@@ -78,26 +78,26 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				return false;
 
 			var dbgModule = method.Module.GetDebuggerModule();
-			if (dbgModule == null)
+			if (dbgModule is null)
 				return false;
 			if (!engine.TryGetDnModule(dbgModule, out var dnModule))
 				return false;
 			var func = dnModule.CorModule.GetFunctionFromToken((uint)method.MetadataToken);
-			if (func == null)
+			if (func is null)
 				return false;
 			var code = func.NativeCode;
-			if (code == null)
+			if (code is null)
 				return false;
 			return TryGetNativeCodeCore(code, method, out nativeCode);
 		}
 
-		bool TryGetNativeCodeCore(CorCode code, DmdMethodBase reflectionMethod, out DbgDotNetNativeCode nativeCode) {
+		bool TryGetNativeCodeCore(CorCode? code, DmdMethodBase? reflectionMethod, out DbgDotNetNativeCode nativeCode) {
 			nativeCode = default;
-			if (code == null)
+			if (code is null)
 				return false;
 
 			var process = code.Function?.Module?.Process;
-			if (process == null)
+			if (process is null)
 				return false;
 
 			// The returned chunks are sorted
@@ -223,7 +223,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				break;
 			}
 
-			NativeCodeInfo codeInfo = null;
+			NativeCodeInfo? codeInfo = null;
 			NativeCodeKind codeKind;
 			switch (Runtime.Process.Architecture) {
 			case DbgArchitecture.X64:
@@ -249,7 +249,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				return false;
 			}
 
-			string methodName = null, shortMethodName = null;
+			string? methodName = null, shortMethodName = null;
 			if (!(reflectionMethod is null)) {
 				methodName = reflectionMethod.ToString() + " (0x" + reflectionMethod.MetadataToken.ToString("X8") + ")";
 				shortMethodName = reflectionMethod.ToString();
@@ -297,7 +297,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return map[map.Length - 1].nativeEndOffset == methodLength;
 		}
 
-		X86Variable[] CreateVariablesX86(VariableHome[] varHomes) {
+		X86Variable[]? CreateVariablesX86(VariableHome[] varHomes) {
 			var x86Variables = varHomes.Length == 0 ? Array.Empty<X86Variable>() : new X86Variable[varHomes.Length];
 			var architecture = Runtime.Process.Architecture;
 			for (int i = 0; i < varHomes.Length; i++) {
@@ -344,7 +344,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 					return null;
 				}
 
-				const string varName = null;
+				const string? varName = null;
 				x86Variables[i] = new X86Variable(varName, varIndex, isLocal, varHome.StartOffset, varHome.Length, locationKind, register, memoryOffset);
 			}
 			return x86Variables;

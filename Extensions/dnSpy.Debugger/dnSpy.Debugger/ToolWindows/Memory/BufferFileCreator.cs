@@ -56,7 +56,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			readonly List<DbgRuntime> runtimes;
 			readonly Dictionary<HexPosition, int> moduleReferences;
 			readonly HashSet<DbgModule> addedModules;
-			DbgProcess process;
+			DbgProcess? process;
 
 			// UI thread
 			public ModuleListener(HexBufferFileServiceFactory hexBufferFileServiceFactory, IHexBufferInfo hexBufferInfo, UIDispatcher uiDispatcher) {
@@ -82,16 +82,16 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			}
 
 			// UI thread
-			void OnProcessChanged_UI(DbgProcess newProcess) {
+			void OnProcessChanged_UI(DbgProcess? newProcess) {
 				uiDispatcher.VerifyAccess();
 				if (disposed) {
-					Debug.Assert(process == null);
+					Debug.Assert(process is null);
 					Debug.Assert(runtimes.Count == 0);
 					Debug.Assert(moduleReferences.Count == 0);
 					Debug.Assert(!hexBufferFileService.Files.Any());
 					return;
 				}
-				if (process != null)
+				if (!(process is null))
 					process.RuntimesChanged -= Process_RuntimesChanged;
 				foreach (var r in runtimes)
 					r.ModulesChanged -= DbgRuntime_ModulesChanged;
@@ -101,7 +101,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 				addedModules.Clear();
 
 				process = newProcess;
-				if (newProcess != null)
+				if (!(newProcess is null))
 					newProcess.DbgManager.Dispatcher.BeginInvoke(() => OnNewProcess_DbgThread(newProcess));
 			}
 

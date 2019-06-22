@@ -45,7 +45,7 @@ namespace dnSpy.Bookmarks.TextEditor.DocViewer {
 		}
 
 		public override DocumentViewerBookmarksOperations Create(ITextView textView) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			return textView.Properties.GetOrCreateSingletonProperty(() => new DocumentViewerBookmarksOperationsImpl(textView, toolWindowService, textViewBookmarkService, bookmarksService, bookmarkNavigator));
 		}

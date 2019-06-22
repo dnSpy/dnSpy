@@ -38,7 +38,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		[ImportingConstructor]
 		HexFileStructureInfoProviderFactoryImpl(PEStructureProviderFactory peStructureProviderFactory) => this.peStructureProviderFactory = peStructureProviderFactory;
 
-		public override HexFileStructureInfoProvider Create(HexView hexView) =>
+		public override HexFileStructureInfoProvider? Create(HexView hexView) =>
 			new HexFileStructureInfoProviderImpl(peStructureProviderFactory);
 	}
 
@@ -57,7 +57,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 					return peStructure;
 
 				var provider = peStructureProviderFactory.TryGetProvider(file);
-				if (provider != null)
+				if (!(provider is null))
 					peStructure = new PEStructure(provider);
 
 				file.Properties.AddProperty(typeof(PEStructure), peStructure);
@@ -72,24 +72,24 @@ namespace dnSpy.AsmEditor.Hex.PE {
 					peStructureProvider.ImageFileHeader,
 					peStructureProvider.ImageOptionalHeader,
 				};
-				if (peStructureProvider.ImageCor20Header != null)
+				if (!(peStructureProvider.ImageCor20Header is null))
 					list.Add(peStructureProvider.ImageCor20Header);
-				if (peStructureProvider.StorageSignature != null)
+				if (!(peStructureProvider.StorageSignature is null))
 					list.Add(peStructureProvider.StorageSignature);
-				if (peStructureProvider.StorageHeader != null)
+				if (!(peStructureProvider.StorageHeader is null))
 					list.Add(peStructureProvider.StorageHeader);
-				if (peStructureProvider.TablesStream != null)
+				if (!(peStructureProvider.TablesStream is null))
 					list.Add(peStructureProvider.TablesStream);
 				list.AddRange(peStructureProvider.Sections);
 				list.AddRange(peStructureProvider.StorageStreams);
 				hexStructures = list.ToArray();
 
 				var tblsStream = peStructureProvider.TablesStream;
-				if (tblsStream != null) {
-					var first = tblsStream.MetadataTables.FirstOrDefault(a => a != null);
-					var last = tblsStream.MetadataTables.LastOrDefault(a => a != null);
-					Debug.Assert(first != null);
-					if (first != null)
+				if (!(tblsStream is null)) {
+					var first = tblsStream.MetadataTables.FirstOrDefault(a => !(a is null));
+					var last = tblsStream.MetadataTables.LastOrDefault(a => !(a is null));
+					Debug.Assert(!(first is null));
+					if (!(first is null))
 						metadataTablesSpan = HexSpan.FromBounds(first.Span.Start, last.Span.End);
 				}
 			}
@@ -104,8 +104,8 @@ namespace dnSpy.AsmEditor.Hex.PE {
 					}
 				}
 				if (metadataTablesSpan.Contains(position)) {
-					foreach (var mdTbl in peStructureProvider.TablesStream.MetadataTables) {
-						if (mdTbl == null || !mdTbl.Span.Contains(position))
+					foreach (var mdTbl in peStructureProvider.TablesStream!.MetadataTables) {
+						if (mdTbl is null || !mdTbl.Span.Contains(position))
 							continue;
 						var offset = position - mdTbl.Span.Start;
 						if (offset >= uint.MaxValue)
@@ -135,19 +135,19 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			}
 		}
 
-		public override object GetReference(HexBufferFile file, ComplexData structure, HexPosition position) {
+		public override object? GetReference(HexBufferFile file, ComplexData structure, HexPosition position) {
 			var peStructure = PEStructure.TryCreate(peStructureProviderFactory, file);
-			if (peStructure == null)
+			if (peStructure is null)
 				return null;
 
 			var info = peStructure.GetField(position);
-			if (info != null)
+			if (!(info is null))
 				return new HexFieldReference(file, info.Value.Structure, info.Value.Field);
 
 			return null;
 		}
 
-		public override HexIndexes[] GetSubStructureIndexes(HexBufferFile file, ComplexData structure, HexPosition position) {
+		public override HexIndexes[]? GetSubStructureIndexes(HexBufferFile file, ComplexData structure, HexPosition position) {
 			if (structure is PeSectionsData sections)
 				return Array.Empty<HexIndexes>();
 

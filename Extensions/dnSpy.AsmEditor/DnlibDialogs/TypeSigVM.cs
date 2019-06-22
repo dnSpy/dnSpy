@@ -28,19 +28,20 @@ using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	abstract class TypeVMBase<T> : DataFieldVM<T> where T : IType {
-		readonly TypeSigCreatorOptions options;
+		readonly TypeSigCreatorOptions? options;
 		T type;
 
 		public ITypeSigCreator TypeSigCreator {
-			set { typeSigCreator = value; }
+			set => typeSigCreator = value;
 		}
-		ITypeSigCreator typeSigCreator;
+		ITypeSigCreator? typeSigCreator;
 
 		public ICommand PickTypeCommand => new RelayCommand(a => PickType());
 
-		protected TypeVMBase(T value, Action<DataFieldVM> onUpdated, TypeSigCreatorOptions options)
+		protected TypeVMBase(T value, Action<DataFieldVM> onUpdated, TypeSigCreatorOptions? options)
 			: base(onUpdated) {
-			if (options != null) {
+			type = default!;
+			if (!(options is null)) {
 				this.options = options.Clone(dnSpy_AsmEditor_Resources.CreateType);
 				this.options.NullTypeSigAllowed = true;
 			}
@@ -52,31 +53,33 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			return ToString(type);
 		}
 
-		protected override string ConvertToValue(out T value) {
+		protected override string? ConvertToValue(out T value) {
 			value = type;
 			return null;
 		}
 
 		void PickType() {
-			if (typeSigCreator == null)
+			if (typeSigCreator is null)
+				throw new InvalidOperationException();
+			if (options is null)
 				throw new InvalidOperationException();
 			var newTypeSig = typeSigCreator.Create(options, ToTypeSig(type), out bool canceled);
 			if (!canceled)
-				SetValue(ToType(newTypeSig));
+				SetValue(ToType(newTypeSig!));
 		}
 
 		protected abstract TypeSig ToTypeSig(T type);
 		protected abstract T ToType(TypeSig type);
-		internal static string ToString(IType type) => type == null ? "null" : type.FullName;
+		internal static string ToString(IType type) => type is null ? "null" : type.FullName;
 	}
 
 	sealed class TypeSigVM : TypeVMBase<TypeSig> {
-		public TypeSigVM(Action<DataFieldVM> onUpdated, TypeSigCreatorOptions options)
+		public TypeSigVM(Action<DataFieldVM> onUpdated, TypeSigCreatorOptions? options)
 			: this(null, onUpdated, options) {
 		}
 
-		public TypeSigVM(TypeSig value, Action<DataFieldVM> onUpdated, TypeSigCreatorOptions options)
-			: base(value, onUpdated, options) {
+		public TypeSigVM(TypeSig? value, Action<DataFieldVM> onUpdated, TypeSigCreatorOptions? options)
+			: base(value!, onUpdated, options) {
 		}
 
 		protected override TypeSig ToTypeSig(TypeSig type) => type;
@@ -88,8 +91,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			: this(null, onUpdated, options) {
 		}
 
-		public TypeDefOrRefVM(ITypeDefOrRef value, Action<DataFieldVM> onUpdated, TypeSigCreatorOptions options)
-			: base(value, onUpdated, options) {
+		public TypeDefOrRefVM(ITypeDefOrRef? value, Action<DataFieldVM> onUpdated, TypeSigCreatorOptions options)
+			: base(value!, onUpdated, options) {
 		}
 
 		protected override TypeSig ToTypeSig(ITypeDefOrRef type) => type.ToTypeSig();
@@ -97,21 +100,21 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 	}
 
 	abstract class TypeListDataFieldVMBase<T> : DataFieldVM<IList<T>> where T : IType {
-		readonly TypeSigCreatorOptions options;
+		readonly TypeSigCreatorOptions? options;
 		readonly List<T> types = new List<T>();
 
 		public ITypeSigCreator TypeSigCreator {
-			set { typeSigCreator = value; }
+			set => typeSigCreator = value;
 		}
-		ITypeSigCreator typeSigCreator;
+		ITypeSigCreator? typeSigCreator;
 
 		public ICommand AddTypeCommand => new RelayCommand(a => AddType());
 		public ICommand RemoveTypeCommand => new RelayCommand(a => RemoveType(), a => RemoveTypeCanExecute());
 		public ICommand ClearTypesCommand => new RelayCommand(a => ClearTypes(), a => ClearTypesCanExecute());
 
-		protected TypeListDataFieldVMBase(IList<T> value, Action<DataFieldVM> onUpdated, TypeSigCreatorOptions options)
+		protected TypeListDataFieldVMBase(IList<T> value, Action<DataFieldVM> onUpdated, TypeSigCreatorOptions? options)
 			: base(onUpdated) {
-			if (options != null) {
+			if (!(options is null)) {
 				this.options = options.Clone(dnSpy_AsmEditor_Resources.CreateType);
 				this.options.NullTypeSigAllowed = true;
 			}
@@ -120,7 +123,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		protected override string OnNewValue(IList<T> value) {
 			types.Clear();
-			if (value != null)
+			if (!(value is null))
 				types.AddRange(value);
 			return CalculateStringValue();
 		}
@@ -128,19 +131,21 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		string CalculateStringValue() => string.Join(", ", types.Select(a => TypeSigVM.ToString(a)));
 		void InitializeStringValue() => StringValue = CalculateStringValue();
 
-		protected override string ConvertToValue(out IList<T> value) {
+		protected override string? ConvertToValue(out IList<T> value) {
 			value = types.ToArray();
 			return null;
 		}
 
 		void AddType() {
-			if (typeSigCreator == null)
+			if (typeSigCreator is null)
+				throw new InvalidOperationException();
+			if (options is null)
 				throw new InvalidOperationException();
 			var newTypeSig = typeSigCreator.Create(options, null, out bool canceled);
 			if (canceled)
 				return;
 
-			types.Add(ToType(newTypeSig));
+			types.Add(ToType(newTypeSig!));
 			InitializeStringValue();
 		}
 
@@ -167,11 +172,11 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 	}
 
 	sealed class TypeSigListDataFieldVM : TypeListDataFieldVMBase<TypeSig> {
-		public TypeSigListDataFieldVM(Action<DataFieldVM> onUpdated, TypeSigCreatorOptions options)
+		public TypeSigListDataFieldVM(Action<DataFieldVM> onUpdated, TypeSigCreatorOptions? options)
 			: this(Array.Empty<TypeSig>(), onUpdated, options) {
 		}
 
-		public TypeSigListDataFieldVM(IList<TypeSig> value, Action<DataFieldVM> onUpdated, TypeSigCreatorOptions options)
+		public TypeSigListDataFieldVM(IList<TypeSig> value, Action<DataFieldVM> onUpdated, TypeSigCreatorOptions? options)
 			: base(value, onUpdated, options) {
 		}
 

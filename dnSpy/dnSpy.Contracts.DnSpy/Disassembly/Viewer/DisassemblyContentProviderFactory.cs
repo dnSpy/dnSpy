@@ -30,6 +30,6 @@ namespace dnSpy.Contracts.Disassembly.Viewer {
 		/// <param name="symbolResolver">Symbol resolver or null</param>
 		/// <param name="header">Header comment added at the top of the document or null. This can contain multiple lines</param>
 		/// <returns></returns>
-		public abstract DisassemblyContentProvider Create(NativeCode code, DisassemblyContentFormatterOptions formatterOptions, ISymbolResolver symbolResolver, string header);
+		public abstract DisassemblyContentProvider Create(NativeCode code, DisassemblyContentFormatterOptions formatterOptions, ISymbolResolver? symbolResolver, string? header);
 	}
 }

@@ -27,7 +27,7 @@ using VSUTIL = Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Hex.Files {
 	sealed class HexBufferFileImpl : HexBufferFile {
-		public override HexBufferFile ParentFile { get; }
+		public override HexBufferFile? ParentFile { get; }
 		public override event EventHandler<BufferFilesAddedEventArgs> BufferFilesAdded;
 		public override bool IsRemoved => isRemoved;
 		public override event EventHandler Removed;
@@ -49,13 +49,13 @@ namespace dnSpy.Hex.Files {
 		readonly Lazy<StructureProviderFactory, VSUTIL.IOrderable>[] structureProviderFactories;
 		readonly Lazy<BufferFileHeadersProviderFactory>[] bufferFileHeadersProviderFactories;
 		readonly SpanDataCollection<HexBufferFileImpl> files;
-		StructureProvider[] structureProviders;
-		BufferFileHeadersProvider[] bufferFileHeadersProviders;
+		StructureProvider[]? structureProviders;
+		BufferFileHeadersProvider[]? bufferFileHeadersProviders;
 		bool isInitializing;
 		bool isStructuresInitialized;
 		bool isRemoved;
 
-		public HexBufferFileImpl(HexBufferFile parentFile, Lazy<StructureProviderFactory, VSUTIL.IOrderable>[] structureProviderFactories, Lazy<BufferFileHeadersProviderFactory>[] bufferFileHeadersProviderFactories, HexBuffer buffer, HexSpan span, string name, string filename, string[] tags)
+		public HexBufferFileImpl(HexBufferFile? parentFile, Lazy<StructureProviderFactory, VSUTIL.IOrderable>[] structureProviderFactories, Lazy<BufferFileHeadersProviderFactory>[] bufferFileHeadersProviderFactories, HexBuffer buffer, HexSpan span, string name, string filename, string[] tags)
 			: base(buffer, span, name, filename, tags) {
 			if (parentFile?.Span.Contains(span) == false)
 				throw new ArgumentOutOfRangeException(nameof(span));
@@ -66,7 +66,7 @@ namespace dnSpy.Hex.Files {
 		}
 
 		public override HexBufferFile[] CreateFiles(params BufferFileOptions[] options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			var newFiles = new HexBufferFileImpl[options.Length];
 			for (int i = 0; i < newFiles.Length; i++) {
@@ -82,19 +82,19 @@ namespace dnSpy.Hex.Files {
 			return newFiles;
 		}
 
-		public override HexBufferFile GetFile(HexPosition position, bool checkNestedFiles) {
+		public override HexBufferFile? GetFile(HexPosition position, bool checkNestedFiles) {
 			var file = files.FindData(position);
-			if (file == null || !checkNestedFiles)
+			if (file is null || !checkNestedFiles)
 				return file;
 			return file.GetFile(position, checkNestedFiles) ?? file;
 		}
 
 		void CreateStructureProviders(bool initialize) {
-			if (structureProviders == null) {
+			if (structureProviders is null) {
 				var list = new List<StructureProvider>(structureProviderFactories.Length);
 				foreach (var lz in structureProviderFactories) {
 					var provider = lz.Value.Create(this);
-					if (provider != null)
+					if (!(provider is null))
 						list.Add(provider);
 				}
 				structureProviders = list.ToArray();
@@ -118,53 +118,56 @@ namespace dnSpy.Hex.Files {
 
 			// Always initialize this first to make sure nested files get created
 			CreateStructureProviders(true);
+			Debug.Assert(!(structureProviders is null));
 
 			if (checkNestedFiles && files.Count != 0) {
 				var file = files.FindData(position);
 				var info = file?.GetFileAndStructure(position, checkNestedFiles);
-				if (info != null)
+				if (!(info is null))
 					return info;
 			}
 
 			foreach (var provider in structureProviders) {
 				var structure = provider.GetStructure(position);
-				if (structure != null)
+				if (!(structure is null))
 					return new FileAndStructure(this, structure);
 			}
 			return null;
 		}
 
-		public override ComplexData GetStructure(string id) {
+		public override ComplexData? GetStructure(string id) {
 			CreateStructureProviders(true);
+			Debug.Assert(!(structureProviders is null));
 			foreach (var provider in structureProviders) {
 				var structure = provider.GetStructure(id);
-				if (structure != null)
+				if (!(structure is null))
 					return structure;
 			}
 			return null;
 		}
 
-		public override THeaders GetHeaders<THeaders>() {
-			if (bufferFileHeadersProviders == null) {
+		public override THeaders? GetHeaders<THeaders>() where THeaders : class {
+			if (bufferFileHeadersProviders is null) {
 				CreateStructureProviders(true);
 				var list = new List<BufferFileHeadersProvider>(bufferFileHeadersProviderFactories.Length);
 				foreach (var lz in bufferFileHeadersProviderFactories) {
 					var provider = lz.Value.Create(this);
-					if (provider != null)
+					if (!(provider is null))
 						list.Add(provider);
 				}
 				bufferFileHeadersProviders = list.ToArray();
 			}
+			Debug.Assert(!(structureProviders is null));
 
 			foreach (var provider in structureProviders) {
 				var headers = provider.GetHeaders<THeaders>();
-				if (headers != null)
+				if (!(headers is null))
 					return headers;
 			}
 
 			foreach (var provider in bufferFileHeadersProviders) {
 				var headers = provider.GetHeaders<THeaders>();
-				if (headers != null)
+				if (!(headers is null))
 					return headers;
 			}
 

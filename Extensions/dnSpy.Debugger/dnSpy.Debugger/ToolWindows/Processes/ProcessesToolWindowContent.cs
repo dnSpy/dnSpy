@@ -31,8 +31,8 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 	sealed class ProcessesToolWindowContentProvider : IToolWindowContentProvider {
 		readonly Lazy<IProcessesContent> processesContent;
 
-		public ProcessesToolWindowContent ProcessesToolWindowContent => processesToolWindowContent ?? (processesToolWindowContent = new ProcessesToolWindowContent(processesContent));
-		ProcessesToolWindowContent processesToolWindowContent;
+		public ProcessesToolWindowContent ProcessesToolWindowContent => processesToolWindowContent ??= new ProcessesToolWindowContent(processesContent);
+		ProcessesToolWindowContent? processesToolWindowContent;
 
 		[ImportingConstructor]
 		ProcessesToolWindowContentProvider(Lazy<IProcessesContent> processesContent) => this.processesContent = processesContent;
@@ -41,18 +41,18 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			get { yield return new ToolWindowContentInfo(ProcessesToolWindowContent.THE_GUID, ProcessesToolWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_PROCESSES, false); }
 		}
 
-		public ToolWindowContent GetOrCreate(Guid guid) => guid == ProcessesToolWindowContent.THE_GUID ? ProcessesToolWindowContent : null;
+		public ToolWindowContent? GetOrCreate(Guid guid) => guid == ProcessesToolWindowContent.THE_GUID ? ProcessesToolWindowContent : null;
 	}
 
 	sealed class ProcessesToolWindowContent : ToolWindowContent, IFocusable {
 		public static readonly Guid THE_GUID = new Guid("F1EFB8BE-8941-4BE4-ACC4-ACA8809394BB");
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultHorizontal;
 
-		public override IInputElement FocusedElement => processesContent.Value.FocusedElement;
-		public override FrameworkElement ZoomElement => processesContent.Value.ZoomElement;
+		public override IInputElement? FocusedElement => processesContent.Value.FocusedElement;
+		public override FrameworkElement? ZoomElement => processesContent.Value.ZoomElement;
 		public override Guid Guid => THE_GUID;
 		public override string Title => dnSpy_Debugger_Resources.Window_Processes;
-		public override object UIObject => processesContent.Value.UIObject;
+		public override object? UIObject => processesContent.Value.UIObject;
 		public bool CanFocus => true;
 
 		readonly Lazy<IProcessesContent> processesContent;

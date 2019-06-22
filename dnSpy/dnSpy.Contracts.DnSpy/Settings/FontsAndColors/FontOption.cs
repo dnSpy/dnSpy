@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Windows.Media;
 using dnSpy.Contracts.Settings.Fonts;
 
@@ -43,7 +44,11 @@ namespace dnSpy.Contracts.Settings.FontsAndColors {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="fontType"></param>
-		public FontOption(FontType fontType) => FontType = fontType;
+		/// <param name="fontType">Font type</param>
+		/// <param name="fontFamily">Font family</param>
+		public FontOption(FontType fontType, FontFamily fontFamily) {
+			FontType = fontType;
+			FontFamily = fontFamily ?? throw new ArgumentOutOfRangeException(nameof(fontFamily));
+		}
 	}
 }

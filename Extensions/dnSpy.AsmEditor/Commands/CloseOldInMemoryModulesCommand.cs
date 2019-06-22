@@ -44,7 +44,7 @@ namespace dnSpy.AsmEditor.Commands {
 			this.appService = appService;
 		}
 
-		AssemblyDocumentNode[] GetNodes() {
+		AssemblyDocumentNode[]? GetNodes() {
 			var nodes = new List<AssemblyDocumentNode>();
 			foreach (var node in documentTreeView.TreeView.Root.DataChildren.OfType<AssemblyDocumentNode>()) {
 				var doc = node.Document;
@@ -54,10 +54,10 @@ namespace dnSpy.AsmEditor.Commands {
 			return nodes.Count == 0 ? null : nodes.ToArray();
 		}
 
-		public override bool IsEnabled(IMenuItemContext context) => GetNodes() != null;
+		public override bool IsEnabled(IMenuItemContext context) => !(GetNodes() is null);
 		public override void Execute(IMenuItemContext context) {
 			var nodes = GetNodes();
-			if (nodes != null)
+			if (!(nodes is null))
 				RemoveAssemblyCommand.Execute(undoCommandService, documentSaver, appService, nodes);
 		}
 	}

@@ -28,9 +28,9 @@ using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Debugger.Evaluation.UI {
 	sealed class VariablesWindowColumnConverter : IValueConverter {
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
+		public object? Convert(object value, Type targetType, object parameter, CultureInfo culture) {
 			var obj = value as FormatterObject<ValueNode>;
-			if (obj == null)
+			if (obj is null)
 				return null;
 			bool isToolTip = parameter is string paramString && paramString == "ToolTip";
 

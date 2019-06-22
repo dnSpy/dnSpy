@@ -2,16 +2,22 @@ version: x.x.{build}
 image: Visual Studio 2019
 configuration: Release
 install:
-- cmd: git submodule update --init --recursive
-before_build:
-- cmd: appveyor-retry nuget restore
-build:
-  project: dnSpy.sln
-  parallel: true
-  verbosity: normal
+- cmd: >-
+    git submodule update --init --recursive
+
+    appveyor DownloadFile https://dot.net/v1/dotnet-install.ps1
+
+    powershell -NoLogo -NoProfile -File dotnet-install.ps1 -Version 3.0.100-preview5-011568 -InstallDir "%ProgramFiles%\dotnet" -Architecture x64
+build_script:
+- cmd: build.cmd
+test: off
 artifacts:
 - path: dnSpy/dnSpy/bin/Release/net472
   name: dnSpy-net472
+- path: dnSpy/dnSpy/bin/Release/netcoreapp3.0/win-x86/publish
+  name: dnSpy-netcore-win32
+- path: dnSpy/dnSpy/bin/Release/netcoreapp3.0/win-x64/publish
+  name: dnSpy-netcore-win64
 deploy:
 - provider: GitHub
   description: New release

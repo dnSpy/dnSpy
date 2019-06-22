@@ -31,7 +31,7 @@ namespace dnSpy.Documents.TreeView {
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.EVENT_NODE_GUID);
 		public override NodePathName NodePathName => new NodePathName(Guid, EventDef.FullName);
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => dnImgMgr.GetImageReference(EventDef);
-		public override ITreeNodeGroup TreeNodeGroup { get; }
+		public override ITreeNodeGroup? TreeNodeGroup { get; }
 
 		public EventNodeImpl(ITreeNodeGroup treeNodeGroup, EventDef @event)
 			: base(@event) => TreeNodeGroup = treeNodeGroup;
@@ -47,11 +47,11 @@ namespace dnSpy.Documents.TreeView {
 		}
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
-			if (EventDef.AddMethod != null)
+			if (!(EventDef.AddMethod is null))
 				yield return new MethodNodeImpl(Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.MethodTreeNodeGroupEvent), EventDef.AddMethod);
-			if (EventDef.RemoveMethod != null)
+			if (!(EventDef.RemoveMethod is null))
 				yield return new MethodNodeImpl(Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.MethodTreeNodeGroupEvent), EventDef.RemoveMethod);
-			if (EventDef.InvokeMethod != null)
+			if (!(EventDef.InvokeMethod is null))
 				yield return new MethodNodeImpl(Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.MethodTreeNodeGroupEvent), EventDef.InvokeMethod);
 			foreach (var m in EventDef.OtherMethods)
 				yield return new MethodNodeImpl(Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.MethodTreeNodeGroupEvent), m);

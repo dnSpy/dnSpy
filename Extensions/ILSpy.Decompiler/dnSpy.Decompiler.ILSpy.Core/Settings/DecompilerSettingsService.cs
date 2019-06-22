@@ -26,12 +26,12 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 		/// </summary>
 		public static DecompilerSettingsService __Instance_DONT_USE {
 			get {
-				if (__instance_DONT_USE == null)
+				if (__instance_DONT_USE is null)
 					Interlocked.CompareExchange(ref __instance_DONT_USE, new DecompilerSettingsService(), null);
-				return __instance_DONT_USE;
+				return __instance_DONT_USE!;
 			}
 		}
-		static DecompilerSettingsService __instance_DONT_USE;
+		static DecompilerSettingsService? __instance_DONT_USE;
 
 		protected DecompilerSettingsService() {
 			CSharpVBDecompilerSettings = new CSharpVBDecompilerSettings();

@@ -33,7 +33,7 @@ namespace dnSpy.Documents.TreeView {
 		public override NodePathName NodePathName => new NodePathName(Guid);
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => DsImages.FolderClosed;
 		protected override ImageReference? GetExpandedIcon(IDotNetImageService dnImgMgr) => DsImages.FolderOpened;
-		public override ITreeNodeGroup TreeNodeGroup { get; }
+		public override ITreeNodeGroup? TreeNodeGroup { get; }
 
 		readonly TypeDef type;
 
@@ -49,11 +49,11 @@ namespace dnSpy.Documents.TreeView {
 		public override IEnumerable<TreeNodeData> CreateChildren() {
 			if (!createChildren)
 				yield break;
-			if (derivedTypesFinder != null)
+			if (!(derivedTypesFinder is null))
 				derivedTypesFinder.Cancel();
 			derivedTypesFinder = new DerivedTypesFinder(this, type);
 		}
-		DerivedTypesFinder derivedTypesFinder;
+		DerivedTypesFinder? derivedTypesFinder;
 
 		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) {
 			output.Write(BoxedTextColor.Text, dnSpy_Resources.DerivedTypes);

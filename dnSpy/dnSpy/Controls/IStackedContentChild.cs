@@ -25,6 +25,6 @@ namespace dnSpy.Controls {
 		/// <summary>
 		/// Gets the UI object
 		/// </summary>
-		object UIObject { get; }
+		object? UIObject { get; }
 	}
 }

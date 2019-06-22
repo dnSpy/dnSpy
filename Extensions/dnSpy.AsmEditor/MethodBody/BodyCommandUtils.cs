@@ -28,33 +28,33 @@ using dnSpy.Contracts.Text;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	static class BodyCommandUtils {
-		public static IList<MethodSourceStatement> GetStatements(IMenuItemContext context, FindByTextPositionOptions options) {
-			if (context == null)
+		public static IList<MethodSourceStatement>? GetStatements(IMenuItemContext? context, FindByTextPositionOptions options) {
+			if (context is null)
 				return null;
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
 				return null;
 			var documentViewer = context.Find<IDocumentViewer>();
-			if (documentViewer == null)
+			if (documentViewer is null)
 				return null;
 			var pos = context.Find<TextEditorPosition>();
-			if (pos == null)
+			if (pos is null)
 				return null;
 			return GetStatements(documentViewer, pos.Position, options);
 		}
 
-		public static IList<MethodSourceStatement> GetStatements(IDocumentViewer documentViewer, int textPosition, FindByTextPositionOptions options) {
-			if (documentViewer == null)
+		public static IList<MethodSourceStatement>? GetStatements(IDocumentViewer? documentViewer, int textPosition, FindByTextPositionOptions options) {
+			if (documentViewer is null)
 				return null;
 			var methodDebugService = documentViewer.GetMethodDebugService();
 			var methodStatements = methodDebugService.FindByTextPosition(textPosition, options | FindByTextPositionOptions.SameMethod);
 			return methodStatements.Count == 0 ? null : methodStatements;
 		}
 
-		public static uint[] GetInstructionOffsets(MethodDef method, IList<MethodSourceStatement> list) {
-			if (method == null)
+		public static uint[]? GetInstructionOffsets(MethodDef? method, IList<MethodSourceStatement> list) {
+			if (method is null)
 				return null;
 			var body = method.Body;
-			if (body == null)
+			if (body is null)
 				return null;
 
 			var foundInstrs = new HashSet<uint>();

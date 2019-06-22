@@ -49,7 +49,7 @@ namespace dnSpy.Debugger.Code {
 
 		void UpdateLocation() {
 			var location = dbgCallStackService.Value.ActiveFrame?.Location;
-			if (location == null)
+			if (location is null)
 				return;
 			referenceNavigatorService.Value.GoTo(location);
 		}

@@ -54,7 +54,7 @@ namespace dnSpy.Contracts.MVVM {
 
 		readonly ListView listView;
 		readonly Dictionary<GridViewColumn, GridViewColumnDesc> toDesc;
-		IGridViewColumnDescsProvider descsProvider;
+		IGridViewColumnDescsProvider? descsProvider;
 
 		GridViewColumnSorter(ListView listView) {
 			this.listView = listView;
@@ -63,7 +63,7 @@ namespace dnSpy.Contracts.MVVM {
 
 		static GridViewColumnSorter GetInstance(ListView listView) {
 			var inst = (GridViewColumnSorter)listView.GetValue(GridViewColumnSorterInstanceProperty);
-			if (inst == null) {
+			if (inst is null) {
 				inst = new GridViewColumnSorter(listView);
 				listView.SetValue(GridViewColumnSorterInstanceProperty, inst);
 			}
@@ -76,9 +76,9 @@ namespace dnSpy.Contracts.MVVM {
 		}
 
 		void Initialize(IGridViewColumnDescsProvider descsProvider) {
-			if (descsProvider == null)
+			if (descsProvider is null)
 				return;
-			Debug.Assert(this.descsProvider == null);
+			Debug.Assert(this.descsProvider is null);
 			this.descsProvider = descsProvider;
 			descsProvider.Descs.SortedColumnChanged += OnSortedColumnChanged;
 			listView.AddHandler(ButtonBase.ClickEvent, new RoutedEventHandler(ListView_Click));
@@ -102,6 +102,7 @@ namespace dnSpy.Contracts.MVVM {
 		}
 
 		void GridView_Columns_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
+			Debug.Assert(!(descsProvider is null));
 			var gridView = (GridView)listView.View;
 			var columns = gridView.Columns;
 			Debug.Assert(columns.Count == descsProvider.Descs.Columns.Length);
@@ -122,6 +123,7 @@ namespace dnSpy.Contracts.MVVM {
 		}
 
 		void UpdateSortedColumn(GridViewColumnDesc desc) {
+			Debug.Assert(!(descsProvider is null));
 			if (!desc.CanBeSorted)
 				return;
 			var sortedColumn = descsProvider.Descs.SortedColumn;
@@ -146,7 +148,7 @@ namespace dnSpy.Contracts.MVVM {
 		}
 
 		void UpdateColumns() {
-			Debug.Assert(descsProvider != null);
+			Debug.Assert(!(descsProvider is null));
 
 			var gridView = (GridView)listView.View;
 			var cols = gridView.Columns;

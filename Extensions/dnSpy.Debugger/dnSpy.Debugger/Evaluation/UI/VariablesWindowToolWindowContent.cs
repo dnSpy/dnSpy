@@ -39,12 +39,12 @@ namespace dnSpy.Debugger.Evaluation.UI {
 
 			public VariablesWindowToolWindowContent Content {
 				get {
-					if (content == null)
+					if (content is null)
 						content = createContent();
 					return content;
 				}
 			}
-			VariablesWindowToolWindowContent content;
+			VariablesWindowToolWindowContent? content;
 
 			readonly Func<VariablesWindowToolWindowContent> createContent;
 
@@ -92,7 +92,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			}
 		}
 
-		public ToolWindowContent GetOrCreate(Guid guid) {
+		public ToolWindowContent? GetOrCreate(Guid guid) {
 			foreach (var info in contents) {
 				if (info.Guid == guid)
 					return info.Content;
@@ -104,11 +104,11 @@ namespace dnSpy.Debugger.Evaluation.UI {
 	sealed class VariablesWindowToolWindowContent : ToolWindowContent, IFocusable {
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultHorizontal;
 
-		public override IInputElement FocusedElement => variablesWindowContent.Value.FocusedElement;
-		public override FrameworkElement ZoomElement => variablesWindowContent.Value.ZoomElement;
+		public override IInputElement? FocusedElement => variablesWindowContent.Value.FocusedElement;
+		public override FrameworkElement? ZoomElement => variablesWindowContent.Value.ZoomElement;
 		public override Guid Guid { get; }
 		public override string Title { get; }
-		public override object UIObject => variablesWindowContent.Value.UIObject;
+		public override object? UIObject => variablesWindowContent.Value.UIObject;
 		public bool CanFocus => true;
 
 		readonly Lazy<IVariablesWindowContent> variablesWindowContent;

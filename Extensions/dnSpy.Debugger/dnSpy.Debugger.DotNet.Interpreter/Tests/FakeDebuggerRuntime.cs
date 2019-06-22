@@ -73,7 +73,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 					}
 				}
 			}
-			public ILValue LoadField(DmdFieldInfo field) {
+			public ILValue? LoadField(DmdFieldInfo field) {
 				InitFields(field.ReflectedType);
 				return AllFields[field];
 			}
@@ -144,7 +144,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 			}
 
 			const int DUMMY_PTR_BASE = 0x4736DC7B;
-			public override bool Call(bool isCallvirt, DmdMethodBase method, ILValue[] arguments, out ILValue returnValue) {
+			public override bool Call(bool isCallvirt, DmdMethodBase method, ILValue[] arguments, out ILValue? returnValue) {
 				var ad = method.AppDomain;
 				var type = method.ReflectedType;
 				if (type == ad.GetWellKnownType(DmdWellKnownType.System_RuntimeTypeHandle)) {
@@ -194,7 +194,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 
 			public override ILValue Clone() => new FakeValueType(this);
 
-			public override ILValue LoadField(DmdFieldInfo field) => fields[field];
+			public override ILValue? LoadField(DmdFieldInfo field) => fields[field];
 
 			public override bool StoreField(DmdFieldInfo field, ILValue value) {
 				if (!fields.ContainsKey(field))
@@ -203,7 +203,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 				return true;
 			}
 
-			public override ILValue LoadFieldAddress(DmdFieldInfo field) {
+			public override ILValue? LoadFieldAddress(DmdFieldInfo field) {
 				if (!fields.ContainsKey(field))
 					return null;
 				return new FakeFieldAddress(fields, field);
@@ -232,7 +232,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 				}
 			}
 
-			public override ILValue LoadField(DmdFieldInfo field) => fields[field];
+			public override ILValue? LoadField(DmdFieldInfo field) => fields[field];
 
 			public override bool StoreField(DmdFieldInfo field, ILValue value) {
 				if (!fields.ContainsKey(field))
@@ -241,13 +241,13 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 				return true;
 			}
 
-			public override ILValue LoadFieldAddress(DmdFieldInfo field) {
+			public override ILValue? LoadFieldAddress(DmdFieldInfo field) {
 				if (!fields.ContainsKey(field))
 					return null;
 				return new FakeFieldAddress(fields, field);
 			}
 
-			public override bool Call(bool isCallvirt, DmdMethodBase method, ILValue[] arguments, out ILValue returnValue) {
+			public override bool Call(bool isCallvirt, DmdMethodBase method, ILValue[] arguments, out ILValue? returnValue) {
 				var ad = method.AppDomain;
 				var type = method.ReflectedType;
 				if (type.FullName == "dnSpy.Debugger.DotNet.Interpreter.Tests.MyClass") {
@@ -281,7 +281,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 				Field = field;
 			}
 
-			public override ILValue LoadIndirect(DmdType type, LoadValueType loadValueType) => Fields[Field];
+			public override ILValue? LoadIndirect(DmdType type, LoadValueType loadValueType) => Fields[Field];
 			public override bool StoreIndirect(DmdType type, LoadValueType loadValueType, ILValue value) {
 				Fields[Field] = value;
 				return true;
@@ -302,7 +302,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 				Collection = collection;
 				Index = index;
 			}
-			public override ILValue LoadIndirect(DmdType type, LoadValueType loadValueType) => Collection[Index];
+			public override ILValue? LoadIndirect(DmdType type, LoadValueType loadValueType) => Collection[Index];
 			public override bool StoreIndirect(DmdType type, LoadValueType loadValueType, ILValue value) {
 				Collection[Index] = value;
 				return true;
@@ -312,10 +312,10 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 				return true;
 			}
 			public override bool InitializeObject(DmdType type) => Collection[Index].InitializeObject(type);
-			public override ILValue LoadField(DmdFieldInfo field) => Collection[Index].LoadField(field);
-			public override ILValue LoadFieldAddress(DmdFieldInfo field) => Collection[Index].LoadFieldAddress(field);
+			public override ILValue? LoadField(DmdFieldInfo field) => Collection[Index].LoadField(field);
+			public override ILValue? LoadFieldAddress(DmdFieldInfo field) => Collection[Index].LoadFieldAddress(field);
 			public override bool StoreField(DmdFieldInfo field, ILValue value) => Collection[Index].StoreField(field, value);
-			public override bool Call(bool isCallvirt, DmdMethodBase method, ILValue[] arguments, out ILValue returnValue) =>
+			public override bool Call(bool isCallvirt, DmdMethodBase method, ILValue[] arguments, out ILValue? returnValue) =>
 				Collection[Index].Call(isCallvirt, method, arguments, out returnValue);
 			public override DmdType Type => Collection[Index].Type.MakeByRefType();
 			public bool Equals(ArgOrLocalAddress other) => Collection == other.Collection && Index == other.Index;
@@ -330,10 +330,10 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 		}
 
 		public override int PointerSize => runtime.PointerSize;
-		public override ILValue LoadArgument(int index) => arguments[index];
-		public override ILValue LoadLocal(int index) => locals[index];
-		public override ILValue LoadArgumentAddress(int index, DmdType type) => new ArgumentAddress(arguments, index);
-		public override ILValue LoadLocalAddress(int index, DmdType type) => new LocalAddress(locals, index);
+		public override ILValue? LoadArgument(int index) => arguments[index];
+		public override ILValue? LoadLocal(int index) => locals[index];
+		public override ILValue? LoadArgumentAddress(int index, DmdType type) => new ArgumentAddress(arguments, index);
+		public override ILValue? LoadLocalAddress(int index, DmdType type) => new LocalAddress(locals, index);
 		public override bool StoreArgument(int index, DmdType type, ILValue value) {
 			arguments[index] = value;
 			return true;
@@ -344,7 +344,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 		}
 
 		static void InitializeValue(ref ILValue value, DmdType valueType) {
-			if (value != null)
+			if (!(value is null))
 				return;
 
 			if (!valueType.IsValueType) {
@@ -392,8 +392,8 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 				elements = new ILValue[length];
 			}
 
-			public override ILValue LoadSZArrayElement(LoadValueType loadValueType, long index, DmdType elementType) => this[index];
-			public override ILValue LoadSZArrayElementAddress(long index, DmdType elementType) => new SZArrayAddress(this, index);
+			public override ILValue? LoadSZArrayElement(LoadValueType loadValueType, long index, DmdType elementType) => this[index];
+			public override ILValue? LoadSZArrayElementAddress(long index, DmdType elementType) => new SZArrayAddress(this, index);
 			public override bool StoreSZArrayElement(LoadValueType loadValueType, long index, ILValue value, DmdType elementType) {
 				this[index] = value;
 				return true;
@@ -413,7 +413,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 				Index = index;
 			}
 
-			public override ILValue LoadIndirect(DmdType type, LoadValueType loadValueType) => ArrayValue[Index];
+			public override ILValue? LoadIndirect(DmdType type, LoadValueType loadValueType) => ArrayValue[Index];
 			public override bool StoreIndirect(DmdType type, LoadValueType loadValueType, ILValue value) {
 				ArrayValue[Index] = value;
 				return true;
@@ -423,38 +423,38 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 				return true;
 			}
 			public override bool InitializeObject(DmdType type) => ArrayValue[Index].InitializeObject(type);
-			public override ILValue LoadField(DmdFieldInfo field) => ArrayValue[Index].LoadField(field);
-			public override ILValue LoadFieldAddress(DmdFieldInfo field) => ArrayValue[Index].LoadFieldAddress(field);
+			public override ILValue? LoadField(DmdFieldInfo field) => ArrayValue[Index].LoadField(field);
+			public override ILValue? LoadFieldAddress(DmdFieldInfo field) => ArrayValue[Index].LoadFieldAddress(field);
 			public override bool StoreField(DmdFieldInfo field, ILValue value) => ArrayValue[Index].StoreField(field, value);
-			public override bool Call(bool isCallvirt, DmdMethodBase method, ILValue[] arguments, out ILValue returnValue) =>
+			public override bool Call(bool isCallvirt, DmdMethodBase method, ILValue[] arguments, out ILValue? returnValue) =>
 				ArrayValue[Index].Call(isCallvirt, method, arguments, out returnValue);
 			public override DmdType Type => ArrayValue.Type.MakeByRefType();
 			public bool Equals(SZArrayAddress other) => ArrayValue == other.ArrayValue && Index == other.Index;
 		}
 
 		public override ILValue CreateSZArray(DmdType elementType, long length) => new SZArrayILValue(elementType, length);
-		public override ILValue CreateRuntimeTypeHandle(DmdType type) {
+		public override ILValue? CreateRuntimeTypeHandle(DmdType type) {
 			var rht = type.AppDomain.GetWellKnownType(DmdWellKnownType.System_RuntimeTypeHandle);
 			return new FakeValueType(rht);
 		}
-		public override ILValue CreateRuntimeFieldHandle(DmdFieldInfo field) {
+		public override ILValue? CreateRuntimeFieldHandle(DmdFieldInfo field) {
 			var rht = field.ReflectedType.AppDomain.GetWellKnownType(DmdWellKnownType.System_RuntimeFieldHandle);
 			return new FakeValueType(rht);
 		}
-		public override ILValue CreateRuntimeMethodHandle(DmdMethodBase method) {
+		public override ILValue? CreateRuntimeMethodHandle(DmdMethodBase method) {
 			var rht = method.ReflectedType.AppDomain.GetWellKnownType(DmdWellKnownType.System_RuntimeMethodHandle);
 			return new FakeValueType(rht);
 		}
 
-		public override ILValue CreateTypeNoConstructor(DmdType type) {
+		public override ILValue? CreateTypeNoConstructor(DmdType type) {
 			if (type.IsValueType)
 				return new FakeValueType(type);
 			return new FakeReferenceType(type);
 		}
 
-		public override ILValue Box(ILValue value, DmdType type) => new BoxedValueTypeILValue(value, type);
+		public override ILValue? Box(ILValue value, DmdType type) => new BoxedValueTypeILValue(value, type);
 
-		public override bool CallStatic(DmdMethodBase method, ILValue[] arguments, out ILValue returnValue) {
+		public override bool CallStatic(DmdMethodBase method, ILValue[] arguments, out ILValue? returnValue) {
 			var ad = method.AppDomain;
 			var type = method.ReflectedType;
 			if (type.FullName == "dnSpy.Debugger.DotNet.Interpreter.Tests.MyStruct") {
@@ -494,7 +494,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 			return false;
 		}
 
-		public override ILValue CreateInstance(DmdConstructorInfo ctor, ILValue[] arguments) {
+		public override ILValue? CreateInstance(DmdConstructorInfo ctor, ILValue[] arguments) {
 			var type = ctor.ReflectedType;
 			if (type.FullName == "dnSpy.Debugger.DotNet.Interpreter.Tests.MyStruct") {
 				if (arguments.Length == 2)
@@ -510,10 +510,10 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 			return null;
 		}
 
-		public override bool CallStaticIndirect(DmdMethodSignature methodSig, ILValue methodAddress, ILValue[] arguments, out ILValue returnValue) => throw new NotImplementedException();
+		public override bool CallStaticIndirect(DmdMethodSignature methodSig, ILValue methodAddress, ILValue[] arguments, out ILValue? returnValue) => throw new NotImplementedException();
 
-		public override ILValue LoadStaticField(DmdFieldInfo field) => staticFields.LoadField(field);
-		public override ILValue LoadStaticFieldAddress(DmdFieldInfo field) => new FakeFieldAddress(staticFields.AllFields, field);
+		public override ILValue? LoadStaticField(DmdFieldInfo field) => staticFields.LoadField(field);
+		public override ILValue? LoadStaticFieldAddress(DmdFieldInfo field) => new FakeFieldAddress(staticFields.AllFields, field);
 		public override bool StoreStaticField(DmdFieldInfo field, ILValue value) {
 			staticFields.StoreField(field, value);
 			return true;
@@ -540,6 +540,6 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests.Fake {
 			this.value = value.Clone();
 			Type = type;
 		}
-		public override ILValue UnboxAny(DmdType type) => value.Clone();
+		public override ILValue? UnboxAny(DmdType type) => value.Clone();
 	}
 }

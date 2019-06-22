@@ -88,7 +88,7 @@ namespace dnSpy.Contracts.MVVM.Dialogs {
 
 		readonly Dispatcher dispatcher;
 		readonly IProgressTask task;
-		CancellationTokenSource cancellationTokenSource;
+		CancellationTokenSource? cancellationTokenSource;
 
 		/// <summary>
 		/// Constructor
@@ -187,7 +187,7 @@ namespace dnSpy.Contracts.MVVM.Dialogs {
 		/// <summary>
 		/// Gets/sets current description
 		/// </summary>
-		public string CurrentItemDescription {
+		public string? CurrentItemDescription {
 			get => currentItemDescription;
 			set {
 				if (currentItemDescription != value) {
@@ -196,17 +196,17 @@ namespace dnSpy.Contracts.MVVM.Dialogs {
 				}
 			}
 		}
-		string currentItemDescription;
+		string? currentItemDescription;
 
 		/// <summary>
 		/// true if there was an error
 		/// </summary>
-		public bool WasError => ErrorMessage != null;
+		public bool WasError => !(ErrorMessage is null);
 
 		/// <summary>
 		/// Gets the error message or null if no error
 		/// </summary>
-		public string ErrorMessage { get; private set; }
+		public string? ErrorMessage { get; private set; }
 
 		class MyAction {
 			public readonly Action Action;
@@ -270,7 +270,7 @@ namespace dnSpy.Contracts.MVVM.Dialogs {
 		void IProgress.ThrowIfCancellationRequested() => Token.ThrowIfCancellationRequested();
 
 		void OnTaskCompleted() {
-			cancellationTokenSource.Dispose();
+			cancellationTokenSource?.Dispose();
 			cancellationTokenSource = null;
 			HasCompleted = true;
 			OnCompleted?.Invoke(this, EventArgs.Empty);

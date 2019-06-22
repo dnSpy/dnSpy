@@ -59,7 +59,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 
 		protected ProcessesCtxMenuCommand(Lazy<IProcessesContent> processesContent) => this.processesContent = processesContent;
 
-		protected sealed override ProcessesCtxMenuContext CreateContext(IMenuItemContext context) {
+		protected sealed override ProcessesCtxMenuContext? CreateContext(IMenuItemContext context) {
 			if (!(context.CreatorObject.Object is ListView))
 				return null;
 			if (context.CreatorObject.Object != processesContent.Value.ListView)

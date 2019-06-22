@@ -247,7 +247,7 @@ namespace dnSpy.Hex.Formatting {
 				if (!IsValid)
 					throw new ObjectDisposedException(nameof(HexFormattedLineImpl));
 				foreach (var part in linePartsCollection.LineParts) {
-					if (part.AdornmentElement != null)
+					if (!(part.AdornmentElement is null))
 						return true;
 				}
 				return false;
@@ -264,7 +264,7 @@ namespace dnSpy.Hex.Formatting {
 		}
 
 		public HexFormattedLineImpl(HexLinePartsCollection linePartsCollection, int linePartsIndex, int linePartsLength, int startColumn, int endColumn, HexBufferLine bufferLine, VST.Span lineSpan, TextLine textLine, double indentation, double virtualSpaceWidth) {
-			if (linePartsCollection == null)
+			if (linePartsCollection is null)
 				throw new ArgumentNullException(nameof(linePartsCollection));
 			if (linePartsIndex < 0)
 				throw new ArgumentOutOfRangeException(nameof(linePartsIndex));
@@ -272,7 +272,7 @@ namespace dnSpy.Hex.Formatting {
 				throw new ArgumentOutOfRangeException(nameof(linePartsLength));
 			if (linePartsIndex + linePartsLength > linePartsCollection.LineParts.Count)
 				throw new ArgumentOutOfRangeException(nameof(linePartsLength));
-			if (textLine == null)
+			if (textLine is null)
 				throw new ArgumentNullException(nameof(textLine));
 
 			this.bufferLine = bufferLine ?? throw new ArgumentNullException(nameof(bufferLine));
@@ -292,7 +292,7 @@ namespace dnSpy.Hex.Formatting {
 			var lineParts = linePartsCollection.LineParts;
 			for (int i = 0; i < linePartsLength; i++) {
 				var adornmentElement = lineParts[linePartsIndex + i].AdornmentElement;
-				if (adornmentElement == null)
+				if (adornmentElement is null)
 					continue;
 				double adornmentBaseLineHeight = adornmentElement.TextHeight - adornmentElement.Baseline;
 				if (adornmentBaseLineHeight > baseLineHeight)
@@ -358,7 +358,7 @@ namespace dnSpy.Hex.Formatting {
 		public override VSTF.TextBounds? GetAdornmentBounds(object identityTag) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(HexFormattedLineImpl));
-			if (identityTag == null)
+			if (identityTag is null)
 				throw new ArgumentNullException(nameof(identityTag));
 
 			var lineParts = linePartsCollection.LineParts;
@@ -367,7 +367,7 @@ namespace dnSpy.Hex.Formatting {
 			for (int i = 0; i < linePartsLengthLocal; i++) {
 				var part = lineParts[linePartsIndexLocal + i];
 				var adornment = part.AdornmentElement;
-				if (adornment == null)
+				if (adornment is null)
 					continue;
 				if (!identityTag.Equals(adornment.IdentityTag))
 					continue;
@@ -380,25 +380,25 @@ namespace dnSpy.Hex.Formatting {
 		public override ReadOnlyCollection<object> GetAdornmentTags(object providerTag) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(HexFormattedLineImpl));
-			if (providerTag == null)
+			if (providerTag is null)
 				throw new ArgumentNullException(nameof(providerTag));
 
 			var lineParts = linePartsCollection.LineParts;
 			int linePartsIndexLocal = linePartsIndex;
 			int linePartsLengthLocal = linePartsLength;
-			List<object> list = null;
+			List<object>? list = null;
 			for (int i = 0; i < linePartsLengthLocal; i++) {
 				var part = lineParts[linePartsIndexLocal + i];
 				var adornment = part.AdornmentElement;
-				if (adornment == null)
+				if (adornment is null)
 					continue;
 				if (!providerTag.Equals(adornment.ProviderTag))
 					continue;
-				if (list == null)
+				if (list is null)
 					list = new List<object>();
 				list.Add(adornment.IdentityTag);
 			}
-			if (list == null)
+			if (list is null)
 				return emptyReadOnlyCollection;
 			return new ReadOnlyCollection<object>(list);
 		}
@@ -427,7 +427,7 @@ namespace dnSpy.Hex.Formatting {
 				throw new ObjectDisposedException(nameof(HexFormattedLineImpl));
 
 			var pos = GetLinePositionFromXCoordinate(xCoordinate);
-			if (pos != null)
+			if (!(pos is null))
 				return pos.Value;
 			if (xCoordinate <= TextLeft)
 				return TextSpan.Start;
@@ -441,7 +441,7 @@ namespace dnSpy.Hex.Formatting {
 				throw new ObjectDisposedException(nameof(HexFormattedLineImpl));
 
 			var pos = GetLinePositionFromXCoordinate(xCoordinate);
-			if (pos != null) {
+			if (!(pos is null)) {
 				if (pos.Value < TextSpan.End) {
 					var bounds = GetExtendedCharacterBounds(pos.Value);
 					// Get closest buffer position
@@ -469,10 +469,10 @@ namespace dnSpy.Hex.Formatting {
 
 			var span = GetTextElementSpan(linePosition);
 			var part = linePartsCollection.GetLinePartFromLinePosition(span.Start);
-			if (part == null)
+			if (part is null)
 				return GetCharacterBounds(linePosition);
 			var elem = part.Value.AdornmentElement;
-			if (elem == null)
+			if (elem is null)
 				return GetCharacterBounds(linePosition);
 			return GetTextBounds(part.Value.Column);
 		}
@@ -496,7 +496,7 @@ namespace dnSpy.Hex.Formatting {
 		int GetLastColumn(int position) {
 			int column = FilterColumn(linePartsCollection.ConvertLinePositionToColumn(position));
 			var part = linePartsCollection.GetLinePartFromColumn(column);
-			if (part != null) {
+			if (!(part is null)) {
 				var lineParts = linePartsCollection.LineParts;
 				int lineIndex = position - linePartsCollection.Span.Start;
 				for (int i = part.Value.Index + 1; i < lineParts.Count; i++, column++) {
@@ -528,14 +528,14 @@ namespace dnSpy.Hex.Formatting {
 			return new VSTF.TextBounds(extra + start, Top, end - start, Height, TextTop, TextHeight);
 		}
 
-		public override TextRunProperties GetCharacterFormatting(int linePosition) {
+		public override TextRunProperties? GetCharacterFormatting(int linePosition) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(HexFormattedLineImpl));
 			if (linePosition < 0)
 				throw new ArgumentOutOfRangeException(nameof(linePosition));
 
 			int column = GetFirstColumn(linePosition);
-			TextSpan<TextRun> lastTextSpan = null;
+			TextSpan<TextRun>? lastTextSpan = null;
 			foreach (var textSpan in TextLine.GetTextRunSpans()) {
 				lastTextSpan = textSpan;
 				if (column < textSpan.Length)
@@ -543,13 +543,13 @@ namespace dnSpy.Hex.Formatting {
 				column -= textSpan.Length;
 			}
 
-			return (column == 0 || IsLastVisualLine) && lastTextSpan != null ? lastTextSpan.Value.Properties : null;
+			return (column == 0 || IsLastVisualLine) && !(lastTextSpan is null) ? lastTextSpan.Value.Properties : null;
 		}
 
 		public override Collection<VSTF.TextBounds> GetNormalizedTextBounds(VST.Span lineSpan) {
 			var list = new List<VSTF.TextBounds>();
 			var bounds = TryGetNormalizedTextBounds(lineSpan);
-			if (bounds != null)
+			if (!(bounds is null))
 				list.Add(bounds.Value);
 			return new Collection<VSTF.TextBounds>(list);
 		}
@@ -558,7 +558,7 @@ namespace dnSpy.Hex.Formatting {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(HexFormattedLineImpl));
 			var span = lineExtent.Intersection(lineSpan);
-			if (span == null)
+			if (span is null)
 				return null;
 
 			var startBounds = GetFirstTextBounds(span.Value.Start);
@@ -581,12 +581,12 @@ namespace dnSpy.Hex.Formatting {
 				throw new ObjectDisposedException(nameof(HexFormattedLineImpl));
 			var pos = BufferSpan.Intersection(bufferPosition);
 			var list = new List<VSTF.TextBounds>();
-			if (pos == null)
+			if (pos is null)
 				return new Collection<VSTF.TextBounds>(list);
 
 			foreach (var info in bufferLine.GetSpans(pos.Value, flags)) {
 				var valuesSpan = TryGetNormalizedTextBounds(info.TextSpan);
-				if (valuesSpan != null)
+				if (!(valuesSpan is null))
 					list.Add(valuesSpan.Value);
 			}
 
@@ -614,7 +614,7 @@ namespace dnSpy.Hex.Formatting {
 		public override Visual GetOrCreateVisual() {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(HexFormattedLineImpl));
-			if (drawingVisual == null) {
+			if (drawingVisual is null) {
 				drawingVisual = new DrawingVisual();
 				double x = Left;
 				var dc = drawingVisual.RenderOpen();
@@ -627,7 +627,7 @@ namespace dnSpy.Hex.Formatting {
 			}
 			return drawingVisual;
 		}
-		DrawingVisual drawingVisual;
+		DrawingVisual? drawingVisual;
 
 		public override void RemoveVisual() {
 			if (!IsValid)
@@ -642,7 +642,7 @@ namespace dnSpy.Hex.Formatting {
 		}
 
 		void UpdateVisualTransform() {
-			if (drawingVisual == null)
+			if (drawingVisual is null)
 				return;
 			var t = new MatrixTransform(1, 0, 0, lineTransform.VerticalScale, 0, TextTop);
 			t.Freeze();
@@ -688,10 +688,10 @@ namespace dnSpy.Hex.Formatting {
 			isValid = false;
 			foreach (var t in textLines)
 				t.Dispose();
-			bufferLine = null;
-			linePartsCollection = null;
-			textLines = null;
-			drawingVisual = null;
+			bufferLine = null!;
+			linePartsCollection = null!;
+			textLines = null!;
+			drawingVisual = null!;
 		}
 	}
 }

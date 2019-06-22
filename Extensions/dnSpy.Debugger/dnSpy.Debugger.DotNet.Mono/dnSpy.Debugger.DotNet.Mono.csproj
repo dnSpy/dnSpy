@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <Import Project="..\..\..\DnSpyCommon.props" />
 
@@ -11,6 +11,7 @@
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
     <OutputPath>..\..\..\dnSpy\dnSpy\bin\$(Configuration)\</OutputPath>
+    <NullableContextOptions>enable</NullableContextOptions>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
@@ -43,20 +44,6 @@
     <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.Logic\dnSpy.Contracts.Logic.csproj" />
     <ProjectReference Include="..\dnSpy.Debugger.DotNet.Metadata\dnSpy.Debugger.DotNet.Metadata.csproj" />
     <ProjectReference Include="..\Mono.Debugger.Soft\Mono.Debugger.Soft.csproj" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(IsDotNetFramework)' == 'true' ">
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="WindowsBase" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Include="Themes\wpf.styles.templates.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
   </ItemGroup>
 
 </Project>

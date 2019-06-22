@@ -44,7 +44,7 @@ namespace dnSpy.Contracts.Scripting {
 		/// </summary>
 		/// <param name="message">Message</param>
 		/// <param name="innerException">Inner exception or null</param>
-		public ScriptException(string message, Exception innerException)
+		public ScriptException(string message, Exception? innerException)
 			: base(message, innerException) {
 		}
 	}

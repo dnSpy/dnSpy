@@ -94,7 +94,7 @@ namespace dnSpy.Contracts.Hex.Files.PE {
 		/// <returns></returns>
 		public override HexSpan? GetFieldReferenceSpan(HexBufferFile file) {
 			var peHeaders = file.GetHeaders<PeHeaders>();
-			if (peHeaders == null)
+			if (peHeaders is null)
 				return null;
 			var rva = ReadValue();
 			if (rva == 0)

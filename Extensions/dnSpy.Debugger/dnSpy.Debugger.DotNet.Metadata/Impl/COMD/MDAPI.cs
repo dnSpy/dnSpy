@@ -29,14 +29,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		const int CLDB_E_INDEX_NOTFOUND = unchecked((int)0x80131124);
 
 		static bool IsGlobal(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return false;
 			int hr = mdi.IsGlobal(token, out int bGlobal);
 			return hr == 0 && bGlobal != 0;
 		}
 
 		public static bool IsValidToken(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return false;
 			return mdi.IsValidToken(token);
 		}
@@ -44,7 +44,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		public unsafe static bool GetClassLayout(IMetaDataImport2 mdi, uint token, out ushort packingSize, out uint classSize) {
 			packingSize = 0;
 			classSize = 0;
-			if (mdi == null)
+			if (mdi is null)
 				return false;
 
 			uint dwPackSize = 0, ulClassSize = 0;
@@ -58,7 +58,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public unsafe static uint? GetRVA(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return null;
 
 			int hr = mdi.GetRVA(token, out uint ulCodeRVA, IntPtr.Zero);
@@ -68,7 +68,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public unsafe static uint[] GetPermissionSetTokens(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return Array.Empty<uint>();
 			var iter = IntPtr.Zero;
 			try {
@@ -99,7 +99,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public unsafe static (IntPtr addr, uint size, uint action) GetPermissionSetBlob(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return (IntPtr.Zero, 0, 0);
 			IntPtr pvPermission;
 			uint cbPermission;
@@ -114,7 +114,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		public unsafe static bool GetPinvokeMapProps(IMetaDataImport2 mdi, uint token, out DmdPInvokeAttributes attrs, out uint moduleToken) {
 			attrs = 0;
 			moduleToken = 0;
-			if (mdi == null)
+			if (mdi is null)
 				return false;
 
 			uint dwMappingFlags, mrImportDLL;
@@ -126,10 +126,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return true;
 		}
 
-		public unsafe static string GetPinvokeMapName(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+		public unsafe static string? GetPinvokeMapName(IMetaDataImport2 mdi, uint token) {
+			if (mdi is null)
 				return null;
-			char[] nameBuf = null;
+			char[]? nameBuf = null;
 			uint chImportName;
 			int hr = mdi.GetPinvokeMap(token, IntPtr.Zero, IntPtr.Zero, 0, new IntPtr(&chImportName), IntPtr.Zero);
 			if (hr >= 0 && chImportName != 0) {
@@ -143,10 +143,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return chImportName <= 1 ? string.Empty : new string(nameBuf, 0, (int)chImportName - 1);
 		}
 
-		public unsafe static string GetMemberRefName(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+		public unsafe static string? GetMemberRefName(IMetaDataImport2 mdi, uint token) {
+			if (mdi is null)
 				return null;
-			char[] nameBuf = null;
+			char[]? nameBuf = null;
 			uint chMember;
 			int hr = mdi.GetMemberRefProps(token, IntPtr.Zero, IntPtr.Zero, 0, new IntPtr(&chMember), IntPtr.Zero, IntPtr.Zero);
 			if (hr >= 0 && chMember != 0) {
@@ -161,7 +161,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public unsafe static uint GetMemberRefClassToken(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return 0;
 			uint tk;
 			int hr = mdi.GetMemberRefProps(token, new IntPtr(&tk), IntPtr.Zero, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
@@ -169,7 +169,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public unsafe static (IntPtr addr, uint size) GetMemberRefSignatureBlob(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return (IntPtr.Zero, 0);
 			IntPtr pvSigBlob;
 			uint cbSig;
@@ -181,7 +181,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public unsafe static uint GetMethodOwnerRid(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return 0;
 			if (IsGlobal(mdi, token))
 				return 1;
@@ -194,7 +194,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public unsafe static uint[] GetMethodTokens(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return Array.Empty<uint>();
 			var iter = IntPtr.Zero;
 			try {
@@ -225,7 +225,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public unsafe static (IntPtr addr, uint size) GetMethodSignatureBlob(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return (IntPtr.Zero, 0);
 			uint cbSigBlob;
 			IntPtr pvSigBlob;
@@ -236,10 +236,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return (pvSigBlob, cbSigBlob);
 		}
 
-		public static unsafe string GetMethodName(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+		public static unsafe string? GetMethodName(IMetaDataImport2 mdi, uint token) {
+			if (mdi is null)
 				return null;
-			char[] nameBuf = null;
+			char[]? nameBuf = null;
 			uint chMethod;
 			int hr = mdi.GetMethodProps(token, IntPtr.Zero, IntPtr.Zero, 0, new IntPtr(&chMethod), IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
 			if (hr >= 0 && chMethod != 0) {
@@ -258,7 +258,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		public static unsafe bool GetMethodAttributes(IMetaDataImport2 mdi, uint token, out DmdMethodAttributes dwAttr, out DmdMethodImplAttributes dwImplFlags) {
 			dwAttr = 0;
 			dwImplFlags = 0;
-			if (mdi == null)
+			if (mdi is null)
 				return false;
 			uint dwAttr2, dwImplFlags2;
 			int hr = mdi.GetMethodProps(token, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, new IntPtr(&dwAttr2), IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, new IntPtr(&dwImplFlags2));
@@ -270,7 +270,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public unsafe static uint[] GetInterfaceImplTokens(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return Array.Empty<uint>();
 			var iter = IntPtr.Zero;
 			try {
@@ -301,7 +301,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public unsafe static uint GetInterfaceImplInterfaceToken(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return 0;
 
 			uint tkIface;
@@ -310,7 +310,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public unsafe static uint[] GetParamTokens(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return Array.Empty<uint>();
 			var iter = IntPtr.Zero;
 			try {
@@ -340,10 +340,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			}
 		}
 
-		public unsafe static string GetParamName(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+		public unsafe static string? GetParamName(IMetaDataImport2 mdi, uint token) {
+			if (mdi is null)
 				return null;
-			char[] nameBuf = null;
+			char[]? nameBuf = null;
 			uint chName;
 			int hr = mdi.GetParamProps(token, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, 0, new IntPtr(&chName), IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
 			if (hr >= 0 && chName != 0) {
@@ -360,7 +360,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		public unsafe static bool GetParamSeqAndAttrs(IMetaDataImport2 mdi, uint token, out uint seq, out DmdParameterAttributes attrs) {
 			seq = uint.MaxValue;
 			attrs = 0;
-			if (mdi == null)
+			if (mdi is null)
 				return false;
 
 			uint ulSequence, dwAttr;
@@ -373,9 +373,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return true;
 		}
 
-		public unsafe static object GetParamConstant(IMetaDataImport2 mdi, uint token, out ElementType constantType) {
+		public unsafe static object? GetParamConstant(IMetaDataImport2 mdi, uint token, out ElementType constantType) {
 			constantType = ElementType.End;
-			if (mdi == null)
+			if (mdi is null)
 				return null;
 			uint cchValue;
 			IntPtr pValue;
@@ -387,11 +387,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return ReadConstant(pValue, cchValue, constantType);
 		}
 
-		public static unsafe string GetTypeRefName(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+		public static unsafe string? GetTypeRefName(IMetaDataImport2 mdi, uint token) {
+			if (mdi is null)
 				return null;
 			uint chName;
-			char[] nameBuf = null;
+			char[]? nameBuf = null;
 			int hr = mdi.GetTypeRefProps(token, IntPtr.Zero, IntPtr.Zero, 0, new IntPtr(&chName));
 			if (hr >= 0 && chName != 0) {
 				nameBuf = new char[chName];
@@ -407,7 +407,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public static unsafe uint GetTypeRefResolutionScope(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return 0;
 			uint tkResolutionScope;
 			int hr = mdi.GetTypeRefProps(token, new IntPtr(&tkResolutionScope), IntPtr.Zero, 0, IntPtr.Zero);
@@ -415,7 +415,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public unsafe static uint[] GetTypeDefTokens(IMetaDataImport2 mdi) {
-			if (mdi == null)
+			if (mdi is null)
 				return Array.Empty<uint>();
 
 			var iter = IntPtr.Zero;
@@ -451,18 +451,18 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public unsafe static uint GetTypeDefExtends(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return 0;
 			uint tkExtends;
 			int hr = mdi.GetTypeDefProps(token, IntPtr.Zero, 0, IntPtr.Zero, IntPtr.Zero, new IntPtr(&tkExtends));
 			return hr != 0 ? 0 : tkExtends;
 		}
 
-		public static unsafe string GetTypeDefName(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+		public static unsafe string? GetTypeDefName(IMetaDataImport2 mdi, uint token) {
+			if (mdi is null)
 				return null;
 			uint chTypeDef;
-			char[] nameBuf = null;
+			char[]? nameBuf = null;
 			int hr = mdi.GetTypeDefProps(token, IntPtr.Zero, 0, new IntPtr(&chTypeDef), IntPtr.Zero, IntPtr.Zero);
 			if (hr >= 0 && chTypeDef != 0) {
 				nameBuf = new char[chTypeDef];
@@ -478,7 +478,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public static unsafe DmdTypeAttributes? GetTypeDefAttributes(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return null;
 			uint dwTypeDefFlags;
 			int hr = mdi.GetTypeDefProps(token, IntPtr.Zero, 0, IntPtr.Zero, new IntPtr(&dwTypeDefFlags), IntPtr.Zero);
@@ -486,7 +486,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public static unsafe uint GetTypeDefEnclosingType(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return 0;
 			uint dwTypeDefFlags;
 			int hr = mdi.GetTypeDefProps(token, IntPtr.Zero, 0, IntPtr.Zero, new IntPtr(&dwTypeDefFlags), IntPtr.Zero);
@@ -502,11 +502,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return 0;
 		}
 
-		public static unsafe string GetGenericParamName(IMetaDataImport2 mdi2, uint token) {
-			if (mdi2 == null)
+		public static unsafe string? GetGenericParamName(IMetaDataImport2 mdi2, uint token) {
+			if (mdi2 is null)
 				return null;
 
-			char[] nameBuf = null;
+			char[]? nameBuf = null;
 			uint chName;
 			int hr = mdi2.GetGenericParamProps(token, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, 0, new IntPtr(&chName));
 			if (hr >= 0 && chName != 0) {
@@ -525,7 +525,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		public static unsafe bool GetGenericParamNumAndAttrs(IMetaDataImport2 mdi2, uint token, out ushort number, out DmdGenericParameterAttributes attrs) {
 			number = ushort.MaxValue;
 			attrs = 0;
-			if (mdi2 == null)
+			if (mdi2 is null)
 				return false;
 
 			uint ulParamSeq, dwParamFlags;
@@ -539,7 +539,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public unsafe static uint[] GetGenericParamTokens(IMetaDataImport2 mdi2, uint token) {
-			if (mdi2 == null)
+			if (mdi2 is null)
 				return Array.Empty<uint>();
 
 			var iter = IntPtr.Zero;
@@ -571,7 +571,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public unsafe static uint GetGenericParamConstraintTypeToken(IMetaDataImport2 mdi2, uint token) {
-			if (mdi2 == null)
+			if (mdi2 is null)
 				return 0;
 			uint tkConstraintType;
 			int hr = mdi2.GetGenericParamConstraintProps(token, IntPtr.Zero, new IntPtr(&tkConstraintType));
@@ -581,7 +581,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public unsafe static uint[] GetGenericParamConstraintTokens(IMetaDataImport2 mdi2, uint token) {
-			if (mdi2 == null)
+			if (mdi2 is null)
 				return Array.Empty<uint>();
 
 			var iter = IntPtr.Zero;
@@ -613,7 +613,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public static unsafe (IntPtr addr, uint size) GetStandAloneSigBlob(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return (IntPtr.Zero, 0);
 
 			int hr = mdi.GetSigFromToken(token, out var pvSig, out uint cbSig);
@@ -622,8 +622,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return (pvSig, cbSig);
 		}
 
-		public unsafe static COR_FIELD_OFFSET[] GetFieldOffsets(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+		public unsafe static COR_FIELD_OFFSET[]? GetFieldOffsets(IMetaDataImport2 mdi, uint token) {
+			if (mdi is null)
 				return null;
 			if ((token & 0x00FFFFFF) == 0)
 				return null;
@@ -639,7 +639,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 
 		public static uint? GetFieldOffset(IMetaDataImport2 mdi, uint token, uint fieldToken) {
 			var offsets = GetFieldOffsets(mdi, token);
-			if (offsets == null)
+			if (offsets is null)
 				return null;
 			foreach (var info in offsets) {
 				if (info.FieldToken == fieldToken) {
@@ -652,7 +652,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public unsafe static (IntPtr addr, uint size) GetFieldMarshalBlob(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return (IntPtr.Zero, 0);
 			if ((token & 0x00FFFFFF) == 0)
 				return (IntPtr.Zero, 0);
@@ -666,7 +666,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public unsafe static uint GetFieldOwnerRid(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return 0;
 			if (IsGlobal(mdi, token))
 				return 1;
@@ -678,11 +678,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return ownerMdToken.Table == Table.TypeDef ? ownerMdToken.Rid : 0;
 		}
 
-		public static unsafe string GetFieldName(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+		public static unsafe string? GetFieldName(IMetaDataImport2 mdi, uint token) {
+			if (mdi is null)
 				return null;
 			uint chField = 0, dwAttr = 0;
-			char[] nameBuf = null;
+			char[]? nameBuf = null;
 			int hr = mdi.GetFieldProps(token, IntPtr.Zero, IntPtr.Zero, 0, new IntPtr(&chField), new IntPtr(&dwAttr), IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
 			if (hr >= 0 && chField != 0) {
 				nameBuf = new char[chField];
@@ -698,7 +698,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public unsafe static uint[] GetFieldTokens(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return Array.Empty<uint>();
 			var iter = IntPtr.Zero;
 			try {
@@ -729,7 +729,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public static unsafe (IntPtr addr, uint size) GetFieldSignatureBlob(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return (IntPtr.Zero, 0);
 
 			uint sigLen = 0;
@@ -742,7 +742,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public unsafe static DmdFieldAttributes GetFieldAttributes(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return 0;
 			uint dwAttr;
 			int hr = mdi.GetFieldProps(token, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, new IntPtr(&dwAttr), IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
@@ -750,9 +750,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return hr < 0 ? 0 : (DmdFieldAttributes)dwAttr;
 		}
 
-		public unsafe static object GetFieldConstant(IMetaDataImport2 mdi, uint token, out ElementType constantType) {
+		public unsafe static object? GetFieldConstant(IMetaDataImport2 mdi, uint token, out ElementType constantType) {
 			constantType = ElementType.End;
-			if (mdi == null)
+			if (mdi is null)
 				return null;
 			uint cchValue;
 			IntPtr pValue;
@@ -764,9 +764,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return ReadConstant(pValue, cchValue, constantType);
 		}
 
-		unsafe static object ReadConstant(IntPtr addr, uint size, ElementType elementType) {
+		unsafe static object? ReadConstant(IntPtr addr, uint size, ElementType elementType) {
 			var p = (byte*)addr;
-			if (p == null)
+			if (p is null)
 				return null;
 
 			// size is always 0 unless it's a string...
@@ -789,7 +789,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public unsafe static uint GetEventOwnerRid(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return 0;
 			if (IsGlobal(mdi, token))
 				return 1;
@@ -802,19 +802,19 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public unsafe static DmdEventAttributes GetEventAttributes(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return 0;
 			uint dwEventFlags;
 			int hr = mdi.GetEventProps(token, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, new IntPtr(&dwEventFlags), IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero);
 			return hr == 0 ? (DmdEventAttributes)dwEventFlags : 0;
 		}
 
-		public unsafe static string GetEventName(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+		public unsafe static string? GetEventName(IMetaDataImport2 mdi, uint token) {
+			if (mdi is null)
 				return null;
 			uint chEvent;
 			int hr = mdi.GetEventProps(token, IntPtr.Zero, IntPtr.Zero, 0, new IntPtr(&chEvent), IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero);
-			char[] nameBuf = null;
+			char[]? nameBuf = null;
 			if (hr >= 0 && chEvent != 0) {
 				nameBuf = new char[chEvent];
 				fixed (char* p = &nameBuf[0])
@@ -827,7 +827,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public unsafe static uint GetEventTypeToken(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return 0;
 			uint tkEventType;
 			int hr = mdi.GetEventProps(token, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, IntPtr.Zero, new IntPtr(&tkEventType), IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero);
@@ -838,7 +838,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			addToken = 0;
 			removeToken = 0;
 			fireToken = 0;
-			if (mdi == null)
+			if (mdi is null)
 				return false;
 			uint addTokenTmp, removeTokenTmp, fireTokenTmp;
 			int hr = mdi.GetEventProps(token, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, new IntPtr(&addTokenTmp), new IntPtr(&removeTokenTmp), new IntPtr(&fireTokenTmp), IntPtr.Zero, 0, IntPtr.Zero);
@@ -851,11 +851,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public unsafe static uint[] GetEventOtherMethodTokens(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return Array.Empty<uint>();
 			uint count;
 			int hr = mdi.GetEventProps(token, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, 0, new IntPtr(&count));
-			uint[] tokens = null;
+			uint[]? tokens = null;
 			if (hr >= 0 && count != 0) {
 				tokens = new uint[count];
 				fixed (uint* p = &tokens[0])
@@ -867,7 +867,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public unsafe static uint[] GetEventTokens(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return Array.Empty<uint>();
 			var iter = IntPtr.Zero;
 			try {
@@ -898,7 +898,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public unsafe static uint GetPropertyOwnerRid(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return 0;
 			if (IsGlobal(mdi, token))
 				return 1;
@@ -911,7 +911,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public unsafe static uint[] GetPropertyTokens(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return Array.Empty<uint>();
 			var iter = IntPtr.Zero;
 			try {
@@ -941,12 +941,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			}
 		}
 
-		public unsafe static string GetPropertyName(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+		public unsafe static string? GetPropertyName(IMetaDataImport2 mdi, uint token) {
+			if (mdi is null)
 				return null;
 			uint chProperty;
 			int hr = mdi.GetPropertyProps(token, IntPtr.Zero, IntPtr.Zero, 0, new IntPtr(&chProperty), IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero);
-			char[] nameBuf = null;
+			char[]? nameBuf = null;
 			if (hr >= 0 && chProperty != 0) {
 				nameBuf = new char[chProperty];
 				fixed (char* p = &nameBuf[0])
@@ -961,7 +961,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		public unsafe static bool GetPropertyGetterSetter(IMetaDataImport2 mdi, uint token, out uint mdGetter, out uint mdSetter) {
 			mdGetter = 0;
 			mdSetter = 0;
-			if (mdi == null)
+			if (mdi is null)
 				return false;
 			uint mdSetterTmp, mdGetterTmp;
 			int hr = mdi.GetPropertyProps(token, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, new IntPtr(&mdSetterTmp), new IntPtr(&mdGetterTmp), IntPtr.Zero, 0, IntPtr.Zero);
@@ -973,11 +973,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public unsafe static uint[] GetPropertyOtherMethodTokens(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return Array.Empty<uint>();
 			uint count;
 			int hr = mdi.GetPropertyProps(token, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, 0, new IntPtr(&count));
-			uint[] tokens = null;
+			uint[]? tokens = null;
 			if (hr >= 0 && count != 0) {
 				tokens = new uint[count];
 				fixed (uint* p = &tokens[0])
@@ -989,7 +989,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public unsafe static DmdPropertyAttributes GetPropertyAttributes(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return 0;
 			uint dwPropFlags;
 			int hr = mdi.GetPropertyProps(token, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, new IntPtr(&dwPropFlags), IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero);
@@ -997,7 +997,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public unsafe static (IntPtr addr, uint size) GetPropertySignatureBlob(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return (IntPtr.Zero, 0);
 			IntPtr pvSig;
 			uint cbSig;
@@ -1008,9 +1008,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return (pvSig, cbSig);
 		}
 
-		public unsafe static object GetPropertyConstant(IMetaDataImport2 mdi, uint token, out ElementType constantType) {
+		public unsafe static object? GetPropertyConstant(IMetaDataImport2 mdi, uint token, out ElementType constantType) {
 			constantType = ElementType.End;
-			if (mdi == null)
+			if (mdi is null)
 				return null;
 			uint cchDefaultValue;
 			IntPtr pDefaultValue;
@@ -1023,7 +1023,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public unsafe static (IntPtr addr, uint size) GetTypeSpecSignatureBlob(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return (IntPtr.Zero, 0);
 
 			int hr = mdi.GetTypeSpecFromToken(token, out var pvSig, out uint cbSig);
@@ -1035,7 +1035,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 
 		public unsafe static (IntPtr addr, uint size) GetMethodSpecProps(IMetaDataImport2 mdi2, uint token, out uint method) {
 			method = 0;
-			if (mdi2 == null)
+			if (mdi2 is null)
 				return (IntPtr.Zero, 0);
 
 			int hr = mdi2.GetMethodSpecProps(token, out method, out var pvSigBlob, out uint cbSigBlob);
@@ -1045,10 +1045,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return (pvSigBlob, cbSigBlob);
 		}
 
-		public unsafe static string GetAssemblyRefSimpleName(IMetaDataAssemblyImport mdai, uint token) {
-			if (mdai == null)
+		public unsafe static string? GetAssemblyRefSimpleName(IMetaDataAssemblyImport mdai, uint token) {
+			if (mdai is null)
 				return null;
-			char[] nameBuf = null;
+			char[]? nameBuf = null;
 			uint chName = 0;
 			int hr = mdai.GetAssemblyRefProps(token, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, 0, new IntPtr(&chName), IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
 			if (hr >= 0 && chName != 0) {
@@ -1064,12 +1064,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return new string(nameBuf, 0, (int)chName - 1);
 		}
 
-		public unsafe static Version GetAssemblyRefVersionAndLocale(IMetaDataAssemblyImport mdai, uint token, out string locale) {
+		public unsafe static Version? GetAssemblyRefVersionAndLocale(IMetaDataAssemblyImport mdai, uint token, out string? locale) {
 			locale = null;
-			if (mdai == null)
+			if (mdai is null)
 				return null;
 			ASSEMBLYMETADATA data;
-			char[] nameBuf = null;
+			char[]? nameBuf = null;
 			int hr = mdai.GetAssemblyRefProps(token, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, new IntPtr(&data), IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
 			if (hr >= 0 && data.cbLocale != 0) {
 				nameBuf = new char[data.cbLocale];
@@ -1085,9 +1085,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return new Version(data.usMajorVersion, data.usMinorVersion, data.usBuildNumber, data.usRevisionNumber);
 		}
 
-		public unsafe static byte[] GetAssemblyRefPublicKeyOrToken(IMetaDataAssemblyImport mdai, uint token, out DmdAssemblyNameFlags attrs) {
+		public unsafe static byte[]? GetAssemblyRefPublicKeyOrToken(IMetaDataAssemblyImport mdai, uint token, out DmdAssemblyNameFlags attrs) {
 			attrs = 0;
-			if (mdai == null)
+			if (mdai is null)
 				return null;
 			IntPtr pbPublicKeyOrToken;
 			uint cbPublicKeyOrToken, dwAssemblyFlags;
@@ -1102,10 +1102,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return data;
 		}
 
-		public unsafe static string GetAssemblySimpleName(IMetaDataAssemblyImport mdai, uint token) {
-			if (mdai == null)
+		public unsafe static string? GetAssemblySimpleName(IMetaDataAssemblyImport mdai, uint token) {
+			if (mdai is null)
 				return null;
-			char[] nameBuf = null;
+			char[]? nameBuf = null;
 			uint chName = 0;
 			int hr = mdai.GetAssemblyProps(token, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, 0, new IntPtr(&chName), IntPtr.Zero, IntPtr.Zero);
 			if (hr >= 0 && chName != 0) {
@@ -1121,12 +1121,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return new string(nameBuf, 0, (int)chName - 1);
 		}
 
-		public unsafe static Version GetAssemblyVersionAndLocale(IMetaDataAssemblyImport mdai, uint token, out string locale) {
+		public unsafe static Version? GetAssemblyVersionAndLocale(IMetaDataAssemblyImport mdai, uint token, out string? locale) {
 			locale = null;
-			if (mdai == null)
+			if (mdai is null)
 				return null;
 			ASSEMBLYMETADATA data;
-			char[] nameBuf = null;
+			char[]? nameBuf = null;
 			int hr = mdai.GetAssemblyProps(token, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, new IntPtr(&data), IntPtr.Zero);
 			if (hr >= 0 && data.cbLocale != 0) {
 				nameBuf = new char[data.cbLocale];
@@ -1143,7 +1143,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public unsafe static DmdAssemblyHashAlgorithm? GetAssemblyHashAlgorithm(IMetaDataAssemblyImport mdai, uint token) {
-			if (mdai == null)
+			if (mdai is null)
 				return null;
 			uint ulHashAlgId;
 			int hr = mdai.GetAssemblyProps(token, IntPtr.Zero, IntPtr.Zero, new IntPtr(&ulHashAlgId), IntPtr.Zero, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
@@ -1153,7 +1153,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public unsafe static DmdAssemblyNameFlags? GetAssemblyAttributes(IMetaDataAssemblyImport mdai, uint token) {
-			if (mdai == null)
+			if (mdai is null)
 				return null;
 			uint dwAssemblyFlags;
 			int hr = mdai.GetAssemblyProps(token, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, IntPtr.Zero, new IntPtr(&dwAssemblyFlags));
@@ -1162,8 +1162,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return (DmdAssemblyNameFlags)dwAssemblyFlags;
 		}
 
-		public unsafe static byte[] GetAssemblyPublicKey(IMetaDataAssemblyImport mdai, uint token) {
-			if (mdai == null)
+		public unsafe static byte[]? GetAssemblyPublicKey(IMetaDataAssemblyImport mdai, uint token) {
+			if (mdai is null)
 				return null;
 			IntPtr pbPublicKey;
 			uint cbPublicKey;
@@ -1177,7 +1177,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 
 		public static DmdImageFileMachine? GetModuleMachineAndPEKind(IMetaDataImport2 mdi2, out DmdPortableExecutableKinds peKind) {
 			peKind = 0;
-			if (mdi2 == null)
+			if (mdi2 is null)
 				return null;
 			int hr = mdi2.GetPEKind(out uint dwPEKind, out uint dwMachine);
 			if (hr != 0)
@@ -1186,10 +1186,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return (DmdImageFileMachine)dwMachine;
 		}
 
-		public unsafe static string GetModuleVersionString(IMetaDataImport2 mdi2) {
-			if (mdi2 == null)
+		public unsafe static string? GetModuleVersionString(IMetaDataImport2 mdi2) {
+			if (mdi2 is null)
 				return null;
-			char[] nameBuf = null;
+			char[]? nameBuf = null;
 			int hr = mdi2.GetVersionString(IntPtr.Zero, 0, out uint ccBufSize);
 			if (hr >= 0 && ccBufSize != 0) {
 				nameBuf = new char[ccBufSize];
@@ -1204,10 +1204,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return new string(nameBuf, 0, (int)ccBufSize - 1);
 		}
 
-		public unsafe static string GetModuleName(IMetaDataImport2 mdi) {
-			if (mdi == null)
+		public unsafe static string? GetModuleName(IMetaDataImport2 mdi) {
+			if (mdi is null)
 				return null;
-			char[] nameBuf = null;
+			char[]? nameBuf = null;
 			uint cchName = 0;
 			int hr = mdi.GetScopeProps(IntPtr.Zero, 0, new IntPtr(&cchName), IntPtr.Zero);
 			if (hr >= 0 && cchName != 0) {
@@ -1224,7 +1224,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public unsafe static Guid? GetModuleMvid(IMetaDataImport2 mdi) {
-			if (mdi == null)
+			if (mdi is null)
 				return null;
 			Guid guid;
 			int hr = mdi.GetScopeProps(IntPtr.Zero, 0, IntPtr.Zero, new IntPtr(&guid));
@@ -1234,10 +1234,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return guid;
 		}
 
-		public unsafe static string GetModuleRefName(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+		public unsafe static string? GetModuleRefName(IMetaDataImport2 mdi, uint token) {
+			if (mdi is null)
 				return null;
-			char[] nameBuf = null;
+			char[]? nameBuf = null;
 			int hr = mdi.GetModuleRefProps(token, IntPtr.Zero, 0, out uint chName);
 			if (hr >= 0 && chName != 0) {
 				nameBuf = new char[chName];
@@ -1252,10 +1252,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return new string(nameBuf, 0, (int)chName - 1);
 		}
 
-		public unsafe static string GetUserString(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+		public unsafe static string? GetUserString(IMetaDataImport2 mdi, uint token) {
+			if (mdi is null)
 				return null;
-			char[] stringBuf = null;
+			char[]? stringBuf = null;
 			int hr = mdi.GetUserString(token, IntPtr.Zero, 0, out uint chString);
 			if (hr >= 0 && chString != 0) {
 				stringBuf = new char[chString];
@@ -1271,7 +1271,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public unsafe static uint[] GetCustomAttributeTokens(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return Array.Empty<uint>();
 			var iter = IntPtr.Zero;
 			try {
@@ -1302,7 +1302,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public unsafe static (IntPtr addr, int size, int typeToken) GetCustomAttributeBlob(IMetaDataImport2 mdi, uint token) {
-			if (mdi == null)
+			if (mdi is null)
 				return (IntPtr.Zero, 0, 0);
 
 			int hr = mdi.GetCustomAttributeProps(token, IntPtr.Zero, out var typeToken, out var pBlob, out uint cbSize);
@@ -1312,10 +1312,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return (pBlob, (int)cbSize, (int)typeToken);
 		}
 
-		public unsafe static string GetFileName(IMetaDataAssemblyImport mdai, uint token) {
-			if (mdai == null)
+		public unsafe static string? GetFileName(IMetaDataAssemblyImport mdai, uint token) {
+			if (mdai is null)
 				return null;
-			char[] nameBuf = null;
+			char[]? nameBuf = null;
 			uint chName;
 			int hr = mdai.GetFileProps(token, IntPtr.Zero, 0, new IntPtr(&chName), IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
 			if (hr >= 0 && chName != 0) {
@@ -1329,10 +1329,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return chName <= 1 ? string.Empty : new string(nameBuf, 0, (int)chName - 1);
 		}
 
-		public unsafe static string GetExportedTypeName(IMetaDataAssemblyImport mdai, uint token) {
-			if (mdai == null)
+		public unsafe static string? GetExportedTypeName(IMetaDataAssemblyImport mdai, uint token) {
+			if (mdai is null)
 				return null;
-			char[] nameBuf = null;
+			char[]? nameBuf = null;
 			uint chName;
 			int hr = mdai.GetExportedTypeProps(token, IntPtr.Zero, 0, new IntPtr(&chName), IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
 			if (hr >= 0 && chName != 0) {
@@ -1350,7 +1350,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			implementation = 0;
 			typeDefId = 0;
 			attrs = 0;
-			if (mdai == null)
+			if (mdai is null)
 				return false;
 
 			uint tkImplementation, tkTypeDef, dwExportedTypeFlags;

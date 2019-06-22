@@ -27,19 +27,19 @@ namespace dnSpy.Contracts.ToolWindows {
 		/// <summary>
 		/// Selected tab group or null
 		/// </summary>
-		public IToolWindowGroup Selected { get; }
+		public IToolWindowGroup? Selected { get; }
 
 		/// <summary>
 		/// Unselected tab group or null
 		/// </summary>
-		public IToolWindowGroup Unselected { get; }
+		public IToolWindowGroup? Unselected { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="selected">Selected tab group or null</param>
 		/// <param name="unselected">Unselected tab group or null</param>
-		public ToolWindowGroupSelectedEventArgs(IToolWindowGroup selected, IToolWindowGroup unselected) {
+		public ToolWindowGroupSelectedEventArgs(IToolWindowGroup? selected, IToolWindowGroup? unselected) {
 			Selected = selected;
 			Unselected = unselected;
 		}

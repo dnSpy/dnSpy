@@ -31,17 +31,17 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 	/// Serialized resource element node base class
 	/// </summary>
 	public abstract class SerializedResourceElementNode : ResourceElementNode {
-		object deserializedData;
+		object? deserializedData;
 
-		string DeserializedStringValue => deserializedData == null ? null : deserializedData.ToString();
-		bool IsSerialized => deserializedData == null;
+		string? DeserializedStringValue => deserializedData?.ToString();
+		bool IsSerialized => deserializedData is null;
 
 		/// <inheritdoc/>
 		protected override string ValueString {
 			get {
-				if (deserializedData == null)
+				if (deserializedData is null)
 					return base.ValueString;
-				return ConvertObjectToString(deserializedData);
+				return ConvertObjectToString(deserializedData)!;
 			}
 		}
 
@@ -68,7 +68,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		protected override IEnumerable<ResourceData> GetDeserializedData() {
 			var dd = deserializedData;
 			var re = ResourceElement;
-			if (dd != null)
+			if (!(dd is null))
 				yield return new ResourceData(re.Name, token => ResourceUtilities.StringToStream(ConvertObjectToString(dd)));
 			else
 				yield return new ResourceData(re.Name, token => new MemoryStream(((BinaryResourceData)re.ResourceData).Data));
@@ -99,7 +99,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 			catch {
 				return;
 			}
-			if (deserializedData == null)
+			if (deserializedData is null)
 				return;
 
 			try {
@@ -110,8 +110,8 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 			}
 		}
 
-		string ConvertObjectToString(object obj) {
-			if (obj == null)
+		string? ConvertObjectToString(object obj) {
+			if (obj is null)
 				return null;
 			if (!Context.DeserializeResources)
 				return obj.ToString();
@@ -127,7 +127,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		}
 
 		/// <inheritdoc/>
-		public override string ToString(CancellationToken token, bool canDecompile) {
+		public override string? ToString(CancellationToken token, bool canDecompile) {
 			if (IsSerialized)
 				return null;
 			return DeserializedStringValue;

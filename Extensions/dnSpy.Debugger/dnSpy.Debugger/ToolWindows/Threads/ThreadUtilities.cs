@@ -30,8 +30,8 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		/// </summary>
 		/// <param name="thread">Thread</param>
 		/// <returns></returns>
-		public static (DbgCodeLocation location, int frameIndex) GetFirstFrameLocation(DbgThread thread) {
-			DbgStackWalker stackWalker = null;
+		public static (DbgCodeLocation? location, int frameIndex) GetFirstFrameLocation(DbgThread thread) {
+			DbgStackWalker? stackWalker = null;
 			var objsToFree = new List<DbgObject>();
 			try {
 				stackWalker = thread.CreateStackWalker();
@@ -45,7 +45,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 						break;
 					foreach (var frame in frames) {
 						var location = frame.Location;
-						if (location != null)
+						if (!(location is null))
 							return (location.Clone(), frameIndex);
 						frameIndex++;
 					}

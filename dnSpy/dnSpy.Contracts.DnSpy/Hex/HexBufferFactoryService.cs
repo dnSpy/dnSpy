@@ -75,7 +75,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="filename">Filename</param>
 		/// <param name="tags">Tags or null to use the default file tags</param>
 		/// <returns></returns>
-		public abstract HexBuffer Create(string filename, HexTags tags = null);
+		public abstract HexBuffer Create(string filename, HexTags? tags = null);
 
 		/// <summary>
 		/// Creates a new <see cref="HexBuffer"/>
@@ -84,7 +84,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="name">Name, can be anything and is usually the filename</param>
 		/// <param name="tags">Tags or null to use the default file tags</param>
 		/// <returns></returns>
-		public abstract HexBuffer Create(byte[] data, string name, HexTags tags = null);
+		public abstract HexBuffer Create(byte[] data, string name, HexTags? tags = null);
 
 		/// <summary>
 		/// Creates a new <see cref="HexBuffer"/>

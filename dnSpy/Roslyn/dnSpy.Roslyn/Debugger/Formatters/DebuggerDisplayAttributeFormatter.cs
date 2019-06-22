@@ -34,9 +34,9 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 		readonly LanguageFormatter languageFormatter;
 		readonly IDbgTextWriter output;
 		readonly DbgValueFormatterOptions options;
-		readonly CultureInfo cultureInfo;
+		readonly CultureInfo? cultureInfo;
 
-		public DebuggerDisplayAttributeFormatter(DbgEvaluationInfo evalInfo, LanguageFormatter languageFormatter, IDbgTextWriter output, DbgValueFormatterOptions options, CultureInfo cultureInfo) {
+		public DebuggerDisplayAttributeFormatter(DbgEvaluationInfo evalInfo, LanguageFormatter languageFormatter, IDbgTextWriter output, DbgValueFormatterOptions options, CultureInfo? cultureInfo) {
 			Debug.Assert((options & DbgValueFormatterOptions.NoDebuggerDisplay) == 0);
 			this.evalInfo = evalInfo;
 			this.languageFormatter = languageFormatter;
@@ -65,25 +65,27 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 
 		sealed class TypeState : IDisposable {
 			public static readonly TypeState Empty = new TypeState(null, Array.Empty<DisplayPart>(), Array.Empty<DisplayPart>(), Array.Empty<DisplayPart>());
-			public readonly DbgEvaluationContext TypeContext;
+			public readonly DbgEvaluationContext? TypeContext;
 			public readonly DisplayPart[] NameParts;
 			public readonly DisplayPart[] ValueParts;
 			public readonly DisplayPart[] TypeParts;
-			public TypeState(DbgEvaluationContext typeContext, DisplayPart[] nameParts, DisplayPart[] valueParts, DisplayPart[] typeParts) {
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
+			public TypeState(DbgEvaluationContext? typeContext, DisplayPart[] nameParts, DisplayPart[] valueParts, DisplayPart[] typeParts) {
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
 				TypeContext = typeContext;
 				NameParts = nameParts ?? throw new ArgumentNullException(nameof(nameParts));
 				ValueParts = valueParts ?? throw new ArgumentNullException(nameof(valueParts));
 				TypeParts = typeParts ?? throw new ArgumentNullException(nameof(typeParts));
-				if (typeContext != null) {
+				if (!(typeContext is null)) {
 					lockObj = new object();
-					eeStates = new Dictionary<string, object>(StringComparer.Ordinal);
+					eeStates = new Dictionary<string, object?>(StringComparer.Ordinal);
 				}
 			}
 
 			readonly object lockObj;
-			readonly Dictionary<string, object> eeStates;
+			readonly Dictionary<string, object?> eeStates;
 
-			public object GetExpressionEvaluatorState(DbgExpressionEvaluator expressionEvaluator, string expression) {
+			public object? GetExpressionEvaluatorState(DbgExpressionEvaluator expressionEvaluator, string expression) {
 				lock (lockObj) {
 					if (eeStates.TryGetValue(expression, out var state))
 						return state;
@@ -123,12 +125,12 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 				if ((part.Flags & DisplayPartFlags.EvaluateText) == 0)
 					output.Write(DbgTextColor.DebuggerDisplayAttributeEval, part.Text);
 				else {
-					object eeState = typeState.GetExpressionEvaluatorState(evalInfo.Context.Language.ExpressionEvaluator, part.Text);
+					var eeState = typeState.GetExpressionEvaluatorState(evalInfo.Context.Language.ExpressionEvaluator, part.Text);
 					DbgDotNetEvalResult evalRes = default;
 					try {
-						var evalInfo2 = new DbgEvaluationInfo(typeState.TypeContext, evalInfo.Frame, evalInfo.CancellationToken);
+						var evalInfo2 = new DbgEvaluationInfo(typeState.TypeContext!, evalInfo.Frame, evalInfo.CancellationToken);
 						evalRes = evaluator.Evaluate(evalInfo2, value, part.Text, DbgEvaluationOptions.Expression, eeState);
-						if (evalRes.Error != null) {
+						if (!(evalRes.Error is null)) {
 							output.Write(DbgTextColor.Error, "<<<");
 							output.Write(DbgTextColor.Error, evalRes.Error);
 							output.Write(DbgTextColor.Error, ">>>");
@@ -138,7 +140,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 							var options = this.options | DbgValueFormatterOptions.NoDebuggerDisplay;
 							options &= ~DbgValueFormatterOptions.NoStringQuotes;
 							options = PredefinedFormatSpecifiers.GetValueFormatterOptions(evalRes.FormatSpecifiers, options);
-							languageFormatter.FormatValue(evalInfo, output, evalRes.Value, options, cultureInfo);
+							languageFormatter.FormatValue(evalInfo, output, evalRes.Value!, options, cultureInfo);
 						}
 					}
 					finally {
@@ -153,7 +155,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 
 		TypeState GetOrCreateTypeState(DmdType type, DbgLanguage language) {
 			var state = StateWithKey<TypeState>.TryGet(type, language);
-			if (state != null)
+			if (!(state is null))
 				return state;
 			return GetOrCreateTypeStateCore(type, language);
 		}
@@ -191,13 +193,13 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 
 		(DisplayPart[] nameParts, DisplayPart[] valueParts, DisplayPart[] typeParts) GetDisplayParts(DmdType type) {
 			var ddaType = type.AppDomain.GetWellKnownType(DmdWellKnownType.System_Diagnostics_DebuggerDisplayAttribute, isOptional: true);
-			Debug.Assert((object)ddaType != null);
+			Debug.Assert(!(ddaType is null));
 
 			bool forceNoAttr = ShouldIgnoreDebuggerDisplayAttribute(type);
-			string nameDisplayString = null, valueDisplayString = null, typeDisplayString = null;
-			if (!forceNoAttr && (object)ddaType != null) {
+			string? nameDisplayString = null, valueDisplayString = null, typeDisplayString = null;
+			if (!forceNoAttr && !(ddaType is null)) {
 				var attr = type.FindCustomAttribute(ddaType, inherit: true);
-				if (attr == null) {
+				if (attr is null) {
 					if (type.CanCastTo(type.AppDomain.System_Type)) {
 						// Show the same thing VS shows
 						valueDisplayString = @"\{Name = {Name} FullName = {FullName}\}";
@@ -217,8 +219,8 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 			return (nameParts, valueParts, typeParts);
 		}
 
-		static string GetString(DmdCustomAttributeData ca, string propertyName) {
-			if (ca == null)
+		static string? GetString(DmdCustomAttributeData ca, string propertyName) {
+			if (ca is null)
 				return null;
 			foreach (var arg in ca.NamedArguments) {
 				if (arg.IsField)
@@ -232,8 +234,8 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 			return null;
 		}
 
-		static DisplayPart[] CreateDisplayParts(string debuggerDisplayString) {
-			if (debuggerDisplayString == null)
+		static DisplayPart[] CreateDisplayParts(string? debuggerDisplayString) {
+			if (debuggerDisplayString is null)
 				return Array.Empty<DisplayPart>();
 			if (debuggerDisplayString.Length == 0)
 				return new[] { DisplayPart.CreateText(string.Empty) };

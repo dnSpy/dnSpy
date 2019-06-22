@@ -37,12 +37,12 @@ namespace dnSpy.AsmEditor.Commands {
 			cmds.Add(EditingCommands.Delete, new CodeContextMenuHandlerCommandProxy(settingsCmd, documentTabService), ModifierKeys.None, Key.Delete);
 		}
 
-		public static void AddSettingsCommand(this IWpfCommandService wpfCommandService, IDocumentTabService documentTabService, EditMenuHandler treeViewCmd, CodeContextMenuHandler textEditorCmd) {
-			if (treeViewCmd != null) {
+		public static void AddSettingsCommand(this IWpfCommandService wpfCommandService, IDocumentTabService documentTabService, EditMenuHandler? treeViewCmd, CodeContextMenuHandler? textEditorCmd) {
+			if (!(treeViewCmd is null)) {
 				var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_DOCUMENT_TREEVIEW);
 				cmds.Add(SettingsRoutedCommand, new EditMenuHandlerCommandProxy(treeViewCmd));
 			}
-			if (textEditorCmd != null) {
+			if (!(textEditorCmd is null)) {
 				var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_DOCUMENTVIEWER_UICONTEXT);
 				cmds.Add(SettingsRoutedCommand, new CodeContextMenuHandlerCommandProxy(textEditorCmd, documentTabService), ModifierKeys.Alt, Key.Enter);
 			}

@@ -23,10 +23,10 @@ using System.Collections.Generic;
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 	sealed class DmdMethodRefMD : DmdMethodRef {
 		readonly DmdEcma335MetadataReader reader;
-		readonly IList<DmdType> genericTypeArguments;
+		readonly IList<DmdType>? genericTypeArguments;
 		readonly uint signature;
 
-		public DmdMethodRefMD(DmdEcma335MetadataReader reader, uint signature, IList<DmdType> genericTypeArguments, DmdType declaringTypeRef, string name, DmdMethodSignature rawMethodSignature, DmdMethodSignature methodSignature)
+		public DmdMethodRefMD(DmdEcma335MetadataReader reader, uint signature, IList<DmdType>? genericTypeArguments, DmdType declaringTypeRef, string name, DmdMethodSignature rawMethodSignature, DmdMethodSignature methodSignature)
 			: base(declaringTypeRef, name, rawMethodSignature, methodSignature) {
 			this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
 			this.genericTypeArguments = genericTypeArguments;

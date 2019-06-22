@@ -37,7 +37,7 @@ namespace dnSpy.Contracts.ToolWindows {
 		/// <summary>
 		/// Gets the active <see cref="ToolWindowContent"/> or null if <see cref="TabContents"/> is empty
 		/// </summary>
-		ToolWindowContent ActiveTabContent { get; set; }
+		ToolWindowContent? ActiveTabContent { get; set; }
 
 		/// <summary>
 		/// Adds the content

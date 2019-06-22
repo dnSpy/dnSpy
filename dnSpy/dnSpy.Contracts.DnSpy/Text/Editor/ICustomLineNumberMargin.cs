@@ -40,7 +40,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="textView">Text view</param>
 		/// <returns></returns>
 		static ICustomLineNumberMargin GetMargin(ITextView textView) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			if (!textView.Properties.TryGetProperty(Key, out ICustomLineNumberMargin margin))
 				throw new InvalidOperationException("No custom line number margin was found");
@@ -53,17 +53,17 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="textView">Text view</param>
 		/// <param name="owner">Owner</param>
 		public static void SetOwner(ITextView textView, ICustomLineNumberMarginOwner owner) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
-			if (owner == null)
+			if (owner is null)
 				throw new ArgumentNullException(nameof(owner));
 			GetMargin(textView).SetOwner(owner);
 		}
 
 		internal static void SetMargin(ITextView textView, ICustomLineNumberMargin margin) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
-			if (margin == null)
+			if (margin is null)
 				throw new ArgumentNullException(nameof(margin));
 			textView.Properties.AddProperty(Key, margin);
 		}
@@ -98,7 +98,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="snapshotLine">Snapshot line</param>
 		/// <param name="state">State, initially null</param>
 		/// <returns></returns>
-		int? GetLineNumber(ITextViewLine viewLine, ITextSnapshotLine snapshotLine, ref object state);
+		int? GetLineNumber(ITextViewLine viewLine, ITextSnapshotLine snapshotLine, ref object? state);
 
 		/// <summary>
 		/// Gets <see cref="TextFormattingRunProperties"/> for the line number text
@@ -108,13 +108,13 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="lineNumber">Line number returned by <see cref="GetLineNumber(ITextViewLine, ITextSnapshotLine, ref object)"/></param>
 		/// <param name="state">State, initialized by <see cref="GetLineNumber(ITextViewLine, ITextSnapshotLine, ref object)"/></param>
 		/// <returns></returns>
-		TextFormattingRunProperties GetLineNumberTextFormattingRunProperties(ITextViewLine viewLine, ITextSnapshotLine snapshotLine, int lineNumber, object state);
+		TextFormattingRunProperties GetLineNumberTextFormattingRunProperties(ITextViewLine viewLine, ITextSnapshotLine snapshotLine, int lineNumber, object? state);
 
 		/// <summary>
 		/// Gets the default text formatting properties
 		/// </summary>
 		/// <returns></returns>
-		TextFormattingRunProperties GetDefaultTextFormattingRunProperties();
+		TextFormattingRunProperties? GetDefaultTextFormattingRunProperties();
 
 		/// <summary>
 		/// Gets called when text formatting properties have changed

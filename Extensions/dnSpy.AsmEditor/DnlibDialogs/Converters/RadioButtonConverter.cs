@@ -23,7 +23,7 @@ using System.Windows.Data;
 
 namespace dnSpy.AsmEditor.DnlibDialogs.Converters {
 	sealed class RadioButtonConverter : IValueConverter {
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => value.Equals(parameter);
+		public object? Convert(object value, Type targetType, object parameter, CultureInfo culture) => value.Equals(parameter);
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => value.Equals(true) ? parameter : Binding.DoNothing;
 	}
 }

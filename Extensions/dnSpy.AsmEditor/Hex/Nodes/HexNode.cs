@@ -80,7 +80,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 				vm.OnBufferChanged(changes);
 		}
 
-		public HexNode FindNode(HexVM structure, HexField field) {
+		public HexNode? FindNode(HexVM structure, HexField field) {
 			Debug.Assert(!(structure is MetadataTableRecordVM), "Use " + nameof(PENode) + "'s method instead");
 			bool found = false;
 			foreach (var span in Spans) {
@@ -102,7 +102,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			TreeNode.EnsureChildrenLoaded();
 			foreach (var child in TreeNode.DataChildren.OfType<HexNode>()) {
 				var node = child.FindNode(structure, field);
-				if (node != null)
+				if (!(node is null))
 					return node;
 			}
 

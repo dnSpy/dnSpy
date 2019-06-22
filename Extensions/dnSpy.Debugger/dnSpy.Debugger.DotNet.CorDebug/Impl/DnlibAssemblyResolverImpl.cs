@@ -34,27 +34,28 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			dict = new Dictionary<IAssembly, AssemblyDef>(AssemblyNameComparer.CompareAll);
 		}
 
-		public AssemblyDef Resolve(IAssembly assembly, ModuleDef sourceModule) {
+		public AssemblyDef? Resolve(IAssembly assembly, ModuleDef sourceModule) {
 			engine.VerifyCorDebugThread();
-			if (dict.TryGetValue(assembly, out var res))
+			AssemblyDef? res;
+			if (dict.TryGetValue(assembly, out res))
 				return res;
 			res = Lookup_CorDebug(assembly);
-			if (res != null) {
+			if (!(res is null)) {
 				dict[assembly] = res;
 				dict[res] = res;
 			}
 			return res;
 		}
 
-		AssemblyDef Lookup_CorDebug(IAssembly assembly) {
+		AssemblyDef? Lookup_CorDebug(IAssembly assembly) {
 			engine.VerifyCorDebugThread();
-			if (assembly == null)
+			if (assembly is null)
 				return null;
 			var asm = appDomain.GetAssembly(new DmdReadOnlyAssemblyName(assembly.FullName));
-			if (asm == null)
+			if (asm is null)
 				return null;
 			var dbgModule = asm.ManifestModule.GetDebuggerModule();
-			if (dbgModule == null)
+			if (dbgModule is null)
 				return null;
 			if (!engine.TryGetDnModule(dbgModule, out var dnModule))
 				return null;

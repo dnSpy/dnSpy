@@ -31,21 +31,21 @@ namespace dnSpy.Debugger.DotNet.CorDebug.DAC {
 	[Export(typeof(ClrDacProvider))]
 	sealed class ClrDacProviderImpl : ClrDacProvider {
 		public override ClrDac Create(int pid, string clrPath, IClrDacDebugger clrDacDebugger) {
-			if (clrPath == null)
+			if (clrPath is null)
 				throw new ArgumentNullException(nameof(clrPath));
 			var clrDac = CreateCore(pid, clrPath, clrDacDebugger);
-			Debug.Assert(clrDac != null);
+			Debug.Assert(!(clrDac is null));
 			return clrDac ?? NullClrDac.Instance;
 		}
 
-		ClrDac CreateCore(int pid, string clrPath, IClrDacDebugger clrDacDebugger) {
-			DataTarget dataTarget = null;
+		ClrDac? CreateCore(int pid, string clrPath, IClrDacDebugger clrDacDebugger) {
+			DataTarget? dataTarget = null;
 			bool failed = true;
 			try {
 				// The timeout isn't used if Passive is used
 				dataTarget = DataTarget.AttachToProcess(pid, 0, AttachFlag.Passive);
 				var clrInfo = GetClrInfo(dataTarget, clrPath);
-				if (clrInfo == null)
+				if (clrInfo is null)
 					return null;
 
 				// Use this overload to make sure it doesn't try to download the dac file which
@@ -71,7 +71,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.DAC {
 			}
 		}
 
-		static ClrInfo GetClrInfo(DataTarget dt, string clrPath) {
+		static ClrInfo? GetClrInfo(DataTarget dt, string clrPath) {
 			foreach (var clrInfo in dt.ClrVersions) {
 				if (!StringComparer.OrdinalIgnoreCase.Equals(clrInfo.ModuleInfo.FileName, clrPath))
 					continue;

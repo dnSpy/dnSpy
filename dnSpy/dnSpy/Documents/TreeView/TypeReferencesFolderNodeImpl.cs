@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.TreeView;
@@ -34,7 +35,7 @@ namespace dnSpy.Documents.TreeView {
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => DsImages.Reference;
 		public override NodePathName NodePathName => new NodePathName(Guid);
 		public override void Initialize() => TreeNode.LazyLoading = true;
-		public override ITreeNodeGroup TreeNodeGroup { get; }
+		public override ITreeNodeGroup? TreeNodeGroup { get; }
 
 		readonly ModuleDocumentNode moduleNode;
 
@@ -69,12 +70,12 @@ namespace dnSpy.Documents.TreeView {
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.TYPESPECS_FOLDER_NODE_GUID);
 		public override NodePathName NodePathName => new NodePathName(Guid);
 		public override void Initialize() => TreeNode.LazyLoading = true;
-		public override ITreeNodeGroup TreeNodeGroup { get; }
+		public override ITreeNodeGroup? TreeNodeGroup { get; }
 
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => DsImages.Template;
 
-		Dictionary<ITypeDefOrRef, TypeRefInfo> typeDict;
-		readonly IScope scope;
+		Dictionary<ITypeDefOrRef, TypeRefInfo>? typeDict;
+		readonly IScope? scope;
 
 		public TypeSpecsFolderNodeImpl(ITreeNodeGroup treeNodeGroup, Dictionary<ITypeDefOrRef, TypeRefInfo> typeDict) {
 			TreeNodeGroup = treeNodeGroup;
@@ -112,12 +113,12 @@ namespace dnSpy.Documents.TreeView {
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.METHODREFS_FOLDER_NODE_GUID);
 		public override NodePathName NodePathName => new NodePathName(Guid);
 		public override void Initialize() => TreeNode.LazyLoading = true;
-		public override ITreeNodeGroup TreeNodeGroup { get; }
+		public override ITreeNodeGroup? TreeNodeGroup { get; }
 
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => DsImages.MethodPublic;
 
-		Dictionary<IMethod, HashSet<IMethod>> methodDict;
-		readonly IScope scope;
+		Dictionary<IMethod, HashSet<IMethod>>? methodDict;
+		readonly IScope? scope;
 
 		public MethodReferencesFolderNodeImpl(ITreeNodeGroup treeNodeGroup, Dictionary<IMethod, HashSet<IMethod>> methodDict) {
 			TreeNodeGroup = treeNodeGroup;
@@ -153,12 +154,12 @@ namespace dnSpy.Documents.TreeView {
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.PROPERTYREFS_FOLDER_NODE_GUID);
 		public override NodePathName NodePathName => new NodePathName(Guid);
 		public override void Initialize() => TreeNode.LazyLoading = true;
-		public override ITreeNodeGroup TreeNodeGroup { get; }
+		public override ITreeNodeGroup? TreeNodeGroup { get; }
 
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => DsImages.Property;
 
-		Dictionary<IMethod, HashSet<IMethod>> propertyDict;
-		readonly IScope scope;
+		Dictionary<IMethod, HashSet<IMethod>>? propertyDict;
+		readonly IScope? scope;
 
 		public PropertyReferencesFolderNodeImpl(ITreeNodeGroup treeNodeGroup, Dictionary<IMethod, HashSet<IMethod>> propertyDict) {
 			TreeNodeGroup = treeNodeGroup;
@@ -194,12 +195,12 @@ namespace dnSpy.Documents.TreeView {
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.EVENTREFS_FOLDER_NODE_GUID);
 		public override NodePathName NodePathName => new NodePathName(Guid);
 		public override void Initialize() => TreeNode.LazyLoading = true;
-		public override ITreeNodeGroup TreeNodeGroup { get; }
+		public override ITreeNodeGroup? TreeNodeGroup { get; }
 
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => DsImages.EventPublic;
 
-		Dictionary<IMethod, HashSet<IMethod>> eventDict;
-		readonly IScope scope;
+		Dictionary<IMethod, HashSet<IMethod>>? eventDict;
+		readonly IScope? scope;
 
 		public EventReferencesFolderNodeImpl(ITreeNodeGroup treeNodeGroup, Dictionary<IMethod, HashSet<IMethod>> eventDict) {
 			TreeNodeGroup = treeNodeGroup;
@@ -235,12 +236,12 @@ namespace dnSpy.Documents.TreeView {
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.FIELDREFS_FOLDER_NODE_GUID);
 		public override NodePathName NodePathName => new NodePathName(Guid);
 		public override void Initialize() => TreeNode.LazyLoading = true;
-		public override ITreeNodeGroup TreeNodeGroup { get; }
+		public override ITreeNodeGroup? TreeNodeGroup { get; }
 
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => DsImages.FieldPublic;
 
-		Dictionary<MemberRef, MemberRef> fieldDict;
-		readonly IScope scope;
+		Dictionary<MemberRef, MemberRef>? fieldDict;
+		readonly IScope? scope;
 
 		public FieldReferencesFolderNodeImpl(ITreeNodeGroup treeNodeGroup, Dictionary<MemberRef, MemberRef> fieldDict) {
 			TreeNodeGroup = treeNodeGroup;
@@ -275,7 +276,7 @@ namespace dnSpy.Documents.TreeView {
 	sealed class TypeReferenceNodeImpl : TypeReferenceNode {
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.TYPE_REFERENCE_NODE_GUID);
 		public override NodePathName NodePathName => new NodePathName(Guid, TypeRef.FullName);
-		public override ITreeNodeGroup TreeNodeGroup { get; }
+		public override ITreeNodeGroup? TreeNodeGroup { get; }
 
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) {
 			if (imageReference is null) {
@@ -288,7 +289,7 @@ namespace dnSpy.Documents.TreeView {
 		}
 		ImageReference? imageReference;
 
-		TypeRefInfo typeInfo;
+		TypeRefInfo? typeInfo;
 
 		public TypeReferenceNodeImpl(ITreeNodeGroup treeNodeGroup, ITypeDefOrRef type, TypeRefInfo typeInfo)
 			: base(type) {
@@ -297,6 +298,7 @@ namespace dnSpy.Documents.TreeView {
 		}
 
 		public override void Initialize() {
+			Debug.Assert(!(typeInfo is null));
 			TreeNode.LazyLoading =
 				typeInfo.TypeDict.Count != 0 ||
 				typeInfo.MethodDict.Count != 0 ||
@@ -336,7 +338,7 @@ namespace dnSpy.Documents.TreeView {
 	sealed class MethodReferenceNodeImpl : MethodReferenceNode {
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.METHOD_REFERENCE_NODE_GUID);
 		public override NodePathName NodePathName => new NodePathName(Guid, MethodRef.FullName);
-		public override ITreeNodeGroup TreeNodeGroup { get; }
+		public override ITreeNodeGroup? TreeNodeGroup { get; }
 
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) {
 			if (imageReference is null) {
@@ -366,13 +368,13 @@ namespace dnSpy.Documents.TreeView {
 	sealed class PropertyReferenceNodeImpl : PropertyReferenceNode {
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.PROPERTY_REFERENCE_NODE_GUID);
 		public override NodePathName NodePathName => new NodePathName(Guid, PropertyRef.FullName);
-		public override ITreeNodeGroup TreeNodeGroup { get; }
+		public override ITreeNodeGroup? TreeNodeGroup { get; }
 
 		// The defs aren't cached since they're in some other assembly that could get unloaded,
 		// but its assembly won't get GC'd if this class has an indirect ref to it. A weak ref isn't
 		// used since there would be too many weak refs (many member ref tree nodes), and it's
 		// currently not needed (not on a hot path).
-		bool TryResolveDef(out PropertyDef property, out MethodDef method) {
+		bool TryResolveDef([NotNullWhenTrue] out PropertyDef? property, [NotNullWhenTrue] out MethodDef? method) {
 			property = null;
 			method = PropertyRef.ResolveMethodDef();
 			if (method is null)
@@ -416,9 +418,9 @@ namespace dnSpy.Documents.TreeView {
 	sealed class EventReferenceNodeImpl : EventReferenceNode {
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.EVENT_REFERENCE_NODE_GUID);
 		public override NodePathName NodePathName => new NodePathName(Guid, EventRef.FullName);
-		public override ITreeNodeGroup TreeNodeGroup { get; }
+		public override ITreeNodeGroup? TreeNodeGroup { get; }
 
-		bool TryResolveDef(out EventDef @event, out MethodDef method) {
+		bool TryResolveDef([NotNullWhenTrue] out EventDef? @event, [NotNullWhenTrue] out MethodDef? method) {
 			@event = null;
 			method = EventRef.ResolveMethodDef();
 			if (method is null)
@@ -462,7 +464,7 @@ namespace dnSpy.Documents.TreeView {
 	sealed class FieldReferenceNodeImpl : FieldReferenceNode {
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.FIELD_REFERENCE_NODE_GUID);
 		public override NodePathName NodePathName => new NodePathName(Guid, FieldRef.FullName);
-		public override ITreeNodeGroup TreeNodeGroup { get; }
+		public override ITreeNodeGroup? TreeNodeGroup { get; }
 
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) {
 			if (imageReference is null) {

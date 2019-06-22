@@ -51,14 +51,14 @@ namespace dnSpy.MainApp.Settings {
 				int count = 0;
 				try {
 					foreach (var ext in openExtensions) {
-						string name;
+						string? name;
 						using (var key = Registry.CurrentUser.OpenSubKey(@"Software\Classes\." + ext))
-							name = key == null ? null : key.GetValue(string.Empty) as string;
+							name = key is null ? null : key.GetValue(string.Empty) as string;
 						if (string.IsNullOrEmpty(name))
 							continue;
 
 						using (var key = Registry.CurrentUser.OpenSubKey(@"Software\Classes\" + name + @"\shell\" + EXPLORER_MENU_TEXT)) {
-							if (key != null)
+							if (!(key is null))
 								count++;
 						}
 					}
@@ -70,11 +70,15 @@ namespace dnSpy.MainApp.Settings {
 					null;
 			}
 			set {
-				if (value == null)
+				if (value is null)
 					return;
 				bool enabled = value.Value;
 
 				var path = Assembly.GetEntryAssembly().Location;
+#if NETCOREAPP
+				// Use the native exe and not the managed file
+				path = Path.ChangeExtension(path, "exe");
+#endif
 				if (!File.Exists(path)) {
 					messageBoxService.Show("Cannot locate dnSpy!");
 					return;
@@ -83,7 +87,7 @@ namespace dnSpy.MainApp.Settings {
 
 				try {
 					foreach (var ext in openExtensions) {
-						string name;
+						string? name;
 						using (var key = Registry.CurrentUser.OpenSubKey(@"Software\Classes\." + ext))
 							name = key?.GetValue(string.Empty) as string;
 

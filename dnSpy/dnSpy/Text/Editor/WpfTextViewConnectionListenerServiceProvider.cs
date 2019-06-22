@@ -37,7 +37,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public void Create(IWpfTextView wpfTextView) {
-			if (wpfTextView == null)
+			if (wpfTextView is null)
 				throw new ArgumentNullException(nameof(wpfTextView));
 			new WpfTextViewConnectionListenerService(wpfTextView, wpfTextViewConnectionListeners, textViewConnectionListeners);
 		}

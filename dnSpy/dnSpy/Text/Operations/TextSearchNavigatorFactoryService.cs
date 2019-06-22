@@ -31,7 +31,7 @@ namespace dnSpy.Text.Operations {
 		TextSearchNavigatorFactoryService(ITextSearchService2 textSearchService2) => this.textSearchService2 = textSearchService2;
 
 		public ITextSearchNavigator CreateSearchNavigator(ITextBuffer buffer) {
-			if (buffer == null)
+			if (buffer is null)
 				throw new ArgumentNullException(nameof(buffer));
 			return new TextSearchNavigator(buffer, textSearchService2);
 		}

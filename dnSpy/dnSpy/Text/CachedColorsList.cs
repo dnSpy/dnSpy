@@ -59,7 +59,7 @@ namespace dnSpy.Text {
 			Add(docOffset, newCachedTextColorsCollection);
 		}
 
-		public CachedTextColorsCollection RemoveLastCachedTextColorsCollection() {
+		public CachedTextColorsCollection? RemoveLastCachedTextColorsCollection() {
 			Debug.Assert(cachedColorsList.Count > 0);
 			if (cachedColorsList.Count == 0)
 				return null;

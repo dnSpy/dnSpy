@@ -22,16 +22,16 @@ using dnSpy.Contracts.Debugger;
 
 namespace dnSpy.Debugger.Impl {
 	readonly struct CurrentObject<T> : IEquatable<CurrentObject<T>> where T : DbgObject {
-		public readonly T Current;
-		public readonly T Break;
-		public CurrentObject(T current, T @break) {
+		public readonly T? Current;
+		public readonly T? Break;
+		public CurrentObject(T? current, T? @break) {
 			Current = current;
 			Break = @break;
 		}
 		public static bool operator ==(CurrentObject<T> left, CurrentObject<T> right) => left.Equals(right);
 		public static bool operator !=(CurrentObject<T> left, CurrentObject<T> right) => !left.Equals(right);
 		public bool Equals(CurrentObject<T> other) => Current == other.Current && Break == other.Break;
-		public override bool Equals(object obj) => obj is CurrentObject<T> other && Equals(other);
+		public override bool Equals(object? obj) => obj is CurrentObject<T> other && Equals(other);
 		public override int GetHashCode() => (Current?.GetHashCode() ?? 0) ^ (Break?.GetHashCode() ?? 0);
 	}
 }

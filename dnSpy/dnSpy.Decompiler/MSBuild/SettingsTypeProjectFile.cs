@@ -71,20 +71,20 @@ namespace dnSpy.Decompiler.MSBuild {
 		}
 
 		public IMemberDef[] GetDefsToRemove() {
-			if (defsToRemove != null)
+			if (!(defsToRemove is null))
 				return defsToRemove;
 			lock (defsToRemoveLock) {
-				if (defsToRemove == null)
+				if (defsToRemove is null)
 					defsToRemove = CalculateDefsToRemove().Distinct().ToArray();
 			}
 			return defsToRemove;
 		}
 		readonly object defsToRemoveLock = new object();
-		IMemberDef[] defsToRemove;
+		IMemberDef[]? defsToRemove;
 
 		IEnumerable<IMemberDef> CalculateDefsToRemove() {
 			var defaultProp = FindDefaultProperty();
-			if (defaultProp != null) {
+			if (!(defaultProp is null)) {
 				foreach (var d in DotNetUtils.GetMethodsAndSelf(defaultProp))
 					yield return d;
 				foreach (var d in DotNetUtils.GetDefs(defaultProp))
@@ -98,18 +98,18 @@ namespace dnSpy.Decompiler.MSBuild {
 			}
 		}
 
-		PropertyDef FindDefaultProperty() {
+		PropertyDef? FindDefaultProperty() {
 			foreach (var p in Type.Properties) {
 				if (p.Name != "Default")
 					continue;
 				var g = p.GetMethod;
-				if (g == null || !g.IsStatic || p.SetMethod != null || p.OtherMethods.Count != 0)
+				if (g is null || !g.IsStatic || !(p.SetMethod is null) || p.OtherMethods.Count != 0)
 					continue;
 				if (g.MethodSig.GetParamCount() != 0)
 					continue;
 				if (g.ReturnType.RemovePinnedAndModifiers().TryGetTypeDef() != Type)
 					continue;
-				if (g.Body == null)
+				if (g.Body is null)
 					continue;
 
 				return p;

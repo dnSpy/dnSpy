@@ -32,7 +32,7 @@ namespace dnSpy.Debugger.Utilities {
 
 		public ProcessProvider() => toProcess = new Dictionary<int, Process>();
 
-		public Process GetProcess(int pid) {
+		public Process? GetProcess(int pid) {
 			if (!processesInitd)
 				ForceInitialize();
 

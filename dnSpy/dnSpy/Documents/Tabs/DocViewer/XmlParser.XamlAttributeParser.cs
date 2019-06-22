@@ -26,7 +26,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 	sealed partial class XmlParser {
 		sealed class XamlAttributeParser {
 			readonly XmlParser owner;
-			string text;
+			string? text;
 			int textPosition;
 			int textEnd;
 			const int MAX_RECURSION = 50;
@@ -142,7 +142,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 				try {
 					var markupExtName = ReadNameToken();
-					if (markupExtName == null) {
+					if (markupExtName is null) {
 						Error();
 						return;
 					}
@@ -165,7 +165,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 						case TokenKind.Name:
 							Undo(token);
-							var name = ReadNameToken().Value;
+							var name = ReadNameToken()!.Value;// Undo() was called so force '!'
 
 							SkipNamesAndPeriods();
 							if (PeekToken().Kind == TokenKind.Equals) {
@@ -250,21 +250,21 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			}
 
 			void Undo(in Token token) {
-				Debug.Assert(cachedToken == null);
-				if (cachedToken != null)
+				Debug.Assert(cachedToken is null);
+				if (!(cachedToken is null))
 					throw new InvalidOperationException();
 				cachedToken = token;
 			}
 
 			Token PeekToken() {
-				if (cachedToken != null)
+				if (!(cachedToken is null))
 					return cachedToken.Value;
 				cachedToken = GetNextToken();
 				return cachedToken.Value;
 			}
 
 			Token GetNextToken() {
-				if (cachedToken != null) {
+				if (!(cachedToken is null)) {
 					var token = cachedToken.Value;
 					cachedToken = null;
 					return token;
@@ -275,7 +275,8 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			Token? cachedToken;
 
 			Token ReadTokenCore() {
-				Debug.Assert(cachedToken == null);
+				Debug.Assert(!(text is null));
+				Debug.Assert(cachedToken is null);
 
 				SkipWhitespace();
 				int startPos = textPosition;
@@ -324,12 +325,14 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			}
 
 			int NextChar() {
+				Debug.Assert(!(text is null));
 				if (textPosition >= textEnd)
 					return -1;
 				return text[textPosition++];
 			}
 
 			int PeekChar() {
+				Debug.Assert(!(text is null));
 				if (textPosition >= textEnd)
 					return -1;
 				return text[textPosition];

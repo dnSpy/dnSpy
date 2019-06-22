@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#nullable disable
 using System;
 using System.Runtime.InteropServices;
 using System.Security;

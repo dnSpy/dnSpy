@@ -22,14 +22,14 @@ using System.Text;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	static class DmdAssemblyNameFormatter {
-		public static string Format(string name, Version version, string culture, byte[] publicKeyOrToken, DmdAssemblyNameFlags attributes, bool isPublicKeyToken) {
-			var sb = ObjectPools.AllocStringBuilder();
+		public static string Format(string? name, Version? version, string? culture, byte[]? publicKeyOrToken, DmdAssemblyNameFlags attributes, bool isPublicKeyToken) {
+			StringBuilder? sb = ObjectPools.AllocStringBuilder();
 			Format(sb, name, version, culture, publicKeyOrToken, attributes, isPublicKeyToken);
 			return ObjectPools.FreeAndToString(ref sb);
 		}
 
-		public static void Format(StringBuilder sb, string name, Version version, string culture, byte[] publicKeyOrToken, DmdAssemblyNameFlags attributes, bool isPublicKeyToken) {
-			if (name == null)
+		public static void Format(StringBuilder sb, string? name, Version? version, string? culture, byte[]? publicKeyOrToken, DmdAssemblyNameFlags attributes, bool isPublicKeyToken) {
+			if (name is null)
 				return;
 
 			foreach (var c in name) {
@@ -38,17 +38,17 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				sb.Append(c);
 			}
 
-			if (version != null) {
+			if (!(version is null)) {
 				sb.Append(", Version=");
 				sb.Append(version.ToString());
 			}
 
-			if (culture != null) {
+			if (!(culture is null)) {
 				sb.Append(", Culture=");
 				sb.Append(string.IsNullOrEmpty(culture) ? "neutral" : culture);
 			}
 
-			if (publicKeyOrToken != null) {
+			if (!(publicKeyOrToken is null)) {
 				sb.Append(isPublicKeyToken ? ", PublicKeyToken=" : ", PublicKey=");
 				if (publicKeyOrToken.Length == 0)
 					sb.Append("null");

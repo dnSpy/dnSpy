@@ -39,7 +39,7 @@ namespace dnSpy.Documents.Tabs {
 			this.documentTreeView = documentTreeView;
 		}
 
-		public DocumentTabReferenceResult Create(IDocumentTabService documentTabService, DocumentTabContent sourceContent, object @ref) {
+		public DocumentTabReferenceResult? Create(IDocumentTabService documentTabService, DocumentTabContent? sourceContent, object? @ref) {
 			if (@ref is TextReference textRef)
 				@ref = textRef.Reference;
 			if (@ref is DocumentTreeNodeData node)
@@ -55,51 +55,51 @@ namespace dnSpy.Documents.Tabs {
 			if (@ref is ModuleDef mod)
 				return Create(mod);
 			if (@ref is IAssembly asmRef) {
-				document = documentTreeView.DocumentService.Resolve(asmRef, null);
-				if (document != null)
-					return Create(document);
+				var doc = documentTreeView.DocumentService.Resolve(asmRef, null);
+				if (!(doc is null))
+					return Create(doc);
 			}
 			return null;
 		}
 
-		DocumentTabReferenceResult Create(DocumentTreeNodeData node) {
+		DocumentTabReferenceResult? Create(DocumentTreeNodeData node) {
 			var content = documentTabContentFactoryService.CreateTabContent(new[] { node });
-			if (content == null)
+			if (content is null)
 				return null;
 			return new DocumentTabReferenceResult(content);
 		}
 
-		DocumentTabReferenceResult Create(NamespaceRef nsRef) {
+		DocumentTabReferenceResult? Create(NamespaceRef nsRef) {
 			var node = documentTreeView.FindNamespaceNode(nsRef.Module, nsRef.Namespace);
-			return node == null ? null : Create(node);
+			return node is null ? null : Create(node);
 		}
 
-		DocumentTabReferenceResult Create(NamespaceReference nsRef) {
-			if (nsRef.Assembly == null)
+		DocumentTabReferenceResult? Create(NamespaceReference nsRef) {
+			if (nsRef.Assembly is null)
 				return null;
 			var asm = documentTreeView.DocumentService.Resolve(nsRef.Assembly, null) as IDsDotNetDocument;
-			if (asm == null)
+			if (asm is null)
 				return null;
 			var mod = asm.Children.FirstOrDefault() as IDsDotNetDocument;
-			if (mod == null)
+			if (mod is null)
 				return null;
 			var node = documentTreeView.FindNamespaceNode(mod, nsRef.Namespace);
-			return node == null ? null : Create(node);
+			return node is null ? null : Create(node);
 		}
 
-		DocumentTabReferenceResult Create(IDsDocument document) {
+		DocumentTabReferenceResult? Create(IDsDocument document) {
 			var node = documentTreeView.FindNode(document);
-			return node == null ? null : Create(node);
+			return node is null ? null : Create(node);
 		}
 
-		DocumentTabReferenceResult Create(AssemblyDef asm) {
+		DocumentTabReferenceResult? Create(AssemblyDef asm) {
 			var node = documentTreeView.FindNode(asm);
-			return node == null ? null : Create(node);
+			return node is null ? null : Create(node);
 		}
 
-		DocumentTabReferenceResult Create(ModuleDef mod) {
+		DocumentTabReferenceResult? Create(ModuleDef mod) {
 			var node = documentTreeView.FindNode(mod);
-			return node == null ? null : Create(node);
+			return node is null ? null : Create(node);
 		}
 	}
 }

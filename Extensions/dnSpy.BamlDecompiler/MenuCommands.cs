@@ -43,7 +43,7 @@ namespace dnSpy.BamlDecompiler {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
 				return false;
 			var uiContext = context.Find<IDocumentViewer>();
-			if (uiContext == null)
+			if (uiContext is null)
 				return false;
 			var nodes = uiContext.DocumentTab.Content.Nodes.ToArray();
 			return nodes.Length == 1 && nodes[0] is BamlResourceElementNode;

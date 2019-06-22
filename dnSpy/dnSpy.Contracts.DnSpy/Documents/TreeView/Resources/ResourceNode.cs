@@ -90,7 +90,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		public uint Length {
 			get {
 				var er = Resource as EmbeddedResource;
-				return er == null ? 0 : er.Length;
+				return er is null ? 0 : er.Length;
 			}
 		}
 
@@ -100,22 +100,22 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		public uint RVA {
 			get {
 				var module = GetModuleOffset(out var fo);
-				if (module == null)
+				if (module is null)
 					return 0;
 
 				return (uint)module.Metadata.PEImage.ToRVA(fo);
 			}
 		}
 
-		ModuleDefMD GetModuleOffset(out FileOffset fileOffset) {
+		ModuleDefMD? GetModuleOffset(out FileOffset fileOffset) {
 			fileOffset = 0;
 
 			var er = Resource as EmbeddedResource;
-			if (er == null)
+			if (er is null)
 				return null;
 
 			var module = this.GetModule() as ModuleDefMD;//TODO: Support CorModuleDef
-			if (module == null)
+			if (module is null)
 				return null;
 
 			fileOffset = (FileOffset)er.CreateReader().StartOffset;
@@ -123,7 +123,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		}
 
 		/// <inheritdoc/>
-		public override ITreeNodeGroup TreeNodeGroup => treeNodeGroup;
+		public override ITreeNodeGroup? TreeNodeGroup => treeNodeGroup;
 		readonly ITreeNodeGroup treeNodeGroup;
 
 		/// <summary>
@@ -148,7 +148,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 			output.WriteOffsetComment(this, showOffset);
 			const string LTR = "\u200E";
 			output.Write(NameUtilities.CleanName(Name) + LTR, this, DecompilerReferenceFlags.Local | DecompilerReferenceFlags.Definition, BoxedTextColor.Comment);
-			string extra = null;
+			string? extra = null;
 			switch (Resource.ResourceType) {
 			case ResourceType.AssemblyLinked:
 				extra = ((AssemblyLinkedResource)Resource).Assembly.FullName;
@@ -161,7 +161,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 				extra = string.Format(dnSpy_Contracts_DnSpy_Resources.NumberOfBytes, ((EmbeddedResource)Resource).Length);
 				break;
 			}
-			output.Write($" ({(extra == null ? string.Empty : $"{extra}, ")}{Resource.ResourceType}, {Resource.Attributes})", BoxedTextColor.Comment);
+			output.Write($" ({(extra is null ? string.Empty : $"{extra}, ")}{Resource.ResourceType}, {Resource.Attributes})", BoxedTextColor.Comment);
 			decompiler.WriteCommentEnd(output, true);
 			output.WriteLine();
 		}
@@ -172,7 +172,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <param name="token">Cancellation token</param>
 		/// <param name="canDecompile">true if the data can be decompiled</param>
 		/// <returns></returns>
-		public virtual string ToString(CancellationToken token, bool canDecompile) => null;
+		public virtual string? ToString(CancellationToken token, bool canDecompile) => null;
 
 		/// <inheritdoc/>
 		public IEnumerable<ResourceData> GetResourceData(ResourceDataType type) {

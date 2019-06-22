@@ -27,9 +27,9 @@ namespace dnSpy.Roslyn.Debugger {
 		readonly object lockObj = new object();
 		readonly List<(object key, T data)> list = new List<(object, T)>();
 
-		public static T TryGet(DmdObject obj, object key) {
-			Debug.Assert(obj != null);
-			Debug.Assert(key != null);
+		public static T? TryGet(DmdObject obj, object key) {
+			Debug.Assert(!(obj is null));
+			Debug.Assert(!(key is null));
 			var state = obj.GetOrCreateData<StateWithKey<T>>();
 			lock (state.lockObj) {
 				var list = state.list;
@@ -43,8 +43,8 @@ namespace dnSpy.Roslyn.Debugger {
 		}
 
 		public static T GetOrCreate(DmdObject obj, object key, Func<T> create) {
-			Debug.Assert(obj != null);
-			Debug.Assert(key != null);
+			Debug.Assert(!(obj is null));
+			Debug.Assert(!(key is null));
 			var state = obj.GetOrCreateData<StateWithKey<T>>();
 			lock (state.lockObj) {
 				var list = state.list;

@@ -21,7 +21,7 @@ using System;
 using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
-	sealed class CorStepper : COMObject<ICorDebugStepper>, IEquatable<CorStepper> {
+	sealed class CorStepper : COMObject<ICorDebugStepper>, IEquatable<CorStepper?> {
 		public bool IsActive {
 			get {
 				int hr = obj.IsActive(out int active);
@@ -70,23 +70,14 @@ namespace dndbg.Engine {
 
 		public bool SetJMC(bool jmc) {
 			var s2 = obj as ICorDebugStepper2;
-			if (s2 == null)
+			if (s2 is null)
 				return true;
 			int hr = s2.SetJMC(jmc ? 1 : 0);
 			return hr >= 0;
 		}
 
-		public static bool operator ==(CorStepper a, CorStepper b) {
-			if (ReferenceEquals(a, b))
-				return true;
-			if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
-				return false;
-			return a.Equals(b);
-		}
-
-		public static bool operator !=(CorStepper a, CorStepper b) => !(a == b);
-		public bool Equals(CorStepper other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
-		public override bool Equals(object obj) => Equals(obj as CorStepper);
+		public bool Equals(CorStepper? other) => !(other is null) && RawObject == other.RawObject;
+		public override bool Equals(object? obj) => Equals(obj as CorStepper);
 		public override int GetHashCode() => RawObject.GetHashCode();
 		public override string ToString() => $"[Stepper] HC={GetHashCode():X8} Active={IsActive}";
 	}

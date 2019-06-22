@@ -58,7 +58,7 @@ namespace dndbg.Engine {
 		internal Func<DebugEventBreakpointConditionContext, bool> Condition { get; }
 		public DebugEventBreakpointKind EventKind { get; }
 
-		internal DnDebugEventBreakpoint(DebugEventBreakpointKind eventKind, Func<DebugEventBreakpointConditionContext, bool> cond) {
+		internal DnDebugEventBreakpoint(DebugEventBreakpointKind eventKind, Func<DebugEventBreakpointConditionContext, bool>? cond) {
 			EventKind = eventKind;
 			Condition = cond ?? defaultCond;
 		}

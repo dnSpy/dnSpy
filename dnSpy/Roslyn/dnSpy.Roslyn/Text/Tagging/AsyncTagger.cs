@@ -44,7 +44,7 @@ namespace dnSpy.Roslyn.Text.Tagging {
 	abstract class AsyncTagger<TTagType, TUserAsyncState> : ITagger<TTagType>, IDisposable where TTagType : ITag where TUserAsyncState : new() {
 		readonly Dictionary<int, IEnumerable<ITagSpan<TTagType>>> cachedTags;
 		readonly object lockObj;
-		SnapshotState lastSnapshotState;
+		SnapshotState? lastSnapshotState;
 
 		public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
 
@@ -91,7 +91,7 @@ namespace dnSpy.Roslyn.Text.Tagging {
 			public ITagSpan<TTagType>[] Tags { get; }
 
 			public TagsResult(SnapshotSpan span, ITagSpan<TTagType>[] tags) {
-				if (span.Snapshot == null)
+				if (span.Snapshot is null)
 					throw new ArgumentException();
 				Span = span;
 				Tags = tags ?? throw new ArgumentNullException(nameof(tags));
@@ -113,7 +113,7 @@ namespace dnSpy.Roslyn.Text.Tagging {
 			readonly List<TagsResult> tagsResultList;
 			readonly List<NormalizedSnapshotSpanCollection> jobs;
 			readonly List<TagsResult> currentResult;
-			HashSet<SnapshotSpan> snapshotHash;
+			HashSet<SnapshotSpan>? snapshotHash;
 
 			public GetTagsStateImpl(CancellationToken cancellationToken)
 				: base(cancellationToken) {
@@ -147,7 +147,7 @@ namespace dnSpy.Roslyn.Text.Tagging {
 					return;
 				}
 
-				if (snapshotHash == null)
+				if (snapshotHash is null)
 					snapshotHash = new HashSet<SnapshotSpan>();
 				foreach (var r in currentResult)
 					snapshotHash.Add(r.Span);
@@ -161,7 +161,7 @@ namespace dnSpy.Roslyn.Text.Tagging {
 			public TagsResult[] GetResult() {
 				Debug.Assert(jobs.Count == 0);
 				Debug.Assert(currentResult.Count == 0);
-				Debug.Assert(snapshotHash == null || snapshotHash.Count == 0);
+				Debug.Assert(snapshotHash is null || snapshotHash.Count == 0);
 				var result = tagsResultList.ToArray();
 				tagsResultList.Clear();
 				currentResult.Clear();
@@ -170,7 +170,7 @@ namespace dnSpy.Roslyn.Text.Tagging {
 				return result;
 			}
 
-			public NormalizedSnapshotSpanCollection TryGetJob() {
+			public NormalizedSnapshotSpanCollection? TryGetJob() {
 				if (jobs.Count == 0)
 					return null;
 				int index = jobs.Count - 1;
@@ -189,8 +189,8 @@ namespace dnSpy.Roslyn.Text.Tagging {
 		}
 
 		protected void RefreshAllTags(ITextSnapshot snapshot) {
-			Debug.Assert(snapshot != null);
-			if (snapshot == null)
+			Debug.Assert(!(snapshot is null));
+			if (snapshot is null)
 				return;
 			lock (lockObj) {
 				lastSnapshotState?.Cancel();
@@ -208,10 +208,10 @@ namespace dnSpy.Roslyn.Text.Tagging {
 			var snapshot = spans[0].Snapshot;
 
 			// The common case is spans.Count == 1, so try to prevent extra allocations
-			IEnumerable<ITagSpan<TTagType>> singleResult = null;
-			List<ITagSpan<TTagType>> multipleResults = null;
+			IEnumerable<ITagSpan<TTagType>>? singleResult = null;
+			List<ITagSpan<TTagType>>? multipleResults = null;
 			SnapshotSpan? singleMissingSpan = null;
-			List<SnapshotSpan> multipleMissingSpans = null;
+			List<SnapshotSpan>? multipleMissingSpans = null;
 			lock (lockObj) {
 				if (lastSnapshotState?.Snapshot != snapshot) {
 					lastSnapshotState?.Cancel();
@@ -221,34 +221,35 @@ namespace dnSpy.Roslyn.Text.Tagging {
 					lastSnapshotState = new SnapshotState(snapshot);
 					lastSnapshotState.AddRef();
 				}
+				Debug.Assert(!(lastSnapshotState is null));
 
 				foreach (var span in spans) {
 					if (cachedTags.TryGetValue(span.Start.Position, out var tags)) {
-						if (singleResult == null)
+						if (singleResult is null)
 							singleResult = tags;
 						else {
-							if (multipleResults == null)
+							if (multipleResults is null)
 								multipleResults = new List<ITagSpan<TTagType>>(singleResult);
 							multipleResults.AddRange(tags);
 						}
 					}
 					else {
-						if (singleMissingSpan == null)
+						if (singleMissingSpan is null)
 							singleMissingSpan = span;
 						else {
-							if (multipleMissingSpans == null)
+							if (multipleMissingSpans is null)
 								multipleMissingSpans = new List<SnapshotSpan>() { singleMissingSpan.Value };
 							multipleMissingSpans.Add(span);
 						}
 					}
 				}
 			}
-			Debug.Assert(multipleResults == null || multipleResults.Count >= 2);
-			Debug.Assert(multipleMissingSpans == null || multipleMissingSpans.Count >= 2);
+			Debug.Assert(multipleResults is null || multipleResults.Count >= 2);
+			Debug.Assert(multipleMissingSpans is null || multipleMissingSpans.Count >= 2);
 
-			if (singleMissingSpan != null) {
+			if (!(singleMissingSpan is null)) {
 				if (spans.Count != (multipleMissingSpans?.Count ?? 1)) {
-					spans = multipleMissingSpans != null ?
+					spans = !(multipleMissingSpans is null) ?
 						new NormalizedSnapshotSpanCollection(multipleMissingSpans) :
 						new NormalizedSnapshotSpanCollection(singleMissingSpan.Value);
 				}
@@ -294,11 +295,11 @@ namespace dnSpy.Roslyn.Text.Tagging {
 
 		async Task<TagsResult[]> GetTagsAsync(SnapshotState snapshotState) {
 			try {
-				NormalizedSnapshotSpanCollection spans;
+				NormalizedSnapshotSpanCollection? spans;
 				for (;;) {
 					lock (lockObj) {
 						spans = snapshotState.GetTagsStateImpl.TryGetJob();
-						if (spans == null) {
+						if (spans is null) {
 							snapshotState.TaskStarted = false;
 							return snapshotState.GetTagsStateImpl.GetResult();
 						}

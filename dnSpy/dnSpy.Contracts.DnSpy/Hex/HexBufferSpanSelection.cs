@@ -35,7 +35,7 @@ namespace dnSpy.Contracts.Hex {
 		public HexBufferSpan BufferSpan { get; }
 
 		/// <summary>
-		/// Selection flags or null
+		/// Selection flags
 		/// </summary>
 		public HexSpanSelectionFlags SelectionFlags { get; }
 
@@ -63,7 +63,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="obj">Object</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is HexBufferSpanSelection && Equals((HexBufferSpanSelection)obj);
+		public override bool Equals(object? obj) => obj is HexBufferSpanSelection && Equals((HexBufferSpanSelection)obj);
 
 		/// <summary>
 		/// GetHashCode()

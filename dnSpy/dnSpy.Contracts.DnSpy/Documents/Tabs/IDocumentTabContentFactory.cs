@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// </summary>
 		/// <param name="context">Context</param>
 		/// <returns></returns>
-		DocumentTabContent Create(IDocumentTabContentFactoryContext context);
+		DocumentTabContent? Create(IDocumentTabContentFactoryContext context);
 
 		/// <summary>
 		/// Serializes a <see cref="DocumentTabContent"/> instance. Returns a unique guid if it was
@@ -51,7 +51,7 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// <param name="section">Section with serialized content</param>
 		/// <param name="context">Context</param>
 		/// <returns></returns>
-		DocumentTabContent Deserialize(Guid guid, ISettingsSection section, IDocumentTabContentFactoryContext context);
+		DocumentTabContent? Deserialize(Guid guid, ISettingsSection section, IDocumentTabContentFactoryContext context);
 	}
 
 	/// <summary>Metadata</summary>

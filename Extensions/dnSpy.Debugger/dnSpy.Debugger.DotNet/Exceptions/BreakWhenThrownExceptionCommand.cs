@@ -34,10 +34,10 @@ namespace dnSpy.Debugger.DotNet.Exceptions {
 			protected CommandBase(Lazy<DbgExceptionSettingsService> dbgExceptionSettingsService) =>
 				this.dbgExceptionSettingsService = dbgExceptionSettingsService;
 
-			protected sealed override string CreateContext(IMenuItemContext context) => GetExceptionTypeName(context);
+			protected sealed override string? CreateContext(IMenuItemContext context) => GetExceptionTypeName(context);
 
 			public override void Execute(string context) {
-				if (context == null)
+				if (context is null)
 					return;
 				var id = new DbgExceptionId(PredefinedExceptionCategories.DotNet, context);
 				if (dbgExceptionSettingsService.Value.TryGetSettings(id, out var settings)) {
@@ -52,9 +52,9 @@ namespace dnSpy.Debugger.DotNet.Exceptions {
 				}
 			}
 
-			string GetExceptionTypeName(IMenuItemContext context) {
+			string? GetExceptionTypeName(IMenuItemContext context) {
 				var td = GetTypeDef(context);
-				if (td == null)
+				if (td is null)
 					return null;
 				if (!IsException(td))
 					return null;
@@ -62,46 +62,47 @@ namespace dnSpy.Debugger.DotNet.Exceptions {
 			}
 
 			static bool IsException(TypeDef type) {
-				if (IsSystemException(type))
+				TypeDef? td = type;
+				if (IsSystemException(td))
 					return true;
-				for (int i = 0; i < 1000 && type != null; i++) {
-					if (IsSystemException(type.BaseType))
+				for (int i = 0; i < 1000 && !(td is null); i++) {
+					if (IsSystemException(td.BaseType))
 						return true;
-					var bt = type.BaseType;
-					type = bt == null ? null : bt.ScopeType.ResolveTypeDef();
+					var bt = td.BaseType;
+					td = bt?.ScopeType.ResolveTypeDef();
 				}
 				return false;
 			}
 
 			static bool IsSystemException(ITypeDefOrRef type) =>
-				type != null &&
-				type.DeclaringType == null &&
+				!(type is null) &&
+				type.DeclaringType is null &&
 				type.Namespace == "System" &&
 				type.Name == "Exception" &&
 				type.DefinitionAssembly.IsCorLib();
 
 			static string GetExceptionString(TypeDef td) => td.ReflectionFullName;
 
-			protected abstract TypeDef GetTypeDef(IMenuItemContext context);
+			protected abstract TypeDef? GetTypeDef(IMenuItemContext context);
 
-			protected TypeDef GetTypeDefFromTreeNodes(IMenuItemContext context, string guid) {
+			protected TypeDef? GetTypeDefFromTreeNodes(IMenuItemContext context, string guid) {
 				if (context.CreatorObject.Guid != new Guid(guid))
 					return null;
 				var nodes = context.Find<TreeNodeData[]>();
-				if (nodes == null || nodes.Length != 1)
+				if (nodes is null || nodes.Length != 1)
 					return null;
 				var node = nodes[0] as IMDTokenNode;
-				if (node == null)
+				if (node is null)
 					return null;
 				return (node.Reference as ITypeDefOrRef).ResolveTypeDef();
 			}
 
-			protected TypeDef GetTypeDefFromReference(IMenuItemContext context, string guid) {
+			protected TypeDef? GetTypeDefFromReference(IMenuItemContext context, string guid) {
 				if (context.CreatorObject.Guid != new Guid(guid))
 					return null;
 
 				var @ref = context.Find<TextReference>();
-				if (@ref == null || @ref.Reference == null)
+				if (@ref is null || @ref.Reference is null)
 					return null;
 
 				return (@ref.Reference as ITypeDefOrRef).ResolveTypeDef();
@@ -118,7 +119,7 @@ namespace dnSpy.Debugger.DotNet.Exceptions {
 				: base(dbgExceptionSettingsService) {
 			}
 
-			protected override TypeDef GetTypeDef(IMenuItemContext context) => GetTypeDefFromTreeNodes(context, MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID);
+			protected override TypeDef? GetTypeDef(IMenuItemContext context) => GetTypeDefFromTreeNodes(context, MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID);
 		}
 
 		[ExportMenuItem(Header = "res:BreakWhenExceptionThrownCommand", Icon = DsImagesAttribute.Add, Group = MenuConstants.GROUP_CTX_DOCVIEWER_DEBUG, Order = 1000)]
@@ -131,7 +132,7 @@ namespace dnSpy.Debugger.DotNet.Exceptions {
 				: base(dbgExceptionSettingsService) {
 			}
 
-			protected override TypeDef GetTypeDef(IMenuItemContext context) => GetTypeDefFromReference(context, MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID);
+			protected override TypeDef? GetTypeDef(IMenuItemContext context) => GetTypeDefFromReference(context, MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID);
 		}
 	}
 }

@@ -42,9 +42,9 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 
 	[Export(typeof(ICodeBreakpointsContent))]
 	sealed class CodeBreakpointsContent : ICodeBreakpointsContent {
-		public object UIObject => codeBreakpointsControl;
-		public IInputElement FocusedElement => codeBreakpointsControl.ListView;
-		public FrameworkElement ZoomElement => codeBreakpointsControl;
+		public object? UIObject => codeBreakpointsControl;
+		public IInputElement? FocusedElement => codeBreakpointsControl.ListView;
+		public FrameworkElement? ZoomElement => codeBreakpointsControl;
 		public ListView ListView => codeBreakpointsControl.ListView;
 		public CodeBreakpointsOperations Operations { get; }
 

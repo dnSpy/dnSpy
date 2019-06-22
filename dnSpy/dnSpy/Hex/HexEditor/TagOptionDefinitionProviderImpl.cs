@@ -73,7 +73,7 @@ namespace dnSpy.Hex.HexEditor {
 			}
 		}
 
-		public override string GetSubGroup(WpfHexView hexView) {
+		public override string? GetSubGroup(WpfHexView hexView) {
 			foreach (var lz in hexEditorOptionsDefinitions) {
 				if (hexView.Roles.Contains(lz.Metadata.SubGroup))
 					return lz.Metadata.SubGroup;

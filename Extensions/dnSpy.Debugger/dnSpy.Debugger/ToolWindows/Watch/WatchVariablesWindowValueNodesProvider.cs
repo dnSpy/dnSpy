@@ -53,7 +53,7 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 			if ((uint)windowIndex >= (uint)providers.Length)
 				throw new ArgumentOutOfRangeException(nameof(windowIndex));
 			var provider = providers[windowIndex];
-			if (provider == null) {
+			if (provider is null) {
 				var savedExpressions = watchWindowExpressionsSettings.Value.GetExpressions(windowIndex);
 				provider = new WatchVariablesWindowValueNodesProviderImpl(dbgObjectIdService.Value, savedExpressions, expressions => watchWindowExpressionsSettings.Value.SetExpressions(windowIndex, expressions));
 				providers[windowIndex] = provider;
@@ -66,7 +66,7 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 		public sealed override bool CanAddRemoveExpressions => true;
 		public abstract override void DeleteExpressions(string[] ids);
 		public abstract override void ClearAllExpressions();
-		public abstract override void EditExpression(string id, string expression);
+		public abstract override void EditExpression(string? id, string expression);
 		public abstract override void AddExpressions(string[] expressions);
 	}
 
@@ -81,7 +81,7 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 			public string Id { get; }
 			public string Expression { get; set; }
 			public bool ForceEval { get; set; }
-			public object ExpressionEvaluatorState { get; set; }
+			public object? ExpressionEvaluatorState { get; set; }
 
 			public ExpressionInfo(string id, string expression, bool forceEval) {
 				Id = id ?? throw new ArgumentNullException(nameof(id));
@@ -142,7 +142,7 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 					realEvalOptions |= DbgEvaluationOptions.NoSideEffects;
 				Debug.Assert(((realEvalOptions & DbgEvaluationOptions.NoFuncEval) != 0) == ((realNodeEvalOptions & DbgValueNodeEvaluationOptions.NoFuncEval) != 0));
 				info.ForceEval = false;
-				if (info.ExpressionEvaluatorState == null)
+				if (info.ExpressionEvaluatorState is null)
 					info.ExpressionEvaluatorState = language.ExpressionEvaluator.CreateExpressionEvaluatorState();
 				infos[i] = new DbgExpressionEvaluationInfo(info.Expression, realNodeEvalOptions, realEvalOptions, info.ExpressionEvaluatorState);
 			}
@@ -165,8 +165,8 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 			// IDs are also sortable
 			foreach (var id in ids.OrderByDescending(a => a, StringComparer.Ordinal)) {
 				var (index, info) = FindPrevExpression(lastIndex, id);
-				Debug.Assert(info != null);
-				Debug.Assert((index < 0) == (info == null));
+				Debug.Assert(!(info is null));
+				Debug.Assert((index < 0) == (info is null));
 				if (index < 0)
 					continue;
 				lastIndex = index;
@@ -175,7 +175,7 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 			OnExpressionsChanged();
 		}
 
-		(int index, ExpressionInfo info) FindPrevExpression(int index, string id) {
+		(int index, ExpressionInfo? info) FindPrevExpression(int index, string id) {
 			if (index >= expressions.Count)
 				index = expressions.Count - 1;
 			for (; index >= 0; index--) {
@@ -191,7 +191,7 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 			OnExpressionsChanged();
 		}
 
-		public override void EditExpression(string id, string expression) {
+		public override void EditExpression(string? id, string expression) {
 			var info = expressions.First(a => a.Id == id);
 			info.Expression = expression;
 			info.ForceEval = true;

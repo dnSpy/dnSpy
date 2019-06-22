@@ -51,11 +51,11 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		DocumentViewer TryGetDocumentViewer() {
-			if (__documentViewer == null)
+			if (__documentViewer is null)
 				__documentViewer = DocumentViewer.TryGetInstance(wpfTextView);
 			return __documentViewer;
 		}
-		DocumentViewer __documentViewer;
+		DocumentViewer? __documentViewer;
 
 		readonly struct MouseReferenceInfo {
 			public SpanData<ReferenceInfo>? SpanData { get; }
@@ -64,7 +64,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			readonly int position;
 			readonly int versionNumber;
 
-			public bool IsClickable => SpanData != null || (RealSpanData != null && Keyboard.Modifiers == ModifierKeys.Control);
+			public bool IsClickable => !(SpanData is null) || (!(RealSpanData is null) && Keyboard.Modifiers == ModifierKeys.Control);
 
 			public MouseReferenceInfo(SpanData<ReferenceInfo>? spanData, SpanData<ReferenceInfo>? realSpanData, VirtualSnapshotPoint point) {
 				SpanData = spanData;
@@ -83,19 +83,19 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public override void PostprocessMouseLeftButtonDown(MouseButtonEventArgs e) {
 			RestoreState();
 			clickedRef = GetReferenceCore(e);
-			if (clickedRef != null)
+			if (!(clickedRef is null))
 				UpdateCursor(clickedRef.Value.IsClickable);
 		}
 
 		void UpdateCursor(bool canClick) {
-			if (oldCursor == null)
+			if (oldCursor is null)
 				oldCursor = wpfTextView.VisualElement.Cursor;
 			wpfTextView.VisualElement.Cursor = canClick ? Cursors.Hand : oldCursor;
 			oldModifierKeys = Keyboard.Modifiers;
 		}
 
 		void RestoreState() {
-			if (oldCursor != null)
+			if (!(oldCursor is null))
 				wpfTextView.VisualElement.Cursor = oldCursor;
 			clickedRef = null;
 			oldCursor = null;
@@ -103,9 +103,9 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		bool CanClick(MouseEventArgs e, MouseReferenceInfo? newRef) {
-			if (newRef == null || !newRef.Value.IsClickable)
+			if (newRef is null || !newRef.Value.IsClickable)
 				return false;
-			if (clickedRef == null)
+			if (clickedRef is null)
 				return true;
 			if (!clickedRef.Value.IsClickable)
 				return false;
@@ -117,11 +117,11 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				var newRef = GetReferenceCore(e);
 				if (!CanClick(e, newRef))
 					return;
-				Debug.Assert(newRef != null);
+				Debug.Assert(!(newRef is null));
 				var documentViewer = TryGetDocumentViewer();
-				if (documentViewer == null)
+				if (documentViewer is null)
 					return;
-				if (newRef?.RealSpanData == null)
+				if (newRef?.RealSpanData is null)
 					return;
 
 				bool newTab = (Keyboard.Modifiers & ModifierKeys.Control) != 0;
@@ -144,19 +144,19 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				return null;
 
 			var documentViewer = TryGetDocumentViewer();
-			if (documentViewer == null)
+			if (documentViewer is null)
 				return null;
 
 			var loc = MouseLocation.Create(documentViewer.TextView, e, insertionPosition: false);
-			if (loc == null)
+			if (loc is null)
 				return null;
 			if (loc.Position.IsInVirtualSpace)
 				return new MouseReferenceInfo(null, null, loc.Position);
 			int pos = loc.Position.Position.Position;
 			var spanData = documentViewer.Content.ReferenceCollection.Find(pos, false);
-			if (spanData == null)
+			if (spanData is null)
 				return new MouseReferenceInfo(null, spanData, loc.Position);
-			if (spanData.Value.Data.Reference == null)
+			if (spanData.Value.Data.Reference is null)
 				return new MouseReferenceInfo(null, spanData, loc.Position);
 			if (Keyboard.Modifiers != ModifierKeys.Control) {
 				if (spanData.Value.Data.IsDefinition)
@@ -168,7 +168,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			return new MouseReferenceInfo(spanData, spanData, loc.Position);
 		}
 		MouseReferenceInfo? clickedRef;
-		Cursor oldCursor;
+		Cursor? oldCursor;
 
 		public override void PostprocessMouseLeave(MouseEventArgs e) => RestoreState();
 

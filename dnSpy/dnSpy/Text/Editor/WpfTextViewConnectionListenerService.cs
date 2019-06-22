@@ -31,7 +31,7 @@ namespace dnSpy.Text.Editor {
 		readonly ListenerInfo[] listenerInfos;
 
 		public WpfTextViewConnectionListenerService(IWpfTextView wpfTextView, Lazy<IWpfTextViewConnectionListener, IContentTypeAndTextViewRoleMetadata>[] wpfTextViewConnectionListeners, Lazy<ITextViewConnectionListener, IContentTypeAndTextViewRoleMetadata>[] textViewConnectionListeners) {
-			if (wpfTextViewConnectionListeners == null)
+			if (wpfTextViewConnectionListeners is null)
 				throw new ArgumentNullException(nameof(wpfTextViewConnectionListeners));
 			this.wpfTextView = wpfTextView ?? throw new ArgumentNullException(nameof(wpfTextView));
 			var list = new List<ListenerInfo>();

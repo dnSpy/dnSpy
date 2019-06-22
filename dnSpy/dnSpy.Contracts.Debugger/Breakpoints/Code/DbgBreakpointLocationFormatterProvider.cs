@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// </summary>
 		/// <param name="location">Breakpoint location</param>
 		/// <returns></returns>
-		public abstract DbgBreakpointLocationFormatter Create(DbgCodeLocation location);
+		public abstract DbgBreakpointLocationFormatter? Create(DbgCodeLocation location);
 	}
 
 	/// <summary>Metadata</summary>

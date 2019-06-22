@@ -28,10 +28,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// </summary>
 	static class TIAHelper {
 		readonly struct Info {
-			public readonly string Scope;
-			public readonly string Identifier;
+			public readonly string? Scope;
+			public readonly string? Identifier;
 
-			public Info(string scope, string identifier) {
+			public Info(string? scope, string? identifier) {
 				Scope = scope;
 				Identifier = identifier;
 			}
@@ -39,15 +39,15 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			public bool Equals(Info other) => StringComparer.OrdinalIgnoreCase.Equals(Scope, other.Scope) && Identifier == other.Identifier;
 		}
 
-		static Info? GetInfo(DmdType td) {
-			if ((object)td == null)
+		static Info? GetInfo(DmdType? td) {
+			if (td is null)
 				return null;
 			if (td.IsWindowsRuntime)
 				return null;
 
-			string scope = null, identifier = null;
+			string? scope = null, identifier = null;
 			var tia = td.FindCustomAttribute("System.Runtime.InteropServices.TypeIdentifierAttribute", inherit: false);
-			if (tia != null) {
+			if (!(tia is null)) {
 				if (tia.ConstructorArguments.Count >= 2) {
 					if (tia.ConstructorArguments[0].ArgumentType != td.AppDomain.System_String)
 						return null;
@@ -64,13 +64,13 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					return null;
 			}
 
-			if (identifier == null) {
-				DmdCustomAttributeData gca;
+			if (identifier is null) {
+				DmdCustomAttributeData? gca;
 				if (td.IsInterface && td.IsImport)
 					gca = td.FindCustomAttribute("System.Runtime.InteropServices.GuidAttribute", inherit: false);
 				else
 					gca = td.Module.Assembly.FindCustomAttribute("System.Runtime.InteropServices.GuidAttribute", inherit: false);
-				if (gca == null)
+				if (gca is null)
 					return null;
 				if (gca.ConstructorArguments.Count < 1)
 					return null;
@@ -88,12 +88,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		static bool CheckEquivalent(DmdType td) {
-			Debug.Assert((object)td != null);
+			Debug.Assert(!(td is null));
 
-			for (int i = 0; (object)td != null && i < 1000; i++) {
+			for (int i = 0; !(td is null) && i < 1000; i++) {
 				if (i != 0) {
 					var info = GetInfo(td);
-					if (info == null)
+					if (info is null)
 						return false;
 				}
 
@@ -108,7 +108,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					return false;
 
 				var declType = td.DeclaringType;
-				if ((object)declType == null)
+				if (declType is null)
 					return td.IsPublic;
 
 				if (!td.IsNestedPublic)
@@ -120,21 +120,23 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		public static bool IsTypeDefEquivalent(DmdType td) {
-			Debug.Assert((object)td != null);
-			if (GetInfo(td) == null)
+			Debug.Assert(!(td is null));
+			if (GetInfo(td) is null)
 				return false;
 			return CheckEquivalent(td);
 		}
 
 		static bool IsDelegate(DmdType td) => td.BaseType == td.AppDomain.System_MulticastDelegate;
 
-		public static bool Equivalent(DmdType td1, DmdType td2) {
+		public static bool Equivalent(DmdType? td1, DmdType? td2) {
 			var info1 = GetInfo(td1);
-			if (info1 == null)
+			if (info1 is null)
 				return false;
+			Debug.Assert(!(td1 is null));
 			var info2 = GetInfo(td2);
-			if (info2 == null)
+			if (info2 is null)
 				return false;
+			Debug.Assert(!(td2 is null));
 			if (!CheckEquivalent(td1) || !CheckEquivalent(td2))
 				return false;
 			if (!info1.Value.Equals(info2.Value))
@@ -150,7 +152,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				else {
 					var bt1 = td1.BaseType;
 					var bt2 = td2.BaseType;
-					if ((object)bt1 == null || (object)bt2 == null)
+					if (bt1 is null || bt2 is null)
 						return false;
 					if (IsDelegate(td1)) {
 						if (!IsDelegate(td2))
@@ -172,9 +174,9 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 				td1 = td1.DeclaringType;
 				td2 = td2.DeclaringType;
-				if ((object)td1 == null && (object)td2 == null)
+				if (td1 is null && td2 is null)
 					break;
-				if ((object)td1 == null || (object)td2 == null)
+				if (td1 is null || td2 is null)
 					return false;
 			}
 
@@ -184,7 +186,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		static bool DelegateEquals(DmdType td1, DmdType td2) {
 			var invoke1 = td1.GetMethod("Invoke");
 			var invoke2 = td2.GetMethod("Invoke");
-			if ((object)invoke1 == null || (object)invoke2 == null)
+			if (invoke1 is null || invoke2 is null)
 				return false;
 
 			//TODO: Compare method signatures. Prevent infinite recursion...

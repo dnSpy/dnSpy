@@ -32,6 +32,7 @@ namespace MakeEverythingPublic {
 		// Increment it if something changes so the files are re-created
 		const string VERSION = "v1";
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
 		[Required]
 		public string IVTString { get; set; }
 
@@ -46,6 +47,7 @@ namespace MakeEverythingPublic {
 
 		[Output]
 		public ITaskItem[] OutputReferencePath { get; private set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
 
 		public override bool Execute() {
 			if (string.IsNullOrWhiteSpace(IVTString)) {
@@ -71,7 +73,7 @@ namespace MakeEverythingPublic {
 			}
 
 			OutputReferencePath = new ITaskItem[ReferencePath.Length];
-			byte[] ivtBlob = null;
+			byte[]? ivtBlob = null;
 			for (int i = 0; i < ReferencePath.Length; i++) {
 				var file = ReferencePath[i];
 				OutputReferencePath[i] = file;
@@ -98,7 +100,7 @@ namespace MakeEverythingPublic {
 					continue;
 
 				if (!File.Exists(patchedFilename)) {
-					if (ivtBlob == null)
+					if (ivtBlob is null)
 						ivtBlob = CreateIVTBlob(IVTString);
 					var data = File.ReadAllBytes(filename);
 					try {

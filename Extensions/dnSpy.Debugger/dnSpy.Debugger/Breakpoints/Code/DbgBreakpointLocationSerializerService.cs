@@ -29,7 +29,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 	abstract class DbgCodeLocationSerializerService {
 		public abstract bool CanSerialize(DbgCodeLocation location);
 		public abstract void Serialize(ISettingsSection section, DbgCodeLocation location);
-		public abstract DbgCodeLocation Deserialize(ISettingsSection section);
+		public abstract DbgCodeLocation? Deserialize(ISettingsSection? section);
 	}
 
 	[Export(typeof(DbgCodeLocationSerializerService))]
@@ -40,7 +40,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		DbgCodeLocationSerializerServiceImpl([ImportMany] IEnumerable<Lazy<DbgCodeLocationSerializer, IDbgCodeLocationSerializerMetadata>> dbgCodeLocationSerializers) =>
 			this.dbgCodeLocationSerializers = dbgCodeLocationSerializers.ToArray();
 
-		Lazy<DbgCodeLocationSerializer, IDbgCodeLocationSerializerMetadata> TryGetSerializer(string type) {
+		Lazy<DbgCodeLocationSerializer, IDbgCodeLocationSerializerMetadata>? TryGetSerializer(string type) {
 			foreach (var lz in dbgCodeLocationSerializers) {
 				if (Array.IndexOf(lz.Metadata.Types, type) >= 0)
 					return lz;
@@ -48,35 +48,35 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			return null;
 		}
 
-		public override bool CanSerialize(DbgCodeLocation location) => TryGetSerializer(location.Type) != null;
+		public override bool CanSerialize(DbgCodeLocation location) => !(TryGetSerializer(location.Type) is null);
 
 		public override void Serialize(ISettingsSection section, DbgCodeLocation location) {
-			if (section == null)
+			if (section is null)
 				throw new ArgumentNullException(nameof(section));
-			if (location == null)
+			if (location is null)
 				throw new ArgumentNullException(nameof(location));
 
 			var bpType = location.Type;
 			var serializer = TryGetSerializer(bpType);
-			Debug.Assert(serializer != null);
-			if (serializer == null)
+			Debug.Assert(!(serializer is null));
+			if (serializer is null)
 				return;
 
 			section.Attribute("__BPT", bpType);
 			serializer.Value.Serialize(section, location);
 		}
 
-		public override DbgCodeLocation Deserialize(ISettingsSection section) {
-			if (section == null)
+		public override DbgCodeLocation? Deserialize(ISettingsSection? section) {
+			if (section is null)
 				return null;
 
 			var typeFullName = section.Attribute<string>("__BPT");
-			Debug.Assert(typeFullName != null);
-			if (typeFullName == null)
+			Debug.Assert(!(typeFullName is null));
+			if (typeFullName is null)
 				return null;
 			var serializer = TryGetSerializer(typeFullName);
-			Debug.Assert(serializer != null);
-			if (serializer == null)
+			Debug.Assert(!(serializer is null));
+			if (serializer is null)
 				return null;
 
 			return serializer.Value.Deserialize(section);

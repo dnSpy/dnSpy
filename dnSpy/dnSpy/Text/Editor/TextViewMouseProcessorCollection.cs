@@ -29,11 +29,11 @@ using Microsoft.VisualStudio.Text.Operations;
 namespace dnSpy.Text.Editor {
 	sealed class TextViewMouseProcessorCollection {
 		readonly IWpfTextView wpfTextView;
-		readonly IDsWpfTextViewImpl dsWpfTextView;
+		readonly IDsWpfTextViewImpl? dsWpfTextView;
 		readonly Lazy<IMouseProcessorProvider, IOrderableContentTypeAndTextViewRoleMetadata>[] mouseProcessorProviders;
 		readonly IEditorOperationsFactoryService editorOperationsFactoryService;
 		readonly Func<MouseEventArgs, bool> allowEventDelegate;
-		MouseProcessorCollection mouseProcessorCollection;
+		MouseProcessorCollection? mouseProcessorCollection;
 
 		public TextViewMouseProcessorCollection(IWpfTextView wpfTextView, Lazy<IMouseProcessorProvider, IOrderableContentTypeAndTextViewRoleMetadata>[] mouseProcessorProviders, IEditorOperationsFactoryService editorOperationsFactoryService) {
 			this.wpfTextView = wpfTextView;
@@ -47,7 +47,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		bool AllowMouseEvent(MouseEventArgs e) {
-			if (dsWpfTextView != null && dsWpfTextView.IsMouseOverOverlayLayerElement(e)) {
+			if (!(dsWpfTextView is null) && dsWpfTextView.IsMouseOverOverlayLayerElement(e)) {
 				e.Handled = true;
 				return false;
 			}
@@ -63,10 +63,10 @@ namespace dnSpy.Text.Editor {
 				if (!wpfTextView.TextDataModel.ContentType.IsOfAnyType(provider.Metadata.ContentTypes))
 					continue;
 				var mouseProcessor = provider.Value.GetAssociatedProcessor(wpfTextView);
-				if (mouseProcessor != null)
+				if (!(mouseProcessor is null))
 					list.Add(mouseProcessor);
 			}
-			UIElement manipulationElem = null;//TODO:
+			UIElement? manipulationElem = null;//TODO:
 			mouseProcessorCollection = new MouseProcessorCollection(wpfTextView.VisualElement, manipulationElem, new DefaultTextViewMouseProcessor(wpfTextView, editorOperationsFactoryService), list.ToArray(), allowEventDelegate);
 		}
 
@@ -75,7 +75,7 @@ namespace dnSpy.Text.Editor {
 		void WpfTextView_Closed(object sender, EventArgs e) {
 			wpfTextView.Closed -= WpfTextView_Closed;
 			wpfTextView.TextDataModel.ContentTypeChanged -= TextDataModel_ContentTypeChanged;
-			mouseProcessorCollection.Dispose();
+			mouseProcessorCollection?.Dispose();
 		}
 	}
 }

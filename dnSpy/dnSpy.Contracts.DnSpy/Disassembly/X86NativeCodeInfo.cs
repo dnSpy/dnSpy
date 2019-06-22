@@ -33,7 +33,7 @@ namespace dnSpy.Contracts.Disassembly {
 		/// Constructor
 		/// </summary>
 		/// <param name="variables">Variables or null</param>
-		public X86NativeCodeInfo(X86Variable[] variables) =>
+		public X86NativeCodeInfo(X86Variable[]? variables) =>
 			Variables = variables ?? Array.Empty<X86Variable>();
 	}
 }

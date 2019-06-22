@@ -34,9 +34,9 @@ namespace dnSpy.Text {
 
 		public string TypeName { get; }
 		public string DisplayName => TypeName;
-		public string MimeType { get; }
+		public string? MimeType { get; }
 
-		public ContentType(string typeName, string mimeType, IEnumerable<IContentType> baseTypes) {
+		public ContentType(string typeName, string? mimeType, IEnumerable<IContentType> baseTypes) {
 			TypeName = typeName;
 			MimeType = mimeType;
 			this.baseTypes = baseTypes.ToArray();

@@ -115,14 +115,14 @@ namespace dnSpy.BamlDecompiler.Baml {
 						Header = document[i]
 					};
 
-					if (prev != null) {
+					if (!(prev is null)) {
 						prev.Children.Add(current);
 						current.Parent = prev;
 						stack.Push(prev);
 					}
 				}
 				else if (IsFooter(document[i])) {
-					if (current == null)
+					if (current is null)
 						throw new Exception("Unexpected footer.");
 
 					while (!IsMatch(current.Header, document[i])) {

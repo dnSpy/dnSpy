@@ -39,7 +39,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 		}
 
 		public DecompilerProvider(DecompilerSettingsService decompilerSettingsService) {
-			Debug.Assert(decompilerSettingsService != null);
+			Debug.Assert(!(decompilerSettingsService is null));
 			this.decompilerSettingsService = decompilerSettingsService ?? throw new ArgumentNullException(nameof(decompilerSettingsService));
 		}
 
@@ -57,7 +57,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 	/// Represents the ILAst "language" used for debugging purposes.
 	/// </summary>
 	sealed class ILAstDecompiler : DecompilerBase {
-		string uniqueNameUI;
+		readonly string uniqueNameUI;
 		Guid uniqueGuid;
 		bool inlineVariables = true;
 		ILAstOptimizationStep? abortBeforeStep;
@@ -65,9 +65,10 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 		public override DecompilerSettingsBase Settings { get; }
 		const int settingsVersion = 1;
 
-		ILAstDecompiler(ILAstDecompilerSettings langSettings, double orderUI) {
+		ILAstDecompiler(ILAstDecompilerSettings langSettings, double orderUI, string uniqueNameUI) {
 			Settings = langSettings;
 			OrderUI = orderUI;
+			this.uniqueNameUI = uniqueNameUI;
 		}
 
 		public override double OrderUI { get; }
@@ -100,10 +101,10 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 			ilMethod.Body = astBuilder.Build(method, inlineVariables, context);
 
 			var stateMachineKind = StateMachineKind.None;
-			MethodDef inlinedMethod = null;
-			AsyncMethodDebugInfo asyncInfo = null;
-			string compilerName = null;
-			if (abortBeforeStep != null) {
+			MethodDef? inlinedMethod = null;
+			AsyncMethodDebugInfo? asyncInfo = null;
+			string? compilerName = null;
+			if (!(abortBeforeStep is null)) {
 				var optimizer = new ILAstOptimizer();
 				optimizer.Optimize(context, ilMethod, out stateMachineKind, out inlinedMethod, out asyncInfo, abortBeforeStep.Value);
 				compilerName = optimizer.CompilerName;
@@ -121,10 +122,10 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 			}
 
 			var allVariables = ilMethod.GetSelfAndChildrenRecursive<ILExpression>().Select(e => e.Operand as ILVariable)
-				.Where(v => v != null && !v.IsParameter).Distinct();
+				.Where(v => !(v is null) && !v.IsParameter).Distinct();
 			foreach (ILVariable v in allVariables) {
 				output.Write(IdentifierEscaper.Escape(v.Name), v.GetTextReferenceObject(), DecompilerReferenceFlags.Local | DecompilerReferenceFlags.Definition, v.IsParameter ? BoxedTextColor.Parameter : BoxedTextColor.Local);
-				if (v.Type != null) {
+				if (!(v.Type is null)) {
 					output.Write(" ", BoxedTextColor.Text);
 					output.Write(":", BoxedTextColor.Punctuation);
 					output.Write(" ", BoxedTextColor.Text);
@@ -147,7 +148,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 			}
 
 			var localVariables = new HashSet<ILVariable>(GetVariables(ilMethod));
-			var builder = new MethodDebugInfoBuilder(settingsVersion, stateMachineKind, inlinedMethod ?? method, inlinedMethod != null ? method : null, CreateSourceLocals(localVariables), CreateSourceParameters(localVariables), asyncInfo);
+			var builder = new MethodDebugInfoBuilder(settingsVersion, stateMachineKind, inlinedMethod ?? method, !(inlinedMethod is null) ? method : null, CreateSourceLocals(localVariables), CreateSourceParameters(localVariables), asyncInfo);
 			builder.CompilerName = compilerName;
 			foreach (ILNode node in ilMethod.Body) {
 				node.WriteTo(output, builder);
@@ -161,14 +162,14 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 		IEnumerable<ILVariable> GetVariables(ILBlock ilMethod) {
 			foreach (var n in ilMethod.GetSelfAndChildrenRecursive(new List<ILNode>())) {
 				var expr = n as ILExpression;
-				if (expr != null) {
+				if (!(expr is null)) {
 					var v = expr.Operand as ILVariable;
-					if (v != null)
+					if (!(v is null))
 						yield return v;
 					continue;
 				}
 				var cb = n as ILTryCatchBlock.CatchBlockBase;
-				if (cb != null && cb.ExceptionVariable != null)
+				if (!(cb is null) && !(cb.ExceptionVariable is null))
 					yield return cb.ExceptionVariable;
 			}
 		}
@@ -227,17 +228,17 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 		public override void Decompile(EventDef ev, IDecompilerOutput output, DecompilationContext ctx) {
 			var eventInfo = StartKeywordBlock(output, ".event", ev);
 
-			if (ev.AddMethod != null) {
+			if (!(ev.AddMethod is null)) {
 				var info = StartKeywordBlock(output, ".add", ev.AddMethod);
 				EndKeywordBlock(output, info, CodeBracesRangeFlags.AccessorBraces);
 			}
 
-			if (ev.InvokeMethod != null) {
+			if (!(ev.InvokeMethod is null)) {
 				var info = StartKeywordBlock(output, ".invoke", ev.InvokeMethod);
 				EndKeywordBlock(output, info, CodeBracesRangeFlags.AccessorBraces);
 			}
 
-			if (ev.RemoveMethod != null) {
+			if (!(ev.RemoveMethod is null)) {
 				var info = StartKeywordBlock(output, ".remove", ev.RemoveMethod);
 				EndKeywordBlock(output, info, CodeBracesRangeFlags.AccessorBraces);
 			}
@@ -250,11 +251,11 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 			output.Write(" ", BoxedTextColor.Text);
 			output.Write(IdentifierEscaper.Escape(field.Name), field, DecompilerReferenceFlags.Definition, MetadataTextColorProvider.GetColor(field));
 			var c = field.Constant;
-			if (c != null) {
+			if (!(c is null)) {
 				output.Write(" ", BoxedTextColor.Text);
 				output.Write("=", BoxedTextColor.Operator);
 				output.Write(" ", BoxedTextColor.Text);
-				if (c.Value == null)
+				if (c.Value is null)
 					output.Write("null", BoxedTextColor.Keyword);
 				else {
 					switch (c.Type) {
@@ -319,7 +320,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 
 		public override void Decompile(TypeDef type, IDecompilerOutput output, DecompilationContext ctx) {
 			this.WriteCommentLine(output, $"Type: {type.FullName}");
-			if (type.BaseType != null) {
+			if (!(type.BaseType is null)) {
 				WriteCommentBegin(output, true);
 				output.Write("Base type: ", BoxedTextColor.Comment);
 				output.Write(IdentifierEscaper.Escape(type.BaseType.FullName), type.BaseType, DecompilerReferenceFlags.None, BoxedTextColor.Comment);
@@ -361,15 +362,13 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 		internal static IEnumerable<ILAstDecompiler> GetDebugDecompilers(DecompilerSettingsService decompilerSettingsService) {
 			double orderUI = DecompilerConstants.ILAST_ILSPY_DEBUG_ORDERUI;
 			uint id = 0x64A926A5;
-			yield return new ILAstDecompiler(decompilerSettingsService.ILAstDecompilerSettings, orderUI++) {
-				uniqueNameUI = "ILAst (unoptimized)",
+			yield return new ILAstDecompiler(decompilerSettingsService.ILAstDecompilerSettings, orderUI++, "ILAst (unoptimized)") {
 				uniqueGuid = new Guid($"CB470049-6AFB-4BDB-93DC-1BB9{id++:X8}"),
 				inlineVariables = false
 			};
 			string nextName = "ILAst (variable splitting)";
 			foreach (ILAstOptimizationStep step in Enum.GetValues(typeof(ILAstOptimizationStep))) {
-				yield return new ILAstDecompiler(decompilerSettingsService.ILAstDecompilerSettings, orderUI++) {
-					uniqueNameUI = nextName,
+				yield return new ILAstDecompiler(decompilerSettingsService.ILAstDecompilerSettings, orderUI++, nextName) {
 					uniqueGuid = new Guid($"CB470049-6AFB-4BDB-93DC-1BB9{id++:X8}"),
 					abortBeforeStep = step
 				};
@@ -379,7 +378,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 
 		public override string FileExtension => ".il";
 
-		protected override void TypeToString(IDecompilerOutput output, ITypeDefOrRef t, bool includeNamespace, IHasCustomAttribute attributeProvider = null) =>
+		protected override void TypeToString(IDecompilerOutput output, ITypeDefOrRef? t, bool includeNamespace, IHasCustomAttribute? attributeProvider = null) =>
 			t.WriteTo(output, includeNamespace ? ILNameSyntax.TypeName : ILNameSyntax.ShortTypeName);
 	}
 #endif

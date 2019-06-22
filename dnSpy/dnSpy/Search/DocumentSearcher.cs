@@ -60,9 +60,9 @@ namespace dnSpy.Search {
 		public bool TooManyResults { get; set; }
 
 		public DocumentSearcher(DocumentSearcherOptions options, IDocumentTreeView documentTreeView, IDotNetImageService dotNetImageService, SearchResultContext searchResultContext) {
-			if (options.Filter == null)
+			if (options.Filter is null)
 				throw new ArgumentException("options.Filter is null", nameof(options));
-			if (options.SearchComparer == null)
+			if (options.SearchComparer is null)
 				throw new ArgumentException("options.SearchComparer is null", nameof(options));
 			this.options = options.Clone();
 			cancellationTokenSource = new CancellationTokenSource();
@@ -99,12 +99,12 @@ namespace dnSpy.Search {
 			var task = Task.Factory.StartNew(SearchNewThread, o, cancellationToken)
 			.ContinueWith(t => {
 				var ex = t.Exception;
-				Debug.Assert(ex == null);
+				Debug.Assert(ex is null);
 			}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
 		}
 		bool hasStarted = false;
 
-		public ISearchResult SearchingResult { get; set; }
+		public ISearchResult? SearchingResult { get; set; }
 
 		void SearchNewThread(object o) {
 			try {
@@ -154,7 +154,7 @@ namespace dnSpy.Search {
 			disposed = true;
 			cancellationTokenSource.Cancel();
 			cancellationTokenSource.Dispose();
-			Debug.Assert(OnSearchCompleted != null);
+			Debug.Assert(!(OnSearchCompleted is null));
 			OnSearchCompleted?.Invoke(this, EventArgs.Empty);
 		}
 		bool disposed;
@@ -195,7 +195,7 @@ namespace dnSpy.Search {
 			if (cancellationTokenSource.IsCancellationRequested)
 				return;
 
-			Debug.Assert(OnNewSearchResults != null);
+			Debug.Assert(!(OnNewSearchResults is null));
 			OnNewSearchResults?.Invoke(this, new SearchResultEventArgs(results));
 		}
 	}

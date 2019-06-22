@@ -29,13 +29,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		readonly DmdModule module;
 		readonly bool isGenericTypeParameter;
 
-		public DmdCreatedGenericParameterType(DmdModule module, bool isGenericTypeParameter, int position, IList<DmdCustomModifier> customModifiers) : base(position, customModifiers) {
+		public DmdCreatedGenericParameterType(DmdModule module, bool isGenericTypeParameter, int position, IList<DmdCustomModifier>? customModifiers) : base(position, customModifiers) {
 			this.module = module ?? throw new ArgumentNullException(nameof(module));
 			this.isGenericTypeParameter = isGenericTypeParameter;
 		}
 
-		protected override DmdType[] CreateGenericParameterConstraints() => Array.Empty<DmdType>();
-		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => new DmdCreatedGenericParameterType(module, isGenericTypeParameter, GenericParameterPosition, customModifiers);
+		protected override DmdType[]? CreateGenericParameterConstraints() => Array.Empty<DmdType>();
+		public override DmdType WithCustomModifiers(IList<DmdCustomModifier>? customModifiers) => new DmdCreatedGenericParameterType(module, isGenericTypeParameter, GenericParameterPosition, customModifiers);
 		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : new DmdCreatedGenericParameterType(module, isGenericTypeParameter, GenericParameterPosition, null);
 	}
 }

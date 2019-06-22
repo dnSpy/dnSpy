@@ -34,14 +34,14 @@ namespace dnSpy.Text.Tagging {
 
 		public ITagAggregator<T> CreateTagAggregator<T>(ITextView textView) where T : ITag => CreateTagAggregator<T>(textView, TagAggregatorOptions.None);
 		public ITagAggregator<T> CreateTagAggregator<T>(ITextView textView, TagAggregatorOptions options) where T : ITag {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			return new TextViewTagAggregator<T>(taggerFactory, textView, options);
 		}
 
 		public ISynchronousTagAggregator<T> CreateSynchronousTagAggregator<T>(ITextView textView) where T : ITag => CreateSynchronousTagAggregator<T>(textView, TagAggregatorOptions.None);
 		public ISynchronousTagAggregator<T> CreateSynchronousTagAggregator<T>(ITextView textView, TagAggregatorOptions options) where T : ITag {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			return new TextViewTagAggregator<T>(taggerFactory, textView, options);
 		}

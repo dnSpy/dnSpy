@@ -89,6 +89,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 
 		protected ImageOptionalHeaderVM(HexBuffer buffer, PeOptionalHeaderData optionalHeader)
 			: base(optionalHeader.Span) {
+			hexFields = null!;
 			MagicVM = new UInt16HexField(optionalHeader.Magic);
 			MajorLinkerVersionVM = new ByteHexField(optionalHeader.MajorLinkerVersion, true);
 			MinorLinkerVersionVM = new ByteHexField(optionalHeader.MinorLinkerVersion, true);

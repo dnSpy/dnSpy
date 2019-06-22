@@ -29,7 +29,7 @@ namespace dnSpy.Hex.Files.PE {
 	[VSUTIL.Name(PredefinedHexFileStructureInfoProviderFactoryNames.PE)]
 	[VSUTIL.Order(Before = PredefinedHexFileStructureInfoProviderFactoryNames.Default)]
 	sealed class PeHexFileStructureInfoProviderFactory : HexFileStructureInfoProviderFactory {
-		public override HexFileStructureInfoProvider Create(HexView hexView) =>
+		public override HexFileStructureInfoProvider? Create(HexView hexView) =>
 			new PeHexFileStructureInfoProvider();
 	}
 
@@ -46,7 +46,7 @@ namespace dnSpy.Hex.Files.PE {
 
 		HexSpan? GetFieldReferenceSpan(HexBufferFile file, PeOptionalHeaderData optHdr, HexPosition position) {
 			if (optHdr.DataDirectory.Data.Span.Contains(position)) {
-				var data = (DataDirectoryData)optHdr.DataDirectory.Data.GetFieldByPosition(position).Data;
+				var data = (DataDirectoryData)optHdr.DataDirectory.Data.GetFieldByPosition(position)!.Data;
 				return DataDirectoryDataUtils.TryGetSpan(file, data, position);
 			}
 
@@ -54,14 +54,14 @@ namespace dnSpy.Hex.Files.PE {
 		}
 
 		HexSpan? GetFieldReferenceSpan(HexBufferFile file, PeSectionsData sections, HexPosition position) {
-			var data = (PeSectionData)sections.GetFieldByPosition(position)?.Data;
-			if (data == null)
+			var data = (PeSectionData?)sections.GetFieldByPosition(position)?.Data;
+			if (data is null)
 				return null;
 
 			HexSpan? span;
-			if ((span = TryGetRvaSpan(file, position, data.VirtualAddress.Data, data.VirtualSize.Data)) != null)
+			if (!((span = TryGetRvaSpan(file, position, data.VirtualAddress.Data, data.VirtualSize.Data)) is null))
 				return span;
-			if ((span = TryGetFileSpan(file, position, data.PointerToRawData.Data, data.SizeOfRawData.Data)) != null)
+			if (!((span = TryGetFileSpan(file, position, data.PointerToRawData.Data, data.SizeOfRawData.Data)) is null))
 				return span;
 
 			return null;
@@ -71,7 +71,7 @@ namespace dnSpy.Hex.Files.PE {
 			if (!rvaData.Span.Span.Contains(position))
 				return null;
 			var peHeaders = file.GetHeaders<PeHeaders>();
-			if (peHeaders == null)
+			if (peHeaders is null)
 				return null;
 			uint rva = rvaData.ReadValue();
 			if (rva == 0)
@@ -89,7 +89,7 @@ namespace dnSpy.Hex.Files.PE {
 			if (!offsetData.Span.Span.Contains(position))
 				return null;
 			var peHeaders = file.GetHeaders<PeHeaders>();
-			if (peHeaders == null)
+			if (peHeaders is null)
 				return null;
 			uint offset = offsetData.ReadValue();
 			if (offset == 0)

@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace dnSpy.Contracts.ToolWindows.Search {
@@ -98,7 +99,7 @@ namespace dnSpy.Contracts.ToolWindows.Search {
 			public IEnumerable<Token> GetTokens() {
 				for (;;) {
 					var word = GetNextWord(out bool isText);
-					if (word == null)
+					if (word is null)
 						break;
 					if (isText)
 						yield return new Token(TokenKind.Text, word);
@@ -109,7 +110,7 @@ namespace dnSpy.Contracts.ToolWindows.Search {
 				}
 			}
 
-			bool TryGetDefinition(string word, out SearchColumnDefinition def, out bool negate) {
+			bool TryGetDefinition(string word, [NotNullWhenTrue] out SearchColumnDefinition? def, out bool negate) {
 				if (word.Length != 0 && word[0] == '-') {
 					foreach (var d in definitions) {
 						if (CompareShortOptionName(word, d.ShortOptionName, out negate)) {
@@ -141,7 +142,7 @@ namespace dnSpy.Contracts.ToolWindows.Search {
 				return true;
 			}
 
-			string GetNextWord(out bool isText) {
+			string? GetNextWord(out bool isText) {
 				isText = false;
 				SkipWhitespace();
 				var currentPositionLocal = currentPosition;
@@ -188,7 +189,7 @@ namespace dnSpy.Contracts.ToolWindows.Search {
 		/// <summary>
 		/// Column id (<see cref="SearchColumnDefinition.Id"/>) or null if it can match any column.
 		/// </summary>
-		public string ColumnId { get; }
+		public string? ColumnId { get; }
 
 		/// <summary>
 		/// The text to search for in the column(s)
@@ -200,7 +201,7 @@ namespace dnSpy.Contracts.ToolWindows.Search {
 		/// </summary>
 		public bool Negate { get; }
 
-		public SearchCommand(string columnId, string searchText, bool negate) {
+		public SearchCommand(string? columnId, string searchText, bool negate) {
 			ColumnId = columnId;
 			SearchText = searchText ?? throw new ArgumentNullException(nameof(searchText));
 			Negate = negate;

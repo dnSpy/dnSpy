@@ -36,6 +36,6 @@ namespace dnSpy.Contracts.Hex.Tagging {
 		/// <param name="hexView">Hex view</param>
 		/// <param name="buffer">Buffer</param>
 		/// <returns></returns>
-		public abstract IHexTagger<T> CreateTagger<T>(HexView hexView, HexBuffer buffer) where T : HexTag;
+		public abstract IHexTagger<T>? CreateTagger<T>(HexView hexView, HexBuffer buffer) where T : HexTag;
 	}
 }

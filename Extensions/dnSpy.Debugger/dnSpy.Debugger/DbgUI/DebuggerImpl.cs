@@ -96,7 +96,7 @@ namespace dnSpy.Debugger.DbgUI {
 			}
 		}
 
-		public override string GetCurrentExecutableFilename() => startDebuggingOptionsProvider.Value.GetCurrentExecutableFilename();
+		public override string? GetCurrentExecutableFilename() => startDebuggingOptionsProvider.Value.GetCurrentExecutableFilename();
 
 		public override bool CanStartWithoutDebugging => startDebuggingOptionsProvider.Value.CanStartWithoutDebugging(out _);
 		public override void StartWithoutDebugging() {
@@ -119,7 +119,7 @@ namespace dnSpy.Debugger.DbgUI {
 			showingDebugProgramDlgBox = true;
 			var (options, flags) = startDebuggingOptionsProvider.Value.GetStartDebuggingOptions(breakKind);
 			showingDebugProgramDlgBox = false;
-			if (options == null)
+			if (options is null)
 				return;
 			if ((flags & StartDebuggingOptionsInfoFlags.WrongExtension) != 0) {
 				if (messageBoxService.Value.Show(dnSpy_Debugger_Resources.DebugWithInvalidExtension, MsgBoxButton.Yes | MsgBoxButton.No) != MsgBoxButton.Yes)
@@ -127,7 +127,7 @@ namespace dnSpy.Debugger.DbgUI {
 			}
 
 			var errMsg = dbgManager.Value.Start(options);
-			if (errMsg != null)
+			if (!(errMsg is null))
 				messageBoxService.Value.Show(errMsg);
 		}
 		bool showingDebugProgramDlgBox;
@@ -164,28 +164,28 @@ namespace dnSpy.Debugger.DbgUI {
 		public override bool CanShowNextStatement => CanExecutePauseCommand;
 		public override void ShowNextStatement() {
 			var info = GetCurrentStatementLocation();
-			if (info.location != null) {
+			if (!(info.location is null)) {
 				referenceNavigatorService.Value.GoTo(info.location);
 				dbgCallStackService.Value.ActiveFrameIndex = info.frameIndex;
 			}
 		}
 
-		(DbgCodeLocation location, int frameIndex) GetCurrentStatementLocation() {
+		(DbgCodeLocation? location, int frameIndex) GetCurrentStatementLocation() {
 			var frames = dbgCallStackService.Value.Frames.Frames;
 			for (int i = 0; i < frames.Count; i++) {
 				var location = frames[i].Location;
-				if (location != null)
+				if (!(location is null))
 					return (location, i);
 			}
 			return (null, -1);
 		}
 
-		public override bool CanSetNextStatement => CanExecutePauseCommand && dbgManager.Value.CurrentThread.Current != null;
+		public override bool CanSetNextStatement => CanExecutePauseCommand && !(dbgManager.Value.CurrentThread.Current is null);
 		public override void SetNextStatement() {
 			if (!CanSetNextStatement)
 				return;
 			using (var res = GetCurrentTextViewStatementLocation()) {
-				if (res.Location != null)
+				if (!(res.Location is null))
 					dbgManager.Value.CurrentThread.Current?.SetIP(res.Location);
 			}
 		}
@@ -194,26 +194,26 @@ namespace dnSpy.Debugger.DbgUI {
 			readonly Lazy<DbgManager> dbgManager;
 			readonly List<DbgCodeLocation> allLocations;
 
-			public DbgCodeLocation Location { get; }
+			public DbgCodeLocation? Location { get; }
 
-			public TextViewStatementLocationResult(Lazy<DbgManager> dbgManager, List<DbgCodeLocation> allLocations, DbgCodeLocation location) {
+			public TextViewStatementLocationResult(Lazy<DbgManager> dbgManager, List<DbgCodeLocation> allLocations, DbgCodeLocation? location) {
 				this.dbgManager = dbgManager;
 				this.allLocations = allLocations;
 				Location = location;
 			}
 
 			public void Dispose() {
-				if (allLocations != null && allLocations.Count > 0)
+				if (!(allLocations is null) && allLocations.Count > 0)
 					dbgManager.Value.Close(allLocations);
 			}
 		}
 
 		TextViewStatementLocationResult GetCurrentTextViewStatementLocation() {
 			var tab = documentTabService.Value.ActiveTab;
-			if (tab == null)
+			if (tab is null)
 				return default;
 			var documentViewer = tab.TryGetDocumentViewer();
-			if (documentViewer == null)
+			if (documentViewer is null)
 				return default;
 			var textView = documentViewer.TextView;
 
@@ -257,7 +257,7 @@ namespace dnSpy.Debugger.DbgUI {
 		public override void StepOutCurrentProcess() => Step(DbgStepKind.StepOutProcess);
 
 		sealed class StepperState : IDisposable {
-			public DbgStepper ActiveStepper;
+			public DbgStepper? ActiveStepper;
 
 			public void SetStepper(DbgStepper stepper) {
 				var oldStepper = ActiveStepper;
@@ -283,7 +283,7 @@ namespace dnSpy.Debugger.DbgUI {
 
 		void Step(DbgStepKind step) {
 			var thread = dbgManager.Value.CurrentThread.Current;
-			if (thread == null)
+			if (thread is null)
 				return;
 
 			var state = thread.Runtime.GetOrCreateData<StepperState>();
@@ -295,12 +295,12 @@ namespace dnSpy.Debugger.DbgUI {
 			stepper.Step(step, autoClose: true);
 		}
 
-		public override bool CanGoToDisassembly => CanExecutePauseCommand && dbgManager.Value.CurrentThread.Current != null;
+		public override bool CanGoToDisassembly => CanExecutePauseCommand && !(dbgManager.Value.CurrentThread.Current is null);
 		public override void GoToDisassembly() {
 			if (!CanGoToDisassembly)
 				return;
 			using (var res = GetCurrentTextViewStatementLocation()) {
-				if (res.Location != null) {
+				if (!(res.Location is null)) {
 					foreach (var runtime in GetRuntimes()) {
 						if (dbgShowNativeCodeService.Value.CanShowNativeCode(runtime, res.Location)) {
 							if (!dbgShowNativeCodeService.Value.ShowNativeCode(runtime, res.Location))
@@ -313,7 +313,7 @@ namespace dnSpy.Debugger.DbgUI {
 		}
 		IEnumerable<DbgRuntime> GetRuntimes() {
 			var currentRuntime = dbgManager.Value.CurrentRuntime.Current;
-			if (currentRuntime != null)
+			if (!(currentRuntime is null))
 				yield return currentRuntime;
 			foreach (var process in dbgManager.Value.Processes) {
 				foreach (var runtime in process.Runtimes) {
@@ -334,7 +334,7 @@ namespace dnSpy.Debugger.DbgUI {
 		public override bool CanDeleteAllBreakpoints => dbgCodeBreakpointsService.Value.VisibleBreakpoints.Any();
 		public override void DeleteAllBreakpointsAskUser() {
 			var res = messageBoxService.Value.ShowIgnorableMessage(new Guid("37250D26-E844-49F4-904B-29600B90476C"), dnSpy_Debugger_Resources.AskDeleteAllBreakpoints, MsgBoxButton.Yes | MsgBoxButton.No);
-			if (res != null && res != MsgBoxButton.Yes)
+			if (!(res is null) && res != MsgBoxButton.Yes)
 				return;
 			dbgCodeBreakpointsService.Value.Clear();
 		}
@@ -394,7 +394,7 @@ namespace dnSpy.Debugger.DbgUI {
 		}
 
 		void DbgManager_MessageSetIPComplete(object sender, DbgMessageSetIPCompleteEventArgs e) {
-			if (e.Error != null)
+			if (!(e.Error is null))
 				UI(() => ShowError_UI(e.Error));
 		}
 
@@ -481,7 +481,7 @@ namespace dnSpy.Debugger.DbgUI {
 			if (id.HasCode)
 				return id.ToString();
 			if (id.HasName)
-				return id.Name;
+				return id.Name!;
 			return "???";
 		}
 
@@ -490,10 +490,10 @@ namespace dnSpy.Debugger.DbgUI {
 				return dnSpy_Debugger_Resources.StatusBar_Running;
 
 			var info = GetBreakInfo(breakInfos);
-			DbgModule module;
+			DbgModule? module;
 			switch (info.Kind) {
 			case DbgBreakInfoKind.Message:
-				var e = (DbgMessageEventArgs)info.Data;
+				var e = (DbgMessageEventArgs)info.Data!;
 				switch (e.Kind) {
 				case DbgMessageKind.ModuleLoaded:
 					module = ((DbgMessageModuleLoadedEventArgs)e).Module;
@@ -571,7 +571,7 @@ namespace dnSpy.Debugger.DbgUI {
 		static int GetPriority(DbgBreakInfo info) {
 			const int defaultPrio = int.MaxValue - 1;
 			if (info.Kind == DbgBreakInfoKind.Message) {
-				var e = (DbgMessageEventArgs)info.Data;
+				var e = (DbgMessageEventArgs)info.Data!;
 				switch (e.Kind) {
 				case DbgMessageKind.ExceptionThrown:
 					return 0;

@@ -41,7 +41,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			: base(options, defToEdit as TypeDef ?? defToEdit.DeclaringType) {
 			this.defToEdit = defToEdit;
 			nonNestedType = defToEdit as TypeDef ?? defToEdit.DeclaringType;
-			while (nonNestedType.DeclaringType != null)
+			while (!(nonNestedType.DeclaringType is null))
 				nonNestedType = nonNestedType.DeclaringType;
 			StartDecompile();
 		}
@@ -78,6 +78,6 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		protected override void Import(ModuleImporter importer, CompilationResult result) =>
-			importer.ImportNewMembers(result.RawFile, result.DebugFile, nonNestedType);
+			importer.ImportNewMembers(result.RawFile!, result.DebugFile, nonNestedType);
 	}
 }

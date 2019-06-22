@@ -31,13 +31,12 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			this.textView = textView;
 		}
 
-		ScriptControlVM TryGetInstance() =>
-			__replEditor ?? (__replEditor = RoslynReplEditorUtils.TryGetInstance(textView));
-		ScriptControlVM __replEditor;
+		ScriptControlVM TryGetInstance() => __replEditor ??= RoslynReplEditorUtils.TryGetInstance(textView);
+		ScriptControlVM? __replEditor;
 
 		public CommandTargetStatus CanExecute(Guid group, int cmdId) {
 			var vm = TryGetInstance();
-			if (vm == null)
+			if (vm is null)
 				return CommandTargetStatus.NotHandled;
 
 			if (group == RoslynReplCommandConstants.RoslynReplGroup) {
@@ -59,14 +58,14 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			return CommandTargetStatus.NotHandled;
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args = null) {
-			object result = null;
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args = null) {
+			object? result = null;
 			return Execute(group, cmdId, args, ref result);
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) {
 			var vm = TryGetInstance();
-			if (vm == null)
+			if (vm is null)
 				return CommandTargetStatus.NotHandled;
 
 			if (group == RoslynReplCommandConstants.RoslynReplGroup) {

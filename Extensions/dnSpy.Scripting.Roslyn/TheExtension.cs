@@ -36,7 +36,7 @@ namespace dnSpy.Scripting.Roslyn {
 			}
 		}
 
-		public void OnEvent(ExtensionEvent @event, object obj) {
+		public void OnEvent(ExtensionEvent @event, object? obj) {
 		}
 	}
 }

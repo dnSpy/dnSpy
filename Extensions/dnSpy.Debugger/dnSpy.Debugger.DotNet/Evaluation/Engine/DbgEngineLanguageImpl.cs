@@ -55,17 +55,17 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		readonly IDebuggerDisplayAttributeEvaluator debuggerDisplayAttributeEvaluator;
 
 		public DbgEngineLanguageImpl(DbgModuleReferenceProvider dbgModuleReferenceProvider, string name, string displayName, DbgDotNetExpressionCompiler expressionCompiler, DbgMethodDebugInfoProvider dbgMethodDebugInfoProvider, IDecompiler decompiler, DbgDotNetFormatter formatter, DbgDotNetEngineValueNodeFactory valueNodeFactory, DbgDotNetILInterpreter dnILInterpreter, DbgAliasProvider dbgAliasProvider, IPredefinedEvaluationErrorMessagesHelper predefinedEvaluationErrorMessagesHelper) {
-			if (dbgModuleReferenceProvider == null)
+			if (dbgModuleReferenceProvider is null)
 				throw new ArgumentNullException(nameof(dbgModuleReferenceProvider));
-			if (formatter == null)
+			if (formatter is null)
 				throw new ArgumentNullException(nameof(formatter));
-			if (valueNodeFactory == null)
+			if (valueNodeFactory is null)
 				throw new ArgumentNullException(nameof(valueNodeFactory));
-			if (dnILInterpreter == null)
+			if (dnILInterpreter is null)
 				throw new ArgumentNullException(nameof(dnILInterpreter));
-			if (dbgAliasProvider == null)
+			if (dbgAliasProvider is null)
 				throw new ArgumentNullException(nameof(dbgAliasProvider));
-			if (predefinedEvaluationErrorMessagesHelper == null)
+			if (predefinedEvaluationErrorMessagesHelper is null)
 				throw new ArgumentNullException(nameof(predefinedEvaluationErrorMessagesHelper));
 			Name = name ?? throw new ArgumentNullException(nameof(name));
 			DisplayName = displayName ?? throw new ArgumentNullException(nameof(displayName));
@@ -86,7 +86,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		readonly struct DbgLanguageDebugInfoKey {
 			readonly uint token;
-			readonly DbgModule module;
+			readonly DbgModule? module;
 			readonly ModuleId moduleId;
 			readonly int refreshedVersion;
 
@@ -117,8 +117,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			public readonly List<(DbgLanguageDebugInfoKey key, DbgLanguageDebugInfo debugInfo)> DebugInfos = new List<(DbgLanguageDebugInfoKey key, DbgLanguageDebugInfo debugInfo)>(MAX_CACHED_DEBUG_INFOS);
 		}
 
-		public override void InitializeContext(DbgEvaluationContext context, DbgCodeLocation location, CancellationToken cancellationToken) {
-			Debug.Assert(context.Runtime.GetDotNetRuntime() != null);
+		public override void InitializeContext(DbgEvaluationContext context, DbgCodeLocation? location, CancellationToken cancellationToken) {
+			Debug.Assert(!(context.Runtime.GetDotNetRuntime() is null));
 
 			IDebuggerDisplayAttributeEvaluatorUtils.Initialize(context, debuggerDisplayAttributeEvaluator);
 			// Needed by DebuggerRuntimeImpl (calls expressionCompiler.TryGetAliasInfo())
@@ -127,13 +127,13 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			if ((context.Options & DbgEvaluationContextOptions.NoMethodBody) == 0 && location is IDbgDotNetCodeLocation loc) {
 				var state = StateWithKey<RuntimeState>.GetOrCreate(context.Runtime, decompiler);
 				var debugInfo = GetOrCreateDebugInfo(context, state, loc, cancellationToken);
-				if (debugInfo != null)
+				if (!(debugInfo is null))
 					DbgLanguageDebugInfoExtensions.SetLanguageDebugInfo(context, debugInfo);
 			}
 		}
 
 		//TODO: If decompiler settings change, we need to invalidate the cached data in DbgEvaluationContext, see decompiler.Settings.VersionChanged
-		DbgLanguageDebugInfo GetOrCreateDebugInfo(DbgEvaluationContext context, RuntimeState state, IDbgDotNetCodeLocation location, CancellationToken cancellationToken) {
+		DbgLanguageDebugInfo? GetOrCreateDebugInfo(DbgEvaluationContext context, RuntimeState state, IDbgDotNetCodeLocation location, CancellationToken cancellationToken) {
 			DbgLanguageDebugInfoKey key;
 			if (location.DbgModule is DbgModule dbgModule)
 				key = new DbgLanguageDebugInfoKey(dbgModule, location.Token);
@@ -157,7 +157,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			}
 
 			var debugInfo = CreateDebugInfo(context, location, cancellationToken);
-			if (debugInfo == null)
+			if (debugInfo is null)
 				return null;
 			lock (state.LockObj) {
 				if (debugInfos.Count == RuntimeState.MAX_CACHED_DEBUG_INFOS)
@@ -167,13 +167,13 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			return debugInfo;
 		}
 
-		DbgLanguageDebugInfo CreateDebugInfo(DbgEvaluationContext context, IDbgDotNetCodeLocation location, CancellationToken cancellationToken) {
+		DbgLanguageDebugInfo? CreateDebugInfo(DbgEvaluationContext context, IDbgDotNetCodeLocation location, CancellationToken cancellationToken) {
 			var result = dbgMethodDebugInfoProvider.GetMethodDebugInfo(context.Runtime, decompiler, location, cancellationToken);
-			if (result.DebugInfoOrNull == null)
+			if (result.DebugInfoOrNull is null)
 				return null;
 
 			var runtime = context.Runtime.GetDotNetRuntime();
-			if (location.DbgModule == null || !runtime.TryGetMethodToken(location.DbgModule, (int)location.Token, out int methodToken, out int localVarSigTok)) {
+			if (location.DbgModule is null || !runtime.TryGetMethodToken(location.DbgModule, (int)location.Token, out int methodToken, out int localVarSigTok)) {
 				methodToken = (int)location.Token;
 				localVarSigTok = (int)((result.StateMachineDebugInfoOrNull ?? result.DebugInfoOrNull)?.Method.Body?.LocalVarSigTok ?? 0);
 			}

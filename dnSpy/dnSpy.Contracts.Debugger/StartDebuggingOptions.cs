@@ -28,14 +28,14 @@ namespace dnSpy.Contracts.Debugger {
 		/// <summary>
 		/// Where to break, see <see cref="PredefinedBreakKinds"/>
 		/// </summary>
-		public string BreakKind { get; set; }
+		public string? BreakKind { get; set; }
 
 		/// <summary>
 		/// Copies this instance to <paramref name="other"/>
 		/// </summary>
 		/// <param name="other">Destination</param>
 		protected void CopyTo(StartDebuggingOptions other) {
-			if (other == null)
+			if (other is null)
 				throw new ArgumentNullException(nameof(other));
 			other.BreakKind = BreakKind;
 		}

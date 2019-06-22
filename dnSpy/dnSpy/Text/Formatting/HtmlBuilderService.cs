@@ -50,9 +50,9 @@ namespace dnSpy.Text.Formatting {
 		public string GenerateHtmlFragment(NormalizedSnapshotSpanCollection spans, CancellationToken cancellationToken) =>
 			GenerateHtmlFragment(spans, DefaultDelimiter, cancellationToken);
 		public string GenerateHtmlFragment(NormalizedSnapshotSpanCollection spans, string delimiter, CancellationToken cancellationToken) {
-			if (spans == null)
+			if (spans is null)
 				throw new ArgumentNullException(nameof(spans));
-			if (delimiter == null)
+			if (delimiter is null)
 				throw new ArgumentNullException(nameof(delimiter));
 
 			return GenerateHtmlFragmentCore(spans, null, delimiter, cancellationToken);
@@ -61,22 +61,22 @@ namespace dnSpy.Text.Formatting {
 		public string GenerateHtmlFragment(NormalizedSnapshotSpanCollection spans, ITextView textView, CancellationToken cancellationToken) =>
 			GenerateHtmlFragment(spans, textView, DefaultDelimiter, cancellationToken);
 		public string GenerateHtmlFragment(NormalizedSnapshotSpanCollection spans, ITextView textView, string delimiter, CancellationToken cancellationToken) {
-			if (spans == null)
+			if (spans is null)
 				throw new ArgumentNullException(nameof(spans));
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
-			if (delimiter == null)
+			if (delimiter is null)
 				throw new ArgumentNullException(nameof(delimiter));
 
 			return GenerateHtmlFragmentCore(spans, textView, delimiter, cancellationToken);
 		}
 
-		string GenerateHtmlFragmentCore(NormalizedSnapshotSpanCollection spans, ITextView textView, string delimiter, CancellationToken cancellationToken) {
-			ISynchronousClassifier classifier = null;
+		string GenerateHtmlFragmentCore(NormalizedSnapshotSpanCollection spans, ITextView? textView, string delimiter, CancellationToken cancellationToken) {
+			ISynchronousClassifier? classifier = null;
 			try {
 				int tabSize;
 				IClassificationFormatMap classificationFormatMap;
-				if (textView != null) {
+				if (!(textView is null)) {
 					classifier = synchronousViewClassifierAggregatorService.GetSynchronousClassifier(textView);
 					classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(textView);
 					tabSize = textView.Options.GetTabSize();
@@ -90,7 +90,7 @@ namespace dnSpy.Text.Formatting {
 
 				var builder = new HtmlBuilder(classificationFormatMap, delimiter, tabSize);
 				if (spans.Count != 0)
-					builder.Add(classifier, spans, cancellationToken);
+					builder.Add(classifier!, spans, cancellationToken);
 				return builder.Create();
 			}
 			finally {

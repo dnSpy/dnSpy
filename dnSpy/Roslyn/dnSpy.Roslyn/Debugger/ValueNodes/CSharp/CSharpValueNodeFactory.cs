@@ -45,21 +45,21 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes.CSharp {
 		protected override DbgDotNetValueNodeProviderFactory CreateValueNodeProviderFactory() => new CSharpValueNodeProviderFactory(this);
 		protected override bool IsIdentifierPartCharacter(char c) => Utilities.UnicodeCharacterUtilities.IsIdentifierPartCharacter(c);
 
-		void AddCastBegin(StringBuilder sb, DmdType castType) {
-			if ((object)castType == null)
+		void AddCastBegin(StringBuilder sb, DmdType? castType) {
+			if (castType is null)
 				return;
 			sb.Append("((");
 			new Formatters.CSharp.CSharpTypeFormatter(new DbgStringBuilderTextWriter(sb), TypeFormatterOptions, null).Format(castType, null);
 			sb.Append(')');
 		}
 
-		void AddCastEnd(StringBuilder sb, DmdType castType) {
-			if ((object)castType == null)
+		void AddCastEnd(StringBuilder sb, DmdType? castType) {
+			if (castType is null)
 				return;
 			sb.Append(')');
 		}
 
-		public override string GetFieldExpression(string baseExpression, string name, DmdType castType, bool addParens) {
+		public override string GetFieldExpression(string baseExpression, string name, DmdType? castType, bool addParens) {
 			baseExpression = RemoveFormatSpecifiers(baseExpression);
 			var sb = ObjectCache.AllocStringBuilder();
 			AddCastBegin(sb, castType);
@@ -70,7 +70,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes.CSharp {
 			return ObjectCache.FreeAndToString(ref sb);
 		}
 
-		public override string GetPropertyExpression(string baseExpression, string name, DmdType castType, bool addParens) {
+		public override string GetPropertyExpression(string baseExpression, string name, DmdType? castType, bool addParens) {
 			baseExpression = RemoveFormatSpecifiers(baseExpression);
 			var sb = ObjectCache.AllocStringBuilder();
 			AddCastBegin(sb, castType);
@@ -81,7 +81,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes.CSharp {
 			return ObjectCache.FreeAndToString(ref sb);
 		}
 
-		public override string GetExpression(string baseExpression, int index, DmdType castType, bool addParens) {
+		public override string GetExpression(string baseExpression, int index, DmdType? castType, bool addParens) {
 			baseExpression = RemoveFormatSpecifiers(baseExpression);
 			var sb = ObjectCache.AllocStringBuilder();
 			AddCastBegin(sb, castType);
@@ -93,7 +93,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes.CSharp {
 			return ObjectCache.FreeAndToString(ref sb);
 		}
 
-		public override string GetExpression(string baseExpression, int[] indexes, DmdType castType, bool addParens) {
+		public override string GetExpression(string baseExpression, int[] indexes, DmdType? castType, bool addParens) {
 			baseExpression = RemoveFormatSpecifiers(baseExpression);
 			var sb = ObjectCache.AllocStringBuilder();
 			AddCastBegin(sb, castType);
@@ -111,12 +111,12 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes.CSharp {
 
 		protected override string EscapeIdentifier(string identifier) => Formatters.CSharp.CSharpTypeFormatter.GetFormattedIdentifier(identifier);
 
-		protected override void FormatReturnValueMethodName(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgValueFormatterTypeOptions typeOptions, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo, DmdMethodBase method, DmdPropertyInfo property) {
+		protected override void FormatReturnValueMethodName(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgValueFormatterTypeOptions typeOptions, DbgValueFormatterOptions valueOptions, CultureInfo? cultureInfo, DmdMethodBase method, DmdPropertyInfo? property) {
 			var typeFormatter = new Formatters.CSharp.CSharpTypeFormatter(output, typeOptions.ToTypeFormatterOptions(), null);
-			typeFormatter.Format(method.DeclaringType, null);
+			typeFormatter.Format(method.DeclaringType!, null);
 			var valueFormatter = new Formatters.CSharp.CSharpPrimitiveValueFormatter(output, valueOptions.ToValueFormatterOptions(), cultureInfo);
 			output.Write(DbgTextColor.Operator, ".");
-			if ((object)property != null) {
+			if (!(property is null)) {
 				if (property.GetIndexParameters().Count != 0) {
 					output.Write(DbgTextColor.Keyword, Keyword_this);
 					WriteMethodParameterList(output, method, typeFormatter, GetAllMethodParameterTypes(property.GetMethodSignature()), IndexerParenOpen, IndexerParenClose);
@@ -139,7 +139,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes.CSharp {
 				}
 				else {
 					var operatorInfo = Formatters.CSharp.Operators.TryGetOperatorInfo(method.Name);
-					if (operatorInfo != null && method is DmdMethodInfo methodInfo) {
+					if (!(operatorInfo is null) && method is DmdMethodInfo methodInfo) {
 						bool isExplicitOrImplicit = operatorInfo[0] == "explicit" || operatorInfo[0] == "implicit";
 
 						for (int i = 0; i < operatorInfo.Length; i++) {
@@ -193,15 +193,15 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes.CSharp {
 				var parameterType = parameterTypes[i];
 				WriteRefIfByRef(output, param);
 				if (parameterType.IsByRef)
-					parameterType = parameterType.GetElementType();
+					parameterType = parameterType.GetElementType()!;
 				typeFormatter.Format(parameterType, null);
 			}
 
 			output.Write(DbgTextColor.Punctuation, closeParen);
 		}
 
-		void WriteRefIfByRef(IDbgTextWriter output, DmdParameterInfo param) {
-			if ((object)param == null)
+		void WriteRefIfByRef(IDbgTextWriter output, DmdParameterInfo? param) {
+			if (param is null)
 				return;
 			var type = param.ParameterType;
 			if (!type.IsByRef)

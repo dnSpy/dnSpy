@@ -7,6 +7,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using DDN = dnlib.DotNet;
@@ -16,9 +17,9 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		enum __CastResult { CannotCast, CanCast, MaybeCast }
 
 		static bool __CanCastTo(DmdType from, DmdType to) {
-			if ((object)from == null)
+			if (from is null)
 				throw new ArgumentNullException(nameof(from));
-			if ((object)to == null)
+			if (to is null)
 				throw new ArgumentNullException(nameof(to));
 
 			bool res;
@@ -100,7 +101,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			case DDN.ElementType.SZArray:
 			case DDN.ElementType.ByRef:
 			case DDN.ElementType.Ptr:
-				return __CanCastParamNoGC(GetElementType(), toType.GetElementType());
+				return __CanCastParamNoGC(GetElementType()!, toType.GetElementType()!);
 
 			case DDN.ElementType.Var:
 			case DDN.ElementType.MVar:
@@ -161,7 +162,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			case DDN.ElementType.SZArray:
 			case DDN.ElementType.ByRef:
 			case DDN.ElementType.Ptr:
-				return __CanCastParam(GetElementType(), toType.GetElementType());
+				return __CanCastParam(GetElementType()!, toType.GetElementType()!);
 
 			case DDN.ElementType.Var:
 			case DDN.ElementType.MVar:
@@ -180,7 +181,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			if (!__IsImplicitInterfaceOfSZArray(@interface))
 				return false;
 
-			return __CanCastParam(arrayType.GetElementType(), @interface.GetGenericArguments()[0]);
+			return __CanCastParam(arrayType.GetElementType()!, @interface.GetGenericArguments()[0]);
 		}
 
 		bool __IsImplicitInterfaceOfSZArray(DmdType @interface) {
@@ -473,7 +474,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				if (__CanCastByVarianceToInterfaceOrDelegate(target))
 					return true;
 
-				var hash = GetAllInterfaces(this);
+				HashSet<DmdType>? hash = GetAllInterfaces(this);
 				foreach (var iface in hash) {
 					if (iface.__CanCastByVarianceToInterfaceOrDelegate(target)) {
 						ObjectPools.Free(ref hash);
@@ -562,13 +563,13 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			if (HasTypeEquivalence || target.HasTypeEquivalence)
 				return __CastResult.MaybeCast;
 			else {
-				var type = this;
+				DmdType? type = this;
 				for (int i = 0; i < 1000; i++) {
 					if (type == target)
 						return __CastResult.CanCast;
 
 					type = type.BaseType;
-					if ((object)type == null)
+					if (type is null)
 						break;
 				}
 			}
@@ -577,7 +578,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		bool __CanCastToClass(DmdType pTargetMT) {
-			var type = this;
+			DmdType? type = this;
 
 			if (pTargetMT.__HasVariance()) {
 				for (int i = 0; i < 1000; i++) {
@@ -588,7 +589,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 						return true;
 
 					type = type.BaseType;
-					if ((object)type == null)
+					if (type is null)
 						break;
 				}
 			}
@@ -599,7 +600,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 						return true;
 
 					type = type.BaseType;
-					if ((object)type == null)
+					if (type is null)
 						break;
 				}
 			}
@@ -660,7 +661,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		bool __ImplementsInterface(DmdType ifaceType, int recursionCounter) {
 			if ((recursionCounter & int.MaxValue) >= 100)
 				return false;
-			var type = this;
+			DmdType? type = this;
 			for (;;) {
 				var comparer = new DmdSigComparer(recursionCounter < 0 ? DmdMemberInfoEqualityComparer.DefaultTypeOptions | DmdSigComparerOptions.CheckTypeEquivalence : DmdMemberInfoEqualityComparer.DefaultTypeOptions);
 				foreach (var iface in type.GetInterfaces()) {
@@ -668,7 +669,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 						return true;
 				}
 				type = type.BaseType;
-				if ((object)type == null)
+				if (type is null)
 					break;
 			}
 			return false;

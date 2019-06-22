@@ -42,6 +42,6 @@ namespace dnSpy.Contracts.MVVM {
 		/// </summary>
 		/// <param name="element">Element</param>
 		/// <returns></returns>
-		public static bool GetIsDraggable(FrameworkElement element) => element != null && (bool)element.GetValue(IsDraggableProperty);
+		public static bool GetIsDraggable(FrameworkElement? element) => !(element is null) && (bool)element.GetValue(IsDraggableProperty);
 	}
 }

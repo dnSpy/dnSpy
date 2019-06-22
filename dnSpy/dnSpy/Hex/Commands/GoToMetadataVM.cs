@@ -35,7 +35,7 @@ namespace dnSpy.Hex.Commands {
 		public ICommand GoToMetadataUSCommand => new RelayCommand(a => GoToMetadataKind = GoToMetadataKind.US);
 		public ICommand GoToMetadataGUIDCommand => new RelayCommand(a => GoToMetadataKind = GoToMetadataKind.GUID);
 		public ICommand GoToMetadataTableCommand => new RelayCommand(a => GoToMetadataKind = GoToMetadataKind.Table);
-		public ICommand GoToMetadataMemberRvaCommand => new RelayCommand(a => GoToMetadataKind = GoToMetadataKind.MemberRva, a => peHeaders != null);
+		public ICommand GoToMetadataMemberRvaCommand => new RelayCommand(a => GoToMetadataKind = GoToMetadataKind.MemberRva, a => !(peHeaders is null));
 
 		public bool IsOffset {
 			get {
@@ -116,18 +116,18 @@ namespace dnSpy.Hex.Commands {
 
 		public uint OffsetTokenValue => offsetTokenVM.Value;
 
-		readonly PeHeaders peHeaders;
+		readonly PeHeaders? peHeaders;
 
-		public GoToMetadataVM(HexBuffer buffer, DotNetMetadataHeaders mdHeaders, PeHeaders peHeaders, uint value) {
-			if (buffer == null)
+		public GoToMetadataVM(HexBuffer buffer, DotNetMetadataHeaders mdHeaders, PeHeaders? peHeaders, uint value) {
+			if (buffer is null)
 				throw new ArgumentNullException(nameof(buffer));
-			if (mdHeaders == null)
+			if (mdHeaders is null)
 				throw new ArgumentNullException(nameof(mdHeaders));
 			this.peHeaders = peHeaders;
 			offsetTokenVM = new OffsetTokenVM(buffer, mdHeaders, peHeaders, value, a => HasErrorUpdated());
 			GoToMetadataCollection = new ObservableCollection<GoToMetadataKindVM>();
 			GoToMetadataCollection.Add(new GoToMetadataKindVM(GoToMetadataKind.Table, dnSpy_Resources.GoToMetadataToken, dnSpy_Resources.ShortCutKeyCtrl1));
-			if (peHeaders != null)
+			if (!(peHeaders is null))
 				GoToMetadataCollection.Add(new GoToMetadataKindVM(GoToMetadataKind.MemberRva, dnSpy_Resources.GoToMetadataMethodBody, dnSpy_Resources.ShortCutKeyCtrl2));
 			GoToMetadataCollection.Add(new GoToMetadataKindVM(GoToMetadataKind.Blob, "#Blob", dnSpy_Resources.ShortCutKeyCtrl3));
 			GoToMetadataCollection.Add(new GoToMetadataKindVM(GoToMetadataKind.Strings, "#Strings", dnSpy_Resources.ShortCutKeyCtrl4));
@@ -140,8 +140,9 @@ namespace dnSpy.Hex.Commands {
 		sealed class OffsetTokenVM : NumberDataFieldVM<uint, uint> {
 			readonly HexBuffer buffer;
 			readonly DotNetMetadataHeaders mdHeaders;
-			readonly PeHeaders peHeaders;
-			public OffsetTokenVM(HexBuffer buffer, DotNetMetadataHeaders mdHeaders, PeHeaders peHeaders, uint value, Action<DataFieldVM> onUpdated)
+			readonly PeHeaders? peHeaders;
+
+			public OffsetTokenVM(HexBuffer buffer, DotNetMetadataHeaders mdHeaders, PeHeaders? peHeaders, uint value, Action<DataFieldVM> onUpdated)
 				: base(onUpdated, uint.MinValue, uint.MaxValue, null) {
 				SetValueFromConstructor(value);
 				this.buffer = buffer;
@@ -162,9 +163,9 @@ namespace dnSpy.Hex.Commands {
 
 			protected override string OnNewValue(uint value) => SimpleTypeConverter.ToString(value, Min, Max, UseDecimal);
 
-			protected override string ConvertToValue(out uint value) {
-				value = SimpleTypeConverter.ParseUInt32(StringValue, Min, Max, out string error);
-				if (error != null)
+			protected override string? ConvertToValue(out uint value) {
+				value = SimpleTypeConverter.ParseUInt32(StringValue, Min, Max, out var error);
+				if (!(error is null))
 					return error;
 				return CheckOffsetToken(value) ? null : dnSpy_Resources.GoToMetadataInvalidOffsetOrToken;
 			}
@@ -172,19 +173,19 @@ namespace dnSpy.Hex.Commands {
 			bool CheckOffsetToken(uint value) {
 				switch (GoToMetadataKind) {
 				case GoToMetadataKind.Blob:
-					if (mdHeaders.BlobStream == null)
+					if (mdHeaders.BlobStream is null)
 						return false;
 					return value < mdHeaders.BlobStream.Span.Span.Length;
 
 				case GoToMetadataKind.Strings:
-					if (mdHeaders.StringsStream == null)
+					if (mdHeaders.StringsStream is null)
 						return false;
 					return value < mdHeaders.StringsStream.Span.Span.Length;
 
 				case GoToMetadataKind.US:
 					if ((value >> 24) == 0x70)
 						value &= 0x00FFFFFF;
-					if (mdHeaders.USStream == null)
+					if (mdHeaders.USStream is null)
 						return false;
 					return value < mdHeaders.USStream.Span.Span.Length;
 
@@ -192,13 +193,13 @@ namespace dnSpy.Hex.Commands {
 					return value != 0 && mdHeaders.GUIDStream?.IsValidIndex(value) == true;
 
 				case GoToMetadataKind.Table:
-					return GetMDTable(value) != null;
+					return !(GetMDTable(value) is null);
 
 				case GoToMetadataKind.MemberRva:
-					if (peHeaders == null)
+					if (peHeaders is null)
 						return false;
 					var mdTable = GetMDTable(value);
-					if (mdTable == null)
+					if (mdTable is null)
 						return false;
 					if (mdTable.Table != Table.Method && mdTable.Table != Table.FieldRVA)
 						return false;
@@ -211,9 +212,9 @@ namespace dnSpy.Hex.Commands {
 				}
 			}
 
-			MDTable GetMDTable(uint token) {
+			MDTable? GetMDTable(uint token) {
 				var tablesStream = mdHeaders.TablesStream;
-				if (tablesStream == null)
+				if (tablesStream is null)
 					return null;
 				var table = token >> 24;
 				if (table >= (uint)tablesStream.MDTables.Count)

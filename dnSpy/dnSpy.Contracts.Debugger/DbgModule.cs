@@ -44,7 +44,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// <summary>
 		/// Gets the app domain or null if it's a process module
 		/// </summary>
-		public abstract DbgAppDomain AppDomain { get; }
+		public abstract DbgAppDomain? AppDomain { get; }
 
 		/// <summary>
 		/// Gets the module object created by the debug engine

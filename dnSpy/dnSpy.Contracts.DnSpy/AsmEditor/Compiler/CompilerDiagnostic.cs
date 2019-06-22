@@ -43,12 +43,12 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		/// <summary>
 		/// Gets the help URI or null if none
 		/// </summary>
-		public string HelpUri { get; }
+		public string? HelpUri { get; }
 
 		/// <summary>
 		/// Filename or null
 		/// </summary>
-		public string Filename { get; }
+		public string? Filename { get; }
 
 		/// <summary>
 		/// Location in the file or null
@@ -62,9 +62,9 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		/// <param name="description">Description</param>
 		/// <param name="id">Id</param>
 		/// <param name="helpUri">Help URI or null if none</param>
-		/// <param name="filename">Filename</param>
+		/// <param name="filename">Filename or null</param>
 		/// <param name="lineLocationSpan">Line location or null</param>
-		public CompilerDiagnostic(CompilerDiagnosticSeverity severity, string description, string id, string helpUri, string filename, LineLocationSpan? lineLocationSpan) {
+		public CompilerDiagnostic(CompilerDiagnosticSeverity severity, string description, string id, string? helpUri, string? filename, LineLocationSpan? lineLocationSpan) {
 			Severity = severity;
 			Description = description ?? string.Empty;
 			Id = id ?? string.Empty;
@@ -80,7 +80,7 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		public override string ToString() {
 			var sb = new StringBuilder();
 			sb.Append(Filename ?? "???");
-			if (LineLocationSpan != null)
+			if (!(LineLocationSpan is null))
 				sb.Append(LineLocationSpan.Value.StartLinePosition.ToString());
 			sb.Append(": ");
 			switch (Severity) {

@@ -33,14 +33,15 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		DebugMessageDispatcher DebugMessageDispatcher {
 			get {
-				if (__debugMessageDispatcher == null)
+				if (__debugMessageDispatcher is null)
 					Interlocked.CompareExchange(ref __debugMessageDispatcher, new DebugMessageDispatcher(Dispatcher), null);
-				return __debugMessageDispatcher;
+				return __debugMessageDispatcher!;
 			}
 		}
-		volatile DebugMessageDispatcher __debugMessageDispatcher;
+		volatile DebugMessageDispatcher? __debugMessageDispatcher;
 
 		public DebuggerThread(string threadName) {
+			Dispatcher = null!;
 			this.threadName = threadName;
 			var autoResetEvent = new AutoResetEvent(false);
 			callDispatcherRunEvent = new AutoResetEvent(false);
@@ -66,7 +67,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 			callDispatcherRunEvent.WaitOne();
 			callDispatcherRunEvent.Close();
-			callDispatcherRunEvent = null;
+			callDispatcherRunEvent = null!;
 
 			if (!terminate)
 				Dispatcher.Run();
@@ -77,7 +78,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		internal void Terminate() {
 			terminate = true;
 			try { callDispatcherRunEvent?.Set(); } catch (ObjectDisposedException) { }
-			if (Dispatcher != null && !Dispatcher.HasShutdownStarted && !Dispatcher.HasShutdownFinished)
+			if (!(Dispatcher is null) && !Dispatcher.HasShutdownStarted && !Dispatcher.HasShutdownFinished)
 				Dispatcher.BeginInvokeShutdown();
 		}
 

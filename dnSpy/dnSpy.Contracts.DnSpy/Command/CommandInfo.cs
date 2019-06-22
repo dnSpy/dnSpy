@@ -37,7 +37,7 @@ namespace dnSpy.Contracts.Command {
 		/// <summary>
 		/// Gets the arguments or null
 		/// </summary>
-		public object Arguments { get; }
+		public object? Arguments { get; }
 
 		/// <summary>
 		/// Constructor
@@ -45,7 +45,7 @@ namespace dnSpy.Contracts.Command {
 		/// <param name="group">Command group, eg. <see cref="CommandConstants.StandardGroup"/></param>
 		/// <param name="id">Command id</param>
 		/// <param name="arguments">Command arguments or null</param>
-		public CommandInfo(Guid group, int id, object arguments = null) {
+		public CommandInfo(Guid group, int id, object? arguments = null) {
 			Group = group;
 			ID = id;
 			Arguments = arguments;

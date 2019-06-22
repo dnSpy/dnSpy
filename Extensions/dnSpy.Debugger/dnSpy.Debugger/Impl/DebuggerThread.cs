@@ -27,10 +27,11 @@ namespace dnSpy.Debugger.Impl {
 
 		readonly Thread debuggerThread;
 		volatile bool terminate;
-		AutoResetEvent callDispatcherRunEvent;
+		AutoResetEvent? callDispatcherRunEvent;
 		readonly string threadName;
 
 		public DebuggerThread(string threadName) {
+			Dispatcher = null!;
 			this.threadName = threadName;
 			var autoResetEvent = new AutoResetEvent(false);
 			callDispatcherRunEvent = new AutoResetEvent(false);
@@ -53,7 +54,7 @@ namespace dnSpy.Debugger.Impl {
 			Dispatcher = new Dispatcher();
 			autoResetEvent.Set();
 
-			callDispatcherRunEvent.WaitOne();
+			callDispatcherRunEvent!.WaitOne();
 			callDispatcherRunEvent.Close();
 			callDispatcherRunEvent = null;
 
@@ -61,12 +62,12 @@ namespace dnSpy.Debugger.Impl {
 				Dispatcher.Run();
 		}
 
-		internal void CallDispatcherRun() => callDispatcherRunEvent.Set();
+		internal void CallDispatcherRun() => callDispatcherRunEvent!.Set();
 
 		internal void Terminate() {
 			terminate = true;
 			try { callDispatcherRunEvent?.Set(); } catch (ObjectDisposedException) { }
-			if (Dispatcher != null && !Dispatcher.HasShutdownStarted && !Dispatcher.HasShutdownFinished)
+			if (!(Dispatcher is null) && !Dispatcher.HasShutdownStarted && !Dispatcher.HasShutdownFinished)
 				Dispatcher.BeginInvokeShutdown();
 		}
 	}

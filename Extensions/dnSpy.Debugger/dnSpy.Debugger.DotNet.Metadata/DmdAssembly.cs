@@ -94,7 +94,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the entry point or null
 		/// </summary>
-		public abstract DmdMethodInfo EntryPoint { get; }
+		public abstract DmdMethodInfo? EntryPoint { get; }
 
 		/// <summary>
 		/// Gets the first module of this assembly
@@ -106,14 +106,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="type">Type</param>
 		/// <returns></returns>
-		public DmdType GetType(Type type) => GetType(type, DmdGetTypeOptions.None);
+		public DmdType? GetType(Type type) => GetType(type, DmdGetTypeOptions.None);
 
 		/// <summary>
 		/// Gets a type and throws if it couldn't be found
 		/// </summary>
 		/// <param name="type"></param>
 		/// <returns></returns>
-		public DmdType GetTypeThrow(Type type) => GetType(type, DmdGetTypeOptions.ThrowOnError);
+		public DmdType GetTypeThrow(Type type) => GetType(type, DmdGetTypeOptions.ThrowOnError)!;
 
 		/// <summary>
 		/// Gets a type
@@ -121,8 +121,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="type">Type</param>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public DmdType GetType(Type type, DmdGetTypeOptions options) {
-			if ((object)type == null)
+		public DmdType? GetType(Type type, DmdGetTypeOptions options) {
+			if (type is null)
 				throw new ArgumentNullException(nameof(type));
 			return GetType(type.FullName, options);
 		}
@@ -132,14 +132,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="name">Name of type</param>
 		/// <returns></returns>
-		public DmdType GetType(string name) => GetType(name, DmdGetTypeOptions.None);
+		public DmdType? GetType(string name) => GetType(name, DmdGetTypeOptions.None);
 
 		/// <summary>
 		/// Gets a type and throws if it couldn't be found
 		/// </summary>
 		/// <param name="name">Name of type</param>
 		/// <returns></returns>
-		public DmdType GetTypeThrow(string name) => GetType(name, DmdGetTypeOptions.ThrowOnError);
+		public DmdType GetTypeThrow(string name) => GetType(name, DmdGetTypeOptions.ThrowOnError)!;
 
 		/// <summary>
 		/// Gets a type in this assembly
@@ -147,7 +147,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="name">Name of type</param>
 		/// <param name="throwOnError">true to throw if the type doesn't exist</param>
 		/// <returns></returns>
-		public DmdType GetType(string name, bool throwOnError) => GetType(name, throwOnError ? DmdGetTypeOptions.ThrowOnError : DmdGetTypeOptions.None);
+		public DmdType? GetType(string name, bool throwOnError) => GetType(name, throwOnError ? DmdGetTypeOptions.ThrowOnError : DmdGetTypeOptions.None);
 
 		/// <summary>
 		/// Gets a type in this assembly
@@ -156,7 +156,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="throwOnError">true to throw if the type doesn't exist</param>
 		/// <param name="ignoreCase">true if case insensitive comparisons</param>
 		/// <returns></returns>
-		public DmdType GetType(string name, bool throwOnError, bool ignoreCase) =>
+		public DmdType? GetType(string name, bool throwOnError, bool ignoreCase) =>
 			GetType(name, (throwOnError ? DmdGetTypeOptions.ThrowOnError : 0) | (ignoreCase ? DmdGetTypeOptions.IgnoreCase : 0));
 
 		/// <summary>
@@ -165,7 +165,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="typeName">Full name of the type (<see cref="DmdType.FullName"/>)</param>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DmdType GetType(string typeName, DmdGetTypeOptions options);
+		public abstract DmdType? GetType(string typeName, DmdGetTypeOptions options);
 
 		/// <summary>
 		/// Gets all public types in this assembly
@@ -233,7 +233,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="attributeType">Custom attribute type</param>
 		/// <param name="inherit">true to check custom attributes in all base classes</param>
 		/// <returns></returns>
-		public bool IsDefined(DmdType attributeType, bool inherit) => CustomAttributesHelper.IsDefined(GetCustomAttributesData(), attributeType);
+		public bool IsDefined(DmdType? attributeType, bool inherit) => CustomAttributesHelper.IsDefined(GetCustomAttributesData(), attributeType);
 
 		/// <summary>
 		/// Checks if a custom attribute is present
@@ -249,7 +249,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="attributeTypeFullName">Full name of the custom attribute type</param>
 		/// <param name="inherit">true to check custom attributes in all base classes</param>
 		/// <returns></returns>
-		public DmdCustomAttributeData FindCustomAttribute(string attributeTypeFullName, bool inherit) => CustomAttributesHelper.Find(GetCustomAttributesData(), attributeTypeFullName);
+		public DmdCustomAttributeData? FindCustomAttribute(string attributeTypeFullName, bool inherit) => CustomAttributesHelper.Find(GetCustomAttributesData(), attributeTypeFullName);
 
 		/// <summary>
 		/// Finds a custom attribute
@@ -257,7 +257,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="attributeType">Custom attribute type</param>
 		/// <param name="inherit">true to check custom attributes in all base classes</param>
 		/// <returns></returns>
-		public DmdCustomAttributeData FindCustomAttribute(DmdType attributeType, bool inherit) => CustomAttributesHelper.Find(GetCustomAttributesData(), attributeType);
+		public DmdCustomAttributeData? FindCustomAttribute(DmdType? attributeType, bool inherit) => CustomAttributesHelper.Find(GetCustomAttributesData(), attributeType);
 
 		/// <summary>
 		/// Finds a custom attribute
@@ -265,14 +265,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="attributeType">Custom attribute type</param>
 		/// <param name="inherit">true to check custom attributes in all base classes</param>
 		/// <returns></returns>
-		public DmdCustomAttributeData FindCustomAttribute(Type attributeType, bool inherit) => CustomAttributesHelper.Find(GetCustomAttributesData(), DmdTypeUtilities.ToDmdType(attributeType, AppDomain));
+		public DmdCustomAttributeData? FindCustomAttribute(Type attributeType, bool inherit) => CustomAttributesHelper.Find(GetCustomAttributesData(), DmdTypeUtilities.ToDmdType(attributeType, AppDomain));
 
 		/// <summary>
 		/// Creates an instance of a type
 		/// </summary>
 		/// <param name="context">Evaluation context</param>
 		/// <param name="typeName">Fully qualified name of type to create</param>
-		public object CreateInstance(object context, string typeName) => CreateInstance(context, typeName, false, DmdBindingFlags.Instance | DmdBindingFlags.Public, null, (IList<DmdType>)null);
+		public object? CreateInstance(object? context, string typeName) => CreateInstance(context, typeName, false, DmdBindingFlags.Instance | DmdBindingFlags.Public, null, (IList<DmdType>?)null);
 
 		/// <summary>
 		/// Creates an instance of a type
@@ -280,7 +280,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="typeName">Fully qualified name of type to create</param>
 		/// <param name="ignoreCase">true to ignore case</param>
-		public object CreateInstance(object context, string typeName, bool ignoreCase) => CreateInstance(context, typeName, ignoreCase, DmdBindingFlags.Instance | DmdBindingFlags.Public, null, (IList<DmdType>)null);
+		public object? CreateInstance(object? context, string typeName, bool ignoreCase) => CreateInstance(context, typeName, ignoreCase, DmdBindingFlags.Instance | DmdBindingFlags.Public, null, (IList<DmdType>?)null);
 
 		/// <summary>
 		/// Creates an instance of a type
@@ -290,7 +290,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="ignoreCase">true to ignore case</param>
 		/// <param name="bindingAttr">Binding attributes</param>
 		/// <param name="args">Constructor arguments or null</param>
-		public object CreateInstance(object context, string typeName, bool ignoreCase, DmdBindingFlags bindingAttr, object[] args) => CreateInstance(context, typeName, ignoreCase, bindingAttr, args, (IList<DmdType>)null);
+		public object? CreateInstance(object? context, string typeName, bool ignoreCase, DmdBindingFlags bindingAttr, object?[]? args) => CreateInstance(context, typeName, ignoreCase, bindingAttr, args, (IList<DmdType>?)null);
 
 		/// <summary>
 		/// Creates an instance of a type
@@ -302,22 +302,22 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="args">Constructor arguments or null</param>
 		/// <param name="argTypes">Constructor parameter types or null</param>
 		/// <returns></returns>
-		public object CreateInstance(object context, string typeName, bool ignoreCase, DmdBindingFlags bindingAttr, object[] args, IList<DmdType> argTypes) {
-			args = args ?? Array.Empty<object>();
-			if (argTypes != null && args.Length != argTypes.Count)
+		public object? CreateInstance(object? context, string typeName, bool ignoreCase, DmdBindingFlags bindingAttr, object?[]? args, IList<DmdType>? argTypes) {
+			args = args ?? Array.Empty<object?>();
+			if (!(argTypes is null) && args.Length != argTypes.Count)
 				throw new ArgumentException();
 			var type = GetType(typeName, false, ignoreCase);
-			if ((object)type == null)
+			if (type is null)
 				return null;
-			DmdConstructorInfo ctor;
-			if (argTypes != null)
+			DmdConstructorInfo? ctor;
+			if (!(argTypes is null))
 				ctor = type.GetConstructor(bindingAttr, argTypes);
 			else {
 				ctor = null;
 				foreach (var c in type.GetConstructors(bindingAttr)) {
 					if (c.GetMethodSignature().GetParameterTypes().Count != args.Length)
 						continue;
-					if ((object)ctor != null)
+					if (!(ctor is null))
 						return null;
 					ctor = c;
 				}
@@ -335,7 +335,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="args">Constructor arguments or null</param>
 		/// <param name="argTypes">Constructor parameter types or null</param>
 		/// <returns></returns>
-		public object CreateInstance(object context, string typeName, bool ignoreCase, DmdBindingFlags bindingAttr, object[] args, IList<Type> argTypes) =>
+		public object? CreateInstance(object? context, string typeName, bool ignoreCase, DmdBindingFlags bindingAttr, object?[]? args, IList<Type>? argTypes) =>
 			CreateInstance(context, typeName, ignoreCase, bindingAttr, args, argTypes.ToDmdType(AppDomain));
 
 		/// <summary>
@@ -360,7 +360,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="name">Name of module</param>
 		/// <returns></returns>
-		public abstract DmdModule GetModule(string name);
+		public abstract DmdModule? GetModule(string name);
 
 		/// <summary>
 		/// Gets all referenced assemblies

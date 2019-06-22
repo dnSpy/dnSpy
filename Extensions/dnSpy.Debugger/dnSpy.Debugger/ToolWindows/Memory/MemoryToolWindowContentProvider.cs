@@ -42,12 +42,12 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 
 			public MemoryToolWindowContent Content {
 				get {
-					if (content == null)
+					if (content is null)
 						content = createContent();
 					return content;
 				}
 			}
-			MemoryToolWindowContent content;
+			MemoryToolWindowContent? content;
 
 			readonly Func<MemoryToolWindowContent> createContent;
 
@@ -90,7 +90,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			}
 		}
 
-		public ToolWindowContent GetOrCreate(Guid guid) {
+		public ToolWindowContent? GetOrCreate(Guid guid) {
 			foreach (var info in contents) {
 				if (info.Guid == guid)
 					return info.Content;
@@ -103,11 +103,11 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 	}
 
 	sealed class MemoryToolWindowContent : ToolWindowContent, IZoomable {
-		public override IInputElement FocusedElement => memoryContent.Value.FocusedElement;
-		public override FrameworkElement ZoomElement => memoryContent.Value.ZoomElement;
+		public override IInputElement? FocusedElement => memoryContent.Value.FocusedElement;
+		public override FrameworkElement? ZoomElement => memoryContent.Value.ZoomElement;
 		public override Guid Guid { get; }
 		public override string Title => string.Format(dnSpy_Debugger_Resources.Window_Memory_N, windowIndex + 1);
-		public override object UIObject => memoryContent.Value.UIObject;
+		public override object? UIObject => memoryContent.Value.UIObject;
 		public WpfHexView HexView => memoryContent.Value.HexView;
 		double IZoomable.ZoomValue => memoryContent.Value.ZoomValue;
 

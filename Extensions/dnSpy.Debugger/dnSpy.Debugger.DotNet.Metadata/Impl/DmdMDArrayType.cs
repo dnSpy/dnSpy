@@ -28,12 +28,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdTypeSignatureKind TypeSignatureKind => DmdTypeSignatureKind.MDArray;
 		public override DmdTypeScope TypeScope => SkipElementTypes().TypeScope;
 		public override DmdModule Module => SkipElementTypes().Module;
-		public override string MetadataNamespace => null;
-		public override string MetadataName => null;
-		public override DmdType BaseType => AppDomain.System_Array;
-		public override StructLayoutAttribute StructLayoutAttribute => null;
+		public override string? MetadataNamespace => null;
+		public override string? MetadataName => null;
+		public override DmdType? BaseType => AppDomain.System_Array;
+		public override StructLayoutAttribute? StructLayoutAttribute => null;
 		public override DmdTypeAttributes Attributes => DmdTypeAttributes.Public | DmdTypeAttributes.AutoLayout | DmdTypeAttributes.Class | DmdTypeAttributes.Sealed | DmdTypeAttributes.AnsiClass | DmdTypeAttributes.Serializable;
-		public override DmdType DeclaringType => null;
+		public override DmdType? DeclaringType => null;
 		public override int MetadataToken => 0x02000000;
 		public override bool IsMetadataReference { get; }
 		internal override bool HasTypeEquivalence => elementType.HasTypeEquivalence;
@@ -43,13 +43,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		readonly ReadOnlyCollection<int> sizes;
 		readonly ReadOnlyCollection<int> lowerBounds;
 
-		public DmdMDArrayType(DmdTypeBase elementType, int rank, IList<int> sizes, IList<int> lowerBounds, IList<DmdCustomModifier> customModifiers) : base(customModifiers) {
+		public DmdMDArrayType(DmdTypeBase elementType, int rank, IList<int> sizes, IList<int> lowerBounds, IList<DmdCustomModifier>? customModifiers) : base(customModifiers) {
 			// Allow 0, it's allowed in the MD
 			if (rank < 0)
 				throw new ArgumentOutOfRangeException(nameof(rank));
-			if (sizes == null)
+			if (sizes is null)
 				throw new ArgumentNullException(nameof(sizes));
-			if (lowerBounds == null)
+			if (lowerBounds is null)
 				throw new ArgumentNullException(nameof(lowerBounds));
 			this.rank = rank;
 			this.elementType = elementType ?? throw new ArgumentNullException(nameof(elementType));
@@ -59,35 +59,35 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			IsFullyResolved = elementType.IsFullyResolved;
 		}
 
-		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => AppDomain.MakeArrayType(elementType, rank, sizes, lowerBounds, customModifiers);
+		public override DmdType WithCustomModifiers(IList<DmdCustomModifier>? customModifiers) => AppDomain.MakeArrayType(elementType, rank, sizes, lowerBounds, customModifiers);
 		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : AppDomain.MakeArrayType(elementType, rank, sizes, lowerBounds, null);
-		public override DmdType GetElementType() => elementType;
+		public override DmdType? GetElementType() => elementType;
 		public override int GetArrayRank() => rank;
 		public override ReadOnlyCollection<int> GetArraySizes() => sizes;
 		public override ReadOnlyCollection<int> GetArrayLowerBounds() => lowerBounds;
 
-		protected override DmdType ResolveNoThrowCore() {
+		protected override DmdType? ResolveNoThrowCore() {
 			if (!IsMetadataReference)
 				return this;
 			var newElementType = elementType.ResolveNoThrow();
-			if ((object)newElementType != null)
+			if (!(newElementType is null))
 				return AppDomain.MakeArrayType(newElementType, rank, sizes, lowerBounds, GetCustomModifiers());
 			return null;
 		}
 
 		public override bool IsFullyResolved { get; }
-		public override DmdTypeBase FullResolve() {
+		public override DmdTypeBase? FullResolve() {
 			if (IsFullyResolved)
 				return this;
 			var et = elementType.FullResolve();
-			if ((object)et != null)
+			if (!(et is null))
 				return (DmdTypeBase)AppDomain.MakeArrayType(et, rank, sizes, lowerBounds, GetCustomModifiers());
 			return null;
 		}
 
-		public override DmdType[] ReadDeclaredInterfaces() => null;
+		public override DmdType[]? ReadDeclaredInterfaces() => null;
 
-		public override DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType) {
+		public override DmdMethodBase[]? CreateDeclaredMethods(DmdType reflectedType) {
 			var appDomain = AppDomain;
 			return new DmdMethodBase[5] {
 				CreateMethod(reflectedType, DmdSpecialMethodKind.Array_Constructor1, DmdConstructorInfo.ConstructorName, appDomain.System_Void, CreateParameterTypes(null)),
@@ -100,13 +100,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		int SafeRank => (uint)rank <= 100 ? rank : 100;
 
-		DmdType[] CreateParameterTypes(DmdType lastType) {
+		DmdType[] CreateParameterTypes(DmdType? lastType) {
 			var rank = SafeRank;
-			var types = new DmdType[rank + ((object)lastType == null ? 0 : 1)];
+			var types = new DmdType[rank + (lastType is null ? 0 : 1)];
 			var int32Type = AppDomain.System_Int32;
 			for (int i = 0; i < types.Length; i++)
 				types[i] = int32Type;
-			if ((object)lastType != null)
+			if (!(lastType is null))
 				types[types.Length - 1] = lastType;
 			return types;
 		}

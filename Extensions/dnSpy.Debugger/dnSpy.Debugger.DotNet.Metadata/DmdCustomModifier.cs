@@ -66,7 +66,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is DmdCustomModifier other && Equals(other);
+		public override bool Equals(object? obj) => obj is DmdCustomModifier other && Equals(other);
 
 		/// <summary>
 		/// GetHashCode()

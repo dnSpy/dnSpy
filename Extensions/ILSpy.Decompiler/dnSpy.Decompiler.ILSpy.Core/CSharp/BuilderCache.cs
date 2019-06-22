@@ -40,7 +40,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 		public readonly StringBuilder XmlDoc_StringBuilder;
 
 		readonly Dictionary<ModuleDef, bool> hasXmlDocFile;
-		ModuleDef lastModule;
+		ModuleDef? lastModule;
 		bool lastModuleResult;
 
 		public AstBuilderState(int settingsVersion) {

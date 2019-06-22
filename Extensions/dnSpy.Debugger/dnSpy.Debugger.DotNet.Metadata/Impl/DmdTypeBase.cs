@@ -30,10 +30,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		readonly ReadOnlyCollection<DmdCustomModifier> customModifiers;
 		public sealed override ReadOnlyCollection<DmdCustomModifier> GetCustomModifiers() => customModifiers;
-		protected DmdTypeBase(IList<DmdCustomModifier> customModifiers) =>
+		protected DmdTypeBase(IList<DmdCustomModifier>? customModifiers) =>
 			this.customModifiers = ReadOnlyCollectionHelpers.Create(customModifiers);
-		protected IList<DmdCustomModifier> VerifyCustomModifiers(IList<DmdCustomModifier> customModifiers) {
-			if (customModifiers != null) {
+		protected IList<DmdCustomModifier>? VerifyCustomModifiers(IList<DmdCustomModifier>? customModifiers) {
+			if (!(customModifiers is null)) {
 				for (int i = 0; i < customModifiers.Count; i++) {
 					if (customModifiers[i].Type.AppDomain != AppDomain)
 						throw new ArgumentException();
@@ -57,19 +57,19 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		/// Resolves a type whose <see cref="IsFullyResolved"/> property is true or returns null if the resolve failed
 		/// </summary>
 		/// <returns></returns>
-		public abstract DmdTypeBase FullResolve();
+		public abstract DmdTypeBase? FullResolve();
 
-		public sealed override DmdType Resolve(bool throwOnError) {
+		public sealed override DmdType? Resolve(bool throwOnError) {
 			var res = ResolveNoThrowCore();
-			if ((object)res == null && throwOnError)
+			if (res is null && throwOnError)
 				throw new TypeResolveException(this);
 			return res;
 		}
-		protected abstract DmdType ResolveNoThrowCore();
+		protected abstract DmdType? ResolveNoThrowCore();
 
-		public override DmdMethodBase DeclaringMethod => throw new InvalidOperationException();
+		public override DmdMethodBase? DeclaringMethod => throw new InvalidOperationException();
 		public sealed override DmdAssembly Assembly => Module.Assembly;
-		public sealed override bool HasElementType => (object)GetElementType() != null;
+		public sealed override bool HasElementType => !(GetElementType() is null);
 		public override DmdGenericParameterAttributes GenericParameterAttributes => throw new InvalidOperationException();
 		public override bool IsGenericType => false;
 		public override bool IsGenericTypeDefinition => false;
@@ -77,7 +77,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdType GetGenericTypeDefinition() => throw new InvalidOperationException();
 		public override ReadOnlyCollection<DmdType> GetGenericParameterConstraints() => throw new InvalidOperationException();
 		public override DmdMethodSignature GetFunctionPointerMethodSignature() => throw new InvalidOperationException();
-		public override DmdType GetElementType() => null;
+		public override DmdType? GetElementType() => null;
 		public override int GetArrayRank() => throw new ArgumentException();
 		public override ReadOnlyCollection<int> GetArraySizes() => throw new ArgumentException();
 		public override ReadOnlyCollection<int> GetArrayLowerBounds() => throw new ArgumentException();
@@ -90,13 +90,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public sealed override ReadOnlyCollection<DmdType> GetGenericArguments() => SkipElementTypes()?.GetGenericArgumentsCore() ?? ReadOnlyCollectionHelpers.Empty<DmdType>();
 		protected virtual ReadOnlyCollection<DmdType> GetGenericArgumentsCore() => ReadOnlyCollectionHelpers.Empty<DmdType>();
 
-		public sealed override string Namespace {
+		public sealed override string? Namespace {
 			get {
 				DmdType type = SkipElementTypes();
 				while (type.DeclaringType is DmdType declType)
 					type = declType;
 				var ns = type.MetadataNamespace;
-				return ns == null || ns.Length == 0 ? null : ns;
+				return ns is null || ns.Length == 0 ? null : ns;
 			}
 		}
 
@@ -107,8 +107,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return type;
 		}
 
-		public sealed override DmdConstructorInfo GetConstructor(DmdBindingFlags bindingAttr, DmdCallingConventions callConvention, IList<DmdType> types) {
-			if (types == null)
+		public sealed override DmdConstructorInfo? GetConstructor(DmdBindingFlags bindingAttr, DmdCallingConventions callConvention, IList<DmdType> types) {
+			if (types is null)
 				throw new ArgumentNullException(nameof(types));
 			foreach (var ctor in GetDeclaredConstructors()) {
 				if (DmdMemberInfoComparer.IsMatch(ctor, bindingAttr, callConvention, types))
@@ -118,10 +118,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		public sealed override DmdConstructorInfo[] GetConstructors(DmdBindingFlags bindingAttr) {
-			List<DmdConstructorInfo> ctors = null;
+			List<DmdConstructorInfo>? ctors = null;
 			foreach (var ctor in GetDeclaredConstructors()) {
 				if (DmdMemberInfoComparer.IsMatch(ctor, bindingAttr)) {
-					if (ctors == null)
+					if (ctors is null)
 						ctors = new List<DmdConstructorInfo>();
 					ctors.Add(ctor);
 				}
@@ -129,22 +129,22 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return ctors?.ToArray() ?? Array.Empty<DmdConstructorInfo>();
 		}
 
-		public sealed override DmdMethodInfo GetMethod(string name, DmdBindingFlags bindingAttr, DmdCallingConventions callConvention, IList<DmdType> types) {
-			if (name == null)
+		public sealed override DmdMethodInfo? GetMethod(string name, DmdBindingFlags bindingAttr, DmdCallingConventions callConvention, IList<DmdType>? types) {
+			if (name is null)
 				throw new ArgumentNullException(nameof(name));
-			DmdMethodInfo foundMethod = null;
+			DmdMethodInfo? foundMethod = null;
 			int counter = 0;
 			foreach (var method in GetMethods(ToGetMemberOptions(bindingAttr))) {
 				if (!DmdMemberInfoComparer.IsMatch(method, name, bindingAttr))
 					continue;
 				if (!DmdMemberInfoComparer.IsMatch(method, bindingAttr, callConvention))
 					continue;
-				if (types != null && DmdMemberInfoComparer.IsMatch(method, types))
+				if (!(types is null) && DmdMemberInfoComparer.IsMatch(method, types))
 					return method;
 				foundMethod = method;
 				counter++;
 			}
-			if ((object)foundMethod != null && types == null) {
+			if (!(foundMethod is null) && types is null) {
 				if (counter == 1)
 					return foundMethod;
 				throw new System.Reflection.AmbiguousMatchException();
@@ -153,10 +153,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		public sealed override DmdMethodInfo[] GetMethods(DmdBindingFlags bindingAttr) {
-			List<DmdMethodInfo> methods = null;
+			List<DmdMethodInfo>? methods = null;
 			foreach (var method in GetMethods(ToGetMemberOptions(bindingAttr))) {
 				if (DmdMemberInfoComparer.IsMatch(method, bindingAttr)) {
-					if (methods == null)
+					if (methods is null)
 						methods = new List<DmdMethodInfo>();
 					methods.Add(method);
 				}
@@ -164,8 +164,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return methods?.ToArray() ?? Array.Empty<DmdMethodInfo>();
 		}
 
-		public sealed override DmdFieldInfo GetField(string name, DmdBindingFlags bindingAttr) {
-			if (name == null)
+		public sealed override DmdFieldInfo? GetField(string name, DmdBindingFlags bindingAttr) {
+			if (name is null)
 				throw new ArgumentNullException(nameof(name));
 			foreach (var field in GetFields(ToGetMemberOptions(bindingAttr))) {
 				if (DmdMemberInfoComparer.IsMatch(field, name, bindingAttr) && DmdMemberInfoComparer.IsMatch(field, bindingAttr))
@@ -175,10 +175,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		public sealed override DmdFieldInfo[] GetFields(DmdBindingFlags bindingAttr) {
-			List<DmdFieldInfo> fields = null;
+			List<DmdFieldInfo>? fields = null;
 			foreach (var field in GetFields(ToGetMemberOptions(bindingAttr))) {
 				if (DmdMemberInfoComparer.IsMatch(field, bindingAttr)) {
-					if (fields == null)
+					if (fields is null)
 						fields = new List<DmdFieldInfo>();
 					fields.Add(field);
 				}
@@ -186,8 +186,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return fields?.ToArray() ?? Array.Empty<DmdFieldInfo>();
 		}
 
-		public sealed override DmdEventInfo GetEvent(string name, DmdBindingFlags bindingAttr) {
-			if (name == null)
+		public sealed override DmdEventInfo? GetEvent(string name, DmdBindingFlags bindingAttr) {
+			if (name is null)
 				throw new ArgumentNullException(nameof(name));
 			foreach (var @event in GetEvents(ToGetMemberOptions(bindingAttr))) {
 				if (DmdMemberInfoComparer.IsMatch(@event, name, bindingAttr) && DmdMemberInfoComparer.IsMatch(@event, bindingAttr))
@@ -197,10 +197,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		public sealed override DmdEventInfo[] GetEvents(DmdBindingFlags bindingAttr) {
-			List<DmdEventInfo> events = null;
+			List<DmdEventInfo>? events = null;
 			foreach (var @event in GetEvents(ToGetMemberOptions(bindingAttr))) {
 				if (DmdMemberInfoComparer.IsMatch(@event, bindingAttr)) {
-					if (events == null)
+					if (events is null)
 						events = new List<DmdEventInfo>();
 					events.Add(@event);
 				}
@@ -208,39 +208,39 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return events?.ToArray() ?? Array.Empty<DmdEventInfo>();
 		}
 
-		public sealed override DmdPropertyInfo GetProperty(string name, DmdBindingFlags bindingAttr, DmdType returnType, IList<DmdType> types) {
-			if (name == null)
+		public sealed override DmdPropertyInfo? GetProperty(string name, DmdBindingFlags bindingAttr, DmdType? returnType, IList<DmdType>? types) {
+			if (name is null)
 				throw new ArgumentNullException(nameof(name));
-			DmdPropertyInfo foundProperty = null;
+			DmdPropertyInfo? foundProperty = null;
 			int counter = 0;
 			foreach (var property in GetProperties(ToGetMemberOptions(bindingAttr))) {
 				if (!DmdMemberInfoComparer.IsMatch(property, name, bindingAttr))
 					continue;
 				if (!DmdMemberInfoComparer.IsMatch(property, bindingAttr))
 					continue;
-				if ((object)returnType != null && !DmdMemberInfoComparer.IsMatch(property, returnType))
+				if (!(returnType is null) && !DmdMemberInfoComparer.IsMatch(property, returnType))
 					continue;
-				if (types != null && !DmdMemberInfoComparer.IsMatch(property, types))
+				if (!(types is null) && !DmdMemberInfoComparer.IsMatch(property, types))
 					continue;
-				if ((object)returnType != null && types != null)
+				if (!(returnType is null) && !(types is null))
 					return property;
 				foundProperty = property;
 				counter++;
 			}
-			if ((object)foundProperty != null && types == null) {
+			if (!(foundProperty is null) && types is null) {
 				if (counter == 1)
 					return foundProperty;
-				if ((object)returnType == null)
+				if (returnType is null)
 					throw new System.Reflection.AmbiguousMatchException();
 			}
 			return null;
 		}
 
 		public sealed override DmdPropertyInfo[] GetProperties(DmdBindingFlags bindingAttr) {
-			List<DmdPropertyInfo> properties = null;
+			List<DmdPropertyInfo>? properties = null;
 			foreach (var property in GetProperties(ToGetMemberOptions(bindingAttr))) {
 				if (DmdMemberInfoComparer.IsMatch(property, bindingAttr)) {
-					if (properties == null)
+					if (properties is null)
 						properties = new List<DmdPropertyInfo>();
 					properties.Add(property);
 				}
@@ -249,45 +249,45 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		public sealed override DmdMemberInfo[] GetMember(string name, DmdMemberTypes type, DmdBindingFlags bindingAttr) {
-			if (name == null)
+			if (name is null)
 				throw new ArgumentNullException(nameof(name));
 
-			DmdConstructorInfo[] ctors = null;
+			DmdConstructorInfo[]? ctors = null;
 			if ((type & DmdMemberTypes.Constructor) != 0) {
 				ctors = GetConstructors(bindingAttr).Where(a => DmdMemberInfoComparer.IsMatch(a, name, bindingAttr) && DmdMemberInfoComparer.IsMatch(a, bindingAttr)).ToArray();
 				if (type == DmdMemberTypes.Constructor)
 					return ctors;
 			}
 
-			DmdMethodInfo[] methods = null;
+			DmdMethodInfo[]? methods = null;
 			if ((type & DmdMemberTypes.Method) != 0) {
 				methods = GetMethods(bindingAttr).Where(a => DmdMemberInfoComparer.IsMatch(a, name, bindingAttr) && DmdMemberInfoComparer.IsMatch(a, bindingAttr)).ToArray();
 				if (type == DmdMemberTypes.Method)
 					return methods;
 			}
 
-			DmdFieldInfo[] fields = null;
+			DmdFieldInfo[]? fields = null;
 			if ((type & DmdMemberTypes.Field) != 0) {
 				fields = GetFields(bindingAttr).Where(a => DmdMemberInfoComparer.IsMatch(a, name, bindingAttr) && DmdMemberInfoComparer.IsMatch(a, bindingAttr)).ToArray();
 				if (type == DmdMemberTypes.Field)
 					return fields;
 			}
 
-			DmdPropertyInfo[] properties = null;
+			DmdPropertyInfo[]? properties = null;
 			if ((type & DmdMemberTypes.Property) != 0) {
 				properties = GetProperties(bindingAttr).Where(a => DmdMemberInfoComparer.IsMatch(a, name, bindingAttr) && DmdMemberInfoComparer.IsMatch(a, bindingAttr)).ToArray();
 				if (type == DmdMemberTypes.Property)
 					return properties;
 			}
 
-			DmdEventInfo[] events = null;
+			DmdEventInfo[]? events = null;
 			if ((type & DmdMemberTypes.Event) != 0) {
 				events = GetEvents(bindingAttr).Where(a => DmdMemberInfoComparer.IsMatch(a, name, bindingAttr) && DmdMemberInfoComparer.IsMatch(a, bindingAttr)).ToArray();
 				if (type == DmdMemberTypes.Event)
 					return events;
 			}
 
-			DmdType[] types = null;
+			DmdType[]? types = null;
 			if ((type & (DmdMemberTypes.TypeInfo | DmdMemberTypes.NestedType)) != 0) {
 				types = GetNestedTypes(bindingAttr).Where(a => DmdMemberInfoComparer.IsMatch(a, name, bindingAttr) && DmdMemberInfoComparer.IsMatch(a, bindingAttr)).ToArray();
 				// Matches Reflection behavior
@@ -309,8 +309,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return res;
 		}
 
-		static void Copy(DmdMemberInfo[] src, DmdMemberInfo[] dst, ref int index) {
-			if (src == null)
+		static void Copy(DmdMemberInfo[]? src, DmdMemberInfo[] dst, ref int index) {
+			if (src is null)
 				return;
 			Array.Copy(src, 0, dst, index, src.Length);
 			index += src.Length;
@@ -331,7 +331,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			var nestedTypes = NestedTypes;
 			if (nestedTypes.Count == 0)
 				return Array.Empty<DmdType>();
-			var list = ObjectPools.AllocListOfType();
+			List<DmdType>? list = ObjectPools.AllocListOfType();
 			foreach (var type in nestedTypes) {
 				if (DmdMemberInfoComparer.IsMatch(type, bindingAttr))
 					list.Add(type);
@@ -339,8 +339,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return ObjectPools.FreeAndToArray(ref list);
 		}
 
-		public sealed override DmdType GetNestedType(string fullName, DmdBindingFlags bindingAttr) {
-			if (fullName == null)
+		public sealed override DmdType? GetNestedType(string fullName, DmdBindingFlags bindingAttr) {
+			if (fullName is null)
 				throw new ArgumentNullException(nameof(fullName));
 			var nestedTypes = NestedTypes;
 			if (nestedTypes.Count == 0)
@@ -353,8 +353,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		public sealed override DmdType GetInterface(string fullName, bool ignoreCase) {
-			if (fullName == null)
+		public sealed override DmdType? GetInterface(string fullName, bool ignoreCase) {
+			if (fullName is null)
 				throw new ArgumentNullException(nameof(fullName));
 			var ifaces = GetInterfaces();
 			if (ifaces.Count == 0)
@@ -370,29 +370,29 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public sealed override ReadOnlyCollection<DmdType> GetInterfaces() {
 			var f = ExtraFields;
-			if (f.__implementedInterfaces_DONT_USE != null)
+			if (!(f.__implementedInterfaces_DONT_USE is null))
 				return f.__implementedInterfaces_DONT_USE;
 
 			var implIfaces = CreateInterfaces(this);
 			Interlocked.CompareExchange(ref f.__implementedInterfaces_DONT_USE, ReadOnlyCollectionHelpers.Create(implIfaces), null);
-			return f.__implementedInterfaces_DONT_USE;
+			return f.__implementedInterfaces_DONT_USE!;
 		}
-		public abstract DmdType[] ReadDeclaredInterfaces();
+		public abstract DmdType[]? ReadDeclaredInterfaces();
 
 		static DmdType[] CreateInterfaces(DmdTypeBase type) {
-			var list = ObjectPools.AllocListOfType();
-			var hash = ObjectPools.AllocHashSetOfType();
-			var stack = ObjectPools.AllocStackOfIEnumeratorOfType();
+			List<DmdType>? list = ObjectPools.AllocListOfType();
+			HashSet<DmdType>? hash = ObjectPools.AllocHashSetOfType();
+			Stack<IEnumerator<DmdType>>? stack = ObjectPools.AllocStackOfIEnumeratorOfType();
 
-			IEnumerator<DmdType> tmpEnum = null;
+			IEnumerator<DmdType>? tmpEnum = null;
 			try {
-				for (var t = type; ;) {
+				for (DmdTypeBase? t = type; ;) {
 					if (!hash.Add(t))
 						break;
 					stack.Push(tmpEnum = t.DeclaredInterfaces.GetEnumerator());
 					tmpEnum = null;
-					t = (DmdTypeBase)t.BaseType;
-					if ((object)t == null)
+					t = (DmdTypeBase?)t.BaseType;
+					if (t is null)
 						break;
 				}
 
@@ -428,22 +428,23 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public sealed override DmdMemberInfo[] GetDefaultMembers() {
 			var name = GetDefaultMemberName(this);
-			if (name == null)
+			if (name is null)
 				return Array.Empty<DmdMemberInfo>();
 			return GetMember(name);
 		}
 
-		static string GetDefaultMemberName(DmdType type) {
-			var defaultMemberAttribute = type.AppDomain.GetWellKnownType(DmdWellKnownType.System_Reflection_DefaultMemberAttribute, isOptional: true);
-			if ((object)defaultMemberAttribute == null)
+		static string? GetDefaultMemberName(DmdType type) {
+			DmdType? currentType = type;
+			var defaultMemberAttribute = currentType.AppDomain.GetWellKnownType(DmdWellKnownType.System_Reflection_DefaultMemberAttribute, isOptional: true);
+			if (defaultMemberAttribute is null)
 				return null;
 			for (int i = 0; i < 100; i++) {
-				foreach (var ca in type.GetCustomAttributesData()) {
+				foreach (var ca in currentType.GetCustomAttributesData()) {
 					if (ca.AttributeType == defaultMemberAttribute)
 						return ca.ConstructorArguments.Count == 1 ? ca.ConstructorArguments[0].Value as string : null;
 				}
-				type = type.BaseType;
-				if ((object)type == null)
+				currentType = currentType.BaseType;
+				if (currentType is null)
 					break;
 			}
 			return null;
@@ -459,37 +460,37 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public sealed override ReadOnlyCollection<DmdCustomAttributeData> GetCustomAttributesData() {
 			var f = ExtraFields;
-			if (f.__customAttributes_DONT_USE == null)
+			if (f.__customAttributes_DONT_USE is null)
 				InitializeCustomAttributes(f);
-			return f.__customAttributes_DONT_USE;
+			return f.__customAttributes_DONT_USE!;
 		}
 
 		void InitializeCustomAttributes(ExtraFieldsImpl f) {
-			if (f.__customAttributes_DONT_USE != null)
+			if (!(f.__customAttributes_DONT_USE is null))
 				return;
 			var info = CreateCustomAttributes();
 			var newSAs = ReadOnlyCollectionHelpers.Create(info.sas);
 			var newCAs = CustomAttributesHelper.AddPseudoCustomAttributes(this, info.cas, newSAs);
 			lock (LockObject) {
-				if (f.__customAttributes_DONT_USE == null) {
+				if (f.__customAttributes_DONT_USE is null) {
 					f.__securityAttributes_DONT_USE = newSAs;
 					f.__customAttributes_DONT_USE = newCAs;
 				}
 			}
 		}
-		public virtual (DmdCustomAttributeData[] cas, DmdCustomAttributeData[] sas) CreateCustomAttributes() => (null, null);
+		public virtual (DmdCustomAttributeData[]? cas, DmdCustomAttributeData[]? sas) CreateCustomAttributes() => (null, null);
 
 		public sealed override ReadOnlyCollection<DmdCustomAttributeData> GetSecurityAttributesData() {
 			var f = ExtraFields;
-			if (f.__customAttributes_DONT_USE == null)
+			if (f.__customAttributes_DONT_USE is null)
 				InitializeCustomAttributes(f);
-			return f.__securityAttributes_DONT_USE;
+			return f.__securityAttributes_DONT_USE!;
 		}
 
-		public virtual DmdFieldInfo[] CreateDeclaredFields(DmdType reflectedType) => null;
-		public virtual DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType) => null;
-		public virtual DmdPropertyInfo[] CreateDeclaredProperties(DmdType reflectedType) => null;
-		public virtual DmdEventInfo[] CreateDeclaredEvents(DmdType reflectedType) => null;
+		public virtual DmdFieldInfo[]? CreateDeclaredFields(DmdType reflectedType) => null;
+		public virtual DmdMethodBase[]? CreateDeclaredMethods(DmdType reflectedType) => null;
+		public virtual DmdPropertyInfo[]? CreateDeclaredProperties(DmdType reflectedType) => null;
+		public virtual DmdEventInfo[]? CreateDeclaredEvents(DmdType reflectedType) => null;
 
 		public sealed override IEnumerable<DmdFieldInfo> Fields => GetFields(GetMemberOptions.Inherit | GetMemberOptions.Inaccessible);
 		public sealed override IEnumerable<DmdMethodBase> Methods => GetMethodsAndConstructors(GetMemberOptions.Inherit | GetMemberOptions.Inaccessible);
@@ -499,55 +500,55 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public sealed override ReadOnlyCollection<DmdFieldInfo> DeclaredFields {
 			get {
 				var f = ExtraFields;
-				if (f.__declaredFields_DONT_USE != null)
+				if (!(f.__declaredFields_DONT_USE is null))
 					return f.__declaredFields_DONT_USE;
 				var res = CreateDeclaredFields(this);
 				Interlocked.CompareExchange(ref f.__declaredFields_DONT_USE, ReadOnlyCollectionHelpers.Create(res), null);
-				return f.__declaredFields_DONT_USE;
+				return f.__declaredFields_DONT_USE!;
 			}
 		}
 
 		public sealed override ReadOnlyCollection<DmdMethodBase> DeclaredMethods {
 			get {
 				var f = ExtraFields;
-				if (f.__declaredMethods_DONT_USE != null)
+				if (!(f.__declaredMethods_DONT_USE is null))
 					return f.__declaredMethods_DONT_USE;
 				var res = CreateDeclaredMethods(this);
 				Interlocked.CompareExchange(ref f.__declaredMethods_DONT_USE, ReadOnlyCollectionHelpers.Create(res), null);
-				return f.__declaredMethods_DONT_USE;
+				return f.__declaredMethods_DONT_USE!;
 			}
 		}
 
 		public sealed override ReadOnlyCollection<DmdPropertyInfo> DeclaredProperties {
 			get {
 				var f = ExtraFields;
-				if (f.__declaredProperties_DONT_USE != null)
+				if (!(f.__declaredProperties_DONT_USE is null))
 					return f.__declaredProperties_DONT_USE;
 				var res = CreateDeclaredProperties(this);
 				Interlocked.CompareExchange(ref f.__declaredProperties_DONT_USE, ReadOnlyCollectionHelpers.Create(res), null);
-				return f.__declaredProperties_DONT_USE;
+				return f.__declaredProperties_DONT_USE!;
 			}
 		}
 
 		public sealed override ReadOnlyCollection<DmdEventInfo> DeclaredEvents {
 			get {
 				var f = ExtraFields;
-				if (f.__declaredEvents_DONT_USE != null)
+				if (!(f.__declaredEvents_DONT_USE is null))
 					return f.__declaredEvents_DONT_USE;
 				var res = CreateDeclaredEvents(this);
 				Interlocked.CompareExchange(ref f.__declaredEvents_DONT_USE, ReadOnlyCollectionHelpers.Create(res), null);
-				return f.__declaredEvents_DONT_USE;
+				return f.__declaredEvents_DONT_USE!;
 			}
 		}
 
-		protected virtual DmdType[] CreateNestedTypes() => null;
+		protected virtual DmdType[]? CreateNestedTypes() => null;
 		protected ReadOnlyCollection<DmdType> NestedTypesCore {
 			get {
 				// We loop here because the field could be cleared if it's a dynamic type
 				for (;;) {
 					var f = ExtraFields;
 					var nestedTypes = f.__nestedTypes_DONT_USE;
-					if (nestedTypes != null)
+					if (!(nestedTypes is null))
 						return nestedTypes;
 					var res = CreateNestedTypes();
 					Interlocked.CompareExchange(ref f.__nestedTypes_DONT_USE, ReadOnlyCollectionHelpers.Create(res), null);
@@ -563,7 +564,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		internal void DynamicType_InvalidateCachedNestedTypes() {
 			Debug.Assert(Module.IsDynamic);
 			var f = __extraFields_DONT_USE;
-			if (f == null)
+			if (f is null)
 				return;
 			f.__nestedTypes_DONT_USE = null;
 		}
@@ -581,11 +582,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		internal ReadOnlyCollection<DmdType> DeclaredInterfaces {
 			get {
 				var f = ExtraFields;
-				if (f.__declaredInterfaces_DONT_USE != null)
+				if (!(f.__declaredInterfaces_DONT_USE is null))
 					return f.__declaredInterfaces_DONT_USE;
 				var res = ReadDeclaredInterfaces();
 				Interlocked.CompareExchange(ref f.__declaredInterfaces_DONT_USE, ReadOnlyCollectionHelpers.Create(res), null);
-				return f.__declaredInterfaces_DONT_USE;
+				return f.__declaredInterfaces_DONT_USE!;
 			}
 		}
 
@@ -594,33 +595,33 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				// We loop here because the field could be cleared if it's a dynamic type
 				for (;;) {
 					var f = __extraFields_DONT_USE;
-					if (f != null)
+					if (!(f is null))
 						return f;
 					Interlocked.CompareExchange(ref __extraFields_DONT_USE, new ExtraFieldsImpl(), null);
 				}
 			}
 		}
-		volatile ExtraFieldsImpl __extraFields_DONT_USE;
+		volatile ExtraFieldsImpl? __extraFields_DONT_USE;
 
 		// Most of the fields aren't used so we alloc them when needed
 		sealed class ExtraFieldsImpl {
-			public volatile ReadOnlyCollection<DmdType> __implementedInterfaces_DONT_USE;
-			public volatile ReadOnlyCollection<DmdType> __declaredInterfaces_DONT_USE;
+			public volatile ReadOnlyCollection<DmdType>? __implementedInterfaces_DONT_USE;
+			public volatile ReadOnlyCollection<DmdType>? __declaredInterfaces_DONT_USE;
 
-			public volatile ReadOnlyCollection<DmdType> __nestedTypes_DONT_USE;
+			public volatile ReadOnlyCollection<DmdType>? __nestedTypes_DONT_USE;
 
-			public volatile ReadOnlyCollection<DmdFieldInfo> __declaredFields_DONT_USE;
-			public volatile ReadOnlyCollection<DmdMethodBase> __declaredMethods_DONT_USE;
-			public volatile ReadOnlyCollection<DmdPropertyInfo> __declaredProperties_DONT_USE;
-			public volatile ReadOnlyCollection<DmdEventInfo> __declaredEvents_DONT_USE;
+			public volatile ReadOnlyCollection<DmdFieldInfo>? __declaredFields_DONT_USE;
+			public volatile ReadOnlyCollection<DmdMethodBase>? __declaredMethods_DONT_USE;
+			public volatile ReadOnlyCollection<DmdPropertyInfo>? __declaredProperties_DONT_USE;
+			public volatile ReadOnlyCollection<DmdEventInfo>? __declaredEvents_DONT_USE;
 
-			public volatile DmdFieldReader __baseFields_DONT_USE;
-			public volatile DmdMethodReader __baseMethods_DONT_USE;
-			public volatile DmdPropertyReader __baseProperties_DONT_USE;
-			public volatile DmdEventReader __baseEvents_DONT_USE;
+			public volatile DmdFieldReader? __baseFields_DONT_USE;
+			public volatile DmdMethodReader? __baseMethods_DONT_USE;
+			public volatile DmdPropertyReader? __baseProperties_DONT_USE;
+			public volatile DmdEventReader? __baseEvents_DONT_USE;
 
-			public volatile ReadOnlyCollection<DmdCustomAttributeData> __customAttributes_DONT_USE;
-			public volatile ReadOnlyCollection<DmdCustomAttributeData> __securityAttributes_DONT_USE;
+			public volatile ReadOnlyCollection<DmdCustomAttributeData>? __customAttributes_DONT_USE;
+			public volatile ReadOnlyCollection<DmdCustomAttributeData>? __securityAttributes_DONT_USE;
 		}
 
 		static bool IsVtblGap(DmdMethodBase method) => method.IsRTSpecialName && method.Name.StartsWith("_VtblGap");
@@ -631,7 +632,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			readonly object lockObj;
 			readonly DmdTypeBase ownerType;
 			IList<MemberInfo<T>> members;
-			DmdTypeBase currentType;
+			DmdTypeBase? currentType;
 			int baseTypeCounter;
 
 			protected DmdMemberReader(DmdTypeBase ownerType) {
@@ -642,7 +643,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				baseTypeCounter = 0;
 			}
 
-			protected abstract T[] CreatedDeclaredMembers(DmdTypeBase ownerType, DmdTypeBase baseType);
+			protected abstract T[]? CreatedDeclaredMembers(DmdTypeBase ownerType, DmdTypeBase baseType);
 			protected abstract MemberInfoKind GetMemberInfoKind(T member);
 			protected abstract void OnCompleted();
 
@@ -659,7 +660,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			protected void InitializeAllCore() {
 				lock (lockObj) {
 					int index = members.Count;
-					while ((object)GetNext(ref index).Member != null)
+					while (!(GetNext(ref index).Member is null))
 						index = members.Count;
 				}
 			}
@@ -669,12 +670,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					// Could be bad MD with an infinite loop
 					if (baseTypeCounter >= MAX_BASE_TYPES)
 						break;
-					if ((object)currentType == null)
+					if (currentType is null)
 						break;
 					// We need a resolved type to get the members. Resolve it now and don't let the TypeRef
 					// resolve it later.
-					currentType = (DmdTypeBase)currentType.BaseType?.Resolve();
-					if ((object)currentType == null)
+					currentType = (DmdTypeBase?)currentType.BaseType?.Resolve();
+					if (currentType is null)
 						break;
 					baseTypeCounter++;
 
@@ -732,7 +733,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		sealed class DmdFieldReader : DmdMemberReader<DmdFieldInfo> {
 			public DmdFieldReader(DmdTypeBase owner) : base(owner) { }
-			protected override DmdFieldInfo[] CreatedDeclaredMembers(DmdTypeBase ownerType, DmdTypeBase baseType) => baseType.CreateDeclaredFields(ownerType);
+			protected override DmdFieldInfo[]? CreatedDeclaredMembers(DmdTypeBase ownerType, DmdTypeBase baseType) => baseType.CreateDeclaredFields(ownerType);
 			protected override MemberInfoKind GetMemberInfoKind(DmdFieldInfo field) => MemberInfoKind.Visible;
 			protected override void OnCompleted() { }
 		}
@@ -752,12 +753,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					Signature = signature;
 				}
 				public bool Equals(Key other) => Name == other.Name && DmdMemberInfoEqualityComparer.DefaultMember.Equals(Signature, other.Signature);
-				public override bool Equals(object obj) => obj is Key other && Equals(other);
+				public override bool Equals(object? obj) => obj is Key other && Equals(other);
 				public override int GetHashCode() => (Name?.GetHashCode() ?? 0) ^ DmdMemberInfoEqualityComparer.DefaultMember.GetHashCode(Signature);
 				public override string ToString() => Name + ": " + Signature?.ToString();
 			}
 
-			bool HasInitializedAllMethods => overriddenHash == null;
+			bool HasInitializedAllMethods => overriddenHash is null;
 
 			Dictionary<Key, DmdMethodDef> overriddenHash;
 			public DmdMethodReader(DmdTypeBase owner) : base(owner) {
@@ -779,7 +780,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				InitializeAllCore();
 			}
 
-			protected override DmdMethodBase[] CreatedDeclaredMembers(DmdTypeBase ownerType, DmdTypeBase baseType) => baseType.CreateDeclaredMethods(ownerType);
+			protected override DmdMethodBase[]? CreatedDeclaredMembers(DmdTypeBase ownerType, DmdTypeBase baseType) => baseType.CreateDeclaredMethods(ownerType);
 			protected override MemberInfoKind GetMemberInfoKind(DmdMethodBase method) {
 				if (method is DmdConstructorInfo)
 					return MemberInfoKind.BaseConstructor;
@@ -808,7 +809,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					return MemberInfoKind.Visible;
 			}
 
-			protected override void OnCompleted() => overriddenHash = null;
+			protected override void OnCompleted() => overriddenHash = null!;
 		}
 
 		sealed class DmdPropertyReader : DmdMemberReader<DmdPropertyInfo> {
@@ -826,7 +827,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					Signature = signature;
 				}
 				public bool Equals(Key other) => Name == other.Name && DmdMemberInfoEqualityComparer.DefaultMember.Equals(Signature, other.Signature);
-				public override bool Equals(object obj) => obj is Key other && Equals(other);
+				public override bool Equals(object? obj) => obj is Key other && Equals(other);
 				public override int GetHashCode() => (Name?.GetHashCode() ?? 0) ^ DmdMemberInfoEqualityComparer.DefaultMember.GetHashCode(Signature);
 				public override string ToString() => Name + ": " + Signature?.ToString();
 			}
@@ -840,7 +841,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				}
 			}
 
-			protected override DmdPropertyInfo[] CreatedDeclaredMembers(DmdTypeBase ownerType, DmdTypeBase baseType) => baseType.CreateDeclaredProperties(ownerType);
+			protected override DmdPropertyInfo[]? CreatedDeclaredMembers(DmdTypeBase ownerType, DmdTypeBase baseType) => baseType.CreateDeclaredProperties(ownerType);
 			protected override MemberInfoKind GetMemberInfoKind(DmdPropertyInfo property) {
 				if (!IsAccessible(property))
 					return MemberInfoKind.Inaccessible;
@@ -850,9 +851,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 
 			void UpdateIsPrivate(DmdMethodInfo method, ref bool? isPrivate) {
-				if ((object)method == null)
+				if (method is null)
 					return;
-				if (method.IsPrivate && isPrivate == null)
+				if (method.IsPrivate && isPrivate is null)
 					isPrivate = true;
 				else
 					isPrivate &= method.IsPrivate;
@@ -863,11 +864,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				foreach (var method in property.GetAccessors(DmdGetAccessorOptions.All))
 					UpdateIsPrivate(method, ref isPrivate);
 
-				bool isDeclaredProperty = (object)property.DeclaringType == property.ReflectedType;
+				bool isDeclaredProperty = (object?)property.DeclaringType == property.ReflectedType;
 				return isDeclaredProperty || isPrivate != true;
 			}
 
-			protected override void OnCompleted() => overriddenHash = null;
+			protected override void OnCompleted() => overriddenHash = null!;
 		}
 
 		sealed class DmdEventReader : DmdMemberReader<DmdEventInfo> {
@@ -878,7 +879,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					overriddenHash.Add(@event.Name);
 			}
 
-			protected override DmdEventInfo[] CreatedDeclaredMembers(DmdTypeBase ownerType, DmdTypeBase baseType) => baseType.CreateDeclaredEvents(ownerType);
+			protected override DmdEventInfo[]? CreatedDeclaredMembers(DmdTypeBase ownerType, DmdTypeBase baseType) => baseType.CreateDeclaredEvents(ownerType);
 			protected override MemberInfoKind GetMemberInfoKind(DmdEventInfo @event) {
 				if (!IsAccessible(@event))
 					return MemberInfoKind.Inaccessible;
@@ -886,10 +887,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				return hide ? MemberInfoKind.Overridden : MemberInfoKind.Visible;
 			}
 
-			void UpdateIsPrivate(DmdMethodInfo method, ref bool? isPrivate) {
-				if ((object)method == null)
+			void UpdateIsPrivate(DmdMethodInfo? method, ref bool? isPrivate) {
+				if (method is null)
 					return;
-				if (method.IsPrivate && isPrivate == null)
+				if (method.IsPrivate && isPrivate is null)
 					isPrivate = true;
 				else
 					isPrivate &= method.IsPrivate;
@@ -908,50 +909,50 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				foreach (var otherMethod in otherMethods)
 					UpdateIsPrivate(otherMethod, ref isPrivate);
 
-				bool isDeclaredEvent = (object)@event.DeclaringType == @event.ReflectedType;
+				bool isDeclaredEvent = (object?)@event.DeclaringType == @event.ReflectedType;
 				return isDeclaredEvent || isPrivate != true;
 			}
 
-			protected override void OnCompleted() => overriddenHash = null;
+			protected override void OnCompleted() => overriddenHash = null!;
 		}
 
 		DmdFieldReader BaseFieldsReader {
 			get {
 				var f = ExtraFields;
-				if (f.__baseFields_DONT_USE != null)
+				if (!(f.__baseFields_DONT_USE is null))
 					return f.__baseFields_DONT_USE;
 				Interlocked.CompareExchange(ref f.__baseFields_DONT_USE, new DmdFieldReader(this), null);
-				return f.__baseFields_DONT_USE;
+				return f.__baseFields_DONT_USE!;
 			}
 		}
 
 		DmdMethodReader BaseMethodsReader {
 			get {
 				var f = ExtraFields;
-				if (f.__baseMethods_DONT_USE != null)
+				if (!(f.__baseMethods_DONT_USE is null))
 					return f.__baseMethods_DONT_USE;
 				Interlocked.CompareExchange(ref f.__baseMethods_DONT_USE, new DmdMethodReader(this), null);
-				return f.__baseMethods_DONT_USE;
+				return f.__baseMethods_DONT_USE!;
 			}
 		}
 
 		DmdPropertyReader BasePropertiesReader {
 			get {
 				var f = ExtraFields;
-				if (f.__baseProperties_DONT_USE != null)
+				if (!(f.__baseProperties_DONT_USE is null))
 					return f.__baseProperties_DONT_USE;
 				Interlocked.CompareExchange(ref f.__baseProperties_DONT_USE, new DmdPropertyReader(this), null);
-				return f.__baseProperties_DONT_USE;
+				return f.__baseProperties_DONT_USE!;
 			}
 		}
 
 		DmdEventReader BaseEventsReader {
 			get {
 				var f = ExtraFields;
-				if (f.__baseEvents_DONT_USE != null)
+				if (!(f.__baseEvents_DONT_USE is null))
 					return f.__baseEvents_DONT_USE;
 				Interlocked.CompareExchange(ref f.__baseEvents_DONT_USE, new DmdEventReader(this), null);
-				return f.__baseEvents_DONT_USE;
+				return f.__baseEvents_DONT_USE!;
 			}
 		}
 
@@ -991,7 +992,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				int index = 0;
 				for (;;) {
 					var info = reader.GetNext(ref index);
-					if ((object)info.Member == null)
+					if (info.Member is null)
 						break;
 					if (IsMatch(info.Kind, options))
 						yield return info.Member;
@@ -1017,7 +1018,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				int index = 0;
 				for (;;) {
 					var info = reader.GetNext(ref index);
-					if ((object)info.Member == null)
+					if (info.Member is null)
 						break;
 					if (IsMatch(info.Kind, options))
 						yield return info.Member;
@@ -1038,7 +1039,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				int index = 0;
 				for (;;) {
 					var info = reader.GetNext(ref index);
-					if ((object)info.Member == null)
+					if (info.Member is null)
 						break;
 					if (IsMatch(info.Kind, options)) {
 						if (info.Member is DmdMethodInfo method)
@@ -1057,7 +1058,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				int index = 0;
 				for (;;) {
 					var info = reader.GetNext(ref index);
-					if ((object)info.Member == null)
+					if (info.Member is null)
 						break;
 					if (IsMatch(info.Kind, options))
 						yield return info.Member;
@@ -1074,7 +1075,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				int index = 0;
 				for (;;) {
 					var info = reader.GetNext(ref index);
-					if ((object)info.Member == null)
+					if (info.Member is null)
 						break;
 					if (IsMatch(info.Kind, options))
 						yield return info.Member;
@@ -1082,7 +1083,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
-		public sealed override DmdMethodBase GetMethod(DmdModule module, int metadataToken, bool throwOnError) {
+		public sealed override DmdMethodBase? GetMethod(DmdModule module, int metadataToken, bool throwOnError) {
 			foreach (var method in GetMethodsAndConstructors(GetMemberOptions.Inherit | GetMemberOptions.All)) {
 				if (method.Module == module && method.MetadataToken == metadataToken)
 					return method;
@@ -1093,7 +1094,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		public sealed override DmdFieldInfo GetField(DmdModule module, int metadataToken, bool throwOnError) {
+		public sealed override DmdFieldInfo? GetField(DmdModule module, int metadataToken, bool throwOnError) {
 			foreach (var field in GetFields(GetMemberOptions.Inherit | GetMemberOptions.All)) {
 				if (field.Module == module && field.MetadataToken == metadataToken)
 					return field;
@@ -1104,7 +1105,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		public sealed override DmdPropertyInfo GetProperty(DmdModule module, int metadataToken, bool throwOnError) {
+		public sealed override DmdPropertyInfo? GetProperty(DmdModule module, int metadataToken, bool throwOnError) {
 			foreach (var property in GetProperties(GetMemberOptions.Inherit | GetMemberOptions.All)) {
 				if (property.Module == module && property.MetadataToken == metadataToken)
 					return property;
@@ -1115,7 +1116,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		public sealed override DmdEventInfo GetEvent(DmdModule module, int metadataToken, bool throwOnError) {
+		public sealed override DmdEventInfo? GetEvent(DmdModule module, int metadataToken, bool throwOnError) {
 			foreach (var @event in GetEvents(GetMemberOptions.Inherit | GetMemberOptions.All)) {
 				if (@event.Module == module && @event.MetadataToken == metadataToken)
 					return @event;
@@ -1126,10 +1127,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		public sealed override DmdMethodBase GetMethod(string name, DmdSignatureCallingConvention flags, int genericParameterCount, DmdType returnType, IList<DmdType> parameterTypes, bool throwOnError) {
-			if (name == null)
+		public sealed override DmdMethodBase? GetMethod(string name, DmdSignatureCallingConvention flags, int genericParameterCount, DmdType? returnType, IList<DmdType> parameterTypes, bool throwOnError) {
+			if (name is null)
 				throw new ArgumentNullException(nameof(name));
-			if (parameterTypes == null)
+			if (parameterTypes is null)
 				throw new ArgumentNullException(nameof(parameterTypes));
 			foreach (var method in GetMethodsAndConstructors(GetMemberOptions.Inherit | GetMemberOptions.Inaccessible)) {
 				if (method.Name != name)
@@ -1153,7 +1154,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					continue;
 				if (sig.GenericParameterCount != genericParameterCount)
 					continue;
-				if ((object)returnType != null) {
+				if (!(returnType is null)) {
 					if (!DmdMemberInfoEqualityComparer.DefaultMember.Equals(returnType, sig.ReturnType))
 						continue;
 				}
@@ -1166,10 +1167,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		public sealed override DmdFieldInfo GetField(string name, DmdType fieldType, bool throwOnError) {
-			if (name == null)
+		public sealed override DmdFieldInfo? GetField(string name, DmdType fieldType, bool throwOnError) {
+			if (name is null)
 				throw new ArgumentNullException(nameof(name));
-			if ((object)fieldType == null)
+			if (fieldType is null)
 				throw new ArgumentNullException(nameof(fieldType));
 			foreach (var field in GetFields(GetMemberOptions.Inherit | GetMemberOptions.Inaccessible)) {
 				if (field.Name != name)
@@ -1185,10 +1186,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		public sealed override DmdPropertyInfo GetProperty(string name, DmdSignatureCallingConvention flags, int genericParameterCount, DmdType returnType, IList<DmdType> parameterTypes, bool throwOnError) {
-			if (name == null)
+		public sealed override DmdPropertyInfo? GetProperty(string name, DmdSignatureCallingConvention flags, int genericParameterCount, DmdType? returnType, IList<DmdType> parameterTypes, bool throwOnError) {
+			if (name is null)
 				throw new ArgumentNullException(nameof(name));
-			if (parameterTypes == null)
+			if (parameterTypes is null)
 				throw new ArgumentNullException(nameof(parameterTypes));
 			foreach (var property in GetProperties(GetMemberOptions.Inherit | GetMemberOptions.Inaccessible)) {
 				if (property.Name != name)
@@ -1212,7 +1213,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					continue;
 				if (sig.GenericParameterCount != genericParameterCount)
 					continue;
-				if ((object)returnType != null) {
+				if (!(returnType is null)) {
 					if (!DmdMemberInfoEqualityComparer.DefaultMember.Equals(returnType, sig.ReturnType))
 						continue;
 				}
@@ -1225,10 +1226,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		public sealed override DmdEventInfo GetEvent(string name, DmdType eventHandlerType, bool throwOnError) {
-			if (name == null)
+		public sealed override DmdEventInfo? GetEvent(string name, DmdType eventHandlerType, bool throwOnError) {
+			if (name is null)
 				throw new ArgumentNullException(nameof(name));
-			if ((object)eventHandlerType == null)
+			if (eventHandlerType is null)
 				throw new ArgumentNullException(nameof(eventHandlerType));
 			foreach (var @event in GetEvents(GetMemberOptions.Inherit | GetMemberOptions.Inaccessible)) {
 				if (@event.Name != name)

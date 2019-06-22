@@ -30,6 +30,6 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 		/// created</param>
 		/// <param name="typeSigs">Existing type sigs or null</param>
 		/// <returns></returns>
-		TypeSig[] Create(TypeSigCreatorOptions options, int? count, TypeSig[] typeSigs);
+		TypeSig[]? Create(TypeSigCreatorOptions options, int? count, TypeSig[]? typeSigs);
 	}
 }

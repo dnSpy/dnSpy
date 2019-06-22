@@ -59,7 +59,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			if (TIAHelper.IsTypeDefEquivalent(this))
 				return true;
 
-			var hash = GetAllInterfaces(this);
+			HashSet<DmdType>? hash = GetAllInterfaces(this);
 			foreach (var ifaceType in hash) {
 				if (ifaceType.HasTypeEquivalence) {
 					ObjectPools.Free(ref hash);
@@ -71,7 +71,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return false;
 		}
 
-		public override StructLayoutAttribute StructLayoutAttribute {
+		public override StructLayoutAttribute? StructLayoutAttribute {
 			get {
 				if (IsInterface || HasElementType || IsGenericParameter)
 					return null;
@@ -106,7 +106,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		protected abstract (int packingSize, int classSize) GetClassLayout();
 
-		public override DmdType DeclaringType {
+		public override DmdType? DeclaringType {
 			get {
 				var f = ExtraFields;
 				if (!f.declaringTypeInitd) {
@@ -122,7 +122,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
-		public override DmdType BaseType {
+		public override DmdType? BaseType {
 			get {
 				var f = ExtraFields;
 				if (!f.baseTypeInitd) {
@@ -145,14 +145,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
-		protected abstract DmdType GetDeclaringType();
-		protected abstract DmdType GetBaseTypeCore(IList<DmdType> genericTypeArguments);
-		public DmdType GetBaseType(IList<DmdType> genericTypeArguments) => GetBaseTypeCore(genericTypeArguments);
+		protected abstract DmdType? GetDeclaringType();
+		protected abstract DmdType? GetBaseTypeCore(IList<DmdType> genericTypeArguments);
+		public DmdType? GetBaseType(IList<DmdType> genericTypeArguments) => GetBaseTypeCore(genericTypeArguments);
 
 		protected uint Rid => rid;
 		readonly uint rid;
 
-		protected DmdTypeDef(uint rid, IList<DmdCustomModifier> customModifiers) : base(customModifiers) => this.rid = rid;
+		protected DmdTypeDef(uint rid, IList<DmdCustomModifier>? customModifiers) : base(customModifiers) => this.rid = rid;
 
 		protected DmdTypeAttributes FixAttributes(DmdTypeAttributes flags) {
 			if (Module.IsCorLib) {
@@ -165,15 +165,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return flags;
 		}
 
-		protected override DmdType ResolveNoThrowCore() => this;
+		protected override DmdType? ResolveNoThrowCore() => this;
 
-		protected abstract DmdType[] CreateGenericParameters();
+		protected abstract DmdType[]? CreateGenericParameters();
 		protected override ReadOnlyCollection<DmdType> GetGenericArgumentsCore() {
 			var f = ExtraFields;
 			// We loop here because the field could be cleared if it's a dynamic type
 			for (;;) {
 				var gps = f.__genericParameters_DONT_USE;
-				if (gps != null)
+				if (!(gps is null))
 					return gps;
 				var res = CreateGenericParameters();
 				Interlocked.CompareExchange(ref f.__genericParameters_DONT_USE, ReadOnlyCollectionHelpers.Create(res), null);
@@ -182,27 +182,27 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public override DmdType GetGenericTypeDefinition() => IsGenericType ? this : throw new InvalidOperationException();
 
-		public abstract DmdFieldInfo[] ReadDeclaredFields(DmdType declaringType, DmdType reflectedType);
-		public abstract DmdMethodBase[] ReadDeclaredMethods(DmdType declaringType, DmdType reflectedType);
-		public abstract DmdPropertyInfo[] ReadDeclaredProperties(DmdType declaringType, DmdType reflectedType);
-		public abstract DmdEventInfo[] ReadDeclaredEvents(DmdType declaringType, DmdType reflectedType);
+		public abstract DmdFieldInfo[]? ReadDeclaredFields(DmdType declaringType, DmdType reflectedType);
+		public abstract DmdMethodBase[]? ReadDeclaredMethods(DmdType declaringType, DmdType reflectedType);
+		public abstract DmdPropertyInfo[]? ReadDeclaredProperties(DmdType declaringType, DmdType reflectedType);
+		public abstract DmdEventInfo[]? ReadDeclaredEvents(DmdType declaringType, DmdType reflectedType);
 
-		public sealed override DmdFieldInfo[] CreateDeclaredFields(DmdType reflectedType) => ReadDeclaredFields(this, reflectedType);
-		public sealed override DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType) => ReadDeclaredMethods(this, reflectedType);
-		public sealed override DmdPropertyInfo[] CreateDeclaredProperties(DmdType reflectedType) => ReadDeclaredProperties(this, reflectedType);
-		public sealed override DmdEventInfo[] CreateDeclaredEvents(DmdType reflectedType) => ReadDeclaredEvents(this, reflectedType);
+		public sealed override DmdFieldInfo[]? CreateDeclaredFields(DmdType reflectedType) => ReadDeclaredFields(this, reflectedType);
+		public sealed override DmdMethodBase[]? CreateDeclaredMethods(DmdType reflectedType) => ReadDeclaredMethods(this, reflectedType);
+		public sealed override DmdPropertyInfo[]? CreateDeclaredProperties(DmdType reflectedType) => ReadDeclaredProperties(this, reflectedType);
+		public sealed override DmdEventInfo[]? CreateDeclaredEvents(DmdType reflectedType) => ReadDeclaredEvents(this, reflectedType);
 
 		public override bool IsFullyResolved => true;
-		public override DmdTypeBase FullResolve() => this;
+		public override DmdTypeBase? FullResolve() => this;
 
-		public sealed override DmdType[] ReadDeclaredInterfaces() => ReadDeclaredInterfacesCore(GetGenericArguments());
-		public DmdType[] ReadDeclaredInterfaces(IList<DmdType> genericTypeArguments) => ReadDeclaredInterfacesCore(genericTypeArguments);
-		protected abstract DmdType[] ReadDeclaredInterfacesCore(IList<DmdType> genericTypeArguments);
+		public sealed override DmdType[]? ReadDeclaredInterfaces() => ReadDeclaredInterfacesCore(GetGenericArguments());
+		public DmdType[]? ReadDeclaredInterfaces(IList<DmdType> genericTypeArguments) => ReadDeclaredInterfacesCore(genericTypeArguments);
+		protected abstract DmdType[]? ReadDeclaredInterfacesCore(IList<DmdType> genericTypeArguments);
 
 		public sealed override ReadOnlyCollection<DmdType> NestedTypes => NestedTypesCore;
 
-		protected abstract override DmdType[] CreateNestedTypes();
-		public abstract override (DmdCustomAttributeData[] cas, DmdCustomAttributeData[] sas) CreateCustomAttributes();
+		protected abstract override DmdType[]? CreateNestedTypes();
+		public abstract override (DmdCustomAttributeData[]? cas, DmdCustomAttributeData[]? sas) CreateCustomAttributes();
 
 		internal new void DynamicType_InvalidateCachedMembers() {
 			if (__extraFields_DONT_USE is ExtraFieldsImpl f) {
@@ -222,19 +222,19 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				if (__extraFields_DONT_USE is ExtraFieldsImpl f)
 					return f;
 				Interlocked.CompareExchange(ref __extraFields_DONT_USE, new ExtraFieldsImpl(), null);
-				return __extraFields_DONT_USE;
+				return __extraFields_DONT_USE!;
 			}
 		}
-		volatile ExtraFieldsImpl __extraFields_DONT_USE;
+		volatile ExtraFieldsImpl? __extraFields_DONT_USE;
 
 		// Most of the fields aren't used so we alloc them when needed
 		sealed class ExtraFieldsImpl {
 			public volatile byte hasTypeEquivalenceFlags;
-			public volatile DmdType __declaringType_DONT_USE;
+			public volatile DmdType? __declaringType_DONT_USE;
 			public volatile bool declaringTypeInitd;
-			public volatile DmdType __baseType_DONT_USE;
+			public volatile DmdType? __baseType_DONT_USE;
 			public volatile bool baseTypeInitd;
-			public volatile ReadOnlyCollection<DmdType> __genericParameters_DONT_USE;
+			public volatile ReadOnlyCollection<DmdType>? __genericParameters_DONT_USE;
 		}
 	}
 }

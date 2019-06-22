@@ -83,7 +83,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		string name = string.Empty;
 
-		public string ModuleName {
+		public string? ModuleName {
 			get => moduleName;
 			set {
 				if (moduleName != value) {
@@ -92,7 +92,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 			}
 		}
-		string moduleName = string.Empty;
+		string? moduleName = string.Empty;
 
 		public PInvokeAttributes Attributes {
 			get {
@@ -101,10 +101,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 							PInvokeAttributes.ThrowOnUnmappableCharMask |
 							PInvokeAttributes.CallConvMask;
 				return (attributes & ~mask) |
-					(PInvokeAttributes)((int)(DnlibDialogs.CharSet)CharSet.SelectedItem << 1) |
-					(PInvokeAttributes)((int)(DnlibDialogs.BestFit)BestFit.SelectedItem << 4) |
-					(PInvokeAttributes)((int)(DnlibDialogs.ThrowOnUnmappableChar)ThrowOnUnmappableChar.SelectedItem << 12) |
-					(PInvokeAttributes)((int)(DnlibDialogs.CallConv)CallConv.SelectedItem << 8);
+					(PInvokeAttributes)((int)(DnlibDialogs.CharSet)CharSet.SelectedItem! << 1) |
+					(PInvokeAttributes)((int)(DnlibDialogs.BestFit)BestFit.SelectedItem! << 4) |
+					(PInvokeAttributes)((int)(DnlibDialogs.ThrowOnUnmappableChar)ThrowOnUnmappableChar.SelectedItem! << 12) |
+					(PInvokeAttributes)((int)(DnlibDialogs.CallConv)CallConv.SelectedItem! << 8);
 			}
 			set {
 				if (attributes != value) {
@@ -136,16 +136,16 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				Attributes &= ~flag;
 		}
 
-		public ImplMap ImplMap {
+		public ImplMap? ImplMap {
 			get {
 				if (!IsEnabled)
 					return null;
-				ModuleRef modRef = ModuleName == null ? null : ownerModule.UpdateRowId(new ModuleRefUser(ownerModule, ModuleName));
+				var modRef = ModuleName is null ? null : ownerModule.UpdateRowId(new ModuleRefUser(ownerModule, ModuleName));
 				return ownerModule.UpdateRowId(new ImplMapUser(modRef, Name, Attributes));
 			}
 			set {
-				IsEnabled = value != null;
-				if (value == null)
+				IsEnabled = !(value is null);
+				if (value is null)
 					return;
 
 				Name = value.Name;

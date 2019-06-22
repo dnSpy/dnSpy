@@ -35,6 +35,6 @@ namespace dnSpy.Contracts.Command {
 		/// <param name="id">ID</param>
 		/// <param name="arguments">Arguments or null</param>
 		/// <returns></returns>
-		public static CommandInfo ToCommandInfo(this HexEditorIds id, object arguments) => new CommandInfo(CommandConstants.HexEditorGroup, (int)id, arguments);
+		public static CommandInfo ToCommandInfo(this HexEditorIds id, object? arguments) => new CommandInfo(CommandConstants.HexEditorGroup, (int)id, arguments);
 	}
 }

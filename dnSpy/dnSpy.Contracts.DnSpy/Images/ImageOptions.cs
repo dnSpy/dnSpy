@@ -36,7 +36,7 @@ namespace dnSpy.Contracts.Images {
 		/// <summary>
 		/// Background brush or null. Only <see cref="SolidColorBrush"/> and <see cref="GradientBrush"/> brushes are supported.
 		/// </summary>
-		public Brush BackgroundBrush { get; set; }
+		public Brush? BackgroundBrush { get; set; }
 
 		/// <summary>
 		/// Image size in logical pixels. 16x16 is used if this is 0x0
@@ -52,7 +52,7 @@ namespace dnSpy.Contracts.Images {
 		/// <summary>
 		/// If initialized, the DPI of its containing window will be used and <see cref="Dpi"/> doesn't have to be initialized.
 		/// </summary>
-		public DependencyObject DpiObject { get; set; }
+		public DependencyObject? DpiObject { get; set; }
 
 		/// <summary>
 		/// DPI or (0,0) to use the default DPI (DPI of main window)
@@ -69,11 +69,11 @@ namespace dnSpy.Contracts.Images {
 		/// </summary>
 		/// <param name="textView">Text view with which to initialize <see cref="Zoom"/> and <see cref="DpiObject"/></param>
 		public ImageOptions(ITextView textView) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			var wpfTextView = textView as IWpfTextView;
-			Debug.Assert(wpfTextView != null);
-			if (wpfTextView != null) {
+			Debug.Assert(!(wpfTextView is null));
+			if (!(wpfTextView is null)) {
 				Zoom = new Size(wpfTextView.ZoomLevel / 100, wpfTextView.ZoomLevel / 100);
 				DpiObject = wpfTextView.VisualElement;
 			}

@@ -45,19 +45,19 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Output {
 	interface IOutputServiceInternal : IOutputService {
-		IInputElement FocusedElement { get; }
+		IInputElement? FocusedElement { get; }
 		bool CanCopy { get; }
 		void Copy();
 		bool CanClearAll { get; }
 		void ClearAll();
 		bool CanSaveText { get; }
 		void SaveText();
-		OutputBufferVM SelectLog(int index);
+		OutputBufferVM? SelectLog(int index);
 		bool CanSelectLog(int index);
 		bool WordWrap { get; set; }
 		bool ShowLineNumbers { get; set; }
 		bool ShowTimestamps { get; set; }
-		OutputBufferVM SelectedOutputBufferVM { get; }
+		OutputBufferVM? SelectedOutputBufferVM { get; }
 		double ZoomLevel { get; }
 	}
 
@@ -92,12 +92,12 @@ namespace dnSpy.Output {
 			set => outputWindowOptionsService.Default.ShowTimestamps = value;
 		}
 
-		public object TextEditorUIObject => SelectedOutputBufferVM?.TextEditorUIObject;
-		public IInputElement FocusedElement => SelectedOutputBufferVM?.FocusedElement;
-		public bool HasOutputWindows => SelectedOutputBufferVM != null;
+		public object? TextEditorUIObject => SelectedOutputBufferVM?.TextEditorUIObject;
+		public IInputElement? FocusedElement => SelectedOutputBufferVM?.FocusedElement;
+		public bool HasOutputWindows => !(SelectedOutputBufferVM is null);
 		public double ZoomLevel => SelectedOutputBufferVM?.ZoomLevel ?? 100;
 
-		public OutputBufferVM SelectedOutputBufferVM {
+		public OutputBufferVM? SelectedOutputBufferVM {
 			get => selectedOutputBufferVM;
 			set {
 				if (selectedOutputBufferVM != value) {
@@ -110,7 +110,7 @@ namespace dnSpy.Output {
 				}
 			}
 		}
-		OutputBufferVM selectedOutputBufferVM;
+		OutputBufferVM? selectedOutputBufferVM;
 
 		public ObservableCollection<OutputBufferVM> OutputBuffers => outputBuffers;
 		readonly ObservableCollection<OutputBufferVM> outputBuffers;
@@ -150,10 +150,10 @@ namespace dnSpy.Output {
 		}
 
 		void OutputBuffers_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
-			if (SelectedOutputBufferVM == null)
+			if (SelectedOutputBufferVM is null)
 				SelectedOutputBufferVM = OutputBuffers.FirstOrDefault();
 
-			if (e.NewItems != null) {
+			if (!(e.NewItems is null)) {
 				foreach (OutputBufferVM vm in e.NewItems) {
 					if (vm.Guid == prevSelectedGuid && prevSelectedGuid != Guid.Empty) {
 						SelectedOutputBufferVM = vm;
@@ -167,16 +167,16 @@ namespace dnSpy.Output {
 		public IOutputTextPane Create(Guid guid, string name, string contentType) =>
 			Create(guid, name, (object)contentType);
 
-		public IOutputTextPane Create(Guid guid, string name, IContentType contentType) =>
-			Create(guid, name, (object)contentType);
+		public IOutputTextPane Create(Guid guid, string name, IContentType? contentType) =>
+			Create(guid, name, (object?)contentType);
 
-		IOutputTextPane Create(Guid guid, string name, object contentTypeObj) {
-			if (name == null)
+		IOutputTextPane Create(Guid guid, string name, object? contentTypeObj) {
+			if (name is null)
 				throw new ArgumentNullException(nameof(name));
 
 			var vm = OutputBuffers.FirstOrDefault(a => a.Guid == guid);
-			Debug.Assert(vm == null || vm.Name == name);
-			if (vm != null)
+			Debug.Assert(vm is null || vm.Name == name);
+			if (!(vm is null))
 				return vm;
 
 			var logEditorOptions = new LogEditorOptions {
@@ -221,15 +221,15 @@ namespace dnSpy.Output {
 
 		public void Select(Guid guid) {
 			var vm = OutputBuffers.FirstOrDefault(a => a.Guid == guid);
-			Debug.Assert(vm != null);
-			if (vm != null)
+			Debug.Assert(!(vm is null));
+			if (!(vm is null))
 				SelectedOutputBufferVM = vm;
 		}
 
 		public bool CanCopy => SelectedOutputBufferVM?.CanCopy == true;
 		public void Copy() => SelectedOutputBufferVM?.Copy();
 
-		public bool CanClearAll => SelectedOutputBufferVM != null;
+		public bool CanClearAll => !(SelectedOutputBufferVM is null);
 
 		public void ClearAll() {
 			if (!CanClearAll)
@@ -237,14 +237,15 @@ namespace dnSpy.Output {
 			SelectedOutputBufferVM?.Clear();
 		}
 
-		public bool CanSaveText => SelectedOutputBufferVM != null;
+		public bool CanSaveText => !(SelectedOutputBufferVM is null);
 
 		public void SaveText() {
 			if (!CanSaveText)
 				return;
+			Debug.Assert(!(SelectedOutputBufferVM is null));
 			var vm = SelectedOutputBufferVM;
 			var filename = pickSaveFilename.GetFilename(GetFilename(vm), "txt", TEXTFILES_FILTER);
-			if (filename == null)
+			if (filename is null)
 				return;
 			try {
 				File.WriteAllText(filename, vm.GetText(), Encoding.UTF8);
@@ -263,7 +264,7 @@ namespace dnSpy.Output {
 
 		public bool CanSelectLog(int index) => (uint)index < (uint)OutputBuffers.Count;
 
-		public OutputBufferVM SelectLog(int index) {
+		public OutputBufferVM? SelectLog(int index) {
 			if (!CanSelectLog(index))
 				return null;
 			SelectedOutputBufferVM = OutputBuffers[index];

@@ -81,14 +81,14 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <summary>
 		/// Gets the type of the value or null if it's unknown, eg. it's a null reference
 		/// </summary>
-		public abstract DmdType Type { get; }
+		public abstract DmdType? Type { get; }
 
 		/// <summary>
 		/// Loads an instance field. Returns null if it's not supported.
 		/// </summary>
 		/// <param name="field">Field</param>
 		/// <returns></returns>
-		public virtual ILValue LoadField(DmdFieldInfo field) => null;
+		public virtual ILValue? LoadField(DmdFieldInfo field) => null;
 
 		/// <summary>
 		/// Stores a value in an instance field. Returns false if it's not supported.
@@ -103,7 +103,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// </summary>
 		/// <param name="field">Field</param>
 		/// <returns></returns>
-		public virtual ILValue LoadFieldAddress(DmdFieldInfo field) => null;
+		public virtual ILValue? LoadFieldAddress(DmdFieldInfo field) => null;
 
 		/// <summary>
 		/// Calls an instance method. The method could be a CLR-generated method, eg. an array Address() method, see <see cref="DmdSpecialMethodKind"/>.
@@ -114,7 +114,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <param name="arguments">Arguments. The hidden 'this' value isn't included, it's this instance.</param>
 		/// <param name="returnValue">Updated with the return value. Can be null if the return type is <see cref="void"/></param>
 		/// <returns></returns>
-		public virtual bool Call(bool isCallvirt, DmdMethodBase method, ILValue[] arguments, out ILValue returnValue) {
+		public virtual bool Call(bool isCallvirt, DmdMethodBase method, ILValue[] arguments, out ILValue? returnValue) {
 			returnValue = null;
 			return false;
 		}
@@ -127,7 +127,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <param name="arguments">Method arguments</param>
 		/// <param name="returnValue">Return value. It's ignored if the method returns <see cref="void"/></param>
 		/// <returns></returns>
-		public virtual bool CallIndirect(DmdMethodSignature methodSig, ILValue methodAddress, ILValue[] arguments, out ILValue returnValue) {
+		public virtual bool CallIndirect(DmdMethodSignature methodSig, ILValue methodAddress, ILValue[] arguments, out ILValue? returnValue) {
 			returnValue = null;
 			return false;
 		}
@@ -137,21 +137,21 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// </summary>
 		/// <param name="type">Target type</param>
 		/// <returns></returns>
-		public virtual ILValue Box(DmdType type) => null;
+		public virtual ILValue? Box(DmdType type) => null;
 
 		/// <summary>
 		/// Unboxes this instance. Returns null if it's not supported.
 		/// </summary>
 		/// <param name="type">Target type</param>
 		/// <returns></returns>
-		public virtual ILValue UnboxAny(DmdType type) => null;
+		public virtual ILValue? UnboxAny(DmdType type) => null;
 
 		/// <summary>
 		/// Unboxes this instance. Returns null if it's not supported.
 		/// </summary>
 		/// <param name="type">Target type</param>
 		/// <returns></returns>
-		public virtual ILValue Unbox(DmdType type) => null;
+		public virtual ILValue? Unbox(DmdType type) => null;
 
 		/// <summary>
 		/// Loads an SZ array element. Returns null if it's not supported.
@@ -160,7 +160,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <param name="index">Array index</param>
 		/// <param name="elementType">Optional element type (eg. it's the ldelem instruction)</param>
 		/// <returns></returns>
-		public virtual ILValue LoadSZArrayElement(LoadValueType loadValueType, long index, DmdType elementType) => null;
+		public virtual ILValue? LoadSZArrayElement(LoadValueType loadValueType, long index, DmdType elementType) => null;
 
 		/// <summary>
 		/// Writes an SZ array element. Returns false if it's not supported.
@@ -178,7 +178,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <param name="index">Index</param>
 		/// <param name="elementType">Element type</param>
 		/// <returns></returns>
-		public virtual ILValue LoadSZArrayElementAddress(long index, DmdType elementType) => null;
+		public virtual ILValue? LoadSZArrayElementAddress(long index, DmdType elementType) => null;
 
 		/// <summary>
 		/// Gets the length of an SZ array. Returns false if it's not supported.
@@ -196,7 +196,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <param name="type">Type</param>
 		/// <param name="loadValueType">Type of value to load</param>
 		/// <returns></returns>
-		public virtual ILValue LoadIndirect(DmdType type, LoadValueType loadValueType) => null;
+		public virtual ILValue? LoadIndirect(DmdType type, LoadValueType loadValueType) => null;
 
 		/// <summary>
 		/// Stores a value. Returns false if it's not supported.
@@ -245,7 +245,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <param name="value">Value to add</param>
 		/// <param name="pointerSize">Size of a pointer in bytes</param>
 		/// <returns></returns>
-		public virtual ILValue Add(AddOpCodeKind kind, long value, int pointerSize) => null;
+		public virtual ILValue? Add(AddOpCodeKind kind, long value, int pointerSize) => null;
 
 		/// <summary>
 		/// Subtracts a constant from a copy of this value and returns the result. Returns null if it's not supported.
@@ -254,7 +254,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <param name="value">Value to subtract</param>
 		/// <param name="pointerSize">Size of a pointer in bytes</param>
 		/// <returns></returns>
-		public virtual ILValue Sub(SubOpCodeKind kind, long value, int pointerSize) => null;
+		public virtual ILValue? Sub(SubOpCodeKind kind, long value, int pointerSize) => null;
 
 		/// <summary>
 		/// Subtracts <paramref name="value"/> from a copy of this value and returns the result. Returns null if it's not supported.
@@ -263,14 +263,14 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <param name="value">Value to subtract</param>
 		/// <param name="pointerSize">Size of a pointer in bytes</param>
 		/// <returns></returns>
-		public virtual ILValue Sub(SubOpCodeKind kind, ILValue value, int pointerSize) => null;
+		public virtual ILValue? Sub(SubOpCodeKind kind, ILValue value, int pointerSize) => null;
 
 		/// <summary>
 		/// Converts this value to a new value. Returns null if it's not supported.
 		/// </summary>
 		/// <param name="kind">Opcode kind</param>
 		/// <returns></returns>
-		public virtual ILValue Conv(ConvOpCodeKind kind) => null;
+		public virtual ILValue? Conv(ConvOpCodeKind kind) => null;
 	}
 
 	/// <summary>
@@ -376,7 +376,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <param name="appDomain">AppDomain</param>
 		/// <param name="value">Value</param>
 		public ConstantInt32ILValue(DmdAppDomain appDomain, int value) {
-			if (appDomain == null)
+			if (appDomain is null)
 				throw new ArgumentNullException(nameof(appDomain));
 			Type = appDomain.System_Int32;
 			Value = value;
@@ -395,7 +395,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <summary>
 		/// Gets the type of the value
 		/// </summary>
-		public override DmdType Type { get; }
+		public override DmdType? Type { get; }
 
 		/// <summary>
 		/// ToString()
@@ -429,7 +429,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <param name="appDomain">AppDomain</param>
 		/// <param name="value">Value</param>
 		public ConstantInt64ILValue(DmdAppDomain appDomain, long value) {
-			if (appDomain == null)
+			if (appDomain is null)
 				throw new ArgumentNullException(nameof(appDomain));
 			Type = appDomain.System_Int64;
 			Value = value;
@@ -448,7 +448,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <summary>
 		/// Gets the type of the value
 		/// </summary>
-		public override DmdType Type { get; }
+		public override DmdType? Type { get; }
 
 		/// <summary>
 		/// ToString()
@@ -477,7 +477,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <param name="appDomain">AppDomain</param>
 		/// <param name="value">Value</param>
 		public ConstantFloatILValue(DmdAppDomain appDomain, double value) {
-			if (appDomain == null)
+			if (appDomain is null)
 				throw new ArgumentNullException(nameof(appDomain));
 			Type = appDomain.System_Double;
 			Value = value;
@@ -496,7 +496,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <summary>
 		/// Gets the type of the value
 		/// </summary>
-		public override DmdType Type { get; }
+		public override DmdType? Type { get; }
 
 		/// <summary>
 		/// ToString()
@@ -579,7 +579,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <param name="appDomain">AppDomain</param>
 		/// <param name="value">Value</param>
 		protected ConstantNativeIntILValue(DmdAppDomain appDomain, int value) {
-			if (appDomain == null)
+			if (appDomain is null)
 				throw new ArgumentNullException(nameof(appDomain));
 			Type = appDomain.System_IntPtr;
 			this.value = value;
@@ -591,7 +591,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <param name="appDomain">AppDomain</param>
 		/// <param name="value">Value</param>
 		protected ConstantNativeIntILValue(DmdAppDomain appDomain, long value) {
-			if (appDomain == null)
+			if (appDomain is null)
 				throw new ArgumentNullException(nameof(appDomain));
 			Type = appDomain.System_IntPtr;
 			this.value = value;
@@ -620,7 +620,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <summary>
 		/// Gets the type of the value
 		/// </summary>
-		public override DmdType Type { get; }
+		public override DmdType? Type { get; }
 
 		/// <summary>
 		/// ToString()
@@ -636,12 +636,12 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <summary>
 		/// true if it was created by a ldvirtftn instruction, false it was created by a ldftn instruction
 		/// </summary>
-		public bool IsVirtual => VirtualThisObject != null;
+		public bool IsVirtual => !(VirtualThisObject is null);
 
 		/// <summary>
 		/// Gets the this value if and only if this was created by a ldvirtftn instruction, otherwise it's null
 		/// </summary>
-		public ILValue VirtualThisObject { get; }
+		public ILValue? VirtualThisObject { get; }
 
 		/// <summary>
 		/// Gets the method
@@ -671,7 +671,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <summary>
 		/// Gets the type of the value
 		/// </summary>
-		public override DmdType Type { get; }
+		public override DmdType? Type { get; }
 	}
 
 	/// <summary>
@@ -692,7 +692,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <param name="appDomain">AppDomain</param>
 		/// <param name="size">Size of memory</param>
 		public NativeMemoryILValue(DmdAppDomain appDomain, int size) {
-			if (appDomain == null)
+			if (appDomain is null)
 				throw new ArgumentNullException(nameof(appDomain));
 			Type = appDomain.System_Void.MakePointerType();
 			data = new byte[size];
@@ -710,7 +710,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <param name="value">Value to add</param>
 		/// <param name="pointerSize">Size of a pointer in bytes</param>
 		/// <returns></returns>
-		public override ILValue Add(AddOpCodeKind kind, long value, int pointerSize) {
+		public override ILValue? Add(AddOpCodeKind kind, long value, int pointerSize) {
 			if (value == 0)
 				return this;
 
@@ -749,7 +749,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <param name="value">Value to subtract</param>
 		/// <param name="pointerSize">Size of a pointer in bytes</param>
 		/// <returns></returns>
-		public override ILValue Sub(SubOpCodeKind kind, long value, int pointerSize) {
+		public override ILValue? Sub(SubOpCodeKind kind, long value, int pointerSize) {
 			if (value == 0)
 				return this;
 
@@ -787,7 +787,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <param name="type">Type</param>
 		/// <param name="loadValueType">Type of value to load</param>
 		/// <returns></returns>
-		public override ILValue LoadIndirect(DmdType type, LoadValueType loadValueType) {
+		public override ILValue? LoadIndirect(DmdType type, LoadValueType loadValueType) {
 			int pointerSize = type.AppDomain.Runtime.PointerSize;
 			switch (loadValueType) {
 			case LoadValueType.I:
@@ -1033,7 +1033,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <summary>
 		/// Gets the type of the value
 		/// </summary>
-		public override DmdType Type { get; }
+		public override DmdType? Type { get; }
 	}
 
 	/// <summary>
@@ -1073,6 +1073,6 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <summary>
 		/// Gets the type of the value
 		/// </summary>
-		public override DmdType Type => null;
+		public override DmdType? Type => null;
 	}
 }

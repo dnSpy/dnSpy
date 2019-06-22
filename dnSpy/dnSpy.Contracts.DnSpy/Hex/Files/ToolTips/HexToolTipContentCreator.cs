@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.Hex.Files.ToolTips {
 		/// <summary>
 		/// Image shown in the tooltip
 		/// </summary>
-		public abstract object Image { get; set; }
+		public abstract object? Image { get; set; }
 
 		/// <summary>
 		/// Gets the current writer

@@ -33,21 +33,21 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public abstract HexIndexes[] GetSubStructureIndexes(HexPosition position);
+		public abstract HexIndexes[]? GetSubStructureIndexes(HexPosition position);
 
 		/// <summary>
 		/// Returns a tooltip or null
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public abstract object GetToolTip(HexPosition position);
+		public abstract object? GetToolTip(HexPosition position);
 
 		/// <summary>
 		/// Returns a reference or null
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public abstract object GetReference(HexPosition position);
+		public abstract object? GetReference(HexPosition position);
 
 		/// <summary>
 		/// Returns the span the field value references or null. The span can be empty.

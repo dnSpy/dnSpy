@@ -93,22 +93,22 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		IEditValueProvider NameEditValueProvider {
 			get {
 				bookmarkContext.UIDispatcher.VerifyAccess();
-				if (nameEditValueProvider == null)
+				if (nameEditValueProvider is null)
 					nameEditValueProvider = editValueProviderService.Create(ContentTypes.BookmarksWindowName, Array.Empty<string>());
 				return nameEditValueProvider;
 			}
 		}
-		IEditValueProvider nameEditValueProvider;
+		IEditValueProvider? nameEditValueProvider;
 
 		IEditValueProvider LabelsEditValueProvider {
 			get {
 				bookmarkContext.UIDispatcher.VerifyAccess();
-				if (labelsEditValueProvider == null)
+				if (labelsEditValueProvider is null)
 					labelsEditValueProvider = editValueProviderService.Create(ContentTypes.BookmarksWindowLabels, Array.Empty<string>());
 				return labelsEditValueProvider;
 			}
 		}
-		IEditValueProvider labelsEditValueProvider;
+		IEditValueProvider? labelsEditValueProvider;
 
 		public event EventHandler OnShowChanged;
 		public event EventHandler AllItemsFiltered;
@@ -143,9 +143,8 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			this.bookmarkLocationFormatterService = bookmarkLocationFormatterService;
 			this.editValueProviderService = editValueProviderService;
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
-			bookmarkContext = new BookmarkContext(uiDispatcher, classificationFormatMap, textElementProvider, new SearchMatcher(searchColumnDefinitions)) {
+			bookmarkContext = new BookmarkContext(uiDispatcher, classificationFormatMap, textElementProvider, new SearchMatcher(searchColumnDefinitions), bookmarkFormatterProvider.Create()) {
 				SyntaxHighlight = bookmarksSettings.SyntaxHighlight,
-				Formatter = bookmarkFormatterProvider.Create(),
 			};
 			Descs = new GridViewColumnDescs {
 				Columns = new GridViewColumnDesc[] {
@@ -429,7 +428,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			var (desc, dir) = Descs.SortedColumn;
 
 			int id;
-			if (desc == null || dir == GridViewSortDirection.Default) {
+			if (desc is null || dir == GridViewSortDirection.Default) {
 				id = BookmarksWindowColumnIds.Default_Order;
 				dir = GridViewSortDirection.Ascending;
 			}

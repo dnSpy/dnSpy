@@ -34,26 +34,26 @@ namespace dnSpy.Text.CodeEditor {
 			LanguageName = languageName;
 		}
 
-		public static CodeEditorOptions TryCreate(ITextViewOptionsGroup group, IContentTypeRegistryService contentTypeRegistryService, ICodeEditorOptionsDefinitionMetadata md) {
-			if (group == null)
+		public static CodeEditorOptions? TryCreate(ITextViewOptionsGroup group, IContentTypeRegistryService contentTypeRegistryService, ICodeEditorOptionsDefinitionMetadata md) {
+			if (group is null)
 				throw new ArgumentNullException(nameof(group));
-			if (contentTypeRegistryService == null)
+			if (contentTypeRegistryService is null)
 				throw new ArgumentNullException(nameof(contentTypeRegistryService));
-			if (md == null)
+			if (md is null)
 				throw new ArgumentNullException(nameof(md));
 
-			if (md.ContentType == null)
+			if (md.ContentType is null)
 				return null;
 			var contentType = contentTypeRegistryService.GetContentType(md.ContentType);
-			if (contentType == null)
+			if (contentType is null)
 				return null;
 
-			if (md.Guid == null)
+			if (md.Guid is null)
 				return null;
 			if (!Guid.TryParse(md.Guid, out var guid))
 				return null;
 
-			if (md.LanguageName == null)
+			if (md.LanguageName is null)
 				return null;
 
 			return new CodeEditorOptions(group, contentType, guid, md.LanguageName);

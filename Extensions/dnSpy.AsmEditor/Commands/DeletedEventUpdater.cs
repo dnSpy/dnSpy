@@ -36,10 +36,11 @@ namespace dnSpy.AsmEditor.Commands {
 		int eventIndex;
 
 		public DeletedEventUpdater(ModuleDocumentNode modNode, EventDef originalEvent) {
-			ownerNode = modNode.Context.DocumentTreeView.FindNode(originalEvent);
-			if (ownerNode == null)
+			var node = modNode.Context.DocumentTreeView.FindNode(originalEvent);
+			if (node is null)
 				throw new InvalidOperationException();
-			parentNode = ownerNode.TreeNode.Parent.Data;
+			ownerNode = node;
+			parentNode = ownerNode.TreeNode.Parent!.Data;
 			ownerType = originalEvent.DeclaringType;
 			@event = originalEvent;
 		}

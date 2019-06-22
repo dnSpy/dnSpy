@@ -38,20 +38,20 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		/// <summary>
 		/// Gets the assembly or null
 		/// </summary>
-		public IAssembly Assembly { get; }
+		public IAssembly? Assembly { get; }
 
 		/// <summary>
 		/// Gets the filename or null if it doesn't exist on disk
 		/// </summary>
-		public string Filename { get; }
+		public string? Filename { get; }
 
 		/// <summary>
 		/// true if it's an assembly reference, false if it's a module reference
 		/// </summary>
 		public bool IsAssemblyReference { get; }
 
-		CompilerMetadataReference(void* data, int size, IAssembly assembly, string filename, bool isAssemblyReference) {
-			if (data == null)
+		CompilerMetadataReference(void* data, int size, IAssembly? assembly, string? filename, bool isAssemblyReference) {
+			if (data is null)
 				throw new ArgumentNullException(nameof(data));
 			if (size <= 0)
 				throw new ArgumentOutOfRangeException(nameof(size));
@@ -70,7 +70,7 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		/// <param name="assembly">Assembly owner or null</param>
 		/// <param name="filename">Filename or null if it doesn't exist on disk</param>
 		/// <returns></returns>
-		public static CompilerMetadataReference CreateAssemblyReference(void* data, int size, IAssembly assembly, string filename = null) => new CompilerMetadataReference(data, size, assembly, filename, true);
+		public static CompilerMetadataReference CreateAssemblyReference(void* data, int size, IAssembly? assembly, string? filename = null) => new CompilerMetadataReference(data, size, assembly, filename, true);
 
 		/// <summary>
 		/// Creates a module metadata reference
@@ -80,6 +80,6 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		/// <param name="assembly">Assembly owner or null</param>
 		/// <param name="filename">Filename or null if it doesn't exist on disk</param>
 		/// <returns></returns>
-		public static CompilerMetadataReference CreateModuleReference(void* data, int size, IAssembly assembly, string filename = null) => new CompilerMetadataReference(data, size, assembly, filename, false);
+		public static CompilerMetadataReference CreateModuleReference(void* data, int size, IAssembly? assembly, string? filename = null) => new CompilerMetadataReference(data, size, assembly, filename, false);
 	}
 }

@@ -42,7 +42,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			recursionCounter = 0;
 		}
 
-		public void Dispose() => ObjectPools.FreeNoToString(ref writer);
+		public void Dispose() => ObjectPools.FreeNoToString(ref writer!);
 
 		bool IncrementRecursionCounter() {
 			if (recursionCounter >= MAX_RECURSION_COUNT)
@@ -57,10 +57,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				return type.IsGenericTypeDefinition;
 			// It's a TypeRef, make sure it won't throw if it can't resolve the type
 			var resolvedType = type.ResolveNoThrow();
-			if ((object)resolvedType != null)
+			if (!(resolvedType is null))
 				return resolvedType.IsGenericTypeDefinition;
 			// Guess based on name
-			return type is Impl.DmdTypeRef && type.MetadataName.LastIndexOf('`') >= 0;
+			return type is Impl.DmdTypeRef && type.MetadataName!.LastIndexOf('`') >= 0;
 		}
 
 		static bool ContainsGenericParameters(DmdType type) {
@@ -68,10 +68,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				return type.ContainsGenericParameters;
 			// It's a TypeRef, make sure it won't throw if it can't resolve the type
 			var resolvedType = type.ResolveNoThrow();
-			if ((object)resolvedType != null)
+			if (!(resolvedType is null))
 				return resolvedType.ContainsGenericParameters;
 			if (type is Impl.DmdTypeRef)
-				return type.MetadataName.LastIndexOf('`') >= 0;
+				return type.MetadataName!.LastIndexOf('`') >= 0;
 			return type.ContainsGenericParameters;
 		}
 
@@ -87,7 +87,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			}
 
 			var nonNested = Impl.DmdTypeUtilities.GetNonNestedType(type);
-			if ((object)nonNested != null) {
+			if (!(nonNested is null)) {
 				var typeScope = nonNested.TypeScope;
 				switch (typeScope.Kind) {
 				default:
@@ -110,17 +110,17 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			}
 		}
 
-		static DmdType GetGenericTypeDefinition(DmdType type) {
+		static DmdType? GetGenericTypeDefinition(DmdType type) {
 			if (!type.IsMetadataReference)
 				return type.GetGenericTypeDefinition();
 
 			var resolvedType = type.ResolveNoThrow();
-			if ((object)resolvedType != null)
+			if (!(resolvedType is null))
 				return resolvedType.GetGenericTypeDefinition();
 
 			if (type is Impl.DmdGenericInstanceTypeRef)
 				return type.GetGenericTypeDefinition();
-			if (type.MetadataName.LastIndexOf('`') >= 0)
+			if (type.MetadataName!.LastIndexOf('`') >= 0)
 				return type;
 			return null;
 		}
@@ -130,7 +130,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				return type.GetGenericArguments();
 
 			var resolvedType = type.ResolveNoThrow();
-			if ((object)resolvedType != null)
+			if (!(resolvedType is null))
 				return resolvedType.GetGenericArguments();
 
 			if (type is Impl.DmdGenericInstanceTypeRef)
@@ -145,15 +145,15 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				return method.GetGenericArguments();
 
 			var resolvedMethod = method.ResolveMethodBaseNoThrow();
-			if ((object)resolvedMethod != null)
+			if (!(resolvedMethod is null))
 				return resolvedMethod.GetGenericArguments();
 
 			return Array.Empty<DmdType>();
 		}
 
-		public static string FormatFullName(DmdType type) => Format(type, serializable: true);
+		public static string? FormatFullName(DmdType type) => Format(type, serializable: true);
 
-		public static string FormatAssemblyQualifiedName(DmdType type) {
+		public static string? FormatAssemblyQualifiedName(DmdType type) {
 			var t = type;
 			while (t.GetElementType() is DmdType elementType)
 				t = elementType;
@@ -172,7 +172,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				return formatter.FormatCore(member);
 		}
 
-		public static string Format(DmdType type, bool serializable = false) {
+		public static string? Format(DmdType type, bool serializable = false) {
 			if (serializable) {
 				var t = type;
 				while (t.GetElementType() is DmdType elementType)
@@ -315,7 +315,9 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			FnPtrIsIntPtr				= 0x00000010,
 		}
 
-		void WriteIdentifier(string id) {
+		void WriteIdentifier(string? id) {
+			if (id is null)
+				id = string.Empty;
 			if (id.IndexOfAny(escapeChars) < 0)
 				writer.Append(id);
 			else {
@@ -351,8 +353,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		static bool IsShortNameType(DmdType type) => type.IsPrimitive || type == type.AppDomain.System_Void || type == type.AppDomain.System_TypedReference;
 
-		void Write(DmdType type, TypeFlags flags) {
-			if ((object)type == null) {
+		void Write(DmdType? type, TypeFlags flags) {
+			if (type is null) {
 				writer.Append("???");
 				return;
 			}
@@ -483,12 +485,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		void Write(DmdPropertyInfo property) => WriteMethod(property.Name, property.GetMethodSignature(), genericArguments: null, isMethod: false);
 		void Write(DmdMethodSignature methodSignature) => WriteMethod(null, methodSignature, genericArguments: null, isMethod: true);
 
-		void WriteMethod(string name, DmdMethodSignature sig, IList<DmdType> genericArguments, bool isMethod) {
+		void WriteMethod(string? name, DmdMethodSignature sig, IList<DmdType>? genericArguments, bool isMethod) {
 			var flags = GetTypeFlags(true) | TypeFlags.FnPtrIsIntPtr;
 			FormatTypeName(sig.ReturnType, flags);
 			writer.Append(' ');
 			writer.Append(name);
-			if (genericArguments != null)
+			if (!(genericArguments is null))
 				WriteMethodGenericArguments(genericArguments, flags);
 			if (isMethod || sig.GetParameterTypes().Count != 0 || sig.GetVarArgsParameterTypes().Count != 0) {
 				if (!isMethod)
@@ -530,8 +532,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			writer.Append(parameter.Name);
 		}
 
-		void WriteName(DmdType type, TypeFlags flags) {
-			if ((object)type == null) {
+		void WriteName(DmdType? type, TypeFlags flags) {
+			if (type is null) {
 				writer.Append("???");
 				return;
 			}

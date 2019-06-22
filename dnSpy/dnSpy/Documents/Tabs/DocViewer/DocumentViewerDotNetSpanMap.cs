@@ -32,8 +32,8 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		readonly IModuleIdProvider moduleIdProvider;
 		readonly IReadOnlyList<MethodDebugInfo> methodDebugInfos;
 		readonly SpanDataCollection<ReferenceInfo> references;
-		Dictionary<ModuleTokenId, MethodDebugInfo> toMethodDebugInfo;
-		Dictionary<ModuleTokenId, Span> toTokenInfo;
+		Dictionary<ModuleTokenId, MethodDebugInfo>? toMethodDebugInfo;
+		Dictionary<ModuleTokenId, Span>? toTokenInfo;
 
 		public DocumentViewerDotNetSpanMap(IModuleIdProvider moduleIdProvider, IReadOnlyList<MethodDebugInfo> methodDebugInfos, SpanDataCollection<ReferenceInfo> references) {
 			this.moduleIdProvider = moduleIdProvider ?? throw new ArgumentNullException(nameof(moduleIdProvider));
@@ -42,7 +42,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		Span? IDotNetSpanMap.ToSpan(ModuleId module, uint token, uint ilOffset) {
-			if (toMethodDebugInfo == null) {
+			if (toMethodDebugInfo is null) {
 				toMethodDebugInfo = new Dictionary<ModuleTokenId, MethodDebugInfo>(methodDebugInfos.Count);
 				foreach (var info in methodDebugInfos) {
 					var tokenId = new ModuleTokenId(moduleIdProvider.Create(info.Method.Module), info.Method.MDToken);
@@ -56,20 +56,20 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			if (!toMethodDebugInfo.TryGetValue(new ModuleTokenId(module, token), out var info2))
 				return null;
 			var statement = info2.GetSourceStatementByCodeOffset(ilOffset);
-			if (statement == null)
+			if (statement is null)
 				return null;
 			var textSpan = statement.Value.TextSpan;
 			return new Span(textSpan.Start, textSpan.Length);
 		}
 
 		Span? IDotNetSpanMap.ToSpan(ModuleId module, uint token) {
-			if (toTokenInfo == null) {
+			if (toTokenInfo is null) {
 				toTokenInfo = new Dictionary<ModuleTokenId, Span>();
 				foreach (var data in references) {
 					if (!data.Data.IsDefinition)
 						continue;
 					var def = data.Data.Reference as IMemberDef;
-					if (def == null)
+					if (def is null)
 						continue;
 					var tokenId = new ModuleTokenId(moduleIdProvider.Create(def.Module), def.MDToken);
 					toTokenInfo[tokenId] = data.Span;

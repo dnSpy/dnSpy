@@ -23,7 +23,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
 	/// A .NET constructor
 	/// </summary>
-	public abstract class DmdConstructorInfo : DmdMethodBase, IEquatable<DmdConstructorInfo> {
+	public abstract class DmdConstructorInfo : DmdMethodBase, IEquatable<DmdConstructorInfo?> {
 		/// <summary>
 		/// Gets the member type
 		/// </summary>
@@ -34,38 +34,38 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
 		/// <returns></returns>
-		public sealed override DmdMemberInfo ResolveMember(bool throwOnError) => Resolve(throwOnError);
+		public sealed override DmdMemberInfo? ResolveMember(bool throwOnError) => Resolve(throwOnError);
 
 		/// <summary>
 		/// Resolves a constructor reference
 		/// </summary>
 		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
 		/// <returns></returns>
-		public sealed override DmdMethodBase ResolveMethodBase(bool throwOnError) => Resolve(throwOnError);
+		public sealed override DmdMethodBase? ResolveMethodBase(bool throwOnError) => Resolve(throwOnError);
 
 		/// <summary>
 		/// Resolves a constructor reference and throws if it doesn't exist
 		/// </summary>
 		/// <returns></returns>
-		public DmdConstructorInfo Resolve() => Resolve(throwOnError: true);
+		public DmdConstructorInfo Resolve() => Resolve(throwOnError: true)!;
 
 		/// <summary>
 		/// Resolves a constructor reference and returns null if it doesn't exist
 		/// </summary>
 		/// <returns></returns>
-		public DmdConstructorInfo ResolveNoThrow() => Resolve(throwOnError: false);
+		public DmdConstructorInfo? ResolveNoThrow() => Resolve(throwOnError: false);
 
 		/// <summary>
 		/// Resolves a constructor reference
 		/// </summary>
 		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
 		/// <returns></returns>
-		public abstract DmdConstructorInfo Resolve(bool throwOnError);
+		public abstract DmdConstructorInfo? Resolve(bool throwOnError);
 
 		/// <summary>
 		/// true if it contains generic parameters
 		/// </summary>
-		public override bool ContainsGenericParameters => DeclaringType.ContainsGenericParameters;
+		public override bool ContainsGenericParameters => DeclaringType!.ContainsGenericParameters;
 
 		/// <summary>
 		/// Calls the method
@@ -73,7 +73,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="parameters">Parameters</param>
 		/// <returns></returns>
-		public object Invoke(object context, object[] parameters) => Invoke(context, DmdBindingFlags.Default, parameters);
+		public object? Invoke(object? context, object?[] parameters) => Invoke(context, DmdBindingFlags.Default, parameters);
 
 		/// <summary>
 		/// Calls the method
@@ -82,11 +82,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="invokeAttr">Binding flags</param>
 		/// <param name="parameters">Parameters</param>
 		/// <returns></returns>
-		public abstract object Invoke(object context, DmdBindingFlags invokeAttr, object[] parameters);
+		public abstract object? Invoke(object? context, DmdBindingFlags invokeAttr, object?[] parameters);
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-		public static bool operator ==(DmdConstructorInfo left, DmdConstructorInfo right) => DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
-		public static bool operator !=(DmdConstructorInfo left, DmdConstructorInfo right) => !DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
+		public static bool operator ==(DmdConstructorInfo? left, DmdConstructorInfo? right) => DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
+		public static bool operator !=(DmdConstructorInfo? left, DmdConstructorInfo? right) => !DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
@@ -94,14 +94,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		public bool Equals(DmdConstructorInfo other) => DmdMemberInfoEqualityComparer.DefaultMember.Equals(this, other);
+		public bool Equals(DmdConstructorInfo? other) => DmdMemberInfoEqualityComparer.DefaultMember.Equals(this, other);
 
 		/// <summary>
 		/// Equals()
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => Equals(obj as DmdConstructorInfo);
+		public override bool Equals(object? obj) => Equals(obj as DmdConstructorInfo);
 
 		/// <summary>
 		/// GetHashCode()

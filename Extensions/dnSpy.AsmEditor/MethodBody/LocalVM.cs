@@ -34,9 +34,9 @@ namespace dnSpy.AsmEditor.MethodBody {
 		LocalOptions origOptions;
 
 		public ITypeSigCreator TypeSigCreator {
-			set { typeSigCreator = value; }
+			set => typeSigCreator = value;
 		}
-		ITypeSigCreator typeSigCreator;
+		ITypeSigCreator? typeSigCreator;
 
 		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
 		public ICommand EditTypeCommand => new RelayCommand(a => EditType());
@@ -56,7 +56,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			get => Type is PinnedSig;
 			set {
 				var t = Type;
-				if (t == null)
+				if (t is null)
 					return;
 				if (value) {
 					if (!(t is PinnedSig))
@@ -69,7 +69,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 		}
 
-		public TypeSig Type {
+		public TypeSig? Type {
 			get => type;
 			set {
 				if (type != value) {
@@ -79,9 +79,9 @@ namespace dnSpy.AsmEditor.MethodBody {
 				}
 			}
 		}
-		TypeSig type;
+		TypeSig? type;
 
-		public string Name {
+		public string? Name {
 			get => name;
 			set {
 				if (name != value) {
@@ -90,7 +90,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				}
 			}
 		}
-		string name;
+		string? name;
 
 		public bool DebuggerHidden {
 			get => (Attributes & PdbLocalAttributes.DebuggerHidden) != 0;
@@ -117,6 +117,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 		readonly TypeSigCreatorOptions typeSigCreatorOptions;
 
 		LocalVM() {
+			typeSigCreatorOptions = null!;
+			origOptions = null!;
 		}
 
 		public LocalVM(TypeSigCreatorOptions typeSigCreatorOptions, LocalOptions options) {
@@ -129,7 +131,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		void EditType() {
-			if (typeSigCreator == null)
+			if (typeSigCreator is null)
 				throw new InvalidOperationException();
 
 			var newType = typeSigCreator.Create(typeSigCreatorOptions, Type, out bool canceled);

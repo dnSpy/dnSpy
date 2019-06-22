@@ -31,12 +31,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		readonly Func<uint, T> readElementByRID;
 		readonly uint length;
 
-		public T this[uint index] {
+		public T? this[uint index] {
 			get {
 				if (index >= length)
 					return null;
 				ref var elem = ref allElements[((int)index / LazyListConstants.MaxArrayObjectElements)][((int)index % LazyListConstants.MaxArrayObjectElements)];
-				if (elem == null)
+				if (elem is null)
 					Interlocked.CompareExchange(ref elem, readElementByRID(index + 1), null);
 				return elem;
 			}
@@ -61,12 +61,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		readonly Func<uint, TArg, TValue> readElementByRID;
 		readonly uint length;
 
-		public TValue this[uint index, TArg arg] {
+		public TValue? this[uint index, TArg arg] {
 			get {
 				if (index >= length)
 					return null;
 				ref var elem = ref allElements[((int)index / LazyListConstants.MaxArrayObjectElements)][((int)index % LazyListConstants.MaxArrayObjectElements)];
-				if (elem == null)
+				if (elem is null)
 					Interlocked.CompareExchange(ref elem, readElementByRID(index + 1, arg), null);
 				return elem;
 			}
@@ -91,12 +91,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		readonly Func<uint, TArg1, TArg2, (TValue elem, bool containedGenericParams)> readElementByRID;
 		readonly uint length;
 
-		public TValue this[uint index, TArg1 arg1, TArg2 arg2] {
+		public TValue? this[uint index, TArg1 arg1, TArg2 arg2] {
 			get {
 				if (index >= length)
 					return null;
 				ref var elem = ref allElements[((int)index / LazyListConstants.MaxArrayObjectElements)][((int)index % LazyListConstants.MaxArrayObjectElements)];
-				if (elem == null) {
+				if (elem is null) {
 					var info = readElementByRID(index + 1, arg1, arg2);
 					if (info.containedGenericParams)
 						return info.elem;

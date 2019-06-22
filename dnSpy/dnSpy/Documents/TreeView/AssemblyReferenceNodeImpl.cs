@@ -34,7 +34,7 @@ namespace dnSpy.Documents.TreeView {
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.ASSEMBLYREF_NODE_GUID);
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => dnImgMgr.GetImageReferenceAssemblyRef();
 		public override NodePathName NodePathName => new NodePathName(Guid, AssemblyRef.FullName);
-		public override ITreeNodeGroup TreeNodeGroup { get; }
+		public override ITreeNodeGroup? TreeNodeGroup { get; }
 
 		readonly WeakReference asmRefOwnerModule;
 
@@ -60,11 +60,11 @@ namespace dnSpy.Documents.TreeView {
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
 			var document = Context.DocumentTreeView.DocumentService.Resolve(AssemblyRef, (ModuleDef)asmRefOwnerModule.Target) as IDsDotNetDocument;
-			if (document == null)
+			if (document is null)
 				yield break;
 			var mod = document.ModuleDef;
-			Debug.Assert(mod != null);
-			if (mod == null)
+			Debug.Assert(!(mod is null));
+			if (mod is null)
 				yield break;
 			foreach (var asmRef in mod.GetAssemblyRefs())
 				yield return new AssemblyReferenceNodeImpl(Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.AssemblyRefTreeNodeGroupAssemblyRef), mod, asmRef);

@@ -33,7 +33,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.AttachToProcess {
 		sealed class Connection {
 			readonly Socket socket;
 			readonly byte[] buffer;
-			public IAsyncResult AsyncResult;
+			public IAsyncResult? AsyncResult;
 
 			public Connection(IPAddress groupAddr, ushort port, IPAddress addr) {
 				try {
@@ -57,7 +57,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.AttachToProcess {
 				return socket.BeginReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref anyEndpoint, null, null);
 			}
 
-			public byte[] GetData() {
+			public byte[]? GetData() {
 				EndPoint anyEndpoint = new IPEndPoint(IPAddress.Any, 0);
 				var asyncRes = AsyncResult;
 				AsyncResult = null;
@@ -89,7 +89,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.AttachToProcess {
 		public void Start() {
 		}
 
-		public byte[] GetNextData() {
+		public byte[]? GetNextData() {
 			for (;;) {
 				if (cancellationToken.IsCancellationRequested)
 					return null;
@@ -101,11 +101,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.AttachToProcess {
 					return null;
 
 				foreach (var s in connections) {
-					if (s.AsyncResult == null)
+					if (s.AsyncResult is null)
 						s.AsyncResult = s.Start();
 				}
 
-				var handles = connections.Select(a => a.AsyncResult.AsyncWaitHandle).ToArray();
+				var handles = connections.Select(a => a.AsyncResult!.AsyncWaitHandle).ToArray();
 				//TODO: Throws if there are too many handles
 				int index = WaitHandle.WaitAny(handles, endTime - currentTime);
 				if (index == WaitHandle.WaitTimeout || (uint)index >= (uint)handles.Length)
@@ -114,7 +114,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.AttachToProcess {
 					return null;
 
 				var conn = connections[index];
-				byte[] data = null;
+				byte[]? data = null;
 				try {
 					data = conn.GetData();
 				}
@@ -123,7 +123,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.AttachToProcess {
 				catch (ObjectDisposedException) {
 				}
 
-				if (data != null)
+				if (!(data is null))
 					return data;
 
 				conn.Dispose();

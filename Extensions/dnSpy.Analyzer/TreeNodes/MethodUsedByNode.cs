@@ -29,7 +29,7 @@ using dnSpy.Contracts.Text;
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class MethodUsedByNode : SearchNode {
 		readonly MethodDef analyzedMethod;
-		ConcurrentDictionary<MethodDef, int> foundMethods;
+		ConcurrentDictionary<MethodDef, int>? foundMethods;
 
 		public MethodUsedByNode(MethodDef analyzedMethod) => this.analyzedMethod = analyzedMethod ?? throw new ArgumentNullException(nameof(analyzedMethod));
 
@@ -52,7 +52,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			foreach (MethodDef method in type.Methods) {
 				if (!method.HasBody)
 					continue;
-				Instruction foundInstr = null;
+				Instruction? foundInstr = null;
 				foreach (Instruction instr in method.Body.Instructions) {
 					if (instr.Operand is IMethod mr && !mr.IsField && mr.Name == name &&
 						Helpers.IsReferencedBy(analyzedMethod.DeclaringType, mr.DeclaringType) &&
@@ -62,7 +62,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 					}
 				}
 
-				if (foundInstr != null) {
+				if (!(foundInstr is null)) {
 					if (GetOriginalCodeLocation(method) is MethodDef codeLocation && !HasAlreadyBeenFound(codeLocation)) {
 						var node = new MethodNode(codeLocation) { Context = Context };
 						if (codeLocation == method)
@@ -73,6 +73,6 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 		}
 
-		bool HasAlreadyBeenFound(MethodDef method) => !foundMethods.TryAdd(method, 0);
+		bool HasAlreadyBeenFound(MethodDef method) => !foundMethods!.TryAdd(method, 0);
 	}
 }

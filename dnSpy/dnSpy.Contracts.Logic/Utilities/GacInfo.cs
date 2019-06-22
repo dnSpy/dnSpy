@@ -137,7 +137,7 @@ namespace dnSpy.Contracts.Utilities {
 			var newWinmdPaths = new List<string>();
 
 			bool hasGAC2;
-			if (Type.GetType("Mono.Runtime") != null) {
+			if (!(Type.GetType("Mono.Runtime") is null)) {
 				hasGAC2 = false;
 				var dirs = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
 				var extraMonoPathsList = new List<GacPathInfo>();
@@ -164,7 +164,7 @@ namespace dnSpy.Contracts.Utilities {
 				}
 
 				var paths = Environment.GetEnvironmentVariable("MONO_PATH");
-				if (paths != null) {
+				if (!(paths is null)) {
 					foreach (var tmp in paths.Split(Path.PathSeparator)) {
 						var path = tmp.Trim();
 						if (path != string.Empty && Directory.Exists(path))
@@ -275,7 +275,7 @@ namespace dnSpy.Contracts.Utilities {
 		/// </summary>
 		/// <param name="asm">Assembly</param>
 		/// <returns></returns>
-		public static string FindInGac(IAssembly asm) => FindInGac(asm, -1);
+		public static string? FindInGac(IAssembly asm) => FindInGac(asm, -1);
 
 		/// <summary>
 		/// Finds an assembly in the GAC
@@ -283,8 +283,8 @@ namespace dnSpy.Contracts.Utilities {
 		/// <param name="asm">Assembly</param>
 		/// <param name="version">2, 4, or -1</param>
 		/// <returns></returns>
-		public static string FindInGac(IAssembly asm, int version) {
-			if (asm == null)
+		public static string? FindInGac(IAssembly? asm, int version) {
+			if (asm is null)
 				return null;
 			var pkt = PublicKeyBase.ToPublicKeyToken(asm.PublicKeyOrToken);
 			if (PublicKeyBase.IsNullOrEmpty2(pkt))

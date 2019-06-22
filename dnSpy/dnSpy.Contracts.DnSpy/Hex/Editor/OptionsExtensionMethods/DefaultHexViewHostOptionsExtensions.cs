@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static bool IsVerticalScrollBarEnabled(this VSTE.IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewHostOptions.VerticalScrollBarId);
 		}
@@ -42,7 +42,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static bool IsHorizontalScrollBarEnabled(this VSTE.IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewHostOptions.HorizontalScrollBarId);
 		}
@@ -53,7 +53,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static bool IsSelectionMarginEnabled(this VSTE.IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewHostOptions.SelectionMarginId);
 		}
@@ -64,7 +64,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static bool IsZoomControlEnabled(this VSTE.IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewHostOptions.ZoomControlId);
 		}
@@ -75,7 +75,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static bool IsGlyphMarginEnabled(this VSTE.IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewHostOptions.GlyphMarginId);
 		}
@@ -86,7 +86,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static bool IsInContrastMode(this VSTE.IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewHostOptions.IsInContrastModeId);
 		}

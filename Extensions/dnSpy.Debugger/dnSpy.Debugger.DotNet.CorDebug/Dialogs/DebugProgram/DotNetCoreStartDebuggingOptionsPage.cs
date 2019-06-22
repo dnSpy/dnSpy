@@ -81,7 +81,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
 
 		void PickNewHostFilename() {
 			var newFilename = pickFilename.GetFilename(HostFilename, "exe", PickFilenameConstants.ExecutableFilter);
-			if (newFilename == null)
+			if (newFilename is null)
 				return;
 
 			HostFilename = newFilename;
@@ -89,7 +89,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
 
 		protected override void PickNewFilename() {
 			var newFilename = pickFilename.GetFilename(Filename, "dll", PickFilenameConstants.DotNetAssemblyOrModuleFilter);
-			if (newFilename == null)
+			if (newFilename is null)
 				return;
 
 			Filename = newFilename;
@@ -97,15 +97,15 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
 
 		public override void InitializePreviousOptions(StartDebuggingOptions options) {
 			var dncOptions = options as DotNetCoreStartDebuggingOptions;
-			if (dncOptions == null)
+			if (dncOptions is null)
 				return;
 			Initialize(dncOptions);
 		}
 
-		public override void InitializeDefaultOptions(string filename, string breakKind, StartDebuggingOptions options) =>
+		public override void InitializeDefaultOptions(string filename, string breakKind, StartDebuggingOptions? options) =>
 			Initialize(GetDefaultOptions(filename, breakKind, options));
 
-		DotNetCoreStartDebuggingOptions GetDefaultOptions(string filename, string breakKind, StartDebuggingOptions options) {
+		DotNetCoreStartDebuggingOptions GetDefaultOptions(string filename, string breakKind, StartDebuggingOptions? options) {
 			bool isExe = PortableExecutableFileHelpers.IsExecutable(filename);
 			if (isExe) {
 				var dncOptions = CreateOptions(breakKind);
@@ -127,8 +127,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
 		void Initialize(DotNetCoreStartDebuggingOptions options) {
 			base.Initialize(options);
 			UseHost = options.UseHost;
-			HostFilename = options.Host;
-			HostArguments = options.HostArguments;
+			HostFilename = options.Host ?? string.Empty;
+			HostArguments = options.HostArguments ?? string.Empty;
 		}
 
 		public override StartDebuggingOptionsInfo GetOptions() {

@@ -24,7 +24,7 @@ using dnlib.PE;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 	static class DotNetAssemblyUtilities {
-		public static int TryGetProgramBitness(string filename) {
+		public static int TryGetProgramBitness(string? filename) {
 			if (!File.Exists(filename))
 				return 0;
 			try {

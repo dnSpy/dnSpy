@@ -63,7 +63,7 @@ namespace dndbg.DotNet {
 			return data;
 		}
 
-		public byte[] ReadBytesUntilByte(byte b) {
+		public byte[]? ReadBytesUntilByte(byte b) {
 			var list = new List<byte>();
 			var origAddr = address;
 			const int MAX_BYTES_TO_CHECK = 0x10000;

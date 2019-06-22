@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.ToolWindows.Search {
 		protected SearchTextClassifierProviderBase(IThemeClassificationTypeService themeClassificationTypeService) =>
 			listFindMatchHighlightClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.ListFindMatchHighlight);
 
-		public ITextClassifier Create(IContentType contentType) => new SearchTextClassifier(listFindMatchHighlightClassificationType);
+		public ITextClassifier? Create(IContentType contentType) => new SearchTextClassifier(listFindMatchHighlightClassificationType);
 	}
 
 	sealed class SearchTextClassifier : ITextClassifier {
@@ -42,7 +42,7 @@ namespace dnSpy.Contracts.ToolWindows.Search {
 
 		public IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context) {
 			var searchContext = context as SearchTextClassifierContext;
-			if (searchContext == null)
+			if (searchContext is null)
 				yield break;
 			foreach (var span in searchContext.SearchMatcher.GetMatchSpans(searchContext.Tag, searchContext.Text))
 				yield return new TextClassificationTag(span, listFindMatchHighlightClassificationType);

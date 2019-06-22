@@ -36,9 +36,9 @@ namespace dnSpy.Hex.Editor.Search {
 		[ImportingConstructor]
 		HexMarkerTaggerProvider(HexViewSearchServiceProvider hexViewSearchServiceProvider) => this.hexViewSearchServiceProvider = hexViewSearchServiceProvider;
 
-		public override IHexTagger<T> CreateTagger<T>(HexView hexView, HexBuffer buffer) {
+		public override IHexTagger<T>? CreateTagger<T>(HexView hexView, HexBuffer buffer) {
 			var wpfHexView = hexView as WpfHexView;
-			if (wpfHexView == null)
+			if (wpfHexView is null)
 				return null;
 			return wpfHexView.Properties.GetOrCreateSingletonProperty(typeof(HexMarkerTagger), () => new HexMarkerTagger(hexViewSearchServiceProvider, wpfHexView)) as HexTagger<T>;
 		}
@@ -48,9 +48,9 @@ namespace dnSpy.Hex.Editor.Search {
 		readonly HexViewSearchService hexViewSearchService;
 
 		public HexMarkerTagger(HexViewSearchServiceProvider hexViewSearchServiceProvider, WpfHexView wpfHexView) {
-			if (hexViewSearchServiceProvider == null)
+			if (hexViewSearchServiceProvider is null)
 				throw new ArgumentNullException(nameof(hexViewSearchServiceProvider));
-			if (wpfHexView == null)
+			if (wpfHexView is null)
 				throw new ArgumentNullException(nameof(wpfHexView));
 			hexViewSearchService = hexViewSearchServiceProvider.Get(wpfHexView);
 			hexViewSearchService.RegisterHexMarkerListener(this);

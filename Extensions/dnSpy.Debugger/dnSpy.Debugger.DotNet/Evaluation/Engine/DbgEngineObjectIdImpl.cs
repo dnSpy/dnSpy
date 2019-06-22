@@ -55,7 +55,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		DbgEngineValue GetValueCore(DbgEvaluationInfo evalInfo) {
 			var dnValue = runtime.GetValue(evalInfo, dnObjectId);
-			if (dnValue == null)
+			if (dnValue is null)
 				return CreateError();
 			try {
 				return new DbgEngineValueImpl(dnValue);

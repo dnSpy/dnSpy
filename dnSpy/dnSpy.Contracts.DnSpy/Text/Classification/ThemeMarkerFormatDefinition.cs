@@ -42,23 +42,23 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <param name="theme">Theme</param>
 		/// <returns></returns>
 		public ResourceDictionary CreateResourceDictionary(ITheme theme) {
-			if (theme == null)
+			if (theme is null)
 				throw new ArgumentNullException(nameof(theme));
 
 			var res = CreateResourceDictionary();
 
 			var fg = GetForeground(theme);
-			if (fg != null)
+			if (!(fg is null))
 				res[ForegroundBrushId] = fg;
 
 			var bg = GetBackground(theme);
-			if (bg != null)
+			if (!(bg is null))
 				res[BackgroundBrushId] = bg;
 
 			return res;
 		}
 
-		Brush GetForeground(ITheme theme) => theme.GetExplicitColor(textColor.ToColorType()).Foreground;
-		Brush GetBackground(ITheme theme) => theme.GetExplicitColor(textColor.ToColorType()).Background;
+		Brush? GetForeground(ITheme theme) => theme.GetExplicitColor(textColor.ToColorType()).Foreground;
+		Brush? GetBackground(ITheme theme) => theme.GetExplicitColor(textColor.ToColorType()).Background;
 	}
 }

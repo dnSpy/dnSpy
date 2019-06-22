@@ -26,10 +26,10 @@ namespace dnSpy.Text.Adornments {
 	[Export(typeof(IToolTipProviderFactory))]
 	sealed class ToolTipProviderFactory : IToolTipProviderFactory {
 		public IToolTipProvider GetToolTipProvider(ITextView textView) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			var wpfTextView = textView as IWpfTextView;
-			if (wpfTextView == null)
+			if (wpfTextView is null)
 				throw new ArgumentException();
 			return wpfTextView.Properties.GetOrCreateSingletonProperty(typeof(ToolTipProvider), () => new ToolTipProvider(wpfTextView));
 		}

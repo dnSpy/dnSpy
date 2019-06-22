@@ -34,7 +34,7 @@ namespace dnSpy.Contracts.Output {
 		/// <param name="name">Name shown in the UI</param>
 		/// <param name="contentType">Content type or null</param>
 		/// <returns></returns>
-		IOutputTextPane Create(Guid guid, string name, IContentType contentType = null);
+		IOutputTextPane Create(Guid guid, string name, IContentType? contentType = null);
 
 		/// <summary>
 		/// Creates a <see cref="IOutputTextPane"/>. Returns an existing one if it's already been

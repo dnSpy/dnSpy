@@ -54,6 +54,6 @@ namespace dndbg.DotNet {
 			attributes = (int)attrs;
 		}
 
-		protected override IImplementation GetImplementation_NoLock() => readerModule.ResolveToken(implementation) as IImplementation;
+		protected override IImplementation? GetImplementation_NoLock() => readerModule.ResolveToken(implementation) as IImplementation;
 	}
 }

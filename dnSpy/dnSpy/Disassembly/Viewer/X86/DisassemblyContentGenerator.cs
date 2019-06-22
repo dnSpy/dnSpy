@@ -49,7 +49,7 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 				this.kind = kind;
 				this.value = value;
 			}
-			public override bool Equals(object obj) => obj is AsmReference other && kind == other.kind && StringComparer.Ordinal.Equals(value, other.value);
+			public override bool Equals(object? obj) => obj is AsmReference other && kind == other.kind && StringComparer.Ordinal.Equals(value, other.value);
 			public override int GetHashCode() => (int)kind ^ StringComparer.Ordinal.GetHashCode(value ?? string.Empty);
 		}
 
@@ -142,7 +142,7 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 			}
 		}
 
-		static string GetName(NativeVariableInfo[] variableInfo, in X86Variable varInfo) {
+		static string? GetName(NativeVariableInfo[] variableInfo, in X86Variable varInfo) {
 			foreach (var info in variableInfo) {
 				if (info.IsLocal == varInfo.IsLocal && info.Index == varInfo.Index)
 					return info.Name;
@@ -152,8 +152,8 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 
 		internal const string LINE = "********************************************";
 
-		public static void Write(int bitness, DisassemblyContentOutput output, string header, NativeCodeOptimization optimization, Formatter formatter, string commentPrefix, InternalFormatterOptions formatterOptions, Block[] blocks, X86NativeCodeInfo codeInfo, NativeVariableInfo[] variableInfo, string methodName, string moduleName) {
-			if (variableInfo == null)
+		public static void Write(int bitness, DisassemblyContentOutput output, string? header, NativeCodeOptimization optimization, Formatter formatter, string commentPrefix, InternalFormatterOptions formatterOptions, Block[] blocks, X86NativeCodeInfo? codeInfo, NativeVariableInfo[]? variableInfo, string? methodName, string? moduleName) {
+			if (variableInfo is null)
 				variableInfo = Array.Empty<NativeVariableInfo>();
 			if (optimization == NativeCodeOptimization.Unoptimized) {
 				WriteComment(output, commentPrefix, LINE);
@@ -161,14 +161,14 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 				WriteComment(output, commentPrefix, LINE);
 				output.Write(Environment.NewLine, BoxedTextColor.Text);
 			}
-			if (header != null) {
+			if (!(header is null)) {
 				WriteComment(output, commentPrefix, header);
 				output.Write(Environment.NewLine, BoxedTextColor.Text);
 			}
 
-			if (moduleName != null)
+			if (!(moduleName is null))
 				WriteComment(output, commentPrefix, moduleName);
-			if (methodName != null)
+			if (!(methodName is null))
 				WriteComment(output, commentPrefix, methodName);
 			WriteComment(output, commentPrefix, GetCodeSizeString(blocks));
 			output.Write(Environment.NewLine, BoxedTextColor.Text);
@@ -187,7 +187,7 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 						sb.Append(' ');
 					}
 					var name = varInfo.Name ?? GetName(variableInfo, varInfo);
-					if (name != null) {
+					if (!(name is null)) {
 						printedName = true;
 						if (varInfo.Index >= 0)
 							sb.Append('(');

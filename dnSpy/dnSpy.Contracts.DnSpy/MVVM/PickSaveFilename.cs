@@ -34,7 +34,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// extensions are "exe" and "dll" but not ".exe"</param>
 		/// <param name="filter">Filename filter or null</param>
 		/// <returns></returns>
-		string GetFilename(string currentFileName, string defaultExtension, string filter = null);
+		string? GetFilename(string? currentFileName, string? defaultExtension, string? filter = null);
 	}
 
 	/// <summary>
@@ -43,7 +43,7 @@ namespace dnSpy.Contracts.MVVM {
 	[Export(typeof(IPickSaveFilename))]
 	public sealed class PickSaveFilename : IPickSaveFilename {
 		/// <inheritdoc/>
-		public string GetFilename(string currentFileName, string extension, string filter) {
+		public string? GetFilename(string? currentFileName, string? extension, string? filter) {
 			var dialog = new SaveFileDialog() {
 				Filter = string.IsNullOrEmpty(filter) ? PickFilenameConstants.AnyFilenameFilter : filter,
 				RestoreDirectory = true,

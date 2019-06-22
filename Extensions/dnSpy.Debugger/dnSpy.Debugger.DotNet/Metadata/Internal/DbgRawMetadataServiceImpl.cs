@@ -41,7 +41,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Internal {
 		}
 
 		public override DbgRawMetadata Create(DbgRuntime runtime, bool isFileLayout, ulong moduleAddress, int moduleSize) {
-			if (runtime == null)
+			if (runtime is null)
 				throw new ArgumentNullException(nameof(runtime));
 			if (moduleAddress == 0)
 				throw new ArgumentOutOfRangeException(nameof(moduleAddress));
@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Internal {
 			var state = runtime.GetOrCreateData<RuntimeState>();
 			lock (state.LockObj) {
 				if (state.Dict.TryGetValue(moduleAddress, out var rawMd)) {
-					if (rawMd.TryAddRef() != null) {
+					if (!(rawMd.TryAddRef() is null)) {
 						if (rawMd.IsFileLayout != isFileLayout || rawMd.Size != moduleSize) {
 							rawMd.Release();
 							throw new InvalidOperationException();
@@ -74,9 +74,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Internal {
 		}
 
 		public override DbgRawMetadata Create(DbgRuntime runtime, bool isFileLayout, byte[] moduleBytes) {
-			if (runtime == null)
+			if (runtime is null)
 				throw new ArgumentNullException(nameof(runtime));
-			if (moduleBytes == null)
+			if (moduleBytes is null)
 				throw new ArgumentNullException(nameof(moduleBytes));
 
 			var state = runtime.GetOrCreateData<RuntimeState>();

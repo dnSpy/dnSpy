@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -254,6 +255,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			var filename = pickFilename.GetFilename(null, "xml", PickFilenameConstants.XmlFilenameFilter);
 			if (!File.Exists(filename))
 				return;
+			Debug.Assert(!(filename is null));
 			var settingsService = settingsServiceFactory.Value.Create();
 			try {
 				settingsService.Open(filename);
@@ -311,7 +313,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 				SelectedItems[0].LabelsEditableValue.IsEditingValue = true;
 			else {
 				var newLabels = messageBoxService.Ask<string>(dnSpy_Debugger_Resources.EditLabelsMsgBoxLabel, SelectedItems[0].GetLabelsString(), dnSpy_Debugger_Resources.EditLabelsTitle);
-				if (newLabels != null) {
+				if (!(newLabels is null)) {
 					var labelsColl = CodeBreakpointVM.CreateLabelsCollection(newLabels);
 					dbgCodeBreakpointsService.Value.Modify(SelectedItems.Select(a => {
 						var bm = a.CodeBreakpoint;

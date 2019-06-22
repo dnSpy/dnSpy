@@ -23,21 +23,21 @@ using System.Windows;
 
 namespace dnSpy.AsmEditor.Hex {
 	static class ClipboardUtils {
-		public static byte[] GetData(bool canBeEmpty) {
+		public static byte[]? GetData(bool canBeEmpty) {
 			string s;
 			try {
 				s = Clipboard.GetText();
 			}
 			catch (ExternalException) { return null; }
-			if (s == null)
+			if (s is null)
 				return null;
 			if (!canBeEmpty && s.Length == 0)
 				return null;
 			return HexStringToByteArray(s);
 		}
 
-		static byte[] HexStringToByteArray(string s) {
-			if (s == null)
+		static byte[]? HexStringToByteArray(string s) {
+			if (s is null)
 				return null;
 			if (s.Length % 2 != 0)
 				return null;
@@ -65,7 +65,7 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		public static string ToHexString(byte[] data) {
-			if (data == null || data.Length == 0)
+			if (data is null || data.Length == 0)
 				return string.Empty;
 
 			var sb = new StringBuilder(data.Length * 2);

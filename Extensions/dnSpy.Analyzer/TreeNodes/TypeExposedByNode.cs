@@ -99,7 +99,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 					return false;
 				var methDecl = method.Overrides[0].MethodDeclaration;
 				var typeDef = methDecl?.DeclaringType?.ResolveTypeDef();
-				if (typeDef != null && !typeDef.IsInterface)
+				if (!(typeDef is null) && !typeDef.IsInterface)
 					return false;
 			}
 
@@ -122,14 +122,14 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		static bool IsPrivate(PropertyDef property) {
-			bool isGetterPublic = (property.GetMethod != null && !property.GetMethod.IsPrivate);
-			bool isSetterPublic = (property.SetMethod != null && !property.SetMethod.IsPrivate);
+			bool isGetterPublic = (!(property.GetMethod is null) && !property.GetMethod.IsPrivate);
+			bool isSetterPublic = (!(property.SetMethod is null) && !property.SetMethod.IsPrivate);
 			return !(isGetterPublic || isSetterPublic);
 		}
 
 		static bool IsPrivate(EventDef eventDef) {
-			bool isAdderPublic = (eventDef.AddMethod != null && !eventDef.AddMethod.IsPrivate);
-			bool isRemoverPublic = (eventDef.RemoveMethod != null && !eventDef.RemoveMethod.IsPrivate);
+			bool isAdderPublic = (!(eventDef.AddMethod is null) && !eventDef.AddMethod.IsPrivate);
+			bool isRemoverPublic = (!(eventDef.RemoveMethod is null) && !eventDef.RemoveMethod.IsPrivate);
 			return !(isAdderPublic || isRemoverPublic);
 		}
 

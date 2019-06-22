@@ -29,7 +29,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		readonly DbgEngineImpl engine;
 		readonly DmdAppDomain reflectionAppDomain;
 		readonly TypeCache typeCache;
-		List<DmdType> typesList;
+		List<DmdType>? typesList;
 		int recursionCounter;
 
 		public ReflectionTypeCreator(DbgEngineImpl engine, DmdAppDomain reflectionAppDomain) {
@@ -42,7 +42,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		}
 
 		List<DmdType> GetTypesList() {
-			if (typesList == null)
+			if (typesList is null)
 				return new List<DmdType>();
 			var list = typesList;
 			typesList = null;
@@ -50,8 +50,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			return list;
 		}
 
-		void FreeTypesList(ref List<DmdType> list) {
-			if (list == null)
+		void FreeTypesList(ref List<DmdType>? list) {
+			if (list is null)
 				return;
 			typesList = list;
 			list = null;
@@ -59,19 +59,20 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		public DmdType Create(TypeMirror type) {
 			var result = CreateCore(type);
-			if ((object)result == null)
+			if (result is null)
 				throw new InvalidOperationException();
 			return result;
 		}
 
-		DmdType CreateCore(TypeMirror type) {
-			if (type == null)
+		DmdType? CreateCore(TypeMirror type) {
+			if (type is null)
 				throw new ArgumentNullException(nameof(type));
 			if (recursionCounter++ > 100)
 				throw new InvalidOperationException();
 
-			List<DmdType> types;
-			if (!typeCache.TryGetType(type, out var result)) {
+			List<DmdType>? types;
+			DmdType? result;
+			if (!typeCache.TryGetType(type, out result)) {
 				bool canAddType = true;
 				if (type.IsByRef)
 					result = CreateCore(type.GetElementType())?.MakeByRefType();
@@ -90,32 +91,32 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				else {
 					var module = engine.TryGetModule(type.Module)?.GetReflectionModule() ?? throw new InvalidOperationException();
 					var reflectionType = module.ResolveType(type.MetadataToken, DmdResolveOptions.None);
-					if ((object)reflectionType != null && reflectionType.GetGenericArguments().Count != 0) {
-						DmdType parsedType = null;
+					if (!(reflectionType is null) && reflectionType.GetGenericArguments().Count != 0) {
+						DmdType? parsedType = null;
 						TypeMirror[] genericArgs;
 						if (type.VirtualMachine.Version.AtLeast(2, 15))
 							genericArgs = type.GetGenericArguments();
 						else {
 							parsedType = reflectionType.Assembly.GetType(type.FullName);
-							if ((object)parsedType != null && parsedType.MetadataToken != type.MetadataToken)
+							if (!(parsedType is null) && parsedType.MetadataToken != type.MetadataToken)
 								parsedType = null;
 							genericArgs = Array.Empty<TypeMirror>();
-							canAddType = (object)parsedType != null;
+							canAddType = !(parsedType is null);
 						}
 
-						if ((object)parsedType != null)
+						if (!(parsedType is null))
 							reflectionType = parsedType;
 						else {
 							types = GetTypesList();
 							foreach (var t in genericArgs) {
 								var newType = CreateCore(t);
-								if ((object)newType == null) {
+								if (newType is null) {
 									reflectionType = null;
 									break;
 								}
 								types.Add(newType);
 							}
-							if ((object)reflectionType != null) {
+							if (!(reflectionType is null)) {
 								Debug.Assert(types.Count == 0 || reflectionType.GetGenericArguments().Count == types.Count);
 								if (types.Count != 0)
 									reflectionType = reflectionType.MakeGenericType(types.ToArray());
@@ -125,7 +126,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					}
 					result = reflectionType;
 				}
-				if (canAddType && (object)result != null)
+				if (canAddType && !(result is null))
 					typeCache.Add(type, result);
 			}
 

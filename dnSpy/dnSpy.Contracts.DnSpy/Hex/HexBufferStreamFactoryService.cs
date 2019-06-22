@@ -36,7 +36,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="filename">Filename</param>
 		/// <returns></returns>
 		public HexBufferStream Create(string filename) {
-			if (filename == null)
+			if (filename is null)
 				throw new ArgumentNullException(nameof(filename));
 			return Create(File.ReadAllBytes(filename), filename);
 		}
@@ -66,7 +66,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="isReadOnly">true if it's read only</param>
 		/// <param name="isVolatile">true if the memory can be changed by other code</param>
 		/// <returns></returns>
-		public HexCachedBufferStream CreateCachedProcessStream(IntPtr hProcess, string name = null, bool isReadOnly = false, bool isVolatile = true) {
+		public HexCachedBufferStream CreateCachedProcessStream(IntPtr hProcess, string? name = null, bool isReadOnly = false, bool isVolatile = true) {
 			var simpleStream = CreateSimpleProcessStream(hProcess, name, isReadOnly, isVolatile);
 			return CreateCached(simpleStream, disposeStream: true);
 		}
@@ -79,6 +79,6 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="isReadOnly">true if it's read only</param>
 		/// <param name="isVolatile">true if the memory can be changed by other code</param>
 		/// <returns></returns>
-		public abstract HexSimpleBufferStream CreateSimpleProcessStream(IntPtr hProcess, string name = null, bool isReadOnly = false, bool isVolatile = true);
+		public abstract HexSimpleBufferStream CreateSimpleProcessStream(IntPtr hProcess, string? name = null, bool isReadOnly = false, bool isVolatile = true);
 	}
 }

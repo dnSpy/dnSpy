@@ -37,7 +37,7 @@ namespace dnSpy.Language.Intellisense {
 			set => control.Opacity = value;
 		}
 
-		public ITrackingSpan PresentationSpan {
+		public ITrackingSpan? PresentationSpan {
 			get => presentationSpan;
 			private set {
 				if (!TrackingSpanHelpers.IsSameTrackingSpan(presentationSpan, value)) {
@@ -46,7 +46,7 @@ namespace dnSpy.Language.Intellisense {
 				}
 			}
 		}
-		ITrackingSpan presentationSpan;
+		ITrackingSpan? presentationSpan;
 
 		public SpaceReservationQuickInfoPresenter(IQuickInfoSession session)
 			: base(session) {

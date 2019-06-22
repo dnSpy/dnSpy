@@ -23,7 +23,7 @@ using dnSpy.Contracts.Documents;
 namespace dnSpy.Bookmarks.DotNet {
 	[ExportReferenceConverter]
 	sealed class DotNetReferenceConverter : ReferenceConverter {
-		public override void Convert(ref object reference) {
+		public override void Convert(ref object? reference) {
 			switch (reference) {
 			case DotNetMethodBodyBookmarkLocation bodyLoc:
 				reference = new DotNetMethodBodyReference(bodyLoc.Module, bodyLoc.Token, bodyLoc.Offset);

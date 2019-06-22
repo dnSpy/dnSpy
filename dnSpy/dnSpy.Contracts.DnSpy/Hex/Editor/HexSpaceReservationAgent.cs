@@ -60,6 +60,6 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// </summary>
 		/// <param name="reservedSpace">Reserved space</param>
 		/// <returns></returns>
-		public abstract Geometry PositionAndDisplay(Geometry reservedSpace);
+		public abstract Geometry? PositionAndDisplay(Geometry reservedSpace);
 	}
 }

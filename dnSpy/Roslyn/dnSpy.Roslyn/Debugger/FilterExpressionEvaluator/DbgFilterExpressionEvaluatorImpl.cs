@@ -55,12 +55,12 @@ namespace dnSpy.Roslyn.Debugger.FilterExpressionEvaluator {
 	sealed class DbgFilterExpressionEvaluatorImpl : DbgFilterExpressionEvaluator {
 		readonly object lockObj;
 		Dictionary<string, CompiledExpr> toCompiledExpr;
-		WeakReference toCompiledExprWeakRef;
+		WeakReference? toCompiledExprWeakRef;
 
 		sealed class CompiledExpr {
-			public EvalDelegate Eval { get; }
-			public string CompilationError { get; }
-			public string RuntimeError { get; set; }
+			public EvalDelegate? Eval { get; }
+			public string? CompilationError { get; }
+			public string? RuntimeError { get; set; }
 			public CompiledExpr(EvalDelegate eval) => Eval = eval ?? throw new ArgumentNullException(nameof(eval));
 			public CompiledExpr(string compilationError) => CompilationError = compilationError ?? throw new ArgumentNullException(nameof(compilationError));
 		}
@@ -87,8 +87,8 @@ namespace dnSpy.Roslyn.Debugger.FilterExpressionEvaluator {
 			}
 		}
 
-		public override string IsValidExpression(string expr) {
-			if (expr == null)
+		public override string? IsValidExpression(string expr) {
+			if (expr is null)
 				throw new ArgumentNullException(nameof(expr));
 			lock (lockObj) {
 				if (toCompiledExpr.TryGetValue(expr, out var compiledExpr))
@@ -98,19 +98,19 @@ namespace dnSpy.Roslyn.Debugger.FilterExpressionEvaluator {
 		}
 
 		public override DbgFilterExpressionEvaluatorResult Evaluate(string expr, DbgFilterEEVariableProvider variableProvider) {
-			if (expr == null)
+			if (expr is null)
 				throw new ArgumentNullException(nameof(expr));
-			if (variableProvider == null)
+			if (variableProvider is null)
 				throw new ArgumentNullException(nameof(variableProvider));
 			var compiledExpr = GetOrCompile(expr);
-			if (compiledExpr.CompilationError != null)
+			if (!(compiledExpr.CompilationError is null))
 				return new DbgFilterExpressionEvaluatorResult(compiledExpr.CompilationError);
-			if (compiledExpr.RuntimeError != null)
+			if (!(compiledExpr.RuntimeError is null))
 				return new DbgFilterExpressionEvaluatorResult(compiledExpr.RuntimeError);
 
 			bool evalResult;
 			try {
-				evalResult = compiledExpr.Eval(variableProvider.MachineName, variableProvider.ProcessId, variableProvider.ProcessName, variableProvider.ThreadId, variableProvider.ThreadName);
+				evalResult = compiledExpr.Eval!(variableProvider.MachineName, variableProvider.ProcessId, variableProvider.ProcessName, variableProvider.ThreadId, variableProvider.ThreadName);
 			}
 			catch (Exception ex) {
 				compiledExpr.RuntimeError = string.Format(dnSpy_Roslyn_Resources.FilterExpressionEvaluator_CompiledExpressionThrewAnException, ex.GetType().FullName);
@@ -163,13 +163,13 @@ namespace dnSpy.Roslyn.Debugger.FilterExpressionEvaluator {
 
 		CompiledExpr CreateCompiledExpr(string expr) {
 			var compRes = Compile(expr);
-			if (compRes.error != null)
+			if (!(compRes.error is null))
 				return new CompiledExpr(compRes.error);
 
 			try {
-				using (var delCreator = new EvalDelegateCreator(compRes.assembly, FilterExpressionClassName, EvalMethodName)) {
+				using (var delCreator = new EvalDelegateCreator(compRes.assembly!, FilterExpressionClassName, EvalMethodName)) {
 					var del = delCreator.CreateDelegate();
-					if (del != null)
+					if (!(del is null))
 						return new CompiledExpr(del);
 				}
 			}
@@ -216,7 +216,7 @@ static class " + FilterExpressionClassName + @" {
 			return (filterText, exprOffset);
 		}
 
-		(byte[] assembly, string error) Compile(string expr, bool verifyExpr = false) {
+		(byte[]? assembly, string? error) Compile(string expr, bool verifyExpr = false) {
 			var info = CreateFilterClassSource(expr);
 			var filterExprClass = CSharpSyntaxTree.ParseText(info.exprSource, parseOptions);
 			var comp = CSharpCompilation.Create("filter-expr-eval", new[] { mscorlibSyntaxTree, filterExprClass }, options: compilationOptions);

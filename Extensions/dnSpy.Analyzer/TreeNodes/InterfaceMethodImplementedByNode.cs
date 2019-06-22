@@ -43,8 +43,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 			if (!type.HasInterfaces)
 				yield break;
 			var iff = type.Interfaces.FirstOrDefault(i => new SigComparer().Equals(i.Interface, analyzedMethod.DeclaringType));
-			ITypeDefOrRef implementedInterfaceRef = iff?.Interface;
-			if (implementedInterfaceRef == null)
+			var implementedInterfaceRef = iff?.Interface;
+			if (implementedInterfaceRef is null)
 				yield break;
 
 			//TODO: Can we compare method sigs too?

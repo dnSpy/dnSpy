@@ -30,7 +30,7 @@ namespace dnSpy.Text.Editor.Search {
 		[ImportingConstructor]
 		CommandTargetFilterProvider(Lazy<ISearchServiceProvider> searchServiceProvider) => this.searchServiceProvider = searchServiceProvider;
 
-		public ICommandTargetFilter Create(object target) {
+		public ICommandTargetFilter? Create(object target) {
 			var textView = target as IWpfTextView;
 			if (textView?.Roles.Contains(PredefinedTextViewRoles.Interactive) != true)
 				return null;
@@ -46,7 +46,7 @@ namespace dnSpy.Text.Editor.Search {
 		[ImportingConstructor]
 		CommandTargetFilterProviderFocus(Lazy<ISearchServiceProvider> searchServiceProvider) => this.searchServiceProvider = searchServiceProvider;
 
-		public ICommandTargetFilter Create(object target) {
+		public ICommandTargetFilter? Create(object target) {
 			var textView = target as IWpfTextView;
 			if (textView?.Roles.Contains(PredefinedTextViewRoles.Interactive) != true)
 				return null;

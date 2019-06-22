@@ -35,11 +35,11 @@ namespace dnSpy.Text.Editor {
 		/// <param name="line">Line</param>
 		/// <returns></returns>
 		public static int? GetDesiredIndentation(ITextView textView, ISmartIndentationService smartIndentationService, ITextSnapshotLine line) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
-			if (smartIndentationService == null)
+			if (smartIndentationService is null)
 				throw new ArgumentNullException(nameof(smartIndentationService));
-			if (line == null)
+			if (line is null)
 				throw new ArgumentNullException(nameof(line));
 
 			var indentStyle = textView.Options.GetIndentStyle();
@@ -52,7 +52,7 @@ namespace dnSpy.Text.Editor {
 
 			case IndentStyle.Smart:
 				var indentSize = smartIndentationService.GetDesiredIndentation(textView, line);
-				Debug.Assert(indentSize == null || indentSize.Value >= 0);
+				Debug.Assert(indentSize is null || indentSize.Value >= 0);
 				return indentSize;
 
 			default:
@@ -68,9 +68,9 @@ namespace dnSpy.Text.Editor {
 		/// <param name="line">Line</param>
 		/// <returns></returns>
 		public static int? GetDesiredBlockIndentation(ITextView textView, ITextSnapshotLine line) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
-			if (line == null)
+			if (line is null)
 				throw new ArgumentNullException(nameof(line));
 
 			while (line.LineNumber != 0) {

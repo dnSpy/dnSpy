@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Text;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler;
@@ -49,7 +50,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			var res = new DbgDotNetAlias[objectIds.Length + aliases.Length];
 			var typeReferences = new DmdType[res.Length];
 
-			var sb = ObjectCache.AllocStringBuilder();
+			StringBuilder? sb = ObjectCache.AllocStringBuilder();
 			var output = new DbgStringBuilderTextWriter(sb);
 			int w = 0;
 			foreach (var alias in aliases) {
@@ -75,7 +76,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				default:
 					throw new InvalidOperationException();
 				}
-				res[w] = new DbgDotNetAlias(dnAliasKind, alias.Type.AssemblyQualifiedName, aliasName, alias.CustomTypeInfoId, alias.CustomTypeInfo);
+				res[w] = new DbgDotNetAlias(dnAliasKind, alias.Type.AssemblyQualifiedName ?? string.Empty, aliasName, alias.CustomTypeInfoId, alias.CustomTypeInfo);
 				typeReferences[w] = alias.Type;
 				w++;
 			}
@@ -84,7 +85,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				var value = objectId.GetValue(evalInfo);
 				var dnValue = (DbgDotNetValue)value.InternalValue;
 				evalInfo.Context.Language.Formatter.FormatObjectIdName(evalInfo.Context, output, objectId.Id);
-				res[w] = new DbgDotNetAlias(DbgDotNetAliasKind.ObjectId, dnValue.Type.AssemblyQualifiedName, sb.ToString(), Guid.Empty, null);
+				res[w] = new DbgDotNetAlias(DbgDotNetAliasKind.ObjectId, dnValue.Type.AssemblyQualifiedName ?? string.Empty, sb.ToString(), Guid.Empty, null);
 				typeReferences[w] = dnValue.Type;
 				w++;
 				value.Close();

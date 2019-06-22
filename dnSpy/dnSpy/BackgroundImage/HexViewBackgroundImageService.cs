@@ -28,7 +28,7 @@ using VSUTIL = Microsoft.VisualStudio.Utilities;
 namespace dnSpy.BackgroundImage {
 	sealed class HexViewBackgroundImageService : BackgroundImageService {
 		readonly WpfHexView wpfHexView;
-		HexAdornmentLayer adornmentLayer;
+		HexAdornmentLayer? adornmentLayer;
 
 #pragma warning disable CS0169
 		[Export(typeof(HexAdornmentLayerDefinition))]
@@ -52,9 +52,9 @@ namespace dnSpy.BackgroundImage {
 		}
 
 		public static void InstallService(WpfHexView wpfHexView, IImageSourceService imageSourceService) {
-			if (wpfHexView == null)
+			if (wpfHexView is null)
 				throw new ArgumentNullException(nameof(wpfHexView));
-			if (imageSourceService == null)
+			if (imageSourceService is null)
 				throw new ArgumentNullException(nameof(imageSourceService));
 			wpfHexView.Properties.GetOrCreateSingletonProperty(typeof(BackgroundImageService), () => new HexViewBackgroundImageService(wpfHexView, imageSourceService));
 		}
@@ -63,19 +63,19 @@ namespace dnSpy.BackgroundImage {
 		protected override double ViewportHeight => wpfHexView.ViewportHeight;
 
 		protected override void OnEnabledCore() {
-			if (adornmentLayer == null)
+			if (adornmentLayer is null)
 				adornmentLayer = wpfHexView.GetAdornmentLayer(PredefinedHexAdornmentLayers.BackgroundImage);
 			wpfHexView.LayoutChanged += WpfHexView_LayoutChanged;
 		}
 
 		protected override void OnDisabledCore() {
 			wpfHexView.LayoutChanged -= WpfHexView_LayoutChanged;
-			if (adornmentLayer != null)
+			if (!(adornmentLayer is null))
 				adornmentLayer.RemoveAllAdornments();
 		}
 
 		protected override void AddImageToAdornmentLayerCore(Image image) =>
-			adornmentLayer.AddAdornment(VSTE.AdornmentPositioningBehavior.OwnerControlled, (HexBufferSpan?)null, null, image, null);
+			adornmentLayer!.AddAdornment(VSTE.AdornmentPositioningBehavior.OwnerControlled, (HexBufferSpan?)null, null, image, null);
 
 		void WpfHexView_Closed(object sender, EventArgs e) {
 			ViewClosed();

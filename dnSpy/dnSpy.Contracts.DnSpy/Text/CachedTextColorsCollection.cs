@@ -42,7 +42,7 @@ namespace dnSpy.Contracts.Text {
 		public void Append(object color, string text) {
 			if (frozen)
 				throw new InvalidOperationException("Instance is frozen");
-			if (text == null)
+			if (text is null)
 				throw new ArgumentNullException(nameof(text));
 			Append(color, text, 0, text.Length);
 		}
@@ -50,7 +50,7 @@ namespace dnSpy.Contracts.Text {
 		public void Append(object color, string text, int index, int length) {
 			if (frozen)
 				throw new InvalidOperationException("Instance is frozen");
-			if (text == null)
+			if (text is null)
 				throw new ArgumentNullException(nameof(text));
 			if (index < 0)
 				throw new ArgumentOutOfRangeException(nameof(index));

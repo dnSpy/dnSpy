@@ -37,7 +37,7 @@ namespace dnSpy.Text.CodeEditor {
 		[ImportingConstructor]
 		CodeEditorOptionsService(ITextViewOptionsGroupService textViewOptionsGroupService, IContentTypeRegistryService contentTypeRegistryService, [ImportMany] IEnumerable<Lazy<CodeEditorOptionsDefinition, ICodeEditorOptionsDefinitionMetadata>> codeEditorOptionsDefinitions) {
 			var group = textViewOptionsGroupService.GetGroup(PredefinedTextViewGroupNames.CodeEditor);
-			Options = codeEditorOptionsDefinitions.Select(a => CodeEditorOptions.TryCreate(group, contentTypeRegistryService, a.Metadata)).Where(a => a != null).ToArray();
+			Options = codeEditorOptionsDefinitions.Select(a => CodeEditorOptions.TryCreate(group, contentTypeRegistryService, a.Metadata)).OfType<CodeEditorOptions>().ToArray();
 		}
 	}
 }

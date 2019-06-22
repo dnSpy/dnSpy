@@ -42,13 +42,13 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 
 		sealed class DbgFilterEEVariableProviderImpl : DbgFilterEEVariableProvider {
 			public override string MachineName => Environment.MachineName;
-			public override int ProcessId => process.Id;
-			public override string ProcessName => process.Filename;
+			public override int ProcessId => process!.Id;
+			public override string ProcessName => process!.Filename;
 			public override ulong ThreadId => thread?.Id ?? ulong.MaxValue;
-			public override string ThreadName => thread?.UIName;
+			public override string? ThreadName => thread?.UIName;
 
-			DbgProcess process;
-			DbgThread thread;
+			DbgProcess? process;
+			DbgThread? thread;
 
 			public void Initialize(DbgProcess process, DbgThread thread) {
 				this.process = process ?? throw new ArgumentNullException(nameof(process));
@@ -68,15 +68,15 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			}
 
 			var expr = filter.Filter;
-			Debug.Assert(expr != null);
-			if (expr == null)
+			Debug.Assert(!(expr is null));
+			if (expr is null)
 				return new DbgCodeBreakpointCheckResult("Missing expression");
 
 			try {
 				dbgFilterEEVariableProvider.Initialize(boundBreakpoint.Process, thread);
 				var res = dbgFilterExpressionEvaluatorService.Evaluate(expr, dbgFilterEEVariableProvider);
 				if (res.HasError)
-					return new DbgCodeBreakpointCheckResult(res.Error);
+					return new DbgCodeBreakpointCheckResult(res.Error!);
 				return new DbgCodeBreakpointCheckResult(res.Result);
 			}
 			finally {

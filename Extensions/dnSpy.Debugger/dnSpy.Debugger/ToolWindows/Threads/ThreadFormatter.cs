@@ -66,7 +66,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 		public void WriteManagedId(IDbgTextWriter output, DbgThread thread) {
 			var managedId = thread.ManagedId;
-			if (managedId != null)
+			if (!(managedId is null))
 				WriteUInt64(output, managedId.Value);
 		}
 
@@ -130,7 +130,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 		public void WriteAppDomain(IDbgTextWriter output, DbgThread thread) {
 			var appDomain = thread.AppDomain;
-			if (appDomain != null)
+			if (!(appDomain is null))
 				output.Write(appDomain);
 		}
 

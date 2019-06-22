@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Text;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Exceptions;
@@ -52,7 +53,7 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 		readonly Lazy<IContentTypeRegistryService> contentTypeRegistryService;
 		readonly OutputLoggerSettings outputLoggerSettings;
 		readonly Lazy<DbgExceptionFormatterService> dbgExceptionFormatterService;
-		IOutputTextPane textPane;
+		IOutputTextPane? textPane;
 
 		[ImportingConstructor]
 		OutputLogger(UIDispatcher uiDispatcher, Lazy<IOutputService> outputService, Lazy<IContentTypeRegistryService> contentTypeRegistryService, OutputLoggerSettings outputLoggerSettings, Lazy<DbgExceptionFormatterService> dbgExceptionFormatterService) {
@@ -70,7 +71,7 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 		void Initialize() => UI(() => Initialize_UI());
 		void Initialize_UI() {
 			uiDispatcher.VerifyAccess();
-			if (textPane != null)
+			if (!(textPane is null))
 				return;
 			textPane = outputService.Value.Create(GUID_OUTPUT_LOGGER_DEBUG, dnSpy_Debugger_Resources.DebugLoggerName, contentTypeRegistryService.Value.GetContentType(ContentTypes.OutputDebug));
 		}
@@ -100,6 +101,7 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 			if (dbgManager.IsDebugging) {
 				UI(() => {
 					Initialize_UI();
+					Debug.Assert(!(textPane is null));
 					if (outputLoggerSettings.ShowDebugOutputLog)
 						outputService.Value.Select(GUID_OUTPUT_LOGGER_DEBUG);
 					textPane.Clear();
@@ -109,15 +111,17 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 
 		void WriteLine_UI(object color, string text) {
 			uiDispatcher.VerifyAccess();
-			if (textPane == null)
+			if (textPane is null)
 				Initialize_UI();
+			Debug.Assert(!(textPane is null));
 			textPane.WriteLine(color, text);
 		}
 
 		void Write_UI(object color, string text) {
 			uiDispatcher.VerifyAccess();
-			if (textPane == null)
+			if (textPane is null)
 				Initialize_UI();
+			Debug.Assert(!(textPane is null));
 			textPane.Write(color, text);
 		}
 
@@ -162,10 +166,10 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 				if (outputLoggerSettings.ShowMDAMessages) {
 					var process = ex.Process;
 					var msg1 = string.Format(dnSpy_Debugger_Resources.DebugLogMDA, GetExceptionName(ex.Id), GetProcessFullPath(process));
-					var msg2 = ex.Message == null ? null : string.Format(dnSpy_Debugger_Resources.DebugLogAdditionalInformation, ex.Message);
+					var msg2 = ex.Message is null ? null : string.Format(dnSpy_Debugger_Resources.DebugLogAdditionalInformation, ex.Message);
 					UI(() => {
 						WriteLine_UI(BoxedTextColor.DebugLogMDA, msg1);
-						if (msg2 != null)
+						if (!(msg2 is null))
 							WriteLine_UI(BoxedTextColor.DebugLogMDA, msg2);
 					});
 				}
@@ -174,19 +178,19 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 				if (outputLoggerSettings.ShowExceptionMessages) {
 					if (ex.IsFirstChance) {
 						var msg1 = string.Format(dnSpy_Debugger_Resources.DebugLogExceptionHandled, GetExceptionName(ex.Id), GetModuleName(ex.Module));
-						var msg2 = ex.Message == null ? null : string.Format(dnSpy_Debugger_Resources.DebugLogAdditionalInformation, FilterUserMessage(ex.Message));
+						var msg2 = ex.Message is null ? null : string.Format(dnSpy_Debugger_Resources.DebugLogAdditionalInformation, FilterUserMessage(ex.Message));
 						UI(() => {
 							WriteLine_UI(BoxedTextColor.DebugLogExceptionHandled, msg1);
-							if (msg2 != null)
+							if (!(msg2 is null))
 								WriteLine_UI(BoxedTextColor.DebugLogExceptionHandled, msg2);
 						});
 					}
 					else if (ex.IsUnhandled) {
 						var msg1 = string.Format(dnSpy_Debugger_Resources.DebugLogExceptionUnhandled, GetExceptionName(ex.Id), GetModuleName(ex.Module));
-						var msg2 = ex.Message == null ? null : string.Format(dnSpy_Debugger_Resources.DebugLogAdditionalInformation, FilterUserMessage(ex.Message));
+						var msg2 = ex.Message is null ? null : string.Format(dnSpy_Debugger_Resources.DebugLogAdditionalInformation, FilterUserMessage(ex.Message));
 						UI(() => {
 							WriteLine_UI(BoxedTextColor.DebugLogExceptionUnhandled, msg1);
-							if (msg2 != null)
+							if (!(msg2 is null))
 								WriteLine_UI(BoxedTextColor.DebugLogExceptionUnhandled, msg2);
 						});
 					}
@@ -211,15 +215,15 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 		string GetRuntimeAppDomainName(DbgModule module) {
 			var runtime = module.Runtime;
 			var appDomain = module.AppDomain;
-			if (appDomain == null)
+			if (appDomain is null)
 				return runtime.Name;
 			return runtime.Name + ": " + appDomain.Name;
 		}
 
 		string GetExceptionName(DbgExceptionId id) => dbgExceptionFormatterService.Value.ToString(id);
 
-		string GetProcessName(DbgProcess process) {
-			if (process == null)
+		string GetProcessName(DbgProcess? process) {
+			if (process is null)
 				return "???";
 			var name = process.Name;
 			if (string.IsNullOrEmpty(name))
@@ -228,7 +232,7 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 		}
 
 		string GetProcessFullPath(DbgProcess process) {
-			if (process == null)
+			if (process is null)
 				return "???";
 			var filename = process.Filename;
 			if (string.IsNullOrEmpty(filename))
@@ -236,11 +240,11 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 			return filename;
 		}
 
-		string GetProcessNameWithPID(DbgProcess process) => $"[0x{process?.Id ?? -1:X}] {GetProcessName(process)}";
-		string GetModuleName(DbgModule module) => module?.Name ?? "???";
+		string GetProcessNameWithPID(DbgProcess? process) => $"[0x{process?.Id ?? -1:X}] {GetProcessName(process)}";
+		string GetModuleName(DbgModule? module) => module?.Name ?? "???";
 
 		string FilterUserMessage(string s) {
-			if (s == null)
+			if (s is null)
 				return string.Empty;
 			const int MAX_USER_MSG_LEN = 100 * 1024;
 			if (s.Length > MAX_USER_MSG_LEN) {

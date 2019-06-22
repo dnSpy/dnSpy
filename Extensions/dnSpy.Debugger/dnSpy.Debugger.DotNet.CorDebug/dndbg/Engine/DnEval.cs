@@ -41,7 +41,7 @@ namespace dndbg.Engine {
 			: this(hr, msg, null) {
 		}
 
-		public EvalException(int hr, string msg, Exception ex)
+		public EvalException(int hr, string? msg, Exception? ex)
 			: base(msg, ex) {
 			HResult = hr;
 			HR = hr;
@@ -53,9 +53,9 @@ namespace dndbg.Engine {
 		public bool WasException { get; }
 		public bool WasCustomNotification { get; }
 		public bool WasCancelled { get; }
-		public CorValue ResultOrException { get; }
+		public CorValue? ResultOrException { get; }
 
-		public EvalResult(bool wasException, bool wasCustomNotification, bool wasCancelled, CorValue resultOrException) {
+		public EvalResult(bool wasException, bool wasCustomNotification, bool wasCancelled, CorValue? resultOrException) {
 			WasException = wasException;
 			WasCustomNotification = wasCustomNotification;
 			WasCancelled = wasCancelled;
@@ -85,6 +85,8 @@ namespace dndbg.Engine {
 		public event EventHandler<EvalEventArgs> EvalEvent;
 
 		internal DnEval(DnDebugger debugger, IDebugMessageDispatcher debugMessageDispatcher, bool suspendOtherThreads, List<(DnModule module, CorClass cls)> customNotificationList, CancellationToken cancellationToken) {
+			thread = null!;
+			eval = null!;
 			this.debugger = debugger;
 			this.debugMessageDispatcher = debugMessageDispatcher;
 			this.customNotificationList = customNotificationList;
@@ -105,36 +107,38 @@ namespace dndbg.Engine {
 		public void SetTimeout(TimeSpan timeout) => initialTimeOut = timeout;
 
 		public void SetThread(DnThread thread) {
-			if (thread == null)
+			if (thread is null)
 				throw new InvalidOperationException();
 
 			int hr = thread.CorThread.RawObject.CreateEval(out var ce);
-			if (hr < 0 || ce == null)
+			if (hr < 0 || ce is null)
 				throw new EvalException(hr, $"Could not create an evaluator, HR=0x{hr:X8}");
 			this.thread = thread;
 			eval = new CorEval(ce);
 		}
 
-		public CorValue CreateNull() => eval.CreateValue(CorElementType.Class);
+		public CorValue CreateNull() => eval.CreateValue(CorElementType.Class) ?? throw new InvalidOperationException();
 
-		public CorValue Box(CorValue value, CorType valueType = null) {
+		public CorValue? Box(CorValue value, CorType? valueType = null) {
 			var et = valueType ?? value?.ExactType;
-			if (et == null)
+			if (et is null)
 				return null;
-			if (value == null || !value.IsGeneric || value.IsBox || value.IsHeap)
+			if (value is null || !value.IsGeneric || value.IsBox || value.IsHeap)
 				return value;
 			var cls = et?.Class;
-			if (cls == null)
+			if (cls is null)
+				return null;
+			if (valueType is null)
 				return null;
 			var res = WaitForResult(eval.NewParameterizedObjectNoConstructor(cls, valueType.TypeParameters.ToArray()));
-			if (res == null || !res.Value.NormalResult) {
+			if (res is null || !res.Value.NormalResult) {
 				res?.ResultOrException?.DisposeHandle();
 				return null;
 			}
-			var newObj = res.Value.ResultOrException;
+			var newObj = res.Value.ResultOrException!;
 			var r = newObj.GetDereferencedValue(out int hr);
 			var vb = r?.GetBoxedValue(out hr);
-			if (vb == null) {
+			if (vb is null) {
 				newObj.DisposeHandle();
 				return null;
 			}
@@ -149,7 +153,7 @@ namespace dndbg.Engine {
 				hr = -1;
 				return null;
 			}
-			return WaitForResult(hr = eval.NewParameterizedObjectNoConstructor(type.Class, type.TypeParameters.ToArray()));
+			return WaitForResult(hr = eval.NewParameterizedObjectNoConstructor(type.Class!, type.TypeParameters.ToArray()));
 		}
 
 		public EvalResult? CallConstructor(CorFunction func, CorType[] typeArgs, CorValue[] args, out int hr) => WaitForResult(hr = eval.NewParameterizedObject(func, typeArgs, args));
@@ -166,7 +170,7 @@ namespace dndbg.Engine {
 		}
 
 		void InitializeStartTime() {
-			if (startTime != null)
+			if (!(startTime is null))
 				return;
 
 			startTime = DateTime.UtcNow;
@@ -197,7 +201,7 @@ namespace dndbg.Engine {
 			static List<ThreadInfo> GetThreadInfos(CorThread thread) {
 				var process = thread.Process;
 				var list = new List<ThreadInfo>();
-				if (process == null) {
+				if (process is null) {
 					list.Add(new ThreadInfo(thread));
 					return list;
 				}
@@ -211,7 +215,7 @@ namespace dndbg.Engine {
 			public void EnableThread() {
 				foreach (var info in list) {
 					CorDebugThreadState newState;
-					if (info.Thread == thread)
+					if (info.Thread.Equals(thread))
 						newState = CorDebugThreadState.THREAD_RUN;
 					else if (suspendOtherThreads)
 						newState = CorDebugThreadState.THREAD_SUSPEND;
@@ -229,7 +233,7 @@ namespace dndbg.Engine {
 		}
 
 		EvalResult SyncWait() {
-			Debug.Assert(startTime != null);
+			Debug.Assert(!(startTime is null));
 
 			var now = DateTime.UtcNow;
 			if (now >= endTime)
@@ -250,7 +254,7 @@ namespace dndbg.Engine {
 					AbortEval(timedOut);
 					throw new TimeoutException();
 				}
-				Debug.Assert(res != null);
+				Debug.Assert(!(res is null));
 				dispResult = (EvalResultKind)res;
 				if (dispResult == EvalResultKind.CustomNotification) {
 					if (!AbortEval(false))
@@ -314,8 +318,8 @@ namespace dndbg.Engine {
 				if (!SuspendOtherThreads)
 					break;
 				var cne = (CustomNotificationDebugCallbackEventArgs)e;
-				var value = cne.CorThread.GetCurrentCustomDebuggerNotification();
-				if (value != null) {
+				var value = cne.CorThread?.GetCurrentCustomDebuggerNotification();
+				if (!(value is null)) {
 					debugMessageDispatcher.CancelDispatchQueue(EvalResultKind.CustomNotification);
 					debugger.DisposeHandle(value);
 					return;

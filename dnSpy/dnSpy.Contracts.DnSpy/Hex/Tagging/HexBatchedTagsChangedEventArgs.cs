@@ -36,7 +36,7 @@ namespace dnSpy.Contracts.Hex.Tagging {
 		/// </summary>
 		/// <param name="spans">Spans</param>
 		public HexBatchedTagsChangedEventArgs(IList<HexBufferSpan> spans) {
-			if (spans == null)
+			if (spans is null)
 				throw new ArgumentNullException(nameof(spans));
 			Spans = new ReadOnlyCollection<HexBufferSpan>(spans);
 		}

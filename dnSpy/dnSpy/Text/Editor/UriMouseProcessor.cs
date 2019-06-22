@@ -81,7 +81,7 @@ namespace dnSpy.Text.Editor {
 		void VisualElement_PreviewKeyUp(object sender, KeyEventArgs e) => UpdateIsControlDown(e);
 		void VisualElement_PreviewKeyDown(object sender, KeyEventArgs e) => UpdateIsControlDown(e);
 
-		IMappingTagSpan<IUrlTag> GetUriSpan(MouseEventArgs e) {
+		IMappingTagSpan<IUrlTag>? GetUriSpan(MouseEventArgs e) {
 			if (!IsControlDown)
 				return null;
 			var loc = MouseLocation.Create(wpfTextView, e, insertionPosition: false);
@@ -92,7 +92,7 @@ namespace dnSpy.Text.Editor {
 
 		void UpdateCursor(MouseEventArgs e) {
 			var tagSpan = GetUriSpan(e);
-			if (tagSpan == null) {
+			if (tagSpan is null) {
 				if (hasWrittenCursor) {
 					wpfTextView.VisualElement.Cursor = origCursor;
 					hasWrittenCursor = false;
@@ -112,7 +112,7 @@ namespace dnSpy.Text.Editor {
 			if (e.Handled)
 				return;
 			var tagSpan = GetUriSpan(e);
-			if (tagSpan == null)
+			if (tagSpan is null)
 				return;
 			e.Handled = true;
 			StartBrowser(tagSpan.Tag.Url);

@@ -43,7 +43,7 @@ namespace dnSpy.Text.Editor {
 		[ImportingConstructor]
 		ZoomControlMarginProvider(IEditorOperationsFactoryService editorOperationsFactoryService) => this.editorOperationsFactoryService = editorOperationsFactoryService;
 
-		public IWpfTextViewMargin CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer) =>
+		public IWpfTextViewMargin? CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer) =>
 			new ZoomControlMargin(wpfTextViewHost, editorOperationsFactoryService.GetEditorOperations(wpfTextViewHost.TextView));
 	}
 
@@ -73,7 +73,7 @@ namespace dnSpy.Text.Editor {
 
 		void UpdateVisibility() => Visibility = Enabled ? Visibility.Visible : Visibility.Collapsed;
 
-		public ITextViewMargin GetTextViewMargin(string marginName) =>
+		public ITextViewMargin? GetTextViewMargin(string marginName) =>
 			StringComparer.OrdinalIgnoreCase.Equals(PredefinedMarginNames.ZoomControl, marginName) ? this : null;
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
@@ -117,8 +117,8 @@ namespace dnSpy.Text.Editor {
 					return;
 				}
 				if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.Escape) {
-					Debug.Assert(originalZoomLevel != null);
-					if (originalZoomLevel != null)
+					Debug.Assert(!(originalZoomLevel is null));
+					if (!(originalZoomLevel is null))
 						TextViewZoomLevel = originalZoomLevel.Value;
 					UpdateTextWithZoomLevel();
 					wpfTextViewHost.TextView.VisualElement.Focus();
@@ -143,19 +143,19 @@ namespace dnSpy.Text.Editor {
 				UpdateTextWithZoomLevel();
 
 				// The combobox is too tall, but I want to use the style from the UI.Wpf dll
-				if (horizontalScrollBarMargin == null) {
+				if (horizontalScrollBarMargin is null) {
 					horizontalScrollBarMargin = wpfTextViewHost.GetTextViewMargin(PredefinedMarginNames.HorizontalScrollBar);
-					Debug.Assert(horizontalScrollBarMargin != null);
-					if (horizontalScrollBarMargin != null)
+					Debug.Assert(!(horizontalScrollBarMargin is null));
+					if (!(horizontalScrollBarMargin is null))
 						horizontalScrollBarMargin.VisualElement.SizeChanged += VisualElement_SizeChanged;
 				}
-				if (horizontalScrollBarMargin != null)
+				if (!(horizontalScrollBarMargin is null))
 					Height = horizontalScrollBarMargin.VisualElement.Height;
 			}
 			else
 				UnregisterEvents();
 		}
-		IWpfTextViewMargin horizontalScrollBarMargin;
+		IWpfTextViewMargin? horizontalScrollBarMargin;
 
 		void VisualElement_SizeChanged(object sender, SizeChangedEventArgs e) =>
 			Height = e.NewSize.Height;
@@ -168,7 +168,7 @@ namespace dnSpy.Text.Editor {
 
 		bool TryUpdateZoomLevel() {
 			double? newValue = zoomLevelConverter.ConvertBack(Text, typeof(double), null, CultureInfo.CurrentUICulture) as double?;
-			if (newValue == null || newValue.Value < ZoomConstants.MinZoom || newValue.Value > ZoomConstants.MaxZoom)
+			if (newValue is null || newValue.Value < ZoomConstants.MinZoom || newValue.Value > ZoomConstants.MaxZoom)
 				return false;
 			TextViewZoomLevel = newValue.Value;
 			return true;
@@ -192,7 +192,7 @@ namespace dnSpy.Text.Editor {
 		public void Dispose() {
 			IsVisibleChanged -= ZoomControlMargin_IsVisibleChanged;
 			wpfTextViewHost.TextView.Options.OptionChanged -= Options_OptionChanged;
-			if (horizontalScrollBarMargin != null)
+			if (!(horizontalScrollBarMargin is null))
 				horizontalScrollBarMargin.VisualElement.SizeChanged -= VisualElement_SizeChanged;
 			UnregisterEvents();
 		}

@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Debugger.DotNet.Code;
@@ -43,7 +44,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		sealed class DbgThreadData {
 			public ThreadMirror MonoThread { get; }
-			public ThreadProperties Last { get; set; }
+			public ThreadProperties? Last { get; set; }
 			public bool HasNewName { get; set; }
 			public bool IsMainThread { get; }
 			public bool IsFinalizerThread { get; }
@@ -57,8 +58,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			}
 		}
 
-		DbgThreadData TryGetThreadData(DbgThread thread) {
-			if (thread != null && thread.TryGetData(out DbgThreadData data))
+		DbgThreadData? TryGetThreadData(DbgThread thread) {
+			if (!(thread is null) && thread.TryGetData(out DbgThreadData? data))
 				return data;
 			return null;
 		}
@@ -84,7 +85,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			var time = DateTime.UtcNow;
 
 			var managedId = threadData.Last?.ManagedId;
-			if (managedId == null && canFuncEval) {
+			if (managedId is null && canFuncEval) {
 				bool getManagedId = forceReadName;
 				if (!getManagedId && threadData.GetManagedIdCounter < MaxCheckNewManagedId)
 					getManagedId = time - threadData.LastManagedIdUpdateTime >= TimeSpan.FromMilliseconds(CheckNewManagedIdDelayMilliseconds);
@@ -95,10 +96,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				}
 			}
 
-			if (threadData.Last?.Name == null && time - threadData.LastNameUpdateTime >= TimeSpan.FromMilliseconds(CheckNewThreadNameDelayMilliseconds))
+			if (threadData.Last?.Name is null && time - threadData.LastNameUpdateTime >= TimeSpan.FromMilliseconds(CheckNewThreadNameDelayMilliseconds))
 				forceReadName = true;
 
-			string name;
+			string? name;
 			if (forceReadName) {
 				name = GetThreadName(thread);
 				threadData.LastNameUpdateTime = time;
@@ -114,7 +115,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		bool getManagedIdFuncEvalTimedOut;
 		sealed class GetManagedIdState {
-			public MethodMirror ManagedIdGetter;
+			public MethodMirror? ManagedIdGetter;
 		}
 		ulong? GetManagedId(ThreadMirror thread) {
 			// Too many problems with Unity, its Mono fork is old and buggy and sometimes crashes.
@@ -124,18 +125,18 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				return null;
 
 			var appDomain = TryGetEngineAppDomain(thread.Domain)?.AppDomain;
-			if (appDomain != null) {
+			if (!(appDomain is null)) {
 				try {
 					var state = appDomain.GetOrCreateData<GetManagedIdState>();
-					if (state.ManagedIdGetter == null) {
+					if (state.ManagedIdGetter is null) {
 						var threadType = thread.Domain.Corlib.GetType("System.Threading.Thread", false, false);
-						Debug.Assert(threadType != null);
+						Debug.Assert(!(threadType is null));
 						state.ManagedIdGetter = threadType?.GetMethod("get_" + nameof(ST.Thread.ManagedThreadId));
 					}
-					if (state.ManagedIdGetter != null) {
+					if (!(state.ManagedIdGetter is null)) {
 						if (!TryGetManagedId(thread, thread, state.ManagedIdGetter, out ulong? managedId))
 							return null;
-						if (managedId != null)
+						if (!(managedId is null))
 							return managedId;
 
 						foreach (var t in thread.VirtualMachine.GetThreads()) {
@@ -143,7 +144,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 								continue;
 							if (!TryGetManagedId(t, thread, state.ManagedIdGetter, out managedId))
 								return null;
-							if (managedId != null)
+							if (!(managedId is null))
 								return managedId;
 						}
 					}
@@ -190,7 +191,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			return true;
 		}
 
-		static string GetThreadName(ThreadMirror thread) {
+		static string? GetThreadName(ThreadMirror thread) {
 			thread.InvalidateName();
 			var name = thread.Name;
 			if (name == string.Empty)
@@ -216,7 +217,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			var threadData = engineThread.Thread.GetData<DbgThreadData>();
 			var newProps = GetThreadProperties_MonoDebug(threadData.MonoThread, threadData, isCreateThread: false, forceReadName: threadData.HasNewName, isMainThread: threadData.IsMainThread, isFinalizerThread: threadData.IsFinalizerThread, canFuncEval: true);
 			threadData.HasNewName = false;
-			var updateOptions = threadData.Last.Compare(newProps);
+			var updateOptions = newProps.Compare(threadData.Last);
 			if (updateOptions == DbgEngineThread.UpdateOptions.None)
 				return null;
 			threadData.Last = newProps;
@@ -225,7 +226,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		void NotifyThreadPropertiesChanged_MonoDebug(DbgEngineThread engineThread, DbgEngineThread.UpdateOptions updateOptions, ThreadProperties props) {
 			debuggerThread.VerifyAccess();
-			ReadOnlyCollection<DbgStateInfo> state = null;
+			ReadOnlyCollection<DbgStateInfo>? state = null;
 			if ((updateOptions & DbgEngineThread.UpdateOptions.State) != 0)
 				state = ThreadMirrorUtils.GetState(props.ThreadState);
 			engineThread.Update(updateOptions, appDomain: props.AppDomain, kind: props.Kind, id: props.Id, managedId: props.ManagedId, name: props.Name, suspendedCount: props.SuspendedCount, state: state);
@@ -234,19 +235,19 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		void UpdateThreadProperties_MonoDebug() {
 			debuggerThread.VerifyAccess();
 			getManagedIdFuncEvalTimedOut = false;
-			List<(DbgEngineThread engineThread, DbgEngineThread.UpdateOptions updateOptions, ThreadProperties props)> threadsToUpdate = null;
+			List<(DbgEngineThread engineThread, DbgEngineThread.UpdateOptions updateOptions, ThreadProperties props)>? threadsToUpdate = null;
 			KeyValuePair<ThreadMirror, DbgEngineThread>[] infos;
 			lock (lockObj)
 				infos = toEngineThread.ToArray();
 			foreach (var kv in infos) {
 				var info = UpdateThreadProperties_MonoDebug(kv.Value);
-				if (info == null)
+				if (info is null)
 					continue;
-				if (threadsToUpdate == null)
+				if (threadsToUpdate is null)
 					threadsToUpdate = new List<(DbgEngineThread, DbgEngineThread.UpdateOptions, ThreadProperties)>();
 				threadsToUpdate.Add(info.Value);
 			}
-			if (threadsToUpdate != null) {
+			if (!(threadsToUpdate is null)) {
 				foreach (var info in threadsToUpdate)
 					NotifyThreadPropertiesChanged_MonoDebug(info.engineThread, info.updateOptions, info.props);
 			}
@@ -267,22 +268,22 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			var props = GetThreadProperties_MonoDebug(monoThread, threadData, isCreateThread: true, forceReadName: false, isMainThread: isMainThread, isFinalizerThread: isFinalizerThread, canFuncEval: false);
 			threadData.Last = props;
 			var state = ThreadMirrorUtils.GetState(props.ThreadState);
-			var engineThread = objectFactory.CreateThread(props.AppDomain, props.Kind, props.Id, props.ManagedId, props.Name, props.SuspendedCount, state, GetMessageFlags(), data: threadData);
+			var engineThread = objectFactory!.CreateThread(props.AppDomain, props.Kind, props.Id, props.ManagedId, props.Name, props.SuspendedCount, state, GetMessageFlags(), data: threadData);
 			lock (lockObj)
 				toEngineThread.Add(monoThread, engineThread);
 			return true;
 		}
 
-		void DestroyThread(ThreadMirror monoThread) {
+		void DestroyThread(ThreadMirror? monoThread) {
 			debuggerThread.VerifyAccess();
-			if (monoThread == null)
+			if (monoThread is null)
 				return;
 			DbgEngineThread engineThread;
 			lock (lockObj) {
 				if (toEngineThread.TryGetValue(monoThread, out engineThread))
 					toEngineThread.Remove(monoThread);
 			}
-			if (engineThread != null)
+			if (!(engineThread is null))
 				engineThread.Remove(GetMessageFlags() | DbgEngineMessageFlags.Running);
 		}
 
@@ -322,8 +323,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			return false;
 		}
 
-		DbgEngineThread TryGetEngineThread(ThreadMirror thread) {
-			if (thread == null)
+		DbgEngineThread? TryGetEngineThread(ThreadMirror? thread) {
+			if (thread is null)
 				return null;
 			DbgEngineThread engineThread;
 			bool b;
@@ -344,9 +345,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		public override DbgEngineStackWalker CreateStackWalker(DbgThread thread) {
 			var threadData = TryGetThreadData(thread);
 			var engineThread = TryGetEngineThread(threadData?.MonoThread);
-			if (engineThread == null)
+			if (engineThread is null)
 				return new NullDbgEngineStackWalker();
-			return new DbgEngineStackWalkerImpl(dbgDotNetCodeLocationFactory, this, threadData.MonoThread, thread);
+			return new DbgEngineStackWalkerImpl(dbgDotNetCodeLocationFactory, this, threadData!.MonoThread, thread);
 		}
 
 		public override void SetIP(DbgThread thread, DbgCodeLocation location) =>
@@ -354,12 +355,12 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		void SetIP_MonoDebug(DbgThread thread, DbgCodeLocation location) {
 			debuggerThread.VerifyAccess();
-			if (!vm.Version.AtLeast(2, 29)) {
+			if (!vm!.Version.AtLeast(2, 29)) {
 				SendMessage(new DbgMessageSetIPComplete(thread, false, dnSpy_Debugger_DotNet_Mono_Resources.Error_RuntimeDoesNotSupportSettingNewStatement, GetMessageFlags()));
 				return;
 			}
 			var threadData = TryGetThreadData(thread);
-			if (isUnhandledException || threadData == null || !(location is IDbgDotNetCodeLocation loc)) {
+			if (isUnhandledException || threadData is null || !(location is IDbgDotNetCodeLocation loc)) {
 				SendMessage(new DbgMessageSetIPComplete(thread, false, dnSpy_Debugger_DotNet_Mono_Resources.Error_CouldNotSetNextStatement, GetMessageFlags()));
 				return;
 			}
@@ -374,7 +375,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			}
 		}
 
-		string SetIPCore_MonoDebug(DbgThreadData threadData, IDbgDotNetCodeLocation location, out bool framesInvalidated) {
+		string? SetIPCore_MonoDebug(DbgThreadData threadData, IDbgDotNetCodeLocation location, out bool framesInvalidated) {
 			debuggerThread.VerifyAccess();
 			framesInvalidated = false;
 
@@ -387,7 +388,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			return null;
 		}
 
-		bool VerifySetIPLocation(DbgThreadData threadData, IDbgDotNetCodeLocation location, out MethodMirror monoMethod, out MDS.StackFrame frame) {
+		bool VerifySetIPLocation(DbgThreadData threadData, IDbgDotNetCodeLocation location, [NotNullWhenTrue] out MethodMirror? monoMethod, [NotNullWhenTrue] out MDS.StackFrame? frame) {
 			monoMethod = null;
 			frame = null;
 			var frames = threadData.MonoThread.GetFrames();
@@ -398,10 +399,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			if (monoMethod.MetadataToken != (int)location.Token)
 				return false;
 			var module = TryGetModule(monoMethod.DeclaringType.Module);
-			if (module == null)
+			if (module is null)
 				return false;
 
-			if (location.DbgModule != null) {
+			if (!(location.DbgModule is null)) {
 				if (location.DbgModule != module)
 					return false;
 			}
@@ -414,6 +415,6 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		}
 
 		public override bool CanSetIP(DbgThread thread, DbgCodeLocation location) =>
-			!isUnhandledException && location is IDbgDotNetCodeLocation && vm.Version.AtLeast(2, 29);
+			!isUnhandledException && location is IDbgDotNetCodeLocation && vm!.Version.AtLeast(2, 29);
 	}
 }

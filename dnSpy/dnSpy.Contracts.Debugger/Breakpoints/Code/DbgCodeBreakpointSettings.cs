@@ -73,10 +73,10 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 			Trace == other.Trace &&
 			LabelsEquals(Labels, other.Labels);
 
-		static bool LabelsEquals(ReadOnlyCollection<string> a, ReadOnlyCollection<string> b) {
-			if (a == null)
+		static bool LabelsEquals(ReadOnlyCollection<string>? a, ReadOnlyCollection<string>? b) {
+			if (a is null)
 				a = emptyLabels;
-			if (b == null)
+			if (b is null)
 				b = emptyLabels;
 			if (a == b)
 				return true;
@@ -102,7 +102,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// </summary>
 		/// <param name="obj">Other instance</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is DbgCodeBreakpointSettings other && Equals(other);
+		public override bool Equals(object? obj) => obj is DbgCodeBreakpointSettings other && Equals(other);
 
 		/// <summary>
 		/// Gets the hash code
@@ -173,7 +173,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// </summary>
 		/// <param name="obj">Other instance</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is DbgCodeBreakpointCondition other && Equals(other);
+		public override bool Equals(object? obj) => obj is DbgCodeBreakpointCondition other && Equals(other);
 
 		/// <summary>
 		/// Gets the hash code
@@ -249,7 +249,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// </summary>
 		/// <param name="obj">Other instance</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is DbgCodeBreakpointHitCount other && Equals(other);
+		public override bool Equals(object? obj) => obj is DbgCodeBreakpointHitCount other && Equals(other);
 
 		/// <summary>
 		/// Gets the hash code
@@ -296,7 +296,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// </summary>
 		/// <param name="obj">Other instance</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is DbgCodeBreakpointFilter other && Equals(other);
+		public override bool Equals(object? obj) => obj is DbgCodeBreakpointFilter other && Equals(other);
 
 		/// <summary>
 		/// Gets the hash code
@@ -352,7 +352,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// </summary>
 		/// <param name="obj">Other instance</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is DbgCodeBreakpointTrace other && Equals(other);
+		public override bool Equals(object? obj) => obj is DbgCodeBreakpointTrace other && Equals(other);
 
 		/// <summary>
 		/// Gets the hash code

@@ -41,9 +41,9 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 
 	[Export(typeof(IModuleBreakpointsContent))]
 	sealed class ModuleBreakpointsContent : IModuleBreakpointsContent {
-		public object UIObject => moduleBreakpointsControl;
-		public IInputElement FocusedElement => moduleBreakpointsControl.ListView;
-		public FrameworkElement ZoomElement => moduleBreakpointsControl;
+		public object? UIObject => moduleBreakpointsControl;
+		public IInputElement? FocusedElement => moduleBreakpointsControl.ListView;
+		public FrameworkElement? ZoomElement => moduleBreakpointsControl;
 		public ListView ListView => moduleBreakpointsControl.ListView;
 		public ModuleBreakpointsOperations Operations { get; }
 

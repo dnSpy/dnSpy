@@ -65,13 +65,13 @@ namespace dnSpy.Hex.Editor {
 			if (TWPF.BrushComparer.Equals(newBackgroundBrush, backgroundBrush))
 				return;
 			backgroundBrush = newBackgroundBrush;
-			if (markerElement != null)
+			if (!(markerElement is null))
 				markerElement.BackgroundBrush = backgroundBrush;
 		}
-		Brush backgroundBrush;
-		MarkerElement markerElement;
+		Brush? backgroundBrush;
+		MarkerElement? markerElement;
 
-		Brush GetBackgroundBrush() {
+		Brush? GetBackgroundBrush() {
 			var props = editorFormatMap.GetProperties(IsActive ? CTC.ThemeClassificationTypeNameKeys.HexSelection : CTC.ThemeClassificationTypeNameKeys.HexInactiveSelectedText);
 			return TE.ResourceDictionaryUtilities.GetBackgroundBrush(props, IsActive ? SystemColors.HighlightBrush : SystemColors.GrayTextBrush);
 		}
@@ -106,13 +106,13 @@ namespace dnSpy.Hex.Editor {
 				return;
 			Debug.Assert(hexSelection.StreamSelectionSpan.Length != 0);
 			var info = CreateStreamSelection();
-			if (info == null)
+			if (info is null)
 				return;
 			CreateMarkerElement(info.Value.span, info.Value.geometry);
 		}
 
 		void CreateMarkerElement(HexBufferSpan fullSpan, Geometry geo) {
-			Debug.Assert(markerElement == null);
+			Debug.Assert(markerElement is null);
 			RemoveAllAdornments();
 			markerElement = new MarkerElement(geo);
 			markerElement.BackgroundBrush = backgroundBrush;
@@ -127,10 +127,10 @@ namespace dnSpy.Hex.Editor {
 			Debug.Assert(!hexSelection.IsEmpty);
 			var linesColl = (WpfHexViewLineCollection)hexSelection.HexView.HexViewLines;
 			var span = hexSelection.StreamSelectionSpan.Overlap(linesColl.FormattedSpan);
-			if (span == null)
+			if (span is null)
 				return null;
 			var geo = linesColl.GetMarkerGeometry(span.Value, HexSelectionImpl.SelectionFlags);
-			if (geo == null)
+			if (geo is null)
 				return null;
 			return (span.Value, geo);
 		}
@@ -141,10 +141,10 @@ namespace dnSpy.Hex.Editor {
 		sealed class MarkerElement : UIElement {
 			readonly Geometry geometry;
 
-			public Brush BackgroundBrush {
+			public Brush? BackgroundBrush {
 				get => backgroundBrush;
 				set {
-					if (value == null)
+					if (value is null)
 						throw new ArgumentNullException(nameof(value));
 					if (!TWPF.BrushComparer.Equals(value, backgroundBrush)) {
 						backgroundBrush = value;
@@ -152,9 +152,9 @@ namespace dnSpy.Hex.Editor {
 					}
 				}
 			}
-			Brush backgroundBrush;
+			Brush? backgroundBrush;
 
-			public Pen Pen {
+			public Pen? Pen {
 				get => pen;
 				set {
 					if (pen != value) {
@@ -163,7 +163,7 @@ namespace dnSpy.Hex.Editor {
 					}
 				}
 			}
-			Pen pen;
+			Pen? pen;
 
 			public MarkerElement(Geometry geometry) => this.geometry = geometry ?? throw new ArgumentNullException(nameof(geometry));
 

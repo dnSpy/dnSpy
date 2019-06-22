@@ -115,7 +115,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				Attributes &= ~flag;
 		}
 
-		public string Name {
+		public string? Name {
 			get => name;
 			set {
 				if (name != value) {
@@ -125,10 +125,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 			}
 		}
-		UTF8String name;
+		UTF8String? name;
 
 		public UInt16VM Sequence { get; }
-		public Constant Constant => HasDefault ? ownerModule.UpdateRowId(new ConstantUser(ConstantVM.Value)) : null;
+		public Constant? Constant => HasDefault ? ownerModule.UpdateRowId(new ConstantUser(ConstantVM.Value)) : null;
 		public ConstantVM ConstantVM { get; }
 		public MarshalTypeVM MarshalTypeVM { get; }
 		public string MarshalTypeString => string.Format(dnSpy_AsmEditor_Resources.MarshalType, HasFieldMarshal ? MarshalTypeVM.TypeString : dnSpy_AsmEditor_Resources.MarshalType_Nothing);
@@ -136,14 +136,14 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		readonly ModuleDef ownerModule;
 
-		public ParamDefVM(ParamDefOptions options, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType, MethodDef ownerMethod) {
+		public ParamDefVM(ParamDefOptions options, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef? ownerType, MethodDef? ownerMethod) {
 			this.ownerModule = ownerModule;
 			origOptions = options;
 			Sequence = new UInt16VM(a => { OnPropertyChanged(nameof(FullName)); HasErrorUpdated(); });
 			CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerService);
 			ConstantVM = new ConstantVM(ownerModule, options.Constant?.Value, dnSpy_AsmEditor_Resources.Parameter_DefaultValueInfo);
 			ConstantVM.PropertyChanged += constantVM_PropertyChanged;
-			MarshalTypeVM = new MarshalTypeVM(ownerModule, decompilerService, ownerType != null ? ownerType : ownerMethod?.DeclaringType, ownerMethod);
+			MarshalTypeVM = new MarshalTypeVM(ownerModule, decompilerService, ownerType ?? ownerMethod?.DeclaringType, ownerMethod);
 			MarshalTypeVM.PropertyChanged += marshalTypeVM_PropertyChanged;
 
 			ConstantVM.IsEnabled = HasDefault;
@@ -172,7 +172,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			Name = options.Name;
 			Sequence.Value = options.Sequence;
 			Attributes = options.Attributes;
-			if (options.Constant != null) {
+			if (!(options.Constant is null)) {
 				HasDefault = true;
 				ConstantVM.Value = options.Constant.Value;
 			}

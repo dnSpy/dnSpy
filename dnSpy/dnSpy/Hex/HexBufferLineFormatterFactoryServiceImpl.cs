@@ -25,9 +25,9 @@ namespace dnSpy.Hex {
 	[Export(typeof(HexBufferLineFormatterFactoryService))]
 	sealed class HexBufferLineFormatterFactoryServiceImpl : HexBufferLineFormatterFactoryService {
 		public override HexBufferLineFormatter Create(HexBuffer buffer, HexBufferLineFormatterOptions options) {
-			if (buffer == null)
+			if (buffer is null)
 				throw new ArgumentNullException(nameof(buffer));
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return new HexBufferLineFormatterImpl(buffer, options);
 		}

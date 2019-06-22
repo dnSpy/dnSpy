@@ -41,7 +41,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			this.debuggerSettings = debuggerSettings;
 		}
 
-		public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag =>
+		public ITagger<T>? CreateTagger<T>(ITextBuffer buffer) where T : ITag =>
 			new ThreadTagger(nameClassificationTag, debuggerSettings) as ITagger<T>;
 	}
 

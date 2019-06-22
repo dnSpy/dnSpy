@@ -54,6 +54,6 @@ namespace dnSpy.Text.Editor {
 			this.textViewUndoManagerProvider = textViewUndoManagerProvider;
 		}
 
-		public IReplEditor Create(ReplEditorOptions options) => new ReplEditor(options, dsTextEditorFactoryService, contentTypeRegistryService, textBufferFactoryService, editorOperationsFactoryService, editorOptionsFactoryService, classificationTypeRegistryService, themeClassificationTypeService, pickSaveFilename, textViewUndoManagerProvider);
+		public IReplEditor Create(ReplEditorOptions? options) => new ReplEditor(options, dsTextEditorFactoryService, contentTypeRegistryService, textBufferFactoryService, editorOperationsFactoryService, editorOptionsFactoryService, classificationTypeRegistryService, themeClassificationTypeService, pickSaveFilename, textViewUndoManagerProvider);
 	}
 }

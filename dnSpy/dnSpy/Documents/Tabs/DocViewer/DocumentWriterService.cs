@@ -41,30 +41,30 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		public void Write(IDecompilerOutput output, string text, string contentType) {
-			if (output == null)
+			if (output is null)
 				throw new ArgumentNullException(nameof(output));
-			if (text == null)
+			if (text is null)
 				throw new ArgumentNullException(nameof(text));
-			if (contentType == null)
+			if (contentType is null)
 				throw new ArgumentNullException(nameof(contentType));
 
 			var ct = contentTypeRegistryService.GetContentType(contentType);
-			if (ct == null)
+			if (ct is null)
 				throw new ArgumentException($"Invalid content type: {contentType}");
 
 			var writer = GetDocumentWriter(ct);
-			if (writer != null)
+			if (!(writer is null))
 				writer.Write(output, text);
 			else
 				output.Write(text, BoxedTextColor.Text);
 		}
 
-		IDocumentWriter GetDocumentWriter(IContentType contentType) {
+		IDocumentWriter? GetDocumentWriter(IContentType contentType) {
 			foreach (var lz in documentWriterProviders) {
 				if (!contentType.IsOfAnyType(lz.Metadata.ContentTypes))
 					continue;
 				var writer = lz.Value.Create(contentType);
-				if (writer != null)
+				if (!(writer is null))
 					return writer;
 			}
 			return null;

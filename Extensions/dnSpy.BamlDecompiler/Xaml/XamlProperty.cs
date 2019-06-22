@@ -37,30 +37,30 @@ namespace dnSpy.BamlDecompiler.Xaml {
 		}
 
 		public void TryResolve() {
-			if (ResolvedMember != null)
+			if (!(ResolvedMember is null))
 				return;
 
 			var typeDef = DeclaringType.ResolvedType.ResolveTypeDef();
-			if (typeDef == null)
+			if (typeDef is null)
 				return;
 
 			ResolvedMember = typeDef.FindPropertyCheckBaseType(PropertyName);
-			if (ResolvedMember != null)
+			if (!(ResolvedMember is null))
 				return;
 
 			ResolvedMember = typeDef.FindFieldCheckBaseType(PropertyName + "Property");
-			if (ResolvedMember != null)
+			if (!(ResolvedMember is null))
 				return;
 
 			ResolvedMember = typeDef.FindEventCheckBaseType(PropertyName);
-			if (ResolvedMember != null)
+			if (!(ResolvedMember is null))
 				return;
 
 			ResolvedMember = typeDef.FindFieldCheckBaseType(PropertyName + "Event");
 		}
 
 		public bool IsAttachedTo(XamlType type) {
-			if (type == null || ResolvedMember == null || type.ResolvedType == null)
+			if (type is null || ResolvedMember is null || type.ResolvedType is null)
 				return true;
 
 			var declType = ResolvedMember.DeclaringType;
@@ -70,7 +70,7 @@ namespace dnSpy.BamlDecompiler.Xaml {
 				if (comparer.Equals(t, declType))
 					return false;
 				t = t.GetBaseType();
-			} while (t != null);
+			} while (!(t is null));
 			return true;
 		}
 
@@ -82,7 +82,7 @@ namespace dnSpy.BamlDecompiler.Xaml {
 			else
 				name = typeName.LocalName + "." + XmlConvert.EncodeLocalName(PropertyName);
 
-			if (parent == null || (parent.GetDefaultNamespace() != typeName.Namespace &&
+			if (parent is null || (parent.GetDefaultNamespace() != typeName.Namespace &&
 			                       parent.Name.Namespace != typeName.Namespace))
 				name = typeName.Namespace + name.LocalName;
 

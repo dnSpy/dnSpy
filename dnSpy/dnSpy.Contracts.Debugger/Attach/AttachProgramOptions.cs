@@ -52,22 +52,22 @@ namespace dnSpy.Contracts.Debugger.Attach {
 		/// <summary>
 		/// Short process name (filename) or null to use the default value
 		/// </summary>
-		public virtual string Name => null;
+		public virtual string? Name => null;
 
 		/// <summary>
 		/// Process title or null to use the default value
 		/// </summary>
-		public virtual string Title => null;
+		public virtual string? Title => null;
 
 		/// <summary>
 		/// Full filename or null to use the default value
 		/// </summary>
-		public virtual string Filename => null;
+		public virtual string? Filename => null;
 
 		/// <summary>
 		/// Command line or null to use the default value
 		/// </summary>
-		public virtual string CommandLine => null;
+		public virtual string? CommandLine => null;
 
 		/// <summary>
 		/// Processor architecture or null to use the default value

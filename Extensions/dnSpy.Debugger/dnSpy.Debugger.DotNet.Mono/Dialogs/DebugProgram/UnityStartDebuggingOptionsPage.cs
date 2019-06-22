@@ -56,15 +56,15 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 
 		public override void InitializePreviousOptions(StartDebuggingOptions options) {
 			var usdOptions = options as UnityStartDebuggingOptions;
-			if (usdOptions == null)
+			if (usdOptions is null)
 				return;
 			Initialize(usdOptions);
 		}
 
-		public override void InitializeDefaultOptions(string filename, string breakKind, StartDebuggingOptions options) =>
+		public override void InitializeDefaultOptions(string filename, string breakKind, StartDebuggingOptions? options) =>
 			Initialize(GetDefaultOptions(filename, breakKind, options));
 
-		UnityStartDebuggingOptions GetDefaultOptions(string filename, string breakKind, StartDebuggingOptions options) {
+		UnityStartDebuggingOptions GetDefaultOptions(string filename, string breakKind, StartDebuggingOptions? options) {
 			bool isExe = PortableExecutableFileHelpers.IsExecutable(filename);
 			if (isExe) {
 				var usdOptions = CreateOptions(breakKind);

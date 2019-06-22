@@ -32,7 +32,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 		public override int Version => ilSettings.SettingsVersion;
 		public override event EventHandler VersionChanged;
 
-		public ILDecompilerSettings(ILSettings ilSettings = null) {
+		public ILDecompilerSettings(ILSettings? ilSettings = null) {
 			this.ilSettings = ilSettings ?? new ILSettings();
 			options = CreateOptions().ToArray();
 			this.ilSettings.SettingsVersionChanged += ILSettings_SettingsVersionChanged;
@@ -83,7 +83,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 			};
 		}
 
-		public override bool Equals(object obj) =>
+		public override bool Equals(object? obj) =>
 			obj is ILDecompilerSettings && ilSettings.Equals(((ILDecompilerSettings)obj).ilSettings);
 		public override int GetHashCode() => ilSettings.GetHashCode();
 	}

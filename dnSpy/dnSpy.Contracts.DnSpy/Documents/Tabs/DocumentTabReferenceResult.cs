@@ -32,12 +32,12 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// <summary>
 		/// UI state (passed to <see cref="DocumentTabUIContext.RestoreUIState(object)"/>) or null if none
 		/// </summary>
-		public object UIState { get; }
+		public object? UIState { get; }
 
 		/// <summary>
 		/// Called when the output has been shown, can be null
 		/// </summary>
-		public Action<ShowTabContentEventArgs> OnShownHandler { get; }
+		public Action<ShowTabContentEventArgs>? OnShownHandler { get; }
 
 		/// <summary>
 		/// Constructor
@@ -45,7 +45,7 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// <param name="documentTabContent">New content</param>
 		/// <param name="uiState">UI state (passed to <see cref="DocumentTabUIContext.RestoreUIState(object)"/>) or null</param>
 		/// <param name="onShownHandler">Handler or null</param>
-		public DocumentTabReferenceResult(DocumentTabContent documentTabContent, object uiState = null, Action<ShowTabContentEventArgs> onShownHandler = null) {
+		public DocumentTabReferenceResult(DocumentTabContent documentTabContent, object? uiState = null, Action<ShowTabContentEventArgs>? onShownHandler = null) {
 			DocumentTabContent = documentTabContent ?? throw new ArgumentNullException(nameof(documentTabContent));
 			UIState = uiState;
 			OnShownHandler = onShownHandler;

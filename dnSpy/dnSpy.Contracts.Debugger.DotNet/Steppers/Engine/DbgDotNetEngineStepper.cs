@@ -38,26 +38,26 @@ namespace dnSpy.Contracts.Debugger.DotNet.Steppers.Engine {
 			/// <summary>
 			/// Gets the tag
 			/// </summary>
-			public object Tag { get; }
+			public object? Tag { get; }
 
 			/// <summary>
 			/// Constructor
 			/// </summary>
 			/// <param name="tag">Tag</param>
-			protected SessionBase(object tag) => Tag = tag;
+			protected SessionBase(object? tag) => Tag = tag;
 		}
 
 		/// <summary>
 		/// Gets/sets the session. It's null if there's no step operation in progress.
 		/// </summary>
-		public abstract SessionBase Session { get; set; }
+		public abstract SessionBase? Session { get; set; }
 
 		/// <summary>
 		/// Creates a new <see cref="SessionBase"/>
 		/// </summary>
 		/// <param name="tag">Tag</param>
 		/// <returns></returns>
-		public abstract SessionBase CreateSession(object tag);
+		public abstract SessionBase CreateSession(object? tag);
 
 		/// <summary>
 		/// true if the runtime is paused
@@ -74,7 +74,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Steppers.Engine {
 		/// </summary>
 		/// <param name="thread">Thread</param>
 		/// <returns></returns>
-		public abstract DbgDotNetEngineStepperFrameInfo TryGetFrameInfo(DbgThread thread);
+		public abstract DbgDotNetEngineStepperFrameInfo? TryGetFrameInfo(DbgThread thread);
 
 		/// <summary>
 		/// Lets the process run
@@ -129,7 +129,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Steppers.Engine {
 		/// <param name="token">Method token</param>
 		/// <param name="offset">IL offset</param>
 		/// <returns></returns>
-		public abstract DbgDotNetStepperBreakpoint CreateBreakpoint(DbgThread thread, DbgModule module, uint token, uint offset);
+		public abstract DbgDotNetStepperBreakpoint CreateBreakpoint(DbgThread? thread, DbgModule module, uint token, uint offset);
 
 		/// <summary>
 		/// Removes breakpoints

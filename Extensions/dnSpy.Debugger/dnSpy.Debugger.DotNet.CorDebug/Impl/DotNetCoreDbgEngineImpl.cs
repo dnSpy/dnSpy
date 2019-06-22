@@ -38,11 +38,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		public override DbgEngineRuntimeInfo RuntimeInfo {
 			get {
-				Debug.Assert(runtimeInfo != null);
+				Debug.Assert(!(runtimeInfo is null));
 				return runtimeInfo;
 			}
 		}
-		DbgEngineRuntimeInfo runtimeInfo;
+		DbgEngineRuntimeInfo? runtimeInfo;
 
 		int Bitness => IntPtr.Size * 8;
 
@@ -59,7 +59,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		protected override CLRTypeDebugInfo CreateDebugInfo(CorDebugStartDebuggingOptions options) {
 			var dncOptions = (DotNetCoreStartDebuggingOptions)options;
-			string hostFilename;
+			string? hostFilename;
 			if (!dncOptions.UseHost)
 				hostFilename = null;
 			else if (string.IsNullOrWhiteSpace(dncOptions.Host)) {
@@ -87,9 +87,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	}
 
 	sealed class DotNetCoreRuntimeId : RuntimeId {
-		readonly string version;
-		public DotNetCoreRuntimeId(string version) => this.version = version;
-		public override bool Equals(object obj) => obj is DotNetCoreRuntimeId other && StringComparer.Ordinal.Equals(version, other.version);
+		readonly string? version;
+		public DotNetCoreRuntimeId(string? version) => this.version = version;
+		public override bool Equals(object? obj) => obj is DotNetCoreRuntimeId other && StringComparer.Ordinal.Equals(version, other.version);
 		public override int GetHashCode() => StringComparer.Ordinal.GetHashCode(version);
 	}
 }

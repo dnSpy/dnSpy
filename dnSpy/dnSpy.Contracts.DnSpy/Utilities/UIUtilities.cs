@@ -36,7 +36,7 @@ namespace dnSpy.Contracts.Utilities {
 		/// </summary>
 		/// <param name="depo">Object</param>
 		/// <returns></returns>
-		public static DependencyObject GetParent(DependencyObject depo) {
+		public static DependencyObject? GetParent(DependencyObject depo) {
 			if (depo is Visual || depo is Visual3D)
 				return VisualTreeHelper.GetParent(depo);
 			else if (depo is FrameworkContentElement)
@@ -44,9 +44,9 @@ namespace dnSpy.Contracts.Utilities {
 			return null;
 		}
 
-		static T GetItem<T>(DependencyObject view, object o) where T : class {
+		static T? GetItem<T>(DependencyObject view, object o) where T : class {
 			var depo = o as DependencyObject;
-			while (depo != null && !(depo is T) && depo != view)
+			while (!(depo is null) && !(depo is T) && depo != view)
 				depo = GetParent(depo);
 			return depo as T;
 		}
@@ -61,7 +61,7 @@ namespace dnSpy.Contracts.Utilities {
 		public static bool IsLeftDoubleClick<T>(DependencyObject view, MouseButtonEventArgs e) where T : class {
 			if (MouseButton.Left != e.ChangedButton)
 				return false;
-			return GetItem<T>(view, e.OriginalSource) != null;
+			return !(GetItem<T>(view, e.OriginalSource) is null);
 		}
 
 		/// <summary>
@@ -69,7 +69,7 @@ namespace dnSpy.Contracts.Utilities {
 		/// </summary>
 		/// <param name="s"></param>
 		/// <returns></returns>
-		public static string EscapeMenuItemHeader(string s) => NameUtilities.CleanName(s).Replace("_", "__");
+		public static string EscapeMenuItemHeader(string s) => NameUtilities.CleanName(s)!.Replace("_", "__");
 
 		/// <summary>
 		/// Truncates the string after <paramref name="length"/> characters and adds an elipsis at the end.
@@ -99,9 +99,9 @@ namespace dnSpy.Contracts.Utilities {
 		static void FocusSelectorInternal(Selector selector) {
 			bool focused = false;
 			var item = selector.SelectedItem as IInputElement;
-			if (item == null && selector.SelectedItem != null)
+			if (item is null && !(selector.SelectedItem is null))
 				item = selector.ItemContainerGenerator.ContainerFromItem(selector.SelectedItem) as IInputElement;
-			if (item != null)
+			if (!(item is null))
 				focused = item.Focus();
 			if (!focused) {
 				selector.Focus();
@@ -122,11 +122,11 @@ namespace dnSpy.Contracts.Utilities {
 		/// </summary>
 		/// <param name="element">Element to focus</param>
 		/// <param name="calledAfterFocus">Delegate that gets called once the element has gotten focus. Can be null.</param>
-		public static void Focus(IInputElement element, Action calledAfterFocus = null) {
+		public static void Focus(IInputElement? element, Action? calledAfterFocus = null) {
 			var uiElem = element as UIElement;
 			var fwkElem = element as FrameworkElement;
-			if (uiElem == null || (fwkElem != null && fwkElem.IsLoaded && fwkElem.IsVisible) || (fwkElem == null && uiElem.IsVisible)) {
-				element.Focus();
+			if (uiElem is null || (!(fwkElem is null) && fwkElem.IsLoaded && fwkElem.IsVisible) || (fwkElem is null && uiElem.IsVisible)) {
+				element?.Focus();
 				calledAfterFocus?.Invoke();
 				return;
 			}
@@ -135,14 +135,14 @@ namespace dnSpy.Contracts.Utilities {
 		}
 
 		sealed class FocusHelper {
-			readonly Action calledAfterFocus;
+			readonly Action? calledAfterFocus;
 			readonly UIElement element;
 
-			public FocusHelper(UIElement element, Action calledAfterFocus) {
+			public FocusHelper(UIElement element, Action? calledAfterFocus) {
 				this.element = element;
 				var fwkElem = element as FrameworkElement;
 				this.calledAfterFocus = calledAfterFocus;
-				if (fwkElem == null || fwkElem.IsLoaded)
+				if (fwkElem is null || fwkElem.IsLoaded)
 					element.IsVisibleChanged += UIElement_IsVisibleChanged;
 				else
 					fwkElem.Loaded += FrameworkElement_Loaded;

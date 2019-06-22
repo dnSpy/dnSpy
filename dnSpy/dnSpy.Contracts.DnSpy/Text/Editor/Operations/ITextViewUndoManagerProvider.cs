@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Runtime.CompilerServices;
+
 namespace dnSpy.Contracts.Text.Editor.Operations {
 	/// <summary>
 	/// Enables undo/redo in text views
@@ -35,7 +37,7 @@ namespace dnSpy.Contracts.Text.Editor.Operations {
 		/// <param name="textView">Text view</param>
 		/// <param name="manager">Updated with the existing instance or null if none exists</param>
 		/// <returns></returns>
-		bool TryGetTextViewUndoManager(IDsWpfTextView textView, out ITextViewUndoManager manager);
+		bool TryGetTextViewUndoManager(IDsWpfTextView textView, [NotNullWhenTrue] out ITextViewUndoManager? manager);
 
 		/// <summary>
 		/// Removes the cached <see cref="ITextViewUndoManager"/> instance, if any.

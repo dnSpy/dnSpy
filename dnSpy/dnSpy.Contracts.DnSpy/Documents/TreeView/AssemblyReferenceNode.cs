@@ -36,6 +36,6 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		protected AssemblyReferenceNode() {
 		}
 
-		IMDTokenProvider IMDTokenNode.Reference => AssemblyRef;
+		IMDTokenProvider? IMDTokenNode.Reference => AssemblyRef;
 	}
 }

@@ -95,9 +95,9 @@ namespace dnSpy.AsmEditor.Compiler {
 			public override void Execute(CodeContext context) => MergeWithAssemblyCommand.Execute(pickFilename, addUpdatedNodesHelperProvider, undoCommandService, appService, context.Nodes);
 		}
 
-		static bool CanExecute(DocumentTreeNodeData[] nodes) => nodes.Length == 1 && GetModuleNode(nodes[0]) != null;
+		static bool CanExecute(DocumentTreeNodeData[] nodes) => nodes.Length == 1 && !(GetModuleNode(nodes[0]) is null);
 
-		static ModuleDocumentNode GetModuleNode(DocumentTreeNodeData node) {
+		static ModuleDocumentNode? GetModuleNode(DocumentTreeNodeData node) {
 			if (node is AssemblyDocumentNode asmNode) {
 				asmNode.TreeNode.EnsureChildrenLoaded();
 				return asmNode.TreeNode.DataChildren.FirstOrDefault() as ModuleDocumentNode;
@@ -111,23 +111,23 @@ namespace dnSpy.AsmEditor.Compiler {
 				return;
 
 			var modNode = GetModuleNode(nodes[0]);
-			Debug.Assert(modNode != null);
-			if (modNode == null)
+			Debug.Assert(!(modNode is null));
+			if (modNode is null)
 				return;
 			var module = modNode.Document.ModuleDef;
-			Debug.Assert(module != null);
-			if (module == null)
+			Debug.Assert(!(module is null));
+			if (module is null)
 				throw new InvalidOperationException();
 
 			var filename = pickFilename.GetFilename(null, "dll", PickFilenameConstants.DotNetAssemblyOrModuleFilter);
 			var result = GetModuleBytes(filename);
-			if (result == null)
+			if (result is null)
 				return;
 
 			// This is a basic assembly merger, we don't support merging dependencies. It would require
 			// fixing all refs to the dep and redirect them to the new defs that now exist in 'module'.
 			var asm = module.Assembly;
-			if (asm != null && result.Value.Assembly != null) {
+			if (!(asm is null) && !(result.Value.Assembly is null)) {
 				if (IsNonSupportedAssembly(module, asm, result.Value.Assembly)) {
 					Contracts.App.MsgBox.Instance.Show($"Can't merge with {result.Value.Assembly} because it's a dependency");
 					return;
@@ -157,17 +157,17 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		readonly struct ModuleResult {
-			public IAssembly Assembly { get; }
+			public IAssembly? Assembly { get; }
 			public byte[] RawBytes { get; }
 			public DebugFileResult DebugFile { get; }
-			public ModuleResult(IAssembly assembly, byte[] bytes, DebugFileResult debugFile) {
+			public ModuleResult(IAssembly? assembly, byte[] bytes, DebugFileResult debugFile) {
 				Assembly = assembly;
 				RawBytes = bytes;
 				DebugFile = debugFile;
 			}
 		}
 
-		static ModuleResult? GetModuleBytes(string filename) {
+		static ModuleResult? GetModuleBytes(string? filename) {
 			if (!File.Exists(filename))
 				return null;
 			try {

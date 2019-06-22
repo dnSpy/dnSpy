@@ -26,12 +26,12 @@ namespace dnSpy.Hex.Files.DotNet {
 	sealed class DotNetHeadersImpl : DotNetHeaders {
 		public override PeHeaders PeHeaders { get; }
 		public override DotNetCor20Data Cor20 { get; }
-		public override DotNetMetadataHeaders MetadataHeaders { get; }
-		public override VirtualArrayData<ByteData> StrongNameSignature { get; }
+		public override DotNetMetadataHeaders? MetadataHeaders { get; }
+		public override VirtualArrayData<ByteData>? StrongNameSignature { get; }
 		public override DotNetMethodProvider MethodProvider { get; }
 		public override DotNetResourceProvider ResourceProvider { get; }
 
-		public DotNetHeadersImpl(PeHeaders peHeaders, DotNetCor20Data cor20, DotNetMetadataHeaders metadataHeaders, VirtualArrayData<ByteData> strongNameSignature, DotNetMethodProvider methodProvider, DotNetResourceProvider resourceProvider) {
+		public DotNetHeadersImpl(PeHeaders peHeaders, DotNetCor20Data cor20, DotNetMetadataHeaders? metadataHeaders, VirtualArrayData<ByteData>? strongNameSignature, DotNetMethodProvider methodProvider, DotNetResourceProvider resourceProvider) {
 			PeHeaders = peHeaders ?? throw new ArgumentNullException(nameof(peHeaders));
 			Cor20 = cor20 ?? throw new ArgumentNullException(nameof(cor20));
 			MetadataHeaders = metadataHeaders;

@@ -34,7 +34,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Engine {
 		/// <param name="runtimeGuid">Runtime guid, see <see cref="PredefinedDbgRuntimeGuids"/></param>
 		/// <param name="dbgDotNetLanguageService">.NET language service instance</param>
 		protected DbgDotNetEngineObjectIdFactory(Guid runtimeGuid, DbgDotNetLanguageService dbgDotNetLanguageService) {
-			if (dbgDotNetLanguageService == null)
+			if (dbgDotNetLanguageService is null)
 				throw new ArgumentNullException(nameof(dbgDotNetLanguageService));
 			dbgEngineObjectIdFactory = dbgDotNetLanguageService.GetEngineObjectIdFactory(runtimeGuid);
 		}
@@ -52,7 +52,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.Engine {
 		/// <param name="value">Value created by this runtime</param>
 		/// <param name="id">Unique id</param>
 		/// <returns></returns>
-		public sealed override DbgEngineObjectId CreateObjectId(DbgEngineValue value, uint id) => dbgEngineObjectIdFactory.CreateObjectId(value, id);
+		public sealed override DbgEngineObjectId? CreateObjectId(DbgEngineValue value, uint id) => dbgEngineObjectIdFactory.CreateObjectId(value, id);
 
 		/// <summary>
 		/// Checks if an object id and a value refer to the same data

@@ -49,13 +49,13 @@ namespace dnSpy.ToolWindows {
 		}
 		readonly WeakEventList<ToolWindowGroupCollectionChangedEventArgs> toolWindowGroupCollectionChanged;
 
-		public object UIObject => tabGroupService.UIObject;
-		public IEnumerable<IToolWindowGroup> TabGroups => tabGroupService.TabGroups.Select(a => GetToolWindowGroup(a));
+		public object? UIObject => tabGroupService.UIObject;
+		public IEnumerable<IToolWindowGroup> TabGroups => tabGroupService.TabGroups.Select(a => GetToolWindowGroup(a)!);
 
-		public IToolWindowGroup ActiveTabGroup {
+		public IToolWindowGroup? ActiveTabGroup {
 			get => GetToolWindowGroup(tabGroupService.ActiveTabGroup);
 			set {
-				if (value == null)
+				if (value is null)
 					throw new ArgumentNullException(nameof(value));
 				var tg = GetTabGroup(value);
 				tabGroupService.ActiveTabGroup = tg ?? throw new InvalidOperationException();
@@ -85,33 +85,33 @@ namespace dnSpy.ToolWindows {
 			this.tabGroupService.TabGroupCollectionChanged += TabGroupService_TabGroupCollectionChanged;
 		}
 
-		internal IToolWindowGroup GetToolWindowGroup(ITabGroup tabGroup) => ToolWindowGroup.GetToolWindowGroup(tabGroup);
-		static ToolWindowContent GetToolWindowContent(ITabContent selected) => ((TabContentImpl)selected)?.Content;
+		internal IToolWindowGroup? GetToolWindowGroup(ITabGroup? tabGroup) => ToolWindowGroup.GetToolWindowGroup(tabGroup);
+		static ToolWindowContent? GetToolWindowContent(ITabContent? selected) => ((TabContentImpl?)selected)?.Content;
 
 		void TabGroupService_TabSelectionChanged(object sender, TabSelectedEventArgs e) {
-			if (e.Selected != null) {
+			if (!(e.Selected is null)) {
 				Debug.Assert(e.TabGroup.ActiveTabContent == e.Selected);
 				e.TabGroup.SetFocus(e.Selected);
 			}
-			tabSelectionChanged.Raise(this, new ToolWindowSelectedEventArgs(GetToolWindowGroup(e.TabGroup), GetToolWindowContent(e.Selected), GetToolWindowContent(e.Unselected)));
+			tabSelectionChanged.Raise(this, new ToolWindowSelectedEventArgs(GetToolWindowGroup(e.TabGroup)!, GetToolWindowContent(e.Selected), GetToolWindowContent(e.Unselected)));
 		}
 
 		void TabGroupService_TabGroupSelectionChanged(object sender, TabGroupSelectedEventArgs e) =>
 			tabGroupSelectionChanged.Raise(this, new ToolWindowGroupSelectedEventArgs(GetToolWindowGroup(e.Selected), GetToolWindowGroup(e.Unselected)));
 		void TabGroupService_TabGroupCollectionChanged(object sender, TabGroupCollectionChangedEventArgs e) =>
-			toolWindowGroupCollectionChanged.Raise(this, new ToolWindowGroupCollectionChangedEventArgs(e.Added, GetToolWindowGroup(e.TabGroup)));
+			toolWindowGroupCollectionChanged.Raise(this, new ToolWindowGroupCollectionChangedEventArgs(e.Added, GetToolWindowGroup(e.TabGroup)!));
 		public IToolWindowGroup Create() => new ToolWindowGroup(this, tabGroupService.Create());
 
 		public void Close(IToolWindowGroup group) {
-			if (group == null)
+			if (group is null)
 				throw new ArgumentNullException(nameof(group));
 			var impl = group as ToolWindowGroup;
-			if (impl == null)
+			if (impl is null)
 				throw new InvalidOperationException();
 			tabGroupService.Close(impl.TabGroup);
 		}
 
-		public bool CloseAllTabsCanExecute => tabGroupService.ActiveTabGroup != null && tabGroupService.ActiveTabGroup.TabContents.Count() > 1 && tabGroupService.CloseAllTabsCanExecute;
+		public bool CloseAllTabsCanExecute => !(tabGroupService.ActiveTabGroup is null) && tabGroupService.ActiveTabGroup.TabContents.Count() > 1 && tabGroupService.CloseAllTabsCanExecute;
 		public void CloseAllTabs() => tabGroupService.CloseAllTabs();
 		public bool NewHorizontalTabGroupCanExecute => tabGroupService.NewHorizontalTabGroupCanExecute;
 		public void NewHorizontalTabGroup() => tabGroupService.NewHorizontalTabGroup(a => new ToolWindowGroup(this, a));

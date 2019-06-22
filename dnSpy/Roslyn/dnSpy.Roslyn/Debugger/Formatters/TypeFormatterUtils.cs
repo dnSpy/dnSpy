@@ -18,6 +18,7 @@
 */
 
 using System.Collections.ObjectModel;
+using System.Runtime.CompilerServices;
 using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 
@@ -85,7 +86,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 		}
 
 		public static DbgTextColor GetColor(DmdType type, bool canBeModule) {
-			if (canBeModule && (object)type.DeclaringType == null && type.IsSealed && type.IsAbstract)
+			if (canBeModule && type.DeclaringType is null && type.IsSealed && type.IsAbstract)
 				return DbgTextColor.Module;
 			if (type.IsInterface)
 				return DbgTextColor.Interface;
@@ -112,10 +113,10 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 			return s.Substring(0, index);
 		}
 
-		public static (DmdPropertyInfo property, AccessorKind kind) TryGetProperty(DmdMethodBase method) {
-			if ((object)method == null)
+		public static (DmdPropertyInfo? property, AccessorKind kind) TryGetProperty(DmdMethodBase method) {
+			if (method is null)
 				return (null, AccessorKind.None);
-			foreach (var p in method.DeclaringType.Properties) {
+			foreach (var p in method.DeclaringType!.Properties) {
 				if ((object)method == p.GetMethod)
 					return (p, AccessorKind.Getter);
 				if ((object)method == p.SetMethod)
@@ -124,10 +125,10 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 			return (null, AccessorKind.None);
 		}
 
-		public static (DmdEventInfo @event, AccessorKind kind) TryGetEvent(DmdMethodBase method) {
-			if ((object)method == null)
+		public static (DmdEventInfo? @event, AccessorKind kind) TryGetEvent(DmdMethodBase method) {
+			if (method is null)
 				return (null, AccessorKind.None);
-			foreach (var e in method.DeclaringType.Events) {
+			foreach (var e in method.DeclaringType!.Events) {
 				if ((object)method == e.AddMethod)
 					return (e, AccessorKind.Adder);
 				if ((object)method == e.RemoveMethod)
@@ -136,8 +137,8 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 			return (null, AccessorKind.None);
 		}
 
-		static DbgTextColor GetColor(DmdMethodInfo method, DbgTextColor staticValue, DbgTextColor instanceValue) {
-			if ((object)method == null)
+		static DbgTextColor GetColor(DmdMethodInfo? method, DbgTextColor staticValue, DbgTextColor instanceValue) {
+			if (method is null)
 				return instanceValue;
 			if (method.IsStatic)
 				return staticValue;
@@ -152,7 +153,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 
 		public static DbgTextColor GetColor(DmdMethodBase method, bool canBeModule) {
 			if (method is DmdConstructorInfo)
-				return GetColor(method.DeclaringType, canBeModule);
+				return GetColor(method.DeclaringType!, canBeModule);
 			if (method.IsStatic) {
 				if (method.IsDefined("System.Runtime.CompilerServices.ExtensionAttribute", inherit: false))
 					return DbgTextColor.ExtensionMethod;
@@ -161,7 +162,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 			return DbgTextColor.InstanceMethod;
 		}
 
-		public static bool TryGetMethodName(string name, out string containingMethodName, out string localFunctionName) {
+		public static bool TryGetMethodName(string name, [NotNullWhenTrue] out string? containingMethodName, [NotNullWhenTrue] out string? localFunctionName) {
 			// Some local function metadata names (real names: Method2(), Method3()) (Roslyn: GeneratedNames.MakeLocalFunctionName())
 			//
 			//		<Method1>g__Method20_0
@@ -243,7 +244,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 		static bool HasIsReadOnlyAttribute(ReadOnlyCollection<DmdCustomAttributeData> customAttributes) {
 			for (int i = 0; i < customAttributes.Count; i++) {
 				var ca = customAttributes[i];
-				if (ca.AttributeType.MetadataName == "IsReadOnlyAttribute" && ca.AttributeType.MetadataNamespace == "System.Runtime.CompilerServices" && (object)ca.AttributeType.DeclaringType == null)
+				if (ca.AttributeType.MetadataName == "IsReadOnlyAttribute" && ca.AttributeType.MetadataNamespace == "System.Runtime.CompilerServices" && ca.AttributeType.DeclaringType is null)
 					return true;
 			}
 			return false;

@@ -28,13 +28,13 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation.Hooks {
 		public MonoDebugValueConverterImpl(DbgMonoDebugInternalRuntimeImpl runtime) =>
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 
-		bool TryGetUInt32(object value, out uint result) {
+		bool TryGetUInt32(object? value, out uint result) {
 			if (value is DbgDotNetValue dnValue) {
 				var rawValue = dnValue.GetRawValue();
 				if (rawValue.HasRawValue)
 					value = rawValue.RawValue;
 			}
-			if (value != null) {
+			if (!(value is null)) {
 				if (value is bool) {
 					result = (bool)value ? 1U : 0;
 					return true;
@@ -74,20 +74,20 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation.Hooks {
 
 		Exception Invalid() => new InvalidOperationException();
 
-		char IMonoDebugValueConverter.ToChar(object value) {
+		char IMonoDebugValueConverter.ToChar(object? value) {
 			if (TryGetUInt32(value, out var result))
 				return (char)result;
 			throw Invalid();
 		}
 
-		int IMonoDebugValueConverter.ToInt32(object value) {
+		int IMonoDebugValueConverter.ToInt32(object? value) {
 			if (TryGetUInt32(value, out var result))
 				return (int)result;
 			throw Invalid();
 		}
 
-		unsafe char[] IMonoDebugValueConverter.ToCharArray(object value) {
-			if (value == null)
+		unsafe char[]? IMonoDebugValueConverter.ToCharArray(object? value) {
+			if (value is null)
 				return null;
 
 			if (value is char[] result)
@@ -100,7 +100,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation.Hooks {
 				var type = dnValue.Type;
 				if (type.IsArray && type.GetElementType() == type.AppDomain.System_Char) {
 					var addr = dnValue.GetRawAddressValue(onlyDataAddress: true);
-					if (addr != null) {
+					if (!(addr is null)) {
 						ulong chars = addr.Value.Length / 2;
 						if (chars <= int.MaxValue / 2) {
 							if (chars == 0)

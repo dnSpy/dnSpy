@@ -51,7 +51,7 @@ namespace dnSpy.Extension {
 			config.AppVersion = ReadVersion(root, APP_VERSION_SECT);
 		}
 
-		static Version ReadVersion(XElement elem, string name) {
+		static Version? ReadVersion(XElement elem, string name) {
 			var fn = elem.Element(name)?.FirstNode;
 			if (fn?.NodeType != XmlNodeType.Text)
 				return null;

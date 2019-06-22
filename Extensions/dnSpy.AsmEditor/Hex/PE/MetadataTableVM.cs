@@ -56,7 +56,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 
 		public VirtualizedList<MetadataTableRecordVM> Collection { get; }
 
-		public object SelectedItem {
+		public object? SelectedItem {
 			get => selectedItem;
 			set {
 				if (selectedItem != value) {
@@ -65,11 +65,11 @@ namespace dnSpy.AsmEditor.Hex.PE {
 				}
 			}
 		}
-		object selectedItem;
+		object? selectedItem;
 
 		public HexBuffer Buffer => buffer;
 		public TablesStreamVM TablesStream { get; }
-		public object Owner { get; set; }
+		public object? Owner { get; set; }
 
 		readonly HexBuffer buffer;
 		readonly HexSpan stringsHeapSpan;
@@ -236,7 +236,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 				Debug.Assert(0 <= i && i <= endi && endi < Collection.Count);
 				while (i <= endi) {
 					var obj = Collection.TryGet(i);
-					if (obj != null)
+					if (!(obj is null))
 						obj.OnBufferChanged(changes);
 					i++;
 				}
@@ -244,7 +244,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		}
 
 		public MetadataTableRecordVM Get(int index) => Collection[index];
-		public MetadataTableRecordVM TryGet(int index) => Collection.TryGet(index);
+		public MetadataTableRecordVM? TryGet(int index) => Collection.TryGet(index);
 
 		public string ReadStringsHeap(uint offset, uint maxLen = 0x200) {
 			if (offset == 0)

@@ -26,16 +26,16 @@ using dnSpy.Contracts.Hex.Files.PE;
 
 namespace dnSpy.AsmEditor.Hex.PE {
 	abstract class PEStructureProviderFactory {
-		public abstract PEStructureProvider TryGetProvider(HexBufferFile file);
+		public abstract PEStructureProvider? TryGetProvider(HexBufferFile file);
 	}
 
 	[Export(typeof(PEStructureProviderFactory))]
 	sealed class PEStructureProviderFactoryImpl : PEStructureProviderFactory {
-		public override PEStructureProvider TryGetProvider(HexBufferFile file) {
-			if (file == null)
+		public override PEStructureProvider? TryGetProvider(HexBufferFile file) {
+			if (file is null)
 				throw new ArgumentNullException(nameof(file));
 			var peHeaders = file.GetHeaders<PeHeaders>();
-			if (peHeaders == null)
+			if (peHeaders is null)
 				return null;
 			return file.Properties.GetOrCreateSingletonProperty(typeof(PEStructureProviderImpl), () => new PEStructureProviderImpl(file, peHeaders));
 		}
@@ -50,14 +50,14 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public abstract ImageOptionalHeaderVM ImageOptionalHeader { get; }
 		public abstract ImageSectionHeaderVM[] Sections { get; }
 		/// <summary>Can be null if it's not a .NET file</summary>
-		public abstract ImageCor20HeaderVM ImageCor20Header { get; }
+		public abstract ImageCor20HeaderVM? ImageCor20Header { get; }
 		/// <summary>Can be null if it's not a .NET file</summary>
-		public abstract StorageSignatureVM StorageSignature { get; }
+		public abstract StorageSignatureVM? StorageSignature { get; }
 		/// <summary>Can be null if it's not a .NET file</summary>
-		public abstract StorageHeaderVM StorageHeader { get; }
+		public abstract StorageHeaderVM? StorageHeader { get; }
 		public abstract StorageStreamVM[] StorageStreams { get; }
 		/// <summary>Can be null if it's not a .NET file</summary>
-		public abstract TablesStreamVM TablesStream { get; }
+		public abstract TablesStreamVM? TablesStream { get; }
 		public abstract HexPosition RvaToBufferPosition(uint rva);
 		public abstract uint BufferPositionToRva(HexPosition position);
 	}
@@ -70,11 +70,11 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		public override ImageFileHeaderVM ImageFileHeader => imageFileHeader;
 		public override ImageOptionalHeaderVM ImageOptionalHeader => imageOptionalHeader;
 		public override ImageSectionHeaderVM[] Sections => sections;
-		public override ImageCor20HeaderVM ImageCor20Header => imageCor20Header;
-		public override StorageSignatureVM StorageSignature => storageSignature;
-		public override StorageHeaderVM StorageHeader => storageHeader;
+		public override ImageCor20HeaderVM? ImageCor20Header => imageCor20Header;
+		public override StorageSignatureVM? StorageSignature => storageSignature;
+		public override StorageHeaderVM? StorageHeader => storageHeader;
 		public override StorageStreamVM[] StorageStreams => storageStreams;
-		public override TablesStreamVM TablesStream => tablesStream;
+		public override TablesStreamVM? TablesStream => tablesStream;
 
 		readonly HexBufferFile file;
 		readonly PeHeaders peHeaders;
@@ -82,16 +82,16 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		readonly ImageFileHeaderVM imageFileHeader;
 		readonly ImageOptionalHeaderVM imageOptionalHeader;
 		readonly ImageSectionHeaderVM[] sections;
-		readonly ImageCor20HeaderVM imageCor20Header;
-		readonly StorageSignatureVM storageSignature;
-		readonly StorageHeaderVM storageHeader;
+		readonly ImageCor20HeaderVM? imageCor20Header;
+		readonly StorageSignatureVM? storageSignature;
+		readonly StorageHeaderVM? storageHeader;
 		readonly StorageStreamVM[] storageStreams;
-		readonly TablesStreamVM tablesStream;
+		readonly TablesStreamVM? tablesStream;
 
 		public PEStructureProviderImpl(HexBufferFile file, PeHeaders peHeaders) {
-			if (file == null)
+			if (file is null)
 				throw new ArgumentNullException(nameof(file));
-			if (peHeaders == null)
+			if (peHeaders is null)
 				throw new ArgumentNullException(nameof(peHeaders));
 			if (peHeaders != file.GetHeaders<PeHeaders>())
 				throw new ArgumentException();
@@ -110,10 +110,10 @@ namespace dnSpy.AsmEditor.Hex.PE {
 				sections[i] = new ImageSectionHeaderVM(buffer, peHeaders.Sections[i].Data);
 			var dnHeaders = file.GetHeaders<DotNetHeaders>();
 			storageStreams = Array.Empty<StorageStreamVM>();
-			if (dnHeaders != null) {
+			if (!(dnHeaders is null)) {
 				imageCor20Header = new ImageCor20HeaderVM(buffer, dnHeaders.Cor20);
 				var mdHeaders = dnHeaders.MetadataHeaders;
-				if (mdHeaders != null) {
+				if (!(mdHeaders is null)) {
 					storageSignature = new StorageSignatureVM(buffer, mdHeaders.MetadataHeader);
 					storageHeader = new StorageHeaderVM(buffer, mdHeaders.MetadataHeader);
 					storageStreams = new StorageStreamVM[mdHeaders.Streams.Count];
@@ -124,7 +124,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 					}
 
 					var metadataTables = new MetadataTableVM[0x40];
-					if (mdHeaders.TablesStream != null) {
+					if (!(mdHeaders.TablesStream is null)) {
 						tablesStream = new TablesStreamVM(buffer, mdHeaders.TablesStream, metadataTables);
 						var stringsHeapSpan = GetSpan(mdHeaders.StringsStream);
 						var guidHeapSpan = GetSpan(mdHeaders.GUIDStream);
@@ -137,7 +137,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			}
 		}
 
-		static HexSpan GetSpan(DotNetHeap heap) => heap?.Span.Span ?? default;
+		static HexSpan GetSpan(DotNetHeap? heap) => heap?.Span.Span ?? default;
 
 		public override HexPosition RvaToBufferPosition(uint rva) =>
 			peHeaders.RvaToBufferPosition(rva);

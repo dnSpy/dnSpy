@@ -29,12 +29,12 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Attach {
 		/// A string returned by <c>dbgshim.dll</c>'s <c>CreateVersionStringFromModule</c> function
 		/// or null to use the first found CoreCLR in the process.
 		/// </summary>
-		public string ClrModuleVersion { get; set; }
+		public string? ClrModuleVersion { get; set; }
 
 		/// <summary>
 		/// Path to <c>coreclr.dll</c> or null to use the first found one in the process
 		/// </summary>
-		public string CoreCLRFilename { get; set; }
+		public string? CoreCLRFilename { get; set; }
 
 		/// <summary>
 		/// Clones this instance
@@ -48,7 +48,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Attach {
 		/// <param name="other">Destination</param>
 		/// <returns></returns>
 		public DotNetCoreAttachToProgramOptions CopyTo(DotNetCoreAttachToProgramOptions other) {
-			if (other == null)
+			if (other is null)
 				throw new ArgumentNullException(nameof(other));
 			base.CopyTo(other);
 			other.ClrModuleVersion = ClrModuleVersion;

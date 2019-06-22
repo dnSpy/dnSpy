@@ -26,7 +26,7 @@ namespace dnSpy.Text.Projection {
 	[Export(typeof(IBufferGraphFactoryService))]
 	sealed class BufferGraphFactoryService : IBufferGraphFactoryService {
 		public IBufferGraph CreateBufferGraph(ITextBuffer textBuffer) {
-			if (textBuffer == null)
+			if (textBuffer is null)
 				throw new ArgumentNullException(nameof(textBuffer));
 			return textBuffer.Properties.GetOrCreateSingletonProperty(typeof(BufferGraph), () => new BufferGraph(textBuffer));
 		}

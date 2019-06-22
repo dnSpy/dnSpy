@@ -34,9 +34,9 @@ namespace dnSpy.Text.Editor {
 		WpfTextViewMarginInfo[] margins;
 
 		public WpfTextViewContainerMargin(IWpfTextViewMarginProviderCollectionProvider wpfTextViewMarginProviderCollectionProvider, IWpfTextViewHost wpfTextViewHost, string name, bool isHorizontal) {
-			if (wpfTextViewMarginProviderCollectionProvider == null)
+			if (wpfTextViewMarginProviderCollectionProvider is null)
 				throw new ArgumentNullException(nameof(wpfTextViewMarginProviderCollectionProvider));
-			if (wpfTextViewHost == null)
+			if (wpfTextViewHost is null)
 				throw new ArgumentNullException(nameof(wpfTextViewHost));
 			this.name = name ?? throw new ArgumentNullException(nameof(name));
 			this.isHorizontal = isHorizontal;
@@ -80,13 +80,13 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		public ITextViewMargin GetTextViewMargin(string marginName) {
+		public ITextViewMargin? GetTextViewMargin(string marginName) {
 			if (StringComparer.OrdinalIgnoreCase.Equals(marginName, name))
 				return this;
 
 			foreach (var info in margins) {
 				var margin = info.Margin.GetTextViewMargin(marginName);
-				if (margin != null)
+				if (!(margin is null))
 					return margin;
 			}
 

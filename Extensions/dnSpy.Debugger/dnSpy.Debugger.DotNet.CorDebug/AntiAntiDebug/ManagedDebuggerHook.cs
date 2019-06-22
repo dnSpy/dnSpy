@@ -19,6 +19,7 @@
 
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.AntiAntiDebug;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
@@ -38,7 +39,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.AntiAntiDebug {
 			return CorDebugUtils.TryGetInternalRuntime(context.Process, out _);
 		}
 
-		public void Hook(DbgNativeFunctionHookContext context, out string errorMessage) {
+		public void Hook(DbgNativeFunctionHookContext context, out string? errorMessage) {
 			if (!CorDebugUtils.TryGetInternalRuntime(context.Process, out var runtime)) {
 				errorMessage = "Couldn't find CorDebug runtime";
 				return;
@@ -57,7 +58,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.AntiAntiDebug {
 			}
 		}
 
-		void HookX86(DbgNativeFunctionHookContext context, DbgCorDebugInternalRuntime runtime, out string errorMessage) =>
+		void HookX86(DbgNativeFunctionHookContext context, DbgCorDebugInternalRuntime runtime, [NotNullWhenFalse] out string? errorMessage) =>
 			new ManagedDebuggerPatcherX86(context, runtime).TryPatch(out errorMessage);
 	}
 }

@@ -47,12 +47,12 @@ namespace dnSpy.Documents.Tabs {
 				return (T)obj;
 			if (weakCachedInstances.TryGetValue(key, out var weakRef)) {
 				obj = weakRef.Target;
-				if (obj != null)
+				if (!(obj is null))
 					return (T)obj;
 			}
 
 			var res = creator();
-			if (res.Reference == null)
+			if (res.Reference is null)
 				throw new InvalidOperationException();
 			if (res.UseStrongReference)
 				strongCachedInstances[key] = res.Reference;
@@ -64,7 +64,7 @@ namespace dnSpy.Documents.Tabs {
 		ReferenceResult<T> Create<T>() where T : class {
 			foreach (var c in documentTabUIContextProviders) {
 				var t = c.Value.Create<T>() as T;
-				if (t != null)
+				if (!(t is null))
 					return new ReferenceResult<T>(t, c.Metadata.UseStrongReference);
 			}
 			throw new InvalidOperationException();
@@ -73,21 +73,21 @@ namespace dnSpy.Documents.Tabs {
 		public T Get<T>() where T : class => GetOrCreate(typeof(T), () => Create<T>());
 		public T Get<T>(object key, Func<T> creator) where T : class => Get(key, false, creator);
 		public T Get<T>(object key, bool useStrongReference, Func<T> creator) where T : class {
-			if (key == null)
+			if (key is null)
 				throw new ArgumentNullException(nameof(key));
-			if (creator == null)
+			if (creator is null)
 				throw new ArgumentNullException(nameof(creator));
 			// System.Type keys are reserved by us so use a new Key instance instead of directly using key
 			return GetOrCreate(new Key(key), () => new ReferenceResult<T>(creator(), useStrongReference));
 		}
 
-		sealed class Key : IEquatable<Key> {
+		sealed class Key : IEquatable<Key?> {
 			readonly object obj;
 
 			public Key(object obj) => this.obj = obj ?? throw new ArgumentNullException(nameof(obj));
 
-			public bool Equals(Key other) => other != null && obj.Equals(other.obj);
-			public override bool Equals(object obj) => Equals(obj as Key);
+			public bool Equals(Key? other) => !(other is null) && obj.Equals(other.obj);
+			public override bool Equals(object? obj) => Equals(obj as Key);
 			public override int GetHashCode() => obj.GetHashCode();
 		}
 

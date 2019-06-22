@@ -23,7 +23,7 @@ using System.Text.RegularExpressions;
 namespace dnSpy.Debugger.Utilities {
 	static class WildcardsUtils {
 		public static Regex CreateRegex(string wildcardString) {
-			if (wildcardString == null)
+			if (wildcardString is null)
 				throw new ArgumentNullException(nameof(wildcardString));
 			const RegexOptions flags = RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Singleline;
 			return new Regex("^" + Regex.Escape(wildcardString).Replace(@"\*", ".*").Replace(@"\?", ".") + "$", flags);

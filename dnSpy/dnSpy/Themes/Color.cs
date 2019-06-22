@@ -45,6 +45,8 @@ namespace dnSpy.Themes {
 		/// </summary>
 		public ThemeColor InheritedColor;
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
 		public Color(ColorInfo colorInfo) => ColorInfo = colorInfo;
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
 	}
 }

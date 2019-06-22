@@ -23,17 +23,17 @@ using System.Threading;
 namespace dnSpy.Debugger.DotNet.Metadata {
 	static class ObjectCache {
 		const int MAX_STRINGBUILDER_CAPACITY = 1024;
-		static volatile StringBuilder stringBuilder;
+		static volatile StringBuilder? stringBuilder;
 		public static StringBuilder AllocStringBuilder() => Interlocked.Exchange(ref stringBuilder, null) ?? new StringBuilder();
-		public static void Free(ref StringBuilder sb) {
-			if (sb.Capacity <= MAX_STRINGBUILDER_CAPACITY) {
+		public static void Free(ref StringBuilder? sb) {
+			if (sb!.Capacity <= MAX_STRINGBUILDER_CAPACITY) {
 				sb.Clear();
 				stringBuilder = sb;
 			}
 			sb = null;
 		}
-		public static string FreeAndToString(ref StringBuilder sb) {
-			var res = sb.ToString();
+		public static string FreeAndToString(ref StringBuilder? sb) {
+			var res = sb!.ToString();
 			Free(ref sb);
 			return res;
 		}

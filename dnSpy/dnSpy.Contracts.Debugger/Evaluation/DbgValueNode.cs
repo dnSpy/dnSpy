@@ -44,22 +44,22 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <summary>
 		/// true if this is an error value node
 		/// </summary>
-		public bool HasError => ErrorMessage != null;
+		public bool HasError => !(ErrorMessage is null);
 
 		/// <summary>
 		/// Gets the error message or null
 		/// </summary>
-		public abstract string ErrorMessage { get; }
+		public abstract string? ErrorMessage { get; }
 
 		/// <summary>
 		/// true if <see cref="Value"/> is not null
 		/// </summary>
-		public bool HasValue => Value != null;
+		public bool HasValue => !(Value is null);
 
 		/// <summary>
 		/// Gets the value or null if there's none
 		/// </summary>
-		public abstract DbgValue Value { get; }
+		public abstract DbgValue? Value { get; }
 
 		/// <summary>
 		/// true if it's a node that has an <see cref="Expression"/> can be evaluated, false if it's a non-value node, eg. 'Type variables', 'Raw View', etc.
@@ -118,7 +118,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="output">Output</param>
 		/// <param name="options">Formatter options</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
-		public void FormatName(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgValueFormatterOptions options, CultureInfo cultureInfo = null) =>
+		public void FormatName(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgValueFormatterOptions options, CultureInfo? cultureInfo = null) =>
 			Format(evalInfo, new DbgValueNodeFormatParameters {
 				NameOutput = output ?? throw new ArgumentNullException(nameof(output)),
 				NameFormatterOptions = options,
@@ -131,7 +131,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="output">Output</param>
 		/// <param name="options">Formatter options</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
-		public void FormatValue(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgValueFormatterOptions options, CultureInfo cultureInfo) =>
+		public void FormatValue(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgValueFormatterOptions options, CultureInfo? cultureInfo) =>
 			Format(evalInfo, new DbgValueNodeFormatParameters {
 				ValueOutput = output ?? throw new ArgumentNullException(nameof(output)),
 				ValueFormatterOptions = options,
@@ -145,7 +145,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="options">Formatter options</param>
 		/// <param name="valueOptions">Value options</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
-		public void FormatExpectedType(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgValueFormatterTypeOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo) =>
+		public void FormatExpectedType(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgValueFormatterTypeOptions options, DbgValueFormatterOptions valueOptions, CultureInfo? cultureInfo) =>
 			Format(evalInfo, new DbgValueNodeFormatParameters {
 				ExpectedTypeOutput = output ?? throw new ArgumentNullException(nameof(output)),
 				ExpectedTypeFormatterOptions = options,
@@ -160,7 +160,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="options">Formatter options</param>
 		/// <param name="valueOptions">Value options</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
-		public void FormatActualType(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgValueFormatterTypeOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo) =>
+		public void FormatActualType(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgValueFormatterTypeOptions options, DbgValueFormatterOptions valueOptions, CultureInfo? cultureInfo) =>
 			Format(evalInfo, new DbgValueNodeFormatParameters {
 				ActualTypeOutput = output ?? throw new ArgumentNullException(nameof(output)),
 				ActualTypeFormatterOptions = options,
@@ -173,7 +173,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="options">Options</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
-		public abstract void Format(DbgEvaluationInfo evalInfo, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo);
+		public abstract void Format(DbgEvaluationInfo evalInfo, IDbgValueNodeFormatParameters options, CultureInfo? cultureInfo);
 
 		/// <summary>
 		/// Writes a new value
@@ -192,7 +192,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <summary>
 		/// Gets the error message or null if none
 		/// </summary>
-		public string Error { get; }
+		public string? Error { get; }
 
 		/// <summary>
 		/// Gets the flags
@@ -204,7 +204,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// </summary>
 		/// <param name="flags">Result flags</param>
 		/// <param name="error">Error message or null if none</param>
-		public DbgValueNodeAssignmentResult(DbgEEAssignmentResultFlags flags, string error) {
+		public DbgValueNodeAssignmentResult(DbgEEAssignmentResultFlags flags, string? error) {
 			Flags = flags;
 			Error = error;
 		}
@@ -217,22 +217,22 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <summary>
 		/// Used when writing the name or null if it's not written
 		/// </summary>
-		IDbgTextWriter NameOutput { get; }
+		IDbgTextWriter? NameOutput { get; }
 
 		/// <summary>
 		/// Used when writing the value or null if it's not written
 		/// </summary>
-		IDbgTextWriter ValueOutput { get; }
+		IDbgTextWriter? ValueOutput { get; }
 
 		/// <summary>
 		/// Used when writing the expected type ("field" type) or null if it's not written
 		/// </summary>
-		IDbgTextWriter ExpectedTypeOutput { get; }
+		IDbgTextWriter? ExpectedTypeOutput { get; }
 
 		/// <summary>
 		/// Used when writing the actual type (value type) or null if it's not written
 		/// </summary>
-		IDbgTextWriter ActualTypeOutput { get; }
+		IDbgTextWriter? ActualTypeOutput { get; }
 
 		/// <summary>
 		/// Name formatter options
@@ -261,10 +261,10 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 	}
 
 	sealed class DbgValueNodeFormatParameters : IDbgValueNodeFormatParameters {
-		public IDbgTextWriter NameOutput { get; set; }
-		public IDbgTextWriter ValueOutput { get; set; }
-		public IDbgTextWriter ExpectedTypeOutput { get; set; }
-		public IDbgTextWriter ActualTypeOutput { get; set; }
+		public IDbgTextWriter? NameOutput { get; set; }
+		public IDbgTextWriter? ValueOutput { get; set; }
+		public IDbgTextWriter? ExpectedTypeOutput { get; set; }
+		public IDbgTextWriter? ActualTypeOutput { get; set; }
 		public DbgValueFormatterOptions NameFormatterOptions { get; set; }
 		public DbgValueFormatterOptions ValueFormatterOptions { get; set; }
 		public DbgValueFormatterOptions TypeFormatterOptions { get; set; }

@@ -81,7 +81,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Code {
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is DbgSourceStatement && Equals((DbgSourceStatement)obj);
+		public override bool Equals(object? obj) => obj is DbgSourceStatement && Equals((DbgSourceStatement)obj);
 
 		/// <summary>
 		/// GetHashCode()

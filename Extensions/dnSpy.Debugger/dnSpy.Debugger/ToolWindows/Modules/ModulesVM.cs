@@ -112,6 +112,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		[ImportingConstructor]
 		ModulesVM(Lazy<DbgManager> dbgManager, DebuggerSettings debuggerSettings, UIDispatcher uiDispatcher, ModuleFormatterProvider moduleFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
 			uiDispatcher.VerifyAccess();
+			selectedProcess = null!;
 			realAllItems = new List<ModuleVM>();
 			AllItems = new BulkObservableCollection<ModuleVM>();
 			SelectedItems = new ObservableCollection<ModuleVM>();
@@ -121,9 +122,8 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			this.debuggerSettings = debuggerSettings;
 			lazyToolWindowVMHelper = new DebuggerLazyToolWindowVMHelper(this, uiDispatcher, dbgManager);
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
-			moduleContext = new ModuleContext(uiDispatcher, classificationFormatMap, textElementProvider, new SearchMatcher(searchColumnDefinitions)) {
+			moduleContext = new ModuleContext(uiDispatcher, classificationFormatMap, textElementProvider, new SearchMatcher(searchColumnDefinitions), moduleFormatterProvider.Create()) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlight,
-				Formatter = moduleFormatterProvider.Create(),
 			};
 			Descs = new GridViewColumnDescs {
 				Columns = new GridViewColumnDesc[] {
@@ -398,7 +398,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 					var coll = realAllItems;
 					for (int i = coll.Count - 1; i >= 0; i--) {
 						var moduleAppDomain = coll[i].Module.AppDomain;
-						if (moduleAppDomain == null)
+						if (moduleAppDomain is null)
 							continue;
 						foreach (var a in e.Objects) {
 							if (a == moduleAppDomain) {
@@ -504,14 +504,14 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 		void InitializeNothingMatched() => InitializeNothingMatched(filterText, selectedProcess);
 		void InitializeNothingMatched(string filterText, SimpleProcessVM selectedProcess) =>
-			NothingMatched = AllItems.Count == 0 && !(string.IsNullOrWhiteSpace(filterText) && selectedProcess?.Process == null);
+			NothingMatched = AllItems.Count == 0 && !(string.IsNullOrWhiteSpace(filterText) && selectedProcess?.Process is null);
 
 		public int Compare(ModuleVM x, ModuleVM y) {
 			Debug.Assert(moduleContext.UIDispatcher.CheckAccess());
 			var (desc, dir) = Descs.SortedColumn;
 
 			int id;
-			if (desc == null || dir == GridViewSortDirection.Default) {
+			if (desc is null || dir == GridViewSortDirection.Default) {
 				id = ModulesWindowColumnIds.Default_Order;
 				dir = GridViewSortDirection.Ascending;
 			}
@@ -599,7 +599,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		// UI thread
 		bool IsMatch_UI(ModuleVM vm, string filterText, SimpleProcessVM selectedProcess) {
 			Debug.Assert(moduleContext.UIDispatcher.CheckAccess());
-			if (selectedProcess?.Process != null && selectedProcess.Process != vm.Module.Process)
+			if (!(selectedProcess?.Process is null) && selectedProcess.Process != vm.Module.Process)
 				return false;
 			// Common case check, we don't need to allocate any strings
 			if (filterText == string.Empty)
@@ -761,7 +761,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 					break;
 				}
 			}
-			if (selectedProcess == null || selectedProcess.Process == process)
+			if (selectedProcess is null || selectedProcess.Process == process)
 				SelectedProcess = processes.FirstOrDefault();
 		}
 
@@ -789,8 +789,8 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			public static readonly SimpleProcessVMComparer Instance = new SimpleProcessVMComparer();
 			SimpleProcessVMComparer() { }
 			public int Compare(SimpleProcessVM x, SimpleProcessVM y) {
-				bool x1 = x.Process == null;
-				bool y1 = y.Process == null;
+				bool x1 = x.Process is null;
+				bool y1 = y.Process is null;
 				if (x1 != y1) {
 					if (x1)
 						return -1;
@@ -799,7 +799,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 				else if (x1)
 					return 0;
 
-				int c = StringComparer.OrdinalIgnoreCase.Compare(x.Process.Name, y.Process.Name);
+				int c = StringComparer.OrdinalIgnoreCase.Compare(x.Process!.Name, y.Process!.Name);
 				if (c != 0)
 					return c;
 				return x.Process.Id.CompareTo(y.Process.Id);

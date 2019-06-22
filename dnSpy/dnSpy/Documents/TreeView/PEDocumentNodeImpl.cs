@@ -31,10 +31,10 @@ using dnSpy.Decompiler;
 namespace dnSpy.Documents.TreeView {
 	sealed class PEDocumentNodeImpl : PEDocumentNode {
 		public PEDocumentNodeImpl(IDsDocument document)
-			: base(document) => Debug.Assert(document.PEImage != null && document.ModuleDef == null);
+			: base(document) => Debug.Assert(!(document.PEImage is null) && document.ModuleDef is null);
 
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.PEDOCUMENT_NODE_GUID);
-		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => dnImgMgr.GetImageReference(Document.PEImage);
+		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => dnImgMgr.GetImageReference(Document.PEImage!);
 		public override void Initialize() => TreeNode.LazyLoading = true;
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
@@ -43,6 +43,7 @@ namespace dnSpy.Documents.TreeView {
 		}
 
 		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) {
+			Debug.Assert(!(Document.PEImage is null));
 			if ((options & DocumentNodeWriteOptions.ToolTip) == 0)
 				new NodeFormatter().Write(output, decompiler, Document);
 			else {

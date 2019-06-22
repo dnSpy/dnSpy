@@ -77,7 +77,7 @@ namespace dndbg.DotNet {
 		protected override void InitializeCustomAttributes() =>
 			readerModule.InitCustomAttributes(this, ref customAttributes, GenericParamContext.Create(ownerType));
 
-		protected override Constant GetConstant_NoLock() {
+		protected override Constant? GetConstant_NoLock() {
 			var mdi = readerModule.MetaDataImport;
 			uint token = OriginalToken.Raw;
 
@@ -97,7 +97,7 @@ namespace dndbg.DotNet {
 		}
 
 		protected override void InitializePropertyMethods_NoLock() {
-			if (otherMethods != null)
+			if (!(otherMethods is null))
 				return;
 			ownerType.InitializeProperty(this, out var newGetMethods, out var newSetMethods, out var newOtherMethods);
 			getMethods = newGetMethods;

@@ -26,10 +26,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 	struct MonoDebugTypeCreator {
 		readonly DbgEngineImpl engine;
 		readonly TypeCache typeCache;
-		readonly MonoTypeLoader monoTypeLoader;
+		readonly MonoTypeLoader? monoTypeLoader;
 		int recursionCounter;
 
-		public static TypeMirror GetType(DbgEngineImpl engine, DmdType type, MonoTypeLoader monoTypeLoader) {
+		public static TypeMirror GetType(DbgEngineImpl engine, DmdType type, MonoTypeLoader? monoTypeLoader) {
 			var typeCache = TypeCache.GetOrCreate(type.AppDomain);
 			if (typeCache.TryGetType(type, out var monoType))
 				return monoType;
@@ -39,14 +39,14 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			return monoType;
 		}
 
-		public static TypeMirror TryGetType(DmdType type) {
+		public static TypeMirror? TryGetType(DmdType type) {
 			var typeCache = TypeCache.GetOrCreate(type.AppDomain);
 			if (typeCache.TryGetType(type, out var monoType))
 				return monoType;
 			return null;
 		}
 
-		MonoDebugTypeCreator(DbgEngineImpl engine, TypeCache typeCache, MonoTypeLoader monoTypeLoader) {
+		MonoDebugTypeCreator(DbgEngineImpl engine, TypeCache typeCache, MonoTypeLoader? monoTypeLoader) {
 			this.engine = engine;
 			this.typeCache = typeCache;
 			this.monoTypeLoader = monoTypeLoader;
@@ -54,7 +54,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		}
 
 		(TypeMirror type, bool containsGenericParameters) Create(DmdType type) {
-			if ((object)type == null)
+			if (type is null)
 				throw new ArgumentNullException(nameof(type));
 
 			if (typeCache.TryGetType(type, out var cachedType))
@@ -63,7 +63,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			if (recursionCounter++ > 100)
 				throw new InvalidOperationException();
 
-			(TypeMirror type, bool containsGenericParameters) result;
+			(TypeMirror type, bool containsGenericParameters) tmp;
+			(TypeMirror? type, bool containsGenericParameters) result;
 			bool addType = true;
 			switch (type.TypeSignatureKind) {
 			case DmdTypeSignatureKind.Type:
@@ -73,25 +74,25 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				//TODO: This can sometimes crash Unity's old mono fork
 				//TODO: It's possible to resolve types, but it's an internal method and it requires a method in the module
 				result = (monoModule.Assembly.GetType(type.FullName, false, false), false);
-				if (result.type == null)
+				if (result.type is null)
 					throw new InvalidOperationException();
 				if (result.type.MetadataToken != type.MetadataToken)
 					throw new InvalidOperationException();
 				break;
 
 			case DmdTypeSignatureKind.Pointer:
-				result = Create(type.GetElementType());
-				result = (TryResolveType(result.type, type), result.containsGenericParameters);
-				if (result.type == null)
+				tmp = Create(type.GetElementType()!);
+				result = (TryResolveType(tmp.type, type), tmp.containsGenericParameters);
+				if (result.type is null)
 					throw new InvalidOperationException();
 				if (!result.type.IsPointer)
 					throw new InvalidOperationException();
 				break;
 
 			case DmdTypeSignatureKind.ByRef:
-				result = Create(type.GetElementType());
-				result = (TryResolveType(result.type, type), result.containsGenericParameters);
-				if (result.type == null)
+				tmp = Create(type.GetElementType()!);
+				result = (TryResolveType(tmp.type, type), tmp.containsGenericParameters);
+				if (result.type is null)
 					throw new InvalidOperationException();
 				// This currently always fails
 				//TODO: We could func-eval MakeByRefType()
@@ -106,27 +107,27 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				break;
 
 			case DmdTypeSignatureKind.SZArray:
-				result = Create(type.GetElementType());
-				result = (TryResolveType(result.type, type), result.containsGenericParameters);
-				if (result.type == null)
+				tmp = Create(type.GetElementType()!);
+				result = (TryResolveType(tmp.type, type), tmp.containsGenericParameters);
+				if (result.type is null)
 					throw new InvalidOperationException();
 				if (!result.type.IsArray || result.type.GetArrayRank() != 1 || !result.type.FullName.EndsWith("[]", StringComparison.Ordinal))
 					throw new InvalidOperationException();
 				break;
 
 			case DmdTypeSignatureKind.MDArray:
-				result = Create(type.GetElementType());
-				result = (TryResolveType(result.type, type), result.containsGenericParameters);
-				if (result.type == null)
+				tmp = Create(type.GetElementType()!);
+				result = (TryResolveType(tmp.type, type), tmp.containsGenericParameters);
+				if (result.type is null)
 					throw new InvalidOperationException();
 				if (!result.type.IsArray || (result.type.GetArrayRank() == 1 && result.type.FullName.EndsWith("[]", StringComparison.Ordinal)))
 					throw new InvalidOperationException();
 				break;
 
 			case DmdTypeSignatureKind.GenericInstance:
-				result = Create(type.GetGenericTypeDefinition());
-				result = (TryResolveType(result.type, type), result.containsGenericParameters);
-				if (result.type == null)
+				tmp = Create(type.GetGenericTypeDefinition());
+				result = (TryResolveType(tmp.type, type), tmp.containsGenericParameters);
+				if (result.type is null)
 					throw new InvalidOperationException();
 				// This fails on Unity (version < 2.12), since it doesn't have that info available
 				//if (!result.type.IsGenericType)
@@ -143,25 +144,25 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				throw new InvalidOperationException();
 			}
 
-			if (result.type == null)
+			if (result.type is null)
 				throw new InvalidOperationException();
 			if (addType && !result.containsGenericParameters)
 				typeCache.Add(result.type, type);
 
 			recursionCounter--;
-			return result;
+			return result!;
 		}
 
-		TypeMirror TryResolveType(TypeMirror monoType, DmdType realType) {
+		TypeMirror? TryResolveType(TypeMirror monoType, DmdType realType) {
 			var fullName = realType.FullName;
-			if (fullName == null && realType.IsGenericType)
+			if (fullName is null && realType.IsGenericType)
 				fullName = realType.GetGenericTypeDefinition().FullName;
 			if (string.IsNullOrEmpty(fullName))
 				return null;
 			// This fails if fullName is a generic instantiated type and at least one generic argument
 			// is a type in another assembly, eg. List<MyType>.
 			var result = monoType.Module.Assembly.GetType(fullName);
-			if (result != null)
+			if (!(result is null))
 				return result;
 			return monoTypeLoader?.Load(monoType.Assembly, fullName);
 		}

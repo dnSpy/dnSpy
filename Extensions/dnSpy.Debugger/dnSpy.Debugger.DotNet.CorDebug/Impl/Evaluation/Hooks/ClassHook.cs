@@ -22,7 +22,7 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation.Hooks {
 	abstract class ClassHook {
-		public virtual DbgDotNetValue CreateInstance(DmdConstructorInfo ctor, object[] arguments) => null;
-		public virtual DbgDotNetValue Call(DbgDotNetValue obj, DmdMethodBase method, object[] arguments) => null;
+		public virtual DbgDotNetValue? CreateInstance(DmdConstructorInfo ctor, object?[] arguments) => null;
+		public virtual DbgDotNetValue? Call(DbgDotNetValue? obj, DmdMethodBase method, object?[] arguments) => null;
 	}
 }

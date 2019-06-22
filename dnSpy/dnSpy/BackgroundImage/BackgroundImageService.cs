@@ -27,7 +27,7 @@ using dnSpy.Contracts.BackgroundImage;
 namespace dnSpy.BackgroundImage {
 	abstract class BackgroundImageService : IImageSourceServiceListener {
 		readonly IImageSourceService imageSourceService;
-		Image currentImage;
+		Image? currentImage;
 
 		protected BackgroundImageService(IImageSourceService imageSourceService) =>
 			this.imageSourceService = imageSourceService ?? throw new ArgumentNullException(nameof(imageSourceService));
@@ -116,7 +116,7 @@ namespace dnSpy.BackgroundImage {
 		}
 
 		public void OnImageChanged() {
-			if (currentImage == null) {
+			if (currentImage is null) {
 				currentImage = InitializeImage(new Image());
 				AddImageToAdornmentLayer();
 			}
@@ -125,8 +125,8 @@ namespace dnSpy.BackgroundImage {
 		}
 
 		protected void UpdateImagePosition() {
-			Debug.Assert(currentImage != null);
-			if (currentImage == null)
+			Debug.Assert(!(currentImage is null));
+			if (currentImage is null)
 				return;
 			UpdateImagePosition(currentImage);
 		}
@@ -226,7 +226,7 @@ namespace dnSpy.BackgroundImage {
 		}
 
 		public void OnSettingsChanged() {
-			if (currentImage == null) {
+			if (currentImage is null) {
 				currentImage = new Image();
 				AddImageToAdornmentLayer();
 			}
@@ -234,7 +234,7 @@ namespace dnSpy.BackgroundImage {
 		}
 
 		void AddImageToAdornmentLayer() {
-			Debug.Assert(currentImage != null);
+			Debug.Assert(!(currentImage is null));
 			AddImageToAdornmentLayerCore(currentImage);
 		}
 

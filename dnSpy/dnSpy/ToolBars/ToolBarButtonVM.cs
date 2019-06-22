@@ -25,13 +25,13 @@ using dnSpy.Contracts.MVVM;
 namespace dnSpy.ToolBars {
 	sealed class ToolBarButtonVM : ViewModelBase {
 		public ICommand Command { get; }
-		public IInputElement CommandTarget { get; }
-		public string Header { get; }
+		public IInputElement? CommandTarget { get; }
+		public string? Header { get; }
 		public bool HasHeader => !string.IsNullOrEmpty(Header);
-		public string ToolTip { get; }
+		public string? ToolTip { get; }
 		public ImageReference ImageReference { get; }
 
-		public ToolBarButtonVM(ICommand command, IInputElement commandTarget, string header, string toolTip, ImageReference? imageReference) {
+		public ToolBarButtonVM(ICommand command, IInputElement? commandTarget, string? header, string? toolTip, ImageReference? imageReference) {
 			Command = command;
 			CommandTarget = commandTarget;
 			Header = string.IsNullOrEmpty(header) ? null : header;

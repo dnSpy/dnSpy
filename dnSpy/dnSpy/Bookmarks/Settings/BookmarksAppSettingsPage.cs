@@ -44,7 +44,7 @@ namespace dnSpy.Bookmarks.Settings {
 		public BookmarksSettingsBase Settings { get; }
 		public override double Order => AppSettingsConstants.ORDER_BOOKMARKS;
 		public override string Title => dnSpy_Resources.BookmarksOptDlgTab;
-		public override object UIObject => this;
+		public override object? UIObject => this;
 
 		public BookmarksAppSettingsPage(BookmarksSettingsImpl bookmarksSettingsImpl) {
 			_global_settings = bookmarksSettingsImpl;

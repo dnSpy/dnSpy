@@ -49,7 +49,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		public override CategoryInfo GetInfo(string kind) {
 			foreach (var lz in threadCategoryProviders) {
 				var info = lz.Value.GetCategory(kind);
-				if (info != null) {
+				if (!(info is null)) {
 					var imgRef = info.Value.Image as ImageReference? ?? ImageReference.None;
 					return new CategoryInfo(imgRef, info.Value.Category);
 				}

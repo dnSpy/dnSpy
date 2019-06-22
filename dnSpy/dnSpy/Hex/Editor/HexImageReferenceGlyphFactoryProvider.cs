@@ -32,13 +32,13 @@ namespace dnSpy.Hex.Editor {
 	[VSUTIL.Name(PredefinedHexGlyphFactoryProviderNames.HexImageReference)]
 	[HexTagType(typeof(HexImageReferenceTag))]
 	sealed class HexImageReferenceGlyphFactoryProvider : HexGlyphFactoryProvider {
-		public override HexGlyphFactory GetGlyphFactory(WpfHexView view, WpfHexViewMargin margin) => new HexImageReferenceGlyphFactory();
+		public override HexGlyphFactory? GetGlyphFactory(WpfHexView view, WpfHexViewMargin margin) => new HexImageReferenceGlyphFactory();
 	}
 
 	sealed class HexImageReferenceGlyphFactory : HexGlyphFactory {
-		public override UIElement GenerateGlyph(WpfHexViewLine line, HexGlyphTag tag) {
+		public override UIElement? GenerateGlyph(WpfHexViewLine line, HexGlyphTag tag) {
 			var glyphTag = tag as HexImageReferenceTag;
-			if (glyphTag == null)
+			if (glyphTag is null)
 				return null;
 
 			const double DEFAULT_IMAGE_LENGTH = 16;

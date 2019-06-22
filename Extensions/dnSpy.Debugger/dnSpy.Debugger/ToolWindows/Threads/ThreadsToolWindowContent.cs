@@ -31,8 +31,8 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 	sealed class ThreadsToolWindowContentProvider : IToolWindowContentProvider {
 		readonly Lazy<IThreadsContent> threadsContent;
 
-		public ThreadsToolWindowContent ThreadsToolWindowContent => threadsToolWindowContent ?? (threadsToolWindowContent = new ThreadsToolWindowContent(threadsContent));
-		ThreadsToolWindowContent threadsToolWindowContent;
+		public ThreadsToolWindowContent ThreadsToolWindowContent => threadsToolWindowContent ??= new ThreadsToolWindowContent(threadsContent);
+		ThreadsToolWindowContent? threadsToolWindowContent;
 
 		[ImportingConstructor]
 		ThreadsToolWindowContentProvider(Lazy<IThreadsContent> threadsContent) => this.threadsContent = threadsContent;
@@ -41,18 +41,18 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			get { yield return new ToolWindowContentInfo(ThreadsToolWindowContent.THE_GUID, ThreadsToolWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_THREADS, false); }
 		}
 
-		public ToolWindowContent GetOrCreate(Guid guid) => guid == ThreadsToolWindowContent.THE_GUID ? ThreadsToolWindowContent : null;
+		public ToolWindowContent? GetOrCreate(Guid guid) => guid == ThreadsToolWindowContent.THE_GUID ? ThreadsToolWindowContent : null;
 	}
 
 	sealed class ThreadsToolWindowContent : ToolWindowContent, IFocusable {
 		public static readonly Guid THE_GUID = new Guid("3C01719C-B6B5-4261-9CD4-3EDCE1032E5C");
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultHorizontal;
 
-		public override IInputElement FocusedElement => threadsContent.Value.FocusedElement;
-		public override FrameworkElement ZoomElement => threadsContent.Value.ZoomElement;
+		public override IInputElement? FocusedElement => threadsContent.Value.FocusedElement;
+		public override FrameworkElement? ZoomElement => threadsContent.Value.ZoomElement;
 		public override Guid Guid => THE_GUID;
 		public override string Title => dnSpy_Debugger_Resources.Window_Threads;
-		public override object UIObject => threadsContent.Value.UIObject;
+		public override object? UIObject => threadsContent.Value.UIObject;
 		public bool CanFocus => true;
 
 		readonly Lazy<IThreadsContent> threadsContent;

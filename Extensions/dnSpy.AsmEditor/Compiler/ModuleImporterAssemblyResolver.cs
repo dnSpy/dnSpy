@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Runtime.CompilerServices;
 using dnlib.DotNet;
 using dnlib.PE;
 using dnSpy.Contracts.AsmEditor.Compiler;
@@ -30,9 +31,9 @@ namespace dnSpy.AsmEditor.Compiler {
 		sealed class ReferenceInfo : IDisposable {
 			public readonly RawModuleBytes RawData;
 			readonly CompilerMetadataReference mdRef;
-			public ModuleDefMD Module;
+			public ModuleDefMD? Module;
 
-			public IAssembly Assembly => mdRef.Assembly;
+			public IAssembly? Assembly => mdRef.Assembly;
 
 			public ReferenceInfo(RawModuleBytes rawData, in CompilerMetadataReference mdRef) {
 				RawData = rawData;
@@ -49,7 +50,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				this.references[i] = new ReferenceInfo(references[i].rawData, references[i].mdRef);
 		}
 
-		public AssemblyDef Resolve(IAssembly assembly, ModuleDef sourceModule) {
+		public AssemblyDef? Resolve(IAssembly assembly, ModuleDef sourceModule) {
 			if (TryResolve(assembly, AssemblyNameComparer.CompareAll, out var resolvedAssembly))
 				return resolvedAssembly;
 			if (TryResolve(assembly, AssemblyNameComparer.NameAndPublicKeyTokenOnly, out resolvedAssembly))
@@ -59,11 +60,11 @@ namespace dnSpy.AsmEditor.Compiler {
 			return null;
 		}
 
-		bool TryResolve(IAssembly assemblyReference, AssemblyNameComparer comparer, out AssemblyDef assembly) {
+		bool TryResolve(IAssembly assemblyReference, AssemblyNameComparer comparer, [NotNullWhenTrue] out AssemblyDef? assembly) {
 			foreach (var reference in references) {
 				if (comparer.Equals(reference.Assembly, assemblyReference)) {
 					assembly = GetModule(reference)?.Assembly;
-					if (assembly != null)
+					if (!(assembly is null))
 						return true;
 				}
 			}
@@ -73,7 +74,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		unsafe ModuleDef GetModule(ReferenceInfo reference) {
-			if (reference.Module == null) {
+			if (reference.Module is null) {
 				var options = new ModuleCreationOptions(moduleContext);
 				options.TryToLoadPdbFromDisk = false;
 				reference.Module = ModuleDefMD.Load((IntPtr)reference.RawData.Pointer, options, reference.RawData.IsFileLayout ? ImageLayout.File : ImageLayout.Memory);

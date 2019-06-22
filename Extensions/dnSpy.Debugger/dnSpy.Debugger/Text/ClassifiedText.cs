@@ -23,7 +23,7 @@ using dnSpy.Contracts.Debugger.Text;
 namespace dnSpy.Debugger.Text {
 	readonly struct ClassifiedTextCollection : IEquatable<ClassifiedTextCollection> {
 		public static readonly ClassifiedTextCollection Empty = default;
-		public bool IsDefault => Result == null;
+		public bool IsDefault => Result is null;
 		public ClassifiedText[] Result { get; }
 
 		public ClassifiedTextCollection(ClassifiedText[] result) => Result = result ?? throw new ArgumentNullException(nameof(result));
@@ -38,7 +38,7 @@ namespace dnSpy.Debugger.Text {
 			var b = other.Result;
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (a.Length != b.Length)
 				return false;

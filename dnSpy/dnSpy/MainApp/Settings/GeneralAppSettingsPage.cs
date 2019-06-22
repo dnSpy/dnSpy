@@ -65,7 +65,7 @@ namespace dnSpy.MainApp.Settings {
 		public override Guid Guid => new Guid("776184ED-10F6-466C-8B66-716936C29A5A");
 		public override double Order => AppSettingsConstants.ORDER_ENVIRONMENT_GENERAL;
 		public override string Title => dnSpy_Resources.GeneralSettings;
-		public override object UIObject => this;
+		public override object? UIObject => this;
 
 		readonly IThemeServiceImpl themeService;
 		readonly IWindowsExplorerIntegrationService windowsExplorerIntegrationService;
@@ -79,7 +79,7 @@ namespace dnSpy.MainApp.Settings {
 
 		public ObservableCollection<ThemeVM> ThemesVM { get; }
 
-		public ThemeVM SelectedThemeVM {
+		public ThemeVM? SelectedThemeVM {
 			get => selectedThemeVM;
 			set {
 				if (selectedThemeVM != value) {
@@ -88,7 +88,7 @@ namespace dnSpy.MainApp.Settings {
 				}
 			}
 		}
-		ThemeVM selectedThemeVM;
+		ThemeVM? selectedThemeVM;
 
 		public bool? WindowsExplorerIntegration {
 			get => windowsExplorerIntegration;
@@ -169,7 +169,7 @@ namespace dnSpy.MainApp.Settings {
 			if (!ThemesVM.Any(a => a.Theme == themeService.Theme))
 				ThemesVM.Add(new ThemeVM(themeService.Theme));
 			SelectedThemeVM = ThemesVM.FirstOrDefault(a => a.Theme == themeService.Theme);
-			Debug.Assert(SelectedThemeVM != null);
+			Debug.Assert(!(SelectedThemeVM is null));
 
 			WindowsExplorerIntegration = windowsExplorerIntegrationService.WindowsExplorerIntegration;
 			AllowMoreThanOneInstance = appSettings.AllowMoreThanOneInstance;
@@ -179,11 +179,11 @@ namespace dnSpy.MainApp.Settings {
 			UseMemoryMappedIO = documentServiceSettings.UseMemoryMappedIO;
 		}
 
-		public override string[] GetSearchStrings() => ThemesVM.Select(a => a.Name).ToArray();
+		public override string[]? GetSearchStrings() => ThemesVM.Select(a => a.Name).ToArray();
 
 		public override void OnApply() => throw new InvalidOperationException();
 		public void OnApply(IAppRefreshSettings appRefreshSettings) {
-			if (SelectedThemeVM != null)
+			if (!(SelectedThemeVM is null))
 				themeService.Theme = SelectedThemeVM.Theme;
 			windowsExplorerIntegrationService.WindowsExplorerIntegration = WindowsExplorerIntegration;
 			appSettings.AllowMoreThanOneInstance = AllowMoreThanOneInstance;

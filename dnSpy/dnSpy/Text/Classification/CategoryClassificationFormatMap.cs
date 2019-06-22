@@ -33,11 +33,11 @@ namespace dnSpy.Text.Classification {
 	sealed class CategoryClassificationFormatMap : IClassificationFormatMap {
 		public TextFormattingRunProperties DefaultTextProperties {
 			get {
-				Debug.Assert(defaultTextFormattingRunProperties != null);
+				Debug.Assert(!(defaultTextFormattingRunProperties is null));
 				return defaultTextFormattingRunProperties;
 			}
 			set {
-				if (value == null)
+				if (value is null)
 					return;
 				if (value == defaultTextFormattingRunProperties)
 					return;
@@ -69,13 +69,13 @@ namespace dnSpy.Text.Classification {
 		readonly Dictionary<IClassificationType, int> toClassificationTypeOrder;
 		readonly Dictionary<string, string> classificationToEditorFormatMapKey;
 		readonly ResourceDictionary defaultResourceDictionary;
-		TextFormattingRunProperties defaultTextFormattingRunProperties;
+		TextFormattingRunProperties? defaultTextFormattingRunProperties;
 
 		sealed class ClassificationInfo {
-			public ResourceDictionary ExplicitResourceDictionary { get; set; }
-			public ResourceDictionary InheritedResourceDictionary { get; set; }
-			public TextFormattingRunProperties ExplicitTextProperties { get; set; }
-			public TextFormattingRunProperties InheritedTextProperties { get; set; }
+			public ResourceDictionary? ExplicitResourceDictionary { get; set; }
+			public ResourceDictionary? InheritedResourceDictionary { get; set; }
+			public TextFormattingRunProperties? ExplicitTextProperties { get; set; }
+			public TextFormattingRunProperties? InheritedTextProperties { get; set; }
 			public Lazy<EditorFormatDefinition, IClassificationFormatMetadata> Lazy { get; }
 			public IClassificationType ClassificationType { get; }
 
@@ -86,9 +86,9 @@ namespace dnSpy.Text.Classification {
 		}
 
 		public CategoryClassificationFormatMap(IThemeService themeService, IEditorFormatMap editorFormatMap, IEditorFormatDefinitionService editorFormatDefinitionService, IClassificationTypeRegistryService classificationTypeRegistryService) {
-			if (editorFormatDefinitionService == null)
+			if (editorFormatDefinitionService is null)
 				throw new ArgumentNullException(nameof(editorFormatDefinitionService));
-			if (classificationTypeRegistryService == null)
+			if (classificationTypeRegistryService is null)
 				throw new ArgumentNullException(nameof(classificationTypeRegistryService));
 			this.themeService = themeService ?? throw new ArgumentNullException(nameof(themeService));
 			this.editorFormatMap = editorFormatMap ?? throw new ArgumentNullException(nameof(editorFormatMap));
@@ -102,8 +102,8 @@ namespace dnSpy.Text.Classification {
 				var e = editorFormatDefinitionService.ClassificationFormatDefinitions[i];
 				foreach (var ctString in e.Metadata.ClassificationTypeNames) {
 					var classificationType = classificationTypeRegistryService.GetClassificationType(ctString);
-					Debug.Assert(classificationType != null);
-					if (classificationType == null)
+					Debug.Assert(!(classificationType is null));
+					if (classificationType is null)
 						continue;
 					Debug.Assert(!toEditorFormatDefinition.ContainsKey(classificationType));
 					if (!toEditorFormatDefinition.ContainsKey(classificationType)) {
@@ -134,8 +134,8 @@ namespace dnSpy.Text.Classification {
 		}
 
 		sealed class ClassificationFormatMetadata : IClassificationFormatMetadata {
-			public IEnumerable<string> After { get; }
-			public IEnumerable<string> Before { get; }
+			public IEnumerable<string>? After { get; }
+			public IEnumerable<string>? Before { get; }
 			public IEnumerable<string> ClassificationTypeNames { get; }
 			public string Name { get; }
 			public bool UserVisible { get; }
@@ -146,7 +146,7 @@ namespace dnSpy.Text.Classification {
 			}
 		}
 
-		ClassificationInfo TryGetClassificationInfo(IClassificationType classificationType, bool canCreate) {
+		ClassificationInfo? TryGetClassificationInfo(IClassificationType classificationType, bool canCreate) {
 			if (!toClassificationInfo.TryGetValue(classificationType, out var info)) {
 				if (!toEditorFormatDefinition.TryGetValue(classificationType, out var lazy)) {
 					if (!canCreate)
@@ -161,25 +161,25 @@ namespace dnSpy.Text.Classification {
 		}
 
 		public TextFormattingRunProperties GetExplicitTextProperties(IClassificationType classificationType) {
-			if (classificationType == null)
+			if (classificationType is null)
 				throw new ArgumentNullException(nameof(classificationType));
 			var info = TryGetClassificationInfo(classificationType, canCreate: false);
-			if (info == null)
+			if (info is null)
 				return TextFormattingRunProperties.CreateTextFormattingRunProperties();
-			if (info.ExplicitTextProperties == null)
+			if (info.ExplicitTextProperties is null)
 				CreateExplicitTextProperties(info);
-			Debug.Assert(info.ExplicitTextProperties != null);
+			Debug.Assert(!(info.ExplicitTextProperties is null));
 			return info.ExplicitTextProperties;
 		}
 
 		public TextFormattingRunProperties GetTextProperties(IClassificationType classificationType) {
-			if (classificationType == null)
+			if (classificationType is null)
 				throw new ArgumentNullException(nameof(classificationType));
 			var info = TryGetClassificationInfo(classificationType, canCreate: true);
-			Debug.Assert(info != null);
-			if (info.InheritedTextProperties == null)
+			Debug.Assert(!(info is null));
+			if (info.InheritedTextProperties is null)
 				CreateInheritedTextProperties(info);
-			Debug.Assert(info.InheritedTextProperties != null);
+			Debug.Assert(!(info.InheritedTextProperties is null));
 			return info.InheritedTextProperties;
 		}
 
@@ -201,9 +201,9 @@ namespace dnSpy.Text.Classification {
 			res.MergedDictionaries.Add(r);
 			for (int i = types.Count - 1; i >= 0; i--) {
 				var info = TryGetClassificationInfo(types[i], canCreate: false);
-				if (info == null)
+				if (info is null)
 					continue;
-				if (info.ExplicitTextProperties == null)
+				if (info.ExplicitTextProperties is null)
 					CreateExplicitTextProperties(info);
 				res.MergedDictionaries.Add(info.ExplicitResourceDictionary);
 			}
@@ -216,14 +216,14 @@ namespace dnSpy.Text.Classification {
 			list.Add(classificationType);
 			var baseTypes = classificationType.BaseTypes.ToArray();
 			if (baseTypes.Length > 1)
-				Array.Sort(baseTypes, classificationTypeComparer ?? (classificationTypeComparer = new ClassificationTypeComparer(this)));
+				Array.Sort(baseTypes, classificationTypeComparer ??= new ClassificationTypeComparer(this));
 			foreach (var bt in baseTypes)
 				AddBaseTypes(list, bt);
 		}
-		ClassificationTypeComparer classificationTypeComparer;
+		ClassificationTypeComparer? classificationTypeComparer;
 
 		public string GetEditorFormatMapKey(IClassificationType classificationType) {
-			if (classificationType == null)
+			if (classificationType is null)
 				throw new ArgumentNullException(nameof(classificationType));
 			if (!classificationToEditorFormatMapKey.TryGetValue(classificationType.Classification, out string key))
 				key = classificationType.Classification;
@@ -231,17 +231,11 @@ namespace dnSpy.Text.Classification {
 		}
 
 		public void AddExplicitTextProperties(IClassificationType classificationType, TextFormattingRunProperties properties) => throw new NotImplementedException();//TODO:
-
 		public void AddExplicitTextProperties(IClassificationType classificationType, TextFormattingRunProperties properties, IClassificationType priority) => throw new NotImplementedException();//TODO:
-
 		public void SetTextProperties(IClassificationType classificationType, TextFormattingRunProperties properties) => throw new NotImplementedException();//TODO:
-
 		public void SetExplicitTextProperties(IClassificationType classificationType, TextFormattingRunProperties properties) => throw new NotImplementedException();//TODO:
-
 		public void SwapPriorities(IClassificationType firstType, IClassificationType secondType) => throw new NotImplementedException();//TODO:
-
 		public void BeginBatchUpdate() => throw new NotImplementedException();//TODO:
-
 		public void EndBatchUpdate() => throw new NotImplementedException();//TODO:
 
 		sealed class ClassificationTypeComparer : IComparer<IClassificationType> {
@@ -252,7 +246,7 @@ namespace dnSpy.Text.Classification {
 			public int Compare(IClassificationType x, IClassificationType y) => GetOrder(y) - GetOrder(x);
 
 			int GetOrder(IClassificationType a) {
-				if (a == null)
+				if (a is null)
 					return -1;
 				if (owner.toClassificationTypeOrder.TryGetValue(a, out int order))
 					return order;

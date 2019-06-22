@@ -69,7 +69,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 		bool DigitSeparators => (options & DbgStackFrameFormatterOptions.DigitSeparators) != 0;
 		bool FullString => (options & DbgStackFrameFormatterOptions.FullString) != 0;
 
-		public CSharpStackFrameFormatter(IDbgTextWriter output, DbgEvaluationInfo evalInfo, LanguageFormatter languageFormatter, DbgStackFrameFormatterOptions options, ValueFormatterOptions valueOptions, CultureInfo cultureInfo) {
+		public CSharpStackFrameFormatter(IDbgTextWriter output, DbgEvaluationInfo evalInfo, LanguageFormatter languageFormatter, DbgStackFrameFormatterOptions options, ValueFormatterOptions valueOptions, CultureInfo? cultureInfo) {
 			this.output = output ?? throw new ArgumentNullException(nameof(output));
 			this.evalInfo = evalInfo ?? throw new ArgumentNullException(nameof(evalInfo));
 			this.languageFormatter = languageFormatter ?? throw new ArgumentNullException(nameof(languageFormatter));
@@ -113,7 +113,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 
 		void FormatReturnType(DmdType type, bool isReadOnly) {
 			if (type.IsByRef && isReadOnly) {
-				type = type.GetElementType();
+				type = type.GetElementType()!;
 				OutputWrite(Keyword_ref, DbgTextColor.Keyword);
 				WriteSpace();
 				OutputWrite(Keyword_readonly, DbgTextColor.Keyword);
@@ -144,7 +144,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 			if (runtime.Dispatcher.CheckAccess())
 				return false;
 			var sig = runtime.GetFrameMethod(evalInfo)?.GetMethodSignature();
-			return sig != null && (sig.GetParameterTypes().Count > 0 || sig.GetVarArgsParameterTypes().Count > 0);
+			return !(sig is null) && (sig.GetParameterTypes().Count > 0 || sig.GetVarArgsParameterTypes().Count > 0);
 		}
 
 		public void Format() {
@@ -171,18 +171,18 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 
 			var runtime = evalInfo.Runtime.GetDotNetRuntime();
 			var method = runtime.GetFrameMethod(evalInfo);
-			if ((object)method == null)
+			if (method is null)
 				OutputWrite("???", DbgTextColor.Error);
 			else {
 				var propInfo = TypeFormatterUtils.TryGetProperty(method);
 				if (propInfo.kind != AccessorKind.None) {
-					Format(method, propInfo.property, propInfo.kind);
+					Format(method, propInfo.property!, propInfo.kind);
 					return;
 				}
 
 				var eventInfo = TypeFormatterUtils.TryGetEvent(method);
 				if (eventInfo.kind != AccessorKind.None) {
-					Format(method, eventInfo.@event, eventInfo.kind);
+					Format(method, eventInfo.@event!, eventInfo.kind);
 					return;
 				}
 
@@ -231,7 +231,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 					var parameterType = parameterTypes[i];
 					WriteRefIfByRef(param);
 					if (parameterType.IsByRef)
-						parameterType = parameterType.GetElementType();
+						parameterType = parameterType.GetElementType()!;
 					FormatType(parameterType);
 				}
 				if (showParameterNames) {
@@ -251,8 +251,8 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 			OutputWrite(closeParen, DbgTextColor.Punctuation);
 		}
 
-		void WriteRefIfByRef(DmdParameterInfo param) {
-			if ((object)param == null)
+		void WriteRefIfByRef(DmdParameterInfo? param) {
+			if (param is null)
 				return;
 			var type = param.ParameterType;
 			if (!type.IsByRef)
@@ -274,7 +274,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 		bool FormatValue(uint index, bool needSpace) {
 			var runtime = evalInfo.Runtime.GetDotNetRuntime();
 			DbgDotNetValueResult parameterValue = default;
-			DbgDotNetValue dereferencedValue = null;
+			DbgDotNetValue? dereferencedValue = null;
 			try {
 				parameterValue = runtime.GetParameterValue(evalInfo, index);
 				if (parameterValue.IsNormalResult) {
@@ -287,9 +287,9 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 
 					var valueFormatter = new CSharpValueFormatter(output, evalInfo, languageFormatter, valueOptions, cultureInfo);
 					var value = parameterValue.Value;
-					if (value.Type.IsByRef)
+					if (value?.Type.IsByRef == true)
 						value = dereferencedValue = value.LoadIndirect().Value;
-					if (value == null)
+					if (value is null)
 						OutputWrite("???", DbgTextColor.Error);
 					else
 						valueFormatter.Format(value);
@@ -350,7 +350,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 				break;
 			}
 
-			if (loc != null) {
+			if (!(loc is null)) {
 				var addr = loc.NativeAddress;
 				if (addr.Address != 0) {
 					WriteCommaSpace();
@@ -406,7 +406,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 				WriteSpace();
 			}
 			if (DeclaringTypes) {
-				FormatType(property.DeclaringType);
+				FormatType(property.DeclaringType!);
 				WritePeriod();
 			}
 			if (property.GetIndexParameters().Count != 0) {
@@ -427,7 +427,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 
 		void Format(DmdMethodBase method, DmdEventInfo @event, AccessorKind accessorKind) {
 			if (DeclaringTypes) {
-				FormatType(@event.DeclaringType);
+				FormatType(@event.DeclaringType!);
 				WritePeriod();
 			}
 			WriteIdentifier(@event.Name, TypeFormatterUtils.GetColor(@event));
@@ -445,12 +445,12 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 
 			var sig = method.GetMethodSignature();
 
-			string[] operatorInfo;
+			string[]? operatorInfo;
 			if (method is DmdConstructorInfo)
 				operatorInfo = null;
 			else
 				operatorInfo = Operators.TryGetOperatorInfo(method.Name);
-			bool isExplicitOrImplicit = operatorInfo != null && (operatorInfo[0] == "explicit" || operatorInfo[0] == "implicit");
+			bool isExplicitOrImplicit = !(operatorInfo is null) && (operatorInfo[0] == "explicit" || operatorInfo[0] == "implicit");
 
 			if (!isExplicitOrImplicit) {
 				if (ReturnTypes && !(method is DmdConstructorInfo)) {
@@ -460,11 +460,11 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 			}
 
 			if (DeclaringTypes) {
-				FormatType(method.DeclaringType);
+				FormatType(method.DeclaringType!);
 				WritePeriod();
 			}
 			if (method is DmdConstructorInfo)
-				WriteIdentifier(TypeFormatterUtils.RemoveGenericTick(method.DeclaringType.MetadataName), TypeFormatterUtils.GetColor(method, canBeModule: false));
+				WriteIdentifier(TypeFormatterUtils.RemoveGenericTick(method.DeclaringType!.MetadataName ?? string.Empty), TypeFormatterUtils.GetColor(method, canBeModule: false));
 			else {
 				if (TypeFormatterUtils.TryGetMethodName(method.Name, out var containingMethodName, out var localFunctionName)) {
 					var methodColor = TypeFormatterUtils.GetColor(method, canBeModule: false);
@@ -490,8 +490,8 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 
 		void WriteOperatorInfoString(string s) => OutputWrite(s, 'a' <= s[0] && s[0] <= 'z' ? DbgTextColor.Keyword : DbgTextColor.Operator);
 
-		void WriteMethodName(DmdMethodBase method, string name, string[] operatorInfo) {
-			if (operatorInfo != null) {
+		void WriteMethodName(DmdMethodBase method, string name, string[]? operatorInfo) {
+			if (!(operatorInfo is null)) {
 				for (int i = 0; i < operatorInfo.Length; i++) {
 					if (i > 0)
 						WriteSpace();

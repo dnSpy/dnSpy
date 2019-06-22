@@ -39,7 +39,7 @@ namespace dnSpy.Contracts.Bookmarks {
 		/// </summary>
 		/// <param name="section">Serialized section</param>
 		/// <returns></returns>
-		public abstract BookmarkLocation Deserialize(ISettingsSection section);
+		public abstract BookmarkLocation? Deserialize(ISettingsSection? section);
 	}
 
 	/// <summary>Metadata</summary>

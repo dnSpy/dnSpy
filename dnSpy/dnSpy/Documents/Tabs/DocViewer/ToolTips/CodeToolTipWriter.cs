@@ -71,21 +71,23 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 			if (!syntaxHighlight)
 				color = BoxedTextColor.Text;
 			var classificationType = ColorUtils.GetClassificationType(classificationTypeRegistryService, themeClassificationTypeService, color);
-			if (classificationType == null) {
+			if (classificationType is null) {
 				var textColor = color as TextColor? ?? TextColor.Text;
 				classificationType = themeClassificationTypeService.GetClassificationType(textColor);
 			}
 			return classificationFormatMap.GetTextProperties(classificationType);
 		}
 
-		void Add(object color, string text) {
+		void Add(object color, string? text) {
+			if (text is null)
+				return;
 			result.Add(new ColorAndText(color, text));
 			sb.Append(text);
 		}
 
 		public void Write(IClassificationType classificationType, string text) => Add(classificationType, text);
-		public void Write(object color, string text) => Add(color, text);
-		public void Write(TextColor color, string text) => Add(color.Box(), text);
+		public void Write(object color, string? text) => Add(color, text);
+		public void Write(TextColor color, string? text) => Add(color.Box(), text);
 
 		bool needsNewLine = false;
 
@@ -105,29 +107,29 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		void InitializeNeedsNewLine() =>
 			needsNewLine = sb.Length == 1 || (sb.Length >= 2 && (sb[sb.Length - 2] != '\r' || sb[sb.Length - 1] != '\n'));
 
-		public bool WriteXmlDoc(string xmlDoc) {
+		public bool WriteXmlDoc(string? xmlDoc) {
 			InitializeNeedsNewLine();
 			bool res = XmlDocRenderer.WriteXmlDoc(this, xmlDoc);
 			needsNewLine = false;
 			return res;
 		}
 
-		public bool WriteXmlDocParameter(string xmlDoc, string paramName) {
+		public bool WriteXmlDocParameter(string? xmlDoc, string? paramName) {
 			InitializeNeedsNewLine();
 			bool res = WriteXmlDoc(this, xmlDoc, paramName, "param");
 			needsNewLine = false;
 			return res;
 		}
 
-		public bool WriteXmlDocGeneric(string xmlDoc, string gpName) {
+		public bool WriteXmlDocGeneric(string? xmlDoc, string? gpName) {
 			InitializeNeedsNewLine();
 			bool res = WriteXmlDoc(this, xmlDoc, gpName, "typeparam");
 			needsNewLine = false;
 			return res;
 		}
 
-		static bool WriteXmlDoc(IXmlDocOutput output, string xmlDoc, string name, string xmlElemName) {
-			if (xmlDoc == null || name == null)
+		static bool WriteXmlDoc(IXmlDocOutput output, string? xmlDoc, string? name, string xmlElemName) {
+			if (xmlDoc is null || name is null)
 				return false;
 			try {
 				var xml = XDocument.Load(new StringReader("<docroot>" + xmlDoc + "</docroot>"), LoadOptions.None);
@@ -151,15 +153,15 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 					switch (xelem.Name.ToString().ToUpperInvariant()) {
 					case "SEE":
 						var cref = xelem.Attribute("cref");
-						if (cref != null)
+						if (!(cref is null))
 							output.Write(XmlDocRenderer.GetCref((string)cref), BoxedTextColor.Text);
 						var langword = xelem.Attribute("langword");
-						if (langword != null)
+						if (!(langword is null))
 							output.Write(((string)langword).Trim(), BoxedTextColor.Keyword);
 						break;
 					case "PARAMREF":
 						var nameAttr = xml.Attribute("name");
-						if (nameAttr != null)
+						if (!(nameAttr is null))
 							output.Write(((string)nameAttr).Trim(), BoxedTextColor.Parameter);
 						break;
 					case "BR":

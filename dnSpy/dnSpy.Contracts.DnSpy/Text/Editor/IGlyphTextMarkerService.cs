@@ -121,7 +121,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// </summary>
 		/// <param name="textView">Text view</param>
 		/// <param name="map">New map or null if none</param>
-		void SetDotNetSpanMap(ITextView textView, IDotNetSpanMap map);
+		void SetDotNetSpanMap(ITextView textView, IDotNetSpanMap? map);
 
 		/// <summary>
 		/// Adds a marker
@@ -137,7 +137,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="handler">Glyph handler or null</param>
 		/// <param name="textViewFilter">Filters out non-supported text views</param>
 		/// <returns></returns>
-		IGlyphTextMethodMarker AddMarker(ModuleTokenId tokenId, uint ilOffset, ImageReference? glyphImage, string markerTypeName, string selectedMarkerTypeName, IClassificationType classificationType, int zIndex, object tag = null, IGlyphTextMarkerHandler handler = null, Func<ITextView, bool> textViewFilter = null);
+		IGlyphTextMethodMarker AddMarker(ModuleTokenId tokenId, uint ilOffset, ImageReference? glyphImage, string? markerTypeName, string? selectedMarkerTypeName, IClassificationType? classificationType, int zIndex, object? tag = null, IGlyphTextMarkerHandler? handler = null, Func<ITextView, bool>? textViewFilter = null);
 
 		/// <summary>
 		/// Adds a marker
@@ -152,7 +152,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="handler">Glyph handler or null</param>
 		/// <param name="textViewFilter">Filters out non-supported text views</param>
 		/// <returns></returns>
-		IGlyphTextMarker AddMarker(GlyphTextMarkerLocationInfo location, ImageReference? glyphImage, string markerTypeName, string selectedMarkerTypeName, IClassificationType classificationType, int zIndex, object tag = null, IGlyphTextMarkerHandler handler = null, Func<ITextView, bool> textViewFilter = null);
+		IGlyphTextMarker AddMarker(GlyphTextMarkerLocationInfo location, ImageReference? glyphImage, string? markerTypeName, string? selectedMarkerTypeName, IClassificationType? classificationType, int zIndex, object? tag = null, IGlyphTextMarkerHandler? handler = null, Func<ITextView, bool>? textViewFilter = null);
 
 		/// <summary>
 		/// Removes a marker
@@ -195,7 +195,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="marker">Marker</param>
 		/// <param name="span">Span of the marker in the <see cref="ITextView"/></param>
 		public GlyphTextMarkerAndSpan(IGlyphTextMarker marker, SnapshotSpan span) {
-			if (span.Snapshot == null)
+			if (span.Snapshot is null)
 				throw new ArgumentException();
 			Marker = marker ?? throw new ArgumentNullException(nameof(marker));
 			Span = span;
@@ -214,17 +214,17 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <summary>
 		/// Gets the name of the marker format definition or null if none
 		/// </summary>
-		string MarkerTypeName { get; }
+		string? MarkerTypeName { get; }
 
 		/// <summary>
 		/// Gets the name of the marker format definition to use whenever the caret is inside the span; it can be null
 		/// </summary>
-		string SelectedMarkerTypeName { get; }
+		string? SelectedMarkerTypeName { get; }
 
 		/// <summary>
 		/// Gets the classification type or null if none
 		/// </summary>
-		IClassificationType ClassificationType { get; }
+		IClassificationType? ClassificationType { get; }
 
 		/// <summary>
 		/// Gets the z-index of <see cref="GlyphImageReference"/> and <see cref="MarkerTypeName"/>, eg. <see cref="GlyphTextMarkerServiceZIndexes.EnabledBreakpoint"/>
@@ -234,7 +234,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <summary>
 		/// Gets the user data
 		/// </summary>
-		object Tag { get; }
+		object? Tag { get; }
 	}
 
 	/// <summary>
@@ -301,7 +301,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <summary>
 		/// Gets the name of the marker format definition to use whenever the caret is inside the span; it can be null (<see cref="IGlyphTextMarker.SelectedMarkerTypeName"/>)
 		/// </summary>
-		string SelectedMarkerTypeName { get; }
+		string? SelectedMarkerTypeName { get; }
 
 		/// <summary>
 		/// Gets the Z-index (<see cref="IGlyphTextMarker.ZIndex"/>)
@@ -321,7 +321,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <summary>
 		/// Gets the name of the marker format definition to use whenever the caret is inside the span; it can be null (<see cref="IGlyphTextMarker.SelectedMarkerTypeName"/>)
 		/// </summary>
-		public string SelectedMarkerTypeName { get; }
+		public string? SelectedMarkerTypeName { get; }
 
 		/// <summary>
 		/// Gets the Z-index (<see cref="IGlyphTextMarker.ZIndex"/>)
@@ -334,7 +334,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="markerTypeName">Name of a <see cref="MarkerFormatDefinition"/> (or an <see cref="EditorFormatDefinition"/>) (<see cref="IGlyphTextMarker.MarkerTypeName"/>)</param>
 		/// <param name="selectedMarkerTypeName">Name of a <see cref="MarkerFormatDefinition"/> (or an <see cref="EditorFormatDefinition"/>) (<see cref="IGlyphTextMarker.SelectedMarkerTypeName"/>)</param>
 		/// <param name="zIndex">Z-index of this text marker (<see cref="IGlyphTextMarker.ZIndex"/>)</param>
-		public GlyphTextMarkerTag(string markerTypeName, string selectedMarkerTypeName, int zIndex) {
+		public GlyphTextMarkerTag(string markerTypeName, string? selectedMarkerTypeName, int zIndex) {
 			MarkerTypeName = markerTypeName ?? throw new ArgumentNullException(nameof(markerTypeName));
 			SelectedMarkerTypeName = selectedMarkerTypeName;
 			ZIndex = zIndex;

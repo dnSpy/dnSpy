@@ -31,11 +31,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		MethodCache(DmdAppDomain reflectionAppDomain) =>
 			engine = DbgEngineImpl.TryGetEngine(reflectionAppDomain.Runtime.GetDebuggerRuntime()) ?? throw new InvalidOperationException();
 
-		public static MethodMirror GetMethod(DmdMethodBase method, MonoTypeLoader monoTypeLoader) =>
+		public static MethodMirror GetMethod(DmdMethodBase method, MonoTypeLoader? monoTypeLoader) =>
 			GetOrCreate(method.AppDomain).GetMethodCore(method, monoTypeLoader);
 
 		static MethodCache GetOrCreate(DmdAppDomain reflectionAppDomain) {
-			if (reflectionAppDomain.TryGetData(out MethodCache methodCache))
+			if (reflectionAppDomain.TryGetData(out MethodCache? methodCache))
 				return methodCache;
 			return GetOrCreateMethodCacheCore(reflectionAppDomain);
 
@@ -43,17 +43,17 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				reflectionAppDomain2.GetOrCreateData(() => new MethodCache(reflectionAppDomain2));
 		}
 
-		MethodMirror GetMethodCore(DmdMethodBase method, MonoTypeLoader monoTypeLoader) {
-			MethodMirror monoMethod;
+		MethodMirror GetMethodCore(DmdMethodBase method, MonoTypeLoader? monoTypeLoader) {
+			MethodMirror? monoMethod;
 
 			var mi = method as DmdMethodInfo;
-			if ((object)mi != null && mi.IsConstructedGenericMethod) {
+			if (!(mi is null) && mi.IsConstructedGenericMethod) {
 				if (toMonoMethod.TryGetValue(method, out monoMethod))
 					return monoMethod;
 				if (!engine.MonoVirtualMachine.Version.AtLeast(2, 24))
 					throw new InvalidOperationException();
 				monoMethod = TryGetMethodCore2(mi.GetGenericMethodDefinition(), monoTypeLoader);
-				if (monoMethod != null) {
+				if (!(monoMethod is null)) {
 					var genArgs = mi.GetGenericArguments();
 					var monoGenArgs = new TypeMirror[genArgs.Count];
 					for (int i = 0; i < monoGenArgs.Length; i++)
@@ -65,21 +65,21 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			}
 			else {
 				monoMethod = TryGetMethodCore2(method, monoTypeLoader);
-				if (monoMethod != null)
+				if (!(monoMethod is null))
 					return monoMethod;
 			}
 
 			throw new InvalidOperationException();
 		}
 
-		MethodMirror TryGetMethodCore2(DmdMethodBase method, MonoTypeLoader monoTypeLoader) {
+		MethodMirror? TryGetMethodCore2(DmdMethodBase method, MonoTypeLoader? monoTypeLoader) {
 			if (toMonoMethod.TryGetValue(method, out var monoMethod))
 				return monoMethod;
 
-			var monoType = MonoDebugTypeCreator.GetType(engine, method.ReflectedType, monoTypeLoader);
-			var methodDeclType = method.ReflectedType;
+			var monoType = MonoDebugTypeCreator.GetType(engine, method.ReflectedType!, monoTypeLoader);
+			DmdType? methodDeclType = method.ReflectedType!;
 			while (methodDeclType != method.DeclaringType) {
-				methodDeclType = methodDeclType.BaseType;
+				methodDeclType = methodDeclType!.BaseType ?? throw new InvalidOperationException();
 				monoType = monoType.BaseType ?? MonoDebugTypeCreator.GetType(engine, method.AppDomain.System_Object, monoTypeLoader);
 			}
 

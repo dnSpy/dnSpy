@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public abstract IAssemblyResolver AssemblyResolver { get; }
 		public abstract IEnumerable<IDsDocument> Documents { get; }
 		public abstract IEnumerable<DocumentInfo> DocumentInfos { get; }
-		public abstract IDsDocument Find(IDsDocumentNameKey key);
+		public abstract IDsDocument? Find(IDsDocumentNameKey key);
 		public abstract IDsDocument GetOrAdd(IDsDocument document);
 	}
 
@@ -71,7 +71,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			get {
 				foreach (var doc in Documents) {
 					var info = GetDocumentInfo(doc);
-					if (info != null)
+					if (!(info is null))
 						yield return info.Value;
 				}
 			}
@@ -82,12 +82,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			if (dnDoc is IModuleIdHolder idHolder)
 				return new DocumentInfo(doc, idHolder.ModuleId, dnDoc.IsActive);
 			var mod = doc.ModuleDef;
-			if (mod != null && File.Exists(mod.Location))
+			if (!(mod is null) && File.Exists(mod.Location))
 				return new DocumentInfo(doc, ModuleId.CreateFromFile(mod), isActive: dnDoc?.IsActive ?? true);
 			return null;
 		}
 
-		public override IDsDocument Find(IDsDocumentNameKey key) => documentService.Find(key);
+		public override IDsDocument? Find(IDsDocumentNameKey key) => documentService.Find(key);
 		public override IDsDocument GetOrAdd(IDsDocument document) => documentService.GetOrAdd(document);
 	}
 }

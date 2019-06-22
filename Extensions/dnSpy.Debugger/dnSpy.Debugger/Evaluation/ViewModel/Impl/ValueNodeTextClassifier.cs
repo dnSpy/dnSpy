@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		ValueNodeTextClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) =>
 			debuggerValueChangedHighlightClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.DebuggerValueChangedHighlight);
 
-		public ITextClassifier Create(IContentType contentType) => new ValueNodeTextClassifier(debuggerValueChangedHighlightClassificationType);
+		public ITextClassifier? Create(IContentType contentType) => new ValueNodeTextClassifier(debuggerValueChangedHighlightClassificationType);
 	}
 
 	sealed class ValueNodeTextClassifier : ITextClassifier {
@@ -46,7 +46,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 		public IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context) {
 			var classifierContext = context as ValueNodeTextClassifierContext;
-			if (classifierContext == null)
+			if (classifierContext is null)
 				yield break;
 			if (classifierContext.TextChanged)
 				yield return new TextClassificationTag(classifierContext.TextChangedSpan, debuggerValueChangedHighlightClassificationType);

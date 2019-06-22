@@ -46,28 +46,28 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			this.debuggerSettings = debuggerSettings;
 		}
 
-		public override ModuleDef TryGetMetadata(DbgModule module, DbgLoadModuleOptions options) {
-			if (module == null)
+		public override ModuleDef? TryGetMetadata(DbgModule module, DbgLoadModuleOptions options) {
+			if (module is null)
 				throw new ArgumentNullException(nameof(module));
 
 			if (UseMemoryModules || module.IsDynamic || module.IsInMemory || (options & DbgLoadModuleOptions.ForceMemory) != 0)
 				return dbgInMemoryModuleService.LoadModule(module);
 
 			var mod = dbgInMemoryModuleService.FindModule(module);
-			if (mod != null)
+			if (!(mod is null))
 				return mod;
 
 			var id = dbgModuleIdProviderService.GetModuleId(module);
-			if (id != null)
+			if (!(id is null))
 				return TryGetMetadata(id.Value, options);
 
 			return null;
 		}
 
-		ModuleDef LoadNonDiskFile(ModuleId moduleId, DbgLoadModuleOptions options) {
+		ModuleDef? LoadNonDiskFile(ModuleId moduleId, DbgLoadModuleOptions options) {
 			if (UseMemoryModules || moduleId.IsDynamic || moduleId.IsInMemory || (options & DbgLoadModuleOptions.ForceMemory) != 0) {
 				var module = dbgModuleIdProviderService.GetModule(moduleId);
-				if (module != null)
+				if (!(module is null))
 					return dbgInMemoryModuleService.LoadModule(module);
 			}
 
@@ -75,9 +75,9 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		// Priority order: 1) active in-memory/dynamic module, 2) active module, 3) other module
-		ModuleDef LoadExisting(ModuleId moduleId) {
-			ModuleDef foundModule = null;
-			ModuleDef activeModule = null;
+		ModuleDef? LoadExisting(ModuleId moduleId) {
+			ModuleDef? foundModule = null;
+			ModuleDef? activeModule = null;
 			foreach (var info in dsDocumentProvider.DocumentInfos) {
 				if (info.Id != moduleId)
 					continue;
@@ -92,9 +92,9 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return activeModule ?? foundModule;
 		}
 
-		public override ModuleDef TryGetMetadata(ModuleId moduleId, DbgLoadModuleOptions options) {
+		public override ModuleDef? TryGetMetadata(ModuleId moduleId, DbgLoadModuleOptions options) {
 			var mod = LoadNonDiskFile(moduleId, options) ?? LoadExisting(moduleId);
-			if (mod != null)
+			if (!(mod is null))
 				return mod;
 
 			if (moduleId.IsDynamic || moduleId.IsInMemory)
@@ -108,9 +108,9 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			bool isAutoLoaded = (options & DbgLoadModuleOptions.AutoLoaded) != 0;
 			if (!string.IsNullOrEmpty(asmFilename)) {
 				var document = documentService.TryGetOrCreate(DsDocumentInfo.CreateDocument(asmFilename), isAutoLoaded);
-				if (document == null)
+				if (document is null)
 					document = documentService.Resolve(new AssemblyNameInfo(moduleId.AssemblyFullName), null);
-				if (document != null) {
+				if (!(document is null)) {
 					// Common case is a single-file assembly or first module of a multifile assembly
 					if (asmFilename.Equals(moduleFilename, StringComparison.OrdinalIgnoreCase))
 						return document.ModuleDef;
@@ -125,7 +125,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return documentService.TryGetOrCreate(DsDocumentInfo.CreateDocument(moduleFilename), isAutoLoaded)?.ModuleDef;
 		}
 
-		static string GetAssemblyFilename(string moduleFilename, string assemblyFullName, bool moduleNameOnly) {
+		static string? GetAssemblyFilename(string moduleFilename, string assemblyFullName, bool moduleNameOnly) {
 			if (string.IsNullOrEmpty(moduleFilename) || (string.IsNullOrEmpty(assemblyFullName) && !moduleNameOnly))
 				return null;
 			if (moduleNameOnly)

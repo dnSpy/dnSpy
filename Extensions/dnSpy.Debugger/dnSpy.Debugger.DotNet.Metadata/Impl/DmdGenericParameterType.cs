@@ -25,22 +25,22 @@ using System.Threading;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	abstract class DmdGenericParameterType : DmdTypeBase {
-		public override DmdTypeSignatureKind TypeSignatureKind => (object)declaringType != null ? DmdTypeSignatureKind.TypeGenericParameter : DmdTypeSignatureKind.MethodGenericParameter;
+		public override DmdTypeSignatureKind TypeSignatureKind => !(declaringType is null) ? DmdTypeSignatureKind.TypeGenericParameter : DmdTypeSignatureKind.MethodGenericParameter;
 		public sealed override DmdTypeScope TypeScope => new DmdTypeScope(Module);
-		public sealed override DmdMethodBase DeclaringMethod => declaringMethod;
-		public sealed override DmdType DeclaringType => declaringType;
-		public override DmdModule Module => ((DmdMemberInfo)declaringType ?? declaringMethod).Module;
-		public sealed override string MetadataNamespace => declaringType?.MetadataNamespace;
-		public sealed override StructLayoutAttribute StructLayoutAttribute => null;
+		public sealed override DmdMethodBase? DeclaringMethod => declaringMethod;
+		public sealed override DmdType? DeclaringType => declaringType;
+		public override DmdModule Module => ((DmdMemberInfo?)declaringType ?? declaringMethod)!.Module;
+		public sealed override string? MetadataNamespace => declaringType?.MetadataNamespace;
+		public sealed override StructLayoutAttribute? StructLayoutAttribute => null;
 		public sealed override DmdGenericParameterAttributes GenericParameterAttributes { get; }
 		public sealed override DmdTypeAttributes Attributes => DmdTypeAttributes.Public;
 		public sealed override int GenericParameterPosition { get; }
-		public sealed override string MetadataName { get; }
+		public sealed override string? MetadataName { get; }
 		public sealed override int MetadataToken => (int)(0x2A000000 + rid);
 		public sealed override bool IsMetadataReference => false;
 		internal override bool HasTypeEquivalence => false;
 
-		public sealed override DmdType BaseType {
+		public sealed override DmdType? BaseType {
 			get {
 				var baseType = AppDomain.System_Object;
 				foreach (var gpcType in GetGenericParameterConstraints()) {
@@ -58,22 +58,22 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		protected uint Rid => rid;
 		readonly uint rid;
-		readonly DmdTypeBase declaringType;
-		readonly DmdMethodBase declaringMethod;
+		readonly DmdTypeBase? declaringType;
+		readonly DmdMethodBase? declaringMethod;
 
-		protected DmdGenericParameterType(uint rid, DmdTypeBase declaringType, string name, int position, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier> customModifiers)
+		protected DmdGenericParameterType(uint rid, DmdTypeBase declaringType, string? name, int position, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier>? customModifiers)
 			: this(rid, declaringType, null, name, position, attributes, customModifiers) {
-			if ((object)declaringType == null)
+			if (declaringType is null)
 				throw new ArgumentNullException(nameof(declaringType));
 		}
 
-		protected DmdGenericParameterType(uint rid, DmdMethodBase declaringMethod, string name, int position, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier> customModifiers)
+		protected DmdGenericParameterType(uint rid, DmdMethodBase declaringMethod, string? name, int position, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier>? customModifiers)
 			: this(rid, null, declaringMethod, name, position, attributes, customModifiers) {
-			if ((object)declaringMethod == null)
+			if (declaringMethod is null)
 				throw new ArgumentNullException(nameof(declaringMethod));
 		}
 
-		DmdGenericParameterType(uint rid, DmdTypeBase declaringType, DmdMethodBase declaringMethod, string name, int position, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier> customModifiers) : base(customModifiers) {
+		DmdGenericParameterType(uint rid, DmdTypeBase? declaringType, DmdMethodBase? declaringMethod, string? name, int position, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier>? customModifiers) : base(customModifiers) {
 			this.rid = rid;
 			this.declaringType = declaringType;
 			this.declaringMethod = declaringMethod;
@@ -82,7 +82,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			GenericParameterAttributes = attributes;
 		}
 
-		protected DmdGenericParameterType(int position, IList<DmdCustomModifier> customModifiers) : base(customModifiers) {
+		protected DmdGenericParameterType(int position, IList<DmdCustomModifier>? customModifiers) : base(customModifiers) {
 			rid = 0;
 			declaringType = null;
 			declaringMethod = null;
@@ -92,22 +92,22 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		public sealed override ReadOnlyCollection<DmdType> GetGenericParameterConstraints() {
-			if (__genericParameterConstraints_DONT_USE != null)
+			if (!(__genericParameterConstraints_DONT_USE is null))
 				return __genericParameterConstraints_DONT_USE;
 			var res = CreateGenericParameterConstraints();
 			Interlocked.CompareExchange(ref __genericParameterConstraints_DONT_USE, ReadOnlyCollectionHelpers.Create(res), null);
-			return __genericParameterConstraints_DONT_USE;
+			return __genericParameterConstraints_DONT_USE!;
 		}
-		volatile ReadOnlyCollection<DmdType> __genericParameterConstraints_DONT_USE;
-		protected abstract DmdType[] CreateGenericParameterConstraints();
+		volatile ReadOnlyCollection<DmdType>? __genericParameterConstraints_DONT_USE;
+		protected abstract DmdType[]? CreateGenericParameterConstraints();
 
-		protected override DmdType ResolveNoThrowCore() => this;
+		protected override DmdType? ResolveNoThrowCore() => this;
 
 		public sealed override bool IsFullyResolved => true;
-		public sealed override DmdTypeBase FullResolve() => this;
+		public sealed override DmdTypeBase? FullResolve() => this;
 
-		public override DmdType[] ReadDeclaredInterfaces() {
-			var list = ObjectPools.AllocListOfType();
+		public override DmdType[]? ReadDeclaredInterfaces() {
+			List<DmdType>? list = ObjectPools.AllocListOfType();
 			foreach (var gpcType in GetGenericParameterConstraints()) {
 				if (gpcType.IsInterface)
 					list.Add(gpcType);

@@ -24,20 +24,20 @@ namespace dnSpy.Extension {
 		/// <summary>
 		/// Minimum OS version (<see cref="Environment.OSVersion"/>'s <see cref="OperatingSystem.Version"/> property) or null if any version
 		/// </summary>
-		public Version OSVersion { get; set; }
+		public Version? OSVersion { get; set; }
 
 		/// <summary>
 		/// Minimum .NET Framework version (<see cref="Environment.Version"/>) or null if any version
 		/// </summary>
-		public Version FrameworkVersion { get; set; }
+		public Version? FrameworkVersion { get; set; }
 
 		/// <summary>
 		/// Minimum dnSpy version or null if any version
 		/// </summary>
-		public Version AppVersion { get; set; }
+		public Version? AppVersion { get; set; }
 
-		public bool IsSupportedOSversion(Version version) => OSVersion == null || OSVersion <= version;
-		public bool IsSupportedFrameworkVersion(Version version) => FrameworkVersion == null || FrameworkVersion <= version;
-		public bool IsSupportedAppVersion(Version version) => AppVersion == null || AppVersion <= version;
+		public bool IsSupportedOSversion(Version version) => OSVersion is null || OSVersion <= version;
+		public bool IsSupportedFrameworkVersion(Version version) => FrameworkVersion is null || FrameworkVersion <= version;
+		public bool IsSupportedAppVersion(Version version) => AppVersion is null || AppVersion <= version;
 	}
 }

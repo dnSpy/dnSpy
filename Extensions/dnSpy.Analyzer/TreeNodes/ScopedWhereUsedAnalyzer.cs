@@ -48,8 +48,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, PropertyDef property, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction)
 			: this(documentService, property.DeclaringType, typeAnalysisFunction) {
-			Accessibility getterAccessibility = (property.GetMethod == null) ? Accessibility.Private : GetMethodAccessibility(property.GetMethod);
-			Accessibility setterAccessibility = (property.SetMethod == null) ? Accessibility.Private : GetMethodAccessibility(property.SetMethod);
+			Accessibility getterAccessibility = (property.GetMethod is null) ? Accessibility.Private : GetMethodAccessibility(property.GetMethod);
+			Accessibility setterAccessibility = (property.SetMethod is null) ? Accessibility.Private : GetMethodAccessibility(property.SetMethod);
 			memberAccessibility = (Accessibility)Math.Max((int)getterAccessibility, (int)setterAccessibility);
 		}
 
@@ -86,7 +86,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		Accessibility GetMethodAccessibility(MethodDef method) {
-			if (method == null)
+			if (method is null)
 				return 0;
 			Accessibility accessibility;
 			switch (method.Attributes & MethodAttributes.MemberAccessMask) {
@@ -232,19 +232,19 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		IEnumerable<ModuleDef> GetReferencingModules(ModuleDef mod, CancellationToken ct) {
 			var asm = mod.Assembly;
-			if (asm == null) {
+			if (asm is null) {
 				yield return mod;
 				yield break;
 			}
 			foreach (var m in mod.Assembly.Modules)
 				yield return m;
 
-			var assemblies = documentService.GetDocuments().Where(a => a.AssemblyDef != null);
+			var assemblies = documentService.GetDocuments().Where(a => !(a.AssemblyDef is null));
 
 			foreach (var assembly in assemblies) {
 				ct.ThrowIfCancellationRequested();
 				bool found = false;
-				foreach (var reference in assembly.AssemblyDef.Modules.SelectMany(module => module.GetAssemblyRefs())) {
+				foreach (var reference in assembly.AssemblyDef!.Modules.SelectMany(module => module.GetAssemblyRefs())) {
 					if (AssemblyNameComparer.NameOnly.CompareTo(asm, reference) == 0) {
 						found = true;
 						break;
@@ -259,7 +259,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		IEnumerable<ModuleDef> GetModuleAndAnyFriends(ModuleDef mod, CancellationToken ct) {
 			var asm = mod.Assembly;
-			if (asm == null) {
+			if (asm is null) {
 				yield return mod;
 				yield break;
 			}
@@ -274,18 +274,18 @@ namespace dnSpy.Analyzer.TreeNodes {
 					if (attribute.ConstructorArguments.Count == 0)
 						continue;
 					string assemblyName = attribute.ConstructorArguments[0].Value as UTF8String;
-					if (assemblyName == null)
+					if (assemblyName is null)
 						continue;
 					assemblyName = assemblyName.Split(',')[0]; // strip off any public key info
 					friendAssemblies.Add(assemblyName);
 				}
 
 				if (friendAssemblies.Count > 0) {
-					var assemblies = documentService.GetDocuments().Where(a => a.AssemblyDef != null);
+					var assemblies = documentService.GetDocuments().Where(a => !(a.AssemblyDef is null));
 
 					foreach (var assembly in assemblies) {
 						ct.ThrowIfCancellationRequested();
-						if (friendAssemblies.Contains(assembly.AssemblyDef.Name) && AssemblyReferencesScopeType(assembly.AssemblyDef)) {
+						if (friendAssemblies.Contains(assembly.AssemblyDef!.Name) && AssemblyReferencesScopeType(assembly.AssemblyDef)) {
 							foreach (var m in assembly.AssemblyDef.Modules)
 								yield return m;
 						}

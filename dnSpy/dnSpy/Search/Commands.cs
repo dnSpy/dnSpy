@@ -62,7 +62,7 @@ namespace dnSpy.Search {
 			: base(SearchCommandLoader.SearchRoutedCommand) {
 		}
 
-		public override string GetToolTip(IToolBarItemContext context) =>
+		public override string? GetToolTip(IToolBarItemContext context) =>
 			ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.SearchAssembliesToolBarToolTip, dnSpy_Resources.ShortCutKeyCtrlShiftK);
 	}
 
@@ -84,14 +84,14 @@ namespace dnSpy.Search {
 
 		public override void Execute(IMenuItemContext context) {
 			var res = GetReference(context);
-			if (res == null)
+			if (res is null)
 				return;
 			searchService.Value.FollowResult(res, newTab);
 		}
 
-		public override bool IsVisible(IMenuItemContext context) => GetReference(context) != null;
+		public override bool IsVisible(IMenuItemContext context) => !(GetReference(context) is null);
 
-		ISearchResult GetReference(IMenuItemContext context) {
+		ISearchResult? GetReference(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_SEARCH_GUID))
 				return null;
 			return context.Find<ISearchResult>();

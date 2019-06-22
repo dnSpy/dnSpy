@@ -22,11 +22,11 @@ using dnlib.DotNet;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class ParamDefOptions {
-		public UTF8String Name;
+		public UTF8String? Name;
 		public ushort Sequence;
 		public ParamAttributes Attributes;
-		public Constant Constant;
-		public MarshalType MarshalType;
+		public Constant? Constant;
+		public MarshalType? MarshalType;
 		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
 
 		public ParamDefOptions() {

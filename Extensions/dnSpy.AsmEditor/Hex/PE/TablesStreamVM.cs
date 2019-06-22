@@ -232,7 +232,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			field.Add(new BooleanHexBitField("Reserved 3F", 63));
 		}
 
-		public MetadataTableVM TryGetMetadataTable(Table table) {
+		public MetadataTableVM? TryGetMetadataTable(Table table) {
 			if ((uint)table >= (uint)metadataTables.Length)
 				return null;
 			return metadataTables[(int)table];

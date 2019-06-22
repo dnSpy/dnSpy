@@ -25,21 +25,21 @@ using dnSpy.Contracts.Documents.TreeView;
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	[ExportReferenceDocumentTabContentProvider(Order = TabConstants.ORDER_CONTENTPROVIDER_HEXTOKENREF)]
 	sealed class TokenReferenceDocumentTabContentProvider : IReferenceDocumentTabContentProvider {
-		public DocumentTabReferenceResult Create(IDocumentTabService documentTabService, DocumentTabContent sourceContent, object @ref) {
+		public DocumentTabReferenceResult? Create(IDocumentTabService documentTabService, DocumentTabContent? sourceContent, object? @ref) {
 			var tokRef = @ref as TokenReference;
-			if (tokRef == null)
+			if (tokRef is null)
 				tokRef = (@ref as TextReference)?.Reference as TokenReference;
-			if (tokRef != null)
+			if (!(tokRef is null))
 				return Create(tokRef, documentTabService);
 			return null;
 		}
 
-		DocumentTabReferenceResult Create(TokenReference tokRef, IDocumentTabService documentTabService) {
+		DocumentTabReferenceResult? Create(TokenReference tokRef, IDocumentTabService documentTabService) {
 			var node = HexDocumentTreeNodeDataFinder.FindNode(documentTabService.DocumentTreeView, tokRef);
-			if (node == null)
+			if (node is null)
 				return null;
 			var content = documentTabService.TryCreateContent(new DocumentTreeNodeData[] { node });
-			if (content == null)
+			if (content is null)
 				return null;
 			return new DocumentTabReferenceResult(content);
 		}

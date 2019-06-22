@@ -52,7 +52,7 @@ namespace dnSpy.Contracts.Debugger.Attach {
 		/// <summary>
 		/// Checks if it's a valid process. May be null.
 		/// </summary>
-		public Func<Process, bool> IsValidProcess { get; }
+		public Func<Process, bool>? IsValidProcess { get; }
 
 		/// <summary>
 		/// Constructor
@@ -66,7 +66,7 @@ namespace dnSpy.Contracts.Debugger.Attach {
 		/// <param name="processIds">All valid process ids or null/empty if any process id is valid</param>
 		/// <param name="isValidProcess">Checks if it's a valid process. May be null.</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public AttachProgramOptionsProviderContext(int[] processIds, Func<Process, bool> isValidProcess, CancellationToken cancellationToken) {
+		public AttachProgramOptionsProviderContext(int[]? processIds, Func<Process, bool>? isValidProcess, CancellationToken cancellationToken) {
 			ProcessIds = processIds ?? Array.Empty<int>();
 			IsValidProcess = isValidProcess;
 			CancellationToken = cancellationToken;

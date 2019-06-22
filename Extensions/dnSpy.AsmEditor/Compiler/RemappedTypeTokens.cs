@@ -27,13 +27,13 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly Dictionary<uint, uint> dict;
 		uint minNestedToken, maxNestedToken;
 		bool isReadOnly;
-		uint[] arrayDict;
+		uint[]? arrayDict;
 		readonly uint enclosingTypeToken;
 		uint enclosingTypeNewToken;
 
 		public int Count => dict.Count;
 
-		public RemappedTypeTokens(TypeDef enclosingTypeOrNull) {
+		public RemappedTypeTokens(TypeDef? enclosingTypeOrNull) {
 			dict = new Dictionary<uint, uint>();
 			minNestedToken = uint.MaxValue;
 			maxNestedToken = uint.MinValue;
@@ -68,7 +68,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		public bool TryGetValue(uint token, out uint newToken) {
 			Debug.Assert(isReadOnly);
 			var arrayDict = this.arrayDict;
-			if (arrayDict != null) {
+			if (!(arrayDict is null)) {
 				// Most likely code path
 
 				if (token == enclosingTypeToken) {

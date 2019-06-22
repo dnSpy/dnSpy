@@ -59,7 +59,7 @@ namespace dnSpy.Hex.Tagging {
 			public override IEnumerable<IHexTextTagSpan<T>> GetAllTags(HexTaggerContext context, CancellationToken cancellationToken) =>
 				owner.GetAllTags(context, cancellationToken);
 
-			public bool IsBatchedTagsChangedHooked => BatchedTagsChanged != null;
+			public bool IsBatchedTagsChangedHooked => !(BatchedTagsChanged is null);
 			public void RaiseTagsChanged(object sender, HexTagsChangedEventArgs e) => TagsChanged?.Invoke(sender, e);
 			public void RaiseBatchedTagsChanged(object sender, HexBatchedTagsChangedEventArgs e) => BatchedTagsChanged?.Invoke(sender, e);
 			protected override void DisposeCore() => owner.Dispose();
@@ -77,7 +77,7 @@ namespace dnSpy.Hex.Tagging {
 		protected void Initialize() => RecreateTaggers();
 
 		IEnumerable<IHexTagSpan<T>> GetTags(NormalizedHexBufferSpanCollection spans) {
-			if (spans == null)
+			if (spans is null)
 				throw new ArgumentNullException(nameof(spans));
 			if (spans.Count == 0)
 				yield break;
@@ -90,7 +90,7 @@ namespace dnSpy.Hex.Tagging {
 		}
 
 		IEnumerable<IHexTagSpan<T>> GetTags(NormalizedHexBufferSpanCollection spans, CancellationToken cancellationToken) {
-			if (spans == null)
+			if (spans is null)
 				throw new ArgumentNullException(nameof(spans));
 			if (spans.Count == 0)
 				yield break;
@@ -124,23 +124,23 @@ namespace dnSpy.Hex.Tagging {
 			var spans = new NormalizedHexBufferSpanCollection(span);
 			var textSpan = context.LineSpan;
 			foreach (var tagger in taggers) {
-				var tags = cancellationToken != null ? tagger.GetTags(spans, cancellationToken.Value) : tagger.GetTags(spans);
+				var tags = !(cancellationToken is null) ? tagger.GetTags(spans, cancellationToken.Value) : tagger.GetTags(spans);
 				foreach (var tagSpan in tags) {
 					var intersection = span.Intersection(tagSpan.Span);
-					if (intersection == null)
+					if (intersection is null)
 						continue;
 
 					foreach (var info in context.Line.GetSpans(intersection.Value, tagSpan.Flags)) {
 						var vs = textSpan.Intersection(info.TextSpan);
-						if (vs != null)
+						if (!(vs is null))
 							yield return new HexTextTagSpan<T>(vs.Value, tagSpan.Tag);
 					}
 				}
 
-				var textTags = cancellationToken != null ? tagger.GetTags(context, cancellationToken.Value) : tagger.GetTags(context);
+				var textTags = !(cancellationToken is null) ? tagger.GetTags(context, cancellationToken.Value) : tagger.GetTags(context);
 				foreach (var tagSpan in textTags) {
 					var intersection = textSpan.Intersection(tagSpan.Span);
-					if (intersection != null)
+					if (!(intersection is null))
 						yield return new HexTextTagSpan<T>(intersection.Value, tagSpan.Tag);
 				}
 			}
@@ -168,7 +168,7 @@ namespace dnSpy.Hex.Tagging {
 			// Use original sender, not us
 			RaiseTagsChanged(e.Span, sender);
 
-		void RaiseTagsChanged(HexBufferSpan span, object sender = null) {
+		void RaiseTagsChanged(HexBufferSpan span, object? sender = null) {
 			if (IsDisposed)
 				return;
 			hexTagAggregatorProxy.RaiseTagsChanged(sender ?? taggers, new HexTagsChangedEventArgs(span));

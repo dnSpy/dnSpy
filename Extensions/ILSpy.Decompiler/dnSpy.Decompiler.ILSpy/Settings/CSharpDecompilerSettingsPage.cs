@@ -35,7 +35,7 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 		public override Guid ParentGuid => new Guid(AppSettingsConstants.GUID_DECOMPILER);
 		public override Guid Guid => new Guid("8929CE8E-7E2C-4701-A8BA-42F70363872C");
 		public override string Title => "C# / Visual Basic (ILSpy)";
-		public override object UIObject => this;
+		public override object? UIObject => this;
 
 		public DecompilationObjectVM[] DecompilationObjectsArray => decompilationObjectVMs2;
 		readonly DecompilationObjectVM[] decompilationObjectVMs;
@@ -67,8 +67,8 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 		}
 
 		void SetDecompilationObject(int index, DecompilationObjectVM newValue) {
-			Debug.Assert(newValue != null);
-			if (newValue == null)
+			Debug.Assert(!(newValue is null));
+			if (newValue is null)
 				throw new ArgumentNullException(nameof(newValue));
 			if (decompilationObjectVMs[index] == newValue)
 				return;
@@ -186,7 +186,7 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 			decompilerSettings.CopyTo(_global_decompilerSettings);
 		}
 
-		public override string[] GetSearchStrings() => DecompilationObjectsArray.Select(a => a.Text).ToArray();
+		public override string[]? GetSearchStrings() => DecompilationObjectsArray.Select(a => a.Text).ToArray();
 	}
 
 	sealed class DecompilationObjectVM : ViewModelBase {

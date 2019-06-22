@@ -33,6 +33,6 @@ namespace dnSpy.Contracts.Hex.Tagging {
 		/// <typeparam name="T">Tag type</typeparam>
 		/// <param name="buffer">Hex buffer</param>
 		/// <returns></returns>
-		public abstract IHexTagger<T> CreateTagger<T>(HexBuffer buffer) where T : HexTag;
+		public abstract IHexTagger<T>? CreateTagger<T>(HexBuffer buffer) where T : HexTag;
 	}
 }

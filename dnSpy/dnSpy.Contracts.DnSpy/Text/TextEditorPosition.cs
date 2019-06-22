@@ -46,7 +46,7 @@ namespace dnSpy.Contracts.Text {
 		/// </summary>
 		/// <param name="point">Position</param>
 		public TextEditorPosition(VirtualSnapshotPoint point) {
-			if (point.Position.Snapshot == null)
+			if (point.Position.Snapshot is null)
 				throw new ArgumentException();
 			Position = point.Position.Position;
 			VirtualSpaces = point.VirtualSpaces;

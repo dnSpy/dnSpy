@@ -24,22 +24,22 @@ using dnSpy.Contracts.Documents.Tabs.DocViewer;
 namespace dnSpy.Documents.Tabs.DocViewer {
 	static class SpanDataReferenceInfoExtensions {
 		public static bool CompareReferences(ReferenceInfo refInfoA, ReferenceInfo refInfoB) {
-			if (refInfoA.Reference == null || refInfoB.Reference == null)
+			if (refInfoA.Reference is null || refInfoB.Reference is null)
 				return false;
 			if (refInfoA.Reference.Equals(refInfoB.Reference))
 				return true;
 
 			var mra = refInfoA.Reference as IMemberRef;
 			var mrb = refInfoB.Reference as IMemberRef;
-			if (mra != null && mrb != null) {
+			if (!(mra is null) && !(mrb is null)) {
 				// PERF: Prevent expensive resolves by doing a quick name check
 				if (mra.Name != mrb.Name)
 					return false;
 
 				var dta = mra.DeclaringType;
 				var dtb = mrb.DeclaringType;
-				if (dta != null) {
-					if (dtb == null)
+				if (!(dta is null)) {
+					if (dtb is null)
 						return false;
 					if (dta.Name != dtb.Name)
 						return false;
@@ -47,7 +47,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 						return false;
 				}
 				else {
-					if (dtb != null)
+					if (!(dtb is null))
 						return false;
 				}
 
@@ -74,7 +74,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			return false;
 		}
 
-		static IMemberRef Resolve(IMemberRef memberRef) {
+		static IMemberRef? Resolve(IMemberRef memberRef) {
 			if (memberRef is ITypeDefOrRef)
 				return ((ITypeDefOrRef)memberRef).ResolveTypeDef();
 			if (memberRef is IMethod && ((IMethod)memberRef).IsMethod)

@@ -59,9 +59,9 @@ namespace dnSpy.Contracts.Debugger.Attach {
 		/// <param name="processNames">Process names or null/empty to match any process name. The process name can
 		/// include wildcards (* and ?)</param>
 		/// <param name="processIds">Process ids or null/empty to match any process id</param>
-		/// <param name="providerNames"><see cref="AttachProgramOptionsProviderFactory"/> names, see <see cref="PredefinedAttachProgramOptionsProviderNames"/></param>
+		/// <param name="providerNames"><see cref="AttachProgramOptionsProviderFactory"/> names or null, see <see cref="PredefinedAttachProgramOptionsProviderNames"/></param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract Task<AttachableProcess[]> GetAttachableProcessesAsync(string[] processNames, int[] processIds, string[] providerNames, CancellationToken cancellationToken = default);
+		public abstract Task<AttachableProcess[]> GetAttachableProcessesAsync(string[]? processNames, int[]? processIds, string[]? providerNames, CancellationToken cancellationToken = default);
 	}
 }

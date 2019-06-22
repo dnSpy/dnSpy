@@ -46,14 +46,15 @@ namespace dnSpy.Documents.TreeView {
 			TreeViewNodeTextElementProvider = treeViewNodeTextElementProvider;
 			FilterVersion = 1;
 			CanDragAndDrop = true;
+			Decompiler = null!;
 		}
 
 		public void Clear() {
-			DocumentTreeView = null;
-			Decompiler = null;
-			ResourceNodeFactory = null;
-			Filter = null;
-			TreeViewNodeTextElementProvider = null;
+			DocumentTreeView = null!;
+			Decompiler = null!;
+			ResourceNodeFactory = null!;
+			Filter = null!;
+			TreeViewNodeTextElementProvider = null!;
 		}
 	}
 }

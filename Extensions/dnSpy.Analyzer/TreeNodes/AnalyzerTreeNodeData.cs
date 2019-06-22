@@ -32,7 +32,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 	abstract class AnalyzerTreeNodeData : TreeNodeData {
 		public override Guid Guid => Guid.Empty;
 		public sealed override bool SingleClickExpandsChildren => Context.SingleClickExpandsChildren;
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
 		public IAnalyzerTreeNodeDataContext Context { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
 		protected abstract ImageReference GetIcon(IDotNetImageService dnImgMgr);
 		protected virtual ImageReference? GetExpandedIcon(IDotNetImageService dnImgMgr) => null;
 		public sealed override ImageReference Icon => GetIcon(Context.DotNetImageService);
@@ -44,10 +46,10 @@ namespace dnSpy.Analyzer.TreeNodes {
 			public static void FreeWriter(TextClassifierTextColorWriter writer) => writer.Clear();
 		}
 
-		public sealed override object Text {
+		public sealed override object? Text {
 			get {
 				var cached = cachedText?.Target;
-				if (cached != null)
+				if (!(cached is null))
 					return cached;
 
 				var writer = Cache.GetWriter();
@@ -63,10 +65,10 @@ namespace dnSpy.Analyzer.TreeNodes {
 				}
 			}
 		}
-		WeakReference cachedText;
+		WeakReference? cachedText;
 
 		protected abstract void Write(ITextColorWriter output, IDecompiler decompiler);
-		public sealed override object ToolTip => null;
+		public sealed override object? ToolTip => null;
 		public sealed override string ToString() => ToString(Context.Decompiler);
 
 		public string ToString(IDecompiler decompiler) {
@@ -91,7 +93,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			for (int i = children.Length - 1; i >= 0; i--) {
 				var c = children[i];
 				var n = c as AnalyzerTreeNodeData;
-				if (n == null || !n.HandleAssemblyListChanged(removedAssemblies, addedAssemblies)) {
+				if (n is null || !n.HandleAssemblyListChanged(removedAssemblies, addedAssemblies)) {
 					AnalyzerTreeNodeData.CancelSelfAndChildren(c);
 					node.Children.RemoveAt(i);
 				}
@@ -103,7 +105,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			for (int i = children.Length - 1; i >= 0; i--) {
 				var c = children[i];
 				var n = c as AnalyzerTreeNodeData;
-				if (n == null || !n.HandleModelUpdated(documents)) {
+				if (n is null || !n.HandleModelUpdated(documents)) {
 					AnalyzerTreeNodeData.CancelSelfAndChildren(c);
 					node.Children.RemoveAt(i);
 				}
@@ -132,12 +134,12 @@ namespace dnSpy.Analyzer.TreeNodes {
 					return 0;
 				var a = x as AnalyzerTreeNodeData;
 				var b = y as AnalyzerTreeNodeData;
-				if (a == null) return -1;
-				if (b == null) return 1;
+				if (a is null) return -1;
+				if (b is null) return 1;
 				return StringComparer.OrdinalIgnoreCase.Compare(a.ToString(), b.ToString());
 			}
 		}
 
-		public override ITreeNodeGroup TreeNodeGroup => TheTreeNodeGroup.Instance;
+		public override ITreeNodeGroup? TreeNodeGroup => TheTreeNodeGroup.Instance;
 	}
 }

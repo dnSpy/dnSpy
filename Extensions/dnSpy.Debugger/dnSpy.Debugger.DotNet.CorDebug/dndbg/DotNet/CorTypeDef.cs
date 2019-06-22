@@ -79,7 +79,7 @@ namespace dndbg.DotNet {
 			Attributes = MDAPI.GetTypeDefAttributes(mdi, token) ?? 0;
 		}
 
-		void InitializeName(UTF8String utf8Name, string fullName) {
+		void InitializeName(UTF8String? utf8Name, string? fullName) {
 			Utils.SplitNameAndNamespace(utf8Name, fullName, out var ns, out var name);
 			Namespace = ns;
 			Name = name;
@@ -103,7 +103,7 @@ namespace dndbg.DotNet {
 
 			var fieldOffsets = MDAPI.GetFieldOffsets(mdi, token);
 			fieldRidToFieldOffset.Clear();
-			if (fieldOffsets != null) {
+			if (!(fieldOffsets is null)) {
 				foreach (var fo in fieldOffsets) {
 					if (fo.Offset != uint.MaxValue)
 						fieldRidToFieldOffset[fo.FieldToken & 0x00FFFFFF] = fo.Offset;
@@ -113,14 +113,14 @@ namespace dndbg.DotNet {
 		}
 
 		internal uint? GetFieldOffset(CorFieldDef cfd) {
-			Debug.Assert(fieldRidToFieldOffset != null);
-			if (fieldRidToFieldOffset == null)
+			Debug.Assert(!(fieldRidToFieldOffset is null));
+			if (fieldRidToFieldOffset is null)
 				return null;
 			if (fieldRidToFieldOffset.TryGetValue(cfd.OriginalToken.Rid, out uint fieldOffset))
 				return fieldOffset;
 			return null;
 		}
-		Dictionary<uint, uint> fieldRidToFieldOffset;
+		Dictionary<uint, uint>? fieldRidToFieldOffset;
 
 		public void UpdateFields() {
 			lock (lockObj) {
@@ -246,7 +246,7 @@ namespace dndbg.DotNet {
 			interfaces?.Clear();
 
 			var itemTokens = MDAPI.GetInterfaceImplTokens(mdi, token);
-			interfaces = new LazyList<InterfaceImpl, uint[]>(itemTokens.Length, itemTokens, (itemTokens2, index) => readerModule.ResolveInterfaceImpl(itemTokens2[index], new GenericParamContext(this)));
+			interfaces = new LazyList<InterfaceImpl?, uint[]>(itemTokens.Length, itemTokens, (itemTokens2, index) => readerModule.ResolveInterfaceImpl(itemTokens2[index], new GenericParamContext(this)));
 		}
 
 		void InitCustomAttributes_NoLock() => customAttributes = null;
@@ -256,7 +256,7 @@ namespace dndbg.DotNet {
 		protected override void InitializeDeclSecurities() =>
 			readerModule.InitDeclSecurities(this, ref declSecurities);
 
-		unsafe protected override ITypeDefOrRef GetBaseType_NoLock() {
+		unsafe protected override ITypeDefOrRef? GetBaseType_NoLock() {
 			var mdi = readerModule.MetaDataImport;
 			uint token = OriginalToken.Raw;
 
@@ -264,9 +264,9 @@ namespace dndbg.DotNet {
 			return readerModule.ResolveTypeDefOrRefInternal(tkExtends, GenericParamContext.Create(this));
 		}
 
-		protected override TypeDef GetDeclaringType2_NoLock() => readerModule.GetEnclosingTypeDef(this);
+		protected override TypeDef? GetDeclaringType2_NoLock() => readerModule.GetEnclosingTypeDef(this);
 
-		TypeDef DeclaringType2_NoLock {
+		TypeDef? DeclaringType2_NoLock {
 			get {
 				if (!declaringType2_isInitialized) {
 					declaringType2 = GetDeclaringType2_NoLock();
@@ -276,7 +276,7 @@ namespace dndbg.DotNet {
 			}
 		}
 
-		protected override ModuleDef GetModule2_NoLock() => DeclaringType2_NoLock != null ? null : readerModule;
+		protected override ModuleDef? GetModule2_NoLock() => !(DeclaringType2_NoLock is null) ? null : readerModule;
 
 		internal void PrepareAutoInsert() {
 			DeclaringType = null;
@@ -289,7 +289,7 @@ namespace dndbg.DotNet {
 			var gpContext = new GenericParamContext(this, cmd);
 
 			var dict = methodRidToOverrides;
-			if (dict == null)
+			if (dict is null)
 				dict = InitializeMethodOverrides();
 
 			if (dict.TryGetValue(cmd.OriginalToken.Rid, out var overrides)) {
@@ -299,8 +299,8 @@ namespace dndbg.DotNet {
 					var ovr = overrides[i];
 					var newMethodBody = readerModule.ResolveToken(ovr.MethodBodyToken, gpContext) as IMethodDefOrRef;
 					var newMethodDeclaration = readerModule.ResolveToken(ovr.MethodDeclarationToken, gpContext) as IMethodDefOrRef;
-					Debug.Assert(newMethodBody != null && newMethodDeclaration != null);
-					if (newMethodBody == null || newMethodDeclaration == null)
+					Debug.Assert(!(newMethodBody is null) && !(newMethodDeclaration is null));
+					if (newMethodBody is null || newMethodDeclaration is null)
 						continue;
 					newList.Add(new MethodOverride(newMethodBody, newMethodDeclaration));
 				}
@@ -327,28 +327,28 @@ namespace dndbg.DotNet {
 				var info = infos[i];
 				var methodBody = readerModule.ResolveToken(info.BodyToken) as IMethodDefOrRef;
 				var methodDecl = readerModule.ResolveToken(info.DeclToken) as IMethodDefOrRef;
-				if (methodBody == null || methodDecl == null)
+				if (methodBody is null || methodDecl is null)
 					continue;
 
 				var method = FindMethodImplMethod(methodBody);
-				if (method == null || method.DeclaringType != this)
+				if (method is null || method.DeclaringType != this)
 					continue;
 
 				var cmd = method as CorMethodDef;
-				uint rid = cmd != null ? cmd.OriginalToken.Rid : method.Rid;
+				uint rid = !(cmd is null) ? cmd.OriginalToken.Rid : method.Rid;
 				if (!newMethodRidToOverrides.TryGetValue(rid, out var overrides))
 					newMethodRidToOverrides[rid] = overrides = new List<MethodOverrideTokens>();
 				overrides.Add(new MethodOverrideTokens(methodBody.MDToken.Raw, methodDecl.MDToken.Raw));
 			}
 			return methodRidToOverrides = newMethodRidToOverrides;
 		}
-		Dictionary<uint, IList<MethodOverrideTokens>> methodRidToOverrides;
+		Dictionary<uint, IList<MethodOverrideTokens>>? methodRidToOverrides;
 
 		internal void InitializeProperty(CorPropertyDef prop, out IList<MethodDef> getMethods, out IList<MethodDef> setMethods, out IList<MethodDef> otherMethods) {
 			getMethods = new List<MethodDef>();
 			setMethods = new List<MethodDef>();
 			otherMethods = new List<MethodDef>();
-			if (prop == null)
+			if (prop is null)
 				return;
 
 			var mdi = readerModule.MetaDataImport;
@@ -372,7 +372,7 @@ namespace dndbg.DotNet {
 			return dict;
 		}
 
-		internal void InitializeEvent(CorEventDef evt, out MethodDef addMethod, out MethodDef invokeMethod, out MethodDef removeMethod, out IList<MethodDef> otherMethods) {
+		internal void InitializeEvent(CorEventDef evt, out MethodDef? addMethod, out MethodDef? invokeMethod, out MethodDef? removeMethod, out IList<MethodDef> otherMethods) {
 			addMethod = null;
 			invokeMethod = null;
 			removeMethod = null;
@@ -391,7 +391,7 @@ namespace dndbg.DotNet {
 				Add(dict, otherMethods, otherToken);
 		}
 
-		CorMethodDef Lookup(Dictionary<uint, CorMethodDef> dict, uint token) {
+		CorMethodDef? Lookup(Dictionary<uint, CorMethodDef> dict, uint token) {
 			var mdToken = new MDToken(token);
 			if (mdToken.Table != Table.Method)
 				return null;
@@ -401,14 +401,14 @@ namespace dndbg.DotNet {
 
 		void Add(Dictionary<uint, CorMethodDef> dict, IList<MethodDef> methods, uint token) {
 			var cmd = Lookup(dict, token);
-			if (cmd == null || methods.Contains(cmd))
+			if (cmd is null || methods.Contains(cmd))
 				return;
 			methods.Add(cmd);
 		}
 
 		protected override void InitializeNestedTypes() {
 			var list = readerModule.GetTypeDefNestedClassRids(this);
-			var tmp = new LazyList<TypeDef, uint[]>(list.Length, this, list, (list2, index) => readerModule.ResolveTypeDef(list2[index]));
+			var tmp = new LazyList<TypeDef?, uint[]>(list.Length, this, list, (list2, index) => readerModule.ResolveTypeDef(list2[index]));
 			Interlocked.CompareExchange(ref nestedTypes, tmp, null);
 		}
 	}

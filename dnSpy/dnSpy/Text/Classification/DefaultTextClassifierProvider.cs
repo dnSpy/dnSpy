@@ -38,7 +38,7 @@ namespace dnSpy.Text.Classification {
 			this.classificationTypeRegistryService = classificationTypeRegistryService;
 		}
 
-		public ITextClassifier Create(IContentType contentType) => new DefaultTextClassifier(themeClassificationTypeService, classificationTypeRegistryService);
+		public ITextClassifier? Create(IContentType contentType) => new DefaultTextClassifier(themeClassificationTypeService, classificationTypeRegistryService);
 	}
 
 	sealed class DefaultTextClassifier : ITextClassifier {

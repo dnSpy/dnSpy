@@ -28,7 +28,7 @@ namespace dnSpy.Debugger.Evaluation {
 		public override object InternalValue => EngineValue.InternalValue;
 		public override DbgSimpleValueType ValueType => EngineValue.ValueType;
 		public override bool HasRawValue => EngineValue.HasRawValue;
-		public override object RawValue => EngineValue.RawValue;
+		public override object? RawValue => EngineValue.RawValue;
 
 		internal DbgEngineValue EngineValue { get; }
 

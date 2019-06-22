@@ -28,12 +28,12 @@ namespace dnSpy.Contracts.ToolWindows {
 		/// <summary>
 		/// A style or a resource key or null to use the default style
 		/// </summary>
-		public object TabControlStyle { get; set; }
+		public object? TabControlStyle { get; set; }
 
 		/// <summary>
 		/// A style or a resource key or null to use the default style
 		/// </summary>
-		public object TabItemStyle { get; set; }
+		public object? TabItemStyle { get; set; }
 
 		/// <summary>
 		/// Tool window group guid, eg. <see cref="MenuConstants.GUIDOBJ_TOOLWINDOW_TABCONTROL_GUID"/>

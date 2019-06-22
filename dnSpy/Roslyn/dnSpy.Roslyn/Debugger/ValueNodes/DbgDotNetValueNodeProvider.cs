@@ -33,11 +33,11 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 
 		public abstract bool? HasChildren { get; }
 		public abstract ulong GetChildCount(DbgEvaluationInfo evalInfo);
-		public abstract DbgDotNetValueNode[] GetChildren(LanguageValueNodeFactory valueNodeFactory, DbgEvaluationInfo evalInfo, ulong index, int count, DbgValueNodeEvaluationOptions options, ReadOnlyCollection<string> formatSpecifiers);
+		public abstract DbgDotNetValueNode[] GetChildren(LanguageValueNodeFactory valueNodeFactory, DbgEvaluationInfo evalInfo, ulong index, int count, DbgValueNodeEvaluationOptions options, ReadOnlyCollection<string>? formatSpecifiers);
 
 		public abstract void Dispose();
 
-		public static DbgDotNetValueNodeProvider Create(List<DbgDotNetValueNodeProvider> providers) {
+		public static DbgDotNetValueNodeProvider? Create(List<DbgDotNetValueNodeProvider> providers) {
 			if (providers.Count == 0)
 				return null;
 			if (providers.Count == 1)

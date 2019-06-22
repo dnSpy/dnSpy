@@ -31,7 +31,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// </summary>
 	abstract class DbgModuleIdProviderService {
 		public abstract ModuleId? GetModuleId(DbgModule module);
-		public abstract DbgModule GetModule(ModuleId moduleId);
+		public abstract DbgModule? GetModule(ModuleId moduleId);
 	}
 
 	[Export(typeof(DbgModuleIdProviderService))]
@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		public override ModuleId? GetModuleId(DbgModule module) {
-			if (module == null)
+			if (module is null)
 				throw new ArgumentNullException(nameof(module));
 			// Don't cache dynamic modules. The reason is that their ModuleIds could change,
 			// see CorDebug's DbgEngineImpl.UpdateDynamicModuleIds()
@@ -63,13 +63,13 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		ModuleId? GetModuleIdCore(DbgModule module) {
 			foreach (var lz in dbgModuleIdProviders) {
 				var id = lz.Value.GetModuleId(module);
-				if (id != null)
+				if (!(id is null))
 					return id;
 			}
 			return null;
 		}
 
-		public override DbgModule GetModule(ModuleId moduleId) {
+		public override DbgModule? GetModule(ModuleId moduleId) {
 			foreach (var p in dbgManager.Processes) {
 				foreach (var r in p.Runtimes) {
 					foreach (var m in r.Modules) {

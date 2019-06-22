@@ -28,7 +28,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 	static class CompilerUtils {
 		public static bool IsIgnoredIteratorStateMachineMethod(MethodDef method) {
 			var declType = method.DeclaringType;
-			if (declType.DeclaringType == null)
+			if (declType.DeclaringType is null)
 				return false;
 			if (!declType.IsDefined(utf8System_Runtime_CompilerServices, utf8CompilerGeneratedAttribute))
 				return false;
@@ -62,12 +62,12 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 		// from inside an iterator or async method. That method just calls the real base method.
 		public static bool IsBaseWrapperMethod(DbgModule module, uint token) {
 			var reflectionModule = module.GetReflectionModule();
-			Debug.Assert(reflectionModule != null);
-			if (reflectionModule == null)
+			Debug.Assert(!(reflectionModule is null));
+			if (reflectionModule is null)
 				return false;
 			var method = reflectionModule.ResolveMethod((int)token, DmdResolveOptions.None);
-			Debug.Assert((object)method != null);
-			if ((object)method == null)
+			Debug.Assert(!(method is null));
+			if (method is null)
 				return false;
 
 			if (!method.IsPrivate || method.IsStatic || method.IsAbstract || method.IsVirtual)

@@ -39,12 +39,12 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		// Try System.Reflection.Assembly.Load(string)
 		bool Try_Assembly_Load_String(string assemblyFullName) {
 			var systemAssemblyType = appDomain.GetWellKnownType(DmdWellKnownType.System_Reflection_Assembly, isOptional: true);
-			Debug.Assert((object)systemAssemblyType != null);
-			if ((object)systemAssemblyType == null)
+			Debug.Assert(!(systemAssemblyType is null));
+			if (systemAssemblyType is null)
 				return false;
 
 			var loadMethod = systemAssemblyType.GetMethod(nameof(Assembly.Load), DmdSignatureCallingConvention.Default, 0, systemAssemblyType, new[] { appDomain.System_String }, throwOnError: false);
-			if ((object)loadMethod == null)
+			if (loadMethod is null)
 				return false;
 
 			var runtime = evalInfo.Runtime.GetDotNetRuntime();

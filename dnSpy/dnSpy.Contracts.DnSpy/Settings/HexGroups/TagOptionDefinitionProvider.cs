@@ -44,7 +44,7 @@ namespace dnSpy.Contracts.Settings.HexGroups {
 		/// </summary>
 		/// <param name="hexView">Hex view</param>
 		/// <returns></returns>
-		public abstract string GetSubGroup(WpfHexView hexView);
+		public abstract string? GetSubGroup(WpfHexView hexView);
 	}
 
 	/// <summary>Metadata</summary>

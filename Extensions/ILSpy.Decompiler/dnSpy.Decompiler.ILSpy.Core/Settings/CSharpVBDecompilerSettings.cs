@@ -34,7 +34,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 		public override int Version => decompilerSettings.SettingsVersion;
 		public override event EventHandler VersionChanged;
 
-		public CSharpVBDecompilerSettings(DecompilerSettings decompilerSettings = null) {
+		public CSharpVBDecompilerSettings(DecompilerSettings? decompilerSettings = null) {
 			this.decompilerSettings = decompilerSettings ?? new DecompilerSettings();
 			options = CreateOptions().ToArray();
 			this.decompilerSettings.SettingsVersionChanged += DecompilerSettings_SettingsVersionChanged;
@@ -246,7 +246,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 		}
 
 		void SetMemberOrder(string s) {
-			if (s == null || s.Length != 5)
+			if (s is null || s.Length != 5)
 				return;
 			decompilerSettings.DecompilationObject0 = GetDecompilationObject(s[0]) ?? decompilerSettings.DecompilationObject0;
 			decompilerSettings.DecompilationObject1 = GetDecompilationObject(s[1]) ?? decompilerSettings.DecompilationObject1;
@@ -266,9 +266,9 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 			return null;
 		}
 
-		public override bool Equals(object obj) {
+		public override bool Equals(object? obj) {
 			var other = obj as CSharpVBDecompilerSettings;
-			return other != null && decompilerSettings.Equals(other.decompilerSettings);
+			return !(other is null) && decompilerSettings.Equals(other.decompilerSettings);
 		}
 
 		public override int GetHashCode() => decompilerSettings.GetHashCode();

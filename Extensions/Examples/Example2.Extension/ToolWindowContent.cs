@@ -46,8 +46,8 @@ namespace Example2.Extension {
 	[Export(typeof(IToolWindowContentProvider))]
 	sealed class MainToolWindowContentProvider : IToolWindowContentProvider {
 		// Caches the created tool window
-		ToolWindowContentImpl ToolWindowContent => myToolWindowContent ?? (myToolWindowContent = new ToolWindowContentImpl());
-		ToolWindowContentImpl myToolWindowContent;
+		ToolWindowContentImpl ToolWindowContent => myToolWindowContent ??= new ToolWindowContentImpl();
+		ToolWindowContentImpl? myToolWindowContent;
 
 		// Add any deps to the constructor if needed, else remove the constructor
 		[ImportingConstructor]
@@ -60,7 +60,7 @@ namespace Example2.Extension {
 
 		// Called by dnSpy. If it's your tool window guid, return the instance. Make sure it's
 		// cached since it can be called multiple times.
-		public ToolWindowContent GetOrCreate(Guid guid) {
+		public ToolWindowContent? GetOrCreate(Guid guid) {
 			if (guid == ToolWindowContentImpl.THE_GUID)
 				return ToolWindowContent;
 			return null;
@@ -76,16 +76,16 @@ namespace Example2.Extension {
 		public override string Title => "Extension Example";
 
 		// This is the object shown in the UI. Return a WPF object or a .NET object with a DataTemplate
-		public override object UIObject => toolWindowControl;
+		public override object? UIObject => toolWindowControl;
 
 		// The element inside UIObject that gets the focus when the tool window should be focused.
 		// If it's not as easy as calling FocusedElement.Focus() to focus it, you must implement
 		// dnSpy.Contracts.Controls.IFocusable.
-		public override IInputElement FocusedElement => toolWindowControl.option1TextBox;
+		public override IInputElement? FocusedElement => toolWindowControl.option1TextBox;
 
 		// The element that gets scaled when the user zooms in or out. Return null if zooming isn't
 		// possible
-		public override FrameworkElement ZoomElement => toolWindowControl;
+		public override FrameworkElement? ZoomElement => toolWindowControl;
 
 		readonly ToolWindowControl toolWindowControl;
 		readonly ToolWindowVM toolWindowVM;

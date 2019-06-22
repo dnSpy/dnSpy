@@ -25,7 +25,7 @@ namespace dnSpy.AsmEditor.Module {
 	static class ModuleUtils {
 		public static ModuleDef CreateNetModule(string name, Guid mvid, ClrVersion clrVersion) => CreateModule(name, mvid, clrVersion, ModuleKind.NetModule);
 
-		public static ModuleDef CreateModule(string name, Guid mvid, ClrVersion clrVersion, ModuleKind kind, ModuleDef existingModule = null) {
+		public static ModuleDef CreateModule(string name, Guid mvid, ClrVersion clrVersion, ModuleKind kind, ModuleDef? existingModule = null) {
 			var module = CreateModuleDef(name, mvid, clrVersion, existingModule);
 			module.Kind = kind;
 			module.Characteristics = Characteristics.Bit32Machine | Characteristics.ExecutableImage;
@@ -35,10 +35,12 @@ namespace dnSpy.AsmEditor.Module {
 			return module;
 		}
 
-		static ModuleDef CreateModuleDef(string name, Guid mvid, ClrVersion clrVersion, ModuleDef existingModule) {
+		static ModuleDef CreateModuleDef(string name, Guid mvid, ClrVersion clrVersion, ModuleDef? existingModule) {
 			var clrValues = ClrVersionValues.GetValues(clrVersion);
+			if (clrValues is null)
+				throw new ArgumentNullException(nameof(clrVersion));
 			ModuleDef module;
-			if (existingModule == null)
+			if (existingModule is null)
 				module = new ModuleDefUser(name, mvid, clrValues.CorLibRef);
 			else {
 				module = existingModule;

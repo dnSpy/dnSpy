@@ -34,7 +34,7 @@ namespace dnSpy.Roslyn.Text.Classification {
 		[ImportingConstructor]
 		TaggedTextClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) => this.themeClassificationTypeService = themeClassificationTypeService;
 
-		public ITextClassifier Create(IContentType contentType) =>
+		public ITextClassifier? Create(IContentType contentType) =>
 			new TaggedTextClassifier(themeClassificationTypeService);
 	}
 
@@ -47,7 +47,7 @@ namespace dnSpy.Roslyn.Text.Classification {
 			if (!context.Colorize)
 				yield break;
 			var tagContext = context as TaggedTextClassifierContext;
-			if (tagContext == null)
+			if (tagContext is null)
 				yield break;
 			int pos = 0;
 			foreach (var part in tagContext.TaggedParts) {

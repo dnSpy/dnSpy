@@ -22,7 +22,7 @@ using dnSpy.Contracts.Hex;
 
 namespace dnSpy.Debugger.ToolWindows.Memory {
 	sealed class DebuggerHexBufferStream : HexBufferStream {
-		HexBufferStream stream;
+		HexBufferStream? stream;
 
 		public override bool IsVolatile {
 			get {
@@ -61,7 +61,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			stream?.ClearCache();
 		}
 
-		public HexBufferStream UnderlyingStream {
+		public HexBufferStream? UnderlyingStream {
 			get {
 				CheckDisposed();
 				return stream;
@@ -72,7 +72,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			}
 		}
 
-		void SetUnderlyingStreamCore(HexBufferStream newStream) {
+		void SetUnderlyingStreamCore(HexBufferStream? newStream) {
 			if (stream == newStream)
 				return;
 			UnregisterEvents();
@@ -93,13 +93,13 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 		public void InvalidateAll() => Invalidate(HexSpan.FromBounds(HexPosition.Zero, HexPosition.MaxEndPosition));
 
 		void RegisterEvents() {
-			if (stream == null)
+			if (stream is null)
 				return;
 			stream.BufferStreamSpanInvalidated += Stream_BufferStreamSpanInvalidated;
 		}
 
 		void UnregisterEvents() {
-			if (stream == null)
+			if (stream is null)
 				return;
 			stream.BufferStreamSpanInvalidated -= Stream_BufferStreamSpanInvalidated;
 		}
@@ -223,7 +223,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 		public override byte[] ReadBytes(HexPosition position, long length) {
 			CheckDisposed();
 			var streamLocal = stream;
-			if (streamLocal != null)
+			if (!(streamLocal is null))
 				return streamLocal.ReadBytes(position, length);
 			return new byte[length];
 		}

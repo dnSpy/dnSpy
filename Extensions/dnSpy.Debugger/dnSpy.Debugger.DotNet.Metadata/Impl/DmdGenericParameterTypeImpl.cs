@@ -24,21 +24,21 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdGenericParameterTypeImpl : DmdGenericParameterType {
 		public override DmdAppDomain AppDomain { get; }
 
-		public DmdGenericParameterTypeImpl(DmdAppDomain appDomain, DmdTypeBase declaringType, string name, int position, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier> customModifiers) : base(0, declaringType, name, position, attributes, customModifiers) =>
+		public DmdGenericParameterTypeImpl(DmdAppDomain appDomain, DmdTypeBase declaringType, string? name, int position, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier>? customModifiers) : base(0, declaringType, name, position, attributes, customModifiers) =>
 			AppDomain = appDomain ?? throw new ArgumentNullException(nameof(appDomain));
 
-		public DmdGenericParameterTypeImpl(DmdAppDomain appDomain, DmdMethodBase declaringMethod, string name, int position, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier> customModifiers) : base(0, declaringMethod, name, position, attributes, customModifiers) =>
+		public DmdGenericParameterTypeImpl(DmdAppDomain appDomain, DmdMethodBase declaringMethod, string? name, int position, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier>? customModifiers) : base(0, declaringMethod, name, position, attributes, customModifiers) =>
 			AppDomain = appDomain ?? throw new ArgumentNullException(nameof(appDomain));
 
-		protected override DmdType[] CreateGenericParameterConstraints() => Array.Empty<DmdType>();
+		protected override DmdType[]? CreateGenericParameterConstraints() => Array.Empty<DmdType>();
 
-		DmdGenericParameterTypeImpl Clone(IList<DmdCustomModifier> customModifiers) =>
-			(object)DeclaringMethod != null ?
+		DmdGenericParameterTypeImpl Clone(IList<DmdCustomModifier>? customModifiers) =>
+			!(DeclaringMethod is null) ?
 			new DmdGenericParameterTypeImpl(AppDomain, DeclaringMethod, MetadataName, GenericParameterPosition, GenericParameterAttributes, customModifiers) :
-			new DmdGenericParameterTypeImpl(AppDomain, (DmdTypeBase)DeclaringType, MetadataName, GenericParameterPosition, GenericParameterAttributes, customModifiers);
+			new DmdGenericParameterTypeImpl(AppDomain, (DmdTypeBase)DeclaringType!, MetadataName, GenericParameterPosition, GenericParameterAttributes, customModifiers);
 
 		// Don't intern these since only the generic parameter position is checked and not the decl type / method
-		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => Clone(VerifyCustomModifiers(customModifiers));
+		public override DmdType WithCustomModifiers(IList<DmdCustomModifier>? customModifiers) => Clone(VerifyCustomModifiers(customModifiers));
 		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : Clone(null);
 	}
 }

@@ -35,16 +35,16 @@ namespace dnSpy.Documents.Tabs {
 			this.documentTabService = documentTabService;
 		}
 
-		public IEnumerable<object> Restore(List<SerializedTabGroupWindow> tgws) {
+		public IEnumerable<object?> Restore(List<SerializedTabGroupWindow> tgws) {
 			var mainTgw = tgws.FirstOrDefault(a => a.Name == SerializedTabGroupWindow.MAIN_NAME);
-			if (mainTgw != null) {
+			if (!(mainTgw is null)) {
 				foreach (var o in Load(mainTgw))
 					yield return o;
 				yield return null;
 			}
 		}
 
-		IEnumerable<object> Load(SerializedTabGroupWindow tgw) {
+		IEnumerable<object?> Load(SerializedTabGroupWindow tgw) {
 			bool addedAutoLoadedAssembly = false;
 			foreach (var f in GetAutoLoadedAssemblies(tgw)) {
 				addedAutoLoadedAssembly = true;

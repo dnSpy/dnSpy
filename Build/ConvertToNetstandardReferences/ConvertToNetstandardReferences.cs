@@ -31,6 +31,7 @@ namespace ConvertToNetstandardReferences {
 		// Increment it if something changes so the files are re-created
 		const string VERSION = "cnsrefs_v1";
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
 		[Required]
 		public string DestinationDirectory { get; set; }
 
@@ -39,6 +40,7 @@ namespace ConvertToNetstandardReferences {
 
 		[Output]
 		public ITaskItem[] OutputReferencePath { get; private set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
 
 		bool ShouldPatchAssembly(string simpleName) {
 			if (simpleName.StartsWith("Microsoft.VisualStudio."))
@@ -48,7 +50,7 @@ namespace ConvertToNetstandardReferences {
 		}
 
 		static bool IsPublic(TypeDef type) {
-			while (type != null) {
+			while (!(type is null)) {
 				if (!type.IsPublic && !type.IsNestedPublic)
 					return false;
 				type = type.DeclaringType;
@@ -57,7 +59,7 @@ namespace ConvertToNetstandardReferences {
 		}
 
 		static bool IsPublic(ExportedType type) {
-			while (type != null) {
+			while (!(type is null)) {
 				if (!type.IsPublic && !type.IsNestedPublic)
 					return false;
 				type = type.DeclaringType;
@@ -72,8 +74,8 @@ namespace ConvertToNetstandardReferences {
 			}
 
 			using (var assemblyFactory = new AssemblyFactory(ReferencePath.Select(a => a.ItemSpec))) {
-				AssemblyRef netstandardAsmRef = null;
-				AssemblyDef netstandardAsm = null;
+				AssemblyRef? netstandardAsmRef = null;
+				AssemblyDef? netstandardAsm = null;
 				var typeComparer = new TypeEqualityComparer(SigComparerOptions.DontCompareTypeScope);
 				var netstandardTypes = new HashSet<IType>(typeComparer);
 				OutputReferencePath = new ITaskItem[ReferencePath.Length];
@@ -104,15 +106,15 @@ namespace ConvertToNetstandardReferences {
 
 					if (!File.Exists(patchedFilename)) {
 						var asm = assemblyFactory.Resolve(asmSimpleName);
-						if (asm == null)
+						if (asm is null)
 							throw new Exception($"Couldn't resolve assembly {filename}");
 						var mod = (ModuleDefMD)asm.ManifestModule;
 						if (!ShouldPatchAssembly(mod))
 							continue;
 
-						if (netstandardAsm == null) {
+						if (netstandardAsm is null) {
 							netstandardAsm = assemblyFactory.Resolve("netstandard");
-							if (netstandardAsm == null)
+							if (netstandardAsm is null)
 								throw new Exception("Couldn't find a netstandard file");
 							netstandardAsmRef = netstandardAsm.ToAssemblyRef();
 							foreach (var type in netstandardAsm.ManifestModule.GetTypes()) {
@@ -127,7 +129,7 @@ namespace ConvertToNetstandardReferences {
 
 						for (uint rid = 1; ; rid++) {
 							var tr = mod.ResolveTypeRef(rid);
-							if (tr == null)
+							if (tr is null)
 								break;
 							if (!netstandardTypes.Contains(tr))
 								continue;
@@ -177,10 +179,10 @@ namespace ConvertToNetstandardReferences {
 			context = new ModuleContext(this, new Resolver(this));
 		}
 
-		AssemblyDef IAssemblyResolver.Resolve(IAssembly assembly, ModuleDef sourceModule) =>
+		AssemblyDef? IAssemblyResolver.Resolve(IAssembly assembly, ModuleDef sourceModule) =>
 			Resolve(assembly.Name);
 
-		public AssemblyDef Resolve(string name) {
+		public AssemblyDef? Resolve(string name) {
 			if (modules.TryGetValue(name, out var module))
 				return module.Assembly;
 			if (!nameToPath.TryGetValue(name, out var path))

@@ -73,7 +73,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is MethodSourceStatement && Equals((MethodSourceStatement)obj);
+		public override bool Equals(object? obj) => obj is MethodSourceStatement && Equals((MethodSourceStatement)obj);
 
 		/// <summary>
 		/// GetHashCode()

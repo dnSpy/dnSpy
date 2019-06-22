@@ -26,7 +26,7 @@ using dnSpy.Contracts.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	abstract class DbgAssemblyInfoProviderService {
-		public abstract DbgAssemblyInfoProvider Create(DbgRuntime runtime);
+		public abstract DbgAssemblyInfoProvider? Create(DbgRuntime runtime);
 	}
 
 	[Export(typeof(DbgAssemblyInfoProviderService))]
@@ -37,12 +37,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		DbgAssemblyInfoProviderServiceImpl([ImportMany] IEnumerable<Lazy<DbgAssemblyInfoProviderFactory>> dbgAssemblyInfoProviderFactories) =>
 			this.dbgAssemblyInfoProviderFactories = dbgAssemblyInfoProviderFactories.ToArray();
 
-		public override DbgAssemblyInfoProvider Create(DbgRuntime runtime) {
-			if (runtime == null)
+		public override DbgAssemblyInfoProvider? Create(DbgRuntime runtime) {
+			if (runtime is null)
 				throw new ArgumentNullException(nameof(runtime));
 			foreach (var lz in dbgAssemblyInfoProviderFactories) {
 				var provider = lz.Value.Create(runtime);
-				if (provider != null)
+				if (!(provider is null))
 					return provider;
 			}
 			return null;

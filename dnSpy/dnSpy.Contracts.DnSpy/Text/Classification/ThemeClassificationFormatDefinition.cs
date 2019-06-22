@@ -42,28 +42,28 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <param name="theme">Theme</param>
 		/// <returns></returns>
 		public ResourceDictionary CreateResourceDictionary(ITheme theme) {
-			if (theme == null)
+			if (theme is null)
 				throw new ArgumentNullException(nameof(theme));
 
 			var res = CreateResourceDictionary();
 
 			var isBold = GetIsBold(theme);
-			if (isBold != null)
+			if (!(isBold is null))
 				res.Add(IsBoldId, isBold.Value);
 
 			var isItalic = GetIsItalic(theme);
-			if (isItalic != null)
+			if (!(isItalic is null))
 				res.Add(IsItalicId, isItalic.Value);
 
 			var fg = GetForeground(theme);
-			if (fg != null) {
+			if (!(fg is null)) {
 				res[ForegroundBrushId] = fg;
 				if (fg.Opacity != 1)
 					res[ForegroundOpacityId] = fg.Opacity;
 			}
 
 			var bg = GetBackground(theme);
-			if (bg != null) {
+			if (!(bg is null)) {
 				res[BackgroundBrushId] = bg;
 				if (bg.Opacity != 1)
 					res[BackgroundOpacityId] = bg.Opacity;
@@ -72,19 +72,19 @@ namespace dnSpy.Contracts.Text.Classification {
 			return res;
 		}
 
-		Brush GetForeground(ITheme theme) => theme.GetExplicitColor(textColor.ToColorType()).Foreground;
-		Brush GetBackground(ITheme theme) => theme.GetExplicitColor(textColor.ToColorType()).Background;
+		Brush? GetForeground(ITheme theme) => theme.GetExplicitColor(textColor.ToColorType()).Foreground;
+		Brush? GetBackground(ITheme theme) => theme.GetExplicitColor(textColor.ToColorType()).Background;
 
 		bool? GetIsBold(ITheme theme) {
 			var tc = theme.GetExplicitColor(textColor.ToColorType());
-			if (tc.FontWeight == null)
+			if (tc.FontWeight is null)
 				return null;
 			return tc.FontWeight.Value == FontWeights.Bold;
 		}
 
 		bool? GetIsItalic(ITheme theme) {
 			var tc = theme.GetExplicitColor(textColor.ToColorType());
-			if (tc.FontStyle == null)
+			if (tc.FontStyle is null)
 				return null;
 			return tc.FontStyle.Value == FontStyles.Italic;
 		}

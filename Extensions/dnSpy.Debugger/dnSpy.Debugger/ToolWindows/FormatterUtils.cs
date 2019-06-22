@@ -46,8 +46,8 @@ namespace dnSpy.Debugger.ToolWindows {
 			return sb.ToString();
 		}
 
-		public static T Write<T>(this T output, DbgAppDomain appDomain) where T : IDbgTextWriter {
-			if (appDomain == null)
+		public static T Write<T>(this T output, DbgAppDomain? appDomain) where T : IDbgTextWriter {
+			if (appDomain is null)
 				output.Write(DbgTextColor.Error, dnSpy_Debugger_Resources.AppDomainNotAvailable);
 			else {
 				output.Write(DbgTextColor.Punctuation, "[");
@@ -65,7 +65,7 @@ namespace dnSpy.Debugger.ToolWindows {
 		}
 
 		static bool HasSameNameAsProcess(DbgAppDomain ad) {
-			if (ad == null)
+			if (ad is null)
 				return false;
 			var fname = ad.Process.Name;
 			return !string.IsNullOrEmpty(fname) && StringComparer.OrdinalIgnoreCase.Equals(fname, ad.Name);
@@ -84,7 +84,7 @@ namespace dnSpy.Debugger.ToolWindows {
 		}
 
 		public static T WriteYesNoOrNA<T>(this T output, bool? value) where T : IDbgTextWriter {
-			if (value != null)
+			if (!(value is null))
 				output.WriteYesNo(value.Value);
 			else
 				output.Write(DbgTextColor.Text, "N/A");

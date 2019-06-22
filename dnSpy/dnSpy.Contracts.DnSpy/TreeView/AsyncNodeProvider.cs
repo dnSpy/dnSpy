@@ -36,7 +36,7 @@ namespace dnSpy.Contracts.TreeView {
 		readonly List<Action> uiThreadActions;
 		readonly Dispatcher dispatcher;
 		readonly TreeNodeData targetNode;
-		ITreeNode msgNode;
+		ITreeNode? msgNode;
 
 		/// <summary>
 		/// Constructor
@@ -68,7 +68,7 @@ namespace dnSpy.Contracts.TreeView {
 		/// </summary>
 		/// <param name="node">New node</param>
 		protected void AddNode(TreeNodeData node) {
-			if (node == null)
+			if (node is null)
 				throw new ArgumentNullException(nameof(node));
 			lock (lockObj) {
 				nodesToAdd.Add(node);
@@ -97,13 +97,13 @@ namespace dnSpy.Contracts.TreeView {
 		/// </summary>
 		/// <param name="create">Creates the message node</param>
 		protected void AddMessageNode(Func<TreeNodeData> create) => ExecInUIThread(() => {
-			Debug.Assert(msgNode == null);
+			Debug.Assert(msgNode is null);
 			msgNode = targetNode.TreeNode.TreeView.Create(create());
 			targetNode.TreeNode.AddChild(msgNode);
 		});
 
 		void RemoveMessageNode_UI() {
-			if (msgNode != null)
+			if (!(msgNode is null))
 				targetNode.TreeNode.Children.Remove(msgNode);
 			OnCompleted();
 		}

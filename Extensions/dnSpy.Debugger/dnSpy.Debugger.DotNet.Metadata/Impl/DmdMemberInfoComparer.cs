@@ -41,7 +41,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				attr |= DmdBindingFlags.Static;
 			else
 				attr |= DmdBindingFlags.Instance;
-			if ((object)method.ReflectedType != method.DeclaringType) {
+			if ((object)method.ReflectedType! != method.DeclaringType) {
 				if (method.IsStatic) {
 					if (method.IsPrivate)
 						return false;
@@ -65,7 +65,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				attr |= DmdBindingFlags.Static;
 			else
 				attr |= DmdBindingFlags.Instance;
-			if ((object)field.ReflectedType != field.DeclaringType) {
+			if ((object)field.ReflectedType! != field.DeclaringType) {
 				if (field.IsStatic) {
 					if (field.IsPrivate)
 						return false;
@@ -89,9 +89,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				attr |= DmdBindingFlags.Static;
 			else
 				attr |= DmdBindingFlags.Instance;
-			if ((object)@event.ReflectedType != @event.DeclaringType) {
+			if ((object)@event.ReflectedType! != @event.DeclaringType) {
 				var method = @event.AddMethod;
-				if ((object)method != null) {
+				if (!(method is null)) {
 					if (method.IsStatic) {
 						if (method.IsPrivate)
 							return false;
@@ -116,9 +116,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				attr |= DmdBindingFlags.Static;
 			else
 				attr |= DmdBindingFlags.Instance;
-			if ((object)property.ReflectedType != property.DeclaringType) {
+			if ((object)property.ReflectedType! != property.DeclaringType) {
 				var method = property.GetMethod;
-				if ((object)method != null) {
+				if (!(method is null)) {
 					if (method.IsStatic) {
 						if (method.IsPrivate)
 							return false;
@@ -160,7 +160,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		public static bool IsMatch(DmdPropertyInfo property, DmdType returnType) {
-			if ((object)returnType != null) {
+			if (!(returnType is null)) {
 				var comparer = new DmdSigComparer(DmdSigComparerOptions.CheckTypeEquivalence | DmdMemberInfoEqualityComparer.DefaultTypeOptions);
 				if (!comparer.Equals(property.PropertyType, returnType))
 					return false;
@@ -177,9 +177,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return StringComparer.Ordinal.Equals(member.Name, name);
 		}
 
-		public static bool IsMatch(DmdType type, string @namespace, string name, DmdBindingFlags bindingAttr) {
+		public static bool IsMatch(DmdType type, string? @namespace, string name, DmdBindingFlags bindingAttr) {
 			// Namespace comparison is exact
-			if (@namespace != null && type.Namespace != @namespace)
+			if (!(@namespace is null) && type.Namespace != @namespace)
 				return false;
 			if ((bindingAttr & DmdBindingFlags.IgnoreCase) != 0)
 				return StringComparer.OrdinalIgnoreCase.Equals(type.Name, name);

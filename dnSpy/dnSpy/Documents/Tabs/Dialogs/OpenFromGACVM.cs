@@ -47,7 +47,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		readonly ObservableCollection<GACFileVM> gacFileList;
 		readonly ListCollectionView collectionView;
 
-		public object SelectedItem {
+		public object? SelectedItem {
 			get => selectedItem;
 			set {
 				if (selectedItem != value) {
@@ -56,7 +56,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 				}
 			}
 		}
-		object selectedItem;
+		object? selectedItem;
 
 		public bool SearchingGAC {
 			get => searchingGAC;
@@ -72,7 +72,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 
 		public bool NotSearchingGAC => !SearchingGAC;
 
-		public string SearchText {
+		public string? SearchText {
 			get => searchText;
 			set {
 				if (searchText != value) {
@@ -82,7 +82,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 				}
 			}
 		}
-		string searchText;
+		string? searchText;
 
 		public bool ShowDuplicates {
 			get => showDuplicates;
@@ -153,7 +153,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		}
 
 		bool CalculateIsVisible(GACFileVM vm, string filterText) {
-			Debug.Assert(filterText != null && filterText.Trim().ToUpperInvariant() == filterText);
+			Debug.Assert(!(filterText is null) && filterText.Trim().ToUpperInvariant() == filterText);
 			if (!ShowDuplicates && vm.IsDuplicate)
 				return false;
 			if (string.IsNullOrEmpty(filterText))
@@ -188,13 +188,13 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		public bool Equals(GACFileVM x, GACFileVM y) {
 			if (x == y)
 				return true;
-			if (x == null || y == null)
+			if (x is null || y is null)
 				return false;
 			return new AssemblyNameComparer(flags).Equals(x.Assembly, y.Assembly);
 		}
 
 		public int GetHashCode(GACFileVM obj) {
-			if (obj == null)
+			if (obj is null)
 				return 0;
 			return new AssemblyNameComparer(flags).GetHashCode(obj.Assembly);
 		}
@@ -206,9 +206,9 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 			var b = y as GACFileVM;
 			if (a == b)
 				return 0;
-			if (a == null)
+			if (a is null)
 				return -1;
-			if (b == null)
+			if (b is null)
 				return 1;
 			return new AssemblyNameComparer(AssemblyNameComparerFlags.All).CompareTo(a.Assembly, b.Assembly);
 		}

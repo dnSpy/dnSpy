@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using dnlib.DotNet;
 
 namespace dnSpy.Documents.TreeView {
@@ -103,7 +104,7 @@ namespace dnSpy.Documents.TreeView {
 			return false;
 		}
 
-		static bool TryGetTypeDefOrRef(TypeSpec ts, out ITypeDefOrRef type) {
+		static bool TryGetTypeDefOrRef(TypeSpec ts, [NotNullWhenTrue] out ITypeDefOrRef? type) {
 			type = null;
 			var sig = ts.TypeSig;
 			while (sig is NonLeafSig)
@@ -124,7 +125,7 @@ namespace dnSpy.Documents.TreeView {
 			return typeRef;
 		}
 
-		static bool TryGetTypeRefInfo(Dictionary<ITypeDefOrRef, TypeRefInfo> typeDict, ITypeDefOrRef declType, out TypeRefInfo typeInfo) {
+		static bool TryGetTypeRefInfo(Dictionary<ITypeDefOrRef, TypeRefInfo> typeDict, ITypeDefOrRef declType, [NotNullWhenTrue] out TypeRefInfo? typeInfo) {
 			typeInfo = null;
 			if (declType is null)
 				return false;

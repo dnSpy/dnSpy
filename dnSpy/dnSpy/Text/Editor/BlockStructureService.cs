@@ -44,7 +44,7 @@ namespace dnSpy.Text.Editor {
 		BlockStructureServiceProvider(IEditorFormatMapService editorFormatMapService) => this.editorFormatMapService = editorFormatMapService;
 
 		public IBlockStructureService GetService(IWpfTextView wpfTextView) {
-			if (wpfTextView == null)
+			if (wpfTextView is null)
 				throw new ArgumentNullException(nameof(wpfTextView));
 			return wpfTextView.Properties.GetOrCreateSingletonProperty(typeof(BlockStructureService), () => new BlockStructureService(wpfTextView, editorFormatMapService));
 		}
@@ -64,8 +64,8 @@ namespace dnSpy.Text.Editor {
 		readonly IEditorFormatMapService editorFormatMapService;
 		readonly List<LineElement> lineElements;
 		readonly LineColorInfo[] lineColorInfos;
-		IAdornmentLayer layer;
-		IEditorFormatMap editorFormatMap;
+		IAdornmentLayer? layer;
+		IEditorFormatMap? editorFormatMap;
 		IBlockStructureServiceDataProvider blockStructureServiceDataProvider;
 		bool enabled;
 
@@ -119,7 +119,7 @@ namespace dnSpy.Text.Editor {
 
 		sealed class LineColorInfo {
 			public string Type { get; }
-			public Pen Pen { get; set; }
+			public Pen? Pen { get; set; }
 
 			public LineColorInfo(string type) => Type = type;
 		}
@@ -153,6 +153,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void UpdateColorInfos() {
+			Debug.Assert(!(editorFormatMap is null));
 			var lineKind = wpfTextView.Options.GetBlockStructureLineKind();
 			foreach (var info in lineColorInfos) {
 				var props = editorFormatMap.GetProperties(info.Type);
@@ -161,24 +162,21 @@ namespace dnSpy.Text.Editor {
 		}
 
 		const double PEN_THICKNESS = 1.0;
-		static Pen GetPen(ResourceDictionary props, BlockStructureLineKind lineKind) {
-			Color? color;
-			SolidColorBrush scBrush;
-
-			Pen newPen;
-			if ((color = props[EditorFormatDefinition.ForegroundColorId] as Color?) != null) {
-				var brush = new SolidColorBrush(color.Value);
+		static Pen? GetPen(ResourceDictionary props, BlockStructureLineKind lineKind) {
+			Pen? newPen;
+			if (props[EditorFormatDefinition.ForegroundColorId] is Color color) {
+				var brush = new SolidColorBrush(color);
 				brush.Freeze();
 				newPen = InitializePen(new Pen(brush, PEN_THICKNESS), lineKind);
 				newPen.Freeze();
 			}
-			else if ((scBrush = props[EditorFormatDefinition.ForegroundBrushId] as SolidColorBrush) != null) {
+			else if (props[EditorFormatDefinition.ForegroundBrushId] is SolidColorBrush scBrush) {
 				if (scBrush.CanFreeze)
 					scBrush.Freeze();
 				newPen = InitializePen(new Pen(scBrush, PEN_THICKNESS), lineKind);
 				newPen.Freeze();
 			}
-			else if ((newPen = props[MarkerFormatDefinition.BorderId] as Pen) != null) {
+			else if (!((newPen = props[MarkerFormatDefinition.BorderId] as Pen) is null)) {
 				if (newPen.CanFreeze)
 					newPen.Freeze();
 			}
@@ -237,9 +235,9 @@ namespace dnSpy.Text.Editor {
 				return;
 			enabled = newValue;
 			if (enabled) {
-				if (layer == null)
+				if (layer is null)
 					layer = wpfTextView.GetAdornmentLayer(PredefinedAdornmentLayers.BlockStructure);
-				if (editorFormatMap == null)
+				if (editorFormatMap is null)
 					editorFormatMap = editorFormatMapService.GetEditorFormatMap(wpfTextView);
 				RegisterEvents();
 				RefreshLinesAndColorInfos();
@@ -251,7 +249,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		public void SetDataProvider(IBlockStructureServiceDataProvider dataProvider) {
+		public void SetDataProvider(IBlockStructureServiceDataProvider? dataProvider) {
 			if (wpfTextView.IsClosed)
 				return;
 			blockStructureServiceDataProvider = dataProvider ?? NullBlockStructureServiceDataProvider.Instance;
@@ -281,6 +279,7 @@ namespace dnSpy.Text.Editor {
 		void AddLineElements(NormalizedSnapshotSpanCollection spans) {
 			if (spans.Count == 0)
 				return;
+			Debug.Assert(!(layer is null));
 			var list = new List<BlockStructureData>();
 			var updated = new HashSet<BlockStructureData>(BlockStructureDataComparer.Instance);
 			foreach (var span in spans) {
@@ -293,11 +292,11 @@ namespace dnSpy.Text.Editor {
 					updated.Add(info);
 
 					var lineElement = FindLineElement(info);
-					if (lineElement != null) {
+					if (!(lineElement is null)) {
 						layer.RemoveAdornment(lineElement);
 						Debug.Assert(!lineElements.Contains(lineElement));
 					}
-					if (lineElement == null)
+					if (lineElement is null)
 						lineElement = new LineElement(info);
 
 					var lines = wpfTextView.TextViewLines.GetTextViewLinesIntersectingSpan(lineElement.Span);
@@ -342,7 +341,7 @@ namespace dnSpy.Text.Editor {
 			return false;
 		}
 
-		LineElement FindLineElement(BlockStructureData info) {
+		LineElement? FindLineElement(BlockStructureData info) {
 			foreach (var lineElement in lineElements) {
 				if (BlockStructureDataComparer.Instance.Equals(lineElement.BlockStructureData, info))
 					return lineElement;
@@ -374,7 +373,7 @@ namespace dnSpy.Text.Editor {
 			layer?.RemoveAllAdornments();
 		}
 
-		Pen GetPen(BlockStructureKind blockKind) => GetLineColorInfo(GetColorInfoType(blockKind)).Pen;
+		Pen? GetPen(BlockStructureKind blockKind) => GetLineColorInfo(GetColorInfoType(blockKind)).Pen;
 
 		LineColorInfo GetLineColorInfo(string type) {
 			foreach (var info in lineColorInfos) {
@@ -429,8 +428,8 @@ namespace dnSpy.Text.Editor {
 		sealed class XPosCache {
 			readonly IWpfTextView wpfTextView;
 			readonly Dictionary<int, double> toXPosDict;
-			ITextSnapshot toXPosDictSnapshot;
-			IFormattedLineSource formattedLineSource;
+			ITextSnapshot? toXPosDictSnapshot;
+			IFormattedLineSource? formattedLineSource;
 
 			public XPosCache(IWpfTextView wpfTextView) {
 				this.wpfTextView = wpfTextView;
@@ -493,8 +492,8 @@ done:
 
 			public void Clear() {
 				toXPosDict.Clear();
-				toXPosDictSnapshot = null;
-				formattedLineSource = null;
+				toXPosDictSnapshot = null!;
+				formattedLineSource = null!;
 			}
 		}
 
@@ -522,7 +521,7 @@ done:
 			double x;
 			double top;
 			double bottom;
-			Pen pen;
+			Pen? pen;
 
 			public LineElement(BlockStructureData info) => BlockStructureData = info;
 
@@ -531,7 +530,7 @@ done:
 				drawingContext.DrawLine(pen, new Point(x, 0), new Point(x, bottom - top));
 			}
 
-			public void Update(double x, double bottom, double top, Pen pen) {
+			public void Update(double x, double bottom, double top, Pen? pen) {
 				Canvas.SetTop(this, top);
 				this.x = x;
 				this.bottom = bottom;
@@ -542,12 +541,12 @@ done:
 
 		void RegisterEvents() {
 			wpfTextView.LayoutChanged += WpfTextView_LayoutChanged;
-			editorFormatMap.FormatMappingChanged += EditorFormatMap_FormatMappingChanged;
+			editorFormatMap!.FormatMappingChanged += EditorFormatMap_FormatMappingChanged;
 		}
 
 		void UnregisterEvents() {
 			wpfTextView.LayoutChanged -= WpfTextView_LayoutChanged;
-			if (editorFormatMap != null)
+			if (!(editorFormatMap is null))
 				editorFormatMap.FormatMappingChanged -= EditorFormatMap_FormatMappingChanged;
 		}
 

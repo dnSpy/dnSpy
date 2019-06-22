@@ -27,7 +27,7 @@ namespace dndbg.Engine {
 	static class DebuggeeVersionDetector {
 		public static string GetVersion(string filename) => TryGetVersion(filename) ?? RuntimeEnvironment.GetSystemVersion();
 
-		public static string TryGetVersion(string filename) {
+		public static string? TryGetVersion(string filename) {
 			try {
 				var clsid = new Guid("2EBCD49A-1B47-4A61-B13A-4A03701E594B");
 				var riid = typeof(ICLRMetaHostPolicy).GUID;
@@ -35,7 +35,7 @@ namespace dndbg.Engine {
 
 				// GetRequestedRuntime() automatically reads the *.config file if it exists so
 				// we don't need to send in a stream with its contents.
-				IStream configStream = null;
+				const IStream? configStream = null;
 				const int STRING_LEN = 1024;
 				var sbVersion = new StringBuilder(STRING_LEN);
 				uint versionLength = (uint)sbVersion.Capacity;

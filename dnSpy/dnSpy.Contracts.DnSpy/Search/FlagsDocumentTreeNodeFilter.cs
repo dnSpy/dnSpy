@@ -96,14 +96,14 @@ namespace dnSpy.Contracts.Search {
 			return FilterFile(thisFlag, visibleFlags);
 		}
 
-		public override DocumentTreeNodeFilterResult GetResult(BaseTypeFolderNode node) {
+		public override DocumentTreeNodeFilterResult GetResult(BaseTypeFolderNode? node) {
 			bool isMatch = (flags & VisibleMembersFlags.BaseTypes) != 0;
 			if (!isMatch)
 				return new DocumentTreeNodeFilterResult(FilterType.Hide, isMatch);
 			return new DocumentTreeNodeFilterResult(FilterType.Visible, isMatch);
 		}
 
-		public override DocumentTreeNodeFilterResult GetResult(DerivedTypesFolderNode node) {
+		public override DocumentTreeNodeFilterResult GetResult(DerivedTypesFolderNode? node) {
 			bool isMatch = (flags & VisibleMembersFlags.DerivedTypes) != 0;
 			if (!isMatch)
 				return new DocumentTreeNodeFilterResult(FilterType.Hide, isMatch);
@@ -186,7 +186,7 @@ namespace dnSpy.Contracts.Search {
 			return new DocumentTreeNodeFilterResult(FilterType.CheckChildren, isMatch);
 		}
 
-		public override DocumentTreeNodeFilterResult GetResult(ReferencesFolderNode node) {
+		public override DocumentTreeNodeFilterResult GetResult(ReferencesFolderNode? node) {
 			var visibleFlags = VisibleMembersFlags.AssemblyRef | VisibleMembersFlags.ModuleRef;
 			const bool isMatch = false;
 			if ((flags & visibleFlags) == 0)
@@ -194,7 +194,7 @@ namespace dnSpy.Contracts.Search {
 			return new DocumentTreeNodeFilterResult(FilterType.Default, isMatch);
 		}
 
-		public override DocumentTreeNodeFilterResult GetResult(ResourcesFolderNode node) {
+		public override DocumentTreeNodeFilterResult GetResult(ResourcesFolderNode? node) {
 			var visibleFlags = VisibleMembersFlags.ResourceList | VisibleMembersFlags.Resource |
 								VisibleMembersFlags.ResourceElement | VisibleMembersFlags.Attributes;
 			bool isMatch = (flags & VisibleMembersFlags.ResourceList) != 0;
@@ -205,7 +205,7 @@ namespace dnSpy.Contracts.Search {
 			return new DocumentTreeNodeFilterResult(FilterType.CheckChildren, isMatch);
 		}
 
-		public override DocumentTreeNodeFilterResult GetResult(ResourceNode node) {
+		public override DocumentTreeNodeFilterResult GetResult(ResourceNode? node) {
 			var visibleFlags = VisibleMembersFlags.Resource | VisibleMembersFlags.ResourceElement |
 								VisibleMembersFlags.Attributes;
 			bool isMatch = (flags & VisibleMembersFlags.Resource) != 0;
@@ -216,7 +216,7 @@ namespace dnSpy.Contracts.Search {
 			return new DocumentTreeNodeFilterResult(FilterType.CheckChildren, isMatch);
 		}
 
-		public override DocumentTreeNodeFilterResult GetResult(ResourceElementNode node) {
+		public override DocumentTreeNodeFilterResult GetResult(ResourceElementNode? node) {
 			bool isMatch = (flags & VisibleMembersFlags.ResourceElement) != 0;
 			if (!isMatch)
 				return new DocumentTreeNodeFilterResult(FilterType.Hide, isMatch);
@@ -285,13 +285,13 @@ namespace dnSpy.Contracts.Search {
 			return new DocumentTreeNodeFilterResult(FilterType.Hide, false);
 		}
 
-		static bool IsDelegate(TypeDef type) => type.BaseType != null && type.BaseType.FullName == "System.MulticastDelegate" && type.BaseType.DefinitionAssembly.IsCorLib();
+		static bool IsDelegate(TypeDef type) => !(type.BaseType is null) && type.BaseType.FullName == "System.MulticastDelegate" && type.BaseType.DefinitionAssembly.IsCorLib();
 
 		static bool HasInstanceConstructors(TypeDef type) => type.Methods.Any(m => m.IsInstanceConstructor);
 
 		static bool HasMethodBodies(TypeDef type) {
 			foreach (var method in type.Methods) {
-				if (method.Body != null)
+				if (!(method.Body is null))
 					return true;
 			}
 			return false;
@@ -301,7 +301,7 @@ namespace dnSpy.Contracts.Search {
 
 		static bool HasLocals(TypeDef type) {
 			foreach (var method in type.Methods) {
-				if (method.Body != null && method.Body.HasVariables)
+				if (!(method.Body is null) && method.Body.HasVariables)
 					return true;
 			}
 			return false;

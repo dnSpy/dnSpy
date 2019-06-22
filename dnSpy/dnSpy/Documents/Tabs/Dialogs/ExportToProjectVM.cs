@@ -45,7 +45,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		public ICommand ExportProjectsCommand => new RelayCommand(a => ExportProjects(), a => CanExportProjects);
 		public ICommand GenerateNewProjectGuidCommand => new RelayCommand(a => ProjectGuid.Value = Guid.NewGuid());
 
-		public string Directory {
+		public string? Directory {
 			get => directory;
 			set {
 				if (directory != value) {
@@ -55,9 +55,9 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 				}
 			}
 		}
-		string directory;
+		string? directory;
 
-		public string SolutionFilename {
+		public string? SolutionFilename {
 			get => solutionFilename;
 			set {
 				if (solutionFilename != value) {
@@ -67,7 +67,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 				}
 			}
 		}
-		string solutionFilename;
+		string? solutionFilename;
 
 		public bool CreateSolution {
 			get => createSolution;
@@ -82,7 +82,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		bool createSolution;
 
 		public ProjectVersion ProjectVersion {
-			get => (ProjectVersion)ProjectVersionVM.SelectedItem;
+			get => (ProjectVersion)ProjectVersionVM.SelectedItem!;
 			set => ProjectVersionVM.SelectedItem = value;
 		}
 
@@ -165,7 +165,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 
 		public bool CanCreateResX => UnpackResources && TheState == State.Editing && false;// See ProjectModuleOptions.CreateResX
 
-		public string FilesToExportMessage {
+		public string? FilesToExportMessage {
 			get => filesToExportMessage;
 			set {
 				if (filesToExportMessage != value) {
@@ -174,7 +174,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 				}
 			}
 		}
-		string filesToExportMessage;
+		string? filesToExportMessage;
 
 		public bool IsIndeterminate {
 			get => isIndeterminate;
@@ -251,7 +251,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 			decompileXaml = canDecompileBaml;
 			createSolution = true;
 			ProjectVersionVM.SelectedItem = ProjectVersion.VS2010;
-			allDecompilers = new ObservableCollection<DecompilerVM>(decompilerService.AllDecompilers.Where(a => a.ProjectFileExtension != null).Select(a => new DecompilerVM(a)));
+			allDecompilers = new ObservableCollection<DecompilerVM>(decompilerService.AllDecompilers.Where(a => !(a.ProjectFileExtension is null)).Select(a => new DecompilerVM(a)));
 			decompiler = allDecompilers.FirstOrDefault();
 			isIndeterminate = false;
 			ProjectGuid = new NullableGuidVM(Guid.NewGuid(), a => HasErrorUpdated());
@@ -261,7 +261,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 
 		void PickDestDir() {
 			var newDir = pickDirectory.GetDirectory(Directory);
-			if (newDir != null)
+			if (!(newDir is null))
 				Directory = newDir;
 		}
 
@@ -318,7 +318,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 
 		public bool NoExportErrors => !exportErrors;
 
-		protected override string Verify(string columnName) {
+		protected override string? Verify(string columnName) {
 			if (columnName == nameof(Directory)) {
 				if (string.IsNullOrWhiteSpace(Directory))
 					return dnSpy_Resources.Error_MissingDestinationFolder;

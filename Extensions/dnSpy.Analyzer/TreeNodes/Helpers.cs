@@ -28,9 +28,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 			if (depth >= 30)
 				return false;
 			// TODO: move it to a better place after adding support for more cases.
-			if (type == null)
+			if (type is null)
 				return false;
-			if (typeRef == null)
+			if (typeRef is null)
 				return false;
 
 			if (type == typeRef)
@@ -40,8 +40,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 			if (type.Namespace != typeRef.Namespace)
 				return false;
 
-			if (type.DeclaringType != null || typeRef.DeclaringType != null) {
-				if (type.DeclaringType == null || typeRef.DeclaringType == null)
+			if (!(type.DeclaringType is null) || !(typeRef.DeclaringType is null)) {
+				if (type.DeclaringType is null || typeRef.DeclaringType is null)
 					return false;
 				if (!IsReferencedBy(type.DeclaringType, typeRef.DeclaringType, depth + 1))
 					return false;
@@ -70,8 +70,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 		/// Given a compiler-generated type, returns the method where that type is used.
 		/// Used to detect the 'parent method' for a lambda/iterator/async state machine.
 		/// </summary>
-		static MethodDef GetOriginalCodeLocation(TypeDef type) {
-			if (type != null && type.DeclaringType != null && IsCompilerGenerated(type)) {
+		static MethodDef? GetOriginalCodeLocation(TypeDef type) {
+			if (!(type is null) && !(type.DeclaringType is null) && IsCompilerGenerated(type)) {
 				if (type.IsValueType) {
 					// Value types might not have any constructor; but they must be stored in a local var
 					// because 'initobj' (or 'call .ctor') expects a managed ref.
@@ -79,7 +79,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				}
 				else {
 					MethodDef constructor = GetTypeConstructor(type);
-					if (constructor == null)
+					if (constructor is null)
 						return null;
 					return FindMethodUsageInType(type.DeclaringType, constructor);
 				}
@@ -89,7 +89,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		static MethodDef GetTypeConstructor(TypeDef type) => type.FindConstructors().FirstOrDefault();
 
-		static MethodDef FindMethodUsageInType(TypeDef type, MethodDef analyzedMethod) {
+		static MethodDef? FindMethodUsageInType(TypeDef type, MethodDef analyzedMethod) {
 			string name = analyzedMethod.Name;
 			foreach (MethodDef method in type.Methods) {
 				bool found = false;
@@ -110,7 +110,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			return null;
 		}
 
-		static MethodDef FindVariableOfTypeUsageInType(TypeDef type, TypeDef variableType) {
+		static MethodDef? FindVariableOfTypeUsageInType(TypeDef type, TypeDef variableType) {
 			foreach (MethodDef method in type.Methods) {
 				bool found = false;
 				if (!method.HasBody)
@@ -128,13 +128,13 @@ namespace dnSpy.Analyzer.TreeNodes {
 			return null;
 		}
 
-		static TypeDef ResolveWithinSameModule(ITypeDefOrRef type) {
-			if (type != null && type.Scope == type.Module)
+		static TypeDef? ResolveWithinSameModule(ITypeDefOrRef type) {
+			if (!(type is null) && type.Scope == type.Module)
 				return type.ResolveTypeDef();
 			return null;
 		}
 
 		static bool IsCompilerGenerated(this IHasCustomAttribute hca) =>
-			hca != null && hca.CustomAttributes.IsDefined("System.Runtime.CompilerServices.CompilerGeneratedAttribute");
+			!(hca is null) && hca.CustomAttributes.IsDefined("System.Runtime.CompilerServices.CompilerGeneratedAttribute");
 	}
 }

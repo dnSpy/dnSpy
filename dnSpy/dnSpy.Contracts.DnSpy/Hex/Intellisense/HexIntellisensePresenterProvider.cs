@@ -32,6 +32,6 @@ namespace dnSpy.Contracts.Hex.Intellisense {
 		/// </summary>
 		/// <param name="session">Session</param>
 		/// <returns></returns>
-		public abstract HexIntellisensePresenter TryCreateIntellisensePresenter(HexIntellisenseSession session);
+		public abstract HexIntellisensePresenter? TryCreateIntellisensePresenter(HexIntellisenseSession session);
 	}
 }

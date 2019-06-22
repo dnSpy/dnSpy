@@ -74,7 +74,7 @@ namespace dnSpy.Bookmarks.Impl {
 			Id = id;
 			Location = location ?? throw new ArgumentNullException(nameof(location));
 			this.settings = settings;
-			if (this.settings.Name == null)
+			if (this.settings.Name is null)
 				this.settings.Name = string.Format(dnSpy_Resources.BookmarkDefaultName, id.ToString());
 		}
 
@@ -82,9 +82,9 @@ namespace dnSpy.Bookmarks.Impl {
 			owner.Dispatcher.VerifyAccess();
 			lock (lockObj) {
 				settings = newSettings;
-				if (settings.Name == null)
+				if (settings.Name is null)
 					settings.Name = string.Empty;
-				if (settings.Labels == null)
+				if (settings.Labels is null)
 					settings.Labels = emptyLabels;
 			}
 		}

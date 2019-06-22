@@ -81,7 +81,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// </summary>
 		/// <param name="s">String</param>
 		/// <returns></returns>
-		public static MemoryStream StringToStream(string s) {
+		public static MemoryStream StringToStream(string? s) {
 			var outStream = new MemoryStream();
 			var writer = new StreamWriter(outStream, Encoding.UTF8);
 			writer.Write(s);
@@ -103,8 +103,8 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 			if (fo == 0)
 				return;
 
-			var mod = (node as DocumentTreeNodeData).GetModule();
-			var filename = mod == null ? null : mod.Location;
+			var mod = (node as DocumentTreeNodeData)?.GetModule();
+			var filename = mod is null ? null : mod.Location;
 			output.Write($"0x{fo:X8}", new AddressReference(filename, false, fo, node.Length), DecompilerReferenceFlags.None, BoxedTextColor.Comment);
 			output.Write(": ", BoxedTextColor.Comment);
 		}
@@ -114,8 +114,8 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// </summary>
 		/// <param name="stream">Stream</param>
 		/// <returns></returns>
-		public static string TryGetString(Stream stream) {
-			if (stream == null)
+		public static string? TryGetString(Stream stream) {
+			if (stream is null)
 				return null;
 
 			stream.Position = 0;
@@ -134,7 +134,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <param name="name">Name</param>
 		/// <returns></returns>
 		public static bool Decompile(IDecompileNodeContext context, Stream stream, string name) {
-			if (stream == null || stream.Length > 500 * 1024)
+			if (stream is null || stream.Length > 500 * 1024)
 				return false;
 
 			stream.Position = 0;

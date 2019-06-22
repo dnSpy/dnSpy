@@ -27,7 +27,7 @@ using dnSpy.Contracts.Text.Editor;
 
 namespace dnSpy.Bookmarks.TextEditor {
 	abstract class BookmarkGlyphTextMarkerLocationProviderService {
-		public abstract GlyphTextMarkerLocationInfo GetLocation(Bookmark bookmark);
+		public abstract GlyphTextMarkerLocationInfo? GetLocation(Bookmark bookmark);
 	}
 
 	[Export(typeof(BookmarkGlyphTextMarkerLocationProviderService))]
@@ -38,12 +38,12 @@ namespace dnSpy.Bookmarks.TextEditor {
 		BookmarkGlyphTextMarkerLocationProviderServiceImpl([ImportMany] IEnumerable<Lazy<BookmarkGlyphTextMarkerLocationProvider, IBookmarkGlyphTextMarkerLocationProviderMetadata>> bookmarkGlyphTextMarkerLocationProviders) =>
 			this.bookmarkGlyphTextMarkerLocationProviders = bookmarkGlyphTextMarkerLocationProviders.OrderBy(a => a.Metadata.Order).ToArray();
 
-		public override GlyphTextMarkerLocationInfo GetLocation(Bookmark bookmark) {
-			if (bookmark == null)
+		public override GlyphTextMarkerLocationInfo? GetLocation(Bookmark bookmark) {
+			if (bookmark is null)
 				throw new ArgumentNullException(nameof(bookmark));
 			foreach (var lz in bookmarkGlyphTextMarkerLocationProviders) {
 				var loc = lz.Value.GetLocation(bookmark);
-				if (loc != null)
+				if (!(loc is null))
 					return loc;
 			}
 			return null;

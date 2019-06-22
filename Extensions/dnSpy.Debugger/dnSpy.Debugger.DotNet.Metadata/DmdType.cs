@@ -28,7 +28,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
 	/// A .NET type
 	/// </summary>
-	public abstract partial class DmdType : DmdMemberInfo, IEquatable<DmdType> {
+	public abstract partial class DmdType : DmdMemberInfo, IEquatable<DmdType?> {
 		/// <summary>
 		/// Gets the AppDomain
 		/// </summary>
@@ -37,7 +37,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the member type
 		/// </summary>
-		public sealed override DmdMemberTypes MemberType => (TypeSignatureKind == DmdTypeSignatureKind.Type || TypeSignatureKind == DmdTypeSignatureKind.GenericInstance) && (object)DeclaringType != null ? DmdMemberTypes.NestedType : DmdMemberTypes.TypeInfo;
+		public sealed override DmdMemberTypes MemberType => (TypeSignatureKind == DmdTypeSignatureKind.Type || TypeSignatureKind == DmdTypeSignatureKind.GenericInstance) && !(DeclaringType is null) ? DmdMemberTypes.NestedType : DmdMemberTypes.TypeInfo;
 
 		/// <summary>
 		/// Gets the type signature kind
@@ -52,12 +52,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the reflected type. This is the type that owns this member, see also <see cref="DmdMemberInfo.DeclaringType"/>
 		/// </summary>
-		public override DmdType ReflectedType => DeclaringType;
+		public override DmdType? ReflectedType => DeclaringType;
 
 		/// <summary>
 		/// Gets the declaring method or null
 		/// </summary>
-		public abstract DmdMethodBase DeclaringMethod { get; }
+		public abstract DmdMethodBase? DeclaringMethod { get; }
 
 		/// <summary>
 		/// Gets the module
@@ -72,12 +72,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the full name
 		/// </summary>
-		public string FullName => DmdMemberFormatter.FormatFullName(this);
+		public string? FullName => DmdMemberFormatter.FormatFullName(this);
 
 		/// <summary>
 		/// Gets the namespace or null
 		/// </summary>
-		public abstract string Namespace { get; }
+		public abstract string? Namespace { get; }
 
 		/// <summary>
 		/// Gets the name
@@ -88,32 +88,32 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Gets the namespace or null. This is the namespace stored in the metadata. <see cref="Namespace"/>
 		/// is the namespace of the non-declaring type.
 		/// </summary>
-		public abstract string MetadataNamespace { get; }
+		public abstract string? MetadataNamespace { get; }
 
 		/// <summary>
 		/// Gets the name stored in the metadata. It's not escaped like <see cref="DmdMemberInfo.Name"/>
 		/// </summary>
-		public abstract string MetadataName { get; }
+		public abstract string? MetadataName { get; }
 
 		/// <summary>
 		/// Gets the assembly qualified name
 		/// </summary>
-		public string AssemblyQualifiedName => DmdMemberFormatter.FormatAssemblyQualifiedName(this);
+		public string? AssemblyQualifiedName => DmdMemberFormatter.FormatAssemblyQualifiedName(this);
 
 		/// <summary>
 		/// Gets the base type or null if none
 		/// </summary>
-		public abstract DmdType BaseType { get; }
+		public abstract DmdType? BaseType { get; }
 
 		/// <summary>
 		/// Gets the struct layout attribute
 		/// </summary>
-		public abstract StructLayoutAttribute StructLayoutAttribute { get; }
+		public abstract StructLayoutAttribute? StructLayoutAttribute { get; }
 
 		/// <summary>
 		/// true if it's a nested type
 		/// </summary>
-		public bool IsNested => (object)DeclaringType != null;
+		public bool IsNested => !(DeclaringType is null);
 
 		/// <summary>
 		/// Gets the generic parameter attributes
@@ -131,7 +131,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				return true;
 			for (;;) {
 				var declType = type.DeclaringType;
-				if ((object)declType == null)
+				if (declType is null)
 					break;
 				if (!type.IsNestedPublic)
 					return false;
@@ -225,7 +225,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					return true;
 				var systemDelegate = AppDomain.System_Delegate;
 				var systemEnum = AppDomain.System_Enum;
-				for (var type = this; (object)type != null; type = type.BaseType) {
+				for (DmdType? type = this; !(type is null); type = type.BaseType) {
 					if (type == systemDelegate || type == systemEnum)
 						return true;
 				}
@@ -245,26 +245,26 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
 		/// <returns></returns>
-		public sealed override DmdMemberInfo ResolveMember(bool throwOnError) => Resolve(throwOnError);
+		public sealed override DmdMemberInfo? ResolveMember(bool throwOnError) => Resolve(throwOnError);
 
 		/// <summary>
 		/// Resolves a type reference and throws if it doesn't exist
 		/// </summary>
 		/// <returns></returns>
-		public DmdType Resolve() => Resolve(throwOnError: true);
+		public DmdType Resolve() => Resolve(throwOnError: true)!;
 
 		/// <summary>
 		/// Resolves a type reference and returns null if it doesn't exist
 		/// </summary>
 		/// <returns></returns>
-		public DmdType ResolveNoThrow() => Resolve(throwOnError: false);
+		public DmdType? ResolveNoThrow() => Resolve(throwOnError: false);
 
 		/// <summary>
 		/// Resolves a type reference
 		/// </summary>
 		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
 		/// <returns></returns>
-		public abstract DmdType Resolve(bool throwOnError);
+		public abstract DmdType? Resolve(bool throwOnError);
 
 		/// <summary>
 		/// Makes a pointer type
@@ -326,15 +326,15 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="typeArguments">Generic arguments</param>
 		/// <returns></returns>
-		public DmdType MakeGenericType(IList<Type> typeArguments) => MakeGenericType(typeArguments.ToDmdType(AppDomain));
+		public DmdType MakeGenericType(IList<Type> typeArguments) => MakeGenericType(typeArguments.ToDmdTypeNoNull(AppDomain));
 
 		/// <summary>
 		/// Gets the type code
 		/// </summary>
 		/// <param name="type">Type or null</param>
 		/// <returns></returns>
-		public static TypeCode GetTypeCode(DmdType type) {
-			if ((object)type == null) return TypeCode.Empty;
+		public static TypeCode GetTypeCode(DmdType? type) {
+			if (type is null) return TypeCode.Empty;
 			const TypeCode defaultValue = TypeCode.Object;
 			if (type.IsEnum)
 				type = type.GetEnumUnderlyingType();
@@ -415,7 +415,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="module">Module</param>
 		/// <param name="metadataToken">Metadata token</param>
 		/// <returns></returns>
-		public DmdMethodBase GetMethod(DmdModule module, int metadataToken) => GetMethod(module, metadataToken, throwOnError: false);
+		public DmdMethodBase? GetMethod(DmdModule module, int metadataToken) => GetMethod(module, metadataToken, throwOnError: false);
 
 		/// <summary>
 		/// Gets a method
@@ -424,7 +424,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="metadataToken">Metadata token</param>
 		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
 		/// <returns></returns>
-		public abstract DmdMethodBase GetMethod(DmdModule module, int metadataToken, bool throwOnError);
+		public abstract DmdMethodBase? GetMethod(DmdModule module, int metadataToken, bool throwOnError);
 
 		/// <summary>
 		/// Gets a field or returns null if it doesn't exist
@@ -432,7 +432,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="module">Module</param>
 		/// <param name="metadataToken">Metadata token</param>
 		/// <returns></returns>
-		public DmdFieldInfo GetField(DmdModule module, int metadataToken) => GetField(module, metadataToken, throwOnError: false);
+		public DmdFieldInfo? GetField(DmdModule module, int metadataToken) => GetField(module, metadataToken, throwOnError: false);
 
 		/// <summary>
 		/// Gets a field
@@ -441,7 +441,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="metadataToken">Metadata token</param>
 		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
 		/// <returns></returns>
-		public abstract DmdFieldInfo GetField(DmdModule module, int metadataToken, bool throwOnError);
+		public abstract DmdFieldInfo? GetField(DmdModule module, int metadataToken, bool throwOnError);
 
 		/// <summary>
 		/// Gets a property or returns null if it doesn't exist
@@ -449,7 +449,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="module">Module</param>
 		/// <param name="metadataToken">Metadata token</param>
 		/// <returns></returns>
-		public DmdPropertyInfo GetProperty(DmdModule module, int metadataToken) => GetProperty(module, metadataToken, throwOnError: false);
+		public DmdPropertyInfo? GetProperty(DmdModule module, int metadataToken) => GetProperty(module, metadataToken, throwOnError: false);
 
 		/// <summary>
 		/// Gets a property
@@ -458,7 +458,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="metadataToken">Metadata token</param>
 		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
 		/// <returns></returns>
-		public abstract DmdPropertyInfo GetProperty(DmdModule module, int metadataToken, bool throwOnError);
+		public abstract DmdPropertyInfo? GetProperty(DmdModule module, int metadataToken, bool throwOnError);
 
 		/// <summary>
 		/// Gets an event or returns null if it doesn't exist
@@ -466,7 +466,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="module">Module</param>
 		/// <param name="metadataToken">Metadata token</param>
 		/// <returns></returns>
-		public DmdEventInfo GetEvent(DmdModule module, int metadataToken) => GetEvent(module, metadataToken, throwOnError: false);
+		public DmdEventInfo? GetEvent(DmdModule module, int metadataToken) => GetEvent(module, metadataToken, throwOnError: false);
 
 		/// <summary>
 		/// Gets an event
@@ -475,7 +475,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="metadataToken">Metadata token</param>
 		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
 		/// <returns></returns>
-		public abstract DmdEventInfo GetEvent(DmdModule module, int metadataToken, bool throwOnError);
+		public abstract DmdEventInfo? GetEvent(DmdModule module, int metadataToken, bool throwOnError);
 
 		/// <summary>
 		/// Gets a method
@@ -484,8 +484,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="methodSignature">Method signature</param>
 		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
 		/// <returns></returns>
-		public DmdMethodBase GetMethod(string name, DmdMethodSignature methodSignature, bool throwOnError) {
-			if ((object)methodSignature == null)
+		public DmdMethodBase? GetMethod(string name, DmdMethodSignature methodSignature, bool throwOnError) {
+			if (methodSignature is null)
 				throw new ArgumentNullException(nameof(methodSignature));
 			return GetMethod(name, methodSignature.Flags, methodSignature.GenericParameterCount, methodSignature.ReturnType, methodSignature.GetParameterTypes(), throwOnError);
 		}
@@ -500,7 +500,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="parameterTypes">Parameter types</param>
 		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
 		/// <returns></returns>
-		public abstract DmdMethodBase GetMethod(string name, DmdSignatureCallingConvention flags, int genericParameterCount, DmdType returnType, IList<DmdType> parameterTypes, bool throwOnError);
+		public abstract DmdMethodBase? GetMethod(string name, DmdSignatureCallingConvention flags, int genericParameterCount, DmdType? returnType, IList<DmdType> parameterTypes, bool throwOnError);
 
 		/// <summary>
 		/// Gets a method
@@ -512,8 +512,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="parameterTypes">Parameter types</param>
 		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
 		/// <returns></returns>
-		public DmdMethodBase GetMethod(string name, DmdSignatureCallingConvention flags, int genericParameterCount, Type returnType, IList<Type> parameterTypes, bool throwOnError) =>
-			GetMethod(name, flags, genericParameterCount, DmdTypeUtilities.ToDmdType(returnType, AppDomain), parameterTypes.ToDmdType(AppDomain), throwOnError);
+		public DmdMethodBase? GetMethod(string name, DmdSignatureCallingConvention flags, int genericParameterCount, Type? returnType, IList<Type> parameterTypes, bool throwOnError) =>
+			GetMethod(name, flags, genericParameterCount, DmdTypeUtilities.ToDmdType(returnType, AppDomain), parameterTypes.ToDmdTypeNoNull(AppDomain), throwOnError);
 
 		/// <summary>
 		/// Gets a method
@@ -523,7 +523,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="parameterTypes">Parameter types</param>
 		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
 		/// <returns></returns>
-		public DmdMethodBase GetMethod(string name, DmdType returnType, IList<DmdType> parameterTypes, bool throwOnError) =>
+		public DmdMethodBase? GetMethod(string name, DmdType? returnType, IList<DmdType> parameterTypes, bool throwOnError) =>
 			GetMethod(name, DmdSignatureCallingConvention.Default, 0, returnType, parameterTypes, throwOnError);
 
 		/// <summary>
@@ -534,8 +534,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="parameterTypes">Parameter types</param>
 		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
 		/// <returns></returns>
-		public DmdMethodBase GetMethod(string name, Type returnType, IList<Type> parameterTypes, bool throwOnError) =>
-			GetMethod(name, DmdSignatureCallingConvention.Default, 0, DmdTypeUtilities.ToDmdType(returnType, AppDomain), parameterTypes.ToDmdType(AppDomain), throwOnError);
+		public DmdMethodBase? GetMethod(string name, Type? returnType, IList<Type> parameterTypes, bool throwOnError) =>
+			GetMethod(name, DmdSignatureCallingConvention.Default, 0, DmdTypeUtilities.ToDmdType(returnType, AppDomain), parameterTypes.ToDmdTypeNoNull(AppDomain), throwOnError);
 
 		/// <summary>
 		/// Gets a field
@@ -544,7 +544,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="fieldType">Field type</param>
 		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
 		/// <returns></returns>
-		public abstract DmdFieldInfo GetField(string name, DmdType fieldType, bool throwOnError);
+		public abstract DmdFieldInfo? GetField(string name, DmdType fieldType, bool throwOnError);
 
 		/// <summary>
 		/// Gets a field
@@ -553,8 +553,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="fieldType">Field type</param>
 		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
 		/// <returns></returns>
-		public DmdFieldInfo GetField(string name, Type fieldType, bool throwOnError) =>
-			GetField(name, DmdTypeUtilities.ToDmdType(fieldType, AppDomain), throwOnError);
+		public DmdFieldInfo? GetField(string name, Type fieldType, bool throwOnError) =>
+			GetField(name, DmdTypeUtilities.ToDmdTypeNoNull(fieldType, AppDomain), throwOnError);
 
 		/// <summary>
 		/// Gets a property
@@ -563,8 +563,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="methodSignature">Method signature</param>
 		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
 		/// <returns></returns>
-		public DmdPropertyInfo GetProperty(string name, DmdMethodSignature methodSignature, bool throwOnError) {
-			if ((object)methodSignature == null)
+		public DmdPropertyInfo? GetProperty(string name, DmdMethodSignature methodSignature, bool throwOnError) {
+			if (methodSignature is null)
 				throw new ArgumentNullException(nameof(methodSignature));
 			return GetProperty(name, methodSignature.Flags, methodSignature.GenericParameterCount, methodSignature.ReturnType, methodSignature.GetParameterTypes(), throwOnError);
 		}
@@ -579,7 +579,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="parameterTypes">Parameter types</param>
 		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
 		/// <returns></returns>
-		public abstract DmdPropertyInfo GetProperty(string name, DmdSignatureCallingConvention flags, int genericParameterCount, DmdType returnType, IList<DmdType> parameterTypes, bool throwOnError);
+		public abstract DmdPropertyInfo? GetProperty(string name, DmdSignatureCallingConvention flags, int genericParameterCount, DmdType? returnType, IList<DmdType> parameterTypes, bool throwOnError);
 
 		/// <summary>
 		/// Gets a property
@@ -591,8 +591,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="parameterTypes">Parameter types</param>
 		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
 		/// <returns></returns>
-		public DmdPropertyInfo GetProperty(string name, DmdSignatureCallingConvention flags, int genericParameterCount, Type returnType, IList<Type> parameterTypes, bool throwOnError) =>
-			GetProperty(name, flags, genericParameterCount, DmdTypeUtilities.ToDmdType(returnType, AppDomain), parameterTypes.ToDmdType(AppDomain), throwOnError);
+		public DmdPropertyInfo? GetProperty(string name, DmdSignatureCallingConvention flags, int genericParameterCount, Type? returnType, IList<Type> parameterTypes, bool throwOnError) =>
+			GetProperty(name, flags, genericParameterCount, DmdTypeUtilities.ToDmdType(returnType, AppDomain), parameterTypes.ToDmdTypeNoNull(AppDomain), throwOnError);
 
 		/// <summary>
 		/// Gets an event
@@ -601,7 +601,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="eventHandlerType">Event handler type</param>
 		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
 		/// <returns></returns>
-		public abstract DmdEventInfo GetEvent(string name, DmdType eventHandlerType, bool throwOnError);
+		public abstract DmdEventInfo? GetEvent(string name, DmdType eventHandlerType, bool throwOnError);
 
 		/// <summary>
 		/// Gets an event
@@ -610,8 +610,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="eventHandlerType">Event handler type</param>
 		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
 		/// <returns></returns>
-		public DmdEventInfo GetEvent(string name, Type eventHandlerType, bool throwOnError) =>
-			GetEvent(name, DmdTypeUtilities.ToDmdType(eventHandlerType, AppDomain), throwOnError);
+		public DmdEventInfo? GetEvent(string name, Type eventHandlerType, bool throwOnError) =>
+			GetEvent(name, DmdTypeUtilities.ToDmdTypeNoNull(eventHandlerType, AppDomain), throwOnError);
 
 		/// <summary>
 		/// Gets a constructor
@@ -620,7 +620,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="callConvention">Calling convention</param>
 		/// <param name="types">Parameter types</param>
 		/// <returns></returns>
-		public abstract DmdConstructorInfo GetConstructor(DmdBindingFlags bindingAttr, DmdCallingConventions callConvention, IList<DmdType> types);
+		public abstract DmdConstructorInfo? GetConstructor(DmdBindingFlags bindingAttr, DmdCallingConventions callConvention, IList<DmdType> types);
 
 		/// <summary>
 		/// Gets a constructor
@@ -629,8 +629,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="callConvention">Calling convention</param>
 		/// <param name="types">Parameter types</param>
 		/// <returns></returns>
-		public DmdConstructorInfo GetConstructor(DmdBindingFlags bindingAttr, DmdCallingConventions callConvention, IList<Type> types) =>
-			GetConstructor(bindingAttr, callConvention, types.ToDmdType(AppDomain));
+		public DmdConstructorInfo? GetConstructor(DmdBindingFlags bindingAttr, DmdCallingConventions callConvention, IList<Type> types) =>
+			GetConstructor(bindingAttr, callConvention, types.ToDmdTypeNoNull(AppDomain));
 
 		/// <summary>
 		/// Gets a constructor
@@ -638,7 +638,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="bindingAttr">Binding flags</param>
 		/// <param name="types">Parameter types</param>
 		/// <returns></returns>
-		public DmdConstructorInfo GetConstructor(DmdBindingFlags bindingAttr, IList<DmdType> types) => GetConstructor(bindingAttr, DmdCallingConventions.Any, types);
+		public DmdConstructorInfo? GetConstructor(DmdBindingFlags bindingAttr, IList<DmdType> types) => GetConstructor(bindingAttr, DmdCallingConventions.Any, types);
 
 		/// <summary>
 		/// Gets a constructor
@@ -646,21 +646,21 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="bindingAttr">Binding flags</param>
 		/// <param name="types">Parameter types</param>
 		/// <returns></returns>
-		public DmdConstructorInfo GetConstructor(DmdBindingFlags bindingAttr, IList<Type> types) => GetConstructor(bindingAttr, DmdCallingConventions.Any, types.ToDmdType(AppDomain));
+		public DmdConstructorInfo? GetConstructor(DmdBindingFlags bindingAttr, IList<Type> types) => GetConstructor(bindingAttr, DmdCallingConventions.Any, types.ToDmdTypeNoNull(AppDomain));
 
 		/// <summary>
 		/// Gets a public constructor
 		/// </summary>
 		/// <param name="types">Parameter types</param>
 		/// <returns></returns>
-		public DmdConstructorInfo GetConstructor(IList<DmdType> types) => GetConstructor(DmdBindingFlags.Instance | DmdBindingFlags.Public, types);
+		public DmdConstructorInfo? GetConstructor(IList<DmdType> types) => GetConstructor(DmdBindingFlags.Instance | DmdBindingFlags.Public, types);
 
 		/// <summary>
 		/// Gets a public constructor
 		/// </summary>
 		/// <param name="types">Parameter types</param>
 		/// <returns></returns>
-		public DmdConstructorInfo GetConstructor(IList<Type> types) => GetConstructor(DmdBindingFlags.Instance | DmdBindingFlags.Public, types.ToDmdType(AppDomain));
+		public DmdConstructorInfo? GetConstructor(IList<Type> types) => GetConstructor(DmdBindingFlags.Instance | DmdBindingFlags.Public, types.ToDmdTypeNoNull(AppDomain));
 
 		/// <summary>
 		/// Gets all public constructors
@@ -678,7 +678,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the type initializer
 		/// </summary>
-		public DmdConstructorInfo TypeInitializer => GetConstructor(DmdBindingFlags.Static | DmdBindingFlags.Public | DmdBindingFlags.NonPublic, DmdCallingConventions.Any, Array.Empty<DmdType>());
+		public DmdConstructorInfo? TypeInitializer => GetConstructor(DmdBindingFlags.Static | DmdBindingFlags.Public | DmdBindingFlags.NonPublic, DmdCallingConventions.Any, Array.Empty<DmdType>());
 
 		/// <summary>
 		/// Gets a method
@@ -688,7 +688,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="callConvention">Calling convention</param>
 		/// <param name="types">Parameter types or null</param>
 		/// <returns></returns>
-		public abstract DmdMethodInfo GetMethod(string name, DmdBindingFlags bindingAttr, DmdCallingConventions callConvention, IList<DmdType> types);
+		public abstract DmdMethodInfo? GetMethod(string name, DmdBindingFlags bindingAttr, DmdCallingConventions callConvention, IList<DmdType>? types);
 
 		/// <summary>
 		/// Gets a method
@@ -698,7 +698,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="callConvention">Calling convention</param>
 		/// <param name="types">Parameter types or null</param>
 		/// <returns></returns>
-		public DmdMethodInfo GetMethod(string name, DmdBindingFlags bindingAttr, DmdCallingConventions callConvention, IList<Type> types) =>
+		public DmdMethodInfo? GetMethod(string name, DmdBindingFlags bindingAttr, DmdCallingConventions callConvention, IList<Type>? types) =>
 			GetMethod(name, bindingAttr, callConvention, types.ToDmdType(AppDomain));
 
 		/// <summary>
@@ -708,7 +708,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="bindingAttr">Binding flags</param>
 		/// <param name="types">Parameter types or null</param>
 		/// <returns></returns>
-		public DmdMethodInfo GetMethod(string name, DmdBindingFlags bindingAttr, IList<DmdType> types) => GetMethod(name, bindingAttr, DmdCallingConventions.Any, types);
+		public DmdMethodInfo? GetMethod(string name, DmdBindingFlags bindingAttr, IList<DmdType>? types) => GetMethod(name, bindingAttr, DmdCallingConventions.Any, types);
 
 		/// <summary>
 		/// Gets a method
@@ -717,7 +717,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="bindingAttr">Binding flags</param>
 		/// <param name="types">Parameter types or null</param>
 		/// <returns></returns>
-		public DmdMethodInfo GetMethod(string name, DmdBindingFlags bindingAttr, IList<Type> types) => GetMethod(name, bindingAttr, DmdCallingConventions.Any, types.ToDmdType(AppDomain));
+		public DmdMethodInfo? GetMethod(string name, DmdBindingFlags bindingAttr, IList<Type>? types) => GetMethod(name, bindingAttr, DmdCallingConventions.Any, types.ToDmdType(AppDomain));
 
 		/// <summary>
 		/// Gets a public static or instance method
@@ -725,7 +725,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="name">Name</param>
 		/// <param name="types">Parameter types or null</param>
 		/// <returns></returns>
-		public DmdMethodInfo GetMethod(string name, IList<DmdType> types) => GetMethod(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, DmdCallingConventions.Any, types);
+		public DmdMethodInfo? GetMethod(string name, IList<DmdType>? types) => GetMethod(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, DmdCallingConventions.Any, types);
 
 		/// <summary>
 		/// Gets a public static or instance method
@@ -733,7 +733,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="name">Name</param>
 		/// <param name="types">Parameter types or null</param>
 		/// <returns></returns>
-		public DmdMethodInfo GetMethod(string name, IList<Type> types) => GetMethod(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, DmdCallingConventions.Any, types.ToDmdType(AppDomain));
+		public DmdMethodInfo? GetMethod(string name, IList<Type>? types) => GetMethod(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, DmdCallingConventions.Any, types.ToDmdType(AppDomain));
 
 		/// <summary>
 		/// Gets a method
@@ -741,14 +741,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="name">Name</param>
 		/// <param name="bindingAttr">Binding flags</param>
 		/// <returns></returns>
-		public DmdMethodInfo GetMethod(string name, DmdBindingFlags bindingAttr) => GetMethod(name, bindingAttr, DmdCallingConventions.Any, (IList<DmdType>)null);
+		public DmdMethodInfo? GetMethod(string name, DmdBindingFlags bindingAttr) => GetMethod(name, bindingAttr, DmdCallingConventions.Any, (IList<DmdType>?)null);
 
 		/// <summary>
 		/// Gets a public static or instance method
 		/// </summary>
 		/// <param name="name">Name</param>
 		/// <returns></returns>
-		public DmdMethodInfo GetMethod(string name) => GetMethod(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, DmdCallingConventions.Any, (IList<DmdType>)null);
+		public DmdMethodInfo? GetMethod(string name) => GetMethod(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, DmdCallingConventions.Any, (IList<DmdType>?)null);
 
 		/// <summary>
 		/// Gets all public static or instance methods
@@ -769,14 +769,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="name">Name</param>
 		/// <param name="bindingAttr">Binding flags</param>
 		/// <returns></returns>
-		public abstract DmdFieldInfo GetField(string name, DmdBindingFlags bindingAttr);
+		public abstract DmdFieldInfo? GetField(string name, DmdBindingFlags bindingAttr);
 
 		/// <summary>
 		/// Gets a public static or instance field
 		/// </summary>
 		/// <param name="name">Name</param>
 		/// <returns></returns>
-		public DmdFieldInfo GetField(string name) => GetField(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public);
+		public DmdFieldInfo? GetField(string name) => GetField(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public);
 
 		/// <summary>
 		/// Gets all public static or instance fields
@@ -796,7 +796,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="name">Name</param>
 		/// <returns></returns>
-		public DmdType GetInterface(string name) => GetInterface(name, false);
+		public DmdType? GetInterface(string name) => GetInterface(name, false);
 
 		/// <summary>
 		/// Gets an interface
@@ -804,7 +804,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="name">Name</param>
 		/// <param name="ignoreCase">true if ignore case</param>
 		/// <returns></returns>
-		public abstract DmdType GetInterface(string name, bool ignoreCase);
+		public abstract DmdType? GetInterface(string name, bool ignoreCase);
 
 		/// <summary>
 		/// Gets all interfaces
@@ -817,7 +817,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="name">Name</param>
 		/// <returns></returns>
-		public DmdEventInfo GetEvent(string name) => GetEvent(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public);
+		public DmdEventInfo? GetEvent(string name) => GetEvent(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public);
 
 		/// <summary>
 		/// Gets an event
@@ -825,7 +825,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="name">Name</param>
 		/// <param name="bindingAttr">Binding flags</param>
 		/// <returns></returns>
-		public abstract DmdEventInfo GetEvent(string name, DmdBindingFlags bindingAttr);
+		public abstract DmdEventInfo? GetEvent(string name, DmdBindingFlags bindingAttr);
 
 		/// <summary>
 		/// Gets all public static or instance events
@@ -845,10 +845,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="name">Name</param>
 		/// <param name="bindingAttr">Binding flags</param>
-		/// <param name="returnType">Return type</param>
+		/// <param name="returnType">Return type or null</param>
 		/// <param name="types">Parameter types or null</param>
 		/// <returns></returns>
-		public abstract DmdPropertyInfo GetProperty(string name, DmdBindingFlags bindingAttr, DmdType returnType, IList<DmdType> types);
+		public abstract DmdPropertyInfo? GetProperty(string name, DmdBindingFlags bindingAttr, DmdType? returnType, IList<DmdType>? types);
 
 		/// <summary>
 		/// Gets a property
@@ -858,7 +858,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="returnType">Return type</param>
 		/// <param name="types">Parameter types or null</param>
 		/// <returns></returns>
-		public DmdPropertyInfo GetProperty(string name, DmdBindingFlags bindingAttr, Type returnType, IList<Type> types) =>
+		public DmdPropertyInfo? GetProperty(string name, DmdBindingFlags bindingAttr, Type returnType, IList<Type>? types) =>
 			GetProperty(name, bindingAttr, DmdTypeUtilities.ToDmdType(returnType, AppDomain), types.ToDmdType(AppDomain));
 
 		/// <summary>
@@ -867,33 +867,25 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="name">Name</param>
 		/// <param name="bindingAttr">Binding flags</param>
 		/// <returns></returns>
-		public DmdPropertyInfo GetProperty(string name, DmdBindingFlags bindingAttr) => GetProperty(name, bindingAttr, null, (IList<DmdType>)null);
+		public DmdPropertyInfo? GetProperty(string name, DmdBindingFlags bindingAttr) => GetProperty(name, bindingAttr, null, (IList<DmdType>?)null);
 
 		/// <summary>
 		/// Gets a public static or instance property
 		/// </summary>
 		/// <param name="name">Name</param>
-		/// <param name="returnType">Return type</param>
+		/// <param name="returnType">Return type or null</param>
 		/// <param name="types">Parameter types or null</param>
 		/// <returns></returns>
-		public DmdPropertyInfo GetProperty(string name, DmdType returnType, IList<DmdType> types) => GetProperty(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, returnType, types);
+		public DmdPropertyInfo? GetProperty(string name, DmdType? returnType, IList<DmdType>? types) => GetProperty(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, returnType, types);
 
 		/// <summary>
 		/// Gets a public static or instance property
 		/// </summary>
 		/// <param name="name">Name</param>
-		/// <param name="returnType">Return type</param>
+		/// <param name="returnType">Return type or null</param>
 		/// <param name="types">Parameter types or null</param>
 		/// <returns></returns>
-		public DmdPropertyInfo GetProperty(string name, Type returnType, IList<Type> types) => GetProperty(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, DmdTypeUtilities.ToDmdType(returnType, AppDomain), types.ToDmdType(AppDomain));
-
-		/// <summary>
-		/// Gets a public static or instance property
-		/// </summary>
-		/// <param name="name">Name</param>
-		/// <param name="types">Parameter types or null</param>
-		/// <returns></returns>
-		public DmdPropertyInfo GetProperty(string name, IList<DmdType> types) => GetProperty(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, null, types);
+		public DmdPropertyInfo? GetProperty(string name, Type? returnType, IList<Type>? types) => GetProperty(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, DmdTypeUtilities.ToDmdType(returnType, AppDomain), types.ToDmdType(AppDomain));
 
 		/// <summary>
 		/// Gets a public static or instance property
@@ -901,30 +893,38 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="name">Name</param>
 		/// <param name="types">Parameter types or null</param>
 		/// <returns></returns>
-		public DmdPropertyInfo GetProperty(string name, IList<Type> types) => GetProperty(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, null, types.ToDmdType(AppDomain));
+		public DmdPropertyInfo? GetProperty(string name, IList<DmdType>? types) => GetProperty(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, null, types);
 
 		/// <summary>
 		/// Gets a public static or instance property
 		/// </summary>
 		/// <param name="name">Name</param>
-		/// <param name="returnType">Return type</param>
+		/// <param name="types">Parameter types or null</param>
 		/// <returns></returns>
-		public DmdPropertyInfo GetProperty(string name, DmdType returnType) => GetProperty(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, returnType, null);
+		public DmdPropertyInfo? GetProperty(string name, IList<Type>? types) => GetProperty(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, null, types.ToDmdType(AppDomain));
 
 		/// <summary>
 		/// Gets a public static or instance property
 		/// </summary>
 		/// <param name="name">Name</param>
-		/// <param name="returnType">Return type</param>
+		/// <param name="returnType">Return type or null</param>
 		/// <returns></returns>
-		public DmdPropertyInfo GetProperty(string name, Type returnType) => GetProperty(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, DmdTypeUtilities.ToDmdType(returnType, AppDomain), null);
+		public DmdPropertyInfo? GetProperty(string name, DmdType? returnType) => GetProperty(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, returnType, null);
+
+		/// <summary>
+		/// Gets a public static or instance property
+		/// </summary>
+		/// <param name="name">Name</param>
+		/// <param name="returnType">Return type or null</param>
+		/// <returns></returns>
+		public DmdPropertyInfo? GetProperty(string name, Type? returnType) => GetProperty(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, DmdTypeUtilities.ToDmdType(returnType, AppDomain), null);
 
 		/// <summary>
 		/// Gets a public static or instance property
 		/// </summary>
 		/// <param name="name">Name</param>
 		/// <returns></returns>
-		public DmdPropertyInfo GetProperty(string name) => GetProperty(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, null, (IList<DmdType>)null);
+		public DmdPropertyInfo? GetProperty(string name) => GetProperty(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public, null, (IList<DmdType>?)null);
 
 		/// <summary>
 		/// Gets all properties
@@ -957,7 +957,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="name">Name</param>
 		/// <returns></returns>
-		public DmdType GetNestedType(string name) => GetNestedType(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public);
+		public DmdType? GetNestedType(string name) => GetNestedType(name, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public);
 
 		/// <summary>
 		/// Gets a nested type
@@ -965,7 +965,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="name">Name</param>
 		/// <param name="bindingAttr">Binding flags</param>
 		/// <returns></returns>
-		public abstract DmdType GetNestedType(string name, DmdBindingFlags bindingAttr);
+		public abstract DmdType? GetNestedType(string name, DmdBindingFlags bindingAttr);
 
 		/// <summary>
 		/// Gets a public static or instance member
@@ -1196,7 +1196,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Gets the element type if it's an array, a by-ref or a pointer type
 		/// </summary>
 		/// <returns></returns>
-		public abstract DmdType GetElementType();
+		public abstract DmdType? GetElementType();
 
 		/// <summary>
 		/// Gets the generic arguments
@@ -1238,7 +1238,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="customModifiers">New custom modifiers</param>
 		/// <returns></returns>
-		public abstract DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers);
+		public abstract DmdType WithCustomModifiers(IList<DmdCustomModifier>? customModifiers);
 
 		/// <summary>
 		/// Returns a type without custom modifiers
@@ -1272,11 +1272,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="type">Other type</param>
 		/// <returns></returns>
 		public bool IsSubclassOf(DmdType type) {
-			if ((object)type == null)
+			if (type is null)
 				throw new ArgumentNullException(nameof(type));
 			if (this == type)
 				return false;
-			for (var t = BaseType; (object)t != null; t = t.BaseType) {
+			for (var t = BaseType; !(t is null); t = t.BaseType) {
 				if (t == type)
 					return true;
 			}
@@ -1289,15 +1289,15 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="type">Other type</param>
 		/// <returns></returns>
-		public bool IsSubclassOf(Type type) => IsSubclassOf(DmdTypeUtilities.ToDmdType(type, AppDomain));
+		public bool IsSubclassOf(Type type) => IsSubclassOf(DmdTypeUtilities.ToDmdTypeNoNull(type, AppDomain));
 
 		/// <summary>
 		/// Returns true if an instance of <paramref name="c"/> can be assigned to an instance of this type
 		/// </summary>
 		/// <param name="c"></param>
 		/// <returns></returns>
-		public bool IsAssignableFrom(DmdType c) {
-			if ((object)c == null)
+		public bool IsAssignableFrom(DmdType? c) {
+			if (c is null)
 				return false;
 			return __CanCastTo(c, this);
 		}
@@ -1314,8 +1314,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="target">Target type</param>
 		/// <returns></returns>
-		public bool CanCastTo(DmdType target) {
-			if ((object)target == null)
+		public bool CanCastTo(DmdType? target) {
+			if (target is null)
 				return false;
 			return __CanCastTo(this, target);
 		}
@@ -1328,19 +1328,20 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public bool CanCastTo(Type target) => CanCastTo(DmdTypeUtilities.ToDmdType(target, AppDomain));
 
 		internal static HashSet<DmdType> GetAllInterfaces(DmdType type) {
-			var hash = ObjectPools.AllocHashSetOfType();
-			var stack = ObjectPools.AllocStackOfType();
-			stack.Push(type);
+			DmdType? currentType = type;
+			HashSet<DmdType>? hash = ObjectPools.AllocHashSetOfType();
+			Stack<DmdType>? stack = ObjectPools.AllocStackOfType();
+			stack.Push(currentType);
 			while (stack.Count > 0) {
-				type = stack.Pop();
+				currentType = stack.Pop();
 				for (;;) {
-					var ifaces = type.GetInterfaces();
+					var ifaces = currentType.GetInterfaces();
 					foreach (var iface in ifaces) {
 						if (hash.Add(iface))
 							stack.Push(iface);
 					}
-					type = type.BaseType;
-					if ((object)type == null)
+					currentType = currentType.BaseType;
+					if (currentType is null)
 						break;
 				}
 			}
@@ -1354,7 +1355,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="other">Other types</param>
 		/// <returns></returns>
-		public bool IsEquivalentTo(DmdType other) => new DmdSigComparer(DmdMemberInfoEqualityComparer.DefaultTypeOptions | DmdSigComparerOptions.CheckTypeEquivalence).Equals(this, other);
+		public bool IsEquivalentTo(DmdType? other) => new DmdSigComparer(DmdMemberInfoEqualityComparer.DefaultTypeOptions | DmdSigComparerOptions.CheckTypeEquivalence).Equals(this, other);
 
 		/// <summary>
 		/// Returns true if this type is equivalent to <paramref name="other"/>
@@ -1385,7 +1386,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="attributeType">Custom attribute type</param>
 		/// <param name="inherit">true to check custom attributes in all base classes</param>
 		/// <returns></returns>
-		public sealed override bool IsDefined(DmdType attributeType, bool inherit) => CustomAttributesHelper.IsDefined(this, attributeType, inherit);
+		public sealed override bool IsDefined(DmdType? attributeType, bool inherit) => CustomAttributesHelper.IsDefined(this, attributeType, inherit);
 
 		/// <summary>
 		/// Finds a custom attribute
@@ -1393,7 +1394,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="attributeTypeFullName">Full name of the custom attribute type</param>
 		/// <param name="inherit">true to check custom attributes in all base classes</param>
 		/// <returns></returns>
-		public sealed override DmdCustomAttributeData FindCustomAttribute(string attributeTypeFullName, bool inherit) => CustomAttributesHelper.Find(this, attributeTypeFullName, inherit);
+		public sealed override DmdCustomAttributeData? FindCustomAttribute(string attributeTypeFullName, bool inherit) => CustomAttributesHelper.Find(this, attributeTypeFullName, inherit);
 
 		/// <summary>
 		/// Finds a custom attribute
@@ -1401,11 +1402,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="attributeType">Custom attribute type</param>
 		/// <param name="inherit">true to check custom attributes in all base classes</param>
 		/// <returns></returns>
-		public sealed override DmdCustomAttributeData FindCustomAttribute(DmdType attributeType, bool inherit) => CustomAttributesHelper.Find(this, attributeType, inherit);
+		public sealed override DmdCustomAttributeData? FindCustomAttribute(DmdType? attributeType, bool inherit) => CustomAttributesHelper.Find(this, attributeType, inherit);
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-		public static bool operator ==(DmdType left, DmdType right) => DmdMemberInfoEqualityComparer.DefaultType.Equals(left, right);
-		public static bool operator !=(DmdType left, DmdType right) => !DmdMemberInfoEqualityComparer.DefaultType.Equals(left, right);
+		public static bool operator ==(DmdType? left, DmdType? right) => DmdMemberInfoEqualityComparer.DefaultType.Equals(left, right);
+		public static bool operator !=(DmdType? left, DmdType? right) => !DmdMemberInfoEqualityComparer.DefaultType.Equals(left, right);
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
@@ -1413,14 +1414,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		public bool Equals(DmdType other) => DmdMemberInfoEqualityComparer.DefaultType.Equals(this, other);
+		public bool Equals(DmdType? other) => DmdMemberInfoEqualityComparer.DefaultType.Equals(this, other);
 
 		/// <summary>
 		/// Equals()
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => Equals(obj as DmdType);
+		public override bool Equals(object? obj) => Equals(obj as DmdType);
 
 		/// <summary>
 		/// GetHashCode()
@@ -1432,6 +1433,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// ToString()
 		/// </summary>
 		/// <returns></returns>
-		public sealed override string ToString() => DmdMemberFormatter.Format(this);
+		public sealed override string? ToString() => DmdMemberFormatter.Format(this);
 	}
 }

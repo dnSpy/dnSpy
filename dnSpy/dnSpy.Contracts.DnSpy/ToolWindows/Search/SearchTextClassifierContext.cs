@@ -25,7 +25,7 @@ using dnSpy.Contracts.Text.Classification;
 namespace dnSpy.Contracts.ToolWindows.Search {
 	sealed class SearchTextClassifierContext : TextClassifierContext {
 		public SearchMatcher SearchMatcher { get; }
-		public SearchTextClassifierContext(SearchMatcher searchMatcher, string text, string tag, bool colorize, IReadOnlyCollection<SpanData<object>> colors = null)
+		public SearchTextClassifierContext(SearchMatcher searchMatcher, string text, string tag, bool colorize, IReadOnlyCollection<SpanData<object>>? colors = null)
 			: base(text, tag, colorize, colors) => SearchMatcher = searchMatcher ?? throw new ArgumentNullException(nameof(searchMatcher));
 	}
 }

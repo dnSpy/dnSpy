@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using dndbg.COM.MetaData;
 using dndbg.Engine;
@@ -64,7 +65,7 @@ namespace dndbg.DotNet {
 	/// </summary>
 	sealed class CorModuleDef : ModuleDef, ISignatureReaderHelper, IInstructionOperandResolver, ICorHasCustomAttribute {
 		readonly IMetaDataImport mdi;
-		readonly IMetaDataImport2 mdi2;
+		readonly IMetaDataImport2? mdi2;
 		readonly uint origRid;
 		readonly ICorModuleDefHelper corModuleDefHelper;
 		readonly bool isManifestModule;
@@ -77,17 +78,17 @@ namespace dndbg.DotNet {
 		readonly Dictionary<uint, MemberInfo<CorPropertyDef>> ridToPropertyDef = new Dictionary<uint, MemberInfo<CorPropertyDef>>();
 		readonly Dictionary<uint, MemberInfo<CorEventDef>> ridToEventDef = new Dictionary<uint, MemberInfo<CorEventDef>>();
 
-		readonly Dictionary<uint, CorInterfaceImpl> ridToInterfaceImpl = new Dictionary<uint, CorInterfaceImpl>();
-		readonly Dictionary<uint, CorMemberRef> ridToMemberRef = new Dictionary<uint, CorMemberRef>();
-		readonly Dictionary<uint, CorStandAloneSig> ridToStandAloneSig = new Dictionary<uint, CorStandAloneSig>();
-		readonly Dictionary<uint, CorTypeSpec> ridToTypeSpec = new Dictionary<uint, CorTypeSpec>();
+		readonly Dictionary<uint, CorInterfaceImpl?> ridToInterfaceImpl = new Dictionary<uint, CorInterfaceImpl?>();
+		readonly Dictionary<uint, CorMemberRef?> ridToMemberRef = new Dictionary<uint, CorMemberRef?>();
+		readonly Dictionary<uint, CorStandAloneSig?> ridToStandAloneSig = new Dictionary<uint, CorStandAloneSig?>();
+		readonly Dictionary<uint, CorTypeSpec?> ridToTypeSpec = new Dictionary<uint, CorTypeSpec?>();
 
-		readonly Dictionary<uint, CorInterfaceImpl> ridToInterfaceImplNoCtx = new Dictionary<uint, CorInterfaceImpl>();
-		readonly Dictionary<uint, CorMemberRef> ridToMemberRefNoCtx = new Dictionary<uint, CorMemberRef>();
-		readonly Dictionary<uint, CorStandAloneSig> ridToStandAloneSigNoCtx = new Dictionary<uint, CorStandAloneSig>();
-		readonly Dictionary<uint, CorTypeSpec> ridToTypeSpecNoCtx = new Dictionary<uint, CorTypeSpec>();
-		readonly Dictionary<uint, CorMethodSpec> ridToMethodSpecNoCtx = new Dictionary<uint, CorMethodSpec>();
-		readonly Dictionary<uint, CorGenericParamConstraint> ridToGenericParamConstraintNoCtx = new Dictionary<uint, CorGenericParamConstraint>();
+		readonly Dictionary<uint, CorInterfaceImpl?> ridToInterfaceImplNoCtx = new Dictionary<uint, CorInterfaceImpl?>();
+		readonly Dictionary<uint, CorMemberRef?> ridToMemberRefNoCtx = new Dictionary<uint, CorMemberRef?>();
+		readonly Dictionary<uint, CorStandAloneSig?> ridToStandAloneSigNoCtx = new Dictionary<uint, CorStandAloneSig?>();
+		readonly Dictionary<uint, CorTypeSpec?> ridToTypeSpecNoCtx = new Dictionary<uint, CorTypeSpec?>();
+		readonly Dictionary<uint, CorMethodSpec?> ridToMethodSpecNoCtx = new Dictionary<uint, CorMethodSpec?>();
+		readonly Dictionary<uint, CorGenericParamConstraint?> ridToGenericParamConstraintNoCtx = new Dictionary<uint, CorGenericParamConstraint?>();
 
 		readonly Dictionary<uint, CorTypeDef> ridToType = new Dictionary<uint, CorTypeDef>();
 		readonly Dictionary<uint, CorTypeRef> ridToTypeRef = new Dictionary<uint, CorTypeRef>();
@@ -98,7 +99,7 @@ namespace dndbg.DotNet {
 		readonly Dictionary<uint, CorExportedType> ridToExportedType = new Dictionary<uint, CorExportedType>();
 		readonly Dictionary<uint, CorManifestResource> ridToManifestResource = new Dictionary<uint, CorManifestResource>();
 
-		Dictionary<uint, List<uint>> ridToNested;
+		Dictionary<uint, List<uint>?> ridToNested;
 		Dictionary<uint, uint> ridToEnclosing;
 		HashSet<uint> nestedListInitd;
 
@@ -133,18 +134,21 @@ namespace dndbg.DotNet {
 		/// Gets the <see cref="IMetaDataImport2"/>. This is null if it's not available, eg.
 		/// a .NET 1.x process is being debugged using the CLR 1.x runtime.
 		/// </summary>
-		public IMetaDataImport2 MetaDataImport2 => mdi2;
+		public IMetaDataImport2? MetaDataImport2 => mdi2;
 
-		public IMetaDataAssemblyImport MetaDataAssemblyImport => mdi as IMetaDataAssemblyImport;
+		public IMetaDataAssemblyImport? MetaDataAssemblyImport => mdi as IMetaDataAssemblyImport;
 
-		public CorModuleDef(IMetaDataImport mdi, ICorModuleDefHelper corModuleDefHelper) {
+		public CorModuleDef(IMetaDataImport? mdi, ICorModuleDefHelper corModuleDefHelper) {
+			ridToNested = null!;
+			ridToEnclosing = null!;
+			nestedListInitd = null!;
 			rid = 1;
 			origRid = 1;
 			this.mdi = mdi ?? throw new ArgumentNullException(nameof(mdi));
 			mdi2 = mdi as IMetaDataImport2;
 			this.corModuleDefHelper = corModuleDefHelper;
 			var fname = corModuleDefHelper.Filename;
-			Debug.Assert(fname == null || File.Exists(fname));
+			Debug.Assert(fname is null || File.Exists(fname));
 			location = fname ?? string.Empty;
 			isManifestModule = corModuleDefHelper.IsManifestModule;
 			isExeFile = IsExeFile(isManifestModule, location);
@@ -171,7 +175,7 @@ namespace dndbg.DotNet {
 		void CreateCorLibTypes() {
 			var corLibAsm = GetCorAssemblyRef() ?? AssemblyRefUser.CreateMscorlibReferenceCLR20();
 			var corLibAsmRef = corLibAsm as AssemblyRef;
-			if (corLibAsmRef == null)
+			if (corLibAsmRef is null)
 				corLibAsmRef = new AssemblyRefUser(corLibAsm);
 			corLibTypes = new CorLibTypes(this, UpdateRowId(corLibAsmRef));
 		}
@@ -183,20 +187,20 @@ namespace dndbg.DotNet {
 				return corModuleDefHelper.CorLib;
 
 			var asmRef = TryGetCorLibAssemblyRef();
-			if (asmRef != null)
+			if (!(asmRef is null))
 				return asmRef;
 
 			return corModuleDefHelper.CorLib;
 		}
 
-		AssemblyRef TryGetCorLibAssemblyRef() {
-			AssemblyRef bestMscorlib = null;
-			AssemblyRef bestNonMscorlib = null;
+		AssemblyRef? TryGetCorLibAssemblyRef() {
+			AssemblyRef? bestMscorlib = null;
+			AssemblyRef? bestNonMscorlib = null;
 			for (uint rid = 1; ; rid++) {
 				if (!IsValidToken(new MDToken(Table.AssemblyRef, rid).Raw))
 					break;
 				var asmRef = ResolveAssemblyRef(rid);
-				if (asmRef == null)
+				if (asmRef is null)
 					break;
 				if (!UTF8String.IsNullOrEmpty(asmRef.Culture))
 					continue;
@@ -204,15 +208,15 @@ namespace dndbg.DotNet {
 				if ("mscorlib".Equals(asmRef.Name, StringComparison.OrdinalIgnoreCase)) {
 					if ((pktMscorlibDesktop.Equals(asmRef.PublicKeyOrToken) || pktMscorlibDotNetCore.Equals(asmRef.PublicKeyOrToken)) &&
 						asmRef.Version != mscorlibWinMDVersion) {
-						if (bestMscorlib == null || asmRef.Version > bestMscorlib.Version)
+						if (bestMscorlib is null || asmRef.Version > bestMscorlib.Version)
 							bestMscorlib = asmRef;
 					}
 				}
-				else if (bestNonMscorlib == null && asmRef.IsCorLib())
+				else if (bestNonMscorlib is null && asmRef.IsCorLib())
 					bestNonMscorlib = asmRef;
 			}
 
-			if (bestMscorlib != null)
+			if (!(bestMscorlib is null))
 				return bestMscorlib;
 			return bestNonMscorlib;
 		}
@@ -249,7 +253,7 @@ namespace dndbg.DotNet {
 		/// Should be called when a <c>LoadClass</c> debug event has been received
 		/// </summary>
 		/// <param name="token">Token of loaded class</param>
-		public TypeDef LoadClass(uint token) {
+		public TypeDef? LoadClass(uint token) {
 			if (!IsValidToken(token))
 				return null;
 			var mdToken = new MDToken(token);
@@ -262,7 +266,7 @@ namespace dndbg.DotNet {
 			return InitializeTypeDef(mdToken.Rid, true, out bool created);
 		}
 
-		CorTypeDef InitializeTypeDef(uint rid, bool calledFromLoadClass, out bool created) {
+		CorTypeDef? InitializeTypeDef(uint rid, bool calledFromLoadClass, out bool created) {
 			created = false;
 			if (!DisableMDAPICalls && !IsValidToken(Table.TypeDef, rid))
 				return null;
@@ -272,7 +276,7 @@ namespace dndbg.DotNet {
 			if (DisableMDAPICalls)
 				return null;
 
-			if (td == null) {
+			if (td is null) {
 				created = true;
 				td = new CorTypeDef(this, rid);
 				ridToType.Add(rid, td);
@@ -288,14 +292,14 @@ namespace dndbg.DotNet {
 			return td;
 		}
 
-		internal CallingConventionSig ReadSignature(byte[] data, GenericParamContext gpContext) {
-			if (data == null)
+		internal CallingConventionSig? ReadSignature(byte[]? data, GenericParamContext gpContext) {
+			if (data is null)
 				return null;
 			return SignatureReader.ReadSig(this, CorLibTypes, data, gpContext);
 		}
 
-		internal TypeSig ReadTypeSignature(byte[] data, GenericParamContext gpContext, out byte[] extraData) {
-			if (data == null) {
+		internal TypeSig? ReadTypeSignature(byte[]? data, GenericParamContext gpContext, out byte[]? extraData) {
+			if (data is null) {
 				extraData = null;
 				return null;
 			}
@@ -305,7 +309,7 @@ namespace dndbg.DotNet {
 
 		protected override void InitializeCustomAttributes() => InitCustomAttributes(this, ref customAttributes, new GenericParamContext());
 
-		internal void InitCustomAttributes(ICorHasCustomAttribute hca, ref CustomAttributeCollection customAttributes, GenericParamContext gpContext) {
+		internal void InitCustomAttributes(ICorHasCustomAttribute hca, ref CustomAttributeCollection? customAttributes, GenericParamContext gpContext) {
 			var tokens = MDAPI.GetCustomAttributeTokens(mdi, hca.OriginalToken.Raw);
 			var tmp = new CustomAttributeCollection(tokens.Length, tokens, (tokens2, index) => ReadCustomAttribute(((uint[])tokens2)[index], gpContext));
 			Interlocked.CompareExchange(ref customAttributes, tmp, null);
@@ -315,22 +319,22 @@ namespace dndbg.DotNet {
 			var caBlob = MDAPI.GetCustomAttributeBlob(mdi, caToken, out uint typeToken) ?? Array.Empty<byte>();
 			var cat = ResolveToken(typeToken, gpContext) as ICustomAttributeType;
 			var ca = CustomAttributeReader.Read(this, caBlob, cat, gpContext);
-			Debug.Assert(ca != null);
+			Debug.Assert(!(ca is null));
 			return ca;
 		}
 
-		internal void InitDeclSecurities(ICorHasDeclSecurity hds, ref IList<DeclSecurity> declSecurities) {
+		internal void InitDeclSecurities(ICorHasDeclSecurity hds, ref IList<DeclSecurity?>? declSecurities) {
 			var tokens = MDAPI.GetPermissionSetTokens(mdi, hds.OriginalToken.Raw);
-			var tmp = new LazyList<DeclSecurity, uint[]>(tokens.Length, tokens, (tokens2, index) => ResolveDeclSecurity(tokens2[index]));
+			var tmp = new LazyList<DeclSecurity?, uint[]>(tokens.Length, tokens, (tokens2, index) => ResolveDeclSecurity(tokens2[index]));
 			Interlocked.CompareExchange(ref declSecurities, tmp, null);
 		}
 
-		internal MarshalType ReadMarshalType(ICorHasFieldMarshal hfm, GenericParamContext gpContext) {
+		internal MarshalType? ReadMarshalType(ICorHasFieldMarshal hfm, GenericParamContext gpContext) {
 			var mdi = MetaDataImport;
 			uint token = hfm.OriginalToken.Raw;
 
 			var data = MDAPI.GetFieldMarshalBlob(mdi, token);
-			if (data == null)
+			if (data is null)
 				return null;
 			return MarshalBlobReader.Read(this, data, gpContext);
 		}
@@ -358,7 +362,7 @@ namespace dndbg.DotNet {
 			DllCharacteristics = DefaultDllCharacteristics;
 			if (!isExeFile)
 				Characteristics |= Characteristics.Dll;
-			if (mach == null) {
+			if (mach is null) {
 				Cor20HeaderFlags = ComImageFlags.ILOnly;
 				Characteristics |= Characteristics.LargeAddressAware;
 			}
@@ -392,10 +396,10 @@ namespace dndbg.DotNet {
 		}
 
 		string CalculateRuntimeVersion() {
-			if (mdi2 == null)
+			if (mdi2 is null)
 				return MDHeaderRuntimeVersion.MS_CLR_10;    // Could be .NET 1.0 or 1.1 but choose 1.0
 			var s = MDAPI.GetModuleVersionString(mdi2);
-			if (s != null)
+			if (!(s is null))
 				return s;
 			return MDHeaderRuntimeVersion.MS_CLR_20;
 		}
@@ -409,9 +413,9 @@ namespace dndbg.DotNet {
 			return ModuleKind.Console;
 		}
 
-		internal byte[] ReadFieldInitialValue(CorFieldDef cfd, uint rva, int size) =>
+		internal byte[]? ReadFieldInitialValue(CorFieldDef cfd, uint rva, int size) =>
 			corModuleDefHelper.ReadFieldInitialValue(rva, cfd.OriginalToken.Raw, size);
-		public TypeSig ConvertRTInternalAddress(IntPtr address) => null;
+		public TypeSig? ConvertRTInternalAddress(IntPtr address) => null;
 
 		internal MemberInfo<CorFieldDef> Register(CorFieldDef item, Action<CorFieldDef> initItem) {
 			if (!ridToField.TryGetValue(item.OriginalToken.Rid, out var info))
@@ -461,7 +465,7 @@ namespace dndbg.DotNet {
 			return info;
 		}
 
-		internal MethodBody ReadMethodBody(CorMethodDef method, uint rva, MethodAttributes attrs, MethodImplAttributes implAttrs, GenericParamContext gpContext) {
+		internal MethodBody? ReadMethodBody(CorMethodDef method, uint rva, MethodAttributes attrs, MethodImplAttributes implAttrs, GenericParamContext gpContext) {
 			// dynamic modules can have methods with RVA == 0 because it's relative to the .text section
 			// and not really an RVA.
 			if (!corModuleDefHelper.IsDynamic) {
@@ -487,15 +491,15 @@ namespace dndbg.DotNet {
 			return MethodBodyReader.CreateCilBody(this, reader, parameters, gpContext);
 		}
 
-		public ITypeDefOrRef ResolveTypeDefOrRef(uint codedToken) => ResolveTypeDefOrRef(codedToken, new GenericParamContext());
+		public ITypeDefOrRef? ResolveTypeDefOrRef(uint codedToken) => ResolveTypeDefOrRef(codedToken, new GenericParamContext());
 
-		public ITypeDefOrRef ResolveTypeDefOrRef(uint codedToken, GenericParamContext gpContext) {
+		public ITypeDefOrRef? ResolveTypeDefOrRef(uint codedToken, GenericParamContext gpContext) {
 			if (!CodedToken.TypeDefOrRef.Decode(codedToken, out uint token))
 				return null;
 			return ResolveTypeDefOrRefInternal(token, gpContext);
 		}
 
-		internal ITypeDefOrRef ResolveTypeDefOrRefInternal(uint token, GenericParamContext gpContext) {
+		internal ITypeDefOrRef? ResolveTypeDefOrRefInternal(uint token, GenericParamContext gpContext) {
 			uint rid = MDToken.ToRID(token);
 			switch (MDToken.ToTable(token)) {
 			case Table.TypeDef:		return ResolveTypeDef(rid);
@@ -505,7 +509,7 @@ namespace dndbg.DotNet {
 			return null;
 		}
 
-		internal IResolutionScope ResolveResolutionScope(uint token) {
+		internal IResolutionScope? ResolveResolutionScope(uint token) {
 			uint rid = MDToken.ToRID(token);
 			switch (MDToken.ToTable(token)) {
 			case Table.Module:		return ResolveModule(rid);
@@ -522,7 +526,7 @@ namespace dndbg.DotNet {
 		/// <param name="token">The metadata token</param>
 		/// <param name="gpContext">Generic parameter context</param>
 		/// <returns>A <see cref="IMDTokenProvider"/> or <c>null</c> if <paramref name="token"/> is invalid</returns>
-		public override IMDTokenProvider ResolveToken(uint token, GenericParamContext gpContext) {
+		public override IMDTokenProvider? ResolveToken(uint token, GenericParamContext gpContext) {
 			uint rid = MDToken.ToRID(token);
 			switch (MDToken.ToTable(token)) {
 			case Table.Module:			return ResolveModule(rid);
@@ -551,13 +555,13 @@ namespace dndbg.DotNet {
 			return null;
 		}
 
-		ModuleDef ResolveModule(uint rid) {
+		ModuleDef? ResolveModule(uint rid) {
 			if (rid == 1)
 				return this;
 			return null;
 		}
 
-		TypeRef ResolveTypeRef(uint rid) {
+		TypeRef? ResolveTypeRef(uint rid) {
 			if (!DisableMDAPICalls && !IsValidToken(Table.TypeRef, rid))
 				return null;
 			if (ridToTypeRef.TryGetValue(rid, out var ctr))
@@ -569,13 +573,13 @@ namespace dndbg.DotNet {
 			return ctr;
 		}
 
-		internal TypeDef ResolveTypeDef(uint rid) {
+		internal TypeDef? ResolveTypeDef(uint rid) {
 			if (!DisableMDAPICalls && !IsValidToken(Table.TypeDef, rid))
 				return null;
 			return InitializeTypeDef(rid, false, out bool created);
 		}
 
-		FieldDef ResolveField(uint rid) {
+		FieldDef? ResolveField(uint rid) {
 			if (!DisableMDAPICalls && !IsValidToken(Table.Field, rid))
 				return null;
 			if (ridToField.TryGetValue(rid, out var info))
@@ -583,12 +587,12 @@ namespace dndbg.DotNet {
 			if (DisableMDAPICalls)
 				return null;
 			uint ownerRid = MDAPI.GetFieldOwnerRid(mdi, new MDToken(Table.Field, rid).Raw);
-			((CorTypeDef)ResolveTypeDef(ownerRid))?.UpdateFields();
+			((CorTypeDef?)ResolveTypeDef(ownerRid))?.UpdateFields();
 			ridToField.TryGetValue(rid, out info);
 			return info?.Item;
 		}
 
-		MethodDef ResolveMethod(uint rid) {
+		MethodDef? ResolveMethod(uint rid) {
 			if (!DisableMDAPICalls && !IsValidToken(Table.Method, rid))
 				return null;
 			if (ridToMethod.TryGetValue(rid, out var info))
@@ -596,12 +600,12 @@ namespace dndbg.DotNet {
 			if (DisableMDAPICalls)
 				return null;
 			uint ownerRid = MDAPI.GetMethodOwnerRid(mdi, new MDToken(Table.Method, rid).Raw);
-			((CorTypeDef)ResolveTypeDef(ownerRid))?.UpdateMethods();
+			((CorTypeDef?)ResolveTypeDef(ownerRid))?.UpdateMethods();
 			ridToMethod.TryGetValue(rid, out info);
 			return info?.Item;
 		}
 
-		ParamDef ResolveParam(uint rid) {
+		ParamDef? ResolveParam(uint rid) {
 			if (!DisableMDAPICalls && !IsValidToken(Table.Param, rid))
 				return null;
 			if (ridToParam.TryGetValue(rid, out var info))
@@ -609,18 +613,18 @@ namespace dndbg.DotNet {
 			if (DisableMDAPICalls)
 				return null;
 			uint ownerRid = MDAPI.GetParamOwnerRid(mdi, new MDToken(Table.Param, rid).Raw);
-			((CorMethodDef)ResolveMethod(ownerRid))?.UpdateParams();
+			((CorMethodDef?)ResolveMethod(ownerRid))?.UpdateParams();
 			ridToParam.TryGetValue(rid, out info);
 			return info?.Item;
 		}
 
-		InterfaceImpl ResolveInterfaceImpl(uint rid) => ResolveInterfaceImpl(rid, new GenericParamContext());
+		InterfaceImpl? ResolveInterfaceImpl(uint rid) => ResolveInterfaceImpl(rid, new GenericParamContext());
 
-		internal InterfaceImpl ResolveInterfaceImpl(uint rid, GenericParamContext gpContext) {
+		internal InterfaceImpl? ResolveInterfaceImpl(uint rid, GenericParamContext gpContext) {
 			if (!DisableMDAPICalls && !IsValidToken(Table.InterfaceImpl, rid))
 				return null;
 
-			CorInterfaceImpl cii;
+			CorInterfaceImpl? cii;
 
 			if (gpContext.IsEmpty) {
 				if (ridToInterfaceImplNoCtx.TryGetValue(rid, out cii))
@@ -634,7 +638,7 @@ namespace dndbg.DotNet {
 			}
 
 			if (ridToInterfaceImpl.TryGetValue(rid, out cii)) {
-				if (cii != null)
+				if (!(cii is null))
 					return cii;
 				if (DisableMDAPICalls)
 					return null;
@@ -652,12 +656,10 @@ namespace dndbg.DotNet {
 			return cii;
 		}
 
-		MemberRef ResolveMemberRef(uint rid) => ResolveMemberRef(rid, new GenericParamContext());
-
-		MemberRef ResolveMemberRef(uint rid, GenericParamContext gpContext) {
+		MemberRef? ResolveMemberRef(uint rid, GenericParamContext gpContext) {
 			if (!DisableMDAPICalls && !IsValidToken(Table.MemberRef, rid))
 				return null;
-			CorMemberRef cmr;
+			CorMemberRef? cmr;
 
 			if (gpContext.IsEmpty) {
 				if (ridToMemberRefNoCtx.TryGetValue(rid, out cmr))
@@ -671,7 +673,7 @@ namespace dndbg.DotNet {
 			}
 
 			if (ridToMemberRef.TryGetValue(rid, out cmr)) {
-				if (cmr != null)
+				if (!(cmr is null))
 					return cmr;
 				if (DisableMDAPICalls)
 					return null;
@@ -689,7 +691,7 @@ namespace dndbg.DotNet {
 			return cmr;
 		}
 
-		DeclSecurity ResolveDeclSecurity(uint rid) {
+		DeclSecurity? ResolveDeclSecurity(uint rid) {
 			if (!DisableMDAPICalls && !IsValidToken(Table.DeclSecurity, rid))
 				return null;
 			if (ridToDeclSecurity.TryGetValue(rid, out var cds))
@@ -701,12 +703,10 @@ namespace dndbg.DotNet {
 			return cds;
 		}
 
-		StandAloneSig ResolveStandAloneSig(uint rid) => ResolveStandAloneSig(rid, new GenericParamContext());
-
-		StandAloneSig ResolveStandAloneSig(uint rid, GenericParamContext gpContext) {
+		StandAloneSig? ResolveStandAloneSig(uint rid, GenericParamContext gpContext) {
 			if (!DisableMDAPICalls && !IsValidToken(Table.StandAloneSig, rid))
 				return null;
-			CorStandAloneSig cts;
+			CorStandAloneSig? cts;
 
 			if (gpContext.IsEmpty) {
 				if (ridToStandAloneSigNoCtx.TryGetValue(rid, out cts))
@@ -720,7 +720,7 @@ namespace dndbg.DotNet {
 			}
 
 			if (ridToStandAloneSig.TryGetValue(rid, out cts)) {
-				if (cts != null)
+				if (!(cts is null))
 					return cts;
 				if (DisableMDAPICalls)
 					return null;
@@ -738,7 +738,7 @@ namespace dndbg.DotNet {
 			return cts;
 		}
 
-		EventDef ResolveEvent(uint rid) {
+		EventDef? ResolveEvent(uint rid) {
 			if (!DisableMDAPICalls && !IsValidToken(Table.Event, rid))
 				return null;
 			if (ridToEventDef.TryGetValue(rid, out var info))
@@ -746,12 +746,12 @@ namespace dndbg.DotNet {
 			if (DisableMDAPICalls)
 				return null;
 			uint ownerRid = MDAPI.GetEventOwnerRid(mdi, new MDToken(Table.Event, rid).Raw);
-			((CorTypeDef)ResolveTypeDef(ownerRid))?.UpdateProperties();
+			((CorTypeDef?)ResolveTypeDef(ownerRid))?.UpdateProperties();
 			ridToEventDef.TryGetValue(rid, out info);
 			return info?.Item;
 		}
 
-		PropertyDef ResolveProperty(uint rid) {
+		PropertyDef? ResolveProperty(uint rid) {
 			if (!DisableMDAPICalls && !IsValidToken(Table.Property, rid))
 				return null;
 			if (ridToPropertyDef.TryGetValue(rid, out var info))
@@ -759,12 +759,12 @@ namespace dndbg.DotNet {
 			if (DisableMDAPICalls)
 				return null;
 			uint ownerRid = MDAPI.GetPropertyOwnerRid(mdi, new MDToken(Table.Property, rid).Raw);
-			((CorTypeDef)ResolveTypeDef(ownerRid))?.UpdateProperties();
+			((CorTypeDef?)ResolveTypeDef(ownerRid))?.UpdateProperties();
 			ridToPropertyDef.TryGetValue(rid, out info);
 			return info?.Item;
 		}
 
-		ModuleRef ResolveModuleRef(uint rid) {
+		ModuleRef? ResolveModuleRef(uint rid) {
 			if (!DisableMDAPICalls && !IsValidToken(Table.ModuleRef, rid))
 				return null;
 			if (ridToModuleRef.TryGetValue(rid, out var cmr))
@@ -776,12 +776,10 @@ namespace dndbg.DotNet {
 			return cmr;
 		}
 
-		TypeSpec ResolveTypeSpec(uint rid) => ResolveTypeSpec(rid, new GenericParamContext());
-
-		TypeSpec ResolveTypeSpec(uint rid, GenericParamContext gpContext) {
+		TypeSpec? ResolveTypeSpec(uint rid, GenericParamContext gpContext) {
 			if (!DisableMDAPICalls && !IsValidToken(Table.TypeSpec, rid))
 				return null;
-			CorTypeSpec cts;
+			CorTypeSpec? cts;
 
 			if (gpContext.IsEmpty) {
 				if (ridToTypeSpecNoCtx.TryGetValue(rid, out cts))
@@ -795,7 +793,7 @@ namespace dndbg.DotNet {
 			}
 
 			if (ridToTypeSpec.TryGetValue(rid, out cts)) {
-				if (cts != null)
+				if (!(cts is null))
 					return cts;
 				if (DisableMDAPICalls)
 					return null;
@@ -813,7 +811,7 @@ namespace dndbg.DotNet {
 			return cts;
 		}
 
-		AssemblyDef ResolveAssembly(uint rid) {
+		AssemblyDef? ResolveAssembly(uint rid) {
 			if (!DisableMDAPICalls && !IsValidToken(Table.Assembly, rid))
 				return null;
 			if (rid == 1 && corModuleDefHelper.IsManifestModule)
@@ -821,7 +819,7 @@ namespace dndbg.DotNet {
 			return null;
 		}
 
-		AssemblyRef ResolveAssemblyRef(uint rid) {
+		AssemblyRef? ResolveAssemblyRef(uint rid) {
 			if (!DisableMDAPICalls && !IsValidToken(Table.AssemblyRef, rid))
 				return null;
 			if (ridToAssemblyRef.TryGetValue(rid, out var car))
@@ -833,7 +831,7 @@ namespace dndbg.DotNet {
 			return car;
 		}
 
-		FileDef ResolveFile(uint rid) {
+		FileDef? ResolveFile(uint rid) {
 			if (!DisableMDAPICalls && !IsValidToken(Table.File, rid))
 				return null;
 			if (ridToFileDef.TryGetValue(rid, out var cfd))
@@ -845,7 +843,7 @@ namespace dndbg.DotNet {
 			return cfd;
 		}
 
-		ExportedType ResolveExportedType(uint rid) {
+		ExportedType? ResolveExportedType(uint rid) {
 			if (!DisableMDAPICalls && !IsValidToken(Table.ExportedType, rid))
 				return null;
 			if (ridToExportedType.TryGetValue(rid, out var cet))
@@ -857,7 +855,7 @@ namespace dndbg.DotNet {
 			return cet;
 		}
 
-		ManifestResource ResolveManifestResource(uint rid) {
+		ManifestResource? ResolveManifestResource(uint rid) {
 			if (!DisableMDAPICalls && !IsValidToken(Table.ManifestResource, rid))
 				return null;
 			if (ridToManifestResource.TryGetValue(rid, out var cmr))
@@ -869,7 +867,7 @@ namespace dndbg.DotNet {
 			return cmr;
 		}
 
-		internal GenericParam ResolveGenericParam(uint rid) {
+		internal GenericParam? ResolveGenericParam(uint rid) {
 			if (!DisableMDAPICalls && !IsValidToken(Table.GenericParam, rid))
 				return null;
 			if (ridToGenericParam.TryGetValue(rid, out var info))
@@ -882,9 +880,9 @@ namespace dndbg.DotNet {
 			return info?.Item;
 		}
 
-		MethodSpec ResolveMethodSpec(uint rid) => ResolveMethodSpec(rid, new GenericParamContext());
+		MethodSpec? ResolveMethodSpec(uint rid) => ResolveMethodSpec(rid, new GenericParamContext());
 
-		MethodSpec ResolveMethodSpec(uint rid, GenericParamContext gpContext) {
+		MethodSpec? ResolveMethodSpec(uint rid, GenericParamContext gpContext) {
 			if (!DisableMDAPICalls && !IsValidToken(Table.MethodSpec, rid))
 				return null;
 
@@ -905,9 +903,7 @@ namespace dndbg.DotNet {
 			return new CorMethodSpec(this, rid, gpContext);
 		}
 
-		GenericParamConstraint ResolveGenericParamConstraint(uint rid) => ResolveGenericParamConstraint(rid, new GenericParamContext());
-
-		GenericParamConstraint ResolveGenericParamConstraint(uint rid, GenericParamContext gpContext) {
+		GenericParamConstraint? ResolveGenericParamConstraint(uint rid, GenericParamContext gpContext) {
 			if (!DisableMDAPICalls && !IsValidToken(Table.GenericParamConstraint, rid))
 				return null;
 
@@ -927,7 +923,7 @@ namespace dndbg.DotNet {
 			return new CorGenericParamConstraint(this, rid, gpContext);
 		}
 
-		internal GenericParamConstraint ResolveGenericParamConstraintDontCache(uint rid, GenericParamContext gpContext) {
+		internal GenericParamConstraint? ResolveGenericParamConstraintDontCache(uint rid, GenericParamContext gpContext) {
 			if (!IsValidToken(Table.GenericParamConstraint, rid))
 				return null;
 
@@ -936,7 +932,7 @@ namespace dndbg.DotNet {
 			return new CorGenericParamConstraint(this, rid, gpContext);
 		}
 
-		public string ReadUserString(uint token) {
+		public string? ReadUserString(uint token) {
 			if (!IsValidToken(token))
 				return null;
 			if (DisableMDAPICalls)
@@ -946,7 +942,7 @@ namespace dndbg.DotNet {
 
 		protected override void InitializeTypes() {
 			var list = GetNonNestedClassRids();
-			var tmp = new LazyList<TypeDef, uint[]>(list.Length, this, list, (list2, index) => ResolveTypeDef(list2[index]));
+			var tmp = new LazyList<TypeDef?, uint[]>(list.Length, this, list, (list2, index) => ResolveTypeDef(list2[index]));
 			Interlocked.CompareExchange(ref types, tmp, null);
 		}
 
@@ -965,16 +961,16 @@ namespace dndbg.DotNet {
 			nestedListInitd.Add(ctd.OriginalToken.Rid);
 			bool b = ridToNested.TryGetValue(ctd.OriginalToken.Rid, out var list);
 			Debug.Assert(b);
-			return list == null || list.Count == 0 ? Array.Empty<uint>() : list.ToArray();
+			return list is null || list.Count == 0 ? Array.Empty<uint>() : list.ToArray();
 		}
 
 		void InitializeTypeTables() {
-			if (ridToNested != null)
+			if (!(ridToNested is null))
 				return;
 
 			var allTypes = MDAPI.GetTypeDefTokens(mdi);
 			int capacity = allTypes.Length < 100 ? 100 : allTypes.Length;
-			ridToNested = new Dictionary<uint, List<uint>>(capacity);
+			ridToNested = new Dictionary<uint, List<uint>?>(capacity);
 			ridToEnclosing = new Dictionary<uint, uint>(capacity);
 			nestedListInitd = new HashSet<uint>();
 			UpdateTypeTables(allTypes);
@@ -1000,7 +996,7 @@ namespace dndbg.DotNet {
 					enclTypeRid = 0;
 				}
 				else {
-					if (enclTypeList == null)
+					if (enclTypeList is null)
 						ridToNested[enclTypeRid] = enclTypeList = new List<uint>();
 					enclTypeList.Add(rid);
 				}
@@ -1011,7 +1007,7 @@ namespace dndbg.DotNet {
 		}
 
 		void UpdateTypeTables(CorTypeDef type) {
-			if (ridToEnclosing == null || ridToEnclosing.ContainsKey(type.OriginalToken.Rid))
+			if (ridToEnclosing is null || ridToEnclosing.ContainsKey(type.OriginalToken.Rid))
 				return;
 
 			var tokens = GetNewTokens(type.OriginalToken.Rid);
@@ -1069,7 +1065,7 @@ namespace dndbg.DotNet {
 			return tokens;
 		}
 
-		internal TypeDef GetEnclosingTypeDef(CorTypeDef ctd) {
+		internal TypeDef? GetEnclosingTypeDef(CorTypeDef ctd) {
 			InitializeTypeTables();
 			bool b = ridToEnclosing.TryGetValue(ctd.OriginalToken.Rid, out uint enclTypeRid);
 			Debug.Assert(b);
@@ -1078,7 +1074,7 @@ namespace dndbg.DotNet {
 
 		protected override void InitializeExportedTypes() {
 			var list = MDAPI.GetExportedTypeRids(MetaDataAssemblyImport);
-			var tmp = new LazyList<ExportedType, uint[]>(list.Length, list, (list2, i) => ResolveExportedType(list2[i]));
+			var tmp = new LazyList<ExportedType?, uint[]>(list.Length, list, (list2, i) => ResolveExportedType(list2[i]));
 			Interlocked.CompareExchange(ref exportedTypes, tmp, null);
 			lastExportedTypeRidInList = list.Length == 0 ? 0 : list.Max();
 		}
@@ -1092,7 +1088,7 @@ namespace dndbg.DotNet {
 		public bool UpdateExportedTypes() {
 			if (!corModuleDefHelper.IsDynamic)
 				return false;
-			if (exportedTypes == null)
+			if (exportedTypes is null)
 				return false;
 
 			bool addedToList = false;
@@ -1100,8 +1096,8 @@ namespace dndbg.DotNet {
 				if (!IsValidToken(new MDToken(Table.ExportedType, rid).Raw))
 					break;
 				var et = ResolveExportedType(rid);
-				Debug.Assert(et != null);
-				if (et == null)
+				Debug.Assert(!(et is null));
+				if (et is null)
 					break;
 				ExportedTypes.Add(et);
 				lastExportedTypeRidInList = rid;
@@ -1126,7 +1122,7 @@ namespace dndbg.DotNet {
 		public bool UpdateResources() {
 			if (!corModuleDefHelper.IsDynamic)
 				return false;
-			if (resources == null)
+			if (resources is null)
 				return false;
 
 			bool addedToList = false;
@@ -1143,12 +1139,12 @@ namespace dndbg.DotNet {
 
 		Resource CreateResource(uint rid) {
 			uint? implementationToken = MDAPI.GetManifestResourceImplementationToken(mdi as IMetaDataAssemblyImport, new MDToken(Table.ManifestResource, rid).Raw);
-			if (implementationToken == null)
+			if (implementationToken is null)
 				return new EmbeddedResource(UTF8String.Empty, Array.Empty<byte>(), 0) { Rid = rid };
 			var token = new MDToken(implementationToken.Value);
 
 			var mr = ResolveManifestResource(rid);
-			if (mr == null)
+			if (mr is null)
 				return new EmbeddedResource(UTF8String.Empty, Array.Empty<byte>(), 0) { Rid = rid };
 
 			if (token.Rid == 0) {
@@ -1166,7 +1162,7 @@ namespace dndbg.DotNet {
 			return new EmbeddedResource(mr.Name, Array.Empty<byte>(), mr.Flags) { Rid = rid, Offset = mr.Offset };
 		}
 
-		bool TryCreateResourceStream(uint offset, out DataReaderFactory dataReaderFactory, out uint resourceOffset, out uint resourceLength) =>
+		bool TryCreateResourceStream(uint offset, [NotNullWhenTrue] out DataReaderFactory? dataReaderFactory, out uint resourceOffset, out uint resourceLength) =>
 			corModuleDefHelper.TryCreateResourceStream(offset, out dataReaderFactory, out resourceOffset, out resourceLength);
 
 		/// <summary>
@@ -1261,11 +1257,11 @@ namespace dndbg.DotNet {
 			const bool calledFromLoadClass = false;
 			var ctd = InitializeTypeDef(rid, calledFromLoadClass, out bool created);
 			// If it was created, Initialize() has already been called
-			if (!created && ctd != null && !ctd.CompletelyLoaded)
+			if (!created && !(ctd is null) && !ctd.CompletelyLoaded)
 				Initialize(ctd, created, calledFromLoadClass);
 		}
 
-		public override void LoadEverything(ICancellationToken cancellationToken) {
+		public override void LoadEverything(ICancellationToken? cancellationToken) {
 			// We sometimes need to execute this a couple of times because fields, methods, etc
 			// could be re-initialized due to eg. UpdateFields()/etc having been called.
 			int counter = 0;

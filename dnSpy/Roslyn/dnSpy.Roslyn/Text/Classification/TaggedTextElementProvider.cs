@@ -32,9 +32,9 @@ namespace dnSpy.Roslyn.Text.Classification {
 		readonly IClassificationFormatMap classificationFormatMap;
 
 		public TaggedTextElementProvider(IContentType contentType, ITextClassifierAggregatorService textClassifierAggregatorService, IClassificationFormatMap classificationFormatMap) {
-			if (contentType == null)
+			if (contentType is null)
 				throw new ArgumentNullException(nameof(contentType));
-			if (textClassifierAggregatorService == null)
+			if (textClassifierAggregatorService is null)
 				throw new ArgumentNullException(nameof(textClassifierAggregatorService));
 			classifierAggregator = textClassifierAggregatorService.Create(contentType);
 			this.classificationFormatMap = classificationFormatMap ?? throw new ArgumentNullException(nameof(classificationFormatMap));

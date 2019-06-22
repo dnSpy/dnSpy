@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using VSTE = Microsoft.VisualStudio.Text.Editor;
 using VSUTIL = Microsoft.VisualStudio.Utilities;
 
@@ -26,13 +27,13 @@ namespace dnSpy.Hex.Editor {
 	sealed class HexEditorOptions : VSTE.IEditorOptions {
 		public VSTE.IEditorOptions GlobalOptions => service.GlobalOptions;
 
-		public VSTE.IEditorOptions Parent {
+		public VSTE.IEditorOptions? Parent {
 			get => parent;
 			set {
 				// Check if we're the global options
-				if (parent == null)
+				if (parent is null)
 					throw new InvalidOperationException();
-				if (value == null)
+				if (value is null)
 					throw new ArgumentNullException(nameof(value));
 				if (parent == value)
 					return;
@@ -41,12 +42,12 @@ namespace dnSpy.Hex.Editor {
 				UpdateOptions(oldParent);
 			}
 		}
-		HexEditorOptions parent;
+		HexEditorOptions? parent;
 
 		public IEnumerable<VSTE.EditorOptionDefinition> SupportedOptions {
 			get {
 				foreach (var def in service.EditorOptionDefinitions) {
-					if (scope == null || def.IsApplicableToScope(scope))
+					if (scope is null || def.IsApplicableToScope(scope))
 						yield return def;
 				}
 			}
@@ -55,9 +56,9 @@ namespace dnSpy.Hex.Editor {
 		readonly Dictionary<string, object> dict;
 		readonly HexEditorOptionsFactoryServiceImpl service;
 		readonly List<WeakReference> weakChildren;
-		readonly VSUTIL.IPropertyOwner scope;
+		readonly VSUTIL.IPropertyOwner? scope;
 
-		public HexEditorOptions(HexEditorOptionsFactoryServiceImpl service, HexEditorOptions parent, VSUTIL.IPropertyOwner scope) {
+		public HexEditorOptions(HexEditorOptionsFactoryServiceImpl service, HexEditorOptions? parent, VSUTIL.IPropertyOwner? scope) {
 			this.service = service;
 			this.parent = parent;
 			dict = new Dictionary<string, object>(StringComparer.Ordinal);
@@ -66,8 +67,8 @@ namespace dnSpy.Hex.Editor {
 			UpdateOptions(null);
 		}
 
-		void UpdateOptions(HexEditorOptions oldParent) {
-			if (oldParent != null) {
+		void UpdateOptions(HexEditorOptions? oldParent) {
+			if (!(oldParent is null)) {
 				for (int i = 0; i < oldParent.weakChildren.Count; i++) {
 					if (oldParent.weakChildren[i].Target == this) {
 						oldParent.weakChildren.RemoveAt(i);
@@ -75,26 +76,26 @@ namespace dnSpy.Hex.Editor {
 					}
 				}
 			}
-			if (parent != null)
+			if (!(parent is null))
 				parent.weakChildren.Add(new WeakReference(this));
 
-			if (parent != null || oldParent != null) {
+			if (!(parent is null) || !(oldParent is null)) {
 				foreach (var o in SupportedOptions) {
 					if (dict.ContainsKey(o.Name))
 						continue;
-					var oldValue = oldParent == null ? o.DefaultValue : oldParent.GetValueOrDefault(o.Name);
-					var newValue = parent == null ? o.DefaultValue : parent.GetValueOrDefault(o.Name);
+					var oldValue = oldParent is null ? o.DefaultValue : oldParent.GetValueOrDefault(o.Name);
+					var newValue = parent is null ? o.DefaultValue : parent.GetValueOrDefault(o.Name);
 					if (!Equals(oldValue, newValue))
 						OnChanged(o.Name);
 				}
 			}
 		}
 
-		bool TryGetValue(string optionId, out object value) {
-			if (scope != null && !service.GetOption(optionId).IsApplicableToScope(scope))
+		bool TryGetValue(string optionId, [NotNullWhenTrue] out object? value) {
+			if (!(scope is null) && !service.GetOption(optionId).IsApplicableToScope(scope))
 				throw new InvalidOperationException();
-			var p = this;
-			while (p != null) {
+			HexEditorOptions? p = this;
+			while (!(p is null)) {
 				if (p.dict.TryGetValue(optionId, out value))
 					return true;
 				p = p.parent;
@@ -104,18 +105,18 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		object GetValueOrDefault(string optionId) {
-			if (!TryGetValue(optionId, out object value))
+			if (!TryGetValue(optionId, out var value))
 				value = service.GetOption(optionId).DefaultValue;
 			return value;
 		}
 
 		public event EventHandler<VSTE.EditorOptionChangedEventArgs> OptionChanged;
 		void OnChanged(string optionId) {
-			if (scope == null || service.GetOption(optionId).IsApplicableToScope(scope))
+			if (scope is null || service.GetOption(optionId).IsApplicableToScope(scope))
 				OptionChanged?.Invoke(this, new VSTE.EditorOptionChangedEventArgs(optionId));
 			for (int i = weakChildren.Count - 1; i >= 0; i--) {
 				var child = weakChildren[i].Target as HexEditorOptions;
-				if (child == null) {
+				if (child is null) {
 					weakChildren.RemoveAt(i);
 					continue;
 				}
@@ -126,19 +127,19 @@ namespace dnSpy.Hex.Editor {
 
 		public bool IsOptionDefined<T>(VSTE.EditorOptionKey<T> key, bool localScopeOnly) => IsOptionDefined(key.Name, localScopeOnly);
 		public bool IsOptionDefined(string optionId, bool localScopeOnly) {
-			if (optionId == null)
+			if (optionId is null)
 				throw new ArgumentNullException(nameof(optionId));
-			if (parent != null && localScopeOnly)
+			if (!(parent is null) && localScopeOnly)
 				return dict.ContainsKey(optionId);
 			var def = service.GetOption(optionId);
-			return scope == null || def.IsApplicableToScope(scope);
+			return scope is null || def.IsApplicableToScope(scope);
 		}
 
 		public bool ClearOptionValue<T>(VSTE.EditorOptionKey<T> key) => ClearOptionValue(key.Name);
 		public bool ClearOptionValue(string optionId) {
-			if (optionId == null)
+			if (optionId is null)
 				throw new ArgumentNullException(nameof(optionId));
-			if (parent == null || !dict.TryGetValue(optionId, out object oldValue))
+			if (parent is null || !dict.TryGetValue(optionId, out object oldValue))
 				return false;
 			dict.Remove(optionId);
 			var newValue = GetValueOrDefault(optionId);
@@ -147,20 +148,20 @@ namespace dnSpy.Hex.Editor {
 			return true;
 		}
 
-		public T GetOptionValue<T>(string optionId) => (T)GetOptionValue(optionId);
-		public T GetOptionValue<T>(VSTE.EditorOptionKey<T> key) => (T)GetOptionValue(key.Name);
-		public object GetOptionValue(string optionId) {
-			if (optionId == null)
+		public T GetOptionValue<T>(string optionId) => (T)GetOptionValue(optionId)!;
+		public T GetOptionValue<T>(VSTE.EditorOptionKey<T> key) => (T)GetOptionValue(key.Name)!;
+		public object? GetOptionValue(string optionId) {
+			if (optionId is null)
 				throw new ArgumentNullException(nameof(optionId));
 			return GetValueOrDefault(optionId);
 		}
 
 		public void SetOptionValue<T>(VSTE.EditorOptionKey<T> key, T value) => SetOptionValue(key.Name, value);
-		public void SetOptionValue(string optionId, object value) {
-			if (optionId == null)
+		public void SetOptionValue(string optionId, object? value) {
+			if (optionId is null)
 				throw new ArgumentNullException(nameof(optionId));
 			var def = service.GetOption(optionId);
-			if (scope != null && !def.IsApplicableToScope(scope))
+			if (!(scope is null) && !def.IsApplicableToScope(scope))
 				throw new InvalidOperationException();
 			if (!def.IsValid(ref value))
 				throw new ArgumentException();

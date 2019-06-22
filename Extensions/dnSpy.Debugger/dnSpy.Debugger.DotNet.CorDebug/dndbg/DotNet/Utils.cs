@@ -21,12 +21,12 @@ using dnlib.DotNet;
 
 namespace dndbg.DotNet {
 	static class Utils {
-		public static void SplitNameAndNamespace(UTF8String utf8Name, string fullName, out UTF8String ns, out UTF8String name) {
-			if (fullName == null)
+		public static void SplitNameAndNamespace(UTF8String? utf8Name, string? fullName, out UTF8String ns, out UTF8String name) {
+			if (fullName is null)
 				fullName = string.Empty;
 
 			if (!UTF8String.IsNull(utf8Name)) {
-				if (fullName == utf8Name.String) {
+				if (fullName == utf8Name!.String) {
 					ns = UTF8String.Empty;
 					name = utf8Name;
 					return;
@@ -50,9 +50,9 @@ namespace dndbg.DotNet {
 			}
 		}
 
-		public static UTF8String GetUTF8String(UTF8String utf8String, string s) {
+		public static UTF8String GetUTF8String(UTF8String? utf8String, string s) {
 			if (!UTF8String.IsNull(utf8String))
-				return utf8String;
+				return utf8String!;
 			return s;
 		}
 	}

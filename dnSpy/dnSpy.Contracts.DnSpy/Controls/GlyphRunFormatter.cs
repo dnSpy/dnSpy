@@ -32,7 +32,7 @@ using Expr = System.Linq.Expressions.Expression;
 namespace dnSpy.Contracts.Controls {
 	interface ITextFormatter : IDisposable {
 		TextLine FormatLine(TextSource textSource, int firstCharIndex, double paragraphWidth,
-			TextParagraphProperties paragraphProperties, TextLineBreak previousLineBreak);
+			TextParagraphProperties paragraphProperties, TextLineBreak? previousLineBreak);
 	}
 
 	static class TextFormatterFactory {
@@ -54,7 +54,7 @@ namespace dnSpy.Contracts.Controls {
 		public WpfTextFormatter(TextFormattingMode mode) => formatter = TextFormatter.Create(mode);
 
 		public TextLine FormatLine(TextSource textSource, int firstCharIndex, double paragraphWidth,
-			TextParagraphProperties paragraphProperties, TextLineBreak previousLineBreak) => formatter.FormatLine(textSource, firstCharIndex, paragraphWidth, paragraphProperties, previousLineBreak);
+			TextParagraphProperties paragraphProperties, TextLineBreak? previousLineBreak) => formatter.FormatLine(textSource, firstCharIndex, paragraphWidth, paragraphProperties, previousLineBreak);
 
 		public void Dispose() => formatter.Dispose();
 	}
@@ -101,8 +101,8 @@ namespace dnSpy.Contracts.Controls {
 			//
 		}
 
-		public TextLine FormatLine(TextSource textSource, int firstCharIndex, double paragraphWidth, TextParagraphProperties paragraphProperties, TextLineBreak previousLineBreak) {
-			var runs = new List<(TextRun, GlyphRun, int, double)>();
+		public TextLine FormatLine(TextSource textSource, int firstCharIndex, double paragraphWidth, TextParagraphProperties paragraphProperties, TextLineBreak? previousLineBreak) {
+			var runs = new List<(TextRun?, GlyphRun?, int, double)>();
 
 			int index = firstCharIndex;
 			double x = paragraphProperties.Indent, height = 0, baseline = 0;
@@ -113,22 +113,22 @@ namespace dnSpy.Contracts.Controls {
 				var textProps = run.Properties ?? paragraphProperties.DefaultTextRunProperties;
 				var fontSize = textProps.FontRenderingEmSize;
 				var len = run.Length;
-				if (textProps != null) {
+				if (!(textProps is null)) {
 					height = Math.Max(height, (int)(textProps.Typeface.FontFamily.LineSpacing * fontSize));
 					baseline = Math.Max(baseline, (int)(textProps.Typeface.FontFamily.Baseline * fontSize));
 				}
 
-				if (run is TextEndOfLine || run == null) {
+				if (run is TextEndOfLine || run is null) {
 					index += len;
-					runs.Add((run, (GlyphRun)null, 0, 0.0));
+					runs.Add((run, (GlyphRun?)null, 0, 0.0));
 					break;
 				}
 				else if (run is TextCharacters chrs) {
 					var charBuf = getCharBuf(chrs.CharacterBufferReference);
 					var charOffset = getCharOffset(chrs.CharacterBufferReference);
 
-					if (!textProps.Typeface.TryGetGlyphTypeface(out var gl))
-						throw new Exception("GlyphTypeface does not exists for font '" + textProps.Typeface.FontFamily + "'.");
+					if (textProps is null || !textProps.Typeface.TryGetGlyphTypeface(out var gl))
+						throw new Exception("GlyphTypeface does not exists for font '" + textProps?.Typeface.FontFamily + "'.");
 
 					ushort[] glyphIndexes = new ushort[len];
 					double[] advanceWidths = new double[len];
@@ -180,7 +180,7 @@ namespace dnSpy.Contracts.Controls {
 				}
 				else if (run is TextEmbeddedObject obj) {
 					var metrics = obj.Format(paragraphWidth - x);
-					runs.Add((run, (GlyphRun)null, 0, metrics.Width));
+					runs.Add((run, (GlyphRun?)null, 0, metrics.Width));
 
 					height = Math.Max(height, obj.Format(paragraphWidth - x).Height);
 					x += metrics.Width;
@@ -189,21 +189,28 @@ namespace dnSpy.Contracts.Controls {
 				}
 			}
 
-			return new GlyphRunLine {
-				entries = runs.ToArray(),
-				baseline = baseline,
-				width = x - trailWhitespaceWidth,
-				height = height,
-				mode = mode
-			};
+			return new GlyphRunLine(
+				entries: runs.ToArray(),
+				baseline: baseline,
+				width: x - trailWhitespaceWidth,
+				height: height,
+				mode: mode
+			);
 		}
 
 		class GlyphRunLine : TextLine {
-			internal (TextRun textRun, GlyphRun glyphRun, int trailWhitespace, double trailWhitespaceWidth)[] entries;
-			internal double baseline;
-			internal double width;
-			internal double height;
-			internal object mode;
+			readonly (TextRun? textRun, GlyphRun? glyphRun, int trailWhitespace, double trailWhitespaceWidth)[] entries;
+			readonly double baseline;
+			readonly double width;
+			readonly double height;
+			readonly object mode;
+			internal GlyphRunLine((TextRun? textRun, GlyphRun? glyphRun, int trailWhitespace, double trailWhitespaceWidth)[] entries, double baseline, double width, double height, object mode) {
+				this.entries = entries;
+				this.baseline = baseline;
+				this.width = width;
+				this.height = height;
+				this.mode = mode;
+			}
 
 			#region Unused members
 
@@ -287,7 +294,7 @@ namespace dnSpy.Contracts.Controls {
 
 			public override void Draw(DrawingContext drawingContext, Point origin, InvertAxes inversion) {
 				foreach (var entry in entries) {
-					if (entry.glyphRun == null)
+					if (entry.glyphRun is null || entry.textRun is null)
 						continue;
 					if (entry.trailWhitespace == entry.textRun.Length) // All whitespace, no need to render
 						continue;
@@ -300,11 +307,11 @@ namespace dnSpy.Contracts.Controls {
 						X = origin.X + glyphRun.BaselineOrigin.X,
 						Y = (int)(origin.Y + glyphRun.GlyphTypeface.Baseline * textProps.FontRenderingEmSize)
 					});
-					if (_textFormattingMode != null)
+					if (!(_textFormattingMode is null))
 						_textFormattingMode.SetValue(glyphRun, mode);
 
 					var box = newRun.ComputeAlignmentBox();
-					if (textProps.BackgroundBrush != null) {
+					if (!(textProps.BackgroundBrush is null)) {
 						drawingContext.DrawRectangle(
 							textProps.BackgroundBrush, null,
 							new Rect(origin, box.Size));
@@ -312,7 +319,7 @@ namespace dnSpy.Contracts.Controls {
 
 					drawingContext.DrawGlyphRun(textProps.ForegroundBrush, newRun);
 
-					if (textProps.TextDecorations != null)
+					if (!(textProps.TextDecorations is null))
 						foreach (var deco in textProps.TextDecorations) {
 							var thickness = Math.Round(glyphRun.GlyphTypeface.UnderlineThickness * textProps.FontRenderingEmSize);
 							var pos = glyphRun.GlyphTypeface.UnderlinePosition -
@@ -332,7 +339,9 @@ namespace dnSpy.Contracts.Controls {
 				double currentDistance = 0;
 				int index = 0;
 				foreach (var entry in entries) {
-					if (entry.glyphRun == null) {
+					if (entry.textRun is null)
+						continue;
+					if (entry.glyphRun is null) {
 						var newDistance = currentDistance + entry.trailWhitespaceWidth;
 						if (newDistance > distance)
 							return new CharacterHit(index, 0);
@@ -359,7 +368,9 @@ namespace dnSpy.Contracts.Controls {
 				double distance = 0;
 				int index = 0;
 				foreach (var entry in entries) {
-					if (entry.glyphRun == null) {
+					if (entry.textRun is null)
+						continue;
+					if (entry.glyphRun is null) {
 						if (index == characterHit.FirstCharacterIndex)
 							return distance;
 						distance += entry.trailWhitespaceWidth;
@@ -388,7 +399,9 @@ namespace dnSpy.Contracts.Controls {
 
 				int index = 0;
 				foreach (var entry in entries) {
-					if (entry.glyphRun == null) {
+					if (entry.textRun is null)
+						continue;
+					if (entry.glyphRun is null) {
 						if (index == firstTextSourceCharacterIndex) {
 							found = true;
 							x = d;
@@ -426,18 +439,18 @@ namespace dnSpy.Contracts.Controls {
 				return new[] { makeBounds(new Rect(x, 0, width, height)) };
 			}
 
-			public override TextLineBreak GetTextLineBreak() => null;
+			public override TextLineBreak? GetTextLineBreak() => null;
 
-			public override IList<TextSpan<TextRun>> GetTextRunSpans() => entries.Select(entry => new TextSpan<TextRun>(entry.Item1.Length, entry.Item1)).ToList();
+			public override IList<TextSpan<TextRun?>> GetTextRunSpans() => entries.Select(entry => new TextSpan<TextRun?>(entry.Item1?.Length ?? 0, entry.Item1)).ToList();
 
 			public override double Width => width;
 			public override double Height => height;
 			public override double Baseline => baseline;
-			public override int Length => entries.Sum(entry => entry.textRun.Length);
+			public override int Length => entries.Sum(entry => entry.textRun?.Length ?? 0);
 			public override int TrailingWhitespaceLength {
 				get {
 					foreach (var e in entries.Reverse()) {
-						if (e.glyphRun != null)
+						if (!(e.glyphRun is null))
 							return e.trailWhitespace;
 					}
 					return 0;
@@ -447,7 +460,7 @@ namespace dnSpy.Contracts.Controls {
 			public override double WidthIncludingTrailingWhitespace {
 				get {
 					foreach (var e in entries.Reverse()) {
-						if (e.glyphRun != null)
+						if (!(e.glyphRun is null))
 							return width + e.trailWhitespaceWidth;
 					}
 					return width;

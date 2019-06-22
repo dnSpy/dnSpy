@@ -65,12 +65,12 @@ namespace dnSpy.Text.Editor.IncrementalSearch {
 		readonly IEditorOperations editorOperations;
 
 		public IncrementalSearch(ITextView textView, ITextSearchService textSearchService, IEditorOperationsFactoryService editorOperationsFactoryService) {
-			if (editorOperationsFactoryService == null)
+			if (editorOperationsFactoryService is null)
 				throw new ArgumentNullException(nameof(editorOperationsFactoryService));
 			TextView = textView ?? throw new ArgumentNullException(nameof(textView));
 			this.textSearchService = textSearchService ?? throw new ArgumentNullException(nameof(textSearchService));
 			editorOperations = editorOperationsFactoryService.GetEditorOperations(textView);
-			SearchString = string.Empty;
+			searchString = string.Empty;
 		}
 
 		public void Start() {
@@ -117,7 +117,7 @@ namespace dnSpy.Text.Editor.IncrementalSearch {
 				return searchFailedResult;
 			TextView.Selection.Clear();
 			var res = textSearchService.FindNext(CaretStartPosition.Position, true, new FindData(SearchString, CaretStartPosition.Snapshot, FindOptions, null));
-			if (res == null)
+			if (res is null)
 				return searchFailedResult;
 			editorOperations.SelectAndMoveCaret(new VirtualSnapshotPoint(res.Value.Start), new VirtualSnapshotPoint(res.Value.End));
 			if (SearchDirection == IncrementalSearchDirection.Forward)

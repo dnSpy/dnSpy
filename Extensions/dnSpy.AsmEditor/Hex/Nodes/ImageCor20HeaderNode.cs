@@ -37,8 +37,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 		readonly ImageCor20HeaderVM imageCor20HeaderVM;
 
-		public static ImageCor20HeaderNode Create(ImageCor20HeaderVM cor20) {
-			if (cor20 != null)
+		public static ImageCor20HeaderNode? Create(ImageCor20HeaderVM? cor20) {
+			if (!(cor20 is null))
 				return new ImageCor20HeaderNode(cor20);
 			return null;
 		}

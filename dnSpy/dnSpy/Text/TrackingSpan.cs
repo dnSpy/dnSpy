@@ -29,7 +29,7 @@ namespace dnSpy.Text {
 		Span span;
 
 		public TrackingSpan(ITextVersion textVersion, Span span, SpanTrackingMode trackingMode, TrackingFidelityMode trackingFidelity) {
-			if (textVersion == null)
+			if (textVersion is null)
 				throw new ArgumentNullException(nameof(textVersion));
 			if ((uint)span.End > (uint)textVersion.Length)
 				throw new ArgumentOutOfRangeException(nameof(span));
@@ -45,7 +45,7 @@ namespace dnSpy.Text {
 		public SnapshotPoint GetStartPoint(ITextSnapshot snapshot) => new SnapshotPoint(snapshot, GetSpan(snapshot.Version).Start);
 		public SnapshotPoint GetEndPoint(ITextSnapshot snapshot) => new SnapshotPoint(snapshot, GetSpan(snapshot.Version).End);
 		public Span GetSpan(ITextVersion version) {
-			if (version == null)
+			if (version is null)
 				throw new ArgumentNullException(nameof(version));
 			if (version == textVersion)
 				return span;

@@ -61,7 +61,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		SaveAllToolbarCommand()
 			: base(SaveModuleCommandLoader.SaveAllCommand) {
 		}
-		public override string GetToolTip(IToolBarItemContext context) => ToolTipHelper.AddKeyboardShortcut(dnSpy_AsmEditor_Resources.SaveAllToolBarToolTip, dnSpy_AsmEditor_Resources.ShortCutKeyCtrlShiftS);
+		public override string? GetToolTip(IToolBarItemContext context) => ToolTipHelper.AddKeyboardShortcut(dnSpy_AsmEditor_Resources.SaveAllToolBarToolTip, dnSpy_AsmEditor_Resources.ShortCutKeyCtrlShiftS);
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:SaveAllCommand", Icon = DsImagesAttribute.SaveAll, InputGestureText = "res:ShortCutKeyCtrlShiftS", Group = MenuConstants.GROUP_APP_MENU_FILE_SAVE, Order = 30)]
@@ -92,19 +92,19 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 			foreach (var node in nodes) {
 				var fileNode = node.GetDocumentNode();
-				if (fileNode == null)
+				if (fileNode is null)
 					continue;
 
 				// Removed nodes could still be used, don't use them.
 				var topNode = fileNode.GetTopNode();
-				if (topNode == null || topNode.TreeNode.Parent == null)
+				if (topNode is null || topNode.TreeNode.Parent is null)
 					continue;
 
 				bool added = false;
 
-				if (fileNode.Document.ModuleDef != null) {
+				if (!(fileNode.Document.ModuleDef is null)) {
 					var file = fileNode.Document;
-					var uo = undoCommandService.Value.GetUndoObject(file);
+					var uo = undoCommandService.Value.GetUndoObject(file)!;
 					if (undoCommandService.Value.IsModified(uo)) {
 						hash.Add(file);
 						added = true;
@@ -112,8 +112,8 @@ namespace dnSpy.AsmEditor.SaveModule {
 				}
 
 				var doc = hexBufferService.Value.TryGet(fileNode.Document.Filename);
-				if (doc != null) {
-					var uo = undoCommandService.Value.GetUndoObject(doc);
+				if (!(doc is null)) {
+					var uo = undoCommandService.Value.GetUndoObject(doc)!;
 					if (undoCommandService.Value.IsModified(uo)) {
 						hash.Add(doc);
 						added = true;
@@ -121,7 +121,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 				}
 
 				// If nothing was modified, just include the selected module
-				if (!added && fileNode.Document.ModuleDef != null)
+				if (!added && !(fileNode.Document.ModuleDef is null))
 					hash.Add(fileNode.Document);
 			}
 			return new HashSet<object>(undoCommandService.Value.GetUniqueDocuments(hash));
@@ -135,6 +135,6 @@ namespace dnSpy.AsmEditor.SaveModule {
 			documentSaver.Value.Save(asmNodes);
 		}
 
-		public override string GetHeader(AsmEditorContext context) => GetDocuments(context.Nodes).Count <= 1 ? dnSpy_AsmEditor_Resources.SaveModuleCommand : dnSpy_AsmEditor_Resources.SaveModulesCommand;
+		public override string? GetHeader(AsmEditorContext context) => GetDocuments(context.Nodes).Count <= 1 ? dnSpy_AsmEditor_Resources.SaveModuleCommand : dnSpy_AsmEditor_Resources.SaveModulesCommand;
 	}
 }

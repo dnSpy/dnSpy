@@ -31,8 +31,8 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 	sealed class BookmarksToolWindowContentProvider : IToolWindowContentProvider {
 		readonly Lazy<IBookmarksContent> bookmarksContent;
 
-		public BookmarksToolWindowContent BookmarksToolWindowContent => bookmarksToolWindowContent ?? (bookmarksToolWindowContent = new BookmarksToolWindowContent(bookmarksContent));
-		BookmarksToolWindowContent bookmarksToolWindowContent;
+		public BookmarksToolWindowContent BookmarksToolWindowContent => bookmarksToolWindowContent ??= new BookmarksToolWindowContent(bookmarksContent);
+		BookmarksToolWindowContent? bookmarksToolWindowContent;
 
 		[ImportingConstructor]
 		BookmarksToolWindowContentProvider(Lazy<IBookmarksContent> bookmarksContent) => this.bookmarksContent = bookmarksContent;
@@ -41,18 +41,18 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			get { yield return new ToolWindowContentInfo(BookmarksToolWindowContent.THE_GUID, BookmarksToolWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_BOOKMARKS, false); }
 		}
 
-		public ToolWindowContent GetOrCreate(Guid guid) => guid == BookmarksToolWindowContent.THE_GUID ? BookmarksToolWindowContent : null;
+		public ToolWindowContent? GetOrCreate(Guid guid) => guid == BookmarksToolWindowContent.THE_GUID ? BookmarksToolWindowContent : null;
 	}
 
 	sealed class BookmarksToolWindowContent : ToolWindowContent, IFocusable {
 		public static readonly Guid THE_GUID = new Guid("A13FFEAD-9F74-4456-9204-034EDBDE3244");
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultHorizontal;
 
-		public override IInputElement FocusedElement => bookmarksContent.Value.FocusedElement;
-		public override FrameworkElement ZoomElement => bookmarksContent.Value.ZoomElement;
+		public override IInputElement? FocusedElement => bookmarksContent.Value.FocusedElement;
+		public override FrameworkElement? ZoomElement => bookmarksContent.Value.ZoomElement;
 		public override Guid Guid => THE_GUID;
 		public override string Title => dnSpy_Resources.Window_Bookmarks;
-		public override object UIObject => bookmarksContent.Value.UIObject;
+		public override object? UIObject => bookmarksContent.Value.UIObject;
 		public bool CanFocus => true;
 
 		readonly Lazy<IBookmarksContent> bookmarksContent;

@@ -29,9 +29,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs.Converters {
 	/// ConverterParameter to the desired value. 1 is default.
 	/// </summary>
 	sealed class BooleanToGridrowLengthConverter : IValueConverter {
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
+		public object? Convert(object value, Type targetType, object parameter, CultureInfo culture) {
 			double starValue = 1;
-			if (parameter != null)
+			if (!(parameter is null))
 				starValue = System.Convert.ToDouble(parameter, culture);
 			return (bool)value ? new GridLength(starValue, GridUnitType.Star) : new GridLength(0);
 		}

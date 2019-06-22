@@ -23,14 +23,14 @@ using dnSpy.Contracts.Debugger.Attach;
 
 namespace dnSpy.Debugger.DotNet.Mono.Dialogs.AttachToProcess {
 	static class ProcessUtils {
-		public static bool IsValidProcess(AttachProgramOptionsProviderContext context, int pid, Process process) {
+		public static bool IsValidProcess(AttachProgramOptionsProviderContext context, int pid, Process? process) {
 			if (context.ProcessIds.Length != 0 && Array.IndexOf(context.ProcessIds, pid) < 0)
 				return false;
 
-			if (context.IsValidProcess != null) {
-				Process processToDispose = null;
+			if (!(context.IsValidProcess is null)) {
+				Process? processToDispose = null;
 				try {
-					if (process == null)
+					if (process is null)
 						process = processToDispose = Process.GetProcessById(pid);
 					if (!context.IsValidProcess(process))
 						return false;

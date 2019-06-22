@@ -33,15 +33,15 @@ namespace dnSpy.Debugger.Evaluation.UI {
 	}
 
 	abstract class VariablesWindowContentBase : IVariablesWindowContent {
-		public object UIObject => variablesWindowControl;
-		public IInputElement FocusedElement => variablesWindowControl.ListView as IInputElement ?? variablesWindowControl;
-		public FrameworkElement ZoomElement => variablesWindowControl;
-		public IVariablesWindowVM VM => variablesWindowVM;
+		public object? UIObject => variablesWindowControl;
+		public IInputElement? FocusedElement => variablesWindowControl.ListView as IInputElement ?? variablesWindowControl;
+		public FrameworkElement? ZoomElement => variablesWindowControl;
+		public IVariablesWindowVM VM => variablesWindowVM!;
 
 		internal VariablesWindowControl VariablesWindowControl => variablesWindowControl;
 
 		readonly VariablesWindowControl variablesWindowControl;
-		IVariablesWindowVM variablesWindowVM;
+		IVariablesWindowVM? variablesWindowVM;
 
 		protected VariablesWindowContentBase() => variablesWindowControl = new VariablesWindowControl();
 
@@ -51,17 +51,17 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			variablesWindowControl.DataContext = variablesWindowVM;
 		}
 
-		void VariablesWindowVM_TreeViewChanged(object sender, EventArgs e) => variablesWindowControl.SetTreeView(variablesWindowVM.TreeView, variablesWindowVM.VM.VariablesWindowKind);
+		void VariablesWindowVM_TreeViewChanged(object sender, EventArgs e) => variablesWindowControl.SetTreeView(variablesWindowVM!.TreeView, variablesWindowVM.VM.VariablesWindowKind);
 
 		public void Focus() {
 			var listView = variablesWindowControl.ListView;
-			if (listView != null)
+			if (!(listView is null))
 				UIUtilities.FocusSelector(listView);
 		}
 
-		public void OnClose() => variablesWindowVM.IsOpen = false;
-		public void OnShow() => variablesWindowVM.IsOpen = true;
-		public void OnHidden() => variablesWindowVM.IsVisible = false;
-		public void OnVisible() => variablesWindowVM.IsVisible = true;
+		public void OnClose() => variablesWindowVM!.IsOpen = false;
+		public void OnShow() => variablesWindowVM!.IsOpen = true;
+		public void OnHidden() => variablesWindowVM!.IsVisible = false;
+		public void OnVisible() => variablesWindowVM!.IsVisible = true;
 	}
 }

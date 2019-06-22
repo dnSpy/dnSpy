@@ -77,7 +77,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			Context = context ?? throw new ArgumentNullException(nameof(context));
 			Order = order;
 			NameEditValueProvider = nameEditValueProvider ?? throw new ArgumentNullException(nameof(nameEditValueProvider));
-			NameEditableValue = new EditableValueImpl(() => Bookmark.Name, s => Bookmark.Name = s);
+			NameEditableValue = new EditableValueImpl(() => Bookmark.Name, s => Bookmark.Name = s ?? string.Empty);
 			LabelsEditValueProvider = labelsEditValueProvider ?? throw new ArgumentNullException(nameof(labelsEditValueProvider));
 			LabelsEditableValue = new EditableValueImpl(() => GetLabelsString(), s => Bookmark.Labels = CreateLabelsCollection(s));
 			BookmarkLocationFormatter = bookmarkLocationFormatter ?? throw new ArgumentNullException(nameof(bookmarkLocationFormatter));
@@ -86,8 +86,8 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			BookmarkLocationFormatter.PropertyChanged += BookmarkLocationFormatter_PropertyChanged;
 		}
 
-		internal static ReadOnlyCollection<string> CreateLabelsCollection(string s) =>
-			new ReadOnlyCollection<string>(s.Split(new[] { BookmarkFormatter.LabelsSeparatorChar }, StringSplitOptions.RemoveEmptyEntries).Select(a => a.Trim()).ToArray());
+		internal static ReadOnlyCollection<string> CreateLabelsCollection(string? s) =>
+			new ReadOnlyCollection<string>((s ?? string.Empty).Split(new[] { BookmarkFormatter.LabelsSeparatorChar }, StringSplitOptions.RemoveEmptyEntries).Select(a => a.Trim()).ToArray());
 
 		// UI thread
 		internal string GetLabelsString() {
@@ -156,9 +156,9 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		}
 
 		static bool LabelsEquals(ReadOnlyCollection<string> a, ReadOnlyCollection<string> b) {
-			if (a == null)
+			if (a is null)
 				a = emptyLabels;
-			if (b == null)
+			if (b is null)
 				b = emptyLabels;
 			if (a == b)
 				return true;

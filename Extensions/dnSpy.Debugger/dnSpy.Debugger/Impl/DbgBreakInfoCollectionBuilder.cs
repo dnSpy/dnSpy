@@ -42,7 +42,7 @@ namespace dnSpy.Debugger.Impl {
 				break;
 
 			default:
-				if (list == null) {
+				if (list is null) {
 					Debug.Assert(count == 2);
 					list = new List<DbgBreakInfo>(count + 1) { info0, info1 };
 				}

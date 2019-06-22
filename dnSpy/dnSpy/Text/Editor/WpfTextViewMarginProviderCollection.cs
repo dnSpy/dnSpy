@@ -54,11 +54,11 @@ namespace dnSpy.Text.Editor {
 		public event EventHandler MarginsChanged;
 
 		public WpfTextViewMarginProviderCollection(Lazy<IWpfTextViewMarginProvider, IWpfTextViewMarginMetadata>[] wpfTextViewMarginProviders, IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer, string marginContainerName) {
-			if (wpfTextViewMarginProviders == null)
+			if (wpfTextViewMarginProviders is null)
 				throw new ArgumentNullException(nameof(wpfTextViewMarginProviders));
-			if (wpfTextViewHost == null)
+			if (wpfTextViewHost is null)
 				throw new ArgumentNullException(nameof(wpfTextViewHost));
-			if (marginContainerName == null)
+			if (marginContainerName is null)
 				throw new ArgumentNullException(nameof(marginContainerName));
 			this.wpfTextViewMarginProviders = wpfTextViewMarginProviders.Where(a =>
 				StringComparer.OrdinalIgnoreCase.Equals(marginContainerName, a.Metadata.MarginContainer) &&
@@ -90,7 +90,7 @@ namespace dnSpy.Text.Editor {
 				}
 				else {
 					var margin = lazy.Value.CreateMargin(wpfTextViewHost, marginContainer);
-					if (margin != null)
+					if (!(margin is null))
 						newInfos.Add(new WpfTextViewMarginInfo(lazy.Value, lazy.Metadata, margin));
 				}
 			}

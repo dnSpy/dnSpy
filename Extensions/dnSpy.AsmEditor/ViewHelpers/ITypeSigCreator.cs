@@ -29,6 +29,6 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 		/// <param name="typeSig">Existing TypeSig or null</param>
 		/// <param name="canceled">true if user canceled</param>
 		/// <returns></returns>
-		TypeSig Create(TypeSigCreatorOptions options, TypeSig typeSig, out bool canceled);
+		TypeSig? Create(TypeSigCreatorOptions options, TypeSig? typeSig, out bool canceled);
 	}
 }

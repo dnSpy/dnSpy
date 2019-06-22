@@ -22,9 +22,9 @@ using dnlib.DotNet;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class MemberRefOptions {
-		public IMemberRefParent Class;
-		public UTF8String Name;
-		public CallingConventionSig Signature;
+		public IMemberRefParent? Class;
+		public UTF8String? Name;
+		public CallingConventionSig? Signature;
 		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
 
 		public MemberRefOptions() {

@@ -32,7 +32,7 @@ namespace dnSpy.Roslyn.Intellisense.QuickInfo {
 		[ImportingConstructor]
 		DefaultTextViewCommandTargetFilterProvider(Lazy<IQuickInfoTriggerServiceProvider> quickInfoTriggerServiceProvider) => this.quickInfoTriggerServiceProvider = quickInfoTriggerServiceProvider;
 
-		public ICommandTargetFilter Create(object target) {
+		public ICommandTargetFilter? Create(object target) {
 			if (target is ITextView textView && textView.Roles.ContainsAll(roles))
 				return new CommandTargetFilter(textView, quickInfoTriggerServiceProvider.Value.Create(textView));
 			return null;
@@ -66,12 +66,12 @@ namespace dnSpy.Roslyn.Intellisense.QuickInfo {
 			return CommandTargetStatus.NotHandled;
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args = null) {
-			object result = null;
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args = null) {
+			object? result = null;
 			return Execute(group, cmdId, args, ref result);
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) {
 			if (!IsSupportedContentType)
 				return CommandTargetStatus.NotHandled;
 

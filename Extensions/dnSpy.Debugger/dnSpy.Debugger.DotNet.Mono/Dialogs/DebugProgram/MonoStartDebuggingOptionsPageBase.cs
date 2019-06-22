@@ -29,7 +29,7 @@ using dnSpy.Debugger.DotNet.Mono.Properties;
 
 namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 	abstract class MonoStartDebuggingOptionsPageBase : StartDebuggingOptionsPage, IDataErrorInfo {
-		public override object UIObject => this;
+		public override object? UIObject => this;
 
 		public string Filename {
 			get => filename;
@@ -39,7 +39,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 					OnPropertyChanged(nameof(Filename));
 					UpdateIsValid();
 					var path = GetPath(filename);
-					if (path != null)
+					if (!(path is null))
 						WorkingDirectory = path;
 				}
 			}
@@ -76,8 +76,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 		public EnumListVM BreakProcessKindVM => breakProcessKindVM;
 		readonly EnumListVM breakProcessKindVM = new EnumListVM(BreakProcessKindsUtils.BreakProcessKindList);
 
-		public string BreakKind {
-			get => (string)BreakProcessKindVM.SelectedItem;
+		public string? BreakKind {
+			get => (string)BreakProcessKindVM.SelectedItem!;
 			set => BreakProcessKindVM.SelectedItem = value;
 		}
 
@@ -105,7 +105,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 			ConnectionTimeout = new UInt32VM(a => UpdateIsValid(), useDecimal: true);
 		}
 
-		static string GetPath(string file) {
+		static string? GetPath(string file) {
 			try {
 				return Path.GetDirectoryName(file);
 			}
@@ -114,10 +114,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 			return null;
 		}
 
-		static string FilterBreakKind(string breakKind) {
+		static string FilterBreakKind(string? breakKind) {
 			foreach (var info in BreakProcessKindsUtils.BreakProcessKindList) {
 				if (StringComparer.Ordinal.Equals(breakKind, (string)info.Value))
-					return breakKind;
+					return breakKind!;
 			}
 			return PredefinedBreakKinds.DontBreak;
 		}
@@ -129,7 +129,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 
 		void PickNewFilename() {
 			var newFilename = pickFilename.GetFilename(Filename, "dll", PickFilenameConstants.DotNetAssemblyOrModuleFilter);
-			if (newFilename == null)
+			if (newFilename is null)
 				return;
 
 			Filename = newFilename;
@@ -137,17 +137,17 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 
 		void PickNewWorkingDirectory() {
 			var newDir = pickDirectory.GetDirectory(WorkingDirectory);
-			if (newDir == null)
+			if (newDir is null)
 				return;
 
 			WorkingDirectory = newDir;
 		}
 
 		protected void Initialize(MonoStartDebuggingOptionsBase options) {
-			Filename = options.Filename;
-			CommandLine = options.CommandLine;
+			Filename = options.Filename ?? string.Empty;
+			CommandLine = options.CommandLine ?? string.Empty;
 			// Must be init'd after Filename since it also overwrites this property
-			WorkingDirectory = options.WorkingDirectory;
+			WorkingDirectory = options.WorkingDirectory ?? string.Empty;
 			ConnectionPort.Value = options.ConnectionPort;
 			ConnectionTimeout.Value = (uint)options.ConnectionTimeout.TotalSeconds;
 			BreakKind = FilterBreakKind(options.BreakKind);

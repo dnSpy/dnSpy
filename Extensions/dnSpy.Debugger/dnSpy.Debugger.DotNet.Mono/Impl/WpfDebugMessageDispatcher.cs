@@ -30,11 +30,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		public WpfDebugMessageDispatcher(Dispatcher dispatcher) => this.dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
 
-		Dispatcher Dispatcher => !dispatcher.HasShutdownFinished && !dispatcher.HasShutdownStarted ? dispatcher : null;
+		Dispatcher? Dispatcher => !dispatcher.HasShutdownFinished && !dispatcher.HasShutdownStarted ? dispatcher : null;
 
 		public void ExecuteAsync(Action callback) {
 			var disp = Dispatcher;
-			if (disp == null)
+			if (disp is null)
 				return;
 			queue.Enqueue(callback);
 			dispatchQueueEvent.Set();
@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		void EmptyQueue() {
 			var disp = Dispatcher;
-			if (disp == null)
+			if (disp is null)
 				return;
 			disp.VerifyAccess();
 
@@ -59,9 +59,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				action();
 		}
 
-		public object DispatchQueue(TimeSpan waitTime, out bool timedOut) {
+		public object? DispatchQueue(TimeSpan waitTime, out bool timedOut) {
 			var disp = Dispatcher;
-			if (disp == null) {
+			if (disp is null) {
 				timedOut = true;
 				return null;
 			}
@@ -71,7 +71,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			return res;
 		}
 
-		object DispatchQueueCore(TimeSpan waitTime, out bool timedOut) {
+		object? DispatchQueueCore(TimeSpan waitTime, out bool timedOut) {
 			try {
 				if (Interlocked.Increment(ref counterDispatchQueue) != 1)
 					throw new InvalidOperationException("DispatchQueue can't be nested");
@@ -112,11 +112,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			}
 		}
 		readonly AutoResetEvent dispatchQueueEvent = new AutoResetEvent(false);
-		volatile object resultDispatchQueue;
+		volatile object? resultDispatchQueue;
 		volatile bool cancelDispatchQueue;
 		int counterDispatchQueue;
 
-		public void CancelDispatchQueue(object result) {
+		public void CancelDispatchQueue(object? result) {
 			resultDispatchQueue = result;
 			cancelDispatchQueue = true;
 			dispatchQueueEvent.Set();
@@ -138,12 +138,12 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		/// <param name="waitTime">Time to wait or -1 to wait forever</param>
 		/// <param name="timedOut">Set to true if it timed out</param>
 		/// <returns></returns>
-		object DispatchQueue(TimeSpan waitTime, out bool timedOut);
+		object? DispatchQueue(TimeSpan waitTime, out bool timedOut);
 
 		/// <summary>
 		/// Cancels <see cref="DispatchQueue(TimeSpan,out bool)"/>
 		/// </summary>
 		/// <param name="result">Result</param>
-		void CancelDispatchQueue(object result);
+		void CancelDispatchQueue(object? result);
 	}
 }

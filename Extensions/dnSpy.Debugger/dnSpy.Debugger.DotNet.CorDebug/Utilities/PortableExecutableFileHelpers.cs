@@ -76,7 +76,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 			return false;
 		}
 
-		public static bool IsGuiApp(string file) {
+		public static bool IsGuiApp(string? file) {
 			if (!File.Exists(file))
 				return false;
 			try {

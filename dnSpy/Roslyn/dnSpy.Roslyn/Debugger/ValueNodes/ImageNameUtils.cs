@@ -23,7 +23,7 @@ using dnSpy.Debugger.DotNet.Metadata;
 namespace dnSpy.Roslyn.Debugger.ValueNodes {
 	static class ImageNameUtils {
 		public static string GetImageName(DmdFieldInfo field) {
-			if (field.ReflectedType.IsEnum && !field.IsSpecialName) {
+			if (field.ReflectedType!.IsEnum && !field.IsSpecialName) {
 				switch (field.Attributes & DmdFieldAttributes.FieldAccessMask) {
 				case DmdFieldAttributes.PrivateScope:	return PredefinedDbgValueNodeImageNames.EnumerationItemCompilerControlled;
 				case DmdFieldAttributes.Private:		return PredefinedDbgValueNodeImageNames.EnumerationItemPrivate;
@@ -60,7 +60,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		}
 
 		public static string GetImageName(DmdType type, bool canBeModule) {
-			if (canBeModule && (object)type.DeclaringType == null && type.IsSealed && type.IsAbstract) {
+			if (canBeModule && type.DeclaringType is null && type.IsSealed && type.IsAbstract) {
 				switch (type.Attributes & DmdTypeAttributes.VisibilityMask) {
 				case DmdTypeAttributes.NotPublic:			return PredefinedDbgValueNodeImageNames.ModuleInternal;
 				case DmdTypeAttributes.Public:				return PredefinedDbgValueNodeImageNames.ModulePublic;
@@ -140,7 +140,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 
 		public static string GetImageName(DmdMethodBase method, bool canBeModule) {
 			if (method is DmdConstructorInfo)
-				return GetImageName(method.DeclaringType, canBeModule);
+				return GetImageName(method.DeclaringType!, canBeModule);
 			if (method.IsStatic) {
 				if (method.IsDefined("System.Runtime.CompilerServices.ExtensionAttribute", inherit: false))
 					return PredefinedDbgValueNodeImageNames.ExtensionMethod;
@@ -159,7 +159,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 
 		public static string GetImageName(DmdPropertyInfo property) {
 			var method = property.GetGetMethod(DmdGetAccessorOptions.All) ?? property.GetSetMethod(DmdGetAccessorOptions.All);
-			if ((object)method == null)
+			if (method is null)
 				return PredefinedDbgValueNodeImageNames.Property;
 			switch (method.Attributes & DmdMethodAttributes.MemberAccessMask) {
 			case DmdMethodAttributes.PrivateScope:	return PredefinedDbgValueNodeImageNames.PropertyCompilerControlled;

@@ -28,9 +28,9 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly bool isFileLayout;
 		readonly IAssembly tempAssembly;
 		readonly ModuleDef editedModule;
-		readonly TypeDef nonNestedEditedTypeOrNull;
+		readonly TypeDef? nonNestedEditedTypeOrNull;
 
-		public ModulePatcher(RawModuleBytes moduleData, bool isFileLayout, IAssembly tempAssembly, ModuleDef editedModule, TypeDef nonNestedEditedTypeOrNull) {
+		public ModulePatcher(RawModuleBytes moduleData, bool isFileLayout, IAssembly tempAssembly, ModuleDef editedModule, TypeDef? nonNestedEditedTypeOrNull) {
 			this.moduleData = moduleData;
 			this.isFileLayout = isFileLayout;
 			this.tempAssembly = tempAssembly;
@@ -44,7 +44,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			// NOTE: We can't remove the type from the corlib (eg. mscorlib) because the compiler
 			// (Roslyn) won't recognize it as the corlib if it has any AssemblyRefs.
 			// A possible fix is to add a new netmodule to the corlib assembly.
-			bool fixTypeDefRefs = nonNestedEditedTypeOrNull != null &&
+			bool fixTypeDefRefs = !(nonNestedEditedTypeOrNull is null) &&
 				MDPatcherUtils.ExistsInMetadata(nonNestedEditedTypeOrNull) &&
 				MDPatcherUtils.ReferencesModule(module, nonNestedEditedTypeOrNull?.Module) &&
 				!module.Assembly.IsCorLib();
@@ -52,6 +52,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (fixTypeDefRefs || addIVT) {
 				DnSpyEventSource.Log.EditCodePatchModuleStart(module.Location);
 				using (var md = MDPatcherUtils.TryCreateMetadata(moduleData, isFileLayout)) {
+					if (md is null)
+						throw new InvalidOperationException("Couldn't create metadata");
 					var mdEditor = new MetadataEditor(moduleData, md);
 					var options = MDEditorPatcherOptions.None;
 					if (fixTypeDefRefs)
@@ -63,7 +65,7 @@ namespace dnSpy.AsmEditor.Compiler {
 					if (mdEditor.MustRewriteMetadata()) {
 						var stream = new MDWriterMemoryStream();
 						new MDWriter(moduleData, mdEditor, stream).Write();
-						NativeMemoryRawModuleBytes newRawData = null;
+						NativeMemoryRawModuleBytes? newRawData = null;
 						try {
 							newRawData = new NativeMemoryRawModuleBytes((int)stream.Length, isFileLayout: true);
 							stream.CopyTo((IntPtr)newRawData.Pointer, newRawData.Size);

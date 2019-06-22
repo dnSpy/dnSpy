@@ -78,7 +78,7 @@ namespace dnSpy.Bookmarks.ToolWindows {
 
 		readonly ILazyToolWindowVM vm;
 		readonly UIDispatcher uiDispatcher;
-		DispatcherTimer timer;
+		DispatcherTimer? timer;
 
 		public LazyToolWindowVMHelper(ILazyToolWindowVM vm, UIDispatcher uiDispatcher) {
 			this.vm = vm ?? throw new ArgumentNullException(nameof(vm));
@@ -100,7 +100,7 @@ namespace dnSpy.Bookmarks.ToolWindows {
 		}
 
 		void StopTimer() {
-			if (timer != null) {
+			if (!(timer is null)) {
 				timer.Tick -= Timer_Tick_UI;
 				timer.Stop();
 				timer = null;

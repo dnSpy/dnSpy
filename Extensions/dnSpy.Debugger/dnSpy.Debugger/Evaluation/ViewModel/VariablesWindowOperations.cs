@@ -73,7 +73,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 		public abstract bool CanCollapseChildren(IValueNodesVM vm);
 		public abstract void CollapseChildren(IValueNodesVM vm);
 		public abstract IList<DbgLanguage> GetLanguages(IValueNodesVM vm);
-		public abstract DbgLanguage GetCurrentLanguage(IValueNodesVM vm);
+		public abstract DbgLanguage? GetCurrentLanguage(IValueNodesVM vm);
 		public abstract void SetCurrentLanguage(IValueNodesVM vm, DbgLanguage language);
 		public abstract bool CanToggleUseHexadecimal { get; }
 		public abstract void ToggleUseHexadecimal();

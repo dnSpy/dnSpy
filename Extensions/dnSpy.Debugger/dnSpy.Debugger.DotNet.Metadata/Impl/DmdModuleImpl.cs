@@ -33,7 +33,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override bool IsSynthetic { get; }
 		public override Guid ModuleVersionId => metadataReader.ModuleVersionId;
 		public override int MetadataToken => 0x00000001;
-		public override DmdType GlobalType => ResolveType(0x02000001);
+		public override DmdType GlobalType => ResolveType(0x02000001)!;
 		public override int MDStreamVersion => metadataReader.MDStreamVersion;
 		public override string ScopeName {
 			get => scopeNameOverride ?? metadataReader.ModuleScopeName;
@@ -45,7 +45,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		internal DmdMetadataReader MetadataReader => metadataReader;
 		readonly DmdAssemblyImpl assembly;
 		readonly DmdMetadataReader metadataReader;
-		string scopeNameOverride;
+		string? scopeNameOverride;
 
 		public DmdModuleImpl(DmdAssemblyImpl assembly, DmdMetadataReader metadataReader, bool isInMemory, bool isDynamic, bool isSynthetic, string fullyQualifiedName) {
 			this.assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
@@ -58,12 +58,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public override DmdType[] GetTypes() => metadataReader.GetTypes();
 		public override DmdType[] GetExportedTypes() => metadataReader.GetExportedTypes();
-		public override DmdMethodBase ResolveMethod(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options) => metadataReader.ResolveMethod(metadataToken, genericTypeArguments, genericMethodArguments, options);
-		public override DmdFieldInfo ResolveField(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options) => metadataReader.ResolveField(metadataToken, genericTypeArguments, genericMethodArguments, options);
-		public override DmdType ResolveType(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options) => metadataReader.ResolveType(metadataToken, genericTypeArguments, genericMethodArguments, options);
-		public override DmdMemberInfo ResolveMember(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options) => metadataReader.ResolveMember(metadataToken, genericTypeArguments, genericMethodArguments, options);
-		public override DmdMethodSignature ResolveMethodSignature(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options) => metadataReader.ResolveMethodSignature(metadataToken, genericTypeArguments, genericMethodArguments, options);
-		public override byte[] ResolveSignature(int metadataToken) => metadataReader.ResolveSignature(metadataToken);
+		public override DmdMethodBase? ResolveMethod(int metadataToken, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments, DmdResolveOptions options) => metadataReader.ResolveMethod(metadataToken, genericTypeArguments, genericMethodArguments, options);
+		public override DmdFieldInfo? ResolveField(int metadataToken, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments, DmdResolveOptions options) => metadataReader.ResolveField(metadataToken, genericTypeArguments, genericMethodArguments, options);
+		public override DmdType? ResolveType(int metadataToken, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments, DmdResolveOptions options) => metadataReader.ResolveType(metadataToken, genericTypeArguments, genericMethodArguments, options);
+		public override DmdMemberInfo? ResolveMember(int metadataToken, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments, DmdResolveOptions options) => metadataReader.ResolveMember(metadataToken, genericTypeArguments, genericMethodArguments, options);
+		public override DmdMethodSignature? ResolveMethodSignature(int metadataToken, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments, DmdResolveOptions options) => metadataReader.ResolveMethodSignature(metadataToken, genericTypeArguments, genericMethodArguments, options);
+		public override byte[]? ResolveSignature(int metadataToken) => metadataReader.ResolveSignature(metadataToken);
 		public override string ResolveString(int metadataToken) => metadataReader.ResolveString(metadataToken);
 		public override void GetPEKind(out DmdPortableExecutableKinds peKind, out DmdImageFileMachine machine) => metadataReader.GetPEKind(out peKind, out machine);
 		public override DmdReadOnlyAssemblyName[] GetReferencedAssemblies() => metadataReader.GetReferencedAssemblies();
@@ -78,46 +78,46 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				this.ignoreCase = ignoreCase;
 			}
 
-			public DmdTypeDef GetTypeDef(IDmdAssemblyName assemblyName, List<string> typeNames) {
+			public DmdTypeDef? GetTypeDef(IDmdAssemblyName? assemblyName, List<string> typeNames) {
 				if (typeNames.Count == 0)
 					return null;
 
-				var targetModule = module;
-				var targetAssembly = targetModule.assembly;
-				if (assemblyName != null && !module.assembly.AppDomainImpl.AssemblyNameEqualityComparer.Equals(targetAssembly.GetName(), assemblyName)) {
-					targetAssembly = (DmdAssemblyImpl)targetAssembly.AppDomain.GetAssembly(assemblyName);
-					targetModule = (DmdModuleImpl)targetAssembly?.ManifestModule;
-					if (targetModule == null)
+				DmdModuleImpl? targetModule = module;
+				DmdAssemblyImpl? targetAssembly = targetModule.assembly;
+				if (!(assemblyName is null) && !module.assembly.AppDomainImpl.AssemblyNameEqualityComparer.Equals(targetAssembly.GetName(), assemblyName)) {
+					targetAssembly = (DmdAssemblyImpl?)targetAssembly.AppDomain.GetAssembly(assemblyName);
+					targetModule = (DmdModuleImpl?)targetAssembly?.ManifestModule;
+					if (targetModule is null)
 						return null;
 				}
 
-				DmdTypeDef type;
-				DmdTypeUtilities.SplitFullName(typeNames[0], out string @namespace, out string name);
+				DmdTypeDef? type;
+				DmdTypeUtilities.SplitFullName(typeNames[0], out var @namespace, out var name);
 
 				var typeRef = new DmdParsedTypeRef(targetModule, null, DmdTypeScope.Invalid, @namespace, name, null);
 				type = targetModule.GetType(typeRef, ignoreCase);
 
-				if ((object)type == null)
+				if (type is null)
 					return null;
 				for (int i = 1; i < typeNames.Count; i++) {
 					var flags = DmdBindingFlags.Public | DmdBindingFlags.NonPublic;
 					if (ignoreCase)
 						flags |= DmdBindingFlags.IgnoreCase;
-					type = (DmdTypeDef)type.GetNestedType(typeNames[i], flags);
-					if ((object)type == null)
+					type = (DmdTypeDef?)type.GetNestedType(typeNames[i], flags);
+					if (type is null)
 						return null;
 				}
 				return type;
 			}
 		}
 
-		public override DmdType GetType(string typeName, DmdGetTypeOptions options) {
-			if (typeName == null)
+		public override DmdType? GetType(string typeName, DmdGetTypeOptions options) {
+			if (typeName is null)
 				throw new ArgumentNullException(nameof(typeName));
 
 			var resolver = new TypeDefResolver(this, (options & DmdGetTypeOptions.IgnoreCase) != 0);
 			var type = DmdTypeNameParser.Parse(resolver, typeName);
-			if ((object)type != null)
+			if (!(type is null))
 				return AppDomain.Intern(type, DmdMakeTypeOptions.NoResolve);
 
 			if ((options & DmdGetTypeOptions.ThrowOnError) != 0)
@@ -125,16 +125,16 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		DmdTypeDef GetType(DmdTypeRef typeRef, bool ignoreCase) => assembly.AppDomainImpl.TryLookup(this, typeRef, ignoreCase);
+		DmdTypeDef? GetType(DmdTypeRef typeRef, bool ignoreCase) => assembly.AppDomainImpl.TryLookup(this, typeRef, ignoreCase);
 
 		public override ReadOnlyCollection<DmdCustomAttributeData> GetCustomAttributesData() {
-			if (customAttributes != null)
+			if (!(customAttributes is null))
 				return customAttributes;
 			var cas = metadataReader.ReadCustomAttributes(0x00000001);
 			var newCAs = CustomAttributesHelper.AddPseudoCustomAttributes(this, cas);
 			Interlocked.CompareExchange(ref customAttributes, newCAs, null);
-			return customAttributes;
+			return customAttributes!;
 		}
-		volatile ReadOnlyCollection<DmdCustomAttributeData> customAttributes;
+		volatile ReadOnlyCollection<DmdCustomAttributeData>? customAttributes;
 	}
 }

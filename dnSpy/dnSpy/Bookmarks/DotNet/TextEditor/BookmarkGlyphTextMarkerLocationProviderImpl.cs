@@ -25,7 +25,7 @@ using dnSpy.Contracts.Text.Editor;
 namespace dnSpy.Bookmarks.DotNet.TextEditor {
 	[ExportBookmarkGlyphTextMarkerLocationProvider]
 	sealed class BookmarkGlyphTextMarkerLocationProviderImpl : BookmarkGlyphTextMarkerLocationProvider {
-		public override GlyphTextMarkerLocationInfo GetLocation(Bookmark bookmark) {
+		public override GlyphTextMarkerLocationInfo? GetLocation(Bookmark bookmark) {
 			if (bookmark.Location is DotNetMethodBodyBookmarkLocation bodyLoc)
 				return new DotNetMethodBodyGlyphTextMarkerLocationInfo(bodyLoc.Module, bodyLoc.Token, bodyLoc.Offset);
 			if (bookmark.Location is DotNetTokenBookmarkLocation tokenLoc)

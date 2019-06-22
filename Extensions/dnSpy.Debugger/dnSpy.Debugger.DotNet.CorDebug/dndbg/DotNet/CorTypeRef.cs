@@ -46,7 +46,7 @@ namespace dndbg.DotNet {
 			InitializeName(MDAPI.GetUtf8Name(mdi, token), MDAPI.GetTypeRefName(mdi, token));
 		}
 
-		void InitializeName(UTF8String utf8Name, string fullName) {
+		void InitializeName(UTF8String? utf8Name, string? fullName) {
 			Utils.SplitNameAndNamespace(utf8Name, fullName, out var ns, out var name);
 			Namespace = ns;
 			Name = name;
@@ -55,7 +55,7 @@ namespace dndbg.DotNet {
 		protected override void InitializeCustomAttributes() =>
 			readerModule.InitCustomAttributes(this, ref customAttributes, new GenericParamContext());
 
-		protected override IResolutionScope GetResolutionScope_NoLock() {
+		protected override IResolutionScope? GetResolutionScope_NoLock() {
 			var mdi = readerModule.MetaDataImport;
 			uint token = OriginalToken.Raw;
 			uint tkResolutionScope = MDAPI.GetTypeRefResolutionScope(mdi, token);

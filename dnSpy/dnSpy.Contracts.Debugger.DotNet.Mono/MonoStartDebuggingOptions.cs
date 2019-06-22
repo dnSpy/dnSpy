@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Mono {
 		/// <summary>
 		/// Path to <c>mono.exe</c> or null / empty string if it should be auto detected
 		/// </summary>
-		public string MonoExePath { get; set; }
+		public string? MonoExePath { get; set; }
 
 		/// <summary>
 		/// <c>mono.exe</c> options
@@ -50,7 +50,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Mono {
 		/// <param name="other">Destination</param>
 		/// <returns></returns>
 		public MonoStartDebuggingOptions CopyTo(MonoStartDebuggingOptions other) {
-			if (other == null)
+			if (other is null)
 				throw new ArgumentNullException(nameof(other));
 			base.CopyTo(other);
 			other.MonoExePath = MonoExePath;

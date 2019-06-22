@@ -89,7 +89,7 @@ namespace dnSpy.Hex {
 					return cp;
 			}
 
-			CachedPage foundCp = null;
+			CachedPage? foundCp = null;
 			for (int i = 0; i < cachedPages.Length; i++) {
 				var cp = cachedPages[(i + lastHitIndex) % cachedPages.Length];
 				if (!cp.IsInitialized) {
@@ -97,7 +97,7 @@ namespace dnSpy.Hex {
 					break;
 				}
 			}
-			if (foundCp == null)
+			if (foundCp is null)
 				foundCp = cachedPages[(lastHitIndex + 1) % cachedPages.Length];
 
 			lastHitIndex = foundCp.Index;
@@ -389,7 +389,7 @@ namespace dnSpy.Hex {
 			if (length == 0)
 				return HexBytes.Empty;
 
-			BitArray bitArray = null;
+			BitArray? bitArray = null;
 			var destination = new byte[length];
 			long destinationIndex = 0;
 			long invalidBytes = 0, validBytes = 0;
@@ -404,11 +404,11 @@ namespace dnSpy.Hex {
 						partSize = (int)length;
 					if (srcIndex + partSize > cp.DataSize) {
 						if (srcIndex >= cp.DataSize && bytesRead == invalidBytes) {
-							Debug.Assert(bitArray == null);
+							Debug.Assert(bitArray is null);
 							invalidBytes += partSize;
 						}
 						else {
-							if (bitArray == null)
+							if (bitArray is null)
 								bitArray = CreateBitArray(destination, invalidBytes, bytesRead);
 							int validCount = cp.DataSize - (int)srcIndex;
 							for (int i = 0; i < validCount; i++) {
@@ -420,11 +420,11 @@ namespace dnSpy.Hex {
 						}
 					}
 					else if (bytesRead == validBytes) {
-						Debug.Assert(bitArray == null);
+						Debug.Assert(bitArray is null);
 						validBytes += partSize;
 					}
 					else {
-						if (bitArray == null)
+						if (bitArray is null)
 							bitArray = CreateBitArray(destination, invalidBytes, bytesRead);
 						for (int i = 0; i < partSize; i++) {
 							long j = bytesRead + i;
@@ -441,7 +441,7 @@ namespace dnSpy.Hex {
 				}
 			}
 
-			if (bitArray != null)
+			if (!(bitArray is null))
 				return new HexBytes(destination, bitArray);
 			if (invalidBytes == bytesRead)
 				return new HexBytes(destination, false);
@@ -491,7 +491,7 @@ namespace dnSpy.Hex {
 		protected override void DisposeCore() {
 			if (disposeStream)
 				simpleStream?.Dispose();
-			simpleStream = null;
+			simpleStream = null!;
 		}
 	}
 }

@@ -66,7 +66,7 @@ namespace dnSpy.BamlDecompiler {
 		}
 
 		void BuildNodeMap(BamlBlockNode node, RecursionCounter counter) {
-			if (node == null || !counter.Increment())
+			if (node is null || !counter.Increment())
 				return;
 
 			NodeMap[node.Header] = node;
@@ -82,7 +82,7 @@ namespace dnSpy.BamlDecompiler {
 		void BuildPIMappings(BamlDocument document) {
 			foreach (var record in document) {
 				var piMap = record as PIMappingRecord;
-				if (piMap == null)
+				if (piMap is null)
 					continue;
 
 				XmlNs.SetPIMapping(piMap.XmlNamespace, piMap.ClrNamespace, Baml.ResolveAssembly(piMap.AssemblyId));
@@ -164,7 +164,7 @@ namespace dnSpy.BamlDecompiler {
 		}
 
 		public XNamespace GetXmlNamespace(string xmlns) {
-			if (xmlns == null)
+			if (xmlns is null)
 				return null;
 
 			if (!xmlnsMap.TryGetValue(xmlns, out var ns))
@@ -174,7 +174,7 @@ namespace dnSpy.BamlDecompiler {
 
 		public string TryGetXmlNamespace(IAssembly assembly, string typeNamespace) {
 			var asm = assembly as AssemblyDef;
-			if (asm == null)
+			if (asm is null)
 				return null;
 
 			foreach (var attr in asm.CustomAttributes.FindAll("System.Windows.Markup.XmlnsDefinitionAttribute")) {
@@ -183,8 +183,8 @@ namespace dnSpy.BamlDecompiler {
 					continue;
 				var xmlNs = attr.ConstructorArguments[0].Value as UTF8String;
 				var typeNs = attr.ConstructorArguments[1].Value as UTF8String;
-				Debug.Assert((object)xmlNs != null && (object)typeNs != null);
-				if ((object)xmlNs == null || (object)typeNs == null)
+				Debug.Assert(!(xmlNs is null) && !(typeNs is null));
+				if (xmlNs is null || typeNs is null)
 					continue;
 
 				if (typeNamespace == typeNs.String)
@@ -197,7 +197,7 @@ namespace dnSpy.BamlDecompiler {
 		public XName GetXamlNsName(string name, XElement elem = null) {
 			var xNs = GetXmlNamespace("http://schemas.microsoft.com/winfx/2006/xaml");
 			XName xName;
-			if (elem != null && xNs == elem.GetDefaultNamespace())
+			if (!(elem is null) && xNs == elem.GetDefaultNamespace())
 				xName = name;
 			else
 				xName = xNs + name;

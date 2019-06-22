@@ -33,7 +33,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// true if this is a default instance that hasn't been initialized
 		/// </summary>
-		public bool IsDefault => bytes == null;
+		public bool IsDefault => bytes is null;
 
 		/// <summary>
 		/// Gets the length in bytes
@@ -44,11 +44,11 @@ namespace dnSpy.Contracts.Hex {
 		/// Returns true if all bytes are valid, false if all bytes are invalid, or null
 		/// if it's not known (use <see cref="IsValid(int)"/>)
 		/// </summary>
-		public bool? AllValid => validBytes != null ? (bool?)null : allValid;
+		public bool? AllValid => !(validBytes is null) ? (bool?)null : allValid;
 
 		readonly byte[] bytes;
 		readonly bool allValid;// Only used if the bit array is null
-		readonly BitArray validBytes;
+		readonly BitArray? validBytes;
 
 		/// <summary>
 		/// Constructor
@@ -77,9 +77,9 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="bytes">All bytes. All invalid bytes should be cleared</param>
 		/// <param name="validBytes">Valid bytes</param>
 		public HexBytes(byte[] bytes, BitArray validBytes) {
-			if (bytes == null)
+			if (bytes is null)
 				throw new ArgumentNullException(nameof(bytes));
-			if (validBytes == null)
+			if (validBytes is null)
 				throw new ArgumentNullException(nameof(validBytes));
 			if (validBytes.Length != bytes.LongLength)
 				throw new ArgumentOutOfRangeException(nameof(bytes));
@@ -94,7 +94,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="index">Index of byte</param>
 		/// <returns></returns>
 		public bool IsValid(int index) {
-			if (validBytes == null)
+			if (validBytes is null)
 				return allValid;
 			return index < validBytes.Length && validBytes.Get(index);
 		}
@@ -105,7 +105,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="index">Index of byte</param>
 		/// <returns></returns>
 		public bool IsValid(long index) {
-			if (validBytes == null)
+			if (validBytes is null)
 				return allValid;
 			return index <= int.MaxValue && (int)index < validBytes.Length ? validBytes.Get((int)index) : true;
 		}
@@ -262,7 +262,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <returns></returns>
 		public unsafe float? TryReadSingle(long index) {
 			var v = TryReadInt32(index);
-			if (v == null)
+			if (v is null)
 				return null;
 			int v2 = v.Value;
 			return *(float*)&v2;
@@ -275,7 +275,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <returns></returns>
 		public unsafe double? TryReadDouble(long index) {
 			var v = TryReadInt64(index);
-			if (v == null)
+			if (v is null)
 				return null;
 			long v2 = v.Value;
 			return *(double*)&v2;
@@ -386,7 +386,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <returns></returns>
 		public unsafe float? TryReadSingleBigEndian(long index) {
 			var v = TryReadInt32BigEndian(index);
-			if (v == null)
+			if (v is null)
 				return null;
 			int v2 = v.Value;
 			return *(float*)&v2;
@@ -399,7 +399,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <returns></returns>
 		public unsafe double? TryReadDoubleBigEndian(long index) {
 			var v = TryReadInt64BigEndian(index);
-			if (v == null)
+			if (v is null)
 				return null;
 			long v2 = v.Value;
 			return *(double*)&v2;

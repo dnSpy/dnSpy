@@ -22,11 +22,11 @@ using System.Collections.Generic;
 using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
-	sealed class CorThread : COMObject<ICorDebugThread>, IEquatable<CorThread> {
-		public CorProcess Process {
+	sealed class CorThread : COMObject<ICorDebugThread>, IEquatable<CorThread?> {
+		public CorProcess? Process {
 			get {
 				int hr = obj.GetProcess(out var process);
-				return hr < 0 || process == null ? null : new CorProcess(process);
+				return hr < 0 || process is null ? null : new CorProcess(process);
 			}
 		}
 
@@ -37,34 +37,34 @@ namespace dndbg.Engine {
 			}
 		}
 
-		public CorAppDomain AppDomain {
+		public CorAppDomain? AppDomain {
 			get {
 				int hr = obj.GetAppDomain(out var appDomain);
-				return hr < 0 || appDomain == null ? null : new CorAppDomain(appDomain);
+				return hr < 0 || appDomain is null ? null : new CorAppDomain(appDomain);
 			}
 		}
 
 		public int VolatileThreadId {
 			get {
 				var th2 = obj as ICorDebugThread2;
-				if (th2 == null)
+				if (th2 is null)
 					return -1;
 				int hr = th2.GetVolatileOSThreadID(out int tid);
 				return hr < 0 ? -1 : tid;
 			}
 		}
 
-		public CorChain ActiveChain {
+		public CorChain? ActiveChain {
 			get {
 				int hr = obj.GetActiveChain(out var chain);
-				return hr < 0 || chain == null ? null : new CorChain(chain);
+				return hr < 0 || chain is null ? null : new CorChain(chain);
 			}
 		}
 
-		public CorFrame ActiveFrame {
+		public CorFrame? ActiveFrame {
 			get {
 				int hr = obj.GetActiveFrame(out var frame);
-				return hr < 0 || frame == null ? null : new CorFrame(frame);
+				return hr < 0 || frame is null ? null : new CorFrame(frame);
 			}
 		}
 
@@ -75,7 +75,7 @@ namespace dndbg.Engine {
 					yield break;
 				for (;;) {
 					hr = chainEnum.Next(1, out var chain, out uint count);
-					if (hr != 0 || chain == null)
+					if (hr != 0 || chain is null)
 						break;
 					yield return new CorChain(chain);
 				}
@@ -111,10 +111,10 @@ namespace dndbg.Engine {
 			}
 		}
 
-		public CorValue CurrentException {
+		public CorValue? CurrentException {
 			get {
 				int hr = obj.GetCurrentException(out var value);
-				return hr < 0 || value == null ? null : new CorValue(value);
+				return hr < 0 || value is null ? null : new CorValue(value);
 			}
 		}
 
@@ -125,10 +125,10 @@ namespace dndbg.Engine {
 			}
 		}
 
-		public CorValue Object {
+		public CorValue? Object {
 			get {
 				int hr = obj.GetObject(out var value);
-				return hr < 0 || value == null ? null : new CorValue(value);
+				return hr < 0 || value is null ? null : new CorValue(value);
 			}
 		}
 
@@ -138,36 +138,27 @@ namespace dndbg.Engine {
 
 		public bool InterceptCurrentException(CorFrame frame) {
 			var t2 = obj as ICorDebugThread2;
-			if (t2 == null)
+			if (t2 is null)
 				return false;
 			int hr = t2.InterceptCurrentException(frame.RawObject);
 			return hr >= 0;
 		}
 
-		public CorValue GetCurrentCustomDebuggerNotification() {
+		public CorValue? GetCurrentCustomDebuggerNotification() {
 			var t4 = obj as ICorDebugThread4;
-			if (t4 == null)
+			if (t4 is null)
 				return null;
 			int hr = t4.GetCurrentCustomDebuggerNotification(out var value);
-			return hr < 0 || value == null ? null : new CorValue(value);
+			return hr < 0 || value is null ? null : new CorValue(value);
 		}
 
-		public CorEval CreateEval() {
+		public CorEval? CreateEval() {
 			int hr = obj.CreateEval(out var eval);
-			return hr < 0 || eval == null ? null : new CorEval(eval);
+			return hr < 0 || eval is null ? null : new CorEval(eval);
 		}
 
-		public static bool operator ==(CorThread a, CorThread b) {
-			if (ReferenceEquals(a, b))
-				return true;
-			if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
-				return false;
-			return a.Equals(b);
-		}
-
-		public static bool operator !=(CorThread a, CorThread b) => !(a == b);
-		public bool Equals(CorThread other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
-		public override bool Equals(object obj) => Equals(obj as CorThread);
+		public bool Equals(CorThread? other) => !(other is null) && RawObject == other.RawObject;
+		public override bool Equals(object? obj) => Equals(obj as CorThread);
 		public override int GetHashCode() => RawObject.GetHashCode();
 		public override string ToString() => $"[Thread] TID={ThreadId}, VTID={VolatileThreadId} State={State} UserState={UserState}";
 	}

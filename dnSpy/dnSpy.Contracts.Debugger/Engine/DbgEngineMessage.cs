@@ -56,7 +56,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <summary>
 		/// The error message or null if there's no error
 		/// </summary>
-		public string ErrorMessage { get; }
+		public string? ErrorMessage { get; }
 
 		/// <summary>
 		/// Gets the process id
@@ -113,19 +113,19 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <summary>
 		/// The error message or null if there's no error
 		/// </summary>
-		public string ErrorMessage { get; }
+		public string? ErrorMessage { get; }
 
 		/// <summary>
 		/// Gets the thread or null if it's not known
 		/// </summary>
-		public DbgThread Thread { get; }
+		public DbgThread? Thread { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="thread">Thread or null if it's not known</param>
 		/// <param name="messageFlags">Message flags</param>
-		public DbgMessageBreak(DbgThread thread, DbgEngineMessageFlags messageFlags) : base(messageFlags) => Thread = thread;
+		public DbgMessageBreak(DbgThread? thread, DbgEngineMessageFlags messageFlags) : base(messageFlags) => Thread = thread;
 
 		/// <summary>
 		/// Constructor
@@ -147,14 +147,14 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <summary>
 		/// Gets the thread or null if it's not known
 		/// </summary>
-		public DbgThread Thread { get; }
+		public DbgThread? Thread { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="thread">Thread or null if it's not known</param>
 		/// <param name="messageFlags">Message flags</param>
-		public DbgMessageEntryPointBreak(DbgThread thread, DbgEngineMessageFlags messageFlags) : base(messageFlags) => Thread = thread;
+		public DbgMessageEntryPointBreak(DbgThread? thread, DbgEngineMessageFlags messageFlags) : base(messageFlags) => Thread = thread;
 	}
 
 	/// <summary>
@@ -174,7 +174,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <summary>
 		/// Gets the thread or null if it's not known
 		/// </summary>
-		public DbgThread Thread { get; }
+		public DbgThread? Thread { get; }
 
 		/// <summary>
 		/// Constructor
@@ -182,7 +182,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="message">Message</param>
 		/// <param name="thread">Thread or null if it's not known</param>
 		/// <param name="messageFlags">Message flags</param>
-		public DbgMessageProgramMessage(string message, DbgThread thread, DbgEngineMessageFlags messageFlags)
+		public DbgMessageProgramMessage(string message, DbgThread? thread, DbgEngineMessageFlags messageFlags)
 			: base(messageFlags) {
 			Message = message ?? throw new ArgumentNullException(nameof(message));
 			Thread = thread;
@@ -206,7 +206,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <summary>
 		/// Gets the thread or null if it's not known
 		/// </summary>
-		public DbgThread Thread { get; }
+		public DbgThread? Thread { get; }
 
 		/// <summary>
 		/// Constructor
@@ -214,7 +214,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="boundBreakpoint">Breakpoint</param>
 		/// <param name="thread">Thread or null if it's not known</param>
 		/// <param name="messageFlags">Message flags</param>
-		public DbgMessageBreakpoint(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, DbgEngineMessageFlags messageFlags)
+		public DbgMessageBreakpoint(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread? thread, DbgEngineMessageFlags messageFlags)
 			: base(messageFlags) {
 			BoundBreakpoint = boundBreakpoint ?? throw new ArgumentNullException(nameof(boundBreakpoint));
 			Thread = thread;
@@ -233,14 +233,14 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <summary>
 		/// Gets the thread or null if it's not known
 		/// </summary>
-		public DbgThread Thread { get; }
+		public DbgThread? Thread { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="thread">Thread or null if it's not known</param>
 		/// <param name="messageFlags">Message flags</param>
-		public DbgMessageProgramBreak(DbgThread thread, DbgEngineMessageFlags messageFlags)
+		public DbgMessageProgramBreak(DbgThread? thread, DbgEngineMessageFlags messageFlags)
 			: base(messageFlags) => Thread = thread;
 	}
 
@@ -266,16 +266,16 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <summary>
 		/// Gets the error string or null if none
 		/// </summary>
-		public string Error { get; }
+		public string? Error { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="thread">Thread or null if it's not known</param>
+		/// <param name="thread">Thread</param>
 		/// <param name="framesInvalidated">true if all frames in the thread have been invalidated</param>
 		/// <param name="error">Error string or null if none</param>
 		/// <param name="messageFlags">Message flags</param>
-		public DbgMessageSetIPComplete(DbgThread thread, bool framesInvalidated, string error, DbgEngineMessageFlags messageFlags)
+		public DbgMessageSetIPComplete(DbgThread thread, bool framesInvalidated, string? error, DbgEngineMessageFlags messageFlags)
 			: base(messageFlags) {
 			Thread = thread ?? throw new ArgumentNullException(nameof(thread));
 			FramesInvalidated = framesInvalidated;

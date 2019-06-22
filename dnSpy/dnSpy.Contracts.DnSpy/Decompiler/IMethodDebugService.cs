@@ -63,14 +63,14 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="method">Method</param>
 		/// <returns></returns>
-		MethodDebugInfo TryGetMethodDebugInfo(MethodDef method);
+		MethodDebugInfo? TryGetMethodDebugInfo(MethodDef method);
 
 		/// <summary>
 		/// Gets a <see cref="MethodDebugInfo"/> or null if it doesn't exist
 		/// </summary>
 		/// <param name="token">Token</param>
 		/// <returns></returns>
-		MethodDebugInfo TryGetMethodDebugInfo(ModuleTokenId token);
+		MethodDebugInfo? TryGetMethodDebugInfo(ModuleTokenId token);
 
 		/// <summary>
 		/// Gets all <see cref="MethodSourceStatement"/>s that intersect a span
@@ -120,17 +120,17 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="self">This</param>
 		/// <returns></returns>
-		public static IMethodDebugService GetMethodDebugService(this IDocumentViewer self) => self.TryGetMethodDebugService() ?? EmptyMethodDebugService.Instance;
+		public static IMethodDebugService GetMethodDebugService(this IDocumentViewer? self) => self.TryGetMethodDebugService() ?? EmptyMethodDebugService.Instance;
 
 		/// <summary>
 		/// Gets a <see cref="IMethodDebugService"/> or null if none exists
 		/// </summary>
 		/// <param name="self">This</param>
 		/// <returns></returns>
-		public static IMethodDebugService TryGetMethodDebugService(this IDocumentViewer self) {
-			if (self == null)
+		public static IMethodDebugService? TryGetMethodDebugService(this IDocumentViewer? self) {
+			if (self is null)
 				return null;
-			return (IMethodDebugService)self.GetContentData(MethodDebugServiceConstants.MethodDebugServiceKey);
+			return (IMethodDebugService?)self.GetContentData(MethodDebugServiceConstants.MethodDebugServiceKey);
 		}
 
 		sealed class EmptyMethodDebugService : IMethodDebugService {
@@ -140,8 +140,8 @@ namespace dnSpy.Contracts.Decompiler {
 			IList<MethodSourceStatement> IMethodDebugService.FindByTextPosition(int textPosition, FindByTextPositionOptions options) => Array.Empty<MethodSourceStatement>();
 			MethodSourceStatement? IMethodDebugService.FindByCodeOffset(ModuleTokenId token, uint codeOffset) => null;
 			MethodSourceStatement? IMethodDebugService.FindByCodeOffset(MethodDef method, uint codeOffset) => null;
-			MethodDebugInfo IMethodDebugService.TryGetMethodDebugInfo(ModuleTokenId token) => null;
-			MethodDebugInfo IMethodDebugService.TryGetMethodDebugInfo(MethodDef method) => null;
+			MethodDebugInfo? IMethodDebugService.TryGetMethodDebugInfo(ModuleTokenId token) => null;
+			MethodDebugInfo? IMethodDebugService.TryGetMethodDebugInfo(MethodDef method) => null;
 			IEnumerable<MethodSourceStatement> IMethodDebugService.GetStatementsByTextSpan(Span span) => Array.Empty<MethodSourceStatement>();
 		}
 	}

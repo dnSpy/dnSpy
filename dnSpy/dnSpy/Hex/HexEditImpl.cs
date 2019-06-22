@@ -43,9 +43,9 @@ namespace dnSpy.Hex {
 		readonly HexBufferImpl hexBufferImpl;
 		readonly List<HexChange> changes;
 		readonly int? reiteratedVersionNumber;
-		readonly object editTag;
+		readonly object? editTag;
 
-		public HexEditImpl(HexBufferImpl hexBufferImpl, int? reiteratedVersionNumber, object editTag) {
+		public HexEditImpl(HexBufferImpl hexBufferImpl, int? reiteratedVersionNumber, object? editTag) {
 			this.hexBufferImpl = hexBufferImpl ?? throw new ArgumentNullException(nameof(hexBufferImpl));
 			changes = new List<HexChange>();
 			this.reiteratedVersionNumber = reiteratedVersionNumber;

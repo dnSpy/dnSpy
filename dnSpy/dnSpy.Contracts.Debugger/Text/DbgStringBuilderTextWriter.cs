@@ -54,7 +54,7 @@ namespace dnSpy.Contracts.Debugger.Text {
 		/// </summary>
 		/// <param name="color">Color</param>
 		/// <param name="text">Text</param>
-		public void Write(DbgTextColor color, string text) => sb.Append(text);
+		public void Write(DbgTextColor color, string? text) => sb.Append(text);
 
 		/// <summary>
 		/// Writes a new line

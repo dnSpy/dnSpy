@@ -23,14 +23,14 @@ using dnSpy.Contracts.Settings.Dialog;
 
 namespace dnSpy.Settings.Dialog {
 	sealed class AppRefreshSettings : IAppRefreshSettings {
-		readonly Dictionary<Guid, object> dict = new Dictionary<Guid, object>();
+		readonly Dictionary<Guid, object?> dict = new Dictionary<Guid, object?>();
 
-		public void Add(Guid guid, object value = null) => dict[guid] = value;
+		public void Add(Guid guid, object? value = null) => dict[guid] = value;
 
 		public bool Has(Guid guid) => dict.ContainsKey(guid);
 
-		public object GetValue(Guid guid) {
-			dict.TryGetValue(guid, out object value);
+		public object? GetValue(Guid guid) {
+			dict.TryGetValue(guid, out var value);
 			return value;
 		}
 	}

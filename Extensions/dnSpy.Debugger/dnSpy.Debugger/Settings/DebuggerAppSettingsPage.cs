@@ -52,16 +52,16 @@ namespace dnSpy.Debugger.Settings {
 		public DebuggerSettingsBase Settings { get; }
 		public override double Order => AppSettingsConstants.ORDER_DEBUGGER;
 		public override string Title => dnSpy_Debugger_Resources.DebuggerOptDlgTab;
-		public override object UIObject => this;
+		public override object? UIObject => this;
 
 		public object Runtimes {
 			get {
-				if (runtimesVM == null)
+				if (runtimesVM is null)
 					runtimesVM = new RuntimesVM(dbgLanguageService.Value.GetLanguageInfos());
 				return runtimesVM;
 			}
 		}
-		RuntimesVM runtimesVM;
+		RuntimesVM? runtimesVM;
 
 		readonly Lazy<DbgLanguageService2> dbgLanguageService;
 
@@ -73,7 +73,7 @@ namespace dnSpy.Debugger.Settings {
 
 		public override void OnApply() {
 			Settings.CopyTo(_global_settings);
-			if (runtimesVM != null) {
+			if (!(runtimesVM is null)) {
 				foreach (var info in runtimesVM.GetSettings()) {
 					var language = dbgLanguageService.Value.GetLanguages(info.runtimeKindGuid).First(a => a.Name == info.languageName);
 					dbgLanguageService.Value.SetCurrentLanguage(info.runtimeKindGuid, language);

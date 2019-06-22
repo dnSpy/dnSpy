@@ -33,23 +33,23 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// <summary>
 		/// Gets the UI object
 		/// </summary>
-		public abstract object UIObject { get; }
+		public abstract object? UIObject { get; }
 
 		/// <summary>
 		/// Gets the element that gets focused or null
 		/// </summary>
-		public abstract IInputElement FocusedElement { get; }
+		public abstract IInputElement? FocusedElement { get; }
 
 		/// <summary>
 		/// Gets the element that gets zoomed or null
 		/// </summary>
-		public abstract FrameworkElement ZoomElement { get; }
+		public abstract FrameworkElement? ZoomElement { get; }
 
 		/// <summary>
 		/// Saves UI state, eg. line number, caret position, etc
 		/// </summary>
 		/// <returns></returns>
-		public virtual object CreateUIState() => null;
+		public virtual object? CreateUIState() => null;
 
 		/// <summary>
 		/// Restores UI state. <paramref name="obj"/> was created by <see cref="CreateUIState()"/> but
@@ -57,14 +57,14 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// <paramref name="obj"/>.
 		/// </summary>
 		/// <param name="obj">Serialized UI state</param>
-		public virtual void RestoreUIState(object obj) { }
+		public virtual void RestoreUIState(object? obj) { }
 
 		/// <summary>
 		/// Creates UI state from serialized data
 		/// </summary>
 		/// <param name="section">Serialized data</param>
 		/// <returns></returns>
-		public virtual object DeserializeUIState(ISettingsSection section) => null;
+		public virtual object? DeserializeUIState(ISettingsSection section) => null;
 
 		/// <summary>
 		/// Saves UI state to <paramref name="section"/>. <paramref name="obj"/> was created
@@ -72,7 +72,7 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// </summary>
 		/// <param name="section">Destination</param>
 		/// <param name="obj">UI state, created by <see cref="CreateUIState()"/></param>
-		public virtual void SerializeUIState(ISettingsSection section, object obj) { }
+		public virtual void SerializeUIState(ISettingsSection section, object? obj) { }
 
 		/// <summary>
 		/// Called when this instance will be shown in a tab
@@ -87,17 +87,17 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// <summary>
 		/// Gets the owner tab
 		/// </summary>
-		public IDocumentTab DocumentTab {
+		public IDocumentTab? DocumentTab {
 			get => documentTab;
 			set {
-				if (value == null)
+				if (value is null)
 					throw new ArgumentNullException(nameof(value));
-				if (documentTab == null)
+				if (documentTab is null)
 					documentTab = value;
 				else if (documentTab != value)
 					throw new InvalidOperationException();
 			}
 		}
-		IDocumentTab documentTab;
+		IDocumentTab? documentTab;
 	}
 }

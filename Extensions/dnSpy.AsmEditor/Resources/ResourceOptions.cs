@@ -24,10 +24,10 @@ using dnlib.DotNet;
 namespace dnSpy.AsmEditor.Resources {
 	sealed class ResourceOptions {
 		public ResourceType ResourceType;
-		public UTF8String Name;
+		public UTF8String? Name;
 		public ManifestResourceAttributes Attributes;
-		public AssemblyRef Assembly;
-		public FileDef File;
+		public AssemblyRef? Assembly;
+		public FileDef? File;
 
 		public ResourceOptions() {
 		}
@@ -62,13 +62,13 @@ namespace dnSpy.AsmEditor.Resources {
 
 			case dnlib.DotNet.ResourceType.AssemblyLinked:
 				var al = (AssemblyLinkedResource)resource;
-				Debug.Assert(Assembly != null);
+				Debug.Assert(!(Assembly is null));
 				al.Assembly = Assembly;
 				break;
 
 			case dnlib.DotNet.ResourceType.Linked:
 				var lr = (LinkedResource)resource;
-				Debug.Assert(File != null);
+				Debug.Assert(!(File is null));
 				lr.File = File;
 				break;
 

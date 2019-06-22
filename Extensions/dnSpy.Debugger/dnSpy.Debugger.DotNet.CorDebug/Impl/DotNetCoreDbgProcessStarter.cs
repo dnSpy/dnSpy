@@ -20,18 +20,19 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
 using dnSpy.Contracts.Debugger.StartDebugging;
 using dnSpy.Debugger.DotNet.CorDebug.Utilities;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	[ExportDbgProcessStarter(PredefinedDbgProcessStarterOrders.DotNetCore)]
 	sealed class DotNetCoreDbgProcessStarter : DbgProcessStarter {
-		string GetPathToDotNetExeHost() => DotNetCoreHelpers.GetPathToDotNetExeHost(IntPtr.Size * 8);
+		string? GetPathToDotNetExeHost() => DotNetCoreHelpers.GetPathToDotNetExeHost(IntPtr.Size * 8);
 
 		public override bool IsSupported(string filename, out ProcessStarterResult result) {
 			result = ProcessStarterResult.None;
 
-			if (!DotNetCoreHelpers.IsDotNetCoreExecutable(filename) || GetPathToDotNetExeHost() == null)
+			if (!DotNetCoreHelpers.IsDotNetCoreExecutable(filename) || GetPathToDotNetExeHost() is null)
 				return false;
 
 			var extension = Path.GetExtension(filename);
@@ -40,9 +41,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			return true;
 		}
 
-		public override bool TryStart(string filename, out string error) {
+		public override bool TryStart(string filename, [NotNullWhenFalse] out string? error) {
 			var dotnetExeFilename = GetPathToDotNetExeHost();
-			Debug.Assert(dotnetExeFilename != null);
+			Debug.Assert(!(dotnetExeFilename is null));
 			var startInfo = new ProcessStartInfo(dotnetExeFilename);
 			startInfo.WorkingDirectory = Path.GetDirectoryName(filename);
 			startInfo.Arguments = $"exec \"{filename}\"";

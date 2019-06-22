@@ -32,7 +32,7 @@ namespace dnSpy.Analyzer {
 			ShortDescription = dnSpy_Analyzer_Resources.Plugin_ShortDescription,
 		};
 
-		public void OnEvent(ExtensionEvent @event, object obj) {
+		public void OnEvent(ExtensionEvent @event, object? obj) {
 		}
 	}
 }

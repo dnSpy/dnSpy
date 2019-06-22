@@ -27,23 +27,23 @@ using System.Windows.Threading;
 
 namespace dnSpy.AsmEditor.Utilities {
 	static class UIUtils {
-		public static IEnumerable<DependencyObject> GetChildren(DependencyObject depo) {
-			if (depo == null)
+		public static IEnumerable<DependencyObject> GetChildren(DependencyObject? depo) {
+			if (depo is null)
 				yield break;
 			int count = VisualTreeHelper.GetChildrenCount(depo);
 			for (int i = 0; i < count; i++)
 				yield return VisualTreeHelper.GetChild(depo, i);
 		}
 
-		public static bool HasSelectedChildrenFocus(ListBox listBox) {
-			if (listBox == null)
+		public static bool HasSelectedChildrenFocus(ListBox? listBox) {
+			if (listBox is null)
 				return false;
 
 			foreach (var item in listBox.SelectedItems) {
 				var elem = listBox.ItemContainerGenerator.ContainerFromItem(item) as UIElement;
-				if (elem == null)
+				if (elem is null)
 					elem = item as UIElement;
-				if (elem == null)
+				if (elem is null)
 					continue;
 				if (elem.IsFocused || elem.IsKeyboardFocusWithin)
 					return true;

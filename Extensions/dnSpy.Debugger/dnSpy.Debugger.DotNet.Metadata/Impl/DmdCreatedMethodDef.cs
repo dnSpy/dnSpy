@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			this.methodSignature = methodSignature ?? throw new ArgumentNullException(nameof(methodSignature));
 		}
 
-		protected override (DmdParameterInfo returnParameter, DmdParameterInfo[] parameters) CreateParameters() {
+		protected override (DmdParameterInfo? returnParameter, DmdParameterInfo[] parameters) CreateParameters() {
 			var returnParameter = new DmdCreatedParameterDef(this, -1, methodSignature.ReturnType);
 			var parameterTypes = methodSignature.GetParameterTypes();
 			var parameters = parameterTypes.Count == 0 ? Array.Empty<DmdParameterInfo>() : new DmdParameterInfo[parameterTypes.Count];
@@ -44,10 +44,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return (returnParameter, parameters);
 		}
 
-		protected override DmdType[] CreateGenericParameters() => null;
-		protected override (DmdCustomAttributeData[] cas, DmdCustomAttributeData[] sas, DmdImplMap? implMap) CreateCustomAttributes() => (null, null, null);
-		public override DmdMethodBody GetMethodBody() => null;
-		internal override DmdMethodBody GetMethodBody(IList<DmdType> genericMethodArguments) => null;
+		protected override DmdType[]? CreateGenericParameters() => null;
+		protected override (DmdCustomAttributeData[]? cas, DmdCustomAttributeData[]? sas, DmdImplMap? implMap) CreateCustomAttributes() => (null, null, null);
+		public override DmdMethodBody? GetMethodBody() => null;
+		internal override DmdMethodBody? GetMethodBody(IList<DmdType> genericMethodArguments) => null;
 		public override DmdMethodSignature GetMethodSignature() => methodSignature;
 		protected override uint GetRVA() => 0;
 	}

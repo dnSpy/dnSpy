@@ -37,7 +37,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Mono {
 		/// <param name="other">Destination</param>
 		/// <returns></returns>
 		public UnityStartDebuggingOptions CopyTo(UnityStartDebuggingOptions other) {
-			if (other == null)
+			if (other is null)
 				throw new ArgumentNullException(nameof(other));
 			base.CopyTo(other);
 			return other;

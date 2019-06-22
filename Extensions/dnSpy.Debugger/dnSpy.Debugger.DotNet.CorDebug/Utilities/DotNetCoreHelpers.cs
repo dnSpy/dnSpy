@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using dnlib.DotNet;
 using dnlib.PE;
 using dnSpy.Debugger.Shared;
@@ -30,11 +31,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 	static class DotNetCoreHelpers {
 		public static readonly string DotNetExeName = FileUtilities.GetNativeExeFilename("dotnet");
 
-		public static string GetPathToDotNetExeHost(int bitness) {
+		public static string? GetPathToDotNetExeHost(int bitness) {
 			if (bitness != 32 && bitness != 64)
 				throw new ArgumentOutOfRangeException(nameof(bitness));
 			var pathEnvVar = Environment.GetEnvironmentVariable("PATH");
-			if (pathEnvVar == null)
+			if (pathEnvVar is null)
 				return null;
 			foreach (var tmp in GetDotNetCoreBaseDirCandidates()) {
 				var path = tmp.Trim();
@@ -86,13 +87,6 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 					yield return installLocation;
 			}
 
-			bool TryGetInstallLocationFromRegistry(string regPath, out string installLocation) {
-				using (var key = Registry.LocalMachine.OpenSubKey(regPath)) {
-					installLocation = key?.GetValue("InstallLocation") as string;
-					return installLocation != null;
-				}
-			}
-
 			// Check default locations
 			var progDirX86 = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
 			var progDir = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
@@ -105,7 +99,15 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 				yield return Path.Combine(progDirX86, dotnetDirName);
 		}
 
+		static bool TryGetInstallLocationFromRegistry(string regPath, [NotNullWhenTrue] out string? installLocation) {
+			using (var key = Registry.LocalMachine.OpenSubKey(regPath)) {
+				installLocation = key?.GetValue("InstallLocation") as string;
+				return !(installLocation is null);
+			}
+		}
+
 		public static string GetDebugShimFilename(int bitness) {
+#if NETFRAMEWORK
 			var basePath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
 			basePath = Path.Combine(basePath, "debug", "core");
 			var filename = FileUtilities.GetNativeDllFilename("dbgshim");
@@ -114,6 +116,12 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 			case 64:	return Path.Combine(basePath, "x64", filename);
 			default:	throw new ArgumentOutOfRangeException(nameof(bitness));
 			}
+#elif NETCOREAPP
+			var filename = FileUtilities.GetNativeDllFilename("dbgshim");
+			return Path.Combine(Path.GetDirectoryName(typeof(void).Assembly.Location), filename);
+#else
+#error Unknown target framework
+#endif
 		}
 
 		public static bool IsDotNetCoreExecutable(string filename) {
@@ -131,16 +139,16 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 
 					using (var mod = ModuleDefMD.Load(peImage, new ModuleCreationOptions())) {
 						var asm = mod.Assembly;
-						if (asm == null)
+						if (asm is null)
 							return false;
 
 						var ca = asm.CustomAttributes.Find("System.Runtime.Versioning.TargetFrameworkAttribute");
-						if (ca == null)
+						if (ca is null)
 							return false;
 						if (ca.ConstructorArguments.Count != 1)
 							return false;
 						string s = ca.ConstructorArguments[0].Value as UTF8String;
-						if (s == null)
+						if (s is null)
 							return false;
 
 						// See corclr/src/mscorlib/src/System/Runtime/Versioning/BinaryCompatibility.cs

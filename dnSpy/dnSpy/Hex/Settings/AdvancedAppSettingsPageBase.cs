@@ -26,7 +26,7 @@ using dnSpy.Properties;
 namespace dnSpy.Hex.Settings {
 	abstract class AdvancedAppSettingsPageBase : AppSettingsPage {
 		public sealed override string Title => dnSpy_Resources.AdvancedSettings;
-		public sealed override object UIObject => this;
+		public sealed override object? UIObject => this;
 
 		public bool ShowColumnLines {
 			get => showColumnLines;
@@ -96,22 +96,22 @@ namespace dnSpy.Hex.Settings {
 
 		public EnumListVM ColumnLine0VM { get; }
 		public HexColumnLineKind ColumnLine0 {
-			get => (HexColumnLineKind)ColumnLine0VM.SelectedItem;
+			get => (HexColumnLineKind)ColumnLine0VM.SelectedItem!;
 			set => ColumnLine0VM.SelectedItem = value;
 		}
 		public EnumListVM ColumnLine1VM { get; }
 		public HexColumnLineKind ColumnLine1 {
-			get => (HexColumnLineKind)ColumnLine1VM.SelectedItem;
+			get => (HexColumnLineKind)ColumnLine1VM.SelectedItem!;
 			set => ColumnLine1VM.SelectedItem = value;
 		}
 		public EnumListVM ColumnGroupLine0VM { get; }
 		public HexColumnLineKind ColumnGroupLine0 {
-			get => (HexColumnLineKind)ColumnGroupLine0VM.SelectedItem;
+			get => (HexColumnLineKind)ColumnGroupLine0VM.SelectedItem!;
 			set => ColumnGroupLine0VM.SelectedItem = value;
 		}
 		public EnumListVM ColumnGroupLine1VM { get; }
 		public HexColumnLineKind ColumnGroupLine1 {
-			get => (HexColumnLineKind)ColumnGroupLine1VM.SelectedItem;
+			get => (HexColumnLineKind)ColumnGroupLine1VM.SelectedItem!;
 			set => ColumnGroupLine1VM.SelectedItem = value;
 		}
 		static readonly EnumVM[] hexColumnLineKindList = new EnumVM[6] {

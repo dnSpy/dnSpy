@@ -42,14 +42,14 @@ namespace dnSpy.Debugger.Attach {
 			this.attachProgramOptionsProviderFactories = attachProgramOptionsProviderFactories.ToArray();
 		}
 
-		public override Task<AttachableProcess[]> GetAttachableProcessesAsync(string[] processNames, int[] processIds, string[] providerNames, CancellationToken cancellationToken) {
+		public override Task<AttachableProcess[]> GetAttachableProcessesAsync(string[]? processNames, int[]? processIds, string[]? providerNames, CancellationToken cancellationToken) {
 			var helper = new Helper(dbgManager, attachProgramOptionsProviderFactories, processNames, processIds, providerNames, cancellationToken);
 			return helper.Task;
 		}
 
 		sealed class Helper {
 			public Task<AttachableProcess[]> Task { get; }
-			readonly TaskCompletionSource<AttachableProcess[]> taskCompletionSource;
+			readonly TaskCompletionSource<AttachableProcess[]>? taskCompletionSource;
 			readonly List<ProviderInfo> providerInfos;
 
 			sealed class ProviderInfo {
@@ -94,8 +94,8 @@ namespace dnSpy.Debugger.Attach {
 			Regex[] processNameRegexes;
 			int[] processIds;
 
-			public Helper(Lazy<DbgManager> dbgManager, Lazy<AttachProgramOptionsProviderFactory, IAttachProgramOptionsProviderFactoryMetadata>[] attachProgramOptionsProviderFactories, string[] processNames, int[] processIds, string[] providerNames, CancellationToken cancellationToken) {
-				if (attachProgramOptionsProviderFactories == null)
+			public Helper(Lazy<DbgManager> dbgManager, Lazy<AttachProgramOptionsProviderFactory, IAttachProgramOptionsProviderFactoryMetadata>[] attachProgramOptionsProviderFactories, string[]? processNames, int[]? processIds, string[]? providerNames, CancellationToken cancellationToken) {
+				if (attachProgramOptionsProviderFactories is null)
 					throw new ArgumentNullException(nameof(attachProgramOptionsProviderFactories));
 				lockObj = new object();
 				result = new List<AttachableProcessImpl>();
@@ -104,7 +104,7 @@ namespace dnSpy.Debugger.Attach {
 				this.dbgManager = dbgManager ?? throw new ArgumentNullException(nameof(dbgManager));
 				processNameRegexes = (processNames ?? Array.Empty<string>()).Select(a => WildcardsUtils.CreateRegex(a)).ToArray();
 				this.processIds = processIds ?? Array.Empty<int>();
-				if (providerNames == null)
+				if (providerNames is null)
 					providerNames = Array.Empty<string>();
 				var providerContext = new AttachProgramOptionsProviderContext(processIds, IsValidProcess, cancellationToken);
 				bool allFactories = providerNames.Length == 0;
@@ -112,7 +112,7 @@ namespace dnSpy.Debugger.Attach {
 					if (providerNames.Length != 0 && Array.IndexOf(providerNames, lz.Metadata.Name) < 0)
 						continue;
 					var provider = lz.Value.Create(allFactories);
-					if (provider == null)
+					if (provider is null)
 						continue;
 					providerInfos.Add(new ProviderInfo(this, providerContext, provider));
 				}
@@ -129,11 +129,11 @@ namespace dnSpy.Debugger.Attach {
 			}
 
 			void AddOptions(AttachProgramOptions options) {
-				if (options == null)
+				if (options is null)
 					throw new ArgumentNullException(nameof(options));
 				lock (lockObj) {
 					var info = AttachableProcessInfo.Create(processProvider, options);
-					if (IsMatch(info))
+					if (!(info is null) && IsMatch(info))
 						result.Add(new AttachableProcessImpl(dbgManager.Value, options, info));
 				}
 			}
@@ -160,12 +160,13 @@ namespace dnSpy.Debugger.Attach {
 			bool IsValidProcessName(string name) => processNameRegexes.Length == 0 || processNameRegexes.Any(a => a.IsMatch(name));
 			bool IsValidProcessId(int pid) => processIds.Length == 0 || Array.IndexOf(processIds, pid) >= 0;
 
-			void EnumeratorCompleted(ProviderInfo info, bool canceled, Exception ex) {
-				AttachableProcess[] attachableProcesses;
+			void EnumeratorCompleted(ProviderInfo info, bool canceled, Exception? ex) {
+				Debug.Assert(!(taskCompletionSource is null));
+				AttachableProcess[]? attachableProcesses;
 				lock (lockObj) {
 					wasCanceled |= canceled;
-					if (ex != null) {
-						if (thrownExceptions == null)
+					if (!(ex is null)) {
+						if (thrownExceptions is null)
 							thrownExceptions = new List<Exception>();
 						thrownExceptions.Add(ex);
 					}
@@ -178,8 +179,8 @@ namespace dnSpy.Debugger.Attach {
 					else
 						attachableProcesses = null;
 				}
-				if (attachableProcesses != null) {
-					if (thrownExceptions != null)
+				if (!(attachableProcesses is null)) {
+					if (!(thrownExceptions is null))
 						taskCompletionSource.SetException(thrownExceptions);
 					else if (wasCanceled)
 						taskCompletionSource.SetCanceled();
@@ -188,13 +189,13 @@ namespace dnSpy.Debugger.Attach {
 					thrownExceptions?.Clear();
 					thrownExceptions = null;
 					processProvider.Dispose();
-					processProvider = null;
-					processNameRegexes = null;
-					processIds = null;
+					processProvider = null!;
+					processNameRegexes = null!;
+					processIds = null!;
 				}
 			}
 			bool wasCanceled;
-			List<Exception> thrownExceptions;
+			List<Exception>? thrownExceptions;
 		}
 	}
 }

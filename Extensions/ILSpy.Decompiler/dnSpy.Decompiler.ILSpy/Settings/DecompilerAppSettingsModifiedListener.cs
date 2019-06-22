@@ -58,7 +58,7 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 			get {
 				foreach (var tab in documentTabService.VisibleFirstTabs) {
 					var decompiler = (tab.Content as IDecompilerTabContent)?.Decompiler;
-					if (decompiler != null)
+					if (!(decompiler is null))
 						yield return (tab, decompiler);
 				}
 			}

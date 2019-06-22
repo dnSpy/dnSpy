@@ -49,9 +49,9 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 
 		protected SignatureHelpTaggerProviderEx(IThemeClassificationTypeService themeClassificationTypeService) => this.themeClassificationTypeService = themeClassificationTypeService ?? throw new ArgumentNullException(nameof(themeClassificationTypeService));
 
-		public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag {
+		public ITagger<T>? CreateTagger<T>(ITextBuffer buffer) where T : ITag {
 			var session = buffer.TryGetSignatureHelpSession();
-			if (session == null)
+			if (session is null)
 				return null;
 			return new SignatureHelpTaggerEx(buffer, themeClassificationTypeService) as ITagger<T>;
 		}
@@ -90,14 +90,14 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 
 		public IEnumerable<ITagSpan<IClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans) {
 			var context = buffer.TryGetSignatureHelpClassifierContext();
-			Debug.Assert(context != null);
-			if (context == null || context.Session.IsDismissed)
+			Debug.Assert(!(context is null));
+			if (context is null || context.Session.IsDismissed)
 				yield break;
 
 			if (context.Type == SignatureHelpClassifierContextTypes.ParameterName) {
 				var paramContext = (ParameterNameSignatureHelpClassifierContext)context;
 				var parameter = paramContext.Parameter as Parameter;
-				if (parameter?.Name != null) {
+				if (!(parameter?.Name is null)) {
 					var snapshot = buffer.CurrentSnapshot;
 					var span = new Span(paramContext.NameOffset, parameter.Name.Length);
 					Debug.Assert(span.End <= snapshot.Length);

@@ -23,12 +23,12 @@ using System.IO;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	interface IMethodBodyResolver {
-		DmdType ResolveType(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options);
-		(DmdType type, bool isPinned)[] ReadLocals(int localSignatureMetadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments);
+		DmdType? ResolveType(int metadataToken, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments, DmdResolveOptions options);
+		(DmdType type, bool isPinned)[] ReadLocals(int localSignatureMetadataToken, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments);
 	}
 
 	readonly struct DmdMethodBodyReader {
-		public static DmdMethodBody Create(IMethodBodyResolver methodBodyResolver, DmdDataStream reader, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) {
+		public static DmdMethodBody? Create(IMethodBodyResolver methodBodyResolver, DmdDataStream reader, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments) {
 			try {
 				return new DmdMethodBodyReader(methodBodyResolver, reader, genericTypeArguments, genericMethodArguments).Read();
 			}
@@ -44,14 +44,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		readonly IList<DmdType> genericTypeArguments;
 		readonly IList<DmdType> genericMethodArguments;
 
-		DmdMethodBodyReader(IMethodBodyResolver methodBodyResolver, DmdDataStream reader, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) {
+		DmdMethodBodyReader(IMethodBodyResolver methodBodyResolver, DmdDataStream reader, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments) {
 			this.methodBodyResolver = methodBodyResolver ?? throw new ArgumentNullException(nameof(methodBodyResolver));
 			this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
 			this.genericTypeArguments = genericTypeArguments ?? Array.Empty<DmdType>();
 			this.genericMethodArguments = genericMethodArguments ?? Array.Empty<DmdType>();
 		}
 
-		DmdMethodBody Read() {
+		DmdMethodBody? Read() {
 			if (!ReadHeader(out var localSignatureMetadataToken, out var maxStackSize, out var initLocals, out var codeSize, out var hasExceptionHandlers))
 				return null;
 
@@ -137,7 +137,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				int tryLength = reader.ReadInt32();
 				int handlerOffset = reader.ReadInt32();
 				int handlerLength = reader.ReadInt32();
-				DmdType catchType = null;
+				DmdType? catchType = null;
 				int filterOffset = 0;
 				if (flags == DmdExceptionHandlingClauseOptions.Clause)
 					catchType = methodBodyResolver.ResolveType(reader.ReadInt32(), genericTypeArguments, genericMethodArguments, DmdResolveOptions.None);
@@ -160,7 +160,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				int tryLength = reader.ReadByte();
 				int handlerOffset = reader.ReadUInt16();
 				int handlerLength = reader.ReadByte();
-				DmdType catchType = null;
+				DmdType? catchType = null;
 				int filterOffset = 0;
 				if (flags == DmdExceptionHandlingClauseOptions.Clause)
 					catchType = methodBodyResolver.ResolveType(reader.ReadInt32(), genericTypeArguments, genericMethodArguments, DmdResolveOptions.None);

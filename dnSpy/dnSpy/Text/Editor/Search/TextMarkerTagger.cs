@@ -38,9 +38,9 @@ namespace dnSpy.Text.Editor.Search {
 		[ImportingConstructor]
 		TextMarkerTaggerProvider(ISearchServiceProvider searchServiceProvider) => this.searchServiceProvider = searchServiceProvider;
 
-		public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag {
+		public ITagger<T>? CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag {
 			var wpfTextView = textView as IWpfTextView;
-			if (wpfTextView == null)
+			if (wpfTextView is null)
 				return null;
 			if (textView.TextBuffer != buffer)
 				return null;
@@ -52,9 +52,9 @@ namespace dnSpy.Text.Editor.Search {
 		readonly ISearchService searchService;
 
 		public TextMarkerTagger(ISearchServiceProvider searchServiceProvider, IWpfTextView wpfTextView) {
-			if (searchServiceProvider == null)
+			if (searchServiceProvider is null)
 				throw new ArgumentNullException(nameof(searchServiceProvider));
-			if (wpfTextView == null)
+			if (wpfTextView is null)
 				throw new ArgumentNullException(nameof(wpfTextView));
 			searchService = searchServiceProvider.Get(wpfTextView);
 			searchService.RegisterTextMarkerListener(this);

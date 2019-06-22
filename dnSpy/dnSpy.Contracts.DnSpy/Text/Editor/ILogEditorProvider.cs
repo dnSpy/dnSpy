@@ -27,6 +27,6 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// </summary>
 		/// <param name="options">Options or null</param>
 		/// <returns></returns>
-		ILogEditor Create(LogEditorOptions options);
+		ILogEditor Create(LogEditorOptions? options);
 	}
 }

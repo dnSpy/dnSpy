@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		[ImportingConstructor]
 		GlyphTextMarkerMouseProcessorProvider(Lazy<TextViewBreakpointService> textViewBreakpointService) => this.textViewBreakpointService = textViewBreakpointService;
 
-		public IGlyphTextMarkerMouseProcessor GetAssociatedMouseProcessor(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin margin) =>
+		public IGlyphTextMarkerMouseProcessor? GetAssociatedMouseProcessor(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin margin) =>
 			new GlyphTextMarkerMouseProcessor(wpfTextViewHost, textViewBreakpointService);
 	}
 
@@ -50,7 +50,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			wpfTextViewHost.TextView.LayoutChanged += TextView_LayoutChanged;
 		}
 
-		WeakReference leftButtonDownLineIdentityTagWeakReference;
+		WeakReference? leftButtonDownLineIdentityTagWeakReference;
 
 		void ClearPressedLine() => leftButtonDownLineIdentityTagWeakReference = null;
 

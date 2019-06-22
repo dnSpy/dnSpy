@@ -35,7 +35,7 @@ namespace dnSpy.Roslyn.Text.Classification {
 		[ImportingConstructor]
 		CompletionToolTipTextClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) => this.themeClassificationTypeService = themeClassificationTypeService;
 
-		public ITextClassifier Create(IContentType contentType) =>
+		public ITextClassifier? Create(IContentType contentType) =>
 			new CompletionToolTipTextClassifier(themeClassificationTypeService);
 	}
 
@@ -59,7 +59,7 @@ namespace dnSpy.Roslyn.Text.Classification {
 			if (!context.Colorize)
 				yield break;
 			var tagContext = context as TaggedTextClassifierContext;
-			if (tagContext == null)
+			if (tagContext is null)
 				yield break;
 			if (tagContext.TaggedParts.Length == 0)
 				yield break;

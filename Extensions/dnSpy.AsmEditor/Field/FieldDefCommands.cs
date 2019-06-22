@@ -57,7 +57,7 @@ namespace dnSpy.AsmEditor.Field {
 
 			public override bool IsVisible(AsmEditorContext context) => DeleteFieldDefCommand.CanExecute(context.Nodes);
 			public override void Execute(AsmEditorContext context) => DeleteFieldDefCommand.Execute(undoCommandService, context.Nodes);
-			public override string GetHeader(AsmEditorContext context) => DeleteFieldDefCommand.GetHeader(context.Nodes);
+			public override string? GetHeader(AsmEditorContext context) => DeleteFieldDefCommand.GetHeader(context.Nodes);
 		}
 
 		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:DeleteFieldCommand", Icon = DsImagesAttribute.Cancel, InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 40)]
@@ -70,7 +70,7 @@ namespace dnSpy.AsmEditor.Field {
 
 			public override bool IsVisible(AsmEditorContext context) => DeleteFieldDefCommand.CanExecute(context.Nodes);
 			public override void Execute(AsmEditorContext context) => DeleteFieldDefCommand.Execute(undoCommandService, context.Nodes);
-			public override string GetHeader(AsmEditorContext context) => DeleteFieldDefCommand.GetHeader(context.Nodes);
+			public override string? GetHeader(AsmEditorContext context) => DeleteFieldDefCommand.GetHeader(context.Nodes);
 		}
 
 		[Export, ExportMenuItem(Header = "res:DeleteFieldCommand", Icon = DsImagesAttribute.Cancel, InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_DELETE, Order = 40)]
@@ -83,7 +83,7 @@ namespace dnSpy.AsmEditor.Field {
 
 			public override bool IsEnabled(CodeContext context) => context.IsDefinition && DeleteFieldDefCommand.CanExecute(context.Nodes);
 			public override void Execute(CodeContext context) => DeleteFieldDefCommand.Execute(undoCommandService, context.Nodes);
-			public override string GetHeader(CodeContext context) => DeleteFieldDefCommand.GetHeader(context.Nodes);
+			public override string? GetHeader(CodeContext context) => DeleteFieldDefCommand.GetHeader(context.Nodes);
 		}
 
 		static string GetHeader(DocumentTreeNodeData[] nodes) {
@@ -106,7 +106,7 @@ namespace dnSpy.AsmEditor.Field {
 		}
 
 		struct DeleteModelNodes {
-			ModelInfo[] infos;
+			ModelInfo[]? infos;
 
 			readonly struct ModelInfo {
 				public readonly TypeDef OwnerType;
@@ -120,8 +120,8 @@ namespace dnSpy.AsmEditor.Field {
 			}
 
 			public void Delete(FieldNode[] nodes) {
-				Debug.Assert(infos == null);
-				if (infos != null)
+				Debug.Assert(infos is null);
+				if (!(infos is null))
 					throw new InvalidOperationException();
 
 				infos = new ModelInfo[nodes.Length];
@@ -136,8 +136,8 @@ namespace dnSpy.AsmEditor.Field {
 			}
 
 			public void Restore(FieldNode[] nodes) {
-				Debug.Assert(infos != null);
-				if (infos == null)
+				Debug.Assert(!(infos is null));
+				if (infos is null)
 					throw new InvalidOperationException();
 				Debug.Assert(infos.Length == nodes.Length);
 				if (infos.Length != nodes.Length)
@@ -228,7 +228,7 @@ namespace dnSpy.AsmEditor.Field {
 
 		static bool CanExecute(DocumentTreeNodeData[] nodes) =>
 			nodes.Length == 1 &&
-			(nodes[0] is TypeNode || (nodes[0].TreeNode.Parent != null && nodes[0].TreeNode.Parent.Data is TypeNode));
+			(nodes[0] is TypeNode || (!(nodes[0].TreeNode.Parent is null) && nodes[0].TreeNode.Parent!.Data is TypeNode));
 
 		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppService appService, DocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
@@ -236,22 +236,22 @@ namespace dnSpy.AsmEditor.Field {
 
 			var ownerNode = nodes[0];
 			if (!(ownerNode is TypeNode))
-				ownerNode = (DocumentTreeNodeData)ownerNode.TreeNode.Parent.Data;
+				ownerNode = (DocumentTreeNodeData)ownerNode.TreeNode.Parent!.Data;
 			var typeNode = ownerNode as TypeNode;
-			Debug.Assert(typeNode != null);
-			if (typeNode == null)
+			Debug.Assert(!(typeNode is null));
+			if (typeNode is null)
 				throw new InvalidOperationException();
 
 			var module = typeNode.GetModule();
-			Debug.Assert(module != null);
-			if (module == null)
+			Debug.Assert(!(module is null));
+			if (module is null)
 				throw new InvalidOperationException();
 
 			FieldDefOptions options;
 			var type = typeNode.TypeDef;
 			if (type.IsEnum) {
 				var ts = type.GetEnumUnderlyingType();
-				if (ts != null) {
+				if (!(ts is null)) {
 					options = FieldDefOptions.Create("MyField", new FieldSig(new ValueTypeSig(typeNode.TypeDef)));
 					options.Constant = module.UpdateRowId(new ConstantUser(ModelUtils.GetDefaultValue(ts), ts.RemovePinnedAndModifiers().GetElementType()));
 					options.Attributes |= FieldAttributes.Literal | FieldAttributes.Static | FieldAttributes.HasDefault;
@@ -378,8 +378,8 @@ namespace dnSpy.AsmEditor.Field {
 			var fieldNode = (FieldNode)nodes[0];
 
 			var module = nodes[0].GetModule();
-			Debug.Assert(module != null);
-			if (module == null)
+			Debug.Assert(!(module is null));
+			if (module is null)
 				throw new InvalidOperationException();
 
 			var data = new FieldOptionsVM(new FieldDefOptions(fieldNode.FieldDef), module, appService.DecompilerService, fieldNode.FieldDef.DeclaringType);
@@ -398,14 +398,14 @@ namespace dnSpy.AsmEditor.Field {
 		readonly DocumentTreeNodeData origParentNode;
 		readonly int origParentChildIndex;
 		readonly bool nameChanged;
-		readonly MemberRefInfo[] memberRefInfos;
+		readonly MemberRefInfo[]? memberRefInfos;
 
 		FieldDefSettingsCommand(FieldNode fieldNode, FieldDefOptions options) {
 			this.fieldNode = fieldNode;
 			newOptions = options;
 			origOptions = new FieldDefOptions(fieldNode.FieldDef);
 
-			origParentNode = (DocumentTreeNodeData)fieldNode.TreeNode.Parent.Data;
+			origParentNode = (DocumentTreeNodeData)fieldNode.TreeNode.Parent!.Data;
 			origParentChildIndex = origParentNode.TreeNode.Children.IndexOf(fieldNode.TreeNode);
 			Debug.Assert(origParentChildIndex >= 0);
 			if (origParentChildIndex < 0)
@@ -413,7 +413,7 @@ namespace dnSpy.AsmEditor.Field {
 
 			nameChanged = origOptions.Name != newOptions.Name;
 			if (nameChanged)
-				memberRefInfos = RefFinder.FindMemberRefsToThisModule(fieldNode.GetModule()).Where(a => RefFinder.Equals(a, fieldNode.FieldDef)).Select(a => new MemberRefInfo(a)).ToArray();
+				memberRefInfos = RefFinder.FindMemberRefsToThisModule(fieldNode.GetModule()!).Where(a => RefFinder.Equals(a, fieldNode.FieldDef)).Select(a => new MemberRefInfo(a)).ToArray();
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.EditFieldCommand2;
@@ -432,7 +432,7 @@ namespace dnSpy.AsmEditor.Field {
 			}
 			else
 				newOptions.CopyTo(fieldNode.FieldDef);
-			if (memberRefInfos != null) {
+			if (!(memberRefInfos is null)) {
 				foreach (var info in memberRefInfos)
 					info.MemberRef.Name = fieldNode.FieldDef.Name;
 			}
@@ -452,7 +452,7 @@ namespace dnSpy.AsmEditor.Field {
 			}
 			else
 				origOptions.CopyTo(fieldNode.FieldDef);
-			if (memberRefInfos != null) {
+			if (!(memberRefInfos is null)) {
 				foreach (var info in memberRefInfos)
 					info.MemberRef.Name = info.OrigName;
 			}

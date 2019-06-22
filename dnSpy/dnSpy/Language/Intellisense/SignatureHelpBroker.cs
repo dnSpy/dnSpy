@@ -44,17 +44,17 @@ namespace dnSpy.Language.Intellisense {
 			this.signatureHelpSourceProviders = Orderer.Order(signatureHelpSourceProviders).ToArray();
 		}
 
-		public ISignatureHelpSession TriggerSignatureHelp(ITextView textView) {
-			if (textView == null)
+		public ISignatureHelpSession? TriggerSignatureHelp(ITextView textView) {
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			var triggerPoint = textView.TextSnapshot.CreateTrackingPoint(textView.Caret.Position.BufferPosition.Position, PointTrackingMode.Negative, TrackingFidelityMode.Forward);
 			return TriggerSignatureHelp(textView, triggerPoint, trackCaret: true);
 		}
 
-		public ISignatureHelpSession TriggerSignatureHelp(ITextView textView, ITrackingPoint triggerPoint, bool trackCaret) {
-			if (textView == null)
+		public ISignatureHelpSession? TriggerSignatureHelp(ITextView textView, ITrackingPoint triggerPoint, bool trackCaret) {
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
-			if (triggerPoint == null)
+			if (triggerPoint is null)
 				throw new ArgumentNullException(nameof(triggerPoint));
 			var session = CreateSignatureHelpSession(textView, triggerPoint, trackCaret);
 			session.Start();
@@ -62,9 +62,9 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		public ISignatureHelpSession CreateSignatureHelpSession(ITextView textView, ITrackingPoint triggerPoint, bool trackCaret) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
-			if (triggerPoint == null)
+			if (triggerPoint is null)
 				throw new ArgumentNullException(nameof(triggerPoint));
 			var stack = intellisenseSessionStackMapService.Value.GetStackForTextView(textView);
 			var session = new SignatureHelpSession(textView, triggerPoint, trackCaret, intellisensePresenterFactoryService.Value, signatureHelpSourceProviders);
@@ -74,20 +74,20 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		public void DismissAllSessions(ITextView textView) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			foreach (var session in GetSessions(textView))
 				session.Dismiss();
 		}
 
 		public bool IsSignatureHelpActive(ITextView textView) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			return GetSessions(textView).Count != 0;
 		}
 
 		public ReadOnlyCollection<ISignatureHelpSession> GetSessions(ITextView textView) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			var stack = intellisenseSessionStackMapService.Value.GetStackForTextView(textView);
 			return new ReadOnlyCollection<ISignatureHelpSession>(stack.Sessions.OfType<ISignatureHelpSession>().ToArray());

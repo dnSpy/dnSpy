@@ -53,7 +53,7 @@ namespace dnSpy.Text.Editor {
 			ClearValue(ContextMenuProperty);
 			base.OnContextMenuOpening(e);
 			var ctxMenu = ContextMenu;
-			if (ctxMenu != null) {
+			if (!(ctxMenu is null)) {
 				if (IsEnabled) {
 					ctxMenu.PlacementTarget = this;
 					ctxMenu.IsOpen = true;

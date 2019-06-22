@@ -29,13 +29,13 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		/// Shows the dialog box
 		/// </summary>
 		/// <param name="owner">Owner window or null to use the main window</param>
-		void Show(Window owner = null);
+		void Show(Window? owner = null);
 
 		/// <summary>
 		/// Shows the dialog box and selects the settings page whose <see cref="AppSettingsPage.Guid"/> equals <paramref name="guid"/>
 		/// </summary>
 		/// <param name="guid">Guid of settings and must match some instance's <see cref="AppSettingsPage.Guid"/> property</param>
 		/// <param name="owner">Owner window or null to use the main window</param>
-		void Show(Guid guid, Window owner = null);
+		void Show(Guid guid, Window? owner = null);
 	}
 }

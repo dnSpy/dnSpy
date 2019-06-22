@@ -43,7 +43,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 	[TextViewRole(PredefinedDsTextViewRoles.CanHaveLineSeparator)]
 	[TagType(typeof(ILineSeparatorTag))]
 	sealed class LineSeparatorViewTaggerProvider : IViewTaggerProvider {
-		public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag {
+		public ITagger<T>? CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag {
 			if (textView.TextBuffer != buffer)
 				return null;
 			return LineSeparatorViewTagger.GetInstance(textView) as ITagger<T>;
@@ -68,7 +68,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public void SetLineSeparatorCollection(LineSeparatorCollection coll) {
 			if (textView.IsClosed)
 				return;
-			if (coll == null)
+			if (coll is null)
 				coll = LineSeparatorCollection.Empty;
 			if (lineSeparatorCollection == coll)
 				return;

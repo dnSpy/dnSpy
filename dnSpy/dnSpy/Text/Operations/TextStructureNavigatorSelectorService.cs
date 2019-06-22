@@ -31,7 +31,7 @@ namespace dnSpy.Text.Operations {
 	sealed class TextStructureNavigatorSelectorService : ITextStructureNavigatorSelectorService {
 		readonly IContentTypeRegistryService contentTypeRegistryService;
 		readonly Lazy<ITextStructureNavigatorProvider, IContentTypeMetadata>[] textStructureNavigatorProviders;
-		ProviderSelector<ITextStructureNavigatorProvider, IContentTypeMetadata> providerSelector;
+		ProviderSelector<ITextStructureNavigatorProvider, IContentTypeMetadata>? providerSelector;
 
 		[ImportingConstructor]
 		TextStructureNavigatorSelectorService(IContentTypeRegistryService contentTypeRegistryService, [ImportMany] IEnumerable<Lazy<ITextStructureNavigatorProvider, IContentTypeMetadata>> textStructureNavigatorProviders) {
@@ -40,7 +40,7 @@ namespace dnSpy.Text.Operations {
 		}
 
 		public ITextStructureNavigator GetTextStructureNavigator(ITextBuffer textBuffer) {
-			if (textBuffer == null)
+			if (textBuffer is null)
 				throw new ArgumentNullException(nameof(textBuffer));
 			return textBuffer.Properties.GetOrCreateSingletonProperty(typeof(ITextStructureNavigator), () => {
 				var nav = CreateTextStructureNavigator(textBuffer, textBuffer.ContentType);
@@ -57,16 +57,16 @@ namespace dnSpy.Text.Operations {
 		}
 
 		public ITextStructureNavigator CreateTextStructureNavigator(ITextBuffer textBuffer, IContentType contentType) {
-			if (textBuffer == null)
+			if (textBuffer is null)
 				throw new ArgumentNullException(nameof(textBuffer));
-			if (contentType == null)
+			if (contentType is null)
 				throw new ArgumentNullException(nameof(contentType));
 
-			if (providerSelector == null)
+			if (providerSelector is null)
 				providerSelector = new ProviderSelector<ITextStructureNavigatorProvider, IContentTypeMetadata>(contentTypeRegistryService, textStructureNavigatorProviders);
 			foreach (var p in providerSelector.GetProviders(contentType)) {
 				var nav = p.Value.CreateTextStructureNavigator(textBuffer);
-				if (nav != null)
+				if (!(nav is null))
 					return nav;
 			}
 			Debug.Fail($"Couldn't find a {nameof(ITextStructureNavigatorProvider)}");

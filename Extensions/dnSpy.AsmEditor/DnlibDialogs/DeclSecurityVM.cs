@@ -52,9 +52,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 	sealed class DeclSecurityVM : ViewModelBase {
 		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
-		public string FullName => SecurityActionEnumList.SelectedItem.ToString();
+		public string FullName => SecurityActionEnumList.SelectedItem!.ToString();
 
-		public string V1XMLString {
+		public string? V1XMLString {
 			get => v1XMLString;
 			set {
 				if (v1XMLString != value) {
@@ -63,10 +63,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 			}
 		}
-		string v1XMLString = string.Empty;
+		string? v1XMLString = string.Empty;
 
-		public bool IsV1 => (DeclSecVer)DeclSecVerEnumList.SelectedItem == DeclSecVer.V1;
-		public bool IsV2 => (DeclSecVer)DeclSecVerEnumList.SelectedItem == DeclSecVer.V2;
+		public bool IsV1 => (DeclSecVer)DeclSecVerEnumList.SelectedItem! == DeclSecVer.V1;
+		public bool IsV2 => (DeclSecVer)DeclSecVerEnumList.SelectedItem! == DeclSecVer.V2;
 
 		public EnumListVM DeclSecVerEnumList { get; }
 		static readonly EnumVM[] declSecVerList = EnumVM.Create(typeof(DeclSecVer));
@@ -80,10 +80,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		readonly DeclSecurityOptions origOptions;
 		readonly ModuleDef ownerModule;
 		readonly IDecompilerService decompilerService;
-		readonly TypeDef ownerType;
-		readonly MethodDef ownerMethod;
+		readonly TypeDef? ownerType;
+		readonly MethodDef? ownerMethod;
 
-		public DeclSecurityVM(DeclSecurityOptions options, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType, MethodDef ownerMethod) {
+		public DeclSecurityVM(DeclSecurityOptions options, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef? ownerType, MethodDef? ownerMethod) {
 			this.ownerModule = ownerModule;
 			this.decompilerService = decompilerService;
 			this.ownerType = ownerType;
@@ -122,11 +122,11 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			SecurityAttributesVM.Collection.Clear();
 			SecurityAttributesVM.Collection.AddRange(options.SecurityAttributes.Select(a => new SecurityAttributeVM(a, ownerModule, decompilerService, ownerType, ownerMethod)));
 			V1XMLString = options.V1XMLString;
-			DeclSecVerEnumList.SelectedItem = options.V1XMLString == null ? DeclSecVer.V2 : DeclSecVer.V1;
+			DeclSecVerEnumList.SelectedItem = options.V1XMLString is null ? DeclSecVer.V2 : DeclSecVer.V1;
 		}
 
 		DeclSecurityOptions CopyTo(DeclSecurityOptions options) {
-			options.Action = (SecurityAction)(SecAc)SecurityActionEnumList.SelectedItem;
+			options.Action = (SecurityAction)(SecAc)SecurityActionEnumList.SelectedItem!;
 			options.CustomAttributes.Clear();
 			options.CustomAttributes.AddRange(CustomAttributesVM.Collection.Select(a => a.CreateCustomAttributeOptions().Create()));
 			options.SecurityAttributes.Clear();

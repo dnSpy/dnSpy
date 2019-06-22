@@ -22,7 +22,7 @@ using dnSpy.Contracts.Command;
 
 namespace dnSpy.Commands {
 	readonly struct ProviderAndCommand {
-		public bool IsDefault => Provider == null;
+		public bool IsDefault => Provider is null;
 		public ICommandInfoProvider Provider { get; }
 		public CommandInfo Command { get; }
 

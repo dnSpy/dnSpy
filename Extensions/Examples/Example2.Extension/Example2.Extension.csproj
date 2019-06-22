@@ -1,35 +1,12 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <Import Project="..\..\..\DnSpyCommon.props" />
 
   <PropertyGroup>
     <AssemblyName>Example2.Extension.x</AssemblyName>
+    <NullableContextOptions>enable</NullableContextOptions>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
-
-  <ItemGroup Condition=" '$(IsDotNetFramework)' == 'true' ">
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="WindowsBase" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="ToolWindowControl.xaml.cs">
-      <DependentUpon>ToolWindowControl.xaml</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Include="Themes\resourcedict.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ToolWindowControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\dnSpy\dnSpy.Contracts.DnSpy\dnSpy.Contracts.DnSpy.csproj" />

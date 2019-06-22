@@ -26,6 +26,7 @@ using dnSpy.Contracts.Search;
 
 namespace dnSpy.Search {
 	sealed class FilterSearcherOptions {
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
 		public Dispatcher Dispatcher { get; set; }
 		public IDocumentTreeView DocumentTreeView { get; set; }
 		public IDotNetImageService DotNetImageService { get; set; }
@@ -35,5 +36,6 @@ namespace dnSpy.Search {
 		public SearchResultContext Context { get; set; }
 		public CancellationToken CancellationToken { get; set; }
 		public bool SearchDecompiledData { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
 	}
 }

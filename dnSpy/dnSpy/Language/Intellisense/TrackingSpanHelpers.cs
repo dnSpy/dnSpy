@@ -21,10 +21,10 @@ using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Language.Intellisense {
 	static class TrackingSpanHelpers {
-		public static bool IsSameTrackingSpan(ITrackingSpan a, ITrackingSpan b) {
+		public static bool IsSameTrackingSpan(ITrackingSpan? a, ITrackingSpan? b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (a.TextBuffer != b.TextBuffer)
 				return false;

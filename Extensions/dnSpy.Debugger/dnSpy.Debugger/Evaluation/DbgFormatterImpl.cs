@@ -40,7 +40,7 @@ namespace dnSpy.Debugger.Evaluation {
 		static void WriteError(IDbgTextWriter output) => output.Write(DbgTextColor.Error, "???");
 
 		public override void FormatExceptionName(DbgEvaluationContext context, IDbgTextWriter output, uint id) {
-			if (context == null)
+			if (context is null)
 				throw new ArgumentNullException(nameof(context));
 			if (!(context is DbgEvaluationContextImpl))
 				throw new ArgumentException();
@@ -48,7 +48,7 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (context.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
-			if (output == null)
+			if (output is null)
 				throw new ArgumentNullException(nameof(output));
 			try {
 				engineFormatter.FormatExceptionName(context, output, id);
@@ -59,7 +59,7 @@ namespace dnSpy.Debugger.Evaluation {
 		}
 
 		public override void FormatStowedExceptionName(DbgEvaluationContext context, IDbgTextWriter output, uint id) {
-			if (context == null)
+			if (context is null)
 				throw new ArgumentNullException(nameof(context));
 			if (!(context is DbgEvaluationContextImpl))
 				throw new ArgumentException();
@@ -67,7 +67,7 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (context.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
-			if (output == null)
+			if (output is null)
 				throw new ArgumentNullException(nameof(output));
 			try {
 				engineFormatter.FormatStowedExceptionName(context, output, id);
@@ -78,7 +78,7 @@ namespace dnSpy.Debugger.Evaluation {
 		}
 
 		public override void FormatReturnValueName(DbgEvaluationContext context, IDbgTextWriter output, uint id) {
-			if (context == null)
+			if (context is null)
 				throw new ArgumentNullException(nameof(context));
 			if (!(context is DbgEvaluationContextImpl))
 				throw new ArgumentException();
@@ -86,7 +86,7 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (context.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
-			if (output == null)
+			if (output is null)
 				throw new ArgumentNullException(nameof(output));
 			try {
 				engineFormatter.FormatReturnValueName(context, output, id);
@@ -97,7 +97,7 @@ namespace dnSpy.Debugger.Evaluation {
 		}
 
 		public override void FormatObjectIdName(DbgEvaluationContext context, IDbgTextWriter output, uint id) {
-			if (context == null)
+			if (context is null)
 				throw new ArgumentNullException(nameof(context));
 			if (!(context is DbgEvaluationContextImpl))
 				throw new ArgumentException();
@@ -105,7 +105,7 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (context.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
-			if (output == null)
+			if (output is null)
 				throw new ArgumentNullException(nameof(output));
 			try {
 				engineFormatter.FormatObjectIdName(context, output, id);
@@ -115,8 +115,8 @@ namespace dnSpy.Debugger.Evaluation {
 			}
 		}
 
-		public override void FormatFrame(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo) {
-			if (evalInfo == null)
+		public override void FormatFrame(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo? cultureInfo) {
+			if (evalInfo is null)
 				throw new ArgumentNullException(nameof(evalInfo));
 			if (!(evalInfo.Context is DbgEvaluationContextImpl))
 				throw new ArgumentException();
@@ -124,10 +124,10 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (evalInfo.Context.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
-			if (output == null)
+			if (output is null)
 				throw new ArgumentNullException(nameof(output));
 			var frameImpl = evalInfo.Frame as DbgStackFrameImpl;
-			if (frameImpl == null)
+			if (frameImpl is null)
 				throw new ArgumentException();
 			try {
 				if (!frameImpl.TryFormat(evalInfo.Context, output, options, valueOptions, cultureInfo, evalInfo.CancellationToken))
@@ -138,8 +138,8 @@ namespace dnSpy.Debugger.Evaluation {
 			}
 		}
 
-		public override void FormatValue(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgValue value, DbgValueFormatterOptions options, CultureInfo cultureInfo) {
-			if (evalInfo == null)
+		public override void FormatValue(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgValue value, DbgValueFormatterOptions options, CultureInfo? cultureInfo) {
+			if (evalInfo is null)
 				throw new ArgumentNullException(nameof(evalInfo));
 			if (!(evalInfo.Context is DbgEvaluationContextImpl))
 				throw new ArgumentException();
@@ -147,9 +147,9 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (evalInfo.Context.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
-			if (output == null)
+			if (output is null)
 				throw new ArgumentNullException(nameof(output));
-			if (value == null)
+			if (value is null)
 				throw new ArgumentNullException(nameof(value));
 			if (!(value is DbgValueImpl valueImpl))
 				throw new ArgumentException();
@@ -163,8 +163,8 @@ namespace dnSpy.Debugger.Evaluation {
 			}
 		}
 
-		public override void FormatType(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgValue value, DbgValueFormatterTypeOptions options, CultureInfo cultureInfo) {
-			if (evalInfo == null)
+		public override void FormatType(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgValue value, DbgValueFormatterTypeOptions options, CultureInfo? cultureInfo) {
+			if (evalInfo is null)
 				throw new ArgumentNullException(nameof(evalInfo));
 			if (!(evalInfo.Context is DbgEvaluationContextImpl))
 				throw new ArgumentException();
@@ -172,9 +172,9 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentException();
 			if (evalInfo.Context.Runtime.RuntimeKindGuid != runtimeKindGuid)
 				throw new ArgumentException();
-			if (output == null)
+			if (output is null)
 				throw new ArgumentNullException(nameof(output));
-			if (value == null)
+			if (value is null)
 				throw new ArgumentNullException(nameof(value));
 			if (!(value is DbgValueImpl valueImpl))
 				throw new ArgumentException();

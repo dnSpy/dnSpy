@@ -33,9 +33,9 @@ namespace dnSpy.Hex.Operations {
 		public override int ByteCount => pattern.Length;
 
 		public ByteHexSearchService(byte[] pattern, byte[] mask) {
-			if (pattern == null)
+			if (pattern is null)
 				throw new ArgumentNullException(nameof(pattern));
-			if (mask == null)
+			if (mask is null)
 				throw new ArgumentNullException(nameof(mask));
 			if (pattern.Length != mask.Length)
 				throw new ArgumentOutOfRangeException(nameof(mask));
@@ -93,7 +93,7 @@ namespace dnSpy.Hex.Operations {
 				public bool MoveNext() => realEnumerator.MoveNext();
 				public void Dispose() {
 					state?.Dispose();
-					state = null;
+					state = null!;
 					realEnumerator.Dispose();
 				}
 
@@ -370,7 +370,7 @@ namespace dnSpy.Hex.Operations {
 			foreach (var span in GetValidSpans(startingPosition.Buffer, startingPosition, searchRange.End)) {
 				cancellationToken.ThrowIfCancellationRequested();
 				foreach (var span2 in FindAllCore(state, span, options)) {
-					if (firstBlockResult == null)
+					if (firstBlockResult is null)
 						firstBlockResult = span2;
 					yield return span2;
 				}
@@ -378,7 +378,7 @@ namespace dnSpy.Hex.Operations {
 
 			if ((options & HexFindOptions.Wrap) != 0) {
 				var upperBounds = HexPosition.Min(searchRange.Span.End, startingPosition.Position + pattern.LongLength - 1);
-				if ((options & HexFindOptions.NoOverlaps) != 0 && firstBlockResult != null && upperBounds > firstBlockResult.Value.Start)
+				if ((options & HexFindOptions.NoOverlaps) != 0 && !(firstBlockResult is null) && upperBounds > firstBlockResult.Value.Start)
 					upperBounds = firstBlockResult.Value.Start;
 				foreach (var span in GetValidSpans(startingPosition.Buffer, searchRange.Start, upperBounds)) {
 					cancellationToken.ThrowIfCancellationRequested();
@@ -396,7 +396,7 @@ namespace dnSpy.Hex.Operations {
 			while (pos < endPos) {
 				state.CancellationToken.ThrowIfCancellationRequested();
 				var result = FindCore(state, pos, span.End);
-				if (result == null)
+				if (result is null)
 					break;
 				yield return new HexBufferSpan(state.Buffer, new HexSpan(result.Value, (ulong)pattern.LongLength));
 				if ((options & HexFindOptions.NoOverlaps) != 0)
@@ -443,7 +443,7 @@ loop:
 				skip = 1;
 				afterPos = state.PositionAfterWithMask1(patternLocal0, maskLocal0, endPos);
 			}
-			if (afterPos == null)
+			if (afterPos is null)
 				return null;
 			pos = afterPos.Value;
 
@@ -464,7 +464,7 @@ loop:
 			foreach (var span in GetValidSpansReverse(startingPosition.Buffer, startingPosition, searchRange.Start)) {
 				cancellationToken.ThrowIfCancellationRequested();
 				foreach (var span2 in FindAllCoreReverse(state, span, options)) {
-					if (firstBlockResult == null)
+					if (firstBlockResult is null)
 						firstBlockResult = span2;
 					yield return span2;
 				}
@@ -476,7 +476,7 @@ loop:
 					HexPosition.Zero;
 				if (lowerBounds < searchRange.Span.Start)
 					lowerBounds = searchRange.Span.Start;
-				if ((options & HexFindOptions.NoOverlaps) != 0 && firstBlockResult != null && lowerBounds < firstBlockResult.Value.End)
+				if ((options & HexFindOptions.NoOverlaps) != 0 && !(firstBlockResult is null) && lowerBounds < firstBlockResult.Value.End)
 					lowerBounds = firstBlockResult.Value.End;
 				foreach (var span in GetValidSpansReverse(startingPosition.Buffer, searchRange.End - 1, lowerBounds)) {
 					cancellationToken.ThrowIfCancellationRequested();
@@ -494,7 +494,7 @@ loop:
 			while (pos >= lowerBounds) {
 				state.CancellationToken.ThrowIfCancellationRequested();
 				var result = FindCoreReverse(state, pos, lowerBounds);
-				if (result == null)
+				if (result is null)
 					break;
 				yield return new HexBufferSpan(state.Buffer, new HexSpan(result.Value, (ulong)pattern.LongLength));
 				if ((options & HexFindOptions.NoOverlaps) != 0) {
@@ -544,7 +544,7 @@ loop:
 				skip = 1;
 				beforePos = state.PositionBeforeWithMask1(patternLocal0, maskLocal0, lowerBounds);
 			}
-			if (beforePos == null)
+			if (beforePos is null)
 				return null;
 			pos = beforePos.Value;
 

@@ -31,8 +31,8 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 	sealed class ModulesToolWindowContentProvider : IToolWindowContentProvider {
 		readonly Lazy<IModulesContent> modulesContent;
 
-		public ModulesToolWindowContent ModulesToolWindowContent => modulesToolWindowContent ?? (modulesToolWindowContent = new ModulesToolWindowContent(modulesContent));
-		ModulesToolWindowContent modulesToolWindowContent;
+		public ModulesToolWindowContent ModulesToolWindowContent => modulesToolWindowContent ??= new ModulesToolWindowContent(modulesContent);
+		ModulesToolWindowContent? modulesToolWindowContent;
 
 		[ImportingConstructor]
 		ModulesToolWindowContentProvider(Lazy<IModulesContent> modulesContent) => this.modulesContent = modulesContent;
@@ -41,18 +41,18 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			get { yield return new ToolWindowContentInfo(ModulesToolWindowContent.THE_GUID, ModulesToolWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_MODULES, false); }
 		}
 
-		public ToolWindowContent GetOrCreate(Guid guid) => guid == ModulesToolWindowContent.THE_GUID ? ModulesToolWindowContent : null;
+		public ToolWindowContent? GetOrCreate(Guid guid) => guid == ModulesToolWindowContent.THE_GUID ? ModulesToolWindowContent : null;
 	}
 
 	sealed class ModulesToolWindowContent : ToolWindowContent, IFocusable {
 		public static readonly Guid THE_GUID = new Guid("8C95EB2E-25F4-4D2F-A00D-A303754990DF");
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultHorizontal;
 
-		public override IInputElement FocusedElement => modulesContent.Value.FocusedElement;
-		public override FrameworkElement ZoomElement => modulesContent.Value.ZoomElement;
+		public override IInputElement? FocusedElement => modulesContent.Value.FocusedElement;
+		public override FrameworkElement? ZoomElement => modulesContent.Value.ZoomElement;
 		public override Guid Guid => THE_GUID;
 		public override string Title => dnSpy_Debugger_Resources.Window_Modules;
-		public override object UIObject => modulesContent.Value.UIObject;
+		public override object? UIObject => modulesContent.Value.UIObject;
 		public bool CanFocus => true;
 
 		readonly Lazy<IModulesContent> modulesContent;

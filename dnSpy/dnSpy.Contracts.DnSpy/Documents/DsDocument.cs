@@ -34,11 +34,11 @@ namespace dnSpy.Contracts.Documents {
 		/// <inheritdoc/>
 		public abstract IDsDocumentNameKey Key { get; }
 		/// <inheritdoc/>
-		public AssemblyDef AssemblyDef => ModuleDef?.Assembly;
+		public AssemblyDef? AssemblyDef => ModuleDef?.Assembly;
 		/// <inheritdoc/>
-		public virtual ModuleDef ModuleDef => null;
+		public virtual ModuleDef? ModuleDef => null;
 		/// <inheritdoc/>
-		public virtual IPEImage PEImage => (ModuleDef as ModuleDefMD)?.Metadata?.PEImage;
+		public virtual IPEImage? PEImage => (ModuleDef as ModuleDefMD)?.Metadata?.PEImage;
 
 		/// <inheritdoc/>
 		public string Filename {
@@ -50,7 +50,7 @@ namespace dnSpy.Contracts.Documents {
 				}
 			}
 		}
-		string filename;
+		string filename = string.Empty;
 
 		/// <summary>
 		/// Gets called when a property has changed
@@ -65,12 +65,12 @@ namespace dnSpy.Contracts.Documents {
 		/// <inheritdoc/>
 		public TList<IDsDocument> Children {
 			get {
-				if (children == null) {
+				if (children is null) {
 					lock (lockObj) {
-						if (children == null) {
+						if (children is null) {
 							children = CreateChildren();
-							Debug.Assert(children != null);
-							if (children == null)
+							Debug.Assert(!(children is null));
+							if (children is null)
 								children = new TList<IDsDocument>();
 						}
 					}
@@ -79,10 +79,10 @@ namespace dnSpy.Contracts.Documents {
 			}
 		}
 		readonly object lockObj;
-		TList<IDsDocument> children;
+		TList<IDsDocument>? children;
 
 		/// <inheritdoc/>
-		public bool ChildrenLoaded => children != null;
+		public bool ChildrenLoaded => !(children is null);
 
 		/// <summary>
 		/// Creates the children
@@ -96,9 +96,9 @@ namespace dnSpy.Contracts.Documents {
 		protected DsDocument() => lockObj = new object();
 
 		/// <inheritdoc/>
-		public T AddAnnotation<T>(T annotation) where T : class => annotations.AddAnnotation(annotation);
+		public T? AddAnnotation<T>(T? annotation) where T : class => annotations.AddAnnotation(annotation);
 		/// <inheritdoc/>
-		public T Annotation<T>() where T : class => annotations.Annotation<T>();
+		public T? Annotation<T>() where T : class => annotations.Annotation<T>();
 		/// <inheritdoc/>
 		public IEnumerable<T> Annotations<T>() where T : class => annotations.Annotations<T>();
 		/// <inheritdoc/>
@@ -134,7 +134,7 @@ namespace dnSpy.Contracts.Documents {
 		/// <inheritdoc/>
 		public override IDsDocumentNameKey Key => FilenameKey.CreateFullPath(Filename);
 		/// <inheritdoc/>
-		public override IPEImage PEImage { get; }
+		public override IPEImage? PEImage { get; }
 
 		/// <summary>
 		/// Constructor
@@ -146,7 +146,7 @@ namespace dnSpy.Contracts.Documents {
 		}
 
 		/// <inheritdoc/>
-		public void Dispose() => PEImage.Dispose();
+		public void Dispose() => PEImage!.Dispose();
 	}
 
 	/// <summary>
@@ -154,7 +154,7 @@ namespace dnSpy.Contracts.Documents {
 	/// </summary>
 	public abstract class DsDotNetDocumentBase : DsDocument, IDsDotNetDocument, IInMemoryDocument {
 		/// <inheritdoc/>
-		public override ModuleDef ModuleDef { get; }
+		public override ModuleDef? ModuleDef { get; }
 		/// <inheritdoc/>
 		public virtual bool IsActive => true;
 
@@ -197,13 +197,14 @@ namespace dnSpy.Contracts.Documents {
 		}
 
 		void LoadSymbols() {
+			Debug.Assert(!(ModuleDef is null));
 			// Happens if a module has been removed but then the exact same instance
 			// was re-added.
-			if (ModuleDef.PdbState != null)
+			if (!(ModuleDef.PdbState is null))
 				return;
 
 			var m = ModuleDef as ModuleDefMD;
-			if (m == null)
+			if (m is null)
 				return;
 			try {
 				m.LoadPdb();
@@ -273,8 +274,8 @@ namespace dnSpy.Contracts.Documents {
 		/// <inheritdoc/>
 		protected override TList<IDsDocument> CreateChildren() {
 			var asm = AssemblyDef;
-			var list = new TList<IDsDocument>(asm == null ? 1 : asm.Modules.Count);
-			if (isAsmNode && asm != null) {
+			var list = new TList<IDsDocument>(asm is null ? 1 : asm.Modules.Count);
+			if (isAsmNode && !(asm is null)) {
 				bool foundThis = false;
 				foreach (var module in asm.Modules) {
 					if (ModuleDef == module) {
@@ -289,19 +290,19 @@ namespace dnSpy.Contracts.Documents {
 		}
 
 		/// <inheritdoc/>
-		public void Dispose() => ModuleDef.Dispose();
+		public void Dispose() => ModuleDef!.Dispose();
 	}
 
 	sealed class DsDotNetDocumentAsmWithMod : DsDotNetDocument {
-		IDsDotNetDocument module;
+		IDsDotNetDocument? module;
 
 		public DsDotNetDocumentAsmWithMod(IDsDotNetDocument modmodule)
-			: base(modmodule.SerializedDocument ?? new DsDocumentInfo(), modmodule.ModuleDef, false, true) => module = modmodule;
+			: base(modmodule.SerializedDocument ?? new DsDocumentInfo(), modmodule.ModuleDef!, false, true) => module = modmodule;
 
 		protected override TList<IDsDocument> CreateChildren() {
-			Debug.Assert(module != null);
+			Debug.Assert(!(module is null));
 			var list = new TList<IDsDocument>();
-			if (module != null)
+			if (!(module is null))
 				list.Add(module);
 			module = null;
 			return list;
@@ -317,7 +318,7 @@ namespace dnSpy.Contracts.Documents {
 		/// </summary>
 		/// <param name="document">Document</param>
 		public static void DisableMemoryMappedIO(IDsDocument document) {
-			if (document == null)
+			if (document is null)
 				return;
 			DisableMemoryMappedIO(document.PEImage);
 		}
@@ -326,8 +327,8 @@ namespace dnSpy.Contracts.Documents {
 		/// Disable memory mapped I/O
 		/// </summary>
 		/// <param name="peImage">PE image</param>
-		public static void DisableMemoryMappedIO(IPEImage peImage) {
-			if (peImage == null)
+		public static void DisableMemoryMappedIO(IPEImage? peImage) {
+			if (peImage is null)
 				return;
 			// Files in the GAC are read-only so there's no need to disable memory mapped I/O to
 			// allow other programs to write to the file.

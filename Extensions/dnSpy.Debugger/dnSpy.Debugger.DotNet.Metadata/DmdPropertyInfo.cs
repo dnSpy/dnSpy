@@ -24,11 +24,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
 	/// A .NET property
 	/// </summary>
-	public abstract class DmdPropertyInfo : DmdMemberInfo, IEquatable<DmdPropertyInfo> {
+	public abstract class DmdPropertyInfo : DmdMemberInfo, IEquatable<DmdPropertyInfo?> {
 		/// <summary>
 		/// Gets the AppDomain
 		/// </summary>
-		public sealed override DmdAppDomain AppDomain => DeclaringType.AppDomain;
+		public sealed override DmdAppDomain AppDomain => DeclaringType!.AppDomain;
 
 		/// <summary>
 		/// Gets the member type
@@ -54,19 +54,19 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// true if the property can be read
 		/// </summary>
-		public bool CanRead => (object)GetMethod != null;
+		public bool CanRead => !(GetMethod is null);
 
 		/// <summary>
 		/// true if the property can be written to
 		/// </summary>
-		public bool CanWrite => (object)SetMethod != null;
+		public bool CanWrite => !(SetMethod is null);
 
 		/// <summary>
 		/// Resolves a property reference
 		/// </summary>
 		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
 		/// <returns></returns>
-		public sealed override DmdMemberInfo ResolveMember(bool throwOnError) => this;
+		public sealed override DmdMemberInfo? ResolveMember(bool throwOnError) => this;
 
 		/// <summary>
 		/// Returns false since there are no property references
@@ -77,7 +77,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Gets the constant stored in metadata
 		/// </summary>
 		/// <returns></returns>
-		public abstract object GetRawConstantValue();
+		public abstract object? GetRawConstantValue();
 
 		/// <summary>
 		/// Gets all accessors
@@ -98,28 +98,28 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="nonPublic">true to return any get method, false to only return a public get method</param>
 		/// <returns></returns>
-		public DmdMethodInfo GetGetMethod(bool nonPublic) => GetGetMethod(nonPublic ? DmdGetAccessorOptions.NonPublic : DmdGetAccessorOptions.None);
+		public DmdMethodInfo? GetGetMethod(bool nonPublic) => GetGetMethod(nonPublic ? DmdGetAccessorOptions.NonPublic : DmdGetAccessorOptions.None);
 
 		/// <summary>
 		/// Gets the get method
 		/// </summary>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DmdMethodInfo GetGetMethod(DmdGetAccessorOptions options);
+		public abstract DmdMethodInfo? GetGetMethod(DmdGetAccessorOptions options);
 
 		/// <summary>
 		/// Gets the set method
 		/// </summary>
 		/// <param name="nonPublic">true to return any set method, false to only return a public set method</param>
 		/// <returns></returns>
-		public DmdMethodInfo GetSetMethod(bool nonPublic) => GetSetMethod(nonPublic ? DmdGetAccessorOptions.NonPublic : DmdGetAccessorOptions.None);
+		public DmdMethodInfo? GetSetMethod(bool nonPublic) => GetSetMethod(nonPublic ? DmdGetAccessorOptions.NonPublic : DmdGetAccessorOptions.None);
 
 		/// <summary>
 		/// Gets the set method
 		/// </summary>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DmdMethodInfo GetSetMethod(DmdGetAccessorOptions options);
+		public abstract DmdMethodInfo? GetSetMethod(DmdGetAccessorOptions options);
 
 		/// <summary>
 		/// Gets the index parameters
@@ -154,24 +154,24 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the get method
 		/// </summary>
-		public DmdMethodInfo GetMethod => GetGetMethod(nonPublic: true);
+		public DmdMethodInfo? GetMethod => GetGetMethod(nonPublic: true);
 
 		/// <summary>
 		/// Gets the set method
 		/// </summary>
-		public DmdMethodInfo SetMethod => GetSetMethod(nonPublic: true);
+		public DmdMethodInfo? SetMethod => GetSetMethod(nonPublic: true);
 
 		/// <summary>
 		/// Gets the public get method
 		/// </summary>
 		/// <returns></returns>
-		public DmdMethodInfo GetGetMethod() => GetGetMethod(nonPublic: false);
+		public DmdMethodInfo? GetGetMethod() => GetGetMethod(nonPublic: false);
 
 		/// <summary>
 		/// Gets the public set method
 		/// </summary>
 		/// <returns></returns>
-		public DmdMethodInfo GetSetMethod() => GetSetMethod(nonPublic: false);
+		public DmdMethodInfo? GetSetMethod() => GetSetMethod(nonPublic: false);
 
 		/// <summary>
 		/// Gets the method signature
@@ -185,7 +185,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="obj">Instance or null if it's a static property</param>
 		/// <returns></returns>
-		public object GetValue(object context, object obj) => GetValue(context, obj, null);
+		public object? GetValue(object? context, object? obj) => GetValue(context, obj, null);
 
 		/// <summary>
 		/// Gets the property value
@@ -194,7 +194,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="obj">Instance or null if it's a static property</param>
 		/// <param name="index">Property indexes</param>
 		/// <returns></returns>
-		public object GetValue(object context, object obj, object[] index) => GetValue(context, obj, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public | DmdBindingFlags.NonPublic, index);
+		public object? GetValue(object? context, object? obj, object?[]? index) => GetValue(context, obj, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public | DmdBindingFlags.NonPublic, index);
 
 		/// <summary>
 		/// Gets the property value
@@ -204,9 +204,9 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="invokeAttr">Binding flags</param>
 		/// <param name="index">Property indexes</param>
 		/// <returns></returns>
-		public object GetValue(object context, object obj, DmdBindingFlags invokeAttr, object[] index) {
+		public object? GetValue(object? context, object? obj, DmdBindingFlags invokeAttr, object?[]? index) {
 			var method = GetGetMethod(nonPublic: true);
-			if ((object)method == null)
+			if (method is null)
 				throw new ArgumentException();
 			return method.Invoke(context, obj, invokeAttr, index);
 		}
@@ -217,7 +217,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="obj">Instance or null if it's a static property</param>
 		/// <param name="value">New value</param>
-		public void SetValue(object context, object obj, object value) => SetValue(context, obj, value, null);
+		public void SetValue(object? context, object? obj, object? value) => SetValue(context, obj, value, null);
 
 		/// <summary>
 		/// Writes a new property value
@@ -226,7 +226,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="obj">Instance or null if it's a static property</param>
 		/// <param name="value">New value</param>
 		/// <param name="index">Property indexes</param>
-		public void SetValue(object context, object obj, object value, object[] index) => SetValue(context, obj, value, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public | DmdBindingFlags.NonPublic, index);
+		public void SetValue(object? context, object? obj, object? value, object?[]? index) => SetValue(context, obj, value, DmdBindingFlags.Instance | DmdBindingFlags.Static | DmdBindingFlags.Public | DmdBindingFlags.NonPublic, index);
 
 		/// <summary>
 		/// Writes a new property value
@@ -236,12 +236,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="value">New value</param>
 		/// <param name="invokeAttr">Binding flags</param>
 		/// <param name="index">Property indexes</param>
-		public void SetValue(object context, object obj, object value, DmdBindingFlags invokeAttr, object[] index) {
+		public void SetValue(object? context, object? obj, object? value, DmdBindingFlags invokeAttr, object?[]? index) {
 			var method = GetSetMethod(nonPublic: true);
-			if ((object)method == null)
+			if (method is null)
 				throw new ArgumentException();
-			object[] parameters;
-			if (index == null || index.Length == 0)
+			object?[] parameters;
+			if (index is null || index.Length == 0)
 				parameters = new[] { value };
 			else {
 				parameters = new object[index.Length + 1];
@@ -254,8 +254,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-		public static bool operator ==(DmdPropertyInfo left, DmdPropertyInfo right) => DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
-		public static bool operator !=(DmdPropertyInfo left, DmdPropertyInfo right) => !DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
+		public static bool operator ==(DmdPropertyInfo? left, DmdPropertyInfo? right) => DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
+		public static bool operator !=(DmdPropertyInfo? left, DmdPropertyInfo? right) => !DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
@@ -263,14 +263,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		public bool Equals(DmdPropertyInfo other) => DmdMemberInfoEqualityComparer.DefaultMember.Equals(this, other);
+		public bool Equals(DmdPropertyInfo? other) => DmdMemberInfoEqualityComparer.DefaultMember.Equals(this, other);
 
 		/// <summary>
 		/// Equals()
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => Equals(obj as DmdPropertyInfo);
+		public override bool Equals(object? obj) => Equals(obj as DmdPropertyInfo);
 
 		/// <summary>
 		/// GetHashCode()
@@ -282,6 +282,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// ToString()
 		/// </summary>
 		/// <returns></returns>
-		public sealed override string ToString() => DmdMemberFormatter.Format(this);
+		public sealed override string? ToString() => DmdMemberFormatter.Format(this);
 	}
 }

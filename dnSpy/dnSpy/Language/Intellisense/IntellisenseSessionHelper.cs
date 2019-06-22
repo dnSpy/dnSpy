@@ -23,26 +23,26 @@ using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Language.Intellisense {
 	static class IntellisenseSessionHelper {
-		public static ITrackingPoint GetTriggerPoint(ITextView textView, ITrackingPoint triggerPoint, ITextBuffer textBuffer) {
-			if (textView == null)
+		public static ITrackingPoint? GetTriggerPoint(ITextView textView, ITrackingPoint triggerPoint, ITextBuffer textBuffer) {
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
-			if (triggerPoint == null)
+			if (triggerPoint is null)
 				throw new ArgumentNullException(nameof(triggerPoint));
-			if (textBuffer == null)
+			if (textBuffer is null)
 				throw new ArgumentNullException(nameof(textBuffer));
 
 			var point = GetTriggerPoint(textView, triggerPoint, textBuffer.CurrentSnapshot);
-			if (point == null)
+			if (point is null)
 				return null;
 			return point.Value.Snapshot.CreateTrackingPoint(point.Value.Position, PointTrackingMode.Negative);
 		}
 
 		public static SnapshotPoint? GetTriggerPoint(ITextView textView, ITrackingPoint triggerPoint, ITextSnapshot textSnapshot) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
-			if (triggerPoint == null)
+			if (triggerPoint is null)
 				throw new ArgumentNullException(nameof(triggerPoint));
-			if (textSnapshot == null)
+			if (textSnapshot is null)
 				throw new ArgumentNullException(nameof(textSnapshot));
 
 			return triggerPoint.GetPoint(textView.TextSnapshot);

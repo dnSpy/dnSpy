@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace dnSpy.Contracts.Bookmarks {
@@ -28,7 +29,7 @@ namespace dnSpy.Contracts.Bookmarks {
 	/// </summary>
 	public abstract class BMObject {
 		readonly object lockObj;
-		List<(RuntimeTypeHandle key, object data)> dataList;
+		List<(RuntimeTypeHandle key, object data)>? dataList;
 
 		/// <summary>
 		/// Constructor
@@ -55,7 +56,7 @@ namespace dnSpy.Contracts.Bookmarks {
 		/// but some other methods could throw or can't be called. After all handlers have been notified,
 		/// all data get disposed (if they implement <see cref="IDisposable"/>).
 		/// </summary>
-		public event EventHandler Closed;
+		public event EventHandler? Closed;
 
 		/// <summary>
 		/// Closes the instance. This method must only be executed on the dispatcher thread
@@ -73,7 +74,7 @@ namespace dnSpy.Contracts.Bookmarks {
 
 			(RuntimeTypeHandle key, object data)[] data;
 			lock (lockObj) {
-				data = dataList == null || dataList.Count == 0 ? Array.Empty<(RuntimeTypeHandle, object)>() : dataList.ToArray();
+				data = dataList is null || dataList.Count == 0 ? Array.Empty<(RuntimeTypeHandle, object)>() : dataList.ToArray();
 				dataList?.Clear();
 			}
 			foreach (var kv in data)
@@ -111,9 +112,9 @@ namespace dnSpy.Contracts.Bookmarks {
 		/// <typeparam name="T">Type of data</typeparam>
 		/// <param name="value">Result</param>
 		/// <returns></returns>
-		public bool TryGetData<T>(out T value) where T : class {
+		public bool TryGetData<T>([NotNullWhenTrue] out T? value) where T : class {
 			lock (lockObj) {
-				if (dataList != null) {
+				if (!(dataList is null)) {
 					var type = typeof(T).TypeHandle;
 					foreach (var kv in dataList) {
 						if (kv.key.Equals(type)) {
@@ -146,10 +147,10 @@ namespace dnSpy.Contracts.Bookmarks {
 		/// <param name="create">Creates the data if it doesn't exist</param>
 		/// <returns></returns>
 		public T GetOrCreateData<T>(Func<T> create) where T : class {
-			if (create == null)
+			if (create is null)
 				throw new ArgumentNullException(nameof(create));
 			lock (lockObj) {
-				if (dataList == null)
+				if (dataList is null)
 					dataList = new List<(RuntimeTypeHandle, object)>();
 				var type = typeof(T).TypeHandle;
 				foreach (var kv in dataList) {

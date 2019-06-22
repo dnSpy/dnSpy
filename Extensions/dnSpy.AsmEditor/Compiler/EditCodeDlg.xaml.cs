@@ -91,8 +91,8 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			var vm = DataContext as EditCodeVM;
 			var diag = diagnosticsListView.SelectedItem as CompilerDiagnosticVM;
-			Debug.Assert(vm != null && diag != null);
-			if (vm == null || diag == null)
+			Debug.Assert(!(vm is null) && !(diag is null));
+			if (vm is null || diag is null)
 				return;
 
 			vm.MoveTo(diag);
@@ -106,7 +106,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		void DiagnosticsListView_SelectionChanged(object sender, SelectionChangedEventArgs e) {
 			var item = diagnosticsListView.SelectedItem;
-			if (item == null)
+			if (item is null)
 				return;
 			diagnosticsListView.ScrollIntoView(item);
 		}

@@ -49,7 +49,7 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// <param name="content">New content</param>
 		/// <param name="contentType">Content type or null</param>
 		/// <returns></returns>
-		bool SetContent(DocumentViewerContent content, IContentType contentType);
+		bool SetContent(DocumentViewerContent content, IContentType? contentType);
 
 		/// <summary>
 		/// Adds data that is removed each time <see cref="SetContent(DocumentViewerContent, IContentType)"/>
@@ -64,14 +64,14 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// </summary>
 		/// <param name="key">Key</param>
 		/// <returns></returns>
-		object GetContentData(object key);
+		object? GetContentData(object key);
 
 		/// <summary>
 		/// Shows a cancel button. Can be used when decompiling in another thread
 		/// </summary>
 		/// <param name="message">Message to show to the user or null</param>
 		/// <param name="onCancel">Called if the user clicks the cancel button</param>
-		void ShowCancelButton(string message, Action onCancel);
+		void ShowCancelButton(string? message, Action onCancel);
 
 		/// <summary>
 		/// Hides the cancel button shown by <see cref="ShowCancelButton(string, Action)"/>
@@ -127,7 +127,7 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// </summary>
 		/// <param name="ref">Reference</param>
 		/// <param name="options">Options</param>
-		void MoveCaretToReference(object @ref, MoveCaretOptions options = MoveCaretOptions.Select | MoveCaretOptions.Focus);
+		void MoveCaretToReference(object? @ref, MoveCaretOptions options = MoveCaretOptions.Select | MoveCaretOptions.Focus);
 
 		/// <summary>
 		/// Moves the caret to a position in the document
@@ -163,14 +163,14 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// passed to <see cref="RestoreReferencePosition(object)"/>
 		/// </summary>
 		/// <returns></returns>
-		object SaveReferencePosition();
+		object? SaveReferencePosition();
 
 		/// <summary>
 		/// Restores location saved by <see cref="SaveReferencePosition()"/>
 		/// </summary>
 		/// <param name="obj">Saved position</param>
 		/// <returns></returns>
-		bool RestoreReferencePosition(object obj);
+		bool RestoreReferencePosition(object? obj);
 
 		/// <summary>
 		/// Raised after this instance got new content (its <see cref="SetContent(DocumentViewerContent, IContentType)"/>

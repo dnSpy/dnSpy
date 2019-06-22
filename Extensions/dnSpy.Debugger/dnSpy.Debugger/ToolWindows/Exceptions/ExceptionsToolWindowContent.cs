@@ -31,8 +31,8 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 	sealed class ExceptionsToolWindowContentProvider : IToolWindowContentProvider {
 		readonly Lazy<IExceptionsContent> exceptionsContent;
 
-		public ExceptionsToolWindowContent ExceptionsToolWindowContent => exceptionsToolWindowContent ?? (exceptionsToolWindowContent = new ExceptionsToolWindowContent(exceptionsContent));
-		ExceptionsToolWindowContent exceptionsToolWindowContent;
+		public ExceptionsToolWindowContent ExceptionsToolWindowContent => exceptionsToolWindowContent ??= new ExceptionsToolWindowContent(exceptionsContent);
+		ExceptionsToolWindowContent? exceptionsToolWindowContent;
 
 		[ImportingConstructor]
 		ExceptionsToolWindowContentProvider(Lazy<IExceptionsContent> exceptionsContent) => this.exceptionsContent = exceptionsContent;
@@ -41,18 +41,18 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			get { yield return new ToolWindowContentInfo(ExceptionsToolWindowContent.THE_GUID, ExceptionsToolWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_EXCEPTIONS, false); }
 		}
 
-		public ToolWindowContent GetOrCreate(Guid guid) => guid == ExceptionsToolWindowContent.THE_GUID ? ExceptionsToolWindowContent : null;
+		public ToolWindowContent? GetOrCreate(Guid guid) => guid == ExceptionsToolWindowContent.THE_GUID ? ExceptionsToolWindowContent : null;
 	}
 
 	sealed class ExceptionsToolWindowContent : ToolWindowContent, IFocusable {
 		public static readonly Guid THE_GUID = new Guid("82575354-AB18-408B-846B-AA585B7B2B4A");
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultHorizontal;
 
-		public override IInputElement FocusedElement => exceptionsContent.Value.FocusedElement;
-		public override FrameworkElement ZoomElement => exceptionsContent.Value.ZoomElement;
+		public override IInputElement? FocusedElement => exceptionsContent.Value.FocusedElement;
+		public override FrameworkElement? ZoomElement => exceptionsContent.Value.ZoomElement;
 		public override Guid Guid => THE_GUID;
 		public override string Title => dnSpy_Debugger_Resources.Window_ExceptionSettings;
-		public override object UIObject => exceptionsContent.Value.UIObject;
+		public override object? UIObject => exceptionsContent.Value.UIObject;
 		public bool CanFocus => true;
 
 		readonly Lazy<IExceptionsContent> exceptionsContent;

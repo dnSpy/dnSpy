@@ -29,7 +29,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		}
 
 		public DbgDotNetValue DisplayValue => displayValue;
-		public DbgDotNetValue ProxyValue => proxyValue;
+		public DbgDotNetValue? ProxyValue => proxyValue;
 		public DbgDotNetValue Value => proxyValue ?? displayValue;
 
 		string expression;
@@ -42,31 +42,31 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		}
 
 		DbgDotNetValue displayValue;
-		DbgDotNetValue proxyValue;
-		object otherValues;
+		DbgDotNetValue? proxyValue;
+		object? otherValues;
 
-		void AddValue(DbgDotNetValue value) {
-			if (value == null)
+		void AddValue(DbgDotNetValue? value) {
+			if (value is null)
 				return;
-			if (otherValues == null)
+			if (otherValues is null)
 				otherValues = value;
 			else {
 				var list = otherValues as List<DbgDotNetValue>;
-				if (list == null)
+				if (list is null)
 					otherValues = list = new List<DbgDotNetValue> { (DbgDotNetValue)otherValues };
 				list.Add(value);
 			}
 		}
 
 		public void SetDisplayValue(DbgDotNetValue value) {
-			if (value == null)
+			if (value is null)
 				throw new ArgumentNullException(nameof(value));
 			AddValue(displayValue);
 			displayValue = value;
 		}
 
 		public void SetProxyValue(DbgDotNetValue value) {
-			if (value == null)
+			if (value is null)
 				throw new ArgumentNullException(nameof(value));
 			AddValue(proxyValue);
 			proxyValue = value;

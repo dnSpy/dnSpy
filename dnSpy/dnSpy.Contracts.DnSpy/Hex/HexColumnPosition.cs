@@ -105,7 +105,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="obj">Object</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is HexColumnPosition && Equals((HexColumnPosition)obj);
+		public override bool Equals(object? obj) => obj is HexColumnPosition && Equals((HexColumnPosition)obj);
 
 		/// <summary>
 		/// GetHashCode()

@@ -63,7 +63,7 @@ namespace dnSpy.Debugger.DotNet.Modules {
 				loadOptions |= DbgLoadModuleOptions.ForceMemory;
 			bool canShowMessageBox = true;
 			var md = LoadModule(moduleRef.Module, loadOptions, ref canShowMessageBox);
-			if (md == null)
+			if (md is null)
 				return false;
 
 			// The file could've been added lazily to the list so add a short delay before we select it
@@ -72,7 +72,7 @@ namespace dnSpy.Debugger.DotNet.Modules {
 			return true;
 		}
 
-		ModuleDef LoadModule(DbgModule module, DbgLoadModuleOptions options, ref bool canShowMessageBox) {
+		ModuleDef? LoadModule(DbgModule module, DbgLoadModuleOptions options, ref bool canShowMessageBox) {
 			if (!module.IsDotNetModule())
 				return null;
 

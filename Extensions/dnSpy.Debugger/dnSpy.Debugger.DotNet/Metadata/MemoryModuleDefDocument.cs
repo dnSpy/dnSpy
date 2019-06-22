@@ -38,7 +38,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				this.address = address;
 			}
 
-			public override bool Equals(object obj) => obj is DocKey o && process == o.process && address == o.address;
+			public override bool Equals(object? obj) => obj is DocKey o && process == o.process && address == o.address;
 			public override int GetHashCode() => process.GetHashCode() ^ address.GetHashCode();
 		}
 
@@ -67,20 +67,20 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		protected override TList<IDsDocument> CreateChildren() {
 			var list = new TList<IDsDocument>();
-			if (files != null) {
+			if (!(files is null)) {
 				list.AddRange(files);
 				files = null;
 			}
 			return list;
 		}
-		List<MemoryModuleDefDocument> files;
+		List<MemoryModuleDefDocument>? files;
 
 		public void UpdateMemory() => owner.UpdateModuleMemory(this);
 
 		internal bool TryUpdateMemory() {
 			if (Process.State == DbgProcessState.Terminated)
 				return false;
-			byte[] buffer = null;
+			byte[]? buffer = null;
 			try {
 				buffer = GetBuffer();
 				int pos = 0;
@@ -98,11 +98,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				return false;
 			}
 			finally {
-				if (buffer != null)
+				if (!(buffer is null))
 					ReleaseBuffer(buffer);
 			}
 		}
-		WeakReference weakBuffer;
+		WeakReference? weakBuffer;
 		byte[] GetBuffer() => weakBuffer?.Target as byte[] ?? new byte[0x2000];
 		void ReleaseBuffer(byte[] buffer) => weakBuffer = new WeakReference(buffer);
 
@@ -116,7 +116,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		public static MemoryModuleDefDocument CreateAssembly(List<MemoryModuleDefDocument> files) {
 			var manifest = files[0];
-			var file = new MemoryModuleDefDocument(manifest.owner, manifest.ModuleId, manifest.Process, manifest.Address, manifest.data, manifest.ModuleDef, false, manifest.AutoUpdateMemory);
+			var file = new MemoryModuleDefDocument(manifest.owner, manifest.ModuleId, manifest.Process, manifest.Address, manifest.data, manifest.ModuleDef!, false, manifest.AutoUpdateMemory);
 			file.files = new List<MemoryModuleDefDocument>(files);
 			return file;
 		}

@@ -62,7 +62,7 @@ namespace dnSpy.Text.Operations {
 		}
 
 		bool MoveInVirtualSpace => Options.IsVirtualSpaceEnabled() || Selection.Mode == TextSelectionMode.Box;
-		public ITrackingSpan ProvisionalCompositionSpan => null;//TODO:
+		public ITrackingSpan? ProvisionalCompositionSpan => null;//TODO:
 		public IEditorOptions Options => TextView.Options;
 		public string SelectedText => TextView.Selection.GetText();
 		public ITextView TextView { get; }
@@ -79,12 +79,12 @@ namespace dnSpy.Text.Operations {
 
 		ITextStructureNavigator TextStructureNavigator {
 			get {
-				if (textStructureNavigator == null)
+				if (textStructureNavigator is null)
 					textStructureNavigator = textStructureNavigatorSelectorService.GetTextStructureNavigator(TextView.TextBuffer);
 				return textStructureNavigator;
 			}
 		}
-		ITextStructureNavigator textStructureNavigator;
+		ITextStructureNavigator? textStructureNavigator;
 
 		void OnContentTypeChanged(object sender, TextDataModelContentTypeChangedEventArgs e) =>
 			// The TextStructureNavigator prop checks it for null and re-initializes it. The reason that we
@@ -219,8 +219,8 @@ namespace dnSpy.Text.Operations {
 							if (!info.IsSignificant)
 								continue;
 							var newSpan = span.Overlap(info.Span);
-							Debug.Assert(newSpan != null);
-							if (newSpan == null)
+							Debug.Assert(!(newSpan is null));
+							if (newSpan is null)
 								continue;
 							var s = info.Span.GetText();
 							int start = newSpan.Value.Start.Position;
@@ -238,7 +238,7 @@ namespace dnSpy.Text.Operations {
 					}
 					ed.Apply();
 				}
-				Debug.Assert(lastWord.Span.Snapshot != null);
+				Debug.Assert(!(lastWord.Span.Snapshot is null));
 				if (lastWord.IsSignificant)
 					Caret.MoveTo(new SnapshotPoint(Snapshot, lastWord.Span.End.Position));
 
@@ -263,7 +263,7 @@ namespace dnSpy.Text.Operations {
 
 		const string VS_COPY_FULL_LINE_DATA_FORMAT = "VisualStudioEditorOperationsLineCutCopyClipboardTag";
 		const string VS_COPY_BOX_DATA_FORMAT = "MSDEVColumnSelect";
-		bool CopyToClipboard(string text, string htmlText, bool isFullLineData, bool isBoxData) {
+		bool CopyToClipboard(string text, string? htmlText, bool isFullLineData, bool isBoxData) {
 			try {
 				var dataObj = new DataObject();
 				dataObj.SetText(text);
@@ -271,7 +271,7 @@ namespace dnSpy.Text.Operations {
 					dataObj.SetData(VS_COPY_FULL_LINE_DATA_FORMAT, true);
 				if (isBoxData)
 					dataObj.SetData(VS_COPY_BOX_DATA_FORMAT, true);
-				if (htmlText != null)
+				if (!(htmlText is null))
 					dataObj.SetData(DataFormats.Html, htmlText);
 				Clipboard.SetDataObject(dataObj);
 				return true;
@@ -281,8 +281,8 @@ namespace dnSpy.Text.Operations {
 			}
 		}
 
-		string TryCreateHtmlText(SnapshotSpan span) => TryCreateHtmlText(new NormalizedSnapshotSpanCollection(span));
-		string TryCreateHtmlText(NormalizedSnapshotSpanCollection spans) {
+		string? TryCreateHtmlText(SnapshotSpan span) => TryCreateHtmlText(new NormalizedSnapshotSpanCollection(span));
+		string? TryCreateHtmlText(NormalizedSnapshotSpanCollection spans) {
 			if (spans.Count == 0)
 				return null;
 
@@ -299,7 +299,7 @@ namespace dnSpy.Text.Operations {
 		public bool CopySelection() => CutOrCopySelection(false);
 		public bool CutSelection() => CutOrCopySelection(true);
 		bool CutOrCopySelection(bool cut) {
-			string htmlText;
+			string? htmlText;
 			if (Selection.IsEmpty) {
 				var line = Caret.ContainingTextViewLine;
 				bool cutEmptyLines = Options.GetOptionValue(DefaultTextViewOptions.CutOrCopyBlankLineIfNoSelectionId);
@@ -358,7 +358,7 @@ namespace dnSpy.Text.Operations {
 			var endLine = span.End.Position.GetContainingLine();
 			var cutSpan = new SnapshotSpan(startLine.Start, endLine.EndIncludingLineBreak);
 			var text = Snapshot.GetText(cutSpan);
-			string htmlText = cut ? TryCreateHtmlText(cutSpan) : null;
+			string? htmlText = cut ? TryCreateHtmlText(cutSpan) : null;
 			Selection.Clear();
 			TextBuffer.Delete(cutSpan);
 			var newPos = caretPos.BufferPosition.TranslateTo(Snapshot, PointTrackingMode.Negative);
@@ -449,7 +449,7 @@ namespace dnSpy.Text.Operations {
 			if (spanEnd > snapshot.Length)
 				throw new ArgumentOutOfRangeException(nameof(span));
 			int pos = span.Start;
-			ITextSnapshotLine line = null;
+			ITextSnapshotLine? line = null;
 			while (pos < spanEnd) {
 				while (pos < spanEnd && !IsWhitespace(snapshot[pos]))
 					pos++;
@@ -464,7 +464,7 @@ namespace dnSpy.Text.Operations {
 					break;
 				}
 
-				if (line == null || start >= line.EndIncludingLineBreak.Position)
+				if (line is null || start >= line.EndIncludingLineBreak.Position)
 					line = snapshot.GetLineFromPosition(start);
 				Debug.Assert(start >= line.Start.Position && end <= line.End);
 
@@ -963,7 +963,7 @@ namespace dnSpy.Text.Operations {
 		}
 
 		public bool InsertFile(string filePath) {
-			if (filePath == null)
+			if (filePath is null)
 				throw new ArgumentNullException(nameof(filePath));
 			const bool isProvisional = false;
 			const bool overwriteMode = false;
@@ -990,7 +990,7 @@ namespace dnSpy.Text.Operations {
 			bool isFullLineData;
 			try {
 				var dataObj = Clipboard.GetDataObject();
-				if (dataObj == null)
+				if (dataObj is null)
 					return false;
 				text = (string)dataObj.GetData(DataFormats.UnicodeText);
 				var fullLineDataObj = dataObj.GetData(VS_COPY_FULL_LINE_DATA_FORMAT);
@@ -999,7 +999,7 @@ namespace dnSpy.Text.Operations {
 			catch (ExternalException) {
 				return false;
 			}
-			if (text == null)
+			if (text is null)
 				return false;
 			const bool isProvisional = false;
 			const bool overwriteMode = false;
@@ -1084,7 +1084,7 @@ namespace dnSpy.Text.Operations {
 		}
 
 		public void MoveCaret(ITextViewLine textLine, double horizontalOffset, bool extendSelection) {
-			if (textLine == null)
+			if (textLine is null)
 				throw new ArgumentNullException(nameof(textLine));
 
 			var anchorPoint = GetAnchorPositionOrCaretIfNoSelection();
@@ -1502,15 +1502,15 @@ namespace dnSpy.Text.Operations {
 
 		public void ScrollColumnLeft() {
 			var wpfTextView = TextView as IWpfTextView;
-			Debug.Assert(wpfTextView != null);
-			if (wpfTextView != null)
+			Debug.Assert(!(wpfTextView is null));
+			if (!(wpfTextView is null))
 				wpfTextView.ViewScroller.ScrollViewportHorizontallyByPixels(-wpfTextView.FormattedLineSource.ColumnWidth);
 		}
 
 		public void ScrollColumnRight() {
 			var wpfTextView = TextView as IWpfTextView;
-			Debug.Assert(wpfTextView != null);
-			if (wpfTextView != null)
+			Debug.Assert(!(wpfTextView is null));
+			if (!(wpfTextView is null))
 				wpfTextView.ViewScroller.ScrollViewportHorizontallyByPixels(wpfTextView.FormattedLineSource.ColumnWidth);
 		}
 
@@ -1593,7 +1593,7 @@ namespace dnSpy.Text.Operations {
 			Selection.Mode = selectionMode;
 			activePoint = activePoint.TranslateTo(Snapshot);
 			Caret.MoveTo(activePoint);
-			if (scrollOptions == null)
+			if (scrollOptions is null)
 				return;
 			anchorPoint = anchorPoint.TranslateTo(Snapshot);
 			activePoint = activePoint.TranslateTo(Snapshot);
@@ -1640,7 +1640,7 @@ namespace dnSpy.Text.Operations {
 		}
 
 		public void SelectLine(ITextViewLine viewLine, bool extendSelection) {
-			if (viewLine == null)
+			if (viewLine is null)
 				throw new ArgumentNullException(nameof(viewLine));
 
 			VirtualSnapshotPoint anchorPoint, activePoint;
@@ -1696,11 +1696,11 @@ namespace dnSpy.Text.Operations {
 
 		public bool Untabify() => true;//TODO:
 
-		IWpfTextView GetZoomableView() {
+		IWpfTextView? GetZoomableView() {
 			if (!Roles.Contains(PredefinedTextViewRoles.Zoomable))
 				return null;
 			var wpfTextView = TextView as IWpfTextView;
-			Debug.Assert(wpfTextView != null);
+			Debug.Assert(!(wpfTextView is null));
 			return wpfTextView;
 		}
 
@@ -1716,21 +1716,21 @@ namespace dnSpy.Text.Operations {
 
 		public void ZoomIn() {
 			var wpfTextView = GetZoomableView();
-			if (wpfTextView == null)
+			if (wpfTextView is null)
 				return;
 			SetZoom(wpfTextView, ZoomSelector.ZoomIn(wpfTextView.ZoomLevel));
 		}
 
 		public void ZoomOut() {
 			var wpfTextView = GetZoomableView();
-			if (wpfTextView == null)
+			if (wpfTextView is null)
 				return;
 			SetZoom(wpfTextView, ZoomSelector.ZoomOut(wpfTextView.ZoomLevel));
 		}
 
 		public void ZoomTo(double zoomLevel) {
 			var wpfTextView = GetZoomableView();
-			if (wpfTextView == null)
+			if (wpfTextView is null)
 				return;
 			SetZoom(wpfTextView, zoomLevel);
 		}

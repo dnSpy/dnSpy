@@ -126,7 +126,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 					continue;
 				foreach (var info in spanData.Data) {
 					var data = CreateBlockStructureData(info, lineExtent.Snapshot);
-					if (data != null)
+					if (!(data is null))
 						list.Add(data.Value);
 				}
 			}

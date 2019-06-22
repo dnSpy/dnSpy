@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// </summary>
 		public MethodDef MethodDef { get; }
 
-		IMDTokenProvider IMDTokenNode.Reference => MethodDef;
+		IMDTokenProvider? IMDTokenNode.Reference => MethodDef;
 
 		/// <summary>
 		/// Constructor

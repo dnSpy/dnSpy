@@ -30,9 +30,9 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <summary>
 		/// The local or null
 		/// </summary>
-		public Local Local { get; }
+		public Local? Local { get; }
 
-		IVariable ISourceVariable.Variable => Local;
+		IVariable? ISourceVariable.Variable => Local;
 		bool ISourceVariable.IsLocal => true;
 		bool ISourceVariable.IsParameter => false;
 
@@ -49,7 +49,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <summary>
 		/// Gets the hoisted field or null if it's not a hoisted local
 		/// </summary>
-		public FieldDef HoistedField { get; }
+		public FieldDef? HoistedField { get; }
 
 		/// <summary>
 		/// Gets the flags
@@ -68,13 +68,13 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="name">Name used by the decompiler</param>
 		/// <param name="type">Type of local</param>
 		/// <param name="flags">Flags</param>
-		public SourceLocal(Local local, string name, TypeSig type, SourceVariableFlags flags) {
+		public SourceLocal(Local? local, string name, TypeSig type, SourceVariableFlags flags) {
 			Debug.Assert((flags & SourceVariableFlags.DecompilerGenerated) == 0);
 			Local = local;
 			Name = name ?? throw new ArgumentNullException(nameof(name));
 			Type = type ?? throw new ArgumentNullException(nameof(type));
-			// It's decompiler generated if Local == null && HoistedField == null
-			if (local == null)
+			// It's decompiler generated if Local is null && HoistedField is null
+			if (local is null)
 				flags |= SourceVariableFlags.DecompilerGenerated;
 			else
 				flags &= ~SourceVariableFlags.DecompilerGenerated;
@@ -88,13 +88,13 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="name">Name used by the decompiler</param>
 		/// <param name="hoistedField">Hoisted field</param>
 		/// <param name="flags">Flags</param>
-		public SourceLocal(Local local, string name, FieldDef hoistedField, SourceVariableFlags flags) {
+		public SourceLocal(Local? local, string name, FieldDef hoistedField, SourceVariableFlags flags) {
 			Debug.Assert((flags & SourceVariableFlags.DecompilerGenerated) == 0);
 			Local = local;
 			Name = name ?? throw new ArgumentNullException(nameof(name));
 			HoistedField = hoistedField ?? throw new ArgumentNullException(nameof(hoistedField));
 			Type = hoistedField.FieldType;
-			// It's decompiler generated if Local == null && HoistedField == null
+			// It's decompiler generated if Local is null && HoistedField is null
 			Flags = flags & ~SourceVariableFlags.DecompilerGenerated;
 		}
 	}

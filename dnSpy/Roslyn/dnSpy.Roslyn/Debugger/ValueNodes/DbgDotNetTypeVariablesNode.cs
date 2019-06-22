@@ -31,15 +31,15 @@ using dnSpy.Roslyn.Properties;
 
 namespace dnSpy.Roslyn.Debugger.ValueNodes {
 	sealed class DbgDotNetTypeVariablesNode : DbgDotNetValueNode {
-		public override DmdType ExpectedType => null;
-		public override DmdType ActualType => null;
-		public override string ErrorMessage => null;
-		public override DbgDotNetValue Value => null;
+		public override DmdType? ExpectedType => null;
+		public override DmdType? ActualType => null;
+		public override string? ErrorMessage => null;
+		public override DbgDotNetValue? Value => null;
 		public override DbgDotNetText Name => typeVariablesName;
 		public override string Expression => "<type variables>";
 		public override string ImageName => PredefinedDbgValueNodeImageNames.TypeVariables;
 		public override bool IsReadOnly => true;
-		public override ReadOnlyCollection<string> FormatSpecifiers => null;
+		public override ReadOnlyCollection<string>? FormatSpecifiers => null;
 		public override bool CausesSideEffects => false;
 		public override bool? HasChildren => typeVariableInfos.Length > 0;
 
@@ -62,7 +62,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 					res[i] = new TypeVariableValueNode(valueNodeFactory, typeVariableInfos[j]);
 			}
 			catch {
-				evalInfo.Context.Process.DbgManager.Close(res.Where(a => a != null));
+				evalInfo.Context.Process.DbgManager.Close(res.Where(a => !(a is null)));
 				throw;
 			}
 			return res;
@@ -72,30 +72,30 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 	}
 
 	sealed class TypeVariableValueNode : DbgDotNetValueNode {
-		public override DmdType ExpectedType { get; }
-		public override DmdType ActualType => ExpectedType;
-		public override string ErrorMessage => null;
-		public override DbgDotNetValue Value { get; }
+		public override DmdType? ExpectedType { get; }
+		public override DmdType? ActualType => ExpectedType;
+		public override string? ErrorMessage => null;
+		public override DbgDotNetValue? Value { get; }
 		public override DbgDotNetText Name { get; }
 		public override string Expression => "<generic type variable>";
 		public override string ImageName { get; }
 		public override bool IsReadOnly => true;
 		public override bool CausesSideEffects => false;
-		public override ReadOnlyCollection<string> FormatSpecifiers => null;
+		public override ReadOnlyCollection<string>? FormatSpecifiers => null;
 		public override bool? HasChildren => false;
 
 		public TypeVariableValueNode(LanguageValueNodeFactory valueNodeFactory, DbgDotNetTypeVariableInfo info) {
 			ExpectedType = info.GenericArgumentType;
 			Value = new TypeVariableValue(info.GenericArgumentType);
 			var paramType = info.GenericParameterType;
-			bool isMethodParam = (object)paramType.DeclaringMethod != null;
+			bool isMethodParam = !(paramType.DeclaringMethod is null);
 			ImageName = isMethodParam ? PredefinedDbgValueNodeImageNames.GenericMethodParameter : PredefinedDbgValueNodeImageNames.GenericTypeParameter;
 			Name = valueNodeFactory.GetTypeParameterName(paramType);
 		}
 
 		public override ulong GetChildCount(DbgEvaluationInfo evalInfo) => 0;
 		public override DbgDotNetValueNode[] GetChildren(DbgEvaluationInfo evalInfo, ulong index, int count, DbgValueNodeEvaluationOptions options) => Array.Empty<DbgDotNetValueNode>();
-		protected override void CloseCore(DbgDispatcher dispatcher) => Value.Dispose();
+		protected override void CloseCore(DbgDispatcher dispatcher) => Value!.Dispose();
 	}
 
 	sealed class TypeVariableValue : DbgDotNetValue {

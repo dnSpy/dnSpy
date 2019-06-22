@@ -27,7 +27,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 	sealed partial class XmlParser {
 		[ExportDocumentViewerToolTipProvider]
 		sealed class DocumentViewerToolTipProvider : IDocumentViewerToolTipProvider {
-			public object Create(IDocumentViewerToolTipProviderContext context, object @ref) {
+			public object? Create(IDocumentViewerToolTipProviderContext context, object? @ref) {
 				if (@ref is XmlNamespaceTextViewerReference nsRef)
 					return Create(context, nsRef);
 				return null;
@@ -37,13 +37,14 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				var provider = context.Create();
 				provider.Image = DsImages.Namespace;
 
-				var name = nsRef.XmlNamespaceReference.Definition.Name;
+				var origName = nsRef.XmlNamespaceReference.Definition?.Name ?? string.Empty;
+				var name = origName;
 				const string prefix = "clr-namespace:";
 				if (name.StartsWith(prefix)) {
 					name = name.Substring(prefix.Length);
-					ParseClrNamespace(name, out string assemblyName, out string @namespace);
-					if (assemblyName == null && @namespace == null)
-						provider.Output.Write(nsRef.XmlNamespaceReference.Definition.Name);
+					ParseClrNamespace(name, out var assemblyName, out var @namespace);
+					if (assemblyName is null && @namespace is null)
+						provider.Output.Write(origName);
 					else {
 						if (!string.IsNullOrEmpty(@namespace))
 							provider.Output.WriteNamespace(@namespace);
@@ -60,7 +61,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				return provider.Create();
 			}
 
-			static void ParseClrNamespace(string name, out string assemblyName, out string @namespace) {
+			static void ParseClrNamespace(string name, out string? assemblyName, out string? @namespace) {
 				assemblyName = null;
 				@namespace = null;
 				foreach (var part in name.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries)) {

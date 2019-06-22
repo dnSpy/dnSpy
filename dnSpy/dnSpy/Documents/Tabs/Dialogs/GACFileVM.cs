@@ -35,26 +35,28 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		public IAssembly Assembly => gacFileInfo.Assembly;
 		public OpenFromGACVM Owner { get; }
 
-		public string VersionString => versionString ?? (versionString = (Version ?? new Version(0, 0, 0, 0)).ToString());
-		string versionString;
+		public string VersionString => versionString ??= (Version ?? new Version(0, 0, 0, 0)).ToString();
+		string? versionString;
 
 		public string CreatedBy {
 			get {
-				if (createdBy == null)
+				if (createdBy is null)
 					CalculateInfo();
+				Debug.Assert(!(createdBy is null));
 				return createdBy;
 			}
 		}
-		string createdBy;
+		string? createdBy;
 
 		public string FileVersion {
 			get {
-				if (fileVersion == null)
+				if (fileVersion is null)
 					CalculateInfo();
+				Debug.Assert(!(fileVersion is null));
 				return fileVersion;
 			}
 		}
-		string fileVersion;
+		string? fileVersion;
 
 		public bool IsDuplicate {
 			get => isDuplicate;
@@ -88,12 +90,12 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 			return string.Empty;
 		}
 
-		string GetCreatedBy(ModuleDef mod) {
+		string? GetCreatedBy(ModuleDef mod) {
 			var asm = mod.Assembly;
-			if (asm == null)
+			if (asm is null)
 				return null;
 			var ca = asm.CustomAttributes.Find("System.Reflection.AssemblyCompanyAttribute");
-			if (ca == null)
+			if (ca is null)
 				return null;
 			if (ca.ConstructorArguments.Count != 1)
 				return null;
@@ -117,7 +119,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		}
 
 		static string Filter(string s) {
-			if (s == null)
+			if (s is null)
 				return string.Empty;
 			const int MAX = 512;
 			if (s.Length > MAX)

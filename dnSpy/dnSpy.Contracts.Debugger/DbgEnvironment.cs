@@ -61,7 +61,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// </summary>
 		/// <param name="key">Key</param>
 		public void Remove(string key) {
-			if (key == null)
+			if (key is null)
 				throw new ArgumentNullException(nameof(key));
 			var env = environment;
 			for (int i = env.Count - 1; i >= 0; i--) {
@@ -76,9 +76,9 @@ namespace dnSpy.Contracts.Debugger {
 		/// <param name="key">Key</param>
 		/// <param name="value">Value</param>
 		public void Add(string key, string value) {
-			if (key == null)
+			if (key is null)
 				throw new ArgumentNullException(nameof(key));
-			if (value == null)
+			if (value is null)
 				throw new ArgumentNullException(nameof(value));
 			Remove(key);
 			environment.Add(new KeyValuePair<string, string>(key, value));
@@ -89,7 +89,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// </summary>
 		/// <param name="environment">Environment</param>
 		public void AddRange(IEnumerable<KeyValuePair<string, string>> environment) {
-			if (environment == null)
+			if (environment is null)
 				throw new ArgumentNullException(nameof(environment));
 			this.environment.AddRange(environment);
 		}

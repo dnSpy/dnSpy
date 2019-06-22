@@ -24,7 +24,7 @@ using System.Windows.Data;
 
 namespace dnSpy.Debugger.UI {
 	sealed class BooleanToHiddenVisibilityConverter : IValueConverter {
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
+		public object? Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
 			value as bool? ?? false ? Visibility.Visible : Visibility.Hidden;
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {

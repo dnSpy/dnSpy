@@ -33,7 +33,7 @@ namespace dnSpy.Hex.Editor {
 		HexSpaceReservationStackProviderImpl([ImportMany] IEnumerable<Lazy<HexSpaceReservationManagerDefinition, VSUTIL.IOrderable>> spaceReservationManagerDefinitions) => spaceReservationManagerNames = VSUTIL.Orderer.Order(spaceReservationManagerDefinitions).Select(a => a.Metadata.Name).ToArray();
 
 		public override HexSpaceReservationStack Create(WpfHexView wpfHexView) {
-			if (wpfHexView == null)
+			if (wpfHexView is null)
 				throw new ArgumentNullException(nameof(wpfHexView));
 			return wpfHexView.Properties.GetOrCreateSingletonProperty(typeof(HexSpaceReservationStackImpl), () => new HexSpaceReservationStackImpl(wpfHexView, spaceReservationManagerNames));
 		}

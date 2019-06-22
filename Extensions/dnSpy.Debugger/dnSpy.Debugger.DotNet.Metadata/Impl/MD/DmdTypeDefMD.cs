@@ -26,13 +26,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 	sealed class DmdTypeDefMD : DmdTypeDef {
 		public override DmdAppDomain AppDomain => reader.Module.AppDomain;
 		public override DmdModule Module => reader.Module;
-		public override string MetadataNamespace { get; }
-		public override string MetadataName { get; }
+		public override string? MetadataNamespace { get; }
+		public override string? MetadataName { get; }
 		public override DmdTypeAttributes Attributes { get; }
 
 		readonly DmdEcma335MetadataReader reader;
 
-		public DmdTypeDefMD(DmdEcma335MetadataReader reader, uint rid, IList<DmdCustomModifier> customModifiers) : base(rid, customModifiers) {
+		public DmdTypeDefMD(DmdEcma335MetadataReader reader, uint rid, IList<DmdCustomModifier>? customModifiers) : base(rid, customModifiers) {
 			this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
 			bool b = reader.TablesStream.TryReadTypeDefRow(rid, out var row);
 			Debug.Assert(b);
@@ -42,16 +42,16 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			Attributes = FixAttributes((DmdTypeAttributes)row.Flags);
 		}
 
-		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => AppDomain.Intern(new DmdTypeDefMD(reader, Rid, VerifyCustomModifiers(customModifiers)));
+		public override DmdType WithCustomModifiers(IList<DmdCustomModifier>? customModifiers) => AppDomain.Intern(new DmdTypeDefMD(reader, Rid, VerifyCustomModifiers(customModifiers)));
 		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : AppDomain.Intern(new DmdTypeDefMD(reader, Rid, null));
 
-		protected override DmdType GetDeclaringType() {
+		protected override DmdType? GetDeclaringType() {
 			if (!reader.TablesStream.TryReadNestedClassRow(reader.Metadata.GetNestedClassRid(Rid), out var row))
 				return null;
 			return Module.ResolveType(0x02000000 + (int)row.EnclosingClass, DmdResolveOptions.None);
 		}
 
-		protected override DmdType GetBaseTypeCore(IList<DmdType> genericTypeArguments) {
+		protected override DmdType? GetBaseTypeCore(IList<DmdType> genericTypeArguments) {
 			if (!reader.TablesStream.TryReadTypeDefRow(Rid, out var row))
 				return null;
 			if (!CodedToken.TypeDefOrRef.Decode(row.Extends, out uint token))
@@ -59,7 +59,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			return reader.Module.ResolveType((int)token, genericTypeArguments, null, DmdResolveOptions.None);
 		}
 
-		protected override DmdType[] CreateGenericParameters() {
+		protected override DmdType[]? CreateGenericParameters() {
 			var ridList = reader.Metadata.GetGenericParamRidList(Table.TypeDef, Rid);
 			if (ridList.Count == 0)
 				return null;
@@ -74,7 +74,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			return genericParams;
 		}
 
-		public override DmdFieldInfo[] ReadDeclaredFields(DmdType declaringType, DmdType reflectedType) {
+		public override DmdFieldInfo[]? ReadDeclaredFields(DmdType declaringType, DmdType reflectedType) {
 			var ridList = reader.Metadata.GetFieldRidList(Rid);
 			if (ridList.Count == 0)
 				return Array.Empty<DmdFieldInfo>();
@@ -86,7 +86,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			return fields;
 		}
 
-		public override DmdMethodBase[] ReadDeclaredMethods(DmdType declaringType, DmdType reflectedType) {
+		public override DmdMethodBase[]? ReadDeclaredMethods(DmdType declaringType, DmdType reflectedType) {
 			var ridList = reader.Metadata.GetMethodRidList(Rid);
 			if (ridList.Count == 0)
 				return Array.Empty<DmdMethodBase>();
@@ -98,7 +98,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			return methods;
 		}
 
-		public override DmdPropertyInfo[] ReadDeclaredProperties(DmdType declaringType, DmdType reflectedType) {
+		public override DmdPropertyInfo[]? ReadDeclaredProperties(DmdType declaringType, DmdType reflectedType) {
 			var mapRid = reader.Metadata.GetPropertyMapRid(Rid);
 			var ridList = reader.Metadata.GetPropertyRidList(mapRid);
 			if (ridList.Count == 0)
@@ -111,7 +111,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			return properties;
 		}
 
-		public override DmdEventInfo[] ReadDeclaredEvents(DmdType declaringType, DmdType reflectedType) {
+		public override DmdEventInfo[]? ReadDeclaredEvents(DmdType declaringType, DmdType reflectedType) {
 			var mapRid = reader.Metadata.GetEventMapRid(Rid);
 			var ridList = reader.Metadata.GetEventRidList(mapRid);
 			if (ridList.Count == 0)
@@ -124,7 +124,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			return events;
 		}
 
-		protected override DmdType[] ReadDeclaredInterfacesCore(IList<DmdType> genericTypeArguments) {
+		protected override DmdType[]? ReadDeclaredInterfacesCore(IList<DmdType> genericTypeArguments) {
 			var ridList = reader.Metadata.GetInterfaceImplRidList(Rid);
 			if (ridList.Count == 0)
 				return null;
@@ -135,12 +135,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 					return null;
 				if (!CodedToken.TypeDefOrRef.Decode(row.Interface, out uint token))
 					return null;
-				res[i] = Module.ResolveType((int)token, genericTypeArguments, null, DmdResolveOptions.ThrowOnError);
+				res[i] = Module.ResolveType((int)token, genericTypeArguments, null, DmdResolveOptions.ThrowOnError)!;
 			}
 			return res;
 		}
 
-		protected override DmdType[] CreateNestedTypes() {
+		protected override DmdType[]? CreateNestedTypes() {
 			var ridList = reader.Metadata.GetNestedClassRidList(Rid);
 			if (ridList.Count == 0)
 				return null;
@@ -148,14 +148,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			for (int i = 0; i < res.Length; i++) {
 				uint rid = ridList[i];
 				var nestedType = Module.ResolveType(0x02000000 + (int)rid, DmdResolveOptions.None);
-				if ((object)nestedType == null)
+				if (nestedType is null)
 					return null;
 				res[i] = nestedType;
 			}
 			return res;
 		}
 
-		public override (DmdCustomAttributeData[] cas, DmdCustomAttributeData[] sas) CreateCustomAttributes() {
+		public override (DmdCustomAttributeData[]? cas, DmdCustomAttributeData[]? sas) CreateCustomAttributes() {
 			var cas = reader.ReadCustomAttributes(MetadataToken);
 			var sas = reader.ReadSecurityAttributes(MetadataToken);
 			return (cas, sas);

@@ -40,7 +40,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 		/// <summary>
 		/// Name of module (case insensitive) or null/empty string if any name. Wildcards can be used
 		/// </summary>
-		public abstract string ModuleName { get; set; }
+		public abstract string? ModuleName { get; set; }
 
 		/// <summary>
 		/// true if dynamic, false if not dynamic, and null if any value
@@ -65,12 +65,12 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 		/// <summary>
 		/// App domain name (case insensitive) or null/empty string if any name. Wildcards can be used
 		/// </summary>
-		public abstract string AppDomainName { get; set; }
+		public abstract string? AppDomainName { get; set; }
 
 		/// <summary>
 		/// Process name (case insensitive) or null/empty string if any name. Wildcards can be used
 		/// </summary>
-		public abstract string ProcessName { get; set; }
+		public abstract string? ProcessName { get; set; }
 
 		/// <summary>
 		/// Removes this breakpoint from the module breakpoints list

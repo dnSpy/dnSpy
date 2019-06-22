@@ -35,22 +35,22 @@ namespace dnSpy.Hex.Files.DnSpy {
 		[ImportingConstructor]
 		HexReferenceConverterImpl(BufferToDocumentNodeService bufferToDocumentNodeService) => this.bufferToDocumentNodeService = bufferToDocumentNodeService;
 
-		public override object Convert(HexView hexView, object reference) {
+		public override object? Convert(HexView hexView, object reference) {
 			if (reference is HexMethodReference methodRef)
 				return ConvertMethodReference(methodRef);
 
 			return reference;
 		}
 
-		MethodStatementReference ConvertMethodReference(HexMethodReference methodRef) {
+		MethodStatementReference? ConvertMethodReference(HexMethodReference methodRef) {
 			var docNode = bufferToDocumentNodeService.Find(methodRef.File);
-			if (docNode == null)
+			if (docNode is null)
 				return null;
 			var module = docNode.Document.ModuleDef;
-			if (module == null)
+			if (module is null)
 				return null;
 			var method = module.ResolveToken(methodRef.Token) as MethodDef;
-			if (method == null)
+			if (method is null)
 				return null;
 
 			return new MethodStatementReference(method, methodRef.Offset);
@@ -70,7 +70,7 @@ namespace dnSpy.Hex.Files.DnSpy {
 	}
 
 	abstract class BufferToDocumentNodeService {
-		public abstract DsDocumentNode Find(HexBufferFile file);
+		public abstract DsDocumentNode? Find(HexBufferFile file);
 	}
 
 	[Export(typeof(BufferToDocumentNodeService))]
@@ -80,13 +80,13 @@ namespace dnSpy.Hex.Files.DnSpy {
 		[ImportingConstructor]
 		BufferToDocumentNodeServiceImpl(IDocumentTabService documentTabService) => this.documentTabService = documentTabService;
 
-		public override DsDocumentNode Find(HexBufferFile file) {
-			if (file == null)
+		public override DsDocumentNode? Find(HexBufferFile file) {
+			if (file is null)
 				throw new ArgumentNullException(nameof(file));
 			if (file.Filename == string.Empty)
 				return null;
 			var doc = documentTabService.DocumentTreeView.DocumentService.Find(new FilenameKey(file.Filename));
-			if (doc == null)
+			if (doc is null)
 				return null;
 			return documentTabService.DocumentTreeView.FindNode(doc);
 		}

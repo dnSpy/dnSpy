@@ -25,23 +25,23 @@ namespace dnSpy.Contracts.Debugger.Attach.Dialogs {
 		/// <summary>
 		/// Gets the title or null to use the default title
 		/// </summary>
-		public string Title { get; set; }
+		public string? Title { get; set; }
 
 		/// <summary>
 		/// Type of processes that can be attached to. Shown in the title bar, eg. "Unity" or null to not show anything
 		/// </summary>
-		public string ProcessType { get; set; }
+		public string? ProcessType { get; set; }
 
 		/// <summary>
 		/// Text shown at the bottom of the dialog box between the buttons or null to use the default value
 		/// </summary>
-		public string Message { get; set; }
+		public string? Message { get; set; }
 
 		/// <summary>
 		/// <see cref="AttachProgramOptionsProviderFactory"/> names, see <see cref="PredefinedAttachProgramOptionsProviderNames"/>
 		/// or null to check every provider
 		/// </summary>
-		public string[] ProviderNames { get; set; }
+		public string[]? ProviderNames { get; set; }
 
 		/// <summary>
 		/// Link button info shown next to the OK button

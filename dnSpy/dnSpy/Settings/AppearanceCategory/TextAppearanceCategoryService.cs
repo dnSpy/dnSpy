@@ -52,7 +52,7 @@ namespace dnSpy.Settings.AppearanceCategory {
 		}
 
 		public ITextAppearanceCategory GetSettings(string category) {
-			if (category == null)
+			if (category is null)
 				throw new ArgumentNullException(nameof(category));
 			if (!categoryToTextAppearanceCategoryDefinition.TryGetValue(category, out var settings))
 				throw new ArgumentOutOfRangeException(nameof(category));

@@ -23,17 +23,17 @@ using dnSpy.AsmEditor.DnlibDialogs;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
 	sealed class CreateTypeSigArray : ICreateTypeSigArray {
-		readonly Window ownerWindow;
+		readonly Window? ownerWindow;
 
 		public CreateTypeSigArray()
 			: this(null) {
 		}
 
-		public CreateTypeSigArray(Window ownerWindow) => this.ownerWindow = ownerWindow;
+		public CreateTypeSigArray(Window? ownerWindow) => this.ownerWindow = ownerWindow;
 
-		public TypeSig[] Create(TypeSigCreatorOptions options, int? count, TypeSig[] typeSigs) {
+		public TypeSig[]? Create(TypeSigCreatorOptions options, int? count, TypeSig[]? typeSigs) {
 			var data = new CreateTypeSigArrayVM(options, count);
-			if (typeSigs != null)
+			if (!(typeSigs is null))
 				data.TypeSigCollection.AddRange(typeSigs);
 			var win = new CreateTypeSigArrayDlg();
 			win.DataContext = data;

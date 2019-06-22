@@ -34,6 +34,6 @@ namespace dnSpy.Contracts.Hex.Files.DnSpy {
 		/// </summary>
 		/// <param name="content">Content</param>
 		/// <returns></returns>
-		public abstract object Create(HexToolTipContent content);
+		public abstract object? Create(HexToolTipContent content);
 	}
 }

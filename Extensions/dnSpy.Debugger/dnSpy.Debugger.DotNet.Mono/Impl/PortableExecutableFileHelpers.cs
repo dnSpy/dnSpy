@@ -21,7 +21,7 @@ using System.IO;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl {
 	static class PortableExecutableFileHelpers {
-		public static bool IsGuiApp(string file) {
+		public static bool IsGuiApp(string? file) {
 			if (!File.Exists(file))
 				return false;
 			try {

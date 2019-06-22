@@ -30,9 +30,9 @@ namespace dnSpy.Hex.Files.DotNet {
 		public override StructField<UInt32Data> MagicNum { get; }
 		public override StructField<UInt32Data> ResMgrHeaderVersion { get; }
 		public override StructField<UInt32Data> HeaderSize { get; }
-		public override StructField<VirtualArrayData<ByteData>> UnknownHeader { get; }
-		public override StructField<Bit7EncodedStringData> ReaderType { get; }
-		public override StructField<Bit7EncodedStringData> ResourceSetType { get; }
+		public override StructField<VirtualArrayData<ByteData>>? UnknownHeader { get; }
+		public override StructField<Bit7EncodedStringData>? ReaderType { get; }
+		public override StructField<Bit7EncodedStringData>? ResourceSetType { get; }
 		public override StructField<UInt32Data> Version { get; }
 		public override StructField<UInt32Data> NumResources { get; }
 		public override StructField<UInt32Data> NumTypes { get; }
@@ -53,13 +53,13 @@ namespace dnSpy.Hex.Files.DotNet {
 			ResMgrHeaderVersion = new StructField<UInt32Data>("ResMgrHeaderVersion", new UInt32Data(buffer, pos + 4));
 			HeaderSize = new StructField<UInt32Data>("HeaderSize", new UInt32Data(buffer, pos + 8));
 
-			if (resourceTypeSpan == null) {
-				if (resourceSetTypeSpan != null)
+			if (resourceTypeSpan is null) {
+				if (!(resourceSetTypeSpan is null))
 					throw new ArgumentException();
 				UnknownHeader = new StructField<VirtualArrayData<ByteData>>("Header", ArrayData.CreateVirtualByteArray(new HexBufferSpan(buffer, HexSpan.FromBounds(pos + 0x0C, versionPosition))));
 			}
 			else {
-				if (resourceSetTypeSpan == null)
+				if (resourceSetTypeSpan is null)
 					throw new ArgumentNullException(nameof(resourceSetTypeSpan));
 				ReaderType = new StructField<Bit7EncodedStringData>("ReaderType", new Bit7EncodedStringData(buffer, resourceTypeSpan.Value.LengthSpan, resourceTypeSpan.Value.StringSpan, Encoding.UTF8));
 				ResourceSetType = new StructField<Bit7EncodedStringData>("ResourceSetType", new Bit7EncodedStringData(buffer, resourceSetTypeSpan.Value.LengthSpan, resourceSetTypeSpan.Value.StringSpan, Encoding.UTF8));
@@ -97,11 +97,11 @@ namespace dnSpy.Hex.Files.DotNet {
 			list.Add(MagicNum);
 			list.Add(ResMgrHeaderVersion);
 			list.Add(HeaderSize);
-			if (UnknownHeader != null)
+			if (!(UnknownHeader is null))
 				list.Add(UnknownHeader);
-			if (ReaderType != null)
+			if (!(ReaderType is null))
 				list.Add(ReaderType);
-			if (ResourceSetType != null)
+			if (!(ResourceSetType is null))
 				list.Add(ResourceSetType);
 			list.Add(Version);
 			list.Add(NumResources);

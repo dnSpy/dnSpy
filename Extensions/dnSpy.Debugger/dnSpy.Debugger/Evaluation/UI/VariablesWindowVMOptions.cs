@@ -51,16 +51,18 @@ namespace dnSpy.Debugger.Evaluation.UI {
 		public virtual bool CanAddRemoveExpressions => false;
 		public virtual void DeleteExpressions(string[] ids) => throw new NotSupportedException();
 		public virtual void ClearAllExpressions() => throw new NotSupportedException();
-		public virtual void EditExpression(string id, string expression) => throw new NotSupportedException();
+		public virtual void EditExpression(string? id, string expression) => throw new NotSupportedException();
 		public virtual void AddExpressions(string[] expressions) => throw new NotSupportedException();
 	}
 
 	sealed class VariablesWindowVMOptions {
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
 		public VariablesWindowValueNodesProvider VariablesWindowValueNodesProvider { get; set; }
 		public string WindowContentType { get; set; }
 		public string NameColumnName { get; set; }
 		public string ValueColumnName { get; set; }
 		public string TypeColumnName { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
 		public VariablesWindowKind VariablesWindowKind { get; set; }
 		public Guid VariablesWindowGuid { get; set; }
 	}

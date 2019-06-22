@@ -26,13 +26,13 @@ using Microsoft.CodeAnalysis;
 namespace dnSpy.Roslyn.Documentation {
 	sealed class RoslynDocumentationProvider : DocumentationProvider {
 		static readonly StringComparer stringComparer = StringComparer.OrdinalIgnoreCase;
-		Contracts.Decompiler.XmlDoc.XmlDocumentationProvider xmlDocumentationProvider;
+		Contracts.Decompiler.XmlDoc.XmlDocumentationProvider? xmlDocumentationProvider;
 		bool hasLoaded;
 		readonly string filename;
 
 		public RoslynDocumentationProvider(string filename) => this.filename = filename;
 
-		protected override string GetDocumentationForSymbol(string documentationMemberID, CultureInfo preferredCulture, CancellationToken cancellationToken) {
+		protected override string? GetDocumentationForSymbol(string documentationMemberID, CultureInfo preferredCulture, CancellationToken cancellationToken) {
 			if (!hasLoaded) {
 				lock (this) {
 					if (!hasLoaded) {
@@ -50,9 +50,9 @@ namespace dnSpy.Roslyn.Documentation {
 
 		public override int GetHashCode() => stringComparer.GetHashCode(filename);
 
-		public override bool Equals(object obj) {
+		public override bool Equals(object? obj) {
 			var other = obj as RoslynDocumentationProvider;
-			return other != null && stringComparer.Equals(filename, other.filename);
+			return !(other is null) && stringComparer.Equals(filename, other.filename);
 		}
 	}
 }

@@ -34,7 +34,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 				}
 
 				public bool Equals(TypeKey other) => module == other.module && metadataToken == other.metadataToken;
-				public override bool Equals(object obj) => obj is TypeKey other && Equals(other);
+				public override bool Equals(object? obj) => obj is TypeKey other && Equals(other);
 				public override int GetHashCode() => module.GetHashCode() ^ metadataToken;
 			}
 			readonly Dictionary<TypeKey, DmdType> dict;
@@ -42,28 +42,28 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			public AssemblyState(DmdAssembly assembly) {
 				dict = new Dictionary<TypeKey, DmdType>();
 				var proxyAttr = assembly.AppDomain.GetWellKnownType(DmdWellKnownType.System_Diagnostics_DebuggerTypeProxyAttribute, isOptional: true);
-				Debug.Assert((object)proxyAttr != null);
-				if ((object)proxyAttr != null) {
+				Debug.Assert(!(proxyAttr is null));
+				if (!(proxyAttr is null)) {
 					foreach (var ca in assembly.CustomAttributes) {
 						if (ca.AttributeType != proxyAttr)
 							continue;
 						if (ca.ConstructorArguments.Count != 1)
 							continue;
 						var proxyType = DebuggerTypeProxyFinder.GetType(assembly, ca.ConstructorArguments[0].Value);
-						if ((object)proxyType == null)
+						if (proxyType is null)
 							continue;
 
-						DmdType targetType = null;
+						DmdType? targetType = null;
 						foreach (var namedArg in ca.NamedArguments) {
 							var prop = namedArg.MemberInfo as DmdPropertyInfo;
-							if ((object)prop == null)
+							if (prop is null)
 								continue;
 							if (prop.Name == nameof(DebuggerTypeProxyAttribute.Target) || prop.Name == nameof(DebuggerTypeProxyAttribute.TargetTypeName)) {
 								targetType = DebuggerTypeProxyFinder.GetType(assembly, namedArg.TypedValue.Value);
 								break;
 							}
 						}
-						if ((object)targetType == null)
+						if (targetType is null)
 							continue;
 
 						dict[new TypeKey(targetType)] = proxyType;
@@ -71,18 +71,18 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 				}
 			}
 
-			public DmdType GetProxyType(DmdType type) {
+			public DmdType? GetProxyType(DmdType type) {
 				if (dict.TryGetValue(new TypeKey(type), out var proxyType))
 					return proxyType;
 				return null;
 			}
 		}
 		sealed class ProxyState {
-			public readonly DmdConstructorInfo Constructor;
-			public ProxyState(DmdConstructorInfo constructor) => Constructor = constructor;
+			public readonly DmdConstructorInfo? Constructor;
+			public ProxyState(DmdConstructorInfo? constructor) => Constructor = constructor;
 		}
 
-		public static DmdConstructorInfo GetDebuggerTypeProxyConstructor(DmdType type) {
+		public static DmdConstructorInfo? GetDebuggerTypeProxyConstructor(DmdType type) {
 			if (type.TypeSignatureKind != DmdTypeSignatureKind.Type && type.TypeSignatureKind != DmdTypeSignatureKind.GenericInstance)
 				return null;
 			if (type.IsInterface)
@@ -90,45 +90,45 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			if (type.IsGenericType && !type.IsConstructedGenericType)
 				return null;
 
-			if (type.TryGetData(out ProxyState proxyState))
+			if (type.TryGetData(out ProxyState? proxyState))
 				return proxyState.Constructor;
 
 			var ctor = GetProxyTypeConstructor(type);
 			return CreateProxyState(type, ctor).Constructor;
 
-			ProxyState CreateProxyState(DmdType targetType, DmdConstructorInfo proxyCtor) =>
+			ProxyState CreateProxyState(DmdType targetType, DmdConstructorInfo? proxyCtor) =>
 				targetType.GetOrCreateData(() => new ProxyState(proxyCtor));
 		}
 
-		static DmdConstructorInfo GetProxyTypeConstructor(DmdType targetType) {
+		static DmdConstructorInfo? GetProxyTypeConstructor(DmdType targetType) {
 			var proxyAttr = targetType.AppDomain.GetWellKnownType(DmdWellKnownType.System_Diagnostics_DebuggerTypeProxyAttribute, isOptional: true);
-			Debug.Assert((object)proxyAttr != null);
-			if ((object)proxyAttr == null)
+			Debug.Assert(!(proxyAttr is null));
+			if (proxyAttr is null)
 				return null;
-			var currentType = targetType;
+			DmdType? currentType = targetType;
 			for (;;) {
-				DmdConstructorInfo proxyCtor;
+				DmdConstructorInfo? proxyCtor;
 
 				var ca = currentType.FindCustomAttribute(proxyAttr, inherit: false);
-				if (ca != null && ca.ConstructorArguments.Count == 1) {
+				if (!(ca is null) && ca.ConstructorArguments.Count == 1) {
 					proxyCtor = GetConstructor(GetType(currentType.Assembly, ca.ConstructorArguments[0].Value), currentType);
-					if ((object)proxyCtor != null)
+					if (!(proxyCtor is null))
 						return proxyCtor;
 				}
 
 				var asmState = GetAssemblyState(currentType.Assembly);
 				proxyCtor = GetConstructor(asmState.GetProxyType(currentType), currentType);
-				if ((object)proxyCtor != null)
+				if (!(proxyCtor is null))
 					return proxyCtor;
 
 				currentType = currentType.BaseType;
-				if ((object)currentType == null)
+				if (currentType is null)
 					return null;
 			}
 		}
 
-		static DmdConstructorInfo GetConstructor(DmdType proxyType, DmdType targetType) {
-			if ((object)proxyType == null)
+		static DmdConstructorInfo? GetConstructor(DmdType? proxyType, DmdType targetType) {
+			if (proxyType is null)
 				return null;
 			if (proxyType.IsConstructedGenericType)
 				return null;
@@ -153,7 +153,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			return null;
 		}
 
-		static DmdType GetType(DmdAssembly assembly, object value) {
+		static DmdType? GetType(DmdAssembly assembly, object? value) {
 			if (value is DmdType type)
 				return type;
 			if (value is string typeName)
@@ -162,7 +162,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		}
 
 		static AssemblyState GetAssemblyState(DmdAssembly assembly) {
-			if (assembly.TryGetData(out AssemblyState state))
+			if (assembly.TryGetData(out AssemblyState? state))
 				return state;
 			return CreateAssemblyState(assembly);
 		}

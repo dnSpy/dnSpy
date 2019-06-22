@@ -37,7 +37,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// Edit tag passed to <see cref="HexBuffer.CreateEdit(int?, object)"/>
 		/// </summary>
-		public object EditTag { get; }
+		public object? EditTag { get; }
 
 		/// <summary>
 		/// Constructor
@@ -45,7 +45,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="beforeVersion">Version before the change</param>
 		/// <param name="afterVersion">Version after the change</param>
 		/// <param name="editTag">Edit tag</param>
-		protected HexVersionChangedEventArgs(HexVersion beforeVersion, HexVersion afterVersion, object editTag) {
+		protected HexVersionChangedEventArgs(HexVersion beforeVersion, HexVersion afterVersion, object? editTag) {
 			BeforeVersion = beforeVersion ?? throw new ArgumentNullException(nameof(beforeVersion));
 			AfterVersion = afterVersion ?? throw new ArgumentNullException(nameof(afterVersion));
 			EditTag = editTag;

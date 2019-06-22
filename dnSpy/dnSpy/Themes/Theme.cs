@@ -62,7 +62,7 @@ namespace dnSpy.Themes {
 			InitColorInfos(ColorInfos.RootColorInfos);
 			for (int i = 0; i < colorInfos.Length; i++) {
 				var colorType = ToColorType(i);
-				if (colorInfos[i] == null) {
+				if (colorInfos[i] is null) {
 					Debug.Fail($"Missing info: {colorType}");
 					throw new Exception($"Missing info: {colorType}");
 				}
@@ -72,7 +72,7 @@ namespace dnSpy.Themes {
 		static void InitColorInfos(ColorInfo[] infos) {
 			foreach (var info in infos) {
 				int i = ToIndex(info.ColorType);
-				if (colorInfos[i] != null) {
+				if (!(colorInfos[i] is null)) {
 					Debug.Fail("Duplicate");
 					throw new Exception("Duplicate");
 				}
@@ -91,45 +91,45 @@ namespace dnSpy.Themes {
 
 		public Theme(XElement root) {
 			var guid = root.Attribute("guid");
-			if (guid == null || string.IsNullOrEmpty(guid.Value))
+			if (guid is null || string.IsNullOrEmpty(guid.Value))
 				throw new Exception("Missing or empty guid attribute");
 			Guid = new Guid(guid.Value);
 
 			var name = root.Attribute("name");
-			Name = name == null ? string.Empty : (string)name;
+			Name = name is null ? string.Empty : (string)name;
 
 			var menuName = root.Attribute("menu-name");
-			if (menuName == null || string.IsNullOrEmpty(menuName.Value))
+			if (menuName is null || string.IsNullOrEmpty(menuName.Value))
 				throw new Exception("Missing or empty menu-name attribute");
 			MenuName = menuName.Value;
 
 			var hcName = root.Attribute("is-high-contrast");
-			IsHighContrast = hcName != null && (bool)hcName;
+			IsHighContrast = !(hcName is null) && (bool)hcName;
 
 			var darkThemeName = root.Attribute("is-dark");
-			IsDark = darkThemeName != null && (bool)darkThemeName;
+			IsDark = !(darkThemeName is null) && (bool)darkThemeName;
 
 			var lightThemeName = root.Attribute("is-light");
-			IsLight = lightThemeName != null && (bool)lightThemeName;
+			IsLight = !(lightThemeName is null) && (bool)lightThemeName;
 
 			var sort = root.Attribute("order");
-			Order = sort == null ? 1 : (double)sort;
+			Order = sort is null ? 1 : (double)sort;
 
 			for (int i = 0; i < hlColors.Length; i++)
 				hlColors[i] = new Color(colorInfos[i]);
 
 			var colors = root.Element("colors");
-			if (colors != null) {
+			if (!(colors is null)) {
 				foreach (var color in colors.Elements("color")) {
 					ColorType colorType = 0;
 					var hl = ReadColor(color, ref colorType);
-					if (hl == null)
+					if (hl is null)
 						continue;
 					hlColors[ToIndex(colorType)].OriginalColor = hl;
 				}
 			}
 			for (int i = 0; i < hlColors.Length; i++) {
-				if (hlColors[i].OriginalColor == null)
+				if (hlColors[i].OriginalColor is null)
 					hlColors[i].OriginalColor = CreateThemeColor(ToColorType(i));
 				hlColors[i].TextInheritedColor = new ThemeColor { Name = hlColors[i].OriginalColor.Name };
 				hlColors[i].InheritedColor = new ThemeColor { Name = hlColors[i].OriginalColor.Name };
@@ -173,78 +173,78 @@ namespace dnSpy.Themes {
 			}
 		}
 
-		Brush GetForeground(ColorInfo info, bool canIncludeDefault) {
-			while (info != null) {
+		Brush? GetForeground(ColorInfo? info, bool canIncludeDefault) {
+			while (!(info is null)) {
 				if (!canIncludeDefault && info.ColorType == ColorType.DefaultText)
 					break;
 				var color = hlColors[ToIndex(info.ColorType)];
 				var val = color.OriginalColor.Foreground;
-				if (val != null)
+				if (!(val is null))
 					return val;
 				info = info.Parent;
 			}
 			return null;
 		}
 
-		Brush GetBackground(ColorInfo info, bool canIncludeDefault) {
-			while (info != null) {
+		Brush? GetBackground(ColorInfo? info, bool canIncludeDefault) {
+			while (!(info is null)) {
 				if (!canIncludeDefault && info.ColorType == ColorType.DefaultText)
 					break;
 				var color = hlColors[ToIndex(info.ColorType)];
 				var val = color.OriginalColor.Background;
-				if (val != null)
+				if (!(val is null))
 					return val;
 				info = info.Parent;
 			}
 			return null;
 		}
 
-		Brush GetColor3(ColorInfo info, bool canIncludeDefault) {
-			while (info != null) {
+		Brush? GetColor3(ColorInfo? info, bool canIncludeDefault) {
+			while (!(info is null)) {
 				if (!canIncludeDefault && info.ColorType == ColorType.DefaultText)
 					break;
 				var color = hlColors[ToIndex(info.ColorType)];
 				var val = color.OriginalColor.Color3;
-				if (val != null)
+				if (!(val is null))
 					return val;
 				info = info.Parent;
 			}
 			return null;
 		}
 
-		Brush GetColor4(ColorInfo info, bool canIncludeDefault) {
-			while (info != null) {
+		Brush? GetColor4(ColorInfo? info, bool canIncludeDefault) {
+			while (!(info is null)) {
 				if (!canIncludeDefault && info.ColorType == ColorType.DefaultText)
 					break;
 				var color = hlColors[ToIndex(info.ColorType)];
 				var val = color.OriginalColor.Color4;
-				if (val != null)
+				if (!(val is null))
 					return val;
 				info = info.Parent;
 			}
 			return null;
 		}
 
-		FontStyle? GetFontStyle(ColorInfo info, bool canIncludeDefault) {
-			while (info != null) {
+		FontStyle? GetFontStyle(ColorInfo? info, bool canIncludeDefault) {
+			while (!(info is null)) {
 				if (!canIncludeDefault && info.ColorType == ColorType.DefaultText)
 					break;
 				var color = hlColors[ToIndex(info.ColorType)];
 				var val = color.OriginalColor.FontStyle;
-				if (val != null)
+				if (!(val is null))
 					return val;
 				info = info.Parent;
 			}
 			return null;
 		}
 
-		FontWeight? GetFontWeight(ColorInfo info, bool canIncludeDefault) {
-			while (info != null) {
+		FontWeight? GetFontWeight(ColorInfo? info, bool canIncludeDefault) {
+			while (!(info is null)) {
 				if (!canIncludeDefault && info.ColorType == ColorType.DefaultText)
 					break;
 				var color = hlColors[ToIndex(info.ColorType)];
 				var val = color.OriginalColor.FontWeight;
-				if (val != null)
+				if (!(val is null))
 					return val;
 				info = info.Parent;
 			}
@@ -262,9 +262,9 @@ namespace dnSpy.Themes {
 			return hlColors[i];
 		}
 
-		ThemeColor ReadColor(XElement color, ref ColorType colorType) {
+		ThemeColor? ReadColor(XElement color, ref ColorType colorType) {
 			var name = color.Attribute("name");
-			if (name == null)
+			if (name is null)
 				return null;
 			colorType = ToColorType(name.Value);
 			if (colorType == ColorType.LastUI)
@@ -276,27 +276,27 @@ namespace dnSpy.Themes {
 			hl.Name = colorType.ToString();
 
 			var fg = GetAttribute(color, "fg", colorInfo.DefaultForeground);
-			if (fg != null)
+			if (!(fg is null))
 				hl.Foreground = CreateColor(fg);
 
 			var bg = GetAttribute(color, "bg", colorInfo.DefaultBackground);
-			if (bg != null)
+			if (!(bg is null))
 				hl.Background = CreateColor(bg);
 
 			var color3 = GetAttribute(color, "color3", colorInfo.DefaultColor3);
-			if (color3 != null)
+			if (!(color3 is null))
 				hl.Color3 = CreateColor(color3);
 
 			var color4 = GetAttribute(color, "color4", colorInfo.DefaultColor4);
-			if (color4 != null)
+			if (!(color4 is null))
 				hl.Color4 = CreateColor(color4);
 
 			var italics = color.Attribute("italics") ?? color.Attribute("italic");
-			if (italics != null)
+			if (!(italics is null))
 				hl.FontStyle = (bool)italics ? FontStyles.Italic : FontStyles.Normal;
 
 			var bold = color.Attribute("bold");
-			if (bold != null)
+			if (!(bold is null))
 				hl.FontWeight = (bool)bold ? FontWeights.Bold : FontWeights.Normal;
 
 			return hl;
@@ -307,42 +307,42 @@ namespace dnSpy.Themes {
 
 			var colorInfo = colorInfos[ToIndex(colorType)];
 
-			if (colorInfo.DefaultForeground != null)
+			if (!(colorInfo.DefaultForeground is null))
 				hl.Foreground = CreateColor(colorInfo.DefaultForeground);
 
-			if (colorInfo.DefaultBackground != null)
+			if (!(colorInfo.DefaultBackground is null))
 				hl.Background = CreateColor(colorInfo.DefaultBackground);
 
-			if (colorInfo.DefaultColor3 != null)
+			if (!(colorInfo.DefaultColor3 is null))
 				hl.Color3 = CreateColor(colorInfo.DefaultColor3);
 
-			if (colorInfo.DefaultColor4 != null)
+			if (!(colorInfo.DefaultColor4 is null))
 				hl.Color4 = CreateColor(colorInfo.DefaultColor4);
 
 			return hl;
 		}
 
-		static string GetAttribute(XElement xml, string attr, string defVal) {
+		static string? GetAttribute(XElement xml, string attr, string? defVal) {
 			var a = xml.Attribute(attr);
-			if (a != null)
+			if (!(a is null))
 				return a.Value;
 			return defVal;
 		}
 
 		static readonly ColorConverter colorConverter = new ColorConverter();
-		static Brush CreateColor(string color) {
+		static Brush? CreateColor(string color) {
 			if (color.StartsWith("SystemColors.")) {
 				string shortName = color.Substring(13);
 				var property = typeof(SystemColors).GetProperty(shortName + "Brush");
-				Debug.Assert(property != null);
-				if (property == null)
+				Debug.Assert(!(property is null));
+				if (property is null)
 					return null;
 				return (Brush)property.GetValue(null, null);
 			}
 
 			try {
 				var clr = (System.Windows.Media.Color?)colorConverter.ConvertFromInvariantString(color);
-				if (clr == null)
+				if (clr is null)
 					return null;
 				var brush = new SolidColorBrush(clr.Value);
 				brush.Freeze();

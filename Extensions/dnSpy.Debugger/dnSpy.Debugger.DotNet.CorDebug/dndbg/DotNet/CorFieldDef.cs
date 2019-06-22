@@ -80,7 +80,7 @@ namespace dndbg.DotNet {
 		}
 		int initCounter;
 
-		protected override Constant GetConstant_NoLock() {
+		protected override Constant? GetConstant_NoLock() {
 			var mdi = readerModule.MetaDataImport;
 			uint token = OriginalToken.Raw;
 
@@ -90,14 +90,14 @@ namespace dndbg.DotNet {
 			return readerModule.UpdateRowId(new ConstantUser(c, (ElementType)etype));
 		}
 
-		protected override MarshalType GetMarshalType_NoLock() => readerModule.ReadMarshalType(this, GenericParamContext.Create(ownerType));
+		protected override MarshalType? GetMarshalType_NoLock() => readerModule.ReadMarshalType(this, GenericParamContext.Create(ownerType));
 
 		protected override RVA GetRVA_NoLock() {
 			GetFieldRVA_NoLock(out var rva2);
 			return rva2;
 		}
 
-		protected override byte[] GetInitialValue_NoLock() {
+		protected override byte[]? GetInitialValue_NoLock() {
 			if (!GetFieldRVA_NoLock(out var rva2))
 				return null;
 			return ReadInitialValue_NoLock(rva2);
@@ -132,13 +132,13 @@ namespace dndbg.DotNet {
 			uint token = OriginalToken.Raw;
 
 			var rva2 = MDAPI.GetRVA(mdi, token);
-			if (rva2 == null)
+			if (rva2 is null)
 				return false;
 			rva = (RVA)rva2.Value;
 			return true;
 		}
 
-		byte[] ReadInitialValue_NoLock(RVA rva) {
+		byte[]? ReadInitialValue_NoLock(RVA rva) {
 			// rva could be 0 if it's a dynamic module. The caller is responsible for checking the
 			// HasFieldRVA bit before calling this method.
 			int ptrSize = IntPtr.Size;

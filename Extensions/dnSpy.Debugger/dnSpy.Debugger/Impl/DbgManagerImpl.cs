@@ -179,7 +179,7 @@ namespace dnSpy.Debugger.Impl {
 			add => IIsRunningProvider_IsRunningChanged += value;
 			remove => IIsRunningProvider_IsRunningChanged -= value;
 		}
-		EventHandler IIsRunningProvider_IsRunningChanged;
+		EventHandler? IIsRunningProvider_IsRunningChanged;
 
 		void RaiseIsRunningChanged_DbgThread() {
 			Dispatcher.VerifyAccess();
@@ -239,15 +239,15 @@ namespace dnSpy.Debugger.Impl {
 
 		sealed class EngineInfo {
 			public DbgEngine Engine { get; }
-			public DbgProcessImpl Process { get; set; }
-			public DbgRuntimeImpl Runtime { get; set; }
+			public DbgProcessImpl? Process { get; set; }
+			public DbgRuntimeImpl? Runtime { get; set; }
 			public EngineState EngineState { get; set; }
 			public string[] DebugTags { get; }
-			public DbgObjectFactoryImpl ObjectFactory { get; set; }
-			public DbgException Exception { get; set; }
+			public DbgObjectFactoryImpl? ObjectFactory { get; set; }
+			public DbgException? Exception { get; set; }
 			public bool DelayedIsRunning { get; set; }
-			public string BreakKind { get; }
-			public EngineInfo(DbgEngine engine, string breakKind) {
+			public string? BreakKind { get; }
+			public EngineInfo(DbgEngine engine, string? breakKind) {
 				Engine = engine;
 				DebugTags = (string[])engine.DebugTags.Clone();
 				EngineState = EngineState.Starting;
@@ -299,7 +299,7 @@ namespace dnSpy.Debugger.Impl {
 				DelayedIsRunningChanged?.Invoke(this, EventArgs.Empty);
 		}
 
-		public override string Start(DebugProgramOptions options) {
+		public override string? Start(DebugProgramOptions options) {
 			var clonedOptions = options.Clone();
 			// Make sure Clone() works correctly by only using a clone of the input.
 			// If it's buggy, the owner will notice something's wrong and fix it.
@@ -321,7 +321,7 @@ namespace dnSpy.Debugger.Impl {
 			try {
 				foreach (var lz in dbgEngineProviders) {
 					var engine = lz.Value.Create(this, options);
-					if (engine != null) {
+					if (!(engine is null)) {
 						DbgThread(() => Start_DbgThread(engine, options, clonedOptions));
 						return null;
 					}
@@ -342,7 +342,7 @@ namespace dnSpy.Debugger.Impl {
 			lock (lockObj) {
 				var oldIsRunning = cachedIsRunning;
 				raiseIsDebuggingChanged = engines.Count == 0;
-				string breakKind = null;
+				string? breakKind = null;
 				if (clonedOptions is StartDebuggingOptions startOptions) {
 					restartOptions.Add(startOptions);
 					breakKind = startOptions.BreakKind;
@@ -377,12 +377,12 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		void DbgEngine_Message(object sender, DbgEngineMessage e) {
-			if (sender == null)
+			if (sender is null)
 				throw new ArgumentNullException(nameof(sender));
-			if (e == null)
+			if (e is null)
 				throw new ArgumentNullException(nameof(e));
 			var engine = sender as DbgEngine;
-			if (engine == null)
+			if (engine is null)
 				throw new ArgumentOutOfRangeException(nameof(sender));
 			DbgThread(() => DbgEngine_Message_DbgThread(engine, e));
 		}
@@ -434,7 +434,7 @@ namespace dnSpy.Debugger.Impl {
 			}
 		}
 
-		EngineInfo TryGetEngineInfo_NoLock(DbgEngine engine) {
+		EngineInfo? TryGetEngineInfo_NoLock(DbgEngine? engine) {
 			foreach (var info in engines) {
 				if (info.Engine == engine)
 					return info;
@@ -444,14 +444,14 @@ namespace dnSpy.Debugger.Impl {
 
 		EngineInfo GetEngineInfo_NoLock(DbgEngine engine) {
 			var info = TryGetEngineInfo_NoLock(engine);
-			if (info == null)
+			if (info is null)
 				throw new InvalidOperationException("Unknown debug engine");
 			return info;
 		}
 
 		DbgRuntime GetRuntime(DbgEngine engine) {
 			lock (lockObj)
-				return GetEngineInfo_NoLock(engine).Runtime;
+				return GetEngineInfo_NoLock(engine).Runtime!;
 		}
 
 		DbgProcessImpl GetOrCreateProcess_DbgThread(int pid, DbgStartKind startKind, out bool createdProcess) {
@@ -475,7 +475,7 @@ namespace dnSpy.Debugger.Impl {
 
 		void OnConnected_DbgThread(DbgEngine engine, DbgMessageConnected e) {
 			Dispatcher.VerifyAccess();
-			if (e.ErrorMessage != null) {
+			if (!(e.ErrorMessage is null)) {
 				RaiseUserMessage_DbgThread(UserMessageKind.CouldNotConnect, e.ErrorMessage ?? "???");
 				OnDisconnected_DbgThread(engine);
 				return;
@@ -499,7 +499,7 @@ namespace dnSpy.Debugger.Impl {
 				info.Runtime.SetBreakThread(null);
 				processState = CalculateProcessState(info.Process);
 				// Compare it before notifying the helper since it could clear it
-				otherPauseProgram = breakAllHelper != null;
+				otherPauseProgram = !(breakAllHelper is null);
 				breakAllHelper?.OnConnected_DbgThread_NoLock(info);
 				bool b = debuggedRuntimes.Add(new ProcessKey(e.ProcessId, runtime.Id));
 				Debug.Assert(b);
@@ -522,7 +522,7 @@ namespace dnSpy.Debugger.Impl {
 			if (!builder.IsEmpty) {
 				lock (lockObj) {
 					var info = GetEngineInfo_NoLock(engine);
-					info.Runtime.SetBreakInfos_DbgThread(builder.Create());
+					info.Runtime!.SetBreakInfos_DbgThread(builder.Create());
 				}
 				OnEnginePaused_DbgThread(engine, process, thread: null, setCurrentProcess: pauseProgram || pausedByListener);
 			}
@@ -530,10 +530,10 @@ namespace dnSpy.Debugger.Impl {
 				Run_DbgThread(engine);
 		}
 
-		DbgProcessState CalculateProcessState(DbgProcess process) {
+		DbgProcessState CalculateProcessState(DbgProcess? process) {
 			lock (lockObj) {
 				int count = 0;
-				if (process != null) {
+				if (!(process is null)) {
 					foreach (var info in engines) {
 						if (info.Process != process)
 							continue;
@@ -553,17 +553,17 @@ namespace dnSpy.Debugger.Impl {
 
 		void OnDisconnected_DbgThread(DbgEngine engine) {
 			Dispatcher.VerifyAccess();
-			DbgProcessImpl processToDispose = null;
-			DbgRuntimeImpl runtime = null;
+			DbgProcessImpl? processToDispose = null;
+			DbgRuntimeImpl? runtime = null;
 			var objectsToClose = new List<DbgObject>();
 			bool raiseIsDebuggingChanged, raiseIsRunningChanged;
 			string[] removedDebugTags;
-			DbgProcessImpl process;
+			DbgProcessImpl? process;
 			lock (lockObj) {
 				var oldIsRunning = cachedIsRunning;
 				var info = TryGetEngineInfo_NoLock(engine);
-				if (info != null) {
-					if (info.Exception != null)
+				if (!(info is null)) {
+					if (!(info.Exception is null))
 						objectsToClose.Add(info.Exception);
 					engines.Remove(info);
 					raiseIsDebuggingChanged = engines.Count == 0;
@@ -574,15 +574,15 @@ namespace dnSpy.Debugger.Impl {
 				process = info?.Process;
 				if (raiseIsDebuggingChanged)
 					restartOptions.Clear();
-				removedDebugTags = debugTags.Remove(info.DebugTags);
+				removedDebugTags = debugTags.Remove(info?.DebugTags ?? Array.Empty<string>());
 				cachedIsRunning = CalculateIsRunning_NoLock();
 				raiseIsRunningChanged = oldIsRunning != cachedIsRunning;
 
 				engine.Message -= DbgEngine_Message;
-				if (process != null) {
+				if (!(process is null)) {
 					var pinfo = process.Remove_DbgThread(engine);
 					runtime = pinfo.runtime;
-					Debug.Assert(runtime != null);
+					Debug.Assert(!(runtime is null));
 					runtime.SetBreakInfos_DbgThread(Array.Empty<DbgBreakInfo>());
 
 					bool b = debuggedRuntimes.Remove(new ProcessKey(process.Id, runtime.Id));
@@ -599,19 +599,19 @@ namespace dnSpy.Debugger.Impl {
 				breakAllHelper?.OnDisconnected_DbgThread_NoLock(engine);
 			}
 
-			if (runtime != null)
+			if (!(runtime is null))
 				boundBreakpointsManager.RemoveAllBoundBreakpoints_DbgThread(runtime);
 
 			foreach (var obj in objectsToClose)
 				obj.Close(Dispatcher);
 
-			process?.NotifyRuntimesChanged_DbgThread(runtime);
+			process?.NotifyRuntimesChanged_DbgThread(runtime!);
 
 			var builder = new DbgBreakInfoCollectionBuilder();
-			if (runtime != null)
+			if (!(runtime is null))
 				RaiseMessage_DbgThread(ref builder, new DbgMessageRuntimeExitedEventArgs(runtime));
 
-			if (processToDispose != null) {
+			if (!(processToDispose is null)) {
 				processToDispose.UpdateState_DbgThread(DbgProcessState.Terminated);
 				ProcessesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgProcess>(processToDispose, added: false));
 				int exitCode = processToDispose.GetExitCode();
@@ -638,9 +638,9 @@ namespace dnSpy.Debugger.Impl {
 		public override bool CanRestart {
 			get {
 				lock (lockObj) {
-					if (breakAllHelper != null)
+					if (!(breakAllHelper is null))
 						return false;
-					if (stopDebuggingHelper != null)
+					if (!(stopDebuggingHelper is null))
 						return false;
 					if (restartOptions.Count == 0)
 						return false;
@@ -656,7 +656,7 @@ namespace dnSpy.Debugger.Impl {
 				var restartOptionsCopy = restartOptions.ToArray();
 				stopDebuggingHelper = new StopDebuggingHelper(this, success => {
 					lock (lockObj) {
-						Debug.Assert(stopDebuggingHelper != null);
+						Debug.Assert(!(stopDebuggingHelper is null));
 						stopDebuggingHelper = null;
 					}
 					// Don't restart the programs in this thread since we're inside a ProcessesChanged callback.
@@ -675,19 +675,19 @@ namespace dnSpy.Debugger.Impl {
 			}
 			stopDebuggingHelper.Initialize();
 		}
-		StopDebuggingHelper stopDebuggingHelper;
+		StopDebuggingHelper? stopDebuggingHelper;
 
 		public override void BreakAll() {
 			lock (lockObj) {
-				if (breakAllHelper != null)
+				if (!(breakAllHelper is null))
 					return;
-				if (stopDebuggingHelper != null)
+				if (!(stopDebuggingHelper is null))
 					return;
 				breakAllHelper = new BreakAllHelper(this);
 				breakAllHelper.Start_NoLock();
 			}
 		}
-		BreakAllHelper breakAllHelper;
+		BreakAllHelper? breakAllHelper;
 
 		void RaiseIsRunningChangedIfNeeded_DbgThread() {
 			Dispatcher.VerifyAccess();
@@ -711,28 +711,28 @@ namespace dnSpy.Debugger.Impl {
 		void OnBreak_DbgThread(DbgEngine engine, DbgMessageBreak e) {
 			Dispatcher.VerifyAccess();
 			DbgProcessState processState;
-			DbgProcessImpl process;
+			DbgProcessImpl? process;
 			bool raiseIsRunningChanged;
-			DbgThread thread = null;
+			DbgThread? thread = null;
 			bool forceSetCurrentProcess = false;
 			lock (lockObj) {
 				var oldCachedIsRunning = cachedIsRunning;
 				var info = TryGetEngineInfo_NoLock(engine);
 				// It could've been disconnected
-				if (info == null)
+				if (info is null)
 					return;
 
-				if (e.ErrorMessage == null) {
+				if (e.ErrorMessage is null) {
 					var builder = new DbgBreakInfoCollectionBuilder();
-					if (info.Runtime != null)
+					if (!(info.Runtime is null))
 						builder.Add(new DbgMessageBreakEventArgs(info.Runtime, e.Thread));
 					else
 						builder.Add(new DbgBreakInfo(DbgBreakInfoKind.Unknown, null));
-					forceSetCurrentProcess = info.EngineState != EngineState.Paused && (dbgCurrentProcess.currentProcess.Current == null || dbgCurrentProcess.currentProcess.Current?.CurrentRuntime.Current?.Engine == engine);
+					forceSetCurrentProcess = info.EngineState != EngineState.Paused && (dbgCurrentProcess.currentProcess.Current is null || dbgCurrentProcess.currentProcess.Current?.CurrentRuntime.Current?.Engine == engine);
 					info.EngineState = EngineState.Paused;
 					info.Runtime?.SetBreakInfos_DbgThread(builder.Create());
 					info.DelayedIsRunning = false;
-					thread = info.Runtime?.SetBreakThread((DbgThreadImpl)e.Thread, true);
+					thread = info.Runtime?.SetBreakThread((DbgThreadImpl?)e.Thread, true);
 				}
 				cachedIsRunning = CalculateIsRunning_NoLock();
 				raiseIsRunningChanged = oldCachedIsRunning != cachedIsRunning;
@@ -741,7 +741,7 @@ namespace dnSpy.Debugger.Impl {
 			}
 			breakAllHelper?.OnBreak_DbgThread(engine);
 			process?.UpdateState_DbgThread(processState);
-			if (e.ErrorMessage == null)
+			if (e.ErrorMessage is null)
 				OnEnginePaused_DbgThread(engine, process, thread, setCurrentProcess: forceSetCurrentProcess);
 			else
 				RaiseUserMessage_DbgThread(UserMessageKind.CouldNotBreak, e.ErrorMessage);
@@ -750,14 +750,14 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		public override event EventHandler<ProcessPausedEventArgs> ProcessPaused;
-		void OnEnginePaused_DbgThread(DbgEngine engine, DbgProcess process, DbgThread thread, bool setCurrentProcess) {
+		void OnEnginePaused_DbgThread(DbgEngine engine, DbgProcess? process, DbgThread? thread, bool setCurrentProcess) {
 			lock (lockObj) {
 				var info = GetEngineInfo_NoLock(engine);
 				info.Process?.SetPaused_DbgThread(info.Runtime);
 			}
 			bool didSetCurrentProcess = SetCurrentEngineIfCurrentIsNull_DbgThread(engine, setCurrentProcess);
 			BreakAllProcessesIfNeeded_DbgThread();
-			if (didSetCurrentProcess && process != null)
+			if (didSetCurrentProcess && !(process is null))
 				ProcessPaused?.Invoke(this, new ProcessPausedEventArgs(process, thread));
 		}
 
@@ -884,7 +884,7 @@ namespace dnSpy.Debugger.Impl {
 			OnConditionalBreak_DbgThread(runtime.Engine, e, e.Exception.Thread, messageFlags, exception);
 		}
 
-		void OnConditionalBreak_DbgThread(DbgEngine engine, DbgMessageEventArgs e, DbgThread thread, DbgEngineMessageFlags messageFlags, DbgExceptionImpl exception = null) {
+		void OnConditionalBreak_DbgThread(DbgEngine engine, DbgMessageEventArgs e, DbgThread? thread, DbgEngineMessageFlags messageFlags, DbgExceptionImpl? exception = null) {
 			Dispatcher.VerifyAccess();
 
 			bool pauseProgram = (messageFlags & DbgEngineMessageFlags.Pause) != 0;
@@ -898,7 +898,7 @@ namespace dnSpy.Debugger.Impl {
 			bool otherPauseProgram = false;
 			if (!pauseProgram && builder.IsEmpty) {
 				lock (lockObj) {
-					otherPauseProgram |= breakAllHelper != null;
+					otherPauseProgram |= !(breakAllHelper is null);
 					// If we're func-eval'ing, don't pause it
 					if (!otherPauseProgram && (messageFlags & DbgEngineMessageFlags.Continue) == 0)
 						otherPauseProgram |= GetEngineInfo_NoLock(engine).EngineState == EngineState.Paused;
@@ -909,7 +909,7 @@ namespace dnSpy.Debugger.Impl {
 				builder.Add(e);
 			if (!builder.IsEmpty) {
 				DbgProcessState processState;
-				DbgProcessImpl process;
+				DbgProcessImpl? process;
 				bool wasPaused;
 				lock (lockObj) {
 					var info = GetEngineInfo_NoLock(engine);
@@ -919,12 +919,12 @@ namespace dnSpy.Debugger.Impl {
 					info.EngineState = EngineState.Paused;
 					info.Runtime?.SetBreakInfos_DbgThread(builder.Create());
 					info.DelayedIsRunning = false;
-					var newThread = info.Runtime?.SetBreakThread((DbgThreadImpl)thread);
-					if (thread == null)
+					var newThread = info.Runtime?.SetBreakThread((DbgThreadImpl?)thread);
+					if (thread is null)
 						thread = newThread;
 					// If we get eg. SetIPComplete, the saved exception shouldn't be cleared
-					if (exception != null) {
-						Debug.Assert(info.Exception == null);
+					if (!(exception is null)) {
+						Debug.Assert(info.Exception is null);
 						info.Exception?.Close(Dispatcher);
 						info.Exception = exception;
 					}
@@ -961,7 +961,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		public override void Run(DbgProcess process) {
-			if (process == null)
+			if (process is null)
 				throw new ArgumentNullException(nameof(process));
 			if (debuggerSettings.BreakAllProcesses)
 				RunAll();
@@ -976,18 +976,18 @@ namespace dnSpy.Debugger.Impl {
 		void RunEngines_DbgThread(EngineInfo[] engineInfos, Action<EngineInfo> runEngine) {
 			Dispatcher.VerifyAccess();
 
-			List<DbgException> exceptions = null;
+			List<DbgException>? exceptions = null;
 			lock (lockObj) {
 				foreach (var info in engineInfos) {
-					if (info.EngineState == EngineState.Paused && info.Exception != null) {
-						if (exceptions == null)
+					if (info.EngineState == EngineState.Paused && !(info.Exception is null)) {
+						if (exceptions is null)
 							exceptions = new List<DbgException>();
 						exceptions.Add(info.Exception);
 						info.Exception = null;
 					}
 				}
 			}
-			if (exceptions != null) {
+			if (!(exceptions is null)) {
 				foreach (var exception in exceptions)
 					exception.Close(Dispatcher);
 			}
@@ -998,17 +998,17 @@ namespace dnSpy.Debugger.Impl {
 				var oldIsRunning = cachedIsRunning;
 
 				// If we're trying to break the processes, don't do a thing
-				if (breakAllHelper != null)
+				if (!(breakAllHelper is null))
 					return;
 
 				foreach (var info in engineInfos) {
 					if (info.EngineState == EngineState.Paused) {
-						if (info.Process != null && !processes.Contains(info.Process))
+						if (!(info.Process is null) && !processes.Contains(info.Process))
 							processes.Add(info.Process);
 						info.EngineState = EngineState.Running;
 						info.Runtime?.SetBreakInfos_DbgThread(Array.Empty<DbgBreakInfo>());
 						info.Process?.SetRunning_DbgThread(info.Runtime);
-						Debug.Assert(info.Exception == null);
+						Debug.Assert(info.Exception is null);
 						info.Runtime?.OnBeforeContinuing_DbgThread();
 						runEngine(info);
 					}
@@ -1029,7 +1029,7 @@ namespace dnSpy.Debugger.Impl {
 			lock (lockObj) {
 				foreach (var engine in engines) {
 					var info = TryGetEngineInfo_NoLock(engine);
-					if (info != null) {
+					if (!(info is null)) {
 						info.Runtime?.ClearBreakThread();
 						info.DelayedIsRunning = true;
 					}
@@ -1051,10 +1051,10 @@ namespace dnSpy.Debugger.Impl {
 
 		void Run_DbgThread(DbgEngine engine) {
 			Dispatcher.VerifyAccess();
-			EngineInfo engineInfo;
+			EngineInfo? engineInfo;
 			lock (lockObj)
 				engineInfo = TryGetEngineInfo_NoLock(engine);
-			if (engineInfo != null)
+			if (!(engineInfo is null))
 				RunEngines_DbgThread(new[] { engineInfo });
 		}
 
@@ -1150,7 +1150,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		public override bool CanDebugRuntime(int pid, RuntimeId rid) {
-			if (rid == null)
+			if (rid is null)
 				throw new ArgumentNullException(nameof(rid));
 			if (pid == currentProcessId)
 				return false;
@@ -1171,7 +1171,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		public override void Close(DbgObject obj) {
-			if (obj == null)
+			if (obj is null)
 				throw new ArgumentNullException(nameof(obj));
 			bool start;
 			lock (objsToClose) {
@@ -1183,7 +1183,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		public override void Close(IEnumerable<DbgObject> objs) {
-			if (objs == null)
+			if (objs is null)
 				throw new ArgumentNullException(nameof(objs));
 			bool start;
 			lock (objsToClose) {
@@ -1208,9 +1208,9 @@ namespace dnSpy.Debugger.Impl {
 
 		public override event EventHandler<DbgManagerMessageEventArgs> DbgManagerMessage;
 		public override void WriteMessage(string messageKind, string message) {
-			if (messageKind == null)
+			if (messageKind is null)
 				throw new ArgumentNullException(nameof(messageKind));
-			if (message == null)
+			if (message is null)
 				throw new ArgumentNullException(nameof(message));
 			DbgManagerMessage?.Invoke(this, new DbgManagerMessageEventArgs(messageKind, message));
 		}

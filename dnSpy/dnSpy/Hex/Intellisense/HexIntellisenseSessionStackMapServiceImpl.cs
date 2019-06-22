@@ -26,10 +26,10 @@ namespace dnSpy.Hex.Intellisense {
 	[Export(typeof(HexIntellisenseSessionStackMapService))]
 	sealed class HexIntellisenseSessionStackMapServiceImpl : HexIntellisenseSessionStackMapService {
 		public override HexIntellisenseSessionStack GetStackForHexView(HexView hexView) {
-			if (hexView == null)
+			if (hexView is null)
 				throw new ArgumentNullException(nameof(hexView));
 			var wpfHexView = hexView as WpfHexView;
-			if (wpfHexView == null)
+			if (wpfHexView is null)
 				throw new InvalidOperationException();
 			return hexView.Properties.GetOrCreateSingletonProperty(typeof(HexIntellisenseSessionStackImpl), () => new HexIntellisenseSessionStackImpl(wpfHexView));
 		}

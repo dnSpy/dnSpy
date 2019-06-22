@@ -28,7 +28,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Attach {
 		/// <summary>
 		/// Version of an already installed CLR (eg. "v2.0.50727", or "v4.0.30319") or null to auto detect it
 		/// </summary>
-		public string DebuggeeVersion { get; set; }
+		public string? DebuggeeVersion { get; set; }
 
 		/// <summary>
 		/// Clones this instance
@@ -42,7 +42,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Attach {
 		/// <param name="other">Destination</param>
 		/// <returns></returns>
 		public DotNetFrameworkAttachToProgramOptions CopyTo(DotNetFrameworkAttachToProgramOptions other) {
-			if (other == null)
+			if (other is null)
 				throw new ArgumentNullException(nameof(other));
 			base.CopyTo(other);
 			other.DebuggeeVersion = DebuggeeVersion;

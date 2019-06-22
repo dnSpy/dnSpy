@@ -23,9 +23,9 @@ using dnlib.DotNet;
 namespace dnSpy.Decompiler {
 	readonly struct FormatterMethodInfo {
 		public readonly ModuleDef ModuleDef;
-		public readonly IList<TypeSig> TypeGenericParams;
-		public readonly IList<TypeSig> MethodGenericParams;
-		public readonly MethodDef MethodDef;
+		public readonly IList<TypeSig>? TypeGenericParams;
+		public readonly IList<TypeSig>? MethodGenericParams;
+		public readonly MethodDef? MethodDef;
 		public readonly MethodSig MethodSig;
 		public readonly bool RetTypeIsLastArgType;
 		public readonly bool IncludeReturnTypeInArgsList;
@@ -41,20 +41,20 @@ namespace dnSpy.Decompiler {
 			MethodDef = method as MethodDef;
 			var ms = method as MethodSpec;
 			var mr = method as MemberRef;
-			if (ms != null) {
-				var ts = ms.Method == null ? null : ms.Method.DeclaringType as TypeSpec;
-				if (ts != null) {
+			if (!(ms is null)) {
+				var ts = ms.Method is null ? null : ms.Method.DeclaringType as TypeSpec;
+				if (!(ts is null)) {
 					if (ts.TypeSig.RemovePinnedAndModifiers() is GenericInstSig gp)
 						TypeGenericParams = gp.GenericArguments;
 				}
 
 				var gsSig = ms.GenericInstMethodSig;
-				if (gsSig != null)
+				if (!(gsSig is null))
 					MethodGenericParams = gsSig.GenericArguments;
 
 				MethodDef = ms.Method.ResolveMethodDef();
 			}
-			else if (mr != null) {
+			else if (!(mr is null)) {
 				if (mr.DeclaringType is TypeSpec ts) {
 					if (ts.TypeSig.RemovePinnedAndModifiers() is GenericInstSig gp)
 						TypeGenericParams = gp.GenericArguments;

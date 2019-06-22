@@ -27,11 +27,11 @@ namespace dnSpy.Hex {
 		public override int VersionNumber { get; }
 		public override int ReiteratedVersionNumber { get; }
 
-		public override NormalizedHexChangeCollection Changes => changes;
-		public override HexVersion Next => next;
+		public override NormalizedHexChangeCollection? Changes => changes;
+		public override HexVersion? Next => next;
 
-		NormalizedHexChangeCollection changes;
-		HexVersion next;
+		NormalizedHexChangeCollection? changes;
+		HexVersion? next;
 
 		public HexVersionImpl(HexBuffer buffer, int versionNumber, int reiteratedVersionNumber) {
 			Buffer = buffer ?? throw new ArgumentNullException(nameof(buffer));
@@ -41,7 +41,7 @@ namespace dnSpy.Hex {
 
 		public HexVersionImpl SetChanges(IList<HexChange> changes, int? reiteratedVersionNumber = null) {
 			var normalizedChanges = NormalizedHexChangeCollection.Create(changes);
-			if (reiteratedVersionNumber == null)
+			if (reiteratedVersionNumber is null)
 				reiteratedVersionNumber = changes.Count == 0 ? ReiteratedVersionNumber : VersionNumber + 1;
 			var newVersion = new HexVersionImpl(Buffer, VersionNumber + 1, reiteratedVersionNumber.Value);
 			this.changes = normalizedChanges;

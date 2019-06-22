@@ -45,7 +45,7 @@ namespace dnSpy.TreeView {
 		}
 
 		public bool Contains(ITreeNode item) {
-			if (item == null)
+			if (item is null)
 				return false;
 			return node.Children.Contains(GetAndVerifyTreeNodeImpl(item).Node);
 		}
@@ -71,10 +71,10 @@ namespace dnSpy.TreeView {
 		}
 
 		TreeNodeImpl GetAndVerifyTreeNodeImpl(ITreeNode treeNode) {
-			if (treeNode == null)
+			if (treeNode is null)
 				throw new ArgumentNullException(nameof(treeNode));
 			var impl = treeNode as TreeNodeImpl;
-			if (impl == null)
+			if (impl is null)
 				throw new InvalidOperationException("ITreeNode is not our impl class. Only insert nodes in the correct owner tree");
 			if (impl.TreeView != node.TreeNodeImpl.TreeView)
 				throw new InvalidOperationException($"Tried add a tree node from TreeView({impl.TreeView.Guid}) to TreeView({node.TreeNodeImpl.TreeView.Guid}). Only insert nodes in the correct tree view");
@@ -84,7 +84,7 @@ namespace dnSpy.TreeView {
 		public void Insert(int index, ITreeNode item) => node.Children.Insert(index, GetAndVerifyTreeNodeImpl(item).Node);
 
 		public bool Remove(ITreeNode item) {
-			if (item == null)
+			if (item is null)
 				return false;
 			var removedNode = GetAndVerifyTreeNodeImpl(item).Node;
 			bool b = node.Children.Remove(removedNode);

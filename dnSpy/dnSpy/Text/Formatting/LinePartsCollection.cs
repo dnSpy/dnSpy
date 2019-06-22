@@ -29,7 +29,7 @@ namespace dnSpy.Text.Formatting {
 		public SnapshotSpan Span { get; private set; }
 
 		public LinePartsCollection(List<LinePart> lineParts, SnapshotSpan span) {
-			if (span.Snapshot == null)
+			if (span.Snapshot is null)
 				throw new ArgumentException();
 			Span = span;
 			LineParts = lineParts ?? throw new ArgumentNullException(nameof(lineParts));
@@ -78,20 +78,20 @@ namespace dnSpy.Text.Formatting {
 			if (bufferPosition.Snapshot != Span.Snapshot)
 				throw new ArgumentException();
 			var linePart = GetLinePartFromBufferPosition(bufferPosition);
-			if (linePart == null && bufferPosition == Span.End && LineParts.Count != 0)
+			if (linePart is null && bufferPosition == Span.End && LineParts.Count != 0)
 				linePart = LineParts[LineParts.Count - 1];
-			if (linePart == null)
+			if (linePart is null)
 				return 0;
-			if (linePart.Value.AdornmentElement != null)
+			if (!(linePart.Value.AdornmentElement is null))
 				return linePart.Value.Column;
 			return linePart.Value.Column + ((bufferPosition.Position - Span.Span.Start) - linePart.Value.Span.Start);
 		}
 
 		public SnapshotPoint ConvertColumnToBufferPosition(int column) {
 			var linePart = GetLinePartFromColumn(column);
-			if (linePart == null && column == Length && LineParts.Count != 0)
+			if (linePart is null && column == Length && LineParts.Count != 0)
 				linePart = LineParts[LineParts.Count - 1];
-			return Span.Start + (linePart == null ? 0 : linePart.Value.Span.Start + (column - linePart.Value.Column));
+			return Span.Start + (linePart is null ? 0 : linePart.Value.Span.Start + (column - linePart.Value.Column));
 		}
 
 		public SnapshotPoint? ConvertColumnToBufferPosition(int column, bool includeHiddenPositions) {
@@ -99,11 +99,11 @@ namespace dnSpy.Text.Formatting {
 				return ConvertColumnToBufferPosition(column);
 
 			var linePart = GetLinePartFromColumn(column);
-			if (linePart == null && column == Length && LineParts.Count != 0)
+			if (linePart is null && column == Length && LineParts.Count != 0)
 				linePart = LineParts[LineParts.Count - 1];
-			if (linePart == null)
+			if (linePart is null)
 				return null;
-			if (linePart.Value.AdornmentElement != null)
+			if (!(linePart.Value.AdornmentElement is null))
 				return null;
 			return Span.Start + linePart.Value.Span.Start + (column - linePart.Value.Column);
 		}

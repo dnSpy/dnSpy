@@ -30,12 +30,12 @@ using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Documents.Tabs {
 	interface IDocumentListLoader {
-		IEnumerable<object> Load(ISettingsSection section, bool loadDocuments);
+		IEnumerable<object?> Load(ISettingsSection section, bool loadDocuments);
 		void Save(ISettingsSection section);
 		bool CanLoad { get; }
-		bool Load(DocumentList documentList, IDsDocumentLoader documentLoader = null);
+		bool Load(DocumentList documentList, IDsDocumentLoader? documentLoader = null);
 		bool CanReload { get; }
-		bool Reload(IDsDocumentLoader documentLoader = null);
+		bool Reload(IDsDocumentLoader? documentLoader = null);
 		bool CanCloseAll { get; }
 		void CloseAll();
 		void SaveCurrentDocumentsToList();
@@ -84,7 +84,7 @@ namespace dnSpy.Documents.Tabs {
 		}
 		bool disable_SaveCurrentDocumentsToList;
 
-		public IEnumerable<object> Load(ISettingsSection section, bool loadDocuments) {
+		public IEnumerable<object?> Load(ISettingsSection section, bool loadDocuments) {
 			var disable = DisableSaveToList();
 			documentListService.Load(section);
 			yield return null;
@@ -124,9 +124,9 @@ namespace dnSpy.Documents.Tabs {
 
 		public bool CanLoad => !disableLoadAndReload && documentListListeners.All(a => a.Value.CanLoad);
 
-		public bool Load(DocumentList documentList, IDsDocumentLoader documentLoader) {
+		public bool Load(DocumentList documentList, IDsDocumentLoader? documentLoader) {
 			const bool isReload = false;
-			if (documentLoader == null)
+			if (documentLoader is null)
 				documentLoader = new DefaultDsDocumentLoader(documentTabService.DocumentTreeView.DocumentService);
 			if (!CanLoad)
 				return false;
@@ -152,9 +152,9 @@ namespace dnSpy.Documents.Tabs {
 
 		public bool CanReload => !disableLoadAndReload && documentListListeners.All(a => a.Value.CanReload);
 
-		public bool Reload(IDsDocumentLoader documentLoader) {
+		public bool Reload(IDsDocumentLoader? documentLoader) {
 			const bool isReload = true;
-			if (documentLoader == null)
+			if (documentLoader is null)
 				documentLoader = new DefaultDsDocumentLoader(documentTabService.DocumentTreeView.DocumentService);
 			if (!CanReload)
 				return false;

@@ -31,11 +31,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		public DebugMessageDispatcher(Dispatcher dispatcher) => this.dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
 
-		Dispatcher Dispatcher => !dispatcher.HasShutdownFinished && !dispatcher.HasShutdownStarted ? dispatcher : null;
+		Dispatcher? Dispatcher => !dispatcher.HasShutdownFinished && !dispatcher.HasShutdownStarted ? dispatcher : null;
 
 		public void ExecuteAsync(Action callback) {
 			var disp = Dispatcher;
-			if (disp == null)
+			if (disp is null)
 				return;
 			queue.Enqueue(callback);
 			dispatchQueueEvent.Set();
@@ -52,7 +52,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		void EmptyQueue() {
 			var disp = Dispatcher;
-			if (disp == null)
+			if (disp is null)
 				return;
 			disp.VerifyAccess();
 
@@ -60,9 +60,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				action();
 		}
 
-		public object DispatchQueue(TimeSpan waitTime, out bool timedOut) {
+		public object? DispatchQueue(TimeSpan waitTime, out bool timedOut) {
 			var disp = Dispatcher;
-			if (disp == null) {
+			if (disp is null) {
 				timedOut = true;
 				return null;
 			}
@@ -72,7 +72,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			return res;
 		}
 
-		object DispatchQueueCore(TimeSpan waitTime, out bool timedOut) {
+		object? DispatchQueueCore(TimeSpan waitTime, out bool timedOut) {
 			try {
 				if (Interlocked.Increment(ref counterDispatchQueue) != 1)
 					throw new InvalidOperationException("DispatchQueue can't be nested");
@@ -113,11 +113,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			}
 		}
 		readonly AutoResetEvent dispatchQueueEvent = new AutoResetEvent(false);
-		volatile object resultDispatchQueue;
+		volatile object? resultDispatchQueue;
 		volatile bool cancelDispatchQueue;
 		int counterDispatchQueue;
 
-		public void CancelDispatchQueue(object result) {
+		public void CancelDispatchQueue(object? result) {
 			resultDispatchQueue = result;
 			cancelDispatchQueue = true;
 			dispatchQueueEvent.Set();

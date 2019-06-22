@@ -38,7 +38,7 @@ namespace dnSpy.Roslyn.Text.Tagging {
 		readonly IRoslynDocumentChangedService roslynDocumentChangedService;
 
 		public RoslynTagger(ITextBuffer textBuffer, IThemeClassificationTypeService themeClassificationTypeService, IRoslynDocumentChangedService roslynDocumentChangedService) {
-			if (themeClassificationTypeService == null)
+			if (themeClassificationTypeService is null)
 				throw new ArgumentNullException(nameof(themeClassificationTypeService));
 			this.textBuffer = textBuffer ?? throw new ArgumentNullException(nameof(textBuffer));
 			defaultClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.Error);
@@ -62,6 +62,7 @@ namespace dnSpy.Roslyn.Text.Tagging {
 			Initialize(asyncState, snapshot, cancellationToken).Wait(cancellationToken);
 			if (!asyncState.IsValid)
 				yield break;
+			Debug.Assert(!(asyncState.SyntaxRoot is null) && !(asyncState.SemanticModel is null) && !(asyncState.Workspace is null));
 
 			var classifier = new RoslynClassifier(asyncState.SyntaxRoot, asyncState.SemanticModel, asyncState.Workspace, roslynClassificationTypes, defaultClassificationType, cancellationToken);
 			foreach (var span in spans) {
@@ -79,6 +80,7 @@ namespace dnSpy.Roslyn.Text.Tagging {
 				await Initialize(state.UserAsyncState, snapshot, state.CancellationToken).ConfigureAwait(false);
 			if (!state.UserAsyncState.IsValid)
 				return;
+			Debug.Assert(!(state.UserAsyncState.SyntaxRoot is null) && !(state.UserAsyncState.SemanticModel is null) && !(state.UserAsyncState.Workspace is null));
 
 			var classifier = new RoslynClassifier(state.UserAsyncState.SyntaxRoot, state.UserAsyncState.SemanticModel, state.UserAsyncState.Workspace, roslynClassificationTypes, defaultClassificationType, state.CancellationToken);
 			state.UserAsyncState.TagsList.Clear();
@@ -94,7 +96,7 @@ namespace dnSpy.Roslyn.Text.Tagging {
 
 		async Task Initialize(RoslynTaggerAsyncState state, ITextSnapshot snapshot, CancellationToken cancellationToken) {
 			var doc = snapshot.GetOpenDocumentInCurrentContextWithChanges();
-			if (doc == null)
+			if (doc is null)
 				return;
 			var syntaxRoot = await doc.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 			var semanticModel = await doc.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);

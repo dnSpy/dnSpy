@@ -31,8 +31,8 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 	sealed class ModuleBreakpointsToolWindowContentProvider : IToolWindowContentProvider {
 		readonly Lazy<IModuleBreakpointsContent> moduleBreakpointsContent;
 
-		public ModuleBreakpointsToolWindowContent ModuleBreakpointsToolWindowContent => moduleBreakpointsToolWindowContent ?? (moduleBreakpointsToolWindowContent = new ModuleBreakpointsToolWindowContent(moduleBreakpointsContent));
-		ModuleBreakpointsToolWindowContent moduleBreakpointsToolWindowContent;
+		public ModuleBreakpointsToolWindowContent ModuleBreakpointsToolWindowContent => moduleBreakpointsToolWindowContent ??= new ModuleBreakpointsToolWindowContent(moduleBreakpointsContent);
+		ModuleBreakpointsToolWindowContent? moduleBreakpointsToolWindowContent;
 
 		[ImportingConstructor]
 		ModuleBreakpointsToolWindowContentProvider(Lazy<IModuleBreakpointsContent> moduleBreakpointsContent) => this.moduleBreakpointsContent = moduleBreakpointsContent;
@@ -41,18 +41,18 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			get { yield return new ToolWindowContentInfo(ModuleBreakpointsToolWindowContent.THE_GUID, ModuleBreakpointsToolWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_MODULEBREAKPOINTS, false); }
 		}
 
-		public ToolWindowContent GetOrCreate(Guid guid) => guid == ModuleBreakpointsToolWindowContent.THE_GUID ? ModuleBreakpointsToolWindowContent : null;
+		public ToolWindowContent? GetOrCreate(Guid guid) => guid == ModuleBreakpointsToolWindowContent.THE_GUID ? ModuleBreakpointsToolWindowContent : null;
 	}
 
 	sealed class ModuleBreakpointsToolWindowContent : ToolWindowContent, IFocusable {
 		public static readonly Guid THE_GUID = new Guid("9D7D28F0-F031-4439-99BF-F7B747FA4B19");
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultHorizontal;
 
-		public override IInputElement FocusedElement => moduleBreakpointsContent.Value.FocusedElement;
-		public override FrameworkElement ZoomElement => moduleBreakpointsContent.Value.ZoomElement;
+		public override IInputElement? FocusedElement => moduleBreakpointsContent.Value.FocusedElement;
+		public override FrameworkElement? ZoomElement => moduleBreakpointsContent.Value.ZoomElement;
 		public override Guid Guid => THE_GUID;
 		public override string Title => dnSpy_Debugger_Resources.Window_ModuleBreakpoints;
-		public override object UIObject => moduleBreakpointsContent.Value.UIObject;
+		public override object? UIObject => moduleBreakpointsContent.Value.UIObject;
 		public bool CanFocus => true;
 
 		readonly Lazy<IModuleBreakpointsContent> moduleBreakpointsContent;

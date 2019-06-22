@@ -32,6 +32,6 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// </summary>
 		/// <param name="wpfHexView">Hex view</param>
 		/// <returns></returns>
-		public abstract HexKeyProcessor GetAssociatedProcessor(WpfHexView wpfHexView);
+		public abstract HexKeyProcessor? GetAssociatedProcessor(WpfHexView wpfHexView);
 	}
 }

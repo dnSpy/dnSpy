@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.Bookmarks.Navigator {
 		/// </summary>
 		/// <param name="bookmark">Bookmark</param>
 		/// <returns></returns>
-		public abstract BookmarkDocument GetDocument(Bookmark bookmark);
+		public abstract BookmarkDocument? GetDocument(Bookmark bookmark);
 	}
 
 	/// <summary>Metadata</summary>

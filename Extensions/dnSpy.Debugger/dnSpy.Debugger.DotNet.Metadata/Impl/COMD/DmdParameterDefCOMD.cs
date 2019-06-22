@@ -21,12 +21,12 @@ using System;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 	sealed class DmdParameterDefCOMD : DmdParameterDef {
-		public sealed override string Name { get; }
+		public sealed override string? Name { get; }
 		public sealed override DmdParameterAttributes Attributes { get; }
 
 		readonly DmdComMetadataReader reader;
 
-		public DmdParameterDefCOMD(DmdComMetadataReader reader, uint rid, string name, DmdParameterAttributes attributes, DmdMemberInfo member, int position, DmdType parameterType) : base(rid, member, position, parameterType) {
+		public DmdParameterDefCOMD(DmdComMetadataReader reader, uint rid, string? name, DmdParameterAttributes attributes, DmdMemberInfo member, int position, DmdType parameterType) : base(rid, member, position, parameterType) {
 			this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
 			reader.Dispatcher.VerifyAccess();
 			Name = name;// Null is allowed
@@ -35,14 +35,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 
 		T COMThread<T>(Func<T> action) => reader.Dispatcher.Invoke(action);
 
-		protected override (DmdCustomAttributeData[] cas, DmdMarshalType marshalType) CreateCustomAttributes() => COMThread(CreateCustomAttributes_COMThread);
-		(DmdCustomAttributeData[] cas, DmdMarshalType marshalType) CreateCustomAttributes_COMThread() {
+		protected override (DmdCustomAttributeData[]? cas, DmdMarshalType? marshalType) CreateCustomAttributes() => COMThread(CreateCustomAttributes_COMThread);
+		(DmdCustomAttributeData[]? cas, DmdMarshalType? marshalType) CreateCustomAttributes_COMThread() {
 			reader.Dispatcher.VerifyAccess();
 			var cas = reader.ReadCustomAttributesCore_COMThread((uint)MetadataToken);
 			var marshalType = reader.ReadFieldMarshalType_COMThread(MetadataToken, Member.Module, null);
 			return (cas, marshalType);
 		}
 
-		protected override (object rawDefaultValue, bool hasDefaultValue) CreateDefaultValue() => COMThread(() => reader.ReadParamConstant_COMThread(MetadataToken));
+		protected override (object? rawDefaultValue, bool hasDefaultValue) CreateDefaultValue() => COMThread(() => reader.ReadParamConstant_COMThread(MetadataToken));
 	}
 }

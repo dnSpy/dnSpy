@@ -43,7 +43,7 @@ namespace dnSpy.Hex.Commands {
 		}
 
 		public override HexCommandOperations GetCommandOperations(HexView hexView) {
-			if (hexView == null)
+			if (hexView is null)
 				throw new ArgumentNullException(nameof(hexView));
 			return hexView.Properties.GetOrCreateSingletonProperty(typeof(HexCommandOperations),
 				() => new HexCommandOperationsImpl(messageBoxService, hexEditorGroupFactoryService, hexBufferFileServiceFactory, hexView));

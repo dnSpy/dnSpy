@@ -32,7 +32,7 @@ namespace dnSpy.Text.Formatting {
 		TextAndAdornmentSequencerFactoryService(IViewTagAggregatorFactoryService viewTagAggregatorFactoryService) => this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
 
 		public ITextAndAdornmentSequencer Create(ITextView view) {
-			if (view == null)
+			if (view is null)
 				throw new ArgumentNullException(nameof(view));
 			return view.Properties.GetOrCreateSingletonProperty(typeof(ITextAndAdornmentSequencer), () => new TextAndAdornmentSequencer(view, viewTagAggregatorFactoryService.CreateTagAggregator<SpaceNegotiatingAdornmentTag>(view)));
 		}

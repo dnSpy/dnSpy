@@ -43,9 +43,9 @@ namespace dnSpy.AsmEditor.Commands {
 		}
 
 		public TypeNodeCreator(ModuleDocumentNode modNode, List<TypeDef> types) {
-			if (modNode == null)
+			if (modNode is null)
 				throw new ArgumentNullException(nameof(modNode));
-			if (types == null)
+			if (types is null)
 				throw new ArgumentNullException(nameof(types));
 			if (types.Count == 0)
 				throw new ArgumentException();
@@ -56,10 +56,10 @@ namespace dnSpy.AsmEditor.Commands {
 				if (tns != ns)
 					throw new ArgumentException();
 				// Can't be a nested type, and can't be part of a module yet
-				if (t.DeclaringType != null || t.Module != null)
+				if (!(t.DeclaringType is null) || !(t.Module is null))
 					throw new ArgumentException();
 			}
-			ownerList = modNode.Document.ModuleDef.Types;
+			ownerList = modNode.Document.ModuleDef!.Types;
 			nsNodeCreator = new NamespaceNodeCreator(ns, modNode);
 			typeNodes = types.Select(a => modNode.Context.DocumentTreeView.Create(a)).ToArray();
 		}

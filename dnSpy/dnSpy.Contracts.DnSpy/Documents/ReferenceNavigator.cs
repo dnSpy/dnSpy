@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.Documents {
 		/// </summary>
 		/// <param name="reference">Reference. MEF exported <see cref="ReferenceConverter"/>s can convert this to another reference.</param>
 		/// <param name="options">Options passed to <see cref="ReferenceNavigator"/>s, eg. <see cref="PredefinedReferenceNavigatorOptions"/></param>
-		public abstract void GoTo(object reference, object[] options = null);
+		public abstract void GoTo(object? reference, object[]? options = null);
 	}
 
 	/// <summary>
@@ -91,7 +91,7 @@ namespace dnSpy.Contracts.Documents {
 		/// This method is called on the UI thread.
 		/// </summary>
 		/// <param name="reference">Reference</param>
-		public abstract void Convert(ref object reference);
+		public abstract void Convert(ref object? reference);
 	}
 
 	/// <summary>Metadata</summary>

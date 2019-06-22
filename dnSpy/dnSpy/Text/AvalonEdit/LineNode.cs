@@ -31,7 +31,7 @@ namespace dnSpy.Text.AvalonEdit {
 	//	{
 	//		internal readonly DocumentLine documentLine;
 	partial class DocumentLine {
-		internal DocumentLine left, right, parent;
+		internal DocumentLine? left, right, parent;
 		internal bool color;
 		// optimization note: I tried packing color and isDeleted into a single byte field, but that
 		// actually increased the memory requirements. The JIT packs two bools and a byte (delimiterSize)
@@ -61,7 +61,7 @@ namespace dnSpy.Text.AvalonEdit {
 		internal LineNode LeftMost {
 			get {
 				LineNode node = this;
-				while (node.left != null)
+				while (!(node.left is null))
 					node = node.left;
 				return node;
 			}
@@ -70,7 +70,7 @@ namespace dnSpy.Text.AvalonEdit {
 		internal LineNode RightMost {
 			get {
 				LineNode node = this;
-				while (node.right != null)
+				while (!(node.right is null))
 					node = node.right;
 				return node;
 			}

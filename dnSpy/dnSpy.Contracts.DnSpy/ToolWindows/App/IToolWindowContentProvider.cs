@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.ToolWindows.App {
 		/// </summary>
 		/// <param name="guid">Guid, see <see cref="ToolWindowContent.Guid"/></param>
 		/// <returns></returns>
-		ToolWindowContent GetOrCreate(Guid guid);
+		ToolWindowContent? GetOrCreate(Guid guid);
 
 		/// <summary>
 		/// Gets the tool windows it can create

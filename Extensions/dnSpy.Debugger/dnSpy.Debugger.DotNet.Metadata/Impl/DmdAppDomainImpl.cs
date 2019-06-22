@@ -29,7 +29,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdRuntime Runtime => runtime;
 		public override int Id { get; }
 
-		public override DmdAssembly CorLib {
+		public override DmdAssembly? CorLib {
 			get {
 				lock (assembliesLockObj) {
 					// Assume that the first assembly is always the corlib. This is documented in DmdAppDomain.CreateAssembly()
@@ -99,9 +99,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		DmdMetadataReader CreateMetadataReader(DmdModuleImpl module, DmdLazyMetadataBytes lzmd) {
-			if (module == null)
+			if (module is null)
 				throw new ArgumentNullException(nameof(module));
-			if (lzmd == null)
+			if (lzmd is null)
 				throw new ArgumentNullException(nameof(lzmd));
 			try {
 				switch (lzmd) {
@@ -119,9 +119,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		public override DmdAssembly CreateAssembly(Func<DmdLazyMetadataBytes> getMetadata, DmdCreateAssemblyInfo assemblyInfo) {
-			if (getMetadata == null)
+			if (getMetadata is null)
 				throw new ArgumentNullException(nameof(getMetadata));
-			if (assemblyInfo.FullyQualifiedName == null || assemblyInfo.AssemblyLocation == null)
+			if (assemblyInfo.FullyQualifiedName is null || assemblyInfo.AssemblyLocation is null)
 				throw new ArgumentException();
 			var metadataReader = new DmdLazyMetadataReader(getMetadata, metadataReaderFactory);
 
@@ -140,14 +140,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		public override DmdModule CreateModule(DmdAssembly assembly, Func<DmdLazyMetadataBytes> getMetadata, bool isInMemory, bool isDynamic, string fullyQualifiedName) {
-			if (assembly == null)
+			if (assembly is null)
 				throw new ArgumentNullException(nameof(assembly));
-			if (getMetadata == null)
+			if (getMetadata is null)
 				throw new ArgumentNullException(nameof(getMetadata));
-			if (fullyQualifiedName == null)
+			if (fullyQualifiedName is null)
 				throw new ArgumentNullException(nameof(fullyQualifiedName));
 			var assemblyImpl = assembly as DmdAssemblyImpl;
-			if (assemblyImpl == null)
+			if (assemblyImpl is null)
 				throw new ArgumentException();
 			var metadataReader = new DmdLazyMetadataReader(getMetadata, metadataReaderFactory);
 			var module = new DmdModuleImpl(assemblyImpl, metadataReader, isInMemory, isDynamic, assemblyImpl.IsSynthetic, fullyQualifiedName);
@@ -157,12 +157,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		public override void Add(DmdAssembly assembly) {
-			if (assembly == null)
+			if (assembly is null)
 				throw new ArgumentNullException(nameof(assembly));
 			if (assembly.AppDomain != this)
 				throw new InvalidOperationException();
 			var assemblyImpl = assembly as DmdAssemblyImpl;
-			if (assemblyImpl == null)
+			if (assemblyImpl is null)
 				throw new InvalidOperationException();
 			AssemblyLoadedListener[] listeners;
 			lock (assembliesLockObj) {
@@ -176,19 +176,19 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		public override void Remove(DmdAssembly assembly) {
-			if (assembly == null)
+			if (assembly is null)
 				throw new ArgumentNullException(nameof(assembly));
 			if (assembly.AppDomain != this)
 				throw new InvalidOperationException();
 			var assemblyImpl = assembly as DmdAssemblyImpl;
-			if (assemblyImpl == null)
+			if (assemblyImpl is null)
 				throw new InvalidOperationException();
 			lock (assembliesLockObj) {
 				bool b = assemblies.Remove(assemblyImpl);
 				Debug.Assert(b);
 				assemblyImpl.IsLoadedInternal = false;
 
-				simpleNameToAssembly.Remove(assemblyImpl.GetName().Name);
+				simpleNameToAssembly.Remove(assemblyImpl.GetName().Name!);
 				assemblyNameToAssembly.Remove(assemblyImpl.GetName());
 			}
 
@@ -237,28 +237,28 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
-		public override DmdAssembly GetAssembly(string simpleName) {
-			if (simpleName == null)
+		public override DmdAssembly? GetAssembly(string simpleName) {
+			if (simpleName is null)
 				throw new ArgumentNullException(nameof(simpleName));
 			return GetAssemblyCore(simpleName, null);
 		}
 
-		public override DmdAssembly GetAssembly(IDmdAssemblyName name) {
-			if (name == null)
+		public override DmdAssembly? GetAssembly(IDmdAssemblyName name) {
+			if (name is null)
 				throw new ArgumentNullException(nameof(name));
-			return GetAssemblyCore(name.Name, name);
+			return GetAssemblyCore(name.Name ?? string.Empty, name);
 		}
 
 		static readonly Version zeroVersion = new Version(0, 0, 0, 0);
-		DmdAssembly GetAssemblyCore(string simpleName, IDmdAssemblyName name) {
-			bool onlySimpleName = name == null ||
-				((name.Version == null || name.Version == zeroVersion) && string.IsNullOrEmpty(name.CultureName) && (name.GetPublicKeyToken() ?? Array.Empty<byte>()).Length == 0);
+		DmdAssembly? GetAssemblyCore(string simpleName, IDmdAssemblyName? name) {
+			bool onlySimpleName = name is null ||
+				((name.Version is null || name.Version == zeroVersion) && string.IsNullOrEmpty(name.CultureName) && (name.GetPublicKeyToken() ?? Array.Empty<byte>()).Length == 0);
 			if (onlySimpleName)
 				name = null;
 
 			DmdAssemblyImpl[] assembliesCopy;
 			lock (assembliesLockObj) {
-				if (name != null) {
+				if (!(name is null)) {
 					if (assemblyNameToAssembly.TryGetValue(name, out var cached))
 						return cached;
 				}
@@ -272,9 +272,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 			var assembly = GetAssemblySlowCore(assembliesCopy, simpleName, name);
 
-			if (assembly != null) {
+			if (!(assembly is null)) {
 				lock (assembliesLockObj) {
-					if (name != null) {
+					if (!(name is null)) {
 						if (assemblyNameToAssembly.TryGetValue(name, out var cached))
 							return cached;
 						assemblyNameToAssembly[name.AsReadOnly()] = assembly;
@@ -299,8 +299,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return assembly;
 		}
 
-		static bool CanResolveToCorLib(IDmdAssemblyName name) {
-			if (name == null)
+		static bool CanResolveToCorLib(IDmdAssemblyName? name) {
+			if (name is null)
 				return false;
 			if (!string.IsNullOrEmpty(name.CultureName))
 				return false;
@@ -315,10 +315,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 		static readonly byte[] pkt = new byte[8] { 0xB0, 0x3F, 0x5F, 0x7F, 0x11, 0xD5, 0x0A, 0x3A };
 
-		static bool Equals(byte[] a, byte[] b) {
+		static bool Equals(byte[]? a, byte[]? b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (a.Length != b.Length)
 				return false;
@@ -329,7 +329,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return true;
 		}
 
-		DmdAssemblyImpl GetAssemblySlowCore(DmdAssemblyImpl[] assemblies, string simpleName, IDmdAssemblyName name) {
+		DmdAssemblyImpl? GetAssemblySlowCore(DmdAssemblyImpl[] assemblies, string simpleName, IDmdAssemblyName? name) {
 			// Try to avoid reading the metadata in case we're debugging a program with lots of assemblies.
 
 			// We first loop over all disk file assemblies since we can check simpleName without accessing metadata.
@@ -340,7 +340,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					continue;
 
 				// Access metadata (when calling GetName())
-				if (name == null || AssemblyNameEqualityComparer.Equals(assembly.GetName(), name))
+				if (name is null || AssemblyNameEqualityComparer.Equals(assembly.GetName(), name))
 					return assembly;
 			}
 
@@ -349,7 +349,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				if (!(assembly.IsInMemory || assembly.IsDynamic || assembly.AssemblySimpleName == string.Empty))
 					continue;
 
-				if (name == null) {
+				if (name is null) {
 					if (StringComparer.OrdinalIgnoreCase.Equals(simpleName, assembly.GetName().Name))
 						return assembly;
 				}
@@ -359,8 +359,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		DmdAssembly GetAssemblyByPath(string path) {
-			if (path == null)
+		DmdAssembly? GetAssemblyByPath(string path) {
+			if (path is null)
 				throw new ArgumentNullException(nameof(path));
 			lock (assembliesLockObj) {
 				// We don't check synthetic assemblies, caller wants real assemblies
@@ -396,15 +396,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				assemblyLoadedListeners.Remove(listener);
 		}
 
-		public override DmdAssembly Load(object context, IDmdAssemblyName name) {
-			if (name == null)
+		public override DmdAssembly? Load(object? context, IDmdAssemblyName name) {
+			if (name is null)
 				throw new ArgumentNullException(nameof(name));
 			var asm = GetAssembly(name);
-			if (asm != null)
+			if (!(asm is null))
 				return asm;
 
 			var assemblyType = GetWellKnownType(DmdWellKnownType.System_Reflection_Assembly);
-			var method = assemblyType.GetMethod("Load", assemblyType, new[] { System_String }, throwOnError: true);
+			var method = assemblyType.GetMethod("Load", assemblyType, new[] { System_String }, throwOnError: true)!;
 
 			// Load an assembly and then try to figure out which one of the 0 or more loaded assemblies
 			// is the one we want. This isn't guaranteed to succeed.
@@ -429,42 +429,42 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
-		public override DmdAssembly LoadFile(object context, string path) {
-			if (path == null)
+		public override DmdAssembly? LoadFile(object? context, string path) {
+			if (path is null)
 				throw new ArgumentNullException(nameof(path));
 			var asm = GetAssemblyByPath(path);
-			if (asm != null)
+			if (!(asm is null))
 				return asm;
 
 			var assemblyType = GetWellKnownType(DmdWellKnownType.System_Reflection_Assembly);
-			var method = assemblyType.GetMethod("LoadFile", assemblyType, new[] { System_String }, throwOnError: true);
+			var method = assemblyType.GetMethod("LoadFile", assemblyType, new[] { System_String }, throwOnError: true)!;
 			method.Invoke(context, null, new[] { path });
 			return GetAssemblyByPath(path);
 		}
 
-		public override DmdAssembly LoadFrom(object context, string assemblyFile) {
-			if (assemblyFile == null)
+		public override DmdAssembly? LoadFrom(object? context, string assemblyFile) {
+			if (assemblyFile is null)
 				throw new ArgumentNullException(nameof(assemblyFile));
 			var name = new DmdReadOnlyAssemblyName(assemblyFile);
 			var asm = GetAssembly(name) ?? GetAssemblyByPath(assemblyFile);
-			if (asm != null)
+			if (!(asm is null))
 				return asm;
 
 			var assemblyType = GetWellKnownType(DmdWellKnownType.System_Reflection_Assembly);
-			var method = assemblyType.GetMethod("LoadFrom", assemblyType, new[] { System_String }, throwOnError: true);
+			var method = assemblyType.GetMethod("LoadFrom", assemblyType, new[] { System_String }, throwOnError: true)!;
 			method.Invoke(context, null, new[] { name.ToString() });
 			return GetAssembly(name) ?? GetAssemblyByPath(assemblyFile);
 		}
 
-		internal override DmdType GetWellKnownType(DmdWellKnownType wellKnownType, bool isOptional, bool onlyCorLib) {
+		internal override DmdType? GetWellKnownType(DmdWellKnownType wellKnownType, bool isOptional, bool onlyCorLib) {
 			var type = wellKnownMemberResolver.GetWellKnownType(wellKnownType, onlyCorLib);
-			if ((object)type == null && !isOptional)
+			if (type is null && !isOptional)
 				throw new ResolveException("Couldn't resolve well known type: " + wellKnownType);
 			return type;
 		}
 
 		public override DmdType Intern(DmdType type, DmdMakeTypeOptions options) {
-			if ((object)type == null)
+			if (type is null)
 				throw new ArgumentNullException(nameof(type));
 			if (type.AppDomain != this)
 				throw new InvalidOperationException();
@@ -482,15 +482,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return res;
 		}
 
-		public override DmdType MakePointerType(DmdType elementType, IList<DmdCustomModifier> customModifiers, DmdMakeTypeOptions options) {
-			if ((object)elementType == null)
+		public override DmdType MakePointerType(DmdType elementType, IList<DmdCustomModifier>? customModifiers, DmdMakeTypeOptions options) {
+			if (elementType is null)
 				throw new ArgumentNullException(nameof(elementType));
 			if (elementType.AppDomain != this)
 				throw new InvalidOperationException();
 			var et = elementType as DmdTypeBase;
-			if ((object)et == null)
+			if (et is null)
 				throw new ArgumentException();
-			if (customModifiers != null) {
+			if (!(customModifiers is null)) {
 				for (int i = 0; i < customModifiers.Count; i++) {
 					if (customModifiers[i].Type.AppDomain != this)
 						throw new ArgumentException();
@@ -510,15 +510,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return res;
 		}
 
-		public override DmdType MakeByRefType(DmdType elementType, IList<DmdCustomModifier> customModifiers, DmdMakeTypeOptions options) {
-			if ((object)elementType == null)
+		public override DmdType MakeByRefType(DmdType elementType, IList<DmdCustomModifier>? customModifiers, DmdMakeTypeOptions options) {
+			if (elementType is null)
 				throw new ArgumentNullException(nameof(elementType));
 			if (elementType.AppDomain != this)
 				throw new InvalidOperationException();
 			var et = elementType as DmdTypeBase;
-			if ((object)et == null)
+			if (et is null)
 				throw new ArgumentException();
-			if (customModifiers != null) {
+			if (!(customModifiers is null)) {
 				for (int i = 0; i < customModifiers.Count; i++) {
 					if (customModifiers[i].Type.AppDomain != this)
 						throw new ArgumentException();
@@ -538,15 +538,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return res;
 		}
 
-		public override DmdType MakeArrayType(DmdType elementType, IList<DmdCustomModifier> customModifiers, DmdMakeTypeOptions options) {
-			if ((object)elementType == null)
+		public override DmdType MakeArrayType(DmdType elementType, IList<DmdCustomModifier>? customModifiers, DmdMakeTypeOptions options) {
+			if (elementType is null)
 				throw new ArgumentNullException(nameof(elementType));
 			if (elementType.AppDomain != this)
 				throw new InvalidOperationException();
 			var et = elementType as DmdTypeBase;
-			if ((object)et == null)
+			if (et is null)
 				throw new ArgumentException();
-			if (customModifiers != null) {
+			if (!(customModifiers is null)) {
 				for (int i = 0; i < customModifiers.Count; i++) {
 					if (customModifiers[i].Type.AppDomain != this)
 						throw new ArgumentException();
@@ -566,22 +566,22 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return res;
 		}
 
-		public override DmdType MakeArrayType(DmdType elementType, int rank, IList<int> sizes, IList<int> lowerBounds, IList<DmdCustomModifier> customModifiers, DmdMakeTypeOptions options) {
+		public override DmdType MakeArrayType(DmdType elementType, int rank, IList<int> sizes, IList<int> lowerBounds, IList<DmdCustomModifier>? customModifiers, DmdMakeTypeOptions options) {
 			// Allow 0, it's allowed in the MD
 			if (rank < 0)
 				throw new ArgumentOutOfRangeException(nameof(rank));
-			if ((object)elementType == null)
+			if (elementType is null)
 				throw new ArgumentNullException(nameof(elementType));
 			if (elementType.AppDomain != this)
 				throw new InvalidOperationException();
-			if (sizes == null)
+			if (sizes is null)
 				throw new ArgumentNullException(nameof(sizes));
-			if (lowerBounds == null)
+			if (lowerBounds is null)
 				throw new ArgumentNullException(nameof(lowerBounds));
 			var et = elementType as DmdTypeBase;
-			if ((object)et == null)
+			if (et is null)
 				throw new ArgumentException();
-			if (customModifiers != null) {
+			if (!(customModifiers is null)) {
 				for (int i = 0; i < customModifiers.Count; i++) {
 					if (customModifiers[i].Type.AppDomain != this)
 						throw new ArgumentException();
@@ -601,18 +601,18 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return res;
 		}
 
-		public override DmdType MakeGenericType(DmdType genericTypeDefinition, IList<DmdType> typeArguments, IList<DmdCustomModifier> customModifiers, DmdMakeTypeOptions options) {
-			if ((object)genericTypeDefinition == null)
+		public override DmdType MakeGenericType(DmdType genericTypeDefinition, IList<DmdType> typeArguments, IList<DmdCustomModifier>? customModifiers, DmdMakeTypeOptions options) {
+			if (genericTypeDefinition is null)
 				throw new ArgumentNullException(nameof(genericTypeDefinition));
 			if (genericTypeDefinition.AppDomain != this)
 				throw new InvalidOperationException();
-			if (typeArguments == null)
+			if (typeArguments is null)
 				throw new ArgumentNullException(nameof(typeArguments));
 			for (int i = 0; i < typeArguments.Count; i++) {
 				if (typeArguments[i].AppDomain != this)
 					throw new InvalidOperationException();
 			}
-			if (customModifiers != null) {
+			if (!(customModifiers is null)) {
 				for (int i = 0; i < customModifiers.Count; i++) {
 					if (customModifiers[i].Type.AppDomain != this)
 						throw new ArgumentException();
@@ -620,15 +620,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 
 			DmdTypeBase res;
-			DmdTypeDef gtDef;
+			DmdTypeDef? gtDef;
 			bool resolve = (options & DmdMakeTypeOptions.NoResolve) == 0;
 			if (resolve)
 				gtDef = genericTypeDefinition.Resolve() as DmdTypeDef;
 			else
 				gtDef = genericTypeDefinition as DmdTypeDef;
-			if ((object)gtDef == null) {
+			if (gtDef is null) {
 				var gtRef = genericTypeDefinition as DmdTypeRef;
-				if ((object)gtRef == null)
+				if (gtRef is null)
 					throw new ArgumentException();
 				if (resolve)
 					typeArguments = DmdTypeUtilities.FullResolve(typeArguments) ?? typeArguments;
@@ -636,7 +636,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 			else {
 				if (resolve)
-					gtDef = (DmdTypeDef)gtDef.FullResolve() ?? gtDef;
+					gtDef = (DmdTypeDef?)gtDef.FullResolve() ?? gtDef;
 				if (!gtDef.IsGenericTypeDefinition)
 					throw new ArgumentException();
 				if (gtDef.GetGenericArguments().Count != typeArguments.Count)
@@ -657,13 +657,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		public override DmdMethodInfo MakeGenericMethod(DmdMethodInfo genericMethodDefinition, IList<DmdType> typeArguments, DmdMakeTypeOptions options) {
-			if ((object)genericMethodDefinition == null)
+			if (genericMethodDefinition is null)
 				throw new ArgumentNullException(nameof(genericMethodDefinition));
 			if (genericMethodDefinition.AppDomain != this)
 				throw new ArgumentException();
 			if (!genericMethodDefinition.IsGenericMethodDefinition)
 				throw new ArgumentException();
-			if (typeArguments == null)
+			if (typeArguments is null)
 				throw new ArgumentNullException(nameof(typeArguments));
 			if (typeArguments.Count == 0)
 				throw new ArgumentException();
@@ -676,16 +676,16 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				throw new ArgumentException();
 
 			DmdMethodInfoBase res;
-			DmdMethodDef gmDef;
+			DmdMethodDef? gmDef;
 			bool resolve = (options & DmdMakeTypeOptions.NoResolve) == 0;
 			if (resolve)
 				gmDef = genericMethodDefinition.Resolve() as DmdMethodDef;
 			else
 				gmDef = genericMethodDefinition as DmdMethodDef;
 
-			if ((object)gmDef == null) {
+			if (gmDef is null) {
 				var gmRef = genericMethodDefinition as DmdMethodRef;
-				if ((object)gmRef == null)
+				if (gmRef is null)
 					throw new ArgumentException();
 				if (resolve)
 					typeArguments = DmdTypeUtilities.FullResolve(typeArguments) ?? typeArguments;
@@ -702,8 +702,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return res;
 		}
 
-		public override DmdType MakeFunctionPointerType(DmdMethodSignature methodSignature, IList<DmdCustomModifier> customModifiers, DmdMakeTypeOptions options) {
-			if ((object)methodSignature == null)
+		public override DmdType MakeFunctionPointerType(DmdMethodSignature methodSignature, IList<DmdCustomModifier>? customModifiers, DmdMakeTypeOptions options) {
+			if (methodSignature is null)
 				throw new ArgumentNullException(nameof(methodSignature));
 			if (methodSignature.ReturnType.AppDomain != this)
 				throw new ArgumentException();
@@ -717,7 +717,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				if (varArgsParameterTypes[i].AppDomain != this)
 					throw new ArgumentException();
 			}
-			if (customModifiers != null) {
+			if (!(customModifiers is null)) {
 				for (int i = 0; i < customModifiers.Count; i++) {
 					if (customModifiers[i].Type.AppDomain != this)
 						throw new ArgumentException();
@@ -735,14 +735,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return res;
 		}
 
-		public override DmdType MakeFunctionPointerType(DmdSignatureCallingConvention flags, int genericParameterCount, DmdType returnType, IList<DmdType> parameterTypes, IList<DmdType> varArgsParameterTypes, IList<DmdCustomModifier> customModifiers, DmdMakeTypeOptions options) {
+		public override DmdType MakeFunctionPointerType(DmdSignatureCallingConvention flags, int genericParameterCount, DmdType returnType, IList<DmdType> parameterTypes, IList<DmdType> varArgsParameterTypes, IList<DmdCustomModifier>? customModifiers, DmdMakeTypeOptions options) {
 			if (genericParameterCount < 0)
 				throw new ArgumentOutOfRangeException(nameof(genericParameterCount));
-			if ((object)returnType == null)
+			if (returnType is null)
 				throw new ArgumentNullException(nameof(returnType));
-			if (parameterTypes == null)
+			if (parameterTypes is null)
 				throw new ArgumentNullException(nameof(parameterTypes));
-			if (varArgsParameterTypes == null)
+			if (varArgsParameterTypes is null)
 				throw new ArgumentNullException(nameof(varArgsParameterTypes));
 			if (returnType.AppDomain != this)
 				throw new ArgumentException();
@@ -754,7 +754,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				if (varArgsParameterTypes[i].AppDomain != this)
 					throw new ArgumentException();
 			}
-			if (customModifiers != null) {
+			if (!(customModifiers is null)) {
 				for (int i = 0; i < customModifiers.Count; i++) {
 					if (customModifiers[i].Type.AppDomain != this)
 						throw new ArgumentException();
@@ -779,33 +779,33 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return res;
 		}
 
-		public override DmdType MakeGenericTypeParameter(int position, DmdType declaringType, string name, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier> customModifiers, DmdMakeTypeOptions options) {
+		public override DmdType MakeGenericTypeParameter(int position, DmdType declaringType, string name, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier>? customModifiers, DmdMakeTypeOptions options) {
 			if (position < 0)
 				throw new ArgumentOutOfRangeException(nameof(position));
-			if ((object)declaringType == null)
+			if (declaringType is null)
 				throw new ArgumentNullException(nameof(declaringType));
-			if (name == null)
+			if (name is null)
 				throw new ArgumentNullException(nameof(name));
-			if (customModifiers != null) {
+			if (!(customModifiers is null)) {
 				for (int i = 0; i < customModifiers.Count; i++) {
 					if (customModifiers[i].Type.AppDomain != this)
 						throw new ArgumentException();
 				}
 			}
 			var declTypeBase = declaringType as DmdTypeBase;
-			if ((object)declTypeBase == null)
+			if (declTypeBase is null)
 				throw new ArgumentException();
 			return new DmdGenericParameterTypeImpl(this, declTypeBase, name, position, attributes, customModifiers);
 		}
 
-		public override DmdType MakeGenericMethodParameter(int position, DmdMethodBase declaringMethod, string name, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier> customModifiers, DmdMakeTypeOptions options) {
+		public override DmdType MakeGenericMethodParameter(int position, DmdMethodBase declaringMethod, string name, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier>? customModifiers, DmdMakeTypeOptions options) {
 			if (position < 0)
 				throw new ArgumentOutOfRangeException(nameof(position));
-			if ((object)declaringMethod == null)
+			if (declaringMethod is null)
 				throw new ArgumentNullException(nameof(declaringMethod));
-			if (name == null)
+			if (name is null)
 				throw new ArgumentNullException(nameof(name));
-			if (customModifiers != null) {
+			if (!(customModifiers is null)) {
 				for (int i = 0; i < customModifiers.Count; i++) {
 					if (customModifiers[i].Type.AppDomain != this)
 						throw new ArgumentException();
@@ -823,15 +823,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				this.ignoreCase = ignoreCase;
 			}
 
-			public DmdTypeDef GetTypeDef(IDmdAssemblyName assemblyName, List<string> typeNames) {
+			public DmdTypeDef? GetTypeDef(IDmdAssemblyName? assemblyName, List<string> typeNames) {
 				if (typeNames.Count == 0)
 					return null;
-				DmdTypeDef type;
-				DmdTypeUtilities.SplitFullName(typeNames[0], out string @namespace, out string name);
-				if (assemblyName != null) {
-					var assembly = (DmdAssemblyImpl)appDomain.GetAssembly(assemblyName);
-					var module = assembly?.ManifestModule;
-					if (module == null)
+				DmdTypeDef? type;
+				DmdTypeUtilities.SplitFullName(typeNames[0], out var @namespace, out var name);
+				if (!(assemblyName is null)) {
+					var assembly = (DmdAssemblyImpl?)appDomain.GetAssembly(assemblyName);
+					if (!(assembly?.ManifestModule is DmdModule module))
 						return null;
 					var typeRef = new DmdParsedTypeRef(module, null, DmdTypeScope.Invalid, @namespace, name, null);
 					type = assembly.GetType(typeRef, ignoreCase);
@@ -840,35 +839,35 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					type = null;
 					foreach (DmdAssemblyImpl assembly in appDomain.GetAssemblies()) {
 						var module = assembly.ManifestModule;
-						if (module == null)
+						if (module is null)
 							continue;
 						var typeRef = new DmdParsedTypeRef(module, null, DmdTypeScope.Invalid, @namespace, name, null);
 						type = assembly.GetType(typeRef, ignoreCase);
-						if ((object)type != null)
+						if (!(type is null))
 							break;
 					}
 				}
-				if ((object)type == null)
+				if (type is null)
 					return null;
 				for (int i = 1; i < typeNames.Count; i++) {
 					var flags = DmdBindingFlags.Public | DmdBindingFlags.NonPublic;
 					if (ignoreCase)
 						flags |= DmdBindingFlags.IgnoreCase;
-					type = (DmdTypeDef)type.GetNestedType(typeNames[i], flags);
-					if ((object)type == null)
+					type = (DmdTypeDef?)type.GetNestedType(typeNames[i], flags);
+					if (type is null)
 						return null;
 				}
 				return type;
 			}
 		}
 
-		public override DmdType GetType(string typeName, DmdGetTypeOptions options) {
-			if (typeName == null)
+		public override DmdType? GetType(string typeName, DmdGetTypeOptions options) {
+			if (typeName is null)
 				throw new ArgumentNullException(nameof(typeName));
 
 			var resolver = new TypeDefResolver(this, (options & DmdGetTypeOptions.IgnoreCase) != 0);
 			var type = DmdTypeNameParser.Parse(resolver, typeName);
-			if ((object)type != null)
+			if (!(type is null))
 				return Intern(type, DmdMakeTypeOptions.NoResolve);
 
 			if ((options & DmdGetTypeOptions.ThrowOnError) != 0)
@@ -876,12 +875,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		internal DmdTypeDef Resolve(DmdTypeRef typeRef, bool throwOnError, bool ignoreCase) {
-			if ((object)typeRef == null)
+		internal DmdTypeDef? Resolve(DmdTypeRef typeRef, bool throwOnError, bool ignoreCase) {
+			if (typeRef is null)
 				throw new ArgumentNullException(nameof(typeRef));
 
 			var type = ResolveCore(typeRef, ignoreCase);
-			if ((object)type != null)
+			if (!(type is null))
 				return type;
 
 			if (throwOnError)
@@ -889,13 +888,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		DmdTypeDef ResolveCore(DmdTypeRef typeRef, bool ignoreCase) {
+		DmdTypeDef? ResolveCore(DmdTypeRef typeRef, bool ignoreCase) {
 			var nonNestedTypeRef = DmdTypeUtilities.GetNonNestedType(typeRef);
-			if ((object)nonNestedTypeRef == null)
+			if (nonNestedTypeRef is null)
 				return null;
 
-			DmdModule module;
-			DmdAssembly assembly;
+			DmdModule? module;
+			DmdAssembly? assembly;
 			var typeScope = nonNestedTypeRef.TypeScope;
 			switch (typeScope.Kind) {
 			case DmdTypeScopeKind.Invalid:
@@ -908,16 +907,16 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 			case DmdTypeScopeKind.ModuleRef:
 				assembly = GetAssembly((IDmdAssemblyName)typeScope.Data2);
-				if (assembly == null)
+				if (assembly is null)
 					return null;
 				module = assembly.GetModule((string)typeScope.Data);
-				if (module == null)
+				if (module is null)
 					return null;
 				return Lookup(module, typeRef, ignoreCase) ?? ResolveExportedType(new[] { module }, typeRef, ignoreCase);
 
 			case DmdTypeScopeKind.AssemblyRef:
 				assembly = GetAssembly((IDmdAssemblyName)typeScope.Data);
-				if (assembly == null)
+				if (assembly is null)
 					return null;
 				return Lookup(assembly, typeRef, ignoreCase) ?? ResolveExportedType(assembly.GetModules(), typeRef, ignoreCase);
 
@@ -926,24 +925,24 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
-		DmdTypeDef ResolveExportedType(DmdModule[] modules, DmdTypeRef typeRef, bool ignoreCase) {
+		DmdTypeDef? ResolveExportedType(DmdModule[] modules, DmdTypeRef typeRef, bool ignoreCase) {
 			for (int i = 0; i < 30; i++) {
 				var exportedType = FindExportedType(modules, typeRef, ignoreCase);
-				if ((object)exportedType == null)
+				if (exportedType is null)
 					return null;
 
 				var nonNested = DmdTypeUtilities.GetNonNestedType(exportedType);
-				if ((object)nonNested == null)
+				if (nonNested is null)
 					return null;
 				var typeScope = nonNested.TypeScope;
 				if (typeScope.Kind != DmdTypeScopeKind.AssemblyRef)
 					return null;
 				var etAsm = GetAssembly((IDmdAssemblyName)typeScope.Data);
-				if (etAsm == null)
+				if (etAsm is null)
 					return null;
 
 				var td = Lookup(etAsm, typeRef, ignoreCase);
-				if ((object)td != null)
+				if (!(td is null))
 					return td;
 
 				modules = etAsm.GetModules();
@@ -952,7 +951,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		DmdTypeRef FindExportedType(IList<DmdModule> modules, DmdTypeRef typeRef, bool ignoreCase) {
+		DmdTypeRef? FindExportedType(IList<DmdModule> modules, DmdTypeRef typeRef, bool ignoreCase) {
 			foreach (var module in modules) {
 				Dictionary<DmdType, DmdTypeRef> dict;
 				do {
@@ -987,54 +986,54 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return null;
 		}
 
-		internal DmdTypeDef TryLookup(DmdAssemblyImpl assembly, DmdTypeRef typeRef, bool ignoreCase) =>
+		internal DmdTypeDef? TryLookup(DmdAssemblyImpl assembly, DmdTypeRef typeRef, bool ignoreCase) =>
 			Lookup(assembly, typeRef, ignoreCase) ?? ResolveExportedType(assembly.GetModules(), typeRef, ignoreCase);
 
-		internal DmdTypeDef TryLookup(DmdModuleImpl module, DmdTypeRef typeRef, bool ignoreCase) =>
+		internal DmdTypeDef? TryLookup(DmdModuleImpl module, DmdTypeRef typeRef, bool ignoreCase) =>
 			Lookup(module, typeRef, ignoreCase) ?? ResolveExportedType(new[] { module }, typeRef, ignoreCase);
 
-		DmdTypeDef Lookup(DmdAssembly assembly, DmdTypeRef typeRef, bool ignoreCase) {
+		DmdTypeDef? Lookup(DmdAssembly assembly, DmdTypeRef typeRef, bool ignoreCase) {
 			// Most likely it's in the manifest module so we don't have to alloc an array (GetModules())
 			var manifestModule = assembly.ManifestModule;
-			if (manifestModule == null)
+			if (manifestModule is null)
 				return null;
 			var type = Lookup(manifestModule, typeRef, ignoreCase);
-			if ((object)type != null)
+			if (!(type is null))
 				return type;
 
 			foreach (var module in assembly.GetModules()) {
 				if (manifestModule == module)
 					continue;
 				type = Lookup(module, typeRef, ignoreCase);
-				if ((object)type != null)
+				if (!(type is null))
 					return type;
 			}
 			return null;
 		}
 
 		void DmdMetadataReader_TypesUpdated(DmdModule module, DmdTypesUpdatedEventArgs e) {
-			var types = new DmdTypeDef[e.Tokens.Length];
+			var types = new DmdTypeDef?[e.Tokens.Length];
 			for (int i = 0; i < types.Length; i++)
 				types[i] = module.ResolveType((int)e.Tokens[i], DmdResolveOptions.None) as DmdTypeDef;
 
 			lock (moduleTypeLockObj) {
 				((DmdModuleImpl)module).DynamicModuleVersionInternal++;
-				Dictionary<DmdType, DmdTypeDef> dict1 = null, dict2 = null;
+				Dictionary<DmdType, DmdTypeDef>? dict1 = null, dict2 = null;
 				toModuleTypeDictIgnoreCase?.TryGetValue(module, out dict1);
 				toModuleTypeDict?.TryGetValue(module, out dict2);
-				Debug.Assert(dict1 != null || dict2 != null);
+				Debug.Assert(!(dict1 is null) || !(dict2 is null));
 				foreach (var type in types) {
-					if ((object)type == null)
+					if (type is null)
 						continue;
-					if (dict1 != null)
+					if (!(dict1 is null))
 						dict1[type] = type;
-					if (dict2 != null)
+					if (!(dict2 is null))
 						dict2[type] = type;
 				}
 			}
 		}
 
-		DmdTypeDef Lookup(DmdModule module, DmdTypeRef typeRef, bool ignoreCase) {
+		DmdTypeDef? Lookup(DmdModule module, DmdTypeRef typeRef, bool ignoreCase) {
 			Dictionary<DmdType, DmdTypeDef> dict;
 			do {
 				lock (moduleTypeLockObj) {
@@ -1079,21 +1078,21 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		internal DmdType[] GetSZArrayInterfaces(DmdType elementType) {
 			var ifaces = defaultExistingWellKnownSZArrayInterfaces;
-			if (ifaces == null) {
-				Debug.Assert(CorLib != null, "CorLib hasn't been loaded yet!");
-				if (CorLib == null)
+			if (ifaces is null) {
+				Debug.Assert(!(CorLib is null), "CorLib hasn't been loaded yet!");
+				if (CorLib is null)
 					return Array.Empty<DmdType>();
-				var list = ObjectPools.AllocListOfType();
+				List<DmdType>? list = ObjectPools.AllocListOfType();
 				foreach (var wellKnownType in possibleWellKnownSZArrayInterfaces) {
 					// These interfaces should only be in corlib since the CLR needs them.
 					// They're not always present so if we fail to find a type in the corlib, we don't
 					// want to search the remaining assemblies (could be hundreds of assemblies).
 					var iface = GetWellKnownType(wellKnownType, isOptional: true, onlyCorLib: true);
-					if ((object)iface != null)
+					if (!(iface is null))
 						list.Add(iface);
 				}
 				Interlocked.CompareExchange(ref defaultExistingWellKnownSZArrayInterfaces, ObjectPools.FreeAndToArray(ref list), null);
-				ifaces = defaultExistingWellKnownSZArrayInterfaces;
+				ifaces = defaultExistingWellKnownSZArrayInterfaces!;
 			}
 			var res = new DmdType[ifaces.Length];
 			var typeArguments = new[] { elementType };
@@ -1101,7 +1100,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				res[i] = MakeGenericType(ifaces[i], typeArguments, null, DmdMakeTypeOptions.None);
 			return res;
 		}
-		volatile DmdType[] defaultExistingWellKnownSZArrayInterfaces;
+		volatile DmdType[]? defaultExistingWellKnownSZArrayInterfaces;
 		static readonly DmdWellKnownType[] possibleWellKnownSZArrayInterfaces = new DmdWellKnownType[] {
 			// Available since .NET Framework 2.0
 			DmdWellKnownType.System_Collections_Generic_IList_T,
@@ -1111,40 +1110,40 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			DmdWellKnownType.System_Collections_Generic_IReadOnlyCollection_T,
 		};
 
-		public override object CreateInstance(object context, DmdConstructorInfo ctor, object[] parameters) {
-			if ((object)ctor == null)
+		public override object? CreateInstance(object? context, DmdConstructorInfo ctor, object?[] parameters) {
+			if (ctor is null)
 				throw new ArgumentNullException(nameof(ctor));
 			if (ctor.IsStatic)
 				throw new ArgumentException();
 			if (ctor.AppDomain != this)
 				throw new ArgumentException();
-			return runtime.Evaluator.CreateInstance(context, ctor, parameters ?? Array.Empty<object>());
+			return runtime.Evaluator.CreateInstance(context, ctor, parameters ?? Array.Empty<object?>());
 		}
 
-		public override object Invoke(object context, DmdMethodBase method, object obj, object[] parameters) {
-			if ((object)method == null)
+		public override object? Invoke(object? context, DmdMethodBase method, object? obj, object?[]? parameters) {
+			if (method is null)
 				throw new ArgumentNullException(nameof(method));
-			if (method.IsStatic != (obj == null))
+			if (method.IsStatic != (obj is null))
 				throw new ArgumentException();
 			if (method.AppDomain != this)
 				throw new ArgumentException();
-			return runtime.Evaluator.Invoke(context, method, obj, parameters ?? Array.Empty<object>());
+			return runtime.Evaluator.Invoke(context, method, obj, parameters ?? Array.Empty<object?>());
 		}
 
-		public override object LoadField(object context, DmdFieldInfo field, object obj) {
-			if ((object)field == null)
+		public override object? LoadField(object? context, DmdFieldInfo field, object? obj) {
+			if (field is null)
 				throw new ArgumentNullException(nameof(field));
-			if (field.IsStatic != (obj == null))
+			if (field.IsStatic != (obj is null))
 				throw new ArgumentException();
 			if (field.AppDomain != this)
 				throw new ArgumentException();
 			return runtime.Evaluator.LoadField(context, field, obj);
 		}
 
-		public override void StoreField(object context, DmdFieldInfo field, object obj, object value) {
-			if ((object)field == null)
+		public override void StoreField(object? context, DmdFieldInfo field, object? obj, object? value) {
+			if (field is null)
 				throw new ArgumentNullException(nameof(field));
-			if (field.IsStatic != (obj == null))
+			if (field.IsStatic != (obj is null))
 				throw new ArgumentException();
 			if (field.AppDomain != this)
 				throw new ArgumentException();

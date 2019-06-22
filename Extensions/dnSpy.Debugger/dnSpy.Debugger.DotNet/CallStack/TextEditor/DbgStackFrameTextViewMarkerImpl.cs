@@ -47,16 +47,16 @@ namespace dnSpy.Debugger.DotNet.CallStack.TextEditor {
 				yield break;
 
 			var docViewer = textView.TextBuffer.TryGetDocumentViewer();
-			if (docViewer == null)
+			if (docViewer is null)
 				yield break;
 
 			var methodDebugService = docViewer.TryGetMethodDebugService();
-			if (methodDebugService == null)
+			if (methodDebugService is null)
 				yield break;
 
 			var snapshot = spans[0].Snapshot;
-			MethodDef method = null;
-			List<uint> ilOffsets = null;
+			MethodDef? method = null;
+			List<uint>? ilOffsets = null;
 			foreach (var span in spans) {
 				foreach (var info in methodDebugService.GetStatementsByTextSpan(span.Span)) {
 					if (info.Method != method) {
@@ -65,7 +65,7 @@ namespace dnSpy.Debugger.DotNet.CallStack.TextEditor {
 						if (!activeStatements.TryGetValue(moduleTokenId, out ilOffsets))
 							continue;
 					}
-					else if (ilOffsets == null)
+					else if (ilOffsets is null)
 						continue;
 					var textSpan = info.Statement.TextSpan;
 					if (textSpan.End > snapshot.Length)

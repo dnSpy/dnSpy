@@ -48,9 +48,9 @@ namespace dnSpy.Debugger.Impl {
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 		}
 
-		internal void UpdateName_DbgThread(string name) {
+		internal void UpdateName_DbgThread(string? name) {
 			Dispatcher.VerifyAccess();
-			if (this.name != name) {
+			if (this.name != name && !(name is null)) {
 				this.name = name;
 				OnPropertyChanged(nameof(Name));
 			}

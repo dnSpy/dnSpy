@@ -21,11 +21,11 @@ using System;
 using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
-	sealed class CorFunctionBreakpoint : COMObject<ICorDebugFunctionBreakpoint>, IEquatable<CorFunctionBreakpoint> {
-		public CorFunction Function {
+	sealed class CorFunctionBreakpoint : COMObject<ICorDebugFunctionBreakpoint>, IEquatable<CorFunctionBreakpoint?> {
+		public CorFunction? Function {
 			get {
 				int hr = obj.GetFunction(out var func);
-				return hr < 0 || func == null ? null : new CorFunction(func);
+				return hr < 0 || func is null ? null : new CorFunction(func);
 			}
 		}
 
@@ -49,17 +49,8 @@ namespace dndbg.Engine {
 				offset = 0;
 		}
 
-		public static bool operator ==(CorFunctionBreakpoint a, CorFunctionBreakpoint b) {
-			if (ReferenceEquals(a, b))
-				return true;
-			if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
-				return false;
-			return a.Equals(b);
-		}
-
-		public static bool operator !=(CorFunctionBreakpoint a, CorFunctionBreakpoint b) => !(a == b);
-		public bool Equals(CorFunctionBreakpoint other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
-		public override bool Equals(object obj) => Equals(obj as CorFunctionBreakpoint);
+		public bool Equals(CorFunctionBreakpoint? other) => !(other is null) && RawObject == other.RawObject;
+		public override bool Equals(object? obj) => Equals(obj as CorFunctionBreakpoint);
 		public override int GetHashCode() => RawObject.GetHashCode();
 		public override string ToString() => $"[FunctionBreakpoint] Enabled={(IsActive ? 1 : 0)}, Offset={Offset:X4} Method={Function}";
 	}

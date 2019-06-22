@@ -20,6 +20,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
@@ -29,7 +31,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the custom attribute type
 		/// </summary>
-		public DmdType AttributeType => Constructor.DeclaringType;
+		public DmdType AttributeType => Constructor.DeclaringType!;
 
 		/// <summary>
 		/// Gets the custom attribute constructor
@@ -58,7 +60,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="constructorArguments">Constructor arguments or null</param>
 		/// <param name="namedArguments">Custom attribute named arguments (fields and properties) or null</param>
 		/// <param name="isPseudoCustomAttribute">true if this custom attribute was not part of the #Blob but created from some other info</param>
-		public DmdCustomAttributeData(DmdConstructorInfo constructor, IList<DmdCustomAttributeTypedArgument> constructorArguments, IList<DmdCustomAttributeNamedArgument> namedArguments, bool isPseudoCustomAttribute) {
+		public DmdCustomAttributeData(DmdConstructorInfo constructor, IList<DmdCustomAttributeTypedArgument>? constructorArguments, IList<DmdCustomAttributeNamedArgument>? namedArguments, bool isPseudoCustomAttribute) {
 			Constructor = constructor ?? throw new ArgumentNullException(nameof(constructor));
 			ConstructorArguments = ReadOnlyCollectionHelpers.Create(constructorArguments);
 			NamedArguments = ReadOnlyCollectionHelpers.Create(namedArguments);
@@ -70,7 +72,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <returns></returns>
 		public override string ToString() {
-			var sb = ObjectPools.AllocStringBuilder();
+			StringBuilder? sb = ObjectPools.AllocStringBuilder();
 			sb.Append('[');
 			sb.Append(AttributeType.FullName);
 			sb.Append('(');
@@ -104,22 +106,22 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the argument value
 		/// </summary>
-		public object Value { get; }
+		public object? Value { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="argumentType">Argument type</param>
 		/// <param name="value">Argument value</param>
-		public DmdCustomAttributeTypedArgument(DmdType argumentType, object value) {
+		public DmdCustomAttributeTypedArgument(DmdType argumentType, object? value) {
 			VerifyValue(value);
 			ArgumentType = argumentType ?? throw new ArgumentNullException(nameof(argumentType));
 			Value = value;
 		}
 
 		[Conditional("DEBUG")]
-		static void VerifyValue(object value) {
-			if (value == null || value is DmdType || value is IList<DmdCustomAttributeTypedArgument>)
+		static void VerifyValue(object? value) {
+			if (value is null || value is DmdType || value is IList<DmdCustomAttributeTypedArgument>)
 				return;
 			switch (Type.GetTypeCode(value.GetType())) {
 			case TypeCode.Boolean:
@@ -147,7 +149,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public override string ToString() => ToString(false);
 
 		internal string ToString(bool typed) {
-			if (Value == null)
+			if (Value is null)
 				return typed ? "null" : "(" + ArgumentType?.Name + ")null";
 			if (ArgumentType.IsEnum)
 				return typed ? Value.ToString() : "(" + ArgumentType.FullName + ")" + Value.ToString();
@@ -159,8 +161,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				return "typeof(" + type.FullName + ")";
 			if (ArgumentType.IsArray) {
 				var list = (IList<DmdCustomAttributeTypedArgument>)Value;
-				var elementType = ArgumentType.GetElementType();
-				var sb = ObjectPools.AllocStringBuilder();
+				var elementType = ArgumentType.GetElementType()!;
+				StringBuilder? sb = ObjectPools.AllocStringBuilder();
 				sb.Append("new ");
 				sb.Append(elementType.IsEnum ? elementType.FullName : elementType.Name);
 				sb.Append('[');
@@ -194,7 +196,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is DmdCustomAttributeTypedArgument other && Equals(other);
+		public override bool Equals(object? obj) => obj is DmdCustomAttributeTypedArgument other && Equals(other);
 
 		/// <summary>
 		/// GetHashCode()
@@ -232,8 +234,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="memberInfo">A property or a field</param>
 		/// <param name="typedArgument"></param>
-		public DmdCustomAttributeNamedArgument(DmdMemberInfo memberInfo, DmdCustomAttributeTypedArgument typedArgument) {
-			if ((object)typedArgument.ArgumentType == null)
+		public DmdCustomAttributeNamedArgument([EnsuresNotNull] DmdMemberInfo? memberInfo, DmdCustomAttributeTypedArgument typedArgument) {
+			if (typedArgument.ArgumentType is null)
 				throw new ArgumentException();
 			MemberInfo = memberInfo ?? throw new ArgumentNullException(nameof(memberInfo));
 			TypedValue = typedArgument;
@@ -256,7 +258,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is DmdCustomAttributeNamedArgument other && Equals(other);
+		public override bool Equals(object? obj) => obj is DmdCustomAttributeNamedArgument other && Equals(other);
 
 		/// <summary>
 		/// GetHashCode()
@@ -269,7 +271,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <returns></returns>
 		public override string ToString() {
-			if ((object)MemberInfo == null)
+			if (MemberInfo is null)
 				return base.ToString();
 			var argType = MemberInfo is DmdFieldInfo field ? field.FieldType : MemberInfo is DmdPropertyInfo property ? property.PropertyType : null;
 			return MemberInfo.Name + " = " + TypedValue.ToString(argType != MemberInfo.AppDomain.System_Object);

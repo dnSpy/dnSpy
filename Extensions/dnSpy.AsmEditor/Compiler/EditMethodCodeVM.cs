@@ -53,7 +53,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			state.CancellationToken.ThrowIfCancellationRequested();
 
 			var type = methodToEdit.DeclaringType;
-			while (type.DeclaringType != null)
+			while (!(type.DeclaringType is null))
 				type = type.DeclaringType;
 
 			DecompileTypeMethods options;
@@ -81,6 +81,6 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		protected override void Import(ModuleImporter importer, CompilationResult result) =>
-			importer.Import(result.RawFile, result.DebugFile, methodToEdit);
+			importer.Import(result.RawFile!, result.DebugFile, methodToEdit);
 	}
 }

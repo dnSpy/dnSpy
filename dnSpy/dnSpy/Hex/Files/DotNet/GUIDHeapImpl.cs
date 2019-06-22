@@ -23,14 +23,14 @@ using dnSpy.Contracts.Hex.Files.DotNet;
 
 namespace dnSpy.Hex.Files.DotNet {
 	sealed class GUIDHeapImpl : GUIDHeap, IDotNetHeap {
-		public override DotNetMetadataHeaders Metadata => metadata;
-		DotNetMetadataHeaders metadata;
+		public override DotNetMetadataHeaders Metadata => metadata!;
+		DotNetMetadataHeaders? metadata;
 
 		public GUIDHeapImpl(HexBufferSpan span)
 			: base(span) {
 		}
 
-		public override ComplexData GetStructure(HexPosition position) {
+		public override ComplexData? GetStructure(HexPosition position) {
 			if (!Span.Contains(position))
 				return null;
 			uint index = (uint)((position - Span.Span.Start).ToUInt64() / 16);

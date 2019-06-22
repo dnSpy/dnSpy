@@ -39,41 +39,41 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			Attributes = (DmdEventAttributes)row.EventFlags;
 			if (!CodedToken.TypeDefOrRef.Decode(row.EventType, out uint token))
 				token = uint.MaxValue;
-			EventHandlerType = reader.ResolveType((int)token, DeclaringType.GetGenericArguments(), null, DmdResolveOptions.None) ?? reader.Module.AppDomain.System_Void;
+			EventHandlerType = reader.ResolveType((int)token, DeclaringType!.GetGenericArguments(), null, DmdResolveOptions.None) ?? reader.Module.AppDomain.System_Void;
 		}
 
-		protected override void GetMethods(out DmdMethodInfo addMethod, out DmdMethodInfo removeMethod, out DmdMethodInfo raiseMethod, out DmdMethodInfo[] otherMethods) {
+		protected override void GetMethods(out DmdMethodInfo? addMethod, out DmdMethodInfo? removeMethod, out DmdMethodInfo? raiseMethod, out DmdMethodInfo[]? otherMethods) {
 			addMethod = null;
 			removeMethod = null;
 			raiseMethod = null;
-			List<DmdMethodInfo> otherMethodsList = null;
+			List<DmdMethodInfo>? otherMethodsList = null;
 
 			var ridList = reader.Metadata.GetMethodSemanticsRidList(Table.Event, Rid);
 			for (int i = 0; i < ridList.Count; i++) {
 				if (!reader.TablesStream.TryReadMethodSemanticsRow(ridList[i], out var row))
 					continue;
-				var method = ReflectedType.GetMethod(Module, 0x06000000 + (int)row.Method) as DmdMethodInfo;
-				if ((object)method == null)
+				var method = ReflectedType!.GetMethod(Module, 0x06000000 + (int)row.Method) as DmdMethodInfo;
+				if (method is null)
 					continue;
 
 				switch ((MethodSemanticsAttributes)row.Semantic) {
 				case MethodSemanticsAttributes.AddOn:
-					if ((object)addMethod == null)
+					if (addMethod is null)
 						addMethod = method;
 					break;
 
 				case MethodSemanticsAttributes.RemoveOn:
-					if ((object)removeMethod == null)
+					if (removeMethod is null)
 						removeMethod = method;
 					break;
 
 				case MethodSemanticsAttributes.Fire:
-					if ((object)raiseMethod == null)
+					if (raiseMethod is null)
 						raiseMethod = method;
 					break;
 
 				case MethodSemanticsAttributes.Other:
-					if (otherMethodsList == null)
+					if (otherMethodsList is null)
 						otherMethodsList = new List<DmdMethodInfo>();
 					otherMethodsList.Add(method);
 					break;

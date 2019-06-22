@@ -47,7 +47,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <param name="name">Name of resource</param>
 		/// <param name="typeCode">Type code</param>
 		/// <param name="userTypeName">User type or null if it's not a <see cref="ResourceTypeCode.UserTypes"/></param>
-		public MultiResourceInfo(string name, ResourceTypeCode typeCode, string userTypeName) {
+		public MultiResourceInfo(string name, ResourceTypeCode typeCode, string? userTypeName) {
 			Name = name ?? throw new ArgumentNullException(nameof(name));
 			TypeCode = typeCode;
 			UserTypeName = userTypeName ?? string.Empty;

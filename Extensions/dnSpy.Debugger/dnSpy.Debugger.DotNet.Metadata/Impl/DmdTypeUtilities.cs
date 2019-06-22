@@ -30,20 +30,20 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return true;
 		}
 
-		public static IList<DmdType> FullResolve(IList<DmdType> list) {
+		public static IList<DmdType>? FullResolve(IList<DmdType> list) {
 			if (IsFullyResolved(list))
 				return list;
 			var res = new DmdType[list.Count];
 			for (int i = 0; i < res.Length; i++) {
 				var type = ((DmdTypeBase)list[i]).FullResolve();
-				if ((object)type == null)
+				if (type is null)
 					return null;
 				res[i] = type;
 			}
 			return res;
 		}
 
-		public static void SplitFullName(string fullName, out string @namespace, out string name) {
+		public static void SplitFullName(string fullName, out string? @namespace, out string name) {
 			int index = fullName.LastIndexOf('.');
 			if (index < 0) {
 				@namespace = null;
@@ -55,19 +55,25 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
-		public static DmdType GetNonNestedType(DmdType typeRef) {
+		public static DmdType? GetNonNestedType(DmdType typeRef) {
 			for (int i = 0; i < 1000; i++) {
 				var next = typeRef.DeclaringType;
-				if ((object)next == null)
+				if (next is null)
 					return typeRef;
 				typeRef = next;
 			}
 			return null;
 		}
 
-		public static DmdType[] ToDmdType(this IList<Type> types, DmdAppDomain appDomain) {
-			if (types == null)
+		public static DmdType[]? ToDmdType(this IList<Type>? types, DmdAppDomain appDomain) {
+			if (types is null)
 				return null;
+			return ToDmdTypeNoNull(types, appDomain);
+		}
+
+		public static DmdType[] ToDmdTypeNoNull(this IList<Type> types, DmdAppDomain appDomain) {
+			if (types is null)
+				throw new ArgumentNullException(nameof(types));
 			if (types.Count == 0)
 				return Array.Empty<DmdType>();
 			var newTypes = new DmdType[types.Count];
@@ -76,9 +82,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return newTypes;
 		}
 
-		public static DmdType ToDmdType(Type type, DmdAppDomain appDomain) {
-			if ((object)type == null)
+		public static DmdType? ToDmdType(Type? type, DmdAppDomain appDomain) {
+			if (type is null)
 				return null;
+			return appDomain.GetTypeThrow(type);
+		}
+
+		public static DmdType ToDmdTypeNoNull(Type type, DmdAppDomain appDomain) {
+			if (type is null)
+				throw new ArgumentNullException(nameof(type));
 			return appDomain.GetTypeThrow(type);
 		}
 	}

@@ -35,11 +35,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		public override DbgEngineRuntimeInfo RuntimeInfo {
 			get {
-				Debug.Assert(runtimeInfo != null);
+				Debug.Assert(!(runtimeInfo is null));
 				return runtimeInfo;
 			}
 		}
-		DbgEngineRuntimeInfo runtimeInfo;
+		DbgEngineRuntimeInfo? runtimeInfo;
 
 		public DotNetFrameworkDbgEngineImpl(DbgEngineImplDependencies deps, DbgManager dbgManager, DbgStartKind startKind)
 			: base(deps, dbgManager, startKind) {
@@ -62,7 +62,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	sealed class DotNetFrameworkRuntimeId : RuntimeId {
 		readonly string version;
 		public DotNetFrameworkRuntimeId(string version) => this.version = version;
-		public override bool Equals(object obj) => obj is DotNetFrameworkRuntimeId other && StringComparer.Ordinal.Equals(version, other.version);
+		public override bool Equals(object? obj) => obj is DotNetFrameworkRuntimeId other && StringComparer.Ordinal.Equals(version, other.version);
 		public override int GetHashCode() => StringComparer.Ordinal.GetHashCode(version);
 	}
 }

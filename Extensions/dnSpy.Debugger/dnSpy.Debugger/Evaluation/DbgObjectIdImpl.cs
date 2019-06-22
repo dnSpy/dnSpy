@@ -42,7 +42,7 @@ namespace dnSpy.Debugger.Evaluation {
 		}
 
 		public override DbgValue GetValue(DbgEvaluationInfo evalInfo) {
-			if (evalInfo == null)
+			if (evalInfo is null)
 				throw new ArgumentNullException(nameof(evalInfo));
 			if (!(evalInfo.Context is DbgEvaluationContextImpl))
 				throw new ArgumentException();

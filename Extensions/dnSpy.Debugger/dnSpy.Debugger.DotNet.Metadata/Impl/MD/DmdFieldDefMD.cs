@@ -35,17 +35,17 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			Debug.Assert(b);
 			Attributes = (DmdFieldAttributes)row.Flags;
 			Name = reader.StringsStream.ReadNoNull(row.Name);
-			FieldType = reader.ReadFieldType(row.Signature, DeclaringType.GetGenericArguments());
+			FieldType = reader.ReadFieldType(row.Signature, DeclaringType!.GetGenericArguments());
 			if (HasFieldRVA) {
 				reader.TablesStream.TryReadFieldRVARow(reader.Metadata.GetFieldRVARid(rid), out var rvaRow);
 				FieldRVA = rvaRow.RVA;
 			}
 		}
 
-		public sealed override object GetRawConstantValue() => reader.ReadConstant(MetadataToken).value;
+		public sealed override object? GetRawConstantValue() => reader.ReadConstant(MetadataToken).value;
 
-		protected override (DmdCustomAttributeData[] cas, uint? fieldOffset, DmdMarshalType marshalType) CreateCustomAttributes() {
-			var marshalType = reader.ReadMarshalType(MetadataToken, ReflectedType.Module, null);
+		protected override (DmdCustomAttributeData[] cas, uint? fieldOffset, DmdMarshalType? marshalType) CreateCustomAttributes() {
+			var marshalType = reader.ReadMarshalType(MetadataToken, ReflectedType!.Module, null);
 			var cas = reader.ReadCustomAttributes(MetadataToken);
 			uint? fieldOffset;
 			if (reader.TablesStream.TryReadFieldLayoutRow(reader.Metadata.GetFieldLayoutRid(Rid), out var row))

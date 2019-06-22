@@ -26,8 +26,8 @@ using dnSpy.Contracts.ToolWindows.App;
 
 namespace dnSpy.Scripting.Roslyn.Common {
 	abstract class ScriptToolWindowContentProvider : IToolWindowContentProvider {
-		public ScriptToolWindowContent ScriptToolWindowContent => scriptToolWindowContent ?? (scriptToolWindowContent = CreateContent());
-		ScriptToolWindowContent scriptToolWindowContent;
+		public ScriptToolWindowContent ScriptToolWindowContent => scriptToolWindowContent ??= CreateContent();
+		ScriptToolWindowContent? scriptToolWindowContent;
 
 		readonly Guid contentGuid;
 
@@ -37,15 +37,15 @@ namespace dnSpy.Scripting.Roslyn.Common {
 
 		public abstract IEnumerable<ToolWindowContentInfo> ContentInfos { get; }
 		protected abstract ScriptToolWindowContent CreateContent();
-		public ToolWindowContent GetOrCreate(Guid guid) => guid == contentGuid ? ScriptToolWindowContent : null;
+		public ToolWindowContent? GetOrCreate(Guid guid) => guid == contentGuid ? ScriptToolWindowContent : null;
 	}
 
 	abstract class ScriptToolWindowContent : ToolWindowContent, IZoomable {
 		protected abstract IScriptContent ScriptContent { get; }
-		public override IInputElement FocusedElement => ScriptContent.FocusedElement;
-		public override FrameworkElement ZoomElement => ScriptContent.ZoomElement;
+		public override IInputElement? FocusedElement => ScriptContent.FocusedElement;
+		public override FrameworkElement? ZoomElement => ScriptContent.ZoomElement;
 		public override Guid Guid { get; }
-		public override object UIObject => ScriptContent.UIObject;
+		public override object? UIObject => ScriptContent.UIObject;
 		double IZoomable.ZoomValue => ScriptContent.ZoomLevel / 100.0;
 
 		public ScriptToolWindowContent(Guid contentGuid) {

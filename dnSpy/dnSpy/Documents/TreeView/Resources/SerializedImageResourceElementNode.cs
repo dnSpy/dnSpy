@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Media;
 using dnlib.DotNet;
@@ -34,11 +35,11 @@ using dnSpy.Properties;
 namespace dnSpy.Documents.TreeView.Resources {
 	[ExportResourceNodeProvider(Order = DocumentTreeViewConstants.ORDER_RSRCPROVIDER_SERIALIZED_IMAGE_RESOURCE_ELEMENT_NODE)]
 	sealed class SerializedImageResourceElementNodeProvider : IResourceNodeProvider {
-		public ResourceNode Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup) => null;
+		public ResourceNode? Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup) => null;
 
-		public ResourceElementNode Create(ModuleDef module, ResourceElement resourceElement, ITreeNodeGroup treeNodeGroup) {
+		public ResourceElementNode? Create(ModuleDef module, ResourceElement resourceElement, ITreeNodeGroup treeNodeGroup) {
 			var serializedData = resourceElement.ResourceData as BinaryResourceData;
-			if (serializedData == null)
+			if (serializedData is null)
 				return null;
 
 			if (SerializedImageUtilities.GetImageData(module, serializedData.TypeName, serializedData.Data, out var imageData))
@@ -49,9 +50,9 @@ namespace dnSpy.Documents.TreeView.Resources {
 	}
 
 	sealed class SerializedImageResourceElementNodeImpl : SerializedImageResourceElementNode {
-		public ImageSource ImageSource => imageSource;
-		ImageSource imageSource;
-		byte[] imageData;
+		public ImageSource ImageSource => imageSource!;
+		ImageSource? imageSource;
+		byte[]? imageData;
 
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.SERIALIZED_IMAGE_RESOURCE_ELEMENT_NODE);
 		protected override ImageReference GetIcon() => DsImages.Image;
@@ -86,7 +87,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 			ResourceData = new BuiltInResourceData(ResourceTypeCode.ByteArray, imageData),
 		};
 
-		public override string CheckCanUpdateData(ResourceElement newResElem) {
+		public override string? CheckCanUpdateData(ResourceElement newResElem) {
 			var res = base.CheckCanUpdateData(newResElem);
 			if (!string.IsNullOrEmpty(res))
 				return res;
@@ -110,6 +111,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 
 			var binData = (BinaryResourceData)newResElem.ResourceData;
 			SerializedImageUtilities.GetImageData(this.GetModule(), binData.TypeName, binData.Data, out var imageData);
+			Debug.Assert(!(imageData is null));
 			InitializeImageData(imageData);
 		}
 	}

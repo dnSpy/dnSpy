@@ -37,7 +37,7 @@ namespace dnSpy.Hex.Classification {
 		}
 
 		public override HexClassifier GetClassifier(HexBuffer buffer) {
-			if (buffer == null)
+			if (buffer is null)
 				throw new ArgumentNullException(nameof(buffer));
 			return new HexBufferClassifierAggregator(hexBufferTagAggregatorFactoryService, classificationTypeRegistryService, buffer);
 		}

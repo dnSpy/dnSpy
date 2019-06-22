@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
@@ -32,8 +33,8 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 	sealed class ILDbgEngineStackFrame : DbgEngineStackFrame {
-		public override DbgCodeLocation Location { get; }
-		public override DbgModule Module { get; }
+		public override DbgCodeLocation? Location { get; }
+		public override DbgModule? Module { get; }
 		public override DbgStackFrameFlags Flags => DbgStackFrameFlags.LocationIsNextStatement;
 		public override uint FunctionOffset { get; }
 		public override uint FunctionToken { get; }
@@ -47,7 +48,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 		}
 		CorFrame __corFrame_DONT_USE;
 
-		CorFrame FindFrame(CorFrame frame) {
+		CorFrame? FindFrame(CorFrame frame) {
 			foreach (var f in dnThread.AllFrames) {
 				if (f.StackStart == frame.StackStart && f.StackEnd == frame.StackEnd)
 					return f;
@@ -119,8 +120,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 			public ILFrameState(ILDbgEngineStackFrame ilFrame) => ILFrame = ilFrame;
 		}
 		public override void OnFrameCreated(DbgStackFrame frame) => frame.GetOrCreateData(() => new ILFrameState(this));
-		internal static bool TryGetEngineStackFrame(DbgStackFrame frame, out ILDbgEngineStackFrame ilFrame) {
-			if (frame.TryGetData<ILFrameState>(out var data)) {
+		internal static bool TryGetEngineStackFrame(DbgStackFrame frame, [NotNullWhenTrue] out ILDbgEngineStackFrame? ilFrame) {
+			if (frame.TryGetData(out ILFrameState? data)) {
 				ilFrame = data.ILFrame;
 				return true;
 			}
@@ -128,15 +129,15 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 			return false;
 		}
 
-		internal DmdModule GetReflectionModule() => Module.GetReflectionModule() ?? throw new InvalidOperationException();
+		internal DmdModule GetReflectionModule() => Module!.GetReflectionModule() ?? throw new InvalidOperationException();
 		internal CorAppDomain GetCorAppDomain() => dnThread.AppDomainOrNull?.CorAppDomain ?? throw new InvalidOperationException();
 
-		internal void GetFrameMethodInfo(out DmdModule module, out int methodMetadataToken, out IList<DmdType> genericTypeArguments, out IList<DmdType> genericMethodArguments) {
+		internal void GetFrameMethodInfo(out DmdModule? module, out int methodMetadataToken, out IList<DmdType> genericTypeArguments, out IList<DmdType> genericMethodArguments) {
 			engine.VerifyCorDebugThread();
 			var corFrame = CorFrame;
 			methodMetadataToken = (int)corFrame.Token;
 			var corModule = corFrame.Function?.Module;
-			if (corModule != null) {
+			if (!(corModule is null)) {
 				module = engine.TryGetModule(corModule)?.GetReflectionModule() ?? throw new InvalidOperationException();
 				if (!corFrame.GetTypeAndMethodGenericParameters(out var typeGenArgs, out var methGenArgs))
 					throw new InvalidOperationException();

@@ -100,27 +100,27 @@ namespace dnSpy.Debugger.Impl {
 				Dispatcher.VerifyAccess();
 				if (!owner.IsDebugging)
 					return;
-				List<DbgCodeBreakpoint> newEnabledBreakpoints = null;
-				List<DbgCodeBreakpoint> newDisabledBreakpoints = null;
+				List<DbgCodeBreakpoint>? newEnabledBreakpoints = null;
+				List<DbgCodeBreakpoint>? newDisabledBreakpoints = null;
 				foreach (var info in e.Breakpoints) {
 					var oldIsEnabled = info.OldSettings.IsEnabled;
 					var newIsEnabled = info.Breakpoint.Settings.IsEnabled;
 					if (oldIsEnabled == newIsEnabled)
 						continue;
 					if (newIsEnabled) {
-						if (newEnabledBreakpoints == null)
+						if (newEnabledBreakpoints is null)
 							newEnabledBreakpoints = new List<DbgCodeBreakpoint>();
 						newEnabledBreakpoints.Add(info.Breakpoint);
 					}
 					else {
-						if (newDisabledBreakpoints == null)
+						if (newDisabledBreakpoints is null)
 							newDisabledBreakpoints = new List<DbgCodeBreakpoint>();
 						newDisabledBreakpoints.Add(info.Breakpoint);
 					}
 				}
-				if (newDisabledBreakpoints != null)
+				if (!(newDisabledBreakpoints is null))
 					RemoveBoundBreakpoints_DbgThread(newDisabledBreakpoints);
-				if (newEnabledBreakpoints != null)
+				if (!(newEnabledBreakpoints is null))
 					AddBoundBreakpoints_DbgThread(newEnabledBreakpoints);
 			}
 
@@ -181,25 +181,25 @@ namespace dnSpy.Debugger.Impl {
 			Dictionary<DbgEngine, List<DbgModule>> GetEngineModules(IList<DbgModule> modules) {
 				var dict = new Dictionary<DbgEngine, List<DbgModule>>();
 				lock (owner.lockObj) {
-					DbgRuntime lastRuntime = null;
-					List<DbgModule> lastList = null;
+					DbgRuntime? lastRuntime = null;
+					List<DbgModule>? lastList = null;
 					foreach (var module in modules) {
 						var runtime = module.Runtime;
 						if (runtime != lastRuntime) {
 							var engine = GetEngine_NoLock(runtime);
-							Debug.Assert(engine != null);
-							if (engine == null)
+							Debug.Assert(!(engine is null));
+							if (engine is null)
 								continue;
 							lastRuntime = runtime;
 							if (!dict.TryGetValue(engine, out lastList))
 								dict.Add(engine, lastList = new List<DbgModule>());
 						}
-						lastList.Add(module);
+						lastList!.Add(module);
 					}
 				}
 				return dict;
 
-				DbgEngine GetEngine_NoLock(DbgRuntime runtime) {
+				DbgEngine? GetEngine_NoLock(DbgRuntime runtime) {
 					foreach (var info in owner.engines) {
 						if (info.Runtime == runtime)
 							return info.Engine;

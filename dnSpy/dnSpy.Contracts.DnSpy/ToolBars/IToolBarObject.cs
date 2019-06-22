@@ -33,7 +33,7 @@ namespace dnSpy.Contracts.ToolBars {
 		/// <param name="context">Context</param>
 		/// <param name="commandTarget">Command target for toolbar items, eg. the owner window, or null</param>
 		/// <returns></returns>
-		object GetUIObject(IToolBarItemContext context, IInputElement commandTarget);
+		object GetUIObject(IToolBarItemContext context, IInputElement? commandTarget);
 	}
 
 	/// <summary>Metadata</summary>

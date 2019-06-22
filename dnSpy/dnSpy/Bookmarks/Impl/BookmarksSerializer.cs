@@ -41,10 +41,10 @@ namespace dnSpy.Bookmarks.Impl {
 			var settings = new List<BookmarkInfo>();
 			foreach (var bmSect in section.SectionsWithName("Bookmark")) {
 				var isEnabled = bmSect.Attribute<bool?>("IsEnabled");
-				if (isEnabled == null)
+				if (isEnabled is null)
 					continue;
 				var location = bookmarkLocationSerializerService.Deserialize(bmSect.TryGetSection("BML"));
-				if (location == null)
+				if (location is null)
 					continue;
 				var bmSettings = new BookmarkSettings {
 					IsEnabled = isEnabled.Value,
@@ -69,13 +69,13 @@ namespace dnSpy.Bookmarks.Impl {
 				bmSect.Attribute("IsEnabled", bmSettings.IsEnabled);
 				bookmarkLocationSerializerService.Serialize(bmSect.CreateSection("BML"), bm.Location);
 				bmSect.Attribute("Name", bm.Name ?? string.Empty);
-				if (bmSettings.Labels != null && bmSettings.Labels.Count != 0)
+				if (!(bmSettings.Labels is null) && bmSettings.Labels.Count != 0)
 					SaveLabels(bmSect, bmSettings.Labels.ToArray());
 			}
 		}
 
 		void SaveLabels(ISettingsSection section, string[] labels) {
-			if (labels == null || labels.Length == 0)
+			if (labels is null || labels.Length == 0)
 				return;
 			section.Attribute("Labels", string.Join(", ", labels));
 		}

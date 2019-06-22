@@ -42,9 +42,9 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 
 	[Export(typeof(IBookmarksContent))]
 	sealed class BookmarksContent : IBookmarksContent {
-		public object UIObject => bookmarksControl;
-		public IInputElement FocusedElement => bookmarksControl.ListView;
-		public FrameworkElement ZoomElement => bookmarksControl;
+		public object? UIObject => bookmarksControl;
+		public IInputElement? FocusedElement => bookmarksControl.ListView;
+		public FrameworkElement? ZoomElement => bookmarksControl;
 		public ListView ListView => bookmarksControl.ListView;
 		public BookmarksOperations Operations { get; }
 

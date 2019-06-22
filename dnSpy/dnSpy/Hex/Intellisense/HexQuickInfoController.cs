@@ -36,11 +36,11 @@ namespace dnSpy.Hex.Intellisense {
 		void HexView_MouseHover(object sender, HexMouseHoverEventArgs e) {
 			var posInfo = e.Line.GetLinePositionInfo(e.TextPosition);
 			HexCellPosition triggerPoint;
-			if (posInfo.IsAsciiCell && posInfo.Cell.HasData)
+			if (posInfo.IsAsciiCell && posInfo.Cell!.HasData)
 				triggerPoint = new HexCellPosition(HexColumnType.Ascii, posInfo.Cell.BufferStart, posInfo.CellPosition);
-			else if (posInfo.IsValueCell && posInfo.Cell.HasData)
+			else if (posInfo.IsValueCell && posInfo.Cell!.HasData)
 				triggerPoint = new HexCellPosition(HexColumnType.Values, hexView.BufferLines.GetValueBufferSpan(posInfo.Cell, posInfo.CellPosition).Start, posInfo.CellPosition);
-			else if (posInfo.IsValueCellSeparator && posInfo.Cell.HasData)
+			else if (posInfo.IsValueCellSeparator && posInfo.Cell!.HasData)
 				triggerPoint = new HexCellPosition(HexColumnType.Values, hexView.BufferLines.GetValueBufferSpan(posInfo.Cell, posInfo.Cell.CellSpan.Length - 1).Start, posInfo.Cell.CellSpan.Length - 1);
 			else
 				return;
@@ -52,7 +52,7 @@ namespace dnSpy.Hex.Intellisense {
 				if (session.HasInteractiveContent) {
 					foreach (var o in session.QuickInfoContent) {
 						var io = o as IHexInteractiveQuickInfoContent;
-						if (io == null)
+						if (io is null)
 							continue;
 						if (io.KeepQuickInfoOpen || io.IsMouseOverAggregated)
 							return;

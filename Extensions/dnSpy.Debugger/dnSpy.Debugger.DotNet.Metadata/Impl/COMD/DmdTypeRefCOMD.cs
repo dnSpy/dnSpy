@@ -23,13 +23,13 @@ using System.Collections.Generic;
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 	sealed class DmdTypeRefCOMD : DmdTypeRef {
 		public override DmdTypeScope TypeScope { get; }
-		public override string MetadataNamespace { get; }
-		public override string MetadataName { get; }
+		public override string? MetadataNamespace { get; }
+		public override string? MetadataName { get; }
 
 		readonly DmdComMetadataReader reader;
 		readonly int declTypeToken;
 
-		public DmdTypeRefCOMD(DmdComMetadataReader reader, uint rid, IList<DmdCustomModifier> customModifiers) : base(reader.Module, rid, customModifiers) {
+		public DmdTypeRefCOMD(DmdComMetadataReader reader, uint rid, IList<DmdCustomModifier>? customModifiers) : base(reader.Module, rid, customModifiers) {
 			this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
 			reader.Dispatcher.VerifyAccess();
 			uint token = 0x01000000 + rid;
@@ -67,7 +67,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 
 		protected override int GetDeclaringTypeRefToken() => declTypeToken;
 
-		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) {
+		public override DmdType WithCustomModifiers(IList<DmdCustomModifier>? customModifiers) {
 			VerifyCustomModifiers(customModifiers);
 			return AppDomain.Intern(COMThread(() => new DmdTypeRefCOMD(reader, Rid, customModifiers)));
 		}

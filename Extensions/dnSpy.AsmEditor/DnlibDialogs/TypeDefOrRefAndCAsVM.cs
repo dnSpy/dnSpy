@@ -28,13 +28,13 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				throw new InvalidOperationException("TModel is an invalid type");
 		}
 
-		public TypeDefOrRefAndCAsVM(string editString, string createString, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType, MethodDef ownerMethod)
+		public TypeDefOrRefAndCAsVM(string editString, string createString, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef? ownerType, MethodDef? ownerMethod)
 			: base(editString, createString, ownerModule, decompilerService, ownerType, ownerMethod) {
 		}
 
 		protected override TypeDefOrRefAndCAVM Create(TModel model) {
 			var gpc = model as GenericParamConstraint;
-			if (gpc != null)
+			if (!(gpc is null))
 				return new TypeDefOrRefAndCAVM(new TypeDefOrRefAndCAOptions(gpc), OwnerModule, decompilerService, ownerType, ownerMethod);
 			return new TypeDefOrRefAndCAVM(new TypeDefOrRefAndCAOptions((InterfaceImpl)(object)model), OwnerModule, decompilerService, ownerType, ownerMethod);
 		}

@@ -24,19 +24,19 @@ using Microsoft.VisualStudio.Text.Formatting;
 namespace dnSpy.Text.Editor {
 	static class TextViewLineExtensions {
 		public static bool IsVisible(this ITextViewLine line) {
-			if (line == null)
+			if (line is null)
 				throw new ArgumentNullException(nameof(line));
 			return line.VisibilityState == VisibilityState.FullyVisible || line.VisibilityState == VisibilityState.PartiallyVisible;
 		}
 
 		public static bool IsFirstDocumentLine(this ITextViewLine line) {
-			if (line == null)
+			if (line is null)
 				throw new ArgumentNullException(nameof(line));
 			return line.IsFirstTextViewLineForSnapshotLine && line.Start.Position == 0;
 		}
 
 		public static bool IsLastDocumentLine(this ITextViewLine line) {
-			if (line == null)
+			if (line is null)
 				throw new ArgumentNullException(nameof(line));
 			return line.IsLastTextViewLineForSnapshotLine && line.LineBreakLength == 0;
 		}
@@ -48,7 +48,7 @@ namespace dnSpy.Text.Editor {
 		/// <param name="line">Line</param>
 		/// <returns></returns>
 		public static SnapshotPoint GetPointAfterLineBreak(this ITextViewLine line) {
-			if (line == null)
+			if (line is null)
 				throw new ArgumentNullException(nameof(line));
 			var span = line.ExtentIncludingLineBreak;
 			if (span.Length != 0)

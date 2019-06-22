@@ -39,9 +39,9 @@ namespace dnSpy.Text.Editor {
 		[ImportingConstructor]
 		UriQuickInfoSourceProvider(IViewTagAggregatorFactoryService viewTagAggregatorFactoryService) => this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
 
-		public IQuickInfoSource TryCreateQuickInfoSource(ITextBuffer textBuffer) {
+		public IQuickInfoSource? TryCreateQuickInfoSource(ITextBuffer textBuffer) {
 			var textView = UriWpfTextViewCreationListener.TryGetTextView(textBuffer);
-			if (textView == null)
+			if (textView is null)
 				return null;
 			return new UriQuickInfoSource(textView, viewTagAggregatorFactoryService);
 		}
@@ -56,14 +56,14 @@ namespace dnSpy.Text.Editor {
 			this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService ?? throw new ArgumentNullException(nameof(viewTagAggregatorFactoryService));
 		}
 
-		public void AugmentQuickInfoSession(IQuickInfoSession session, IList<object> quickInfoContent, out ITrackingSpan applicableToSpan) {
+		public void AugmentQuickInfoSession(IQuickInfoSession session, IList<object> quickInfoContent, out ITrackingSpan? applicableToSpan) {
 			applicableToSpan = null;
 
 			var triggerPoint = session.GetTriggerPoint(textView.TextSnapshot);
-			if (triggerPoint == null)
+			if (triggerPoint is null)
 				return;
 			var tagSpan = UriHelper.GetUri(viewTagAggregatorFactoryService, textView, triggerPoint.Value);
-			if (tagSpan == null)
+			if (tagSpan is null)
 				return;
 			if (!tagSpan.Tag.Url.IsAbsoluteUri)
 				return;

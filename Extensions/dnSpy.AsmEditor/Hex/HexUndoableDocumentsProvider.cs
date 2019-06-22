@@ -34,17 +34,17 @@ namespace dnSpy.AsmEditor.Hex {
 		[ImportingConstructor]
 		HexUndoableDocumentsProvider(Lazy<IHexBufferService> hexBufferService) => this.hexBufferService = hexBufferService;
 
-		IEnumerable<IUndoObject> IUndoableDocumentsProvider.GetObjects() => hexBufferService.Value.GetBuffers().Select(a => TryGetUndoObject(a)).Where(a => a != null);
+		IEnumerable<IUndoObject> IUndoableDocumentsProvider.GetObjects() => hexBufferService.Value.GetBuffers().Select(a => TryGetUndoObject(a)).Where(a => !(a is null));
 
-		IUndoObject IUndoableDocumentsProvider.GetUndoObject(object obj) {
+		IUndoObject? IUndoableDocumentsProvider.GetUndoObject(object obj) {
 			if (obj is HexBuffer buffer)
 				return TryGetUndoObject(buffer);
 			return null;
 		}
 
-		bool IUndoableDocumentsProvider.OnExecutedOneCommand(IUndoObject obj) => TryGetHexBuffer(obj) != null;
-		object IUndoableDocumentsProvider.GetDocument(IUndoObject obj) => TryGetHexBuffer(obj);
-		internal static HexBuffer TryGetHexBuffer(IUndoObject iuo) => (iuo as UndoObject)?.Value as HexBuffer;
+		bool IUndoableDocumentsProvider.OnExecutedOneCommand(IUndoObject obj) => !(TryGetHexBuffer(obj) is null);
+		object? IUndoableDocumentsProvider.GetDocument(IUndoObject obj) => TryGetHexBuffer(obj);
+		internal static HexBuffer? TryGetHexBuffer(IUndoObject? iuo) => (iuo as UndoObject)?.Value as HexBuffer;
 
 		static IUndoObject TryGetUndoObject(HexBuffer buffer) {
 			buffer.Properties.TryGetProperty(undoObjectKey, out IUndoObject undoObject);

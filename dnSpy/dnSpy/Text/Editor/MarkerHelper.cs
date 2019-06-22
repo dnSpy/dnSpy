@@ -38,10 +38,10 @@ namespace dnSpy.Text.Editor {
 			return line1.ExtentIncludingLineBreak != line2.ExtentIncludingLineBreak;
 		}
 
-		public static Geometry CreateGeometry(IWpfTextView textView, VirtualSnapshotSpan span, bool isMultiLine, bool clipToViewport = false) {
+		public static Geometry? CreateGeometry(IWpfTextView textView, VirtualSnapshotSpan span, bool isMultiLine, bool clipToViewport = false) {
 			var padding = isMultiLine ? LineMarkerPadding : TextMarkerPadding;
 			var pos = span.Start;
-			PathGeometry geo = null;
+			PathGeometry? geo = null;
 			bool createOutlinedPath = false;
 
 			while (pos <= span.End) {
@@ -49,8 +49,8 @@ namespace dnSpy.Text.Editor {
 				bool useVspaces = line.IsLastDocumentLine();
 				var lineExtent = new VirtualSnapshotSpan(new VirtualSnapshotPoint(line.Start), new VirtualSnapshotPoint(line.EndIncludingLineBreak, useVspaces ? span.End.VirtualSpaces : 0));
 				var extentTmp = lineExtent.Intersection(new VirtualSnapshotSpan(pos, span.End));
-				Debug.Assert(extentTmp != null);
-				if (line.VisibilityState != VisibilityState.Unattached && extentTmp != null && extentTmp.Value.Length != 0) {
+				Debug.Assert(!(extentTmp is null));
+				if (line.VisibilityState != VisibilityState.Unattached && !(extentTmp is null) && extentTmp.Value.Length != 0) {
 					var extent = extentTmp.Value;
 					Collection<TextBounds> textBounds;
 					if (extent.Start.IsInVirtualSpace) {
@@ -77,15 +77,15 @@ namespace dnSpy.Text.Editor {
 				pos = new VirtualSnapshotPoint(line.GetPointAfterLineBreak());
 			}
 			if (createOutlinedPath)
-				geo = geo.GetOutlinedPathGeometry();
-			if (geo != null && geo.CanFreeze)
+				geo = geo!.GetOutlinedPathGeometry();
+			if (!(geo is null) && geo.CanFreeze)
 				geo.Freeze();
 			return geo;
 		}
 
-		public static Geometry CreateBoxGeometry(IWpfTextView textView, IList<VirtualSnapshotSpan> spans, bool isMultiLine, bool clipToViewport = false) {
+		public static Geometry? CreateBoxGeometry(IWpfTextView textView, IList<VirtualSnapshotSpan> spans, bool isMultiLine, bool clipToViewport = false) {
 			var padding = isMultiLine ? LineMarkerPadding : TextMarkerPadding;
-			PathGeometry geo = null;
+			PathGeometry? geo = null;
 			bool createOutlinedPath = false;
 
 			foreach (var span in spans) {
@@ -93,8 +93,8 @@ namespace dnSpy.Text.Editor {
 				Debug.Assert(span.SnapshotSpan.End <= line.EndIncludingLineBreak);
 				var lineExtent = new VirtualSnapshotSpan(new VirtualSnapshotPoint(line.Start), new VirtualSnapshotPoint(line.EndIncludingLineBreak, span.End.VirtualSpaces));
 				var extentTmp = lineExtent.Intersection(span);
-				Debug.Assert(extentTmp != null);
-				if (line.VisibilityState != VisibilityState.Unattached && extentTmp != null) {
+				Debug.Assert(!(extentTmp is null));
+				if (line.VisibilityState != VisibilityState.Unattached && !(extentTmp is null)) {
 					var extent = extentTmp.Value;
 					Collection<TextBounds> textBounds;
 					if (extent.Start.IsInVirtualSpace) {
@@ -117,13 +117,13 @@ namespace dnSpy.Text.Editor {
 				}
 			}
 			if (createOutlinedPath)
-				geo = geo.GetOutlinedPathGeometry();
-			if (geo != null && geo.CanFreeze)
+				geo = geo!.GetOutlinedPathGeometry();
+			if (!(geo is null) && geo.CanFreeze)
 				geo.Freeze();
 			return geo;
 		}
 
-		public static void AddGeometries(IWpfTextView textView, Collection<TextBounds> textBounds, bool isLineGeometry, bool clipToViewport, Thickness padding, double minWidth, ref PathGeometry geo, ref bool createOutlinedPath) {
+		public static void AddGeometries(IWpfTextView textView, Collection<TextBounds> textBounds, bool isLineGeometry, bool clipToViewport, Thickness padding, double minWidth, ref PathGeometry? geo, ref bool createOutlinedPath) {
 			foreach (var bounds in textBounds) {
 				double left = bounds.Left - padding.Left;
 				double right = bounds.Right + padding.Right;
@@ -149,7 +149,7 @@ namespace dnSpy.Text.Editor {
 				double width = Math.Min(right - left, MAX_WIDTH);
 				double height = Math.Min(bottom - top, MAX_HEIGHT);
 
-				if (geo == null)
+				if (geo is null)
 					geo = new PathGeometry { FillRule = FillRule.Nonzero };
 				else
 					createOutlinedPath = true;

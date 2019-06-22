@@ -28,19 +28,19 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdTypeSignatureKind TypeSignatureKind => DmdTypeSignatureKind.FunctionPointer;
 		public override DmdTypeScope TypeScope => methodSignature.ReturnType.TypeScope;
 		public override DmdModule Module => methodSignature.ReturnType.Module;
-		public override string MetadataNamespace => null;
-		public override string MetadataName => null;
-		public override DmdType BaseType => null;
-		public override StructLayoutAttribute StructLayoutAttribute => null;
+		public override string? MetadataNamespace => null;
+		public override string? MetadataName => null;
+		public override DmdType? BaseType => null;
+		public override StructLayoutAttribute? StructLayoutAttribute => null;
 		public override DmdTypeAttributes Attributes => DmdTypeAttributes.NotPublic | DmdTypeAttributes.AutoLayout | DmdTypeAttributes.Class | DmdTypeAttributes.AnsiClass;
-		public override DmdType DeclaringType => null;
+		public override DmdType? DeclaringType => null;
 		public override int MetadataToken => 0x02000000;
 		public override bool IsMetadataReference => false;
 		internal override bool HasTypeEquivalence => methodSignature.HasTypeEquivalence;
 
 		readonly DmdMethodSignature methodSignature;
 
-		public DmdFunctionPointerType(DmdAppDomain appDomain, DmdMethodSignature methodSignature, IList<DmdCustomModifier> customModifiers) : base(customModifiers) {
+		public DmdFunctionPointerType(DmdAppDomain appDomain, DmdMethodSignature methodSignature, IList<DmdCustomModifier>? customModifiers) : base(customModifiers) {
 			AppDomain = appDomain ?? throw new ArgumentNullException(nameof(appDomain));
 			this.methodSignature = methodSignature ?? throw new ArgumentNullException(nameof(methodSignature));
 			IsFullyResolved = ((DmdTypeBase)methodSignature.ReturnType).IsFullyResolved &&
@@ -48,29 +48,29 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					DmdTypeUtilities.IsFullyResolved(methodSignature.GetVarArgsParameterTypes());
 		}
 
-		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => AppDomain.MakeFunctionPointerType(methodSignature.Flags, methodSignature.GenericParameterCount, methodSignature.ReturnType, methodSignature.GetParameterTypes(), methodSignature.GetVarArgsParameterTypes(), customModifiers);
+		public override DmdType WithCustomModifiers(IList<DmdCustomModifier>? customModifiers) => AppDomain.MakeFunctionPointerType(methodSignature.Flags, methodSignature.GenericParameterCount, methodSignature.ReturnType, methodSignature.GetParameterTypes(), methodSignature.GetVarArgsParameterTypes(), customModifiers);
 		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : AppDomain.MakeFunctionPointerType(methodSignature.Flags, methodSignature.GenericParameterCount, methodSignature.ReturnType, methodSignature.GetParameterTypes(), methodSignature.GetVarArgsParameterTypes(), null);
 
 		public override DmdMethodSignature GetFunctionPointerMethodSignature() => methodSignature;
 
-		protected override DmdType ResolveNoThrowCore() => this;
+		protected override DmdType? ResolveNoThrowCore() => this;
 		public override bool IsFullyResolved { get; }
-		public override DmdTypeBase FullResolve() {
+		public override DmdTypeBase? FullResolve() {
 			if (IsFullyResolved)
 				return this;
 			var returnType = ((DmdTypeBase)methodSignature.ReturnType).FullResolve();
-			if ((object)returnType == null)
+			if (returnType is null)
 				return null;
 			var parameterTypes = DmdTypeUtilities.FullResolve(methodSignature.GetParameterTypes());
-			if (parameterTypes == null)
+			if (parameterTypes is null)
 				return null;
 			var varArgsParameterTypes = DmdTypeUtilities.FullResolve(methodSignature.GetVarArgsParameterTypes());
-			if (varArgsParameterTypes == null)
+			if (varArgsParameterTypes is null)
 				return null;
 			return (DmdTypeBase)returnType.AppDomain.MakeFunctionPointerType(methodSignature.Flags, methodSignature.GenericParameterCount, returnType, parameterTypes, varArgsParameterTypes, GetCustomModifiers());
 		}
 
-		public override DmdType[] ReadDeclaredInterfaces() => null;
+		public override DmdType[]? ReadDeclaredInterfaces() => null;
 		public override ReadOnlyCollection<DmdType> NestedTypes => ReadOnlyCollectionHelpers.Empty<DmdType>();
 	}
 }

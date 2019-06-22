@@ -35,7 +35,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// </summary>
 		/// <param name="wpfHexView">Hex view</param>
 		/// <returns></returns>
-		public abstract HexCursorProvider Create(WpfHexView wpfHexView);
+		public abstract HexCursorProvider? Create(WpfHexView wpfHexView);
 	}
 
 	/// <summary>
@@ -104,7 +104,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is HexCursorInfo && Equals((HexCursorInfo)obj);
+		public override bool Equals(object? obj) => obj is HexCursorInfo && Equals((HexCursorInfo)obj);
 
 		/// <summary>
 		/// GetHashCode()

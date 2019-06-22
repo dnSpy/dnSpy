@@ -43,7 +43,7 @@ namespace dnSpy.Debugger.UI {
 		public void UI(TimeSpan delay, Action callback) {
 			var timer = new DispatcherTimer(DispatcherPriority.Send, Dispatcher);
 			timer.Interval = delay;
-			EventHandler handler = null;
+			EventHandler? handler = null;
 			handler = (s, e) => {
 				timer.Stop();
 				timer.Tick -= handler;

@@ -37,8 +37,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		public override void Initialize() => TreeNode.LazyLoading = true;
-		public override IMemberRef Member => analyzedEvent;
-		public override IMDTokenProvider Reference => analyzedEvent;
+		public override IMemberRef? Member => analyzedEvent;
+		public override IMDTokenProvider? Reference => analyzedEvent;
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => dnImgMgr.GetImageReference(analyzedEvent);
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) {
@@ -54,10 +54,10 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
-			if (analyzedEvent.AddMethod != null)
+			if (!(analyzedEvent.AddMethod is null))
 				yield return new EventAccessorNode(analyzedEvent.AddMethod, dnSpy_Analyzer_Resources.EventAdderTreeNodeName);
 
-			if (analyzedEvent.RemoveMethod != null)
+			if (!(analyzedEvent.RemoveMethod is null))
 				yield return new EventAccessorNode(analyzedEvent.RemoveMethod, dnSpy_Analyzer_Resources.EventRemoverTreeNodeName);
 
 			foreach (var accessor in analyzedEvent.OtherMethods)
@@ -76,13 +76,13 @@ namespace dnSpy.Analyzer.TreeNodes {
 				yield return new InterfaceEventImplementedByNode(analyzedEvent);
 		}
 
-		public static AnalyzerTreeNodeData TryCreateAnalyzer(IMemberRef member, IDecompiler decompiler) {
+		public static AnalyzerTreeNodeData? TryCreateAnalyzer(IMemberRef? member, IDecompiler decompiler) {
 			if (CanShow(member, decompiler))
-				return new EventNode(member as EventDef);
+				return new EventNode((EventDef)member!);
 			else
 				return null;
 		}
 
-		public static bool CanShow(IMemberRef member, IDecompiler decompiler) => member is EventDef;
+		public static bool CanShow(IMemberRef? member, IDecompiler decompiler) => member is EventDef;
 	}
 }

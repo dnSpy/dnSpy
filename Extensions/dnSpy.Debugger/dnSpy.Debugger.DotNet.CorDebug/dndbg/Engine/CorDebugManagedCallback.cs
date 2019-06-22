@@ -27,7 +27,7 @@ namespace dndbg.Engine {
 
 		public CorDebugManagedCallback(DnDebugger dbg) => this.dbg = dbg;
 
-		static T I<T>(IntPtr ptr) where T : class {
+		static T? I<T>(IntPtr ptr) where T : class {
 			if (ptr == IntPtr.Zero)
 				return null;
 			try {

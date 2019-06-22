@@ -30,7 +30,7 @@ namespace dnSpy.Decompiler {
 		/// <param name="module">Module</param>
 		/// <returns></returns>
 		public static string GetArchString(ModuleDef module) {
-			if (module == null)
+			if (module is null)
 				return "???";
 
 			if (module.Machine.IsI386()) {

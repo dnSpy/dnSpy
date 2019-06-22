@@ -30,9 +30,9 @@ using dnSpy.Contracts.Text;
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class VirtualMethodUsedByNode : SearchNode {
 		readonly MethodDef analyzedMethod;
-		ConcurrentDictionary<MethodDef, int> foundMethods;
-		MethodDef baseMethod;
-		List<ITypeDefOrRef> possibleTypes;
+		ConcurrentDictionary<MethodDef, int>? foundMethods;
+		MethodDef? baseMethod;
+		List<ITypeDefOrRef>? possibleTypes;
 
 		public VirtualMethodUsedByNode(MethodDef analyzedMethod) => this.analyzedMethod = analyzedMethod ?? throw new ArgumentNullException(nameof(analyzedMethod));
 
@@ -62,8 +62,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 			possibleTypes = new List<ITypeDefOrRef>();
 
-			ITypeDefOrRef type = analyzedMethod.DeclaringType.BaseType;
-			while (type != null) {
+			ITypeDefOrRef? type = analyzedMethod.DeclaringType.BaseType;
+			while (!(type is null)) {
 				possibleTypes.Add(type);
 				type = type.ResolveTypeDef()?.BaseType;
 			}
@@ -79,7 +79,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			foreach (MethodDef method in type.Methods) {
 				if (!method.HasBody)
 					continue;
-				Instruction foundInstr = null;
+				Instruction? foundInstr = null;
 				foreach (Instruction instr in method.Body.Instructions) {
 					if (instr.Operand is IMethod mr && !mr.IsField && mr.Name == name) {
 						// explicit call to the requested method 
@@ -92,7 +92,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 						// virtual call to base method
 						if (instr.OpCode.Code == Code.Callvirt) {
 							MethodDef md = mr.ResolveMethodDef();
-							if (md == null) {
+							if (md is null) {
 								// cannot resolve the operand, so ignore this method
 								break;
 							}
@@ -104,7 +104,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 					}
 				}
 
-				if (foundInstr != null) {
+				if (!(foundInstr is null)) {
 					if (GetOriginalCodeLocation(method) is MethodDef codeLocation && !HasAlreadyBeenFound(codeLocation)) {
 						var node = new MethodNode(codeLocation) { Context = Context };
 						if (codeLocation == method)
@@ -115,6 +115,6 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 		}
 
-		bool HasAlreadyBeenFound(MethodDef method) => !foundMethods.TryAdd(method, 0);
+		bool HasAlreadyBeenFound(MethodDef method) => !foundMethods!.TryAdd(method, 0);
 	}
 }

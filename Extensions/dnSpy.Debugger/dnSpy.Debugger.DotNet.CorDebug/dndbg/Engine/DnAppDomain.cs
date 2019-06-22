@@ -68,7 +68,7 @@ namespace dndbg.Engine {
 			return CorAppDomain.RawObject.IsRunning(out int running) >= 0;
 		}
 
-		internal DnAssembly TryAdd(ICorDebugAssembly comAssembly) => assemblies.Add(comAssembly);
+		internal DnAssembly? TryAdd(ICorDebugAssembly? comAssembly) => assemblies.Add(comAssembly);
 
 		public DnAssembly[] Assemblies {
 			get {
@@ -79,14 +79,14 @@ namespace dndbg.Engine {
 			}
 		}
 
-		public DnAssembly TryGetAssembly(ICorDebugAssembly comAssembly) {
+		public DnAssembly? TryGetAssembly(ICorDebugAssembly? comAssembly) {
 			Debugger.DebugVerifyThread();
 			return assemblies.TryGet(comAssembly);
 		}
 
-		internal void AssemblyUnloaded(ICorDebugAssembly comAssembly) {
+		internal void AssemblyUnloaded(ICorDebugAssembly? comAssembly) {
 			var assembly = assemblies.TryGet(comAssembly);
-			if (assembly == null)
+			if (assembly is null)
 				return;
 			assembly.SetHasUnloaded();
 			assemblies.Remove(comAssembly);

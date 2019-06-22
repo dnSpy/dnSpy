@@ -22,8 +22,8 @@ using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	abstract class EntityNode : AnalyzerTreeNodeData, IMDTokenNode {
-		public abstract IMemberRef Member { get; }
-		public abstract IMDTokenProvider Reference { get; }
+		public abstract IMemberRef? Member { get; }
+		public abstract IMDTokenProvider? Reference { get; }
 		public SourceRef? SourceRef { get; set; }
 
 		public override bool Activate() {
@@ -33,7 +33,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		public override bool HandleAssemblyListChanged(IDsDocument[] removedAssemblies, IDsDocument[] addedAssemblies) {
 			foreach (var asm in removedAssemblies) {
-				if (Member.Module == asm.ModuleDef)
+				if (Member?.Module == asm.ModuleDef)
 					return false; // remove this node
 			}
 			HandleAssemblyListChanged(TreeNode, removedAssemblies, addedAssemblies);
@@ -41,10 +41,10 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		public override bool HandleModelUpdated(IDsDocument[] documents) {
-			if (Member.Module == null)
+			if (Member?.Module is null)
 				return false; // remove this node
 			if ((Member is IField || Member is IMethod || Member is PropertyDef || Member is EventDef) &&
-				Member.DeclaringType == null)
+				Member.DeclaringType is null)
 				return false;
 			HandleModelUpdated(TreeNode, documents);
 			return true;

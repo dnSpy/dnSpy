@@ -36,9 +36,9 @@ namespace dnSpy.AsmEditor.MethodBody {
 		readonly CilBodyOptions origOptions;
 
 		public ISelectItems<InstructionVM> SelectItems {
-			set { selectItems = value; }
+			set => selectItems = value;
 		}
-		ISelectItems<InstructionVM> selectItems;
+		ISelectItems<InstructionVM>? selectItems;
 
 		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
 		public ICommand SimplifyAllInstructionsCommand => new RelayCommand(a => SimplifyAllInstructions(), a => SimplifyAllInstructionsCanExecute());
@@ -145,16 +145,17 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		public void Select(uint[] offsets) {
-			if (selectItems == null)
+			if (selectItems is null)
 				throw new InvalidOperationException();
-			if (offsets == null || offsets.Length == 0)
+			if (offsets is null || offsets.Length == 0)
 				return;
 
 			var dict = InstructionsListVM.ToDictionary(a => a.Offset);
 			var instrs = offsets.Select(a => {
-				dict.TryGetValue(a, out var instr);
+				InstructionVM? instr;
+				dict.TryGetValue(a, out instr);
 				return instr;
-			}).Where(a => a != null).Distinct().ToArray();
+			}).OfType<InstructionVM>().Distinct().ToArray();
 			if (instrs.Length == 0)
 				return;
 
@@ -347,12 +348,12 @@ namespace dnSpy.AsmEditor.MethodBody {
 		void InvertBranch(InstructionVM[] instrs) {
 			foreach (var instr in instrs) {
 				var code = InvertBcc(instr.Code);
-				if (code != null)
+				if (!(code is null))
 					instr.Code = code.Value;
 			}
 		}
 
-		bool InvertBranchCanExecute(InstructionVM[] instrs) => instrs.Any(a => InvertBcc(a.Code) != null);
+		bool InvertBranchCanExecute(InstructionVM[] instrs) => instrs.Any(a => !(InvertBcc(a.Code) is null));
 
 		static Code? InvertBcc(Code code) {
 			switch (code) {
@@ -439,7 +440,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		void RemoveInstructionAndAddPops(InstructionVM[] instrs) {
 			foreach (var instr in instrs) {
 				var info = GetInstructionPops(instr);
-				if (info == null)
+				if (info is null)
 					continue;
 
 				var popCount = info.Value.PopCount;
@@ -461,12 +462,12 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 		}
 
-		bool RemoveInstructionAndAddPopsCanExecute(InstructionVM[] instrs) => instrs.Any(a => GetInstructionPops(a) != null);
+		bool RemoveInstructionAndAddPopsCanExecute(InstructionVM[] instrs) => instrs.Any(a => !(GetInstructionPops(a) is null));
 
 		readonly struct InstructionPushPopInfo {
 			public readonly int PopCount;
 			public readonly bool Pushes;// Needed in case there's an invalid method sig with a null type
-			public readonly TypeSig PushType;
+			public readonly TypeSig? PushType;
 
 			public InstructionPushPopInfo(int pops) {
 				PopCount = pops;
@@ -474,7 +475,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				PushType = null;
 			}
 
-			public InstructionPushPopInfo(int pops, TypeSig pushType) {
+			public InstructionPushPopInfo(int pops, TypeSig? pushType) {
 				PopCount = pops;
 				Pushes = true;
 				PushType = pushType;
@@ -492,14 +493,14 @@ namespace dnSpy.AsmEditor.MethodBody {
 				return new InstructionPushPopInfo(pops, GetMethodSig(instr.InstructionOperandVM.Other).GetRetType());
 			if (pushes == 1 && code == Code.Newobj) {
 				var ctor = instr.InstructionOperandVM.Other as IMethod;
-				return new InstructionPushPopInfo(pops, ctor == null ? null : ctor.DeclaringType.ToTypeSig());
+				return new InstructionPushPopInfo(pops, ctor is null ? null : ctor.DeclaringType.ToTypeSig());
 			}
 			if (pushes != 0)
 				return null;
 			return new InstructionPushPopInfo(pops);
 		}
 
-		void AddPushDefaultValue(int count, ref int index, TypeSig pushType) {
+		void AddPushDefaultValue(int count, ref int index, TypeSig? pushType) {
 			pushType = pushType.RemovePinned();
 			switch (count > 10 ? ElementType.End : pushType.RemovePinnedAndModifiers().GetElementType()) {
 			case ElementType.Void:
@@ -543,8 +544,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 				break;
 
 			case ElementType.ValueType:
-				var td = ((ValueTypeSig)pushType).TypeDefOrRef.ResolveTypeDef();
-				if (td != null && td.IsEnum) {
+				var td = ((ValueTypeSig)pushType!).TypeDefOrRef.ResolveTypeDef();
+				if (!(td is null) && td.IsEnum) {
 					var undType = td.GetEnumUnderlyingType().RemovePinnedAndModifiers();
 					var et = undType.GetElementType();
 					if ((ElementType.Boolean <= et && et <= ElementType.R8) || et == ElementType.I || et == ElementType.U) {
@@ -557,7 +558,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			case ElementType.TypedByRef:
 			case ElementType.Var:
 			case ElementType.MVar:
-				var local = new LocalVM(TypeSigCreatorOptions, new LocalOptions(new Local(pushType)));
+				var local = new LocalVM(TypeSigCreatorOptions, new LocalOptions(new Local(pushType!)));
 				LocalsListVM.Add(local);
 
 				var newInstr = CreateInstructionVM(Code.Ldloca);
@@ -574,7 +575,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				break;
 
 			case ElementType.GenericInst:
-				if (((GenericInstSig)pushType).GenericType is ValueTypeSig)
+				if (((GenericInstSig)pushType!).GenericType is ValueTypeSig)
 					goto case ElementType.TypedByRef;
 				goto case ElementType.Class;
 
@@ -599,7 +600,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 		}
 
-		static MethodBaseSig GetMethodSig(object operand) {
+		static MethodBaseSig? GetMethodSig(object? operand) {
 			if (operand is MethodSig msig)
 				return msig;
 
@@ -615,26 +616,26 @@ namespace dnSpy.AsmEditor.MethodBody {
 				var type = ms.DeclaringType;
 				var genMeth = ms.GenericInstMethodSig;
 				var meth = ms.Method;
-				return GetMethodSig(type, meth == null ? null : meth.MethodSig, genMeth == null ? null : genMeth.GenericArguments);
+				return GetMethodSig(type, meth is null ? null : meth.MethodSig, genMeth is null ? null : genMeth.GenericArguments);
 			}
 
 			return null;
 		}
 
-		static MethodBaseSig GetMethodSig(ITypeDefOrRef type, MethodSig msig, IList<TypeSig> methodGenArgs) {
-			IList<TypeSig> typeGenArgs = null;
+		static MethodBaseSig? GetMethodSig(ITypeDefOrRef type, MethodSig? msig, IList<TypeSig>? methodGenArgs) {
+			IList<TypeSig>? typeGenArgs = null;
 			if (type is TypeSpec ts) {
 				var genSig = ts.TypeSig.ToGenericInstSig();
-				if (genSig != null)
+				if (!(genSig is null))
 					typeGenArgs = genSig.GenericArguments;
 			}
-			if (typeGenArgs == null && methodGenArgs == null)
+			if (typeGenArgs is null && methodGenArgs is null)
 				return msig;
 			return GenericArgumentResolver.Resolve(msig, typeGenArgs, methodGenArgs);
 		}
 
 		void InstructionsListVM_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
-			if (e.NewItems != null)
+			if (!(e.NewItems is null))
 				InstallInstructionHandlers(e.NewItems);
 
 			if (!InstructionsListVM.DisableAutoUpdateProps)
@@ -679,7 +680,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		bool disableInstrOpUpdate = false;
 
 		void LocalsListVM_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
-			if (e.NewItems != null) {
+			if (!(e.NewItems is null)) {
 				foreach (LocalVM local in e.NewItems) {
 					local.PropertyChanged -= local_PropertyChanged;
 					local.PropertyChanged += local_PropertyChanged;
@@ -700,7 +701,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		void ExceptionHandlersListVM_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
-			if (e.NewItems != null) {
+			if (!(e.NewItems is null)) {
 				foreach (ExceptionHandlerVM eh in e.NewItems) {
 					eh.PropertyChanged -= eh_PropertyChanged;
 					eh.PropertyChanged += eh_PropertyChanged;
@@ -709,7 +710,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 			if (!ExceptionHandlersListVM.DisableAutoUpdateProps) {
 				if (e.Action == NotifyCollectionChangedAction.Add) {
-					if (e.NewItems != null) {
+					if (!(e.NewItems is null)) {
 						foreach (ExceptionHandlerVM eh in e.NewItems)
 							eh.InstructionChanged(InstructionsListVM);
 					}

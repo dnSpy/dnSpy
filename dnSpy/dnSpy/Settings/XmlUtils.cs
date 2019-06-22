@@ -25,8 +25,8 @@ namespace dnSpy.Settings {
 	static class XmlUtils {
 		const char ESCAPE_CHAR = '©';
 
-		public static string EscapeAttributeValue(string s) {
-			if (s == null)
+		public static string? EscapeAttributeValue(string s) {
+			if (s is null)
 				return null;
 			var sb = new StringBuilder(s.Length);
 			foreach (var c in s) {
@@ -38,8 +38,8 @@ namespace dnSpy.Settings {
 			return sb.ToString();
 		}
 
-		public static string UnescapeAttributeValue(string s) {
-			if (s == null)
+		public static string? UnescapeAttributeValue(string s) {
+			if (s is null)
 				return null;
 			if (s.IndexOf(ESCAPE_CHAR) < 0)
 				return s;
@@ -77,8 +77,8 @@ namespace dnSpy.Settings {
 
 		static bool IsHex(char c) => ('0' <= c && c <= '9') || ('A' <= c && c <= 'F') || ('a' <= c && c <= 'f');
 
-		public static string FilterAttributeName(string s) {
-			if (s == null || s.Length == 0)
+		public static string? FilterAttributeName(string s) {
+			if (s is null || s.Length == 0)
 				return null;
 
 			// Only allow a sub set of the valid names. Fix it if this is a problem.

@@ -28,53 +28,53 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdTypeSignatureKind TypeSignatureKind => DmdTypeSignatureKind.SZArray;
 		public override DmdTypeScope TypeScope => SkipElementTypes().TypeScope;
 		public override DmdModule Module => SkipElementTypes().Module;
-		public override string MetadataNamespace => null;
-		public override string MetadataName => null;
-		public override DmdType BaseType => AppDomain.System_Array;
-		public override StructLayoutAttribute StructLayoutAttribute => null;
+		public override string? MetadataNamespace => null;
+		public override string? MetadataName => null;
+		public override DmdType? BaseType => AppDomain.System_Array;
+		public override StructLayoutAttribute? StructLayoutAttribute => null;
 		public override DmdTypeAttributes Attributes => DmdTypeAttributes.Public | DmdTypeAttributes.AutoLayout | DmdTypeAttributes.Class | DmdTypeAttributes.Sealed | DmdTypeAttributes.AnsiClass | DmdTypeAttributes.Serializable;
-		public override DmdType DeclaringType => null;
+		public override DmdType? DeclaringType => null;
 		public override int MetadataToken => 0x02000000;
 		public override bool IsMetadataReference { get; }
 		internal override bool HasTypeEquivalence => elementType.HasTypeEquivalence;
 
 		readonly DmdTypeBase elementType;
 
-		public DmdSZArrayType(DmdTypeBase elementType, IList<DmdCustomModifier> customModifiers) : base(customModifiers) {
+		public DmdSZArrayType(DmdTypeBase elementType, IList<DmdCustomModifier>? customModifiers) : base(customModifiers) {
 			this.elementType = elementType ?? throw new ArgumentNullException(nameof(elementType));
 			IsMetadataReference = elementType.IsMetadataReference;
 			IsFullyResolved = elementType.IsFullyResolved;
 		}
 
-		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => AppDomain.MakeArrayType(elementType, customModifiers);
+		public override DmdType WithCustomModifiers(IList<DmdCustomModifier>? customModifiers) => AppDomain.MakeArrayType(elementType, customModifiers);
 		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : AppDomain.MakeArrayType(elementType, null);
-		public override DmdType GetElementType() => elementType;
+		public override DmdType? GetElementType() => elementType;
 		public override int GetArrayRank() => 1;
 		public override ReadOnlyCollection<int> GetArraySizes() => ReadOnlyCollectionHelpers.Empty<int>();
 		public override ReadOnlyCollection<int> GetArrayLowerBounds() => ReadOnlyCollectionHelpers.Empty<int>();
 
-		protected override DmdType ResolveNoThrowCore() {
+		protected override DmdType? ResolveNoThrowCore() {
 			if (!IsMetadataReference)
 				return this;
 			var newElementType = elementType.ResolveNoThrow();
-			if ((object)newElementType != null)
+			if (!(newElementType is null))
 				return AppDomain.MakeArrayType(newElementType, GetCustomModifiers());
 			return null;
 		}
 
 		public override bool IsFullyResolved { get; }
-		public override DmdTypeBase FullResolve() {
+		public override DmdTypeBase? FullResolve() {
 			if (IsFullyResolved)
 				return this;
 			var et = elementType.FullResolve();
-			if ((object)et != null)
+			if (!(et is null))
 				return (DmdTypeBase)AppDomain.MakeArrayType(et, GetCustomModifiers());
 			return null;
 		}
 
-		public override DmdType[] ReadDeclaredInterfaces() => ((DmdAppDomainImpl)AppDomain).GetSZArrayInterfaces(elementType);
+		public override DmdType[]? ReadDeclaredInterfaces() => ((DmdAppDomainImpl)AppDomain).GetSZArrayInterfaces(elementType);
 
-		public override DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType) {
+		public override DmdMethodBase[]? CreateDeclaredMethods(DmdType reflectedType) {
 			var appDomain = AppDomain;
 			return new DmdMethodBase[4] {
 				CreateMethod(reflectedType, DmdSpecialMethodKind.Array_Constructor1, DmdConstructorInfo.ConstructorName, appDomain.System_Void, appDomain.System_Int32),

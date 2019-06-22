@@ -47,7 +47,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Code {
 		/// <summary>
 		/// Gets the debugger module or null
 		/// </summary>
-		DbgModule DbgModule { get; }
+		DbgModule? DbgModule { get; }
 
 		/// <summary>
 		/// Gets the native address

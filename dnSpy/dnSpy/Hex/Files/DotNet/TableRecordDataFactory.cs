@@ -36,7 +36,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			MDTable = mdTable ?? throw new ArgumentNullException(nameof(mdTable));
 		}
 
-		public TableRecordData Create(uint rid) {
+		public TableRecordData? Create(uint rid) {
 			if (!MDTable.IsValidRID(rid))
 				return null;
 			var position = MDTable.Span.Start + (rid - 1) * MDTable.RowSize;

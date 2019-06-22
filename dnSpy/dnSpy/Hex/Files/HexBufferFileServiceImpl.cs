@@ -55,7 +55,7 @@ namespace dnSpy.Hex.Files {
 		}
 
 		public override HexBufferFile[] CreateFiles(BufferFileOptions[] options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			var newFiles = new HexBufferFileImpl[options.Length];
 			for (int i = 0; i < newFiles.Length; i++) {
@@ -72,13 +72,13 @@ namespace dnSpy.Hex.Files {
 		public override void RemoveFiles(HexSpan span) => RaiseRemovedFiles(files.Remove(new[] { span }));
 
 		public override void RemoveFile(HexBufferFile file) {
-			if (file == null)
+			if (file is null)
 				throw new ArgumentNullException(nameof(file));
 			RaiseRemovedFiles(files.Remove(new[] { file.Span }).ToArray());
 		}
 
 		public override void RemoveFiles(IEnumerable<HexBufferFile> files) {
-			if (files == null)
+			if (files is null)
 				throw new ArgumentNullException(nameof(files));
 			RaiseRemovedFiles(this.files.Remove(files.Select(a => a.Span).ToArray()));
 		}
@@ -91,9 +91,9 @@ namespace dnSpy.Hex.Files {
 			BufferFilesRemoved?.Invoke(this, new BufferFilesRemovedEventArgs(files.Select(a => a.Data).ToArray()));
 		}
 
-		public override HexBufferFile GetFile(HexPosition position, bool checkNestedFiles) {
+		public override HexBufferFile? GetFile(HexPosition position, bool checkNestedFiles) {
 			var file = files.FindData(position);
-			if (file == null || !checkNestedFiles)
+			if (file is null || !checkNestedFiles)
 				return file;
 			return file.GetFile(position, checkNestedFiles) ?? file;
 		}

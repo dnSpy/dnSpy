@@ -31,7 +31,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 			return type == type.AppDomain.GetWellKnownType(DmdWellKnownType.System_Collections_DictionaryEntry, isOptional: true);
 		}
 
-		public static (DmdFieldInfo keyField, DmdFieldInfo valueField) TryGetFields(DmdType type) {
+		public static (DmdFieldInfo? keyField, DmdFieldInfo? valueField) TryGetFields(DmdType type) {
 			Debug.Assert(IsDictionaryEntry(type));
 			return KeyValuePairTypeUtils.TryGetFields(type, KeyFieldName, ValueFieldName);
 		}

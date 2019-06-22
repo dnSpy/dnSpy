@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			public string DisplayName => dnSpy_Debugger_Resources.BgImgDisplayName_DebuggerMemory;
 			public double UIOrder => BackgroundImageOptionDefinitionConstants.UIOrder_HexEditorDebuggerMemory;
 			public bool UserVisible => true;
-			public DefaultImageSettings GetDefaultImageSettings() => null;
+			public DefaultImageSettings? GetDefaultImageSettings() => null;
 			public bool IsSupported(VSTE.ITextView textView) => false;
 			public bool IsSupported(HexView hexView) => hexView.Roles.Contains(PredefinedHexViewRoles.HexEditorGroupDebuggerMemory);
 		}

@@ -45,10 +45,10 @@ namespace dnSpy.Hex.Formatting {
 
 		public override TextRun GetTextRun(int textSourceCharacterIndex) {
 			var linePart = linePartsCollection.GetLinePartFromColumn(textSourceCharacterIndex, ref linePartIndex);
-			if (linePart == null)
+			if (linePart is null)
 				return endOfLine;
 			var part = linePart.Value;
-			if (part.AdornmentElement != null)
+			if (!(part.AdornmentElement is null))
 				return new AdornmentTextRun(part);
 			else {
 				int offs = textSourceCharacterIndex - part.Column;
@@ -71,10 +71,11 @@ namespace dnSpy.Hex.Formatting {
 			public override LineBreakCondition BreakAfter { get; }
 			public override bool HasFixedSize { get; }
 			public override int Length { get; }
-			public override TextRunProperties Properties { get; }
+			public override TextRunProperties? Properties { get; }
 			readonly HexAdornmentElement adornmentElement;
 
 			public AdornmentTextRun(HexLinePart linePart) {
+				Debug.Assert(!(linePart.AdornmentElement is null));
 				adornmentElement = linePart.AdornmentElement;
 				if (linePart.Span.Length != 0 || adornmentElement.Affinity == VST.PositionAffinity.Successor) {
 					BreakBefore = LineBreakCondition.BreakPossible;
@@ -104,7 +105,7 @@ namespace dnSpy.Hex.Formatting {
 		public int GetColumnOfFirstNonWhitespace() {
 			int column = 0;
 			foreach (var part in linePartsCollection.LineParts) {
-				if (part.AdornmentElement != null)
+				if (!(part.AdornmentElement is null))
 					break;
 				int len = part.Span.Length;
 				int start = part.Span.Start;

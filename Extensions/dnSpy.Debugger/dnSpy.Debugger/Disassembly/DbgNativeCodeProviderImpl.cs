@@ -42,7 +42,7 @@ namespace dnSpy.Debugger.Disassembly {
 
 			foreach (var lz in dbgRuntimeNativeCodeProviders) {
 				var guidString = lz.Metadata.Guid;
-				if (guidString == null)
+				if (guidString is null)
 					continue;
 				bool b = Guid.TryParse(guidString, out var guid);
 				Debug.Assert(b);
@@ -59,7 +59,7 @@ namespace dnSpy.Debugger.Disassembly {
 
 			foreach (var lz in dbgRuntimeNativeCodeProviders) {
 				var guidString = lz.Metadata.RuntimeKindGuid;
-				if (guidString == null)
+				if (guidString is null)
 					continue;
 				bool b = Guid.TryParse(guidString, out var guid);
 				Debug.Assert(b);
@@ -76,7 +76,7 @@ namespace dnSpy.Debugger.Disassembly {
 		}
 
 		public override bool CanGetNativeCode(DbgStackFrame frame) {
-			if (frame == null)
+			if (frame is null)
 				throw new ArgumentNullException(nameof(frame));
 
 			foreach (var provider in GetProviders(frame.Runtime)) {
@@ -88,7 +88,7 @@ namespace dnSpy.Debugger.Disassembly {
 		}
 
 		public override bool TryGetNativeCode(DbgStackFrame frame, DbgNativeCodeOptions options, out GetNativeCodeResult result) {
-			if (frame == null)
+			if (frame is null)
 				throw new ArgumentNullException(nameof(frame));
 
 			foreach (var provider in GetProviders(frame.Runtime)) {
@@ -101,7 +101,7 @@ namespace dnSpy.Debugger.Disassembly {
 		}
 
 		public override bool CanGetNativeCode(DbgBoundCodeBreakpoint boundBreakpoint) {
-			if (boundBreakpoint == null)
+			if (boundBreakpoint is null)
 				throw new ArgumentNullException(nameof(boundBreakpoint));
 
 			foreach (var provider in GetProviders(boundBreakpoint.Runtime)) {
@@ -113,7 +113,7 @@ namespace dnSpy.Debugger.Disassembly {
 		}
 
 		public override bool TryGetNativeCode(DbgBoundCodeBreakpoint boundBreakpoint, DbgNativeCodeOptions options, out GetNativeCodeResult result) {
-			if (boundBreakpoint == null)
+			if (boundBreakpoint is null)
 				throw new ArgumentNullException(nameof(boundBreakpoint));
 
 			foreach (var provider in GetProviders(boundBreakpoint.Runtime)) {
@@ -126,9 +126,9 @@ namespace dnSpy.Debugger.Disassembly {
 		}
 
 		public override bool CanGetNativeCode(DbgRuntime runtime, DbgCodeLocation location) {
-			if (runtime == null)
+			if (runtime is null)
 				throw new ArgumentNullException(nameof(runtime));
-			if (location == null)
+			if (location is null)
 				throw new ArgumentNullException(nameof(location));
 
 			foreach (var provider in GetProviders(runtime)) {
@@ -140,9 +140,9 @@ namespace dnSpy.Debugger.Disassembly {
 		}
 
 		public override bool TryGetNativeCode(DbgRuntime runtime, DbgCodeLocation location, DbgNativeCodeOptions options, out GetNativeCodeResult result) {
-			if (runtime == null)
+			if (runtime is null)
 				throw new ArgumentNullException(nameof(runtime));
-			if (location == null)
+			if (location is null)
 				throw new ArgumentNullException(nameof(location));
 
 			foreach (var provider in GetProviders(runtime)) {

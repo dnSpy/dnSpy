@@ -27,7 +27,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		public DmdDispatcherImpl(DbgEngineImpl engine) => this.engine = engine ?? throw new ArgumentNullException(nameof(engine));
 
 		public override bool CheckAccess() => engine.CheckCorDebugThread();
-		public override void Invoke(Action callback) => Invoke<object>(() => { callback(); return null; });
+		public override void Invoke(Action callback) => Invoke<object?>(() => { callback(); return null; });
 
 		public override T Invoke<T>(Func<T> callback) {
 			System.Diagnostics.Debugger.NotifyOfCrossThreadDependency();

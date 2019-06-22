@@ -29,7 +29,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		[ImportingConstructor]
 		ModuleIdFactoryProviderImpl(DsDocumentProvider documentProvider) => this.documentProvider = documentProvider;
 
-		public IModuleIdFactory Create() => new ModuleIdFactory(documentProvider);
+		public IModuleIdFactory? Create() => new ModuleIdFactory(documentProvider);
 
 		sealed class ModuleIdFactory : IModuleIdFactory {
 			readonly DsDocumentProvider documentProvider;

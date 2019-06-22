@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.Command {
 		/// </summary>
 		/// <param name="target">Target object</param>
 		/// <returns></returns>
-		ICommandTargetFilter Create(object target);
+		ICommandTargetFilter? Create(object target);
 	}
 
 	/// <summary>Metadata</summary>

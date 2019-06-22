@@ -51,9 +51,9 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		public FrameworkElement Create(CompletionSet completionSet, Completion completion, CompletionClassifierKind kind, bool colorize) {
-			if (completionSet == null)
+			if (completionSet is null)
 				throw new ArgumentNullException(nameof(completionSet));
-			if (completion == null)
+			if (completion is null)
 				throw new ArgumentNullException(nameof(completion));
 			Debug.Assert(completionSet.Completions.Contains(completion));
 
@@ -77,7 +77,7 @@ namespace dnSpy.Language.Intellisense {
 			}
 
 			var contentType = (completionSet as ICompletionSetContentTypeProvider)?.GetContentType(contentTypeRegistryService, kind);
-			if (contentType == null)
+			if (contentType is null)
 				contentType = contentTypeRegistryService.GetContentType(defaultContentType);
 			var classifier = GetTextClassifier(contentType);
 			return TextBlockFactory.Create(context.Text, classificationFormatMap.DefaultTextProperties,

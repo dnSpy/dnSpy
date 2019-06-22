@@ -92,12 +92,12 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		IEditValueProvider LabelsEditValueProvider {
 			get {
 				codeBreakpointContext.UIDispatcher.VerifyAccess();
-				if (labelsEditValueProvider == null)
+				if (labelsEditValueProvider is null)
 					labelsEditValueProvider = editValueProviderService.Create(ContentTypes.CodeBreakpointsWindowLabels, Array.Empty<string>());
 				return labelsEditValueProvider;
 			}
 		}
-		IEditValueProvider labelsEditValueProvider;
+		IEditValueProvider? labelsEditValueProvider;
 
 		readonly Lazy<DbgManager> dbgManager;
 		readonly CodeBreakpointContext codeBreakpointContext;
@@ -129,9 +129,8 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			this.dbgBreakpointLocationFormatterService = dbgBreakpointLocationFormatterService;
 			this.editValueProviderService = editValueProviderService;
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
-			codeBreakpointContext = new CodeBreakpointContext(uiDispatcher, classificationFormatMap, textElementProvider, breakpointConditionsFormatter, dbgCodeBreakpointHitCountService, new SearchMatcher(searchColumnDefinitions)) {
+			codeBreakpointContext = new CodeBreakpointContext(uiDispatcher, classificationFormatMap, textElementProvider, breakpointConditionsFormatter, dbgCodeBreakpointHitCountService, new SearchMatcher(searchColumnDefinitions), codeBreakpointFormatterProvider.Create()) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlight,
-				Formatter = codeBreakpointFormatterProvider.Create(),
 			};
 			Descs = new GridViewColumnDescs {
 				Columns = new GridViewColumnDesc[] {
@@ -464,7 +463,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			var (desc, dir) = Descs.SortedColumn;
 
 			int id;
-			if (desc == null || dir == GridViewSortDirection.Default) {
+			if (desc is null || dir == GridViewSortDirection.Default) {
 				id = CodeBreakpointsColumnIds.Default_Order;
 				dir = GridViewSortDirection.Ascending;
 			}

@@ -54,8 +54,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs {
 				};
 				showAttachToProcessDialog.Value.Attach(options);
 			}
-			public override bool IsVisible(IMenuItemContext context) => mustBeDebugging == null || dbgManager.Value.IsDebugging == mustBeDebugging;
-			public override string GetHeader(IMenuItemContext context) => string.Format(dnSpy_Debugger_DotNet_Mono_Resources.AttachToProcessXCommand, "_Unity");
+			public override bool IsVisible(IMenuItemContext context) => mustBeDebugging is null || dbgManager.Value.IsDebugging == mustBeDebugging;
+			public override string? GetHeader(IMenuItemContext context) => string.Format(dnSpy_Debugger_DotNet_Mono_Resources.AttachToProcessXCommand, "_Unity");
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Icon = DsImagesAttribute.Metadata, Group = MenuConstants.GROUP_APP_MENU_DEBUG_START, Order = 40)]

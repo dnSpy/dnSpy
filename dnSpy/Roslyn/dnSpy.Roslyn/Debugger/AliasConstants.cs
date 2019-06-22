@@ -30,7 +30,7 @@ namespace dnSpy.Roslyn.Debugger {
 		public const string ObjectIdName = "$";
 
 		public static bool TryGetAliasInfo(string aliasName, bool isCaseSensitive, out DbgDotNetParsedAlias aliasInfo) {
-			if (aliasName != null) {
+			if (!(aliasName is null)) {
 				var comparison = isCaseSensitive ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
 				if (aliasName.Equals(ReturnValueName, comparison)) {
 					aliasInfo = new DbgDotNetParsedAlias(DbgDotNetAliasKind.ReturnValue, DbgDotNetRuntimeConstants.LastReturnValueId);

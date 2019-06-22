@@ -46,7 +46,7 @@ namespace dnSpy.Hex.Editor {
 
 			var point = GetTextPoint(wpfHexView, e);
 			var line = wpfHexView.HexViewLines.GetHexViewLineContainingYCoordinate(point.Y);
-			if (line != null)
+			if (!(line is null))
 				hexViewLine = line;
 			else if (point.Y <= wpfHexView.ViewportTop)
 				hexViewLine = wpfHexView.HexViewLines.FirstVisibleLine;
@@ -60,10 +60,10 @@ namespace dnSpy.Hex.Editor {
 			return new HexMouseLocation(hexViewLine, position, point);
 		}
 
-		public static HexMouseLocation TryCreateTextOnly(WpfHexView wpfHexView, MouseEventArgs e, bool fullLineHeight) {
+		public static HexMouseLocation? TryCreateTextOnly(WpfHexView wpfHexView, MouseEventArgs e, bool fullLineHeight) {
 			var point = GetTextPoint(wpfHexView, e);
 			var line = wpfHexView.HexViewLines.GetHexViewLineContainingYCoordinate(point.Y);
-			if (line == null)
+			if (line is null)
 				return null;
 			if (fullLineHeight) {
 				if (!(line.Top <= point.Y && point.Y < line.Bottom))
@@ -78,7 +78,7 @@ namespace dnSpy.Hex.Editor {
 					return null;
 			}
 			var position = line.GetLinePositionFromXCoordinate(point.X, true);
-			if (position == null)
+			if (position is null)
 				return null;
 
 			return new HexMouseLocation(line, position.Value, point);

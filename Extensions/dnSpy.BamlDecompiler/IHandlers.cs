@@ -47,16 +47,16 @@ namespace dnSpy.BamlDecompiler {
 
 		public static void ProcessChildren(XamlContext ctx, BamlBlockNode node, BamlElement nodeElem) {
 			ctx.XmlNs.PushScope(nodeElem);
-			if (nodeElem.Xaml.Element != null)
+			if (!(nodeElem.Xaml.Element is null))
 				nodeElem.Xaml.Element.AddAnnotation(ctx.XmlNs.CurrentScope);
 			foreach (var child in node.Children) {
 				var handler = LookupHandler(child.Type);
-				if (handler == null) {
+				if (handler is null) {
 					Debug.WriteLine("BAML Handler {0} not implemented.", child.Type);
 					continue;
 				}
 				var elem = handler.Translate(ctx, (BamlNode)child, nodeElem);
-				if (elem != null) {
+				if (!(elem is null)) {
 					nodeElem.Children.Add(elem);
 					elem.Parent = nodeElem;
 				}

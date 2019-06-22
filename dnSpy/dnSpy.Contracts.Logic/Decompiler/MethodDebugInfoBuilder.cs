@@ -27,14 +27,14 @@ namespace dnSpy.Contracts.Decompiler {
 	/// </summary>
 	public sealed class MethodDebugInfoBuilder {
 		readonly MethodDef method;
-		readonly MethodDef kickoffMethod;
+		readonly MethodDef? kickoffMethod;
 		readonly StateMachineKind stateMachineKind;
 		readonly List<SourceStatement> statements;
 
 		/// <summary>
 		/// Compiler name (<see cref="PredefinedCompilerNames"/>) or null
 		/// </summary>
-		public string CompilerName { get; set; }
+		public string? CompilerName { get; set; }
 
 		/// <summary>
 		/// Gets the scope builder
@@ -44,12 +44,12 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <summary>
 		/// Gets/sets the parameters
 		/// </summary>
-		public SourceParameter[] Parameters { get; set; }
+		public SourceParameter[]? Parameters { get; set; }
 
 		/// <summary>
 		/// Async method debug info or null
 		/// </summary>
-		public AsyncMethodDebugInfo AsyncInfo { get; set; }
+		public AsyncMethodDebugInfo? AsyncInfo { get; set; }
 
 		/// <summary>
 		/// Start of method (eg. position of the first character of the modifier or return type)
@@ -70,7 +70,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="stateMachineKind">State machine kind</param>
 		/// <param name="method">Method</param>
 		/// <param name="kickoffMethod">Kickoff method or null</param>
-		public MethodDebugInfoBuilder(int decompilerSettingsVersion, StateMachineKind stateMachineKind, MethodDef method, MethodDef kickoffMethod) {
+		public MethodDebugInfoBuilder(int decompilerSettingsVersion, StateMachineKind stateMachineKind, MethodDef method, MethodDef? kickoffMethod) {
 			this.decompilerSettingsVersion = decompilerSettingsVersion;
 			this.stateMachineKind = stateMachineKind;
 			this.method = method ?? throw new ArgumentNullException(nameof(method));
@@ -92,7 +92,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="locals">Locals</param>
 		/// <param name="parameters">Parameters or null</param>
 		/// <param name="asyncInfo">Async method info or null</param>
-		public MethodDebugInfoBuilder(int decompilerSettingsVersion, StateMachineKind stateMachineKind, MethodDef method, MethodDef kickoffMethod, SourceLocal[] locals, SourceParameter[] parameters, AsyncMethodDebugInfo asyncInfo)
+		public MethodDebugInfoBuilder(int decompilerSettingsVersion, StateMachineKind stateMachineKind, MethodDef method, MethodDef? kickoffMethod, SourceLocal[] locals, SourceParameter[]? parameters, AsyncMethodDebugInfo? asyncInfo)
 			: this(decompilerSettingsVersion, stateMachineKind, method, kickoffMethod) {
 			Scope.Locals.AddRange(locals);
 			Parameters = parameters;
@@ -111,7 +111,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <returns></returns>
 		public MethodDebugInfo Create() {
 			TextSpan? methodSpan;
-			if (StartPosition != null && EndPosition != null && StartPosition.Value <= EndPosition.Value)
+			if (!(StartPosition is null) && !(EndPosition is null) && StartPosition.Value <= EndPosition.Value)
 				methodSpan = TextSpan.FromBounds(StartPosition.Value, EndPosition.Value);
 			else
 				methodSpan = null;

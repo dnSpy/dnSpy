@@ -36,11 +36,11 @@ namespace dnSpy.Bookmarks.Navigator {
 	[Export(typeof(BookmarkNavigator))]
 	[Export(typeof(BookmarkNavigator2))]
 	sealed class BookmarkNavigatorImpl : BookmarkNavigator2 {
-		public override Bookmark ActiveBookmark {
+		public override Bookmark? ActiveBookmark {
 			get => activeBookmark;
 			set => SetActiveBookmark(value, verifyBookmark: true);
 		}
-		Bookmark activeBookmark;
+		Bookmark? activeBookmark;
 
 		public override event EventHandler ActiveBookmarkChanged;
 
@@ -48,7 +48,7 @@ namespace dnSpy.Bookmarks.Navigator {
 		readonly ViewBookmarkProvider viewBookmarkProvider;
 		readonly Lazy<ReferenceNavigatorService> referenceNavigatorService;
 		readonly Lazy<BookmarkDocumentProvider, IBookmarkDocumentProviderMetadata>[] bookmarkDocumentProviders;
-		ReadOnlyCollection<string> currentLabels;
+		ReadOnlyCollection<string>? currentLabels;
 
 		[ImportingConstructor]
 		BookmarkNavigatorImpl(UIDispatcher uiDispatcher, ViewBookmarkProvider viewBookmarkProvider, Lazy<ReferenceNavigatorService> referenceNavigatorService, [ImportMany] IEnumerable<Lazy<BookmarkDocumentProvider, IBookmarkDocumentProviderMetadata>> bookmarkDocumentProviders) {
@@ -66,7 +66,7 @@ namespace dnSpy.Bookmarks.Navigator {
 		void ViewBookmarkProvider_BookmarksViewOrderChanged(object sender, EventArgs e) => UI(() => ViewBookmarkProvider_BookmarksViewOrderChanged_UI());
 		void ViewBookmarkProvider_BookmarksViewOrderChanged_UI() {
 			uiDispatcher.VerifyAccess();
-			if (!viewBookmarkProvider.BookmarksViewOrder.Contains(activeBookmark))
+			if (!viewBookmarkProvider.BookmarksViewOrder.Contains(activeBookmark!))
 				ActiveBookmark = viewBookmarkProvider.DefaultBookmark;
 		}
 
@@ -88,18 +88,18 @@ namespace dnSpy.Bookmarks.Navigator {
 		public override bool CanSelectNextBookmarkWithSameLabel => true;
 		public override void SelectNextBookmarkWithSameLabel() => SelectAndGoTo(GetNextBookmarkWithSameLabel(1), keepLabels: true);
 
-		Bookmark GetNextBookmark(int increment) {
+		Bookmark? GetNextBookmark(int increment) {
 			uiDispatcher.VerifyAccess();
 			foreach (var bm in GetBookmarks(increment))
 				return bm;
 			return null;
 		}
 
-		Bookmark GetNextBookmarkInDocument(int increment) {
+		Bookmark? GetNextBookmarkInDocument(int increment) {
 			uiDispatcher.VerifyAccess();
 			var currentDocument = GetDocument(activeBookmark);
 			foreach (var bm in GetBookmarks(increment)) {
-				if (currentDocument == null)
+				if (currentDocument is null)
 					return bm;
 				var doc = GetDocument(bm);
 				if (currentDocument.Equals(doc))
@@ -108,21 +108,21 @@ namespace dnSpy.Bookmarks.Navigator {
 			return null;
 		}
 
-		BookmarkDocument GetDocument(Bookmark bookmark) {
+		BookmarkDocument? GetDocument(Bookmark? bookmark) {
 			uiDispatcher.VerifyAccess();
-			if (bookmark == null)
+			if (bookmark is null)
 				return null;
 			foreach (var lz in bookmarkDocumentProviders) {
 				var doc = lz.Value.GetDocument(bookmark);
-				if (doc != null)
+				if (!(doc is null))
 					return doc;
 			}
 			return null;
 		}
 
-		Bookmark GetNextBookmarkWithSameLabel(int increment) {
+		Bookmark? GetNextBookmarkWithSameLabel(int increment) {
 			uiDispatcher.VerifyAccess();
-			if (currentLabels == null)
+			if (currentLabels is null)
 				currentLabels = activeBookmark?.Labels ?? emptyLabels;
 			foreach (var bm in GetBookmarks(increment)) {
 				if (SameLabel(currentLabels, bm.Labels))
@@ -133,7 +133,7 @@ namespace dnSpy.Bookmarks.Navigator {
 		static readonly ReadOnlyCollection<string> emptyLabels = new ReadOnlyCollection<string>(Array.Empty<string>());
 
 		static bool SameLabel(ReadOnlyCollection<string> validLabels, ReadOnlyCollection<string> labels) {
-			if (labels == null)
+			if (labels is null)
 				labels = emptyLabels;
 			if (validLabels.Count == 0)
 				return labels.Count == 0;
@@ -148,7 +148,7 @@ namespace dnSpy.Bookmarks.Navigator {
 			uiDispatcher.VerifyAccess();
 			Debug.Assert(increment == 1 || increment == -1);
 			var bookmarks = viewBookmarkProvider.BookmarksViewOrder;
-			int currentIndex = bookmarks.IndexOf(activeBookmark);
+			int currentIndex = bookmarks.IndexOf(activeBookmark!);
 			// If this is true, there are no visible bookmarks in the UI or there are no bookmarks
 			if (currentIndex < 0)
 				yield break;
@@ -161,9 +161,9 @@ namespace dnSpy.Bookmarks.Navigator {
 			}
 		}
 
-		void SelectAndGoTo(Bookmark bookmark, bool keepLabels = false) {
+		void SelectAndGoTo(Bookmark? bookmark, bool keepLabels = false) {
 			uiDispatcher.VerifyAccess();
-			if (bookmark == null)
+			if (bookmark is null)
 				return;
 			var currentLabelsTmp = currentLabels;
 			ActiveBookmark = bookmark;
@@ -174,10 +174,10 @@ namespace dnSpy.Bookmarks.Navigator {
 
 		public override void SetActiveBookmarkNoCheck(Bookmark bookmark) => SetActiveBookmark(bookmark, verifyBookmark: false);
 
-		void SetActiveBookmark(Bookmark bookmark, bool verifyBookmark) {
+		void SetActiveBookmark(Bookmark? bookmark, bool verifyBookmark) {
 			uiDispatcher.VerifyAccess();
 			currentLabels = null;
-			if (bookmark == null || (verifyBookmark && !viewBookmarkProvider.BookmarksViewOrder.Contains(bookmark)))
+			if (bookmark is null || (verifyBookmark && !viewBookmarkProvider.BookmarksViewOrder.Contains(bookmark)))
 				bookmark = viewBookmarkProvider.DefaultBookmark;
 			if (activeBookmark == bookmark)
 				return;

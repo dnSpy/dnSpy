@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Text;
 using dnSpy.Contracts.Language.Intellisense.Classification;
 using dnSpy.Contracts.Text;
@@ -41,13 +42,13 @@ namespace dnSpy.Roslyn.Intellisense.Completions.Classification {
 		[ImportingConstructor]
 		CompletionClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) => this.themeClassificationTypeService = themeClassificationTypeService;
 
-		public ITextClassifier Create(IContentType contentType) => new CompletionClassifier(themeClassificationTypeService);
+		public ITextClassifier? Create(IContentType contentType) => new CompletionClassifier(themeClassificationTypeService);
 	}
 
 	sealed class CompletionClassifier : ITextClassifier {
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
 		readonly IClassificationType punctuationClassificationType;
-		StringBuilder stringBuilder;
+		StringBuilder? stringBuilder;
 
 		public CompletionClassifier(IThemeClassificationTypeService themeClassificationTypeService) {
 			this.themeClassificationTypeService = themeClassificationTypeService ?? throw new ArgumentNullException(nameof(themeClassificationTypeService));
@@ -58,13 +59,13 @@ namespace dnSpy.Roslyn.Intellisense.Completions.Classification {
 			if (!context.Colorize)
 				yield break;
 			var completionContext = context as CompletionDisplayTextClassifierContext;
-			if (completionContext == null)
+			if (completionContext is null)
 				yield break;
 			var completion = completionContext.Completion as RoslynCompletion;
-			if (completion == null)
+			if (completion is null)
 				yield break;
 			var completionSet = completionContext.CompletionSet as RoslynCompletionSet;
-			if (completionSet == null)
+			if (completionSet is null)
 				yield break;
 
 			// The completion API doesn't create tagged text so try to extract that information
@@ -103,7 +104,8 @@ namespace dnSpy.Roslyn.Intellisense.Completions.Classification {
 			// The text is usually identical to the description and it's classified
 			var description = completionSet.GetDescriptionAsync(completion).GetAwaiter().GetResult();
 			var indexes = GetMatchIndexes(completion, description);
-			if (indexes != null) {
+			if (!(indexes is null)) {
+				Debug.Assert(!(description is null));
 				int pos = 0;
 				var parts = description.TaggedParts;
 				int endIndex = indexes.Value.endIndex;
@@ -130,10 +132,10 @@ namespace dnSpy.Roslyn.Intellisense.Completions.Classification {
 			'(', ')',
 		};
 
-		(int index, int endIndex)? GetMatchIndexes(RoslynCompletion completion, CompletionDescription description) {
-			if (completion == null || description == null)
+		(int index, int endIndex)? GetMatchIndexes(RoslynCompletion? completion, CompletionDescription? description) {
+			if (completion is null || description is null)
 				return null;
-			if (stringBuilder == null)
+			if (stringBuilder is null)
 				stringBuilder = new StringBuilder();
 			else
 				stringBuilder.Clear();

@@ -37,7 +37,7 @@ namespace dnSpy.Text.Repl {
 		[ImportingConstructor]
 		ReplOptionsService(ITextViewOptionsGroupService textViewOptionsGroupService, IContentTypeRegistryService contentTypeRegistryService, [ImportMany] IEnumerable<Lazy<ReplOptionsDefinition, IReplOptionsDefinitionMetadata>> replOptionsDefinitions) {
 			var group = textViewOptionsGroupService.GetGroup(PredefinedTextViewGroupNames.REPL);
-			Options = replOptionsDefinitions.Select(a => ReplOptions.TryCreate(group, contentTypeRegistryService, a.Metadata)).Where(a => a != null).ToArray();
+			Options = replOptionsDefinitions.Select(a => ReplOptions.TryCreate(group, contentTypeRegistryService, a.Metadata)).OfType<ReplOptions>().ToArray();
 		}
 	}
 }

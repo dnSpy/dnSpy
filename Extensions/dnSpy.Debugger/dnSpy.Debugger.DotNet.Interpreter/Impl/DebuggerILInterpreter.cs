@@ -30,7 +30,10 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 		DebuggerRuntime debuggerRuntime;
 		int totalInstructionCount;
 		readonly List<ILValue> ilValueStack;
-		public DebuggerILInterpreter() => ilValueStack = new List<ILValue>();
+		public DebuggerILInterpreter() {
+			debuggerRuntime = null!;
+			ilValueStack = new List<ILValue>();
+		}
 
 		public ILValue Execute(DebuggerRuntime debuggerRuntime, ILVMExecuteStateImpl state) {
 			try {
@@ -53,7 +56,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 			}
 			finally {
 				ilValueStack.Clear();
-				this.debuggerRuntime = null;
+				this.debuggerRuntime = null!;
 			}
 		}
 
@@ -95,7 +98,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 			// such as address of value that the caller (debugger) would like to keep.
 			var type = value.Type;
 			if (targetType.IsAssignableFrom(type)) {
-				if (boxIfNeeded && type.IsValueType && type != targetType)
+				if (boxIfNeeded && type!.IsValueType && type != targetType)
 					value = debuggerRuntime.Box(value, type) ?? value;
 				return value;
 			}
@@ -168,7 +171,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					if (GetValue(value, out l))
 						return debuggerRuntime.PointerSize == 4 ? ConstantNativeIntILValue.Create32(targetType, (int)l) : ConstantNativeIntILValue.Create64(targetType, l);
 				}
-				if ((object)type != null && (type == type.AppDomain.System_IntPtr || type == type.AppDomain.System_UIntPtr) && (targetType.IsPointer || targetType.IsFunctionPointer)) {
+				if (!(type is null) && (type == type.AppDomain.System_IntPtr || type == type.AppDomain.System_UIntPtr) && (targetType.IsPointer || targetType.IsFunctionPointer)) {
 					if (GetValue(value, out l))
 						return debuggerRuntime.PointerSize == 4 ? ConstantNativeIntILValue.Create32(targetType, (int)l) : ConstantNativeIntILValue.Create64(targetType, l);
 				}
@@ -220,20 +223,22 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 		ILValue ExecuteLoop(ILVMExecuteStateImpl state) {
 			var currentMethod = state.Method;
 			var body = state.Body;
-			if (body == null)
+			if (body is null)
 				ThrowInvalidMethodBodyInterpreterException();
+			Debug.Assert(!(body is null));
 			debuggerRuntime.Initialize(currentMethod, body);
 			var bodyBytes = state.ILBytes;
+			Debug.Assert(!(bodyBytes is null));
 			var exceptionHandlingClauses = body.ExceptionHandlingClauses;
 			int methodBodyPos = 0;
-			DmdType constrainedType = null;
+			DmdType? constrainedType = null;
 			for (;;) {
 				if (totalInstructionCount++ >= MAX_INTERPRETED_INSTRUCTIONS)
 					throw new TooManyInstructionsInterpreterException();
 
 				int i, j;
 				long l;
-				ILValue v1, v2, v3;
+				ILValue? v1, v2, v3;
 				DmdType type;
 				DmdFieldInfo field;
 				DmdMethodBase method;
@@ -249,32 +254,32 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					switch ((OpCodeFE)i) {
 					case OpCodeFE.Ldarg:
 						v1 = debuggerRuntime.LoadArgument(ToUInt16(bodyBytes, ref methodBodyPos));
-						if (v1 == null)
+						if (v1 is null)
 							ThrowInvalidMethodBodyInterpreterException();
-						ilValueStack.Add(v1.Clone());
+						ilValueStack.Add(v1!.Clone());
 						break;
 
 					case OpCodeFE.Ldarga:
 						i = ToUInt16(bodyBytes, ref methodBodyPos);
 						v1 = debuggerRuntime.LoadArgumentAddress(i, currentMethod.GetParameters()[i].ParameterType);
-						if (v1 == null)
+						if (v1 is null)
 							ThrowInvalidMethodBodyInterpreterException();
-						ilValueStack.Add(v1.Clone());
+						ilValueStack.Add(v1!.Clone());
 						break;
 
 					case OpCodeFE.Ldloc:
 						v1 = debuggerRuntime.LoadLocal(ToUInt16(bodyBytes, ref methodBodyPos));
-						if (v1 == null)
+						if (v1 is null)
 							ThrowInvalidMethodBodyInterpreterException();
-						ilValueStack.Add(v1.Clone());
+						ilValueStack.Add(v1!.Clone());
 						break;
 
 					case OpCodeFE.Ldloca:
 						i = ToUInt16(bodyBytes, ref methodBodyPos);
-						v1 = debuggerRuntime.LoadLocalAddress(i, state.Body.LocalVariables[i].LocalType);
-						if (v1 == null)
+						v1 = debuggerRuntime.LoadLocalAddress(i, body!.LocalVariables[i].LocalType);
+						if (v1 is null)
 							ThrowInvalidMethodBodyInterpreterException();
-						ilValueStack.Add(v1.Clone());
+						ilValueStack.Add(v1!.Clone());
 						break;
 
 					case OpCodeFE.Starg:
@@ -286,13 +291,13 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 					case OpCodeFE.Stloc:
 						i = ToUInt16(bodyBytes, ref methodBodyPos);
-						type = state.Body.LocalVariables[i].LocalType;
+						type = body!.LocalVariables[i].LocalType;
 						if (!debuggerRuntime.StoreLocal(i, type, Convert(Pop1(), type)))
 							ThrowInvalidMethodBodyInterpreterException();
 						break;
 
 					case OpCodeFE.Sizeof:
-						type = currentMethod.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+						type = currentMethod.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError)!;
 						ilValueStack.Add(new ConstantInt32ILValue(currentMethod.AppDomain, GetSizeOf(type)));
 						break;
 
@@ -339,19 +344,19 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						break;
 
 					case OpCodeFE.Initobj:
-						type = currentMethod.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+						type = currentMethod.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError)!;
 						v1 = Pop1();
 						if (!v1.InitializeObject(type))
 							ThrowInvalidMethodBodyInterpreterException();
 						break;
 
 					case OpCodeFE.Ldftn:
-						method = currentMethod.Module.ResolveMethod(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+						method = currentMethod.Module.ResolveMethod(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError)!;
 						ilValueStack.Add(new FunctionPointerILValue(method));
 						break;
 
 					case OpCodeFE.Ldvirtftn:
-						method = currentMethod.Module.ResolveMethod(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+						method = currentMethod.Module.ResolveMethod(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError)!;
 						ilValueStack.Add(new FunctionPointerILValue(method, Pop1()));
 						break;
 
@@ -368,7 +373,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 					case OpCodeFE.Constrained:
 						isPrefix = true;
-						constrainedType = currentMethod.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+						constrainedType = currentMethod.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError)!;
 						break;
 
 					case OpCodeFE.No:
@@ -455,9 +460,9 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 				case OpCode.Ldstr:
 					v1 = debuggerRuntime.LoadString(currentMethod.AppDomain.System_String, currentMethod.Module.ResolveString(ToInt32(bodyBytes, ref methodBodyPos)));
-					if (v1 == null)
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1);
+					ilValueStack.Add(v1!);
 					break;
 
 				case OpCode.Ldnull:
@@ -469,24 +474,24 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				case OpCode.Ldarg_2:
 				case OpCode.Ldarg_3:
 					v1 = debuggerRuntime.LoadArgument(i - (int)OpCode.Ldarg_0);
-					if (v1 == null)
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1.Clone());
+					ilValueStack.Add(v1!.Clone());
 					break;
 
 				case OpCode.Ldarg_S:
 					v1 = debuggerRuntime.LoadArgument(bodyBytes[methodBodyPos++]);
-					if (v1 == null)
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1.Clone());
+					ilValueStack.Add(v1!.Clone());
 					break;
 
 				case OpCode.Ldarga_S:
 					i = bodyBytes[methodBodyPos++];
 					v1 = debuggerRuntime.LoadArgumentAddress(i, currentMethod.GetParameters()[i].ParameterType);
-					if (v1 == null)
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1.Clone());
+					ilValueStack.Add(v1!.Clone());
 					break;
 
 				case OpCode.Ldloc_0:
@@ -494,24 +499,24 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				case OpCode.Ldloc_2:
 				case OpCode.Ldloc_3:
 					v1 = debuggerRuntime.LoadLocal(i - (int)OpCode.Ldloc_0);
-					if (v1 == null)
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1.Clone());
+					ilValueStack.Add(v1!.Clone());
 					break;
 
 				case OpCode.Ldloc_S:
 					v1 = debuggerRuntime.LoadLocal(bodyBytes[methodBodyPos++]);
-					if (v1 == null)
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1.Clone());
+					ilValueStack.Add(v1!.Clone());
 					break;
 
 				case OpCode.Ldloca_S:
 					i = bodyBytes[methodBodyPos++];
-					v1 = debuggerRuntime.LoadLocalAddress(i, state.Body.LocalVariables[i].LocalType);
-					if (v1 == null)
+					v1 = debuggerRuntime.LoadLocalAddress(i, body.LocalVariables[i].LocalType);
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1.Clone());
+					ilValueStack.Add(v1!.Clone());
 					break;
 
 				case OpCode.Stloc_0:
@@ -519,7 +524,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				case OpCode.Stloc_2:
 				case OpCode.Stloc_3:
 					i -= (int)OpCode.Stloc_0;
-					type = state.Body.LocalVariables[i].LocalType;
+					type = body.LocalVariables[i].LocalType;
 					if (!debuggerRuntime.StoreLocal(i, type, Convert(Pop1(), type)))
 						ThrowInvalidMethodBodyInterpreterException();
 					break;
@@ -533,7 +538,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 				case OpCode.Stloc_S:
 					i = bodyBytes[methodBodyPos++];
-					type = state.Body.LocalVariables[i].LocalType;
+					type = body.LocalVariables[i].LocalType;
 					if (!debuggerRuntime.StoreLocal(i, type, Convert(Pop1(), type)))
 						ThrowInvalidMethodBodyInterpreterException();
 					break;
@@ -550,126 +555,126 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					break;
 
 				case OpCode.Ldelem:
-					type = currentMethod.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+					type = currentMethod.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError)!;
 					Pop2(out v1, out v2);
 					l = GetInt32OrNativeInt(v2);
 					v1 = v1.LoadSZArrayElement(GetLoadValueType(type), l, type);
-					if (v1 == null)
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1.Clone());
+					ilValueStack.Add(v1!.Clone());
 					break;
 
 				case OpCode.Ldelem_I:
 					Pop2(out v1, out v2);
 					l = GetInt32OrNativeInt(v2);
 					v1 = v1.LoadSZArrayElement(LoadValueType.I, l, currentMethod.AppDomain.System_IntPtr);
-					if (v1 == null)
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1.Clone());
+					ilValueStack.Add(v1!.Clone());
 					break;
 
 				case OpCode.Ldelem_I1:
 					Pop2(out v1, out v2);
 					l = GetInt32OrNativeInt(v2);
 					v1 = v1.LoadSZArrayElement(LoadValueType.I1, l, currentMethod.AppDomain.System_SByte);
-					if (v1 == null)
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1.Clone());
+					ilValueStack.Add(v1!.Clone());
 					break;
 
 				case OpCode.Ldelem_I2:
 					Pop2(out v1, out v2);
 					l = GetInt32OrNativeInt(v2);
 					v1 = v1.LoadSZArrayElement(LoadValueType.I2, l, currentMethod.AppDomain.System_Int16);
-					if (v1 == null)
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1.Clone());
+					ilValueStack.Add(v1!.Clone());
 					break;
 
 				case OpCode.Ldelem_I4:
 					Pop2(out v1, out v2);
 					l = GetInt32OrNativeInt(v2);
 					v1 = v1.LoadSZArrayElement(LoadValueType.I4, l, currentMethod.AppDomain.System_Int32);
-					if (v1 == null)
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1.Clone());
+					ilValueStack.Add(v1!.Clone());
 					break;
 
 				case OpCode.Ldelem_I8:
 					Pop2(out v1, out v2);
 					l = GetInt32OrNativeInt(v2);
 					v1 = v1.LoadSZArrayElement(LoadValueType.I8, l, currentMethod.AppDomain.System_Int64);
-					if (v1 == null)
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1.Clone());
+					ilValueStack.Add(v1!.Clone());
 					break;
 
 				case OpCode.Ldelem_R4:
 					Pop2(out v1, out v2);
 					l = GetInt32OrNativeInt(v2);
 					v1 = v1.LoadSZArrayElement(LoadValueType.R4, l, currentMethod.AppDomain.System_Single);
-					if (v1 == null)
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1.Clone());
+					ilValueStack.Add(v1!.Clone());
 					break;
 
 				case OpCode.Ldelem_R8:
 					Pop2(out v1, out v2);
 					l = GetInt32OrNativeInt(v2);
 					v1 = v1.LoadSZArrayElement(LoadValueType.R8, l, currentMethod.AppDomain.System_Double);
-					if (v1 == null)
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1.Clone());
+					ilValueStack.Add(v1!.Clone());
 					break;
 
 				case OpCode.Ldelem_Ref:
 					Pop2(out v1, out v2);
 					l = GetInt32OrNativeInt(v2);
 					v1 = v1.LoadSZArrayElement(LoadValueType.Ref, l, currentMethod.AppDomain.System_Object);
-					if (v1 == null)
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1.Clone());
+					ilValueStack.Add(v1!.Clone());
 					break;
 
 				case OpCode.Ldelem_U1:
 					Pop2(out v1, out v2);
 					l = GetInt32OrNativeInt(v2);
 					v1 = v1.LoadSZArrayElement(LoadValueType.U1, l, currentMethod.AppDomain.System_Byte);
-					if (v1 == null)
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1.Clone());
+					ilValueStack.Add(v1!.Clone());
 					break;
 
 				case OpCode.Ldelem_U2:
 					Pop2(out v1, out v2);
 					l = GetInt32OrNativeInt(v2);
 					v1 = v1.LoadSZArrayElement(LoadValueType.U2, l, currentMethod.AppDomain.System_UInt16);
-					if (v1 == null)
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1.Clone());
+					ilValueStack.Add(v1!.Clone());
 					break;
 
 				case OpCode.Ldelem_U4:
 					Pop2(out v1, out v2);
 					l = GetInt32OrNativeInt(v2);
 					v1 = v1.LoadSZArrayElement(LoadValueType.U4, l, currentMethod.AppDomain.System_UInt32);
-					if (v1 == null)
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1.Clone());
+					ilValueStack.Add(v1!.Clone());
 					break;
 
 				case OpCode.Ldelema:
-					type = currentMethod.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+					type = currentMethod.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError)!;
 					Pop2(out v1, out v2);
 					l = GetInt32OrNativeInt(v2);
 					v1 = v1.LoadSZArrayElementAddress(l, type);
-					if (v1 == null)
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1.Clone());
+					ilValueStack.Add(v1!.Clone());
 					break;
 
 				case OpCode.Stelem:
-					type = currentMethod.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+					type = currentMethod.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError)!;
 					Pop2(out v1, out v2);
 					v3 = Pop1();
 					l = GetInt32OrNativeInt(v1);
@@ -742,49 +747,49 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					break;
 
 				case OpCode.Ldfld:
-					field = currentMethod.Module.ResolveField(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+					field = currentMethod.Module.ResolveField(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError)!;
 					if (field.IsStatic)
 						ThrowInvalidMethodBodyInterpreterException();
 					v1 = Pop1();
 					v1 = v1.LoadField(field);
-					if (v1 == null)
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1.Clone());
+					ilValueStack.Add(v1!.Clone());
 					break;
 
 				case OpCode.Ldflda:
-					field = currentMethod.Module.ResolveField(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+					field = currentMethod.Module.ResolveField(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError)!;
 					if (field.IsStatic)
 						ThrowInvalidMethodBodyInterpreterException();
 					v1 = Pop1();
 					v1 = v1.LoadFieldAddress(field);
-					if (v1 == null)
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1.Clone());
+					ilValueStack.Add(v1!.Clone());
 					break;
 
 				case OpCode.Ldsfld:
-					field = currentMethod.Module.ResolveField(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+					field = currentMethod.Module.ResolveField(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError)!;
 					if (!field.IsStatic)
 						ThrowInvalidMethodBodyInterpreterException();
 					v1 = debuggerRuntime.LoadStaticField(field);
-					if (v1 == null)
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1.Clone());
+					ilValueStack.Add(v1!.Clone());
 					break;
 
 				case OpCode.Ldsflda:
-					field = currentMethod.Module.ResolveField(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+					field = currentMethod.Module.ResolveField(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError)!;
 					if (!field.IsStatic)
 						ThrowInvalidMethodBodyInterpreterException();
 					v1 = debuggerRuntime.LoadStaticFieldAddress(field);
-					if (v1 == null)
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1.Clone());
+					ilValueStack.Add(v1!.Clone());
 					break;
 
 				case OpCode.Stfld:
-					field = currentMethod.Module.ResolveField(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+					field = currentMethod.Module.ResolveField(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError)!;
 					if (field.IsStatic)
 						ThrowInvalidMethodBodyInterpreterException();
 					Pop2(out v1, out v2);
@@ -793,7 +798,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					break;
 
 				case OpCode.Stsfld:
-					field = currentMethod.Module.ResolveField(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+					field = currentMethod.Module.ResolveField(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError)!;
 					if (!field.IsStatic)
 						ThrowInvalidMethodBodyInterpreterException();
 					if (!debuggerRuntime.StoreStaticField(field, Convert(Pop1(), field.FieldType)))
@@ -803,89 +808,89 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				case OpCode.Ldind_I:
 					v2 = Pop1();
 					v1 = v2.LoadIndirect(currentMethod.AppDomain.System_IntPtr, LoadValueType.I);
-					if (v1 == null)
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1.Clone());
+					ilValueStack.Add(v1!.Clone());
 					break;
 
 				case OpCode.Ldind_I1:
 					v2 = Pop1();
 					v1 = v2.LoadIndirect(currentMethod.AppDomain.System_SByte, LoadValueType.I1);
-					if (v1 == null)
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1.Clone());
+					ilValueStack.Add(v1!.Clone());
 					break;
 
 				case OpCode.Ldind_I2:
 					v2 = Pop1();
 					v1 = v2.LoadIndirect(currentMethod.AppDomain.System_Int16, LoadValueType.I2);
-					if (v1 == null)
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1.Clone());
+					ilValueStack.Add(v1!.Clone());
 					break;
 
 				case OpCode.Ldind_I4:
 					v2 = Pop1();
 					v1 = v2.LoadIndirect(currentMethod.AppDomain.System_Int32, LoadValueType.I4);
-					if (v1 == null)
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1.Clone());
+					ilValueStack.Add(v1!.Clone());
 					break;
 
 				case OpCode.Ldind_I8:
 					v2 = Pop1();
 					v1 = v2.LoadIndirect(currentMethod.AppDomain.System_Int64, LoadValueType.I8);
-					if (v1 == null)
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1.Clone());
+					ilValueStack.Add(v1!.Clone());
 					break;
 
 				case OpCode.Ldind_R4:
 					v2 = Pop1();
 					v1 = v2.LoadIndirect(currentMethod.AppDomain.System_Single, LoadValueType.R4);
-					if (v1 == null)
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1.Clone());
+					ilValueStack.Add(v1!.Clone());
 					break;
 
 				case OpCode.Ldind_R8:
 					v2 = Pop1();
 					v1 = v2.LoadIndirect(currentMethod.AppDomain.System_Double, LoadValueType.R8);
-					if (v1 == null)
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1.Clone());
+					ilValueStack.Add(v1!.Clone());
 					break;
 
 				case OpCode.Ldind_Ref:
 					v2 = Pop1();
 					v1 = v2.LoadIndirect(currentMethod.AppDomain.System_Object, LoadValueType.Ref);
-					if (v1 == null)
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1.Clone());
+					ilValueStack.Add(v1!.Clone());
 					break;
 
 				case OpCode.Ldind_U1:
 					v2 = Pop1();
 					v1 = v2.LoadIndirect(currentMethod.AppDomain.System_Byte, LoadValueType.U1);
-					if (v1 == null)
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1.Clone());
+					ilValueStack.Add(v1!.Clone());
 					break;
 
 				case OpCode.Ldind_U2:
 					v2 = Pop1();
 					v1 = v2.LoadIndirect(currentMethod.AppDomain.System_UInt16, LoadValueType.U2);
-					if (v1 == null)
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1.Clone());
+					ilValueStack.Add(v1!.Clone());
 					break;
 
 				case OpCode.Ldind_U4:
 					v2 = Pop1();
 					v1 = v2.LoadIndirect(currentMethod.AppDomain.System_UInt32, LoadValueType.U4);
-					if (v1 == null)
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1.Clone());
+					ilValueStack.Add(v1!.Clone());
 					break;
 
 				case OpCode.Stind_I:
@@ -937,23 +942,23 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					break;
 
 				case OpCode.Ldobj:
-					type = currentMethod.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+					type = currentMethod.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError)!;
 					v1 = Pop1();
 					v1 = v1.LoadIndirect(type, GetLoadValueType(type));
-					if (v1 == null)
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1.Clone());
+					ilValueStack.Add(v1!.Clone());
 					break;
 
 				case OpCode.Stobj:
-					type = currentMethod.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+					type = currentMethod.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError)!;
 					Pop2(out v1, out v2);
 					if (!v1.StoreIndirect(type, GetLoadValueType(type), Convert(v2, type)))
 						ThrowInvalidMethodBodyInterpreterException();
 					break;
 
 				case OpCode.Ldtoken:
-					var member = currentMethod.Module.ResolveMember(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+					var member = currentMethod.Module.ResolveMember(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError)!;
 					switch (member.MemberType) {
 					case DmdMemberTypes.TypeInfo:
 					case DmdMemberTypes.NestedType:
@@ -973,18 +978,18 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 						v1 = null;
 						break;
 					}
-					if (v1 == null)
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1);
+					ilValueStack.Add(v1!);
 					break;
 
 				case OpCode.Box:
-					type = currentMethod.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+					type = currentMethod.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError)!;
 					v1 = Pop1();
 					v1 = v1.Box(type) ?? debuggerRuntime.Box(v1, type);
-					if (v1 == null)
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1.Clone());
+					ilValueStack.Add(v1!.Clone());
 					break;
 
 				case OpCode.Break:
@@ -992,19 +997,19 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 				case OpCode.Call:
 				case OpCode.Callvirt:
-					method = currentMethod.Module.ResolveMethod(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+					method = currentMethod.Module.ResolveMethod(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError)!;
 					methodSig = method.GetMethodSignature();
 					args = PopMethodArguments(methodSig);
 					if (methodSig.HasThis) {
 						v1 = Pop1();
-						if ((object)constrainedType != null) {
+						if (!(constrainedType is null)) {
 							if (i != (int)OpCode.Callvirt)
 								ThrowInvalidMethodBodyInterpreterException();
 							v1 = FixConstrainedType(constrainedType, method, v1);
-							if (v1 == null)
+							if (v1 is null)
 								ThrowInvalidMethodBodyInterpreterException();
 						}
-						if (!v1.Call(i == (int)OpCode.Callvirt, method, args, out v3))
+						if (!v1!.Call(i == (int)OpCode.Callvirt, method, args, out v3))
 							ThrowInvalidMethodBodyInterpreterException();
 					}
 					else {
@@ -1012,11 +1017,11 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 							ThrowInvalidMethodBodyInterpreterException();
 					}
 					if (methodSig.ReturnType != currentMethod.AppDomain.System_Void)
-						ilValueStack.Add(Convert(v3.Clone(), methodSig.ReturnType));
+						ilValueStack.Add(Convert(v3!.Clone(), methodSig.ReturnType));
 					break;
 
 				case OpCode.Calli:
-					methodSig = currentMethod.Module.ResolveMethodSignature(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+					methodSig = currentMethod.Module.ResolveMethodSignature(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError)!;
 					v2 = Pop1();
 					args = PopMethodArguments(methodSig);
 					if (methodSig.HasThis) {
@@ -1036,7 +1041,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 							ThrowInvalidMethodBodyInterpreterException();
 					}
 					if (methodSig.ReturnType != currentMethod.AppDomain.System_Void)
-						ilValueStack.Add(Convert(v1.Clone(), methodSig.ReturnType));
+						ilValueStack.Add(Convert(v1!.Clone(), methodSig.ReturnType));
 					break;
 
 				case OpCode.Dup:
@@ -1051,7 +1056,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					break;
 
 				case OpCode.Castclass:
-					type = currentMethod.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+					type = currentMethod.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError)!;
 					v1 = Pop1();
 					if (!v1.IsNull && !(v1.Kind == ILValueKind.Type && type.IsAssignableFrom(v1.Type)))
 						ThrowInvalidMethodBodyInterpreterException();
@@ -1059,54 +1064,56 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					break;
 
 				case OpCode.Isinst:
-					type = currentMethod.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+					type = currentMethod.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError)!;
 					v1 = Pop1();
 					ilValueStack.Add(!v1.IsNull && type.IsAssignableFrom(v1.Type) ? v1 : new NullObjectRefILValue());
 					break;
 
 				case OpCode.Newarr:
-					type = currentMethod.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+					type = currentMethod.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError)!;
 					v1 = debuggerRuntime.CreateSZArray(type, GetInt32OrNativeInt(Pop1()));
-					if (v1 == null)
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1);
+					ilValueStack.Add(v1!);
 					break;
 
 				case OpCode.Newobj:
-					method = currentMethod.Module.ResolveMethod(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+					method = currentMethod.Module.ResolveMethod(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError)!;
 					methodSig = method.GetMethodSignature();
-					if (!(method is DmdConstructorInfo) || !methodSig.HasThis || methodSig.ReturnType != currentMethod.DeclaringType.AppDomain.System_Void)
+					if (!(method is DmdConstructorInfo) || !methodSig.HasThis || methodSig.ReturnType != currentMethod.DeclaringType!.AppDomain.System_Void)
 						ThrowInvalidMethodBodyInterpreterException();
 					args = PopMethodArguments(methodSig);
 					v1 = debuggerRuntime.CreateInstance((DmdConstructorInfo)method, args);
-					if (v1 == null)
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1);
+					ilValueStack.Add(v1!);
 					break;
 
 				case OpCode.Unbox:
-					type = currentMethod.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+					type = currentMethod.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError)!;
 					v1 = Pop1();
 					if (v1.IsNull || !type.IsValueType)
 						ThrowInvalidMethodBodyInterpreterException();
 					v1 = v1.Unbox(type);
-					if (v1 == null)
+					if (v1 is null)
 						ThrowInvalidMethodBodyInterpreterException();
-					ilValueStack.Add(v1);
+					ilValueStack.Add(v1!);
 					break;
 
 				case OpCode.Unbox_Any:
-					type = currentMethod.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+					type = currentMethod.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError)!;
 					v1 = Pop1();
 					if (v1.IsNull)
 						v1 = type.IsNullable ? debuggerRuntime.CreateTypeNoConstructor(type) : v1;
 					else
 						v1 = v1.UnboxAny(type) ?? v1;
-					ilValueStack.Add(v1);
+					if (v1 is null)
+						ThrowInvalidMethodBodyInterpreterException();
+					ilValueStack.Add(v1!);
 					break;
 
 				case OpCode.Cpobj:
-					type = currentMethod.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError);
+					type = currentMethod.Module.ResolveType(ToInt32(bodyBytes, ref methodBodyPos), body.GenericTypeArguments, body.GenericMethodArguments, DmdResolveOptions.ThrowOnError)!;
 					Pop2(out v1, out v2);
 					if (!v1.CopyObject(type, v2))
 						ThrowInvalidMethodBodyInterpreterException();
@@ -1122,7 +1129,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 							break;
 
 						case ILValueKind.NativeInt:
-							if ((v3 = v2.Add(AddOpCodeKind.Add, ((ConstantInt32ILValue)v1).Value, debuggerRuntime.PointerSize)) != null)
+							if (!((v3 = v2.Add(AddOpCodeKind.Add, ((ConstantInt32ILValue)v1).Value, debuggerRuntime.PointerSize)) is null))
 								break;
 							else if (v2 is ConstantNativeIntILValue) {
 								if (debuggerRuntime.PointerSize == 4)
@@ -1135,7 +1142,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 							break;
 
 						case ILValueKind.ByRef:
-							if ((v3 = v2.Add(AddOpCodeKind.Add, ((ConstantInt32ILValue)v1).Value, debuggerRuntime.PointerSize)) != null)
+							if (!((v3 = v2.Add(AddOpCodeKind.Add, ((ConstantInt32ILValue)v1).Value, debuggerRuntime.PointerSize)) is null))
 								break;
 							throw new InvalidMethodBodyInterpreterException();
 
@@ -1182,7 +1189,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					case ILValueKind.NativeInt:
 						switch (v2.Kind) {
 						case ILValueKind.Int32:
-							if ((v3 = v1.Add(AddOpCodeKind.Add, ((ConstantInt32ILValue)v2).Value, debuggerRuntime.PointerSize)) != null)
+							if (!((v3 = v1.Add(AddOpCodeKind.Add, ((ConstantInt32ILValue)v2).Value, debuggerRuntime.PointerSize)) is null))
 								break;
 							else if (v1 is ConstantNativeIntILValue) {
 								if (debuggerRuntime.PointerSize == 4)
@@ -1195,9 +1202,9 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 							break;
 
 						case ILValueKind.NativeInt:
-							if (v2 is ConstantNativeIntILValue && (v3 = v1.Add(AddOpCodeKind.Add, debuggerRuntime.PointerSize == 4 ? ((ConstantNativeIntILValue)v2).Value32 : ((ConstantNativeIntILValue)v2).Value64, debuggerRuntime.PointerSize)) != null)
+							if (v2 is ConstantNativeIntILValue && !((v3 = v1.Add(AddOpCodeKind.Add, debuggerRuntime.PointerSize == 4 ? ((ConstantNativeIntILValue)v2).Value32 : ((ConstantNativeIntILValue)v2).Value64, debuggerRuntime.PointerSize)) is null))
 								break;
-							else if (v1 is ConstantNativeIntILValue && (v3 = v2.Add(AddOpCodeKind.Add, debuggerRuntime.PointerSize == 4 ? ((ConstantNativeIntILValue)v1).Value32 : ((ConstantNativeIntILValue)v1).Value64, debuggerRuntime.PointerSize)) != null)
+							else if (v1 is ConstantNativeIntILValue && !((v3 = v2.Add(AddOpCodeKind.Add, debuggerRuntime.PointerSize == 4 ? ((ConstantNativeIntILValue)v1).Value32 : ((ConstantNativeIntILValue)v1).Value64, debuggerRuntime.PointerSize)) is null))
 								break;
 							else if (v1 is ConstantNativeIntILValue && v2 is ConstantNativeIntILValue) {
 								if (debuggerRuntime.PointerSize == 4)
@@ -1210,7 +1217,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 							break;
 
 						case ILValueKind.ByRef:
-							if (v1 is ConstantNativeIntILValue && (v3 = v2.Add(AddOpCodeKind.Add, debuggerRuntime.PointerSize == 4 ? ((ConstantNativeIntILValue)v1).Value32 : ((ConstantNativeIntILValue)v1).Value64, debuggerRuntime.PointerSize)) != null)
+							if (v1 is ConstantNativeIntILValue && !((v3 = v2.Add(AddOpCodeKind.Add, debuggerRuntime.PointerSize == 4 ? ((ConstantNativeIntILValue)v1).Value32 : ((ConstantNativeIntILValue)v1).Value64, debuggerRuntime.PointerSize)) is null))
 								break;
 							throw new InvalidMethodBodyInterpreterException();
 
@@ -1225,12 +1232,12 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					case ILValueKind.ByRef:
 						switch (v2.Kind) {
 						case ILValueKind.Int32:
-							if ((v3 = v1.Add(AddOpCodeKind.Add, ((ConstantInt32ILValue)v2).Value, debuggerRuntime.PointerSize)) != null)
+							if (!((v3 = v1.Add(AddOpCodeKind.Add, ((ConstantInt32ILValue)v2).Value, debuggerRuntime.PointerSize)) is null))
 								break;
 							goto case ILValueKind.ByRef;
 
 						case ILValueKind.NativeInt:
-							if (v2 is ConstantNativeIntILValue && (v3 = v1.Add(AddOpCodeKind.Add, debuggerRuntime.PointerSize == 4 ? ((ConstantNativeIntILValue)v2).Value32 : ((ConstantNativeIntILValue)v2).Value64, debuggerRuntime.PointerSize)) != null)
+							if (v2 is ConstantNativeIntILValue && !((v3 = v1.Add(AddOpCodeKind.Add, debuggerRuntime.PointerSize == 4 ? ((ConstantNativeIntILValue)v2).Value32 : ((ConstantNativeIntILValue)v2).Value64, debuggerRuntime.PointerSize)) is null))
 								break;
 							goto case ILValueKind.ByRef;
 
@@ -1260,7 +1267,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 							break;
 
 						case ILValueKind.NativeInt:
-							if ((v3 = v2.Add(AddOpCodeKind.Add_Ovf, ((ConstantInt32ILValue)v1).Value, debuggerRuntime.PointerSize)) != null)
+							if (!((v3 = v2.Add(AddOpCodeKind.Add_Ovf, ((ConstantInt32ILValue)v1).Value, debuggerRuntime.PointerSize)) is null))
 								break;
 							else if (v2 is ConstantNativeIntILValue) {
 								if (debuggerRuntime.PointerSize == 4)
@@ -1273,7 +1280,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 							break;
 
 						case ILValueKind.ByRef:
-							if ((v3 = v2.Add(AddOpCodeKind.Add_Ovf, ((ConstantInt32ILValue)v1).Value, debuggerRuntime.PointerSize)) != null)
+							if (!((v3 = v2.Add(AddOpCodeKind.Add_Ovf, ((ConstantInt32ILValue)v1).Value, debuggerRuntime.PointerSize)) is null))
 								break;
 							throw new InvalidMethodBodyInterpreterException();
 
@@ -1320,7 +1327,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					case ILValueKind.NativeInt:
 						switch (v2.Kind) {
 						case ILValueKind.Int32:
-							if ((v3 = v1.Add(AddOpCodeKind.Add_Ovf, ((ConstantInt32ILValue)v2).Value, debuggerRuntime.PointerSize)) != null)
+							if (!((v3 = v1.Add(AddOpCodeKind.Add_Ovf, ((ConstantInt32ILValue)v2).Value, debuggerRuntime.PointerSize)) is null))
 								break;
 							else if (v1 is ConstantNativeIntILValue) {
 								if (debuggerRuntime.PointerSize == 4)
@@ -1333,9 +1340,9 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 							break;
 
 						case ILValueKind.NativeInt:
-							if (v2 is ConstantNativeIntILValue && (v3 = v1.Add(AddOpCodeKind.Add_Ovf, debuggerRuntime.PointerSize == 4 ? ((ConstantNativeIntILValue)v2).Value32 : ((ConstantNativeIntILValue)v2).Value64, debuggerRuntime.PointerSize)) != null)
+							if (v2 is ConstantNativeIntILValue && !((v3 = v1.Add(AddOpCodeKind.Add_Ovf, debuggerRuntime.PointerSize == 4 ? ((ConstantNativeIntILValue)v2).Value32 : ((ConstantNativeIntILValue)v2).Value64, debuggerRuntime.PointerSize)) is null))
 								break;
-							else if (v1 is ConstantNativeIntILValue && (v3 = v2.Add(AddOpCodeKind.Add_Ovf, debuggerRuntime.PointerSize == 4 ? ((ConstantNativeIntILValue)v1).Value32 : ((ConstantNativeIntILValue)v1).Value64, debuggerRuntime.PointerSize)) != null)
+							else if (v1 is ConstantNativeIntILValue && !((v3 = v2.Add(AddOpCodeKind.Add_Ovf, debuggerRuntime.PointerSize == 4 ? ((ConstantNativeIntILValue)v1).Value32 : ((ConstantNativeIntILValue)v1).Value64, debuggerRuntime.PointerSize)) is null))
 								break;
 							else if (v1 is ConstantNativeIntILValue && v2 is ConstantNativeIntILValue) {
 								if (debuggerRuntime.PointerSize == 4)
@@ -1348,7 +1355,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 							break;
 
 						case ILValueKind.ByRef:
-							if (v1 is ConstantNativeIntILValue && (v3 = v2.Add(AddOpCodeKind.Add_Ovf, debuggerRuntime.PointerSize == 4 ? ((ConstantNativeIntILValue)v1).Value32 : ((ConstantNativeIntILValue)v1).Value64, debuggerRuntime.PointerSize)) != null)
+							if (v1 is ConstantNativeIntILValue && !((v3 = v2.Add(AddOpCodeKind.Add_Ovf, debuggerRuntime.PointerSize == 4 ? ((ConstantNativeIntILValue)v1).Value32 : ((ConstantNativeIntILValue)v1).Value64, debuggerRuntime.PointerSize)) is null))
 								break;
 							throw new InvalidMethodBodyInterpreterException();
 
@@ -1363,12 +1370,12 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					case ILValueKind.ByRef:
 						switch (v2.Kind) {
 						case ILValueKind.Int32:
-							if ((v3 = v1.Add(AddOpCodeKind.Add_Ovf, ((ConstantInt32ILValue)v2).Value, debuggerRuntime.PointerSize)) != null)
+							if (!((v3 = v1.Add(AddOpCodeKind.Add_Ovf, ((ConstantInt32ILValue)v2).Value, debuggerRuntime.PointerSize)) is null))
 								break;
 							goto case ILValueKind.ByRef;
 
 						case ILValueKind.NativeInt:
-							if (v2 is ConstantNativeIntILValue && (v3 = v1.Add(AddOpCodeKind.Add_Ovf, debuggerRuntime.PointerSize == 4 ? ((ConstantNativeIntILValue)v2).Value32 : ((ConstantNativeIntILValue)v2).Value64, debuggerRuntime.PointerSize)) != null)
+							if (v2 is ConstantNativeIntILValue && !((v3 = v1.Add(AddOpCodeKind.Add_Ovf, debuggerRuntime.PointerSize == 4 ? ((ConstantNativeIntILValue)v2).Value32 : ((ConstantNativeIntILValue)v2).Value64, debuggerRuntime.PointerSize)) is null))
 								break;
 							goto case ILValueKind.ByRef;
 
@@ -1398,7 +1405,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 							break;
 
 						case ILValueKind.NativeInt:
-							if ((v3 = v2.Add(AddOpCodeKind.Add_Ovf_Un, ((ConstantInt32ILValue)v1).Value, debuggerRuntime.PointerSize)) != null)
+							if (!((v3 = v2.Add(AddOpCodeKind.Add_Ovf_Un, ((ConstantInt32ILValue)v1).Value, debuggerRuntime.PointerSize)) is null))
 								break;
 							else if (v2 is ConstantNativeIntILValue) {
 								if (debuggerRuntime.PointerSize == 4)
@@ -1411,7 +1418,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 							break;
 
 						case ILValueKind.ByRef:
-							if ((v3 = v2.Add(AddOpCodeKind.Add_Ovf_Un, ((ConstantInt32ILValue)v1).Value, debuggerRuntime.PointerSize)) != null)
+							if (!((v3 = v2.Add(AddOpCodeKind.Add_Ovf_Un, ((ConstantInt32ILValue)v1).Value, debuggerRuntime.PointerSize)) is null))
 								break;
 							throw new InvalidMethodBodyInterpreterException();
 
@@ -1445,7 +1452,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					case ILValueKind.NativeInt:
 						switch (v2.Kind) {
 						case ILValueKind.Int32:
-							if ((v3 = v1.Add(AddOpCodeKind.Add_Ovf_Un, ((ConstantInt32ILValue)v2).Value, debuggerRuntime.PointerSize)) != null)
+							if (!((v3 = v1.Add(AddOpCodeKind.Add_Ovf_Un, ((ConstantInt32ILValue)v2).Value, debuggerRuntime.PointerSize)) is null))
 								break;
 							else if (v1 is ConstantNativeIntILValue) {
 								if (debuggerRuntime.PointerSize == 4)
@@ -1458,9 +1465,9 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 							break;
 
 						case ILValueKind.NativeInt:
-							if (v2 is ConstantNativeIntILValue && (v3 = v1.Add(AddOpCodeKind.Add_Ovf_Un, debuggerRuntime.PointerSize == 4 ? ((ConstantNativeIntILValue)v2).Value32 : ((ConstantNativeIntILValue)v2).Value64, debuggerRuntime.PointerSize)) != null)
+							if (v2 is ConstantNativeIntILValue && !((v3 = v1.Add(AddOpCodeKind.Add_Ovf_Un, debuggerRuntime.PointerSize == 4 ? ((ConstantNativeIntILValue)v2).Value32 : ((ConstantNativeIntILValue)v2).Value64, debuggerRuntime.PointerSize)) is null))
 								break;
-							else if (v1 is ConstantNativeIntILValue && (v3 = v2.Add(AddOpCodeKind.Add_Ovf_Un, debuggerRuntime.PointerSize == 4 ? ((ConstantNativeIntILValue)v1).Value32 : ((ConstantNativeIntILValue)v1).Value64, debuggerRuntime.PointerSize)) != null)
+							else if (v1 is ConstantNativeIntILValue && !((v3 = v2.Add(AddOpCodeKind.Add_Ovf_Un, debuggerRuntime.PointerSize == 4 ? ((ConstantNativeIntILValue)v1).Value32 : ((ConstantNativeIntILValue)v1).Value64, debuggerRuntime.PointerSize)) is null))
 								break;
 							else if (v1 is ConstantNativeIntILValue && v2 is ConstantNativeIntILValue) {
 								if (debuggerRuntime.PointerSize == 4)
@@ -1473,7 +1480,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 							break;
 
 						case ILValueKind.ByRef:
-							if (v1 is ConstantNativeIntILValue && (v3 = v2.Add(AddOpCodeKind.Add_Ovf_Un, debuggerRuntime.PointerSize == 4 ? ((ConstantNativeIntILValue)v1).Value32 : ((ConstantNativeIntILValue)v1).Value64, debuggerRuntime.PointerSize)) != null)
+							if (v1 is ConstantNativeIntILValue && !((v3 = v2.Add(AddOpCodeKind.Add_Ovf_Un, debuggerRuntime.PointerSize == 4 ? ((ConstantNativeIntILValue)v1).Value32 : ((ConstantNativeIntILValue)v1).Value64, debuggerRuntime.PointerSize)) is null))
 								break;
 							throw new InvalidMethodBodyInterpreterException();
 
@@ -1488,12 +1495,12 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					case ILValueKind.ByRef:
 						switch (v2.Kind) {
 						case ILValueKind.Int32:
-							if ((v3 = v1.Add(AddOpCodeKind.Add_Ovf_Un, ((ConstantInt32ILValue)v2).Value, debuggerRuntime.PointerSize)) != null)
+							if (!((v3 = v1.Add(AddOpCodeKind.Add_Ovf_Un, ((ConstantInt32ILValue)v2).Value, debuggerRuntime.PointerSize)) is null))
 								break;
 							goto case ILValueKind.ByRef;
 
 						case ILValueKind.NativeInt:
-							if (v2 is ConstantNativeIntILValue && (v3 = v1.Add(AddOpCodeKind.Add_Ovf_Un, debuggerRuntime.PointerSize == 4 ? ((ConstantNativeIntILValue)v2).Value32 : ((ConstantNativeIntILValue)v2).Value64, debuggerRuntime.PointerSize)) != null)
+							if (v2 is ConstantNativeIntILValue && !((v3 = v1.Add(AddOpCodeKind.Add_Ovf_Un, debuggerRuntime.PointerSize == 4 ? ((ConstantNativeIntILValue)v2).Value32 : ((ConstantNativeIntILValue)v2).Value64, debuggerRuntime.PointerSize)) is null))
 								break;
 							goto case ILValueKind.ByRef;
 
@@ -1515,7 +1522,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 				case OpCode.Sub:
 					Pop2(out v1, out v2);
-					if ((v3 = v1.Sub(SubOpCodeKind.Sub, v2, debuggerRuntime.PointerSize)) != null) {
+					if (!((v3 = v1.Sub(SubOpCodeKind.Sub, v2, debuggerRuntime.PointerSize)) is null)) {
 						ilValueStack.Add(v3);
 						break;
 					}
@@ -1581,7 +1588,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					case ILValueKind.NativeInt:
 						switch (v2.Kind) {
 						case ILValueKind.Int32:
-							if ((v3 = v1.Sub(SubOpCodeKind.Sub, ((ConstantInt32ILValue)v2).Value, debuggerRuntime.PointerSize)) != null)
+							if (!((v3 = v1.Sub(SubOpCodeKind.Sub, ((ConstantInt32ILValue)v2).Value, debuggerRuntime.PointerSize)) is null))
 								break;
 							else if (v1 is ConstantNativeIntILValue) {
 								if (debuggerRuntime.PointerSize == 4)
@@ -1594,7 +1601,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 							break;
 
 						case ILValueKind.NativeInt:
-							if (v2 is ConstantNativeIntILValue && (v3 = v1.Sub(SubOpCodeKind.Sub, debuggerRuntime.PointerSize == 4 ? ((ConstantNativeIntILValue)v2).Value32 : ((ConstantNativeIntILValue)v2).Value64, debuggerRuntime.PointerSize)) != null)
+							if (v2 is ConstantNativeIntILValue && !((v3 = v1.Sub(SubOpCodeKind.Sub, debuggerRuntime.PointerSize == 4 ? ((ConstantNativeIntILValue)v2).Value32 : ((ConstantNativeIntILValue)v2).Value64, debuggerRuntime.PointerSize)) is null))
 								break;
 							else if (v1 is ConstantNativeIntILValue && v2 is ConstantNativeIntILValue) {
 								if (debuggerRuntime.PointerSize == 4)
@@ -1618,12 +1625,12 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					case ILValueKind.ByRef:
 						switch (v2.Kind) {
 						case ILValueKind.Int32:
-							if ((v3 = v1.Sub(SubOpCodeKind.Sub, ((ConstantInt32ILValue)v2).Value, debuggerRuntime.PointerSize)) != null)
+							if (!((v3 = v1.Sub(SubOpCodeKind.Sub, ((ConstantInt32ILValue)v2).Value, debuggerRuntime.PointerSize)) is null))
 								break;
 							goto case ILValueKind.ByRef;
 
 						case ILValueKind.NativeInt:
-							if (v2 is ConstantNativeIntILValue && (v3 = v1.Sub(SubOpCodeKind.Sub, debuggerRuntime.PointerSize == 4 ? ((ConstantNativeIntILValue)v2).Value32 : ((ConstantNativeIntILValue)v2).Value64, debuggerRuntime.PointerSize)) != null)
+							if (v2 is ConstantNativeIntILValue && !((v3 = v1.Sub(SubOpCodeKind.Sub, debuggerRuntime.PointerSize == 4 ? ((ConstantNativeIntILValue)v2).Value32 : ((ConstantNativeIntILValue)v2).Value64, debuggerRuntime.PointerSize)) is null))
 								break;
 							goto case ILValueKind.ByRef;
 
@@ -1645,7 +1652,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 				case OpCode.Sub_Ovf:
 					Pop2(out v1, out v2);
-					if ((v3 = v1.Sub(SubOpCodeKind.Sub_Ovf, v2, debuggerRuntime.PointerSize)) != null) {
+					if (!((v3 = v1.Sub(SubOpCodeKind.Sub_Ovf, v2, debuggerRuntime.PointerSize)) is null)) {
 						ilValueStack.Add(v3);
 						break;
 					}
@@ -1711,7 +1718,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					case ILValueKind.NativeInt:
 						switch (v2.Kind) {
 						case ILValueKind.Int32:
-							if ((v3 = v1.Sub(SubOpCodeKind.Sub_Ovf, ((ConstantInt32ILValue)v2).Value, debuggerRuntime.PointerSize)) != null)
+							if (!((v3 = v1.Sub(SubOpCodeKind.Sub_Ovf, ((ConstantInt32ILValue)v2).Value, debuggerRuntime.PointerSize)) is null))
 								break;
 							else if (v1 is ConstantNativeIntILValue) {
 								if (debuggerRuntime.PointerSize == 4)
@@ -1724,7 +1731,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 							break;
 
 						case ILValueKind.NativeInt:
-							if (v2 is ConstantNativeIntILValue && (v3 = v1.Sub(SubOpCodeKind.Sub_Ovf, debuggerRuntime.PointerSize == 4 ? ((ConstantNativeIntILValue)v2).Value32 : ((ConstantNativeIntILValue)v2).Value64, debuggerRuntime.PointerSize)) != null)
+							if (v2 is ConstantNativeIntILValue && !((v3 = v1.Sub(SubOpCodeKind.Sub_Ovf, debuggerRuntime.PointerSize == 4 ? ((ConstantNativeIntILValue)v2).Value32 : ((ConstantNativeIntILValue)v2).Value64, debuggerRuntime.PointerSize)) is null))
 								break;
 							else if (v1 is ConstantNativeIntILValue && v2 is ConstantNativeIntILValue) {
 								if (debuggerRuntime.PointerSize == 4)
@@ -1748,12 +1755,12 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					case ILValueKind.ByRef:
 						switch (v2.Kind) {
 						case ILValueKind.Int32:
-							if ((v3 = v1.Sub(SubOpCodeKind.Sub_Ovf, ((ConstantInt32ILValue)v2).Value, debuggerRuntime.PointerSize)) != null)
+							if (!((v3 = v1.Sub(SubOpCodeKind.Sub_Ovf, ((ConstantInt32ILValue)v2).Value, debuggerRuntime.PointerSize)) is null))
 								break;
 							goto case ILValueKind.ByRef;
 
 						case ILValueKind.NativeInt:
-							if (v2 is ConstantNativeIntILValue && (v3 = v1.Sub(SubOpCodeKind.Sub_Ovf, debuggerRuntime.PointerSize == 4 ? ((ConstantNativeIntILValue)v2).Value32 : ((ConstantNativeIntILValue)v2).Value64, debuggerRuntime.PointerSize)) != null)
+							if (v2 is ConstantNativeIntILValue && !((v3 = v1.Sub(SubOpCodeKind.Sub_Ovf, debuggerRuntime.PointerSize == 4 ? ((ConstantNativeIntILValue)v2).Value32 : ((ConstantNativeIntILValue)v2).Value64, debuggerRuntime.PointerSize)) is null))
 								break;
 							goto case ILValueKind.ByRef;
 
@@ -1775,7 +1782,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 				case OpCode.Sub_Ovf_Un:
 					Pop2(out v1, out v2);
-					if ((v3 = v1.Sub(SubOpCodeKind.Sub_Ovf_Un, v2, debuggerRuntime.PointerSize)) != null) {
+					if (!((v3 = v1.Sub(SubOpCodeKind.Sub_Ovf_Un, v2, debuggerRuntime.PointerSize)) is null)) {
 						ilValueStack.Add(v3);
 						break;
 					}
@@ -1828,7 +1835,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					case ILValueKind.NativeInt:
 						switch (v2.Kind) {
 						case ILValueKind.Int32:
-							if ((v3 = v1.Sub(SubOpCodeKind.Sub_Ovf_Un, ((ConstantInt32ILValue)v2).Value, debuggerRuntime.PointerSize)) != null)
+							if (!((v3 = v1.Sub(SubOpCodeKind.Sub_Ovf_Un, ((ConstantInt32ILValue)v2).Value, debuggerRuntime.PointerSize)) is null))
 								break;
 							else if (v1 is ConstantNativeIntILValue) {
 								if (debuggerRuntime.PointerSize == 4)
@@ -1841,7 +1848,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 							break;
 
 						case ILValueKind.NativeInt:
-							if (v2 is ConstantNativeIntILValue && (v3 = v1.Sub(SubOpCodeKind.Sub_Ovf_Un, debuggerRuntime.PointerSize == 4 ? ((ConstantNativeIntILValue)v2).Value32 : ((ConstantNativeIntILValue)v2).Value64, debuggerRuntime.PointerSize)) != null)
+							if (v2 is ConstantNativeIntILValue && !((v3 = v1.Sub(SubOpCodeKind.Sub_Ovf_Un, debuggerRuntime.PointerSize == 4 ? ((ConstantNativeIntILValue)v2).Value32 : ((ConstantNativeIntILValue)v2).Value64, debuggerRuntime.PointerSize)) is null))
 								break;
 							else if (v1 is ConstantNativeIntILValue && v2 is ConstantNativeIntILValue) {
 								if (debuggerRuntime.PointerSize == 4)
@@ -1865,12 +1872,12 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 					case ILValueKind.ByRef:
 						switch (v2.Kind) {
 						case ILValueKind.Int32:
-							if ((v3 = v1.Sub(SubOpCodeKind.Sub_Ovf_Un, ((ConstantInt32ILValue)v2).Value, debuggerRuntime.PointerSize)) != null)
+							if (!((v3 = v1.Sub(SubOpCodeKind.Sub_Ovf_Un, ((ConstantInt32ILValue)v2).Value, debuggerRuntime.PointerSize)) is null))
 								break;
 							goto case ILValueKind.ByRef;
 
 						case ILValueKind.NativeInt:
-							if (v2 is ConstantNativeIntILValue && (v3 = v1.Sub(SubOpCodeKind.Sub_Ovf_Un, debuggerRuntime.PointerSize == 4 ? ((ConstantNativeIntILValue)v2).Value32 : ((ConstantNativeIntILValue)v2).Value64, debuggerRuntime.PointerSize)) != null)
+							if (v2 is ConstantNativeIntILValue && !((v3 = v1.Sub(SubOpCodeKind.Sub_Ovf_Un, debuggerRuntime.PointerSize == 4 ? ((ConstantNativeIntILValue)v2).Value32 : ((ConstantNativeIntILValue)v2).Value64, debuggerRuntime.PointerSize)) is null))
 								break;
 							goto case ILValueKind.ByRef;
 
@@ -4446,7 +4453,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 			}
 
 			var res = debuggerRuntime.Equals(v1, v2);
-			if (res != null)
+			if (!(res is null))
 				return res.Value;
 
 			throw new InvalidMethodBodyInterpreterException();
@@ -4457,7 +4464,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				return 0;
 
 			var res = debuggerRuntime.CompareSigned(v1, v2);
-			if (res != null)
+			if (!(res is null))
 				return res.Value;
 
 			var v1z = IsIntegerZeroOrNull(v1);
@@ -4555,7 +4562,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 				return 0;
 
 			var res = debuggerRuntime.CompareUnsigned(v1, v2);
-			if (res != null)
+			if (!(res is null))
 				return res.Value;
 
 			var v1z = IsIntegerZeroOrNull(v1);
@@ -4744,7 +4751,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 
 			case ILValueKind.NativeInt:
 				var cv = v as ConstantNativeIntILValue;
-				if (cv != null) {
+				if (!(cv is null)) {
 					if (debuggerRuntime.PointerSize == 4)
 						return cv.Value32;
 					return cv.Value64;
@@ -4765,16 +4772,17 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 			}
 		}
 
-		ILValue FixConstrainedType(DmdType constrainedType, DmdMethodBase method, ILValue v1) {
-			Debug.Assert((object)constrainedType != null);
-			Debug.Assert((object)method != null);
-			if (v1 == null)
+		ILValue? FixConstrainedType(DmdType constrainedType, DmdMethodBase method, ILValue v1) {
+			Debug.Assert(!(constrainedType is null));
+			Debug.Assert(!(method is null));
+			if (v1 is null)
 				ThrowInvalidMethodBodyInterpreterException();
+			Debug.Assert(!(v1 is null));
 			if (constrainedType.IsValueType) {
 				if (ImplementsMethod(constrainedType, method.Name, method.GetMethodSignature()))
 					return v1;
 				var value = v1.LoadIndirect(constrainedType, GetLoadValueType(constrainedType));
-				if (value == null)
+				if (value is null)
 					return null;
 				return value.Box(constrainedType) ?? debuggerRuntime.Box(value, constrainedType);
 			}

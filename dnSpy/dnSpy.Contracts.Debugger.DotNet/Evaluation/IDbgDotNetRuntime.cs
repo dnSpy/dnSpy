@@ -69,7 +69,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// </summary>
 		/// <param name="evalInfo">Evaluation info</param>
 		/// <returns></returns>
-		DmdMethodBase GetFrameMethod(DbgEvaluationInfo evalInfo);
+		DmdMethodBase? GetFrameMethod(DbgEvaluationInfo evalInfo);
 
 		/// <summary>
 		/// Loads the address of an instance or a static field or returns null if it's not supported
@@ -78,7 +78,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="obj">Instance object or null if it's a static field</param>
 		/// <param name="field">Field</param>
 		/// <returns></returns>
-		DbgDotNetValue LoadFieldAddress(DbgEvaluationInfo evalInfo, DbgDotNetValue obj, DmdFieldInfo field);
+		DbgDotNetValue? LoadFieldAddress(DbgEvaluationInfo evalInfo, DbgDotNetValue? obj, DmdFieldInfo field);
 
 		/// <summary>
 		/// Loads an instance or a static field
@@ -87,7 +87,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="obj">Instance object or null if it's a static field</param>
 		/// <param name="field">Field</param>
 		/// <returns></returns>
-		DbgDotNetValueResult LoadField(DbgEvaluationInfo evalInfo, DbgDotNetValue obj, DmdFieldInfo field);
+		DbgDotNetValueResult LoadField(DbgEvaluationInfo evalInfo, DbgDotNetValue? obj, DmdFieldInfo field);
 
 		/// <summary>
 		/// Stores a value in a field. Returns null or an error message
@@ -97,7 +97,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="field">Field</param>
 		/// <param name="value">Value to store: A <see cref="DbgDotNetValue"/> or a primitive number or a string or arrays of primitive numbers / strings</param>
 		/// <returns></returns>
-		string StoreField(DbgEvaluationInfo evalInfo, DbgDotNetValue obj, DmdFieldInfo field, object value);
+		string? StoreField(DbgEvaluationInfo evalInfo, DbgDotNetValue? obj, DmdFieldInfo field, object? value);
 
 		/// <summary>
 		/// Calls an instance or a static method
@@ -108,7 +108,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="arguments">Arguments: A <see cref="DbgDotNetValue"/> or a primitive number or a string or arrays of primitive numbers / strings</param>
 		/// <param name="invokeOptions">Invoke options</param>
 		/// <returns></returns>
-		DbgDotNetValueResult Call(DbgEvaluationInfo evalInfo, DbgDotNetValue obj, DmdMethodBase method, object[] arguments, DbgDotNetInvokeOptions invokeOptions);
+		DbgDotNetValueResult Call(DbgEvaluationInfo evalInfo, DbgDotNetValue? obj, DmdMethodBase method, object?[] arguments, DbgDotNetInvokeOptions invokeOptions);
 
 		/// <summary>
 		/// Creates a new instance of a type by calling its constructor
@@ -118,7 +118,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="arguments">Arguments: A <see cref="DbgDotNetValue"/> or a primitive number or a string or arrays of primitive numbers / strings</param>
 		/// <param name="invokeOptions">Invoke options</param>
 		/// <returns></returns>
-		DbgDotNetValueResult CreateInstance(DbgEvaluationInfo evalInfo, DmdConstructorInfo ctor, object[] arguments, DbgDotNetInvokeOptions invokeOptions);
+		DbgDotNetValueResult CreateInstance(DbgEvaluationInfo evalInfo, DmdConstructorInfo ctor, object?[] arguments, DbgDotNetInvokeOptions invokeOptions);
 
 		/// <summary>
 		/// Creates a new instance of a type. All fields are initialized to 0 or null. The constructor isn't called.
@@ -173,7 +173,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="id">Exception id, eg. <see cref="DbgDotNetRuntimeConstants.ExceptionId"/></param>
 		/// <returns></returns>
-		DbgDotNetValue GetException(DbgEvaluationInfo evalInfo, uint id);
+		DbgDotNetValue? GetException(DbgEvaluationInfo evalInfo, uint id);
 
 		/// <summary>
 		/// Gets a stowed exception or null
@@ -181,7 +181,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="id">Stowed exception id, eg. <see cref="DbgDotNetRuntimeConstants.StowedExceptionId"/></param>
 		/// <returns></returns>
-		DbgDotNetValue GetStowedException(DbgEvaluationInfo evalInfo, uint id);
+		DbgDotNetValue? GetStowedException(DbgEvaluationInfo evalInfo, uint id);
 
 		/// <summary>
 		/// Gets a return value or null
@@ -189,7 +189,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="id">Return value id, eg. <see cref="DbgDotNetRuntimeConstants.LastReturnValueId"/></param>
 		/// <returns></returns>
-		DbgDotNetValue GetReturnValue(DbgEvaluationInfo evalInfo, uint id);
+		DbgDotNetValue? GetReturnValue(DbgEvaluationInfo evalInfo, uint id);
 
 		/// <summary>
 		/// Gets a local value
@@ -215,7 +215,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="targetType">Type of the local</param>
 		/// <param name="value">New value: A <see cref="DbgDotNetValue"/> or a primitive number or a string or arrays of primitive numbers / strings</param>
 		/// <returns></returns>
-		string SetLocalValue(DbgEvaluationInfo evalInfo, uint index, DmdType targetType, object value);
+		string? SetLocalValue(DbgEvaluationInfo evalInfo, uint index, DmdType targetType, object? value);
 
 		/// <summary>
 		/// Writes a new parameter value. Returns an error message or null.
@@ -225,7 +225,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="targetType">Type of the parameter</param>
 		/// <param name="value">New value: A <see cref="DbgDotNetValue"/> or a primitive number or a string or arrays of primitive numbers / strings</param>
 		/// <returns></returns>
-		string SetParameterValue(DbgEvaluationInfo evalInfo, uint index, DmdType targetType, object value);
+		string? SetParameterValue(DbgEvaluationInfo evalInfo, uint index, DmdType targetType, object? value);
 
 		/// <summary>
 		/// Gets the address of a local value or null if it's not supported
@@ -234,7 +234,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="index">Metadata index of local</param>
 		/// <param name="targetType">Type of the local</param>
 		/// <returns></returns>
-		DbgDotNetValue GetLocalValueAddress(DbgEvaluationInfo evalInfo, uint index, DmdType targetType);
+		DbgDotNetValue? GetLocalValueAddress(DbgEvaluationInfo evalInfo, uint index, DmdType targetType);
 
 		/// <summary>
 		/// Gets the address of a parameter value or null if it's not supported
@@ -243,7 +243,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="index">Metadata index of local</param>
 		/// <param name="targetType">Type of the parameter</param>
 		/// <returns></returns>
-		DbgDotNetValue GetParameterValueAddress(DbgEvaluationInfo evalInfo, uint index, DmdType targetType);
+		DbgDotNetValue? GetParameterValueAddress(DbgEvaluationInfo evalInfo, uint index, DmdType targetType);
 
 		/// <summary>
 		/// Creates a simple value (a primitive number or a string, or arrays of those types)
@@ -251,7 +251,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="value">A <see cref="DbgDotNetValue"/> or a primitive number or a string or arrays of primitive numbers / strings</param>
 		/// <returns></returns>
-		DbgDotNetValueResult CreateValue(DbgEvaluationInfo evalInfo, object value);
+		DbgDotNetValueResult CreateValue(DbgEvaluationInfo evalInfo, object? value);
 
 		/// <summary>
 		/// Boxes the value type
@@ -259,7 +259,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="value">Value to box</param>
 		/// <returns></returns>
-		DbgDotNetValueResult Box(DbgEvaluationInfo evalInfo, object value);
+		DbgDotNetValueResult Box(DbgEvaluationInfo evalInfo, object? value);
 
 		/// <summary>
 		/// Returns true if it's possible to create an object id
@@ -274,7 +274,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="value">Value created by this runtime</param>
 		/// <param name="id">Unique id</param>
 		/// <returns></returns>
-		DbgDotNetObjectId CreateObjectId(DbgDotNetValue value, uint id);
+		DbgDotNetObjectId? CreateObjectId(DbgDotNetValue value, uint id);
 
 		/// <summary>
 		/// Checks if an object id and a value refer to the same data
@@ -304,7 +304,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="objectId">Object id created by this class</param>
 		/// <returns></returns>
-		DbgDotNetValue GetValue(DbgEvaluationInfo evalInfo, DbgDotNetObjectId objectId);
+		DbgDotNetValue? GetValue(DbgEvaluationInfo evalInfo, DbgDotNetObjectId objectId);
 
 		/// <summary>
 		/// Checks if two values are equal. Returns null if it's unknown.

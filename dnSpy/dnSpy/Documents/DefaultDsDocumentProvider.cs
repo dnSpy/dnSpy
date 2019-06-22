@@ -28,21 +28,21 @@ namespace dnSpy.Documents {
 	sealed class DefaultDsDocumentProvider : IDsDocumentProvider {
 		public double Order => DocumentConstants.ORDER_DEFAULT_DOCUMENT_PROVIDER;
 
-		public IDsDocument Create(IDsDocumentService documentService, DsDocumentInfo documentInfo) {
+		public IDsDocument? Create(IDsDocumentService documentService, DsDocumentInfo documentInfo) {
 			var filename = GetFilename(documentInfo);
-			if (filename != null)
+			if (!(filename is null))
 				return documentService.CreateDocument(documentInfo, filename);
 			return null;
 		}
 
-		public IDsDocumentNameKey CreateKey(IDsDocumentService documentService, DsDocumentInfo documentInfo) {
+		public IDsDocumentNameKey? CreateKey(IDsDocumentService documentService, DsDocumentInfo documentInfo) {
 			var filename = GetFilename(documentInfo);
-			if (filename != null)
+			if (!(filename is null))
 				return new FilenameKey(filename);
 			return null;
 		}
 
-		static string GetFilename(DsDocumentInfo documentInfo) {
+		static string? GetFilename(DsDocumentInfo documentInfo) {
 			if (documentInfo.Type == DocumentConstants.DOCUMENTTYPE_FILE)
 				return documentInfo.Name;
 			if (documentInfo.Type == DocumentConstants.DOCUMENTTYPE_GAC)
@@ -52,16 +52,16 @@ namespace dnSpy.Documents {
 			return null;
 		}
 
-		static string GetGacFilename(string asmFullName) => GacInfo.FindInGac(new AssemblyNameInfo(asmFullName));
+		static string? GetGacFilename(string asmFullName) => GacInfo.FindInGac(new AssemblyNameInfo(asmFullName));
 
-		static string GetRefFileFilename(string s) {
+		static string? GetRefFileFilename(string s) {
 			int index = s.LastIndexOf(DocumentConstants.REFERENCE_ASSEMBLY_SEPARATOR);
 			Debug.Assert(index >= 0);
 			if (index < 0)
 				return null;
 
 			var f = GetGacFilename(s.Substring(0, index));
-			if (f != null)
+			if (!(f is null))
 				return f;
 			return s.Substring(index + DocumentConstants.REFERENCE_ASSEMBLY_SEPARATOR.Length).Trim();
 		}

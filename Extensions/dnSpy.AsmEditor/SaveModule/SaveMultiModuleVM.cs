@@ -73,7 +73,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 					OnPropertyChanged(nameof(IsSavingOrCanceling));
 					OnModuleSettingsSaved();
 
-					if (saveState == SaveState.Saved && OnSavedEvent != null)
+					if (saveState == SaveState.Saved && !(OnSavedEvent is null))
 						OnSavedEvent(this, EventArgs.Empty);
 				}
 			}
@@ -81,7 +81,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		SaveState saveState = SaveState.Loaded;
 
 		public ICommand SaveCommand => new RelayCommand(a => Save(), a => CanExecuteSave);
-		public ICommand CancelSaveCommand => new RelayCommand(a => CancelSave(), a => IsSaving && moduleSaver != null);
+		public ICommand CancelSaveCommand => new RelayCommand(a => CancelSave(), a => IsSaving && !(moduleSaver is null));
 		public event EventHandler OnSavedEvent;
 		public bool IsLoaded => State == SaveState.Loaded;
 		public bool IsSaving => State == SaveState.Saving;
@@ -94,7 +94,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		public bool CanExecuteSave => string.IsNullOrEmpty(CanExecuteSaveError);
 		public bool CanShowModuleErrors => IsLoaded && !CanExecuteSave;
 
-		public string CanExecuteSaveError {
+		public string? CanExecuteSaveError {
 			get {
 				if (!IsLoaded)
 					return "It's only possible to save when loaded";
@@ -211,13 +211,13 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 		public bool WasSaved(object obj) {
 			var data = GetSaveOptionsVM(obj);
-			if (data == null)
+			if (data is null)
 				return false;
 			savedFile.TryGetValue(data, out bool saved);
 			return saved;
 		}
 
-		public string GetSavedFileName(object obj) => GetSaveOptionsVM(obj)?.FileName;
+		public string? GetSavedFileName(object obj) => GetSaveOptionsVM(obj)?.FileName;
 
 		public void Save() {
 			if (!CanExecuteSave)
@@ -239,7 +239,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			dispatcher.BeginInvoke(DispatcherPriority.Background, action);
 		}
 
-		ModuleSaver moduleSaver;
+		ModuleSaver? moduleSaver;
 		void SaveAsync(SaveOptionsVM[] mods) {
 			DnSpyEventSource.Log.SaveDocumentsStart();
 			try {
@@ -339,7 +339,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			if (!IsSaving)
 				return;
 			var ms = moduleSaver;
-			if (ms == null)
+			if (ms is null)
 				return;
 
 			State = SaveState.Canceling;

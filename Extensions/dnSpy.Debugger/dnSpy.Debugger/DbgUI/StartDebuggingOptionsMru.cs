@@ -41,7 +41,7 @@ namespace dnSpy.Debugger.DbgUI {
 
 		public StartDebuggingOptionsMru() => list = new List<Info>(MRU_SIZE);
 
-		Info Find(string filename) {
+		Info? Find(string filename) {
 			foreach (var info in list) {
 				if (StringComparer.Ordinal.Equals(info.Filename, filename))
 					return info;
@@ -50,13 +50,13 @@ namespace dnSpy.Debugger.DbgUI {
 		}
 
 		public void Add(string filename, StartDebuggingOptions options, Guid pageGuid) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			lastOptions = ((StartDebuggingOptions)options.Clone(), pageGuid);
-			if (filename == null)
+			if (filename is null)
 				return;
 			var info = Find(filename);
-			if (info != null) {
+			if (!(info is null)) {
 				bool b = list.Remove(info);
 				Debug.Assert(b);
 				list.Add(info);
@@ -71,10 +71,10 @@ namespace dnSpy.Debugger.DbgUI {
 		}
 
 		public (StartDebuggingOptions options, Guid pageGuid)? TryGetOptions(string filename) {
-			if (filename == null)
+			if (filename is null)
 				throw new ArgumentNullException(nameof(filename));
 			var info = Find(filename);
-			if (info == null)
+			if (info is null)
 				return null;
 			return (info.Options, info.PageGuid);
 		}

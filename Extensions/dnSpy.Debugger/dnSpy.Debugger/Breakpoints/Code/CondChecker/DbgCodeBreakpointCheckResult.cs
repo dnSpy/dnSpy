@@ -21,7 +21,7 @@ using System;
 
 namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 	readonly struct DbgCodeBreakpointCheckResult {
-		public string ErrorMessage { get; }
+		public string? ErrorMessage { get; }
 		public bool ShouldBreak { get; }
 
 		public DbgCodeBreakpointCheckResult(bool shouldBreak) {

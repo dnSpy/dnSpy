@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 		/// <summary>
 		/// Name of module (case insensitive) or null/empty string if any name. Wildcards can be used
 		/// </summary>
-		public string ModuleName { get; set; }
+		public string? ModuleName { get; set; }
 
 		/// <summary>
 		/// true if dynamic, false if not dynamic, and null if any value
@@ -57,12 +57,12 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 		/// <summary>
 		/// App domain name (case insensitive) or null/empty string if any name. Wildcards can be used
 		/// </summary>
-		public string AppDomainName { get; set; }
+		public string? AppDomainName { get; set; }
 
 		/// <summary>
 		/// Process name (case insensitive) or null/empty string if any name. Wildcards can be used
 		/// </summary>
-		public string ProcessName { get; set; }
+		public string? ProcessName { get; set; }
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DbgModuleBreakpointSettings left, DbgModuleBreakpointSettings right) => left.Equals(right);
@@ -89,7 +89,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 		/// </summary>
 		/// <param name="obj">Other instance</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is DbgModuleBreakpointSettings other && Equals(other);
+		public override bool Equals(object? obj) => obj is DbgModuleBreakpointSettings other && Equals(other);
 
 		/// <summary>
 		/// Gets the hash code

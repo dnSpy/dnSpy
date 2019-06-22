@@ -39,7 +39,7 @@ namespace dnSpy.Hex.Classification.DnSpy {
 
 		public override HexTextElementCreator Create() => Create(CT.ContentTypes.DefaultHexToolTip);
 		public override HexTextElementCreator Create(string contentType) {
-			if (contentType == null)
+			if (contentType is null)
 				throw new ArgumentNullException(nameof(contentType));
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
 			return new HexTextElementCreatorImpl(textElementProvider, classificationFormatMap, contentType);

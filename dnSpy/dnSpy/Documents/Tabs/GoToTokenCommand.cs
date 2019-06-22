@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
@@ -55,16 +56,16 @@ namespace dnSpy.Documents.Tabs {
 	}
 
 	static class GoToTokenCommand {
-		static ITokenResolver GetResolver(IDocumentTabService documentTabService, out IDocumentTab tab) {
+		static ITokenResolver? GetResolver(IDocumentTabService documentTabService, out IDocumentTab? tab) {
 			tab = documentTabService.ActiveTab;
-			if (tab == null)
+			if (tab is null)
 				return null;
 			return tab.Content.Nodes.FirstOrDefault().GetModule();
 		}
 
-		internal static bool CanExecuteInternal(IDocumentTabService documentTabService) => GetResolver(documentTabService, out var tab) != null;
+		internal static bool CanExecuteInternal(IDocumentTabService documentTabService) => !(GetResolver(documentTabService, out var tab) is null);
 
-		static object ResolveDef(object mr) {
+		static object? ResolveDef(object mr) {
 			if (mr is ParamDef)
 				return mr;
 			if (mr is ITypeDefOrRef)
@@ -78,30 +79,31 @@ namespace dnSpy.Documents.Tabs {
 
 		internal static void ExecuteInternal(IDocumentTabService documentTabService) {
 			var resolver = GetResolver(documentTabService, out var tab);
-			if (resolver == null)
+			if (resolver is null)
 				return;
+			Debug.Assert(!(tab is null));
 
 			var member = AskForDef(dnSpy_Resources.GoToToken_Title, resolver);
-			if (member == null)
+			if (member is null)
 				return;
 
 			tab.FollowReference(member, false);
 		}
 
-		static object AskForDef(string title, ITokenResolver resolver) => MsgBox.Instance.Ask(dnSpy_Resources.GoToToken_Label, null, title, s => {
-			uint token = SimpleTypeConverter.ParseUInt32(s, uint.MinValue, uint.MaxValue, out string error);
+		static object? AskForDef(string title, ITokenResolver resolver) => MsgBox.Instance.Ask(dnSpy_Resources.GoToToken_Label, null, title, s => {
+			uint token = SimpleTypeConverter.ParseUInt32(s, uint.MinValue, uint.MaxValue, out var error);
 			var memberRef = resolver.ResolveToken(token);
 			var member = ResolveDef(memberRef);
 			return member;
 		}, s => {
-			uint token = SimpleTypeConverter.ParseUInt32(s, uint.MinValue, uint.MaxValue, out string error);
+			uint token = SimpleTypeConverter.ParseUInt32(s, uint.MinValue, uint.MaxValue, out var error);
 			if (!string.IsNullOrEmpty(error))
 				return error;
 			var memberRef = resolver.ResolveToken(token);
 			var member = ResolveDef(memberRef);
-			if (memberRef == null)
+			if (memberRef is null)
 				return string.Format(dnSpy_Resources.GoToToken_InvalidToken, token);
-			else if (member == null)
+			else if (member is null)
 				return string.Format(dnSpy_Resources.GoToToken_CouldNotResolve, token);
 			return string.Empty;
 		});
@@ -137,7 +139,7 @@ namespace dnSpy.Documents.Tabs {
 				if (!CanExecuteInternal(documentTabService))
 					return false;
 				var nodes = context.Find<TreeNodeData[]>();
-				if (nodes == null || nodes.Length == 0)
+				if (nodes is null || nodes.Length == 0)
 					return false;
 				var elem = nodes[0];
 				return elem is DocumentTreeNodeData;

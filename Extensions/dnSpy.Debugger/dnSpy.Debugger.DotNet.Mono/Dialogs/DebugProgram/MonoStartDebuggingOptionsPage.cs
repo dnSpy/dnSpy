@@ -33,7 +33,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 		// Shouldn't be localized
 		public override string DisplayName => "Mono";
 
-		public string MonoExePath {
+		public string? MonoExePath {
 			get => monoExePath;
 			set {
 				if (monoExePath != value) {
@@ -43,7 +43,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 				}
 			}
 		}
-		string monoExePath;
+		string? monoExePath;
 
 		public ICommand PickMonoExePathCommand => new RelayCommand(a => PickMonoExePath());
 
@@ -54,7 +54,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 		static readonly string MonoExeFilter = $"mono.exe|mono.exe";
 		void PickMonoExePath() {
 			var newMonoExePath = pickFilename.GetFilename(Filename, "exe", MonoExeFilter);
-			if (newMonoExePath == null)
+			if (newMonoExePath is null)
 				return;
 
 			MonoExePath = newMonoExePath;
@@ -78,15 +78,15 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 
 		public override void InitializePreviousOptions(StartDebuggingOptions options) {
 			var msdOptions = options as MonoStartDebuggingOptions;
-			if (msdOptions == null)
+			if (msdOptions is null)
 				return;
 			Initialize(msdOptions);
 		}
 
-		public override void InitializeDefaultOptions(string filename, string breakKind, StartDebuggingOptions options) =>
+		public override void InitializeDefaultOptions(string filename, string breakKind, StartDebuggingOptions? options) =>
 			Initialize(GetDefaultOptions(filename, breakKind, options));
 
-		MonoStartDebuggingOptions GetDefaultOptions(string filename, string breakKind, StartDebuggingOptions options) {
+		MonoStartDebuggingOptions GetDefaultOptions(string filename, string breakKind, StartDebuggingOptions? options) {
 			bool isExe = PortableExecutableFileHelpers.IsExecutable(filename);
 			if (isExe) {
 				var msdOptions = CreateOptions(breakKind);

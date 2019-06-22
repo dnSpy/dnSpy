@@ -29,29 +29,29 @@ using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Debugger.CallStack.TextEditor {
 	abstract class CallStackGlyphTextMarkerHandler : IGlyphTextMarkerHandler {
-		public abstract IGlyphTextMarkerHandlerMouseProcessor MouseProcessor { get; }
+		public abstract IGlyphTextMarkerHandlerMouseProcessor? MouseProcessor { get; }
 		public abstract IEnumerable<GuidObject> GetContextMenuObjects(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker, Point marginRelativePoint);
-		public abstract GlyphTextMarkerToolTip GetToolTipContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker);
-		public abstract FrameworkElement GetPopupContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker);
+		public abstract GlyphTextMarkerToolTip? GetToolTipContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker);
+		public abstract FrameworkElement? GetPopupContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker);
 	}
 
 	[Export(typeof(CallStackGlyphTextMarkerHandler))]
 	sealed class CallStackGlyphTextMarkerHandlerImpl : CallStackGlyphTextMarkerHandler {
-		public override IGlyphTextMarkerHandlerMouseProcessor MouseProcessor => null;
+		public override IGlyphTextMarkerHandlerMouseProcessor? MouseProcessor => null;
 
-		public override FrameworkElement GetPopupContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker) => null;
+		public override FrameworkElement? GetPopupContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker) => null;
 
-		public override GlyphTextMarkerToolTip GetToolTipContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker) =>
-			new GlyphTextMarkerToolTip(GetToolTipContent((object)marker.Tag, context.TextView, context.SpanProvider.GetSpan(marker)));
+		public override GlyphTextMarkerToolTip? GetToolTipContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker) =>
+			new GlyphTextMarkerToolTip(GetToolTipContent(marker.Tag, context.TextView, context.SpanProvider.GetSpan(marker)));
 
-		string GetToolTipContent(object frameKind, ITextView textView, SnapshotSpan span) {
+		string GetToolTipContent(object? frameKind, ITextView textView, SnapshotSpan span) {
 			if (frameKind == CallStackFrameKind.CurrentStatement)
 				return dnSpy_Debugger_Resources.GlyphMargin_CurrentStatementToolTip;
 			else if (frameKind == CallStackFrameKind.ReturnStatement)
 				return dnSpy_Debugger_Resources.GlyphMargin_ReturnStatementToolTip;
 			else {
 				Debug.Fail("Unknown frame kind");
-				return null;
+				return "???";
 			}
 		}
 

@@ -24,23 +24,26 @@ using dnSpy.Debugger.DotNet.Metadata;
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 	sealed class DefaultArgumentsProviderImpl : VariablesProvider {
 		readonly IDbgDotNetRuntime runtime;
-		public DefaultArgumentsProviderImpl(IDbgDotNetRuntime runtime) => this.runtime = runtime;
+		public DefaultArgumentsProviderImpl(IDbgDotNetRuntime runtime) {
+			evalInfo = null!;
+			this.runtime = runtime;
+		}
 
 		DbgEvaluationInfo evalInfo;
 
 		public override void Initialize(DbgEvaluationInfo evalInfo, DmdMethodBase method, DmdMethodBody body) => this.evalInfo = evalInfo;
 
-		public override DbgDotNetValue GetValueAddress(int index, DmdType targetType) =>
+		public override DbgDotNetValue? GetValueAddress(int index, DmdType targetType) =>
 			runtime.GetParameterValueAddress(evalInfo, (uint)index, targetType);
 
 		public override DbgDotNetValueResult GetVariable(int index) =>
 			runtime.GetParameterValue(evalInfo, (uint)index);
 
-		public override string SetVariable(int index, DmdType targetType, object value) =>
+		public override string? SetVariable(int index, DmdType targetType, object? value) =>
 			runtime.SetParameterValue(evalInfo, (uint)index, targetType, value);
 
 		public override bool CanDispose(DbgDotNetValue value) => true;
 
-		public override void Clear() => evalInfo = null;
+		public override void Clear() => evalInfo = null!;
 	}
 }

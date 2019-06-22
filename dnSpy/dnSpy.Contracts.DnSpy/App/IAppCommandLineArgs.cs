@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.App {
 	/// </summary>
 	public interface IAppCommandLineArgs {
 		/// <summary>Settings filename</summary>
-		string SettingsFilename { get; }
+		string? SettingsFilename { get; }
 
 		/// <summary>Filenames to load</summary>
 		IEnumerable<string> Filenames { get; }
@@ -53,7 +53,7 @@ namespace dnSpy.Contracts.App {
 		bool NewTab { get; }
 
 		/// <summary>Search string or null if none</summary>
-		string SearchText { get; }
+		string? SearchText { get; }
 
 		/// <summary>Search type</summary>
 		string SearchFor { get; }
@@ -103,7 +103,7 @@ namespace dnSpy.Contracts.App {
 		/// </summary>
 		/// <param name="argName">Argument name, eg. <c>--my-arg</c></param>
 		/// <returns></returns>
-		string GetArgumentValue(string argName);
+		string? GetArgumentValue(string argName);
 
 		/// <summary>
 		/// Gets all user arguments and values

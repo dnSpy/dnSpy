@@ -142,6 +142,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 
 		[ImportingConstructor]
 		ExceptionsVM(Lazy<DbgManager> dbgManager, Lazy<DbgExceptionSettingsService> dbgExceptionSettingsService, DebuggerSettings debuggerSettings, UIDispatcher uiDispatcher, ExceptionFormatterProvider exceptionFormatterProvider, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider, DbgExceptionSettingsService exceptionSettingsService, DbgExceptionFormatterService exceptionFormatterService) {
+			selectedCategory = null!;
 			uiDispatcher.VerifyAccess();
 			AllItems = new BulkObservableCollection<ExceptionVM>();
 			SelectedItems = new ObservableCollection<ExceptionVM>();
@@ -154,9 +155,8 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			toVM = new Dictionary<DbgExceptionId, ExceptionVM>();
 			realAllItems = new List<ExceptionVM>();
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
-			exceptionContext = new ExceptionContext(uiDispatcher, classificationFormatMap, textElementProvider, exceptionSettingsService, exceptionFormatterService, new SearchMatcher(searchColumnDefinitions)) {
+			exceptionContext = new ExceptionContext(uiDispatcher, classificationFormatMap, textElementProvider, exceptionSettingsService, exceptionFormatterService, new SearchMatcher(searchColumnDefinitions), exceptionFormatterProvider.Create()) {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlight,
-				Formatter = exceptionFormatterProvider.Create(),
 			};
 			Descs = new GridViewColumnDescs {
 				Columns = new GridViewColumnDesc[] {
@@ -412,7 +412,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			var (desc, dir) = Descs.SortedColumn;
 
 			int id;
-			if (desc == null || dir == GridViewSortDirection.Default) {
+			if (desc is null || dir == GridViewSortDirection.Default) {
 				id = ExceptionsWindowColumnIds.Default_Order;
 				dir = GridViewSortDirection.Ascending;
 			}
@@ -473,17 +473,17 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 
 		sealed class ExceptionVMCached {
 			public ExceptionVM VM { get; }
-			public string Name => name ?? (name = GetName_UI(VM));
-			public string Category => category ?? (category = GetCategory_UI(VM));
-			public string Conditions => conditions ?? (conditions = GetConditions_UI(VM));
+			public string Name => name ??= GetName_UI(VM);
+			public string Category => category ??= GetCategory_UI(VM);
+			public string Conditions => conditions ??= GetConditions_UI(VM);
 
 			// The order must match searchColumnDefinitions
-			public string[] AllStrings => allStrings ?? (allStrings = new[] { Name, Category, Conditions });
+			public string[] AllStrings => allStrings ??= new[] { Name, Category, Conditions };
 
-			string name;
-			string category;
-			string conditions;
-			string[] allStrings;
+			string? name;
+			string? category;
+			string? conditions;
+			string[]? allStrings;
 			public ExceptionVMCached(ExceptionVM vm) => VM = vm;
 		}
 
@@ -492,7 +492,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			exceptionContext.UIDispatcher.VerifyAccess();
 			var category = selectedCategory?.Definition?.Name;
 			foreach (var item in realAllItems) {
-				if (category != null && item.Definition.Id.Category != category)
+				if (!(category is null) && item.Definition.Id.Category != category)
 					continue;
 				var vmc = CreateCached_UI(item);
 				if (IsMatch_UI(vmc, filterText, showOnlyEnabledExceptions))

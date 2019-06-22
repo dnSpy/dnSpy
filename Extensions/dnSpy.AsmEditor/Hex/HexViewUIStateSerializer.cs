@@ -47,7 +47,7 @@ namespace dnSpy.AsmEditor.Hex {
 			return s;
 		}
 
-		public static HexViewUIState Read(ISettingsSection section, HexViewUIState s) {
+		public static HexViewUIState? Read(ISettingsSection section, HexViewUIState s) {
 			bool failed = false;
 			s.ShowOffsetColumn = GetValue<bool>(section, "ShowOffsetColumn", ref failed);
 			s.ShowValuesColumn = GetValue<bool>(section, "ShowValuesColumn", ref failed);
@@ -77,7 +77,7 @@ namespace dnSpy.AsmEditor.Hex {
 
 		static T GetValue<T>(ISettingsSection section, string name, ref bool failed) where T : struct {
 			var v = section.Attribute<T?>(name);
-			if (v == null) {
+			if (v is null) {
 				failed = true;
 				return default;
 			}

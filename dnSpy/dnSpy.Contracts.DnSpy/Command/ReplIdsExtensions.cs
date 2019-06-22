@@ -35,6 +35,6 @@ namespace dnSpy.Contracts.Command {
 		/// <param name="id">ID</param>
 		/// <param name="arguments">Arguments or null</param>
 		/// <returns></returns>
-		public static CommandInfo ToCommandInfo(this ReplIds id, object arguments) => new CommandInfo(CommandConstants.ReplGroup, (int)id, arguments);
+		public static CommandInfo ToCommandInfo(this ReplIds id, object? arguments) => new CommandInfo(CommandConstants.ReplGroup, (int)id, arguments);
 	}
 }

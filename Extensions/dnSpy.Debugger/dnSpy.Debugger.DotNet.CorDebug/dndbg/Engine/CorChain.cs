@@ -22,11 +22,11 @@ using System.Collections.Generic;
 using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
-	sealed class CorChain : COMObject<ICorDebugChain>, IEquatable<CorChain> {
-		public CorThread Thread {
+	sealed class CorChain : COMObject<ICorDebugChain>, IEquatable<CorChain?> {
+		public CorThread? Thread {
 			get {
 				int hr = obj.GetThread(out var thread);
-				return hr < 0 || thread == null ? null : new CorThread(thread);
+				return hr < 0 || thread is null ? null : new CorThread(thread);
 			}
 		}
 
@@ -41,38 +41,38 @@ namespace dndbg.Engine {
 		public ulong StackEnd => rangeEnd;
 		readonly ulong rangeEnd;
 
-		public CorFrame ActiveFrame {
+		public CorFrame? ActiveFrame {
 			get {
 				int hr = obj.GetActiveFrame(out var frame);
-				return hr < 0 || frame == null ? null : new CorFrame(frame);
+				return hr < 0 || frame is null ? null : new CorFrame(frame);
 			}
 		}
 
-		public CorChain Callee {
+		public CorChain? Callee {
 			get {
 				int hr = obj.GetCallee(out var callee);
-				return hr < 0 || callee == null ? null : new CorChain(callee);
+				return hr < 0 || callee is null ? null : new CorChain(callee);
 			}
 		}
 
-		public CorChain Caller {
+		public CorChain? Caller {
 			get {
 				int hr = obj.GetCaller(out var caller);
-				return hr < 0 || caller == null ? null : new CorChain(caller);
+				return hr < 0 || caller is null ? null : new CorChain(caller);
 			}
 		}
 
-		public CorChain Next {
+		public CorChain? Next {
 			get {
 				int hr = obj.GetNext(out var next);
-				return hr < 0 || next == null ? null : new CorChain(next);
+				return hr < 0 || next is null ? null : new CorChain(next);
 			}
 		}
 
-		public CorChain Previous {
+		public CorChain? Previous {
 			get {
 				int hr = obj.GetPrevious(out var prev);
-				return hr < 0 || prev == null ? null : new CorChain(prev);
+				return hr < 0 || prev is null ? null : new CorChain(prev);
 			}
 		}
 
@@ -106,17 +106,8 @@ namespace dndbg.Engine {
 				rangeStart = rangeEnd = 0;
 		}
 
-		public static bool operator ==(CorChain a, CorChain b) {
-			if (ReferenceEquals(a, b))
-				return true;
-			if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
-				return false;
-			return a.Equals(b);
-		}
-
-		public static bool operator !=(CorChain a, CorChain b) => !(a == b);
-		public bool Equals(CorChain other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
-		public override bool Equals(object obj) => Equals(obj as CorChain);
+		public bool Equals(CorChain? other) => !(other is null) && RawObject == other.RawObject;
+		public override bool Equals(object? obj) => Equals(obj as CorChain);
 		public override int GetHashCode() => RawObject.GetHashCode();
 		public override string ToString() => $"[Chain] Managed={(IsManaged ? 1 : 0)} {StackStart:X8}-{StackEnd:X8} {Reason}";
 	}

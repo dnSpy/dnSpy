@@ -35,18 +35,18 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			uint token = 0x04000000 + rid;
 			Attributes = MDAPI.GetFieldAttributes(reader.MetaDataImport, token);
 			Name = MDAPI.GetFieldName(reader.MetaDataImport, token) ?? string.Empty;
-			FieldType = reader.ReadFieldType_COMThread(MDAPI.GetFieldSignatureBlob(reader.MetaDataImport, token), DeclaringType.GetGenericArguments());
+			FieldType = reader.ReadFieldType_COMThread(MDAPI.GetFieldSignatureBlob(reader.MetaDataImport, token), DeclaringType!.GetGenericArguments());
 		}
 
 		T COMThread<T>(Func<T> action) => reader.Dispatcher.Invoke(action);
 
-		public override object GetRawConstantValue() => COMThread(() => reader.ReadFieldConstant_COMThread(MetadataToken).value);
+		public override object? GetRawConstantValue() => COMThread(() => reader.ReadFieldConstant_COMThread(MetadataToken).value);
 
-		protected override (DmdCustomAttributeData[] cas, uint? fieldOffset, DmdMarshalType marshalType) CreateCustomAttributes() => COMThread(CreateCustomAttributes_COMThread);
+		protected override (DmdCustomAttributeData[] cas, uint? fieldOffset, DmdMarshalType? marshalType) CreateCustomAttributes() => COMThread(CreateCustomAttributes_COMThread);
 
-		(DmdCustomAttributeData[] cas, uint? fieldOffset, DmdMarshalType marshalType) CreateCustomAttributes_COMThread() {
+		(DmdCustomAttributeData[] cas, uint? fieldOffset, DmdMarshalType? marshalType) CreateCustomAttributes_COMThread() {
 			reader.Dispatcher.VerifyAccess();
-			var marshalType = reader.ReadFieldMarshalType_COMThread(MetadataToken, ReflectedType.Module, null);
+			var marshalType = reader.ReadFieldMarshalType_COMThread(MetadataToken, ReflectedType!.Module, null);
 			var cas = reader.ReadCustomAttributesCore_COMThread((uint)MetadataToken);
 			var fieldOffset = MDAPI.GetFieldOffset(reader.MetaDataImport, (uint)ReflectedType.MetadataToken, 0x04000000 + Rid);
 			return (cas, fieldOffset, marshalType);

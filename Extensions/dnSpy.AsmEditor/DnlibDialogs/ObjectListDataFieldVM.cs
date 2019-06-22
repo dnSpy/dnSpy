@@ -27,14 +27,14 @@ using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
-	sealed class ObjectListDataFieldVM : DataFieldVM<IList<object>> {
-		readonly TypeSigCreatorOptions options;
-		List<object> objects = new List<object>();
+	sealed class ObjectListDataFieldVM : DataFieldVM<IList<object?>> {
+		readonly TypeSigCreatorOptions? options;
+		List<object?> objects = new List<object?>();
 
 		public ICreateConstantType CreateConstantType {
-			set { createConstantType = value; }
+			set => createConstantType = value;
 		}
-		ICreateConstantType createConstantType;
+		ICreateConstantType? createConstantType;
 
 		public ICommand AddObjectCommand => new RelayCommand(a => AddObject());
 		public ICommand RemoveObjectCommand => new RelayCommand(a => RemoveObject(), a => RemoveObjectCanExecute());
@@ -42,23 +42,23 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		readonly ModuleDef ownerModule;
 
-		public ObjectListDataFieldVM(ModuleDef ownerModule, Action<DataFieldVM> onUpdated, TypeSigCreatorOptions options)
+		public ObjectListDataFieldVM(ModuleDef ownerModule, Action<DataFieldVM> onUpdated, TypeSigCreatorOptions? options)
 			: this(ownerModule, Array.Empty<object>(), onUpdated, options) {
 		}
 
-		public ObjectListDataFieldVM(ModuleDef ownerModule, IList<object> value, Action<DataFieldVM> onUpdated, TypeSigCreatorOptions options)
+		public ObjectListDataFieldVM(ModuleDef ownerModule, IList<object?> value, Action<DataFieldVM> onUpdated, TypeSigCreatorOptions? options)
 			: base(onUpdated) {
 			this.ownerModule = ownerModule;
-			if (options != null) {
+			if (!(options is null)) {
 				this.options = options.Clone(dnSpy_AsmEditor_Resources.CreateType);
 				this.options.NullTypeSigAllowed = true;
 			}
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(IList<object> value) {
+		protected override string OnNewValue(IList<object?> value) {
 			objects.Clear();
-			if (value != null)
+			if (!(value is null))
 				objects.AddRange(value);
 			return CalculateStringValue();
 		}
@@ -67,7 +67,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		void InitializeStringValue() => StringValue = CalculateStringValue();
 
-		protected override string ConvertToValue(out IList<object> value) {
+		protected override string? ConvertToValue(out IList<object?> value) {
 			value = objects.ToArray();
 			return null;
 		}
@@ -93,9 +93,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		};
 
 		void AddObject() {
-			if (createConstantType == null)
+			if (createConstantType is null)
 				throw new InvalidOperationException();
-			var newObject = createConstantType.Create(ownerModule, null, Constants, true, true, options, out object newObjectNoSpecialNull, out bool canceled);
+			var newObject = createConstantType.Create(ownerModule, null, Constants, true, true, options, out _, out bool canceled);
 			if (canceled)
 				return;
 

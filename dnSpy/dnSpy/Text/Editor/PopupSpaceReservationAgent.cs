@@ -32,7 +32,7 @@ using Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Text.Editor {
 	sealed class PopupSpaceReservationAgent : ISpaceReservationAgent {
-		bool IsVisible => popup.Child != null;
+		bool IsVisible => !(popup.Child is null);
 		public bool HasFocus => IsVisible && popup.IsKeyboardFocusWithin;
 		public bool IsMouseOver => IsVisible && popup.IsMouseOver;
 		public event EventHandler GotFocus;
@@ -137,9 +137,9 @@ namespace dnSpy.Text.Editor {
 		Rect ToScreenRect(Rect wpfRect) => new Rect(ToScreenPoint(wpfRect.TopLeft), ToScreenPoint(wpfRect.BottomRight));
 		Point ToScreenPoint(Point point) => wpfTextView.VisualElement.PointToScreen(point);
 
-		public Geometry PositionAndDisplay(Geometry reservedSpace) {
+		public Geometry? PositionAndDisplay(Geometry reservedSpace) {
 			var spanBoundsTmp = GetVisualSpanBounds();
-			if (spanBoundsTmp == null || spanBoundsTmp.Value.IsEmpty)
+			if (spanBoundsTmp is null || spanBoundsTmp.Value.IsEmpty)
 				return null;
 			var spanBounds = WpfTextViewRectToScreenRect(spanBoundsTmp.Value);
 			var desiredSize = ToScreenSize(PopupSize);
@@ -159,7 +159,7 @@ namespace dnSpy.Text.Editor {
 				}
 			}
 
-			if (popupRect == null)
+			if (popupRect is null)
 				return null;
 			var viewRelativeRect = PopupHelper.TransformFromDevice(wpfTextView, popupRect.Value);
 
@@ -185,7 +185,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		Rect GetClosest(Rect spanBounds, Rect? rect, Rect candidate, PopupStyles style) {
-			if (rect == null)
+			if (rect is null)
 				return candidate;
 			double rectDist, candidateDist;
 			if ((style & PopupStyles.PositionLeftOrRight) != 0) {
@@ -289,7 +289,7 @@ namespace dnSpy.Text.Editor {
 
 		bool IsMouseOverSpan(MouseEventArgs e) {
 			var rect = GetVisualSpanBounds();
-			if (rect == null)
+			if (rect is null)
 				return false;
 			var point = e.MouseDevice.GetPosition(wpfTextView.VisualElement);
 			point.X += wpfTextView.ViewportLeft;
@@ -328,7 +328,7 @@ namespace dnSpy.Text.Editor {
 			if (content is FrameworkElement fwElem)
 				fwElem.SizeChanged += Content_SizeChanged;
 			var window = Window.GetWindow(wpfTextView.VisualElement);
-			if (window != null)
+			if (!(window is null))
 				window.LocationChanged += Window_LocationChanged;
 			content.GotFocus += Content_GotFocus;
 			content.LostFocus += Content_LostFocus;
@@ -344,7 +344,7 @@ namespace dnSpy.Text.Editor {
 			if (content is FrameworkElement fwElem)
 				fwElem.SizeChanged -= Content_SizeChanged;
 			var window = Window.GetWindow(wpfTextView.VisualElement);
-			if (window != null)
+			if (!(window is null))
 				window.LocationChanged -= Window_LocationChanged;
 			content.GotFocus -= Content_GotFocus;
 			content.LostFocus -= Content_LostFocus;

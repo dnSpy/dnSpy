@@ -141,7 +141,7 @@ namespace dnSpy.Hex.Editor {
 				if (!wpfHexView.Roles.ContainsAny(provider.Metadata.TextViewRoles))
 					continue;
 				var keyProcessor = provider.Value.GetAssociatedProcessor(wpfHexView);
-				if (keyProcessor != null)
+				if (!(keyProcessor is null))
 					list.Add(keyProcessor);
 			}
 			keyProcessors = list.ToArray();

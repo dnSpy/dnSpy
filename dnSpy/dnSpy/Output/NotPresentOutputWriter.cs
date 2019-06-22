@@ -31,12 +31,12 @@ namespace dnSpy.Output {
 
 		IOutputTextPane TextPane {
 			get {
-				if (textPane != null)
+				if (!(textPane is null))
 					return textPane;
 				return (textPane = outputService.Find(guid)) ?? NullOutputTextPane.Instance;
 			}
 		}
-		IOutputTextPane textPane;
+		IOutputTextPane? textPane;
 
 		public NotPresentOutputWriter(OutputService outputService, Guid guid) {
 			this.outputService = outputService;
@@ -44,12 +44,12 @@ namespace dnSpy.Output {
 		}
 
 		public ICachedWriter CreateWriter() => new CachedWriter(this);
-		public void WriteLine(object color, string s) => TextPane.WriteLine(color, s);
-		public void WriteLine(TextColor color, string s) => TextPane.WriteLine(color, s);
+		public void WriteLine(object color, string? s) => TextPane.WriteLine(color, s);
+		public void WriteLine(TextColor color, string? s) => TextPane.WriteLine(color, s);
 		public void Write(IEnumerable<ColorAndText> text) => TextPane.Write(text);
 		public void Clear() => TextPane.Clear();
 		public string GetText() => TextPane.GetText();
-		public void Write(object color, string s) => TextPane.Write(color, s);
-		public void Write(TextColor color, string s) => TextPane.Write(color, s);
+		public void Write(object color, string? s) => TextPane.Write(color, s);
+		public void Write(TextColor color, string? s) => TextPane.Write(color, s);
 	}
 }

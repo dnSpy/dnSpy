@@ -34,7 +34,7 @@ namespace dnSpy.Text.Formatting {
 		public bool IsLastLine { get; private set; }
 
 		public PhysicalLine(ITextSnapshotLine snapshotLine, Collection<IFormattedLine> lines) {
-			if (lines == null)
+			if (lines is null)
 				throw new ArgumentNullException(nameof(lines));
 			if (lines.Count == 0)
 				throw new ArgumentException();
@@ -48,7 +48,7 @@ namespace dnSpy.Text.Formatting {
 		public bool Contains(SnapshotPoint point) {
 			if (disposed)
 				throw new ObjectDisposedException(nameof(PhysicalLine));
-			if (point.Snapshot == null)
+			if (point.Snapshot is null)
 				throw new ArgumentException();
 			if (point.Snapshot != BufferSpan.Snapshot)
 				return false;
@@ -59,10 +59,10 @@ namespace dnSpy.Text.Formatting {
 			return point < BufferSpan.End;
 		}
 
-		public IFormattedLine FindFormattedLineByBufferPosition(SnapshotPoint point) {
+		public IFormattedLine? FindFormattedLineByBufferPosition(SnapshotPoint point) {
 			if (disposed)
 				throw new ObjectDisposedException(nameof(PhysicalLine));
-			if (point.Snapshot == null)
+			if (point.Snapshot is null)
 				throw new ArgumentException();
 			if (point.Snapshot != BufferSpan.Snapshot)
 				return null;

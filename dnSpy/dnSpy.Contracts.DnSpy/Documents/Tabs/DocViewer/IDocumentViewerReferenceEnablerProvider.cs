@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// </summary>
 		/// <param name="documentViewer">Document viewer</param>
 		/// <returns></returns>
-		IDocumentViewerReferenceEnabler Create(IDocumentViewer documentViewer);
+		IDocumentViewerReferenceEnabler? Create(IDocumentViewer documentViewer);
 	}
 
 	/// <summary>Metadata</summary>

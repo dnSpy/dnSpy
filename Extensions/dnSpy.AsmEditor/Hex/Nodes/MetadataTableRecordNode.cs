@@ -39,12 +39,12 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		protected override ImageReference IconReference => DsImages.Metadata;
-		MetadataTableNode MDParent => (MetadataTableNode)TreeNode.Parent.Data;
+		MetadataTableNode MDParent => (MetadataTableNode)TreeNode.Parent!.Data;
 		MetadataTableRecordVM Record => MDParent.MetadataTableVM.Get(index);
 		public override bool SingleClickExpandsChildren => false;
 
 		readonly int index;
-		readonly Tuple<int[], Action<ITextColorWriter>> infoTuple;
+		readonly Tuple<int[], Action<ITextColorWriter>>? infoTuple;
 
 		public MetadataTableRecordNode(TableInfo tableInfo, int index, HexPosition startOffset, HexPosition endOffset)
 			: base(HexSpan.FromBounds(startOffset, endOffset)) {
@@ -54,7 +54,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		protected override void WriteCore(ITextColorWriter output, DocumentNodeWriteOptions options) {
 			output.Write(BoxedTextColor.Number, (index + 1).ToString());
-			if (infoTuple != null) {
+			if (!(infoTuple is null)) {
 				output.WriteSpace();
 				output.Write(BoxedTextColor.Operator, "-");
 				output.WriteSpace();
@@ -63,8 +63,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		public override void OnBufferChanged(NormalizedHexChangeCollection changes) {
-			if (infoTuple != null) {
-				var tableInfo = ((MetadataTableNode)TreeNode.Parent.Data).TableInfo;
+			if (!(infoTuple is null)) {
+				var tableInfo = ((MetadataTableNode)TreeNode.Parent!.Data).TableInfo;
 				foreach (var index in infoTuple.Item1) {
 					var col = tableInfo.Columns[index];
 					var span = new HexSpan(Span.Start + (ulong)col.Offset, (ulong)col.Size);
@@ -76,7 +76,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			}
 		}
 
-		Tuple<int[], Action<ITextColorWriter>> GetInfoTuple(TableInfo tableInfo) {
+		Tuple<int[], Action<ITextColorWriter>>? GetInfoTuple(TableInfo tableInfo) {
 			switch (tableInfo.Table) {
 			case Table.Module:					return new Tuple<int[], Action<ITextColorWriter>>(new int[] { 1 }, WriteModuleInfo);
 			case Table.TypeRef:					return new Tuple<int[], Action<ITextColorWriter>>(new int[] { 1, 2 }, WriteTypeRefInfo);
@@ -136,7 +136,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		string ReadStringsHeap(int index) {
-			var mdt = (MetadataTableNode)TreeNode.Parent.Data;
+			var mdt = (MetadataTableNode)TreeNode.Parent!.Data;
 			var tableInfo = mdt.TableInfo;
 			var s = SimpleTypeConverter.ToString(mdt.MetadataTableVM.ReadStringsHeap(ReadFieldValue(mdt.Buffer, tableInfo.Columns[index])), false);
 			Debug.Assert(s.Length >= 2);

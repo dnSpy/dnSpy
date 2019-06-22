@@ -203,13 +203,13 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		void LoadModules(IList<ModuleVM> modules) =>
 			moduleLoader.Value.LoadModules(modules.Select(a => a.Module).ToArray(), DbgLoadModuleReferenceHandlerOptions.None);
 
-		public override bool CanShowInMemoryWindow => GetShowInMemoryWindowModule() != null;
+		public override bool CanShowInMemoryWindow => !(GetShowInMemoryWindowModule() is null);
 		public override void ShowInMemoryWindow(int windowIndex) {
 			if ((uint)windowIndex >= (uint)MemoryWindowsHelper.NUMBER_OF_MEMORY_WINDOWS)
 				throw new ArgumentOutOfRangeException(nameof(windowIndex));
 			ShowInMemoryWindowCore(windowIndex);
 		}
-		ModuleVM GetShowInMemoryWindowModule() {
+		ModuleVM? GetShowInMemoryWindowModule() {
 			if (SelectedItems.Count != 1)
 				return null;
 			var vm = SelectedItems[0];
@@ -220,12 +220,12 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		public override void ShowInMemoryWindow() => ShowInMemoryWindowCore(null);
 		void ShowInMemoryWindowCore(int? windowIndex) {
 			var vm = GetShowInMemoryWindowModule();
-			if (vm != null) {
+			if (!(vm is null)) {
 				var start = new HexPosition(vm.Module.Address);
 				var end = start + vm.Module.Size;
 				Debug.Assert(end <= HexPosition.MaxEndPosition);
 				if (end <= HexPosition.MaxEndPosition) {
-					if (windowIndex != null)
+					if (!(windowIndex is null))
 						memoryWindowService.Value.Show(vm.Module.Process.Id, HexSpan.FromBounds(start, end), windowIndex.Value);
 					else
 						memoryWindowService.Value.Show(vm.Module.Process.Id, HexSpan.FromBounds(start, end));
@@ -240,10 +240,10 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			set => debuggerSettings.UseHexadecimal = value;
 		}
 
-		public override bool CanOpenContainingFolder => GetFilename() != null;
+		public override bool CanOpenContainingFolder => !(GetFilename() is null);
 		public override void OpenContainingFolder() {
 			var filename = GetFilename();
-			if (filename == null)
+			if (filename is null)
 				return;
 			// Known problem: explorer can't show files in the .NET 2.0 GAC.
 			var args = $"/select,{filename}";
@@ -253,7 +253,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			catch {
 			}
 		}
-		string GetFilename() {
+		string? GetFilename() {
 			if (SelectedItems.Count != 1)
 				return null;
 			var path = SelectedItems[0].Module.Filename;

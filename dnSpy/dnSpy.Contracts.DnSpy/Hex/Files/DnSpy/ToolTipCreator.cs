@@ -38,6 +38,6 @@ namespace dnSpy.Contracts.Hex.Files.DnSpy {
 		/// Creates an object that can be added to a tooltip
 		/// </summary>
 		/// <returns></returns>
-		public abstract object Create();
+		public abstract object? Create();
 	}
 }

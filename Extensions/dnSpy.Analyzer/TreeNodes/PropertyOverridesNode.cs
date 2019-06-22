@@ -46,7 +46,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 				if (TypesHierarchyHelpers.IsBaseProperty(analyzedProperty, property)) {
 					MethodDef anyAccessor = property.GetMethod ?? property.SetMethod;
-					if (anyAccessor == null)
+					if (anyAccessor is null)
 						continue;
 					bool hidesParent = !anyAccessor.IsVirtual ^ anyAccessor.IsNewSlot;
 					yield return new PropertyNode(property, hidesParent) { Context = Context };
@@ -56,7 +56,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		public static bool CanShow(PropertyDef property) {
 			var accessor = property.GetMethod ?? property.SetMethod;
-			return accessor != null && accessor.IsVirtual && !accessor.IsFinal && !accessor.DeclaringType.IsInterface;
+			return !(accessor is null) && accessor.IsVirtual && !accessor.IsFinal && !accessor.DeclaringType.IsInterface;
 		}
 	}
 }

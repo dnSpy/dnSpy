@@ -68,7 +68,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 				if (!output.IsEmpty)
 					res.Children.Add(output.Create());
 			}
-			if (Image != null) {
+			if (!(Image is null)) {
 				var img = new DsImage {
 					ImageReference = Image.Value,
 					Margin = new Thickness(0, 0, 4, 0),

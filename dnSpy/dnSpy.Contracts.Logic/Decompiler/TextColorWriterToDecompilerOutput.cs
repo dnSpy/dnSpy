@@ -72,9 +72,9 @@ namespace dnSpy.Contracts.Decompiler {
 		}
 		static readonly char[] newLineChars = new char[] { '\r', '\n', '\u0085', '\u2028', '\u2029' };
 
-		void IDecompilerOutput.Write(string text, object reference, DecompilerReferenceFlags flags, object color) =>
+		void IDecompilerOutput.Write(string text, object? reference, DecompilerReferenceFlags flags, object color) =>
 			((IDecompilerOutput)this).Write(text, color);
-		void IDecompilerOutput.Write(string text, int index, int length, object reference, DecompilerReferenceFlags flags, object color) =>
+		void IDecompilerOutput.Write(string text, int index, int length, object? reference, DecompilerReferenceFlags flags, object color) =>
 			((IDecompilerOutput)this).Write(text, index, length, color);
 		void IDecompilerOutput.WriteLine() =>
 			((IDecompilerOutput)this).Write(Environment.NewLine, BoxedTextColor.Text);

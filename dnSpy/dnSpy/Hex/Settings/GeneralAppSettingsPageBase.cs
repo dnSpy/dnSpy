@@ -28,7 +28,7 @@ using dnSpy.Properties;
 namespace dnSpy.Hex.Settings {
 	abstract class GeneralAppSettingsPageBase : AppSettingsPage {
 		public sealed override string Title => dnSpy_Resources.GeneralSettings;
-		public sealed override object UIObject => this;
+		public sealed override object? UIObject => this;
 
 		public bool EnableHighlightCurrentLine {
 			get => enableHighlightCurrentLine;
@@ -111,7 +111,7 @@ namespace dnSpy.Hex.Settings {
 
 		public EnumListVM HexOffsetFormatVM { get; }
 		public HexOffsetFormat HexOffsetFormat {
-			get => (HexOffsetFormat)HexOffsetFormatVM.SelectedItem;
+			get => (HexOffsetFormat)HexOffsetFormatVM.SelectedItem!;
 			set => HexOffsetFormatVM.SelectedItem = value;
 		}
 		static readonly EnumVM[] hexOffsetFormatList = new EnumVM[] {
@@ -122,8 +122,8 @@ namespace dnSpy.Hex.Settings {
 		};
 
 		public EnumListVM EncodingInfoVM { get; }
-		public EncodingInfo EncodingInfo {
-			get => (EncodingInfo)EncodingInfoVM.SelectedItem;
+		public EncodingInfo? EncodingInfo {
+			get => (EncodingInfo?)EncodingInfoVM.SelectedItem;
 			set => EncodingInfoVM.SelectedItem = value;
 		}
 
@@ -144,10 +144,10 @@ namespace dnSpy.Hex.Settings {
 			EnableColorization = options.EnableColorization;
 			GroupSizeInBytesVM.Value = options.GroupSizeInBytes;
 			HexOffsetFormat = options.HexOffsetFormat;
-			EncodingInfo = GetEncodingInfo(options.EncodingCodePage) ?? GetEncodingInfo(Encoding.UTF8.CodePage) ?? (EncodingInfo)EncodingInfoVM.Items.FirstOrDefault()?.Value;
+			EncodingInfo = GetEncodingInfo(options.EncodingCodePage) ?? GetEncodingInfo(Encoding.UTF8.CodePage) ?? (EncodingInfo?)EncodingInfoVM.Items.FirstOrDefault()?.Value;
 		}
 
-		EncodingInfo GetEncodingInfo(int codePage) {
+		EncodingInfo? GetEncodingInfo(int codePage) {
 			foreach (var vm in EncodingInfoVM.Items) {
 				var info = (EncodingInfo)vm.Value;
 				if (info.CodePage == codePage)
@@ -170,7 +170,7 @@ namespace dnSpy.Hex.Settings {
 				options.GroupSizeInBytes = GroupSizeInBytesVM.Value;
 
 			var encodingInfo = EncodingInfo;
-			if (encodingInfo != null)
+			if (!(encodingInfo is null))
 				options.EncodingCodePage = encodingInfo.CodePage;
 		}
 	}

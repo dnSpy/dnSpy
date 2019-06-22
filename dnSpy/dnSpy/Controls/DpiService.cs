@@ -45,7 +45,7 @@ namespace dnSpy.Controls {
 		public event EventHandler<WindowDpiChangedEventArgs> DpiChanged;
 
 		DpiService() {
-			Debug.Assert(Application.Current == null || Application.Current.Windows.Count == 0);
+			Debug.Assert(Application.Current is null || Application.Current.Windows.Count == 0);
 			MetroWindow.MetroWindowCreated += MetroWindow_MetroWindowCreated;
 		}
 

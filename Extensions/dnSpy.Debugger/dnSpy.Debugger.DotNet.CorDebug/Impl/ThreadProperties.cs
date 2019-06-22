@@ -23,15 +23,15 @@ using dnSpy.Contracts.Debugger.Engine;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	sealed class ThreadProperties {
-		public DbgAppDomain AppDomain { get; }
+		public DbgAppDomain? AppDomain { get; }
 		public string Kind { get; }
 		public ulong Id { get; }
 		public ulong? ManagedId { get; }
-		public string Name { get; }
+		public string? Name { get; }
 		public int SuspendedCount { get; }
 		public CorDebugUserState UserState { get; }
 
-		public ThreadProperties(DbgAppDomain appDomain, string kind, ulong id, ulong? managedId, string name, int suspendedCount, CorDebugUserState userState) {
+		public ThreadProperties(DbgAppDomain? appDomain, string kind, ulong id, ulong? managedId, string? name, int suspendedCount, CorDebugUserState userState) {
 			AppDomain = appDomain;
 			Kind = kind;
 			Id = id;
@@ -41,21 +41,21 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			UserState = userState;
 		}
 
-		public DbgEngineThread.UpdateOptions Compare(ThreadProperties other) {
+		public DbgEngineThread.UpdateOptions Compare(ThreadProperties? other) {
 			var options = DbgEngineThread.UpdateOptions.None;
-			if (other.AppDomain != AppDomain)
+			if (other?.AppDomain != AppDomain)
 				options |= DbgEngineThread.UpdateOptions.AppDomain;
-			if (other.Kind != Kind)
+			if (other?.Kind != Kind)
 				options |= DbgEngineThread.UpdateOptions.Kind;
-			if (other.Id != Id)
+			if (other?.Id != Id)
 				options |= DbgEngineThread.UpdateOptions.Id;
-			if (other.ManagedId != ManagedId)
+			if (other?.ManagedId != ManagedId)
 				options |= DbgEngineThread.UpdateOptions.ManagedId;
-			if (other.Name != Name)
+			if (other?.Name != Name)
 				options |= DbgEngineThread.UpdateOptions.Name;
-			if (other.SuspendedCount != SuspendedCount)
+			if (other?.SuspendedCount != SuspendedCount)
 				options |= DbgEngineThread.UpdateOptions.SuspendedCount;
-			if (other.UserState != UserState)
+			if (other?.UserState != UserState)
 				options |= DbgEngineThread.UpdateOptions.State;
 			return options;
 		}

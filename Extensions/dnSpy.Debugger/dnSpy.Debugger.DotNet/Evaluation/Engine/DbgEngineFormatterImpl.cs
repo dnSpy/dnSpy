@@ -43,20 +43,20 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public override void FormatObjectIdName(DbgEvaluationContext context, IDbgTextWriter output, uint id) =>
 			formatter.FormatObjectIdName(context, output, id);
 
-		public override void FormatFrame(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo) =>
+		public override void FormatFrame(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo? cultureInfo) =>
 			formatter.FormatFrame(evalInfo, output, options, valueOptions, cultureInfo);
 
-		public override void FormatValue(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgEngineValue value, DbgValueFormatterOptions options, CultureInfo cultureInfo) {
+		public override void FormatValue(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgEngineValue value, DbgValueFormatterOptions options, CultureInfo? cultureInfo) {
 			var valueImpl = value as DbgEngineValueImpl;
-			if (valueImpl == null)
+			if (valueImpl is null)
 				throw new ArgumentException();
 			var dnValue = valueImpl.DotNetValue;
 			formatter.FormatValue(evalInfo, output, dnValue, options, cultureInfo);
 		}
 
-		public override void FormatType(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgEngineValue value, DbgValueFormatterTypeOptions options, CultureInfo cultureInfo) {
+		public override void FormatType(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgEngineValue value, DbgValueFormatterTypeOptions options, CultureInfo? cultureInfo) {
 			var valueImpl = value as DbgEngineValueImpl;
-			if (valueImpl == null)
+			if (valueImpl is null)
 				throw new ArgumentException();
 			var dnValue = valueImpl.DotNetValue;
 			formatter.FormatType(evalInfo, output, dnValue.Type, null, options, cultureInfo);

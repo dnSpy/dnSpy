@@ -50,7 +50,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		[ImportingConstructor]
 		BracePairViewTaggerProvider(IBracePairServiceProvider bracePairServiceProvider) => this.bracePairServiceProvider = bracePairServiceProvider;
 
-		public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag {
+		public ITagger<T>? CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag {
 			if (textView.TextBuffer != buffer)
 				return null;
 			return textView.Properties.GetOrCreateSingletonProperty(typeof(BracePairViewTagger), () => new BracePairViewTagger(textView, bracePairServiceProvider.GetBracePairService(textView))) as ITagger<T>;
@@ -63,7 +63,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		readonly IBracePairService bracePairService;
 
 		public BracePairViewTagger(ITextView textView, IBracePairService bracePairService) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			this.bracePairService = bracePairService;
 			bracePairService.SetBracePairViewTagger(this);
@@ -82,7 +82,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		[ImportingConstructor]
 		BracePairCommandTargetFilterProvider(Lazy<IBracePairServiceProvider> bracePairServiceProvider) => this.bracePairServiceProvider = bracePairServiceProvider;
 
-		public ICommandTargetFilter Create(object target) {
+		public ICommandTargetFilter? Create(object target) {
 			var textView = target as ITextView;
 			if (textView?.Roles.Contains(PredefinedDsTextViewRoles.DocumentViewer) != true)
 				return null;
@@ -100,12 +100,11 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			this.bracePairService = bracePairService;
 		}
 
-		IDocumentViewer TryGetInstance() =>
-			__documentViewer ?? (__documentViewer = DocumentViewerExtensions.TryGetDocumentViewer(textView.TextBuffer));
-		IDocumentViewer __documentViewer;
+		IDocumentViewer? TryGetInstance() => __documentViewer ??= DocumentViewerExtensions.TryGetDocumentViewer(textView.TextBuffer);
+		IDocumentViewer? __documentViewer;
 
 		public CommandTargetStatus CanExecute(Guid group, int cmdId) {
-			if (TryGetInstance() == null)
+			if (TryGetInstance() is null)
 				return CommandTargetStatus.NotHandled;
 
 			if (group == CommandConstants.TextEditorGroup) {
@@ -120,14 +119,14 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			return CommandTargetStatus.NotHandled;
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args = null) {
-			object result = null;
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args = null) {
+			object? result = null;
 			return Execute(group, cmdId, args, ref result);
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) {
 			var documentViewer = TryGetInstance();
-			if (documentViewer == null)
+			if (documentViewer is null)
 				return CommandTargetStatus.NotHandled;
 
 			if (group == CommandConstants.TextEditorGroup) {
@@ -149,10 +148,10 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 		static void MoveToMatchingBrace(IDocumentViewer documentViewer, bool select) {
 			var t = GetMatchingBracePosition(documentViewer);
-			if (t == null)
+			if (t is null)
 				return;
 			var pos = t.Value.position;
-			if (pos == null)
+			if (pos is null)
 				return;
 			var snapshot = documentViewer.TextView.TextSnapshot;
 			if (pos.Value > snapshot.Length)
@@ -178,11 +177,11 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			if (caretPos.VirtualSpaces > 0)
 				return null;
 			var coll = documentViewer.Content.GetCustomData<BracePairCollection>(DocumentViewerContentDataIds.BracePair);
-			if (coll == null)
+			if (coll is null)
 				return null;
 			int pos = caretPos.BufferPosition.Position;
 			var pairColl = coll.GetBracePairs(pos);
-			if (pairColl == null)
+			if (pairColl is null)
 				return null;
 			var pair = pairColl.Value.First;
 			if (pair.Left.Start == pos)
@@ -191,7 +190,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				return (pair.Left.Start, pair);
 			if (pair.Right.Start == pos) {
 				var pair2 = coll.GetBracePairs(pos - 1);
-				if (pair2 != null && pair2.Value.First.Right.End == pos)
+				if (!(pair2 is null) && pair2.Value.First.Right.End == pos)
 					return (pair2.Value.First.Left.Start, pair2.Value.First);
 			}
 			if (pair.Left.Start <= pos && pos <= pair.Left.End)
@@ -229,7 +228,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		public IBracePairService GetBracePairService(ITextView textView) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			return textView.Properties.GetOrCreateSingletonProperty(typeof(BracePairService), () => new BracePairService(textView));
 		}
@@ -243,7 +242,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 	sealed class BracePairService : IBracePairService {
 		readonly ITextView textView;
-		BracePairViewTagger tagger;
+		BracePairViewTagger? tagger;
 		BracePairCollection bracePairCollection;
 		bool canHighlightBraces;
 		BracePairResultCollection? currentBracePair;
@@ -283,13 +282,13 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				return null;
 			int pos = caretPos.BufferPosition.Position;
 			var res = bracePairCollection.GetBracePairs(pos);
-			if (res == null)
+			if (res is null)
 				return null;
 			if (res.Value.First.Left.Start == pos || res.Value.First.Right.End == pos)
 				return res;
 			if (res.Value.First.Right.Start == pos) {
 				res = bracePairCollection.GetBracePairs(pos - 1);
-				if (res != null && res.Value.First.Right.End == pos)
+				if (!(res is null) && res.Value.First.Right.End == pos)
 					return new BracePairResultCollection(res.Value.First, null);
 			}
 			return null;
@@ -308,33 +307,33 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		static bool IsSamePair(BracePairResultCollection? a, BracePairResultCollection? b) {
-			if (a == null && b == null)
+			if (a is null && b is null)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			return a.Value.Equals(b.Value);
 		}
 
 		void RefreshTags(BracePairResultCollection? a, BracePairResultCollection? b) {
-			if (a != null) {
+			if (!(a is null)) {
 				RefreshTags(a.Value.First);
 				RefreshTags(a.Value.Second);
 			}
-			if (b != null) {
+			if (!(b is null)) {
 				RefreshTags(b.Value.First);
 				RefreshTags(b.Value.Second);
 			}
 		}
 
 		void RefreshTags(BracePairResult? a) {
-			if (a != null) {
+			if (!(a is null)) {
 				RefreshTags(a.Value.Left);
 				RefreshTags(a.Value.Right);
 			}
 		}
 
 		void RefreshTags(Span span) {
-			if (tagger != null) {
+			if (!(tagger is null)) {
 				var snapshot = textView.TextSnapshot;
 				if (span.End <= snapshot.Length)
 					tagger?.RaiseTagsChanged(new SnapshotSpan(snapshot, span));
@@ -342,7 +341,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		void RefreshAllTags() {
-			if (tagger != null) {
+			if (!(tagger is null)) {
 				UpdateBracePairs(false);
 				var snapshot = textView.TextSnapshot;
 				tagger?.RaiseTagsChanged(new SnapshotSpan(snapshot, 0, snapshot.Length));
@@ -355,20 +354,20 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		public void SetBracePairViewTagger(BracePairViewTagger tagger) {
-			if (this.tagger != null)
+			if (!(this.tagger is null))
 				throw new InvalidOperationException();
 			this.tagger = tagger ?? throw new ArgumentNullException(nameof(tagger));
 		}
 
 		public IEnumerable<ITagSpan<IBracePairTag>> GetTags(NormalizedSnapshotSpanCollection spans) {
-			if (currentBracePair == null)
+			if (currentBracePair is null)
 				yield break;
 			var snapshot = textView.TextSnapshot;
 			if (currentBracePair.Value.First.Left.End <= snapshot.Length)
 				yield return new TagSpan<IBracePairTag>(new SnapshotSpan(snapshot, currentBracePair.Value.First.Left), BracePairTag.Instance);
 			if (currentBracePair.Value.First.Right.End <= snapshot.Length)
 				yield return new TagSpan<IBracePairTag>(new SnapshotSpan(snapshot, currentBracePair.Value.First.Right), BracePairTag.Instance);
-			if (currentBracePair.Value.Second != null) {
+			if (!(currentBracePair.Value.Second is null)) {
 				if (currentBracePair.Value.Second.Value.Left.End <= snapshot.Length)
 					yield return new TagSpan<IBracePairTag>(new SnapshotSpan(snapshot, currentBracePair.Value.Second.Value.Left), BracePairTag.Instance);
 				if (currentBracePair.Value.Second.Value.Right.End <= snapshot.Length)

@@ -35,7 +35,7 @@ namespace dnSpy.Text.Editor {
 		readonly ITextSnapshot snapshot;
 
 		public WpfTextViewLineCollection(IWpfTextView textView, ITextSnapshot snapshot, IList<IWpfTextViewLine> lines) {
-			if (lines == null)
+			if (lines is null)
 				throw new ArgumentNullException(nameof(lines));
 			this.textView = textView ?? throw new ArgumentNullException(nameof(textView));
 			this.snapshot = snapshot ?? throw new ArgumentNullException(nameof(snapshot));
@@ -49,7 +49,9 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public IWpfTextViewLine this[int index] => lines[index];
+#pragma warning disable CS8643 // Nullability of reference types in explicit interface specifier doesn't match interface implemented by the type.
 		ITextViewLine IList<ITextViewLine>.this[int index] {
+#pragma warning restore CS8643 // Nullability of reference types in explicit interface specifier doesn't match interface implemented by the type.
 			get => this[index];
 			set => throw new NotSupportedException();
 		}
@@ -134,7 +136,7 @@ namespace dnSpy.Text.Editor {
 			if (bufferPosition.Snapshot != snapshot)
 				throw new ArgumentException();
 			var line = GetTextViewLineContainingBufferPosition(bufferPosition);
-			if (line == null)
+			if (line is null)
 				throw new ArgumentOutOfRangeException(nameof(bufferPosition));
 			return line.GetCharacterBounds(bufferPosition);
 		}
@@ -142,7 +144,7 @@ namespace dnSpy.Text.Editor {
 		public int GetIndexOfTextLine(ITextViewLine textLine) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(WpfTextViewLineCollection));
-			if (textLine == null)
+			if (textLine is null)
 				throw new ArgumentNullException(nameof(textLine));
 			for (int i = 0; i < lines.Count; i++) {
 				if (lines[i] == textLine)
@@ -151,32 +153,32 @@ namespace dnSpy.Text.Editor {
 			return -1;
 		}
 
-		public Geometry GetLineMarkerGeometry(SnapshotSpan bufferSpan) =>
+		public Geometry? GetLineMarkerGeometry(SnapshotSpan bufferSpan) =>
 			GetMarkerGeometry(bufferSpan, false, MarkerHelper.LineMarkerPadding, true);
-		public Geometry GetLineMarkerGeometry(SnapshotSpan bufferSpan, bool clipToViewport, Thickness padding) =>
+		public Geometry? GetLineMarkerGeometry(SnapshotSpan bufferSpan, bool clipToViewport, Thickness padding) =>
 			GetMarkerGeometry(bufferSpan, clipToViewport, padding, true);
 
-		public Geometry GetTextMarkerGeometry(SnapshotSpan bufferSpan) =>
+		public Geometry? GetTextMarkerGeometry(SnapshotSpan bufferSpan) =>
 			GetMarkerGeometry(bufferSpan, false, MarkerHelper.TextMarkerPadding, false);
-		public Geometry GetTextMarkerGeometry(SnapshotSpan bufferSpan, bool clipToViewport, Thickness padding) =>
+		public Geometry? GetTextMarkerGeometry(SnapshotSpan bufferSpan, bool clipToViewport, Thickness padding) =>
 			GetMarkerGeometry(bufferSpan, clipToViewport, padding, false);
 
-		Geometry GetMarkerGeometry(SnapshotSpan bufferSpan, bool clipToViewport, Thickness padding, bool isLineGeometry) {
+		Geometry? GetMarkerGeometry(SnapshotSpan bufferSpan, bool clipToViewport, Thickness padding, bool isLineGeometry) {
 			if (bufferSpan.Snapshot != snapshot)
 				throw new ArgumentException();
 
 			bool createOutlinedPath = false;
-			PathGeometry geo = null;
+			PathGeometry? geo = null;
 			var textBounds = GetNormalizedTextBounds(bufferSpan);
 			MarkerHelper.AddGeometries(textView, textBounds, isLineGeometry, clipToViewport, padding, 0, ref geo, ref createOutlinedPath);
 			if (createOutlinedPath)
-				geo = geo.GetOutlinedPathGeometry();
-			if (geo != null && geo.CanFreeze)
+				geo = geo!.GetOutlinedPathGeometry();
+			if (!(geo is null) && geo.CanFreeze)
 				geo.Freeze();
 			return geo;
 		}
 
-		public Geometry GetMarkerGeometry(SnapshotSpan bufferSpan) {
+		public Geometry? GetMarkerGeometry(SnapshotSpan bufferSpan) {
 			if (bufferSpan.Snapshot != snapshot)
 				throw new ArgumentException();
 			if (MarkerHelper.IsMultiLineSpan(textView, bufferSpan))
@@ -184,7 +186,7 @@ namespace dnSpy.Text.Editor {
 			return GetTextMarkerGeometry(bufferSpan);
 		}
 
-		public Geometry GetMarkerGeometry(SnapshotSpan bufferSpan, bool clipToViewport, Thickness padding) {
+		public Geometry? GetMarkerGeometry(SnapshotSpan bufferSpan, bool clipToViewport, Thickness padding) {
 			if (bufferSpan.Snapshot != snapshot)
 				throw new ArgumentException();
 			if (MarkerHelper.IsMultiLineSpan(textView, bufferSpan))
@@ -199,7 +201,7 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentException();
 			var span = FormattedSpan.Overlap(bufferSpan);
 			var list = new List<TextBounds>();
-			if (span == null)
+			if (span is null)
 				return new Collection<TextBounds>(list);
 
 			bool found = false;
@@ -225,14 +227,14 @@ namespace dnSpy.Text.Editor {
 			if (bufferPosition.Snapshot != snapshot)
 				throw new ArgumentException();
 			var line = GetTextViewLineContainingBufferPosition(bufferPosition);
-			if (line == null)
+			if (line is null)
 				throw new ArgumentOutOfRangeException(nameof(bufferPosition));
 			return line.GetTextElementSpan(bufferPosition);
 		}
 
-		ITextViewLine ITextViewLineCollection.GetTextViewLineContainingBufferPosition(SnapshotPoint bufferPosition) =>
+		ITextViewLine? ITextViewLineCollection.GetTextViewLineContainingBufferPosition(SnapshotPoint bufferPosition) =>
 			GetTextViewLineContainingBufferPosition(bufferPosition);
-		public IWpfTextViewLine GetTextViewLineContainingBufferPosition(SnapshotPoint bufferPosition) {
+		public IWpfTextViewLine? GetTextViewLineContainingBufferPosition(SnapshotPoint bufferPosition) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(WpfTextViewLineCollection));
 			if (bufferPosition.Snapshot != snapshot)
@@ -244,7 +246,7 @@ namespace dnSpy.Text.Editor {
 			return null;
 		}
 
-		public ITextViewLine GetTextViewLineContainingYCoordinate(double y) {
+		public ITextViewLine? GetTextViewLineContainingYCoordinate(double y) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(WpfTextViewLineCollection));
 			if (double.IsNaN(y))
@@ -273,14 +275,14 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public void CopyTo(ITextViewLine[] array, int arrayIndex) {
-			if (array == null)
+			if (array is null)
 				throw new ArgumentNullException(nameof(array));
 			for (int i = 0; i < lines.Count; i++)
 				array[arrayIndex + i] = lines[i];
 		}
 
 		public bool Contains(ITextViewLine item) => IndexOf(item) >= 0;
-		public int IndexOf(ITextViewLine item) => lines.IndexOf(item as IWpfTextViewLine);
+		public int IndexOf(ITextViewLine item) => lines.IndexOf((item as IWpfTextViewLine)!);
 
 		public void Add(ITextViewLine item) => throw new NotSupportedException();
 

@@ -73,23 +73,23 @@ namespace dnSpy.MainApp {
 			}
 		}
 
-		static void ShowException(Exception ex) {
+		static void ShowException(Exception? ex) {
 			string msg = ex?.ToString() ?? "Unknown exception";
 			MessageBox.Show(msg, Constants.DnSpy, MessageBoxButton.OK, MessageBoxImage.Error);
 		}
 
 		readonly ResourceManagerTokenCacheImpl resourceManagerTokenCacheImpl;
 		long resourceManagerTokensOffset;
-		volatile Assembly[] mefAssemblies;
-		AppWindow appWindow;
-		ExtensionService extensionService;
-		IDsLoaderService dsLoaderService;
+		volatile Assembly[]? mefAssemblies;
+		AppWindow? appWindow;
+		ExtensionService? extensionService;
+		IDsLoaderService? dsLoaderService;
 		readonly List<LoadedExtension> loadedExtensions = new List<LoadedExtension>();
 		readonly IAppCommandLineArgs args;
-		ExportProvider exportProvider;
+		ExportProvider? exportProvider;
 
 		Task<ExportProvider> initializeMEFTask;
-		Stopwatch startupStopwatch;
+		Stopwatch? startupStopwatch;
 		public App(bool readSettings, Stopwatch startupStopwatch) {
 			resourceManagerTokenCacheImpl = new ResourceManagerTokenCacheImpl();
 
@@ -152,7 +152,7 @@ namespace dnSpy.MainApp {
 			return Path.Combine(profileDir, Constants.DnSpyFile + "-mef-info.bin");
 		}
 
-		IExportProviderFactory TryCreateExportProviderFactoryCached(Resolver resolver, bool useCache, out long resourceManagerTokensOffset) {
+		IExportProviderFactory? TryCreateExportProviderFactoryCached(Resolver resolver, bool useCache, out long resourceManagerTokensOffset) {
 			resourceManagerTokensOffset = -1;
 			if (!useCache)
 				return null;
@@ -165,13 +165,14 @@ namespace dnSpy.MainApp {
 			}
 		}
 
-		IExportProviderFactory TryCreateExportProviderFactoryCachedCore(Resolver resolver, out long resourceManagerTokensOffset) {
+		IExportProviderFactory? TryCreateExportProviderFactoryCachedCore(Resolver resolver, out long resourceManagerTokensOffset) {
+			Debug.Assert(!(mefAssemblies is null));
 			resourceManagerTokensOffset = -1;
 			var filename = GetCachedCompositionConfigurationFilename();
 			if (!File.Exists(filename))
 				return null;
 
-			Stream cachedStream = null;
+			Stream? cachedStream = null;
 			try {
 				try {
 					cachedStream = File.OpenRead(filename);
@@ -192,7 +193,7 @@ namespace dnSpy.MainApp {
 				cachedStream?.Dispose();
 			}
 
-			bool IsFileIOException(Exception ex) => ex is IOException || ex is UnauthorizedAccessException || ex is SecurityException;
+			static bool IsFileIOException(Exception ex) => ex is IOException || ex is UnauthorizedAccessException || ex is SecurityException;
 		}
 
 		IExportProviderFactory CreateExportProviderFactorySlow(Resolver resolver) {
@@ -202,12 +203,15 @@ namespace dnSpy.MainApp {
 
 			var catalog = ComposableCatalog.Create(resolver).AddParts(parts);
 			var config = CompositionConfiguration.Create(catalog);
+			// If this fails/throws, one of the following is probably true:
+			//	- you didn't build all projects or all files aren't in the same output dir
+			//	- netcoreapp: dnSpy isn't the startup project (eg. dnSpy-x86 is)
 			Debug.Assert(config.ThrowOnErrors() == config);
 
 			writingCachedMefFile = true;
 			Task.Run(() => SaveMefStateAsync(config)).ContinueWith(t => {
 				var ex = t.Exception;
-				Debug.Assert(ex == null);
+				Debug.Assert(ex is null);
 				writingCachedMefFile = false;
 			}, CancellationToken.None);
 
@@ -216,6 +220,7 @@ namespace dnSpy.MainApp {
 
 		bool writingCachedMefFile;
 		async Task SaveMefStateAsync(CompositionConfiguration config) {
+			Debug.Assert(!(mefAssemblies is null));
 			string filename = GetCachedCompositionConfigurationFilename();
 			bool fileCreated = false;
 			bool deleteFile = true;
@@ -255,6 +260,7 @@ namespace dnSpy.MainApp {
 		}
 
 		void UpdateResourceManagerTokens() {
+			Debug.Assert(!(mefAssemblies is null));
 			var tokensOffset = resourceManagerTokensOffset;
 			if (tokensOffset < 0)
 				return;
@@ -396,7 +402,7 @@ namespace dnSpy.MainApp {
 		}
 
 		static bool Equals(byte[] a, byte[] b) {
-			if (a == null || b == null || a.Length != b.Length)
+			if (a is null || b is null || a.Length != b.Length)
 				return false;
 			for (int i = 0; i < a.Length; i++) {
 				if (a[i] != b[i])
@@ -472,11 +478,12 @@ namespace dnSpy.MainApp {
 		}
 
 		void MainWindow_SourceInitialized(object sender, EventArgs e) {
+			Debug.Assert(!(appWindow is null));
 			appWindow.MainWindow.SourceInitialized -= MainWindow_SourceInitialized;
 
 			var hwndSource = PresentationSource.FromVisual(appWindow.MainWindow) as HwndSource;
-			Debug.Assert(hwndSource != null);
-			if (hwndSource != null)
+			Debug.Assert(!(hwndSource is null));
+			if (!(hwndSource is null))
 				hwndSource.AddHook(WndProc);
 		}
 
@@ -485,7 +492,7 @@ namespace dnSpy.MainApp {
 			dsLoaderService?.Save();
 			try {
 				var settingsService = exportProvider?.GetExportedValue<SettingsService>();
-				if (settingsService != null)
+				if (!(settingsService is null))
 					new XmlSettingsWriter(settingsService).Write();
 			}
 			catch {
@@ -504,13 +511,13 @@ namespace dnSpy.MainApp {
 		void FixEditorContextMenuStyle() {
 			var module = typeof(ContextMenu).Module;
 			var type = module.GetType("System.Windows.Documents.TextEditorContextMenu+EditorContextMenu", false, false);
-			Debug.Assert(type != null);
-			if (type == null)
+			Debug.Assert(!(type is null));
+			if (type is null)
 				return;
 			const string styleKey = "EditorContextMenuStyle";
 			var style = Resources[styleKey];
-			Debug.Assert(style != null);
-			if (style == null)
+			Debug.Assert(!(style is null));
+			if (style is null)
 				return;
 			Resources.Remove(styleKey);
 			Resources.Add(type, style);
@@ -549,7 +556,7 @@ namespace dnSpy.MainApp {
 		}
 
 		void DsLoaderService_OnAppLoaded(object sender, EventArgs e) {
-			startupStopwatch.Stop();
+			startupStopwatch!.Stop();
 			DnSpyEventSource.Log.StartupStop();
 			var sw = startupStopwatch;
 			startupStopwatch = null;
@@ -557,9 +564,9 @@ namespace dnSpy.MainApp {
 			if (args.ShowStartupTime)
 				ShowElapsedTime(sw);
 
-			dsLoaderService.OnAppLoaded -= DsLoaderService_OnAppLoaded;
-			appWindow.AppLoaded = true;
-			extensionService.OnAppLoaded();
+			dsLoaderService!.OnAppLoaded -= DsLoaderService_OnAppLoaded;
+			appWindow!.AppLoaded = true;
+			extensionService!.OnAppLoaded();
 			HandleAppArgs(args);
 		}
 
@@ -567,14 +574,16 @@ namespace dnSpy.MainApp {
 		static void ShowElapsedTime(Stopwatch sw) => MsgBox.Instance.Show($"{sw.ElapsedMilliseconds} ms, {sw.ElapsedTicks} ticks");
 
 		void HandleAppArgs(IAppCommandLineArgs appArgs) {
+			Debug.Assert(!(exportProvider is null));
+			Debug.Assert(!(appWindow is null));
 			if (appArgs.Activate && appWindow.MainWindow.WindowState == WindowState.Minimized)
 				WindowUtils.SetState(appWindow.MainWindow, WindowState.Normal);
 
 			var decompiler = GetDecompiler(appArgs.Language);
-			if (decompiler != null)
+			if (!(decompiler is null))
 				exportProvider.GetExportedValue<IDecompilerService>().Decompiler = decompiler;
 
-			if (appArgs.FullScreen != null)
+			if (!(appArgs.FullScreen is null))
 				appWindow.MainWindow.IsFullScreen = appArgs.FullScreen.Value;
 
 			if (appArgs.NewTab)
@@ -593,18 +602,20 @@ namespace dnSpy.MainApp {
 		}
 
 		void HandleAppArgs2(IAppCommandLineArgs appArgs) {
+			Debug.Assert(!(exportProvider is null));
 			foreach (var handler in exportProvider.GetExports<IAppCommandLineArgsHandler>().OrderBy(a => a.Value.Order))
 				handler.Value.OnNewArgs(appArgs);
 		}
 
-		IDecompiler GetDecompiler(string language) {
+		IDecompiler? GetDecompiler(string language) {
+			Debug.Assert(!(exportProvider is null));
 			if (string.IsNullOrEmpty(language))
 				return null;
 
 			var decompilerService = exportProvider.GetExportedValue<IDecompilerService>();
 			if (Guid.TryParse(language, out var guid)) {
 				var lang = decompilerService.Find(guid);
-				if (lang != null)
+				if (!(lang is null))
 					return lang;
 			}
 

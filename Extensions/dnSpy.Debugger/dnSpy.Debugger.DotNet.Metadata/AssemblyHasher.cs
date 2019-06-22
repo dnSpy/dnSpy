@@ -53,8 +53,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		public void Dispose() => (hasher as IDisposable)?.Dispose();
 
-		public static byte[] Hash(byte[] data, DmdAssemblyHashAlgorithm hashAlgo) {
-			if (data == null)
+		public static byte[]? Hash(byte[]? data, DmdAssemblyHashAlgorithm hashAlgo) {
+			if (data is null)
 				return null;
 
 			using (var asmHash = new AssemblyHasher(hashAlgo)) {
@@ -85,10 +85,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return hasher.Hash;
 		}
 
-		public static byte[] CreatePublicKeyToken(byte[] publicKeyData) {
-			if (publicKeyData == null || publicKeyData.Length == 0)
+		public static byte[]? CreatePublicKeyToken(byte[]? publicKeyData) {
+			if (publicKeyData is null || publicKeyData.Length == 0)
 				return publicKeyData;
-			var hash = Hash(publicKeyData, DmdAssemblyHashAlgorithm.SHA1);
+			var hash = Hash(publicKeyData, DmdAssemblyHashAlgorithm.SHA1)!;
 			var pkt = new byte[8];
 			for (int i = 0; i < pkt.Length && i < hash.Length; i++)
 				pkt[i] = hash[hash.Length - i - 1];

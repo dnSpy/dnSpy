@@ -52,7 +52,7 @@ namespace dnSpy.Roslyn.Text {
 		/// </summary>
 		/// <param name="textContainer">Text container</param>
 		/// <returns></returns>
-		public static ITextBuffer TryFindEditorTextBuffer(this SourceTextContainer textContainer) =>
+		public static ITextBuffer? TryFindEditorTextBuffer(this SourceTextContainer textContainer) =>
 			(textContainer as TextBufferSourceTextContainer)?.TextBuffer;
 
 		/// <summary>
@@ -70,7 +70,7 @@ namespace dnSpy.Roslyn.Text {
 		/// </summary>
 		/// <param name="sourceText">Source text</param>
 		/// <returns></returns>
-		public static ITextSnapshot TryFindEditorSnapshot(this SourceText sourceText) =>
+		public static ITextSnapshot? TryFindEditorSnapshot(this SourceText sourceText) =>
 			(sourceText as TextSnapshotSourceText)?.TextSnapshot;
 
 		/// <summary>
@@ -78,7 +78,7 @@ namespace dnSpy.Roslyn.Text {
 		/// </summary>
 		/// <param name="sourceText">Source text</param>
 		/// <returns></returns>
-		internal static ITextImage TryFindEditorTextImage(this SourceText sourceText) =>
+		internal static ITextImage? TryFindEditorTextImage(this SourceText sourceText) =>
 			((sourceText as TextSnapshotSourceText)?.TextSnapshot as ITextSnapshot2)?.TextImage;
 
 		internal static TextChangeEventArgs ToTextChangeEventArgs(this TextContentChangedEventArgs e) =>
@@ -112,7 +112,7 @@ namespace dnSpy.Roslyn.Text {
 		/// </summary>
 		/// <param name="snapshot">Snapshot</param>
 		/// <returns></returns>
-		public static Document GetOpenDocumentInCurrentContextWithChanges(this ITextSnapshot snapshot) =>
+		public static Document? GetOpenDocumentInCurrentContextWithChanges(this ITextSnapshot snapshot) =>
 			snapshot.AsText().GetOpenDocumentInCurrentContextWithChanges();
 
 		/// <summary>
@@ -120,11 +120,11 @@ namespace dnSpy.Roslyn.Text {
 		/// </summary>
 		/// <param name="text">Source text</param>
 		/// <returns></returns>
-		public static Document GetOpenDocumentInCurrentContextWithChanges(this SourceText text) {
+		public static Document? GetOpenDocumentInCurrentContextWithChanges(this SourceText text) {
 			// This internal Roslyn method was copied from roslyn/src/Workspaces/Core/Portable/Workspace/TextExtensions.cs
 			if (Workspace.TryGetWorkspace(text.Container, out var workspace)) {
 				var id = workspace.GetDocumentIdInCurrentContext(text.Container);
-				if (id == null || !workspace.CurrentSolution.ContainsDocument(id))
+				if (id is null || !workspace.CurrentSolution.ContainsDocument(id))
 					return null;
 
 				var sol = workspace.CurrentSolution.WithDocumentText(id, text, PreservationMode.PreserveIdentity);

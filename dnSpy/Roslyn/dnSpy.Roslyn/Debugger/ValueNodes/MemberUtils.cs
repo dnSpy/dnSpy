@@ -23,7 +23,7 @@ using dnSpy.Debugger.DotNet.Metadata;
 namespace dnSpy.Roslyn.Debugger.ValueNodes {
 	static class MemberUtils {
 		public static DbgTextColor GetColor(DmdFieldInfo field) {
-			if (field.ReflectedType.IsEnum)
+			if (field.ReflectedType!.IsEnum)
 				return DbgTextColor.EnumField;
 			if (field.IsLiteral)
 				return DbgTextColor.LiteralField;

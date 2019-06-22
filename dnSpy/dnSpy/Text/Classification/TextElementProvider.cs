@@ -43,14 +43,14 @@ namespace dnSpy.Text.Classification {
 		}
 
 		public FrameworkElement CreateTextElement(IClassificationFormatMap classificationFormatMap, TextClassifierContext context, string contentType, TextElementFlags flags) {
-			if (classificationFormatMap == null)
+			if (classificationFormatMap is null)
 				throw new ArgumentNullException(nameof(classificationFormatMap));
-			if (context == null)
+			if (context is null)
 				throw new ArgumentNullException(nameof(context));
-			if (contentType == null)
+			if (contentType is null)
 				throw new ArgumentNullException(nameof(contentType));
 			var ct = contentTypeRegistryService.GetContentType(contentType);
-			if (ct == null)
+			if (ct is null)
 				throw new ArgumentException($"Invalid content type: {contentType}");
 
 			if (!toAggregator.TryGetValue(ct, out var aggregator))

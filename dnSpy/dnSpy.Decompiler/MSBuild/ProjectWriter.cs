@@ -57,7 +57,7 @@ namespace dnSpy.Decompiler.MSBuild {
 				writer.WriteStartDocument();
 				writer.WriteStartElement("Project", "http://schemas.microsoft.com/developer/msbuild/2003");
 				var toolsVersion = GetToolsVersion();
-				if (toolsVersion != null)
+				if (!(toolsVersion is null))
 					writer.WriteAttributeString("ToolsVersion", toolsVersion);
 				if (projectVersion <= ProjectVersion.VS2015)
 					writer.WriteAttributeString("DefaultTargets", "Build");
@@ -84,7 +84,7 @@ namespace dnSpy.Decompiler.MSBuild {
 				writer.WriteElementString("ProjectGuid", project.Guid.ToString("B").ToUpperInvariant());
 				writer.WriteElementString("OutputType", GetOutputType());
 				var appDesignFolder = GetAppDesignerFolder();
-				if (appDesignFolder != null)
+				if (!(appDesignFolder is null))
 					writer.WriteElementString("AppDesignerFolder", appDesignFolder);
 				writer.WriteElementString("RootNamespace", GetRootNamespace());
 				var asmName = GetAssemblyName();
@@ -103,11 +103,11 @@ namespace dnSpy.Decompiler.MSBuild {
 					writer.WriteElementString("ProjectTypeGuids", text);
 				}
 				//TODO: VB includes a "MyType"
-				if (project.ApplicationManifest != null)
+				if (!(project.ApplicationManifest is null))
 					writer.WriteElementString("ApplicationManifest", GetRelativePath(project.ApplicationManifest.Filename));
-				if (project.ApplicationIcon != null)
+				if (!(project.ApplicationIcon is null))
 					writer.WriteElementString("ApplicationIcon", GetRelativePath(project.ApplicationIcon.Filename));
-				if (project.StartupObject != null)
+				if (!(project.StartupObject is null))
 					writer.WriteElementString("StartupObject", project.StartupObject);
 				writer.WriteEndElement();
 
@@ -127,7 +127,7 @@ namespace dnSpy.Decompiler.MSBuild {
 					writer.WriteElementString("NoStdLib", "true");
 				if (project.AllowUnsafeBlocks)
 					writer.WriteElementString("AllowUnsafeBlocks", "true");
-				if (noWarnList != null)
+				if (!(noWarnList is null))
 					writer.WriteElementString("NoWarn", noWarnList);
 				writer.WriteEndElement();
 
@@ -145,7 +145,7 @@ namespace dnSpy.Decompiler.MSBuild {
 					writer.WriteElementString("NoStdLib", "true");
 				if (project.AllowUnsafeBlocks)
 					writer.WriteElementString("AllowUnsafeBlocks", "true");
-				if (noWarnList != null)
+				if (!(noWarnList is null))
 					writer.WriteElementString("NoWarn", noWarnList);
 				writer.WriteEndElement();
 
@@ -156,13 +156,13 @@ namespace dnSpy.Decompiler.MSBuild {
 					var hash = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 					foreach (var r in gacRefs) {
 						var asm = project.Module.Context.AssemblyResolver.Resolve(r, project.Module);
-						if (asm != null && ExistsInProject(asm.ManifestModule.Location))
+						if (!(asm is null) && ExistsInProject(asm.ManifestModule.Location))
 							continue;
 						hash.Add(r.Name);
 						writer.WriteStartElement("Reference");
 						writer.WriteAttributeString("Include", IdentifierEscaper.Escape(r.Name));
 						var hintPath = GetHintPath(asm);
-						if (hintPath != null)
+						if (!(hintPath is null))
 							writer.WriteElementString("HintPath", hintPath);
 						writer.WriteEndElement();
 					}
@@ -189,8 +189,8 @@ namespace dnSpy.Decompiler.MSBuild {
 				// Project references
 				var projRefs = project.Module.GetAssemblyRefs().
 					Select(a => project.Module.Context.AssemblyResolver.Resolve(a, project.Module)).
-					Select(a => a == null ? null : FindOtherProject(a.ManifestModule.Location)).
-					Where(a => a != null).OrderBy(a => a.Filename, StringComparer.OrdinalIgnoreCase).ToArray();
+					Select(a => a is null ? null : FindOtherProject(a.ManifestModule.Location)).
+					OfType<Project>().OrderBy(a => a.Filename, StringComparer.OrdinalIgnoreCase).ToArray();
 				if (projRefs.Length > 0) {
 					writer.WriteStartElement("ItemGroup");
 					foreach (var otherProj in projRefs) {
@@ -203,7 +203,7 @@ namespace dnSpy.Decompiler.MSBuild {
 						writer.WriteString(guidString);
 						writer.WriteEndElement();
 						writer.WriteStartElement("Name");
-						writer.WriteString(IdentifierEscaper.Escape(otherProj.Module.Assembly == null ? string.Empty : otherProj.Module.Assembly.Name.String));
+						writer.WriteString(IdentifierEscaper.Escape(otherProj.Module.Assembly is null ? string.Empty : otherProj.Module.Assembly.Name.String));
 						writer.WriteEndElement();
 						writer.WriteEndElement();
 					}
@@ -246,13 +246,13 @@ namespace dnSpy.Decompiler.MSBuild {
 					continue;
 				writer.WriteStartElement(ToString(buildAction));
 				writer.WriteAttributeString("Include", GetRelativePath(file.Filename));
-				if (file.DependentUpon != null)
+				if (!(file.DependentUpon is null))
 					writer.WriteElementString("DependentUpon", GetRelativePath(Path.GetDirectoryName(file.Filename), file.DependentUpon.Filename));
-				if (file.SubType != null)
+				if (!(file.SubType is null))
 					writer.WriteElementString("SubType", file.SubType);
-				if (file.Generator != null)
+				if (!(file.Generator is null))
 					writer.WriteElementString("Generator", file.Generator);
-				if (file.LastGenOutput != null)
+				if (!(file.LastGenOutput is null))
 					writer.WriteElementString("LastGenOutput", GetRelativePath(Path.GetDirectoryName(file.Filename), file.LastGenOutput.Filename));
 				if (file.AutoGen)
 					writer.WriteElementString("AutoGen", "True");
@@ -278,7 +278,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			}
 		}
 
-		string GetToolsVersion() {
+		string? GetToolsVersion() {
 			switch (projectVersion) {
 			case ProjectVersion.VS2005: return null;
 			case ProjectVersion.VS2008: return "3.5";
@@ -338,7 +338,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			}
 		}
 
-		string GetAppDesignerFolder() {
+		string? GetAppDesignerFolder() {
 			if (project.Options.Decompiler.GenericGuid == DecompilerConstants.LANGUAGE_VISUALBASIC)
 				return null;
 			if (projectVersion >= ProjectVersion.VS2017)
@@ -346,7 +346,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			return project.PropertiesFolder;
 		}
 
-		string GetNoWarnList() {
+		string? GetNoWarnList() {
 			if (project.Options.Decompiler.GenericGuid == DecompilerConstants.LANGUAGE_VISUALBASIC)
 				return "41999,42016,42017,42018,42019,42020,42021,42022,42032,42036,42314";
 			return null;
@@ -374,8 +374,8 @@ namespace dnSpy.Decompiler.MSBuild {
 			return @"$(MSBuildToolsPath)\Microsoft.CSharp.targets";
 		}
 
-		string GetHintPath(AssemblyDef asm) {
-			if (asm == null)
+		string? GetHintPath(AssemblyDef? asm) {
+			if (asm is null)
 				return null;
 			if (IsGacPath(asm.ManifestModule.Location))
 				return null;
@@ -396,7 +396,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			return false;
 		}
 
-		bool ExistsInProject(string filename) => FindOtherProject(filename) != null;
+		bool ExistsInProject(string filename) => !(FindOtherProject(filename) is null);
 		bool AssemblyExistsInProject(string asmSimpleName) =>
 			allProjects.Any(a => StringComparer.OrdinalIgnoreCase.Equals(a.AssemblyName, asmSimpleName));
 		Project FindOtherProject(string filename) =>

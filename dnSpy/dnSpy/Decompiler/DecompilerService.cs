@@ -39,14 +39,14 @@ namespace dnSpy.Decompiler {
 			if (langs.Count == 0)
 				langs.Add(new DummyDecompiler());
 			decompilers = langs.OrderBy(a => a.OrderUI).ToArray();
-			decompiler = FindOrDefault(decompilerServiceSettings.LanguageGuid);
+			decompiler = FindOrDefault(decompilerServiceSettings.LanguageGuid) ?? throw new InvalidOperationException();
 			decompilerChanged = new WeakEventList<EventArgs>();
 		}
 
 		public IDecompiler Decompiler {
 			get => decompiler;
 			set {
-				if (value == null)
+				if (value is null)
 					throw new ArgumentNullException(nameof(value));
 				if (Array.IndexOf(decompilers, value) < 0)
 					throw new InvalidOperationException("Can't set a language that isn't part of this instance's language collection");
@@ -66,9 +66,9 @@ namespace dnSpy.Decompiler {
 		readonly WeakEventList<EventArgs> decompilerChanged;
 
 		public IEnumerable<IDecompiler> AllDecompilers => decompilers;
-		public IDecompiler Find(Guid guid) =>
+		public IDecompiler? Find(Guid guid) =>
 			AllDecompilers.FirstOrDefault(a => a.GenericGuid == guid || a.UniqueGuid == guid);
 		public IDecompiler FindOrDefault(Guid guid) =>
-			Find(guid) ?? AllDecompilers.FirstOrDefault();
+			Find(guid) ?? AllDecompilers.FirstOrDefault()!;
 	}
 }

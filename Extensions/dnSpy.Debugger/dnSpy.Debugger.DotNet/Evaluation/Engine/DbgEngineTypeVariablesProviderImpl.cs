@@ -50,17 +50,17 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			try {
 				var runtime = evalInfo.Runtime.GetDotNetRuntime();
 				var method = runtime.GetFrameMethod(evalInfo);
-				if ((object)method == null)
+				if (method is null)
 					return Array.Empty<DbgEngineValueNode>();
 
 				IList<DmdType> genericTypeParameters, genericTypeArguments;
 				IList<DmdType> genericMethodParameters, genericMethodArguments;
 
-				genericTypeArguments = method.ReflectedType.GetGenericArguments();
+				genericTypeArguments = method.ReflectedType!.GetGenericArguments();
 				genericMethodArguments = method.GetGenericArguments();
 
 				genericTypeParameters = genericTypeArguments.Count == 0 ? genericTypeArguments : method.ReflectedType.GetGenericTypeDefinition().GetGenericArguments();
-				genericMethodParameters = genericMethodArguments.Count == 0 ? genericMethodArguments : method.Module.ResolveMethod(method.MetadataToken).GetGenericArguments();
+				genericMethodParameters = genericMethodArguments.Count == 0 ? genericMethodArguments : method.Module.ResolveMethod(method.MetadataToken)!.GetGenericArguments();
 				if (genericTypeParameters.Count != genericTypeArguments.Count)
 					throw new InvalidOperationException();
 				if (genericMethodParameters.Count != genericMethodArguments.Count)

@@ -53,12 +53,12 @@ namespace dnSpy.AsmEditor.Resources {
 		readonly ResourceElementOptions origOptions;
 
 		public IOpenFile OpenFile {
-			set { openFile = value; }
+			set => openFile = value;
 		}
-		IOpenFile openFile;
+		IOpenFile? openFile;
 
 		public IDnlibTypePicker DnlibTypePicker {
-			set { UserTypeVM.DnlibTypePicker = value; }
+			set => UserTypeVM.DnlibTypePicker = value;
 		}
 
 		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
@@ -78,7 +78,7 @@ namespace dnSpy.AsmEditor.Resources {
 		internal static readonly EnumVM[] resourceElementTypeList = EnumVM.Create(false, typeof(ResourceElementType));
 		public EnumListVM ResourceElementTypeVM { get; }
 
-		public string Name {
+		public string? Name {
 			get => name;
 			set {
 				if (name != value) {
@@ -87,9 +87,9 @@ namespace dnSpy.AsmEditor.Resources {
 				}
 			}
 		}
-		UTF8String name;
+		UTF8String? name;
 
-		public string String {
+		public string? String {
 			get => @string;
 			set {
 				if (@string != value) {
@@ -98,7 +98,7 @@ namespace dnSpy.AsmEditor.Resources {
 				}
 			}
 		}
-		string @string;
+		string? @string;
 
 		public BooleanVM BooleanVM { get; }
 		public CharVM CharVM { get; }
@@ -116,7 +116,7 @@ namespace dnSpy.AsmEditor.Resources {
 		public DateTimeVM DateTimeVM { get; }
 		public TimeSpanVM TimeSpanVM { get; }
 
-		public byte[] Data {
+		public byte[]? Data {
 			get => data;
 			set {
 				if (data != value) {
@@ -126,14 +126,14 @@ namespace dnSpy.AsmEditor.Resources {
 				}
 			}
 		}
-		byte[] data;
+		byte[]? data;
 
-		public string DataString => string.Format(dnSpy_AsmEditor_Resources.XBytes, Data == null ? 0 : Data.Length);
+		public string DataString => string.Format(dnSpy_AsmEditor_Resources.XBytes, Data is null ? 0 : Data.Length);
 		public UserTypeVM UserTypeVM { get; }
 
-		public object ValueVM {
+		public object? ValueVM {
 			get {
-				switch ((ResourceElementType)ResourceElementTypeVM.SelectedItem) {
+				switch ((ResourceElementType)ResourceElementTypeVM.SelectedItem!) {
 				case ResourceElementType.Null:		return null;
 				case ResourceElementType.String:	return null;
 				case ResourceElementType.Boolean:	return BooleanVM;
@@ -159,13 +159,13 @@ namespace dnSpy.AsmEditor.Resources {
 			}
 		}
 
-		public bool IsSerializedType => (ResourceElementType)ResourceElementTypeVM.SelectedItem == ResourceElementType.SerializedType;
-		public bool IsSingleLineValue => !IsMultiLineValue && !IsRawBytes && (ResourceElementType)ResourceElementTypeVM.SelectedItem != ResourceElementType.Null;
-		public bool IsMultiLineValue => (ResourceElementType)ResourceElementTypeVM.SelectedItem == ResourceElementType.String;
+		public bool IsSerializedType => (ResourceElementType)ResourceElementTypeVM.SelectedItem! == ResourceElementType.SerializedType;
+		public bool IsSingleLineValue => !IsMultiLineValue && !IsRawBytes && (ResourceElementType)ResourceElementTypeVM.SelectedItem! != ResourceElementType.Null;
+		public bool IsMultiLineValue => (ResourceElementType)ResourceElementTypeVM.SelectedItem! == ResourceElementType.String;
 
 		public bool IsRawBytes {
 			get {
-				var code = (ResourceElementType)ResourceElementTypeVM.SelectedItem;
+				var code = (ResourceElementType)ResourceElementTypeVM.SelectedItem!;
 				return code == ResourceElementType.ByteArray || code == ResourceElementType.Stream;
 			}
 		}
@@ -203,10 +203,10 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 
 		void PickRawBytes() {
-			if (openFile == null)
+			if (openFile is null)
 				throw new InvalidOperationException();
 			var newBytes = openFile.Open();
-			if (newBytes != null)
+			if (!(newBytes is null))
 				Data = newBytes;
 		}
 
@@ -224,29 +224,29 @@ namespace dnSpy.AsmEditor.Resources {
 
 		void InitializeFrom(ResourceElementOptions options) {
 			Name = options.Name;
-			var code = Convert(options.ResourceData.Code);
+			var code = Convert(options.ResourceData!.Code);
 			var builtin = options.ResourceData as BuiltInResourceData;
 			ResourceElementTypeVM.SelectedItem = code;
 			switch (code) {
 			case ResourceElementType.Null:		break;
-			case ResourceElementType.String:	String = (string)builtin.Data; break;
-			case ResourceElementType.Boolean:	BooleanVM.Value = (bool)builtin.Data; break;
-			case ResourceElementType.Char:		CharVM.Value = (char)builtin.Data; break;
-			case ResourceElementType.Byte:		ByteVM.Value = (byte)builtin.Data; break;
-			case ResourceElementType.SByte:		SByteVM.Value = (sbyte)builtin.Data; break;
-			case ResourceElementType.Int16:		Int16VM.Value = (short)builtin.Data; break;
-			case ResourceElementType.UInt16:	UInt16VM.Value = (ushort)builtin.Data; break;
-			case ResourceElementType.Int32:		Int32VM.Value = (int)builtin.Data; break;
-			case ResourceElementType.UInt32:	UInt32VM.Value = (uint)builtin.Data; break;
-			case ResourceElementType.Int64:		Int64VM.Value = (long)builtin.Data; break;
-			case ResourceElementType.UInt64:	UInt64VM.Value = (ulong)builtin.Data; break;
-			case ResourceElementType.Single:	SingleVM.Value = (float)builtin.Data; break;
-			case ResourceElementType.Double:	DoubleVM.Value = (double)builtin.Data; break;
-			case ResourceElementType.Decimal:	DecimalVM.Value = (decimal)builtin.Data; break;
-			case ResourceElementType.DateTime:	DateTimeVM.Value = (DateTime)builtin.Data; break;
-			case ResourceElementType.TimeSpan:	TimeSpanVM.Value = (TimeSpan)builtin.Data; break;
-			case ResourceElementType.ByteArray:	Data = (byte[])builtin.Data; break;
-			case ResourceElementType.Stream:	Data = (byte[])builtin.Data; break;
+			case ResourceElementType.String:	String = (string)builtin!.Data; break;
+			case ResourceElementType.Boolean:	BooleanVM.Value = (bool)builtin!.Data; break;
+			case ResourceElementType.Char:		CharVM.Value = (char)builtin!.Data; break;
+			case ResourceElementType.Byte:		ByteVM.Value = (byte)builtin!.Data; break;
+			case ResourceElementType.SByte:		SByteVM.Value = (sbyte)builtin!.Data; break;
+			case ResourceElementType.Int16:		Int16VM.Value = (short)builtin!.Data; break;
+			case ResourceElementType.UInt16:	UInt16VM.Value = (ushort)builtin!.Data; break;
+			case ResourceElementType.Int32:		Int32VM.Value = (int)builtin!.Data; break;
+			case ResourceElementType.UInt32:	UInt32VM.Value = (uint)builtin!.Data; break;
+			case ResourceElementType.Int64:		Int64VM.Value = (long)builtin!.Data; break;
+			case ResourceElementType.UInt64:	UInt64VM.Value = (ulong)builtin!.Data; break;
+			case ResourceElementType.Single:	SingleVM.Value = (float)builtin!.Data; break;
+			case ResourceElementType.Double:	DoubleVM.Value = (double)builtin!.Data; break;
+			case ResourceElementType.Decimal:	DecimalVM.Value = (decimal)builtin!.Data; break;
+			case ResourceElementType.DateTime:	DateTimeVM.Value = (DateTime)builtin!.Data; break;
+			case ResourceElementType.TimeSpan:	TimeSpanVM.Value = (TimeSpan)builtin!.Data; break;
+			case ResourceElementType.ByteArray:	Data = (byte[])builtin!.Data; break;
+			case ResourceElementType.Stream:	Data = (byte[])builtin!.Data; break;
 
 			case ResourceElementType.SerializedType:
 				var binRes = (BinaryResourceData)options.ResourceData;
@@ -271,7 +271,7 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 
 		IResourceData CreateResourceData() {
-			var code = (ResourceElementType)ResourceElementTypeVM.SelectedItem;
+			var code = (ResourceElementType)ResourceElementTypeVM.SelectedItem!;
 			switch (code) {
 			case ResourceElementType.Null:		return new BuiltInResourceData((ResourceTypeCode)code, null);
 			case ResourceElementType.String:	return new BuiltInResourceData((ResourceTypeCode)code, String);
@@ -299,7 +299,7 @@ namespace dnSpy.AsmEditor.Resources {
 
 		public override bool HasError {
 			get {
-				switch ((ResourceElementType)ResourceElementTypeVM.SelectedItem) {
+				switch ((ResourceElementType)ResourceElementTypeVM.SelectedItem!) {
 				case ResourceElementType.Null:		break;
 				case ResourceElementType.String:	break;
 				case ResourceElementType.Boolean:	if (BooleanVM.HasError) return true; break;

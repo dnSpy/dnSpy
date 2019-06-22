@@ -60,7 +60,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// Updates <see cref="DbgAppDomain.Name"/>
 		/// </summary>
 		/// <param name="name">New value</param>
-		public void UpdateName(string name) => Update(UpdateOptions.Name, name: name);
+		public void UpdateName(string? name) => Update(UpdateOptions.Name, name: name);
 
 		/// <summary>
 		/// Updates <see cref="DbgAppDomain.Id"/>
@@ -74,6 +74,6 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="options">Options</param>
 		/// <param name="name">New <see cref="DbgAppDomain.Name"/> value</param>
 		/// <param name="id">New <see cref="DbgAppDomain.Id"/> value</param>
-		public abstract void Update(UpdateOptions options, string name = null, int id = 0);
+		public abstract void Update(UpdateOptions options, string? name = null, int id = 0);
 	}
 }

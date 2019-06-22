@@ -29,16 +29,16 @@ namespace dnSpy.AsmEditor.Hex.PE {
 		[ImportingConstructor]
 		HexReferenceConverterImpl(BufferToDocumentNodeService bufferToDocumentNodeService) => this.bufferToDocumentNodeService = bufferToDocumentNodeService;
 
-		public override object Convert(HexView hexView, object reference) {
+		public override object? Convert(HexView hexView, object reference) {
 			if (reference is HexFieldReference fieldRef)
 				return ConvertFieldReference(fieldRef);
 
 			return reference;
 		}
 
-		DocumentTreeNodeData ConvertFieldReference(HexFieldReference fieldRef) {
+		DocumentTreeNodeData? ConvertFieldReference(HexFieldReference fieldRef) {
 			var peNode = bufferToDocumentNodeService.FindPENode(fieldRef.File);
-			if (peNode == null)
+			if (peNode is null)
 				return null;
 
 			return peNode.FindNode(fieldRef.Structure, fieldRef.Field);

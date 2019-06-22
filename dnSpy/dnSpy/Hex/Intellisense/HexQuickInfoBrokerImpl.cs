@@ -41,15 +41,15 @@ namespace dnSpy.Hex.Intellisense {
 			this.quickInfoSourceProviders = VSUTIL.Orderer.Order(quickInfoSourceProviders).ToArray();
 		}
 
-		public override HexQuickInfoSession TriggerQuickInfo(HexView hexView) {
-			if (hexView == null)
+		public override HexQuickInfoSession? TriggerQuickInfo(HexView hexView) {
+			if (hexView is null)
 				throw new ArgumentNullException(nameof(hexView));
 			var triggerPoint = hexView.Caret.Position.Position.ActivePosition;
 			return TriggerQuickInfo(hexView, triggerPoint, trackMouse: false);
 		}
 
-		public override HexQuickInfoSession TriggerQuickInfo(HexView hexView, HexCellPosition triggerPoint, bool trackMouse) {
-			if (hexView == null)
+		public override HexQuickInfoSession? TriggerQuickInfo(HexView hexView, HexCellPosition triggerPoint, bool trackMouse) {
+			if (hexView is null)
 				throw new ArgumentNullException(nameof(hexView));
 			if (triggerPoint.IsDefault)
 				throw new ArgumentException();
@@ -59,7 +59,7 @@ namespace dnSpy.Hex.Intellisense {
 		}
 
 		public override HexQuickInfoSession CreateQuickInfoSession(HexView hexView, HexCellPosition triggerPoint, bool trackMouse) {
-			if (hexView == null)
+			if (hexView is null)
 				throw new ArgumentNullException(nameof(hexView));
 			if (triggerPoint.IsDefault)
 				throw new ArgumentException();
@@ -70,13 +70,13 @@ namespace dnSpy.Hex.Intellisense {
 		}
 
 		public override bool IsQuickInfoActive(HexView hexView) {
-			if (hexView == null)
+			if (hexView is null)
 				throw new ArgumentNullException(nameof(hexView));
 			return GetSessions(hexView).Count != 0;
 		}
 
 		public override ReadOnlyCollection<HexQuickInfoSession> GetSessions(HexView hexView) {
-			if (hexView == null)
+			if (hexView is null)
 				throw new ArgumentNullException(nameof(hexView));
 			var stack = intellisenseSessionStackMapService.Value.GetStackForHexView(hexView);
 			return new ReadOnlyCollection<HexQuickInfoSession>(stack.Sessions.OfType<HexQuickInfoSession>().ToArray());

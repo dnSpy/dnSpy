@@ -28,7 +28,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		public UndoAsmEdCommand()
 			: base(UndoRoutedCommands.Undo) {
 		}
-		public override string GetToolTip(IToolBarItemContext context) => ToolTipHelper.AddKeyboardShortcut(dnSpy_AsmEditor_Resources.UndoToolBarToolTip, dnSpy_AsmEditor_Resources.ShortCutKeyCtrlZ);
+		public override string? GetToolTip(IToolBarItemContext context) => ToolTipHelper.AddKeyboardShortcut(dnSpy_AsmEditor_Resources.UndoToolBarToolTip, dnSpy_AsmEditor_Resources.ShortCutKeyCtrlZ);
 	}
 
 	[ExportToolBarButton(OwnerGuid = ToolBarConstants.APP_TB_GUID, Icon = DsImagesAttribute.Redo, Group = ToolBarConstants.GROUP_APP_TB_MAIN_ASMED_UNDO, Order = 10)]
@@ -36,6 +36,6 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		public RedoAsmEdCommand()
 			: base(UndoRoutedCommands.Redo) {
 		}
-		public override string GetToolTip(IToolBarItemContext context) => ToolTipHelper.AddKeyboardShortcut(dnSpy_AsmEditor_Resources.RedoToolBarToolTip, dnSpy_AsmEditor_Resources.ShortCutKeyCtrlY);
+		public override string? GetToolTip(IToolBarItemContext context) => ToolTipHelper.AddKeyboardShortcut(dnSpy_AsmEditor_Resources.RedoToolBarToolTip, dnSpy_AsmEditor_Resources.ShortCutKeyCtrlY);
 	}
 }

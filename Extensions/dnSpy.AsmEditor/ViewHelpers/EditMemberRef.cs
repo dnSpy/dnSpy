@@ -22,17 +22,17 @@ using dnSpy.AsmEditor.DnlibDialogs;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
 	sealed class EditMemberRef : IEdit<MemberRefVM> {
-		readonly Window ownerWindow;
+		readonly Window? ownerWindow;
 
 		public EditMemberRef()
 			: this(null) {
 		}
 
-		public EditMemberRef(Window ownerWindow) => this.ownerWindow = ownerWindow;
+		public EditMemberRef(Window? ownerWindow) => this.ownerWindow = ownerWindow;
 
-		public MemberRefVM Edit(string title, MemberRefVM pd) {
+		public MemberRefVM? Edit(string? title, MemberRefVM pd) {
 			var win = new MemberRefDlg();
-			if (title != null)
+			if (!(title is null))
 				win.Title = title;
 			win.DataContext = pd;
 			win.Owner = ownerWindow ?? Application.Current.MainWindow;

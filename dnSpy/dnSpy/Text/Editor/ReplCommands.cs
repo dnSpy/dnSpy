@@ -28,11 +28,11 @@ namespace dnSpy.Text.Editor {
 
 		public bool HasCommands => commands.Count > 0;
 
-		public string SelectedCommand {
+		public string? SelectedCommand {
 			get {
 				if (!HasCommands)
 					return null;
-				if (selectedIndex == null)
+				if (selectedIndex is null)
 					return null;
 				return commands[selectedIndex.Value];
 			}
@@ -52,9 +52,9 @@ namespace dnSpy.Text.Editor {
 			get {
 				if (!HasCommands)
 					yield break;
-				if (selectedIndex == null)
+				if (selectedIndex is null)
 					yield return (LastCommandIndex, commands[LastCommandIndex]);
-				int index = selectedIndex == null ? LastCommandIndex : selectedIndex.Value;
+				int index = selectedIndex is null ? LastCommandIndex : selectedIndex.Value;
 				while (index != firstIndex) {
 					index = (index - 1 + commands.Count) % commands.Count;
 					yield return (index, commands[index]);
@@ -66,7 +66,7 @@ namespace dnSpy.Text.Editor {
 			get {
 				if (!HasCommands)
 					yield break;
-				if (selectedIndex == null)
+				if (selectedIndex is null)
 					yield break;
 				int index = selectedIndex.Value;
 				int last = LastCommandIndex;
@@ -79,7 +79,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		public bool SelectPrevious(string text = null) {
+		public bool SelectPrevious(string? text = null) {
 			foreach (var t in PreviousCommands) {
 				if (string.IsNullOrEmpty(text) || t.command.Contains(text)) {
 					selectedIndex = t.index;
@@ -89,9 +89,9 @@ namespace dnSpy.Text.Editor {
 			return false;
 		}
 
-		public bool CanSelectNext => HasCommands && selectedIndex != null;
+		public bool CanSelectNext => HasCommands && !(selectedIndex is null);
 
-		public bool SelectNext(string text = null) {
+		public bool SelectNext(string? text = null) {
 			foreach (var t in NextCommands) {
 				if (string.IsNullOrEmpty(text) || t.command.Contains(text)) {
 					selectedIndex = t.index;

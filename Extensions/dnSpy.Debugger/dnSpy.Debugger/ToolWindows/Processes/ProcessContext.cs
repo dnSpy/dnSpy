@@ -43,12 +43,13 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		public bool SyntaxHighlight { get; set; }
 		public SearchMatcher SearchMatcher { get; }
 
-		public ProcessContext(UIDispatcher uiDispatcher, IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider, SearchMatcher searchMatcher) {
+		public ProcessContext(UIDispatcher uiDispatcher, IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider, SearchMatcher searchMatcher, ProcessFormatter formatter) {
 			UIDispatcher = uiDispatcher;
 			ClassificationFormatMap = classificationFormatMap;
 			TextElementProvider = textElementProvider;
 			TextClassifierTextColorWriter = new DbgTextClassifierTextColorWriter();
 			SearchMatcher = searchMatcher;
+			Formatter = formatter;
 		}
 	}
 }

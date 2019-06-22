@@ -41,7 +41,7 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 		/// <summary>
 		/// Gets the UI object (text control)
 		/// </summary>
-		object UIObject { get; }
+		object? UIObject { get; }
 
 		/// <summary>
 		/// true if the control has keyboard focus
@@ -61,12 +61,12 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 		/// <summary>
 		/// Gets the new text or null if it was canceled
 		/// </summary>
-		public string NewText { get; }
+		public string? NewText { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="newText">New text or null if it was canceled</param>
-		public EditCompletedEventArgs(string newText) => NewText = newText;
+		public EditCompletedEventArgs(string? newText) => NewText = newText;
 	}
 }

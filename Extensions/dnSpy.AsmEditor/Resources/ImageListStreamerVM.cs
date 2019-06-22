@@ -23,7 +23,7 @@ using dnSpy.AsmEditor.DnlibDialogs;
 namespace dnSpy.AsmEditor.Resources {
 	sealed class ImageListStreamerVM : ListVM<ImageVM, ImageSource> {
 		public ImageListStreamerVM()
-			: base(null, null, null, null, null, null) {
+			: base(null, null, null!, null!, null, null) {
 		}
 
 		protected override ImageVM Clone(ImageVM obj) => new ImageVM(obj.ImageSource);

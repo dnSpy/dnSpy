@@ -44,10 +44,10 @@ namespace dndbg.DotNet {
 			uint token = OriginalToken.Raw;
 
 			Name = MDAPI.GetAssemblyRefSimpleName(mdai, token) ?? string.Empty;
-			Version = MDAPI.GetAssemblyRefVersionAndLocale(mdai, token, out string locale) ?? new Version(0, 0, 0, 0);
+			Version = MDAPI.GetAssemblyRefVersionAndLocale(mdai, token, out var locale) ?? new Version(0, 0, 0, 0);
 			Culture = locale ?? string.Empty;
 			Hash = MDAPI.GetAssemblyRefHash(mdai, token);
-			PublicKeyOrToken = MDAPI.GetAssemblyRefPublicKeyOrToken(mdai, token, out var attrs) ?? new PublicKeyToken((byte[])null);
+			PublicKeyOrToken = MDAPI.GetAssemblyRefPublicKeyOrToken(mdai, token, out var attrs) ?? new PublicKeyToken((byte[]?)null);
 			Attributes = attrs;
 		}
 	}

@@ -35,9 +35,10 @@ namespace dnSpy.AsmEditor.Commands {
 		readonly PropertyDefOptions newPropertyDefOptions;
 
 		public EditedPropertyUpdater(ModuleDocumentNode modNode, PropertyDef originalProperty, PropertyDefOptions propertyDefOptions) {
-			ownerNode = modNode.Context.DocumentTreeView.FindNode(originalProperty);
-			if (ownerNode == null)
+			var node = modNode.Context.DocumentTreeView.FindNode(originalProperty);
+			if (node is null)
 				throw new InvalidOperationException();
+			ownerNode = node;
 			property = originalProperty;
 			originalPropertyDefOptions = new PropertyDefOptions(originalProperty);
 			newPropertyDefOptions = propertyDefOptions;

@@ -25,7 +25,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class ConstantVM : ViewModelBase {
 		public ConstantTypeVM ConstantTypeVM { get; }
 
-		public object Value {
+		public object? Value {
 			get => ConstantTypeVM.ValueNoSpecialNull;
 			set => ConstantTypeVM.Value = value;
 		}
@@ -43,7 +43,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		bool isEnabled = true;
 
-		public string ConstantCheckBoxToolTip {
+		public string? ConstantCheckBoxToolTip {
 			get => constantCheckBoxToolTip;
 			set {
 				if (constantCheckBoxToolTip != value) {
@@ -52,7 +52,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 			}
 		}
-		string constantCheckBoxToolTip;
+		string? constantCheckBoxToolTip;
 
 		static readonly ConstantType[] constantTypes = new ConstantType[] {
 			ConstantType.Null,
@@ -71,7 +71,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			ConstantType.String,
 		};
 
-		public ConstantVM(ModuleDef ownerModule, object value, string constantCheckBoxToolTip) {
+		public ConstantVM(ModuleDef ownerModule, object? value, string constantCheckBoxToolTip) {
 			ConstantTypeVM = new ConstantTypeVM(ownerModule, value, constantTypes, true, false);
 			ConstantCheckBoxToolTip = constantCheckBoxToolTip;
 			ConstantTypeVM.PropertyChanged += ConstantTypeVM_PropertyChanged;

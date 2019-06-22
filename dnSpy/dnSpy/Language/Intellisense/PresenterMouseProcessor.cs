@@ -45,8 +45,8 @@ namespace dnSpy.Language.Intellisense {
 	sealed class PresenterMouseProcessor : IMouseProcessor2 {
 		readonly IIntellisenseSessionStack intellisenseSessionStack;
 
-		IMouseProcessor MouseProcessor => intellisenseSessionStack.TopSession?.Presenter as IMouseProcessor;
-		IMouseProcessor2 MouseProcessor2 => intellisenseSessionStack.TopSession?.Presenter as IMouseProcessor2;
+		IMouseProcessor? MouseProcessor => intellisenseSessionStack.TopSession?.Presenter as IMouseProcessor;
+		IMouseProcessor2? MouseProcessor2 => intellisenseSessionStack.TopSession?.Presenter as IMouseProcessor2;
 
 		public PresenterMouseProcessor(IIntellisenseSessionStack intellisenseSessionStack) => this.intellisenseSessionStack = intellisenseSessionStack ?? throw new ArgumentNullException(nameof(intellisenseSessionStack));
 

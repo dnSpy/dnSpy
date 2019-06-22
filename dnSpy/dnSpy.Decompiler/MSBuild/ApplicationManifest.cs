@@ -36,12 +36,12 @@ namespace dnSpy.Decompiler.MSBuild {
 			this.reader = reader;
 		}
 
-		public static ApplicationManifest TryCreate(Win32Resources resources, FilenameCreator filenameCreator) {
-			if (resources == null)
+		public static ApplicationManifest? TryCreate(Win32Resources resources, FilenameCreator filenameCreator) {
+			if (resources is null)
 				return null;
 
 			var dir = resources.Find(new ResourceName(RT_MANIFEST));
-			if (dir == null || dir.Directories.Count == 0)
+			if (dir is null || dir.Directories.Count == 0)
 				return null;
 			dir = dir.Directories[0];
 			if (dir.Data.Count == 0)

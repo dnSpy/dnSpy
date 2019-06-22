@@ -46,7 +46,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 			: base(treeNodeGroup, resourceElement) {
 		}
 
-		public override string ToString(CancellationToken token, bool canDecompile) {
+		public override string? ToString(CancellationToken token, bool canDecompile) {
 			if (ResourceElement.ResourceData.Code == ResourceTypeCode.ByteArray || ResourceElement.ResourceData.Code == ResourceTypeCode.Stream) {
 				var data = (byte[])((BuiltInResourceData)ResourceElement.ResourceData).Data;
 				return ResourceUtilities.TryGetString(new MemoryStream(data));

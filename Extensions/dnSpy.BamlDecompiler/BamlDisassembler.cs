@@ -146,7 +146,7 @@ namespace dnSpy.BamlDecompiler {
 			else
 				reference = null;
 
-			if (reference != null)
+			if (!(reference is null))
 				reference = IdentifierEscaper.Escape(reference);
 
 			output.Write($"0x{id:x4}", BamlToolTipReference.Create(reference), DecompilerReferenceFlags.Local, BoxedTextColor.Number);
@@ -174,7 +174,7 @@ namespace dnSpy.BamlDecompiler {
 				declType = name = null;
 
 			string reference = null;
-			if (declType != null && name != null)
+			if (!(declType is null) && !(name is null))
 				reference = $"{IdentifierEscaper.Escape(declType)}::{IdentifierEscaper.Escape(name)}";
 			output.Write($"0x{id:x4}", BamlToolTipReference.Create(reference), DecompilerReferenceFlags.Local, BoxedTextColor.Number);
 		}
@@ -188,7 +188,7 @@ namespace dnSpy.BamlDecompiler {
 			else
 				str = null;
 			string reference = null;
-			if (str != null)
+			if (!(str is null))
 				reference = SimpleTypeConverter.ToString(str, true);
 			output.Write($"0x{id:x4}", BamlToolTipReference.Create(reference), DecompilerReferenceFlags.Local, BoxedTextColor.Number);
 		}

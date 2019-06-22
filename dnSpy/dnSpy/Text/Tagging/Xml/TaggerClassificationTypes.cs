@@ -21,6 +21,7 @@ using Microsoft.VisualStudio.Text.Tagging;
 
 namespace dnSpy.Text.Tagging.Xml {
 	abstract class TaggerClassificationTypes {
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
 		public ClassificationTag Attribute { get; protected set; }
 		public ClassificationTag AttributeQuotes { get; protected set; }
 		public ClassificationTag AttributeValue { get; protected set; }
@@ -33,5 +34,6 @@ namespace dnSpy.Text.Tagging.Xml {
 		public ClassificationTag Name { get; protected set; }
 		public ClassificationTag ProcessingInstruction { get; protected set; }
 		public ClassificationTag Text { get; protected set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
 	}
 }

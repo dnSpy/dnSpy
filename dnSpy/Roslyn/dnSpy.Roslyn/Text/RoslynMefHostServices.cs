@@ -35,12 +35,13 @@ namespace dnSpy.Roslyn.Text {
 		/// </summary>
 		public static MefHostServices DefaultServices {
 			get {
-				if (defaultServices == null)
+				if (defaultServices is null)
 					Interlocked.CompareExchange(ref defaultServices, CreateDefaultServices(), null);
+				Debug.Assert(!(defaultServices is null));
 				return defaultServices;
 			}
 		}
-		static MefHostServices defaultServices;
+		static MefHostServices? defaultServices;
 
 		static MefHostServices CreateDefaultServices() {
 			var asms = new HashSet<Assembly>(MefHostServices.DefaultAssemblies);

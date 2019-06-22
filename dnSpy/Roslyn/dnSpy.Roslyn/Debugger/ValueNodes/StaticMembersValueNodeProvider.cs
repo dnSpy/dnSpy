@@ -46,12 +46,12 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			return ObjectCache.FreeAndToString(ref sb);
 		}
 
-		protected override (DbgDotNetValueNode node, bool canHide) CreateValueNode(DbgEvaluationInfo evalInfo, int index, DbgValueNodeEvaluationOptions options, ReadOnlyCollection<string> formatSpecifiers) {
+		protected override (DbgDotNetValueNode node, bool canHide) CreateValueNode(DbgEvaluationInfo evalInfo, int index, DbgValueNodeEvaluationOptions options, ReadOnlyCollection<string>? formatSpecifiers) {
 			var runtime = evalInfo.Runtime.GetDotNetRuntime();
 			DbgDotNetValueResult valueResult = default;
 			try {
 				ref var info = ref membersCollection.Members[index];
-				var typeExpression = GetExpression(info.Member.DeclaringType);
+				var typeExpression = GetExpression(info.Member.DeclaringType!);
 				string expression, imageName;
 				bool isReadOnly;
 				DmdType expectedType;
@@ -79,7 +79,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 					else {
 						var getter = property.GetGetMethod(DmdGetAccessorOptions.All) ?? throw new InvalidOperationException();
 						valueResult = runtime.Call(evalInfo, null, getter, Array.Empty<object>(), DbgDotNetInvokeOptions.None);
-						isReadOnly = (object)property.GetSetMethod(DmdGetAccessorOptions.All) == null;
+						isReadOnly = property.GetSetMethod(DmdGetAccessorOptions.All) is null;
 					}
 					break;
 
@@ -89,11 +89,11 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 
 				DbgDotNetValueNode newNode;
 				if (valueResult.HasError)
-					newNode = valueNodeFactory.CreateError(evalInfo, info.Name, valueResult.ErrorMessage, expression, false);
+					newNode = valueNodeFactory.CreateError(evalInfo, info.Name, valueResult.ErrorMessage!, expression, false);
 				else if (valueResult.ValueIsException)
-					newNode = valueNodeFactory.Create(evalInfo, info.Name, valueResult.Value, formatSpecifiers, options, expression, PredefinedDbgValueNodeImageNames.Error, true, false, expectedType, false);
+					newNode = valueNodeFactory.Create(evalInfo, info.Name, valueResult.Value!, formatSpecifiers, options, expression, PredefinedDbgValueNodeImageNames.Error, true, false, expectedType, false);
 				else
-					newNode = valueNodeFactory.Create(evalInfo, info.Name, valueResult.Value, formatSpecifiers, options, expression, imageName, isReadOnly, false, expectedType, false);
+					newNode = valueNodeFactory.Create(evalInfo, info.Name, valueResult.Value!, formatSpecifiers, options, expression, imageName, isReadOnly, false, expectedType, false);
 
 				valueResult = default;
 				return (newNode, true);

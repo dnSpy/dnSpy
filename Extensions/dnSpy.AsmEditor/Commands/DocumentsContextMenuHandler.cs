@@ -29,12 +29,12 @@ namespace dnSpy.AsmEditor.Commands {
 		protected sealed override object CachedContextKey => ContextKey;
 		static readonly object ContextKey = new object();
 
-		protected sealed override AsmEditorContext CreateContext(IMenuItemContext context) {
+		protected sealed override AsmEditorContext? CreateContext(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID))
 				return null;
 			var ary = context.Find<TreeNodeData[]>();
-			Debug.Assert(ary != null);
-			return new AsmEditorContext(ary == null ? Array.Empty<DocumentTreeNodeData>() : ary.OfType<DocumentTreeNodeData>().ToArray());
+			Debug.Assert(!(ary is null));
+			return new AsmEditorContext(ary is null ? Array.Empty<DocumentTreeNodeData>() : ary.OfType<DocumentTreeNodeData>().ToArray());
 		}
 	}
 }

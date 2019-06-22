@@ -30,8 +30,8 @@ namespace dnSpy.Documents.Tabs {
 	}
 
 	sealed class NullDocumentTabUIContext : DocumentTabUIContext {
-		public override IInputElement FocusedElement => null;
-		public override object UIObject => string.Empty;
-		public override FrameworkElement ZoomElement => null;
+		public override IInputElement? FocusedElement => null;
+		public override object? UIObject => string.Empty;
+		public override FrameworkElement? ZoomElement => null;
 	}
 }

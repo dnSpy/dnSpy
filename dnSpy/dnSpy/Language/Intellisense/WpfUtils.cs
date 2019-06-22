@@ -26,51 +26,51 @@ namespace dnSpy.Language.Intellisense {
 	static class WpfUtils {
 		public static void ScrollSelectedItemIntoView(ListBox lb, bool center) {
 			var item = lb.SelectedItem;
-			if (item == null)
+			if (item is null)
 				return;
 			lb.ScrollIntoView(item);
 			var lbItem = lb.ItemContainerGenerator.ContainerFromItem(item) as ListBoxItem;
-			if (lbItem == null)
+			if (lbItem is null)
 				return;
 			lbItem.Focus();
 
 			if (!center)
 				return;
 			var scrollViewer = TryGetScrollViewer(lb);
-			if (scrollViewer != null) {
+			if (!(scrollViewer is null)) {
 				int index = lb.Items.IndexOf(item);
 				int itemsPerPage = (int)Math.Max(1, Math.Floor(scrollViewer.ViewportHeight));
 				scrollViewer.ScrollToVerticalOffset(Math.Max(0, index - itemsPerPage / 2));
 			}
 		}
 
-		static T FindVisualChild<T>(DependencyObject obj) where T : DependencyObject {
+		static T? FindVisualChild<T>(DependencyObject obj) where T : DependencyObject {
 			int childrenCount = VisualTreeHelper.GetChildrenCount(obj);
 			for (int i = 0; i < childrenCount; i++) {
 				var child = VisualTreeHelper.GetChild(obj, i);
 				if (child is T res)
 					return res;
 
-				res = FindVisualChild<T>(child);
-				if (res != null)
-					return res;
+				var res2 = FindVisualChild<T>(child);
+				if (!(res2 is null))
+					return res2;
 			}
 
 			return null;
 		}
 
-		public static ScrollViewer TryGetScrollViewer(ListBox lb)=> FindVisualChild<ScrollViewer>(lb);
+		public static ScrollViewer? TryGetScrollViewer(ListBox lb)=> FindVisualChild<ScrollViewer>(lb);
 
 		public static int GetItemsPerPage(ListBox lb, int defaultValue) {
 			var scrollViewer = TryGetScrollViewer(lb);
-			if (scrollViewer == null)
+			if (scrollViewer is null)
 				return defaultValue;
 			return (int)Math.Max(1, Math.Floor(scrollViewer.ViewportHeight));
 		}
 
 		public static void Scroll(ListBox lb, int lines) {
 			var scrollViewer = TryGetScrollViewer(lb);
-			if (scrollViewer == null)
+			if (scrollViewer is null)
 				return;
 			if (lines > 0) {
 				while (lines-- > 0)
@@ -84,7 +84,7 @@ namespace dnSpy.Language.Intellisense {
 
 		public static void ScrollToTop(ListBox lb) {
 			var scrollViewer = TryGetScrollViewer(lb);
-			if (scrollViewer == null)
+			if (scrollViewer is null)
 				return;
 			scrollViewer.ScrollToTop();
 			if (lb.Items.Count != 0)
@@ -93,7 +93,7 @@ namespace dnSpy.Language.Intellisense {
 
 		public static void ScrollToBottom(ListBox lb) {
 			var scrollViewer = TryGetScrollViewer(lb);
-			if (scrollViewer == null)
+			if (scrollViewer is null)
 				return;
 			scrollViewer.ScrollToBottom();
 			if (lb.Items.Count != 0)

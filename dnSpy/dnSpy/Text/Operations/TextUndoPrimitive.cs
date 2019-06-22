@@ -25,7 +25,7 @@ namespace dnSpy.Text.Operations {
 	sealed class TextUndoPrimitive : ITextUndoPrimitive {
 		public bool CanRedo => !canUndo;
 		public bool CanUndo => canUndo;
-		public ITextUndoTransaction Parent { get; set; }
+		public ITextUndoTransaction? Parent { get; set; }
 
 		readonly ITextBuffer textBuffer;
 		readonly ChangeInfo info;
@@ -40,13 +40,13 @@ namespace dnSpy.Text.Operations {
 		}
 
 		public bool CanMerge(ITextUndoPrimitive older) {
-			if (older == null)
+			if (older is null)
 				throw new ArgumentNullException(nameof(older));
 			return false;//TODO:
 		}
 
 		public ITextUndoPrimitive Merge(ITextUndoPrimitive older) {
-			if (older == null)
+			if (older is null)
 				throw new ArgumentNullException(nameof(older));
 			throw new NotSupportedException();//TODO:
 		}

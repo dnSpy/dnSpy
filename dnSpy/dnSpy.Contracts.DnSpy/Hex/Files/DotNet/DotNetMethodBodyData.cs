@@ -64,7 +64,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <param name="tokens">Tokens of all methods that reference this method body</param>
 		protected DotNetMethodBody(DotNetMethodProvider methodProvider, string name, HexBufferSpan span, ReadOnlyCollection<uint> tokens)
 			: base(name, span) {
-			if (tokens == null)
+			if (tokens is null)
 				throw new ArgumentOutOfRangeException(nameof(tokens));
 			if (tokens.Count == 0)
 				throw new ArgumentOutOfRangeException(nameof(tokens));
@@ -167,12 +167,12 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// Padding between <see cref="DotNetMethodBody.Instructions"/> and <see cref="EHTable"/>.
 		/// It's null if <see cref="EHTable"/> isn't present.
 		/// </summary>
-		public abstract StructField<VirtualArrayData<ByteData>> Padding { get; }
+		public abstract StructField<VirtualArrayData<ByteData>>? Padding { get; }
 
 		/// <summary>
 		/// Gets the exception handler table or null if there's none
 		/// </summary>
-		public abstract StructField<ExceptionHandlerTable> EHTable { get; }
+		public abstract StructField<ExceptionHandlerTable>? EHTable { get; }
 	}
 
 	/// <summary>

@@ -19,7 +19,7 @@
 
 namespace dnSpy.Contracts.Language.Intellisense {
 	static class AcronymSearchHelpers {
-		public static int[] TryCreateMatchIndexes(string searchText) {
+		public static int[]? TryCreateMatchIndexes(string searchText) {
 			// Don't treat eg. "I" as an acronym search. We don't want "I"
 			// to match Int16 intead of IEnumerable.
 			if (searchText.Length <= 1)
@@ -31,8 +31,8 @@ namespace dnSpy.Contracts.Language.Intellisense {
 			return new int[searchText.Length];
 		}
 
-		public static bool TryUpdateAcronymIndexes(int[] acronymMatchIndexes, string searchText, string completionText) {
-			if (acronymMatchIndexes == null)
+		public static bool TryUpdateAcronymIndexes(int[]? acronymMatchIndexes, string searchText, string completionText) {
+			if (acronymMatchIndexes is null)
 				return false;
 			for (int acronymIndex = 0, textIndex = 0; acronymIndex < searchText.Length; acronymIndex++) {
 				textIndex = completionText.IndexOf(searchText[acronymIndex], textIndex);

@@ -45,7 +45,7 @@ namespace dnSpy.Text.Editor {
 
 		public IAdornmentLayer GetAdornmentLayer(MetadataAndOrder<IAdornmentLayersMetadata> info) {
 			var layer = adornmentLayers.FirstOrDefault(a => a.Info.Metadata == info.Metadata);
-			if (layer == null)
+			if (layer is null)
 				layer = Create(info);
 			return layer;
 		}

@@ -50,7 +50,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// <summary>
 		/// Gets the module or null if none
 		/// </summary>
-		public abstract DbgModule Module { get; }
+		public abstract DbgModule? Module { get; }
 
 		/// <summary>
 		/// Gets the address of the breakpoint. This property is valid if <see cref="HasAddress"/> is true
@@ -134,7 +134,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// </summary>
 		/// <param name="obj">Object</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is DbgBoundCodeBreakpointMessage other && Equals(other);
+		public override bool Equals(object? obj) => obj is DbgBoundCodeBreakpointMessage other && Equals(other);
 
 		/// <summary>
 		/// Gets the hash code

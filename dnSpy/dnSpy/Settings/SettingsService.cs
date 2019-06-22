@@ -67,8 +67,8 @@ namespace dnSpy.Settings {
 		}
 
 		public void RemoveSection(ISettingsSection section) {
-			Debug.Assert(section != null);
-			if (section == null)
+			Debug.Assert(!(section is null));
+			if (section is null)
 				throw new ArgumentNullException(nameof(section));
 
 			lock (lockObj) {

@@ -48,7 +48,7 @@ namespace dnSpy.Text.AvalonEdit {
 
 		internal DocumentLine(TextDocument document) {
 #if DEBUG
-			Debug.Assert(document != null);
+			Debug.Assert(!(document is null));
 			this.document = document;
 #endif
 		}
@@ -155,21 +155,21 @@ namespace dnSpy.Text.AvalonEdit {
 		/// Gets the next line in the document.
 		/// </summary>
 		/// <returns>The line following this line, or null if this is the last line.</returns>
-		public DocumentLine NextLine {
+		public DocumentLine? NextLine {
 			get {
 				DebugVerifyAccess();
 
-				if (right != null) {
+				if (!(right is null)) {
 					return right.LeftMost;
 				}
 				else {
-					DocumentLine node = this;
+					DocumentLine? node = this;
 					DocumentLine oldNode;
 					do {
 						oldNode = node;
 						node = node.parent;
 						// we are on the way up from the right part, don't output node again
-					} while (node != null && node.right == oldNode);
+					} while (!(node is null) && node.right == oldNode);
 					return node;
 				}
 			}
@@ -179,21 +179,21 @@ namespace dnSpy.Text.AvalonEdit {
 		/// Gets the previous line in the document.
 		/// </summary>
 		/// <returns>The line before this line, or null if this is the first line.</returns>
-		public DocumentLine PreviousLine {
+		public DocumentLine? PreviousLine {
 			get {
 				DebugVerifyAccess();
 
-				if (left != null) {
+				if (!(left is null)) {
 					return left.RightMost;
 				}
 				else {
-					DocumentLine node = this;
+					DocumentLine? node = this;
 					DocumentLine oldNode;
 					do {
 						oldNode = node;
 						node = node.parent;
 						// we are on the way up from the left part, don't output node again
-					} while (node != null && node.left == oldNode);
+					} while (!(node is null) && node.left == oldNode);
 					return node;
 				}
 			}

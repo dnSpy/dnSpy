@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Diagnostics;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
 
@@ -67,8 +68,8 @@ namespace dnSpy.Contracts.Text {
 		/// <param name="output">Output</param>
 		/// <param name="version">Version</param>
 		/// <returns></returns>
-		public static T Write<T>(this T output, Version version) where T : ITextColorWriter {
-			if (version == null)
+		public static T Write<T>(this T output, Version? version) where T : ITextColorWriter {
+			if (version is null)
 				output.Write(BoxedTextColor.Error, "?.?.?.?");
 			else {
 				output.Write(BoxedTextColor.Number, version.Major.ToString());
@@ -89,12 +90,12 @@ namespace dnSpy.Contracts.Text {
 		/// <param name="output">Output</param>
 		/// <param name="asm">Assembly</param>
 		/// <returns></returns>
-		public static T Write<T>(this T output, IAssembly asm) where T : ITextColorWriter {
-			if (asm == null)
+		public static T Write<T>(this T output, IAssembly? asm) where T : ITextColorWriter {
+			if (asm is null)
 				return output;
 			var asmDef = asm as AssemblyDef;
-			bool isExe = asmDef != null &&
-				asmDef.ManifestModule != null &&
+			bool isExe = !(asmDef is null) &&
+				!(asmDef.ManifestModule is null) &&
 				(asmDef.ManifestModule.Characteristics & dnlib.PE.Characteristics.Dll) == 0;
 			output.Write(isExe ? BoxedTextColor.AssemblyExe : BoxedTextColor.Assembly, asm.Name);
 
@@ -113,12 +114,14 @@ namespace dnSpy.Contracts.Text {
 			output.WriteCommaSpace();
 
 			var publicKey = PublicKeyBase.ToPublicKeyToken(asm.PublicKeyOrToken);
-			output.Write(BoxedTextColor.InstanceProperty, publicKey == null || publicKey is PublicKeyToken ? "PublicKeyToken" : "PublicKey");
+			output.Write(BoxedTextColor.InstanceProperty, publicKey is null || publicKey is PublicKeyToken ? "PublicKeyToken" : "PublicKey");
 			output.Write(BoxedTextColor.Operator, "=");
 			if (PublicKeyBase.IsNullOrEmpty2(publicKey))
 				output.Write(BoxedTextColor.Keyword, "null");
-			else
+			else {
+				Debug.Assert(!(publicKey is null));
 				output.Write(BoxedTextColor.Number, publicKey.ToString());
+			}
 
 			if ((asm.Attributes & AssemblyAttributes.Retargetable) != 0) {
 				output.WriteCommaSpace();
@@ -144,8 +147,8 @@ namespace dnSpy.Contracts.Text {
 		/// <param name="output">Output</param>
 		/// <param name="namespace">Namespace</param>
 		/// <returns></returns>
-		public static T WriteNamespace<T>(this T output, string @namespace) where T : ITextColorWriter {
-			if (@namespace == null)
+		public static T WriteNamespace<T>(this T output, string? @namespace) where T : ITextColorWriter {
+			if (@namespace is null)
 				return output;
 			if (@namespace.Length == 0)
 				output.Write(BoxedTextColor.Punctuation, "-");
@@ -179,10 +182,10 @@ namespace dnSpy.Contracts.Text {
 		/// <param name="output">Output</param>
 		/// <param name="filename">Filename</param>
 		/// <returns></returns>
-		public static T WriteFilename<T>(this T output, string filename) where T : ITextColorWriter {
-			if (filename == null)
+		public static T WriteFilename<T>(this T output, string? filename) where T : ITextColorWriter {
+			if (filename is null)
 				return output;
-			filename = NameUtilities.CleanName(filename);
+			filename = NameUtilities.CleanName(filename)!;
 			var s = filename.Replace('\\', '/');
 			var parts = s.Split('/');
 			int slashIndex = 0;

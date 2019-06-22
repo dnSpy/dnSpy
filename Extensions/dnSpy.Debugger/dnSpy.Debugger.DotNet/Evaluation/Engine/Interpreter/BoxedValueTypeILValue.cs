@@ -28,10 +28,10 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			this.ilValue = ilValue;
 		}
 
-		public override ILValue UnboxAny(DmdType type) {
+		public override ILValue? UnboxAny(DmdType type) {
 			if (type.IsNullable) {
 				var method = type.GetConstructor(new[] { type.GetNullableElementType() });
-				if ((object)method == null)
+				if (method is null)
 					return null;
 				return runtime.CreateInstance(method, new[] { ilValue });
 			}
@@ -39,7 +39,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 				return ilValue.Clone();
 		}
 
-		public override ILValue Unbox(DmdType type) {
+		public override ILValue? Unbox(DmdType type) {
 			var dnValue = runtime.GetDotNetValue(ilValue);
 			if (dnValue.Type != type)
 				return null;

@@ -35,12 +35,12 @@ namespace dnSpy.Contracts.Images {
 		/// <summary>
 		/// true if it's the default instance
 		/// </summary>
-		public bool IsDefault => Assembly == null && Name == null;
+		public bool IsDefault => Assembly is null && Name is null;
 
 		/// <summary>
 		/// Assembly of image or null if <see cref="Name"/> is a URI
 		/// </summary>
-		public Assembly Assembly { get; }
+		public Assembly? Assembly { get; }
 
 		/// <summary>
 		/// Name of image
@@ -52,7 +52,7 @@ namespace dnSpy.Contracts.Images {
 		/// </summary>
 		/// <param name="assembly">Assembly of image or null if <paramref name="name"/> is a pack: URI</param>
 		/// <param name="name">Name of image</param>
-		public ImageReference(Assembly assembly, string name) {
+		public ImageReference(Assembly? assembly, string name) {
 			Assembly = assembly;
 			Name = name ?? throw new ArgumentNullException(nameof(name));
 		}
@@ -63,9 +63,9 @@ namespace dnSpy.Contracts.Images {
 		/// <param name="value">String to parse</param>
 		/// <param name="result">Result</param>
 		/// <returns></returns>
-		public static bool TryParse(string value, out ImageReference result) {
+		public static bool TryParse(string? value, out ImageReference result) {
 			result = default;
-			if (value == null)
+			if (value is null)
 				return false;
 			if (value == string.Empty)
 				return true;
@@ -102,7 +102,7 @@ namespace dnSpy.Contracts.Images {
 		public override string ToString() {
 			if (IsDefault)
 				return string.Empty;
-			if (Assembly == null)
+			if (Assembly is null)
 				return Name;
 			return Assembly.GetName().Name + "," + Name;
 		}

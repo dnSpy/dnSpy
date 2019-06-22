@@ -28,12 +28,12 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly IAssemblyResolver assemblyResolver;
 		readonly IAssembly tempAssembly;
 		readonly ModuleDef editedModule;
-		readonly TypeDef nonNestedEditedTypeOrNull;
+		readonly TypeDef? nonNestedEditedTypeOrNull;
 		readonly List<(RawModuleBytes rawData, CompilerMetadataReference mdRef)> rawModuleBytesList;
 
-		public AssemblyReferenceResolver(RawModuleBytesProvider rawModuleBytesProvider, IAssemblyResolver assemblyResolver, IAssembly tempAssembly, ModuleDef editedModule, TypeDef nonNestedEditedTypeOrNull) {
-			Debug.Assert(nonNestedEditedTypeOrNull == null || nonNestedEditedTypeOrNull.Module == editedModule);
-			Debug.Assert(nonNestedEditedTypeOrNull?.DeclaringType == null);
+		public AssemblyReferenceResolver(RawModuleBytesProvider rawModuleBytesProvider, IAssemblyResolver assemblyResolver, IAssembly tempAssembly, ModuleDef editedModule, TypeDef? nonNestedEditedTypeOrNull) {
+			Debug.Assert(nonNestedEditedTypeOrNull is null || nonNestedEditedTypeOrNull.Module == editedModule);
+			Debug.Assert(nonNestedEditedTypeOrNull?.DeclaringType is null);
 			this.rawModuleBytesProvider = rawModuleBytesProvider;
 			this.assemblyResolver = assemblyResolver;
 			this.tempAssembly = tempAssembly;
@@ -45,7 +45,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		internal (RawModuleBytes rawData, CompilerMetadataReference mdRef)[] GetReferences() => rawModuleBytesList.ToArray();
 
 		CompilerMetadataReference? Save((RawModuleBytes rawData, CompilerMetadataReference mdRef) info) {
-			if (info.rawData == null)
+			if (info.rawData is null)
 				return null;
 			try {
 				rawModuleBytesList.Add(info);
@@ -58,9 +58,9 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		public CompilerMetadataReference? Resolve(IAssembly asmRef) {
-			ModuleDef sourceModule = null;
+			ModuleDef? sourceModule = null;
 			var asm = assemblyResolver.Resolve(asmRef, sourceModule ?? editedModule);
-			if (asm == null)
+			if (asm is null)
 				return null;
 
 			return Save(CreateRef(asm.ManifestModule));
@@ -71,7 +71,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		unsafe (RawModuleBytes rawData, CompilerMetadataReference mdRef) CreateRef(ModuleDef module) {
 			var moduleData = rawModuleBytesProvider.GetRawModuleBytes(module);
-			if (moduleData == null)
+			if (moduleData is null)
 				return default;
 			bool error = true;
 			try {

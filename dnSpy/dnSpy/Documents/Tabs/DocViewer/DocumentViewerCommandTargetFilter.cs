@@ -28,12 +28,11 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 		public DocumentViewerCommandTargetFilter(ITextView textView) => this.textView = textView;
 
-		DocumentViewer TryGetInstance() =>
-			__documentViewer ?? (__documentViewer = DocumentViewer.TryGetInstance(textView));
-		DocumentViewer __documentViewer;
+		DocumentViewer TryGetInstance() => __documentViewer ??= DocumentViewer.TryGetInstance(textView);
+		DocumentViewer? __documentViewer;
 
 		public CommandTargetStatus CanExecute(Guid group, int cmdId) {
-			if (TryGetInstance() == null)
+			if (TryGetInstance() is null)
 				return CommandTargetStatus.NotHandled;
 
 			if (group == CommandConstants.TextEditorGroup) {
@@ -60,14 +59,14 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			return CommandTargetStatus.NotHandled;
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args = null) {
-			object result = null;
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args = null) {
+			object? result = null;
 			return Execute(group, cmdId, args, ref result);
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) {
 			var documentViewer = TryGetInstance();
-			if (documentViewer == null)
+			if (documentViewer is null)
 				return CommandTargetStatus.NotHandled;
 
 			if (group == CommandConstants.TextEditorGroup) {

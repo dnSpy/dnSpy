@@ -28,7 +28,7 @@ namespace dnSpy.Text {
 		public ITextImage CreateTextImage(string text) => new SimpleTextImage(text);
 
 		public ITextImage CreateTextImage(TextReader reader, long length) {
-			if (reader == null)
+			if (reader is null)
 				throw new ArgumentNullException(nameof(reader));
 			throw new NotImplementedException();
 		}

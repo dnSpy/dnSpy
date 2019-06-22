@@ -24,25 +24,25 @@ using dndbg.COM.CorDebug;
 using dndbg.COM.MetaData;
 
 namespace dndbg.Engine {
-	sealed class CorFrame : COMObject<ICorDebugFrame>, IEquatable<CorFrame> {
-		public CorFrame Callee {
+	sealed class CorFrame : COMObject<ICorDebugFrame>, IEquatable<CorFrame?> {
+		public CorFrame? Callee {
 			get {
 				int hr = obj.GetCallee(out var calleeFrame);
-				return hr < 0 || calleeFrame == null ? null : new CorFrame(calleeFrame);
+				return hr < 0 || calleeFrame is null ? null : new CorFrame(calleeFrame);
 			}
 		}
 
-		public CorFrame Caller {
+		public CorFrame? Caller {
 			get {
 				int hr = obj.GetCaller(out var callerFrame);
-				return hr < 0 || callerFrame == null ? null : new CorFrame(callerFrame);
+				return hr < 0 || callerFrame is null ? null : new CorFrame(callerFrame);
 			}
 		}
 
-		public CorChain Chain {
+		public CorChain? Chain {
 			get {
 				int hr = obj.GetChain(out var chain);
-				return hr < 0 || chain == null ? null : new CorChain(chain);
+				return hr < 0 || chain is null ? null : new CorChain(chain);
 			}
 		}
 
@@ -71,7 +71,7 @@ namespace dndbg.Engine {
 		public ILFrameIP ILFrameIP {
 			get {
 				var ilf = obj as ICorDebugILFrame;
-				if (ilf == null)
+				if (ilf is null)
 					return new ILFrameIP();
 				int hr = ilf.GetIP(out uint offset, out var mappingResult);
 				return hr < 0 ? new ILFrameIP() : new ILFrameIP(offset, mappingResult);
@@ -81,7 +81,7 @@ namespace dndbg.Engine {
 		public uint NativeFrameIP {
 			get {
 				var nf = obj as ICorDebugNativeFrame;
-				if (nf == null)
+				if (nf is null)
 					return 0;
 				int hr = nf.GetIP(out uint offset);
 				return hr < 0 ? 0 : offset;
@@ -91,38 +91,38 @@ namespace dndbg.Engine {
 		public CorDebugInternalFrameType InternalFrameType {
 			get {
 				var @if = obj as ICorDebugInternalFrame;
-				if (@if == null)
+				if (@if is null)
 					return CorDebugInternalFrameType.STUBFRAME_NONE;
 				int hr = @if.GetFrameType(out var type);
 				return hr < 0 ? CorDebugInternalFrameType.STUBFRAME_NONE : type;
 			}
 		}
 
-		public CorFunction Function {
+		public CorFunction? Function {
 			get {
 				int hr = obj.GetFunction(out var func);
-				return hr < 0 || func == null ? null : new CorFunction(func);
+				return hr < 0 || func is null ? null : new CorFunction(func);
 			}
 		}
 
-		public CorCode Code {
+		public CorCode? Code {
 			get {
 				int hr = obj.GetCode(out var code);
-				return hr < 0 || code == null ? null : new CorCode(code);
+				return hr < 0 || code is null ? null : new CorCode(code);
 			}
 		}
 
 		public IEnumerable<CorType> TypeParameters {
 			get {
 				var ilf2 = obj as ICorDebugILFrame2;
-				if (ilf2 == null)
+				if (ilf2 is null)
 					yield break;
 				int hr = ilf2.EnumerateTypeParameters(out var valueEnum);
 				if (hr < 0)
 					yield break;
 				for (;;) {
 					hr = valueEnum.Next(1, out var value, out uint count);
-					if (hr != 0 || value == null)
+					if (hr != 0 || value is null)
 						break;
 					yield return new CorType(value);
 				}
@@ -140,14 +140,14 @@ namespace dndbg.Engine {
 				rangeStart = rangeEnd = 0;
 		}
 
-		public CorStepper CreateStepper() {
+		public CorStepper? CreateStepper() {
 			int hr = obj.CreateStepper(out var stepper);
-			return hr < 0 || stepper == null ? null : new CorStepper(stepper);
+			return hr < 0 || stepper is null ? null : new CorStepper(stepper);
 		}
 
 		public bool SetILFrameIP(uint ilOffset) {
 			var ilf = obj as ICorDebugILFrame;
-			if (ilf == null)
+			if (ilf is null)
 				return false;
 			int hr = ilf.SetIP(ilOffset);
 			return hr >= 0;
@@ -155,14 +155,14 @@ namespace dndbg.Engine {
 
 		public bool CanSetILFrameIP(uint ilOffset) {
 			var ilf = obj as ICorDebugILFrame;
-			if (ilf == null)
+			if (ilf is null)
 				return false;
 			return ilf.CanSetIP(ilOffset) == 0;
 		}
 
 		public bool SetNativeFrameIP(uint offset) {
 			var nf = obj as ICorDebugNativeFrame;
-			if (nf == null)
+			if (nf is null)
 				return false;
 			int hr = nf.SetIP(offset);
 			return hr >= 0;
@@ -170,62 +170,63 @@ namespace dndbg.Engine {
 
 		public bool CanSetNativeFrameIP(uint offset) {
 			var nf = obj as ICorDebugNativeFrame;
-			if (nf == null)
+			if (nf is null)
 				return false;
 			return nf.CanSetIP(offset) == 0;
 		}
 
-		public CorValue GetILLocal(uint index, out int hr) {
+		public CorValue? GetILLocal(uint index, out int hr) {
 			var ilf = obj as ICorDebugILFrame;
-			if (ilf == null) {
+			if (ilf is null) {
 				hr = -1;
 				return null;
 			}
 			hr = ilf.GetLocalVariable(index, out var value);
-			return hr < 0 || value == null ? null : new CorValue(value);
+			return hr < 0 || value is null ? null : new CorValue(value);
 		}
 
-		public CorValue GetILArgument(uint index, out int hr) {
+		public CorValue? GetILArgument(uint index, out int hr) {
 			var ilf = obj as ICorDebugILFrame;
-			if (ilf == null) {
+			if (ilf is null) {
 				hr = -1;
 				return null;
 			}
 			hr = ilf.GetArgument(index, out var value);
-			return hr < 0 || value == null ? null : new CorValue(value);
+			return hr < 0 || value is null ? null : new CorValue(value);
 		}
 
-		public CorValue GetILLocal(ILCodeKind kind, uint index) {
+		public CorValue? GetILLocal(ILCodeKind kind, uint index) {
 			var ilf4 = obj as ICorDebugILFrame4;
-			if (ilf4 == null)
+			if (ilf4 is null)
 				return null;
 			int hr = ilf4.GetLocalVariableEx(kind, index, out var value);
-			return hr < 0 || value == null ? null : new CorValue(value);
+			return hr < 0 || value is null ? null : new CorValue(value);
 		}
 
-		public CorValue GetILLocal(ILCodeKind kind, int index) => GetILLocal(kind, (uint)index);
+		public CorValue? GetILLocal(ILCodeKind kind, int index) => GetILLocal(kind, (uint)index);
 
-		public CorCode GetCode(ILCodeKind kind) {
+		public CorCode? GetCode(ILCodeKind kind) {
 			var ilf4 = obj as ICorDebugILFrame4;
-			if (ilf4 == null)
+			if (ilf4 is null)
 				return null;
 			int hr = ilf4.GetCodeEx(kind, out var code);
-			return hr < 0 || code == null ? null : new CorCode(code);
+			return hr < 0 || code is null ? null : new CorCode(code);
 		}
 
 		public bool GetTypeAndMethodGenericParameters(out CorType[] typeGenArgs, out CorType[] methGenArgs) {
 			var func = Function;
 			var module = func?.Module;
-			if (module == null) {
+			if (module is null) {
 				typeGenArgs = Array.Empty<CorType>();
 				methGenArgs = Array.Empty<CorType>();
 				return false;
 			}
+			Debug.Assert(!(func is null));
 
 			var mdi = module.GetMetaDataInterface<IMetaDataImport>();
 			var gas = new List<CorType>(TypeParameters);
 			var cls = func.Class;
-			int typeGenArgsCount = cls == null ? 0 : GetCountGenericParameters(mdi, cls.Token);
+			int typeGenArgsCount = cls is null ? 0 : GetCountGenericParameters(mdi, cls.Token);
 			int methGenArgsCount = GetCountGenericParameters(mdi, func.Token);
 			Debug.Assert(typeGenArgsCount + methGenArgsCount == gas.Count);
 			typeGenArgs = new CorType[typeGenArgsCount];
@@ -239,27 +240,18 @@ namespace dndbg.Engine {
 			return true;
 		}
 
-		static int GetCountGenericParameters(IMetaDataImport mdi, uint token) => MDAPI.GetGenericParamTokens(mdi as IMetaDataImport2, token).Length;
+		static int GetCountGenericParameters(IMetaDataImport? mdi, uint token) => MDAPI.GetGenericParamTokens(mdi as IMetaDataImport2, token).Length;
 
-		public CorValue GetReturnValueForILOffset(uint offset) {
+		public CorValue? GetReturnValueForILOffset(uint offset) {
 			var ilf3 = obj as ICorDebugILFrame3;
-			if (ilf3 == null)
+			if (ilf3 is null)
 				return null;
 			int hr = ilf3.GetReturnValueForILOffset(offset, out var value);
-			return hr < 0 || value == null ? null : new CorValue(value);
+			return hr < 0 || value is null ? null : new CorValue(value);
 		}
 
-		public static bool operator ==(CorFrame a, CorFrame b) {
-			if (ReferenceEquals(a, b))
-				return true;
-			if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
-				return false;
-			return a.Equals(b);
-		}
-
-		public static bool operator !=(CorFrame a, CorFrame b) => !(a == b);
-		public bool Equals(CorFrame other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
-		public override bool Equals(object obj) => Equals(obj as CorFrame);
+		public bool Equals(CorFrame? other) => !(other is null) && RawObject == other.RawObject;
+		public override bool Equals(object? obj) => Equals(obj as CorFrame);
 		public override int GetHashCode() => RawObject.GetHashCode();
 	}
 }

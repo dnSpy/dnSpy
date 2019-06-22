@@ -76,7 +76,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <summary>
 		/// Gets the terminator or null if there's none
 		/// </summary>
-		public StructField<ByteData> Terminator { get; }
+		public StructField<ByteData>? Terminator { get; }
 
 		/// <summary>
 		/// Gets the fields
@@ -94,14 +94,14 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <param name="tokens">Tokens of records referencing this string</param>
 		public StringsHeapRecordData(HexBuffer buffer, HexSpan stringSpan, bool hasTerminatingZero, StringsHeap heap, uint[] tokens)
 			: base(NAME, new HexBufferSpan(buffer, HexSpan.FromBounds(stringSpan.Start, stringSpan.End + (hasTerminatingZero ? 1 : 0)))) {
-			if (tokens == null)
+			if (tokens is null)
 				throw new ArgumentNullException(nameof(tokens));
 			Heap = heap ?? throw new ArgumentNullException(nameof(heap));
 			Tokens = new ReadOnlyCollection<uint>(tokens);
 			String = new StructField<StringData>("String", new StringData(new HexBufferSpan(buffer, stringSpan), Encoding.UTF8));
 			if (hasTerminatingZero)
 				Terminator = new StructField<ByteData>("Terminator", new ByteData(buffer, stringSpan.End));
-			if (Terminator != null) {
+			if (!(Terminator is null)) {
 				Fields = new BufferField[] {
 					String,
 					Terminator,
@@ -139,7 +139,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <summary>
 		/// Gets the terminal byte or null if none exists
 		/// </summary>
-		public StructField<ByteData> TerminalByte { get; }
+		public StructField<ByteData>? TerminalByte { get; }
 
 		/// <summary>
 		/// Gets the fields
@@ -167,7 +167,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 			String = new StructField<StringData>("String", new StringData(new HexBufferSpan(buffer, stringSpan), Encoding.Unicode));
 			if (!terminalByteSpan.IsEmpty)
 				TerminalByte = new StructField<ByteData>("TerminalByte", new ByteData(new HexBufferSpan(buffer, terminalByteSpan)));
-			if (TerminalByte != null) {
+			if (!(TerminalByte is null)) {
 				Fields = new BufferField[] {
 					Length,
 					String,
@@ -227,7 +227,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 			: base(NAME, new HexBufferSpan(buffer, span)) {
 			if (lengthSpan.Start != span.Start)
 				throw new ArgumentOutOfRangeException(nameof(lengthSpan));
-			if (data == null)
+			if (data is null)
 				throw new ArgumentNullException(nameof(data));
 			Heap = heap ?? throw new ArgumentNullException(nameof(heap));
 			Tokens = tokens ?? throw new ArgumentNullException(nameof(tokens));
@@ -265,7 +265,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <returns></returns>
 		public override HexSpan? GetFieldReferenceSpan(HexBufferFile file) {
 			var stringsStream = file.GetHeaders<DotNetMetadataHeaders>()?.StringsStream;
-			if (stringsStream == null)
+			if (stringsStream is null)
 				return null;
 			uint offset = ReadOffset();
 			if (offset >= stringsStream.Span.Length)
@@ -385,7 +385,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <returns></returns>
 		public override HexSpan? GetFieldReferenceSpan(HexBufferFile file) {
 			var blobStream = file.GetHeaders<DotNetMetadataHeaders>()?.BlobStream;
-			if (blobStream == null)
+			if (blobStream is null)
 				return null;
 			uint offset = ReadOffset();
 			if (offset >= blobStream.Span.Length)
@@ -495,7 +495,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <returns></returns>
 		public override HexSpan? GetFieldReferenceSpan(HexBufferFile file) {
 			var guidStream = file.GetHeaders<DotNetMetadataHeaders>()?.GUIDStream;
-			if (guidStream == null)
+			if (guidStream is null)
 				return null;
 			uint index = ReadIndex();
 			if (index == 0 || !guidStream.IsValidIndex(index))

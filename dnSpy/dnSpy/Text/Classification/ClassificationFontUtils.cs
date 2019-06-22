@@ -76,33 +76,33 @@ namespace dnSpy.Text.Classification {
 			var cultureInfo = dict[ClassificationFormatDefinition.CultureInfoId] as CultureInfo;
 			var textRunProps = TextFormattingRunProperties.CreateTextFormattingRunProperties(foreground, background, typeface, size, hintingSize, textDecorations, textEffects, cultureInfo);
 			var isItalic = dict[ClassificationFormatDefinition.IsItalicId] as bool?;
-			if (isItalic != null)
+			if (!(isItalic is null))
 				textRunProps = textRunProps.SetItalic(isItalic.Value);
 			var isBold = dict[ClassificationFormatDefinition.IsBoldId] as bool?;
-			if (isBold != null)
+			if (!(isBold is null))
 				textRunProps = textRunProps.SetBold(isBold.Value);
 			double? opacity;
-			if (foreground == null && (opacity = dict[ClassificationFormatDefinition.ForegroundOpacityId] as double?) != null)
+			if (foreground is null && !((opacity = dict[ClassificationFormatDefinition.ForegroundOpacityId] as double?) is null))
 				textRunProps = textRunProps.SetForegroundOpacity(opacity.Value);
-			if (background == null && (opacity = dict[ClassificationFormatDefinition.BackgroundOpacityId] as double?) != null)
+			if (background is null && !((opacity = dict[ClassificationFormatDefinition.BackgroundOpacityId] as double?) is null))
 				textRunProps = textRunProps.SetBackgroundOpacity(opacity.Value);
 			return textRunProps;
 		}
 
-		static Brush GetBrush(ResourceDictionary dict, string brushId, string colorId, string opacityId, double? defaultOpacity, Brush defaultBrush) {
+		static Brush? GetBrush(ResourceDictionary dict, string brushId, string colorId, string opacityId, double? defaultOpacity, Brush? defaultBrush) {
 			var brush = dict[brushId] as Brush;
-			if (brush == null) {
+			if (brush is null) {
 				var color = dict[colorId] as Color?;
-				if (color != null)
+				if (!(color is null))
 					brush = new SolidColorBrush(color.Value);
 			}
-			if (brush == null)
+			if (brush is null)
 				brush = defaultBrush;
-			if (brush == null)
+			if (brush is null)
 				return brush;
 
 			var opacity = dict[opacityId] as double? ?? defaultOpacity;
-			if (opacity != null) {
+			if (!(opacity is null)) {
 				brush = brush.Clone();
 				brush.Opacity = opacity.Value;
 			}
@@ -114,7 +114,7 @@ namespace dnSpy.Text.Classification {
 
 		static Typeface GetTypeface(ResourceDictionary dict) {
 			var typeface = dict[ClassificationFormatDefinition.TypefaceId] as Typeface;
-			if (typeface == null)
+			if (typeface is null)
 				typeface = new Typeface(defaultFontFamily, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal, DefaultFallbackFontFamily);
 			var isBold = dict[ClassificationFormatDefinition.IsBoldId] as bool?;
 			var isItalic = dict[ClassificationFormatDefinition.IsItalicId] as bool?;

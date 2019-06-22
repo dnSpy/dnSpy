@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using DMD = dnlib.DotNet;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
@@ -31,12 +32,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	}
 
 	interface ITypeDefResolver {
-		DmdTypeDef GetTypeDef(IDmdAssemblyName assemblyName, List<string> typeNames);
+		DmdTypeDef? GetTypeDef(IDmdAssemblyName? assemblyName, List<string> typeNames);
 	}
 
 	struct DmdTypeNameParser : IDisposable {
-		readonly DmdModule ownerModule;
-		readonly ITypeDefResolver typeDefResolver;
+		readonly DmdModule? ownerModule;
+		readonly ITypeDefResolver? typeDefResolver;
 		readonly IList<DmdType> genericTypeArguments;
 		readonly StringReader reader;
 		const int MAX_RECURSION_COUNT = 100;
@@ -45,15 +46,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public static DmdType ParseThrow(DmdModule ownerModule, string typeFullName) =>
 			ParseThrow(ownerModule, typeFullName, null);
 
-		public static DmdType ParseThrow(DmdModule ownerModule, string typeFullName, IList<DmdType> genericTypeArguments) {
+		public static DmdType ParseThrow(DmdModule ownerModule, string typeFullName, IList<DmdType>? genericTypeArguments) {
 			using (var parser = new DmdTypeNameParser(ownerModule, typeFullName, genericTypeArguments))
 				return parser.ParseCore();
 		}
 
-		public static DmdType Parse(DmdModule ownerModule, string typeFullName) =>
+		public static DmdType? Parse(DmdModule ownerModule, string typeFullName) =>
 			Parse(ownerModule, typeFullName, null);
 
-		public static DmdType Parse(DmdModule ownerModule, string typeFullName, IList<DmdType> genericTypeArguments) {
+		public static DmdType? Parse(DmdModule ownerModule, string typeFullName, IList<DmdType>? genericTypeArguments) {
 			try {
 				return ParseThrow(ownerModule, typeFullName, genericTypeArguments);
 			}
@@ -65,15 +66,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public static DmdType ParseThrow(ITypeDefResolver typeDefResolver, string typeFullName) =>
 			ParseThrow(typeDefResolver, typeFullName, null);
 
-		public static DmdType ParseThrow(ITypeDefResolver typeDefResolver, string typeFullName, IList<DmdType> genericTypeArguments) {
+		public static DmdType ParseThrow(ITypeDefResolver typeDefResolver, string typeFullName, IList<DmdType>? genericTypeArguments) {
 			using (var parser = new DmdTypeNameParser(typeDefResolver, typeFullName, genericTypeArguments))
 				return parser.ParseCore();
 		}
 
-		public static DmdType Parse(ITypeDefResolver typeDefResolver, string typeFullName) =>
+		public static DmdType? Parse(ITypeDefResolver typeDefResolver, string typeFullName) =>
 			Parse(typeDefResolver, typeFullName, null);
 
-		public static DmdType Parse(ITypeDefResolver typeDefResolver, string typeFullName, IList<DmdType> genericTypeArguments) {
+		public static DmdType? Parse(ITypeDefResolver typeDefResolver, string typeFullName, IList<DmdType>? genericTypeArguments) {
 			try {
 				return ParseThrow(typeDefResolver, typeFullName, genericTypeArguments);
 			}
@@ -82,7 +83,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
-		DmdTypeNameParser(DmdModule ownerModule, string typeFullName, IList<DmdType> genericTypeArguments) {
+		DmdTypeNameParser(DmdModule? ownerModule, string typeFullName, IList<DmdType>? genericTypeArguments) {
 			this.ownerModule = ownerModule;
 			typeDefResolver = null;
 			reader = new StringReader(typeFullName ?? string.Empty);
@@ -90,7 +91,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			recursionCounter = 0;
 		}
 
-		DmdTypeNameParser(ITypeDefResolver typeDefResolver, string typeFullName, IList<DmdType> genericTypeArguments) {
+		DmdTypeNameParser(ITypeDefResolver typeDefResolver, string typeFullName, IList<DmdType>? genericTypeArguments) {
 			ownerModule = null;
 			this.typeDefResolver = typeDefResolver;
 			reader = new StringReader(typeFullName ?? string.Empty);
@@ -188,12 +189,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		DmdParsedTypeRef CreateTypeRef(List<string> typeNames) {
 			if (typeNames.Count == 0)
 				throw new InvalidOperationException();
-			DmdParsedTypeRef typeRef = null;
+			DmdParsedTypeRef? typeRef = null;
 			for (int i = 0; i < typeNames.Count; i++) {
 				var newTypeRef = CreateTypeRefNoAssembly(typeNames[i], typeRef);
 				typeRef = newTypeRef;
 			}
-			return typeRef;
+			return typeRef!;
 		}
 
 		List<string> ReadTypeRefAndNestedNoAssembly(char nestedChar) {
@@ -208,28 +209,28 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return typeNames;
 		}
 
-		DmdParsedTypeRef CreateTypeRefNoAssembly(string fullName, DmdParsedTypeRef declaringTypeRef) {
-			DmdTypeUtilities.SplitFullName(fullName, out string ns, out string name);
-			return new DmdParsedTypeRef(ownerModule, declaringTypeRef, DmdTypeScope.Invalid, ns, name, null);
+		DmdParsedTypeRef CreateTypeRefNoAssembly(string fullName, DmdParsedTypeRef? declaringTypeRef) {
+			DmdTypeUtilities.SplitFullName(fullName, out var ns, out var name);
+			return new DmdParsedTypeRef(ownerModule!, declaringTypeRef, DmdTypeScope.Invalid, ns, name, null);
 		}
 
-		IDmdAssemblyName FindAssemblyRef(DmdParsedTypeRef nonNestedTypeRef) {
-			IDmdAssemblyName asmRef = null;
-			if ((object)nonNestedTypeRef != null)
+		IDmdAssemblyName FindAssemblyRef(DmdParsedTypeRef? nonNestedTypeRef) {
+			IDmdAssemblyName? asmRef = null;
+			if (!(nonNestedTypeRef is null))
 				asmRef = FindAssemblyRefCore(nonNestedTypeRef);
-			return asmRef ?? ownerModule.Assembly.GetName();
+			return asmRef ?? ownerModule!.Assembly.GetName();
 		}
 
 		IDmdAssemblyName FindAssemblyRefCore(DmdParsedTypeRef nonNestedTypeRef) {
-			var modAsm = (DmdAssemblyImpl)ownerModule.Assembly;
+			var modAsm = (DmdAssemblyImpl)ownerModule!.Assembly;
 			var type = modAsm.GetType(nonNestedTypeRef, ignoreCase: false);
-			if ((object)type != null)
+			if (!(type is null))
 				return modAsm.GetName();
 
-			var corLibAsm = (DmdAssemblyImpl)ownerModule.AppDomain.CorLib;
-			if (corLibAsm != null) {
+			var corLibAsm = (DmdAssemblyImpl?)ownerModule.AppDomain.CorLib;
+			if (!(corLibAsm is null)) {
 				type = corLibAsm.GetType(nonNestedTypeRef, ignoreCase: false);
-				if ((object)type != null)
+				if (!(type is null))
 					return corLibAsm.GetName();
 			}
 
@@ -294,7 +295,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		string ReadId(bool ignoreWhiteSpace) {
 			SkipWhite();
-			var sb = ObjectPools.AllocStringBuilder();
+			StringBuilder? sb = ObjectPools.AllocStringBuilder();
 			int c;
 			while ((c = GetIdChar(ignoreWhiteSpace)) != -1)
 				sb.Append((char)c);
@@ -322,7 +323,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		DmdType ReadType(bool readAssemblyReference) {
 			IncrementRecursionCounter();
-			DmdType result;
+			DmdType? result;
 
 			SkipWhite();
 			if (PeekChar() == '!') {
@@ -335,11 +336,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				var typeNames = ReadTypeRefAndNestedNoAssembly('+');
 				var tspecs = ReadTSpecs();
 
-				IDmdAssemblyName asmRef;
-				if (typeDefResolver == null) {
-					Debug.Assert(ownerModule != null);
+				IDmdAssemblyName? asmRef;
+				if (typeDefResolver is null) {
+					Debug.Assert(!(ownerModule is null));
 					var typeRef = CreateTypeRef(typeNames);
-					var nonNestedTypeRef = (DmdParsedTypeRef)DmdTypeUtilities.GetNonNestedType(typeRef);
+					var nonNestedTypeRef = (DmdParsedTypeRef)DmdTypeUtilities.GetNonNestedType(typeRef)!;
 					if (readAssemblyReference)
 						asmRef = ReadOptionalAssemblyRef() ?? FindAssemblyRef(nonNestedTypeRef);
 					else
@@ -350,7 +351,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				else {
 					asmRef = readAssemblyReference ? ReadOptionalAssemblyRef() : null;
 					result = typeDefResolver.GetTypeDef(asmRef, typeNames);
-					if ((object)result == null)
+					if (result is null)
 						throw new TypeNameParserException("Couldn't find the type def");
 				}
 
@@ -362,8 +363,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return result;
 		}
 
-		DmdType Resolve(IDmdAssemblyName asmRef, DmdType typeRef) {
-			var asm = ownerModule.Assembly;
+		DmdType? Resolve(IDmdAssemblyName? asmRef, DmdType typeRef) {
+			var asm = ownerModule!.Assembly;
 			var asmName = asm.GetName();
 			if (!DmdMemberInfoEqualityComparer.DefaultOther.Equals(asmRef, asmName))
 				return null;
@@ -371,7 +372,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return td?.Module == ownerModule ? td : null;
 		}
 
-		DmdReadOnlyAssemblyName ReadOptionalAssemblyRef() {
+		DmdReadOnlyAssemblyName? ReadOptionalAssemblyRef() {
 			SkipWhite();
 			if (PeekChar() == ',') {
 				ReadChar();
@@ -491,11 +492,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
-		public static void ParseAssemblyName(string asmFullName, out string name, out Version version, out string cultureName, out DmdAssemblyNameFlags flags, out byte[] publicKey, out byte[] publicKeyToken, out DmdAssemblyHashAlgorithm hashAlgorithm) {
-			if (asmFullName == null)
+		public static void ParseAssemblyName(string asmFullName, out string? name, out Version? version, out string? cultureName, out DmdAssemblyNameFlags flags, out byte[]? publicKey, out byte[]? publicKeyToken, out DmdAssemblyHashAlgorithm hashAlgorithm) {
+			if (asmFullName is null)
 				throw new ArgumentNullException(nameof(asmFullName));
 			try {
-				using (var parser = new DmdTypeNameParser((DmdModule)null, asmFullName, null))
+				using (var parser = new DmdTypeNameParser((DmdModule?)null, asmFullName, null))
 					parser.ReadAssemblyRef(out name, out version, out cultureName, out flags, out publicKey, out publicKeyToken, out hashAlgorithm);
 				return;
 			}
@@ -510,7 +511,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			hashAlgorithm = 0;
 		}
 
-		void ReadAssemblyRef(out string name, out Version version, out string cultureName, out DmdAssemblyNameFlags flags, out byte[] publicKey, out byte[] publicKeyToken, out DmdAssemblyHashAlgorithm hashAlgorithm) {
+		void ReadAssemblyRef(out string name, out Version? version, out string? cultureName, out DmdAssemblyNameFlags flags, out byte[]? publicKey, out byte[]? publicKeyToken, out DmdAssemblyHashAlgorithm hashAlgorithm) {
 			name = ReadAssemblyNameId();
 			version = null;
 			cultureName = null;
@@ -590,7 +591,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		string ReadAssemblyNameId() {
 			SkipWhite();
-			var sb = ObjectPools.AllocStringBuilder();
+			StringBuilder? sb = ObjectPools.AllocStringBuilder();
 			int c;
 			while ((c = GetAsmNameChar()) != -1)
 				sb.Append((char)c);

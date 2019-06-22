@@ -56,10 +56,10 @@ namespace dndbg.Engine {
 
 	sealed class ILCodeBreakpointPauseState : DebuggerPauseState {
 		public DnILCodeBreakpoint Breakpoint { get; }
-		public CorAppDomain CorAppDomain { get; }
-		public CorThread CorThread { get; }
+		public CorAppDomain? CorAppDomain { get; }
+		public CorThread? CorThread { get; }
 
-		public ILCodeBreakpointPauseState(DnILCodeBreakpoint bp, CorAppDomain corAppDomain, CorThread corThread)
+		public ILCodeBreakpointPauseState(DnILCodeBreakpoint bp, CorAppDomain? corAppDomain, CorThread? corThread)
 			: base(DebuggerPauseReason.ILCodeBreakpoint) {
 			Breakpoint = bp;
 			CorAppDomain = corAppDomain;
@@ -69,10 +69,10 @@ namespace dndbg.Engine {
 
 	sealed class NativeCodeBreakpointPauseState : DebuggerPauseState {
 		public DnNativeCodeBreakpoint Breakpoint { get; }
-		public CorAppDomain CorAppDomain { get; }
-		public CorThread CorThread { get; }
+		public CorAppDomain? CorAppDomain { get; }
+		public CorThread? CorThread { get; }
 
-		public NativeCodeBreakpointPauseState(DnNativeCodeBreakpoint bp, CorAppDomain corAppDomain, CorThread corThread)
+		public NativeCodeBreakpointPauseState(DnNativeCodeBreakpoint bp, CorAppDomain? corAppDomain, CorThread? corThread)
 			: base(DebuggerPauseReason.NativeCodeBreakpoint) {
 			Breakpoint = bp;
 			CorAppDomain = corAppDomain;
@@ -81,11 +81,10 @@ namespace dndbg.Engine {
 	}
 
 	sealed class BreakPauseState : DebuggerPauseState {
-		public DnNativeCodeBreakpoint Breakpoint { get; }
-		public CorAppDomain CorAppDomain { get; }
-		public CorThread CorThread { get; }
+		public CorAppDomain? CorAppDomain { get; }
+		public CorThread? CorThread { get; }
 
-		public BreakPauseState(CorAppDomain corAppDomain, CorThread corThread)
+		public BreakPauseState(CorAppDomain? corAppDomain, CorThread? corThread)
 			: base(DebuggerPauseReason.Break) {
 			CorAppDomain = corAppDomain;
 			CorThread = corThread;
@@ -93,10 +92,10 @@ namespace dndbg.Engine {
 	}
 
 	sealed class EntryPointBreakpointPauseState : DebuggerPauseState {
-		public CorAppDomain CorAppDomain { get; }
-		public CorThread CorThread { get; }
+		public CorAppDomain? CorAppDomain { get; }
+		public CorThread? CorThread { get; }
 
-		public EntryPointBreakpointPauseState(CorAppDomain corAppDomain, CorThread corThread)
+		public EntryPointBreakpointPauseState(CorAppDomain? corAppDomain, CorThread? corThread)
 			: base(DebuggerPauseReason.EntryPointBreakpoint) {
 			CorAppDomain = corAppDomain;
 			CorThread = corThread;

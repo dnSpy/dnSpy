@@ -44,7 +44,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		readonly string valueExpression;
 		readonly DmdAppDomain appDomain;
 		string dynamicViewProxyExpression;
-		DbgDotNetValue getDynamicViewValue;
+		DbgDotNetValue? getDynamicViewValue;
 
 		public DynamicViewMembersValueNodeProvider(DbgDotNetValueNodeProviderFactory valueNodeProviderFactory, LanguageValueNodeFactory valueNodeFactory, DbgDotNetValue instanceValue, DmdType expectedType, string valueExpression, DmdAppDomain appDomain, DbgValueNodeEvaluationOptions evalOptions)
 			: base(valueNodeFactory, dynamicViewName, valueExpression + ", " + PredefinedFormatSpecifiers.DynamicView, default, evalOptions) {
@@ -60,22 +60,22 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			public volatile int Counter;
 		}
 
-		protected override string InitializeCore(DbgEvaluationInfo evalInfo) {
+		protected override string? InitializeCore(DbgEvaluationInfo evalInfo) {
 			if ((evalOptions & DbgValueNodeEvaluationOptions.NoFuncEval) != 0)
 				return PredefinedEvaluationErrorMessages.FuncEvalDisabled;
 
 			var proxyCtor = DynamicMetaObjectProviderDebugViewHelper.GetDynamicMetaObjectProviderDebugViewConstructor(appDomain);
-			if ((object)proxyCtor == null) {
+			if (proxyCtor is null) {
 				var loadState = appDomain.GetOrCreateData<ForceLoadAssemblyState>();
 				if (Interlocked.Exchange(ref loadState.Counter, 1) == 0) {
 					var loader = new ReflectionAssemblyLoader(evalInfo, appDomain);
 					if (loader.TryLoadAssembly(GetRequiredAssemblyFullName(evalInfo.Runtime)))
 						proxyCtor = DynamicMetaObjectProviderDebugViewHelper.GetDynamicMetaObjectProviderDebugViewConstructor(appDomain);
 				}
-				if ((object)proxyCtor == null) {
+				if (proxyCtor is null) {
 					var asmFilename = GetRequiredAssemblyFilename(evalInfo.Runtime);
 					var asm = appDomain.GetAssembly(Path.GetFileNameWithoutExtension(asmFilename));
-					if (asm == null)
+					if (asm is null)
 						return string.Format(dnSpy_Roslyn_Resources.DynamicViewAssemblyNotLoaded, asmFilename);
 					return string.Format(dnSpy_Roslyn_Resources.TypeDoesNotExistInAssembly, DynamicMetaObjectProviderDebugViewHelper.GetDebugViewTypeDisplayName(), asmFilename);
 				}
@@ -84,11 +84,11 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			var runtime = evalInfo.Runtime.GetDotNetRuntime();
 			var proxyTypeResult = runtime.CreateInstance(evalInfo, proxyCtor, new[] { instanceValue }, DbgDotNetInvokeOptions.None);
 			if (proxyTypeResult.HasError)
-				return proxyTypeResult.ErrorMessage;
+				return proxyTypeResult.ErrorMessage!;
 
 			dynamicViewProxyExpression = valueNodeProviderFactory.GetNewObjectExpression(proxyCtor, valueExpression, expectedType);
 			getDynamicViewValue = proxyTypeResult.Value;
-			valueNodeProviderFactory.GetMemberCollections(getDynamicViewValue.Type, evalOptions, out membersCollection, out _);
+			valueNodeProviderFactory.GetMemberCollections(getDynamicViewValue!.Type, evalOptions, out membersCollection, out _);
 			return null;
 		}
 
@@ -100,12 +100,12 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		string GetRequiredAssemblyFilename(DbgRuntime runtime) =>
 			"Microsoft.CSharp.dll";
 
-		protected override (DbgDotNetValueNode node, bool canHide) CreateValueNode(DbgEvaluationInfo evalInfo, int index, DbgValueNodeEvaluationOptions options, ReadOnlyCollection<string> formatSpecifiers) =>
-			CreateValueNode(evalInfo, false, getDynamicViewValue.Type, getDynamicViewValue, index, options, dynamicViewProxyExpression, formatSpecifiers);
+		protected override (DbgDotNetValueNode node, bool canHide) CreateValueNode(DbgEvaluationInfo evalInfo, int index, DbgValueNodeEvaluationOptions options, ReadOnlyCollection<string>? formatSpecifiers) =>
+			CreateValueNode(evalInfo, false, getDynamicViewValue!.Type, getDynamicViewValue, index, options, dynamicViewProxyExpression, formatSpecifiers);
 
-		protected override (DbgDotNetValueNode node, bool canHide) TryCreateInstanceValueNode(DbgEvaluationInfo evalInfo, DbgDotNetValueResult valueResult) {
+		protected override (DbgDotNetValueNode? node, bool canHide) TryCreateInstanceValueNode(DbgEvaluationInfo evalInfo, DbgDotNetValueResult valueResult) {
 			var noResultsNode = DebugViewNoResultsValueNode.TryCreate(evalInfo, Expression, valueResult);
-			if (noResultsNode != null) {
+			if (!(noResultsNode is null)) {
 				valueResult.Value?.Dispose();
 				return (noResultsNode, false);
 			}

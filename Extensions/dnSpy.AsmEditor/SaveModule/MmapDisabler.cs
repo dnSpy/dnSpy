@@ -58,13 +58,13 @@ namespace dnSpy.AsmEditor.SaveModule {
 			}
 			foreach (var uo in undoCommandService.Value.GetAllObjects()) {
 				var f = DsDocumentUndoableDocumentsProvider.TryGetDocument(uo);
-				if (f != null)
+				if (!(f is null))
 					yield return f;
 			}
 		}
 
-		static void DisableMemoryMappedIO(HashSet<string> filenames, IPEImage peImage) {
-			if (peImage != null && filenames.Contains(peImage.Filename))
+		static void DisableMemoryMappedIO(HashSet<string> filenames, IPEImage? peImage) {
+			if (!(peImage is null) && filenames.Contains(peImage.Filename))
 				MemoryMappedIOHelper.DisableMemoryMappedIO(peImage);
 		}
 	}

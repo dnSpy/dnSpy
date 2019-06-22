@@ -48,7 +48,7 @@ namespace dnSpy.Hex.Formatting {
 				if (!hexView.Roles.ContainsAny(lz.Metadata.TextViewRoles))
 					continue;
 				var source = lz.Value.Create(hexView);
-				if (source != null)
+				if (!(source is null))
 					list.Add(source);
 			}
 			return new HexLineTransformProviderImpl(list.ToArray(), removeExtraTextLineVerticalPixels);

@@ -36,7 +36,7 @@ namespace dnSpy.Decompiler.MSBuild {
 
 			paramTypes = new Type[] { typeof(string), typeof(Func<Type, string>) };
 			ctorInfo = typeof(ResXResourceWriter).GetConstructor(paramTypes);
-			if (ctorInfo != null) {
+			if (!(ctorInfo is null)) {
 				var dynMethod = new DynamicMethod("ResXResourceWriter-ctor", typeof(ResXResourceWriter), paramTypes);
 				var ilg = dynMethod.GetILGenerator();
 				ilg.Emit(OpCodes.Ldarg_0);
@@ -48,7 +48,7 @@ namespace dnSpy.Decompiler.MSBuild {
 
 			paramTypes = new Type[] { typeof(string), typeof(object), typeof(Func<Type, string>) };
 			ctorInfo = typeof(ResXDataNode).GetConstructor(paramTypes);
-			if (ctorInfo != null) {
+			if (!(ctorInfo is null)) {
 				var dynMethod = new DynamicMethod("ResXDataNode-ctor", typeof(ResXDataNode), paramTypes);
 				var ilg = dynMethod.GetILGenerator();
 				ilg.Emit(OpCodes.Ldarg_0);
@@ -113,10 +113,10 @@ namespace dnSpy.Decompiler.MSBuild {
 					var iter = reader.GetEnumerator();
 					while (iter.MoveNext()) {
 						ctx.CancellationToken.ThrowIfCancellationRequested();
-						string key = null;
+						string? key = null;
 						try {
 							key = iter.Key as string;
-							if (key == null)
+							if (key is null)
 								continue;
 							var value = iter.Value;
 							// ResXDataNode ctor checks if the input is serializable, which this stream isn't.

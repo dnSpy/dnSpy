@@ -26,7 +26,7 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// Gets the created module or null if none has been created
 		/// </summary>
-		public CorModuleDef CorModuleDef { get; internal set; }
+		public CorModuleDef? CorModuleDef { get; internal set; }
 
 		/// <summary>
 		/// Returns the created module or creates one if none has been created
@@ -34,11 +34,11 @@ namespace dndbg.Engine {
 		/// <returns></returns>
 		public CorModuleDef GetOrCreateCorModuleDef() {
 			Debugger.DebugVerifyThread();
-			if (CorModuleDef != null)
+			if (!(CorModuleDef is null))
 				return CorModuleDef;
 
 			Assembly.InitializeAssemblyAndModules();
-			Debug.Assert(CorModuleDef != null);
+			Debug.Assert(!(CorModuleDef is null));
 			return CorModuleDef;
 		}
 

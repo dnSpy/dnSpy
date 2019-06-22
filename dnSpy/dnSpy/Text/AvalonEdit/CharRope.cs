@@ -33,7 +33,7 @@ namespace dnSpy.Text.AvalonEdit {
 		/// This method counts as a read access and may be called concurrently to other read accesses.
 		/// </remarks>
 		public static string ToString(this Rope<char> rope, int startIndex, int length) {
-			if (rope == null)
+			if (rope is null)
 				throw new ArgumentNullException("rope");
 #if DEBUG
 			if (length < 0)
@@ -55,9 +55,9 @@ namespace dnSpy.Text.AvalonEdit {
 		/// This method counts as a read access and may be called concurrently to other read accesses.
 		/// </remarks>
 		public static void WriteTo(this Rope<char> rope, TextWriter output, int startIndex, int length) {
-			if (rope == null)
+			if (rope is null)
 				throw new ArgumentNullException("rope");
-			if (output == null)
+			if (output is null)
 				throw new ArgumentNullException("output");
 			rope.VerifyRange(startIndex, length);
 			rope.root.WriteTo(startIndex, output, length);
@@ -70,7 +70,7 @@ namespace dnSpy.Text.AvalonEdit {
 		/// <exception cref="ArgumentNullException">newElements is null.</exception>
 		/// <exception cref="ArgumentOutOfRangeException">index or length is outside the valid range.</exception>
 		public static void InsertText(this Rope<char> rope, int index, string text) {
-			if (rope == null)
+			if (rope is null)
 				throw new ArgumentNullException("rope");
 			rope.InsertRange(index, text.ToCharArray(), 0, text.Length);
 		}
@@ -85,7 +85,7 @@ namespace dnSpy.Text.AvalonEdit {
 		}
 
 		static void FillNode(RopeNode<char> node, string text, int start) {
-			if (node.contents != null) {
+			if (!(node.contents is null)) {
 				text.CopyTo(start, node.contents, 0, node.length);
 			}
 			else {
@@ -96,7 +96,7 @@ namespace dnSpy.Text.AvalonEdit {
 
 		internal static void WriteTo(this RopeNode<char> node, int index, TextWriter output, int count) {
 			if (node.height == 0) {
-				if (node.contents == null) {
+				if (node.contents is null) {
 					// function node
 					node.GetContentNode().WriteTo(index, output, count);
 				}
@@ -130,9 +130,9 @@ namespace dnSpy.Text.AvalonEdit {
 		/// <param name="length">Length of the area to search.</param>
 		/// <returns>The first index where any character was found; or -1 if no occurrence was found.</returns>
 		public static int IndexOfAny(this Rope<char> rope, char[] anyOf, int startIndex, int length) {
-			if (rope == null)
+			if (rope is null)
 				throw new ArgumentNullException("rope");
-			if (anyOf == null)
+			if (anyOf is null)
 				throw new ArgumentNullException("anyOf");
 			rope.VerifyRange(startIndex, length);
 

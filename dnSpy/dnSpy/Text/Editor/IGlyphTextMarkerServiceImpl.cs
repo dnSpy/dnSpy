@@ -65,9 +65,9 @@ namespace dnSpy.Text.Editor {
 	sealed class GetGlyphTextMarkerAndSpanEventArgs : EventArgs {
 		public ITextView TextView { get; }
 		public SnapshotSpan Span { get; }
-		public GlyphTextMarkerAndSpan[] Result { get; set; }
+		public GlyphTextMarkerAndSpan[]? Result { get; set; }
 		public GetGlyphTextMarkerAndSpanEventArgs(ITextView textView, SnapshotSpan span) {
-			if (span.Snapshot == null)
+			if (span.Snapshot is null)
 				throw new ArgumentException();
 			TextView = textView ?? throw new ArgumentNullException(nameof(textView));
 			Span = span;
@@ -79,7 +79,7 @@ namespace dnSpy.Text.Editor {
 		public SnapshotSpan Span { get; }
 		public GlyphTextMarkerAndSpan? Result { get; set; }
 		public GetFirstGlyphTextMarkerAndSpanEventArgs(ITextView textView, SnapshotSpan span) {
-			if (span.Snapshot == null)
+			if (span.Snapshot is null)
 				throw new ArgumentException();
 			TextView = textView ?? throw new ArgumentNullException(nameof(textView));
 			Span = span;

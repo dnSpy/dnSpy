@@ -43,7 +43,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 		}
 
 		public DecompilerProvider(DecompilerSettingsService decompilerSettingsService) {
-			Debug.Assert(decompilerSettingsService != null);
+			Debug.Assert(!(decompilerSettingsService is null));
 			this.decompilerSettingsService = decompilerSettingsService ?? throw new ArgumentNullException(nameof(decompilerSettingsService));
 		}
 
@@ -56,7 +56,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 	/// Decompiler logic for VB.
 	/// </summary>
 	sealed class VBDecompiler : DecompilerBase {
-		readonly Predicate<IAstTransform> transformAbortCondition = null;
+		readonly Predicate<IAstTransform>? transformAbortCondition = null;
 		readonly bool showAllMembers = false;
 		readonly Func<BuilderCache> createBuilderCache;
 
@@ -77,7 +77,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 		public override Guid GenericGuid => DecompilerConstants.LANGUAGE_VISUALBASIC;
 		public override Guid UniqueGuid => DecompilerConstants.LANGUAGE_VISUALBASIC_ILSPY;
 		public override string FileExtension => ".vb";
-		public override string ProjectFileExtension => ".vbproj";
+		public override string? ProjectFileExtension => ".vbproj";
 
 		public override void WriteCommentBegin(IDecompilerOutput output, bool addSpace) {
 			if (addSpace)
@@ -187,10 +187,10 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 
 		public override bool ShowMember(IMemberRef member) => CSharpDecompiler.ShowMember(member, showAllMembers, GetDecompilerSettings());
 
-		void RunTransformsAndGenerateCode(ref BuilderState state, IDecompilerOutput output, DecompilationContext ctx, IAstTransform additionalTransform = null) {
+		void RunTransformsAndGenerateCode(ref BuilderState state, IDecompilerOutput output, DecompilationContext ctx, IAstTransform? additionalTransform = null) {
 			var astBuilder = state.AstBuilder;
 			astBuilder.RunTransformations(transformAbortCondition);
-			if (additionalTransform != null) {
+			if (!(additionalTransform is null)) {
 				additionalTransform.Run(astBuilder.SyntaxTree);
 			}
 			CSharpDecompiler.AddXmlDocumentation(ref state, GetDecompilerSettings(), astBuilder);
@@ -202,9 +202,9 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 			unit.AcceptVisitor(new OutputVisitor(outputFormatter, formattingPolicy), null);
 		}
 
-		BuilderState CreateAstBuilder(DecompilationContext ctx, DecompilerSettings settings, ModuleDef currentModule = null, TypeDef currentType = null, bool isSingleMember = false) {
-			if (currentModule == null)
-				currentModule = currentType.Module;
+		BuilderState CreateAstBuilder(DecompilationContext ctx, DecompilerSettings settings, ModuleDef? currentModule = null, TypeDef? currentType = null, bool isSingleMember = false) {
+			if (currentModule is null)
+				currentModule = currentType?.Module;
 			settings = settings.Clone();
 			if (isSingleMember)
 				settings.UsingDeclarations = false;
@@ -222,13 +222,13 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 		}
 
 		protected override void FormatTypeName(IDecompilerOutput output, TypeDef type) {
-			if (type == null)
+			if (type is null)
 				throw new ArgumentNullException(nameof(type));
 
 			TypeToString(output, ConvertTypeOptions.DoNotUsePrimitiveTypeNames | ConvertTypeOptions.IncludeTypeParameterDefinitions | ConvertTypeOptions.DoNotIncludeEnclosingType, type);
 		}
 
-		protected override void TypeToString(IDecompilerOutput output, ITypeDefOrRef type, bool includeNamespace, IHasCustomAttribute typeAttributes = null) {
+		protected override void TypeToString(IDecompilerOutput output, ITypeDefOrRef? type, bool includeNamespace, IHasCustomAttribute? typeAttributes = null) {
 			ConvertTypeOptions options = ConvertTypeOptions.IncludeTypeParameterDefinitions;
 			if (includeNamespace)
 				options |= ConvertTypeOptions.IncludeNamespace;
@@ -236,12 +236,14 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 			TypeToString(output, options, type, typeAttributes);
 		}
 
-		void TypeToString(IDecompilerOutput output, ConvertTypeOptions options, ITypeDefOrRef type, IHasCustomAttribute typeAttributes = null) {
+		void TypeToString(IDecompilerOutput output, ConvertTypeOptions options, ITypeDefOrRef? type, IHasCustomAttribute? typeAttributes = null) {
+			if (type is null)
+				return;
 			var envProvider = new ILSpyEnvironmentProvider();
 			var converter = new CSharpToVBConverterVisitor(type.Module, envProvider);
 			var astType = AstBuilder.ConvertType(type, new StringBuilder(), typeAttributes, options);
 
-			if (type.TryGetByRefSig() != null) {
+			if (!(type.TryGetByRefSig() is null)) {
 				output.Write("ByRef", BoxedTextColor.Keyword);
 				output.Write(" ", BoxedTextColor.Text);
 				if (astType is ICSharpCode.NRefactory.CSharp.ComposedType && ((ICSharpCode.NRefactory.CSharp.ComposedType)astType).PointerRank > 0)
@@ -312,11 +314,11 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 			}
 		}
 
-		public override void WriteToolTip(ITextColorWriter output, IMemberRef member, IHasCustomAttribute typeAttributes) =>
+		public override void WriteToolTip(ITextColorWriter output, IMemberRef member, IHasCustomAttribute? typeAttributes) =>
 			new VisualBasicFormatter(output, DefaultFormatterOptions, null).WriteToolTip(member);
 		public override void WriteToolTip(ITextColorWriter output, ISourceVariable variable) =>
 			new VisualBasicFormatter(output, DefaultFormatterOptions, null).WriteToolTip(variable);
-		public override void WriteNamespaceToolTip(ITextColorWriter output, string @namespace) =>
+		public override void WriteNamespaceToolTip(ITextColorWriter output, string? @namespace) =>
 			new VisualBasicFormatter(output, DefaultFormatterOptions, null).WriteNamespaceToolTip(@namespace);
 		public override void Write(ITextColorWriter output, IMemberRef member, FormatterOptions flags) =>
 			new VisualBasicFormatter(output, flags, null).Write(member);

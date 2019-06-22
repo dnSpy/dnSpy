@@ -25,7 +25,7 @@ using Microsoft.VisualStudio.Text.Editor;
 namespace dnSpy.AsmEditor.Compiler {
 	[ExportCommandTargetFilterProvider(CommandTargetFilterOrder.EditCode)]
 	sealed class ReplCommandTargetFilterProvider : ICommandTargetFilterProvider {
-		public ICommandTargetFilter Create(object target) {
+		public ICommandTargetFilter? Create(object target) {
 			var textView = target as ITextView;
 			if (textView?.Roles.Contains(PredefinedDsTextViewRoles.CodeEditor) != true)
 				return null;
@@ -39,13 +39,12 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		public EditCodeCommandTargetFilter(ITextView textView) => this.textView = textView;
 
-		EditCodeVM TryGetInstance() =>
-			__editCodeVM ?? (__editCodeVM = EditCodeVM.TryGet(textView));
-		EditCodeVM __editCodeVM;
+		EditCodeVM TryGetInstance() => __editCodeVM ??= EditCodeVM.TryGet(textView);
+		EditCodeVM? __editCodeVM;
 
 		public CommandTargetStatus CanExecute(Guid group, int cmdId) {
 			var vm = TryGetInstance();
-			if (vm == null)
+			if (vm is null)
 				return CommandTargetStatus.NotHandled;
 
 			if (group == EditCodeCommandConstants.EditCodeGroup) {
@@ -60,14 +59,14 @@ namespace dnSpy.AsmEditor.Compiler {
 			return CommandTargetStatus.NotHandled;
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args = null) {
-			object result = null;
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args = null) {
+			object? result = null;
 			return Execute(group, cmdId, args, ref result);
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) {
 			var vm = TryGetInstance();
-			if (vm == null)
+			if (vm is null)
 				return CommandTargetStatus.NotHandled;
 
 			if (group == EditCodeCommandConstants.EditCodeGroup) {

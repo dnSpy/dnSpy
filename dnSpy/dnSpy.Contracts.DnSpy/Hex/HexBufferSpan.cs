@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// true if this is a default instance that hasn't been initialized
 		/// </summary>
-		public bool IsDefault => Buffer == null;
+		public bool IsDefault => Buffer is null;
 
 		/// <summary>
 		/// Gets the buffer
@@ -92,7 +92,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="start">Start position</param>
 		/// <param name="end">End position</param>
 		public HexBufferSpan(HexBufferPoint start, HexBufferPoint end) {
-			if (start.Buffer != end.Buffer || start.Buffer == null)
+			if (start.Buffer != end.Buffer || start.Buffer is null)
 				throw new ArgumentException();
 			if (end.Position < start.Position)
 				throw new ArgumentOutOfRangeException(nameof(end));
@@ -106,7 +106,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="start">Start point</param>
 		/// <param name="length">Length</param>
 		public HexBufferSpan(HexBufferPoint start, ulong length) {
-			if (start.Buffer == null)
+			if (start.Buffer is null)
 				throw new ArgumentException();
 			Buffer = start.Buffer;
 			Span = new HexSpan(start, length);
@@ -192,7 +192,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <returns></returns>
 		public HexBufferSpan? Overlap(HexSpan span) {
 			var res = Span.Overlap(span);
-			if (res == null)
+			if (res is null)
 				return null;
 			return new HexBufferSpan(Buffer, res.Value);
 		}
@@ -206,7 +206,7 @@ namespace dnSpy.Contracts.Hex {
 			if (span.Buffer != Buffer)
 				throw new ArgumentException();
 			var res = Span.Overlap(span.Span);
-			if (res == null)
+			if (res is null)
 				return null;
 			return new HexBufferSpan(Buffer, res.Value);
 		}
@@ -236,7 +236,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <returns></returns>
 		public HexBufferSpan? Intersection(HexSpan span) {
 			var res = Span.Intersection(span);
-			if (res == null)
+			if (res is null)
 				return null;
 			return new HexBufferSpan(Buffer, res.Value);
 		}
@@ -250,7 +250,7 @@ namespace dnSpy.Contracts.Hex {
 			if (span.Buffer != Buffer)
 				throw new ArgumentException();
 			var res = Span.Intersection(span.Span);
-			if (res == null)
+			if (res is null)
 				return null;
 			return new HexBufferSpan(Buffer, res.Value);
 		}
@@ -283,7 +283,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="obj">Object</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is HexBufferSpan && Equals((HexBufferSpan)obj);
+		public override bool Equals(object? obj) => obj is HexBufferSpan && Equals((HexBufferSpan)obj);
 
 		/// <summary>
 		/// GetHashCode()
@@ -296,7 +296,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <returns></returns>
 		public override string ToString() {
-			if (Buffer == null)
+			if (Buffer is null)
 				return "uninit";
 			const int maxBytes = 16;
 			const string ellipsis = "...";

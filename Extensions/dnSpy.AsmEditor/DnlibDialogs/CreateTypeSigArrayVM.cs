@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
@@ -47,19 +48,19 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public MyObservableCollection<TypeSig> TypeSigCollection { get; } = new MyObservableCollection<TypeSig>();
 		public TypeSigCreatorVM TypeSigCreator { get; }
 
-		public string Title {
+		public string? Title {
 			get {
 				if (!string.IsNullOrEmpty(title))
 					return title;
 				if (IsUnlimitedCount)
 					return dnSpy_AsmEditor_Resources.Create_TypeSigs;
-				else if (RequiredCount.Value == 1)
+				else if (RequiredCount!.Value == 1)
 					return dnSpy_AsmEditor_Resources.Create_TypeSig;
 				else
 					return string.Format(dnSpy_AsmEditor_Resources.Create_N_TypeSigs, RequiredCount.Value);
 			}
 		}
-		string title;
+		string? title;
 
 		public int? RequiredCount {
 			get => requiredCount;
@@ -76,9 +77,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		int? requiredCount;
 
-		public bool IsFiniteCount => RequiredCount != null;
-		public bool IsUnlimitedCount => RequiredCount == null;
-		public int NumberOfTypesLeft => RequiredCount == null ? -1 : RequiredCount.Value - TypeSigCollection.Count;
+		public bool IsFiniteCount => !(RequiredCount is null);
+		public bool IsUnlimitedCount => RequiredCount is null;
+		public int NumberOfTypesLeft => RequiredCount is null ? -1 : RequiredCount.Value - TypeSigCollection.Count;
 		public bool CanNotAddMore => !CanAddMore;
 		public bool CanAddMore => IsEnabled && (IsUnlimitedCount || NumberOfTypesLeft > 0);
 
@@ -113,6 +114,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			if (!AddCurrentCanExecute())
 				return;
 			var typeSig = TypeSigCreator.TypeSig;
+			Debug.Assert(!(typeSig is null));
 			TypeSigCollection.Add(typeSig);
 			TypeSigCollection.SelectedIndex = TypeSigCollection.Count - 1;
 			TypeSigCreator.TypeSig = null;
@@ -121,7 +123,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		bool AddCurrentCanExecute() =>
 			IsEnabled &&
 			(IsUnlimitedCount || NumberOfTypesLeft > 0) &&
-			TypeSigCreator.TypeSig != null;
+			!(TypeSigCreator.TypeSig is null);
 
 		public override bool HasError => !IsUnlimitedCount && NumberOfTypesLeft > 0;
 	}

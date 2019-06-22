@@ -38,7 +38,7 @@ namespace dnSpy.Hex.Files {
 
 		public SpanDataCollection() => spanDataList = new List<SpanData<TData>>();
 
-		public TData FindData(HexPosition position) {
+		public TData? FindData(HexPosition position) {
 			int index = GetStartIndex(position);
 			var list = spanDataList;
 			if (index < 0 || !list[index].Span.Contains(position))

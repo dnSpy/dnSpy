@@ -33,7 +33,7 @@ namespace dnSpy.Text.Editor {
 	[ContentType(ContentTypes.Text)]
 	[TextViewRole(PredefinedTextViewRoles.Interactive)]
 	sealed class HorizontalScrollBarMarginProvider : IWpfTextViewMarginProvider {
-		public IWpfTextViewMargin CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer) =>
+		public IWpfTextViewMargin? CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer) =>
 			new HorizontalScrollBarMargin(wpfTextViewHost);
 	}
 
@@ -59,7 +59,7 @@ namespace dnSpy.Text.Editor {
 
 		void UpdateVisibility() => Visibility = Enabled ? Visibility.Visible : Visibility.Collapsed;
 
-		public ITextViewMargin GetTextViewMargin(string marginName) =>
+		public ITextViewMargin? GetTextViewMargin(string marginName) =>
 			StringComparer.OrdinalIgnoreCase.Equals(PredefinedMarginNames.HorizontalScrollBar, marginName) ? this : null;
 
 		protected override void OnScroll(ScrollEventArgs e) {

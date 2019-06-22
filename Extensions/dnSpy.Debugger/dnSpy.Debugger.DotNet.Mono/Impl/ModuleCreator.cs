@@ -128,9 +128,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			}
 			else {
 				var manifestModule = engine.TryGetModule(monoModule.Assembly.ManifestModule);
-				if (manifestModule == null)
+				if (manifestModule is null)
 					throw new InvalidOperationException();
-				reflectionAssembly = ((DbgMonoDebugInternalModuleImpl)manifestModule.InternalModule).ReflectionModule.Assembly;
+				reflectionAssembly = ((DbgMonoDebugInternalModuleImpl)manifestModule.InternalModule).ReflectionModule!.Assembly;
 				reflectionModule = reflectionAppDomain.CreateModule(reflectionAssembly, getMetadata, isInMemory, isDynamic, fullyQualifiedName);
 			}
 
@@ -170,7 +170,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			var runtime = objectFactory.Runtime;
 			var filename = monoModule.FullyQualifiedName;
 			return () => {
-				DbgRawMetadata rawMd = null;
+				DbgRawMetadata? rawMd = null;
 				try {
 					if (moduleAddressTmp != 0 && moduleSizeTmp != 0)
 						rawMd = engine.RawMetadataService.Create(runtime, imageLayout == DbgImageLayout.File, moduleAddressTmp, (int)moduleSizeTmp);
@@ -203,11 +203,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			return s;
 		}
 
-		void InitializeExeFields(string filename, DbgImageLayout imageLayout, out bool isExe, out bool isDll, out DateTime? timestamp, out string version, out string assemblySimpleName) {
+		void InitializeExeFields(string filename, DbgImageLayout imageLayout, out bool isExe, out bool isDll, out DateTime? timestamp, out string version, out string? assemblySimpleName) {
 			isExe = false;
 			isDll = false;
 			timestamp = null;
-			version = null;
+			version = string.Empty;
 			assemblySimpleName = null;
 
 			if (isDynamic) {
@@ -218,7 +218,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				Debug.Assert(imageLayout == DbgImageLayout.File, nameof(GetFileVersion) + " assumes file layout");
 
 				var bytes = moduleSize == 0 ? null : engine.DbgRuntime.Process.ReadMemory(moduleAddress, (int)moduleSize);
-				if (bytes != null) {
+				if (!(bytes is null)) {
 					try {
 						version = GetFileVersion(bytes);
 						using (var peImage = new PEImage(bytes, imageLayout == DbgImageLayout.File ? ImageLayout.File : ImageLayout.Memory, true))
@@ -237,12 +237,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				catch {
 				}
 			}
-
-			if (version == null)
-				version = string.Empty;
 		}
 
-		static void InitializeExeFieldsFrom(IPEImage peImage, out bool isExe, out bool isDll, out DateTime? timestamp, ref string version, out string assemblySimpleName) {
+		static void InitializeExeFieldsFrom(IPEImage peImage, out bool isExe, out bool isDll, out DateTime? timestamp, ref string version, out string? assemblySimpleName) {
 			isExe = (peImage.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) == 0;
 			isDll = !isExe;
 
@@ -256,7 +253,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				if (string.IsNullOrEmpty(version)) {
 					using (var mod = ModuleDefMD.Load(peImage)) {
 						if (string.IsNullOrEmpty(version))
-							version = mod.Assembly?.Version.ToString();
+							version = mod.Assembly?.Version.ToString() ?? string.Empty;
 						assemblySimpleName = UTF8String.ToSystemString(mod.Assembly?.Name);
 					}
 				}
@@ -289,7 +286,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		}
 
 		static string GetFileVersion(byte[] bytes) {
-			string tempFilename = null;
+			string? tempFilename = null;
 			try {
 				tempFilename = Path.GetTempFileName();
 				File.WriteAllBytes(tempFilename, bytes);
@@ -299,7 +296,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			}
 			finally {
 				try {
-					if (tempFilename != null)
+					if (!(tempFilename is null))
 						File.Delete(tempFilename);
 				}
 				catch { }

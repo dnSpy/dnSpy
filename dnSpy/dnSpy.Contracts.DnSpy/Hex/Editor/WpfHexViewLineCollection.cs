@@ -78,7 +78,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="line">A line in this collection</param>
 		/// <param name="span">Text span</param>
 		/// <returns></returns>
-		public abstract Geometry GetLineMarkerGeometry(WpfHexViewLine line, VST.Span span);
+		public abstract Geometry? GetLineMarkerGeometry(WpfHexViewLine line, VST.Span span);
 
 		/// <summary>
 		/// Gets a line marker geometry
@@ -88,7 +88,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="clipToViewport">true to clip the geometry to the viewport</param>
 		/// <param name="padding">Padding to use</param>
 		/// <returns></returns>
-		public abstract Geometry GetLineMarkerGeometry(WpfHexViewLine line, VST.Span span, bool clipToViewport, Thickness padding);
+		public abstract Geometry? GetLineMarkerGeometry(WpfHexViewLine line, VST.Span span, bool clipToViewport, Thickness padding);
 
 		/// <summary>
 		/// Gets a text marker geometry
@@ -96,7 +96,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="line">A line in this collection</param>
 		/// <param name="span">Text span</param>
 		/// <returns></returns>
-		public abstract Geometry GetTextMarkerGeometry(WpfHexViewLine line, VST.Span span);
+		public abstract Geometry? GetTextMarkerGeometry(WpfHexViewLine line, VST.Span span);
 
 		/// <summary>
 		/// Gets a text marker geometry
@@ -106,7 +106,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="clipToViewport">true to clip the geometry to the viewport</param>
 		/// <param name="padding">Padding to use</param>
 		/// <returns></returns>
-		public abstract Geometry GetTextMarkerGeometry(WpfHexViewLine line, VST.Span span, bool clipToViewport, Thickness padding);
+		public abstract Geometry? GetTextMarkerGeometry(WpfHexViewLine line, VST.Span span, bool clipToViewport, Thickness padding);
 
 		/// <summary>
 		/// Gets a line marker geometry
@@ -114,7 +114,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="bufferSpan">Span</param>
 		/// <param name="flags">Flags</param>
 		/// <returns></returns>
-		public abstract Geometry GetLineMarkerGeometry(HexBufferSpan bufferSpan, HexSpanSelectionFlags flags);
+		public abstract Geometry? GetLineMarkerGeometry(HexBufferSpan bufferSpan, HexSpanSelectionFlags flags);
 
 		/// <summary>
 		/// Gets a line marker geometry
@@ -124,7 +124,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="clipToViewport">true to clip the geometry to the viewport</param>
 		/// <param name="padding">Padding to use</param>
 		/// <returns></returns>
-		public abstract Geometry GetLineMarkerGeometry(HexBufferSpan bufferSpan, HexSpanSelectionFlags flags, bool clipToViewport, Thickness padding);
+		public abstract Geometry? GetLineMarkerGeometry(HexBufferSpan bufferSpan, HexSpanSelectionFlags flags, bool clipToViewport, Thickness padding);
 
 		/// <summary>
 		/// Gets a marker geometry
@@ -132,7 +132,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="bufferSpan">Span</param>
 		/// <param name="flags">Flags</param>
 		/// <returns></returns>
-		public abstract Geometry GetMarkerGeometry(HexBufferSpan bufferSpan, HexSpanSelectionFlags flags);
+		public abstract Geometry? GetMarkerGeometry(HexBufferSpan bufferSpan, HexSpanSelectionFlags flags);
 
 		/// <summary>
 		/// Gets a marker geometry
@@ -142,7 +142,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="clipToViewport">true to clip the geometry to the viewport</param>
 		/// <param name="padding">Padding to use</param>
 		/// <returns></returns>
-		public abstract Geometry GetMarkerGeometry(HexBufferSpan bufferSpan, HexSpanSelectionFlags flags, bool clipToViewport, Thickness padding);
+		public abstract Geometry? GetMarkerGeometry(HexBufferSpan bufferSpan, HexSpanSelectionFlags flags, bool clipToViewport, Thickness padding);
 
 		/// <summary>
 		/// Gets a text marker geometry
@@ -150,7 +150,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="bufferSpan">Span</param>
 		/// <param name="flags">Flags</param>
 		/// <returns></returns>
-		public abstract Geometry GetTextMarkerGeometry(HexBufferSpan bufferSpan, HexSpanSelectionFlags flags);
+		public abstract Geometry? GetTextMarkerGeometry(HexBufferSpan bufferSpan, HexSpanSelectionFlags flags);
 
 		/// <summary>
 		/// Gets a text marker geometry
@@ -160,13 +160,13 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="clipToViewport">true to clip the geometry to the viewport</param>
 		/// <param name="padding">Padding to use</param>
 		/// <returns></returns>
-		public abstract Geometry GetTextMarkerGeometry(HexBufferSpan bufferSpan, HexSpanSelectionFlags flags, bool clipToViewport, Thickness padding);
+		public abstract Geometry? GetTextMarkerGeometry(HexBufferSpan bufferSpan, HexSpanSelectionFlags flags, bool clipToViewport, Thickness padding);
 
 		/// <summary>
 		/// Gets the line containing <paramref name="bufferPosition"/>
 		/// </summary>
 		/// <param name="bufferPosition">Buffer position</param>
 		/// <returns></returns>
-		public abstract WpfHexViewLine GetWpfHexViewLineContainingBufferPosition(HexBufferPoint bufferPosition);
+		public abstract WpfHexViewLine? GetWpfHexViewLineContainingBufferPosition(HexBufferPoint bufferPosition);
 	}
 }

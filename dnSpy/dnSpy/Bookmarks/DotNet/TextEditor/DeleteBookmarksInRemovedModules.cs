@@ -34,7 +34,7 @@ namespace dnSpy.Bookmarks.DotNet.TextEditor {
 		readonly UIDispatcher uiDispatcher;
 		readonly Lazy<IDocumentTabService> documentTabService;
 		readonly Lazy<IModuleIdProvider> moduleIdProvider;
-		BookmarksService bookmarksService;
+		BookmarksService? bookmarksService;
 
 		[ImportingConstructor]
 		DeleteBookmarksInRemovedModules(UIDispatcher uiDispatcher, Lazy<IDocumentTabService> documentTabService, Lazy<IModuleIdProvider> moduleIdProvider) {
@@ -54,8 +54,8 @@ namespace dnSpy.Bookmarks.DotNet.TextEditor {
 		}
 
 		void DocumentTabService_FileCollectionChanged(object sender, NotifyDocumentCollectionChangedEventArgs e) {
-			Debug.Assert(bookmarksService != null);
-			if (bookmarksService == null)
+			Debug.Assert(!(bookmarksService is null));
+			if (bookmarksService is null)
 				return;
 			switch (e.Type) {
 			case NotifyDocumentCollectionType.Clear:
@@ -64,7 +64,7 @@ namespace dnSpy.Bookmarks.DotNet.TextEditor {
 				var removed = new HashSet<ModuleId>(e.Documents.Select(a => moduleIdProvider.Value.Create(a.ModuleDef)));
 				existing.Remove(new ModuleId());
 				removed.Remove(new ModuleId());
-				List<Bookmark> bookmarksToRemove = null;
+				List<Bookmark>? bookmarksToRemove = null;
 				foreach (var bm in bookmarksService.Bookmarks) {
 					if (!(bm.Location is IDotNetBookmarkLocation loc))
 						continue;
@@ -80,12 +80,12 @@ namespace dnSpy.Bookmarks.DotNet.TextEditor {
 						continue;
 
 					if (removed.Contains(loc.Module)) {
-						if (bookmarksToRemove == null)
+						if (bookmarksToRemove is null)
 							bookmarksToRemove = new List<Bookmark>();
 						bookmarksToRemove.Add(bm);
 					}
 				}
-				if (bookmarksToRemove != null)
+				if (!(bookmarksToRemove is null))
 					bookmarksService.Remove(bookmarksToRemove.ToArray());
 				break;
 

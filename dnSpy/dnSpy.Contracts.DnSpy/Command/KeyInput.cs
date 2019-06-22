@@ -50,7 +50,7 @@ namespace dnSpy.Contracts.Command {
 		public static bool operator ==(KeyInput a, KeyInput b) => a.Equals(b);
 		public static bool operator !=(KeyInput a, KeyInput b) => !a.Equals(b);
 		public bool Equals(KeyInput other) => Key == other.Key && Modifiers == other.Modifiers;
-		public override bool Equals(object obj) => obj is KeyInput && Equals((KeyInput)obj);
+		public override bool Equals(object? obj) => obj is KeyInput && Equals((KeyInput)obj);
 		public override int GetHashCode() => ((int)Key).GetHashCode() ^ ((int)Modifiers).GetHashCode();
 		public override string ToString() => Modifiers == ModifierKeys.None ? GetKeyName() : $"{GetModifiers()}+{GetKeyName()}";
 

@@ -41,7 +41,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		public static ResourceTypeCodeData Create(HexBufferSpan span) {
 			var pos = span.Start.Position;
 			var value = Utils.Read7BitEncodedInt32(span.Buffer, ref pos);
-			if (value == null || value.Value < (int)ResourceTypeCode.UserTypes)
+			if (value is null || value.Value < (int)ResourceTypeCode.UserTypes)
 				return new KnownResourceTypeCodeData(span);
 			return new UserTypeResourceTypeCodeData(span);
 		}
@@ -88,7 +88,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		public override void WriteValue(HexFieldFormatter formatter) {
 			var pos = Span.Start.Position;
 			var value = Utils.Read7BitEncodedInt32(Span.Buffer, ref pos);
-			if (value == null)
+			if (value is null)
 				formatter.WriteUnknownValue();
 			else
 				formatter.WriteEnum((ulong)value.Value, typeCodeEnumFieldInfos);
@@ -114,7 +114,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		public override void WriteValue(HexFieldFormatter formatter) {
 			var pos = Span.Start.Position;
 			var value = Utils.Read7BitEncodedInt32(Span.Buffer, ref pos);
-			if (value == null || value.Value < (int)ResourceTypeCode.UserTypes)
+			if (value is null || value.Value < (int)ResourceTypeCode.UserTypes)
 				formatter.WriteUnknownValue();
 			else
 				formatter.Write("UserType" + (value.Value - (int)ResourceTypeCode.UserTypes).ToString(), PredefinedClassifiedTextTags.EnumField);

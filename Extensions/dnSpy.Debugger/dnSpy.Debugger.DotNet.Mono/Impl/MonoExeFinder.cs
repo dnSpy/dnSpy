@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		const string MONO_PROGRAM_FILES_DIR = "Mono";
 		const string MONO_PROGRAM_FILES_DIR_BIN = "bin";
 
-		public static string Find(MonoExeOptions options) {
+		public static string? Find(MonoExeOptions options) {
 			if ((options & (MonoExeOptions.Prefer32 | MonoExeOptions.Prefer64)) == 0) {
 				if (IntPtr.Size == 4)
 					options |= MonoExeOptions.Prefer32;
@@ -40,25 +40,25 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 			Find(options, out var mono32, out var mono64);
 
-			if ((options & MonoExeOptions.Prefer32) != 0 && (options & MonoExeOptions.Debug32) != 0 && mono32 != null)
+			if ((options & MonoExeOptions.Prefer32) != 0 && (options & MonoExeOptions.Debug32) != 0 && !(mono32 is null))
 				return mono32;
-			if ((options & MonoExeOptions.Prefer64) != 0 && (options & MonoExeOptions.Debug64) != 0 && mono64 != null)
+			if ((options & MonoExeOptions.Prefer64) != 0 && (options & MonoExeOptions.Debug64) != 0 && !(mono64 is null))
 				return mono64;
 
-			if ((options & MonoExeOptions.Debug32) != 0 && mono32 != null)
+			if ((options & MonoExeOptions.Debug32) != 0 && !(mono32 is null))
 				return mono32;
-			if ((options & MonoExeOptions.Debug64) != 0 && mono64 != null)
+			if ((options & MonoExeOptions.Debug64) != 0 && !(mono64 is null))
 				return mono64;
 
 			return null;
 		}
 
-		static void Find(MonoExeOptions options, out string mono32, out string mono64) {
+		static void Find(MonoExeOptions options, out string? mono32, out string? mono64) {
 			mono32 = null;
 			mono64 = null;
 			foreach (var dir in GetDirectories()) {
-				bool has32 = mono32 != null || (options & MonoExeOptions.Debug32) == 0;
-				bool has64 = mono64 != null || (options & MonoExeOptions.Debug64) == 0;
+				bool has32 = !(mono32 is null) || (options & MonoExeOptions.Debug32) == 0;
+				bool has64 = !(mono64 is null) || (options & MonoExeOptions.Debug64) == 0;
 				if (has32 && has64)
 					break;
 				if (!Directory.Exists(dir))
@@ -69,12 +69,12 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 						continue;
 					switch (FileUtilities.GetNativeFileBitness(file)) {
 					case 32:
-						if (mono32 == null)
+						if (mono32 is null)
 							mono32 = file;
 						break;
 
 					case 64:
-						if (mono64 == null)
+						if (mono64 is null)
 							mono64 = file;
 						break;
 					}

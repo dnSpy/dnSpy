@@ -26,7 +26,7 @@ namespace dnSpy.Debugger.UI.Wpf {
 	/// Contains enough information to create a new text block to show in the UI. A new text block
 	/// isn't created if the new <see cref="TextBlockContentInfo"/> is identical to the old instance.
 	/// </summary>
-	sealed class TextBlockContentInfo : IEquatable<TextBlockContentInfo> {
+	sealed class TextBlockContentInfo : IEquatable<TextBlockContentInfo?> {
 		public ITextElementFactory TextElementFactory { get; }
 		/// <summary>
 		/// Version number. It's incremented when the theme has changed to make sure the UI element is regenerated.
@@ -62,17 +62,17 @@ namespace dnSpy.Debugger.UI.Wpf {
 			Opacity = opacity;
 		}
 
-		public static bool operator !=(TextBlockContentInfo left, TextBlockContentInfo right) => !(left == right);
-		public static bool operator ==(TextBlockContentInfo left, TextBlockContentInfo right) {
-			if ((object)left == right)
+		public static bool operator !=(TextBlockContentInfo? left, TextBlockContentInfo? right) => !(left == right);
+		public static bool operator ==(TextBlockContentInfo? left, TextBlockContentInfo? right) {
+			if ((object?)left == right)
 				return true;
-			if ((object)left == null)
+			if (left is null)
 				return false;
 			return left.Equals(right);
 		}
 
-		public bool Equals(TextBlockContentInfo other) =>
-			other != null &&
+		public bool Equals(TextBlockContentInfo? other) =>
+			!(other is null) &&
 			TextElementFactory == other.TextElementFactory &&
 			Version == other.Version &&
 			ClassificationFormatMap == other.ClassificationFormatMap &&
@@ -84,7 +84,7 @@ namespace dnSpy.Debugger.UI.Wpf {
 		static bool CompareTags(TextClassificationTag[] a, TextClassificationTag[] b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (a.Length != b.Length)
 				return false;
@@ -97,7 +97,7 @@ namespace dnSpy.Debugger.UI.Wpf {
 			return true;
 		}
 
-		public override bool Equals(object obj) => Equals(obj as TextBlockContentInfo);
+		public override bool Equals(object? obj) => Equals(obj as TextBlockContentInfo);
 
 		public override int GetHashCode() {
 			int hc = 0;

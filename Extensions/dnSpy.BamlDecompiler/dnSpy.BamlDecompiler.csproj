@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <Import Project="..\..\DnSpyCommon.props" />
 
@@ -15,13 +15,6 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(IsDotNetFramework)' == 'true' ">
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="WindowsBase" />
-  </ItemGroup>
-
   <ItemGroup>
     <Compile Remove="Baml\KnownThings.gen.cs" />
     <None Include="Baml\KnownThings.gen.cs" />
@@ -32,13 +25,6 @@
     <ProjectReference Include="..\..\dnSpy\dnSpy.Contracts.Logic\dnSpy.Contracts.Logic.csproj" />
     <ProjectReference Include="..\ILSpy.Decompiler\ICSharpCode.Decompiler\ICSharpCode.Decompiler\ICSharpCode.Decompiler.csproj" />
     <ProjectReference Include="..\..\dnSpy\dnSpy.Decompiler\dnSpy.Decompiler.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Include="BamlSettings.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
   </ItemGroup>
 
   <ItemGroup>

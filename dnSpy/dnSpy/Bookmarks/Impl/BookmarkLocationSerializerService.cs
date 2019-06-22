@@ -28,7 +28,7 @@ using dnSpy.Contracts.Settings;
 namespace dnSpy.Bookmarks.Impl {
 	abstract class BookmarkLocationSerializerService {
 		public abstract void Serialize(ISettingsSection section, BookmarkLocation location);
-		public abstract BookmarkLocation Deserialize(ISettingsSection section);
+		public abstract BookmarkLocation? Deserialize(ISettingsSection? section);
 	}
 
 	[Export(typeof(BookmarkLocationSerializerService))]
@@ -39,7 +39,7 @@ namespace dnSpy.Bookmarks.Impl {
 		BookmarkLocationSerializerServiceImpl([ImportMany] IEnumerable<Lazy<BookmarkLocationSerializer, IBookmarkLocationSerializerMetadata>> bookmarkLocationSerializers) =>
 			this.bookmarkLocationSerializers = bookmarkLocationSerializers.ToArray();
 
-		Lazy<BookmarkLocationSerializer, IBookmarkLocationSerializerMetadata> TryGetSerializer(string type) {
+		Lazy<BookmarkLocationSerializer, IBookmarkLocationSerializerMetadata>? TryGetSerializer(string type) {
 			foreach (var lz in bookmarkLocationSerializers) {
 				if (Array.IndexOf(lz.Metadata.Types, type) >= 0)
 					return lz;
@@ -48,32 +48,32 @@ namespace dnSpy.Bookmarks.Impl {
 		}
 
 		public override void Serialize(ISettingsSection section, BookmarkLocation location) {
-			if (section == null)
+			if (section is null)
 				throw new ArgumentNullException(nameof(section));
-			if (location == null)
+			if (location is null)
 				throw new ArgumentNullException(nameof(location));
 
 			var bmType = location.Type;
 			var serializer = TryGetSerializer(bmType);
-			Debug.Assert(serializer != null);
-			if (serializer == null)
+			Debug.Assert(!(serializer is null));
+			if (serializer is null)
 				return;
 
 			section.Attribute("__BMT", bmType);
 			serializer.Value.Serialize(section, location);
 		}
 
-		public override BookmarkLocation Deserialize(ISettingsSection section) {
-			if (section == null)
+		public override BookmarkLocation? Deserialize(ISettingsSection? section) {
+			if (section is null)
 				return null;
 
 			var typeFullName = section.Attribute<string>("__BMT");
-			Debug.Assert(typeFullName != null);
-			if (typeFullName == null)
+			Debug.Assert(!(typeFullName is null));
+			if (typeFullName is null)
 				return null;
 			var serializer = TryGetSerializer(typeFullName);
-			Debug.Assert(serializer != null);
-			if (serializer == null)
+			Debug.Assert(!(serializer is null));
+			if (serializer is null)
 				return null;
 
 			return serializer.Value.Deserialize(section);

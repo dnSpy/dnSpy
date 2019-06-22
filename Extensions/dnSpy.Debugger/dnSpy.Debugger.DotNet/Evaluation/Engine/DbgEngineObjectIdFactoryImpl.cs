@@ -30,22 +30,22 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public override bool CanCreateObjectId(DbgEngineValue value) {
 			var dnValue = ((DbgEngineValueImpl)value).DotNetValue;
 			var runtime = dnValue.TryGetDotNetRuntime();
-			if (runtime == null)
+			if (runtime is null)
 				return false;
 			if ((runtime.Features & DbgDotNetRuntimeFeatures.ObjectIds) == 0)
 				return false;
 			return runtime.CanCreateObjectId(dnValue);
 		}
 
-		public override DbgEngineObjectId CreateObjectId(DbgEngineValue value, uint id) {
+		public override DbgEngineObjectId? CreateObjectId(DbgEngineValue value, uint id) {
 			var dnValue = ((DbgEngineValueImpl)value).DotNetValue;
 			var runtime = dnValue.TryGetDotNetRuntime();
-			if (runtime == null)
+			if (runtime is null)
 				return null;
 			if ((runtime.Features & DbgDotNetRuntimeFeatures.ObjectIds) == 0)
 				return null;
 			var objectId = runtime.CreateObjectId(dnValue, id);
-			if (objectId == null)
+			if (objectId is null)
 				return null;
 			try {
 				return new DbgEngineObjectIdImpl(runtime, objectId);
@@ -60,7 +60,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			var dnObjectId = ((DbgEngineObjectIdImpl)objectId).DotNetObjectId;
 			var dnValue = ((DbgEngineValueImpl)value).DotNetValue;
 			var runtime = dnValue.TryGetDotNetRuntime();
-			if (runtime == null)
+			if (runtime is null)
 				return false;
 			if ((runtime.Features & DbgDotNetRuntimeFeatures.ObjectIds) == 0)
 				return false;
@@ -78,7 +78,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public override int GetHashCode(DbgEngineValue value) {
 			var dnValue = ((DbgEngineValueImpl)value).DotNetValue;
 			var runtime = dnValue.TryGetDotNetRuntime();
-			if (runtime == null)
+			if (runtime is null)
 				return 0;
 			if ((runtime.Features & DbgDotNetRuntimeFeatures.ObjectIds) == 0)
 				return 0;

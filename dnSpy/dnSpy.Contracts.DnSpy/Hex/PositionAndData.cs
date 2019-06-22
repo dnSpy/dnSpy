@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// true if this is a default instance that hasn't been initialized
 		/// </summary>
-		public bool IsDefault => Data == null;
+		public bool IsDefault => Data is null;
 
 		/// <summary>
 		/// Gets the position

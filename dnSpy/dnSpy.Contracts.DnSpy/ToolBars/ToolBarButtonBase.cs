@@ -31,10 +31,10 @@ namespace dnSpy.Contracts.ToolBars {
 		/// <inheritdoc/>
 		public virtual bool IsVisible(IToolBarItemContext context) => true;
 		/// <inheritdoc/>
-		public virtual string GetHeader(IToolBarItemContext context) => null;
+		public virtual string? GetHeader(IToolBarItemContext context) => null;
 		/// <inheritdoc/>
 		public virtual ImageReference? GetIcon(IToolBarItemContext context) => null;
 		/// <inheritdoc/>
-		public virtual string GetToolTip(IToolBarItemContext context) => null;
+		public virtual string? GetToolTip(IToolBarItemContext context) => null;
 	}
 }

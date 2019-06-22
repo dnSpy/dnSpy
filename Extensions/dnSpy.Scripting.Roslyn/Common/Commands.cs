@@ -41,13 +41,13 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		protected sealed override object CachedContextKey => ContextKey;
 		static readonly object ContextKey = new object();
 
-		protected sealed override ReplEditorCtxMenuContext CreateContext(IMenuItemContext context) => CreateContextInternal(context);
+		protected sealed override ReplEditorCtxMenuContext? CreateContext(IMenuItemContext context) => CreateContextInternal(context);
 
-		internal static ReplEditorCtxMenuContext CreateContextInternal(IMenuItemContext context) {
+		internal static ReplEditorCtxMenuContext? CreateContextInternal(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_REPL_TEXTEDITORCONTROL_GUID))
 				return null;
 			var ui = context.Find<IReplEditor>();
-			if (ui == null)
+			if (ui is null)
 				return null;
 
 			return new ReplEditorCtxMenuContext(ui);
@@ -58,13 +58,13 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		protected sealed override object CachedContextKey => ContextKey;
 		static readonly object ContextKey = new object();
 
-		protected sealed override ReplEditorCtxMenuContext CreateContext(IMenuItemContext context) => CreateContextInternal(context);
+		protected sealed override ReplEditorCtxMenuContext? CreateContext(IMenuItemContext context) => CreateContextInternal(context);
 
-		internal static ReplEditorCtxMenuContext CreateContextInternal(IMenuItemContext context) {
+		internal static ReplEditorCtxMenuContext? CreateContextInternal(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_REPL_TEXTEDITORCONTROL_GUID))
 				return null;
 			var ui = context.Find<IReplEditor>();
-			if (ui == null)
+			if (ui is null)
 				return null;
 
 			return new ReplEditorCtxMenuContext(ui);
@@ -86,7 +86,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			: base(RoslynReplCommandConstants.RoslynReplGroup, (int)cmdId) {
 		}
 
-		protected sealed override ICommandTarget GetCommandTarget(ReplEditorCtxMenuContext context) => context.VM.ReplEditor.CommandTarget;
+		protected sealed override ICommandTarget? GetCommandTarget(ReplEditorCtxMenuContext context) => context.VM.ReplEditor.CommandTarget;
 	}
 
 	[ExportMenuItem(Header = "res:Script_ToolTip_Reset", Icon = DsImagesAttribute.Restart, Group = MenuConstants.GROUP_CTX_REPL_RESET, Order = 0)]

@@ -23,10 +23,10 @@ using System.Windows.Data;
 
 namespace dnSpy.Language.Intellisense {
 	sealed class FilterToolTipConverter : IMultiValueConverter {
-		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
+		public object? Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
 			var filterVM = (FilterVM)values[0];
 			var presenter = (CompletionPresenter)values[1];
-			if (filterVM == null || presenter == null)
+			if (filterVM is null || presenter is null)
 				return null;
 			return presenter.GetToolTip(filterVM);
 		}

@@ -31,7 +31,7 @@ namespace dnSpy.Hex.Intellisense {
 		public override event EventHandler ApplicableToSpanChanged;
 		public override bool TrackMouse { get; }
 		public override HexView HexView { get; }
-		public override HexIntellisensePresenter Presenter => quickInfoPresenter;
+		public override HexIntellisensePresenter? Presenter => quickInfoPresenter;
 		public override HexCellPosition TriggerPoint { get; }
 		public override event EventHandler PresenterChanged;
 		public override event EventHandler Recalculated;
@@ -54,8 +54,8 @@ namespace dnSpy.Hex.Intellisense {
 
 		readonly Lazy<HexQuickInfoSourceProvider, VSUTIL.IOrderable>[] quickInfoSourceProviders;
 		readonly HexIntellisensePresenterFactoryService intellisensePresenterFactoryService;
-		HexQuickInfoSource[] quickInfoSources;
-		HexIntellisensePresenter quickInfoPresenter;
+		HexQuickInfoSource[]? quickInfoSources;
+		HexIntellisensePresenter? quickInfoPresenter;
 
 		public HexQuickInfoSessionImpl(HexView hexView, HexCellPosition triggerPoint, bool trackMouse, HexIntellisensePresenterFactoryService intellisensePresenterFactoryService, Lazy<HexQuickInfoSourceProvider, VSUTIL.IOrderable>[] quickInfoSourceProviders) {
 			if (triggerPoint.IsDefault)
@@ -75,11 +75,11 @@ namespace dnSpy.Hex.Intellisense {
 		}
 
 		HexQuickInfoSource[] CreateQuickInfoSources() {
-			List<HexQuickInfoSource> list = null;
+			List<HexQuickInfoSource>? list = null;
 			foreach (var provider in quickInfoSourceProviders) {
 				var source = provider.Value.TryCreateQuickInfoSource(HexView);
-				if (source != null) {
-					if (list == null)
+				if (!(source is null)) {
+					if (list is null)
 						list = new List<HexQuickInfoSource>();
 					list.Add(source);
 				}
@@ -88,7 +88,7 @@ namespace dnSpy.Hex.Intellisense {
 		}
 
 		void DisposeQuickInfoSources() {
-			if (quickInfoSources != null) {
+			if (!(quickInfoSources is null)) {
 				foreach (var source in quickInfoSources)
 					source.Dispose();
 				quickInfoSources = null;
@@ -131,9 +131,9 @@ namespace dnSpy.Hex.Intellisense {
 
 				hasInteractiveContent = CalculateHasInteractiveContent();
 				SetApplicableToSpan(applicableToSpan);
-				if (quickInfoPresenter == null) {
+				if (quickInfoPresenter is null) {
 					quickInfoPresenter = intellisensePresenterFactoryService.TryCreateIntellisensePresenter(this);
-					if (quickInfoPresenter == null) {
+					if (quickInfoPresenter is null) {
 						Dismiss();
 						return;
 					}

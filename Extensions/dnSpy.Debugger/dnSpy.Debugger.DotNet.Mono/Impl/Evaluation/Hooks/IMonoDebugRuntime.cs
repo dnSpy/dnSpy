@@ -23,8 +23,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation.Hooks {
 	}
 
 	interface IMonoDebugValueConverter {
-		char ToChar(object value);
-		int ToInt32(object value);
-		char[] ToCharArray(object value);
+		char ToChar(object? value);
+		int ToInt32(object? value);
+		char[]? ToCharArray(object? value);
 	}
 }

@@ -102,7 +102,7 @@ namespace dnSpy.Hex.Commands {
 			Reinitialize();
 		}
 
-		public LocalGroupOptions TryGetLocalGroupOptions() {
+		public LocalGroupOptions? TryGetLocalGroupOptions() {
 			var options = new LocalGroupOptions();
 			options.ShowOffsetColumn = ShowOffsetColumn;
 			options.ShowValuesColumn = ShowValuesColumn;
@@ -120,7 +120,7 @@ namespace dnSpy.Hex.Commands {
 			if (OffsetBitSizeVM.HasError)
 				return null;
 			options.OffsetBitSize = OffsetBitSizeVM.Value;
-			options.HexValuesDisplayFormat = (HexValuesDisplayFormat)HexValuesDisplayFormatVM.SelectedItem;
+			options.HexValuesDisplayFormat = (HexValuesDisplayFormat)HexValuesDisplayFormatVM.SelectedItem!;
 			if (BytesPerLineVM.HasError)
 				return null;
 			options.BytesPerLine = BytesPerLineVM.Value;

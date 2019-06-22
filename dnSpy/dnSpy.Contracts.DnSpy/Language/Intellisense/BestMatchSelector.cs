@@ -83,12 +83,12 @@ namespace dnSpy.Contracts.Language.Intellisense {
 			Nothing = int.MaxValue,
 		}
 
-		public Completion Result => bestCompletion;
+		public Completion? Result => bestCompletion;
 
 		readonly string searchText;
 		MatchPriority matchPriority;
-		Completion bestCompletion;
-		readonly int[] acronymMatchIndexes;
+		Completion? bestCompletion;
+		readonly int[]? acronymMatchIndexes;
 
 		public BestMatchSelector(string searchText) {
 			this.searchText = searchText ?? throw new ArgumentNullException(nameof(searchText));
@@ -117,15 +117,15 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		MatchPriority GetMatchPriority(Completion completion) {
 			var filterText = completion.TryGetFilterText();
-			Debug.Assert(filterText != null);
-			if (filterText == null)
+			Debug.Assert(!(filterText is null));
+			if (filterText is null)
 				return MatchPriority.Other;
 
 			if (filterText.Equals(searchText, StringComparison.CurrentCulture))
 				return MatchPriority.Full;
 
-			bool matchedAcronym = acronymMatchIndexes != null && AcronymSearchHelpers.TryUpdateAcronymIndexes(acronymMatchIndexes, searchText, filterText);
-			if (matchedAcronym && CountUpperCaseLetters(filterText) == acronymMatchIndexes.Length)
+			bool matchedAcronym = !(acronymMatchIndexes is null) && AcronymSearchHelpers.TryUpdateAcronymIndexes(acronymMatchIndexes, searchText, filterText);
+			if (matchedAcronym && CountUpperCaseLetters(filterText) == acronymMatchIndexes!.Length)
 				return MatchPriority.FullAcronym;
 
 			if (filterText.Equals(searchText, StringComparison.CurrentCultureIgnoreCase))
@@ -135,7 +135,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 			if (index == 0)
 				return MatchPriority.Start;
 
-			if (matchedAcronym && acronymMatchIndexes[0] == 0)
+			if (matchedAcronym && acronymMatchIndexes![0] == 0)
 				return MatchPriority.StartAcronym;
 
 			int indexIgnoringCase = filterText.IndexOf(searchText, StringComparison.CurrentCultureIgnoreCase);

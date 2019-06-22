@@ -51,7 +51,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 
 		public override ulong GetChildCount(DbgEvaluationInfo evalInfo) => (uint)tupleFields.Length;
 
-		public override DbgDotNetValueNode[] GetChildren(LanguageValueNodeFactory valueNodeFactory, DbgEvaluationInfo evalInfo, ulong index, int count, DbgValueNodeEvaluationOptions options, ReadOnlyCollection<string> formatSpecifiers) {
+		public override DbgDotNetValueNode[] GetChildren(LanguageValueNodeFactory valueNodeFactory, DbgEvaluationInfo evalInfo, ulong index, int count, DbgValueNodeEvaluationOptions options, ReadOnlyCollection<string>? formatSpecifiers) {
 			var runtime = evalInfo.Runtime.GetDotNetRuntime();
 			var res = count == 0 ? Array.Empty<DbgDotNetValueNode>() : new DbgDotNetValueNode[count];
 			var valueResults = new List<DbgDotNetValueResult>();
@@ -67,12 +67,12 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 					var expectedType = info.Fields[info.Fields.Length - 1].FieldType;
 
 					var objValue = nodeInfo.Value;
-					string errorMessage = null;
+					string? errorMessage = null;
 					bool valueIsException = false;
 					for (int j = 0; j < info.Fields.Length; j++) {
 						evalInfo.CancellationToken.ThrowIfCancellationRequested();
 						valueResult = runtime.LoadField(evalInfo, objValue, info.Fields[j]);
-						objValue = valueResult.Value;
+						objValue = valueResult.Value!;
 						if (valueResult.HasError) {
 							valueResults.Add(valueResult);
 							errorMessage = valueResult.ErrorMessage;
@@ -91,7 +91,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 
 					var name = new DbgDotNetText(new DbgDotNetTextPart(DbgTextColor.InstanceField, info.DefaultName));
 					DbgDotNetValueNode newNode;
-					if (errorMessage != null)
+					if (!(errorMessage is null))
 						newNode = valueNodeFactory.CreateError(evalInfo, name, errorMessage, expression, false);
 					else if (valueIsException)
 						newNode = valueNodeFactory.Create(evalInfo, name, objValue, formatSpecifiers, options, expression, PredefinedDbgValueNodeImageNames.Error, true, false, expectedType, false);
@@ -105,7 +105,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 				}
 			}
 			catch {
-				evalInfo.Runtime.Process.DbgManager.Close(res.Where(a => a != null));
+				evalInfo.Runtime.Process.DbgManager.Close(res.Where(a => !(a is null)));
 				foreach (var vr in valueResults)
 					vr.Value?.Dispose();
 				valueResult.Value?.Dispose();

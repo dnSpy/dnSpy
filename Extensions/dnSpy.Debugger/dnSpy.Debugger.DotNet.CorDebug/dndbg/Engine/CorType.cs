@@ -23,17 +23,17 @@ using dndbg.COM.CorDebug;
 using dndbg.COM.MetaData;
 
 namespace dndbg.Engine {
-	sealed class CorType : COMObject<ICorDebugType>, IEquatable<CorType> {
+	sealed class CorType : COMObject<ICorDebugType>, IEquatable<CorType?> {
 		public CorElementType ElementType => elemType;
 		readonly CorElementType elemType;
 
 		public uint Rank => rank;
 		readonly uint rank;
 
-		public CorType FirstTypeParameter {
+		public CorType? FirstTypeParameter {
 			get {
 				int hr = obj.GetFirstTypeParameter(out var type);
-				return hr < 0 || type == null ? null : new CorType(type);
+				return hr < 0 || type is null ? null : new CorType(type);
 			}
 		}
 
@@ -44,7 +44,7 @@ namespace dndbg.Engine {
 					yield break;
 				for (;;) {
 					hr = typeEnum.Next(1, out var type, out uint count);
-					if (hr != 0 || type == null)
+					if (hr != 0 || type is null)
 						break;
 					yield return new CorType(type);
 				}
@@ -53,16 +53,16 @@ namespace dndbg.Engine {
 
 		public bool HasClass => ElementType == CorElementType.Class || ElementType == CorElementType.ValueType;
 
-		public CorClass Class {
+		public CorClass? Class {
 			get {
 				int hr = obj.GetClass(out var cls);
-				return hr < 0 || cls == null ? null : new CorClass(cls);
+				return hr < 0 || cls is null ? null : new CorClass(cls);
 			}
 		}
 
-		internal IMetaDataImport MetaDataImport => GetMetaDataImport(out uint token);
+		internal IMetaDataImport? MetaDataImport => GetMetaDataImport(out uint token);
 
-		internal IMetaDataImport GetMetaDataImport(out uint token) {
+		internal IMetaDataImport? GetMetaDataImport(out uint token) {
 			var cls = Class;
 			var mdi = cls?.Module?.GetMetaDataInterface<IMetaDataImport>();
 			token = cls?.Token ?? 0;
@@ -80,22 +80,13 @@ namespace dndbg.Engine {
 				rank = 0;
 		}
 
-		public CorValue GetStaticFieldValue(uint token, CorFrame frame, out int hr) {
+		public CorValue? GetStaticFieldValue(uint token, CorFrame frame, out int hr) {
 			hr = obj.GetStaticFieldValue(token, frame?.RawObject, out var value);
-			return hr < 0 || value == null ? null : new CorValue(value);
+			return hr < 0 || value is null ? null : new CorValue(value);
 		}
 
-		public static bool operator ==(CorType a, CorType b) {
-			if (ReferenceEquals(a, b))
-				return true;
-			if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
-				return false;
-			return a.Equals(b);
-		}
-
-		public static bool operator !=(CorType a, CorType b) => !(a == b);
-		public bool Equals(CorType other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
-		public override bool Equals(object obj) => Equals(obj as CorType);
+		public bool Equals(CorType? other) => !(other is null) && RawObject == other.RawObject;
+		public override bool Equals(object? obj) => Equals(obj as CorType);
 		public override int GetHashCode() => RawObject.GetHashCode();
 	}
 }

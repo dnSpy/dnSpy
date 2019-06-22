@@ -24,7 +24,7 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 	static class SyntheticValueFactory {
-		public static DbgDotNetValue TryCreateSyntheticValue(DmdType type, object constant) {
+		public static DbgDotNetValue? TryCreateSyntheticValue(DmdType type, object? constant) {
 			switch (DmdType.GetTypeCode(type)) {
 			case TypeCode.Boolean:
 				if (constant is bool)
@@ -87,7 +87,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 				break;
 
 			case TypeCode.String:
-				if (constant is string || constant == null)
+				if (constant is string || constant is null)
 					return new SyntheticValue(type, new DbgDotNetRawValue(DbgSimpleValueType.StringUtf16, constant));
 				break;
 
@@ -114,7 +114,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 							return new SyntheticValue(type, new DbgDotNetRawValue(DbgSimpleValueType.Ptr64, ((UIntPtr)constant).ToUInt64()));
 					}
 				}
-				else if (constant == null && !type.IsValueType)
+				else if (constant is null && !type.IsValueType)
 					return new SyntheticNullValue(type);
 				break;
 			}
@@ -138,7 +138,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		public override DmdType Type { get; }
 		public override bool IsNull => true;
 
-		public SyntheticNullValue(DmdType type) =>
+		public SyntheticNullValue(DmdType? type) =>
 			Type = type ?? throw new ArgumentNullException(nameof(type));
 
 		public override DbgDotNetRawValue GetRawValue() => new DbgDotNetRawValue(DbgSimpleValueType.Other, null);

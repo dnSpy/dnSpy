@@ -39,7 +39,7 @@ namespace dnSpy.Contracts.Debugger.CallStack {
 		/// <summary>
 		/// Gets the AppDomain or null if it's unknown
 		/// </summary>
-		public DbgAppDomain AppDomain => Module?.AppDomain ?? Thread.AppDomain;
+		public DbgAppDomain? AppDomain => Module?.AppDomain ?? Thread.AppDomain;
 
 		/// <summary>
 		/// Gets the thread
@@ -50,12 +50,12 @@ namespace dnSpy.Contracts.Debugger.CallStack {
 		/// Gets the location or null if none. Can be passed to <see cref="ReferenceNavigatorService.GoTo(object, object[])"/>
 		/// or can be used to create a breakpoint if you call <see cref="DbgCodeLocation.Clone"/>
 		/// </summary>
-		public abstract DbgCodeLocation Location { get; }
+		public abstract DbgCodeLocation? Location { get; }
 
 		/// <summary>
 		/// Gets the module or null if it's unknown
 		/// </summary>
-		public abstract DbgModule Module { get; }
+		public abstract DbgModule? Module { get; }
 
 		/// <summary>
 		/// Gets the flags

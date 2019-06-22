@@ -24,8 +24,8 @@ using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.Editor {
 	static class WpfTextViewExtensions {
-		public static TextEditorPosition GetTextEditorPosition(this IWpfTextView textView, bool openedFromKeyboard) {
-			if (textView == null)
+		public static TextEditorPosition? GetTextEditorPosition(this IWpfTextView textView, bool openedFromKeyboard) {
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			if (openedFromKeyboard)
 				return GetTextEditorPosition(textView);
@@ -33,12 +33,12 @@ namespace dnSpy.Text.Editor {
 		}
 
 		static TextEditorPosition GetTextEditorPosition(ITextView textView) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			return new TextEditorPosition(textView.Caret.Position.VirtualBufferPosition);
 		}
 
-		static TextEditorPosition GetTextEditorPositionFromMouse(IWpfTextView textView) {
+		static TextEditorPosition? GetTextEditorPositionFromMouse(IWpfTextView textView) {
 			if (!textView.VisualElement.IsVisible)
 				return null;
 			var loc = MouseLocation.Create(textView, new MouseEventArgs(Mouse.PrimaryDevice, 0), insertionPosition: true);

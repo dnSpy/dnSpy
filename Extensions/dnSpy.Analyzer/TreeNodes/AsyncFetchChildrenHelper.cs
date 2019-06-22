@@ -45,8 +45,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 					return 0;
 				var a = x as MessageNode;
 				var b = y as MessageNode;
-				if (a == null) return -1;
-				if (b == null) return 1;
+				if (a is null) return -1;
+				if (b is null) return 1;
 				return 0;
 			}
 		}
@@ -54,9 +54,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 		sealed class MessageNode : TreeNodeData {
 			public override Guid Guid => Guid.Empty;
 			public override ImageReference Icon => DsImages.Search;
-			public override object ToolTip => null;
+			public override object? ToolTip => null;
 			public override void OnRefreshUI() { }
-			public override ITreeNodeGroup TreeNodeGroup => treeNodeGroup;
+			public override ITreeNodeGroup? TreeNodeGroup => treeNodeGroup;
 			readonly ITreeNodeGroup treeNodeGroup = new MessageNodeTreeNodeGroup();
 
 			readonly IAnalyzerTreeNodeDataContext context;
@@ -69,7 +69,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				public static void FreeWriter(TextClassifierTextColorWriter writer) => writer.Clear();
 			}
 
-			public override object Text {
+			public override object? Text {
 				get {
 					var writer = Cache.GetWriter();
 					try {

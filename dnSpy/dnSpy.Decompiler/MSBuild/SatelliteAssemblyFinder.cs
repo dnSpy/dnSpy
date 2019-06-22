@@ -27,18 +27,18 @@ using dnlib.DotNet;
 namespace dnSpy.Decompiler.MSBuild {
 	sealed class SatelliteAssemblyFinder : IDisposable {
 		readonly HashSet<string> cultures;
-		readonly Dictionary<string, ModuleDef> openedModules;
+		readonly Dictionary<string, ModuleDef?> openedModules;
 
 		public SatelliteAssemblyFinder() {
 			cultures = new HashSet<string>(CultureInfo.GetCultures(CultureTypes.AllCultures).Select(a => a.Name), StringComparer.OrdinalIgnoreCase);
-			openedModules = new Dictionary<string, ModuleDef>(StringComparer.OrdinalIgnoreCase);
+			openedModules = new Dictionary<string, ModuleDef?>(StringComparer.OrdinalIgnoreCase);
 		}
 
 		bool IsValidCulture(string name) => !string.IsNullOrEmpty(name) && cultures.Contains(name);
 
 		public IEnumerable<ModuleDef> GetSatelliteAssemblies(ModuleDef module) {
 			var asm = module.Assembly;
-			if (asm == null)
+			if (asm is null)
 				yield break;
 			var satAsmName = new AssemblyNameInfo(asm);
 			satAsmName.Name = asm.Name + ".resources";
@@ -46,7 +46,7 @@ namespace dnSpy.Decompiler.MSBuild {
 				if (!File.Exists(filename))
 					continue;
 				var satAsm = TryOpenAssembly(filename);
-				if (satAsm == null || !AssemblyNameComparer.NameAndPublicKeyTokenOnly.Equals(satAsmName, satAsm))
+				if (satAsm is null || !AssemblyNameComparer.NameAndPublicKeyTokenOnly.Equals(satAsmName, satAsm))
 					continue;
 				yield return satAsm.ManifestModule;
 			}
@@ -90,16 +90,16 @@ namespace dnSpy.Decompiler.MSBuild {
 			return Array.Empty<string>();
 		}
 
-		AssemblyDef TryOpenAssembly(string filename) {
+		AssemblyDef? TryOpenAssembly(string filename) {
 			lock (openedModules) {
 				if (openedModules.TryGetValue(filename, out var mod))
-					return mod.Assembly;
+					return mod?.Assembly;
 				openedModules[filename] = null;
 				if (!File.Exists(filename))
 					return null;
 				try {
 					mod = ModuleDefMD.Load(filename);
-					if (mod.Assembly == null || UTF8String.IsNullOrEmpty(mod.Assembly.Culture)) {
+					if (mod.Assembly is null || UTF8String.IsNullOrEmpty(mod.Assembly.Culture)) {
 						mod.Dispose();
 						return null;
 					}
@@ -114,7 +114,7 @@ namespace dnSpy.Decompiler.MSBuild {
 
 		public void Dispose() {
 			foreach (var mod in openedModules.Values)
-				mod.Dispose();
+				mod?.Dispose();
 		}
 	}
 }

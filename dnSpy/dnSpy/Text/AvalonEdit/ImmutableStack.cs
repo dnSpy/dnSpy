@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -79,7 +80,7 @@ namespace dnSpy.Text.AvalonEdit {
 		/// <summary>
 		/// Gets if this stack is empty.
 		/// </summary>
-		public bool IsEmpty => next == null;
+		public bool IsEmpty => next is null;
 
 		/// <summary>
 		/// Gets an enumerator that iterates through the stack top-to-bottom.

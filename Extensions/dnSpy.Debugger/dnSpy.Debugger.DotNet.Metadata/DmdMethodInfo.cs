@@ -27,7 +27,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
 	/// A .NET method
 	/// </summary>
-	public abstract class DmdMethodInfo : DmdMethodBase, IEquatable<DmdMethodInfo> {
+	public abstract class DmdMethodInfo : DmdMethodBase, IEquatable<DmdMethodInfo?> {
 		/// <summary>
 		/// Gets the member type
 		/// </summary>
@@ -38,33 +38,33 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
 		/// <returns></returns>
-		public sealed override DmdMemberInfo ResolveMember(bool throwOnError) => Resolve(throwOnError);
+		public sealed override DmdMemberInfo? ResolveMember(bool throwOnError) => Resolve(throwOnError);
 
 		/// <summary>
 		/// Resolves a method reference
 		/// </summary>
 		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
 		/// <returns></returns>
-		public sealed override DmdMethodBase ResolveMethodBase(bool throwOnError) => Resolve(throwOnError);
+		public sealed override DmdMethodBase? ResolveMethodBase(bool throwOnError) => Resolve(throwOnError);
 
 		/// <summary>
 		/// Resolves a method reference and throws if it doesn't exist
 		/// </summary>
 		/// <returns></returns>
-		public DmdMethodInfo Resolve() => Resolve(throwOnError: true);
+		public DmdMethodInfo Resolve() => Resolve(throwOnError: true)!;
 
 		/// <summary>
 		/// Resolves a method reference and returns null if it doesn't exist
 		/// </summary>
 		/// <returns></returns>
-		public DmdMethodInfo ResolveNoThrow() => Resolve(throwOnError: false);
+		public DmdMethodInfo? ResolveNoThrow() => Resolve(throwOnError: false);
 
 		/// <summary>
 		/// Resolves a method reference
 		/// </summary>
 		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
 		/// <returns></returns>
-		public abstract DmdMethodInfo Resolve(bool throwOnError);
+		public abstract DmdMethodInfo? Resolve(bool throwOnError);
 
 		/// <summary>
 		/// Gets the return type
@@ -86,7 +86,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		public override bool ContainsGenericParameters {
 			get {
-				if (DeclaringType.ContainsGenericParameters)
+				if (DeclaringType!.ContainsGenericParameters)
 					return true;
 				if (!IsGenericMethod)
 					return false;
@@ -105,16 +105,16 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public DmdMethodInfo GetBaseDefinition() {
 			if (!IsVirtual && !IsAbstract)
 				return this;
-			if (DeclaringType.IsInterface)
+			if (DeclaringType!.IsInterface)
 				return this;
 			var method = this;
 			for (;;) {
 				var parentMethod = method.GetParentDefinition();
-				if ((object)parentMethod == null) {
-					Debug.Assert((object)ReflectedType == method.ReflectedType);
-					if ((object)method.DeclaringType == method.ReflectedType)
+				if (parentMethod is null) {
+					Debug.Assert((object?)ReflectedType == method.ReflectedType);
+					if ((object?)method.DeclaringType == method.ReflectedType)
 						return method;
-					return method.DeclaringType.GetMethod(method.Module, method.MetadataToken) as DmdMethodInfo ?? throw new InvalidOperationException();
+					return method.DeclaringType!.GetMethod(method.Module, method.MetadataToken) as DmdMethodInfo ?? throw new InvalidOperationException();
 				}
 				method = parentMethod;
 			}
@@ -124,7 +124,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Gets the parent method
 		/// </summary>
 		/// <returns></returns>
-		internal abstract DmdMethodInfo GetParentDefinition();
+		internal abstract DmdMethodInfo? GetParentDefinition();
 
 		/// <summary>
 		/// Gets all generic arguments if it's a generic method
@@ -164,7 +164,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="typeArguments">Generic arguments</param>
 		/// <returns></returns>
-		public DmdMethodInfo MakeGenericMethod(IList<Type> typeArguments) => MakeGenericMethod(typeArguments.ToDmdType(AppDomain));
+		public DmdMethodInfo MakeGenericMethod(IList<Type> typeArguments) => MakeGenericMethod(typeArguments.ToDmdTypeNoNull(AppDomain));
 
 		/// <summary>
 		/// Checks if a custom attribute is present
@@ -180,7 +180,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="attributeType">Custom attribute type</param>
 		/// <param name="inherit">true to check custom attributes in all base classes</param>
 		/// <returns></returns>
-		public sealed override bool IsDefined(DmdType attributeType, bool inherit) => CustomAttributesHelper.IsDefined(this, attributeType, inherit);
+		public sealed override bool IsDefined(DmdType? attributeType, bool inherit) => CustomAttributesHelper.IsDefined(this, attributeType, inherit);
 
 		/// <summary>
 		/// Finds a custom attribute
@@ -188,7 +188,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="attributeTypeFullName">Full name of the custom attribute type</param>
 		/// <param name="inherit">true to check custom attributes in all base classes</param>
 		/// <returns></returns>
-		public sealed override DmdCustomAttributeData FindCustomAttribute(string attributeTypeFullName, bool inherit) => CustomAttributesHelper.Find(this, attributeTypeFullName, inherit);
+		public sealed override DmdCustomAttributeData? FindCustomAttribute(string attributeTypeFullName, bool inherit) => CustomAttributesHelper.Find(this, attributeTypeFullName, inherit);
 
 		/// <summary>
 		/// Finds a custom attribute
@@ -196,11 +196,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="attributeType">Custom attribute type</param>
 		/// <param name="inherit">true to check custom attributes in all base classes</param>
 		/// <returns></returns>
-		public sealed override DmdCustomAttributeData FindCustomAttribute(DmdType attributeType, bool inherit) => CustomAttributesHelper.Find(this, attributeType, inherit);
+		public sealed override DmdCustomAttributeData? FindCustomAttribute(DmdType? attributeType, bool inherit) => CustomAttributesHelper.Find(this, attributeType, inherit);
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-		public static bool operator ==(DmdMethodInfo left, DmdMethodInfo right) => DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
-		public static bool operator !=(DmdMethodInfo left, DmdMethodInfo right) => !DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
+		public static bool operator ==(DmdMethodInfo? left, DmdMethodInfo? right) => DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
+		public static bool operator !=(DmdMethodInfo? left, DmdMethodInfo? right) => !DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
@@ -208,14 +208,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		public bool Equals(DmdMethodInfo other) => DmdMemberInfoEqualityComparer.DefaultMember.Equals(this, other);
+		public bool Equals(DmdMethodInfo? other) => DmdMemberInfoEqualityComparer.DefaultMember.Equals(this, other);
 
 		/// <summary>
 		/// Equals()
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => Equals(obj as DmdMethodInfo);
+		public override bool Equals(object? obj) => Equals(obj as DmdMethodInfo);
 
 		/// <summary>
 		/// GetHashCode()

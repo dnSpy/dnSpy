@@ -33,9 +33,9 @@ using dnSpy.Contracts.Search;
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class SecurityAttributeVM : ViewModelBase {
 		public IDnlibTypePicker DnlibTypePicker {
-			set { dnlibTypePicker = value; }
+			set => dnlibTypePicker = value;
 		}
-		IDnlibTypePicker dnlibTypePicker;
+		IDnlibTypePicker? dnlibTypePicker;
 
 		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
 		public ICommand PickAttributeTypeCommand => new RelayCommand(a => PickAttributeType());
@@ -43,7 +43,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public string FullName {
 			get {
 				var sb = new StringBuilder();
-				sb.Append(AttributeType == null ? "<<<null>>>" : AttributeType.FullName);
+				sb.Append(AttributeType is null ? "<<<null>>>" : AttributeType.FullName);
 				sb.Append('(');
 				bool first = true;
 				foreach (var namedArg in CANamedArgumentsVM.Collection) {
@@ -57,7 +57,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			}
 		}
 
-		public ITypeDefOrRef AttributeType {
+		public ITypeDefOrRef? AttributeType {
 			get => attributeType;
 			set {
 				if (attributeType != value) {
@@ -68,14 +68,14 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 			}
 		}
-		ITypeDefOrRef attributeType;
+		ITypeDefOrRef? attributeType;
 
 		public CANamedArgumentsVM CANamedArgumentsVM { get; }
 
 		readonly SecurityAttribute origSa;
 		readonly ModuleDef ownerModule;
 
-		public SecurityAttributeVM(SecurityAttribute sa, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType, MethodDef ownerMethod) {
+		public SecurityAttributeVM(SecurityAttribute sa, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef? ownerType, MethodDef? ownerMethod) {
 			origSa = sa;
 			this.ownerModule = ownerModule;
 			CANamedArgumentsVM = new CANamedArgumentsVM(ownerModule, decompilerService, ownerType, ownerMethod, a => {
@@ -94,11 +94,11 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		void Hook(NotifyCollectionChangedEventArgs e) {
-			if (e.OldItems != null) {
+			if (!(e.OldItems is null)) {
 				foreach (INotifyPropertyChanged i in e.OldItems)
 					i.PropertyChanged -= arg_PropertyChanged;
 			}
-			if (e.NewItems != null) {
+			if (!(e.NewItems is null)) {
 				foreach (INotifyPropertyChanged i in e.NewItems)
 					i.PropertyChanged += arg_PropertyChanged;
 			}
@@ -110,10 +110,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		void PickAttributeType() {
-			if (dnlibTypePicker == null)
+			if (dnlibTypePicker is null)
 				throw new InvalidOperationException();
 			var newAttrType = dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Type, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.TypeDef), AttributeType, ownerModule);
-			if (newAttrType != null)
+			if (!(newAttrType is null))
 				AttributeType = newAttrType;
 		}
 
@@ -130,6 +130,6 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			return sa;
 		}
 
-		public override bool HasError => AttributeType == null || CANamedArgumentsVM.Collection.Any(a => a.HasError);
+		public override bool HasError => AttributeType is null || CANamedArgumentsVM.Collection.Any(a => a.HasError);
 	}
 }

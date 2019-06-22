@@ -25,7 +25,7 @@ using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	static class DlgUtils {
-		public static string ValueToString(object value, TypeSig storageType) {
+		public static string ValueToString(object? value, TypeSig? storageType) {
 			var t = storageType.RemovePinnedAndModifiers();
 			bool addCast = t.GetElementType() == ElementType.Object;
 			if (t is SZArraySig)
@@ -35,8 +35,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		static string AddCast(string s, bool addCast, string cast) => addCast ? $"({cast}){s}" : s;
 
-		public static string ValueToString(object value, bool addCast) {
-			if (value == null)
+		public static string ValueToString(object? value, bool addCast) {
+			if (value is null)
 				return "null";
 
 			switch (ModelUtils.GetElementType(value.GetType())) {
@@ -94,7 +94,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		static string ArrayToString(object value, Type type) {
 			var list = value as System.Collections.IList;
-			if (list == null)
+			if (list is null)
 				return $"({type.FullName}[])null";
 
 			var sb = new StringBuilder();

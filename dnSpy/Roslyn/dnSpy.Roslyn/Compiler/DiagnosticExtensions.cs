@@ -31,7 +31,7 @@ namespace dnSpy.Roslyn.Compiler {
 				var severity = d.Severity.ToCompilerDiagnosticSeverity();
 				var description = d.GetMessage();
 				var id = d.Id;
-				string filename;
+				string? filename;
 				LineLocationSpan? lineLocationSpan;
 				if (d.Location.IsInSource) {
 					var pos = d.Location.GetLineSpan();

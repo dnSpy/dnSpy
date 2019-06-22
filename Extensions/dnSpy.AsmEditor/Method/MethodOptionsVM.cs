@@ -75,8 +75,8 @@ namespace dnSpy.AsmEditor.Method {
 				var mask = MethodImplAttributes.CodeTypeMask |
 							MethodImplAttributes.ManagedMask;
 				return (implAttributes & ~mask) |
-					(MethodImplAttributes)((int)(CodeType)CodeType.SelectedItem << 0) |
-					(MethodImplAttributes)((int)(ManagedType)ManagedType.SelectedItem << 2);
+					(MethodImplAttributes)((int)(CodeType)CodeType.SelectedItem! << 0) |
+					(MethodImplAttributes)((int)(ManagedType)ManagedType.SelectedItem! << 2);
 			}
 			set {
 				if (implAttributes != value) {
@@ -156,8 +156,8 @@ namespace dnSpy.AsmEditor.Method {
 				var mask = MethodAttributes.MemberAccessMask |
 							MethodAttributes.VtableLayoutMask;
 				return (attributes & ~mask) |
-					(MethodAttributes)((int)(MethodAccess)MethodAccess.SelectedItem << 0) |
-					(MethodAttributes)((int)(VtableLayout)VtableLayout.SelectedItem << 8);
+					(MethodAttributes)((int)(MethodAccess)MethodAccess.SelectedItem! << 0) |
+					(MethodAttributes)((int)(VtableLayout)VtableLayout.SelectedItem! << 8);
 			}
 			set {
 				if (attributes != value) {
@@ -254,7 +254,7 @@ namespace dnSpy.AsmEditor.Method {
 				Attributes &= ~flag;
 		}
 
-		public string Name {
+		public string? Name {
 			get => name;
 			set {
 				if (name != value) {
@@ -263,21 +263,21 @@ namespace dnSpy.AsmEditor.Method {
 				}
 			}
 		}
-		UTF8String name;
+		UTF8String? name;
 
-		public ImplMap ImplMap {
+		public ImplMap? ImplMap {
 			get => ImplMapVM.ImplMap;
 			set => ImplMapVM.ImplMap = value;
 		}
 
 		public ImplMapVM ImplMapVM { get; }
 
-		public MethodSig MethodSig {
+		public MethodSig? MethodSig {
 			get => MethodSigCreator.MethodSig;
 			set => MethodSigCreator.MethodSig = value;
 		}
 
-		public string MethodSigHeader => $"MethodSig: {(MethodSigCreator.HasError ? "null" : MethodSigCreator.MethodSig.ToString())}";
+		public string MethodSigHeader => $"MethodSig: {(MethodSigCreator.HasError ? "null" : MethodSigCreator.MethodSig!.ToString())}";
 
 		public MethodSigCreatorVM MethodSigCreator { get; }
 		public CustomAttributesVM CustomAttributesVM { get; }
@@ -288,16 +288,16 @@ namespace dnSpy.AsmEditor.Method {
 
 		readonly ModuleDef ownerModule;
 
-		public MethodOptionsVM(MethodDefOptions options, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType, MethodDef ownerMethod) {
+		public MethodOptionsVM(MethodDefOptions options, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef? ownerType, MethodDef? ownerMethod) {
 			this.ownerModule = ownerModule;
 			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, decompilerService) {
 				IsLocal = false,
 				CanAddGenericTypeVar = true,
-				CanAddGenericMethodVar = ownerMethod == null || ownerMethod.GenericParameters.Count > 0,
+				CanAddGenericMethodVar = ownerMethod is null || ownerMethod.GenericParameters.Count > 0,
 				OwnerType = ownerType,
 				OwnerMethod = ownerMethod,
 			};
-			if (ownerType != null && ownerType.GenericParameters.Count == 0)
+			if (!(ownerType is null) && ownerType.GenericParameters.Count == 0)
 				typeSigCreatorOptions.CanAddGenericTypeVar = false;
 
 			var methodSigCreatorOptions = new MethodSigCreatorOptions(typeSigCreatorOptions);
@@ -362,7 +362,7 @@ namespace dnSpy.AsmEditor.Method {
 			options.ImplAttributes = ImplAttributes;
 			options.Attributes = Attributes;
 			options.Name = Name;
-			options.MethodSig = MethodSig;
+			options.MethodSig = MethodSig!;
 			options.ImplMap = PinvokeImpl ? ImplMap : null;
 			options.CustomAttributes.Clear();
 			options.CustomAttributes.AddRange(CustomAttributesVM.Collection.Select(a => a.CreateCustomAttributeOptions().Create()));

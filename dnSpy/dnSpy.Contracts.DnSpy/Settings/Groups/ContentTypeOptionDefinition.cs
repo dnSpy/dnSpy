@@ -40,7 +40,7 @@ namespace dnSpy.Contracts.Settings.Groups {
 		/// <summary>
 		/// Default value
 		/// </summary>
-		public object DefaultValue { get; set; }
+		public object? DefaultValue { get; set; }
 
 		/// <summary>
 		/// Gets the type
@@ -55,7 +55,12 @@ namespace dnSpy.Contracts.Settings.Groups {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		protected ContentTypeOptionDefinition() => CanBeSaved = true;
+		protected ContentTypeOptionDefinition() {
+			CanBeSaved = true;
+			Type = typeof(void);
+			Name = null!;
+			ContentType = null!;
+		}
 	}
 
 	/// <summary>
@@ -66,7 +71,7 @@ namespace dnSpy.Contracts.Settings.Groups {
 		/// Constructor
 		/// </summary>
 		public ContentTypeOptionDefinition() {
-			DefaultValue = default(T);
+			DefaultValue = default(T)!;
 			Type = typeof(T);
 		}
 

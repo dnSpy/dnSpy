@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -78,12 +79,13 @@ namespace dnSpy.AsmEditor.Commands {
 				Execute(context.Find<IDocumentViewer>(), methodAnnotations);
 		}
 
-		public static bool CanExecute(IDocumentViewer documentViewer) =>
-			documentViewer != null && FindInstructions(documentViewer).Any();
+		public static bool CanExecute(IDocumentViewer? documentViewer) =>
+			!(documentViewer is null) && FindInstructions(documentViewer).Any();
 
-		public static void Execute(IDocumentViewer documentViewer, Lazy<IMethodAnnotations> methodAnnotations) {
+		public static void Execute(IDocumentViewer? documentViewer, Lazy<IMethodAnnotations> methodAnnotations) {
 			if (!CanExecute(documentViewer))
 				return;
+			Debug.Assert(!(documentViewer is null));
 
 			var copier = new InstructionILBytesCopier();
 			var text = copier.Copy(FindInstructions(documentViewer), methodAnnotations);
@@ -114,11 +116,11 @@ namespace dnSpy.AsmEditor.Commands {
 		public string Copy(IEnumerable<SpanData<ReferenceInfo>> refs, Lazy<IMethodAnnotations> methodAnnotations) {
 			var sb = new StringBuilder();
 
-			IInstructionBytesReader reader = null;
-			MethodDef method = null;
+			IInstructionBytesReader? reader = null;
+			MethodDef? method = null;
 			int index = 0;
 			foreach (var r in refs) {
-				var ir = (InstructionReference)r.Data.Reference;
+				var ir = (InstructionReference)r.Data.Reference!;
 				var instr = ir.Instruction;
 				if (ir.Method != method) {
 					method = ir.Method;
@@ -128,20 +130,20 @@ namespace dnSpy.AsmEditor.Commands {
 						throw new InvalidOperationException();
 					reader.SetInstruction(index, instr.Offset);
 				}
-				else if (index >= method.Body.Instructions.Count)
+				else if (index >= method!.Body.Instructions.Count)
 					throw new InvalidOperationException();
 				else if (method.Body.Instructions[index + 1] != ir.Instruction) {
 					index = method.Body.Instructions.IndexOf(instr);
 					if (index < 0)
 						throw new InvalidOperationException();
-					reader.SetInstruction(index, instr.Offset);
+					reader!.SetInstruction(index, instr.Offset);
 				}
 				else
 					index++;
 
 				int size = instr.GetSize();
 				for (int i = 0; i < size; i++) {
-					int b = reader.ReadByte();
+					int b = reader!.ReadByte();
 					if (b < 0) {
 						sb.Append("??");
 						FoundUnknownBytes = true;

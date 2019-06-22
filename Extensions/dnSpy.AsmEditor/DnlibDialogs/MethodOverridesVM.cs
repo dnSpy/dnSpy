@@ -23,7 +23,7 @@ using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class MethodOverridesVM : ListVM<MethodOverrideVM, MethodOverride> {
-		public MethodOverridesVM(ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType, MethodDef ownerMethod)
+		public MethodOverridesVM(ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef? ownerType, MethodDef? ownerMethod)
 			: base(dnSpy_AsmEditor_Resources.EditMethodOverride, dnSpy_AsmEditor_Resources.CreateMethodOverride, ownerModule, decompilerService, ownerType, ownerMethod) {
 		}
 

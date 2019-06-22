@@ -23,7 +23,7 @@ using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class ParamDefsVM : ListVM<ParamDefVM, ParamDef> {
-		public ParamDefsVM(ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType, MethodDef ownerMethod)
+		public ParamDefsVM(ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef? ownerType, MethodDef? ownerMethod)
 			: base(dnSpy_AsmEditor_Resources.EditParameter, dnSpy_AsmEditor_Resources.CreateParameter, ownerModule, decompilerService, ownerType, ownerMethod) {
 		}
 

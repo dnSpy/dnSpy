@@ -37,33 +37,33 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		}
 
 		public void Dispose() => Flush();
-		public void Print(string text) => Print(BoxedTextColor.ReplScriptOutputText, text);
+		public void Print(string? text) => Print(BoxedTextColor.ReplScriptOutputText, text);
 		public void Print(string fmt, params object[] args) => Print(string.Format(fmt, args));
-		public void Print(object color, string text) => cachedList.Add(new ColorAndText(color ?? BoxedTextColor.ReplScriptOutputText, text));
-		public void Print(object color, string fmt, params object[] args) => Print(color ?? BoxedTextColor.ReplScriptOutputText, string.Format(fmt, args));
-		public void Print(Exception ex, object color) => owner.Print(this, ex, color ?? BoxedTextColor.Error);
-		public void Print(object value, object color) => owner.Print(this, value, color ?? BoxedTextColor.ReplScriptOutputText);
-		public void PrintLine(Exception ex, object color) => owner.PrintLine(this, ex, color ?? BoxedTextColor.Error);
-		public void PrintLine(object value, object color) => owner.PrintLine(this, value, color ?? BoxedTextColor.ReplScriptOutputText);
-		public void Print(TextColor color, string text) => cachedList.Add(new ColorAndText(color, text));
+		public void Print(object? color, string? text) => cachedList.Add(new ColorAndText(color ?? BoxedTextColor.ReplScriptOutputText, text ?? string.Empty));
+		public void Print(object? color, string fmt, params object[] args) => Print(color ?? BoxedTextColor.ReplScriptOutputText, string.Format(fmt, args));
+		public void Print(Exception ex, object? color) => owner.Print(this, ex, color ?? BoxedTextColor.Error);
+		public void Print(object value, object? color) => owner.Print(this, value, color ?? BoxedTextColor.ReplScriptOutputText);
+		public void PrintLine(Exception ex, object? color) => owner.PrintLine(this, ex, color ?? BoxedTextColor.Error);
+		public void PrintLine(object value, object? color) => owner.PrintLine(this, value, color ?? BoxedTextColor.ReplScriptOutputText);
+		public void Print(TextColor color, string? text) => cachedList.Add(new ColorAndText(color, text ?? string.Empty));
 		public void Print(TextColor color, string fmt, params object[] args) => Print(color, string.Format(fmt, args));
 		public void Print(Exception ex, TextColor color) => owner.Print(this, ex, color);
 		public void Print(object value, TextColor color) => owner.Print(this, value, color);
 		public void PrintLine(Exception ex, TextColor color) => owner.PrintLine(this, ex, color);
 		public void PrintLine(object value, TextColor color) => owner.PrintLine(this, value, color);
-		public void PrintError(string text) => Print(BoxedTextColor.Error, text);
+		public void PrintError(string? text) => Print(BoxedTextColor.Error, text);
 		public void PrintError(string fmt, params object[] args) => PrintError(string.Format(fmt, args));
-		public void PrintLine(string text) => PrintLine(BoxedTextColor.ReplScriptOutputText, text);
+		public void PrintLine(string? text) => PrintLine(BoxedTextColor.ReplScriptOutputText, text);
 		public void PrintLine(string fmt, params object[] args) => PrintLine(string.Format(fmt, args));
-		public void PrintLine(object color, string fmt, params object[] args) => PrintLine(color ?? BoxedTextColor.ReplScriptOutputText, string.Format(fmt, args));
+		public void PrintLine(object? color, string fmt, params object[] args) => PrintLine(color ?? BoxedTextColor.ReplScriptOutputText, string.Format(fmt, args));
 		public void PrintLine(TextColor color, string fmt, params object[] args) => PrintLine(color, string.Format(fmt, args));
-		public void PrintLineError(string text) => PrintLine(BoxedTextColor.Error, text);
+		public void PrintLineError(string? text) => PrintLine(BoxedTextColor.Error, text);
 		public void PrintLineError(string fmt, params object[] args) => PrintLineError(string.Format(fmt, args));
-		public void Write(string text, object color) => Print(color ?? BoxedTextColor.ReplScriptOutputText, text);
-		public void Write(string text, TextColor color) => Print(color, text);
-		public void PrintLine(TextColor color, string text) => PrintLine(color.Box(), text);
+		public void Write(string? text, object? color) => Print(color ?? BoxedTextColor.ReplScriptOutputText, text);
+		public void Write(string? text, TextColor color) => Print(color, text);
+		public void PrintLine(TextColor color, string? text) => PrintLine(color.Box(), text);
 
-		public void PrintLine(object color, string text) {
+		public void PrintLine(object? color, string? text) {
 			Print(color, text);
 			Print(Environment.NewLine);
 		}

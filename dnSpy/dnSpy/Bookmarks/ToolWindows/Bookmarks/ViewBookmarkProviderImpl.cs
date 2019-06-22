@@ -35,7 +35,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		readonly UIDispatcher uiDispatcher;
 		readonly BookmarksService bookmarksService;
 		readonly Lazy<IBookmarksVM> bookmarksVM;
-		Bookmark activeBookmark;
+		Bookmark? activeBookmark;
 		Bookmark[] allBookmarks;
 
 		[ImportingConstructor]

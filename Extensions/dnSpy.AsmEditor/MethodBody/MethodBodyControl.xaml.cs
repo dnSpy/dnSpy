@@ -22,9 +22,9 @@ using System.Windows.Controls;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed partial class MethodBodyControl : UserControl {
-		LocalsListHelper localsListHelper;
-		InstructionsListHelper instructionsListHelper;
-		ExceptionHandlersListHelper exceptionHandlersListHelper;
+		LocalsListHelper? localsListHelper;
+		InstructionsListHelper? instructionsListHelper;
+		ExceptionHandlersListHelper? exceptionHandlersListHelper;
 
 		public MethodBodyControl() {
 			InitializeComponent();
@@ -39,7 +39,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		void SetFocusToControl() {
 			var data = DataContext as MethodBodyVM;
-			if (data == null)
+			if (data is null)
 				return;
 
 			if (data.IsCilBody)
@@ -50,7 +50,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		void MethodBodyControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e) {
 			var data = DataContext as MethodBodyVM;
-			if (data == null)
+			if (data is null)
 				return;
 
 			var ownerWindow = Window.GetWindow(this);

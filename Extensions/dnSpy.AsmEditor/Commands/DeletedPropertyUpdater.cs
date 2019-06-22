@@ -36,10 +36,11 @@ namespace dnSpy.AsmEditor.Commands {
 		int propertyIndex;
 
 		public DeletedPropertyUpdater(ModuleDocumentNode modNode, PropertyDef originalProperty) {
-			ownerNode = modNode.Context.DocumentTreeView.FindNode(originalProperty);
-			if (ownerNode == null)
+			var node = modNode.Context.DocumentTreeView.FindNode(originalProperty);
+			if (node is null)
 				throw new InvalidOperationException();
-			parentNode = ownerNode.TreeNode.Parent.Data;
+			ownerNode = node;
+			parentNode = ownerNode.TreeNode.Parent!.Data;
 			ownerType = originalProperty.DeclaringType;
 			property = originalProperty;
 		}

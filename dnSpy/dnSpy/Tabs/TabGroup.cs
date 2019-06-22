@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -40,7 +41,7 @@ namespace dnSpy.Tabs {
 	}
 
 	sealed class TabGroup : ViewModelBase, ITabGroup, IStackedContentChild {
-		public object Tag { get; set; }
+		public object? Tag { get; set; }
 
 		public event EventHandler<TabContentAttachedEventArgs> TabContentAttached {
 			add => tabContentAttached.Add(value);
@@ -77,13 +78,10 @@ namespace dnSpy.Tabs {
 		internal int Count => tabControl.Items.Count;
 		public bool IsKeyboardFocusWithin => tabControl.IsKeyboardFocusWithin;
 
-		public ITabContent ActiveTabContent {
-			get {
-				var act = ActiveTabItemImpl;
-				return act == null ? null : act.TabContent;
-			}
+		public ITabContent? ActiveTabContent {
+			get => ActiveTabItemImpl?.TabContent;
 			set {
-				if (value == null)
+				if (value is null)
 					throw new ArgumentNullException(nameof(value));
 				var impl = GetTabItemImpl(value);
 				tabControl.SelectedItem = impl ?? throw new InvalidOperationException();
@@ -91,7 +89,7 @@ namespace dnSpy.Tabs {
 		}
 
 		public void SetFocus(ITabContent content) {
-			if (content == null)
+			if (content is null)
 				throw new ArgumentNullException(nameof(content));
 			var impl = GetTabItemImpl(content);
 			tabControl.SelectedItem = impl ?? throw new InvalidOperationException();
@@ -101,7 +99,7 @@ namespace dnSpy.Tabs {
 
 		void SetFocus2(ITabContent content) {
 			var fel = content.FocusedElement;
-			if (fel == null)
+			if (fel is null)
 				fel = content.UIObject as IInputElement;
 			if (fel is ScrollViewer sv)
 				fel = sv.Content as IInputElement ?? fel;
@@ -118,7 +116,7 @@ namespace dnSpy.Tabs {
 				}
 			}
 			else {
-				if (fel == null || !fel.Focusable)
+				if (fel is null || !fel.Focusable)
 					return;
 
 				if (fel is UIElement uiel && !uiel.IsVisible)
@@ -129,15 +127,15 @@ namespace dnSpy.Tabs {
 		}
 
 		void SetFocusNoChecks(IInputElement uiel) {
-			Debug.Assert(uiel != null && uiel.Focusable);
-			if (uiel == null)
+			Debug.Assert(!(uiel is null) && uiel.Focusable);
+			if (uiel is null)
 				return;
 			wpfFocusService.Focus(uiel);
 		}
 
 		bool IsActiveTab(ITabContent content) {
 			var impl = GetTabItemImpl(content);
-			if (impl == null)
+			if (impl is null)
 				return false;
 			if (impl != ActiveTabItemImpl)
 				return false;
@@ -170,7 +168,7 @@ namespace dnSpy.Tabs {
 			}
 		}
 
-		TabItemImpl GetTabItemImpl(ITabContent content) {
+		TabItemImpl? GetTabItemImpl(ITabContent content) {
 			foreach (TabItemImpl impl in tabControl.Items) {
 				if (impl.TabContent == content)
 					return impl;
@@ -178,7 +176,7 @@ namespace dnSpy.Tabs {
 			return null;
 		}
 
-		internal TabItemImpl ActiveTabItemImpl {
+		internal TabItemImpl? ActiveTabItemImpl {
 			get {
 				int index = tabControl.SelectedIndex == -1 ? 0 : tabControl.SelectedIndex;
 				if (index >= tabControl.Items.Count)
@@ -190,14 +188,14 @@ namespace dnSpy.Tabs {
 		public ITabGroupService TabGroupService => tabGroupService;
 		readonly TabGroupService tabGroupService;
 
-		object IStackedContentChild.UIObject => tabControl;
+		object? IStackedContentChild.UIObject => tabControl;
 
 		readonly TabControl tabControl;
 		readonly IWpfFocusService wpfFocusService;
 		readonly TabGroupServiceOptions options;
 
-		public IContextMenuProvider ContextMenuProvider => contextMenuProvider;
-		readonly IContextMenuProvider contextMenuProvider;
+		public IContextMenuProvider ContextMenuProvider => contextMenuProvider ?? throw new InvalidOperationException();
+		readonly IContextMenuProvider? contextMenuProvider;
 
 		sealed class GuidObjectsProvider : IGuidObjectsProvider {
 			readonly TabGroup tabGroup;
@@ -220,7 +218,7 @@ namespace dnSpy.Tabs {
 			tabControl.SetStyle(options.TabControlStyle ?? "FileTabGroupTabControlStyle");
 			tabControl.SelectionChanged += TabControl_SelectionChanged;
 			tabControl.PreviewKeyDown += TabControl_PreviewKeyDown;
-			if (options.InitializeContextMenu != null)
+			if (!(options.InitializeContextMenu is null))
 				contextMenuProvider = options.InitializeContextMenu(menuService, this, tabControl);
 			else if (options.TabGroupGuid != Guid.Empty)
 				contextMenuProvider = menuService.InitializeContextMenu(tabControl, options.TabGroupGuid, new GuidObjectsProvider(this));
@@ -241,15 +239,15 @@ namespace dnSpy.Tabs {
 			Debug.Assert(e.RemovedItems.Count <= 1);
 			Debug.Assert(e.AddedItems.Count <= 1);
 
-			TabItemImpl selected = null, unselected = null;
+			TabItemImpl? selected = null, unselected = null;
 			if (e.RemovedItems.Count >= 1) {
 				unselected = e.RemovedItems[0] as TabItemImpl;
-				if (unselected == null)
+				if (unselected is null)
 					return;
 			}
 			if (e.AddedItems.Count >= 1) {
 				selected = e.AddedItems[0] as TabItemImpl;
-				if (selected == null)
+				if (selected is null)
 					return;
 			}
 
@@ -257,7 +255,7 @@ namespace dnSpy.Tabs {
 			tabGroupService.OnSelectionChanged(this, selected, unselected);
 		}
 
-		internal bool Contains(TabItemImpl impl) => tabControl.Items.Contains(impl);
+		internal bool Contains(TabItemImpl? impl) => tabControl.Items.Contains(impl);
 
 		void OnStylePropChange() {
 			OnPropertyChanged(nameof(TabGroupState));
@@ -289,21 +287,21 @@ namespace dnSpy.Tabs {
 		void tabItem_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
 			tabGroupService.SetActive(this);
 			var tabItem = GetTabItemImpl(sender);
-			if (tabItem != null)
+			if (!(tabItem is null))
 				tabItem.IsActive = true;
 			IsActive = true;
 		}
 
 		void tabItem_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
 			var tabItem = GetTabItemImpl(sender);
-			if (tabItem != null)
+			if (!(tabItem is null))
 				tabItem.IsActive = false;
 			IsActive = false;
 		}
 
-		TabItemImpl GetTabItemImpl(object o) {
+		TabItemImpl? GetTabItemImpl(object o) {
 			var tabItem = o as TabItemImpl;
-			if (tabItem == null)
+			if (tabItem is null)
 				return null;
 			if (tabControl.Items.IndexOf(tabItem) < 0)
 				return null;
@@ -312,23 +310,23 @@ namespace dnSpy.Tabs {
 
 		void tabItem_MouseRightButtonDown(object sender, MouseButtonEventArgs e) {
 			var tabItem = GetTabItemImpl(sender);
-			if (tabItem == null)
+			if (tabItem is null)
 				return;
 			tabControl.SelectedItem = tabItem;
 		}
 
 		bool IsDragArea(object sender, MouseEventArgs e, TabItem tabItem) => IsDraggableAP.GetIsDraggable(e.OriginalSource as FrameworkElement);
 
-		bool GetTabItem(object sender, MouseEventArgs e, out TabItemImpl tabItem, out TabControl tabControl) {
+		bool GetTabItem(object sender, MouseEventArgs e, [NotNullWhenTrue] out TabItemImpl? tabItem, [NotNullWhenTrue] out TabControl? tabControl) {
 			tabItem = null;
 			tabControl = null;
 
 			tabItem = GetTabItemImpl(sender);
-			if (tabItem == null)
+			if (tabItem is null)
 				return false;
 
 			tabControl = tabItem.Parent as TabControl;
-			if (tabControl == null)
+			if (tabControl is null)
 				return false;
 
 			if (!IsDragArea(sender, e, tabItem))
@@ -377,8 +375,8 @@ namespace dnSpy.Tabs {
 		}
 
 		bool GetInfo(object sender, DragEventArgs e,
-					out TabItemImpl tabItemSource, out TabItemImpl tabItemTarget,
-					out TabGroup tabGroupSource, out TabGroup tabGroupTarget,
+					[NotNullWhenTrue] out TabItemImpl? tabItemSource, [NotNullWhenTrue] out TabItemImpl? tabItemTarget,
+					[NotNullWhenTrue] out TabGroup? tabGroupSource, [NotNullWhenTrue] out TabGroup? tabGroupTarget,
 					bool canBeSame) {
 			tabItemSource = tabItemTarget = null;
 			tabGroupSource = tabGroupTarget = null;
@@ -388,18 +386,18 @@ namespace dnSpy.Tabs {
 
 			tabItemTarget = sender as TabItemImpl;
 			tabItemSource = (TabItemImpl)e.Data.GetData(typeof(TabItemImpl));
-			if (tabItemTarget == null || tabItemSource == null || (!canBeSame && tabItemTarget == tabItemSource))
+			if (tabItemTarget is null || tabItemSource is null || (!canBeSame && tabItemTarget == tabItemSource))
 				return false;
 			var tabControlTarget = tabItemTarget.Parent as TabControl;
-			if (tabControlTarget == null)
+			if (tabControlTarget is null)
 				return false;
 			var tabControlSource = tabItemSource.Parent as TabControl;
-			if (tabControlSource == null)
+			if (tabControlSource is null)
 				return false;
 
 			tabGroupTarget = tabControlTarget.DataContext as TabGroup;
 			tabGroupSource = tabControlSource.DataContext as TabGroup;
-			if (tabGroupTarget == null || tabGroupSource == null)
+			if (tabGroupTarget is null || tabGroupSource is null)
 				return false;
 			if (tabGroupTarget.tabGroupService.TabService != tabGroupSource.tabGroupService.TabService)
 				return false;
@@ -411,7 +409,7 @@ namespace dnSpy.Tabs {
 
 		void tabItem_DragOver(object sender, DragEventArgs e) {
 			var tabItem = GetTabItemImpl(sender);
-			if (tabItem == null)
+			if (tabItem is null)
 				return;
 			bool canDrag = false;
 			if (GetInfo(sender, e, out var tabItemSource, out var tabItemTarget, out var tabGroupSource, out var tabGroupTarget, true))
@@ -430,7 +428,7 @@ namespace dnSpy.Tabs {
 		}
 
 		public void Add(ITabContent content) {
-			if (content == null)
+			if (content is null)
 				throw new ArgumentNullException(nameof(content));
 			var impl = new TabItemImpl(this, content, options.TabItemStyle);
 			AddEvents(impl);
@@ -440,7 +438,7 @@ namespace dnSpy.Tabs {
 		}
 
 		int IndexOf(ITabContent content) {
-			if (content == null)
+			if (content is null)
 				throw new ArgumentNullException(nameof(content));
 			for (int i = 0; i < tabControl.Items.Count; i++) {
 				var ti = (TabItemImpl)tabControl.Items[i];
@@ -473,15 +471,15 @@ namespace dnSpy.Tabs {
 			return res;
 		}
 
-		public bool MoveToAndSelect(TabGroup dstTabGroup, TabItemImpl srcTabItem, int insertIndex) {
+		public bool MoveToAndSelect(TabGroup dstTabGroup, TabItemImpl? srcTabItem, int insertIndex) {
 			bool res = MoveTo(dstTabGroup, srcTabItem, insertIndex);
 			if (res)
-				dstTabGroup.SetSelectedTab(srcTabItem);
+				dstTabGroup.SetSelectedTab(srcTabItem!);
 			return res;
 		}
 
 		public bool MoveTo(TabGroup dstTabGroup, TabItemImpl srcTabItem, TabItemImpl insertBeforeThis) {
-			if (insertBeforeThis != null) {
+			if (!(insertBeforeThis is null)) {
 				Debug.Assert(dstTabGroup.tabControl.Items.Contains(insertBeforeThis));
 				return MoveTo(dstTabGroup, srcTabItem, dstTabGroup.tabControl.Items.IndexOf(insertBeforeThis));
 			}
@@ -489,9 +487,9 @@ namespace dnSpy.Tabs {
 				return MoveTo(dstTabGroup, srcTabItem, -1);
 		}
 
-		public bool MoveTo(TabGroup dstTabGroup, TabItemImpl srcTabItem, int insertIndex) {
+		public bool MoveTo(TabGroup dstTabGroup, TabItemImpl? srcTabItem, int insertIndex) {
 			Debug.Assert(Contains(srcTabItem));
-			if (srcTabItem == null)
+			if (srcTabItem is null)
 				return false;
 
 			DetachTabItem(srcTabItem);
@@ -535,7 +533,7 @@ namespace dnSpy.Tabs {
 		}
 
 		void DetachNoEvents(TabItemImpl tabItem) {
-			if (tabItem == null)
+			if (tabItem is null)
 				return;
 			int index = tabControl.Items.IndexOf(tabItem);
 			Debug.Assert(index >= 0);
@@ -564,17 +562,17 @@ namespace dnSpy.Tabs {
 		}
 
 		internal bool SetActiveTab(TabItemImpl tabItem) {
-			if (tabItem == null || !Contains(tabItem))
+			if (tabItem is null || !Contains(tabItem))
 				return false;
 			tabControl.SelectedItem = tabItem;
 			return true;
 		}
 
 		void ITabGroup.Close(ITabContent content) {
-			if (content == null)
+			if (content is null)
 				throw new ArgumentNullException(nameof(content));
 			var impl = GetTabItemImpl(content);
-			if (impl == null)
+			if (impl is null)
 				throw new InvalidOperationException();
 			Close(impl);
 		}
@@ -596,11 +594,11 @@ namespace dnSpy.Tabs {
 		public void SelectPreviousTab() => SelectTab(tabControl.SelectedIndex - 1);
 		public bool SelectPreviousTabCanExecute => tabControl.Items.Count > 1;
 		public void CloseActiveTab() => RemoveTabItem(ActiveTabItemImpl);
-		public bool CloseActiveTabCanExecute => ActiveTabItemImpl != null;
+		public bool CloseActiveTabCanExecute => !(ActiveTabItemImpl is null);
 
 		public void CloseAllButActiveTab() {
 			var activeTab = ActiveTabItemImpl;
-			if (activeTab == null)
+			if (activeTab is null)
 				return;
 			foreach (var tabItem in AllTabItemImpls.ToArray()) {
 				if (tabItem != activeTab)
@@ -617,8 +615,8 @@ namespace dnSpy.Tabs {
 			NotifyIfEmtpy();
 		}
 
-		void RemoveTabItem(TabItemImpl tabItem) {
-			if (tabItem == null)
+		void RemoveTabItem(TabItemImpl? tabItem) {
+			if (tabItem is null)
 				return;
 			Debug.Assert(tabControl.Items.Contains(tabItem));
 			DetachNoEvents(tabItem);

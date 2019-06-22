@@ -42,12 +42,12 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <summary>
 		/// Gets the .NET metadata-only headers or null if none
 		/// </summary>
-		public abstract DotNetMetadataHeaders MetadataHeaders { get; }
+		public abstract DotNetMetadataHeaders? MetadataHeaders { get; }
 
 		/// <summary>
 		/// Gets the strong name signature or null if none
 		/// </summary>
-		public abstract VirtualArrayData<ByteData> StrongNameSignature { get; }
+		public abstract VirtualArrayData<ByteData>? StrongNameSignature { get; }
 
 		/// <summary>
 		/// Gets the method provider

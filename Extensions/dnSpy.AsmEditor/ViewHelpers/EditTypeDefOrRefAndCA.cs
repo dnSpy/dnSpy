@@ -22,17 +22,17 @@ using dnSpy.AsmEditor.DnlibDialogs;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
 	sealed class EditTypeDefOrRefAndCA : IEdit<TypeDefOrRefAndCAVM> {
-		readonly Window ownerWindow;
+		readonly Window? ownerWindow;
 
 		public EditTypeDefOrRefAndCA()
 			: this(null) {
 		}
 
-		public EditTypeDefOrRefAndCA(Window ownerWindow) => this.ownerWindow = ownerWindow;
+		public EditTypeDefOrRefAndCA(Window? ownerWindow) => this.ownerWindow = ownerWindow;
 
-		public TypeDefOrRefAndCAVM Edit(string title, TypeDefOrRefAndCAVM obj) {
+		public TypeDefOrRefAndCAVM? Edit(string? title, TypeDefOrRefAndCAVM obj) {
 			var win = new TypeDefOrRefAndCADlg();
-			if (title != null)
+			if (!(title is null))
 				win.Title = title;
 			win.DataContext = obj;
 			win.Owner = ownerWindow ?? Application.Current.MainWindow;

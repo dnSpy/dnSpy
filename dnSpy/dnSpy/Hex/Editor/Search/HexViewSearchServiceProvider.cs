@@ -44,7 +44,7 @@ namespace dnSpy.Hex.Editor.Search {
 		}
 
 		public override HexViewSearchService Get(WpfHexView wpfHexView) {
-			if (wpfHexView == null)
+			if (wpfHexView is null)
 				throw new ArgumentNullException(nameof(wpfHexView));
 			return wpfHexView.Properties.GetOrCreateSingletonProperty(typeof(HexViewSearchService),
 				() => new HexViewSearchServiceImpl(wpfHexView, hexSearchServiceFactory, searchSettings, messageBoxService, editorOperationsFactoryService));

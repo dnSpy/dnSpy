@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Hex.Editor.HexGroups {
 	/// <summary>
 	/// Local group options
 	/// </summary>
-	public sealed class LocalGroupOptions : IEquatable<LocalGroupOptions> {
+	public sealed class LocalGroupOptions : IEquatable<LocalGroupOptions?> {
 		/// <summary><see cref="DefaultHexViewOptions.ShowOffsetColumnId"/></summary>
 		public bool ShowOffsetColumn { get; set; }
 		/// <summary><see cref="DefaultHexViewOptions.ShowValuesColumnId"/></summary>
@@ -55,7 +55,7 @@ namespace dnSpy.Contracts.Hex.Editor.HexGroups {
 		/// </summary>
 		/// <param name="hexView">Hex view</param>
 		public LocalGroupOptions(HexView hexView) {
-			if (hexView == null)
+			if (hexView is null)
 				throw new ArgumentNullException(nameof(hexView));
 			InitializeFrom(hexView);
 		}
@@ -66,7 +66,7 @@ namespace dnSpy.Contracts.Hex.Editor.HexGroups {
 		/// <param name="hexView">Hex view</param>
 		/// <returns></returns>
 		public LocalGroupOptions InitializeFrom(HexView hexView) {
-			if (hexView == null)
+			if (hexView is null)
 				throw new ArgumentNullException(nameof(hexView));
 			ShowOffsetColumn = hexView.Options.GetOptionValue(DefaultHexViewOptions.ShowOffsetColumnId);
 			ShowValuesColumn = hexView.Options.GetOptionValue(DefaultHexViewOptions.ShowValuesColumnId);
@@ -86,7 +86,7 @@ namespace dnSpy.Contracts.Hex.Editor.HexGroups {
 		/// </summary>
 		/// <param name="hexView">Hex view</param>
 		public LocalGroupOptions WriteTo(HexView hexView) {
-			if (hexView == null)
+			if (hexView is null)
 				throw new ArgumentNullException(nameof(hexView));
 			hexView.Options.SetOptionValue(DefaultHexViewOptions.ShowOffsetColumnId, ShowOffsetColumn);
 			hexView.Options.SetOptionValue(DefaultHexViewOptions.ShowValuesColumnId, ShowValuesColumn);
@@ -131,8 +131,8 @@ namespace dnSpy.Contracts.Hex.Editor.HexGroups {
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		public bool Equals(LocalGroupOptions other) =>
-			other != null &&
+		public bool Equals(LocalGroupOptions? other) =>
+			!(other is null) &&
 			ShowOffsetColumn == other.ShowOffsetColumn &&
 			ShowValuesColumn == other.ShowValuesColumn &&
 			ShowAsciiColumn == other.ShowAsciiColumn &&
@@ -149,7 +149,7 @@ namespace dnSpy.Contracts.Hex.Editor.HexGroups {
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is LocalGroupOptions && Equals((LocalGroupOptions)obj);
+		public override bool Equals(object? obj) => obj is LocalGroupOptions && Equals((LocalGroupOptions)obj);
 
 		/// <summary>
 		/// GetHashCode()

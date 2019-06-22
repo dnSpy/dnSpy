@@ -26,13 +26,14 @@ using dnSpy.Contracts.Hex.Files.DotNet;
 
 namespace dnSpy.Hex.Files.DotNet {
 	sealed class PdbHeapImpl : PdbHeap, IDotNetHeap {
-		public override DotNetMetadataHeaders Metadata => metadata;
-		DotNetMetadataHeaders metadata;
+		public override DotNetMetadataHeaders Metadata => metadata!;
+		DotNetMetadataHeaders? metadata;
 
 		public override PdbStreamHeaderData Header {
 			get {
 				if (!initialized)
 					Initialize();
+				Debug.Assert(!(pdbStreamHeaderData is null));
 				return pdbStreamHeaderData;
 			}
 		}
@@ -41,6 +42,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			get {
 				if (!initialized)
 					Initialize();
+				Debug.Assert(!(pdbId is null));
 				return pdbId;
 			}
 		}
@@ -65,16 +67,17 @@ namespace dnSpy.Hex.Files.DotNet {
 			get {
 				if (!initialized)
 					Initialize();
+				Debug.Assert(!(typeSystemTableRowsReadOnly is null));
 				return typeSystemTableRowsReadOnly;
 			}
 		}
 
 		bool initialized;
-		PdbStreamHeaderData pdbStreamHeaderData;
-		ReadOnlyCollection<byte> pdbId;
+		PdbStreamHeaderData? pdbStreamHeaderData;
+		ReadOnlyCollection<byte>? pdbId;
 		MDToken entryPoint;
 		ulong referencedTypeSystemTables;
-		ReadOnlyCollection<uint> typeSystemTableRowsReadOnly;
+		ReadOnlyCollection<uint>? typeSystemTableRowsReadOnly;
 
 		internal static int MinimumSize => 32;
 
@@ -111,7 +114,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			pdbStreamHeaderData = new PdbStreamHeaderDataImpl(new HexBufferSpan(buffer, headerSpan), typeSystemTableRowsReadOnly.Count);
 		}
 
-		public override ComplexData GetStructure(HexPosition position) {
+		public override ComplexData? GetStructure(HexPosition position) {
 			if (!Span.Span.Contains(position))
 				return null;
 

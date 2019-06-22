@@ -70,17 +70,17 @@ namespace dnSpy.Debugger.DotNet.Code {
 			return false;
 		}
 
-		ModuleDef GetModule(ModuleId module, ReadOnlyCollection<object> options) =>
+		ModuleDef? GetModule(ModuleId module, ReadOnlyCollection<object> options) =>
 			dbgMetadataService.Value.TryGetMetadata(module, DbgLoadModuleOptions.None);
 
 		bool GoTo(DotNetMethodBodyReference bodyRef, ReadOnlyCollection<object> options) {
 			bool newTab = options.Any(a => StringComparer.Ordinal.Equals(PredefinedReferenceNavigatorOptions.NewTab, a));
 			var module = GetModule(bodyRef.Module, options);
-			if (module == null)
+			if (module is null)
 				return false;
 
 			var method = module.ResolveToken(bodyRef.Token) as MethodDef;
-			if (method == null)
+			if (method is null)
 				return false;
 
 			uint offset = bodyRef.Offset;
@@ -97,14 +97,14 @@ namespace dnSpy.Debugger.DotNet.Code {
 		bool GoTo(DotNetTokenReference tokenRef, ReadOnlyCollection<object> options) {
 			bool newTab = options.Any(a => StringComparer.Ordinal.Equals(PredefinedReferenceNavigatorOptions.NewTab, a));
 			var module = GetModule(tokenRef.Module, options);
-			if (module == null)
+			if (module is null)
 				return false;
 
 			var def = module.ResolveToken(tokenRef.Token) as IMemberDef;
-			if (def == null)
+			if (def is null)
 				return false;
 
-			bool found = documentTabService.DocumentTreeView.FindNode(def.Module) != null;
+			bool found = !(documentTabService.DocumentTreeView.FindNode(def.Module) is null);
 			if (found) {
 				documentTabService.FollowReference(def, newTab, true, e => {
 					Debug.Assert(e.Tab.UIContext is IDocumentViewer);
@@ -130,11 +130,11 @@ namespace dnSpy.Debugger.DotNet.Code {
 			return true;
 		}
 
-		static bool MoveCaretTo(IDocumentViewer documentViewer, IMemberDef def) {
-			if (documentViewer == null)
+		static bool MoveCaretTo(IDocumentViewer? documentViewer, IMemberDef def) {
+			if (documentViewer is null)
 				return false;
 			var data = documentViewer.ReferenceCollection.FirstOrNull(a => a.Data.IsDefinition && a.Data.Reference == def);
-			if (data == null)
+			if (data is null)
 				return false;
 			documentViewer.MoveCaretToPosition(data.Value.Span.Start);
 			return true;
@@ -145,7 +145,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 			if (offset == EPILOG) {
 				specialIpOffset = true;
 				var mod = dbgMetadataService.Value.TryGetMetadata(module.Module, DbgLoadModuleOptions.AutoLoaded);
-				if (mod?.ResolveToken(module.Token) is MethodDef md && md.Body != null && md.Body.Instructions.Count > 0)
+				if (mod?.ResolveToken(module.Token) is MethodDef md && !(md.Body is null) && md.Body.Instructions.Count > 0)
 					offset = md.Body.Instructions[md.Body.Instructions.Count - 1].Offset;
 				else
 					return;
@@ -162,7 +162,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 
 		void GoToLocationCore(IDocumentTab tab, MethodDef method, ModuleTokenId module, uint offset, bool specialIpOffset, bool newTab, bool canRefreshMethods) {
 			uiDispatcher.VerifyAccess();
-			if (tab == null || method == null)
+			if (tab is null || method is null)
 				return;
 
 			// The file could've been added lazily to the list so add a short delay before we select it
@@ -177,8 +177,8 @@ namespace dnSpy.Debugger.DotNet.Code {
 			});
 		}
 
-		bool MoveCaretToCurrentStatement(IDocumentViewer documentViewer, MethodDef method, ModuleTokenId module, uint offset, bool specialIpOffset, bool canRefreshMethods, bool newTab) {
-			if (documentViewer == null)
+		bool MoveCaretToCurrentStatement(IDocumentViewer? documentViewer, MethodDef method, ModuleTokenId module, uint offset, bool specialIpOffset, bool canRefreshMethods, bool newTab) {
+			if (documentViewer is null)
 				return false;
 			if (MoveCaretTo(documentViewer, module, offset))
 				return true;
@@ -191,14 +191,14 @@ namespace dnSpy.Debugger.DotNet.Code {
 		}
 
 		static bool MoveCaretTo(IDocumentViewer documentViewer, ModuleTokenId module, uint offset) {
-			if (documentViewer == null)
+			if (documentViewer is null)
 				return false;
 
 			if (!VerifyAndGetCurrentDebuggedMethod(documentViewer, module, out var methodDebugService))
 				return false;
 
-			var sourceStatement = methodDebugService.TryGetMethodDebugInfo(module).GetSourceStatementByCodeOffset(offset);
-			if (sourceStatement == null)
+			var sourceStatement = methodDebugService.TryGetMethodDebugInfo(module)!.GetSourceStatementByCodeOffset(offset);
+			if (sourceStatement is null)
 				return false;
 
 			documentViewer.MoveCaretToPosition(sourceStatement.Value.TextSpan.Start);
@@ -207,7 +207,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 
 		static bool VerifyAndGetCurrentDebuggedMethod(IDocumentViewer documentViewer, ModuleTokenId token, out IMethodDebugService methodDebugService) {
 			methodDebugService = documentViewer.GetMethodDebugService();
-			return methodDebugService.TryGetMethodDebugInfo(token) != null;
+			return !(methodDebugService.TryGetMethodDebugInfo(token) is null);
 		}
 
 		void RefreshMethodBodies(IDocumentViewer documentViewer, MethodDef method, ModuleTokenId module, uint offset, bool specialIpOffset, bool newTab) {
@@ -218,22 +218,23 @@ namespace dnSpy.Debugger.DotNet.Code {
 				return;
 
 			var body = method.Body;
-			if (body == null)
+			if (body is null)
 				return;
 			// If the offset is a valid instruction in the body, the method is probably not encrypted
 			if (body.Instructions.Any(i => i.Offset == offset))
 				return;
 
 			var modNode = documentTabService.DocumentTreeView.FindNode(method.Module);
-			if (modNode == null)
+			if (modNode is null)
 				return;
 			if (modNode.Document is MemoryModuleDefDocument memFile)
 				memFile.UpdateMemory();
 			else {
 				var mod = dbgMetadataService.Value.TryGetMetadata(module.Module, DbgLoadModuleOptions.ForceMemory | DbgLoadModuleOptions.AutoLoaded);
-				method = mod?.ResolveToken(module.Token) as MethodDef;
-				if (method == null)
+				var md = mod?.ResolveToken(module.Token) as MethodDef;
+				if (md is null)
 					return;
+				method = md;
 			}
 
 			GoToLocationCore(documentViewer.DocumentTab, method, module, offset, specialIpOffset, newTab, canRefreshMethods: false);

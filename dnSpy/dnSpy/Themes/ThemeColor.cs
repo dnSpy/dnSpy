@@ -24,15 +24,17 @@ using dnSpy.Contracts.Themes;
 
 namespace dnSpy.Themes {
 	sealed class ThemeColor : IThemeColor {
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
 		public string Name { get; set; }
-		public Brush Foreground { get; set; }
-		public Brush Background { get; set; }
-		public Brush Color3 { get; set; }
-		public Brush Color4 { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
+		public Brush? Foreground { get; set; }
+		public Brush? Background { get; set; }
+		public Brush? Color3 { get; set; }
+		public Brush? Color4 { get; set; }
 		public FontStyle? FontStyle { get; set; }
 		public FontWeight? FontWeight { get; set; }
 
-		public Brush GetBrushByIndex(int index) {
+		public Brush? GetBrushByIndex(int index) {
 			switch (index) {
 			case 0: return Foreground;
 			case 1: return Background;

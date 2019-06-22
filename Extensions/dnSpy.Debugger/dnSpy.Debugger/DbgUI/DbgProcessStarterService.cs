@@ -22,13 +22,14 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using dnSpy.Contracts.Debugger.StartDebugging;
 using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.DbgUI {
 	abstract class DbgProcessStarterService {
 		public abstract bool CanStart(string filename, out ProcessStarterResult result);
-		public abstract bool TryStart(string filename, out string error);
+		public abstract bool TryStart(string filename, [NotNullWhenFalse] out string? error);
 	}
 
 	[Export(typeof(DbgProcessStarterService))]
@@ -40,7 +41,7 @@ namespace dnSpy.Debugger.DbgUI {
 			this.processStarters = processStarters.OrderBy(a => a.Metadata.Order).ToArray();
 
 		public override bool CanStart(string filename, out ProcessStarterResult result) {
-			if (filename == null)
+			if (filename is null)
 				throw new ArgumentNullException(nameof(filename));
 			foreach (var lz in processStarters) {
 				if (lz.Value.IsSupported(filename, out result))
@@ -51,8 +52,8 @@ namespace dnSpy.Debugger.DbgUI {
 			return false;
 		}
 
-		public override bool TryStart(string filename, out string error) {
-			if (filename == null)
+		public override bool TryStart(string filename, [NotNullWhenFalse] out string? error) {
+			if (filename is null)
 				throw new ArgumentNullException(nameof(filename));
 			bool ok;
 			try {
@@ -65,13 +66,13 @@ namespace dnSpy.Debugger.DbgUI {
 			if (ok)
 				return true;
 
-			Debug.Assert(error != null);
-			if (error == null)
+			Debug.Assert(!(error is null));
+			if (error is null)
 				error = "<Unknown error>";
 			return false;
 		}
 
-		bool TryStartCore(string filename, out string error) {
+		bool TryStartCore(string filename, [NotNullWhenFalse] out string? error) {
 			foreach (var lz in processStarters) {
 				if (lz.Value.IsSupported(filename, out _))
 					return lz.Value.TryStart(filename, out error);

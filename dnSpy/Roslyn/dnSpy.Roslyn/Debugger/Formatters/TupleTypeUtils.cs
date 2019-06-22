@@ -24,7 +24,7 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Debugger.Formatters {
 	static class TupleTypeUtils {
-		public static IEnumerable<(int tupleIndex, List<DmdFieldInfo> fields)> GetTupleFields(DmdType type, int tupleArity) {
+		public static IEnumerable<(int tupleIndex, List<DmdFieldInfo>? fields)> GetTupleFields(DmdType type, int tupleArity) {
 			Debug.Assert(tupleArity == TypeFormatterUtils.GetTupleArity(type));
 			if (tupleArity <= 0) {
 				yield return (-1, null);
@@ -42,18 +42,24 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 						continue;
 					currentFields.Add(field);
 				}
-				if (currentFields.Count > sortedTupleFields.Length)
+				if (currentFields.Count > sortedTupleFields.Length) {
 					yield return (-1, null);
+					yield break;
+				}
 				currentFields.Sort((a, b) => StringComparer.Ordinal.Compare(a.Name, b.Name));
 				for (int i = 0; i < currentFields.Count; i++) {
 					var field = currentFields[i];
-					if (field.Name != sortedTupleFields[i])
+					if (field.Name != sortedTupleFields[i]) {
 						yield return (-1, null);
+						yield break;
+					}
 					fields[fields.Count - 1] = field;
 					if (i + 1 != sortedTupleFields.Length) {
-						if (tupleIndex >= tupleArity)
+						if (tupleIndex >= tupleArity) {
 							yield return (-1, null);
-						yield return (tupleIndex, fields);
+							yield break;
+						}
+						yield return (tupleIndex, fields)!;
 						tupleIndex++;
 					}
 					else

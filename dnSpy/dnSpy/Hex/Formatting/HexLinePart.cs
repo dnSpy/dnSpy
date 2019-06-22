@@ -35,7 +35,7 @@ namespace dnSpy.Hex.Formatting {
 		/// <summary>
 		/// Length in column characters. This is never zero.
 		/// </summary>
-		public int ColumnLength => AdornmentElement != null ? 1 : Span.Length;
+		public int ColumnLength => !(AdornmentElement is null) ? 1 : Span.Length;
 
 		/// <summary>
 		/// Span relative to the start of the physical line (<see cref="HexLinePartsCollection.Span"/>)
@@ -45,12 +45,12 @@ namespace dnSpy.Hex.Formatting {
 		/// <summary>
 		/// Adornment element or null
 		/// </summary>
-		public readonly HexAdornmentElement AdornmentElement;
+		public readonly HexAdornmentElement? AdornmentElement;
 
 		/// <summary>
 		/// Text run properties if it's normal text or null if an adornment element is used instead
 		/// </summary>
-		public readonly TextRunProperties TextRunProperties;
+		public readonly TextRunProperties? TextRunProperties;
 
 		/// <summary>
 		/// Index of this instance in the collection
@@ -58,8 +58,8 @@ namespace dnSpy.Hex.Formatting {
 		public readonly int Index;
 
 		public HexLinePart(int index, int column, VST.Span span, HexAdornmentElement adornmentElement, TextRunProperties textRunProperties) {
-			Debug.Assert(adornmentElement != null);
-			Debug.Assert(textRunProperties != null);
+			Debug.Assert(!(adornmentElement is null));
+			Debug.Assert(!(textRunProperties is null));
 			Index = index;
 			Column = column;
 			Span = span;
@@ -69,7 +69,7 @@ namespace dnSpy.Hex.Formatting {
 
 		public HexLinePart(int index, int column, VST.Span span, TextRunProperties textRunProperties) {
 			Debug.Assert(!span.IsEmpty);
-			Debug.Assert(textRunProperties != null);
+			Debug.Assert(!(textRunProperties is null));
 			Index = index;
 			Column = column;
 			Span = span;
@@ -78,7 +78,7 @@ namespace dnSpy.Hex.Formatting {
 		}
 
 		public bool BelongsTo(int lineIndex) {
-			if (AdornmentElement == null || Span.Length != 0)
+			if (AdornmentElement is null || Span.Length != 0)
 				return Span.Start <= lineIndex && lineIndex < Span.End;
 
 			switch (AdornmentElement.Affinity) {
@@ -95,7 +95,7 @@ namespace dnSpy.Hex.Formatting {
 		}
 
 		public override string ToString() {
-			if (AdornmentElement != null)
+			if (!(AdornmentElement is null))
 				return $"{Span.ToString()} {AdornmentElement.ToString()}";
 			return Span.ToString();
 		}

@@ -40,6 +40,7 @@ namespace dnSpy.Text.Classification {
 		IClassificationFormatMap categoryMap;
 
 		protected ViewClassificationFormatMap(ClassificationFormatMapService classificationFormatMapService, string appearanceCategoryName) {
+			categoryMap = null!;
 			this.classificationFormatMapService = classificationFormatMapService ?? throw new ArgumentNullException(nameof(classificationFormatMapService));
 			this.appearanceCategoryName = appearanceCategoryName ?? throw new ArgumentNullException(nameof(appearanceCategoryName));
 		}
@@ -58,7 +59,7 @@ namespace dnSpy.Text.Classification {
 			if (categoryMap == newMap)
 				return;
 
-			if (categoryMap != null)
+			if (!(categoryMap is null))
 				categoryMap.ClassificationFormatMappingChanged -= CategoryMap_ClassificationFormatMappingChanged;
 			categoryMap = newMap;
 			categoryMap.ClassificationFormatMappingChanged += CategoryMap_ClassificationFormatMappingChanged;
@@ -96,7 +97,7 @@ namespace dnSpy.Text.Classification {
 		public void EndBatchUpdate() => categoryMap.EndBatchUpdate();
 
 		public void Dispose() {
-			if (categoryMap != null)
+			if (!(categoryMap is null))
 				categoryMap.ClassificationFormatMappingChanged -= CategoryMap_ClassificationFormatMappingChanged;
 			DisposeCore();
 		}

@@ -45,7 +45,7 @@ namespace dnSpy.Hex.Editor {
 		readonly IThemeService themeService;
 
 		public WpfHexViewHostImpl(WpfHexViewMarginProviderCollectionProvider wpfHexViewMarginProviderCollectionProvider, WpfHexView wpfHexView, HexEditorOperationsFactoryService editorOperationsFactoryService, IThemeService themeService, bool setFocus) {
-			if (wpfHexViewMarginProviderCollectionProvider == null)
+			if (wpfHexViewMarginProviderCollectionProvider is null)
 				throw new ArgumentNullException(nameof(wpfHexViewMarginProviderCollectionProvider));
 			contentControl = new ContentControl();
 			this.editorOperationsFactoryService = editorOperationsFactoryService ?? throw new ArgumentNullException(nameof(editorOperationsFactoryService));
@@ -68,7 +68,7 @@ namespace dnSpy.Hex.Editor {
 			containerMargins[3] = CreateContainerMargin(wpfHexViewMarginProviderCollectionProvider, PredefinedHexMarginNames.Left, false, 1, 0, 1);
 			containerMargins[4] = CreateContainerMargin(wpfHexViewMarginProviderCollectionProvider, PredefinedHexMarginNames.Right, false, 1, 2, 1);
 			Add(HexView.VisualElement, 1, 1, 1);
-			Debug.Assert(!containerMargins.Any(a => a == null));
+			Debug.Assert(!containerMargins.Any(a => a is null));
 
 			if (setFocus) {
 				contentControl.Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(() => {
@@ -136,9 +136,9 @@ namespace dnSpy.Hex.Editor {
 			}
 		}
 
-		public override WpfHexViewMargin GetHexViewMargin(string marginName) {
+		public override WpfHexViewMargin? GetHexViewMargin(string marginName) {
 			foreach (var margin in containerMargins) {
-				if (margin == null)
+				if (margin is null)
 					continue;
 				if (margin.GetHexViewMargin(marginName) is WpfHexViewMargin result)
 					return result;

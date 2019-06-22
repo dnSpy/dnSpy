@@ -115,9 +115,9 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 		public ThreadPriority Priority {
 			get {
-				if (hThread == null)
+				if (hThread is null)
 					OpenThread_UI();
-				if (priority == null)
+				if (priority is null)
 					priority = CalculateThreadPriority_UI();
 				return priority.Value;
 			}
@@ -126,9 +126,9 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 		public ulong AffinityMask {
 			get {
-				if (hThread == null)
+				if (hThread is null)
 					OpenThread_UI();
-				if (affinityMask == null)
+				if (affinityMask is null)
 					affinityMask = CalculateAffinityMask_UI();
 				return affinityMask.Value;
 			}
@@ -150,15 +150,16 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		readonly DbgLanguageService dbgLanguageService;
 		readonly ThreadCategoryService threadCategoryService;
 		bool initializeThreadCategory;
-		SafeAccessTokenHandle hThread;
+		SafeAccessTokenHandle? hThread;
 
 		public ThreadVM(DbgLanguageService dbgLanguageService, DbgThread thread, IThreadContext context, int order, ThreadCategoryService threadCategoryService, IEditValueProvider nameEditValueProvider) {
+			categoryText = null!;
 			this.dbgLanguageService = dbgLanguageService ?? throw new ArgumentNullException(nameof(dbgLanguageService));
 			Thread = thread ?? throw new ArgumentNullException(nameof(thread));
 			Context = context ?? throw new ArgumentNullException(nameof(context));
 			Order = order;
 			NameEditValueProvider = nameEditValueProvider ?? throw new ArgumentNullException(nameof(nameEditValueProvider));
-			NameEditableValue = new EditableValueImpl(() => Thread.HasName() ? Thread.UIName : string.Empty, s => Thread.UIName = s);
+			NameEditableValue = new EditableValueImpl(() => Thread.HasName() ? Thread.UIName : string.Empty, s => Thread.UIName = s ?? string.Empty);
 			this.threadCategoryService = threadCategoryService ?? throw new ArgumentNullException(nameof(threadCategoryService));
 			initializeThreadCategory = true;
 			thread.PropertyChanged += DbgThread_PropertyChanged;
@@ -167,8 +168,8 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		// UI thread
 		ThreadPriority CalculateThreadPriority_UI() {
 			Context.UIDispatcher.VerifyAccess();
-			Debug.Assert(hThread != null);
-			if (hThread == null || hThread.IsInvalid)
+			Debug.Assert(!(hThread is null));
+			if (hThread is null || hThread.IsInvalid)
 				return ThreadPriority.Normal;
 			return (ThreadPriority)NativeMethods.GetThreadPriority(hThread.DangerousGetHandle());
 		}
@@ -176,8 +177,8 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		// UI thread
 		ulong CalculateAffinityMask_UI() {
 			Context.UIDispatcher.VerifyAccess();
-			Debug.Assert(hThread != null);
-			if (hThread == null || hThread.IsInvalid)
+			Debug.Assert(!(hThread is null));
+			if (hThread is null || hThread.IsInvalid)
 				return 0;
 			var affinityMask = NativeMethods.SetThreadAffinityMask(hThread.DangerousGetHandle(), new IntPtr(-1));
 			if (affinityMask != IntPtr.Zero)
@@ -239,7 +240,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		// UI thread
 		internal void UpdateFields_UI() {
 			Context.UIDispatcher.VerifyAccess();
-			if (hThread == null)
+			if (hThread is null)
 				OpenThread_UI();
 
 			locationCachedOutput = default;
@@ -322,7 +323,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		// UI thread
 		void OpenThread_UI() {
 			Context.UIDispatcher.VerifyAccess();
-			if (hThread != null)
+			if (!(hThread is null))
 				return;
 			const int dwDesiredAccess = NativeMethods.THREAD_QUERY_INFORMATION | NativeMethods.THREAD_SET_INFORMATION;
 			hThread = NativeMethods.OpenThread(dwDesiredAccess, false, (uint)Thread.Id);
@@ -337,9 +338,9 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		// UI thread
 		ClassifiedTextCollection CreateLocationCachedOutput() {
 			Context.UIDispatcher.VerifyAccess();
-			DbgStackWalker stackWalker = null;
-			DbgStackFrame[] frames = null;
-			DbgEvaluationContext context = null;
+			DbgStackWalker? stackWalker = null;
+			DbgStackFrame[]? frames = null;
+			DbgEvaluationContext? context = null;
 			try {
 				stackWalker = Thread.CreateStackWalker();
 				frames = stackWalker.GetNextStackFrames(1);
@@ -351,7 +352,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 					var language = dbgLanguageService.GetCurrentLanguage(Thread.Runtime.RuntimeKindGuid);
 					const DbgEvaluationContextOptions ctxOptions = DbgEvaluationContextOptions.NoMethodBody;
 					CancellationToken cancellationToken = default;
-					const CultureInfo cultureInfo = null;
+					const CultureInfo? cultureInfo = null;
 					context = language.CreateContext(frame, ctxOptions);
 					var evalInfo = new DbgEvaluationInfo(context, frame, cancellationToken);
 					language.Formatter.FormatFrame(evalInfo, Context.ClassifiedTextWriter, GetStackFrameFormatterOptions(), DbgValueFormatterOptions.None, cultureInfo);
@@ -359,9 +360,9 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 				}
 			}
 			finally {
-				if (frames != null && frames.Length != 0) {
+				if (!(frames is null) && frames.Length != 0) {
 					Debug.Assert(frames.Length == 1);
-					Thread.Process.DbgManager.Close(new DbgObject[] { stackWalker, frames[0] });
+					Thread.Process.DbgManager.Close(new DbgObject[] { stackWalker!, frames[0] });
 				}
 				else
 					stackWalker?.Close();

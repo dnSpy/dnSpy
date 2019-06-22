@@ -162,7 +162,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="obj">Object</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is HexPosition && Equals((HexPosition)obj);
+		public override bool Equals(object? obj) => obj is HexPosition && Equals((HexPosition)obj);
 
 		/// <summary>
 		/// Gets the hash code of this instance
@@ -186,7 +186,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="value">String</param>
 		/// <returns></returns>
 		public static HexPosition Parse(string value) {
-			if (value == null)
+			if (value is null)
 				throw new ArgumentNullException(nameof(value));
 			if (!TryParse(value, out var result))
 				throw new FormatException($"Invalid {nameof(HexPosition)} value: {value}");
@@ -201,7 +201,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <returns></returns>
 		public static bool TryParse(string value, out HexPosition result) {
 			result = default;
-			if (value == null)
+			if (value is null)
 				throw new ArgumentNullException(nameof(value));
 			const string digitSeparator = "_";
 			value = value.Trim();
@@ -220,7 +220,7 @@ namespace dnSpy.Contracts.Hex {
 					lo = TryParse(value, value.Length - 16, 16);
 					hi = TryParse(value, 2, value.Length - 16 - 2);
 				}
-				if (lo == null || hi == null)
+				if (lo is null || hi is null)
 					return false;
 				result = new HexPosition(hi.Value, lo.Value);
 				return true;

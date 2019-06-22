@@ -30,6 +30,6 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// </summary>
 		/// <param name="completion">Completion</param>
 		/// <returns></returns>
-		public static string TryGetFilterText(this Completion completion) => (completion as DsCompletion)?.FilterText ?? completion.DisplayText;
+		public static string? TryGetFilterText(this Completion completion) => (completion as DsCompletion)?.FilterText ?? completion.DisplayText;
 	}
 }

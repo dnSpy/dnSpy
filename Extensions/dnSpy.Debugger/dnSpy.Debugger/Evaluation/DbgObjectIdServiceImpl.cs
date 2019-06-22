@@ -57,13 +57,13 @@ namespace dnSpy.Debugger.Evaluation {
 		void DbgRuntimeObjectIdService_ObjectIdsChanged(object sender, EventArgs e) => ObjectIdsChanged?.Invoke(this, EventArgs.Empty);
 
 		public override bool CanCreateObjectId(DbgValue value, CreateObjectIdOptions options) {
-			if (value == null)
+			if (value is null)
 				throw new ArgumentNullException(nameof(value));
 			return GetRuntimeObjectIdService(value.Runtime).CanCreateObjectId(value, options);
 		}
 
-		public override DbgObjectId[] CreateObjectIds(DbgValue[] values, CreateObjectIdOptions options) {
-			if (values == null)
+		public override DbgObjectId?[] CreateObjectIds(DbgValue[] values, CreateObjectIdOptions options) {
+			if (values is null)
 				throw new ArgumentNullException(nameof(values));
 			if (values.Length == 0)
 				return Array.Empty<DbgObjectId>();
@@ -75,13 +75,13 @@ namespace dnSpy.Debugger.Evaluation {
 			var dict = new Dictionary<DbgRuntime, List<(DbgValue value, int index)>>();
 			for (int i = 0; i < values.Length; i++) {
 				var value = values[i];
-				if (value == null)
+				if (value is null)
 					throw new ArgumentException();
 				if (!dict.TryGetValue(value.Runtime, out var list))
 					dict.Add(value.Runtime, list = new List<(DbgValue, int)>());
 				list.Add((value, i));
 			}
-			var res = new DbgObjectId[values.Length];
+			var res = new DbgObjectId?[values.Length];
 			foreach (var kv in dict) {
 				var objectIds = GetRuntimeObjectIdService(kv.Key).CreateObjectIds(kv.Value.Select(a => a.value).ToArray(), options);
 				if (objectIds.Length != kv.Value.Count)
@@ -92,30 +92,30 @@ namespace dnSpy.Debugger.Evaluation {
 			return res;
 		}
 
-		public override DbgObjectId GetObjectId(DbgValue value) {
-			if (value == null)
+		public override DbgObjectId? GetObjectId(DbgValue value) {
+			if (value is null)
 				throw new ArgumentNullException(nameof(value));
 			return GetRuntimeObjectIdService(value.Runtime).GetObjectId(value);
 		}
 
-		public override DbgObjectId GetObjectId(DbgRuntime runtime, uint id) {
-			if (runtime == null)
+		public override DbgObjectId? GetObjectId(DbgRuntime runtime, uint id) {
+			if (runtime is null)
 				throw new ArgumentNullException(nameof(runtime));
 			return GetRuntimeObjectIdService(runtime).GetObjectId(id);
 		}
 
 		public override DbgObjectId[] GetObjectIds(DbgRuntime runtime) {
-			if (runtime == null)
+			if (runtime is null)
 				throw new ArgumentNullException(nameof(runtime));
 			return GetRuntimeObjectIdService(runtime).GetObjectIds();
 		}
 
 		public override void Remove(IEnumerable<DbgObjectId> objectIds) {
-			if (objectIds == null)
+			if (objectIds is null)
 				throw new ArgumentNullException(nameof(objectIds));
 			var dict = new Dictionary<DbgRuntime, List<DbgObjectId>>();
 			foreach (var objectId in objectIds) {
-				if (objectId == null)
+				if (objectId is null)
 					throw new ArgumentException();
 				if (!dict.TryGetValue(objectId.Runtime, out var list))
 					dict.Add(objectId.Runtime, list = new List<DbgObjectId>());
@@ -126,15 +126,15 @@ namespace dnSpy.Debugger.Evaluation {
 		}
 
 		public override bool Equals(DbgObjectId objectId, DbgValue value) {
-			if (objectId == null)
+			if (objectId is null)
 				throw new ArgumentNullException(nameof(objectId));
-			if (value == null)
+			if (value is null)
 				throw new ArgumentNullException(nameof(value));
 			return GetRuntimeObjectIdService(objectId.Runtime).Equals(objectId, value);
 		}
 
 		public override int GetHashCode(DbgObjectId objectId) {
-			if (objectId == null)
+			if (objectId is null)
 				throw new ArgumentNullException(nameof(objectId));
 			return GetRuntimeObjectIdService(objectId.Runtime).GetHashCode(objectId);
 		}

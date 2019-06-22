@@ -29,8 +29,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 		readonly MethodBodyOptions origOptions;
 
 		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
-		public bool IsNativeBody => (MethodBodyType)MethodBodyTypeVM.SelectedItem == MethodBodyType.Native;
-		public bool IsCilBody => (MethodBodyType)MethodBodyTypeVM.SelectedItem == MethodBodyType.Cil;
+		public bool IsNativeBody => (MethodBodyType)MethodBodyTypeVM.SelectedItem! == MethodBodyType.Native;
+		public bool IsCilBody => (MethodBodyType)MethodBodyTypeVM.SelectedItem! == MethodBodyType.Cil;
 
 		internal static readonly EnumVM[] methodBodyTypeList = new EnumVM[] {
 			new EnumVM(MethodBodyType.None, dnSpy_AsmEditor_Resources.MethodBodyType_None),
@@ -55,7 +55,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		void OnMethodBodyTypeChanged() {
-			switch ((MethodBodyType)MethodBodyTypeVM.SelectedItem) {
+			switch ((MethodBodyType)MethodBodyTypeVM.SelectedItem!) {
 			case MethodBodyType.None:
 				CodeTypeVM.SelectedItem = Method.CodeType.IL;
 				break;
@@ -92,14 +92,14 @@ namespace dnSpy.AsmEditor.MethodBody {
 		MethodBodyOptions CopyTo(MethodBodyOptions options) {
 			NativeMethodBodyVM.CopyTo(options.NativeMethodBodyOptions);
 			CilBodyVM.CopyTo(options.CilBodyOptions);
-			options.BodyType = (MethodBodyType)MethodBodyTypeVM.SelectedItem;
-			options.CodeType = (MethodImplAttributes)(Method.CodeType)CodeTypeVM.SelectedItem;
+			options.BodyType = (MethodBodyType)MethodBodyTypeVM.SelectedItem!;
+			options.CodeType = (MethodImplAttributes)(Method.CodeType)CodeTypeVM.SelectedItem!;
 			return options;
 		}
 
 		public override bool HasError {
 			get {
-				switch ((MethodBodyType)MethodBodyTypeVM.SelectedItem) {
+				switch ((MethodBodyType)MethodBodyTypeVM.SelectedItem!) {
 				case MethodBodyType.None:
 					break;
 

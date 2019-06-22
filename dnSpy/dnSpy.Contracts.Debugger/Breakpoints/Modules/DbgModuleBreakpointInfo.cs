@@ -65,7 +65,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 		/// <param name="module">Module</param>
 		/// <param name="isLoaded">true if it was loaded, false if it was unloaded</param>
 		public DbgModuleBreakpointInfo(DbgModule module, bool isLoaded) {
-			if (module == null)
+			if (module is null)
 				throw new ArgumentNullException(nameof(module));
 			ModuleName = module.Name ?? string.Empty;
 			IsDynamic = module.IsDynamic;

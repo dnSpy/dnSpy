@@ -29,23 +29,23 @@ namespace dnSpy.Debugger.Dialogs.DebugProgram {
 		public object OptionsPages => optionsPages;
 		readonly ObservableCollection<OptionsPageVM> optionsPages;
 
-		public object OptionsPages_SelectedItem {
+		public object? OptionsPages_SelectedItem {
 			get => optionsPages_selectedItem;
 			set {
 				if (optionsPages_selectedItem == value)
 					return;
-				optionsPages_selectedItem = (OptionsPageVM)value;
+				optionsPages_selectedItem = (OptionsPageVM?)value;
 				OnPropertyChanged(nameof(OptionsPages_SelectedItem));
 				HasErrorUpdated();
 			}
 		}
-		OptionsPageVM optionsPages_selectedItem;
+		OptionsPageVM? optionsPages_selectedItem;
 
 		public StartDebuggingOptionsInfo StartDebuggingOptions {
 			get {
 				Debug.Assert(optionsPages_selectedItem?.IsValid == true);
 				var info = optionsPages_selectedItem.StartDebuggingOptionsPage.GetOptions();
-				if (info.Options == null)
+				if (info.Options is null)
 					throw new InvalidOperationException();
 				return info;
 			}
@@ -54,7 +54,7 @@ namespace dnSpy.Debugger.Dialogs.DebugProgram {
 		public Guid SelectedPageGuid => optionsPages_selectedItem?.PageGuid ?? Guid.Empty;
 
 		public DebugProgramVM(StartDebuggingOptionsPage[] pages, Guid selectedPageGuid) {
-			if (pages == null)
+			if (pages is null)
 				throw new ArgumentNullException(nameof(pages));
 			Debug.Assert(pages.Length != 0);
 			optionsPages = new ObservableCollection<OptionsPageVM>(pages.Select(a => new OptionsPageVM(a)));

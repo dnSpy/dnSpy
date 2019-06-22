@@ -172,7 +172,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			var thread = SelectedItems[0].Thread;
 			thread.Process.DbgManager.CurrentThread.Current = thread;
 			var info = ThreadUtilities.GetFirstFrameLocation(thread);
-			if (info.location != null) {
+			if (!(info.location is null)) {
 				try {
 					var options = newTab ? new object[] { PredefinedReferenceNavigatorOptions.NewTab } : Array.Empty<object>();
 					referenceNavigatorService.Value.GoTo(info.location, options);

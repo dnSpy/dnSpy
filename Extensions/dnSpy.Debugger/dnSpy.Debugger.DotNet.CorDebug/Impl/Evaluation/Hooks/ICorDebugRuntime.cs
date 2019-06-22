@@ -23,8 +23,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation.Hooks {
 	}
 
 	interface ICorDebugValueConverter {
-		char ToChar(object value);
-		int ToInt32(object value);
-		char[] ToCharArray(object value);
+		char ToChar(object? value);
+		int ToInt32(object? value);
+		char[]? ToCharArray(object? value);
 	}
 }

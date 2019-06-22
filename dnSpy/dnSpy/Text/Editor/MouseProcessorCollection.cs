@@ -25,13 +25,13 @@ using Microsoft.VisualStudio.Text.Editor;
 namespace dnSpy.Text.Editor {
 	sealed class MouseProcessorCollection : IDisposable {
 		readonly UIElement mouseElement;
-		readonly UIElement manipulationElement;
+		readonly UIElement? manipulationElement;
 		readonly DefaultMouseProcessor defaultMouseProcessor;
 		readonly IMouseProcessor[] mouseProcessors;
 		readonly Func<MouseEventArgs, bool> allowEvent;
 		static readonly Func<MouseEventArgs, bool> defaultAllowEvent = a => true;
 
-		public MouseProcessorCollection(UIElement mouseElement, UIElement manipulationElement, DefaultMouseProcessor defaultMouseProcessor, IMouseProcessor[] mouseProcessors, Func<MouseEventArgs, bool> allowEvent) {
+		public MouseProcessorCollection(UIElement mouseElement, UIElement? manipulationElement, DefaultMouseProcessor defaultMouseProcessor, IMouseProcessor[] mouseProcessors, Func<MouseEventArgs, bool>? allowEvent) {
 			this.mouseElement = mouseElement ?? throw new ArgumentNullException(nameof(mouseElement));
 			this.manipulationElement = manipulationElement;
 			this.defaultMouseProcessor = defaultMouseProcessor ?? throw new ArgumentNullException(nameof(defaultMouseProcessor));
@@ -53,7 +53,7 @@ namespace dnSpy.Text.Editor {
 			mouseElement.AddHandler(UIElement.DragOverEvent, new DragEventHandler(MouseElement_DragOver), true);
 			mouseElement.AddHandler(UIElement.DragLeaveEvent, new DragEventHandler(MouseElement_DragLeave), true);
 			mouseElement.AddHandler(UIElement.DragEnterEvent, new DragEventHandler(MouseElement_DragEnter), true);
-			if (manipulationElement != null) {
+			if (!(manipulationElement is null)) {
 				manipulationElement.AddHandler(UIElement.TouchUpEvent, new EventHandler<TouchEventArgs>(ManipulationElement_TouchUp), true);
 				manipulationElement.AddHandler(UIElement.TouchDownEvent, new EventHandler<TouchEventArgs>(ManipulationElement_TouchDown), true);
 				manipulationElement.AddHandler(UIElement.StylusSystemGestureEvent, new StylusSystemGestureEventHandler(ManipulationElement_StylusSystemGesture), true);
@@ -393,7 +393,7 @@ namespace dnSpy.Text.Editor {
 			mouseElement.RemoveHandler(UIElement.DragOverEvent, new DragEventHandler(MouseElement_DragOver));
 			mouseElement.RemoveHandler(UIElement.DragLeaveEvent, new DragEventHandler(MouseElement_DragLeave));
 			mouseElement.RemoveHandler(UIElement.DragEnterEvent, new DragEventHandler(MouseElement_DragEnter));
-			if (manipulationElement != null) {
+			if (!(manipulationElement is null)) {
 				manipulationElement.RemoveHandler(UIElement.TouchUpEvent, new EventHandler<TouchEventArgs>(ManipulationElement_TouchUp));
 				manipulationElement.RemoveHandler(UIElement.TouchDownEvent, new EventHandler<TouchEventArgs>(ManipulationElement_TouchDown));
 				manipulationElement.RemoveHandler(UIElement.StylusSystemGestureEvent, new StylusSystemGestureEventHandler(ManipulationElement_StylusSystemGesture));

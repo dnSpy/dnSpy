@@ -50,7 +50,7 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 
 		public RoslynIntellisenseFilter(ImageReference imageReference, string toolTip, string accessKey, params string[] tags)
 			: base(imageReference, toolTip, accessKey, false, true) {
-			if (tags == null)
+			if (tags is null)
 				throw new ArgumentNullException(nameof(tags));
 			if (tags.Length == 0)
 				throw new ArgumentOutOfRangeException(nameof(tags));

@@ -127,7 +127,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <param name="bits">Number of bits used to encode token type</param>
 		/// <param name="tableTypes">All table types</param>
 		public CodedToken(int bits, Table[] tableTypes) {
-			if (tableTypes == null)
+			if (tableTypes is null)
 				throw new ArgumentNullException(nameof(tableTypes));
 			Bits = bits;
 			mask = (1 << bits) - 1;

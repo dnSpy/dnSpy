@@ -29,7 +29,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	struct ReflectionTypeCreator {
 		readonly DbgEngineImpl engine;
 		readonly DmdAppDomain reflectionAppDomain;
-		List<DmdType> typesList;
+		List<DmdType>? typesList;
 		int recursionCounter;
 
 		public ReflectionTypeCreator(DbgEngineImpl engine, DmdAppDomain reflectionAppDomain) {
@@ -40,7 +40,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		}
 
 		List<DmdType> GetTypesList() {
-			if (typesList == null)
+			if (typesList is null)
 				return new List<DmdType>();
 			var list = typesList;
 			typesList = null;
@@ -48,21 +48,21 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			return list;
 		}
 
-		void FreeTypesList(ref List<DmdType> list) {
-			if (list == null)
+		void FreeTypesList(ref List<DmdType>? list) {
+			if (list is null)
 				return;
 			typesList = list;
 			list = null;
 		}
 
-		public DmdType Create(CorType type) {
-			if (type == null)
+		public DmdType Create(CorType? type) {
+			if (type is null)
 				throw new ArgumentNullException(nameof(type));
 			if (recursionCounter++ > 100)
 				throw new InvalidOperationException();
 
 			DmdType result;
-			List<DmdType> types;
+			List<DmdType>? types;
 			switch (type.ElementType) {
 			case CorElementType.Void:		result = reflectionAppDomain.System_Void; break;
 			case CorElementType.Boolean:	result = reflectionAppDomain.System_Boolean; break;
@@ -103,7 +103,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			case CorElementType.Class:
 				var cl = type.Class ?? throw new InvalidOperationException();
 				var module = engine.TryGetModule(cl.Module)?.GetReflectionModule() ?? throw new InvalidOperationException();
-				var reflectionType = module.ResolveType((int)cl.Token, DmdResolveOptions.ThrowOnError);
+				var reflectionType = module.ResolveType((int)cl.Token, DmdResolveOptions.ThrowOnError)!;
 				if (reflectionType.GetGenericArguments().Count != 0) {
 					types = GetTypesList();
 					foreach (var t in type.TypeParameters)
@@ -117,18 +117,18 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				break;
 
 			case CorElementType.FnPtr:
-				DmdType returnType = null;
+				DmdType? returnType = null;
 				types = null;
 				foreach (var t in type.TypeParameters) {
-					if ((object)returnType == null)
+					if (returnType is null)
 						returnType = Create(t);
 					else {
-						if (types == null)
+						if (types is null)
 							types = GetTypesList();
 						types.Add(Create(t));
 					}
 				}
-				if ((object)returnType == null)
+				if (returnType is null)
 					throw new InvalidOperationException();
 				//TODO: Guessing FnPtr calling convention
 				const DmdSignatureCallingConvention fnPtrCallingConvention = DmdSignatureCallingConvention.C;

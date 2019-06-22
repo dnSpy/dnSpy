@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.Extension {
 		/// </summary>
 		/// <param name="event">Event</param>
 		/// <param name="obj">Data, see <see cref="ExtensionEvent"/></param>
-		void OnEvent(ExtensionEvent @event, object obj);
+		void OnEvent(ExtensionEvent @event, object? obj);
 
 		/// <summary>
 		/// Gets the <see cref="Extension.ExtensionInfo"/> instance

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <Import Project="..\..\DnSpyCommon.props" />
 
@@ -11,11 +11,12 @@
     <AssemblyOriginatorKeyFile>..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NullableContextOptions>enable</NullableContextOptions>
 
+    <RuntimeIdentifiers>$(DnSpyRuntimeIdentifiers)</RuntimeIdentifiers>
     <OutputType>WinExe</OutputType>
     <Prefer32Bit>false</Prefer32Bit>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
@@ -24,16 +25,6 @@
     <ApplicationIcon>Images\dnSpy.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
-
-  <ItemGroup Condition=" '$(IsDotNetFramework)' == 'true' ">
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="PresentationFramework.Aero" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="WindowsBase" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-  </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="MainApp\DevBuildWarning.cs" />
@@ -68,183 +59,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Bookmarks\ToolWindows\Bookmarks\BookmarksControl.xaml.cs">
-      <DependentUpon>BookmarksControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Documents\Tabs\Dialogs\ExportToProjectDlg.xaml.cs">
-      <DependentUpon>ExportToProjectDlg.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Documents\Tabs\Dialogs\OpenDocumentListDlg.xaml.cs">
-      <DependentUpon>OpenDocumentListDlg.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Documents\Tabs\Dialogs\OpenFromGACDlg.xaml.cs">
-      <DependentUpon>OpenFromGACDlg.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Documents\Tabs\Dialogs\TabsDlg.xaml.cs">
-      <DependentUpon>TabsDlg.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Documents\Tabs\DocViewer\WaitAdorner.xaml.cs">
-      <DependentUpon>WaitAdorner.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Hex\Commands\GoToMetadataDlg.xaml.cs">
-      <DependentUpon>GoToMetadataDlg.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Hex\Commands\GoToPositionDlg.xaml.cs">
-      <DependentUpon>GoToPositionDlg.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Hex\Commands\LocalSettingsDlg.xaml.cs">
-      <DependentUpon>LocalSettingsDlg.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Hex\Commands\SelectDlg.xaml.cs">
-      <DependentUpon>SelectDlg.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Hex\Editor\Search\SearchControl.xaml.cs">
-      <DependentUpon>SearchControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Hex\Intellisense\HexQuickInfoPresenterControl.xaml.cs">
-      <DependentUpon>HexQuickInfoPresenterControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Language\Intellisense\CompletionPresenterControl.xaml.cs">
-      <DependentUpon>CompletionPresenterControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Language\Intellisense\QuickInfoPresenterControl.xaml.cs">
-      <DependentUpon>QuickInfoPresenterControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Language\Intellisense\SignatureHelpPresenterControl.xaml.cs">
-      <DependentUpon>SignatureHelpPresenterControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="MainApp\App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="MainApp\AskDlg.xaml.cs">
-      <DependentUpon>AskDlg.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="MainApp\DsLoaderControl.xaml.cs">
-      <DependentUpon>DsLoaderControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="MainApp\MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="MainApp\MsgBoxDlg.xaml.cs">
-      <DependentUpon>MsgBoxDlg.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Output\OutputControl.xaml.cs">
-      <DependentUpon>OutputControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Search\SearchControl.xaml.cs">
-      <DependentUpon>SearchControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Settings\Dialog\AppSettingsDlg.xaml.cs">
-      <DependentUpon>AppSettingsDlg.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Text\Editor\Search\SearchControl.xaml.cs">
-      <DependentUpon>SearchControl.xaml</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Include="Bookmarks\ToolWindows\Bookmarks\BookmarksControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Documents\Tabs\Dialogs\ExportToProjectDlg.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Documents\Tabs\Dialogs\OpenDocumentListDlg.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Documents\Tabs\Dialogs\OpenFromGACDlg.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Documents\Tabs\Dialogs\TabsDlg.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Documents\Tabs\DocViewer\WaitAdorner.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Hex\Commands\GoToMetadataDlg.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Hex\Commands\GoToPositionDlg.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Hex\Commands\LocalSettingsDlg.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Hex\Commands\SelectDlg.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Hex\Editor\Search\SearchControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Hex\Intellisense\HexQuickInfoPresenterControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Language\Intellisense\CompletionPresenterControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Language\Intellisense\QuickInfoPresenterControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Language\Intellisense\SignatureHelpPresenterControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="MainApp\App.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="MainApp\AskDlg.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="MainApp\DsLoaderControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="MainApp\MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="MainApp\MsgBoxDlg.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Output\OutputControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Search\SearchControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Settings\Dialog\AppSettingsDlg.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Text\Editor\Search\SearchControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Themes\wpf.styles.templates.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Update="Properties\dnSpy.Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -259,7 +73,7 @@
     </EmbeddedResource>
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition=" '$(HasCOMReference)' == 'true' ">
     <COMReference Include="IWshRuntimeLibrary">
       <Guid>{F935DC20-1CF0-11D0-ADB9-00C04FD58A0B}</Guid>
       <VersionMajor>1</VersionMajor>
@@ -271,11 +85,17 @@
     </COMReference>
   </ItemGroup>
 
+  <ItemGroup Condition=" '$(IsDotNetFramework)' == 'true' ">
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="PresentationFramework.Aero" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Iced" Version="$(IcedVersion)" />
     <PackageReference Include="Microsoft.VisualStudio.Composition" Version="$(MSVSCompositionVersion)" />
     <PackageReference Include="Microsoft.VisualStudio.Language.Intellisense" Version="$(MSVSIntellisenseVersion)" />
-    <PackageReference Include="Microsoft.DiaSymReader.Native" Version="$(DiaSymReaderVersion)" />
+    <!-- Self contained .NET Core apps already ship with this DLL (not necessarily the same version, though) -->
+    <PackageReference Include="Microsoft.DiaSymReader.Native" Version="$(DiaSymReaderVersion)" Condition=" '$(IsSelfContainedDotNetCore)' != 'true' " />
     <PackageReference Include="Microsoft.VisualStudio.Text.UI.Wpf" Version="$(MSVSTextVersion)" />
   </ItemGroup>
 

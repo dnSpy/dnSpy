@@ -38,7 +38,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="options">Eval options</param>
 		/// <param name="expressionEvaluatorState">State created by <see cref="DbgExpressionEvaluator.CreateExpressionEvaluatorState"/> or null to store the state in <paramref name="evalInfo"/>'s context</param>
 		/// <returns></returns>
-		public DbgCreateValueNodeResult Create(DbgEvaluationInfo evalInfo, string expression, DbgValueNodeEvaluationOptions nodeOptions, DbgEvaluationOptions options, object expressionEvaluatorState) =>
+		public DbgCreateValueNodeResult Create(DbgEvaluationInfo evalInfo, string expression, DbgValueNodeEvaluationOptions nodeOptions, DbgEvaluationOptions options, object? expressionEvaluatorState) =>
 			Create(evalInfo, new[] { new DbgExpressionEvaluationInfo(expression, nodeOptions, options, expressionEvaluatorState) })[0];
 
 		/// <summary>
@@ -64,7 +64,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// </summary>
 	public readonly struct DbgCreateValueNodeResult {
 		/// <summary>
-		/// Gets the created node or null if there was an error
+		/// Gets the created node
 		/// </summary>
 		public DbgValueNode ValueNode { get; }
 

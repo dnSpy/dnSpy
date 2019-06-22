@@ -26,15 +26,15 @@ using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
 	sealed class OpenPublicKeyFile : IOpenPublicKeyFile {
-		readonly Window ownerWindow;
+		readonly Window? ownerWindow;
 
 		public OpenPublicKeyFile()
 			: this(null) {
 		}
 
-		public OpenPublicKeyFile(Window ownerWindow) => this.ownerWindow = ownerWindow;
+		public OpenPublicKeyFile(Window? ownerWindow) => this.ownerWindow = ownerWindow;
 
-		public PublicKey Open() {
+		public PublicKey? Open() {
 			var dialog = new OpenFileDialog() {
 				Filter = PickFilenameConstants.StrongNameKeyFilter,
 				RestoreDirectory = true,

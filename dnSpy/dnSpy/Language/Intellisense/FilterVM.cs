@@ -49,8 +49,8 @@ namespace dnSpy.Language.Intellisense {
 			}
 		}
 
-		public string ToolTip => filter.ToolTip;
-		public string AccessKey => filter.AccessKey;
+		public string? ToolTip => filter.ToolTip;
+		public string? AccessKey => filter.AccessKey;
 
 		readonly CompletionPresenter owner;
 		readonly DsIntellisenseFilter filter;

@@ -27,8 +27,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdConstructorRef : DmdConstructorInfoBase {
 		public override DmdAppDomain AppDomain => declaringTypeRef.AppDomain;
 		public override string Name { get; }
-		public override DmdType DeclaringType => __resolvedConstructor_DONT_USE?.DeclaringType ?? declaringTypeRef;
-		public override DmdType ReflectedType => DeclaringType;
+		public override DmdType? DeclaringType => __resolvedConstructor_DONT_USE?.DeclaringType ?? declaringTypeRef;
+		public override DmdType? ReflectedType => DeclaringType;
 		public override bool IsMetadataReference => true;
 		public override int MetadataToken => ResolvedConstructor.MetadataToken;
 		public override DmdMethodImplAttributes MethodImplementationFlags => ResolvedConstructor.MethodImplementationFlags;
@@ -37,33 +37,33 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override bool IsGenericMethodDefinition => methodSignature.GenericParameterCount != 0;
 		public override bool IsGenericMethod => methodSignature.GenericParameterCount != 0;
 
-		DmdConstructorDef ResolvedConstructor => GetResolvedConstructor(throwOnError: true);
-		DmdConstructorDef GetResolvedConstructor(bool throwOnError) {
-			if ((object)__resolvedConstructor_DONT_USE != null)
+		DmdConstructorDef ResolvedConstructor => GetResolvedConstructor(throwOnError: true)!;
+		DmdConstructorDef? GetResolvedConstructor(bool throwOnError) {
+			if (!(__resolvedConstructor_DONT_USE is null))
 				return __resolvedConstructor_DONT_USE;
 
-			DmdConstructorDef newResolvedCtor = null;
+			DmdConstructorDef? newResolvedCtor = null;
 			var declType = declaringTypeRef.Resolve(throwOnError);
-			if ((object)declType != null) {
+			if (!(declType is null)) {
 				var nonGenericInstDeclType = declType.IsGenericType ? declType.GetGenericTypeDefinition() : declType;
 				var nonGenericInstDeclTypeMethod = nonGenericInstDeclType?.GetMethod(Name, rawMethodSignature, throwOnError: false) as DmdConstructorDef;
-				if ((object)nonGenericInstDeclTypeMethod != null) {
-					newResolvedCtor = (object)nonGenericInstDeclTypeMethod.DeclaringType == declType ?
+				if (!(nonGenericInstDeclTypeMethod is null)) {
+					newResolvedCtor = (object?)nonGenericInstDeclTypeMethod.DeclaringType == declType ?
 						nonGenericInstDeclTypeMethod :
 						declType.GetMethod(nonGenericInstDeclTypeMethod.Module, nonGenericInstDeclTypeMethod.MetadataToken) as DmdConstructorDef;
-					Debug.Assert((object)newResolvedCtor != null);
+					Debug.Assert(!(newResolvedCtor is null));
 				}
 			}
-			if ((object)newResolvedCtor != null) {
+			if (!(newResolvedCtor is null)) {
 				Interlocked.CompareExchange(ref __resolvedConstructor_DONT_USE, newResolvedCtor, null);
-				Debug.Assert(DmdMemberInfoEqualityComparer.DefaultMember.Equals(__resolvedConstructor_DONT_USE.ReflectedType, declaringTypeRef));
+				Debug.Assert(DmdMemberInfoEqualityComparer.DefaultMember.Equals(__resolvedConstructor_DONT_USE!.ReflectedType, declaringTypeRef));
 				return __resolvedConstructor_DONT_USE;
 			}
 			if (throwOnError)
 				throw new MethodResolveException(this);
 			return null;
 		}
-		volatile DmdConstructorDef __resolvedConstructor_DONT_USE;
+		volatile DmdConstructorDef? __resolvedConstructor_DONT_USE;
 
 		readonly DmdType declaringTypeRef;
 		readonly DmdMethodSignature rawMethodSignature;
@@ -76,11 +76,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			this.methodSignature = methodSignature ?? throw new ArgumentNullException(nameof(methodSignature));
 		}
 
-		public override DmdConstructorInfo Resolve(bool throwOnError) => GetResolvedConstructor(throwOnError);
+		public override DmdConstructorInfo? Resolve(bool throwOnError) => GetResolvedConstructor(throwOnError);
 		public override ReadOnlyCollection<DmdParameterInfo> GetParameters() => ResolvedConstructor.GetParameters();
 		public override ReadOnlyCollection<DmdType> GetGenericArguments() => methodSignature.GenericParameterCount == 0 ? ReadOnlyCollectionHelpers.Empty<DmdType>() : ResolvedConstructor.GetGenericArguments();
-		public override DmdMethodBody GetMethodBody() => ResolvedConstructor.GetMethodBody();
-		internal override DmdMethodBody GetMethodBody(IList<DmdType> genericMethodArguments) => ResolvedConstructor.GetMethodBody(genericMethodArguments);
+		public override DmdMethodBody? GetMethodBody() => ResolvedConstructor.GetMethodBody();
+		internal override DmdMethodBody? GetMethodBody(IList<DmdType> genericMethodArguments) => ResolvedConstructor.GetMethodBody(genericMethodArguments);
 		public override DmdMethodSignature GetMethodSignature() => methodSignature;
 		public override ReadOnlyCollection<DmdCustomAttributeData> GetCustomAttributesData() => ResolvedConstructor.GetCustomAttributesData();
 		public override ReadOnlyCollection<DmdCustomAttributeData> GetSecurityAttributesData() => ResolvedConstructor.GetSecurityAttributesData();

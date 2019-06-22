@@ -100,9 +100,9 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests {
 
 		sealed class DmdEvaluatorImpl : DmdEvaluator {
 			public override object CreateInstance(object context, DmdConstructorInfo ctor, object[] arguments) => throw new NotImplementedException();
-			public override object Invoke(object context, DmdMethodBase method, object obj, object[] parameters) => throw new NotImplementedException();
-			public override object LoadField(object context, DmdFieldInfo field, object obj) => throw new NotImplementedException();
-			public override void StoreField(object context, DmdFieldInfo field, object obj, object value) => throw new NotImplementedException();
+			public override object? Invoke(object? context, DmdMethodBase method, object? obj, object?[] parameters) => throw new NotImplementedException();
+			public override object? LoadField(object? context, DmdFieldInfo field, object? obj) => throw new NotImplementedException();
+			public override void StoreField(object? context, DmdFieldInfo field, object? obj, object? value) => throw new NotImplementedException();
 		}
 
 		TestRuntime CreateTestRuntime() {
@@ -3762,7 +3762,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests {
 		static bool Equals(byte[] a, byte[] b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (a.Length != b.Length)
 				return false;
@@ -3812,7 +3812,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests {
 				ex2 = ex;
 				res2 = null;
 			}
-			if (ex1 != null || ex2 != null)
+			if (!(ex1 is null) || !(ex2 is null))
 				Verify(ex1?.GetType().FullName == ex2?.GetType().FullName);
 			else
 				Verify(m1.ReturnType, res1, res2);
@@ -3844,7 +3844,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests {
 		}
 
 		ILValue CreateArgument(object value) {
-			if (value == null)
+			if (value is null)
 				return new NullObjectRefILValue();
 			switch (Type.GetTypeCode(value.GetType())) {
 			case TypeCode.Boolean:	return new ConstantInt32ILValue(testAsm1.AppDomain, (bool)value ? 1 : 0);

@@ -87,7 +87,7 @@ namespace dndbg.DotNet {
 		protected override void InitializeCustomAttributes() =>
 			readerModule.InitCustomAttributes(this, ref customAttributes, new GenericParamContext(ownerMethod.OwnerType, ownerMethod));
 
-		protected override Constant GetConstant_NoLock() {
+		protected override Constant? GetConstant_NoLock() {
 			var mdi = readerModule.MetaDataImport;
 			uint token = OriginalToken.Raw;
 
@@ -97,7 +97,7 @@ namespace dndbg.DotNet {
 			return readerModule.UpdateRowId(new ConstantUser(c, (ElementType)etype));
 		}
 
-		protected override MarshalType GetMarshalType_NoLock() =>
+		protected override MarshalType? GetMarshalType_NoLock() =>
 			readerModule.ReadMarshalType(this, new GenericParamContext(ownerMethod.OwnerType, ownerMethod));
 	}
 }

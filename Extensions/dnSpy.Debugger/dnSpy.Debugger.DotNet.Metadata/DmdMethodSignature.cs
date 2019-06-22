@@ -25,7 +25,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
 	/// .NET method signature
 	/// </summary>
-	public sealed class DmdMethodSignature : IEquatable<DmdMethodSignature> {
+	public sealed class DmdMethodSignature : IEquatable<DmdMethodSignature?> {
 		/// <summary>
 		/// Gets the flags
 		/// </summary>
@@ -85,7 +85,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="returnType">Return type</param>
 		/// <param name="parameterTypes">Parameter types or null</param>
 		/// <param name="varArgsParameterTypes">Var args parameter types or null</param>
-		public DmdMethodSignature(DmdSignatureCallingConvention flags, int genericParameterCount, DmdType returnType, IList<DmdType> parameterTypes, IList<DmdType> varArgsParameterTypes) {
+		public DmdMethodSignature(DmdSignatureCallingConvention flags, int genericParameterCount, DmdType returnType, IList<DmdType>? parameterTypes, IList<DmdType>? varArgsParameterTypes) {
 			if (genericParameterCount < 0)
 				throw new ArgumentOutOfRangeException(nameof(genericParameterCount));
 			Flags = flags;
@@ -108,8 +108,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public ReadOnlyCollection<DmdType> GetVarArgsParameterTypes() => varArgsParameterTypes;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-		public static bool operator ==(DmdMethodSignature left, DmdMethodSignature right) => DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
-		public static bool operator !=(DmdMethodSignature left, DmdMethodSignature right) => !DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
+		public static bool operator ==(DmdMethodSignature? left, DmdMethodSignature? right) => DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
+		public static bool operator !=(DmdMethodSignature? left, DmdMethodSignature? right) => !DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
@@ -117,14 +117,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		public bool Equals(DmdMethodSignature other) => DmdMemberInfoEqualityComparer.DefaultMember.Equals(this, other);
+		public bool Equals(DmdMethodSignature? other) => DmdMemberInfoEqualityComparer.DefaultMember.Equals(this, other);
 
 		/// <summary>
 		/// Equals()
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => Equals(obj as DmdMethodSignature);
+		public override bool Equals(object? obj) => Equals(obj as DmdMethodSignature);
 
 		/// <summary>
 		/// GetHashCode()

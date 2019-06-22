@@ -31,14 +31,14 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		readonly MethodSpecOptions origOptions;
 
 		public IDnlibTypePicker DnlibTypePicker {
-			set { dnlibTypePicker = value; }
+			set => dnlibTypePicker = value;
 		}
-		IDnlibTypePicker dnlibTypePicker;
+		IDnlibTypePicker? dnlibTypePicker;
 
 		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
 		public ICommand PickMethodCommand => new RelayCommand(a => PickMethod());
 
-		public IMethodDefOrRef Method {
+		public IMethodDefOrRef? Method {
 			get => method;
 			set {
 				if (method != value) {
@@ -49,11 +49,11 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 			}
 		}
-		IMethodDefOrRef method;
+		IMethodDefOrRef? method;
 
 		public string MethodFullName {
 			get {
-				if (Method == null)
+				if (Method is null)
 					return "null";
 				return Method.FullName;
 			}
@@ -80,10 +80,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		void PickMethod() {
-			if (dnlibTypePicker == null)
+			if (dnlibTypePicker is null)
 				throw new InvalidOperationException();
 			var newMethod = dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Method, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.MethodDef), Method, typeSigCreatorOptions.OwnerModule);
-			if (newMethod != null)
+			if (!(newMethod is null))
 				Method = newMethod;
 		}
 
@@ -94,7 +94,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			Method = options.Method;
 			var gim = options.Instantiation as GenericInstMethodSig;
 			CreateTypeSigArrayVM.TypeSigCollection.Clear();
-			if (gim != null)
+			if (!(gim is null))
 				CreateTypeSigArrayVM.TypeSigCollection.AddRange(gim.GenericArguments);
 			CustomAttributesVM.InitializeFrom(options.CustomAttributes);
 		}
@@ -107,6 +107,6 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			return options;
 		}
 
-		public override bool HasError => Method == null;
+		public override bool HasError => Method is null;
 	}
 }

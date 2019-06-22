@@ -32,14 +32,14 @@ namespace dnSpy.Contracts.Tabs {
 		/// <summary>
 		/// Gets the active <see cref="ITabGroupService"/> instance
 		/// </summary>
-		ITabGroupService ActiveTabGroupService { get; }
+		ITabGroupService? ActiveTabGroupService { get; }
 
 		/// <summary>
 		/// Creates a new <see cref="ITabGroupService"/> instance
 		/// </summary>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		ITabGroupService Create(TabGroupServiceOptions options);
+		ITabGroupService Create(TabGroupServiceOptions? options);
 
 		/// <summary>
 		/// Removes a <see cref="ITabGroupService"/> instance

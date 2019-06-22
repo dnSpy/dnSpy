@@ -29,38 +29,38 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public override DmdTypeSignatureKind TypeSignatureKind => DmdTypeSignatureKind.GenericInstance;
 		public override DmdTypeScope TypeScope => ResolvedType.TypeScope;
 		public override DmdModule Module => ResolvedType.Module;
-		public override string MetadataNamespace => ResolvedType.MetadataNamespace;
-		public override DmdType BaseType => ResolvedType.BaseType;
-		public override StructLayoutAttribute StructLayoutAttribute => ResolvedType.StructLayoutAttribute;
+		public override string? MetadataNamespace => ResolvedType.MetadataNamespace;
+		public override DmdType? BaseType => ResolvedType.BaseType;
+		public override StructLayoutAttribute? StructLayoutAttribute => ResolvedType.StructLayoutAttribute;
 		public override DmdTypeAttributes Attributes => ResolvedType.Attributes;
-		public override string MetadataName => genericTypeRef.MetadataName;
-		public override DmdType DeclaringType => ResolvedType.DeclaringType;
+		public override string? MetadataName => genericTypeRef.MetadataName;
+		public override DmdType? DeclaringType => ResolvedType.DeclaringType;
 		public override int MetadataToken => ResolvedType.MetadataToken;
 		public override bool IsMetadataReference => true;
 		internal override bool HasTypeEquivalence => ResolvedType.HasTypeEquivalence;
 
-		DmdGenericInstanceType ResolvedType => GetResolvedType(throwOnError: true);
-		DmdGenericInstanceType GetResolvedType(bool throwOnError) {
-			if ((object)__resolvedType_DONT_USE != null)
+		DmdGenericInstanceType ResolvedType => GetResolvedType(throwOnError: true)!;
+		DmdGenericInstanceType? GetResolvedType(bool throwOnError) {
+			if (!(__resolvedType_DONT_USE is null))
 				return __resolvedType_DONT_USE;
 			var typeDef = genericTypeRef.GetResolvedType(throwOnError);
-			var newRT = (DmdGenericInstanceType)typeDef?.AppDomain.MakeGenericType(typeDef, typeArguments, GetCustomModifiers());
+			var newRT = (DmdGenericInstanceType?)typeDef?.AppDomain.MakeGenericType(typeDef, typeArguments, GetCustomModifiers());
 			Interlocked.CompareExchange(ref __resolvedType_DONT_USE, newRT, null);
-			return __resolvedType_DONT_USE;
+			return __resolvedType_DONT_USE!;
 		}
-		volatile DmdGenericInstanceType __resolvedType_DONT_USE;
+		volatile DmdGenericInstanceType? __resolvedType_DONT_USE;
 
 		readonly DmdTypeRef genericTypeRef;
 		readonly ReadOnlyCollection<DmdType> typeArguments;
 
-		public DmdGenericInstanceTypeRef(DmdTypeRef genericTypeRef, IList<DmdType> typeArguments, IList<DmdCustomModifier> customModifiers) : base(customModifiers) {
-			if (typeArguments == null)
+		public DmdGenericInstanceTypeRef(DmdTypeRef genericTypeRef, IList<DmdType> typeArguments, IList<DmdCustomModifier>? customModifiers) : base(customModifiers) {
+			if (typeArguments is null)
 				throw new ArgumentNullException(nameof(typeArguments));
 			this.genericTypeRef = genericTypeRef ?? throw new ArgumentNullException(nameof(genericTypeRef));
 			this.typeArguments = ReadOnlyCollectionHelpers.Create(typeArguments);
 		}
 
-		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => AppDomain.MakeGenericType(genericTypeRef, typeArguments, customModifiers);
+		public override DmdType WithCustomModifiers(IList<DmdCustomModifier>? customModifiers) => AppDomain.MakeGenericType(genericTypeRef, typeArguments, customModifiers);
 		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : AppDomain.MakeGenericType(genericTypeRef, typeArguments, null);
 
 		public override bool IsGenericType => true;
@@ -68,22 +68,22 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public override DmdType GetGenericTypeDefinition() {
 			var resolvedType = GetResolvedType(throwOnError: false);
-			if ((object)resolvedType != null)
+			if (!(resolvedType is null))
 				return resolvedType.GetGenericTypeDefinition();
 			return genericTypeRef;
 		}
 
-		protected override DmdType ResolveNoThrowCore() => GetResolvedType(throwOnError: false);
+		protected override DmdType? ResolveNoThrowCore() => GetResolvedType(throwOnError: false);
 		public override bool IsFullyResolved => false;
-		public override DmdTypeBase FullResolve() => GetResolvedType(throwOnError: false)?.FullResolve();
+		public override DmdTypeBase? FullResolve() => GetResolvedType(throwOnError: false)?.FullResolve();
 
-		public sealed override DmdFieldInfo[] CreateDeclaredFields(DmdType reflectedType) => ResolvedType.CreateDeclaredFields(reflectedType);
-		public sealed override DmdMethodBase[] CreateDeclaredMethods(DmdType reflectedType) => ResolvedType.CreateDeclaredMethods(reflectedType);
-		public sealed override DmdPropertyInfo[] CreateDeclaredProperties(DmdType reflectedType) => ResolvedType.CreateDeclaredProperties(reflectedType);
-		public sealed override DmdEventInfo[] CreateDeclaredEvents(DmdType reflectedType) => ResolvedType.CreateDeclaredEvents(reflectedType);
+		public sealed override DmdFieldInfo[]? CreateDeclaredFields(DmdType reflectedType) => ResolvedType.CreateDeclaredFields(reflectedType);
+		public sealed override DmdMethodBase[]? CreateDeclaredMethods(DmdType reflectedType) => ResolvedType.CreateDeclaredMethods(reflectedType);
+		public sealed override DmdPropertyInfo[]? CreateDeclaredProperties(DmdType reflectedType) => ResolvedType.CreateDeclaredProperties(reflectedType);
+		public sealed override DmdEventInfo[]? CreateDeclaredEvents(DmdType reflectedType) => ResolvedType.CreateDeclaredEvents(reflectedType);
 
-		public override DmdType[] ReadDeclaredInterfaces() => ResolvedType.ReadDeclaredInterfaces();
+		public override DmdType[]? ReadDeclaredInterfaces() => ResolvedType.ReadDeclaredInterfaces();
 		public override ReadOnlyCollection<DmdType> NestedTypes => ResolvedType.NestedTypes;
-		public override (DmdCustomAttributeData[] cas, DmdCustomAttributeData[] sas) CreateCustomAttributes() => ResolvedType.CreateCustomAttributes();
+		public override (DmdCustomAttributeData[]? cas, DmdCustomAttributeData[]? sas) CreateCustomAttributes() => ResolvedType.CreateCustomAttributes();
 	}
 }

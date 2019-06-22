@@ -31,8 +31,8 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 	sealed class CallStackToolWindowContentProvider : IToolWindowContentProvider {
 		readonly Lazy<ICallStackContent> callStackContent;
 
-		public CallStackToolWindowContent CallStackToolWindowContent => callStackToolWindowContent ?? (callStackToolWindowContent = new CallStackToolWindowContent(callStackContent));
-		CallStackToolWindowContent callStackToolWindowContent;
+		public CallStackToolWindowContent CallStackToolWindowContent => callStackToolWindowContent ??= new CallStackToolWindowContent(callStackContent);
+		CallStackToolWindowContent? callStackToolWindowContent;
 
 		[ImportingConstructor]
 		CallStackToolWindowContentProvider(Lazy<ICallStackContent> callStackContent) => this.callStackContent = callStackContent;
@@ -41,18 +41,18 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			get { yield return new ToolWindowContentInfo(CallStackToolWindowContent.THE_GUID, CallStackToolWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_CALLSTACK, false); }
 		}
 
-		public ToolWindowContent GetOrCreate(Guid guid) => guid == CallStackToolWindowContent.THE_GUID ? CallStackToolWindowContent : null;
+		public ToolWindowContent? GetOrCreate(Guid guid) => guid == CallStackToolWindowContent.THE_GUID ? CallStackToolWindowContent : null;
 	}
 
 	sealed class CallStackToolWindowContent : ToolWindowContent, IFocusable {
 		public static readonly Guid THE_GUID = new Guid("0E53B79D-EC30-44B6-86A3-DFFCE364EB4A");
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultHorizontal;
 
-		public override IInputElement FocusedElement => callStackContent.Value.FocusedElement;
-		public override FrameworkElement ZoomElement => callStackContent.Value.ZoomElement;
+		public override IInputElement? FocusedElement => callStackContent.Value.FocusedElement;
+		public override FrameworkElement? ZoomElement => callStackContent.Value.ZoomElement;
 		public override Guid Guid => THE_GUID;
 		public override string Title => dnSpy_Debugger_Resources.Window_CallStack;
-		public override object UIObject => callStackContent.Value.UIObject;
+		public override object? UIObject => callStackContent.Value.UIObject;
 		public bool CanFocus => true;
 
 		readonly Lazy<ICallStackContent> callStackContent;

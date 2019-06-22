@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
@@ -38,10 +39,11 @@ namespace dnSpy.Documents.TreeView {
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.MODULE_NODE_GUID);
 
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) =>
-			dnImgMgr.GetImageReference(Document.ModuleDef);
+			dnImgMgr.GetImageReference(Document.ModuleDef!);
 		public override void Initialize() => TreeNode.LazyLoading = true;
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
+			Debug.Assert(!(Document.ModuleDef is null));
 			foreach (var document in Document.Children)
 				yield return Context.DocumentTreeView.CreateNode(this, document);
 
@@ -61,6 +63,7 @@ namespace dnSpy.Documents.TreeView {
 		}
 
 		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) {
+			Debug.Assert(!(Document.ModuleDef is null));
 			if ((options & DocumentNodeWriteOptions.ToolTip) == 0)
 				new NodeFormatter().Write(output, decompiler, Document.ModuleDef, false);
 			else {
@@ -77,8 +80,8 @@ namespace dnSpy.Documents.TreeView {
 			}
 		}
 
-		public override NamespaceNode FindNode(string ns) {
-			if (ns == null)
+		public override NamespaceNode? FindNode(string? ns) {
+			if (ns is null)
 				return null;
 
 			TreeNode.EnsureChildrenLoaded();
@@ -91,6 +94,6 @@ namespace dnSpy.Documents.TreeView {
 		}
 
 		public override FilterType GetFilterType(IDocumentTreeNodeFilter filter) =>
-			filter.GetResult(Document.ModuleDef).FilterType;
+			filter.GetResult(Document.ModuleDef!).FilterType;
 	}
 }

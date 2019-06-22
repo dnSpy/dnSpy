@@ -58,7 +58,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		double IProgressTask.ProgressMaximum => maxProgress;
 		readonly uint maxProgress;
 		uint currentProgress;
-		IProgress progress;
+		IProgress? progress;
 
 		unsafe void IProgressTask.Execute(IProgress progress) {
 			this.progress = progress;
@@ -67,7 +67,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 			int maxSize = infos.Max(a => a.Size);
 			var buf = new byte[maxSize];
-			byte[] buf2 = null;
+			byte[]? buf2 = null;
 			foreach (var info in infos) {
 				progress.ThrowIfCancellationRequested();
 				progress.SetDescription(Path.GetFileName(info.Filename));
@@ -80,7 +80,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 				byte[] data = buf;
 				int dataSize = (int)info.Size;
 				if (info.ImageLayout == DbgImageLayout.Memory) {
-					if (buf2 == null)
+					if (buf2 is null)
 						buf2 = new byte[buf.Length];
 					data = buf2;
 					progress.ThrowIfCancellationRequested();

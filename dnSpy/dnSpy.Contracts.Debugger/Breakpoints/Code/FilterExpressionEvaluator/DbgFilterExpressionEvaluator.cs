@@ -33,7 +33,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code.FilterExpressionEvaluator {
 		/// </summary>
 		/// <param name="expr">Filter expression</param>
 		/// <returns></returns>
-		public abstract string IsValidExpression(string expr);
+		public abstract string? IsValidExpression(string expr);
 
 		/// <summary>
 		/// Evaluates <paramref name="expr"/> and returns the result of the expression.
@@ -63,12 +63,12 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code.FilterExpressionEvaluator {
 		/// <summary>
 		/// Error message if <see cref="HasError"/> is true
 		/// </summary>
-		public string Error { get; }
+		public string? Error { get; }
 
 		/// <summary>
 		/// true if there was an error
 		/// </summary>
-		public bool HasError => Error != null;
+		public bool HasError => !(Error is null);
 
 		/// <summary>
 		/// Constructor

@@ -45,7 +45,7 @@ namespace dnSpy.Disassembly.X86 {
 		public NasmDisassemblySettings Clone() => CopyTo(new NasmDisassemblySettings());
 
 		public NasmDisassemblySettings CopyTo(NasmDisassemblySettings other) {
-			if (other == null)
+			if (other is null)
 				throw new ArgumentNullException(nameof(other));
 			base.CopyTo(other);
 			other.ShowSignExtendedImmediateSize = ShowSignExtendedImmediateSize;

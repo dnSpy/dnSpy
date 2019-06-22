@@ -28,8 +28,8 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			new byte[8] { 0xB0, 0x3F, 0x5F, 0x7F, 0x11, 0xD5, 0x0A, 0x3A }, DmdAssemblyHashAlgorithm.None);
 
 		sealed class CtorState {
-			public DmdAssembly Assembly;
-			public DmdConstructorInfo Constructor;
+			public DmdAssembly? Assembly;
+			public DmdConstructorInfo? Constructor;
 		}
 
 		/// <summary>
@@ -41,9 +41,9 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		/// </summary>
 		/// <param name="appDomain">AppDomain</param>
 		/// <returns></returns>
-		public static DmdConstructorInfo GetDynamicMetaObjectProviderDebugViewConstructor(DmdAppDomain appDomain) {
+		public static DmdConstructorInfo? GetDynamicMetaObjectProviderDebugViewConstructor(DmdAppDomain appDomain) {
 			var state = appDomain.GetOrCreateData<CtorState>();
-			if (state.Assembly == null) {
+			if (state.Assembly is null) {
 				state.Assembly = appDomain.GetAssembly(debugViewAssemblyName);
 				var type = state.Assembly?.GetType("Microsoft.CSharp.RuntimeBinder.DynamicMetaObjectProviderDebugView", DmdGetTypeOptions.None);
 				state.Constructor = type?.GetMethod(DmdConstructorInfo.ConstructorName, DmdSignatureCallingConvention.HasThis, 0, appDomain.System_Void, new[] { appDomain.System_Object }, throwOnError: false) as DmdConstructorInfo;

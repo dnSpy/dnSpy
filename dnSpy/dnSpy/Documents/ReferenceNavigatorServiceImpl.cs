@@ -39,13 +39,13 @@ namespace dnSpy.Documents {
 			this.referenceConverters = referenceConverters.OrderBy(a => a.Metadata.Order).ToArray();
 		}
 
-		public override void GoTo(object reference, object[] options) => uiDispatcher.UI(() => GoToCore(reference, options));
-		void GoToCore(object reference, object[] options) {
+		public override void GoTo(object? reference, object[]? options) => uiDispatcher.UI(() => GoToCore(reference, options));
+		void GoToCore(object? reference, object[]? options) {
 			uiDispatcher.VerifyAccess();
 			reference = Convert(reference);
-			if (reference == null)
+			if (reference is null)
 				return;
-			var roOptions = options == null || options.Length == 0 ? emptyOptions : new ReadOnlyCollection<object>(options);
+			var roOptions = options is null || options.Length == 0 ? emptyOptions : new ReadOnlyCollection<object>(options);
 			foreach (var lz in referenceNavigators) {
 				if (lz.Value.GoTo(reference, roOptions))
 					break;
@@ -53,10 +53,10 @@ namespace dnSpy.Documents {
 		}
 		static readonly ReadOnlyCollection<object> emptyOptions = new ReadOnlyCollection<object>(Array.Empty<object>());
 
-		object Convert(object reference) {
+		object? Convert(object? reference) {
 			uiDispatcher.VerifyAccess();
 			foreach (var lz in referenceConverters) {
-				if (reference == null)
+				if (reference is null)
 					break;
 				lz.Value.Convert(ref reference);
 			}

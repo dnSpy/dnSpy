@@ -53,10 +53,10 @@ namespace dnSpy.Hex.HexGroups {
 			optionsStorage = new OptionsStorage(settingsService);
 		}
 
-		internal string GetSubGroup(WpfHexView hexView) {
+		internal string? GetSubGroup(WpfHexView hexView) {
 			foreach (var lz in tagOptionDefinitionProviders) {
 				var subGroup = lz.Value.GetSubGroup(hexView);
-				if (subGroup != null)
+				if (!(subGroup is null))
 					return subGroup;
 			}
 			return null;
@@ -64,7 +64,7 @@ namespace dnSpy.Hex.HexGroups {
 
 		public override HexViewOptionsGroup GetGroup(string name) => GetGroupCore(name);
 		HexViewOptionsGroupImpl GetGroupCore(string name) {
-			if (name == null)
+			if (name is null)
 				throw new ArgumentNullException(nameof(name));
 			if (!nameToGroup.TryGetValue(name, out var group)) {
 				var defaultOptions = GetDefaultOptions(name);
@@ -80,7 +80,7 @@ namespace dnSpy.Hex.HexGroups {
 					continue;
 				options.AddRange(lz.Value.GetOptions());
 			}
-			return options.Where(a => a.SubGroup != null && a.Name != null && a.Type != null).ToArray();
+			return options.Where(a => !(a.SubGroup is null) && !(a.Name is null) && !(a.Type is null)).ToArray();
 		}
 
 		internal void HexViewCreated(WpfHexView hexView) {
@@ -90,7 +90,7 @@ namespace dnSpy.Hex.HexGroups {
 
 			foreach (var lz in hexViewOptionsGroupNameProviders) {
 				var name = lz.Value.TryGetGroupName(hexView);
-				if (name != null) {
+				if (!(name is null)) {
 					var group = GetGroupCore(name);
 					group.HexViewCreated(hexView);
 					break;

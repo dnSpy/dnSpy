@@ -29,9 +29,9 @@ namespace dnSpy.Debugger.Evaluation {
 	abstract class DbgRuntimeObjectIdService {
 		public abstract event EventHandler ObjectIdsChanged;
 		public abstract bool CanCreateObjectId(DbgValue value, CreateObjectIdOptions options);
-		public abstract DbgObjectId[] CreateObjectIds(DbgValue[] values, CreateObjectIdOptions options);
-		public abstract DbgObjectId GetObjectId(DbgValue value);
-		public abstract DbgObjectId GetObjectId(uint id);
+		public abstract DbgObjectId?[] CreateObjectIds(DbgValue[] values, CreateObjectIdOptions options);
+		public abstract DbgObjectId? GetObjectId(DbgValue value);
+		public abstract DbgObjectId? GetObjectId(uint id);
 		public abstract DbgObjectId[] GetObjectIds();
 		public abstract void Remove(IList<DbgObjectId> objectIds);
 		public abstract bool Equals(DbgObjectId objectId, DbgValue value);
@@ -89,7 +89,7 @@ namespace dnSpy.Debugger.Evaluation {
 		}
 
 		public override bool CanCreateObjectId(DbgValue value, CreateObjectIdOptions options) {
-			if (value == null)
+			if (value is null)
 				throw new ArgumentNullException(nameof(value));
 			if (value.Runtime != Runtime)
 				throw new ArgumentException();
@@ -102,25 +102,26 @@ namespace dnSpy.Debugger.Evaluation {
 				return (isHidden || !objectIds.ContainsKey(valueImpl)) && dbgEngineObjectIdFactory.CanCreateObjectId(valueImpl.EngineValue);
 		}
 
-		public override DbgObjectId[] CreateObjectIds(DbgValue[] values, CreateObjectIdOptions options) {
-			if (values == null)
+		public override DbgObjectId?[] CreateObjectIds(DbgValue[] values, CreateObjectIdOptions options) {
+			if (values is null)
 				throw new ArgumentNullException(nameof(values));
 			if (values.Length == 0)
 				return Array.Empty<DbgObjectId>();
-			var res = new DbgObjectId[values.Length];
+			var res = new DbgObjectId?[values.Length];
 			bool isHidden = (options & CreateObjectIdOptions.Hidden) != 0;
 			lock (lockObj) {
 				for (int i = 0; i < values.Length; i++) {
 					var value = values[i] as DbgValueImpl;
 					if (value?.Runtime != Runtime)
 						throw new ArgumentException();
-					DbgObjectId objectId;
+					Debug.Assert(!(value is null));
+					DbgObjectId? objectId;
 					if (Runtime.IsClosed || value.IsClosed || (!isHidden && objectIds.ContainsKey(value)))
 						objectId = null;
 					else {
 						uint id = isHidden ? HiddenObjectId : objectIdCounter;
 						var engineObjectId = dbgEngineObjectIdFactory.CreateObjectId(value.EngineValue, id);
-						if (engineObjectId == null)
+						if (engineObjectId is null)
 							objectId = null;
 						else {
 							if (engineObjectId.Id != id)
@@ -147,8 +148,8 @@ namespace dnSpy.Debugger.Evaluation {
 			return res;
 		}
 
-		public override DbgObjectId GetObjectId(DbgValue value) {
-			if (value == null)
+		public override DbgObjectId? GetObjectId(DbgValue value) {
+			if (value is null)
 				throw new ArgumentNullException(nameof(value));
 			if (value.Runtime != Runtime)
 				throw new ArgumentException();
@@ -163,7 +164,7 @@ namespace dnSpy.Debugger.Evaluation {
 			}
 		}
 
-		public override DbgObjectId GetObjectId(uint id) {
+		public override DbgObjectId? GetObjectId(uint id) {
 			if (Runtime.IsClosed)
 				return null;
 			lock (lockObj) {
@@ -188,12 +189,12 @@ namespace dnSpy.Debugger.Evaluation {
 		}
 
 		public override void Remove(IList<DbgObjectId> objectIds) {
-			if (objectIds == null)
+			if (objectIds is null)
 				throw new ArgumentNullException(nameof(objectIds));
 			lock (lockObj) {
 				Debug.Assert(this.objectIds.Count == idToObjectId.Count);
 				foreach (var objectId in objectIds) {
-					if (objectId == null || objectId.Runtime != Runtime)
+					if (objectId is null || objectId.Runtime != Runtime)
 						throw new ArgumentException();
 					if (this.objectIds.Remove(objectId))
 						idToObjectId.Remove(objectId.Id);
@@ -220,15 +221,15 @@ namespace dnSpy.Debugger.Evaluation {
 		}
 
 		public override bool Equals(DbgObjectId objectId, DbgValue value) {
-			if (objectId == null)
+			if (objectId is null)
 				throw new ArgumentNullException(nameof(objectId));
-			if (value == null)
+			if (value is null)
 				throw new ArgumentNullException(nameof(value));
 			var objectIdImpl = objectId as DbgObjectIdImpl;
-			if (objectIdImpl == null)
+			if (objectIdImpl is null)
 				throw new ArgumentException();
 			var valueImpl = value as DbgValueImpl;
-			if (valueImpl == null)
+			if (valueImpl is null)
 				throw new ArgumentException();
 			if (objectId.Runtime != value.Runtime)
 				return false;
@@ -236,10 +237,10 @@ namespace dnSpy.Debugger.Evaluation {
 		}
 
 		public override int GetHashCode(DbgObjectId objectId) {
-			if (objectId == null)
+			if (objectId is null)
 				throw new ArgumentNullException(nameof(objectId));
 			var objectIdImpl = objectId as DbgObjectIdImpl;
-			if (objectIdImpl == null)
+			if (objectIdImpl is null)
 				throw new ArgumentException();
 			return dbgEngineObjectIdFactory.GetHashCode(objectIdImpl.EngineObjectId);
 		}

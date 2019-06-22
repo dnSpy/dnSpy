@@ -31,7 +31,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		int recursionCounter;
 
 		public static CorType GetType(DbgEngineImpl engine, CorAppDomain appDomain, DmdType type) {
-			if (type.TryGetData(out CorType corType))
+			if (type.TryGetData(out CorType? corType))
 				return corType;
 			return GetTypeCore(engine, appDomain, type);
 
@@ -45,31 +45,31 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		}
 
 		public CorType Create(DmdType type) {
-			if ((object)type == null)
+			if (type is null)
 				throw new ArgumentNullException(nameof(type));
 			if (recursionCounter++ > 100)
 				throw new InvalidOperationException();
 
-			CorType result;
+			CorType? result;
 			int i;
 			ReadOnlyCollection<DmdType> types;
 			CorType[] corTypes;
-			DnModule dnModule;
+			DnModule? dnModule;
 			switch (type.TypeSignatureKind) {
 			case DmdTypeSignatureKind.Type:
 				if (!engine.TryGetDnModule(type.Module.GetDebuggerModule() ?? throw new InvalidOperationException(), out dnModule))
 					throw new InvalidOperationException();
 				Debug.Assert((type.MetadataToken >> 24) == 0x02);
-				result = dnModule.CorModule.GetClassFromToken((uint)type.MetadataToken).GetParameterizedType(type.IsValueType ? CorElementType.ValueType : CorElementType.Class);
+				result = dnModule.CorModule.GetClassFromToken((uint)type.MetadataToken)?.GetParameterizedType(type.IsValueType ? CorElementType.ValueType : CorElementType.Class);
 				break;
 
 			case DmdTypeSignatureKind.Pointer:
-				result = Create(type.GetElementType());
+				result = Create(type.GetElementType()!);
 				result = appDomain.GetPtr(result);
 				break;
 
 			case DmdTypeSignatureKind.ByRef:
-				result = Create(type.GetElementType());
+				result = Create(type.GetElementType()!);
 				result = appDomain.GetByRef(result);
 				break;
 
@@ -78,12 +78,12 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				throw new InvalidOperationException();
 
 			case DmdTypeSignatureKind.SZArray:
-				result = Create(type.GetElementType());
+				result = Create(type.GetElementType()!);
 				result = appDomain.GetSZArray(result);
 				break;
 
 			case DmdTypeSignatureKind.MDArray:
-				result = Create(type.GetElementType());
+				result = Create(type.GetElementType()!);
 				result = appDomain.GetArray(result, (uint)type.GetArrayRank());
 				break;
 
@@ -93,7 +93,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				corTypes = new CorType[types.Count];
 				for (i = 0; i < corTypes.Length; i++)
 					corTypes[i] = Create(types[i]);
-				result = result.Class.GetParameterizedType(type.IsValueType ? CorElementType.ValueType : CorElementType.Class, corTypes);
+				result = result.Class?.GetParameterizedType(type.IsValueType ? CorElementType.ValueType : CorElementType.Class, corTypes);
 				break;
 
 			case DmdTypeSignatureKind.FunctionPointer:
@@ -113,7 +113,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				throw new InvalidOperationException();
 			}
 
-			if (result == null)
+			if (result is null)
 				throw new InvalidOperationException();
 
 			recursionCounter--;

@@ -61,7 +61,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		IEnumerable<object> Distinct(IEnumerable<object> objs) => undoCommandService.Value.GetUniqueDocuments(objs);
 
 		public bool AskUserToSaveIfModified(IEnumerable<object> docs) {
-			var modifiedDocs = Distinct(docs).Where(a => undoCommandService.Value.IsModified(undoCommandService.Value.GetUndoObject(a))).ToArray();
+			var modifiedDocs = Distinct(docs).Where(a => undoCommandService.Value.IsModified(undoCommandService.Value.GetUndoObject(a)!)).ToArray();
 			if (modifiedDocs.Length == 0)
 				return true;
 
@@ -94,7 +94,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 				}
 				else {
 					var buffer = objsAry[0] as HexBuffer;
-					Debug.Assert(buffer != null);
+					Debug.Assert(!(buffer is null));
 					var optsData = new SaveHexOptionsVM(buffer);
 					var optsWin = new SaveHexOptionsDlg();
 					optsWin.Owner = appWindow.MainWindow;
@@ -129,15 +129,15 @@ namespace dnSpy.AsmEditor.SaveModule {
 				if (!vm.WasSaved(doc))
 					allSaved = false;
 				else {
-					undoCommandService.Value.MarkAsSaved(undoCommandService.Value.GetUndoObject(doc));
+					undoCommandService.Value.MarkAsSaved(undoCommandService.Value.GetUndoObject(doc)!);
 					if (doc is IDsDocument document && string.IsNullOrEmpty(document.Filename)) {
 						var filename = vm.GetSavedFileName(doc);
-						if (!string.IsNullOrWhiteSpace(filename) && document.ModuleDef != null) {
+						if (!string.IsNullOrWhiteSpace(filename) && !(document.ModuleDef is null)) {
 							document.ModuleDef.Location = filename;
 							document.Filename = filename;
 							var modNode = documentTabService.DocumentTreeView.FindNode(document.ModuleDef) as ModuleDocumentNode;
-							Debug.Assert(modNode != null);
-							if (modNode != null) {
+							Debug.Assert(!(modNode is null));
+							if (!(modNode is null)) {
 								modNode.TreeNode.RefreshUI();
 								documentTabService.RefreshModifiedDocument(modNode.Document);
 							}

@@ -30,14 +30,14 @@ namespace dnSpy.Contracts.Output {
 		/// </summary>
 		/// <param name="color">Color</param>
 		/// <param name="text">Text</param>
-		void WriteLine(object color, string text);
+		void WriteLine(object color, string? text);
 
 		/// <summary>
 		/// Writes text
 		/// </summary>
 		/// <param name="color">Color</param>
 		/// <param name="text">Text</param>
-		void WriteLine(TextColor color, string text);
+		void WriteLine(TextColor color, string? text);
 
 		/// <summary>
 		/// Writes text

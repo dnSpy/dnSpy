@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
 	/// An address reference
 	/// </summary>
-	public sealed class AddressReference : IEquatable<AddressReference> {
+	public sealed class AddressReference : IEquatable<AddressReference?> {
 		/// <summary>
 		/// Filename
 		/// </summary>
@@ -47,11 +47,11 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="filename">Filename</param>
+		/// <param name="filename">Filename or null</param>
 		/// <param name="isRva">true if <paramref name="address"/> is an RVA, false if it's a file offset</param>
 		/// <param name="address">Address</param>
 		/// <param name="length">Length</param>
-		public AddressReference(string filename, bool isRva, ulong address, ulong length) {
+		public AddressReference(string? filename, bool isRva, ulong address, ulong length) {
 			Filename = filename ?? string.Empty;
 			IsRVA = isRva;
 			Address = address;
@@ -63,8 +63,8 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		public bool Equals(AddressReference other) =>
-			other != null &&
+		public bool Equals(AddressReference? other) =>
+			!(other is null) &&
 			IsRVA == other.IsRVA &&
 			Address == other.Address &&
 			Length == other.Length &&
@@ -75,7 +75,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => Equals(obj as AddressReference);
+		public override bool Equals(object? obj) => Equals(obj as AddressReference);
 
 		/// <summary>
 		/// GetHashCode()

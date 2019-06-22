@@ -25,9 +25,9 @@ using dnSpy.Debugger.DotNet.Mono.Impl;
 namespace dnSpy.Debugger.DotNet.Mono.Metadata {
 	[Export(typeof(DbgAssemblyInfoProviderFactory))]
 	sealed class DbgAssemblyInfoProviderFactoryImpl : DbgAssemblyInfoProviderFactory {
-		public override DbgAssemblyInfoProvider Create(DbgRuntime runtime) {
+		public override DbgAssemblyInfoProvider? Create(DbgRuntime runtime) {
 			var engine = DbgEngineImpl.TryGetEngine(runtime);
-			if (engine != null)
+			if (!(engine is null))
 				return new DbgAssemblyInfoProviderImpl(engine);
 			return null;
 		}

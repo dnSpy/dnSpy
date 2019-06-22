@@ -54,14 +54,14 @@ namespace Test {
 			var code = new StringBuilder();
 
 			foreach (var type in types) {
-				if (type == null)
+				if (type is null)
 					continue;
 				if (!assemblies.Contains(GetDeclAssembly(type)))
 					assemblies.Add(GetDeclAssembly(type));
 			}
 
 			foreach (var member in members) {
-				if (member == null)
+				if (member is null)
 					continue;
 				if (!assemblies.Contains(GetDeclAssembly(member.Item3)))
 					assemblies.Add(GetDeclAssembly(member.Item3));
@@ -70,7 +70,7 @@ namespace Test {
 			code.AppendLine("\tinternal enum KnownTypes : short {");
 			code.AppendLine("\t\tUnknown = 0,");
 			for (int i = 1; i < types.Count; i++) {
-				if (types[i] == null) {
+				if (types[i] is null) {
 					code.AppendLine();
 					continue;
 				}
@@ -82,7 +82,7 @@ namespace Test {
 			code.AppendLine("\tinternal enum KnownMembers : short {");
 			code.AppendLine("\t\tUnknown = 0,");
 			for (int i = 1; i < members.Count; i++) {
-				if (members[i] == null) {
+				if (members[i] is null) {
 					code.AppendLine();
 					continue;
 				}
@@ -101,7 +101,7 @@ namespace Test {
 			code.AppendLine("\t\tvoid InitTypes() {");
 			for (int i = 0; i < types.Count; i++) {
 				var type = types[i];
-				if (type == null) {
+				if (type is null) {
 					code.AppendLine();
 					continue;
 				}
@@ -118,7 +118,7 @@ namespace Test {
 			code.AppendLine("\t\tvoid InitMembers() {");
 			for (int i = 0; i < members.Count; i++) {
 				var member = members[i];
-				if (member == null) {
+				if (member is null) {
 					code.AppendLine();
 					continue;
 				}
@@ -135,7 +135,7 @@ namespace Test {
 
 			code.AppendLine("\t\tvoid InitStrings() {");
 			for (int i = 0; i < strings.Count; i++) {
-				if (strings[i] == null)
+				if (strings[i] is null)
 					continue;
 				var line = "\t\t\tstrings[{0}] = \"{1}\";";
 				code.AppendLine(string.Format(line, i, strings[i]));
@@ -144,7 +144,7 @@ namespace Test {
 
 			code.AppendLine("\t\tvoid InitResources() {");
 			for (int i = 0; i < resources.Count; i++) {
-				if (resources[i] == null) {
+				if (resources[i] is null) {
 					code.AppendLine();
 					continue;
 				}

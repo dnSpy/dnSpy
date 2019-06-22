@@ -38,18 +38,18 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			dbgCodeBreakpointsService.BreakpointsModified += DbgCodeBreakpointsService_BreakpointsModified;
 
 		void DbgCodeBreakpointsService_BreakpointsModified(object sender, DbgBreakpointsModifiedEventArgs e) {
-			List<DbgCodeBreakpoint> resetThese = null;
+			List<DbgCodeBreakpoint>? resetThese = null;
 			foreach (var info in e.Breakpoints) {
-				if (info.OldSettings.HitCount != null)
+				if (!(info.OldSettings.HitCount is null))
 					continue;
 				var breakpoint = info.Breakpoint;
-				if (breakpoint.Settings.HitCount == null)
+				if (breakpoint.Settings.HitCount is null)
 					continue;
-				if (resetThese == null)
+				if (resetThese is null)
 					resetThese = new List<DbgCodeBreakpoint>();
 				resetThese.Add(breakpoint);
 			}
-			if (resetThese != null)
+			if (!(resetThese is null))
 				dbgCodeBreakpointHitCountService.Value.Reset(resetThese.ToArray());
 		}
 	}

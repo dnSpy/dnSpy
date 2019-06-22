@@ -64,13 +64,13 @@ namespace dnSpy.Text.Editor {
 			if (BrushComparer.Equals(newBackgroundBrush, backgroundBrush))
 				return;
 			backgroundBrush = newBackgroundBrush;
-			if (markerElement != null)
+			if (!(markerElement is null))
 				markerElement.BackgroundBrush = backgroundBrush;
 		}
-		Brush backgroundBrush;
-		MarkerElement markerElement;
+		Brush? backgroundBrush;
+		MarkerElement? markerElement;
 
-		Brush GetBackgroundBrush() {
+		Brush? GetBackgroundBrush() {
 			var props = editorFormatMap.GetProperties(IsActive ? ThemeClassificationTypeNameKeys.SelectedText : ThemeClassificationTypeNameKeys.InactiveSelectedText);
 			return ResourceDictionaryUtilities.GetBackgroundBrush(props, IsActive ? SystemColors.HighlightBrush : SystemColors.GrayTextBrush);
 		}
@@ -124,21 +124,21 @@ namespace dnSpy.Text.Editor {
 			if (textSelection.Mode == TextSelectionMode.Stream) {
 				Debug.Assert(textSelection.StreamSelectionSpan.Length != 0);
 				var info = CreateStreamSelection();
-				if (info == null)
+				if (info is null)
 					return;
 				CreateMarkerElement(info.Value.span, info.Value.geometry);
 			}
 			else {
 				Debug.Assert(textSelection.Mode == TextSelectionMode.Box);
 				var info = CreateBoxSelection();
-				if (info == null)
+				if (info is null)
 					return;
 				CreateMarkerElement(info.Value.span, info.Value.geometry);
 			}
 		}
 
 		void CreateMarkerElement(SnapshotSpan fullSpan, Geometry geo) {
-			Debug.Assert(markerElement == null);
+			Debug.Assert(markerElement is null);
 			RemoveAllAdornments();
 			markerElement = new MarkerElement(geo);
 			markerElement.BackgroundBrush = backgroundBrush;
@@ -153,10 +153,10 @@ namespace dnSpy.Text.Editor {
 			Debug.Assert(!textSelection.IsEmpty && textSelection.Mode == TextSelectionMode.Stream);
 			bool isMultiLine = MarkerHelper.IsMultiLineSpan(textSelection.TextView, textSelection.StreamSelectionSpan.SnapshotSpan);
 			var span = textSelection.StreamSelectionSpan.Overlap(new VirtualSnapshotSpan(textSelection.TextView.TextViewLines.FormattedSpan));
-			if (span == null)
+			if (span is null)
 				return null;
 			var geo = MarkerHelper.CreateGeometry(textSelection.TextView, span.Value, false, isMultiLine);
-			if (geo == null)
+			if (geo is null)
 				return null;
 			return (span.Value.SnapshotSpan, geo);
 		}
@@ -168,7 +168,7 @@ namespace dnSpy.Text.Editor {
 			if (spans.Count == 0)
 				return null;
 			var geo = MarkerHelper.CreateBoxGeometry(textSelection.TextView, spans, allSpans.Count > 1);
-			if (geo == null)
+			if (geo is null)
 				return null;
 			var fullSpan = new SnapshotSpan(spans[0].SnapshotSpan.Start, spans[spans.Count - 1].SnapshotSpan.End);
 			return (fullSpan, geo);
@@ -190,10 +190,10 @@ namespace dnSpy.Text.Editor {
 		sealed class MarkerElement : UIElement {
 			readonly Geometry geometry;
 
-			public Brush BackgroundBrush {
+			public Brush? BackgroundBrush {
 				get => backgroundBrush;
 				set {
-					if (value == null)
+					if (value is null)
 						throw new ArgumentNullException(nameof(value));
 					if (!BrushComparer.Equals(value, backgroundBrush)) {
 						backgroundBrush = value;
@@ -201,9 +201,9 @@ namespace dnSpy.Text.Editor {
 					}
 				}
 			}
-			Brush backgroundBrush;
+			Brush? backgroundBrush;
 
-			public Pen Pen {
+			public Pen? Pen {
 				get => pen;
 				set {
 					if (pen != value) {
@@ -212,7 +212,7 @@ namespace dnSpy.Text.Editor {
 					}
 				}
 			}
-			Pen pen;
+			Pen? pen;
 
 			public MarkerElement(Geometry geometry) => this.geometry = geometry ?? throw new ArgumentNullException(nameof(geometry));
 

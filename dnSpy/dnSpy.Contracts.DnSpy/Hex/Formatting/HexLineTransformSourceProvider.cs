@@ -34,6 +34,6 @@ namespace dnSpy.Contracts.Hex.Formatting {
 		/// </summary>
 		/// <param name="hexView">Hex view</param>
 		/// <returns></returns>
-		public abstract HexLineTransformSource Create(WpfHexView hexView);
+		public abstract HexLineTransformSource? Create(WpfHexView hexView);
 	}
 }

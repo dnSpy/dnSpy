@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.Impl {
 
 		public override void Remove(DbgEngineMessageFlags messageFlags) => module.Remove(messageFlags);
 
-		public override void Update(UpdateOptions options, bool isExe, ulong address, uint size, DbgImageLayout imageLayout, string name, string filename, bool isDynamic, bool isInMemory, bool? isOptimized, int order, DateTime? timestamp, string version) => module.Process.DbgManager.Dispatcher.BeginInvoke(() => {
+		public override void Update(UpdateOptions options, bool isExe, ulong address, uint size, DbgImageLayout imageLayout, string? name, string? filename, bool isDynamic, bool isInMemory, bool? isOptimized, int order, DateTime? timestamp, string? version) => module.Process.DbgManager.Dispatcher.BeginInvoke(() => {
 			if (module.IsClosed)
 				return;
 			if ((options & UpdateOptions.IsExe) != 0)

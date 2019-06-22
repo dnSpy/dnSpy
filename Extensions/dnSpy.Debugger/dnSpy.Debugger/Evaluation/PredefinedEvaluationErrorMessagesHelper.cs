@@ -48,18 +48,22 @@ namespace dnSpy.Debugger.Evaluation {
 		}
 
 		public static string GetErrorMessage(string error) {
-			if (error == null)
-				return null;
 			if (toErrorMessage.TryGetValue(error, out var msg))
 				return msg;
 			return error;
+		}
+
+		public static string? GetErrorMessageOrNull(string? error) {
+			if (error is null)
+				return null;
+			return GetErrorMessage(error);
 		}
 	}
 
 	[Export(typeof(IPredefinedEvaluationErrorMessagesHelper))]
 	sealed class PredefinedEvaluationErrorMessagesHelperImpl : IPredefinedEvaluationErrorMessagesHelper {
 		public string GetErrorMessage(string error) {
-			if (error == null)
+			if (error is null)
 				throw new ArgumentNullException(nameof(error));
 			return PredefinedEvaluationErrorMessagesHelper.GetErrorMessage(error);
 		}

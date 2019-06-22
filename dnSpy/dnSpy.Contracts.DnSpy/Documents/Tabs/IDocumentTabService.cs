@@ -50,7 +50,7 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// <summary>
 		/// Gets the active tab or null if none, see also <see cref="GetOrCreateActiveTab()"/>
 		/// </summary>
-		IDocumentTab ActiveTab { get; set; }
+		IDocumentTab? ActiveTab { get; set; }
 
 		/// <summary>
 		/// Gets the active tab or creates a new one if <see cref="ActiveTab"/> is null
@@ -122,7 +122,7 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// </summary>
 		/// <param name="content">Tab content</param>
 		/// <returns></returns>
-		IDocumentTab TryGetDocumentTab(ITabContent content);
+		IDocumentTab? TryGetDocumentTab(ITabContent? content);
 
 		/// <summary>
 		/// Closes all tabs
@@ -136,13 +136,13 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// <param name="newTab">true to open a new tab</param>
 		/// <param name="setFocus">true to give the tab keyboard focus</param>
 		/// <param name="onShown">Called after the content has been shown. Can be null.</param>
-		void FollowReference(object @ref, bool newTab = false, bool setFocus = true, Action<ShowTabContentEventArgs> onShown = null);
+		void FollowReference(object @ref, bool newTab = false, bool setFocus = true, Action<ShowTabContentEventArgs>? onShown = null);
 
 		/// <summary>
 		/// Creates a new <see cref="DocumentTabContent"/> instance. Returns null if it couldn't be created
 		/// </summary>
 		/// <param name="nodes">Nodes</param>
 		/// <returns></returns>
-		DocumentTabContent TryCreateContent(DocumentTreeNodeData[] nodes);
+		DocumentTabContent? TryCreateContent(DocumentTreeNodeData[] nodes);
 	}
 }

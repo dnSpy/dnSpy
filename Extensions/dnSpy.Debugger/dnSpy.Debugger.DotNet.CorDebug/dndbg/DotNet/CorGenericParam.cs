@@ -107,7 +107,7 @@ namespace dndbg.DotNet {
 			//genericParamConstraints?.Clear();
 
 			var itemTokens = MDAPI.GetGenericParamConstraintTokens(mdi2, token);
-			genericParamConstraints = new LazyList<GenericParamConstraint, uint[]>(itemTokens.Length, this, itemTokens, (itemTokens2, index) => readerModule.ResolveGenericParamConstraintDontCache(itemTokens2[index], GetGenericParamContext(owner)));
+			genericParamConstraints = new LazyList<GenericParamConstraint?, uint[]>(itemTokens.Length, this, itemTokens, (itemTokens2, index) => readerModule.ResolveGenericParamConstraintDontCache(itemTokens2[index], GetGenericParamContext(owner)));
 		}
 	}
 }

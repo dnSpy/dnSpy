@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.Text.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static IndentStyle GetIndentStyle(this IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultDsOptions.IndentStyleOptionId);
 		}

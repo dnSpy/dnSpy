@@ -27,7 +27,7 @@ namespace dnSpy.Text.Formatting {
 		public static string GetFontName(this TextFormattingRunProperties props) {
 			if (props.TypefaceEmpty)
 				return string.Empty;
-			if (!props.Typeface.FontFamily.FamilyNames.TryGetValue(language, out string name))
+			if (!props.Typeface.FontFamily.FamilyNames.TryGetValue(language, out string? name))
 				name = null;
 			return name ?? string.Empty;
 		}

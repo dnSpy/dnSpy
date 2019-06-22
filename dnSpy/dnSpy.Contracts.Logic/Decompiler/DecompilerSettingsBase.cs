@@ -52,14 +52,14 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="guid">Guid</param>
 		/// <returns></returns>
-		public IDecompilerOption TryGetOption(Guid guid) => Options.FirstOrDefault(a => a.Guid == guid);
+		public IDecompilerOption? TryGetOption(Guid guid) => Options.FirstOrDefault(a => a.Guid == guid);
 
 		/// <summary>
 		/// Returns an option or null
 		/// </summary>
 		/// <param name="name">Name</param>
 		/// <returns></returns>
-		public IDecompilerOption TryGetOption(string name) => Options.FirstOrDefault(a => StringComparer.Ordinal.Equals(a.Name, name));
+		public IDecompilerOption? TryGetOption(string name) => Options.FirstOrDefault(a => StringComparer.Ordinal.Equals(a.Name, name));
 
 		/// <summary>
 		/// Returns a boolean or false if the option doesn't exist
@@ -80,7 +80,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="obj">Other object, may be null</param>
 		/// <returns></returns>
-		public abstract override bool Equals(object obj);
+		public abstract override bool Equals(object? obj);
 
 		/// <summary>
 		/// Gets the hash code of this instance

@@ -49,15 +49,15 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			}
 		}
 
-		readonly Window ownerWindow;
+		readonly Window? ownerWindow;
 
 		public DnlibTypePicker()
 			: this(null) {
 		}
 
-		public DnlibTypePicker(Window ownerWindow) => this.ownerWindow = ownerWindow;
+		public DnlibTypePicker(Window? ownerWindow) => this.ownerWindow = ownerWindow;
 
-		public T GetDnlibType<T>(string title, IDocumentTreeNodeFilter filter, T selectedObject, ModuleDef ownerModule) where T : class {
+		public T? GetDnlibType<T>(string title, IDocumentTreeNodeFilter filter, T? selectedObject, ModuleDef ownerModule) where T : class {
 			var newDocumentTreeView = documentTreeViewProvider.Create(filter);
 			try {
 				var win = new MemberPickerDlg(documentTreeView, newDocumentTreeView);
@@ -76,7 +76,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			}
 		}
 
-		static object ImportObject(ModuleDef ownerModule, object obj) {
+		static object? ImportObject(ModuleDef ownerModule, object? obj) {
 			var importer = new Importer(ownerModule, ImporterOptions.TryToUseDefs);
 
 			if (obj is IType type)

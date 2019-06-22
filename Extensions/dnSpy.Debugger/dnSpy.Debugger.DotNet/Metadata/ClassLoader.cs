@@ -118,7 +118,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 			var states = new List<ModuleState>(visibleDocs.Count);
 			foreach (var info in visibleDocs) {
-				oldLoadedClasses.TryGetValue(info.document.DbgModule, out var hash);
+				HashSet<uint>? hash;
+				oldLoadedClasses.TryGetValue(info.document.DbgModule, out hash);
 				states.Add(new ModuleState(info.document, info.documentNode, hash));
 			}
 
@@ -136,7 +137,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				dbgDynamicModuleProvider.InitializeNonLoadedClasses(state.Document.DbgModule, nonLoadedTokens);
 			}
 
-			var remaining = states.Where(a => a.ModifiedTypes.Count != 0 || (a.LoadClassHash != null && a.LoadClassHash.Count != 0)).Select(a => a.Document).ToArray();
+			var remaining = states.Where(a => a.ModifiedTypes.Count != 0 || (!(a.LoadClassHash is null) && a.LoadClassHash.Count != 0)).Select(a => a.Document).ToArray();
 			if (remaining.Length == 0)
 				return;
 
@@ -156,7 +157,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		uint[] GetNonLoadedTokens(ModuleState state) {
 			var hash = new HashSet<uint>(state.ModifiedTypes);
-			if (state.LoadClassHash != null) {
+			if (!(state.LoadClassHash is null)) {
 				foreach (var a in state.LoadClassHash)
 					hash.Add(a);
 			}
@@ -164,7 +165,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			tokens.Sort();
 			var res = new List<uint>(tokens.Count);
 			foreach (uint token in tokens) {
-				bool loaded = state.LoadClassHash != null && state.LoadClassHash.Contains(token);
+				bool loaded = !(state.LoadClassHash is null) && state.LoadClassHash.Contains(token);
 				if (loaded)
 					continue;   // It has already been initialized
 
@@ -176,10 +177,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		sealed class ModuleState {
 			public DynamicModuleDefDocument Document { get; }
 			public ModuleDocumentNode ModuleNode { get; }
-			public HashSet<uint> LoadClassHash { get; }
+			public HashSet<uint>? LoadClassHash { get; }
 			public HashSet<uint> ModifiedTypes { get; }
 
-			public ModuleState(DynamicModuleDefDocument document, ModuleDocumentNode moduleNode, HashSet<uint> loadClassHash) {
+			public ModuleState(DynamicModuleDefDocument document, ModuleDocumentNode moduleNode, HashSet<uint>? loadClassHash) {
 				Document = document ?? throw new ArgumentNullException(nameof(document));
 				ModuleNode = moduleNode ?? throw new ArgumentNullException(nameof(moduleNode));
 				LoadClassHash = loadClassHash;
@@ -199,7 +200,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		public override void LoadEverything_UI(DynamicModuleDefDocument[] documents) {
 			uiDispatcher.VerifyAccess();
-			if (documents == null)
+			if (documents is null)
 				throw new ArgumentNullException(nameof(documents));
 			if (runtime.IsClosed)
 				return;

@@ -49,8 +49,8 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 				e.BoundBreakpoint.Breakpoint.Remove();
 		}
 
-		bool ShouldBreak(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread) {
-			if (thread == null)
+		bool ShouldBreak(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread? thread) {
+			if (thread is null)
 				return false;
 			var bp = (DbgCodeBreakpointImpl)boundBreakpoint.Breakpoint;
 			if (bp.IsClosed || boundBreakpoint.IsClosed)
@@ -67,7 +67,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 
 			if (settings.Filter is DbgCodeBreakpointFilter filter) {
 				checkRes = dbgCodeBreakpointFilterChecker.Value.ShouldBreak(boundBreakpoint, thread, filter);
-				if (checkRes.ErrorMessage != null) {
+				if (!(checkRes.ErrorMessage is null)) {
 					boundBreakpoint.Process.DbgManager.ShowError(checkRes.ErrorMessage);
 					return true;
 				}
@@ -77,7 +77,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 
 			if (settings.Condition is DbgCodeBreakpointCondition condition) {
 				checkRes = dbgCodeBreakpointConditionChecker.Value.ShouldBreak(boundBreakpoint, thread, condition);
-				if (checkRes.ErrorMessage != null) {
+				if (!(checkRes.ErrorMessage is null)) {
 					boundBreakpoint.Process.DbgManager.ShowError(checkRes.ErrorMessage);
 					return true;
 				}
@@ -89,7 +89,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			int currentHitCount = dbgCodeBreakpointHitCountService.Value.Hit_DbgThread(boundBreakpoint.Breakpoint);
 			if (settings.HitCount is DbgCodeBreakpointHitCount hitCount) {
 				checkRes = dbgCodeBreakpointHitCountChecker.Value.ShouldBreak(boundBreakpoint, thread, hitCount, currentHitCount);
-				if (checkRes.ErrorMessage != null) {
+				if (!(checkRes.ErrorMessage is null)) {
 					boundBreakpoint.Process.DbgManager.ShowError(checkRes.ErrorMessage);
 					return true;
 				}

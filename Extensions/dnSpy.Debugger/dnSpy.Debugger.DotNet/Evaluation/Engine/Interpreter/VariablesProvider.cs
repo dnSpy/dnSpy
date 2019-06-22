@@ -24,9 +24,9 @@ using dnSpy.Debugger.DotNet.Metadata;
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 	abstract class VariablesProvider {
 		public abstract void Initialize(DbgEvaluationInfo evalInfo, DmdMethodBase method, DmdMethodBody body);
-		public abstract DbgDotNetValue GetValueAddress(int index, DmdType targetType);
+		public abstract DbgDotNetValue? GetValueAddress(int index, DmdType targetType);
 		public abstract DbgDotNetValueResult GetVariable(int index);
-		public abstract string SetVariable(int index, DmdType targetType, object value);
+		public abstract string? SetVariable(int index, DmdType targetType, object? value);
 		public abstract bool CanDispose(DbgDotNetValue value);
 		public abstract void Clear();
 	}

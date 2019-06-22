@@ -82,7 +82,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			var files = new List<BufferFileOptions>(resourceInfos.Length);
 			foreach (var info in resourceInfos) {
 				var data = info.ResData;
-				if (data == null)
+				if (data is null)
 					continue;
 				if (data.NestedFileData.IsEmpty)
 					continue;
@@ -132,10 +132,10 @@ namespace dnSpy.Hex.Files.DotNet {
 			public HexSpan UnicodeNameAndOffsetSpan => HexSpan.FromBounds(UnicodeName.FullSpan.Start, UnicodeName.FullSpan.End + 4);
 			public Bit7String UnicodeName { get; }
 			public HexPosition DataStart { get; }
-			public ResData ResData => resData;
+			public ResData? ResData => resData;
 
 			public void SetData(ResData newData) => resData = newData;
-			ResData resData;
+			ResData? resData;
 
 			public ResourceInfo(int index, Bit7String unicodeName, HexPosition dataPos) {
 				Index = index;
@@ -153,7 +153,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			for (int i = 0; i < numResources; i++, namePosition += 4) {
 				var stringPos = nameSectionPosition + buffer.ReadUInt32(namePosition);
 				var bit7String = ReadBit7String(File.Buffer, ref stringPos, File.Span.End);
-				if (bit7String == null)
+				if (bit7String is null)
 					continue;
 				if (stringPos + 4 > File.Span.End)
 					continue;
@@ -170,14 +170,14 @@ namespace dnSpy.Hex.Files.DotNet {
 				var elem = elems[i];
 				var endPos = i == elems.Count - 1 ? File.Span.End : elems[i + 1].DataStart;
 				var resData = ReadData(typeNames, elem.DataStart, endPos);
-				if (resData == null || resData.DataSpan.End > endPos)
+				if (resData is null || resData.DataSpan.End > endPos)
 					continue;
 				elem.SetData(resData);
 			}
 
 			foreach (var elem in elems) {
 				list.Add(new UnicodeNameAndOffsetData(elem, elem.UnicodeName));
-				if (elem.ResData != null)
+				if (!(elem.ResData is null))
 					list.Add(new ResourceInfoData(elem, elem.ResData.FullSpan));
 			}
 
@@ -224,10 +224,10 @@ namespace dnSpy.Hex.Files.DotNet {
 				: base(typeCode, codeSpan, dataSpan, dataSpan) => Utf8TypeName = utf8TypeName;
 		}
 
-		ResData ReadData(Bit7String[] typeNames, HexPosition position, HexPosition endPosition) {
+		ResData? ReadData(Bit7String[] typeNames, HexPosition position, HexPosition endPosition) {
 			var start = position;
 			var codeTmp = Read7BitEncodedInt32(File.Buffer, ref position);
-			if (codeTmp == null)
+			if (codeTmp is null)
 				return null;
 			var codeSpan = HexSpan.FromBounds(start, position);
 			uint code = (uint)codeTmp.Value;
@@ -253,7 +253,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			case ResourceTypeCode.String:
 				var stringPos = position;
 				var bit7String = ReadBit7String(File.Buffer, ref stringPos, endPosition);
-				if (bit7String == null)
+				if (bit7String is null)
 					return null;
 				return new StringResData(typeCode, codeSpan, bit7String.Value.FullSpan, bit7String.Value);
 
@@ -273,7 +273,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			}
 		}
 
-		public static DotNetMultiFileResourcesImpl TryRead(HexBufferFile file) {
+		public static DotNetMultiFileResourcesImpl? TryRead(HexBufferFile file) {
 			try {
 				return TryReadCore(file);
 			}
@@ -282,8 +282,8 @@ namespace dnSpy.Hex.Files.DotNet {
 			}
 		}
 
-		static DotNetMultiFileResourcesImpl TryReadCore(HexBufferFile file) {
-			if (file == null)
+		static DotNetMultiFileResourcesImpl? TryReadCore(HexBufferFile file) {
+			if (file is null)
 				throw new ArgumentNullException(nameof(file));
 			if (file.Span.Length < 0x1C)
 				return null;
@@ -305,7 +305,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			else {
 				resourceTypeSpan = ReadBit7String(buffer, ref pos, file.Span.End);
 				resourceSetTypeSpan = ReadBit7String(buffer, ref pos, file.Span.End);
-				if (resourceTypeSpan == null || resourceSetTypeSpan == null)
+				if (resourceTypeSpan is null || resourceSetTypeSpan is null)
 					return null;
 				var resourceType = Encoding.UTF8.GetString(buffer.ReadBytes(resourceTypeSpan.Value.StringSpan));
 				if (!Regex.IsMatch(resourceType, @"^System\.Resources\.ResourceReader,\s*mscorlib,"))
@@ -326,7 +326,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			var typeNames = new Bit7String[numTypes];
 			for (int i = 0; i < typeNames.Length; i++) {
 				var info = ReadBit7String(buffer, ref pos, file.Span.End);
-				if (info == null)
+				if (info is null)
 					return null;
 				typeNames[i] = info.Value;
 			}
@@ -353,7 +353,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		static Bit7String? ReadBit7String(HexBuffer buffer, ref HexPosition position, HexPosition fileEnd) {
 			var start = position;
 			int? len = Read7BitEncodedInt32(buffer, ref position);
-			if (len == null)
+			if (len is null)
 				return null;
 			var lengthSpan = HexSpan.FromBounds(start, position);
 			var stringEnd = lengthSpan.End + len.Value;
@@ -376,20 +376,20 @@ namespace dnSpy.Hex.Files.DotNet {
 			return null;
 		}
 
-		public override ComplexData GetStructure(HexPosition position) {
+		public override ComplexData? GetStructure(HexPosition position) {
 			if (!File.Span.Contains(position))
 				return null;
 			if (Header.Span.Span.Contains(position))
 				return Header;
 
 			var data = GetData(position);
-			if (data != null)
+			if (!(data is null))
 				return GetStructure(data);
 
 			return null;
 		}
 
-		ComplexData GetStructure(Data data) {
+		ComplexData? GetStructure(Data data) {
 			switch (data.Kind) {
 			case DataKind.UnicodeNameAndOffset:
 				var tdata = (UnicodeNameAndOffsetData)data;
@@ -399,13 +399,13 @@ namespace dnSpy.Hex.Files.DotNet {
 				var rdata = (ResourceInfoData)data;
 				var info = rdata.Owner;
 				var resData = info.ResData;
-				if (resData == null)
+				if (resData is null)
 					return null;
 				var span = new HexBufferSpan(File.Buffer, resData.FullSpan);
 				string resName = Encoding.Unicode.GetString(File.Buffer.ReadBytes(info.UnicodeName.StringSpan));
-				string typeName = null;
+				string? typeName = null;
 				var typeData = resData as TypeResData;
-				if (typeData != null)
+				if (!(typeData is null))
 					typeName = Encoding.UTF8.GetString(File.Buffer.ReadBytes(typeData.Utf8TypeName.StringSpan));
 				var resInfo = new MultiResourceInfo(resName, resData.TypeCode, typeName);
 				switch (resData.TypeCode) {
@@ -425,7 +425,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			}
 		}
 
-		Data GetData(HexPosition position) {
+		Data? GetData(HexPosition position) {
 			var array = dataArray;
 			int lo = 0, hi = array.Length - 1;
 			while (lo <= hi) {

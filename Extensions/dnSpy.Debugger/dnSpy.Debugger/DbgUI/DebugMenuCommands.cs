@@ -36,7 +36,7 @@ namespace dnSpy.Debugger.DbgUI {
 				this.mustBeDebugging = mustBeDebugging;
 			}
 
-			public override bool IsVisible(IMenuItemContext context) => mustBeDebugging == null || debugger.Value.IsDebugging == mustBeDebugging;
+			public override bool IsVisible(IMenuItemContext context) => mustBeDebugging is null || debugger.Value.IsDebugging == mustBeDebugging;
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "res:StartDebugging2", Icon = DsImagesAttribute.Run, Group = MenuConstants.GROUP_APP_MENU_DEBUG_START, Order = 0)]
@@ -48,7 +48,7 @@ namespace dnSpy.Debugger.DbgUI {
 
 			public override void Execute(IMenuItemContext context) => debugger.Value.DebugProgram(pauseAtEntryPoint: false);
 			public override bool IsVisible(IMenuItemContext context) => debugger.Value.CanDebugProgram;
-			public override string GetInputGestureText(IMenuItemContext context) =>
+			public override string? GetInputGestureText(IMenuItemContext context) =>
 				debugger.Value.IsDebugging ? null : dnSpy_Debugger_Resources.ShortCutKeyF5;
 		}
 

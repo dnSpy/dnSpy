@@ -36,15 +36,16 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 		public IClassificationFormatMap ClassificationFormatMap { get; }
 		public ITextElementProvider TextElementProvider { get; }
 		public DbgTextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
-		public ProgramFormatter Formatter { get; set; }
+		public ProgramFormatter Formatter { get; }
 		public bool SyntaxHighlight { get; set; }
 		public SearchMatcher SearchMatcher { get; }
 
-		public AttachToProcessContext(IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider, SearchMatcher searchMatcher) {
+		public AttachToProcessContext(IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider, SearchMatcher searchMatcher, ProgramFormatter formatter) {
 			ClassificationFormatMap = classificationFormatMap;
 			TextElementProvider = textElementProvider;
 			TextClassifierTextColorWriter = new DbgTextClassifierTextColorWriter();
 			SearchMatcher = searchMatcher;
+			Formatter = formatter;
 		}
 	}
 }

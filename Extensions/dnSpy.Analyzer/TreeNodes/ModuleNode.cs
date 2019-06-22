@@ -26,8 +26,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 	sealed class ModuleNode : EntityNode {
 		readonly ModuleDef module;
 
-		public override IMemberRef Member => null;
-		public override IMDTokenProvider Reference => module;
+		public override IMemberRef? Member => null;
+		public override IMDTokenProvider? Reference => module;
 
 		public ModuleNode(ModuleDef module) => this.module = module;
 

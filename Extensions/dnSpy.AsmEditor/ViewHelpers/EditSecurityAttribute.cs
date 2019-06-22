@@ -22,17 +22,17 @@ using dnSpy.AsmEditor.DnlibDialogs;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
 	sealed class EditSecurityAttribute : IEdit<SecurityAttributeVM> {
-		readonly Window ownerWindow;
+		readonly Window? ownerWindow;
 
 		public EditSecurityAttribute()
 			: this(null) {
 		}
 
-		public EditSecurityAttribute(Window ownerWindow) => this.ownerWindow = ownerWindow;
+		public EditSecurityAttribute(Window? ownerWindow) => this.ownerWindow = ownerWindow;
 
-		public SecurityAttributeVM Edit(string title, SecurityAttributeVM sa) {
+		public SecurityAttributeVM? Edit(string? title, SecurityAttributeVM sa) {
 			var win = new SecurityAttributeDlg();
-			if (title != null)
+			if (!(title is null))
 				win.Title = title;
 			win.DataContext = sa;
 			win.Owner = ownerWindow ?? Application.Current.MainWindow;

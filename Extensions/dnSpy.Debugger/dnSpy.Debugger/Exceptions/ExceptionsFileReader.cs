@@ -53,12 +53,12 @@ namespace dnSpy.Debugger.Exceptions {
 						foreach (var exDefElem in exDefCollElem.Elements("Exception")) {
 							var name = (string)exDefElem.Attribute("Name");
 							var code = (string)exDefElem.Attribute("Code");
-							var description = (string)exDefElem.Attribute("Description");
+							string? description = (string)exDefElem.Attribute("Description");
 							if (string.IsNullOrWhiteSpace(description))
 								description = null;
 							var flagsAttr = (string)exDefElem.Attribute("Flags");
 							DbgExceptionId id;
-							if (code == null) {
+							if (code is null) {
 								if (string.IsNullOrWhiteSpace(name))
 									continue;
 								id = new DbgExceptionId(category, name);
@@ -97,7 +97,7 @@ namespace dnSpy.Debugger.Exceptions {
 		static readonly char[] flagsSeparators = new char[] { ',' };
 		static DbgExceptionCategoryDefinitionFlags ParseCategoryFlags(string flagsAttr) {
 			var flags = DbgExceptionCategoryDefinitionFlags.None;
-			if (flagsAttr != null) {
+			if (!(flagsAttr is null)) {
 				foreach (var name in flagsAttr.Split(flagsSeparators, StringSplitOptions.RemoveEmptyEntries)) {
 					switch (name.Trim().ToLowerInvariant()) {
 					case "code":		flags |= DbgExceptionCategoryDefinitionFlags.Code; break;
@@ -111,7 +111,7 @@ namespace dnSpy.Debugger.Exceptions {
 
 		static DbgExceptionDefinitionFlags ParseExceptionFlags(string flagsAttr) {
 			var flags = DbgExceptionDefinitionFlags.None;
-			if (flagsAttr != null) {
+			if (!(flagsAttr is null)) {
 				foreach (var name in flagsAttr.Split(flagsSeparators, StringSplitOptions.RemoveEmptyEntries)) {
 					switch (name.Trim().ToLowerInvariant()) {
 					case "stop1":		flags |= DbgExceptionDefinitionFlags.StopFirstChance; break;

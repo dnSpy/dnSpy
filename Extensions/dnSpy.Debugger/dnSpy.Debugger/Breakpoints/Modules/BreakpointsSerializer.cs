@@ -36,7 +36,7 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 			var settings = new List<DbgModuleBreakpointSettings>();
 			foreach (var bpSect in section.SectionsWithName("Breakpoint")) {
 				var isEnabled = bpSect.Attribute<bool?>("IsEnabled");
-				if (isEnabled == null)
+				if (isEnabled is null)
 					continue;
 				var bpSettings = new DbgModuleBreakpointSettings {
 					IsEnabled = isEnabled.Value,
@@ -61,13 +61,13 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 				bpSect.Attribute("IsEnabled", bpSettings.IsEnabled);
 				if (!string.IsNullOrEmpty(bpSettings.ModuleName))
 					bpSect.Attribute("ModuleName", bpSettings.ModuleName);
-				if (bpSettings.IsDynamic != null)
+				if (!(bpSettings.IsDynamic is null))
 					bpSect.Attribute("IsDynamic", bpSettings.IsDynamic);
-				if (bpSettings.IsInMemory != null)
+				if (!(bpSettings.IsInMemory is null))
 					bpSect.Attribute("IsInMemory", bpSettings.IsInMemory);
 				if (bpSettings.IsLoaded != null)
 					bpSect.Attribute("IsLoaded", bpSettings.IsLoaded);
-				if (bpSettings.Order != null)
+				if (!(bpSettings.Order is null))
 					bpSect.Attribute("Order", bpSettings.Order);
 				if (!string.IsNullOrEmpty(bpSettings.AppDomainName))
 					bpSect.Attribute("AppDomainName", bpSettings.AppDomainName);

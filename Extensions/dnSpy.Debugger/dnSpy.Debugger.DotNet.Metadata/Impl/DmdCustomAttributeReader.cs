@@ -57,13 +57,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		readonly DmdModule module;
 		readonly DmdDataStream reader;
 		readonly DmdType ctorReflectedType;
-		readonly IList<DmdType> genericTypeArguments;
+		readonly IList<DmdType>? genericTypeArguments;
 		readonly bool ownsReader;
 		const int MAX_RECURSION_COUNT = 100;
 		int recursionCounter;
 
-		public static DmdCustomAttributeData Read(DmdModule module, DmdDataStream stream, DmdConstructorInfo ctor) {
-			using (var reader = new DmdCustomAttributeReader(module, stream, ctor.ReflectedType, GetGenericArguments(ctor.ReflectedType), ownsReader: true)) {
+		public static DmdCustomAttributeData? Read(DmdModule module, DmdDataStream stream, DmdConstructorInfo ctor) {
+			using (var reader = new DmdCustomAttributeReader(module, stream, ctor.ReflectedType!, GetGenericArguments(ctor.ReflectedType!), ownsReader: true)) {
 				try {
 					return reader.Read(ctor);
 				}
@@ -77,7 +77,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
-		DmdCustomAttributeReader(DmdModule module, DmdDataStream reader, DmdType ctorReflectedType, IList<DmdType> genericTypeArguments, bool ownsReader) {
+		DmdCustomAttributeReader(DmdModule module, DmdDataStream reader, DmdType ctorReflectedType, IList<DmdType>? genericTypeArguments, bool ownsReader) {
 			this.module = module;
 			this.reader = reader;
 			this.ctorReflectedType = ctorReflectedType;
@@ -130,7 +130,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return x.MemberInfo.MetadataToken - y.MemberInfo.MetadataToken;
 		}
 
-		internal static DmdCustomAttributeNamedArgument[] ReadNamedArguments(DmdModule module, DmdDataStream stream, DmdType ctorReflectedType, int numNamedArgs, IList<DmdType> genericTypeArguments) {
+		internal static DmdCustomAttributeNamedArgument[]? ReadNamedArguments(DmdModule module, DmdDataStream stream, DmdType ctorReflectedType, int numNamedArgs, IList<DmdType>? genericTypeArguments) {
 			using (var reader = new DmdCustomAttributeReader(module, stream, ctorReflectedType, genericTypeArguments, ownsReader: false)) {
 				try {
 					return reader.ReadNamedArguments(numNamedArgs);
@@ -160,7 +160,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		DmdCustomAttributeTypedArgument ReadFixedArg(DmdType argType) {
 			if (!IncrementRecursionCounter())
 				throw new CABlobParserException("Stack overflow");
-			if ((object)argType == null)
+			if (argType is null)
 				throw new CABlobParserException("null argType");
 			DmdCustomAttributeTypedArgument result;
 
@@ -174,10 +174,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		DmdCustomAttributeTypedArgument ReadElem(DmdType argType) {
-			if ((object)argType == null)
+			if (argType is null)
 				throw new CABlobParserException("null argType");
 			var value = ReadValue(ToSerializationType(argType), argType, out var realArgType);
-			if ((object)realArgType == null)
+			if (realArgType is null)
 				throw new CABlobParserException("Invalid arg type");
 
 			// One example when this is true is when prop/field type is object and
@@ -188,11 +188,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return new DmdCustomAttributeTypedArgument(realArgType, value);
 		}
 
-		object ReadValue(SerializationType etype, DmdType argType, out DmdType realArgType) {
+		object? ReadValue(SerializationType etype, DmdType argType, out DmdType realArgType) {
 			if (!IncrementRecursionCounter())
 				throw new CABlobParserException("Stack overflow");
 
-			object result;
+			object? result;
 			switch (etype) {
 			case SerializationType.Boolean:
 				realArgType = module.AppDomain.System_Boolean;
@@ -261,7 +261,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 			// It's ET.ValueType if it's eg. a ctor enum arg type
 			case (SerializationType)DMD.ElementType.ValueType:
-				if ((object)argType == null)
+				if (argType is null)
 					throw new CABlobParserException("Invalid element type");
 				realArgType = argType;
 				result = ReadEnumValue(GetEnumUnderlyingType(argType));
@@ -303,7 +303,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				break;
 
 			case SerializationType.Enum:
-				realArgType = ReadType(false);
+				realArgType = ReadType(false)!;
 				result = ReadEnumValue(GetEnumUnderlyingType(realArgType));
 				break;
 
@@ -316,7 +316,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		static SerializationType ToSerializationType(DmdType type) {
-			if ((object)type == null)
+			if (type is null)
 				return SerializationType.Undefined;
 			if (type.IsSZArray)
 				return SerializationType.SZArray;
@@ -347,8 +347,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
-		object ReadEnumValue(DmdType underlyingType) {
-			if ((object)underlyingType != null) {
+		object? ReadEnumValue(DmdType? underlyingType) {
+			if (!(underlyingType is null)) {
 				var typeCode = DmdType.GetTypeCode(underlyingType);
 				if (typeCode < TypeCode.Boolean || typeCode > TypeCode.UInt64)
 					throw new CABlobParserException("Invalid enum underlying type");
@@ -363,27 +363,27 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				return type.GetGenericArguments();
 
 			var resolvedType = type.ResolveNoThrow();
-			if ((object)resolvedType != null)
+			if (!(resolvedType is null))
 				return resolvedType.GetGenericArguments();
 
 			return ReadOnlyCollectionHelpers.Empty<DmdType>();
 		}
 
-		DmdType ReadType(bool canReturnNull) {
+		DmdType? ReadType(bool canReturnNull) {
 			var name = ReadUTF8String();
-			if (canReturnNull && name == null)
+			if (canReturnNull && name is null)
 				return null;
 			var type = DmdTypeNameParser.Parse(module, name ?? string.Empty, genericTypeArguments);
-			if ((object)type == null)
+			if (type is null)
 				throw new CABlobParserException("Could not parse type");
 			return type;
 		}
 
-		static DmdType GetEnumUnderlyingType(DmdType type) {
-			if ((object)type == null)
+		static DmdType? GetEnumUnderlyingType(DmdType type) {
+			if (type is null)
 				throw new CABlobParserException("null enum type");
 			var td = type.ResolveNoThrow();
-			if ((object)td == null)
+			if (td is null)
 				return null;
 			if (!td.IsEnum)
 				throw new CABlobParserException("Not an enum");
@@ -396,7 +396,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			if (!IncrementRecursionCounter())
 				throw new CABlobParserException("Stack overflow");
 
-			object argValue;
+			object? argValue;
 			int arrayCount = reader.ReadInt32();
 			if (arrayCount == -1)// -1 if it's null
 				argValue = null;
@@ -404,7 +404,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				throw new CABlobParserException("Array is too big");
 			else {
 				var array = new DmdCustomAttributeTypedArgument[arrayCount];
-				var elemType = FixTypeSig(arrayType.GetElementType());
+				var elemType = FixTypeSig(arrayType.GetElementType()!);
 				for (int i = 0; i < array.Length; i++)
 					array[i] = ReadFixedArg(elemType);
 				argValue = ReadOnlyCollectionHelpers.Create(array);
@@ -423,26 +423,26 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 
 			var fieldPropType = ReadFieldOrPropType();
-			var name = ReadUTF8String();
+			var name = ReadUTF8String() ?? string.Empty;
 			var argument = ReadFixedArg(fieldPropType);
 
-			DmdMemberInfo memberInfo;
+			DmdMemberInfo? memberInfo;
 			if (isField) {
 				var field = ctorReflectedType.GetField(name);
-				if ((object)field == null || !DmdMemberInfoEqualityComparer.DefaultMember.Equals(field.FieldType, fieldPropType))
+				if (field is null || !DmdMemberInfoEqualityComparer.DefaultMember.Equals(field.FieldType, fieldPropType))
 					memberInfo = null;
 				else
 					memberInfo = field;
 			}
 			else {
 				var property = ctorReflectedType.GetProperty(name);
-				if ((object)property == null || !DmdMemberInfoEqualityComparer.DefaultMember.Equals(property.PropertyType, fieldPropType))
+				if (property is null || !DmdMemberInfoEqualityComparer.DefaultMember.Equals(property.PropertyType, fieldPropType))
 					memberInfo = null;
 				else
 					memberInfo = property;
 			}
 
-			if ((object)memberInfo == null)
+			if (memberInfo is null)
 				throw new ResolveException($"Couldn't resolve CA {(isField ? "field" : "property")}: {name}");
 
 			return new DmdCustomAttributeNamedArgument(memberInfo, argument);
@@ -469,14 +469,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			case SerializationType.SZArray: result = ReadFieldOrPropType().MakeArrayType(); break;
 			case SerializationType.Type:	result = module.AppDomain.System_Type; break;
 			case SerializationType.TaggedObject: result = module.AppDomain.System_Object; break;
-			case SerializationType.Enum:	result = ReadType(false); break;
+			case SerializationType.Enum:	result = ReadType(false)!; break;
 			default: throw new CABlobParserException("Invalid type");
 			}
 			DecrementRecursionCounter();
 			return result;
 		}
 
-		string ReadUTF8String() {
+		string? ReadUTF8String() {
 			byte b = reader.ReadByte();
 			if (b == 0xFF)
 				return null;

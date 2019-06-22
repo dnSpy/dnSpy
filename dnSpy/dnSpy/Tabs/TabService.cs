@@ -29,7 +29,7 @@ namespace dnSpy.Tabs {
 		public IEnumerable<ITabGroupService> TabGroupServices => tabGroupServices;
 		readonly List<TabGroupService> tabGroupServices;
 
-		public ITabGroupService ActiveTabGroupService => selectedIndex < 0 ? null : tabGroupServices[selectedIndex];
+		public ITabGroupService? ActiveTabGroupService => selectedIndex < 0 ? null : tabGroupServices[selectedIndex];
 
 		public int SelectedIndex => selectedIndex;
 		int selectedIndex;
@@ -44,7 +44,7 @@ namespace dnSpy.Tabs {
 			selectedIndex = -1;
 		}
 
-		public ITabGroupService Create(TabGroupServiceOptions options = null) {
+		public ITabGroupService Create(TabGroupServiceOptions? options) {
 			var mgr = new TabGroupService(this, menuService, wpfFocusService, options);
 			tabGroupServices.Add(mgr);
 			if (selectedIndex < 0)
@@ -53,7 +53,7 @@ namespace dnSpy.Tabs {
 		}
 
 		public void Remove(ITabGroupService mgr) {
-			if (mgr == null)
+			if (mgr is null)
 				throw new ArgumentNullException(nameof(mgr));
 			int index = tabGroupServices.IndexOf((TabGroupService)mgr);
 			Debug.Assert(index >= 0);

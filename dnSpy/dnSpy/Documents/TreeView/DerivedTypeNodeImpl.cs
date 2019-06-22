@@ -30,14 +30,14 @@ namespace dnSpy.Documents.TreeView {
 	sealed class DerivedTypeNodeImpl : DerivedTypeNode {
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.DERIVEDTYPE_NODE_GUID);
 		public override NodePathName NodePathName => new NodePathName(Guid, TypeDef.FullName);
-		public override ITreeNodeGroup TreeNodeGroup { get; }
+		public override ITreeNodeGroup? TreeNodeGroup { get; }
 		public override TypeDef TypeDef => TryGetTypeDef() ?? new TypeDefUser("???");
 		TypeDef TryGetTypeDef() => (TypeDef)weakRefTypeDef.Target;
 		readonly WeakReference weakRefTypeDef;
 
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) {
 			var td = TryGetTypeDef();
-			if (td != null)
+			if (!(td is null))
 				return dnImgMgr.GetImageReference(td);
 			return DsImages.ClassPublic;
 		}
@@ -54,15 +54,15 @@ namespace dnSpy.Documents.TreeView {
 		public override IEnumerable<TreeNodeData> CreateChildren() {
 			if (!createChildren)
 				yield break;
-			if (derivedTypesFinder != null) {
+			if (!(derivedTypesFinder is null)) {
 				derivedTypesFinder.Cancel();
 				derivedTypesFinder = null;
 			}
 			var td = TryGetTypeDef();
-			if (td != null)
+			if (!(td is null))
 				derivedTypesFinder = new DerivedTypesFinder(this, td);
 		}
-		DerivedTypesFinder derivedTypesFinder;
+		DerivedTypesFinder? derivedTypesFinder;
 
 		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) {
 			var td = TryGetTypeDef();

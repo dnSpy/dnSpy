@@ -35,13 +35,13 @@ namespace dnSpy.Contracts.Debugger.Engine.Steppers {
 		/// </summary>
 		/// <param name="tag">This value must be used when raising <see cref="StepComplete"/></param>
 		/// <param name="step">Step kind</param>
-		public abstract void Step(object tag, DbgEngineStepKind step);
+		public abstract void Step(object? tag, DbgEngineStepKind step);
 
 		/// <summary>
 		/// Cancels the step, but does not raise <see cref="StepComplete"/>
 		/// </summary>
 		/// <param name="tag">Same value that was passed to <see cref="Step(object, DbgEngineStepKind)"/></param>
-		public abstract void Cancel(object tag);
+		public abstract void Cancel(object? tag);
 	}
 
 	/// <summary>
@@ -51,17 +51,17 @@ namespace dnSpy.Contracts.Debugger.Engine.Steppers {
 		/// <summary>
 		/// Gets the thread or null to use the default thread that was used to create the stepper
 		/// </summary>
-		public DbgThread Thread { get; }
+		public DbgThread? Thread { get; }
 
 		/// <summary>
 		/// Gets the tag
 		/// </summary>
-		public object Tag { get; }
+		public object? Tag { get; }
 
 		/// <summary>
 		/// Gets the error message or null if none
 		/// </summary>
-		public string Error { get; }
+		public string? Error { get; }
 
 		/// <summary>
 		/// true if the stepper was canceled by the engine
@@ -75,7 +75,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Steppers {
 		/// <param name="tag">Same value that was passed to <see cref="DbgEngineStepper.Step(object, DbgEngineStepKind)"/></param>
 		/// <param name="error">Error message or null if none</param>
 		/// <param name="forciblyCanceled">true if the stepper was canceled by the engine</param>
-		public DbgEngineStepCompleteEventArgs(DbgThread thread, object tag, string error, bool forciblyCanceled) {
+		public DbgEngineStepCompleteEventArgs(DbgThread? thread, object? tag, string? error, bool forciblyCanceled) {
 			Thread = thread;
 			Tag = tag;
 			Error = error;

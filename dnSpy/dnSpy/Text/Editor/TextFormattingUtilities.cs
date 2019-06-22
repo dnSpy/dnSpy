@@ -26,9 +26,9 @@ using Microsoft.VisualStudio.Text.Classification;
 namespace dnSpy.Text.Editor {
 	static class TextFormattingUtilities {
 		public static void UpdateForceClearTypeIfNeeded(DependencyObject target, bool forceClearTypeIfNeeded, IClassificationFormatMap classificationFormatMap) {
-			if (target == null)
+			if (target is null)
 				throw new ArgumentNullException(nameof(target));
-			if (classificationFormatMap == null)
+			if (classificationFormatMap is null)
 				throw new ArgumentNullException(nameof(classificationFormatMap));
 
 			// Remote Desktop seems to force disable-ClearType so to prevent Consolas from looking

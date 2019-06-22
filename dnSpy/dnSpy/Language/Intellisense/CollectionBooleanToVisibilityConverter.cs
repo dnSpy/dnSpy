@@ -25,9 +25,9 @@ using System.Windows.Data;
 
 namespace dnSpy.Language.Intellisense {
 	sealed class CollectionBooleanToVisibilityConverter : IValueConverter {
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
+		public object? Convert(object value, Type targetType, object parameter, CultureInfo culture) {
 			var collection = (IList)value;
-			return collection == null || collection.Count == 0 ? Visibility.Collapsed : Visibility.Visible;
+			return collection is null || collection.Count == 0 ? Visibility.Collapsed : Visibility.Visible;
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotSupportedException();

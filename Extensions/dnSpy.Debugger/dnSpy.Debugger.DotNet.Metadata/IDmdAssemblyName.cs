@@ -28,17 +28,17 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the simple name
 		/// </summary>
-		string Name { get; }
+		string? Name { get; }
 
 		/// <summary>
 		/// Gets the version
 		/// </summary>
-		Version Version { get; }
+		Version? Version { get; }
 
 		/// <summary>
 		/// Gets the culture name
 		/// </summary>
-		string CultureName { get; }
+		string? CultureName { get; }
 
 		/// <summary>
 		/// Gets the flags
@@ -64,13 +64,13 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Gets the public key
 		/// </summary>
 		/// <returns></returns>
-		byte[] GetPublicKey();
+		byte[]? GetPublicKey();
 
 		/// <summary>
 		/// Gets the public key token
 		/// </summary>
 		/// <returns></returns>
-		byte[] GetPublicKeyToken();
+		byte[]? GetPublicKeyToken();
 
 		/// <summary>
 		/// Gets the hash algorithm

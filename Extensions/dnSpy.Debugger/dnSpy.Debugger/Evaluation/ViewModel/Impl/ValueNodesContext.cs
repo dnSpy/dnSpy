@@ -47,11 +47,11 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		ShowMessageBox ShowMessageBox { get; }
 		LanguageEditValueProvider ValueEditValueProvider { get; }
 		LanguageEditValueProvider NameEditValueProvider { get; }
-		DbgEvaluationInfo EvaluationInfo { get; }
-		Action<string, bool> OnValueNodeAssigned { get; }
+		DbgEvaluationInfo? EvaluationInfo { get; }
+		Action<string?, bool> OnValueNodeAssigned { get; }
 		DbgEvaluationOptions EvaluationOptions { get; }
 		DbgValueNodeEvaluationOptions ValueNodeEvaluationOptions { get; }
-		string ExpressionToEdit { get; set; }
+		string? ExpressionToEdit { get; set; }
 		bool IsWindowReadOnly { get; }
 		CultureInfo FormatCulture { get; }
 	}
@@ -77,15 +77,15 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public ShowMessageBox ShowMessageBox { get; }
 		public LanguageEditValueProvider ValueEditValueProvider { get; }
 		public LanguageEditValueProvider NameEditValueProvider { get; }
-		public DbgEvaluationInfo EvaluationInfo { get; set; }
-		public Action<string, bool> OnValueNodeAssigned { get; }
+		public DbgEvaluationInfo? EvaluationInfo { get; set; }
+		public Action<string?, bool> OnValueNodeAssigned { get; }
 		public DbgEvaluationOptions EvaluationOptions { get; set; }
 		public DbgValueNodeEvaluationOptions ValueNodeEvaluationOptions { get; set; }
-		public string ExpressionToEdit { get; set; }
+		public string? ExpressionToEdit { get; set; }
 		public bool IsWindowReadOnly { get; set; }
 		public CultureInfo FormatCulture { get; }
 
-		public ValueNodesContext(UIDispatcher uiDispatcher, IEditValueNodeExpression editValueNodeExpression, string windowContentType, string nameColumnName, string valueColumnName, string typeColumnName, LanguageEditValueProviderFactory languageEditValueProviderFactory, DbgValueNodeImageReferenceService dbgValueNodeImageReferenceService, DbgValueNodeReader dbgValueNodeReader, IClassificationFormatMap classificationFormatMap, ITextBlockContentInfoFactory textBlockContentInfoFactory, CultureInfo formatCulture, ShowMessageBox showMessageBox, Action<string, bool> onValueNodeAssigned) {
+		public ValueNodesContext(UIDispatcher uiDispatcher, IEditValueNodeExpression editValueNodeExpression, string windowContentType, string nameColumnName, string valueColumnName, string typeColumnName, LanguageEditValueProviderFactory languageEditValueProviderFactory, DbgValueNodeImageReferenceService dbgValueNodeImageReferenceService, DbgValueNodeReader dbgValueNodeReader, IClassificationFormatMap classificationFormatMap, ITextBlockContentInfoFactory textBlockContentInfoFactory, CultureInfo formatCulture, ShowMessageBox showMessageBox, Action<string?, bool> onValueNodeAssigned) {
 			UIDispatcher = uiDispatcher;
 			EditValueNodeExpression = editValueNodeExpression;
 			WindowContentType = windowContentType;

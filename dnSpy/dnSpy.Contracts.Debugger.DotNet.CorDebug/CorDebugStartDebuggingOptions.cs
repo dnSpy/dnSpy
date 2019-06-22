@@ -27,17 +27,17 @@ namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
 		/// <summary>
 		/// Path to application to debug
 		/// </summary>
-		public string Filename { get; set; }
+		public string? Filename { get; set; }
 
 		/// <summary>
 		/// Command line
 		/// </summary>
-		public string CommandLine { get; set; }
+		public string? CommandLine { get; set; }
 
 		/// <summary>
 		/// Working directory
 		/// </summary>
-		public string WorkingDirectory { get; set; }
+		public string? WorkingDirectory { get; set; }
 
 		/// <summary>
 		/// Environment variables
@@ -54,7 +54,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
 		/// </summary>
 		/// <param name="other">Destination</param>
 		protected void CopyTo(CorDebugStartDebuggingOptions other) {
-			if (other == null)
+			if (other is null)
 				throw new ArgumentNullException(nameof(other));
 			base.CopyTo(other);
 			other.Filename = Filename;

@@ -43,11 +43,11 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler.CSharp {
 			public CSharpMetadataContext MetadataContext;
 		}
 
-		protected override ImmutableArray<ImmutableArray<DSEEImportRecord>> GetImports(TypeDef declaringType, DbgMethodDebugScope scope, out string defaultNamespaceName) {
+		protected override ImmutableArray<ImmutableArray<DSEEImportRecord>> GetImports(TypeDef declaringType, DbgMethodDebugScope scope, out string? defaultNamespaceName) {
 			var importRecordGroupBuilder = ImmutableArray.CreateBuilder<ImmutableArray<DSEEImportRecord>>();
 
 			var type = declaringType;
-			while (type.DeclaringType != null)
+			while (!(type.DeclaringType is null))
 				type = type.DeclaringType;
 			var ns = UTF8String.ToSystemStringOrEmpty(type.Namespace);
 			int index = 0;
@@ -114,7 +114,7 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler.CSharp {
 			DbgDotNetText name;
 			if ((options & DbgEvaluationOptions.NoName) != 0)
 				name = DbgDotNetText.Empty;
-			else if (compileResult == null || errorMessage != null)
+			else if (!(errorMessage is null))
 				name = CreateErrorName(expression);
 			else
 				name = GetExpressionText(state.MetadataContext.EvaluationContext, state.MetadataContext.Compilation, expression, cancellationToken);

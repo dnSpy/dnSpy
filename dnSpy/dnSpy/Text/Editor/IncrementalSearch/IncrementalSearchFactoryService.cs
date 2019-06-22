@@ -36,7 +36,7 @@ namespace dnSpy.Text.Editor.IncrementalSearch {
 		}
 
 		public IIncrementalSearch GetIncrementalSearch(ITextView textView) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			return textView.Properties.GetOrCreateSingletonProperty(typeof(IIncrementalSearch), () => new IncrementalSearch(textView, textSearchService, editorOperationsFactoryService));
 		}

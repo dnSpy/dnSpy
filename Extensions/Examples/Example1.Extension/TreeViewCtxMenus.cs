@@ -28,14 +28,14 @@ namespace Example1.Extension {
 		protected sealed override object CachedContextKey => ContextKey;
 		static readonly object ContextKey = new object();
 
-		protected sealed override TVContext CreateContext(IMenuItemContext context) {
+		protected sealed override TVContext? CreateContext(IMenuItemContext context) {
 			// Make sure it's the file treeview
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID))
 				return null;
 
 			// Extract the data needed by the context
 			var nodes = context.Find<TreeNodeData[]>();
-			if (nodes == null)
+			if (nodes is null)
 				return null;
 			var newNodes = nodes.OfType<DocumentTreeNodeData>();
 
@@ -84,35 +84,35 @@ namespace Example1.Extension {
 	sealed class TVCommand5 : TVCtxMenuCommand {
 		public override void Execute(TVContext context) {
 			var node = GetTokenNode(context);
-			if (node != null) {
+			if (!(node is null)) {
 				try {
-					Clipboard.SetText($"{node.Reference.MDToken.Raw:X8}");
+					Clipboard.SetText($"{node.Reference!.MDToken.Raw:X8}");
 				}
 				catch (ExternalException) { }
 			}
 		}
 
-		IMDTokenNode GetTokenNode(TVContext context) {
+		IMDTokenNode? GetTokenNode(TVContext context) {
 			if (context.Nodes.Length == 0)
 				return null;
 			return context.Nodes[0] as IMDTokenNode;
 		}
 
-		public override string GetHeader(TVContext context) {
+		public override string? GetHeader(TVContext context) {
 			var node = GetTokenNode(context);
-			if (node == null)
+			if (node is null)
 				return string.Empty;
-			return $"Copy token {node.Reference.MDToken.Raw:X8}";
+			return $"Copy token {node.Reference!.MDToken.Raw:X8}";
 		}
 
-		public override bool IsVisible(TVContext context) => GetTokenNode(context) != null;
+		public override bool IsVisible(TVContext context) => !(GetTokenNode(context) is null);
 	}
 
 	[ExportMenuItem(Header = "Copy Second Instruction", Group = Constants.GROUP_TREEVIEW, Order = 50)]
 	sealed class TVCommand6 : TVCtxMenuCommand {
 		public override void Execute(TVContext context) {
 			var instr = GetSecondInstruction(context);
-			if (instr != null) {
+			if (!(instr is null)) {
 				try {
 					Clipboard.SetText($"Second instruction: {instr}");
 				}
@@ -120,18 +120,18 @@ namespace Example1.Extension {
 			}
 		}
 
-		Instruction GetSecondInstruction(TVContext context) {
+		Instruction? GetSecondInstruction(TVContext context) {
 			if (context.Nodes.Length == 0)
 				return null;
 			var methNode = context.Nodes[0] as MethodNode;
-			if (methNode == null)
+			if (methNode is null)
 				return null;
 			var body = methNode.MethodDef.Body;
-			if (body == null || body.Instructions.Count < 2)
+			if (body is null || body.Instructions.Count < 2)
 				return null;
 			return body.Instructions[1];
 		}
 
-		public override bool IsEnabled(TVContext context) => GetSecondInstruction(context) != null;
+		public override bool IsEnabled(TVContext context) => !(GetSecondInstruction(context) is null);
 	}
 }

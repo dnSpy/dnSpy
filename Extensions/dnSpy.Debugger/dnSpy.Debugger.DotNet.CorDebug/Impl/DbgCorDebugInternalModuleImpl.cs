@@ -24,9 +24,9 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	sealed class DbgCorDebugInternalModuleImpl : DbgDotNetInternalModule {
-		public override DmdModule ReflectionModule { get; }
+		public override DmdModule? ReflectionModule { get; }
 		public override DbgModule Module => module ?? throw new ArgumentNullException(nameof(module));
-		DbgModule module;
+		DbgModule? module;
 		readonly ClosedListenerCollection closedListenerCollection;
 		public DbgCorDebugInternalModuleImpl(DmdModule reflectionModule, ClosedListenerCollection closedListenerCollection) {
 			ReflectionModule = reflectionModule ?? throw new ArgumentNullException(nameof(reflectionModule));
@@ -34,10 +34,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		}
 		internal void SetModule(DbgModule module) {
 			this.module = module ?? throw new ArgumentNullException(nameof(module));
-			ReflectionModule.GetOrCreateData(() => module);
+			ReflectionModule!.GetOrCreateData(() => module);
 		}
 		internal void Remove() {
-			var asm = ReflectionModule.Assembly;
+			var asm = ReflectionModule!.Assembly;
 			asm.Remove(ReflectionModule);
 			if (asm.GetModules().Length == 0)
 				asm.AppDomain.Remove(asm);

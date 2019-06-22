@@ -85,14 +85,14 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// <param name="ref">Reference</param>
 		/// <param name="sourceContent">Source content or null</param>
 		/// <param name="onShown">Called after the content has been shown. Can be null.</param>
-		void FollowReference(object @ref, DocumentTabContent sourceContent = null, Action<ShowTabContentEventArgs> onShown = null);
+		void FollowReference(object @ref, DocumentTabContent? sourceContent = null, Action<ShowTabContentEventArgs>? onShown = null);
 
 		/// <summary>
 		/// Follows a reference in a new tab
 		/// </summary>
 		/// <param name="ref">Reference</param>
 		/// <param name="onShown">Called after the content has been shown. Can be null.</param>
-		void FollowReferenceNewTab(object @ref, Action<ShowTabContentEventArgs> onShown = null);
+		void FollowReferenceNewTab(object @ref, Action<ShowTabContentEventArgs>? onShown = null);
 
 		/// <summary>
 		/// Follows a reference
@@ -100,7 +100,7 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// <param name="ref">Reference</param>
 		/// <param name="newTab">true to open a new tab</param>
 		/// <param name="onShown">Called after the content has been shown. Can be null.</param>
-		void FollowReference(object @ref, bool newTab, Action<ShowTabContentEventArgs> onShown = null);
+		void FollowReference(object @ref, bool newTab, Action<ShowTabContentEventArgs>? onShown = null);
 
 		/// <summary>
 		/// Shows the tab content
@@ -108,7 +108,7 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// <param name="tabContent">Tab content</param>
 		/// <param name="uiState">UI state (passed to <see cref="DocumentTabUIContext.RestoreUIState(object)"/>) or null</param>
 		/// <param name="onShown">Called after the output has been shown on the screen</param>
-		void Show(DocumentTabContent tabContent, object uiState, Action<ShowTabContentEventArgs> onShown);
+		void Show(DocumentTabContent tabContent, object? uiState, Action<ShowTabContentEventArgs>? onShown);
 
 		/// <summary>
 		/// Sets focus to the focused element if this is the active tab
@@ -144,6 +144,6 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// </summary>
 		/// <param name="tab">Tab</param>
 		/// <returns></returns>
-		public static IDocumentViewer TryGetDocumentViewer(this IDocumentTab tab) => tab?.UIContext as IDocumentViewer;
+		public static IDocumentViewer? TryGetDocumentViewer(this IDocumentTab? tab) => tab?.UIContext as IDocumentViewer;
 	}
 }

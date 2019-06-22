@@ -65,8 +65,8 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="stringBuilder">String builder to use. Its <see cref="StringBuilder.Clear"/> method gets called by the constructor</param>
 		/// <param name="indenter">Indenter or null</param>
-		public StringBuilderDecompilerOutput(StringBuilder stringBuilder, Indenter indenter = null) {
-			if (stringBuilder == null)
+		public StringBuilderDecompilerOutput(StringBuilder stringBuilder, Indenter? indenter = null) {
+			if (stringBuilder is null)
 				throw new ArgumentNullException(nameof(stringBuilder));
 			stringBuilder.Clear();
 			sb = stringBuilder;
@@ -141,7 +141,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="reference">Reference</param>
 		/// <param name="flags">Flags</param>
 		/// <param name="color">Color, eg. <see cref="BoxedTextColor.Keyword"/></param>
-		public virtual void Write(string text, object reference, DecompilerReferenceFlags flags, object color) {
+		public virtual void Write(string text, object? reference, DecompilerReferenceFlags flags, object color) {
 			if (addIndent)
 				AddIndent();
 			AddText(text, color);
@@ -156,7 +156,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="reference">Reference</param>
 		/// <param name="flags">Flags</param>
 		/// <param name="color">Color, eg. <see cref="BoxedTextColor.Keyword"/></param>
-		public virtual void Write(string text, int index, int length, object reference, DecompilerReferenceFlags flags, object color) {
+		public virtual void Write(string text, int index, int length, object? reference, DecompilerReferenceFlags flags, object color) {
 			if (addIndent)
 				AddIndent();
 			AddText(text, index, length, color);

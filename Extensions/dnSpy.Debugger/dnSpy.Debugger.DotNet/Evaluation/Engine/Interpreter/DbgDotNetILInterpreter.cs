@@ -34,12 +34,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 
 		public DbgDotNetValueResult Execute(DbgEvaluationInfo evalInfo, DbgDotNetILInterpreterState state, string typeName, string methodName, DbgEvaluationOptions options, out DmdType expectedType) {
 			var frameMethod = evalInfo.Runtime.GetDotNetRuntime().GetFrameMethod(evalInfo) ?? throw new InvalidOperationException();
-			var genericTypeArguments = frameMethod.ReflectedType.GetGenericArguments();
+			var genericTypeArguments = frameMethod.ReflectedType!.GetGenericArguments();
 			var genericMethodArguments = frameMethod.GetGenericArguments();
 			return Execute(evalInfo, genericTypeArguments, genericMethodArguments, null, null, state, typeName, methodName, options, out expectedType);
 		}
 
-		public abstract DbgDotNetValueResult Execute(DbgEvaluationInfo evalInfo, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, VariablesProvider argumentsProvider, VariablesProvider localsProvider, DbgDotNetILInterpreterState state, string typeName, string methodName, DbgEvaluationOptions options, out DmdType expectedType);
+		public abstract DbgDotNetValueResult Execute(DbgEvaluationInfo evalInfo, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, VariablesProvider? argumentsProvider, VariablesProvider? localsProvider, DbgDotNetILInterpreterState state, string typeName, string methodName, DbgEvaluationOptions options, out DmdType expectedType);
 	}
 
 	abstract class DbgDotNetILInterpreterState {
@@ -91,7 +91,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 						return info.assembly;
 				}
 				var reflectionAppDomain = appDomain.GetReflectionAppDomain();
-				if (reflectionAppDomain == null)
+				if (reflectionAppDomain is null)
 					throw new InvalidOperationException();
 
 				const bool isInMemory = true;
@@ -112,25 +112,25 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			this.debuggerRuntimeFactory = debuggerRuntimeFactory;
 
 		sealed class MethodInfoState {
-			public ILVMExecuteState ILVMExecuteState { get; set; }
-			public DmdType ExpectedType { get; set; }
-			public DmdMethodBody RealMethodBody { get; set; }
+			public ILVMExecuteState? ILVMExecuteState { get; set; }
+			public DmdType? ExpectedType { get; set; }
+			public DmdMethodBody? RealMethodBody { get; set; }
 		}
 
 		public override DbgDotNetILInterpreterState CreateState(byte[] assembly) {
-			if (assembly == null)
+			if (assembly is null)
 				throw new ArgumentNullException(nameof(assembly));
 			return new DbgDotNetILInterpreterStateImpl(assembly);
 		}
 
-		public override DbgDotNetValueResult Execute(DbgEvaluationInfo evalInfo, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, VariablesProvider argumentsProvider, VariablesProvider localsProvider, DbgDotNetILInterpreterState state, string typeName, string methodName, DbgEvaluationOptions options, out DmdType expectedType) {
+		public override DbgDotNetValueResult Execute(DbgEvaluationInfo evalInfo, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, VariablesProvider? argumentsProvider, VariablesProvider? localsProvider, DbgDotNetILInterpreterState state, string typeName, string methodName, DbgEvaluationOptions options, out DmdType expectedType) {
 			var stateImpl = (DbgDotNetILInterpreterStateImpl)state;
 
 			var debuggerRuntime = debuggerRuntimeFactory.Create(evalInfo.Runtime);
 			debuggerRuntime.Runtime.Dispatcher.VerifyAccess();
 
 			var appDomain = evalInfo.Frame.AppDomain;
-			if (appDomain == null)
+			if (appDomain is null)
 				throw new ArgumentException("No AppDomain available");
 
 			var reflectionAssembly = stateImpl.GetOrCreateReflectionAssembly(appDomain);
@@ -139,7 +139,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			DbgDotNetValueResult result = default;
 			using (reflectionAssembly.AppDomain.AddTemporaryAssembly(reflectionAssembly)) {
 				var ilvmState = methodState.ILVMExecuteState;
-				if (ilvmState == null) {
+				if (ilvmState is null) {
 					// This could fail so get it first
 					var realMethod = evalInfo.Runtime.GetDotNetRuntime().GetFrameMethod(evalInfo) ?? throw new InvalidOperationException();
 
@@ -159,7 +159,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 					methodState.RealMethodBody = realMethod.GetMethodBody();
 				}
 
-				expectedType = methodState.ExpectedType;
+				expectedType = methodState.ExpectedType!;
 				debuggerRuntime.Initialize(evalInfo, methodState.RealMethodBody, argumentsProvider, localsProvider, (options & DbgEvaluationOptions.NoFuncEval) == 0);
 				try {
 					var execResult = stateImpl.ILVM.Execute(debuggerRuntime, ilvmState);

@@ -44,7 +44,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="value">Value</param>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public DbgObjectId CreateObjectId(DbgValue value, CreateObjectIdOptions options = CreateObjectIdOptions.None) =>
+		public DbgObjectId? CreateObjectId(DbgValue value, CreateObjectIdOptions options = CreateObjectIdOptions.None) =>
 			CreateObjectIds(new[] { value ?? throw new ArgumentNullException(nameof(value)) }, options)[0];
 
 		/// <summary>
@@ -53,14 +53,14 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="values">Values</param>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DbgObjectId[] CreateObjectIds(DbgValue[] values, CreateObjectIdOptions options = CreateObjectIdOptions.None);
+		public abstract DbgObjectId?[] CreateObjectIds(DbgValue[] values, CreateObjectIdOptions options = CreateObjectIdOptions.None);
 
 		/// <summary>
 		/// Returns an non-hidden object id or null if there's none that references <paramref name="value"/>
 		/// </summary>
 		/// <param name="value">Value</param>
 		/// <returns></returns>
-		public abstract DbgObjectId GetObjectId(DbgValue value);
+		public abstract DbgObjectId? GetObjectId(DbgValue value);
 
 		/// <summary>
 		/// Returns a non-hidden object id or null if there's none
@@ -68,7 +68,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="runtime">Runtime</param>
 		/// <param name="id">Object id</param>
 		/// <returns></returns>
-		public abstract DbgObjectId GetObjectId(DbgRuntime runtime, uint id);
+		public abstract DbgObjectId? GetObjectId(DbgRuntime runtime, uint id);
 
 		/// <summary>
 		/// Gets all non-hidden object ids

@@ -47,12 +47,12 @@ namespace dnSpy.Debugger.ToolWindows.TextView {
 			return CommandTargetStatus.NotHandled;
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args = null) {
-			object result = null;
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args = null) {
+			object? result = null;
 			return Execute(group, cmdId, args, ref result);
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) {
 			if (group == DebuggerCommandConstants.DebuggerToolWindowGroup) {
 				switch ((DebuggerToolWindowIds)cmdId) {
 				case DebuggerToolWindowIds.ShowAutos:

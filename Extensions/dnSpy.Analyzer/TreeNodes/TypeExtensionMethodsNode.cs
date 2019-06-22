@@ -52,14 +52,14 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		static int GetParametersSkip(IList<Parameter> parameters) {
-			if (parameters == null || parameters.Count == 0)
+			if (parameters is null || parameters.Count == 0)
 				return 0;
 			if (parameters[0].IsHiddenThisParameter)
 				return 1;
 			return 0;
 		}
 
-		bool HasExtensionAttribute(IHasCustomAttribute p) => p.CustomAttributes.Find("System.Runtime.CompilerServices.ExtensionAttribute") != null;
+		bool HasExtensionAttribute(IHasCustomAttribute p) => !(p.CustomAttributes.Find("System.Runtime.CompilerServices.ExtensionAttribute") is null);
 
 		// show on all types except static classes
 		public static bool CanShow(TypeDef type) => !(type.IsAbstract && type.IsSealed);

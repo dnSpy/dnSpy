@@ -31,10 +31,10 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 		readonly IDecompiler decompiler;
 		readonly MethodDef method;
 		readonly CancellationToken cancellationToken;
-		DecompilerOutputImpl output;
-		MethodDebugInfo debugInfo;
+		DecompilerOutputImpl? output;
+		MethodDebugInfo? debugInfo;
 
-		public DecompiledCodeProvider(IDecompiler decompiler, MethodDef method, CancellationToken cancellationToken) {
+		public DecompiledCodeProvider(IDecompiler? decompiler, MethodDef method, CancellationToken cancellationToken) {
 			this.decompiler = decompiler ?? throw new ArgumentNullException(nameof(decompiler));
 			this.method = method ?? throw new ArgumentNullException(nameof(method));
 			this.cancellationToken = cancellationToken;
@@ -43,7 +43,7 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 		}
 
 		public bool TryDecompile() {
-			Debug.Assert(output == null);
+			Debug.Assert(output is null);
 			output = new DecompilerOutputImpl();
 
 			if (!StateMachineHelpers.TryGetKickoffMethod(method, out var containingMethod))
@@ -55,23 +55,23 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 				AsyncMethodBodyDecompilation = false,
 			};
 			var info = TryDecompileCode(containingMethod, method.MDToken.Raw, ctx, output);
-			if (info.debugInfo == null && containingMethod != method) {
+			if (info.debugInfo is null && containingMethod != method) {
 				output.Clear();
 				// The decompiler can't decompile the iterator / async method, try again,
 				// but only decompile the MoveNext method
 				info = TryDecompileCode(method, method.MDToken.Raw, ctx, output);
 			}
 			debugInfo = info.debugInfo;
-			return debugInfo != null;
+			return !(debugInfo is null);
 		}
 
 		public NativeVariableInfo[] CreateNativeVariableInfo() {
-			if (debugInfo == null)
+			if (debugInfo is null)
 				return Array.Empty<NativeVariableInfo>();
 			var list = new List<NativeVariableInfo>();
 			foreach (var arg in debugInfo.Parameters) {
 				var p = arg.Parameter;
-				if (p == null || p.Index < 0)
+				if (p is null || p.Index < 0)
 					continue;
 				var name = arg.Name;
 				if (string.IsNullOrEmpty(name))
@@ -81,7 +81,7 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 			foreach (var scope in GetScopes(debugInfo.Scope)) {
 				foreach (var local in scope.Locals) {
 					var l = local.Local;
-					if (l == null)
+					if (l is null)
 						continue;
 					var name = local.Name;
 					if (string.IsNullOrEmpty(name))
@@ -100,7 +100,7 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 			}
 		}
 
-		(MethodDebugInfo debugInfo, MethodDebugInfo stateMachineDebugInfoOrNull) TryDecompileCode(MethodDef method, uint methodToken, DecompilationContext ctx, DecompilerOutputImpl output) {
+		(MethodDebugInfo debugInfo, MethodDebugInfo? stateMachineDebugInfoOrNull) TryDecompileCode(MethodDef method, uint methodToken, DecompilationContext ctx, DecompilerOutputImpl output) {
 			output.Initialize(methodToken);
 			decompiler.Decompile(method, output, ctx);
 			var info = output.TryGetMethodDebugInfo();
@@ -109,14 +109,14 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 		}
 
 		public SourceStatementProvider CreateCodeProvider() {
-			if (output == null || debugInfo == null)
+			if (output is null || debugInfo is null)
 				return default;
 			return new SourceStatementProvider(output.ToString(), debugInfo);
 		}
 
 		public ILSourceStatementProvider CreateILCodeProvider() {
 			Debug.Assert(decompiler.GenericGuid == DecompilerConstants.LANGUAGE_IL);
-			if (output == null || debugInfo == null)
+			if (output is null || debugInfo is null)
 				return default;
 			return new ILSourceStatementProvider(output.ToString(), debugInfo);
 		}

@@ -35,24 +35,24 @@ namespace dnSpy.Language.Intellisense {
 		[ImportingConstructor]
 		FilterMatchCompletionClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) => this.themeClassificationTypeService = themeClassificationTypeService;
 
-		public ITextClassifier Create(IContentType contentType) => new FilterMatchCompletionClassifier(themeClassificationTypeService);
+		public ITextClassifier? Create(IContentType contentType) => new FilterMatchCompletionClassifier(themeClassificationTypeService);
 	}
 
 	sealed class FilterMatchCompletionClassifier : ITextClassifier {
 		readonly IClassificationType completionMatchHighlightClassificationType;
 
 		public FilterMatchCompletionClassifier(IThemeClassificationTypeService themeClassificationTypeService) {
-			if (themeClassificationTypeService == null)
+			if (themeClassificationTypeService is null)
 				throw new ArgumentNullException(nameof(themeClassificationTypeService));
 			completionMatchHighlightClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.CompletionMatchHighlight);
 		}
 
 		public IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context) {
 			var completionContext = context as CompletionDisplayTextClassifierContext;
-			if (completionContext == null)
+			if (completionContext is null)
 				yield break;
 			var spans = completionContext.CompletionSet.GetHighlightedSpansInDisplayText(context.Text);
-			if (spans == null)
+			if (spans is null)
 				yield break;
 			foreach (var span in spans)
 				yield return new TextClassificationTag(span, completionMatchHighlightClassificationType);

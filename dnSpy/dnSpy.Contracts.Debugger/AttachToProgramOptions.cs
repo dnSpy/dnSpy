@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// <param name="other">Destination</param>
 		/// <returns></returns>
 		protected AttachToProgramOptions CopyTo(AttachToProgramOptions other) {
-			if (other == null)
+			if (other is null)
 				throw new ArgumentNullException(nameof(other));
 			// Nothing at the moment
 			return other;

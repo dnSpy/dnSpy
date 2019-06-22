@@ -35,12 +35,12 @@ namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
 		/// <summary>
 		/// Path to host (eg. dotnet.exe) or null if dnSpy should try to find dotnet.exe
 		/// </summary>
-		public string Host { get; set; }
+		public string? Host { get; set; }
 
 		/// <summary>
 		/// Host arguments (eg. "exec" if .NET Core's dotnet.exe is used)
 		/// </summary>
-		public string HostArguments { get; set; }
+		public string? HostArguments { get; set; }
 
 		/// <summary>
 		/// Clones this instance
@@ -54,7 +54,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
 		/// <param name="other">Destination</param>
 		/// <returns></returns>
 		public DotNetCoreStartDebuggingOptions CopyTo(DotNetCoreStartDebuggingOptions other) {
-			if (other == null)
+			if (other is null)
 				throw new ArgumentNullException(nameof(other));
 			base.CopyTo(other);
 			other.UseHost = UseHost;

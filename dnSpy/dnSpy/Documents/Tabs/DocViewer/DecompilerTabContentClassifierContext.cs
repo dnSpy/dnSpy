@@ -25,7 +25,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 	sealed class DecompilerTabContentClassifierContext : TextClassifierContext {
 		public bool IsToolTip { get; }
 
-		public DecompilerTabContentClassifierContext(string text, bool isToolTip, bool colorize, IReadOnlyCollection<SpanData<object>> colors = null)
+		public DecompilerTabContentClassifierContext(string text, bool isToolTip, bool colorize, IReadOnlyCollection<SpanData<object>>? colors = null)
 			: base(text, string.Empty, colorize, colors) {
 			IsToolTip = isToolTip;
 		}

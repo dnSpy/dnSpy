@@ -32,12 +32,12 @@ namespace dnSpy.Contracts.Hex.Tagging {
 		/// <summary>
 		/// Tooltip to show or null
 		/// </summary>
-		public object ToolTip { get; }
+		public object? ToolTip { get; }
 
 		/// <summary>
 		/// A reference to some high level object that represents the data or null
 		/// </summary>
-		public object Reference { get; }
+		public object? Reference { get; }
 
 		/// <summary>
 		/// Constructor
@@ -53,7 +53,7 @@ namespace dnSpy.Contracts.Hex.Tagging {
 		/// <param name="bufferSpan">Span of field</param>
 		/// <param name="toolTip">Tooltip to show or null</param>
 		/// <param name="reference">A reference to some high level object that represents the data or null</param>
-		public HexToolTipStructureSpanTag(HexBufferSpan bufferSpan, object toolTip, object reference) {
+		public HexToolTipStructureSpanTag(HexBufferSpan bufferSpan, object? toolTip, object? reference) {
 			if (bufferSpan.IsDefault)
 				throw new ArgumentException();
 			BufferSpan = bufferSpan;

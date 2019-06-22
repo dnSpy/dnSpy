@@ -48,7 +48,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 
 		void ExitDialog() {
 			var vm = DataContext as TabsVM;
-			if (vm == null)
+			if (vm is null)
 				return;
 			vm.Activate(listView.SelectedItem as TabVM);
 			ClickOK();

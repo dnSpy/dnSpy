@@ -40,19 +40,19 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		public override LanguageEditValueProvider Create(string defaultContentType) {
-			if (defaultContentType == null)
+			if (defaultContentType is null)
 				throw new ArgumentNullException(nameof(defaultContentType));
 			return new LanguageEditValueProviderImpl(uiDispatcher, editValueProviderService, defaultContentType);
 		}
 	}
 
 	abstract class LanguageEditValueProvider : IEditValueProvider {
-		public abstract DbgLanguage Language { get; set; }
+		public abstract DbgLanguage? Language { get; set; }
 		public abstract IEditValue Create(string text, EditValueFlags flags);
 	}
 
 	sealed class LanguageEditValueProviderImpl : LanguageEditValueProvider {
-		public override DbgLanguage Language {
+		public override DbgLanguage? Language {
 			get => language;
 			set {
 				if (language == value)
@@ -65,8 +65,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		readonly UIDispatcher uiDispatcher;
 		readonly EditValueProviderService editValueProviderService;
 		readonly string defaultContentType;
-		IEditValueProvider editValueProvider;
-		DbgLanguage language;
+		IEditValueProvider? editValueProvider;
+		DbgLanguage? language;
 
 		public LanguageEditValueProviderImpl(UIDispatcher uiDispatcher, EditValueProviderService editValueProviderService, string defaultContentType) {
 			this.uiDispatcher = uiDispatcher ?? throw new ArgumentNullException(nameof(uiDispatcher));
@@ -75,7 +75,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		string GetContentType() {
-			if (language != null) {
+			if (!(language is null)) {
 				//TODO:
 			}
 			return defaultContentType;
@@ -83,7 +83,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 		public override IEditValue Create(string text, EditValueFlags flags) {
 			uiDispatcher.VerifyAccess();
-			if (editValueProvider == null)
+			if (editValueProvider is null)
 				editValueProvider = editValueProviderService.Create(GetContentType(), Array.Empty<string>());
 			return editValueProvider.Create(text, flags);
 		}

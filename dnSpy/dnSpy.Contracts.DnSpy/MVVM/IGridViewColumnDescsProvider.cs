@@ -37,7 +37,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <summary>
 		/// All columns in UI order. Gets updated by the UI when the user drags a column.
 		/// </summary>
-		public GridViewColumnDesc[] Columns { get; set; }
+		public GridViewColumnDesc[] Columns { get; set; } = Array.Empty<GridViewColumnDesc>();
 
 		/// <summary>
 		/// Currently selected column and sort direction
@@ -66,7 +66,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <summary>
 		/// Column or null to use default sort order
 		/// </summary>
-		public readonly GridViewColumnDesc Column;
+		public readonly GridViewColumnDesc? Column;
 
 		/// <summary>
 		/// Sort direction
@@ -78,7 +78,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// </summary>
 		/// <param name="column">Column or null to use default sort order</param>
 		/// <param name="direction">Sort direction</param>
-		public GridViewSortedColumn(GridViewColumnDesc column, GridViewSortDirection direction) {
+		public GridViewSortedColumn(GridViewColumnDesc? column, GridViewSortDirection direction) {
 			Column = column;
 			Direction = direction;
 		}
@@ -88,7 +88,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// </summary>
 		/// <param name="column"></param>
 		/// <param name="direction"></param>
-		public void Deconstruct(out GridViewColumnDesc column, out GridViewSortDirection direction) {
+		public void Deconstruct(out GridViewColumnDesc? column, out GridViewSortDirection direction) {
 			column = Column;
 			direction = Direction;
 		}

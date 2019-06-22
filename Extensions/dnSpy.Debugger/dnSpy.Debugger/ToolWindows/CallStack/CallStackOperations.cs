@@ -68,7 +68,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		public abstract bool CanExportBreakpoint { get; }
 		public abstract void ExportBreakpoint();
 		public abstract IList<DbgLanguage> GetLanguages();
-		public abstract DbgLanguage GetCurrentLanguage();
+		public abstract DbgLanguage? GetCurrentLanguage();
 		public abstract void SetCurrentLanguage(DbgLanguage language);
 		public abstract bool CanToggleUseHexadecimal { get; }
 		public abstract void ToggleUseHexadecimal();
@@ -216,14 +216,14 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			(vm.Frame.Flags & DbgStackFrameFlags.LocationIsNextStatement) != 0 &&
 			vm.Index != 0 &&
 			vm.Frame.Location is DbgCodeLocation location &&
-			dbgCodeBreakpointsService.Value.TryGetBreakpoint(location) == null;
+			dbgCodeBreakpointsService.Value.TryGetBreakpoint(location) is null;
 		public override void RunToCursor() {
 			if (!CanRunToCursor)
 				return;
 			var vm = (NormalStackFrameVM)SelectedItems[0];
 			var process = vm.Frame.Process;
-			var bp = dbgCodeBreakpointsService.Value.Add(new DbgCodeBreakpointInfo(vm.Frame.Location.Clone(), new DbgCodeBreakpointSettings { IsEnabled = true }, DbgCodeBreakpointOptions.Hidden | DbgCodeBreakpointOptions.Temporary | DbgCodeBreakpointOptions.OneShot));
-			if (bp != null)
+			var bp = dbgCodeBreakpointsService.Value.Add(new DbgCodeBreakpointInfo(vm.Frame.Location!.Clone(), new DbgCodeBreakpointSettings { IsEnabled = true }, DbgCodeBreakpointOptions.Hidden | DbgCodeBreakpointOptions.Temporary | DbgCodeBreakpointOptions.OneShot));
+			if (!(bp is null))
 				dbgManager.Value.Run(process);
 		}
 
@@ -235,23 +235,23 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			//TODO:
 		}
 
-		DbgCodeBreakpoint TryGetBreakpoint(DbgCodeLocation location) {
-			if (location == null)
+		DbgCodeBreakpoint? TryGetBreakpoint(DbgCodeLocation location) {
+			if (location is null)
 				return null;
 			var bp = dbgCodeBreakpointsService.Value.TryGetBreakpoint(location);
-			return bp == null || bp.IsHidden ? null : bp;
+			return bp is null || bp.IsHidden ? null : bp;
 		}
 
-		(DbgCodeBreakpoint breakpoint, DbgCodeLocation location)? GetBreakpoint() {
+		(DbgCodeBreakpoint? breakpoint, DbgCodeLocation location)? GetBreakpoint() {
 			if (SelectedItems.Count != 1)
 				return null;
 			var vm = SelectedItems[0] as NormalStackFrameVM;
-			if (vm == null)
+			if (vm is null)
 				return null;
 			if ((vm.Frame.Flags & DbgStackFrameFlags.LocationIsNextStatement) == 0)
 				return null;
 			var location = vm.Frame.Location;
-			if (location == null)
+			if (location is null)
 				return null;
 			var bp = TryGetBreakpoint(location);
 			return (bp, location);
@@ -262,15 +262,15 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 				if (SelectedItems.Count != 1)
 					return BreakpointsCommandKind.None;
 				var vm = SelectedItems[0] as NormalStackFrameVM;
-				if (vm == null)
+				if (vm is null)
 					return BreakpointsCommandKind.None;
 				if ((vm.Frame.Flags & DbgStackFrameFlags.LocationIsNextStatement) == 0)
 					return BreakpointsCommandKind.None;
 				var location = vm.Frame.Location;
-				if (location == null)
+				if (location is null)
 					return BreakpointsCommandKind.None;
 				var bp = TryGetBreakpoint(location);
-				return bp == null ? BreakpointsCommandKind.Add : BreakpointsCommandKind.Edit;
+				return bp is null ? BreakpointsCommandKind.Add : BreakpointsCommandKind.Edit;
 			}
 		}
 
@@ -285,9 +285,9 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			if (!CanAddBreakpointOrTracepoint)
 				return;
 			var info = GetBreakpoint();
-			if (info == null)
+			if (info is null)
 				return;
-			if (info.Value.breakpoint != null) {
+			if (!(info.Value.breakpoint is null)) {
 				if (info.Value.breakpoint.IsEnabled)
 					info.Value.breakpoint.Remove();
 				else
@@ -295,19 +295,19 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			}
 			else {
 				var bp = dbgCodeBreakpointsService.Value.Add(new DbgCodeBreakpointInfo(info.Value.location.Clone(), new DbgCodeBreakpointSettings { IsEnabled = true }, DbgCodeBreakpointOptions.Temporary));
-				if (bp == null)
+				if (bp is null)
 					return;
 				if (!addBreakpoint) {
 					var settings = bp.Settings;
 					settings.Trace = new DbgCodeBreakpointTrace(string.Empty, @continue: true);
 					var newSettings = showCodeBreakpointSettingsService.Value.Show(settings);
-					if (newSettings != null)
+					if (!(newSettings is null))
 						bp.Settings = newSettings.Value;
 				}
 			}
 		}
 
-		public override bool CanEnableBreakpoint => GetBreakpoint()?.breakpoint != null;
+		public override bool CanEnableBreakpoint => !(GetBreakpoint()?.breakpoint is null);
 		public override void EnableBreakpoint() {
 			if (!CanEnableBreakpoint)
 				return;
@@ -316,7 +316,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 				bp.IsEnabled = !bp.IsEnabled;
 		}
 
-		public override bool CanRemoveBreakpoint => GetBreakpoint()?.breakpoint != null;
+		public override bool CanRemoveBreakpoint => !(GetBreakpoint()?.breakpoint is null);
 		public override void RemoveBreakpoint() {
 			if (!CanRemoveBreakpoint)
 				return;
@@ -325,7 +325,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 				bp.Remove();
 		}
 
-		public override bool CanEditBreakpointSettings => GetBreakpoint()?.breakpoint != null;
+		public override bool CanEditBreakpointSettings => !(GetBreakpoint()?.breakpoint is null);
 		public override void EditBreakpointSettings() {
 			if (!CanEditBreakpointSettings)
 				return;
@@ -333,12 +333,12 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			if (info?.breakpoint is DbgCodeBreakpoint bp) {
 				var settings = bp.Settings;
 				var newSettings = showCodeBreakpointSettingsService.Value.Show(settings);
-				if (newSettings != null)
+				if (!(newSettings is null))
 					bp.Settings = newSettings.Value;
 			}
 		}
 
-		public override bool CanExportBreakpoint => GetBreakpoint()?.breakpoint != null;
+		public override bool CanExportBreakpoint => !(GetBreakpoint()?.breakpoint is null);
 		public override void ExportBreakpoint() {
 			if (!CanExportBreakpoint)
 				return;
@@ -347,25 +347,25 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 				dbgCodeBreakpointSerializerService.Value.Save(new[] { bp });
 		}
 
-		DbgRuntime CurrentRuntime => dbgManager.Value.CurrentThread.Current?.Runtime;
+		DbgRuntime? CurrentRuntime => dbgManager.Value.CurrentThread.Current?.Runtime;
 
 		public override IList<DbgLanguage> GetLanguages() {
 			var runtime = CurrentRuntime;
-			if (runtime == null)
+			if (runtime is null)
 				return Array.Empty<DbgLanguage>();
 			return dbgLanguageService.Value.GetLanguages(runtime.RuntimeKindGuid);
 		}
 
-		public override DbgLanguage GetCurrentLanguage() {
+		public override DbgLanguage? GetCurrentLanguage() {
 			var runtime = CurrentRuntime;
-			if (runtime == null)
+			if (runtime is null)
 				return null;
 			return dbgLanguageService.Value.GetCurrentLanguage(runtime.RuntimeKindGuid);
 		}
 
 		public override void SetCurrentLanguage(DbgLanguage language) {
 			var runtime = CurrentRuntime;
-			if (runtime == null)
+			if (runtime is null)
 				return;
 			dbgLanguageService.Value.SetCurrentLanguage(runtime.RuntimeKindGuid, language);
 		}

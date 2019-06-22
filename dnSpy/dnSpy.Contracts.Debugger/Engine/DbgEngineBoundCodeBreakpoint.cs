@@ -92,7 +92,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="module">New <see cref="DbgBoundCodeBreakpoint.Module"/> value</param>
 		/// <param name="address">New <see cref="DbgBoundCodeBreakpoint.Address"/> value</param>
 		/// <param name="message">New <see cref="DbgBoundCodeBreakpoint.Message"/> value</param>
-		public abstract void Update(UpdateOptions options, DbgModule module = null, ulong address = 0, DbgEngineBoundCodeBreakpointMessage message = default);
+		public abstract void Update(UpdateOptions options, DbgModule? module = null, ulong address = 0, DbgEngineBoundCodeBreakpointMessage message = default);
 	}
 
 	/// <summary>

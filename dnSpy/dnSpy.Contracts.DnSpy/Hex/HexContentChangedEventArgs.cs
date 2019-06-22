@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// Gets the changes
 		/// </summary>
-		public NormalizedHexChangeCollection Changes => BeforeVersion.Changes;
+		public NormalizedHexChangeCollection Changes => BeforeVersion.Changes!;
 
 		/// <summary>
 		/// Constructor
@@ -33,7 +33,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="beforeVersion">Version before the change</param>
 		/// <param name="afterVersion">Version after the change</param>
 		/// <param name="editTag">Edit tag</param>
-		public HexContentChangedEventArgs(HexVersion beforeVersion, HexVersion afterVersion, object editTag)
+		public HexContentChangedEventArgs(HexVersion beforeVersion, HexVersion afterVersion, object? editTag)
 			: base(beforeVersion, afterVersion, editTag) {
 		}
 	}

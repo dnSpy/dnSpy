@@ -25,7 +25,7 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 	abstract class AddressILValue : ByRefILValue {
-		public override DmdType Type { get; }
+		public override DmdType? Type { get; }
 
 		protected readonly DebuggerRuntimeImpl runtime;
 
@@ -34,31 +34,31 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			Type = locationType.MakeByRefType();
 		}
 
-		protected abstract DbgDotNetValue ReadValue();
-		protected abstract void WriteValue(object value);
+		protected abstract DbgDotNetValue? ReadValue();
+		protected abstract void WriteValue(object? value);
 
 		DbgDotNetValue ReadValueImpl() => ReadValue() ?? throw new InvalidOperationException();
 
 		public override bool StoreField(DmdFieldInfo field, ILValue value) =>
 			runtime.StoreInstanceField(ReadValueImpl(), field, value);
 
-		public override ILValue LoadField(DmdFieldInfo field) =>
+		public override ILValue? LoadField(DmdFieldInfo field) =>
 			runtime.LoadInstanceField(ReadValueImpl(), field);
 
-		public override ILValue LoadFieldAddress(DmdFieldInfo field) {
-			if (field.ReflectedType.IsValueType)
+		public override ILValue? LoadFieldAddress(DmdFieldInfo field) {
+			if (field.ReflectedType!.IsValueType)
 				return runtime.LoadValueTypeFieldAddress(this, field);
 			return null;
 		}
 
-		public override bool Call(bool isCallvirt, DmdMethodBase method, ILValue[] arguments, out ILValue returnValue) =>
+		public override bool Call(bool isCallvirt, DmdMethodBase method, ILValue[] arguments, out ILValue? returnValue) =>
 			runtime.CallInstance(ReadValueImpl(), isCallvirt, method, arguments, out returnValue);
 
 		public ILValue LoadIndirect() => runtime.CreateILValue(ReadValueImpl());
-		public override ILValue LoadIndirect(DmdType type, LoadValueType loadValueType) => LoadIndirect();
+		public override ILValue? LoadIndirect(DmdType type, LoadValueType loadValueType) => LoadIndirect();
 
 		public override bool StoreIndirect(DmdType type, LoadValueType loadValueType, ILValue value) {
-			WriteValue(runtime.GetDebuggerValue(value, Type.GetElementType()));
+			WriteValue(runtime.GetDebuggerValue(value, Type!.GetElementType()!));
 			return true;
 		}
 
@@ -70,7 +70,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 
 		public override bool CopyObject(DmdType type, ILValue source) {
 			var sourceAddr = source as AddressILValue;
-			if (sourceAddr == null)
+			if (sourceAddr is null)
 				return false;
 			WriteValue(sourceAddr.ReadValueImpl());
 			return true;
@@ -87,8 +87,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			this.field = field;
 		}
 
-		protected override DbgDotNetValue ReadValue() => runtime.LoadStaticField2(field);
-		protected override void WriteValue(object value) => runtime.StoreStaticField(field, value);
+		protected override DbgDotNetValue? ReadValue() => runtime.LoadStaticField2(field);
+		protected override void WriteValue(object? value) => runtime.StoreStaticField(field, value);
 
 		public override bool Equals(AddressILValue other) =>
 			other is StaticFieldAddress addr &&
@@ -101,13 +101,13 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 
 		public ReferenceTypeFieldAddress(DebuggerRuntimeImpl runtime, DbgDotNetValue objValue, DmdFieldInfo field)
 			: base(runtime, field.FieldType) {
-			Debug.Assert(!field.ReflectedType.IsValueType && !objValue.Type.IsArray);
+			Debug.Assert(!field.ReflectedType!.IsValueType && !objValue.Type.IsArray);
 			this.objValue = objValue;
 			this.field = field;
 		}
 
-		protected override DbgDotNetValue ReadValue() => runtime.LoadInstanceField2(objValue, field);
-		protected override void WriteValue(object value) => runtime.StoreInstanceField(objValue, field, value);
+		protected override DbgDotNetValue? ReadValue() => runtime.LoadInstanceField2(objValue, field);
+		protected override void WriteValue(object? value) => runtime.StoreInstanceField(objValue, field, value);
 
 		public override bool Equals(AddressILValue other) =>
 			other is ReferenceTypeFieldAddress addr &&
@@ -121,13 +121,13 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 
 		public ValueTypeFieldAddress(DebuggerRuntimeImpl runtime, AddressILValue objValue, DmdFieldInfo field)
 			: base(runtime, field.FieldType) {
-			Debug.Assert(field.ReflectedType.IsValueType);
+			Debug.Assert(field.ReflectedType!.IsValueType);
 			this.objValue = objValue;
 			this.field = field;
 		}
 
-		protected override DbgDotNetValue ReadValue() => runtime.LoadInstanceField2(runtime.GetDotNetValue(objValue.LoadIndirect()), field);
-		protected override void WriteValue(object value) => runtime.StoreInstanceField(runtime.GetDotNetValue(objValue.LoadIndirect()), field, value);
+		protected override DbgDotNetValue? ReadValue() => runtime.LoadInstanceField2(runtime.GetDotNetValue(objValue.LoadIndirect()), field);
+		protected override void WriteValue(object? value) => runtime.StoreInstanceField(runtime.GetDotNetValue(objValue.LoadIndirect()), field, value);
 
 		public override bool Equals(AddressILValue other) =>
 			other is ValueTypeFieldAddress addr &&
@@ -140,14 +140,14 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		readonly uint index;
 
 		public ArrayElementAddress(DebuggerRuntimeImpl runtime, ArrayILValue arrayValue, uint index)
-			: base(runtime, arrayValue.Type.GetElementType()) {
+			: base(runtime, arrayValue.Type!.GetElementType()!) {
 			Debug.Assert(arrayValue.Type.IsArray);
 			this.arrayValue = arrayValue;
 			this.index = index;
 		}
 
-		protected override DbgDotNetValue ReadValue() => arrayValue.ReadArrayElement(index);
-		protected override void WriteValue(object value) => arrayValue.StoreArrayElement(index, value);
+		protected override DbgDotNetValue? ReadValue() => arrayValue.ReadArrayElement(index);
+		protected override void WriteValue(object? value) => arrayValue.StoreArrayElement(index, value);
 
 		public override bool Equals(AddressILValue other) =>
 			other is ArrayElementAddress addr &&
@@ -165,8 +165,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			this.index = index;
 		}
 
-		protected override DbgDotNetValue ReadValue() => runtime.LoadLocal2(index);
-		protected override void WriteValue(object value) => runtime.StoreLocal2(index, localType, value);
+		protected override DbgDotNetValue? ReadValue() => runtime.LoadLocal2(index);
+		protected override void WriteValue(object? value) => runtime.StoreLocal2(index, localType, value);
 
 		public override bool Equals(AddressILValue other) =>
 			other is LocalAddress addr &&
@@ -183,8 +183,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			this.index = index;
 		}
 
-		protected override DbgDotNetValue ReadValue() => runtime.LoadArgument2(index);
-		protected override void WriteValue(object value) => runtime.StoreArgument2(index, argumentType, value);
+		protected override DbgDotNetValue? ReadValue() => runtime.LoadArgument2(index);
+		protected override void WriteValue(object? value) => runtime.StoreArgument2(index, argumentType, value);
 
 		public override bool Equals(AddressILValue other) =>
 			other is ArgumentAddress addr &&

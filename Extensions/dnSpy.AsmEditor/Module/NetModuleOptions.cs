@@ -22,7 +22,7 @@ using dnlib.DotNet;
 
 namespace dnSpy.AsmEditor.Module {
 	sealed class NetModuleOptions {
-		public UTF8String Name { get; set; }
+		public UTF8String? Name { get; set; }
 		public ClrVersion ClrVersion { get; set; }
 		public Guid Mvid { get; set; }
 	}

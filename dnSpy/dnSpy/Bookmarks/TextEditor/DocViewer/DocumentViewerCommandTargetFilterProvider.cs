@@ -31,7 +31,7 @@ namespace dnSpy.Bookmarks.TextEditor.DocViewer {
 		DocumentViewerCommandTargetFilterProvider(DocumentViewerBookmarksOperationsProvider documentViewerBookmarksOperationsProvider) =>
 			this.documentViewerBookmarksOperationsProvider = documentViewerBookmarksOperationsProvider;
 
-		public ICommandTargetFilter Create(object target) {
+		public ICommandTargetFilter? Create(object target) {
 			var textView = target as ITextView;
 			if (textView?.Roles.Contains(PredefinedDsTextViewRoles.DocumentViewer) != true)
 				return null;

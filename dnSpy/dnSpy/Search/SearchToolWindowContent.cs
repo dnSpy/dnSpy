@@ -31,8 +31,8 @@ namespace dnSpy.Search {
 	sealed class SearchToolWindowContentProvider : IToolWindowContentProvider {
 		readonly Lazy<ISearchService> searchService;
 
-		SearchToolWindowContent SearchToolWindowContent => searchToolWindowContent ?? (searchToolWindowContent = new SearchToolWindowContent(searchService));
-		SearchToolWindowContent searchToolWindowContent;
+		SearchToolWindowContent SearchToolWindowContent => searchToolWindowContent ??= new SearchToolWindowContent(searchService);
+		SearchToolWindowContent? searchToolWindowContent;
 
 		[ImportingConstructor]
 		SearchToolWindowContentProvider(Lazy<ISearchService> searchService) => this.searchService = searchService;
@@ -41,7 +41,7 @@ namespace dnSpy.Search {
 			get { yield return new ToolWindowContentInfo(SearchToolWindowContent.THE_GUID, SearchToolWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_TOP_SEARCH, false); }
 		}
 
-		public ToolWindowContent GetOrCreate(Guid guid) {
+		public ToolWindowContent? GetOrCreate(Guid guid) {
 			if (guid == SearchToolWindowContent.THE_GUID)
 				return SearchToolWindowContent;
 			return null;
@@ -52,11 +52,11 @@ namespace dnSpy.Search {
 		public static readonly Guid THE_GUID = new Guid("8E359BE0-C8CD-4CA7-B228-8C836219AF85");
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultHorizontal;
 
-		public override IInputElement FocusedElement => searchService.Value.FocusedElement;
-		public override FrameworkElement ZoomElement => searchService.Value.ZoomElement;
+		public override IInputElement? FocusedElement => searchService.Value.FocusedElement;
+		public override FrameworkElement? ZoomElement => searchService.Value.ZoomElement;
 		public override Guid Guid => THE_GUID;
 		public override string Title => dnSpy_Resources.SearchWindow_Title;
-		public override object UIObject => searchService.Value.UIObject;
+		public override object? UIObject => searchService.Value.UIObject;
 		public bool CanFocus => true;
 
 		readonly Lazy<ISearchService> searchService;

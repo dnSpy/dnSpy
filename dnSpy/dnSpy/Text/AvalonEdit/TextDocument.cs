@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -46,7 +47,7 @@ namespace dnSpy.Text.AvalonEdit {
 		/// It is possible to change the owner thread using the <see cref="SetOwnerThread"/> method.</para>
 		/// </remarks>
 		public void VerifyAccess() {
-			if (owner != null && Thread.CurrentThread != owner)
+			if (!(owner is null) && Thread.CurrentThread != owner)
 				throw new InvalidOperationException("TextDocument can be accessed only from the thread that owns it.");
 		}
 
@@ -66,7 +67,7 @@ namespace dnSpy.Text.AvalonEdit {
 			// We need to lock here to ensure that in the null owner case,
 			// only one thread succeeds in taking ownership.
 			lock (lockObject) {
-				if (owner != null) {
+				if (!(owner is null)) {
 					VerifyAccess();
 				}
 				owner = newOwner;
@@ -96,7 +97,7 @@ namespace dnSpy.Text.AvalonEdit {
 		/// Create a new text document with the specified initial text.
 		/// </summary>
 		public TextDocument(IEnumerable<char> initialText) {
-			if (initialText == null)
+			if (initialText is null)
 				throw new ArgumentNullException("initialText");
 			rope = new Rope<char>(initialText);
 			lineTree = new DocumentLineTree(this);
@@ -152,8 +153,8 @@ namespace dnSpy.Text.AvalonEdit {
 		public string Text {
 			get {
 				VerifyAccess();
-				string completeText = cachedText != null ? (cachedText.Target as string) : null;
-				if (completeText == null) {
+				string completeText = !(cachedText is null) ? (cachedText.Target as string) : null;
+				if (completeText is null) {
 					completeText = rope.ToString();
 					cachedText = new WeakReference(completeText);
 				}
@@ -273,7 +274,7 @@ namespace dnSpy.Text.AvalonEdit {
 		/// <param name="length">The length of the text to be replaced.</param>
 		/// <param name="text">The new text.</param>
 		public void Replace(int offset, int length, string text) {
-			if (text == null)
+			if (text is null)
 				throw new ArgumentNullException("text");
 			var textSource = new StringTextSource(text);
 

@@ -28,13 +28,13 @@ namespace dnSpy.Contracts.App {
 		/// Gets the <see cref="IMessageBoxService"/> instance
 		/// </summary>
 		public static IMessageBoxService Instance {
-			get => messageBoxService;
+			get => messageBoxService ?? throw new InvalidOperationException();
 			internal set {
-				if (messageBoxService != null)
+				if (!(messageBoxService is null))
 					throw new InvalidOperationException();
 				messageBoxService = value ?? throw new ArgumentNullException(nameof(value));
 			}
 		}
-		static IMessageBoxService messageBoxService;
+		static IMessageBoxService? messageBoxService;
 	}
 }

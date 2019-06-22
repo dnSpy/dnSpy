@@ -31,7 +31,7 @@ namespace dnSpy.AsmEditor.Module {
 			CLR10, CLR11, CLR20, CLR40,
 		};
 
-		public static ClrVersionValues GetValues(ClrVersion clrVersion) {
+		public static ClrVersionValues? GetValues(ClrVersion clrVersion) {
 			switch (clrVersion) {
 			case ClrVersion.CLR10: return CLR10;
 			case ClrVersion.CLR11: return CLR11;
@@ -41,7 +41,7 @@ namespace dnSpy.AsmEditor.Module {
 			}
 		}
 
-		public static ClrVersionValues Find(uint cor20HeaderRuntimeVersion, ushort tablesHeaderVersion, string runtimeVersion) {
+		public static ClrVersionValues? Find(uint cor20HeaderRuntimeVersion, ushort tablesHeaderVersion, string? runtimeVersion) {
 			foreach (var clrValues in AllVersions) {
 				if (clrValues.Cor20HeaderRuntimeVersion == cor20HeaderRuntimeVersion &&
 					clrValues.TablesHeaderVersion == tablesHeaderVersion &&

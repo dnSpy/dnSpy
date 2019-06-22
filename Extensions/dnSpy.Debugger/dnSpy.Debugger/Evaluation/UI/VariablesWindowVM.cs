@@ -78,9 +78,9 @@ namespace dnSpy.Debugger.Evaluation.UI {
 		}
 
 		public event EventHandler TreeViewChanged;
-		public ITreeView TreeView => valueNodesVM.TreeView;
+		public ITreeView TreeView => valueNodesVM!.TreeView;
 
-		IValueNodesVM IVariablesWindowVM.VM => valueNodesVM;
+		IValueNodesVM IVariablesWindowVM.VM => valueNodesVM!;
 
 		readonly VariablesWindowVMOptions variablesWindowVMOptions;
 		readonly Lazy<DbgManager> dbgManager;
@@ -89,7 +89,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 		readonly ValueNodesProviderImpl valueNodesProvider;
 		readonly Lazy<ValueNodesVMFactory> valueNodesVMFactory;
 		readonly Lazy<IMessageBoxService> messageBoxService;
-		IValueNodesVM valueNodesVM;
+		IValueNodesVM? valueNodesVM;
 
 		public VariablesWindowVM(VariablesWindowVMOptions variablesWindowVMOptions, Lazy<DbgManager> dbgManager, UIDispatcher uiDispatcher, Lazy<ValueNodesVMFactory> valueNodesVMFactory, Lazy<DbgLanguageService> dbgLanguageService, Lazy<DbgCallStackService> dbgCallStackService, Lazy<IMessageBoxService> messageBoxService) {
 			uiDispatcher.VerifyAccess();
@@ -123,7 +123,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			uiDispatcher.VerifyAccess();
 			if (enable) {
 				valueNodesProvider.Initialize_UI(enable);
-				if (valueNodesVM == null) {
+				if (valueNodesVM is null) {
 					var options = new ValueNodesVMOptions() {
 						NodesProvider = valueNodesProvider,
 						ShowMessageBox = ShowMessageBox,

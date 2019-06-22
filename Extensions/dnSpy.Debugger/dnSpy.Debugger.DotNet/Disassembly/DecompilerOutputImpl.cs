@@ -27,8 +27,8 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 		int indentLevel;
 		bool addIndent;
 		uint methodToken;
-		MethodDebugInfo methodDebugInfo;
-		MethodDebugInfo kickoffMethodDebugInfo;
+		MethodDebugInfo? methodDebugInfo;
+		MethodDebugInfo? kickoffMethodDebugInfo;
 
 		const string TAB_SPACES = "    ";
 
@@ -51,9 +51,9 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 		}
 
 		public void Initialize(uint methodToken) => this.methodToken = methodToken;
-		public (MethodDebugInfo debugInfo, MethodDebugInfo stateMachineDebugInfoOrNull) TryGetMethodDebugInfo() {
-			if (methodDebugInfo != null) {
-				if (kickoffMethodDebugInfo != null)
+		public (MethodDebugInfo debugInfo, MethodDebugInfo? stateMachineDebugInfoOrNull) TryGetMethodDebugInfo() {
+			if (!(methodDebugInfo is null)) {
+				if (!(kickoffMethodDebugInfo is null))
 					return (kickoffMethodDebugInfo, methodDebugInfo);
 				return (methodDebugInfo, null);
 			}
@@ -65,7 +65,7 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 				if (debugInfo.Method.MDToken.Raw == methodToken)
 					methodDebugInfo = debugInfo;
 				else if (debugInfo.KickoffMethod?.MDToken.Raw == methodToken) {
-					var m = debugInfo.KickoffMethod;
+					var m = debugInfo.KickoffMethod!;
 					var body = m.Body;
 					int bodySize = body?.GetCodeSize() ?? 0;
 					var scope = new MethodDebugScope(new ILSpan(0, (uint)bodySize), Array.Empty<MethodDebugScope>(), Array.Empty<SourceLocal>(), Array.Empty<ImportInfo>(), Array.Empty<MethodDebugConstant>());
@@ -106,10 +106,10 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 		public void Write(string text, object color) => AddText(text, color);
 		public void Write(string text, int index, int length, object color) => AddText(text, index, length, color);
 
-		public void Write(string text, object reference, DecompilerReferenceFlags flags, object color) =>
+		public void Write(string text, object? reference, DecompilerReferenceFlags flags, object color) =>
 			Write(text, 0, text.Length, reference, flags, color);
 
-		public void Write(string text, int index, int length, object reference, DecompilerReferenceFlags flags, object color) {
+		public void Write(string text, int index, int length, object? reference, DecompilerReferenceFlags flags, object color) {
 			if (addIndent)
 				AddIndent();
 			AddText(text, index, length, color);

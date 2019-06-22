@@ -29,12 +29,12 @@ using Microsoft.VisualStudio.Text.Formatting;
 namespace dnSpy.Language.Intellisense {
 	sealed class QuickInfoPresenter : QuickInfoPresenterBase, ICustomIntellisensePresenter {
 		readonly Popup popup;
-		readonly IWpfTextView wpfTextView;
+		readonly IWpfTextView? wpfTextView;
 
 		public QuickInfoPresenter(IQuickInfoSession session)
 			: base(session) {
 			wpfTextView = session.TextView as IWpfTextView;
-			Debug.Assert(wpfTextView != null);
+			Debug.Assert(!(wpfTextView is null));
 			popup = new Popup {
 				PlacementTarget = wpfTextView?.VisualElement,
 				Placement = PlacementMode.Relative,
@@ -59,17 +59,17 @@ namespace dnSpy.Language.Intellisense {
 		bool RenderCore() {
 			if (session.IsDismissed || session.TextView.IsClosed)
 				return false;
-			if (wpfTextView == null)
+			if (wpfTextView is null)
 				return false;
 
 			var point = session.GetTriggerPoint(session.TextView.TextSnapshot);
-			Debug.Assert(point != null);
-			if (point == null)
+			Debug.Assert(!(point is null));
+			if (point is null)
 				return false;
 
 			var line = session.TextView.TextViewLines.GetTextViewLineContainingBufferPosition(point.Value);
-			Debug.Assert(line != null && line.VisibilityState != VisibilityState.Unattached);
-			if (line == null || line.VisibilityState == VisibilityState.Unattached)
+			Debug.Assert(!(line is null) && line.VisibilityState != VisibilityState.Unattached);
+			if (line is null || line.VisibilityState == VisibilityState.Unattached)
 				return false;
 
 			var bounds = line.GetExtendedCharacterBounds(point.Value);
@@ -103,8 +103,9 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		bool ShouldDismiss(MouseEventArgs e) {
+			Debug.Assert(!(wpfTextView is null));
 			var mousePos = GetMousePoint(e.MouseDevice);
-			if (mousePos == null)
+			if (mousePos is null)
 				return true;
 			if (IsMouseWithinSpan(mousePos.Value) && wpfTextView.VisualElement.IsMouseOver)
 				return false;
@@ -115,7 +116,7 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		Point? GetMousePoint(MouseDevice device) {
-			if (wpfTextView == null)
+			if (wpfTextView is null)
 				return null;
 			var mousePos = device.GetPosition(wpfTextView.VisualElement);
 			mousePos.X += wpfTextView.ViewportLeft;
@@ -125,7 +126,7 @@ namespace dnSpy.Language.Intellisense {
 
 		bool IsMouseWithinSpan(Point mousePos) {
 			var applicableToSpan = session.ApplicableToSpan;
-			if (applicableToSpan == null)
+			if (applicableToSpan is null)
 				return false;
 			var span = applicableToSpan.GetSpan(session.TextView.TextSnapshot);
 			var lines = session.TextView.TextViewLines.GetTextViewLinesIntersectingSpan(span);
@@ -146,7 +147,7 @@ namespace dnSpy.Language.Intellisense {
 
 		protected override void OnSessionDismissed() {
 			ClosePopup();
-			if (wpfTextView != null) {
+			if (!(wpfTextView is null)) {
 				wpfTextView.VisualElement.MouseLeave -= VisualElement_MouseLeave;
 				wpfTextView.VisualElement.MouseMove -= VisualElement_MouseMove;
 				popup.RemoveHandler(UIElement.MouseLeaveEvent, new MouseEventHandler(Popup_MouseLeave));

@@ -26,7 +26,7 @@ using dnSpy.Contracts.Debugger.Engine;
 namespace dnSpy.Debugger.Impl {
 	sealed class DbgModuleImpl : DbgModule {
 		public override DbgRuntime Runtime => runtime;
-		public override DbgAppDomain AppDomain => appDomain;
+		public override DbgAppDomain? AppDomain => appDomain;
 		public override DbgInternalModule InternalModule { get; }
 		public override bool IsExe => isExe;
 		public override uint Size => size;
@@ -71,7 +71,7 @@ namespace dnSpy.Debugger.Impl {
 
 		readonly object lockObj;
 		readonly DbgRuntimeImpl runtime;
-		readonly DbgAppDomainImpl appDomain;
+		readonly DbgAppDomainImpl? appDomain;
 		bool isExe;
 		ulong address;
 		uint size;
@@ -85,7 +85,7 @@ namespace dnSpy.Debugger.Impl {
 		DateTime? timestamp;
 		string version;
 
-		public DbgModuleImpl(DbgRuntimeImpl runtime, DbgAppDomainImpl appDomain, DbgInternalModule internalModule, bool isExe, ulong address, uint size, DbgImageLayout imageLayout, string name, string filename, bool isDynamic, bool isInMemory, bool? isOptimized, int order, DateTime? timestamp, string version) {
+		public DbgModuleImpl(DbgRuntimeImpl runtime, DbgAppDomainImpl? appDomain, DbgInternalModule internalModule, bool isExe, ulong address, uint size, DbgImageLayout imageLayout, string name, string filename, bool isDynamic, bool isInMemory, bool? isOptimized, int order, DateTime? timestamp, string version) {
 			lockObj = new object();
 			this.runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			this.appDomain = appDomain;
@@ -145,17 +145,17 @@ namespace dnSpy.Debugger.Impl {
 			}
 		}
 
-		internal void UpdateName_DbgThread(string name) {
+		internal void UpdateName_DbgThread(string? name) {
 			Dispatcher.VerifyAccess();
-			if (this.name != name) {
+			if (this.name != name && !(name is null)) {
 				this.name = name;
 				OnPropertyChanged(nameof(Name));
 			}
 		}
 
-		internal void UpdateFilename_DbgThread(string filename) {
+		internal void UpdateFilename_DbgThread(string? filename) {
 			Dispatcher.VerifyAccess();
-			if (this.filename != filename) {
+			if (this.filename != filename && !(filename is null)) {
 				this.filename = filename;
 				OnPropertyChanged(nameof(Filename));
 			}
@@ -208,9 +208,9 @@ namespace dnSpy.Debugger.Impl {
 				OnPropertyChanged(nameof(Timestamp));
 		}
 
-		internal void UpdateVersion_DbgThread(string version) {
+		internal void UpdateVersion_DbgThread(string? version) {
 			Dispatcher.VerifyAccess();
-			if (this.version != version) {
+			if (this.version != version && !(version is null)) {
 				this.version = version;
 				OnPropertyChanged(nameof(Version));
 			}

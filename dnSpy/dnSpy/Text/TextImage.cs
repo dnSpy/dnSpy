@@ -26,7 +26,7 @@ namespace dnSpy.Text {
 	sealed class TextImage : ITextImage {
 		internal TextBuffer TextBuffer { get; }
 		readonly ITextSource textSource;
-		uint[] lineOffsets;
+		uint[]? lineOffsets;
 
 		public char this[int position] => textSource.GetCharAt(position);
 		public ITextImageVersion Version { get; }
@@ -36,7 +36,7 @@ namespace dnSpy.Text {
 			get {
 				if (TextBuffer.IsSafeToAccessDocumentFromSnapshot(this))
 					return TextBuffer.Document.LineCount;
-				if (lineOffsets == null)
+				if (lineOffsets is null)
 					lineOffsets = TextImageUtils.CreateLineOffsets(this);
 				return lineOffsets.Length;
 			}
@@ -59,7 +59,7 @@ namespace dnSpy.Text {
 				var docLine = TextBuffer.Document.GetLineByNumber(lineNumber + 1);
 				return new TextImageLine(this, lineNumber, new Span(docLine.Offset, docLine.Length), docLine.DelimiterLength);
 			}
-			if (lineOffsets == null)
+			if (lineOffsets is null)
 				lineOffsets = TextImageUtils.CreateLineOffsets(this);
 			TextImageUtils.GetLineInfo(lineOffsets, lineNumber, Length, out int start, out int end, out int lineBreakLength);
 			return new TextImageLine(this, lineNumber, new Span(start, end - start), lineBreakLength);
@@ -78,11 +78,11 @@ namespace dnSpy.Text {
 				throw new ArgumentOutOfRangeException(nameof(position));
 			if (TextBuffer.IsSafeToAccessDocumentFromSnapshot(this))
 				return TextBuffer.Document.GetLineByOffset(position).LineNumber - 1;
-			if (lineOffsets == null)
+			if (lineOffsets is null)
 				lineOffsets = TextImageUtils.CreateLineOffsets(this);
 			return TextImageUtils.GetLineNumberFromPosition(lineOffsets, position, Length);
 		}
 
-		internal uint[] GetOrCreateLineOffsets() => lineOffsets ?? (lineOffsets = TextImageUtils.CreateLineOffsets(this));
+		internal uint[] GetOrCreateLineOffsets() => lineOffsets ??= TextImageUtils.CreateLineOffsets(this);
 	}
 }

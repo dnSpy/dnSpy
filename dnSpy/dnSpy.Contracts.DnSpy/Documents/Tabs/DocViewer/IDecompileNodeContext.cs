@@ -60,11 +60,11 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// <summary>
 		/// Sets the content type. See also <see cref="ContentTypeString"/>
 		/// </summary>
-		IContentType ContentType { get; set; }
+		IContentType? ContentType { get; set; }
 
 		/// <summary>
 		/// Sets the content type. See also <see cref="ContentType"/>
 		/// </summary>
-		string ContentTypeString { get; set; }
+		string? ContentTypeString { get; set; }
 	}
 }

@@ -37,9 +37,9 @@ namespace dnSpy.AsmEditor.Resources {
 		readonly ResourceOptions origOptions;
 
 		public IDnlibTypePicker DnlibTypePicker {
-			set { dnlibTypePicker = value; }
+			set => dnlibTypePicker = value;
 		}
-		IDnlibTypePicker dnlibTypePicker;
+		IDnlibTypePicker? dnlibTypePicker;
 
 		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
 		public ICommand PickAssemblyCommand => new RelayCommand(a => PickAssembly(), a => IsAssemblyLinked);
@@ -69,7 +69,7 @@ namespace dnSpy.AsmEditor.Resources {
 			get {
 				var mask = ManifestResourceAttributes.VisibilityMask;
 				return (attrs & ~mask) |
-					(ManifestResourceAttributes)((int)(ResourceVisibility)ResourceVisibilityVM.SelectedItem << 0);
+					(ManifestResourceAttributes)((int)(ResourceVisibility)ResourceVisibilityVM.SelectedItem! << 0);
 			}
 			set {
 				if (attrs != value) {
@@ -80,7 +80,7 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 		ManifestResourceAttributes attrs;
 
-		public string Name {
+		public string? Name {
 			get => name;
 			set {
 				if (name != value) {
@@ -89,9 +89,9 @@ namespace dnSpy.AsmEditor.Resources {
 				}
 			}
 		}
-		UTF8String name;
+		UTF8String? name;
 
-		public AssemblyRef Assembly {
+		public AssemblyRef? Assembly {
 			get => assembly;
 			set {
 				if (assembly != value) {
@@ -102,12 +102,12 @@ namespace dnSpy.AsmEditor.Resources {
 				}
 			}
 		}
-		AssemblyRef assembly;
+		AssemblyRef? assembly;
 
-		public string AssemblyFullName => Assembly == null ? "null" : Assembly.FullName;
+		public string AssemblyFullName => Assembly is null ? "null" : Assembly.FullName;
 		public HexStringVM FileHashValue { get; }
 
-		public string FileName {
+		public string? FileName {
 			get => fileName;
 			set {
 				if (fileName != value) {
@@ -116,7 +116,7 @@ namespace dnSpy.AsmEditor.Resources {
 				}
 			}
 		}
-		UTF8String fileName;
+		UTF8String? fileName;
 
 		public bool FileContainsNoMetadata {
 			get => fileContainsNoMetadata;
@@ -141,10 +141,10 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 
 		void PickAssembly() {
-			if (dnlibTypePicker == null)
+			if (dnlibTypePicker is null)
 				throw new InvalidOperationException();
 			var newAsm = dnlibTypePicker.GetDnlibType<IDsDocument>(dnSpy_AsmEditor_Resources.Pick_Assembly, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.AssemblyDef), null, ownerModule);
-			if (newAsm != null && newAsm.AssemblyDef != null)
+			if (!(newAsm is null) && !(newAsm.AssemblyDef is null))
 				Assembly = newAsm.AssemblyDef.ToAssemblyRef();
 		}
 
@@ -157,7 +157,7 @@ namespace dnSpy.AsmEditor.Resources {
 			Attributes = options.Attributes;
 			Name = options.Name;
 			Assembly = options.Assembly;
-			if (options.File != null) {
+			if (!(options.File is null)) {
 				FileHashValue.Value = options.File.HashValue;
 				FileName = options.File.Name ?? UTF8String.Empty;
 				FileContainsNoMetadata = options.File.ContainsNoMetadata;
@@ -180,9 +180,9 @@ namespace dnSpy.AsmEditor.Resources {
 			return options;
 		}
 
-		protected override string Verify(string columnName) {
+		protected override string? Verify(string columnName) {
 			if (columnName == nameof(AssemblyFullName)) {
-				if (Assembly == null)
+				if (Assembly is null)
 					return dnSpy_AsmEditor_Resources.Error_AssemblyFieldMustNotBeEmpty;
 				return string.Empty;
 			}
@@ -192,7 +192,7 @@ namespace dnSpy.AsmEditor.Resources {
 		public override bool HasError {
 			get {
 				return
-					(IsAssemblyLinked && Assembly == null) ||
+					(IsAssemblyLinked && Assembly is null) ||
 					(IsLinked && FileHashValue.HasError);
 			}
 		}

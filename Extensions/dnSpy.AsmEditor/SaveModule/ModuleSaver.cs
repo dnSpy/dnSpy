@@ -85,9 +85,9 @@ namespace dnSpy.AsmEditor.SaveModule {
 			}
 		}
 		int fileIndex;
-		FileProgress fileProgress;
+		FileProgress? fileProgress;
 
-		double GetFileProgress() => fileProgress.Progress;
+		double GetFileProgress() => fileProgress!.Progress;
 
 		abstract class FileProgress {
 			public abstract double Progress { get; }
@@ -140,7 +140,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 		public void SaveAll() {
 			mustCancel = false;
-			byte[] buffer = null;
+			byte[]? buffer = null;
 			for (int i = 0; i < filesToSave.Length; i++) {
 				fileIndex = i;
 				var state = filesToSave[fileIndex];
@@ -154,7 +154,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 				}
 				fileProgress = null;
 				if (!StringComparer.OrdinalIgnoreCase.Equals(state.File.OriginalFileName, state.File.FileName))
-					SaveAppConfig(state.File.OriginalFileName, state.File.FileName);
+					SaveAppConfig(state.File.OriginalFileName!, state.File.FileName);
 
 				OnWritingFile?.Invoke(this, new ModuleSaverWriteEventArgs(state.File, false));
 			}
@@ -189,10 +189,10 @@ namespace dnSpy.AsmEditor.SaveModule {
 				vm.Module.Write(filename, (ModuleWriterOptions)opts);
 		}
 
-		void Save(SaveHexOptionsVM hex, ref byte[] buffer) {
+		void Save(SaveHexOptionsVM hex, ref byte[]? buffer) {
 			var progress = new HexFileProgress(GetSize(hex.Buffer.Span.Start, hex.Buffer.Span.End));
 			fileProgress = progress;
-			if (buffer == null)
+			if (buffer is null)
 				buffer = new byte[64 * 1024];
 
 			try {
@@ -235,13 +235,13 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 		void ModuleWriter_ProgressUpdated(object sender, ModuleWriterProgressEventArgs e) {
 			ThrowIfCanceled();
-			((ModuleFileProgress)fileProgress).CurrentProgress = e.Progress;
+			((ModuleFileProgress)fileProgress!).CurrentProgress = e.Progress;
 			NotifyProgressUpdated();
 		}
 
 		void ILogger.Log(object sender, LoggerEvent loggerEvent, string format, params object[] args) {
 			ThrowIfCanceled();
-			if (OnLogMessage != null) {
+			if (!(OnLogMessage is null)) {
 				var evtType =
 					loggerEvent == LoggerEvent.Error ? ModuleSaverLogEvent.Error :
 					loggerEvent == LoggerEvent.Warning ? ModuleSaverLogEvent.Warning :

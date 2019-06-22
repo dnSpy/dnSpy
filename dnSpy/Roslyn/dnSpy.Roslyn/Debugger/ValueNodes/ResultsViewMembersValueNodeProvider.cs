@@ -45,7 +45,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		readonly DmdType expectedType;
 		readonly string valueExpression;
 		string resultsViewProxyExpression;
-		DbgDotNetValue getResultsViewValue;
+		DbgDotNetValue? getResultsViewValue;
 
 		public ResultsViewMembersValueNodeProvider(DbgDotNetValueNodeProviderFactory valueNodeProviderFactory, LanguageValueNodeFactory valueNodeFactory, DmdType enumerableType, DbgDotNetValue instanceValue, DmdType expectedType, string valueExpression, DbgValueNodeEvaluationOptions evalOptions)
 			: base(valueNodeFactory, resultsViewName, valueExpression + ", " + PredefinedFormatSpecifiers.ResultsView, default, evalOptions) {
@@ -61,12 +61,12 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			public volatile int Counter;
 		}
 
-		protected override string InitializeCore(DbgEvaluationInfo evalInfo) {
+		protected override string? InitializeCore(DbgEvaluationInfo evalInfo) {
 			if ((evalOptions & DbgValueNodeEvaluationOptions.NoFuncEval) != 0)
 				return PredefinedEvaluationErrorMessages.FuncEvalDisabled;
 
 			var errorMessage = InitializeEnumerableDebugView(evalInfo);
-			if (errorMessage != null) {
+			if (!(errorMessage is null)) {
 				if (InitializeListDebugView(evalInfo))
 					errorMessage = null;
 			}
@@ -76,7 +76,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 
 		bool InitializeListDebugView(DbgEvaluationInfo evalInfo) {
 			var info = EnumerableDebugViewHelper.GetListEnumerableMethods(instanceValue.Type, enumerableType);
-			if ((object)info.ctor == null)
+			if (info.ctor is null)
 				return false;
 
 			DbgDotNetValueResult collTypeResult = default;
@@ -95,8 +95,8 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 					return false;
 				expr = valueNodeProviderFactory.GetCallExpression(info.toArrayMethod, expr);
 
-				var result = valueNodeProviderFactory.Create(evalInfo, false, toArrayResult.Value.Type, new DbgDotNetValueNodeInfo(toArrayResult.Value, expr), evalOptions);
-				if (result.Provider == null)
+				var result = valueNodeProviderFactory.Create(evalInfo, false, toArrayResult.Value!.Type, new DbgDotNetValueNodeInfo(toArrayResult.Value, expr), evalOptions);
+				if (result.Provider is null)
 					return false;
 				realProvider = result.Provider;
 				error = false;
@@ -109,19 +109,19 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			}
 		}
 
-		string InitializeEnumerableDebugView(DbgEvaluationInfo evalInfo) {
+		string? InitializeEnumerableDebugView(DbgEvaluationInfo evalInfo) {
 			var proxyCtor = EnumerableDebugViewHelper.GetEnumerableDebugViewConstructor(enumerableType);
-			if ((object)proxyCtor == null) {
+			if (proxyCtor is null) {
 				var loadState = enumerableType.AppDomain.GetOrCreateData<ForceLoadAssemblyState>();
 				if (Interlocked.Exchange(ref loadState.Counter, 1) == 0) {
 					var loader = new ReflectionAssemblyLoader(evalInfo, enumerableType.AppDomain);
 					if (loader.TryLoadAssembly(GetRequiredAssemblyFullName(evalInfo.Runtime)))
 						proxyCtor = EnumerableDebugViewHelper.GetEnumerableDebugViewConstructor(enumerableType);
 				}
-				if ((object)proxyCtor == null) {
+				if (proxyCtor is null) {
 					var asmFilename = GetRequiredAssemblyFilename(evalInfo.Runtime);
 					var asm = enumerableType.AppDomain.GetAssembly(Path.GetFileNameWithoutExtension(asmFilename));
-					if (asm == null)
+					if (asm is null)
 						return string.Format(dnSpy_Roslyn_Resources.SystemCoreDllNotLoaded, asmFilename);
 					return string.Format(dnSpy_Roslyn_Resources.TypeDoesNotExistInAssembly, EnumerableDebugViewHelper.GetDebugViewTypeDisplayName(enumerableType), asmFilename);
 				}
@@ -134,7 +134,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 
 			resultsViewProxyExpression = valueNodeProviderFactory.GetNewObjectExpression(proxyCtor, valueExpression, expectedType);
 			getResultsViewValue = proxyTypeResult.Value;
-			valueNodeProviderFactory.GetMemberCollections(getResultsViewValue.Type, evalOptions, out membersCollection, out _);
+			valueNodeProviderFactory.GetMemberCollections(getResultsViewValue!.Type, evalOptions, out membersCollection, out _);
 			return null;
 		}
 
@@ -147,7 +147,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		ClrVersion GetClrVersion(DbgRuntime runtime) {
 			if (runtime.Guid == PredefinedDbgRuntimeGuids.DotNetCore_Guid)
 				return ClrVersion.CoreCLR;
-			if (enumerableType.AppDomain.CorLib.GetName().Version == new Version(2, 0, 0, 0))
+			if (enumerableType.AppDomain.CorLib?.GetName().Version == new Version(2, 0, 0, 0))
 				return ClrVersion.CLR2;
 			return ClrVersion.CLR4;
 		}
@@ -170,12 +170,12 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			}
 		}
 
-		protected override (DbgDotNetValueNode node, bool canHide) CreateValueNode(DbgEvaluationInfo evalInfo, int index, DbgValueNodeEvaluationOptions options, ReadOnlyCollection<string> formatSpecifiers) =>
-			CreateValueNode(evalInfo, false, getResultsViewValue.Type, getResultsViewValue, index, options, resultsViewProxyExpression, formatSpecifiers);
+		protected override (DbgDotNetValueNode node, bool canHide) CreateValueNode(DbgEvaluationInfo evalInfo, int index, DbgValueNodeEvaluationOptions options, ReadOnlyCollection<string>? formatSpecifiers) =>
+			CreateValueNode(evalInfo, false, getResultsViewValue!.Type, getResultsViewValue, index, options, resultsViewProxyExpression, formatSpecifiers);
 
-		protected override (DbgDotNetValueNode node, bool canHide) TryCreateInstanceValueNode(DbgEvaluationInfo evalInfo, DbgDotNetValueResult valueResult) {
+		protected override (DbgDotNetValueNode? node, bool canHide) TryCreateInstanceValueNode(DbgEvaluationInfo evalInfo, DbgDotNetValueResult valueResult) {
 			var noResultsNode = DebugViewNoResultsValueNode.TryCreate(evalInfo, Expression, valueResult);
-			if (noResultsNode != null) {
+			if (!(noResultsNode is null)) {
 				valueResult.Value?.Dispose();
 				return (noResultsNode, false);
 			}

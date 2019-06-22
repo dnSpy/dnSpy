@@ -35,12 +35,12 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// Gets all hex changes or null if this is the latest version
 		/// </summary>
-		public abstract NormalizedHexChangeCollection Changes { get; }
+		public abstract NormalizedHexChangeCollection? Changes { get; }
 
 		/// <summary>
 		/// Next version or null if this is the latest version
 		/// </summary>
-		public abstract HexVersion Next { get; }
+		public abstract HexVersion? Next { get; }
 
 		/// <summary>
 		/// Version number

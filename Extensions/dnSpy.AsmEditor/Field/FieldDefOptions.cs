@@ -24,14 +24,14 @@ using dnlib.PE;
 namespace dnSpy.AsmEditor.Field {
 	sealed class FieldDefOptions {
 		public FieldAttributes Attributes;
-		public UTF8String Name;
-		public FieldSig FieldSig;
+		public UTF8String? Name;
+		public FieldSig? FieldSig;
 		public uint? FieldOffset;
-		public MarshalType MarshalType;
+		public MarshalType? MarshalType;
 		public RVA RVA;
-		public byte[] InitialValue;
-		public ImplMap ImplMap;
-		public Constant Constant;
+		public byte[]? InitialValue;
+		public ImplMap? ImplMap;
+		public Constant? Constant;
 		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
 
 		public FieldDefOptions() {

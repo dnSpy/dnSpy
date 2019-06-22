@@ -98,7 +98,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			settings = ModuleBreakpoint.Settings;
 		}
 
-		string ConvertEditedString(string s) {
+		string? ConvertEditedString(string? s) {
 			if (string.IsNullOrWhiteSpace(s))
 				return null;
 			return s.Trim();
@@ -110,12 +110,12 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			return writer.ToString();
 		}
 
-		void WriteOrder(string value) {
+		void WriteOrder(string? value) {
 			if (string.IsNullOrWhiteSpace(value))
 				ModuleBreakpoint.Order = null;
 			else {
 				var order = SimpleTypeConverter.ParseInt32(value, int.MinValue, int.MaxValue, out var error);
-				if (error == null)
+				if (error is null)
 					ModuleBreakpoint.Order = order;
 				else {
 					// Keep original value

@@ -33,7 +33,7 @@ using dnSpy.Debugger.Shared;
 namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.AttachToProcess {
 	[ExportAttachProgramOptionsProviderFactory(PredefinedAttachProgramOptionsProviderNames.DotNetCore)]
 	sealed class DotNetCoreAttachProgramOptionsProviderFactory : AttachProgramOptionsProviderFactory {
-		public override AttachProgramOptionsProvider Create(bool allFactories) => new DotNetCoreAttachProgramOptionsProvider();
+		public override AttachProgramOptionsProvider? Create(bool allFactories) => new DotNetCoreAttachProgramOptionsProvider();
 	}
 
 	sealed class DotNetCoreAttachProgramOptionsProvider : AttachProgramOptionsProvider {
@@ -77,10 +77,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.AttachToProcess {
 		public override Guid RuntimeGuid => PredefinedDbgRuntimeGuids.DotNetCore_Guid;
 		public override Guid RuntimeKindGuid => PredefinedDbgRuntimeKindGuids.DotNet_Guid;
 
-		readonly string clrModuleVersion;
-		readonly string coreCLRFilename;
+		readonly string ?clrModuleVersion;
+		readonly string? coreCLRFilename;
 
-		public DotNetCoreAttachProgramOptions(int pid, string clrModuleVersion, string coreCLRFilename) {
+		public DotNetCoreAttachProgramOptions(int pid, string? clrModuleVersion, string? coreCLRFilename) {
 			ProcessId = pid;
 			RuntimeId = new DotNetCoreRuntimeId(clrModuleVersion);
 			RuntimeName = "CoreCLR " + clrModuleVersion;

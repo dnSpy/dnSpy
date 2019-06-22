@@ -31,7 +31,7 @@ namespace dnSpy.Debugger.ToolWindows.TextView {
 		[ImportingConstructor]
 		DocumentViewerCommandTargetFilterProvider(Lazy<ToolWindowsOperations> toolWindowsOperations) => this.toolWindowsOperations = toolWindowsOperations;
 
-		public ICommandTargetFilter Create(object target) {
+		public ICommandTargetFilter? Create(object target) {
 			var textView = target as ITextView;
 			if (textView?.Roles.Contains(PredefinedDsTextViewRoles.DocumentViewer) != true)
 				return null;

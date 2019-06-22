@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Hex.Tagging {
 		/// <summary>
 		/// true if this is a default instance that hasn't been initialized
 		/// </summary>
-		public bool IsDefault => Line == null;
+		public bool IsDefault => Line is null;
 
 		/// <summary>
 		/// Gets the line info
@@ -46,7 +46,7 @@ namespace dnSpy.Contracts.Hex.Tagging {
 		/// <param name="line">Line info</param>
 		/// <param name="lineSpan">Line span to tag</param>
 		public HexTaggerContext(HexBufferLine line, VST.Span lineSpan) {
-			if (line == null)
+			if (line is null)
 				throw new ArgumentNullException(nameof(line));
 			if (!line.TextSpan.Contains(lineSpan))
 				throw new ArgumentOutOfRangeException(nameof(lineSpan));

@@ -35,27 +35,27 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			MethodImplementationFlags = implementationFlags;
 			Attributes = attributes;
 			Name = name ?? throw new ArgumentNullException(nameof(name));
-			methodSignature = reader.ReadMethodSignature_COMThread(MDAPI.GetMethodSignatureBlob(reader.MetaDataImport, 0x06000000 + rid), DeclaringType.GetGenericArguments(), GetGenericArguments(), isProperty: false);
+			methodSignature = reader.ReadMethodSignature_COMThread(MDAPI.GetMethodSignatureBlob(reader.MetaDataImport, 0x06000000 + rid), DeclaringType!.GetGenericArguments(), GetGenericArguments(), isProperty: false);
 		}
 
 		T COMThread<T>(Func<T> action) => reader.Dispatcher.Invoke(action);
 
-		protected override DmdType[] CreateGenericParameters() => COMThread(() => reader.CreateGenericParameters_COMThread(this));
+		protected override DmdType[]? CreateGenericParameters() => COMThread(() => reader.CreateGenericParameters_COMThread(this));
 
-		public override DmdMethodBody GetMethodBody() => COMThread(() => reader.GetMethodBody_COMThread(this, DeclaringType.GetGenericArguments(), GetGenericArguments()));
-		internal override DmdMethodBody GetMethodBody(IList<DmdType> genericMethodArguments) => COMThread(() => reader.GetMethodBody_COMThread(this, DeclaringType.GetGenericArguments(), genericMethodArguments));
+		public override DmdMethodBody? GetMethodBody() => COMThread(() => reader.GetMethodBody_COMThread(this, DeclaringType!.GetGenericArguments(), GetGenericArguments()));
+		internal override DmdMethodBody? GetMethodBody(IList<DmdType> genericMethodArguments) => COMThread(() => reader.GetMethodBody_COMThread(this, DeclaringType!.GetGenericArguments(), genericMethodArguments));
 		public override DmdMethodSignature GetMethodSignature() => methodSignature;
-		protected override (DmdParameterInfo returnParameter, DmdParameterInfo[] parameters) CreateParameters() => COMThread(() => reader.CreateParameters_COMThread(this, createReturnParameter: true));
+		protected override (DmdParameterInfo? returnParameter, DmdParameterInfo[] parameters) CreateParameters() => COMThread(() => reader.CreateParameters_COMThread(this, createReturnParameter: true))!;
 
-		protected override (DmdCustomAttributeData[] cas, DmdCustomAttributeData[] sas, DmdImplMap? implMap) CreateCustomAttributes() => COMThread(CreateCustomAttributes_COMThread);
-		(DmdCustomAttributeData[] cas, DmdCustomAttributeData[] sas, DmdImplMap? implMap) CreateCustomAttributes_COMThread() {
+		protected override (DmdCustomAttributeData[]? cas, DmdCustomAttributeData[]? sas, DmdImplMap? implMap) CreateCustomAttributes() => COMThread(CreateCustomAttributes_COMThread);
+		(DmdCustomAttributeData[]? cas, DmdCustomAttributeData[]? sas, DmdImplMap? implMap) CreateCustomAttributes_COMThread() {
 			reader.Dispatcher.VerifyAccess();
 			var cas = reader.ReadCustomAttributes(MetadataToken);
 			var sas = reader.ReadSecurityAttributes(MetadataToken);
 			DmdImplMap? implMap;
 			if (IsPinvokeImpl) {
 				var name = MDAPI.GetPinvokeMapName(reader.MetaDataImport, (uint)MetadataToken);
-				if (name == null || !MDAPI.GetPinvokeMapProps(reader.MetaDataImport, (uint)MetadataToken, out var attrs, out uint moduleToken))
+				if (name is null || !MDAPI.GetPinvokeMapProps(reader.MetaDataImport, (uint)MetadataToken, out var attrs, out uint moduleToken))
 					implMap = null;
 				else {
 					var module = MDAPI.GetModuleRefName(reader.MetaDataImport, moduleToken) ?? string.Empty;
@@ -67,7 +67,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return (cas, sas, implMap);
 		}
 
-		private protected override DmdMethodSignature GetMethodSignatureCore(IList<DmdType> genericMethodArguments) => COMThread(() => reader.ReadMethodSignature_COMThread(MDAPI.GetMethodSignatureBlob(reader.MetaDataImport, 0x06000000 + Rid), DeclaringType.GetGenericArguments(), genericMethodArguments, isProperty: false));
+		private protected override DmdMethodSignature GetMethodSignatureCore(IList<DmdType> genericMethodArguments) => COMThread(() => reader.ReadMethodSignature_COMThread(MDAPI.GetMethodSignatureBlob(reader.MetaDataImport, 0x06000000 + Rid), DeclaringType!.GetGenericArguments(), genericMethodArguments, isProperty: false));
 		protected override uint GetRVA() => 0;
 	}
 }

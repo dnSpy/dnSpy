@@ -29,9 +29,9 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public IDecompiler Decompiler { get; }
 		public IDecompilerOutput Output { get; }
 		public IDocumentWriterService DocumentWriterService { get; }
-		public string FileExtension { get; set; }
-		public IContentType ContentType { get; set; }
-		public string ContentTypeString { get; set; }
+		public string? FileExtension { get; set; }
+		public IContentType? ContentType { get; set; }
+		public string? ContentTypeString { get; set; }
 
 		readonly Dispatcher dispatcher;
 
@@ -44,7 +44,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		public T UIThread<T>(Func<T> func) {
-			if (func == null)
+			if (func is null)
 				throw new ArgumentNullException(nameof(func));
 			if (dispatcher.CheckAccess())
 				return func();

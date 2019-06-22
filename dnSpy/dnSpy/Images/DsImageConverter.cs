@@ -29,8 +29,8 @@ namespace dnSpy.Images {
 	sealed class DsImageConverter : IMultiValueConverter {
 		internal static IImageService imageService;
 
-		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
-			if (values == null)
+		public object? Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
+			if (values is null)
 				throw new ArgumentNullException(nameof(values));
 			bool b = values.Length == 7;
 			Debug.Assert(b);

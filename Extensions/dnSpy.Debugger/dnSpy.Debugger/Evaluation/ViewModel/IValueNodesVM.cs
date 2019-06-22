@@ -34,7 +34,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 		bool CanAddRemoveExpressions { get; }
 		void DeleteExpressions(string[] ids);
 		void ClearAllExpressions();
-		void EditExpression(string id, string expression);
+		void EditExpression(string? id, string expression);
 		void AddExpressions(string[] expressions, bool select = false);
 		void Refresh();
 	}

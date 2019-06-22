@@ -57,16 +57,16 @@ namespace dndbg.Engine {
 		/// </summary>
 		public string FullName {
 			get {
-				if (fullName == null) {
+				if (fullName is null) {
 					Debug.Assert(modules.Count != 0);
 					if (modules.Count == 0)
 						return Name;
 					Interlocked.CompareExchange(ref fullName, CorAssembly.FullName, null);
 				}
-				return fullName;
+				return fullName!;
 			}
 		}
-		string fullName;
+		string? fullName;
 
 		public bool HasUnloaded { get; private set; }
 		public DnDebugger Debugger => AppDomain.Debugger;
@@ -85,7 +85,7 @@ namespace dndbg.Engine {
 		DnModule CreateModule(ICorDebugModule comModule) =>
 			new DnModule(this, comModule, Debugger.GetNextModuleId(), Process.GetNextModuleId(), AppDomain.GetNextModuleId());
 		internal void SetHasUnloaded() => HasUnloaded = true;
-		internal DnModule TryAdd(ICorDebugModule comModule) => modules.Add(comModule);
+		internal DnModule? TryAdd(ICorDebugModule? comModule) => modules.Add(comModule);
 
 		public DnModule[] Modules {
 			get {
@@ -96,7 +96,7 @@ namespace dndbg.Engine {
 			}
 		}
 
-		public DnModule TryGetModule(ICorDebugModule comModule) {
+		public DnModule? TryGetModule(ICorDebugModule? comModule) {
 			Debugger.DebugVerifyThread();
 			return modules.TryGet(comModule);
 		}
@@ -115,12 +115,12 @@ namespace dndbg.Engine {
 			var modules = this.modules.GetAll();
 			for (int i = 0; i < modules.Length; i++) {
 				var module = modules[i];
-				if (module.CorModuleDef != null) {
-					Debug.Assert(corAssemblyDef != null);
+				if (!(module.CorModuleDef is null)) {
+					Debug.Assert(!(corAssemblyDef is null));
 					continue;
 				}
 				module.CorModuleDef = new CorModuleDef(module.CorModule.GetMetaDataInterface<IMetaDataImport>(), new CorModuleDefHelper(module));
-				if (corAssemblyDef == null)
+				if (corAssemblyDef is null)
 					corAssemblyDef = new CorAssemblyDef(module.CorModuleDef, 1);
 				corAssemblyDef.Modules.Add(module.CorModuleDef);
 				module.CorModuleDef.Initialize();
@@ -130,7 +130,7 @@ namespace dndbg.Engine {
 			foreach (var m in created)
 				Debugger.CorModuleDefCreated(m);
 		}
-		CorAssemblyDef corAssemblyDef;
+		CorAssemblyDef? corAssemblyDef;
 
 		public override string ToString() => $"{UniqueId} {Name}";
 	}

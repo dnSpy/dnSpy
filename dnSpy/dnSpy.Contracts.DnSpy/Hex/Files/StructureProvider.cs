@@ -47,19 +47,19 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// </summary>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public abstract ComplexData GetStructure(HexPosition position);
+		public abstract ComplexData? GetStructure(HexPosition position);
 
 		/// <summary>
 		/// Returns a structure or null
 		/// </summary>
 		/// <param name="id">Id, see eg. <see cref="PE.PredefinedPeDataIds"/></param>
 		/// <returns></returns>
-		public abstract ComplexData GetStructure(string id);
+		public abstract ComplexData? GetStructure(string id);
 
 		/// <summary>
 		/// Returns headers or null. This method is called before <see cref="BufferFileHeadersProvider.GetHeaders{THeader}"/>
 		/// </summary>
 		/// <returns></returns>
-		public virtual THeader GetHeaders<THeader>() where THeader : class, IBufferFileHeaders => null;
+		public virtual THeader? GetHeaders<THeader>() where THeader : class, IBufferFileHeaders => null;
 	}
 }

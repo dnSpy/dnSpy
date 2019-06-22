@@ -165,14 +165,14 @@ namespace dnSpy.Contracts.Debugger {
 		/// <summary>
 		/// Gets the data, see <see cref="DbgBreakInfoKind"/> for more info
 		/// </summary>
-		public object Data { get; }
+		public object? Data { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="kind">Kind</param>
 		/// <param name="data">Data</param>
-		public DbgBreakInfo(DbgBreakInfoKind kind, object data) {
+		public DbgBreakInfo(DbgBreakInfoKind kind, object? data) {
 			Kind = kind;
 			Data = data;
 		}
@@ -198,7 +198,7 @@ namespace dnSpy.Contracts.Debugger {
 				return Kind.ToString();
 
 			case DbgBreakInfoKind.Message:
-				return $"Debug message: {((DbgMessageEventArgs)Data).Kind}";
+				return $"Debug message: {((DbgMessageEventArgs)Data!).Kind}";
 			}
 		}
 	}

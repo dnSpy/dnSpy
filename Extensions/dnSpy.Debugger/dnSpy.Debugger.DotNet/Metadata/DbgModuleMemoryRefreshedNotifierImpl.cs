@@ -31,7 +31,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	sealed class DbgModuleMemoryRefreshedNotifierImpl : DbgModuleMemoryRefreshedNotifier2 {
 		public override event EventHandler<ModulesRefreshedEventArgs> ModulesRefreshed;
 		public override void RaiseModulesRefreshed(DbgModule[] modules) {
-			if (modules == null)
+			if (modules is null)
 				throw new ArgumentNullException(nameof(modules));
 			if (modules.Length > 0)
 				ModulesRefreshed?.Invoke(this, new ModulesRefreshedEventArgs(modules));

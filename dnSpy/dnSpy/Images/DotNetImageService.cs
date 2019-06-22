@@ -177,28 +177,29 @@ namespace dnSpy.Images {
 		}
 
 		static bool IsModule(TypeDef type) =>
-			type != null && type.DeclaringType == null && type.IsSealed && type.IsDefined(stringMicrosoftVisualBasicCompilerServices, stringStandardModuleAttribute);
+			!(type is null) && type.DeclaringType is null && type.IsSealed && type.IsDefined(stringMicrosoftVisualBasicCompilerServices, stringStandardModuleAttribute);
 		static readonly UTF8String stringMicrosoftVisualBasicCompilerServices = new UTF8String("Microsoft.VisualBasic.CompilerServices");
 		static readonly UTF8String stringStandardModuleAttribute = new UTF8String("StandardModuleAttribute");
 
 		static bool IsDelegate(TypeDef type) =>
-			type.BaseType != null && type.BaseType.FullName == "System.MulticastDelegate" && type.BaseType.DefinitionAssembly.IsCorLib();
+			!(type.BaseType is null) && type.BaseType.FullName == "System.MulticastDelegate" && type.BaseType.DefinitionAssembly.IsCorLib();
 
 		static bool IsException(TypeDef type) {
-			if (IsSystemException(type))
+			TypeDef? td = type;
+			if (IsSystemException(td))
 				return true;
-			for (int i = 0; i < 1000 && type != null; i++) {
-				if (IsSystemException(type.BaseType))
+			for (int i = 0; i < 1000 && !(td is null); i++) {
+				if (IsSystemException(td.BaseType))
 					return true;
-				var bt = type.BaseType;
-				type = bt == null ? null : bt.ScopeType.ResolveTypeDef();
+				var bt = td.BaseType;
+				td = bt?.ScopeType.ResolveTypeDef();
 			}
 			return false;
 		}
 
-		static bool IsSystemException(ITypeDefOrRef type) =>
-			type != null &&
-			type.DeclaringType == null &&
+		static bool IsSystemException(ITypeDefOrRef? type) =>
+			!(type is null) &&
+			type.DeclaringType is null &&
 			type.Namespace == "System" &&
 			type.Name == "Exception" &&
 			type.DefinitionAssembly.IsCorLib();
@@ -260,7 +261,7 @@ namespace dnSpy.Images {
 			}
 		}
 
-		static bool IsSystemDecimal(TypeSig ts) => ts != null && ts.DefinitionAssembly.IsCorLib() && ts.FullName == "System.Decimal";
+		static bool IsSystemDecimal(TypeSig ts) => !(ts is null) && ts.DefinitionAssembly.IsCorLib() && ts.FullName == "System.Decimal";
 		static bool IsDecimalConstant(FieldDef field) => IsSystemDecimal(field.FieldType) && field.CustomAttributes.IsDefined("System.Runtime.CompilerServices.DecimalConstantAttribute");
 
 		public ImageReference GetImageReference(MethodDef method) {
@@ -306,7 +307,7 @@ namespace dnSpy.Images {
 
 		public ImageReference GetImageReference(EventDef @event) {
 			var method = @event.AddMethod ?? @event.RemoveMethod;
-			if (method == null)
+			if (method is null)
 				return DsImages.EventPublic;
 
 			switch (method.Access) {
@@ -329,7 +330,7 @@ namespace dnSpy.Images {
 
 		public ImageReference GetImageReference(PropertyDef property) {
 			var method = property.GetMethod ?? property.SetMethod;
-			if (method == null)
+			if (method is null)
 				return DsImages.Property;
 
 			switch (method.Access) {

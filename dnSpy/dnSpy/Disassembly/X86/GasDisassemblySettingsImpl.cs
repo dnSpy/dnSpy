@@ -67,7 +67,7 @@ namespace dnSpy.Disassembly.X86 {
 		public GasDisassemblySettings Clone() => CopyTo(new GasDisassemblySettings());
 
 		public GasDisassemblySettings CopyTo(GasDisassemblySettings other) {
-			if (other == null)
+			if (other is null)
 				throw new ArgumentNullException(nameof(other));
 			base.CopyTo(other);
 			other.NakedRegisters = NakedRegisters;

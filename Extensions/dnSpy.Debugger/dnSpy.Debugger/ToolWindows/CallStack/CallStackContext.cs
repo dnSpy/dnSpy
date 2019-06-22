@@ -50,12 +50,13 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		public DbgStackFrameFormatterOptions StackFrameFormatterOptions { get; set; }
 		public DbgValueFormatterOptions ValueFormatterOptions { get; set; }
 
-		public CallStackContext(UIDispatcher uiDispatcher, IClassificationFormatMap classificationFormatMap, ITextBlockContentInfoFactory textBlockContentInfoFactory) {
+		public CallStackContext(UIDispatcher uiDispatcher, IClassificationFormatMap classificationFormatMap, ITextBlockContentInfoFactory textBlockContentInfoFactory, CallStackFormatter formatter) {
 			UIDispatcher = uiDispatcher;
 			ClassificationFormatMap = classificationFormatMap;
 			TextBlockContentInfoFactory = textBlockContentInfoFactory;
 			TextClassifierTextColorWriter = new DbgTextClassifierTextColorWriter();
 			ClassifiedTextWriter = new ClassifiedTextWriter();
+			Formatter = formatter;
 		}
 	}
 }

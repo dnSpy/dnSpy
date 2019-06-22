@@ -23,11 +23,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
 	/// A .NET event
 	/// </summary>
-	public abstract class DmdEventInfo : DmdMemberInfo, IEquatable<DmdEventInfo> {
+	public abstract class DmdEventInfo : DmdMemberInfo, IEquatable<DmdEventInfo?> {
 		/// <summary>
 		/// Gets the AppDomain
 		/// </summary>
-		public sealed override DmdAppDomain AppDomain => DeclaringType.AppDomain;
+		public sealed override DmdAppDomain AppDomain => DeclaringType!.AppDomain;
 
 		/// <summary>
 		/// Gets the member type
@@ -54,7 +54,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		public bool IsMulticast {
 			get {
-				var multicastDelegate = DeclaringType.Assembly.AppDomain.System_MulticastDelegate;
+				var multicastDelegate = DeclaringType!.Assembly.AppDomain.System_MulticastDelegate;
 				return multicastDelegate.IsAssignableFrom(EventHandlerType);
 			}
 		}
@@ -64,7 +64,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
 		/// <returns></returns>
-		public sealed override DmdMemberInfo ResolveMember(bool throwOnError) => this;
+		public sealed override DmdMemberInfo? ResolveMember(bool throwOnError) => this;
 
 		/// <summary>
 		/// Returns false since there are no event references
@@ -74,17 +74,17 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the add method
 		/// </summary>
-		public DmdMethodInfo AddMethod => GetAddMethod(nonPublic: true);
+		public DmdMethodInfo? AddMethod => GetAddMethod(nonPublic: true);
 
 		/// <summary>
 		/// Gets the remove method
 		/// </summary>
-		public DmdMethodInfo RemoveMethod => GetRemoveMethod(nonPublic: true);
+		public DmdMethodInfo? RemoveMethod => GetRemoveMethod(nonPublic: true);
 
 		/// <summary>
 		/// Gets the raise method
 		/// </summary>
-		public DmdMethodInfo RaiseMethod => GetRaiseMethod(nonPublic: true);
+		public DmdMethodInfo? RaiseMethod => GetRaiseMethod(nonPublic: true);
 
 		/// <summary>
 		/// Gets all public 'other' methods
@@ -96,19 +96,19 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Gets the public add method
 		/// </summary>
 		/// <returns></returns>
-		public DmdMethodInfo GetAddMethod() => GetAddMethod(nonPublic: false);
+		public DmdMethodInfo? GetAddMethod() => GetAddMethod(nonPublic: false);
 
 		/// <summary>
 		/// Gets the public remove method
 		/// </summary>
 		/// <returns></returns>
-		public DmdMethodInfo GetRemoveMethod() => GetRemoveMethod(nonPublic: false);
+		public DmdMethodInfo? GetRemoveMethod() => GetRemoveMethod(nonPublic: false);
 
 		/// <summary>
 		/// Gets the public raise method
 		/// </summary>
 		/// <returns></returns>
-		public DmdMethodInfo GetRaiseMethod() => GetRaiseMethod(nonPublic: false);
+		public DmdMethodInfo? GetRaiseMethod() => GetRaiseMethod(nonPublic: false);
 
 		/// <summary>
 		/// Gets 'other' methods
@@ -129,46 +129,46 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="nonPublic">true to return any method, false to only return a public method</param>
 		/// <returns></returns>
-		public DmdMethodInfo GetAddMethod(bool nonPublic) => GetAddMethod(nonPublic ? DmdGetAccessorOptions.NonPublic : DmdGetAccessorOptions.None);
+		public DmdMethodInfo? GetAddMethod(bool nonPublic) => GetAddMethod(nonPublic ? DmdGetAccessorOptions.NonPublic : DmdGetAccessorOptions.None);
 
 		/// <summary>
 		/// Gets the add method
 		/// </summary>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DmdMethodInfo GetAddMethod(DmdGetAccessorOptions options);
+		public abstract DmdMethodInfo? GetAddMethod(DmdGetAccessorOptions options);
 
 		/// <summary>
 		/// Gets the remove method
 		/// </summary>
 		/// <param name="nonPublic">true to return any method, false to only return a public method</param>
 		/// <returns></returns>
-		public DmdMethodInfo GetRemoveMethod(bool nonPublic) => GetRemoveMethod(nonPublic ? DmdGetAccessorOptions.NonPublic : DmdGetAccessorOptions.None);
+		public DmdMethodInfo? GetRemoveMethod(bool nonPublic) => GetRemoveMethod(nonPublic ? DmdGetAccessorOptions.NonPublic : DmdGetAccessorOptions.None);
 
 		/// <summary>
 		/// Gets the remove method
 		/// </summary>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DmdMethodInfo GetRemoveMethod(DmdGetAccessorOptions options);
+		public abstract DmdMethodInfo? GetRemoveMethod(DmdGetAccessorOptions options);
 
 		/// <summary>
 		/// Gets the raise method
 		/// </summary>
 		/// <param name="nonPublic">true to return any method, false to only return a public method</param>
 		/// <returns></returns>
-		public DmdMethodInfo GetRaiseMethod(bool nonPublic) => GetRaiseMethod(nonPublic ? DmdGetAccessorOptions.NonPublic : DmdGetAccessorOptions.None);
+		public DmdMethodInfo? GetRaiseMethod(bool nonPublic) => GetRaiseMethod(nonPublic ? DmdGetAccessorOptions.NonPublic : DmdGetAccessorOptions.None);
 
 		/// <summary>
 		/// Gets the raise method
 		/// </summary>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DmdMethodInfo GetRaiseMethod(DmdGetAccessorOptions options);
+		public abstract DmdMethodInfo? GetRaiseMethod(DmdGetAccessorOptions options);
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-		public static bool operator ==(DmdEventInfo left, DmdEventInfo right) => DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
-		public static bool operator !=(DmdEventInfo left, DmdEventInfo right) => !DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
+		public static bool operator ==(DmdEventInfo? left, DmdEventInfo? right) => DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
+		public static bool operator !=(DmdEventInfo? left, DmdEventInfo? right) => !DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
@@ -176,14 +176,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		public bool Equals(DmdEventInfo other) => DmdMemberInfoEqualityComparer.DefaultMember.Equals(this, other);
+		public bool Equals(DmdEventInfo? other) => DmdMemberInfoEqualityComparer.DefaultMember.Equals(this, other);
 
 		/// <summary>
 		/// Equals()
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => Equals(obj as DmdEventInfo);
+		public override bool Equals(object? obj) => Equals(obj as DmdEventInfo);
 
 		/// <summary>
 		/// GetHashCode()
@@ -195,6 +195,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// ToString()
 		/// </summary>
 		/// <returns></returns>
-		public sealed override string ToString() => DmdMemberFormatter.Format(this);
+		public sealed override string? ToString() => DmdMemberFormatter.Format(this);
 	}
 }

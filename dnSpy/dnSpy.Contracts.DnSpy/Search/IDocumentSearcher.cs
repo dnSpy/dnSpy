@@ -49,7 +49,7 @@ namespace dnSpy.Contracts.Search {
 		/// A search result that was added to indicate that it's searching. Should be removed from
 		/// the list after the search has completed if it's not null.
 		/// </summary>
-		ISearchResult SearchingResult { get; }
+		ISearchResult? SearchingResult { get; }
 
 		/// <summary>
 		/// Starts the search

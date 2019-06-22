@@ -19,6 +19,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.Code;
@@ -33,17 +34,17 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 		const int MAX_STEPS = 1000;
 
 		sealed class SessionImpl : SessionBase {
-			public SessionImpl(object tag) : base(tag) { }
-			public StepEventRequest MonoStepper { get; set; }
+			public SessionImpl(object? tag) : base(tag) { }
+			public StepEventRequest? MonoStepper { get; set; }
 		}
 
 		readonly DbgEngineImpl engine;
-		SessionImpl session;
+		SessionImpl? session;
 
 		public DbgDotNetEngineStepperImpl(DbgEngineImpl engine) =>
 			this.engine = engine ?? throw new ArgumentNullException(nameof(engine));
 
-		static MDS.StackFrame GetFrame(ThreadMirror thread) {
+		static MDS.StackFrame? GetFrame(ThreadMirror thread) {
 			try {
 				var frames = thread.GetFrames();
 				return frames.Length == 0 ? null : frames[0];
@@ -55,12 +56,12 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 
 		static StepFilter GetStepFilterFlags() => StepFilter.StaticCtor;
 
-		public override SessionBase Session {
+		public override SessionBase? Session {
 			get => session;
-			set => session = (SessionImpl)value;
+			set => session = (SessionImpl?)value;
 		}
 
-		public override SessionBase CreateSession(object tag) => new SessionImpl(tag);
+		public override SessionBase CreateSession(object? tag) => new SessionImpl(tag);
 
 		public override bool IsRuntimePaused => engine.IsPaused;
 		public override uint ContinueCounter => engine.ContinueCounter;
@@ -71,8 +72,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 			internal ThreadMirror MonoThread { get; }
 
 			readonly DbgEngineImpl engine;
-			readonly MDS.StackFrame frame;
-			readonly MethodMirror frameMethod;
+			readonly MDS.StackFrame? frame;
+			readonly MethodMirror? frameMethod;
 
 			public DbgDotNetEngineStepperFrameInfoImpl(DbgEngineImpl engine, DbgThread thread) {
 				this.engine = engine ?? throw new ArgumentNullException(nameof(engine));
@@ -82,13 +83,13 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 				frameMethod = frame?.Method;
 			}
 
-			public override bool TryGetLocation(out DbgModule module, out uint token, out uint offset) {
+			public override bool TryGetLocation([NotNullWhenTrue] out DbgModule? module, out uint token, out uint offset) {
 				engine.VerifyMonoDebugThread();
 				module = engine.TryGetModule(frameMethod?.DeclaringType.Module);
 				token = (uint)(frameMethod?.MetadataToken ?? 0);
 				var offs = frame?.ILOffset;
 				offset = (uint)(offs ?? 0);
-				return module != null && token != 0 && offs != null;
+				return !(module is null) && token != 0 && !(offs is null);
 			}
 
 			public override bool Equals(DbgDotNetEngineStepperFrameInfo other) {
@@ -100,7 +101,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 			}
 		}
 
-		public override DbgDotNetEngineStepperFrameInfo TryGetFrameInfo(DbgThread thread) => new DbgDotNetEngineStepperFrameInfoImpl(engine, thread);
+		public override DbgDotNetEngineStepperFrameInfo? TryGetFrameInfo(DbgThread thread) => new DbgDotNetEngineStepperFrameInfoImpl(engine, thread);
 		public override void Continue() => engine.RunCore();
 
 		public override Task<DbgThread> StepIntoAsync(DbgDotNetEngineStepperFrameInfo frame, DbgCodeRange[] ranges) {
@@ -117,10 +118,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 
 		async Task<DbgThread> StepCoreAsync(ThreadMirror thread, DbgCodeRange[] ranges, bool isStepInto) {
 			engine.VerifyMonoDebugThread();
-			Debug.Assert(session != null);
+			Debug.Assert(!(session is null));
 			var method = GetFrame(thread)?.Method;
-			Debug.Assert(method != null);
-			if (method == null)
+			Debug.Assert(!(method is null));
+			if (method is null)
 				throw new StepErrorException("Internal error");
 
 			for (int i = 0; i < MAX_STEPS; i++) {
@@ -135,7 +136,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 
 		Task<ThreadMirror> StepCore2Async(ThreadMirror thread, DbgCodeRange[] ranges, bool isStepInto) {
 			engine.VerifyMonoDebugThread();
-			Debug.Assert(session != null);
+			Debug.Assert(!(session is null));
 			var tcs = new TaskCompletionSource<ThreadMirror>();
 			var stepReq = engine.CreateStepRequest(thread, e => {
 				if (engine.IsClosed || e.Canceled)
@@ -157,7 +158,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 
 		public override Task<DbgThread> StepOutAsync(DbgDotNetEngineStepperFrameInfo frame) {
 			engine.VerifyMonoDebugThread();
-			Debug.Assert(session != null);
+			Debug.Assert(!(session is null));
 			var frameImpl = (DbgDotNetEngineStepperFrameInfoImpl)frame;
 			var tcs = new TaskCompletionSource<DbgThread>();
 			var stepReq = engine.CreateStepRequest(frameImpl.MonoThread, e => {
@@ -167,7 +168,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 					tcs.SetException(new ForciblyCanceledException(forciblyCanceledErrorMessage));
 				else {
 					var thread = engine.TryGetThread(frameImpl.MonoThread);
-					if (thread != null)
+					if (!(thread is null))
 						tcs.SetResult(thread);
 					else
 						tcs.SetException(new InvalidOperationException());
@@ -191,7 +192,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 			return false;
 		}
 
-		public override DbgDotNetStepperBreakpoint CreateBreakpoint(DbgThread thread, DbgModule module, uint token, uint offset) {
+		public override DbgDotNetStepperBreakpoint CreateBreakpoint(DbgThread? thread, DbgModule module, uint token, uint offset) {
 			engine.VerifyMonoDebugThread();
 			return new DbgDotNetStepperBreakpointImpl(engine, thread, module, token, offset);
 		}
@@ -213,17 +214,17 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 
 		public override void CancelLastStep() {
 			engine.VerifyMonoDebugThread();
-			CancelStepper(Session);
+			CancelStepper(session);
 		}
 
-		void CancelStepper(SessionBase session) {
+		void CancelStepper(SessionBase? session) {
 			engine.VerifyMonoDebugThread();
-			if (session == null)
+			if (session is null)
 				return;
 			var sessionImpl = (SessionImpl)session;
 			var stepper = sessionImpl.MonoStepper;
 			sessionImpl.MonoStepper = null;
-			if (stepper != null)
+			if (!(stepper is null))
 				engine.CancelStepper(stepper);
 		}
 

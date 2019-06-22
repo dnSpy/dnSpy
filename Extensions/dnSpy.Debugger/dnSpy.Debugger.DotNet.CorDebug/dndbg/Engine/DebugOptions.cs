@@ -33,7 +33,9 @@ namespace dndbg.Engine {
 	}
 
 	sealed class DebugOptions {
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
 		public DebugOptionsProvider DebugOptionsProvider { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
 		public CorDebugIntercept StepperInterceptMask { get; set; } = CorDebugIntercept.INTERCEPT_NONE;
 		public CorDebugUnmappedStop StepperUnmappedStopMask { get; set; } = CorDebugUnmappedStop.STOP_NONE;
 		public bool StepperJMC { get; set; } = false;

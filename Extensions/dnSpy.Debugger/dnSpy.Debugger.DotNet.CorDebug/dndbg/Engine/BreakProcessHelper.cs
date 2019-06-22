@@ -29,8 +29,8 @@ namespace dndbg.Engine {
 		readonly DnDebugger debugger;
 		readonly BreakProcessKind type;
 		readonly string filename1;
-		readonly string filename2;
-		DnBreakpoint breakpoint;
+		readonly string? filename2;
+		DnBreakpoint? breakpoint;
 
 		public BreakProcessHelper(DnDebugger debugger, BreakProcessKind type, string filename, bool isAppHost) {
 			this.debugger = debugger ?? throw new ArgumentNullException(nameof(debugger));
@@ -56,31 +56,31 @@ namespace dndbg.Engine {
 			}
 		}
 
-		void CreateStartupDebugBreakEvent(DebugEventBreakpointKind evt, Func<DebugEventBreakpointConditionContext, bool> cond = null) {
+		void CreateStartupDebugBreakEvent(DebugEventBreakpointKind evt, Func<DebugEventBreakpointConditionContext, bool>? cond = null) {
 			Debug.Assert(debugger.ProcessState == DebuggerProcessState.Starting);
-			DnDebugEventBreakpoint bp = null;
+			DnDebugEventBreakpoint? bp = null;
 			bp = debugger.CreateBreakpoint(evt, ctx => {
-				if (cond == null || cond(ctx)) {
-					debugger.RemoveBreakpoint(bp);
+				if (cond is null || cond(ctx)) {
+					debugger.RemoveBreakpoint(bp!);
 					return true;
 				}
 				return false;
 			});
 		}
 
-		void CreateStartupAnyDebugBreakEvent(Func<AnyDebugEventBreakpointConditionContext, bool> cond = null) {
+		void CreateStartupAnyDebugBreakEvent(Func<AnyDebugEventBreakpointConditionContext, bool>? cond = null) {
 			Debug.Assert(debugger.ProcessState == DebuggerProcessState.Starting);
-			DnAnyDebugEventBreakpoint bp = null;
+			DnAnyDebugEventBreakpoint? bp = null;
 			bp = debugger.CreateAnyDebugEventBreakpoint(ctx => {
-				if (cond == null || cond(ctx)) {
-					debugger.RemoveBreakpoint(bp);
+				if (cond is null || cond(ctx)) {
+					debugger.RemoveBreakpoint(bp!);
 					return true;
 				}
 				return false;
 			});
 		}
 
-		bool IsOurModule(CorModule module, out string filename) {
+		bool IsOurModule(CorModule? module, out string? filename) {
 			if (IsModule(module, filename1)) {
 				filename = filename1;
 				return true;
@@ -93,13 +93,13 @@ namespace dndbg.Engine {
 			return false;
 		}
 
-		static bool IsModule(CorModule module, string filename) => module != null && !module.IsDynamic && !module.IsInMemory && StringComparer.OrdinalIgnoreCase.Equals(module.Name, filename);
+		static bool IsModule(CorModule? module, string? filename) => !(module is null) && !module.IsDynamic && !module.IsInMemory && StringComparer.OrdinalIgnoreCase.Equals(module.Name, filename);
 
 		void SetILBreakpoint(DnModuleId moduleId, uint token) {
-			Debug.Assert(token != 0 && breakpoint == null);
-			DnBreakpoint bp = null;
+			Debug.Assert(token != 0 && breakpoint is null);
+			DnBreakpoint? bp = null;
 			bp = debugger.CreateBreakpoint(moduleId, token, 0, ctx2 => {
-				debugger.RemoveBreakpoint(bp);
+				debugger.RemoveBreakpoint(bp!);
 				ctx2.E.AddPauseState(new EntryPointBreakpointPauseState(ctx2.E.CorAppDomain, ctx2.E.CorThread));
 				return false;
 			});
@@ -108,25 +108,26 @@ namespace dndbg.Engine {
 		bool OnLoadModule(DebugEventBreakpointConditionContext ctx) {
 			var lmArgs = (LoadModuleDebugCallbackEventArgs)ctx.EventArgs;
 			var mod = lmArgs.CorModule;
-			if (!IsOurModule(mod, out string filename))
+			if (!IsOurModule(mod, out var filename))
 				return false;
-			debugger.RemoveBreakpoint(breakpoint);
+			Debug.Assert(!(mod is null));
+			debugger.RemoveBreakpoint(breakpoint!);
 			breakpoint = null;
 			Debug.Assert(!mod.IsDynamic && !mod.IsInMemory);
 			// It's not a dyn/in-mem module so id isn't used
 			var moduleId = mod.GetModuleId(uint.MaxValue);
 
-			uint epToken = GetEntryPointToken(filename, out string otherModuleName);
+			uint epToken = GetEntryPointToken(filename, out var otherModuleName);
 			if (epToken != 0) {
 				if ((Table)(epToken >> 24) == Table.Method) {
 					SetILBreakpoint(moduleId, epToken);
 					return false;
 				}
 
-				if (otherModuleName != null) {
+				if (!(otherModuleName is null)) {
 					Debug.Assert((Table)(epToken >> 24) == Table.File);
 					otherModuleFullName = GetOtherModuleFullName(otherModuleName);
-					if (otherModuleFullName != null) {
+					if (!(otherModuleFullName is null)) {
 						thisAssembly = mod.Assembly;
 						breakpoint = debugger.CreateBreakpoint(DebugEventBreakpointKind.LoadModule, OnLoadOtherModule);
 						return false;
@@ -137,18 +138,18 @@ namespace dndbg.Engine {
 			// Failed to set BP. Break to debugger.
 			return true;
 		}
-		CorAssembly thisAssembly;
-		string otherModuleFullName;
+		CorAssembly? thisAssembly;
+		string? otherModuleFullName;
 
 		bool OnLoadOtherModule(DebugEventBreakpointConditionContext ctx) {
 			var lmArgs = (LoadModuleDebugCallbackEventArgs)ctx.EventArgs;
 			var mod = lmArgs.CorModule;
-			if (!IsModule(mod, otherModuleFullName) || mod.Assembly != thisAssembly)
+			if (!IsModule(mod, otherModuleFullName) || !object.Equals(mod!.Assembly, thisAssembly))
 				return false;
-			debugger.RemoveBreakpoint(breakpoint);
+			debugger.RemoveBreakpoint(breakpoint!);
 			breakpoint = null;
 
-			uint epToken = GetEntryPointToken(otherModuleFullName, out string otherModuleName);
+			uint epToken = GetEntryPointToken(otherModuleFullName, out var otherModuleName);
 			if (epToken != 0 && (Table)(epToken >> 24) == Table.Method) {
 				Debug.Assert(!mod.IsDynamic && !mod.IsInMemory);
 				// It's not a dyn/in-mem module so id isn't used
@@ -159,7 +160,7 @@ namespace dndbg.Engine {
 			return true;
 		}
 
-		string GetOtherModuleFullName(string name) {
+		string? GetOtherModuleFullName(string name) {
 			try {
 				return Path.Combine(Path.GetDirectoryName(filename1), name);
 			}
@@ -168,7 +169,7 @@ namespace dndbg.Engine {
 			return null;
 		}
 
-		static uint GetEntryPointToken(string filename, out string otherModuleName) {
+		static uint GetEntryPointToken(string? filename, out string? otherModuleName) {
 			otherModuleName = null;
 			try {
 				using (var peImage = new PEImage(filename)) {
@@ -187,7 +188,7 @@ namespace dndbg.Engine {
 
 					using (var mod = ModuleDefMD.Load(peImage)) {
 						var file = mod.ResolveFile(token & 0x00FFFFFF);
-						if (file == null || !file.ContainsMetadata)
+						if (file is null || !file.ContainsMetadata)
 							return 0;
 
 						otherModuleName = file.Name;

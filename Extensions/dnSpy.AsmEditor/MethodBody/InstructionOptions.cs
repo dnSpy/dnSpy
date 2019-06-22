@@ -24,8 +24,8 @@ using dnlib.DotNet.Pdb;
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class InstructionOptions {
 		public Code Code;
-		public object Operand;
-		public SequencePoint SequencePoint;//TODO: Use this
+		public object? Operand;
+		public SequencePoint? SequencePoint;//TODO: Use this
 
 		public InstructionOptions() {
 		}

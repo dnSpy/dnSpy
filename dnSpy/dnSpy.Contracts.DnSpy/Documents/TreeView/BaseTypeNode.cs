@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// </summary>
 		public abstract ITypeDefOrRef TypeDefOrRef { get; }
 
-		IMDTokenProvider IMDTokenNode.Reference => TypeDefOrRef;
+		IMDTokenProvider? IMDTokenNode.Reference => TypeDefOrRef;
 
 		/// <summary>
 		/// Constructor

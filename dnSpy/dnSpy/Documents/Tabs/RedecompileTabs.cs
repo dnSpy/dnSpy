@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.Tabs;
@@ -41,8 +42,7 @@ namespace dnSpy.Documents.Tabs {
 			if (!appWindow.AppLoaded)
 				return;
 			var tab = documentTabService.ActiveTab;
-			var decompilerContent = tab?.Content as IDecompilerTabContent;
-			if (decompilerContent == null)
+			if (!(tab?.Content is IDecompilerTabContent decompilerContent))
 				return;
 			var decompilerService = (IDecompilerService)sender;
 			if (decompilerContent.Decompiler == decompilerService.Decompiler)

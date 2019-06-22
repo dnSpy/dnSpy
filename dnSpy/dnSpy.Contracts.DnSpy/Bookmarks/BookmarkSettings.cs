@@ -55,10 +55,10 @@ namespace dnSpy.Contracts.Bookmarks {
 			StringComparer.Ordinal.Equals(Name ?? string.Empty, other.Name ?? string.Empty) &&
 			LabelsEquals(Labels, other.Labels);
 
-		static bool LabelsEquals(ReadOnlyCollection<string> a, ReadOnlyCollection<string> b) {
-			if (a == null)
+		static bool LabelsEquals(ReadOnlyCollection<string>? a, ReadOnlyCollection<string>? b) {
+			if (a is null)
 				a = emptyLabels;
-			if (b == null)
+			if (b is null)
 				b = emptyLabels;
 			if (a == b)
 				return true;
@@ -84,7 +84,7 @@ namespace dnSpy.Contracts.Bookmarks {
 		/// </summary>
 		/// <param name="obj">Other instance</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is BookmarkSettings other && Equals(other);
+		public override bool Equals(object? obj) => obj is BookmarkSettings other && Equals(other);
 
 		/// <summary>
 		/// Gets the hash code

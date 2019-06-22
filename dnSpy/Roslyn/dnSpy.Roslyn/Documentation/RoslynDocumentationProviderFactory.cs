@@ -23,7 +23,7 @@ using Microsoft.CodeAnalysis;
 namespace dnSpy.Roslyn.Documentation {
 	[Export(typeof(IRoslynDocumentationProviderFactory))]
 	sealed class RoslynDocumentationProviderFactory : IRoslynDocumentationProviderFactory {
-		public DocumentationProvider TryCreate(string filename) {
+		public DocumentationProvider? TryCreate(string? filename) {
 			if (string.IsNullOrEmpty(filename))
 				return null;
 			return new RoslynDocumentationProvider(filename);

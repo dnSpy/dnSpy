@@ -27,10 +27,10 @@ using dnSpy.Debugger.UI;
 namespace dnSpy.Debugger.Evaluation.ViewModel {
 	abstract class ValueNode : TreeNodeData {
 		public override Guid Guid => Guid.Empty;
-		public override object Text => null;
-		public override object ToolTip => null;
+		public override object? Text => null;
+		public override object? ToolTip => null;
 
-		public abstract string RootId { get; }
+		public abstract string? RootId { get; }
 
 		// Used by XAML
 		public abstract bool IsInvalid { get; protected set; }

@@ -38,21 +38,21 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes.VisualBasic {
 		protected override DbgDotNetValueNodeProviderFactory CreateValueNodeProviderFactory() => new VisualBasicValueNodeProviderFactory(this);
 		protected override bool IsIdentifierPartCharacter(char c) => SyntaxFacts.IsIdentifierPartCharacter(c);
 
-		void AddCastBegin(StringBuilder sb, DmdType castType) {
-			if ((object)castType == null)
+		void AddCastBegin(StringBuilder sb, DmdType? castType) {
+			if (castType is null)
 				return;
 			sb.Append("CType(");
 		}
 
-		void AddCastEnd(StringBuilder sb, DmdType castType) {
-			if ((object)castType == null)
+		void AddCastEnd(StringBuilder sb, DmdType? castType) {
+			if (castType is null)
 				return;
 			sb.Append(", ");
 			new Formatters.VisualBasic.VisualBasicTypeFormatter(new DbgStringBuilderTextWriter(sb), TypeFormatterOptions, null).Format(castType, null);
 			sb.Append(')');
 		}
 
-		public override string GetFieldExpression(string baseExpression, string name, DmdType castType, bool addParens) {
+		public override string GetFieldExpression(string baseExpression, string name, DmdType? castType, bool addParens) {
 			baseExpression = RemoveFormatSpecifiers(baseExpression);
 			var sb = ObjectCache.AllocStringBuilder();
 			AddCastBegin(sb, castType);
@@ -63,7 +63,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes.VisualBasic {
 			return ObjectCache.FreeAndToString(ref sb);
 		}
 
-		public override string GetPropertyExpression(string baseExpression, string name, DmdType castType, bool addParens) {
+		public override string GetPropertyExpression(string baseExpression, string name, DmdType? castType, bool addParens) {
 			baseExpression = RemoveFormatSpecifiers(baseExpression);
 			var sb = ObjectCache.AllocStringBuilder();
 			AddCastBegin(sb, castType);
@@ -74,7 +74,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes.VisualBasic {
 			return ObjectCache.FreeAndToString(ref sb);
 		}
 
-		public override string GetExpression(string baseExpression, int index, DmdType castType, bool addParens) {
+		public override string GetExpression(string baseExpression, int index, DmdType? castType, bool addParens) {
 			baseExpression = RemoveFormatSpecifiers(baseExpression);
 			var sb = ObjectCache.AllocStringBuilder();
 			AddCastBegin(sb, castType);
@@ -86,7 +86,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes.VisualBasic {
 			return ObjectCache.FreeAndToString(ref sb);
 		}
 
-		public override string GetExpression(string baseExpression, int[] indexes, DmdType castType, bool addParens) {
+		public override string GetExpression(string baseExpression, int[] indexes, DmdType? castType, bool addParens) {
 			baseExpression = RemoveFormatSpecifiers(baseExpression);
 			var sb = ObjectCache.AllocStringBuilder();
 			AddCastBegin(sb, castType);
@@ -104,12 +104,12 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes.VisualBasic {
 
 		protected override string EscapeIdentifier(string identifier) => Formatters.VisualBasic.VisualBasicTypeFormatter.GetFormattedIdentifier(identifier);
 
-		protected override void FormatReturnValueMethodName(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgValueFormatterTypeOptions typeOptions, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo, DmdMethodBase method, DmdPropertyInfo property) {
+		protected override void FormatReturnValueMethodName(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgValueFormatterTypeOptions typeOptions, DbgValueFormatterOptions valueOptions, CultureInfo? cultureInfo, DmdMethodBase method, DmdPropertyInfo? property) {
 			var typeFormatter = new Formatters.VisualBasic.VisualBasicTypeFormatter(output, typeOptions.ToTypeFormatterOptions(), null);
-			typeFormatter.Format(method.DeclaringType, null);
+			typeFormatter.Format(method.DeclaringType!, null);
 			var valueFormatter = new Formatters.VisualBasic.VisualBasicPrimitiveValueFormatter(output, valueOptions.ToValueFormatterOptions(), cultureInfo);
 			output.Write(DbgTextColor.Operator, ".");
-			if ((object)property != null) {
+			if (!(property is null)) {
 				output.Write(MemberUtils.GetColor(property), Formatters.VisualBasic.VisualBasicTypeFormatter.GetFormattedIdentifier(property.Name));
 				valueFormatter.WriteTokenComment(property.MetadataToken);
 				output.Write(DbgTextColor.Operator, ".");
@@ -118,7 +118,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes.VisualBasic {
 			}
 			else {
 				var operatorInfo = Formatters.VisualBasic.Operators.TryGetOperatorInfo(method.Name);
-				if (operatorInfo != null && method is DmdMethodInfo methodInfo) {
+				if (!(operatorInfo is null) && method is DmdMethodInfo methodInfo) {
 					for (int i = 0; i < operatorInfo.Length; i++) {
 						if (i > 0)
 							output.Write(DbgTextColor.Text, " ");

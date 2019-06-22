@@ -30,9 +30,9 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		/// <param name="vm">Script control</param>
 		/// <param name="textView">REPL editor text view</param>
 		public static void AddInstance(ScriptControlVM vm, ITextView textView) {
-			if (vm == null)
+			if (vm is null)
 				throw new ArgumentNullException(nameof(vm));
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			textView.Properties.AddProperty(Key, vm);
 		}
@@ -43,7 +43,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		/// <param name="textView">Text view</param>
 		/// <returns></returns>
 		public static ScriptControlVM TryGetInstance(ITextView textView) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			textView.Properties.TryGetProperty(Key, out ScriptControlVM vm);
 			return vm;

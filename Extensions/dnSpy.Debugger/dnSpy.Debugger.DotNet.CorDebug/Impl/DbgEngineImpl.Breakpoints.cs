@@ -38,6 +38,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			public DbgEngineBoundCodeBreakpoint EngineBoundCodeBreakpoint { get; set; }
 			public DbgEngineImpl Engine { get; }
 			public BoundBreakpointData(DbgEngineImpl engine, ModuleId module, DnCodeBreakpoint breakpoint) {
+				EngineBoundCodeBreakpoint = null!;
 				Engine = engine ?? throw new ArgumentNullException(nameof(engine));
 				Module = module;
 				Breakpoint = breakpoint ?? throw new ArgumentNullException(nameof(breakpoint));
@@ -51,11 +52,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			}
 		}
 
-		void SendCodeBreakpointHitMessage_CorDebug(DnCodeBreakpoint breakpoint, DbgThread thread) {
+		void SendCodeBreakpointHitMessage_CorDebug(DnCodeBreakpoint breakpoint, DbgThread? thread) {
 			debuggerThread.VerifyAccess();
-			var bpData = (BoundBreakpointData)breakpoint.Tag;
-			Debug.Assert(bpData != null);
-			if (bpData != null)
+			var bpData = (BoundBreakpointData?)breakpoint.Tag;
+			Debug.Assert(!(bpData is null));
+			if (!(bpData is null))
 				SendMessage(new DbgMessageBreakpoint(bpData.EngineBoundCodeBreakpoint.BoundCodeBreakpoint, thread, GetMessageFlags()));
 			else
 				SendMessage(new DbgMessageBreak(thread, GetMessageFlags()));
@@ -101,7 +102,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				if (location.IsClosed)
 					continue;
 				if (location is DbgDotNetNativeCodeLocationImpl loc) {
-					if (loc.CorCode.Object == null || loc.CorCode.Engine != this)
+					if (loc.CorCode.Object is null || loc.CorCode.Engine != this)
 						continue;
 					if (!dict.TryGetValue(loc.Module, out var list))
 						dict.Add(loc.Module, list = new List<DbgDotNetNativeCodeLocationImpl>());
@@ -143,7 +144,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			}
 			var boundBreakpoints = objectFactory.Create(createdBreakpoints.ToArray());
 			foreach (var ebp in boundBreakpoints) {
-				if (!ebp.BoundCodeBreakpoint.TryGetData(out BoundBreakpointData bpData)) {
+				if (!ebp.BoundCodeBreakpoint.TryGetData(out BoundBreakpointData? bpData)) {
 					Debug.Assert(ebp.BoundCodeBreakpoint.IsClosed);
 					continue;
 				}
@@ -166,13 +167,13 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				goto case DnCodeBreakpointError.OtherError;
 			}
 
-			string GetFunctionName(DnCodeBreakpoint cbp) => $"0x{cbp.Token:X8} ({cbp.Module.ModuleName})";
+			static string GetFunctionName(DnCodeBreakpoint cbp) => $"0x{cbp.Token:X8} ({cbp.Module.ModuleName})";
 		}
 
 		Dictionary<ModuleId, List<BoundBreakpointData>> CreateBoundBreakpointsDictionary(DbgBoundCodeBreakpoint[] boundBreakpoints) {
 			var dict = new Dictionary<ModuleId, List<BoundBreakpointData>>();
 			foreach (var bound in boundBreakpoints) {
-				if (!bound.TryGetData(out BoundBreakpointData bpData) || bpData.Engine != this)
+				if (!bound.TryGetData(out BoundBreakpointData? bpData) || bpData.Engine != this)
 					continue;
 				if (!dict.TryGetValue(bpData.Module, out var list))
 					dict.Add(bpData.Module, list = new List<BoundBreakpointData>());
@@ -195,7 +196,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				bpsToRemove[0].EngineBoundCodeBreakpoint.Remove(bpsToRemove.Select(a => a.EngineBoundCodeBreakpoint).ToArray());
 		}
 
-		internal DnNativeCodeBreakpoint CreateNativeBreakpointForGetReturnValue(CorCode code, uint offset, Action<CorThread> callback) {
+		internal DnNativeCodeBreakpoint CreateNativeBreakpointForGetReturnValue(CorCode code, uint offset, Action<CorThread?> callback) {
 			debuggerThread.VerifyAccess();
 			return dnDebugger.CreateNativeBreakpoint(code, offset, ctx => { callback(ctx.E.CorThread); return false; });
 		}
@@ -205,7 +206,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			dnDebugger.RemoveBreakpoint(breakpoint);
 		}
 
-		internal DnILCodeBreakpoint CreateBreakpointForStepper(DbgModule module, uint token, uint offset, Func<CorThread, bool> callback) {
+		internal DnILCodeBreakpoint CreateBreakpointForStepper(DbgModule module, uint token, uint offset, Func<CorThread?, bool> callback) {
 			debuggerThread.VerifyAccess();
 			return dnDebugger.CreateBreakpoint(GetModuleId(module).ToDnModuleId(), token, offset, ctx => {
 				if (callback(ctx.E.CorThread))

@@ -29,12 +29,11 @@ namespace dnSpy.Text.Editor {
 
 		public OutputTextPaneCommandTargetFilter(ITextView textView) => this.textView = textView;
 
-		IOutputTextPane TryGetInstance() =>
-			__outputTextPane ?? (__outputTextPane = OutputTextPaneUtils.TryGetInstance(textView));
-		IOutputTextPane __outputTextPane;
+		IOutputTextPane TryGetInstance() => __outputTextPane ??= OutputTextPaneUtils.TryGetInstance(textView);
+		IOutputTextPane? __outputTextPane;
 
 		public CommandTargetStatus CanExecute(Guid group, int cmdId) {
-			if (TryGetInstance() == null)
+			if (TryGetInstance() is null)
 				return CommandTargetStatus.NotHandled;
 
 			if (group == CommandConstants.OutputTextPaneGroup) {
@@ -50,14 +49,14 @@ namespace dnSpy.Text.Editor {
 			return CommandTargetStatus.NotHandled;
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args = null) {
-			object result = null;
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args = null) {
+			object? result = null;
 			return Execute(group, cmdId, args, ref result);
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) {
 			var textPane = TryGetInstance();
-			if (textPane == null)
+			if (textPane is null)
 				return CommandTargetStatus.NotHandled;
 
 			if (group == CommandConstants.OutputTextPaneGroup) {

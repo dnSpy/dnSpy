@@ -36,9 +36,9 @@ namespace dnSpy.Contracts.ToolBars {
 	/// <summary>Metadata</summary>
 	public interface IToolBarItemMetadata {
 		/// <summary>See <see cref="ExportToolBarItemAttribute.OwnerGuid"/></summary>
-		string OwnerGuid { get; }
+		string? OwnerGuid { get; }
 		/// <summary>See <see cref="ExportToolBarItemAttribute.Group"/></summary>
-		string Group { get; }
+		string? Group { get; }
 		/// <summary>See <see cref="ExportToolBarItemAttribute.Order"/></summary>
 		double Order { get; }
 	}
@@ -58,13 +58,13 @@ namespace dnSpy.Contracts.ToolBars {
 		/// <summary>
 		/// Guid of owner toolbar or null to use <see cref="ToolBarConstants.APP_TB_GUID"/>
 		/// </summary>
-		public string OwnerGuid { get; set; }
+		public string? OwnerGuid { get; set; }
 
 		/// <summary>
 		/// Group name, must be of the format "order,name" where order is a decimal number and the
 		/// order of the group in this toolbar.
 		/// </summary>
-		public string Group { get; set; }
+		public string? Group { get; set; }
 
 		/// <summary>
 		/// Order within the toolbar group (<see cref="Group"/>)

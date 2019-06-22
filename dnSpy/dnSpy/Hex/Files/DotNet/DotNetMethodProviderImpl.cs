@@ -53,9 +53,9 @@ namespace dnSpy.Hex.Files.DotNet {
 			}
 		}
 
-		public DotNetMethodProviderImpl(HexBufferFile file, PeHeaders peHeaders, TablesHeap tablesHeap)
+		public DotNetMethodProviderImpl(HexBufferFile file, PeHeaders peHeaders, TablesHeap? tablesHeap)
 			: base(file) {
-			if (file == null)
+			if (file is null)
 				throw new ArgumentNullException(nameof(file));
 			this.peHeaders = peHeaders ?? throw new ArgumentNullException(nameof(peHeaders));
 			methodBodyRvas = CreateMethodBodyRvas(tablesHeap?.MDTables[(int)Table.Method]);
@@ -71,8 +71,8 @@ namespace dnSpy.Hex.Files.DotNet {
 			return HexSpan.FromBounds(peHeaders.RvaToBufferPosition(methodBodyRvas[0].Rva), info.Span.End);
 		}
 
-		MethodBodyRvaAndRid[] CreateMethodBodyRvas(MDTable methodTable) {
-			if (methodTable == null)
+		MethodBodyRvaAndRid[] CreateMethodBodyRvas(MDTable? methodTable) {
+			if (methodTable is null)
 				return Array.Empty<MethodBodyRvaAndRid>();
 			var list = new List<MethodBodyRvaAndRid>((int)methodTable.Rows);
 			var recordPos = methodTable.Span.Start;
@@ -107,7 +107,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			if (endPos < methodBodyPosition)
 				endPos = methodBodyPosition;
 			var info = new MethodBodyReader(File, tokens, methodBodyPosition, endPos).Read();
-			if (info != null)
+			if (!(info is null))
 				return info.Value;
 
 			// The file could be obfuscated (encrypted methods), assume the method ends at the next method body RVA
@@ -119,7 +119,7 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		public override bool IsMethodPosition(HexPosition position) => methodBodiesSpan.Contains(position);
 
-		public override DotNetMethodBody GetMethodBody(HexPosition position) {
+		public override DotNetMethodBody? GetMethodBody(HexPosition position) {
 			if (!IsMethodPosition(position))
 				return null;
 

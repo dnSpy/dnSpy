@@ -35,7 +35,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 
 		readonly DbgDotNetValueNodeProviderFactory valueNodeProviderFactory;
 		readonly DbgDotNetValue value;
-		DbgDotNetValue derefValue;
+		DbgDotNetValue? derefValue;
 		bool initialized;
 
 		public PointerValueNodeProvider(DbgDotNetValueNodeProviderFactory valueNodeProviderFactory, string expression, DbgDotNetValue value) {
@@ -53,23 +53,23 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 				initialized = true;
 				// Fails if it's not supported by the runtime
 				derefValue = value.LoadIndirect().Value;
-				Debug.Assert((derefValue == null) == ((evalInfo.Runtime.GetDotNetRuntime().Features & DbgDotNetRuntimeFeatures.NoDereferencePointers) != 0));
+				Debug.Assert((derefValue is null) == ((evalInfo.Runtime.GetDotNetRuntime().Features & DbgDotNetRuntimeFeatures.NoDereferencePointers) != 0));
 			}
-			return derefValue != null ? 1UL : 0;
+			return !(derefValue is null) ? 1UL : 0;
 		}
 
-		public override DbgDotNetValueNode[] GetChildren(LanguageValueNodeFactory valueNodeFactory, DbgEvaluationInfo evalInfo, ulong index, int count, DbgValueNodeEvaluationOptions options, ReadOnlyCollection<string> formatSpecifiers) {
-			if (derefValue == null)
+		public override DbgDotNetValueNode[] GetChildren(LanguageValueNodeFactory valueNodeFactory, DbgEvaluationInfo evalInfo, ulong index, int count, DbgValueNodeEvaluationOptions options, ReadOnlyCollection<string>? formatSpecifiers) {
+			if (derefValue is null)
 				return Array.Empty<DbgDotNetValueNode>();
 			var derefExpr = valueNodeProviderFactory.GetDereferenceExpression(Expression);
 			ref readonly var derefName = ref valueNodeProviderFactory.GetDereferencedName();
 			var nodeInfo = new DbgDotNetValueNodeInfo(derefValue, derefExpr);
 			var res = valueNodeProviderFactory.Create(evalInfo, true, derefValue.Type, nodeInfo, options);
 			DbgDotNetValueNode valueNode;
-			if (res.ErrorMessage != null)
+			if (!(res.ErrorMessage is null))
 				valueNode = valueNodeFactory.CreateError(evalInfo, DbgDotNetText.Empty, res.ErrorMessage, derefExpr, false);
 			else
-				valueNode = valueNodeFactory.Create(res.Provider, derefName, nodeInfo, derefExpr, PredefinedDbgValueNodeImageNames.DereferencedPointer, false, false, value.Type.GetElementType(), derefValue.Type, null, default, formatSpecifiers);
+				valueNode = valueNodeFactory.Create(res.Provider!, derefName, nodeInfo, derefExpr, PredefinedDbgValueNodeImageNames.DereferencedPointer, false, false, value.Type.GetElementType()!, derefValue.Type, null, default, formatSpecifiers);
 			return new[] { valueNode };
 		}
 

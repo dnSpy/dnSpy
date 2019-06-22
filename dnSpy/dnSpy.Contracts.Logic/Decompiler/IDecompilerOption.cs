@@ -32,12 +32,12 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <summary>
 		/// Name or null, eg. <see cref="DecompilerOptionConstants.ShowILComments_NAME"/>
 		/// </summary>
-		string Name { get; }
+		string? Name { get; }
 
 		/// <summary>
 		/// Description or null
 		/// </summary>
-		string Description { get; }
+		string? Description { get; }
 
 		/// <summary>
 		/// Type

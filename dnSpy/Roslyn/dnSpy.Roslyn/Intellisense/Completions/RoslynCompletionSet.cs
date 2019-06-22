@@ -52,26 +52,26 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 		void InitializeCompletions(IEnumerable<Completion> completions) {
 			foreach (var c in completions) {
 				var rc = c as RoslynCompletion;
-				Debug.Assert(rc != null);
-				if (rc != null)
+				Debug.Assert(!(rc is null));
+				if (!(rc is null))
 					rc.CompletionSet = this;
 			}
 		}
 
 		public static RoslynCompletionSet Create(IMruCompletionService mruCompletionService, CompletionList completionList, CompletionService completionService, ITextView textView, string moniker, string displayName, ITrackingSpan applicableTo) {
-			if (mruCompletionService == null)
+			if (mruCompletionService is null)
 				throw new ArgumentNullException(nameof(mruCompletionService));
-			if (completionList == null)
+			if (completionList is null)
 				throw new ArgumentNullException(nameof(completionList));
-			if (completionService == null)
+			if (completionService is null)
 				throw new ArgumentNullException(nameof(completionService));
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
-			if (moniker == null)
+			if (moniker is null)
 				throw new ArgumentNullException(nameof(moniker));
-			if (displayName == null)
+			if (displayName is null)
 				throw new ArgumentNullException(nameof(displayName));
-			if (applicableTo == null)
+			if (applicableTo is null)
 				throw new ArgumentNullException(nameof(applicableTo));
 			var completions = new List<Completion>(completionList.Items.Length);
 			var remainingFilters = new List<(RoslynIntellisenseFilter filter, int index)>(RoslynIntellisenseFilters.CreateFilters().Select((a, index) => (a, index)));
@@ -99,23 +99,23 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 		protected override int GetMruIndex(Completion completion) => mruCompletionService.GetMruIndex(completion.DisplayText);
 
 		protected override void Filter(List<Completion> filteredResult, IList<Completion> completions) {
-			List<string> filteredTags = null;
+			List<string>? filteredTags = null;
 
 			var filters = Filters;
-			Debug.Assert(filters != null);
-			if (filters != null) {
+			Debug.Assert(!(filters is null));
+			if (!(filters is null)) {
 				foreach (var tmpFilter in filters) {
 					var filter = tmpFilter as RoslynIntellisenseFilter;
-					Debug.Assert(filter != null);
-					if (filter != null && filter.IsChecked) {
-						if (filteredTags == null)
+					Debug.Assert(!(filter is null));
+					if (!(filter is null) && filter.IsChecked) {
+						if (filteredTags is null)
 							filteredTags = new List<string>();
 						filteredTags.AddRange(filter.Tags);
 					}
 				}
 			}
 
-			if (filteredTags == null)
+			if (filteredTags is null)
 				base.Filter(filteredResult, completions);
 			else {
 				foreach (var completion in completions) {
@@ -133,14 +133,14 @@ matched:
 		}
 
 		public void Commit(RoslynCompletion completion) {
-			if (completion == null)
+			if (completion is null)
 				throw new ArgumentNullException(nameof(completion));
 
 			mruCompletionService.AddText(completion.DisplayText);
 
 			var info = CompletionInfo.Create(ApplicableTo.TextBuffer.CurrentSnapshot);
-			Debug.Assert(info != null);
-			if (info == null)
+			Debug.Assert(!(info is null));
+			if (info is null)
 				return;
 
 			var change = completionService.GetChangeAsync(info.Value.Document, completion.CompletionItem, commitCharacter: null).GetAwaiter().GetResult();
@@ -156,7 +156,7 @@ matched:
 					return;
 				ed.Apply();
 			}
-			if (change.NewPosition != null) {
+			if (!(change.NewPosition is null)) {
 				var snapshot = buffer.CurrentSnapshot;
 				Debug.Assert(change.NewPosition.Value <= snapshot.Length);
 				if (change.NewPosition.Value <= snapshot.Length) {
@@ -172,18 +172,18 @@ matched:
 		/// <param name="completion">Completion</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public Task<CompletionDescription> GetDescriptionAsync(RoslynCompletion completion, CancellationToken cancellationToken = default) {
-			if (completion == null)
+		public Task<CompletionDescription?> GetDescriptionAsync(RoslynCompletion completion, CancellationToken cancellationToken = default) {
+			if (completion is null)
 				throw new ArgumentNullException(nameof(completion));
 
 			var info = CompletionInfo.Create(textView.TextSnapshot);
-			if (info == null)
-				return Task.FromResult<CompletionDescription>(null);
+			if (info is null)
+				return Task.FromResult<CompletionDescription?>(null);
 
 			return completionService.GetDescriptionAsync(info.Value.Document, completion.CompletionItem, cancellationToken);
 		}
 
-		IContentType ICompletionSetContentTypeProvider.GetContentType(IContentTypeRegistryService contentTypeRegistryService, CompletionClassifierKind kind) {
+		IContentType? ICompletionSetContentTypeProvider.GetContentType(IContentTypeRegistryService contentTypeRegistryService, CompletionClassifierKind kind) {
 			switch (kind) {
 			case CompletionClassifierKind.DisplayText:
 				return contentTypeRegistryService.GetContentType(RoslynContentTypes.CompletionDisplayTextRoslyn);

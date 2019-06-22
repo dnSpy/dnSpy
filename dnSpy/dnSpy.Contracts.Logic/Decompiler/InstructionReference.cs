@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
 	/// Instruction reference
 	/// </summary>
-	public sealed class InstructionReference : IEquatable<InstructionReference> {
+	public sealed class InstructionReference : IEquatable<InstructionReference?> {
 		/// <summary>
 		/// Method
 		/// </summary>
@@ -51,14 +51,14 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		public bool Equals(InstructionReference other) => other != null && Method == other.Method && Instruction == other.Instruction;
+		public bool Equals(InstructionReference? other) => !(other is null) && Method == other.Method && Instruction == other.Instruction;
 
 		/// <summary>
 		/// Equals()
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => Equals(obj as InstructionReference);
+		public override bool Equals(object? obj) => Equals(obj as InstructionReference);
 
 		/// <summary>
 		/// GetHashCode()

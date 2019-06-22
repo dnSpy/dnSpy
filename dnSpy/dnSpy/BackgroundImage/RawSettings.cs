@@ -26,9 +26,9 @@ using dnSpy.Contracts.BackgroundImage;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.BackgroundImage {
-	sealed class RawSettings : IEquatable<RawSettings> {
-		public bool IsValid => Id != null;
-		public string Id { get; private set; }
+	sealed class RawSettings : IEquatable<RawSettings?> {
+		public bool IsValid => !(Id is null);
+		public string? Id { get; private set; }
 		public Stretch Stretch { get; set; }
 		public StretchDirection StretchDirection { get; set; }
 		public double Opacity { get; set; }
@@ -54,7 +54,7 @@ namespace dnSpy.BackgroundImage {
 
 		RawSettings() {
 			Id = null;
-			Images = Array.Empty<string>();
+			images = Array.Empty<string>();
 			Stretch = DefaultRawSettings.DefaultStretch;
 			StretchDirection = DefaultRawSettings.DefaultStretchDirection;
 			Opacity = DefaultRawSettings.Opacity;
@@ -73,14 +73,16 @@ namespace dnSpy.BackgroundImage {
 			Interval = DefaultRawSettings.Interval;
 		}
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
 		public RawSettings(RawSettings other) {
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
 			Id = other.Id;
 			CopyFrom(other);
 		}
 
 		public RawSettings(string id, DefaultImageSettings defaultSettings) {
 			Id = id ?? throw new ArgumentNullException(nameof(id));
-			Images = defaultSettings.Images ?? Array.Empty<string>();
+			images = defaultSettings.Images ?? Array.Empty<string>();
 			Stretch = defaultSettings.Stretch ?? DefaultRawSettings.DefaultStretch;
 			StretchDirection = defaultSettings.StretchDirection ?? DefaultRawSettings.DefaultStretchDirection;
 			Opacity = defaultSettings.Opacity ?? DefaultRawSettings.Opacity;
@@ -102,7 +104,9 @@ namespace dnSpy.BackgroundImage {
 		public RawSettings(string id)
 			: this() => Id = id ?? throw new ArgumentNullException(nameof(id));
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
 		public RawSettings(ISettingsSection section) => ReadSettings(section);
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
 
 		void ReadSettings(ISettingsSection section) {
 			Id = section.Attribute<string>(nameof(Id));
@@ -135,7 +139,7 @@ namespace dnSpy.BackgroundImage {
 		const string SEP_STRING = "<{[]}>";
 		static string SerializeImages(string[] s) => string.Join(SEP_STRING, s);
 		static string[] DeserializeImages(string s) {
-			if (s == null)
+			if (s is null)
 				return Array.Empty<string>();
 			return s.Split(new string[] { SEP_STRING }, StringSplitOptions.None).Where(a => !string.IsNullOrEmpty(a)).Select(a => a.Trim()).ToArray();
 		}
@@ -183,9 +187,11 @@ namespace dnSpy.BackgroundImage {
 
 		public RawSettings Clone() => new RawSettings(this);
 
-		public bool EqualsImages(RawSettings other) => EqualsImagesInternal(Images, other.Images);
+		public bool EqualsImages(RawSettings? other) => EqualsImagesInternal(Images, other?.Images);
 
-		public bool EqualsSettingsNoImages(RawSettings other) {
+		public bool EqualsSettingsNoImages(RawSettings? other) {
+			if (other is null)
+				return false;
 			if (!StringComparer.Ordinal.Equals(Id, other.Id))
 				return false;
 			if (Stretch != other.Stretch)
@@ -223,13 +229,13 @@ namespace dnSpy.BackgroundImage {
 			return true;
 		}
 
-		public bool Equals(RawSettings other) =>
+		public bool Equals(RawSettings? other) =>
 			EqualsSettingsNoImages(other) && EqualsImages(other);
 
-		bool EqualsImagesInternal(string[] a, string[] b) {
+		bool EqualsImagesInternal(string[]? a, string[]? b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (a.Length != b.Length)
 				return false;
@@ -240,10 +246,10 @@ namespace dnSpy.BackgroundImage {
 			return true;
 		}
 
-		public override bool Equals(object obj) => Equals(obj as RawSettings);
+		public override bool Equals(object? obj) => Equals(obj as RawSettings);
 
 		public override int GetHashCode() {
-			int hc = Id.GetHashCode();
+			int hc = Id?.GetHashCode() ?? 0;
 			foreach (var i in Images)
 				hc ^= i.GetHashCode();
 			hc ^= (int)Stretch << 14;

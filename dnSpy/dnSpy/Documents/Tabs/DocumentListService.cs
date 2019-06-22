@@ -39,7 +39,7 @@ namespace dnSpy.Documents.Tabs {
 				return documentsList[selectedIndex];
 			}
 			set {
-				if (value == null)
+				if (value is null)
 					throw new ArgumentNullException(nameof(value));
 				int index = documentsList.IndexOf(value);
 				if (index < 0)

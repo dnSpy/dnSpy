@@ -104,7 +104,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes.VisualBasic {
 			var output = new DbgStringBuilderTextWriter(sb);
 			output.Write(DbgTextColor.Keyword, "New");
 			output.Write(DbgTextColor.Text, " ");
-			FormatTypeName(output, ctor.DeclaringType);
+			FormatTypeName(output, ctor.DeclaringType!);
 			output.Write(DbgTextColor.Punctuation, "(");
 			var castType = ctor.GetMethodSignature().GetParameterTypes()[0];
 			bool needCast = !expectedType.CanCastTo(castType);

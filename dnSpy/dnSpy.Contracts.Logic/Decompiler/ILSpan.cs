@@ -143,7 +143,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is ILSpan && Equals((ILSpan)obj);
+		public override bool Equals(object? obj) => obj is ILSpan && Equals((ILSpan)obj);
 
 		/// <summary>
 		/// GetHashCode()

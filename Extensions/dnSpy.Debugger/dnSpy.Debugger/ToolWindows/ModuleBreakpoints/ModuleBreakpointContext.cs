@@ -43,12 +43,13 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		public bool SyntaxHighlight { get; set; }
 		public SearchMatcher SearchMatcher { get; }
 
-		public ModuleBreakpointContext(UIDispatcher uiDispatcher, IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider, SearchMatcher searchMatcher) {
+		public ModuleBreakpointContext(UIDispatcher uiDispatcher, IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider, SearchMatcher searchMatcher, ModuleBreakpointFormatter formatter) {
 			UIDispatcher = uiDispatcher;
 			ClassificationFormatMap = classificationFormatMap;
 			TextElementProvider = textElementProvider;
 			TextClassifierTextColorWriter = new DbgTextClassifierTextColorWriter();
 			SearchMatcher = searchMatcher;
+			Formatter = formatter;
 		}
 	}
 }

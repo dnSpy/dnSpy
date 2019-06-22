@@ -31,8 +31,8 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 	sealed class CodeBreakpointsToolWindowContentProvider : IToolWindowContentProvider {
 		readonly Lazy<ICodeBreakpointsContent> codeBreakpointsContent;
 
-		public CodeBreakpointsToolWindowContent CodeBreakpointsToolWindowContent => codeBreakpointsToolWindowContent ?? (codeBreakpointsToolWindowContent = new CodeBreakpointsToolWindowContent(codeBreakpointsContent));
-		CodeBreakpointsToolWindowContent codeBreakpointsToolWindowContent;
+		public CodeBreakpointsToolWindowContent CodeBreakpointsToolWindowContent => codeBreakpointsToolWindowContent ??= new CodeBreakpointsToolWindowContent(codeBreakpointsContent);
+		CodeBreakpointsToolWindowContent? codeBreakpointsToolWindowContent;
 
 		[ImportingConstructor]
 		CodeBreakpointsToolWindowContentProvider(Lazy<ICodeBreakpointsContent> codeBreakpointsContent) => this.codeBreakpointsContent = codeBreakpointsContent;
@@ -41,18 +41,18 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			get { yield return new ToolWindowContentInfo(CodeBreakpointsToolWindowContent.THE_GUID, CodeBreakpointsToolWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_CODEBREAKPOINTS, false); }
 		}
 
-		public ToolWindowContent GetOrCreate(Guid guid) => guid == CodeBreakpointsToolWindowContent.THE_GUID ? CodeBreakpointsToolWindowContent : null;
+		public ToolWindowContent? GetOrCreate(Guid guid) => guid == CodeBreakpointsToolWindowContent.THE_GUID ? CodeBreakpointsToolWindowContent : null;
 	}
 
 	sealed class CodeBreakpointsToolWindowContent : ToolWindowContent, IFocusable {
 		public static readonly Guid THE_GUID = new Guid("E5745D58-4DCB-4D92-B786-4E1635C86EED");
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultHorizontal;
 
-		public override IInputElement FocusedElement => codeBreakpointsContent.Value.FocusedElement;
-		public override FrameworkElement ZoomElement => codeBreakpointsContent.Value.ZoomElement;
+		public override IInputElement? FocusedElement => codeBreakpointsContent.Value.FocusedElement;
+		public override FrameworkElement? ZoomElement => codeBreakpointsContent.Value.ZoomElement;
 		public override Guid Guid => THE_GUID;
 		public override string Title => dnSpy_Debugger_Resources.Window_Breakpoints;
-		public override object UIObject => codeBreakpointsContent.Value.UIObject;
+		public override object? UIObject => codeBreakpointsContent.Value.UIObject;
 		public bool CanFocus => true;
 
 		readonly Lazy<ICodeBreakpointsContent> codeBreakpointsContent;

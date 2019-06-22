@@ -80,7 +80,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		public ICreateConstantType CreateConstantType {
-			set { ObjectArray.CreateConstantType = value; }
+			set => ObjectArray.CreateConstantType = value;
 		}
 
 		public EnumListVM ConstantTypeEnumList { get; }
@@ -137,11 +137,11 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		bool isEnabled = true;
 
-		public ConstantType ValueType => (ConstantType)ConstantTypeEnumList.SelectedItem;
-		public object ValueNoSpecialNull => ConvertValueNoSpecialNull(Value);
+		public ConstantType ValueType => (ConstantType)ConstantTypeEnumList.SelectedItem!;
+		public object? ValueNoSpecialNull => ConvertValueNoSpecialNull(Value);
 
-		public static object ConvertValueNoSpecialNull(object value) {
-			if (value == null)
+		public static object? ConvertValueNoSpecialNull(object? value) {
+			if (value is null)
 				return value;
 			if (value is Null)
 				return null;
@@ -150,9 +150,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			return value;
 		}
 
-		public object Value {
+		public object? Value {
 			get {
-				switch ((ConstantType)ConstantTypeEnumList.SelectedItem) {
+				switch ((ConstantType)ConstantTypeEnumList.SelectedItem!) {
 				case ConstantType.Null:			return null;
 				case ConstantType.Boolean:		return Boolean.Value;
 				case ConstantType.Char:			return Char.Value;
@@ -244,17 +244,17 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 				else if (value == Null<string>.Instance) {
 					SetSelectedItem(ConstantType.String);
-					String.Value = null;
+					String.Value = null!;
 				}
 				else if (value is EnumInfo enumInfo) {
 					if (enumInfo.IsArray) {
-						Debug.Assert(enumInfo.Value == null || enumInfo.Value is System.Collections.IList);
+						Debug.Assert(enumInfo.Value is null || enumInfo.Value is System.Collections.IList);
 						SetSelectedItem(ConstantType.EnumArray);
 						EnumArray.Value = enumInfo;
-						if (ArraysCanBeNull && enumInfo.Value == null) EnumArrayIsNull = true;
+						if (ArraysCanBeNull && enumInfo.Value is null) EnumArrayIsNull = true;
 					}
 					else {
-						Debug.Assert(enumInfo.Value != null && !(enumInfo.Value is System.Collections.IList));
+						Debug.Assert(!(enumInfo.Value is null) && !(enumInfo.Value is System.Collections.IList));
 						SetSelectedItem(ConstantType.Enum);
 						Enum.Value = enumInfo;
 					}
@@ -265,7 +265,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 				else if (value == Null<TypeSig>.Instance) {
 					SetSelectedItem(ConstantType.Type);
-					Type.Value = null;
+					Type.Value = null!;
 				}
 				else if (value is IList<bool>) {
 					SetSelectedItem(ConstantType.BooleanArray);
@@ -273,7 +273,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 				else if (value == Null<bool[]>.Instance) {
 					SetSelectedItem(ConstantType.BooleanArray);
-					BooleanArray.Value = null;
+					BooleanArray.Value = null!;
 					if (ArraysCanBeNull) BooleanArrayIsNull = true;
 				}
 				else if (value is IList<char>) {
@@ -282,7 +282,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 				else if (value == Null<char[]>.Instance) {
 					SetSelectedItem(ConstantType.CharArray);
-					CharArray.Value = null;
+					CharArray.Value = null!;
 					if (ArraysCanBeNull) CharArrayIsNull = true;
 				}
 				else if (value is IList<sbyte> && valueType != typeof(byte[])) {
@@ -291,7 +291,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 				else if (value == Null<sbyte[]>.Instance) {
 					SetSelectedItem(ConstantType.SByteArray);
-					SByteArray.Value = null;
+					SByteArray.Value = null!;
 					if (ArraysCanBeNull) SByteArrayIsNull = true;
 				}
 				else if (value is IList<short> && valueType != typeof(ushort[])) {
@@ -300,7 +300,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 				else if (value == Null<short[]>.Instance) {
 					SetSelectedItem(ConstantType.Int16Array);
-					Int16Array.Value = null;
+					Int16Array.Value = null!;
 					if (ArraysCanBeNull) Int16ArrayIsNull = true;
 				}
 				else if (value is IList<int> && valueType != typeof(uint[])) {
@@ -309,7 +309,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 				else if (value == Null<int[]>.Instance) {
 					SetSelectedItem(ConstantType.Int32Array);
-					Int32Array.Value = null;
+					Int32Array.Value = null!;
 					if (ArraysCanBeNull) Int32ArrayIsNull = true;
 				}
 				else if (value is IList<long> && valueType != typeof(ulong[])) {
@@ -318,7 +318,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 				else if (value == Null<long[]>.Instance) {
 					SetSelectedItem(ConstantType.Int64Array);
-					Int64Array.Value = null;
+					Int64Array.Value = null!;
 					if (ArraysCanBeNull) Int64ArrayIsNull = true;
 				}
 				else if (value is IList<byte> && valueType != typeof(sbyte[])) {
@@ -327,7 +327,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 				else if (value == Null<byte[]>.Instance) {
 					SetSelectedItem(ConstantType.ByteArray);
-					ByteArray.Value = null;
+					ByteArray.Value = null!;
 					if (ArraysCanBeNull) ByteArrayIsNull = true;
 				}
 				else if (value is IList<ushort> && valueType != typeof(short[])) {
@@ -336,7 +336,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 				else if (value == Null<ushort[]>.Instance) {
 					SetSelectedItem(ConstantType.UInt16Array);
-					UInt16Array.Value = null;
+					UInt16Array.Value = null!;
 					if (ArraysCanBeNull) UInt16ArrayIsNull = true;
 				}
 				else if (value is IList<uint> && valueType != typeof(int[])) {
@@ -345,7 +345,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 				else if (value == Null<uint[]>.Instance) {
 					SetSelectedItem(ConstantType.UInt32Array);
-					UInt32Array.Value = null;
+					UInt32Array.Value = null!;
 					if (ArraysCanBeNull) UInt32ArrayIsNull = true;
 				}
 				else if (value is IList<ulong> && valueType != typeof(long[])) {
@@ -354,7 +354,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 				else if (value == Null<ulong[]>.Instance) {
 					SetSelectedItem(ConstantType.UInt64Array);
-					UInt64Array.Value = null;
+					UInt64Array.Value = null!;
 					if (ArraysCanBeNull) UInt64ArrayIsNull = true;
 				}
 				else if (value is IList<float>) {
@@ -363,7 +363,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 				else if (value == Null<float[]>.Instance) {
 					SetSelectedItem(ConstantType.SingleArray);
-					SingleArray.Value = null;
+					SingleArray.Value = null!;
 					if (ArraysCanBeNull) SingleArrayIsNull = true;
 				}
 				else if (value is IList<double>) {
@@ -372,7 +372,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 				else if (value == Null<double[]>.Instance) {
 					SetSelectedItem(ConstantType.DoubleArray);
-					DoubleArray.Value = null;
+					DoubleArray.Value = null!;
 					if (ArraysCanBeNull) DoubleArrayIsNull = true;
 				}
 				else if (value is IList<string>) {
@@ -381,7 +381,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 				else if (value == Null<string[]>.Instance) {
 					SetSelectedItem(ConstantType.StringArray);
-					StringArray.Value = null;
+					StringArray.Value = null!;
 					if (ArraysCanBeNull) StringArrayIsNull = true;
 				}
 				else if (value is IList<TypeSig>) {
@@ -390,16 +390,16 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 				else if (value == Null<TypeSig[]>.Instance) {
 					SetSelectedItem(ConstantType.TypeArray);
-					TypeArray.Value = null;
+					TypeArray.Value = null!;
 					if (ArraysCanBeNull) TypeArrayIsNull = true;
 				}
-				else if (value is IList<object>) {
+				else if (value is IList<object?>) {
 					SetSelectedItem(ConstantType.ObjectArray);
-					ObjectArray.Value = (IList<object>)value;
+					ObjectArray.Value = (IList<object?>)value;
 				}
 				else if (value == Null<object[]>.Instance) {
 					SetSelectedItem(ConstantType.ObjectArray);
-					ObjectArray.Value = null;
+					ObjectArray.Value = null!;
 					if (ArraysCanBeNull) ObjectArrayIsNull = true;
 				}
 				else {
@@ -416,54 +416,54 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				ConstantTypeEnumList.SelectedIndex = 0;
 		}
 
-		public bool NullIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Null;
-		public bool BooleanIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Boolean;
-		public bool CharIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Char;
-		public bool SByteIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.SByte;
-		public bool Int16IsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Int16;
-		public bool Int32IsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Int32;
-		public bool Int64IsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Int64;
-		public bool ByteIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Byte;
-		public bool UInt16IsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.UInt16;
-		public bool UInt32IsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.UInt32;
-		public bool UInt64IsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.UInt64;
-		public bool SingleIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Single;
-		public bool DoubleIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Double;
-		public bool StringIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.String;
-		public bool EnumIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Enum;
-		public bool TypeIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Type;
-		public bool ObjectArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.ObjectArray;
-		public bool BooleanArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.BooleanArray;
-		public bool CharArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.CharArray;
-		public bool SByteArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.SByteArray;
-		public bool Int16ArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Int16Array;
-		public bool Int32ArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Int32Array;
-		public bool Int64ArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Int64Array;
-		public bool ByteArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.ByteArray;
-		public bool UInt16ArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.UInt16Array;
-		public bool UInt32ArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.UInt32Array;
-		public bool UInt64ArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.UInt64Array;
-		public bool SingleArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.SingleArray;
-		public bool DoubleArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.DoubleArray;
-		public bool StringArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.StringArray;
-		public bool EnumArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.EnumArray;
-		public bool TypeArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.TypeArray;
-		public bool ObjectArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.ObjectArray && !ObjectArrayIsNull;
-		public bool BooleanArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.BooleanArray && !BooleanArrayIsNull;
-		public bool CharArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.CharArray && !CharArrayIsNull;
-		public bool SByteArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.SByteArray && !SByteArrayIsNull;
-		public bool Int16ArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Int16Array && !Int16ArrayIsNull;
-		public bool Int32ArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Int32Array && !Int32ArrayIsNull;
-		public bool Int64ArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Int64Array && !Int64ArrayIsNull;
-		public bool ByteArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.ByteArray && !ByteArrayIsNull;
-		public bool UInt16ArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.UInt16Array && !UInt16ArrayIsNull;
-		public bool UInt32ArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.UInt32Array && !UInt32ArrayIsNull;
-		public bool UInt64ArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.UInt64Array && !UInt64ArrayIsNull;
-		public bool SingleArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.SingleArray && !SingleArrayIsNull;
-		public bool DoubleArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.DoubleArray && !DoubleArrayIsNull;
-		public bool StringArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.StringArray && !StringArrayIsNull;
-		public bool EnumArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.EnumArray && !EnumArrayIsNull;
-		public bool TypeArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.TypeArray && !TypeArrayIsNull;
+		public bool NullIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.Null;
+		public bool BooleanIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.Boolean;
+		public bool CharIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.Char;
+		public bool SByteIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.SByte;
+		public bool Int16IsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.Int16;
+		public bool Int32IsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.Int32;
+		public bool Int64IsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.Int64;
+		public bool ByteIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.Byte;
+		public bool UInt16IsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.UInt16;
+		public bool UInt32IsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.UInt32;
+		public bool UInt64IsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.UInt64;
+		public bool SingleIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.Single;
+		public bool DoubleIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.Double;
+		public bool StringIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.String;
+		public bool EnumIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.Enum;
+		public bool TypeIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.Type;
+		public bool ObjectArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.ObjectArray;
+		public bool BooleanArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.BooleanArray;
+		public bool CharArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.CharArray;
+		public bool SByteArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.SByteArray;
+		public bool Int16ArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.Int16Array;
+		public bool Int32ArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.Int32Array;
+		public bool Int64ArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.Int64Array;
+		public bool ByteArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.ByteArray;
+		public bool UInt16ArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.UInt16Array;
+		public bool UInt32ArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.UInt32Array;
+		public bool UInt64ArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.UInt64Array;
+		public bool SingleArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.SingleArray;
+		public bool DoubleArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.DoubleArray;
+		public bool StringArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.StringArray;
+		public bool EnumArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.EnumArray;
+		public bool TypeArrayIsSelected => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.TypeArray;
+		public bool ObjectArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.ObjectArray && !ObjectArrayIsNull;
+		public bool BooleanArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.BooleanArray && !BooleanArrayIsNull;
+		public bool CharArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.CharArray && !CharArrayIsNull;
+		public bool SByteArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.SByteArray && !SByteArrayIsNull;
+		public bool Int16ArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.Int16Array && !Int16ArrayIsNull;
+		public bool Int32ArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.Int32Array && !Int32ArrayIsNull;
+		public bool Int64ArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.Int64Array && !Int64ArrayIsNull;
+		public bool ByteArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.ByteArray && !ByteArrayIsNull;
+		public bool UInt16ArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.UInt16Array && !UInt16ArrayIsNull;
+		public bool UInt32ArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.UInt32Array && !UInt32ArrayIsNull;
+		public bool UInt64ArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.UInt64Array && !UInt64ArrayIsNull;
+		public bool SingleArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.SingleArray && !SingleArrayIsNull;
+		public bool DoubleArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.DoubleArray && !DoubleArrayIsNull;
+		public bool StringArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.StringArray && !StringArrayIsNull;
+		public bool EnumArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.EnumArray && !EnumArrayIsNull;
+		public bool TypeArrayIsSelectedAndNotNull => (ConstantType)ConstantTypeEnumList.SelectedItem! == ConstantType.TypeArray && !TypeArrayIsNull;
 
 		public BooleanVM Boolean { get; }
 		public CharVM Char { get; }
@@ -707,8 +707,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		public bool ArraysCanBeNull { get; }
 
-		public ConstantTypeVM(ModuleDef ownerModule, object value, ConstantType[] validConstants, bool allowNullString, bool arraysCanBeNull, TypeSigCreatorOptions options = null) {
-			if (options == null) {
+		public ConstantTypeVM(ModuleDef ownerModule, object? value, ConstantType[] validConstants, bool allowNullString, bool arraysCanBeNull, TypeSigCreatorOptions? options = null) {
+			if (options is null) {
 				IList<ConstantType> clist = validConstants;
 				if (clist.IndexOf(ConstantType.Type) >= 0 ||
 					clist.IndexOf(ConstantType.TypeArray) >= 0 ||
@@ -816,7 +816,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				if (!IsEnabled)
 					return false;
 
-				switch ((ConstantType)ConstantTypeEnumList.SelectedItem) {
+				switch ((ConstantType)ConstantTypeEnumList.SelectedItem!) {
 				case ConstantType.Null:			break;
 				case ConstantType.Boolean:		if (Boolean.HasError) return true; break;
 				case ConstantType.Char:			if (Char.HasError) return true; break;

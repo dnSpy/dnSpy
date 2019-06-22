@@ -194,6 +194,6 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="order">New <see cref="DbgModule.Order"/> value</param>
 		/// <param name="timestamp">New <see cref="DbgModule.Timestamp"/> value</param>
 		/// <param name="version">New <see cref="DbgModule.Version"/> value</param>
-		public abstract void Update(UpdateOptions options, bool isExe = false, ulong address = 0, uint size = 0, DbgImageLayout imageLayout = 0, string name = null, string filename = null, bool isDynamic = false, bool isInMemory = false, bool? isOptimized = null, int order = 0, DateTime? timestamp = null, string version = null);
+		public abstract void Update(UpdateOptions options, bool isExe = false, ulong address = 0, uint size = 0, DbgImageLayout imageLayout = 0, string? name = null, string? filename = null, bool isDynamic = false, bool isInMemory = false, bool? isOptimized = null, int order = 0, DateTime? timestamp = null, string? version = null);
 	}
 }

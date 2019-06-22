@@ -36,7 +36,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <param name="resource">Resource</param>
 		/// <param name="treeNodeGroup">Group</param>
 		/// <returns></returns>
-		ResourceNode Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup);
+		ResourceNode? Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup);
 
 		/// <summary>
 		/// Creates a <see cref="ResourceElementNode"/> instance or returns null
@@ -45,7 +45,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <param name="resourceElement">Resource</param>
 		/// <param name="treeNodeGroup">Group</param>
 		/// <returns></returns>
-		ResourceElementNode Create(ModuleDef module, ResourceElement resourceElement, ITreeNodeGroup treeNodeGroup);
+		ResourceElementNode? Create(ModuleDef module, ResourceElement resourceElement, ITreeNodeGroup treeNodeGroup);
 	}
 
 	/// <summary>Metadata</summary>

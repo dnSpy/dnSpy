@@ -111,7 +111,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			output.Write(mdVM.OffsetString, BoxedTextColor.Comment);
 			for (int j = 0; j < cols.Count; j++) {
 				output.Write("\t", BoxedTextColor.Comment);
-				output.Write(mdVM.GetField(j).DataFieldVM.StringValue, BoxedTextColor.Comment);
+				output.Write(mdVM.GetField(j)!.DataFieldVM.StringValue, BoxedTextColor.Comment);
 			}
 			if (MetadataTableVM.HasInfo) {
 				output.Write("\t", BoxedTextColor.Comment);
@@ -154,7 +154,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			}
 		}
 
-		public MetadataTableRecordNode FindTokenNode(uint token) {
+		public MetadataTableRecordNode? FindTokenNode(uint token) {
 			uint rid = token & 0x00FFFFFF;
 			if (rid - 1 >= MetadataTableVM.Rows)
 				return null;

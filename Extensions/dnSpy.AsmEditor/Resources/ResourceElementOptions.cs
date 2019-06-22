@@ -21,8 +21,8 @@ using dnlib.DotNet.Resources;
 
 namespace dnSpy.AsmEditor.Resources {
 	sealed class ResourceElementOptions {
-		public string Name;
-		public IResourceData ResourceData;
+		public string? Name;
+		public IResourceData? ResourceData;
 
 		public ResourceElementOptions() {
 		}

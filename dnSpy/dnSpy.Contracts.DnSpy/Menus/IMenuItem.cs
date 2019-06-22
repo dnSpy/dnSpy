@@ -53,7 +53,7 @@ namespace dnSpy.Contracts.Menus {
 		/// </summary>
 		/// <param name="context">Context</param>
 		/// <returns></returns>
-		string GetHeader(IMenuItemContext context);
+		string? GetHeader(IMenuItemContext context);
 
 		/// <summary>
 		/// Gets the menu item input gesture text or null if the default input gesture text from the
@@ -61,7 +61,7 @@ namespace dnSpy.Contracts.Menus {
 		/// </summary>
 		/// <param name="context">Context</param>
 		/// <returns></returns>
-		string GetInputGestureText(IMenuItemContext context);
+		string? GetInputGestureText(IMenuItemContext context);
 
 		/// <summary>
 		/// Gets the menu item icon or null if the default icon from the attribute should be used.
@@ -81,19 +81,19 @@ namespace dnSpy.Contracts.Menus {
 	/// <summary>Metadata</summary>
 	public interface IMenuItemMetadata {
 		/// <summary>See <see cref="ExportMenuItemAttribute.OwnerGuid"/></summary>
-		string OwnerGuid { get; }
+		string? OwnerGuid { get; }
 		/// <summary>See <see cref="ExportMenuItemAttribute.Guid"/></summary>
-		string Guid { get; }
+		string? Guid { get; }
 		/// <summary>See <see cref="ExportMenuItemAttribute.Group"/></summary>
-		string Group { get; }
+		string? Group { get; }
 		/// <summary>See <see cref="ExportMenuItemAttribute.Order"/></summary>
 		double Order { get; }
 		/// <summary>See <see cref="ExportMenuItemAttribute.Header"/></summary>
-		string Header { get; }
+		string? Header { get; }
 		/// <summary>See <see cref="ExportMenuItemAttribute.InputGestureText"/></summary>
-		string InputGestureText { get; }
+		string? InputGestureText { get; }
 		/// <summary>See <see cref="ExportMenuItemAttribute.Icon"/></summary>
-		string Icon { get; }
+		string? Icon { get; }
 	}
 
 	/// <summary>
@@ -109,18 +109,18 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>
 		/// Guid of owner menu or menu item. <c>null</c> if it's a context menu (<see cref="MenuConstants.CTX_MENU_GUID"/>)
 		/// </summary>
-		public string OwnerGuid { get; set; }
+		public string? OwnerGuid { get; set; }
 
 		/// <summary>
 		/// Guid of this item or null if it can't contain any child items
 		/// </summary>
-		public string Guid { get; set; }
+		public string? Guid { get; set; }
 
 		/// <summary>
 		/// Group name, must be of the format "order,name" where order is a decimal number and the
 		/// order of the group in this menu.
 		/// </summary>
-		public string Group { get; set; }
+		public string? Group { get; set; }
 
 		/// <summary>
 		/// Order within the menu group (<see cref="Group"/>)
@@ -130,16 +130,16 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>
 		/// Menu item header property value
 		/// </summary>
-		public string Header { get; set; }
+		public string? Header { get; set; }
 
 		/// <summary>
 		/// Menu item input gesture text property value
 		/// </summary>
-		public string InputGestureText { get; set; }
+		public string? InputGestureText { get; set; }
 
 		/// <summary>
 		/// Icon name
 		/// </summary>
-		public string Icon { get; set; }
+		public string? Icon { get; set; }
 	}
 }

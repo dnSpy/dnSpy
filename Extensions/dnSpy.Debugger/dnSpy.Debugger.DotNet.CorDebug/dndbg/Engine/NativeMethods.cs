@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#nullable disable
 using System;
 using System.Runtime.InteropServices;
 using dndbg.COM.CorDebug;
@@ -47,7 +48,7 @@ namespace dndbg.Engine {
 		public static extern bool FreeLibrary([In] IntPtr hModule);
 
 		[DllImport("kernel32", CharSet = CharSet.Unicode, SetLastError = true)]
-		public static extern bool CreateProcess([In] string lpApplicationName, [In, Out] string lpCommandLine, [In] IntPtr lpProcessAttributes, [In] IntPtr lpThreadAttributes, [In] bool bInheritHandles, [In] ProcessCreationFlags dwCreationFlags, [In] string lpEnvironment, [In] string lpCurrentDirectory, [In] ref STARTUPINFO lpStartupInfo, out PROCESS_INFORMATION lpProcessInformation);
+		public static extern bool CreateProcess([In] string lpApplicationName, [In] string lpCommandLine, [In] IntPtr lpProcessAttributes, [In] IntPtr lpThreadAttributes, [In] bool bInheritHandles, [In] ProcessCreationFlags dwCreationFlags, [In] string lpEnvironment, [In] string lpCurrentDirectory, [In] ref STARTUPINFO lpStartupInfo, out PROCESS_INFORMATION lpProcessInformation);
 
 		[DllImport("kernel32", SetLastError = true)]
 		public static extern bool TerminateProcess([In] IntPtr hProcess, [In] uint uExitCode);

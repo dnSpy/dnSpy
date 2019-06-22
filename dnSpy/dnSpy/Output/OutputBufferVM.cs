@@ -30,8 +30,8 @@ using Microsoft.VisualStudio.Text.Operations;
 
 namespace dnSpy.Output {
 	sealed class OutputBufferVM : ViewModelBase, IOutputTextPane {
-		public IInputElement FocusedElement => logEditor.FocusedElement;
-		public object TextEditorUIObject => logEditor.UIObject;
+		public IInputElement? FocusedElement => logEditor.FocusedElement;
+		public object? TextEditorUIObject => logEditor.UIObject;
 		public double ZoomLevel => logEditor.TextView.ZoomLevel;
 
 		public Guid Guid { get; }
@@ -105,11 +105,11 @@ namespace dnSpy.Output {
 
 		public string GetText() => logEditor.GetText();
 		public ICachedWriter CreateWriter() => new CachedWriter(this);
-		public void Write(object color, string s) => WriteInternal(color, s);
-		public void Write(TextColor color, string s) => WriteInternal(color.Box(), s);
-		public void WriteLine(TextColor color, string s) => WriteLine(color.Box(), s);
+		public void Write(object color, string? s) => WriteInternal(color, s);
+		public void Write(TextColor color, string? s) => WriteInternal(color.Box(), s);
+		public void WriteLine(TextColor color, string? s) => WriteLine(color.Box(), s);
 
-		public void WriteLine(object color, string s) {
+		public void WriteLine(object color, string? s) {
 			WriteInternal(color, s);
 			WriteInternal(BoxedTextColor.Text, Environment.NewLine);
 		}
@@ -119,8 +119,8 @@ namespace dnSpy.Output {
 				WriteInternal(t.Color, t.Text);
 		}
 
-		void WriteInternal(object color, string text) {
-			if (text == null)
+		void WriteInternal(object color, string? text) {
+			if (text is null)
 				return;
 			int so = 0;
 			while (so < text.Length) {

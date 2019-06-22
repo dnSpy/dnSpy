@@ -23,25 +23,26 @@ using System.Collections.Generic;
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 	sealed class LazyList<T> where T : class {
 		readonly Dictionary<uint, T> dict;
-		readonly Func<uint, T> readElementByRID;
+		readonly Func<uint, T?> readElementByRID;
 
-		public T this[uint index] {
+		public T? this[uint index] {
 			get {
-				if (dict.TryGetValue(index, out var elem))
+				T? elem;
+				if (dict.TryGetValue(index, out elem))
 					return elem;
 				elem = readElementByRID(index + 1);
-				if (elem != null)
+				if (!(elem is null))
 					dict[index] = elem;
 				return elem;
 			}
 		}
 
-		public T TryGet(uint index) {
+		public T? TryGet(uint index) {
 			dict.TryGetValue(index, out var elem);
 			return elem;
 		}
 
-		public LazyList(Func<uint, T> readElementByRID) {
+		public LazyList(Func<uint, T?> readElementByRID) {
 			this.readElementByRID = readElementByRID;
 			dict = new Dictionary<uint, T>();
 		}
@@ -49,20 +50,21 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 
 	sealed class LazyList<TValue, TArg> where TValue : class {
 		readonly Dictionary<uint, TValue> dict;
-		readonly Func<uint, TArg, TValue> readElementByRID;
+		readonly Func<uint, TArg, TValue?> readElementByRID;
 
-		public TValue this[uint index, TArg arg] {
+		public TValue? this[uint index, TArg arg] {
 			get {
-				if (dict.TryGetValue(index, out var elem))
+				TValue? elem;
+				if (dict.TryGetValue(index, out elem))
 					return elem;
 				elem = readElementByRID(index + 1, arg);
-				if (elem != null)
+				if (!(elem is null))
 					dict[index] = elem;
 				return elem;
 			}
 		}
 
-		public LazyList(Func<uint, TArg, TValue> readElementByRID) {
+		public LazyList(Func<uint, TArg, TValue?> readElementByRID) {
 			this.readElementByRID = readElementByRID;
 			dict = new Dictionary<uint, TValue>();
 		}
@@ -70,20 +72,21 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 
 	sealed class LazyList2<TValue, TArg1, TArg2> where TValue : class {
 		readonly Dictionary<uint, TValue> dict;
-		readonly Func<uint, TArg1, TArg2, (TValue elem, bool containedGenericParams)> readElementByRID;
+		readonly Func<uint, TArg1, TArg2, (TValue? elem, bool containedGenericParams)> readElementByRID;
 
-		public TValue this[uint index, TArg1 arg1, TArg2 arg2] {
+		public TValue? this[uint index, TArg1 arg1, TArg2 arg2] {
 			get {
-				if (dict.TryGetValue(index, out var elem))
+				TValue? elem;
+				if (dict.TryGetValue(index, out elem))
 					return elem;
 				var info = readElementByRID(index + 1, arg1, arg2);
-				if ((elem = info.elem) != null && !info.containedGenericParams)
+				if (!((elem = info.elem) is null) && !info.containedGenericParams)
 					dict[index] = elem;
 				return elem;
 			}
 		}
 
-		public LazyList2(Func<uint, TArg1, TArg2, (TValue elem, bool containedGenericParams)> readElementByRID) {
+		public LazyList2(Func<uint, TArg1, TArg2, (TValue? elem, bool containedGenericParams)> readElementByRID) {
 			this.readElementByRID = readElementByRID;
 			dict = new Dictionary<uint, TValue>();
 		}

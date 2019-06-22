@@ -27,9 +27,9 @@ using dnSpy.Debugger.UI;
 
 namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 	sealed class ModuleBreakpointColumnConverter : IValueConverter {
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
+		public object? Convert(object value, Type targetType, object parameter, CultureInfo culture) {
 			var obj = value as FormatterObject<ModuleBreakpointVM>;
-			if (obj == null)
+			if (obj is null)
 				return null;
 
 			var writer = obj.VM.Context.TextClassifierTextColorWriter;

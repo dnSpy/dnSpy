@@ -27,6 +27,6 @@ namespace dnSpy.Contracts.TreeView {
 		/// <summary>
 		/// Gets the reference
 		/// </summary>
-		IMDTokenProvider Reference { get; }
+		IMDTokenProvider? Reference { get; }
 	}
 }

@@ -35,11 +35,11 @@ namespace dnSpy.Text.Editor {
 			return new Size(size.Width * maxWidthMultiplier, size.Height * maxHeightMultiplier);
 		}
 
-		public static void SetScaleTransform(IWpfTextView wpfTextView, FrameworkElement popupElement) {
-			if (wpfTextView == null)
+		public static void SetScaleTransform(IWpfTextView? wpfTextView, FrameworkElement popupElement) {
+			if (wpfTextView is null)
 				return;
 			var metroWindow = Window.GetWindow(wpfTextView.VisualElement) as MetroWindow;
-			if (metroWindow == null)
+			if (metroWindow is null)
 				return;
 			metroWindow.SetScaleTransform(popupElement, wpfTextView.ZoomLevel / 100);
 

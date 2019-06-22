@@ -30,9 +30,9 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 	}
 
 	sealed class MemoryContent : IMemoryContent {
-		public IInputElement FocusedElement => memoryVM.CanEditMemory ? hexViewHost.HexView.VisualElement : memoryControl.DisabledFocusedElement;
-		public FrameworkElement ZoomElement => null;
-		public object UIObject => memoryControl;
+		public IInputElement? FocusedElement => memoryVM.CanEditMemory ? hexViewHost.HexView.VisualElement : memoryControl.DisabledFocusedElement;
+		public FrameworkElement? ZoomElement => null;
+		public object? UIObject => memoryControl;
 		public WpfHexView HexView => hexViewHost.HexView;
 		double IZoomable.ZoomValue => hexViewHost.HexView.ZoomLevel / 100;
 

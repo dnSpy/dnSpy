@@ -34,8 +34,8 @@ namespace dnSpy.AsmEditor.Compiler {
 		public string Code => Diagnostic.Id;
 		public string Description => Diagnostic.Description;
 		public string File => GetFilename(Diagnostic.Filename);
-		public string FullPath => Diagnostic.Filename;
-		public string Line => Diagnostic.LineLocationSpan == null ? string.Empty : (Diagnostic.LineLocationSpan.Value.StartLinePosition.Line + 1).ToString();
+		public string? FullPath => Diagnostic.Filename;
+		public string Line => Diagnostic.LineLocationSpan is null ? string.Empty : (Diagnostic.LineLocationSpan.Value.StartLinePosition.Line + 1).ToString();
 		public ICommand ShowHelpCommand => new RelayCommand(a => ShowHelp());
 		public LineLocationSpan? LineLocationSpan => Diagnostic.LineLocationSpan;
 
@@ -66,8 +66,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 		}
 
-		static string GetFilename(string filename) {
-			if (filename == null)
+		static string GetFilename(string? filename) {
+			if (filename is null)
 				return string.Empty;
 			try {
 				return Path.GetFileName(filename);

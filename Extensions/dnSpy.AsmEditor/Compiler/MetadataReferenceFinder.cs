@@ -59,7 +59,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		IEnumerable<AssemblyDef> GetAssemblies(ModuleDef module, IEnumerable<string> extraAssemblyReferences) {
 			var asm = module.Assembly;
-			if (asm != null) {
+			if (!(asm is null)) {
 				foreach (var a in GetAssemblies(asm))
 					yield return a;
 			}
@@ -67,7 +67,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			foreach (var asmRef in GetAssemblyRefs(module, extraAssemblyReferences)) {
 				cancellationToken.ThrowIfCancellationRequested();
 				asm = module.Context.AssemblyResolver.Resolve(asmRef, module);
-				if (asm == null)
+				if (asm is null)
 					continue;
 				foreach (var a in GetAssemblies(asm))
 					yield return a;
@@ -79,7 +79,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				yield return a;
 			foreach (var s in extraAssemblyReferences) {
 				var info = new AssemblyNameInfo(s);
-				if (info.Version != null)
+				if (!(info.Version is null))
 					yield return info;
 			}
 		}
@@ -101,8 +101,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			new PublicKeyToken("cc7b13ffcd2ddd51"),
 		};
 
-		static bool IsPublicKeyToken(PublicKeyToken[] tokens, PublicKeyToken token) {
-			if (token == null)
+		static bool IsPublicKeyToken(PublicKeyToken[] tokens, PublicKeyToken? token) {
+			if (token is null)
 				return false;
 			foreach (var t in tokens) {
 				if (token.Equals(t))
@@ -134,7 +134,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				checkedContractsAssemblies.Add(asmRef);
 
 				var contractsAsm = module.Context.AssemblyResolver.Resolve(asmRef, module);
-				if (contractsAsm != null) {
+				if (!(contractsAsm is null)) {
 					yield return contractsAsm;
 					foreach (var m in contractsAsm.Modules) {
 						foreach (var ar in m.GetAssemblyRefs()) {
@@ -150,7 +150,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			foreach (var asmRef in nonContractAsms) {
 				cancellationToken.ThrowIfCancellationRequested();
 				var asm = module.Context.AssemblyResolver.Resolve(asmRef, module);
-				if (asm != null)
+				if (!(asm is null))
 					yield return asm;
 			}
 		}

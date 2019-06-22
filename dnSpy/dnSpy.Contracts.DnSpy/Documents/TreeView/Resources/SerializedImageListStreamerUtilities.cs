@@ -21,6 +21,7 @@ using System;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Windows.Forms;
 using System.Windows.Media.Imaging;
@@ -41,7 +42,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <param name="serializedData">Serialized data</param>
 		/// <param name="imageData">Updated with image data</param>
 		/// <returns></returns>
-		public static bool GetImageData(ModuleDef module, string typeName, byte[] serializedData, out byte[] imageData) {
+		public static bool GetImageData(ModuleDef? module, string typeName, byte[] serializedData, [NotNullWhenTrue] out byte[]? imageData) {
 			imageData = null;
 			if (!SerializedImageUtilities.CheckType(module, typeName, SystemWindowsFormsImageListStreamer))
 				return false;
@@ -50,7 +51,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 			// ImageListStreamer loops over every item looking for "Data" (case insensitive)
 			foreach (var v in dict.Values) {
 				var d = v.Value as byte[];
-				if (d == null)
+				if (d is null)
 					continue;
 				if ("Data".Equals(v.Name, StringComparison.OrdinalIgnoreCase)) {
 					imageData = d;
@@ -77,7 +78,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 
 			foreach (var imageSource in opts.ImageSources) {
 				var bitmapSource = imageSource as BitmapSource;
-				if (bitmapSource == null)
+				if (bitmapSource is null)
 					throw new InvalidOperationException("Only BitmapSources can be used");
 				var encoder = new BmpBitmapEncoder();
 				encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
@@ -101,7 +102,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <param name="module">Module</param>
 		/// <param name="newResElem">New data</param>
 		/// <returns></returns>
-		public static string CheckCanUpdateData(ModuleDef module, ResourceElement newResElem) {
+		public static string CheckCanUpdateData(ModuleDef? module, ResourceElement newResElem) {
 			var binData = (BinaryResourceData)newResElem.ResourceData;
 			if (!GetImageData(module, binData.TypeName, binData.Data, out var imageData))
 				return dnSpy_Contracts_DnSpy_Resources.NewDataNotImageList;

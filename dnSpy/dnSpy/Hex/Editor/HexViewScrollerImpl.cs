@@ -47,7 +47,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		public override void EnsureSpanVisible(HexBufferLine line, VST.Span span, VSTE.EnsureSpanVisibleOptions options) {
-			if (line == null)
+			if (line is null)
 				throw new ArgumentNullException(nameof(line));
 			if (line.Buffer != hexView.Buffer)
 				throw new ArgumentException();
@@ -75,7 +75,7 @@ namespace dnSpy.Hex.Editor {
 				return;
 
 			var ispan = span.Intersection(hexView.HexViewLines.FormattedSpan);
-			if (ispan == null)
+			if (ispan is null)
 				return;
 			span = ispan.Value;
 
@@ -83,12 +83,12 @@ namespace dnSpy.Hex.Editor {
 			for (int i = 0; i < lines.Count; i++) {
 				var line = lines[i];
 				var intersection = line.BufferSpan.Intersection(span);
-				if (intersection == null)
+				if (intersection is null)
 					continue;
 
 				var bounds = lineSpan.IsTextSpan ?
-					line.GetNormalizedTextBounds(lineSpan.TextSpan.Value) :
-					line.GetNormalizedTextBounds(intersection.Value, lineSpan.SelectionFlags.Value);
+					line.GetNormalizedTextBounds(lineSpan.TextSpan!.Value) :
+					line.GetNormalizedTextBounds(intersection.Value, lineSpan.SelectionFlags!.Value);
 				foreach (var b in bounds) {
 					if (left > b.Left)
 						left = b.Left;
@@ -171,12 +171,12 @@ namespace dnSpy.Hex.Editor {
 
 				if (showStart) {
 					var line = hexView.HexViewLines.GetHexViewLineContainingBufferPosition(firstSpan.Start);
-					if (line == null || line.VisibilityState != VSTF.VisibilityState.FullyVisible)
+					if (line is null || line.VisibilityState != VSTF.VisibilityState.FullyVisible)
 						ShowSpan(span, options);
 				}
 				else {
 					var line = hexView.HexViewLines.GetHexViewLineContainingBufferPosition(lastSpan.Start);
-					if (line == null || line.VisibilityState != VSTF.VisibilityState.FullyVisible)
+					if (line is null || line.VisibilityState != VSTF.VisibilityState.FullyVisible)
 						ShowSpan(span, options);
 				}
 			}
@@ -200,7 +200,7 @@ namespace dnSpy.Hex.Editor {
 
 		public override void ScrollViewportVerticallyByPixels(double distanceToScroll) {
 			var lines = hexView.HexViewLines;
-			if (lines == null)
+			if (lines is null)
 				return;
 			var line = distanceToScroll >= 0 ? lines.FirstVisibleLine : lines.LastVisibleLine;
 			hexView.DisplayHexLineContainingBufferPosition(line.BufferStart, line.Top - hexView.ViewportTop + distanceToScroll, VSTE.ViewRelativePosition.Top);

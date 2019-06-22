@@ -31,7 +31,7 @@ namespace dnSpy.Text.AvalonEdit {
 		/// Creates a new RopeTextSource.
 		/// </summary>
 		public RopeTextSource(Rope<char> rope) {
-			if (rope == null)
+			if (rope is null)
 				throw new ArgumentNullException("rope");
 			this.rope = rope.Clone();
 		}

@@ -41,9 +41,9 @@ namespace dnSpy.Contracts.Resources {
 		static ResourceManagerTokenCache resourceManagerTokenCache;
 
 		internal static void SetResourceManagerTokenCache(ResourceManagerTokenCache tokenCache) {
-			if (tokenCache == null)
+			if (tokenCache is null)
 				throw new ArgumentNullException(nameof(tokenCache));
-			if (resourceManagerTokenCache != null)
+			if (!(resourceManagerTokenCache is null))
 				throw new InvalidOperationException();
 			resourceManagerTokenCache = tokenCache;
 		}
@@ -54,30 +54,47 @@ namespace dnSpy.Contracts.Resources {
 		/// <param name="obj">Can be any object in the assembly containing the resources or the assembly itself (<see cref="Assembly"/>).</param>
 		/// <param name="value">String</param>
 		/// <returns></returns>
-		public static string GetString(object obj, string value) {
-			Debug.Assert(resourceManagerTokenCache != null);
-			if (obj == null)
+		public static string? GetStringOrNull(object obj, string? value) {
+			Debug.Assert(!(resourceManagerTokenCache is null));
+			if (obj is null)
 				throw new ArgumentNullException(nameof(obj));
-			if (value == null || !value.StartsWith(PREFIX))
+			if (value is null)
+				return value;
+			return GetString(obj, value);
+		}
+
+		/// <summary>
+		/// Converts <paramref name="value"/> to a string in the resources if it has been prefixed with "res:"
+		/// </summary>
+		/// <param name="obj">Can be any object in the assembly containing the resources or the assembly itself (<see cref="Assembly"/>).</param>
+		/// <param name="value">String</param>
+		/// <returns></returns>
+		public static string GetString(object obj, string value) {
+			Debug.Assert(!(resourceManagerTokenCache is null));
+			if (obj is null)
+				throw new ArgumentNullException(nameof(obj));
+			if (value is null)
+				throw new ArgumentNullException(nameof(value));
+			if (!value.StartsWith(PREFIX))
 				return value;
 			var key = value.Substring(PREFIX.Length);
 			var mgr = GetResourceManager(obj as Assembly ?? obj.GetType().Assembly);
-			if (mgr == null)
+			if (mgr is null)
 				return "???";
 			var s = mgr.GetString(key);
-			Debug.Assert(s != null);
+			Debug.Assert(!(s is null));
 			return s ?? "???";
 		}
 
-		static ResourceManager GetResourceManager(Assembly assembly) {
+		static ResourceManager? GetResourceManager(Assembly assembly) {
 			if (asmToMgr.TryGetValue(assembly, out var mgr))
 				return mgr;
 
 			var tokenCache = resourceManagerTokenCache;
-			Debug.Assert(tokenCache != null);
-			if (tokenCache != null) {
+			Debug.Assert(!(tokenCache is null));
+			if (!(tokenCache is null)) {
 				if (tokenCache.TryGetResourceManagerGetMethodMetadataToken(assembly, out int getMethodMetadataToken)) {
-					MethodInfo method;
+					MethodInfo? method;
 					try {
 						method = assembly.ManifestModule.ResolveMethod(getMethodMetadataToken) as MethodInfo;
 					}
@@ -86,20 +103,20 @@ namespace dnSpy.Contracts.Resources {
 						method = null;
 					}
 					mgr = TrySetResourceManager(assembly, method, save: false);
-					if (mgr != null)
+					if (!(mgr is null))
 						return mgr;
 				}
 			}
 
 			foreach (var type in assembly.ManifestModule.GetTypes()) {
-				if (type.Namespace == null || !type.Namespace.EndsWith(".Properties", StringComparison.InvariantCultureIgnoreCase))
+				if (type.Namespace is null || !type.Namespace.EndsWith(".Properties", StringComparison.InvariantCultureIgnoreCase))
 					continue;
 				var prop = type.GetProperty("ResourceManager", BindingFlags.Public | BindingFlags.Static);
-				if (prop == null)
+				if (prop is null)
 					continue;
 				var m = prop.GetGetMethod();
 				mgr = TrySetResourceManager(assembly, m, save: true);
-				if (mgr != null)
+				if (!(mgr is null))
 					return mgr;
 			}
 
@@ -107,8 +124,8 @@ namespace dnSpy.Contracts.Resources {
 			return null;
 		}
 
-		static ResourceManager TrySetResourceManager(Assembly assembly, MethodInfo m, bool save) {
-			if (m == null)
+		static ResourceManager? TrySetResourceManager(Assembly assembly, MethodInfo? m, bool save) {
+			if (m is null)
 				return null;
 			if (!m.IsStatic)
 				return null;
@@ -117,7 +134,7 @@ namespace dnSpy.Contracts.Resources {
 			if (m.GetParameters().Length != 0)
 				return null;
 
-			ResourceManager mgr;
+			ResourceManager? mgr;
 			try {
 				mgr = m.Invoke(null, Array.Empty<object>()) as ResourceManager;
 			}
@@ -130,6 +147,6 @@ namespace dnSpy.Contracts.Resources {
 			return mgr;
 		}
 
-		static readonly Dictionary<Assembly, ResourceManager> asmToMgr = new Dictionary<Assembly, ResourceManager>();
+		static readonly Dictionary<Assembly, ResourceManager?> asmToMgr = new Dictionary<Assembly, ResourceManager?>();
 	}
 }

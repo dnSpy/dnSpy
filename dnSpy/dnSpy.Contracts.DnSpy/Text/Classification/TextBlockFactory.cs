@@ -88,11 +88,11 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <param name="flags">Flags</param>
 		/// <returns></returns>
 		public static TextBlock Create(string text, TextFormattingRunProperties defaultProperties, IEnumerable<TextRunPropertiesAndSpan> orderedPropsAndSpans, Flags flags = Flags.None) {
-			if (text == null)
+			if (text is null)
 				throw new ArgumentNullException(nameof(text));
-			if (defaultProperties == null)
+			if (defaultProperties is null)
 				throw new ArgumentNullException(nameof(defaultProperties));
-			if (orderedPropsAndSpans == null)
+			if (orderedPropsAndSpans is null)
 				throw new ArgumentNullException(nameof(orderedPropsAndSpans));
 			text = WpfUnicodeUtils.ReplaceBadChars(text);
 
@@ -172,10 +172,10 @@ namespace dnSpy.Contracts.Text.Classification {
 			return props.BackgroundBrushEmpty;
 		}
 
-		static DOC.Run CreateRun(string text, TextFormattingRunProperties defaultProperties, TextFormattingRunProperties properties, Flags flags) {
+		static DOC.Run CreateRun(string text, TextFormattingRunProperties defaultProperties, TextFormattingRunProperties? properties, Flags flags) {
 			var run = new DOC.Run(text);
 
-			if (properties == null)
+			if (properties is null)
 				return run;
 
 			if (!properties.BackgroundBrushEmpty)
@@ -206,10 +206,10 @@ namespace dnSpy.Contracts.Text.Classification {
 			return GetFontName(a) == GetFontName(b);
 		}
 
-		static string GetFontName(TextFormattingRunProperties props) {
+		static string? GetFontName(TextFormattingRunProperties props) {
 			if (props.TypefaceEmpty)
 				return string.Empty;
-			if (!props.Typeface.FontFamily.FamilyNames.TryGetValue(language, out string name))
+			if (!props.Typeface.FontFamily.FamilyNames.TryGetValue(language, out string? name))
 				name = null;
 			return name ?? string.Empty;
 		}

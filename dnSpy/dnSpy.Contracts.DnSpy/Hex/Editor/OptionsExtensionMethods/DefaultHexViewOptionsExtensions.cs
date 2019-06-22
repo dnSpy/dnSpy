@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static bool ShowOffsetColumn(this VSTE.IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewOptions.ShowOffsetColumnId);
 		}
@@ -43,7 +43,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static bool ShowValuesColumn(this VSTE.IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewOptions.ShowValuesColumnId);
 		}
@@ -54,7 +54,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static bool ShowAsciiColumn(this VSTE.IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewOptions.ShowAsciiColumnId);
 		}
@@ -65,7 +65,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static HexPosition GetStartPosition(this VSTE.IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewOptions.StartPositionId);
 		}
@@ -76,7 +76,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static HexPosition GetEndPosition(this VSTE.IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewOptions.EndPositionId);
 		}
@@ -87,7 +87,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static HexPosition GetBasePosition(this VSTE.IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewOptions.BasePositionId);
 		}
@@ -98,7 +98,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static bool UseRelativePositions(this VSTE.IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewOptions.UseRelativePositionsId);
 		}
@@ -109,7 +109,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static int GetOffsetBitSize(this VSTE.IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewOptions.OffsetBitSizeId);
 		}
@@ -120,7 +120,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static HexValuesDisplayFormat GetValuesDisplayFormat(this VSTE.IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewOptions.HexValuesDisplayFormatId);
 		}
@@ -131,7 +131,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static HexOffsetFormat GetOffsetFormat(this VSTE.IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewOptions.HexOffsetFormatId);
 		}
@@ -142,7 +142,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static bool IsValuesLowerCaseHexEnabled(this VSTE.IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewOptions.ValuesLowerCaseHexId);
 		}
@@ -153,7 +153,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static bool IsOffsetLowerCaseHexEnabled(this VSTE.IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewOptions.OffsetLowerCaseHexId);
 		}
@@ -164,7 +164,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static int GetBytesPerLine(this VSTE.IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewOptions.BytesPerLineId);
 		}
@@ -175,7 +175,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static int GetGroupSizeInBytes(this VSTE.IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewOptions.GroupSizeInBytesId);
 		}
@@ -186,7 +186,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static bool IsColorizationEnabled(this VSTE.IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewOptions.EnableColorizationId);
 		}
@@ -197,7 +197,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static bool DoesViewProhibitUserInput(this VSTE.IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewOptions.ViewProhibitUserInputId);
 		}
@@ -208,7 +208,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static bool IsRefreshScreenOnChangeEnabled(this VSTE.IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewOptions.RefreshScreenOnChangeId);
 		}
@@ -219,7 +219,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static int GetRefreshScreenOnChangeWaitMilliSeconds(this VSTE.IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewOptions.RefreshScreenOnChangeWaitMilliSecondsId);
 		}
@@ -230,7 +230,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static bool IsRemoveExtraTextLineVerticalPixelsEnabled(this VSTE.IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewOptions.RemoveExtraTextLineVerticalPixelsId);
 		}
@@ -241,7 +241,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static bool ShowColumnLines(this VSTE.IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewOptions.ShowColumnLinesId);
 		}
@@ -252,7 +252,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static HexColumnLineKind GetColumnLine0Kind(this VSTE.IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewOptions.ColumnLine0Id);
 		}
@@ -263,7 +263,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static HexColumnLineKind GetColumnLine1Kind(this VSTE.IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewOptions.ColumnLine1Id);
 		}
@@ -274,7 +274,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static HexColumnLineKind GetColumnGroupLine0Kind(this VSTE.IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewOptions.ColumnGroupLine0Id);
 		}
@@ -285,7 +285,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static HexColumnLineKind GetColumnGroupLine1Kind(this VSTE.IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewOptions.ColumnGroupLine1Id);
 		}
@@ -296,7 +296,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static bool HighlightActiveColumn(this VSTE.IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewOptions.HighlightActiveColumnId);
 		}
@@ -307,7 +307,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static bool HighlightCurrentValue(this VSTE.IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewOptions.HighlightCurrentValueId);
 		}
@@ -318,7 +318,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static int GetHighlightCurrentValueDelayMilliSeconds(this VSTE.IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewOptions.HighlightCurrentValueDelayMilliSecondsId);
 		}
@@ -329,7 +329,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static int GetEncodingCodePage(this VSTE.IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewOptions.EncodingCodePageId);
 		}
@@ -339,8 +339,8 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// </summary>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public static Encoding TryGetEncoding(this VSTE.IEditorOptions options) {
-			if (options == null)
+		public static Encoding? TryGetEncoding(this VSTE.IEditorOptions options) {
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			var codePage = options.GetEncodingCodePage();
 			try {
@@ -357,7 +357,7 @@ namespace dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static bool HighlightStructureUnderMouseCursor(this VSTE.IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultHexViewOptions.HighlightStructureUnderMouseCursorId);
 		}

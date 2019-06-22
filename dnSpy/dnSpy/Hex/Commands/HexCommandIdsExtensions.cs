@@ -22,6 +22,6 @@ using dnSpy.Contracts.Command;
 namespace dnSpy.Hex.Commands {
 	static class HexCommandIdsExtensions {
 		public static CommandInfo ToCommandInfo(this HexCommandIds id) => new CommandInfo(HexCommandConstants.HexCommandGroup, (int)id);
-		public static CommandInfo ToCommandInfo(this HexCommandIds id, object arguments) => new CommandInfo(HexCommandConstants.HexCommandGroup, (int)id, arguments);
+		public static CommandInfo ToCommandInfo(this HexCommandIds id, object? arguments) => new CommandInfo(HexCommandConstants.HexCommandGroup, (int)id, arguments);
 	}
 }

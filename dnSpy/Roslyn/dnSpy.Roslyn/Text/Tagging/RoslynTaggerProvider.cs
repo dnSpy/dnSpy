@@ -38,7 +38,7 @@ namespace dnSpy.Roslyn.Text.Tagging {
 			this.roslynDocumentChangedService = roslynDocumentChangedService;
 		}
 
-		public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag =>
+		public ITagger<T>? CreateTagger<T>(ITextBuffer buffer) where T : ITag =>
 			new RoslynTagger(buffer, themeClassificationTypeService, roslynDocumentChangedService) as ITagger<T>;
 	}
 }

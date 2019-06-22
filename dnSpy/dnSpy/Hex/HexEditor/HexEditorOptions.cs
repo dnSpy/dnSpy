@@ -28,30 +28,30 @@ namespace dnSpy.Hex.HexEditor {
 		public Guid Guid { get; }
 		public string Name { get; }
 
-		HexEditorOptions(HexViewOptionsGroup group, string subGroup, Guid guid, string name)
+		HexEditorOptions(HexViewOptionsGroup group, string subGroup, Guid guid, string? name)
 			: base(group, subGroup) {
 			Guid = guid;
-			Name = name;
+			Name = name ?? throw new ArgumentOutOfRangeException(nameof(name));
 		}
 
-		public static HexEditorOptions TryCreate(HexViewOptionsGroup group, IHexEditorOptionsDefinitionMetadata md) {
-			if (group == null)
+		public static HexEditorOptions? TryCreate(HexViewOptionsGroup group, IHexEditorOptionsDefinitionMetadata md) {
+			if (group is null)
 				throw new ArgumentNullException(nameof(group));
-			if (md == null)
+			if (md is null)
 				throw new ArgumentNullException(nameof(md));
 
-			if (md.SubGroup == null)
+			if (md.SubGroup is null)
 				return null;
 			var subGroup = md.SubGroup;
-			if (subGroup == null)
+			if (subGroup is null)
 				return null;
 
-			if (md.Guid == null)
+			if (md.Guid is null)
 				return null;
 			if (!Guid.TryParse(md.Guid, out var guid))
 				return null;
 
-			if (md.Name == null)
+			if (md.Name is null)
 				return null;
 
 			return new HexEditorOptions(group, subGroup, guid, ResourceHelper.GetString(md.Type.Assembly, md.Name));

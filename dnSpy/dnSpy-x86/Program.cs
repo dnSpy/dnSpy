@@ -22,6 +22,14 @@ using System;
 namespace dnSpy_x86 {
 	static class Program {
 		[STAThread]
-		static void Main() => dnSpy.MainApp.StartUpClass.Main();
+		static void Main() {
+#if NETCOREAPP
+			const string errmsg = "Wrong startup project";
+			System.Diagnostics.Debug.Fail(errmsg);
+			throw new InvalidOperationException(errmsg);
+#else
+			dnSpy.MainApp.StartUpClass.Main();
+#endif
+		}
 	}
 }

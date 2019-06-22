@@ -92,19 +92,19 @@ namespace dnSpy.Decompiler.IL {
 		}
 
 		static void AddToken(this IList<short> instrs, ITokenResolver resolver, uint token) {
-			if (resolver == null || resolver.ResolveToken(token) == null)
+			if (resolver is null || resolver.ResolveToken(token) is null)
 				instrs.AddUnknownInt32();
 			else
 				instrs.AddInt32(unchecked((int)token));
 		}
 
 		public static void AddOperand(IList<short> instrs, ITokenResolver resolver, uint offset, OpCode opCode, object operand) {
-			Instruction target;
-			IVariable variable;
+			Instruction? target;
+			IVariable? variable;
 			switch (opCode.OperandType) {
 			case OperandType.InlineBrTarget:
 				target = operand as Instruction;
-				if (target == null)
+				if (target is null)
 					instrs.AddUnknownInt32();
 				else
 					instrs.AddInt32(unchecked((int)target.Offset - (int)(offset + 4)));
@@ -115,12 +115,12 @@ namespace dnSpy.Decompiler.IL {
 			case OperandType.InlineTok:
 			case OperandType.InlineType:
 				var tok = operand as ITokenOperand;
-				instrs.AddToken(resolver, tok == null ? 0 : tok.MDToken.Raw);
+				instrs.AddToken(resolver, tok is null ? 0 : tok.MDToken.Raw);
 				break;
 
 			case OperandType.InlineSig:
 				var msig = operand as MethodSig;
-				instrs.AddToken(resolver, msig == null ? 0 : msig.OriginalToken);
+				instrs.AddToken(resolver, msig is null ? 0 : msig.OriginalToken);
 				break;
 
 			case OperandType.InlineString:
@@ -157,13 +157,13 @@ namespace dnSpy.Decompiler.IL {
 
 			case OperandType.InlineSwitch:
 				var targets = operand as IList<Instruction>;
-				if (targets == null)
+				if (targets is null)
 					instrs.AddUnknownInt32();
 				else {
 					uint offsetAfter = offset + 4 + (uint)targets.Count * 4;
 					instrs.AddInt32(targets.Count);
 					foreach (var instr in targets) {
-						if (instr == null)
+						if (instr is null)
 							instrs.AddUnknownInt32();
 						else
 							instrs.AddInt32(unchecked((int)instr.Offset - (int)offsetAfter));
@@ -173,7 +173,7 @@ namespace dnSpy.Decompiler.IL {
 
 			case OperandType.InlineVar:
 				variable = operand as IVariable;
-				if (variable == null)
+				if (variable is null)
 					instrs.AddUnknownInt16();
 				else if (ushort.MinValue <= variable.Index && variable.Index <= ushort.MaxValue)
 					instrs.AddInt16(unchecked((short)variable.Index));
@@ -183,7 +183,7 @@ namespace dnSpy.Decompiler.IL {
 
 			case OperandType.ShortInlineVar:
 				variable = operand as IVariable;
-				if (variable == null)
+				if (variable is null)
 					instrs.AddUnknownByte();
 				else if (byte.MinValue <= variable.Index && variable.Index <= byte.MaxValue)
 					instrs.Add((byte)variable.Index);
@@ -193,7 +193,7 @@ namespace dnSpy.Decompiler.IL {
 
 			case OperandType.ShortInlineBrTarget:
 				target = operand as Instruction;
-				if (target == null)
+				if (target is null)
 					instrs.AddUnknownByte();
 				else {
 					int displ = unchecked((int)target.Offset - (int)(offset + 1));

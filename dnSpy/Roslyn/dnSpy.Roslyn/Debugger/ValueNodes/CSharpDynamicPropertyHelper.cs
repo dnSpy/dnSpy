@@ -26,17 +26,17 @@ using dnSpy.Debugger.DotNet.Metadata;
 namespace dnSpy.Roslyn.Debugger.ValueNodes {
 	static class CSharpDynamicPropertyHelper {
 		public static bool IsCSharpDynamicProperty(DmdType type) =>
-			type.MetadataNamespace == null &&
+			type.MetadataNamespace is null &&
 			type.MetadataName == "DynamicProperty" &&
 			type.DeclaringType is DmdType declType &&
 			declType.MetadataNamespace == "Microsoft.CSharp.RuntimeBinder" &&
 			declType.MetadataName == "DynamicMetaObjectProviderDebugView" &&
-			(object)declType.DeclaringType == null;
+			declType.DeclaringType is null;
 
 		sealed class CSharpDynamicPropertyState {
 			public bool Initialized;
-			public DmdFieldInfo NameField;
-			public DmdFieldInfo ValueField;
+			public DmdFieldInfo? NameField;
+			public DmdFieldInfo? ValueField;
 		}
 
 		public static (string name, DbgDotNetValue value, DmdFieldInfo valueField) GetRealValue(DbgEvaluationInfo evalInfo, DbgDotNetValue propValue) {
@@ -48,7 +48,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 				state.NameField = type.GetField("name", type.AppDomain.System_String, throwOnError: false);
 				state.ValueField = type.GetField("value", type.AppDomain.System_Object, throwOnError: false);
 			}
-			if ((object)state.NameField == null || (object)state.ValueField == null)
+			if (state.NameField is null || state.ValueField is null)
 				return default;
 
 			DbgDotNetValueResult nameValue = default;
@@ -62,12 +62,12 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 				valueValue = runtime.LoadField(evalInfo, propValue, state.ValueField);
 				if (!valueValue.IsNormalResult)
 					return default;
-				var rawValue = nameValue.Value.GetRawValue();
+				var rawValue = nameValue.Value!.GetRawValue();
 				if (!rawValue.HasRawValue || rawValue.ValueType != DbgSimpleValueType.StringUtf16 || !(rawValue.RawValue is string realName))
 					return default;
 
 				error = false;
-				return (realName, valueValue.Value, state.ValueField);
+				return (realName, valueValue.Value!, state.ValueField);
 			}
 			finally {
 				nameValue.Value?.Dispose();

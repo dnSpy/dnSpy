@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Diagnostics;
 using System.Threading;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
@@ -157,11 +158,12 @@ namespace dnSpy.Roslyn.Text.Classification {
 		/// </summary>
 		/// <returns></returns>
 		public static RoslynClassificationTypes GetClassificationTypeInstance(IThemeClassificationTypeService themeClassificationTypeService) {
-			if (classificationTypeInstance == null)
+			if (classificationTypeInstance is null)
 				Interlocked.CompareExchange(ref classificationTypeInstance, new RoslynClassificationTypes(themeClassificationTypeService), null);
+			Debug.Assert(!(classificationTypeInstance is null));
 			return classificationTypeInstance;
 		}
-		static RoslynClassificationTypes classificationTypeInstance;
+		static RoslynClassificationTypes? classificationTypeInstance;
 
 		RoslynClassificationTypes(IThemeClassificationTypeService themeClassificationTypeService) {
 			Comment = themeClassificationTypeService.GetClassificationType(TextColor.Comment);

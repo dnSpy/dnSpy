@@ -26,7 +26,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 	sealed class FastClickButton : Button {
 		protected override void OnClick() {
 			var cmd = Command;
-			if (cmd != null) {
+			if (!(cmd is null)) {
 				if (cmd.CanExecute(CommandParameter))
 					cmd.Execute(CommandParameter);
 			}

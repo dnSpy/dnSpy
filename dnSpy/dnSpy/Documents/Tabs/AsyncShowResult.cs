@@ -23,7 +23,7 @@ using dnSpy.Contracts.Documents.Tabs;
 
 namespace dnSpy.Documents.Tabs {
 	sealed class AsyncShowResult : IAsyncShowResult {
-		public Exception Exception { get; }
+		public Exception? Exception { get; }
 		public bool IsCanceled { get; }
 		public bool CanShowOutput { get; }
 

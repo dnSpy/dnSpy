@@ -18,6 +18,7 @@
 */
 
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using dnSpy.Debugger.DotNet.Metadata;
 using Mono.Debugger.Soft;
 
@@ -26,8 +27,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		readonly Dictionary<TypeMirror, DmdType> toReflectionType = new Dictionary<TypeMirror, DmdType>();
 		readonly Dictionary<DmdType, TypeMirror> toMonoType = new Dictionary<DmdType, TypeMirror>(DmdMemberInfoEqualityComparer.DefaultType);
 
-		public bool TryGetType(TypeMirror monoType, out DmdType type) => toReflectionType.TryGetValue(monoType, out type);
-		public bool TryGetType(DmdType type, out TypeMirror monoType) => toMonoType.TryGetValue(type, out monoType);
+		public bool TryGetType(TypeMirror monoType, [NotNullWhenTrue] out DmdType? type) => toReflectionType.TryGetValue(monoType, out type);
+		public bool TryGetType(DmdType type, [NotNullWhenTrue] out TypeMirror? monoType) => toMonoType.TryGetValue(type, out monoType);
 
 		public void Add(TypeMirror monoType, DmdType reflectionType) {
 			toReflectionType[monoType] = reflectionType;
@@ -35,11 +36,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		}
 
 		public static TypeCache GetOrCreate(DmdAppDomain reflectionAppDomain) {
-			if (reflectionAppDomain.TryGetData(out TypeCache typeCache))
+			if (reflectionAppDomain.TryGetData(out TypeCache? typeCache))
 				return typeCache;
 			return GetOrCreateTypeCacheCore(reflectionAppDomain);
 
-			TypeCache GetOrCreateTypeCacheCore(DmdAppDomain reflectionAppDomain2) =>
+			static TypeCache GetOrCreateTypeCacheCore(DmdAppDomain reflectionAppDomain2) =>
 				reflectionAppDomain2.GetOrCreateData(() => new TypeCache());
 		}
 	}

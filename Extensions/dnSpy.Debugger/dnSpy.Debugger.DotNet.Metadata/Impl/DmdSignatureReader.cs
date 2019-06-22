@@ -24,7 +24,7 @@ using DMD = dnlib.DotNet;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	struct DmdSignatureReader : IDisposable {
-		public static (DmdType type, bool containedGenericParams) ReadTypeSignature(DmdModule module, DmdDataStream reader, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool resolve) {
+		public static (DmdType type, bool containedGenericParams) ReadTypeSignature(DmdModule module, DmdDataStream reader, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments, bool resolve) {
 			try {
 				using (var sigReader = new DmdSignatureReader(module, reader, genericTypeArguments, genericMethodArguments, resolve)) {
 					var type = sigReader.ReadType().type;
@@ -38,7 +38,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return (module.AppDomain.System_Void, false);
 		}
 
-		public static (DmdType fieldType, bool containedGenericParams) ReadFieldSignature(DmdModule module, DmdDataStream reader, IList<DmdType> genericTypeArguments, bool resolve) {
+		public static (DmdType fieldType, bool containedGenericParams) ReadFieldSignature(DmdModule module, DmdDataStream reader, IList<DmdType>? genericTypeArguments, bool resolve) {
 			try {
 				using (var sigReader = new DmdSignatureReader(module, reader, genericTypeArguments, null, resolve)) {
 					var fieldType = sigReader.ReadFieldSignature();
@@ -52,7 +52,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return (module.AppDomain.System_Void, false);
 		}
 
-		public static (DmdMethodSignature methodSignature, bool containedGenericParams) ReadMethodSignature(DmdModule module, DmdDataStream reader, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool isProperty, bool resolve) {
+		public static (DmdMethodSignature methodSignature, bool containedGenericParams) ReadMethodSignature(DmdModule module, DmdDataStream reader, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments, bool isProperty, bool resolve) {
 			try {
 				using (var sigReader = new DmdSignatureReader(module, reader, genericTypeArguments, genericMethodArguments, resolve)) {
 					sigReader.ReadMethodSignature(out var flags, out var genericParameterCount, out var returnType, out var parameterTypes, out var varArgsParameterTypes);
@@ -70,7 +70,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return (dummySig, false);
 		}
 
-		public static (DmdType fieldType, DmdMethodSignature methodSignature, bool containedGenericParams) ReadMethodSignatureOrFieldType(DmdModule module, DmdDataStream reader, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool resolve) {
+		public static (DmdType? fieldType, DmdMethodSignature? methodSignature, bool containedGenericParams) ReadMethodSignatureOrFieldType(DmdModule module, DmdDataStream reader, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments, bool resolve) {
 			try {
 				using (var sigReader = new DmdSignatureReader(module, reader, genericTypeArguments, genericMethodArguments, resolve)) {
 					var flags = (DmdSignatureCallingConvention)reader.ReadByte();
@@ -94,7 +94,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return (module.AppDomain.System_Void, null, false);
 		}
 
-		public static (DmdType[] types, bool containedGenericParams) ReadMethodSpecSignature(DmdModule module, DmdDataStream reader, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool resolve) {
+		public static (DmdType[] types, bool containedGenericParams) ReadMethodSpecSignature(DmdModule module, DmdDataStream reader, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments, bool resolve) {
 			try {
 				using (var sigReader = new DmdSignatureReader(module, reader, genericTypeArguments, genericMethodArguments, resolve)) {
 					var types = sigReader.ReadInstantiation();
@@ -108,7 +108,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return (Array.Empty<DmdType>(), false);
 		}
 
-		public static (DmdType type, bool isPinned)[] ReadLocalsSignature(DmdModule module, DmdDataStream reader, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool resolve) {
+		public static (DmdType type, bool isPinned)[] ReadLocalsSignature(DmdModule module, DmdDataStream reader, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments, bool resolve) {
 			try {
 				using (var sigReader = new DmdSignatureReader(module, reader, genericTypeArguments, genericMethodArguments, resolve))
 					return sigReader.ReadLocalsSignature();
@@ -127,10 +127,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		readonly IList<DmdType> genericTypeArguments;
 		readonly IList<DmdType> genericMethodArguments;
 		readonly bool resolve;
-		List<DmdCustomModifier> customModifiers;
+		List<DmdCustomModifier>? customModifiers;
 		bool containedGenericParams;
 
-		DmdSignatureReader(DmdModule module, DmdDataStream reader, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool resolve) {
+		DmdSignatureReader(DmdModule module, DmdDataStream reader, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments, bool resolve) {
 			this.module = module;
 			this.reader = reader;
 			this.genericTypeArguments = genericTypeArguments ?? Array.Empty<DmdType>();
@@ -150,14 +150,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		void DecrementRecursionCounter() => recursionCounter--;
 
 		void AddCustomModifier(DmdType type, bool isRequired) {
-			if (customModifiers == null)
+			if (customModifiers is null)
 				customModifiers = new List<DmdCustomModifier>();
 			customModifiers.Add(new DmdCustomModifier(type, isRequired));
 		}
 
 		DmdCustomModifier[] GetCustomModifiers() {
 			var customModifiers = this.customModifiers;
-			if (customModifiers == null || customModifiers.Count == 0)
+			if (customModifiers is null || customModifiers.Count == 0)
 				return Array.Empty<DmdCustomModifier>();
 			// Reflection reverses the custom modifiers
 			customModifiers.Reverse();

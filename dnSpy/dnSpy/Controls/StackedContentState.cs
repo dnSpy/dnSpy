@@ -42,15 +42,15 @@ namespace dnSpy.Controls {
 			}
 		}
 
-		public static StackedContentState TryDeserialize(ISettingsSection section) {
+		public static StackedContentState? TryDeserialize(ISettingsSection section) {
 			var state = new StackedContentState();
 			bool? b = section.Attribute<bool?>(ISHORIZONTAL_ATTR);
-			if (b == null)
+			if (b is null)
 				return null;
 			state.IsHorizontal = b.Value;
 			foreach (var lengthSect in section.SectionsWithName(LENGTH_SECTION)) {
 				var length = lengthSect.Attribute<GridLength?>(LENGTH_ATTR);
-				if (length == null)
+				if (length is null)
 					return null;
 				state.RowsCols.Add(length.Value);
 			}

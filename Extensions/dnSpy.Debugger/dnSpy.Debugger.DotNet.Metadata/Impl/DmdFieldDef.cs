@@ -23,8 +23,8 @@ using System.Threading;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	abstract class DmdFieldDef : DmdFieldInfoBase {
-		public sealed override DmdType DeclaringType { get; }
-		public sealed override DmdType ReflectedType { get; }
+		public sealed override DmdType? DeclaringType { get; }
+		public sealed override DmdType? ReflectedType { get; }
 		public sealed override int MetadataToken => (int)(0x04000000 + rid);
 		public sealed override bool IsMetadataReference => false;
 
@@ -37,18 +37,18 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			ReflectedType = reflectedType ?? throw new ArgumentNullException(nameof(reflectedType));
 		}
 
-		public sealed override DmdFieldInfo Resolve(bool throwOnError) => this;
+		public sealed override DmdFieldInfo? Resolve(bool throwOnError) => this;
 
 		public sealed override ReadOnlyCollection<DmdCustomAttributeData> GetCustomAttributesData() {
-			if (__customAttributes_DONT_USE != null)
+			if (!(__customAttributes_DONT_USE is null))
 				return __customAttributes_DONT_USE;
 			var info = CreateCustomAttributes();
 			var newCAs = CustomAttributesHelper.AddPseudoCustomAttributes(this, info.cas, info.fieldOffset, info.marshalType);
 			Interlocked.CompareExchange(ref __customAttributes_DONT_USE, newCAs, null);
-			return __customAttributes_DONT_USE;
+			return __customAttributes_DONT_USE!;
 		}
-		volatile ReadOnlyCollection<DmdCustomAttributeData> __customAttributes_DONT_USE;
+		volatile ReadOnlyCollection<DmdCustomAttributeData>? __customAttributes_DONT_USE;
 
-		protected abstract (DmdCustomAttributeData[] cas, uint? fieldOffset, DmdMarshalType marshalType) CreateCustomAttributes();
+		protected abstract (DmdCustomAttributeData[] cas, uint? fieldOffset, DmdMarshalType? marshalType) CreateCustomAttributes();
 	}
 }

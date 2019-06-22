@@ -40,18 +40,18 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			this.assemblyBytes = assemblyBytes;
 		}
 
-		public DbgEngineValueNode CreateValueNode(ref DbgDotNetILInterpreterState ilInterpreterState, ref DbgDotNetCompiledExpressionResult compExprInfo) {
-			if (compExprInfo.ErrorMessage != null)
+		public DbgEngineValueNode CreateValueNode(ref DbgDotNetILInterpreterState? ilInterpreterState, ref DbgDotNetCompiledExpressionResult compExprInfo) {
+			if (!(compExprInfo.ErrorMessage is null))
 				return valueNodeFactory.CreateError(evalInfo, compExprInfo.Name, compExprInfo.ErrorMessage, compExprInfo.Expression, (compExprInfo.Flags & DbgEvaluationResultFlags.SideEffects) != 0);
 			else {
-				if (ilInterpreterState == null)
+				if (ilInterpreterState is null)
 					ilInterpreterState = dnILInterpreter.CreateState(assemblyBytes);
 				var res = dnILInterpreter.Execute(evalInfo, ilInterpreterState, compExprInfo.TypeName, compExprInfo.MethodName, options, out var expectedType);
 				try {
-					if (res.ErrorMessage != null)
+					if (!(res.ErrorMessage is null))
 						return valueNodeFactory.CreateError(evalInfo, compExprInfo.Name, res.ErrorMessage, compExprInfo.Expression, (compExprInfo.Flags & DbgEvaluationResultFlags.SideEffects) != 0);
 					//TODO: Pass in compExprInfo.CustomTypeInfo, or attach it to the DbgDotNetValueNode
-					return valueNodeFactory.Create(evalInfo, compExprInfo.Name, res.Value, compExprInfo.FormatSpecifiers, nodeOptions, compExprInfo.Expression, compExprInfo.ImageName, (compExprInfo.Flags & DbgEvaluationResultFlags.ReadOnly) != 0, (compExprInfo.Flags & DbgEvaluationResultFlags.SideEffects) != 0, expectedType);
+					return valueNodeFactory.Create(evalInfo, compExprInfo.Name, res.Value!, compExprInfo.FormatSpecifiers, nodeOptions, compExprInfo.Expression, compExprInfo.ImageName, (compExprInfo.Flags & DbgEvaluationResultFlags.ReadOnly) != 0, (compExprInfo.Flags & DbgEvaluationResultFlags.SideEffects) != 0, expectedType);
 				}
 				catch {
 					res.Value?.Dispose();

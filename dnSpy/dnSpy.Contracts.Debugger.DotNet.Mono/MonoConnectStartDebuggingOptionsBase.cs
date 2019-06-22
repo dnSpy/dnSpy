@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Mono {
 		/// <summary>
 		/// The IP address <c>mono.exe</c> is listening on or null / empty string to use <c>127.0.0.1</c>
 		/// </summary>
-		public string Address { get; set; }
+		public string? Address { get; set; }
 
 		/// <summary>
 		/// The port <c>mono.exe</c> is listening on
@@ -54,7 +54,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Mono {
 		/// </summary>
 		/// <param name="other">Destination</param>
 		protected void CopyTo(MonoConnectStartDebuggingOptionsBase other) {
-			if (other == null)
+			if (other is null)
 				throw new ArgumentNullException(nameof(other));
 			base.CopyTo(other);
 			other.Address = Address;

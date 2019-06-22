@@ -27,6 +27,6 @@ namespace dnSpy.Contracts.Debugger.Text {
 		/// </summary>
 		/// <param name="color">Color</param>
 		/// <param name="text">Text</param>
-		void Write(DbgTextColor color, string text);
+		void Write(DbgTextColor color, string? text);
 	}
 }

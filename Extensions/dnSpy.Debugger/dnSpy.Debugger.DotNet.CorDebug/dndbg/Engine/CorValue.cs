@@ -22,7 +22,7 @@ using System.Diagnostics;
 using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
-	sealed class CorValue : COMObject<ICorDebugValue>, IEquatable<CorValue> {
+	sealed class CorValue : COMObject<ICorDebugValue>, IEquatable<CorValue?> {
 		public bool IsGeneric => obj is ICorDebugGenericValue;
 		public bool IsReference => obj is ICorDebugReferenceValue;
 		public bool IsHandle => obj is ICorDebugHandleValue;
@@ -45,30 +45,30 @@ namespace dndbg.Engine {
 		public ulong Address => address;
 		readonly ulong address;
 
-		public CorClass Class {
+		public CorClass? Class {
 			get {
 				var o = obj as ICorDebugObjectValue;
-				if (o == null)
+				if (o is null)
 					return null;
 				int hr = o.GetClass(out var cls);
-				return hr < 0 || cls == null ? null : new CorClass(cls);
+				return hr < 0 || cls is null ? null : new CorClass(cls);
 			}
 		}
 
-		public CorType ExactType {
+		public CorType? ExactType {
 			get {
 				var v2 = obj as ICorDebugValue2;
-				if (v2 == null)
+				if (v2 is null)
 					return null;
 				int hr = v2.GetExactType(out var type);
-				return hr < 0 || type == null ? null : new CorType(type);
+				return hr < 0 || type is null ? null : new CorType(type);
 			}
 		}
 
 		public bool IsNull {
 			get {
 				var r = obj as ICorDebugReferenceValue;
-				if (r == null)
+				if (r is null)
 					return false;
 				int hr = r.IsNull(out int isn);
 				return hr >= 0 && isn != 0;
@@ -78,7 +78,7 @@ namespace dndbg.Engine {
 		public ulong ReferenceAddress {
 			get {
 				var r = obj as ICorDebugReferenceValue;
-				if (r == null)
+				if (r is null)
 					return 0;
 				int hr = r.GetValue(out ulong addr);
 				return hr < 0 ? 0 : addr;
@@ -87,7 +87,7 @@ namespace dndbg.Engine {
 
 		public int SetReferenceAddress(ulong value) {
 			var r = obj as ICorDebugReferenceValue;
-			if (r == null)
+			if (r is null)
 				return -1;
 			return r.SetValue(value);
 		}
@@ -95,28 +95,28 @@ namespace dndbg.Engine {
 		public CorDebugHandleType HandleType {
 			get {
 				var h = obj as ICorDebugHandleValue;
-				if (h == null)
+				if (h is null)
 					return 0;
 				int hr = h.GetHandleType(out var type);
 				return hr < 0 ? 0 : type;
 			}
 		}
 
-		public CorValue DereferencedValue => GetDereferencedValue(out _);
-		public CorValue GetDereferencedValue(out int hr) {
+		public CorValue? DereferencedValue => GetDereferencedValue(out _);
+		public CorValue? GetDereferencedValue(out int hr) {
 			var r = obj as ICorDebugReferenceValue;
-			if (r == null) {
+			if (r is null) {
 				hr = -1;
 				return null;
 			}
 			hr = r.Dereference(out var value);
-			return hr < 0 || value == null ? null : new CorValue(value);
+			return hr < 0 || value is null ? null : new CorValue(value);
 		}
 
 		public CorElementType ArrayElementType {
 			get {
 				var a = obj as ICorDebugArrayValue;
-				if (a == null)
+				if (a is null)
 					return CorElementType.End;
 				int hr = a.GetElementType(out var etype);
 				return hr < 0 ? 0 : etype;
@@ -126,7 +126,7 @@ namespace dndbg.Engine {
 		public uint Rank {
 			get {
 				var a = obj as ICorDebugArrayValue;
-				if (a == null)
+				if (a is null)
 					return 0;
 				int hr = a.GetRank(out uint rank);
 				return hr < 0 ? 0 : rank;
@@ -136,17 +136,17 @@ namespace dndbg.Engine {
 		public uint ArrayCount {
 			get {
 				var a = obj as ICorDebugArrayValue;
-				if (a == null)
+				if (a is null)
 					return 0;
 				int hr = a.GetCount(out uint count);
 				return hr < 0 ? 0 : count;
 			}
 		}
 
-		public unsafe uint[] Dimensions {
+		public unsafe uint[]? Dimensions {
 			get {
 				var a = obj as ICorDebugArrayValue;
-				if (a == null)
+				if (a is null)
 					return null;
 				uint[] dims = new uint[Rank];
 				fixed (uint* p = &dims[0]) {
@@ -159,17 +159,17 @@ namespace dndbg.Engine {
 		public bool HasBaseIndicies {
 			get {
 				var a = obj as ICorDebugArrayValue;
-				if (a == null)
+				if (a is null)
 					return false;
 				int hr = a.HasBaseIndicies(out int has);
 				return hr >= 0 && has != 0;
 			}
 		}
 
-		public unsafe uint[] BaseIndicies {
+		public unsafe uint[]? BaseIndicies {
 			get {
 				var a = obj as ICorDebugArrayValue;
-				if (a == null)
+				if (a is null)
 					return null;
 				uint[] indicies = new uint[Rank];
 				fixed (uint* p = &indicies[0]) {
@@ -179,31 +179,31 @@ namespace dndbg.Engine {
 			}
 		}
 
-		public CorValue BoxedValue => GetBoxedValue(out _);
-		public CorValue GetBoxedValue(out int hr) {
+		public CorValue? BoxedValue => GetBoxedValue(out _);
+		public CorValue? GetBoxedValue(out int hr) {
 			var b = obj as ICorDebugBoxValue;
-			if (b == null) {
+			if (b is null) {
 				hr = -1;
 				return null;
 			}
 			hr = b.GetObject(out var value);
-			return hr < 0 || value == null ? null : new CorValue(value);
+			return hr < 0 || value is null ? null : new CorValue(value);
 		}
 
 		public uint StringLength {
 			get {
 				var s = obj as ICorDebugStringValue;
-				if (s == null)
+				if (s is null)
 					return 0;
 				int hr = s.GetLength(out uint len);
 				return hr < 0 ? 0 : len;
 			}
 		}
 
-		public unsafe string String {
+		public unsafe string? String {
 			get {
 				var s = obj as ICorDebugStringValue;
-				if (s == null)
+				if (s is null)
 					return null;
 				uint len = StringLength;
 				if (len == 0)
@@ -222,7 +222,7 @@ namespace dndbg.Engine {
 		public bool IsValueClass {
 			get {
 				var o = obj as ICorDebugObjectValue;
-				if (o == null)
+				if (o is null)
 					return false;
 				int hr = o.IsValueClass(out int i);
 				return hr >= 0 && i != 0;
@@ -272,7 +272,7 @@ namespace dndbg.Engine {
 
 		public bool DisposeHandle() {
 			var h = obj as ICorDebugHandleValue;
-			if (h == null)
+			if (h is null)
 				return false;
 			int hr = h.Dispose();
 			bool success = hr == 0 || hr == CordbgErrors.CORDBG_E_OBJECT_NEUTERED;
@@ -280,49 +280,49 @@ namespace dndbg.Engine {
 			return success;
 		}
 
-		public CorValue GetElementAtPosition(uint index, out int hr) {
+		public CorValue? GetElementAtPosition(uint index, out int hr) {
 			var a = obj as ICorDebugArrayValue;
-			if (a == null) {
+			if (a is null) {
 				hr = -1;
 				return null;
 			}
 			hr = a.GetElementAtPosition(index, out var value);
-			return hr < 0 || value == null ? null : new CorValue(value);
+			return hr < 0 || value is null ? null : new CorValue(value);
 		}
 
-		public CorValue GetElementAtPosition(int index, out int hr) => GetElementAtPosition((uint)index, out hr);
+		public CorValue? GetElementAtPosition(int index, out int hr) => GetElementAtPosition((uint)index, out hr);
 
-		public CorValue GetFieldValue(CorClass cls, uint token) => GetFieldValue(cls, token, out int hr);
-		public CorValue GetFieldValue(CorClass cls, uint token, out int hr) {
+		public CorValue? GetFieldValue(CorClass? cls, uint token) => GetFieldValue(cls, token, out int hr);
+		public CorValue? GetFieldValue(CorClass? cls, uint token, out int hr) {
 			var o = obj as ICorDebugObjectValue;
-			if (o == null || cls == null) {
+			if (o is null || cls is null) {
 				hr = -1;
 				return null;
 			}
 			hr = o.GetFieldValue(cls.RawObject, token, out var value);
-			return hr < 0 || value == null ? null : new CorValue(value);
+			return hr < 0 || value is null ? null : new CorValue(value);
 		}
 
-		public CorValue CreateHandle(CorDebugHandleType type) {
+		public CorValue? CreateHandle(CorDebugHandleType type) {
 			var h2 = obj as ICorDebugHeapValue2;
-			if (h2 == null)
+			if (h2 is null)
 				return null;
 			int hr = h2.CreateHandle(type, out var value);
-			return hr < 0 || value == null ? null : new CorValue(value);
+			return hr < 0 || value is null ? null : new CorValue(value);
 		}
 
-		public unsafe int WriteGenericValue(byte[] data, CorProcess process = null) {
-			if (data == null || (uint)data.Length != Size)
+		public unsafe int WriteGenericValue(byte[]? data, CorProcess? process = null) {
+			if (data is null || (uint)data.Length != Size)
 				return -1;
 			var g = obj as ICorDebugGenericValue;
-			if (g == null)
+			if (g is null)
 				return -1;
 			int hr;
 			fixed (byte* p = &data[0]) {
 				// This sometimes fails with CORDBG_E_CLASS_NOT_LOADED (ImmutableArray<T>, debugging VS2017).
 				// If it fails, use process.WriteMemory().
 				hr = g.SetValue(new IntPtr(p));
-				if (hr < 0 && process != null) {
+				if (hr < 0 && !(process is null)) {
 					hr = process.WriteMemory(address, data, 0, data.Length, out var sizeWritten);
 					if (sizeWritten != data.Length && hr >= 0)
 						hr = -1;
@@ -331,9 +331,9 @@ namespace dndbg.Engine {
 			return hr;
 		}
 
-		public unsafe byte[] ReadGenericValue() {
+		public unsafe byte[]? ReadGenericValue() {
 			var g = obj as ICorDebugGenericValue;
-			if (g == null)
+			if (g is null)
 				return null;
 			var data = new byte[Size];
 			int hr;
@@ -343,17 +343,8 @@ namespace dndbg.Engine {
 			return hr < 0 ? null : data;
 		}
 
-		public static bool operator ==(CorValue a, CorValue b) {
-			if (ReferenceEquals(a, b))
-				return true;
-			if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
-				return false;
-			return a.Equals(b);
-		}
-
-		public static bool operator !=(CorValue a, CorValue b) => !(a == b);
-		public bool Equals(CorValue other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
-		public override bool Equals(object obj) => Equals(obj as CorValue);
+		public bool Equals(CorValue? other) => !(other is null) && RawObject == other.RawObject;
+		public override bool Equals(object? obj) => Equals(obj as CorValue);
 		public override int GetHashCode() => RawObject.GetHashCode();
 	}
 }

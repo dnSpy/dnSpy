@@ -26,7 +26,7 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 		readonly string text;
 		readonly MethodDebugInfo debugInfo;
 
-		public bool IsDefault => text == null;
+		public bool IsDefault => text is null;
 
 		public ILSourceStatementProvider(string text, MethodDebugInfo debugInfo) {
 			this.text = text ?? throw new ArgumentNullException(nameof(text));
@@ -37,7 +37,7 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 			Debug.Assert(ilOffset <= endILOffset);
 			var text = this.text;
 			var debugInfo = this.debugInfo;
-			if (text == null || debugInfo == null)
+			if (text is null || debugInfo is null)
 				return default;
 
 			var stmt = debugInfo.GetSourceStatementByCodeOffset((uint)ilOffset);
@@ -54,7 +54,7 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 				stmtEnd = stmt;
 			else
 				stmtEnd = null;
-			if (stmt == null || stmtEnd == null)
+			if (stmt is null || stmtEnd is null)
 				return default;
 			Debug.Assert(stmt.Value.TextSpan.Start <= stmtEnd.Value.TextSpan.End);
 			if (stmt.Value.TextSpan.Start > stmtEnd.Value.TextSpan.End)

@@ -60,7 +60,7 @@ namespace dnSpy.Search {
 		/// </summary>
 		/// <param name="searchResult">Search result</param>
 		/// <param name="newTab">true to show it in a new tab</param>
-		void FollowResult(ISearchResult searchResult, bool newTab);
+		void FollowResult(ISearchResult? searchResult, bool newTab);
 
 		SearchLocation SearchLocation { get; set; }
 		SearchType SearchType { get; set; }
@@ -74,7 +74,7 @@ namespace dnSpy.Search {
 		readonly IDocumentTabService documentTabService;
 
 		public SearchLocation SearchLocation {
-			get => (SearchLocation)vmSearch.SearchLocationVM.SelectedItem;
+			get => (SearchLocation)vmSearch.SearchLocationVM.SelectedItem!;
 			set => vmSearch.SearchLocationVM.SelectedItem = value;
 		}
 
@@ -88,19 +88,19 @@ namespace dnSpy.Search {
 			set => vmSearch.SearchText = value;
 		}
 
-		public IInputElement FocusedElement => searchControl.SearchTextBox;
+		public IInputElement? FocusedElement => searchControl.SearchTextBox;
 
-		public FrameworkElement ZoomElement => searchControl;
+		public FrameworkElement? ZoomElement => searchControl;
 
-		public object UIObject => searchControl;
+		public object? UIObject => searchControl;
 
 		sealed class GuidObjectsProvider : IGuidObjectsProvider {
 			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsProviderArgs args) {
-				var listBox = (ListBox)args.CreatorObject.Object;
+				var listBox = (ListBox)args.CreatorObject.Object!;
 				if (listBox.SelectedItem is ISearchResult searchResult) {
 					yield return new GuidObject(MenuConstants.GUIDOBJ_SEARCHRESULT_GUID, searchResult);
 					var @ref = searchResult.Reference;
-					if (@ref != null)
+					if (!(@ref is null))
 						yield return new GuidObject(MenuConstants.GUIDOBJ_CODE_REFERENCE_GUID, new TextReference(@ref));
 				}
 			}
@@ -111,9 +111,7 @@ namespace dnSpy.Search {
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
 			this.documentTabService = documentTabService;
 			searchControl = new SearchControl();
-			vmSearch = new SearchControlVM(fileSearcherProvider, documentTabService.DocumentTreeView, searchSettings) {
-				Decompiler = decompilerService.Decompiler,
-			};
+			vmSearch = new SearchControlVM(fileSearcherProvider, documentTabService.DocumentTreeView, searchSettings, decompilerService.Decompiler);
 			searchControl.DataContext = vmSearch;
 
 			menuService.InitializeContextMenu(searchControl.ListBox, MenuConstants.GUIDOBJ_SEARCH_GUID, new GuidObjectsProvider());
@@ -241,9 +239,8 @@ namespace dnSpy.Search {
 			FollowResult(searchControl.ListBox.SelectedItem as ISearchResult, newTab);
 		}
 
-		public void FollowResult(ISearchResult searchResult, bool newTab) {
-			var @ref = searchResult == null ? null : searchResult.Reference;
-			if (@ref != null) {
+		public void FollowResult(ISearchResult? searchResult, bool newTab) {
+			if (searchResult?.Reference is object @ref) {
 				documentTabService.FollowReference(@ref, newTab, true, a => {
 					if (!a.HasMovedCaret && a.Success) {
 						if (searchResult.ObjectInfo is BodyResult bodyResult)
@@ -253,13 +250,13 @@ namespace dnSpy.Search {
 			}
 		}
 
-		bool GoTo(IDocumentTab tab, MethodDef method, uint ilOffset) {
+		bool GoTo(IDocumentTab tab, MethodDef? method, uint ilOffset) {
 			var documentViewer = tab.TryGetDocumentViewer();
-			if (documentViewer == null || method == null)
+			if (documentViewer is null || method is null)
 				return false;
 			var methodDebugService = documentViewer.GetMethodDebugService();
 			var methodStatement = methodDebugService.FindByCodeOffset(method, ilOffset);
-			if (methodStatement == null)
+			if (methodStatement is null)
 				return false;
 
 			documentViewer.MoveCaretToPosition(methodStatement.Value.Statement.TextSpan.Start);

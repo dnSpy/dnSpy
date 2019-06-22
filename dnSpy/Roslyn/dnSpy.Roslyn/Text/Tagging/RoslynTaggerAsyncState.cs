@@ -25,11 +25,11 @@ namespace dnSpy.Roslyn.Text.Tagging {
 	sealed class RoslynTaggerAsyncState {
 		public RoslynTaggerAsyncState() { }
 
-		public bool IsValid => SyntaxRoot != null && SemanticModel != null && Workspace != null;
+		public bool IsValid => !(SyntaxRoot is null) && !(SemanticModel is null) && !(Workspace is null);
 		public bool IsInitialized { get; private set; }
-		public SyntaxNode SyntaxRoot { get; private set; }
-		public SemanticModel SemanticModel { get; private set; }
-		public Workspace Workspace { get; private set; }
+		public SyntaxNode? SyntaxRoot { get; private set; }
+		public SemanticModel? SemanticModel { get; private set; }
+		public Workspace? Workspace { get; private set; }
 		public List<ITagSpan<IClassificationTag>> TagsList { get; } = new List<ITagSpan<IClassificationTag>>();
 
 		public void Initialize(SyntaxNode syntaxRoot, SemanticModel semanticModel, Workspace workspace) {

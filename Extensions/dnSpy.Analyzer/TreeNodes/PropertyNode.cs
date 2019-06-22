@@ -33,7 +33,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		readonly bool hidesParent;
 
 		public PropertyNode(PropertyDef analyzedProperty, bool hidesParent = false) {
-			if (analyzedProperty == null)
+			if (analyzedProperty is null)
 				throw new ArgumentNullException(nameof(analyzedProperty));
 			isIndexer = analyzedProperty.IsIndexer();
 			this.analyzedProperty = analyzedProperty;
@@ -56,9 +56,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
-			if (analyzedProperty.GetMethod != null)
+			if (!(analyzedProperty.GetMethod is null))
 				yield return new PropertyAccessorNode(analyzedProperty.GetMethod, dnSpy_Analyzer_Resources.PropertyGetterTreeNode);
-			if (analyzedProperty.SetMethod != null)
+			if (!(analyzedProperty.SetMethod is null))
 				yield return new PropertyAccessorNode(analyzedProperty.SetMethod, dnSpy_Analyzer_Resources.PropertySetterTreeNode);
 			foreach (var accessor in analyzedProperty.OtherMethods)
 				yield return new PropertyAccessorNode(accessor, null);
@@ -71,15 +71,15 @@ namespace dnSpy.Analyzer.TreeNodes {
 				yield return new InterfacePropertyImplementedByNode(analyzedProperty);
 		}
 
-		public static AnalyzerTreeNodeData TryCreateAnalyzer(IMemberRef member, IDecompiler decompiler) {
+		public static AnalyzerTreeNodeData? TryCreateAnalyzer(IMemberRef? member, IDecompiler decompiler) {
 			if (CanShow(member, decompiler))
-				return new PropertyNode(member as PropertyDef);
+				return new PropertyNode((PropertyDef)member!);
 			else
 				return null;
 		}
 
-		public static bool CanShow(IMemberRef member, IDecompiler decompiler) => member is PropertyDef;
-		public override IMemberRef Member => analyzedProperty;
-		public override IMDTokenProvider Reference => analyzedProperty;
+		public static bool CanShow(IMemberRef? member, IDecompiler decompiler) => member is PropertyDef;
+		public override IMemberRef? Member => analyzedProperty;
+		public override IMDTokenProvider? Reference => analyzedProperty;
 	}
 }

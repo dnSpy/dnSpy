@@ -32,7 +32,7 @@ namespace dnSpy.Roslyn.Text {
 		public event EventHandler<RoslynDocumentChangedEventArgs> DocumentChanged;
 
 		public void RaiseDocumentChanged(ITextSnapshot snapshot) {
-			if (snapshot == null)
+			if (snapshot is null)
 				throw new ArgumentNullException(nameof(snapshot));
 			DocumentChanged?.Invoke(this, new RoslynDocumentChangedEventArgs(snapshot));
 		}

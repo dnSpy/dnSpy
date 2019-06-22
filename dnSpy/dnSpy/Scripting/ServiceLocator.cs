@@ -29,34 +29,36 @@ using Microsoft.VisualStudio.Composition;
 namespace dnSpy.Scripting {
 	[Export, Export(typeof(IServiceLocator))]
 	sealed class ServiceLocator : IServiceLocator {
-		Dispatcher dispatcher;
+		Dispatcher? dispatcher;
 
-		public T Resolve<T>() {
-			Debug.Assert(exportProvider != null);
-			if (exportProvider == null)
+		public T Resolve<T>() where T : class {
+			Debug.Assert(!(exportProvider is null));
+			Debug.Assert(!(dispatcher is null));
+			if (exportProvider is null)
 				throw new InvalidOperationException();
 			return dispatcher.UI(() => exportProvider.GetExportedValue<T>());
 		}
 
-		public T TryResolve<T>() {
-			Debug.Assert(exportProvider != null);
-			if (exportProvider == null)
+		public T? TryResolve<T>() where T : class {
+			Debug.Assert(!(exportProvider is null));
+			Debug.Assert(!(dispatcher is null));
+			if (exportProvider is null)
 				throw new InvalidOperationException();
 			return dispatcher.UI(() => {
 				// VS-MEF doesn't have GetExportedValueOrDefault()
 				var res = exportProvider.GetExports<T, IDictionary<string, object>>(null).SingleOrDefault();
-				if (res == null)
-					return default;
+				if (res is null)
+					return null;
 				return res.Value;
 			});
 		}
 
 		public void SetExportProvider(Dispatcher dispatcher, ExportProvider exportProvider) {
 			this.dispatcher = dispatcher;
-			if (this.exportProvider != null)
+			if (!(this.exportProvider is null))
 				throw new InvalidOperationException();
 			this.exportProvider = exportProvider ?? throw new ArgumentNullException(nameof(exportProvider));
 		}
-		ExportProvider exportProvider;
+		ExportProvider? exportProvider;
 	}
 }

@@ -45,7 +45,7 @@ namespace dndbg.Engine {
 		public uint Offset { get; }
 
 		readonly List<ModuleCodeBreakpoint> rawBps = new List<ModuleCodeBreakpoint>();
-		readonly CorCode code;
+		readonly CorCode? code;
 
 		internal event EventHandler ErrorChanged;
 		internal DnCodeBreakpointError Error => error;
@@ -89,22 +89,22 @@ namespace dndbg.Engine {
 			}
 
 			var c = code;
-			if (c == null) {
+			if (c is null) {
 				var func = module.CorModule.GetFunctionFromToken(Token);
-				if (func == null)
+				if (func is null)
 					return DnCodeBreakpointError.FunctionNotFound;
 
 				c = GetCode(func);
 			}
 			else {
-				if (c.Function?.Module != module.CorModule)
+				if (!object.Equals(c.Function?.Module, module.CorModule))
 					return DnCodeBreakpointError.OtherError;
 			}
-			if (c == null)
+			if (c is null)
 				return DnCodeBreakpointError.FunctionNotFound;
 
 			var funcBp = c.CreateBreakpoint(Offset);
-			if (funcBp == null)
+			if (funcBp is null)
 				return DnCodeBreakpointError.CouldNotCreateBreakpoint;
 
 			var modIlBp = new ModuleCodeBreakpoint(module, funcBp);
@@ -114,7 +114,7 @@ namespace dndbg.Engine {
 			return DnCodeBreakpointError.None;
 		}
 
-		internal abstract CorCode GetCode(CorFunction func);
+		internal abstract CorCode? GetCode(CorFunction func);
 
 		sealed internal override void OnRemoved() {
 			foreach (var bp in rawBps)
@@ -122,7 +122,7 @@ namespace dndbg.Engine {
 			rawBps.Clear();
 		}
 
-		public bool IsBreakpoint(ICorDebugBreakpoint comBp) {
+		public bool IsBreakpoint(ICorDebugBreakpoint? comBp) {
 			foreach (var bp in rawBps) {
 				if (bp.FunctionBreakpoint.RawObject == comBp)
 					return true;

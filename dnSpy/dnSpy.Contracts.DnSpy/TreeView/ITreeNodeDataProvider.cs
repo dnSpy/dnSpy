@@ -40,7 +40,7 @@ namespace dnSpy.Contracts.TreeView {
 		/// <summary>See <see cref="ExportTreeNodeDataProviderAttribute.Order"/></summary>
 		double Order { get; }
 		/// <summary>See <see cref="ExportTreeNodeDataProviderAttribute.Guid"/></summary>
-		string Guid { get; }
+		string? Guid { get; }
 	}
 
 	/// <summary>
@@ -61,6 +61,6 @@ namespace dnSpy.Contracts.TreeView {
 		/// Guid of owner <see cref="TreeNodeData"/> that will receive the new
 		/// <see cref="TreeNodeData"/> nodes
 		/// </summary>
-		public string Guid { get; set; }
+		public string? Guid { get; set; }
 	}
 }

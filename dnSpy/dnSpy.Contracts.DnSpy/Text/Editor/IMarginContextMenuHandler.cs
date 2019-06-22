@@ -36,7 +36,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="wpfTextViewHost">Text view host</param>
 		/// <param name="margin">Margin</param>
 		/// <returns></returns>
-		IMarginContextMenuHandler Create(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin margin);
+		IMarginContextMenuHandler? Create(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin margin);
 	}
 
 	/// <summary>

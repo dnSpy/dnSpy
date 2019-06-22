@@ -39,6 +39,6 @@ namespace dnSpy.Text.Editor {
 			this.editorOptionsFactoryService = editorOptionsFactoryService;
 		}
 
-		public ILogEditor Create(LogEditorOptions options) => new LogEditor(options, dsTextEditorFactoryService, contentTypeRegistryService, textBufferFactoryService, editorOptionsFactoryService);
+		public ILogEditor Create(LogEditorOptions? options) => new LogEditor(options, dsTextEditorFactoryService, contentTypeRegistryService, textBufferFactoryService, editorOptionsFactoryService);
 	}
 }

@@ -40,7 +40,7 @@ namespace dnSpy.Text.Groups {
 				this.contentType = contentType;
 			}
 			public bool Equals(ContentTypeKey other) => StringComparer.Ordinal.Equals(groupName, other.groupName) && StringComparer.OrdinalIgnoreCase.Equals(contentType, other.contentType);
-			public override bool Equals(object obj) => obj is ContentTypeKey && Equals((ContentTypeKey)obj);
+			public override bool Equals(object? obj) => obj is ContentTypeKey && Equals((ContentTypeKey)obj);
 			public override int GetHashCode() => StringComparer.Ordinal.GetHashCode(groupName) ^ StringComparer.OrdinalIgnoreCase.GetHashCode(contentType);
 			public override string ToString() => $"({groupName},{contentType})";
 		}
@@ -53,7 +53,7 @@ namespace dnSpy.Text.Groups {
 				this.name = name;
 			}
 			public bool Equals(OptionKey other) => contentTypeKey.Equals(other.contentTypeKey) && StringComparer.Ordinal.Equals(name, other.name);
-			public override bool Equals(object obj) => obj is OptionKey && Equals((OptionKey)obj);
+			public override bool Equals(object? obj) => obj is OptionKey && Equals((OptionKey)obj);
 			public override int GetHashCode() => contentTypeKey.GetHashCode() ^ StringComparer.Ordinal.GetHashCode(name);
 			public override string ToString() => contentTypeKey.ToString() + ": " + name;
 		}
@@ -64,7 +64,7 @@ namespace dnSpy.Text.Groups {
 		readonly Dictionary<OptionKey, ISettingsSection> toOptionSection;
 
 		public OptionsStorage(ISettingsService settingsService) {
-			if (settingsService == null)
+			if (settingsService is null)
 				throw new ArgumentNullException(nameof(settingsService));
 			toGroupSection = new Dictionary<string, ISettingsSection>(StringComparer.Ordinal);
 			toContentTypeSection = new Dictionary<ContentTypeKey, ISettingsSection>();
@@ -73,7 +73,7 @@ namespace dnSpy.Text.Groups {
 
 			foreach (var groupSect in settingsSection.SectionsWithName(GroupName)) {
 				var groupName = groupSect.Attribute<string>(GroupNameAttr);
-				if (groupName == null)
+				if (groupName is null)
 					continue;
 				if (toGroupSection.ContainsKey(groupName))
 					continue;
@@ -81,7 +81,7 @@ namespace dnSpy.Text.Groups {
 
 				foreach (var ctSect in groupSect.SectionsWithName(ContentTypeName)) {
 					var contentType = ctSect.Attribute<string>(ContentTypeNameAttr);
-					if (contentType == null)
+					if (contentType is null)
 						continue;
 					var key = new ContentTypeKey(groupName, contentType);
 					if (toContentTypeSection.ContainsKey(key))
@@ -90,7 +90,7 @@ namespace dnSpy.Text.Groups {
 
 					foreach (var optSect in ctSect.SectionsWithName(OptionName)) {
 						var name = optSect.Attribute<string>(OptionNameAttr);
-						if (name == null)
+						if (name is null)
 							continue;
 						var optKey = new OptionKey(key, name);
 						if (toOptionSection.ContainsKey(optKey))
@@ -102,9 +102,9 @@ namespace dnSpy.Text.Groups {
 		}
 
 		public void InitializeOptions(string groupName, TextViewGroupOptionCollection collection) {
-			if (groupName == null)
+			if (groupName is null)
 				throw new ArgumentNullException(nameof(groupName));
-			if (collection == null)
+			if (collection is null)
 				throw new ArgumentNullException(nameof(collection));
 
 			if (!toContentTypeSection.TryGetValue(new ContentTypeKey(groupName, collection.ContentType.TypeName), out var ctSect))
@@ -116,11 +116,11 @@ namespace dnSpy.Text.Groups {
 
 			foreach (var sect in ctSect.SectionsWithName(OptionName)) {
 				var name = sect.Attribute<string>(OptionNameAttr);
-				if (name == null)
+				if (name is null)
 					continue;
 
 				var textValue = sect.Attribute<string>(OptionValueAttr);
-				if (textValue == null)
+				if (textValue is null)
 					continue;
 
 				if (!toOption.TryGetValue(name, out var option))
@@ -128,21 +128,21 @@ namespace dnSpy.Text.Groups {
 				if (!option.Definition.CanBeSaved)
 					continue;
 
-				if (!TryGetValue(option, textValue, out object value))
+				if (!TryGetValue(option, textValue, out var value))
 					continue;
 
 				option.Value = value;
 			}
 		}
 
-		bool TryGetValue(TextViewGroupOption option, string textValue, out object value) {
+		bool TryGetValue(TextViewGroupOption option, string textValue, out object? value) {
 			var type = option.Definition.Type;
 			var c = TypeDescriptor.GetConverter(type);
 			try {
 				value = c.ConvertFromInvariantString(textValue);
-				if (type.IsValueType && value == null)
+				if (type.IsValueType && value is null)
 					return false;
-				if (value != null && !type.IsAssignableFrom(value.GetType()))
+				if (!(value is null) && !type.IsAssignableFrom(value.GetType()))
 					return false;
 				return true;
 			}
@@ -154,7 +154,7 @@ namespace dnSpy.Text.Groups {
 			return false;
 		}
 
-		bool TryGetValueString(TextViewGroupOption option, out string valueString) {
+		bool TryGetValueString(TextViewGroupOption option, out string? valueString) {
 			if (!option.Definition.CanBeSaved) {
 				valueString = null;
 				return false;
@@ -205,14 +205,14 @@ namespace dnSpy.Text.Groups {
 		}
 
 		public void Write(string groupName, TextViewGroupOption option) {
-			if (groupName == null)
+			if (groupName is null)
 				throw new ArgumentNullException(nameof(groupName));
-			if (option == null)
+			if (option is null)
 				throw new ArgumentNullException(nameof(option));
 			if (!option.Definition.CanBeSaved)
 				return;
 			var sect = GetOrCreateOptionSection(groupName, option);
-			if (!TryGetValueString(option, out string valueString))
+			if (!TryGetValueString(option, out var valueString))
 				return;
 			sect.Attribute(OptionValueAttr, valueString);
 		}

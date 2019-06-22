@@ -41,7 +41,7 @@ namespace dnSpy.Documents.Tabs {
 			this.documentListLoader = documentListLoader;
 		}
 
-		public IEnumerable<object> Load(ISettingsService settingsService, IAppCommandLineArgs args) {
+		public IEnumerable<object?> Load(ISettingsService settingsService, IAppCommandLineArgs args) {
 			var section = settingsService.GetOrCreateSection(SETTINGS_GUID);
 
 			foreach (var o in documentListLoader.Load(section.GetOrCreateSection(DOCUMENT_LISTS_SECTION), args.LoadFiles))

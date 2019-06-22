@@ -22,11 +22,11 @@ using System.Text;
 using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
-	sealed class CorAppDomain : COMObject<ICorDebugAppDomain>, IEquatable<CorAppDomain> {
-		public CorProcess Process {
+	sealed class CorAppDomain : COMObject<ICorDebugAppDomain>, IEquatable<CorAppDomain?> {
+		public CorProcess? Process {
 			get {
 				int hr = obj.GetProcess(out var process);
-				return hr < 0 || process == null ? null : new CorProcess(process);
+				return hr < 0 || process is null ? null : new CorProcess(process);
 			}
 		}
 
@@ -35,7 +35,7 @@ namespace dndbg.Engine {
 
 		public string Name => GetName(obj) ?? string.Empty;
 
-		static string GetName(ICorDebugAppDomain appDomain) {
+		static string? GetName(ICorDebugAppDomain appDomain) {
 			int hr = appDomain.GetName(0, out uint cchName, null);
 			if (hr < 0)
 				return null;
@@ -53,57 +53,48 @@ namespace dndbg.Engine {
 				id = -1;
 		}
 
-		public CorType GetPtr(CorType type) {
+		public CorType? GetPtr(CorType type) {
 			var ad2 = obj as ICorDebugAppDomain2;
-			if (ad2 == null)
+			if (ad2 is null)
 				return null;
 			int hr = ad2.GetArrayOrPointerType(CorElementType.Ptr, 0, type.RawObject, out var res);
-			return res == null ? null : new CorType(res);
+			return res is null ? null : new CorType(res);
 		}
 
-		public CorType GetByRef(CorType type) {
+		public CorType? GetByRef(CorType type) {
 			var ad2 = obj as ICorDebugAppDomain2;
-			if (ad2 == null)
+			if (ad2 is null)
 				return null;
 			int hr = ad2.GetArrayOrPointerType(CorElementType.ByRef, 0, type.RawObject, out var res);
-			return res == null ? null : new CorType(res);
+			return res is null ? null : new CorType(res);
 		}
 
-		public CorType GetSZArray(CorType type) {
+		public CorType? GetSZArray(CorType type) {
 			var ad2 = obj as ICorDebugAppDomain2;
-			if (ad2 == null)
+			if (ad2 is null)
 				return null;
 			int hr = ad2.GetArrayOrPointerType(CorElementType.SZArray, 1, type.RawObject, out var res);
-			return res == null ? null : new CorType(res);
+			return res is null ? null : new CorType(res);
 		}
 
-		public CorType GetArray(CorType type, uint rank) {
+		public CorType? GetArray(CorType type, uint rank) {
 			var ad2 = obj as ICorDebugAppDomain2;
-			if (ad2 == null)
+			if (ad2 is null)
 				return null;
 			int hr = ad2.GetArrayOrPointerType(CorElementType.Array, rank, type.RawObject, out var res);
-			return res == null ? null : new CorType(res);
+			return res is null ? null : new CorType(res);
 		}
 
-		public CorType GetFnPtr(CorType[] args) {
+		public CorType? GetFnPtr(CorType[] args) {
 			var ad2 = obj as ICorDebugAppDomain2;
-			if (ad2 == null)
+			if (ad2 is null)
 				return null;
 			int hr = ad2.GetFunctionPointerType(args.Length, args.ToCorDebugArray(), out var res);
-			return res == null ? null : new CorType(res);
+			return res is null ? null : new CorType(res);
 		}
 
-		public static bool operator ==(CorAppDomain a, CorAppDomain b) {
-			if (ReferenceEquals(a, b))
-				return true;
-			if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
-				return false;
-			return a.Equals(b);
-		}
-
-		public static bool operator !=(CorAppDomain a, CorAppDomain b) => !(a == b);
-		public bool Equals(CorAppDomain other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
-		public override bool Equals(object obj) => Equals(obj as CorAppDomain);
+		public bool Equals(CorAppDomain? other) => !(other is null) && RawObject == other.RawObject;
+		public override bool Equals(object? obj) => Equals(obj as CorAppDomain);
 		public override int GetHashCode() => RawObject.GetHashCode();
 		public override string ToString() => $"[AppDomain] {Id} {Name}";
 	}

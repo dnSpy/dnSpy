@@ -44,7 +44,7 @@ namespace dnSpy.Hex.Editor {
 
 		public HexAdornmentLayer GetAdornmentLayer(MetadataAndOrder<IAdornmentLayersMetadata> info) {
 			var layer = adornmentLayers.FirstOrDefault(a => a.Info.Metadata == info.Metadata);
-			if (layer == null)
+			if (layer is null)
 				layer = Create(info);
 			return layer;
 		}

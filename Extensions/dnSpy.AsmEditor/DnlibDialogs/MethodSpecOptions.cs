@@ -22,8 +22,8 @@ using dnlib.DotNet;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class MethodSpecOptions {
-		public IMethodDefOrRef Method;
-		public CallingConventionSig Instantiation;
+		public IMethodDefOrRef? Method;
+		public CallingConventionSig? Instantiation;
 		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
 
 		public MethodSpecOptions() {

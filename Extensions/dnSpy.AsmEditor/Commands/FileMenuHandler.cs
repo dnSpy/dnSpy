@@ -31,7 +31,7 @@ namespace dnSpy.AsmEditor.Commands {
 
 		protected FileMenuHandler(IDocumentTreeView documentTreeView) => this.documentTreeView = documentTreeView;
 
-		protected sealed override AsmEditorContext CreateContext(IMenuItemContext context) {
+		protected sealed override AsmEditorContext? CreateContext(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.APP_MENU_FILE_GUID))
 				return null;
 			return CreateContext();

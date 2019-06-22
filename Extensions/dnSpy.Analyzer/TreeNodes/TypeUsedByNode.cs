@@ -38,12 +38,12 @@ namespace dnSpy.Analyzer.TreeNodes {
 			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNodeData>(Context.DocumentService, analyzedType, FindTypeUsage);
 			return analyzer.PerformAnalysis(ct)
 				.Cast<EntityNode>()
-				.Where(n => n.Member.DeclaringType != analyzedType)
-				.Distinct(new AnalyzerEntityTreeNodeComparer());
+				.Where(n => n.Member!.DeclaringType != analyzedType)
+				.Distinct(AnalyzerEntityTreeNodeComparer.Instance);
 		}
 
-		IEnumerable<EntityNode> FindTypeUsage(TypeDef type) {
-			if (type == null)
+		IEnumerable<EntityNode> FindTypeUsage(TypeDef? type) {
+			if (type is null)
 				yield break;
 			if (type == analyzedType)
 				yield break;
@@ -63,7 +63,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		EntityNode HandleSpecialMethodNode(MethodDef method, SourceRef? sourceRef) {
 			var property = method.DeclaringType.Properties.FirstOrDefault(p => p.GetMethod == method || p.SetMethod == method);
-			if (property != null)
+			if (!(property is null))
 				return new PropertyNode(property) { Context = Context, SourceRef = sourceRef };
 
 			return new MethodNode(method) { Context = Context, SourceRef = sourceRef };
@@ -71,16 +71,16 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		bool IsUsedInTypeRefs(IEnumerable<ITypeDefOrRef> types) => types.Any(IsUsedInTypeRef);
 
-		bool IsUsedInTypeRef(ITypeDefOrRef type) {
-			if (type == null)
+		bool IsUsedInTypeRef(ITypeDefOrRef? type) {
+			if (type is null)
 				return false;
 
 			return TypeMatches(type.DeclaringType)
 				|| TypeMatches(type);
 		}
 
-		bool IsUsedInTypeDef(TypeDef type) {
-			if (type == null)
+		bool IsUsedInTypeDef(TypeDef? type) {
+			if (type is null)
 				return false;
 
 			return IsUsedInTypeRef(type)
@@ -88,16 +88,16 @@ namespace dnSpy.Analyzer.TreeNodes {
 				   || IsUsedInTypeRefs(type.Interfaces.Select(ii => ii.Interface));
 		}
 
-		bool IsUsedInFieldRef(IField field) {
-			if (field == null || !field.IsField)
+		bool IsUsedInFieldRef(IField? field) {
+			if (field is null || !field.IsField)
 				return false;
 
 			return TypeMatches(field.DeclaringType)
 				|| TypeMatches(field.FieldSig.GetFieldType());
 		}
 
-		bool IsUsedInMethodRef(IMethod method) {
-			if (method == null || !method.IsMethod)
+		bool IsUsedInMethodRef(IMethod? method) {
+			if (method is null || !method.IsMethod)
 				return false;
 
 			return TypeMatches(method.DeclaringType)
@@ -105,26 +105,26 @@ namespace dnSpy.Analyzer.TreeNodes {
 				   || IsUsedInMethodParameters(method.GetParameters());
 		}
 
-		bool IsUsedInMethodDef(MethodDef method, ref SourceRef? sourceRef) => IsUsedInMethodRef(method) || IsUsedInMethodBody(method, ref sourceRef);
+		bool IsUsedInMethodDef(MethodDef? method, ref SourceRef? sourceRef) => IsUsedInMethodRef(method) || IsUsedInMethodBody(method, ref sourceRef);
 
-		bool IsUsedInMethodBody(MethodDef method, ref SourceRef? sourceRef) {
-			if (method == null)
+		bool IsUsedInMethodBody(MethodDef? method, ref SourceRef? sourceRef) {
+			if (method is null)
 				return false;
-			if (method.Body == null)
+			if (method.Body is null)
 				return false;
 
 			foreach (var instruction in method.Body.Instructions) {
-				ITypeDefOrRef tr = instruction.Operand as ITypeDefOrRef;
+				ITypeDefOrRef? tr = instruction.Operand as ITypeDefOrRef;
 				if (IsUsedInTypeRef(tr)) {
 					sourceRef = new SourceRef(method, instruction.Offset, instruction.Operand as IMDTokenProvider);
 					return true;
 				}
-				IField fr = instruction.Operand as IField;
+				IField? fr = instruction.Operand as IField;
 				if (IsUsedInFieldRef(fr)) {
 					sourceRef = new SourceRef(method, instruction.Offset, instruction.Operand as IMDTokenProvider);
 					return true;
 				}
-				IMethod mr = instruction.Operand as IMethod;
+				IMethod? mr = instruction.Operand as IMethod;
 				if (IsUsedInMethodRef(mr)) {
 					sourceRef = new SourceRef(method, instruction.Offset, instruction.Operand as IMDTokenProvider);
 					return true;
@@ -136,12 +136,14 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		bool IsUsedInMethodParameters(IEnumerable<Parameter> parameters) => parameters.Any(IsUsedInMethodParameter);
 		bool IsUsedInMethodParameter(Parameter parameter) => !parameter.IsHiddenThisParameter && TypeMatches(parameter.Type);
-		bool TypeMatches(IType tref) => tref != null && new SigComparer().Equals(analyzedType, tref);
-		public static bool CanShow(TypeDef type) => type != null;
+		bool TypeMatches(IType? tref) => !(tref is null) && new SigComparer().Equals(analyzedType, tref);
+		public static bool CanShow(TypeDef? type) => !(type is null);
 	}
 
 	sealed class AnalyzerEntityTreeNodeComparer : IEqualityComparer<EntityNode> {
+		public static readonly AnalyzerEntityTreeNodeComparer Instance = new AnalyzerEntityTreeNodeComparer();
+		AnalyzerEntityTreeNodeComparer() { }
 		public bool Equals(EntityNode x, EntityNode y) => x.Member == y.Member;
-		public int GetHashCode(EntityNode node) => node.Member.GetHashCode();
+		public int GetHashCode(EntityNode node) => node.Member?.GetHashCode() ?? 0;
 	}
 }

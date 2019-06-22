@@ -54,11 +54,11 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 		ProcessesContextMenuEntry(ProcessHexBufferProvider processHexBufferProvider) => this.processHexBufferProvider = processHexBufferProvider;
 
 		public override void Execute(Context context) { }
-		protected override Context CreateContext(IMenuItemContext context) => CreateContext(processHexBufferProvider, context);
+		protected override Context? CreateContext(IMenuItemContext context) => CreateContext(processHexBufferProvider, context);
 
-		internal static Context CreateContext(ProcessHexBufferProvider processHexBufferProvider, IMenuItemContext context) {
+		internal static Context? CreateContext(ProcessHexBufferProvider processHexBufferProvider, IMenuItemContext context) {
 			var hexView = context.Find<HexView>();
-			if (hexView == null)
+			if (hexView is null)
 				return null;
 			if (!processHexBufferProvider.IsValidBuffer(hexView.Buffer))
 				return null;
@@ -77,8 +77,8 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 
 		IEnumerable<CreatedMenuItem> IMenuItemProvider.Create(IMenuItemContext context) {
 			var ctx = ProcessesContextMenuEntry.CreateContext(processHexBufferProvider, context);
-			Debug.Assert(ctx != null);
-			if (ctx == null)
+			Debug.Assert(!(ctx is null));
+			if (ctx is null)
 				yield break;
 
 			var currentPid = processHexBufferProvider.GetProcessId(ctx.Buffer);
@@ -92,9 +92,9 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			}
 		}
 
-		string GetProcessHeader(Process process, int pid) {
+		string GetProcessHeader(Process? process, int pid) {
 			try {
-				if (process != null) {
+				if (!(process is null)) {
 					var title = Filter(process.MainWindowTitle, 200);
 					var name = GetProcessName(process);
 					if (string.IsNullOrWhiteSpace(title))

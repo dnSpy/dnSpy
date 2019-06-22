@@ -50,7 +50,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="attributeType">Custom attribute type</param>
 		/// <param name="inherit">true to check custom attributes in all base classes</param>
 		/// <returns></returns>
-		bool IsDefined(DmdType attributeType, bool inherit);
+		bool IsDefined(DmdType? attributeType, bool inherit);
 
 		/// <summary>
 		/// Checks if a custom attribute is present
@@ -66,7 +66,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="attributeTypeFullName">Full name of the custom attribute type</param>
 		/// <param name="inherit">true to check custom attributes in all base classes</param>
 		/// <returns></returns>
-		DmdCustomAttributeData FindCustomAttribute(string attributeTypeFullName, bool inherit);
+		DmdCustomAttributeData? FindCustomAttribute(string attributeTypeFullName, bool inherit);
 
 		/// <summary>
 		/// Finds a custom attribute
@@ -74,7 +74,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="attributeType">Custom attribute type</param>
 		/// <param name="inherit">true to check custom attributes in all base classes</param>
 		/// <returns></returns>
-		DmdCustomAttributeData FindCustomAttribute(DmdType attributeType, bool inherit);
+		DmdCustomAttributeData? FindCustomAttribute(DmdType? attributeType, bool inherit);
 
 		/// <summary>
 		/// Finds a custom attribute
@@ -82,6 +82,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="attributeType">Custom attribute type</param>
 		/// <param name="inherit">true to check custom attributes in all base classes</param>
 		/// <returns></returns>
-		DmdCustomAttributeData FindCustomAttribute(Type attributeType, bool inherit);
+		DmdCustomAttributeData? FindCustomAttribute(Type attributeType, bool inherit);
 	}
 }

@@ -55,7 +55,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 		bool ShowIntrinsicTypeKeywords => (options & TypeFormatterOptions.IntrinsicTypeKeywords) != 0;
 		bool ShowNamespaces => (options & TypeFormatterOptions.Namespaces) != 0;
 
-		public VisualBasicTypeFormatter(IDbgTextWriter output, TypeFormatterOptions options, CultureInfo cultureInfo) {
+		public VisualBasicTypeFormatter(IDbgTextWriter output, TypeFormatterOptions options, CultureInfo? cultureInfo) {
 			this.output = output ?? throw new ArgumentNullException(nameof(output));
 			this.options = options;
 			this.cultureInfo = cultureInfo ?? CultureInfo.InvariantCulture;
@@ -116,20 +116,20 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 			"Widening", "With", "WithEvents", "WriteOnly", "Xor",
 		};
 
-		internal static string GetFormattedIdentifier(string id) {
-			if (isKeyword.Contains(id))
+		internal static string GetFormattedIdentifier(string? id) {
+			if (isKeyword.Contains(id!))
 				return IDENTIFIER_ESCAPE_BEGIN + IdentifierEscaper.Escape(id) + IDENTIFIER_ESCAPE_END;
 			return IdentifierEscaper.Escape(id);
 		}
 
-		void WriteIdentifier(string id, DbgTextColor color) => OutputWrite(GetFormattedIdentifier(id), color);
+		void WriteIdentifier(string? id, DbgTextColor color) => OutputWrite(GetFormattedIdentifier(id), color);
 
-		public void Format(DmdType type, DbgDotNetValue value) {
-			if ((object)type == null)
+		public void Format(DmdType type, DbgDotNetValue? value) {
+			if (type is null)
 				throw new ArgumentNullException(nameof(type));
 
-			List<(DmdType type, DbgDotNetValue value)> arrayTypesList = null;
-			DbgDotNetValue disposeThisValue = null;
+			List<(DmdType type, DbgDotNetValue? value)>? arrayTypesList = null;
+			DbgDotNetValue? disposeThisValue = null;
 			try {
 				if (recursionCounter++ >= MAX_RECURSION)
 					return;
@@ -138,13 +138,13 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 				case DmdTypeSignatureKind.SZArray:
 				case DmdTypeSignatureKind.MDArray:
 					// Array types are shown in reverse order
-					arrayTypesList = new List<(DmdType type, DbgDotNetValue value)>();
+					arrayTypesList = new List<(DmdType type, DbgDotNetValue? value)>();
 					do {
 						arrayTypesList.Add((type, arrayTypesList.Count == 0 ? value : null));
-						type = type.GetElementType();
+						type = type.GetElementType()!;
 					} while (type.IsArray);
 					var t = arrayTypesList[arrayTypesList.Count - 1];
-					Format(t.type.GetElementType(), null);
+					Format(t.type.GetElementType()!, null);
 					foreach (var tuple in arrayTypesList) {
 						var aryType = tuple.type;
 						var aryValue = tuple.value;
@@ -155,9 +155,9 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 							if (rank <= 0)
 								OutputWrite("???", DbgTextColor.Error);
 							else {
-								if (aryValue == null || aryValue.IsNull || !aryValue.GetArrayInfo(out elementCount, out var dimensionInfos))
+								if (aryValue is null || aryValue.IsNull || !aryValue.GetArrayInfo(out elementCount, out var dimensionInfos))
 									dimensionInfos = null;
-								if (ShowArrayValueSizes && dimensionInfos != null && dimensionInfos.Length == rank) {
+								if (ShowArrayValueSizes && !(dimensionInfos is null) && dimensionInfos.Length == rank) {
 									for (int i = 0; i < rank; i++) {
 										if (i > 0) {
 											OutputWrite(",", DbgTextColor.Punctuation);
@@ -183,7 +183,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 						else {
 							Debug.Assert(aryType.IsSZArray);
 							OutputWrite(ARRAY_OPEN_PAREN, DbgTextColor.Punctuation);
-							if (ShowArrayValueSizes && aryValue != null && !aryValue.IsNull) {
+							if (ShowArrayValueSizes && !(aryValue is null) && !aryValue.IsNull) {
 								if (aryValue.GetArrayCount(out elementCount))
 									WriteUInt32(elementCount);
 							}
@@ -193,14 +193,14 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 					break;
 
 				case DmdTypeSignatureKind.Pointer:
-					Format(type.GetElementType(), null);
+					Format(type.GetElementType()!, null);
 					OutputWrite("*", DbgTextColor.Operator);
 					break;
 
 				case DmdTypeSignatureKind.ByRef:
 					OutputWrite(BYREF_KEYWORD, DbgTextColor.Keyword);
 					WriteSpace();
-					Format(type.GetElementType(), disposeThisValue = value?.LoadIndirect().Value);
+					Format(type.GetElementType()!, disposeThisValue = value?.LoadIndirect().Value);
 					break;
 
 				case DmdTypeSignatureKind.TypeGenericParameter:
@@ -219,11 +219,11 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 					}
 					else if (TypeFormatterUtils.IsTupleType(type)) {
 						OutputWrite(TUPLE_OPEN_PAREN, DbgTextColor.Punctuation);
-						var tupleType = type;
+						DmdType? tupleType = type;
 						int tupleIndex = 0;
 						for (;;) {
 							tupleType = WriteTupleFields(tupleType, ref tupleIndex);
-							if ((object)tupleType != null)
+							if (!(tupleType is null))
 								WriteCommaSpace();
 							else
 								break;
@@ -234,7 +234,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 						var genericArgs = type.GetGenericArguments();
 						int genericArgsIndex = 0;
 						KeywordType keywordType;
-						if ((object)type.DeclaringType == null) {
+						if (type.DeclaringType is null) {
 							keywordType = GetKeywordType(type);
 							if (keywordType == KeywordType.NoKeyword)
 								WriteNamespace(type);
@@ -244,7 +244,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 						else {
 							var typesList = new List<DmdType>();
 							typesList.Add(type);
-							while ((object)type.DeclaringType != null) {
+							while (!(type.DeclaringType is null)) {
 								type = type.DeclaringType;
 								typesList.Add(type);
 							}
@@ -291,7 +291,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 			}
 			finally {
 				recursionCounter--;
-				if (arrayTypesList != null) {
+				if (!(arrayTypesList is null)) {
 					foreach (var info in arrayTypesList) {
 						if (info.value != value)
 							info.value?.Dispose();
@@ -317,7 +317,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 			}
 		}
 
-		DmdType WriteTupleFields(DmdType type, ref int index) {
+		DmdType? WriteTupleFields(DmdType type, ref int index) {
 			var args = type.GetGenericArguments();
 			Debug.Assert(0 < args.Count && args.Count <= TypeFormatterUtils.MAX_TUPLE_ARITY);
 			if (args.Count > TypeFormatterUtils.MAX_TUPLE_ARITY) {
@@ -328,8 +328,8 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 				if (i > 0)
 					WriteCommaSpace();
 				//TODO: Write tuple name used in source
-				string fieldName = null;
-				if (fieldName != null) {
+				string? fieldName = null;
+				if (!(fieldName is null)) {
 					OutputWrite(fieldName, DbgTextColor.InstanceField);
 					WriteSpace();
 					OutputWrite("As", DbgTextColor.Keyword);
@@ -382,7 +382,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 				throw new InvalidOperationException();
 			}
 
-			WriteIdentifier(TypeFormatterUtils.RemoveGenericTick(type.MetadataName), TypeFormatterUtils.GetColor(type, canBeModule: true));
+			WriteIdentifier(TypeFormatterUtils.RemoveGenericTick(type.MetadataName ?? string.Empty), TypeFormatterUtils.GetColor(type, canBeModule: true));
 			new VisualBasicPrimitiveValueFormatter(output, options.ToValueFormatterOptions(), cultureInfo).WriteTokenComment(type.MetadataToken);
 		}
 

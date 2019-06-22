@@ -24,13 +24,13 @@ using System.Windows.Data;
 
 namespace dnSpy.Language.Intellisense {
 	sealed class CompletionTextConverter : IMultiValueConverter {
-		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
+		public object? Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
 			var func = parameter as string;
-			if (func == null)
+			if (func is null)
 				return null;
 			var completion = (CompletionVM)values[0];
 			var presenter = (CompletionPresenter)values[1];
-			if (completion == null || presenter == null)
+			if (completion is null || presenter is null)
 				return null;
 			switch (func) {
 			case "DisplayText":

@@ -21,10 +21,10 @@ using System.Windows.Media;
 
 namespace dnSpy.Text.WPF {
 	static class BrushComparer {
-		public static bool Equals(Brush a, Brush b) {
+		public static bool Equals(Brush? a, Brush? b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 
 			if (a.Opacity == 0 && b.Opacity == 0)
@@ -32,7 +32,7 @@ namespace dnSpy.Text.WPF {
 
 			var sa = a as SolidColorBrush;
 			var sb = b as SolidColorBrush;
-			if (sa != null && sb != null) {
+			if (!(sa is null) && !(sb is null)) {
 				if (sa.Color.A == 0 && sb.Color.A == 0)
 					return true;
 				return sa.Color.A == sb.Color.A && sa.Color.R == sb.Color.R && sa.Color.G == sb.Color.G && sa.Color.B == sb.Color.B;

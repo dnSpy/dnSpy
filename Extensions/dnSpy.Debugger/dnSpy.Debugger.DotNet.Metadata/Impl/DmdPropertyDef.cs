@@ -26,9 +26,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	abstract class DmdPropertyDef : DmdPropertyInfo {
 		sealed private protected override void YouCantDeriveFromThisClass() => throw new InvalidOperationException();
 
-		public sealed override DmdModule Module => DeclaringType.Module;
-		public sealed override DmdType DeclaringType { get; }
-		public sealed override DmdType ReflectedType { get; }
+		public sealed override DmdModule Module => DeclaringType!.Module;
+		public sealed override DmdType? DeclaringType { get; }
+		public sealed override DmdType? ReflectedType { get; }
 		public sealed override int MetadataToken => (int)(0x17000000 + rid);
 		public sealed override DmdType PropertyType => GetMethodSignature().ReturnType;
 
@@ -43,62 +43,62 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public sealed override DmdMethodInfo[] GetAccessors(DmdGetAccessorOptions options) {
 			var f = ExtraFields;
-			if (f.__otherMethods_DONT_USE == null)
+			if (f.__otherMethods_DONT_USE is null)
 				InitializePropertyMethods();
 			var list = new List<DmdMethodInfo>();
-			var accessor = AccessorUtils.FilterAccessor(options, f.__getMethod_DONT_USE);
-			if ((object)accessor != null)
+			var accessor = AccessorUtils.FilterAccessor(options, f.__getMethod_DONT_USE!);
+			if (!(accessor is null))
 				list.Add(accessor);
-			accessor = AccessorUtils.FilterAccessor(options, f.__setMethod_DONT_USE);
-			if ((object)accessor != null)
+			accessor = AccessorUtils.FilterAccessor(options, f.__setMethod_DONT_USE!);
+			if (!(accessor is null))
 				list.Add(accessor);
-			foreach (var method in f.__otherMethods_DONT_USE) {
+			foreach (var method in f.__otherMethods_DONT_USE!) {
 				accessor = AccessorUtils.FilterAccessor(options, method);
-				if ((object)accessor != null)
+				if (!(accessor is null))
 					list.Add(accessor);
 			}
 			return list.ToArray();
 		}
 
-		public sealed override DmdMethodInfo GetGetMethod(DmdGetAccessorOptions options) {
+		public sealed override DmdMethodInfo? GetGetMethod(DmdGetAccessorOptions options) {
 			var f = ExtraFields;
-			if (f.__otherMethods_DONT_USE == null)
+			if (f.__otherMethods_DONT_USE is null)
 				InitializePropertyMethods();
-			return AccessorUtils.FilterAccessor(options, f.__getMethod_DONT_USE);
+			return AccessorUtils.FilterAccessor(options, f.__getMethod_DONT_USE!);
 		}
 
-		public sealed override DmdMethodInfo GetSetMethod(DmdGetAccessorOptions options) {
+		public sealed override DmdMethodInfo? GetSetMethod(DmdGetAccessorOptions options) {
 			var f = ExtraFields;
-			if (f.__otherMethods_DONT_USE == null)
+			if (f.__otherMethods_DONT_USE is null)
 				InitializePropertyMethods();
-			return AccessorUtils.FilterAccessor(options, f.__setMethod_DONT_USE);
+			return AccessorUtils.FilterAccessor(options, f.__setMethod_DONT_USE!);
 		}
 
 		void InitializePropertyMethods() {
 			var f = ExtraFields;
-			if (f.__otherMethods_DONT_USE != null)
+			if (!(f.__otherMethods_DONT_USE is null))
 				return;
 			GetMethods(out var getMethod, out var setMethod, out var otherMethods);
 			lock (LockObject) {
-				if (f.__otherMethods_DONT_USE == null) {
+				if (f.__otherMethods_DONT_USE is null) {
 					f.__getMethod_DONT_USE = getMethod;
 					f.__setMethod_DONT_USE = setMethod;
 					f.__otherMethods_DONT_USE = ReadOnlyCollectionHelpers.Create(otherMethods);
 				}
 			}
 		}
-		protected abstract void GetMethods(out DmdMethodInfo getMethod, out DmdMethodInfo setMethod, out DmdMethodInfo[] otherMethods);
+		protected abstract void GetMethods(out DmdMethodInfo? getMethod, out DmdMethodInfo? setMethod, out DmdMethodInfo[]? otherMethods);
 
 		public sealed override ReadOnlyCollection<DmdParameterInfo> GetIndexParameters() {
 			var f = ExtraFields;
-			if (f.__indexParameters_DONT_USE == null)
+			if (f.__indexParameters_DONT_USE is null)
 				InitializeIndexParameters();
-			return f.__indexParameters_DONT_USE;
+			return f.__indexParameters_DONT_USE!;
 		}
 
 		void InitializeIndexParameters() {
 			var f = ExtraFields;
-			if (f.__indexParameters_DONT_USE != null)
+			if (!(f.__indexParameters_DONT_USE is null))
 				return;
 			var info = CreateIndexParameters();
 			Interlocked.CompareExchange(ref f.__indexParameters_DONT_USE, ReadOnlyCollectionHelpers.Create(info), null);
@@ -132,12 +132,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public sealed override ReadOnlyCollection<DmdCustomAttributeData> GetCustomAttributesData() {
 			var f = ExtraFields;
-			if (f.__customAttributes_DONT_USE != null)
+			if (!(f.__customAttributes_DONT_USE is null))
 				return f.__customAttributes_DONT_USE;
 			var info = CreateCustomAttributes();
 			var newCAs = CustomAttributesHelper.AddPseudoCustomAttributes(this, info);
 			Interlocked.CompareExchange(ref f.__customAttributes_DONT_USE, newCAs, null);
-			return f.__customAttributes_DONT_USE;
+			return f.__customAttributes_DONT_USE!;
 		}
 
 		protected abstract DmdCustomAttributeData[] CreateCustomAttributes();
@@ -147,18 +147,18 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				if (__extraFields_DONT_USE is ExtraFieldsImpl f)
 					return f;
 				Interlocked.CompareExchange(ref __extraFields_DONT_USE, new ExtraFieldsImpl(), null);
-				return __extraFields_DONT_USE;
+				return __extraFields_DONT_USE!;
 			}
 		}
-		volatile ExtraFieldsImpl __extraFields_DONT_USE;
+		volatile ExtraFieldsImpl? __extraFields_DONT_USE;
 
 		// Most of the fields aren't used so we alloc them when needed
 		sealed class ExtraFieldsImpl {
-			public volatile ReadOnlyCollection<DmdParameterInfo> __indexParameters_DONT_USE;
-			public volatile DmdMethodInfo __getMethod_DONT_USE;
-			public volatile DmdMethodInfo __setMethod_DONT_USE;
-			public volatile ReadOnlyCollection<DmdMethodInfo> __otherMethods_DONT_USE;
-			public volatile ReadOnlyCollection<DmdCustomAttributeData> __customAttributes_DONT_USE;
+			public volatile ReadOnlyCollection<DmdParameterInfo>? __indexParameters_DONT_USE;
+			public volatile DmdMethodInfo? __getMethod_DONT_USE;
+			public volatile DmdMethodInfo? __setMethod_DONT_USE;
+			public volatile ReadOnlyCollection<DmdMethodInfo>? __otherMethods_DONT_USE;
+			public volatile ReadOnlyCollection<DmdCustomAttributeData>? __customAttributes_DONT_USE;
 		}
 	}
 }

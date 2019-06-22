@@ -38,15 +38,15 @@ namespace dnSpy.Output {
 		protected sealed override object CachedContextKey => ContextKey;
 		static readonly object ContextKey = new object();
 
-		protected sealed override LogEditorCtxMenuContext CreateContext(IMenuItemContext context) {
+		protected sealed override LogEditorCtxMenuContext? CreateContext(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_LOG_TEXTEDITORCONTROL_GUID))
 				return null;
 			var textPane = context.Find<IOutputTextPane>();
-			if (textPane == null)
+			if (textPane is null)
 				return null;
 
 			var outputService = context.Find<IOutputServiceInternal>();
-			if (outputService == null)
+			if (outputService is null)
 				return null;
 
 			return new LogEditorCtxMenuContext(textPane, outputService);

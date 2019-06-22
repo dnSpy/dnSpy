@@ -32,14 +32,15 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		WpfDebugMessageDispatcher WpfDebugMessageDispatcher {
 			get {
-				if (__wpfDebugMessageDispatcher == null)
+				if (__wpfDebugMessageDispatcher is null)
 					Interlocked.CompareExchange(ref __wpfDebugMessageDispatcher, new WpfDebugMessageDispatcher(Dispatcher), null);
-				return __wpfDebugMessageDispatcher;
+				return __wpfDebugMessageDispatcher!;
 			}
 		}
-		volatile WpfDebugMessageDispatcher __wpfDebugMessageDispatcher;
+		volatile WpfDebugMessageDispatcher? __wpfDebugMessageDispatcher;
 
 		public DebuggerThread(string threadName) {
+			Dispatcher = null!;
 			this.threadName = threadName;
 			var autoResetEvent = new AutoResetEvent(false);
 			callDispatcherRunEvent = new AutoResetEvent(false);
@@ -64,7 +65,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 			callDispatcherRunEvent.WaitOne();
 			callDispatcherRunEvent.Close();
-			callDispatcherRunEvent = null;
+			callDispatcherRunEvent = null!;
 
 			if (!terminate)
 				Dispatcher.Run();
@@ -75,7 +76,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		internal void Terminate() {
 			terminate = true;
 			try { callDispatcherRunEvent?.Set(); } catch (ObjectDisposedException) { }
-			if (Dispatcher != null && !Dispatcher.HasShutdownStarted && !Dispatcher.HasShutdownFinished)
+			if (!(Dispatcher is null) && !Dispatcher.HasShutdownStarted && !Dispatcher.HasShutdownFinished)
 				Dispatcher.BeginInvokeShutdown();
 		}
 

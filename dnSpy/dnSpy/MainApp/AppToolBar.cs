@@ -27,7 +27,7 @@ using dnSpy.Controls;
 namespace dnSpy.MainApp {
 	[Export]
 	sealed class AppToolBar : IStackedContentChild {
-		public object UIObject => toolBar;
+		public object? UIObject => toolBar;
 		readonly ToolBar toolBar;
 
 		readonly IToolBarService toolBarService;

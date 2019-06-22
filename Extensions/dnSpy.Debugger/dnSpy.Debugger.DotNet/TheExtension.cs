@@ -31,6 +31,6 @@ namespace dnSpy.Debugger.DotNet {
 			ShortDescription = ".NET Debugger",
 		};
 
-		public void OnEvent(ExtensionEvent @event, object obj) { }
+		public void OnEvent(ExtensionEvent @event, object? obj) { }
 	}
 }

@@ -27,19 +27,19 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// </summary>
 		/// <param name="tab">Tab</param>
 		/// <returns></returns>
-		bool CanSave(IDocumentTab tab);
+		bool CanSave(IDocumentTab? tab);
 
 		/// <summary>
 		/// Saves the tab. See also <see cref="CanSave(IDocumentTab)"/>
 		/// </summary>
 		/// <param name="tab">Tab</param>
-		void Save(IDocumentTab tab);
+		void Save(IDocumentTab? tab);
 
 		/// <summary>
 		/// Returns the menu header content, eg. "_Save..."
 		/// </summary>
 		/// <param name="tab">Tab</param>
 		/// <returns></returns>
-		string GetMenuHeader(IDocumentTab tab);
+		string GetMenuHeader(IDocumentTab? tab);
 	}
 }

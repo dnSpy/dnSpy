@@ -44,9 +44,9 @@ namespace dnSpy.Contracts.Hex.Classification.DnSpy {
 		/// <summary>
 		/// Creates the text element
 		/// </summary>
-		/// <param name="tag">Tag (<see cref="CTC.PredefinedTextClassifierTags"/>), can be null</param>
 		/// <param name="colorize">true if it should be colorized</param>
+		/// <param name="tag">Tag (<see cref="CTC.PredefinedTextClassifierTags"/>), can be null</param>
 		/// <returns></returns>
-		public abstract FrameworkElement CreateTextElement(bool colorize = true, string tag = null);
+		public abstract FrameworkElement CreateTextElement(bool colorize = true, string? tag = null);
 	}
 }

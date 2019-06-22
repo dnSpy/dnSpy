@@ -25,12 +25,12 @@ namespace dnSpy.Disassembly.X86 {
 	readonly struct Block {
 		public NativeCodeBlockKind Kind { get; }
 		public ulong Address { get; }
-		public string Comment { get; }
-		public string Label { get; }
+		public string? Comment { get; }
+		public string? Label { get; }
 		public FormatterOutputTextKind LabelKind { get; }
 		public X86InstructionInfo[] Instructions { get; }
 
-		public Block(NativeCodeBlockKind kind, ulong address, string comment, string label, FormatterOutputTextKind labelKind, X86InstructionInfo[] instructions) {
+		public Block(NativeCodeBlockKind kind, ulong address, string? comment, string? label, FormatterOutputTextKind labelKind, X86InstructionInfo[] instructions) {
 			Kind = kind;
 			Address = address;
 			Comment = comment;

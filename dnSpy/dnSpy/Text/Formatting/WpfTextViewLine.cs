@@ -327,7 +327,7 @@ namespace dnSpy.Text.Formatting {
 				if (!IsValid)
 					throw new ObjectDisposedException(nameof(WpfTextViewLine));
 				foreach (var part in linePartsCollection.LineParts) {
-					if (part.AdornmentElement != null)
+					if (!(part.AdornmentElement is null))
 						return true;
 				}
 				return false;
@@ -344,7 +344,7 @@ namespace dnSpy.Text.Formatting {
 		}
 
 		public WpfTextViewLine(IBufferGraph bufferGraph, LinePartsCollection linePartsCollection, int linePartsIndex, int linePartsLength, int startColumn, int endColumn, ITextSnapshotLine bufferLine, SnapshotSpan span, ITextSnapshot visualSnapshot, TextLine textLine, double indentation, double virtualSpaceWidth) {
-			if (linePartsCollection == null)
+			if (linePartsCollection is null)
 				throw new ArgumentNullException(nameof(linePartsCollection));
 			if (linePartsIndex < 0)
 				throw new ArgumentOutOfRangeException(nameof(linePartsIndex));
@@ -352,11 +352,11 @@ namespace dnSpy.Text.Formatting {
 				throw new ArgumentOutOfRangeException(nameof(linePartsLength));
 			if (linePartsIndex + linePartsLength > linePartsCollection.LineParts.Count)
 				throw new ArgumentOutOfRangeException(nameof(linePartsLength));
-			if (bufferLine == null)
+			if (bufferLine is null)
 				throw new ArgumentNullException(nameof(bufferLine));
 			if (span.Snapshot != bufferLine.Snapshot)
 				throw new ArgumentException();
-			if (textLine == null)
+			if (textLine is null)
 				throw new ArgumentNullException(nameof(textLine));
 
 			IsValid = true;
@@ -377,7 +377,7 @@ namespace dnSpy.Text.Formatting {
 			var lineParts = linePartsCollection.LineParts;
 			for (int i = 0; i < linePartsLength; i++) {
 				var adornmentElement = lineParts[linePartsIndex + i].AdornmentElement;
-				if (adornmentElement == null)
+				if (adornmentElement is null)
 					continue;
 				double adornmentBaseLineHeight = adornmentElement.TextHeight - adornmentElement.Baseline;
 				if (adornmentBaseLineHeight > baseLineHeight)
@@ -448,7 +448,7 @@ namespace dnSpy.Text.Formatting {
 		public TF.TextBounds? GetAdornmentBounds(object identityTag) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(WpfTextViewLine));
-			if (identityTag == null)
+			if (identityTag is null)
 				throw new ArgumentNullException(nameof(identityTag));
 
 			var lineParts = linePartsCollection.LineParts;
@@ -457,7 +457,7 @@ namespace dnSpy.Text.Formatting {
 			for (int i = 0; i < linePartsLengthLocal; i++) {
 				var part = lineParts[linePartsIndexLocal + i];
 				var adornment = part.AdornmentElement;
-				if (adornment == null)
+				if (adornment is null)
 					continue;
 				if (!identityTag.Equals(adornment.IdentityTag))
 					continue;
@@ -470,25 +470,25 @@ namespace dnSpy.Text.Formatting {
 		public ReadOnlyCollection<object> GetAdornmentTags(object providerTag) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(WpfTextViewLine));
-			if (providerTag == null)
+			if (providerTag is null)
 				throw new ArgumentNullException(nameof(providerTag));
 
 			var lineParts = linePartsCollection.LineParts;
 			int linePartsIndexLocal = linePartsIndex;
 			int linePartsLengthLocal = linePartsLength;
-			List<object> list = null;
+			List<object>? list = null;
 			for (int i = 0; i < linePartsLengthLocal; i++) {
 				var part = lineParts[linePartsIndexLocal + i];
 				var adornment = part.AdornmentElement;
-				if (adornment == null)
+				if (adornment is null)
 					continue;
 				if (!providerTag.Equals(adornment.ProviderTag))
 					continue;
-				if (list == null)
+				if (list is null)
 					list = new List<object>();
 				list.Add(adornment.IdentityTag);
 			}
-			if (list == null)
+			if (list is null)
 				return emptyReadOnlyCollection;
 			return new ReadOnlyCollection<object>(list);
 		}
@@ -517,7 +517,7 @@ namespace dnSpy.Text.Formatting {
 				throw new ObjectDisposedException(nameof(WpfTextViewLine));
 
 			var pos = GetBufferPositionFromXCoordinate(xCoordinate);
-			if (pos != null)
+			if (!(pos is null))
 				return new VirtualSnapshotPoint(pos.Value);
 			if (xCoordinate <= TextLeft)
 				return new VirtualSnapshotPoint(ExtentIncludingLineBreak.Start);
@@ -531,7 +531,7 @@ namespace dnSpy.Text.Formatting {
 				throw new ObjectDisposedException(nameof(WpfTextViewLine));
 
 			var pos = GetBufferPositionFromXCoordinate(xCoordinate);
-			if (pos != null) {
+			if (!(pos is null)) {
 				if (pos.Value < End) {
 					var bounds = GetExtendedCharacterBounds(pos.Value);
 					// Get closest buffer position
@@ -563,10 +563,10 @@ namespace dnSpy.Text.Formatting {
 
 			var span = GetTextElementSpan(bufferPosition.Position);
 			var part = linePartsCollection.GetLinePartFromBufferPosition(span.Start);
-			if (part == null)
+			if (part is null)
 				return GetCharacterBounds(bufferPosition);
 			var elem = part.Value.AdornmentElement;
-			if (elem == null)
+			if (elem is null)
 				return GetCharacterBounds(bufferPosition);
 			return GetTextBounds(part.Value.Column);
 		}
@@ -599,7 +599,7 @@ namespace dnSpy.Text.Formatting {
 				throw new ArgumentException();
 			int column = FilterColumn(linePartsCollection.ConvertBufferPositionToColumn(point));
 			var part = linePartsCollection.GetLinePartFromColumn(column);
-			if (part != null) {
+			if (!(part is null)) {
 				var lineParts = linePartsCollection.LineParts;
 				int lineIndex = point - linePartsCollection.Span.Start;
 				for (int i = part.Value.Index + 1; i < lineParts.Count; i++, column++) {
@@ -631,7 +631,7 @@ namespace dnSpy.Text.Formatting {
 			return new TF.TextBounds(extra + start, Top, end - start, Height, TextTop, TextHeight);
 		}
 
-		public TextRunProperties GetCharacterFormatting(SnapshotPoint bufferPosition) {
+		public TextRunProperties? GetCharacterFormatting(SnapshotPoint bufferPosition) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(WpfTextViewLine));
 			if (bufferPosition.Snapshot != Snapshot)
@@ -640,7 +640,7 @@ namespace dnSpy.Text.Formatting {
 				throw new ArgumentOutOfRangeException(nameof(bufferPosition));
 
 			int column = GetFirstColumn(bufferPosition);
-			TextSpan<TextRun> lastTextSpan = null;
+			TextSpan<TextRun>? lastTextSpan = null;
 			foreach (var textSpan in TextLine.GetTextRunSpans()) {
 				lastTextSpan = textSpan;
 				if (column < textSpan.Length)
@@ -648,7 +648,7 @@ namespace dnSpy.Text.Formatting {
 				column -= textSpan.Length;
 			}
 
-			return ((column == 0 && IsLastTextViewLineForSnapshotLine) || IsLastVisualLine) && lastTextSpan != null ? lastTextSpan.Value.Properties : null;
+			return ((column == 0 && IsLastTextViewLineForSnapshotLine) || IsLastVisualLine) && !(lastTextSpan is null) ? lastTextSpan.Value.Properties : null;
 		}
 
 		public Collection<TF.TextBounds> GetNormalizedTextBounds(SnapshotSpan bufferSpan) {
@@ -658,7 +658,7 @@ namespace dnSpy.Text.Formatting {
 				throw new ArgumentException();
 			var span = ExtentIncludingLineBreak.Intersection(bufferSpan);
 			var list = new List<TF.TextBounds>();
-			if (span == null)
+			if (span is null)
 				return new Collection<TF.TextBounds>(list);
 
 			var startBounds = GetFirstTextBounds(span.Value.Start);
@@ -703,7 +703,7 @@ namespace dnSpy.Text.Formatting {
 		public Visual GetOrCreateVisual() {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(WpfTextViewLine));
-			if (drawingVisual == null) {
+			if (drawingVisual is null) {
 				drawingVisual = new DrawingVisual();
 				double x = Left;
 				var dc = drawingVisual.RenderOpen();
@@ -716,7 +716,7 @@ namespace dnSpy.Text.Formatting {
 			}
 			return drawingVisual;
 		}
-		DrawingVisual drawingVisual;
+		DrawingVisual? drawingVisual;
 
 		public void RemoveVisual() {
 			if (!IsValid)
@@ -731,7 +731,7 @@ namespace dnSpy.Text.Formatting {
 		}
 
 		void UpdateVisualTransform() {
-			if (drawingVisual == null)
+			if (drawingVisual is null)
 				return;
 			var t = new MatrixTransform(1, 0, 0, lineTransform.VerticalScale, 0, TextTop);
 			t.Freeze();
@@ -760,9 +760,9 @@ namespace dnSpy.Text.Formatting {
 		public void SetSnapshot(ITextSnapshot visualSnapshot, ITextSnapshot editSnapshot) {
 			if (!IsValid)
 				throw new ObjectDisposedException(nameof(WpfTextViewLine));
-			if (visualSnapshot == null)
+			if (visualSnapshot is null)
 				throw new ArgumentNullException(nameof(visualSnapshot));
-			if (editSnapshot == null)
+			if (editSnapshot is null)
 				throw new ArgumentNullException(nameof(editSnapshot));
 			if (visualSnapshot != editSnapshot)
 				throw new NotSupportedException();
@@ -795,11 +795,11 @@ namespace dnSpy.Text.Formatting {
 			IsValid = false;
 			foreach (var t in textLines)
 				t.Dispose();
-			bufferGraph = null;
+			bufferGraph = null!;
 			extentIncludingLineBreak = default;
-			visualSnapshot = null;
-			linePartsCollection = null;
-			textLines = null;
+			visualSnapshot = null!;
+			linePartsCollection = null!;
+			textLines = null!;
 			drawingVisual = null;
 		}
 	}

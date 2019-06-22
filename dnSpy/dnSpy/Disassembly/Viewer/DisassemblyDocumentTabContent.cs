@@ -31,13 +31,13 @@ using Microsoft.VisualStudio.Utilities;
 namespace dnSpy.Disassembly.Viewer {
 	sealed class DisassemblyDocumentTabContent : DocumentTabContent, IDisposable {
 		public override string Title { get; }
-		public override object ToolTip { get; }
+		public override object? ToolTip { get; }
 
 		readonly IDocumentViewerContentFactoryProvider documentViewerContentFactoryProvider;
 		readonly DisassemblyContentProvider contentProvider;
 		readonly IContentType asmContentType;
-		DocumentViewerContent cachedDocumentViewerContent;
-		IContentType cachedContentType;
+		DocumentViewerContent? cachedDocumentViewerContent;
+		IContentType? cachedContentType;
 		bool isVisible;
 		bool disposed;
 
@@ -72,7 +72,7 @@ namespace dnSpy.Disassembly.Viewer {
 			Debug.Assert(!isVisible);
 			isVisible = true;
 			var documentViewer = (IDocumentViewer)ctx.UIContext;
-			if (cachedDocumentViewerContent == null)
+			if (cachedDocumentViewerContent is null)
 				(cachedDocumentViewerContent, cachedContentType) = CreateContent(documentViewer);
 			documentViewer.SetContent(cachedDocumentViewerContent, cachedContentType);
 		}
@@ -84,7 +84,7 @@ namespace dnSpy.Disassembly.Viewer {
 			var bracesStack = new Stack<(int pos, char brace)>();
 			foreach (var info in disasmContent.Text) {
 				var text = info.Text;
-				if (info.Reference != null)
+				if (!(info.Reference is null))
 					output.Write(text, info.Reference, ToDecompilerReferenceFlags(info.ReferenceFlags), info.Color);
 				else
 					output.Write(text, info.Color);

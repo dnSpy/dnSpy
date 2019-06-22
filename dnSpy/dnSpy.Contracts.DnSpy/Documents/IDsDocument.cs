@@ -43,17 +43,17 @@ namespace dnSpy.Contracts.Documents {
 		/// <summary>
 		/// Gets the assembly or null if it's not a .NET file or if it's a netmodule
 		/// </summary>
-		AssemblyDef AssemblyDef { get; }
+		AssemblyDef? AssemblyDef { get; }
 
 		/// <summary>
 		/// Gets the module or null if it's not a .NET file
 		/// </summary>
-		ModuleDef ModuleDef { get; }
+		ModuleDef? ModuleDef { get; }
 
 		/// <summary>
 		/// Gets the PE image or null if it's not available
 		/// </summary>
-		IPEImage PEImage { get; }
+		IPEImage? PEImage { get; }
 
 		/// <summary>
 		/// Gets/sets the filename
@@ -128,7 +128,7 @@ namespace dnSpy.Contracts.Documents {
 		/// <param name="document">Document</param>
 		/// <returns></returns>
 		public static IEnumerable<IDsDocument> NonLoadedDescendantsAndSelf(this IDsDocument document) {
-			if (document == null)
+			if (document is null)
 				throw new ArgumentNullException(nameof(document));
 			yield return document;
 			if (document.ChildrenLoaded) {
@@ -158,14 +158,16 @@ namespace dnSpy.Contracts.Documents {
 		static IEnumerable<T> GetModules<T>(HashSet<T> hash, IEnumerable<IDsDocument> documents) where T : ModuleDef {
 			foreach (var f in documents.SelectMany(f => f.NonLoadedDescendantsAndSelf())) {
 				var mod = f.ModuleDef as T;
-				if (mod != null && !hash.Contains(mod)) {
+				if (!(mod is null) && !hash.Contains(mod)) {
 					hash.Add(mod);
 					yield return mod;
 				}
-				var asm = mod.Assembly;
+				var asm = mod?.Assembly;
+				if (asm is null)
+					continue;
 				foreach (var m in asm.Modules) {
 					mod = m as T;
-					if (mod != null && !hash.Contains(mod)) {
+					if (!(mod is null) && !hash.Contains(mod)) {
 						hash.Add(mod);
 						yield return mod;
 					}

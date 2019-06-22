@@ -68,7 +68,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// </summary>
 		public ITypeDefOrRef TypeRef { get; }
 
-		IMDTokenProvider IMDTokenNode.Reference => TypeRef;
+		IMDTokenProvider? IMDTokenNode.Reference => TypeRef;
 
 		/// <summary>
 		/// Constructor
@@ -89,7 +89,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// </summary>
 		public IMethod MethodRef { get; }
 
-		IMDTokenProvider IMDTokenNode.Reference => MethodRef;
+		IMDTokenProvider? IMDTokenNode.Reference => MethodRef;
 
 		/// <summary>
 		/// Constructor
@@ -110,7 +110,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// </summary>
 		public MemberRef FieldRef { get; }
 
-		IMDTokenProvider IMDTokenNode.Reference => FieldRef;
+		IMDTokenProvider? IMDTokenNode.Reference => FieldRef;
 
 		/// <summary>
 		/// Constructor
@@ -131,7 +131,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// </summary>
 		public IMethod PropertyRef { get; }
 
-		IMDTokenProvider IMDTokenNode.Reference => PropertyRef;
+		IMDTokenProvider? IMDTokenNode.Reference => PropertyRef;
 
 		/// <summary>
 		/// Constructor
@@ -152,7 +152,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// </summary>
 		public IMethod EventRef { get; }
 
-		IMDTokenProvider IMDTokenNode.Reference => EventRef;
+		IMDTokenProvider? IMDTokenNode.Reference => EventRef;
 
 		/// <summary>
 		/// Constructor

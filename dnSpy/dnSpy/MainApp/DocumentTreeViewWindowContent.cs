@@ -37,8 +37,8 @@ namespace dnSpy.MainApp {
 	sealed class DocumentTreeViewWindowContentProvider : IToolWindowContentProvider {
 		readonly IDocumentTreeView documentTreeView;
 
-		DocumentTreeViewWindowContent DocumentTreeViewWindowContent => documentTreeViewWindowContent ?? (documentTreeViewWindowContent = new DocumentTreeViewWindowContent(documentTreeView.TreeView));
-		DocumentTreeViewWindowContent documentTreeViewWindowContent;
+		DocumentTreeViewWindowContent DocumentTreeViewWindowContent => documentTreeViewWindowContent ??= new DocumentTreeViewWindowContent(documentTreeView.TreeView);
+		DocumentTreeViewWindowContent? documentTreeViewWindowContent;
 
 		[ImportingConstructor]
 		DocumentTreeViewWindowContentProvider(IDocumentTreeView documentTreeView) => this.documentTreeView = documentTreeView;
@@ -47,7 +47,7 @@ namespace dnSpy.MainApp {
 			get { yield return new ToolWindowContentInfo(DocumentTreeViewWindowContent.THE_GUID, DocumentTreeViewWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_LEFT_FILES, true); }
 		}
 
-		public ToolWindowContent GetOrCreate(Guid guid) {
+		public ToolWindowContent? GetOrCreate(Guid guid) {
 			if (guid == DocumentTreeViewWindowContent.THE_GUID)
 				return DocumentTreeViewWindowContent;
 			return null;
@@ -58,11 +58,11 @@ namespace dnSpy.MainApp {
 		public static readonly Guid THE_GUID = new Guid("5495EE9F-1EF2-45F3-A320-22A89BFDF731");
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultVertical;
 
-		public override IInputElement FocusedElement => null;
-		public override FrameworkElement ZoomElement => treeView.UIObject;
+		public override IInputElement? FocusedElement => null;
+		public override FrameworkElement? ZoomElement => treeView.UIObject;
 		public override Guid Guid => THE_GUID;
 		public override string Title => dnSpy_Resources.AssemblyExplorerTitle;
-		public override object UIObject => treeView.UIObject;
+		public override object? UIObject => treeView.UIObject;
 		public bool CanFocus => true;
 
 		readonly ITreeView treeView;

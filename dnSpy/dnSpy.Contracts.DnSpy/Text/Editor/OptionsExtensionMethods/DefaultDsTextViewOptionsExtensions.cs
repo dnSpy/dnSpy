@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.Text.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static bool IsCanChangeOverwriteModeEnabled(this IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultDsTextViewOptions.CanChangeOverwriteModeId);
 		}
@@ -42,7 +42,7 @@ namespace dnSpy.Contracts.Text.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static bool IsCanChangeUseVisibleWhitespaceEnabled(this IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultDsTextViewOptions.CanChangeUseVisibleWhitespaceId);
 		}
@@ -53,7 +53,7 @@ namespace dnSpy.Contracts.Text.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static bool IsCanChangeWordWrapStyleEnabled(this IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultDsTextViewOptions.CanChangeWordWrapStyleId);
 		}
@@ -64,7 +64,7 @@ namespace dnSpy.Contracts.Text.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static bool IsAllowBoxSelectionEnabled(this IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultDsTextViewOptions.AllowBoxSelectionId);
 		}
@@ -75,7 +75,7 @@ namespace dnSpy.Contracts.Text.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static bool IsRefreshScreenOnChangeEnabled(this IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultDsTextViewOptions.RefreshScreenOnChangeId);
 		}
@@ -86,7 +86,7 @@ namespace dnSpy.Contracts.Text.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static int GetRefreshScreenOnChangeWaitMilliSeconds(this IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultDsTextViewOptions.RefreshScreenOnChangeWaitMilliSecondsId);
 		}
@@ -97,7 +97,7 @@ namespace dnSpy.Contracts.Text.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static bool IsColorizationEnabled(this IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultDsTextViewOptions.EnableColorizationId);
 		}
@@ -108,7 +108,7 @@ namespace dnSpy.Contracts.Text.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static bool IsReferenceHighlightingEnabled(this IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultDsTextViewOptions.ReferenceHighlightingId);
 		}
@@ -119,7 +119,7 @@ namespace dnSpy.Contracts.Text.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static bool IsBraceMatchingEnabled(this IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultDsTextViewOptions.BraceMatchingId);
 		}
@@ -130,7 +130,7 @@ namespace dnSpy.Contracts.Text.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static bool IsLineSeparatorEnabled(this IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultDsTextViewOptions.LineSeparatorsId);
 		}
@@ -141,7 +141,7 @@ namespace dnSpy.Contracts.Text.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static bool IsHighlightRelatedKeywordsEnabled(this IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultDsTextViewOptions.HighlightRelatedKeywordsId);
 		}
@@ -152,7 +152,7 @@ namespace dnSpy.Contracts.Text.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static bool IsCompressEmptyOrWhitespaceLinesEnabled(this IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultDsTextViewOptions.CompressEmptyOrWhitespaceLinesId);
 		}
@@ -163,7 +163,7 @@ namespace dnSpy.Contracts.Text.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static bool IsCompressNonLetterLinesEnabled(this IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultDsTextViewOptions.CompressNonLetterLinesId);
 		}
@@ -174,7 +174,7 @@ namespace dnSpy.Contracts.Text.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static bool IsRemoveExtraTextLineVerticalPixelsEnabled(this IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultDsTextViewOptions.RemoveExtraTextLineVerticalPixelsId);
 		}
@@ -185,7 +185,7 @@ namespace dnSpy.Contracts.Text.Editor.OptionsExtensionMethods {
 		/// <param name="options">Options</param>
 		/// <returns></returns>
 		public static BlockStructureLineKind GetBlockStructureLineKind(this IEditorOptions options) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return options.GetOptionValue(DefaultDsTextViewOptions.BlockStructureLineKindId);
 		}

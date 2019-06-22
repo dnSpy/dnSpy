@@ -40,30 +40,30 @@ namespace dnSpy.Decompiler.MSBuild {
 			this.data = data;
 		}
 
-		public static ApplicationIcon TryCreate(Win32Resources resources, string filenameNoExt, FilenameCreator filenameCreator) {
-			if (resources == null)
+		public static ApplicationIcon? TryCreate(Win32Resources resources, string filenameNoExt, FilenameCreator filenameCreator) {
+			if (resources is null)
 				return null;
 
 			var dir = resources.Find(new ResourceName(RT_GROUP_ICON));
-			if (dir == null || dir.Directories.Count == 0)
+			if (dir is null || dir.Directories.Count == 0)
 				return null;
 			dir = dir.Directories[0];
 			if (dir.Data.Count == 0)
 				return null;
 
 			var iconDir = resources.Find(new ResourceName(RT_ICON));
-			if (iconDir == null)
+			if (iconDir is null)
 				return null;
 
 			var reader = dir.Data[0].CreateReader();
 			var iconData = TryCreateIcon(ref reader, iconDir);
-			if (iconData == null)
+			if (iconData is null)
 				return null;
 
 			return new ApplicationIcon(filenameCreator.CreateName(filenameNoExt + ".ico"), iconData);
 		}
 
-		static byte[] TryCreateIcon(ref DataReader reader, ResourceDirectory iconDir) {
+		static byte[]? TryCreateIcon(ref DataReader reader, ResourceDirectory iconDir) {
 			try {
 				reader.Position = 0;
 				var outStream = new MemoryStream();
@@ -103,7 +103,7 @@ namespace dnSpy.Decompiler.MSBuild {
 
 				foreach (var e in entries) {
 					var d = iconDir.Directories.FirstOrDefault(a => a.Name == new ResourceName(e.nID));
-					if (d == null || d.Data.Count == 0)
+					if (d is null || d.Data.Count == 0)
 						return null;
 					var r = d.Data[0].CreateReader();
 					Debug.Assert(r.Length == e.dwBytesInRes);

@@ -28,30 +28,30 @@ namespace dnSpy.Hex.Files.DotNet {
 	[Export(typeof(StructureProviderFactory))]
 	[VSUTIL.Name(PredefinedStructureProviderFactoryNames.DotNetMultiResource)]
 	sealed class MultiResourceStructureProviderFactory : StructureProviderFactory {
-		public override StructureProvider Create(HexBufferFile file) => new MultiResourceStructureProvider(file);
+		public override StructureProvider? Create(HexBufferFile file) => new MultiResourceStructureProvider(file);
 	}
 
 	sealed class MultiResourceStructureProvider : StructureProvider {
 		readonly HexBufferFile file;
-		DotNetMultiFileResourcesImpl multiFileResources;
+		DotNetMultiFileResourcesImpl? multiFileResources;
 
 		public MultiResourceStructureProvider(HexBufferFile file) => this.file = file ?? throw new ArgumentNullException(nameof(file));
 
 		public override bool Initialize() {
 			multiFileResources = DotNetMultiFileResourcesImpl.TryRead(file);
-			return multiFileResources != null;
+			return !(multiFileResources is null);
 		}
 
-		public override ComplexData GetStructure(HexPosition position) =>
+		public override ComplexData? GetStructure(HexPosition position) =>
 			multiFileResources?.GetStructure(position);
 
-		public override ComplexData GetStructure(string id) {
+		public override ComplexData? GetStructure(string id) {
 			if (id == PredefinedDotNetDataIds.MultiFileResource)
 				return multiFileResources?.Header;
 			return null;
 		}
 
-		public override THeader GetHeaders<THeader>() =>
+		public override THeader? GetHeaders<THeader>() where THeader : class =>
 			multiFileResources as THeader;
 	}
 }

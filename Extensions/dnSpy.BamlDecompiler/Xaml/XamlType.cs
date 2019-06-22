@@ -46,22 +46,22 @@ namespace dnSpy.BamlDecompiler.Xaml {
 		}
 
 		public void ResolveNamespace(XElement elem, XamlContext ctx) {
-			if (Namespace != null)
+			if (!(Namespace is null))
 				return;
 
 			// Since XmlnsProperty records are inside the element,
 			// the namespace is resolved after processing the element body.
 
 			string xmlNs = null;
-			if (elem.Annotation<XmlnsScope>() != null)
+			if (!(elem.Annotation<XmlnsScope>() is null))
 				xmlNs = elem.Annotation<XmlnsScope>().LookupXmlns(Assembly, TypeNamespace);
-			if (xmlNs == null)
+			if (xmlNs is null)
 				xmlNs = ctx.XmlNs.LookupXmlns(Assembly, TypeNamespace);
 			// Sometimes there's no reference to System.Xaml even if x:Type is used
-			if (xmlNs == null)
+			if (xmlNs is null)
 				xmlNs = ctx.TryGetXmlNamespace(Assembly, TypeNamespace);
 
-			if (xmlNs == null) {
+			if (xmlNs is null) {
 				if (AssemblyNameComparer.CompareAll.Equals(Assembly, ctx.Module.Assembly))
 					xmlNs = $"clr-namespace:{TypeNamespace}";
 				else
@@ -78,12 +78,12 @@ namespace dnSpy.BamlDecompiler.Xaml {
 				int count = 0;
 				var truePrefix = prefix;
 				XNamespace prefixNs, ns = ctx.GetXmlNamespace(xmlNs);
-				while ((prefixNs = elem.GetNamespaceOfPrefix(truePrefix)) != null && prefixNs != ns) {
+				while (!((prefixNs = elem.GetNamespaceOfPrefix(truePrefix)) is null) && prefixNs != ns) {
 					count++;
 					truePrefix = prefix + count;
 				}
 
-				if (prefixNs == null) {
+				if (prefixNs is null) {
 					elem.Add(new XAttribute(XNamespace.Xmlns + XmlConvert.EncodeLocalName(truePrefix), ns));
 					if (string.IsNullOrEmpty(TypeNamespace))
 						elem.AddBeforeSelf(new XComment(string.Format(dnSpy_BamlDecompiler_Resources.Msg_GlobalNamespace, truePrefix)));
@@ -93,7 +93,7 @@ namespace dnSpy.BamlDecompiler.Xaml {
 		}
 
 		public XName ToXName(XamlContext ctx) {
-			if (Namespace == null)
+			if (Namespace is null)
 				return XmlConvert.EncodeLocalName(TypeName);
 			return Namespace + XmlConvert.EncodeLocalName(TypeName);
 		}

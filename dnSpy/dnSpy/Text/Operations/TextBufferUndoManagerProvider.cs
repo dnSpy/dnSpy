@@ -32,13 +32,13 @@ namespace dnSpy.Text.Operations {
 		TextBufferUndoManagerProvider(ITextUndoHistoryRegistry textUndoHistoryRegistry) => this.textUndoHistoryRegistry = textUndoHistoryRegistry;
 
 		public ITextBufferUndoManager GetTextBufferUndoManager(ITextBuffer textBuffer) {
-			if (textBuffer == null)
+			if (textBuffer is null)
 				throw new ArgumentNullException(nameof(textBuffer));
 			return textBuffer.Properties.GetOrCreateSingletonProperty(textBufferUndoManagerKey, () => new TextBufferUndoManager(textBuffer, textUndoHistoryRegistry));
 		}
 
 		public void RemoveTextBufferUndoManager(ITextBuffer textBuffer) {
-			if (textBuffer == null)
+			if (textBuffer is null)
 				throw new ArgumentNullException(nameof(textBuffer));
 			if (!textBuffer.Properties.TryGetProperty(textBufferUndoManagerKey, out TextBufferUndoManager manager))
 				return;

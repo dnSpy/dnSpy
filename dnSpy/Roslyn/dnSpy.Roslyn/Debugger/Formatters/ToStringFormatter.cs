@@ -30,19 +30,19 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 		public ToStringFormatter(DbgEvaluationInfo evalInfo) => this.evalInfo = evalInfo ?? throw new ArgumentNullException(nameof(evalInfo));
 
 		sealed class ToStringState {
-			public readonly DmdMethodInfo ToStringMethod;
-			public ToStringState(DmdMethodInfo toStringMethod) => ToStringMethod = toStringMethod;
+			public readonly DmdMethodInfo? ToStringMethod;
+			public ToStringState(DmdMethodInfo? toStringMethod) => ToStringMethod = toStringMethod;
 		}
 
 		ToStringState GetToStringState(DmdType type) {
-			if (type.TryGetData(out ToStringState state))
+			if (type.TryGetData(out ToStringState? state))
 				return state;
 			return CreateToStringState(type);
 
 			ToStringState CreateToStringState(DmdType type2) {
 				var appDomain = type2.AppDomain;
 				var method = type2.GetMethod(nameof(object.ToString), DmdSignatureCallingConvention.Default | DmdSignatureCallingConvention.HasThis, 0, appDomain.System_String, Array.Empty<DmdType>(), throwOnError: false) as DmdMethodInfo;
-				if ((object)method != null) {
+				if (!(method is null)) {
 					if (method.DeclaringType == appDomain.System_Object || method.DeclaringType == appDomain.System_ValueType || method.DeclaringType == appDomain.System_Enum)
 						method = null;
 				}
@@ -50,12 +50,12 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 			}
 		}
 
-		public string GetToStringValue(DbgDotNetValue value) {
+		public string? GetToStringValue(DbgDotNetValue value) {
 			if (value.IsNull)
 				return null;
 
 			var state = GetToStringState(value.Type);
-			if ((object)state.ToStringMethod == null)
+			if (state.ToStringMethod is null)
 				return null;
 
 			var runtime = evalInfo.Runtime.GetDotNetRuntime();
@@ -63,7 +63,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 			if (res.HasError || res.ValueIsException)
 				return null;
 
-			var rawValue = res.Value.GetRawValue();
+			var rawValue = res.Value!.GetRawValue();
 			if (!rawValue.HasRawValue)
 				return null;
 			return rawValue.RawValue as string;

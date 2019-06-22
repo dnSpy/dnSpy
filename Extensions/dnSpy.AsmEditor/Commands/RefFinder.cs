@@ -37,10 +37,10 @@ namespace dnSpy.AsmEditor.Commands {
 		public static readonly TypeEqualityComparer TypeEqualityComparerInstance = new TypeEqualityComparer(TypeSigComparerOptionsFlags);
 
 		public static IEnumerable<AssemblyRef> FindAssemblyRefsToThisModule(ModuleDef module) {
-			if (module == null || !module.IsManifestModule)
+			if (module is null || !module.IsManifestModule)
 				yield break;
 			var asm = module.Assembly;
-			if (asm == null)
+			if (asm is null)
 				yield break;
 
 			foreach (var tr in FindTypeRefsToThisModule(module)) {
@@ -64,7 +64,7 @@ namespace dnSpy.AsmEditor.Commands {
 		}
 
 		public static bool Equals(MemberRef mr, FieldDef field) {
-			if (mr == null || field == null)
+			if (mr is null || field is null)
 				return false;
 			if (!mr.IsFieldRef)
 				return false;
@@ -74,7 +74,7 @@ namespace dnSpy.AsmEditor.Commands {
 		}
 
 		public static bool Equals(MemberRef mr, MethodDef method) {
-			if (mr == null || method == null)
+			if (mr is null || method is null)
 				return false;
 			if (!mr.IsMethodRef)
 				return false;
@@ -84,7 +84,7 @@ namespace dnSpy.AsmEditor.Commands {
 		}
 
 		static bool Equals(IMemberRefParent @class, TypeDef type) {
-			if (@class == null || type == null)
+			if (@class is null || type is null)
 				return false;
 			if (@class is TypeDef td)
 				return TypeEqualityComparerInstance.Equals(td, type);
@@ -93,9 +93,9 @@ namespace dnSpy.AsmEditor.Commands {
 			if (@class is TypeSpec ts) {
 				var typeSig = ts.TypeSig.RemovePinnedAndModifiers();
 				var tdrSig = typeSig as TypeDefOrRefSig;
-				if (tdrSig == null && typeSig is GenericInstSig gis)
+				if (tdrSig is null && typeSig is GenericInstSig gis)
 					tdrSig = gis.GenericType;
-				if (tdrSig != null) {
+				if (!(tdrSig is null)) {
 					if (tdrSig.TypeDefOrRef is TypeDef td2)
 						return TypeEqualityComparerInstance.Equals(td2, type);
 					if (tdrSig.TypeDefOrRef is TypeRef tr2)

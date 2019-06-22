@@ -24,7 +24,7 @@ using dnSpy.Contracts.Hex.Operations;
 namespace dnSpy.Hex.Editor.Search {
 	abstract class HexSearchServiceFactory {
 		public abstract bool IsSearchDataValid(HexDataKind dataKind, string searchString, bool matchCase, bool isBigEndian);
-		public abstract HexSearchService TryCreateHexSearchService(HexDataKind dataKind, string searchString, bool matchCase, bool isBigEndian);
+		public abstract HexSearchService? TryCreateHexSearchService(HexDataKind dataKind, string searchString, bool matchCase, bool isBigEndian);
 	}
 
 	[Export(typeof(HexSearchServiceFactory))]
@@ -56,18 +56,18 @@ namespace dnSpy.Hex.Editor.Search {
 			case HexDataKind.UInt64:
 			case HexDataKind.Single:
 			case HexDataKind.Double:
-				return DataParser.TryParseData(searchString, dataKind, isBigEndian) != null;
+				return !(DataParser.TryParseData(searchString, dataKind, isBigEndian) is null);
 
 			default:
 				throw new InvalidOperationException();
 			}
 		}
 
-		public override HexSearchService TryCreateHexSearchService(HexDataKind dataKind, string searchString, bool matchCase, bool isBigEndian) {
+		public override HexSearchService? TryCreateHexSearchService(HexDataKind dataKind, string searchString, bool matchCase, bool isBigEndian) {
 			if (searchString == string.Empty)
 				return null;
 
-			byte[] data;
+			byte[]? data;
 			switch (dataKind) {
 			case HexDataKind.Bytes:
 				if (!hexSearchServiceProvider.IsValidByteSearchString(searchString))
@@ -91,7 +91,7 @@ namespace dnSpy.Hex.Editor.Search {
 			case HexDataKind.Single:
 			case HexDataKind.Double:
 				data = DataParser.TryParseData(searchString, dataKind, isBigEndian);
-				if (data == null)
+				if (data is null)
 					return null;
 				return hexSearchServiceProvider.CreateByteSearchService(data);
 

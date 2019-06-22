@@ -25,18 +25,18 @@ using dnSpy.Contracts.Search;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
 	sealed class EditMethodOverride : IEdit<MethodOverrideVM> {
-		readonly Window ownerWindow;
+		readonly Window? ownerWindow;
 
 		public EditMethodOverride()
 			: this(null) {
 		}
 
-		public EditMethodOverride(Window ownerWindow) => this.ownerWindow = ownerWindow;
+		public EditMethodOverride(Window? ownerWindow) => this.ownerWindow = ownerWindow;
 
-		public MethodOverrideVM Edit(string title, MethodOverrideVM mo) {
+		public MethodOverrideVM? Edit(string? title, MethodOverrideVM mo) {
 			var dnlibPicker = new DnlibTypePicker(ownerWindow);
 			var method = dnlibPicker.GetDnlibType<IMethodDefOrRef>(dnSpy_AsmEditor_Resources.Pick_Method, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.MethodDef), mo.MethodDeclaration, mo.OwnerModule);
-			if (method == null)
+			if (method is null)
 				return null;
 
 			mo.MethodDeclaration = method;

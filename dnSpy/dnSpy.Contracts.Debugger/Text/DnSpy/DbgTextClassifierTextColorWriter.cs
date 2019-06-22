@@ -60,7 +60,9 @@ namespace dnSpy.Contracts.Debugger.Text.DnSpy {
 		/// </summary>
 		/// <param name="color">Color</param>
 		/// <param name="text">Text</param>
-		public void Write(DbgTextColor color, string text) {
+		public void Write(DbgTextColor color, string? text) {
+			if (text is null)
+				return;
 			colors.Add(new SpanData<object>(new Span(sb.Length, text.Length), ColorConverter.ToDnSpyColor(color)));
 			sb.Append(text);
 		}

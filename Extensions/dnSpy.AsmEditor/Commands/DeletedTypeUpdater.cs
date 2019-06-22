@@ -37,10 +37,11 @@ namespace dnSpy.AsmEditor.Commands {
 		int typeIndex;
 
 		public DeletedTypeUpdater(ModuleDocumentNode modNode, TypeDef originalType) {
-			ownerNode = modNode.Context.DocumentTreeView.FindNode(originalType);
-			if (ownerNode == null)
+			var node = modNode.Context.DocumentTreeView.FindNode(originalType);
+			if (node is null)
 				throw new InvalidOperationException();
-			parentNode = ownerNode.TreeNode.Parent.Data;
+			ownerNode = node;
+			parentNode = ownerNode.TreeNode.Parent!.Data;
 			ownerModule = originalType.Module;
 			ownerType = originalType.DeclaringType;
 			type = originalType;
@@ -49,7 +50,7 @@ namespace dnSpy.AsmEditor.Commands {
 		public void Add() {
 			if (!parentNode.TreeNode.Children.Remove(ownerNode.TreeNode))
 				throw new InvalidOperationException();
-			if (ownerType != null) {
+			if (!(ownerType is null)) {
 				typeIndex = ownerType.NestedTypes.IndexOf(type);
 				ownerType.NestedTypes.RemoveAt(typeIndex);
 			}
@@ -60,7 +61,7 @@ namespace dnSpy.AsmEditor.Commands {
 		}
 
 		public void Remove() {
-			if (ownerType != null)
+			if (!(ownerType is null))
 				ownerType.NestedTypes.Insert(typeIndex, type);
 			else
 				ownerModule.Types.Insert(typeIndex, type);

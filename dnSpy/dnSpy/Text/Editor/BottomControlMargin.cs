@@ -34,7 +34,7 @@ namespace dnSpy.Text.Editor {
 		[ImportingConstructor]
 		BottomControlMarginProvider(IWpfTextViewMarginProviderCollectionProvider wpfTextViewMarginProviderCollectionProvider) => this.wpfTextViewMarginProviderCollectionProvider = wpfTextViewMarginProviderCollectionProvider;
 
-		public IWpfTextViewMargin CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer) =>
+		public IWpfTextViewMargin? CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer) =>
 			new WpfTextViewContainerMargin(wpfTextViewMarginProviderCollectionProvider, wpfTextViewHost, PredefinedMarginNames.BottomControl, false);
 	}
 }

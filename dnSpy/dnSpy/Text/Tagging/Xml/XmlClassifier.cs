@@ -129,7 +129,7 @@ namespace dnSpy.Text.Tagging.Xml {
 		public XmlSpanKind? GetNext() {
 			for (;;) {
 				var kind = GetNextCore();
-				if (kind == null)
+				if (kind is null)
 					break;
 				Debug.Assert(spanStart != snapshotPos);
 				if (spanStart == snapshotPos)

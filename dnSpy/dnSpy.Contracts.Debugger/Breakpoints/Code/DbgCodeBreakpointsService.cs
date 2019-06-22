@@ -67,7 +67,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// </summary>
 		/// <param name="breakpoint">Breakpoint info</param>
 		/// <returns></returns>
-		public DbgCodeBreakpoint Add(DbgCodeBreakpointInfo breakpoint) => Add(new[] { breakpoint }).FirstOrDefault();
+		public DbgCodeBreakpoint? Add(DbgCodeBreakpointInfo breakpoint) => Add(new[] { breakpoint }).FirstOrDefault();
 
 		/// <summary>
 		/// Adds breakpoints. Duplicate breakpoints are ignored.
@@ -93,7 +93,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// </summary>
 		/// <param name="location">Location</param>
 		/// <returns></returns>
-		public abstract DbgCodeBreakpoint TryGetBreakpoint(DbgCodeLocation location);
+		public abstract DbgCodeBreakpoint? TryGetBreakpoint(DbgCodeLocation location);
 
 		/// <summary>
 		/// Removes all visible breakpoints

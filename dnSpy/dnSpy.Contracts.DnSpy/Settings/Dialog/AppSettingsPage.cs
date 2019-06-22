@@ -56,7 +56,7 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		/// Gets the UI object. This property is only loaded if the user clicks on the page
 		/// title in the dialog box.
 		/// </summary>
-		public abstract object UIObject { get; }
+		public abstract object? UIObject { get; }
 
 		/// <summary>
 		/// Called when all settings should be saved
@@ -80,7 +80,7 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		/// See also <see cref="GetSearchStrings"/>.
 		/// </summary>
 		/// <returns></returns>
-		public virtual object GetStringsObject() => UIObject;
+		public virtual object? GetStringsObject() => UIObject;
 
 		/// <summary>
 		/// Returns an array of strings shown in the UI that can be searched. This method
@@ -88,7 +88,7 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		/// behavior).
 		/// </summary>
 		/// <returns></returns>
-		public virtual string[] GetSearchStrings() => null;
+		public virtual string[]? GetSearchStrings() => null;
 
 		/// <summary>
 		/// Raised when a property is changed

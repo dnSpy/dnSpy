@@ -55,7 +55,7 @@ namespace dnSpy.Contracts.Menus {
 		/// <param name="key">Key, eg. a guid or a static key in some base command class</param>
 		/// <param name="createState">Delegate that creates a new value if it hasn't been created yet</param>
 		/// <returns></returns>
-		T GetOrCreateState<T>(object key, Func<T> createState) where T : class;
+		T? GetOrCreateState<T>(object key, Func<T> createState) where T : class;
 
 		/// <summary>
 		/// Finds the first object of a certain type. Returns default({T}) if none was found

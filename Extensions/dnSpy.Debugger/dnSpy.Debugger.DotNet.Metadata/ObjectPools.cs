@@ -23,71 +23,71 @@ using System.Threading;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	static class ObjectPools {
-		static StringBuilder stringBuilder;
+		static StringBuilder? stringBuilder;
 		public static StringBuilder AllocStringBuilder() =>
 			Interlocked.Exchange(ref stringBuilder, null) ?? new StringBuilder();
-		public static string FreeAndToString(ref StringBuilder sb) {
-			var result = sb.ToString();
+		public static string FreeAndToString(ref StringBuilder? sb) {
+			var result = sb!.ToString();
 			FreeNoToString(ref sb);
 			return result;
 		}
-		public static void FreeNoToString(ref StringBuilder sb) {
-			var tmp = sb;
+		public static void FreeNoToString(ref StringBuilder? sb) {
+			var tmp = sb!;
 			sb = null;
-			if (tmp.Capacity <= 1024 && stringBuilder == null) {
+			if (tmp.Capacity <= 1024 && stringBuilder is null) {
 				tmp.Clear();
 				stringBuilder = tmp;
 			}
 		}
 
-		static HashSet<DmdType> typeHashSet;
+		static HashSet<DmdType>? typeHashSet;
 		public static HashSet<DmdType> AllocHashSetOfType() =>
 			Interlocked.Exchange(ref typeHashSet, null) ?? new HashSet<DmdType>(DmdMemberInfoEqualityComparer.DefaultType);
-		public static void Free(ref HashSet<DmdType> hash) {
-			var tmp = hash;
+		public static void Free(ref HashSet<DmdType>? hash) {
+			var tmp = hash!;
 			hash = null;
-			if (tmp.Count <= 1024 && typeHashSet == null) {
+			if (tmp.Count <= 1024 && typeHashSet is null) {
 				tmp.Clear();
 				typeHashSet = tmp;
 			}
 		}
 
-		static Stack<DmdType> typeStack;
+		static Stack<DmdType>? typeStack;
 		public static Stack<DmdType> AllocStackOfType() =>
 			Interlocked.Exchange(ref typeStack, null) ?? new Stack<DmdType>();
-		public static void Free(ref Stack<DmdType> stack) {
-			var tmp = stack;
+		public static void Free(ref Stack<DmdType>? stack) {
+			var tmp = stack!;
 			stack = null;
-			if (typeStack == null) {
+			if (typeStack is null) {
 				tmp.Clear();
 				typeStack = tmp;
 			}
 		}
 
-		static Stack<IEnumerator<DmdType>> enumeratorTypeStack;
+		static Stack<IEnumerator<DmdType>>? enumeratorTypeStack;
 		public static Stack<IEnumerator<DmdType>> AllocStackOfIEnumeratorOfType() =>
 			Interlocked.Exchange(ref enumeratorTypeStack, null) ?? new Stack<IEnumerator<DmdType>>();
-		public static void Free(ref Stack<IEnumerator<DmdType>> stack) {
-			var tmp = stack;
+		public static void Free(ref Stack<IEnumerator<DmdType>>? stack) {
+			var tmp = stack!;
 			stack = null;
-			if (enumeratorTypeStack == null) {
+			if (enumeratorTypeStack is null) {
 				tmp.Clear();
 				enumeratorTypeStack = tmp;
 			}
 		}
 
-		static List<DmdType> typeList;
+		static List<DmdType>? typeList;
 		public static List<DmdType> AllocListOfType() =>
 			Interlocked.Exchange(ref typeList, null) ?? new List<DmdType>();
-		public static DmdType[] FreeAndToArray(ref List<DmdType> list) {
-			var res = list.ToArray();
+		public static DmdType[] FreeAndToArray(ref List<DmdType>? list) {
+			var res = list!.ToArray();
 			Free(ref list);
 			return res;
 		}
-		public static void Free(ref List<DmdType> list) {
-			var tmp = list;
+		public static void Free(ref List<DmdType>? list) {
+			var tmp = list!;
 			list = null;
-			if (tmp.Capacity <= 1024 && typeList == null) {
+			if (tmp.Capacity <= 1024 && typeList is null) {
 				tmp.Clear();
 				typeList = tmp;
 			}

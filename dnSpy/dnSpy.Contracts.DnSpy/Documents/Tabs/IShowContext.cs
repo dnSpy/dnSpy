@@ -37,11 +37,11 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// <summary>
 		/// If non-null, gets called after the content has been shown
 		/// </summary>
-		Action<ShowTabContentEventArgs> OnShown { get; set; }
+		Action<ShowTabContentEventArgs>? OnShown { get; set; }
 
 		/// <summary>
 		/// Can be initialized by the <see cref="DocumentTabContent"/> instance
 		/// </summary>
-		object Tag { get; set; }
+		object? Tag { get; set; }
 	}
 }

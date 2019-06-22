@@ -53,14 +53,14 @@ namespace dnSpy.Debugger.Evaluation {
 			ValueNodeFactory = new NullDbgEngineValueNodeFactory();
 		}
 
-		public override void InitializeContext(DbgEvaluationContext context, DbgCodeLocation location, CancellationToken cancellationToken) { }
+		public override void InitializeContext(DbgEvaluationContext context, DbgCodeLocation? location, CancellationToken cancellationToken) { }
 	}
 
 	sealed class NullDbgEngineExpressionEvaluator : DbgEngineExpressionEvaluator {
 		// No need to localize it, an EE should always be available
 		public const string ERROR = "No expression evaluator is available for this runtime";
-		public override object CreateExpressionEvaluatorState() => null;
-		public override DbgEngineEvaluationResult Evaluate(DbgEvaluationInfo evalInfo, string expression, DbgEvaluationOptions options, object state) => new DbgEngineEvaluationResult(ERROR);
+		public override object? CreateExpressionEvaluatorState() => null;
+		public override DbgEngineEvaluationResult Evaluate(DbgEvaluationInfo evalInfo, string expression, DbgEvaluationOptions options, object? state) => new DbgEngineEvaluationResult(ERROR);
 		public override DbgEngineEEAssignmentResult Assign(DbgEvaluationInfo evalInfo, string expression, string valueExpression, DbgEvaluationOptions options) => new DbgEngineEEAssignmentResult(DbgEEAssignmentResultFlags.CompilerError, ERROR);
 	}
 
@@ -69,9 +69,9 @@ namespace dnSpy.Debugger.Evaluation {
 		public override void FormatStowedExceptionName(DbgEvaluationContext context, IDbgTextWriter output, uint id) { }
 		public override void FormatReturnValueName(DbgEvaluationContext context, IDbgTextWriter output, uint id) { }
 		public override void FormatObjectIdName(DbgEvaluationContext context, IDbgTextWriter output, uint id) { }
-		public override void FormatFrame(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo cultureInfo) { }
-		public override void FormatValue(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgEngineValue value, DbgValueFormatterOptions options, CultureInfo cultureInfo) { }
-		public override void FormatType(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgEngineValue value, DbgValueFormatterTypeOptions options, CultureInfo cultureInfo) { }
+		public override void FormatFrame(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo? cultureInfo) { }
+		public override void FormatValue(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgEngineValue value, DbgValueFormatterOptions options, CultureInfo? cultureInfo) { }
+		public override void FormatType(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgEngineValue value, DbgValueFormatterTypeOptions options, CultureInfo? cultureInfo) { }
 	}
 
 	sealed class NullDbgEngineLocalsValueNodeProvider : DbgEngineLocalsValueNodeProvider {
@@ -88,17 +88,17 @@ namespace dnSpy.Debugger.Evaluation {
 	}
 
 	sealed class NullDbgEngineErrorValueNode : DbgEngineValueNode {
-		public override string ErrorMessage => NullDbgEngineExpressionEvaluator.ERROR;
-		public override DbgEngineValue Value => null;
+		public override string? ErrorMessage => NullDbgEngineExpressionEvaluator.ERROR;
+		public override DbgEngineValue? Value => null;
 		public override string Expression { get; }
 		public override string ImageName => PredefinedDbgValueNodeImageNames.Error;
 		public override bool IsReadOnly => true;
 		public override bool CausesSideEffects => false;
 		public override bool? HasChildren => false;
-		public NullDbgEngineErrorValueNode(string expression = null) => Expression = expression ?? string.Empty;
+		public NullDbgEngineErrorValueNode(string? expression = null) => Expression = expression ?? string.Empty;
 		public override ulong GetChildCount(DbgEvaluationInfo evalInfo) => 0;
 		public override DbgEngineValueNode[] GetChildren(DbgEvaluationInfo evalInfo, ulong index, int count, DbgValueNodeEvaluationOptions options) => Array.Empty<DbgEngineValueNode>();
-		public override void Format(DbgEvaluationInfo evalInfo, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo) { }
+		public override void Format(DbgEvaluationInfo evalInfo, IDbgValueNodeFormatParameters options, CultureInfo? cultureInfo) { }
 		public override DbgEngineValueNodeAssignmentResult Assign(DbgEvaluationInfo evalInfo, string expression, DbgEvaluationOptions options) => new DbgEngineValueNodeAssignmentResult(DbgEEAssignmentResultFlags.None, NullDbgEngineExpressionEvaluator.ERROR);
 		protected override void CloseCore(DbgDispatcher dispatcher) { }
 	}

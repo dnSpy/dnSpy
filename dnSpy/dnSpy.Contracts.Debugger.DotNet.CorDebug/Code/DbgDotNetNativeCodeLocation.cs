@@ -49,7 +49,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.CorDebug.Code {
 		/// <summary>
 		/// Gets the debugger module or null
 		/// </summary>
-		public abstract DbgModule DbgModule { get; }
+		public abstract DbgModule? DbgModule { get; }
 
 		/// <summary>
 		/// Gets the native address

@@ -28,7 +28,7 @@ namespace Example2.Extension {
 		// Used by MyDsDocumentNode.Decompile() to show the file in the text editor
 		public string Text {
 			get {
-				if (text != null)
+				if (!(text is null))
 					return text;
 				try {
 					return text = File.ReadAllText(Filename);
@@ -38,9 +38,9 @@ namespace Example2.Extension {
 				}
 			}
 		}
-		string text;
+		string? text;
 
-		public static MyDsDocument TryCreate(string filename) {
+		public static MyDsDocument? TryCreate(string filename) {
 			if (!File.Exists(filename))
 				return null;
 			return new MyDsDocument(filename);
@@ -55,7 +55,7 @@ namespace Example2.Extension {
 	sealed class MyDsDocumentProvider : IDsDocumentProvider {
 		public double Order => 0;
 
-		public IDsDocument Create(IDsDocumentService documentService, DsDocumentInfo documentInfo) {
+		public IDsDocument? Create(IDsDocumentService documentService, DsDocumentInfo documentInfo) {
 			if (documentInfo.Type == MyDsDocument.THE_GUID)
 				return MyDsDocument.TryCreate(documentInfo.Name);
 			// Also check for normal files
@@ -64,7 +64,7 @@ namespace Example2.Extension {
 			return null;
 		}
 
-		public IDsDocumentNameKey CreateKey(IDsDocumentService documentService, DsDocumentInfo documentInfo) {
+		public IDsDocumentNameKey? CreateKey(IDsDocumentService documentService, DsDocumentInfo documentInfo) {
 			if (documentInfo.Type == MyDsDocument.THE_GUID)
 				return new FilenameKey(documentInfo.Name);  // Must match the key in MyDsDocument.Key
 			// Also check for normal files
@@ -88,7 +88,7 @@ namespace Example2.Extension {
 	// Gets called by dnSpy to create a DsDocumentNode
 	[ExportDsDocumentNodeProvider]
 	sealed class MyDsDocumentNodeProvider : IDsDocumentNodeProvider {
-		public DsDocumentNode Create(IDocumentTreeView documentTreeView, DsDocumentNode owner, IDsDocument document) {
+		public DsDocumentNode? Create(IDocumentTreeView documentTreeView, DsDocumentNode? owner, IDsDocument document) {
 			if (document is MyDsDocument myDocument)
 				return new MyDsDocumentNode(myDocument);
 			return null;

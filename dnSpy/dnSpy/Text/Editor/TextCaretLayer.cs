@@ -37,10 +37,10 @@ namespace dnSpy.Text.Editor {
 		double left, top, width, height;
 		bool drawCaretShape;
 		bool overwriteMode;
-		DispatcherTimer dispatcherTimer;
+		DispatcherTimer? dispatcherTimer;
 		readonly CaretGeometry caretGeometry;
-		Brush caretBrush;
-		Brush overwriteCaretBrush;
+		Brush? caretBrush;
+		Brush? overwriteCaretBrush;
 
 		public bool OverwriteMode {
 			get => overwriteMode;
@@ -220,7 +220,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void StartTimer() {
-			if (dispatcherTimer != null)
+			if (!(dispatcherTimer is null))
 				throw new InvalidOperationException();
 			// Make sure the caret doesn't blink when it's moved
 			layer.Opacity = 1;
@@ -234,8 +234,8 @@ namespace dnSpy.Text.Editor {
 
 		protected override void OnRender(DrawingContext drawingContext) {
 			base.OnRender(drawingContext);
-			Debug.Assert((overwriteCaretBrush == null) == (caretBrush == null));
-			if (caretBrush == null) {
+			Debug.Assert((overwriteCaretBrush is null) == (caretBrush is null));
+			if (caretBrush is null) {
 				caretBrush = classificationFormatMap.DefaultTextProperties.ForegroundBrush;
 				Debug.Assert(!classificationFormatMap.DefaultTextProperties.ForegroundBrushEmpty);
 				if (classificationFormatMap.DefaultTextProperties.ForegroundBrushEmpty)
@@ -256,7 +256,7 @@ namespace dnSpy.Text.Editor {
 
 			public Geometry Geometry {
 				get {
-					if (geometry == null) {
+					if (geometry is null) {
 						var geo = new RectangleGeometry(new Rect(0, 0, width, height));
 						geo.Freeze();
 						geometry = geo;
@@ -264,7 +264,7 @@ namespace dnSpy.Text.Editor {
 					return geometry;
 				}
 			}
-			Geometry geometry;
+			Geometry? geometry;
 			double width, height;
 
 			public CaretGeometry() {

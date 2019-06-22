@@ -57,7 +57,7 @@ namespace dnSpy.Scripting.Roslyn.CSharp {
 			: base(replEditor, settings, serviceLocator) {
 		}
 
-		protected override Script<T> Create<T>(string code, ScriptOptions options, Type globalsType, InteractiveAssemblyLoader assemblyLoader) =>
+		protected override Script<T> Create<T>(string code, ScriptOptions options, Type globalsType, InteractiveAssemblyLoader? assemblyLoader) =>
 			CSharpScript.Create<T>(code, options, globalsType, assemblyLoader);
 
 		protected override bool IsCompleteSubmission(string text) =>
@@ -68,13 +68,13 @@ namespace dnSpy.Scripting.Roslyn.CSharp {
 			SyntaxFactory.ParseSyntaxTree(code, parseOptions, cancellationToken: cancellationToken);
 
 		protected override Compilation CreateScriptCompilation(string assemblyName, SyntaxTree syntaxTree,
-			IEnumerable<MetadataReference> references, CompilationOptions options,
+			IEnumerable<MetadataReference>? references, CompilationOptions options,
 			Compilation previousScriptCompilation, Type returnType, Type globalsType) =>
 			CSharpCompilation.CreateScriptCompilation(assemblyName, syntaxTree, references, (CSharpCompilationOptions)options, (CSharpCompilation)previousScriptCompilation, returnType, globalsType);
 
 		protected override void InitializeUserScriptOptions(UserScriptOptions options) {
 			var rspFile = GetResponseFile("CSharpInteractive.rsp");
-			if (rspFile == null)
+			if (rspFile is null)
 				return;
 			ReplEditor.OutputPrintLine(string.Format(dnSpy_Scripting_Roslyn_Resources.LoadingContextFromFile, Path.GetFileName(rspFile)), BoxedTextColor.ReplOutputText);
 

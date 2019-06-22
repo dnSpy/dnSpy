@@ -44,7 +44,7 @@ namespace dnSpy.Debugger.Evaluation {
 			foreach (var sect in rootSect.SectionsWithName("Language")) {
 				var guid = sect.Attribute<Guid?>("Guid");
 				var languageName = sect.Attribute<string>("Language");
-				if (guid == null || languageName == null)
+				if (guid is null || languageName is null)
 					continue;
 				dbgLanguageService.SetDefaultLanguageName(guid.Value, languageName);
 			}

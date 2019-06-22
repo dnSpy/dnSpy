@@ -38,13 +38,13 @@ namespace dnSpy.Text.Classification {
 		}
 
 		public IClassifier GetClassifier(ITextBuffer textBuffer) {
-			if (textBuffer == null)
+			if (textBuffer is null)
 				throw new ArgumentNullException(nameof(textBuffer));
 			return new ClassifierAggregator(synchronousBufferTagAggregatorFactoryService, classificationTypeRegistryService, textBuffer);
 		}
 
 		public ISynchronousClassifier GetSynchronousClassifier(ITextBuffer textBuffer) {
-			if (textBuffer == null)
+			if (textBuffer is null)
 				throw new ArgumentNullException(nameof(textBuffer));
 			return new ClassifierAggregator(synchronousBufferTagAggregatorFactoryService, classificationTypeRegistryService, textBuffer);
 		}

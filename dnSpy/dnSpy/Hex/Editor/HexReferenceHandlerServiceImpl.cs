@@ -36,24 +36,24 @@ namespace dnSpy.Hex.Editor {
 			this.hexReferenceConverters = hexReferenceConverters.ToArray();
 		}
 
-		public override bool Handle(HexView hexView, object reference, IList<string> tags) {
-			if (hexView == null)
+		public override bool Handle(HexView hexView, object reference, IList<string>? tags) {
+			if (hexView is null)
 				throw new ArgumentNullException(nameof(hexView));
-			if (reference == null)
+			if (reference is null)
 				throw new ArgumentNullException(nameof(reference));
-			reference = ConvertReference(hexView, reference);
-			if (reference == null)
+			object? newRef = ConvertReference(hexView, reference);
+			if (newRef is null)
 				return false;
-			if (tags == null)
+			if (tags is null)
 				tags = Array.Empty<string>();
 			foreach (var lz in hexReferenceHandlers) {
-				if (lz.Value.Handle(hexView, reference, tags))
+				if (lz.Value.Handle(hexView, newRef, tags))
 					return true;
 			}
 			return false;
 		}
 
-		object ConvertReference(HexView hexView, object reference) {
+		object? ConvertReference(HexView hexView, object reference) {
 			foreach (var lz in hexReferenceConverters) {
 				var newRef = lz.Value.Convert(hexView, reference);
 				if (newRef != reference)

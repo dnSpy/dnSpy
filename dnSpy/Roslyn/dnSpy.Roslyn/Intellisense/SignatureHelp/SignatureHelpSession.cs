@@ -37,8 +37,8 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 		readonly ITextView textView;
 		readonly SignatureHelpService signatureHelpService;
 		readonly List<Signature> signatures;
-		CancellationTokenSource cancellationTokenSource;
-		ISignatureHelpSession session;
+		CancellationTokenSource? cancellationTokenSource;
+		ISignatureHelpSession? session;
 		static readonly object sigHelpSessionKey = new object();
 
 
@@ -54,25 +54,25 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 		/// </summary>
 		/// <param name="session">Intellisense sig help session</param>
 		/// <returns></returns>
-		public static SignatureHelpSession TryGetSession(ISignatureHelpSession session) {
-			if (session == null)
+		public static SignatureHelpSession? TryGetSession(ISignatureHelpSession session) {
+			if (session is null)
 				return null;
 			if (session.Properties.TryGetProperty(sigHelpSessionKey, out SignatureHelpSession ourSession))
 				return ourSession;
 			return null;
 		}
 
-		public static SignatureHelpSession TryCreate(SnapshotPoint triggerPosition, SignatureHelpTriggerInfo triggerInfo, Lazy<ISignatureHelpBroker> signatureHelpBroker, ITextView textView) {
+		public static SignatureHelpSession? TryCreate(SnapshotPoint triggerPosition, SignatureHelpTriggerInfo triggerInfo, Lazy<ISignatureHelpBroker> signatureHelpBroker, ITextView textView) {
 			var info = SignatureHelpInfo.Create(triggerPosition.Snapshot);
-			if (info == null)
+			if (info is null)
 				return null;
 			if (triggerInfo.TriggerReason == SignatureHelpTriggerReason.TypeCharCommand) {
-				Debug.Assert(triggerInfo.TriggerCharacter != null);
-				if (triggerInfo.TriggerCharacter != null && !info.Value.SignatureHelpService.IsTriggerCharacter(triggerInfo.TriggerCharacter.Value))
+				Debug.Assert(!(triggerInfo.TriggerCharacter is null));
+				if (!(triggerInfo.TriggerCharacter is null) && !info.Value.SignatureHelpService.IsTriggerCharacter(triggerInfo.TriggerCharacter.Value))
 					return null;
 			}
 			else if (triggerInfo.TriggerReason == SignatureHelpTriggerReason.RetriggerCommand) {
-				if (triggerInfo.TriggerCharacter != null && !info.Value.SignatureHelpService.IsRetriggerCharacter(triggerInfo.TriggerCharacter.Value))
+				if (!(triggerInfo.TriggerCharacter is null) && !info.Value.SignatureHelpService.IsRetriggerCharacter(triggerInfo.TriggerCharacter.Value))
 					return null;
 			}
 
@@ -86,7 +86,7 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 
 		bool RestartCore(SnapshotPoint triggerPosition, SignatureHelpTriggerInfo triggerInfo) {
 			var info = SignatureHelpInfo.Create(triggerPosition.Snapshot);
-			if (info == null)
+			if (info is null)
 				return false;
 
 			Start(info.Value, triggerPosition, triggerInfo);
@@ -101,7 +101,7 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 
 		void Start(SignatureHelpInfo info, SnapshotPoint triggerPosition, SignatureHelpTriggerInfo triggerInfo) {
 			CancelFetchItems();
-			Debug.Assert(cancellationTokenSource == null);
+			Debug.Assert(cancellationTokenSource is null);
 			cancellationTokenSource = new CancellationTokenSource();
 			var cancellationTokenSourceTmp = cancellationTokenSource;
 			StartAsync(info, triggerPosition, triggerInfo, cancellationTokenSource.Token)
@@ -118,7 +118,7 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 			ProfileOptimizationHelper.StartProfile("roslyn-sighelp-" + info.SignatureHelpService.Language);
 
 			var result = await info.SignatureHelpService.GetItemsAsync(info.Document, triggerPosition.Position, triggerInfo, cancellationToken);
-			if (result == null) {
+			if (result is null) {
 				Dispose();
 				return;
 			}
@@ -150,7 +150,7 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 
 			InitializeSignatures(trackingSpan, signatureHelpResult);
 
-			if (session == null) {
+			if (session is null) {
 				session = signatureHelpBroker.Value.CreateSignatureHelpSession(textView, triggerPoint, trackCaret: false);
 				session.Dismissed += Session_Dismissed;
 				session.Properties.AddProperty(sigHelpSessionKey, this);
@@ -158,21 +158,21 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 			session.Recalculate();
 
 			// It's set to null if it got dismissed
-			if (session == null || session.IsDismissed) {
+			if (session is null || session.IsDismissed) {
 				Debug.Assert(isDisposed);
 				Dispose();
 				return;
 			}
 
 			var selectedSig = signatures.FirstOrDefault(a => a.IsSelected);
-			if (selectedSig != null)
+			if (!(selectedSig is null))
 				session.SelectedSignature = selectedSig;
 		}
 
 		void Session_Dismissed(object sender, EventArgs e) => Dispose();
 
 		void InitializeSignatures(ITrackingSpan applicableToSpan, SignatureHelpResult signatureHelpResult) {
-			Debug.Assert(signatureHelpResult.Items != null);
+			Debug.Assert(!(signatureHelpResult.Items is null));
 			signatures.Clear();
 			foreach (var item in signatureHelpResult.Items.Items) {
 				bool isSelected = signatureHelpResult.SelectedItem == item;
@@ -185,7 +185,7 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 				signatures.Add(sig);
 		}
 
-		public ISignature GetBestMatch() => session.SelectedSignature;
+		public ISignature? GetBestMatch() => session?.SelectedSignature;
 		public bool IsTriggerCharacter(char c) => signatureHelpService.IsTriggerCharacter(c);
 		public bool IsRetriggerCharacter(char c) => signatureHelpService.IsRetriggerCharacter(c);
 
@@ -194,7 +194,7 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 				return;
 			isDisposed = true;
 			CancelFetchItems();
-			if (session != null) {
+			if (!(session is null)) {
 				session.Dismissed -= Session_Dismissed;
 				session.Dismiss();
 			}

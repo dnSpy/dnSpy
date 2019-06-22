@@ -27,7 +27,7 @@ using dnSpy.Contracts.Text.Editor;
 namespace dnSpy.Debugger.DotNet.CorDebug.CallStack.TextEditor {
 	[Export(typeof(DbgStackFrameGlyphTextMarkerLocationInfoProvider))]
 	sealed class DbgStackFrameGlyphTextMarkerLocationInfoProviderImpl : DbgStackFrameGlyphTextMarkerLocationInfoProvider {
-		public override GlyphTextMarkerLocationInfo Create(DbgStackFrame frame) {
+		public override GlyphTextMarkerLocationInfo? Create(DbgStackFrame frame) {
 			switch (frame.Location) {
 			case DbgDotNetNativeCodeLocation nativeLoc:
 				switch (nativeLoc.ILOffsetMapping) {

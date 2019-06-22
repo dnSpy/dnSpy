@@ -42,7 +42,7 @@ namespace dnSpy.Contracts.App {
 		/// <param name="settingsService">Settings manager</param>
 		/// <param name="args">Command line arguments</param>
 		/// <returns></returns>
-		IEnumerable<object> Load(ISettingsService settingsService, IAppCommandLineArgs args);
+		IEnumerable<object?> Load(ISettingsService settingsService, IAppCommandLineArgs args);
 
 		/// <summary>
 		/// Called when everything has been loaded

@@ -43,7 +43,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		readonly uint arrayCount;
 		readonly DbgDotNetArrayDimensionInfo[] dimensionInfos;
 		// This one's only non-null if this is an array with 2 or more dimensions
-		readonly int[] indexes;
+		readonly int[]? indexes;
 
 		public ArrayValueNodeProvider(DbgDotNetValueNodeProviderFactory owner, bool addParens, DmdType slotType, DbgDotNetValueNodeInfo valueInfo) {
 			this.owner = owner;
@@ -51,7 +51,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			this.slotType = slotType;
 			this.valueInfo = valueInfo;
 
-			bool b = valueInfo.Value.GetArrayInfo(out arrayCount, out dimensionInfos) && dimensionInfos.Length != 0;
+			bool b = valueInfo.Value.GetArrayInfo(out arrayCount, out dimensionInfos!) && dimensionInfos.Length != 0;
 			Debug.Assert(b);
 			if (!b)
 				dimensionInfos = new[] { new DbgDotNetArrayDimensionInfo(0, arrayCount) };
@@ -61,12 +61,12 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 
 		public override ulong GetChildCount(DbgEvaluationInfo evalInfo) => arrayCount;
 
-		public override DbgDotNetValueNode[] GetChildren(LanguageValueNodeFactory valueNodeFactory, DbgEvaluationInfo evalInfo, ulong index, int count, DbgValueNodeEvaluationOptions options, ReadOnlyCollection<string> formatSpecifiers) {
+		public override DbgDotNetValueNode[] GetChildren(LanguageValueNodeFactory valueNodeFactory, DbgEvaluationInfo evalInfo, ulong index, int count, DbgValueNodeEvaluationOptions options, ReadOnlyCollection<string>? formatSpecifiers) {
 			var res = count == 0 ? Array.Empty<DbgDotNetValueNode>() : new DbgDotNetValueNode[count];
 			DbgDotNetValueResult newValue = default;
 			try {
 				var output = ObjectCache.AllocDotNetTextOutput();
-				var elementType = valueInfo.Value.Type.GetElementType();
+				var elementType = valueInfo.Value.Type.GetElementType()!;
 				var castType = NeedCast(slotType, valueInfo.Value.Type) ? valueInfo.Value.Type : null;
 				for (int i = 0; i < res.Length; i++) {
 					evalInfo.CancellationToken.ThrowIfCancellationRequested();
@@ -82,6 +82,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 					}
 					else {
 						uint indexLeft = arrayIndex;
+						Debug.Assert(!(indexes is null));
 						for (int j = dimensionInfos.Length - 1; j >= 0; j--) {
 							indexes[j] = (int)(indexLeft % dimensionInfos[j].Length) + dimensionInfos[j].BaseIndex;
 							indexLeft = indexLeft / dimensionInfos[j].Length;
@@ -91,21 +92,21 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 					}
 
 					var name = output.CreateAndReset();
-					DbgDotNetValueNode newNode;
+					DbgDotNetValueNode? newNode;
 					if (newValue.HasError)
-						newNode = valueNodeFactory.CreateError(evalInfo, name, newValue.ErrorMessage, expression, false);
+						newNode = valueNodeFactory.CreateError(evalInfo, name, newValue.ErrorMessage!, expression, false);
 					else {
 						newNode = null;
-						if (CSharpDynamicPropertyHelper.IsCSharpDynamicProperty(newValue.Value.Type)) {
+						if (CSharpDynamicPropertyHelper.IsCSharpDynamicProperty(newValue.Value!.Type)) {
 							var info = CSharpDynamicPropertyHelper.GetRealValue(evalInfo, newValue.Value);
-							if (info.name != null) {
+							if (!(info.name is null)) {
 								newValue.Value.Dispose();
 								name = new DbgDotNetText(new DbgDotNetTextPart(DbgTextColor.DebugViewPropertyName, info.name));
 								expression = valueNodeFactory.GetFieldExpression(expression, info.valueField.Name, null, false);
 								newNode = valueNodeFactory.Create(evalInfo, name, info.value, formatSpecifiers, options, expression, PredefinedDbgValueNodeImageNames.DynamicViewElement, true, false, info.valueField.FieldType, false);
 							}
 						}
-						if (newNode == null)
+						if (newNode is null)
 							newNode = valueNodeFactory.Create(evalInfo, name, newValue.Value, formatSpecifiers, options, expression, PredefinedDbgValueNodeImageNames.ArrayElement, false, false, elementType, false);
 					}
 					newValue = default;
@@ -114,7 +115,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 				ObjectCache.Free(ref output);
 			}
 			catch {
-				evalInfo.Context.Process.DbgManager.Close(res.Where(a => a != null));
+				evalInfo.Context.Process.DbgManager.Close(res.Where(a => !(a is null)));
 				newValue.Value?.Dispose();
 				throw;
 			}

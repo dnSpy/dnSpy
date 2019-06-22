@@ -26,13 +26,13 @@ namespace dnSpy.Settings.Fonts {
 	sealed class ThemeFontSettingsImpl : ThemeFontSettings {
 		public override string Name { get; }
 		public override FontType FontType { get; }
-		public override FontSettings Active => active;
+		public override FontSettings Active => active!;
 
 		internal IEnumerable<FontSettingsImpl> FontSettings => toSettings.Values.ToArray();
 
 		readonly Dictionary<Guid, FontSettingsImpl> toSettings;
 		readonly DefaultFontInfo defaultFontInfo;
-		FontSettings active;
+		FontSettings? active;
 
 		public ThemeFontSettingsImpl(string name, FontType fontType, DefaultFontInfo defaultFontInfo) {
 			Name = name ?? throw new ArgumentNullException(nameof(name));

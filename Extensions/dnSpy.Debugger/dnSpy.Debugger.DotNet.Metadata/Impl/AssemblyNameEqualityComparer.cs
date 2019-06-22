@@ -54,10 +54,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return ignorePublicKeyToken || PublicKeyTokenEquals(x.GetPublicKeyToken(), y.GetPublicKeyToken());
 		}
 
-		static bool PublicKeyTokenEquals(byte[] a, byte[] b) {
-			if (a == null)
+		static bool PublicKeyTokenEquals(byte[]? a, byte[]? b) {
+			if (a is null)
 				a = Array.Empty<byte>();
-			if (b == null)
+			if (b is null)
 				b = Array.Empty<byte>();
 			if (Equals(a, b))
 				return true;
@@ -65,7 +65,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		static bool IsSystemPublicKeyToken(byte[] a) {
-			if (a == null)
+			if (a is null)
 				return false;
 			foreach (var sys in systemPublicKeyTokens) {
 				if (Equals(sys, a))
@@ -77,7 +77,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		static bool Equals(byte[] a, byte[] b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (a.Length != b.Length)
 				return false;

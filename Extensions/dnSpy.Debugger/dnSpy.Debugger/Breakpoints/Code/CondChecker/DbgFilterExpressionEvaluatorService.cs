@@ -27,7 +27,7 @@ using dnSpy.Contracts.Debugger.Text;
 namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 	abstract class DbgFilterExpressionEvaluatorService {
 		public abstract bool HasExpressionEvaluator { get; }
-		public abstract string IsValidExpression(string expr);
+		public abstract string? IsValidExpression(string expr);
 		public abstract DbgFilterExpressionEvaluatorResult Evaluate(string expr, DbgFilterEEVariableProvider variableProvider);
 		public abstract void Write(IDbgTextWriter output, string expr);
 	}
@@ -36,7 +36,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 	sealed class DbgFilterExpressionEvaluatorServiceImpl : DbgFilterExpressionEvaluatorService {
 		readonly Lazy<DbgFilterExpressionEvaluator, IDbgFilterExpressionEvaluatorMetadata> dbgFilterExpressionEvaluator;
 
-		public override bool HasExpressionEvaluator => dbgFilterExpressionEvaluator != null;
+		public override bool HasExpressionEvaluator => !(dbgFilterExpressionEvaluator is null);
 
 		[ImportingConstructor]
 		DbgFilterExpressionEvaluatorServiceImpl([ImportMany] IEnumerable<Lazy<DbgFilterExpressionEvaluator, IDbgFilterExpressionEvaluatorMetadata>> dbgFilterExpressionEvaluators) =>
@@ -44,28 +44,28 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 
 		const string NoFEEError = "No filter expression evaluator available";
 
-		public override string IsValidExpression(string expr) {
-			if (expr == null)
+		public override string? IsValidExpression(string expr) {
+			if (expr is null)
 				throw new ArgumentNullException(nameof(expr));
-			if (dbgFilterExpressionEvaluator != null)
+			if (!(dbgFilterExpressionEvaluator is null))
 				return dbgFilterExpressionEvaluator.Value.IsValidExpression(expr);
 			return NoFEEError;
 		}
 
 		public override DbgFilterExpressionEvaluatorResult Evaluate(string expr, DbgFilterEEVariableProvider variableProvider) {
-			if (expr == null)
+			if (expr is null)
 				throw new ArgumentNullException(nameof(expr));
-			if (variableProvider == null)
+			if (variableProvider is null)
 				throw new ArgumentNullException(nameof(variableProvider));
 			return dbgFilterExpressionEvaluator?.Value.Evaluate(expr, variableProvider) ?? new DbgFilterExpressionEvaluatorResult(NoFEEError);
 		}
 
 		public override void Write(IDbgTextWriter output, string expr) {
-			if (output == null)
+			if (output is null)
 				throw new ArgumentNullException(nameof(output));
-			if (expr == null)
+			if (expr is null)
 				throw new ArgumentNullException(nameof(expr));
-			if (dbgFilterExpressionEvaluator != null)
+			if (!(dbgFilterExpressionEvaluator is null))
 				dbgFilterExpressionEvaluator.Value.Write(output, expr);
 			else
 				output.Write(DbgTextColor.Error, expr);

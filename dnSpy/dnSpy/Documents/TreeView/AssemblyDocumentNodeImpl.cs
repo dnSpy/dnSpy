@@ -31,10 +31,10 @@ using dnSpy.Decompiler;
 namespace dnSpy.Documents.TreeView {
 	sealed class AssemblyDocumentNodeImpl : AssemblyDocumentNode {
 		public AssemblyDocumentNodeImpl(IDsDotNetDocument document)
-			: base(document) => Debug.Assert(document.AssemblyDef != null);
+			: base(document) => Debug.Assert(!(document.AssemblyDef is null));
 
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.ASSEMBLY_NODE_GUID);
-		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => dnImgMgr.GetImageReference(Document.AssemblyDef);
+		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => dnImgMgr.GetImageReference(Document.AssemblyDef!);
 		public override void Initialize() => TreeNode.LazyLoading = true;
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
@@ -43,6 +43,7 @@ namespace dnSpy.Documents.TreeView {
 		}
 
 		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) {
+			Debug.Assert(!(Document.AssemblyDef is null));
 			if ((options & DocumentNodeWriteOptions.ToolTip) == 0)
 				new NodeFormatter().Write(output, decompiler, Document.AssemblyDef, false, Context.ShowAssemblyVersion, Context.ShowAssemblyPublicKeyToken);
 			else {
@@ -59,6 +60,6 @@ namespace dnSpy.Documents.TreeView {
 			}
 		}
 
-		public override FilterType GetFilterType(IDocumentTreeNodeFilter filter) => filter.GetResult(Document.AssemblyDef).FilterType;
+		public override FilterType GetFilterType(IDocumentTreeNodeFilter filter) => filter.GetResult(Document.AssemblyDef!).FilterType;
 	}
 }

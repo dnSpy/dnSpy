@@ -34,7 +34,7 @@ namespace dnSpy.Documents.TreeView {
 		protected override ImageReference? GetExpandedIcon(IDotNetImageService dnImgMgr) => DsImages.FolderOpened;
 		public override NodePathName NodePathName => new NodePathName(Guid);
 		public override void Initialize() => TreeNode.LazyLoading = true;
-		public override ITreeNodeGroup TreeNodeGroup { get; }
+		public override ITreeNodeGroup? TreeNodeGroup { get; }
 
 		readonly ModuleDef module;
 

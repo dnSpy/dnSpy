@@ -40,10 +40,10 @@ namespace dnSpy.Bookmarks.DotNet.TextEditor {
 
 		public override TextViewBookmarkLocationResult? CreateLocation(IDocumentTab tab, ITextView textView, VirtualSnapshotPoint position) {
 			var documentViewer = tab.TryGetDocumentViewer();
-			if (documentViewer == null)
+			if (documentViewer is null)
 				return null;
 			var methodDebugService = documentViewer.GetMethodDebugService();
-			if (methodDebugService == null)
+			if (methodDebugService is null)
 				return null;
 			// A bookmark should be set on the current line if possible, and the current position
 			// isn't necessarily at the start of the line.

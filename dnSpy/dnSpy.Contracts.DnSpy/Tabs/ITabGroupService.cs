@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Tabs {
 		/// <summary>
 		/// Any value can be written here. It's ignored by this instance.
 		/// </summary>
-		object Tag { get; set; }
+		object? Tag { get; set; }
 
 		/// <summary>
 		/// Gets the <see cref="ITabService"/> instance
@@ -43,7 +43,7 @@ namespace dnSpy.Contracts.Tabs {
 		/// <summary>
 		/// Gets the active <see cref="ITabGroup"/> or null if <see cref="TabGroups"/> is empty
 		/// </summary>
-		ITabGroup ActiveTabGroup { get; set; }
+		ITabGroup? ActiveTabGroup { get; set; }
 
 		/// <summary>
 		/// true if the <see cref="ITabGroup"/>s are lined up horizontally, else vertically
@@ -59,7 +59,7 @@ namespace dnSpy.Contracts.Tabs {
 		/// <summary>
 		/// Gets the UI object
 		/// </summary>
-		object UIObject { get; }
+		object? UIObject { get; }
 
 		/// <summary>
 		/// Raised when a new tab has been selected
@@ -101,7 +101,7 @@ namespace dnSpy.Contracts.Tabs {
 		/// Moves the active tab to a new horizontal tab group
 		/// </summary>
 		/// <param name="onCreated">Called after the <see cref="ITabGroup"/> instance has been created</param>
-		void NewHorizontalTabGroup(Action<ITabGroup> onCreated = null);
+		void NewHorizontalTabGroup(Action<ITabGroup>? onCreated = null);
 
 		/// <summary>
 		/// true if <see cref="NewVerticalTabGroup(Action{ITabGroup})"/> can execute
@@ -112,7 +112,7 @@ namespace dnSpy.Contracts.Tabs {
 		/// Moves the active tab to a new vertical tab group
 		/// </summary>
 		/// <param name="onCreated">Called after the <see cref="ITabGroup"/> instance has been created</param>
-		void NewVerticalTabGroup(Action<ITabGroup> onCreated = null);
+		void NewVerticalTabGroup(Action<ITabGroup>? onCreated = null);
 
 		/// <summary>
 		/// true if <see cref="MoveToNextTabGroup()"/> can execute

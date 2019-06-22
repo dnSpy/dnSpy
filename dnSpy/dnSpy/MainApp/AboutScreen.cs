@@ -54,11 +54,11 @@ namespace dnSpy.MainApp {
 			aboutContentType = contentTypeRegistryService.GetContentType(ContentTypes.AboutDnSpy);
 		}
 
-		public DocumentTabContent Create(IDocumentTabContentFactoryContext context) => null;
+		public DocumentTabContent? Create(IDocumentTabContentFactoryContext context) => null;
 
 		static readonly Guid GUID_SerializedContent = new Guid("1C931C0F-D968-4664-B22D-87287A226EEC");
 
-		public DocumentTabContent Deserialize(Guid guid, ISettingsSection section, IDocumentTabContentFactoryContext context) {
+		public DocumentTabContent? Deserialize(Guid guid, ISettingsSection section, IDocumentTabContentFactoryContext context) {
 			if (guid == GUID_SerializedContent)
 				return new AboutScreenDocumentTabContent(documentViewerContentFactoryProvider, appWindow, extensionService, aboutContentType);
 			return null;
@@ -219,7 +219,7 @@ namespace dnSpy.MainApp {
 			using (var streamReader = new StreamReader(stream, Encoding.UTF8)) {
 				for (;;) {
 					var line = streamReader.ReadLine();
-					if (line == null)
+					if (line is null)
 						break;
 					output.WriteLine(line, BoxedTextColor.Text);
 				}

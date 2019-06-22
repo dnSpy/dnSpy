@@ -28,17 +28,17 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets/sets the simple name
 		/// </summary>
-		public string Name { get; set; }
+		public string? Name { get; set; }
 
 		/// <summary>
 		/// Gets/sets the version
 		/// </summary>
-		public Version Version { get; set; }
+		public Version? Version { get; set; }
 
 		/// <summary>
 		/// Gets/sets the culture name
 		/// </summary>
-		public string CultureName { get; set; }
+		public string? CultureName { get; set; }
 
 		/// <summary>
 		/// Gets/sets the flags
@@ -73,16 +73,16 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Gets the public key
 		/// </summary>
 		/// <returns></returns>
-		public byte[] GetPublicKey() => publicKey;
-		byte[] publicKey;
+		public byte[]? GetPublicKey() => publicKey;
+		byte[]? publicKey;
 
 		/// <summary>
 		/// Sets the public key
 		/// </summary>
 		/// <param name="publicKey">Public key or null</param>
-		public void SetPublicKey(byte[] publicKey) {
+		public void SetPublicKey(byte[]? publicKey) {
 			this.publicKey = publicKey;
-			if (publicKey == null)
+			if (publicKey is null)
 				RawFlags &= ~DmdAssemblyNameFlags.PublicKey;
 			else
 				RawFlags |= DmdAssemblyNameFlags.PublicKey;
@@ -92,8 +92,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Gets the public key token
 		/// </summary>
 		/// <returns></returns>
-		public byte[] GetPublicKeyToken() {
-			if (publicKeyToken == null && publicKey != null) {
+		public byte[]? GetPublicKeyToken() {
+			if (publicKeyToken is null && !(publicKey is null)) {
 				try {
 					publicKeyToken = AssemblyHasher.CreatePublicKeyToken(publicKey);
 				}
@@ -101,7 +101,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			}
 			return publicKeyToken;
 		}
-		byte[] publicKeyToken;
+		byte[]? publicKeyToken;
 
 		/// <summary>
 		/// Sets the public key token
@@ -143,8 +143,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			publicKeyToken = CloneArray(other.publicKeyToken);
 		}
 
-		internal static T[] CloneArray<T>(T[] array) {
-			if (array == null)
+		internal static T[]? CloneArray<T>(T[]? array) {
+			if (array is null)
 				return null;
 			var res = new T[array.Length];
 			Array.Copy(array, res, res.Length);
@@ -156,9 +156,9 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="assemblyName">Assembly name</param>
 		public DmdAssemblyName(string assemblyName) {
-			if (assemblyName == null)
+			if (assemblyName is null)
 				throw new ArgumentNullException(nameof(assemblyName));
-			Impl.DmdTypeNameParser.ParseAssemblyName(assemblyName, out string name, out Version version, out string cultureName, out DmdAssemblyNameFlags flags, out this.publicKey, out this.publicKeyToken, out DmdAssemblyHashAlgorithm hashAlgorithm);
+			Impl.DmdTypeNameParser.ParseAssemblyName(assemblyName, out var name, out var version, out var cultureName, out var flags, out publicKey, out publicKeyToken, out var hashAlgorithm);
 			Name = name;
 			Version = version;
 			CultureName = cultureName;
@@ -171,7 +171,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="name">Assembly name</param>
 		public DmdAssemblyName(IDmdAssemblyName name) {
-			if (name == null)
+			if (name is null)
 				throw new ArgumentNullException(nameof(name));
 			Name = name.Name;
 			Version = name.Version;

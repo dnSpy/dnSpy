@@ -32,12 +32,12 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// </summary>
 		public PropertyCollection Properties {
 			get {
-				if (properties == null)
+				if (properties is null)
 					Interlocked.CompareExchange(ref properties, new PropertyCollection(), null);
-				return properties;
+				return properties!;
 			}
 		}
-		PropertyCollection properties;
+		PropertyCollection? properties;
 
 		/// <summary>
 		/// Gets the text to classify
@@ -66,7 +66,7 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <param name="tag">Tag (<see cref="PredefinedTextClassifierTags"/>), can be null</param>
 		/// <param name="colorize">true if it should be colorized. Only special classifiers can ignore this, eg. highlighters</param>
 		/// <param name="colors">Default colors or null (see <see cref="TextClassifierTextColorWriter"/>)</param>
-		public TextClassifierContext(string text, string tag, bool colorize, IReadOnlyCollection<SpanData<object>> colors = null) {
+		public TextClassifierContext(string text, string? tag, bool colorize, IReadOnlyCollection<SpanData<object>>? colors = null) {
 			Text = text ?? throw new ArgumentNullException(nameof(text));
 			Tag = tag ?? string.Empty;
 			Colorize = colorize;

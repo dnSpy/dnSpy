@@ -41,10 +41,10 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			var settings = new List<DbgCodeBreakpointInfo>();
 			foreach (var bpSect in section.SectionsWithName("Breakpoint")) {
 				var isEnabled = bpSect.Attribute<bool?>("IsEnabled");
-				if (isEnabled == null)
+				if (isEnabled is null)
 					continue;
 				var location = dbgCodeLocationSerializerService.Deserialize(bpSect.TryGetSection("BPL"));
-				if (location == null)
+				if (location is null)
 					continue;
 				var bpSettings = new DbgCodeBreakpointSettings {
 					IsEnabled = isEnabled.Value,
@@ -59,41 +59,41 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			return settings.ToArray();
 		}
 
-		DbgCodeBreakpointCondition? LoadCondition(ISettingsSection section) {
-			if (section == null)
+		DbgCodeBreakpointCondition? LoadCondition(ISettingsSection? section) {
+			if (section is null)
 				return null;
 			var kind = section.Attribute<DbgCodeBreakpointConditionKind?>("Kind");
 			var condition = section.Attribute<string>("Condition");
-			if (kind == null || condition == null)
+			if (kind is null || condition is null)
 				return null;
 			return new DbgCodeBreakpointCondition(kind.Value, condition);
 		}
 
-		DbgCodeBreakpointHitCount? LoadHitCount(ISettingsSection section) {
-			if (section == null)
+		DbgCodeBreakpointHitCount? LoadHitCount(ISettingsSection? section) {
+			if (section is null)
 				return null;
 			var kind = section.Attribute<DbgCodeBreakpointHitCountKind?>("Kind");
 			var count = section.Attribute<int?>("Count");
-			if (kind == null || count == null)
+			if (kind is null || count is null)
 				return null;
 			return new DbgCodeBreakpointHitCount(kind.Value, count.Value);
 		}
 
-		DbgCodeBreakpointFilter? LoadFilter(ISettingsSection section) {
-			if (section == null)
+		DbgCodeBreakpointFilter? LoadFilter(ISettingsSection? section) {
+			if (section is null)
 				return null;
 			var filter = section.Attribute<string>("Filter");
-			if (filter == null)
+			if (filter is null)
 				return null;
 			return new DbgCodeBreakpointFilter(filter);
 		}
 
-		DbgCodeBreakpointTrace? LoadTrace(ISettingsSection section) {
-			if (section == null)
+		DbgCodeBreakpointTrace? LoadTrace(ISettingsSection? section) {
+			if (section is null)
 				return null;
 			var message = section.Attribute<string>("Message");
 			var @continue = section.Attribute<bool?>("Continue") ?? true;
-			if (message == null)
+			if (message is null)
 				return null;
 			return new DbgCodeBreakpointTrace(message, @continue);
 		}
@@ -113,15 +113,15 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 				var bpSettings = bp.Settings;
 				bpSect.Attribute("IsEnabled", bpSettings.IsEnabled);
 				dbgCodeLocationSerializerService.Serialize(bpSect.CreateSection("BPL"), location);
-				if (bpSettings.Condition != null)
+				if (!(bpSettings.Condition is null))
 					Save(bpSect.CreateSection("Condition"), bpSettings.Condition.Value);
-				if (bpSettings.HitCount != null)
+				if (!(bpSettings.HitCount is null))
 					Save(bpSect.CreateSection("HitCount"), bpSettings.HitCount.Value);
-				if (bpSettings.Filter != null)
+				if (!(bpSettings.Filter is null))
 					Save(bpSect.CreateSection("Filter"), bpSettings.Filter.Value);
-				if (bpSettings.Trace != null)
+				if (!(bpSettings.Trace is null))
 					Save(bpSect.CreateSection("Trace"), bpSettings.Trace.Value);
-				if (bpSettings.Labels != null && bpSettings.Labels.Count != 0)
+				if (!(bpSettings.Labels is null) && bpSettings.Labels.Count != 0)
 					SaveLabels(bpSect, bpSettings.Labels.ToArray());
 			}
 		}
@@ -145,7 +145,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		}
 
 		void SaveLabels(ISettingsSection section, string[] labels) {
-			if (labels == null || labels.Length == 0)
+			if (labels is null || labels.Length == 0)
 				return;
 			section.Attribute("Labels", string.Join(", ", labels));
 		}

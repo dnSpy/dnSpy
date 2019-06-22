@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Bookmarks.Navigator {
 		/// <summary>
 		/// Current active bookmark. It's null if there are no bookmarks or no bookmarks are visible in the UI
 		/// </summary>
-		public abstract Bookmark ActiveBookmark { get; set; }
+		public abstract Bookmark? ActiveBookmark { get; set; }
 
 		/// <summary>
 		/// Raised when <see cref="ActiveBookmark"/> is changed

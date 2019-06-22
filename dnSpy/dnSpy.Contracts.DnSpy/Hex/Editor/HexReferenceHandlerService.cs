@@ -36,6 +36,6 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="reference">Reference created by eg. <see cref="HexStructureInfoProvider.GetReference(HexPosition)"/></param>
 		/// <param name="tags">Tags or null, see <see cref="PredefinedHexReferenceHandlerTags"/></param>
 		/// <returns></returns>
-		public abstract bool Handle(HexView hexView, object reference, IList<string> tags = null);
+		public abstract bool Handle(HexView hexView, object reference, IList<string>? tags = null);
 	}
 }

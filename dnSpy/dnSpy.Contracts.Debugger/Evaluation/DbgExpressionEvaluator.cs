@@ -34,7 +34,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// Creates evaluator state used to cache data that is needed to evaluate an expression
 		/// </summary>
 		/// <returns></returns>
-		public abstract object CreateExpressionEvaluatorState();
+		public abstract object? CreateExpressionEvaluatorState();
 
 		/// <summary>
 		/// Evaluates an expression. The returned <see cref="DbgValue"/> is automatically closed when its runtime continues.
@@ -44,7 +44,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="options">Options</param>
 		/// <param name="state">State created by <see cref="CreateExpressionEvaluatorState"/> or null to store the state in <paramref name="evalInfo"/>'s context</param>
 		/// <returns></returns>
-		public abstract DbgEvaluationResult Evaluate(DbgEvaluationInfo evalInfo, string expression, DbgEvaluationOptions options, object state);
+		public abstract DbgEvaluationResult Evaluate(DbgEvaluationInfo evalInfo, string expression, DbgEvaluationOptions options, object? state);
 
 		/// <summary>
 		/// Assigns the value of an expression to another expression
@@ -131,7 +131,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <summary>
 		/// Gets the value or null if there was an error
 		/// </summary>
-		public DbgValue Value { get; }
+		public DbgValue? Value { get; }
 
 		/// <summary>
 		/// Gets the format specifiers
@@ -151,7 +151,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <summary>
 		/// Gets the error or null if none
 		/// </summary>
-		public string Error { get; }
+		public string? Error { get; }
 
 		static readonly ReadOnlyCollection<string> emptyFormatSpecifiers = new ReadOnlyCollection<string>(Array.Empty<string>());
 
@@ -161,7 +161,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="value">Value</param>
 		/// <param name="formatSpecifiers">Format specifiers or null</param>
 		/// <param name="flags">Flags</param>
-		public DbgEvaluationResult(DbgValue value, ReadOnlyCollection<string> formatSpecifiers, DbgEvaluationResultFlags flags) {
+		public DbgEvaluationResult(DbgValue value, ReadOnlyCollection<string>? formatSpecifiers, DbgEvaluationResultFlags flags) {
 			Value = value ?? throw new ArgumentNullException(nameof(value));
 			FormatSpecifiers = formatSpecifiers ?? emptyFormatSpecifiers;
 			Flags = flags;
@@ -174,7 +174,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="error">Error message</param>
 		/// <param name="formatSpecifiers">Format specifiers or null</param>
 		/// <param name="flags">Flags</param>
-		public DbgEvaluationResult(string error, ReadOnlyCollection<string> formatSpecifiers = null, DbgEvaluationResultFlags flags = 0) {
+		public DbgEvaluationResult(string error, ReadOnlyCollection<string>? formatSpecifiers = null, DbgEvaluationResultFlags flags = 0) {
 			Value = null;
 			FormatSpecifiers = formatSpecifiers ?? emptyFormatSpecifiers;
 			Flags = flags;
@@ -210,7 +210,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <summary>
 		/// Error message or null
 		/// </summary>
-		public string Error { get; }
+		public string? Error { get; }
 
 		/// <summary>
 		/// Gets the flags
@@ -227,7 +227,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// </summary>
 		/// <param name="flags">Result flags</param>
 		/// <param name="error">Error message or null</param>
-		public DbgEEAssignmentResult(DbgEEAssignmentResultFlags flags, string error) {
+		public DbgEEAssignmentResult(DbgEEAssignmentResultFlags flags, string? error) {
 			Flags = flags;
 			Error = error;
 		}

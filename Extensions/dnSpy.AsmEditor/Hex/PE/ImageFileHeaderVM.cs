@@ -36,7 +36,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 				if (TimeDateStampVM.DataFieldVM.HasError)
 					return string.Empty;
 
-				var date = EpochToDate((uint)TimeDateStampVM.DataFieldVM.ObjectValue).ToLocalTime();
+				var date = EpochToDate((uint)TimeDateStampVM.DataFieldVM.ObjectValue!).ToLocalTime();
 				return date.ToString(CultureInfo.CurrentCulture.DateTimeFormat);
 			}
 		}

@@ -52,7 +52,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 		bool useMixedMode;
 
-		public bool CanWritePdb => Module.PdbState != null;
+		public bool CanWritePdb => !(Module.PdbState is null);
 
 		public bool WritePdb {
 			get => writePdb;
@@ -87,7 +87,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 		bool addCheckSum;
 
-		public Win32Resources Win32Resources {
+		public Win32Resources? Win32Resources {
 			get => win32Resources;
 			set {
 				if (win32Resources != value) {
@@ -96,7 +96,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 				}
 			}
 		}
-		Win32Resources win32Resources;
+		Win32Resources? win32Resources;
 
 		public bool KeepExtraPEData {
 			get => keepExtraPEData;
@@ -126,7 +126,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 		public string Extension {
 			get {
-				switch ((ModuleKind)ModuleKind.SelectedItem) {
+				switch ((ModuleKind)ModuleKind.SelectedItem!) {
 				case dnlib.DotNet.ModuleKind.Console:
 				case dnlib.DotNet.ModuleKind.Windows:
 				default:
@@ -145,7 +145,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 		public SaveModuleOptionsVM(IDsDocument document) {
 			this.document = document;
-			Module = document.ModuleDef;
+			Module = document.ModuleDef!;
 			PEHeadersOptions = new PEHeadersOptionsVM(Module.Machine, GetSubsystem(Module.Kind));
 			Cor20HeaderOptions = new Cor20HeaderOptionsVM();
 			MetadataOptions = new MetadataOptionsVM(Module);
@@ -156,8 +156,8 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 			ModuleKind = new EnumListVM(moduleKindList, (a, b) => {
 				OnPropertyChanged(nameof(Extension));
-				PEHeadersOptions.Subsystem.SelectedItem = GetSubsystem((ModuleKind)ModuleKind.SelectedItem);
-				PEHeadersOptions.Characteristics = CharacteristicsHelper.GetCharacteristics(PEHeadersOptions.Characteristics ?? 0, (ModuleKind)ModuleKind.SelectedItem);
+				PEHeadersOptions.Subsystem.SelectedItem = GetSubsystem((ModuleKind)ModuleKind.SelectedItem!);
+				PEHeadersOptions.Characteristics = CharacteristicsHelper.GetCharacteristics(PEHeadersOptions.Characteristics ?? 0, (ModuleKind)ModuleKind.SelectedItem!);
 			});
 
 			Reinitialize();
@@ -197,7 +197,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			else {
 				var options = new ModuleWriterOptions(Module);
 				CopyTo(options);
-				if (Module.ManagedEntryPoint != null || Module.NativeEntryPoint == 0)
+				if (!(Module.ManagedEntryPoint is null) || Module.NativeEntryPoint == 0)
 					options.Cor20HeaderOptions.Flags &= ~ComImageFlags.NativeEntryPoint;
 				return AddOtherOptions(options);
 			}
@@ -218,7 +218,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			options.ShareMethodBodies = ShareMethodBodies;
 			options.AddCheckSum = AddCheckSum;
 			options.Win32Resources = Win32Resources;
-			options.ModuleKind = (ModuleKind)ModuleKind.SelectedItem;
+			options.ModuleKind = (ModuleKind)ModuleKind.SelectedItem!;
 		}
 
 		public SaveModuleOptionsVM Clone() => CopyTo(new SaveModuleOptionsVM(document));
@@ -288,7 +288,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			this.defaultMachine = defaultMachine;
 			this.defaultSubsystem = defaultSubsystem;
 			Machine = new EnumListVM(machineList, (a, b) => {
-				Characteristics = CharacteristicsHelper.GetCharacteristics(Characteristics ?? 0, (dnlib.PE.Machine)Machine.SelectedItem);
+				Characteristics = CharacteristicsHelper.GetCharacteristics(Characteristics ?? 0, (dnlib.PE.Machine)Machine.SelectedItem!);
 			});
 			TimeDateStamp = new NullableUInt32VM(a => HasErrorUpdated());
 			PointerToSymbolTable = new NullableUInt32VM(a => HasErrorUpdated());
@@ -426,10 +426,10 @@ namespace dnSpy.AsmEditor.SaveModule {
 			set => SetFlagValue(dnlib.PE.Characteristics.BytesReversedHi, value);
 		}
 
-		bool? GetFlagValue(Characteristics flag) => Characteristics == null ? (bool?)null : (Characteristics.Value & flag) != 0;
+		bool? GetFlagValue(Characteristics flag) => Characteristics is null ? (bool?)null : (Characteristics.Value & flag) != 0;
 
 		void SetFlagValue(Characteristics flag, bool? value) {
-			if (Characteristics == null)
+			if (Characteristics is null)
 				Characteristics = 0;
 			if (value ?? false)
 				Characteristics |= flag;
@@ -560,10 +560,10 @@ namespace dnSpy.AsmEditor.SaveModule {
 			set => SetFlagValue(dnlib.PE.DllCharacteristics.TerminalServerAware, value);
 		}
 
-		bool? GetFlagValue(DllCharacteristics flag) => DllCharacteristics == null ? (bool?)null : (DllCharacteristics.Value & flag) != 0;
+		bool? GetFlagValue(DllCharacteristics flag) => DllCharacteristics is null ? (bool?)null : (DllCharacteristics.Value & flag) != 0;
 
 		void SetFlagValue(DllCharacteristics flag, bool? value) {
-			if (DllCharacteristics == null)
+			if (DllCharacteristics is null)
 				DllCharacteristics = 0;
 			if (value ?? false)
 				DllCharacteristics |= flag;
@@ -579,7 +579,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		public NullableUInt32VM NumberOfRvaAndSizes { get; }
 
 		public void CopyTo(PEHeadersOptions options) {
-			options.Machine = (dnlib.PE.Machine)Machine.SelectedItem;
+			options.Machine = (dnlib.PE.Machine)Machine.SelectedItem!;
 			options.TimeDateStamp = TimeDateStamp.Value;
 			options.PointerToSymbolTable = PointerToSymbolTable.Value;
 			options.NumberOfSymbols = NumberOfSymbols.Value;
@@ -596,7 +596,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			options.MajorSubsystemVersion = MajorSubsystemVersion.Value;
 			options.MinorSubsystemVersion = MinorSubsystemVersion.Value;
 			options.Win32VersionValue = Win32VersionValue.Value;
-			options.Subsystem = (dnlib.PE.Subsystem)Subsystem.SelectedItem;
+			options.Subsystem = (dnlib.PE.Subsystem)Subsystem.SelectedItem!;
 			options.DllCharacteristics = DllCharacteristics;
 			options.SizeOfStackReserve = SizeOfStackReserve.Value;
 			options.SizeOfStackCommit = SizeOfStackCommit.Value;
@@ -718,10 +718,10 @@ namespace dnSpy.AsmEditor.SaveModule {
 			set => SetFlagValue(ComImageFlags.Bit32Preferred, value);
 		}
 
-		bool? GetFlagValue(ComImageFlags flag) => Flags == null ? (bool?)null : (Flags.Value & flag) != 0;
+		bool? GetFlagValue(ComImageFlags flag) => Flags is null ? (bool?)null : (Flags.Value & flag) != 0;
 
 		void SetFlagValue(ComImageFlags flag, bool? value) {
-			if (Flags == null)
+			if (Flags is null)
 				Flags = 0;
 			if (value ?? false)
 				Flags |= flag;
@@ -845,7 +845,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 				return null;
 			}
 			set {
-				if (value != null && value != PreserveRids) {
+				if (!(value is null) && value != PreserveRids) {
 					if (value.Value)
 						Flags |= MetadataFlags.PreserveRids;
 					else
@@ -934,7 +934,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 		bool GetFlagValue(MetadataFlags flag) => (Flags & flag) != 0;
 
-		void SetFlagValue(MetadataFlags flag, bool value, string prop1, string prop2 = null) {
+		void SetFlagValue(MetadataFlags flag, bool value, string prop1, string? prop2 = null) {
 			bool origValue = (Flags & flag) != 0;
 			if (origValue == value)
 				return;
@@ -945,7 +945,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 				Flags &= ~flag;
 
 			OnPropertyChanged(prop1);
-			if (prop2 != null)
+			if (!(prop2 is null))
 				OnPropertyChanged(prop2);
 		}
 
@@ -1010,7 +1010,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		public NullableUInt16VM MinorVersion { get; }
 		public NullableUInt32VM Reserved1 { get; }
 
-		public string VersionString {
+		public string? VersionString {
 			get => versionString;
 			set {
 				versionString = value;
@@ -1018,7 +1018,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 				HasErrorUpdated();
 			}
 		}
-		string versionString;
+		string? versionString;
 
 		public NullableByteVM StorageFlags { get; }
 		public NullableByteVM Reserved2 { get; }
@@ -1043,7 +1043,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			Reserved2.Value = options.Reserved2;
 		}
 
-		protected override string Verify(string columnName) {
+		protected override string? Verify(string columnName) {
 			if (columnName == nameof(VersionString))
 				return ValidateVersionString(versionString);
 
@@ -1064,7 +1064,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			}
 		}
 
-		internal static string ValidateVersionString(string versionString) {
+		internal static string ValidateVersionString(string? versionString) {
 			var bytes = Encoding.UTF8.GetBytes(versionString + "\0");
 			if (bytes.Length > 256)
 				return dnSpy_AsmEditor_Resources.Error_VersionStringTooLong;

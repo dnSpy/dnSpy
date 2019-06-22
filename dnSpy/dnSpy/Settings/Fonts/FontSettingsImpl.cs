@@ -30,7 +30,7 @@ namespace dnSpy.Settings.Fonts {
 		public override FontFamily FontFamily {
 			get => fontFamily;
 			set {
-				if (value == null)
+				if (value is null)
 					throw new ArgumentNullException(nameof(value));
 				if (fontFamily.Source != value.Source) {
 					fontFamily = value;

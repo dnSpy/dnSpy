@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
-	sealed class CorProcess : COMObject<ICorDebugProcess>, IEquatable<CorProcess> {
+	sealed class CorProcess : COMObject<ICorDebugProcess>, IEquatable<CorProcess?> {
 		public uint HelperThreadId {
 			get {
 				int hr = obj.GetHelperThreadID(out uint threadId);
@@ -47,7 +47,7 @@ namespace dndbg.Engine {
 					yield break;
 				for (;;) {
 					hr = threadEnum.Next(1, out var thread, out uint count);
-					if (hr != 0 || thread == null)
+					if (hr != 0 || thread is null)
 						break;
 					yield return new CorThread(thread);
 				}
@@ -61,7 +61,7 @@ namespace dndbg.Engine {
 					yield break;
 				for (;;) {
 					hr = appDomainEnum.Next(1, out var appDomain, out uint count);
-					if (hr != 0 || appDomain == null)
+					if (hr != 0 || appDomain is null)
 						break;
 					yield return new CorAppDomain(appDomain);
 				}
@@ -89,14 +89,14 @@ namespace dndbg.Engine {
 		public CorDebugJITCompilerFlags DesiredNGENCompilerFlags {
 			get {
 				var p2 = obj as ICorDebugProcess2;
-				if (p2 == null)
+				if (p2 is null)
 					return 0;
 				int hr = p2.GetDesiredNGENCompilerFlags(out var flags);
 				return hr < 0 ? 0 : flags;
 			}
 			set {
 				var p2 = obj as ICorDebugProcess2;
-				if (p2 == null)
+				if (p2 is null)
 					return;
 				int hr = p2.SetDesiredNGENCompilerFlags(value);
 			}
@@ -146,7 +146,7 @@ namespace dndbg.Engine {
 			return 0;
 		}
 
-		public byte[] ReadMemory(ulong addr, int size) {
+		public byte[]? ReadMemory(ulong addr, int size) {
 			if (addr == 0 || size < 0)
 				return null;
 			var buf = new byte[size];
@@ -197,18 +197,8 @@ namespace dndbg.Engine {
 			return hr >= 0;
 		}
 
-		public static bool operator ==(CorProcess a, CorProcess b) {
-			if (ReferenceEquals(a, b))
-				return true;
-			if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
-				return false;
-			return a.Equals(b);
-		}
-
-		public static bool operator !=(CorProcess a, CorProcess b) => !(a == b);
-
-		public bool Equals(CorProcess other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
-		public override bool Equals(object obj) => Equals(obj as CorProcess);
+		public bool Equals(CorProcess? other) => !(other is null) && RawObject == other.RawObject;
+		public override bool Equals(object? obj) => Equals(obj as CorProcess);
 		public override int GetHashCode() => RawObject.GetHashCode();
 		public override string ToString() => $"[Process] {ProcessId} CLR v{CLRVersion} Flags={DesiredNGENCompilerFlags}";
 	}

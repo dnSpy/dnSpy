@@ -26,9 +26,9 @@ using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 	abstract class MonoConnectStartDebuggingOptionsPageBase : StartDebuggingOptionsPage, IDataErrorInfo {
-		public sealed override object UIObject => this;
+		public sealed override object? UIObject => this;
 
-		public string Address {
+		public string? Address {
 			get => address;
 			set {
 				if (address != value) {
@@ -38,7 +38,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 				}
 			}
 		}
-		string address;
+		string? address;
 
 		public UInt16VM ConnectionPort { get; }
 		public UInt32VM ConnectionTimeout { get; }
@@ -46,8 +46,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 		public EnumListVM BreakProcessKindVM => breakProcessKindVM;
 		readonly EnumListVM breakProcessKindVM = new EnumListVM(BreakProcessKindsUtils.BreakProcessKindList);
 
-		public string BreakKind {
-			get => (string)BreakProcessKindVM.SelectedItem;
+		public string? BreakKind {
+			get => (string?)BreakProcessKindVM.SelectedItem;
 			set => BreakProcessKindVM.SelectedItem = value;
 		}
 
@@ -78,10 +78,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 			ConnectionTimeout = new UInt32VM(a => UpdateIsValid(), useDecimal: true);
 		}
 
-		static string FilterBreakKind(string breakKind) {
+		static string FilterBreakKind(string? breakKind) {
 			foreach (var info in BreakProcessKindsUtils.BreakProcessKindList) {
 				if (StringComparer.Ordinal.Equals(breakKind, (string)info.Value))
-					return breakKind;
+					return breakKind!;
 			}
 			return PredefinedBreakKinds.DontBreak;
 		}

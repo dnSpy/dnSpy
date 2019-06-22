@@ -47,7 +47,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			get {
 				if (!modulePropsInitd)
 					InitializeModuleProperties();
-				return __moduleScopeName_DONT_USE;
+				return __moduleScopeName_DONT_USE!;
 			}
 		}
 
@@ -55,7 +55,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			get {
 				if (!modulePropsInitd)
 					InitializeModuleProperties();
-				return __imageRuntimeVersion_DONT_USE;
+				return __imageRuntimeVersion_DONT_USE!;
 			}
 		}
 
@@ -92,13 +92,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		bool modulePropsInitd;
 		Guid __moduleVersionId_DONT_USE;
 		int __mdStreamVersion_DONT_USE;
-		string __moduleScopeName_DONT_USE;
-		string __imageRuntimeVersion_DONT_USE;
+		string? __moduleScopeName_DONT_USE;
+		string? __imageRuntimeVersion_DONT_USE;
 		DmdPortableExecutableKinds __peKind_DONT_USE;
 		DmdImageFileMachine __machine_DONT_USE;
 
 		// It doesn't seem to be possible to get the entry point from the COM MetaData API
-		public override DmdMethodInfo EntryPoint => null;
+		public override DmdMethodInfo? EntryPoint => null;
 
 		internal IMetaDataImport2 MetaDataImport {
 			get {
@@ -112,7 +112,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 				Debug.Assert(IsCOMThread);
 				// It's initialized lazily and not in the ctor because the ctor is not necessarily running
 				// on the COM thread.
-				if (__metaDataAssemblyImport_DONT_USE == null)
+				if (__metaDataAssemblyImport_DONT_USE is null)
 					__metaDataAssemblyImport_DONT_USE = (IMetaDataAssemblyImport)__metaDataImport_DONT_USE;
 				return __metaDataAssemblyImport_DONT_USE;
 			}
@@ -123,23 +123,23 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 
 		readonly DmdModuleImpl module;
 		readonly IMetaDataImport2 __metaDataImport_DONT_USE;
-		IMetaDataAssemblyImport __metaDataAssemblyImport_DONT_USE;
+		IMetaDataAssemblyImport? __metaDataAssemblyImport_DONT_USE;
 		readonly DmdDynamicModuleHelper dynamicModuleHelper;
 		readonly DmdDispatcher dispatcher;
-		Dictionary<uint, List<uint>> ridToNested;
-		Dictionary<uint, uint> ridToEnclosing;
+		Dictionary<uint, List<uint>?>? ridToNested;
+		Dictionary<uint, uint>? ridToEnclosing;
 		readonly LazyList<DmdTypeRef> typeRefList;
-		readonly LazyList<DmdFieldDef, DmdTypeDef> fieldList;
+		readonly LazyList<DmdFieldDef, DmdTypeDef?> fieldList;
 		readonly LazyList<DmdTypeDef> typeDefList;
-		readonly LazyList<DmdMethodBase, DmdTypeDef> methodList;
-		readonly LazyList2<DmdMemberInfo, IList<DmdType>, IList<DmdType>> memberRefList;
-		readonly LazyList<DmdEventDef, DmdTypeDef> eventList;
-		readonly LazyList<DmdPropertyDef, DmdTypeDef> propertyList;
-		readonly LazyList2<DmdType, IList<DmdType>, IList<DmdType>> typeSpecList;
+		readonly LazyList<DmdMethodBase, DmdTypeDef?> methodList;
+		readonly LazyList2<DmdMemberInfo, IList<DmdType>?, IList<DmdType>?> memberRefList;
+		readonly LazyList<DmdEventDef, DmdTypeDef?> eventList;
+		readonly LazyList<DmdPropertyDef, DmdTypeDef?> propertyList;
+		readonly LazyList2<DmdType, IList<DmdType>?, IList<DmdType>?> typeSpecList;
 		readonly LazyList<DmdTypeRef> exportedTypeList;
 		readonly DmdNullGlobalType globalTypeIfThereAreNoTypes;
-		readonly Dictionary<IntPtr, DmdType> fieldTypeCache;
-		readonly Dictionary<IntPtr, DmdMethodSignature> methodSignatureCache;
+		readonly Dictionary<IntPtr, DmdType?> fieldTypeCache;
+		readonly Dictionary<IntPtr, DmdMethodSignature?> methodSignatureCache;
 
 		public DmdComMetadataReader(DmdModuleImpl module, IMetaDataImport2 metaDataImport, DmdDynamicModuleHelper dynamicModuleHelper, DmdDispatcher dispatcher) {
 			this.module = module ?? throw new ArgumentNullException(nameof(module));
@@ -147,17 +147,17 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			this.dynamicModuleHelper = dynamicModuleHelper ?? throw new ArgumentNullException(nameof(dynamicModuleHelper));
 			this.dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
 
-			fieldTypeCache = new Dictionary<IntPtr, DmdType>();
-			methodSignatureCache = new Dictionary<IntPtr, DmdMethodSignature>();
+			fieldTypeCache = new Dictionary<IntPtr, DmdType?>();
+			methodSignatureCache = new Dictionary<IntPtr, DmdMethodSignature?>();
 
 			typeRefList = new LazyList<DmdTypeRef>(TryCreateTypeRefCOMD_COMThread);
-			fieldList = new LazyList<DmdFieldDef, DmdTypeDef>(CreateResolvedField_COMThread);
+			fieldList = new LazyList<DmdFieldDef, DmdTypeDef?>(CreateResolvedField_COMThread);
 			typeDefList = new LazyList<DmdTypeDef>(TryCreateTypeDefCOMD_COMThread);
-			methodList = new LazyList<DmdMethodBase, DmdTypeDef>(CreateResolvedMethod_COMThread);
-			memberRefList = new LazyList2<DmdMemberInfo, IList<DmdType>, IList<DmdType>>(CreateResolvedMemberRef_COMThread);
-			eventList = new LazyList<DmdEventDef, DmdTypeDef>(CreateResolvedEvent_COMThread);
-			propertyList = new LazyList<DmdPropertyDef, DmdTypeDef>(CreateResolvedProperty_COMThread);
-			typeSpecList = new LazyList2<DmdType, IList<DmdType>, IList<DmdType>>(TryCreateTypeSpecCOMD_COMThread);
+			methodList = new LazyList<DmdMethodBase, DmdTypeDef?>(CreateResolvedMethod_COMThread);
+			memberRefList = new LazyList2<DmdMemberInfo, IList<DmdType>?, IList<DmdType>?>(CreateResolvedMemberRef_COMThread);
+			eventList = new LazyList<DmdEventDef, DmdTypeDef?>(CreateResolvedEvent_COMThread);
+			propertyList = new LazyList<DmdPropertyDef, DmdTypeDef?>(CreateResolvedProperty_COMThread);
+			typeSpecList = new LazyList2<DmdType, IList<DmdType>?, IList<DmdType>?>(TryCreateTypeSpecCOMD_COMThread);
 			exportedTypeList = new LazyList<DmdTypeRef>(TryCreateExportedTypeCOMD_COMThread);
 
 			globalTypeIfThereAreNoTypes = new DmdNullGlobalType(module, null);
@@ -174,21 +174,21 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return dispatcher.Invoke(action);
 		}
 
-		DmdTypeRefCOMD TryCreateTypeRefCOMD_COMThread(uint rid) {
+		DmdTypeRefCOMD? TryCreateTypeRefCOMD_COMThread(uint rid) {
 			dispatcher.VerifyAccess();
 			if (!MDAPI.IsValidToken(MetaDataImport, 0x01000000 + rid))
 				return null;
 			return new DmdTypeRefCOMD(this, rid, null);
 		}
 
-		DmdTypeDefCOMD TryCreateTypeDefCOMD_COMThread(uint rid) {
+		DmdTypeDefCOMD? TryCreateTypeDefCOMD_COMThread(uint rid) {
 			dispatcher.VerifyAccess();
 			if (!MDAPI.IsValidToken(MetaDataImport, 0x02000000 + rid))
 				return null;
 			return new DmdTypeDefCOMD(this, rid, null);
 		}
 
-		DmdExportedTypeCOMD TryCreateExportedTypeCOMD_COMThread(uint rid) {
+		DmdExportedTypeCOMD? TryCreateExportedTypeCOMD_COMThread(uint rid) {
 			dispatcher.VerifyAccess();
 			if (!MDAPI.IsValidToken(MetaDataImport, 0x27000000 + rid))
 				return null;
@@ -198,6 +198,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		internal uint GetEnclosingTypeDefRid_COMThread(uint typeDefRid) {
 			dispatcher.VerifyAccess();
 			InitializeTypeTables_COMThread();
+			Debug.Assert(!(ridToEnclosing is null));
 			bool b = ridToEnclosing.TryGetValue(typeDefRid, out uint enclTypeRid);
 			Debug.Assert(b);
 			return enclTypeRid;
@@ -206,25 +207,28 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		internal uint[] GetTypeDefNestedClassRids_COMThread(uint typeDefRid) {
 			dispatcher.VerifyAccess();
 			InitializeTypeTables_COMThread();
+			Debug.Assert(!(ridToNested is null));
 			bool b = ridToNested.TryGetValue(typeDefRid, out var list);
 			Debug.Assert(b);
-			return list == null || list.Count == 0 ? Array.Empty<uint>() : list.ToArray();
+			return list is null || list.Count == 0 ? Array.Empty<uint>() : list.ToArray();
 		}
 
 		void InitializeTypeTables_COMThread() {
 			dispatcher.VerifyAccess();
-			if (ridToNested != null)
+			if (!(ridToNested is null))
 				return;
 
 			var allTypes = MDAPI.GetTypeDefTokens(MetaDataImport);
 			int capacity = allTypes.Length;
-			ridToNested = new Dictionary<uint, List<uint>>(capacity);
+			ridToNested = new Dictionary<uint, List<uint>?>(capacity);
 			ridToEnclosing = new Dictionary<uint, uint>(capacity);
 			UpdateTypeTables_COMThread(allTypes);
 		}
 
 		void UpdateTypeTables_COMThread(uint[] tokens) {
 			dispatcher.VerifyAccess();
+			Debug.Assert(!(ridToNested is null));
+			Debug.Assert(!(ridToEnclosing is null));
 			Array.Sort(tokens);
 			foreach (uint token in tokens) {
 				uint rid = token & 0x00FFFFFF;
@@ -244,7 +248,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 					enclTypeRid = 0;
 				}
 				else {
-					if (enclTypeList == null)
+					if (enclTypeList is null)
 						ridToNested[enclTypeRid] = enclTypeList = new List<uint>();
 					enclTypeList.Add(rid);
 				}
@@ -265,7 +269,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 
 			uint typeToken = (uint)e.MetadataToken;
 			uint[] newTokens;
-			if (ridToNested != null)
+			if (!(ridToNested is null))
 				newTokens = UpdateTypeTables_COMThread(typeToken);
 			else
 				newTokens = GetNewTokens_COMThread(typeToken);
@@ -279,10 +283,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		uint[] UpdateTypeTables_COMThread(uint typeToken) {
 			dispatcher.VerifyAccess();
 			uint typeRid = typeToken & 0x00FFFFFF;
-			bool b = ridToEnclosing != null && !ridToEnclosing.ContainsKey(typeRid);
+			bool b = !(ridToEnclosing is null) && !ridToEnclosing.ContainsKey(typeRid);
 			Debug.Assert(b);
 			if (!b)
 				return new[] { typeToken };
+			Debug.Assert(!(ridToEnclosing is null));
 
 			var tokens = GetNewTokens_COMThread(typeRid);
 			UpdateTypeTables_COMThread(tokens);
@@ -290,7 +295,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			foreach (var token in tokens) {
 				uint rid = token & 0x00FFFFFF;
 				if (token != typeToken) {
-					b = (object)typeDefList.TryGet(rid) != null;
+					b = !(typeDefList.TryGet(rid) is null);
 					Debug.Assert(!b);
 					if (b)
 						continue;
@@ -310,7 +315,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 
 		uint[] GetNewTokens_COMThread(uint rid) {
 			dispatcher.VerifyAccess();
-			if (ridToEnclosing == null)
+			if (ridToEnclosing is null)
 				return new[] { rid };
 			var hash = tmpHash;
 			hash.Clear();
@@ -329,7 +334,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 		readonly HashSet<uint> tmpHash = new HashSet<uint>();
 
-		(DmdType type, bool containedGenericParams) TryCreateTypeSpecCOMD_COMThread(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) {
+		(DmdType? type, bool containedGenericParams) TryCreateTypeSpecCOMD_COMThread(uint rid, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments) {
 			dispatcher.VerifyAccess();
 			uint token = 0x1B000000 + rid;
 			if (!MDAPI.IsValidToken(MetaDataImport, token))
@@ -338,12 +343,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return DmdSignatureReader.ReadTypeSignature(module, new DmdPointerDataStream(blob), genericTypeArguments, genericMethodArguments, resolveTypes);
 		}
 
-		DmdFieldDefCOMD CreateResolvedField_COMThread(uint rid, DmdTypeDef declaringType) {
+		DmdFieldDefCOMD? CreateResolvedField_COMThread(uint rid, DmdTypeDef? declaringType) {
 			dispatcher.VerifyAccess();
 			uint token = 0x04000000 + rid;
 			if (!MDAPI.IsValidToken(MetaDataImport, token))
 				return null;
-			if ((object)declaringType == null)
+			if (declaringType is null)
 				declaringType = ResolveTypeDef_COMThread(MDAPI.GetFieldOwnerRid(MetaDataImport, token)) ?? globalTypeIfThereAreNoTypes;
 			else
 				Debug.Assert((object)declaringType == ResolveTypeDef_COMThread(MDAPI.GetFieldOwnerRid(MetaDataImport, token)));
@@ -353,7 +358,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		internal DmdFieldDef CreateFieldDef_COMThread(uint rid, DmdType declaringType, DmdType reflectedType) {
 			dispatcher.VerifyAccess();
 			if ((object)declaringType == reflectedType && declaringType is DmdTypeDef declaringTypeDef)
-				return ResolveFieldDef_COMThread(rid, declaringTypeDef);
+				return ResolveFieldDef_COMThread(rid, declaringTypeDef)!;
 			return CreateFieldDefCore_COMThread(rid, declaringType, reflectedType);
 		}
 
@@ -365,7 +370,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		internal DmdType ReadFieldType_COMThread((IntPtr addr, uint size) signature, IList<DmdType> genericTypeArguments) {
 			dispatcher.VerifyAccess();
 			if (fieldTypeCache.TryGetValue(signature.addr, out var fieldType)) {
-				if ((object)fieldType != null)
+				if (!(fieldType is null))
 					return fieldType;
 				var info = ReadFieldTypeCore_COMThread(signature, genericTypeArguments);
 				Debug.Assert(info.containedGenericParams);
@@ -381,19 +386,19 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			}
 		}
 
-		(DmdType fieldType, bool containedGenericParams) ReadFieldTypeCore_COMThread((IntPtr addr, uint size) signature, IList<DmdType> genericTypeArguments) {
+		(DmdType fieldType, bool containedGenericParams) ReadFieldTypeCore_COMThread((IntPtr addr, uint size) signature, IList<DmdType>? genericTypeArguments) {
 			dispatcher.VerifyAccess();
 			if (signature.addr == IntPtr.Zero)
 				return (module.AppDomain.System_Void, false);
 			return DmdSignatureReader.ReadFieldSignature(module, new DmdPointerDataStream(signature), genericTypeArguments, resolveTypes);
 		}
 
-		DmdMethodBase CreateResolvedMethod_COMThread(uint rid, DmdTypeDef declaringType) {
+		DmdMethodBase? CreateResolvedMethod_COMThread(uint rid, DmdTypeDef? declaringType) {
 			dispatcher.VerifyAccess();
 			uint token = 0x06000000 + rid;
 			if (!MDAPI.IsValidToken(MetaDataImport, token))
 				return null;
-			if ((object)declaringType == null)
+			if (declaringType is null)
 				declaringType = ResolveTypeDef_COMThread(MDAPI.GetMethodOwnerRid(MetaDataImport, token)) ?? globalTypeIfThereAreNoTypes;
 			else
 				Debug.Assert((object)declaringType == ResolveTypeDef_COMThread(MDAPI.GetMethodOwnerRid(MetaDataImport, token)));
@@ -403,7 +408,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		internal DmdMethodBase CreateMethodDef_COMThread(uint rid, DmdType declaringType, DmdType reflectedType) {
 			dispatcher.VerifyAccess();
 			if ((object)declaringType == reflectedType && declaringType is DmdTypeDef declaringTypeDef)
-				return ResolveMethodDef_COMThread(rid, declaringTypeDef);
+				return ResolveMethodDef_COMThread(rid, declaringTypeDef)!;
 			return CreateMethodDefCore_COMThread(rid, declaringType, reflectedType);
 		}
 
@@ -419,10 +424,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return new DmdMethodDefCOMD(this, attrs, implAttrs, rid, name, declaringType, reflectedType);
 		}
 
-		internal DmdMethodSignature ReadMethodSignature_COMThread((IntPtr addr, uint size) signature, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool isProperty) {
+		internal DmdMethodSignature ReadMethodSignature_COMThread((IntPtr addr, uint size) signature, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments, bool isProperty) {
 			dispatcher.VerifyAccess();
 			if (methodSignatureCache.TryGetValue(signature.addr, out var methodSignature)) {
-				if ((object)methodSignature != null)
+				if (!(methodSignature is null))
 					return methodSignature;
 				var info = ReadMethodSignatureCore_COMThread(signature, genericTypeArguments, genericMethodArguments, isProperty);
 				Debug.Assert(info.containedGenericParams);
@@ -438,17 +443,17 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			}
 		}
 
-		(DmdMethodSignature methodSignature, bool containedGenericParams) ReadMethodSignatureCore_COMThread((IntPtr addr, uint size) signature, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, bool isProperty) {
+		(DmdMethodSignature methodSignature, bool containedGenericParams) ReadMethodSignatureCore_COMThread((IntPtr addr, uint size) signature, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments, bool isProperty) {
 			dispatcher.VerifyAccess();
 			return DmdSignatureReader.ReadMethodSignature(module, new DmdPointerDataStream(signature), genericTypeArguments, genericMethodArguments, isProperty, resolveTypes);
 		}
 
-		internal (DmdParameterInfo returnParameter, DmdParameterInfo[] parameters) CreateParameters_COMThread(DmdMethodBase method, bool createReturnParameter) {
+		internal (DmdParameterInfo? returnParameter, DmdParameterInfo[] parameters) CreateParameters_COMThread(DmdMethodBase method, bool createReturnParameter) {
 			dispatcher.VerifyAccess();
 			var tokens = MDAPI.GetParamTokens(MetaDataImport, (uint)method.MetadataToken);
 			var methodSignature = method.GetMethodSignature();
 			var sigParamTypes = methodSignature.GetParameterTypes();
-			DmdParameterInfo returnParameter = null;
+			DmdParameterInfo? returnParameter = null;
 			var parameters = sigParamTypes.Count == 0 ? Array.Empty<DmdParameterInfo>() : new DmdParameterInfo[sigParamTypes.Count];
 			for (int i = 0; i < tokens.Length; i++) {
 				uint token = tokens[i];
@@ -457,33 +462,33 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 				if (!MDAPI.GetParamSeqAndAttrs(MetaDataImport, token, out uint seq, out var attrs))
 					continue;
 				if (seq == 0) {
-					if (createReturnParameter && (object)returnParameter == null)
+					if (createReturnParameter && returnParameter is null)
 						returnParameter = new DmdParameterDefCOMD(this, rid, name, attrs, method, -1, methodSignature.ReturnType);
 				}
 				else {
 					int paramIndex = (int)seq - 1;
 					if ((uint)paramIndex < (uint)parameters.Length) {
-						if ((object)parameters[paramIndex] == null)
+						if (parameters[paramIndex] is null)
 							parameters[paramIndex] = new DmdParameterDefCOMD(this, rid, name, attrs, method, paramIndex, sigParamTypes[paramIndex]);
 					}
 				}
 			}
 			for (int i = 0; i < parameters.Length; i++) {
-				if ((object)parameters[i] == null)
+				if (parameters[i] is null)
 					parameters[i] = new DmdCreatedParameterDef(method, i, sigParamTypes[i]);
 			}
-			if (createReturnParameter && (object)returnParameter == null)
+			if (createReturnParameter && returnParameter is null)
 				returnParameter = new DmdCreatedParameterDef(method, -1, methodSignature.ReturnType);
 
 			return (returnParameter, parameters);
 		}
 
-		DmdEventDef CreateResolvedEvent_COMThread(uint rid, DmdTypeDef declaringType) {
+		DmdEventDef? CreateResolvedEvent_COMThread(uint rid, DmdTypeDef? declaringType) {
 			dispatcher.VerifyAccess();
 			uint token = 0x14000000 + rid;
 			if (!MDAPI.IsValidToken(MetaDataImport, token))
 				return null;
-			if ((object)declaringType == null)
+			if (declaringType is null)
 				declaringType = ResolveTypeDef_COMThread(MDAPI.GetEventOwnerRid(MetaDataImport, token)) ?? globalTypeIfThereAreNoTypes;
 			else
 				Debug.Assert((object)declaringType == ResolveTypeDef_COMThread(MDAPI.GetEventOwnerRid(MetaDataImport, token)));
@@ -493,7 +498,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		internal DmdEventDef CreateEventDef_COMThread(uint rid, DmdType declaringType, DmdType reflectedType) {
 			dispatcher.VerifyAccess();
 			if ((object)declaringType == reflectedType && declaringType is DmdTypeDef declaringTypeDef)
-				return ResolveEventDef_COMThread(rid, declaringTypeDef);
+				return ResolveEventDef_COMThread(rid, declaringTypeDef)!;
 			return CreateEventDefCore_COMThread(rid, declaringType, reflectedType);
 		}
 
@@ -502,12 +507,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return new DmdEventDefCOMD(this, rid, declaringType, reflectedType);
 		}
 
-		DmdPropertyDef CreateResolvedProperty_COMThread(uint rid, DmdTypeDef declaringType) {
+		DmdPropertyDef? CreateResolvedProperty_COMThread(uint rid, DmdTypeDef? declaringType) {
 			dispatcher.VerifyAccess();
 			uint token = 0x17000000 + rid;
 			if (!MDAPI.IsValidToken(MetaDataImport, token))
 				return null;
-			if ((object)declaringType == null)
+			if (declaringType is null)
 				declaringType = ResolveTypeDef_COMThread(MDAPI.GetPropertyOwnerRid(MetaDataImport, token)) ?? globalTypeIfThereAreNoTypes;
 			else
 				Debug.Assert((object)declaringType == ResolveTypeDef_COMThread(MDAPI.GetPropertyOwnerRid(MetaDataImport, token)));
@@ -517,7 +522,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		internal DmdPropertyDef CreatePropertyDef_COMThread(uint rid, DmdType declaringType, DmdType reflectedType) {
 			dispatcher.VerifyAccess();
 			if ((object)declaringType == reflectedType && declaringType is DmdTypeDef declaringTypeDef)
-				return ResolvePropertyDef_COMThread(rid, declaringTypeDef);
+				return ResolvePropertyDef_COMThread(rid, declaringTypeDef)!;
 			return CreatePropertyDefCore_COMThread(rid, declaringType, reflectedType);
 		}
 
@@ -526,7 +531,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return new DmdPropertyDefCOMD(this, rid, declaringType, reflectedType);
 		}
 
-		internal DmdType[] CreateGenericParameters_COMThread(DmdMethodBase method) {
+		internal DmdType[]? CreateGenericParameters_COMThread(DmdMethodBase method) {
 			dispatcher.VerifyAccess();
 			var tokens = MDAPI.GetGenericParamTokens(MetaDataImport, (uint)method.MetadataToken);
 			if (tokens.Length == 0)
@@ -544,7 +549,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return genericParams;
 		}
 
-		(DmdMemberInfo member, bool containedGenericParams) CreateResolvedMemberRef_COMThread(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) {
+		(DmdMemberInfo member, bool containedGenericParams) CreateResolvedMemberRef_COMThread(uint rid, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments) {
 			dispatcher.VerifyAccess();
 			uint token = 0x0A000000 + rid;
 			var signature = MDAPI.GetMemberRefSignatureBlob(MetaDataImport, token);
@@ -562,24 +567,24 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			if ((classToken >> 24) == 0x1B)
 				containedGenericParams = true;
 
-			if ((object)info.fieldType != null) {
-				var fieldRef = new DmdFieldRef(reflectedTypeRef, name, rawInfo.fieldType, info.fieldType);
+			if (!(info.fieldType is null)) {
+				var fieldRef = new DmdFieldRef(reflectedTypeRef, name, rawInfo.fieldType!, info.fieldType);
 				return (fieldRef, containedGenericParams);
 			}
 			else {
-				Debug.Assert((object)info.methodSignature != null);
+				Debug.Assert(!(info.methodSignature is null));
 				if (name == DmdConstructorInfo.ConstructorName || name == DmdConstructorInfo.TypeConstructorName) {
-					var ctorRef = new DmdConstructorRef(reflectedTypeRef, name, rawInfo.methodSignature, info.methodSignature);
+					var ctorRef = new DmdConstructorRef(reflectedTypeRef, name, rawInfo.methodSignature!, info.methodSignature);
 					return (ctorRef, containedGenericParams);
 				}
 				else {
-					var methodRef = new DmdMethodRefCOMD(this, signature, genericTypeArguments, reflectedTypeRef, name, rawInfo.methodSignature, info.methodSignature);
+					var methodRef = new DmdMethodRefCOMD(this, signature, genericTypeArguments, reflectedTypeRef, name, rawInfo.methodSignature!, info.methodSignature);
 					return (methodRef, containedGenericParams);
 				}
 			}
 		}
 
-		DmdType GetMemberRefParent_COMThread(uint classToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) {
+		DmdType GetMemberRefParent_COMThread(uint classToken, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments) {
 			dispatcher.VerifyAccess();
 			uint rid = classToken & 0x00FFFFFF;
 			switch ((Table)(classToken >> 24)) {
@@ -603,29 +608,29 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			}
 		}
 
-		(DmdType fieldType, DmdMethodSignature methodSignature, bool containedGenericParams) ReadMethodSignatureOrFieldType_COMThread((IntPtr addr, uint size) signature, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) {
+		(DmdType? fieldType, DmdMethodSignature? methodSignature, bool containedGenericParams) ReadMethodSignatureOrFieldType_COMThread((IntPtr addr, uint size) signature, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments) {
 			dispatcher.VerifyAccess();
 			if (methodSignatureCache.TryGetValue(signature.addr, out var methodSignature)) {
-				if ((object)methodSignature != null)
+				if (!(methodSignature is null))
 					return (null, methodSignature, false);
 				var info = ReadMethodSignatureCore_COMThread(signature, genericTypeArguments, genericMethodArguments, isProperty: false);
-				if ((object)info.methodSignature == null)
+				if (info.methodSignature is null)
 					throw new InvalidOperationException();
 				Debug.Assert(info.containedGenericParams);
 				return (null, info.methodSignature, info.containedGenericParams);
 			}
 			else if (fieldTypeCache.TryGetValue(signature.addr, out var fieldType)) {
-				if ((object)fieldType != null)
+				if (!(fieldType is null))
 					return (fieldType, null, false);
 				var info = ReadFieldTypeCore_COMThread(signature, genericTypeArguments);
-				if ((object)info.fieldType == null)
+				if (info.fieldType is null)
 					throw new InvalidOperationException();
 				Debug.Assert(info.containedGenericParams);
 				return (info.fieldType, null, info.containedGenericParams);
 			}
 			else {
 				var info = DmdSignatureReader.ReadMethodSignatureOrFieldType(module, new DmdPointerDataStream(signature), genericTypeArguments, genericMethodArguments, resolveTypes);
-				if ((object)info.fieldType != null) {
+				if (!(info.fieldType is null)) {
 					if (info.containedGenericParams)
 						fieldTypeCache.Add(signature.addr, null);
 					else
@@ -633,7 +638,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 					return (info.fieldType, null, info.containedGenericParams);
 				}
 				else {
-					Debug.Assert((object)info.methodSignature != null);
+					Debug.Assert(!(info.methodSignature is null));
 					if (info.containedGenericParams)
 						methodSignatureCache.Add(signature.addr, null);
 					else
@@ -643,13 +648,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			}
 		}
 
-		internal DmdMethodBody GetMethodBody_COMThread(DmdMethodBase method, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) {
+		internal DmdMethodBody? GetMethodBody_COMThread(DmdMethodBase method, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments) {
 			dispatcher.VerifyAccess();
 			if ((method.MethodImplementationFlags & DmdMethodImplAttributes.CodeTypeMask) != DmdMethodImplAttributes.IL)
 				return null;
 
 			var rvaTmp = MDAPI.GetRVA(MetaDataImport, (uint)method.MetadataToken);
-			if (rvaTmp == null)
+			if (rvaTmp is null)
 				return null;
 			uint rva = rvaTmp.Value;
 
@@ -665,16 +670,16 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			}
 
 			var bodyStream = dynamicModuleHelper.TryGetMethodBody(method.Module, method.MetadataToken, rva);
-			if (bodyStream == null)
+			if (bodyStream is null)
 				return null;
 			using (bodyStream) {
 				var body = DmdMethodBodyReader.Create(this, bodyStream, genericTypeArguments, genericMethodArguments);
-				Debug.Assert(body != null);
+				Debug.Assert(!(body is null));
 				return body;
 			}
 		}
 
-		(DmdType type, bool isPinned)[] IMethodBodyResolver.ReadLocals(int localSignatureMetadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) {
+		(DmdType type, bool isPinned)[] IMethodBodyResolver.ReadLocals(int localSignatureMetadataToken, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments) {
 			dispatcher.VerifyAccess();
 			if ((localSignatureMetadataToken & 0x00FFFFFF) == 0 || (localSignatureMetadataToken >> 24) != 0x11)
 				return Array.Empty<(DmdType, bool)>();
@@ -696,7 +701,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			var result = new List<DmdTypeDef>();
 			for (uint rid = 1; rid <= 0x00FFFFFF; rid++) {
 				var type = ResolveTypeDef_COMThread(rid);
-				if ((object)type == null)
+				if (type is null)
 					break;
 				result.Add(type);
 			}
@@ -715,157 +720,157 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 
 		DmdTypeRef[] GetExportedTypes_COMThread() {
 			dispatcher.VerifyAccess();
-			List<DmdTypeRef> result = null;
+			List<DmdTypeRef>? result = null;
 			for (uint rid = 1; rid <= 0x00FFFFFF; rid++) {
 				var type = ResolveExportedType_COMThread(rid);
-				if ((object)type == null)
+				if (type is null)
 					break;
-				if (result == null)
+				if (result is null)
 					result = new List<DmdTypeRef>();
 				result.Add(type);
 			}
 			return result?.ToArray() ?? Array.Empty<DmdTypeRef>();
 		}
 
-		protected override DmdTypeRef ResolveTypeRef(uint rid) {
+		protected override DmdTypeRef? ResolveTypeRef(uint rid) {
 			if (IsCOMThread)
 				return ResolveTypeRef_COMThread(rid);
 			else
 				return COMThread(() => ResolveTypeRef_COMThread(rid));
 		}
 
-		DmdTypeRef ResolveTypeRef_COMThread(uint rid) {
+		DmdTypeRef? ResolveTypeRef_COMThread(uint rid) {
 			dispatcher.VerifyAccess();
 			return typeRefList[rid - 1];
 		}
 
-		protected override DmdTypeDef ResolveTypeDef(uint rid) {
+		protected override DmdTypeDef? ResolveTypeDef(uint rid) {
 			if (IsCOMThread)
 				return ResolveTypeDef_COMThread(rid);
 			else
 				return COMThread(() => ResolveTypeDef_COMThread(rid));
 		}
 
-		DmdTypeDef ResolveTypeDef_COMThread(uint rid) {
+		DmdTypeDef? ResolveTypeDef_COMThread(uint rid) {
 			dispatcher.VerifyAccess();
 			var type = typeDefList[rid - 1];
-			if ((object)type == null && rid == 1)
+			if (type is null && rid == 1)
 				return globalTypeIfThereAreNoTypes;
 			return type;
 		}
 
-		protected override DmdFieldDef ResolveFieldDef(uint rid) {
+		protected override DmdFieldDef? ResolveFieldDef(uint rid) {
 			if (IsCOMThread)
 				return ResolveFieldDef_COMThread(rid);
 			else
 				return COMThread(() => ResolveFieldDef_COMThread(rid));
 		}
 
-		DmdFieldDef ResolveFieldDef_COMThread(uint rid) {
+		DmdFieldDef? ResolveFieldDef_COMThread(uint rid) {
 			dispatcher.VerifyAccess();
 			return fieldList[rid - 1, null];
 		}
 
-		DmdFieldDef ResolveFieldDef_COMThread(uint rid, DmdTypeDef declaringType) {
+		DmdFieldDef? ResolveFieldDef_COMThread(uint rid, DmdTypeDef declaringType) {
 			dispatcher.VerifyAccess();
 			return fieldList[rid - 1, declaringType];
 		}
 
-		protected override DmdMethodBase ResolveMethodDef(uint rid) {
+		protected override DmdMethodBase? ResolveMethodDef(uint rid) {
 			if (IsCOMThread)
 				return ResolveMethodDef_COMThread(rid);
 			else
 				return COMThread(() => ResolveMethodDef_COMThread(rid));
 		}
 
-		DmdMethodBase ResolveMethodDef_COMThread(uint rid) {
+		DmdMethodBase? ResolveMethodDef_COMThread(uint rid) {
 			dispatcher.VerifyAccess();
 			return methodList[rid - 1, null];
 		}
 
-		DmdMethodBase ResolveMethodDef_COMThread(uint rid, DmdTypeDef declaringType) {
+		DmdMethodBase? ResolveMethodDef_COMThread(uint rid, DmdTypeDef declaringType) {
 			dispatcher.VerifyAccess();
 			return methodList[rid - 1, declaringType];
 		}
 
-		protected override DmdMemberInfo ResolveMemberRef(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) {
+		protected override DmdMemberInfo? ResolveMemberRef(uint rid, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments) {
 			if (IsCOMThread)
 				return ResolveMemberRef_COMThread(rid, genericTypeArguments, genericMethodArguments);
 			else
 				return COMThread(() => ResolveMemberRef_COMThread(rid, genericTypeArguments, genericMethodArguments));
 		}
 
-		DmdMemberInfo ResolveMemberRef_COMThread(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) {
+		DmdMemberInfo? ResolveMemberRef_COMThread(uint rid, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments) {
 			dispatcher.VerifyAccess();
 			return memberRefList[rid - 1, genericTypeArguments, genericMethodArguments]; ;
 		}
 
-		protected override DmdEventDef ResolveEventDef(uint rid) {
+		protected override DmdEventDef? ResolveEventDef(uint rid) {
 			if (IsCOMThread)
 				return ResolveEventDef_COMThread(rid);
 			else
 				return COMThread(() => ResolveEventDef_COMThread(rid));
 		}
 
-		DmdEventDef ResolveEventDef_COMThread(uint rid) {
+		DmdEventDef? ResolveEventDef_COMThread(uint rid) {
 			dispatcher.VerifyAccess();
 			return eventList[rid - 1, null];
 		}
 
-		DmdEventDef ResolveEventDef_COMThread(uint rid, DmdTypeDef declaringType) {
+		DmdEventDef? ResolveEventDef_COMThread(uint rid, DmdTypeDef declaringType) {
 			dispatcher.VerifyAccess();
 			return eventList[rid - 1, declaringType];
 		}
 
-		protected override DmdPropertyDef ResolvePropertyDef(uint rid) {
+		protected override DmdPropertyDef? ResolvePropertyDef(uint rid) {
 			if (IsCOMThread)
 				return ResolvePropertyDef_COMThread(rid);
 			else
 				return COMThread(() => ResolvePropertyDef_COMThread(rid));
 		}
 
-		DmdPropertyDef ResolvePropertyDef_COMThread(uint rid) {
+		DmdPropertyDef? ResolvePropertyDef_COMThread(uint rid) {
 			dispatcher.VerifyAccess();
 			return propertyList[rid - 1, null];
 		}
 
-		DmdPropertyDef ResolvePropertyDef_COMThread(uint rid, DmdTypeDef declaringType) {
+		DmdPropertyDef? ResolvePropertyDef_COMThread(uint rid, DmdTypeDef declaringType) {
 			dispatcher.VerifyAccess();
 			return propertyList[rid - 1, declaringType];
 		}
 
-		protected override DmdType ResolveTypeSpec(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) {
+		protected override DmdType? ResolveTypeSpec(uint rid, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments) {
 			if (IsCOMThread)
 				return ResolveTypeSpec_COMThread(rid, genericTypeArguments, genericMethodArguments);
 			else
 				return COMThread(() => ResolveTypeSpec_COMThread(rid, genericTypeArguments, genericMethodArguments));
 		}
 
-		DmdType ResolveTypeSpec_COMThread(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) {
+		DmdType? ResolveTypeSpec_COMThread(uint rid, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments) {
 			dispatcher.VerifyAccess();
 			return typeSpecList[rid - 1, genericTypeArguments, genericMethodArguments];
 		}
 
-		protected override DmdTypeRef ResolveExportedType(uint rid) {
+		protected override DmdTypeRef? ResolveExportedType(uint rid) {
 			if (IsCOMThread)
 				return ResolveExportedType_COMThread(rid);
 			else
 				return COMThread(() => ResolveExportedType_COMThread(rid));
 		}
 
-		DmdTypeRef ResolveExportedType_COMThread(uint rid) {
+		DmdTypeRef? ResolveExportedType_COMThread(uint rid) {
 			dispatcher.VerifyAccess();
 			return exportedTypeList[rid - 1];
 		}
 
-		protected override DmdMethodBase ResolveMethodSpec(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) {
+		protected override DmdMethodBase? ResolveMethodSpec(uint rid, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments) {
 			if (IsCOMThread)
 				return ResolveMethodSpec_COMThread(rid, genericTypeArguments, genericMethodArguments);
 			else
 				return COMThread(() => ResolveMethodSpec_COMThread(rid, genericTypeArguments, genericMethodArguments));
 		}
 
-		DmdMethodBase ResolveMethodSpec_COMThread(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) {
+		DmdMethodBase? ResolveMethodSpec_COMThread(uint rid, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments) {
 			dispatcher.VerifyAccess();
 			uint token = 0x2B000000 + rid;
 			if (!MDAPI.IsValidToken(MetaDataImport, token))
@@ -878,14 +883,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return genericMethod.MakeGenericMethod(instantiation);
 		}
 
-		protected override DmdMethodSignature ResolveMethodSignature(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) {
+		protected override DmdMethodSignature? ResolveMethodSignature(uint rid, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments) {
 			if (IsCOMThread)
 				return ResolveMethodSignature_COMThread(rid, genericTypeArguments, genericMethodArguments);
 			else
 				return COMThread(() => ResolveMethodSignature_COMThread(rid, genericTypeArguments, genericMethodArguments));
 		}
 
-		DmdMethodSignature ResolveMethodSignature_COMThread(uint rid, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) {
+		DmdMethodSignature? ResolveMethodSignature_COMThread(uint rid, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments) {
 			dispatcher.VerifyAccess();
 			var signature = MDAPI.GetStandAloneSigBlob(MetaDataImport, 0x11000000 + rid);
 			if (signature.addr == IntPtr.Zero)
@@ -893,42 +898,42 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return ReadMethodSignature_COMThread(signature, genericTypeArguments, genericMethodArguments, isProperty: false);
 		}
 
-		protected override byte[] ResolveFieldSignature(uint rid) {
+		protected override byte[]? ResolveFieldSignature(uint rid) {
 			if (IsCOMThread)
 				return ResolveFieldSignature_COMThread(rid);
 			else
 				return COMThread(() => ResolveFieldSignature_COMThread(rid));
 		}
 
-		protected override byte[] ResolveMethodSignature(uint rid) {
+		protected override byte[]? ResolveMethodSignature(uint rid) {
 			if (IsCOMThread)
 				return ResolveMethodSignature_COMThread(rid);
 			else
 				return COMThread(() => ResolveMethodSignature_COMThread(rid));
 		}
 
-		protected override byte[] ResolveMemberRefSignature(uint rid) {
+		protected override byte[]? ResolveMemberRefSignature(uint rid) {
 			if (IsCOMThread)
 				return ResolveMemberRefSignature_COMThread(rid);
 			else
 				return COMThread(() => ResolveMemberRefSignature_COMThread(rid));
 		}
 
-		protected override byte[] ResolveStandAloneSigSignature(uint rid) {
+		protected override byte[]? ResolveStandAloneSigSignature(uint rid) {
 			if (IsCOMThread)
 				return ResolveStandAloneSigSignature_COMThread(rid);
 			else
 				return COMThread(() => ResolveStandAloneSigSignature_COMThread(rid));
 		}
 
-		protected override byte[] ResolveTypeSpecSignature(uint rid) {
+		protected override byte[]? ResolveTypeSpecSignature(uint rid) {
 			if (IsCOMThread)
 				return ResolveTypeSpecSignature_COMThread(rid);
 			else
 				return COMThread(() => ResolveTypeSpecSignature_COMThread(rid));
 		}
 
-		protected override byte[] ResolveMethodSpecSignature(uint rid) {
+		protected override byte[]? ResolveMethodSpecSignature(uint rid) {
 			if (IsCOMThread)
 				return ResolveMethodSpecSignature_COMThread(rid);
 			else
@@ -982,7 +987,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 
 		string ResolveStringCore_COMThread(uint offset) {
 			dispatcher.VerifyAccess();
-			return MDAPI.GetUserString(MetaDataImport, 0x70000000 + offset);
+			return MDAPI.GetUserString(MetaDataImport, 0x70000000 + offset) ?? string.Empty;
 		}
 
 		public override void GetPEKind(out DmdPortableExecutableKinds peKind, out DmdImageFileMachine machine) {
@@ -993,14 +998,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		public override DmdReadOnlyAssemblyName GetName() {
-			if (assemblyName == null)
+			if (assemblyName is null)
 				InitializeAssemblyName();
+			Debug.Assert(!(assemblyName is null));
 			return assemblyName;
 		}
-		DmdReadOnlyAssemblyName assemblyName;
+		DmdReadOnlyAssemblyName? assemblyName;
 
 		void InitializeAssemblyName() {
-			if (assemblyName != null)
+			if (!(assemblyName is null))
 				return;
 			if (IsCOMThread)
 				InitializeAssemblyName_COMThread();
@@ -1010,11 +1016,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 
 		void InitializeAssemblyName_COMThread() {
 			dispatcher.VerifyAccess();
-			if (assemblyName != null)
+			if (!(assemblyName is null))
 				return;
 
 			const uint token = 0x20000001;
-			var version = MDAPI.GetAssemblyVersionAndLocale(MetaDataAssemblyImport, token, out string locale) ?? new Version(0, 0, 0, 0);
+			var version = MDAPI.GetAssemblyVersionAndLocale(MetaDataAssemblyImport, token, out var locale) ?? new Version(0, 0, 0, 0);
 			var name = MDAPI.GetAssemblySimpleName(MetaDataAssemblyImport, token) ?? string.Empty;
 			var cultureName = locale ?? string.Empty;
 			var hashAlgorithm = MDAPI.GetAssemblyHashAlgorithm(MetaDataAssemblyImport, token) ?? DmdAssemblyHashAlgorithm.SHA1;
@@ -1046,7 +1052,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			dispatcher.VerifyAccess();
 			uint token = 0x23000000 + rid;
 			var name = MDAPI.GetAssemblyRefSimpleName(MetaDataAssemblyImport, token) ?? string.Empty;
-			var version = MDAPI.GetAssemblyRefVersionAndLocale(MetaDataAssemblyImport, token, out string locale) ?? new Version(0, 0, 0, 0);
+			var version = MDAPI.GetAssemblyRefVersionAndLocale(MetaDataAssemblyImport, token, out var locale) ?? new Version(0, 0, 0, 0);
 			var cultureName = locale ?? string.Empty;
 			var publicKeyOrToken = MDAPI.GetAssemblyRefPublicKeyOrToken(MetaDataAssemblyImport, token, out var flags);
 			return new DmdReadOnlyAssemblyName(name, version, cultureName, flags, publicKeyOrToken, DmdAssemblyHashAlgorithm.None);
@@ -1084,11 +1090,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 					continue;
 
 				var ctor = ResolveMethod(info.typeToken, null, null, DmdResolveOptions.None) as DmdConstructorInfo;
-				if ((object)ctor == null)
+				if (ctor is null)
 					continue;
 
 				var ca = DmdCustomAttributeReader.Read(module, new DmdPointerDataStream(info.addr, info.size), ctor);
-				if (ca == null)
+				if (ca is null)
 					continue;
 
 				res[w++] = ca;
@@ -1114,10 +1120,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			var tokens = MDAPI.GetPermissionSetTokens(MetaDataImport, token);
 			if (tokens.Length == 0)
 				return Array.Empty<DmdCustomAttributeData>();
-			IList<DmdType> genericTypeArguments = null;
-			DmdCustomAttributeData[] firstCas = null;
+			IList<DmdType>? genericTypeArguments = null;
+			DmdCustomAttributeData[]? firstCas = null;
 			SSP.SecurityAction firstAction = 0;
-			List<(DmdCustomAttributeData[] cas, SSP.SecurityAction action)> res = null;
+			List<(DmdCustomAttributeData[] cas, SSP.SecurityAction action)>? res = null;
 			for (int i = 0; i < tokens.Length; i++) {
 				if (!MDAPI.IsValidToken(MetaDataImport, tokens[i]))
 					continue;
@@ -1128,22 +1134,22 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 				var cas = DmdDeclSecurityReader.Read(module, new DmdPointerDataStream(info.addr, (int)info.size), action, genericTypeArguments);
 				if (cas.Length == 0)
 					continue;
-				if (res == null && firstCas == null) {
+				if (res is null && firstCas is null) {
 					firstAction = action;
 					firstCas = cas;
 				}
 				else {
-					if (res == null) {
-						res = new List<(DmdCustomAttributeData[], SSP.SecurityAction)>(firstCas.Length + cas.Length);
+					if (res is null) {
+						res = new List<(DmdCustomAttributeData[], SSP.SecurityAction)>(firstCas!.Length + cas.Length);
 						res.Add((firstCas, firstAction));
 						firstCas = null;
 					}
 					res.Add((cas, action));
 				}
 			}
-			if (firstCas != null)
+			if (!(firstCas is null))
 				return firstCas;
-			if (res == null)
+			if (res is null)
 				return Array.Empty<DmdCustomAttributeData>();
 			// Reflection sorts it by action
 			res.Sort((a, b) => (int)a.action - (int)b.action);
@@ -1161,7 +1167,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return sas;
 		}
 
-		internal DmdMarshalType ReadFieldMarshalType_COMThread(int metadataToken, DmdModule module, IList<DmdType> genericTypeArguments) {
+		internal DmdMarshalType? ReadFieldMarshalType_COMThread(int metadataToken, DmdModule module, IList<DmdType>? genericTypeArguments) {
 			dispatcher.VerifyAccess();
 			var signature = MDAPI.GetFieldMarshalBlob(MetaDataImport, (uint)metadataToken);
 			if (signature.addr == IntPtr.Zero)
@@ -1169,7 +1175,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return DmdMarshalBlobReader.Read(module, new DmdPointerDataStream(signature), genericTypeArguments);
 		}
 
-		internal (object value, bool hasValue) ReadFieldConstant_COMThread(int metadataToken) {
+		internal (object? value, bool hasValue) ReadFieldConstant_COMThread(int metadataToken) {
 			dispatcher.VerifyAccess();
 			var c = MDAPI.GetFieldConstant(MetaDataImport, (uint)metadataToken, out var etype);
 			if (etype == ElementType.End)
@@ -1177,7 +1183,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return (c, true);
 		}
 
-		internal (object value, bool hasValue) ReadParamConstant_COMThread(int metadataToken) {
+		internal (object? value, bool hasValue) ReadParamConstant_COMThread(int metadataToken) {
 			dispatcher.VerifyAccess();
 			var c = MDAPI.GetParamConstant(MetaDataImport, (uint)metadataToken, out var etype);
 			if (etype == ElementType.End)
@@ -1185,7 +1191,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return (c, true);
 		}
 
-		internal (object value, bool hasValue) ReadPropertyConstant_COMThread(int metadataToken) {
+		internal (object? value, bool hasValue) ReadPropertyConstant_COMThread(int metadataToken) {
 			dispatcher.VerifyAccess();
 			var c = MDAPI.GetPropertyConstant(MetaDataImport, (uint)metadataToken, out var etype);
 			if (etype == ElementType.End)

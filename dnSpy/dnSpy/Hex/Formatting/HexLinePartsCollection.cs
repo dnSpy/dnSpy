@@ -73,20 +73,20 @@ namespace dnSpy.Hex.Formatting {
 
 		public int ConvertLinePositionToColumn(int linePosition) {
 			var linePart = GetLinePartFromLinePosition(linePosition);
-			if (linePart == null && linePosition == Span.End && LineParts.Count != 0)
+			if (linePart is null && linePosition == Span.End && LineParts.Count != 0)
 				linePart = LineParts[LineParts.Count - 1];
-			if (linePart == null)
+			if (linePart is null)
 				return 0;
-			if (linePart.Value.AdornmentElement != null)
+			if (!(linePart.Value.AdornmentElement is null))
 				return linePart.Value.Column;
 			return linePart.Value.Column + ((linePosition - Span.Start) - linePart.Value.Span.Start);
 		}
 
 		public int ConvertColumnToLinePosition(int column) {
 			var linePart = GetLinePartFromColumn(column);
-			if (linePart == null && column == Length && LineParts.Count != 0)
+			if (linePart is null && column == Length && LineParts.Count != 0)
 				linePart = LineParts[LineParts.Count - 1];
-			return Span.Start + (linePart == null ? 0 : linePart.Value.Span.Start + (column - linePart.Value.Column));
+			return Span.Start + (linePart is null ? 0 : linePart.Value.Span.Start + (column - linePart.Value.Column));
 		}
 
 		public int? ConvertColumnToLinePosition(int column, bool includeHiddenPositions) {
@@ -94,11 +94,11 @@ namespace dnSpy.Hex.Formatting {
 				return ConvertColumnToLinePosition(column);
 
 			var linePart = GetLinePartFromColumn(column);
-			if (linePart == null && column == Length && LineParts.Count != 0)
+			if (linePart is null && column == Length && LineParts.Count != 0)
 				linePart = LineParts[LineParts.Count - 1];
-			if (linePart == null)
+			if (linePart is null)
 				return null;
-			if (linePart.Value.AdornmentElement != null)
+			if (!(linePart.Value.AdornmentElement is null))
 				return null;
 			return Span.Start + linePart.Value.Span.Start + (column - linePart.Value.Column);
 		}

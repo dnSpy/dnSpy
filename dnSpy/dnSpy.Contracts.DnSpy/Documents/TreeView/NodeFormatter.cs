@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using dnlib.DotNet;
 using dnlib.PE;
@@ -30,11 +31,11 @@ namespace dnSpy.Contracts.Documents.TreeView {
 	/// Node formatter
 	/// </summary>
 	public readonly struct NodeFormatter {
-		static bool IsExe(ModuleDef mod) => mod != null && (mod.Characteristics & Characteristics.Dll) == 0;
-		static bool IsExe(IPEImage peImage) => peImage != null && (peImage.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) == 0;
+		static bool IsExe(ModuleDef? mod) => !(mod is null) && (mod.Characteristics & Characteristics.Dll) == 0;
+		static bool IsExe(IPEImage? peImage) => !(peImage is null) && (peImage.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) == 0;
 
 		static string GetFilename(IDsDocument document) {
-			string filename = null;
+			string? filename = null;
 			try {
 				filename = Path.GetFileName(document.Filename);
 			}
@@ -62,7 +63,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		public void Write(ITextColorWriter output, IDecompiler decompiler, IDsDocument document) {
 			var filename = GetFilename(document);
 			var peImage = document.PEImage;
-			if (peImage != null)
+			if (!(peImage is null))
 				output.Write(IsExe(peImage) ? BoxedTextColor.AssemblyExe : BoxedTextColor.Assembly, NameUtilities.CleanName(filename));
 			else
 				output.Write(BoxedTextColor.Text, NameUtilities.CleanName(filename));
@@ -259,10 +260,11 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		public void Write(ITextColorWriter output, IDecompiler decompiler, MethodDef method, bool showToken) =>
 			Write(output, decompiler, method, method, method.MethodSig, showToken, false);
 
-		void Write(ITextColorWriter output, IDecompiler decompiler, MethodDef md, IMethod m, MethodSig msig, bool showToken, bool showGenericParams) {
+		void Write(ITextColorWriter output, IDecompiler decompiler, MethodDef? md, IMethod? m, MethodSig? msig, bool showToken, bool showGenericParams) {
 			if (md is null)
 				md = m?.ResolveMethodDef();
-			var method = md ?? m;
+			var method = (md ?? m)!;
+			Debug.Assert(!(method is null));
 
 			output.Write(decompiler.MetadataTextColorProvider.GetColor(method), NameUtilities.CleanIdentifier(method.Name));
 
@@ -314,10 +316,10 @@ namespace dnSpy.Contracts.Documents.TreeView {
 			output.WriteSpace();
 			decompiler.WriteType(output, (md?.MethodSig ?? msig)?.RetType.ToTypeDefOrRef(), false, md?.Parameters.ReturnParameter.ParamDef);
 			// m is the original ref, so use its token instead of the method def's token
-			WriteToken(output, m ?? md, showToken);
+			WriteToken(output, (m ?? md)!, showToken);
 		}
 
-		static string GetName(IList<GenericParam> genericParameters, int number) {
+		static string? GetName(IList<GenericParam> genericParameters, int number) {
 			if ((uint)number < (uint)genericParameters.Count && genericParameters[number].Number == number)
 				return genericParameters[number].Name;
 			foreach (var gp in genericParameters) {

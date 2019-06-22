@@ -28,15 +28,15 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public const int COMPRESSED_INT32_MIN	=-0x10000000;
 		public const int COMPRESSED_INT32_MAX	= 0x0FFFFFFF;
 
-		public static bool IsSystemType(this ITypeDefOrRef tdr) =>
-			tdr != null &&
-			tdr.DeclaringType == null &&
+		public static bool IsSystemType(this ITypeDefOrRef? tdr) =>
+			!(tdr is null) &&
+			tdr.DeclaringType is null &&
 			tdr.Namespace == "System" &&
 			tdr.Name == "Type" &&
 			tdr.DefinitionAssembly.IsCorLib();
 
-		public static ElementType GetElementType(Type type) {
-			var tc = type == null ? TypeCode.Empty : Type.GetTypeCode(type);
+		public static ElementType GetElementType(Type? type) {
+			var tc = type is null ? TypeCode.Empty : Type.GetTypeCode(type);
 			switch (tc) {
 			case TypeCode.Boolean:	return ElementType.Boolean;
 			case TypeCode.Char:		return ElementType.Char;
@@ -55,17 +55,17 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			}
 		}
 
-		public static string GetEnumFieldName(TypeDef td, object value) {
-			if (td == null || value == null)
+		public static string? GetEnumFieldName(TypeDef? td, object? value) {
+			if (td is null || value is null)
 				return null;
 			foreach (var fd in td.Fields) {
-				if (fd.IsLiteral && fd.Constant != null && value.Equals(fd.Constant.Value))
+				if (fd.IsLiteral && !(fd.Constant is null) && value.Equals(fd.Constant.Value))
 					return fd.Name;
 			}
 			return null;
 		}
 
-		public static object GetDefaultValue(TypeSig type, bool classValueTypeIsEnum = false) {
+		public static object? GetDefaultValue(TypeSig type, bool classValueTypeIsEnum = false) {
 			var t = type.RemovePinnedAndModifiers();
 			switch (t.GetElementType()) {
 			case ElementType.Boolean:return false;
@@ -86,7 +86,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				if (tdr.IsSystemType())
 					break;
 				var td = tdr.ResolveTypeDef();
-				if (td == null) {
+				if (td is null) {
 					if (classValueTypeIsEnum)
 						return (int)0;
 					break;

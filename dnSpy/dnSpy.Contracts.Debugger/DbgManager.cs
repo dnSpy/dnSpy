@@ -164,7 +164,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// See <see cref="IDbgManagerStartListener"/> on how to get called the first time this method gets called.
 		/// </summary>
 		/// <param name="options">Options needed to start the program or attach to it</param>
-		public abstract string Start(DebugProgramOptions options);
+		public abstract string? Start(DebugProgramOptions options);
 
 		/// <summary>
 		/// true if <see cref="Restart"/> can be called
@@ -402,12 +402,12 @@ namespace dnSpy.Contracts.Debugger {
 		/// <summary>
 		/// Gets the current object or null if none
 		/// </summary>
-		public abstract T Current { get; set; }
+		public abstract T? Current { get; set; }
 
 		/// <summary>
 		/// Gets the object that caused the debugger to enter break mode
 		/// </summary>
-		public abstract T Break { get; }
+		public abstract T? Break { get; }
 	}
 
 	/// <summary>
@@ -448,14 +448,14 @@ namespace dnSpy.Contracts.Debugger {
 		/// <summary>
 		/// Gets the thread or null if unknown
 		/// </summary>
-		public DbgThread Thread { get; }
+		public DbgThread? Thread { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="process">Process</param>
 		/// <param name="thread">Thread or null if unknown</param>
-		public ProcessPausedEventArgs(DbgProcess process, DbgThread thread) {
+		public ProcessPausedEventArgs(DbgProcess process, DbgThread? thread) {
 			Process = process ?? throw new ArgumentNullException(nameof(process));
 			Thread = thread;
 		}

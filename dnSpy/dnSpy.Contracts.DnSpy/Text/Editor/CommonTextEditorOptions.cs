@@ -27,12 +27,12 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <summary>
 		/// Content type or null
 		/// </summary>
-		public IContentType ContentType { get; set; }
+		public IContentType? ContentType { get; set; }
 
 		/// <summary>
 		/// Content type string or null
 		/// </summary>
-		public string ContentTypeString { get; set; }
+		public string? ContentTypeString { get; set; }
 
 		/// <summary>
 		/// Constructor

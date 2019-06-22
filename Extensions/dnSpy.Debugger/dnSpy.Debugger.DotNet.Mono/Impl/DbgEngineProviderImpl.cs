@@ -33,7 +33,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		DbgEngineProviderImpl(Lazy<DbgEngineImplDependencies> dbgEngineImplDependencies) =>
 			this.dbgEngineImplDependencies = dbgEngineImplDependencies;
 
-		public override DbgEngine Create(DbgManager dbgManager, DebugProgramOptions options) {
+		public override DbgEngine? Create(DbgManager dbgManager, DebugProgramOptions options) {
 			switch (options) {
 			case MonoStartDebuggingOptions _:
 			case MonoConnectStartDebuggingOptions _:

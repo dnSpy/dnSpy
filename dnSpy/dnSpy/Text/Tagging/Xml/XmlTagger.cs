@@ -33,7 +33,7 @@ namespace dnSpy.Text.Tagging.Xml {
 		[ImportingConstructor]
 		XmlTaggerProvider(XmlTaggerClassificationTypes xmlTaggerClassificationTypes) => this.xmlTaggerClassificationTypes = xmlTaggerClassificationTypes;
 
-		public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag => new XmlTagger(xmlTaggerClassificationTypes) as ITagger<T>;
+		public ITagger<T>? CreateTagger<T>(ITextBuffer buffer) where T : ITag => new XmlTagger(xmlTaggerClassificationTypes) as ITagger<T>;
 	}
 
 	sealed class XmlTagger : XmlTaggerBase {

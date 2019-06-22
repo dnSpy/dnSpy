@@ -77,7 +77,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <summary>
 		/// Project file extension, eg. .csproj or null if it's not supported
 		/// </summary>
-		string ProjectFileExtension { get; }
+		string? ProjectFileExtension { get; }
 
 		/// <summary>
 		/// Writes a type name
@@ -101,7 +101,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="type">Type</param>
 		/// <param name="includeNamespace">true to include namespace</param>
 		/// <param name="pd"><see cref="ParamDef"/> or null</param>
-		void WriteType(ITextColorWriter output, ITypeDefOrRef type, bool includeNamespace, ParamDef pd = null);
+		void WriteType(ITextColorWriter output, ITypeDefOrRef? type, bool includeNamespace, ParamDef? pd = null);
 
 		/// <summary>
 		/// Decompiles a method
@@ -174,7 +174,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="output">Output</param>
 		/// <param name="member">Member</param>
 		/// <param name="typeAttributes">Type containing attributes, used to detect the dynamic types and out/ref params</param>
-		void WriteToolTip(ITextColorWriter output, IMemberRef member, IHasCustomAttribute typeAttributes);
+		void WriteToolTip(ITextColorWriter output, IMemberRef member, IHasCustomAttribute? typeAttributes);
 
 		/// <summary>
 		/// Writes a tooltip
@@ -188,7 +188,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="output">Output</param>
 		/// <param name="namespace">Namespace</param>
-		void WriteNamespaceToolTip(ITextColorWriter output, string @namespace);
+		void WriteNamespaceToolTip(ITextColorWriter output, string? @namespace);
 
 		/// <summary>
 		/// Writes <paramref name="member"/> to <paramref name="output"/>

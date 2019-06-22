@@ -35,12 +35,12 @@ namespace dndbg.Engine {
 		/// <param name="waitTime">Time to wait or -1 to wait forever</param>
 		/// <param name="timedOut">Set to true if it timed out</param>
 		/// <returns></returns>
-		object DispatchQueue(TimeSpan waitTime, out bool timedOut);
+		object? DispatchQueue(TimeSpan waitTime, out bool timedOut);
 
 		/// <summary>
 		/// Cancels <see cref="DispatchQueue(TimeSpan,out bool)"/>
 		/// </summary>
 		/// <param name="result">Result</param>
-		void CancelDispatchQueue(object result);
+		void CancelDispatchQueue(object? result);
 	}
 }

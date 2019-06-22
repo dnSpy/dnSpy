@@ -17,12 +17,12 @@ namespace Example2.Extension {
 
 		public static IOutputTextPane Instance {
 			get {
-				if (_instance == null)
+				if (_instance is null)
 					throw new InvalidOperationException("Logger hasn't been initialized yet");
 				return _instance;
 			}
 			set {
-				if (_instance != null)
+				if (!(_instance is null))
 					throw new InvalidOperationException("Can't initialize the logger twice");
 				_instance = value ?? throw new ArgumentNullException(nameof(value));
 			}
@@ -50,14 +50,14 @@ namespace Example2.Extension {
 		protected sealed override object CachedContextKey => ContextKey;
 		static readonly object ContextKey = new object();
 
-		protected sealed override LogEditorCtxMenuContext CreateContext(IMenuItemContext context) {
+		protected sealed override LogEditorCtxMenuContext? CreateContext(IMenuItemContext context) {
 			// Check if it's the Output window
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_LOG_TEXTEDITORCONTROL_GUID))
 				return null;
 
 			// Get the text pane if any
 			var textPane = context.Find<IOutputTextPane>();
-			if (textPane == null)
+			if (textPane is null)
 				return null;
 
 			// Check if it's our logger text pane

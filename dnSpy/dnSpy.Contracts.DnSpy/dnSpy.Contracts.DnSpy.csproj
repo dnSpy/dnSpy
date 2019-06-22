@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <Import Project="..\..\DnSpyCommon.props" />
 
@@ -13,38 +13,11 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
+    <NullableContextOptions>enable</NullableContextOptions>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Update="Controls\ToolWindows\EditValueControl.xaml.cs">
-      <DependentUpon>EditValueControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="MVVM\Dialogs\ProgressDlg.xaml.cs">
-      <DependentUpon>ProgressDlg.xaml</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\dnSpy.Contracts.Logic\dnSpy.Contracts.Logic.csproj" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(IsDotNetFramework)' == 'true' ">
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="WindowsBase" />
-   </ItemGroup>
-
-  <ItemGroup>
-    <Page Include="Controls\ToolWindows\EditValueControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="MVVM\Dialogs\ProgressDlg.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
   </ItemGroup>
 
   <ItemGroup>
@@ -64,6 +37,16 @@
 
   <ItemGroup>
     <PackageReference Include="Ookii.Dialogs" Version="$(OokiiDialogsVersion)" />
+    <!--TODO: This is a workaround for a bug where we get the wrong version of System.Security.Permissions.
+    Microsoft.VisualStudio.Composition.NetFxAttributes and Microsoft.VisualStudio.Composition reference
+    System.ComponentModel.Composition 4.5.0 which references System.Security.Permissions 4.5.0 which has
+    assembly version 4.0.1.0. The runtime has asm version 4.0.2.0. This library is copied to the output dir
+    overwriting the 4.0.2.0 file because CopyLocalLockFileAssemblies=true in DnSpyCommon.props (to prevent
+    us having to publish all extensions).
+    Will probably be fixed after Microsoft.VisualStudio.Composition.NetFxAttributes and Microsoft.VisualStudio.Composition
+    reference a newer System.ComponentModel.Composition nuget in which case this hack can be removed.
+    -->
+    <PackageReference Include="System.ComponentModel.Composition" Version="$(SCCompositionVersion)" Condition=" '$(CopyLocalLockFileAssemblies)' == 'true' " />
     <PackageReference Include="Microsoft.VisualStudio.Composition.NetFxAttributes" Version="$(MSVSCompositionVersion)" />
     <PackageReference Include="Microsoft.VisualStudio.Language.Intellisense" Version="$(MSVSIntellisenseVersion)" />
     <PackageReference Include="Microsoft.VisualStudio.Text.UI.Wpf" Version="$(MSVSTextVersion)" />

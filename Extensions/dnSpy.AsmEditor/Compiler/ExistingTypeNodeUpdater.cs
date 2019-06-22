@@ -50,15 +50,13 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly DeletedEventUpdater[] deletedEvents;
 
 		public ExistingTypeNodeUpdater(Lazy<IMethodAnnotations> methodAnnotations, ModuleDocumentNode modNode, MergedImportedType type) {
-			targetType = type.TargetType;
+			targetType = type.TargetType!;
 			ownerModule = targetType.Module;
 			origTypeDefOptions = new TypeDefOptions(targetType);
 			newTypeDefOptions = type.NewTypeDefOptions;
-			typeNode = modNode.Context.DocumentTreeView.FindNode(targetType);
-			if (typeNode == null)
-				throw new InvalidOperationException();
+			typeNode = modNode.Context.DocumentTreeView.FindNode(targetType) ?? throw new InvalidOperationException();
 			nestedTypes1 = type.NewOrExistingNestedTypes.OfType<MergedImportedType>().Select(a => new ExistingTypeNodeUpdater(methodAnnotations, modNode, a)).ToArray();
-			nestedTypes2 = type.NewOrExistingNestedTypes.OfType<NewImportedType>().Select(a => new NestedTypeNodeCreator(modNode, typeNode, a.TargetType)).ToArray();
+			nestedTypes2 = type.NewOrExistingNestedTypes.OfType<NewImportedType>().Select(a => new NestedTypeNodeCreator(modNode, typeNode, a.TargetType!)).ToArray();
 			if (nestedTypes1.Length + nestedTypes2.Length != type.NewOrExistingNestedTypes.Count)
 				throw new InvalidOperationException();
 			fields = type.NewFields.Select(a => new FieldNodeCreator(modNode, typeNode, a)).ToArray();
@@ -90,11 +88,11 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 
 			foreach (var e in type.NewEvents) {
-				if (e.AddMethod != null)
+				if (!(e.AddMethod is null))
 					specialMethods.Add(e.AddMethod);
-				if (e.RemoveMethod != null)
+				if (!(e.RemoveMethod is null))
 					specialMethods.Add(e.RemoveMethod);
-				if (e.InvokeMethod != null)
+				if (!(e.InvokeMethod is null))
 					specialMethods.Add(e.InvokeMethod);
 				foreach (var m in e.OtherMethods)
 					specialMethods.Add(m);

@@ -26,11 +26,11 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 		const uint headerSize = 0x48;
 
 		readonly DotNetMetadataSectionData mdData;
-		readonly StrongNameSignatureSectionData snData;
+		readonly StrongNameSignatureSectionData? snData;
 		long cor20HeaderMetadataDataDirPosition;
 		long cor20HeaderStrongnameDataDirPosition;
 
-		public ImageCor20HeaderSectionData(DotNetMetadataSectionData mdData, StrongNameSignatureSectionData snData) {
+		public ImageCor20HeaderSectionData(DotNetMetadataSectionData mdData, StrongNameSignatureSectionData? snData) {
 			this.mdData = mdData;
 			this.snData = snData;
 		}
@@ -45,7 +45,7 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 			stream.Position += 8;// Metadata data directory, updated later
 			var flags = cor20.Flags;
 			flags &= ~ComImageFlags.NativeEntryPoint;
-			if (snData == null)
+			if (snData is null)
 				flags &= ~ComImageFlags.StrongNameSigned;
 			else
 				flags |= ComImageFlags.StrongNameSigned;
@@ -70,7 +70,7 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 			stream.Write(mdData.RVA);
 			stream.Write(mdData.Size);
 
-			if (snData != null) {
+			if (!(snData is null)) {
 				stream.Position = cor20HeaderStrongnameDataDirPosition;
 				Debug.Assert(snData.RVA != 0);
 				Debug.Assert(snData.Size != 0);

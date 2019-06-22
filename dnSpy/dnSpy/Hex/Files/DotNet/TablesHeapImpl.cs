@@ -25,13 +25,14 @@ using dnSpy.Contracts.Hex.Files.DotNet;
 
 namespace dnSpy.Hex.Files.DotNet {
 	sealed class TablesHeapImpl : TablesHeap, IDotNetHeap {
-		public override DotNetMetadataHeaders Metadata => metadata;
-		DotNetMetadataHeaders metadata;
+		public override DotNetMetadataHeaders Metadata => metadata!;
+		DotNetMetadataHeaders? metadata;
 
 		public override ReadOnlyCollection<MDTable> MDTables {
 			get {
 				if (!initialized)
 					Initialize();
+				Debug.Assert(!(mdTablesReadOnly is null));
 				return mdTablesReadOnly;
 			}
 		}
@@ -56,6 +57,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			get {
 				if (!initialized)
 					Initialize();
+				Debug.Assert(!(tablesHeaderData is null));
 				return tablesHeaderData;
 			}
 		}
@@ -103,7 +105,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		bool initialized;
 		HexSpan headerSpan;
 		HexSpan tablesSpan;
-		TablesHeaderData tablesHeaderData;
+		TablesHeaderData? tablesHeaderData;
 
 		uint reserved1;
 		byte majorVersion;
@@ -113,9 +115,9 @@ namespace dnSpy.Hex.Files.DotNet {
 		ulong validMask;
 		ulong sortedMask;
 		uint extraData;
-		MDTable[] mdTables;
-		ReadOnlyCollection<MDTable> mdTablesReadOnly;
-		TableRecordDataFactory[] tableRecordDataFactories;
+		MDTable[]? mdTables;
+		ReadOnlyCollection<MDTable>? mdTablesReadOnly;
+		TableRecordDataFactory[]? tableRecordDataFactories;
 
 		internal static int MinimumSize => 0x18;
 
@@ -223,7 +225,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			}
 		}
 
-		public override ComplexData GetStructure(HexPosition position) {
+		public override ComplexData? GetStructure(HexPosition position) {
 			if (!Span.Span.Contains(position))
 				return null;
 
@@ -231,31 +233,33 @@ namespace dnSpy.Hex.Files.DotNet {
 				return Header;
 
 			var mdTable = GetTable(position);
-			if (mdTable != null)
+			if (!(mdTable is null))
 				return GetRecord(mdTable, position);
 
 			return null;
 		}
 
-		TableRecordData GetRecord(MDTable mdTable, HexPosition position) {
+		TableRecordData? GetRecord(MDTable mdTable, HexPosition position) {
 			if (!mdTable.Span.Contains(position))
 				return null;
 			int index = (int)((position - mdTable.Span.Start).ToUInt64() / (uint)mdTable.TableInfo.RowSize);
 			return GetRecord(new MDToken(mdTable.Table, index + 1));
 		}
 
-		public override TableRecordData GetRecord(MDToken token) {
+		public override TableRecordData? GetRecord(MDToken token) {
 			if (!initialized)
 				Initialize();
+			Debug.Assert(!(tableRecordDataFactories is null));
 			int tableIndex = (int)token.Table;
 			if ((uint)tableIndex >= (uint)tableRecordDataFactories.Length)
 				return null;
 			return tableRecordDataFactories[tableIndex].Create(token.Rid);
 		}
 
-		MDTable GetTable(HexPosition position) {
+		MDTable? GetTable(HexPosition position) {
 			if (!initialized)
 				Initialize();
+			Debug.Assert(!(mdTables is null));
 			var array = mdTables;
 			int lo = 0, hi = array.Length - 1;
 			while (lo <= hi) {

@@ -24,37 +24,37 @@ using Microsoft.VisualStudio.Text.Operations;
 
 namespace dnSpy.Text.Operations {
 	sealed class TextSearchNavigator : ITextSearchNavigator {
-		public string SearchTerm { get; set; }
-		public string ReplaceTerm { get; set; }
+		public string? SearchTerm { get; set; }
+		public string? ReplaceTerm { get; set; }
 		public FindOptions SearchOptions { get; set; }
 		public SnapshotSpan? CurrentResult => currentResult;
 		SnapshotSpan? currentResult;
 
 		public SnapshotPoint? StartPoint {
 			get {
-				if (startPoint != null)
+				if (!(startPoint is null))
 					startPoint = startPoint.Value.TranslateTo(buffer.CurrentSnapshot, (SearchOptions & FindOptions.SearchReverse) != 0 ? PointTrackingMode.Negative : PointTrackingMode.Positive);
 				return startPoint;
 			}
 			set {
-				if (value != null && value.Value.Snapshot.TextBuffer != buffer)
+				if (!(value is null) && value.Value.Snapshot.TextBuffer != buffer)
 					throw new ArgumentException();
 				startPoint = value;
 			}
 		}
 		SnapshotPoint? startPoint;
 
-		public ITrackingSpan SearchSpan {
+		public ITrackingSpan? SearchSpan {
 			get => searchSpan;
 			set {
-				if (value == null)
+				if (value is null)
 					throw new ArgumentNullException(nameof(value));
 				if (value.TextBuffer != buffer)
 					throw new ArgumentException();
 				searchSpan = value;
 			}
 		}
-		ITrackingSpan searchSpan;
+		ITrackingSpan? searchSpan;
 
 		readonly ITextBuffer buffer;
 		readonly ITextSearchService2 textSearchService2;
@@ -73,13 +73,13 @@ namespace dnSpy.Text.Operations {
 		}
 
 		public bool Find() {
-			if (SearchTerm == null)
+			if (SearchTerm is null)
 				throw new InvalidOperationException();
 			if (SearchTerm.Length == 0)
 				throw new InvalidOperationException();
 
 			SnapshotPoint startingPosition;
-			if (CurrentResult != null) {
+			if (!(CurrentResult is null)) {
 				if ((SearchOptions & FindOptions.SearchReverse) != 0) {
 					if (CurrentResult.Value.End.Position > 0)
 						startingPosition = CurrentResult.Value.End - 1;
@@ -97,7 +97,7 @@ namespace dnSpy.Text.Operations {
 						return FindFailed();
 				}
 			}
-			else if (StartPoint != null)
+			else if (!(StartPoint is null))
 				startingPosition = StartPoint.Value;
 			else
 				startingPosition = new SnapshotPoint(buffer.CurrentSnapshot, 0);
@@ -115,13 +115,13 @@ namespace dnSpy.Text.Operations {
 		}
 
 		public bool Replace() {
-			if (SearchTerm == null)
+			if (SearchTerm is null)
 				throw new InvalidOperationException();
 			if (SearchTerm.Length == 0)
 				throw new InvalidOperationException();
-			if (CurrentResult == null)
+			if (CurrentResult is null)
 				throw new InvalidOperationException();
-			if (ReplaceTerm == null)
+			if (ReplaceTerm is null)
 				throw new InvalidOperationException();
 
 			var spanToUse = searchSpan?.GetSpan(CurrentResult.Value.Snapshot) ?? new SnapshotSpan(CurrentResult.Value.Snapshot, 0, CurrentResult.Value.Snapshot.Length);
@@ -140,7 +140,7 @@ namespace dnSpy.Text.Operations {
 			}
 
 			var span = textSearchService2.FindForReplace(searchRange, SearchTerm, ReplaceTerm, SearchOptions, out string expandedReplacePattern);
-			if (span == null)
+			if (span is null)
 				return false;
 			using (var ed = buffer.CreateEdit()) {
 				var currSpan = span.Value.TranslateTo(buffer.CurrentSnapshot, SpanTrackingMode.EdgeInclusive);
