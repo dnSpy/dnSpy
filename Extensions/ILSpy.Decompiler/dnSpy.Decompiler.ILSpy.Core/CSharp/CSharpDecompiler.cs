@@ -331,10 +331,16 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 			TypeToString(output, options, type, typeAttributes);
 		}
 
+		static readonly UTF8String systemRuntimeCompilerServicesString = new UTF8String("System.Runtime.CompilerServices");
+		static readonly UTF8String isReadOnlyAttributeString = new UTF8String("IsReadOnlyAttribute");
 		bool WriteRefIfByRef(IDecompilerOutput output, TypeSig typeSig, ParamDef? pd) {
 			if (typeSig.RemovePinnedAndModifiers() is ByRefSig) {
 				if (!(pd is null) && (!pd.IsIn && pd.IsOut)) {
 					output.Write("out", BoxedTextColor.Keyword);
+					output.Write(" ", BoxedTextColor.Text);
+				}
+				else if (!(pd is null) && pd.IsDefined(systemRuntimeCompilerServicesString, isReadOnlyAttributeString)) {
+					output.Write("in", BoxedTextColor.Keyword);
 					output.Write(" ", BoxedTextColor.Text);
 				}
 				else {
