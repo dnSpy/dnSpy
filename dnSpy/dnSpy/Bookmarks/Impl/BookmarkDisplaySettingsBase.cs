@@ -18,14 +18,13 @@
 */
 
 using System;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Bookmarks;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Bookmarks.Impl {
 	class BookmarkDisplaySettingsBase : BookmarkDisplaySettings {
-		protected virtual void OnModified() { }
-
 		readonly object lockObj;
 
 		protected BookmarkDisplaySettingsBase() => lockObj = new object();
@@ -41,10 +40,8 @@ namespace dnSpy.Bookmarks.Impl {
 					modified = showTokens != value;
 					showTokens = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(ShowTokens));
-					OnModified();
-				}
 			}
 		}
 		bool showTokens = true;
@@ -60,10 +57,8 @@ namespace dnSpy.Bookmarks.Impl {
 					modified = showModuleNames != value;
 					showModuleNames = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(ShowModuleNames));
-					OnModified();
-				}
 			}
 		}
 		bool showModuleNames = false;
@@ -79,10 +74,8 @@ namespace dnSpy.Bookmarks.Impl {
 					modified = showParameterTypes != value;
 					showParameterTypes = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(ShowParameterTypes));
-					OnModified();
-				}
 			}
 		}
 		bool showParameterTypes = true;
@@ -98,10 +91,8 @@ namespace dnSpy.Bookmarks.Impl {
 					modified = showParameterNames != value;
 					showParameterNames = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(ShowParameterNames));
-					OnModified();
-				}
 			}
 		}
 		bool showParameterNames = true;
@@ -117,10 +108,8 @@ namespace dnSpy.Bookmarks.Impl {
 					modified = showDeclaringTypes != value;
 					showDeclaringTypes = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(ShowDeclaringTypes));
-					OnModified();
-				}
 			}
 		}
 		bool showDeclaringTypes = true;
@@ -136,10 +125,8 @@ namespace dnSpy.Bookmarks.Impl {
 					modified = showReturnTypes != value;
 					showReturnTypes = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(ShowReturnTypes));
-					OnModified();
-				}
 			}
 		}
 		bool showReturnTypes = true;
@@ -155,10 +142,8 @@ namespace dnSpy.Bookmarks.Impl {
 					modified = showNamespaces != value;
 					showNamespaces = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(ShowNamespaces));
-					OnModified();
-				}
 			}
 		}
 		bool showNamespaces = false;
@@ -174,10 +159,8 @@ namespace dnSpy.Bookmarks.Impl {
 					modified = showIntrinsicTypeKeywords != value;
 					showIntrinsicTypeKeywords = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(ShowIntrinsicTypeKeywords));
-					OnModified();
-				}
 			}
 		}
 		bool showIntrinsicTypeKeywords = true;
@@ -193,7 +176,6 @@ namespace dnSpy.Bookmarks.Impl {
 		BookmarkDisplaySettingsImpl(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			ShowTokens = sect.Attribute<bool?>(nameof(ShowTokens)) ?? ShowTokens;
 			ShowModuleNames = sect.Attribute<bool?>(nameof(ShowModuleNames)) ?? ShowModuleNames;
@@ -203,13 +185,10 @@ namespace dnSpy.Bookmarks.Impl {
 			ShowReturnTypes = sect.Attribute<bool?>(nameof(ShowReturnTypes)) ?? ShowReturnTypes;
 			ShowNamespaces = sect.Attribute<bool?>(nameof(ShowNamespaces)) ?? ShowNamespaces;
 			ShowIntrinsicTypeKeywords = sect.Attribute<bool?>(nameof(ShowIntrinsicTypeKeywords)) ?? ShowIntrinsicTypeKeywords;
-			disableSave = false;
+			PropertyChanged += BookmarkDisplaySettingsImpl_PropertyChanged;
 		}
-		readonly bool disableSave;
 
-		protected override void OnModified() {
-			if (disableSave)
-				return;
+		void BookmarkDisplaySettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(ShowTokens), ShowTokens);
 			sect.Attribute(nameof(ShowModuleNames), ShowModuleNames);

@@ -18,21 +18,19 @@
 */
 
 using System;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Debugger.ToolWindows.Logger {
 	class OutputLoggerSettings : ViewModelBase {
-		protected virtual void OnModified() { }
-
 		public bool ShowExceptionMessages {
 			get => showExceptionMessages;
 			set {
 				if (showExceptionMessages != value) {
 					showExceptionMessages = value;
 					OnPropertyChanged(nameof(ShowExceptionMessages));
-					OnModified();
 				}
 			}
 		}
@@ -44,7 +42,6 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 				if (showStepFilteringMessages != value) {
 					showStepFilteringMessages = value;
 					OnPropertyChanged(nameof(ShowStepFilteringMessages));
-					OnModified();
 				}
 			}
 		}
@@ -56,7 +53,6 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 				if (showModuleLoadMessages != value) {
 					showModuleLoadMessages = value;
 					OnPropertyChanged(nameof(ShowModuleLoadMessages));
-					OnModified();
 				}
 			}
 		}
@@ -68,7 +64,6 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 				if (showModuleUnloadMessages != value) {
 					showModuleUnloadMessages = value;
 					OnPropertyChanged(nameof(ShowModuleUnloadMessages));
-					OnModified();
 				}
 			}
 		}
@@ -80,7 +75,6 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 				if (showProcessExitMessages != value) {
 					showProcessExitMessages = value;
 					OnPropertyChanged(nameof(ShowProcessExitMessages));
-					OnModified();
 				}
 			}
 		}
@@ -92,7 +86,6 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 				if (showThreadExitMessages != value) {
 					showThreadExitMessages = value;
 					OnPropertyChanged(nameof(ShowThreadExitMessages));
-					OnModified();
 				}
 			}
 		}
@@ -104,7 +97,6 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 				if (showProgramOutputMessages != value) {
 					showProgramOutputMessages = value;
 					OnPropertyChanged(nameof(ShowProgramOutputMessages));
-					OnModified();
 				}
 			}
 		}
@@ -116,7 +108,6 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 				if (showMDAMessages != value) {
 					showMDAMessages = value;
 					OnPropertyChanged(nameof(ShowMDAMessages));
-					OnModified();
 				}
 			}
 		}
@@ -128,7 +119,6 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 				if (showDebugOutputLog != value) {
 					showDebugOutputLog = value;
 					OnPropertyChanged(nameof(ShowDebugOutputLog));
-					OnModified();
 				}
 			}
 		}
@@ -145,7 +135,6 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 		OutputLoggerSettingsImpl(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			ShowExceptionMessages = sect.Attribute<bool?>(nameof(ShowExceptionMessages)) ?? ShowExceptionMessages;
 			ShowStepFilteringMessages = sect.Attribute<bool?>(nameof(ShowStepFilteringMessages)) ?? ShowStepFilteringMessages;
@@ -156,13 +145,10 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 			ShowProgramOutputMessages = sect.Attribute<bool?>(nameof(ShowProgramOutputMessages)) ?? ShowProgramOutputMessages;
 			ShowMDAMessages = sect.Attribute<bool?>(nameof(ShowMDAMessages)) ?? ShowMDAMessages;
 			ShowDebugOutputLog = sect.Attribute<bool?>(nameof(ShowDebugOutputLog)) ?? ShowDebugOutputLog;
-			disableSave = false;
+			PropertyChanged += OutputLoggerSettingsImpl_PropertyChanged;
 		}
-		readonly bool disableSave;
 
-		protected override void OnModified() {
-			if (disableSave)
-				return;
+		void OutputLoggerSettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(ShowExceptionMessages), ShowExceptionMessages);
 			sect.Attribute(nameof(ShowStepFilteringMessages), ShowStepFilteringMessages);

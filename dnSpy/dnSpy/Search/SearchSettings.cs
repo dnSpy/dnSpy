@@ -34,15 +34,12 @@ namespace dnSpy.Search {
 	}
 
 	class SearchSettings : ViewModelBase, ISearchSettings {
-		protected virtual void OnModified() { }
-
 		public bool SyntaxHighlight {
 			get => syntaxHighlight;
 			set {
 				if (syntaxHighlight != value) {
 					syntaxHighlight = value;
 					OnPropertyChanged(nameof(SyntaxHighlight));
-					OnModified();
 				}
 			}
 		}
@@ -54,7 +51,6 @@ namespace dnSpy.Search {
 				if (matchWholeWords != value) {
 					matchWholeWords = value;
 					OnPropertyChanged(nameof(MatchWholeWords));
-					OnModified();
 				}
 			}
 		}
@@ -66,7 +62,6 @@ namespace dnSpy.Search {
 				if (caseSensitive != value) {
 					caseSensitive = value;
 					OnPropertyChanged(nameof(CaseSensitive));
-					OnModified();
 				}
 			}
 		}
@@ -78,7 +73,6 @@ namespace dnSpy.Search {
 				if (matchAnySearchTerm != value) {
 					matchAnySearchTerm = value;
 					OnPropertyChanged(nameof(MatchAnySearchTerm));
-					OnModified();
 				}
 			}
 		}
@@ -90,7 +84,6 @@ namespace dnSpy.Search {
 				if (searchDecompiledData != value) {
 					searchDecompiledData = value;
 					OnPropertyChanged(nameof(SearchDecompiledData));
-					OnModified();
 				}
 			}
 		}
@@ -102,7 +95,6 @@ namespace dnSpy.Search {
 				if (searchGacAssemblies != value) {
 					searchGacAssemblies = value;
 					OnPropertyChanged(nameof(SearchGacAssemblies));
-					OnModified();
 				}
 			}
 		}
@@ -131,7 +123,6 @@ namespace dnSpy.Search {
 		SearchSettingsImpl(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			SyntaxHighlight = sect.Attribute<bool?>(nameof(SyntaxHighlight)) ?? SyntaxHighlight;
 			MatchWholeWords = sect.Attribute<bool?>(nameof(MatchWholeWords)) ?? MatchWholeWords;
@@ -139,13 +130,10 @@ namespace dnSpy.Search {
 			MatchAnySearchTerm = sect.Attribute<bool?>(nameof(MatchAnySearchTerm)) ?? MatchAnySearchTerm;
 			SearchDecompiledData = sect.Attribute<bool?>(nameof(SearchDecompiledData)) ?? SearchDecompiledData;
 			SearchGacAssemblies = sect.Attribute<bool?>(nameof(SearchGacAssemblies)) ?? SearchGacAssemblies;
-			disableSave = false;
+			PropertyChanged += SearchSettingsImpl_PropertyChanged;
 		}
-		readonly bool disableSave;
 
-		protected override void OnModified() {
-			if (disableSave)
-				return;
+		void SearchSettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(SyntaxHighlight), SyntaxHighlight);
 			sect.Attribute(nameof(MatchWholeWords), MatchWholeWords);

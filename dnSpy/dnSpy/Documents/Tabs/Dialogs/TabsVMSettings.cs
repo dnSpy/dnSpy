@@ -29,15 +29,12 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 	}
 
 	class TabsVMSettings : ViewModelBase, ITabsVMSettings {
-		protected virtual void OnModified() { }
-
 		public bool SyntaxHighlight {
 			get => syntaxHighlight;
 			set {
 				if (syntaxHighlight != value) {
 					syntaxHighlight = value;
 					OnPropertyChanged(nameof(SyntaxHighlight));
-					OnModified();
 				}
 			}
 		}
@@ -54,16 +51,12 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		TabsVMSettingsImpl(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			SyntaxHighlight = sect.Attribute<bool?>(nameof(SyntaxHighlight)) ?? SyntaxHighlight;
-			disableSave = false;
+			PropertyChanged += TabsVMSettingsImpl_PropertyChanged;
 		}
-		readonly bool disableSave;
 
-		protected override void OnModified() {
-			if (disableSave)
-				return;
+		void TabsVMSettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(SyntaxHighlight), SyntaxHighlight);
 		}

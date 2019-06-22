@@ -18,14 +18,13 @@
 */
 
 using System;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Debugger.Settings {
 	class DebuggerSettingsBase : DebuggerSettings {
-		protected virtual void OnModified() { }
-
 		readonly object lockObj;
 
 		protected DebuggerSettingsBase() => lockObj = new object();
@@ -41,10 +40,8 @@ namespace dnSpy.Debugger.Settings {
 					modified = useHexadecimal != value;
 					useHexadecimal = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(UseHexadecimal));
-					OnModified();
-				}
 			}
 		}
 		bool useHexadecimal = true;
@@ -60,10 +57,8 @@ namespace dnSpy.Debugger.Settings {
 					modified = useDigitSeparators != value;
 					useDigitSeparators = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(UseDigitSeparators));
-					OnModified();
-				}
 			}
 		}
 		bool useDigitSeparators = false;
@@ -79,10 +74,8 @@ namespace dnSpy.Debugger.Settings {
 					modified = syntaxHighlight != value;
 					syntaxHighlight = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(SyntaxHighlight));
-					OnModified();
-				}
 			}
 		}
 		bool syntaxHighlight = true;
@@ -98,10 +91,8 @@ namespace dnSpy.Debugger.Settings {
 					modified = autoOpenLocalsWindow != value;
 					autoOpenLocalsWindow = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(AutoOpenLocalsWindow));
-					OnModified();
-				}
 			}
 		}
 		bool autoOpenLocalsWindow = true;
@@ -117,10 +108,8 @@ namespace dnSpy.Debugger.Settings {
 					modified = useMemoryModules != value;
 					useMemoryModules = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(UseMemoryModules));
-					OnModified();
-				}
 			}
 		}
 		bool useMemoryModules = false;
@@ -136,10 +125,8 @@ namespace dnSpy.Debugger.Settings {
 					modified = propertyEvalAndFunctionCalls != value;
 					propertyEvalAndFunctionCalls = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(PropertyEvalAndFunctionCalls));
-					OnModified();
-				}
 			}
 		}
 		bool propertyEvalAndFunctionCalls = true;
@@ -155,10 +142,8 @@ namespace dnSpy.Debugger.Settings {
 					modified = useStringConversionFunction != value;
 					useStringConversionFunction = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(UseStringConversionFunction));
-					OnModified();
-				}
 			}
 		}
 		bool useStringConversionFunction = true;
@@ -174,10 +159,8 @@ namespace dnSpy.Debugger.Settings {
 					modified = preventManagedDebuggerDetection != value;
 					preventManagedDebuggerDetection = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(PreventManagedDebuggerDetection));
-					OnModified();
-				}
 			}
 		}
 		bool preventManagedDebuggerDetection = true;
@@ -193,10 +176,8 @@ namespace dnSpy.Debugger.Settings {
 					modified = antiIsDebuggerPresent != value;
 					antiIsDebuggerPresent = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(AntiIsDebuggerPresent));
-					OnModified();
-				}
 			}
 		}
 		bool antiIsDebuggerPresent = true;
@@ -212,10 +193,8 @@ namespace dnSpy.Debugger.Settings {
 					modified = antiCheckRemoteDebuggerPresent != value;
 					antiCheckRemoteDebuggerPresent = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(AntiCheckRemoteDebuggerPresent));
-					OnModified();
-				}
 			}
 		}
 		bool antiCheckRemoteDebuggerPresent = true;
@@ -231,10 +210,8 @@ namespace dnSpy.Debugger.Settings {
 					modified = ignoreBreakInstructions != value;
 					ignoreBreakInstructions = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(IgnoreBreakInstructions));
-					OnModified();
-				}
 			}
 		}
 		bool ignoreBreakInstructions = false;
@@ -250,10 +227,8 @@ namespace dnSpy.Debugger.Settings {
 					modified = breakAllProcesses != value;
 					breakAllProcesses = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(BreakAllProcesses));
-					OnModified();
-				}
 			}
 		}
 		bool breakAllProcesses = true;
@@ -269,10 +244,8 @@ namespace dnSpy.Debugger.Settings {
 					modified = enableManagedDebuggingAssistants != value;
 					enableManagedDebuggingAssistants = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(EnableManagedDebuggingAssistants));
-					OnModified();
-				}
 			}
 		}
 		bool enableManagedDebuggingAssistants = true;
@@ -288,10 +261,8 @@ namespace dnSpy.Debugger.Settings {
 					modified = highlightChangedVariables != value;
 					highlightChangedVariables = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(HighlightChangedVariables));
-					OnModified();
-				}
 			}
 		}
 		bool highlightChangedVariables = true;
@@ -307,10 +278,8 @@ namespace dnSpy.Debugger.Settings {
 					modified = showRawStructureOfObjects != value;
 					showRawStructureOfObjects = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(ShowRawStructureOfObjects));
-					OnModified();
-				}
 			}
 		}
 		bool showRawStructureOfObjects = false;
@@ -326,10 +295,8 @@ namespace dnSpy.Debugger.Settings {
 					modified = sortParameters != value;
 					sortParameters = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(SortParameters));
-					OnModified();
-				}
 			}
 		}
 		bool sortParameters = false;
@@ -345,10 +312,8 @@ namespace dnSpy.Debugger.Settings {
 					modified = sortLocals != value;
 					sortLocals = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(SortLocals));
-					OnModified();
-				}
 			}
 		}
 		bool sortLocals = false;
@@ -364,10 +329,8 @@ namespace dnSpy.Debugger.Settings {
 					modified = groupParametersAndLocalsTogether != value;
 					groupParametersAndLocalsTogether = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(GroupParametersAndLocalsTogether));
-					OnModified();
-				}
 			}
 		}
 		bool groupParametersAndLocalsTogether = false;
@@ -383,10 +346,8 @@ namespace dnSpy.Debugger.Settings {
 					modified = showCompilerGeneratedVariables != value;
 					showCompilerGeneratedVariables = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(ShowCompilerGeneratedVariables));
-					OnModified();
-				}
 			}
 		}
 		bool showCompilerGeneratedVariables = false;
@@ -402,10 +363,8 @@ namespace dnSpy.Debugger.Settings {
 					modified = showDecompilerGeneratedVariables != value;
 					showDecompilerGeneratedVariables = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(ShowDecompilerGeneratedVariables));
-					OnModified();
-				}
 			}
 		}
 		bool showDecompilerGeneratedVariables = true;
@@ -421,10 +380,8 @@ namespace dnSpy.Debugger.Settings {
 					modified = hideCompilerGeneratedMembers != value;
 					hideCompilerGeneratedMembers = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(HideCompilerGeneratedMembers));
-					OnModified();
-				}
 			}
 		}
 		bool hideCompilerGeneratedMembers = true;
@@ -440,10 +397,8 @@ namespace dnSpy.Debugger.Settings {
 					modified = respectHideMemberAttributes != value;
 					respectHideMemberAttributes = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(RespectHideMemberAttributes));
-					OnModified();
-				}
 			}
 		}
 		bool respectHideMemberAttributes = true;
@@ -459,10 +414,8 @@ namespace dnSpy.Debugger.Settings {
 					modified = hideDeprecatedError != value;
 					hideDeprecatedError = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(HideDeprecatedError));
-					OnModified();
-				}
 			}
 		}
 		bool hideDeprecatedError = false;
@@ -478,10 +431,8 @@ namespace dnSpy.Debugger.Settings {
 					modified = suppressJITOptimization_SystemModules != value;
 					suppressJITOptimization_SystemModules = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(SuppressJITOptimization_SystemModules));
-					OnModified();
-				}
 			}
 		}
 		bool suppressJITOptimization_SystemModules = true;
@@ -497,10 +448,8 @@ namespace dnSpy.Debugger.Settings {
 					modified = suppressJITOptimization_ProgramModules != value;
 					suppressJITOptimization_ProgramModules = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(SuppressJITOptimization_ProgramModules));
-					OnModified();
-				}
 			}
 		}
 		bool suppressJITOptimization_ProgramModules = true;
@@ -516,10 +465,8 @@ namespace dnSpy.Debugger.Settings {
 					modified = focusActiveProcess != value;
 					focusActiveProcess = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(FocusActiveProcess));
-					OnModified();
-				}
 			}
 		}
 		bool focusActiveProcess = true;
@@ -535,10 +482,8 @@ namespace dnSpy.Debugger.Settings {
 					modified = focusDebuggerWhenProcessBreaks != value;
 					focusDebuggerWhenProcessBreaks = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(FocusDebuggerWhenProcessBreaks));
-					OnModified();
-				}
 			}
 		}
 		bool focusDebuggerWhenProcessBreaks = true;
@@ -554,10 +499,8 @@ namespace dnSpy.Debugger.Settings {
 					modified = showReturnValues != value;
 					showReturnValues = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(ShowReturnValues));
-					OnModified();
-				}
 			}
 		}
 		bool showReturnValues = true;
@@ -573,10 +516,8 @@ namespace dnSpy.Debugger.Settings {
 					modified = redirectGuiConsoleOutput != value;
 					redirectGuiConsoleOutput = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(RedirectGuiConsoleOutput));
-					OnModified();
-				}
 			}
 		}
 		bool redirectGuiConsoleOutput = true;
@@ -592,10 +533,8 @@ namespace dnSpy.Debugger.Settings {
 					modified = showOnlyPublicMembers != value;
 					showOnlyPublicMembers = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(ShowOnlyPublicMembers));
-					OnModified();
-				}
 			}
 		}
 		bool showOnlyPublicMembers = false;
@@ -611,10 +550,8 @@ namespace dnSpy.Debugger.Settings {
 					modified = showRawLocals != value;
 					showRawLocals = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(ShowRawLocals));
-					OnModified();
-				}
 			}
 		}
 		bool showRawLocals = false;
@@ -630,10 +567,8 @@ namespace dnSpy.Debugger.Settings {
 					modified = asyncDebugging != value;
 					asyncDebugging = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(AsyncDebugging));
-					OnModified();
-				}
 			}
 		}
 		bool asyncDebugging = true;
@@ -649,10 +584,8 @@ namespace dnSpy.Debugger.Settings {
 					modified = stepOverPropertiesAndOperators != value;
 					stepOverPropertiesAndOperators = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(StepOverPropertiesAndOperators));
-					OnModified();
-				}
 			}
 		}
 		bool stepOverPropertiesAndOperators = true;
@@ -668,10 +601,8 @@ namespace dnSpy.Debugger.Settings {
 					modified = ignoreUnhandledExceptions != value;
 					ignoreUnhandledExceptions = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(IgnoreUnhandledExceptions));
-					OnModified();
-				}
 			}
 		}
 		bool ignoreUnhandledExceptions;
@@ -687,10 +618,8 @@ namespace dnSpy.Debugger.Settings {
 					modified = fullString != value;
 					fullString = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(FullString));
-					OnModified();
-				}
 			}
 		}
 		bool fullString;
@@ -748,7 +677,6 @@ namespace dnSpy.Debugger.Settings {
 		DebuggerSettingsImpl(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			UseHexadecimal = sect.Attribute<bool?>(nameof(UseHexadecimal)) ?? UseHexadecimal;
 			SyntaxHighlight = sect.Attribute<bool?>(nameof(SyntaxHighlight)) ?? SyntaxHighlight;
@@ -785,13 +713,10 @@ namespace dnSpy.Debugger.Settings {
 			StepOverPropertiesAndOperators = sect.Attribute<bool?>(nameof(StepOverPropertiesAndOperators)) ?? StepOverPropertiesAndOperators;
 			IgnoreUnhandledExceptions = sect.Attribute<bool?>(nameof(IgnoreUnhandledExceptions)) ?? IgnoreUnhandledExceptions;
 			FullString = sect.Attribute<bool?>(nameof(FullString)) ?? FullString;
-			disableSave = false;
+			PropertyChanged += DebuggerSettingsImpl_PropertyChanged;
 		}
-		readonly bool disableSave;
 
-		protected override void OnModified() {
-			if (disableSave)
-				return;
+		void DebuggerSettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(UseHexadecimal), UseHexadecimal);
 			sect.Attribute(nameof(SyntaxHighlight), SyntaxHighlight);

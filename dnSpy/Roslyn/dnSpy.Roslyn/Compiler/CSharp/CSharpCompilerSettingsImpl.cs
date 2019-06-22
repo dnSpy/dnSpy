@@ -18,20 +18,18 @@
 */
 
 using System;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Roslyn.Compiler.CSharp {
 	class CSharpCompilerSettingsBase : CSharpCompilerSettings {
-		protected virtual void OnModified() { }
-
 		public override string PreprocessorSymbols {
 			get => preprocessorSymbols;
 			set {
 				if (preprocessorSymbols != value) {
 					preprocessorSymbols = value ?? string.Empty;
 					OnPropertyChanged(nameof(PreprocessorSymbols));
-					OnModified();
 				}
 			}
 		}
@@ -43,7 +41,6 @@ namespace dnSpy.Roslyn.Compiler.CSharp {
 				if (optimize != value) {
 					optimize = value;
 					OnPropertyChanged(nameof(Optimize));
-					OnModified();
 				}
 			}
 		}
@@ -55,7 +52,6 @@ namespace dnSpy.Roslyn.Compiler.CSharp {
 				if (checkOverflow != value) {
 					checkOverflow = value;
 					OnPropertyChanged(nameof(CheckOverflow));
-					OnModified();
 				}
 			}
 		}
@@ -67,7 +63,6 @@ namespace dnSpy.Roslyn.Compiler.CSharp {
 				if (allowUnsafe != value) {
 					allowUnsafe = value;
 					OnPropertyChanged(nameof(AllowUnsafe));
-					OnModified();
 				}
 			}
 		}
@@ -106,19 +101,15 @@ namespace dnSpy.Roslyn.Compiler.CSharp {
 		CSharpCompilerSettingsImpl(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			PreprocessorSymbols = sect.Attribute<string>(nameof(PreprocessorSymbols)) ?? PreprocessorSymbols;
 			Optimize = sect.Attribute<bool?>(nameof(Optimize)) ?? Optimize;
 			CheckOverflow = sect.Attribute<bool?>(nameof(CheckOverflow)) ?? CheckOverflow;
 			AllowUnsafe = sect.Attribute<bool?>(nameof(AllowUnsafe)) ?? AllowUnsafe;
-			disableSave = false;
+			PropertyChanged += CSharpCompilerSettingsImpl_PropertyChanged;
 		}
-		readonly bool disableSave;
 
-		protected override void OnModified() {
-			if (disableSave)
-				return;
+		void CSharpCompilerSettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(PreprocessorSymbols), PreprocessorSymbols);
 			sect.Attribute(nameof(Optimize), Optimize);

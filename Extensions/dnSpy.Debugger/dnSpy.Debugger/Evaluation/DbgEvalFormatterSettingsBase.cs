@@ -18,13 +18,12 @@
 */
 
 using System;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Debugger.Evaluation {
 	abstract class DbgEvalFormatterSettingsBase : DbgEvalFormatterSettings {
-		protected virtual void OnModified() { }
-
 		readonly object lockObj;
 
 		protected DbgEvalFormatterSettingsBase() => lockObj = new object();
@@ -40,10 +39,8 @@ namespace dnSpy.Debugger.Evaluation {
 					modified = showNamespaces != value;
 					showNamespaces = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(ShowNamespaces));
-					OnModified();
-				}
 			}
 		}
 		bool showNamespaces = true;
@@ -59,10 +56,8 @@ namespace dnSpy.Debugger.Evaluation {
 					modified = showIntrinsicTypeKeywords != value;
 					showIntrinsicTypeKeywords = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(ShowIntrinsicTypeKeywords));
-					OnModified();
-				}
 			}
 		}
 		bool showIntrinsicTypeKeywords = true;
@@ -78,10 +73,8 @@ namespace dnSpy.Debugger.Evaluation {
 					modified = showTokens != value;
 					showTokens = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(ShowTokens));
-					OnModified();
-				}
 			}
 		}
 		bool showTokens = false;
@@ -97,18 +90,14 @@ namespace dnSpy.Debugger.Evaluation {
 		DbgEvalFormatterSettingsImpl(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			ShowNamespaces = sect.Attribute<bool?>(nameof(ShowNamespaces)) ?? ShowNamespaces;
 			ShowIntrinsicTypeKeywords = sect.Attribute<bool?>(nameof(ShowIntrinsicTypeKeywords)) ?? ShowIntrinsicTypeKeywords;
 			ShowTokens = sect.Attribute<bool?>(nameof(ShowTokens)) ?? ShowTokens;
-			disableSave = false;
+			PropertyChanged += DbgEvalFormatterSettingsImpl_PropertyChanged;
 		}
-		readonly bool disableSave;
 
-		protected override void OnModified() {
-			if (disableSave)
-				return;
+		void DbgEvalFormatterSettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(ShowNamespaces), ShowNamespaces);
 			sect.Attribute(nameof(ShowIntrinsicTypeKeywords), ShowIntrinsicTypeKeywords);

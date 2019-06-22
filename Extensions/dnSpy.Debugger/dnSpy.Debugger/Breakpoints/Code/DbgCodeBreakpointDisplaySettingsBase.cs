@@ -18,14 +18,13 @@
 */
 
 using System;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Debugger.Breakpoints.Code {
 	class DbgCodeBreakpointDisplaySettingsBase : DbgCodeBreakpointDisplaySettings {
-		protected virtual void OnModified() { }
-
 		readonly object lockObj;
 
 		protected DbgCodeBreakpointDisplaySettingsBase() => lockObj = new object();
@@ -41,10 +40,8 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 					modified = showTokens != value;
 					showTokens = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(ShowTokens));
-					OnModified();
-				}
 			}
 		}
 		bool showTokens = true;
@@ -60,10 +57,8 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 					modified = showModuleNames != value;
 					showModuleNames = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(ShowModuleNames));
-					OnModified();
-				}
 			}
 		}
 		bool showModuleNames = false;
@@ -79,10 +74,8 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 					modified = showParameterTypes != value;
 					showParameterTypes = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(ShowParameterTypes));
-					OnModified();
-				}
 			}
 		}
 		bool showParameterTypes = true;
@@ -98,10 +91,8 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 					modified = showParameterNames != value;
 					showParameterNames = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(ShowParameterNames));
-					OnModified();
-				}
 			}
 		}
 		bool showParameterNames = true;
@@ -117,10 +108,8 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 					modified = showDeclaringTypes != value;
 					showDeclaringTypes = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(ShowDeclaringTypes));
-					OnModified();
-				}
 			}
 		}
 		bool showDeclaringTypes = true;
@@ -136,10 +125,8 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 					modified = showReturnTypes != value;
 					showReturnTypes = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(ShowReturnTypes));
-					OnModified();
-				}
 			}
 		}
 		bool showReturnTypes = true;
@@ -155,10 +142,8 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 					modified = showNamespaces != value;
 					showNamespaces = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(ShowNamespaces));
-					OnModified();
-				}
 			}
 		}
 		bool showNamespaces = false;
@@ -174,10 +159,8 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 					modified = showIntrinsicTypeKeywords != value;
 					showIntrinsicTypeKeywords = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(ShowIntrinsicTypeKeywords));
-					OnModified();
-				}
 			}
 		}
 		bool showIntrinsicTypeKeywords = true;
@@ -193,7 +176,6 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		DbgCodeBreakpointDisplaySettingsImpl(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			ShowTokens = sect.Attribute<bool?>(nameof(ShowTokens)) ?? ShowTokens;
 			ShowModuleNames = sect.Attribute<bool?>(nameof(ShowModuleNames)) ?? ShowModuleNames;
@@ -203,13 +185,10 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			ShowReturnTypes = sect.Attribute<bool?>(nameof(ShowReturnTypes)) ?? ShowReturnTypes;
 			ShowNamespaces = sect.Attribute<bool?>(nameof(ShowNamespaces)) ?? ShowNamespaces;
 			ShowIntrinsicTypeKeywords = sect.Attribute<bool?>(nameof(ShowIntrinsicTypeKeywords)) ?? ShowIntrinsicTypeKeywords;
-			disableSave = false;
+			PropertyChanged += DbgCodeBreakpointDisplaySettingsImpl_PropertyChanged;
 		}
-		readonly bool disableSave;
 
-		protected override void OnModified() {
-			if (disableSave)
-				return;
+		void DbgCodeBreakpointDisplaySettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(ShowTokens), ShowTokens);
 			sect.Attribute(nameof(ShowModuleNames), ShowModuleNames);

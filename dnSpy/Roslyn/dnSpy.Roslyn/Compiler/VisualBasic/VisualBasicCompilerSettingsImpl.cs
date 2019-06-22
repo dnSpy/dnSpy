@@ -18,20 +18,18 @@
 */
 
 using System;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Roslyn.Compiler.VisualBasic {
 	class VisualBasicCompilerSettingsBase : VisualBasicCompilerSettings {
-		protected virtual void OnModified() { }
-
 		public override string PreprocessorSymbols {
 			get => preprocessorSymbols;
 			set {
 				if (preprocessorSymbols != value) {
 					preprocessorSymbols = value ?? string.Empty;
 					OnPropertyChanged(nameof(PreprocessorSymbols));
-					OnModified();
 				}
 			}
 		}
@@ -43,7 +41,6 @@ namespace dnSpy.Roslyn.Compiler.VisualBasic {
 				if (optimize != value) {
 					optimize = value;
 					OnPropertyChanged(nameof(Optimize));
-					OnModified();
 				}
 			}
 		}
@@ -55,7 +52,6 @@ namespace dnSpy.Roslyn.Compiler.VisualBasic {
 				if (optionExplicit != value) {
 					optionExplicit = value;
 					OnPropertyChanged(nameof(OptionExplicit));
-					OnModified();
 				}
 			}
 		}
@@ -67,7 +63,6 @@ namespace dnSpy.Roslyn.Compiler.VisualBasic {
 				if (optionInfer != value) {
 					optionInfer = value;
 					OnPropertyChanged(nameof(OptionInfer));
-					OnModified();
 				}
 			}
 		}
@@ -79,7 +74,6 @@ namespace dnSpy.Roslyn.Compiler.VisualBasic {
 				if (optionStrict != value) {
 					optionStrict = value;
 					OnPropertyChanged(nameof(OptionStrict));
-					OnModified();
 				}
 			}
 		}
@@ -91,7 +85,6 @@ namespace dnSpy.Roslyn.Compiler.VisualBasic {
 				if (optionCompareBinary != value) {
 					optionCompareBinary = value;
 					OnPropertyChanged(nameof(OptionCompareBinary));
-					OnModified();
 				}
 			}
 		}
@@ -103,7 +96,6 @@ namespace dnSpy.Roslyn.Compiler.VisualBasic {
 				if (embedVBRuntime != value) {
 					embedVBRuntime = value;
 					OnPropertyChanged(nameof(EmbedVBRuntime));
-					OnModified();
 				}
 			}
 		}
@@ -145,7 +137,6 @@ namespace dnSpy.Roslyn.Compiler.VisualBasic {
 		VisualBasicCompilerSettingsImpl(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			PreprocessorSymbols = sect.Attribute<string>(nameof(PreprocessorSymbols)) ?? PreprocessorSymbols;
 			Optimize = sect.Attribute<bool?>(nameof(Optimize)) ?? Optimize;
@@ -154,13 +145,10 @@ namespace dnSpy.Roslyn.Compiler.VisualBasic {
 			OptionStrict = sect.Attribute<bool?>(nameof(OptionStrict)) ?? OptionStrict;
 			OptionCompareBinary = sect.Attribute<bool?>(nameof(OptionCompareBinary)) ?? OptionCompareBinary;
 			EmbedVBRuntime = sect.Attribute<bool?>(nameof(EmbedVBRuntime)) ?? EmbedVBRuntime;
-			disableSave = false;
+			PropertyChanged += VisualBasicCompilerSettingsImpl_PropertyChanged;
 		}
-		readonly bool disableSave;
 
-		protected override void OnModified() {
-			if (disableSave)
-				return;
+		void VisualBasicCompilerSettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(PreprocessorSymbols), PreprocessorSymbols);
 			sect.Attribute(nameof(Optimize), Optimize);

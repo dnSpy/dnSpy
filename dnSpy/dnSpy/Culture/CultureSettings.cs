@@ -29,15 +29,12 @@ namespace dnSpy.Culture {
 	}
 
 	class CultureSettings : ViewModelBase, ICultureSettings {
-		protected virtual void OnModified() { }
-
 		public string UIName {
 			get => uiName;
 			set {
 				if (uiName != value) {
 					uiName = value;
 					OnPropertyChanged(nameof(UIName));
-					OnModified();
 				}
 			}
 		}
@@ -54,16 +51,12 @@ namespace dnSpy.Culture {
 		CultureSettingsImpl(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			UIName = sect.Attribute<string>(nameof(UIName)) ?? UIName;
-			disableSave = false;
+			PropertyChanged += CultureSettingsImpl_PropertyChanged;
 		}
-		readonly bool disableSave;
 
-		protected override void OnModified() {
-			if (disableSave)
-				return;
+		void CultureSettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(UIName), UIName);
 		}

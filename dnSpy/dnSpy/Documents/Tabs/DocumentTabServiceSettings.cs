@@ -30,15 +30,12 @@ namespace dnSpy.Documents.Tabs {
 	}
 
 	class DocumentTabServiceSettings : ViewModelBase, IDocumentTabServiceSettings {
-		protected virtual void OnModified() { }
-
 		public bool RestoreTabs {
 			get => restoreTabs;
 			set {
 				if (restoreTabs != value) {
 					restoreTabs = value;
 					OnPropertyChanged(nameof(RestoreTabs));
-					OnModified();
 				}
 			}
 		}
@@ -50,7 +47,6 @@ namespace dnSpy.Documents.Tabs {
 				if (decompileFullType != value) {
 					decompileFullType = value;
 					OnPropertyChanged(nameof(DecompileFullType));
-					OnModified();
 				}
 			}
 		}
@@ -74,17 +70,13 @@ namespace dnSpy.Documents.Tabs {
 		DocumentTabServiceSettingsImpl(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			RestoreTabs = sect.Attribute<bool?>(nameof(RestoreTabs)) ?? RestoreTabs;
 			DecompileFullType = sect.Attribute<bool?>(nameof(DecompileFullType)) ?? DecompileFullType;
-			disableSave = false;
+			PropertyChanged += DocumentTabServiceSettingsImpl_PropertyChanged;
 		}
-		readonly bool disableSave;
 
-		protected override void OnModified() {
-			if (disableSave)
-				return;
+		void DocumentTabServiceSettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(RestoreTabs), RestoreTabs);
 			sect.Attribute(nameof(DecompileFullType), DecompileFullType);

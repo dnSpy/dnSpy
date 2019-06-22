@@ -18,21 +18,19 @@
 */
 
 using System;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.MainApp {
 	class AppSettings : ViewModelBase {
-		protected virtual void OnModified() { }
-
 		public bool AllowMoreThanOneInstance {
 			get => allowMoreThanOneInstance;
 			set {
 				if (allowMoreThanOneInstance != value) {
 					allowMoreThanOneInstance = value;
 					OnPropertyChanged(nameof(AllowMoreThanOneInstance));
-					OnModified();
 				}
 			}
 		}
@@ -49,16 +47,12 @@ namespace dnSpy.MainApp {
 		AppSettingsImpl(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			AllowMoreThanOneInstance = sect.Attribute<bool?>(nameof(AllowMoreThanOneInstance)) ?? AllowMoreThanOneInstance;
-			disableSave = false;
+			PropertyChanged += AppSettingsImpl_PropertyChanged;
 		}
-		readonly bool disableSave;
 
-		protected override void OnModified() {
-			if (disableSave)
-				return;
+		void AppSettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(AllowMoreThanOneInstance), AllowMoreThanOneInstance);
 		}

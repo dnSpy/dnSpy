@@ -33,15 +33,12 @@ using dnSpy.Contracts.Settings.Dialog;
 
 namespace dnSpy.BamlDecompiler {
 	class BamlSettings : ViewModelBase {
-		protected virtual void OnModified() { }
-
 		public bool DisassembleBaml {
 			get => disassembleBaml;
 			set {
 				if (disassembleBaml != value) {
 					disassembleBaml = value;
 					OnPropertyChanged(nameof(DisassembleBaml));
-					OnModified();
 				}
 			}
 		}
@@ -53,7 +50,6 @@ namespace dnSpy.BamlDecompiler {
 				if (useTabs != value) {
 					useTabs = value;
 					OnPropertyChanged(nameof(UseTabs));
-					OnModified();
 				}
 			}
 		}
@@ -65,7 +61,6 @@ namespace dnSpy.BamlDecompiler {
 				if (newLineOnAttributes != value) {
 					newLineOnAttributes = value;
 					OnPropertyChanged(nameof(NewLineOnAttributes));
-					OnModified();
 				}
 			}
 		}
@@ -91,18 +86,14 @@ namespace dnSpy.BamlDecompiler {
 		BamlSettingsImpl(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			DisassembleBaml = sect.Attribute<bool?>(nameof(DisassembleBaml)) ?? DisassembleBaml;
 			UseTabs = sect.Attribute<bool?>(nameof(UseTabs)) ?? UseTabs;
 			NewLineOnAttributes = sect.Attribute<bool?>(nameof(NewLineOnAttributes)) ?? NewLineOnAttributes;
-			disableSave = false;
+			PropertyChanged += BamlSettingsImpl_PropertyChanged;
 		}
-		readonly bool disableSave;
 
-		protected override void OnModified() {
-			if (disableSave)
-				return;
+		void BamlSettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(DisassembleBaml), DisassembleBaml);
 			sect.Attribute(nameof(UseTabs), UseTabs);

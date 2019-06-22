@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dnSpy.Contracts.Documents.TreeView;
@@ -26,15 +27,12 @@ using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Documents.TreeView {
 	class DocumentTreeViewSettings : ViewModelBase, IDocumentTreeViewSettings {
-		protected virtual void OnModified() { }
-
 		public bool SyntaxHighlight {
 			get => syntaxHighlightDocumentTreeView;
 			set {
 				if (syntaxHighlightDocumentTreeView != value) {
 					syntaxHighlightDocumentTreeView = value;
 					OnPropertyChanged(nameof(SyntaxHighlight));
-					OnModified();
 				}
 			}
 		}
@@ -46,7 +44,6 @@ namespace dnSpy.Documents.TreeView {
 				if (singleClickExpandsTreeViewChildren != value) {
 					singleClickExpandsTreeViewChildren = value;
 					OnPropertyChanged(nameof(SingleClickExpandsTreeViewChildren));
-					OnModified();
 				}
 			}
 		}
@@ -58,7 +55,6 @@ namespace dnSpy.Documents.TreeView {
 				if (showAssemblyVersion != value) {
 					showAssemblyVersion = value;
 					OnPropertyChanged(nameof(ShowAssemblyVersion));
-					OnModified();
 				}
 			}
 		}
@@ -70,7 +66,6 @@ namespace dnSpy.Documents.TreeView {
 				if (showAssemblyPublicKeyToken != value) {
 					showAssemblyPublicKeyToken = value;
 					OnPropertyChanged(nameof(ShowAssemblyPublicKeyToken));
-					OnModified();
 				}
 			}
 		}
@@ -82,7 +77,6 @@ namespace dnSpy.Documents.TreeView {
 				if (showToken != value) {
 					showToken = value;
 					OnPropertyChanged(nameof(ShowToken));
-					OnModified();
 				}
 			}
 		}
@@ -99,7 +93,6 @@ namespace dnSpy.Documents.TreeView {
 				if (filterDraggedItems != value) {
 					filterDraggedItems = value;
 					OnPropertyChanged(nameof(FilterDraggedItems));
-					OnModified();
 				}
 			}
 		}
@@ -151,7 +144,6 @@ namespace dnSpy.Documents.TreeView {
 				OnPropertyChanged(string.Format(MemberKind_format, otherIndex));
 			}
 			OnPropertyChanged(string.Format(MemberKind_format, index));
-			OnModified();
 		}
 		static string MemberKind_format = nameof(MemberKind0).Substring(0, nameof(MemberKind0).Length - 1) + "{0}";
 
@@ -184,7 +176,6 @@ namespace dnSpy.Documents.TreeView {
 		DocumentTreeViewSettingsImpl(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			SyntaxHighlight = sect.Attribute<bool?>(nameof(SyntaxHighlight)) ?? SyntaxHighlight;
 			SingleClickExpandsTreeViewChildren = sect.Attribute<bool?>(nameof(SingleClickExpandsTreeViewChildren)) ?? SingleClickExpandsTreeViewChildren;
@@ -198,13 +189,10 @@ namespace dnSpy.Documents.TreeView {
 			MemberKind2 = sect.Attribute<MemberKind?>(nameof(MemberKind2)) ?? MemberKind2;
 			MemberKind3 = sect.Attribute<MemberKind?>(nameof(MemberKind3)) ?? MemberKind3;
 			MemberKind4 = sect.Attribute<MemberKind?>(nameof(MemberKind4)) ?? MemberKind4;
-			disableSave = false;
+			PropertyChanged += DocumentTreeViewSettingsImpl_PropertyChanged;
 		}
-		readonly bool disableSave;
 
-		protected override void OnModified() {
-			if (disableSave)
-				return;
+		void DocumentTreeViewSettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(SyntaxHighlight), SyntaxHighlight);
 			sect.Attribute(nameof(SingleClickExpandsTreeViewChildren), SingleClickExpandsTreeViewChildren);
