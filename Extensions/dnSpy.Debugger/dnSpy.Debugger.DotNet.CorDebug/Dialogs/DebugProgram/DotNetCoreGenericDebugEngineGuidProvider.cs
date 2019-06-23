@@ -34,7 +34,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
 		internal static bool IsDotNetCoreAppHostFilename(string filename) {
 			if (!File.Exists(filename))
 				return false;
+			return IsDotNetCoreAppHost(filename) ||
+				IsDotNetCoreBundle(filename);
+		}
 
+		static bool IsDotNetCoreAppHost(string filename) {
 			// We detect the apphost.exe like so:
 			//	- must have an exe extension
 			//	- must be a PE file and an EXE (DLL bit cleared)
@@ -58,5 +62,31 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
 
 			return true;
 		}
+
+		static bool IsDotNetCoreBundle(string filename) {
+			if (!PortableExecutableFileHelpers.IsPE(filename, out bool isExe, out bool hasDotNetMetadata))
+				return false;
+			if (!isExe || hasDotNetMetadata)
+				return false;
+			try {
+				using (var stream = File.OpenRead(filename)) {
+					if (stream.Length < bundleSig.Length)
+						return false;
+					stream.Position = stream.Length - bundleSig.Length;
+					var sig = new byte[bundleSig.Length];
+					stream.Read(sig, 0, sig.Length);
+					for (int i = 0; i < sig.Length; i++) {
+						if (bundleSig[i] != sig[i])
+							return false;
+					}
+					return true;
+				}
+			}
+			catch {
+			}
+			return false;
+		}
+		// "\x0E.NetCoreBundle"
+		static readonly byte[] bundleSig = new byte[] { 0x0E, 0x2E, 0x4E, 0x65, 0x74, 0x43, 0x6F, 0x72, 0x65, 0x42, 0x75, 0x6E, 0x64, 0x6C, 0x65 };
 	}
 }
