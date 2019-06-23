@@ -246,10 +246,14 @@ namespace dnSpy.Analyzer {
 			if (code) {
 				if (srcRef is null)
 					return;
-				documentTabService.FollowReference(srcRef.Value.Method, newTab, true, a => {
-					if (!a.HasMovedCaret && a.Success && !(srcRef is null))
-						a.HasMovedCaret = GoTo(a.Tab, srcRef.Value.Method, srcRef.Value.ILOffset, srcRef.Value.Reference);
-				});
+				if (!(srcRef.Value.ILOffset is null)) {
+					documentTabService.FollowReference(srcRef.Value.Method, newTab, true, a => {
+						if (!a.HasMovedCaret && a.Success && !(srcRef is null))
+							a.HasMovedCaret = GoTo(a.Tab, srcRef.Value.Method, srcRef.Value.ILOffset, srcRef.Value.Reference);
+					});
+				}
+				else
+					documentTabService.FollowReference(srcRef.Value.Method, newTab);
 			}
 			else {
 				if (@ref is null)

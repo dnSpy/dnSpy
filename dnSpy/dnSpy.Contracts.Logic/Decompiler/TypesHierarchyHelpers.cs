@@ -124,52 +124,26 @@ namespace dnSpy.Contracts.Decompiler {
 			}
 		}
 
-		private static bool MatchMethod(MethodDef? mCandidate, MethodBaseSig? mCandidateSig, MethodDef? mMethod) {
+		private static bool MatchMethod(MethodDef? mCandidate, MethodBaseSig? mCandidateSig, MethodDef? mMethod) =>
+			MatchMethod(mCandidate, mCandidateSig, mMethod, mMethod?.MethodSig);
+
+		static bool MatchMethod(MethodDef? mCandidate, MethodBaseSig? mCandidateSig, MethodDef? mMethod, MethodBaseSig? mMethodSig) {
 			if (mCandidate is null || mCandidateSig is null || mMethod is null)
 				return false;
 
 			if (mCandidate.Name != mMethod.Name)
 				return false;
 
-			if (mCandidate.HasOverrides)
-				return false;
-
-			if (mCandidate.IsSpecialName != mMethod.IsSpecialName)
-				return false;
-
-			if (mCandidate.HasGenericParameters || mMethod.HasGenericParameters) {
-				if (!mCandidate.HasGenericParameters || !mMethod.HasGenericParameters || mCandidate.GenericParameters.Count != mMethod.GenericParameters.Count)
-					return false;
-			}
-
-			if (mMethod.MethodSig is null || mCandidateSig.Params.Count != mMethod.MethodSig.Params.Count)
-				return false;
-
-			if (mCandidate.Parameters.Count != mMethod.Parameters.Count)
-				return false;
-			for (int i = 0; i < mCandidate.Parameters.Count; i++) {
-				var p1 = mCandidate.Parameters[i];
-				var p2 = mMethod.Parameters[i];
-				if (p1.IsHiddenThisParameter != p2.IsHiddenThisParameter)
-					return false;
-				if (p1.IsHiddenThisParameter)
-					continue;
-				var pd1 = p1.ParamDef ?? new ParamDefUser();
-				var pd2 = p2.ParamDef ?? new ParamDefUser();
-				if (pd1.IsIn != pd2.IsIn || pd1.IsOut != pd2.IsOut)
-					return false;
-			}
-
-			return new SigComparer().Equals(mCandidateSig.Params, mMethod.MethodSig.Params);
+			return new SigComparer().Equals(mCandidateSig, mMethodSig);
 		}
 
-		public static bool MatchInterfaceMethod(MethodDef candidate, MethodDef method, ITypeDefOrRef interfaceContextType) {
+		public static bool MatchInterfaceMethod(MethodDef? candidate, MethodDef? method, ITypeDefOrRef interfaceContextType) {
 			var genericInstSig = interfaceContextType.TryGetGenericInstSig();
 			if (!(genericInstSig is null)) {
-				return MatchMethod(candidate, GenericArgumentResolver.Resolve(candidate is null ? null : candidate.MethodSig, genericInstSig.GenericArguments, null), method);
+				return MatchMethod(candidate, candidate?.MethodSig, method, GenericArgumentResolver.Resolve(method?.MethodSig, genericInstSig.GenericArguments, null));
 			}
 			else {
-				return MatchMethod(candidate, candidate is null ? null : candidate.MethodSig, method);
+				return MatchMethod(candidate, candidate?.MethodSig, method);
 			}
 		}
 
@@ -180,10 +154,6 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <returns>Properties overriden or hidden by the specified property.</returns>
 		public static IEnumerable<PropertyDef> FindBaseProperties(PropertyDef? property) {
 			if (property is null)
-				yield break;
-
-			var accMeth = property.GetMethod ?? property.SetMethod;
-			if (!(accMeth is null) && accMeth.HasOverrides)
 				yield break;
 
 			bool isIndexer = property.IsIndexer();
@@ -212,14 +182,7 @@ namespace dnSpy.Contracts.Decompiler {
 			if (mCandidate.Name != mProperty.Name)
 				return false;
 
-			var accMeth = mCandidate.GetMethod ?? mCandidate.SetMethod;
-			if (!(accMeth is null) && accMeth.HasOverrides)
-				return false;
-
-			if (mProperty.PropertySig is null || mCandidateSig.GenParamCount != mProperty.PropertySig.GenParamCount)
-				return false;
-
-			return new SigComparer().Equals(mCandidateSig.Params, mProperty.PropertySig.Params);
+			return new SigComparer().Equals(mCandidateSig, mProperty.PropertySig);
 		}
 
 		public static IEnumerable<EventDef> FindBaseEvents(EventDef? eventDef) {
@@ -250,14 +213,7 @@ namespace dnSpy.Contracts.Decompiler {
 			if (mCandidate.Name != mEvent.Name)
 				return false;
 
-			var m = mCandidate.AddMethod ?? mCandidate.RemoveMethod;
-			if (m is null || m.HasOverrides)
-				return false;
-
-			if (!new SigComparer().Equals(mCandidateType, mEventType))
-				return false;
-
-			return true;
+			return new SigComparer().Equals(mCandidateType, mEventType);
 		}
 
 		/// <summary>

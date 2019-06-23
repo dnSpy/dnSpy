@@ -19,6 +19,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using dnlib.DotNet;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.TreeView;
@@ -86,5 +87,16 @@ namespace dnSpy.Analyzer.TreeNodes {
 			asyncFetchChildrenHelper?.Cancel();
 			asyncFetchChildrenHelper = null;
 		}
+
+		internal static bool CanIncludeModule(ModuleDef targetModule, ModuleDef? module) {
+			if (module is null)
+				return false;
+			if (targetModule == module)
+				return false;
+			if (!(targetModule.Assembly is null) && targetModule.Assembly == module.Assembly)
+				return false;
+			return true;
+		}
+
 	}
 }

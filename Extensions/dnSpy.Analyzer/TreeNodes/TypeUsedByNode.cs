@@ -130,13 +130,19 @@ namespace dnSpy.Analyzer.TreeNodes {
 					return true;
 				}
 			}
+			foreach (var local in method.Body.Variables) {
+				if (TypeMatches(local.Type)) {
+					sourceRef = new SourceRef(method, null, null);
+					return true;
+				}
+			}
 
 			return false;
 		}
 
 		bool IsUsedInMethodParameters(IEnumerable<Parameter> parameters) => parameters.Any(IsUsedInMethodParameter);
 		bool IsUsedInMethodParameter(Parameter parameter) => !parameter.IsHiddenThisParameter && TypeMatches(parameter.Type);
-		bool TypeMatches(IType? tref) => !(tref is null) && new SigComparer().Equals(analyzedType, tref);
+		bool TypeMatches(IType? tref) => !(tref is null) && new SigComparer().Equals(analyzedType, tref?.ScopeType);
 		public static bool CanShow(TypeDef? type) => !(type is null);
 	}
 

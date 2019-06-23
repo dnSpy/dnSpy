@@ -74,21 +74,21 @@ namespace dnSpy.Analyzer.TreeNodes {
 			if (field.IsPrivate)
 				return false;
 
-			return new SigComparer().Equals(analyzedType, field.FieldType);
+			return new SigComparer().Equals(analyzedType, field.FieldType?.ScopeType);
 		}
 
 		bool TypeIsExposedBy(PropertyDef property) {
 			if (IsPrivate(property))
 				return false;
 
-			return new SigComparer().Equals(analyzedType, property.PropertySig.GetRetType());
+			return new SigComparer().Equals(analyzedType, property.PropertySig.GetRetType()?.ScopeType);
 		}
 
 		bool TypeIsExposedBy(EventDef eventDef) {
 			if (IsPrivate(eventDef))
 				return false;
 
-			return new SigComparer().Equals(eventDef.EventType, analyzedType);
+			return new SigComparer().Equals(eventDef.EventType?.ScopeType, analyzedType);
 		}
 
 		bool TypeIsExposedBy(MethodDef method) {
@@ -108,13 +108,13 @@ namespace dnSpy.Analyzer.TreeNodes {
 			if (method.SemanticsAttributes != MethodSemanticsAttributes.None)
 				return false;
 
-			if (new SigComparer().Equals(analyzedType, method.ReturnType))
+			if (new SigComparer().Equals(analyzedType, method.ReturnType?.ScopeType))
 				return true;
 
 			foreach (var parameter in method.Parameters) {
 				if (parameter.IsHiddenThisParameter)
 					continue;
-				if (new SigComparer().Equals(analyzedType, parameter.Type))
+				if (new SigComparer().Equals(analyzedType, parameter.Type?.ScopeType))
 					return true;
 			}
 

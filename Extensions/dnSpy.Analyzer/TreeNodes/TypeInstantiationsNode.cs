@@ -69,6 +69,6 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 		}
 
-		public static bool CanShow(TypeDef type) => (type.IsClass && !(type.IsAbstract && type.IsSealed) && !type.IsEnum);
+		public static bool CanShow(TypeDef type) => type.IsClass && !type.IsAbstract && !type.IsEnum;
 	}
 }

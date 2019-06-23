@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using dnlib.DotNet;
@@ -239,21 +240,13 @@ namespace dnSpy.Analyzer.TreeNodes {
 			foreach (var m in mod.Assembly.Modules)
 				yield return m;
 
-			var assemblies = documentService.GetDocuments().Where(a => !(a.AssemblyDef is null));
+			var modules = documentService.GetDocuments().Where(a => SearchNode.CanIncludeModule(mod, a.ModuleDef));
 
-			foreach (var assembly in assemblies) {
+			foreach (var module in modules) {
+				Debug.Assert(!(module.ModuleDef is null));
 				ct.ThrowIfCancellationRequested();
-				bool found = false;
-				foreach (var reference in assembly.AssemblyDef!.Modules.SelectMany(module => module.GetAssemblyRefs())) {
-					if (AssemblyNameComparer.NameOnly.CompareTo(asm, reference) == 0) {
-						found = true;
-						break;
-					}
-				}
-				if (found && AssemblyReferencesScopeType(assembly.AssemblyDef)) {
-					foreach (var m in assembly.AssemblyDef.Modules)
-						yield return m;
-				}
+				if (AssemblyReferencesScopeType(module.ModuleDef))
+					yield return module.ModuleDef;
 			}
 		}
 
@@ -267,39 +260,47 @@ namespace dnSpy.Analyzer.TreeNodes {
 				yield return m;
 
 			if (asm.HasCustomAttributes) {
-				var attributes = asm.CustomAttributes
-					.Where(attr => attr.TypeFullName == "System.Runtime.CompilerServices.InternalsVisibleToAttribute");
-				var friendAssemblies = new HashSet<string>();
-				foreach (var attribute in attributes) {
+				var friendAssemblies = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+				foreach (var attribute in asm.CustomAttributes.FindAll("System.Runtime.CompilerServices.InternalsVisibleToAttribute")) {
 					if (attribute.ConstructorArguments.Count == 0)
 						continue;
 					string assemblyName = attribute.ConstructorArguments[0].Value as UTF8String;
 					if (assemblyName is null)
 						continue;
-					assemblyName = assemblyName.Split(',')[0]; // strip off any public key info
+					assemblyName = assemblyName.Split(',')[0];
 					friendAssemblies.Add(assemblyName);
+				}
+				var modules = documentService.GetDocuments().Where(a => SearchNode.CanIncludeModule(mod, a.ModuleDef)).ToArray();
+				foreach (var module in modules) {
+					Debug.Assert(!(module.ModuleDef is null));
+					var asm2 = module.AssemblyDef;
+					if (asm2 is null)
+						continue;
+					foreach (var attribute in asm2.CustomAttributes.FindAll("System.Runtime.CompilerServices.IgnoresAccessChecksToAttribute")) {
+						string assemblyName = attribute.ConstructorArguments[0].Value as UTF8String;
+						if (assemblyName is null)
+							continue;
+						assemblyName = assemblyName.Split(',')[0];
+						if (StringComparer.OrdinalIgnoreCase.Equals(asm.Name.String, assemblyName))
+							friendAssemblies.Add(asm2.Name);
+					}
 				}
 
 				if (friendAssemblies.Count > 0) {
-					var assemblies = documentService.GetDocuments().Where(a => !(a.AssemblyDef is null));
-
-					foreach (var assembly in assemblies) {
+					foreach (var module in modules) {
+						Debug.Assert(!(module.ModuleDef is null));
 						ct.ThrowIfCancellationRequested();
-						if (friendAssemblies.Contains(assembly.AssemblyDef!.Name) && AssemblyReferencesScopeType(assembly.AssemblyDef)) {
-							foreach (var m in assembly.AssemblyDef.Modules)
-								yield return m;
-						}
+						if ((module.AssemblyDef is null || friendAssemblies.Contains(module.AssemblyDef.Name)) && AssemblyReferencesScopeType(module.ModuleDef))
+							yield return module.ModuleDef;
 					}
 				}
 			}
 		}
 
-		bool AssemblyReferencesScopeType(AssemblyDef asm) {
-			foreach (var mod in asm.Modules) {
-				foreach (var typeref in mod.GetTypeRefs()) {
-					if (new SigComparer().Equals(typeScope, typeref))
-						return true;
-				}
+		bool AssemblyReferencesScopeType(ModuleDef mod) {
+			foreach (var typeref in mod.GetTypeRefs()) {
+				if (new SigComparer().Equals(typeScope, typeref))
+					return true;
 			}
 			return false;
 		}

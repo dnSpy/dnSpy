@@ -29,10 +29,18 @@ namespace dnSpy.Analyzer.TreeNodes {
 	sealed class InterfaceEventImplementedByNode : SearchNode {
 		readonly EventDef analyzedEvent;
 		readonly MethodDef analyzedMethod;
+		readonly bool isAdder;
 
 		public InterfaceEventImplementedByNode(EventDef analyzedEvent) {
 			this.analyzedEvent = analyzedEvent ?? throw new ArgumentNullException(nameof(analyzedEvent));
-			analyzedMethod = this.analyzedEvent.AddMethod ?? this.analyzedEvent.RemoveMethod;
+			if (!(this.analyzedEvent.AddMethod is null)) {
+				analyzedMethod = this.analyzedEvent.AddMethod;
+				isAdder = true;
+			}
+			else {
+				analyzedMethod = this.analyzedEvent.RemoveMethod;
+				isAdder = false;
+			}
 		}
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
@@ -50,28 +58,32 @@ namespace dnSpy.Analyzer.TreeNodes {
 		IEnumerable<AnalyzerTreeNodeData> FindReferencesInType(TypeDef type) {
 			if (!type.HasInterfaces || analyzedMethod is null)
 				yield break;
-			var iff = type.Interfaces.FirstOrDefault(i => new SigComparer().Equals(i.Interface, analyzedMethod.DeclaringType));
+			var iff = type.Interfaces.FirstOrDefault(i => new SigComparer().Equals(i.Interface?.ScopeType, analyzedMethod.DeclaringType));
 			var implementedInterfaceRef = iff?.Interface;
 			if (implementedInterfaceRef is null)
 				yield break;
 
-			//TODO: Can we compare event types too?
-			foreach (EventDef ev in type.Events.Where(e => e.Name == analyzedEvent.Name)) {
-				MethodDef accessor = ev.AddMethod ?? ev.RemoveMethod;
-				if (!(accessor is null) && TypesHierarchyHelpers.MatchInterfaceMethod(accessor, analyzedMethod, implementedInterfaceRef)) {
+			foreach (EventDef ev in type.Events.Where(e => e.Name.EndsWith(analyzedEvent.Name))) {
+				MethodDef accessor = isAdder ? ev.AddMethod : ev.RemoveMethod;
+				if (accessor is null || !(accessor.IsVirtual || accessor.IsAbstract))
+					continue;
+				if (accessor.HasOverrides && accessor.Overrides.Any(m => m.MethodDeclaration.ResolveMethodDef() == analyzedMethod)) {
 					yield return new EventNode(ev) { Context = Context };
+					yield break;
 				}
 			}
 
-			foreach (EventDef ev in type.Events.Where(e => e.Name.EndsWith(analyzedEvent.Name))) {
-				MethodDef accessor = ev.AddMethod ?? ev.RemoveMethod;
-				if (!(accessor is null) && accessor.HasOverrides &&
-					accessor.Overrides.Any(m => m.MethodDeclaration.ResolveMethodDef() == analyzedMethod)) {
+			foreach (EventDef ev in type.Events.Where(e => e.Name == analyzedEvent.Name)) {
+				MethodDef accessor = isAdder ? ev.AddMethod : ev.RemoveMethod;
+				if (accessor is null || !(accessor.IsVirtual || accessor.IsAbstract))
+					continue;
+				if (TypesHierarchyHelpers.MatchInterfaceMethod(accessor, analyzedMethod, implementedInterfaceRef)) {
 					yield return new EventNode(ev) { Context = Context };
+					yield break;
 				}
 			}
 		}
 
-		public static bool CanShow(EventDef ev) => ev.DeclaringType.IsInterface;
+		public static bool CanShow(EventDef ev) => ev.DeclaringType.IsInterface && (ev.AddMethod ?? ev.RemoveMethod) is MethodDef accessor && (accessor.IsVirtual || accessor.IsAbstract);
 	}
 }

@@ -29,10 +29,18 @@ namespace dnSpy.Analyzer.TreeNodes {
 	sealed class InterfacePropertyImplementedByNode : SearchNode {
 		readonly PropertyDef analyzedProperty;
 		readonly MethodDef analyzedMethod;
+		readonly bool isGetter;
 
 		public InterfacePropertyImplementedByNode(PropertyDef analyzedProperty) {
 			this.analyzedProperty = analyzedProperty ?? throw new ArgumentNullException(nameof(analyzedProperty));
-			analyzedMethod = this.analyzedProperty.GetMethod ?? this.analyzedProperty.SetMethod;
+			if (!(this.analyzedProperty.GetMethod is null)) {
+				analyzedMethod = this.analyzedProperty.GetMethod;
+				isGetter = true;
+			}
+			else {
+				analyzedMethod = this.analyzedProperty.SetMethod;
+				isGetter = false;
+			}
 		}
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
@@ -50,27 +58,32 @@ namespace dnSpy.Analyzer.TreeNodes {
 				yield break;
 			if (!type.HasInterfaces)
 				yield break;
-			var iff = type.Interfaces.FirstOrDefault(i => new SigComparer().Equals(i.Interface, analyzedMethod.DeclaringType));
+			var iff = type.Interfaces.FirstOrDefault(i => new SigComparer().Equals(i.Interface?.ScopeType, analyzedMethod.DeclaringType));
 			var implementedInterfaceRef = iff?.Interface;
 			if (implementedInterfaceRef is null)
 				yield break;
 
-			//TODO: Can we compare property sigs too?
-			foreach (PropertyDef property in type.Properties.Where(e => e.Name == analyzedProperty.Name)) {
-				MethodDef accessor = property.GetMethod ?? property.SetMethod;
-				if (!(accessor is null) && TypesHierarchyHelpers.MatchInterfaceMethod(accessor, analyzedMethod, implementedInterfaceRef)) {
+			foreach (PropertyDef property in type.Properties.Where(e => e.Name.EndsWith(analyzedProperty.Name))) {
+				MethodDef accessor = isGetter ? property.GetMethod : property.SetMethod;
+				if (accessor is null || !(accessor.IsVirtual || accessor.IsAbstract))
+					continue;
+				if (accessor.HasOverrides && accessor.Overrides.Any(m => m.MethodDeclaration.ResolveMethodDef() == analyzedMethod)) {
 					yield return new PropertyNode(property) { Context = Context };
+					yield break;
 				}
 			}
 
-			foreach (PropertyDef property in type.Properties.Where(e => e.Name.EndsWith(analyzedProperty.Name))) {
-				MethodDef accessor = property.GetMethod ?? property.SetMethod;
-				if (!(accessor is null) && accessor.HasOverrides && accessor.Overrides.Any(m => m.MethodDeclaration.ResolveMethodDef() == analyzedMethod)) {
+			foreach (PropertyDef property in type.Properties.Where(e => e.Name == analyzedProperty.Name)) {
+				MethodDef accessor = isGetter ? property.GetMethod : property.SetMethod;
+				if (accessor is null || !(accessor.IsVirtual || accessor.IsAbstract))
+					continue;
+				if (TypesHierarchyHelpers.MatchInterfaceMethod(accessor, analyzedMethod, implementedInterfaceRef)) {
 					yield return new PropertyNode(property) { Context = Context };
+					yield break;
 				}
 			}
 		}
 
-		public static bool CanShow(PropertyDef property) => property.DeclaringType.IsInterface;
+		public static bool CanShow(PropertyDef property) => property.DeclaringType.IsInterface && (property.GetMethod ?? property.SetMethod) is MethodDef accessor && (accessor.IsVirtual || accessor.IsAbstract);
 	}
 }

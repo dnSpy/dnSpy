@@ -22,9 +22,9 @@ using dnlib.DotNet;
 namespace dnSpy.Analyzer.TreeNodes {
 	readonly struct SourceRef {
 		public MethodDef Method { get; }
-		public uint ILOffset { get; }
+		public uint? ILOffset { get; }
 		public IMDTokenProvider? Reference { get; }
-		public SourceRef(MethodDef method, uint offset, IMDTokenProvider? reference) {
+		public SourceRef(MethodDef method, uint? offset, IMDTokenProvider? reference) {
 			Method = method;
 			ILOffset = offset;
 			Reference = reference;
