@@ -266,7 +266,11 @@ namespace dnSpy.Contracts.Documents.TreeView {
 			var method = (md ?? m)!;
 			Debug.Assert(!(method is null));
 
-			output.Write(decompiler.MetadataTextColorProvider.GetColor(method), NameUtilities.CleanIdentifier(method.Name));
+			var name = method.Name;
+			if (name == ".ctor")
+				output.Write(decompiler.MetadataTextColorProvider.GetColor(method.DeclaringType), NameUtilities.CleanIdentifier(method.DeclaringType.Name));
+			else
+				output.Write(decompiler.MetadataTextColorProvider.GetColor(method), NameUtilities.CleanIdentifier(name));
 
 			if (showGenericParams) {
 				if (m is MethodSpec ms && ms.GenericInstMethodSig is GenericInstMethodSig gis) {
