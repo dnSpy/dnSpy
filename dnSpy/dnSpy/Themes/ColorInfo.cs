@@ -45,7 +45,7 @@ namespace dnSpy.Themes {
 		}
 		ColorInfo[] children = Array.Empty<ColorInfo>();
 
-		public abstract IEnumerable<Tuple<object?, object>> GetResourceKeyValues(ThemeColor hlColor);
+		public abstract IEnumerable<(object?, object)> GetResourceKeyValues(ThemeColor hlColor);
 
 		protected ColorInfo(ColorType colorType, string description) {
 			ColorType = colorType;
@@ -60,14 +60,14 @@ namespace dnSpy.Themes {
 		public ColorColorInfo(ColorType colorType, string description)
 			: base(colorType, description) => ForegroundResourceKey = null;
 
-		public override IEnumerable<Tuple<object?, object>> GetResourceKeyValues(ThemeColor hlColor) {
+		public override IEnumerable<(object?, object)> GetResourceKeyValues(ThemeColor hlColor) {
 			if (!(ForegroundResourceKey is null)) {
 				Debug.Assert(!(hlColor.Foreground is null));
-				yield return new Tuple<object?, object>(ForegroundResourceKey, ((SolidColorBrush)hlColor.Foreground).Color);
+				yield return (ForegroundResourceKey, ((SolidColorBrush)hlColor.Foreground).Color);
 			}
 			if (!(BackgroundResourceKey is null)) {
 				Debug.Assert(!(hlColor.Background is null));
-				yield return new Tuple<object?, object>(BackgroundResourceKey, ((SolidColorBrush)hlColor.Background).Color);
+				yield return (BackgroundResourceKey, ((SolidColorBrush)hlColor.Background).Color);
 			}
 		}
 	}
@@ -80,14 +80,14 @@ namespace dnSpy.Themes {
 			: base(colorType, description) {
 		}
 
-		public override IEnumerable<Tuple<object?, object>> GetResourceKeyValues(ThemeColor hlColor) {
+		public override IEnumerable<(object?, object)> GetResourceKeyValues(ThemeColor hlColor) {
 			if (!(ForegroundResourceKey is null)) {
 				Debug.Assert(!(hlColor.Foreground is null));
-				yield return new Tuple<object?, object>(ForegroundResourceKey, hlColor.Foreground);
+				yield return (ForegroundResourceKey, hlColor.Foreground);
 			}
 			if (!(BackgroundResourceKey is null)) {
 				Debug.Assert(!(hlColor.Background is null));
-				yield return new Tuple<object?, object>(BackgroundResourceKey, hlColor.Background);
+				yield return (BackgroundResourceKey, hlColor.Background);
 			}
 		}
 	}
@@ -100,16 +100,16 @@ namespace dnSpy.Themes {
 		public DrawingBrushColorInfo(ColorType colorType, string description)
 			: base(colorType, description) => ForegroundResourceKey = null;
 
-		public override IEnumerable<Tuple<object?, object>> GetResourceKeyValues(ThemeColor hlColor) {
+		public override IEnumerable<(object?, object)> GetResourceKeyValues(ThemeColor hlColor) {
 			if (!(ForegroundResourceKey is null)) {
 				Debug.Assert(!(hlColor.Foreground is null));
 				var brush = hlColor.Foreground;
-				yield return new Tuple<object?, object>(ForegroundResourceKey, CreateDrawingBrush(brush));
+				yield return (ForegroundResourceKey, CreateDrawingBrush(brush));
 			}
 			if (!(BackgroundResourceKey is null)) {
 				Debug.Assert(!(hlColor.Background is null));
 				var brush = hlColor.Background;
-				yield return new Tuple<object?, object>(BackgroundResourceKey, CreateDrawingBrush(brush));
+				yield return (BackgroundResourceKey, CreateDrawingBrush(brush));
 			}
 		}
 
@@ -169,7 +169,7 @@ namespace dnSpy.Themes {
 			GradientOffsets = gradientOffsets;
 		}
 
-		public override IEnumerable<Tuple<object?, object>> GetResourceKeyValues(ThemeColor hlColor) {
+		public override IEnumerable<(object?, object)> GetResourceKeyValues(ThemeColor hlColor) {
 			var br = new LinearGradientBrush() {
 				StartPoint = StartPoint,
 				EndPoint = EndPoint,
@@ -180,7 +180,7 @@ namespace dnSpy.Themes {
 				br.GradientStops.Add(gs);
 			}
 			br.Freeze();
-			yield return new Tuple<object?, object>(ResourceKey, br);
+			yield return (ResourceKey, br);
 		}
 	}
 }

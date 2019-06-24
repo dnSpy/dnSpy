@@ -19,7 +19,6 @@
 
 using System;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.Tabs;

@@ -64,7 +64,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			foundMethods = new ConcurrentDictionary<MethodDef, int>();
 
 			AddTypeEquivalentTypes(Context.DocumentService, analyzedType, analyzedTypes);
-			IEnumerable<Tuple<ModuleDef, ITypeDefOrRef>> modules;
+			IEnumerable<(ModuleDef module, ITypeDefOrRef type)> modules;
 			if (TIAHelper.IsTypeDefEquivalent(analyzedType))
 				modules = GetTypeEquivalentModulesAndTypes(analyzedTypes);
 			else if (IsPublic(analyzedType))
@@ -255,15 +255,15 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		bool HasAlreadyBeenFound(MethodDef method) => !foundMethods!.TryAdd(method, 0);
 
-		IEnumerable<Tuple<ModuleDef, ITypeDefOrRef>> GetReferencingModules(ModuleDef mod, CancellationToken ct) {
+		IEnumerable<(ModuleDef module, ITypeDefOrRef type)> GetReferencingModules(ModuleDef mod, CancellationToken ct) {
 			var asm = mod.Assembly;
 			if (asm is null) {
-				yield return new Tuple<ModuleDef, ITypeDefOrRef>(mod, analyzedType);
+				yield return (mod, analyzedType);
 				yield break;
 			}
 
 			foreach (var m in asm.Modules)
-				yield return new Tuple<ModuleDef, ITypeDefOrRef>(m, analyzedType);
+				yield return (m, analyzedType);
 
 			var modules = Context.DocumentService.GetDocuments().Where(a => SearchNode.CanIncludeModule(mod, a.ModuleDef));
 
@@ -272,19 +272,19 @@ namespace dnSpy.Analyzer.TreeNodes {
 				ct.ThrowIfCancellationRequested();
 				var typeref = GetScopeTypeRefInModule(module.ModuleDef);
 				if (!(typeref is null))
-					yield return new Tuple<ModuleDef, ITypeDefOrRef>(module.ModuleDef, typeref);
+					yield return (module.ModuleDef, typeref);
 			}
 		}
 
-		IEnumerable<Tuple<ModuleDef, ITypeDefOrRef>> GetModuleAndAnyFriends(ModuleDef mod, CancellationToken ct) {
+		IEnumerable<(ModuleDef module, ITypeDefOrRef type)> GetModuleAndAnyFriends(ModuleDef mod, CancellationToken ct) {
 			var asm = mod.Assembly;
 			if (asm is null) {
-				yield return new Tuple<ModuleDef, ITypeDefOrRef>(mod, analyzedType);
+				yield return (mod, analyzedType);
 				yield break;
 			}
 
 			foreach (var m in asm.Modules)
-				yield return new Tuple<ModuleDef, ITypeDefOrRef>(m, analyzedType);
+				yield return (m, analyzedType);
 
 			if (asm.HasCustomAttributes) {
 				var friendAssemblies = GetFriendAssemblies(Context.DocumentService, mod, out var modules);
@@ -295,7 +295,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 						if (module.AssemblyDef is null || friendAssemblies.Contains(module.AssemblyDef.Name)) {
 							var typeref = GetScopeTypeRefInModule(module.ModuleDef);
 							if (!(typeref is null))
-								yield return new Tuple<ModuleDef, ITypeDefOrRef>(module.ModuleDef, typeref);
+								yield return (module.ModuleDef, typeref);
 						}
 					}
 				}

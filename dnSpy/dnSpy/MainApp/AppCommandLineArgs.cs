@@ -261,6 +261,6 @@ namespace dnSpy.MainApp {
 			return value;
 		}
 
-		public IEnumerable<Tuple<string, string>> GetArguments() => userArgs.Select(a => Tuple.Create(a.Key, a.Value));
+		public IEnumerable<(string argument, string value)> GetArguments() => userArgs.Select(a => (a.Key, a.Value));
 	}
 }

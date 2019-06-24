@@ -27,7 +27,7 @@ namespace dnSpy.Settings {
 		readonly SettingsSectionProvider settingsSectionProvider;
 
 		public string Name { get; }
-		public Tuple<string, string>[] Attributes => sectionAttributes.Attributes;
+		public (string key, string value)[] Attributes => sectionAttributes.Attributes;
 
 		public SettingsSection(string name) {
 			Name = name;
@@ -50,7 +50,7 @@ namespace dnSpy.Settings {
 			if (section is null)
 				throw new ArgumentNullException(nameof(section));
 			foreach (var attr in section.Attributes)
-				Attribute(attr.Item1, attr.Item2);
+				Attribute(attr.key, attr.value);
 			foreach (var child in section.Sections)
 				CreateSection(child.Name).CopyFrom(child);
 		}

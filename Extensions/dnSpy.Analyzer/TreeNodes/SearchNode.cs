@@ -167,9 +167,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 		}
 
-		protected static IEnumerable<Tuple<ModuleDef, ITypeDefOrRef>> GetTypeEquivalentModulesAndTypes(List<TypeDef> analyzedTypes) {
+		protected static IEnumerable<(ModuleDef module, ITypeDefOrRef type)> GetTypeEquivalentModulesAndTypes(List<TypeDef> analyzedTypes) {
 			foreach (var type in analyzedTypes)
-				yield return new Tuple<ModuleDef, ITypeDefOrRef>(type.Module, type);
+				yield return (type.Module, type);
 		}
 
 		internal static IEnumerable<ModuleDef> GetTypeEquivalentModules(List<TypeDef> analyzedTypes) {

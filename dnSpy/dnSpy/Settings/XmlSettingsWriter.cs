@@ -56,8 +56,8 @@ namespace dnSpy.Settings {
 				return xmlSect;
 
 			xmlSect.SetAttributeValue(XmlSettingsConstants.SECTION_ATTRIBUTE_NAME, XmlUtils.EscapeAttributeValue(section.Name));
-			foreach (var attr in section.Attributes.OrderBy(a => a.Item1.ToUpperInvariant())) {
-				var n = XmlUtils.FilterAttributeName(attr.Item1);
+			foreach (var attr in section.Attributes.OrderBy(a => a.key.ToUpperInvariant())) {
+				var n = XmlUtils.FilterAttributeName(attr.key);
 				Debug.Assert(!(n is null), "Invalid character(s) in section attribute name. Only valid XML attribute names can be used.");
 				if (n is null)
 					continue;
@@ -65,7 +65,7 @@ namespace dnSpy.Settings {
 				Debug.Assert(!b, $"Attribute name '{XmlSettingsConstants.SECTION_ATTRIBUTE_NAME}' is reserved for use by the XML writer");
 				if (b)
 					continue;
-				xmlSect.SetAttributeValue(n, XmlUtils.EscapeAttributeValue(attr.Item2));
+				xmlSect.SetAttributeValue(n, XmlUtils.EscapeAttributeValue(attr.value));
 			}
 
 			foreach (var childSection in Sort(section.Sections))

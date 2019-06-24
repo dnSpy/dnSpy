@@ -44,7 +44,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public override bool SingleClickExpandsChildren => false;
 
 		readonly int index;
-		readonly Tuple<int[], Action<ITextColorWriter>>? infoTuple;
+		readonly (int[], Action<ITextColorWriter>)? infoTuple;
 
 		public MetadataTableRecordNode(TableInfo tableInfo, int index, HexPosition startOffset, HexPosition endOffset)
 			: base(HexSpan.FromBounds(startOffset, endOffset)) {
@@ -58,14 +58,14 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 				output.WriteSpace();
 				output.Write(BoxedTextColor.Operator, "-");
 				output.WriteSpace();
-				infoTuple.Item2(output);
+				infoTuple.Value.Item2(output);
 			}
 		}
 
 		public override void OnBufferChanged(NormalizedHexChangeCollection changes) {
 			if (!(infoTuple is null)) {
 				var tableInfo = ((MetadataTableNode)TreeNode.Parent!.Data).TableInfo;
-				foreach (var index in infoTuple.Item1) {
+				foreach (var index in infoTuple.Value.Item1) {
 					var col = tableInfo.Columns[index];
 					var span = new HexSpan(Span.Start + (ulong)col.Offset, (ulong)col.Size);
 					if (changes.OverlapsWith(span)) {
@@ -76,19 +76,19 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			}
 		}
 
-		Tuple<int[], Action<ITextColorWriter>>? GetInfoTuple(TableInfo tableInfo) {
+		(int[], Action<ITextColorWriter>)? GetInfoTuple(TableInfo tableInfo) {
 			switch (tableInfo.Table) {
-			case Table.Module:					return new Tuple<int[], Action<ITextColorWriter>>(new int[] { 1 }, WriteModuleInfo);
-			case Table.TypeRef:					return new Tuple<int[], Action<ITextColorWriter>>(new int[] { 1, 2 }, WriteTypeRefInfo);
-			case Table.TypeDef:					return new Tuple<int[], Action<ITextColorWriter>>(new int[] { 1, 2 }, WriteTypeDefInfo);
+			case Table.Module:					return (new int[] { 1 }, WriteModuleInfo);
+			case Table.TypeRef:					return (new int[] { 1, 2 }, WriteTypeRefInfo);
+			case Table.TypeDef:					return (new int[] { 1, 2 }, WriteTypeDefInfo);
 			case Table.FieldPtr:				return null;
-			case Table.Field:					return new Tuple<int[], Action<ITextColorWriter>>(new int[] { 1 }, WriteFieldInfo);
+			case Table.Field:					return (new int[] { 1 }, WriteFieldInfo);
 			case Table.MethodPtr:				return null;
-			case Table.Method:					return new Tuple<int[], Action<ITextColorWriter>>(new int[] { 3 }, WriteMethodInfo);
+			case Table.Method:					return (new int[] { 3 }, WriteMethodInfo);
 			case Table.ParamPtr:				return null;
-			case Table.Param:					return new Tuple<int[], Action<ITextColorWriter>>(new int[] { 2 }, WriteParamInfo);
+			case Table.Param:					return (new int[] { 2 }, WriteParamInfo);
 			case Table.InterfaceImpl:			return null;
-			case Table.MemberRef:				return new Tuple<int[], Action<ITextColorWriter>>(new int[] { 1 }, WriteMemberRefInfo);
+			case Table.MemberRef:				return (new int[] { 1 }, WriteMemberRefInfo);
 			case Table.Constant:				return null;
 			case Table.CustomAttribute:			return null;
 			case Table.FieldMarshal:			return null;
@@ -98,29 +98,29 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			case Table.StandAloneSig:			return null;
 			case Table.EventMap:				return null;
 			case Table.EventPtr:				return null;
-			case Table.Event:					return new Tuple<int[], Action<ITextColorWriter>>(new int[] { 1 }, WriteEventInfo);
+			case Table.Event:					return (new int[] { 1 }, WriteEventInfo);
 			case Table.PropertyMap:				return null;
 			case Table.PropertyPtr:				return null;
-			case Table.Property:				return new Tuple<int[], Action<ITextColorWriter>>(new int[] { 1 }, WritePropertyInfo);
+			case Table.Property:				return (new int[] { 1 }, WritePropertyInfo);
 			case Table.MethodSemantics:			return null;
 			case Table.MethodImpl:				return null;
-			case Table.ModuleRef:				return new Tuple<int[], Action<ITextColorWriter>>(new int[] { 0 }, WriteModuleRefInfo);
+			case Table.ModuleRef:				return (new int[] { 0 }, WriteModuleRefInfo);
 			case Table.TypeSpec:				return null;
-			case Table.ImplMap:					return new Tuple<int[], Action<ITextColorWriter>>(new int[] { 2 }, WriteImplMapInfo);
+			case Table.ImplMap:					return (new int[] { 2 }, WriteImplMapInfo);
 			case Table.FieldRVA:				return null;
 			case Table.ENCLog:					return null;
 			case Table.ENCMap:					return null;
-			case Table.Assembly:				return new Tuple<int[], Action<ITextColorWriter>>(new int[] { 7 }, WriteAssemblyInfo);
+			case Table.Assembly:				return (new int[] { 7 }, WriteAssemblyInfo);
 			case Table.AssemblyProcessor:		return null;
 			case Table.AssemblyOS:				return null;
-			case Table.AssemblyRef:				return new Tuple<int[], Action<ITextColorWriter>>(new int[] { 6 }, WriteAssemblyRefInfo);
+			case Table.AssemblyRef:				return (new int[] { 6 }, WriteAssemblyRefInfo);
 			case Table.AssemblyRefProcessor:	return null;
 			case Table.AssemblyRefOS:			return null;
-			case Table.File:					return new Tuple<int[], Action<ITextColorWriter>>(new int[] { 1 }, WriteFileInfo);
-			case Table.ExportedType:			return new Tuple<int[], Action<ITextColorWriter>>(new int[] { 2, 3 }, WriteExportedTypeInfo);
-			case Table.ManifestResource:		return new Tuple<int[], Action<ITextColorWriter>>(new int[] { 2 }, WriteManifestResourceInfo);
+			case Table.File:					return (new int[] { 1 }, WriteFileInfo);
+			case Table.ExportedType:			return (new int[] { 2, 3 }, WriteExportedTypeInfo);
+			case Table.ManifestResource:		return (new int[] { 2 }, WriteManifestResourceInfo);
 			case Table.NestedClass:				return null;
-			case Table.GenericParam:			return new Tuple<int[], Action<ITextColorWriter>>(new int[] { 3 }, WriteGenericParamInfo);
+			case Table.GenericParam:			return (new int[] { 3 }, WriteGenericParamInfo);
 			case Table.MethodSpec:				return null;
 			case Table.GenericParamConstraint:	return null;
 			case Table.Document:				return null;

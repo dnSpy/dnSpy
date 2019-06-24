@@ -109,6 +109,6 @@ namespace dnSpy.Contracts.App {
 		/// Gets all user arguments and values
 		/// </summary>
 		/// <returns></returns>
-		IEnumerable<Tuple<string, string>> GetArguments();
+		IEnumerable<(string argument, string value)> GetArguments();
 	}
 }

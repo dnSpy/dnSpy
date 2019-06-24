@@ -74,21 +74,21 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		void PrintCommands(ScriptControlVM vm, object color1, object color2) {
 			const string CMDS_SEP = ", ";
 			var hash = new HashSet<IScriptCommand>(vm.ScriptCommands);
-			var cmds = hash.Select(a => Tuple.Create(a.Names.Select(b => ScriptControlVM.CMD_PREFIX + b).ToArray(), a.ShortDescription))
+			var cmds = hash.Select(a => (commands: a.Names.Select(b => ScriptControlVM.CMD_PREFIX + b).ToArray(), description: a.ShortDescription))
 						.OrderBy(a => a.Item1[0], StringComparer.OrdinalIgnoreCase);
 			foreach (var t in cmds) {
 				vm.ReplEditor.OutputPrint("  ", BoxedTextColor.ReplOutputText);
-				int cmdsLen = t.Item1.Sum(a => a.Length) + CMDS_SEP.Length * (t.Item1.Length - 1);
-				for (int i = 0; i < t.Item1.Length; i++) {
+				int cmdsLen = t.commands.Sum(a => a.Length) + CMDS_SEP.Length * (t.commands.Length - 1);
+				for (int i = 0; i < t.commands.Length; i++) {
 					if (i > 0)
 						vm.ReplEditor.OutputPrint(", ", BoxedTextColor.ReplOutputText);
-					vm.ReplEditor.OutputPrint(t.Item1[i], color1);
+					vm.ReplEditor.OutputPrint(t.commands[i], color1);
 				}
 				int len = LEFT_COL_LEN - cmdsLen;
 				if (len > 0)
 					vm.ReplEditor.OutputPrint(new string(' ', len), BoxedTextColor.ReplOutputText);
 				vm.ReplEditor.OutputPrint(" ", BoxedTextColor.ReplOutputText);
-				vm.ReplEditor.OutputPrint(t.Item2, color2);
+				vm.ReplEditor.OutputPrint(t.description, color2);
 				vm.ReplEditor.OutputPrintLine(string.Empty, BoxedTextColor.ReplOutputText);
 			}
 		}

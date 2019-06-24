@@ -28,10 +28,10 @@ namespace dnSpy.Settings {
 		readonly object lockObj;
 		readonly Dictionary<string, string> attributes;
 
-		public Tuple<string, string>[] Attributes {
+		public (string key, string value)[] Attributes {
 			get {
 				lock (lockObj)
-					return attributes.Select(a => Tuple.Create(a.Key, a.Value)).ToArray();
+					return attributes.Select(a => (a.Key, a.Value)).ToArray();
 			}
 		}
 
