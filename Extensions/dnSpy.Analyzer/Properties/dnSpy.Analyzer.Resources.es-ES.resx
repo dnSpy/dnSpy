@@ -135,12 +135,6 @@
   <data name="DoubleClick" xml:space="preserve">
     <value>Doble Clic</value>
   </data>
-  <data name="EventAdderTreeNodeName" xml:space="preserve">
-    <value>añadir</value>
-  </data>
-  <data name="EventRemoverTreeNodeName" xml:space="preserve">
-    <value>eliminar</value>
-  </data>
   <data name="ExposedByTreeNode" xml:space="preserve">
     <value>Expuesto por</value>
   </data>
@@ -176,12 +170,6 @@
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
     <value>Analiza ensamblados</value>
-  </data>
-  <data name="PropertyGetterTreeNode" xml:space="preserve">
-    <value>get</value>
-  </data>
-  <data name="PropertySetterTreeNode" xml:space="preserve">
-    <value>set</value>
   </data>
   <data name="RaisedByTreeNode" xml:space="preserve">
     <value>Levantado por</value>

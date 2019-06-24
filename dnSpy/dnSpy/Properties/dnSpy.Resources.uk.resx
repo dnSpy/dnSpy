@@ -1846,7 +1846,7 @@
     <value>Вимкнути _Усі Закладки</value>
   </data>
   <data name="EnableAllBookmarksCommand" xml:space="preserve">
-    <value>Увімкнути _Усі закладки</value>
+    <value>Увімкнути _Усі Закладки</value>
   </data>
   <data name="EnableBookmarkCommand" xml:space="preserve">
     <value>Увімкнути Закладку</value>
@@ -1867,7 +1867,7 @@
     <value>П_опередня закладка в документі</value>
   </data>
   <data name="GoToPreviousBookmarkWithSameLabelCommand" xml:space="preserve">
-    <value>Попередня закладка із тою ж міткою</value>
+    <value>Попередня Закладка із тою ж Міткою</value>
   </data>
   <data name="ShortCutKeyCtrlK_CtrlK" xml:space="preserve">
     <value>Ctrl+K, Ctrl+K</value>
