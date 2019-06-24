@@ -25,6 +25,11 @@ using dnlib.DotNet;
 
 namespace dnSpy.Decompiler.MSBuild {
 	sealed class FilenameCreator {
+		// Max length of a filename, excluding extension
+		const int MaxNameLength = 60;
+		// Max length of a directory name part
+		const int MaxDirNameLength = 40;
+
 		public string DefaultNamespace => defaultNamespace;
 		readonly string defaultNamespace;
 
@@ -84,8 +89,10 @@ namespace dnSpy.Decompiler.MSBuild {
 		string Create(string[] parts, string fileExt) {
 			fileExt = FilenameUtils.CleanName(fileExt);
 			string tempName = string.Empty;
-			foreach (var part in parts) {
-				tempName = Path.Combine(tempName, FilenameUtils.CleanName(part));
+			for (int i = 0; i < parts.Length; i++) {
+				var part = parts[i];
+				int maxLen = i == parts.Length - 1 ? MaxNameLength : MaxDirNameLength;
+				tempName = Path.Combine(tempName, FixLongName(FilenameUtils.CleanName(part), maxLen));
 			}
 			tempName = Path.Combine(baseDir, tempName);
 			var newName = tempName + fileExt;
@@ -111,7 +118,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		}
 
 		string Create(string name) {
-			name = Path.Combine(baseDir, FilenameUtils.CleanName(name));
+			name = Path.Combine(baseDir, FixLongName(FilenameUtils.CleanName(name), MaxNameLength));
 			if (usedNames.Contains(name)) {
 				var tempName = name;
 				for (int i = 2; ; i++) {
@@ -122,6 +129,12 @@ namespace dnSpy.Decompiler.MSBuild {
 			}
 			usedNames.Add(name);
 			return name;
+		}
+
+		static string FixLongName(string name, int maxLen) {
+			if (name.Length <= maxLen)
+				return name;
+			return name.Substring(0, maxLen);
 		}
 
 		public string CreateFromNamespaceFilename(string @namespace, string filename) {
