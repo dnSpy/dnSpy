@@ -48,8 +48,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		public sealed override object? Text {
 			get {
-				var cached = cachedText?.Target;
-				if (!(cached is null))
+				if (cachedText?.Target is object cached)
 					return cached;
 
 				var writer = Cache.GetWriter();

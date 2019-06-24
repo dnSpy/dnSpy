@@ -28,7 +28,7 @@ using dnSpy.Contracts.Text;
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class InterfaceEventImplementedByNode : SearchNode {
 		readonly EventDef analyzedEvent;
-		readonly MethodDef analyzedMethod;
+		readonly MethodDef? analyzedMethod;
 		readonly bool isAdder;
 
 		public InterfaceEventImplementedByNode(EventDef analyzedEvent) {
@@ -58,7 +58,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		IEnumerable<AnalyzerTreeNodeData> FindReferencesInType(TypeDef type) {
 			if (!type.HasInterfaces || analyzedMethod is null)
 				yield break;
-			var iff = type.Interfaces.FirstOrDefault(i => new SigComparer().Equals(i.Interface?.ScopeType, analyzedMethod.DeclaringType));
+			var iff = type.Interfaces.FirstOrDefault(i => new SigComparer().Equals(i.Interface?.GetScopeType(), analyzedMethod.DeclaringType));
 			var implementedInterfaceRef = iff?.Interface;
 			if (implementedInterfaceRef is null)
 				yield break;
@@ -67,7 +67,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				MethodDef accessor = isAdder ? ev.AddMethod : ev.RemoveMethod;
 				if (accessor is null || !(accessor.IsVirtual || accessor.IsAbstract))
 					continue;
-				if (accessor.HasOverrides && accessor.Overrides.Any(m => m.MethodDeclaration.ResolveMethodDef() == analyzedMethod)) {
+				if (accessor.HasOverrides && accessor.Overrides.Any(m => CheckEquals(m.MethodDeclaration.ResolveMethodDef(), analyzedMethod))) {
 					yield return new EventNode(ev) { Context = Context };
 					yield break;
 				}

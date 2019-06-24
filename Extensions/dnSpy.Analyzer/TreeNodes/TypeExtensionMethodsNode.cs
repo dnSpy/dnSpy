@@ -44,7 +44,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			foreach (MethodDef method in type.Methods) {
 				if (method.IsStatic && HasExtensionAttribute(method)) {
 					int skip = GetParametersSkip(method.Parameters);
-					if (method.Parameters.Count > skip && new SigComparer().Equals(analyzedType, method.Parameters[skip].Type?.ScopeType)) {
+					if (method.Parameters.Count > skip && new SigComparer().Equals(analyzedType, method.Parameters[skip].Type?.GetScopeType())) {
 						yield return new MethodNode(method) { Context = Context };
 					}
 				}

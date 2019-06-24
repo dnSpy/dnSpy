@@ -28,26 +28,32 @@ using dnSpy.Contracts.Text;
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class EventOverriddenNode : SearchNode {
 		readonly EventDef analyzedEvent;
+		readonly List<TypeDef> analyzedTypes;
 
-		public EventOverriddenNode(EventDef analyzedEvent) =>
+		public EventOverriddenNode(EventDef analyzedEvent) {
 			this.analyzedEvent = analyzedEvent ?? throw new ArgumentNullException(nameof(analyzedEvent));
+			analyzedTypes = new List<TypeDef> { analyzedEvent.DeclaringType };
+		}
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
 			output.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.OverridesTreeNode);
 
 		protected override IEnumerable<AnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
-			var type = analyzedEvent.DeclaringType.BaseType.ResolveTypeDef();
-			while (!(type is null)) {
-				foreach (var eventDef in type.Events) {
-					if (TypesHierarchyHelpers.IsBaseEvent(eventDef, analyzedEvent)) {
-						var anyAccessor = eventDef.AddMethod ?? eventDef.RemoveMethod;
-						if (anyAccessor is null)
-							continue;
-						yield return new EventNode(eventDef) { Context = Context };
-						yield break;
+			AddTypeEquivalentTypes(Context.DocumentService, analyzedTypes[0], analyzedTypes);
+			foreach (var declType in analyzedTypes) {
+				var type = declType.BaseType.ResolveTypeDef();
+				while (!(type is null)) {
+					foreach (var eventDef in type.Events) {
+						if (TypesHierarchyHelpers.IsBaseEvent(eventDef, analyzedEvent)) {
+							var anyAccessor = eventDef.AddMethod ?? eventDef.RemoveMethod;
+							if (anyAccessor is null)
+								continue;
+							yield return new EventNode(eventDef) { Context = Context };
+							yield break;
+						}
 					}
+					type = type.BaseType.ResolveTypeDef();
 				}
-				type = type.BaseType.ResolveTypeDef();
 			}
 		}
 

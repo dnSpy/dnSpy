@@ -53,7 +53,7 @@ namespace dnSpy.Contracts.TreeView {
 			thread.IsBackground = true;
 		}
 
-		void ExecInUIThread(Action action) {
+		void UI(Action action) {
 			bool start;
 			lock (lockObj) {
 				uiThreadActions.Add(action);
@@ -73,7 +73,7 @@ namespace dnSpy.Contracts.TreeView {
 			lock (lockObj) {
 				nodesToAdd.Add(node);
 				if (nodesToAdd.Count == 1)
-					ExecInUIThread(AddNodes_UI);
+					UI(AddNodes_UI);
 			}
 		}
 		readonly List<TreeNodeData> nodesToAdd = new List<TreeNodeData>();
@@ -84,19 +84,34 @@ namespace dnSpy.Contracts.TreeView {
 				nodes = new List<TreeNodeData>(nodesToAdd);
 				nodesToAdd.Clear();
 			}
+			AddNodes_UI(nodes, 0);
+		}
+
+		// If too many nodes are added at the same time, the whole UI stops working, so
+		// pause a little bit before adding the rest. Repro: analyze a common type such
+		// as 'int' with a lot of assemblies in Assembly Explorer.
+		const int MaxAddNodeInMilliSecs = 100;
+		void AddNodes_UI(List<TreeNodeData> nodes, int index) {
 			// If it's been canceled, don't add any new nodes since the search might've restarted.
 			// We must not add 'old' nodes to the current Children list.
-			if (canceled)
-				return;
-			foreach (var n in nodes)
-				targetNode.TreeNode.AddChild(targetNode.TreeNode.TreeView.Create(n));
+			if (!canceled) {
+				var sw = Stopwatch.StartNew();
+				for (int i = index; i < nodes.Count; i++) {
+					var n = nodes[i];
+					targetNode.TreeNode.AddChild(targetNode.TreeNode.TreeView.Create(n));
+					if (sw.ElapsedMilliseconds > MaxAddNodeInMilliSecs && i + 1 < nodes.Count) {
+						UI(() => AddNodes_UI(nodes, i + 1));
+						return;
+					}
+				}
+			}
 		}
 
 		/// <summary>
 		/// Adds a node with a message
 		/// </summary>
 		/// <param name="create">Creates the message node</param>
-		protected void AddMessageNode(Func<TreeNodeData> create) => ExecInUIThread(() => {
+		protected void AddMessageNode(Func<TreeNodeData> create) => UI(() => {
 			Debug.Assert(msgNode is null);
 			msgNode = targetNode.TreeNode.TreeView.Create(create());
 			targetNode.TreeNode.AddChild(msgNode);
@@ -153,7 +168,7 @@ namespace dnSpy.Contracts.TreeView {
 			}
 			catch (OperationCanceledException) {
 			}
-			ExecInUIThread(RemoveMessageNode_UI);
+			UI(RemoveMessageNode_UI);
 			IsRunning = false;
 			disposed = true;
 			cancellationTokenSource.Dispose();

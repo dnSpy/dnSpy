@@ -42,7 +42,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		IEnumerable<AnalyzerTreeNodeData> FindReferencesInType(TypeDef type) {
 			if (!type.HasInterfaces)
 				yield break;
-			var iff = type.Interfaces.FirstOrDefault(i => new SigComparer().Equals(i.Interface?.ScopeType, analyzedMethod.DeclaringType));
+			var iff = type.Interfaces.FirstOrDefault(i => new SigComparer().Equals(i.Interface?.GetScopeType(), analyzedMethod.DeclaringType));
 			var implementedInterfaceRef = iff?.Interface;
 			if (implementedInterfaceRef is null)
 				yield break;
@@ -50,7 +50,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			foreach (MethodDef method in type.Methods) {
 				if (!(method.IsVirtual || method.IsAbstract))
 					continue;
-				if (method.HasOverrides && method.Overrides.Any(m => m.MethodDeclaration.ResolveMethodDef() == analyzedMethod)) {
+				if (method.HasOverrides && method.Overrides.Any(m => CheckEquals(m.MethodDeclaration.ResolveMethodDef(), analyzedMethod))) {
 					yield return new MethodNode(method) { Context = Context };
 					yield break;
 				}

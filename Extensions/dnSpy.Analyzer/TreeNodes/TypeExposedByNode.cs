@@ -39,7 +39,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		IEnumerable<AnalyzerTreeNodeData> FindReferencesInType(TypeDef type) {
-			if (analyzedType.IsEnum && type == analyzedType)
+			if (analyzedType.IsEnum && new SigComparer().Equals(type, analyzedType))
 				yield break;
 
 			if (!Context.Decompiler.ShowMember(type))
@@ -74,21 +74,21 @@ namespace dnSpy.Analyzer.TreeNodes {
 			if (field.IsPrivate)
 				return false;
 
-			return new SigComparer().Equals(analyzedType, field.FieldType?.ScopeType);
+			return new SigComparer().Equals(analyzedType, field.FieldType?.GetScopeType());
 		}
 
 		bool TypeIsExposedBy(PropertyDef property) {
 			if (IsPrivate(property))
 				return false;
 
-			return new SigComparer().Equals(analyzedType, property.PropertySig.GetRetType()?.ScopeType);
+			return new SigComparer().Equals(analyzedType, property.PropertySig.GetRetType()?.GetScopeType());
 		}
 
 		bool TypeIsExposedBy(EventDef eventDef) {
 			if (IsPrivate(eventDef))
 				return false;
 
-			return new SigComparer().Equals(eventDef.EventType?.ScopeType, analyzedType);
+			return new SigComparer().Equals(eventDef.EventType?.GetScopeType(), analyzedType);
 		}
 
 		bool TypeIsExposedBy(MethodDef method) {
@@ -108,13 +108,13 @@ namespace dnSpy.Analyzer.TreeNodes {
 			if (method.SemanticsAttributes != MethodSemanticsAttributes.None)
 				return false;
 
-			if (new SigComparer().Equals(analyzedType, method.ReturnType?.ScopeType))
+			if (new SigComparer().Equals(analyzedType, method.ReturnType?.GetScopeType()))
 				return true;
 
 			foreach (var parameter in method.Parameters) {
 				if (parameter.IsHiddenThisParameter)
 					continue;
-				if (new SigComparer().Equals(analyzedType, parameter.Type?.ScopeType))
+				if (new SigComparer().Equals(analyzedType, parameter.Type?.GetScopeType()))
 					return true;
 			}
 
@@ -133,6 +133,6 @@ namespace dnSpy.Analyzer.TreeNodes {
 			return !(isAdderPublic || isRemoverPublic);
 		}
 
-		public static bool CanShow(TypeDef type) => true;
+		public static bool CanShow(TypeDef type) => !(type.IsAbstract && type.IsSealed);
 	}
 }

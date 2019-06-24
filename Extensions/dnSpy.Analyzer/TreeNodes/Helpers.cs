@@ -22,33 +22,7 @@ using dnlib.DotNet.Emit;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	static class Helpers {
-		public static bool IsReferencedBy(TypeDef type, ITypeDefOrRef typeRef) => IsReferencedBy(type, typeRef, 0);
-
-		static bool IsReferencedBy(TypeDef type, ITypeDefOrRef typeRef, int depth) {
-			if (depth >= 30)
-				return false;
-			// TODO: move it to a better place after adding support for more cases.
-			if (type is null)
-				return false;
-			if (typeRef is null)
-				return false;
-
-			if (type == typeRef)
-				return true;
-			if (type.Name != typeRef.Name)
-				return false;
-			if (type.Namespace != typeRef.Namespace)
-				return false;
-
-			if (!(type.DeclaringType is null) || !(typeRef.DeclaringType is null)) {
-				if (type.DeclaringType is null || typeRef.DeclaringType is null)
-					return false;
-				if (!IsReferencedBy(type.DeclaringType, typeRef.DeclaringType, depth + 1))
-					return false;
-			}
-
-			return true;
-		}
+		public static bool IsReferencedBy(TypeDef? type, ITypeDefOrRef? typeRef) => new SigComparer().Equals(type, typeRef);
 
 		public static IMemberRef GetOriginalCodeLocation(IMemberRef member) {
 			if (member is MethodDef)
@@ -98,7 +72,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				foreach (Instruction instr in method.Body.Instructions) {
 					if (instr.Operand is IMethod mr && !mr.IsField && mr.Name == name &&
 						IsReferencedBy(analyzedMethod.DeclaringType, mr.DeclaringType) &&
-						mr.ResolveMethodDef() == analyzedMethod) {
+						CheckEquals(mr.ResolveMethodDef(), analyzedMethod)) {
 						found = true;
 						break;
 					}
@@ -109,6 +83,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 			return null;
 		}
+
+		internal static bool CheckEquals(IMemberRef? mr1, IMemberRef? mr2) =>
+			new SigComparer(SigComparerOptions.CompareDeclaringTypes | SigComparerOptions.PrivateScopeIsComparable).Equals(mr1, mr2);
 
 		static MethodDef? FindVariableOfTypeUsageInType(TypeDef type, TypeDef variableType) {
 			foreach (MethodDef method in type.Methods) {

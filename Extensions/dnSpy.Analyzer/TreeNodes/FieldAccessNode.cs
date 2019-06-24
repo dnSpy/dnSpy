@@ -60,7 +60,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				foreach (Instruction instr in method.Body.Instructions) {
 					if (CanBeReference(instr.OpCode.Code)) {
 						IField? fr = instr.Operand as IField;
-						if (fr.ResolveFieldDef() == analyzedField &&
+						if (CheckEquals(fr.ResolveFieldDef(), analyzedField) &&
 							Helpers.IsReferencedBy(analyzedField.DeclaringType, fr!.DeclaringType)) {
 							foundInstr = instr;
 							break;

@@ -29,19 +29,23 @@ namespace dnSpy.Analyzer.TreeNodes {
 	/// Determines the accessibility domain of a member for where-used analysis.
 	/// </summary>
 	sealed class ScopedWhereUsedAnalyzer<T> {
-		readonly ModuleDef moduleScope;
 		readonly IDsDocumentService documentService;
+		readonly TypeDef analyzedType;
+		readonly List<ModuleDef> allModules;
 		TypeDef typeScope;
+
+		internal List<ModuleDef> AllModules => allModules;
 
 		readonly Accessibility memberAccessibility = Accessibility.Public;
 		Accessibility typeAccessibility = Accessibility.Public;
 		readonly Func<TypeDef, IEnumerable<T>> typeAnalysisFunction;
 
-		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, TypeDef type, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction) {
-			typeScope = type;
-			moduleScope = type.Module;
+		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, TypeDef analyzedType, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction) {
+			this.analyzedType = analyzedType;
+			typeScope = analyzedType;
 			this.typeAnalysisFunction = typeAnalysisFunction;
 			this.documentService = documentService;
+			allModules = new List<ModuleDef>();
 		}
 
 		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, MethodDef method, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction)
@@ -192,13 +196,29 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		IEnumerable<T> FindReferencesInAssemblyAndFriends(CancellationToken ct) {
-			var modules = GetModuleAndAnyFriends(moduleScope, ct);
-			return modules.AsParallel().WithCancellation(ct).SelectMany(a => FindReferencesInModule(a, ct));
+			IEnumerable<ModuleDef> modules;
+			if (TIAHelper.IsTypeDefEquivalent(analyzedType)) {
+				var analyzedTypes = new List<TypeDef> { analyzedType };
+				SearchNode.AddTypeEquivalentTypes(documentService, analyzedType, analyzedTypes);
+				modules = SearchNode.GetTypeEquivalentModules(analyzedTypes);
+			}
+			else
+				modules = GetModuleAndAnyFriends(analyzedType.Module, ct);
+			allModules.AddRange(modules);
+			return allModules.AsParallel().WithCancellation(ct).SelectMany(a => FindReferencesInModule(a, ct));
 		}
 
 		IEnumerable<T> FindReferencesGlobal(CancellationToken ct) {
-			var modules = GetReferencingModules(moduleScope, ct);
-			return modules.AsParallel().WithCancellation(ct).SelectMany(a => FindReferencesInModule(a, ct));
+			IEnumerable<ModuleDef> modules;
+			if (TIAHelper.IsTypeDefEquivalent(analyzedType)) {
+				var analyzedTypes = new List<TypeDef> { analyzedType };
+				SearchNode.AddTypeEquivalentTypes(documentService, analyzedType, analyzedTypes);
+				modules = SearchNode.GetTypeEquivalentModules(analyzedTypes);
+			}
+			else
+				modules = GetReferencingModules(analyzedType.Module, ct);
+			allModules.AddRange(modules);
+			return allModules.AsParallel().WithCancellation(ct).SelectMany(a => FindReferencesInModule(a, ct));
 		}
 
 		IEnumerable<T> FindReferencesInModule(ModuleDef mod, CancellationToken ct) {
@@ -260,32 +280,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				yield return m;
 
 			if (asm.HasCustomAttributes) {
-				var friendAssemblies = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-				foreach (var attribute in asm.CustomAttributes.FindAll("System.Runtime.CompilerServices.InternalsVisibleToAttribute")) {
-					if (attribute.ConstructorArguments.Count == 0)
-						continue;
-					string assemblyName = attribute.ConstructorArguments[0].Value as UTF8String;
-					if (assemblyName is null)
-						continue;
-					assemblyName = assemblyName.Split(',')[0];
-					friendAssemblies.Add(assemblyName);
-				}
-				var modules = documentService.GetDocuments().Where(a => SearchNode.CanIncludeModule(mod, a.ModuleDef)).ToArray();
-				foreach (var module in modules) {
-					Debug.Assert(!(module.ModuleDef is null));
-					var asm2 = module.AssemblyDef;
-					if (asm2 is null)
-						continue;
-					foreach (var attribute in asm2.CustomAttributes.FindAll("System.Runtime.CompilerServices.IgnoresAccessChecksToAttribute")) {
-						string assemblyName = attribute.ConstructorArguments[0].Value as UTF8String;
-						if (assemblyName is null)
-							continue;
-						assemblyName = assemblyName.Split(',')[0];
-						if (StringComparer.OrdinalIgnoreCase.Equals(asm.Name.String, assemblyName))
-							friendAssemblies.Add(asm2.Name);
-					}
-				}
-
+				var friendAssemblies = SearchNode.GetFriendAssemblies(documentService, mod, out var modules);
 				if (friendAssemblies.Count > 0) {
 					foreach (var module in modules) {
 						Debug.Assert(!(module.ModuleDef is null));
@@ -298,8 +293,14 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		bool AssemblyReferencesScopeType(ModuleDef mod) {
-			foreach (var typeref in mod.GetTypeRefs()) {
-				if (new SigComparer().Equals(typeScope, typeref))
+			foreach (var typeRef in mod.GetTypeRefs()) {
+				if (new SigComparer().Equals(typeScope, typeRef))
+					return true;
+			}
+			foreach (var exportedType in mod.ExportedTypes) {
+				if (!exportedType.MovedToAnotherAssembly)
+					continue;
+				if (new SigComparer().Equals(typeScope, exportedType))
 					return true;
 			}
 			return false;

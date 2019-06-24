@@ -51,7 +51,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				// ignore chained constructors
 				// (since object is the root of everything, we can short circuit the test in this case)
 				if (method.Name == ".ctor" &&
-					(isSystemObject || analyzedType == type || TypesHierarchyHelpers.IsBaseType(analyzedType, type, false)))
+					(isSystemObject || new SigComparer().Equals(analyzedType, type) || TypesHierarchyHelpers.IsBaseType(analyzedType, type, false)))
 					continue;
 
 				Instruction? foundInstr = null;

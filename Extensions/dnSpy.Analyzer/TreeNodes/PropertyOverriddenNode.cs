@@ -27,27 +27,33 @@ using dnSpy.Contracts.Text;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class PropertyOverriddenNode : SearchNode {
+		readonly List<TypeDef> analyzedTypes;
 		readonly PropertyDef analyzedProperty;
 
-		public PropertyOverriddenNode(PropertyDef analyzedProperty) =>
+		public PropertyOverriddenNode(PropertyDef analyzedProperty) {
 			this.analyzedProperty = analyzedProperty ?? throw new ArgumentNullException(nameof(analyzedProperty));
+			analyzedTypes = new List<TypeDef> { analyzedProperty.DeclaringType };
+		}
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
 			output.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.OverridesTreeNode);
 
 		protected override IEnumerable<AnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
-			var type = analyzedProperty.DeclaringType.BaseType.ResolveTypeDef();
-			while (!(type is null)) {
-				foreach (var property in type.Properties) {
-					if (TypesHierarchyHelpers.IsBaseProperty(property, analyzedProperty)) {
-						var anyAccessor = property.GetMethod ?? property.SetMethod;
-						if (anyAccessor is null)
-							continue;
-						yield return new PropertyNode(property) { Context = Context };
-						yield break;
+			AddTypeEquivalentTypes(Context.DocumentService, analyzedTypes[0], analyzedTypes);
+			foreach (var declType in analyzedTypes) {
+				var type = declType.BaseType.ResolveTypeDef();
+				while (!(type is null)) {
+					foreach (var property in type.Properties) {
+						if (TypesHierarchyHelpers.IsBaseProperty(property, analyzedProperty)) {
+							var anyAccessor = property.GetMethod ?? property.SetMethod;
+							if (anyAccessor is null)
+								continue;
+							yield return new PropertyNode(property) { Context = Context };
+							yield break;
+						}
 					}
+					type = type.BaseType.ResolveTypeDef();
 				}
-				type = type.BaseType.ResolveTypeDef();
 			}
 		}
 

@@ -56,7 +56,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				foreach (Instruction instr in method.Body.Instructions) {
 					if (instr.Operand is IMethod mr && !mr.IsField && mr.Name == name &&
 						Helpers.IsReferencedBy(analyzedMethod.DeclaringType, mr.DeclaringType) &&
-						mr.ResolveMethodDef() == analyzedMethod) {
+						CheckEquals(mr.ResolveMethodDef(), analyzedMethod)) {
 						foundInstr = instr;
 						break;
 					}

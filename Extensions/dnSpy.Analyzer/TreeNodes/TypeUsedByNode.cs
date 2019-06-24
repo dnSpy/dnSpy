@@ -29,7 +29,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 	sealed class TypeUsedByNode : SearchNode {
 		readonly TypeDef analyzedType;
 
-		public TypeUsedByNode(TypeDef analyzedType) => this.analyzedType = analyzedType ?? throw new ArgumentNullException(nameof(analyzedType));
+		public TypeUsedByNode(TypeDef analyzedType) =>
+			this.analyzedType = analyzedType ?? throw new ArgumentNullException(nameof(analyzedType));
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
 			output.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.UsedByTreeNode);
@@ -39,19 +40,39 @@ namespace dnSpy.Analyzer.TreeNodes {
 			return analyzer.PerformAnalysis(ct)
 				.Cast<EntityNode>()
 				.Where(n => n.Member!.DeclaringType != analyzedType)
-				.Distinct(AnalyzerEntityTreeNodeComparer.Instance);
+				.Distinct(AnalyzerEntityTreeNodeComparer.Instance)
+				.Concat(FindGlobalUsage(analyzer.AllModules));
+		}
+
+		IEnumerable<EntityNode> FindGlobalUsage(List<ModuleDef> allModules) {
+			var analyzedAssemblies = new HashSet<AssemblyDef>();
+			foreach (var module in allModules) {
+				bool analyzedTypeIsExported = false;
+				foreach (var et in module.ExportedTypes) {
+					if (et.MovedToAnotherAssembly && et.Name == analyzedType.Name && et.Namespace == analyzedType.Namespace && et.Resolve() == analyzedType) {
+						analyzedTypeIsExported = true;
+						break;
+					}
+				}
+				if (module.Assembly is AssemblyDef asm && analyzedAssemblies.Add(asm)) {
+					if (IsUsedInCustomAttributes(asm))
+						yield return new AssemblyNode(asm) { Context = Context };
+				}
+				if (analyzedTypeIsExported || IsUsedInCustomAttributes(module))
+					yield return new ModuleNode(module) { Context = Context };
+			}
 		}
 
 		IEnumerable<EntityNode> FindTypeUsage(TypeDef? type) {
 			if (type is null)
 				yield break;
-			if (type == analyzedType)
+			if (new SigComparer().Equals(type, analyzedType))
 				yield break;
 
 			if (IsUsedInTypeDef(type))
 				yield return new TypeNode(type) { Context = Context };
 
-			foreach (var field in type.Fields.Where(IsUsedInFieldRef))
+			foreach (var field in type.Fields.Where(IsUsedInFieldDef))
 				yield return new FieldNode(field) { Context = Context };
 
 			foreach (var method in type.Methods) {
@@ -59,12 +80,26 @@ namespace dnSpy.Analyzer.TreeNodes {
 				if (IsUsedInMethodDef(method, ref sourceRef))
 					yield return HandleSpecialMethodNode(method, sourceRef);
 			}
+
+			foreach (var property in type.Properties) {
+				if (IsUsedInCustomAttributes(property))
+					yield return new PropertyNode(property) { Context = Context };
+			}
+
+			foreach (var @event in type.Events) {
+				if (IsUsedInCustomAttributes(@event))
+					yield return new EventNode(@event) { Context = Context };
+			}
 		}
 
 		EntityNode HandleSpecialMethodNode(MethodDef method, SourceRef? sourceRef) {
-			var property = method.DeclaringType.Properties.FirstOrDefault(p => p.GetMethod == method || p.SetMethod == method);
+			var property = method.DeclaringType.Properties.FirstOrDefault(p => (object?)p.GetMethod == method || (object?)p.SetMethod == method);
 			if (!(property is null))
 				return new PropertyNode(property) { Context = Context, SourceRef = sourceRef };
+
+			var @event = method.DeclaringType.Events.FirstOrDefault(p => (object?)p.AddMethod == method || (object?)p.RemoveMethod == method || (object?)p.InvokeMethod == method);
+			if (!(@event is null))
+				return new EventNode(@event) { Context = Context, SourceRef = sourceRef };
 
 			return new MethodNode(method) { Context = Context, SourceRef = sourceRef };
 		}
@@ -85,8 +120,58 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 			return IsUsedInTypeRef(type)
 				   || TypeMatches(type.BaseType)
-				   || IsUsedInTypeRefs(type.Interfaces.Select(ii => ii.Interface));
+				   || IsUsedInTypeRefs(type.Interfaces.Select(ii => ii.Interface))
+				   || IsUsedInCustomAttributes(type);
 		}
+
+		bool IsUsedInCustomAttributes(IHasCustomAttribute? hca) {
+			if (hca is null)
+				return false;
+			foreach (var ca in hca.CustomAttributes) {
+				foreach (var arg in ca.ConstructorArguments) {
+					if (IsUsed(arg, 0))
+						return true;
+				}
+				foreach (var arg in ca.NamedArguments) {
+					if (IsUsed(arg.Argument, 0))
+						return true;
+					if (TypeMatches(arg.Type))
+						return true;
+				}
+			}
+			return false;
+		}
+
+		const int maxRecursion = 20;
+		bool IsUsed(CAArgument arg, int recursionCounter) {
+			if (recursionCounter > maxRecursion)
+				return false;
+			if (TypeMatches(arg.Type))
+				return true;
+			return ValueMatches(arg.Value, recursionCounter + 1);
+		}
+
+		bool ValueMatches(object? value, int recursionCounter) {
+			if (recursionCounter > maxRecursion)
+				return false;
+			if (value is null)
+				return false;
+			if (value is TypeSig ts)
+				return TypeMatches(ts);
+			if (value is CAArgument arg)
+				return IsUsed(arg, recursionCounter + 1);
+			if (value is IList<CAArgument> args) {
+				for (int i = 0; i < args.Count; i++) {
+					if (IsUsed(args[i], recursionCounter + 1))
+						return true;
+				}
+				return false;
+			}
+			return false;
+		}
+
+		bool IsUsedInFieldDef(FieldDef field) =>
+			IsUsedInFieldRef(field) || IsUsedInCustomAttributes(field);
 
 		bool IsUsedInFieldRef(IField? field) {
 			if (field is null || !field.IsField)
@@ -105,7 +190,15 @@ namespace dnSpy.Analyzer.TreeNodes {
 				   || IsUsedInMethodParameters(method.GetParameters());
 		}
 
-		bool IsUsedInMethodDef(MethodDef? method, ref SourceRef? sourceRef) => IsUsedInMethodRef(method) || IsUsedInMethodBody(method, ref sourceRef);
+		bool IsUsedInMethodDef(MethodDef method, ref SourceRef? sourceRef) {
+			if (IsUsedInMethodRef(method) || IsUsedInMethodBody(method, ref sourceRef) || IsUsedInCustomAttributes(method))
+				return true;
+			foreach (var pd in method.ParamDefs) {
+				if (IsUsedInCustomAttributes(pd))
+					return true;
+			}
+			return false;
+		}
 
 		bool IsUsedInMethodBody(MethodDef? method, ref SourceRef? sourceRef) {
 			if (method is null)
@@ -136,20 +229,26 @@ namespace dnSpy.Analyzer.TreeNodes {
 					return true;
 				}
 			}
+			foreach (var eh in method.Body.ExceptionHandlers) {
+				if (TypeMatches(eh.CatchType)) {
+					sourceRef = new SourceRef(method, null, null);
+					return true;
+				}
+			}
 
 			return false;
 		}
 
 		bool IsUsedInMethodParameters(IEnumerable<Parameter> parameters) => parameters.Any(IsUsedInMethodParameter);
 		bool IsUsedInMethodParameter(Parameter parameter) => !parameter.IsHiddenThisParameter && TypeMatches(parameter.Type);
-		bool TypeMatches(IType? tref) => !(tref is null) && new SigComparer().Equals(analyzedType, tref?.ScopeType);
+		bool TypeMatches(IType? tref) => !(tref is null) && new SigComparer().Equals(analyzedType, tref?.GetScopeType());
 		public static bool CanShow(TypeDef? type) => !(type is null);
 	}
 
 	sealed class AnalyzerEntityTreeNodeComparer : IEqualityComparer<EntityNode> {
 		public static readonly AnalyzerEntityTreeNodeComparer Instance = new AnalyzerEntityTreeNodeComparer();
 		AnalyzerEntityTreeNodeComparer() { }
-		public bool Equals(EntityNode x, EntityNode y) => x.Member == y.Member;
+		public bool Equals(EntityNode x, EntityNode y) => (object?)x.Member == y.Member;
 		public int GetHashCode(EntityNode node) => node.Member?.GetHashCode() ?? 0;
 	}
 }

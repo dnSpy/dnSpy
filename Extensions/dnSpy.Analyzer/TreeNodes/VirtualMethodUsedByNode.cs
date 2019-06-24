@@ -85,7 +85,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 						// explicit call to the requested method 
 						if ((instr.OpCode.Code == Code.Call || instr.OpCode.Code == Code.Callvirt)
 							&& Helpers.IsReferencedBy(analyzedMethod.DeclaringType, mr.DeclaringType)
-							&& mr.ResolveMethodDef() == analyzedMethod) {
+							&& CheckEquals(mr.ResolveMethodDef(), analyzedMethod)) {
 							foundInstr = instr;
 							break;
 						}
@@ -96,7 +96,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 								// cannot resolve the operand, so ignore this method
 								break;
 							}
-							if (md == baseMethod) {
+							if (CheckEquals(md, baseMethod)) {
 								foundInstr = instr;
 								break;
 							}

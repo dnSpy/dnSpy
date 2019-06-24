@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using dnlib.DotNet;
@@ -27,7 +28,7 @@ namespace dnSpy.Contracts.Decompiler {
 			if (baseType is null || derivedType is null)
 				return false;
 			if (resolveTypeArguments)
-				return BaseTypes(derivedType).Any(t => t.Resolve() == baseType);
+				return BaseTypes(derivedType).Any(t => new SigComparer().Equals(t.Resolve(), baseType));
 			else {
 				var comparableBaseType = baseType.ResolveTypeDef();
 				if (comparableBaseType is null)
@@ -36,7 +37,7 @@ namespace dnSpy.Contracts.Decompiler {
 					var resolvedBaseType = derivedType.BaseType.Resolve();
 					if (resolvedBaseType is null)
 						return false;
-					if (comparableBaseType == resolvedBaseType)
+					if (new SigComparer().Equals(comparableBaseType, resolvedBaseType))
 						return true;
 					derivedType = resolvedBaseType;
 				}
@@ -66,8 +67,11 @@ namespace dnSpy.Contracts.Decompiler {
 				if (parentParams == 0 || childParams == 0 || parentParams != childParams)
 					return false;
 
-			return FindBaseMethods(childMethod).Any(m => m == parentMethod);// || (parentMethod.HasGenericParameters && m.);
+			return FindBaseMethods(childMethod).Any(m => CheckEquals(m, parentMethod));// || (parentMethod.HasGenericParameters && m.);
 		}
+
+		static bool CheckEquals(IMemberRef? mr1, IMemberRef? mr2) =>
+			new SigComparer(SigComparerOptions.CompareDeclaringTypes | SigComparerOptions.PrivateScopeIsComparable).Equals(mr1, mr2);
 
 		/// <summary>
 		/// Determines whether a property overrides or hides another property.
@@ -91,14 +95,14 @@ namespace dnSpy.Contracts.Decompiler {
 				if (parentParams == 0 || childParams == 0 || parentParams != childParams)
 					return false;
 
-			return FindBaseProperties(childProperty).Any(m => m == parentProperty);
+			return FindBaseProperties(childProperty).Any(m => CheckEquals(m, parentProperty));
 		}
 
 		public static bool IsBaseEvent(EventDef? parentEvent, EventDef childEvent) {
 			if (parentEvent is null || parentEvent.Name != childEvent.Name)
 				return false;
 
-			return FindBaseEvents(childEvent).Any(m => m == parentEvent);
+			return FindBaseEvents(childEvent).Any(m => CheckEquals(m, parentEvent));
 		}
 
 		/// <summary>
@@ -249,7 +253,7 @@ namespace dnSpy.Contracts.Decompiler {
 						if (assemblyName is null)
 							continue;
 						assemblyName = assemblyName.Split(',')[0]; // strip off any public key info
-						if (assemblyName == derivedTypeAsm.Name)
+						if (StringComparer.OrdinalIgnoreCase.Equals(assemblyName, derivedTypeAsm.Name))
 							return true;
 					}
 				}
