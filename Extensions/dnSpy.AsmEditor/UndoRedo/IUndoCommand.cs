@@ -49,8 +49,4 @@ namespace dnSpy.AsmEditor.UndoRedo {
 	interface IUndoCommand2 : IUndoCommand {
 		IEnumerable<object> NonModifiedObjects { get; }
 	}
-
-	interface IGCUndoCommand : IUndoCommand {
-		bool CallGarbageCollectorAfterDispose { get; }
-	}
 }

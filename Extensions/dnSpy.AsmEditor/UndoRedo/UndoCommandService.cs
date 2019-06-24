@@ -67,7 +67,6 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		void MarkAsSaved(IUndoObject obj);
 		IEnumerable<IUndoObject> UndoObjects { get; }
 		IEnumerable<IUndoObject> RedoObjects { get; }
-		void CallGc();
 		bool CachedHasModifiedDocuments { get; }
 		IEnumerable<object> GetModifiedDocuments();
 		IEnumerable<IUndoObject> GetAllObjects();
@@ -170,48 +169,29 @@ namespace dnSpy.AsmEditor.UndoRedo {
 			currentCommands.Commands.TrimExcess();
 			undoCommands.Add(currentCommands);
 
-			bool callGc = NeedsToCallGc(redoCommands);
 			Clear(redoCommands);
-			if (callGc)
-				CallGc();
 
 			UpdateAssemblySavedStateRedo(currentCommands);
 			currentCommands = null;
 			NotifyEvent(UndoCommandServiceEventType.Add);
 		}
 
-		static bool NeedsToCallGc(List<UndoState> list) {
-			foreach (var state in list) {
-				foreach (var c in state.Commands) {
-					if (c is IGCUndoCommand c2 && c2.CallGarbageCollectorAfterDispose)
-						return true;
-				}
-			}
-			return false;
-		}
+		public void ClearRedo() => Clear(false, true);
+		public void Clear() => Clear(true, true);
 
-		public void ClearRedo() => Clear(false, true, redoCommands.Count != 0);
-		public void Clear() => Clear(true, true, undoCommands.Count != 0 || redoCommands.Count != 0);
-
-		void Clear(bool clearUndo, bool clearRedo, bool forceCallGc) {
+		void Clear(bool clearUndo, bool clearRedo) {
 			Debug.Assert(currentCommands is null);
 			if (!(currentCommands is null))
 				throw new InvalidOperationException();
 
-			bool callGc = forceCallGc;
 			if (clearUndo) {
-				callGc |= NeedsToCallGc(undoCommands);
 				Clear(undoCommands);
 				NotifyEvent(UndoCommandServiceEventType.ClearUndo);
 			}
 			if (clearRedo) {
-				callGc |= NeedsToCallGc(redoCommands);
 				Clear(redoCommands);
 				NotifyEvent(UndoCommandServiceEventType.ClearRedo);
 			}
-
-			if (callGc)
-				CallGc();
 
 			if (clearUndo && clearRedo) {
 				foreach (var p in undoableDocumentsProviders) {
@@ -223,20 +203,6 @@ namespace dnSpy.AsmEditor.UndoRedo {
 				}
 			}
 		}
-
-		public void CallGc() {
-			if (!callingGc) {
-				callingGc = true;
-				// Some removed assemblies need to be GC'd. The AssemblyList already does this but
-				// we might cache them so we need to call the GC again.
-				Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(delegate {
-					callingGc = false;
-					GC.Collect();
-					GC.WaitForPendingFinalizers();
-				}));
-			}
-		}
-		bool callingGc = false;
 
 		static void Clear(List<UndoState> list) {
 			foreach (var group in list) {

@@ -81,7 +81,7 @@ namespace dnSpy.AsmEditor.Assembly {
 	}
 
 	[DebuggerDisplay("{Description}")]
-	sealed class RemoveAssemblyCommand : IGCUndoCommand {
+	sealed class RemoveAssemblyCommand : IUndoCommand {
 		[ExportMenuItem(Header = "res:RemoveAssemblyCommand", Icon = DsImagesAttribute.Cancel, InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_DELETE, Order = 0)]
 		sealed class DocumentsCommand : DocumentsContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
@@ -173,8 +173,6 @@ namespace dnSpy.AsmEditor.Assembly {
 			}
 
 			FreeAssemblies(freeNodes);
-			if (freeNodes.Count > 0 || onlyInRedoHistory.Count > 0)
-				undoCommandService.Value.CallGc();
 		}
 
 		static void FreeAssemblies(IList<DsDocumentNode> nodes) {
@@ -242,8 +240,6 @@ namespace dnSpy.AsmEditor.Assembly {
 					yield return savedState.DocumentNode;
 			}
 		}
-
-		public bool CallGarbageCollectorAfterDispose => true;
 	}
 
 	[DebuggerDisplay("{Description}")]

@@ -143,10 +143,6 @@ namespace dnSpy.Documents.Tabs {
 			}
 			NotifyAfterLoad(isReload);
 
-			Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
-				GC.Collect();
-				GC.WaitForPendingFinalizers();
-			}));
 			return true;
 		}
 
@@ -185,8 +181,6 @@ namespace dnSpy.Documents.Tabs {
 			// or the code that tries to find the nodes might fail to find them.
 			disableLoadAndReload = true;
 			Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
-				GC.Collect();
-				GC.WaitForPendingFinalizers();
 				foreach (var o in documentTabSerializer.Restore(tgws)) {
 				}
 				disableLoadAndReload = false;
@@ -208,11 +202,6 @@ namespace dnSpy.Documents.Tabs {
 			documentTabService.CloseAll();
 			documentTabService.DocumentTreeView.DocumentService.Clear();
 			NotifyAfterLoad(isReload);
-
-			Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
-				GC.Collect();
-				GC.WaitForPendingFinalizers();
-			}));
 		}
 	}
 }

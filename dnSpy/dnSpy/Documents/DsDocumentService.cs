@@ -332,15 +332,9 @@ namespace dnSpy.Documents {
 		}
 
 		void ClearTempCache() {
-			bool collect;
 			lock (tempCacheLock) {
-				collect = tempCache.Count > 0;
-				if (collect)
+				if (tempCache.Count > 0)
 					tempCache = new HashSet<IDsDocument>();
-			}
-			if (collect) {
-				GC.Collect();
-				GC.WaitForPendingFinalizers();
 			}
 		}
 
