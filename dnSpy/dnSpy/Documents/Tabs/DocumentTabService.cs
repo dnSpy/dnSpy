@@ -27,6 +27,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using dnlib.DotNet;
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.TreeView;
@@ -269,7 +270,7 @@ namespace dnSpy.Documents.Tabs {
 			if (e.Node is BaseTypeNode baseTypeNode) {
 				var tdr = baseTypeNode.TypeDefOrRef;
 				Debug.Assert(!(tdr is null));
-				var td = tdr?.ScopeType.ResolveTypeDef();
+				var td = tdr?.GetScopeType().ResolveTypeDef();
 				SelectType(td);
 				return;
 			}

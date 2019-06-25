@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using dnlib.DotNet;
 using dnSpy.Analyzer.Properties;
@@ -41,25 +42,46 @@ namespace dnSpy.Analyzer.TreeNodes {
 		protected override IEnumerable<AnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
 			AddTypeEquivalentTypes(Context.DocumentService, analyzedTypes[0], analyzedTypes);
 			foreach (var declType in analyzedTypes) {
-				var type = declType.BaseType.ResolveTypeDef();
-				while (!(type is null)) {
-					foreach (var property in type.Properties) {
-						if (TypesHierarchyHelpers.IsBaseProperty(property, analyzedProperty)) {
-							var anyAccessor = property.GetMethod ?? property.SetMethod;
-							if (anyAccessor is null)
-								continue;
-							yield return new PropertyNode(property) { Context = Context };
-							yield break;
+				var analyzedAccessor = GetVirtualAccessor(analyzedProperty.GetMethod) ?? GetVirtualAccessor(analyzedProperty.SetMethod);
+				if (analyzedAccessor?.Overrides is IList<MethodOverride> overrides && overrides.Count > 0) {
+					bool matched = false;
+					foreach (var o in overrides) {
+						if (o.MethodDeclaration.ResolveMethodDef() is MethodDef method && (method.IsVirtual || method.IsAbstract)) {
+							if (method.DeclaringType.Properties.FirstOrDefault(a => (object?)a.GetMethod == method || (object?)a.SetMethod == method) is PropertyDef property) {
+								matched = true;
+								yield return new PropertyNode(property) { Context = Context };
+							}
 						}
 					}
-					type = type.BaseType.ResolveTypeDef();
+					if (matched)
+						yield break;
+				}
+
+				foreach (var property in TypesHierarchyHelpers.FindBaseProperties(analyzedProperty, declType)) {
+					var anyAccessor = GetVirtualAccessor(property.GetMethod) ?? GetVirtualAccessor(property.SetMethod);
+					if (anyAccessor is null || !(anyAccessor.IsVirtual || anyAccessor.IsAbstract))
+						continue;
+						yield return new PropertyNode(property) { Context = Context };
+					yield break;
 				}
 			}
 		}
 
-		public static bool CanShow(PropertyDef property) {
-			var accessor = property.GetMethod ?? property.SetMethod;
-			return !(accessor is null) && accessor.IsVirtual && !(accessor.DeclaringType.BaseType is null);
+		public static bool CanShow(PropertyDef property) =>
+			!((GetAccessor(property.GetMethod) ?? GetAccessor(property.SetMethod)) is null);
+
+		static MethodDef? GetAccessor(MethodDef? accessor) {
+			if (!(accessor is null) &&
+				!(accessor.DeclaringType.BaseType is null) &&
+				(accessor.IsVirtual || accessor.IsAbstract) && accessor.IsReuseSlot)
+				return accessor;
+			return null;
+		}
+
+		static MethodDef? GetVirtualAccessor(MethodDef? accessor) {
+			if (!(accessor is null) && (accessor.IsVirtual || accessor.IsAbstract))
+				return accessor;
+			return null;
 		}
 	}
 }

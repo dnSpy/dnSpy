@@ -29,17 +29,27 @@ namespace dnSpy.Analyzer.TreeNodes {
 	sealed class InterfaceEventImplementedByNode : SearchNode {
 		readonly EventDef analyzedEvent;
 		readonly MethodDef? analyzedMethod;
-		readonly bool isAdder;
+		readonly AccessorKind accessorKind;
+
+		enum AccessorKind {
+			Adder,
+			Remover,
+			Invoker,
+		}
 
 		public InterfaceEventImplementedByNode(EventDef analyzedEvent) {
 			this.analyzedEvent = analyzedEvent ?? throw new ArgumentNullException(nameof(analyzedEvent));
 			if (!(this.analyzedEvent.AddMethod is null)) {
 				analyzedMethod = this.analyzedEvent.AddMethod;
-				isAdder = true;
+				accessorKind = AccessorKind.Adder;
+			}
+			else if (!(this.analyzedEvent.RemoveMethod is null)) {
+				analyzedMethod = this.analyzedEvent.RemoveMethod;
+				accessorKind = AccessorKind.Remover;
 			}
 			else {
-				analyzedMethod = this.analyzedEvent.RemoveMethod;
-				isAdder = false;
+				analyzedMethod = this.analyzedEvent.InvokeMethod;
+				accessorKind = AccessorKind.Invoker;
 			}
 		}
 
@@ -56,16 +66,18 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		IEnumerable<AnalyzerTreeNodeData> FindReferencesInType(TypeDef type) {
-			if (!type.HasInterfaces || analyzedMethod is null)
+			if (analyzedMethod is null)
 				yield break;
-			var iff = type.Interfaces.FirstOrDefault(i => new SigComparer().Equals(i.Interface?.GetScopeType(), analyzedMethod.DeclaringType));
-			var implementedInterfaceRef = iff?.Interface;
+			if (type.IsInterface)
+				yield break;
+			var implementedInterfaceRef = InterfaceMethodImplementedByNode.GetInterface(type, analyzedMethod.DeclaringType);
 			if (implementedInterfaceRef is null)
 				yield break;
 
 			foreach (EventDef ev in type.Events.Where(e => e.Name.EndsWith(analyzedEvent.Name))) {
-				MethodDef accessor = isAdder ? ev.AddMethod : ev.RemoveMethod;
-				if (accessor is null || !(accessor.IsVirtual || accessor.IsAbstract))
+				var accessor = GetAccessor(ev);
+				// Don't include abstract accessors, they don't implement anything
+				if (accessor is null || !accessor.IsVirtual || accessor.IsAbstract)
 					continue;
 				if (accessor.HasOverrides && accessor.Overrides.Any(m => CheckEquals(m.MethodDeclaration.ResolveMethodDef(), analyzedMethod))) {
 					yield return new EventNode(ev) { Context = Context };
@@ -74,8 +86,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 
 			foreach (EventDef ev in type.Events.Where(e => e.Name == analyzedEvent.Name)) {
-				MethodDef accessor = isAdder ? ev.AddMethod : ev.RemoveMethod;
-				if (accessor is null || !(accessor.IsVirtual || accessor.IsAbstract))
+				var accessor = GetAccessor(ev);
+				// Don't include abstract accessors, they don't implement anything
+				if (accessor is null || !accessor.IsVirtual || accessor.IsAbstract)
 					continue;
 				if (TypesHierarchyHelpers.MatchInterfaceMethod(accessor, analyzedMethod, implementedInterfaceRef)) {
 					yield return new EventNode(ev) { Context = Context };
@@ -84,6 +97,15 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 		}
 
-		public static bool CanShow(EventDef ev) => ev.DeclaringType.IsInterface && (ev.AddMethod ?? ev.RemoveMethod) is MethodDef accessor && (accessor.IsVirtual || accessor.IsAbstract);
+		MethodDef? GetAccessor(EventDef ev) {
+			switch (accessorKind) {
+			case AccessorKind.Adder:	return ev.AddMethod;
+			case AccessorKind.Remover:	return ev.RemoveMethod;
+			case AccessorKind.Invoker:	return ev.InvokeMethod;
+			default:					return null;
+			}
+		}
+
+		public static bool CanShow(EventDef ev) => ev.DeclaringType.IsInterface && (ev.AddMethod ?? ev.RemoveMethod ?? ev.InvokeMethod) is MethodDef accessor && (accessor.IsVirtual || accessor.IsAbstract);
 	}
 }

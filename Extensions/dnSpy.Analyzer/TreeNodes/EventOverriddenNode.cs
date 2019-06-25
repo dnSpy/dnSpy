@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using dnlib.DotNet;
 using dnSpy.Analyzer.Properties;
@@ -41,25 +42,46 @@ namespace dnSpy.Analyzer.TreeNodes {
 		protected override IEnumerable<AnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
 			AddTypeEquivalentTypes(Context.DocumentService, analyzedTypes[0], analyzedTypes);
 			foreach (var declType in analyzedTypes) {
-				var type = declType.BaseType.ResolveTypeDef();
-				while (!(type is null)) {
-					foreach (var eventDef in type.Events) {
-						if (TypesHierarchyHelpers.IsBaseEvent(eventDef, analyzedEvent)) {
-							var anyAccessor = eventDef.AddMethod ?? eventDef.RemoveMethod;
-							if (anyAccessor is null)
-								continue;
-							yield return new EventNode(eventDef) { Context = Context };
-							yield break;
+				var analyzedAccessor = GetVirtualAccessor(analyzedEvent.AddMethod) ?? GetVirtualAccessor(analyzedEvent.RemoveMethod) ?? GetVirtualAccessor(analyzedEvent.InvokeMethod);
+				if (analyzedAccessor?.Overrides is IList<MethodOverride> overrides && overrides.Count > 0) {
+					bool matched = false;
+					foreach (var o in overrides) {
+						if (o.MethodDeclaration.ResolveMethodDef() is MethodDef method && (method.IsVirtual || method.IsAbstract)) {
+							if (method.DeclaringType.Events.FirstOrDefault(a => (object?)a.AddMethod == method || (object?)a.RemoveMethod == method || (object?)a.InvokeMethod == method) is EventDef eventDef) {
+								matched = true;
+								yield return new EventNode(eventDef) { Context = Context };
+							}
 						}
 					}
-					type = type.BaseType.ResolveTypeDef();
+					if (matched)
+						yield break;
+				}
+
+				foreach (var eventDef in TypesHierarchyHelpers.FindBaseEvents(analyzedEvent, declType)) {
+					var anyAccessor = GetVirtualAccessor(eventDef.AddMethod) ?? GetVirtualAccessor(eventDef.RemoveMethod) ?? GetVirtualAccessor(eventDef.InvokeMethod);
+					if (anyAccessor is null || !(anyAccessor.IsVirtual || anyAccessor.IsAbstract))
+						continue;
+					yield return new EventNode(eventDef) { Context = Context };
+					yield break;
 				}
 			}
 		}
 
-		public static bool CanShow(EventDef property) {
-			var accessor = property.AddMethod ?? property.RemoveMethod;
-			return !(accessor is null) && accessor.IsVirtual && !(accessor.DeclaringType.BaseType is null);
+		public static bool CanShow(EventDef @event) =>
+			!((GetAccessor(@event.AddMethod) ?? GetAccessor(@event.RemoveMethod) ?? GetAccessor(@event.InvokeMethod)) is null);
+
+		static MethodDef? GetAccessor(MethodDef? accessor) {
+			if (!(accessor is null) &&
+				!(accessor.DeclaringType.BaseType is null) &&
+				(accessor.IsVirtual || accessor.IsAbstract) && accessor.IsReuseSlot)
+				return accessor;
+			return null;
+		}
+
+		static MethodDef? GetVirtualAccessor(MethodDef? accessor) {
+			if (!(accessor is null) && (accessor.IsVirtual || accessor.IsAbstract))
+				return accessor;
+			return null;
 		}
 	}
 }

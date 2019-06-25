@@ -110,16 +110,19 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="method">The method which overrides or hides methods from base types.</param>
 		/// <returns>Methods overriden or hidden by the specified method.</returns>
-		public static IEnumerable<MethodDef> FindBaseMethods(MethodDef? method) {
-			if (method is null)
+		public static IEnumerable<MethodDef> FindBaseMethods(MethodDef? method) =>
+			FindBaseMethods(method, method?.DeclaringType);
+
+		public static IEnumerable<MethodDef> FindBaseMethods(MethodDef? method, TypeDef? declType) {
+			if (method is null || declType is null)
 				yield break;
 
-			foreach (var baseType in BaseTypes(method.DeclaringType)) {
+			foreach (var baseType in BaseTypes(declType)) {
 				var baseTypeDef = baseType.Resolve();
 				if (baseTypeDef is null)
 					continue;
 				foreach (var baseMethod in baseTypeDef.Methods) {
-					if (MatchMethod(baseMethod, Resolve(baseMethod.MethodSig, baseType), method) && IsVisibleFromDerived(baseMethod, method.DeclaringType)) {
+					if (MatchMethod(baseMethod, Resolve(baseMethod.MethodSig, baseType), method) && IsVisibleFromDerived(baseMethod, declType)) {
 						yield return baseMethod;
 						if (baseMethod.IsNewSlot == baseMethod.IsVirtual)
 							yield break;
@@ -156,19 +159,22 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="property">The property which overrides or hides properties from base types.</param>
 		/// <returns>Properties overriden or hidden by the specified property.</returns>
-		public static IEnumerable<PropertyDef> FindBaseProperties(PropertyDef? property) {
+		public static IEnumerable<PropertyDef> FindBaseProperties(PropertyDef? property) =>
+			FindBaseProperties(property, property?.DeclaringType);
+
+		public static IEnumerable<PropertyDef> FindBaseProperties(PropertyDef? property, TypeDef? declType) {
 			if (property is null)
 				yield break;
 
 			bool isIndexer = property.IsIndexer();
 
-			foreach (var baseType in BaseTypes(property.DeclaringType)) {
+			foreach (var baseType in BaseTypes(declType)) {
 				var baseTypeDef = baseType.Resolve();
 				if (baseTypeDef is null)
 					continue;
 				foreach (var baseProperty in baseTypeDef.Properties) {
 					if (MatchProperty(baseProperty, Resolve(baseProperty.PropertySig, baseType), property)
-							&& IsVisibleFromDerived(baseProperty, property.DeclaringType)) {
+							&& IsVisibleFromDerived(baseProperty, declType)) {
 						if (isIndexer != baseProperty.IsIndexer())
 							continue;
 						yield return baseProperty;
@@ -189,21 +195,24 @@ namespace dnSpy.Contracts.Decompiler {
 			return new SigComparer().Equals(mCandidateSig, mProperty.PropertySig);
 		}
 
-		public static IEnumerable<EventDef> FindBaseEvents(EventDef? eventDef) {
+		public static IEnumerable<EventDef> FindBaseEvents(EventDef? eventDef) =>
+			FindBaseEvents(eventDef, eventDef?.DeclaringType);
+
+		public static IEnumerable<EventDef> FindBaseEvents(EventDef? eventDef, TypeDef? declType) {
 			if (eventDef is null)
 				yield break;
 
 			var eventType = eventDef.EventType.ToTypeSig();
 
-			foreach (var baseType in BaseTypes(eventDef.DeclaringType)) {
+			foreach (var baseType in BaseTypes(declType)) {
 				var baseTypeDef = baseType.Resolve();
 				if (baseTypeDef is null)
 					continue;
 				foreach (var baseEvent in baseTypeDef.Events) {
 					if (MatchEvent(baseEvent, Resolve(baseEvent.EventType.ToTypeSig(), baseType), eventDef, eventType) &&
-						IsVisibleFromDerived(baseEvent, eventDef.DeclaringType)) {
+						IsVisibleFromDerived(baseEvent, declType)) {
 						yield return baseEvent;
-						var anyEventAccessor = baseEvent.AddMethod ?? baseEvent.RemoveMethod;
+						var anyEventAccessor = baseEvent.AddMethod ?? baseEvent.RemoveMethod ?? baseEvent.InvokeMethod;
 						if (!(anyEventAccessor is null) && anyEventAccessor.IsNewSlot == anyEventAccessor.IsVirtual)
 							yield break;
 					}
@@ -243,7 +252,7 @@ namespace dnSpy.Contracts.Decompiler {
 				var derivedTypeAsm = derivedType.Module.Assembly;
 				var asm = baseMember.DeclaringType.Module.Assembly;
 
-				if (!(derivedTypeAsm is null) && !(asm is null) && asm.HasCustomAttributes) {
+				if (!(derivedTypeAsm is null) && !(asm is null)) {
 					foreach (var attribute in asm.CustomAttributes) {
 						if (!Compare(attribute.AttributeType, systemRuntimeCompilerServicesString, internalsVisibleToAttributeString))
 							continue;
@@ -252,8 +261,20 @@ namespace dnSpy.Contracts.Decompiler {
 						string assemblyName = attribute.ConstructorArguments[0].Value as UTF8String;
 						if (assemblyName is null)
 							continue;
-						assemblyName = assemblyName.Split(',')[0]; // strip off any public key info
+						assemblyName = assemblyName.Split(',')[0];
 						if (StringComparer.OrdinalIgnoreCase.Equals(assemblyName, derivedTypeAsm.Name))
+							return true;
+					}
+					foreach (var attribute in derivedTypeAsm.CustomAttributes) {
+						if (!Compare(attribute.AttributeType, systemRuntimeCompilerServicesString, ignoresAccessChecksToAttributeString))
+							continue;
+						if (attribute.ConstructorArguments.Count == 0)
+							continue;
+						string assemblyName = attribute.ConstructorArguments[0].Value as UTF8String;
+						if (assemblyName is null)
+							continue;
+						assemblyName = assemblyName.Split(',')[0];
+						if (StringComparer.OrdinalIgnoreCase.Equals(assemblyName, asm.Name))
 							return true;
 					}
 				}
@@ -265,6 +286,7 @@ namespace dnSpy.Contracts.Decompiler {
 		}
 		static readonly UTF8String systemRuntimeCompilerServicesString = new UTF8String("System.Runtime.CompilerServices");
 		static readonly UTF8String internalsVisibleToAttributeString = new UTF8String("InternalsVisibleToAttribute");
+		static readonly UTF8String ignoresAccessChecksToAttributeString = new UTF8String("IgnoresAccessChecksToAttribute");
 
 		static bool Compare(ITypeDefOrRef? type, UTF8String expNs, UTF8String expName) {
 			if (type is null)
@@ -291,7 +313,7 @@ namespace dnSpy.Contracts.Decompiler {
 			}
 
 			if (member is EventDef evnt) {
-				var m = evnt.AddMethod ?? evnt.RemoveMethod;
+				var m = evnt.AddMethod ?? evnt.RemoveMethod ?? evnt.InvokeMethod;
 				return m is null ? 0 : m.Attributes;
 			}
 
@@ -306,7 +328,7 @@ namespace dnSpy.Contracts.Decompiler {
 			return 0;
 		}
 
-		private static IEnumerable<TypeSig> BaseTypes(TypeDef typeDef) {
+		private static IEnumerable<TypeSig> BaseTypes(TypeDef? typeDef) {
 			if (typeDef is null)
 				yield break;
 			if (typeDef.BaseType is null)
@@ -324,6 +346,14 @@ namespace dnSpy.Contracts.Decompiler {
 				if (typeDef is null)
 					break;
 			} while (!(typeDef.BaseType is null));
+		}
+
+		public static IEnumerable<TypeSig> GetTypeAndBaseTypes(TypeDef? type) {
+			if (type is null)
+				yield break;
+			yield return type.ToTypeSig();
+			foreach (var baseType in BaseTypes(type))
+				yield return baseType;
 		}
 
 		private static TypeSig? Resolve(TypeSig? type, TypeSig? typeContext) {

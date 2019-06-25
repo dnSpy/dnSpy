@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using dnlib.DotNet;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.TreeView;
@@ -72,7 +73,7 @@ namespace dnSpy.Documents.TreeView {
 			if (type.IsInterface) {
 				foreach (var td in module.GetTypes()) {
 					foreach (var iface in td.Interfaces) {
-						if (new SigComparer().Equals(type, iface.Interface.ScopeType))
+						if (new SigComparer().Equals(type, iface.Interface.GetScopeType()))
 							yield return td;
 					}
 				}
@@ -80,7 +81,7 @@ namespace dnSpy.Documents.TreeView {
 			else {
 				foreach (var td in module.GetTypes()) {
 					var bt = td.BaseType;
-					if (!(bt is null) && new SigComparer().Equals(type, bt.ScopeType))
+					if (!(bt is null) && new SigComparer().Equals(type, bt.GetScopeType()))
 						yield return td;
 				}
 			}

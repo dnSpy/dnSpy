@@ -42,9 +42,6 @@ namespace dnSpy.Analyzer.TreeNodes {
 			if (analyzedType.IsEnum && new SigComparer().Equals(type, analyzedType))
 				yield break;
 
-			if (!Context.Decompiler.ShowMember(type))
-				yield break;
-
 			foreach (FieldDef field in type.Fields) {
 				if (TypeIsExposedBy(field)) {
 					yield return new FieldNode(field) { Context = Context };
@@ -70,25 +67,103 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 		}
 
+		bool CheckType(IType? type) => CheckType(type, 0);
+
+		const int maxRecursion = 20;
+		bool CheckType(IType? type, int recursionCounter) {
+			if (recursionCounter > maxRecursion)
+				return false;
+			if (type is TypeSig ts)
+				return CheckType(ts, recursionCounter + 1);
+			if (type is TypeSpec typeSpec)
+				return CheckType(typeSpec.TypeSig, recursionCounter + 1);
+			return new SigComparer().Equals(analyzedType, type);
+		}
+
+		bool CheckType(TypeSig? sig, int recursionCounter) {
+			if (recursionCounter > maxRecursion)
+				return false;
+			if (sig is null)
+				return false;
+			switch (sig.ElementType) {
+			case ElementType.Void:		return new SigComparer().Equals(analyzedType, analyzedType.Module.CorLibTypes.Void);
+			case ElementType.Boolean:	return new SigComparer().Equals(analyzedType, analyzedType.Module.CorLibTypes.Boolean);
+			case ElementType.Char:		return new SigComparer().Equals(analyzedType, analyzedType.Module.CorLibTypes.Char);
+			case ElementType.I1:		return new SigComparer().Equals(analyzedType, analyzedType.Module.CorLibTypes.SByte);
+			case ElementType.U1:		return new SigComparer().Equals(analyzedType, analyzedType.Module.CorLibTypes.Byte);
+			case ElementType.I2:		return new SigComparer().Equals(analyzedType, analyzedType.Module.CorLibTypes.Int16);
+			case ElementType.U2:		return new SigComparer().Equals(analyzedType, analyzedType.Module.CorLibTypes.UInt16);
+			case ElementType.I4:		return new SigComparer().Equals(analyzedType, analyzedType.Module.CorLibTypes.Int32);
+			case ElementType.U4:		return new SigComparer().Equals(analyzedType, analyzedType.Module.CorLibTypes.UInt32);
+			case ElementType.I8:		return new SigComparer().Equals(analyzedType, analyzedType.Module.CorLibTypes.Int64);
+			case ElementType.U8:		return new SigComparer().Equals(analyzedType, analyzedType.Module.CorLibTypes.UInt64);
+			case ElementType.R4:		return new SigComparer().Equals(analyzedType, analyzedType.Module.CorLibTypes.Single);
+			case ElementType.R8:		return new SigComparer().Equals(analyzedType, analyzedType.Module.CorLibTypes.Double);
+			case ElementType.String:	return new SigComparer().Equals(analyzedType, analyzedType.Module.CorLibTypes.String);
+			case ElementType.TypedByRef:return new SigComparer().Equals(analyzedType, analyzedType.Module.CorLibTypes.TypedReference);
+			case ElementType.I:			return new SigComparer().Equals(analyzedType, analyzedType.Module.CorLibTypes.IntPtr);
+			case ElementType.U:			return new SigComparer().Equals(analyzedType, analyzedType.Module.CorLibTypes.UIntPtr);
+			case ElementType.Object:	return new SigComparer().Equals(analyzedType, analyzedType.Module.CorLibTypes.Object);
+
+			case ElementType.Ptr:
+			case ElementType.ByRef:
+			case ElementType.Array:
+			case ElementType.SZArray:
+			case ElementType.ValueArray:
+			case ElementType.Module:
+			case ElementType.Pinned:
+				return CheckType(sig.Next, recursionCounter + 1);
+
+			case ElementType.CModReqd:
+			case ElementType.CModOpt:
+				return CheckType(((ModifierSig)sig).Modifier, recursionCounter + 1) || CheckType(sig.Next, recursionCounter + 1);
+
+			case ElementType.ValueType:
+			case ElementType.Class:
+				return CheckType(((TypeDefOrRefSig)sig).TypeDefOrRef, recursionCounter + 1);
+
+			case ElementType.GenericInst:
+				if (CheckType(((GenericInstSig)sig).GenericType?.TypeDefOrRef, recursionCounter + 1))
+					return true;
+				foreach (var genericArg in ((GenericInstSig)sig).GenericArguments) {
+					if (CheckType(genericArg, recursionCounter + 1))
+						return true;
+				}
+				return false;
+
+			case ElementType.FnPtr:
+				return TypeIsExposedBy(((FnPtrSig)sig).MethodSig, recursionCounter + 1);
+
+			case ElementType.End:
+			case ElementType.Var:
+			case ElementType.R:
+			case ElementType.MVar:
+			case ElementType.Internal:
+			case ElementType.Sentinel:
+			default:
+				return false;
+			}
+		}
+
 		bool TypeIsExposedBy(FieldDef field) {
 			if (field.IsPrivate)
 				return false;
 
-			return new SigComparer().Equals(analyzedType, field.FieldType?.GetScopeType());
+			return CheckType(field.FieldType);
 		}
 
 		bool TypeIsExposedBy(PropertyDef property) {
 			if (IsPrivate(property))
 				return false;
 
-			return new SigComparer().Equals(analyzedType, property.PropertySig.GetRetType()?.GetScopeType());
+			return TypeIsExposedBy(property.PropertySig);
 		}
 
 		bool TypeIsExposedBy(EventDef eventDef) {
 			if (IsPrivate(eventDef))
 				return false;
 
-			return new SigComparer().Equals(eventDef.EventType?.GetScopeType(), analyzedType);
+			return CheckType(eventDef.EventType);
 		}
 
 		bool TypeIsExposedBy(MethodDef method) {
@@ -108,16 +183,23 @@ namespace dnSpy.Analyzer.TreeNodes {
 			if (method.SemanticsAttributes != MethodSemanticsAttributes.None)
 				return false;
 
-			if (new SigComparer().Equals(analyzedType, method.ReturnType?.GetScopeType()))
-				return true;
+			return TypeIsExposedBy(method.MethodSig);
+		}
 
-			foreach (var parameter in method.Parameters) {
-				if (parameter.IsHiddenThisParameter)
-					continue;
-				if (new SigComparer().Equals(analyzedType, parameter.Type?.GetScopeType()))
+		bool TypeIsExposedBy(MethodBaseSig? methodSig) => TypeIsExposedBy(methodSig, 0);
+
+		bool TypeIsExposedBy(MethodBaseSig? methodSig, int recursionCounter) {
+			if (recursionCounter > maxRecursion)
+				return false;
+			if (methodSig is null)
+				return false;
+
+			if (CheckType(methodSig.RetType))
+				return true;
+			foreach (var type in methodSig.Params) {
+				if (CheckType(type))
 					return true;
 			}
-
 			return false;
 		}
 
@@ -130,7 +212,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 		static bool IsPrivate(EventDef eventDef) {
 			bool isAdderPublic = (!(eventDef.AddMethod is null) && !eventDef.AddMethod.IsPrivate);
 			bool isRemoverPublic = (!(eventDef.RemoveMethod is null) && !eventDef.RemoveMethod.IsPrivate);
-			return !(isAdderPublic || isRemoverPublic);
+			bool isInvokerPublic = (!(eventDef.InvokeMethod is null) && !eventDef.InvokeMethod.IsPrivate);
+			return !(isAdderPublic || isRemoverPublic || isInvokerPublic);
 		}
 
 		public static bool CanShow(TypeDef type) => !(type.IsAbstract && type.IsSealed);

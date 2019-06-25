@@ -19,10 +19,11 @@
 using System.Linq;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	static class Helpers {
-		public static bool IsReferencedBy(TypeDef? type, ITypeDefOrRef? typeRef) => new SigComparer().Equals(type, typeRef);
+		public static bool IsReferencedBy(TypeDef? type, ITypeDefOrRef? typeRef) => new SigComparer().Equals(type, typeRef.GetScopeType());
 
 		public static IMemberRef GetOriginalCodeLocation(IMemberRef member) {
 			if (member is MethodDef)

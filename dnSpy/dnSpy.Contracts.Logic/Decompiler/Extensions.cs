@@ -18,6 +18,7 @@
 */
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
@@ -28,6 +29,60 @@ namespace dnSpy.Contracts.Decompiler {
 	/// Extensions
 	/// </summary>
 	public static class Extensions {
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="type"></param>
+		/// <returns></returns>
+		public static ITypeDefOrRef? GetScopeType(this ITypeDefOrRef? type) {
+			if (type is TypeSpec ts) {
+				var sig = ts.TypeSig.RemovePinnedAndModifiers();
+				if (sig is GenericInstSig gis)
+					return gis.GenericType?.TypeDefOrRef;
+				if (sig is TypeDefOrRefSig tdrs)
+					return tdrs.TypeDefOrRef;
+			}
+			return type;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="type"></param>
+		/// <returns></returns>
+		public static ITypeDefOrRef? GetScopeTypeDefOrRef(this IType? type) {
+			var t = type.GetScopeType();
+			if (t is ITypeDefOrRef tdr)
+				return tdr;
+			if (t is TypeSig sig)
+				return sig.ToTypeDefOrRef();
+			Debug.Assert(t is null);
+			return null;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="type"></param>
+		/// <returns></returns>
+		public static IType? GetScopeType(this IType? type) {
+			if (type is TypeDef td)
+				return td;
+			if (type is TypeRef tr)
+				return tr;
+			if (!(type is TypeSig sig)) {
+				if (!(type is TypeSpec ts))
+					return type;
+				sig = ts.TypeSig;
+			}
+			sig = sig.RemovePinnedAndModifiers();
+			if (sig is GenericInstSig gis)
+				return gis.GenericType?.TypeDefOrRef;
+			if (sig is TypeDefOrRefSig tdrs)
+				return tdrs.TypeDefOrRef;
+			return type;
+		}
+
 		/// <summary>
 		/// Checks whether a custom attribute exists
 		/// </summary>
@@ -211,7 +266,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="type">Type</param>
 		/// <returns></returns>
-		public static TypeDef? Resolve(this IType? type) => type?.ScopeType.ResolveTypeDef();
+		public static TypeDef? Resolve(this IType? type) => type?.GetScopeTypeDefOrRef().ResolveTypeDef();
 
 		/// <summary>
 		/// Returns true if the fields can be sorted and false if the original metadata order must be used

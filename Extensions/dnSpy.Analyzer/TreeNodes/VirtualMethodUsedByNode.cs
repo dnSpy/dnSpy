@@ -32,7 +32,6 @@ namespace dnSpy.Analyzer.TreeNodes {
 		readonly MethodDef analyzedMethod;
 		ConcurrentDictionary<MethodDef, int>? foundMethods;
 		MethodDef? baseMethod;
-		List<ITypeDefOrRef>? possibleTypes;
 
 		public VirtualMethodUsedByNode(MethodDef analyzedMethod) => this.analyzedMethod = analyzedMethod ?? throw new ArgumentNullException(nameof(analyzedMethod));
 
@@ -59,14 +58,6 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 			else
 				baseMethod = analyzedMethod;
-
-			possibleTypes = new List<ITypeDefOrRef>();
-
-			ITypeDefOrRef? type = analyzedMethod.DeclaringType.BaseType;
-			while (!(type is null)) {
-				possibleTypes.Add(type);
-				type = type.ResolveTypeDef()?.BaseType;
-			}
 		}
 
 		void ReleaseAnalyzer() {

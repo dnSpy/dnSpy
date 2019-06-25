@@ -128,6 +128,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 			if (hca is null)
 				return false;
 			foreach (var ca in hca.CustomAttributes) {
+				if (IsUsedInMethodRef(ca.Constructor))
+					return true;
 				foreach (var arg in ca.ConstructorArguments) {
 					if (IsUsed(arg, 0))
 						return true;

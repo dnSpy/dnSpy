@@ -56,16 +56,16 @@ namespace dnSpy.Analyzer.TreeNodes {
 		IEnumerable<AnalyzerTreeNodeData> FindReferencesInType(TypeDef type) {
 			if (analyzedMethod is null)
 				yield break;
-			if (!type.HasInterfaces)
+			if (type.IsInterface)
 				yield break;
-			var iff = type.Interfaces.FirstOrDefault(i => new SigComparer().Equals(i.Interface?.GetScopeType(), analyzedMethod.DeclaringType));
-			var implementedInterfaceRef = iff?.Interface;
+			var implementedInterfaceRef = InterfaceMethodImplementedByNode.GetInterface(type, analyzedMethod.DeclaringType);
 			if (implementedInterfaceRef is null)
 				yield break;
 
 			foreach (PropertyDef property in type.Properties.Where(e => e.Name.EndsWith(analyzedProperty.Name))) {
 				MethodDef accessor = isGetter ? property.GetMethod : property.SetMethod;
-				if (accessor is null || !(accessor.IsVirtual || accessor.IsAbstract))
+				// Don't include abstract accessors, they don't implement anything
+				if (accessor is null || !accessor.IsVirtual || accessor.IsAbstract)
 					continue;
 				if (accessor.HasOverrides && accessor.Overrides.Any(m => CheckEquals(m.MethodDeclaration.ResolveMethodDef(), analyzedMethod))) {
 					yield return new PropertyNode(property) { Context = Context };
@@ -75,7 +75,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 			foreach (PropertyDef property in type.Properties.Where(e => e.Name == analyzedProperty.Name)) {
 				MethodDef accessor = isGetter ? property.GetMethod : property.SetMethod;
-				if (accessor is null || !(accessor.IsVirtual || accessor.IsAbstract))
+				// Don't include abstract accessors, they don't implement anything
+				if (accessor is null || !accessor.IsVirtual || accessor.IsAbstract)
 					continue;
 				if (TypesHierarchyHelpers.MatchInterfaceMethod(accessor, analyzedMethod, implementedInterfaceRef)) {
 					yield return new PropertyNode(property) { Context = Context };

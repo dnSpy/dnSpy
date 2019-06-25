@@ -40,15 +40,15 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		IEnumerable<AnalyzerTreeNodeData> FindReferencesInType(TypeDef type) {
-			if (!type.HasInterfaces)
+			if (type.IsInterface)
 				yield break;
-			var iff = type.Interfaces.FirstOrDefault(i => new SigComparer().Equals(i.Interface?.GetScopeType(), analyzedMethod.DeclaringType));
-			var implementedInterfaceRef = iff?.Interface;
+			var implementedInterfaceRef = GetInterface(type, analyzedMethod.DeclaringType);
 			if (implementedInterfaceRef is null)
 				yield break;
 
 			foreach (MethodDef method in type.Methods) {
-				if (!(method.IsVirtual || method.IsAbstract))
+				// Don't include abstract methods, they don't implement anything
+				if (!method.IsVirtual || method.IsAbstract)
 					continue;
 				if (method.HasOverrides && method.Overrides.Any(m => CheckEquals(m.MethodDeclaration.ResolveMethodDef(), analyzedMethod))) {
 					yield return new MethodNode(method) { Context = Context };
@@ -57,13 +57,31 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 
 			foreach (MethodDef method in type.Methods.Where(m => m.Name == analyzedMethod.Name)) {
-				if (!(method.IsVirtual || method.IsAbstract))
+				// Don't include abstract methods, they don't implement anything
+				if (!method.IsVirtual || method.IsAbstract)
 					continue;
 				if (TypesHierarchyHelpers.MatchInterfaceMethod(method, analyzedMethod, implementedInterfaceRef)) {
 					yield return new MethodNode(method) { Context = Context };
 					yield break;
 				}
 			}
+		}
+
+		internal static ITypeDefOrRef? GetInterface(TypeDef type, TypeDef interfaceType) {
+			foreach (var t in TypesHierarchyHelpers.GetTypeAndBaseTypes(type)) {
+				var td = t.Resolve();
+				if (td is null)
+					break;
+				foreach (var ii in td.Interfaces) {
+					var genericArgs = t is GenericInstSig ? ((GenericInstSig)t).GenericArguments : null;
+					var iface = GenericArgumentResolver.Resolve(ii.Interface.ToTypeSig(), genericArgs, null);
+					if (iface is null)
+						continue;
+					if (new SigComparer().Equals(ii.Interface.GetScopeType(), interfaceType))
+						return iface.ToTypeDefOrRef();
+				}
+			}
+			return null;
 		}
 
 		public static bool CanShow(MethodDef method) => method.DeclaringType.IsInterface && (method.IsVirtual || method.IsAbstract);

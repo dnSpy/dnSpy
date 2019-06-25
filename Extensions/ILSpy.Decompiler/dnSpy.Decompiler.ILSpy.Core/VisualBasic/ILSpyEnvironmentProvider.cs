@@ -81,7 +81,7 @@ return loader.ReadTypeReference(annotation, entity: current).Resolve(context);*/
 			if (annotation is null || annotation.InferredType is null)
 				return TypeCode.Object;
 
-			var definition = annotation.InferredType.ScopeType.ResolveTypeDef();
+			var definition = annotation.InferredType.GetScopeTypeDefOrRef().ResolveTypeDef();
 
 			if (definition is null)
 				return TypeCode.Object;
@@ -105,7 +105,7 @@ return loader.ReadTypeReference(annotation, entity: current).Resolve(context);*/
 			if (annotation is null || annotation.InferredType is null)
 				return null;
 
-			var definition = annotation.InferredType.ScopeType.ResolveTypeDef();
+			var definition = annotation.InferredType.GetScopeTypeDefOrRef().ResolveTypeDef();
 
 			if (definition is null)
 				return null;

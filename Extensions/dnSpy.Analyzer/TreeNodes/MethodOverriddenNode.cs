@@ -43,23 +43,30 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		protected override IEnumerable<AnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
 			AddTypeEquivalentTypes(Context.DocumentService, analyzedTypes[0], analyzedTypes);
+			var overrides = analyzedMethod.Overrides;
 			foreach (var declType in analyzedTypes) {
-				var type = declType.BaseType.ResolveTypeDef();
-				while (!(type is null)) {
-					foreach (var method in type.Methods) {
-						if (TypesHierarchyHelpers.IsBaseMethod(method, analyzedMethod)) {
+				if (overrides.Count > 0) {
+					bool matched = false;
+					foreach (var o in overrides) {
+						if (o.MethodDeclaration.ResolveMethodDef() is MethodDef method && (method.IsVirtual || method.IsAbstract)) {
+							matched = true;
 							yield return new MethodNode(method) { Context = Context };
-							yield break;
 						}
 					}
-					type = type.BaseType.ResolveTypeDef();
+					if (matched)
+						yield break;
+				}
+				foreach (var method in TypesHierarchyHelpers.FindBaseMethods(analyzedMethod, declType)) {
+					if (!(method.IsVirtual || method.IsAbstract))
+						continue;
+					yield return new MethodNode(method) { Context = Context };
+					yield break;
 				}
 			}
 		}
 
 		public static bool CanShow(MethodDef method) =>
 			!(method.DeclaringType.BaseType is null) &&
-			method.IsVirtual &&
-			!method.DeclaringType.IsInterface;
+			(method.IsVirtual || method.IsAbstract) && method.IsReuseSlot;
 	}
 }

@@ -23,6 +23,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.Properties;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
@@ -229,7 +230,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		object ConvertEnum(TypeSig elemType, IList<CAArgument> oldList) {
-			var td = elemType.ScopeType.ResolveTypeDef();
+			var td = elemType.GetScopeTypeDefOrRef().ResolveTypeDef();
 			ElementType underlyingElemType = ElementType.End;
 			if (!(td is null) && td.IsEnum)
 				underlyingElemType = td.GetEnumUnderlyingType().RemovePinnedAndModifiers().GetElementType();

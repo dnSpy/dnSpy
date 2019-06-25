@@ -55,7 +55,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			if (analyzedMethod.HasBody)
 				yield return new MethodUsesNode(analyzedMethod);
 
-			if (analyzedMethod.IsVirtual && !(analyzedMethod.IsNewSlot && analyzedMethod.IsFinal))
+			if ((analyzedMethod.IsVirtual || analyzedMethod.IsAbstract) && !(analyzedMethod.IsNewSlot && analyzedMethod.IsFinal))
 				yield return new VirtualMethodUsedByNode(analyzedMethod);
 			else
 				yield return new MethodUsedByNode(analyzedMethod);
