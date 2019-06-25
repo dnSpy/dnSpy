@@ -120,9 +120,6 @@
   <data name="DbgAsm_Args" xml:space="preserve">
     <value>A_rgomenti</value>
   </data>
-  <data name="DbgAsm_Assembly" xml:space="preserve">
-    <value>_Assembly</value>
-  </data>
   <data name="DbgAsm_BreakAt" xml:space="preserve">
     <value>_Interrompi a</value>
   </data>
@@ -276,5 +273,8 @@ Errore: 0x{1:X8}</value>
   </data>
   <data name="DbgAsm_UseHostExecutable" xml:space="preserve">
     <value>Use host executable</value>
+  </data>
+  <data name="DbgAsm_Executable" xml:space="preserve">
+    <value>E_seguibile</value>
   </data>
 </root>

@@ -1861,7 +1861,7 @@
     <value>Наступна Закладка із Тою ж Міткою</value>
   </data>
   <data name="GoToPreviousBookmarkCommand" xml:space="preserve">
-    <value>_Попередня закладка</value>
+    <value>_Попередня Закладка</value>
   </data>
   <data name="GoToPreviousBookmarkInDocumentCommand" xml:space="preserve">
     <value>П_опередня закладка в документі</value>

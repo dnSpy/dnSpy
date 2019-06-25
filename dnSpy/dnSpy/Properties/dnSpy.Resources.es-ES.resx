@@ -2040,7 +2040,7 @@
     <value>&lt; desconocido &gt;</value>
   </data>
   <data name="TypeReferencesFolder" xml:space="preserve">
-    <value>Type References</value>
+    <value>Tipos de referencias</value>
   </data>
   <data name="TreeViewEventsFolder" xml:space="preserve">
     <value>Eventos</value>
@@ -2055,6 +2055,6 @@
     <value>Propiedades</value>
   </data>
   <data name="TreeViewTypesFolder" xml:space="preserve">
-    <value>Types</value>
+    <value>Tipos</value>
   </data>
 </root>

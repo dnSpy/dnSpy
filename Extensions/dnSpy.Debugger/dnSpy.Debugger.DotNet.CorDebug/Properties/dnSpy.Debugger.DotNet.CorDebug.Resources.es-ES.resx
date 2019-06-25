@@ -120,9 +120,6 @@
   <data name="DbgAsm_Args" xml:space="preserve">
     <value>A_rgumentos</value>
   </data>
-  <data name="DbgAsm_Assembly" xml:space="preserve">
-    <value>_Ensamblado</value>
-  </data>
   <data name="DbgAsm_BreakAt" xml:space="preserve">
     <value>_Romper en</value>
   </data>
@@ -272,5 +269,8 @@ Error: 0 x{1:X8}</value>
   </data>
   <data name="DbgAsm_UseHostExecutable" xml:space="preserve">
     <value>Usar anfitrión ejecutable</value>
+  </data>
+  <data name="DbgAsm_Executable" xml:space="preserve">
+    <value>E_jecutable</value>
   </data>
 </root>

@@ -120,9 +120,6 @@
   <data name="DbgAsm_Args" xml:space="preserve">
     <value>Argümanlar</value>
   </data>
-  <data name="DbgAsm_Assembly" xml:space="preserve">
-    <value>_Assembly</value>
-  </data>
   <data name="DbgAsm_BreakAt" xml:space="preserve">
     <value>_Atla</value>
   </data>
@@ -276,5 +273,8 @@ Hata: 0x{1:X8}</value>
   </data>
   <data name="DbgAsm_UseHostExecutable" xml:space="preserve">
     <value>Ana bilgisayar da yürütülebilir</value>
+  </data>
+  <data name="DbgAsm_Executable" xml:space="preserve">
+    <value>Çalıştırılabilir</value>
   </data>
 </root>

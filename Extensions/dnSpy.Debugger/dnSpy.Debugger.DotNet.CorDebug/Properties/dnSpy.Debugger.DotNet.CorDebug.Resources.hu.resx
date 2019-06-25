@@ -120,9 +120,6 @@
   <data name="DbgAsm_Args" xml:space="preserve">
     <value>_Argumentumok</value>
   </data>
-  <data name="DbgAsm_Assembly" xml:space="preserve">
-    <value>_Szerelvény</value>
-  </data>
   <data name="DbgAsm_BreakAt" xml:space="preserve">
     <value>_Töréspont</value>
   </data>
@@ -276,5 +273,8 @@ Hiba: 0x{1:X8}</value>
   </data>
   <data name="DbgAsm_UseHostExecutable" xml:space="preserve">
     <value>Gazda végrehajtó használata</value>
+  </data>
+  <data name="DbgAsm_Executable" xml:space="preserve">
+    <value>_Futtatható</value>
   </data>
 </root>

@@ -1525,6 +1525,6 @@ ERROR: {1}</value>
     <value>Lleva dnSpy al primer plano al romper en el depurador</value>
   </data>
   <data name="Column_LoadModule" xml:space="preserve">
-    <value>Load</value>
+    <value>Cargar</value>
   </data>
 </root>

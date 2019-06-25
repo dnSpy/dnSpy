@@ -120,9 +120,6 @@
   <data name="DbgAsm_Args" xml:space="preserve">
     <value>А_ргументи</value>
   </data>
-  <data name="DbgAsm_Assembly" xml:space="preserve">
-    <value>_Збірка</value>
-  </data>
   <data name="DbgAsm_BreakAt" xml:space="preserve">
     <value>_Зупинитись на</value>
   </data>
@@ -276,5 +273,8 @@ HR: 0x{0:X8}
   </data>
   <data name="DbgAsm_UseHostExecutable" xml:space="preserve">
     <value>Використовувати виконавчий файл хоста</value>
+  </data>
+  <data name="DbgAsm_Executable" xml:space="preserve">
+    <value>Виконавчий</value>
   </data>
 </root>

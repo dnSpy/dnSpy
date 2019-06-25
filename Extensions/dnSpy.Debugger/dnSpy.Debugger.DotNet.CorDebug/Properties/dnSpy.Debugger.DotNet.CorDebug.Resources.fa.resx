@@ -120,9 +120,6 @@
   <data name="DbgAsm_Args" xml:space="preserve">
     <value>آرگومان ها</value>
   </data>
-  <data name="DbgAsm_Assembly" xml:space="preserve">
-    <value>_اسمبلی</value>
-  </data>
   <data name="DbgAsm_BreakAt" xml:space="preserve">
     <value>_توقف در</value>
   </data>
@@ -276,5 +273,8 @@ Error: 0x{1:X8}</value>
   </data>
   <data name="DbgAsm_UseHostExecutable" xml:space="preserve">
     <value>استفاده از میزبان اجرایی</value>
+  </data>
+  <data name="DbgAsm_Executable" xml:space="preserve">
+    <value>اجرایی</value>
   </data>
 </root>

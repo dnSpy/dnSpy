@@ -120,9 +120,6 @@
   <data name="DbgAsm_Args" xml:space="preserve">
     <value>A_rgumente</value>
   </data>
-  <data name="DbgAsm_Assembly" xml:space="preserve">
-    <value>_Assembly</value>
-  </data>
   <data name="DbgAsm_BreakAt" xml:space="preserve">
     <value>Unter_breche bei</value>
   </data>
@@ -276,5 +273,8 @@ Error: 0x{1:X8}</value>
   </data>
   <data name="DbgAsm_UseHostExecutable" xml:space="preserve">
     <value>Ausführbaren Host verwenden</value>
+  </data>
+  <data name="DbgAsm_Executable" xml:space="preserve">
+    <value>Ausführbare _Datei</value>
   </data>
 </root>
