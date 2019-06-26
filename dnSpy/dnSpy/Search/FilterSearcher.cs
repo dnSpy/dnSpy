@@ -26,6 +26,7 @@ using System.Windows.Threading;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnlib.DotNet.Resources;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Documents.TreeView.Resources;
@@ -67,7 +68,7 @@ namespace dnSpy.Search {
 			var res = options.Filter.GetResultAttributes(hca);
 			if (!res.IsMatch)
 				return;
-			foreach (var ca in hca.CustomAttributes) {
+			foreach (var ca in hca.GetCustomAttributes()) {
 				options.CancellationToken.ThrowIfCancellationRequested();
 				foreach (var o in ca.ConstructorArguments) {
 					options.CancellationToken.ThrowIfCancellationRequested();

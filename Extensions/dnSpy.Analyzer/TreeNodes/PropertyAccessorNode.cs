@@ -24,8 +24,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 	sealed class PropertyAccessorNode : MethodNode {
 		readonly string? name;
 
-		public PropertyAccessorNode(MethodDef analyzedMethod, string? name)
-			: base(analyzedMethod) => this.name = name;
+		public PropertyAccessorNode(MethodDef analyzedMethod, string? name, bool isSetter)
+			: base(analyzedMethod, isSetter: isSetter) => this.name = name;
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) {
 			if (!(name is null))

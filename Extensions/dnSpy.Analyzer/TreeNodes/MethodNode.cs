@@ -30,10 +30,12 @@ namespace dnSpy.Analyzer.TreeNodes {
 	class MethodNode : EntityNode {
 		readonly MethodDef analyzedMethod;
 		readonly bool hidesParent;
+		readonly bool isSetter;
 
-		public MethodNode(MethodDef analyzedMethod, bool hidesParent = false) {
+		public MethodNode(MethodDef analyzedMethod, bool hidesParent = false, bool isSetter = false) {
 			this.analyzedMethod = analyzedMethod ?? throw new ArgumentNullException(nameof(analyzedMethod));
 			this.hidesParent = hidesParent;
+			this.isSetter = isSetter;
 		}
 
 		public override void Initialize() => TreeNode.LazyLoading = true;
@@ -56,9 +58,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 				yield return new MethodUsesNode(analyzedMethod);
 
 			if ((analyzedMethod.IsVirtual || analyzedMethod.IsAbstract) && !(analyzedMethod.IsNewSlot && analyzedMethod.IsFinal))
-				yield return new VirtualMethodUsedByNode(analyzedMethod);
+				yield return new VirtualMethodUsedByNode(analyzedMethod, isSetter);
 			else
-				yield return new MethodUsedByNode(analyzedMethod);
+				yield return new MethodUsedByNode(analyzedMethod, isSetter);
 
 			if (MethodOverriddenNode.CanShow(analyzedMethod))
 				yield return new MethodOverriddenNode(analyzedMethod);

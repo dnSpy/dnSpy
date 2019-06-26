@@ -109,11 +109,12 @@ namespace dnSpy.Contracts.Decompiler {
 		/// Finds all methods from base types overridden or hidden by the specified method.
 		/// </summary>
 		/// <param name="method">The method which overrides or hides methods from base types.</param>
+		/// <param name="compareReturnType">Compare return type if true</param>
 		/// <returns>Methods overriden or hidden by the specified method.</returns>
-		public static IEnumerable<MethodDef> FindBaseMethods(MethodDef? method) =>
-			FindBaseMethods(method, method?.DeclaringType);
+		public static IEnumerable<MethodDef> FindBaseMethods(MethodDef? method, bool compareReturnType = true) =>
+			FindBaseMethods(method, method?.DeclaringType, compareReturnType);
 
-		public static IEnumerable<MethodDef> FindBaseMethods(MethodDef? method, TypeDef? declType) {
+		public static IEnumerable<MethodDef> FindBaseMethods(MethodDef? method, TypeDef? declType, bool compareReturnType = true) {
 			if (method is null || declType is null)
 				yield break;
 
@@ -122,7 +123,7 @@ namespace dnSpy.Contracts.Decompiler {
 				if (baseTypeDef is null)
 					continue;
 				foreach (var baseMethod in baseTypeDef.Methods) {
-					if (MatchMethod(baseMethod, Resolve(baseMethod.MethodSig, baseType), method) && IsVisibleFromDerived(baseMethod, declType)) {
+					if (MatchMethod(baseMethod, Resolve(baseMethod.MethodSig, baseType), method, compareReturnType) && IsVisibleFromDerived(baseMethod, declType)) {
 						yield return baseMethod;
 						if (baseMethod.IsNewSlot == baseMethod.IsVirtual)
 							yield break;
@@ -131,17 +132,18 @@ namespace dnSpy.Contracts.Decompiler {
 			}
 		}
 
-		private static bool MatchMethod(MethodDef? mCandidate, MethodBaseSig? mCandidateSig, MethodDef? mMethod) =>
-			MatchMethod(mCandidate, mCandidateSig, mMethod, mMethod?.MethodSig);
+		private static bool MatchMethod(MethodDef? mCandidate, MethodBaseSig? mCandidateSig, MethodDef? mMethod, bool compareReturnType = true) =>
+			MatchMethod(mCandidate, mCandidateSig, mMethod, mMethod?.MethodSig, compareReturnType);
 
-		static bool MatchMethod(MethodDef? mCandidate, MethodBaseSig? mCandidateSig, MethodDef? mMethod, MethodBaseSig? mMethodSig) {
+		static bool MatchMethod(MethodDef? mCandidate, MethodBaseSig? mCandidateSig, MethodDef? mMethod, MethodBaseSig? mMethodSig, bool compareReturnType = true) {
 			if (mCandidate is null || mCandidateSig is null || mMethod is null)
 				return false;
 
 			if (mCandidate.Name != mMethod.Name)
 				return false;
 
-			return new SigComparer().Equals(mCandidateSig, mMethodSig);
+			var options = compareReturnType ? 0 : SigComparerOptions.DontCompareReturnType;
+			return new SigComparer(options).Equals(mCandidateSig, mMethodSig);
 		}
 
 		public static bool MatchInterfaceMethod(MethodDef? candidate, MethodDef? method, ITypeDefOrRef interfaceContextType) {
@@ -261,7 +263,7 @@ namespace dnSpy.Contracts.Decompiler {
 						string assemblyName = attribute.ConstructorArguments[0].Value as UTF8String;
 						if (assemblyName is null)
 							continue;
-						assemblyName = assemblyName.Split(',')[0];
+						assemblyName = new AssemblyNameInfo(assemblyName).Name;
 						if (StringComparer.OrdinalIgnoreCase.Equals(assemblyName, derivedTypeAsm.Name))
 							return true;
 					}
@@ -273,7 +275,7 @@ namespace dnSpy.Contracts.Decompiler {
 						string assemblyName = attribute.ConstructorArguments[0].Value as UTF8String;
 						if (assemblyName is null)
 							continue;
-						assemblyName = assemblyName.Split(',')[0];
+						assemblyName = new AssemblyNameInfo(assemblyName).Name;
 						if (StringComparer.OrdinalIgnoreCase.Equals(assemblyName, asm.Name))
 							return true;
 					}

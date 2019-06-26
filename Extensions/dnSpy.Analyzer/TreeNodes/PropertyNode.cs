@@ -57,13 +57,13 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
 			if (!(analyzedProperty.GetMethod is null))
-				yield return new PropertyAccessorNode(analyzedProperty.GetMethod, "get");
+				yield return new PropertyAccessorNode(analyzedProperty.GetMethod, "get", isSetter: false);
 
 			if (!(analyzedProperty.SetMethod is null))
-				yield return new PropertyAccessorNode(analyzedProperty.SetMethod, "set");
+				yield return new PropertyAccessorNode(analyzedProperty.SetMethod, "set", isSetter: true);
 
 			foreach (var accessor in analyzedProperty.OtherMethods)
-				yield return new PropertyAccessorNode(accessor, null);
+				yield return new PropertyAccessorNode(accessor, null, isSetter: false);
 
 			if (PropertyOverriddenNode.CanShow(analyzedProperty))
 				yield return new PropertyOverriddenNode(analyzedProperty);

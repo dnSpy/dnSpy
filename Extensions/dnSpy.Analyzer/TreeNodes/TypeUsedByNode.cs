@@ -36,7 +36,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			output.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.UsedByTreeNode);
 
 		protected override IEnumerable<AnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
-			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNodeData>(Context.DocumentService, analyzedType, FindTypeUsage);
+			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNodeData>(Context.DocumentService, analyzedType, FindTypeUsage, includeAllModules: CustomAttributesUtils.IsPseudoCustomAttributeType(analyzedType) || CustomAttributesUtils.IsPseudoCustomAttributeOtherType(analyzedType));
 			return analyzer.PerformAnalysis(ct)
 				.Cast<EntityNode>()
 				.Where(n => n.Member!.DeclaringType != analyzedType)
@@ -55,10 +55,10 @@ namespace dnSpy.Analyzer.TreeNodes {
 					}
 				}
 				if (module.Assembly is AssemblyDef asm && analyzedAssemblies.Add(asm)) {
-					if (IsUsedInCustomAttributes(asm))
+					if (analyzedTypeIsExported || IsUsedInCustomAttributes(asm))
 						yield return new AssemblyNode(asm) { Context = Context };
 				}
-				if (analyzedTypeIsExported || IsUsedInCustomAttributes(module))
+				if (IsUsedInCustomAttributes(module))
 					yield return new ModuleNode(module) { Context = Context };
 			}
 		}
@@ -127,7 +127,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		bool IsUsedInCustomAttributes(IHasCustomAttribute? hca) {
 			if (hca is null)
 				return false;
-			foreach (var ca in hca.CustomAttributes) {
+			foreach (var ca in hca.GetCustomAttributes()) {
 				if (IsUsedInMethodRef(ca.Constructor))
 					return true;
 				foreach (var arg in ca.ConstructorArguments) {

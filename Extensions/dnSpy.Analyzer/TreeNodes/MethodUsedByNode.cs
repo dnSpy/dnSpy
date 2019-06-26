@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
@@ -29,9 +30,14 @@ using dnSpy.Contracts.Text;
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class MethodUsedByNode : SearchNode {
 		readonly MethodDef analyzedMethod;
+		readonly bool isSetter;
+		PropertyDef? property;
 		ConcurrentDictionary<MethodDef, int>? foundMethods;
 
-		public MethodUsedByNode(MethodDef analyzedMethod) => this.analyzedMethod = analyzedMethod ?? throw new ArgumentNullException(nameof(analyzedMethod));
+		public MethodUsedByNode(MethodDef analyzedMethod, bool isSetter) {
+			this.analyzedMethod = analyzedMethod ?? throw new ArgumentNullException(nameof(analyzedMethod));
+			this.isSetter = isSetter;
+		}
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
 			output.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.UsedByTreeNode);
@@ -39,9 +45,25 @@ namespace dnSpy.Analyzer.TreeNodes {
 		protected override IEnumerable<AnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
 			foundMethods = new ConcurrentDictionary<MethodDef, int>();
 
-			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNodeData>(Context.DocumentService, analyzedMethod, FindReferencesInType);
+			if (isSetter)
+				property = analyzedMethod.DeclaringType.Properties.FirstOrDefault(a => a.SetMethod == analyzedMethod);
+
+			var includeAllModules = !(property is null) && CustomAttributesUtils.IsPseudoCustomAttributeType(analyzedMethod.DeclaringType);
+			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNodeData>(Context.DocumentService, analyzedMethod, FindReferencesInType, includeAllModules);
 			foreach (var child in analyzer.PerformAnalysis(ct)) {
 				yield return child;
+			}
+
+			if (!(property is null)) {
+				var hash = new HashSet<AssemblyDef>();
+				foreach (var module in analyzer.AllModules) {
+					if (module.Assembly is AssemblyDef asm && hash.Add(module.Assembly)) {
+						foreach (var node in FieldAccessNode.CheckCustomAttributeNamedArgumentWrite(Context, asm, property))
+							yield return node;
+					}
+					foreach (var node in FieldAccessNode.CheckCustomAttributeNamedArgumentWrite(Context, module, property))
+						yield return node;
+				}
 			}
 
 			foundMethods = null;
@@ -69,6 +91,14 @@ namespace dnSpy.Analyzer.TreeNodes {
 							node.SourceRef = new SourceRef(method, foundInstr.Offset, foundInstr.Operand as IMDTokenProvider);
 						yield return node;
 					}
+				}
+			}
+
+			if (!(property is null)) {
+				foreach (var node in FieldAccessNode.CheckCustomAttributeNamedArgumentWrite(Context, type, property)) {
+					if (node is MethodNode methodNode && methodNode.Member is MethodDef method && HasAlreadyBeenFound(method))
+						continue;
+					yield return node;
 				}
 			}
 		}

@@ -110,7 +110,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				string assemblyName = attribute.ConstructorArguments[0].Value as UTF8String;
 				if (assemblyName is null)
 					continue;
-				assemblyName = assemblyName.Split(',')[0];
+				assemblyName = new AssemblyNameInfo(assemblyName).Name;
 				friendAssemblies.Add(assemblyName);
 			}
 			modules = documentService.GetDocuments().Where(a => CanIncludeModule(mod, a.ModuleDef)).ToArray();
@@ -123,7 +123,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 					string assemblyName = attribute.ConstructorArguments[0].Value as UTF8String;
 					if (assemblyName is null)
 						continue;
-					assemblyName = assemblyName.Split(',')[0];
+					assemblyName = new AssemblyNameInfo(assemblyName).Name;
 					if (StringComparer.OrdinalIgnoreCase.Equals(asm.Name.String, assemblyName))
 						friendAssemblies.Add(asm2.Name);
 				}

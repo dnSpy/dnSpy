@@ -32,6 +32,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		readonly IDsDocumentService documentService;
 		readonly TypeDef analyzedType;
 		readonly List<ModuleDef> allModules;
+		readonly bool includeAllModules;
 		TypeDef typeScope;
 
 		internal List<ModuleDef> AllModules => allModules;
@@ -40,19 +41,20 @@ namespace dnSpy.Analyzer.TreeNodes {
 		Accessibility typeAccessibility = Accessibility.Public;
 		readonly Func<TypeDef, IEnumerable<T>> typeAnalysisFunction;
 
-		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, TypeDef analyzedType, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction) {
+		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, TypeDef analyzedType, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction, bool includeAllModules = false) {
 			this.analyzedType = analyzedType;
 			typeScope = analyzedType;
 			this.typeAnalysisFunction = typeAnalysisFunction;
 			this.documentService = documentService;
 			allModules = new List<ModuleDef>();
+			this.includeAllModules = includeAllModules;
 		}
 
-		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, MethodDef method, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction)
-			: this(documentService, method.DeclaringType, typeAnalysisFunction) => memberAccessibility = GetMethodAccessibility(method);
+		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, MethodDef method, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction, bool includeAllModules = false)
+			: this(documentService, method.DeclaringType, typeAnalysisFunction, includeAllModules) => memberAccessibility = GetMethodAccessibility(method);
 
-		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, PropertyDef property, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction)
-			: this(documentService, property.DeclaringType, typeAnalysisFunction) {
+		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, PropertyDef property, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction, bool includeAllModules = false)
+			: this(documentService, property.DeclaringType, typeAnalysisFunction, includeAllModules) {
 			Accessibility getterAccessibility = (property.GetMethod is null) ? Accessibility.Private : GetMethodAccessibility(property.GetMethod);
 			Accessibility setterAccessibility = (property.SetMethod is null) ? Accessibility.Private : GetMethodAccessibility(property.SetMethod);
 			memberAccessibility = (Accessibility)Math.Max((int)getterAccessibility, (int)setterAccessibility);
@@ -64,8 +66,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 			// [CLS Rule 30: The accessibility of an event and of its accessors shall be identical.]
 			memberAccessibility = GetMethodAccessibility(eventDef.AddMethod);
 
-		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, FieldDef field, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction)
-			: this(documentService, field.DeclaringType, typeAnalysisFunction) {
+		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, FieldDef field, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction, bool includeAllModules = false)
+			: this(documentService, field.DeclaringType, typeAnalysisFunction, includeAllModules) {
 			switch (field.Attributes & FieldAttributes.FieldAccessMask) {
 			case FieldAttributes.Private:
 			default:
@@ -197,7 +199,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		IEnumerable<T> FindReferencesInAssemblyAndFriends(CancellationToken ct) {
 			IEnumerable<ModuleDef> modules;
-			if (TIAHelper.IsTypeDefEquivalent(analyzedType)) {
+			if (includeAllModules)
+				modules = documentService.GetDocuments().Select(a => a.ModuleDef).OfType<ModuleDef>();
+			else if (TIAHelper.IsTypeDefEquivalent(analyzedType)) {
 				var analyzedTypes = new List<TypeDef> { analyzedType };
 				SearchNode.AddTypeEquivalentTypes(documentService, analyzedType, analyzedTypes);
 				modules = SearchNode.GetTypeEquivalentModules(analyzedTypes);
@@ -210,7 +214,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		IEnumerable<T> FindReferencesGlobal(CancellationToken ct) {
 			IEnumerable<ModuleDef> modules;
-			if (TIAHelper.IsTypeDefEquivalent(analyzedType)) {
+			if (includeAllModules)
+				modules = documentService.GetDocuments().Select(a => a.ModuleDef).OfType<ModuleDef>();
+			else if (TIAHelper.IsTypeDefEquivalent(analyzedType)) {
 				var analyzedTypes = new List<TypeDef> { analyzedType };
 				SearchNode.AddTypeEquivalentTypes(documentService, analyzedType, analyzedTypes);
 				modules = SearchNode.GetTypeEquivalentModules(analyzedTypes);
@@ -265,7 +271,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			foreach (var module in modules) {
 				Debug.Assert(!(module.ModuleDef is null));
 				ct.ThrowIfCancellationRequested();
-				if (AssemblyReferencesScopeType(module.ModuleDef))
+				if (ModuleReferencesScopeType(module.ModuleDef))
 					yield return module.ModuleDef;
 			}
 		}
@@ -279,20 +285,18 @@ namespace dnSpy.Analyzer.TreeNodes {
 			foreach (var m in mod.Assembly.Modules)
 				yield return m;
 
-			if (asm.HasCustomAttributes) {
-				var friendAssemblies = SearchNode.GetFriendAssemblies(documentService, mod, out var modules);
-				if (friendAssemblies.Count > 0) {
-					foreach (var module in modules) {
-						Debug.Assert(!(module.ModuleDef is null));
-						ct.ThrowIfCancellationRequested();
-						if ((module.AssemblyDef is null || friendAssemblies.Contains(module.AssemblyDef.Name)) && AssemblyReferencesScopeType(module.ModuleDef))
-							yield return module.ModuleDef;
-					}
+			var friendAssemblies = SearchNode.GetFriendAssemblies(documentService, mod, out var modules);
+			if (friendAssemblies.Count > 0) {
+				foreach (var module in modules) {
+					Debug.Assert(!(module.ModuleDef is null));
+					ct.ThrowIfCancellationRequested();
+					if ((module.AssemblyDef is null || friendAssemblies.Contains(module.AssemblyDef.Name)) && ModuleReferencesScopeType(module.ModuleDef))
+						yield return module.ModuleDef;
 				}
 			}
 		}
 
-		bool AssemblyReferencesScopeType(ModuleDef mod) {
+		bool ModuleReferencesScopeType(ModuleDef mod) {
 			foreach (var typeRef in mod.GetTypeRefs()) {
 				if (new SigComparer().Equals(typeScope, typeRef))
 					return true;
