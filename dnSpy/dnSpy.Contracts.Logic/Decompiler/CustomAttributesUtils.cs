@@ -210,10 +210,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="module">Module</param>
 		/// <returns></returns>
-		public static IEnumerable<CustomAttribute> GetCustomAttributes(this ModuleDef module) {
-			foreach (var ca in module.CustomAttributes)
-				yield return ca;
-		}
+		public static IEnumerable<CustomAttribute> GetCustomAttributes(this ModuleDef module) => module.CustomAttributes;
 
 		/// <summary>
 		/// Gets custom attributes and pseudo custom attributes
@@ -419,15 +416,8 @@ namespace dnSpy.Contracts.Decompiler {
 			return null;
 		}
 
-		static bool HasIsReadOnlyAttribute(IHasCustomAttribute hca) {
-			if (hca == null)
-				return false;
-			foreach (var ca in hca.CustomAttributes) {
-				if (ca.TypeFullName == "System.Runtime.CompilerServices.IsReadOnlyAttribute")
-					return true;
-			}
-			return false;
-		}
+		static bool HasIsReadOnlyAttribute(IHasCustomAttribute hca) =>
+			!(Find(hca, systemRuntimeCompilerServicesName, isReadOnlyAttributeName) is null);
 
 		/// <summary>
 		/// Gets custom attributes and pseudo custom attributes
@@ -510,6 +500,20 @@ namespace dnSpy.Contracts.Decompiler {
 			return ca;
 		}
 
+		static CustomAttribute? Find(IHasCustomAttribute hca, UTF8String @namespace, UTF8String name) {
+			var cas = hca.CustomAttributes;
+			for (int i = 0; i < cas.Count; i++) {
+				var ca = cas[i];
+				var type = ca.AttributeType;
+				if (type.Name != name || type.Namespace != @namespace)
+					continue;
+				if (!(type.DeclaringType is null))
+					continue;
+				return ca;
+			}
+			return null;
+		}
+
 		/// <summary>
 		/// Gets custom attributes and pseudo custom attributes
 		/// </summary>
@@ -518,7 +522,7 @@ namespace dnSpy.Contracts.Decompiler {
 		public static IEnumerable<CustomAttribute> GetCustomAttributes(this PropertyDef property) {
 			foreach (var ca in property.CustomAttributes)
 				yield return ca;
-			var defMemCa = property.DeclaringType.CustomAttributes.Find("System.Reflection.DefaultMemberAttribute");
+			var defMemCa = Find(property.DeclaringType, systemReflectionName, defaultMemberAttributeName);
 			if (!(defMemCa is null) && defMemCa.ConstructorArguments.Count > 0 &&
 				defMemCa.ConstructorArguments[0].Value is UTF8String defMember &&
 				defMember != itemName && defMember == property.Name) {
@@ -601,6 +605,8 @@ namespace dnSpy.Contracts.Decompiler {
 		static readonly UTF8String securityAttributeName = new UTF8String("SecurityAttribute");
 		static readonly UTF8String indexerNameAttributeName = new UTF8String("IndexerNameAttribute");
 		static readonly UTF8String itemName = new UTF8String("Item");
+		static readonly UTF8String defaultMemberAttributeName = new UTF8String("DefaultMemberAttribute");
+		static readonly UTF8String isReadOnlyAttributeName = new UTF8String("IsReadOnlyAttribute");
 		static readonly PublicKeyToken contractsPublicKeyToken = new PublicKeyToken("b03f5f7f11d50a3a");
 
 		static readonly (UTF8String @namespace, UTF8String name)[] pseudoCANames = new (UTF8String, UTF8String)[] {
