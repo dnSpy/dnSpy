@@ -25,10 +25,6 @@ using System.Reflection;
 using System.Runtime.Loader;
 
 namespace dnSpy.MainApp {
-	partial class App {
-		readonly NetCoreAssemblyLoader netCoreAssemblyLoader = new NetCoreAssemblyLoader(AssemblyLoadContext.Default);
-	}
-
 	sealed class NetCoreAssemblyLoader {
 		string[] searchPaths;
 		readonly HashSet<string> searchPathsHash;

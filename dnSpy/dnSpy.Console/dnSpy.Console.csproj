@@ -27,6 +27,10 @@ The workaround is to add WindowsDesktop above.
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\dnSpy\MainApp\NetCoreAssemblyLoader.cs" Link="NetCoreAssemblyLoader.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="Properties\dnSpy.Console.Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

@@ -87,6 +87,9 @@ namespace dnSpy.MainApp {
 		readonly List<LoadedExtension> loadedExtensions = new List<LoadedExtension>();
 		readonly IAppCommandLineArgs args;
 		ExportProvider? exportProvider;
+#if NETCOREAPP
+		readonly NetCoreAssemblyLoader netCoreAssemblyLoader = new NetCoreAssemblyLoader(System.Runtime.Loader.AssemblyLoadContext.Default);
+#endif
 
 		Task<ExportProvider> initializeMEFTask;
 		Stopwatch? startupStopwatch;
