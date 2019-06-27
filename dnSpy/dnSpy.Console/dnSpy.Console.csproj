@@ -46,7 +46,7 @@ The workaround is to add WindowsDesktop above.
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\dnSpy\app.config">
+    <None Include="..\dnSpy\app.config" Condition=" '$(IsDotNetFramework)' == 'true' " >
       <Link>app.config</Link>
     </None>
     <None Include="..\dnSpy\app.manifest">

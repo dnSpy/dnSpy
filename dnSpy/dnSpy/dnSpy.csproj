@@ -48,7 +48,7 @@
   <ItemGroup>
     <Resource Include="Images\dnSpy.ico" />
     <EmbeddedResource Include="LicenseInfo\CREDITS.txt" />
-    <None Include="app.config" />
+    <None Remove="app.config" Condition=" '$(IsDotNetFramework)' != 'true' " />
     <None Include="app.manifest" />
     <None Include="Themes\*.dntheme">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
