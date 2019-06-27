@@ -846,7 +846,7 @@ namespace dnSpy_Console {
 		}
 
 		IEnumerable<ProjectModuleOptions> DumpDir(string path, string? pattern) {
-			pattern = pattern ?? "*";
+			pattern ??= "*";
 			Stack<string> stack = new Stack<string>();
 			stack.Push(path);
 			while (stack.Count > 0) {
@@ -893,7 +893,7 @@ namespace dnSpy_Console {
 		}
 
 		IEnumerable<ProjectModuleOptions> DumpDir2(string path, string pattern) {
-			pattern = pattern ?? "*";
+			pattern ??= "*";
 			foreach (var fi in GetFiles(path, pattern)) {
 				var info = OpenNetFile(fi.FullName);
 				if (!(info is null))

@@ -66,12 +66,12 @@ namespace dnSpy.Debugger.Attach {
 			var operatingSystem = options.OperatingSystem;
 			if (name is null || title is null || filename is null || commandLine is null || architecture is null || operatingSystem is null) {
 				var info = GetDefaultProperties(processProvider, options);
-				name = name ?? info.name ?? string.Empty;
-				title = title ?? info.title ?? string.Empty;
-				filename = filename ?? info.filename ?? string.Empty;
-				commandLine = commandLine ?? info.commandLine ?? string.Empty;
-				architecture = architecture ?? info.arch;
-				operatingSystem = operatingSystem ?? info.operatingSystem;
+				name ??= info.name ?? string.Empty;
+				title ??= info.title ?? string.Empty;
+				filename ??= info.filename ?? string.Empty;
+				commandLine ??= info.commandLine ?? string.Empty;
+				architecture ??= info.arch;
+				operatingSystem ??= info.operatingSystem;
 			}
 			if (architecture is null)
 				return null;

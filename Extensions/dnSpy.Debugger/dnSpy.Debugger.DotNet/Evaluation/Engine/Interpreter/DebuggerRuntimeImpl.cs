@@ -123,7 +123,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		}
 
 		public override DbgDotNetValue GetDotNetValue(ILValue value, DmdType? targetType = null) {
-			targetType = targetType ?? value.Type;
+			targetType ??= value.Type;
 			var dnValue = TryGetDotNetValue(value, value.IsNull ? targetType : value.Type, canCreateValue: true);
 			if (!(dnValue is null))
 				return dnValue;

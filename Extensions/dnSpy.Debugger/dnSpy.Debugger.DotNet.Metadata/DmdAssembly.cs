@@ -303,7 +303,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="argTypes">Constructor parameter types or null</param>
 		/// <returns></returns>
 		public object? CreateInstance(object? context, string typeName, bool ignoreCase, DmdBindingFlags bindingAttr, object?[]? args, IList<DmdType>? argTypes) {
-			args = args ?? Array.Empty<object?>();
+			args ??= Array.Empty<object?>();
 			if (!(argTypes is null) && args.Length != argTypes.Count)
 				throw new ArgumentException();
 			var type = GetType(typeName, false, ignoreCase);

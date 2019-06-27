@@ -84,10 +84,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				if (info.IsActive) {
 					if (info.Document is MemoryModuleDefDocument || info.Document is DynamicModuleDefDocument)
 						return info.Document.ModuleDef;
-					activeModule = activeModule ?? info.Document.ModuleDef;
+					activeModule ??= info.Document.ModuleDef;
 				}
 				else
-					foundModule = foundModule ?? info.Document.ModuleDef;
+					foundModule ??= info.Document.ModuleDef;
 			}
 			return activeModule ?? foundModule;
 		}

@@ -171,8 +171,8 @@ namespace dndbg.Engine {
 			if (clrPath is null || otherVersion is null) {
 				var infos = GetCoreCLRInfos(pid, runtimePath: null, dbgshimPath: info.DbgShimFilename);
 				if (infos.Length != 0) {
-					clrPath = clrPath ?? infos[0].CoreCLRTypeInfo.CoreCLRFilename;
-					otherVersion = otherVersion ?? infos[0].CoreCLRTypeInfo.Version;
+					clrPath ??= infos[0].CoreCLRTypeInfo.CoreCLRFilename;
+					otherVersion ??= infos[0].CoreCLRTypeInfo.Version;
 				}
 				else
 					throw new ArgumentException("Couldn't find a CoreCLR process");
