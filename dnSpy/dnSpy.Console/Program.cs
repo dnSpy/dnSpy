@@ -198,7 +198,8 @@ namespace dnSpy_Console {
 
 		public DnSpyDecompiler() {
 #if NETCOREAPP
-			netCoreAssemblyLoader.AddSearchPath(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+			// This assembly is always in the bin sub dir if one exists
+			netCoreAssemblyLoader.AddSearchPath(Path.GetDirectoryName(typeof(ILSpan).Assembly.Location));
 #endif
 			files = new List<string>();
 			asmPaths = new List<string>();

@@ -70,7 +70,6 @@ namespace dnSpy.Documents.Tabs {
 			}
 		}
 
-		void AddGacDocument(string asmFullName) => Documents.Add(DsDocumentInfo.CreateGacDocument(asmFullName));
 		void AddDocument(Assembly asm) => Documents.Add(DsDocumentInfo.CreateDocument(asm.Location));
 
 		public void AddDefaultDocuments() {

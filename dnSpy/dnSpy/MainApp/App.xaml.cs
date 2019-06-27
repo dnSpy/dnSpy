@@ -293,7 +293,7 @@ namespace dnSpy.MainApp {
 
 		Assembly[] GetAssemblies() {
 #if NETCOREAPP
-			netCoreAssemblyLoader.AddSearchPath(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+			netCoreAssemblyLoader.AddSearchPath(AppDirectories.BinDirectory);
 #endif
 			var list = new List<Assembly>();
 			list.Add(GetType().Assembly);
@@ -319,7 +319,7 @@ namespace dnSpy.MainApp {
 		}
 
 		Assembly[] LoadExtensionAssemblies() {
-			var dir = Path.GetDirectoryName(GetType().Assembly.Location);
+			var dir = AppDirectories.BinDirectory;
 			// Load the modules in a predictable order or multicore-JIT could stop recording. See
 			// "Understanding Background JIT compilation -> What can go wrong with background JIT compilation"
 			// in the PerfView docs for more info.

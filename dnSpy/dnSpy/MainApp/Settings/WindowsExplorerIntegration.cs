@@ -78,6 +78,10 @@ namespace dnSpy.MainApp.Settings {
 #if NETCOREAPP
 				// Use the native exe and not the managed file
 				path = Path.ChangeExtension(path, "exe");
+				if (!File.Exists(path)) {
+					// All .NET files could be in a bin sub dir
+					path = Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(path)), Path.GetFileName(path));
+				}
 #endif
 				if (!File.Exists(path)) {
 					messageBoxService.Show("Cannot locate dnSpy!");

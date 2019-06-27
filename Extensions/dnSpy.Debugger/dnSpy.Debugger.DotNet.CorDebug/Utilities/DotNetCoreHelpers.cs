@@ -24,6 +24,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using dnlib.DotNet;
 using dnlib.PE;
+using dnSpy.Contracts.App;
 using dnSpy.Debugger.Shared;
 using Microsoft.Win32;
 
@@ -108,7 +109,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 
 		public static string GetDebugShimFilename(int bitness) {
 #if NETFRAMEWORK
-			var basePath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+			var basePath = AppDirectories.BinDirectory;
 			basePath = Path.Combine(basePath, "debug", "core");
 			var filename = FileUtilities.GetNativeDllFilename("dbgshim");
 			switch (bitness) {
