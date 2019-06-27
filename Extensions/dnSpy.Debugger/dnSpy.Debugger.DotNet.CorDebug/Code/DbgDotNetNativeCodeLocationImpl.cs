@@ -60,7 +60,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Code {
 
 		public override bool Equals(object? obj) =>
 			obj is DbgDotNetNativeCodeLocationImpl other &&
-			CorCode.Object.Equals(other.CorCode.Object) &&
+			CorCode.Object?.Equals(other.CorCode.Object) == true &&
 			Module == other.Module &&
 			Token == other.Token &&
 			Offset == other.Offset &&

@@ -24,23 +24,23 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	abstract class DnDebuggerObjectHolder {
 		public abstract void Dispose();
 		public abstract void Close();
-		public abstract DbgEngineImpl Engine { get; }
+		public abstract DbgEngineImpl? Engine { get; }
 	}
 
 	abstract class DnDebuggerObjectHolder<T> : DnDebuggerObjectHolder where T : class {
 		public bool IsClosed => Object is null;
-		public abstract T Object { get; }
+		public abstract T? Object { get; }
 		public abstract int HashCode { get; }
 		public abstract DnDebuggerObjectHolder<T> AddRef();
 	}
 
 	sealed class DnDebuggerObjectHolderImpl<T> : DnDebuggerObjectHolder<T> where T : class {
-		public override T Object => obj;
+		public override T? Object => obj;
 		public override int HashCode { get; }
-		public override DbgEngineImpl Engine => engine;
+		public override DbgEngineImpl? Engine => engine;
 
-		T obj;
-		DbgEngineImpl engine;
+		T? obj;
+		DbgEngineImpl? engine;
 		int refCount;
 
 		DnDebuggerObjectHolderImpl(DbgEngineImpl engine, T obj) {
@@ -69,8 +69,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		}
 
 		public override void Dispose() {
-			obj = null!;
-			engine = null!;
+			obj = null;
+			engine = null;
 		}
 	}
 }

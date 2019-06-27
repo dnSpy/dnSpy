@@ -109,7 +109,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 			Debug.Assert(nativeCode?.IsIL == false);
 			if (nativeCode?.IsIL == false) {
 				var corCode = engine.CreateDnDebuggerObjectHolder(nativeCode);
-				Location = dbgDotNetNativeCodeLocationFactory.Value.Create(module, moduleId, FunctionToken, FunctionOffset, ilOffsetMapping, corCode.Object.Address, corFrame.NativeFrameIP, corCode);
+				Location = dbgDotNetNativeCodeLocationFactory.Value.Create(module, moduleId, FunctionToken, FunctionOffset, ilOffsetMapping, corCode.Object?.Address ?? 0, corFrame.NativeFrameIP, corCode);
 			}
 			else
 				Location = dbgDotNetCodeLocationFactory.Value.Create(moduleId, FunctionToken, FunctionOffset, ilOffsetMapping);
