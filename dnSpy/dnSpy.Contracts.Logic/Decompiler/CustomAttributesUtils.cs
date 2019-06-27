@@ -27,6 +27,8 @@ namespace dnSpy.Contracts.Decompiler {
 	/// </summary>
 	public static class CustomAttributesUtils {
 		static bool IsType(TypeDef type, (UTF8String @namespace, UTF8String name)[] typeNames) {
+			if (!(type.DeclaringType is null))
+				return false;
 			var name = type.Name;
 			var @namespace = type.Namespace;
 			foreach (var info in typeNames) {

@@ -56,7 +56,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			if (showWrites) {
 				var hash = new HashSet<AssemblyDef>();
 				foreach (var module in analyzer.AllModules) {
-					if (module.Assembly is AssemblyDef asm && hash.Add(module.Assembly)) {
+					if (module.Assembly is AssemblyDef asm && hash.Add(asm)) {
 						foreach (var node in CheckCustomAttributeNamedArgumentWrite(Context, asm, analyzedField))
 							yield return node;
 					}
