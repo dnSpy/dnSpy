@@ -42,6 +42,7 @@
     <MSVSCompositionVersion>16.1.8</MSVSCompositionVersion>
     <MSVSIntellisenseVersion>15.5.27130</MSVSIntellisenseVersion>
     <MSVSTextVersion>15.5.27130</MSVSTextVersion>
+    <NewtonsoftJsonVersion>12.0.2</NewtonsoftJsonVersion>
     <OokiiDialogsVersion>1.0.0</OokiiDialogsVersion>
     <RoslynVersion>2.10.0</RoslynVersion>
     <SCCompositionVersion>4.6.0-preview5.19224.8</SCCompositionVersion>

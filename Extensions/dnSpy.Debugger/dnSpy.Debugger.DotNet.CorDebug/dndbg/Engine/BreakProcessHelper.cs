@@ -28,16 +28,13 @@ namespace dndbg.Engine {
 	sealed class BreakProcessHelper {
 		readonly DnDebugger debugger;
 		readonly BreakProcessKind type;
-		readonly string filename1;
-		readonly string? filename2;
+		readonly string filename;
 		DnBreakpoint? breakpoint;
 
-		public BreakProcessHelper(DnDebugger debugger, BreakProcessKind type, string filename, bool isAppHost) {
+		public BreakProcessHelper(DnDebugger debugger, BreakProcessKind type, string filename, string? managedDllFilename) {
 			this.debugger = debugger ?? throw new ArgumentNullException(nameof(debugger));
 			this.type = type;
-			filename1 = filename;
-			if (isAppHost)
-				filename2 = Path.ChangeExtension(filename, "dll");
+			this.filename = managedDllFilename ?? filename;
 			AddStartupBreakpoint();
 		}
 
@@ -81,12 +78,8 @@ namespace dndbg.Engine {
 		}
 
 		bool IsOurModule(CorModule? module, out string? filename) {
-			if (IsModule(module, filename1)) {
-				filename = filename1;
-				return true;
-			}
-			if (IsModule(module, filename2)) {
-				filename = filename2;
+			if (IsModule(module, this.filename)) {
+				filename = this.filename;
 				return true;
 			}
 			filename = null;
@@ -162,7 +155,7 @@ namespace dndbg.Engine {
 
 		string? GetOtherModuleFullName(string name) {
 			try {
-				return Path.Combine(Path.GetDirectoryName(filename1), name);
+				return Path.Combine(Path.GetDirectoryName(filename), name);
 			}
 			catch {
 			}

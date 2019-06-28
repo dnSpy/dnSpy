@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\..\DnSpyCommon.props" />
+
+  <PropertyGroup>
+    <Copyright>$(DnSpyAssemblyCopyright)</Copyright>
+    <Version>$(DnSpyAssemblyVersion)</Version>
+    <InformationalVersion>$(DnSpyAssemblyInformationalVersion)</InformationalVersion>
+
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
+    <NullableContextOptions>enable</NullableContextOptions>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\dnSpy.Debugger.DotNet.CorDebug\Impl\AppHostInfo.cs" Link="AppHostInfo.cs" />
+    <Compile Include="..\dnSpy.Debugger.DotNet.CorDebug\Impl\AppHostInfoData.cs" Link="AppHostInfoData.cs" />
+    <Compile Include="..\dnSpy.Debugger.DotNet.CorDebug\Impl\ExeUtils.cs" Link="ExeUtils.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(IsDotNetFramework)' == 'true' ">
+    <Reference Include="System.IO.Compression" />
+  </ItemGroup>
+
+</Project>

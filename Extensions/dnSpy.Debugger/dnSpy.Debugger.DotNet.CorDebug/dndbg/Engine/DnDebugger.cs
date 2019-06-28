@@ -1087,7 +1087,7 @@ namespace dndbg.Engine {
 				throw new Exception("Could not create an ICorDebug instance");
 			var dbg = new DnDebugger(corDebug, options.DebugOptions!, options.DebugMessageDispatcher!, clrPath, debuggeeVersion, null, isAttach: false);
 			if (options.BreakProcessKind != BreakProcessKind.None)
-				new BreakProcessHelper(dbg, options.BreakProcessKind, options.Filename!, false);
+				new BreakProcessHelper(dbg, options.BreakProcessKind, options.Filename!, options.ManagedDllFilename);
 			dbg.CreateProcess(options);
 			return dbg;
 		}
@@ -1111,7 +1111,7 @@ namespace dndbg.Engine {
 					var dbg = new DnDebugger(cd, options.DebugOptions!, options.DebugMessageDispatcher!, coreclrFilename, null, version, isAttach: false);
 					(dbg.outputPipe, dbg.errorPipe) = pipeInfo;
 					if (options.BreakProcessKind != BreakProcessKind.None)
-						new BreakProcessHelper(dbg, options.BreakProcessKind, options.Filename!, clrType.HostFilename is null);
+						new BreakProcessHelper(dbg, options.BreakProcessKind, options.Filename!, options.ManagedDllFilename);
 					cd.DebugActiveProcess((int)pid, 0, out var comProcess);
 					var dnProcess = dbg.TryAdd(comProcess);
 					if (!(dnProcess is null))

@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using dnlib.DotNet;
 using dnlib.PE;

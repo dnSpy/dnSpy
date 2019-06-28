@@ -92,6 +92,11 @@ namespace dndbg.Engine {
 		public string? CurrentDirectory { get; set; }
 
 		/// <summary>
+		/// Path of managed dll if <see cref="Filename"/> is the .NET Core apphost executable
+		/// </summary>
+		public string? ManagedDllFilename { get; set; }
+
+		/// <summary>
 		/// Environment
 		/// </summary>
 		public KeyValuePair<string, string>[]? Environment { get; set; }
@@ -139,6 +144,7 @@ namespace dndbg.Engine {
 			other.Filename = Filename;
 			other.CommandLine = CommandLine;
 			other.CurrentDirectory = CurrentDirectory;
+			other.ManagedDllFilename = ManagedDllFilename;
 			other.InheritHandles = InheritHandles;
 			other.RedirectConsoleOutput = RedirectConsoleOutput;
 			other.ProcessCreationFlags = ProcessCreationFlags;
