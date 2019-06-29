@@ -421,6 +421,7 @@ namespace dnSpy.Debugger.DbgUI {
 		}
 
 		void ActivateWindow_UI() {
+			NativeMethods.SetForegroundWindow(new WindowInteropHelper(appWindow.Value.MainWindow).Handle);
 			NativeMethods.SetWindowPos(new WindowInteropHelper(appWindow.Value.MainWindow).Handle, IntPtr.Zero, 0, 0, 0, 0, 3);
 			appWindow.Value.MainWindow.Activate();
 		}
