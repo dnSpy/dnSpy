@@ -126,7 +126,13 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 						continue;
 					if (relPath == AppHostExeUnpatched)
 						continue;
-					var dotnetFile = Path.Combine(basePath, relPath);
+					string dotnetFile;
+					try {
+						dotnetFile = Path.Combine(basePath, relPath);
+					}
+					catch (ArgumentException) {
+						continue;
+					}
 					if (!PortableExecutableFileHelpers.IsPE(dotnetFile, out _, out hasDotNetMetadata))
 						continue;
 					if (!hasDotNetMetadata)
