@@ -28,16 +28,20 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		public readonly uint HashDataOffset;
 		public readonly uint HashDataSize;
 		public readonly byte[] Hash;
+		// The last byte of the hashed data. The reason the last byte is used instead of the first byte
+		// is that the first byte is most likely the first byte of a function, so it's not very random.
+		public readonly byte LastByte;
 
 		public const int MaxAppHostRelPathLength = 1024;
 
-		public AppHostInfo(string rid, string version, uint relPathOffset, uint hashDataOffset, uint hashDataSize, byte[] hash) {
+		public AppHostInfo(string rid, string version, uint relPathOffset, uint hashDataOffset, uint hashDataSize, byte[] hash, byte lastByte) {
 			Rid = rid;
 			Version = version;
 			RelPathOffset = relPathOffset;
 			HashDataOffset = hashDataOffset;
 			HashDataSize = hashDataSize;
 			Hash = hash;
+			LastByte = lastByte;
 		}
 	}
 }

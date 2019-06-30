@@ -136,9 +136,9 @@ namespace AppHostInfoGenerator {
 									var exeReader = new BinaryReader(new MemoryStream(appHostData));
 									if (!ExeUtils.TryGetTextSectionInfo(exeReader, out var textOffset, out var textSize))
 										throw new InvalidOperationException("Could not get .text offset/size");
-									if (!TryHashData(appHostData, relPathOffset, textOffset, textSize, out var hashDataOffset, out var hashDataSize, out var hash))
+									if (!TryHashData(appHostData, relPathOffset, textOffset, textSize, out var hashDataOffset, out var hashDataSize, out var hash, out var lastByte))
 										throw new InvalidOperationException("Failed to hash the .text section");
-									newInfos.Add(new AppHostInfo(info.rid, runtimePackageVersion, (uint)relPathOffset, (uint)hashDataOffset, (uint)hashDataSize, hash));
+									newInfos.Add(new AppHostInfo(info.rid, runtimePackageVersion, (uint)relPathOffset, (uint)hashDataOffset, (uint)hashDataSize, hash, lastByte));
 								}
 							}
 						}
@@ -234,6 +234,7 @@ namespace AppHostInfoGenerator {
 			SerializeCompressedUInt32(info.HashDataOffset, nameof(info.HashDataOffset));
 			SerializeCompressedUInt32(info.HashDataSize, nameof(info.HashDataSize));
 			SerializeByteArray(info.Hash, nameof(info.Hash), null, needLength: false);
+			SerializeByte(info.LastByte, nameof(info.LastByte));
 		}
 		const string serializeIndent = "\t\t\t";
 
@@ -268,6 +269,15 @@ namespace AppHostInfoGenerator {
 			Console.WriteLine();
 		}
 
+		static void SerializeByte(byte value, string name) {
+			Console.Write(serializeIndent);
+
+			Console.Write($"0x{value.ToString("X2")},");
+
+			WriteComment(name, null);
+			Console.WriteLine();
+		}
+
 		static void SerializeByteArray(byte[] value, string name, string? origValue, bool needLength) {
 			Console.Write(serializeIndent);
 			if (value.Length > byte.MaxValue)
@@ -292,7 +302,7 @@ namespace AppHostInfoGenerator {
 			Console.WriteLine();
 		}
 
-		static bool TryHashData(byte[] appHostData, int relPathOffset, int textOffset, int textSize, out int hashDataOffset, out int hashDataSize, [NotNullWhenTrue] out byte[]? hash) {
+		static bool TryHashData(byte[] appHostData, int relPathOffset, int textOffset, int textSize, out int hashDataOffset, out int hashDataSize, [NotNullWhenTrue] out byte[]? hash, out byte lastByte) {
 			hashDataOffset = textOffset;
 			hashDataSize = Math.Min(textSize, HashSize);
 			int hashDataSizeEnd = hashDataOffset + hashDataSize;
@@ -300,9 +310,11 @@ namespace AppHostInfoGenerator {
 			if ((hashDataOffset >= relPathOffsetEnd || hashDataSizeEnd <= relPathOffset) && hashDataSize >= MinHashSize) {
 				using (var sha1 = new SHA1Managed())
 					hash = sha1.ComputeHash(appHostData, hashDataOffset, hashDataSize);
+				lastByte = appHostData[hashDataOffset + hashDataSize - 1];
 				return true;
 			}
 			hash = null;
+			lastByte = 0;
 			return false;
 		}
 

@@ -162,17 +162,21 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			byte[]? hash = null;
 			foreach (var info in AppHostInfoData.KnownAppHostInfos) {
 				if (hash is null || !(hashDataOffset == info.HashDataOffset && hashDataSize == info.HashDataSize)) {
-					hashDataOffset = info.HashDataOffset;
-					hashDataSize = info.HashDataSize;
-					hash = Hash(data, hashDataOffset, hashDataSize);
+					if (Hash(data, info.HashDataOffset, info.HashDataSize, info.LastByte) is byte[] newHash) {
+						hash = newHash;
+						hashDataOffset = info.HashDataOffset;
+						hashDataSize = info.HashDataSize;
+					}
 				}
-				if (ByteArrayEquals(hash, info.Hash))
+				if (!(hash is null) && ByteArrayEquals(hash, info.Hash))
 					yield return info;
 			}
 		}
 
-		static byte[]? Hash(byte[] data, uint offset, uint size) {
+		static byte[]? Hash(byte[] data, uint offset, uint size, byte lastByte) {
 			if ((ulong)offset + size > (ulong)data.Length)
+				return null;
+			if (data[(int)(offset + size - 1)] != lastByte)
 				return null;
 			using (var sha1 = new SHA1Managed())
 				return sha1.ComputeHash(data, (int)offset, (int)size);
