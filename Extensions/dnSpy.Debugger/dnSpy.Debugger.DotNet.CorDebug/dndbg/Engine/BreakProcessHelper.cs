@@ -34,7 +34,7 @@ namespace dndbg.Engine {
 		public BreakProcessHelper(DnDebugger debugger, BreakProcessKind type, string filename, string? managedDllFilename) {
 			this.debugger = debugger ?? throw new ArgumentNullException(nameof(debugger));
 			this.type = type;
-			this.filename = managedDllFilename ?? filename;
+			this.filename = Path.GetFullPath(managedDllFilename ?? filename);
 			AddStartupBreakpoint();
 		}
 
