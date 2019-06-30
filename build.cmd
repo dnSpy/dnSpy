@@ -31,25 +31,27 @@ echo Building .NET Core x86 binaries
 msbuild -v:m -t:Restore -p:Configuration=Release -p:TargetFramework=netcoreapp3.0 -p:RuntimeIdentifier=win-x86 -p:SelfContained=True || goto :error
 msbuild -v:m -t:Publish -p:Configuration=Release -p:TargetFramework=netcoreapp3.0 -p:RuntimeIdentifier=win-x86 -p:SelfContained=True || goto :error
 REM move all files to a bin sub dir but keep the exe apphosts
-ren dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x86\publish bin || goto :error
+ren dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x86\publish tmpbin || goto :error
 mkdir dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x86\publish || goto :error
-move dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x86\bin dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x86\publish || goto :error
+move dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x86\tmpbin dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x86\publish || goto :error
+ren dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x86\publish\tmpbin bin || goto :error
 move dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x86\publish\bin\dnSpy.exe dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x86\publish || goto :error
 move dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x86\publish\bin\dnSpy.Console.exe dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x86\publish || goto :error
-Build\AppHostPatcher\bin\Release\net472\AppHostPatcher.exe dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x86\publish\dnSpy.exe dnSpy.dll bin\dnSpy.dll || goto :error
-Build\AppHostPatcher\bin\Release\net472\AppHostPatcher.exe dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x86\publish\dnSpy.Console.exe dnSpy.Console.dll bin\dnSpy.Console.dll || goto :error
+Build\AppHostPatcher\bin\Release\net472\AppHostPatcher.exe dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x86\publish\dnSpy.exe -d bin || goto :error
+Build\AppHostPatcher\bin\Release\net472\AppHostPatcher.exe dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x86\publish\dnSpy.Console.exe -d bin || goto :error
 
 echo Building .NET Core x64 binaries
 msbuild -v:m -t:Restore -p:Configuration=Release -p:TargetFramework=netcoreapp3.0 -p:RuntimeIdentifier=win-x64 -p:SelfContained=True || goto :error
 msbuild -v:m -t:Publish -p:Configuration=Release -p:TargetFramework=netcoreapp3.0 -p:RuntimeIdentifier=win-x64 -p:SelfContained=True || goto :error
 REM move all files to a bin sub dir but keep the exe apphosts
-ren dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x64\publish bin || goto :error
+ren dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x64\publish tmpbin || goto :error
 mkdir dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x64\publish || goto :error
-move dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x64\bin dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x64\publish || goto :error
+move dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x64\tmpbin dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x64\publish || goto :error
+ren dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x64\publish\tmpbin bin || goto :error
 move dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x64\publish\bin\dnSpy.exe dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x64\publish || goto :error
 move dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x64\publish\bin\dnSpy.Console.exe dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x64\publish || goto :error
-Build\AppHostPatcher\bin\Release\net472\AppHostPatcher.exe dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x64\publish\dnSpy.exe dnSpy.dll bin\dnSpy.dll || goto :error
-Build\AppHostPatcher\bin\Release\net472\AppHostPatcher.exe dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x64\publish\dnSpy.Console.exe dnSpy.Console.dll bin\dnSpy.Console.dll || goto :error
+Build\AppHostPatcher\bin\Release\net472\AppHostPatcher.exe dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x64\publish\dnSpy.exe -d bin || goto :error
+Build\AppHostPatcher\bin\Release\net472\AppHostPatcher.exe dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x64\publish\dnSpy.Console.exe -d bin || goto :error
 
 goto :EOF
 

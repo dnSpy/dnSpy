@@ -20,24 +20,47 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace AppHostPatcher {
 	class Program {
-		static void Usage() =>
-			Console.WriteLine("apphostpatcher <apphost.exe> <origdllpath> <newdllpath>");
+		static void Usage() {
+			Console.WriteLine("apphostpatcher <apphostexe> <origdllpath> <newdllpath>");
+			Console.WriteLine("apphostpatcher <apphostexe> <newdllpath>");
+			Console.WriteLine("apphostpatcher <apphostexe> -d <newsubdir>");
+			Console.WriteLine("example: apphostpatcher my.exe -d bin");
+		}
 
 		const int maxPathBytes = 1024;
 
+		static string ChangeExecutableExtension(string apphostExe) =>
+			RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? Path.ChangeExtension(apphostExe, ".dll") : apphostExe + ".dll";
+
 		static int Main(string[] args) {
 			try {
-				if (args.Length != 3) {
+				string apphostExe, origPath, newPath;
+				if (args.Length == 3) {
+					if (args[1] == "-d") {
+						apphostExe = args[0];
+						origPath = Path.GetFileName(ChangeExecutableExtension(apphostExe));
+						newPath = Path.Combine(args[2], origPath);
+					}
+					else {
+						apphostExe = args[0];
+						origPath = args[1];
+						newPath = args[2];
+					}
+				}
+				else if (args.Length == 2) {
+					apphostExe = args[0];
+					origPath = Path.GetFileName(ChangeExecutableExtension(apphostExe));
+					newPath = args[1];
+				}
+				else {
 					Usage();
 					return 1;
 				}
-				var apphostExe = args[0];
-				var origPath = args[1];
-				var newPath = args[2];
 				if (!File.Exists(apphostExe)) {
 					Console.WriteLine($"Apphost '{apphostExe}' does not exist");
 					return 1;
