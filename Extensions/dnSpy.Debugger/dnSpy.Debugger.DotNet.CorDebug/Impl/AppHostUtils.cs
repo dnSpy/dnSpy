@@ -28,8 +28,16 @@ using dnSpy.Debugger.DotNet.CorDebug.Utilities;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	static class AppHostUtils {
-		// Don't read more bytes than this, the rest is user data (if it's an apphost exe)
-		const int MaxAppHostExeSize = 500 * 1024;
+		static int CalculateMaxAppHostExeSize() {
+			ulong maxSize = 0;
+			foreach (var info in AppHostInfoData.KnownAppHostInfos) {
+				maxSize = Math.Max(maxSize, (ulong)info.HashDataOffset + info.HashDataSize);
+				maxSize = Math.Max(maxSize, (ulong)info.RelPathOffset + AppHostInfo.MaxAppHostRelPathLength);
+			}
+			return checked((int)maxSize);
+		}
+
+		static readonly int MaxAppHostExeSize = CalculateMaxAppHostExeSize();
 		const string AppHostExeUnpatched = "c3ab8ff13720e8ad9047dd39466b3c89" + "74e592c2fa383d4a3960714caef0c4f2";
 		static readonly byte[] AppHostExeUnpatchedSignature = Encoding.UTF8.GetBytes(AppHostExeUnpatched);
 		static readonly byte[] AppHostExeSignature = Encoding.UTF8.GetBytes("c3ab8ff13720e8ad9047dd39466b3c89");
