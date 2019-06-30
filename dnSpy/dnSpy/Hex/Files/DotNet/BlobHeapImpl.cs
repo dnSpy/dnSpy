@@ -136,12 +136,12 @@ namespace dnSpy.Hex.Files.DotNet {
 		}
 
 		BlobDataInfo? GetBlobDataInfo(HexPosition position) {
-			Debug.Assert(!(blobDataInfos is null));
 			if (!Span.Contains(position))
 				return null;
 			var index = GetIndex(position);
 			if (index < 0)
 				return null;
+			Debug.Assert(!(blobDataInfos is null));
 			return blobDataInfos[index];
 		}
 
