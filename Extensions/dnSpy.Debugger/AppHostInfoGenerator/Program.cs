@@ -84,7 +84,7 @@ namespace AppHostInfoGenerator {
 
 		static int Main(string[] args) {
 			try {
-				var knownVersions = new HashSet<string>(AppHostInfoData.KnownAppHostInfos.Select(a => a.Version));
+				var knownVersions = new HashSet<string>(AppHostInfoData.KnownAppHostInfos.Select(a => a.Version), StringComparer.Ordinal);
 				var newInfos = new List<AppHostInfo>();
 				var errors = new List<string>();
 				foreach (var version in DotNetAppHost_Versions_ToCheck) {
@@ -332,11 +332,11 @@ namespace AppHostInfoGenerator {
 
 		const string runtimesDir = "runtimes";
 		const string nativeDir = "native";
-		static readonly HashSet<string> apphostNames = new HashSet<string> {
+		static readonly HashSet<string> apphostNames = new HashSet<string>(StringComparer.Ordinal) {
 			"apphost",
 			"apphost.exe",
 		};
-		static readonly HashSet<string> ignoredNames = new HashSet<string> {
+		static readonly HashSet<string> ignoredNames = new HashSet<string>(StringComparer.Ordinal) {
 			"comhost.dll",
 			"ijwhost.dll",
 			"ijwhost.lib",
