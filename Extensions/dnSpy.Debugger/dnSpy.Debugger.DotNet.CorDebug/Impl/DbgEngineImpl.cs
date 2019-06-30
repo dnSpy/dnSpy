@@ -676,6 +676,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					env.Add("COMPlus_ZapDisable", "1");
 					env.Add("COMPlus_ReadyToRun", "0");
 				}
+				// Disable OS heap debugging https://github.com/0xd4d/dnSpy/issues/1106
+				env.Add("_NO_DEBUG_HEAP", "1");
 
 				var dbgOptions = new DebugProcessOptions(CreateDebugInfo(options)) {
 					DebugMessageDispatcher = debuggerThread.GetDebugMessageDispatcher(),
