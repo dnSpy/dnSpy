@@ -115,6 +115,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			("System.Runtime.CompilerServices", "AsyncTaskMethodBuilder"),
 			("System.Runtime.CompilerServices", "AsyncTaskMethodBuilder`1"),
 			("System.Runtime.CompilerServices", "AsyncVoidMethodBuilder"),
+			("System.Runtime.CompilerServices", "AsyncValueTaskMethodBuilder"),
 			("System.Runtime.CompilerServices", "AsyncValueTaskMethodBuilder`1"),
 		};
 
@@ -207,10 +208,15 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 					return resultValue = getTaskResult.Value;
 
 				var field = getTaskResult.Value.Type.GetField(KnownMemberNames.ValueTask_Task_FieldName, DmdBindingFlags.Instance | DmdBindingFlags.Public | DmdBindingFlags.NonPublic);
+				if (field is null)
+					field = getTaskResult.Value.Type.GetField(KnownMemberNames.ValueTask_Obj_FieldName, DmdBindingFlags.Instance | DmdBindingFlags.Public | DmdBindingFlags.NonPublic);
 				if (!(field is null)) {
 					taskFieldResult = runtime.LoadField(evalInfo, getTaskResult.Value, field);
-					if (taskFieldResult.IsNormalResult && !taskFieldResult.Value!.IsNull)
-						return resultValue = taskFieldResult.Value;
+					if (taskFieldResult.IsNormalResult && !taskFieldResult.Value!.IsNull) {
+						var taskType = taskFieldResult.Value.Type.AppDomain.GetWellKnownType(DmdWellKnownType.System_Threading_Tasks_Task, isOptional: true);
+						if (!(taskType is null) && taskFieldResult.Value.Type.IsSubclassOf(taskType))
+							return resultValue = taskFieldResult.Value;
+					}
 				}
 
 				return null;

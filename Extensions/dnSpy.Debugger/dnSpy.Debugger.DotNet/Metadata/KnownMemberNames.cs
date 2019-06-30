@@ -49,6 +49,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		// System.Threading.Tasks.ValueTask<TResult>
 		public const string ValueTask_Task_FieldName = "_task";// 4.0.0-rc2-24027 - 4.5.0-preview1-26216-02
+		public const string ValueTask_Obj_FieldName = "_obj";// 4.5.0-preview2-26406-04 - present
 
 		// System.Exception
 		public const string Exception_Message_FieldName = "_message";
