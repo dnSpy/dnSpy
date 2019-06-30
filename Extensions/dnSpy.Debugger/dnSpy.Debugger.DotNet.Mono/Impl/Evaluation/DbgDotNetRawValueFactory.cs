@@ -227,7 +227,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			var fields = structMirror.Type.GetFields().Where(a => !a.IsStatic && !a.IsLiteral).ToArray();
 			if (fields.Length != 4)
 				return default;
-			if (fields[0].Name != "flags" || fields[1].Name != "hi" || fields[2].Name != "lo" || fields[3].Name != "mid")
+			if (fields[0].Name != KnownMemberNames.Decimal_Flags_FieldName || fields[1].Name != KnownMemberNames.Decimal_Hi_FieldName || fields[2].Name != KnownMemberNames.Decimal_Lo_FieldName || fields[3].Name != KnownMemberNames.Decimal_Mid_FieldName)
 				return default;
 			var fieldValues = structMirror.Fields;
 			if (fieldValues.Length != 4)
@@ -252,7 +252,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			if (fields.Length == 1) {
 				// Newer Mono using .NET Core source code
 
-				if (fields[0].Name != "dateData" && fields[0].Name != "_dateData")
+				if (fields[0].Name != KnownMemberNames.DateTime_DateData_FieldName1 && fields[0].Name != KnownMemberNames.DateTime_DateData_FieldName2)
 					return default;
 				if (values[0] is PrimitiveValue pv && pv.Value is ulong) {
 					if (!(DateTime_ctor_UInt64 is null))
@@ -263,7 +263,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			else if (fields.Length == 2) {
 				// Unity and older Mono
 
-				if (fields[0].Name != "ticks" || fields[1].Name != "kind")
+				if (fields[0].Name != KnownMemberNames.DateTime_Ticks_FieldName_Mono || fields[1].Name != KnownMemberNames.DateTime_Kind_FieldName_Mono)
 					return default;
 				var ticksValue = values[0] as StructMirror;
 				var kindValue = values[1] as EnumMirror;
@@ -294,12 +294,12 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				return default;
 			Value hasValue, value;
 			TypeMirror valueType;
-			if ((fields[0].Name == "has_value" || fields[0].Name == "hasValue") && fields[1].Name == "value") {
+			if ((fields[0].Name == KnownMemberNames.Nullable_HasValue_FieldName_Mono || fields[0].Name == KnownMemberNames.Nullable_HasValue_FieldName) && fields[1].Name == KnownMemberNames.Nullable_Value_FieldName) {
 				hasValue = values[0];
 				value = values[1];
 				valueType = fields[1].FieldType;
 			}
-			else if ((fields[1].Name == "has_value" || fields[1].Name == "hasValue") && fields[0].Name == "value") {
+			else if ((fields[1].Name == KnownMemberNames.Nullable_HasValue_FieldName_Mono || fields[1].Name == KnownMemberNames.Nullable_HasValue_FieldName) && fields[0].Name == KnownMemberNames.Nullable_Value_FieldName) {
 				hasValue = values[1];
 				value = values[0];
 				valueType = fields[0].FieldType;

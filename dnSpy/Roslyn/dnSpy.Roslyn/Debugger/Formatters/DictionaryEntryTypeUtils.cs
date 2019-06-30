@@ -22,9 +22,6 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Debugger.Formatters {
 	static class DictionaryEntryTypeUtils {
-		const string KeyFieldName = "_key";
-		const string ValueFieldName = "_value";
-
 		public static bool IsDictionaryEntry(DmdType type) {
 			if (type.MetadataName != "DictionaryEntry" || type.MetadataNamespace != "System.Collections")
 				return false;
@@ -33,7 +30,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 
 		public static (DmdFieldInfo? keyField, DmdFieldInfo? valueField) TryGetFields(DmdType type) {
 			Debug.Assert(IsDictionaryEntry(type));
-			return KeyValuePairTypeUtils.TryGetFields(type, KeyFieldName, ValueFieldName);
+			return KeyValuePairTypeUtils.TryGetFields(type, KnownMemberNames.DictionaryEntry_Key_FieldName, KnownMemberNames.DictionaryEntry_Value_FieldName);
 		}
 	}
 }

@@ -37,6 +37,7 @@ using dnSpy.Contracts.Metadata;
 using dnSpy.Debugger.DotNet.CorDebug.CallStack;
 using dnSpy.Debugger.DotNet.CorDebug.DAC;
 using dnSpy.Debugger.DotNet.CorDebug.Properties;
+using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	abstract partial class DbgEngineImpl {
@@ -98,7 +99,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		}
 
 		ulong? GetManagedId(DnThread thread, DbgAppDomain? appDomain) {
-			var res = ReadField_CorDebug(TryGetThreadObject(thread), appDomain, "m_ManagedThreadId");
+			var res = ReadField_CorDebug(TryGetThreadObject(thread), appDomain, KnownMemberNames.Thread_ManagedThreadId_FieldName1, KnownMemberNames.Thread_ManagedThreadId_FieldName2);
 			if (res is null || !res.HasValue)
 				return null;
 			if (res.Value.ValueType == DbgSimpleValueType.Int32)
@@ -117,7 +118,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		}
 
 		string? GetThreadName(DnThread thread, DbgAppDomain? appDomain) {
-			var res = ReadField_CorDebug(TryGetThreadObject(thread), appDomain, "m_Name");
+			var res = ReadField_CorDebug(TryGetThreadObject(thread), appDomain, KnownMemberNames.Thread_Name_FieldName1, KnownMemberNames.Thread_Name_FieldName2);
 			if (res is null || !res.HasValue)
 				return null;
 			if (res.Value.ValueType == DbgSimpleValueType.StringUtf16)

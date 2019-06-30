@@ -16,6 +16,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\..\..\Extensions\dnSpy.Debugger\dnSpy.Debugger.DotNet\Metadata\KnownMemberNames.cs" Link="Metadata\KnownMemberNames.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\..\Extensions\dnSpy.Debugger\dnSpy.Debugger.DotNet.Metadata\dnSpy.Debugger.DotNet.Metadata.csproj" />
     <ProjectReference Include="..\..\dnSpy.Contracts.Debugger.DotNet\dnSpy.Contracts.Debugger.DotNet.csproj" />
     <ProjectReference Include="..\..\dnSpy.Contracts.Debugger\dnSpy.Contracts.Debugger.csproj" />

@@ -273,7 +273,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			var fields = GetFields(monoType, 4);
 			if (fields is null)
 				return new EvalArgumentResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
-			if (fields[0].Name != "flags" || fields[1].Name != "hi" || fields[2].Name != "lo" || fields[3].Name != "mid")
+			if (fields[0].Name != KnownMemberNames.Decimal_Flags_FieldName || fields[1].Name != KnownMemberNames.Decimal_Hi_FieldName || fields[2].Name != KnownMemberNames.Decimal_Lo_FieldName || fields[3].Name != KnownMemberNames.Decimal_Mid_FieldName)
 				return new EvalArgumentResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 
 			var bits = Decimal.GetBits(value);

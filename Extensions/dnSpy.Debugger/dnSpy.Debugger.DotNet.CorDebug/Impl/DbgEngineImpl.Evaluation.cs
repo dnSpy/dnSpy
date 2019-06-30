@@ -111,7 +111,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			dnDebugger.DisposeHandle(value);
 		}
 
-		DbgDotNetRawValue? ReadField_CorDebug(CorValue? obj, DbgAppDomain? appDomain, string fieldName) {
+		DbgDotNetRawValue? ReadField_CorDebug(CorValue? obj, DbgAppDomain? appDomain, string fieldName1, string fieldName2) {
 			if (obj is null || appDomain is null)
 				return null;
 			var reflectionAppDomain = appDomain.GetReflectionAppDomain();
@@ -122,15 +122,18 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				objImp = CreateDotNetValue_CorDebug(obj, reflectionAppDomain, tryCreateStrongHandle: false) as DbgDotNetValueImpl;
 				if (objImp is null)
 					return null;
-				return ReadField_CorDebug(objImp, fieldName);
+				return ReadField_CorDebug(objImp, fieldName1, fieldName2);
 			}
 			finally {
 				objImp?.Dispose();
 			}
 		}
 
-		DbgDotNetRawValue? ReadField_CorDebug(DbgDotNetValueImpl obj, string fieldName) {
-			var field = obj.Type.GetField(fieldName, DmdBindingFlags.Public | DmdBindingFlags.NonPublic | DmdBindingFlags.Instance);
+		DbgDotNetRawValue? ReadField_CorDebug(DbgDotNetValueImpl obj, string fieldName1, string? fieldName2) {
+			const DmdBindingFlags fieldFlags = DmdBindingFlags.Public | DmdBindingFlags.NonPublic | DmdBindingFlags.Instance;
+			var field = obj.Type.GetField(fieldName1, fieldFlags);
+			if (field is null && !(fieldName2 is null))
+				field = obj.Type.GetField(fieldName2, fieldFlags);
 			Debug.Assert(!(field is null));
 			if (field is null)
 				return null;

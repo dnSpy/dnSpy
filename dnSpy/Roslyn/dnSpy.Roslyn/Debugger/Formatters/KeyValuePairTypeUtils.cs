@@ -22,9 +22,6 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Debugger.Formatters {
 	static class KeyValuePairTypeUtils {
-		const string KeyFieldName = "key";
-		const string ValueFieldName = "value";
-
 		public static bool IsKeyValuePair(DmdType type) {
 			if (type.MetadataName != "KeyValuePair`2" || type.MetadataNamespace != "System.Collections.Generic")
 				return false;
@@ -36,7 +33,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 
 		public static (DmdFieldInfo? keyField, DmdFieldInfo? valueField) TryGetFields(DmdType type) {
 			Debug.Assert(IsKeyValuePair(type));
-			return TryGetFields(type, KeyFieldName, ValueFieldName);
+			return TryGetFields(type, KnownMemberNames.KeyValuePair_Key_FieldName, KnownMemberNames.KeyValuePair_Value_FieldName);
 		}
 
 		public static (DmdFieldInfo? keyField, DmdFieldInfo? valueField) TryGetFields(DmdType type, string keyFieldName, string valueFieldName) {

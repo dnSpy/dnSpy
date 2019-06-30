@@ -271,7 +271,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		string? TryGetExceptionMessage(DbgDotNetValueImpl? exObj) {
 			if (exObj is null)
 				return null;
-			var res = ReadField_CorDebug(exObj, "_message");
+			var res = ReadField_CorDebug(exObj, KnownMemberNames.Exception_Message_FieldName, null);
 			if (res is null || !res.Value.HasRawValue)
 				return null;
 			return res.Value.RawValue as string ?? dnSpy_Debugger_DotNet_CorDebug_Resources.ExceptionMessageIsNull;

@@ -43,9 +43,8 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		public override ReadOnlyCollection<string>? FormatSpecifiers => null;
 		public override bool? HasChildren => false;
 
-		const string EmptyPropertyName = "Empty";
 		readonly DbgDotNetText noResultsName;
-		static readonly DbgDotNetText emptyPropertyName = new DbgDotNetText(new DbgDotNetTextPart(DbgTextColor.InstanceProperty, EmptyPropertyName));
+		static readonly DbgDotNetText emptyPropertyName = new DbgDotNetText(new DbgDotNetTextPart(DbgTextColor.InstanceProperty, KnownMemberNames.SystemCore_EnumerableDebugViewEmptyException_Empty_PropertyName));
 
 		DebugViewNoResultsValueNode(string expression, string emptyMessage) {
 			Expression = expression;
@@ -58,7 +57,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 				if (!valueResult.ValueIsException)
 					return null;
 				var appDomain = valueResult.Value!.Type.AppDomain;
-				var emptyProperty = valueResult.Value.Type.GetProperty(EmptyPropertyName, DmdSignatureCallingConvention.HasThis | DmdSignatureCallingConvention.Property, 0, appDomain.System_String, Array.Empty<DmdType>(), throwOnError: false);
+				var emptyProperty = valueResult.Value.Type.GetProperty(KnownMemberNames.SystemCore_EnumerableDebugViewEmptyException_Empty_PropertyName, DmdSignatureCallingConvention.HasThis | DmdSignatureCallingConvention.Property, 0, appDomain.System_String, Array.Empty<DmdType>(), throwOnError: false);
 				var emptyGetter = emptyProperty?.GetGetMethod(DmdGetAccessorOptions.All);
 				if (emptyGetter is null)
 					return null;

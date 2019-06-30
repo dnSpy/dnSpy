@@ -22,10 +22,6 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Debugger.Formatters {
 	static class NullableTypeUtils {
-		const string HasValueFieldName = "hasValue";
-		const string HasValueFieldName_Mono = "has_value";
-		const string ValueFieldName = "value";
-
 		public static (DmdFieldInfo? hasValueField, DmdFieldInfo? valueField) TryGetNullableFields(DmdType type) {
 			Debug.Assert(type.IsNullable);
 
@@ -37,13 +33,13 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 				if (field.IsStatic || field.IsLiteral)
 					continue;
 				switch (field.Name) {
-				case HasValueFieldName:
-				case HasValueFieldName_Mono:
+				case KnownMemberNames.Nullable_HasValue_FieldName:
+				case KnownMemberNames.Nullable_HasValue_FieldName_Mono:
 					if (!(hasValueField is null))
 						return (null, null);
 					hasValueField = field;
 					break;
-				case ValueFieldName:
+				case KnownMemberNames.Nullable_Value_FieldName:
 					if (!(valueField is null))
 						return (null, null);
 					valueField = field;

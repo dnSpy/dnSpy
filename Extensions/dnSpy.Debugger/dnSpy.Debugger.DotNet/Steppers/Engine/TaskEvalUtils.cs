@@ -82,21 +82,13 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			TryGetBuilderFieldByname(type) ?? TryGetBuilderFieldByType(type);
 
 		static DmdFieldInfo? TryGetBuilderFieldByname(DmdType type) {
-			foreach (var name in builderFieldNames) {
+			foreach (var name in KnownMemberNames.builderFieldNames) {
 				const DmdBindingFlags flags = DmdBindingFlags.Instance | DmdBindingFlags.Public | DmdBindingFlags.NonPublic;
 				if (type.GetField(name, flags) is DmdFieldInfo field)
 					return field;
 			}
 			return null;
 		}
-		static readonly string[] builderFieldNames = new string[] {
-			// Roslyn C#
-			"<>t__builder",
-			// Roslyn Visual Basic
-			"$Builder",
-			// Mono mcs
-			"$builder",
-		};
 
 		static DmdFieldInfo? TryGetBuilderFieldByType(DmdType type) {
 			DmdFieldInfo? builderField = null;
@@ -126,12 +118,6 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			("System.Runtime.CompilerServices", "AsyncValueTaskMethodBuilder`1"),
 		};
 
-		const string AsyncTaskMethodBuilder_Builder_FieldName = "m_builder";
-		const string Builder_Task_FieldName = "m_task";
-		const string Builder_ObjectIdForDebugger_PropertyName = "ObjectIdForDebugger";
-		const string Builder_Task_PropertyName = "Task";
-		const string ValueTask_Task_Fieldname = "_task";
-
 		/// <summary>
 		/// Gets the task's object id or null on failure
 		/// </summary>
@@ -156,14 +142,14 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 				DmdFieldInfo? field;
 				var currInst = builderValue;
 
-				field = currInst.Type.GetField(AsyncTaskMethodBuilder_Builder_FieldName, DmdBindingFlags.Instance | DmdBindingFlags.Public | DmdBindingFlags.NonPublic);
+				field = currInst.Type.GetField(KnownMemberNames.AsyncTaskMethodBuilder_Builder_FieldName, DmdBindingFlags.Instance | DmdBindingFlags.Public | DmdBindingFlags.NonPublic);
 				if (!(field is null)) {
 					fieldResult1 = runtime.LoadField(evalInfo, currInst, field);
 					if (fieldResult1.IsNormalResult)
 						currInst = fieldResult1.Value!;
 				}
 
-				field = currInst.Type.GetField(Builder_Task_FieldName, DmdBindingFlags.Instance | DmdBindingFlags.Public | DmdBindingFlags.NonPublic);
+				field = currInst.Type.GetField(KnownMemberNames.Builder_Task_FieldName, DmdBindingFlags.Instance | DmdBindingFlags.Public | DmdBindingFlags.NonPublic);
 				if (!(field is null)) {
 					fieldResult2 = runtime.LoadField(evalInfo, currInst, field);
 					if (fieldResult2.IsNormalResult && !fieldResult2.Value!.IsNull)
@@ -186,7 +172,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			try {
 				var runtime = evalInfo.Runtime.GetDotNetRuntime();
 
-				var prop = builderValue.Type.GetProperty(Builder_ObjectIdForDebugger_PropertyName, DmdBindingFlags.Instance | DmdBindingFlags.Public | DmdBindingFlags.NonPublic);
+				var prop = builderValue.Type.GetProperty(KnownMemberNames.Builder_ObjectIdForDebugger_PropertyName, DmdBindingFlags.Instance | DmdBindingFlags.Public | DmdBindingFlags.NonPublic);
 				var getMethod = prop?.GetGetMethod(DmdGetAccessorOptions.All);
 				if (!(getMethod is null) && getMethod.GetMethodSignature().GetParameterTypes().Count == 0) {
 					getObjectIdTaskResult = runtime.Call(evalInfo, builderValue, getMethod, Array.Empty<object>(), DbgDotNetInvokeOptions.None);
@@ -209,7 +195,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			try {
 				var runtime = evalInfo.Runtime.GetDotNetRuntime();
 
-				var prop = builderValue.Type.GetProperty(Builder_Task_PropertyName, DmdBindingFlags.Instance | DmdBindingFlags.Public | DmdBindingFlags.NonPublic);
+				var prop = builderValue.Type.GetProperty(KnownMemberNames.Builder_Task_PropertyName, DmdBindingFlags.Instance | DmdBindingFlags.Public | DmdBindingFlags.NonPublic);
 				var getMethod = prop?.GetGetMethod(DmdGetAccessorOptions.All);
 				if (getMethod is null || getMethod.GetMethodSignature().GetParameterTypes().Count != 0)
 					return null;
@@ -220,7 +206,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 				if (!getTaskResult.Value.Type.IsValueType)
 					return resultValue = getTaskResult.Value;
 
-				var field = getTaskResult.Value.Type.GetField(ValueTask_Task_Fieldname, DmdBindingFlags.Instance | DmdBindingFlags.Public | DmdBindingFlags.NonPublic);
+				var field = getTaskResult.Value.Type.GetField(KnownMemberNames.ValueTask_Task_FieldName, DmdBindingFlags.Instance | DmdBindingFlags.Public | DmdBindingFlags.NonPublic);
 				if (!(field is null)) {
 					taskFieldResult = runtime.LoadField(evalInfo, getTaskResult.Value, field);
 					if (taskFieldResult.IsNormalResult && !taskFieldResult.Value!.IsNull)

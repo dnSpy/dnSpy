@@ -17,13 +17,14 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Debugger.DotNet.Metadata;
 using dnSpy.Debugger.DotNet.Mono.Properties;
 using Mono.Debugger.Soft;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl {
 	static class EvalReflectionUtils {
 		public static string? TryGetExceptionMessage(ObjectMirror exObj) {
-			var field = GetField(exObj.Type, "_message", "message");
+			var field = GetField(exObj.Type, KnownMemberNames.Exception_Message_FieldName, KnownMemberNames.Exception_Message_FieldName_Mono);
 			if (field is null)
 				return null;
 			var value = exObj.GetValue(field);

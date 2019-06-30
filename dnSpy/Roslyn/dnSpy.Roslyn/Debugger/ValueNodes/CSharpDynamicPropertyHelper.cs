@@ -45,8 +45,8 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			var state = type.GetOrCreateData<CSharpDynamicPropertyState>();
 			if (!state.Initialized) {
 				state.Initialized = true;
-				state.NameField = type.GetField("name", type.AppDomain.System_String, throwOnError: false);
-				state.ValueField = type.GetField("value", type.AppDomain.System_Object, throwOnError: false);
+				state.NameField = type.GetField(KnownMemberNames.DynamicProperty_Name_FieldName, type.AppDomain.System_String, throwOnError: false);
+				state.ValueField = type.GetField(KnownMemberNames.DynamicProperty_Value_FieldName, type.AppDomain.System_Object, throwOnError: false);
 			}
 			if (state.NameField is null || state.ValueField is null)
 				return default;
