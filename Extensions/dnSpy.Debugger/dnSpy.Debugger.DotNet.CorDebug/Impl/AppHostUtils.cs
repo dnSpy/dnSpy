@@ -34,7 +34,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		static readonly byte[] AppHostExeUnpatchedSignature = Encoding.UTF8.GetBytes(AppHostExeUnpatched);
 		static readonly byte[] AppHostExeSignature = Encoding.UTF8.GetBytes("c3ab8ff13720e8ad9047dd39466b3c89");
 
-		internal static bool IsDotNetCoreAppHost(string filename) {
+		internal static bool IsDotNetCoreAppHost(string filename, [NotNullWhenTrue] out string? dllFilename) {
 			// We detect the apphost.exe like so:
 			//	- must have an exe extension
 			//	- must be a PE file and an EXE (DLL bit cleared)
@@ -49,7 +49,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			// to override this path so it should be identical to apphostname with a dll extension,
 			// unless someone patched the apphost exe (eg. dnSpy).
 
-			string dllFilename;
+			dllFilename = null;
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
 				if (!StringComparer.OrdinalIgnoreCase.Equals(Path.GetExtension(filename), ".exe"))
 					return false;

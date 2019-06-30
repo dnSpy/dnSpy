@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -689,13 +688,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				Debug.Assert(!(dbgOptions.Filename is null));
 				if (AppHostUtils.TryGetAppHostEmbeddedDotNetDllPath(dbgOptions.Filename, out _, out var dotNetDllPath))
 					dbgOptions.ManagedDllFilename = dotNetDllPath;
-				else if (AppHostUtils.IsDotNetCoreAppHost(dbgOptions.Filename)) {
-					if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-						dotNetDllPath = Path.ChangeExtension(dbgOptions.Filename, "dll");
-					else
-						dotNetDllPath = dbgOptions.Filename + ".dll";
-					dbgOptions.ManagedDllFilename = dotNetDllPath;
-				}
+				else if (AppHostUtils.IsDotNetCoreAppHost(dbgOptions.Filename, out var dllFilename))
+					dbgOptions.ManagedDllFilename = dllFilename;
 				dbgOptions.DebugOptions.IgnoreBreakInstructions = false;
 				dbgOptions.DebugOptions.DebugOptionsProvider = new DebugOptionsProviderImpl(debuggerSettings);
 				if (debuggerSettings.RedirectGuiConsoleOutput && PortableExecutableFileHelpers.IsGuiApp(options.Filename))

@@ -37,7 +37,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
 				return false;
 			return
 				IsKnownDotNetCoreAppHost(filename) ||
-				AppHostUtils.IsDotNetCoreAppHost(filename) ||
+				AppHostUtils.IsDotNetCoreAppHost(filename, out _) ||
 				AppHostUtils.IsDotNetCoreBundle(filename);
 		}
 
