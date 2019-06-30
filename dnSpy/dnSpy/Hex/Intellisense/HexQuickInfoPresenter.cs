@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,12 +29,12 @@ using VSTF = Microsoft.VisualStudio.Text.Formatting;
 namespace dnSpy.Hex.Intellisense {
 	sealed class HexQuickInfoPresenter : HexQuickInfoPresenterBase, IHexCustomIntellisensePresenter {
 		readonly Popup popup;
-		readonly WpfHexView wpfHexView;
+		readonly WpfHexView? wpfHexView;
 
 		public HexQuickInfoPresenter(HexQuickInfoSession session)
 			: base(session) {
 			wpfHexView = session.HexView as WpfHexView;
-			Debug.Assert(wpfHexView != null);
+			Debug.Assert(!(wpfHexView is null));
 			popup = new Popup {
 				PlacementTarget = wpfHexView?.VisualElement,
 				Placement = PlacementMode.Relative,
@@ -48,7 +48,7 @@ namespace dnSpy.Hex.Intellisense {
 			// It's possible that quick info gets triggered inside the space between two values but
 			// the full span doesn't include that space. In that case, dismiss the session.
 			var mousePos = GetMousePoint(Mouse.PrimaryDevice);
-			if (mousePos == null || !IsMouseWithinSpan(mousePos.Value))
+			if (mousePos is null || !IsMouseWithinSpan(mousePos.Value))
 				session.Dismiss();
 		}
 
@@ -65,7 +65,7 @@ namespace dnSpy.Hex.Intellisense {
 		bool RenderCore() {
 			if (session.IsDismissed || session.HexView.IsClosed)
 				return false;
-			if (wpfHexView == null)
+			if (wpfHexView is null)
 				return false;
 
 			var point = session.TriggerPoint;
@@ -74,8 +74,8 @@ namespace dnSpy.Hex.Intellisense {
 				return false;
 
 			var line = session.HexView.HexViewLines.GetHexViewLineContainingBufferPosition(point.BufferPosition);
-			Debug.Assert(line != null && line.VisibilityState != VSTF.VisibilityState.Unattached);
-			if (line == null || line.VisibilityState == VSTF.VisibilityState.Unattached)
+			Debug.Assert(!(line is null) && line.VisibilityState != VSTF.VisibilityState.Unattached);
+			if (line is null || line.VisibilityState == VSTF.VisibilityState.Unattached)
 				return false;
 
 			var linePosition = line.BufferLine.GetLinePosition(point) ?? 0;
@@ -110,8 +110,9 @@ namespace dnSpy.Hex.Intellisense {
 		}
 
 		bool ShouldDismiss(MouseEventArgs e) {
+			Debug.Assert(!(wpfHexView is null));
 			var mousePos = GetMousePoint(e.MouseDevice);
-			if (mousePos == null)
+			if (mousePos is null)
 				return true;
 			if (IsMouseWithinSpan(mousePos.Value) && wpfHexView.VisualElement.IsMouseOver)
 				return false;
@@ -122,7 +123,7 @@ namespace dnSpy.Hex.Intellisense {
 		}
 
 		Point? GetMousePoint(MouseDevice device) {
-			if (wpfHexView == null)
+			if (wpfHexView is null)
 				return null;
 			var mousePos = device.GetPosition(wpfHexView.VisualElement);
 			mousePos.X += wpfHexView.ViewportLeft;
@@ -152,7 +153,7 @@ namespace dnSpy.Hex.Intellisense {
 
 		protected override void OnSessionDismissed() {
 			ClosePopup();
-			if (wpfHexView != null) {
+			if (!(wpfHexView is null)) {
 				wpfHexView.VisualElement.MouseLeave -= VisualElement_MouseLeave;
 				wpfHexView.VisualElement.MouseMove -= VisualElement_MouseMove;
 				popup.RemoveHandler(UIElement.MouseLeaveEvent, new MouseEventHandler(Popup_MouseLeave));

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -58,7 +58,7 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 			get {
 				foreach (var tab in documentTabService.VisibleFirstTabs) {
 					var decompiler = (tab.Content as IDecompilerTabContent)?.Decompiler;
-					if (decompiler != null)
+					if (!(decompiler is null))
 						yield return (tab, decompiler);
 				}
 			}

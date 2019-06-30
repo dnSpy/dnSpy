@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,12 +33,12 @@ namespace dnSpy.Events {
 			public abstract void Execute(object source, TEventArgs e);
 			public abstract bool Equals(EventHandler<TEventArgs> h);
 			public static Info Create(EventHandler<TEventArgs> h) {
-				if (h.Target == null)
+				if (h.Target is null)
 					return new HardRefInfo(h);
 
 				// Need to add check for cases when there's no 'this' pointer in h.Target
 				bool compilerGenerated = h.Target.GetType().IsDefined(typeof(CompilerGeneratedAttribute), false);
-				Debug.Assert(!compilerGenerated, string.Format("Event handler {0} is compiler generated (probably a lambda expression) and can't be removed from the event", h.Method));
+				Debug.Assert(!compilerGenerated, $"Event handler {h.Method} is compiler generated (probably a lambda expression) and can't be removed from the event");
 				if (compilerGenerated)
 					return new HardRefInfo(h);
 
@@ -57,11 +57,11 @@ namespace dnSpy.Events {
 		}
 
 		sealed class InstanceInfo : Info {
-			public override bool IsAlive => target.Target != null;
+			public override bool IsAlive => !(target.Target is null);
 
 			public override void Execute(object source, TEventArgs e) {
 				var self = target.Target;
-				if (self != null)
+				if (!(self is null))
 					methodInfo.Invoke(self, new object[] { source, e });
 			}
 
@@ -72,7 +72,7 @@ namespace dnSpy.Events {
 			readonly MethodInfo methodInfo;
 
 			public InstanceInfo(EventHandler<TEventArgs> handler) {
-				Debug.Assert(handler.Target != null);
+				Debug.Assert(!(handler.Target is null));
 				Debug.Assert(handler.GetInvocationList().Length == 1);
 				target = new WeakReference(handler.Target);
 				methodInfo = handler.Method;
@@ -82,13 +82,13 @@ namespace dnSpy.Events {
 		public WeakEventList() => handlers = new List<Info>();
 
 		public void Add(EventHandler<TEventArgs> h) {
-			if (h == null)
+			if (h is null)
 				throw new ArgumentNullException(nameof(h));
 			handlers.Add(Info.Create(h));
 		}
 
 		public void Remove(EventHandler<TEventArgs> h) {
-			if (h == null)
+			if (h is null)
 				throw new ArgumentNullException(nameof(h));
 			for (int i = 0; i < handlers.Count; i++) {
 				if (handlers[i].Equals(h)) {

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,6 +28,6 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 		/// <param name="options">Create-options</param>
 		/// <param name="origSig">Signature to edit or null</param>
 		/// <returns></returns>
-		MethodBaseSig Create(MethodSigCreatorOptions options, MethodBaseSig origSig);
+		MethodBaseSig? Create(MethodSigCreatorOptions options, MethodBaseSig? origSig);
 	}
 }

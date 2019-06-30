@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,17 +28,17 @@ namespace dnSpy.Contracts.Controls {
 		/// <summary>
 		/// UI object
 		/// </summary>
-		object UIObject { get; }
+		object? UIObject { get; }
 
 		/// <summary>
 		/// Focused element
 		/// </summary>
-		IInputElement FocusedElement { get; }
+		IInputElement? FocusedElement { get; }
 
 		/// <summary>
 		/// Gets the element that gets the <see cref="ScaleTransform"/> or null if none
 		/// </summary>
-		FrameworkElement ZoomElement { get; }
+		FrameworkElement? ZoomElement { get; }
 	}
 
 	/// <summary>
@@ -48,6 +48,6 @@ namespace dnSpy.Contracts.Controls {
 		/// <summary>
 		/// Can be set to any value by the owner
 		/// </summary>
-		object Tag { get; set; }
+		object? Tag { get; set; }
 	}
 }

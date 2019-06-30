@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -41,11 +41,11 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <summary>Header size</summary>
 		public abstract StructField<UInt32Data> HeaderSize { get; }
 		/// <summary>Unknown header or null if it's a known header (see <see cref="ReaderType"/> and <see cref="ResourceSetType"/>)</summary>
-		public abstract StructField<VirtualArrayData<ByteData>> UnknownHeader { get; }
+		public abstract StructField<VirtualArrayData<ByteData>>? UnknownHeader { get; }
 		/// <summary>Reader type or null if unknown header</summary>
-		public abstract StructField<Bit7EncodedStringData> ReaderType { get; }
+		public abstract StructField<Bit7EncodedStringData>? ReaderType { get; }
 		/// <summary>ResourceSet type or null if unknown header</summary>
-		public abstract StructField<Bit7EncodedStringData> ResourceSetType { get; }
+		public abstract StructField<Bit7EncodedStringData>? ResourceSetType { get; }
 		/// <summary>Version</summary>
 		public abstract StructField<UInt32Data> Version { get; }
 		/// <summary>NumResources</summary>

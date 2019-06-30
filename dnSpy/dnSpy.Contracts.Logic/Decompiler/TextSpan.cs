@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
 	/// Text span
 	/// </summary>
-	public struct TextSpan : IEquatable<TextSpan> {
+	public readonly struct TextSpan : IEquatable<TextSpan> {
 		readonly int start, end;
 
 		/// <summary>
@@ -85,6 +85,20 @@ namespace dnSpy.Contracts.Decompiler {
 		public static bool operator !=(TextSpan left, TextSpan right) => !left.Equals(right);
 
 		/// <summary>
+		/// Checks if <paramref name="position"/> is inside this span
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <returns></returns>
+		public bool Contains(int position) => start <= position && position < end;
+
+		/// <summary>
+		/// Checks if <paramref name="position"/> is inside this span
+		/// </summary>
+		/// <param name="position">Position</param>
+		/// <returns></returns>
+		public bool Intersects(int position) => start <= position && position <= end;
+
+		/// <summary>
 		/// Equals()
 		/// </summary>
 		/// <param name="other"></param>
@@ -96,7 +110,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is TextSpan && Equals((TextSpan)obj);
+		public override bool Equals(object? obj) => obj is TextSpan && Equals((TextSpan)obj);
 
 		/// <summary>
 		/// GetHashCode()

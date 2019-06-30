@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// </summary>
 		/// <param name="location">Breakpoint location</param>
 		/// <returns></returns>
-		public abstract DbgBreakpointLocationFormatter Create(DbgCodeLocation location);
+		public abstract DbgBreakpointLocationFormatter? Create(DbgCodeLocation location);
 	}
 
 	/// <summary>Metadata</summary>

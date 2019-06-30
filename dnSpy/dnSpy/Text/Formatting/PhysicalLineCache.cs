@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,13 +35,13 @@ namespace dnSpy.Text.Formatting {
 			this.maxCacheSize = maxCacheSize;
 		}
 
-		public IFormattedLine FindFormattedLineByBufferPosition(SnapshotPoint point) {
+		public IFormattedLine? FindFormattedLineByBufferPosition(SnapshotPoint point) {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(PhysicalLineCache));
 			for (int i = 0; i < cache.Count; i++) {
 				var physLine = cache[i];
 				var line = physLine.FindFormattedLineByBufferPosition(point);
-				if (line != null)
+				if (!(line is null))
 					return line;
 			}
 			return null;
@@ -50,7 +50,7 @@ namespace dnSpy.Text.Formatting {
 		public void Add(PhysicalLine line) {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(PhysicalLineCache));
-			if (line == null)
+			if (line is null)
 				throw new ArgumentNullException(nameof(line));
 			if (cache.Count == maxCacheSize) {
 				const int oldestIndex = 0;

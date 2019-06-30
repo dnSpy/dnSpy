@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,10 +27,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
 				var data = DataContext as ModuleLoaderVM;
-				if (data != null)
+				if (!(data is null)) {
 					data.OnCompleted += ModuleLoaderVM_OnCompleted;
-				if (data.HasCompleted)
-					OnCompleted();
+					if (data.HasCompleted)
+						OnCompleted();
+				}
 			};
 		}
 
@@ -43,7 +44,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			base.OnClosing(e);
 
 			var data = DataContext as ModuleLoaderVM;
-			if (data == null)
+			if (data is null)
 				return;
 			if (!data.HasCompleted)
 				data.AskCancel();
@@ -55,7 +56,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		void OnCompleted() {
 			var data = DataContext as ModuleLoaderVM;
-			DialogResult = data != null && !data.WasCanceled;
+			DialogResult = !(data is null) && !data.WasCanceled;
 			Close();
 		}
 	}

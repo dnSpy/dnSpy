@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 		readonly UIDispatcher uiDispatcher;
 		readonly Lazy<IDocumentTabService> documentTabService;
 		readonly Lazy<IModuleIdProvider> moduleIdProvider;
-		DbgCodeBreakpointsService dbgCodeBreakpointsService;
+		DbgCodeBreakpointsService? dbgCodeBreakpointsService;
 
 		[ImportingConstructor]
 		DeleteBreakpointsInRemovedModules(UIDispatcher uiDispatcher, Lazy<IDocumentTabService> documentTabService, Lazy<IModuleIdProvider> moduleIdProvider) {
@@ -55,8 +55,8 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 		}
 
 		void DocumentTabService_FileCollectionChanged(object sender, NotifyDocumentCollectionChangedEventArgs e) {
-			Debug.Assert(dbgCodeBreakpointsService != null);
-			if (dbgCodeBreakpointsService == null)
+			Debug.Assert(!(dbgCodeBreakpointsService is null));
+			if (dbgCodeBreakpointsService is null)
 				return;
 			switch (e.Type) {
 			case NotifyDocumentCollectionType.Clear:
@@ -65,7 +65,7 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 				var removed = new HashSet<ModuleId>(e.Documents.Select(a => moduleIdProvider.Value.Create(a.ModuleDef)));
 				existing.Remove(new ModuleId());
 				removed.Remove(new ModuleId());
-				List<DbgCodeBreakpoint> breakpointsToRemove = null;
+				List<DbgCodeBreakpoint>? breakpointsToRemove = null;
 				foreach (var bp in dbgCodeBreakpointsService.Breakpoints) {
 					if (bp.IsHidden)
 						continue;
@@ -82,12 +82,12 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 						continue;
 
 					if (removed.Contains(location.Module)) {
-						if (breakpointsToRemove == null)
+						if (breakpointsToRemove is null)
 							breakpointsToRemove = new List<DbgCodeBreakpoint>();
 						breakpointsToRemove.Add(bp);
 					}
 				}
-				if (breakpointsToRemove != null)
+				if (!(breakpointsToRemove is null))
 					dbgCodeBreakpointsService.Remove(breakpointsToRemove.ToArray());
 				break;
 

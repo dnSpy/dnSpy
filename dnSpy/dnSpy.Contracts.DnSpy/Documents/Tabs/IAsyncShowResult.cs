@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// <summary>
 		/// The caught exception or null if none
 		/// </summary>
-		Exception Exception { get; }
+		Exception? Exception { get; }
 
 		/// <summary>
 		/// true if it was canceled (the cancellation token threw an exception)

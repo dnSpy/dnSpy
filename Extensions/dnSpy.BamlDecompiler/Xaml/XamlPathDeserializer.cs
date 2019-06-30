@@ -1,4 +1,4 @@
-﻿/*
+/*
 	Copyright (c) 2015 Ki
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -40,7 +40,7 @@ namespace dnSpy.BamlDecompiler.Xaml {
 			FillRule
 		}
 
-		struct Point {
+		readonly struct Point {
 			public readonly double X;
 			public readonly double Y;
 

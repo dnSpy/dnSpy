@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,6 +29,6 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 		/// <param name="typeSig">Existing TypeSig or null</param>
 		/// <param name="canceled">true if user canceled</param>
 		/// <returns></returns>
-		TypeSig Create(TypeSigCreatorOptions options, TypeSig typeSig, out bool canceled);
+		TypeSig? Create(TypeSigCreatorOptions options, TypeSig? typeSig, out bool canceled);
 	}
 }

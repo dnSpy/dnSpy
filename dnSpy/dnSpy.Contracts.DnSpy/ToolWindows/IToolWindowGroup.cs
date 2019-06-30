@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -37,7 +37,7 @@ namespace dnSpy.Contracts.ToolWindows {
 		/// <summary>
 		/// Gets the active <see cref="ToolWindowContent"/> or null if <see cref="TabContents"/> is empty
 		/// </summary>
-		ToolWindowContent ActiveTabContent { get; set; }
+		ToolWindowContent? ActiveTabContent { get; set; }
 
 		/// <summary>
 		/// Adds the content

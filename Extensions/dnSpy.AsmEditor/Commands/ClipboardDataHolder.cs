@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -45,10 +45,10 @@ namespace dnSpy.AsmEditor.Commands {
 				this.dataFormat = dataFormat;
 			}
 
-			public object GetData(Type format) => GetData(format.FullName);
-			public object GetData(string format) => GetData(format, true);
+			public object? GetData(Type format) => GetData(format.FullName);
+			public object? GetData(string format) => GetData(format, true);
 
-			public object GetData(string format, bool autoConvert) {
+			public object? GetData(string format, bool autoConvert) {
 				if (format != dataFormat)
 					return null;
 				return serializedData;
@@ -88,7 +88,7 @@ namespace dnSpy.AsmEditor.Commands {
 			weakRefMyDataObject = new WeakReference(mdo);
 		}
 
-		public static T TryGet<T>() where T : class {
+		public static T? TryGet<T>() where T : class {
 			if (!IsInClipboard(typeof(T)))
 				return null;
 			var mdo = weakRefMyDataObject.Target as MyDataObject;

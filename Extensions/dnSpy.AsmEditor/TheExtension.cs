@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -45,13 +45,13 @@ namespace dnSpy.AsmEditor {
 		void Initialize(FontSettings fontSettings) {
 			if (prevFontSettings == fontSettings)
 				return;
-			if (prevFontSettings != null)
+			if (!(prevFontSettings is null))
 				prevFontSettings.PropertyChanged -= FontSettings_PropertyChanged;
 			prevFontSettings = fontSettings;
 			fontSettings.PropertyChanged += FontSettings_PropertyChanged;
 			UpdateFont(fontSettings);
 		}
-		FontSettings prevFontSettings;
+		FontSettings? prevFontSettings;
 
 		void UpdateFont(FontSettings fontSettings) =>
 			Application.Current.Resources["TextEditorFontFamily"] = fontSettings.FontFamily;
@@ -77,7 +77,7 @@ namespace dnSpy.AsmEditor {
 			}
 		}
 
-		public void OnEvent(ExtensionEvent @event, object obj) {
+		public void OnEvent(ExtensionEvent @event, object? obj) {
 		}
 	}
 }

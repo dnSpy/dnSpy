@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,9 +34,9 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// <summary>
 		/// true if it's an .exe file, false if it's a .dll or .netmodule
 		/// </summary>
-		public bool IsExe => (Document.ModuleDef.Characteristics & Characteristics.Dll) == 0;
+		public bool IsExe => (Document.ModuleDef!.Characteristics & Characteristics.Dll) == 0;
 
-		IMDTokenProvider IMDTokenNode.Reference => Document.AssemblyDef;
+		IMDTokenProvider? IMDTokenNode.Reference => Document.AssemblyDef;
 
 		/// <summary>
 		/// Constructor

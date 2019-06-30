@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,9 +27,9 @@ using System.Windows.Media;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Classification;
 using dnSpy.Contracts.Hex.Editor;
+using dnSpy.Contracts.Hex.Editor.OptionsExtensionMethods;
 using dnSpy.Contracts.Hex.Formatting;
 using dnSpy.Contracts.Hex.Tagging;
-using dnSpy.Contracts.Themes;
 using TWPF = dnSpy.Text.WPF;
 using VST = Microsoft.VisualStudio.Text;
 using VSTC = Microsoft.VisualStudio.Text.Classification;
@@ -43,21 +43,19 @@ namespace dnSpy.Hex.Editor {
 	sealed class HexMarkerServiceWpfHexViewCreationListener : WpfHexViewCreationListener {
 		readonly HexViewTagAggregatorFactoryService viewTagAggregatorFactoryService;
 		readonly HexEditorFormatMapService editorFormatMapService;
-		readonly IThemeService themeService;
 
 		[ImportingConstructor]
-		HexMarkerServiceWpfHexViewCreationListener(HexViewTagAggregatorFactoryService viewTagAggregatorFactoryService, HexEditorFormatMapService editorFormatMapService, IThemeService themeService) {
+		HexMarkerServiceWpfHexViewCreationListener(HexViewTagAggregatorFactoryService viewTagAggregatorFactoryService, HexEditorFormatMapService editorFormatMapService) {
 			this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
 			this.editorFormatMapService = editorFormatMapService;
-			this.themeService = themeService;
 		}
 
 		public override void HexViewCreated(WpfHexView hexView) =>
-			new HexMarkerService(hexView, viewTagAggregatorFactoryService.CreateTagAggregator<HexMarkerTag>(hexView), editorFormatMapService.GetEditorFormatMap(hexView), themeService);
+			new HexMarkerService(hexView, viewTagAggregatorFactoryService.CreateTagAggregator<HexMarkerTag>(hexView), editorFormatMapService.GetEditorFormatMap(hexView));
 	}
 
 	sealed class HexMarkerService {
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[Export(typeof(HexAdornmentLayerDefinition))]
 		[VSUTIL.Name(PredefinedHexAdornmentLayers.NegativeTextMarker)]
 		[VSUTIL.Order(After = PredefinedHexAdornmentLayers.BottomLayer, Before = PredefinedHexAdornmentLayers.TopLayer)]
@@ -71,7 +69,7 @@ namespace dnSpy.Hex.Editor {
 		[VSUTIL.Order(After = PredefinedHexAdornmentLayers.BottomLayer, Before = PredefinedHexAdornmentLayers.TopLayer)]
 		[VSUTIL.Order(Before = PredefinedHexAdornmentLayers.Selection, After = PredefinedHexAdornmentLayers.Outlining)]
 		static HexAdornmentLayerDefinition textMarkerAdornmentLayerDefinition;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 
 		readonly WpfHexView wpfHexView;
 		readonly HexTagAggregator<HexMarkerTag> tagAggregator;
@@ -79,18 +77,18 @@ namespace dnSpy.Hex.Editor {
 		readonly HexAdornmentLayer textMarkerAdornmentLayer;
 		readonly HexAdornmentLayer negativeTextMarkerAdornmentLayer;
 		readonly List<MarkerElement> markerElements;
-		readonly IThemeService themeService;
 		bool useReducedOpacityForHighContrast;
+		bool isInContrastMode;
 
-		public HexMarkerService(WpfHexView wpfHexView, HexTagAggregator<HexMarkerTag> tagAggregator, VSTC.IEditorFormatMap editorFormatMap, IThemeService themeService) {
+		public HexMarkerService(WpfHexView wpfHexView, HexTagAggregator<HexMarkerTag> tagAggregator, VSTC.IEditorFormatMap editorFormatMap) {
 			this.wpfHexView = wpfHexView ?? throw new ArgumentNullException(nameof(wpfHexView));
 			this.tagAggregator = tagAggregator ?? throw new ArgumentNullException(nameof(tagAggregator));
 			this.editorFormatMap = editorFormatMap ?? throw new ArgumentNullException(nameof(editorFormatMap));
-			this.themeService = themeService ?? throw new ArgumentNullException(nameof(themeService));
 			textMarkerAdornmentLayer = wpfHexView.GetAdornmentLayer(PredefinedHexAdornmentLayers.TextMarker);
 			negativeTextMarkerAdornmentLayer = wpfHexView.GetAdornmentLayer(PredefinedHexAdornmentLayers.NegativeTextMarker);
 			markerElements = new List<MarkerElement>();
 			useReducedOpacityForHighContrast = wpfHexView.Options.GetOptionValue(DefaultWpfHexViewOptions.UseReducedOpacityForHighContrastOptionId);
+			isInContrastMode = wpfHexView.Options.IsInContrastMode();
 			onRemovedDelegate = OnRemoved;
 			wpfHexView.Closed += WpfHexView_Closed;
 			wpfHexView.LayoutChanged += WpfHexView_LayoutChanged;
@@ -101,8 +99,15 @@ namespace dnSpy.Hex.Editor {
 
 		void Options_OptionChanged(object sender, VSTE.EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultWpfHexViewOptions.UseReducedOpacityForHighContrastOptionName) {
+				bool old = ShouldUseHighContrastOpacity;
 				useReducedOpacityForHighContrast = wpfHexView.Options.GetOptionValue(DefaultWpfHexViewOptions.UseReducedOpacityForHighContrastOptionId);
-				if (themeService.Theme.IsHighContrast)
+				if (old != ShouldUseHighContrastOpacity)
+					RefreshExistingMarkers();
+			}
+			else if (e.OptionId == DefaultHexViewHostOptions.IsInContrastModeName) {
+				bool old = ShouldUseHighContrastOpacity;
+				isInContrastMode = wpfHexView.Options.IsInContrastMode();
+				if (old != ShouldUseHighContrastOpacity)
 					RefreshExistingMarkers();
 			}
 		}
@@ -110,10 +115,10 @@ namespace dnSpy.Hex.Editor {
 		sealed class MarkerElement : UIElement {
 			readonly Geometry geometry;
 
-			public Brush BackgroundBrush {
-				get { return backgroundBrush; }
+			public Brush? BackgroundBrush {
+				get => backgroundBrush;
 				set {
-					if (value == null)
+					if (value is null)
 						throw new ArgumentNullException(nameof(value));
 					if (!TWPF.BrushComparer.Equals(value, backgroundBrush)) {
 						backgroundBrush = value;
@@ -121,10 +126,10 @@ namespace dnSpy.Hex.Editor {
 					}
 				}
 			}
-			Brush backgroundBrush;
+			Brush? backgroundBrush;
 
-			public Pen Pen {
-				get { return pen; }
+			public Pen? Pen {
+				get => pen;
 				set {
 					if (pen != value) {
 						pen = value;
@@ -132,7 +137,7 @@ namespace dnSpy.Hex.Editor {
 					}
 				}
 			}
-			Pen pen;
+			Pen? pen;
 
 			public HexBufferSpan Span { get; }
 			public string Type { get; }
@@ -194,16 +199,16 @@ namespace dnSpy.Hex.Editor {
 			if (wpfHexView.IsClosed)
 				return;
 			wpfHexView.VisualElement.Dispatcher.VerifyAccess();
-			List<HexBufferSpan> intersectionSpans = null;
+			List<HexBufferSpan>? intersectionSpans = null;
 			foreach (var span in e.Spans) {
 				var intersection = wpfHexView.HexViewLines.FormattedSpan.Intersection(span);
-				if (intersection != null) {
-					if (intersectionSpans == null)
+				if (!(intersection is null)) {
+					if (intersectionSpans is null)
 						intersectionSpans = new List<HexBufferSpan>();
 					intersectionSpans.Add(intersection.Value);
 				}
 			}
-			if (intersectionSpans != null)
+			if (!(intersectionSpans is null))
 				UpdateRange(new NormalizedHexBufferSpanCollection(intersectionSpans));
 		}
 
@@ -221,12 +226,12 @@ namespace dnSpy.Hex.Editor {
 
 		void AddMarkerElements(NormalizedHexBufferSpanCollection spans) {
 			foreach (var tag in tagAggregator.GetTags(spans)) {
-				if (tag.Tag?.Type == null)
+				if (tag.Tag?.Type is null)
 					continue;
 				if (!tag.Span.IntersectsWith(wpfHexView.HexViewLines.FormattedSpan))
 					continue;
 				var markerElement = TryCreateMarkerElement(tag.Span, tag.Flags, tag.Tag);
-				if (markerElement == null)
+				if (markerElement is null)
 					continue;
 				var layer = markerElement.ZIndex < 0 ? negativeTextMarkerAdornmentLayer : textMarkerAdornmentLayer;
 				bool added = layer.AddAdornment(VSTE.AdornmentPositioningBehavior.TextRelative, markerElement.Span, null, markerElement, onRemovedDelegate);
@@ -236,19 +241,19 @@ namespace dnSpy.Hex.Editor {
 			var formattedEnd = wpfHexView.HexViewLines.FormattedSpan.End;
 			foreach (var span in spans) {
 				var overlap = wpfHexView.HexViewLines.FormattedSpan.Overlap(span);
-				if (overlap == null)
+				if (overlap is null)
 					continue;
 				var pos = overlap.Value.Start;
 				for (;;) {
 					var line = wpfHexView.WpfHexViewLines.GetWpfHexViewLineContainingBufferPosition(pos);
-					Debug.Assert(line != null);
-					if (line != null) {
+					Debug.Assert(!(line is null));
+					if (!(line is null)) {
 						var taggerContext = new HexTaggerContext(line.BufferLine, line.BufferLine.TextSpan);
 						foreach (var tag in tagAggregator.GetLineTags(taggerContext)) {
-							if (tag.Tag?.Type == null)
+							if (tag.Tag?.Type is null)
 								continue;
 							var markerElement = TryCreateMarkerElement(line, tag.Span, tag.Tag);
-							if (markerElement == null)
+							if (markerElement is null)
 								continue;
 							var layer = markerElement.ZIndex < 0 ? negativeTextMarkerAdornmentLayer : textMarkerAdornmentLayer;
 							bool added = layer.AddAdornment(VSTE.AdornmentPositioningBehavior.TextRelative, markerElement.Span, null, markerElement, onRemovedDelegate);
@@ -256,6 +261,7 @@ namespace dnSpy.Hex.Editor {
 								markerElements.Add(markerElement);
 						}
 					}
+					Debug.Assert(!(line is null));
 
 					pos = line.BufferEnd;
 					if (pos > overlap.Value.End || pos >= formattedEnd)
@@ -282,25 +288,23 @@ namespace dnSpy.Hex.Editor {
 			textMarkerAdornmentLayer.RemoveAllAdornments();
 		}
 
-		Brush GetBackgroundBrush(ResourceDictionary props) {
-			Color? color;
-			SolidColorBrush scBrush;
-			Brush fillBrush;
+		bool ShouldUseHighContrastOpacity => useReducedOpacityForHighContrast && isInContrastMode;
 
+		Brush GetBackgroundBrush(ResourceDictionary props) {
 			const double BG_BRUSH_OPACITY = 0.8;
 			const double BG_BRUSH_HIGHCONTRAST_OPACITY = 0.5;
 			Brush newBrush;
-			if ((color = props[VSTC.EditorFormatDefinition.BackgroundColorId] as Color?) != null) {
-				newBrush = new SolidColorBrush(color.Value);
+			if (props[VSTC.EditorFormatDefinition.BackgroundColorId] is Color color) {
+				newBrush = new SolidColorBrush(color);
 				newBrush.Opacity = BG_BRUSH_OPACITY;
 				newBrush.Freeze();
 			}
-			else if ((scBrush = props[VSTC.EditorFormatDefinition.BackgroundBrushId] as SolidColorBrush) != null) {
+			else if (props[VSTC.EditorFormatDefinition.BackgroundBrushId] is SolidColorBrush scBrush) {
 				newBrush = new SolidColorBrush(scBrush.Color);
 				newBrush.Opacity = BG_BRUSH_OPACITY;
 				newBrush.Freeze();
 			}
-			else if ((fillBrush = props[VSTC.MarkerFormatDefinition.FillId] as Brush) != null) {
+			else if (props[VSTC.MarkerFormatDefinition.FillId] is Brush fillBrush) {
 				newBrush = fillBrush;
 				if (newBrush.CanFreeze)
 					newBrush.Freeze();
@@ -311,7 +315,7 @@ namespace dnSpy.Hex.Editor {
 				newBrush.Freeze();
 			}
 
-			if (useReducedOpacityForHighContrast && themeService.Theme.IsHighContrast) {
+			if (ShouldUseHighContrastOpacity) {
 				newBrush = newBrush.Clone();
 				newBrush.Opacity = BG_BRUSH_HIGHCONTRAST_OPACITY;
 				if (newBrush.CanFreeze)
@@ -321,25 +325,22 @@ namespace dnSpy.Hex.Editor {
 			return newBrush;
 		}
 
-		Pen GetPen(ResourceDictionary props) {
-			Color? color;
-			SolidColorBrush scBrush;
-
+		Pen? GetPen(ResourceDictionary props) {
 			const double PEN_THICKNESS = 0.5;
-			Pen newPen;
-			if ((color = props[VSTC.EditorFormatDefinition.ForegroundColorId] as Color?) != null) {
-				var brush = new SolidColorBrush(color.Value);
+			Pen? newPen;
+			if (props[VSTC.EditorFormatDefinition.ForegroundColorId] is Color color) {
+				var brush = new SolidColorBrush(color);
 				brush.Freeze();
 				newPen = new Pen(brush, PEN_THICKNESS);
 				newPen.Freeze();
 			}
-			else if ((scBrush = props[VSTC.EditorFormatDefinition.ForegroundBrushId] as SolidColorBrush) != null) {
+			else if (props[VSTC.EditorFormatDefinition.ForegroundBrushId] is SolidColorBrush scBrush) {
 				if (scBrush.CanFreeze)
 					scBrush.Freeze();
 				newPen = new Pen(scBrush, PEN_THICKNESS);
 				newPen.Freeze();
 			}
-			else if ((newPen = props[VSTC.MarkerFormatDefinition.BorderId] as Pen) != null) {
+			else if (!((newPen = props[VSTC.MarkerFormatDefinition.BorderId] as Pen) is null)) {
 				if (newPen.CanFreeze)
 					newPen.Freeze();
 			}
@@ -347,21 +348,21 @@ namespace dnSpy.Hex.Editor {
 			return newPen;
 		}
 
-		MarkerElement TryCreateMarkerElement(HexBufferSpan span, HexSpanSelectionFlags flags, HexMarkerTag tag) {
-			Debug.Assert(tag.Type != null);
+		MarkerElement? TryCreateMarkerElement(HexBufferSpan span, HexSpanSelectionFlags flags, HexMarkerTag tag) {
+			Debug.Assert(!(tag.Type is null));
 			var overlap = wpfHexView.WpfHexViewLines.FormattedSpan.Overlap(span);
-			if (overlap == null)
+			if (overlap is null)
 				return null;
 			return TryCreateMarkerElementCore(wpfHexView.WpfHexViewLines.GetMarkerGeometry(overlap.Value, flags), overlap.Value, tag);
 		}
 
-		MarkerElement TryCreateMarkerElement(WpfHexViewLine line, VST.Span span, HexMarkerTag tag) {
-			Debug.Assert(tag.Type != null);
+		MarkerElement? TryCreateMarkerElement(WpfHexViewLine line, VST.Span span, HexMarkerTag tag) {
+			Debug.Assert(!(tag.Type is null));
 			return TryCreateMarkerElementCore(wpfHexView.WpfHexViewLines.GetLineMarkerGeometry(line, span), line.BufferSpan, tag);
 		}
 
-		MarkerElement TryCreateMarkerElementCore(Geometry geo, HexBufferSpan span, HexMarkerTag tag) {
-			if (geo == null)
+		MarkerElement? TryCreateMarkerElementCore(Geometry? geo, HexBufferSpan span, HexMarkerTag tag) {
+			if (geo is null)
 				return null;
 
 			var type = tag.Type ?? string.Empty;

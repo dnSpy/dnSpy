@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -58,13 +58,13 @@ namespace dnSpy.AsmEditor.SaveModule {
 			}
 			foreach (var uo in undoCommandService.Value.GetAllObjects()) {
 				var f = DsDocumentUndoableDocumentsProvider.TryGetDocument(uo);
-				if (f != null)
+				if (!(f is null))
 					yield return f;
 			}
 		}
 
-		static void DisableMemoryMappedIO(HashSet<string> filenames, IPEImage peImage) {
-			if (peImage != null && filenames.Contains(peImage.FileName))
+		static void DisableMemoryMappedIO(HashSet<string> filenames, IPEImage? peImage) {
+			if (!(peImage is null) && filenames.Contains(peImage.Filename))
 				MemoryMappedIOHelper.DisableMemoryMappedIO(peImage);
 		}
 	}

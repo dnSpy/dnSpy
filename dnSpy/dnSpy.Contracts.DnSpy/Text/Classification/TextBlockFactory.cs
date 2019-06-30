@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,6 +23,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Markup;
+using dnSpy.Contracts.DnSpy.Text.WPF;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Formatting;
 using DOC = System.Windows.Documents;
@@ -87,12 +88,13 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <param name="flags">Flags</param>
 		/// <returns></returns>
 		public static TextBlock Create(string text, TextFormattingRunProperties defaultProperties, IEnumerable<TextRunPropertiesAndSpan> orderedPropsAndSpans, Flags flags = Flags.None) {
-			if (text == null)
+			if (text is null)
 				throw new ArgumentNullException(nameof(text));
-			if (defaultProperties == null)
+			if (defaultProperties is null)
 				throw new ArgumentNullException(nameof(defaultProperties));
-			if (orderedPropsAndSpans == null)
+			if (orderedPropsAndSpans is null)
 				throw new ArgumentNullException(nameof(orderedPropsAndSpans));
+			text = WpfUnicodeUtils.ReplaceBadChars(text);
 
 			var textBlock = new TextBlock();
 			bool filterOutNewlines = (flags & Flags.FilterOutNewlines) != 0;
@@ -170,10 +172,10 @@ namespace dnSpy.Contracts.Text.Classification {
 			return props.BackgroundBrushEmpty;
 		}
 
-		static DOC.Run CreateRun(string text, TextFormattingRunProperties defaultProperties, TextFormattingRunProperties properties, Flags flags) {
+		static DOC.Run CreateRun(string text, TextFormattingRunProperties defaultProperties, TextFormattingRunProperties? properties, Flags flags) {
 			var run = new DOC.Run(text);
 
-			if (properties == null)
+			if (properties is null)
 				return run;
 
 			if (!properties.BackgroundBrushEmpty)
@@ -204,10 +206,10 @@ namespace dnSpy.Contracts.Text.Classification {
 			return GetFontName(a) == GetFontName(b);
 		}
 
-		static string GetFontName(TextFormattingRunProperties props) {
+		static string? GetFontName(TextFormattingRunProperties props) {
 			if (props.TypefaceEmpty)
 				return string.Empty;
-			if (!props.Typeface.FontFamily.FamilyNames.TryGetValue(language, out string name))
+			if (!props.Typeface.FontFamily.FamilyNames.TryGetValue(language, out string? name))
 				name = null;
 			return name ?? string.Empty;
 		}
@@ -217,7 +219,7 @@ namespace dnSpy.Contracts.Text.Classification {
 	/// <summary>
 	/// Text properties and span
 	/// </summary>
-	internal struct TextRunPropertiesAndSpan {
+	internal readonly struct TextRunPropertiesAndSpan {
 		/// <summary>
 		/// Span
 		/// </summary>

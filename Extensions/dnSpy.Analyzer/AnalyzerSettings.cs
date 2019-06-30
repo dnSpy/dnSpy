@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,51 +32,45 @@ namespace dnSpy.Analyzer {
 	}
 
 	class AnalyzerSettings : ViewModelBase, IAnalyzerSettings {
-		protected virtual void OnModified() { }
-
 		public bool SyntaxHighlight {
-			get { return syntaxHighlight; }
+			get => syntaxHighlight;
 			set {
 				if (syntaxHighlight != value) {
 					syntaxHighlight = value;
 					OnPropertyChanged(nameof(SyntaxHighlight));
-					OnModified();
 				}
 			}
 		}
 		bool syntaxHighlight = true;
 
 		public bool ShowToken {
-			get { return showToken; }
+			get => showToken;
 			set {
 				if (showToken != value) {
 					showToken = value;
 					OnPropertyChanged(nameof(ShowToken));
-					OnModified();
 				}
 			}
 		}
 		bool showToken = true;
 
 		public bool SingleClickExpandsChildren {
-			get { return singleClickExpandsChildren; }
+			get => singleClickExpandsChildren;
 			set {
 				if (singleClickExpandsChildren != value) {
 					singleClickExpandsChildren = value;
 					OnPropertyChanged(nameof(SingleClickExpandsChildren));
-					OnModified();
 				}
 			}
 		}
 		bool singleClickExpandsChildren = true;
 
 		public bool UseNewRenderer {
-			get { return useNewRenderer; }
+			get => useNewRenderer;
 			set {
 				if (useNewRenderer != value) {
 					useNewRenderer = value;
 					OnPropertyChanged(nameof(UseNewRenderer));
-					OnModified();
 				}
 			}
 		}
@@ -103,19 +97,15 @@ namespace dnSpy.Analyzer {
 		AnalyzerSettingsImpl(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			SyntaxHighlight = sect.Attribute<bool?>(nameof(SyntaxHighlight)) ?? SyntaxHighlight;
 			ShowToken = sect.Attribute<bool?>(nameof(ShowToken)) ?? ShowToken;
 			SingleClickExpandsChildren = sect.Attribute<bool?>(nameof(SingleClickExpandsChildren)) ?? SingleClickExpandsChildren;
 			UseNewRenderer = sect.Attribute<bool?>(nameof(UseNewRenderer)) ?? UseNewRenderer;
-			disableSave = false;
+			PropertyChanged += AnalyzerSettingsImpl_PropertyChanged;
 		}
-		readonly bool disableSave;
 
-		protected override void OnModified() {
-			if (disableSave)
-				return;
+		void AnalyzerSettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(SyntaxHighlight), SyntaxHighlight);
 			sect.Attribute(nameof(ShowToken), ShowToken);

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -78,7 +78,7 @@ namespace dnSpy.Bookmarks.ToolWindows {
 
 		readonly ILazyToolWindowVM vm;
 		readonly UIDispatcher uiDispatcher;
-		DispatcherTimer timer;
+		DispatcherTimer? timer;
 
 		public LazyToolWindowVMHelper(ILazyToolWindowVM vm, UIDispatcher uiDispatcher) {
 			this.vm = vm ?? throw new ArgumentNullException(nameof(vm));
@@ -100,7 +100,7 @@ namespace dnSpy.Bookmarks.ToolWindows {
 		}
 
 		void StopTimer() {
-			if (timer != null) {
+			if (!(timer is null)) {
 				timer.Tick -= Timer_Tick_UI;
 				timer.Stop();
 				timer = null;

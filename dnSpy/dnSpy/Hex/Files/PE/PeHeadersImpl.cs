@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,14 +32,14 @@ namespace dnSpy.Hex.Files.PE {
 		readonly HexSpan fileSpan;
 
 		public PeHeadersImpl(PeHeadersReader reader, HexSpan fileSpan) {
-			if (reader == null)
+			if (reader is null)
 				throw new ArgumentNullException(nameof(reader));
-			DosHeader = reader.DosHeader;
-			FileHeader = reader.FileHeader;
-			OptionalHeader = reader.OptionalHeader;
-			Sections = reader.Sections;
+			DosHeader = reader.DosHeader!;
+			FileHeader = reader.FileHeader!;
+			OptionalHeader = reader.OptionalHeader!;
+			Sections = reader.Sections!;
 			IsFileLayout = reader.IsFileLayout;
-			SectionHeaders = reader.SectionHeaders;
+			SectionHeaders = reader.SectionHeaders!;
 			this.fileSpan = fileSpan;
 		}
 

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,17 +34,17 @@ namespace dnSpy.AsmEditor.Commands {
 		public IEnumerable<DocumentTreeNodeData> OriginalNodes {
 			get {
 				yield return ownerTypeNode;
-				if (nestedTypeNode != null)
+				if (!(nestedTypeNode is null))
 					yield return nestedTypeNode;
 			}
 		}
 
 		public NestedTypeNodeCreator(ModuleDocumentNode modNode, TypeNode ownerTypeNode, TypeDef nestedType) {
-			if (modNode == null)
+			if (modNode is null)
 				throw new ArgumentNullException(nameof(modNode));
-			if (nestedType == null)
+			if (nestedType is null)
 				throw new ArgumentNullException(nameof(nestedType));
-			if (nestedType.Module != null)
+			if (!(nestedType.Module is null))
 				throw new ArgumentException();
 			this.ownerTypeNode = ownerTypeNode;
 			nestedTypeNode = modNode.Context.DocumentTreeView.CreateNested(nestedType);

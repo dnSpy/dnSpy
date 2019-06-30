@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,23 +24,23 @@ using System.Runtime.InteropServices;
 using System.Text;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
-	struct DmdMarshalBlobReader : IDisposable {
+	readonly struct DmdMarshalBlobReader : IDisposable {
 		readonly DmdModule module;
 		readonly DmdDataStream reader;
 		readonly IList<DmdType> genericTypeArguments;
 
-		public static DmdMarshalType Read(DmdModule module, DmdDataStream reader, IList<DmdType> genericTypeArguments) {
+		public static DmdMarshalType? Read(DmdModule module, DmdDataStream reader, IList<DmdType>? genericTypeArguments) {
 			using (var marshalReader = new DmdMarshalBlobReader(module, reader, genericTypeArguments))
 				return marshalReader.Read();
 		}
 
-		DmdMarshalBlobReader(DmdModule module, DmdDataStream reader, IList<DmdType> genericTypeArguments) {
+		DmdMarshalBlobReader(DmdModule module, DmdDataStream reader, IList<DmdType>? genericTypeArguments) {
 			this.module = module;
 			this.reader = reader;
 			this.genericTypeArguments = genericTypeArguments ?? Array.Empty<DmdType>();
 		}
 
-		DmdMarshalType Read() {
+		DmdMarshalType? Read() {
 			const int DEFAULT = 0;
 			try {
 				var nativeType = (UnmanagedType)reader.ReadByte();
@@ -54,7 +54,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				case UnmanagedType.SafeArray:
 					var vt = CanRead ? (VarEnum)reader.ReadCompressedUInt32() : DEFAULT;
 					var udtName = CanRead ? ReadUTF8String() : null;
-					var udtRef = udtName == null ? null : DmdTypeNameParser.Parse(module, udtName, genericTypeArguments);
+					var udtRef = udtName is null ? null : DmdTypeNameParser.Parse(module, udtName, genericTypeArguments);
 					return DmdMarshalType.CreateSafeArray(vt, udtRef);
 
 				case UnmanagedType.ByValArray:
@@ -77,7 +77,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					var guid = ReadUTF8String();
 					var nativeTypeName = ReadUTF8String();
 					var custMarshalerName = ReadUTF8String();
-					var cmRef = DmdTypeNameParser.Parse(module, custMarshalerName, genericTypeArguments);
+					var cmRef = custMarshalerName.Length == 0 ? null : DmdTypeNameParser.Parse(module, custMarshalerName, genericTypeArguments);
 					var cookie = ReadUTF8String();
 					return DmdMarshalType.CreateCustomMarshaler(custMarshalerName, cmRef, cookie);
 

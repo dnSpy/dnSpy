@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,9 +32,9 @@ namespace dnSpy.AsmEditor.UndoRedo {
 
 	sealed class UndoCommandServiceEventArgs : EventArgs {
 		public readonly UndoCommandServiceEventType Type;
-		public readonly IUndoObject UndoObject;
+		public readonly IUndoObject? UndoObject;
 
-		public UndoCommandServiceEventArgs(UndoCommandServiceEventType type, IUndoObject obj) {
+		public UndoCommandServiceEventArgs(UndoCommandServiceEventType type, IUndoObject? obj) {
 			Type = type;
 			UndoObject = obj;
 		}

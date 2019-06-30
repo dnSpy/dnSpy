@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,15 +22,15 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.Engine;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
-using dnSpy.Contracts.Debugger.DotNet.Metadata;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Engine.Evaluation.Internal;
-using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Resources;
+using dnSpy.Debugger.DotNet.Code;
 using dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
@@ -41,11 +41,11 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	[Export(typeof(DbgDotNetLanguageService))]
 	[Export(typeof(DbgDotNetLanguageService2))]
 	sealed class DbgDotNetLanguageServiceImpl : DbgDotNetLanguageService2 {
-		readonly Lazy<DbgMetadataService> dbgMetadataService;
+		readonly Lazy<DbgMethodDebugInfoProvider> dbgMethodDebugInfoProvider;
 		readonly Lazy<DbgModuleReferenceProvider> dbgModuleReferenceProvider;
 		readonly Lazy<DbgDotNetEngineValueNodeFactoryService> dbgDotNetEngineValueNodeFactoryService;
 		readonly Lazy<DbgDotNetILInterpreter> dnILInterpreter;
-		readonly Lazy<DbgObjectIdService> objectIdService;
+		readonly Lazy<DbgAliasProvider> dbgAliasProvider;
 		readonly Lazy<DbgDotNetExpressionCompiler, IDbgDotNetExpressionCompilerMetadata>[] dbgDotNetExpressionCompilers;
 		readonly IDecompilerService decompilerService;
 		readonly IPredefinedEvaluationErrorMessagesHelper predefinedEvaluationErrorMessagesHelper;
@@ -55,12 +55,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		static readonly Guid visualBasicDecompilerGuid = new Guid(PredefinedDecompilerGuids.VisualBasic);
 
 		[ImportingConstructor]
-		DbgDotNetLanguageServiceImpl(Lazy<DbgMetadataService> dbgMetadataService, Lazy<DbgModuleReferenceProvider> dbgModuleReferenceProvider, Lazy<DbgDotNetEngineValueNodeFactoryService> dbgDotNetEngineValueNodeFactoryService, Lazy<DbgDotNetILInterpreter> dnILInterpreter, Lazy<DbgObjectIdService> objectIdService, [ImportMany] IEnumerable<Lazy<DbgDotNetExpressionCompiler, IDbgDotNetExpressionCompilerMetadata>> dbgDotNetExpressionCompilers, IDecompilerService decompilerService, IPredefinedEvaluationErrorMessagesHelper predefinedEvaluationErrorMessagesHelper, [ImportMany] IEnumerable<Lazy<DbgDotNetFormatter, IDbgDotNetFormatterMetadata>> dbgDotNetFormatters) {
-			this.dbgMetadataService = dbgMetadataService;
+		DbgDotNetLanguageServiceImpl(Lazy<DbgMethodDebugInfoProvider> dbgMethodDebugInfoProvider, Lazy<DbgModuleReferenceProvider> dbgModuleReferenceProvider, Lazy<DbgDotNetEngineValueNodeFactoryService> dbgDotNetEngineValueNodeFactoryService, Lazy<DbgDotNetILInterpreter> dnILInterpreter, Lazy<DbgAliasProvider> dbgAliasProvider, [ImportMany] IEnumerable<Lazy<DbgDotNetExpressionCompiler, IDbgDotNetExpressionCompilerMetadata>> dbgDotNetExpressionCompilers, IDecompilerService decompilerService, IPredefinedEvaluationErrorMessagesHelper predefinedEvaluationErrorMessagesHelper, [ImportMany] IEnumerable<Lazy<DbgDotNetFormatter, IDbgDotNetFormatterMetadata>> dbgDotNetFormatters) {
+			this.dbgMethodDebugInfoProvider = dbgMethodDebugInfoProvider;
 			this.dbgModuleReferenceProvider = dbgModuleReferenceProvider;
 			this.dbgDotNetEngineValueNodeFactoryService = dbgDotNetEngineValueNodeFactoryService;
 			this.dnILInterpreter = dnILInterpreter;
-			this.objectIdService = objectIdService;
+			this.dbgAliasProvider = dbgAliasProvider;
 			this.decompilerService = decompilerService;
 			this.predefinedEvaluationErrorMessagesHelper = predefinedEvaluationErrorMessagesHelper;
 			var eeList = new List<Lazy<DbgDotNetExpressionCompiler, IDbgDotNetExpressionCompilerMetadata>>();
@@ -105,20 +105,20 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				else if (decompilerGuid == visualBasicDecompilerGuid)
 					decompilerGuid = DecompilerConstants.LANGUAGE_VISUALBASIC;
 				var decompiler = decompilerService.Find(decompilerGuid);
-				Debug.Assert(decompiler != null);
-				if (decompiler == null)
+				Debug.Assert(!(decompiler is null));
+				if (decompiler is null)
 					continue;
 
 				var valueNodeFactory = dbgDotNetEngineValueNodeFactoryService.Value.Create(lz.Metadata.LanguageGuid, formatter.Value);
-				if (valueNodeFactory == null)
+				if (valueNodeFactory is null)
 					continue;
 
 				var languageDisplayName = ResourceHelper.GetString(lz.Value, lz.Metadata.LanguageDisplayName);
-				yield return new DbgEngineLanguageImpl(dbgModuleReferenceProvider.Value, lz.Metadata.LanguageName, languageDisplayName, lz.Value, dbgMetadataService.Value, decompiler, formatter.Value, valueNodeFactory, dnILInterpreter.Value, objectIdService.Value, predefinedEvaluationErrorMessagesHelper);
+				yield return new DbgEngineLanguageImpl(dbgModuleReferenceProvider.Value, lz.Metadata.LanguageName, languageDisplayName, lz.Value, dbgMethodDebugInfoProvider.Value, decompiler, formatter.Value, valueNodeFactory, dnILInterpreter.Value, dbgAliasProvider.Value, predefinedEvaluationErrorMessagesHelper);
 			}
 		}
 
-		bool TryGetFormatter(string guidString, out Lazy<DbgDotNetFormatter, IDbgDotNetFormatterMetadata> formatter) {
+		bool TryGetFormatter(string guidString, [NotNullWhenTrue] out Lazy<DbgDotNetFormatter, IDbgDotNetFormatterMetadata>? formatter) {
 			formatter = null;
 			bool b = Guid.TryParse(guidString, out var languageGuid);
 			Debug.Assert(b);
@@ -132,7 +132,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 			Debug.Fail($"Default formatter ({LanguageConstants.DefaultLanguageGuid.ToString()}) wasn't exported");
 			formatter = formattersDict.Values.FirstOrDefault();
-			return formatter != null;
+			return !(formatter is null);
 		}
 
 		public override DbgEngineObjectIdFactory GetEngineObjectIdFactory(Guid runtimeGuid) =>

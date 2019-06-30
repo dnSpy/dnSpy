@@ -1,0 +1,45 @@
+<Project>
+  <ItemGroup>
+    <!-- Remove unwanted files, eg. resources of unused files, unused native files -->
+    <GarbageFile Include="cs\Microsoft.CodeAnalysis.Workspaces.Desktop.resources.dll" />
+    <GarbageFile Include="de\Microsoft.CodeAnalysis.Workspaces.Desktop.resources.dll" />
+    <GarbageFile Include="es\Microsoft.CodeAnalysis.Workspaces.Desktop.resources.dll" />
+    <GarbageFile Include="fr\Microsoft.CodeAnalysis.Workspaces.Desktop.resources.dll" />
+    <GarbageFile Include="it\Microsoft.CodeAnalysis.Workspaces.Desktop.resources.dll" />
+    <GarbageFile Include="ja\Microsoft.CodeAnalysis.Workspaces.Desktop.resources.dll" />
+    <GarbageFile Include="ko\Microsoft.CodeAnalysis.Workspaces.Desktop.resources.dll" />
+    <GarbageFile Include="pl\Microsoft.CodeAnalysis.Workspaces.Desktop.resources.dll" />
+    <GarbageFile Include="pt-BR\Microsoft.CodeAnalysis.Workspaces.Desktop.resources.dll" />
+    <GarbageFile Include="ru\Microsoft.CodeAnalysis.Workspaces.Desktop.resources.dll" />
+    <GarbageFile Include="tr\Microsoft.CodeAnalysis.Workspaces.Desktop.resources.dll" />
+    <GarbageFile Include="zh-Hans\Microsoft.CodeAnalysis.Workspaces.Desktop.resources.dll" />
+    <GarbageFile Include="zh-Hant\Microsoft.CodeAnalysis.Workspaces.Desktop.resources.dll" />
+    <GarbageFile Include="Microsoft.CodeAnalysis.Workspaces.Desktop.dll" />
+    <GarbageFile Include="Microsoft.CodeAnalysis.Workspaces.Desktop.pdb" />
+    <GarbageFile Include="SQLitePCLRaw.batteries_green.dll" />
+    <GarbageFile Include="SQLitePCLRaw.batteries_v2.dll" />
+    <GarbageFile Include="SQLitePCLRaw.core.dll" />
+    <GarbageFile Include="SQLitePCLRaw.provider.e_sqlite3.dll" />
+    <GarbageFile Include="e_sqlite3.dll" />
+    <GarbageFile Include="x64\e_sqlite3.dll" />
+    <GarbageFile Include="x86\e_sqlite3.dll" />
+    <GarbageDir Include="x86" />
+    <GarbageDir Include="x64" />
+    <GarbageDir Include="cs" />
+    <GarbageDir Include="ja" />
+    <GarbageDir Include="ko" />
+    <GarbageDir Include="pl" />
+    <GarbageDir Include="pt-BR" />
+    <GarbageDir Include="zh-Hans" />
+    <GarbageDir Include="zh-Hant" />
+    <GarbageDir Include="runtimes" Condition=" '$(IsDotNetFramework)' == 'true' " />
+  </ItemGroup>
+  <Target Name="MyRemoveGarbageFiles_AfterBuild" AfterTargets="AfterBuild">
+    <Delete Files="$(OutputPath)%(GarbageFile.Identity)" ContinueOnError="WarnAndContinue" />
+    <RemoveDir Directories="$(OutputPath)%(GarbageDir.Identity)" ContinueOnError="WarnAndContinue" />
+  </Target>
+  <Target Name="MyRemoveGarbageFiles_Publish" AfterTargets="Publish">
+    <Delete Files="$(PublishDir)%(GarbageFile.Identity)" ContinueOnError="WarnAndContinue" />
+    <RemoveDir Directories="$(PublishDir)%(GarbageDir.Identity)" ContinueOnError="WarnAndContinue" />
+  </Target>
+</Project>

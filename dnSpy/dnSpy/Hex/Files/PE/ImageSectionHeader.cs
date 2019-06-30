@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,7 +18,7 @@
 */
 
 namespace dnSpy.Hex.Files.PE {
-	struct ImageSectionHeader {
+	readonly struct ImageSectionHeader {
 		public uint VirtualSize { get; }
 		public uint VirtualAddress { get; }
 		public uint SizeOfRawData { get; }

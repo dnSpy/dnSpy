@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,10 +21,10 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using dnSpy.AsmEditor.Properties;
+using dnSpy.AsmEditor.SaveModule;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Extension;
-using dnSpy.AsmEditor.SaveModule;
 
 namespace dnSpy.AsmEditor.UndoRedo {
 	[ExportAutoLoaded]
@@ -53,8 +53,11 @@ namespace dnSpy.AsmEditor.UndoRedo {
 			var msg = count == 1 ? dnSpy_AsmEditor_Resources.AskExitUnsavedFile :
 					string.Format(dnSpy_AsmEditor_Resources.AskExitUnsavedFiles, count);
 			var res = messageBoxService.Show(msg, MsgBoxButton.Yes | MsgBoxButton.No);
-			if (res == MsgBoxButton.Yes)
-				documentSaver.Value.Save(undoCommandService.Value.GetModifiedDocuments());
+			if (res == MsgBoxButton.Yes) {
+				bool savedAll = documentSaver.Value.Save(undoCommandService.Value.GetModifiedDocuments());
+				if (!savedAll)
+					e.Cancel = true;
+			}
 
 			if (res == MsgBoxButton.None)
 				e.Cancel = true;

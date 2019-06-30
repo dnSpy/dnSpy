@@ -1,0 +1,67 @@
+<Project>
+
+  <PropertyGroup>
+    <!--
+        - appveyor.yml (artifacts)
+        - build.cmd
+        - dnSpy/dnSpy/app.config (supportedRuntime, .NET Framework only)
+    NOTE: Update the ABOVE files when TargetFrameworks is updated -->
+    <TargetFrameworks>net472;netcoreapp3.0</TargetFrameworks>
+    <IsDotNetFramework>false</IsDotNetFramework>
+    <IsDotNetCore>false</IsDotNetCore>
+    <IsSelfContainedDotNetCore>false</IsSelfContainedDotNetCore>
+    <IsDotNetFramework Condition=" !$(TargetFramework.StartsWith(netcoreapp)) ">true</IsDotNetFramework>
+    <IsDotNetCore Condition=" $(TargetFramework.StartsWith(netcoreapp)) ">true</IsDotNetCore>
+    <IsSelfContainedDotNetCore Condition=" '$(IsDotNetCore)' == 'true' ">true</IsSelfContainedDotNetCore>
+    <Features>strict;nullablePublicOnly</Features>
+    <LangVersion>8.0</LangVersion>
+    <LangVersion Condition=" $(MSBuildProjectFile.EndsWith('.vbproj')) " >latest</LangVersion>
+    <NeutralLanguage>en</NeutralLanguage>
+    <AppDesignerFolderContentsVisibleOnlyInShowAllFiles>false</AppDesignerFolderContentsVisibleOnlyInShowAllFiles>
+    <!-- Make sure we don't have to publish each extension to get all their refs -->
+    <CopyLocalLockFileAssemblies Condition=" '$(IsDotNetCore)' == 'true' ">true</CopyLocalLockFileAssemblies>
+    <!-- If this gets updated, also update appveyor.yml and build.cmd -->
+    <DnSpyRuntimeIdentifiers>win-x86;win-x64</DnSpyRuntimeIdentifiers>
+    <SatelliteResourceLanguages>de;es;es-ES;fa;fr;hu;it;pt-PT;ru;tr;uk;zh-CN</SatelliteResourceLanguages>
+
+    <!-- Update app.config whenever this value changes -->
+    <DnSpyAssemblyVersion>6.0.5.0</DnSpyAssemblyVersion>
+    <!-- This is shown in the title bar -->
+    <DnSpyAssemblyInformationalVersion>v6.0.5</DnSpyAssemblyInformationalVersion>
+    <DnSpyAssemblyCopyright>Copyright (C) 2014-2019 de4dot@gmail.com</DnSpyAssemblyCopyright>
+
+    <!-- AD0001: buggy Roslyn analyzer(s) crash, disable that warning -->
+    <NoWarn>NU1701;AD0001</NoWarn>
+
+    <!-- Update app.config whenever some of these versions change (eg. dnlib version) -->
+    <DiaSymReaderVersion>1.7.0</DiaSymReaderVersion>
+    <DnlibVersion>3.2.0</DnlibVersion>
+    <IcedVersion>1.3.0</IcedVersion>
+    <MSBuildNuGetVersion>16.0.461</MSBuildNuGetVersion>
+    <MSDiagRuntimeVersion>1.0.5</MSDiagRuntimeVersion>
+    <MSVSCompositionVersion>16.1.8</MSVSCompositionVersion>
+    <MSVSIntellisenseVersion>15.5.27130</MSVSIntellisenseVersion>
+    <MSVSTextVersion>15.5.27130</MSVSTextVersion>
+    <NewtonsoftJsonVersion>12.0.2</NewtonsoftJsonVersion>
+    <OokiiDialogsVersion>1.0.0</OokiiDialogsVersion>
+    <RoslynVersion>2.10.0</RoslynVersion>
+    <SCCompositionVersion>4.6.0-preview5.19224.8</SCCompositionVersion>
+  </PropertyGroup>
+
+  <Import Project="$(MSBuildThisFileDirectory)Build\ConvertToNetstandardReferences\ConvertToNetstandardReferences.tasks" Condition=" '$(IsDotNetCore)' == 'true' " />
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DefineConstants>$(DefineConstants);DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DefineConstants>$(DefineConstants);TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <!-- .NET Core 3.0 SDK doesn't currently support COMReference: https://github.com/0xd4d/dnSpy/issues/1053 -->
+  <PropertyGroup>
+    <HasCOMReference>false</HasCOMReference>
+    <HasCOMReference Condition=" '$(MSBuildRuntimeType)' != 'Core' ">true</HasCOMReference>
+    <DefineConstants Condition=" '$(HasCOMReference)' == 'true' ">$(DefineConstants);HAS_COMREFERENCE</DefineConstants>
+  </PropertyGroup>
+
+</Project>

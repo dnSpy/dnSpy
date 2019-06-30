@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,6 +26,7 @@ namespace dnSpy.Debugger.DbgUI {
 	sealed class StartDebuggingOptionsMru {
 		const int MRU_SIZE = 10;
 		readonly List<Info> list;
+		(StartDebuggingOptions options, Guid pageGuid)? lastOptions;
 
 		sealed class Info {
 			public string Filename { get; }
@@ -40,7 +41,7 @@ namespace dnSpy.Debugger.DbgUI {
 
 		public StartDebuggingOptionsMru() => list = new List<Info>(MRU_SIZE);
 
-		Info Find(string filename) {
+		Info? Find(string filename) {
 			foreach (var info in list) {
 				if (StringComparer.Ordinal.Equals(info.Filename, filename))
 					return info;
@@ -49,12 +50,13 @@ namespace dnSpy.Debugger.DbgUI {
 		}
 
 		public void Add(string filename, StartDebuggingOptions options, Guid pageGuid) {
-			if (filename == null)
-				throw new ArgumentNullException(nameof(filename));
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
+			lastOptions = ((StartDebuggingOptions)options.Clone(), pageGuid);
+			if (filename is null)
+				return;
 			var info = Find(filename);
-			if (info != null) {
+			if (!(info is null)) {
 				bool b = list.Remove(info);
 				Debug.Assert(b);
 				list.Add(info);
@@ -69,19 +71,14 @@ namespace dnSpy.Debugger.DbgUI {
 		}
 
 		public (StartDebuggingOptions options, Guid pageGuid)? TryGetOptions(string filename) {
-			if (filename == null)
+			if (filename is null)
 				throw new ArgumentNullException(nameof(filename));
 			var info = Find(filename);
-			if (info == null)
+			if (info is null)
 				return null;
 			return (info.Options, info.PageGuid);
 		}
 
-		public (StartDebuggingOptions options, Guid pageGuid)? TryGetLastOptions() {
-			if (list.Count == 0)
-				return null;
-			var info = list[list.Count - 1];
-			return (info.Options, info.PageGuid);
-		}
+		public (StartDebuggingOptions options, Guid pageGuid)? TryGetLastOptions() => lastOptions;
 	}
 }

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 		}
 
 		public override void AddExpressions(string[] expressions) {
-			if (expressions == null)
+			if (expressions is null)
 				throw new ArgumentNullException(nameof(expressions));
 			if (expressions.Length == 0)
 				return;

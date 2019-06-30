@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,9 +24,6 @@ using System.Threading;
 using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
-	/// <summary>
-	/// A debugged AppDomain in a debugged process
-	/// </summary>
 	sealed class DnAppDomain {
 		readonly DebuggerCollection<ICorDebugAssembly, DnAssembly> assemblies;
 
@@ -42,29 +39,10 @@ namespace dndbg.Engine {
 		/// </summary>
 		public int UniqueIdProcess { get; }
 
-		/// <summary>
-		/// AppDomain Id
-		/// </summary>
 		public int Id => CorAppDomain.Id;
-
-		/// <summary>
-		/// true if the AppDomain has exited
-		/// </summary>
 		public bool HasExited { get; private set; }
-
-		/// <summary>
-		/// AppDomain name
-		/// </summary>
 		public string Name => CorAppDomain.Name ?? string.Empty;
-
-		/// <summary>
-		/// Gets the owner debugger
-		/// </summary>
 		public DnDebugger Debugger => Process.Debugger;
-
-		/// <summary>
-		/// Gets the owner process
-		/// </summary>
 		public DnProcess Process { get; }
 
 		internal DnAppDomain(DnProcess ownerProcess, ICorDebugAppDomain appDomain, int uniqueId, int uniqueIdProcess) {
@@ -90,12 +68,8 @@ namespace dndbg.Engine {
 			return CorAppDomain.RawObject.IsRunning(out int running) >= 0;
 		}
 
-		internal DnAssembly TryAdd(ICorDebugAssembly comAssembly) => assemblies.Add(comAssembly);
+		internal DnAssembly? TryAdd(ICorDebugAssembly? comAssembly) => assemblies.Add(comAssembly);
 
-		/// <summary>
-		/// Gets all Assemblies, sorted on the order they were created
-		/// </summary>
-		/// <returns></returns>
 		public DnAssembly[] Assemblies {
 			get {
 				Debugger.DebugVerifyThread();
@@ -105,33 +79,21 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets an Assembly or null
-		/// </summary>
-		/// <param name="comAssembly">Assembly</param>
-		/// <returns></returns>
-		public DnAssembly TryGetAssembly(ICorDebugAssembly comAssembly) {
+		public DnAssembly? TryGetAssembly(ICorDebugAssembly? comAssembly) {
 			Debugger.DebugVerifyThread();
 			return assemblies.TryGet(comAssembly);
 		}
 
-		internal void AssemblyUnloaded(ICorDebugAssembly comAssembly) {
+		internal void AssemblyUnloaded(ICorDebugAssembly? comAssembly) {
 			var assembly = assemblies.TryGet(comAssembly);
-			if (assembly == null)
+			if (assembly is null)
 				return;
 			assembly.SetHasUnloaded();
 			assemblies.Remove(comAssembly);
 		}
 
-		/// <summary>
-		/// Gets all threads, sorted on the order they were created
-		/// </summary>
-		/// <returns></returns>
 		public DnThread[] Threads => Process.Threads.Where(t => t.AppDomainOrNull == this).ToArray();
 
-		/// <summary>
-		/// Gets all modules in this app domain
-		/// </summary>
 		public IEnumerable<DnModule> Modules {
 			get {
 				Debugger.DebugVerifyThread();
@@ -142,6 +104,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		public override string ToString() => string.Format("{0} {1} {2}", UniqueId, Id, Name);
+		public override string ToString() => $"{UniqueId} {Id} {Name}";
 	}
 }

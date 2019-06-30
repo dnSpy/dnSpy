@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -44,16 +44,16 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 
 	[Export(typeof(IExceptionsContent))]
 	sealed class ExceptionsContent : IExceptionsContent {
-		public object UIObject => exceptionsControl;
-		public IInputElement FocusedElement => exceptionsControl.ListView;
-		public FrameworkElement ZoomElement => exceptionsControl;
+		public object? UIObject => exceptionsControl;
+		public IInputElement? FocusedElement => exceptionsControl.ListView;
+		public FrameworkElement? ZoomElement => exceptionsControl;
 		public ListView ListView => exceptionsControl.ListView;
 		public ExceptionsOperations Operations { get; }
 
 		readonly ExceptionsControl exceptionsControl;
 		readonly IExceptionsVM exceptionsVM;
 
-		sealed class ControlVM {
+		sealed class ControlVM : ViewModelBase {
 			public IExceptionsVM VM { get; }
 			public ExceptionsOperations Operations { get; }
 

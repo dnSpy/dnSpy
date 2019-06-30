@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -17,10 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.Disassembly;
+
 namespace dnSpy.Debugger.DotNet.CorDebug.DAC {
 	sealed class NullClrDac : ClrDac {
 		public static readonly ClrDac Instance = new NullClrDac();
 		NullClrDac() { }
 		public override ClrDacThreadInfo? GetThreadInfo(int tid) => null;
+		public override bool TryGetSymbolCore(ulong address, out SymbolResolverResult result) {
+			result = default;
+			return false;
+		}
 	}
 }

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 	/// <summary>
 	/// Multi file resource element info
 	/// </summary>
-	public struct MultiResourceInfo {
+	public readonly struct MultiResourceInfo {
 		/// <summary>
 		/// Gets the resource name
 		/// </summary>
@@ -47,7 +47,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <param name="name">Name of resource</param>
 		/// <param name="typeCode">Type code</param>
 		/// <param name="userTypeName">User type or null if it's not a <see cref="ResourceTypeCode.UserTypes"/></param>
-		public MultiResourceInfo(string name, ResourceTypeCode typeCode, string userTypeName) {
+		public MultiResourceInfo(string name, ResourceTypeCode typeCode, string? userTypeName) {
 			Name = name ?? throw new ArgumentNullException(nameof(name));
 			TypeCode = typeCode;
 			UserTypeName = userTypeName ?? string.Empty;

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,7 +29,7 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		/// </summary>
 		/// <param name="guid">Guid, eg. <see cref="AppSettingsConstants.REFRESH_LANGUAGE_SHOWMEMBER"/></param>
 		/// <param name="value">Value or null</param>
-		void Add(Guid guid, object value = null);
+		void Add(Guid guid, object? value = null);
 
 		/// <summary>
 		/// Returns true if <paramref name="guid"/> has been added by <see cref="Add(Guid, object)"/>
@@ -43,6 +43,6 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		/// </summary>
 		/// <param name="guid">Guid, eg. <see cref="AppSettingsConstants.REFRESH_LANGUAGE_SHOWMEMBER"/></param>
 		/// <returns></returns>
-		object GetValue(Guid guid);
+		object? GetValue(Guid guid);
 	}
 }

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,7 +33,7 @@ namespace dnSpy.Hex {
 		byte[] data;
 
 		public ByteArrayHexBufferStream(byte[] data, string name) {
-			if (data == null)
+			if (data is null)
 				throw new ArgumentNullException(nameof(data));
 			Span = new HexSpan(0, (ulong)data.LongLength);
 			Name = name ?? throw new ArgumentNullException(nameof(name));
@@ -439,6 +439,6 @@ namespace dnSpy.Hex {
 			Array.Copy(source, sourceIndex, d, (long)pos, validBytes);
 		}
 
-		protected override void DisposeCore() => data = null;
+		protected override void DisposeCore() => data = null!;
 	}
 }

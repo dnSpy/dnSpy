@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,28 +34,28 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor {
 	sealed class LogEditor : ILogEditor {
-		public object UIObject => wpfTextViewHost.HostControl;
-		public IInputElement FocusedElement => wpfTextView.VisualElement;
-		public FrameworkElement ZoomElement => wpfTextView.VisualElement;
-		public object Tag { get; set; }
+		public object? UIObject => wpfTextViewHost.HostControl;
+		public IInputElement? FocusedElement => wpfTextView.VisualElement;
+		public FrameworkElement? ZoomElement => wpfTextView.VisualElement;
+		public object? Tag { get; set; }
 		public IDsWpfTextView TextView => wpfTextViewHost.TextView;
 		public IDsWpfTextViewHost TextViewHost => wpfTextViewHost;
 
 		public WordWrapStyles WordWrapStyle {
-			get { return wpfTextView.Options.WordWrapStyle(); }
-			set { wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, value); }
+			get => wpfTextView.Options.WordWrapStyle();
+			set => wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.WordWrapStyleId, value);
 		}
 
 		public bool ShowLineNumbers {
-			get { return wpfTextView.Options.IsLineNumberMarginEnabled(); }
-			set { wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId, value); }
+			get => wpfTextView.Options.IsLineNumberMarginEnabled();
+			set => wpfTextView.Options.SetOptionValue(DefaultTextViewHostOptions.LineNumberMarginId, value);
 		}
 
 		readonly IDsWpfTextViewHost wpfTextViewHost;
 		readonly IDsWpfTextView wpfTextView;
 		readonly CachedColorsList cachedColorsList;
 		readonly Dispatcher dispatcher;
-		CachedTextColorsCollection cachedTextColorsCollection;
+		CachedTextColorsCollection? cachedTextColorsCollection;
 
 		sealed class GuidObjectsProvider : IGuidObjectsProvider {
 			readonly LogEditor logEditorUI;
@@ -76,7 +76,7 @@ namespace dnSpy.Text.Editor {
 			PredefinedDsTextViewRoles.LogEditor,
 		};
 
-		public LogEditor(LogEditorOptions options, IDsTextEditorFactoryService dsTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService) {
+		public LogEditor(LogEditorOptions? options, IDsTextEditorFactoryService dsTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService) {
 			dispatcher = Dispatcher.CurrentDispatcher;
 			cachedColorsList = new CachedColorsList();
 			options = options?.Clone() ?? new LogEditorOptions();
@@ -129,7 +129,7 @@ namespace dnSpy.Text.Editor {
 
 		public void Write(IEnumerable<ColorAndText> text) {
 			var list = text as IList<ColorAndText>;
-			if (list == null)
+			if (list is null)
 				list = text.ToArray();
 			if (list.Count == 0)
 				return;
@@ -185,7 +185,7 @@ namespace dnSpy.Text.Editor {
 
 			foreach (var info in newPendingOutput) {
 				sb.Append(info.Text);
-				cachedTextColorsCollection.Append(info.Color, info.Text);
+				cachedTextColorsCollection!.Append(info.Color, info.Text);
 			}
 			if (sb.Length == 0)
 				return;

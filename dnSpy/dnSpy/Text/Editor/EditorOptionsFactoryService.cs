@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -47,7 +47,7 @@ namespace dnSpy.Text.Editor {
 
 		public IEditorOptions CreateOptions() => new EditorOptions(this, GlobalOptions, null);
 		public IEditorOptions GetOptions(IPropertyOwner scope) {
-			if (scope == null)
+			if (scope is null)
 				throw new ArgumentNullException(nameof(scope));
 			return scope.Properties.GetOrCreateSingletonProperty(typeof(IEditorOptions), () => new EditorOptions(this, GlobalOptions, scope));
 		}

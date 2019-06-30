@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -49,7 +49,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="writer">Text writer to use</param>
 		/// <param name="indenter">Indenter or null</param>
-		public TextWriterDecompilerOutput(TextWriter writer, Indenter indenter = null) {
+		public TextWriterDecompilerOutput(TextWriter writer, Indenter? indenter = null) {
 			this.writer = writer ?? throw new ArgumentNullException(nameof(writer));
 			this.indenter = indenter ?? new Indenter(4, 4, true);
 		}
@@ -132,7 +132,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="reference">Reference</param>
 		/// <param name="flags">Flags</param>
 		/// <param name="color">Color, eg. <see cref="BoxedTextColor.Keyword"/></param>
-		public virtual void Write(string text, object reference, DecompilerReferenceFlags flags, object color) => AddText(text, color);
+		public virtual void Write(string text, object? reference, DecompilerReferenceFlags flags, object color) => AddText(text, color);
 
 		/// <summary>
 		/// Writes text, color and a reference. The text will be indented if needed.
@@ -143,7 +143,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="reference">Reference</param>
 		/// <param name="flags">Flags</param>
 		/// <param name="color">Color, eg. <see cref="BoxedTextColor.Keyword"/></param>
-		public virtual void Write(string text, int index, int length, object reference, DecompilerReferenceFlags flags, object color) => AddText(text, index, length, color);
+		public virtual void Write(string text, int index, int length, object? reference, DecompilerReferenceFlags flags, object color) => AddText(text, index, length, color);
 
 		/// <summary>
 		/// Returns the result from <see cref="TextWriter"/>'s <see cref="object.ToString"/> method

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// </summary>
 		/// <typeparam name="T">Type</typeparam>
 		/// <returns></returns>
-		DocumentTabUIContext Create<T>() where T : class;
+		DocumentTabUIContext? Create<T>() where T : class;
 	}
 
 	/// <summary>Metadata</summary>

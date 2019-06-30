@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,6 +23,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.TextFormatting;
+using dnSpy.Contracts.DnSpy.Text.WPF;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Formatting;
 
@@ -33,6 +34,7 @@ namespace dnSpy.Text.Formatting {
 		readonly string text;
 		int maxLengthLeft;
 		int linePartIndex;
+		int totalBadChars;
 
 		public LinePartsTextSource(LinePartsCollection linePartsCollection) {
 			this.linePartsCollection = linePartsCollection ?? throw new ArgumentNullException(nameof(linePartsCollection));
@@ -45,21 +47,42 @@ namespace dnSpy.Text.Formatting {
 
 		public override TextRun GetTextRun(int textSourceCharacterIndex) {
 			var linePart = linePartsCollection.GetLinePartFromColumn(textSourceCharacterIndex, ref linePartIndex);
-			if (linePart == null)
+			if (linePart is null)
 				return endOfLine;
 			var part = linePart.Value;
-			if (part.AdornmentElement != null)
+			if (!(part.AdornmentElement is null))
 				return new AdornmentTextRun(part);
 			else {
 				int offs = textSourceCharacterIndex - part.Column;
+				int baseOffset = part.Span.Start + offs;
 				int length = part.ColumnLength - offs;
 				Debug.Assert(length >= 0);
 				if (length > maxLengthLeft)
 					length = maxLengthLeft;
+				var text = this.text;
+				for (int i = 0; i < length; i++) {
+					uint cp = text[baseOffset + i];
+					if (char.IsHighSurrogate((char)cp) && i + 1 < length) {
+						uint lo = text[baseOffset + i + 1];
+						if (char.IsLowSurrogate((char)lo)) {
+							cp = 0x10000 + ((cp - 0xD800) << 10) + (lo - 0xDC00);
+							i++;
+						}
+					}
+					if (WpfUnicodeUtils.IsBadWpfFormatterChar(cp)) {
+						totalBadChars++;
+						Debug.Assert(totalBadChars <= WpfUnicodeUtils.MAX_BAD_CHARS);
+						if (totalBadChars == WpfUnicodeUtils.MAX_BAD_CHARS) {
+							maxLengthLeft = i;
+							length = i;
+							break;
+						}
+					}
+				}
 				if (length == 0)
 					return endOfLine;
 				maxLengthLeft -= length;
-				return new TextCharacters(text, part.Span.Start + offs, length, part.TextRunProperties);
+				return new TextCharacters(text, baseOffset, length, part.TextRunProperties);
 			}
 		}
 		static readonly TextEndOfLine endOfLine = new TextEndOfLine(1);
@@ -71,10 +94,11 @@ namespace dnSpy.Text.Formatting {
 			public override LineBreakCondition BreakAfter { get; }
 			public override bool HasFixedSize { get; }
 			public override int Length { get; }
-			public override TextRunProperties Properties { get; }
+			public override TextRunProperties? Properties { get; }
 			readonly IAdornmentElement adornmentElement;
 
-			public AdornmentTextRun(LinePart linePart) {
+			public AdornmentTextRun(in LinePart linePart) {
+				Debug.Assert(!(linePart.AdornmentElement is null));
 				adornmentElement = linePart.AdornmentElement;
 				if (linePart.Span.Length != 0 || adornmentElement.Affinity == PositionAffinity.Successor) {
 					BreakBefore = LineBreakCondition.BreakPossible;
@@ -104,7 +128,7 @@ namespace dnSpy.Text.Formatting {
 		public int GetColumnOfFirstNonWhitespace() {
 			int column = 0;
 			foreach (var part in linePartsCollection.LineParts) {
-				if (part.AdornmentElement != null)
+				if (!(part.AdornmentElement is null))
 					break;
 				int len = part.Span.Length;
 				int start = part.Span.Start;
@@ -117,6 +141,9 @@ namespace dnSpy.Text.Formatting {
 			return column;
 		}
 
-		public void SetMaxLineLength(int maxLineLength) => maxLengthLeft = maxLineLength;
+		public void SetMaxLineLength(int maxLineLength) {
+			maxLengthLeft = maxLineLength;
+			totalBadChars = 0;
+		}
 	}
 }

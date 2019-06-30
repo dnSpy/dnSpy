@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,7 +33,7 @@ namespace dnSpy.Text.Editor {
 		SpaceReservationStackProvider([ImportMany] IEnumerable<Lazy<SpaceReservationManagerDefinition, IOrderable>> spaceReservationManagerDefinitions) => spaceReservationManagerNames = Orderer.Order(spaceReservationManagerDefinitions).Select(a => a.Metadata.Name).ToArray();
 
 		public ISpaceReservationStack Create(IWpfTextView wpfTextView) {
-			if (wpfTextView == null)
+			if (wpfTextView is null)
 				throw new ArgumentNullException(nameof(wpfTextView));
 			return wpfTextView.Properties.GetOrCreateSingletonProperty(typeof(SpaceReservationStack), () => new SpaceReservationStack(wpfTextView, spaceReservationManagerNames));
 		}

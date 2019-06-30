@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,6 +18,7 @@
 */
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using dnSpy.Contracts.Documents;
@@ -29,7 +30,7 @@ namespace dnSpy.Documents {
 		readonly Window ownerWindow;
 		readonly HashSet<IDsDocument> hash;
 		readonly List<IDsDocument> loadedDocuments;
-		DocumentToLoad[] documentsToLoad;
+		DocumentToLoad[]? documentsToLoad;
 
 		public bool IsIndeterminate => false;
 		public double ProgressMinimum => 0;
@@ -52,7 +53,7 @@ namespace dnSpy.Documents {
 					Load(f);
 			}
 			else
-				ProgressDlg.Show(this, "dnSpy", ownerWindow);
+				ProgressDlg.Show(this, MainApp.Constants.DnSpy, ownerWindow);
 
 			return loadedDocuments.ToArray();
 		}
@@ -61,13 +62,16 @@ namespace dnSpy.Documents {
 			if (f.Info.Type == DocumentConstants.DOCUMENTTYPE_FILE && string.IsNullOrEmpty(f.Info.Name))
 				return;
 			var document = documentService.TryGetOrCreate(f.Info, f.IsAutoLoaded);
-			if (document != null && !hash.Contains(document)) {
+			if (!(document is null) && !hash.Contains(document)) {
 				loadedDocuments.Add(document);
 				hash.Add(document);
+				if (!f.IsAutoLoaded)
+					document.IsAutoLoaded = f.IsAutoLoaded;
 			}
 		}
 
 		public void Execute(IProgress progress) {
+			Debug.Assert(!(documentsToLoad is null));
 			for (int i = 0; i < documentsToLoad.Length; i++) {
 				progress.ThrowIfCancellationRequested();
 				var f = documentsToLoad[i];

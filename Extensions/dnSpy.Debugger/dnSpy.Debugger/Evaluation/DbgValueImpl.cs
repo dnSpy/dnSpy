@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,7 +28,7 @@ namespace dnSpy.Debugger.Evaluation {
 		public override object InternalValue => EngineValue.InternalValue;
 		public override DbgSimpleValueType ValueType => EngineValue.ValueType;
 		public override bool HasRawValue => EngineValue.HasRawValue;
-		public override object RawValue => EngineValue.RawValue;
+		public override object? RawValue => EngineValue.RawValue;
 
 		internal DbgEngineValue EngineValue { get; }
 

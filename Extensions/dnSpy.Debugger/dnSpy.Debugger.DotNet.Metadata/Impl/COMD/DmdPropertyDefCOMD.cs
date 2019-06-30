@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,23 +34,23 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			uint token = 0x17000000 + rid;
 			Name = MDAPI.GetPropertyName(reader.MetaDataImport, token) ?? string.Empty;
 			Attributes = MDAPI.GetPropertyAttributes(reader.MetaDataImport, token);
-			methodSignature = reader.ReadMethodSignature_COMThread(MDAPI.GetPropertySignatureBlob(reader.MetaDataImport, token), DeclaringType.GetGenericArguments(), null, isProperty: true);
+			methodSignature = reader.ReadMethodSignature_COMThread(MDAPI.GetPropertySignatureBlob(reader.MetaDataImport, token), DeclaringType!.GetGenericArguments(), null, isProperty: true);
 		}
 
 		T COMThread<T>(Func<T> action) => reader.Dispatcher.Invoke(action);
 
 		public override DmdMethodSignature GetMethodSignature() => methodSignature;
 		protected override DmdCustomAttributeData[] CreateCustomAttributes() => COMThread(() => reader.ReadCustomAttributesCore_COMThread((uint)MetadataToken));
-		public override object GetRawConstantValue() => COMThread(() => reader.ReadPropertyConstant_COMThread(MetadataToken).value);
+		public override object? GetRawConstantValue() => COMThread(() => reader.ReadPropertyConstant_COMThread(MetadataToken).value);
 
-		protected override void GetMethods(out DmdMethodInfo getMethod, out DmdMethodInfo setMethod, out DmdMethodInfo[] otherMethods) {
+		protected override void GetMethods(out DmdMethodInfo? getMethod, out DmdMethodInfo? setMethod, out DmdMethodInfo[]? otherMethods) {
 			var info = COMThread(GetMethods_COMThread);
 			getMethod = info.getMethod;
 			setMethod = info.setMethod;
 			otherMethods = info.otherMethods;
 		}
 
-		(DmdMethodInfo getMethod, DmdMethodInfo setMethod, DmdMethodInfo[] otherMethods) GetMethods_COMThread() {
+		(DmdMethodInfo? getMethod, DmdMethodInfo? setMethod, DmdMethodInfo[] otherMethods) GetMethods_COMThread() {
 			reader.Dispatcher.VerifyAccess();
 			uint token = 0x17000000 + Rid;
 			MDAPI.GetPropertyGetterSetter(reader.MetaDataImport, token, out uint getToken, out uint setToken);
@@ -60,7 +60,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			var otherMethods = otherMethodTokens.Length == 0 ? Array.Empty<DmdMethodInfo>() : new DmdMethodInfo[otherMethodTokens.Length];
 			for (int i = 0; i < otherMethods.Length; i++) {
 				var otherMethod = Lookup_COMThread(otherMethodTokens[i]);
-				if ((object)otherMethod == null) {
+				if (otherMethod is null) {
 					otherMethods = Array.Empty<DmdMethodInfo>();
 					break;
 				}
@@ -69,11 +69,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			return (getMethod, setMethod, otherMethods);
 		}
 
-		DmdMethodInfo Lookup_COMThread(uint token) {
+		DmdMethodInfo? Lookup_COMThread(uint token) {
 			if ((token >> 24) != 0x06 || (token & 0x00FFFFFF) == 0)
 				return null;
-			var method = ReflectedType.GetMethod(Module, (int)token) as DmdMethodInfo;
-			Debug.Assert((object)method != null);
+			var method = ReflectedType!.GetMethod(Module, (int)token) as DmdMethodInfo;
+			Debug.Assert(!(method is null));
 			return method;
 		}
 	}

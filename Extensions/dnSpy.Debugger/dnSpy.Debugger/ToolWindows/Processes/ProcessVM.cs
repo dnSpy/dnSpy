@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -78,13 +78,14 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		public object TitleObject => new FormatterObject<ProcessVM>(this, PredefinedTextClassifierTags.ProcessesWindowTitle);
 		public object StateObject => new FormatterObject<ProcessVM>(this, PredefinedTextClassifierTags.ProcessesWindowState);
 		public object DebuggingObject => new FormatterObject<ProcessVM>(this, PredefinedTextClassifierTags.ProcessesWindowDebugging);
+		public object ArchitectureObject => new FormatterObject<ProcessVM>(this, PredefinedTextClassifierTags.ProcessesWindowArchitecture);
 		public object PathObject => new FormatterObject<ProcessVM>(this, PredefinedTextClassifierTags.ProcessesWindowPath);
 		public DbgProcess Process { get; }
 		public IProcessContext Context { get; }
 
 		internal string Title {
 			get {
-				if (title == null)
+				if (title is null)
 					title = GetProcessTitle() ?? string.Empty;
 				return title;
 			}
@@ -97,14 +98,14 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 				}
 			}
 		}
-		string title;
+		string? title;
 
 		internal int Order { get; }
 
 		sealed class ProcessState : IDisposable {
 			public string Title {
 				get {
-					if (process == null)
+					if (process is null)
 						return string.Empty;
 					try {
 						process.Refresh();
@@ -120,11 +121,11 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			// it's cached here and disposed of when the DbgProcess is closed.
 			// It's no problem if we're debugging just one process, but try 5-20 processes.
 			// ;)
-			readonly Process process;
+			readonly Process? process;
 
-			public ProcessState(ulong pid) {
+			public ProcessState(int pid) {
 				try {
-					process = System.Diagnostics.Process.GetProcessById((int)pid);
+					process = System.Diagnostics.Process.GetProcessById(pid);
 				}
 				catch {
 				}
@@ -134,6 +135,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		}
 
 		readonly ProcessesVM owner;
+		bool refreshTitleOnPause;
 
 		public ProcessVM(ProcessesVM owner, DbgProcess process, IProcessContext context, int order) {
 			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
@@ -144,6 +146,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			process.PropertyChanged += DbgProcess_PropertyChanged;
 			process.IsRunningChanged += DbgProcess_IsRunningChanged;
 			process.DelayedIsRunningChanged += DbgProcess_DelayedIsRunningChanged;
+			refreshTitleOnPause = true;
 		}
 
 		// random thread
@@ -166,6 +169,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			OnPropertyChanged(nameof(TitleObject));
 			OnPropertyChanged(nameof(StateObject));
 			OnPropertyChanged(nameof(DebuggingObject));
+			OnPropertyChanged(nameof(ArchitectureObject));
 			OnPropertyChanged(nameof(PathObject));
 		}
 
@@ -210,8 +214,13 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 				OnPropertyChanged(nameof(DebuggingObject));
 				break;
 
-			case nameof(Process.Machine):
+			case nameof(Process.Architecture):
+				OnPropertyChanged(nameof(ArchitectureObject));
+				break;
+
 			case nameof(Process.Bitness):
+			case nameof(Process.PointerSize):
+			case nameof(Process.OperatingSystem):
 			case nameof(Process.ShouldDetach):
 				break;
 
@@ -222,16 +231,15 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		}
 
 		// DbgManager thread
-		void DbgProcess_IsRunningChanged(object sender, EventArgs e) => UI(() => refreshTitlesOnPause = true);
-		bool refreshTitlesOnPause;
+		void DbgProcess_IsRunningChanged(object sender, EventArgs e) => UI(() => {
+			if (refreshTitleOnPause && !Process.IsRunning) {
+				refreshTitleOnPause = false;
+				RefreshTitle_UI();
+			}
+		});
 
 		// DbgManager thread
-		void DbgProcess_DelayedIsRunningChanged(object sender, EventArgs e) {
-			if (refreshTitlesOnPause && !Process.IsRunning) {
-				refreshTitlesOnPause = false;
-				UI(() => RefreshTitle_UI());
-			}
-		}
+		void DbgProcess_DelayedIsRunningChanged(object sender, EventArgs e) => UI(() => refreshTitleOnPause = true);
 
 		// UI thread
 		internal void Dispose() {

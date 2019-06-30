@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,10 +23,10 @@ using System.Threading;
 namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 	static class ObjectCache {
 		const int MAX_STRINGBUILDER_CAPACITY = 1024;
-		static StringBuilder stringBuilder;
+		static StringBuilder? stringBuilder;
 		public static StringBuilder AllocStringBuilder() => Interlocked.Exchange(ref stringBuilder, null) ?? new StringBuilder();
-		public static string FreeAndToString(ref StringBuilder sb) {
-			var res = sb.ToString();
+		public static string FreeAndToString(ref StringBuilder? sb) {
+			var res = sb!.ToString();
 			sb.Clear();
 			if (sb.Capacity <= MAX_STRINGBUILDER_CAPACITY)
 				stringBuilder = sb;

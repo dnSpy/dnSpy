@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,6 +22,14 @@ using System;
 namespace dnSpy_x86 {
 	static class Program {
 		[STAThread]
-		static void Main() => dnSpy.MainApp.StartUpClass.Main();
+		static void Main() {
+#if NETCOREAPP
+			const string errmsg = "Wrong startup project";
+			System.Diagnostics.Debug.Fail(errmsg);
+			throw new InvalidOperationException(errmsg);
+#else
+			dnSpy.MainApp.StartUpClass.Main();
+#endif
+		}
 	}
 }

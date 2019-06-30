@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.DotNet.UI {
 		static readonly FieldInfo _disableProcessingCountFieldInfo;
 		static UIDispatcher() {
 			_disableProcessingCountFieldInfo = typeof(Dispatcher).GetField("_disableProcessingCount", BindingFlags.NonPublic | BindingFlags.Instance);
-			Debug.Assert(_disableProcessingCountFieldInfo != null);
+			Debug.Assert(!(_disableProcessingCountFieldInfo is null));
 		}
 
 		Dispatcher Dispatcher { get; }
@@ -42,7 +42,7 @@ namespace dnSpy.Debugger.DotNet.UI {
 		public bool CheckAccess() => Dispatcher.CheckAccess();
 
 		public bool IsProcessingDisabled() {
-			if (_disableProcessingCountFieldInfo == null)
+			if (_disableProcessingCountFieldInfo is null)
 				return false;
 			return (int)_disableProcessingCountFieldInfo.GetValue(Dispatcher) > 0;
 		}

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -42,16 +42,16 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 
 	[Export(typeof(IBookmarksContent))]
 	sealed class BookmarksContent : IBookmarksContent {
-		public object UIObject => bookmarksControl;
-		public IInputElement FocusedElement => bookmarksControl.ListView;
-		public FrameworkElement ZoomElement => bookmarksControl;
+		public object? UIObject => bookmarksControl;
+		public IInputElement? FocusedElement => bookmarksControl.ListView;
+		public FrameworkElement? ZoomElement => bookmarksControl;
 		public ListView ListView => bookmarksControl.ListView;
 		public BookmarksOperations Operations { get; }
 
 		readonly BookmarksControl bookmarksControl;
 		readonly IBookmarksVM bookmarksVM;
 
-		sealed class ControlVM {
+		sealed class ControlVM : ViewModelBase {
 			public IBookmarksVM VM { get; }
 			BookmarksOperations Operations { get; }
 

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,10 +23,10 @@ using System.Collections.Generic;
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 	sealed class DmdMethodRefCOMD : DmdMethodRef {
 		readonly DmdComMetadataReader reader;
-		readonly IList<DmdType> genericTypeArguments;
+		readonly IList<DmdType>? genericTypeArguments;
 		readonly (IntPtr addr, uint size) signature;
 
-		public DmdMethodRefCOMD(DmdComMetadataReader reader, (IntPtr addr, uint size) signature, IList<DmdType> genericTypeArguments, DmdType declaringTypeRef, string name, DmdMethodSignature rawMethodSignature, DmdMethodSignature methodSignature)
+		public DmdMethodRefCOMD(DmdComMetadataReader reader, (IntPtr addr, uint size) signature, IList<DmdType>? genericTypeArguments, DmdType declaringTypeRef, string name, DmdMethodSignature rawMethodSignature, DmdMethodSignature methodSignature)
 			: base(declaringTypeRef, name, rawMethodSignature, methodSignature) {
 			this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
 			this.genericTypeArguments = genericTypeArguments;
@@ -35,6 +35,6 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 
 		T COMThread<T>(Func<T> action) => reader.Dispatcher.Invoke(action);
 
-		internal override DmdMethodSignature GetMethodSignatureCore(IList<DmdType> genericMethodArguments) => COMThread(() => reader.ReadMethodSignature_COMThread(signature, genericTypeArguments, genericMethodArguments, isProperty: false));
+		private protected override DmdMethodSignature GetMethodSignatureCore(IList<DmdType> genericMethodArguments) => COMThread(() => reader.ReadMethodSignature_COMThread(signature, genericTypeArguments, genericMethodArguments, isProperty: false));
 	}
 }

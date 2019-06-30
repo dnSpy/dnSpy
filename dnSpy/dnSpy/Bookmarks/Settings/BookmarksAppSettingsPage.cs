@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -44,7 +44,7 @@ namespace dnSpy.Bookmarks.Settings {
 		public BookmarksSettingsBase Settings { get; }
 		public override double Order => AppSettingsConstants.ORDER_BOOKMARKS;
 		public override string Title => dnSpy_Resources.BookmarksOptDlgTab;
-		public override object UIObject => this;
+		public override object? UIObject => this;
 
 		public BookmarksAppSettingsPage(BookmarksSettingsImpl bookmarksSettingsImpl) {
 			_global_settings = bookmarksSettingsImpl;

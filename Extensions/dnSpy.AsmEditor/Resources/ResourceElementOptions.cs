@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,8 +21,8 @@ using dnlib.DotNet.Resources;
 
 namespace dnSpy.AsmEditor.Resources {
 	sealed class ResourceElementOptions {
-		public string Name;
-		public IResourceData ResourceData;
+		public string? Name;
+		public IResourceData? ResourceData;
 
 		public ResourceElementOptions() {
 		}

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,14 +24,14 @@ using dnSpy.Contracts.Documents.TreeView;
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	[ExportDocumentTreeNodeDataFinder]
 	sealed class HexDocumentTreeNodeDataFinder : IDocumentTreeNodeDataFinder {
-		public DocumentTreeNodeData FindNode(IDocumentTreeView documentTreeView, object @ref) => FindNode(documentTreeView, @ref as TokenReference);
+		public DocumentTreeNodeData? FindNode(IDocumentTreeView documentTreeView, object? @ref) => FindNode(documentTreeView, @ref as TokenReference);
 
-		internal static MetaDataTableRecordNode FindNode(IDocumentTreeView documentTreeView, TokenReference tokRef) {
-			if (tokRef == null)
+		internal static MetadataTableRecordNode? FindNode(IDocumentTreeView documentTreeView, TokenReference? tokRef) {
+			if (tokRef is null)
 				return null;
 
 			var modNode = documentTreeView.FindNode(tokRef.ModuleDef);
-			if (modNode == null)
+			if (modNode is null)
 				return null;
 			modNode.TreeNode.EnsureChildrenLoaded();
 			var peNode = (PENode)modNode.TreeNode.DataChildren.FirstOrDefault(a => a is PENode);

@@ -1,5 +1,5 @@
-﻿<!--
-    Copyright (C) 2014-2017 de4dot@gmail.com
+<!--
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,14 +35,14 @@
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <mvvmvc:NegateBooleanConverter x:Key="NegateBooleanConverter" />
     </winlocal:WindowBase.Resources>
-    <Grid>
+    <Grid img:DsImage.BackgroundBrush="{DynamicResource DialogWindowBackground}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Column="0" Margin="5 5 5 0" mvvm:InitDataTemplateAP.Initialize="True" img:DsImage.BackgroundBrush="{DynamicResource DialogWindowBackground}">
+        <Grid Grid.Column="0" Margin="5 5 5 0" mvvm:InitDataTemplateAP.Initialize="True">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
@@ -64,7 +64,9 @@
             VirtualizingStackPanel.IsVirtualizing="True"
             VirtualizingStackPanel.VirtualizationMode="Recycling"
             mvvm:InitDataTemplateAP.Initialize="True"
+            mvvm:AutomationPeerMemoryLeakWorkaround.Initialize="True"
             ui:ListBoxSelectedItemsAP.SelectedItemsVM="{Binding SelectedItems}"
+            mvvm:GridViewColumnSorter.ColumnProvider="{Binding}"
             SelectionMode="Extended"
             ItemsSource="{Binding AllItems}">
             <ListView.Resources>
@@ -72,50 +74,50 @@
                 <local:ProgramColumnConverter x:Key="programColumnConverter" />
             </ListView.Resources>
             <ListView.View>
-                <GridView AllowsColumnReorder="False">
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Process}">
+                <GridView AllowsColumnReorder="True">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:AttachToProcessWindowColumnIds.Process}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_Process}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding ProcessObject, Mode=OneWay, Converter={StaticResource programColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_ProcessID}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:AttachToProcessWindowColumnIds.ProcessID}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_ProcessID}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding IdObject, Mode=OneWay, Converter={StaticResource programColumnConverter}}" HorizontalAlignment="Right" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_ProcessTitle}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:AttachToProcessWindowColumnIds.ProcessTitle}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_ProcessTitle}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding TitleObject, Mode=OneWay, Converter={StaticResource programColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_ProcessType}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:AttachToProcessWindowColumnIds.ProcessType}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_ProcessType}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding RuntimeNameObject, Mode=OneWay, Converter={StaticResource programColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_ProcessArchitecture}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:AttachToProcessWindowColumnIds.ProcessArchitecture}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_ProcessArchitecture}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding ArchitectureObject, Mode=OneWay, Converter={StaticResource programColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_ProcessFilename}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:AttachToProcessWindowColumnIds.ProcessFilename}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_ProcessFilename}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding PathObject, Mode=OneWay, Converter={StaticResource programColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_ProcessCommandLine}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:AttachToProcessWindowColumnIds.ProcessCommandLine}" Header="{x:Static p:dnSpy_Debugger_Resources.Column_ProcessCommandLine}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding CommandLineObject, Mode=OneWay, Converter={StaticResource programColumnConverter}}" />
@@ -126,7 +128,7 @@
             </ListView.View>
         </ListView>
 
-        <Grid Grid.Row="2" Margin="5" img:DsImage.BackgroundBrush="{DynamicResource DialogWindowBackground}">
+        <Grid Grid.Row="2" Margin="5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
@@ -135,9 +137,9 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0" Content="{x:Static p:dnSpy_Debugger_Resources.Button_Refresh}" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding RefreshCommand}" />
-            <TextBlock Grid.Column="1" Text="{Binding DebuggingText}" Visibility="{Binding HasDebuggingText, Converter={StaticResource BooleanToVisibilityConverter}}" VerticalAlignment="Center" />
+            <TextBlock Grid.Column="1" Text="{Binding MessageText}" Visibility="{Binding HasMessageText, Converter={StaticResource BooleanToVisibilityConverter}}" VerticalAlignment="Center" />
             <ProgressBar Name="progressBar" Grid.Column="1" IsIndeterminate="True" Visibility="{Binding IsRefreshing, Converter={StaticResource BooleanToVisibilityConverter}}" />
-            <Button Grid.Column="2" Margin="5 0 0 0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding MakingAnImageEasierToDebugCommand}" ToolTip="{Binding MakingAnImageEasierToDebugToolTip}">
+            <Button Grid.Column="2" Margin="5 0 0 0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" ToolTipService.ShowOnDisabled="True" Command="{Binding InfoLinkCommand}" ToolTip="{Binding InfoLinkToolTip}" Visibility="{Binding HasInfoLink, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <img:DsImage ImageReference="{x:Static img:DsImages.StatusInformation}"/>
             </Button>
             <Button Grid.Column="3" Content="{x:Static p:dnSpy_Debugger_Resources.Button_Attach}" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="5 0 5 0" Click="okButton_Click" />

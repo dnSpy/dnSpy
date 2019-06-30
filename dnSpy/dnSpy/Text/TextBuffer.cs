@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,14 +25,14 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text {
-	sealed class TextBuffer : ITextBuffer {
+	sealed class TextBuffer : ITextBuffer2 {
 		public IContentType ContentType => contentType;
 		IContentType contentType;
 		TextVersion currentTextVersion;
 
-		public void ChangeContentType(IContentType newContentType, object editTag) {
+		public void ChangeContentType(IContentType newContentType, object? editTag) {
 			VerifyAccess();
-			if (newContentType == null)
+			if (newContentType is null)
 				throw new ArgumentNullException(nameof(newContentType));
 			if (contentType != newContentType) {
 				var oldContentType = contentType;
@@ -45,11 +45,13 @@ namespace dnSpy.Text {
 			}
 		}
 
-		void CreateNewCurrentSnapshot(IList<ITextChange> changes, int? reiteratedVersionNumber = null, ITextSource afterTextSource = null) {
+		void CreateNewCurrentSnapshot(IList<ITextChange>? changes, int? reiteratedVersionNumber = null, ITextSource? afterTextSource = null) {
 			// It's null the first time it's called from the ctor
-			if (changes != null)
+			if (!(changes is null))
 				currentTextVersion = currentTextVersion.SetChanges(changes, reiteratedVersionNumber);
-			CurrentSnapshot = new TextSnapshot(afterTextSource ?? Document.CreateSnapshot(), ContentType, this, currentTextVersion);
+			var textSource = afterTextSource ?? Document.CreateSnapshot();
+			var textImage = new TextImage(this, textSource, currentTextVersion.ImageVersion);
+			CurrentSnapshot = new TextSnapshot(textImage, ContentType, this, currentTextVersion);
 		}
 
 		ITextSnapshot ITextBuffer.CurrentSnapshot => CurrentSnapshot;
@@ -61,14 +63,19 @@ namespace dnSpy.Text {
 		public event EventHandler<TextContentChangedEventArgs> ChangedLowPriority;
 		public event EventHandler<TextContentChangingEventArgs> Changing;
 		public event EventHandler PostChanged;
-#pragma warning disable 0067
+#pragma warning disable CS0067
 		public event EventHandler<SnapshotSpanEventArgs> ReadOnlyRegionsChanged;//TODO: Use this event
-#pragma warning restore 0067
+#pragma warning restore CS0067
+
+		event EventHandler<TextContentChangedEventArgs> ITextBuffer2.ChangedOnBackground {
+			add => throw new NotImplementedException();
+			remove => throw new NotImplementedException();
+		}
 
 		internal TextDocument Document {
-			get { return document; }
+			get => document;
 			private set {
-				if (document != null)
+				if (!(document is null))
 					throw new InvalidOperationException();
 				document = value;
 				CreateNewCurrentSnapshot(null);
@@ -79,19 +86,21 @@ namespace dnSpy.Text {
 		public PropertyCollection Properties { get; }
 
 		public TextBuffer(IContentType contentType, string text) {
+			document = null!;
+			CurrentSnapshot = null!;
 			Properties = new PropertyCollection();
 			this.contentType = contentType ?? throw new ArgumentNullException(nameof(contentType));
-			currentTextVersion = new TextVersion(this, text?.Length ?? 0, 0, 0);
+			currentTextVersion = new TextVersion(this, text?.Length ?? 0, 0, 0, new object());
 			Document = new TextDocument(text);
 			Document.SetOwnerThread(null);
 		}
 
-		public bool EditInProgress => textEditInProgress != null;
+		public bool EditInProgress => !(textEditInProgress is null);
 		public bool CheckEditAccess() => CheckAccess();
-		TextEdit textEditInProgress;
+		TextEdit? textEditInProgress;
 
 		public ITextEdit CreateEdit() => CreateEdit(EditOptions.None,  null, null);
-		public ITextEdit CreateEdit(EditOptions options, int? reiteratedVersionNumber, object editTag) {
+		public ITextEdit CreateEdit(EditOptions options, int? reiteratedVersionNumber, object? editTag) {
 			VerifyAccess();
 			if (EditInProgress)
 				throw new InvalidOperationException("An edit operation is in progress");
@@ -127,12 +136,12 @@ namespace dnSpy.Text {
 			}
 		}
 
-		bool RaiseChangingGetIsCanceled(object editTag) {
+		bool RaiseChangingGetIsCanceled(object? editTag) {
 			var c = Changing;
-			if (c == null)
+			if (c is null)
 				return false;
 
-			Action<TextContentChangingEventArgs> cancelAction = null;
+			Action<TextContentChangingEventArgs>? cancelAction = null;
 			var args = new TextContentChangingEventArgs(CurrentSnapshot, editTag, cancelAction);
 			foreach (EventHandler<TextContentChangingEventArgs> handler in c.GetInvocationList()) {
 				handler(this, args);
@@ -142,7 +151,7 @@ namespace dnSpy.Text {
 			return args.Canceled;
 		}
 
-		internal void ApplyChanges(TextEdit textEdit, List<ITextChange> changes, EditOptions options, int? reiteratedVersionNumber, object editTag) {
+		internal void ApplyChanges(TextEdit textEdit, List<ITextChange> changes, EditOptions options, int? reiteratedVersionNumber, object? editTag) {
 			VerifyAccess();
 			if (textEdit != textEditInProgress)
 				throw new InvalidOperationException();
@@ -170,19 +179,19 @@ namespace dnSpy.Text {
 				CreateNewCurrentSnapshot(changes, reiteratedVersionNumber, Document.CreateSnapshot());
 				var afterSnapshot = CurrentSnapshot;
 
-				TextContentChangedEventArgs args = null;
+				TextContentChangedEventArgs? args = null;
 				//TODO: The event handlers are allowed to modify the buffer, but the new events must only be
 				//		raised after all of these three events have been raised.
-				ChangedHighPriority?.Invoke(this, args ?? (args = new TextContentChangedEventArgs(beforeSnapshot, afterSnapshot, options, editTag)));
-				Changed?.Invoke(this, args ?? (args = new TextContentChangedEventArgs(beforeSnapshot, afterSnapshot, options, editTag)));
-				ChangedLowPriority?.Invoke(this, args ?? (args = new TextContentChangedEventArgs(beforeSnapshot, afterSnapshot, options, editTag)));
+				ChangedHighPriority?.Invoke(this, args ??= new TextContentChangedEventArgs(beforeSnapshot, afterSnapshot, options, editTag));
+				Changed?.Invoke(this, args ??= new TextContentChangedEventArgs(beforeSnapshot, afterSnapshot, options, editTag));
+				ChangedLowPriority?.Invoke(this, args ??= new TextContentChangedEventArgs(beforeSnapshot, afterSnapshot, options, editTag));
 			}
 			PostChanged?.Invoke(this, EventArgs.Empty);
 		}
 
-		internal bool IsSafeToAccessDocumentFromSnapshot(TextSnapshot snapshot) {
+		internal bool IsSafeToAccessDocumentFromSnapshot(TextImage snapshot) {
 			// If it's not the latest snapshot, Document could be different
-			if (snapshot != CurrentSnapshot)
+			if (snapshot != CurrentSnapshot.TextImage)
 				return false;
 			// It's only safe to access Document on the owner thread. If owner thread
 			// is null, assume there's only one thread that accesses the text buffer.
@@ -190,14 +199,14 @@ namespace dnSpy.Text {
 		}
 
 		public void TakeThreadOwnership() {
-			if (ownerThread != null && ownerThread != Thread.CurrentThread)
+			if (!(ownerThread is null) && ownerThread != Thread.CurrentThread)
 				throw new InvalidOperationException();
 			ownerThread = Thread.CurrentThread;
 			Document.SetOwnerThread(ownerThread);
 		}
 
-		Thread ownerThread;
-		bool CheckAccess() => ownerThread == null || ownerThread == Thread.CurrentThread;
+		Thread? ownerThread;
+		bool CheckAccess() => ownerThread is null || ownerThread == Thread.CurrentThread;
 		void VerifyAccess() {
 			if (!CheckAccess())
 				throw new InvalidOperationException();

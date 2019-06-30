@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,8 +29,9 @@ namespace dnSpy.Contracts.Debugger.Attach {
 		/// <summary>
 		/// Creates a new <see cref="AttachProgramOptionsProvider"/> or returns null
 		/// </summary>
+		/// <param name="allFactories">true if all factories are called, false if only some of them get called</param>
 		/// <returns></returns>
-		public abstract AttachProgramOptionsProvider Create();
+		public abstract AttachProgramOptionsProvider? Create(bool allFactories);
 	}
 
 	/// <summary>Metadata</summary>

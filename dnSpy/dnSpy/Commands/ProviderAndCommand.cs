@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,8 +21,8 @@ using System;
 using dnSpy.Contracts.Command;
 
 namespace dnSpy.Commands {
-	struct ProviderAndCommand {
-		public bool IsDefault => Provider == null;
+	readonly struct ProviderAndCommand {
+		public bool IsDefault => Provider is null;
 		public ICommandInfoProvider Provider { get; }
 		public CommandInfo Command { get; }
 

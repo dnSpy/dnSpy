@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,13 +19,13 @@
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdCreatedParameterDef : DmdParameterDef {
-		public override string Name => null;
+		public override string? Name => null;
 		public override DmdParameterAttributes Attributes => 0;
 
 		public DmdCreatedParameterDef(DmdMemberInfo member, int position, DmdType parameterType) : base(0, member, position, parameterType) {
 		}
 
-		protected override (DmdCustomAttributeData[] cas, DmdMarshalType marshalType) CreateCustomAttributes() => (null, null);
-		protected override (object rawDefaultValue, bool hasDefaultValue) CreateDefaultValue() => (null, true);
+		protected override (DmdCustomAttributeData[]? cas, DmdMarshalType? marshalType) CreateCustomAttributes() => (null, null);
+		protected override (object? rawDefaultValue, bool hasDefaultValue) CreateDefaultValue() => (null, true);
 	}
 }

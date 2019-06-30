@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,11 +27,12 @@ using dnSpy.Text.WPF;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 
 namespace dnSpy.Text.Editor {
 	sealed class TextSelectionLayer {
 		public bool IsActive {
-			get { return isActive; }
+			get => isActive;
 			set {
 				if (isActive != value) {
 					isActive = value;
@@ -54,34 +55,36 @@ namespace dnSpy.Text.Editor {
 			textSelection.SelectionChanged += TextSelection_SelectionChanged;
 			textSelection.TextView.LayoutChanged += TextView_LayoutChanged;
 			editorFormatMap.FormatMappingChanged += EditorFormatMap_FormatMappingChanged;
-			UpdateUseReducedOpacityForHighContrastOption();
 			UpdateBackgroundBrush();
 		}
 
 		void UpdateBackgroundBrush() {
+			UpdateIsInContrastModeOption();
 			var newBackgroundBrush = GetBackgroundBrush();
 			if (BrushComparer.Equals(newBackgroundBrush, backgroundBrush))
 				return;
 			backgroundBrush = newBackgroundBrush;
-			if (markerElement != null)
+			if (!(markerElement is null))
 				markerElement.BackgroundBrush = backgroundBrush;
 		}
-		Brush backgroundBrush;
-		MarkerElement markerElement;
+		Brush? backgroundBrush;
+		MarkerElement? markerElement;
 
-		Brush GetBackgroundBrush() {
+		Brush? GetBackgroundBrush() {
 			var props = editorFormatMap.GetProperties(IsActive ? ThemeClassificationTypeNameKeys.SelectedText : ThemeClassificationTypeNameKeys.InactiveSelectedText);
 			return ResourceDictionaryUtilities.GetBackgroundBrush(props, IsActive ? SystemColors.HighlightBrush : SystemColors.GrayTextBrush);
 		}
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
-			if (e.OptionId == DefaultWpfViewOptions.UseReducedOpacityForHighContrastOptionName)
-				UpdateUseReducedOpacityForHighContrastOption();
+			if (e.OptionId == DefaultTextViewHostOptions.IsInContrastModeName)
+				UpdateIsInContrastModeOption();
 		}
 
-		void UpdateUseReducedOpacityForHighContrastOption() {
-			bool reducedOpacity = textSelection.TextView.Options.GetOptionValue(DefaultWpfViewOptions.UseReducedOpacityForHighContrastOptionId);
-			layer.Opacity = reducedOpacity ? 0.4 : 1;
+		void UpdateIsInContrastModeOption() {
+			bool isInContrastMode = textSelection.TextView.Options.IsInContrastMode();
+			var newValue = isInContrastMode ? 1 : 0.4;
+			if (layer.Opacity != newValue)
+				layer.Opacity = newValue;
 		}
 
 		void EditorFormatMap_FormatMappingChanged(object sender, FormatItemsEventArgs e) {
@@ -121,21 +124,21 @@ namespace dnSpy.Text.Editor {
 			if (textSelection.Mode == TextSelectionMode.Stream) {
 				Debug.Assert(textSelection.StreamSelectionSpan.Length != 0);
 				var info = CreateStreamSelection();
-				if (info == null)
+				if (info is null)
 					return;
 				CreateMarkerElement(info.Value.span, info.Value.geometry);
 			}
 			else {
 				Debug.Assert(textSelection.Mode == TextSelectionMode.Box);
 				var info = CreateBoxSelection();
-				if (info == null)
+				if (info is null)
 					return;
 				CreateMarkerElement(info.Value.span, info.Value.geometry);
 			}
 		}
 
 		void CreateMarkerElement(SnapshotSpan fullSpan, Geometry geo) {
-			Debug.Assert(markerElement == null);
+			Debug.Assert(markerElement is null);
 			RemoveAllAdornments();
 			markerElement = new MarkerElement(geo);
 			markerElement.BackgroundBrush = backgroundBrush;
@@ -150,10 +153,10 @@ namespace dnSpy.Text.Editor {
 			Debug.Assert(!textSelection.IsEmpty && textSelection.Mode == TextSelectionMode.Stream);
 			bool isMultiLine = MarkerHelper.IsMultiLineSpan(textSelection.TextView, textSelection.StreamSelectionSpan.SnapshotSpan);
 			var span = textSelection.StreamSelectionSpan.Overlap(new VirtualSnapshotSpan(textSelection.TextView.TextViewLines.FormattedSpan));
-			if (span == null)
+			if (span is null)
 				return null;
 			var geo = MarkerHelper.CreateGeometry(textSelection.TextView, span.Value, false, isMultiLine);
-			if (geo == null)
+			if (geo is null)
 				return null;
 			return (span.Value.SnapshotSpan, geo);
 		}
@@ -165,7 +168,7 @@ namespace dnSpy.Text.Editor {
 			if (spans.Count == 0)
 				return null;
 			var geo = MarkerHelper.CreateBoxGeometry(textSelection.TextView, spans, allSpans.Count > 1);
-			if (geo == null)
+			if (geo is null)
 				return null;
 			var fullSpan = new SnapshotSpan(spans[0].SnapshotSpan.Start, spans[spans.Count - 1].SnapshotSpan.End);
 			return (fullSpan, geo);
@@ -187,10 +190,10 @@ namespace dnSpy.Text.Editor {
 		sealed class MarkerElement : UIElement {
 			readonly Geometry geometry;
 
-			public Brush BackgroundBrush {
-				get { return backgroundBrush; }
+			public Brush? BackgroundBrush {
+				get => backgroundBrush;
 				set {
-					if (value == null)
+					if (value is null)
 						throw new ArgumentNullException(nameof(value));
 					if (!BrushComparer.Equals(value, backgroundBrush)) {
 						backgroundBrush = value;
@@ -198,10 +201,10 @@ namespace dnSpy.Text.Editor {
 					}
 				}
 			}
-			Brush backgroundBrush;
+			Brush? backgroundBrush;
 
-			public Pen Pen {
-				get { return pen; }
+			public Pen? Pen {
+				get => pen;
 				set {
 					if (pen != value) {
 						pen = value;
@@ -209,7 +212,7 @@ namespace dnSpy.Text.Editor {
 					}
 				}
 			}
-			Pen pen;
+			Pen? pen;
 
 			public MarkerElement(Geometry geometry) => this.geometry = geometry ?? throw new ArgumentNullException(nameof(geometry));
 

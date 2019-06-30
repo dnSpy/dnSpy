@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,9 +34,11 @@ namespace dnSpy.Text {
 
 		public string TypeName { get; }
 		public string DisplayName => TypeName;
+		public string? MimeType { get; }
 
-		public ContentType(string typeName, IEnumerable<IContentType> baseTypes) {
+		public ContentType(string typeName, string? mimeType, IEnumerable<IContentType> baseTypes) {
 			TypeName = typeName;
+			MimeType = mimeType;
 			this.baseTypes = baseTypes.ToArray();
 		}
 

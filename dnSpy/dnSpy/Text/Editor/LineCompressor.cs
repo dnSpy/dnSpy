@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -99,8 +99,8 @@ namespace dnSpy.Text.Editor {
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		LineKind GetLineType(ITextViewLine line) {
 			var dsLine = line as IDsTextViewLine;
-			Debug.Assert(dsLine != null);
-			if (dsLine != null && dsLine.HasAdornments)
+			Debug.Assert(!(dsLine is null));
+			if (!(dsLine is null) && dsLine.HasAdornments)
 				return LineKind.Normal;
 			if (line.Length == 0)
 				return LineKind.EmptyOrWhitespace;

@@ -124,7 +124,7 @@
     <value>Analysierer</value>
   </data>
   <data name="AppliedToTreeNode" xml:space="preserve">
-    <value>Angewendet auf</value>
+    <value>Angewandt auf</value>
   </data>
   <data name="AssignedByTreeNode" xml:space="preserve">
     <value>Zugewiesen von</value>
@@ -135,14 +135,8 @@
   <data name="DoubleClick" xml:space="preserve">
     <value>Doppelklick</value>
   </data>
-  <data name="EventAdderTreeNodeName" xml:space="preserve">
-    <value>Hinzufügen</value>
-  </data>
-  <data name="EventRemoverTreeNodeName" xml:space="preserve">
-    <value>Entfernen</value>
-  </data>
   <data name="ExposedByTreeNode" xml:space="preserve">
-    <value>Exponiert durch</value>
+    <value>Sichtbar durch</value>
   </data>
   <data name="ExtensionMethodsTreeNode" xml:space="preserve">
     <value>Erweiterungsmethoden</value>
@@ -151,10 +145,10 @@
     <value>Gehe zu Verweis</value>
   </data>
   <data name="GoToReferenceInCodeCommand" xml:space="preserve">
-    <value>Zeige Verweis in Methode</value>
+    <value>Verweis in Methode zeigen</value>
   </data>
   <data name="GoToReferenceInCodeNewTabCommand" xml:space="preserve">
-    <value>Zeige Verweis in Methode (neuer _Tab)</value>
+    <value>Verweis in Methode zeigen (neuer _Tab)</value>
   </data>
   <data name="GoToReferenceNewTabCommand" xml:space="preserve">
     <value>Gehe zu Verweis (neuer Ta_b)</value>
@@ -172,16 +166,10 @@
     <value>Überschrieben von</value>
   </data>
   <data name="OverridesTreeNode" xml:space="preserve">
-    <value>Überschreibungen</value>
+    <value>Überschreibt</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>Analysiert Assemblys</value>
-  </data>
-  <data name="PropertyGetterTreeNode" xml:space="preserve">
-    <value>holen</value>
-  </data>
-  <data name="PropertySetterTreeNode" xml:space="preserve">
-    <value>setzen</value>
+    <value>Analysiert Assemblies</value>
   </data>
   <data name="RaisedByTreeNode" xml:space="preserve">
     <value>Ausgelöst durch</value>
@@ -193,7 +181,7 @@
     <value>_Entfernen</value>
   </data>
   <data name="Searching" xml:space="preserve">
-    <value>Suche...</value>
+    <value>Suchen...</value>
   </data>
   <data name="ShiftDoubleClick" xml:space="preserve">
     <value>Umschalt+Doppelklick</value>
@@ -205,10 +193,10 @@
     <value>Strg+Umschalt+R</value>
   </data>
   <data name="ShortCutKeyDelete" xml:space="preserve">
-    <value>Löschen</value>
+    <value>Entf</value>
   </data>
   <data name="ShowMetadataTokensCommand" xml:space="preserve">
-    <value>Tokens zeigen</value>
+    <value>Tokens anzeigen</value>
   </data>
   <data name="SyntaxHighlightCommand" xml:space="preserve">
     <value>Syntax hervorheben</value>

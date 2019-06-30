@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -49,14 +49,14 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 	sealed class InstructionOperandVM : ViewModelBase {
 		public IEditOperand EditOperand {
-			set { editOperand = value; }
+			set => editOperand = value;
 		}
-		IEditOperand editOperand;
+		IEditOperand? editOperand;
 
 		public ICommand EditOtherCommand => new RelayCommand(a => EditOther(a), a => EditOtherCanExecute(a));
 
 		public InstructionOperandType InstructionOperandType {
-			get { return operandType; }
+			get => operandType;
 			set {
 				if (operandType != value) {
 					operandType = value;
@@ -70,7 +70,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 		InstructionOperandType operandType;
 
-		public object Value {
+		public object? Value {
 			get {
 				switch (InstructionOperandType) {
 				case MethodBody.InstructionOperandType.None:	return null;
@@ -130,26 +130,26 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		public void UpdateOperandType(Code code) => InstructionOperandType = GetOperandType(code);
 
-		public void WriteValue(Code code, object value) {
+		public void WriteValue(Code code, object? value) {
 			UpdateOperandType(code);
 			switch (InstructionOperandType) {
 			case MethodBody.InstructionOperandType.None:	break;
-			case MethodBody.InstructionOperandType.SByte:	SByte.Value = (sbyte)value; break;
-			case MethodBody.InstructionOperandType.Byte:	Byte.Value = (byte)value; break;
-			case MethodBody.InstructionOperandType.Int32:	Int32.Value = (int)value; break;
-			case MethodBody.InstructionOperandType.Int64:	Int64.Value = (long)value; break;
-			case MethodBody.InstructionOperandType.Single:	Single.Value = (float)value; break;
-			case MethodBody.InstructionOperandType.Double:	Double.Value = (double)value; break;
-			case MethodBody.InstructionOperandType.String:	String.Value = (string)value; break;
-			case MethodBody.InstructionOperandType.Field:	Other = (IField)value; break;
-			case MethodBody.InstructionOperandType.Method:	Other = (IMethod)value; break;
-			case MethodBody.InstructionOperandType.Token:	Other = (ITokenOperand)value; break;
-			case MethodBody.InstructionOperandType.Type:	Other = (ITypeDefOrRef)value; break;
-			case MethodBody.InstructionOperandType.MethodSig: Other = (MethodSig)value; break;
-			case MethodBody.InstructionOperandType.BranchTarget: OperandListItem = (InstructionVM)value ?? InstructionVM.Null; break;
-			case MethodBody.InstructionOperandType.SwitchTargets: Other = (InstructionVM[])value; break;
-			case MethodBody.InstructionOperandType.Local:	OperandListItem = (LocalVM)value ?? LocalVM.Null; break;
-			case MethodBody.InstructionOperandType.Parameter: OperandListItem = (Parameter)value ?? BodyUtils.NullParameter; break;
+			case MethodBody.InstructionOperandType.SByte:	SByte.Value = (sbyte)value!; break;
+			case MethodBody.InstructionOperandType.Byte:	Byte.Value = (byte)value!; break;
+			case MethodBody.InstructionOperandType.Int32:	Int32.Value = (int)value!; break;
+			case MethodBody.InstructionOperandType.Int64:	Int64.Value = (long)value!; break;
+			case MethodBody.InstructionOperandType.Single:	Single.Value = (float)value!; break;
+			case MethodBody.InstructionOperandType.Double:	Double.Value = (double)value!; break;
+			case MethodBody.InstructionOperandType.String:	String.Value = (string)value!; break;
+			case MethodBody.InstructionOperandType.Field:	Other = (IField?)value; break;
+			case MethodBody.InstructionOperandType.Method:	Other = (IMethod?)value; break;
+			case MethodBody.InstructionOperandType.Token:	Other = (ITokenOperand?)value; break;
+			case MethodBody.InstructionOperandType.Type:	Other = (ITypeDefOrRef?)value; break;
+			case MethodBody.InstructionOperandType.MethodSig: Other = (MethodSig?)value; break;
+			case MethodBody.InstructionOperandType.BranchTarget: OperandListItem = (InstructionVM?)value ?? InstructionVM.Null; break;
+			case MethodBody.InstructionOperandType.SwitchTargets: Other = (InstructionVM[]?)value; break;
+			case MethodBody.InstructionOperandType.Local:	OperandListItem = (LocalVM?)value ?? LocalVM.Null; break;
+			case MethodBody.InstructionOperandType.Parameter: OperandListItem = (Parameter?)value ?? BodyUtils.NullParameter; break;
 			default: throw new InvalidOperationException();
 			}
 		}
@@ -203,7 +203,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 		}
 
-		public DataFieldVM Text {
+		public DataFieldVM? Text {
 			get {
 				switch (InstructionOperandType) {
 				case MethodBody.InstructionOperandType.SByte:	return SByte;
@@ -241,8 +241,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public DoubleVM Double { get; }
 		public StringVM String { get; }
 
-		public object Other {
-			get { return other; }
+		public object? Other {
+			get => other;
 			set {
 				if (other != value) {
 					other = value;
@@ -251,11 +251,11 @@ namespace dnSpy.AsmEditor.MethodBody {
 				}
 			}
 		}
-		object other;
+		object? other;
 
 		public object OperandListItem {
-			get { return OperandListVM.SelectedItem; }
-			set { OperandListVM.SelectedItem = value; }
+			get => OperandListVM.SelectedItem;
+			set => OperandListVM.SelectedItem = value;
 		}
 
 		public ListVM<object> OperandListVM { get; }
@@ -280,7 +280,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			case InstructionOperandType.Type:
 			case InstructionOperandType.MethodSig:
 			case InstructionOperandType.SwitchTargets:
-				if (editOperand == null)
+				if (editOperand is null)
 					throw new InvalidOperationException();
 				editOperand.Edit(parameter, this);
 				break;
@@ -311,7 +311,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			switch (InstructionOperandType) {
 			case MethodBody.InstructionOperandType.BranchTarget:
 				var instr = item as InstructionVM;
-				if (instr == null || instr == InstructionVM.Null)
+				if (instr is null || instr == InstructionVM.Null)
 					return dnSpy_AsmEditor_Resources.Error_OpMustBeInstr;
 				if (instr.Index == -1)
 					return dnSpy_AsmEditor_Resources.Error_InstrTargetHasBeenRemoved;
@@ -319,7 +319,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 			case MethodBody.InstructionOperandType.Local:
 				var local = item as LocalVM;
-				if (local == null || local == LocalVM.Null)
+				if (local is null || local == LocalVM.Null)
 					return dnSpy_AsmEditor_Resources.Error_OpMustBeLocal;
 				if (local.Index == -1)
 					return dnSpy_AsmEditor_Resources.Error_LocalHasBeenRemoved;
@@ -327,7 +327,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 			case MethodBody.InstructionOperandType.Parameter:
 				var p = item as Parameter;
-				if (p == null || p == BodyUtils.NullParameter)
+				if (p is null || p == BodyUtils.NullParameter)
 					return dnSpy_AsmEditor_Resources.Error_OpMustBeParam;
 				break;
 
@@ -383,7 +383,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 		}
 
-		object Import(ModuleDef ownerModule, object o) {
+		object? Import(ModuleDef ownerModule, object? o) {
 			var importer = new Importer(ownerModule, ImporterOptions.TryToUseDefs);
 
 			if (o is ITypeDefOrRef tdr)
@@ -398,11 +398,11 @@ namespace dnSpy.AsmEditor.MethodBody {
 			if (o is MethodSig msig)
 				return importer.Import(msig);
 
-			Debug.Assert(o == null);
+			Debug.Assert(o is null);
 			return null;
 		}
 
-		protected override string Verify(string columnName) {
+		protected override string? Verify(string columnName) {
 			if (columnName == nameof(Other)) {
 				switch (InstructionOperandType) {
 				case MethodBody.InstructionOperandType.None:
@@ -419,41 +419,41 @@ namespace dnSpy.AsmEditor.MethodBody {
 					break;
 
 				case MethodBody.InstructionOperandType.Field:
-					if (Other != null) {
+					if (!(Other is null)) {
 						if (!(Other is IField))
 							return dnSpy_AsmEditor_Resources.Error_OpMustBeField;
-						if (Other is IMethod method && method.MethodSig != null)
+						if (Other is IMethod method && !(method.MethodSig is null))
 							return dnSpy_AsmEditor_Resources.Error_OpMustBeField;
 					}
 					break;
 
 				case MethodBody.InstructionOperandType.Method:
-					if (Other != null) {
+					if (!(Other is null)) {
 						if (!(Other is IMethod))
 							return dnSpy_AsmEditor_Resources.Error_OpMustBeMethod;
-						if (Other is IField field && field.FieldSig != null)
+						if (Other is IField field && !(field.FieldSig is null))
 							return dnSpy_AsmEditor_Resources.Error_OpMustBeMethod;
 					}
 					break;
 
 				case MethodBody.InstructionOperandType.Token:
-					if (Other != null && !(Other is ITokenOperand)) return dnSpy_AsmEditor_Resources.Error_OpMustBeTypeMethodField;
+					if (!(Other is null) && !(Other is ITokenOperand)) return dnSpy_AsmEditor_Resources.Error_OpMustBeTypeMethodField;
 					break;
 
 				case MethodBody.InstructionOperandType.Type:
-					if (Other != null && !(Other is ITypeDefOrRef)) return dnSpy_AsmEditor_Resources.Error_OpMustBeType;
+					if (!(Other is null) && !(Other is ITypeDefOrRef)) return dnSpy_AsmEditor_Resources.Error_OpMustBeType;
 					break;
 
 				case MethodBody.InstructionOperandType.MethodSig:
-					if (Other != null && !(Other is MethodSig)) return dnSpy_AsmEditor_Resources.Error_OpMustBeMethodSig;
+					if (!(Other is null) && !(Other is MethodSig)) return dnSpy_AsmEditor_Resources.Error_OpMustBeMethodSig;
 					break;
 
 				case MethodBody.InstructionOperandType.SwitchTargets:
 					var list = Other as IList<InstructionVM>;
-					if (list == null)
+					if (list is null)
 						return dnSpy_AsmEditor_Resources.Error_OpMustBeListInstrs;
 					foreach (var i in list) {
-						if (i != null && i.Index == -1)
+						if (!(i is null) && i.Index == -1)
 							return dnSpy_AsmEditor_Resources.Error_SwitchInstrTargetHasBeenRemoved;
 					}
 					break;

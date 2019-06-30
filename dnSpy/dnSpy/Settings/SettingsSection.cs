@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,7 +27,7 @@ namespace dnSpy.Settings {
 		readonly SettingsSectionProvider settingsSectionProvider;
 
 		public string Name { get; }
-		public Tuple<string, string>[] Attributes => sectionAttributes.Attributes;
+		public (string key, string value)[] Attributes => sectionAttributes.Attributes;
 
 		public SettingsSection(string name) {
 			Name = name;
@@ -41,16 +41,16 @@ namespace dnSpy.Settings {
 		public void RemoveSection(string name) => settingsSectionProvider.RemoveSection(name);
 		public void RemoveSection(ISettingsSection section) => settingsSectionProvider.RemoveSection(section);
 		public ISettingsSection[] SectionsWithName(string name) => Sections.Where(a => StringComparer.Ordinal.Equals(name, a.Name)).ToArray();
-		public ISettingsSection TryGetSection(string name) => Sections.FirstOrDefault(a => StringComparer.Ordinal.Equals(name, a.Name));
+		public ISettingsSection? TryGetSection(string name) => Sections.FirstOrDefault(a => StringComparer.Ordinal.Equals(name, a.Name));
 		public T Attribute<T>(string name) => sectionAttributes.Attribute<T>(name);
 		public void Attribute<T>(string name, T value) => sectionAttributes.Attribute(name, value);
 		public void RemoveAttribute(string name) => sectionAttributes.RemoveAttribute(name);
 
 		public void CopyFrom(ISettingsSection section) {
-			if (section == null)
+			if (section is null)
 				throw new ArgumentNullException(nameof(section));
 			foreach (var attr in section.Attributes)
-				Attribute(attr.Item1, attr.Item2);
+				Attribute(attr.key, attr.value);
 			foreach (var child in section.Sections)
 				CreateSection(child.Name).CopyFrom(child);
 		}

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,8 +31,8 @@ namespace dnSpy.AsmEditor.Resources {
 
 		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
 
-		public string Name {
-			get { return name; }
+		public string? Name {
+			get => name;
 			set {
 				if (name != value) {
 					name = value;
@@ -40,7 +40,7 @@ namespace dnSpy.AsmEditor.Resources {
 				}
 			}
 		}
-		string name;
+		string? name;
 
 		internal static readonly EnumVM[] colorDepthList = new EnumVM[] {
 			new EnumVM(ColorDepth.Depth4Bit, dnSpy_AsmEditor_Resources.Resource_ColorDepth_4Bit),
@@ -86,12 +86,12 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 
 		ImageListOptions CopyTo(ImageListOptions options) {
-			options.Name = Name;
+			options.Name = Name ?? string.Empty;
 			options.ImageSize = new Size(WidthVM.Value, HeightVM.Value);
 			options.TransparentColor = TransparentColorVM.Value;
-			options.ColorDepth = (ColorDepth)ColorDepthVM.SelectedItem;
+			options.ColorDepth = (ColorDepth)ColorDepthVM.SelectedItem!;
 			options.ImageSources.Clear();
-			options.ImageSources.AddRange(ImageListStreamerVM.Collection.Select(a => a.ImageSource));
+			options.ImageSources.AddRange(ImageListStreamerVM.Collection.Select(a => a.ImageSource!));
 			return options;
 		}
 

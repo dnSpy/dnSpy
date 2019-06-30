@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,7 +22,7 @@ namespace dnSpy.Contracts.Decompiler {
 	/// Span and data
 	/// </summary>
 	/// <typeparam name="TData">Type of data</typeparam>
-	public struct TextSpanData<TData> {
+	public readonly struct TextSpanData<TData> {
 		/// <summary>
 		/// Gets the span
 		/// </summary>

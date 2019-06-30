@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,21 +21,21 @@ using System;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Debugger.Breakpoints.Code.CondChecker;
 using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.Breakpoints.Code {
 	abstract class BreakpointConditionsFormatter {
-		public abstract void Write(ITextColorWriter output, DbgCodeBreakpointCondition? condition);
-		public abstract void Write(ITextColorWriter output, DbgCodeBreakpointHitCount? hitCount, int? currentHitCount);
-		public abstract void Write(ITextColorWriter output, DbgCodeBreakpointFilter? filter);
-		public abstract void Write(ITextColorWriter output, DbgCodeBreakpointTrace? trace);
+		public abstract void Write(IDbgTextWriter output, DbgCodeBreakpointCondition? condition);
+		public abstract void Write(IDbgTextWriter output, DbgCodeBreakpointHitCount? hitCount, int? currentHitCount);
+		public abstract void Write(IDbgTextWriter output, DbgCodeBreakpointFilter? filter);
+		public abstract void Write(IDbgTextWriter output, DbgCodeBreakpointTrace? trace);
 
-		public abstract void WriteToolTip(ITextColorWriter output, DbgCodeBreakpointCondition condition);
-		public abstract void WriteToolTip(ITextColorWriter output, DbgCodeBreakpointHitCount hitCount, int? currentHitCount);
-		public abstract void WriteToolTip(ITextColorWriter output, DbgCodeBreakpointFilter filter);
-		public abstract void WriteToolTip(ITextColorWriter output, DbgCodeBreakpointTrace trace);
+		public abstract void WriteToolTip(IDbgTextWriter output, DbgCodeBreakpointCondition condition);
+		public abstract void WriteToolTip(IDbgTextWriter output, DbgCodeBreakpointHitCount hitCount, int? currentHitCount);
+		public abstract void WriteToolTip(IDbgTextWriter output, DbgCodeBreakpointFilter filter);
+		public abstract void WriteToolTip(IDbgTextWriter output, DbgCodeBreakpointTrace trace);
 	}
 
 	[Export(typeof(BreakpointConditionsFormatter))]
@@ -49,19 +49,19 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			this.tracepointMessageCreatorImpl = tracepointMessageCreatorImpl;
 		}
 
-		public override void Write(ITextColorWriter output, DbgCodeBreakpointCondition? condition) {
-			if (output == null)
+		public override void Write(IDbgTextWriter output, DbgCodeBreakpointCondition? condition) {
+			if (output is null)
 				throw new ArgumentNullException(nameof(output));
-			if (condition == null)
-				output.Write(BoxedTextColor.Text, dnSpy_Debugger_Resources.Breakpoint_Condition_NoCondition);
+			if (condition is null)
+				output.Write(DbgTextColor.Text, dnSpy_Debugger_Resources.Breakpoint_Condition_NoCondition);
 			else {
 				switch (condition.Value.Kind) {
 				case DbgCodeBreakpointConditionKind.IsTrue:
-					WriteArgumentAndText(output, BoxedTextColor.String, dnSpy_Debugger_Resources.Breakpoint_Condition_WhenConditionIsTrue, condition.Value.Condition);
+					WriteArgumentAndText(output, DbgTextColor.String, dnSpy_Debugger_Resources.Breakpoint_Condition_WhenConditionIsTrue, condition.Value.Condition);
 					break;
 
 				case DbgCodeBreakpointConditionKind.WhenChanged:
-					WriteArgumentAndText(output, BoxedTextColor.String, dnSpy_Debugger_Resources.Breakpoint_Condition_WhenConditionHasChanged, condition.Value.Condition);
+					WriteArgumentAndText(output, DbgTextColor.String, dnSpy_Debugger_Resources.Breakpoint_Condition_WhenConditionHasChanged, condition.Value.Condition);
 					break;
 
 				default:
@@ -71,23 +71,23 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			}
 		}
 
-		public override void Write(ITextColorWriter output, DbgCodeBreakpointHitCount? hitCount, int? currentHitCount) {
-			if (output == null)
+		public override void Write(IDbgTextWriter output, DbgCodeBreakpointHitCount? hitCount, int? currentHitCount) {
+			if (output is null)
 				throw new ArgumentNullException(nameof(output));
-			if (hitCount == null)
-				output.Write(BoxedTextColor.Text, dnSpy_Debugger_Resources.Breakpoint_HitCount_NoHitCount);
+			if (hitCount is null)
+				output.Write(DbgTextColor.Text, dnSpy_Debugger_Resources.Breakpoint_HitCount_NoHitCount);
 			else {
 				switch (hitCount.Value.Kind) {
 				case DbgCodeBreakpointHitCountKind.Equals:
-					WriteArgumentAndText(output, BoxedTextColor.Number, dnSpy_Debugger_Resources.Breakpoint_HitCount_HitCountIsEqualTo, hitCount.Value.Count.ToString());
+					WriteArgumentAndText(output, DbgTextColor.Number, dnSpy_Debugger_Resources.Breakpoint_HitCount_HitCountIsEqualTo, hitCount.Value.Count.ToString());
 					break;
 
 				case DbgCodeBreakpointHitCountKind.MultipleOf:
-					WriteArgumentAndText(output, BoxedTextColor.Number, dnSpy_Debugger_Resources.Breakpoint_HitCount_HitCountIsAMultipleOf, hitCount.Value.Count.ToString());
+					WriteArgumentAndText(output, DbgTextColor.Number, dnSpy_Debugger_Resources.Breakpoint_HitCount_HitCountIsAMultipleOf, hitCount.Value.Count.ToString());
 					break;
 
 				case DbgCodeBreakpointHitCountKind.GreaterThanOrEquals:
-					WriteArgumentAndText(output, BoxedTextColor.Number, dnSpy_Debugger_Resources.Breakpoint_HitCount_HitCountIsGreaterThanOrEqualTo, hitCount.Value.Count.ToString());
+					WriteArgumentAndText(output, DbgTextColor.Number, dnSpy_Debugger_Resources.Breakpoint_HitCount_HitCountIsGreaterThanOrEqualTo, hitCount.Value.Count.ToString());
 					break;
 
 				default:
@@ -98,46 +98,49 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			WriteCurrentHitCountValue(output, currentHitCount);
 		}
 
-		void WriteCurrentHitCountValue(ITextColorWriter output, int? currentHitCount) {
-			if (currentHitCount != null) {
-				output.Write(BoxedTextColor.Comment, " ");
-				output.Write(BoxedTextColor.Punctuation, "(");
-				WriteArgumentAndText(output, BoxedTextColor.Number, dnSpy_Debugger_Resources.Breakpoint_HitCount_CurrentHitCountValue, currentHitCount.Value.ToString());
-				output.Write(BoxedTextColor.Punctuation, ")");
+		void WriteCurrentHitCountValue(IDbgTextWriter output, int? currentHitCount) {
+			if (!(currentHitCount is null)) {
+				output.Write(DbgTextColor.Comment, " ");
+				output.Write(DbgTextColor.Punctuation, "(");
+				WriteArgumentAndText(output, DbgTextColor.Number, dnSpy_Debugger_Resources.Breakpoint_HitCount_CurrentHitCountValue, currentHitCount.Value.ToString());
+				output.Write(DbgTextColor.Punctuation, ")");
 			}
 		}
 
-		public override void Write(ITextColorWriter output, DbgCodeBreakpointFilter? filter) {
-			if (output == null)
+		public override void Write(IDbgTextWriter output, DbgCodeBreakpointFilter? filter) {
+			if (output is null)
 				throw new ArgumentNullException(nameof(output));
-			if (filter == null)
-				output.Write(BoxedTextColor.Text, dnSpy_Debugger_Resources.Breakpoint_Filter_NoFilter);
+			if (filter is null)
+				output.Write(DbgTextColor.Text, dnSpy_Debugger_Resources.Breakpoint_Filter_NoFilter);
 			else
 				dbgFilterExpressionEvaluatorService.Value.Write(output, filter.Value.Filter ?? string.Empty);
 		}
 
-		public override void Write(ITextColorWriter output, DbgCodeBreakpointTrace? trace) {
-			if (output == null)
+		public override void Write(IDbgTextWriter output, DbgCodeBreakpointTrace? trace) {
+			if (output is null)
 				throw new ArgumentNullException(nameof(output));
-			if (trace == null)
-				output.Write(BoxedTextColor.Text, dnSpy_Debugger_Resources.Breakpoint_Tracepoint_NoTraceMessage);
-			else if (trace.Value.Continue)
-				WriteArgumentAndText(output, BoxedTextColor.Comment, dnSpy_Debugger_Resources.Breakpoint_Tracepoint_PrintMessage, () => tracepointMessageCreatorImpl.Value.Write(output, trace.Value));
-			else
-				WriteArgumentAndText(output, BoxedTextColor.Comment, dnSpy_Debugger_Resources.Breakpoint_Tracepoint_BreakPrintMessage, () => tracepointMessageCreatorImpl.Value.Write(output, trace.Value));
+			if (trace is null)
+				output.Write(DbgTextColor.Text, dnSpy_Debugger_Resources.Breakpoint_Tracepoint_NoTraceMessage);
+			else {
+				var traceTmp = trace.Value;
+				if (traceTmp.Continue)
+					WriteArgumentAndText(output, DbgTextColor.Comment, dnSpy_Debugger_Resources.Breakpoint_Tracepoint_PrintMessage, () => tracepointMessageCreatorImpl.Value.Write(output, traceTmp));
+				else
+					WriteArgumentAndText(output, DbgTextColor.Comment, dnSpy_Debugger_Resources.Breakpoint_Tracepoint_BreakPrintMessage, () => tracepointMessageCreatorImpl.Value.Write(output, traceTmp));
+			}
 		}
 
-		void WriteArgumentAndText(ITextColorWriter output, object valueColor, string formatString, string formatValue) =>
-			WriteArgumentAndText(output, BoxedTextColor.Comment, valueColor, formatString, formatValue);
+		void WriteArgumentAndText(IDbgTextWriter output, DbgTextColor valueColor, string formatString, string formatValue) =>
+			WriteArgumentAndText(output, DbgTextColor.Comment, valueColor, formatString, formatValue);
 
-		void WriteArgumentAndText(ITextColorWriter output, object defaultColor, object valueColor, string formatString, string formatValue) =>
+		void WriteArgumentAndText(IDbgTextWriter output, DbgTextColor defaultColor, DbgTextColor valueColor, string formatString, string formatValue) =>
 			WriteArgumentAndText(output, defaultColor, formatString, () => output.Write(valueColor, formatValue ?? string.Empty));
 
-		void WriteArgumentAndText(ITextColorWriter output, object defaultColor, string formatString, Action callback) {
+		void WriteArgumentAndText(IDbgTextWriter output, DbgTextColor defaultColor, string formatString, Action callback) {
 			const string pattern = "{0}";
 			var index = formatString.IndexOf(pattern);
 			if (index < 0)
-				output.Write(BoxedTextColor.Error, "???");
+				output.Write(DbgTextColor.Error, "???");
 			else {
 				if (index != 0)
 					output.Write(defaultColor, formatString.Substring(0, index));
@@ -147,19 +150,19 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			}
 		}
 
-		public override void WriteToolTip(ITextColorWriter output, DbgCodeBreakpointCondition condition) {
-			if (output == null)
+		public override void WriteToolTip(IDbgTextWriter output, DbgCodeBreakpointCondition condition) {
+			if (output is null)
 				throw new ArgumentNullException(nameof(output));
-			var defaultColor = BoxedTextColor.Text;
+			var defaultColor = DbgTextColor.Text;
 			output.Write(defaultColor, dnSpy_Debugger_Resources.Breakpoint_Condition_ConditionalExpression);
-			output.WriteSpace();
+			output.Write(DbgTextColor.Text, " ");
 			switch (condition.Kind) {
 			case DbgCodeBreakpointConditionKind.IsTrue:
-				WriteArgumentAndText(output, defaultColor, BoxedTextColor.String, dnSpy_Debugger_Resources.Breakpoint_Condition_WhenConditionIsTrue2, condition.Condition);
+				WriteArgumentAndText(output, defaultColor, DbgTextColor.String, dnSpy_Debugger_Resources.Breakpoint_Condition_WhenConditionIsTrue2, condition.Condition);
 				break;
 
 			case DbgCodeBreakpointConditionKind.WhenChanged:
-				WriteArgumentAndText(output, defaultColor, BoxedTextColor.String, dnSpy_Debugger_Resources.Breakpoint_Condition_WhenConditionHasChanged2, condition.Condition);
+				WriteArgumentAndText(output, defaultColor, DbgTextColor.String, dnSpy_Debugger_Resources.Breakpoint_Condition_WhenConditionHasChanged2, condition.Condition);
 				break;
 
 			default:
@@ -168,21 +171,21 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			}
 		}
 
-		public override void WriteToolTip(ITextColorWriter output, DbgCodeBreakpointHitCount hitCount, int? currentHitCount) {
-			if (output == null)
+		public override void WriteToolTip(IDbgTextWriter output, DbgCodeBreakpointHitCount hitCount, int? currentHitCount) {
+			if (output is null)
 				throw new ArgumentNullException(nameof(output));
-			var defaultColor = BoxedTextColor.Text;
+			var defaultColor = DbgTextColor.Text;
 			switch (hitCount.Kind) {
 			case DbgCodeBreakpointHitCountKind.Equals:
-				WriteArgumentAndText(output, defaultColor, BoxedTextColor.Number, dnSpy_Debugger_Resources.Breakpoint_HitCount_HitCountIsEqualTo2, hitCount.Count.ToString());
+				WriteArgumentAndText(output, defaultColor, DbgTextColor.Number, dnSpy_Debugger_Resources.Breakpoint_HitCount_HitCountIsEqualTo2, hitCount.Count.ToString());
 				break;
 
 			case DbgCodeBreakpointHitCountKind.MultipleOf:
-				WriteArgumentAndText(output, defaultColor, BoxedTextColor.Number, dnSpy_Debugger_Resources.Breakpoint_HitCount_HitCountIsAMultipleOf2, hitCount.Count.ToString());
+				WriteArgumentAndText(output, defaultColor, DbgTextColor.Number, dnSpy_Debugger_Resources.Breakpoint_HitCount_HitCountIsAMultipleOf2, hitCount.Count.ToString());
 				break;
 
 			case DbgCodeBreakpointHitCountKind.GreaterThanOrEquals:
-				WriteArgumentAndText(output, defaultColor, BoxedTextColor.Number, dnSpy_Debugger_Resources.Breakpoint_HitCount_HitCountIsGreaterThanOrEqualTo2, hitCount.Count.ToString());
+				WriteArgumentAndText(output, defaultColor, DbgTextColor.Number, dnSpy_Debugger_Resources.Breakpoint_HitCount_HitCountIsGreaterThanOrEqualTo2, hitCount.Count.ToString());
 				break;
 
 			default:
@@ -192,18 +195,20 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			WriteCurrentHitCountValue(output, currentHitCount);
 		}
 
-		public override void WriteToolTip(ITextColorWriter output, DbgCodeBreakpointFilter filter) {
-			if (output == null)
+		public override void WriteToolTip(IDbgTextWriter output, DbgCodeBreakpointFilter filter) {
+			if (output is null)
 				throw new ArgumentNullException(nameof(output));
-			var defaultColor = BoxedTextColor.Text;
-			WriteArgumentAndText(output, defaultColor, dnSpy_Debugger_Resources.Breakpoint_Filter_Filter, () => dbgFilterExpressionEvaluatorService.Value.Write(output, filter.Filter ?? string.Empty));
+			var defaultColor = DbgTextColor.Text;
+			var filterTmp = filter;
+			WriteArgumentAndText(output, defaultColor, dnSpy_Debugger_Resources.Breakpoint_Filter_Filter, () => dbgFilterExpressionEvaluatorService.Value.Write(output, filterTmp.Filter ?? string.Empty));
 		}
 
-		public override void WriteToolTip(ITextColorWriter output, DbgCodeBreakpointTrace trace) {
-			if (output == null)
+		public override void WriteToolTip(IDbgTextWriter output, DbgCodeBreakpointTrace trace) {
+			if (output is null)
 				throw new ArgumentNullException(nameof(output));
-			var defaultColor = BoxedTextColor.Text;
-			WriteArgumentAndText(output, defaultColor, dnSpy_Debugger_Resources.Breakpoint_Tracepoint_PrintMessage2, () => tracepointMessageCreatorImpl.Value.Write(output, trace));
+			var defaultColor = DbgTextColor.Text;
+			var traceTmp = trace;
+			WriteArgumentAndText(output, defaultColor, dnSpy_Debugger_Resources.Breakpoint_Tracepoint_PrintMessage2, () => tracepointMessageCreatorImpl.Value.Write(output, traceTmp));
 		}
 	}
 }

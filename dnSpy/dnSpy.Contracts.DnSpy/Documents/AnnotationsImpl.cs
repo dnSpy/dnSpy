@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,13 +22,13 @@ using System.Linq;
 
 namespace dnSpy.Contracts.Documents {
 	sealed class AnnotationsImpl : IAnnotations {
-		public T AddAnnotation<T>(T annotation) where T : class {
-			if (annotation != null)
+		public T? AddAnnotation<T>(T? annotation) where T : class {
+			if (!(annotation is null))
 				list.Add(annotation);
 			return annotation;
 		}
 
-		public T Annotation<T>() where T : class => (T)list.FirstOrDefault(a => a is T);
+		public T? Annotation<T>() where T : class => (T)list.FirstOrDefault(a => a is T);
 		public IEnumerable<T> Annotations<T>() where T : class => list.OfType<T>();
 
 		public void RemoveAnnotations<T>() where T : class {

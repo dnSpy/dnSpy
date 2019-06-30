@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,10 +31,10 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 			public static void FreeWriter(TextClassifierTextColorWriter writer) => writer.Clear();
 		}
 
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
+		public object? Convert(object value, Type targetType, object parameter, CultureInfo culture) {
 			var vm = value as GACFileVM;
 			var tag = parameter as string;
-			if (vm == null || tag == null)
+			if (vm is null || tag is null)
 				return null;
 
 			var writer = Cache.GetWriter();

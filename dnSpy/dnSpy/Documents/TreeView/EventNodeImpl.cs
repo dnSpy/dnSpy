@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,20 +31,27 @@ namespace dnSpy.Documents.TreeView {
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.EVENT_NODE_GUID);
 		public override NodePathName NodePathName => new NodePathName(Guid, EventDef.FullName);
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => dnImgMgr.GetImageReference(EventDef);
-		public override ITreeNodeGroup TreeNodeGroup { get; }
+		public override ITreeNodeGroup? TreeNodeGroup { get; }
 
 		public EventNodeImpl(ITreeNodeGroup treeNodeGroup, EventDef @event)
 			: base(@event) => TreeNodeGroup = treeNodeGroup;
 
-		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>
-			new NodePrinter().Write(output, decompiler, EventDef, GetShowToken(options));
+		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) {
+			if ((options & DocumentNodeWriteOptions.ToolTip) != 0) {
+				WriteMemberRef(output, decompiler, EventDef);
+				output.WriteLine();
+				WriteFilename(output);
+			}
+			else
+				new NodeFormatter().Write(output, decompiler, EventDef, GetShowToken(options));
+		}
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
-			if (EventDef.AddMethod != null)
+			if (!(EventDef.AddMethod is null))
 				yield return new MethodNodeImpl(Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.MethodTreeNodeGroupEvent), EventDef.AddMethod);
-			if (EventDef.RemoveMethod != null)
+			if (!(EventDef.RemoveMethod is null))
 				yield return new MethodNodeImpl(Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.MethodTreeNodeGroupEvent), EventDef.RemoveMethod);
-			if (EventDef.InvokeMethod != null)
+			if (!(EventDef.InvokeMethod is null))
 				yield return new MethodNodeImpl(Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.MethodTreeNodeGroupEvent), EventDef.InvokeMethod);
 			foreach (var m in EventDef.OtherMethods)
 				yield return new MethodNodeImpl(Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.MethodTreeNodeGroupEvent), m);

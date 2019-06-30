@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
+// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
@@ -18,10 +18,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using dnlib.DotNet;
-using dnlib.Threading;
 using dnSpy.Contracts.Documents;
 
 namespace dnSpy.Analyzer.TreeNodes {
@@ -29,28 +29,34 @@ namespace dnSpy.Analyzer.TreeNodes {
 	/// Determines the accessibility domain of a member for where-used analysis.
 	/// </summary>
 	sealed class ScopedWhereUsedAnalyzer<T> {
-		readonly ModuleDef moduleScope;
 		readonly IDsDocumentService documentService;
+		readonly TypeDef analyzedType;
+		readonly List<ModuleDef> allModules;
+		readonly bool includeAllModules;
 		TypeDef typeScope;
+
+		internal List<ModuleDef> AllModules => allModules;
 
 		readonly Accessibility memberAccessibility = Accessibility.Public;
 		Accessibility typeAccessibility = Accessibility.Public;
 		readonly Func<TypeDef, IEnumerable<T>> typeAnalysisFunction;
 
-		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, TypeDef type, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction) {
-			typeScope = type;
-			moduleScope = type.Module;
+		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, TypeDef analyzedType, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction, bool includeAllModules = false) {
+			this.analyzedType = analyzedType;
+			typeScope = analyzedType;
 			this.typeAnalysisFunction = typeAnalysisFunction;
 			this.documentService = documentService;
+			allModules = new List<ModuleDef>();
+			this.includeAllModules = includeAllModules;
 		}
 
-		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, MethodDef method, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction)
-			: this(documentService, method.DeclaringType, typeAnalysisFunction) => memberAccessibility = GetMethodAccessibility(method);
+		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, MethodDef method, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction, bool includeAllModules = false)
+			: this(documentService, method.DeclaringType, typeAnalysisFunction, includeAllModules) => memberAccessibility = GetMethodAccessibility(method);
 
-		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, PropertyDef property, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction)
-			: this(documentService, property.DeclaringType, typeAnalysisFunction) {
-			Accessibility getterAccessibility = (property.GetMethod == null) ? Accessibility.Private : GetMethodAccessibility(property.GetMethod);
-			Accessibility setterAccessibility = (property.SetMethod == null) ? Accessibility.Private : GetMethodAccessibility(property.SetMethod);
+		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, PropertyDef property, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction, bool includeAllModules = false)
+			: this(documentService, property.DeclaringType, typeAnalysisFunction, includeAllModules) {
+			Accessibility getterAccessibility = (property.GetMethod is null) ? Accessibility.Private : GetMethodAccessibility(property.GetMethod);
+			Accessibility setterAccessibility = (property.SetMethod is null) ? Accessibility.Private : GetMethodAccessibility(property.SetMethod);
 			memberAccessibility = (Accessibility)Math.Max((int)getterAccessibility, (int)setterAccessibility);
 		}
 
@@ -60,8 +66,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 			// [CLS Rule 30: The accessibility of an event and of its accessors shall be identical.]
 			memberAccessibility = GetMethodAccessibility(eventDef.AddMethod);
 
-		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, FieldDef field, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction)
-			: this(documentService, field.DeclaringType, typeAnalysisFunction) {
+		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, FieldDef field, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction, bool includeAllModules = false)
+			: this(documentService, field.DeclaringType, typeAnalysisFunction, includeAllModules) {
 			switch (field.Attributes & FieldAttributes.FieldAccessMask) {
 			case FieldAttributes.Private:
 			default:
@@ -87,7 +93,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		Accessibility GetMethodAccessibility(MethodDef method) {
-			if (method == null)
+			if (method is null)
 				return 0;
 			Accessibility accessibility;
 			switch (method.Attributes & MethodAttributes.MemberAccessMask) {
@@ -192,13 +198,33 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		IEnumerable<T> FindReferencesInAssemblyAndFriends(CancellationToken ct) {
-			var modules = GetModuleAndAnyFriends(moduleScope, ct);
-			return modules.AsParallel().WithCancellation(ct).SelectMany(a => FindReferencesInModule(a, ct));
+			IEnumerable<ModuleDef> modules;
+			if (includeAllModules)
+				modules = documentService.GetDocuments().Select(a => a.ModuleDef).OfType<ModuleDef>();
+			else if (TIAHelper.IsTypeDefEquivalent(analyzedType)) {
+				var analyzedTypes = new List<TypeDef> { analyzedType };
+				SearchNode.AddTypeEquivalentTypes(documentService, analyzedType, analyzedTypes);
+				modules = SearchNode.GetTypeEquivalentModules(analyzedTypes);
+			}
+			else
+				modules = GetModuleAndAnyFriends(analyzedType.Module, ct);
+			allModules.AddRange(modules);
+			return allModules.AsParallel().WithCancellation(ct).SelectMany(a => FindReferencesInModule(a, ct));
 		}
 
 		IEnumerable<T> FindReferencesGlobal(CancellationToken ct) {
-			var modules = GetReferencingModules(moduleScope, ct);
-			return modules.AsParallel().WithCancellation(ct).SelectMany(a => FindReferencesInModule(a, ct));
+			IEnumerable<ModuleDef> modules;
+			if (includeAllModules)
+				modules = documentService.GetDocuments().Select(a => a.ModuleDef).OfType<ModuleDef>();
+			else if (TIAHelper.IsTypeDefEquivalent(analyzedType)) {
+				var analyzedTypes = new List<TypeDef> { analyzedType };
+				SearchNode.AddTypeEquivalentTypes(documentService, analyzedType, analyzedTypes);
+				modules = SearchNode.GetTypeEquivalentModules(analyzedTypes);
+			}
+			else
+				modules = GetReferencingModules(analyzedType.Module, ct);
+			allModules.AddRange(modules);
+			return allModules.AsParallel().WithCancellation(ct).SelectMany(a => FindReferencesInModule(a, ct));
 		}
 
 		IEnumerable<T> FindReferencesInModule(ModuleDef mod, CancellationToken ct) {
@@ -233,74 +259,53 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		IEnumerable<ModuleDef> GetReferencingModules(ModuleDef mod, CancellationToken ct) {
 			var asm = mod.Assembly;
-			if (asm == null) {
+			if (asm is null) {
 				yield return mod;
 				yield break;
 			}
-			foreach (var m in mod.Assembly.Modules.GetSafeEnumerable())
+			foreach (var m in mod.Assembly.Modules)
 				yield return m;
 
-			var assemblies = documentService.GetDocuments().Where(a => a.AssemblyDef != null);
+			var modules = documentService.GetDocuments().Where(a => SearchNode.CanIncludeModule(mod, a.ModuleDef));
 
-			foreach (var assembly in assemblies) {
+			foreach (var module in modules) {
+				Debug.Assert(!(module.ModuleDef is null));
 				ct.ThrowIfCancellationRequested();
-				bool found = false;
-				foreach (var reference in assembly.AssemblyDef.Modules.GetSafeEnumerable().SelectMany(module => module.GetAssemblyRefs())) {
-					if (AssemblyNameComparer.CompareAll.CompareTo(asm, reference) == 0) {
-						found = true;
-						break;
-					}
-				}
-				if (found && AssemblyReferencesScopeType(assembly.AssemblyDef)) {
-					foreach (var m in assembly.AssemblyDef.Modules.GetSafeEnumerable())
-						yield return m;
-				}
+				if (ModuleReferencesScopeType(module.ModuleDef))
+					yield return module.ModuleDef;
 			}
 		}
 
 		IEnumerable<ModuleDef> GetModuleAndAnyFriends(ModuleDef mod, CancellationToken ct) {
 			var asm = mod.Assembly;
-			if (asm == null) {
+			if (asm is null) {
 				yield return mod;
 				yield break;
 			}
-			foreach (var m in mod.Assembly.Modules.GetSafeEnumerable())
+			foreach (var m in mod.Assembly.Modules)
 				yield return m;
 
-			if (asm.HasCustomAttributes) {
-				var attributes = asm.CustomAttributes
-					.Where(attr => attr.TypeFullName == "System.Runtime.CompilerServices.InternalsVisibleToAttribute");
-				var friendAssemblies = new HashSet<string>();
-				foreach (var attribute in attributes) {
-					if (attribute.ConstructorArguments.Count == 0)
-						continue;
-					string assemblyName = attribute.ConstructorArguments[0].Value as UTF8String;
-					if (assemblyName == null)
-						continue;
-					assemblyName = assemblyName.Split(',')[0]; // strip off any public key info
-					friendAssemblies.Add(assemblyName);
-				}
-
-				if (friendAssemblies.Count > 0) {
-					var assemblies = documentService.GetDocuments().Where(a => a.AssemblyDef != null);
-
-					foreach (var assembly in assemblies) {
-						ct.ThrowIfCancellationRequested();
-						if (friendAssemblies.Contains(assembly.AssemblyDef.Name) && AssemblyReferencesScopeType(assembly.AssemblyDef)) {
-							foreach (var m in assembly.AssemblyDef.Modules.GetSafeEnumerable())
-								yield return m;
-						}
-					}
+			var friendAssemblies = SearchNode.GetFriendAssemblies(documentService, mod, out var modules);
+			if (friendAssemblies.Count > 0) {
+				foreach (var module in modules) {
+					Debug.Assert(!(module.ModuleDef is null));
+					ct.ThrowIfCancellationRequested();
+					if ((module.AssemblyDef is null || friendAssemblies.Contains(module.AssemblyDef.Name)) && ModuleReferencesScopeType(module.ModuleDef))
+						yield return module.ModuleDef;
 				}
 			}
 		}
 
-		bool AssemblyReferencesScopeType(AssemblyDef asm) {
-			foreach (var mod in asm.Modules.GetSafeEnumerable()) {
-				foreach (var typeref in mod.GetTypeRefs()) {
-					if (new SigComparer().Equals(typeScope, typeref))
-						return true;
-				}
+		bool ModuleReferencesScopeType(ModuleDef mod) {
+			foreach (var typeRef in mod.GetTypeRefs()) {
+				if (new SigComparer().Equals(typeScope, typeRef))
+					return true;
+			}
+			foreach (var exportedType in mod.ExportedTypes) {
+				if (!exportedType.MovedToAnotherAssembly)
+					continue;
+				if (new SigComparer().Equals(typeScope, exportedType))
+					return true;
 			}
 			return false;
 		}

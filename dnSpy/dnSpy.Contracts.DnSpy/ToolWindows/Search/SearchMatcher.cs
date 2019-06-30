@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
-using dnSpy.Contracts.Properties;
+using dnSpy.Contracts.DnSpy.Properties;
 using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Contracts.ToolWindows.Search {
@@ -47,6 +47,12 @@ namespace dnSpy.Contracts.ToolWindows.Search {
 				sb.Append(string.Format(dnSpy_Contracts_DnSpy_Resources.Search_SearchColumnHelpText, def.LocalizedName));
 				sb.AppendLine();
 			}
+			Debug.Assert(definitions.Length > 0);
+			if (definitions.Length > 0) {
+				sb.AppendLine();
+				var def = definitions[0];
+				sb.AppendLine(string.Format(dnSpy_Contracts_DnSpy_Resources.Search_SearchColumnInvertMatchHelpText, "-option!", "-" + def.ShortOptionName + "! <text>"));
+			}
 			return sb.ToString();
 		}
 
@@ -56,10 +62,13 @@ namespace dnSpy.Contracts.ToolWindows.Search {
 			if (columnText.Length != definitions.Length)
 				throw new InvalidOperationException();
 			foreach (var cmd in searchCommands) {
-				if (cmd.ColumnId == null) {
+				if (cmd.ColumnId is null) {
 					bool match = false;
 					foreach (var text in columnText) {
-						if (text.IndexOf(cmd.SearchText, stringComparison) >= 0) {
+						bool b = text.IndexOf(cmd.SearchText, stringComparison) >= 0;
+						if (cmd.Negate)
+							b = !b;
+						if (b) {
 							match = true;
 							break;
 						}
@@ -70,7 +79,12 @@ namespace dnSpy.Contracts.ToolWindows.Search {
 				else {
 					int index = GetColumnIndex(cmd.ColumnId);
 					Debug.Assert(index >= 0);
-					if (index < 0 || columnText[index].IndexOf(cmd.SearchText, stringComparison) < 0)
+					if (index < 0)
+						return false;
+					bool b = columnText[index].IndexOf(cmd.SearchText, stringComparison) >= 0;
+					if (cmd.Negate)
+						b = !b;
+					if (!b)
 						return false;
 				}
 			}
@@ -91,7 +105,9 @@ namespace dnSpy.Contracts.ToolWindows.Search {
 				return spans;
 
 			foreach (var cmd in searchCommands) {
-				if (cmd.ColumnId != null && cmd.ColumnId != columnId)
+				if (!(cmd.ColumnId is null) && cmd.ColumnId != columnId)
+					continue;
+				if (cmd.Negate)
 					continue;
 				int searchLength = cmd.SearchText.Length;
 				if (searchLength == 0)

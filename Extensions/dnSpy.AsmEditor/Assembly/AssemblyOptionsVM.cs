@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -47,15 +47,15 @@ namespace dnSpy.AsmEditor.Assembly {
 		readonly AssemblyOptions origOptions;
 
 		public IOpenPublicKeyFile OpenPublicKeyFile {
-			set { openPublicKeyFile = value; }
+			set => openPublicKeyFile = value;
 		}
-		IOpenPublicKeyFile openPublicKeyFile;
+		IOpenPublicKeyFile? openPublicKeyFile;
 
 		public ICommand OpenPublicKeyFileCommand => new RelayCommand(a => OnOpenPublicKeyFile());
 		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
 
 		public bool CanShowClrVersion {
-			get { return canShowClrVersion; }
+			get => canShowClrVersion;
 			set {
 				if (canShowClrVersion != value) {
 					canShowClrVersion = value;
@@ -78,11 +78,9 @@ namespace dnSpy.AsmEditor.Assembly {
 		public UInt16VM VersionRevision { get; }
 
 		public AssemblyAttributes Flags {
-			get {
-				return (flags & ~(AssemblyAttributes.PA_Mask | AssemblyAttributes.ContentType_Mask) |
-					((AssemblyAttributes)((uint)(AsmProcArch)ProcessArchitecture.SelectedItem << (int)AssemblyAttributes.PA_Shift) & AssemblyAttributes.PA_Mask) |
-					((AssemblyAttributes)((uint)(AsmContType)ContentType.SelectedItem << 9) & AssemblyAttributes.ContentType_Mask));
-			}
+			get => (flags & ~(AssemblyAttributes.PA_Mask | AssemblyAttributes.ContentType_Mask) |
+					((AssemblyAttributes)((uint)(AsmProcArch)ProcessArchitecture.SelectedItem! << (int)AssemblyAttributes.PA_Shift) & AssemblyAttributes.PA_Mask) |
+					((AssemblyAttributes)((uint)(AsmContType)ContentType.SelectedItem! << 9) & AssemblyAttributes.ContentType_Mask));
 			set {
 				if (flags != value) {
 					flags = value;
@@ -101,28 +99,28 @@ namespace dnSpy.AsmEditor.Assembly {
 		AssemblyAttributes flags;
 
 		public bool FlagsPublicKey {
-			get { return GetFlagValue(AssemblyAttributes.PublicKey); }
-			set { SetFlagValue(AssemblyAttributes.PublicKey, value); }
+			get => GetFlagValue(AssemblyAttributes.PublicKey);
+			set => SetFlagValue(AssemblyAttributes.PublicKey, value);
 		}
 
 		public bool PA_Specified {
-			get { return GetFlagValue(AssemblyAttributes.PA_Specified); }
-			set { SetFlagValue(AssemblyAttributes.PA_Specified, value); }
+			get => GetFlagValue(AssemblyAttributes.PA_Specified);
+			set => SetFlagValue(AssemblyAttributes.PA_Specified, value);
 		}
 
 		public bool Retargetable {
-			get { return GetFlagValue(AssemblyAttributes.Retargetable); }
-			set { SetFlagValue(AssemblyAttributes.Retargetable, value); }
+			get => GetFlagValue(AssemblyAttributes.Retargetable);
+			set => SetFlagValue(AssemblyAttributes.Retargetable, value);
 		}
 
 		public bool EnableJITcompileTracking {
-			get { return GetFlagValue(AssemblyAttributes.EnableJITcompileTracking); }
-			set { SetFlagValue(AssemblyAttributes.EnableJITcompileTracking, value); }
+			get => GetFlagValue(AssemblyAttributes.EnableJITcompileTracking);
+			set => SetFlagValue(AssemblyAttributes.EnableJITcompileTracking, value);
 		}
 
 		public bool DisableJITcompileOptimizer {
-			get { return GetFlagValue(AssemblyAttributes.DisableJITcompileOptimizer); }
-			set { SetFlagValue(AssemblyAttributes.DisableJITcompileOptimizer, value); }
+			get => GetFlagValue(AssemblyAttributes.DisableJITcompileOptimizer);
+			set => SetFlagValue(AssemblyAttributes.DisableJITcompileOptimizer, value);
 		}
 
 		bool GetFlagValue(AssemblyAttributes flag) => (Flags & flag) != 0;
@@ -144,8 +142,8 @@ namespace dnSpy.AsmEditor.Assembly {
 
 		public HexStringVM PublicKey { get; }
 
-		public string Name {
-			get { return name; }
+		public string? Name {
+			get => name;
 			set {
 				if (name != value) {
 					name = value;
@@ -154,10 +152,10 @@ namespace dnSpy.AsmEditor.Assembly {
 				}
 			}
 		}
-		UTF8String name;
+		UTF8String? name;
 
-		public string Culture {
-			get { return culture; }
+		public string? Culture {
+			get => culture;
 			set {
 				if (culture != value) {
 					culture = value;
@@ -166,12 +164,12 @@ namespace dnSpy.AsmEditor.Assembly {
 				}
 			}
 		}
-		string culture;
+		string? culture;
 
 		public string AssemblyFullName {
 			get {
 				var asm = new AssemblyNameInfo();
-				asm.HashAlgId = (AssemblyHashAlgorithm)HashAlgorithm.SelectedItem;
+				asm.HashAlgId = (AssemblyHashAlgorithm)HashAlgorithm.SelectedItem!;
 				int major = VersionMajor.HasError ? 0 : VersionMajor.Value;
 				int minor = VersionMinor.HasError ? 0 : VersionMinor.Value;
 				int build = VersionBuild.HasError ? 0 : VersionBuild.Value;
@@ -227,13 +225,13 @@ namespace dnSpy.AsmEditor.Assembly {
 		}
 
 		AssemblyOptions CopyTo(AssemblyOptions options) {
-			options.HashAlgorithm = (AssemblyHashAlgorithm)HashAlgorithm.SelectedItem;
+			options.HashAlgorithm = (AssemblyHashAlgorithm)HashAlgorithm.SelectedItem!;
 			options.Version = new Version(VersionMajor.Value, VersionMinor.Value, VersionBuild.Value, VersionRevision.Value);
 			options.Attributes = Flags;
 			options.PublicKey = new PublicKey(PublicKey.Value.ToArray());
 			options.Name = Name;
 			options.Culture = Culture;
-			options.ClrVersion = (Module.ClrVersion)ClrVersion.SelectedItem;
+			options.ClrVersion = (Module.ClrVersion)ClrVersion.SelectedItem!;
 			options.CustomAttributes.Clear();
 			options.CustomAttributes.AddRange(CustomAttributesVM.Collection.Select(a => a.CreateCustomAttributeOptions().Create()));
 			options.DeclSecurities.Clear();
@@ -242,10 +240,10 @@ namespace dnSpy.AsmEditor.Assembly {
 		}
 
 		void OnOpenPublicKeyFile() {
-			if (openPublicKeyFile == null)
+			if (openPublicKeyFile is null)
 				throw new InvalidOperationException();
 			var newPublicKey = openPublicKeyFile.Open();
-			if (newPublicKey == null)
+			if (newPublicKey is null)
 				return;
 			PublicKey.Value = newPublicKey.Data;
 		}

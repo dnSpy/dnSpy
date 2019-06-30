@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,6 +25,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using dnSpy.Contracts.Documents.TreeView;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.TreeView;
@@ -42,12 +43,12 @@ namespace dnSpy.TreeView {
 		public Control UIObject => sharpTreeView;
 		readonly SharpTreeView sharpTreeView;
 
-		object IStackedContentChild.UIObject => sharpTreeView;
+		object? IStackedContentChild.UIObject => sharpTreeView;
 
-		public TreeNodeData SelectedItem {
+		public TreeNodeData? SelectedItem {
 			get {
 				var node = sharpTreeView.SelectedItem as DsSharpTreeNode;
-				return node == null ? null : node.TreeNodeImpl.Data;
+				return node?.TreeNodeImpl.Data;
 			}
 		}
 
@@ -55,7 +56,7 @@ namespace dnSpy.TreeView {
 		public TreeNodeData[] TopLevelSelection => Convert(sharpTreeView.GetTopLevelSelection());
 
 		readonly ITreeViewServiceImpl treeViewService;
-		readonly ITreeViewListener treeViewListener;
+		readonly ITreeViewListener? treeViewListener;
 		readonly IClassificationFormatMap classificationFormatMap;
 		readonly object foregroundBrushResourceKey;
 
@@ -74,8 +75,9 @@ namespace dnSpy.TreeView {
 			sharpTreeView.CanDragAndDrop = options.CanDragAndDrop;
 			sharpTreeView.AllowDrop = options.AllowDrop;
 			sharpTreeView.AllowDropOrder = options.AllowDrop;
-			VirtualizingStackPanel.SetIsVirtualizing(sharpTreeView, options.IsVirtualizing);
-			VirtualizingStackPanel.SetVirtualizationMode(sharpTreeView, options.VirtualizationMode);
+			VirtualizingPanel.SetIsVirtualizing(sharpTreeView, options.IsVirtualizing);
+			VirtualizingPanel.SetVirtualizationMode(sharpTreeView, options.VirtualizationMode);
+			AutomationPeerMemoryLeakWorkaround.SetInitialize(sharpTreeView, true);
 			sharpTreeView.SelectionMode = options.SelectionMode;
 			sharpTreeView.BorderThickness = new Thickness(0);
 			sharpTreeView.ShowRoot = false;
@@ -110,10 +112,10 @@ namespace dnSpy.TreeView {
 			SelectionChanged?.Invoke(this, Convert(e));
 
 		static TreeViewSelectionChangedEventArgs Convert(SelectionChangedEventArgs e) {
-			TreeNodeData[] added = null, removed = null;
-			if (e.AddedItems != null)
+			TreeNodeData[]? added = null, removed = null;
+			if (!(e.AddedItems is null))
 				added = Convert(e.AddedItems);
-			if (e.RemovedItems != null)
+			if (!(e.RemovedItems is null))
 				removed = Convert(e.RemovedItems);
 			return new TreeViewSelectionChangedEventArgs(added, removed);
 		}
@@ -124,9 +126,9 @@ namespace dnSpy.TreeView {
 		ITreeNode ITreeView.Create(TreeNodeData data) => Create(data);
 
 		TreeNodeImpl Create(TreeNodeData data) {
-			Debug.Assert(data.TreeNode == null);
+			Debug.Assert(data.TreeNode is null);
 			var impl = new TreeNodeImpl(this, data);
-			if (treeViewListener != null)
+			if (!(treeViewListener is null))
 				treeViewListener.OnEvent(this, new TreeViewListenerEventArgs(TreeViewListenerEvent.NodeCreated, impl));
 			data.Initialize();
 			if (!impl.LazyLoading)
@@ -145,7 +147,7 @@ namespace dnSpy.TreeView {
 		}
 
 		internal void AddSorted(TreeNodeImpl owner, ITreeNode node) {
-			if (node == null)
+			if (node is null)
 				throw new ArgumentNullException(nameof(node));
 			if (node.TreeView != this)
 				throw new InvalidOperationException("You can only add a ITreeNode to a treeview that created it");
@@ -154,7 +156,7 @@ namespace dnSpy.TreeView {
 
 		internal void AddSorted(TreeNodeImpl owner, TreeNodeImpl impl) {
 			var group = impl.Data.TreeNodeGroup;
-			if (group == null)
+			if (group is null)
 				owner.Children.Add(impl);
 			else {
 				int index = GetInsertIndex(owner, impl, group);
@@ -169,7 +171,7 @@ namespace dnSpy.TreeView {
 			if (children.Count >= 1) {
 				var lastData = children[children.Count - 1].Data;
 				var lastGroup = lastData.TreeNodeGroup;
-				if (lastGroup != null) {
+				if (!(lastGroup is null)) {
 					int x = Compare(impl.Data, lastData, group, lastGroup);
 					if (x > 0)
 						return children.Count;
@@ -183,7 +185,7 @@ namespace dnSpy.TreeView {
 				var otherData = children[i].Data;
 				var otherGroup = otherData.TreeNodeGroup;
 				int x;
-				if (otherGroup == null)
+				if (otherGroup is null)
 					x = -1;
 				else
 					x = Compare(impl.Data, otherData, group, otherGroup);
@@ -204,7 +206,7 @@ namespace dnSpy.TreeView {
 			if (ga.Order > gb.Order)
 				return 1;
 			if (ga.GetType() != gb.GetType()) {
-				Debug.Fail(string.Format("Two different groups have identical order: {0} vs {1}", ga.GetType(), gb.GetType()));
+				Debug.Fail($"Two different groups have identical order: {ga.GetType()} vs {gb.GetType()}");
 				return ga.GetType().GetHashCode().CompareTo(gb.GetType().GetHashCode());
 			}
 			return ga.Compare(a, b);
@@ -215,7 +217,7 @@ namespace dnSpy.TreeView {
 				sharpTreeView.SelectedItem = null;
 			else
 				sharpTreeView.SelectedItems.Clear();
-			var nodes = items.Where(a => a != null).Select(a => (TreeNodeImpl)a.TreeNode).ToArray();
+			var nodes = items.Where(a => !(a is null)).Select(a => (TreeNodeImpl)a.TreeNode).ToArray();
 			if (nodes.Length > 0) {
 				sharpTreeView.FocusNode(nodes[0].Node);
 				sharpTreeView.SelectedItem = nodes[0].Node;
@@ -256,16 +258,16 @@ namespace dnSpy.TreeView {
 				node.RefreshUI();
 		}
 
-		public TreeNodeData FromImplNode(object selectedItem) {
+		public TreeNodeData? FromImplNode(object? selectedItem) {
 			var node = selectedItem as DsSharpTreeNode;
-			return node == null ? null : node.TreeNodeImpl.Data;
+			return node?.TreeNodeImpl.Data;
 		}
 
-		public object ToImplNode(TreeNodeData node) {
-			if (node == null)
+		public object? ToImplNode(TreeNodeData node) {
+			if (node is null)
 				return null;
 			var impl = node.TreeNode as TreeNodeImpl;
-			Debug.Assert(impl != null);
+			Debug.Assert(!(impl is null));
 			return impl?.Node;
 		}
 
@@ -298,7 +300,7 @@ namespace dnSpy.TreeView {
 
 		internal Brush GetNodeForegroundBrush() {
 			var brush = sharpTreeView.TryFindResource(foregroundBrushResourceKey) as Brush;
-			Debug.Assert(brush != null);
+			Debug.Assert(!(brush is null));
 			return brush;
 		}
 	}

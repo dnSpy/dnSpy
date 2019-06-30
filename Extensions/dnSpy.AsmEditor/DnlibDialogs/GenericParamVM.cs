@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -57,7 +57,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			get {
 				var mask = GenericParamAttributes.VarianceMask;
 				return (attributes & ~mask) |
-					((GenericParamAttributes)((int)(GPVariance)GPVarianceVM.SelectedItem << 0) & GenericParamAttributes.VarianceMask);
+					((GenericParamAttributes)((int)(GPVariance)GPVarianceVM.SelectedItem! << 0) & GenericParamAttributes.VarianceMask);
 			}
 			set {
 				if (attributes != value) {
@@ -74,18 +74,18 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public EnumListVM GPVarianceVM { get; }
 
 		public bool ReferenceTypeConstraint {
-			get { return GetFlagValue(GenericParamAttributes.ReferenceTypeConstraint); }
-			set { SetFlagValue(GenericParamAttributes.ReferenceTypeConstraint, value); }
+			get => GetFlagValue(GenericParamAttributes.ReferenceTypeConstraint);
+			set => SetFlagValue(GenericParamAttributes.ReferenceTypeConstraint, value);
 		}
 
 		public bool NotNullableValueTypeConstraint {
-			get { return GetFlagValue(GenericParamAttributes.NotNullableValueTypeConstraint); }
-			set { SetFlagValue(GenericParamAttributes.NotNullableValueTypeConstraint, value); }
+			get => GetFlagValue(GenericParamAttributes.NotNullableValueTypeConstraint);
+			set => SetFlagValue(GenericParamAttributes.NotNullableValueTypeConstraint, value);
 		}
 
 		public bool DefaultConstructorConstraint {
-			get { return GetFlagValue(GenericParamAttributes.DefaultConstructorConstraint); }
-			set { SetFlagValue(GenericParamAttributes.DefaultConstructorConstraint, value); }
+			get => GetFlagValue(GenericParamAttributes.DefaultConstructorConstraint);
+			set => SetFlagValue(GenericParamAttributes.DefaultConstructorConstraint, value);
 		}
 
 		bool GetFlagValue(GenericParamAttributes flag) => (Attributes & flag) != 0;
@@ -97,8 +97,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				Attributes &= ~flag;
 		}
 
-		public string Name {
-			get { return name; }
+		public string? Name {
+			get => name;
 			set {
 				if (name != value) {
 					name = value;
@@ -107,7 +107,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 			}
 		}
-		UTF8String name;
+		UTF8String? name;
 
 		public UInt16VM Number { get; }
 		public TypeDefOrRefAndCAsVM<GenericParamConstraint> TypeDefOrRefAndCAsVM { get; }
@@ -116,7 +116,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		readonly ModuleDef ownerModule;
 
-		public GenericParamVM(GenericParamOptions options, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType, MethodDef ownerMethod) {
+		public GenericParamVM(GenericParamOptions options, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef? ownerType, MethodDef? ownerMethod) {
 			this.ownerModule = ownerModule;
 			origOptions = options;
 			Number = new UInt16VM(a => { OnPropertyChanged(nameof(FullName)); HasErrorUpdated(); });
@@ -131,9 +131,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				OwnerType = ownerType,
 				OwnerMethod = ownerMethod,
 			};
-			if (ownerType != null && ownerType.GenericParameters.Count == 0)
+			if (!(ownerType is null) && ownerType.GenericParameters.Count == 0)
 				typeSigCreatorOptions.CanAddGenericTypeVar = false;
-			if (ownerMethod != null && ownerMethod.GenericParameters.Count > 0)
+			if (!(ownerMethod is null) && ownerMethod.GenericParameters.Count > 0)
 				typeSigCreatorOptions.CanAddGenericMethodVar = true;
 			TypeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
 

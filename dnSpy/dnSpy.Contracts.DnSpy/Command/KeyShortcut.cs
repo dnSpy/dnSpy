@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,8 +21,8 @@ using System;
 using System.Windows.Input;
 
 namespace dnSpy.Contracts.Command {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
-	public struct KeyShortcut : IEquatable<KeyShortcut> {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+	public readonly struct KeyShortcut : IEquatable<KeyShortcut> {
 		public KeyInput KeyInput1 { get; }
 		public KeyInput KeyInput2 { get; }
 
@@ -50,9 +50,9 @@ namespace dnSpy.Contracts.Command {
 		public static bool operator ==(KeyShortcut a, KeyShortcut b) => a.Equals(b);
 		public static bool operator !=(KeyShortcut a, KeyShortcut b) => !a.Equals(b);
 		public bool Equals(KeyShortcut other) => KeyInput1 == other.KeyInput1 && KeyInput2 == other.KeyInput2;
-		public override bool Equals(object obj) => obj is KeyShortcut && Equals((KeyShortcut)obj);
+		public override bool Equals(object? obj) => obj is KeyShortcut && Equals((KeyShortcut)obj);
 		public override int GetHashCode() => KeyInput1.GetHashCode() ^ KeyInput2.GetHashCode();
 		public override string ToString() => HasTwoKeyInputs ? $"{KeyInput1}, {KeyInput2}" : KeyInput1.ToString();
 	}
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,53 +18,26 @@
 */
 
 using System;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
-using dnSpy.Contracts.App;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.MainApp {
-	class AppSettings : ViewModelBase, IAppSettings {
-		protected virtual void OnModified() { }
-
-		public bool UseNewRenderer_TextEditor {
-			get { return useNewRenderer_TextEditor; }
+	class AppSettings : ViewModelBase {
+		public bool AllowMoreThanOneInstance {
+			get => allowMoreThanOneInstance;
 			set {
-				if (useNewRenderer_TextEditor != value) {
-					useNewRenderer_TextEditor = value;
-					OnPropertyChanged(nameof(UseNewRenderer_TextEditor));
-					OnModified();
+				if (allowMoreThanOneInstance != value) {
+					allowMoreThanOneInstance = value;
+					OnPropertyChanged(nameof(AllowMoreThanOneInstance));
 				}
 			}
 		}
-		bool useNewRenderer_TextEditor = false;
-
-		public bool UseNewRenderer_HexEditor {
-			get { return useNewRenderer_HexEditor; }
-			set {
-				if (useNewRenderer_HexEditor != value) {
-					useNewRenderer_HexEditor = value;
-					OnPropertyChanged(nameof(UseNewRenderer_HexEditor));
-					OnModified();
-				}
-			}
-		}
-		bool useNewRenderer_HexEditor = false;
-
-		public bool UseNewRenderer_DocumentTreeView {
-			get { return useNewRenderer_DocumentTreeView; }
-			set {
-				if (useNewRenderer_DocumentTreeView != value) {
-					useNewRenderer_DocumentTreeView = value;
-					OnPropertyChanged(nameof(UseNewRenderer_DocumentTreeView));
-					OnModified();
-				}
-			}
-		}
-		bool useNewRenderer_DocumentTreeView = false;
+		bool allowMoreThanOneInstance = true;
 	}
 
-	[Export, Export(typeof(IAppSettings))]
+	[Export]
 	sealed class AppSettingsImpl : AppSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("071CF92D-ACFA-46A1-8EEF-DFAC1D01E644");
 
@@ -74,22 +47,14 @@ namespace dnSpy.MainApp {
 		AppSettingsImpl(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
-			UseNewRenderer_TextEditor = sect.Attribute<bool?>(nameof(UseNewRenderer_TextEditor)) ?? UseNewRenderer_TextEditor;
-			UseNewRenderer_HexEditor = sect.Attribute<bool?>(nameof(UseNewRenderer_HexEditor)) ?? UseNewRenderer_HexEditor;
-			UseNewRenderer_DocumentTreeView = sect.Attribute<bool?>(nameof(UseNewRenderer_DocumentTreeView)) ?? UseNewRenderer_DocumentTreeView;
-			disableSave = false;
+			AllowMoreThanOneInstance = sect.Attribute<bool?>(nameof(AllowMoreThanOneInstance)) ?? AllowMoreThanOneInstance;
+			PropertyChanged += AppSettingsImpl_PropertyChanged;
 		}
-		readonly bool disableSave;
 
-		protected override void OnModified() {
-			if (disableSave)
-				return;
+		void AppSettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
-			sect.Attribute(nameof(UseNewRenderer_TextEditor), UseNewRenderer_TextEditor);
-			sect.Attribute(nameof(UseNewRenderer_HexEditor), UseNewRenderer_HexEditor);
-			sect.Attribute(nameof(UseNewRenderer_DocumentTreeView), UseNewRenderer_DocumentTreeView);
+			sect.Attribute(nameof(AllowMoreThanOneInstance), AllowMoreThanOneInstance);
 		}
 	}
 }

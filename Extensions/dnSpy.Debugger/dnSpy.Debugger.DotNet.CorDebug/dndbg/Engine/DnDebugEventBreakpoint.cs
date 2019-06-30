@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -58,7 +58,7 @@ namespace dndbg.Engine {
 		internal Func<DebugEventBreakpointConditionContext, bool> Condition { get; }
 		public DebugEventBreakpointKind EventKind { get; }
 
-		internal DnDebugEventBreakpoint(DebugEventBreakpointKind eventKind, Func<DebugEventBreakpointConditionContext, bool> cond) {
+		internal DnDebugEventBreakpoint(DebugEventBreakpointKind eventKind, Func<DebugEventBreakpointConditionContext, bool>? cond) {
 			EventKind = eventKind;
 			Condition = cond ?? defaultCond;
 		}

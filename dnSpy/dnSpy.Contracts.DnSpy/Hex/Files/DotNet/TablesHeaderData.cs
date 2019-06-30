@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -47,9 +47,9 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <summary>m_sorted</summary>
 		public abstract StructField<UInt64FlagsData> SortedMask { get; }
 		/// <summary>Extra data or null if there was no extra data</summary>
-		public abstract StructField<UInt32Data> ExtraData { get; }
+		public abstract StructField<UInt32Data>? ExtraData { get; }
 		/// <summary>true if <see cref="ExtraData"/> field exists in header and isn't null</summary>
-		public bool HasExtraData => ExtraData != null;
+		public bool HasExtraData => !(ExtraData is null);
 		/// <summary>Rows</summary>
 		public abstract StructField<ArrayData<UInt32Data>> Rows { get; }
 	}

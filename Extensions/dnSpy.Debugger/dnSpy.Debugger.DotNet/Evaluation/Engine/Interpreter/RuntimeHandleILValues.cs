@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,7 +29,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			this.type = type;
 		}
 
-		protected override DbgDotNetValue CreateObjValue() => runtime.CreateRuntimeTypeHandleCore(type);
+		protected override DbgDotNetValue? CreateObjValue() => runtime.CreateRuntimeTypeHandleCore(type);
 	}
 
 	sealed class RuntimeFieldHandleILValue : TypeILValueImpl {
@@ -40,7 +40,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			Field = field;
 		}
 
-		protected override DbgDotNetValue CreateObjValue() => runtime.CreateRuntimeFieldHandleCore(Field);
+		protected override DbgDotNetValue? CreateObjValue() => runtime.CreateRuntimeFieldHandleCore(Field);
 	}
 
 	sealed class RuntimeMethodHandleILValue : TypeILValueImpl {
@@ -51,6 +51,6 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			this.method = method;
 		}
 
-		protected override DbgDotNetValue CreateObjValue() => runtime.CreateRuntimeMethodHandleCore(method);
+		protected override DbgDotNetValue? CreateObjValue() => runtime.CreateRuntimeMethodHandleCore(method);
 	}
 }

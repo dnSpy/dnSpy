@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,6 +36,6 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="reference">Reference created by eg. <see cref="HexStructureInfoProvider.GetReference(HexPosition)"/></param>
 		/// <param name="tags">Tags or null, see <see cref="PredefinedHexReferenceHandlerTags"/></param>
 		/// <returns></returns>
-		public abstract bool Handle(HexView hexView, object reference, IList<string> tags = null);
+		public abstract bool Handle(HexView hexView, object reference, IList<string>? tags = null);
 	}
 }

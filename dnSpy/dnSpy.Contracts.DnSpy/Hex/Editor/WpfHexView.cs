@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -41,7 +41,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <summary>
 		/// Gets/sets the background brush
 		/// </summary>
-		public abstract Brush Background { get; set; }
+		public abstract Brush? Background { get; set; }
 
 		/// <summary>
 		/// Raised when the background property has changed

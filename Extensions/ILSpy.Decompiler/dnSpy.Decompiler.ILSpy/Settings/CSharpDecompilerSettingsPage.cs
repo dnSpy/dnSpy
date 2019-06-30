@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.MVVM;
@@ -27,53 +26,49 @@ using dnSpy.Decompiler.ILSpy.Properties;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.Decompiler.ILSpy.Settings {
-	sealed class CSharpDecompilerSettingsPage : AppSettingsPage, IAppSettingsPage2, INotifyPropertyChanged {
+	sealed class CSharpDecompilerSettingsPage : AppSettingsPage, IAppSettingsPage2 {
 		readonly DecompilerSettings _global_decompilerSettings;
 		readonly DecompilerSettings decompilerSettings;
 
-		public event PropertyChangedEventHandler PropertyChanged;
-		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
-
 		public override double Order => AppSettingsConstants.ORDER_DECOMPILER_SETTINGS_ILSPY_CSHARP;
-		public string Name => dnSpy_Decompiler_ILSpy_Resources.CSharpDecompilerSettingsTabName;
 		public DecompilerSettings Settings => decompilerSettings;
 		public override Guid ParentGuid => new Guid(AppSettingsConstants.GUID_DECOMPILER);
 		public override Guid Guid => new Guid("8929CE8E-7E2C-4701-A8BA-42F70363872C");
 		public override string Title => "C# / Visual Basic (ILSpy)";
-		public override object UIObject => this;
+		public override object? UIObject => this;
 
 		public DecompilationObjectVM[] DecompilationObjectsArray => decompilationObjectVMs2;
 		readonly DecompilationObjectVM[] decompilationObjectVMs;
 		readonly DecompilationObjectVM[] decompilationObjectVMs2;
 
 		public DecompilationObjectVM DecompilationObject0 {
-			get { return decompilationObjectVMs[0]; }
-			set { SetDecompilationObject(0, value); }
+			get => decompilationObjectVMs[0];
+			set => SetDecompilationObject(0, value);
 		}
 
 		public DecompilationObjectVM DecompilationObject1 {
-			get { return decompilationObjectVMs[1]; }
-			set { SetDecompilationObject(1, value); }
+			get => decompilationObjectVMs[1];
+			set => SetDecompilationObject(1, value);
 		}
 
 		public DecompilationObjectVM DecompilationObject2 {
-			get { return decompilationObjectVMs[2]; }
-			set { SetDecompilationObject(2, value); }
+			get => decompilationObjectVMs[2];
+			set => SetDecompilationObject(2, value);
 		}
 
 		public DecompilationObjectVM DecompilationObject3 {
-			get { return decompilationObjectVMs[3]; }
-			set { SetDecompilationObject(3, value); }
+			get => decompilationObjectVMs[3];
+			set => SetDecompilationObject(3, value);
 		}
 
 		public DecompilationObjectVM DecompilationObject4 {
-			get { return decompilationObjectVMs[4]; }
-			set { SetDecompilationObject(4, value); }
+			get => decompilationObjectVMs[4];
+			set => SetDecompilationObject(4, value);
 		}
 
 		void SetDecompilationObject(int index, DecompilationObjectVM newValue) {
-			Debug.Assert(newValue != null);
-			if (newValue == null)
+			Debug.Assert(!(newValue is null));
+			if (newValue is null)
 				throw new ArgumentNullException(nameof(newValue));
 			if (decompilationObjectVMs[index] == newValue)
 				return;
@@ -171,6 +166,7 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 			if (g.ForceShowAllMembers != d.ForceShowAllMembers) flags |= RefreshFlags.CSharp | RefreshFlags.ShowMember;
 			if (g.SortSystemUsingStatementsFirst != d.SortSystemUsingStatementsFirst) flags |= RefreshFlags.CSharp;
 			if (g.MaxArrayElements != d.MaxArrayElements) flags |= RefreshFlags.CSharp;
+			if (g.MaxStringLength != d.MaxStringLength) flags |= RefreshFlags.CSharp;
 			if (g.SortCustomAttributes != d.SortCustomAttributes) flags |= RefreshFlags.CSharp;
 			if (g.UseSourceCodeOrder != d.UseSourceCodeOrder) flags |= RefreshFlags.CSharp;
 			if (g.AllowFieldInitializers != d.AllowFieldInitializers) flags |= RefreshFlags.CSharp;
@@ -190,7 +186,7 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 			decompilerSettings.CopyTo(_global_decompilerSettings);
 		}
 
-		public override string[] GetSearchStrings() => DecompilationObjectsArray.Select(a => a.Text).ToArray();
+		public override string[]? GetSearchStrings() => DecompilationObjectsArray.Select(a => a.Text).ToArray();
 	}
 
 	sealed class DecompilationObjectVM : ViewModelBase {

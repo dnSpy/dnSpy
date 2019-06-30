@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -37,7 +37,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public List<Instruction> Instructions = new List<Instruction>();
 		public List<ExceptionHandler> ExceptionHandlers = new List<ExceptionHandler>();
 		public List<Local> Locals = new List<Local>();
-		public PdbMethod PdbMethod;//TODO: Use this
+		public PdbMethod? PdbMethod;//TODO: Use this
 
 		public CilBodyOptions() {
 		}

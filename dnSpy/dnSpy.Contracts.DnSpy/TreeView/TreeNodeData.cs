@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,12 +36,12 @@ namespace dnSpy.Contracts.TreeView {
 		/// <summary>
 		/// Gets the data shown in the UI
 		/// </summary>
-		public abstract object Text { get; }
+		public abstract object? Text { get; }
 
 		/// <summary>
 		/// Gets the data shown in a tooltip
 		/// </summary>
-		public abstract object ToolTip { get; }
+		public abstract object? ToolTip { get; }
 
 		/// <summary>
 		/// Icon
@@ -51,7 +51,7 @@ namespace dnSpy.Contracts.TreeView {
 		/// <summary>
 		/// Group or null
 		/// </summary>
-		public virtual ITreeNodeGroup TreeNodeGroup => null;
+		public virtual ITreeNodeGroup? TreeNodeGroup => null;
 
 		/// <summary>
 		/// Expanded icon or null to use <see cref="Icon"/>
@@ -68,9 +68,9 @@ namespace dnSpy.Contracts.TreeView {
 		/// property.
 		/// </summary>
 		public ITreeNode TreeNode {
-			get { return treeNode; }
+			get => treeNode;
 			set {
-				if (treeNode != null)
+				if (!(treeNode is null))
 					throw new InvalidOperationException();
 				treeNode = value ?? throw new ArgumentNullException(nameof(value));
 			}
@@ -80,8 +80,7 @@ namespace dnSpy.Contracts.TreeView {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		protected TreeNodeData() {
-		}
+		protected TreeNodeData() => treeNode = null!;
 
 		/// <summary>
 		/// Returns true if the expander should be shown
@@ -199,12 +198,12 @@ namespace dnSpy.Contracts.TreeView {
 		/// <typeparam name="T">Desired type</typeparam>
 		/// <param name="self">This</param>
 		/// <returns></returns>
-		public static T GetAncestorOrSelf<T>(this TreeNodeData self) where T : TreeNodeData {
-			while (self != null) {
+		public static T? GetAncestorOrSelf<T>(this TreeNodeData? self) where T : TreeNodeData {
+			while (!(self is null)) {
 				if (self is T found)
 					return found;
 				var parent = self.TreeNode.Parent;
-				if (parent == null)
+				if (parent is null)
 					break;
 				self = parent.Data;
 			}

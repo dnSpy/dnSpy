@@ -120,9 +120,6 @@
   <data name="DbgAsm_Args" xml:space="preserve">
     <value>参数(_R)</value>
   </data>
-  <data name="DbgAsm_Assembly" xml:space="preserve">
-    <value>程序集(_A)</value>
-  </data>
   <data name="DbgAsm_BreakAt" xml:space="preserve">
     <value>中断于(_B)</value>
   </data>
@@ -143,27 +140,6 @@
   </data>
   <data name="DbgBreak_EntryPoint" xml:space="preserve">
     <value>入口点</value>
-  </data>
-  <data name="DbgBreak_ExeFirstLoadClassEvent" xml:space="preserve">
-    <value>程序的第一个LoadClass事件</value>
-  </data>
-  <data name="DbgBreak_ExeLoadModuleEvent" xml:space="preserve">
-    <value>程序的LoadModule事件</value>
-  </data>
-  <data name="DbgBreak_FirstCreateAppDomainEvent" xml:space="preserve">
-    <value>第一个CreateAppDomain事件</value>
-  </data>
-  <data name="DbgBreak_FirstCreateThreadEvent" xml:space="preserve">
-    <value>第一个CreateThread事件</value>
-  </data>
-  <data name="DbgBreak_FirstLoadClassEvent" xml:space="preserve">
-    <value>第一个LoadClass事件</value>
-  </data>
-  <data name="DbgBreak_FirstLoadModuleEvent" xml:space="preserve">
-    <value>第一个LoadModule事件</value>
-  </data>
-  <data name="DbgBreak_ModuleClassConstructorOrEntryPoint" xml:space="preserve">
-    <value>模块的静态构造函数或入口点</value>
   </data>
   <data name="Error_CouldNotFindDotNetCoreHost" xml:space="preserve">
     <value>无法找到.NET Core宿主 '{0}'</value>
@@ -216,10 +192,10 @@
     <value>WaitSleepJoin</value>
   </data>
   <data name="UseDnSpy64ExeToDebug32" xml:space="preserve">
-    <value>请改用 dnSpy-x86.exe 调试 32 位应用程序。</value>
+    <value>请改用32位dnspy 来调试32位应用程序。</value>
   </data>
   <data name="UseDnSpyExeToDebug64" xml:space="preserve">
-    <value>请改用 dnSpy.exe 调试 64 位应用程序。</value>
+    <value>请改用64位dnspy 来调试64位应用程序。</value>
   </data>
   <data name="ExceptionMessageIsNull" xml:space="preserve">
     <value>"&lt; 没有异常消息 &gt;"</value>
@@ -239,7 +215,7 @@
     <value>本机帧 {0}</value>
   </data>
   <data name="StackFrame_AppdomainTransition" xml:space="preserve">
-    <value>Appdomain Transition</value>
+    <value>程序域转换</value>
   </data>
   <data name="StackFrame_ClassInit" xml:space="preserve">
     <value>类初始化</value>
@@ -294,5 +270,11 @@
 
 HR: 0x{0:X8}
 错误：0x{1:X8}</value>
+  </data>
+  <data name="DbgAsm_UseHostExecutable" xml:space="preserve">
+    <value>使用host可执行文件</value>
+  </data>
+  <data name="DbgAsm_Executable" xml:space="preserve">
+    <value>可执行程序(_X)</value>
   </data>
 </root>

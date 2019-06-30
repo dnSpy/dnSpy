@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,17 +22,17 @@ using dnSpy.AsmEditor.DnlibDialogs;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
 	sealed class EditCustomAttribute : IEdit<CustomAttributeVM> {
-		readonly Window ownerWindow;
+		readonly Window? ownerWindow;
 
 		public EditCustomAttribute()
 			: this(null) {
 		}
 
-		public EditCustomAttribute(Window ownerWindow) => this.ownerWindow = ownerWindow;
+		public EditCustomAttribute(Window? ownerWindow) => this.ownerWindow = ownerWindow;
 
-		public CustomAttributeVM Edit(string title, CustomAttributeVM ca) {
+		public CustomAttributeVM? Edit(string? title, CustomAttributeVM ca) {
 			var win = new CustomAttributeDlg();
-			if (title != null)
+			if (!(title is null))
 				win.Title = title;
 			win.DataContext = ca;
 			win.Owner = ownerWindow ?? Application.Current.MainWindow;

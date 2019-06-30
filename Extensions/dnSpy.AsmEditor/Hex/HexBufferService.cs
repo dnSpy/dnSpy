@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,7 +24,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security;
-using dnlib.IO;
 using dnlib.PE;
 using dnSpy.AsmEditor.UndoRedo;
 using dnSpy.Contracts.Hex;
@@ -32,9 +31,9 @@ using dnSpy.Contracts.Hex;
 namespace dnSpy.AsmEditor.Hex {
 	interface IHexBufferService {
 		HexBuffer GetOrCreate(IPEImage peImage);
-		HexBuffer GetOrCreate(string filename);
+		HexBuffer? GetOrCreate(string filename);
 		HexBuffer[] GetBuffers();
-		HexBuffer TryGet(string filename);
+		HexBuffer? TryGet(string filename);
 		HexBuffer[] Clear();
 	}
 
@@ -59,7 +58,7 @@ namespace dnSpy.AsmEditor.Hex {
 
 		void UndoCommandService_OnEvent(object sender, UndoCommandServiceEventArgs e) {
 			var buffer = HexUndoableDocumentsProvider.TryGetHexBuffer(e.UndoObject);
-			if (buffer == null)
+			if (buffer is null)
 				return;
 
 			if (e.Type == UndoCommandServiceEventType.Saved)
@@ -102,7 +101,7 @@ namespace dnSpy.AsmEditor.Hex {
 			var buffersToDispose = new List<HexBuffer>(objs.Length);
 			foreach (var obj in objs) {
 				var buffer = TryGetBuffer(obj);
-				if (buffer != null)
+				if (!(buffer is null))
 					buffersToDispose.Add(buffer);
 			}
 			foreach (var lz in hexBufferServiceListeners)
@@ -110,36 +109,36 @@ namespace dnSpy.AsmEditor.Hex {
 			return buffersToDispose.ToArray();
 		}
 
-		HexBuffer IHexBufferService.TryGet(string filename) {
+		HexBuffer? IHexBufferService.TryGet(string filename) {
 			filename = GetFullPath(filename);
 
 			lock (lockObj)
 				return TryGet_NoLock(filename);
 		}
 
-		HexBuffer TryGet_NoLock(string filename) {
+		HexBuffer? TryGet_NoLock(string filename) {
 			if (!filenameToBuffer.TryGetValue(filename, out object obj))
 				return null;
 			return TryGetBuffer(obj);
 		}
 
-		HexBuffer TryGetBuffer(object obj) {
+		HexBuffer? TryGetBuffer(object obj) {
 			if (obj is HexBuffer buffer)
 				return buffer;
 			var weakRef = obj as WeakReference;
-			Debug.Assert(weakRef != null);
+			Debug.Assert(!(weakRef is null));
 			return weakRef?.Target as HexBuffer;
 		}
 
-		HexBuffer GetOrCreate(string filename) {
+		HexBuffer? GetOrCreate(string filename) {
 			if (!File.Exists(filename))
 				return null;
 			filename = GetFullPath(filename);
 
-			HexBuffer buffer;
+			HexBuffer? buffer;
 			lock (lockObj) {
 				buffer = TryGet_NoLock(filename);
-				if (buffer != null)
+				if (!(buffer is null))
 					return buffer;
 
 				byte[] data;
@@ -163,29 +162,26 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		HexBuffer GetOrCreate(IPEImage peImage) {
-			var filename = GetFullPath(peImage.FileName);
+			var filename = GetFullPath(peImage.Filename);
 
-			HexBuffer buffer;
+			HexBuffer? buffer;
 			lock (lockObj) {
 				buffer = TryGet_NoLock(filename);
-				if (buffer != null)
+				if (!(buffer is null))
 					return buffer;
 
-				using (var stream = peImage.CreateFullStream()) {
-					var data = stream.ReadAllBytes();
-					buffer = hexBufferFactoryService.Create(data, filename, hexBufferFactoryService.DefaultFileTags);
-					filenameToBuffer[filename] = new WeakReference(buffer);
-				}
+				buffer = hexBufferFactoryService.Create(peImage.CreateReader().ToArray(), filename, hexBufferFactoryService.DefaultFileTags);
+				filenameToBuffer[filename] = new WeakReference(buffer);
 			}
 			return NotifyBufferCreated(buffer);
 		}
 
 		HexBuffer IHexBufferService.GetOrCreate(IPEImage peImage) => GetOrCreate(peImage);
-		HexBuffer IHexBufferService.GetOrCreate(string filename) => GetOrCreate(filename);
+		HexBuffer? IHexBufferService.GetOrCreate(string filename) => GetOrCreate(filename);
 
 		HexBuffer[] IHexBufferService.GetBuffers() {
 			lock (lockObj)
-				return filenameToBuffer.Values.Select(a => TryGetBuffer(a)).Where(a => a != null).ToArray();
+				return filenameToBuffer.Values.Select(a => TryGetBuffer(a)).OfType<HexBuffer>().ToArray();
 		}
 
 		static string GetFullPath(string filename) {

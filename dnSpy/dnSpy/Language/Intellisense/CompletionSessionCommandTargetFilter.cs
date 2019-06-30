@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,20 +27,20 @@ using Microsoft.VisualStudio.Text.Editor;
 namespace dnSpy.Language.Intellisense {
 	sealed class CompletionSessionCommandTargetFilter : ICommandTargetFilter {
 		readonly ICompletionSession completionSession;
-		readonly IDsWpfTextView dsWpfTextView;
+		readonly IDsWpfTextView? dsWpfTextView;
 		readonly int minimumCaretPosition;
 
 		public CompletionSessionCommandTargetFilter(ICompletionSession completionSession) {
 			this.completionSession = completionSession ?? throw new ArgumentNullException(nameof(completionSession));
 			dsWpfTextView = completionSession.TextView as IDsWpfTextView;
-			Debug.Assert(dsWpfTextView != null);
+			Debug.Assert(!(dsWpfTextView is null));
 
 			dsWpfTextView?.CommandTarget.AddFilter(this, CommandTargetFilterOrder.IntellisenseDefaultStatmentCompletion);
 			completionSession.TextView.Caret.PositionChanged += Caret_PositionChanged;
 
 			// Make sure that pressing backspace at start pos dismisses the session
 			var span = completionSession.SelectedCompletionSet?.ApplicableTo.GetSpan(completionSession.TextView.TextSnapshot);
-			minimumCaretPosition = span == null ? 0 : span.Value.Start.Position;
+			minimumCaretPosition = span is null ? 0 : span.Value.Start.Position;
 		}
 
 		void Caret_PositionChanged(object sender, CaretPositionChangedEventArgs e) {
@@ -49,13 +49,13 @@ namespace dnSpy.Language.Intellisense {
 			else {
 				var pos = e.NewPosition.BufferPosition;
 				var span = completionSession.SelectedCompletionSet?.ApplicableTo.GetSpan(pos.Snapshot);
-				if (span == null || pos < minimumCaretPosition || pos < span.Value.Start || pos > span.Value.End)
+				if (span is null || pos < minimumCaretPosition || pos < span.Value.Start || pos > span.Value.End)
 					completionSession.Dismiss();
 				else if (pos == span.Value.Start.Position) {
 					// This matches what VS does. It prevents you from accidentally committing
 					// something when you select the current input text by pressing Shift+Home
 					// and then pressing eg. " or some other commit-character.
-					var curr = completionSession.SelectedCompletionSet.SelectionStatus;
+					var curr = completionSession.SelectedCompletionSet!.SelectionStatus;
 					completionSession.SelectedCompletionSet.SelectionStatus = new CompletionSelectionStatus(curr.Completion, isSelected: false, isUnique: curr.IsUnique);
 				}
 			}
@@ -76,12 +76,12 @@ namespace dnSpy.Language.Intellisense {
 			return CommandTargetStatus.NotHandled;
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args) {
-			object result = null;
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args) {
+			object? result = null;
 			return Execute(group, cmdId, args, ref result);
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) {
 			if (group == CommandConstants.StandardGroup) {
 				switch ((StandardIds)cmdId) {
 				case StandardIds.Paste:

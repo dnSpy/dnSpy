@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
+// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
@@ -117,14 +117,10 @@ namespace dnSpy.Text.AvalonEdit {
 		public StringTextSource(string text) => this.text = text ?? throw new ArgumentNullException("text");
 
 		/// <inheritdoc/>
-		public int TextLength {
-			get { return text.Length; }
-		}
+		public int TextLength => text.Length;
 
 		/// <inheritdoc/>
-		public string Text {
-			get { return text; }
-		}
+		public string Text => text;
 
 		/// <inheritdoc/>
 		public ITextSource CreateSnapshot() => this; // StringTextSource is immutable

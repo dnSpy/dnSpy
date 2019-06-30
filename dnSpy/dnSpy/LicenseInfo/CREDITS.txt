@@ -1,4 +1,4 @@
-﻿dnSpy credits:
+dnSpy credits:
 
 	0xd4d
 	Ki
@@ -27,6 +27,7 @@ Chinese Simplified:
 	SquallATF
 	linkinshi
 	YuXiaoChou
+	zqy2419328026
 
 Russian:
 
@@ -38,8 +39,55 @@ Russian:
 Portuguese:
 
 	Raphael Aquiles
+	jp2masa
 
 German:
 
 	patricksadowski
 	li0nsar3c00l
+	Michael Heinrich
+	Danghor
+
+Spanish:
+
+	Isidro Padilla
+	Phid
+	lemalc
+
+Hungarian:
+
+	Gábor Mizda
+	Krisztián Szilágyi
+
+French:
+
+	Kévin Drapel
+	Adwelean
+
+Italian:
+
+	debugasm
+	andreabr
+	Marco Fornaro
+
+Ukrainian:
+
+	IamHappy (mrmx2013)
+
+Persian:
+
+	RezaHNA
+	Rex Prog
+
+Turkish:
+
+	Erol Yağız AYDIN
+	smngn
+	comanchero
+	Yüksel Güzel
+	URKMVC TMGD
+	Bilgehan Zeki ÖZAYTAÇ
+	Enes Taha SELEK
+	rifatx
+	python dede
+	meertcevik

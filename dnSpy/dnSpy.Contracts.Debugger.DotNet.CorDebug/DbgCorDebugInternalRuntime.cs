@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -17,9 +17,11 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.Debugger.DotNet.Evaluation;
+
 namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
 	/// <summary>
-	/// Base class of a .NET runtime object implemented by the .NET debug engine
+	/// .NET Framework / .NET Core runtime. It must implement <see cref="IDbgDotNetRuntime"/>
 	/// </summary>
 	public abstract class DbgCorDebugInternalRuntime : DbgDotNetInternalRuntime {
 		/// <summary>

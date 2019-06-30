@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -59,7 +59,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 		protected ThreadsCtxMenuCommand(Lazy<IThreadsContent> threadsContent) => this.threadsContent = threadsContent;
 
-		protected sealed override ThreadsCtxMenuContext CreateContext(IMenuItemContext context) {
+		protected sealed override ThreadsCtxMenuContext? CreateContext(IMenuItemContext context) {
 			if (!(context.CreatorObject.Object is ListView))
 				return null;
 			if (context.CreatorObject.Object != threadsContent.Value.ListView)

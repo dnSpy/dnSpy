@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,9 +18,10 @@
 */
 
 using System;
-using System.Threading;
 using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Contracts.Debugger.DotNet.Disassembly;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Contracts.Disassembly;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Debugger.DotNet.Metadata;
 
@@ -35,6 +36,11 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		DbgDotNetDispatcher Dispatcher { get; }
 
 		/// <summary>
+		/// Gets the feature flags
+		/// </summary>
+		DbgDotNetRuntimeFeatures Features { get; }
+
+		/// <summary>
 		/// Gets the module id
 		/// </summary>
 		/// <param name="module">Module</param>
@@ -44,7 +50,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <summary>
 		/// Gets the module data or <see cref="DbgDotNetRawModuleBytes.None"/>
 		/// </summary>
-		/// <param name="module"></param>
+		/// <param name="module">Module</param>
 		/// <returns></returns>
 		DbgDotNetRawModuleBytes GetRawModuleBytes(DbgModule module);
 
@@ -61,205 +67,199 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <summary>
 		/// Gets the current method or null if it's not a normal IL frame
 		/// </summary>
-		/// <param name="context">Context</param>
-		/// <param name="frame">Stack frame</param>
-		/// <param name="cancellationToken">Cancellation token</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <returns></returns>
-		DmdMethodBase GetFrameMethod(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken);
+		DmdMethodBase? GetFrameMethod(DbgEvaluationInfo evalInfo);
+
+		/// <summary>
+		/// Loads the address of an instance or a static field or returns null if it's not supported
+		/// </summary>
+		/// <param name="evalInfo">Evaluation info</param>
+		/// <param name="obj">Instance object or null if it's a static field</param>
+		/// <param name="field">Field</param>
+		/// <returns></returns>
+		DbgDotNetValue? LoadFieldAddress(DbgEvaluationInfo evalInfo, DbgDotNetValue? obj, DmdFieldInfo field);
 
 		/// <summary>
 		/// Loads an instance or a static field
 		/// </summary>
-		/// <param name="context">Context</param>
-		/// <param name="frame">Stack frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="obj">Instance object or null if it's a static field</param>
 		/// <param name="field">Field</param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		DbgDotNetValueResult LoadField(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdFieldInfo field, CancellationToken cancellationToken);
+		DbgDotNetValueResult LoadField(DbgEvaluationInfo evalInfo, DbgDotNetValue? obj, DmdFieldInfo field);
 
 		/// <summary>
 		/// Stores a value in a field. Returns null or an error message
 		/// </summary>
-		/// <param name="context">Context</param>
-		/// <param name="frame">Stack frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="obj">Instance object or null if it's a static field</param>
 		/// <param name="field">Field</param>
 		/// <param name="value">Value to store: A <see cref="DbgDotNetValue"/> or a primitive number or a string or arrays of primitive numbers / strings</param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		string StoreField(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdFieldInfo field, object value, CancellationToken cancellationToken);
+		string? StoreField(DbgEvaluationInfo evalInfo, DbgDotNetValue? obj, DmdFieldInfo field, object? value);
 
 		/// <summary>
 		/// Calls an instance or a static method
 		/// </summary>
-		/// <param name="context">Context</param>
-		/// <param name="frame">Stack frame</param>
-		/// <param name="obj">Instance object or null if it's a static field</param>
+		/// <param name="evalInfo">Evaluation info</param>
+		/// <param name="obj">Instance object or null if it's a static method</param>
 		/// <param name="method">Method</param>
 		/// <param name="arguments">Arguments: A <see cref="DbgDotNetValue"/> or a primitive number or a string or arrays of primitive numbers / strings</param>
-		/// <param name="cancellationToken">Cancellation token</param>
+		/// <param name="invokeOptions">Invoke options</param>
 		/// <returns></returns>
-		DbgDotNetValueResult Call(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetValue obj, DmdMethodBase method, object[] arguments, CancellationToken cancellationToken);
+		DbgDotNetValueResult Call(DbgEvaluationInfo evalInfo, DbgDotNetValue? obj, DmdMethodBase method, object?[] arguments, DbgDotNetInvokeOptions invokeOptions);
 
 		/// <summary>
 		/// Creates a new instance of a type by calling its constructor
 		/// </summary>
-		/// <param name="context">Context</param>
-		/// <param name="frame">Stack frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="ctor">Constructor</param>
 		/// <param name="arguments">Arguments: A <see cref="DbgDotNetValue"/> or a primitive number or a string or arrays of primitive numbers / strings</param>
-		/// <param name="cancellationToken">Cancellation token</param>
+		/// <param name="invokeOptions">Invoke options</param>
 		/// <returns></returns>
-		DbgDotNetValueResult CreateInstance(DbgEvaluationContext context, DbgStackFrame frame, DmdConstructorInfo ctor, object[] arguments, CancellationToken cancellationToken);
+		DbgDotNetValueResult CreateInstance(DbgEvaluationInfo evalInfo, DmdConstructorInfo ctor, object?[] arguments, DbgDotNetInvokeOptions invokeOptions);
 
 		/// <summary>
 		/// Creates a new instance of a type. All fields are initialized to 0 or null. The constructor isn't called.
 		/// </summary>
-		/// <param name="context">Context</param>
-		/// <param name="frame">Stack frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="type">Type to create</param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		DbgDotNetValueResult CreateInstanceNoConstructor(DbgEvaluationContext context, DbgStackFrame frame, DmdType type, CancellationToken cancellationToken);
+		DbgDotNetValueResult CreateInstanceNoConstructor(DbgEvaluationInfo evalInfo, DmdType type);
 
 		/// <summary>
 		/// Creates an SZ array
 		/// </summary>
-		/// <param name="context">Context</param>
-		/// <param name="frame">Stack frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="elementType">Element type</param>
 		/// <param name="length">Length of the array</param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		DbgDotNetValueResult CreateSZArray(DbgEvaluationContext context, DbgStackFrame frame, DmdType elementType, int length, CancellationToken cancellationToken);
+		DbgDotNetValueResult CreateSZArray(DbgEvaluationInfo evalInfo, DmdType elementType, int length);
 
 		/// <summary>
 		/// Creates a multi-dimensional array
 		/// </summary>
-		/// <param name="context">Context</param>
-		/// <param name="frame">Stack frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="elementType">Element type</param>
 		/// <param name="dimensionInfos">Dimension infos</param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		DbgDotNetValueResult CreateArray(DbgEvaluationContext context, DbgStackFrame frame, DmdType elementType, DbgDotNetArrayDimensionInfo[] dimensionInfos, CancellationToken cancellationToken);
+		DbgDotNetValueResult CreateArray(DbgEvaluationInfo evalInfo, DmdType elementType, DbgDotNetArrayDimensionInfo[] dimensionInfos);
 
 		/// <summary>
 		/// Gets aliases
 		/// </summary>
-		/// <param name="context">Context</param>
-		/// <param name="frame">Stack frame</param>
-		/// <param name="cancellationToken">Cancellation token</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <returns></returns>
-		DbgDotNetAliasInfo[] GetAliases(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken);
+		DbgDotNetAliasInfo[] GetAliases(DbgEvaluationInfo evalInfo);
 
 		/// <summary>
 		/// Gets all exceptions
 		/// </summary>
-		/// <param name="context">Context</param>
-		/// <param name="frame">Stack frame</param>
-		/// <param name="cancellationToken">Cancellation token</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <returns></returns>
-		DbgDotNetExceptionInfo[] GetExceptions(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken);
+		DbgDotNetExceptionInfo[] GetExceptions(DbgEvaluationInfo evalInfo);
 
 		/// <summary>
 		/// Gets all return values
 		/// </summary>
-		/// <param name="context">Context</param>
-		/// <param name="frame">Stack frame</param>
-		/// <param name="cancellationToken">Cancellation token</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <returns></returns>
-		DbgDotNetReturnValueInfo[] GetReturnValues(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken);
+		DbgDotNetReturnValueInfo[] GetReturnValues(DbgEvaluationInfo evalInfo);
 
 		/// <summary>
 		/// Gets an exception or null
 		/// </summary>
-		/// <param name="context">Context</param>
-		/// <param name="frame">Stack frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="id">Exception id, eg. <see cref="DbgDotNetRuntimeConstants.ExceptionId"/></param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		DbgDotNetValue GetException(DbgEvaluationContext context, DbgStackFrame frame, uint id, CancellationToken cancellationToken);
+		DbgDotNetValue? GetException(DbgEvaluationInfo evalInfo, uint id);
 
 		/// <summary>
 		/// Gets a stowed exception or null
 		/// </summary>
-		/// <param name="context">Context</param>
-		/// <param name="frame">Stack frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="id">Stowed exception id, eg. <see cref="DbgDotNetRuntimeConstants.StowedExceptionId"/></param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		DbgDotNetValue GetStowedException(DbgEvaluationContext context, DbgStackFrame frame, uint id, CancellationToken cancellationToken);
+		DbgDotNetValue? GetStowedException(DbgEvaluationInfo evalInfo, uint id);
 
 		/// <summary>
 		/// Gets a return value or null
 		/// </summary>
-		/// <param name="context">Context</param>
-		/// <param name="frame">Stack frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="id">Return value id, eg. <see cref="DbgDotNetRuntimeConstants.LastReturnValueId"/></param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		DbgDotNetValue GetReturnValue(DbgEvaluationContext context, DbgStackFrame frame, uint id, CancellationToken cancellationToken);
+		DbgDotNetValue? GetReturnValue(DbgEvaluationInfo evalInfo, uint id);
 
 		/// <summary>
-		/// Gets a local value or null if the local doesn't exist or if it's not possible to read it (eg. optimized code)
+		/// Gets a local value
 		/// </summary>
-		/// <param name="context">Context</param>
-		/// <param name="frame">Stack frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="index">Metadata index of local</param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		DbgDotNetValueResult GetLocalValue(DbgEvaluationContext context, DbgStackFrame frame, uint index, CancellationToken cancellationToken);
+		DbgDotNetValueResult GetLocalValue(DbgEvaluationInfo evalInfo, uint index);
 
 		/// <summary>
-		/// Gets a parameter value or null if the parameter doesn't exist or if it's not possible to read it (eg. optimized code)
+		/// Gets a parameter value
 		/// </summary>
-		/// <param name="context">Context</param>
-		/// <param name="frame">Stack frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="index">Metadata index of parameter</param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		DbgDotNetValueResult GetParameterValue(DbgEvaluationContext context, DbgStackFrame frame, uint index, CancellationToken cancellationToken);
+		DbgDotNetValueResult GetParameterValue(DbgEvaluationInfo evalInfo, uint index);
 
 		/// <summary>
 		/// Writes a new local value. Returns an error message or null.
 		/// </summary>
-		/// <param name="context">Context</param>
-		/// <param name="frame">Stack frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="index">Metadata index of parameter</param>
 		/// <param name="targetType">Type of the local</param>
 		/// <param name="value">New value: A <see cref="DbgDotNetValue"/> or a primitive number or a string or arrays of primitive numbers / strings</param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		string SetLocalValue(DbgEvaluationContext context, DbgStackFrame frame, uint index, DmdType targetType, object value, CancellationToken cancellationToken);
+		string? SetLocalValue(DbgEvaluationInfo evalInfo, uint index, DmdType targetType, object? value);
 
 		/// <summary>
 		/// Writes a new parameter value. Returns an error message or null.
 		/// </summary>
-		/// <param name="context">Context</param>
-		/// <param name="frame">Stack frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="index">Metadata index of parameter</param>
 		/// <param name="targetType">Type of the parameter</param>
 		/// <param name="value">New value: A <see cref="DbgDotNetValue"/> or a primitive number or a string or arrays of primitive numbers / strings</param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		string SetParameterValue(DbgEvaluationContext context, DbgStackFrame frame, uint index, DmdType targetType, object value, CancellationToken cancellationToken);
+		string? SetParameterValue(DbgEvaluationInfo evalInfo, uint index, DmdType targetType, object? value);
+
+		/// <summary>
+		/// Gets the address of a local value or null if it's not supported
+		/// </summary>
+		/// <param name="evalInfo">Evaluation info</param>
+		/// <param name="index">Metadata index of local</param>
+		/// <param name="targetType">Type of the local</param>
+		/// <returns></returns>
+		DbgDotNetValue? GetLocalValueAddress(DbgEvaluationInfo evalInfo, uint index, DmdType targetType);
+
+		/// <summary>
+		/// Gets the address of a parameter value or null if it's not supported
+		/// </summary>
+		/// <param name="evalInfo">Evaluation info</param>
+		/// <param name="index">Metadata index of local</param>
+		/// <param name="targetType">Type of the parameter</param>
+		/// <returns></returns>
+		DbgDotNetValue? GetParameterValueAddress(DbgEvaluationInfo evalInfo, uint index, DmdType targetType);
 
 		/// <summary>
 		/// Creates a simple value (a primitive number or a string, or arrays of those types)
 		/// </summary>
-		/// <param name="context">Context</param>
-		/// <param name="frame">Stack frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="value">A <see cref="DbgDotNetValue"/> or a primitive number or a string or arrays of primitive numbers / strings</param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		DbgDotNetCreateValueResult CreateValue(DbgEvaluationContext context, DbgStackFrame frame, object value, CancellationToken cancellationToken);
+		DbgDotNetValueResult CreateValue(DbgEvaluationInfo evalInfo, object? value);
 
 		/// <summary>
-		/// Returns true if object IDs are supported by this runtime
+		/// Boxes the value type
 		/// </summary>
-		bool SupportsObjectIds { get; }
+		/// <param name="evalInfo">Evaluation info</param>
+		/// <param name="value">Value to box</param>
+		/// <returns></returns>
+		DbgDotNetValueResult Box(DbgEvaluationInfo evalInfo, object? value);
 
 		/// <summary>
 		/// Returns true if it's possible to create an object id
@@ -274,7 +274,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="value">Value created by this runtime</param>
 		/// <param name="id">Unique id</param>
 		/// <returns></returns>
-		DbgDotNetObjectId CreateObjectId(DbgDotNetValue value, uint id);
+		DbgDotNetObjectId? CreateObjectId(DbgDotNetValue value, uint id);
 
 		/// <summary>
 		/// Checks if an object id and a value refer to the same data
@@ -299,14 +299,12 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		int GetHashCode(DbgDotNetValue value);
 
 		/// <summary>
-		/// Gets an object ID's value
+		/// Gets an object ID's value or null if there was an error
 		/// </summary>
-		/// <param name="context">Context</param>
-		/// <param name="frame">Stack frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="objectId">Object id created by this class</param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		DbgDotNetValue GetValue(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetObjectId objectId, CancellationToken cancellationToken);
+		DbgDotNetValue? GetValue(DbgEvaluationInfo evalInfo, DbgDotNetObjectId objectId);
 
 		/// <summary>
 		/// Checks if two values are equal. Returns null if it's unknown.
@@ -315,6 +313,83 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="b">Value #2</param>
 		/// <returns></returns>
 		bool? Equals(DbgDotNetValue a, DbgDotNetValue b);
+
+		/// <summary>
+		/// Tries to get the native code
+		/// </summary>
+		/// <param name="frame">Frame</param>
+		/// <param name="nativeCode">Updated with the native code if successful</param>
+		/// <returns></returns>
+		bool TryGetNativeCode(DbgStackFrame frame, out DbgDotNetNativeCode nativeCode);
+
+		/// <summary>
+		/// Tries to get the native code
+		/// </summary>
+		/// <param name="method">Method</param>
+		/// <param name="nativeCode">Updated with the native code if successful</param>
+		/// <returns></returns>
+		bool TryGetNativeCode(DmdMethodBase method, out DbgDotNetNativeCode nativeCode);
+
+		/// <summary>
+		/// Tries to get a symbol
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <param name="result">Updated with the symbol if successful</param>
+		/// <returns></returns>
+		bool TryGetSymbol(ulong address, out SymbolResolverResult result);
+	}
+
+	/// <summary>
+	/// Invoke options
+	/// </summary>
+	[Flags]
+	public enum DbgDotNetInvokeOptions {
+		/// <summary>
+		/// No bit is set
+		/// </summary>
+		None					= 0,
+
+		/// <summary>
+		/// Non-virtual call
+		/// </summary>
+		NonVirtual				= 0x00000001,
+	}
+
+	/// <summary>
+	/// .NET runtime features
+	/// </summary>
+	[Flags]
+	public enum DbgDotNetRuntimeFeatures {
+		/// <summary>
+		/// No bit is set
+		/// </summary>
+		None					= 0,
+
+		/// <summary>
+		/// Object IDs are supported
+		/// </summary>
+		ObjectIds				= 0x00000001,
+
+		/// <summary>
+		/// Calling generic methods isn't supported
+		/// </summary>
+		NoGenericMethods		= 0x00000002,
+
+		/// <summary>
+		/// <see cref="DbgDotNetValue.LoadIndirect"/> and <see cref="DbgDotNetValue.StoreIndirect(DbgEvaluationInfo, object)"/>
+		/// isn't supported for pointers.
+		/// </summary>
+		NoDereferencePointers	= 0x00000004,
+
+		/// <summary>
+		/// Async step with object ids isn't supported
+		/// </summary>
+		NoAsyncStepObjectId		= 0x00000008,
+
+		/// <summary>
+		/// It's possible to get the native code of jitted managed methods
+		/// </summary>
+		NativeMethodBodies		= 0x00000010,
 	}
 
 	/// <summary>
@@ -338,42 +413,9 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 	}
 
 	/// <summary>
-	/// Contains the created value or an error message
-	/// </summary>
-	public struct DbgDotNetCreateValueResult {
-		/// <summary>
-		/// Gets the value or null if there was an error
-		/// </summary>
-		public DbgDotNetValue Value { get; }
-
-		/// <summary>
-		/// Gets the error message or null
-		/// </summary>
-		public string Error { get; }
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="errorMessage">Error message</param>
-		public DbgDotNetCreateValueResult(string errorMessage) {
-			Value = null;
-			Error = errorMessage ?? throw new ArgumentNullException(nameof(errorMessage));
-		}
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="value">Value</param>
-		public DbgDotNetCreateValueResult(DbgDotNetValue value) {
-			Value = value ?? throw new ArgumentNullException(nameof(value));
-			Error = null;
-		}
-	}
-
-	/// <summary>
 	/// Contains .NET module data information
 	/// </summary>
-	public struct DbgDotNetRawModuleBytes {
+	public readonly struct DbgDotNetRawModuleBytes {
 		/// <summary>
 		/// No .NET module data is available
 		/// </summary>

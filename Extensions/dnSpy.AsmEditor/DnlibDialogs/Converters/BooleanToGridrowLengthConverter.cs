@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,13 +25,13 @@ using System.Windows.Data;
 namespace dnSpy.AsmEditor.DnlibDialogs.Converters {
 	/// <summary>
 	/// Converts a <see cref="bool"/> to a <see cref="GridLength"/>. If the value is true, it's
-	/// converted to a "1*" or a "<user-parameter>*" value, else to a 0px length. The user can set
+	/// converted to a "1*" or a "&lt;user-parameter&gt;*" value, else to a 0px length. The user can set
 	/// ConverterParameter to the desired value. 1 is default.
 	/// </summary>
 	sealed class BooleanToGridrowLengthConverter : IValueConverter {
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
+		public object? Convert(object value, Type targetType, object parameter, CultureInfo culture) {
 			double starValue = 1;
-			if (parameter != null)
+			if (!(parameter is null))
 				starValue = System.Convert.ToDouble(parameter, culture);
 			return (bool)value ? new GridLength(starValue, GridUnitType.Star) : new GridLength(0);
 		}

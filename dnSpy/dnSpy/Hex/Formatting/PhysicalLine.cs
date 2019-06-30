@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,7 +33,7 @@ namespace dnSpy.Hex.Formatting {
 		public HexBufferLineFormatter BufferLines => Lines[0].BufferLine.LineProvider;
 
 		public PhysicalLine(HexFormattedLine[] lines) {
-			if (lines == null)
+			if (lines is null)
 				throw new ArgumentNullException(nameof(lines));
 			if (lines.Length == 0)
 				throw new ArgumentException();
@@ -55,7 +55,7 @@ namespace dnSpy.Hex.Formatting {
 			return point < BufferSpan.End;
 		}
 
-		public HexFormattedLine FindFormattedLineByBufferPosition(HexBufferPoint point) {
+		public HexFormattedLine? FindFormattedLineByBufferPosition(HexBufferPoint point) {
 			if (disposed)
 				throw new ObjectDisposedException(nameof(PhysicalLine));
 			if (point.Buffer != BufferSpan.Buffer)

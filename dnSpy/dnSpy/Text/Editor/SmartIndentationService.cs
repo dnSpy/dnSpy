@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Contracts.Text.Editor;
-using dnSpy.Text.MEF;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
@@ -32,7 +31,7 @@ namespace dnSpy.Text.Editor {
 	sealed class SmartIndentationService : ISmartIndentationService {
 		readonly IContentTypeRegistryService contentTypeRegistryService;
 		readonly Lazy<ISmartIndentProvider, IContentTypeMetadata>[] smartIndentProviders;
-		ProviderSelector<ISmartIndentProvider, IContentTypeMetadata> providerSelector;
+		ProviderSelector<ISmartIndentProvider, IContentTypeMetadata>? providerSelector;
 
 		[ImportingConstructor]
 		SmartIndentationService(IContentTypeRegistryService contentTypeRegistryService, [ImportMany] IEnumerable<Lazy<ISmartIndentProvider, IContentTypeMetadata>> smartIndentProviders) {
@@ -41,9 +40,9 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public int? GetDesiredIndentation(ITextView textView, ITextSnapshotLine line) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
-			if (line == null)
+			if (line is null)
 				throw new ArgumentNullException(nameof(line));
 
 			var smartIndent = textView.Properties.GetOrCreateSingletonProperty(typeof(SmartIndentationService), () => new Helper(this, textView).SmartIndent);
@@ -51,12 +50,12 @@ namespace dnSpy.Text.Editor {
 		}
 
 		ISmartIndent CreateSmartIndent(ITextView textView) {
-			if (providerSelector == null)
+			if (providerSelector is null)
 				providerSelector = new ProviderSelector<ISmartIndentProvider, IContentTypeMetadata>(contentTypeRegistryService, smartIndentProviders);
 			var contentType = textView.TextDataModel.ContentType;
 			foreach (var p in providerSelector.GetProviders(contentType)) {
 				var smartIndent = p.Value.CreateSmartIndent(textView);
-				if (smartIndent != null)
+				if (!(smartIndent is null))
 					return smartIndent;
 			}
 

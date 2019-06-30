@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,6 +23,7 @@ using System.ComponentModel.Composition;
 using dnlib.DotNet;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.CallStack.TextEditor;
+using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug.Code;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
@@ -43,17 +44,20 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack.TextEditor {
 		}
 
 		public override IEnumerable<SnapshotSpan> GetFrameSpans(ITextView textView, NormalizedSnapshotSpanCollection spans) {
+			if (activeStatements.Count == 0)
+				yield break;
+
 			var docViewer = textView.TextBuffer.TryGetDocumentViewer();
-			if (docViewer == null)
+			if (docViewer is null)
 				yield break;
 
 			var methodDebugService = docViewer.TryGetMethodDebugService();
-			if (methodDebugService == null)
+			if (methodDebugService is null)
 				yield break;
 
 			var snapshot = spans[0].Snapshot;
-			MethodDef method = null;
-			List<uint> ilOffsets = null;
+			MethodDef? method = null;
+			List<uint>? ilOffsets = null;
 			foreach (var span in spans) {
 				foreach (var info in methodDebugService.GetStatementsByTextSpan(span.Span)) {
 					if (info.Method != method) {
@@ -62,14 +66,14 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack.TextEditor {
 						if (!activeStatements.TryGetValue(moduleTokenId, out ilOffsets))
 							continue;
 					}
-					else if (ilOffsets == null)
+					else if (ilOffsets is null)
 						continue;
 					var textSpan = info.Statement.TextSpan;
 					if (textSpan.End > snapshot.Length)
 						yield break;// Old data, but we'll get called again
-					var binSpan = info.Statement.BinSpan;
+					var ilSpan = info.Statement.ILSpan;
 					foreach (uint ilOffset in ilOffsets) {
-						if (ilOffset >= binSpan.Start && ilOffset < binSpan.End)
+						if (ilOffset >= ilSpan.Start && ilOffset < ilSpan.End)
 							yield return new SnapshotSpan(snapshot, textSpan.Start, textSpan.Length);
 					}
 				}
@@ -85,12 +89,12 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack.TextEditor {
 				switch (frames[i].Location) {
 				case DbgDotNetNativeCodeLocation nativeLoc:
 					switch (nativeLoc.ILOffsetMapping) {
-					case DbgILOffsetMapping.Prolog:
-					case DbgILOffsetMapping.Epilog:
 					case DbgILOffsetMapping.Exact:
 					case DbgILOffsetMapping.Approximate:
 						break;
 
+					case DbgILOffsetMapping.Prolog:
+					case DbgILOffsetMapping.Epilog:
 					case DbgILOffsetMapping.Unknown:
 					case DbgILOffsetMapping.NoInfo:
 					case DbgILOffsetMapping.UnmappedAddress:

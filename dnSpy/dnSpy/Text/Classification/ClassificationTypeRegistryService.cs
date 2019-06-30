@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -54,8 +54,8 @@ namespace dnSpy.Text.Classification {
 				rawClassificationTypes = new Dictionary<string, RawClassificationType>();
 				foreach (var md in classificationTypeDefinitions.Select(a => a.Metadata)) {
 					var type = md.Name;
-					Debug.Assert(type != null);
-					if (type == null)
+					Debug.Assert(!(type is null));
+					if (type is null)
 						continue;
 					Debug.Assert(!rawClassificationTypes.ContainsKey(type));
 					if (rawClassificationTypes.ContainsKey(type))
@@ -74,9 +74,9 @@ namespace dnSpy.Text.Classification {
 				return classificationType;
 			}
 
-			IClassificationType TryCreate(string type, int recurse) {
+			IClassificationType? TryCreate(string type, int recurse) {
 				var ct = TryGet(type);
-				if (ct != null)
+				if (!(ct is null))
 					return ct;
 
 				const int MAX_RECURSE = 1000;
@@ -94,7 +94,7 @@ namespace dnSpy.Text.Classification {
 				var baseTypes = new IClassificationType[rawCt.BaseTypes.Length];
 				for (int i = 0; i < baseTypes.Length; i++) {
 					var btClassificationType = TryCreate(rawCt.BaseTypes[i], recurse + 1);
-					if (btClassificationType == null)
+					if (btClassificationType is null)
 						return null;
 					baseTypes[i] = btClassificationType;
 				}
@@ -111,18 +111,18 @@ namespace dnSpy.Text.Classification {
 			transientNameToType = new Dictionary<string, IClassificationType>();
 			new ClassificationTypeCreator(this, classificationTypeDefinitions);
 			transientClassificationType = GetClassificationType(TRANSIENT_NAME);
-			if (transientClassificationType == null)
+			if (transientClassificationType is null)
 				throw new InvalidOperationException();
 		}
 
 		const string TRANSIENT_NAME = "(TRANSIENT)";
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[Export, Name(TRANSIENT_NAME)]
 		static ClassificationTypeDefinition _transientClassificationTypeDefinition;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 
 		public IClassificationType CreateClassificationType(string type, IEnumerable<IClassificationType> baseTypes) {
-			if (baseTypes == null)
+			if (baseTypes is null)
 				throw new ArgumentNullException(nameof(baseTypes));
 			if (toClassificationType.ContainsKey(type))
 				throw new InvalidOperationException();
@@ -134,7 +134,7 @@ namespace dnSpy.Text.Classification {
 		public IClassificationType CreateTransientClassificationType(params IClassificationType[] baseTypes) =>
 			CreateTransientClassificationType((IEnumerable<IClassificationType>)baseTypes);
 		public IClassificationType CreateTransientClassificationType(IEnumerable<IClassificationType> baseTypes) {
-			if (baseTypes == null)
+			if (baseTypes is null)
 				throw new ArgumentNullException(nameof(baseTypes));
 			var bts = baseTypes.ToArray();
 			if (bts.Length == 0)

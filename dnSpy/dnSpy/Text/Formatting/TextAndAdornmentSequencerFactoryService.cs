@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,7 +32,7 @@ namespace dnSpy.Text.Formatting {
 		TextAndAdornmentSequencerFactoryService(IViewTagAggregatorFactoryService viewTagAggregatorFactoryService) => this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
 
 		public ITextAndAdornmentSequencer Create(ITextView view) {
-			if (view == null)
+			if (view is null)
 				throw new ArgumentNullException(nameof(view));
 			return view.Properties.GetOrCreateSingletonProperty(typeof(ITextAndAdornmentSequencer), () => new TextAndAdornmentSequencer(view, viewTagAggregatorFactoryService.CreateTagAggregator<SpaceNegotiatingAdornmentTag>(view)));
 		}

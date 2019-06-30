@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,14 +36,14 @@ namespace dnSpy.Language.Intellisense {
 		[ImportingConstructor]
 		CompletionSuffixTextClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) => this.themeClassificationTypeService = themeClassificationTypeService;
 
-		public ITextClassifier Create(IContentType contentType) => new CompletionSuffixTextClassifier(themeClassificationTypeService);
+		public ITextClassifier? Create(IContentType contentType) => new CompletionSuffixTextClassifier(themeClassificationTypeService);
 	}
 
 	sealed class CompletionSuffixTextClassifier : ITextClassifier {
 		readonly IClassificationType completionSuffixClassificationType;
 
 		public CompletionSuffixTextClassifier(IThemeClassificationTypeService themeClassificationTypeService) {
-			if (themeClassificationTypeService == null)
+			if (themeClassificationTypeService is null)
 				throw new ArgumentNullException(nameof(themeClassificationTypeService));
 			completionSuffixClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.CompletionSuffix);
 		}

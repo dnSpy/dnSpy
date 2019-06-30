@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,8 +22,8 @@ using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.Resources {
 	sealed class ImageVM : ViewModelBase {
-		public ImageSource ImageSource {
-			get { return imageSource; }
+		public ImageSource? ImageSource {
+			get => imageSource;
 			set {
 				if (imageSource != value) {
 					imageSource = value;
@@ -31,8 +31,8 @@ namespace dnSpy.AsmEditor.Resources {
 				}
 			}
 		}
-		ImageSource imageSource;
+		ImageSource? imageSource;
 
-		public ImageVM(ImageSource imageSource) => this.imageSource = imageSource;
+		public ImageVM(ImageSource? imageSource) => this.imageSource = imageSource;
 	}
 }

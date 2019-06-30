@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -37,13 +37,13 @@ namespace dnSpy.Text.Editor {
 		double left, top, width, height;
 		bool drawCaretShape;
 		bool overwriteMode;
-		DispatcherTimer dispatcherTimer;
+		DispatcherTimer? dispatcherTimer;
 		readonly CaretGeometry caretGeometry;
-		Brush caretBrush;
-		Brush overwriteCaretBrush;
+		Brush? caretBrush;
+		Brush? overwriteCaretBrush;
 
 		public bool OverwriteMode {
-			get { return overwriteMode; }
+			get => overwriteMode;
 			set {
 				if (overwriteMode != value) {
 					overwriteMode = value;
@@ -69,7 +69,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public bool IsHidden {
-			get { return isHidden; }
+			get => isHidden;
 			set {
 				if (isHidden == value)
 					return;
@@ -128,8 +128,8 @@ namespace dnSpy.Text.Editor {
 		void RemoveAdornment() => layer.RemoveAllAdornments();
 		void AddAdornment() => layer.AddAdornment(AdornmentPositioningBehavior.OwnerControlled, null, null, this, null);
 
-		struct SelectionState {
-			byte state;
+		readonly struct SelectionState {
+			readonly byte state;
 
 			public SelectionState(ITextSelection selection) => state = (byte)((selection.IsEmpty ? 1 : 0) | (selection.Mode == TextSelectionMode.Box ? 2 : 0));
 
@@ -220,7 +220,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void StartTimer() {
-			if (dispatcherTimer != null)
+			if (!(dispatcherTimer is null))
 				throw new InvalidOperationException();
 			// Make sure the caret doesn't blink when it's moved
 			layer.Opacity = 1;
@@ -234,8 +234,8 @@ namespace dnSpy.Text.Editor {
 
 		protected override void OnRender(DrawingContext drawingContext) {
 			base.OnRender(drawingContext);
-			Debug.Assert((overwriteCaretBrush == null) == (caretBrush == null));
-			if (caretBrush == null) {
+			Debug.Assert((overwriteCaretBrush is null) == (caretBrush is null));
+			if (caretBrush is null) {
 				caretBrush = classificationFormatMap.DefaultTextProperties.ForegroundBrush;
 				Debug.Assert(!classificationFormatMap.DefaultTextProperties.ForegroundBrushEmpty);
 				if (classificationFormatMap.DefaultTextProperties.ForegroundBrushEmpty)
@@ -256,7 +256,7 @@ namespace dnSpy.Text.Editor {
 
 			public Geometry Geometry {
 				get {
-					if (geometry == null) {
+					if (geometry is null) {
 						var geo = new RectangleGeometry(new Rect(0, 0, width, height));
 						geo.Freeze();
 						geometry = geo;
@@ -264,7 +264,7 @@ namespace dnSpy.Text.Editor {
 					return geometry;
 				}
 			}
-			Geometry geometry;
+			Geometry? geometry;
 			double width, height;
 
 			public CaretGeometry() {

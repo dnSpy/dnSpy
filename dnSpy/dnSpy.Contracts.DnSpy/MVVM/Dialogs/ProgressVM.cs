@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -88,7 +88,7 @@ namespace dnSpy.Contracts.MVVM.Dialogs {
 
 		readonly Dispatcher dispatcher;
 		readonly IProgressTask task;
-		CancellationTokenSource cancellationTokenSource;
+		CancellationTokenSource? cancellationTokenSource;
 
 		/// <summary>
 		/// Constructor
@@ -146,7 +146,7 @@ namespace dnSpy.Contracts.MVVM.Dialogs {
 		/// Gets/sets the total progress
 		/// </summary>
 		public double TotalProgress {
-			get { return totalProgress; }
+			get => totalProgress;
 			set {
 				if (totalProgress != value) {
 					totalProgress = value;
@@ -160,7 +160,7 @@ namespace dnSpy.Contracts.MVVM.Dialogs {
 		/// Gets/sets whether it was cancelled
 		/// </summary>
 		public bool WasCanceled {
-			get { return wasCanceled; }
+			get => wasCanceled;
 			set {
 				if (wasCanceled != value) {
 					wasCanceled = value;
@@ -174,7 +174,7 @@ namespace dnSpy.Contracts.MVVM.Dialogs {
 		/// Gets/sets has-completed
 		/// </summary>
 		public bool HasCompleted {
-			get { return hasCompleted; }
+			get => hasCompleted;
 			set {
 				if (hasCompleted != value) {
 					hasCompleted = value;
@@ -187,8 +187,8 @@ namespace dnSpy.Contracts.MVVM.Dialogs {
 		/// <summary>
 		/// Gets/sets current description
 		/// </summary>
-		public string CurrentItemDescription {
-			get { return currentItemDescription; }
+		public string? CurrentItemDescription {
+			get => currentItemDescription;
 			set {
 				if (currentItemDescription != value) {
 					currentItemDescription = value;
@@ -196,17 +196,17 @@ namespace dnSpy.Contracts.MVVM.Dialogs {
 				}
 			}
 		}
-		string currentItemDescription;
+		string? currentItemDescription;
 
 		/// <summary>
 		/// true if there was an error
 		/// </summary>
-		public bool WasError => ErrorMessage != null;
+		public bool WasError => !(ErrorMessage is null);
 
 		/// <summary>
 		/// Gets the error message or null if no error
 		/// </summary>
-		public string ErrorMessage { get; private set; }
+		public string? ErrorMessage { get; private set; }
 
 		class MyAction {
 			public readonly Action Action;
@@ -270,7 +270,7 @@ namespace dnSpy.Contracts.MVVM.Dialogs {
 		void IProgress.ThrowIfCancellationRequested() => Token.ThrowIfCancellationRequested();
 
 		void OnTaskCompleted() {
-			cancellationTokenSource.Dispose();
+			cancellationTokenSource?.Dispose();
 			cancellationTokenSource = null;
 			HasCompleted = true;
 			OnCompleted?.Invoke(this, EventArgs.Empty);

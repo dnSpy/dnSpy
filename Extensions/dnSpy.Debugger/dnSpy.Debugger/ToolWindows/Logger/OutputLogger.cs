@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Text;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Exceptions;
@@ -52,7 +53,7 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 		readonly Lazy<IContentTypeRegistryService> contentTypeRegistryService;
 		readonly OutputLoggerSettings outputLoggerSettings;
 		readonly Lazy<DbgExceptionFormatterService> dbgExceptionFormatterService;
-		IOutputTextPane textPane;
+		IOutputTextPane? textPane;
 
 		[ImportingConstructor]
 		OutputLogger(UIDispatcher uiDispatcher, Lazy<IOutputService> outputService, Lazy<IContentTypeRegistryService> contentTypeRegistryService, OutputLoggerSettings outputLoggerSettings, Lazy<DbgExceptionFormatterService> dbgExceptionFormatterService) {
@@ -70,7 +71,7 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 		void Initialize() => UI(() => Initialize_UI());
 		void Initialize_UI() {
 			uiDispatcher.VerifyAccess();
-			if (textPane != null)
+			if (!(textPane is null))
 				return;
 			textPane = outputService.Value.Create(GUID_OUTPUT_LOGGER_DEBUG, dnSpy_Debugger_Resources.DebugLoggerName, contentTypeRegistryService.Value.GetContentType(ContentTypes.OutputDebug));
 		}
@@ -78,13 +79,21 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) {
 			Initialize();
 			dbgManager.IsDebuggingChanged += DbgManager_IsDebuggingChanged;
-			dbgManager.Message += DbgManager_Message;
+			dbgManager.MessageProcessExited += DbgManager_MessageProcessExited;
+			dbgManager.MessageModuleLoaded += DbgManager_MessageModuleLoaded;
+			dbgManager.MessageModuleUnloaded += DbgManager_MessageModuleUnloaded;
+			dbgManager.MessageThreadExited += DbgManager_MessageThreadExited;
+			dbgManager.MessageExceptionThrown += DbgManager_MessageExceptionThrown;
+			dbgManager.MessageProgramMessage += DbgManager_MessageProgramMessage;
+			dbgManager.MessageAsyncProgramMessage += DbgManager_MessageAsyncProgramMessage;
 			dbgManager.DbgManagerMessage += DbgManager_DbgManagerMessage;
 		}
 
 		void DbgManager_DbgManagerMessage(object sender, DbgManagerMessageEventArgs e) {
 			if (e.MessageKind == PredefinedDbgManagerMessageKinds.Output)
 				UI(() => WriteLine_UI(BoxedTextColor.DebugLogExtensionMessage, e.Message));
+			else if (e.MessageKind == PredefinedDbgManagerMessageKinds.StepFilter && outputLoggerSettings.ShowStepFilteringMessages)
+				UI(() => WriteLine_UI(BoxedTextColor.DebugLogStepFiltering, e.Message));
 		}
 
 		void DbgManager_IsDebuggingChanged(object sender, EventArgs e) {
@@ -92,6 +101,7 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 			if (dbgManager.IsDebugging) {
 				UI(() => {
 					Initialize_UI();
+					Debug.Assert(!(textPane is null));
 					if (outputLoggerSettings.ShowDebugOutputLog)
 						outputService.Value.Select(GUID_OUTPUT_LOGGER_DEBUG);
 					textPane.Clear();
@@ -101,129 +111,119 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 
 		void WriteLine_UI(object color, string text) {
 			uiDispatcher.VerifyAccess();
-			if (textPane == null)
+			if (textPane is null)
 				Initialize_UI();
+			Debug.Assert(!(textPane is null));
 			textPane.WriteLine(color, text);
 		}
 
 		void Write_UI(object color, string text) {
 			uiDispatcher.VerifyAccess();
-			if (textPane == null)
+			if (textPane is null)
 				Initialize_UI();
+			Debug.Assert(!(textPane is null));
 			textPane.Write(color, text);
 		}
 
 		void ITracepointMessageListener.Message(string message) =>
 			UI(() => WriteLine_UI(BoxedTextColor.DebugLogTrace, message));
 
-		void DbgManager_Message(object sender, DbgMessageEventArgs e) {
-			switch (e.Kind) {
-			case DbgMessageKind.ProcessExited:
-				if (outputLoggerSettings.ShowProcessExitMessages) {
-					var ep = (DbgMessageProcessExitedEventArgs)e;
-					var msg = string.Format(dnSpy_Debugger_Resources.DebugLogExitProcess, GetProcessNameWithPID(ep.Process), ep.ExitCode);
-					UI(() => WriteLine_UI(BoxedTextColor.DebugLogExitProcess, msg));
-				}
-				break;
+		void DbgManager_MessageProcessExited(object sender, DbgMessageProcessExitedEventArgs e) {
+			if (outputLoggerSettings.ShowProcessExitMessages) {
+				var msg = string.Format(dnSpy_Debugger_Resources.DebugLogExitProcess, GetProcessNameWithPID(e.Process), e.ExitCode);
+				UI(() => WriteLine_UI(BoxedTextColor.DebugLogExitProcess, msg));
+			}
+		}
 
-			case DbgMessageKind.ModuleLoaded:
-				if (outputLoggerSettings.ShowModuleLoadMessages) {
-					var em = (DbgMessageModuleLoadedEventArgs)e;
-					var module = em.Module;
-					var msg = GetProcessName(module.Process) + " (" + GetRuntimeAppDomainName(module) + "): " +
-							string.Format(dnSpy_Debugger_Resources.DebugLogLoadModule, module.Filename);
-					UI(() => WriteLine_UI(BoxedTextColor.DebugLogLoadModule, msg));
-				}
-				break;
+		void DbgManager_MessageModuleLoaded(object sender, DbgMessageModuleLoadedEventArgs e) {
+			if (outputLoggerSettings.ShowModuleLoadMessages) {
+				var module = e.Module;
+				var msg = GetProcessName(module.Process) + " (" + GetRuntimeAppDomainName(module) + "): " +
+						string.Format(dnSpy_Debugger_Resources.DebugLogLoadModule, module.Filename);
+				UI(() => WriteLine_UI(BoxedTextColor.DebugLogLoadModule, msg));
+			}
+		}
 
-			case DbgMessageKind.ModuleUnloaded:
-				if (outputLoggerSettings.ShowModuleUnloadMessages) {
-					var eu = (DbgMessageModuleUnloadedEventArgs)e;
-					var module = eu.Module;
-					var msg = GetProcessName(module.Process) + " (" + GetRuntimeAppDomainName(module) + "): " +
-							string.Format(dnSpy_Debugger_Resources.DebugLogUnloadModule, module.Filename);
-					UI(() => WriteLine_UI(BoxedTextColor.DebugLogUnloadModule, msg));
-				}
-				break;
+		void DbgManager_MessageModuleUnloaded(object sender, DbgMessageModuleUnloadedEventArgs e) {
+			if (outputLoggerSettings.ShowModuleUnloadMessages) {
+				var module = e.Module;
+				var msg = GetProcessName(module.Process) + " (" + GetRuntimeAppDomainName(module) + "): " +
+						string.Format(dnSpy_Debugger_Resources.DebugLogUnloadModule, module.Filename);
+				UI(() => WriteLine_UI(BoxedTextColor.DebugLogUnloadModule, msg));
+			}
+		}
 
-			case DbgMessageKind.ThreadExited:
-				if (outputLoggerSettings.ShowThreadExitMessages) {
-					var et = (DbgMessageThreadExitedEventArgs)e;
-					var msg = string.Format(dnSpy_Debugger_Resources.DebugLogExitThread, et.Thread.Id, et.ExitCode);
-					UI(() => WriteLine_UI(BoxedTextColor.DebugLogExitThread, msg));
-				}
-				break;
+		void DbgManager_MessageThreadExited(object sender, DbgMessageThreadExitedEventArgs e) {
+			if (outputLoggerSettings.ShowThreadExitMessages) {
+				var msg = string.Format(dnSpy_Debugger_Resources.DebugLogExitThread, e.Thread.Id, e.ExitCode);
+				UI(() => WriteLine_UI(BoxedTextColor.DebugLogExitThread, msg));
+			}
+		}
 
-			case DbgMessageKind.ExceptionThrown:
-				var ext = (DbgMessageExceptionThrownEventArgs)e;
-				var ex = ext.Exception;
-				if (ex.Id.Category == PredefinedExceptionCategories.MDA) {
-					if (outputLoggerSettings.ShowMDAMessages) {
-						var process = ex.Process;
-						var msg1 = string.Format(dnSpy_Debugger_Resources.DebugLogMDA, GetExceptionName(ex.Id), GetProcessFullPath(process));
-						var msg2 = ex.Message == null ? null : string.Format(dnSpy_Debugger_Resources.DebugLogAdditionalInformation, ex.Message);
+		void DbgManager_MessageExceptionThrown(object sender, DbgMessageExceptionThrownEventArgs e) {
+			var ex = e.Exception;
+			if (ex.Id.Category == PredefinedExceptionCategories.MDA) {
+				if (outputLoggerSettings.ShowMDAMessages) {
+					var process = ex.Process;
+					var msg1 = string.Format(dnSpy_Debugger_Resources.DebugLogMDA, GetExceptionName(ex.Id), GetProcessFullPath(process));
+					var msg2 = ex.Message is null ? null : string.Format(dnSpy_Debugger_Resources.DebugLogAdditionalInformation, ex.Message);
+					UI(() => {
+						WriteLine_UI(BoxedTextColor.DebugLogMDA, msg1);
+						if (!(msg2 is null))
+							WriteLine_UI(BoxedTextColor.DebugLogMDA, msg2);
+					});
+				}
+			}
+			else {
+				if (outputLoggerSettings.ShowExceptionMessages) {
+					if (ex.IsFirstChance) {
+						var msg1 = string.Format(dnSpy_Debugger_Resources.DebugLogExceptionHandled, GetExceptionName(ex.Id), GetModuleName(ex.Module));
+						var msg2 = ex.Message is null ? null : string.Format(dnSpy_Debugger_Resources.DebugLogAdditionalInformation, FilterUserMessage(ex.Message));
 						UI(() => {
-							WriteLine_UI(BoxedTextColor.DebugLogMDA, msg1);
-							if (msg2 != null)
-								WriteLine_UI(BoxedTextColor.DebugLogMDA, msg2);
+							WriteLine_UI(BoxedTextColor.DebugLogExceptionHandled, msg1);
+							if (!(msg2 is null))
+								WriteLine_UI(BoxedTextColor.DebugLogExceptionHandled, msg2);
+						});
+					}
+					else if (ex.IsUnhandled) {
+						var msg1 = string.Format(dnSpy_Debugger_Resources.DebugLogExceptionUnhandled, GetExceptionName(ex.Id), GetModuleName(ex.Module));
+						var msg2 = ex.Message is null ? null : string.Format(dnSpy_Debugger_Resources.DebugLogAdditionalInformation, FilterUserMessage(ex.Message));
+						UI(() => {
+							WriteLine_UI(BoxedTextColor.DebugLogExceptionUnhandled, msg1);
+							if (!(msg2 is null))
+								WriteLine_UI(BoxedTextColor.DebugLogExceptionUnhandled, msg2);
 						});
 					}
 				}
-				else {
-					if (outputLoggerSettings.ShowExceptionMessages) {
-						if (ex.IsFirstChance) {
-							var msg1 = string.Format(dnSpy_Debugger_Resources.DebugLogExceptionHandled, GetExceptionName(ex.Id), GetModuleName(ex.Module));
-							var msg2 = ex.Message == null ? null : string.Format(dnSpy_Debugger_Resources.DebugLogAdditionalInformation, FilterUserMessage(ex.Message));
-							UI(() => {
-								WriteLine_UI(BoxedTextColor.DebugLogExceptionHandled, msg1);
-								if (msg2 != null)
-									WriteLine_UI(BoxedTextColor.DebugLogExceptionHandled, msg2);
-							});
-						}
-						else if (ex.IsUnhandled) {
-							var msg1 = string.Format(dnSpy_Debugger_Resources.DebugLogExceptionUnhandled, GetExceptionName(ex.Id), GetModuleName(ex.Module));
-							var msg2 = ex.Message == null ? null : string.Format(dnSpy_Debugger_Resources.DebugLogAdditionalInformation, FilterUserMessage(ex.Message));
-							UI(() => {
-								WriteLine_UI(BoxedTextColor.DebugLogExceptionUnhandled, msg1);
-								if (msg2 != null)
-									WriteLine_UI(BoxedTextColor.DebugLogExceptionUnhandled, msg2);
-							});
-						}
-					}
-				}
-				break;
+			}
+		}
 
-			case DbgMessageKind.ProgramMessage:
-				if (outputLoggerSettings.ShowProgramOutputMessages) {
-					var ep = (DbgMessageProgramMessageEventArgs)e;
-					var msg = FilterUserMessage(ep.Message);
-					UI(() => Write_UI(BoxedTextColor.DebugLogProgramOutput, msg));
-				}
-				break;
+		void DbgManager_MessageProgramMessage(object sender, DbgMessageProgramMessageEventArgs e) {
+			if (outputLoggerSettings.ShowProgramOutputMessages) {
+				var msg = FilterUserMessage(e.Message);
+				UI(() => Write_UI(BoxedTextColor.DebugLogProgramOutput, msg));
+			}
+		}
 
-			case DbgMessageKind.ProcessCreated:
-			case DbgMessageKind.RuntimeCreated:
-			case DbgMessageKind.RuntimeExited:
-			case DbgMessageKind.AppDomainLoaded:
-			case DbgMessageKind.AppDomainUnloaded:
-			case DbgMessageKind.ThreadCreated:
-			default:
-				break;
+		void DbgManager_MessageAsyncProgramMessage(object sender, DbgMessageAsyncProgramMessageEventArgs e) {
+			if (outputLoggerSettings.ShowProgramOutputMessages) {
+				var msg = FilterUserMessage(e.Message);
+				UI(() => Write_UI(BoxedTextColor.DebugLogProgramOutput, msg));
 			}
 		}
 
 		string GetRuntimeAppDomainName(DbgModule module) {
 			var runtime = module.Runtime;
 			var appDomain = module.AppDomain;
-			if (appDomain == null)
+			if (appDomain is null)
 				return runtime.Name;
 			return runtime.Name + ": " + appDomain.Name;
 		}
 
 		string GetExceptionName(DbgExceptionId id) => dbgExceptionFormatterService.Value.ToString(id);
 
-		string GetProcessName(DbgProcess process) {
-			if (process == null)
+		string GetProcessName(DbgProcess? process) {
+			if (process is null)
 				return "???";
 			var name = process.Name;
 			if (string.IsNullOrEmpty(name))
@@ -232,7 +232,7 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 		}
 
 		string GetProcessFullPath(DbgProcess process) {
-			if (process == null)
+			if (process is null)
 				return "???";
 			var filename = process.Filename;
 			if (string.IsNullOrEmpty(filename))
@@ -240,11 +240,11 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 			return filename;
 		}
 
-		string GetProcessNameWithPID(DbgProcess process) => $"[0x{process?.Id ?? ulong.MaxValue:X}] {GetProcessName(process)}";
-		string GetModuleName(DbgModule module) => module?.Name ?? "???";
+		string GetProcessNameWithPID(DbgProcess? process) => $"[0x{process?.Id ?? -1:X}] {GetProcessName(process)}";
+		string GetModuleName(DbgModule? module) => module?.Name ?? "???";
 
 		string FilterUserMessage(string s) {
-			if (s == null)
+			if (s is null)
 				return string.Empty;
 			const int MAX_USER_MSG_LEN = 100 * 1024;
 			if (s.Length > MAX_USER_MSG_LEN) {

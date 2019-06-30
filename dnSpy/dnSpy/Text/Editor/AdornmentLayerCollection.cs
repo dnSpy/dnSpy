@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -45,7 +45,7 @@ namespace dnSpy.Text.Editor {
 
 		public IAdornmentLayer GetAdornmentLayer(MetadataAndOrder<IAdornmentLayersMetadata> info) {
 			var layer = adornmentLayers.FirstOrDefault(a => a.Info.Metadata == info.Metadata);
-			if (layer == null)
+			if (layer is null)
 				layer = Create(info);
 			return layer;
 		}

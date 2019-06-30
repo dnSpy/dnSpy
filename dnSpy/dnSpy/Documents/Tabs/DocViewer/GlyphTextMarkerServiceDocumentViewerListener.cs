@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,7 +36,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 		void IDocumentViewerListener.OnEvent(DocumentViewerEventArgs e) {
 			if (e.EventType == DocumentViewerEvent.GotNewContent)
-				glyphTextMarkerService.SetMethodOffsetSpanMap(e.DocumentViewer.TextView, new DocumentViewerDotNetSpanMap(moduleIdProvider, e.DocumentViewer.Content.MethodDebugInfos, e.DocumentViewer.ReferenceCollection));
+				glyphTextMarkerService.SetDotNetSpanMap(e.DocumentViewer.TextView, new DocumentViewerDotNetSpanMap(moduleIdProvider, e.DocumentViewer.Content.MethodDebugInfos, e.DocumentViewer.ReferenceCollection));
 		}
 	}
 }

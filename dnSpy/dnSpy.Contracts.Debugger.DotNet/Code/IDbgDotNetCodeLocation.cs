@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -40,8 +40,53 @@ namespace dnSpy.Contracts.Debugger.DotNet.Code {
 		uint Offset { get; }
 
 		/// <summary>
+		/// Gets the IL offset mapping
+		/// </summary>
+		DbgILOffsetMapping ILOffsetMapping { get; }
+
+		/// <summary>
 		/// Gets the debugger module or null
 		/// </summary>
-		DbgModule DbgModule { get; }
+		DbgModule? DbgModule { get; }
+
+		/// <summary>
+		/// Gets the native address
+		/// </summary>
+		DbgDotNetNativeFunctionAddress NativeAddress { get; }
+	}
+
+	/// <summary>
+	/// Native address info
+	/// </summary>
+	public readonly struct DbgDotNetNativeFunctionAddress {
+		/// <summary>
+		/// No address
+		/// </summary>
+		public static readonly DbgDotNetNativeFunctionAddress None = default;
+
+		/// <summary>
+		/// Gets the address or 0 if it's not available
+		/// </summary>
+		public ulong Address { get; }
+
+		/// <summary>
+		/// Gets the offset relative to <see cref="Address"/>
+		/// </summary>
+		public ulong Offset { get; }
+
+		/// <summary>
+		/// Gets the instruction pointer
+		/// </summary>
+		public ulong IP => Address + Offset;
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="address">Address or 0 if it's not available</param>
+		/// <param name="offset">Offset relative to <paramref name="address"/></param>
+		public DbgDotNetNativeFunctionAddress(ulong address, ulong offset) {
+			Address = address;
+			Offset = offset;
+		}
 	}
 }

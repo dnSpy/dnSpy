@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -46,7 +46,7 @@ namespace dnSpy.Debugger.UI.Wpf {
 				}
 			}
 			var newContent = newValue?.TextElementFactory.Create(newValue.ClassificationFormatMap, newValue.Text, newValue.Tags, newValue.TextElementFlags);
-			if (newContent != null && newValue.Opacity != 1.0)
+			if (!(newContent is null) && newValue!.Opacity != 1.0)
 				newContent.Opacity = newValue.Opacity;
 			tb.Content = newContent;
 		}

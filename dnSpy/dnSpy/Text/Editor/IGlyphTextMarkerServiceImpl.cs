@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using dnSpy.Contracts.Text.Editor;
-using dnSpy.Contracts.Themes;
 using dnSpy.Text.MEF;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
@@ -29,7 +28,6 @@ using Microsoft.VisualStudio.Text.Tagging;
 
 namespace dnSpy.Text.Editor {
 	interface IGlyphTextMarkerServiceImpl : IGlyphTextMarkerService {
-		IThemeService ThemeService { get; }
 		IViewTagAggregatorFactoryService ViewTagAggregatorFactoryService { get; }
 		IEditorFormatMapService EditorFormatMapService { get; }
 		IEnumerable<IGlyphTextMarkerImpl> AllMarkers { get; }
@@ -67,9 +65,9 @@ namespace dnSpy.Text.Editor {
 	sealed class GetGlyphTextMarkerAndSpanEventArgs : EventArgs {
 		public ITextView TextView { get; }
 		public SnapshotSpan Span { get; }
-		public GlyphTextMarkerAndSpan[] Result { get; set; }
+		public GlyphTextMarkerAndSpan[]? Result { get; set; }
 		public GetGlyphTextMarkerAndSpanEventArgs(ITextView textView, SnapshotSpan span) {
-			if (span.Snapshot == null)
+			if (span.Snapshot is null)
 				throw new ArgumentException();
 			TextView = textView ?? throw new ArgumentNullException(nameof(textView));
 			Span = span;
@@ -81,7 +79,7 @@ namespace dnSpy.Text.Editor {
 		public SnapshotSpan Span { get; }
 		public GlyphTextMarkerAndSpan? Result { get; set; }
 		public GetFirstGlyphTextMarkerAndSpanEventArgs(ITextView textView, SnapshotSpan span) {
-			if (span.Snapshot == null)
+			if (span.Snapshot is null)
 				throw new ArgumentException();
 			TextView = textView ?? throw new ArgumentNullException(nameof(textView));
 			Span = span;

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,5 +27,6 @@ namespace dnSpy.Decompiler.MSBuild {
 		VS2013,
 		VS2015,
 		VS2017,
+		VS2019,
 	}
 }

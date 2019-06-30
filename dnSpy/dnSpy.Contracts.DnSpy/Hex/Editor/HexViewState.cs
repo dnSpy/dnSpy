@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -79,7 +79,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="effectiveViewportWidth">Viewport width</param>
 		/// <param name="effectiveViewportHeight">Viewport height</param>
 		public HexViewState(HexView view, double effectiveViewportWidth, double effectiveViewportHeight) {
-			if (view == null)
+			if (view is null)
 				throw new ArgumentNullException(nameof(view));
 			ViewportTop = view.ViewportTop;
 			ViewportLeft = view.ViewportLeft;

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,16 +23,16 @@ using dnSpy.Contracts.App;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
 	sealed class ShowWarningMessage : IShowWarningMessage {
-		readonly Window ownerWindow;
+		readonly Window? ownerWindow;
 
 		public ShowWarningMessage()
 			: this(null) {
 		}
 
-		public ShowWarningMessage(Window ownerWindow) => this.ownerWindow = ownerWindow;
+		public ShowWarningMessage(Window? ownerWindow) => this.ownerWindow = ownerWindow;
 
 		public void Show(Guid? guid, string msg) {
-			if (guid == null)
+			if (guid is null)
 				MsgBox.Instance.Show(msg, MsgBoxButton.OK, ownerWindow);
 			else
 				MsgBox.Instance.ShowIgnorableMessage(guid.Value, msg, MsgBoxButton.OK, ownerWindow);

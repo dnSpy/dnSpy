@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,7 +29,7 @@ namespace dnSpy.Text.Editor {
 	sealed class TextLayer : UIElement {
 		readonly List<LineInfo> lines;
 
-		struct LineInfo {
+		readonly struct LineInfo {
 			public IFormattedLine Line { get; }
 			public Visual Visual { get; }
 			public LineInfo(IFormattedLine line) {
@@ -39,7 +39,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public TextLayer(IAdornmentLayer adornmentLayer) {
-			if (adornmentLayer == null)
+			if (adornmentLayer is null)
 				throw new ArgumentNullException(nameof(adornmentLayer));
 			lines = new List<LineInfo>();
 			adornmentLayer.AddAdornment(AdornmentPositioningBehavior.OwnerControlled, null, null, this, null);

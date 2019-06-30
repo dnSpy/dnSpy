@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 	/// <summary>
 	/// Contains a method and its return value
 	/// </summary>
-	public struct DbgDotNetReturnValueInfo {
+	public readonly struct DbgDotNetReturnValueInfo {
 		/// <summary>
 		/// Gets the return value id
 		/// </summary>
@@ -33,7 +33,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <summary>
 		/// Gets the method
 		/// </summary>
-		public DmdMethodInfo Method { get; }
+		public DmdMethodBase Method { get; }
 
 		/// <summary>
 		/// Gets the value returned by <see cref="Method"/>
@@ -46,7 +46,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="id">Return value id</param>
 		/// <param name="method">Method</param>
 		/// <param name="value">Value returned by <paramref name="method"/></param>
-		public DbgDotNetReturnValueInfo(uint id, DmdMethodInfo method, DbgDotNetValue value) {
+		public DbgDotNetReturnValueInfo(uint id, DmdMethodBase method, DbgDotNetValue value) {
 			Id = id;
 			Method = method ?? throw new ArgumentNullException(nameof(method));
 			Value = value ?? throw new ArgumentNullException(nameof(value));

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,7 +25,7 @@ using dnSpy.Contracts.Text.Editor;
 namespace dnSpy.Bookmarks.DotNet.TextEditor {
 	[ExportBookmarkGlyphTextMarkerLocationProvider]
 	sealed class BookmarkGlyphTextMarkerLocationProviderImpl : BookmarkGlyphTextMarkerLocationProvider {
-		public override GlyphTextMarkerLocationInfo GetLocation(Bookmark bookmark) {
+		public override GlyphTextMarkerLocationInfo? GetLocation(Bookmark bookmark) {
 			if (bookmark.Location is DotNetMethodBodyBookmarkLocation bodyLoc)
 				return new DotNetMethodBodyGlyphTextMarkerLocationInfo(bodyLoc.Module, bodyLoc.Token, bodyLoc.Offset);
 			if (bookmark.Location is DotNetTokenBookmarkLocation tokenLoc)

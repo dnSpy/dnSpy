@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,22 +20,22 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Debugger.DotNet.Code;
-using dnSpy.Contracts.Debugger.DotNet.CorDebug.Code;
 using dnSpy.Contracts.Debugger.Engine.CallStack;
-using dnSpy.Contracts.Text;
 using dnSpy.Debugger.DotNet.CorDebug.Code;
 using dnSpy.Debugger.DotNet.CorDebug.Impl;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 	sealed class ILDbgEngineStackFrame : DbgEngineStackFrame {
-		public override DbgCodeLocation Location { get; }
-		public override DbgModule Module { get; }
+		public override DbgCodeLocation? Location { get; }
+		public override DbgModule? Module { get; }
+		public override DbgStackFrameFlags Flags => DbgStackFrameFlags.LocationIsNextStatement;
 		public override uint FunctionOffset { get; }
 		public override uint FunctionToken { get; }
 
@@ -48,7 +48,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 		}
 		CorFrame __corFrame_DONT_USE;
 
-		CorFrame FindFrame(CorFrame frame) {
+		CorFrame? FindFrame(CorFrame frame) {
 			foreach (var f in dnThread.AllFrames) {
 				if (f.StackStart == frame.StackStart && f.StackEnd == frame.StackEnd)
 					return f;
@@ -109,45 +109,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 			Debug.Assert(nativeCode?.IsIL == false);
 			if (nativeCode?.IsIL == false) {
 				var corCode = engine.CreateDnDebuggerObjectHolder(nativeCode);
-				Location = dbgDotNetNativeCodeLocationFactory.Value.Create(module, moduleId, FunctionToken, FunctionOffset, ilOffsetMapping, corCode.Object.Address, corFrame.NativeFrameIP, corCode);
+				Location = dbgDotNetNativeCodeLocationFactory.Value.Create(module, moduleId, FunctionToken, FunctionOffset, ilOffsetMapping, corCode.Object?.Address ?? 0, corFrame.NativeFrameIP, corCode);
 			}
 			else
-				Location = dbgDotNetCodeLocationFactory.Value.Create(moduleId, FunctionToken, FunctionOffset);
-		}
-
-		public override void Format(ITextColorWriter writer, DbgStackFrameFormatOptions options) =>
-			engine.DebuggerThread.Invoke(() => Format_CorDebug(writer, options));
-
-		void Format_CorDebug(ITextColorWriter writer, DbgStackFrameFormatOptions options) {
-			if (Module.IsClosed)
-				return;
-			var output = engine.stackFrameData.TypeOutputTextColorWriter.Initialize(writer);
-			try {
-				var flags = GetFlags(options);
-				Func<DnEval> getEval = null;
-				Debug.Assert((options & DbgStackFrameFormatOptions.ShowParameterValues) == 0, "NYI");
-				new TypeFormatter(output, flags, getEval).Write(CorFrame);
-			}
-			finally {
-				output.Clear();
-			}
-		}
-
-		static TypeFormatterFlags GetFlags(DbgStackFrameFormatOptions options) {
-			var flags = TypeFormatterFlags.ShowArrayValueSizes;
-			if ((options & DbgStackFrameFormatOptions.ShowReturnTypes) != 0)			flags |= TypeFormatterFlags.ShowReturnTypes;
-			if ((options & DbgStackFrameFormatOptions.ShowParameterTypes) != 0)			flags |= TypeFormatterFlags.ShowParameterTypes;
-			if ((options & DbgStackFrameFormatOptions.ShowParameterNames) != 0)			flags |= TypeFormatterFlags.ShowParameterNames;
-			if ((options & DbgStackFrameFormatOptions.ShowParameterValues) != 0)		flags |= TypeFormatterFlags.ShowParameterValues;
-			if ((options & DbgStackFrameFormatOptions.ShowFunctionOffset) != 0)			flags |= TypeFormatterFlags.ShowIP;
-			if ((options & DbgStackFrameFormatOptions.ShowModuleNames) != 0)			flags |= TypeFormatterFlags.ShowModuleNames;
-			if ((options & DbgStackFrameFormatOptions.ShowDeclaringTypes) != 0)			flags |= TypeFormatterFlags.ShowDeclaringTypes;
-			if ((options & DbgStackFrameFormatOptions.ShowNamespaces) != 0)				flags |= TypeFormatterFlags.ShowNamespaces;
-			if ((options & DbgStackFrameFormatOptions.ShowIntrinsicTypeKeywords) != 0)	flags |= TypeFormatterFlags.ShowIntrinsicTypeKeywords;
-			if ((options & DbgStackFrameFormatOptions.ShowTokens) != 0)					flags |= TypeFormatterFlags.ShowTokens;
-			if ((options & DbgStackFrameFormatOptions.UseDecimal) != 0)					flags |= TypeFormatterFlags.UseDecimal;
-			if ((options & DbgStackFrameFormatOptions.DigitSeparators) != 0)			flags |= TypeFormatterFlags.DigitSeparators;
-			return flags;
+				Location = dbgDotNetCodeLocationFactory.Value.Create(moduleId, FunctionToken, FunctionOffset, ilOffsetMapping);
 		}
 
 		sealed class ILFrameState {
@@ -155,8 +120,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 			public ILFrameState(ILDbgEngineStackFrame ilFrame) => ILFrame = ilFrame;
 		}
 		public override void OnFrameCreated(DbgStackFrame frame) => frame.GetOrCreateData(() => new ILFrameState(this));
-		internal static bool TryGetEngineStackFrame(DbgStackFrame frame, out ILDbgEngineStackFrame ilFrame) {
-			if (frame.TryGetData<ILFrameState>(out var data)) {
+		internal static bool TryGetEngineStackFrame(DbgStackFrame frame, [NotNullWhenTrue] out ILDbgEngineStackFrame? ilFrame) {
+			if (frame.TryGetData(out ILFrameState? data)) {
 				ilFrame = data.ILFrame;
 				return true;
 			}
@@ -164,19 +129,28 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 			return false;
 		}
 
-		internal DmdModule GetReflectionModule() => Module.GetReflectionModule() ?? throw new InvalidOperationException();
+		internal DmdModule GetReflectionModule() => Module!.GetReflectionModule() ?? throw new InvalidOperationException();
 		internal CorAppDomain GetCorAppDomain() => dnThread.AppDomainOrNull?.CorAppDomain ?? throw new InvalidOperationException();
 
-		internal void GetFrameMethodInfo(out DmdModule module, out int methodMetadataToken, out IList<DmdType> genericTypeArguments, out IList<DmdType> genericMethodArguments) {
+		internal void GetFrameMethodInfo(out DmdModule? module, out int methodMetadataToken, out IList<DmdType> genericTypeArguments, out IList<DmdType> genericMethodArguments) {
 			engine.VerifyCorDebugThread();
 			var corFrame = CorFrame;
 			methodMetadataToken = (int)corFrame.Token;
-			module = engine.TryGetModule(corFrame.Function?.Module)?.GetReflectionModule() ?? throw new InvalidOperationException();
-			if (!corFrame.GetTypeAndMethodGenericParameters(out var typeGenArgs, out var methGenArgs))
-				throw new InvalidOperationException();
-			var reflectionAppDomain = module.AppDomain;
-			genericTypeArguments = Convert(reflectionAppDomain, typeGenArgs);
-			genericMethodArguments = Convert(reflectionAppDomain, methGenArgs);
+			var corModule = corFrame.Function?.Module;
+			if (!(corModule is null)) {
+				module = engine.TryGetModule(corModule)?.GetReflectionModule() ?? throw new InvalidOperationException();
+				if (!corFrame.GetTypeAndMethodGenericParameters(out var typeGenArgs, out var methGenArgs))
+					throw new InvalidOperationException();
+				var reflectionAppDomain = module.AppDomain;
+				genericTypeArguments = Convert(reflectionAppDomain, typeGenArgs);
+				genericMethodArguments = Convert(reflectionAppDomain, methGenArgs);
+				return;
+			}
+
+			module = null;
+			methodMetadataToken = 0;
+			genericTypeArguments = Array.Empty<DmdType>();
+			genericMethodArguments = Array.Empty<DmdType>();
 		}
 
 		IList<DmdType> Convert(DmdAppDomain reflectionAppDomain, CorType[] typeArgs) {

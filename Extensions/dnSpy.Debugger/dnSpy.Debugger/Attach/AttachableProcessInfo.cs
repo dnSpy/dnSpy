@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,14 +18,16 @@
 */
 
 using System;
+using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Attach;
 using dnSpy.Debugger.Utilities;
 
 namespace dnSpy.Debugger.Attach {
 	sealed class AttachableProcessInfo {
-		public ulong ProcessId { get; }
+		public int ProcessId { get; }
 		public RuntimeId RuntimeId { get; }
 		public Guid RuntimeGuid { get; }
 		public Guid RuntimeKindGuid { get; }
@@ -34,9 +36,10 @@ namespace dnSpy.Debugger.Attach {
 		public string Title { get; }
 		public string Filename { get; }
 		public string CommandLine { get; }
-		public string Architecture { get; }
+		public DbgArchitecture Architecture { get; }
+		public DbgOperatingSystem OperatingSystem { get; }
 
-		AttachableProcessInfo(ulong processId, RuntimeId runtimeId, Guid runtimeGuid, Guid runtimeKindGuid, string runtimeName, string name, string title, string filename, string commandLine, string architecture) {
+		AttachableProcessInfo(int processId, RuntimeId runtimeId, Guid runtimeGuid, Guid runtimeKindGuid, string runtimeName, string name, string title, string filename, string commandLine, DbgArchitecture architecture, DbgOperatingSystem operatingSystem) {
 			ProcessId = processId;
 			RuntimeId = runtimeId ?? throw new ArgumentNullException(nameof(runtimeId));
 			RuntimeGuid = runtimeGuid;
@@ -46,62 +49,110 @@ namespace dnSpy.Debugger.Attach {
 			Title = title ?? throw new ArgumentNullException(nameof(title));
 			Filename = filename ?? throw new ArgumentNullException(nameof(filename));
 			CommandLine = commandLine ?? throw new ArgumentNullException(nameof(commandLine));
-			Architecture = architecture ?? throw new ArgumentNullException(nameof(architecture));
+			Architecture = architecture;
+			OperatingSystem = operatingSystem;
 		}
 
-		public static AttachableProcessInfo Create(ProcessProvider processProvider, AttachProgramOptions options) {
-			if (processProvider == null)
+		public static AttachableProcessInfo? Create(ProcessProvider processProvider, AttachProgramOptions options) {
+			if (processProvider is null)
 				throw new ArgumentNullException(nameof(processProvider));
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			var name = options.Name;
 			var title = options.Title;
 			var filename = options.Filename;
 			var commandLine = options.CommandLine;
 			var architecture = options.Architecture;
-			if (name == null || title == null || filename == null || commandLine == null || architecture == null) {
+			var operatingSystem = options.OperatingSystem;
+			if (name is null || title is null || filename is null || commandLine is null || architecture is null || operatingSystem is null) {
 				var info = GetDefaultProperties(processProvider, options);
-				name = name ?? info.name ?? string.Empty;
-				title = title ?? info.title ?? string.Empty;
-				filename = filename ?? info.filename ?? string.Empty;
-				commandLine = commandLine ?? info.commandLine ?? string.Empty;
-				architecture = architecture ?? info.arch ?? string.Empty;
+				name ??= info.name ?? string.Empty;
+				title ??= info.title ?? string.Empty;
+				filename ??= info.filename ?? string.Empty;
+				commandLine ??= info.commandLine ?? string.Empty;
+				architecture ??= info.arch;
+				operatingSystem ??= info.operatingSystem;
 			}
-			return new AttachableProcessInfo(options.ProcessId, options.RuntimeId, options.RuntimeGuid, options.RuntimeKindGuid, options.RuntimeName, name, title, filename, commandLine, architecture);
+			if (architecture is null)
+				return null;
+			if (operatingSystem is null)
+				return null;
+			return new AttachableProcessInfo(options.ProcessId, options.RuntimeId, options.RuntimeGuid, options.RuntimeKindGuid, options.RuntimeName, name, title, filename, commandLine, architecture ?? DbgArchitecture.X86, operatingSystem ?? DbgOperatingSystem.Windows);
 		}
 
-		static (string name, string title, string filename, string commandLine, string arch) GetDefaultProperties(ProcessProvider processProvider, AttachProgramOptions attachProgramOptions) {
+		static (string? name, string? title, string? filename, string? commandLine, DbgArchitecture? arch, DbgOperatingSystem? operatingSystem) GetDefaultProperties(ProcessProvider processProvider, AttachProgramOptions attachProgramOptions) {
 			try {
 				return GetDefaultPropertiesCore(processProvider, attachProgramOptions);
 			}
 			catch {
 			}
-			return (null, null, null, null, null);
+			return default;
 		}
 
-		static (string name, string title, string filename, string commandLine, string arch) GetDefaultPropertiesCore(ProcessProvider processProvider, AttachProgramOptions attachProgramOptions) {
-			string name = null, title = null, filename = null, commandLine = null, arch = null;
+		static (string? name, string? title, string? filename, string? commandLine, DbgArchitecture? arch, DbgOperatingSystem? operatingSystem) GetDefaultPropertiesCore(ProcessProvider processProvider, AttachProgramOptions attachProgramOptions) {
+			string? name = null, title = null, filename = null, commandLine = null;
+			DbgArchitecture? arch = default;
+			DbgOperatingSystem? operatingSystem = default;
 
 			var process = processProvider.GetProcess(attachProgramOptions.ProcessId);
-			if (process != null) {
-				if (attachProgramOptions.Name == null)
-					name = Path.GetFileName(attachProgramOptions.Filename ?? process.MainModule.FileName);
-				if (attachProgramOptions.Filename == null)
-					filename = process.MainModule.FileName;
-				if (attachProgramOptions.CommandLine == null)
+			if (!(process is null)) {
+				if (attachProgramOptions.CommandLine is null)
 					commandLine = Win32CommandLineProvider.TryGetCommandLine(process.Handle);
-				if (attachProgramOptions.Title == null)
+				if (attachProgramOptions.Title is null)
 					title = process.MainWindowTitle;
-				if (attachProgramOptions.Architecture == null) {
-					switch (ProcessUtilities.GetBitness(process.Handle)) {
-					case 32: arch = PredefinedArchitectureNames.X86; break;
-					case 64: arch = PredefinedArchitectureNames.X64; break;
-					default: arch = "???"; break;
+				if (attachProgramOptions.Architecture is null) {
+					int bitness = ProcessUtilities.GetBitness(process.Handle);
+					var processArchitecture = RuntimeInformation.ProcessArchitecture;
+					switch (processArchitecture) {
+					case System.Runtime.InteropServices.Architecture.X86:
+					case System.Runtime.InteropServices.Architecture.X64:
+						switch (bitness) {
+						case 32: arch = DbgArchitecture.X86; break;
+						case 64: arch = DbgArchitecture.X64; break;
+						}
+						break;
+
+					case System.Runtime.InteropServices.Architecture.Arm:
+					case System.Runtime.InteropServices.Architecture.Arm64:
+						switch (bitness) {
+						case 32: arch = DbgArchitecture.Arm; break;
+						case 64: arch = DbgArchitecture.Arm64; break;
+						}
+						break;
+
+					default:
+						Debug.Fail($"Unknown arch: {processArchitecture}");
+						break;
 					}
 				}
+				if (attachProgramOptions.Name is null)
+					name = Path.GetFileName(attachProgramOptions.Filename ?? GetProcessName(process));
+				if (attachProgramOptions.Filename is null)
+					filename = GetProcessName(process);
+			}
+			if (attachProgramOptions.OperatingSystem is null) {
+				if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+					operatingSystem = DbgOperatingSystem.Windows;
+				else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+					operatingSystem = DbgOperatingSystem.MacOS;
+				else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+					operatingSystem = DbgOperatingSystem.Linux;
+				else if (RuntimeInformation.IsOSPlatform(OSPlatform.Create("FREEBSD")))
+					operatingSystem = DbgOperatingSystem.FreeBSD;
+				else
+					Debug.Fail($"Unknown OS: {RuntimeInformation.OSDescription}");
 			}
 
-			return (name, title, filename, commandLine, arch);
+			return (name, title, filename, commandLine, arch, operatingSystem);
+		}
+
+		static string GetProcessName(Process process) {
+			try {
+				return process.MainModule.FileName;
+			}
+			catch {
+			}
+			return process.ProcessName;
 		}
 	}
 }

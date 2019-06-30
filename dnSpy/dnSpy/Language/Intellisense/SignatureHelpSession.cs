@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -37,14 +37,14 @@ namespace dnSpy.Language.Intellisense {
 		public bool IsDismissed { get; private set; }
 		public event EventHandler Dismissed;
 		public bool IsStarted { get; private set; }
-		public IIntellisensePresenter Presenter => signatureHelpPresenter;
+		public IIntellisensePresenter? Presenter => signatureHelpPresenter;
 		public event EventHandler PresenterChanged;
 		public event EventHandler Recalculated;
 
-		public ISignature SelectedSignature {
-			get { return selectedSignature; }
+		public ISignature? SelectedSignature {
+			get => selectedSignature;
 			set {
-				if (value == null)
+				if (value is null)
 					throw new ArgumentNullException(nameof(value));
 				if (value == selectedSignature)
 					return;
@@ -55,15 +55,15 @@ namespace dnSpy.Language.Intellisense {
 				SelectedSignatureChanged?.Invoke(this, new SelectedSignatureChangedEventArgs(oldSig, selectedSignature));
 			}
 		}
-		ISignature selectedSignature;
+		ISignature? selectedSignature;
 
 		readonly ITrackingPoint triggerPoint;
 		readonly IIntellisensePresenterFactoryService intellisensePresenterFactoryService;
 		readonly Lazy<ISignatureHelpSourceProvider, IOrderableContentTypeMetadata>[] signatureHelpSourceProviders;
 		readonly ObservableCollection<ISignature> signatures;
 		readonly bool trackCaret;
-		IIntellisensePresenter signatureHelpPresenter;
-		ISignatureHelpSource[] signatureHelpSources;
+		IIntellisensePresenter? signatureHelpPresenter;
+		ISignatureHelpSource[]? signatureHelpSources;
 
 		public SignatureHelpSession(ITextView textView, ITrackingPoint triggerPoint, bool trackCaret, IIntellisensePresenterFactoryService intellisensePresenterFactoryService, Lazy<ISignatureHelpSourceProvider, IOrderableContentTypeMetadata>[] signatureHelpSourceProviders) {
 			Properties = new PropertyCollection();
@@ -82,15 +82,15 @@ namespace dnSpy.Language.Intellisense {
 			if (IsDismissed)
 				return;
 			var caretPos = TextView.Caret.Position;
-			List<int> sigsToRemove = null;
+			List<int>? sigsToRemove = null;
 			for (int i = 0; i < signatures.Count; i++) {
 				if (!IsInSignature(signatures[i], caretPos)) {
-					if (sigsToRemove == null)
+					if (sigsToRemove is null)
 						sigsToRemove = new List<int>();
 					sigsToRemove.Add(i);
 				}
 			}
-			if (sigsToRemove != null) {
+			if (!(sigsToRemove is null)) {
 				for (int i = sigsToRemove.Count - 1; i >= 0; i--)
 					signatures.RemoveAt(sigsToRemove[i]);
 			}
@@ -98,7 +98,7 @@ namespace dnSpy.Language.Intellisense {
 				Dismiss();
 			else {
 				Match();
-				if (!signatures.Contains(SelectedSignature))
+				if (!signatures.Contains(SelectedSignature!))
 					SelectedSignature = signatures.FirstOrDefault();
 			}
 		}
@@ -107,7 +107,7 @@ namespace dnSpy.Language.Intellisense {
 			if (caretPos.VirtualSpaces > 0)
 				return false;
 			var atSpan = signature.ApplicableToSpan;
-			if (atSpan == null)
+			if (atSpan is null)
 				return false;
 			var span = atSpan.GetSpan(caretPos.BufferPosition.Snapshot);
 			return span.IntersectsWith(new SnapshotSpan(caretPos.BufferPosition, 0));
@@ -125,7 +125,7 @@ namespace dnSpy.Language.Intellisense {
 				if (!TextView.TextDataModel.ContentType.IsOfAnyType(provider.Metadata.ContentTypes))
 					continue;
 				var source = provider.Value.TryCreateSignatureHelpSource(textBuffer);
-				if (source != null)
+				if (!(source is null))
 					list.Add(source);
 			}
 			return list.ToArray();
@@ -158,9 +158,9 @@ namespace dnSpy.Language.Intellisense {
 				Dismiss();
 			else {
 				SelectedSignature = signatures[0];
-				if (signatureHelpPresenter == null) {
+				if (signatureHelpPresenter is null) {
 					signatureHelpPresenter = intellisensePresenterFactoryService.TryCreateIntellisensePresenter(this);
-					if (signatureHelpPresenter == null) {
+					if (signatureHelpPresenter is null) {
 						Dismiss();
 						return;
 					}
@@ -171,7 +171,7 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		void DisposeSignatureHelpSources() {
-			if (signatureHelpSources != null) {
+			if (!(signatureHelpSources is null)) {
 				foreach (var source in signatureHelpSources)
 					source.Dispose();
 				signatureHelpSources = null;
@@ -196,10 +196,12 @@ namespace dnSpy.Language.Intellisense {
 				throw new InvalidOperationException();
 			if (IsDismissed)
 				throw new InvalidOperationException();
+			if (signatureHelpSources is null)
+				throw new InvalidOperationException();
 
 			foreach (var source in signatureHelpSources) {
 				var signature = source.GetBestMatch(this);
-				if (signature != null) {
+				if (!(signature is null)) {
 					SelectedSignature = signature;
 					return true;
 				}
@@ -208,7 +210,7 @@ namespace dnSpy.Language.Intellisense {
 			return false;
 		}
 
-		public ITrackingPoint GetTriggerPoint(ITextBuffer textBuffer) {
+		public ITrackingPoint? GetTriggerPoint(ITextBuffer textBuffer) {
 			if (!IsStarted)
 				throw new InvalidOperationException();
 			if (IsDismissed)

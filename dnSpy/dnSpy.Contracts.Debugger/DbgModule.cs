@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -44,7 +44,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// <summary>
 		/// Gets the app domain or null if it's a process module
 		/// </summary>
-		public abstract DbgAppDomain AppDomain { get; }
+		public abstract DbgAppDomain? AppDomain { get; }
 
 		/// <summary>
 		/// Gets the module object created by the debug engine

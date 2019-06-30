@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,7 +30,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		/// </summary>
 		/// <param name="filename">Filename</param>
 		/// <returns></returns>
-		public static string ValidateFileName(this string filename) {
+		public static string? ValidateFileName(this string filename) {
 			if (string.IsNullOrEmpty(filename))
 				return dnSpy_AsmEditor_Resources.Error_Filename_Empty;
 			if (string.IsNullOrWhiteSpace(filename))

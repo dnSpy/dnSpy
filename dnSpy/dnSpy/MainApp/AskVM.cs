@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,7 +28,7 @@ namespace dnSpy.MainApp {
 		readonly string labelMessage;
 
 		public string Text {
-			get { return text; }
+			get => text;
 			set {
 				if (text != value) {
 					text = value;
@@ -39,18 +39,18 @@ namespace dnSpy.MainApp {
 		}
 		string text = string.Empty;
 
-		public object Value => converter(Text);
+		public object? Value => converter(Text);
 
-		readonly Func<string, object> converter;
-		readonly Func<string, string> verifier;
+		readonly Func<string, object?> converter;
+		readonly Func<string, string?> verifier;
 
-		public AskVM(string labelMessage, Func<string, object> converter, Func<string, string> verifier) {
+		public AskVM(string labelMessage, Func<string, object?> converter, Func<string, string?> verifier) {
 			this.labelMessage = labelMessage;
 			this.converter = converter ?? throw new ArgumentNullException(nameof(converter));
 			this.verifier = verifier ?? throw new ArgumentNullException(nameof(verifier));
 		}
 
-		protected override string Verify(string columnName) {
+		protected override string? Verify(string columnName) {
 			if (columnName == nameof(Text)) {
 				try {
 					var error = verifier(Text);

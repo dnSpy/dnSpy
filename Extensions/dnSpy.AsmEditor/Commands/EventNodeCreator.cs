@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -38,11 +38,11 @@ namespace dnSpy.AsmEditor.Commands {
 		}
 
 		IEnumerable<MethodDef> GetMethods() {
-			if (eventNode.EventDef.AddMethod != null)
+			if (!(eventNode.EventDef.AddMethod is null))
 				yield return eventNode.EventDef.AddMethod;
-			if (eventNode.EventDef.RemoveMethod != null)
+			if (!(eventNode.EventDef.RemoveMethod is null))
 				yield return eventNode.EventDef.RemoveMethod;
-			if (eventNode.EventDef.InvokeMethod != null)
+			if (!(eventNode.EventDef.InvokeMethod is null))
 				yield return eventNode.EventDef.InvokeMethod;
 			foreach (var m in eventNode.EventDef.OtherMethods)
 				yield return m;

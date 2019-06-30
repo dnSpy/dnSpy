@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,6 +35,6 @@ namespace dnSpy.Contracts.Controls {
 		/// <summary>
 		/// Gets the <see cref="IZoomable"/> instance or null
 		/// </summary>
-		IZoomable Zoomable { get; }
+		IZoomable? Zoomable { get; }
 	}
 }

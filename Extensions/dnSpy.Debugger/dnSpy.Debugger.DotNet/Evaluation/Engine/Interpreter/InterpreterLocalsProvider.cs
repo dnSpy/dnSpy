@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -17,11 +17,10 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Threading;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -29,6 +28,7 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 	sealed class InterpreterLocalsProvider : VariablesProvider {
+		static ReadOnlyCollection<DmdLocalVariableInfo> emptyLocalVariableInfos = new ReadOnlyCollection<DmdLocalVariableInfo>(Array.Empty<DmdLocalVariableInfo>());
 		readonly DebuggerRuntimeImpl runtime;
 		readonly Dictionary<int, DbgDotNetValue> extraLocals;
 		VariablesProvider localsProvider;
@@ -36,20 +36,29 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		ReadOnlyCollection<DmdLocalVariableInfo> localVariables;
 
 		public InterpreterLocalsProvider(DebuggerRuntimeImpl runtime) {
+			localsProvider = null!;
+			realLocalVariables = null!;
+			localVariables = null!;
 			this.runtime = runtime;
 			extraLocals = new Dictionary<int, DbgDotNetValue>();
 		}
 
-		internal void Initialize(DmdMethodBody realMethodBody, VariablesProvider localsProvider) {
+		internal void Initialize(DmdMethodBody? realMethodBody, VariablesProvider localsProvider) {
 			Debug.Assert(extraLocals.Count == 0);
-			realLocalVariables = realMethodBody.LocalVariables;
+			realLocalVariables = realMethodBody?.LocalVariables ?? emptyLocalVariableInfos;
 			this.localsProvider = localsProvider;
 		}
 
-		public override void Initialize(DbgEvaluationContext context, DbgStackFrame frame, DmdMethodBase method, DmdMethodBody body, CancellationToken cancellationToken) {
+		public override void Initialize(DbgEvaluationInfo evalInfo, DmdMethodBase method, DmdMethodBody body) {
 			Debug.Assert(extraLocals.Count == 0);
 			localVariables = body.LocalVariables;
-			localsProvider.Initialize(context, frame, method, body, cancellationToken);
+			localsProvider.Initialize(evalInfo, method, body);
+		}
+
+		public override DbgDotNetValue? GetValueAddress(int index, DmdType targetType) {
+			if ((uint)index < (uint)realLocalVariables.Count)
+				return localsProvider.GetValueAddress(index, targetType);
+			return null;
 		}
 
 		public override DbgDotNetValueResult GetVariable(int index) {
@@ -61,16 +70,16 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 					localValue = runtime.GetDefaultValue(type);
 					extraLocals.Add(index, localValue);
 				}
-				return new DbgDotNetValueResult(localValue, valueIsException: false);
+				return DbgDotNetValueResult.Create(localValue);
 			}
-			return new DbgDotNetValueResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
+			return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 		}
 
-		public override string SetVariable(int index, DmdType targetType, object value) {
+		public override string? SetVariable(int index, DmdType targetType, object? value) {
 			if ((uint)index < (uint)realLocalVariables.Count)
 				return localsProvider.SetVariable(index, targetType, value);
 			if ((uint)index < (uint)localVariables.Count) {
-				extraLocals[index] = runtime.CreateValue(value);
+				extraLocals[index] = runtime.CreateValue(value, targetType);
 				return null;
 			}
 			return PredefinedEvaluationErrorMessages.InternalDebuggerError;
@@ -82,9 +91,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		public override void Clear() {
 			localsProvider.Clear();
 			extraLocals.Clear();
-			localsProvider = null;
-			realLocalVariables = null;
-			localVariables = null;
+			localsProvider = null!;
+			realLocalVariables = null!;
+			localVariables = null!;
 		}
 	}
 }

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.IO;
 using System.Text;
 using System.Threading;
 using dndbg.COM.CorDebug;
@@ -26,35 +27,27 @@ using dnlib.DotNet;
 using dnlib.DotNet.MD;
 
 namespace dndbg.Engine {
-	sealed class CorModule : COMObject<ICorDebugModule>, IEquatable<CorModule> {
-		/// <summary>
-		/// Gets the process or null
-		/// </summary>
-		public CorProcess Process {
+	sealed class CorModule : COMObject<ICorDebugModule>, IEquatable<CorModule?> {
+		public CorProcess? Process {
 			get {
 				int hr = obj.GetProcess(out var process);
-				return hr < 0 || process == null ? null : new CorProcess(process);
+				return hr < 0 || process is null ? null : new CorProcess(process);
 			}
 		}
 
-		/// <summary>
-		/// Gets the assembly or null
-		/// </summary>
-		public CorAssembly Assembly {
+		public CorAssembly? Assembly {
 			get {
 				int hr = obj.GetAssembly(out var assembly);
-				return hr < 0 || assembly == null ? null : new CorAssembly(assembly);
+				return hr < 0 || assembly is null ? null : new CorAssembly(assembly);
 			}
 		}
 
-		/// <summary>
-		/// true if this is the manifest module
-		/// </summary>
-		public bool IsManifestModule {
+		public bool IsManifestModule => Equals(Assembly?.ManifestModule);
+
+		public bool HasAssemblyRow {
 			get {
 				var mdi = GetMetaDataInterface<IMetaDataImport>();
-				// Only the manifest module should have an assembly row
-				return mdi != null && mdi.IsValidToken(new MDToken(Table.Assembly, 1).Raw);
+				return !(mdi is null) && mdi.IsValidToken(new MDToken(Table.Assembly, 1).Raw);
 			}
 		}
 
@@ -67,12 +60,12 @@ namespace dndbg.Engine {
 
 		string DnlibName {
 			get {
-				if (dnlibName == null)
+				if (dnlibName is null)
 					Interlocked.CompareExchange(ref dnlibName, CalculateDnlibName(this), null);
-				return dnlibName;
+				return dnlibName!;
 			}
 		}
-		string dnlibName;
+		string? dnlibName;
 
 		internal void ClearCachedDnlibName() => dnlibName = null;
 
@@ -83,32 +76,16 @@ namespace dndbg.Engine {
 			return DotNet.Utils.GetUTF8String(MDAPI.GetUtf8Name(mdi, token), MDAPI.GetModuleName(mdi) ?? string.Empty);
 		}
 
-		/// <summary>
-		/// Gets the base address of the module or 0
-		/// </summary>
 		public ulong Address => address;
 		readonly ulong address;
 
-		/// <summary>
-		/// Gets the size of the module or 0
-		/// </summary>
 		public uint Size => size;
 		readonly uint size;
 
-		/// <summary>
-		/// Gets the token or 0
-		/// </summary>
 		public uint Token => token;
 		readonly uint token;
 
-		/// <summary>
-		/// true if it's a dynamic module that can add/remove types
-		/// </summary>
 		public bool IsDynamic { get; }
-
-		/// <summary>
-		/// true if this is an in-memory module
-		/// </summary>
 		public bool IsInMemory { get; }
 
 		string GetSerializedName(uint id) {
@@ -124,22 +101,17 @@ namespace dndbg.Engine {
 
 		public DnModuleId GetModuleId(uint id) => new DnModuleId(Assembly?.FullName ?? string.Empty, GetSerializedName(id), IsDynamic, IsInMemory, false);
 
-		/// <summary>
-		/// Gets/sets the JIT compiler flags. The setter can only be called from the
-		/// ICorDebugManagedCallback::LoadModule handler. The getter can only be called when the
-		/// debugged process is synchronized (paused).
-		/// </summary>
 		public CorDebugJITCompilerFlags JITCompilerFlags {
 			get {
 				var m2 = obj as ICorDebugModule2;
-				if (m2 == null)
+				if (m2 is null)
 					return 0;
 				int hr = m2.GetJITCompilerFlags(out var flags);
 				return hr < 0 ? 0 : flags;
 			}
 			set {
 				var m2 = obj as ICorDebugModule2;
-				if (m2 == null)
+				if (m2 is null)
 					return;
 				int hr = m2.SetJITCompilerFlags(value);
 			}
@@ -163,9 +135,22 @@ namespace dndbg.Engine {
 			IsDynamic = hr >= 0 && b != 0;
 			hr = module.IsInMemory(out b);
 			IsInMemory = hr >= 0 && b != 0;
+			if (!IsDynamic && !IsInMemory)
+				Name = NormalizeFilename(Name);
 		}
 
-		static string GetName(ICorDebugModule module) {
+		static string NormalizeFilename(string filename) {
+			if (!File.Exists(filename))
+				return filename;
+			try {
+				return Path.GetFullPath(filename);
+			}
+			catch {
+			}
+			return filename;
+		}
+
+		static string? GetName(ICorDebugModule module) {
 			int hr = module.GetName(0, out uint cchName, null);
 			if (hr < 0)
 				return null;
@@ -176,9 +161,9 @@ namespace dndbg.Engine {
 			return sb.ToString();
 		}
 
-		public CorFunction GetFunctionFromToken(uint token) {
+		public CorFunction? GetFunctionFromToken(uint token) {
 			int hr = obj.GetFunctionFromToken(token, out var func);
-			return hr < 0 || func == null ? null : new CorFunction(func, this);
+			return hr < 0 || func is null ? null : new CorFunction(func, this);
 		}
 
 		public void EnableJITDebugging(bool trackJITInfo, bool allowJitOpts) {
@@ -191,44 +176,25 @@ namespace dndbg.Engine {
 
 		public void SetJMCStatus(bool isJustMyCode) {
 			var m2 = obj as ICorDebugModule2;
-			if (m2 == null)
+			if (m2 is null)
 				return;
 			int hr = m2.SetJMCStatus(isJustMyCode ? 1 : 0, 0, IntPtr.Zero);
 		}
 
-		/// <summary>
-		/// Gets a class
-		/// </summary>
-		/// <param name="token">TypeDef token</param>
-		/// <returns></returns>
-		public CorClass GetClassFromToken(uint token) {
+		public CorClass? GetClassFromToken(uint token) {
 			int hr = obj.GetClassFromToken(token, out var cls);
-			return hr < 0 || cls == null ? null : new CorClass(cls);
+			return hr < 0 || cls is null ? null : new CorClass(cls);
 		}
 
-		/// <summary>
-		/// Gets a metadata interface, eg. <see cref="IMetaDataImport"/> or <see cref="IMetaDataImport2"/>
-		/// </summary>
-		/// <typeparam name="T">Type of COM metadata interface</typeparam>
-		/// <returns></returns>
-		public T GetMetaDataInterface<T>() where T : class {
+		public T? GetMetaDataInterface<T>() where T : class {
 			var riid = typeof(T).GUID;
 			int hr = obj.GetMetaDataInterface(ref riid, out object o);
 			return o as T;
 		}
 
-		public static bool operator ==(CorModule a, CorModule b) {
-			if (ReferenceEquals(a, b))
-				return true;
-			if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
-				return false;
-			return a.Equals(b);
-		}
-
-		public static bool operator !=(CorModule a, CorModule b) => !(a == b);
-		public bool Equals(CorModule other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
-		public override bool Equals(object obj) => Equals(obj as CorModule);
+		public bool Equals(CorModule? other) => !(other is null) && RawObject == other.RawObject;
+		public override bool Equals(object? obj) => Equals(obj as CorModule);
 		public override int GetHashCode() => RawObject.GetHashCode();
-		public override string ToString() => string.Format("[Module] DYN={0} MEM={1} A={2:X8} S={3:X8} {4}", IsDynamic ? 1 : 0, IsInMemory ? 1 : 0, Address, Size, Name);
+		public override string ToString() => $"[Module] DYN={(IsDynamic ? 1 : 0)} MEM={(IsInMemory ? 1 : 0)} A={Address:X8} S={Size:X8} {Name}";
 	}
 }

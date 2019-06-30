@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,20 +18,16 @@
 */
 
 using System;
-using System.ComponentModel;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Properties;
 
 namespace dnSpy.Hex.Settings {
-	abstract class ScrollBarsAppSettingsPageBase : AppSettingsPage, INotifyPropertyChanged {
+	abstract class ScrollBarsAppSettingsPageBase : AppSettingsPage {
 		public sealed override string Title => dnSpy_Resources.ScrollBarsSettings;
-		public sealed override object UIObject => this;
-
-		public event PropertyChangedEventHandler PropertyChanged;
-		protected void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+		public sealed override object? UIObject => this;
 
 		public bool HorizontalScrollBar {
-			get { return horizontalScrollBar; }
+			get => horizontalScrollBar;
 			set {
 				if (horizontalScrollBar != value) {
 					horizontalScrollBar = value;
@@ -42,7 +38,7 @@ namespace dnSpy.Hex.Settings {
 		bool horizontalScrollBar;
 
 		public bool VerticalScrollBar {
-			get { return verticalScrollBar; }
+			get => verticalScrollBar;
 			set {
 				if (verticalScrollBar != value) {
 					verticalScrollBar = value;

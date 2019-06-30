@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,22 +31,22 @@ namespace dnSpy.Menus {
 		public IEnumerable<GuidObject> GuidObjects => guidObjects;
 		readonly List<GuidObject> guidObjects;
 
-		public MenuItemContext(Guid menuGuid, bool openedFromKeyboard, GuidObject creatorObject, IEnumerable<GuidObject> guidObjects) {
+		public MenuItemContext(Guid menuGuid, bool openedFromKeyboard, GuidObject creatorObject, IEnumerable<GuidObject>? guidObjects) {
 			MenuGuid = menuGuid;
 			OpenedFromKeyboard = openedFromKeyboard;
 			this.guidObjects = new List<GuidObject>();
 			this.guidObjects.Add(creatorObject);
-			if (guidObjects != null)
+			if (!(guidObjects is null))
 				this.guidObjects.AddRange(guidObjects);
 			state = new Dictionary<object, object>();
 		}
 
-		public T GetOrCreateState<T>(object key, Func<T> createState) where T : class {
-			Debug.Assert(key != null);
-			T value;
+		public T? GetOrCreateState<T>(object key, Func<T> createState) where T : class {
+			Debug.Assert(!(key is null));
+			T? value;
 			if (state.TryGetValue(key, out object o)) {
 				value = o as T;
-				Debug.Assert(o == null || value != null);
+				Debug.Assert(o is null || !(value is null));
 				return value;
 			}
 			value = createState();
@@ -60,13 +60,17 @@ namespace dnSpy.Menus {
 				if (o.Object is T)
 					return (T)o.Object;
 			}
-			return default;
+			return default!;
 		}
+
+		public event EventHandler? OnDisposed;
 
 		public void Dispose() {
 			if (IsDisposed)
 				return;
 			IsDisposed = true;
+			OnDisposed?.Invoke(this, EventArgs.Empty);
+			OnDisposed = null;
 
 			// Clear everything. We don't want to hold on to objects that could've gotten disposed,
 			// eg. IDocumentViewer. Those instances could throw ObjectDisposedException

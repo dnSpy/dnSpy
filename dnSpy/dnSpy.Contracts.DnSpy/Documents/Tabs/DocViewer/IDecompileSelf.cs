@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,7 +26,7 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 	public interface IDecompileSelf {
 		/// <summary>
 		/// Decompiles itself or returns false if someone else should have a try. This method can be
-		/// called in any thread.
+		/// called on any thread.
 		/// </summary>
 		/// <param name="context">Context</param>
 		/// <returns></returns>

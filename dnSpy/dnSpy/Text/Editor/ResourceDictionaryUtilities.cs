@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,12 +23,12 @@ using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Text.Editor {
 	static class ResourceDictionaryUtilities {
-		public static Brush GetForegroundBrush(ResourceDictionary dict, Brush defaultBrush = null) => GetBrush(dict, EditorFormatDefinition.ForegroundBrushId, defaultBrush);
-		public static Brush GetBackgroundBrush(ResourceDictionary dict, Brush defaultBrush = null) => GetBrush(dict, EditorFormatDefinition.BackgroundBrushId, defaultBrush);
+		public static Brush? GetForegroundBrush(ResourceDictionary dict, Brush? defaultBrush = null) => GetBrush(dict, EditorFormatDefinition.ForegroundBrushId, defaultBrush);
+		public static Brush? GetBackgroundBrush(ResourceDictionary dict, Brush? defaultBrush = null) => GetBrush(dict, EditorFormatDefinition.BackgroundBrushId, defaultBrush);
 
-		public static Brush GetBrush(ResourceDictionary dict, string prop, Brush defaultBrush = null) {
+		public static Brush? GetBrush(ResourceDictionary dict, string prop, Brush? defaultBrush = null) {
 			var brush = dict[prop] as Brush ?? defaultBrush;
-			if (brush != null && brush.CanFreeze)
+			if (!(brush is null) && brush.CanFreeze)
 				brush.Freeze();
 			return brush;
 		}

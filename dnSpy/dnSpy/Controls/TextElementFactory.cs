@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,6 +30,7 @@ using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.TextFormatting;
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.DnSpy.Text.WPF;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using Microsoft.VisualStudio.Text.Classification;
@@ -81,7 +82,7 @@ namespace dnSpy.Controls {
 			if (tags.Count != 0) {
 				if (useFastTextBlock) {
 					return new FastTextBlock((flags & TextElementFlags.NewFormatter) != 0, new TextSrc {
-						text = ToString(text, filterOutNewLines),
+						text = ToString(WpfUnicodeUtils.ReplaceBadChars(text), filterOutNewLines),
 						classificationFormatMap = classificationFormatMap,
 						tagsList = tags.ToArray(),
 					});
@@ -97,12 +98,12 @@ namespace dnSpy.Controls {
 			FrameworkElement fwElem;
 			if (useFastTextBlock) {
 				fwElem = new FastTextBlock((flags & TextElementFlags.NewFormatter) != 0) {
-					Text = ToString(text, filterOutNewLines)
+					Text = ToString(WpfUnicodeUtils.ReplaceBadChars(text), filterOutNewLines)
 				};
 			}
 			else {
 				fwElem = new TextBlock {
-					Text = ToString(text, filterOutNewLines),
+					Text = ToString(WpfUnicodeUtils.ReplaceBadChars(text), filterOutNewLines),
 					TextTrimming = GetTextTrimming(flags),
 					TextWrapping = GetTextWrapping(flags),
 				};
@@ -137,26 +138,30 @@ namespace dnSpy.Controls {
 
 		// Ki's fast TextSource
 		sealed class TextSrc : TextSource, FastTextBlock.IFastTextSource {
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
 			FastTextBlock parent;
 			internal string text;
 			internal IClassificationFormatMap classificationFormatMap;
 			internal TextClassificationTag[] tagsList;
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
 
 			sealed class TextProps : TextRunProperties {
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
 				internal Brush background;
 				internal Brush foreground;
 				internal Typeface typeface;
 				internal double fontSize;
-				internal TextDecorationCollection textDecorations;
-				internal TextEffectCollection textEffects;
+				internal TextDecorationCollection? textDecorations;
+				internal TextEffectCollection? textEffects;
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
 
 				public override Brush BackgroundBrush => background;
 				public override CultureInfo CultureInfo => CultureInfo.CurrentUICulture;
 				public override double FontHintingEmSize => fontSize;
 				public override double FontRenderingEmSize => fontSize;
 				public override Brush ForegroundBrush => foreground;
-				public override TextDecorationCollection TextDecorations => textDecorations;
-				public override TextEffectCollection TextEffects => textEffects;
+				public override TextDecorationCollection? TextDecorations => textDecorations;
+				public override TextEffectCollection? TextEffects => textEffects;
 				public override Typeface Typeface => typeface;
 			}
 

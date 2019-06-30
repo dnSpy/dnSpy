@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,20 +25,22 @@ namespace dnSpy.AsmEditor.Module {
 	static class ModuleUtils {
 		public static ModuleDef CreateNetModule(string name, Guid mvid, ClrVersion clrVersion) => CreateModule(name, mvid, clrVersion, ModuleKind.NetModule);
 
-		public static ModuleDef CreateModule(string name, Guid mvid, ClrVersion clrVersion, ModuleKind kind, ModuleDef existingModule = null) {
+		public static ModuleDef CreateModule(string name, Guid mvid, ClrVersion clrVersion, ModuleKind kind, ModuleDef? existingModule = null) {
 			var module = CreateModuleDef(name, mvid, clrVersion, existingModule);
 			module.Kind = kind;
-			module.Characteristics = Characteristics._32BitMachine | Characteristics.ExecutableImage;
+			module.Characteristics = Characteristics.Bit32Machine | Characteristics.ExecutableImage;
 			if (kind == ModuleKind.Dll || kind == ModuleKind.NetModule)
 				module.Characteristics |= Characteristics.Dll;
 			module.DllCharacteristics = DllCharacteristics.TerminalServerAware | DllCharacteristics.NoSeh | DllCharacteristics.NxCompat | DllCharacteristics.DynamicBase;
 			return module;
 		}
 
-		static ModuleDef CreateModuleDef(string name, Guid mvid, ClrVersion clrVersion, ModuleDef existingModule) {
+		static ModuleDef CreateModuleDef(string name, Guid mvid, ClrVersion clrVersion, ModuleDef? existingModule) {
 			var clrValues = ClrVersionValues.GetValues(clrVersion);
+			if (clrValues is null)
+				throw new ArgumentNullException(nameof(clrVersion));
 			ModuleDef module;
-			if (existingModule == null)
+			if (existingModule is null)
 				module = new ModuleDefUser(name, mvid, clrValues.CorLibRef);
 			else {
 				module = existingModule;

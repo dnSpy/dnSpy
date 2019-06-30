@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,12 +30,12 @@ using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Documents.Tabs {
 	interface IDocumentListLoader {
-		IEnumerable<object> Load(ISettingsSection section, bool loadDocuments);
+		IEnumerable<object?> Load(ISettingsSection section, bool loadDocuments);
 		void Save(ISettingsSection section);
 		bool CanLoad { get; }
-		bool Load(DocumentList documentList, IDsDocumentLoader documentLoader = null);
+		bool Load(DocumentList documentList, IDsDocumentLoader? documentLoader = null);
 		bool CanReload { get; }
-		bool Reload(IDsDocumentLoader documentLoader = null);
+		bool Reload(IDsDocumentLoader? documentLoader = null);
 		bool CanCloseAll { get; }
 		void CloseAll();
 		void SaveCurrentDocumentsToList();
@@ -59,7 +59,7 @@ namespace dnSpy.Documents.Tabs {
 
 		void AppWindow_MainWindowClosed(object sender, EventArgs e) => SaveCurrentDocumentsToList();
 
-		struct Disable_SaveCurrentDocumentsToList : IDisposable {
+		readonly struct Disable_SaveCurrentDocumentsToList : IDisposable {
 			readonly DocumentListLoader documentListLoader;
 			readonly bool oldValue;
 
@@ -84,7 +84,7 @@ namespace dnSpy.Documents.Tabs {
 		}
 		bool disable_SaveCurrentDocumentsToList;
 
-		public IEnumerable<object> Load(ISettingsSection section, bool loadDocuments) {
+		public IEnumerable<object?> Load(ISettingsSection section, bool loadDocuments) {
 			var disable = DisableSaveToList();
 			documentListService.Load(section);
 			yield return null;
@@ -124,9 +124,9 @@ namespace dnSpy.Documents.Tabs {
 
 		public bool CanLoad => !disableLoadAndReload && documentListListeners.All(a => a.Value.CanLoad);
 
-		public bool Load(DocumentList documentList, IDsDocumentLoader documentLoader) {
+		public bool Load(DocumentList documentList, IDsDocumentLoader? documentLoader) {
 			const bool isReload = false;
-			if (documentLoader == null)
+			if (documentLoader is null)
 				documentLoader = new DefaultDsDocumentLoader(documentTabService.DocumentTreeView.DocumentService);
 			if (!CanLoad)
 				return false;
@@ -143,18 +143,14 @@ namespace dnSpy.Documents.Tabs {
 			}
 			NotifyAfterLoad(isReload);
 
-			Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
-				GC.Collect();
-				GC.WaitForPendingFinalizers();
-			}));
 			return true;
 		}
 
 		public bool CanReload => !disableLoadAndReload && documentListListeners.All(a => a.Value.CanReload);
 
-		public bool Reload(IDsDocumentLoader documentLoader) {
+		public bool Reload(IDsDocumentLoader? documentLoader) {
 			const bool isReload = true;
-			if (documentLoader == null)
+			if (documentLoader is null)
 				documentLoader = new DefaultDsDocumentLoader(documentTabService.DocumentTreeView.DocumentService);
 			if (!CanReload)
 				return false;
@@ -185,8 +181,6 @@ namespace dnSpy.Documents.Tabs {
 			// or the code that tries to find the nodes might fail to find them.
 			disableLoadAndReload = true;
 			Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
-				GC.Collect();
-				GC.WaitForPendingFinalizers();
 				foreach (var o in documentTabSerializer.Restore(tgws)) {
 				}
 				disableLoadAndReload = false;
@@ -208,11 +202,6 @@ namespace dnSpy.Documents.Tabs {
 			documentTabService.CloseAll();
 			documentTabService.DocumentTreeView.DocumentService.Clear();
 			NotifyAfterLoad(isReload);
-
-			Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
-				GC.Collect();
-				GC.WaitForPendingFinalizers();
-			}));
 		}
 	}
 }

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -38,9 +38,10 @@ namespace dnSpy.AsmEditor.SaveModule {
 		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
 		public bool CanSaveMixedModeModule => Module is ModuleDefMD;
 		public bool IsMixedModeModule => CanSaveMixedModeModule && !Module.IsILOnly;
+		public bool CanPreserveOtherMetadataStreams => Module is ModuleDefMD;
 
 		public bool UseMixedMode {
-			get { return useMixedMode; }
+			get => useMixedMode;
 			set {
 				if (useMixedMode != value) {
 					useMixedMode = value;
@@ -51,10 +52,10 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 		bool useMixedMode;
 
-		public bool CanWritePdb => Module.PdbState != null;
+		public bool CanWritePdb => !(Module.PdbState is null);
 
 		public bool WritePdb {
-			get { return writePdb; }
+			get => writePdb;
 			set {
 				if (writePdb != value) {
 					writePdb = value;
@@ -65,7 +66,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		bool writePdb;
 
 		public bool ShareMethodBodies {
-			get { return shareMethodBodies; }
+			get => shareMethodBodies;
 			set {
 				if (value != shareMethodBodies) {
 					shareMethodBodies = value;
@@ -76,7 +77,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		bool shareMethodBodies;
 
 		public bool AddCheckSum {
-			get { return addCheckSum; }
+			get => addCheckSum;
 			set {
 				if (value != addCheckSum) {
 					addCheckSum = value;
@@ -86,8 +87,8 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 		bool addCheckSum;
 
-		public Win32Resources Win32Resources {
-			get { return win32Resources; }
+		public Win32Resources? Win32Resources {
+			get => win32Resources;
 			set {
 				if (win32Resources != value) {
 					win32Resources = value;
@@ -95,10 +96,10 @@ namespace dnSpy.AsmEditor.SaveModule {
 				}
 			}
 		}
-		Win32Resources win32Resources;
+		Win32Resources? win32Resources;
 
 		public bool KeepExtraPEData {
-			get { return keepExtraPEData; }
+			get => keepExtraPEData;
 			set {
 				if (keepExtraPEData != value) {
 					keepExtraPEData = value;
@@ -109,7 +110,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		bool keepExtraPEData;
 
 		public bool KeepWin32Resources {
-			get { return keepWin32Resources; }
+			get => keepWin32Resources;
 			set {
 				if (keepWin32Resources != value) {
 					keepWin32Resources = value;
@@ -119,13 +120,13 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 		bool keepWin32Resources;
 
-		internal static readonly EnumVM[] moduleKindList = EnumVM.Create(typeof(dnlib.DotNet.ModuleKind));
+		internal static readonly EnumVM[] moduleKindList = EnumVM.Create(typeof(ModuleKind));
 
 		public EnumListVM ModuleKind { get; }
 
 		public string Extension {
 			get {
-				switch ((dnlib.DotNet.ModuleKind)ModuleKind.SelectedItem) {
+				switch ((ModuleKind)ModuleKind.SelectedItem!) {
 				case dnlib.DotNet.ModuleKind.Console:
 				case dnlib.DotNet.ModuleKind.Windows:
 				default:
@@ -140,23 +141,23 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 		public PEHeadersOptionsVM PEHeadersOptions { get; }
 		public Cor20HeaderOptionsVM Cor20HeaderOptions { get; }
-		public MetaDataOptionsVM MetaDataOptions { get; }
+		public MetadataOptionsVM MetadataOptions { get; }
 
 		public SaveModuleOptionsVM(IDsDocument document) {
 			this.document = document;
-			Module = document.ModuleDef;
+			Module = document.ModuleDef!;
 			PEHeadersOptions = new PEHeadersOptionsVM(Module.Machine, GetSubsystem(Module.Kind));
 			Cor20HeaderOptions = new Cor20HeaderOptionsVM();
-			MetaDataOptions = new MetaDataOptionsVM();
+			MetadataOptions = new MetadataOptionsVM(Module);
 
 			PEHeadersOptions.PropertyChanged += (s, e) => HasErrorUpdated();
 			Cor20HeaderOptions.PropertyChanged += (s, e) => HasErrorUpdated();
-			MetaDataOptions.PropertyChanged += (s, e) => HasErrorUpdated();
+			MetadataOptions.PropertyChanged += (s, e) => HasErrorUpdated();
 
 			ModuleKind = new EnumListVM(moduleKindList, (a, b) => {
 				OnPropertyChanged(nameof(Extension));
-				PEHeadersOptions.Subsystem.SelectedItem = GetSubsystem((dnlib.DotNet.ModuleKind)ModuleKind.SelectedItem);
-				PEHeadersOptions.Characteristics = CharacteristicsHelper.GetCharacteristics(PEHeadersOptions.Characteristics ?? 0, (dnlib.DotNet.ModuleKind)ModuleKind.SelectedItem);
+				PEHeadersOptions.Subsystem.SelectedItem = GetSubsystem((ModuleKind)ModuleKind.SelectedItem!);
+				PEHeadersOptions.Characteristics = CharacteristicsHelper.GetCharacteristics(PEHeadersOptions.Characteristics ?? 0, (ModuleKind)ModuleKind.SelectedItem!);
 			});
 
 			Reinitialize();
@@ -170,6 +171,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 		void Reinitialize() {
 			FileName = Module.Location;
+			OriginalFileName = Module.Location;
 			if (UseMixedMode == IsMixedModeModule)
 				ReinitializeModuleWriterOptions();
 			else
@@ -178,7 +180,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 		void ReinitializeModuleWriterOptions() {
 			if (UseMixedMode)
-				InitializeFrom(new NativeModuleWriterOptions((ModuleDefMD)Module));
+				InitializeFrom(new NativeModuleWriterOptions((ModuleDefMD)Module, optimizeImageSize: true));
 			else
 				InitializeFrom(new ModuleWriterOptions(Module));
 			WritePdb = CanWritePdb;
@@ -186,38 +188,46 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 		public ModuleWriterOptionsBase CreateWriterOptions() {
 			if (UseMixedMode) {
-				var options = new NativeModuleWriterOptions((ModuleDefMD)Module);
+				var options = new NativeModuleWriterOptions((ModuleDefMD)Module, optimizeImageSize: true);
 				CopyTo(options);
 				options.KeepExtraPEData = KeepExtraPEData;
 				options.KeepWin32Resources = KeepWin32Resources;
-				return options;
+				return AddOtherOptions(options);
 			}
 			else {
-				var options = new ModuleWriterOptions();
+				var options = new ModuleWriterOptions(Module);
 				CopyTo(options);
-				if (Module.ManagedEntryPoint != null || Module.NativeEntryPoint == 0)
+				if (!(Module.ManagedEntryPoint is null) || Module.NativeEntryPoint == 0)
 					options.Cor20HeaderOptions.Flags &= ~ComImageFlags.NativeEntryPoint;
-				return options;
+				return AddOtherOptions(options);
 			}
+		}
+
+		ModuleWriterOptionsBase AddOtherOptions(ModuleWriterOptionsBase options) {
+			if (MetadataOptions.PreserveOtherMetadataStreams)
+				options.MetadataOptions.PreserveHeapOrder(Module, addCustomHeaps: true);
+			return options;
 		}
 
 		void CopyTo(ModuleWriterOptionsBase options) {
 			PEHeadersOptions.CopyTo(options.PEHeadersOptions);
 			Cor20HeaderOptions.CopyTo(options.Cor20HeaderOptions);
-			MetaDataOptions.CopyTo(options.MetaDataOptions);
+			MetadataOptions.CopyTo(options.MetadataOptions);
 
 			options.WritePdb = WritePdb;
 			options.ShareMethodBodies = ShareMethodBodies;
 			options.AddCheckSum = AddCheckSum;
 			options.Win32Resources = Win32Resources;
-			options.ModuleKind = (dnlib.DotNet.ModuleKind)ModuleKind.SelectedItem;
+			options.ModuleKind = (ModuleKind)ModuleKind.SelectedItem!;
 		}
 
 		public SaveModuleOptionsVM Clone() => CopyTo(new SaveModuleOptionsVM(document));
 
 		public SaveModuleOptionsVM CopyTo(SaveModuleOptionsVM other) {
 			other.FileName = FileName;
+			other.OriginalFileName = OriginalFileName;
 			other.UseMixedMode = UseMixedMode;
+			other.MetadataOptions.PreserveOtherMetadataStreams = MetadataOptions.PreserveOtherMetadataStreams;
 			other.InitializeFrom(CreateWriterOptions());
 			return other;
 		}
@@ -247,7 +257,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 			PEHeadersOptions.InitializeFrom(options.PEHeadersOptions);
 			Cor20HeaderOptions.InitializeFrom(options.Cor20HeaderOptions);
-			MetaDataOptions.InitializeFrom(options.MetaDataOptions);
+			MetadataOptions.InitializeFrom(options.MetadataOptions);
 
 			WritePdb = options.WritePdb;
 			ShareMethodBodies = options.ShareMethodBodies;
@@ -265,7 +275,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 				return base.HasError ||
 						PEHeadersOptions.HasError ||
 						Cor20HeaderOptions.HasError ||
-						MetaDataOptions.HasError;
+						MetadataOptions.HasError;
 			}
 		}
 	}
@@ -278,7 +288,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			this.defaultMachine = defaultMachine;
 			this.defaultSubsystem = defaultSubsystem;
 			Machine = new EnumListVM(machineList, (a, b) => {
-				Characteristics = CharacteristicsHelper.GetCharacteristics(Characteristics ?? 0, (dnlib.PE.Machine)Machine.SelectedItem);
+				Characteristics = CharacteristicsHelper.GetCharacteristics(Characteristics ?? 0, (dnlib.PE.Machine)Machine.SelectedItem!);
 			});
 			TimeDateStamp = new NullableUInt32VM(a => HasErrorUpdated());
 			PointerToSymbolTable = new NullableUInt32VM(a => HasErrorUpdated());
@@ -310,7 +320,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		public NullableUInt32VM NumberOfSymbols { get; }
 
 		public Characteristics? Characteristics {
-			get { return characteristics; }
+			get => characteristics;
 			set {
 				if (characteristics != value) {
 					characteristics = value;
@@ -337,89 +347,89 @@ namespace dnSpy.AsmEditor.SaveModule {
 		Characteristics? characteristics;
 
 		public bool? RelocsStripped {
-			get { return GetFlagValue(dnlib.PE.Characteristics.RelocsStripped); }
-			set { SetFlagValue(dnlib.PE.Characteristics.RelocsStripped, value); }
+			get => GetFlagValue(dnlib.PE.Characteristics.RelocsStripped);
+			set => SetFlagValue(dnlib.PE.Characteristics.RelocsStripped, value);
 		}
 
 		public bool? ExecutableImage {
-			get { return GetFlagValue(dnlib.PE.Characteristics.ExecutableImage); }
-			set { SetFlagValue(dnlib.PE.Characteristics.ExecutableImage, value); }
+			get => GetFlagValue(dnlib.PE.Characteristics.ExecutableImage);
+			set => SetFlagValue(dnlib.PE.Characteristics.ExecutableImage, value);
 		}
 
 		public bool? LineNumsStripped {
-			get { return GetFlagValue(dnlib.PE.Characteristics.LineNumsStripped); }
-			set { SetFlagValue(dnlib.PE.Characteristics.LineNumsStripped, value); }
+			get => GetFlagValue(dnlib.PE.Characteristics.LineNumsStripped);
+			set => SetFlagValue(dnlib.PE.Characteristics.LineNumsStripped, value);
 		}
 
 		public bool? LocalSymsStripped {
-			get { return GetFlagValue(dnlib.PE.Characteristics.LocalSymsStripped); }
-			set { SetFlagValue(dnlib.PE.Characteristics.LocalSymsStripped, value); }
+			get => GetFlagValue(dnlib.PE.Characteristics.LocalSymsStripped);
+			set => SetFlagValue(dnlib.PE.Characteristics.LocalSymsStripped, value);
 		}
 
 		public bool? AggressiveWsTrim {
-			get { return GetFlagValue(dnlib.PE.Characteristics.AggressiveWsTrim); }
-			set { SetFlagValue(dnlib.PE.Characteristics.AggressiveWsTrim, value); }
+			get => GetFlagValue(dnlib.PE.Characteristics.AggressiveWsTrim);
+			set => SetFlagValue(dnlib.PE.Characteristics.AggressiveWsTrim, value);
 		}
 
 		public bool? LargeAddressAware {
-			get { return GetFlagValue(dnlib.PE.Characteristics.LargeAddressAware); }
-			set { SetFlagValue(dnlib.PE.Characteristics.LargeAddressAware, value); }
+			get => GetFlagValue(dnlib.PE.Characteristics.LargeAddressAware);
+			set => SetFlagValue(dnlib.PE.Characteristics.LargeAddressAware, value);
 		}
 
 		public bool? CharacteristicsReserved1 {
-			get { return GetFlagValue(dnlib.PE.Characteristics.Reserved1); }
-			set { SetFlagValue(dnlib.PE.Characteristics.Reserved1, value); }
+			get => GetFlagValue(dnlib.PE.Characteristics.Reserved1);
+			set => SetFlagValue(dnlib.PE.Characteristics.Reserved1, value);
 		}
 
 		public bool? BytesReversedLo {
-			get { return GetFlagValue(dnlib.PE.Characteristics.BytesReversedLo); }
-			set { SetFlagValue(dnlib.PE.Characteristics.BytesReversedLo, value); }
+			get => GetFlagValue(dnlib.PE.Characteristics.BytesReversedLo);
+			set => SetFlagValue(dnlib.PE.Characteristics.BytesReversedLo, value);
 		}
 
 		public bool? Bit32Machine {
-			get { return GetFlagValue(dnlib.PE.Characteristics._32BitMachine); }
-			set { SetFlagValue(dnlib.PE.Characteristics._32BitMachine, value); }
+			get => GetFlagValue(dnlib.PE.Characteristics.Bit32Machine);
+			set => SetFlagValue(dnlib.PE.Characteristics.Bit32Machine, value);
 		}
 
 		public bool? DebugStripped {
-			get { return GetFlagValue(dnlib.PE.Characteristics.DebugStripped); }
-			set { SetFlagValue(dnlib.PE.Characteristics.DebugStripped, value); }
+			get => GetFlagValue(dnlib.PE.Characteristics.DebugStripped);
+			set => SetFlagValue(dnlib.PE.Characteristics.DebugStripped, value);
 		}
 
 		public bool? RemovableRunFromSwap {
-			get { return GetFlagValue(dnlib.PE.Characteristics.RemovableRunFromSwap); }
-			set { SetFlagValue(dnlib.PE.Characteristics.RemovableRunFromSwap, value); }
+			get => GetFlagValue(dnlib.PE.Characteristics.RemovableRunFromSwap);
+			set => SetFlagValue(dnlib.PE.Characteristics.RemovableRunFromSwap, value);
 		}
 
 		public bool? NetRunFromSwap {
-			get { return GetFlagValue(dnlib.PE.Characteristics.NetRunFromSwap); }
-			set { SetFlagValue(dnlib.PE.Characteristics.NetRunFromSwap, value); }
+			get => GetFlagValue(dnlib.PE.Characteristics.NetRunFromSwap);
+			set => SetFlagValue(dnlib.PE.Characteristics.NetRunFromSwap, value);
 		}
 
 		public bool? System {
-			get { return GetFlagValue(dnlib.PE.Characteristics.System); }
-			set { SetFlagValue(dnlib.PE.Characteristics.System, value); }
+			get => GetFlagValue(dnlib.PE.Characteristics.System);
+			set => SetFlagValue(dnlib.PE.Characteristics.System, value);
 		}
 
 		public bool? Dll {
-			get { return GetFlagValue(dnlib.PE.Characteristics.Dll); }
-			set { SetFlagValue(dnlib.PE.Characteristics.Dll, value); }
+			get => GetFlagValue(dnlib.PE.Characteristics.Dll);
+			set => SetFlagValue(dnlib.PE.Characteristics.Dll, value);
 		}
 
 		public bool? UpSystemOnly {
-			get { return GetFlagValue(dnlib.PE.Characteristics.UpSystemOnly); }
-			set { SetFlagValue(dnlib.PE.Characteristics.UpSystemOnly, value); }
+			get => GetFlagValue(dnlib.PE.Characteristics.UpSystemOnly);
+			set => SetFlagValue(dnlib.PE.Characteristics.UpSystemOnly, value);
 		}
 
 		public bool? BytesReversedHi {
-			get { return GetFlagValue(dnlib.PE.Characteristics.BytesReversedHi); }
-			set { SetFlagValue(dnlib.PE.Characteristics.BytesReversedHi, value); }
+			get => GetFlagValue(dnlib.PE.Characteristics.BytesReversedHi);
+			set => SetFlagValue(dnlib.PE.Characteristics.BytesReversedHi, value);
 		}
 
-		bool? GetFlagValue(Characteristics flag) => Characteristics == null ? (bool?)null : (Characteristics.Value & flag) != 0;
+		bool? GetFlagValue(Characteristics flag) => Characteristics is null ? (bool?)null : (Characteristics.Value & flag) != 0;
 
 		void SetFlagValue(Characteristics flag, bool? value) {
-			if (Characteristics == null)
+			if (Characteristics is null)
 				Characteristics = 0;
 			if (value ?? false)
 				Characteristics |= flag;
@@ -444,7 +454,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		public EnumListVM Subsystem { get; } = new EnumListVM(subsystemList);
 
 		public DllCharacteristics? DllCharacteristics {
-			get { return dllCharacteristics; }
+			get => dllCharacteristics;
 			set {
 				if (dllCharacteristics != value) {
 					dllCharacteristics = value;
@@ -471,89 +481,89 @@ namespace dnSpy.AsmEditor.SaveModule {
 		DllCharacteristics? dllCharacteristics;
 
 		public bool? DllCharacteristicsReserved1 {
-			get { return GetFlagValue(dnlib.PE.DllCharacteristics.Reserved1); }
-			set { SetFlagValue(dnlib.PE.DllCharacteristics.Reserved1, value); }
+			get => GetFlagValue(dnlib.PE.DllCharacteristics.Reserved1);
+			set => SetFlagValue(dnlib.PE.DllCharacteristics.Reserved1, value);
 		}
 
 		public bool? DllCharacteristicsReserved2 {
-			get { return GetFlagValue(dnlib.PE.DllCharacteristics.Reserved2); }
-			set { SetFlagValue(dnlib.PE.DllCharacteristics.Reserved2, value); }
+			get => GetFlagValue(dnlib.PE.DllCharacteristics.Reserved2);
+			set => SetFlagValue(dnlib.PE.DllCharacteristics.Reserved2, value);
 		}
 
 		public bool? DllCharacteristicsReserved3 {
-			get { return GetFlagValue(dnlib.PE.DllCharacteristics.Reserved3); }
-			set { SetFlagValue(dnlib.PE.DllCharacteristics.Reserved3, value); }
+			get => GetFlagValue(dnlib.PE.DllCharacteristics.Reserved3);
+			set => SetFlagValue(dnlib.PE.DllCharacteristics.Reserved3, value);
 		}
 
 		public bool? DllCharacteristicsReserved4 {
-			get { return GetFlagValue(dnlib.PE.DllCharacteristics.Reserved4); }
-			set { SetFlagValue(dnlib.PE.DllCharacteristics.Reserved4, value); }
+			get => GetFlagValue(dnlib.PE.DllCharacteristics.Reserved4);
+			set => SetFlagValue(dnlib.PE.DllCharacteristics.Reserved4, value);
 		}
 
 		public bool? DllCharacteristicsReserved5 {
-			get { return GetFlagValue(dnlib.PE.DllCharacteristics.Reserved5); }
-			set { SetFlagValue(dnlib.PE.DllCharacteristics.Reserved5, value); }
+			get => GetFlagValue(dnlib.PE.DllCharacteristics.Reserved5);
+			set => SetFlagValue(dnlib.PE.DllCharacteristics.Reserved5, value);
 		}
 
 		public bool? HighEntropyVA {
-			get { return GetFlagValue(dnlib.PE.DllCharacteristics.HighEntropyVA); }
-			set { SetFlagValue(dnlib.PE.DllCharacteristics.HighEntropyVA, value); }
+			get => GetFlagValue(dnlib.PE.DllCharacteristics.HighEntropyVA);
+			set => SetFlagValue(dnlib.PE.DllCharacteristics.HighEntropyVA, value);
 		}
 
 		public bool? DynamicBase {
-			get { return GetFlagValue(dnlib.PE.DllCharacteristics.DynamicBase); }
-			set { SetFlagValue(dnlib.PE.DllCharacteristics.DynamicBase, value); }
+			get => GetFlagValue(dnlib.PE.DllCharacteristics.DynamicBase);
+			set => SetFlagValue(dnlib.PE.DllCharacteristics.DynamicBase, value);
 		}
 
 		public bool? ForceIntegrity {
-			get { return GetFlagValue(dnlib.PE.DllCharacteristics.ForceIntegrity); }
-			set { SetFlagValue(dnlib.PE.DllCharacteristics.ForceIntegrity, value); }
+			get => GetFlagValue(dnlib.PE.DllCharacteristics.ForceIntegrity);
+			set => SetFlagValue(dnlib.PE.DllCharacteristics.ForceIntegrity, value);
 		}
 
 		public bool? NxCompat {
-			get { return GetFlagValue(dnlib.PE.DllCharacteristics.NxCompat); }
-			set { SetFlagValue(dnlib.PE.DllCharacteristics.NxCompat, value); }
+			get => GetFlagValue(dnlib.PE.DllCharacteristics.NxCompat);
+			set => SetFlagValue(dnlib.PE.DllCharacteristics.NxCompat, value);
 		}
 
 		public bool? NoIsolation {
-			get { return GetFlagValue(dnlib.PE.DllCharacteristics.NoIsolation); }
-			set { SetFlagValue(dnlib.PE.DllCharacteristics.NoIsolation, value); }
+			get => GetFlagValue(dnlib.PE.DllCharacteristics.NoIsolation);
+			set => SetFlagValue(dnlib.PE.DllCharacteristics.NoIsolation, value);
 		}
 
 		public bool? NoSeh {
-			get { return GetFlagValue(dnlib.PE.DllCharacteristics.NoSeh); }
-			set { SetFlagValue(dnlib.PE.DllCharacteristics.NoSeh, value); }
+			get => GetFlagValue(dnlib.PE.DllCharacteristics.NoSeh);
+			set => SetFlagValue(dnlib.PE.DllCharacteristics.NoSeh, value);
 		}
 
 		public bool? NoBind {
-			get { return GetFlagValue(dnlib.PE.DllCharacteristics.NoBind); }
-			set { SetFlagValue(dnlib.PE.DllCharacteristics.NoBind, value); }
+			get => GetFlagValue(dnlib.PE.DllCharacteristics.NoBind);
+			set => SetFlagValue(dnlib.PE.DllCharacteristics.NoBind, value);
 		}
 
 		public bool? AppContainer {
-			get { return GetFlagValue(dnlib.PE.DllCharacteristics.AppContainer); }
-			set { SetFlagValue(dnlib.PE.DllCharacteristics.AppContainer, value); }
+			get => GetFlagValue(dnlib.PE.DllCharacteristics.AppContainer);
+			set => SetFlagValue(dnlib.PE.DllCharacteristics.AppContainer, value);
 		}
 
 		public bool? WdmDriver {
-			get { return GetFlagValue(dnlib.PE.DllCharacteristics.WdmDriver); }
-			set { SetFlagValue(dnlib.PE.DllCharacteristics.WdmDriver, value); }
+			get => GetFlagValue(dnlib.PE.DllCharacteristics.WdmDriver);
+			set => SetFlagValue(dnlib.PE.DllCharacteristics.WdmDriver, value);
 		}
 
 		public bool? GuardCf {
-			get { return GetFlagValue(dnlib.PE.DllCharacteristics.GuardCf); }
-			set { SetFlagValue(dnlib.PE.DllCharacteristics.GuardCf, value); }
+			get => GetFlagValue(dnlib.PE.DllCharacteristics.GuardCf);
+			set => SetFlagValue(dnlib.PE.DllCharacteristics.GuardCf, value);
 		}
 
 		public bool? TerminalServerAware {
-			get { return GetFlagValue(dnlib.PE.DllCharacteristics.TerminalServerAware); }
-			set { SetFlagValue(dnlib.PE.DllCharacteristics.TerminalServerAware, value); }
+			get => GetFlagValue(dnlib.PE.DllCharacteristics.TerminalServerAware);
+			set => SetFlagValue(dnlib.PE.DllCharacteristics.TerminalServerAware, value);
 		}
 
-		bool? GetFlagValue(DllCharacteristics flag) => DllCharacteristics == null ? (bool?)null : (DllCharacteristics.Value & flag) != 0;
+		bool? GetFlagValue(DllCharacteristics flag) => DllCharacteristics is null ? (bool?)null : (DllCharacteristics.Value & flag) != 0;
 
 		void SetFlagValue(DllCharacteristics flag, bool? value) {
-			if (DllCharacteristics == null)
+			if (DllCharacteristics is null)
 				DllCharacteristics = 0;
 			if (value ?? false)
 				DllCharacteristics |= flag;
@@ -569,7 +579,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		public NullableUInt32VM NumberOfRvaAndSizes { get; }
 
 		public void CopyTo(PEHeadersOptions options) {
-			options.Machine = (dnlib.PE.Machine)Machine.SelectedItem;
+			options.Machine = (dnlib.PE.Machine)Machine.SelectedItem!;
 			options.TimeDateStamp = TimeDateStamp.Value;
 			options.PointerToSymbolTable = PointerToSymbolTable.Value;
 			options.NumberOfSymbols = NumberOfSymbols.Value;
@@ -586,7 +596,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			options.MajorSubsystemVersion = MajorSubsystemVersion.Value;
 			options.MinorSubsystemVersion = MinorSubsystemVersion.Value;
 			options.Win32VersionValue = Win32VersionValue.Value;
-			options.Subsystem = (dnlib.PE.Subsystem)Subsystem.SelectedItem;
+			options.Subsystem = (dnlib.PE.Subsystem)Subsystem.SelectedItem!;
 			options.DllCharacteristics = DllCharacteristics;
 			options.SizeOfStackReserve = SizeOfStackReserve.Value;
 			options.SizeOfStackCommit = SizeOfStackCommit.Value;
@@ -662,7 +672,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		public NullableUInt16VM MinorRuntimeVersion { get; }
 
 		public ComImageFlags? Flags {
-			get { return flags; }
+			get => flags;
 			set {
 				if (flags != value) {
 					flags = value;
@@ -679,39 +689,39 @@ namespace dnSpy.AsmEditor.SaveModule {
 		ComImageFlags? flags;
 
 		public bool? ILOnly {
-			get { return GetFlagValue(ComImageFlags.ILOnly); }
-			set { SetFlagValue(ComImageFlags.ILOnly, value); }
+			get => GetFlagValue(ComImageFlags.ILOnly);
+			set => SetFlagValue(ComImageFlags.ILOnly, value);
 		}
 
 		public bool? Bit32Required {
-			get { return GetFlagValue(ComImageFlags._32BitRequired); }
-			set { SetFlagValue(ComImageFlags._32BitRequired, value); }
+			get => GetFlagValue(ComImageFlags.Bit32Required);
+			set => SetFlagValue(ComImageFlags.Bit32Required, value);
 		}
 
 		public bool? ILLibrary {
-			get { return GetFlagValue(ComImageFlags.ILLibrary); }
-			set { SetFlagValue(ComImageFlags.ILLibrary, value); }
+			get => GetFlagValue(ComImageFlags.ILLibrary);
+			set => SetFlagValue(ComImageFlags.ILLibrary, value);
 		}
 
 		public bool? StrongNameSigned {
-			get { return GetFlagValue(ComImageFlags.StrongNameSigned); }
-			set { SetFlagValue(ComImageFlags.StrongNameSigned, value); }
+			get => GetFlagValue(ComImageFlags.StrongNameSigned);
+			set => SetFlagValue(ComImageFlags.StrongNameSigned, value);
 		}
 
 		public bool? TrackDebugData {
-			get { return GetFlagValue(ComImageFlags.TrackDebugData); }
-			set { SetFlagValue(ComImageFlags.TrackDebugData, value); }
+			get => GetFlagValue(ComImageFlags.TrackDebugData);
+			set => SetFlagValue(ComImageFlags.TrackDebugData, value);
 		}
 
 		public bool? Bit32Preferred {
-			get { return GetFlagValue(ComImageFlags._32BitPreferred); }
-			set { SetFlagValue(ComImageFlags._32BitPreferred, value); }
+			get => GetFlagValue(ComImageFlags.Bit32Preferred);
+			set => SetFlagValue(ComImageFlags.Bit32Preferred, value);
 		}
 
-		bool? GetFlagValue(ComImageFlags flag) => Flags == null ? (bool?)null : (Flags.Value & flag) != 0;
+		bool? GetFlagValue(ComImageFlags flag) => Flags is null ? (bool?)null : (Flags.Value & flag) != 0;
 
 		void SetFlagValue(ComImageFlags flag, bool? value) {
-			if (Flags == null)
+			if (Flags is null)
 				Flags = 0;
 			if (value ?? false)
 				Flags |= flag;
@@ -744,20 +754,23 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 	}
 
-	sealed class MetaDataOptionsVM : ViewModelBase {
-		public MetaDataOptionsVM() {
-			MetaDataHeaderOptions = new MetaDataHeaderOptionsVM();
+	sealed class MetadataOptionsVM : ViewModelBase {
+		readonly ModuleDef module;
+
+		public MetadataOptionsVM(ModuleDef module) {
+			this.module = module;
+			MetadataHeaderOptions = new MetadataHeaderOptionsVM();
 			TablesHeapOptions = new TablesHeapOptionsVM();
 
-			MetaDataHeaderOptions.PropertyChanged += (s, e) => HasErrorUpdated();
+			MetadataHeaderOptions.PropertyChanged += (s, e) => HasErrorUpdated();
 			TablesHeapOptions.PropertyChanged += (s, e) => HasErrorUpdated();
 		}
 
-		public MetaDataHeaderOptionsVM MetaDataHeaderOptions { get; }
+		public MetadataHeaderOptionsVM MetadataHeaderOptions { get; }
 		public TablesHeapOptionsVM TablesHeapOptions { get; }
 
-		public MetaDataFlags Flags {
-			get { return flags; }
+		public MetadataFlags Flags {
+			get => flags;
 			set {
 				if (flags != value) {
 					flags = value;
@@ -765,78 +778,78 @@ namespace dnSpy.AsmEditor.SaveModule {
 				}
 			}
 		}
-		MetaDataFlags flags;
+		MetadataFlags flags;
 
 		public bool PreserveTypeRefRids {
-			get { return GetFlagValue(MetaDataFlags.PreserveTypeRefRids); }
-			set { SetFlagValue(MetaDataFlags.PreserveTypeRefRids, value, nameof(PreserveRids), nameof(PreserveTypeRefRids)); }
+			get => GetFlagValue(MetadataFlags.PreserveTypeRefRids);
+			set => SetFlagValue(MetadataFlags.PreserveTypeRefRids, value, nameof(PreserveRids), nameof(PreserveTypeRefRids));
 		}
 
 		public bool PreserveTypeDefRids {
-			get { return GetFlagValue(MetaDataFlags.PreserveTypeDefRids); }
-			set { SetFlagValue(MetaDataFlags.PreserveTypeDefRids, value, nameof(PreserveRids), nameof(PreserveTypeDefRids)); }
+			get => GetFlagValue(MetadataFlags.PreserveTypeDefRids);
+			set => SetFlagValue(MetadataFlags.PreserveTypeDefRids, value, nameof(PreserveRids), nameof(PreserveTypeDefRids));
 		}
 
 		public bool PreserveFieldRids {
-			get { return GetFlagValue(MetaDataFlags.PreserveFieldRids); }
-			set { SetFlagValue(MetaDataFlags.PreserveFieldRids, value, nameof(PreserveRids), nameof(PreserveFieldRids)); }
+			get => GetFlagValue(MetadataFlags.PreserveFieldRids);
+			set => SetFlagValue(MetadataFlags.PreserveFieldRids, value, nameof(PreserveRids), nameof(PreserveFieldRids));
 		}
 
 		public bool PreserveMethodRids {
-			get { return GetFlagValue(MetaDataFlags.PreserveMethodRids); }
-			set { SetFlagValue(MetaDataFlags.PreserveMethodRids, value, nameof(PreserveRids), nameof(PreserveMethodRids)); }
+			get => GetFlagValue(MetadataFlags.PreserveMethodRids);
+			set => SetFlagValue(MetadataFlags.PreserveMethodRids, value, nameof(PreserveRids), nameof(PreserveMethodRids));
 		}
 
 		public bool PreserveParamRids {
-			get { return GetFlagValue(MetaDataFlags.PreserveParamRids); }
-			set { SetFlagValue(MetaDataFlags.PreserveParamRids, value, nameof(PreserveRids), nameof(PreserveParamRids)); }
+			get => GetFlagValue(MetadataFlags.PreserveParamRids);
+			set => SetFlagValue(MetadataFlags.PreserveParamRids, value, nameof(PreserveRids), nameof(PreserveParamRids));
 		}
 
 		public bool PreserveMemberRefRids {
-			get { return GetFlagValue(MetaDataFlags.PreserveMemberRefRids); }
-			set { SetFlagValue(MetaDataFlags.PreserveMemberRefRids, value, nameof(PreserveRids), nameof(PreserveMemberRefRids)); }
+			get => GetFlagValue(MetadataFlags.PreserveMemberRefRids);
+			set => SetFlagValue(MetadataFlags.PreserveMemberRefRids, value, nameof(PreserveRids), nameof(PreserveMemberRefRids));
 		}
 
 		public bool PreserveStandAloneSigRids {
-			get { return GetFlagValue(MetaDataFlags.PreserveStandAloneSigRids); }
-			set { SetFlagValue(MetaDataFlags.PreserveStandAloneSigRids, value, nameof(PreserveRids), nameof(PreserveStandAloneSigRids)); }
+			get => GetFlagValue(MetadataFlags.PreserveStandAloneSigRids);
+			set => SetFlagValue(MetadataFlags.PreserveStandAloneSigRids, value, nameof(PreserveRids), nameof(PreserveStandAloneSigRids));
 		}
 
 		public bool PreserveEventRids {
-			get { return GetFlagValue(MetaDataFlags.PreserveEventRids); }
-			set { SetFlagValue(MetaDataFlags.PreserveEventRids, value, nameof(PreserveRids), nameof(PreserveEventRids)); }
+			get => GetFlagValue(MetadataFlags.PreserveEventRids);
+			set => SetFlagValue(MetadataFlags.PreserveEventRids, value, nameof(PreserveRids), nameof(PreserveEventRids));
 		}
 
 		public bool PreservePropertyRids {
-			get { return GetFlagValue(MetaDataFlags.PreservePropertyRids); }
-			set { SetFlagValue(MetaDataFlags.PreservePropertyRids, value, nameof(PreserveRids), nameof(PreservePropertyRids)); }
+			get => GetFlagValue(MetadataFlags.PreservePropertyRids);
+			set => SetFlagValue(MetadataFlags.PreservePropertyRids, value, nameof(PreserveRids), nameof(PreservePropertyRids));
 		}
 
 		public bool PreserveTypeSpecRids {
-			get { return GetFlagValue(MetaDataFlags.PreserveTypeSpecRids); }
-			set { SetFlagValue(MetaDataFlags.PreserveTypeSpecRids, value, nameof(PreserveRids), nameof(PreserveTypeSpecRids)); }
+			get => GetFlagValue(MetadataFlags.PreserveTypeSpecRids);
+			set => SetFlagValue(MetadataFlags.PreserveTypeSpecRids, value, nameof(PreserveRids), nameof(PreserveTypeSpecRids));
 		}
 
 		public bool PreserveMethodSpecRids {
-			get { return GetFlagValue(MetaDataFlags.PreserveMethodSpecRids); }
-			set { SetFlagValue(MetaDataFlags.PreserveMethodSpecRids, value, nameof(PreserveRids), nameof(PreserveMethodSpecRids)); }
+			get => GetFlagValue(MetadataFlags.PreserveMethodSpecRids);
+			set => SetFlagValue(MetadataFlags.PreserveMethodSpecRids, value, nameof(PreserveRids), nameof(PreserveMethodSpecRids));
 		}
 
 		public bool? PreserveRids {
 			get {
-				var val = Flags & MetaDataFlags.PreserveRids;
-				if (val == MetaDataFlags.PreserveRids)
+				var val = Flags & MetadataFlags.PreserveRids;
+				if (val == MetadataFlags.PreserveRids)
 					return true;
 				if (val == 0)
 					return false;
 				return null;
 			}
 			set {
-				if (value != null && value != PreserveRids) {
+				if (!(value is null) && value != PreserveRids) {
 					if (value.Value)
-						Flags |= MetaDataFlags.PreserveRids;
+						Flags |= MetadataFlags.PreserveRids;
 					else
-						Flags &= ~MetaDataFlags.PreserveRids;
+						Flags &= ~MetadataFlags.PreserveRids;
 					OnPropertyChanged(nameof(PreserveRids));
 					OnPropertyChanged(nameof(PreserveTypeRefRids));
 					OnPropertyChanged(nameof(PreserveTypeDefRids));
@@ -854,53 +867,74 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 
 		public bool PreserveStringsOffsets {
-			get { return GetFlagValue(MetaDataFlags.PreserveStringsOffsets); }
-			set { SetFlagValue(MetaDataFlags.PreserveStringsOffsets, value, nameof(PreserveStringsOffsets)); }
+			get => GetFlagValue(MetadataFlags.PreserveStringsOffsets);
+			set => SetFlagValue(MetadataFlags.PreserveStringsOffsets, value, nameof(PreserveStringsOffsets));
 		}
 
 		public bool PreserveUSOffsets {
-			get { return GetFlagValue(MetaDataFlags.PreserveUSOffsets); }
-			set { SetFlagValue(MetaDataFlags.PreserveUSOffsets, value, nameof(PreserveUSOffsets)); }
+			get => GetFlagValue(MetadataFlags.PreserveUSOffsets);
+			set => SetFlagValue(MetadataFlags.PreserveUSOffsets, value, nameof(PreserveUSOffsets));
 		}
 
 		public bool PreserveBlobOffsets {
-			get { return GetFlagValue(MetaDataFlags.PreserveBlobOffsets); }
-			set { SetFlagValue(MetaDataFlags.PreserveBlobOffsets, value, nameof(PreserveBlobOffsets)); }
+			get => GetFlagValue(MetadataFlags.PreserveBlobOffsets);
+			set => SetFlagValue(MetadataFlags.PreserveBlobOffsets, value, nameof(PreserveBlobOffsets));
 		}
 
 		public bool PreserveExtraSignatureData {
-			get { return GetFlagValue(MetaDataFlags.PreserveExtraSignatureData); }
-			set { SetFlagValue(MetaDataFlags.PreserveExtraSignatureData, value, nameof(PreserveExtraSignatureData)); }
+			get => GetFlagValue(MetadataFlags.PreserveExtraSignatureData);
+			set => SetFlagValue(MetadataFlags.PreserveExtraSignatureData, value, nameof(PreserveExtraSignatureData));
 		}
 
 		public bool KeepOldMaxStack {
-			get { return GetFlagValue(MetaDataFlags.KeepOldMaxStack); }
-			set { SetFlagValue(MetaDataFlags.KeepOldMaxStack, value, nameof(KeepOldMaxStack)); }
+			get => GetFlagValue(MetadataFlags.KeepOldMaxStack);
+			set => SetFlagValue(MetadataFlags.KeepOldMaxStack, value, nameof(KeepOldMaxStack));
 		}
 
 		public bool AlwaysCreateGuidHeap {
-			get { return GetFlagValue(MetaDataFlags.AlwaysCreateGuidHeap); }
-			set { SetFlagValue(MetaDataFlags.AlwaysCreateGuidHeap, value, nameof(AlwaysCreateGuidHeap)); }
+			get => GetFlagValue(MetadataFlags.AlwaysCreateGuidHeap);
+			set => SetFlagValue(MetadataFlags.AlwaysCreateGuidHeap, value, nameof(AlwaysCreateGuidHeap));
 		}
 
 		public bool AlwaysCreateStringsHeap {
-			get { return GetFlagValue(MetaDataFlags.AlwaysCreateStringsHeap); }
-			set { SetFlagValue(MetaDataFlags.AlwaysCreateStringsHeap, value, nameof(AlwaysCreateStringsHeap)); }
+			get => GetFlagValue(MetadataFlags.AlwaysCreateStringsHeap);
+			set => SetFlagValue(MetadataFlags.AlwaysCreateStringsHeap, value, nameof(AlwaysCreateStringsHeap));
 		}
 
 		public bool AlwaysCreateUSHeap {
-			get { return GetFlagValue(MetaDataFlags.AlwaysCreateUSHeap); }
-			set { SetFlagValue(MetaDataFlags.AlwaysCreateUSHeap, value, nameof(AlwaysCreateUSHeap)); }
+			get => GetFlagValue(MetadataFlags.AlwaysCreateUSHeap);
+			set => SetFlagValue(MetadataFlags.AlwaysCreateUSHeap, value, nameof(AlwaysCreateUSHeap));
 		}
 
 		public bool AlwaysCreateBlobHeap {
-			get { return GetFlagValue(MetaDataFlags.AlwaysCreateBlobHeap); }
-			set { SetFlagValue(MetaDataFlags.AlwaysCreateBlobHeap, value, nameof(AlwaysCreateBlobHeap)); }
+			get => GetFlagValue(MetadataFlags.AlwaysCreateBlobHeap);
+			set => SetFlagValue(MetadataFlags.AlwaysCreateBlobHeap, value, nameof(AlwaysCreateBlobHeap));
 		}
 
-		bool GetFlagValue(MetaDataFlags flag) => (Flags & flag) != 0;
+		public bool PreserveOtherMetadataStreams {
+			get => preserveOtherMetadataStreams;
+			set {
+				if (preserveOtherMetadataStreams != value) {
+					preserveOtherMetadataStreams = value;
+					OnPropertyChanged(nameof(PreserveOtherMetadataStreams));
+					if (preserveOtherMetadataStreams && module is ModuleDefMD mod) {
+						if (mod.Metadata.GuidStream.StartOffset != 0)
+							AlwaysCreateGuidHeap = true;
+						if (mod.Metadata.StringsStream.StartOffset != 0)
+							AlwaysCreateStringsHeap = true;
+						if (mod.Metadata.USStream.StartOffset != 0)
+							AlwaysCreateUSHeap = true;
+						if (mod.Metadata.BlobStream.StartOffset != 0)
+							AlwaysCreateBlobHeap = true;
+					}
+				}
+			}
+		}
+		bool preserveOtherMetadataStreams;
 
-		void SetFlagValue(MetaDataFlags flag, bool value, string prop1, string prop2 = null) {
+		bool GetFlagValue(MetadataFlags flag) => (Flags & flag) != 0;
+
+		void SetFlagValue(MetadataFlags flag, bool value, string prop1, string? prop2 = null) {
 			bool origValue = (Flags & flag) != 0;
 			if (origValue == value)
 				return;
@@ -911,20 +945,21 @@ namespace dnSpy.AsmEditor.SaveModule {
 				Flags &= ~flag;
 
 			OnPropertyChanged(prop1);
-			if (prop2 != null)
+			if (!(prop2 is null))
 				OnPropertyChanged(prop2);
 		}
 
-		public void CopyTo(MetaDataOptions options) {
-			MetaDataHeaderOptions.CopyTo(options.MetaDataHeaderOptions);
+		public void CopyTo(MetadataOptions options) {
+			MetadataHeaderOptions.CopyTo(options.MetadataHeaderOptions);
 			TablesHeapOptions.CopyTo(options.TablesHeapOptions);
 			options.Flags = Flags;
 		}
 
-		public void InitializeFrom(MetaDataOptions options) {
-			MetaDataHeaderOptions.InitializeFrom(options.MetaDataHeaderOptions);
+		public void InitializeFrom(MetadataOptions options) {
+			MetadataHeaderOptions.InitializeFrom(options.MetadataHeaderOptions);
 			TablesHeapOptions.InitializeFrom(options.TablesHeapOptions);
 			Flags = options.Flags;
+			PreserveOtherMetadataStreams = false;
 			OnFlagsChanged();
 		}
 
@@ -954,14 +989,14 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 		public override bool HasError {
 			get {
-				return MetaDataHeaderOptions.HasError ||
+				return MetadataHeaderOptions.HasError ||
 					TablesHeapOptions.HasError;
 			}
 		}
 	}
 
-	sealed class MetaDataHeaderOptionsVM : ViewModelBase {
-		public MetaDataHeaderOptionsVM() {
+	sealed class MetadataHeaderOptionsVM : ViewModelBase {
+		public MetadataHeaderOptionsVM() {
 			Signature = new NullableUInt32VM(a => HasErrorUpdated());
 			MajorVersion = new NullableUInt16VM(a => HasErrorUpdated());
 			MinorVersion = new NullableUInt16VM(a => HasErrorUpdated());
@@ -975,20 +1010,20 @@ namespace dnSpy.AsmEditor.SaveModule {
 		public NullableUInt16VM MinorVersion { get; }
 		public NullableUInt32VM Reserved1 { get; }
 
-		public string VersionString {
-			get { return versionString; }
+		public string? VersionString {
+			get => versionString;
 			set {
 				versionString = value;
 				OnPropertyChanged(nameof(VersionString));
 				HasErrorUpdated();
 			}
 		}
-		string versionString;
+		string? versionString;
 
 		public NullableByteVM StorageFlags { get; }
 		public NullableByteVM Reserved2 { get; }
 
-		public void CopyTo(MetaDataHeaderOptions options) {
+		public void CopyTo(MetadataHeaderOptions options) {
 			options.Signature = Signature.Value;
 			options.MajorVersion = MajorVersion.Value;
 			options.MinorVersion = MinorVersion.Value;
@@ -998,7 +1033,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			options.Reserved2 = Reserved2.Value;
 		}
 
-		public void InitializeFrom(MetaDataHeaderOptions options) {
+		public void InitializeFrom(MetadataHeaderOptions options) {
 			Signature.Value = options.Signature;
 			MajorVersion.Value = options.MajorVersion;
 			MinorVersion.Value = options.MinorVersion;
@@ -1008,7 +1043,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			Reserved2.Value = options.Reserved2;
 		}
 
-		protected override string Verify(string columnName) {
+		protected override string? Verify(string columnName) {
 			if (columnName == nameof(VersionString))
 				return ValidateVersionString(versionString);
 
@@ -1029,7 +1064,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			}
 		}
 
-		internal static string ValidateVersionString(string versionString) {
+		internal static string ValidateVersionString(string? versionString) {
 			var bytes = Encoding.UTF8.GetBytes(versionString + "\0");
 			if (bytes.Length > 256)
 				return dnSpy_AsmEditor_Resources.Error_VersionStringTooLong;
@@ -1051,7 +1086,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		public NullableByteVM MinorVersion { get; }
 
 		public bool? UseENC {
-			get { return useENC; }
+			get => useENC;
 			set {
 				useENC = value;
 				OnPropertyChanged(nameof(UseENC));
@@ -1062,7 +1097,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		public NullableUInt32VM ExtraData { get; }
 
 		public bool? HasDeletedRows {
-			get { return hasDeletedRows; }
+			get => hasDeletedRows;
 			set {
 				hasDeletedRows = value;
 				OnPropertyChanged(nameof(HasDeletedRows));

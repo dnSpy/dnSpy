@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,6 +20,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 
@@ -29,7 +30,7 @@ namespace dnSpy.Debugger.CallStack {
 	sealed class DbgCallStackServiceImpl : DbgCallStackService, IDbgManagerStartListener {
 		const int MaxShownFrames = 5000;
 
-		public override DbgThread Thread => dbgManager?.CurrentThread.Current;
+		public override DbgThread? Thread => dbgManager?.CurrentThread.Current;
 
 		public override int ActiveFrameIndex {
 			get {
@@ -40,7 +41,7 @@ namespace dnSpy.Debugger.CallStack {
 				lock (lockObj) {
 					if (activeFrameIndex == value)
 						return;
-					if (dbgManager == null)
+					if (dbgManager is null)
 						return;
 				}
 				Dbg(() => SetActiveFrameIndex_DbgThread(value));
@@ -56,12 +57,12 @@ namespace dnSpy.Debugger.CallStack {
 		}
 
 		readonly object lockObj;
-		DbgManager dbgManager;
+		DbgManager? dbgManager;
 		DbgStackFrame[] frames;
 		ReadOnlyCollection<DbgStackFrame> readOnlyFrames;
 		bool framesTruncated;
 		int activeFrameIndex;
-		DbgProcess currentThreadProcess;
+		DbgProcess? currentThreadProcess;
 		static ReadOnlyCollection<DbgStackFrame> emptyFrames = new ReadOnlyCollection<DbgStackFrame>(Array.Empty<DbgStackFrame>());
 
 		[ImportingConstructor]
@@ -76,14 +77,14 @@ namespace dnSpy.Debugger.CallStack {
 		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) {
 			this.dbgManager = dbgManager;
 			dbgManager.CurrentThreadChanged += DbgManager_CurrentThreadChanged;
-			dbgManager.Message += DbgManager_Message;
+			dbgManager.MessageSetIPComplete += DbgManager_MessageSetIPComplete;
 		}
 
 		// Note that dbgManager can be null if called before debugging has started
 		void Dbg(Action callback) => dbgManager?.Dispatcher.BeginInvoke(callback);
 
 		void SetActiveFrameIndex_DbgThread(int newIndex) {
-			dbgManager.Dispatcher.VerifyAccess();
+			dbgManager!.Dispatcher.VerifyAccess();
 			lock (lockObj) {
 				if (activeFrameIndex == newIndex)
 					return;
@@ -94,12 +95,9 @@ namespace dnSpy.Debugger.CallStack {
 			FramesChanged?.Invoke(this, new FramesChangedEventArgs(framesChanged: false, activeFrameIndexChanged: true));
 		}
 
-		void DbgManager_Message(object sender, DbgMessageEventArgs e) {
-			if (e.Kind == DbgMessageKind.SetIPComplete) {
-				var ep = (DbgMessageSetIPCompleteEventArgs)e;
-				if (ep.FramesInvalidated && dbgManager.CurrentThread.Current == ep.Thread)
-					RefreshAllFrames_DbgThread();
-			}
+		void DbgManager_MessageSetIPComplete(object sender, DbgMessageSetIPCompleteEventArgs e) {
+			if (e.FramesInvalidated && dbgManager!.CurrentThread.Current == e.Thread)
+				RefreshAllFrames_DbgThread();
 		}
 
 		void DbgManager_CurrentThreadChanged(object sender, DbgCurrentObjectChangedEventArgs<DbgThread> e) {
@@ -108,36 +106,37 @@ namespace dnSpy.Debugger.CallStack {
 		}
 
 		void RefreshAllFrames_DbgThread() {
-			UpdateCurrentThreadProcess_DbgThread(dbgManager.CurrentThread.Current?.Process);
+			UpdateCurrentThreadProcess_DbgThread(dbgManager!.CurrentThread.Current?.Process);
 			UpdateFrames_DbgThread();
 		}
 
-		void UpdateCurrentThreadProcess_DbgThread(DbgProcess process) {
-			dbgManager.Dispatcher.VerifyAccess();
+		void UpdateCurrentThreadProcess_DbgThread(DbgProcess? process) {
+			dbgManager!.Dispatcher.VerifyAccess();
 			if (currentThreadProcess == process)
 				return;
-			if (currentThreadProcess != null)
+			if (!(currentThreadProcess is null))
 				currentThreadProcess.IsRunningChanged -= DbgProcess_IsRunningChanged;
 			currentThreadProcess = process;
-			if (process != null)
+			if (!(process is null))
 				process.IsRunningChanged += DbgProcess_IsRunningChanged;
 		}
 
 		void DbgProcess_IsRunningChanged(object sender, EventArgs e) {
 			if (currentThreadProcess != sender)
 				return;
+			Debug.Assert(!(currentThreadProcess is null));
 			if (!currentThreadProcess.IsRunning)
 				UpdateFrames_DbgThread();
 		}
 
 		void UpdateFrames_DbgThread() {
-			dbgManager.Dispatcher.VerifyAccess();
+			dbgManager!.Dispatcher.VerifyAccess();
 			bool raiseActiveFrameIndexChanged, raiseFramesChanged;
-			DbgStackWalker stackWalker = null;
-			DbgStackFrame[] newFrames = null;
+			DbgStackWalker? stackWalker = null;
+			DbgStackFrame[]? newFrames = null;
 			try {
 				var thread = dbgManager.CurrentThread.Current;
-				if (thread == null || thread.Process.State != DbgProcessState.Paused)
+				if (thread is null || thread.Process.State != DbgProcessState.Paused)
 					newFrames = Array.Empty<DbgStackFrame>();
 				else {
 					stackWalker = thread.CreateStackWalker();
@@ -164,7 +163,7 @@ namespace dnSpy.Debugger.CallStack {
 			}
 			finally {
 				stackWalker?.Close();
-				if (newFrames != null && frames != newFrames && newFrames.Length > 0)
+				if (!(newFrames is null) && frames != newFrames && newFrames.Length > 0)
 					dbgManager.Close(newFrames);
 			}
 			if (raiseFramesChanged || raiseActiveFrameIndexChanged)
@@ -173,7 +172,7 @@ namespace dnSpy.Debugger.CallStack {
 
 		int GetFrameIndex(DbgStackFrame[] newFrames) {
 			for (int i = 0; i < newFrames.Length; i++) {
-				if (newFrames[i].Location != null)
+				if (!(newFrames[i].Location is null))
 					return i;
 			}
 			return 0;

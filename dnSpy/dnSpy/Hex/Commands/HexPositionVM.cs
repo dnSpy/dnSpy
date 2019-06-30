@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -53,7 +53,7 @@ namespace dnSpy.Hex.Commands {
 		}
 
 		/// <inheritdoc/>
-		protected override string ConvertToValue(out HexPosition value) {
+		protected override string? ConvertToValue(out HexPosition value) {
 			if (HexPosition.TryParse(StringValue, out value)) {
 				if (!IsValid(value))
 					return string.Format(dnSpy_Resources.ValueMustBeWithinRange, Min, Max);

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,7 +34,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		/// </summary>
 		public Span TextChangedSpan { get; }
 
-		public ValueNodeTextClassifierContext(bool textChanged, Span textChangedSpan, string text, string tag, bool colorize, IReadOnlyCollection<SpanData<object>> colors = null)
+		public ValueNodeTextClassifierContext(bool textChanged, Span textChangedSpan, string text, string tag, bool colorize, IReadOnlyCollection<SpanData<object>>? colors = null)
 			: base(text, tag, colorize, colors) {
 			TextChanged = textChanged;
 			TextChangedSpan = textChangedSpan;

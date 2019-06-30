@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,11 +20,11 @@
 using dnlib.DotNet;
 
 namespace dnSpy.Analyzer.TreeNodes {
-	struct SourceRef {
+	readonly struct SourceRef {
 		public MethodDef Method { get; }
-		public uint ILOffset { get; }
-		public IMDTokenProvider Reference { get; }
-		public SourceRef(MethodDef method, uint offset, IMDTokenProvider reference) {
+		public uint? ILOffset { get; }
+		public IMDTokenProvider? Reference { get; }
+		public SourceRef(MethodDef method, uint? offset, IMDTokenProvider? reference) {
 			Method = method;
 			ILOffset = offset;
 			Reference = reference;

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -48,7 +48,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 
 		void ExitDialog() {
 			var vm = DataContext as TabsVM;
-			if (vm == null)
+			if (vm is null)
 				return;
 			vm.Activate(listView.SelectedItem as TabVM);
 			ClickOK();

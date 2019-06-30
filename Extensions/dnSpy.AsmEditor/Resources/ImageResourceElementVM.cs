@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,17 +30,17 @@ namespace dnSpy.AsmEditor.Resources {
 		readonly ResourceElementOptions origOptions;
 
 		public IOpenFile OpenFile {
-			set { openFile = value; }
+			set => openFile = value;
 		}
-		IOpenFile openFile;
+		IOpenFile? openFile;
 
 		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
 		public ICommand FillDataCommand => new RelayCommand(a => FillData());
 
 		ResourceTypeCode resourceTypeCode;
 
-		public string Name {
-			get { return name; }
+		public string? Name {
+			get => name;
 			set {
 				if (name != value) {
 					name = value;
@@ -48,10 +48,10 @@ namespace dnSpy.AsmEditor.Resources {
 				}
 			}
 		}
-		UTF8String name;
+		UTF8String? name;
 
-		public byte[] Data {
-			get { return data; }
+		public byte[]? Data {
+			get => data;
 			set {
 				if (data != value) {
 					data = value;
@@ -60,9 +60,9 @@ namespace dnSpy.AsmEditor.Resources {
 				}
 			}
 		}
-		byte[] data;
+		byte[]? data;
 
-		public string DataString => string.Format(dnSpy_AsmEditor_Resources.XBytes, Data == null ? 0 : Data.Length);
+		public string DataString => string.Format(dnSpy_AsmEditor_Resources.XBytes, Data is null ? 0 : Data.Length);
 
 		public ImageResourceElementVM(ResourceElementOptions options) {
 			origOptions = options;
@@ -71,10 +71,10 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 
 		void FillData() {
-			if (openFile == null)
+			if (openFile is null)
 				throw new InvalidOperationException();
 			var newBytes = openFile.Open(PickFilenameConstants.ImagesFilter);
-			if (newBytes != null)
+			if (!(newBytes is null))
 				Data = newBytes;
 		}
 
@@ -82,7 +82,7 @@ namespace dnSpy.AsmEditor.Resources {
 		public ResourceElementOptions CreateResourceElementOptions() => CopyTo(new ResourceElementOptions());
 
 		void InitializeFrom(ResourceElementOptions options) {
-			if (options.ResourceData.Code != ResourceTypeCode.ByteArray && options.ResourceData.Code != ResourceTypeCode.Stream)
+			if (options.ResourceData!.Code != ResourceTypeCode.ByteArray && options.ResourceData.Code != ResourceTypeCode.Stream)
 				throw new InvalidOperationException();
 			var builtin = (BuiltInResourceData)options.ResourceData;
 

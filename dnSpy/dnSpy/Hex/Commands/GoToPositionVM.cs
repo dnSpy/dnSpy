@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,7 +35,7 @@ namespace dnSpy.Hex.Commands {
 		public ObservableCollection<PositionVM> PositionsCollection { get; }
 
 		public PositionVM SelectedItem {
-			get { return selectedItem; }
+			get => selectedItem;
 			set {
 				if (selectedItem != value) {
 					selectedItem = value;
@@ -46,12 +46,12 @@ namespace dnSpy.Hex.Commands {
 		PositionVM selectedItem;
 
 		public PositionKind PositionKind {
-			get { return SelectedItem.Kind; }
-			set { SelectedItem = PositionsCollection.First(a => a.Kind == value); }
+			get => SelectedItem.Kind;
+			set => SelectedItem = PositionsCollection.First(a => a.Kind == value);
 		}
 
 		public bool SelectToNewPosition {
-			get { return selectToNewPosition; }
+			get => selectToNewPosition;
 			set {
 				if (value != selectToNewPosition) {
 					selectToNewPosition = value;
@@ -74,7 +74,7 @@ namespace dnSpy.Hex.Commands {
 		public override bool HasError => OffsetVM.HasError;
 	}
 
-	sealed class PositionVM {
+	sealed class PositionVM : ViewModelBase {
 		public PositionKind Kind { get; }
 		public string Text { get; }
 		public string InputGestureText { get; }

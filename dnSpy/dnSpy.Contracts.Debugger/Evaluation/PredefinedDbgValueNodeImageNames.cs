@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,7 +22,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// Image names returned by <see cref="DbgValueNode"/>
 	/// </summary>
 	public static class PredefinedDbgValueNodeImageNames {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public const string Edit = nameof(Edit);
 		public const string Information = nameof(Information);
 		public const string Warning = nameof(Warning);
@@ -42,10 +42,14 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public const string ObjectId = nameof(ObjectId);
 		public const string ObjectAddress = nameof(ObjectAddress);
 		public const string EEVariable = nameof(EEVariable);
+		public const string Pointer = nameof(Pointer);
+		public const string DereferencedPointer = nameof(DereferencedPointer);
 		public const string InstanceMembers = nameof(InstanceMembers);
 		public const string StaticMembers = nameof(StaticMembers);
 		public const string RawView = nameof(RawView);
 		public const string ResultsView = nameof(ResultsView);
+		public const string DynamicView = nameof(DynamicView);
+		public const string DynamicViewElement = nameof(DynamicViewElement);
 		public const string ExceptionInternal = nameof(ExceptionInternal);
 		public const string ExceptionPrivate = nameof(ExceptionPrivate);
 		public const string ExceptionProtected = nameof(ExceptionProtected);
@@ -78,6 +82,16 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public const string EnumerationItemFamilyAndAssembly = nameof(EnumerationItemFamilyAndAssembly);
 		public const string EnumerationItemFamilyOrAssembly = nameof(EnumerationItemFamilyOrAssembly);
 		public const string EnumerationItemCompilerControlled = nameof(EnumerationItemCompilerControlled);
+		public const string Module = nameof(Module);
+		public const string ModuleInternal = nameof(ModuleInternal);
+		public const string ModulePrivate = nameof(ModulePrivate);
+		public const string ModuleProtected = nameof(ModuleProtected);
+		public const string ModulePublic = nameof(ModulePublic);
+		public const string Delegate = nameof(Delegate);
+		public const string DelegateInternal = nameof(DelegateInternal);
+		public const string DelegatePrivate = nameof(DelegatePrivate);
+		public const string DelegateProtected = nameof(DelegateProtected);
+		public const string DelegatePublic = nameof(DelegatePublic);
 		public const string Constant = nameof(Constant);
 		public const string ConstantPrivate = nameof(ConstantPrivate);
 		public const string ConstantPublic = nameof(ConstantPublic);
@@ -94,6 +108,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public const string FieldFamilyAndAssembly = nameof(FieldFamilyAndAssembly);
 		public const string FieldFamilyOrAssembly = nameof(FieldFamilyOrAssembly);
 		public const string FieldCompilerControlled = nameof(FieldCompilerControlled);
+		public const string ExtensionMethod = nameof(ExtensionMethod);
 		public const string Method = nameof(Method);
 		public const string MethodPrivate = nameof(MethodPrivate);
 		public const string MethodPublic = nameof(MethodPublic);
@@ -118,6 +133,6 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public const string EventFamilyAndAssembly = nameof(EventFamilyAndAssembly);
 		public const string EventFamilyOrAssembly = nameof(EventFamilyOrAssembly);
 		public const string EventCompilerControlled = nameof(EventCompilerControlled);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

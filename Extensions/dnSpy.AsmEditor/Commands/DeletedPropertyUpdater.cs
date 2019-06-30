@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,10 +36,11 @@ namespace dnSpy.AsmEditor.Commands {
 		int propertyIndex;
 
 		public DeletedPropertyUpdater(ModuleDocumentNode modNode, PropertyDef originalProperty) {
-			ownerNode = modNode.Context.DocumentTreeView.FindNode(originalProperty);
-			if (ownerNode == null)
+			var node = modNode.Context.DocumentTreeView.FindNode(originalProperty);
+			if (node is null)
 				throw new InvalidOperationException();
-			parentNode = ownerNode.TreeNode.Parent.Data;
+			ownerNode = node;
+			parentNode = ownerNode.TreeNode.Parent!.Data;
 			ownerType = originalProperty.DeclaringType;
 			property = originalProperty;
 		}

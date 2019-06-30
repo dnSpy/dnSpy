@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -67,30 +67,30 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public void InstallLineSeparatorService(IWpfTextView wpfTextView) {
-			if (wpfTextView == null)
+			if (wpfTextView is null)
 				throw new ArgumentNullException(nameof(wpfTextView));
 			wpfTextView.Properties.GetOrCreateSingletonProperty(typeof(LineSeparatorService), () => new LineSeparatorService(wpfTextView, viewTagAggregatorFactoryService, editorFormatMapService));
 		}
 	}
 
 	sealed class LineSeparatorService {
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[Export(typeof(AdornmentLayerDefinition))]
 		[Name(PredefinedDsAdornmentLayers.LineSeparator)]
 		[Order(After = PredefinedDsAdornmentLayers.BottomLayer, Before = PredefinedDsAdornmentLayers.TopLayer)]
 		[Order(After = PredefinedAdornmentLayers.Selection, Before = PredefinedAdornmentLayers.Squiggle)]
 		static AdornmentLayerDefinition theAdornmentLayerDefinition;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 
 		readonly IWpfTextView wpfTextView;
 		readonly IViewTagAggregatorFactoryService viewTagAggregatorFactoryService;
 		readonly IEditorFormatMapService editorFormatMapService;
 		readonly List<LineSeparatorElement> lineSeparatorElements;
 		readonly HashSet<object> usedLines;
-		IEditorFormatMap editorFormatMap;
-		IAdornmentLayer adornmentLayer;
-		ITagAggregator<ILineSeparatorTag> tagAggregator;
-		Brush lineSeparatorBrush;
+		IEditorFormatMap? editorFormatMap;
+		IAdornmentLayer? adornmentLayer;
+		ITagAggregator<ILineSeparatorTag>? tagAggregator;
+		Brush? lineSeparatorBrush;
 
 		public LineSeparatorService(IWpfTextView wpfTextView, IViewTagAggregatorFactoryService viewTagAggregatorFactoryService, IEditorFormatMapService editorFormatMapService) {
 			this.wpfTextView = wpfTextView ?? throw new ArgumentNullException(nameof(wpfTextView));
@@ -111,12 +111,12 @@ namespace dnSpy.Text.Editor {
 
 		void UpdateLineSeparator() {
 			if (wpfTextView.Options.IsLineSeparatorEnabled()) {
-				Debug.Assert(tagAggregator == null);
-				if (tagAggregator != null)
+				Debug.Assert(tagAggregator is null);
+				if (!(tagAggregator is null))
 					throw new InvalidOperationException();
-				if (adornmentLayer == null)
+				if (adornmentLayer is null)
 					adornmentLayer = wpfTextView.GetAdornmentLayer(PredefinedDsAdornmentLayers.LineSeparator);
-				if (editorFormatMap == null)
+				if (editorFormatMap is null)
 					editorFormatMap = editorFormatMapService.GetEditorFormatMap(wpfTextView);
 				tagAggregator = viewTagAggregatorFactoryService.CreateTagAggregator<ILineSeparatorTag>(wpfTextView);
 				tagAggregator.BatchedTagsChanged += TagAggregator_BatchedTagsChanged;
@@ -128,7 +128,7 @@ namespace dnSpy.Text.Editor {
 			else {
 				DisposeTagAggregator();
 				wpfTextView.LayoutChanged -= WpfTextView_LayoutChanged;
-				if (editorFormatMap != null)
+				if (!(editorFormatMap is null))
 					editorFormatMap.FormatMappingChanged -= EditorFormatMap_FormatMappingChanged;
 				RemoveAllLineSeparatorElements();
 			}
@@ -140,11 +140,11 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void UpdateLineSeparatorBrush() {
-			if (editorFormatMap == null)
+			if (editorFormatMap is null)
 				return;
 			var props = editorFormatMap.GetProperties(ThemeClassificationTypeNameKeys.LineSeparator);
 			var brush = ResourceDictionaryUtilities.GetForegroundBrush(props);
-			if (brush == null)
+			if (brush is null)
 				brush = new SolidColorBrush(Color.FromRgb(0xA5, 0xA5, 0xA5));
 			if (brush.CanFreeze)
 				brush.Freeze();
@@ -155,14 +155,15 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void UpdateLineSeparatorElementsForeground() {
+			Debug.Assert(!(lineSeparatorBrush is null));
 			foreach (var elem in lineSeparatorElements)
 				elem.Brush = lineSeparatorBrush;
 		}
 
 		sealed class LineSeparatorElement : Border {
-			public Brush Brush {
-				get { return BorderBrush; }
-				set { BorderBrush = value; }
+			public Brush? Brush {
+				get => BorderBrush;
+				set => BorderBrush = value;
 			}
 
 			public SnapshotSpan Span { get; }
@@ -171,8 +172,8 @@ namespace dnSpy.Text.Editor {
 
 			const double HEIGHT = 1;
 
-			public LineSeparatorElement(SnapshotSpan span, double yBottom, double width, Brush brush, object lineIdentityTag) {
-				if (span.Snapshot == null)
+			public LineSeparatorElement(SnapshotSpan span, double yBottom, double width, Brush? brush, object lineIdentityTag) {
+				if (span.Snapshot is null)
 					throw new ArgumentException();
 				Span = span;
 				Y = yBottom - HEIGHT;
@@ -187,13 +188,13 @@ namespace dnSpy.Text.Editor {
 			wpfTextView.VisualElement.Dispatcher.VerifyAccess();
 			if (wpfTextView.IsClosed || tagAggregator != sender)
 				return;
-			List<SnapshotSpan> intersectionSpans = null;
+			List<SnapshotSpan>? intersectionSpans = null;
 			var textViewLines = wpfTextView.TextViewLines;
 			foreach (var mappingSpan in e.Spans) {
 				foreach (var span in mappingSpan.GetSpans(wpfTextView.TextSnapshot)) {
 					var intersection = textViewLines.FormattedSpan.Intersection(span);
-					if (intersection != null) {
-						if (intersectionSpans == null)
+					if (!(intersection is null)) {
+						if (intersectionSpans is null)
 							intersectionSpans = new List<SnapshotSpan>();
 						var lineStart = intersection.Value.Start.GetContainingLine();
 						ITextSnapshotLine lineEnd;
@@ -205,7 +206,7 @@ namespace dnSpy.Text.Editor {
 					}
 				}
 			}
-			if (intersectionSpans != null)
+			if (!(intersectionSpans is null))
 				UpdateRange(new NormalizedSnapshotSpanCollection(intersectionSpans));
 		}
 
@@ -225,7 +226,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void RemoveLineSeparatorElements(NormalizedSnapshotSpanCollection spans) {
-			if (adornmentLayer == null)
+			if (adornmentLayer is null)
 				return;
 			for (int i = lineSeparatorElements.Count - 1; i >= 0; i--) {
 				var lineSeparatorElement = lineSeparatorElements[i];
@@ -235,6 +236,8 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void AddLineSeparatorElements(NormalizedSnapshotSpanCollection spans) {
+			Debug.Assert(!(tagAggregator is null));
+			Debug.Assert(!(adornmentLayer is null));
 			var textViewLines = wpfTextView.TextViewLines;
 			// There's always at least one line in the collection
 			Debug.Assert(textViewLines.Count > 0);
@@ -242,13 +245,13 @@ namespace dnSpy.Text.Editor {
 			var end = textViewLines[textViewLines.Count - 1].End.GetContainingLine().EndIncludingLineBreak;
 			var fullSpan = new SnapshotSpan(start, end);
 			foreach (var tag in tagAggregator.GetTags(spans)) {
-				if (tag.Tag == null)
+				if (tag.Tag is null)
 					continue;
 				foreach (var span in tag.Span.GetSpans(wpfTextView.TextSnapshot)) {
 					if (!span.IntersectsWith(fullSpan))
 						continue;
 					var lineSeparatorElement = TryCreateLineSeparatorElement(span, tag.Tag);
-					if (lineSeparatorElement == null)
+					if (lineSeparatorElement is null)
 						continue;
 					bool added = adornmentLayer.AddAdornment(AdornmentPositioningBehavior.TextRelative, lineSeparatorElement.Span, null, lineSeparatorElement, onRemovedDelegate);
 					if (added) {
@@ -260,16 +263,16 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		LineSeparatorElement TryCreateLineSeparatorElement(SnapshotSpan span, ILineSeparatorTag tag) {
-			if (tag == null)
+		LineSeparatorElement? TryCreateLineSeparatorElement(SnapshotSpan span, ILineSeparatorTag tag) {
+			if (tag is null)
 				return null;
 			var line = wpfTextView.TextViewLines.GetTextViewLineContainingBufferPosition(span.Start.TranslateTo(wpfTextView.TextSnapshot, PointTrackingMode.Negative));
-			if (line == null)
+			if (line is null)
 				return null;
 			if (tag.IsPhysicalLine) {
 				while (!line.IsLastTextViewLineForSnapshotLine) {
 					line = wpfTextView.TextViewLines.GetTextViewLineContainingBufferPosition(line.GetPointAfterLineBreak());
-					if (line == null)
+					if (line is null)
 						return null;
 				}
 			}
@@ -307,9 +310,9 @@ namespace dnSpy.Text.Editor {
 				RemoveAllLineSeparatorElements();
 
 			var lineSpans = new List<SnapshotSpan>();
-			ITextSnapshotLine snapshotLine = null;
+			ITextSnapshotLine? snapshotLine = null;
 			foreach (var line in newOrReformattedLines) {
-				if (snapshotLine != null && line.Start >= snapshotLine.Start && line.EndIncludingLineBreak <= snapshotLine.EndIncludingLineBreak)
+				if (!(snapshotLine is null) && line.Start >= snapshotLine.Start && line.EndIncludingLineBreak <= snapshotLine.EndIncludingLineBreak)
 					continue;
 				snapshotLine = line.Start.GetContainingLine();
 				lineSpans.Add(snapshotLine.Extent);
@@ -319,7 +322,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void DisposeTagAggregator() {
-			if (tagAggregator != null) {
+			if (!(tagAggregator is null)) {
 				tagAggregator.BatchedTagsChanged -= TagAggregator_BatchedTagsChanged;
 				tagAggregator.Dispose();
 				tagAggregator = null;
@@ -331,7 +334,7 @@ namespace dnSpy.Text.Editor {
 			wpfTextView.Closed -= WpfTextView_Closed;
 			wpfTextView.Options.OptionChanged -= Options_OptionChanged;
 			wpfTextView.LayoutChanged -= WpfTextView_LayoutChanged;
-			if (editorFormatMap != null)
+			if (!(editorFormatMap is null))
 				editorFormatMap.FormatMappingChanged -= EditorFormatMap_FormatMappingChanged;
 			DisposeTagAggregator();
 		}

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Diagnostics;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 	sealed class DmdFieldDefMD : DmdFieldDef {
@@ -30,23 +31,27 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 
 		public DmdFieldDefMD(DmdEcma335MetadataReader reader, uint rid, DmdType declaringType, DmdType reflectedType) : base(rid, declaringType, reflectedType) {
 			this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
-			var row = reader.TablesStream.ReadFieldRow(rid);
+			bool b = reader.TablesStream.TryReadFieldRow(rid, out var row);
+			Debug.Assert(b);
 			Attributes = (DmdFieldAttributes)row.Flags;
 			Name = reader.StringsStream.ReadNoNull(row.Name);
-			FieldType = reader.ReadFieldType(row.Signature, DeclaringType.GetGenericArguments());
+			FieldType = reader.ReadFieldType(row.Signature, DeclaringType!.GetGenericArguments());
 			if (HasFieldRVA) {
-				var rvaRow = reader.TablesStream.ReadFieldRVARow(reader.Metadata.GetFieldRVARid(rid));
-				FieldRVA = rvaRow?.RVA ?? 0;
+				reader.TablesStream.TryReadFieldRVARow(reader.Metadata.GetFieldRVARid(rid), out var rvaRow);
+				FieldRVA = rvaRow.RVA;
 			}
 		}
 
-		public sealed override object GetRawConstantValue() => reader.ReadConstant(MetadataToken).value;
+		public sealed override object? GetRawConstantValue() => reader.ReadConstant(MetadataToken).value;
 
-		protected override (DmdCustomAttributeData[] cas, uint? fieldOffset, DmdMarshalType marshalType) CreateCustomAttributes() {
-			var marshalType = reader.ReadMarshalType(MetadataToken, ReflectedType.Module, null);
+		protected override (DmdCustomAttributeData[] cas, uint? fieldOffset, DmdMarshalType? marshalType) CreateCustomAttributes() {
+			var marshalType = reader.ReadMarshalType(MetadataToken, ReflectedType!.Module, null);
 			var cas = reader.ReadCustomAttributes(MetadataToken);
-			var row = reader.TablesStream.ReadFieldLayoutRow(reader.Metadata.GetFieldLayoutRid(Rid));
-			var fieldOffset = row == null ? (uint?)null : row.OffSet;
+			uint? fieldOffset;
+			if (reader.TablesStream.TryReadFieldLayoutRow(reader.Metadata.GetFieldLayoutRid(Rid), out var row))
+				fieldOffset = row.OffSet;
+			else
+				fieldOffset = null;
 			return (cas, fieldOffset, marshalType);
 		}
 	}

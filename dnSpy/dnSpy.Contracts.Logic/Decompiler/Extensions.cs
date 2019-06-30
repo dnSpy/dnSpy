@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,6 +18,7 @@
 */
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
@@ -29,14 +30,68 @@ namespace dnSpy.Contracts.Decompiler {
 	/// </summary>
 	public static class Extensions {
 		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="type"></param>
+		/// <returns></returns>
+		public static ITypeDefOrRef? GetScopeType(this ITypeDefOrRef? type) {
+			if (type is TypeSpec ts) {
+				var sig = ts.TypeSig.RemovePinnedAndModifiers();
+				if (sig is GenericInstSig gis)
+					return gis.GenericType?.TypeDefOrRef;
+				if (sig is TypeDefOrRefSig tdrs)
+					return tdrs.TypeDefOrRef;
+			}
+			return type;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="type"></param>
+		/// <returns></returns>
+		public static ITypeDefOrRef? GetScopeTypeDefOrRef(this IType? type) {
+			var t = type.GetScopeType();
+			if (t is ITypeDefOrRef tdr)
+				return tdr;
+			if (t is TypeSig sig)
+				return sig.ToTypeDefOrRef();
+			Debug.Assert(t is null);
+			return null;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="type"></param>
+		/// <returns></returns>
+		public static IType? GetScopeType(this IType? type) {
+			if (type is TypeDef td)
+				return td;
+			if (type is TypeRef tr)
+				return tr;
+			if (!(type is TypeSig sig)) {
+				if (!(type is TypeSpec ts))
+					return type;
+				sig = ts.TypeSig;
+			}
+			sig = sig.RemovePinnedAndModifiers();
+			if (sig is GenericInstSig gis)
+				return gis.GenericType?.TypeDefOrRef;
+			if (sig is TypeDefOrRefSig tdrs)
+				return tdrs.TypeDefOrRef;
+			return type;
+		}
+
+		/// <summary>
 		/// Checks whether a custom attribute exists
 		/// </summary>
 		/// <param name="provider">Custom attribute provider</param>
 		/// <param name="namespace">Namespace of custom attribute</param>
 		/// <param name="name">Name of custom attribute</param>
 		/// <returns></returns>
-		public static bool IsDefined(this IHasCustomAttribute provider, UTF8String @namespace, UTF8String name) {
-			if (provider == null || provider.CustomAttributes.Count == 0)
+		public static bool IsDefined(this IHasCustomAttribute? provider, UTF8String? @namespace, UTF8String? name) {
+			if (provider is null || provider.CustomAttributes.Count == 0)
 				return false;
 			foreach (var ca in provider.CustomAttributes) {
 				if (ca.AttributeType is TypeRef tr) {
@@ -62,19 +117,19 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="rva">Updated with the RVA</param>
 		/// <param name="fileOffset">Updated with the file offset</param>
 		/// <returns></returns>
-		public static bool GetRVA(this IMemberDef member, out uint rva, out long fileOffset) {
+		public static bool GetRVA(this IMemberDef? member, out uint rva, out long fileOffset) {
 			rva = 0;
 			fileOffset = 0;
 
-			if (member is MethodDef)
-				rva = (uint)(member as MethodDef).RVA;
-			else if (member is FieldDef)
-				rva = (uint)(member as FieldDef).RVA;
+			if (member is MethodDef method)
+				rva = (uint)method.RVA;
+			else if (member is FieldDef field)
+				rva = (uint)field.RVA;
 			if (rva == 0)
 				return false;
 
-			var fo = member.Module.ToFileOffset(rva);
-			if (fo == null)
+			var fo = member!.Module.ToFileOffset(rva);
+			if (fo is null)
 				return false;
 			fileOffset = fo.Value;
 			return true;
@@ -86,11 +141,11 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="module">Module</param>
 		/// <param name="rva">RVA</param>
 		/// <returns></returns>
-		public static long? ToFileOffset(this ModuleDef module, uint rva) {
+		public static uint? ToFileOffset(this ModuleDef? module, uint rva) {
 			var m = module as ModuleDefMD;//TODO: Support CorModuleDef
-			if (m == null)
+			if (m is null)
 				return null;
-			return (long)m.MetaData.PEImage.ToFileOffset((RVA)rva);
+			return (uint)m.Metadata.PEImage.ToFileOffset((RVA)rva);
 		}
 
 		/// <summary>
@@ -98,8 +153,8 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="body">Method body, can be null</param>
 		/// <returns></returns>
-		public static int GetCodeSize(this CilBody body) {
-			if (body == null || body.Instructions.Count == 0)
+		public static int GetCodeSize(this CilBody? body) {
+			if (body is null || body.Instructions.Count == 0)
 				return 0;
 			var instr = body.Instructions[body.Instructions.Count - 1];
 			return (int)instr.Offset + instr.GetSize();
@@ -110,8 +165,8 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="method">Method</param>
 		/// <returns></returns>
-		public static IList<Parameter> GetParameters(this IMethod method) {
-			if (method == null || method.MethodSig == null)
+		public static IList<Parameter> GetParameters(this IMethod? method) {
+			if (method is null || method.MethodSig is null)
 				return new List<Parameter>();
 
 			if (method is MethodDef md)
@@ -133,11 +188,11 @@ namespace dnSpy.Contracts.Decompiler {
 		}
 
 		static IEnumerable<MethodDef> GetAllMethods(this EventDef e) {
-			if (e.AddMethod != null)
+			if (!(e.AddMethod is null))
 				yield return e.AddMethod;
-			if (e.InvokeMethod != null)
+			if (!(e.InvokeMethod is null))
 				yield return e.InvokeMethod;
-			if (e.RemoveMethod != null)
+			if (!(e.RemoveMethod is null))
 				yield return e.RemoveMethod;
 			foreach (var m in e.OtherMethods)
 				yield return m;
@@ -148,8 +203,8 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="type">Type</param>
 		/// <returns></returns>
-		public static HashSet<MethodDef> GetPropertyAndEventMethods(this TypeDef type) {
-			var hash = new HashSet<MethodDef>();
+		public static HashSet<MethodDef?> GetPropertyAndEventMethods(this TypeDef type) {
+			var hash = new HashSet<MethodDef?>();
 			foreach (var p in type.Properties) {
 				foreach (var m in p.GetAllMethods())
 					hash.Add(m);
@@ -167,15 +222,15 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="property">Property to check</param>
 		/// <returns></returns>
-		public static bool IsIndexer(this PropertyDef property) {
-			if (property == null || property.PropertySig.GetParamCount() == 0)
+		public static bool IsIndexer(this PropertyDef? property) {
+			if (property is null || property.PropertySig.GetParamCount() == 0)
 				return false;
 
 			var accessor = property.GetMethod ?? property.SetMethod;
 			var basePropDef = property;
-			if (accessor != null && accessor.HasOverrides) {
+			if (!(accessor is null) && accessor.HasOverrides) {
 				var baseAccessor = accessor.Overrides.First().MethodDeclaration.ResolveMethodDef();
-				if (baseAccessor != null) {
+				if (!(baseAccessor is null)) {
 					foreach (var baseProp in baseAccessor.DeclaringType.Properties) {
 						if (baseProp.GetMethod == baseAccessor || baseProp.SetMethod == baseAccessor) {
 							basePropDef = baseProp;
@@ -193,11 +248,11 @@ namespace dnSpy.Contracts.Decompiler {
 			return false;
 		}
 
-		static string GetDefaultMemberName(TypeDef type) {
-			if (type == null)
+		static string? GetDefaultMemberName(TypeDef type) {
+			if (type is null)
 				return null;
 			foreach (var ca in type.CustomAttributes.FindAll("System.Reflection.DefaultMemberAttribute")) {
-				if (ca.Constructor != null && ca.Constructor.FullName == @"System.Void System.Reflection.DefaultMemberAttribute::.ctor(System.String)" &&
+				if (!(ca.Constructor is null) && ca.Constructor.FullName == @"System.Void System.Reflection.DefaultMemberAttribute::.ctor(System.String)" &&
 					ca.ConstructorArguments.Count == 1 &&
 					ca.ConstructorArguments[0].Value is UTF8String) {
 					return (UTF8String)ca.ConstructorArguments[0].Value;
@@ -211,7 +266,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="type">Type</param>
 		/// <returns></returns>
-		public static TypeDef Resolve(this IType type) => type?.ScopeType.ResolveTypeDef();
+		public static TypeDef? Resolve(this IType? type) => type?.GetScopeTypeDefOrRef().ResolveTypeDef();
 
 		/// <summary>
 		/// Returns true if the fields can be sorted and false if the original metadata order must be used

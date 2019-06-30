@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
+// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
@@ -33,7 +33,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		readonly bool hidesParent;
 
 		public PropertyNode(PropertyDef analyzedProperty, bool hidesParent = false) {
-			if (analyzedProperty == null)
+			if (analyzedProperty is null)
 				throw new ArgumentNullException(nameof(analyzedProperty));
 			isIndexer = analyzedProperty.IsIndexer();
 			this.analyzedProperty = analyzedProperty;
@@ -52,34 +52,38 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 			decompiler.WriteType(output, analyzedProperty.DeclaringType, true);
 			output.Write(BoxedTextColor.Operator, ".");
-			new NodePrinter().Write(output, decompiler, analyzedProperty, Context.ShowToken, null);
+			new NodeFormatter().Write(output, decompiler, analyzedProperty, Context.ShowToken, null);
 		}
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
-			if (analyzedProperty.GetMethod != null)
-				yield return new PropertyAccessorNode(analyzedProperty.GetMethod, dnSpy_Analyzer_Resources.PropertyGetterTreeNode);
-			if (analyzedProperty.SetMethod != null)
-				yield return new PropertyAccessorNode(analyzedProperty.SetMethod, dnSpy_Analyzer_Resources.PropertySetterTreeNode);
+			if (!(analyzedProperty.GetMethod is null))
+				yield return new PropertyAccessorNode(analyzedProperty.GetMethod, "get", isSetter: false);
+
+			if (!(analyzedProperty.SetMethod is null))
+				yield return new PropertyAccessorNode(analyzedProperty.SetMethod, "set", isSetter: true);
+
 			foreach (var accessor in analyzedProperty.OtherMethods)
-				yield return new PropertyAccessorNode(accessor, null);
+				yield return new PropertyAccessorNode(accessor, null, isSetter: false);
 
 			if (PropertyOverriddenNode.CanShow(analyzedProperty))
 				yield return new PropertyOverriddenNode(analyzedProperty);
+
 			if (PropertyOverridesNode.CanShow(analyzedProperty))
 				yield return new PropertyOverridesNode(analyzedProperty);
+
 			if (InterfacePropertyImplementedByNode.CanShow(analyzedProperty))
 				yield return new InterfacePropertyImplementedByNode(analyzedProperty);
 		}
 
-		public static AnalyzerTreeNodeData TryCreateAnalyzer(IMemberRef member, IDecompiler decompiler) {
+		public static AnalyzerTreeNodeData? TryCreateAnalyzer(IMemberRef? member, IDecompiler decompiler) {
 			if (CanShow(member, decompiler))
-				return new PropertyNode(member as PropertyDef);
+				return new PropertyNode((PropertyDef)member!);
 			else
 				return null;
 		}
 
-		public static bool CanShow(IMemberRef member, IDecompiler decompiler) => member is PropertyDef;
-		public override IMemberRef Member => analyzedProperty;
-		public override IMDTokenProvider Reference => analyzedProperty;
+		public static bool CanShow(IMemberRef? member, IDecompiler decompiler) => member is PropertyDef;
+		public override IMemberRef? Member => analyzedProperty;
+		public override IMDTokenProvider? Reference => analyzedProperty;
 	}
 }

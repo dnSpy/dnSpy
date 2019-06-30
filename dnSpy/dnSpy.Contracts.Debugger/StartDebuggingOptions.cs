@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,14 +28,14 @@ namespace dnSpy.Contracts.Debugger {
 		/// <summary>
 		/// Where to break, see <see cref="PredefinedBreakKinds"/>
 		/// </summary>
-		public string BreakKind { get; set; }
+		public string? BreakKind { get; set; }
 
 		/// <summary>
 		/// Copies this instance to <paramref name="other"/>
 		/// </summary>
 		/// <param name="other">Destination</param>
 		protected void CopyTo(StartDebuggingOptions other) {
-			if (other == null)
+			if (other is null)
 				throw new ArgumentNullException(nameof(other));
 			other.BreakKind = BreakKind;
 		}
@@ -56,7 +56,7 @@ namespace dnSpy.Contracts.Debugger {
 		public const string CreateProcess = nameof(CreateProcess);
 
 		/// <summary>
-		/// Break at entry point
+		/// Entry point
 		/// </summary>
 		public const string EntryPoint = nameof(EntryPoint);
 	}

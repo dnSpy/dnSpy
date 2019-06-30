@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,9 +27,9 @@ using dnSpy.Contracts.ToolWindows.Search;
 
 namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 	sealed class BookmarkColumnConverter : IValueConverter {
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
+		public object? Convert(object value, Type targetType, object parameter, CultureInfo culture) {
 			var obj = value as FormatterObject<BookmarkVM>;
-			if (obj == null)
+			if (obj is null)
 				return null;
 
 			var writer = obj.VM.Context.TextClassifierTextColorWriter;

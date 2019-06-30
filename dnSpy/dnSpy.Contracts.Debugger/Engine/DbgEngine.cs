@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -60,7 +60,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		public abstract void Start(DebugProgramOptions options);
 
 		/// <summary>
-		/// Raised when there's a new message. It can be raised in any thread.
+		/// Raised when there's a new message. It can be raised on any thread.
 		/// </summary>
 		public abstract event EventHandler<DbgEngineMessage> Message;
 

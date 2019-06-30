@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,7 +24,7 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Text.Formatting {
-	struct LinePart {
+	readonly struct LinePart {
 		/// <summary>
 		/// Column (visible character index). This is usually equal to <see cref="Span"/>'s <see cref="Microsoft.VisualStudio.Text.Span.Start"/>
 		/// property unless there's one or more hidden characters before this <see cref="LinePart"/> or if there's a <see cref="LinePart"/>
@@ -35,7 +35,7 @@ namespace dnSpy.Text.Formatting {
 		/// <summary>
 		/// Length in column characters. This is never zero.
 		/// </summary>
-		public int ColumnLength => AdornmentElement != null ? 1 : Span.Length;
+		public int ColumnLength => !(AdornmentElement is null) ? 1 : Span.Length;
 
 		/// <summary>
 		/// Span relative to the start of the physical line (<see cref="LinePartsCollection.Span"/>)
@@ -45,12 +45,12 @@ namespace dnSpy.Text.Formatting {
 		/// <summary>
 		/// Adornment element or null
 		/// </summary>
-		public readonly IAdornmentElement AdornmentElement;
+		public readonly IAdornmentElement? AdornmentElement;
 
 		/// <summary>
 		/// Text run properties if it's normal text or null if an adornment element is used instead
 		/// </summary>
-		public readonly TextRunProperties TextRunProperties;
+		public readonly TextRunProperties? TextRunProperties;
 
 		/// <summary>
 		/// Index of this instance in the collection
@@ -58,8 +58,8 @@ namespace dnSpy.Text.Formatting {
 		public readonly int Index;
 
 		public LinePart(int index, int column, Span span, IAdornmentElement adornmentElement, TextRunProperties textRunProperties) {
-			Debug.Assert(adornmentElement != null);
-			Debug.Assert(textRunProperties != null);
+			Debug.Assert(!(adornmentElement is null));
+			Debug.Assert(!(textRunProperties is null));
 			Index = index;
 			Column = column;
 			Span = span;
@@ -69,7 +69,7 @@ namespace dnSpy.Text.Formatting {
 
 		public LinePart(int index, int column, Span span, TextRunProperties textRunProperties) {
 			Debug.Assert(!span.IsEmpty);
-			Debug.Assert(textRunProperties != null);
+			Debug.Assert(!(textRunProperties is null));
 			Index = index;
 			Column = column;
 			Span = span;
@@ -78,7 +78,7 @@ namespace dnSpy.Text.Formatting {
 		}
 
 		public bool BelongsTo(int lineIndex) {
-			if (AdornmentElement == null || Span.Length != 0)
+			if (AdornmentElement is null || Span.Length != 0)
 				return Span.Start <= lineIndex && lineIndex < Span.End;
 
 			switch (AdornmentElement.Affinity) {
@@ -95,7 +95,7 @@ namespace dnSpy.Text.Formatting {
 		}
 
 		public override string ToString() {
-			if (AdornmentElement != null)
+			if (!(AdornmentElement is null))
 				return $"{Span.ToString()} {AdornmentElement.ToString()}";
 			return Span.ToString();
 		}

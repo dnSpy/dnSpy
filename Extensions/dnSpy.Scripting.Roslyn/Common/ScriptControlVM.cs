@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,6 +24,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -36,8 +37,8 @@ using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Utilities;
-using dnSpy.Roslyn.Shared.Text;
-using dnSpy.Roslyn.Shared.Text.Classification;
+using dnSpy.Roslyn.Text;
+using dnSpy.Roslyn.Text.Classification;
 using dnSpy.Scripting.Roslyn.Properties;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Scripting;
@@ -58,7 +59,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 	abstract class ScriptControlVM : ViewModelBase, IReplCommandHandler, IScriptGlobalsHelper {
 		internal const string CMD_PREFIX = "#";
 
-		static readonly string TEXTFILES_FILTER = string.Format("{1} (*.txt)|*.txt|{0} (*.*)|*.*", dnSpy_Scripting_Roslyn_Resources.AllFiles, dnSpy_Scripting_Roslyn_Resources.TextFiles);
+		static readonly string TEXTFILES_FILTER = $"{dnSpy_Scripting_Roslyn_Resources.TextFiles} (*.txt)|*.txt|{dnSpy_Scripting_Roslyn_Resources.AllFiles} (*.*)|*.*";
 
 		protected abstract string TextFilenameNoExtension { get; }
 		protected abstract string CodeFilenameNoExtension { get; }
@@ -77,7 +78,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		public ICommand SaveCommand => new RelayCommand(a => SaveText(), a => CanSaveText);
 		public ICommand HistoryPreviousCommand => new RelayCommand(a => ReplEditor.SelectPreviousCommand(), a => ReplEditor.CanSelectPreviousCommand);
 		public ICommand HistoryNextCommand => new RelayCommand(a => ReplEditor.SelectNextCommand(), a => ReplEditor.CanSelectNextCommand);
-		public bool CanReset => hasInitialized && (execState == null || !execState.IsInitializing);
+		public bool CanReset => hasInitialized && (execState is null || !execState.IsInitializing);
 
 		public bool CanSaveText => ReplEditor.CanSaveText;
 		public void SaveText() => ReplEditor.SaveText(TextFilenameNoExtension, "txt", TEXTFILES_FILTER);
@@ -87,7 +88,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		public void Reset(bool loadConfig = true) {
 			if (!CanReset)
 				return;
-			if (execState != null) {
+			if (!(execState is null)) {
 				execState.CancellationTokenSource.Cancel();
 				try {
 					execState.Globals.RaiseScriptResetting();
@@ -107,7 +108,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		bool isResetting;
 
 		public bool WordWrap {
-			get { return (ReplEditor.TextView.Options.WordWrapStyle() & WordWrapStyles.WordWrap) != 0; }
+			get => (ReplEditor.TextView.Options.WordWrapStyle() & WordWrapStyles.WordWrap) != 0;
 			set {
 				if (value)
 					WordWrapStyle |= WordWrapStyles.WordWrap;
@@ -117,7 +118,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		}
 
 		WordWrapStyles WordWrapStyle {
-			get { return ReplEditor.TextView.Options.WordWrapStyle(); }
+			get => ReplEditor.TextView.Options.WordWrapStyle();
 			set {
 				var oldWordWrapStyle = WordWrapStyle;
 				if (value == oldWordWrapStyle)
@@ -131,7 +132,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		}
 
 		bool ShowLineNumbers {
-			get { return ReplEditor.TextView.Options.IsLineNumberMarginEnabled(); }
+			get => ReplEditor.TextView.Options.IsLineNumberMarginEnabled();
 			set {
 				if (ShowLineNumbers == value)
 					return;
@@ -152,7 +153,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		}
 
 		readonly Dispatcher dispatcher;
-		readonly RoslynClassificationTypes2 roslynClassificationTypes;
+		readonly RoslynClassificationTypes roslynClassificationTypes;
 		readonly IClassificationType defaultClassificationType;
 		readonly ReplSettings replSettings;
 
@@ -167,7 +168,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			ReplEditor.TextView.Options.OptionChanged += Options_OptionChanged;
 
 			var themeClassificationTypeService = serviceLocator.Resolve<IThemeClassificationTypeService>();
-			roslynClassificationTypes = RoslynClassificationTypes2.GetClassificationTypeInstance(themeClassificationTypeService);
+			roslynClassificationTypes = RoslynClassificationTypes.GetClassificationTypeInstance(themeClassificationTypeService);
 			defaultClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.Error);
 
 			toScriptCommand = new Dictionary<string, IScriptCommand>(StringComparer.Ordinal);
@@ -189,7 +190,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 
 		protected abstract string Logo { get; }
 		protected abstract string Help { get; }
-		protected abstract Script<T> Create<T>(string code, ScriptOptions options, Type globalsType, InteractiveAssemblyLoader assemblyLoader);
+		protected abstract Script<T> Create<T>(string code, ScriptOptions options, Type globalsType, InteractiveAssemblyLoader? assemblyLoader);
 
 		public void OnVisible() {
 			if (hasInitialized)
@@ -211,7 +212,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		}
 
 		public bool IsCommand(string text) {
-			if (ParseScriptCommand(text) != null)
+			if (!(ParseScriptCommand(text) is null))
 				return true;
 			return IsCompleteSubmission(text);
 		}
@@ -219,12 +220,12 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		protected abstract bool IsCompleteSubmission(string text);
 
 		sealed class ExecState {
-			public ScriptOptions ScriptOptions;
+			public ScriptOptions? ScriptOptions;
 			public readonly CancellationTokenSource CancellationTokenSource;
 			public readonly CancellationToken CancellationToken;
 			public readonly ScriptGlobals Globals;
-			public ScriptState<object> ScriptState;
-			public Task<ScriptState<object>> ExecTask;
+			public ScriptState<object>? ScriptState;
+			public Task<ScriptState<object>>? ExecTask;
 			public bool Executing;
 			public bool IsInitializing;
 			public ExecState(ScriptControlVM vm, Dispatcher dispatcher, CancellationTokenSource cts) {
@@ -234,7 +235,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 				IsInitializing = true;
 			}
 		}
-		ExecState execState;
+		ExecState? execState;
 		readonly object lockObj = new object();
 
 		IEnumerable<string> GetDefaultScriptFilePaths() {
@@ -253,8 +254,8 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		IEnumerable<string> GetDefaultLoadPaths() => GetDefaultScriptFilePaths();
 
 		void InitializeExecutionEngine(bool loadConfig, bool showHelp) {
-			Debug.Assert(execState == null);
-			if (execState != null)
+			Debug.Assert(execState is null);
+			if (!(execState is null))
 				throw new InvalidOperationException();
 
 			execState = new ExecState(this, dispatcher, new CancellationTokenSource());
@@ -314,13 +315,13 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		public Task OnCommandUpdatedAsync(IReplCommandInput command, CancellationToken cancellationToken) {
 			if (isResetting)
 				return Task.CompletedTask;
-			Debug.Assert(execState != null);
-			if (execState == null)
+			Debug.Assert(!(execState is null));
+			if (execState is null)
 				throw new InvalidOperationException();
 
 			string code = command.Input;
 			const string assemblyName = "myasm";
-			var previousScriptCompilation = execState.ScriptState.Script.GetCompilation();
+			var previousScriptCompilation = execState.ScriptState!.Script.GetCompilation();
 			if (cancellationToken.IsCancellationRequested)
 				return Task.CompletedTask;
 			var options = previousScriptCompilation.Options;
@@ -346,23 +347,23 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		}
 
 		protected abstract SyntaxTree CreateSyntaxTree(string code, CancellationToken cancellationToken);
-		protected abstract Compilation CreateScriptCompilation(string assemblyName, SyntaxTree syntaxTree, IEnumerable<MetadataReference> references, CompilationOptions options, Compilation previousScriptCompilation, Type returnType, Type globalsType);
+		protected abstract Compilation CreateScriptCompilation(string assemblyName, SyntaxTree syntaxTree, IEnumerable<MetadataReference>? references, CompilationOptions options, Compilation previousScriptCompilation, Type returnType, Type globalsType);
 
 		bool ExecuteCommandInternal(string input) {
-			Debug.Assert(execState != null && !execState.IsInitializing);
-			if (execState == null || execState.IsInitializing)
+			Debug.Assert(!(execState is null) && !execState.IsInitializing);
+			if (execState is null || execState.IsInitializing)
 				return true;
 			lock (lockObj) {
-				Debug.Assert(execState.ExecTask == null && !execState.Executing);
-				if (execState.ExecTask != null || execState.Executing)
+				Debug.Assert(execState.ExecTask is null && !execState.Executing);
+				if (!(execState.ExecTask is null) || execState.Executing)
 					return true;
 				execState.Executing = true;
 			}
 
 			try {
 				var scState = ParseScriptCommand(input);
-				if (scState != null) {
-					if (execState != null) {
+				if (!(scState is null)) {
+					if (!(execState is null)) {
 						lock (lockObj)
 							execState.Executing = false;
 					}
@@ -379,8 +380,8 @@ namespace dnSpy.Scripting.Roslyn.Common {
 				Task.Run(() => {
 					oldState.CancellationToken.ThrowIfCancellationRequested();
 
-					var opts = oldState.ScriptOptions.WithReferences(Array.Empty<MetadataReference>()).WithImports(Array.Empty<string>());
-					var execTask = oldState.ScriptState.ContinueWithAsync(input, opts, oldState.CancellationToken);
+					var opts = oldState.ScriptOptions!.WithReferences(Array.Empty<MetadataReference>()).WithImports(Array.Empty<string>());
+					var execTask = oldState.ScriptState!.ContinueWithAsync(input, opts, oldState.CancellationToken);
 					oldState.CancellationToken.ThrowIfCancellationRequested();
 					lock (lockObj) {
 						if (oldState == execState)
@@ -396,13 +397,13 @@ namespace dnSpy.Scripting.Roslyn.Common {
 						}
 						if (isActive) {
 							try {
-								if (ex != null)
+								if (!(ex is null))
 									ReplEditor.OutputPrint(Format(ex.InnerException), BoxedTextColor.Error, true);
 
 								if (!t.IsCanceled && !t.IsFaulted) {
 									oldState.ScriptState = t.Result;
 									var val = t.Result.ReturnValue;
-									if (val != null)
+									if (!(val is null))
 										ObjectOutputLine(BoxedTextColor.ReplOutputText, oldState.Globals.PrintOptionsImpl, val, true);
 								}
 							}
@@ -413,7 +414,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 					}, CancellationToken.None, TaskContinuationOptions.None, taskSched);
 				})
 				.ContinueWith(t => {
-					if (execState != null) {
+					if (!(execState is null)) {
 						lock (lockObj)
 							execState.Executing = false;
 					}
@@ -426,7 +427,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 						CommandExecuted();
 					else {
 						var ex = t.Exception;
-						if (ex != null) {
+						if (!(ex is null)) {
 							ReplEditor.OutputPrint(ex.ToString(), BoxedTextColor.Error, true);
 							CommandExecuted();
 						}
@@ -436,7 +437,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 				return true;
 			}
 			catch (Exception ex) {
-				if (execState != null) {
+				if (!(execState is null)) {
 					lock (lockObj)
 						execState.Executing = false;
 				}
@@ -445,7 +446,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			}
 		}
 
-		bool UnpackScriptCommand(string input, out string name, out string[] args) {
+		bool UnpackScriptCommand(string input, [NotNullWhenTrue] out string? name, [NotNullWhenTrue] out string[]? args) {
 			name = null;
 			args = null;
 
@@ -470,8 +471,8 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			}
 		}
 
-		ExecScriptCommandState ParseScriptCommand(string input) {
-			if (!UnpackScriptCommand(input, out string name, out var args))
+		ExecScriptCommandState? ParseScriptCommand(string input) {
+			if (!UnpackScriptCommand(input, out var name, out var args))
 				return null;
 
 			if (!toScriptCommand.TryGetValue(name, out var sc))
@@ -501,7 +502,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 
 		protected abstract ObjectFormatter ObjectFormatter { get; }
 		protected abstract DiagnosticFormatter DiagnosticFormatter { get; }
-		string Format(object value, PrintOptions printOptions) => ObjectFormatter.FormatObject(value, printOptions);
+		string Format(object? value, PrintOptions printOptions) => ObjectFormatter.FormatObject(value, printOptions);
 		string Format(Exception ex) => ObjectFormatter.FormatException(ex);
 
 		/// <summary>
@@ -511,50 +512,60 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		/// <returns></returns>
 		bool IsCurrentScript(ScriptGlobals globals) => execState?.Globals == globals;
 
-		void IScriptGlobalsHelper.Print(ScriptGlobals globals, object color, string text) {
+		void IScriptGlobalsHelper.Print(ScriptGlobals globals, object? color, string? text) {
 			if (!IsCurrentScript(globals))
+				return;
+			if (color is null)
 				return;
 			ReplEditor.OutputPrint(text, color);
 		}
 
-		void IScriptGlobalsHelper.PrintLine(ScriptGlobals globals, object color, string text) {
+		void IScriptGlobalsHelper.PrintLine(ScriptGlobals globals, object? color, string? text) {
 			if (!IsCurrentScript(globals))
+				return;
+			if (color is null)
 				return;
 			ReplEditor.OutputPrintLine(text, color);
 		}
 
-		void IScriptGlobalsHelper.Print(ScriptGlobals globals, object color, PrintOptionsImpl printOptions, object value) {
+		void IScriptGlobalsHelper.Print(ScriptGlobals globals, object? color, PrintOptionsImpl printOptions, object? value) {
 			if (!IsCurrentScript(globals))
 				return;
 			ObjectOutput(color, printOptions, value);
 		}
 
-		void IScriptGlobalsHelper.PrintLine(ScriptGlobals globals, object color, PrintOptionsImpl printOptions, object value) {
+		void IScriptGlobalsHelper.PrintLine(ScriptGlobals globals, object? color, PrintOptionsImpl printOptions, object? value) {
 			if (!IsCurrentScript(globals))
 				return;
 			ObjectOutputLine(color, printOptions, value);
 		}
 
-		void IScriptGlobalsHelper.Print(ScriptGlobals globals, object color, Exception ex) {
+		void IScriptGlobalsHelper.Print(ScriptGlobals globals, object? color, Exception? ex) {
 			if (!IsCurrentScript(globals))
+				return;
+			if (color is null || ex is null)
 				return;
 			ReplEditor.OutputPrint(Format(ex), color);
 		}
 
-		void IScriptGlobalsHelper.PrintLine(ScriptGlobals globals, object color, Exception ex) {
+		void IScriptGlobalsHelper.PrintLine(ScriptGlobals globals, object? color, Exception? ex) {
 			if (!IsCurrentScript(globals))
+				return;
+			if (color is null || ex is null)
 				return;
 			ReplEditor.OutputPrintLine(Format(ex), color);
 		}
 
-		void IScriptGlobalsHelper.Print(ScriptGlobals globals, CachedWriter writer, object color, PrintOptionsImpl printOptions, object value) {
+		void IScriptGlobalsHelper.Print(ScriptGlobals globals, CachedWriter writer, object? color, PrintOptionsImpl printOptions, object? value) {
 			if (!IsCurrentScript(globals))
 				return;
 			ObjectOutput(writer, color, printOptions, value);
 		}
 
-		void IScriptGlobalsHelper.Print(ScriptGlobals globals, CachedWriter writer, object color, Exception ex) {
+		void IScriptGlobalsHelper.Print(ScriptGlobals globals, CachedWriter writer, object? color, Exception? ex) {
 			if (!IsCurrentScript(globals))
+				return;
+			if (color is null || ex is null)
 				return;
 			writer.Write(Format(ex), color);
 		}
@@ -565,7 +576,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			ReplEditor.OutputPrint(list.Select(a => new ColorAndText(a.Color, a.Text)));
 		}
 
-		IOutputWritable GetOutputWritable(PrintOptionsImpl printOptions, object value) {
+		IOutputWritable? GetOutputWritable(PrintOptionsImpl printOptions, object? value) {
 			if (!printOptions.AutoColorizeObjects)
 				return null;
 			return value as IOutputWritable;
@@ -586,31 +597,37 @@ namespace dnSpy.Scripting.Roslyn.Common {
 				this.owner = owner;
 			}
 
-			public void Write(string text, object color) {
+			public void Write(string? text, object? color) {
+				if (text is null)
+					return;
 				owner.ReplEditor.OutputPrint(text, color ?? BoxedTextColor.ReplScriptOutputText, startOnNewLine);
 				startOnNewLine = false;
 			}
 
-			public void Write(string text, TextColor color) => Write(text, color.Box());
+			public void Write(string? text, TextColor color) => Write(text, color.Box());
 		}
 
-		void ObjectOutput(CachedWriter writer, object color, PrintOptionsImpl printOptions, object value) {
+		void ObjectOutput(CachedWriter writer, object? color, PrintOptionsImpl printOptions, object? value) {
 			var writable = GetOutputWritable(printOptions, value);
-			if (writable != null)
+			if (!(writable is null))
 				writable.WriteTo(writer);
 			else
 				writer.Write(Format(value, printOptions.RoslynPrintOptions), color);
 		}
 
-		void ObjectOutput(object color, PrintOptionsImpl printOptions, object value, bool startOnNewLine = false) {
+		void ObjectOutput(object? color, PrintOptionsImpl printOptions, object? value, bool startOnNewLine = false) {
+			if (color is null)
+				return;
 			var writable = GetOutputWritable(printOptions, value);
-			if (writable != null)
+			if (!(writable is null))
 				writable.WriteTo(OutputWriter.Create(this, startOnNewLine));
 			else
 				ReplEditor.OutputPrint(Format(value, printOptions.RoslynPrintOptions), color, startOnNewLine);
 		}
 
-		void ObjectOutputLine(object color, PrintOptionsImpl printOptions, object value, bool startOnNewLine = false) {
+		void ObjectOutputLine(object? color, PrintOptionsImpl printOptions, object? value, bool startOnNewLine = false) {
+			if (color is null)
+				return;
 			ObjectOutput(color, printOptions, value, startOnNewLine);
 			ReplEditor.OutputPrintLine(string.Empty, color);
 		}
@@ -618,7 +635,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		IServiceLocator IScriptGlobalsHelper.ServiceLocator => serviceLocator;
 		readonly IServiceLocator serviceLocator;
 
-		protected static string GetResponseFile(string filename) {
+		protected static string? GetResponseFile(string filename) {
 			foreach (var dir in AppDirectories.GetDirectories(string.Empty)) {
 				var path = Path.Combine(dir, filename);
 				if (File.Exists(path))

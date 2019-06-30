@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using dnlib.DotNet;
 using dnSpy.Contracts.Bookmarks;
 using dnSpy.Contracts.Bookmarks.DotNet;
@@ -39,7 +40,7 @@ namespace dnSpy.Bookmarks.DotNet.TextEditor {
 			this.moduleIdProvider = moduleIdProvider;
 		}
 
-		public override BookmarkDocument GetDocument(Bookmark bookmark) {
+		public override BookmarkDocument? GetDocument(Bookmark bookmark) {
 			switch (bookmark.Location) {
 			case DotNetMethodBodyBookmarkLocation bodyLoc:
 				return GetDocument(bodyLoc);
@@ -54,35 +55,37 @@ namespace dnSpy.Bookmarks.DotNet.TextEditor {
 		sealed class BookmarkDocumentImpl : BookmarkDocument {
 			readonly IDocumentTab tab;
 			public BookmarkDocumentImpl(IDocumentTab tab) => this.tab = tab ?? throw new ArgumentNullException(nameof(tab));
-			public override bool Equals(object obj) => obj is BookmarkDocumentImpl other && tab == other.tab;
+			public override bool Equals(object? obj) => obj is BookmarkDocumentImpl other && tab == other.tab;
 			public override int GetHashCode() => tab.GetHashCode();
 		}
 
-		BookmarkDocument GetDocument(DotNetMethodBodyBookmarkLocation bodyLoc) {
+		BookmarkDocument? GetDocument(DotNetMethodBodyBookmarkLocation bodyLoc) {
 			var tab = documentTabService.Value.ActiveTab;
-			var documentViewer = tab.TryGetDocumentViewer();
-			if (documentViewer == null)
+			var documentViewer = tab?.TryGetDocumentViewer();
+			if (documentViewer is null)
 				return null;
+			Debug.Assert(!(tab is null));
 			var methodDebugService = documentViewer.GetMethodDebugService();
 			var info = methodDebugService.TryGetMethodDebugInfo(new ModuleTokenId(bodyLoc.Module, bodyLoc.Token));
-			if (info == null)
+			if (info is null)
 				return null;
-			if (info.GetSourceStatementByCodeOffset(bodyLoc.Offset) == null)
+			if (info.GetSourceStatementByCodeOffset(bodyLoc.Offset) is null)
 				return null;
 			return new BookmarkDocumentImpl(tab);
 		}
 
-		BookmarkDocument GetDocument(DotNetTokenBookmarkLocation tokenLoc) {
+		BookmarkDocument? GetDocument(DotNetTokenBookmarkLocation tokenLoc) {
 			var tab = documentTabService.Value.ActiveTab;
-			var documentViewer = tab.TryGetDocumentViewer();
-			if (documentViewer == null)
+			var documentViewer = tab?.TryGetDocumentViewer();
+			if (documentViewer is null)
 				return null;
+			Debug.Assert(!(tab is null));
 
 			foreach (var info in documentViewer.ReferenceCollection) {
 				if (!info.Data.IsDefinition)
 					continue;
 				var def = info.Data.Reference as IMemberDef;
-				if (def == null || def.MDToken.Raw != tokenLoc.Token)
+				if (def is null || def.MDToken.Raw != tokenLoc.Token)
 					continue;
 				if (moduleIdProvider.Value.Create(def.Module) != tokenLoc.Module)
 					continue;

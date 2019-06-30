@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Linq;
 using dnSpy.Text.MEF;
 using Microsoft.VisualStudio.Text.Classification;
@@ -29,7 +30,7 @@ namespace dnSpy.Text.Classification {
 	interface IEditorFormatDefinitionService {
 		Lazy<EditorFormatDefinition, IEditorFormatMetadata>[] EditorFormatDefinitions { get; }
 		Lazy<EditorFormatDefinition, IClassificationFormatMetadata>[] ClassificationFormatDefinitions { get; }
-		EditorFormatDefinition GetDefinition(string key);
+		EditorFormatDefinition? GetDefinition(string key);
 	}
 
 	[Export(typeof(IEditorFormatDefinitionService))]
@@ -45,14 +46,20 @@ namespace dnSpy.Text.Classification {
 			toLazy = new Dictionary<string, Lazy<EditorFormatDefinition, IEditorFormatMetadata>>(StringComparer.OrdinalIgnoreCase);
 			foreach (var e in EditorFormatDefinitions) {
 				var name = e.Metadata.Name;
-				if (!toLazy.ContainsKey(name))
+				if (toLazy.TryGetValue(name, out var lz)) {
+					if (e.Metadata.Priority > lz.Metadata.Priority)
+						toLazy[name] = e;
+					else
+						Debug.Assert(e.Metadata.Priority < lz.Metadata.Priority);
+				}
+				else
 					toLazy.Add(name, e);
 			}
 		}
 
 		static bool Filter(string s) => s != Priority.Low && s != Priority.Default && s != Priority.High;
 
-		public EditorFormatDefinition GetDefinition(string key) {
+		public EditorFormatDefinition? GetDefinition(string key) {
 			if (!toLazy.TryGetValue(key, out var lazy))
 				return null;
 			return lazy.Value;

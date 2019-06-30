@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,13 +30,12 @@ namespace dnSpy.Text.Editor {
 
 		public ReplCommandTargetFilter(ITextView textView) => this.textView = textView;
 
-		ReplEditor TryGetInstance() =>
-			__replEditor ?? (__replEditor = ReplEditorUtils.TryGetInstance(textView) as ReplEditor);
-		ReplEditor __replEditor;
+		ReplEditor? TryGetInstance() => __replEditor ??= ReplEditorUtils.TryGetInstance(textView) as ReplEditor;
+		ReplEditor? __replEditor;
 
 		public CommandTargetStatus CanExecute(Guid group, int cmdId) {
 			var replEditor = TryGetInstance();
-			if (replEditor == null)
+			if (replEditor is null)
 				return CommandTargetStatus.NotHandled;
 
 			if (group == CommandConstants.StandardGroup) {
@@ -197,14 +196,14 @@ namespace dnSpy.Text.Editor {
 			return CommandTargetStatus.NotHandled;
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args = null) {
-			object result = null;
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args = null) {
+			object? result = null;
 			return Execute(group, cmdId, args, ref result);
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) {
 			var replEditor = TryGetInstance();
-			if (replEditor == null)
+			if (replEditor is null)
 				return CommandTargetStatus.NotHandled;
 
 			if (group == CommandConstants.StandardGroup) {
@@ -223,7 +222,7 @@ namespace dnSpy.Text.Editor {
 
 				case StandardIds.Redo:
 				case StandardIds.Undo:
-					replEditor.SearchText = null;
+					replEditor.SearchText = string.Empty;
 					return CommandTargetStatus.NotHandled;
 
 				default:
@@ -233,7 +232,7 @@ namespace dnSpy.Text.Editor {
 			else if (group == CommandConstants.TextEditorGroup) {
 				switch ((TextEditorIds)cmdId) {
 				case TextEditorIds.BACKSPACE:
-					if (replEditor.ReplEditorOperations.ProvisionalCompositionSpan != null)
+					if (!(replEditor.ReplEditorOperations.ProvisionalCompositionSpan is null))
 						replEditor.ReplEditorOperations.InsertText(string.Empty);
 					else
 						replEditor.ReplEditorOperations.Backspace();

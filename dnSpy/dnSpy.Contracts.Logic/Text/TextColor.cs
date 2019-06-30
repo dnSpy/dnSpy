@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,7 +26,7 @@ namespace dnSpy.Contracts.Text {
 	public enum TextColor {
 		// IMPORTANT: The order must match dnSpy.Contracts.Themes.ColorType
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		Text,
 		Operator,
 		Punctuation,
@@ -326,19 +326,37 @@ namespace dnSpy.Contracts.Text {
 		DebugObjectIdName,
 		DebuggerDisplayAttributeEval,
 		DebuggerNoStringQuotesEval,
+		DebugViewPropertyName,
+		AsmComment,
+		AsmDirective,
+		AsmPrefix,
+		AsmMnemonic,
+		AsmKeyword,
+		AsmOperator,
+		AsmPunctuation,
+		AsmNumber,
+		AsmRegister,
+		AsmSelectorValue,
+		AsmLabelAddress,
+		AsmFunctionAddress,
+		AsmLabel,
+		AsmFunction,
+		AsmData,
+		AsmAddress,
+		AsmHexBytes,
 
 		/// <summary>
 		/// Must be last
 		/// </summary>
 		Last,
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 
 	/// <summary>
 	/// Boxed colors
 	/// </summary>
 	public static class BoxedTextColor {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static readonly object Text = TextColor.Text;
 		public static readonly object Operator = TextColor.Operator;
 		public static readonly object Punctuation = TextColor.Punctuation;
@@ -638,6 +656,24 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object DebugObjectIdName = TextColor.DebugObjectIdName;
 		public static readonly object DebuggerDisplayAttributeEval = TextColor.DebuggerDisplayAttributeEval;
 		public static readonly object DebuggerNoStringQuotesEval = TextColor.DebuggerNoStringQuotesEval;
+		public static readonly object DebugViewPropertyName = TextColor.DebugViewPropertyName;
+		public static readonly object AsmComment = TextColor.AsmComment;
+		public static readonly object AsmDirective = TextColor.AsmDirective;
+		public static readonly object AsmPrefix = TextColor.AsmPrefix;
+		public static readonly object AsmMnemonic = TextColor.AsmMnemonic;
+		public static readonly object AsmKeyword = TextColor.AsmKeyword;
+		public static readonly object AsmOperator = TextColor.AsmOperator;
+		public static readonly object AsmPunctuation = TextColor.AsmPunctuation;
+		public static readonly object AsmNumber = TextColor.AsmNumber;
+		public static readonly object AsmRegister = TextColor.AsmRegister;
+		public static readonly object AsmSelectorValue = TextColor.AsmSelectorValue;
+		public static readonly object AsmLabelAddress = TextColor.AsmLabelAddress;
+		public static readonly object AsmFunctionAddress = TextColor.AsmFunctionAddress;
+		public static readonly object AsmLabel = TextColor.AsmLabel;
+		public static readonly object AsmFunction = TextColor.AsmFunction;
+		public static readonly object AsmData = TextColor.AsmData;
+		public static readonly object AsmAddress = TextColor.AsmAddress;
+		public static readonly object AsmHexBytes = TextColor.AsmHexBytes;
 
 		/// <summary>
 		/// Boxes <paramref name="color"/>
@@ -952,7 +988,25 @@ namespace dnSpy.Contracts.Text {
 			DebugObjectIdName,
 			DebuggerDisplayAttributeEval,
 			DebuggerNoStringQuotesEval,
+			DebugViewPropertyName,
+			AsmComment,
+			AsmDirective,
+			AsmPrefix,
+			AsmMnemonic,
+			AsmKeyword,
+			AsmOperator,
+			AsmPunctuation,
+			AsmNumber,
+			AsmRegister,
+			AsmSelectorValue,
+			AsmLabelAddress,
+			AsmFunctionAddress,
+			AsmLabel,
+			AsmFunction,
+			AsmData,
+			AsmAddress,
+			AsmHexBytes,
 		};
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

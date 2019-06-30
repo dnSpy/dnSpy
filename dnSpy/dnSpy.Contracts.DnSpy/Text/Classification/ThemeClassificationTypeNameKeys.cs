@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -1526,5 +1526,95 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <see cref="TextColor.DebuggerNoStringQuotesEval"/>
 		/// </summary>
 		public const string DebuggerNoStringQuotesEval = nameof(DebuggerNoStringQuotesEval);
+
+		/// <summary>
+		/// <see cref="TextColor.DebugViewPropertyName"/>
+		/// </summary>
+		public const string DebugViewPropertyName = nameof(DebugViewPropertyName);
+
+		/// <summary>
+		/// <see cref="TextColor.AsmComment"/>
+		/// </summary>
+		public const string AsmComment = nameof(AsmComment);
+
+		/// <summary>
+		/// <see cref="TextColor.AsmDirective"/>
+		/// </summary>
+		public const string AsmDirective = nameof(AsmDirective);
+
+		/// <summary>
+		/// <see cref="TextColor.AsmPrefix"/>
+		/// </summary>
+		public const string AsmPrefix = nameof(AsmPrefix);
+
+		/// <summary>
+		/// <see cref="TextColor.AsmMnemonic"/>
+		/// </summary>
+		public const string AsmMnemonic = nameof(AsmMnemonic);
+
+		/// <summary>
+		/// <see cref="TextColor.AsmKeyword"/>
+		/// </summary>
+		public const string AsmKeyword = nameof(AsmKeyword);
+
+		/// <summary>
+		/// <see cref="TextColor.AsmOperator"/>
+		/// </summary>
+		public const string AsmOperator = nameof(AsmOperator);
+
+		/// <summary>
+		/// <see cref="TextColor.AsmPunctuation"/>
+		/// </summary>
+		public const string AsmPunctuation = nameof(AsmPunctuation);
+
+		/// <summary>
+		/// <see cref="TextColor.AsmNumber"/>
+		/// </summary>
+		public const string AsmNumber = nameof(AsmNumber);
+
+		/// <summary>
+		/// <see cref="TextColor.AsmRegister"/>
+		/// </summary>
+		public const string AsmRegister = nameof(AsmRegister);
+
+		/// <summary>
+		/// <see cref="TextColor.AsmSelectorValue"/>
+		/// </summary>
+		public const string AsmSelectorValue = nameof(AsmSelectorValue);
+
+		/// <summary>
+		/// <see cref="TextColor.AsmLabelAddress"/>
+		/// </summary>
+		public const string AsmLabelAddress = nameof(AsmLabelAddress);
+
+		/// <summary>
+		/// <see cref="TextColor.AsmFunctionAddress"/>
+		/// </summary>
+		public const string AsmFunctionAddress = nameof(AsmFunctionAddress);
+
+		/// <summary>
+		/// <see cref="TextColor.AsmLabel"/>
+		/// </summary>
+		public const string AsmLabel = nameof(AsmLabel);
+
+		/// <summary>
+		/// <see cref="TextColor.AsmFunction"/>
+		/// </summary>
+		public const string AsmFunction = nameof(AsmFunction);
+
+		/// <summary>
+		/// <see cref="TextColor.AsmData"/>
+		/// </summary>
+		public const string AsmData = nameof(AsmData);
+
+		/// <summary>
+		/// <see cref="TextColor.AsmAddress"/>
+		/// </summary>
+		public const string AsmAddress = nameof(AsmAddress);
+
+		/// <summary>
+		/// <see cref="TextColor.AsmHexBytes"/>
+		/// </summary>
+		public const string AsmHexBytes = nameof(AsmHexBytes);
 	}
 }

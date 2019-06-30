@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,6 +19,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using dnSpy.Contracts.Hex;
 
 namespace dnSpy.Hex {
@@ -34,7 +35,7 @@ namespace dnSpy.Hex {
 		readonly bool isVolatile;
 		readonly HexPosition endAddress;
 
-		public HexProcessSimpleBufferStream(IntPtr hProcess, string name, bool isReadOnly, bool isVolatile) {
+		public HexProcessSimpleBufferStream(IntPtr hProcess, string? name, bool isReadOnly, bool isVolatile) {
 			this.hProcess = hProcess;
 			Span = GetDefaultSpan(hProcess);
 			Name = name ?? GetDefaultName(hProcess);
@@ -126,7 +127,7 @@ namespace dnSpy.Hex {
 					return 32;
 				return 64;
 			}
-			Debug.Fail("IsWow64Process failed");
+			Debug.Fail($"IsWow64Process failed: 0x{Marshal.GetLastWin32Error():X8}");
 			return IntPtr.Size * 8;
 		}
 

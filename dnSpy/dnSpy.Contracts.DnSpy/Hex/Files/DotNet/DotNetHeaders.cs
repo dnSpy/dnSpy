@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -42,12 +42,12 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <summary>
 		/// Gets the .NET metadata-only headers or null if none
 		/// </summary>
-		public abstract DotNetMetadataHeaders MetadataHeaders { get; }
+		public abstract DotNetMetadataHeaders? MetadataHeaders { get; }
 
 		/// <summary>
 		/// Gets the strong name signature or null if none
 		/// </summary>
-		public abstract VirtualArrayData<ByteData> StrongNameSignature { get; }
+		public abstract VirtualArrayData<ByteData>? StrongNameSignature { get; }
 
 		/// <summary>
 		/// Gets the method provider

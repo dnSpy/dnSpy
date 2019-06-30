@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,7 +26,7 @@ namespace dnSpy.Text.Editor {
 	sealed class ScrollMapFactoryService : IScrollMapFactoryService {
 		public IScrollMap Create(ITextView textView) => Create(textView, false);
 		public IScrollMap Create(ITextView textView, bool areElisionsExpanded) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			return new ScrollMap(textView, areElisionsExpanded);
 		}

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -55,13 +55,13 @@ namespace dndbg.DotNet {
 		}
 
 		public override byte[] GetBlob() {
-			if (blob != null)
+			if (!(blob is null))
 				return blob;
 			var mdi = readerModule.MetaDataImport;
 			uint token = OriginalToken.Raw;
 			Interlocked.CompareExchange(ref blob, MDAPI.GetPermissionSetBlob(mdi, token) ?? Array.Empty<byte>(), null);
-			return blob;
+			return blob!;
 		}
-		byte[] blob;
+		byte[]? blob;
 	}
 }

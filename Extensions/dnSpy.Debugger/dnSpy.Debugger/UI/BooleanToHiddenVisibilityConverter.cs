@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,7 +24,7 @@ using System.Windows.Data;
 
 namespace dnSpy.Debugger.UI {
 	sealed class BooleanToHiddenVisibilityConverter : IValueConverter {
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
+		public object? Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
 			value as bool? ?? false ? Visibility.Visible : Visibility.Hidden;
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {

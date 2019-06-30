@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,7 +29,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 	sealed class NullObjectRefILValueImpl : NullObjectRefILValue, IDebuggerRuntimeILValue {
 		readonly DbgDotNetValue value;
 		public NullObjectRefILValueImpl(DbgDotNetValue value) => this.value = value;
-		public override DmdType Type => value.Type;
+		public override DmdType? Type => value.Type;
 		DbgDotNetValue IDebuggerRuntimeILValue.GetDotNetValue() => value;
 	}
 

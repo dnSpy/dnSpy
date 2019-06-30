@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,6 +21,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using dnSpy.Contracts.Hex;
@@ -36,13 +37,13 @@ namespace dnSpy.Hex.Operations {
 		public override int ByteCount => lowerBytes.Length;
 
 		protected StringHexSearchService(string pattern) {
-			valid = Initialize(pattern, out lowerBytes, out upperBytes, out charLengths);
+			valid = Initialize(pattern, out lowerBytes!, out upperBytes!, out charLengths!);
 			Debug.Assert(valid);
 		}
 
-		protected abstract bool Initialize(string pattern, out byte[] lowerBytes, out byte[] upperBytes, out byte[] charLengths);
+		protected abstract bool Initialize(string pattern, [NotNullWhenTrue] out byte[]? lowerBytes, [NotNullWhenTrue] out byte[]? upperBytes, [NotNullWhenTrue] out byte[]? charLengths);
 
-		protected bool Initialize(Encoding encoding, string pattern, out byte[] lowerBytes, out byte[] upperBytes, out byte[] charLengths) {
+		protected bool Initialize(Encoding encoding, string pattern, [NotNullWhenTrue] out byte[]? lowerBytes, [NotNullWhenTrue] out byte[]? upperBytes, [NotNullWhenTrue] out byte[]? charLengths) {
 			lowerBytes = null;
 			upperBytes = null;
 			charLengths = null;
@@ -71,7 +72,7 @@ namespace dnSpy.Hex.Operations {
 			return true;
 		}
 
-		bool GetCharLengths(Encoding encoding, string s, out byte[] charLengths, out byte[] encodedBytes) {
+		bool GetCharLengths(Encoding encoding, string s, [NotNullWhenTrue] out byte[]? charLengths, [NotNullWhenTrue] out byte[]? encodedBytes) {
 			charLengths = null;
 			encodedBytes = null;
 
@@ -158,7 +159,7 @@ namespace dnSpy.Hex.Operations {
 				public bool MoveNext() => realEnumerator.MoveNext();
 				public void Dispose() {
 					state?.Dispose();
-					state = null;
+					state = null!;
 					realEnumerator.Dispose();
 				}
 
@@ -297,7 +298,7 @@ namespace dnSpy.Hex.Operations {
 			foreach (var span in GetValidSpans(startingPosition.Buffer, startingPosition, searchRange.End)) {
 				cancellationToken.ThrowIfCancellationRequested();
 				foreach (var span2 in FindAllCore(state, span, options)) {
-					if (firstBlockResult == null)
+					if (firstBlockResult is null)
 						firstBlockResult = span2;
 					yield return span2;
 				}
@@ -305,7 +306,7 @@ namespace dnSpy.Hex.Operations {
 
 			if ((options & HexFindOptions.Wrap) != 0) {
 				var upperBounds = HexPosition.Min(searchRange.Span.End, startingPosition.Position + lowerBytes.LongLength - 1);
-				if ((options & HexFindOptions.NoOverlaps) != 0 && firstBlockResult != null && upperBounds > firstBlockResult.Value.Start)
+				if ((options & HexFindOptions.NoOverlaps) != 0 && !(firstBlockResult is null) && upperBounds > firstBlockResult.Value.Start)
 					upperBounds = firstBlockResult.Value.Start;
 				foreach (var span in GetValidSpans(startingPosition.Buffer, searchRange.Start, upperBounds)) {
 					cancellationToken.ThrowIfCancellationRequested();
@@ -323,7 +324,7 @@ namespace dnSpy.Hex.Operations {
 			while (pos < endPos) {
 				state.CancellationToken.ThrowIfCancellationRequested();
 				var result = FindCore(state, pos, span.End);
-				if (result == null)
+				if (result is null)
 					break;
 				yield return new HexBufferSpan(state.Buffer, new HexSpan(result.Value, (ulong)lowerBytes.LongLength));
 				if ((options & HexFindOptions.NoOverlaps) != 0)
@@ -365,7 +366,7 @@ loop:
 				skip = 1;
 				afterPos = state.PositionAfter1(lowerBytesLocal0, upperBytesLocal0, endPos);
 			}
-			if (afterPos == null)
+			if (afterPos is null)
 				return null;
 			pos = afterPos.Value - skip;
 			state.SetPosition(pos);
@@ -393,7 +394,7 @@ loop:
 			foreach (var span in GetValidSpansReverse(startingPosition.Buffer, startingPosition, searchRange.Start)) {
 				cancellationToken.ThrowIfCancellationRequested();
 				foreach (var span2 in FindAllCoreReverse(state, span, options)) {
-					if (firstBlockResult == null)
+					if (firstBlockResult is null)
 						firstBlockResult = span2;
 					yield return span2;
 				}
@@ -405,7 +406,7 @@ loop:
 					HexPosition.Zero;
 				if (lowerBounds < searchRange.Span.Start)
 					lowerBounds = searchRange.Span.Start;
-				if ((options & HexFindOptions.NoOverlaps) != 0 && firstBlockResult != null && lowerBounds < firstBlockResult.Value.End)
+				if ((options & HexFindOptions.NoOverlaps) != 0 && !(firstBlockResult is null) && lowerBounds < firstBlockResult.Value.End)
 					lowerBounds = firstBlockResult.Value.End;
 				foreach (var span in GetValidSpansReverse(startingPosition.Buffer, searchRange.End - 1, lowerBounds)) {
 					cancellationToken.ThrowIfCancellationRequested();
@@ -423,7 +424,7 @@ loop:
 			while (pos >= lowerBounds) {
 				state.CancellationToken.ThrowIfCancellationRequested();
 				var result = FindCoreReverse(state, pos, lowerBounds);
-				if (result == null)
+				if (result is null)
 					break;
 				yield return new HexBufferSpan(state.Buffer, new HexSpan(result.Value, (ulong)lowerBytes.LongLength));
 				if ((options & HexFindOptions.NoOverlaps) != 0) {
@@ -468,7 +469,7 @@ loop:
 				skip = 1;
 				beforePos = state.PositionBefore1(lowerBytesLocal0, upperBytesLocal0, lowerBounds);
 			}
-			if (beforePos == null)
+			if (beforePos is null)
 				return null;
 			pos = beforePos.Value + skip;
 			state.SetPreviousPosition(pos);

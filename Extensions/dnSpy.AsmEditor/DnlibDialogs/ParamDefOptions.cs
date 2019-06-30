@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,11 +22,11 @@ using dnlib.DotNet;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class ParamDefOptions {
-		public UTF8String Name;
+		public UTF8String? Name;
 		public ushort Sequence;
 		public ParamAttributes Attributes;
-		public Constant Constant;
-		public MarshalType MarshalType;
+		public Constant? Constant;
+		public MarshalType? MarshalType;
 		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
 
 		public ParamDefOptions() {

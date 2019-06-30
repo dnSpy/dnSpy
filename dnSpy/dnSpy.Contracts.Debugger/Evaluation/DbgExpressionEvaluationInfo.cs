@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// <summary>
 	/// Contains the expression to evaluate and options
 	/// </summary>
-	public struct DbgExpressionEvaluationInfo {
+	public readonly struct DbgExpressionEvaluationInfo {
 		/// <summary>
 		/// Gets the expression to evaluate
 		/// </summary>
@@ -42,7 +42,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <summary>
 		/// Expression evaluator state or null, see <see cref="DbgExpressionEvaluator.CreateExpressionEvaluatorState"/>
 		/// </summary>
-		public object ExpressionEvaluatorState { get; }
+		public object? ExpressionEvaluatorState { get; }
 
 		/// <summary>
 		/// Constructor
@@ -51,7 +51,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="nodeOptions">Value node options</param>
 		/// <param name="options">Evaluation options</param>
 		/// <param name="expressionEvaluatorState">Expression evaluator state or null, see <see cref="DbgExpressionEvaluator.CreateExpressionEvaluatorState"/></param>
-		public DbgExpressionEvaluationInfo(string expression, DbgValueNodeEvaluationOptions nodeOptions, DbgEvaluationOptions options, object expressionEvaluatorState) {
+		public DbgExpressionEvaluationInfo(string expression, DbgValueNodeEvaluationOptions nodeOptions, DbgEvaluationOptions options, object? expressionEvaluatorState) {
 			Expression = expression ?? throw new ArgumentNullException(nameof(expression));
 			NodeOptions = nodeOptions;
 			Options = options;

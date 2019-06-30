@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -17,23 +17,26 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Threading;
 using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 	class ILSettings : ViewModelBase {
 		protected virtual void OnModified() { }
+		public event EventHandler SettingsVersionChanged;
 
 		void OptionsChanged() {
 			Interlocked.Increment(ref settingsVersion);
 			OnModified();
+			SettingsVersionChanged?.Invoke(this, EventArgs.Empty);
 		}
 
 		public int SettingsVersion => settingsVersion;
 		volatile int settingsVersion;
 
 		public bool ShowILComments {
-			get { return showILComments; }
+			get => showILComments;
 			set {
 				if (showILComments != value) {
 					showILComments = value;
@@ -45,7 +48,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 		bool showILComments = false;
 
 		public bool ShowXmlDocumentation {
-			get { return showXmlDocumentation; }
+			get => showXmlDocumentation;
 			set {
 				if (showXmlDocumentation != value) {
 					showXmlDocumentation = value;
@@ -57,7 +60,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 		bool showXmlDocumentation = true;
 
 		public bool ShowTokenAndRvaComments {
-			get { return showTokenAndRvaComments; }
+			get => showTokenAndRvaComments;
 			set {
 				if (showTokenAndRvaComments != value) {
 					showTokenAndRvaComments = value;
@@ -69,7 +72,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 		bool showTokenAndRvaComments = true;
 
 		public bool ShowILBytes {
-			get { return showILBytes; }
+			get => showILBytes;
 			set {
 				if (showILBytes != value) {
 					showILBytes = value;
@@ -81,7 +84,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 		bool showILBytes = true;
 
 		public bool SortMembers {
-			get { return sortMembers; }
+			get => sortMembers;
 			set {
 				if (sortMembers != value) {
 					sortMembers = value;
@@ -93,7 +96,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 		bool sortMembers = false;
 
 		public bool ShowPdbInfo {
-			get { return showPdbInfo; }
+			get => showPdbInfo;
 			set {
 				if (showPdbInfo != value) {
 					showPdbInfo = value;
@@ -102,7 +105,19 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 				}
 			}
 		}
-		bool showPdbInfo = false;
+		bool showPdbInfo = true;
+
+		public int MaxStringLength {
+			get => maxStringLength;
+			set {
+				if (maxStringLength != value) {
+					maxStringLength = value;
+					OnPropertyChanged(nameof(MaxStringLength));
+					OptionsChanged();
+				}
+			}
+		}
+		int maxStringLength = ICSharpCode.Decompiler.DecompilerSettings.ConstMaxStringLength;
 
 		public ILSettings Clone() => CopyTo(new ILSettings());
 
@@ -113,18 +128,20 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 			other.ShowILBytes = ShowILBytes;
 			other.SortMembers = SortMembers;
 			other.ShowPdbInfo = ShowPdbInfo;
+			other.MaxStringLength = MaxStringLength;
 			return other;
 		}
 
-		public override bool Equals(object obj) {
+		public override bool Equals(object? obj) {
 			var other = obj as ILSettings;
-			return other != null &&
+			return !(other is null) &&
 				ShowILComments == other.ShowILComments &&
 				ShowXmlDocumentation == other.ShowXmlDocumentation &&
 				ShowTokenAndRvaComments == other.ShowTokenAndRvaComments &&
 				ShowILBytes == other.ShowILBytes &&
 				SortMembers == other.SortMembers &&
-				ShowPdbInfo == other.ShowPdbInfo;
+				ShowPdbInfo == other.ShowPdbInfo &&
+				MaxStringLength == other.MaxStringLength;
 		}
 
 		public override int GetHashCode() {
@@ -136,6 +153,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 			if (ShowILBytes) h ^= 0x10000000;
 			if (SortMembers) h ^= 0x08000000;
 			if (ShowPdbInfo) h ^= 0x04000000;
+			h ^= (uint)MaxStringLength;
 
 			return (int)h;
 		}

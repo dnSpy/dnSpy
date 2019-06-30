@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
 
@@ -32,41 +33,43 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 
 		public DmdPropertyDefMD(DmdEcma335MetadataReader reader, uint rid, DmdType declaringType, DmdType reflectedType) : base(rid, declaringType, reflectedType) {
 			this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
-			var row = reader.TablesStream.ReadPropertyRow(rid);
+			bool b = reader.TablesStream.TryReadPropertyRow(rid, out var row);
+			Debug.Assert(b);
 			Name = reader.StringsStream.ReadNoNull(row.Name);
 			Attributes = (DmdPropertyAttributes)row.PropFlags;
-			methodSignature = reader.ReadMethodSignature(row.Type, DeclaringType.GetGenericArguments(), null, isProperty: true);
+			methodSignature = reader.ReadMethodSignature(row.Type, DeclaringType!.GetGenericArguments(), null, isProperty: true);
 		}
 
 		public override DmdMethodSignature GetMethodSignature() => methodSignature;
 		protected override DmdCustomAttributeData[] CreateCustomAttributes() => reader.ReadCustomAttributes(MetadataToken);
-		public override object GetRawConstantValue() => reader.ReadConstant(MetadataToken).value;
+		public override object? GetRawConstantValue() => reader.ReadConstant(MetadataToken).value;
 
-		protected override void GetMethods(out DmdMethodInfo getMethod, out DmdMethodInfo setMethod, out DmdMethodInfo[] otherMethods) {
+		protected override void GetMethods(out DmdMethodInfo? getMethod, out DmdMethodInfo? setMethod, out DmdMethodInfo[]? otherMethods) {
 			getMethod = null;
 			setMethod = null;
-			List<DmdMethodInfo> otherMethodsList = null;
+			List<DmdMethodInfo>? otherMethodsList = null;
 
 			var ridList = reader.Metadata.GetMethodSemanticsRidList(Table.Property, Rid);
-			for (uint i = 0; i < ridList.Length; i++) {
-				var row = reader.TablesStream.ReadMethodSemanticsRow(ridList[i]);
-				var method = ReflectedType.GetMethod(Module, 0x06000000 + (int)row.Method) as DmdMethodInfo;
-				if ((object)method == null)
+			for (int i = 0; i < ridList.Count; i++) {
+				if (!reader.TablesStream.TryReadMethodSemanticsRow(ridList[i], out var row))
+					continue;
+				var method = ReflectedType!.GetMethod(Module, 0x06000000 + (int)row.Method) as DmdMethodInfo;
+				if (method is null)
 					continue;
 
 				switch ((MethodSemanticsAttributes)row.Semantic) {
 				case MethodSemanticsAttributes.Setter:
-					if ((object)setMethod == null)
+					if (setMethod is null)
 						setMethod = method;
 					break;
 
 				case MethodSemanticsAttributes.Getter:
-					if ((object)getMethod == null)
+					if (getMethod is null)
 						getMethod = method;
 					break;
 
 				case MethodSemanticsAttributes.Other:
-					if (otherMethodsList == null)
+					if (otherMethodsList is null)
 						otherMethodsList = new List<DmdMethodInfo>();
 					otherMethodsList.Add(method);
 					break;

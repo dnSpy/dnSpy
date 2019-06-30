@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -39,12 +39,11 @@ namespace dnSpy.Scripting.Roslyn.VisualBasic {
 		protected override string Logo {
 			get {
 				// This is how MS gets the version, see roslyn/src/Interactive/EditorFeatures/VisualBasic/Interactive/VisualBasicReplServiceProvider.vb
-				return string.Format("Microsoft (R) Roslyn Visual Basic Compiler version {0}",
-					FileVersionInfo.GetVersionInfo(typeof(VisualBasicCommandLineArguments).Assembly.Location).FileVersion);
+				return $"Microsoft (R) Roslyn Visual Basic Compiler version {FileVersionInfo.GetVersionInfo(typeof(VisualBasicCommandLineArguments).Assembly.Location).FileVersion}";
 			}
 		}
 
-		static readonly string CODEFILTERTEXT = string.Format("{1} (*.vbx)|*.vbx|{0} (*.*)|*.*", dnSpy_Scripting_Roslyn_Resources.AllFiles, dnSpy_Scripting_Roslyn_Resources.VisualBasicScriptFiles);
+		static readonly string CODEFILTERTEXT = $"{dnSpy_Scripting_Roslyn_Resources.VisualBasicScriptFiles} (*.vbx)|*.vbx|{dnSpy_Scripting_Roslyn_Resources.AllFiles} (*.*)|*.*";
 
 		protected override string Help => dnSpy_Scripting_Roslyn_Resources.HelpString;
 		protected override ObjectFormatter ObjectFormatter => VisualBasicObjectFormatter.Instance;
@@ -58,7 +57,7 @@ namespace dnSpy.Scripting.Roslyn.VisualBasic {
 			: base(replEditor, settings, serviceLocator) {
 		}
 
-		protected override Script<T> Create<T>(string code, ScriptOptions options, Type globalsType, InteractiveAssemblyLoader assemblyLoader) =>
+		protected override Script<T> Create<T>(string code, ScriptOptions options, Type globalsType, InteractiveAssemblyLoader? assemblyLoader) =>
 			VisualBasicScript.Create<T>(code, options, globalsType, assemblyLoader);
 
 		protected override bool IsCompleteSubmission(string text) =>
@@ -69,13 +68,13 @@ namespace dnSpy.Scripting.Roslyn.VisualBasic {
 			SyntaxFactory.ParseSyntaxTree(code, parseOptions, cancellationToken: cancellationToken);
 
 		protected override Compilation CreateScriptCompilation(string assemblyName, SyntaxTree syntaxTree,
-			IEnumerable<MetadataReference> references, CompilationOptions options,
+			IEnumerable<MetadataReference>? references, CompilationOptions options,
 			Compilation previousScriptCompilation, Type returnType, Type globalsType) =>
 			VisualBasicCompilation.CreateScriptCompilation(assemblyName, syntaxTree, references, (VisualBasicCompilationOptions)options, (VisualBasicCompilation)previousScriptCompilation, returnType, globalsType);
 
 		protected override void InitializeUserScriptOptions(UserScriptOptions options) {
 			var rspFile = GetResponseFile("VisualBasicInteractive.rsp");
-			if (rspFile == null)
+			if (rspFile is null)
 				return;
 			ReplEditor.OutputPrintLine(string.Format(dnSpy_Scripting_Roslyn_Resources.LoadingContextFromFile, Path.GetFileName(rspFile)), BoxedTextColor.ReplOutputText);
 
@@ -103,7 +102,7 @@ namespace dnSpy.Scripting.Roslyn.VisualBasic {
 					break;
 
 				default:
-					Debug.Fail(string.Format("Unknown option: '{0}'", t.Item1));
+					Debug.Fail($"Unknown option: '{t.Item1}'");
 					break;
 				}
 			}

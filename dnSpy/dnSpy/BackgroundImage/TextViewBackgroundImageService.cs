@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,14 +27,14 @@ using Microsoft.VisualStudio.Utilities;
 namespace dnSpy.BackgroundImage {
 	sealed class TextViewBackgroundImageService : BackgroundImageService {
 		readonly IWpfTextView wpfTextView;
-		IAdornmentLayer adornmentLayer;
+		IAdornmentLayer? adornmentLayer;
 
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[Export(typeof(AdornmentLayerDefinition))]
 		[Name(PredefinedDsAdornmentLayers.BackgroundImage)]
 		[LayerKind(LayerKind.Underlay)]
 		static AdornmentLayerDefinition backgroundImageAdornmentLayerDefinition;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 
 		TextViewBackgroundImageService(IWpfTextView wpfTextView, IImageSourceService imageSourceService)
 			: base(imageSourceService) {
@@ -51,9 +51,9 @@ namespace dnSpy.BackgroundImage {
 		}
 
 		public static void InstallService(IWpfTextView wpfTextView, IImageSourceService imageSourceService) {
-			if (wpfTextView == null)
+			if (wpfTextView is null)
 				throw new ArgumentNullException(nameof(wpfTextView));
-			if (imageSourceService == null)
+			if (imageSourceService is null)
 				throw new ArgumentNullException(nameof(imageSourceService));
 			wpfTextView.Properties.GetOrCreateSingletonProperty(typeof(BackgroundImageService), () => new TextViewBackgroundImageService(wpfTextView, imageSourceService));
 		}
@@ -62,19 +62,19 @@ namespace dnSpy.BackgroundImage {
 		protected override double ViewportHeight => wpfTextView.ViewportHeight;
 
 		protected override void OnEnabledCore() {
-			if (adornmentLayer == null)
+			if (adornmentLayer is null)
 				adornmentLayer = wpfTextView.GetAdornmentLayer(PredefinedDsAdornmentLayers.BackgroundImage);
 			wpfTextView.LayoutChanged += WpfTextView_LayoutChanged;
 		}
 
 		protected override void OnDisabledCore() {
 			wpfTextView.LayoutChanged -= WpfTextView_LayoutChanged;
-			if (adornmentLayer != null)
+			if (!(adornmentLayer is null))
 				adornmentLayer.RemoveAllAdornments();
 		}
 
 		protected override void AddImageToAdornmentLayerCore(Image image) =>
-			adornmentLayer.AddAdornment(AdornmentPositioningBehavior.OwnerControlled, null, null, image, null);
+			adornmentLayer!.AddAdornment(AdornmentPositioningBehavior.OwnerControlled, null, null, image, null);
 
 		void WpfTextView_Closed(object sender, EventArgs e) {
 			ViewClosed();

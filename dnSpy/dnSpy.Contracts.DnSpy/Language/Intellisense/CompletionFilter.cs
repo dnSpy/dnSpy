@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// </summary>
 	sealed class CompletionFilter : ICompletionFilter {
 		readonly string searchText;
-		readonly int[] acronymMatchIndexes;
+		readonly int[]? acronymMatchIndexes;
 		const StringComparison stringComparison = StringComparison.CurrentCultureIgnoreCase;
 
 		/// <summary>
@@ -41,27 +41,27 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		}
 
 		bool TryUpdateAcronymIndexes(string completionText) =>
-			AcronymSearchHelpers.TryUpdateAcronymIndexes(acronymMatchIndexes, searchText, completionText);
+			AcronymSearchHelpers.TryUpdateAcronymIndexes(acronymMatchIndexes!, searchText, completionText);
 
 		public bool IsMatch(Completion completion) {
 			var completionText = completion.TryGetFilterText();
-			if (completionText == null)
+			if (completionText is null)
 				return false;
 
 			if (completionText.IndexOf(searchText, stringComparison) >= 0)
 				return true;
-			if (acronymMatchIndexes != null && TryUpdateAcronymIndexes(completionText))
+			if (!(acronymMatchIndexes is null) && TryUpdateAcronymIndexes(completionText))
 				return true;
 
 			return false;
 		}
 
 		public Span[] GetMatchSpans(string completionText) {
-			Debug.Assert(acronymMatchIndexes == null || acronymMatchIndexes.Length > 0);
+			Debug.Assert(acronymMatchIndexes is null || acronymMatchIndexes.Length > 0);
 
 			// Acronyms have higher priority, eg. TA should match |T|ask|A|waiter
 			// and not |Ta|skAwaiter.
-			if (acronymMatchIndexes != null && TryUpdateAcronymIndexes(completionText)) {
+			if (!(acronymMatchIndexes is null) && TryUpdateAcronymIndexes(completionText)) {
 				var localIndexes = acronymMatchIndexes;
 				var res = new Span[localIndexes.Length];
 				for (int i = 0; i < localIndexes.Length; i++)

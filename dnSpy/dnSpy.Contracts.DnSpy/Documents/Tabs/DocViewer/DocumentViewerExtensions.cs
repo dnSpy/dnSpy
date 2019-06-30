@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,8 +32,8 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// </summary>
 		/// <param name="textBuffer">Text buffer</param>
 		/// <returns></returns>
-		public static IDocumentViewer TryGetDocumentViewer(this ITextBuffer textBuffer) {
-			if (textBuffer == null)
+		public static IDocumentViewer? TryGetDocumentViewer(this ITextBuffer textBuffer) {
+			if (textBuffer is null)
 				throw new ArgumentNullException(nameof(textBuffer));
 			textBuffer.Properties.TryGetProperty(DocumentViewerTextBufferKey, out IDocumentViewer documentViewer);
 			return documentViewer;

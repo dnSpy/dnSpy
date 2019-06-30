@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -51,7 +51,7 @@ namespace dnSpy.Text.Editor {
 
 			var point = GetTextPoint(wpfTextView, e);
 			var line = wpfTextView.TextViewLines.GetTextViewLineContainingYCoordinate(point.Y);
-			if (line != null)
+			if (!(line is null))
 				textViewLine = line;
 			else if (point.Y <= wpfTextView.ViewportTop)
 				textViewLine = wpfTextView.TextViewLines.FirstVisibleLine;
@@ -65,10 +65,10 @@ namespace dnSpy.Text.Editor {
 			return new MouseLocation(textViewLine, position, point);
 		}
 
-		public static MouseLocation TryCreateTextOnly(IWpfTextView wpfTextView, MouseEventArgs e, bool fullLineHeight) {
+		public static MouseLocation? TryCreateTextOnly(IWpfTextView wpfTextView, MouseEventArgs e, bool fullLineHeight) {
 			var point = GetTextPoint(wpfTextView, e);
 			var line = wpfTextView.TextViewLines.GetTextViewLineContainingYCoordinate(point.Y);
-			if (line == null)
+			if (line is null)
 				return null;
 			if (fullLineHeight) {
 				if (!(line.Top <= point.Y && point.Y < line.Bottom))
@@ -83,7 +83,7 @@ namespace dnSpy.Text.Editor {
 					return null;
 			}
 			var position = line.GetBufferPositionFromXCoordinate(point.X, true);
-			if (position == null)
+			if (position is null)
 				return null;
 
 			return new MouseLocation(line, new VirtualSnapshotPoint(position.Value), point);

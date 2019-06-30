@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,9 +18,7 @@
 */
 
 using System;
-using System.Threading;
 using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -40,18 +38,25 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			this.dnObjectId = dnObjectId ?? throw new ArgumentNullException(nameof(dnObjectId));
 		}
 
-		public override DbgEngineValue GetValue(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
+		public override DbgEngineValue GetValue(DbgEvaluationInfo evalInfo) {
 			var dispatcher = runtime.Dispatcher;
 			if (dispatcher.CheckAccess())
-				return GetValueCore(context, frame, cancellationToken);
-			return GetValue(dispatcher, context, frame, cancellationToken);
+				return GetValueCore(evalInfo);
+			return GetValue(dispatcher, evalInfo);
 
-			DbgEngineValue GetValue(DbgDotNetDispatcher dispatcher2, DbgEvaluationContext context2, DbgStackFrame frame2, CancellationToken cancellationToken2) =>
-				dispatcher2.InvokeRethrow(() => GetValueCore(context2, frame2, cancellationToken2));
+			DbgEngineValue GetValue(DbgDotNetDispatcher dispatcher2, DbgEvaluationInfo evalInfo2) {
+				if (!dispatcher2.TryInvokeRethrow(() => GetValueCore(evalInfo2), out var result))
+					result = CreateError();
+				return result;
+			}
 		}
 
-		DbgEngineValue GetValueCore(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
-			var dnValue = runtime.GetValue(context, frame, dnObjectId, cancellationToken);
+		static DbgEngineValue CreateError() => new DbgEngineValueImpl(new DbgDotNetValueError());
+
+		DbgEngineValue GetValueCore(DbgEvaluationInfo evalInfo) {
+			var dnValue = runtime.GetValue(evalInfo, dnObjectId);
+			if (dnValue is null)
+				return CreateError();
 			try {
 				return new DbgEngineValueImpl(dnValue);
 			}

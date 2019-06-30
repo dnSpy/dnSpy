@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,9 +18,8 @@
 */
 
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
-using System.Threading;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Text;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.Metadata;
@@ -34,79 +33,71 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
 		/// <summary>
 		/// Creates a value node
 		/// </summary>
-		/// <param name="context">Context</param>
-		/// <param name="frame">Frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="name">Name</param>
 		/// <param name="value">Value</param>
+		/// <param name="formatSpecifiers">Format specifiers or null</param>
 		/// <param name="options">Options</param>
 		/// <param name="expression">Expression</param>
 		/// <param name="imageName">Image name, see <see cref="PredefinedDbgValueNodeImageNames"/></param>
 		/// <param name="isReadOnly">true if it's a read-only value</param>
 		/// <param name="causesSideEffects">true if the expression causes side effects</param>
 		/// <param name="expectedType">Expected type</param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgDotNetValueNode Create(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetText name, DbgDotNetValue value, DbgValueNodeEvaluationOptions options, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType, CancellationToken cancellationToken);
+		public abstract DbgDotNetValueNode Create(DbgEvaluationInfo evalInfo, DbgDotNetText name, DbgDotNetValue value, ReadOnlyCollection<string>? formatSpecifiers, DbgValueNodeEvaluationOptions options, string expression, string imageName, bool isReadOnly, bool causesSideEffects, DmdType expectedType);
 
 		/// <summary>
 		/// Creates an exception value node
 		/// </summary>
-		/// <param name="context">Context</param>
-		/// <param name="frame">Frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="id">Exception id</param>
 		/// <param name="value">Value</param>
+		/// <param name="formatSpecifiers">Format specifiers or null</param>
 		/// <param name="options">Options</param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgDotNetValueNode CreateException(DbgEvaluationContext context, DbgStackFrame frame, uint id, DbgDotNetValue value, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken);
+		public abstract DbgDotNetValueNode CreateException(DbgEvaluationInfo evalInfo, uint id, DbgDotNetValue value, ReadOnlyCollection<string>? formatSpecifiers, DbgValueNodeEvaluationOptions options);
 
 		/// <summary>
 		/// Creates an exception value node
 		/// </summary>
-		/// <param name="context">Context</param>
-		/// <param name="frame">Frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="id">Stowed exception id</param>
 		/// <param name="value">Value</param>
+		/// <param name="formatSpecifiers">Format specifiers or null</param>
 		/// <param name="options">Options</param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgDotNetValueNode CreateStowedException(DbgEvaluationContext context, DbgStackFrame frame, uint id, DbgDotNetValue value, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken);
+		public abstract DbgDotNetValueNode CreateStowedException(DbgEvaluationInfo evalInfo, uint id, DbgDotNetValue value, ReadOnlyCollection<string>? formatSpecifiers, DbgValueNodeEvaluationOptions options);
 
 		/// <summary>
 		/// Creates a return value node
 		/// </summary>
-		/// <param name="context">Context</param>
-		/// <param name="frame">Frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="id">Return value id</param>
 		/// <param name="value">Value</param>
+		/// <param name="formatSpecifiers">Format specifiers or null</param>
 		/// <param name="options">Options</param>
 		/// <param name="method">Method</param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgDotNetValueNode CreateReturnValue(DbgEvaluationContext context, DbgStackFrame frame, uint id, DbgDotNetValue value, DbgValueNodeEvaluationOptions options, DmdMethodBase method, CancellationToken cancellationToken);
+		public abstract DbgDotNetValueNode CreateReturnValue(DbgEvaluationInfo evalInfo, uint id, DbgDotNetValue value, ReadOnlyCollection<string>? formatSpecifiers, DbgValueNodeEvaluationOptions options, DmdMethodBase method);
 
 		/// <summary>
 		/// Creates an error value node
 		/// </summary>
-		/// <param name="context">Context</param>
-		/// <param name="frame">Frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="name">Name</param>
 		/// <param name="errorMessage">Error message</param>
 		/// <param name="expression">Expression</param>
 		/// <param name="causesSideEffects">true if the expression causes side effects</param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgDotNetValueNode CreateError(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetText name, string errorMessage, string expression, bool causesSideEffects, CancellationToken cancellationToken);
+		public abstract DbgDotNetValueNode CreateError(DbgEvaluationInfo evalInfo, DbgDotNetText name, string errorMessage, string expression, bool causesSideEffects);
 
 		/// <summary>
 		/// Creates type variables value node
 		/// </summary>
-		/// <param name="context">Context</param>
-		/// <param name="frame">Frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="typeVariableInfos">Type variables</param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgDotNetValueNode CreateTypeVariables(DbgEvaluationContext context, DbgStackFrame frame, DbgDotNetTypeVariableInfo[] typeVariableInfos, CancellationToken cancellationToken);
+		public abstract DbgDotNetValueNode CreateTypeVariables(DbgEvaluationInfo evalInfo, DbgDotNetTypeVariableInfo[] typeVariableInfos);
 	}
 
 	/// <summary>Metadata</summary>
@@ -147,7 +138,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes {
 	/// <summary>
 	/// Contains the generic parameter and type
 	/// </summary>
-	public struct DbgDotNetTypeVariableInfo {
+	public readonly struct DbgDotNetTypeVariableInfo {
 		/// <summary>
 		/// Gets the generic parameter type
 		/// </summary>

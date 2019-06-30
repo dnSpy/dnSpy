@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -44,7 +44,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 			this.textElementProvider = textElementProvider;
 		}
 
-		public string[] GetPaths(Window ownerWindow) {
+		public string[] GetPaths(Window? ownerWindow) {
 			var win = new OpenFromGACDlg();
 			const bool syntaxHighlight = true;
 			var vm = new OpenFromGACVM(syntaxHighlight, classificationFormatMap, textElementProvider);
@@ -55,7 +55,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 			return win.SelectedItems.Select(a => a.Path).ToArray();
 		}
 
-		public ModuleDef[] OpenAssemblies(bool selectAssembly, Window ownerWindow) =>
-			OpenDocumentsHelper.OpenDocuments(documentTreeView, appWindow.MainWindow, GetPaths(ownerWindow), selectAssembly).Select(a => a.ModuleDef).Where(a => a != null).ToArray();
+		public ModuleDef[] OpenAssemblies(bool selectAssembly, Window? ownerWindow) =>
+			OpenDocumentsHelper.OpenDocuments(documentTreeView, appWindow.MainWindow, GetPaths(ownerWindow), selectAssembly).Select(a => a.ModuleDef).OfType<ModuleDef>().ToArray();
 	}
 }

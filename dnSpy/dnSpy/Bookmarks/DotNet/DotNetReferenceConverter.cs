@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,7 +23,7 @@ using dnSpy.Contracts.Documents;
 namespace dnSpy.Bookmarks.DotNet {
 	[ExportReferenceConverter]
 	sealed class DotNetReferenceConverter : ReferenceConverter {
-		public override void Convert(ref object reference) {
+		public override void Convert(ref object? reference) {
 			switch (reference) {
 			case DotNetMethodBodyBookmarkLocation bodyLoc:
 				reference = new DotNetMethodBodyReference(bodyLoc.Module, bodyLoc.Token, bodyLoc.Offset);

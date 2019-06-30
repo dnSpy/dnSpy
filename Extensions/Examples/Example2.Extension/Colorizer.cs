@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Windows.Media;
@@ -24,7 +24,7 @@ namespace Example2.Extension {
 
 		// Disable compiler warnings. The fields aren't referenced, just exported so
 		// the metadata can be added to some table. The fields will always be null.
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		// Export the classes that define the name, and base types
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(Color1_ClassificationTypeName)]
@@ -35,7 +35,7 @@ namespace Example2.Extension {
 		[Name(Color2_ClassificationTypeName)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition Color2ClassificationTypeDefinition;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 
 		// Export the classes that define the colors and order
 		[Export(typeof(EditorFormatDefinition))]
@@ -71,7 +71,7 @@ namespace Example2.Extension {
 		[ImportingConstructor]
 		TextTaggerProvider(IClassificationTypeRegistryService classificationTypeRegistryService) => this.classificationTypeRegistryService = classificationTypeRegistryService;
 
-		public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag =>
+		public ITagger<T>? CreateTagger<T>(ITextBuffer buffer) where T : ITag =>
 			// All text content types (including C#/VB code) derive from the TEXT content
 			// type, so our tagger will get called to colorize every text file that's shown
 			// in a text editor.

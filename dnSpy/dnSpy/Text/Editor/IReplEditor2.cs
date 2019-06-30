@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -50,7 +50,7 @@ namespace dnSpy.Text.Editor {
 		ReplSubBufferInfo FindBuffer(int offset);
 	}
 
-	struct ReplSubBufferInfo {
+	readonly struct ReplSubBufferInfo {
 		public ReplSubBuffer Buffer { get; }
 		public int CodeBufferIndex { get; }
 		public ReplSubBufferInfo(ReplSubBuffer buffer, int codeBufferIndex) {

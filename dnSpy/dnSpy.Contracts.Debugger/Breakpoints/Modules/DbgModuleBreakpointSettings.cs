@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 		/// <summary>
 		/// Name of module (case insensitive) or null/empty string if any name. Wildcards can be used
 		/// </summary>
-		public string ModuleName { get; set; }
+		public string? ModuleName { get; set; }
 
 		/// <summary>
 		/// true if dynamic, false if not dynamic, and null if any value
@@ -45,6 +45,11 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 		public bool? IsInMemory { get; set; }
 
 		/// <summary>
+		/// true if it was loaded, false if it was unloaded, and null if any value
+		/// </summary>
+		public bool? IsLoaded { get; set; }
+
+		/// <summary>
 		/// Module load order or null if any value
 		/// </summary>
 		public int? Order { get; set; }
@@ -52,17 +57,17 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 		/// <summary>
 		/// App domain name (case insensitive) or null/empty string if any name. Wildcards can be used
 		/// </summary>
-		public string AppDomainName { get; set; }
+		public string? AppDomainName { get; set; }
 
 		/// <summary>
 		/// Process name (case insensitive) or null/empty string if any name. Wildcards can be used
 		/// </summary>
-		public string ProcessName { get; set; }
+		public string? ProcessName { get; set; }
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DbgModuleBreakpointSettings left, DbgModuleBreakpointSettings right) => left.Equals(right);
 		public static bool operator !=(DbgModuleBreakpointSettings left, DbgModuleBreakpointSettings right) => !left.Equals(right);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Compares this instance to <paramref name="other"/>
@@ -74,6 +79,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 			ModuleName == other.ModuleName &&
 			IsDynamic == other.IsDynamic &&
 			IsInMemory == other.IsInMemory &&
+			IsLoaded == other.IsLoaded &&
 			Order == other.Order &&
 			AppDomainName == other.AppDomainName &&
 			ProcessName == other.ProcessName;
@@ -83,7 +89,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 		/// </summary>
 		/// <param name="obj">Other instance</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is DbgModuleBreakpointSettings other && Equals(other);
+		public override bool Equals(object? obj) => obj is DbgModuleBreakpointSettings other && Equals(other);
 
 		/// <summary>
 		/// Gets the hash code
@@ -94,6 +100,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 			(ModuleName ?? string.Empty).GetHashCode() ^
 			((IsDynamic ?? false) ? 2 : 0) ^
 			((IsInMemory ?? false) ? 4 : 0) ^
+			((IsLoaded ?? false) ? 8 : 0) ^
 			(Order ?? 0) ^
 			(AppDomainName ?? string.Empty).GetHashCode() ^
 			(ProcessName ?? string.Empty).GetHashCode();

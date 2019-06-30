@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -37,15 +37,15 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 		readonly DbgEngineImpl engine;
 		readonly DnThread dnThread;
 		readonly DbgThread thread;
-		ICorDebugFrame[] framesBuffer;
+		ICorDebugFrame[]? framesBuffer;
 		readonly uint continueCounter;
-		IEnumerator<CorFrame> enumerator;
+		IEnumerator<CorFrame>? enumerator;
 
 		sealed class EmptyEnumerator<T> : IEnumerator<T> {
 			public static readonly IEnumerator<T> Empty = new EmptyEnumerator<T>();
 			EmptyEnumerator() { }
-			T IEnumerator<T>.Current => default;
-			object IEnumerator.Current => default(T);
+			T IEnumerator<T>.Current => default!;
+			object IEnumerator.Current => default(T)!;
 			bool IEnumerator.MoveNext() => false;
 			void IEnumerator.Reset() => throw new NotSupportedException();
 			void IDisposable.Dispose() { }
@@ -61,8 +61,14 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 			continueCounter = dnThread.Debugger.ContinueCounter;
 		}
 
-		public override DbgEngineStackFrame[] GetNextStackFrames(int maxFrames) =>
-			engine.DebuggerThread.Invoke(() => GetNextStackFrames_CorDebug(maxFrames));
+		public override DbgEngineStackFrame[] GetNextStackFrames(int maxFrames) {
+			if (engine.DebuggerThread.CheckAccess())
+				return GetNextStackFrames_CorDebug(maxFrames);
+			return GetNextStackFrames2(maxFrames);
+
+			DbgEngineStackFrame[] GetNextStackFrames2(int maxFrames2) =>
+				engine.DebuggerThread.Invoke(() => GetNextStackFrames_CorDebug(maxFrames2));
+		}
 
 		DbgEngineStackFrame[] GetNextStackFrames_CorDebug(int maxFrames) {
 			engine.DebuggerThread.VerifyAccess();
@@ -71,8 +77,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 				enumerator = EmptyEnumerator<CorFrame>.Empty;
 				return Array.Empty<DbgEngineStackFrame>();
 			}
-			if (enumerator == null)
-				enumerator = dnThread.GetAllFrames(framesBuffer).GetEnumerator();
+			if (enumerator is null)
+				enumerator = dnThread.GetAllFrames(framesBuffer!).GetEnumerator();
 			var list = engine.stackFrameData.DbgEngineStackFrameList;
 			try {
 				Debug.Assert(list.Count == 0);
@@ -90,10 +96,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 			engine.DebuggerThread.VerifyAccess();
 			if (corFrame.IsILFrame) {
 				var func = corFrame.Function;
-				if (func == null)
+				if (func is null)
 					return CreateErrorStackFrame();
 				var module = engine.TryGetModule(func.Module);
-				if (module == null)
+				if (module is null)
 					return CreateErrorStackFrame();
 				return new ILDbgEngineStackFrame(engine, module, corFrame, dnThread, func, dbgDotNetNativeCodeLocationFactory, dbgDotNetCodeLocationFactory);
 			}
@@ -157,7 +163,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 		}
 
 		protected override void CloseCore(DbgDispatcher dispatcher) {
-			if (framesBuffer != null)
+			if (!(framesBuffer is null))
 				engine.ReturnFramesBuffer(ref framesBuffer);
 			framesBuffer = null;
 			enumerator?.Dispose();

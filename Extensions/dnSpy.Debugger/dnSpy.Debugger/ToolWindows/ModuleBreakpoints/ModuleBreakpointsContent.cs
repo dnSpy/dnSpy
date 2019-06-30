@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -41,16 +41,16 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 
 	[Export(typeof(IModuleBreakpointsContent))]
 	sealed class ModuleBreakpointsContent : IModuleBreakpointsContent {
-		public object UIObject => moduleBreakpointsControl;
-		public IInputElement FocusedElement => moduleBreakpointsControl.ListView;
-		public FrameworkElement ZoomElement => moduleBreakpointsControl;
+		public object? UIObject => moduleBreakpointsControl;
+		public IInputElement? FocusedElement => moduleBreakpointsControl.ListView;
+		public FrameworkElement? ZoomElement => moduleBreakpointsControl;
 		public ListView ListView => moduleBreakpointsControl.ListView;
 		public ModuleBreakpointsOperations Operations { get; }
 
 		readonly ModuleBreakpointsControl moduleBreakpointsControl;
 		readonly IModuleBreakpointsVM moduleBreakpointsVM;
 
-		sealed class ControlVM {
+		sealed class ControlVM : ViewModelBase {
 			public IModuleBreakpointsVM VM { get; }
 			ModuleBreakpointsOperations Operations { get; }
 

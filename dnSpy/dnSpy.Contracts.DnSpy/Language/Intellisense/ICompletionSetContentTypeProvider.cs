@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,6 +33,6 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// <param name="contentTypeRegistryService">Content type registry service</param>
 		/// <param name="kind">Kind</param>
 		/// <returns></returns>
-		IContentType GetContentType(IContentTypeRegistryService contentTypeRegistryService, CompletionClassifierKind kind);
+		IContentType? GetContentType(IContentTypeRegistryService contentTypeRegistryService, CompletionClassifierKind kind);
 	}
 }

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,12 +24,12 @@ namespace dnSpy.Bookmarks.TextEditor {
 	sealed class BookmarkInfo {
 		public BookmarkKind Kind { get; }
 		public ImageReference? ImageReference { get; }
-		public string MarkerTypeName { get; }
-		public string SelectedMarkerTypeName { get; }
-		public IClassificationType ClassificationType { get; }
+		public string? MarkerTypeName { get; }
+		public string? SelectedMarkerTypeName { get; }
+		public IClassificationType? ClassificationType { get; }
 		public int ZIndex { get; }
 
-		public BookmarkInfo(BookmarkKind kind, string markerTypeName, string selectedMarkerTypeName, IClassificationType classificationType, int zIndex) {
+		public BookmarkInfo(BookmarkKind kind, string? markerTypeName, string? selectedMarkerTypeName, IClassificationType? classificationType, int zIndex) {
 			Kind = kind;
 			ImageReference = BookmarkImageUtilities.GetImage(kind);
 			MarkerTypeName = markerTypeName;

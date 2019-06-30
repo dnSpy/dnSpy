@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,7 +23,7 @@ using System.Windows;
 using System.Windows.Interop;
 
 namespace dnSpy.Controls {
-	struct Screen {
+	readonly struct Screen {
 		/// <summary>
 		/// true if we managed to get monitor info
 		/// </summary>
@@ -80,17 +80,17 @@ namespace dnSpy.Controls {
 			public int bottom;
 		}
 
-		MONITORINFOEX info;
+		readonly MONITORINFOEX info;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="o">Dependency object attached somewhere in a <see cref="Window"/> or the <see cref="Window"/> object itself</param>
-		public Screen(DependencyObject o) {
+		public Screen(DependencyObject? o) {
 			var helper = GetHelper(o);
 			IsValid = false;
 			info = default;
-			if (helper != null) {
+			if (!(helper is null)) {
 				var hMonitor = MonitorFromWindow(helper.Handle, MONITOR_DEFAULTTONEAREST);
 				info.cbSize = MONITORINFOEX.SIZE;
 				if (!GetMonitorInfo(hMonitor, ref info))
@@ -100,11 +100,11 @@ namespace dnSpy.Controls {
 			}
 		}
 
-		static WindowInteropHelper GetHelper(DependencyObject o) {
-			if (o == null)
+		static WindowInteropHelper? GetHelper(DependencyObject? o) {
+			if (o is null)
 				return null;
 			var win = Window.GetWindow(o);
-			if (win == null)
+			if (win is null)
 				return null;
 			var helper = new WindowInteropHelper(win);
 			if (helper.Handle == IntPtr.Zero)

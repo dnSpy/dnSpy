@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,29 +19,10 @@
 
 namespace dndbg.Engine {
 	enum DebuggerProcessState {
-		/// <summary>
-		/// Creating the first process
-		/// </summary>
 		Starting,
-
-		/// <summary>
-		/// Process is about to run after having been stopped
-		/// </summary>
 		Continuing,
-
-		/// <summary>
-		/// Process is running
-		/// </summary>
 		Running,
-
-		/// <summary>
-		/// Process is temporarily stopped
-		/// </summary>
 		Paused,
-
-		/// <summary>
-		/// All processes have terminated
-		/// </summary>
 		Terminated,
 	}
 }

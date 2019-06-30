@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,6 +27,7 @@ using dnSpy.Contracts.Decompiler.XmlDoc;
 using dnSpy.Contracts.Documents.Tabs.DocViewer.ToolTips;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
+using dnSpy.Text;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Formatting;
@@ -37,13 +38,15 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		readonly StringBuilder sb;
 		readonly IClassificationFormatMap classificationFormatMap;
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
+		readonly IClassificationTypeRegistryService classificationTypeRegistryService;
 		readonly bool syntaxHighlight;
 
 		public bool IsEmpty => sb.Length == 0;
 
-		public CodeToolTipWriter(IClassificationFormatMap classificationFormatMap, IThemeClassificationTypeService themeClassificationTypeService, bool syntaxHighlight) {
+		public CodeToolTipWriter(IClassificationFormatMap classificationFormatMap, IThemeClassificationTypeService themeClassificationTypeService, IClassificationTypeRegistryService classificationTypeRegistryService, bool syntaxHighlight) {
 			this.classificationFormatMap = classificationFormatMap ?? throw new ArgumentNullException(nameof(classificationFormatMap));
 			this.themeClassificationTypeService = themeClassificationTypeService ?? throw new ArgumentNullException(nameof(themeClassificationTypeService));
+			this.classificationTypeRegistryService = classificationTypeRegistryService ?? throw new ArgumentNullException(nameof(classificationTypeRegistryService));
 			this.syntaxHighlight = syntaxHighlight;
 			result = new List<ColorAndText>();
 			sb = new StringBuilder();
@@ -67,22 +70,24 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		TextFormattingRunProperties GetTextFormattingRunProperties(object color) {
 			if (!syntaxHighlight)
 				color = BoxedTextColor.Text;
-			var classificationType = color as IClassificationType;
-			if (classificationType == null) {
+			var classificationType = ColorUtils.GetClassificationType(classificationTypeRegistryService, themeClassificationTypeService, color);
+			if (classificationType is null) {
 				var textColor = color as TextColor? ?? TextColor.Text;
 				classificationType = themeClassificationTypeService.GetClassificationType(textColor);
 			}
 			return classificationFormatMap.GetTextProperties(classificationType);
 		}
 
-		void Add(object color, string text) {
+		void Add(object color, string? text) {
+			if (text is null)
+				return;
 			result.Add(new ColorAndText(color, text));
 			sb.Append(text);
 		}
 
 		public void Write(IClassificationType classificationType, string text) => Add(classificationType, text);
-		public void Write(object color, string text) => Add(color, text);
-		public void Write(TextColor color, string text) => Add(color.Box(), text);
+		public void Write(object color, string? text) => Add(color, text);
+		public void Write(TextColor color, string? text) => Add(color.Box(), text);
 
 		bool needsNewLine = false;
 
@@ -102,29 +107,29 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		void InitializeNeedsNewLine() =>
 			needsNewLine = sb.Length == 1 || (sb.Length >= 2 && (sb[sb.Length - 2] != '\r' || sb[sb.Length - 1] != '\n'));
 
-		public bool WriteXmlDoc(string xmlDoc) {
+		public bool WriteXmlDoc(string? xmlDoc) {
 			InitializeNeedsNewLine();
 			bool res = XmlDocRenderer.WriteXmlDoc(this, xmlDoc);
 			needsNewLine = false;
 			return res;
 		}
 
-		public bool WriteXmlDocParameter(string xmlDoc, string paramName) {
+		public bool WriteXmlDocParameter(string? xmlDoc, string? paramName) {
 			InitializeNeedsNewLine();
 			bool res = WriteXmlDoc(this, xmlDoc, paramName, "param");
 			needsNewLine = false;
 			return res;
 		}
 
-		public bool WriteXmlDocGeneric(string xmlDoc, string gpName) {
+		public bool WriteXmlDocGeneric(string? xmlDoc, string? gpName) {
 			InitializeNeedsNewLine();
 			bool res = WriteXmlDoc(this, xmlDoc, gpName, "typeparam");
 			needsNewLine = false;
 			return res;
 		}
 
-		static bool WriteXmlDoc(IXmlDocOutput output, string xmlDoc, string name, string xmlElemName) {
-			if (xmlDoc == null || name == null)
+		static bool WriteXmlDoc(IXmlDocOutput output, string? xmlDoc, string? name, string xmlElemName) {
+			if (xmlDoc is null || name is null)
 				return false;
 			try {
 				var xml = XDocument.Load(new StringReader("<docroot>" + xmlDoc + "</docroot>"), LoadOptions.None);
@@ -148,15 +153,15 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 					switch (xelem.Name.ToString().ToUpperInvariant()) {
 					case "SEE":
 						var cref = xelem.Attribute("cref");
-						if (cref != null)
+						if (!(cref is null))
 							output.Write(XmlDocRenderer.GetCref((string)cref), BoxedTextColor.Text);
 						var langword = xelem.Attribute("langword");
-						if (langword != null)
+						if (!(langword is null))
 							output.Write(((string)langword).Trim(), BoxedTextColor.Keyword);
 						break;
 					case "PARAMREF":
 						var nameAttr = xml.Attribute("name");
-						if (nameAttr != null)
+						if (!(nameAttr is null))
 							output.Write(((string)nameAttr).Trim(), BoxedTextColor.Parameter);
 						break;
 					case "BR":

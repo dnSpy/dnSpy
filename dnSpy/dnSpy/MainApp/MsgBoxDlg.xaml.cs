@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,8 +24,8 @@ using dnSpy.Contracts.Controls;
 namespace dnSpy.MainApp {
 	sealed partial class MsgBoxDlg : WindowBase {
 		public MsgBoxButton ClickedButton {
-			get { return clickedButton; }
-			set { clickedButton = value; }
+			get => clickedButton;
+			set => clickedButton = value;
 		}
 		MsgBoxButton clickedButton;
 
@@ -37,7 +37,7 @@ namespace dnSpy.MainApp {
 
 		void MsgBoxDlg_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
 			var vm = DataContext as MsgBoxVM;
-			if (vm == null)
+			if (vm is null)
 				return;
 			if (vm.HasOKButton)
 				okButton.Focus();

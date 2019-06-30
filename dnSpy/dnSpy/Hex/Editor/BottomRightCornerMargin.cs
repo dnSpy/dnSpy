@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,7 +33,7 @@ namespace dnSpy.Hex.Editor {
 	[VSTE.TextViewRole(PredefinedHexViewRoles.Interactive)]
 	[VSTE.GridCellLength(1.0), VSTE.GridUnitType(GridUnitType.Star)]
 	sealed class BottomRightCornerMarginProvider : WpfHexViewMarginProvider {
-		public override WpfHexViewMargin CreateMargin(WpfHexViewHost wpfHexViewHost, WpfHexViewMargin marginContainer) =>
+		public override WpfHexViewMargin? CreateMargin(WpfHexViewHost wpfHexViewHost, WpfHexViewMargin marginContainer) =>
 			new BottomRightCornerMargin(wpfHexViewHost);
 	}
 
@@ -57,7 +57,7 @@ namespace dnSpy.Hex.Editor {
 
 		void UpdateVisibility() => canvas.Visibility = Enabled ? Visibility.Visible : Visibility.Collapsed;
 
-		public override HexViewMargin GetHexViewMargin(string marginName) =>
+		public override HexViewMargin? GetHexViewMargin(string marginName) =>
 			StringComparer.OrdinalIgnoreCase.Equals(NAME, marginName) ? this : null;
 
 		void Options_OptionChanged(object sender, VSTE.EditorOptionChangedEventArgs e) {

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,21 +19,23 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using dnlib.DotNet.MD;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 	sealed class DmdExportedTypeMD : DmdTypeRef {
 		public override DmdTypeScope TypeScope { get; }
-		public override string MetadataNamespace { get; }
-		public override string MetadataName { get; }
+		public override string? MetadataNamespace { get; }
+		public override string? MetadataName { get; }
 
 		readonly DmdEcma335MetadataReader reader;
 		readonly int baseTypeToken;
 
-		public DmdExportedTypeMD(DmdEcma335MetadataReader reader, uint rid, IList<DmdCustomModifier> customModifiers) : base(reader.Module, rid, customModifiers) {
+		public DmdExportedTypeMD(DmdEcma335MetadataReader reader, uint rid, IList<DmdCustomModifier>? customModifiers) : base(reader.Module, rid, customModifiers) {
 			this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
 
-			var row = reader.TablesStream.ReadExportedTypeRow(rid);
+			bool b = reader.TablesStream.TryReadExportedTypeRow(rid, out var row);
+			Debug.Assert(b);
 			var ns = reader.StringsStream.Read(row.TypeNamespace);
 			MetadataNamespace = string.IsNullOrEmpty(ns) ? null : ns;
 			MetadataName = reader.StringsStream.ReadNoNull(row.TypeName);
@@ -46,7 +48,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 				break;
 
 			case 0x26:
-				var fileRow = reader.TablesStream.ReadFileRow(implToken & 0x00FFFFFF) ?? new RawFileRow();
+				reader.TablesStream.TryReadFileRow(implToken & 0x00FFFFFF, out var fileRow);
 				var moduleName = reader.StringsStream.ReadNoNull(fileRow.Name);
 				TypeScope = new DmdTypeScope(reader.GetName(), moduleName);
 				break;
@@ -65,7 +67,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		protected override int GetDeclaringTypeRefToken() => baseTypeToken;
 
 		// Don't intern exported type refs
-		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => new DmdExportedTypeMD(reader, Rid, VerifyCustomModifiers(customModifiers));
+		public override DmdType WithCustomModifiers(IList<DmdCustomModifier>? customModifiers) => new DmdExportedTypeMD(reader, Rid, VerifyCustomModifiers(customModifiers));
 		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : new DmdExportedTypeMD(reader, Rid, null);
 	}
 }

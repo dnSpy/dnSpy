@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -43,21 +43,21 @@ namespace dnSpy.Contracts.Themes {
 		/// <summary>
 		/// Foreground (first) color or null
 		/// </summary>
-		Brush Foreground { get; }
+		Brush? Foreground { get; }
 
 		/// <summary>
 		/// Background (second) color null
 		/// </summary>
-		Brush Background { get; }
+		Brush? Background { get; }
 
 		/// <summary>
 		/// Third color or null
 		/// </summary>
-		Brush Color3 { get; }
+		Brush? Color3 { get; }
 
 		/// <summary>
 		/// Fourth color or null
 		/// </summary>
-		Brush Color4 { get; }
+		Brush? Color4 { get; }
 	}
 }

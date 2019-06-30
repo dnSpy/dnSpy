@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,33 +18,37 @@
 */
 
 using System;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Themes {
 	[Export]
-	sealed class ThemeSettings {
+	sealed class ThemeSettings : INotifyPropertyChanged {
 		static readonly Guid SETTINGS_GUID = new Guid("34CF0AF5-D265-4393-BC68-9B8C9B8EA622");
+
+		public event PropertyChangedEventHandler PropertyChanged;
+		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 		readonly ISettingsService settingsService;
 
 		public Guid? ThemeGuid {
-			get { return themeGuid; }
+			get => themeGuid;
 			set {
 				if (themeGuid != value) {
 					themeGuid = value;
-					OnModified();
+					OnPropertyChanged(nameof(ThemeGuid));
 				}
 			}
 		}
 		Guid? themeGuid;
 
 		public bool ShowAllThemes {
-			get { return showAllThemes; }
+			get => showAllThemes;
 			set {
 				if (showAllThemes != value) {
 					showAllThemes = value;
-					OnModified();
+					OnPropertyChanged(nameof(ShowAllThemes));
 				}
 			}
 		}
@@ -54,17 +58,13 @@ namespace dnSpy.Themes {
 		ThemeSettings(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			ThemeGuid = sect.Attribute<Guid?>(nameof(ThemeGuid));
 			ShowAllThemes = sect.Attribute<bool?>(nameof(ShowAllThemes)) ?? ShowAllThemes;
-			disableSave = false;
+			PropertyChanged += ThemeSettings_PropertyChanged;
 		}
-		readonly bool disableSave;
 
-		void OnModified() {
-			if (disableSave)
-				return;
+		void ThemeSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(ThemeGuid), ThemeGuid);
 			sect.Attribute(nameof(ShowAllThemes), ShowAllThemes);

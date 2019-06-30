@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,12 +32,12 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <summary>
 		/// Name or null, eg. <see cref="DecompilerOptionConstants.ShowILComments_NAME"/>
 		/// </summary>
-		string Name { get; }
+		string? Name { get; }
 
 		/// <summary>
 		/// Description or null
 		/// </summary>
-		string Description { get; }
+		string? Description { get; }
 
 		/// <summary>
 		/// Type

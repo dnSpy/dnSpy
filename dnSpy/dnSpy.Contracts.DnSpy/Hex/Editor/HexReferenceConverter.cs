@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,6 +33,6 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="hexView">Hex view</param>
 		/// <param name="reference">Reference</param>
 		/// <returns></returns>
-		public abstract object Convert(HexView hexView, object reference);
+		public abstract object? Convert(HexView hexView, object reference);
 	}
 }

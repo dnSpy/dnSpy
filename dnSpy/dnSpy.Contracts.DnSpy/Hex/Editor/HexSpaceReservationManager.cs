@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -162,19 +162,19 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <summary>
 		/// Gets the new agent or null
 		/// </summary>
-		public HexSpaceReservationAgent NewAgent { get; }
+		public HexSpaceReservationAgent? NewAgent { get; }
 
 		/// <summary>
 		/// Gets the old agent or null
 		/// </summary>
-		public HexSpaceReservationAgent OldAgent { get; }
+		public HexSpaceReservationAgent? OldAgent { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="oldAgent">Old agent or null</param>
 		/// <param name="newAgent">New agent or null</param>
-		public HexSpaceReservationAgentChangedEventArgs(HexSpaceReservationAgent oldAgent, HexSpaceReservationAgent newAgent) {
+		public HexSpaceReservationAgentChangedEventArgs(HexSpaceReservationAgent? oldAgent, HexSpaceReservationAgent? newAgent) {
 			NewAgent = newAgent;
 			OldAgent = oldAgent;
 		}

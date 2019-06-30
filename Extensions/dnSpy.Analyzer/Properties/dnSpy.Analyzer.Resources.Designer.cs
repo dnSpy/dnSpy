@@ -19,7 +19,7 @@ namespace dnSpy.Analyzer.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class dnSpy_Analyzer_Resources {
@@ -111,24 +111,6 @@ namespace dnSpy.Analyzer.Properties {
         public static string DoubleClick {
             get {
                 return ResourceManager.GetString("DoubleClick", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to add.
-        /// </summary>
-        public static string EventAdderTreeNodeName {
-            get {
-                return ResourceManager.GetString("EventAdderTreeNodeName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to remove.
-        /// </summary>
-        public static string EventRemoverTreeNodeName {
-            get {
-                return ResourceManager.GetString("EventRemoverTreeNodeName", resourceCulture);
             }
         }
         
@@ -237,24 +219,6 @@ namespace dnSpy.Analyzer.Properties {
         public static string Plugin_ShortDescription {
             get {
                 return ResourceManager.GetString("Plugin_ShortDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to get.
-        /// </summary>
-        public static string PropertyGetterTreeNode {
-            get {
-                return ResourceManager.GetString("PropertyGetterTreeNode", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to set.
-        /// </summary>
-        public static string PropertySetterTreeNode {
-            get {
-                return ResourceManager.GetString("PropertySetterTreeNode", resourceCulture);
             }
         }
         

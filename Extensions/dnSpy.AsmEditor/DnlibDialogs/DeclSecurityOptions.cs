@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,7 +25,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public SecurityAction Action;
 		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
 		public List<SecurityAttribute> SecurityAttributes = new List<SecurityAttribute>();
-		public string V1XMLString;
+		public string? V1XMLString;
 
 		public DeclSecurityOptions() {
 		}
@@ -34,7 +34,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			Action = ds.Action;
 			CustomAttributes.AddRange(ds.CustomAttributes);
 			V1XMLString = ds.GetNet1xXmlString();
-			if (V1XMLString == null)
+			if (V1XMLString is null)
 				SecurityAttributes.AddRange(ds.SecurityAttributes);
 		}
 
@@ -43,7 +43,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			ds.CustomAttributes.Clear();
 			ds.CustomAttributes.AddRange(CustomAttributes);
 			ds.SecurityAttributes.Clear();
-			if (V1XMLString == null)
+			if (V1XMLString is null)
 				ds.SecurityAttributes.AddRange(SecurityAttributes);
 			else
 				ds.SecurityAttributes.Add(SecurityAttribute.CreateFromXml(module, V1XMLString));

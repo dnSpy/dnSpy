@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -45,16 +45,16 @@ namespace dnSpy.Controls {
 			new FrameworkPropertyMetadata(CurrentWinSysType.Minimize));
 
 		public WinSysType WinSysType {
-			get { return (WinSysType)GetValue(WinSysTypeProperty); }
-			set { SetValue(WinSysTypeProperty, value); }
+			get => (WinSysType)GetValue(WinSysTypeProperty);
+			set => SetValue(WinSysTypeProperty, value);
 		}
 
 		public CurrentWinSysType CurrentWinSysType {
-			get { return (CurrentWinSysType)GetValue(CurrentWinSysTypeProperty); }
-			set { SetValue(CurrentWinSysTypeProperty, value); }
+			get => (CurrentWinSysType)GetValue(CurrentWinSysTypeProperty);
+			set => SetValue(CurrentWinSysTypeProperty, value);
 		}
 
-		Window window;
+		Window? window;
 
 		static WinSysButton() => DefaultStyleKeyProperty.OverrideMetadata(typeof(WinSysButton), new FrameworkPropertyMetadata(typeof(WinSysButton)));
 
@@ -63,7 +63,7 @@ namespace dnSpy.Controls {
 		void WinSysButton_Loaded(object sender, RoutedEventArgs e) {
 			Loaded -= WinSysButton_Loaded;
 			window = Window.GetWindow(this);
-			if (window != null) // null if in design mode
+			if (!(window is null)) // null if in design mode
 				window.StateChanged += window_StateChanged;
 		}
 
@@ -72,9 +72,9 @@ namespace dnSpy.Controls {
 			((WinSysButton)d).OnWinSysTypeChanged((WinSysType)e.NewValue);
 
 		void OnWinSysTypeChanged(WinSysType newValue) {
-			if (window == null)
+			if (window is null)
 				window = Window.GetWindow(this);
-			if (window == null && DesignerProperties.GetIsInDesignMode(this))
+			if (window is null || DesignerProperties.GetIsInDesignMode(this))
 				return;
 
 			switch (newValue) {
@@ -99,6 +99,9 @@ namespace dnSpy.Controls {
 		}
 
 		protected override void OnClick() {
+			if (window is null)
+				return;
+
 			switch (CurrentWinSysType) {
 			case CurrentWinSysType.Minimize:
 				WindowUtils.Minimize(window);

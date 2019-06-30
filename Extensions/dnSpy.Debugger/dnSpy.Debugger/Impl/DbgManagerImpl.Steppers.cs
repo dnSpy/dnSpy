@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,14 +27,14 @@ using dnSpy.Debugger.Steppers;
 
 namespace dnSpy.Debugger.Impl {
 	sealed partial class DbgManagerImpl {
-		internal void Step(DbgStepperImpl stepper, object stepperTag, DbgEngineStepKind step, bool singleProcess) =>
+		internal void Step(DbgStepperImpl stepper, object? stepperTag, DbgEngineStepKind step, bool singleProcess) =>
 			DbgThread(() => Step_DbgThread(stepper, stepperTag, step, singleProcess));
 
-		void Step_DbgThread(DbgStepperImpl stepper, object stepperTag, DbgEngineStepKind step, bool singleProcess) {
+		void Step_DbgThread(DbgStepperImpl stepper, object? stepperTag, DbgEngineStepKind step, bool singleProcess) {
 			Dispatcher.VerifyAccess();
 
 			var infos = new List<EngineInfo>();
-			EngineInfo stepperEngineInfo = null;
+			EngineInfo? stepperEngineInfo = null;
 			lock (lockObj) {
 				var process = stepper.Process;
 				var runtime = stepper.Runtime;
@@ -65,15 +65,16 @@ namespace dnSpy.Debugger.Impl {
 			stepper.RaiseError_DbgThread(string.Format(dnSpy_Debugger_Resources.DebugStepProcessError, error));
 		}
 
-		internal void StepComplete_DbgThread(DbgThreadImpl thread, string error) {
+		internal void StepComplete_DbgThread(DbgThreadImpl thread, string? error, bool forciblyCanceled) {
 			Dispatcher.VerifyAccess();
 			var engine = thread.RuntimeImpl.Engine;
+			if (engine.IsClosed)
+				return;
 			Debug.Assert(IsOurEngine(engine));
 			if (!IsOurEngine(engine))
 				return;
 			var e = new DbgMessageStepCompleteEventArgs(thread, error);
-			// This is a good default value...
-			e.Pause = true;
+			e.Pause = !forciblyCanceled;
 			OnConditionalBreak_DbgThread(engine, e, thread, DbgEngineMessageFlags.None);
 		}
 	}

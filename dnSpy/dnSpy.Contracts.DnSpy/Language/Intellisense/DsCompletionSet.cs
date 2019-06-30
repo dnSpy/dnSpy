@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// <see cref="Completion"/> collection
 	/// </summary>
-	public class DsCompletionSet : CompletionSet2 {
+	public class DsCompletionSet : CompletionSet {
 		readonly Completion[] allCompletions;
 		readonly Completion[] allCompletionBuilders;
 		readonly FilteredCompletionCollection filteredCompletions;
@@ -48,7 +48,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// Gets or sets the text tracking span to which this completion applies
 		/// </summary>
 		public override ITrackingSpan ApplicableTo {
-			get { return base.ApplicableTo; }
+			get => base.ApplicableTo;
 			protected set {
 				searchText = null;
 				base.ApplicableTo = value;
@@ -56,9 +56,9 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		}
 
 		/// <summary>
-		/// Constructor
+		/// Gets the filters
 		/// </summary>
-		protected DsCompletionSet() { }
+		public virtual IReadOnlyList<DsIntellisenseFilter> Filters { get; }
 
 		/// <summary>
 		/// Constructor
@@ -69,27 +69,28 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// <param name="completions">Completion items</param>
 		/// <param name="completionBuilders">Completion builders</param>
 		/// <param name="filters">Filters or null</param>
-		public DsCompletionSet(string moniker, string displayName, ITrackingSpan applicableTo, IEnumerable<Completion> completions, IEnumerable<Completion> completionBuilders, IReadOnlyList<IIntellisenseFilter> filters)
-			: base(moniker, displayName, applicableTo, Array.Empty<Completion>(), Array.Empty<Completion>(), filters ?? Array.Empty<IIntellisenseFilter>()) {
+		public DsCompletionSet(string moniker, string displayName, ITrackingSpan applicableTo, IEnumerable<Completion> completions, IEnumerable<Completion> completionBuilders, IReadOnlyList<DsIntellisenseFilter>? filters)
+			: base(moniker, displayName, applicableTo, Array.Empty<Completion>(), Array.Empty<Completion>()) {
 			allCompletions = completions.ToArray();
 			allCompletionBuilders = completionBuilders.ToArray();
 			filteredCompletions = new FilteredCompletionCollection(allCompletions);
 			filteredCompletionBuilders = new FilteredCompletionCollection(allCompletionBuilders);
+			Filters = filters ?? Array.Empty<DsIntellisenseFilter>();
 		}
 
 		string SearchText {
 			get {
 				var atSpan = ApplicableTo;
-				if (atSpan == null)
+				if (atSpan is null)
 					return string.Empty;
-				if (searchText == null || atSpan.TextBuffer.CurrentSnapshot.Version.VersionNumber != searchTextVersion) {
+				if (searchText is null || atSpan.TextBuffer.CurrentSnapshot.Version.VersionNumber != searchTextVersion) {
 					searchTextVersion = atSpan.TextBuffer.CurrentSnapshot.Version.VersionNumber;
 					searchText = atSpan.GetText(atSpan.TextBuffer.CurrentSnapshot);
 				}
 				return searchText;
 			}
 		}
-		string searchText;
+		string? searchText;
 		int searchTextVersion = -1;
 
 		/// <summary>
@@ -97,7 +98,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// </summary>
 		/// <param name="displayText">Text shown in the UI</param>
 		/// <returns></returns>
-		public override IReadOnlyList<Span> GetHighlightedSpansInDisplayText(string displayText) =>
+		public override IReadOnlyList<Span>? GetHighlightedSpansInDisplayText(string displayText) =>
 			CreateCompletionFilter(SearchText).GetMatchSpans(displayText);
 
 		/// <summary>
@@ -108,7 +109,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		public virtual ICompletionFilter CreateCompletionFilter(string searchText) => new CompletionFilter(searchText);
 
 		/// <summary>
-		/// Uses <see cref="CompletionSet2.Filters"/> to filter <paramref name="completions"/>
+		/// Uses <see cref="DsCompletionSet.Filters"/> to filter <paramref name="completions"/>
 		/// </summary>
 		/// <param name="filteredResult">Result</param>
 		/// <param name="completions">Completion items to filter</param>
@@ -118,7 +119,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// Filters the list. <see cref="SelectBestMatch"/> should be called after this method
 		/// </summary>
 		public override void Filter() {
-			Debug.Assert(ApplicableTo != null, "You must initialize " + nameof(ApplicableTo) + " before calling this method");
+			Debug.Assert(!(ApplicableTo is null), "You must initialize " + nameof(ApplicableTo) + " before calling this method");
 			var inputText = SearchText;
 			var filteredList = new List<Completion>(allCompletions.Length);
 			Filter(filteredList, allCompletions);
@@ -144,7 +145,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		public override void SelectBestMatch() =>
 			SelectionStatus = GetBestMatch() ?? new CompletionSelectionStatus(null, false, false);
 
-		struct MruSelection {
+		readonly struct MruSelection {
 			public Completion Completion { get; }
 			public int Index { get; }
 			public MruSelection(Completion completion, int index) {
@@ -158,7 +159,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// </summary>
 		/// <returns></returns>
 		protected virtual CompletionSelectionStatus GetBestMatch() {
-			Debug.Assert(ApplicableTo != null, "You must initialize " + nameof(ApplicableTo) + " before calling this method");
+			Debug.Assert(!(ApplicableTo is null), "You must initialize " + nameof(ApplicableTo) + " before calling this method");
 			var inputText = SearchText;
 			var completionFilter = CreateCompletionFilter(inputText);
 			int matches = 0;
@@ -174,12 +175,12 @@ namespace dnSpy.Contracts.Language.Intellisense {
 
 					if (completion.DisplayText.StartsWith(searchText, StringComparison.Ordinal)) {
 						int currentMruIndex = GetMruIndex(completion);
-						if (mruSelectionCase.Completion == null || currentMruIndex < mruSelectionCase.Index)
+						if (mruSelectionCase.Completion is null || currentMruIndex < mruSelectionCase.Index)
 							mruSelectionCase = new MruSelection(completion, currentMruIndex);
 					}
 					else if (completion.DisplayText.StartsWith(searchText, StringComparison.OrdinalIgnoreCase)) {
 						int currentMruIndex = GetMruIndex(completion);
-						if (mruSelection.Completion == null || currentMruIndex < mruSelection.Index)
+						if (mruSelection.Completion is null || currentMruIndex < mruSelection.Index)
 							mruSelection = new MruSelection(completion, currentMruIndex);
 					}
 				}
@@ -189,10 +190,10 @@ namespace dnSpy.Contracts.Language.Intellisense {
 			// local 'i' exists, and we previously typed 'int', and we've just typed 'i',
 			// then select 'i' and not 'int'
 			var selectedCompletion = mruSelectionCase.Completion ?? mruSelection.Completion ?? selector.Result;
-			if (selector.Result != null && inputText.Equals(selector.Result.TryGetFilterText(), StringComparison.OrdinalIgnoreCase))
+			if (!(selector.Result is null) && inputText.Equals(selector.Result!.TryGetFilterText(), StringComparison.OrdinalIgnoreCase))
 				selectedCompletion = selector.Result;
 
-			bool isSelected = selectedCompletion != null;
+			bool isSelected = !(selectedCompletion is null);
 			bool isUnique = matches == 1;
 			return new CompletionSelectionStatus(selectedCompletion, isSelected, isUnique);
 		}

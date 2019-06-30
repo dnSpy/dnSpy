@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,7 +31,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		/// <summary>
 		/// New or existing type in target module
 		/// </summary>
-		public TypeDef TargetType { get; protected set; }
+		public TypeDef? TargetType { get; protected set; }
 	}
 
 	/// <summary>
@@ -41,7 +41,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		public NewImportedType(TypeDef targetType) => TargetType = targetType;
 	}
 
-	struct EditedProperty {
+	readonly struct EditedProperty {
 		public PropertyDef OriginalProperty { get; }
 		public PropertyDefOptions PropertyDefOptions { get; }
 		public EditedProperty(PropertyDef originalProperty, PropertyDefOptions propertyDefOptions) {
@@ -50,7 +50,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 	}
 
-	struct EditedEvent {
+	readonly struct EditedEvent {
 		public EventDef OriginalEvent { get; }
 		public EventDefOptions EventDefOptions { get; }
 		public EditedEvent(EventDef originalEvent, EventDefOptions eventDefOptions) {
@@ -59,7 +59,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 	}
 
-	struct EditedMethod {
+	readonly struct EditedMethod {
 		public MethodDef OriginalMethod { get; }
 		public Emit.MethodBody NewBody { get; }
 		public MethodDefOptions MethodDefOptions { get; }
@@ -71,7 +71,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 	}
 
-	struct EditedField {
+	readonly struct EditedField {
 		public FieldDef OriginalField { get; }
 		public FieldDefOptions FieldDefOptions { get; }
 		public EditedField(FieldDef originalField, FieldDefOptions fieldDefOptions) {
@@ -94,7 +94,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		internal MergeKind MergeKind { get; }
 
 		public bool IsEmpty =>
-			TargetType.IsGlobalModuleType &&
+			TargetType!.IsGlobalModuleType &&
 			NewOrExistingNestedTypes.Count == 0 &&
 			NewProperties.Count == 0 &&
 			NewEvents.Count == 0 &&

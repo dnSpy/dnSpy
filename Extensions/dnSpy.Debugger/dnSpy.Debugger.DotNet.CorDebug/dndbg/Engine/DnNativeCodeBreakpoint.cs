@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,21 +23,25 @@ namespace dndbg.Engine {
 	sealed class NativeCodeBreakpointConditionContext : BreakpointConditionContext {
 		public override DnBreakpoint Breakpoint => NativeCodeBreakpoint;
 		public DnNativeCodeBreakpoint NativeCodeBreakpoint { get; }
+		public BreakpointDebugCallbackEventArgs E { get; }
 
-		public NativeCodeBreakpointConditionContext(DnDebugger debugger, DnNativeCodeBreakpoint bp)
-			: base(debugger) => NativeCodeBreakpoint = bp;
+		public NativeCodeBreakpointConditionContext(DnDebugger debugger, DnNativeCodeBreakpoint bp, BreakpointDebugCallbackEventArgs e)
+			: base(debugger) {
+			NativeCodeBreakpoint = bp;
+			E = e;
+		}
 	}
 
 	sealed class DnNativeCodeBreakpoint : DnCodeBreakpoint {
 		internal Func<NativeCodeBreakpointConditionContext, bool> Condition { get; }
 
-		internal DnNativeCodeBreakpoint(DnModuleId module, uint token, uint offset, Func<NativeCodeBreakpointConditionContext, bool> cond)
+		internal DnNativeCodeBreakpoint(DnModuleId module, uint token, uint offset, Func<NativeCodeBreakpointConditionContext, bool>? cond)
 			: base(module, token, offset) => Condition = cond ?? defaultCond;
 		static readonly Func<NativeCodeBreakpointConditionContext, bool> defaultCond = a => true;
 
-		internal DnNativeCodeBreakpoint(DnModuleId module, CorCode code, uint offset, Func<NativeCodeBreakpointConditionContext, bool> cond)
+		internal DnNativeCodeBreakpoint(DnModuleId module, CorCode code, uint offset, Func<NativeCodeBreakpointConditionContext, bool>? cond)
 			: base(module, code, offset) => Condition = cond ?? defaultCond;
 
-		internal override CorCode GetCode(CorFunction func) => func.NativeCode;
+		internal override CorCode? GetCode(CorFunction func) => func.NativeCode;
 	}
 }

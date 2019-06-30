@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,8 +27,8 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="sb">This</param>
 		/// <param name="s">String</param>
 		/// <returns></returns>
-		public static bool CheckEquals(this StringBuilder sb, string s) {
-			if (s == null || sb.Length != s.Length)
+		public static bool CheckEquals(this StringBuilder sb, string? s) {
+			if (s is null || sb.Length != s.Length)
 				return false;
 			for (int i = 0; i < s.Length; i++) {
 				if (sb[i] != s[i])

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -43,12 +43,12 @@ namespace dnSpy.Debugger.DotNet.Code.TextEditor {
 
 		public override DbgTextViewBreakpointLocationResult? CreateLocation(IDocumentTab tab, ITextView textView, VirtualSnapshotPoint position) {
 			var documentViewer = tab.TryGetDocumentViewer();
-			if (documentViewer == null)
+			if (documentViewer is null)
 				return null;
 			var methodDebugService = documentViewer.GetMethodDebugService();
-			if (methodDebugService == null)
+			if (methodDebugService is null)
 				return null;
-			var methodStatements = methodDebugService.FindByTextPosition(position.Position, sameMethod: false);
+			var methodStatements = methodDebugService.FindByTextPosition(position.Position, FindByTextPositionOptions.None);
 			if (methodStatements.Count == 0)
 				return null;
 			var textSpan = methodStatements[0].Statement.TextSpan;
@@ -60,7 +60,7 @@ namespace dnSpy.Debugger.DotNet.Code.TextEditor {
 			for (int i = 0; i < methodStatements.Count; i++) {
 				var statement = methodStatements[i];
 				var moduleId = moduleIdProvider.Create(statement.Method.Module);
-				locations[i] = dbgDotNetCodeLocationFactory.Value.Create(moduleId, statement.Method.MDToken.Raw, statement.Statement.BinSpan.Start);
+				locations[i] = dbgDotNetCodeLocationFactory.Value.Create(moduleId, statement.Method.MDToken.Raw, statement.Statement.ILSpan.Start);
 			}
 			return new DbgTextViewBreakpointLocationResult(locations, span);
 		}

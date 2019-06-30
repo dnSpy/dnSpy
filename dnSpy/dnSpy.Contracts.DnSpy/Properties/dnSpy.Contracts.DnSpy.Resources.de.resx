@@ -182,6 +182,9 @@
   <data name="Search_SearchColumnHelpText" xml:space="preserve">
     <value>Suchspalte: {0}</value>
   </data>
+  <data name="Search_SearchColumnInvertMatchHelpText" xml:space="preserve">
+    <value>Verwende '{0}' um die Übereinstimmung zu invertieren, z.B. {1}</value>
+  </data>
   <data name="ValueMustBeType" xml:space="preserve">
     <value>Wert muss den Typ {0} haben.
 Fehler: {1}</value>

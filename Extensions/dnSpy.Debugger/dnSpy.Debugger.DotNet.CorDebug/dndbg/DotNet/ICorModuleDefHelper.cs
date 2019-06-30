@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Runtime.CompilerServices;
 using dnlib.DotNet;
 using dnlib.IO;
 
@@ -46,23 +47,24 @@ namespace dndbg.DotNet {
 		/// <summary>
 		/// Gets the filename if the module is available on disk, else null
 		/// </summary>
-		string Filename { get; }
+		string? Filename { get; }
 
 		/// <summary>
-		/// Returns true if <paramref name="module"/> is the manifest (first) module
+		/// Returns true if module is the manifest (first) module
 		/// </summary>
 		bool IsManifestModule { get; }
 
 		/// <summary>
-		/// Creates a method body reader. If <paramref name="module"/> is a dynamic module, the
+		/// Creates a method body reader. If module is a dynamic module, the
 		/// RVA in the method record is an RVA relative to the dynamic module which is not known
 		/// by the module. The address can be found in
 		/// <c>CorModule.GetFunctionFromToken(mdToken).ILCode.Address</c>
 		/// </summary>
 		/// <param name="bodyRva">RVA of method body</param>
 		/// <param name="mdToken">Method token</param>
-		/// <returns>A new <see cref="IBinaryReader"/> instance or null if there's no method body</returns>
-		IBinaryReader CreateBodyReader(uint bodyRva, uint mdToken);
+		/// <param name="reader">Method body reader if successful</param>
+		/// <returns></returns>
+		bool TryCreateBodyReader(uint bodyRva, uint mdToken, out DataReader reader);
 
 		/// <summary>
 		/// Returns a field's initial value or null. It's only called if <see cref="FieldAttributes.HasFieldRVA"/> is set
@@ -71,13 +73,16 @@ namespace dndbg.DotNet {
 		/// <param name="fdToken">Field token</param>
 		/// <param name="size">Size of data</param>
 		/// <returns></returns>
-		byte[] ReadFieldInitialValue(uint fieldRva, uint fdToken, int size);
+		byte[]? ReadFieldInitialValue(uint fieldRva, uint fdToken, int size);
 
 		/// <summary>
-		/// Creates a resource stream. Returns null if it couldn't be created.
+		/// Creates a resource reader or returns false on failure
 		/// </summary>
 		/// <param name="offset">Offset of resource</param>
+		/// <param name="dataReaderFactory">Data reader factory</param>
+		/// <param name="resourceOffset">Resource offset</param>
+		/// <param name="resourceLength">Resource length</param>
 		/// <returns></returns>
-		IImageStream CreateResourceStream(uint offset);
+		bool TryCreateResourceStream(uint offset, [NotNullWhenTrue] out DataReaderFactory? dataReaderFactory, out uint resourceOffset, out uint resourceLength);
 	}
 }

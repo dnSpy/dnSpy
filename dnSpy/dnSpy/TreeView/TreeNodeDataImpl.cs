@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,8 +25,8 @@ namespace dnSpy.TreeView {
 	sealed class TreeNodeDataImpl : TreeNodeData {
 		public TreeNodeDataImpl(Guid guid) => Guid = guid;
 
-		public override object Text => null;
-		public override object ToolTip => null;
+		public override object? Text => null;
+		public override object? ToolTip => null;
 		public override Guid Guid { get; }
 		public override ImageReference Icon => new ImageReference();
 		public override void OnRefreshUI() { }

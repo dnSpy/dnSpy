@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,7 +32,7 @@ namespace dnSpy.Text.Editor {
 	[TagType(typeof(IUrlTag))]
 	[ContentType(ContentTypes.Text)]
 	sealed class UriTaggerProvider : IViewTaggerProvider {
-		public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag =>
+		public ITagger<T>? CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag =>
 			textView.Properties.GetOrCreateSingletonProperty(typeof(UriTagger), () => new UriTagger(textView)) as ITagger<T>;
 	}
 
@@ -65,22 +65,22 @@ namespace dnSpy.Text.Editor {
 			if (!enableLinks)
 				yield break;
 
-			ITextSnapshotLine line = null;
+			ITextSnapshotLine? line = null;
 			foreach (var span in spans) {
 				int pos = span.Start;
 
 				// We check full lines so make sure we don't re-check the same line again
-				if (line != null && line.ExtentIncludingLineBreak.End.Position > pos)
+				if (!(line is null) && line.ExtentIncludingLineBreak.End.Position > pos)
 					continue;
 
 				for (;;) {
-					if (line != null && line.ExtentIncludingLineBreak.End.Position == pos) {
+					if (!(line is null) && line.ExtentIncludingLineBreak.End.Position == pos) {
 						if (line.Snapshot.LineCount == line.LineNumber + 1)
 							break;
 						line = line.Snapshot.GetLineFromLineNumber(line.LineNumber + 1);
 					}
 					else {
-						Debug.Assert(line == null || pos > line.ExtentIncludingLineBreak.End.Position);
+						Debug.Assert(line is null || pos > line.ExtentIncludingLineBreak.End.Position);
 						line = span.Snapshot.GetLineFromPosition(pos);
 					}
 
@@ -89,7 +89,7 @@ namespace dnSpy.Text.Editor {
 						var uriFinder = new UriFinder(lineText);
 						for (;;) {
 							var res = uriFinder.GetNext();
-							if (res == null)
+							if (res is null)
 								break;
 							Debug.Assert(res.Value.Length != 0);
 							if (res.Value.Length == 0)
@@ -101,7 +101,7 @@ namespace dnSpy.Text.Editor {
 								break;
 							var uriSpan = new SnapshotSpan(line.Snapshot, start, res.Value.Length);
 							var uri = TryCreateUri(uriSpan.GetText());
-							if (uri == null)
+							if (uri is null)
 								continue;
 							yield return new TagSpan<IUrlTag>(uriSpan, new UrlTag(uri));
 						}
@@ -114,7 +114,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		static Uri TryCreateUri(string text) {
+		static Uri? TryCreateUri(string text) {
 			try {
 				return new Uri(text, UriKind.RelativeOrAbsolute);
 			}

@@ -1,0 +1,1533 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddBreakpointCommand" xml:space="preserve">
+    <value>_Töréspont hozzáadása</value>
+  </data>
+  <data name="AddExceptionCommand" xml:space="preserve">
+    <value>_Kivétel hozzáadása</value>
+  </data>
+  <data name="AppDomainNotAvailable" xml:space="preserve">
+    <value>&lt;nem elérhető&gt;</value>
+  </data>
+  <data name="AppMenu_Debug" xml:space="preserve">
+    <value>_Hibakeresés</value>
+  </data>
+  <data name="AppTitle_Debugging" xml:space="preserve">
+    <value>Hibakeresés</value>
+  </data>
+  <data name="AskDeleteAllBreakpoints" xml:space="preserve">
+    <value>Minden töréspontot törölni akar?</value>
+  </data>
+  <data name="AttachToProcessCommand" xml:space="preserve">
+    <value>_Kapcsolódás folyamathoz...</value>
+  </data>
+  <data name="Attach_AttachToProcess" xml:space="preserve">
+    <value>Kapcsolódás folyamathoz</value>
+  </data>
+  <data name="Attach_UseDnSpy32" xml:space="preserve">
+    <value>64 bites dnSpy használata a 64 bites folyamathoz való kapcsolódáshoz</value>
+  </data>
+  <data name="Attach_UseDnSpy64" xml:space="preserve">
+    <value>32 bites dnSpy használata a 32 bites folyamathoz való kapcsolódáshoz</value>
+  </data>
+  <data name="BreakCommand" xml:space="preserve">
+    <value>_Megállítás mindenhol</value>
+  </data>
+  <data name="BreakpointsCommand" xml:space="preserve">
+    <value>_Töréspontok</value>
+  </data>
+  <data name="Button_Attach" xml:space="preserve">
+    <value>_Kapcsolódás</value>
+  </data>
+  <data name="Button_Cancel" xml:space="preserve">
+    <value>_Mégsem</value>
+  </data>
+  <data name="Button_OK" xml:space="preserve">
+    <value>_OK</value>
+  </data>
+  <data name="Button_Refresh" xml:space="preserve">
+    <value>_Frissítés</value>
+  </data>
+  <data name="CallStackCommand" xml:space="preserve">
+    <value>_Call Stack</value>
+  </data>
+  <data name="CallStack_MaxFramesExceeded" xml:space="preserve">
+    <value>Túlléptük a dnSpy által támogatott verem keretek maximális számát.</value>
+  </data>
+  <data name="Column_Address" xml:space="preserve">
+    <value>Cím</value>
+  </data>
+  <data name="Column_AppDomain" xml:space="preserve">
+    <value>AppDomain</value>
+  </data>
+  <data name="Column_DynamicModule" xml:space="preserve">
+    <value>Dinamikus</value>
+  </data>
+  <data name="Column_InMemoryModule" xml:space="preserve">
+    <value>InMemory</value>
+  </data>
+  <data name="Column_Module" xml:space="preserve">
+    <value>Modul</value>
+  </data>
+  <data name="Column_Name" xml:space="preserve">
+    <value>Név</value>
+  </data>
+  <data name="Column_OptimizedModule" xml:space="preserve">
+    <value>Optimalizált</value>
+  </data>
+  <data name="Column_Order" xml:space="preserve">
+    <value>Sorrend</value>
+  </data>
+  <data name="Column_Path" xml:space="preserve">
+    <value>Elérési út</value>
+  </data>
+  <data name="Column_Process" xml:space="preserve">
+    <value>Folyamat</value>
+  </data>
+  <data name="Column_ProcessArchitecture" xml:space="preserve">
+    <value>Architektúra</value>
+  </data>
+  <data name="Column_ProcessFilename" xml:space="preserve">
+    <value>Fájlnév</value>
+  </data>
+  <data name="Column_ProcessID" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="Column_ProcessTitle" xml:space="preserve">
+    <value>Cím</value>
+  </data>
+  <data name="Column_ProcessType" xml:space="preserve">
+    <value>Típus</value>
+  </data>
+  <data name="Column_ThreadAffinityMask" xml:space="preserve">
+    <value>Affinítás maszk</value>
+  </data>
+  <data name="Column_ThreadCategory" xml:space="preserve">
+    <value>Kategória</value>
+  </data>
+  <data name="Column_ThreadID" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="Column_ThreadLocation" xml:space="preserve">
+    <value>Hely</value>
+  </data>
+  <data name="Column_ThreadManagedId" xml:space="preserve">
+    <value>Felügyelt ID</value>
+  </data>
+  <data name="Column_ThreadPriority" xml:space="preserve">
+    <value>Prioritás</value>
+  </data>
+  <data name="Column_ThreadState" xml:space="preserve">
+    <value>Állapot</value>
+  </data>
+  <data name="Column_ThreadSuspendedCount" xml:space="preserve">
+    <value>Felfüggesztések száma</value>
+  </data>
+  <data name="Column_Timestamp" xml:space="preserve">
+    <value>Időbélyeg</value>
+  </data>
+  <data name="Column_Type" xml:space="preserve">
+    <value>Típus</value>
+  </data>
+  <data name="Column_Value" xml:space="preserve">
+    <value>Érték</value>
+  </data>
+  <data name="Column_Version" xml:space="preserve">
+    <value>Verzió</value>
+  </data>
+  <data name="ContinueDebuggingCommand" xml:space="preserve">
+    <value>_Folytatás</value>
+  </data>
+  <data name="CopyCommand" xml:space="preserve">
+    <value>_Másolás</value>
+  </data>
+  <data name="DbgAsm_Title" xml:space="preserve">
+    <value>Program debuggolása</value>
+  </data>
+  <data name="DbgSettings_AutoOpenLocalsWindow" xml:space="preserve">
+    <value>A Helyi ablakok megjelenítése a debugger indításakor</value>
+  </data>
+  <data name="DbgSettings_DisableDebuggerDetection" xml:space="preserve">
+    <value>A kód megakadályozása a hibakereső detektálásában</value>
+  </data>
+  <data name="DbgSettings_IgnoreBreakInstructions" xml:space="preserve">
+    <value>Debugger.Break() és break utasítások figyelmen kívül hagyása</value>
+  </data>
+  <data name="DbgSettings_PropertyEvalAndFunctionCalls" xml:space="preserve">
+    <value>Tulajdonság kiértékelés és egyéb implicit függvényhívások engedélyezése</value>
+  </data>
+  <data name="DbgSettings_UseMemoryModules" xml:space="preserve">
+    <value>A folyamat memóriájából betöltött fájlok hibakeresése (ne jelölje ki a lemezen lévő fájlok használatához)</value>
+  </data>
+  <data name="DbgSettings_UseStringConversionFunction" xml:space="preserve">
+    <value>Karakterlánc átalakító függvények hívása objektumokon a változók ablakban</value>
+  </data>
+  <data name="StartDebugging2" xml:space="preserve">
+    <value>Hibakereső indítá_sa...</value>
+  </data>
+  <data name="DebuggerOptDlgTab" xml:space="preserve">
+    <value>Hibakereső</value>
+  </data>
+  <data name="DebugProgramX" xml:space="preserve">
+    <value>{0} hi_bakeresése</value>
+  </data>
+  <data name="Debug_EventDescription_Exception" xml:space="preserve">
+    <value>Kivétel</value>
+  </data>
+  <data name="Debug_EventDescription_LoadModule1" xml:space="preserve">
+    <value>LoadModule DYN={0} MEM={1} {2:X8} {3:X8} {4}</value>
+  </data>
+  <data name="Debug_EventDescription_LoadModule2" xml:space="preserve">
+    <value>LoadModule A={0:X8} S={1:X8} {2}</value>
+  </data>
+  <data name="Debug_EventDescription_UnhandledException" xml:space="preserve">
+    <value>Nem kezelt kivétel</value>
+  </data>
+  <data name="DeleteAllBreakpointsCommand" xml:space="preserve">
+    <value>Min_den töréspont törlése</value>
+  </data>
+  <data name="DeleteBreakpointCommand" xml:space="preserve">
+    <value>Töréspont törlés_e</value>
+  </data>
+  <data name="DetachAllCommand" xml:space="preserve">
+    <value>Minden _leválasztása</value>
+  </data>
+  <data name="DisableAllBreakpointsCommand" xml:space="preserve">
+    <value>Minden töréspo_nt letiltása</value>
+  </data>
+  <data name="EnableAllBreakpointsCommand" xml:space="preserve">
+    <value>Minden töréspo_nt engedélyezése</value>
+  </data>
+  <data name="EnableBreakpointCommand" xml:space="preserve">
+    <value>Töréspont _engedélyezése</value>
+  </data>
+  <data name="EnableBreakpointCommand2" xml:space="preserve">
+    <value>Töréspont engedé_lyezése</value>
+  </data>
+  <data name="ErrorOccurredX" xml:space="preserve">
+    <value>Hiba történt:
+
+{0}</value>
+  </data>
+  <data name="Error_CantEvalUnlessDebuggerStopped" xml:space="preserve">
+    <value>Nem lehet kiértékelni, amíg a hibakereső fut</value>
+  </data>
+  <data name="Error_CantEvalWhenUnhandledExceptionHasOccurred" xml:space="preserve">
+    <value>Nem lehet kiértékelni, ha nem kezelt kivétel lépett fel</value>
+  </data>
+  <data name="Error_StartWithoutDebuggingCouldNotStart" xml:space="preserve">
+    <value>Nem sikerült elindítani '{0}'-t
+HIBA: {1}</value>
+  </data>
+  <data name="ExceptionSettingsCommand" xml:space="preserve">
+    <value>_Kivétel beállítások</value>
+  </data>
+  <data name="Exceptions_Remove_ToolTip" xml:space="preserve">
+    <value>Eltávolít egy kivételt a listából</value>
+  </data>
+  <data name="Exceptions_RestoreSettings_ToolTip" xml:space="preserve">
+    <value>Visszaállítja a listát az alapértelmezett beállításokra</value>
+  </data>
+  <data name="Exceptions_Search" xml:space="preserve">
+    <value>Keresés</value>
+  </data>
+  <data name="Exceptions_Search_ToolTip" xml:space="preserve">
+    <value>Keressen egy kivétel</value>
+  </data>
+  <data name="Exceptions_ShowOnlyEnabledExceptions_ToolTip" xml:space="preserve">
+    <value>Csak engedélyezett kivételek megjelenítése</value>
+  </data>
+  <data name="FreezeThreadCommand" xml:space="preserve">
+    <value>_Freeze</value>
+  </data>
+  <data name="GoToDisassemblyCommand2" xml:space="preserve">
+    <value>Ugrás a visszafejtéshez</value>
+  </data>
+  <data name="GoToModuleCommand" xml:space="preserve">
+    <value>U_grás modulra</value>
+  </data>
+  <data name="HexDisplayCommand" xml:space="preserve">
+    <value>_Hexadecimális kijelzés</value>
+  </data>
+  <data name="LocalsAddWatchCommand" xml:space="preserve">
+    <value>_Figyelő hozzáadása</value>
+  </data>
+  <data name="LocalsCollapseChildrenNodesCommand" xml:space="preserve">
+    <value>Gyerekelemek be_csukása</value>
+  </data>
+  <data name="LocalsCollapseParentNodeCommand" xml:space="preserve">
+    <value>Szülőelem becs_ukása</value>
+  </data>
+  <data name="LocalsCommand" xml:space="preserve">
+    <value>_Lokálisak</value>
+  </data>
+  <data name="LocalsCopyValueCommand" xml:space="preserve">
+    <value>Érték máso_lása</value>
+  </data>
+  <data name="LocalsEditValueCommand" xml:space="preserve">
+    <value>Érték sz_erkesztése</value>
+  </data>
+  <data name="LocalsExpandChildrenNodesCommand" xml:space="preserve">
+    <value>Gyerekelemek _kinyitása</value>
+  </data>
+  <data name="LocalsSaveCommand" xml:space="preserve">
+    <value>_Mentés...</value>
+  </data>
+  <data name="LocalsSave_Error_CouldNotSaveDataToFilename" xml:space="preserve">
+    <value>Hiba az adat '{0}' helyre mentésekor
+HIBA: {1}</value>
+  </data>
+  <data name="Locals_Ask_TooManyItems" xml:space="preserve">
+    <value>Ez az elem több, mint {0} gyerek elemet tartalmaz, kinyitásnál ennyi elem fog csak megjelenni.
+
+Biztosan ki akarja nyitni?</value>
+  </data>
+  <data name="Locals_Error_CantEvaluateWhenThreadIsAtUnsafePoint" xml:space="preserve">
+    <value>Nem lehet kiértékelni, ha a szál egy nem biztonságos pontban van. Léptessen egyet vagy futtassa egy töréspontig.</value>
+  </data>
+  <data name="Locals_Error_EvalDisabledCantCallPropsAndMethods" xml:space="preserve">
+    <value>Jelenleg nem lehet tulajdonságokat és metódusokat hívni</value>
+  </data>
+  <data name="Locals_Error_EvalTimedOutIsDisabled" xml:space="preserve">
+    <value>A kiértékelés túllépte a neki szánt időt és le lett tiltva, amíg nem folytatja a nyomon követett programot.</value>
+  </data>
+  <data name="Locals_Error_EvaluationTimedOut" xml:space="preserve">
+    <value>Művelet időtúllépés</value>
+  </data>
+  <data name="MemoryWindowCommand" xml:space="preserve">
+    <value>_Memória</value>
+  </data>
+  <data name="ModuleCopyFilenameCommand" xml:space="preserve">
+    <value>Fájlnév másolása</value>
+  </data>
+  <data name="ModuleSaveModulesTitle" xml:space="preserve">
+    <value>Modul mentése</value>
+  </data>
+  <data name="ModuleSaveModuleTitle" xml:space="preserve">
+    <value>Modul mentése</value>
+  </data>
+  <data name="ModulesCommand" xml:space="preserve">
+    <value>M_odulok</value>
+  </data>
+  <data name="Module_NoAddress" xml:space="preserve">
+    <value>&lt;nincs cím&gt;</value>
+  </data>
+  <data name="OpenContainingFolderCommand" xml:space="preserve">
+    <value>_Tartalmazó mappa megnyitása</value>
+  </data>
+  <data name="OpenModuleFromMemoryCommand" xml:space="preserve">
+    <value>Modul megnyitása a memóriából</value>
+  </data>
+  <data name="RemoveExceptionCommand" xml:space="preserve">
+    <value>_Eltávolít</value>
+  </data>
+  <data name="RenameThreadCommand" xml:space="preserve">
+    <value>Átnevezés</value>
+  </data>
+  <data name="RestartCommand" xml:space="preserve">
+    <value>Új_raindítás</value>
+  </data>
+  <data name="RestoreDefaultExceptionSettingsCommand" xml:space="preserve">
+    <value>Alapértékek visszaállítása</value>
+  </data>
+  <data name="RunToCursorCommand" xml:space="preserve">
+    <value>F_uttatás a kurzorig</value>
+  </data>
+  <data name="SaveModuleCommand" xml:space="preserve">
+    <value>Modul mentése...</value>
+  </data>
+  <data name="SaveModulesCommand" xml:space="preserve">
+    <value>{0} modul mentése...</value>
+  </data>
+  <data name="SelectAllCommand" xml:space="preserve">
+    <value>Összes Kijelölése</value>
+  </data>
+  <data name="SetNextStatementCommand" xml:space="preserve">
+    <value>_Következő utasítás beállítása</value>
+  </data>
+  <data name="ShortCutAltAsterisk" xml:space="preserve">
+    <value>Alt+Num *</value>
+  </data>
+  <data name="ShortCutKeyAlt4" xml:space="preserve">
+    <value>Alt+4</value>
+  </data>
+  <data name="ShortCutKeyAlt6" xml:space="preserve">
+    <value>Alt+6</value>
+  </data>
+  <data name="ShortCutKeyCtrlA" xml:space="preserve">
+    <value>Ctrl+A</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltB" xml:space="preserve">
+    <value>Ctrl+Alt+B</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltC" xml:space="preserve">
+    <value>Ctrl+Alt+C</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltE" xml:space="preserve">
+    <value>Ctrl+Alt+E</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltH" xml:space="preserve">
+    <value>Ctrl+Alt+H</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltP" xml:space="preserve">
+    <value>Ctrl+Alt+P</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltU" xml:space="preserve">
+    <value>Ctrl+Alt+U</value>
+  </data>
+  <data name="ShortCutKeyCtrlShift_DIGIT" xml:space="preserve">
+    <value>Ctrl+Shift+{0}</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltBreak" xml:space="preserve">
+    <value>Ctrl+Alt+Break</value>
+  </data>
+  <data name="ShortCutKeyCtrlC" xml:space="preserve">
+    <value>Ctrl+C</value>
+  </data>
+  <data name="ShortCutKeyCtrlF10" xml:space="preserve">
+    <value>Ctrl+F10</value>
+  </data>
+  <data name="ShortCutKeyCtrlF5" xml:space="preserve">
+    <value>Ctrl+F5</value>
+  </data>
+  <data name="ShortCutKeyCtrlF9" xml:space="preserve">
+    <value>Ctrl+F9</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftC" xml:space="preserve">
+    <value>Ctrl+Shift+C</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftF10" xml:space="preserve">
+    <value>Ctrl+Shift+F10</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftF5" xml:space="preserve">
+    <value>Ctrl+Shift+F5</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftF9" xml:space="preserve">
+    <value>Ctrl+Shift+F9</value>
+  </data>
+  <data name="ShortCutKeyCtrl_DIGIT" xml:space="preserve">
+    <value>Ctrl+{0}</value>
+  </data>
+  <data name="ShortCutKeyDelete" xml:space="preserve">
+    <value>Del</value>
+  </data>
+  <data name="ShortCutKeyEnter" xml:space="preserve">
+    <value>Enter</value>
+  </data>
+  <data name="ShortCutKeyF10" xml:space="preserve">
+    <value>F10</value>
+  </data>
+  <data name="ShortCutKeyF11" xml:space="preserve">
+    <value>F11</value>
+  </data>
+  <data name="ShortCutKeyF2" xml:space="preserve">
+    <value>F2</value>
+  </data>
+  <data name="ShortCutKeyF5" xml:space="preserve">
+    <value>F5</value>
+  </data>
+  <data name="ShortCutKeyF9" xml:space="preserve">
+    <value>F9</value>
+  </data>
+  <data name="ShortCutKeyInsert" xml:space="preserve">
+    <value>Ins</value>
+  </data>
+  <data name="ShortCutKeyShiftF11" xml:space="preserve">
+    <value>Shift+F11</value>
+  </data>
+  <data name="ShortCutKeyShiftF5" xml:space="preserve">
+    <value>Shift+F5</value>
+  </data>
+  <data name="ShowInMemoryWindowCommand" xml:space="preserve">
+    <value>Memória ablak megjelenítése</value>
+  </data>
+  <data name="ShowInstructionPointerCommand" xml:space="preserve">
+    <value>IP mutatása</value>
+  </data>
+  <data name="ShowModuleNamesCommand" xml:space="preserve">
+    <value>_Modul nevek megjelenítése</value>
+  </data>
+  <data name="ShowNamespacesCommand" xml:space="preserve">
+    <value>Névterek mutatása</value>
+  </data>
+  <data name="ShowNextStatementCommand" xml:space="preserve">
+    <value>S_how következő nyilatkozat</value>
+  </data>
+  <data name="ShowDeclaringTypesCommand" xml:space="preserve">
+    <value>Deklaráló típusok mutatása</value>
+  </data>
+  <data name="ShowParameterNamesCommand" xml:space="preserve">
+    <value>_Paraméter nevek mutatása</value>
+  </data>
+  <data name="ShowParameterTypesCommand" xml:space="preserve">
+    <value>Paraméter típusok mutatása</value>
+  </data>
+  <data name="ShowParameterValuesCommand" xml:space="preserve">
+    <value>Paraméter típusok mutatása</value>
+  </data>
+  <data name="ShowReturnTypesCommand" xml:space="preserve">
+    <value>Visszatérési értékek mutatása</value>
+  </data>
+  <data name="ShowTokensCommand" xml:space="preserve">
+    <value>Token-ek mutatása</value>
+  </data>
+  <data name="ShowIntrinsicTypeKeywordsCommand" xml:space="preserve">
+    <value>Belső típus kulcsszavak mutatása</value>
+  </data>
+  <data name="StartWithoutDebuggingCommand" xml:space="preserve">
+    <value>Indítsa el a hibakeresés nélkül</value>
+  </data>
+  <data name="StatusBar_Ready" xml:space="preserve">
+    <value>Kész</value>
+  </data>
+  <data name="StatusBar_Running" xml:space="preserve">
+    <value>Fut...</value>
+  </data>
+  <data name="StepIntoCommand" xml:space="preserve">
+    <value>Belép</value>
+  </data>
+  <data name="StepOutCommand" xml:space="preserve">
+    <value>Kilépni</value>
+  </data>
+  <data name="StepOverCommand" xml:space="preserve">
+    <value>Átlép</value>
+  </data>
+  <data name="StopDebuggingCommand" xml:space="preserve">
+    <value>Debugger leállítása</value>
+  </data>
+  <data name="SwitchToFrameCommand" xml:space="preserve">
+    <value>_Váltás a keretre</value>
+  </data>
+  <data name="SwitchToThreadCommand" xml:space="preserve">
+    <value>_Váltás a szálra</value>
+  </data>
+  <data name="ThawThreadCommand" xml:space="preserve">
+    <value>_Thaw</value>
+  </data>
+  <data name="ThreadsCommand" xml:space="preserve">
+    <value>_Szálak</value>
+  </data>
+  <data name="ThreadType_Main" xml:space="preserve">
+    <value>Fő szál</value>
+  </data>
+  <data name="ThreadType_Terminated" xml:space="preserve">
+    <value>Megszakított szál</value>
+  </data>
+  <data name="ThreadType_ThreadPool" xml:space="preserve">
+    <value>Szálkészlet</value>
+  </data>
+  <data name="ThreadType_Unknown" xml:space="preserve">
+    <value>Ismeretlen szál</value>
+  </data>
+  <data name="ThreadType_Worker" xml:space="preserve">
+    <value>Munka szál</value>
+  </data>
+  <data name="Thread_LocationNotAvailable" xml:space="preserve">
+    <value>&lt;nem elérhető&gt;</value>
+  </data>
+  <data name="Thread_NoName" xml:space="preserve">
+    <value>&lt;Nincs név&gt;</value>
+  </data>
+  <data name="Thread_Priority_AboveNormal" xml:space="preserve">
+    <value>Normális feletti</value>
+  </data>
+  <data name="Thread_Priority_BelowNormal" xml:space="preserve">
+    <value>Normális alatti</value>
+  </data>
+  <data name="Thread_Priority_Highest" xml:space="preserve">
+    <value>Legmagasabb</value>
+  </data>
+  <data name="Thread_Priority_Lowest" xml:space="preserve">
+    <value>Legalacsonyabb</value>
+  </data>
+  <data name="Thread_Priority_Normal" xml:space="preserve">
+    <value>Normális</value>
+  </data>
+  <data name="ToggleBreakpointCommand" xml:space="preserve">
+    <value>Törés_pont állítása</value>
+  </data>
+  <data name="ToolBarBreakAllToolTip" xml:space="preserve">
+    <value>Mindenhol megáll</value>
+  </data>
+  <data name="ToolBarContinueDebuggingButton" xml:space="preserve">
+    <value>Folytatás</value>
+  </data>
+  <data name="ToolBarContinueDebuggingToolTip" xml:space="preserve">
+    <value>Folytatás</value>
+  </data>
+  <data name="ToolBarDebugAssemblyToolTip" xml:space="preserve">
+    <value>Program nyomkövetése</value>
+  </data>
+  <data name="ToolBarRestartToolTip" xml:space="preserve">
+    <value>Újraindítás</value>
+  </data>
+  <data name="ToolBarShowNextStatementToolTip" xml:space="preserve">
+    <value>Következő utasítás mutatása</value>
+  </data>
+  <data name="ToolBarStartDebuggingButton" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="ToolBarStepIntoToolTip" xml:space="preserve">
+    <value>Bele lépés</value>
+  </data>
+  <data name="ToolBarStepOutToolTip" xml:space="preserve">
+    <value>Kilépés</value>
+  </data>
+  <data name="ToolBarStepOverToolTip" xml:space="preserve">
+    <value>Átlépés</value>
+  </data>
+  <data name="ToolBarStopDebuggingToolTip" xml:space="preserve">
+    <value>Nyomkövetés leállítása</value>
+  </data>
+  <data name="Window_Breakpoints" xml:space="preserve">
+    <value>Töréspontok</value>
+  </data>
+  <data name="Window_CallStack" xml:space="preserve">
+    <value>Hívásverem</value>
+  </data>
+  <data name="Window_ExceptionSettings" xml:space="preserve">
+    <value>Kivétel beállítások</value>
+  </data>
+  <data name="Window_Locals" xml:space="preserve">
+    <value>Helyi</value>
+  </data>
+  <data name="Window_Memory_10_MenuItem" xml:space="preserve">
+    <value>1_0 memória</value>
+  </data>
+  <data name="Window_Memory_N" xml:space="preserve">
+    <value>{0} memória</value>
+  </data>
+  <data name="Window_Memory_N_MenuItem" xml:space="preserve">
+    <value>_{0} memória</value>
+  </data>
+  <data name="Window_Memory_N_MenuItem2" xml:space="preserve">
+    <value>{0} memória</value>
+  </data>
+  <data name="Window_Modules" xml:space="preserve">
+    <value>Modulok</value>
+  </data>
+  <data name="Window_Threads" xml:space="preserve">
+    <value>Szálak</value>
+  </data>
+  <data name="YesNo_No" xml:space="preserve">
+    <value>Nem</value>
+  </data>
+  <data name="YesNo_Yes" xml:space="preserve">
+    <value>Igen</value>
+  </data>
+  <data name="DbgSettings_SyntaxHighlight" xml:space="preserve">
+    <value>Szintaxis kiemelés</value>
+  </data>
+  <data name="LoadModulesCommand" xml:space="preserve">
+    <value>Modulok megnyitása</value>
+  </data>
+  <data name="LoadXModulesCommand" xml:space="preserve">
+    <value>{0} modul megnyitása</value>
+  </data>
+  <data name="ShowParameterTypesCommand2" xml:space="preserve">
+    <value>Paraméter típusok mutatása</value>
+  </data>
+  <data name="Plugin_ShortDescription" xml:space="preserve">
+    <value>Hibakereső</value>
+  </data>
+  <data name="DebugLoggerName" xml:space="preserve">
+    <value>Hibakeresés</value>
+  </data>
+  <data name="ShowExceptionMessages" xml:space="preserve">
+    <value>Kivét_el üzenetek</value>
+  </data>
+  <data name="ShowModuleLoadMessages" xml:space="preserve">
+    <value>Modul betö_ltés üzenetek</value>
+  </data>
+  <data name="ShowModuleUnloadMessages" xml:space="preserve">
+    <value>Modul eltávolítá_s üzenetek</value>
+  </data>
+  <data name="ShowProcessExitMessages" xml:space="preserve">
+    <value>Folyamat kilé_pés üzenetek</value>
+  </data>
+  <data name="ShowProgramOutputMessages" xml:space="preserve">
+    <value>Program _kimenet</value>
+  </data>
+  <data name="ShowStepFilteringMessages" xml:space="preserve">
+    <value>Üzenetek szűrésének léptetése</value>
+  </data>
+  <data name="ShowThreadExitMessages" xml:space="preserve">
+    <value>Szál kilépési üzene_tek</value>
+  </data>
+  <data name="ShowMDAMessages" xml:space="preserve">
+    <value>MDA üzenetek</value>
+  </data>
+  <data name="DebugLogAdditionalInformation" xml:space="preserve">
+    <value>További információk: {0}</value>
+  </data>
+  <data name="DebugLogExceptionHandled" xml:space="preserve">
+    <value>Kivételhiba: "{0}" a {1}</value>
+  </data>
+  <data name="DebugLogExceptionUnhandled" xml:space="preserve">
+    <value>Típusú "{0}" nem kezelt kivétel történt a {1}</value>
+  </data>
+  <data name="DebugLogExitProcess" xml:space="preserve">
+    <value>A(z) '{0}' program {1} (0x{1:x}) kóddal véget ért.</value>
+  </data>
+  <data name="DebugLogExitThread" xml:space="preserve">
+    <value>A 0x{0:x} szál {1} (0x{1:x}) kóddal véget ért.</value>
+  </data>
+  <data name="DebugLogLoadModule" xml:space="preserve">
+    <value>Betöltött '{0}'.</value>
+  </data>
+  <data name="DebugLogMDA" xml:space="preserve">
+    <value>A(z) '{0}' menedzselt hibakereső asszisztens problémát talált itt: '{1}'.</value>
+  </data>
+  <data name="DebugLogUnloadModule" xml:space="preserve">
+    <value>Betöltött '{0}'.</value>
+  </data>
+  <data name="ExceptionMessageIsNull" xml:space="preserve">
+    <value>"&lt; nincs kivétel üzenet &gt;"</value>
+  </data>
+  <data name="GlyphToolTip_Location" xml:space="preserve">
+    <value>Hely</value>
+  </data>
+  <data name="HexEditorGroup_DebuggerMemory" xml:space="preserve">
+    <value>Memória ablak</value>
+  </data>
+  <data name="BgImgDisplayName_DebuggerMemory" xml:space="preserve">
+    <value>Hex szerkesztő (memória ablak)</value>
+  </data>
+  <data name="DbgAsm_DebugEngine" xml:space="preserve">
+    <value>_Nyomkövető motor</value>
+  </data>
+  <data name="DebugWindows" xml:space="preserve">
+    <value>_Ablak</value>
+  </data>
+  <data name="OutputCommand" xml:space="preserve">
+    <value>K_imenet</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltW_DIGIT" xml:space="preserve">
+    <value>Ctrl + Alt + W, {0}</value>
+  </data>
+  <data name="TerminateAllCommand" xml:space="preserve">
+    <value>Lezárja az összeset</value>
+  </data>
+  <data name="WatchCommand" xml:space="preserve">
+    <value>_Figyelő</value>
+  </data>
+  <data name="Window_Watch_10_MenuItem" xml:space="preserve">
+    <value>1_0 figyelő</value>
+  </data>
+  <data name="Window_Watch_N" xml:space="preserve">
+    <value>{0} figyelés</value>
+  </data>
+  <data name="Window_Watch_N_MenuItem" xml:space="preserve">
+    <value>_{0} figyelés</value>
+  </data>
+  <data name="Window_Watch_N_MenuItem2" xml:space="preserve">
+    <value>{0} figyelés</value>
+  </data>
+  <data name="Options" xml:space="preserve">
+    <value>_Beállítások...</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltZ" xml:space="preserve">
+    <value>Ctrl+Alt+Z</value>
+  </data>
+  <data name="ProcessesCommand" xml:space="preserve">
+    <value>_Folyamat</value>
+  </data>
+  <data name="Window_Processes" xml:space="preserve">
+    <value>Folyamat</value>
+  </data>
+  <data name="Column_Debugging" xml:space="preserve">
+    <value>Hibakeresés</value>
+  </data>
+  <data name="Column_ID" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="Column_State" xml:space="preserve">
+    <value>Állapot</value>
+  </data>
+  <data name="Column_Title" xml:space="preserve">
+    <value>Cím</value>
+  </data>
+  <data name="Process_Paused" xml:space="preserve">
+    <value>Törés</value>
+  </data>
+  <data name="Process_Running" xml:space="preserve">
+    <value>Folyamatban van</value>
+  </data>
+  <data name="Processes_AttachToProcessToolTip" xml:space="preserve">
+    <value>Kapcsolódás folyamathoz</value>
+  </data>
+  <data name="Processes_DetachToolTip" xml:space="preserve">
+    <value>Leválasztja a folyamatot</value>
+  </data>
+  <data name="Processes_TerminateToolTip" xml:space="preserve">
+    <value>A folyamat befejezése</value>
+  </data>
+  <data name="ShortCutKeyCtrlF" xml:space="preserve">
+    <value>Ctrl+F</value>
+  </data>
+  <data name="DetachProcessCommand" xml:space="preserve">
+    <value>_Leválasztja a folyamatot</value>
+  </data>
+  <data name="DetachWhenDebuggingStoppedCommand" xml:space="preserve">
+    <value>Leválasztás _amikor a debugger befejeződött</value>
+  </data>
+  <data name="TerminateProcessCommand" xml:space="preserve">
+    <value>A folyamat befejezése</value>
+  </data>
+  <data name="ProcessCommand" xml:space="preserve">
+    <value>Folyamat</value>
+  </data>
+  <data name="Column_ProcessName" xml:space="preserve">
+    <value>Folyamat neve</value>
+  </data>
+  <data name="AllRemainingExceptionsNotInList" xml:space="preserve">
+    <value>&lt;Nincs minden {0} ebben a listában&gt;</value>
+  </data>
+  <data name="Exceptions_EditConditions_ToolTip" xml:space="preserve">
+    <value>A feltétel szerkesztése</value>
+  </data>
+  <data name="Column_Conditions" xml:space="preserve">
+    <value>Feltételek</value>
+  </data>
+  <data name="Column_BreakWhenThrown" xml:space="preserve">
+    <value>_Töréspont kivételnél</value>
+  </data>
+  <data name="Column_Category" xml:space="preserve">
+    <value>Kategória</value>
+  </data>
+  <data name="Exception_Conditions_And" xml:space="preserve">
+    <value>És</value>
+  </data>
+  <data name="Exception_Conditions_ModuleNameEquals" xml:space="preserve">
+    <value>A fájl neve megegyezik</value>
+  </data>
+  <data name="Exception_Conditions_ModuleNameNotEquals" xml:space="preserve">
+    <value>A fájl neve nem egyezik</value>
+  </data>
+  <data name="Exceptions_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Keresési feltételek törlése, hogy az összes kivétel látszódjon</value>
+  </data>
+  <data name="Exceptions_AllCategories" xml:space="preserve">
+    <value>Mind</value>
+  </data>
+  <data name="EditConditionsCommand" xml:space="preserve">
+    <value>A feltétel szerkesztése...</value>
+  </data>
+  <data name="ExceptionsCommand" xml:space="preserve">
+    <value>Kivételek</value>
+  </data>
+  <data name="FindCommand" xml:space="preserve">
+    <value>_Keres</value>
+  </data>
+  <data name="Exceptions_NoMatch" xml:space="preserve">
+    <value>Nincs a keresési feltételnek megfelelő eredmény.</value>
+  </data>
+  <data name="AddExceptionButton" xml:space="preserve">
+    <value>Hozzáad</value>
+  </data>
+  <data name="ExceptionDescription" xml:space="preserve">
+    <value>Kivétel Leírás</value>
+  </data>
+  <data name="Exception_Error_NameCanNotBeEmpty" xml:space="preserve">
+    <value>A név nem lehet üres</value>
+  </data>
+  <data name="EditConditions_Title" xml:space="preserve">
+    <value>Feltételek szerkesztése</value>
+  </data>
+  <data name="Button_AddCondition" xml:space="preserve">
+    <value>Feltétel hozzá_adása</value>
+  </data>
+  <data name="ModuleBreakpointsCommand" xml:space="preserve">
+    <value>Mod_ul töréspontok</value>
+  </data>
+  <data name="Window_ModuleBreakpoints" xml:space="preserve">
+    <value>Modul töréspontok</value>
+  </data>
+  <data name="Breakpoints_AddBreakpoint_ToolTip" xml:space="preserve">
+    <value>Töréspont hozzáadása</value>
+  </data>
+  <data name="Breakpoints_RemoveBreakpoint_ToolTip" xml:space="preserve">
+    <value>Töréspont eltávolítása</value>
+  </data>
+  <data name="EditAppDomainNameCommand" xml:space="preserve">
+    <value>AppDomain név szerkesztése</value>
+  </data>
+  <data name="EditModuleNameCommand" xml:space="preserve">
+    <value>Modulnév szerkesztése</value>
+  </data>
+  <data name="EditOrderCommand" xml:space="preserve">
+    <value>Modul betöltési sorrend szerkesztése</value>
+  </data>
+  <data name="EditProcessNameCommand" xml:space="preserve">
+    <value>Folyamat név szerkesztése</value>
+  </data>
+  <data name="RemoveAllBreakpointsCommand" xml:space="preserve">
+    <value>Minden töréspont eltávolítása</value>
+  </data>
+  <data name="RemoveBreakpointCommand" xml:space="preserve">
+    <value>Töréspont eltávolítása</value>
+  </data>
+  <data name="DisableBreakpointCommand3" xml:space="preserve">
+    <value>Töréspont letiltása</value>
+  </data>
+  <data name="EnableBreakpointCommand3" xml:space="preserve">
+    <value>Töréspont engedélyezése</value>
+  </data>
+  <data name="DbgSettings_BreakAllProcesses" xml:space="preserve">
+    <value>Minden folyamatot szakítson meg, ha egy folyamat megszakad</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltF10" xml:space="preserve">
+    <value>Ctrl+Alt+F10</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltF11" xml:space="preserve">
+    <value>Ctrl+Alt+F11</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftAltF11" xml:space="preserve">
+    <value>Ctrl+Shift+Alt+F11</value>
+  </data>
+  <data name="StepIntoCurrentProcessCommand" xml:space="preserve">
+    <value>Bele lépés (aktuális folyamat)</value>
+  </data>
+  <data name="StepOutCurrentProcessCommand" xml:space="preserve">
+    <value>Kilépés (aktuális folyamat)</value>
+  </data>
+  <data name="StepOverCurrentProcessCommand" xml:space="preserve">
+    <value>Átlépés (aktuális folyamat)</value>
+  </data>
+  <data name="Processes_BreakProcessToolTip" xml:space="preserve">
+    <value>Folyamat megállítása</value>
+  </data>
+  <data name="Processes_ContinueProcessToolTip" xml:space="preserve">
+    <value>Folyamat folytatása</value>
+  </data>
+  <data name="Processes_StepIntoProcessToolTip" xml:space="preserve">
+    <value>Bele lépés</value>
+  </data>
+  <data name="Processes_StepOutProcessToolTip" xml:space="preserve">
+    <value>Kilépés</value>
+  </data>
+  <data name="Processes_StepOverProcessToolTip" xml:space="preserve">
+    <value>Átlépés</value>
+  </data>
+  <data name="StepsOnlyTheCurrentProcess" xml:space="preserve">
+    <value>Csak az aktuális folyamatot lépteti</value>
+  </data>
+  <data name="BreakProcessCommand" xml:space="preserve">
+    <value>Folyamat _megállítása</value>
+  </data>
+  <data name="ContinueProcessCommand" xml:space="preserve">
+    <value>Folyamat _folytatása</value>
+  </data>
+  <data name="AttachToProcess_Search_ToolTip" xml:space="preserve">
+    <value>Folyamat keresése</value>
+  </data>
+  <data name="AutosCommand" xml:space="preserve">
+    <value>_Auto</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltV_A" xml:space="preserve">
+    <value>Ctrl+Alt+V, A</value>
+  </data>
+  <data name="Breakpoints_ExportMatchingBreakpoints_ToolTip" xml:space="preserve">
+    <value>Az aktuális keresési feltételeknek megfelelő töréspontok exportálása</value>
+  </data>
+  <data name="Breakpoints_ImportBreakpoints_ToolTip" xml:space="preserve">
+    <value>Töréspontok importálása fájlból</value>
+  </data>
+  <data name="ExportSelectedCommand" xml:space="preserve">
+    <value>Kijelölt_ek exportálása...</value>
+  </data>
+  <data name="Breakpoints_NoMatch" xml:space="preserve">
+    <value>Nincs a keresési feltételnek megfelelő töréspont.</value>
+  </data>
+  <data name="Breakpoints_Search" xml:space="preserve">
+    <value>Keresés</value>
+  </data>
+  <data name="Breakpoints_Search_ToolTip" xml:space="preserve">
+    <value>Keressen egy töréspontot</value>
+  </data>
+  <data name="Breakpoints_RemoveMatchingBreakpoints_ToolTip" xml:space="preserve">
+    <value>Az aktuális keresési feltételeknek megfelelő összes töréspont eltávolítása</value>
+  </data>
+  <data name="Breakpoints_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Keresési feltételek törlése, hogy az összes töréspont látszódjon</value>
+  </data>
+  <data name="Breakpoints_ToggleMatchingBreakpoints_ToolTip" xml:space="preserve">
+    <value>Az aktuális keresési feltételeknek megfelelő összes töréspont engedélyezése vagy tiltása</value>
+  </data>
+  <data name="Modules_AllProcesses" xml:space="preserve">
+    <value>Mind</value>
+  </data>
+  <data name="Modules_NoMatch" xml:space="preserve">
+    <value>A keresési feltételnek egy modul sem felel meg.</value>
+  </data>
+  <data name="Modules_Search" xml:space="preserve">
+    <value>Keresés</value>
+  </data>
+  <data name="Modules_Search_ToolTip" xml:space="preserve">
+    <value>Modul keresése</value>
+  </data>
+  <data name="Modules_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Keresési feltételek törlése, hogy az összes modul látszódjon</value>
+  </data>
+  <data name="Modules_Process" xml:space="preserve">
+    <value>Folyamat</value>
+  </data>
+  <data name="SearchHelp_ToolTip" xml:space="preserve">
+    <value>Segítség</value>
+  </data>
+  <data name="Column_Condition" xml:space="preserve">
+    <value>Feltétel</value>
+  </data>
+  <data name="Column_Filter" xml:space="preserve">
+    <value>Szűrő</value>
+  </data>
+  <data name="Column_HitCount" xml:space="preserve">
+    <value>Találatok száma</value>
+  </data>
+  <data name="Column_WhenHit" xml:space="preserve">
+    <value>Mikor talál</value>
+  </data>
+  <data name="Breakpoints_GoToDisassembly_ToolTip" xml:space="preserve">
+    <value>Ugrás a visszafejtéshez</value>
+  </data>
+  <data name="Breakpoints_GoToSourceCode_ToolTip" xml:space="preserve">
+    <value>Menj a forrás kódhoz</value>
+  </data>
+  <data name="GoToSourceCodeCommand" xml:space="preserve">
+    <value>Menj a forrás kódhoz</value>
+  </data>
+  <data name="Breakpoint_Condition_NoCondition" xml:space="preserve">
+    <value>(nincs feltétel)</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenConditionHasChanged" xml:space="preserve">
+    <value>ha '{0}' változott</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenConditionIsTrue" xml:space="preserve">
+    <value>ha '{0}' igaz</value>
+  </data>
+  <data name="Breakpoint_Filter_NoFilter" xml:space="preserve">
+    <value>(egyik sem)</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsAMultipleOf" xml:space="preserve">
+    <value>ha a találat számláló {0} többszöröse</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsEqualTo" xml:space="preserve">
+    <value>ha a találat számláló {0}</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsGreaterThanOrEqualTo" xml:space="preserve">
+    <value>ha a találat számláló nagyobb vagy egyenlő, mint {0}</value>
+  </data>
+  <data name="Breakpoint_HitCount_NoHitCount" xml:space="preserve">
+    <value>mindig törje meg</value>
+  </data>
+  <data name="Breakpoint_Tracepoint_NoTraceMessage" xml:space="preserve">
+    <value>Törés</value>
+  </data>
+  <data name="Breakpoint_Tracepoint_PrintMessage" xml:space="preserve">
+    <value>Mutassa a(z) '{0}' üzenetet</value>
+  </data>
+  <data name="ShortCutKeyAltEnter" xml:space="preserve">
+    <value>Alt+Enter</value>
+  </data>
+  <data name="SettingsCommand" xml:space="preserve">
+    <value>Beállítá_sok</value>
+  </data>
+  <data name="EditBreakpointSettings_Title" xml:space="preserve">
+    <value>Töréspont beállítások</value>
+  </data>
+  <data name="Breakpoint_Condition_IsTrue" xml:space="preserve">
+    <value>Igaz</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenChanged" xml:space="preserve">
+    <value>Ha a megváltozott</value>
+  </data>
+  <data name="Breakpoint_HitCount_IsAMultipleOf" xml:space="preserve">
+    <value>többszöröse</value>
+  </data>
+  <data name="EditBreakpointSettings_ConditionalExpression" xml:space="preserve">
+    <value>Feltételes kif_ejezés</value>
+  </data>
+  <data name="EditBreakpointSettings_Filter" xml:space="preserve">
+    <value>_Szűrő</value>
+  </data>
+  <data name="EditBreakpointSettings_HitCount" xml:space="preserve">
+    <value>_Találatok száma</value>
+  </data>
+  <data name="EditBreakpointSettings_Trace" xml:space="preserve">
+    <value>Nap_ló üzenet</value>
+  </data>
+  <data name="GlyphToolTip_Actions" xml:space="preserve">
+    <value>Műveletek:</value>
+  </data>
+  <data name="GlyphToolTip_Conditions" xml:space="preserve">
+    <value>Feltételek:</value>
+  </data>
+  <data name="Breakpoint_Condition_ConditionalExpression" xml:space="preserve">
+    <value>Feltételes kifejezés:</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenConditionHasChanged2" xml:space="preserve">
+    <value>'{0} megváltozott'</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenConditionIsTrue2" xml:space="preserve">
+    <value>igaz, "{0}"</value>
+  </data>
+  <data name="Breakpoint_Filter_Filter" xml:space="preserve">
+    <value>Szűrő: "{0}"</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsAMultipleOf2" xml:space="preserve">
+    <value>A találatszámláló {0} többszöröse</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsEqualTo2" xml:space="preserve">
+    <value>A találatszámláló egyenlő {0}</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsGreaterThanOrEqualTo2" xml:space="preserve">
+    <value>A találat számláló nagyobb vagy egyenlő, mint {0}</value>
+  </data>
+  <data name="Breakpoint_Tracepoint_PrintMessage2" xml:space="preserve">
+    <value>'{0}' üzenet naplózása a kimeneti ablakba</value>
+  </data>
+  <data name="Breakpoints_GlyphMargin_DisableBreakpoint" xml:space="preserve">
+    <value>Töréspont letiltása</value>
+  </data>
+  <data name="Breakpoints_GlyphMargin_EnableBreakpoint" xml:space="preserve">
+    <value>Töréspont engedélyezése</value>
+  </data>
+  <data name="Breakpoints_GlyphMargin_ShowSettingsToolTip" xml:space="preserve">
+    <value>Beállítások...</value>
+  </data>
+  <data name="Breakpoints_GlyphMargin_BreakWhenBreakpointHit" xml:space="preserve">
+    <value>Törés</value>
+  </data>
+  <data name="EditBreakpointSettings_TraceContinue" xml:space="preserve">
+    <value>Folytatás</value>
+  </data>
+  <data name="ExportCommand" xml:space="preserve">
+    <value>E_xportálás...</value>
+  </data>
+  <data name="SettingsCommand2" xml:space="preserve">
+    <value>_Beállítások...</value>
+  </data>
+  <data name="StartDebuggingCommand" xml:space="preserve">
+    <value>Debugger indítása</value>
+  </data>
+  <data name="Breakpoint_Tracepoint_BreakPrintMessage" xml:space="preserve">
+    <value>Megállít és kiírja a(z) '{0}' üzenetet</value>
+  </data>
+  <data name="BreakpointMessage_TheFunctionCanNotBeFound" xml:space="preserve">
+    <value>A függvény nem található: {0}</value>
+  </data>
+  <data name="Breakpoints_BreakpointWillNotBeHit" xml:space="preserve">
+    <value>A törésponton most nem haladunk át. {0}</value>
+  </data>
+  <data name="Breakpoints_ModuleNotLoaded" xml:space="preserve">
+    <value>A modul vagy a modulhoz tartozó szimbólumok nem lettek betöltve.</value>
+  </data>
+  <data name="BreakpointMessage_CouldNotCreateBreakpoint" xml:space="preserve">
+    <value>A töréspont nem hozható létre.</value>
+  </data>
+  <data name="Column_Labels" xml:space="preserve">
+    <value>Címkék</value>
+  </data>
+  <data name="EditLabelsCommand" xml:space="preserve">
+    <value>Címkék szerkesztése</value>
+  </data>
+  <data name="Threads_FreezeThreads_ToolTip" xml:space="preserve">
+    <value>Szálak fagyasztása</value>
+  </data>
+  <data name="Threads_NoMatch" xml:space="preserve">
+    <value>A keresési feltételnek egy szál sem felel meg.</value>
+  </data>
+  <data name="Threads_Process" xml:space="preserve">
+    <value>Folyamat</value>
+  </data>
+  <data name="Threads_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Keresési feltételek törlése, hogy az összes szál látszódjon</value>
+  </data>
+  <data name="Threads_Search" xml:space="preserve">
+    <value>Keresés</value>
+  </data>
+  <data name="Threads_Search_ToolTip" xml:space="preserve">
+    <value>Szál keresése</value>
+  </data>
+  <data name="Threads_ThawThreads_ToolTip" xml:space="preserve">
+    <value>Szálak futtatása</value>
+  </data>
+  <data name="Threads_AllProcesses" xml:space="preserve">
+    <value>Mind</value>
+  </data>
+  <data name="EditLabelsMsgBoxLabel" xml:space="preserve">
+    <value>Címkék</value>
+  </data>
+  <data name="EditLabelsTitle" xml:space="preserve">
+    <value>Címkék szerkesztése</value>
+  </data>
+  <data name="Breakpoint_HitCount_CurrentHitCountValue" xml:space="preserve">
+    <value>jelenleg {0}</value>
+  </data>
+  <data name="ResetBreakpointHitCountCommand" xml:space="preserve">
+    <value>Találat számláló nullázása</value>
+  </data>
+  <data name="HelpToolTip" xml:space="preserve">
+    <value>Segítség</value>
+  </data>
+  <data name="FilterExpression_AllVariables" xml:space="preserve">
+    <value>Használható változók:</value>
+  </data>
+  <data name="FilterExpression_Example" xml:space="preserve">
+    <value>Például: {0}</value>
+  </data>
+  <data name="TracepointMessage_EscapeSequences" xml:space="preserve">
+    <value>Escape szekvenciák: {0}</value>
+  </data>
+  <data name="TracepointMessage_EvaluateMessage" xml:space="preserve">
+    <value>A(z) {xxx} használható az xxx kifejezéshez</value>
+  </data>
+  <data name="TracepointMessage_Example" xml:space="preserve">
+    <value>Például: {0}</value>
+  </data>
+  <data name="TracepointMessage_ValidKeywords" xml:space="preserve">
+    <value>A következő kulcsszavak használhatóak:</value>
+  </data>
+  <data name="CallStackBreakpointCommand" xml:space="preserve">
+    <value>_Töréspont</value>
+  </data>
+  <data name="InsertBreakpointCommand" xml:space="preserve">
+    <value>Törésőpont _beillesztése</value>
+  </data>
+  <data name="InsertTracepointCommand" xml:space="preserve">
+    <value>Követési pon_t beillesztése</value>
+  </data>
+  <data name="UnwindToThisFrameCommand" xml:space="preserve">
+    <value>_Visszagörgetés eddig a keretig</value>
+  </data>
+  <data name="GlyphMargin_CurrentStatementToolTip" xml:space="preserve">
+    <value>Ez a következő utasítás, ami végre lesz hajtva.</value>
+  </data>
+  <data name="GlyphMargin_ReturnStatementToolTip" xml:space="preserve">
+    <value>Ez a következő, végrehajtandó utasítás ha ez a szál visszatér a jelenlegi függvényből.</value>
+  </data>
+  <data name="DbgSettings_EnableManagedDebuggingAssistants" xml:space="preserve">
+    <value>Menedzselt nyomkövetési asszisztens (MDA) engedélyezése</value>
+  </data>
+  <data name="DebugStepProcessError" xml:space="preserve">
+    <value>Nem lehet léptetni: {0}</value>
+  </data>
+  <data name="ProcessIsNotPaused" xml:space="preserve">
+    <value>A folyamat nincs szüneteltetve</value>
+  </data>
+  <data name="Window_Autos" xml:space="preserve">
+    <value>Auto</value>
+  </data>
+  <data name="DbgSettings_HighlightChangedVariables" xml:space="preserve">
+    <value>A változó ablakban emelje ki a módosult változókat</value>
+  </data>
+  <data name="MakeObjectIdCommand" xml:space="preserve">
+    <value>Objekt ID _készítése</value>
+  </data>
+  <data name="LanguageCommand" xml:space="preserve">
+    <value>Nyelv</value>
+  </data>
+  <data name="DbgSettings_DebugEngine" xml:space="preserve">
+    <value>Nyomkövető motor</value>
+  </data>
+  <data name="DbgSettings_Language" xml:space="preserve">
+    <value>Nyelv</value>
+  </data>
+  <data name="ShortCutKeyCtrlV" xml:space="preserve">
+    <value>Ctrl+V</value>
+  </data>
+  <data name="ClearAllCommand" xml:space="preserve">
+    <value>Minden törlése</value>
+  </data>
+  <data name="DeleteWatchCommand" xml:space="preserve">
+    <value>Figyelő tö_rlése</value>
+  </data>
+  <data name="PasteCommand" xml:space="preserve">
+    <value>_Beillesztés</value>
+  </data>
+  <data name="ExpressionCausesSideEffectsNoEval" xml:space="preserve">
+    <value>Ennek a kifejezésnek mellékhatásai vannak ezért nem lesz kiértékelve</value>
+  </data>
+  <data name="RefreshExpressionButtonToolTip" xml:space="preserve">
+    <value>Kattintson erre a gombra az azonnali kiértékeléshez.</value>
+  </data>
+  <data name="ErrorEvaluatingExpression" xml:space="preserve">
+    <value>A kifejezést nem lehet kiértékelni</value>
+  </data>
+  <data name="DeleteObjectIdCommand" xml:space="preserve">
+    <value>Objektum ID törlése</value>
+  </data>
+  <data name="DbgSettings_ShowRawStructureOfObjects" xml:space="preserve">
+    <value>Objektumok nyers struktúrájának mutatása a változó ablakban</value>
+  </data>
+  <data name="UnknownValue" xml:space="preserve">
+    <value>&lt;Ismeretlen&gt;</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>Frissítés</value>
+  </data>
+  <data name="DbgSettings_GroupParametersAndLocalsTogether" xml:space="preserve">
+    <value>Csoportos paraméterek és helyi változók együtt</value>
+  </data>
+  <data name="DbgSettings_ShowCompilerGeneratedVariables" xml:space="preserve">
+    <value>Mutassa a fordító által generált változókat</value>
+  </data>
+  <data name="DbgSettings_ShowDecompilerGeneratedVariables" xml:space="preserve">
+    <value>Mutassa a visszafordító által generált változókat</value>
+  </data>
+  <data name="DbgSettings_SortLocals" xml:space="preserve">
+    <value>Helyi változók rendezése</value>
+  </data>
+  <data name="DbgSettings_SortParameters" xml:space="preserve">
+    <value>Paraméterek rendezése</value>
+  </data>
+  <data name="DbgSettings_HideCompilerGeneratedMembers" xml:space="preserve">
+    <value>A fordító által generált tagok elrejtése</value>
+  </data>
+  <data name="FunctionEvaluationDisabled" xml:space="preserve">
+    <value>Az implicit függvény kiértékelést a felhasználó kikapcsolta</value>
+  </data>
+  <data name="DbgSettings_RespectHideMemberAttributes" xml:space="preserve">
+    <value>A tagot elrejtő attribútumok figyelembe vétele</value>
+  </data>
+  <data name="InternalDebuggerError" xml:space="preserve">
+    <value>Belső debugger hiba</value>
+  </data>
+  <data name="FuncEvalRequiresAllThreadsToRun" xml:space="preserve">
+    <value>A függvény kiértékeléshez minden szálnak futnia kell.</value>
+  </data>
+  <data name="DigitSeparatorsCommand" xml:space="preserve">
+    <value>Számjegy elválasztó</value>
+  </data>
+  <data name="Column_ProcessCommandLine" xml:space="preserve">
+    <value>Parancssor</value>
+  </data>
+  <data name="CannotReadLocalOrArgumentMaybeOptimizedAway" xml:space="preserve">
+    <value>A helyi változó vagy argumentum értékét nem sikerült beolvasni, mert nem érhető el ennél az utasítás mutatónál, valószínűleg le lett optimalizálva.</value>
+  </data>
+  <data name="ExceptionMessage" xml:space="preserve">
+    <value>Üzenet: {0}</value>
+  </data>
+  <data name="ExceptionName" xml:space="preserve">
+    <value>Kivétel: {0}</value>
+  </data>
+  <data name="UnhandledExceptionMessage_ProcessName_ProcessId" xml:space="preserve">
+    <value>Nem kezelt kivétel történt a {0} helyen ({1})</value>
+  </data>
+  <data name="StatusBar_BreakpointHit" xml:space="preserve">
+    <value>Töréspont</value>
+  </data>
+  <data name="BreakpointExpressionMustBeABooleanExpression" xml:space="preserve">
+    <value>A töréspont kifejezésének logikai kifejezésnek kell lennie</value>
+  </data>
+  <data name="DbgSettings_SuppressJITOptimization" xml:space="preserve">
+    <value>JIT optimalizáció letiltása a modul betöltésekor</value>
+  </data>
+  <data name="DbgSettings_SuppressJITOptimization_ProgramModules" xml:space="preserve">
+    <value>Program modulok</value>
+  </data>
+  <data name="DbgSettings_SuppressJITOptimization_SystemModules" xml:space="preserve">
+    <value>Rendszer modulok</value>
+  </data>
+  <data name="RuntimeIsUnableToEvaluateExpression" xml:space="preserve">
+    <value>A futtató környezet nem tudja kiértékelni ezt a kifejezést.</value>
+  </data>
+  <data name="Exceptions_ToggleMatchingExceptions_ToolTip" xml:space="preserve">
+    <value>Az aktuális keresési feltételeknek megfelelő összes kivétel engedélyezése vagy tiltása</value>
+  </data>
+  <data name="DisableBreakpointCommand2" xml:space="preserve">
+    <value>Töréspont let_iltása</value>
+  </data>
+  <data name="Exceptions_Add_ToolTip" xml:space="preserve">
+    <value>Kivétel hozzáadása a listához</value>
+  </data>
+  <data name="AskAppWindowClosingStopDebugging" xml:space="preserve">
+    <value>Leállítja a hibakeresést?</value>
+  </data>
+  <data name="DbgSettings_FocusActiveProcess" xml:space="preserve">
+    <value>Fókusz adása a nyomkövetett folyamatnak</value>
+  </data>
+  <data name="LoadAllModulesCommand" xml:space="preserve">
+    <value>Minden modul megnyitása</value>
+  </data>
+  <data name="DbgSettings_HideDeprecatedError" xml:space="preserve">
+    <value>Az elavult tagok elrejtése a változó ablakban</value>
+  </data>
+  <data name="DbgSettings_ShowReturnValues" xml:space="preserve">
+    <value>Visszatérési értékek mutatása</value>
+  </data>
+  <data name="DbgSettings_RedirectGuiConsoleOutput" xml:space="preserve">
+    <value>GUI-s alkalmazások konzol kimenetének átirányítása a kimeneti ablakba</value>
+  </data>
+  <data name="AttachToProcess_MakingAnImageEasierToDebug" xml:space="preserve">
+    <value>Megkönnyíti a futtatható csomag hibakeresését</value>
+  </data>
+  <data name="ShowOnlyPublicMembersCommand" xml:space="preserve">
+    <value>Nyilvános tagok</value>
+  </data>
+  <data name="DbgSettings_ShowRawLocals" xml:space="preserve">
+    <value>Nyers helyi változók mutatása</value>
+  </data>
+  <data name="DbgSettings_AsyncDebugging" xml:space="preserve">
+    <value>Aszinkron hibakeresés engedélyezése</value>
+  </data>
+  <data name="DbgSettings_StepOverPropertiesAndOperators" xml:space="preserve">
+    <value>Tulajdonságok és operátorok átlépése</value>
+  </data>
+  <data name="CopyExpressionCommand" xml:space="preserve">
+    <value>_Kifejezés másolása</value>
+  </data>
+  <data name="Error_CouldNotShowDisassembly" xml:space="preserve">
+    <value>A metódus kódja nem található. Győződjön meg róla, hogy a folyamat szünetel és a metódus le lett fordítva.</value>
+  </data>
+  <data name="DisassemblyCommand" xml:space="preserve">
+    <value>_Disassembly</value>
+  </data>
+  <data name="ShortCutKeyAlt8" xml:space="preserve">
+    <value>Alt+8</value>
+  </data>
+  <data name="DbgSettings_IgnoreUnhandledExceptions" xml:space="preserve">
+    <value>Nem kezelt kivételek figyelmen kívül hagyása</value>
+  </data>
+  <data name="RunWithInvalidExtension" xml:space="preserve">
+    <value>Biztos, hogy futtatni akarja ezt a fájlt, aminek nincs érvényes kiterjesztése?</value>
+  </data>
+  <data name="DebugWithInvalidExtension" xml:space="preserve">
+    <value>Biztos, hogy hibakeresést végez ezen a fájlon, aminek nincs érvényes kiterjesztése?</value>
+  </data>
+  <data name="Processes_NoMatch" xml:space="preserve">
+    <value>Egy folyamat sem felel meg a keresési feltételeknek.</value>
+  </data>
+  <data name="Processes_Search" xml:space="preserve">
+    <value>Keresés</value>
+  </data>
+  <data name="Processes_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Keresési feltételek törlése, hogy minden folyamat látszódjon</value>
+  </data>
+  <data name="Processes_Search_ToolTip" xml:space="preserve">
+    <value>Folyamat keresése</value>
+  </data>
+  <data name="DbgSettings_FocusDebuggerWhenProcessBreaks" xml:space="preserve">
+    <value>Bring dnSpy to the foreground when breaking in the debugger</value>
+  </data>
+  <data name="Column_LoadModule" xml:space="preserve">
+    <value>Load</value>
+  </data>
+</root>

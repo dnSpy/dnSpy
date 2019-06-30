@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.Impl {
 
 		public override void Remove(DbgEngineMessageFlags messageFlags) => appDomain.Remove(messageFlags);
 
-		public override void Update(UpdateOptions options, string name = null, int id = 0) => appDomain.Process.DbgManager.Dispatcher.BeginInvoke(() => {
+		public override void Update(UpdateOptions options, string? name, int id) => appDomain.Process.DbgManager.Dispatcher.BeginInvoke(() => {
 			if (appDomain.IsClosed)
 				return;
 			if ((options & UpdateOptions.Name) != 0)

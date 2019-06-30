@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -40,7 +40,7 @@ namespace dnSpy.Settings.Dialog {
 			Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
 				var guidString = args.GetArgumentValue(ARG_NAME);
 				var guid = TryParse(guidString);
-				if (guid != null)
+				if (!(guid is null))
 					appSettingsService.Value.Show(guid.Value);
 				else
 					appSettingsService.Value.Show();

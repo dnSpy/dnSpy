@@ -1,5 +1,5 @@
-﻿<!--
-    Copyright (C) 2014-2017 de4dot@gmail.com
+<!--
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,17 +20,13 @@
              x:ClassModifier="internal"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:dnSpy.Bookmarks.ToolWindows.Bookmarks"
              xmlns:ctrls="clr-namespace:dnSpy.Contracts.Controls.ToolWindows;assembly=dnSpy.Contracts.DnSpy"
              xmlns:mvvm="clr-namespace:dnSpy.Contracts.MVVM;assembly=dnSpy.Contracts.DnSpy"
              xmlns:img="clr-namespace:dnSpy.Contracts.Images;assembly=dnSpy.Contracts.DnSpy"
              xmlns:ui="clr-namespace:dnSpy.Contracts.Controls.ToolWindows;assembly=dnSpy.Contracts.DnSpy"
              xmlns:p="clr-namespace:dnSpy.Properties"
-             Name="thisControl"
-             mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             Name="thisControl">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -120,7 +116,9 @@
             VirtualizingStackPanel.IsVirtualizing="True"
             VirtualizingStackPanel.VirtualizationMode="Recycling"
             mvvm:InitDataTemplateAP.Initialize="True"
+            mvvm:AutomationPeerMemoryLeakWorkaround.Initialize="True"
             ui:ListBoxSelectedItemsAP.SelectedItemsVM="{Binding VM.SelectedItems}"
+            mvvm:GridViewColumnSorter.ColumnProvider="{Binding VM}"
             BorderThickness="0"
             img:DsImage.BackgroundBrush="{Binding Background, RelativeSource={RelativeSource Self}}"
             SelectionMode="Extended"
@@ -131,7 +129,7 @@
             </ListView.Resources>
             <ListView.View>
                 <GridView AllowsColumnReorder="True">
-                    <GridViewColumn Header="{x:Static p:dnSpy_Resources.Column_Name}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:BookmarksWindowColumnIds.Name}" Header="{x:Static p:dnSpy_Resources.Column_Name}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <Grid>
@@ -155,21 +153,21 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Resources.Column_Labels}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:BookmarksWindowColumnIds.Labels}" Header="{x:Static p:dnSpy_Resources.Column_Labels}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ctrls:EditValueControl ReadOnlyContent="{Binding LabelsObject, Mode=OneWay, Converter={StaticResource bookmarkColumnConverter}}" EditableValue="{Binding LabelsEditableValue}" EditValueProvider="{Binding LabelsEditValueProvider}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Resources.Column_Location}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:BookmarksWindowColumnIds.Location}" Header="{x:Static p:dnSpy_Resources.Column_Location}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding LocationObject, Mode=OneWay, Converter={StaticResource bookmarkColumnConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="{x:Static p:dnSpy_Resources.Column_Module}">
+                    <GridViewColumn mvvm:GridViewColumnSorter.Id="{x:Static local:BookmarksWindowColumnIds.Module}" Header="{x:Static p:dnSpy_Resources.Column_Module}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding ModuleObject, Mode=OneWay, Converter={StaticResource bookmarkColumnConverter}}" />

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,11 +25,11 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.Attach.Dialogs;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Steppers;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.Documents;
-using dnSpy.Contracts.Text;
-using dnSpy.Debugger.Dialogs.AttachToProcess;
 using dnSpy.Debugger.UI;
 
 namespace dnSpy.Debugger.ToolWindows.Processes {
@@ -62,6 +62,8 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		public abstract bool UseHexadecimal { get; set; }
 		public abstract bool CanSetCurrentProcess { get; }
 		public abstract void SetCurrentProcess(bool newTab);
+		public abstract bool CanResetSearchSettings { get; }
+		public abstract void ResetSearchSettings();
 	}
 
 	[Export(typeof(ProcessesOperations))]
@@ -74,10 +76,9 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		readonly Lazy<ReferenceNavigatorService> referenceNavigatorService;
 		readonly Lazy<DbgCallStackService> dbgCallStackService;
 
-		ObservableCollection<ProcessVM> AllItems => processesVM.AllItems;
+		BulkObservableCollection<ProcessVM> AllItems => processesVM.AllItems;
 		ObservableCollection<ProcessVM> SelectedItems => processesVM.SelectedItems;
-		//TODO: This should be view order
-		IEnumerable<ProcessVM> SortedSelectedItems => SelectedItems.OrderBy(a => a.Order);
+		IEnumerable<ProcessVM> SortedSelectedItems => processesVM.Sort(SelectedItems);
 
 		[ImportingConstructor]
 		ProcessesOperationsImpl(UIDispatcher uiDispatcher, IProcessesVM processesVM, DebuggerSettings debuggerSettings, Lazy<DbgManager> dbgManager, Lazy<ShowAttachToProcessDialog> showAttachToProcessDialog, Lazy<ReferenceNavigatorService> referenceNavigatorService, Lazy<DbgCallStackService> dbgCallStackService) {
@@ -92,22 +93,55 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 
 		public override bool CanCopy => SelectedItems.Count != 0;
 		public override void Copy() {
-			var output = new StringBuilderTextColorOutput();
+			var output = new DbgStringBuilderTextWriter();
 			foreach (var vm in SortedSelectedItems) {
 				var formatter = vm.Context.Formatter;
-				formatter.WriteImage(output, vm);
-				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteName(output, vm.Process);
-				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteId(output, vm.Process);
-				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteTitle(output, vm);
-				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteState(output, vm);
-				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteDebugging(output, vm.Process);
-				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WritePath(output, vm.Process);
+				bool needTab = false;
+				foreach (var column in processesVM.Descs.Columns) {
+					if (!column.IsVisible)
+						continue;
+
+					if (needTab)
+						output.Write(DbgTextColor.Text, "\t");
+					switch (column.Id) {
+					case ProcessesWindowColumnIds.Icon:
+						formatter.WriteImage(output, vm);
+						break;
+
+					case ProcessesWindowColumnIds.Name:
+						formatter.WriteName(output, vm.Process);
+						break;
+
+					case ProcessesWindowColumnIds.ID:
+						formatter.WriteId(output, vm.Process);
+						break;
+
+					case ProcessesWindowColumnIds.Title:
+						formatter.WriteTitle(output, vm);
+						break;
+
+					case ProcessesWindowColumnIds.State:
+						formatter.WriteState(output, vm);
+						break;
+
+					case ProcessesWindowColumnIds.Debugging:
+						formatter.WriteDebugging(output, vm.Process);
+						break;
+
+					case ProcessesWindowColumnIds.ProcessArchitecture:
+						formatter.WriteArchitecture(output, vm.Process.Architecture);
+						break;
+
+					case ProcessesWindowColumnIds.Path:
+						formatter.WritePath(output, vm.Process);
+						break;
+
+					default:
+						throw new InvalidOperationException();
+					}
+
+					needTab = true;
+				}
 				output.WriteLine();
 			}
 			var s = output.ToString();
@@ -142,7 +176,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			if (!CanStepProcess)
 				return;
 			var thread = dbgManager.Value.CurrentThread.Current;
-			if (thread == null)
+			if (thread is null)
 				return;
 			thread.CreateStepper().Step(step, autoClose: true);
 		}
@@ -200,7 +234,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 				process.DbgManager.Dispatcher.BeginInvoke(() => {
 					if (process.DbgManager.CurrentProcess.Current == process) {
 						var thread = process.DbgManager.CurrentThread.Current;
-						if (thread != null)
+						if (!(thread is null))
 							uiDispatcher.UI(() => GoToThread(thread, newTab: newTab));
 					}
 				});
@@ -209,7 +243,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 
 		void GoToThread(DbgThread thread, bool newTab) {
 			var info = Threads.ThreadUtilities.GetFirstFrameLocation(thread);
-			if (info.location != null) {
+			if (!(info.location is null)) {
 				try {
 					var options = newTab ? new object[] { PredefinedReferenceNavigatorOptions.NewTab } : Array.Empty<object>();
 					referenceNavigatorService.Value.GoTo(info.location, options);
@@ -220,5 +254,8 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 				}
 			}
 		}
+
+		public override bool CanResetSearchSettings => true;
+		public override void ResetSearchSettings() => processesVM.ResetSearchSettings();
 	}
 }

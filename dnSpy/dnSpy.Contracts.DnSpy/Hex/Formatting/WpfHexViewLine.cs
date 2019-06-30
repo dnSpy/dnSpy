@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -46,6 +46,6 @@ namespace dnSpy.Contracts.Hex.Formatting {
 		/// </summary>
 		/// <param name="linePosition">Line position</param>
 		/// <returns></returns>
-		public abstract TextRunProperties GetCharacterFormatting(int linePosition);
+		public abstract TextRunProperties? GetCharacterFormatting(int linePosition);
 	}
 }

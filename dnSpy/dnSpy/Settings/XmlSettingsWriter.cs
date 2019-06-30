@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,11 +25,11 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Settings {
-	struct XmlSettingsWriter {
+	readonly struct XmlSettingsWriter {
 		readonly ISettingsService mgr;
 		readonly string filename;
 
-		public XmlSettingsWriter(ISettingsService mgr, string filename = null) {
+		public XmlSettingsWriter(ISettingsService mgr, string? filename = null) {
 			this.mgr = mgr;
 			this.filename = filename ?? AppDirectories.SettingsFilename;
 		}
@@ -56,16 +56,16 @@ namespace dnSpy.Settings {
 				return xmlSect;
 
 			xmlSect.SetAttributeValue(XmlSettingsConstants.SECTION_ATTRIBUTE_NAME, XmlUtils.EscapeAttributeValue(section.Name));
-			foreach (var attr in section.Attributes.OrderBy(a => a.Item1.ToUpperInvariant())) {
-				var n = XmlUtils.FilterAttributeName(attr.Item1);
-				Debug.Assert(n != null, "Invalid character(s) in section attribute name. Only valid XML attribute names can be used.");
-				if (n == null)
+			foreach (var attr in section.Attributes.OrderBy(a => a.key.ToUpperInvariant())) {
+				var n = XmlUtils.FilterAttributeName(attr.key);
+				Debug.Assert(!(n is null), "Invalid character(s) in section attribute name. Only valid XML attribute names can be used.");
+				if (n is null)
 					continue;
 				bool b = n == XmlSettingsConstants.SECTION_ATTRIBUTE_NAME;
-				Debug.Assert(!b, string.Format("Attribute name '{0}' is reserved for use by the XML writer", XmlSettingsConstants.SECTION_ATTRIBUTE_NAME));
+				Debug.Assert(!b, $"Attribute name '{XmlSettingsConstants.SECTION_ATTRIBUTE_NAME}' is reserved for use by the XML writer");
 				if (b)
 					continue;
-				xmlSect.SetAttributeValue(n, XmlUtils.EscapeAttributeValue(attr.Item2));
+				xmlSect.SetAttributeValue(n, XmlUtils.EscapeAttributeValue(attr.value));
 			}
 
 			foreach (var childSection in Sort(section.Sections))

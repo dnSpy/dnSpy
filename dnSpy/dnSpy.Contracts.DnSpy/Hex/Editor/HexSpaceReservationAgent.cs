@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -60,6 +60,6 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// </summary>
 		/// <param name="reservedSpace">Reserved space</param>
 		/// <returns></returns>
-		public abstract Geometry PositionAndDisplay(Geometry reservedSpace);
+		public abstract Geometry? PositionAndDisplay(Geometry reservedSpace);
 	}
 }

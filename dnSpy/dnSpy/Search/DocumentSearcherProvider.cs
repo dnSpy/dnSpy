@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -44,13 +44,12 @@ namespace dnSpy.Search {
 		}
 
 		public IDocumentSearcher Create(DocumentSearcherOptions options, IDocumentTreeView documentTreeView) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
-			if (documentTreeView == null)
+			if (documentTreeView is null)
 				throw new ArgumentNullException(nameof(documentTreeView));
-			var searchResultContext = new SearchResultContext(classificationFormatMap, textElementProvider) {
+			var searchResultContext = new SearchResultContext(classificationFormatMap, textElementProvider, decompilerService.Decompiler) {
 				SyntaxHighlight = true,
-				Decompiler = decompilerService.Decompiler,
 			};
 			return new DocumentSearcher(options, documentTreeView, dotNetImageService, searchResultContext);
 		}

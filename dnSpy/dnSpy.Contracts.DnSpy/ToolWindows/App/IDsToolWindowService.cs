@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -43,7 +43,7 @@ namespace dnSpy.Contracts.ToolWindows.App {
 		/// (<see cref="ToolWindowContentInfo.Location"/>). It's ignored if the content is already
 		/// present in the UI.</param>
 		/// <returns></returns>
-		ToolWindowContent Show(Guid guid, AppToolWindowLocation? location = null);
+		ToolWindowContent? Show(Guid guid, AppToolWindowLocation? location = null);
 
 		/// <summary>
 		/// Removes <paramref name="content"/> from the UI
@@ -84,14 +84,14 @@ namespace dnSpy.Contracts.ToolWindows.App {
 		/// <param name="content">Content</param>
 		/// <param name="location">Location</param>
 		/// <returns></returns>
-		bool CanMove(ToolWindowContent content, AppToolWindowLocation location);
+		bool CanMove(ToolWindowContent? content, AppToolWindowLocation location);
 
 		/// <summary>
 		/// Moves <paramref name="content"/> to a new location
 		/// </summary>
 		/// <param name="content">Content</param>
 		/// <param name="location">Location</param>
-		void Move(ToolWindowContent content, AppToolWindowLocation location);
+		void Move(ToolWindowContent? content, AppToolWindowLocation location);
 
 		/// <summary>
 		/// Returns true if <see cref="Move(IToolWindowGroup, AppToolWindowLocation)"/> can execute

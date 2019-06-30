@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -17,8 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-
 namespace dnSpy.Contracts.Settings {
 	/// <summary>
 	/// Settings section
@@ -32,7 +30,7 @@ namespace dnSpy.Contracts.Settings {
 		/// <summary>
 		/// Gets all attributes
 		/// </summary>
-		Tuple<string, string>[] Attributes { get; }
+		(string key, string value)[] Attributes { get; }
 
 		/// <summary>
 		/// Adds or overwrites an existing attribute with a new value

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,7 +32,7 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	static class ModuleCreator {
-		public static DbgEngineModule CreateModule<T>(DbgEngineImpl engine, DbgObjectFactory objectFactory, DbgAppDomain appDomain, DnModule dnModule, T data) where T : class {
+		public static DbgEngineModule CreateModule<T>(DbgEngineImpl engine, DbgObjectFactory objectFactory, DbgAppDomain? appDomain, DnModule dnModule, T data) where T : class {
 			ulong address = dnModule.Address;
 			uint size = dnModule.Size;
 			var imageLayout = CalculateImageLayout(dnModule);
@@ -40,10 +40,12 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			string filename = dnModule.Name;
 			bool isDynamic = dnModule.IsDynamic;
 			bool isInMemory = dnModule.IsInMemory;
-			bool isOptimized = CalculateIsOptimized(dnModule);
-			int order = dnModule.UniqueId;
+			bool? isOptimized = CalculateIsOptimized(dnModule);
+			int order = dnModule.UniqueId + 1;// 0-based to 1-based
 			InitializeExeFields(dnModule, filename, imageLayout, out var isExe, out var isDll, out var timestamp, out var version, out var assemblySimpleName);
 
+			if (appDomain is null)
+				throw new InvalidOperationException("No appdomain");
 			var reflectionAppDomain = ((DbgCorDebugInternalAppDomainImpl)appDomain.InternalAppDomain).ReflectionAppDomain;
 
 			var closedListenerCollection = new ClosedListenerCollection();
@@ -70,9 +72,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			}
 			else {
 				var manifestModule = engine.TryGetModule(modules[0].CorModule);
-				if (manifestModule == null)
+				if (manifestModule is null)
 					throw new InvalidOperationException();
-				reflectionAssembly = ((DbgCorDebugInternalModuleImpl)manifestModule.InternalModule).ReflectionModule.Assembly;
+				reflectionAssembly = ((DbgCorDebugInternalModuleImpl)manifestModule.InternalModule).ReflectionModule!.Assembly;
 				reflectionModule = reflectionAppDomain.CreateModule(reflectionAssembly, getMetadata, isInMemory, isDynamic, fullyQualifiedName);
 			}
 
@@ -90,7 +92,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		static Func<DmdLazyMetadataBytes> CreateDynamicGetMetadataDelegate(DbgEngineImpl engine, DnModule dnModule) {
 			Debug.Assert(dnModule.IsDynamic);
 			var comMetadata = dnModule.CorModule.GetMetaDataInterface<IMetaDataImport2>();
-			if (comMetadata == null)
+			if (comMetadata is null)
 				throw new InvalidOperationException();
 			var result = new DmdLazyMetadataBytesCom(comMetadata, engine.GetDynamicModuleHelper(dnModule), engine.DmdDispatcher);
 			return () => result;
@@ -120,7 +122,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			return DbgImageLayout.Memory;
 		}
 
-		static bool CalculateIsOptimized(DnModule dnModule) {
+		static bool? CalculateIsOptimized(DnModule dnModule) {
 			switch (dnModule.CachedJITCompilerFlags) {
 			case CorDebugJITCompilerFlags.CORDEBUG_JIT_DEFAULT:
 				return true;
@@ -129,7 +131,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				return false;
 			default:
 				Debug.Fail($"Unknown JIT compiler flags: {dnModule.CachedJITCompilerFlags}");
-				return false;
+				return null;
 			}
 		}
 
@@ -142,11 +144,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			return s;
 		}
 
-		static void InitializeExeFields(DnModule dnModule, string filename, DbgImageLayout imageLayout, out bool isExe, out bool isDll, out DateTime? timestamp, out string version, out string assemblySimpleName) {
+		static void InitializeExeFields(DnModule dnModule, string filename, DbgImageLayout imageLayout, out bool isExe, out bool isDll, out DateTime? timestamp, out string version, out string? assemblySimpleName) {
 			isExe = false;
 			isDll = false;
 			timestamp = null;
-			version = null;
+			version = string.Empty;
 			assemblySimpleName = null;
 
 			if (dnModule.IsDynamic) {
@@ -157,7 +159,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				Debug.Assert(imageLayout == DbgImageLayout.File, nameof(GetFileVersion) + " assumes file layout");
 
 				var bytes = dnModule.Process.CorProcess.ReadMemory(dnModule.Address, (int)dnModule.Size);
-				if (bytes != null) {
+				if (!(bytes is null)) {
 					try {
 						version = GetFileVersion(bytes);
 						using (var peImage = new PEImage(bytes, imageLayout == DbgImageLayout.File ? ImageLayout.File : ImageLayout.Memory, true))
@@ -176,17 +178,14 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				catch {
 				}
 			}
-
-			if (version == null)
-				version = string.Empty;
 		}
 
-		static void InitializeExeFieldsFrom(IPEImage peImage, out bool isExe, out bool isDll, out DateTime? timestamp, ref string version, out string assemblySimpleName) {
+		static void InitializeExeFieldsFrom(IPEImage peImage, out bool isExe, out bool isDll, out DateTime? timestamp, ref string version, out string? assemblySimpleName) {
 			isExe = (peImage.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) == 0;
 			isDll = !isExe;
 
 			// Roslyn sets bit 31 if /deterministic is used (the low 31 bits is not a timestamp)
-			if (peImage.ImageNTHeaders.FileHeader.TimeDateStamp < 0x80000000)
+			if (peImage.ImageNTHeaders.FileHeader.TimeDateStamp < 0x80000000 && peImage.ImageNTHeaders.FileHeader.TimeDateStamp != 0)
 				timestamp = Epoch.AddSeconds(peImage.ImageNTHeaders.FileHeader.TimeDateStamp);
 			else
 				timestamp = null;
@@ -195,14 +194,13 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				if (string.IsNullOrEmpty(version)) {
 					using (var mod = ModuleDefMD.Load(peImage)) {
 						if (string.IsNullOrEmpty(version))
-							version = mod.Assembly?.Version.ToString();
+							version = mod.Assembly?.Version.ToString() ?? string.Empty;
 						assemblySimpleName = UTF8String.ToSystemString(mod.Assembly?.Name);
 					}
 				}
 				else {
-					using (var md = MetaDataCreator.CreateMetaData(peImage)) {
-						var row = md.TablesStream.ReadAssemblyRow(1);
-						if (row == null)
+					using (var md = MetadataFactory.CreateMetadata(peImage)) {
+						if (!md.TablesStream.TryReadAssemblyRow(1, out var row))
 							assemblySimpleName = null;
 						else
 							assemblySimpleName = md.StringsStream.Read(row.Name);
@@ -229,7 +227,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		}
 
 		static string GetFileVersion(byte[] bytes) {
-			string tempFilename = null;
+			string? tempFilename = null;
 			try {
 				tempFilename = Path.GetTempFileName();
 				File.WriteAllBytes(tempFilename, bytes);
@@ -239,7 +237,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			}
 			finally {
 				try {
-					if (tempFilename != null)
+					if (!(tempFilename is null))
 						File.Delete(tempFilename);
 				}
 				catch { }

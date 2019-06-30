@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,10 +31,10 @@ namespace dnSpy.Text.Editor {
 		public IDsWpfTextView TextView => TextViewHost.TextView;
 		public IDsWpfTextViewHost TextViewHost { get; }
 		public ITextBuffer TextBuffer => TextViewHost.TextView.TextBuffer;
-		public object UIObject => TextViewHost.HostControl;
-		public IInputElement FocusedElement => TextViewHost.TextView.VisualElement;
-		public FrameworkElement ZoomElement => TextViewHost.TextView.VisualElement;
-		public object Tag { get; set; }
+		public object? UIObject => TextViewHost.HostControl;
+		public IInputElement? FocusedElement => TextViewHost.TextView.VisualElement;
+		public FrameworkElement? ZoomElement => TextViewHost.TextView.VisualElement;
+		public object? Tag { get; set; }
 
 		sealed class GuidObjectsProvider : IGuidObjectsProvider {
 			readonly CodeEditor codeEditor;
@@ -51,7 +51,7 @@ namespace dnSpy.Text.Editor {
 			options.CreateGuidObjects = CommonGuidObjectsProvider.Create(options.CreateGuidObjects, new GuidObjectsProvider(this));
 			var contentType = contentTypeRegistryService.GetContentType(options.ContentType, options.ContentTypeString) ?? textBufferFactoryService.TextContentType;
 			var textBuffer = options.TextBuffer;
-			if (textBuffer == null)
+			if (textBuffer is null)
 				textBuffer = textBufferFactoryService.CreateTextBuffer(contentType);
 			var roles = dsTextEditorFactoryService.CreateTextViewRoleSet(options.Roles);
 			var textView = dsTextEditorFactoryService.CreateTextView(textBuffer, roles, editorOptionsFactoryService.GlobalOptions, options);

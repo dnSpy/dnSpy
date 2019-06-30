@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -47,16 +47,16 @@ namespace dnSpy.AsmEditor.Commands {
 		}
 
 		public void Add() {
-			Debug.Assert(documentNode.TreeNode.Parent == null);
-			if (documentNode.TreeNode.Parent != null)
+			Debug.Assert(documentNode.TreeNode.Parent is null);
+			if (!(documentNode.TreeNode.Parent is null))
 				throw new InvalidOperationException();
 			Debug.Assert(!restoreIndex || origIndex >= 0);
 
 			documentTreeView.AddNode(documentNode, origIndex);
 
-			bool b = documentNode.Document.ModuleDef == null ||
+			bool b = documentNode.Document.ModuleDef is null ||
 				(documentTreeView.FindNode(
-				documentNode.Document.AssemblyDef != null ?
+				!(documentNode.Document.AssemblyDef is null) ?
 				(object)documentNode.Document.AssemblyDef :
 				documentNode.Document.ModuleDef) == documentNode);
 			Debug.Assert(b);
@@ -65,8 +65,8 @@ namespace dnSpy.AsmEditor.Commands {
 		}
 
 		public void Remove() {
-			Debug.Assert(documentNode.TreeNode.Parent != null);
-			if (documentNode.TreeNode.Parent == null)
+			Debug.Assert(!(documentNode.TreeNode.Parent is null));
+			if (documentNode.TreeNode.Parent is null)
 				throw new InvalidOperationException();
 
 			if (restoreIndex && origIndex == -1) {

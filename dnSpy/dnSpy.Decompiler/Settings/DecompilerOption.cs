@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,13 +22,13 @@ using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.Decompiler.Settings {
 	public sealed class DecompilerOption<T> : IDecompilerOption {
-		public string Description { get; set; }
-		public string Name { get; set; }
+		public string? Description { get; set; }
+		public string? Name { get; set; }
 		public Guid Guid { get; }
 		public Type Type => typeof(T);
 
 		public object Value {
-			get { return getter(); }
+			get { return getter()!; }
 			set { setter((T)value); }
 		}
 		readonly Func<T> getter;

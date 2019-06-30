@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -79,8 +79,8 @@ namespace dnSpy.Hex.Files.DotNet {
 			};
 		}
 
-		public static DotNetMetadataHeaderData TryCreate(HexBufferFile file, HexSpan span, int stringLength, StorageStreamHeader[] storageStreamHeaders) {
-			if (file == null)
+		public static DotNetMetadataHeaderData? TryCreate(HexBufferFile? file, HexSpan span, int stringLength, StorageStreamHeader[] storageStreamHeaders) {
+			if (file is null)
 				throw new ArgumentNullException(nameof(file));
 			if (!file.Span.Contains(span))
 				return null;

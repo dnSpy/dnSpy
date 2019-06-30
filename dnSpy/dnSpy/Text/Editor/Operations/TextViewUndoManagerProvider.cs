@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Runtime.CompilerServices;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Text.Editor.Operations;
 using Microsoft.VisualStudio.Text.Operations;
@@ -34,19 +35,19 @@ namespace dnSpy.Text.Editor.Operations {
 		TextViewUndoManagerProvider(ITextBufferUndoManagerProvider textBufferUndoManagerProvider) => this.textBufferUndoManagerProvider = textBufferUndoManagerProvider;
 
 		public ITextViewUndoManager GetTextViewUndoManager(IDsWpfTextView textView) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			return textView.Properties.GetOrCreateSingletonProperty(textViewUndoManagerKey, () => new TextViewUndoManager(textView, this, textBufferUndoManagerProvider));
 		}
 
-		public bool TryGetTextViewUndoManager(IDsWpfTextView textView, out ITextViewUndoManager manager) {
-			if (textView == null)
+		public bool TryGetTextViewUndoManager(IDsWpfTextView textView, [NotNullWhenTrue] out ITextViewUndoManager? manager) {
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			return textView.Properties.TryGetProperty(textViewUndoManagerKey, out manager);
 		}
 
 		public void RemoveTextViewUndoManager(IDsWpfTextView textView) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			if (!textView.Properties.TryGetProperty(textViewUndoManagerKey, out TextViewUndoManager manager))
 				return;

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -98,7 +98,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <param name="position">Position</param>
 		/// <param name="checkNestedFiles">true to check nested files</param>
 		/// <returns></returns>
-		public abstract HexBufferFile GetFile(HexPosition position, bool checkNestedFiles);
+		public abstract HexBufferFile? GetFile(HexPosition position, bool checkNestedFiles);
 
 		/// <summary>
 		/// Gets a <see cref="HexBufferFile"/> and structure at <paramref name="position"/> or null if
@@ -117,7 +117,7 @@ namespace dnSpy.Contracts.Hex.Files {
 	/// <summary>
 	/// File and structure
 	/// </summary>
-	public struct FileAndStructure {
+	public readonly struct FileAndStructure {
 		/// <summary>
 		/// Gets the file
 		/// </summary>

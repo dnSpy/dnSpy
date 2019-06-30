@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
+// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
@@ -40,7 +40,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.IL {
 		}
 
 		public DecompilerProvider(DecompilerSettingsService decompilerSettingsService) {
-			Debug.Assert(decompilerSettingsService != null);
+			Debug.Assert(!(decompilerSettingsService is null));
 			this.decompilerSettingsService = decompilerSettingsService ?? throw new ArgumentNullException(nameof(decompilerSettingsService));
 		}
 
@@ -89,27 +89,28 @@ namespace dnSpy.Decompiler.ILSpy.Core.IL {
 			var sb = new StringBuilder();
 			if (langSettings.Settings.ShowXmlDocumentation)
 				disOpts.GetXmlDocComments = a => GetXmlDocComments(a, sb);
-			disOpts.CreateInstructionBytesReader = m => InstructionBytesReader.Create(m, ctx.IsBodyModified != null && ctx.IsBodyModified(m));
+			disOpts.CreateInstructionBytesReader = m => InstructionBytesReader.Create(m, !(ctx.IsBodyModified is null) && ctx.IsBodyModified(m));
 			disOpts.ShowTokenAndRvaComments = langSettings.Settings.ShowTokenAndRvaComments;
 			disOpts.ShowILBytes = langSettings.Settings.ShowILBytes;
 			disOpts.SortMembers = langSettings.Settings.SortMembers;
 			disOpts.ShowPdbInfo = langSettings.Settings.ShowPdbInfo;
+			disOpts.MaxStringLength = langSettings.Settings.MaxStringLength;
 			return new ReflectionDisassembler(output, detectControlStructure, disOpts);
 		}
 
 		static IEnumerable<string> GetXmlDocComments(IMemberRef mr, StringBuilder sb) {
-			if (mr == null || mr.Module == null)
+			if (mr is null || mr.Module is null)
 				yield break;
 			var xmldoc = XmlDocLoader.LoadDocumentation(mr.Module);
-			if (xmldoc == null)
+			if (xmldoc is null)
 				yield break;
-			string doc = xmldoc.GetDocumentation(XmlDocKeyProvider.GetKey(mr, sb));
+			var doc = xmldoc.GetDocumentation(XmlDocKeyProvider.GetKey(mr, sb));
 			if (string.IsNullOrEmpty(doc))
 				yield break;
 
 			foreach (var info in new XmlDocLine(doc)) {
 				sb.Clear();
-				if (info != null) {
+				if (!(info is null)) {
 					sb.Append(' ');
 					info.Value.WriteTo(sb);
 				}
@@ -130,11 +131,11 @@ namespace dnSpy.Decompiler.ILSpy.Core.IL {
 		public override void Decompile(PropertyDef property, IDecompilerOutput output, DecompilationContext ctx) {
 			ReflectionDisassembler rd = CreateReflectionDisassembler(output, ctx, property);
 			rd.DisassembleProperty(property, addLineSep: true);
-			if (property.GetMethod != null) {
+			if (!(property.GetMethod is null)) {
 				output.WriteLine();
 				rd.DisassembleMethod(property.GetMethod, true);
 			}
-			if (property.SetMethod != null) {
+			if (!(property.SetMethod is null)) {
 				output.WriteLine();
 				rd.DisassembleMethod(property.SetMethod, true);
 			}
@@ -147,11 +148,11 @@ namespace dnSpy.Decompiler.ILSpy.Core.IL {
 		public override void Decompile(EventDef ev, IDecompilerOutput output, DecompilationContext ctx) {
 			ReflectionDisassembler rd = CreateReflectionDisassembler(output, ctx, ev);
 			rd.DisassembleEvent(ev, addLineSep: true);
-			if (ev.AddMethod != null) {
+			if (!(ev.AddMethod is null)) {
 				output.WriteLine();
 				rd.DisassembleMethod(ev.AddMethod, true);
 			}
-			if (ev.RemoveMethod != null) {
+			if (!(ev.RemoveMethod is null)) {
 				output.WriteLine();
 				rd.DisassembleMethod(ev.RemoveMethod, true);
 			}
@@ -185,10 +186,10 @@ namespace dnSpy.Decompiler.ILSpy.Core.IL {
 			rd.WriteModuleHeader(mod);
 		}
 
-		protected override void TypeToString(IDecompilerOutput output, ITypeDefOrRef t, bool includeNamespace, IHasCustomAttribute attributeProvider = null) =>
+		protected override void TypeToString(IDecompilerOutput output, ITypeDefOrRef? t, bool includeNamespace, IHasCustomAttribute? attributeProvider = null) =>
 			t.WriteTo(output, includeNamespace ? ILNameSyntax.TypeName : ILNameSyntax.ShortTypeName);
 
-		public override void WriteToolTip(ITextColorWriter output, IMemberRef member, IHasCustomAttribute typeAttributes) {
+		public override void WriteToolTip(ITextColorWriter output, IMemberRef member, IHasCustomAttribute? typeAttributes) {
 			if (!(member is ITypeDefOrRef) && ILDecompilerUtils.Write(TextColorWriterToDecompilerOutput.Create(output), member))
 				return;
 

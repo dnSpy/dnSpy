@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,33 +22,30 @@ using System.Collections.Generic;
 using System.Windows.Controls;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Language.Intellisense;
+using dnSpy.Contracts.MVVM;
 using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace dnSpy.Language.Intellisense {
-	sealed class CompletionVM {
-		public object ImageUIObject { get; }
+	sealed class CompletionVM : ViewModelBase {
+		public object? ImageUIObject { get; }
 		public object DisplayTextObject => this;
 		public object SuffixObject => this;
 		public Completion Completion { get; }
 
-		public IEnumerable<CompletionIconVM> AttributeIcons => attributeIcons ?? (attributeIcons = CreateAttributeIcons());
-		IEnumerable<CompletionIconVM> attributeIcons;
-		readonly IImageMonikerService imageMonikerService;
+		public IEnumerable<CompletionIconVM> AttributeIcons => attributeIcons ??= CreateAttributeIcons();
+		IEnumerable<CompletionIconVM>? attributeIcons;
 
-		public CompletionVM(Completion completion, IImageMonikerService imageMonikerService) {
-			if (imageMonikerService == null)
-				throw new ArgumentNullException(nameof(imageMonikerService));
+		public CompletionVM(Completion completion) {
 			Completion = completion ?? throw new ArgumentNullException(nameof(completion));
 			Completion.Properties.AddProperty(typeof(CompletionVM), this);
-			ImageUIObject = CreateImageUIObject(completion, imageMonikerService);
-			this.imageMonikerService = imageMonikerService;
+			ImageUIObject = CreateImageUIObject(completion);
 		}
 
-		static object CreateImageUIObject(Completion completion, IImageMonikerService imageMonikerService) {
-			var c3 = completion as Completion3;
-			if (c3 == null) {
+		static object? CreateImageUIObject(Completion completion) {
+			var dsCompletion = completion as DsCompletion;
+			if (dsCompletion is null) {
 				var iconSource = completion.IconSource;
-				if (iconSource == null)
+				if (iconSource is null)
 					return null;
 				return new Image {
 					Width = 16,
@@ -57,17 +54,17 @@ namespace dnSpy.Language.Intellisense {
 				};
 			}
 
-			var imageReference = imageMonikerService.ToImageReference(c3.IconMoniker);
+			var imageReference = dsCompletion.ImageReference;
 			if (imageReference.IsDefault)
 				return null;
 			return new DsImage { ImageReference = imageReference };
 		}
 
-		static object CreateImageUIObject(CompletionIcon icon, IImageMonikerService imageMonikerService) {
-			var icon2 = icon as CompletionIcon2;
-			if (icon2 == null) {
+		static object? CreateImageUIObject(CompletionIcon icon) {
+			var dsIcon = icon as DsCompletionIcon;
+			if (dsIcon is null) {
 				var iconSource = icon.IconSource;
-				if (iconSource == null)
+				if (iconSource is null)
 					return null;
 				return new Image {
 					Width = 16,
@@ -76,19 +73,19 @@ namespace dnSpy.Language.Intellisense {
 				};
 			}
 
-			var imageReference = imageMonikerService.ToImageReference(icon2.IconMoniker);
+			var imageReference = dsIcon.ImageReference;
 			if (imageReference.IsDefault)
 				return null;
 			var image = new DsImage { ImageReference = imageReference };
-			if (!((icon as IDsCompletionIcon)?.ThemeImage ?? false)) {
+			if (!dsIcon.ThemeImage) {
 				DsImage.SetBackgroundColor(image, null);
 				DsImage.SetBackgroundBrush(image, null);
 			}
 			return image;
 		}
 
-		public static CompletionVM TryGet(Completion completion) {
-			if (completion == null)
+		public static CompletionVM? TryGet(Completion completion) {
+			if (completion is null)
 				return null;
 			if (completion.Properties.TryGetProperty(typeof(CompletionVM), out CompletionVM vm))
 				return vm;
@@ -97,12 +94,12 @@ namespace dnSpy.Language.Intellisense {
 
 		IEnumerable<CompletionIconVM> CreateAttributeIcons() {
 			var icons = (Completion as Completion2)?.AttributeIcons;
-			if (icons == null)
+			if (icons is null)
 				return Array.Empty<CompletionIconVM>();
 			var list = new List<CompletionIconVM>();
 			foreach (var icon in icons) {
-				var imageUIObject = CreateImageUIObject(icon, imageMonikerService);
-				if (imageUIObject != null)
+				var imageUIObject = CreateImageUIObject(icon);
+				if (!(imageUIObject is null))
 					list.Add(new CompletionIconVM(imageUIObject));
 			}
 			return list;

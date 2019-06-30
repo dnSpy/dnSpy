@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -73,7 +73,7 @@ namespace dnSpy.Hex.HexEditor {
 			}
 		}
 
-		public override string GetSubGroup(WpfHexView hexView) {
+		public override string? GetSubGroup(WpfHexView hexView) {
 			foreach (var lz in hexEditorOptionsDefinitions) {
 				if (hexView.Roles.Contains(lz.Metadata.SubGroup))
 					return lz.Metadata.SubGroup;

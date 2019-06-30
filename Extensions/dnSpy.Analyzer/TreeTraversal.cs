@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010-2013 AlphaSierraPapa for the SharpDevelop Team
+// Copyright (c) 2010-2013 AlphaSierraPapa for the SharpDevelop Team
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
@@ -47,7 +47,7 @@ namespace dnSpy.Analyzer {
 						T element = stack.Peek().Current;
 						yield return element;
 						IEnumerable<T> children = recursion(element);
-						if (children != null) {
+						if (!(children is null)) {
 							stack.Push(children.GetEnumerator());
 						}
 					}
@@ -83,7 +83,7 @@ namespace dnSpy.Analyzer {
 					while (stack.Peek().MoveNext()) {
 						T element = stack.Peek().Current;
 						IEnumerable<T> children = recursion(element);
-						if (children != null) {
+						if (!(children is null)) {
 							stack.Push(children.GetEnumerator());
 						}
 						else {

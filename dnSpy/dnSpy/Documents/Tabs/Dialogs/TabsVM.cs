@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -38,7 +38,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		readonly ISaveService saveService;
 
 		public TabVM[] SelectedItems {
-			get { return selectedItems; }
+			get => selectedItems;
 			set {
 				selectedItems = value ?? Array.Empty<TabVM>();
 				InitializeSaveText();
@@ -46,8 +46,8 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		}
 		TabVM[] selectedItems = Array.Empty<TabVM>();
 
-		public object SelectedItem {
-			get { return selectedItem; }
+		public object? SelectedItem {
+			get => selectedItem;
 			set {
 				if (selectedItem != value) {
 					selectedItem = value;
@@ -56,10 +56,10 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 				}
 			}
 		}
-		object selectedItem;
+		object? selectedItem;
 
-		public string SaveText {
-			get { return saveText; }
+		public string? SaveText {
+			get => saveText;
 			set {
 				if (saveText != value) {
 					saveText = value;
@@ -67,7 +67,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 				}
 			}
 		}
-		string saveText;
+		string? saveText;
 
 		public IClassificationFormatMap ClassificationFormatMap { get; }
 		public ITextElementProvider TextElementProvider { get; }
@@ -112,17 +112,17 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 				SelectedItem = tabsList.Count == 0 ? null : tabsList[0];
 		}
 
-		public void Activate(TabVM vm) {
-			if (vm == null)
+		public void Activate(TabVM? vm) {
+			if (vm is null)
 				return;
 			LastActivated = vm;
 			documentTabService.SetFocus(vm.Tab);
 		}
 
-		public TabVM LastActivated {
-			get { return lastActivated; }
-			set { lastActivated = value; }
+		public TabVM? LastActivated {
+			get => lastActivated;
+			set => lastActivated = value;
 		}
-		TabVM lastActivated;
+		TabVM? lastActivated;
 	}
 }

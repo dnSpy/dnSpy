@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,31 +18,21 @@
 */
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
-	sealed class CorCode : COMObject<ICorDebugCode>, IEquatable<CorCode> {
-		/// <summary>
-		/// true if it's IL code
-		/// </summary>
+	sealed class CorCode : COMObject<ICorDebugCode>, IEquatable<CorCode?> {
 		public bool IsIL { get; }
+		public bool SupportsReturnValues => obj is ICorDebugCode3;
 
-		/// <summary>
-		/// Gets the size of the code
-		/// </summary>
 		public uint Size => size;
 		readonly uint size;
 
-		/// <summary>
-		/// Gets the address of code (eg. IL instructions). If it's IL, it doesn't include the
-		/// method header.
-		/// </summary>
 		public ulong Address => address;
 		readonly ulong address;
 
-		/// <summary>
-		/// Gets the EnC (edit and continue) version number of this function
-		/// </summary>
 		public uint VersionNumber {
 			get {
 				int hr = obj.GetVersionNumber(out uint ver);
@@ -50,23 +40,17 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets the function or null
-		/// </summary>
-		public CorFunction Function {
+		public CorFunction? Function {
 			get {
 				int hr = obj.GetFunction(out var func);
-				return hr < 0 || func == null ? null : new CorFunction(func);
+				return hr < 0 || func is null ? null : new CorFunction(func);
 			}
 		}
 
-		/// <summary>
-		/// Gets the JIT/NGEN compiler flags
-		/// </summary>
 		public CorDebugJITCompilerFlags CompilerFlags {
 			get {
 				var c2 = obj as ICorDebugCode2;
-				if (c2 == null)
+				if (c2 is null)
 					return 0;
 				int hr = c2.GetCompilerFlags(out var flags);
 				return hr < 0 ? 0 : flags;
@@ -87,23 +71,14 @@ namespace dndbg.Engine {
 				address = 0;
 		}
 
-		/// <summary>
-		/// Creates a function breakpoint
-		/// </summary>
-		/// <param name="offset">Offset relative to the start of the method</param>
-		/// <returns></returns>
-		public CorFunctionBreakpoint CreateBreakpoint(uint offset) {
+		public CorFunctionBreakpoint? CreateBreakpoint(uint offset) {
 			int hr = obj.CreateBreakpoint(offset, out var fnbp);
-			return hr < 0 || fnbp == null ? null : new CorFunctionBreakpoint(fnbp);
+			return hr < 0 || fnbp is null ? null : new CorFunctionBreakpoint(fnbp);
 		}
 
-		/// <summary>
-		/// Gets all code chunks
-		/// </summary>
-		/// <returns></returns>
 		public unsafe CodeChunkInfo[] GetCodeChunks() {
 			var c2 = obj as ICorDebugCode2;
-			if (c2 == null)
+			if (c2 is null)
 				return Array.Empty<CodeChunkInfo>();
 			int hr = c2.GetCodeChunks(0, out uint cnumChunks, IntPtr.Zero);
 			if (hr < 0)
@@ -118,25 +93,130 @@ namespace dndbg.Engine {
 			return infos;
 		}
 
-		public static bool operator ==(CorCode a, CorCode b) {
-			if (ReferenceEquals(a, b))
-				return true;
-			if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
-				return false;
-			return a.Equals(b);
+		public unsafe ILToNativeMap[] GetILToNativeMapping() {
+			int hr = obj.GetILToNativeMapping(0, out uint cMap, IntPtr.Zero);
+			if (hr < 0)
+				return Array.Empty<ILToNativeMap>();
+			var infos = new ILToNativeMap[cMap];
+			if (cMap != 0) {
+				fixed (void* p = &infos[0])
+					hr = obj.GetILToNativeMapping(cMap, out cMap, new IntPtr(p));
+				if (hr < 0)
+					return Array.Empty<ILToNativeMap>();
+			}
+			return infos;
 		}
 
-		public static bool operator !=(CorCode a, CorCode b) => !(a == b);
-		public bool Equals(CorCode other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
-		public override bool Equals(object obj) => Equals(obj as CorCode);
+		public unsafe VariableHome[] GetVariables() {
+			if (!(obj is ICorDebugCode4 c4))
+				return Array.Empty<VariableHome>();
+
+			var list = new List<VariableHome>();
+
+			int hr = c4.EnumerateVariableHomes(out var varEnum);
+			if (hr < 0)
+				return Array.Empty<VariableHome>();
+			var varHomeArray = new ICorDebugVariableHome[1];
+			const int E_FAIL = unchecked((int)0x80004005);
+			for (;;) {
+				hr = varEnum.Next((uint)varHomeArray.Length, varHomeArray, out uint count);
+				if (hr < 0 || count == 0)
+					break;
+
+				var varHome = varHomeArray[0];
+				bool error = false;
+				VariableHome varInfo = default;
+
+				hr = varHome.GetSlotIndex(out varInfo.SlotIndex);
+				if (hr == E_FAIL)
+					varInfo.SlotIndex = -1;
+				else if (hr < 0)
+					error = true;
+
+				hr = varHome.GetArgumentIndex(out varInfo.ArgumentIndex);
+				if (hr == E_FAIL)
+					varInfo.ArgumentIndex = -1;
+				else if (hr < 0)
+					error = true;
+
+				hr = varHome.GetLiveRange(out uint startOffset, out uint endOffset);
+				if (hr < 0 || startOffset > endOffset)
+					error = true;
+				varInfo.StartOffset = startOffset;
+				varInfo.Length = endOffset - startOffset;
+
+				hr = varHome.GetLocationType(out varInfo.LocationType);
+				if (hr < 0)
+					error = true;
+
+				switch (varInfo.LocationType) {
+				case VariableLocationType.VLT_REGISTER:
+					hr = varHome.GetRegister(out varInfo.Register);
+					if (hr < 0)
+						error = true;
+					varInfo.Offset = 0;
+					break;
+
+				case VariableLocationType.VLT_REGISTER_RELATIVE:
+					hr = varHome.GetRegister(out varInfo.Register);
+					if (hr < 0)
+						error = true;
+					hr = varHome.GetOffset(out varInfo.Offset);
+					if (hr < 0)
+						error = true;
+					break;
+
+				case VariableLocationType.VLT_INVALID:
+					break;
+
+				default:
+					Debug.Fail($"Unknown location type: {varInfo.LocationType}");
+					continue;
+				}
+				if (error)
+					return Array.Empty<VariableHome>();
+
+				list.Add(varInfo);
+			}
+
+			return list.Count == 0 ? Array.Empty<VariableHome>() : list.ToArray();
+		}
+
+		public unsafe uint[] GetReturnValueLiveOffset(uint ilOffset) {
+			var c3 = obj as ICorDebugCode3;
+			if (c3 is null)
+				return Array.Empty<uint>();
+			int hr = c3.GetReturnValueLiveOffset(ilOffset, 0, out uint totalSize, null);
+			// E_UNEXPECTED if it returns void
+			const int E_UNEXPECTED = unchecked((int)0x8000FFFF);
+			// E_FAIL if nothing is found
+			const int E_FAIL = unchecked((int)0x80004005);
+			Debug.Assert(hr == 0 || hr == CordbgErrors.CORDBG_E_INVALID_OPCODE || hr == CordbgErrors.CORDBG_E_UNSUPPORTED || hr == CordbgErrors.META_E_BAD_SIGNATURE || hr == E_UNEXPECTED || hr == E_FAIL);
+			if (hr < 0)
+				return Array.Empty<uint>();
+			if (totalSize == 0)
+				return Array.Empty<uint>();
+			var res = new uint[totalSize];
+			hr = c3.GetReturnValueLiveOffset(ilOffset, (uint)res.Length, out uint fetched, res);
+			if (hr < 0)
+				return Array.Empty<uint>();
+			if (fetched != (uint)res.Length)
+				Array.Resize(ref res, (int)fetched);
+			return res;
+		}
+
+		public bool Equals(CorCode? other) => !(other is null) && RawObject == other.RawObject;
+		public override bool Equals(object? obj) => Equals(obj as CorCode);
 		public override int GetHashCode() => RawObject.GetHashCode();
+	}
 
-		public T Write<T>(T output, TypeFormatterFlags flags, Func<DnEval> getEval = null) where T : ITypeOutput {
-			new TypeFormatter(output, flags, getEval).Write(this);
-			return output;
-		}
-
-		public string ToString(TypeFormatterFlags flags) => Write(new StringBuilderTypeOutput(), flags).ToString();
-		public override string ToString() => ToString(TypeFormatterFlags.Default);
+	struct VariableHome {
+		public int SlotIndex;
+		public int ArgumentIndex;
+		public ulong StartOffset;
+		public uint Length;
+		public VariableLocationType LocationType;
+		public CorDebugRegister Register;
+		public int Offset;
 	}
 }

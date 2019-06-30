@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,7 +27,7 @@ namespace dnSpy.Output {
 		[Export(typeof(TextAppearanceCategoryDefinition))]
 		sealed class OutputWindowTextAppearanceCategoryDefinition : TextAppearanceCategoryDefinition {
 			public override bool IsUserVisible => true;
-			public override string DisplayName => dnSpy_Resources.OutputWindowSettings;
+			public override string? DisplayName => dnSpy_Resources.OutputWindowSettings;
 			public override string Category => AppearanceCategoryConstants.OutputWindow;
 			public override ColorType ColorType => ColorType.OutputWindowText;
 		}

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Hex {
 	/// A position in a <see cref="HexBufferStream"/>
 	/// </summary>
 	[TypeConverter(typeof(HexPositionConverter))]
-	public struct HexPosition : IEquatable<HexPosition>, IComparable<HexPosition> {
+	public readonly struct HexPosition : IEquatable<HexPosition>, IComparable<HexPosition> {
 		/// <summary>
 		/// Gets the value 0
 		/// </summary>
@@ -101,7 +101,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <returns></returns>
 		public static HexPosition Min(HexPosition val1, HexPosition val2) => val1 <= val2 ? val1 : val2;
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static implicit operator HexPosition(ulong value) => new HexPosition(value);
 		public static implicit operator HexPosition(uint value) => new HexPosition((ulong)value);
 		public static implicit operator HexPosition(long value) => new HexPosition(value);
@@ -119,7 +119,7 @@ namespace dnSpy.Contracts.Hex {
 		public static HexPosition operator -(HexPosition a) => Subtract(Zero, a);
 		public static HexPosition operator ++(HexPosition a) => Add(a, One);
 		public static HexPosition operator --(HexPosition a) => Subtract(a, One);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		static HexPosition Add(HexPosition a, HexPosition b) {
 			ulong lo = a.lo + b.lo;
@@ -162,7 +162,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="obj">Object</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is HexPosition && Equals((HexPosition)obj);
+		public override bool Equals(object? obj) => obj is HexPosition && Equals((HexPosition)obj);
 
 		/// <summary>
 		/// Gets the hash code of this instance
@@ -186,7 +186,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="value">String</param>
 		/// <returns></returns>
 		public static HexPosition Parse(string value) {
-			if (value == null)
+			if (value is null)
 				throw new ArgumentNullException(nameof(value));
 			if (!TryParse(value, out var result))
 				throw new FormatException($"Invalid {nameof(HexPosition)} value: {value}");
@@ -201,7 +201,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <returns></returns>
 		public static bool TryParse(string value, out HexPosition result) {
 			result = default;
-			if (value == null)
+			if (value is null)
 				throw new ArgumentNullException(nameof(value));
 			const string digitSeparator = "_";
 			value = value.Trim();
@@ -220,7 +220,7 @@ namespace dnSpy.Contracts.Hex {
 					lo = TryParse(value, value.Length - 16, 16);
 					hi = TryParse(value, 2, value.Length - 16 - 2);
 				}
-				if (lo == null || hi == null)
+				if (lo is null || hi is null)
 					return false;
 				result = new HexPosition(hi.Value, lo.Value);
 				return true;

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -48,20 +48,20 @@ namespace dnSpy.Text.Editor {
 
 		public bool AddAdornment(SnapshotSpan visualSpan, object tag, UIElement adornment) =>
 			AddAdornment(AdornmentPositioningBehavior.TextRelative, visualSpan, tag, adornment, null);
-		public bool AddAdornment(AdornmentPositioningBehavior behavior, SnapshotSpan? visualSpan, object tag, UIElement adornment, AdornmentRemovedCallback removedCallback) {
-			if (adornment == null)
+		public bool AddAdornment(AdornmentPositioningBehavior behavior, SnapshotSpan? visualSpan, object tag, UIElement adornment, AdornmentRemovedCallback? removedCallback) {
+			if (adornment is null)
 				throw new ArgumentNullException(nameof(adornment));
-			if (visualSpan == null && behavior == AdornmentPositioningBehavior.TextRelative)
+			if (visualSpan is null && behavior == AdornmentPositioningBehavior.TextRelative)
 				throw new ArgumentNullException(nameof(visualSpan));
 			if ((uint)behavior > (uint)AdornmentPositioningBehavior.TextRelative)
 				throw new ArgumentOutOfRangeException(nameof(behavior));
 			if (layerKind != LayerKind.Normal) {
 				if (behavior != AdornmentPositioningBehavior.OwnerControlled)
 					throw new ArgumentOutOfRangeException(nameof(behavior), "Special layers must use AdornmentPositioningBehavior.OwnerControlled");
-				if (visualSpan != null)
+				if (!(visualSpan is null))
 					throw new ArgumentOutOfRangeException(nameof(visualSpan), "Special layers must use a null visual span");
 			}
-			bool canAdd = visualSpan == null || TextView.TextViewLines.IntersectsBufferSpan(visualSpan.Value);
+			bool canAdd = visualSpan is null || TextView.TextViewLines.IntersectsBufferSpan(visualSpan.Value);
 			if (canAdd) {
 				var layerElem = new AdornmentLayerElement(behavior, visualSpan, tag, adornment, removedCallback);
 				layerElem.OnLayoutChanged(TextView.TextSnapshot);
@@ -72,7 +72,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public void RemoveAdornment(UIElement adornment) {
-			if (adornment == null)
+			if (adornment is null)
 				throw new ArgumentNullException(nameof(adornment));
 			for (int i = 0; i < adornmentLayerElements.Count; i++) {
 				var elem = adornmentLayerElements[i];
@@ -93,8 +93,8 @@ namespace dnSpy.Text.Editor {
 			return false;
 		}
 
-		public void RemoveAdornmentsByTag(object tag) {
-			if (tag == null)
+		public void RemoveAdornmentsByTag(object? tag) {
+			if (tag is null)
 				throw new ArgumentNullException(nameof(tag));
 			for (int i = adornmentLayerElements.Count - 1; i >= 0; i--) {
 				var elem = adornmentLayerElements[i];
@@ -107,11 +107,11 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public void RemoveAdornmentsByVisualSpan(SnapshotSpan visualSpan) {
-			if (visualSpan.Snapshot == null)
+			if (visualSpan.Snapshot is null)
 				throw new ArgumentException();
 			for (int i = adornmentLayerElements.Count - 1; i >= 0; i--) {
 				var elem = adornmentLayerElements[i];
-				if (elem.VisualSpan != null && visualSpan.OverlapsWith(GetOverlapsWithSpan(elem.VisualSpan.Value))) {
+				if (!(elem.VisualSpan is null) && visualSpan.OverlapsWith(GetOverlapsWithSpan(elem.VisualSpan.Value))) {
 					adornmentLayerElements.RemoveAt(i);
 					Children.RemoveAt(i);
 					elem.RemovedCallback?.Invoke(elem.Tag, elem.Adornment);
@@ -129,7 +129,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public void RemoveMatchingAdornments(Predicate<IAdornmentLayerElement> match) {
-			if (match == null)
+			if (match is null)
 				throw new ArgumentNullException(nameof(match));
 			for (int i = adornmentLayerElements.Count - 1; i >= 0; i--) {
 				var elem = adornmentLayerElements[i];
@@ -142,13 +142,13 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public void RemoveMatchingAdornments(SnapshotSpan visualSpan, Predicate<IAdornmentLayerElement> match) {
-			if (visualSpan.Snapshot == null)
+			if (visualSpan.Snapshot is null)
 				throw new ArgumentException();
-			if (match == null)
+			if (match is null)
 				throw new ArgumentNullException(nameof(match));
 			for (int i = adornmentLayerElements.Count - 1; i >= 0; i--) {
 				var elem = adornmentLayerElements[i];
-				if (elem.VisualSpan != null && visualSpan.OverlapsWith(GetOverlapsWithSpan(elem.VisualSpan.Value)) && match(elem)) {
+				if (!(elem.VisualSpan is null) && visualSpan.OverlapsWith(GetOverlapsWithSpan(elem.VisualSpan.Value)) && match(elem)) {
 					adornmentLayerElements.RemoveAt(i);
 					Children.RemoveAt(i);
 					elem.RemovedCallback?.Invoke(elem.Tag, elem.Adornment);
@@ -170,8 +170,8 @@ namespace dnSpy.Text.Editor {
 				elem.OnLayoutChanged(e.NewSnapshot);
 
 				// All adornments that exist in spans that have been removed or in reformatted lines are always removed.
-				if (elem.VisualSpan != null &&
-					(!TextView.TextViewLines.IntersectsBufferSpan(elem.VisualSpan.Value) || GetLine(e.NewOrReformattedLines, GetOverlapsWithSpan(elem.VisualSpan.Value)) != null)) {
+				if (!(elem.VisualSpan is null) &&
+					(!TextView.TextViewLines.IntersectsBufferSpan(elem.VisualSpan.Value) || !(GetLine(e.NewOrReformattedLines, GetOverlapsWithSpan(elem.VisualSpan.Value)) is null))) {
 					adornmentLayerElements.RemoveAt(i);
 					Children.RemoveAt(i);
 					elem.RemovedCallback?.Invoke(elem.Tag, elem.Adornment);
@@ -188,9 +188,9 @@ namespace dnSpy.Text.Editor {
 					break;
 
 				case AdornmentPositioningBehavior.TextRelative:
-					Debug.Assert(elem.VisualSpan != null);
+					Debug.Assert(!(elem.VisualSpan is null));
 					var translatedLine = GetLine(e.TranslatedLines, GetOverlapsWithSpan(elem.VisualSpan.Value));
-					if (translatedLine != null) {
+					if (!(translatedLine is null)) {
 						// Only y is updated, x is owner controlled
 						SetTop(elem.Adornment, ToDefault(GetTop(elem.Adornment), 0) + translatedLine.DeltaY);
 					}
@@ -205,7 +205,7 @@ namespace dnSpy.Text.Editor {
 		// Canvas.Top/Left default to NaN, not 0
 		static double ToDefault(double value, double defaultValue) => double.IsNaN(value) ? defaultValue : value;
 
-		static ITextViewLine GetLine(IList<ITextViewLine> lines, SnapshotSpan span) {
+		static ITextViewLine? GetLine(IList<ITextViewLine> lines, SnapshotSpan span) {
 			foreach (var line in lines) {
 				if (line.ExtentIncludingLineBreak.OverlapsWith(span))
 					return line;

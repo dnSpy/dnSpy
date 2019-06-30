@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,7 +35,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// </summary>
 		/// <param name="wpfHexView">Hex view</param>
 		/// <returns></returns>
-		public abstract HexCursorProvider Create(WpfHexView wpfHexView);
+		public abstract HexCursorProvider? Create(WpfHexView wpfHexView);
 	}
 
 	/// <summary>
@@ -66,7 +66,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 	/// <summary>
 	/// Cursor info
 	/// </summary>
-	public struct HexCursorInfo : IEquatable<HexCursorInfo> {
+	public readonly struct HexCursorInfo : IEquatable<HexCursorInfo> {
 		/// <summary>
 		/// Gets the cursor or null
 		/// </summary>
@@ -87,10 +87,10 @@ namespace dnSpy.Contracts.Hex.Editor {
 			Priority = priority;
 		}
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(HexCursorInfo left, HexCursorInfo right) => left.Equals(right);
 		public static bool operator !=(HexCursorInfo left, HexCursorInfo right) => !left.Equals(right);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Equals()
@@ -104,7 +104,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is HexCursorInfo && Equals((HexCursorInfo)obj);
+		public override bool Equals(object? obj) => obj is HexCursorInfo && Equals((HexCursorInfo)obj);
 
 		/// <summary>
 		/// GetHashCode()

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
+// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -48,7 +49,7 @@ namespace dnSpy.Text.AvalonEdit {
 		/// </summary>
 		/// <exception cref="ArgumentNullException">input is null.</exception>
 		public Rope(IEnumerable<T> input) {
-			if (input == null)
+			if (input is null)
 				throw new ArgumentNullException("input");
 			if (input is Rope<T> inputRope) {
 				// clone ropes instead of copying them
@@ -57,7 +58,7 @@ namespace dnSpy.Text.AvalonEdit {
 			}
 			else {
 				string text = input as string;
-				if (text != null) {
+				if (!(text is null)) {
 					// if a string is IEnumerable<T>, then T must be char
 					((Rope<char>)(object)this).root = CharRope.InitFromString(text);
 				}
@@ -108,9 +109,7 @@ namespace dnSpy.Text.AvalonEdit {
 		/// <remarks>
 		/// This method counts as a read access and may be called concurrently to other read accesses.
 		/// </remarks>
-		public int Length {
-			get { return root.length; }
-		}
+		public int Length => root.length;
 
 		/// <summary>
 		/// Gets the length of the rope.
@@ -119,9 +118,7 @@ namespace dnSpy.Text.AvalonEdit {
 		/// <remarks>
 		/// This method counts as a read access and may be called concurrently to other read accesses.
 		/// </remarks>
-		public int Count {
-			get { return root.length; }
-		}
+		public int Count => root.length;
 
 		/// <summary>
 		/// Inserts another rope into this rope.
@@ -133,7 +130,7 @@ namespace dnSpy.Text.AvalonEdit {
 			if (index < 0 || index > Length) {
 				throw new ArgumentOutOfRangeException("index", index, "0 <= index <= " + Length.ToString(CultureInfo.InvariantCulture));
 			}
-			if (newElements == null)
+			if (newElements is null)
 				throw new ArgumentNullException("newElements");
 			newElements.root.Publish();
 			root = root.Insert(index, newElements.root);
@@ -245,7 +242,7 @@ namespace dnSpy.Text.AvalonEdit {
 			ImmutableStack<RopeCacheEntry> stack = lastUsedNodeStack;
 			ImmutableStack<RopeCacheEntry> oldStack = stack;
 
-			if (stack == null) {
+			if (stack is null) {
 				stack = ImmutableStack<RopeCacheEntry>.Empty.Push(new RopeCacheEntry(root, 0));
 			}
 			while (!stack.PeekOrDefault().IsInside(index))
@@ -254,12 +251,12 @@ namespace dnSpy.Text.AvalonEdit {
 				RopeCacheEntry entry = stack.PeekOrDefault();
 				// check if we've reached a leaf or function node
 				if (entry.node.height == 0) {
-					if (entry.node.contents == null) {
+					if (entry.node.contents is null) {
 						// this is a function node - go down into its subtree
 						entry = new RopeCacheEntry(entry.node.GetContentNode(), entry.nodeStartIndex);
 						// entry is now guaranteed NOT to be another function node
 					}
-					if (entry.node.contents != null) {
+					if (!(entry.node.contents is null)) {
 						// this is a node containing actual content, so we're done
 						break;
 					}
@@ -279,7 +276,7 @@ namespace dnSpy.Text.AvalonEdit {
 			}
 
 			// this method guarantees that it finds a leaf node
-			Debug.Assert(stack.Peek().node.contents != null);
+			Debug.Assert(!(stack.Peek().node.contents is null));
 			return stack;
 		}
 		#endregion
@@ -295,7 +292,7 @@ namespace dnSpy.Text.AvalonEdit {
 		}
 
 		internal static void VerifyArrayWithRange(T[] array, int arrayIndex, int count) {
-			if (array == null)
+			if (array is null)
 				throw new ArgumentNullException("array");
 			if (arrayIndex < 0 || arrayIndex > array.Length) {
 				throw new ArgumentOutOfRangeException("startIndex", arrayIndex, "0 <= arrayIndex <= " + array.Length.ToString(CultureInfo.InvariantCulture));
@@ -316,7 +313,7 @@ namespace dnSpy.Text.AvalonEdit {
 		/// </remarks>
 		public override string ToString() {
 			Rope<char> charRope = this as Rope<char>;
-			if (charRope != null) {
+			if (!(charRope is null)) {
 				return charRope.ToString(0, Length);
 			}
 			else {
@@ -334,9 +331,7 @@ namespace dnSpy.Text.AvalonEdit {
 		}
 		#endregion
 
-		bool ICollection<T>.IsReadOnly {
-			get { return false; }
-		}
+		bool ICollection<T>.IsReadOnly => false;
 
 		/// <summary>
 		/// Finds the first occurance of item.
@@ -504,15 +499,15 @@ namespace dnSpy.Text.AvalonEdit {
 
 		static IEnumerator<T> Enumerate(RopeNode<T> node) {
 			Stack<RopeNode<T>> stack = new Stack<RopeNode<T>>();
-			while (node != null) {
+			while (!(node is null)) {
 				// go to leftmost node, pushing the right parts that we'll have to visit later
-				while (node.contents == null) {
+				while (node.contents is null) {
 					if (node.height == 0) {
 						// go down into function nodes
 						node = node.GetContentNode();
 						continue;
 					}
-					Debug.Assert(node.right != null);
+					Debug.Assert(!(node.right is null));
 					stack.Push(node.right);
 					node = node.left;
 				}

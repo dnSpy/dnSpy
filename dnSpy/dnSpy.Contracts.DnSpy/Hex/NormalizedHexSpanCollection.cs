@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,7 +26,7 @@ namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// Normalized <see cref="HexSpan"/> collection
 	/// </summary>
-	public sealed class NormalizedHexSpanCollection : ReadOnlyCollection<HexSpan>, IEquatable<NormalizedHexSpanCollection> {
+	public sealed class NormalizedHexSpanCollection : ReadOnlyCollection<HexSpan>, IEquatable<NormalizedHexSpanCollection?> {
 		/// <summary>
 		/// An empty collection
 		/// </summary>
@@ -56,7 +56,7 @@ namespace dnSpy.Contracts.Hex {
 		}
 
 		static HexSpan[] Normalize(IEnumerable<HexSpan> spans) {
-			if (spans == null)
+			if (spans is null)
 				throw new ArgumentNullException(nameof(spans));
 			var list = new List<HexSpan>(spans);
 			if (list.Count <= 1)
@@ -118,10 +118,10 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="left"></param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static bool operator ==(NormalizedHexSpanCollection left, NormalizedHexSpanCollection right) {
-			if ((object)left == right)
+		public static bool operator ==(NormalizedHexSpanCollection? left, NormalizedHexSpanCollection? right) {
+			if ((object?)left == right)
 				return true;
-			if ((object)left == null || (object)right == null)
+			if (left is null || right is null)
 				return false;
 			return left.Equals(right);
 		}
@@ -132,15 +132,15 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="left"></param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static bool operator !=(NormalizedHexSpanCollection left, NormalizedHexSpanCollection right) => !(left == right);
+		public static bool operator !=(NormalizedHexSpanCollection? left, NormalizedHexSpanCollection? right) => !(left == right);
 
 		/// <summary>
 		/// Equals()
 		/// </summary>
 		/// <param name="other">Other instance</param>
 		/// <returns></returns>
-		public bool Equals(NormalizedHexSpanCollection other) {
-			if ((object)other == null)
+		public bool Equals(NormalizedHexSpanCollection? other) {
+			if (other is null)
 				return false;
 			if (Count != other.Count)
 				return false;
@@ -156,7 +156,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="obj">Object</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => Equals(obj as NormalizedHexSpanCollection);
+		public override bool Equals(object? obj) => Equals(obj as NormalizedHexSpanCollection);
 
 		/// <summary>
 		/// GetHashCode()

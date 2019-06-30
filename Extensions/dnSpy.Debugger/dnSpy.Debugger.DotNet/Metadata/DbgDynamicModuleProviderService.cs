@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,7 +26,7 @@ using dnSpy.Contracts.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	abstract class DbgDynamicModuleProviderService {
-		public abstract DbgDynamicModuleProvider Create(DbgRuntime runtime);
+		public abstract DbgDynamicModuleProvider? Create(DbgRuntime runtime);
 	}
 
 	[Export(typeof(DbgDynamicModuleProviderService))]
@@ -37,12 +37,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		DbgDynamicModuleProviderServiceImpl([ImportMany] IEnumerable<Lazy<DbgDynamicModuleProviderFactory>> dbgDynamicModuleProviderFactories) =>
 			this.dbgDynamicModuleProviderFactories = dbgDynamicModuleProviderFactories.ToArray();
 
-		public override DbgDynamicModuleProvider Create(DbgRuntime runtime) {
-			if (runtime == null)
+		public override DbgDynamicModuleProvider? Create(DbgRuntime runtime) {
+			if (runtime is null)
 				throw new ArgumentNullException(nameof(runtime));
 			foreach (var lz in dbgDynamicModuleProviderFactories) {
 				var provider = lz.Value.Create(runtime);
-				if (provider != null)
+				if (!(provider is null))
 					return provider;
 			}
 			return null;

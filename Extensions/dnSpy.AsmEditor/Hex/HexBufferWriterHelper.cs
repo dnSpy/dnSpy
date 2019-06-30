@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,15 +26,15 @@ namespace dnSpy.AsmEditor.Hex {
 			if (string.IsNullOrEmpty(filename))
 				throw new ArgumentException();
 			var buffer = hexBufferService.GetOrCreate(filename);
-			if (buffer == null)
+			if (buffer is null)
 				return;
 			Write(buffer, position, data);
 		}
 
 		public static void Write(HexBuffer buffer, HexPosition position, byte[] data) {
-			if (buffer == null)
+			if (buffer is null)
 				throw new ArgumentNullException(nameof(buffer));
-			if (data == null || data.Length == 0)
+			if (data is null || data.Length == 0)
 				return;
 			buffer.Replace(position, data);
 		}

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,14 +23,14 @@ using dnSpy.Contracts.Settings;
 namespace dnSpy.Settings {
 	sealed class SettingsService2 : SettingsService, ISettingsService2 {
 		public void Open(string filename) {
-			if (filename == null)
+			if (filename is null)
 				throw new ArgumentNullException(nameof(filename));
 			Reset();
 			new XmlSettingsReader(this, filename).Read();
 		}
 
 		public void Save(string filename) {
-			if (filename == null)
+			if (filename is null)
 				throw new ArgumentNullException(nameof(filename));
 			new XmlSettingsWriter(this, filename).Write();
 		}

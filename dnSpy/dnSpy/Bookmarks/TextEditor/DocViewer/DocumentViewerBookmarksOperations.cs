@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -45,7 +45,7 @@ namespace dnSpy.Bookmarks.TextEditor.DocViewer {
 		}
 
 		public override DocumentViewerBookmarksOperations Create(ITextView textView) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			return textView.Properties.GetOrCreateSingletonProperty(() => new DocumentViewerBookmarksOperationsImpl(textView, toolWindowService, textViewBookmarkService, bookmarksService, bookmarkNavigator));
 		}

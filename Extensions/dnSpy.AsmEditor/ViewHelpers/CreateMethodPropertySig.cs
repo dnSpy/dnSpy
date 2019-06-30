@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,15 +23,15 @@ using dnSpy.AsmEditor.DnlibDialogs;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
 	sealed class CreateMethodPropertySig : ICreateMethodPropertySig {
-		readonly Window ownerWindow;
+		readonly Window? ownerWindow;
 
 		public CreateMethodPropertySig()
 			: this(null) {
 		}
 
-		public CreateMethodPropertySig(Window ownerWindow) => this.ownerWindow = ownerWindow;
+		public CreateMethodPropertySig(Window? ownerWindow) => this.ownerWindow = ownerWindow;
 
-		public MethodBaseSig Create(MethodSigCreatorOptions options, MethodBaseSig origSig) {
+		public MethodBaseSig? Create(MethodSigCreatorOptions options, MethodBaseSig? origSig) {
 			var data = new MethodSigCreatorVM(options);
 			if (origSig is MethodSig)
 				data.MethodSig = (MethodSig)origSig;

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -40,15 +40,15 @@ namespace dnSpy.Debugger.Code.TextEditor {
 			this.dbgTextViewCodeLocationProviders = dbgTextViewCodeLocationProviders.ToArray();
 
 		public override IEnumerable<DbgTextViewBreakpointLocationResult> CreateLocation(IDocumentTab tab, ITextView textView, VirtualSnapshotPoint position) {
-			if (tab == null)
+			if (tab is null)
 				throw new ArgumentNullException(nameof(tab));
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
-			if (position.Position.Snapshot == null)
+			if (position.Position.Snapshot is null)
 				throw new ArgumentException();
 			foreach (var lz in dbgTextViewCodeLocationProviders) {
 				var res = lz.Value.CreateLocation(tab, textView, position);
-				if (res != null)
+				if (!(res is null))
 					yield return res.Value;
 			}
 		}

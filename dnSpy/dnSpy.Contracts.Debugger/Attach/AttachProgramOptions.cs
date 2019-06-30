@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Debugger.Attach {
 		/// <summary>
 		/// Process id
 		/// </summary>
-		public abstract ulong ProcessId { get; }
+		public abstract int ProcessId { get; }
 
 		/// <summary>
 		/// Runtime id
@@ -52,27 +52,32 @@ namespace dnSpy.Contracts.Debugger.Attach {
 		/// <summary>
 		/// Short process name (filename) or null to use the default value
 		/// </summary>
-		public virtual string Name => null;
+		public virtual string? Name => null;
 
 		/// <summary>
 		/// Process title or null to use the default value
 		/// </summary>
-		public virtual string Title => null;
+		public virtual string? Title => null;
 
 		/// <summary>
 		/// Full filename or null to use the default value
 		/// </summary>
-		public virtual string Filename => null;
+		public virtual string? Filename => null;
 
 		/// <summary>
 		/// Command line or null to use the default value
 		/// </summary>
-		public virtual string CommandLine => null;
+		public virtual string? CommandLine => null;
 
 		/// <summary>
-		/// Processor architecture (eg. <see cref="PredefinedArchitectureNames.X86"/>) or null to use the default value
+		/// Processor architecture or null to use the default value
 		/// </summary>
-		public virtual string Architecture => null;
+		public virtual DbgArchitecture? Architecture => null;
+
+		/// <summary>
+		/// Operating system or null to use the default value
+		/// </summary>
+		public virtual DbgOperatingSystem? OperatingSystem => null;
 
 		/// <summary>
 		/// Gets all options required to attach to the process

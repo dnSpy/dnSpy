@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,11 +20,11 @@
 using dndbg.Engine;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
-	struct CreateCorValueResult {
-		public readonly CorValue Value;
+	readonly struct CreateCorValueResult {
+		public readonly CorValue? Value;
 		public readonly int HResult;
 		public readonly bool CanDispose;
-		public CreateCorValueResult(CorValue value, int hr, bool canDispose = true) {
+		public CreateCorValueResult(CorValue? value, int hr, bool canDispose = true) {
 			Value = value;
 			HResult = hr;
 			CanDispose = canDispose;

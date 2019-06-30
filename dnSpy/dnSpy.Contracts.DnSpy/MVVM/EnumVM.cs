@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.MVVM {
 	/// <summary>
 	/// Enum value
 	/// </summary>
-	public sealed class EnumVM {
+	public sealed class EnumVM : ViewModelBase {
 		readonly object value;
 		readonly string name;
 
@@ -101,14 +101,14 @@ namespace dnSpy.Contracts.MVVM {
 		/// <summary>
 		/// Gets the selected item
 		/// </summary>
-		public new object SelectedItem {
+		public new object? SelectedItem {
 			get {
 				if (Index < 0 || Index >= list.Count)
 					return null;
 				return list[Index].Value;
 			}
 			set {
-				if (!object.Equals(SelectedItem, value))
+				if (!(value is null) && !object.Equals(SelectedItem, value))
 					SelectedIndex = GetIndex(value);
 			}
 		}
@@ -126,7 +126,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// </summary>
 		/// <param name="list">Initial value</param>
 		/// <param name="onChanged">Called when the selected item gets changed</param>
-		public EnumListVM(IEnumerable<EnumVM> list, Action<int, int> onChanged)
+		public EnumListVM(IEnumerable<EnumVM> list, Action<int, int>? onChanged)
 			: base(list, onChanged) {
 		}
 

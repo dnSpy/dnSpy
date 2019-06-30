@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -46,7 +46,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 			: base(treeNodeGroup, resourceElement) {
 		}
 
-		public override string ToString(CancellationToken token, bool canDecompile) {
+		public override string? ToString(CancellationToken token, bool canDecompile) {
 			if (ResourceElement.ResourceData.Code == ResourceTypeCode.ByteArray || ResourceElement.ResourceData.Code == ResourceTypeCode.Stream) {
 				var data = (byte[])((BuiltInResourceData)ResourceElement.ResourceData).Data;
 				return ResourceUtilities.TryGetString(new MemoryStream(data));

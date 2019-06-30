@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -47,7 +47,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		public bool Decompile(IDecompileNodeContext context) {
 			context.ContentTypeString = context.Decompiler.ContentTypeString;
-			context.Decompiler.WriteCommentLine(context.Output, string.Format("{0:X8} - {1:X8} {2}", Span.Start.ToUInt64(), Span.End.ToUInt64() - 1, ToString()));
+			context.Decompiler.WriteCommentLine(context.Output, $"{Span.Start.ToUInt64():X8} - {Span.End.ToUInt64() - 1:X8} {ToString()}");
 			DecompileFields(context.Decompiler, context.Output);
 			(context.Output as IDocumentViewerOutput)?.DisableCaching();
 			return true;
@@ -56,13 +56,20 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		protected virtual void DecompileFields(IDecompiler decompiler, IDecompilerOutput output) {
 			foreach (var vm in HexVMs) {
 				decompiler.WriteCommentLine(output, string.Empty);
-				decompiler.WriteCommentLine(output, string.Format("{0}:", vm.Name));
+				decompiler.WriteCommentLine(output, $"{vm.Name}:");
 				foreach (var field in vm.HexFields)
-					decompiler.WriteCommentLine(output, string.Format("{0:X8} - {1:X8} {2} = {3}", field.Span.Start.ToUInt64(), field.Span.End.ToUInt64() - 1, field.FormattedValue, field.Name));
+					decompiler.WriteCommentLine(output, $"{field.Span.Start.ToUInt64():X8} - {field.Span.End.ToUInt64() - 1:X8} {field.FormattedValue} = {field.Name}");
 			}
 		}
 
-		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) => WriteCore(output, options);
+		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) {
+			WriteCore(output, options);
+			if ((options & DocumentNodeWriteOptions.ToolTip) != 0) {
+				output.WriteLine();
+				WriteFilename(output);
+			}
+		}
+
 		protected abstract void WriteCore(ITextColorWriter output, DocumentNodeWriteOptions options);
 
 		public virtual void OnBufferChanged(NormalizedHexChangeCollection changes) {
@@ -73,8 +80,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 				vm.OnBufferChanged(changes);
 		}
 
-		public HexNode FindNode(HexVM structure, HexField field) {
-			Debug.Assert(!(structure is MetaDataTableRecordVM), "Use " + nameof(PENode) + "'s method instead");
+		public HexNode? FindNode(HexVM structure, HexField field) {
+			Debug.Assert(!(structure is MetadataTableRecordVM), "Use " + nameof(PENode) + "'s method instead");
 			bool found = false;
 			foreach (var span in Spans) {
 				if (span.Contains(field.Span)) {
@@ -95,7 +102,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			TreeNode.EnsureChildrenLoaded();
 			foreach (var child in TreeNode.DataChildren.OfType<HexNode>()) {
 				var node = child.FindNode(structure, field);
-				if (node != null)
+				if (!(node is null))
 					return node;
 			}
 

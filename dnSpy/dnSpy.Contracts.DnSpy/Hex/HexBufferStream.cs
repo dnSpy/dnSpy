@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -247,7 +247,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="position">Position</param>
 		/// <param name="source">Data</param>
 		public void Write(HexPosition position, byte[] source) {
-			if (source == null)
+			if (source is null)
 				throw new ArgumentNullException(nameof(source));
 			Write(position, source, 0, source.LongLength);
 		}

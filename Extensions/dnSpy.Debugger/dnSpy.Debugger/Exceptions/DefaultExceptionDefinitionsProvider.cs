@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,6 +25,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger.Exceptions;
 
 namespace dnSpy.Debugger.Exceptions {
@@ -50,7 +51,7 @@ namespace dnSpy.Debugger.Exceptions {
 					xmlFiles.Add(filename);
 				}
 			}
-			var debugDir = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "debug");
+			var debugDir = Path.Combine(AppDirectories.BinDirectory, "debug");
 			xmlFiles.AddRange(Directory.GetFiles(debugDir, "*.ex.xml").OrderBy(a => a, StringComparer.OrdinalIgnoreCase));
 			var reader = new ExceptionsFileReader();
 			foreach (var file in xmlFiles.Distinct(StringComparer.OrdinalIgnoreCase))

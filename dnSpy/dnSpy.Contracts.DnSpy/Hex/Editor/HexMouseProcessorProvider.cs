@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,6 +32,6 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// </summary>
 		/// <param name="wpfHexView"></param>
 		/// <returns></returns>
-		public abstract HexMouseProcessor GetAssociatedProcessor(WpfHexView wpfHexView);
+		public abstract HexMouseProcessor? GetAssociatedProcessor(WpfHexView wpfHexView);
 	}
 }

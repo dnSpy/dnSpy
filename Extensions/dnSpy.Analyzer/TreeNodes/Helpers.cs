@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
+// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
@@ -19,36 +19,11 @@
 using System.Linq;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	static class Helpers {
-		public static bool IsReferencedBy(TypeDef type, ITypeDefOrRef typeRef) => IsReferencedBy(type, typeRef, 0);
-
-		static bool IsReferencedBy(TypeDef type, ITypeDefOrRef typeRef, int depth) {
-			if (depth >= 30)
-				return false;
-			// TODO: move it to a better place after adding support for more cases.
-			if (type == null)
-				return false;
-			if (typeRef == null)
-				return false;
-
-			if (type == typeRef)
-				return true;
-			if (type.Name != typeRef.Name)
-				return false;
-			if (type.Namespace != typeRef.Namespace)
-				return false;
-
-			if (type.DeclaringType != null || typeRef.DeclaringType != null) {
-				if (type.DeclaringType == null || typeRef.DeclaringType == null)
-					return false;
-				if (!IsReferencedBy(type.DeclaringType, typeRef.DeclaringType, depth + 1))
-					return false;
-			}
-
-			return true;
-		}
+		public static bool IsReferencedBy(TypeDef? type, ITypeDefOrRef? typeRef) => new SigComparer().Equals(type, typeRef.GetScopeType());
 
 		public static IMemberRef GetOriginalCodeLocation(IMemberRef member) {
 			if (member is MethodDef)
@@ -70,8 +45,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 		/// Given a compiler-generated type, returns the method where that type is used.
 		/// Used to detect the 'parent method' for a lambda/iterator/async state machine.
 		/// </summary>
-		static MethodDef GetOriginalCodeLocation(TypeDef type) {
-			if (type != null && type.DeclaringType != null && IsCompilerGenerated(type)) {
+		static MethodDef? GetOriginalCodeLocation(TypeDef type) {
+			if (!(type is null) && !(type.DeclaringType is null) && IsCompilerGenerated(type)) {
 				if (type.IsValueType) {
 					// Value types might not have any constructor; but they must be stored in a local var
 					// because 'initobj' (or 'call .ctor') expects a managed ref.
@@ -79,7 +54,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				}
 				else {
 					MethodDef constructor = GetTypeConstructor(type);
-					if (constructor == null)
+					if (constructor is null)
 						return null;
 					return FindMethodUsageInType(type.DeclaringType, constructor);
 				}
@@ -89,7 +64,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		static MethodDef GetTypeConstructor(TypeDef type) => type.FindConstructors().FirstOrDefault();
 
-		static MethodDef FindMethodUsageInType(TypeDef type, MethodDef analyzedMethod) {
+		static MethodDef? FindMethodUsageInType(TypeDef type, MethodDef analyzedMethod) {
 			string name = analyzedMethod.Name;
 			foreach (MethodDef method in type.Methods) {
 				bool found = false;
@@ -98,7 +73,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				foreach (Instruction instr in method.Body.Instructions) {
 					if (instr.Operand is IMethod mr && !mr.IsField && mr.Name == name &&
 						IsReferencedBy(analyzedMethod.DeclaringType, mr.DeclaringType) &&
-						mr.ResolveMethodDef() == analyzedMethod) {
+						CheckEquals(mr.ResolveMethodDef(), analyzedMethod)) {
 						found = true;
 						break;
 					}
@@ -110,7 +85,10 @@ namespace dnSpy.Analyzer.TreeNodes {
 			return null;
 		}
 
-		static MethodDef FindVariableOfTypeUsageInType(TypeDef type, TypeDef variableType) {
+		internal static bool CheckEquals(IMemberRef? mr1, IMemberRef? mr2) =>
+			new SigComparer(SigComparerOptions.CompareDeclaringTypes | SigComparerOptions.PrivateScopeIsComparable).Equals(mr1, mr2);
+
+		static MethodDef? FindVariableOfTypeUsageInType(TypeDef type, TypeDef variableType) {
 			foreach (MethodDef method in type.Methods) {
 				bool found = false;
 				if (!method.HasBody)
@@ -128,13 +106,13 @@ namespace dnSpy.Analyzer.TreeNodes {
 			return null;
 		}
 
-		static TypeDef ResolveWithinSameModule(ITypeDefOrRef type) {
-			if (type != null && type.Scope == type.Module)
+		static TypeDef? ResolveWithinSameModule(ITypeDefOrRef type) {
+			if (!(type is null) && type.Scope == type.Module)
 				return type.ResolveTypeDef();
 			return null;
 		}
 
 		static bool IsCompilerGenerated(this IHasCustomAttribute hca) =>
-			hca != null && hca.CustomAttributes.IsDefined("System.Runtime.CompilerServices.CompilerGeneratedAttribute");
+			!(hca is null) && hca.CustomAttributes.IsDefined("System.Runtime.CompilerServices.CompilerGeneratedAttribute");
 	}
 }

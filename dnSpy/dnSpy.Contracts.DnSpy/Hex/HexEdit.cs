@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -136,7 +136,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="data">New data</param>
 		/// <returns></returns>
 		public bool Replace(HexPosition position, byte[] data) {
-			if (data == null)
+			if (data is null)
 				throw new ArgumentNullException(nameof(data));
 			return Replace(position, data, 0, data.LongLength);
 		}

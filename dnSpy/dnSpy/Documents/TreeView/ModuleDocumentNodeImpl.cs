@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
@@ -38,15 +39,17 @@ namespace dnSpy.Documents.TreeView {
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.MODULE_NODE_GUID);
 
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) =>
-			dnImgMgr.GetImageReference(Document.ModuleDef);
+			dnImgMgr.GetImageReference(Document.ModuleDef!);
 		public override void Initialize() => TreeNode.LazyLoading = true;
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
+			Debug.Assert(!(Document.ModuleDef is null));
 			foreach (var document in Document.Children)
 				yield return Context.DocumentTreeView.CreateNode(this, document);
 
 			yield return new ResourcesFolderNodeImpl(Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.ResourcesFolderTreeNodeGroupModule), Document.ModuleDef);
 			yield return new ReferencesFolderNodeImpl(Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.ReferencesFolderTreeNodeGroupModule), this);
+			yield return new TypeReferencesFolderNodeImpl(Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.ReferencesFolderTreeNodeGroupModule), this);
 
 			var nsDict = new Dictionary<string, List<TypeDef>>(StringComparer.Ordinal);
 			foreach (var td in Document.ModuleDef.Types) {
@@ -60,8 +63,9 @@ namespace dnSpy.Documents.TreeView {
 		}
 
 		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) {
+			Debug.Assert(!(Document.ModuleDef is null));
 			if ((options & DocumentNodeWriteOptions.ToolTip) == 0)
-				new NodePrinter().Write(output, decompiler, Document.ModuleDef, false);
+				new NodeFormatter().Write(output, decompiler, Document.ModuleDef, false);
 			else {
 				output.WriteModule(Document.ModuleDef.Name);
 
@@ -76,8 +80,8 @@ namespace dnSpy.Documents.TreeView {
 			}
 		}
 
-		public override NamespaceNode FindNode(string ns) {
-			if (ns == null)
+		public override NamespaceNode? FindNode(string? ns) {
+			if (ns is null)
 				return null;
 
 			TreeNode.EnsureChildrenLoaded();
@@ -90,6 +94,6 @@ namespace dnSpy.Documents.TreeView {
 		}
 
 		public override FilterType GetFilterType(IDocumentTreeNodeFilter filter) =>
-			filter.GetResult(Document.ModuleDef).FilterType;
+			filter.GetResult(Document.ModuleDef!).FilterType;
 	}
 }

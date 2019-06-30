@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -58,9 +58,12 @@ namespace dnSpy.Debugger.DotNet.Modules {
 		}
 
 		bool GoToCore(DbgLoadModuleReference moduleRef, ReadOnlyCollection<object> options) {
+			var loadOptions = DbgLoadModuleOptions.AutoLoaded;
+			if (moduleRef.UseMemory)
+				loadOptions |= DbgLoadModuleOptions.ForceMemory;
 			bool canShowMessageBox = true;
-			var md = LoadModule(moduleRef.Module, moduleRef.UseMemory, ref canShowMessageBox);
-			if (md == null)
+			var md = LoadModule(moduleRef.Module, loadOptions, ref canShowMessageBox);
+			if (md is null)
 				return false;
 
 			// The file could've been added lazily to the list so add a short delay before we select it
@@ -69,7 +72,7 @@ namespace dnSpy.Debugger.DotNet.Modules {
 			return true;
 		}
 
-		ModuleDef LoadModule(DbgModule module, bool useMemory, ref bool canShowMessageBox) {
+		ModuleDef? LoadModule(DbgModule module, DbgLoadModuleOptions options, ref bool canShowMessageBox) {
 			if (!module.IsDotNetModule())
 				return null;
 
@@ -81,19 +84,25 @@ namespace dnSpy.Debugger.DotNet.Modules {
 				return null;
 			}
 
-			var loadOptions = DbgLoadModuleOptions.AutoLoaded;
-			if (useMemory)
-				loadOptions |= DbgLoadModuleOptions.ForceMemory;
-			return dbgMetadataService.Value.TryGetMetadata(module, loadOptions);
+			return dbgMetadataService.Value.TryGetMetadata(module, options);
 		}
 
-		public override DbgModule[] Load(DbgModule[] modules, bool useMemory) {
+		static DbgLoadModuleOptions ToDbgLoadModuleOptions(DbgLoadModuleReferenceHandlerOptions options) {
+			var res = DbgLoadModuleOptions.None;
+			if ((options & DbgLoadModuleReferenceHandlerOptions.AutoLoaded) != 0)
+				res |= DbgLoadModuleOptions.AutoLoaded;
+			if ((options & DbgLoadModuleReferenceHandlerOptions.ForceMemory) != 0)
+				res |= DbgLoadModuleOptions.ForceMemory;
+			return res;
+		}
+
+		public override DbgModule[] Load(DbgModule[] modules, DbgLoadModuleReferenceHandlerOptions options) {
 			var loaded = new List<DbgModule>();
 			bool canShowMessageBox = true;
 			foreach (var module in modules) {
 				if (!module.IsDotNetModule())
 					continue;
-				LoadModule(module, useMemory, ref canShowMessageBox);
+				LoadModule(module, ToDbgLoadModuleOptions(options), ref canShowMessageBox);
 				loaded.Add(module);
 			}
 			return loaded.ToArray();

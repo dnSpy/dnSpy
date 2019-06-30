@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,14 +30,14 @@ namespace dnSpy.Contracts.Output {
 		/// </summary>
 		/// <param name="color">Color</param>
 		/// <param name="text">Text</param>
-		void WriteLine(object color, string text);
+		void WriteLine(object color, string? text);
 
 		/// <summary>
 		/// Writes text
 		/// </summary>
 		/// <param name="color">Color</param>
 		/// <param name="text">Text</param>
-		void WriteLine(TextColor color, string text);
+		void WriteLine(TextColor color, string? text);
 
 		/// <summary>
 		/// Writes text

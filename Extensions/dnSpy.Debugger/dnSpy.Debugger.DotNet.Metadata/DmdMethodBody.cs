@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -116,12 +116,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// </summary>
 	[Flags]
 	public enum DmdExceptionHandlingClauseOptions {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		Clause				= 0,
 		Filter				= 1,
 		Finally				= 2,
 		Fault				= 4,
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 
 	/// <summary>
@@ -168,14 +168,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Catch type
 		/// </summary>
-		public DmdType CatchType {
+		public DmdType? CatchType {
 			get {
 				if (Flags != DmdExceptionHandlingClauseOptions.Clause)
 					throw new InvalidOperationException();
 				return catchType;
 			}
 		}
-		readonly DmdType catchType;
+		readonly DmdType? catchType;
 
 		/// <summary>
 		/// Constructor
@@ -187,7 +187,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="handlerLength">Handler length</param>
 		/// <param name="filterOffset">Filter offset</param>
 		/// <param name="catchType">Catch type</param>
-		public DmdExceptionHandlingClause(DmdExceptionHandlingClauseOptions flags, int tryOffset, int tryLength, int handlerOffset, int handlerLength, int filterOffset, DmdType catchType) {
+		public DmdExceptionHandlingClause(DmdExceptionHandlingClauseOptions flags, int tryOffset, int tryLength, int handlerOffset, int handlerLength, int filterOffset, DmdType? catchType) {
 			Flags = flags;
 			TryOffset = tryOffset;
 			TryLength = tryLength;

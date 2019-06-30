@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,14 +22,11 @@ using dndbg.COM.CorDebug;
 using dndbg.DotNet;
 
 namespace dndbg.Engine {
-	/// <summary>
-	/// A loaded module
-	/// </summary>
 	sealed class DnModule {
 		/// <summary>
 		/// Gets the created module or null if none has been created
 		/// </summary>
-		public CorModuleDef CorModuleDef { get; internal set; }
+		public CorModuleDef? CorModuleDef { get; internal set; }
 
 		/// <summary>
 		/// Returns the created module or creates one if none has been created
@@ -37,11 +34,11 @@ namespace dndbg.Engine {
 		/// <returns></returns>
 		public CorModuleDef GetOrCreateCorModuleDef() {
 			Debugger.DebugVerifyThread();
-			if (CorModuleDef != null)
+			if (!(CorModuleDef is null))
 				return CorModuleDef;
 
 			Assembly.InitializeAssemblyAndModules();
-			Debug.Assert(CorModuleDef != null);
+			Debug.Assert(!(CorModuleDef is null));
 			return CorModuleDef;
 		}
 
@@ -69,64 +66,16 @@ namespace dndbg.Engine {
 		/// </summary>
 		public string Name => CorModule.Name;
 
-		/// <summary>
-		/// true if the module has been unloaded
-		/// </summary>
 		public bool HasUnloaded { get; private set; }
-
-		/// <summary>
-		/// Gets the base address of the module or 0
-		/// </summary>
 		public ulong Address => CorModule.Address;
-
-		/// <summary>
-		/// Gets the size of the module or 0
-		/// </summary>
 		public uint Size => CorModule.Size;
-
-		/// <summary>
-		/// Gets the token or 0
-		/// </summary>
-		public uint Token => CorModule.Token;
-
-		/// <summary>
-		/// true if it's a dynamic module that can add/remove types
-		/// </summary>
 		public bool IsDynamic => CorModule.IsDynamic;
-
-		/// <summary>
-		/// true if this is an in-memory module
-		/// </summary>
 		public bool IsInMemory => CorModule.IsInMemory;
-
-		/// <summary>
-		/// Gets the owner debugger
-		/// </summary>
 		public DnDebugger Debugger => Assembly.Debugger;
-
-		/// <summary>
-		/// Gets the owner process
-		/// </summary>
 		public DnProcess Process => Assembly.Process;
-
-		/// <summary>
-		/// Gets the owner AppDomain
-		/// </summary>
 		public DnAppDomain AppDomain => Assembly.AppDomain;
-
-		/// <summary>
-		/// Gets the owner assembly
-		/// </summary>
 		public DnAssembly Assembly { get; }
-
-		/// <summary>
-		/// Gets the module id
-		/// </summary>
 		public DnModuleId DnModuleId { get; }
-
-		/// <summary>
-		/// Gets the JIT compiler flags. This is a cached value and never gets updated
-		/// </summary>
 		public CorDebugJITCompilerFlags CachedJITCompilerFlags { get; private set; }
 
 		internal DnModule(DnAssembly ownerAssembly, ICorDebugModule module, int uniqueId, int uniqueIdProcess, int uniqueIdAppDomain) {
@@ -143,6 +92,6 @@ namespace dndbg.Engine {
 			CachedJITCompilerFlags = CorModule.JITCompilerFlags;
 
 		internal void SetHasUnloaded() => HasUnloaded = true;
-		public override string ToString() => string.Format("{0} DYN={1} MEM={2} A={3:X8} S={4:X8} {5}", UniqueId, IsDynamic ? 1 : 0, IsInMemory ? 1 : 0, Address, Size, Name);
+		public override string ToString() => $"{UniqueId} DYN={(IsDynamic ? 1 : 0)} MEM={(IsInMemory ? 1 : 0)} A={Address:X8} S={Size:X8} {Name}";
 	}
 }

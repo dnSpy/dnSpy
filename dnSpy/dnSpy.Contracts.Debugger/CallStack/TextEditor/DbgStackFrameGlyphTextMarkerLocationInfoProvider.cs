@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,6 +29,6 @@ namespace dnSpy.Contracts.Debugger.CallStack.TextEditor {
 		/// </summary>
 		/// <param name="frame">Frame</param>
 		/// <returns></returns>
-		public abstract GlyphTextMarkerLocationInfo Create(DbgStackFrame frame);
+		public abstract GlyphTextMarkerLocationInfo? Create(DbgStackFrame frame);
 	}
 }

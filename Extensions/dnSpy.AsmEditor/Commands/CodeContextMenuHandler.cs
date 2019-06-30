@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,9 +27,9 @@ namespace dnSpy.AsmEditor.Commands {
 	sealed class CodeContext {
 		public DocumentTreeNodeData[] Nodes { get; }
 		public bool IsDefinition { get; }
-		public IMenuItemContext MenuItemContextOrNull { get; }
+		public IMenuItemContext? MenuItemContextOrNull { get; }
 
-		public CodeContext(DocumentTreeNodeData[] nodes, bool isDefinition, IMenuItemContext menuItemContext) {
+		public CodeContext(DocumentTreeNodeData[] nodes, bool isDefinition, IMenuItemContext? menuItemContext) {
 			Nodes = nodes ?? Array.Empty<DocumentTreeNodeData>();
 			IsDefinition = isDefinition;
 			MenuItemContextOrNull = menuItemContext;
@@ -46,14 +46,14 @@ namespace dnSpy.AsmEditor.Commands {
 
 		protected CodeContextMenuHandler(IDocumentTreeView documentTreeView) => this.documentTreeView = documentTreeView;
 
-		protected sealed override CodeContext CreateContext(IMenuItemContext context) {
+		protected sealed override CodeContext? CreateContext(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
 				return null;
 			var textRef = context.Find<TextReference>();
-			if (textRef == null)
+			if (textRef is null)
 				return null;
 			var node = documentTreeView.FindNode(textRef.Reference);
-			var nodes = node == null ? Array.Empty<DocumentTreeNodeData>() : new DocumentTreeNodeData[] { node };
+			var nodes = node is null ? Array.Empty<DocumentTreeNodeData>() : new DocumentTreeNodeData[] { node };
 			return new CodeContext(nodes, textRef.IsDefinition, context);
 		}
 	}
@@ -68,7 +68,7 @@ namespace dnSpy.AsmEditor.Commands {
 
 		protected NodesCodeContextMenuHandler(IDocumentTreeView documentTreeView) => this.documentTreeView = documentTreeView;
 
-		protected sealed override CodeContext CreateContext(IMenuItemContext context) {
+		protected sealed override CodeContext? CreateContext(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
 				return null;
 			var nodes = documentTreeView.TreeView.TopLevelSelection.OfType<DocumentTreeNodeData>().ToArray();

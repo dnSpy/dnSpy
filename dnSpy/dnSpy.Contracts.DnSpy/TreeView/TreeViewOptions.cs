@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -58,17 +58,17 @@ namespace dnSpy.Contracts.TreeView {
 		/// <summary>
 		/// <see cref="ITreeView"/> listener
 		/// </summary>
-		public ITreeViewListener TreeViewListener { get; set; }
+		public ITreeViewListener? TreeViewListener { get; set; }
 
 		/// <summary>
 		/// The root node or null
 		/// </summary>
-		public TreeNodeData RootNode { get; set; }
+		public TreeNodeData? RootNode { get; set; }
 
 		/// <summary>
 		/// Foreground brush resource key or null to use the default color
 		/// </summary>
-		public object ForegroundBrushResourceKey { get; set; }
+		public object? ForegroundBrushResourceKey { get; set; }
 
 		/// <summary>
 		/// Constructor

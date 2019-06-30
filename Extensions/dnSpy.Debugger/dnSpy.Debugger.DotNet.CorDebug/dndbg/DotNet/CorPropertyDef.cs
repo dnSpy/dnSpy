@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,11 +21,6 @@ using System.Diagnostics;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
 using dnlib.DotNet;
-
-#if THREAD_SAFE
-#else
-using ThreadSafe = System.Collections.Generic;
-#endif
 
 namespace dndbg.DotNet {
 	sealed class CorPropertyDef : PropertyDef, ICorHasCustomAttribute {
@@ -82,7 +77,7 @@ namespace dndbg.DotNet {
 		protected override void InitializeCustomAttributes() =>
 			readerModule.InitCustomAttributes(this, ref customAttributes, GenericParamContext.Create(ownerType));
 
-		protected override Constant GetConstant_NoLock() {
+		protected override Constant? GetConstant_NoLock() {
 			var mdi = readerModule.MetaDataImport;
 			uint token = OriginalToken.Raw;
 
@@ -102,7 +97,7 @@ namespace dndbg.DotNet {
 		}
 
 		protected override void InitializePropertyMethods_NoLock() {
-			if (otherMethods != null)
+			if (!(otherMethods is null))
 				return;
 			ownerType.InitializeProperty(this, out var newGetMethods, out var newSetMethods, out var newOtherMethods);
 			getMethods = newGetMethods;

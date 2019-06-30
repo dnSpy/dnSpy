@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,7 +33,7 @@ namespace dnSpy.Controls {
 		public Guid Guid => guid;
 		readonly Guid guid;
 
-		struct CMKKey : IEquatable<CMKKey> {
+		readonly struct CMKKey : IEquatable<CMKKey> {
 			readonly ICommand command;
 			readonly ModifierKeys modifiers;
 			readonly Key key;
@@ -47,7 +47,7 @@ namespace dnSpy.Controls {
 			public bool Equals(CMKKey other) =>
 				command == other.command && modifiers == other.modifiers && key == other.key;
 
-			public override bool Equals(object obj) {
+			public override bool Equals(object? obj) {
 				if (obj is CMKKey)
 					return Equals((CMKKey)obj);
 				return false;
@@ -74,22 +74,27 @@ namespace dnSpy.Controls {
 			}
 		}
 
+		static InputBinding Clone(InputBinding inputBinding) {
+			// We must clone it since it contains a reference to the UIElement
+			return (InputBinding)inputBinding.Clone();
+		}
+
 		public void Add(UIElement elem) {
-			if (elem == null)
+			if (elem is null)
 				throw new ArgumentNullException(nameof(elem));
 			uiElements.Add(new WeakReference(elem));
 			foreach (var c in commandBindings)
 				elem.CommandBindings.Add(c);
 			foreach (var i in inputBindings)
-				elem.InputBindings.Add(i);
+				elem.InputBindings.Add(Clone(i));
 		}
 
 		public void Remove(UIElement elem) {
-			if (elem == null)
+			if (elem is null)
 				throw new ArgumentNullException(nameof(elem));
 			for (int i = uiElements.Count - 1; i >= 0; i--) {
 				var t = uiElements[i].Target;
-				if (t == elem || t == null)
+				if (t == elem || t is null)
 					uiElements.RemoveAt(i);
 			}
 		}
@@ -103,7 +108,7 @@ namespace dnSpy.Controls {
 		void Add(InputBinding inputBinding) {
 			inputBindings.Add(inputBinding);
 			foreach (var u in UIElements)
-				u.InputBindings.Add(inputBinding);
+				u.InputBindings.Add(Clone(inputBinding));
 		}
 
 		void AddIfNotAdded(KeyBinding kb) {

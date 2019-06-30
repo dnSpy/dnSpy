@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,13 +22,14 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.Engine.Evaluation.Internal;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	abstract class DbgDotNetEngineValueNodeFactoryService {
-		public abstract DbgDotNetEngineValueNodeFactory Create(string languageGuid, DbgDotNetFormatter formatter);
+		public abstract DbgDotNetEngineValueNodeFactory? Create(string languageGuid, DbgDotNetFormatter formatter);
 	}
 
 	[Export(typeof(DbgDotNetEngineValueNodeFactoryService))]
@@ -52,10 +53,10 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			}
 		}
 
-		public override DbgDotNetEngineValueNodeFactory Create(string languageGuid, DbgDotNetFormatter formatter) {
-			if (languageGuid == null)
+		public override DbgDotNetEngineValueNodeFactory? Create(string languageGuid, DbgDotNetFormatter formatter) {
+			if (languageGuid is null)
 				throw new ArgumentNullException(nameof(languageGuid));
-			if (formatter == null)
+			if (formatter is null)
 				throw new ArgumentNullException(nameof(formatter));
 
 			bool b = Guid.TryParse(languageGuid, out var guid);
@@ -70,12 +71,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 			Debug.Fail($"Default value node factory ({LanguageConstants.DefaultLanguageGuid.ToString()}) wasn't exported");
 			var lz = toLazyFactory.Values.FirstOrDefault();
-			if (lz != null)
+			if (!(lz is null))
 				return GetFactory(formatter, lz);
 			return null;
 		}
 
-		bool TryGetFactory(Guid guid, DbgDotNetFormatter formatter, out DbgDotNetEngineValueNodeFactory factory) {
+		bool TryGetFactory(Guid guid, DbgDotNetFormatter formatter, [NotNullWhenTrue] out DbgDotNetEngineValueNodeFactory? factory) {
 			if (!toLazyFactory.TryGetValue(guid, out var lz)) {
 				factory = null;
 				return false;

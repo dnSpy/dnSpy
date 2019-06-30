@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace dnSpy.Contracts.ToolWindows.Search {
@@ -45,14 +46,15 @@ namespace dnSpy.Contracts.ToolWindows.Search {
 				var token = tokens[i];
 				switch (token.Kind) {
 				case TokenKind.Text:
-					commands.Add(new SearchCommand(columnId: null, searchText: token.Text));
+					commands.Add(new SearchCommand(columnId: null, searchText: token.Text, negate: false));
 					break;
 
 				case TokenKind.Command:
+				case TokenKind.NegatedCommand:
 					i++;
 					if (i < tokens.Count) {
 						var next = tokens[i];
-						commands.Add(new SearchCommand(columnId: token.Text, searchText: next.Text));
+						commands.Add(new SearchCommand(columnId: token.Text, searchText: next.Text, negate: token.Kind == TokenKind.NegatedCommand));
 					}
 					break;
 
@@ -69,9 +71,10 @@ namespace dnSpy.Contracts.ToolWindows.Search {
 		enum TokenKind {
 			Text,
 			Command,
+			NegatedCommand,
 		}
 
-		struct Token {
+		readonly struct Token {
 			public TokenKind Kind { get; }
 			public string Text { get; }
 			public Token(TokenKind kind, string text) {
@@ -96,32 +99,39 @@ namespace dnSpy.Contracts.ToolWindows.Search {
 			public IEnumerable<Token> GetTokens() {
 				for (;;) {
 					var word = GetNextWord(out bool isText);
-					if (word == null)
+					if (word is null)
 						break;
 					if (isText)
 						yield return new Token(TokenKind.Text, word);
-					else if (TryGetDefinition(word, out var def))
-						yield return new Token(TokenKind.Command, def.Id);
+					else if (TryGetDefinition(word, out var def, out bool negate))
+						yield return new Token(negate ? TokenKind.NegatedCommand : TokenKind.Command, def.Id);
 					else
 						yield return new Token(TokenKind.Text, word);
 				}
 			}
 
-			bool TryGetDefinition(string word, out SearchColumnDefinition def) {
+			bool TryGetDefinition(string word, [NotNullWhenTrue] out SearchColumnDefinition? def, out bool negate) {
 				if (word.Length != 0 && word[0] == '-') {
 					foreach (var d in definitions) {
-						if (CompareShortOptionName(word, d.ShortOptionName)) {
+						if (CompareShortOptionName(word, d.ShortOptionName, out negate)) {
 							def = d;
 							return true;
 						}
 					}
 				}
 				def = null;
+				negate = false;
 				return false;
 			}
 
-			bool CompareShortOptionName(string word, string shortOptionName) {
-				if (word.Length != shortOptionName.Length + 1)
+			bool CompareShortOptionName(string word, string shortOptionName, out bool negate) {
+				negate = false;
+				int wordLength = word.Length;
+				if (wordLength > 0 && word[wordLength - 1] == '!') {
+					negate = true;
+					wordLength--;
+				}
+				if (wordLength != shortOptionName.Length + 1)
 					return false;
 				if (word[0] != '-')
 					return false;
@@ -132,7 +142,7 @@ namespace dnSpy.Contracts.ToolWindows.Search {
 				return true;
 			}
 
-			string GetNextWord(out bool isText) {
+			string? GetNextWord(out bool isText) {
 				isText = false;
 				SkipWhitespace();
 				var currentPositionLocal = currentPosition;
@@ -175,20 +185,26 @@ namespace dnSpy.Contracts.ToolWindows.Search {
 		}
 	}
 
-	struct SearchCommand {
+	readonly struct SearchCommand {
 		/// <summary>
 		/// Column id (<see cref="SearchColumnDefinition.Id"/>) or null if it can match any column.
 		/// </summary>
-		public string ColumnId { get; }
+		public string? ColumnId { get; }
 
 		/// <summary>
 		/// The text to search for in the column(s)
 		/// </summary>
 		public string SearchText { get; }
 
-		public SearchCommand(string columnId, string searchText) {
+		/// <summary>
+		/// true to negate the result, matching everything that doesn't match <see cref="SearchText"/>
+		/// </summary>
+		public bool Negate { get; }
+
+		public SearchCommand(string? columnId, string searchText, bool negate) {
 			ColumnId = columnId;
 			SearchText = searchText ?? throw new ArgumentNullException(nameof(searchText));
+			Negate = negate;
 		}
 	}
 }

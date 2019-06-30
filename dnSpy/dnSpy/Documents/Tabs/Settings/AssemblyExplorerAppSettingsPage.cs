@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,11 +19,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Documents.TreeView;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Documents.TreeView;
 using dnSpy.Properties;
@@ -41,19 +41,16 @@ namespace dnSpy.Documents.Tabs.Settings {
 		}
 	}
 
-	sealed class AssemblyExplorerAppSettingsPage : AppSettingsPage, IAppSettingsPage2, INotifyPropertyChanged {
+	sealed class AssemblyExplorerAppSettingsPage : AppSettingsPage, IAppSettingsPage2 {
 		public override Guid Guid => new Guid("F8B8DA74-9318-4BEE-B50A-1139147D3C82");
 		public override double Order => AppSettingsConstants.ORDER_ASSEMBLY_EXPLORER;
 		public override string Title => dnSpy_Resources.AssemblyExplorerTitle;
-		public override object UIObject => this;
-
-		public event PropertyChangedEventHandler PropertyChanged;
-		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+		public override object? UIObject => this;
 
 		readonly DocumentTreeViewSettingsImpl documentTreeViewSettings;
 
 		public bool ShowToken {
-			get { return showToken; }
+			get => showToken;
 			set {
 				if (showToken != value) {
 					showToken = value;
@@ -64,7 +61,7 @@ namespace dnSpy.Documents.Tabs.Settings {
 		bool showToken;
 
 		public bool ShowAssemblyVersion {
-			get { return showAssemblyVersion; }
+			get => showAssemblyVersion;
 			set {
 				if (showAssemblyVersion != value) {
 					showAssemblyVersion = value;
@@ -75,7 +72,7 @@ namespace dnSpy.Documents.Tabs.Settings {
 		bool showAssemblyVersion;
 
 		public bool ShowAssemblyPublicKeyToken {
-			get { return showAssemblyPublicKeyToken; }
+			get => showAssemblyPublicKeyToken;
 			set {
 				if (showAssemblyPublicKeyToken != value) {
 					showAssemblyPublicKeyToken = value;
@@ -86,7 +83,7 @@ namespace dnSpy.Documents.Tabs.Settings {
 		bool showAssemblyPublicKeyToken;
 
 		public bool SingleClickExpandsTreeViewChildren {
-			get { return singleClickExpandsTreeViewChildren; }
+			get => singleClickExpandsTreeViewChildren;
 			set {
 				if (singleClickExpandsTreeViewChildren != value) {
 					singleClickExpandsTreeViewChildren = value;
@@ -97,7 +94,7 @@ namespace dnSpy.Documents.Tabs.Settings {
 		bool singleClickExpandsTreeViewChildren;
 
 		public bool SyntaxHighlight {
-			get { return syntaxHighlight; }
+			get => syntaxHighlight;
 			set {
 				if (syntaxHighlight != value) {
 					syntaxHighlight = value;
@@ -110,7 +107,7 @@ namespace dnSpy.Documents.Tabs.Settings {
 		public DocumentFilterTypeVM[] DocumentFilterTypes { get; }
 
 		public DocumentFilterTypeVM FilterDraggedItems {
-			get { return filterDraggedItems; }
+			get => filterDraggedItems;
 			set {
 				if (filterDraggedItems != value) {
 					filterDraggedItems = value;
@@ -125,33 +122,33 @@ namespace dnSpy.Documents.Tabs.Settings {
 		readonly MemberKindVM[] memberKindVMs2;
 
 		public MemberKindVM MemberKind0 {
-			get { return memberKindVMs[0]; }
-			set { SetMemberKind(0, value); }
+			get => memberKindVMs[0];
+			set => SetMemberKind(0, value);
 		}
 
 		public MemberKindVM MemberKind1 {
-			get { return memberKindVMs[1]; }
-			set { SetMemberKind(1, value); }
+			get => memberKindVMs[1];
+			set => SetMemberKind(1, value);
 		}
 
 		public MemberKindVM MemberKind2 {
-			get { return memberKindVMs[2]; }
-			set { SetMemberKind(2, value); }
+			get => memberKindVMs[2];
+			set => SetMemberKind(2, value);
 		}
 
 		public MemberKindVM MemberKind3 {
-			get { return memberKindVMs[3]; }
-			set { SetMemberKind(3, value); }
+			get => memberKindVMs[3];
+			set => SetMemberKind(3, value);
 		}
 
 		public MemberKindVM MemberKind4 {
-			get { return memberKindVMs[4]; }
-			set { SetMemberKind(4, value); }
+			get => memberKindVMs[4];
+			set => SetMemberKind(4, value);
 		}
 
 		void SetMemberKind(int index, MemberKindVM newValue) {
-			Debug.Assert(newValue != null);
-			if (newValue == null)
+			Debug.Assert(!(newValue is null));
+			if (newValue is null)
 				throw new ArgumentNullException(nameof(newValue));
 			if (memberKindVMs[index] == newValue)
 				return;
@@ -162,9 +159,9 @@ namespace dnSpy.Documents.Tabs.Settings {
 				memberKindVMs[otherIndex] = memberKindVMs[index];
 				memberKindVMs[index] = newValue;
 
-				OnPropertyChanged(string.Format("MemberKind{0}", otherIndex));
+				OnPropertyChanged($"MemberKind{otherIndex}");
 			}
-			OnPropertyChanged(string.Format("MemberKind{0}", index));
+			OnPropertyChanged($"MemberKind{index}");
 		}
 
 		public AssemblyExplorerAppSettingsPage(DocumentTreeViewSettingsImpl documentTreeViewSettings) {
@@ -181,7 +178,7 @@ namespace dnSpy.Documents.Tabs.Settings {
 			for (int i = 0; i < filterObjs.Length; i++)
 				DocumentFilterTypes[i] = new DocumentFilterTypeVM(filterObjs[i], ToString(filterObjs[i]));
 
-			FilterDraggedItems = DocumentFilterTypes.First(a => a.FilterType == documentTreeViewSettings.FilterDraggedItems);
+			filterDraggedItems = DocumentFilterTypes.First(a => a.FilterType == documentTreeViewSettings.FilterDraggedItems);
 
 			var defObjs = typeof(MemberKind).GetEnumValues().Cast<MemberKind>().ToArray();
 			memberKindVMs = new MemberKindVM[defObjs.Length];
@@ -245,10 +242,10 @@ namespace dnSpy.Documents.Tabs.Settings {
 			}
 		}
 
-		public override string[] GetSearchStrings() => MemberKindsArray.Select(a => a.Text).Concat(DocumentFilterTypes.Select(a => a.Text)).ToArray();
+		public override string[]? GetSearchStrings() => MemberKindsArray.Select(a => a.Text).Concat(DocumentFilterTypes.Select(a => a.Text)).ToArray();
 	}
 
-	sealed class MemberKindVM {
+	sealed class MemberKindVM : ViewModelBase {
 		public MemberKind Object { get; }
 		public string Text { get; }
 
@@ -258,7 +255,7 @@ namespace dnSpy.Documents.Tabs.Settings {
 		}
 	}
 
-	sealed class DocumentFilterTypeVM {
+	sealed class DocumentFilterTypeVM : ViewModelBase {
 		public DocumentFilterType FilterType { get; }
 		public string Text { get; }
 

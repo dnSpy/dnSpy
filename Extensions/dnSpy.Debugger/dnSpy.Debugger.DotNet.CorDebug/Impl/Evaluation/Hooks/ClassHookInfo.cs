@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,7 +21,7 @@ using System;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation.Hooks {
-	struct ClassHookInfo {
+	readonly struct ClassHookInfo {
 		public ClassHook Hook { get; }
 		public DmdWellKnownType WellKnownType { get; }
 

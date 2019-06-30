@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -37,6 +37,7 @@ namespace dnSpy.Text.Classification {
 		readonly HashSet<string> viewProps;
 
 		protected ViewEditorFormatMap(EditorFormatMapService editorFormatMapService, string appearanceCategoryName) {
+			categoryMap = null!;
 			this.editorFormatMapService = editorFormatMapService ?? throw new ArgumentNullException(nameof(editorFormatMapService));
 			this.appearanceCategoryName = appearanceCategoryName ?? throw new ArgumentNullException(nameof(appearanceCategoryName));
 			viewProps = new HashSet<string>(StringComparer.Ordinal);
@@ -56,7 +57,7 @@ namespace dnSpy.Text.Classification {
 			if (categoryMap == newMap)
 				return;
 
-			if (categoryMap != null)
+			if (!(categoryMap is null))
 				categoryMap.FormatMappingChanged -= CategoryMap_FormatMappingChanged;
 			categoryMap = newMap;
 			categoryMap.FormatMappingChanged += CategoryMap_FormatMappingChanged;
@@ -85,7 +86,7 @@ namespace dnSpy.Text.Classification {
 		}
 
 		public void Dispose() {
-			if (categoryMap != null)
+			if (!(categoryMap is null))
 				categoryMap.FormatMappingChanged -= CategoryMap_FormatMappingChanged;
 			DisposeCore();
 		}

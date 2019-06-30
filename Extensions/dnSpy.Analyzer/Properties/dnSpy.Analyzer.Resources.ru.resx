@@ -127,19 +127,13 @@
     <value>Применяется к</value>
   </data>
   <data name="AssignedByTreeNode" xml:space="preserve">
-    <value>Кем назначено</value>
+    <value>Назначается в</value>
   </data>
   <data name="CopyCommand" xml:space="preserve">
     <value>Коп_ировать</value>
   </data>
   <data name="DoubleClick" xml:space="preserve">
-    <value>Dbl Click</value>
-  </data>
-  <data name="EventAdderTreeNodeName" xml:space="preserve">
-    <value>add</value>
-  </data>
-  <data name="EventRemoverTreeNodeName" xml:space="preserve">
-    <value>remove</value>
+    <value>Двойнок клик</value>
   </data>
   <data name="ExposedByTreeNode" xml:space="preserve">
     <value>Представлено в</value>
@@ -157,7 +151,7 @@
     <value>Показать ссылку в методе (новая _вкладка)</value>
   </data>
   <data name="GoToReferenceNewTabCommand" xml:space="preserve">
-    <value>Перейти к ссылке (New Ta_b)</value>
+    <value>Перейти к ссылке (Новая вкла_дка)</value>
   </data>
   <data name="HidesParent" xml:space="preserve">
     <value>hides</value>
@@ -169,7 +163,7 @@
     <value>Вызвано в</value>
   </data>
   <data name="OverriddenByTreeNode" xml:space="preserve">
-    <value>Перегружен в</value>
+    <value>Перегружено в</value>
   </data>
   <data name="OverridesTreeNode" xml:space="preserve">
     <value>Переопределения</value>
@@ -177,17 +171,11 @@
   <data name="Plugin_ShortDescription" xml:space="preserve">
     <value>Анализирует сборки</value>
   </data>
-  <data name="PropertyGetterTreeNode" xml:space="preserve">
-    <value>get</value>
-  </data>
-  <data name="PropertySetterTreeNode" xml:space="preserve">
-    <value>set</value>
-  </data>
   <data name="RaisedByTreeNode" xml:space="preserve">
-    <value>Кем вызвано</value>
+    <value>Вызывается в</value>
   </data>
   <data name="ReadByTreeNode" xml:space="preserve">
-    <value>Кем читается</value>
+    <value>Читается в</value>
   </data>
   <data name="RemoveCommand" xml:space="preserve">
     <value>_Убрать</value>

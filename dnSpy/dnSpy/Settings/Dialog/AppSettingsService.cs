@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -44,14 +44,14 @@ namespace dnSpy.Settings.Dialog {
 		readonly Lazy<IAppSettingsPageProvider>[] appSettingsPageProviders;
 		readonly Lazy<IAppSettingsModifiedListener, IAppSettingsModifiedListenerMetadata>[] appSettingsModifiedListeners;
 		Guid? lastSelectedGuid;
-		ShowAppSettingsDialog showAppSettings;
+		ShowAppSettingsDialog? showAppSettings;
 
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[Export]
 		[Name(ContentTypes.OptionsDialogText)]
 		[BaseDefinition(ContentTypes.Text)]
 		static readonly ContentTypeDefinition OptionsDialogTextContentTypeDefinition;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 
 		[ImportingConstructor]
 		AppSettingsService(IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider, IAppWindow appWindow, ITreeViewService treeViewService, ITreeViewNodeTextElementProvider treeViewNodeTextElementProvider, [ImportMany] IEnumerable<Lazy<IAppSettingsPageContainer, IAppSettingsPageContainerMetadata>> appSettingsPageContainers, [ImportMany] IEnumerable<Lazy<IAppSettingsPageProvider>> appSettingsPageProviders, [ImportMany] IEnumerable<Lazy<IAppSettingsModifiedListener, IAppSettingsModifiedListenerMetadata>> appSettingsModifiedListeners) {
@@ -65,12 +65,12 @@ namespace dnSpy.Settings.Dialog {
 			this.appSettingsModifiedListeners = appSettingsModifiedListeners.OrderBy(a => a.Metadata.Order).ToArray();
 		}
 
-		public void Show(Window owner) => Show2(null, owner);
-		public void Show(Guid guid, Window owner) => Show2(guid, owner);
+		public void Show(Window? owner) => Show2(null, owner);
+		public void Show(Guid guid, Window? owner) => Show2(guid, owner);
 
-		void Show2(Guid? guid, Window owner) {
-			if (showAppSettings != null) {
-				if (guid != null)
+		void Show2(Guid? guid, Window? owner) {
+			if (!(showAppSettings is null)) {
+				if (!(guid is null))
 					showAppSettings.Select(guid.Value);
 				return;
 			}

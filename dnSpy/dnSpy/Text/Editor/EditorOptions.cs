@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,13 +26,13 @@ namespace dnSpy.Text.Editor {
 	sealed class EditorOptions : IEditorOptions {
 		public IEditorOptions GlobalOptions => service.GlobalOptions;
 
-		public IEditorOptions Parent {
-			get { return parent; }
+		public IEditorOptions? Parent {
+			get => parent;
 			set {
 				// Check if we're the global options
-				if (parent == null)
+				if (parent is null)
 					throw new InvalidOperationException();
-				if (value == null)
+				if (value is null)
 					throw new ArgumentNullException(nameof(value));
 				if (parent == value)
 					return;
@@ -41,12 +41,12 @@ namespace dnSpy.Text.Editor {
 				UpdateOptions(oldParent);
 			}
 		}
-		EditorOptions parent;
+		EditorOptions? parent;
 
 		public IEnumerable<EditorOptionDefinition> SupportedOptions {
 			get {
 				foreach (var def in service.EditorOptionDefinitions) {
-					if (scope == null || def.IsApplicableToScope(scope))
+					if (scope is null || def.IsApplicableToScope(scope))
 						yield return def;
 				}
 			}
@@ -55,9 +55,9 @@ namespace dnSpy.Text.Editor {
 		readonly Dictionary<string, object> dict;
 		readonly EditorOptionsFactoryService service;
 		readonly List<WeakReference> weakChildren;
-		readonly IPropertyOwner scope;
+		readonly IPropertyOwner? scope;
 
-		public EditorOptions(EditorOptionsFactoryService service, EditorOptions parent, IPropertyOwner scope) {
+		public EditorOptions(EditorOptionsFactoryService service, EditorOptions? parent, IPropertyOwner? scope) {
 			this.service = service;
 			this.parent = parent;
 			dict = new Dictionary<string, object>(StringComparer.Ordinal);
@@ -66,8 +66,8 @@ namespace dnSpy.Text.Editor {
 			UpdateOptions(null);
 		}
 
-		void UpdateOptions(EditorOptions oldParent) {
-			if (oldParent != null) {
+		void UpdateOptions(EditorOptions? oldParent) {
+			if (!(oldParent is null)) {
 				for (int i = 0; i < oldParent.weakChildren.Count; i++) {
 					if (oldParent.weakChildren[i].Target == this) {
 						oldParent.weakChildren.RemoveAt(i);
@@ -75,26 +75,26 @@ namespace dnSpy.Text.Editor {
 					}
 				}
 			}
-			if (parent != null)
+			if (!(parent is null))
 				parent.weakChildren.Add(new WeakReference(this));
 
-			if (parent != null || oldParent != null) {
+			if (!(parent is null) || !(oldParent is null)) {
 				foreach (var o in SupportedOptions) {
 					if (dict.ContainsKey(o.Name))
 						continue;
-					var oldValue = oldParent == null ? o.DefaultValue : oldParent.GetValueOrDefault(o.Name);
-					var newValue = parent == null ? o.DefaultValue : parent.GetValueOrDefault(o.Name);
+					var oldValue = oldParent is null ? o.DefaultValue : oldParent.GetValueOrDefault(o.Name);
+					var newValue = parent is null ? o.DefaultValue : parent.GetValueOrDefault(o.Name);
 					if (!Equals(oldValue, newValue))
 						OnChanged(o.Name);
 				}
 			}
 		}
 
-		bool TryGetValue(string optionId, out object value) {
-			if (scope != null && !service.GetOption(optionId).IsApplicableToScope(scope))
+		bool TryGetValue(string optionId, out object? value) {
+			if (!(scope is null) && !service.GetOption(optionId).IsApplicableToScope(scope))
 				throw new InvalidOperationException();
-			var p = this;
-			while (p != null) {
+			EditorOptions? p = this;
+			while (!(p is null)) {
 				if (p.dict.TryGetValue(optionId, out value))
 					return true;
 				p = p.parent;
@@ -103,19 +103,19 @@ namespace dnSpy.Text.Editor {
 			return false;
 		}
 
-		object GetValueOrDefault(string optionId) {
-			if (!TryGetValue(optionId, out object value))
+		object? GetValueOrDefault(string optionId) {
+			if (!TryGetValue(optionId, out var value))
 				value = service.GetOption(optionId).DefaultValue;
 			return value;
 		}
 
 		public event EventHandler<EditorOptionChangedEventArgs> OptionChanged;
 		void OnChanged(string optionId) {
-			if (scope == null || service.GetOption(optionId).IsApplicableToScope(scope))
+			if (scope is null || service.GetOption(optionId).IsApplicableToScope(scope))
 				OptionChanged?.Invoke(this, new EditorOptionChangedEventArgs(optionId));
 			for (int i = weakChildren.Count - 1; i >= 0; i--) {
 				var child = weakChildren[i].Target as EditorOptions;
-				if (child == null) {
+				if (child is null) {
 					weakChildren.RemoveAt(i);
 					continue;
 				}
@@ -126,19 +126,19 @@ namespace dnSpy.Text.Editor {
 
 		public bool IsOptionDefined<T>(EditorOptionKey<T> key, bool localScopeOnly) => IsOptionDefined(key.Name, localScopeOnly);
 		public bool IsOptionDefined(string optionId, bool localScopeOnly) {
-			if (optionId == null)
+			if (optionId is null)
 				throw new ArgumentNullException(nameof(optionId));
-			if (parent != null && localScopeOnly)
+			if (!(parent is null) && localScopeOnly)
 				return dict.ContainsKey(optionId);
 			var def = service.GetOption(optionId);
-			return scope == null || def.IsApplicableToScope(scope);
+			return scope is null || def.IsApplicableToScope(scope);
 		}
 
 		public bool ClearOptionValue<T>(EditorOptionKey<T> key) => ClearOptionValue(key.Name);
 		public bool ClearOptionValue(string optionId) {
-			if (optionId == null)
+			if (optionId is null)
 				throw new ArgumentNullException(nameof(optionId));
-			if (parent == null || !dict.TryGetValue(optionId, out object oldValue))
+			if (parent is null || !dict.TryGetValue(optionId, out object oldValue))
 				return false;
 			dict.Remove(optionId);
 			var newValue = GetValueOrDefault(optionId);
@@ -147,20 +147,20 @@ namespace dnSpy.Text.Editor {
 			return true;
 		}
 
-		public T GetOptionValue<T>(string optionId) => (T)GetOptionValue(optionId);
-		public T GetOptionValue<T>(EditorOptionKey<T> key) => (T)GetOptionValue(key.Name);
-		public object GetOptionValue(string optionId) {
-			if (optionId == null)
+		public T GetOptionValue<T>(string optionId) => (T)GetOptionValue(optionId)!;
+		public T GetOptionValue<T>(EditorOptionKey<T> key) => (T)GetOptionValue(key.Name)!;
+		public object? GetOptionValue(string optionId) {
+			if (optionId is null)
 				throw new ArgumentNullException(nameof(optionId));
 			return GetValueOrDefault(optionId);
 		}
 
 		public void SetOptionValue<T>(EditorOptionKey<T> key, T value) => SetOptionValue(key.Name, value);
-		public void SetOptionValue(string optionId, object value) {
-			if (optionId == null)
+		public void SetOptionValue(string optionId, object? value) {
+			if (optionId is null)
 				throw new ArgumentNullException(nameof(optionId));
 			var def = service.GetOption(optionId);
-			if (scope != null && !def.IsApplicableToScope(scope))
+			if (!(scope is null) && !def.IsApplicableToScope(scope))
 				throw new InvalidOperationException();
 			if (!def.IsValid(ref value))
 				throw new ArgumentException();

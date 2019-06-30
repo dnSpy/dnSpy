@@ -1,8 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26228.4
-MinimumVisualStudioVersion = 15.0.26206.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28729.10
+MinimumVisualStudioVersion = 16.0.28729.10
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dnSpy", "dnSpy", "{293F0A13-6653-4580-9116-1D255F4C4E69}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{1CE427B9-B8B2-4B92-9FAB-708C51C99098}"
@@ -15,85 +15,101 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{84
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ILSpy.Decompiler", "ILSpy.Decompiler", "{6C439ABB-7252-4F00-9A21-121C11E98895}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy-x86", "dnSpy\dnSpy-x86\dnSpy-x86.csproj", "{0F407613-E15D-4FB5-89DF-EE866DB6A7EC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnSpy-x86", "dnSpy\dnSpy-x86\dnSpy-x86.csproj", "{0F407613-E15D-4FB5-89DF-EE866DB6A7EC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy", "dnSpy\dnSpy\dnSpy.csproj", "{722257A9-1B14-4D63-B886-18A4229AF4EB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnSpy", "dnSpy\dnSpy\dnSpy.csproj", "{722257A9-1B14-4D63-B886-18A4229AF4EB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Console", "dnSpy\dnSpy.Console\dnSpy.Console.csproj", "{DA111693-97C8-413B-9102-4DCBEE8885B7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnSpy.Console", "dnSpy\dnSpy.Console\dnSpy.Console.csproj", "{DA111693-97C8-413B-9102-4DCBEE8885B7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Decompiler", "dnSpy\dnSpy.Decompiler\dnSpy.Decompiler.csproj", "{9265E4EA-EB00-4CB6-8A9A-608871E24FD0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnSpy.Decompiler", "dnSpy\dnSpy.Decompiler\dnSpy.Decompiler.csproj", "{9265E4EA-EB00-4CB6-8A9A-608871E24FD0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnlib", "Libraries\dnlib\src\dnlib.csproj", "{FDFC1237-143F-4919-8318-4926901F4639}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICSharpCode.TreeView", "Libraries\ICSharpCode.TreeView\ICSharpCode.TreeView.csproj", "{DDE2A481-8271-4EAC-A330-8FA6A38D13D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.TreeView", "Libraries\ICSharpCode.TreeView\ICSharpCode.TreeView.csproj", "{DDE2A481-8271-4EAC-A330-8FA6A38D13D1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnSpy.Debugger", "Extensions\dnSpy.Debugger\dnSpy.Debugger\dnSpy.Debugger.csproj", "{52995BD1-DB91-4654-89B7-1DEB3B0D3155}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Debugger", "Extensions\dnSpy.Debugger\dnSpy.Debugger\dnSpy.Debugger.csproj", "{52995BD1-DB91-4654-89B7-1DEB3B0D3155}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Example1.Extension", "Extensions\Examples\Example1.Extension\Example1.Extension.csproj", "{B24AAB0F-CA85-4D85-8B46-10D634896E2A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example1.Extension", "Extensions\Examples\Example1.Extension\Example1.Extension.csproj", "{B24AAB0F-CA85-4D85-8B46-10D634896E2A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Example2.Extension", "Extensions\Examples\Example2.Extension\Example2.Extension.csproj", "{4613C8A1-28DC-4586-9F9B-D201864CFE1A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example2.Extension", "Extensions\Examples\Example2.Extension\Example2.Extension.csproj", "{4613C8A1-28DC-4586-9F9B-D201864CFE1A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnSpy.Decompiler.ILSpy", "Extensions\ILSpy.Decompiler\dnSpy.Decompiler.ILSpy\dnSpy.Decompiler.ILSpy.csproj", "{D7FE873E-DF22-4F54-AEFA-BCF33AFD7E05}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Decompiler.ILSpy", "Extensions\ILSpy.Decompiler\dnSpy.Decompiler.ILSpy\dnSpy.Decompiler.ILSpy.csproj", "{D7FE873E-DF22-4F54-AEFA-BCF33AFD7E05}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICSharpCode.Decompiler", "Extensions\ILSpy.Decompiler\ICSharpCode.Decompiler\ICSharpCode.Decompiler\ICSharpCode.Decompiler.csproj", "{984CC812-9470-4A13-AFF9-CC44068D666C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.Decompiler", "Extensions\ILSpy.Decompiler\ICSharpCode.Decompiler\ICSharpCode.Decompiler\ICSharpCode.Decompiler.csproj", "{984CC812-9470-4A13-AFF9-CC44068D666C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICSharpCode.NRefactory", "Extensions\ILSpy.Decompiler\NRefactory\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj", "{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.NRefactory", "Extensions\ILSpy.Decompiler\NRefactory\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj", "{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICSharpCode.NRefactory.CSharp", "Extensions\ILSpy.Decompiler\NRefactory\ICSharpCode.NRefactory.CSharp\ICSharpCode.NRefactory.CSharp.csproj", "{53DCA265-3C3C-42F9-B647-F72BA678122B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.NRefactory.CSharp", "Extensions\ILSpy.Decompiler\NRefactory\ICSharpCode.NRefactory.CSharp\ICSharpCode.NRefactory.CSharp.csproj", "{53DCA265-3C3C-42F9-B647-F72BA678122B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICSharpCode.NRefactory.VB", "Extensions\ILSpy.Decompiler\ICSharpCode.Decompiler\NRefactory.VB\ICSharpCode.NRefactory.VB\ICSharpCode.NRefactory.VB.csproj", "{7B82B671-419F-45F4-B778-D9286F996EFA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.NRefactory.VB", "Extensions\ILSpy.Decompiler\ICSharpCode.Decompiler\NRefactory.VB\ICSharpCode.NRefactory.VB\ICSharpCode.NRefactory.VB.csproj", "{7B82B671-419F-45F4-B778-D9286F996EFA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnSpy.Analyzer", "Extensions\dnSpy.Analyzer\dnSpy.Analyzer.csproj", "{82E9DEC4-564F-42D5-8856-AA17D3962829}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Analyzer", "Extensions\dnSpy.Analyzer\dnSpy.Analyzer.csproj", "{82E9DEC4-564F-42D5-8856-AA17D3962829}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnSpy.AsmEditor", "Extensions\dnSpy.AsmEditor\dnSpy.AsmEditor.csproj", "{87772B51-FA94-47A5-83F4-4E8E69369A2D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.AsmEditor", "Extensions\dnSpy.AsmEditor\dnSpy.AsmEditor.csproj", "{87772B51-FA94-47A5-83F4-4E8E69369A2D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnSpy.BamlDecompiler", "Extensions\dnSpy.BamlDecompiler\dnSpy.BamlDecompiler.csproj", "{6D647069-5C94-4388-AC0C-E059D125AC51}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.BamlDecompiler", "Extensions\dnSpy.BamlDecompiler\dnSpy.BamlDecompiler.csproj", "{6D647069-5C94-4388-AC0C-E059D125AC51}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnSpy.Scripting.Roslyn", "Extensions\dnSpy.Scripting.Roslyn\dnSpy.Scripting.Roslyn.csproj", "{D2EFF1AF-6E3A-4025-9E67-52772384B73F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Scripting.Roslyn", "Extensions\dnSpy.Scripting.Roslyn\dnSpy.Scripting.Roslyn.csproj", "{D2EFF1AF-6E3A-4025-9E67-52772384B73F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnSpy.Roslyn", "dnSpy\Roslyn\dnSpy.Roslyn\dnSpy.Roslyn.csproj", "{844EEF8A-C7B6-4299-8CF0-4BD21DDDD4A8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Roslyn.Shared", "dnSpy\Roslyn\dnSpy.Roslyn.Shared\dnSpy.Roslyn.Shared.csproj", "{844EEF8A-C7B6-4299-8CF0-4BD21DDDD4A8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnSpy.Contracts.Logic", "dnSpy\dnSpy.Contracts.Logic\dnSpy.Contracts.Logic.csproj", "{BB748E78-376F-429A-8D83-9A8946EC179F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Contracts.Logic", "dnSpy\dnSpy.Contracts.Logic\dnSpy.Contracts.Logic.csproj", "{BB748E78-376F-429A-8D83-9A8946EC179F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnSpy.Contracts.DnSpy", "dnSpy\dnSpy.Contracts.DnSpy\dnSpy.Contracts.DnSpy.csproj", "{CB6F6372-9479-41E2-83A8-07854326BCA8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Contracts.DnSpy", "dnSpy\dnSpy.Contracts.DnSpy\dnSpy.Contracts.DnSpy.csproj", "{CB6F6372-9479-41E2-83A8-07854326BCA8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnSpy.Decompiler.ILSpy.Core", "Extensions\ILSpy.Decompiler\dnSpy.Decompiler.ILSpy.Core\dnSpy.Decompiler.ILSpy.Core.csproj", "{CE9EC29D-8A2A-41D4-8F82-BF8B536ABC31}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Decompiler.ILSpy.Core", "Extensions\ILSpy.Decompiler\dnSpy.Decompiler.ILSpy.Core\dnSpy.Decompiler.ILSpy.Core.csproj", "{CE9EC29D-8A2A-41D4-8F82-BF8B536ABC31}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnSpy.Roslyn.Internal", "dnSpy\Roslyn\dnSpy.Roslyn.Internal\dnSpy.Roslyn.Internal.csproj", "{C5F25F3E-B8EF-4A8F-8BD6-5B9863A56FE2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Roslyn.Internal", "dnSpy\Roslyn\dnSpy.Roslyn.Internal\dnSpy.Roslyn.Internal.csproj", "{C5F25F3E-B8EF-4A8F-8BD6-5B9863A56FE2}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "dnSpy.Roslyn.VisualBasic.Internal", "dnSpy\Roslyn\dnSpy.Roslyn.VisualBasic.Internal\dnSpy.Roslyn.VisualBasic.Internal.vbproj", "{8B774E77-C956-4ABC-BBFE-8756CB4111C8}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "dnSpy.Roslyn.VisualBasic.Internal", "dnSpy\Roslyn\dnSpy.Roslyn.VisualBasic.Internal\dnSpy.Roslyn.VisualBasic.Internal.vbproj", "{8B774E77-C956-4ABC-BBFE-8756CB4111C8}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "dnSpy.Roslyn.VisualBasic.EditorFeatures", "dnSpy\Roslyn\dnSpy.Roslyn.VisualBasic.EditorFeatures\dnSpy.Roslyn.VisualBasic.EditorFeatures.vbproj", "{30057546-DED0-450E-89C3-0354B4FF9CCD}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "dnSpy.Roslyn.VisualBasic.EditorFeatures", "dnSpy\Roslyn\dnSpy.Roslyn.VisualBasic.EditorFeatures\dnSpy.Roslyn.VisualBasic.EditorFeatures.vbproj", "{30057546-DED0-450E-89C3-0354B4FF9CCD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnSpy.Roslyn.EditorFeatures", "dnSpy\Roslyn\dnSpy.Roslyn.EditorFeatures\dnSpy.Roslyn.EditorFeatures.csproj", "{F10A60DA-4716-45F6-AB2E-4690440C0C7C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Roslyn.EditorFeatures", "dnSpy\Roslyn\dnSpy.Roslyn.EditorFeatures\dnSpy.Roslyn.EditorFeatures.csproj", "{F10A60DA-4716-45F6-AB2E-4690440C0C7C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnSpy.Images", "dnSpy\dnSpy.Images\dnSpy.Images.csproj", "{83BBD76B-4ECD-42E1-BF9C-AF8114E52317}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Images", "dnSpy\dnSpy.Images\dnSpy.Images.csproj", "{83BBD76B-4ECD-42E1-BF9C-AF8114E52317}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnSpy.Debugger.DotNet.CorDebug", "Extensions\dnSpy.Debugger\dnSpy.Debugger.DotNet.CorDebug\dnSpy.Debugger.DotNet.CorDebug.csproj", "{AD6EE4B9-7EE6-4FF0-869E-32DADCAA1E4A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Debugger.DotNet.CorDebug", "Extensions\dnSpy.Debugger\dnSpy.Debugger.DotNet.CorDebug\dnSpy.Debugger.DotNet.CorDebug.csproj", "{AD6EE4B9-7EE6-4FF0-869E-32DADCAA1E4A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnSpy.Contracts.Debugger", "dnSpy\dnSpy.Contracts.Debugger\dnSpy.Contracts.Debugger.csproj", "{C92217E8-A68E-4F8D-9B98-D7328E89DAF1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Contracts.Debugger", "dnSpy\dnSpy.Contracts.Debugger\dnSpy.Contracts.Debugger.csproj", "{C92217E8-A68E-4F8D-9B98-D7328E89DAF1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnSpy.Contracts.Debugger.DotNet.CorDebug", "dnSpy\dnSpy.Contracts.Debugger.DotNet.CorDebug\dnSpy.Contracts.Debugger.DotNet.CorDebug.csproj", "{A6D1AA27-ABDD-4832-B4D0-94E4B175C98F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Contracts.Debugger.DotNet.CorDebug", "dnSpy\dnSpy.Contracts.Debugger.DotNet.CorDebug\dnSpy.Contracts.Debugger.DotNet.CorDebug.csproj", "{A6D1AA27-ABDD-4832-B4D0-94E4B175C98F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnSpy.Debugger.DotNet", "Extensions\dnSpy.Debugger\dnSpy.Debugger.DotNet\dnSpy.Debugger.DotNet.csproj", "{8EA4B210-37BE-478F-AB0E-8C8C3E016114}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Diagnostics.Runtime", "Extensions\dnSpy.Debugger\clrmd\src\Microsoft.Diagnostics.Runtime\Microsoft.Diagnostics.Runtime.csproj", "{A82126CA-23AA-41F1-8586-A5938D44D0A7}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Debugger.DotNet", "Extensions\dnSpy.Debugger\dnSpy.Debugger.DotNet\dnSpy.Debugger.DotNet.csproj", "{8EA4B210-37BE-478F-AB0E-8C8C3E016114}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Contracts.Debugger.DotNet", "dnSpy\dnSpy.Contracts.Debugger.DotNet\dnSpy.Contracts.Debugger.DotNet.csproj", "{2376E072-101F-4900-8770-79C6DFFBD0FB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnSpy.Contracts.Debugger.DotNet", "dnSpy\dnSpy.Contracts.Debugger.DotNet\dnSpy.Contracts.Debugger.DotNet.csproj", "{2376E072-101F-4900-8770-79C6DFFBD0FB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Roslyn", "Roslyn", "{379DB01F-CA3E-4E34-85F1-586EB20583E0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Debugger.DotNet.Metadata", "Extensions\dnSpy.Debugger\dnSpy.Debugger.DotNet.Metadata\dnSpy.Debugger.DotNet.Metadata.csproj", "{FCD8913D-85A0-479E-9689-70FEA52C6DCB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnSpy.Debugger.DotNet.Metadata", "Extensions\dnSpy.Debugger\dnSpy.Debugger.DotNet.Metadata\dnSpy.Debugger.DotNet.Metadata.csproj", "{FCD8913D-85A0-479E-9689-70FEA52C6DCB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Debugger.DotNet.Interpreter", "Extensions\dnSpy.Debugger\dnSpy.Debugger.DotNet.Interpreter\dnSpy.Debugger.DotNet.Interpreter.csproj", "{B89E5078-FF71-4FB2-B99F-A790BD94AFD7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnSpy.Debugger.DotNet.Interpreter", "Extensions\dnSpy.Debugger\dnSpy.Debugger.DotNet.Interpreter\dnSpy.Debugger.DotNet.Interpreter.csproj", "{B89E5078-FF71-4FB2-B99F-A790BD94AFD7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExpressionCompiler", "ExpressionCompiler", "{AF34FB07-B743-4A53-B430-53EFAA27FB92}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpressionCompiler", "dnSpy\Roslyn\Roslyn.ExpressionCompiler\Core\ExpressionCompiler\ExpressionCompiler.csproj", "{255C3FEC-91B5-4E11-AAF8-9B102EA57634}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExpressionCompiler", "dnSpy\Roslyn\Roslyn.ExpressionCompiler\Core\ExpressionCompiler\ExpressionCompiler.csproj", "{255C3FEC-91B5-4E11-AAF8-9B102EA57634}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpExpressionCompiler", "dnSpy\Roslyn\Roslyn.ExpressionCompiler\CSharp\CSharpExpressionCompiler\CSharpExpressionCompiler.csproj", "{DAD4C898-6CFF-485E-AB51-8D7E56F4C672}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSharpExpressionCompiler", "dnSpy\Roslyn\Roslyn.ExpressionCompiler\CSharp\CSharpExpressionCompiler\CSharpExpressionCompiler.csproj", "{DAD4C898-6CFF-485E-AB51-8D7E56F4C672}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "BasicExpressionCompiler", "dnSpy\Roslyn\Roslyn.ExpressionCompiler\VisualBasic\BasicExpressionCompiler\BasicExpressionCompiler.vbproj", "{4B38BFCF-4253-48E7-8AD2-861AE12F41DF}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "BasicExpressionCompiler", "dnSpy\Roslyn\Roslyn.ExpressionCompiler\VisualBasic\BasicExpressionCompiler\BasicExpressionCompiler.vbproj", "{4B38BFCF-4253-48E7-8AD2-861AE12F41DF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnSpy.Debugger.DotNet.Mono", "Extensions\dnSpy.Debugger\dnSpy.Debugger.DotNet.Mono\dnSpy.Debugger.DotNet.Mono.csproj", "{083DE7BE-F315-4C7A-98B8-775428D4D20D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnSpy.Contracts.Debugger.DotNet.Mono", "dnSpy\dnSpy.Contracts.Debugger.DotNet.Mono\dnSpy.Contracts.Debugger.DotNet.Mono.csproj", "{7B58F062-7ED0-4AF1-90BB-BEB509E3BD68}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mono.Debugger.Soft", "Extensions\dnSpy.Debugger\Mono.Debugger.Soft\Mono.Debugger.Soft.csproj", "{57B5039F-30CC-4EAA-9D55-1B9A07AC8A69}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{C6E9757D-E267-4CEF-B550-EF864373A92E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnSpy.Roslyn.CSharp.EditorFeatures", "dnSpy\Roslyn\dnSpy.Roslyn.CSharp.EditorFeatures\dnSpy.Roslyn.CSharp.EditorFeatures.csproj", "{B7CD7DF8-1723-43D2-8B8A-063BA033E203}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnSpy.Roslyn.CSharp.Internal", "dnSpy\Roslyn\dnSpy.Roslyn.CSharp.Internal\dnSpy.Roslyn.CSharp.Internal.csproj", "{08AA97E1-0DEC-46B3-8103-CCFCEFC5825A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MakeEverythingPublic", "Build\MakeEverythingPublic\MakeEverythingPublic.csproj", "{F20FE1F8-19E0-4C3E-8114-4314F85D88D5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConvertToNetstandardReferences", "Build\ConvertToNetstandardReferences\ConvertToNetstandardReferences.csproj", "{60E81CF4-0255-443A-9BEC-2E4A5746F912}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppHostPatcher", "Build\AppHostPatcher\AppHostPatcher.csproj", "{7B579A88-FA0B-46DD-8150-3CFD332C05F9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppHostInfoGenerator", "Extensions\dnSpy.Debugger\AppHostInfoGenerator\AppHostInfoGenerator.csproj", "{C40804E2-F748-4162-A554-658ADD6E6EDA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -153,18 +169,6 @@ Global
 		{9265E4EA-EB00-4CB6-8A9A-608871E24FD0}.Release|x64.Build.0 = Release|Any CPU
 		{9265E4EA-EB00-4CB6-8A9A-608871E24FD0}.Release|x86.ActiveCfg = Release|Any CPU
 		{9265E4EA-EB00-4CB6-8A9A-608871E24FD0}.Release|x86.Build.0 = Release|Any CPU
-		{FDFC1237-143F-4919-8318-4926901F4639}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FDFC1237-143F-4919-8318-4926901F4639}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FDFC1237-143F-4919-8318-4926901F4639}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{FDFC1237-143F-4919-8318-4926901F4639}.Debug|x64.Build.0 = Debug|Any CPU
-		{FDFC1237-143F-4919-8318-4926901F4639}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{FDFC1237-143F-4919-8318-4926901F4639}.Debug|x86.Build.0 = Debug|Any CPU
-		{FDFC1237-143F-4919-8318-4926901F4639}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FDFC1237-143F-4919-8318-4926901F4639}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FDFC1237-143F-4919-8318-4926901F4639}.Release|x64.ActiveCfg = Release|Any CPU
-		{FDFC1237-143F-4919-8318-4926901F4639}.Release|x64.Build.0 = Release|Any CPU
-		{FDFC1237-143F-4919-8318-4926901F4639}.Release|x86.ActiveCfg = Release|Any CPU
-		{FDFC1237-143F-4919-8318-4926901F4639}.Release|x86.Build.0 = Release|Any CPU
 		{DDE2A481-8271-4EAC-A330-8FA6A38D13D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DDE2A481-8271-4EAC-A330-8FA6A38D13D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DDE2A481-8271-4EAC-A330-8FA6A38D13D1}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -465,18 +469,6 @@ Global
 		{A6D1AA27-ABDD-4832-B4D0-94E4B175C98F}.Release|x64.Build.0 = Release|Any CPU
 		{A6D1AA27-ABDD-4832-B4D0-94E4B175C98F}.Release|x86.ActiveCfg = Release|Any CPU
 		{A6D1AA27-ABDD-4832-B4D0-94E4B175C98F}.Release|x86.Build.0 = Release|Any CPU
-		{A82126CA-23AA-41F1-8586-A5938D44D0A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A82126CA-23AA-41F1-8586-A5938D44D0A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A82126CA-23AA-41F1-8586-A5938D44D0A7}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{A82126CA-23AA-41F1-8586-A5938D44D0A7}.Debug|x64.Build.0 = Debug|Any CPU
-		{A82126CA-23AA-41F1-8586-A5938D44D0A7}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{A82126CA-23AA-41F1-8586-A5938D44D0A7}.Debug|x86.Build.0 = Debug|Any CPU
-		{A82126CA-23AA-41F1-8586-A5938D44D0A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A82126CA-23AA-41F1-8586-A5938D44D0A7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A82126CA-23AA-41F1-8586-A5938D44D0A7}.Release|x64.ActiveCfg = Release|Any CPU
-		{A82126CA-23AA-41F1-8586-A5938D44D0A7}.Release|x64.Build.0 = Release|Any CPU
-		{A82126CA-23AA-41F1-8586-A5938D44D0A7}.Release|x86.ActiveCfg = Release|Any CPU
-		{A82126CA-23AA-41F1-8586-A5938D44D0A7}.Release|x86.Build.0 = Release|Any CPU
 		{8EA4B210-37BE-478F-AB0E-8C8C3E016114}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8EA4B210-37BE-478F-AB0E-8C8C3E016114}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8EA4B210-37BE-478F-AB0E-8C8C3E016114}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -561,6 +553,114 @@ Global
 		{4B38BFCF-4253-48E7-8AD2-861AE12F41DF}.Release|x64.Build.0 = Release|Any CPU
 		{4B38BFCF-4253-48E7-8AD2-861AE12F41DF}.Release|x86.ActiveCfg = Release|Any CPU
 		{4B38BFCF-4253-48E7-8AD2-861AE12F41DF}.Release|x86.Build.0 = Release|Any CPU
+		{083DE7BE-F315-4C7A-98B8-775428D4D20D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{083DE7BE-F315-4C7A-98B8-775428D4D20D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{083DE7BE-F315-4C7A-98B8-775428D4D20D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{083DE7BE-F315-4C7A-98B8-775428D4D20D}.Debug|x64.Build.0 = Debug|Any CPU
+		{083DE7BE-F315-4C7A-98B8-775428D4D20D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{083DE7BE-F315-4C7A-98B8-775428D4D20D}.Debug|x86.Build.0 = Debug|Any CPU
+		{083DE7BE-F315-4C7A-98B8-775428D4D20D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{083DE7BE-F315-4C7A-98B8-775428D4D20D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{083DE7BE-F315-4C7A-98B8-775428D4D20D}.Release|x64.ActiveCfg = Release|Any CPU
+		{083DE7BE-F315-4C7A-98B8-775428D4D20D}.Release|x64.Build.0 = Release|Any CPU
+		{083DE7BE-F315-4C7A-98B8-775428D4D20D}.Release|x86.ActiveCfg = Release|Any CPU
+		{083DE7BE-F315-4C7A-98B8-775428D4D20D}.Release|x86.Build.0 = Release|Any CPU
+		{7B58F062-7ED0-4AF1-90BB-BEB509E3BD68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B58F062-7ED0-4AF1-90BB-BEB509E3BD68}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B58F062-7ED0-4AF1-90BB-BEB509E3BD68}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7B58F062-7ED0-4AF1-90BB-BEB509E3BD68}.Debug|x64.Build.0 = Debug|Any CPU
+		{7B58F062-7ED0-4AF1-90BB-BEB509E3BD68}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7B58F062-7ED0-4AF1-90BB-BEB509E3BD68}.Debug|x86.Build.0 = Debug|Any CPU
+		{7B58F062-7ED0-4AF1-90BB-BEB509E3BD68}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B58F062-7ED0-4AF1-90BB-BEB509E3BD68}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B58F062-7ED0-4AF1-90BB-BEB509E3BD68}.Release|x64.ActiveCfg = Release|Any CPU
+		{7B58F062-7ED0-4AF1-90BB-BEB509E3BD68}.Release|x64.Build.0 = Release|Any CPU
+		{7B58F062-7ED0-4AF1-90BB-BEB509E3BD68}.Release|x86.ActiveCfg = Release|Any CPU
+		{7B58F062-7ED0-4AF1-90BB-BEB509E3BD68}.Release|x86.Build.0 = Release|Any CPU
+		{57B5039F-30CC-4EAA-9D55-1B9A07AC8A69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57B5039F-30CC-4EAA-9D55-1B9A07AC8A69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57B5039F-30CC-4EAA-9D55-1B9A07AC8A69}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{57B5039F-30CC-4EAA-9D55-1B9A07AC8A69}.Debug|x64.Build.0 = Debug|Any CPU
+		{57B5039F-30CC-4EAA-9D55-1B9A07AC8A69}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{57B5039F-30CC-4EAA-9D55-1B9A07AC8A69}.Debug|x86.Build.0 = Debug|Any CPU
+		{57B5039F-30CC-4EAA-9D55-1B9A07AC8A69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57B5039F-30CC-4EAA-9D55-1B9A07AC8A69}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57B5039F-30CC-4EAA-9D55-1B9A07AC8A69}.Release|x64.ActiveCfg = Release|Any CPU
+		{57B5039F-30CC-4EAA-9D55-1B9A07AC8A69}.Release|x64.Build.0 = Release|Any CPU
+		{57B5039F-30CC-4EAA-9D55-1B9A07AC8A69}.Release|x86.ActiveCfg = Release|Any CPU
+		{57B5039F-30CC-4EAA-9D55-1B9A07AC8A69}.Release|x86.Build.0 = Release|Any CPU
+		{B7CD7DF8-1723-43D2-8B8A-063BA033E203}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7CD7DF8-1723-43D2-8B8A-063BA033E203}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7CD7DF8-1723-43D2-8B8A-063BA033E203}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B7CD7DF8-1723-43D2-8B8A-063BA033E203}.Debug|x64.Build.0 = Debug|Any CPU
+		{B7CD7DF8-1723-43D2-8B8A-063BA033E203}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B7CD7DF8-1723-43D2-8B8A-063BA033E203}.Debug|x86.Build.0 = Debug|Any CPU
+		{B7CD7DF8-1723-43D2-8B8A-063BA033E203}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7CD7DF8-1723-43D2-8B8A-063BA033E203}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7CD7DF8-1723-43D2-8B8A-063BA033E203}.Release|x64.ActiveCfg = Release|Any CPU
+		{B7CD7DF8-1723-43D2-8B8A-063BA033E203}.Release|x64.Build.0 = Release|Any CPU
+		{B7CD7DF8-1723-43D2-8B8A-063BA033E203}.Release|x86.ActiveCfg = Release|Any CPU
+		{B7CD7DF8-1723-43D2-8B8A-063BA033E203}.Release|x86.Build.0 = Release|Any CPU
+		{08AA97E1-0DEC-46B3-8103-CCFCEFC5825A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08AA97E1-0DEC-46B3-8103-CCFCEFC5825A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08AA97E1-0DEC-46B3-8103-CCFCEFC5825A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{08AA97E1-0DEC-46B3-8103-CCFCEFC5825A}.Debug|x64.Build.0 = Debug|Any CPU
+		{08AA97E1-0DEC-46B3-8103-CCFCEFC5825A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{08AA97E1-0DEC-46B3-8103-CCFCEFC5825A}.Debug|x86.Build.0 = Debug|Any CPU
+		{08AA97E1-0DEC-46B3-8103-CCFCEFC5825A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08AA97E1-0DEC-46B3-8103-CCFCEFC5825A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08AA97E1-0DEC-46B3-8103-CCFCEFC5825A}.Release|x64.ActiveCfg = Release|Any CPU
+		{08AA97E1-0DEC-46B3-8103-CCFCEFC5825A}.Release|x64.Build.0 = Release|Any CPU
+		{08AA97E1-0DEC-46B3-8103-CCFCEFC5825A}.Release|x86.ActiveCfg = Release|Any CPU
+		{08AA97E1-0DEC-46B3-8103-CCFCEFC5825A}.Release|x86.Build.0 = Release|Any CPU
+		{F20FE1F8-19E0-4C3E-8114-4314F85D88D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F20FE1F8-19E0-4C3E-8114-4314F85D88D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F20FE1F8-19E0-4C3E-8114-4314F85D88D5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F20FE1F8-19E0-4C3E-8114-4314F85D88D5}.Debug|x64.Build.0 = Debug|Any CPU
+		{F20FE1F8-19E0-4C3E-8114-4314F85D88D5}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F20FE1F8-19E0-4C3E-8114-4314F85D88D5}.Debug|x86.Build.0 = Debug|Any CPU
+		{F20FE1F8-19E0-4C3E-8114-4314F85D88D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F20FE1F8-19E0-4C3E-8114-4314F85D88D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F20FE1F8-19E0-4C3E-8114-4314F85D88D5}.Release|x64.ActiveCfg = Release|Any CPU
+		{F20FE1F8-19E0-4C3E-8114-4314F85D88D5}.Release|x64.Build.0 = Release|Any CPU
+		{F20FE1F8-19E0-4C3E-8114-4314F85D88D5}.Release|x86.ActiveCfg = Release|Any CPU
+		{F20FE1F8-19E0-4C3E-8114-4314F85D88D5}.Release|x86.Build.0 = Release|Any CPU
+		{60E81CF4-0255-443A-9BEC-2E4A5746F912}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60E81CF4-0255-443A-9BEC-2E4A5746F912}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60E81CF4-0255-443A-9BEC-2E4A5746F912}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{60E81CF4-0255-443A-9BEC-2E4A5746F912}.Debug|x64.Build.0 = Debug|Any CPU
+		{60E81CF4-0255-443A-9BEC-2E4A5746F912}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{60E81CF4-0255-443A-9BEC-2E4A5746F912}.Debug|x86.Build.0 = Debug|Any CPU
+		{60E81CF4-0255-443A-9BEC-2E4A5746F912}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60E81CF4-0255-443A-9BEC-2E4A5746F912}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60E81CF4-0255-443A-9BEC-2E4A5746F912}.Release|x64.ActiveCfg = Release|Any CPU
+		{60E81CF4-0255-443A-9BEC-2E4A5746F912}.Release|x64.Build.0 = Release|Any CPU
+		{60E81CF4-0255-443A-9BEC-2E4A5746F912}.Release|x86.ActiveCfg = Release|Any CPU
+		{60E81CF4-0255-443A-9BEC-2E4A5746F912}.Release|x86.Build.0 = Release|Any CPU
+		{7B579A88-FA0B-46DD-8150-3CFD332C05F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B579A88-FA0B-46DD-8150-3CFD332C05F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B579A88-FA0B-46DD-8150-3CFD332C05F9}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7B579A88-FA0B-46DD-8150-3CFD332C05F9}.Debug|x64.Build.0 = Debug|Any CPU
+		{7B579A88-FA0B-46DD-8150-3CFD332C05F9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7B579A88-FA0B-46DD-8150-3CFD332C05F9}.Debug|x86.Build.0 = Debug|Any CPU
+		{7B579A88-FA0B-46DD-8150-3CFD332C05F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B579A88-FA0B-46DD-8150-3CFD332C05F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B579A88-FA0B-46DD-8150-3CFD332C05F9}.Release|x64.ActiveCfg = Release|Any CPU
+		{7B579A88-FA0B-46DD-8150-3CFD332C05F9}.Release|x64.Build.0 = Release|Any CPU
+		{7B579A88-FA0B-46DD-8150-3CFD332C05F9}.Release|x86.ActiveCfg = Release|Any CPU
+		{7B579A88-FA0B-46DD-8150-3CFD332C05F9}.Release|x86.Build.0 = Release|Any CPU
+		{C40804E2-F748-4162-A554-658ADD6E6EDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C40804E2-F748-4162-A554-658ADD6E6EDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C40804E2-F748-4162-A554-658ADD6E6EDA}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C40804E2-F748-4162-A554-658ADD6E6EDA}.Debug|x64.Build.0 = Debug|Any CPU
+		{C40804E2-F748-4162-A554-658ADD6E6EDA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C40804E2-F748-4162-A554-658ADD6E6EDA}.Debug|x86.Build.0 = Debug|Any CPU
+		{C40804E2-F748-4162-A554-658ADD6E6EDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C40804E2-F748-4162-A554-658ADD6E6EDA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C40804E2-F748-4162-A554-658ADD6E6EDA}.Release|x64.ActiveCfg = Release|Any CPU
+		{C40804E2-F748-4162-A554-658ADD6E6EDA}.Release|x64.Build.0 = Release|Any CPU
+		{C40804E2-F748-4162-A554-658ADD6E6EDA}.Release|x86.ActiveCfg = Release|Any CPU
+		{C40804E2-F748-4162-A554-658ADD6E6EDA}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -573,7 +673,6 @@ Global
 		{722257A9-1B14-4D63-B886-18A4229AF4EB} = {293F0A13-6653-4580-9116-1D255F4C4E69}
 		{DA111693-97C8-413B-9102-4DCBEE8885B7} = {293F0A13-6653-4580-9116-1D255F4C4E69}
 		{9265E4EA-EB00-4CB6-8A9A-608871E24FD0} = {293F0A13-6653-4580-9116-1D255F4C4E69}
-		{FDFC1237-143F-4919-8318-4926901F4639} = {1CE427B9-B8B2-4B92-9FAB-708C51C99098}
 		{DDE2A481-8271-4EAC-A330-8FA6A38D13D1} = {1CE427B9-B8B2-4B92-9FAB-708C51C99098}
 		{52995BD1-DB91-4654-89B7-1DEB3B0D3155} = {29E1907A-9C87-4F6E-961C-1C45273EFAFA}
 		{B24AAB0F-CA85-4D85-8B46-10D634896E2A} = {843A6224-CA2A-4D25-B507-53C05675F021}
@@ -599,7 +698,6 @@ Global
 		{AD6EE4B9-7EE6-4FF0-869E-32DADCAA1E4A} = {29E1907A-9C87-4F6E-961C-1C45273EFAFA}
 		{C92217E8-A68E-4F8D-9B98-D7328E89DAF1} = {293F0A13-6653-4580-9116-1D255F4C4E69}
 		{A6D1AA27-ABDD-4832-B4D0-94E4B175C98F} = {293F0A13-6653-4580-9116-1D255F4C4E69}
-		{A82126CA-23AA-41F1-8586-A5938D44D0A7} = {29E1907A-9C87-4F6E-961C-1C45273EFAFA}
 		{8EA4B210-37BE-478F-AB0E-8C8C3E016114} = {29E1907A-9C87-4F6E-961C-1C45273EFAFA}
 		{2376E072-101F-4900-8770-79C6DFFBD0FB} = {293F0A13-6653-4580-9116-1D255F4C4E69}
 		{379DB01F-CA3E-4E34-85F1-586EB20583E0} = {293F0A13-6653-4580-9116-1D255F4C4E69}
@@ -609,6 +707,15 @@ Global
 		{255C3FEC-91B5-4E11-AAF8-9B102EA57634} = {AF34FB07-B743-4A53-B430-53EFAA27FB92}
 		{DAD4C898-6CFF-485E-AB51-8D7E56F4C672} = {AF34FB07-B743-4A53-B430-53EFAA27FB92}
 		{4B38BFCF-4253-48E7-8AD2-861AE12F41DF} = {AF34FB07-B743-4A53-B430-53EFAA27FB92}
+		{083DE7BE-F315-4C7A-98B8-775428D4D20D} = {29E1907A-9C87-4F6E-961C-1C45273EFAFA}
+		{7B58F062-7ED0-4AF1-90BB-BEB509E3BD68} = {293F0A13-6653-4580-9116-1D255F4C4E69}
+		{57B5039F-30CC-4EAA-9D55-1B9A07AC8A69} = {29E1907A-9C87-4F6E-961C-1C45273EFAFA}
+		{B7CD7DF8-1723-43D2-8B8A-063BA033E203} = {379DB01F-CA3E-4E34-85F1-586EB20583E0}
+		{08AA97E1-0DEC-46B3-8103-CCFCEFC5825A} = {379DB01F-CA3E-4E34-85F1-586EB20583E0}
+		{F20FE1F8-19E0-4C3E-8114-4314F85D88D5} = {C6E9757D-E267-4CEF-B550-EF864373A92E}
+		{60E81CF4-0255-443A-9BEC-2E4A5746F912} = {C6E9757D-E267-4CEF-B550-EF864373A92E}
+		{7B579A88-FA0B-46DD-8150-3CFD332C05F9} = {C6E9757D-E267-4CEF-B550-EF864373A92E}
+		{C40804E2-F748-4162-A554-658ADD6E6EDA} = {29E1907A-9C87-4F6E-961C-1C45273EFAFA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {73CB4820-3A98-46A7-AF32-E0939347B2AC}

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,10 +34,11 @@ namespace dnSpy.Contracts.MVVM.Dialogs {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
 				var data = DataContext as ProgressVM;
-				if (data != null)
+				if (!(data is null)) {
 					data.OnCompleted += ProgressVM_OnCompleted;
-				if (data.HasCompleted)
-					OnCompleted();
+					if (data.HasCompleted)
+						OnCompleted();
+				}
 			};
 		}
 
@@ -52,7 +53,7 @@ namespace dnSpy.Contracts.MVVM.Dialogs {
 			base.OnClosing(e);
 
 			var data = DataContext as ProgressVM;
-			if (data == null)
+			if (data is null)
 				return;
 			data.Cancel();
 			if (!data.HasCompleted)
@@ -63,7 +64,7 @@ namespace dnSpy.Contracts.MVVM.Dialogs {
 
 		void OnCompleted() {
 			var data = DataContext as ProgressVM;
-			DialogResult = data != null && !data.WasCanceled;
+			DialogResult = !(data is null) && !data.WasCanceled;
 			Close();
 		}
 

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,13 +32,13 @@ namespace dndbg.Engine {
 		/// null if we should auto detect the version, else it should be a version of an already
 		/// installed CLR, eg. "v2.0.50727" etc.
 		/// </summary>
-		public string DebuggeeVersion { get; set; }
+		public string? DebuggeeVersion { get; set; }
 
 		public DesktopCLRTypeDebugInfo()
 			: this(null) {
 		}
 
-		public DesktopCLRTypeDebugInfo(string debuggeeVersion) => DebuggeeVersion = debuggeeVersion;
+		public DesktopCLRTypeDebugInfo(string? debuggeeVersion) => DebuggeeVersion = debuggeeVersion;
 
 		public override CLRTypeDebugInfo Clone() => new DesktopCLRTypeDebugInfo(DebuggeeVersion);
 	}
@@ -47,21 +47,21 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// dbgshim.dll filename or null
 		/// </summary>
-		public string DbgShimFilename { get; set; }
+		public string? DbgShimFilename { get; set; }
 
 		/// <summary>
-		/// Host filename
+		/// Host filename or null to not use a host exe
 		/// </summary>
-		public string HostFilename { get; set; }
+		public string? HostFilename { get; set; }
 
 		/// <summary>
 		/// Host command line
 		/// </summary>
-		public string HostCommandLine { get; set; }
+		public string? HostCommandLine { get; set; }
 
 		public override CLRType CLRType => CLRType.CoreCLR;
 
-		public CoreCLRTypeDebugInfo(string dbgShimFilename, string hostFilename, string hostCommandLine) {
+		public CoreCLRTypeDebugInfo(string? dbgShimFilename, string? hostFilename, string? hostCommandLine) {
 			DbgShimFilename = dbgShimFilename;
 			HostFilename = hostFilename;
 			HostCommandLine = hostCommandLine;
@@ -79,27 +79,37 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// File to debug
 		/// </summary>
-		public string Filename { get; set; }
+		public string? Filename { get; set; }
 
 		/// <summary>
 		/// Command line to pass to debugged program
 		/// </summary>
-		public string CommandLine { get; set; }
+		public string? CommandLine { get; set; }
 
 		/// <summary>
 		/// Current directory of debugged program or null to use the debugger's cwd
 		/// </summary>
-		public string CurrentDirectory { get; set; }
+		public string? CurrentDirectory { get; set; }
+
+		/// <summary>
+		/// Path of managed dll if <see cref="Filename"/> is the .NET Core apphost executable
+		/// </summary>
+		public string? ManagedDllFilename { get; set; }
 
 		/// <summary>
 		/// Environment
 		/// </summary>
-		public KeyValuePair<string, string>[] Environment { get; set; }
+		public KeyValuePair<string, string>[]? Environment { get; set; }
 
 		/// <summary>
 		/// true if handles should be inherited by the started process
 		/// </summary>
 		public bool InheritHandles { get; set; }
+
+		/// <summary>
+		/// Redirect stdout and stderr
+		/// </summary>
+		public bool RedirectConsoleOutput { get; set; }
 
 		/// <summary>
 		/// Process creation flags passed to CreateProcess()
@@ -109,7 +119,7 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// An <see cref="IDebugMessageDispatcher"/> instance. Can't be null.
 		/// </summary>
-		public IDebugMessageDispatcher DebugMessageDispatcher { get; set; }
+		public IDebugMessageDispatcher? DebugMessageDispatcher { get; set; }
 
 		/// <summary>
 		/// Debug options
@@ -134,10 +144,12 @@ namespace dndbg.Engine {
 			other.Filename = Filename;
 			other.CommandLine = CommandLine;
 			other.CurrentDirectory = CurrentDirectory;
+			other.ManagedDllFilename = ManagedDllFilename;
 			other.InheritHandles = InheritHandles;
+			other.RedirectConsoleOutput = RedirectConsoleOutput;
 			other.ProcessCreationFlags = ProcessCreationFlags;
 			other.DebugMessageDispatcher = DebugMessageDispatcher;
-			other.DebugOptions = DebugOptions == null ? null : DebugOptions.Clone();
+			other.DebugOptions = DebugOptions.Clone();
 			other.BreakProcessKind = BreakProcessKind;
 			return other;
 		}

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,6 +26,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
+using dnSpy.Contracts.Themes;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 using Microsoft.VisualStudio.Text.Operations;
@@ -41,18 +42,22 @@ namespace dnSpy.Text.Editor {
 		readonly IWpfTextViewMargin[] containerMargins;
 		readonly Grid grid;
 		readonly IEditorOperationsFactoryService editorOperationsFactoryService;
+		readonly IThemeService themeService;
 
-		public WpfTextViewHost(IWpfTextViewMarginProviderCollectionProvider wpfTextViewMarginProviderCollectionProvider, IDsWpfTextView wpfTextView, IEditorOperationsFactoryService editorOperationsFactoryService, bool setFocus) {
-			if (wpfTextViewMarginProviderCollectionProvider == null)
+		public WpfTextViewHost(IWpfTextViewMarginProviderCollectionProvider wpfTextViewMarginProviderCollectionProvider, IDsWpfTextView wpfTextView, IEditorOperationsFactoryService editorOperationsFactoryService, IThemeService themeService, bool setFocus) {
+			if (wpfTextViewMarginProviderCollectionProvider is null)
 				throw new ArgumentNullException(nameof(wpfTextViewMarginProviderCollectionProvider));
 			this.editorOperationsFactoryService = editorOperationsFactoryService ?? throw new ArgumentNullException(nameof(editorOperationsFactoryService));
+			this.themeService = themeService;
 			grid = CreateGrid();
 			TextView = wpfTextView ?? throw new ArgumentNullException(nameof(wpfTextView));
 			Focusable = false;
 			Content = grid;
 
-			UpdateBackground();
+			themeService.ThemeChanged += ThemeService_ThemeChanged;
 			TextView.BackgroundBrushChanged += TextView_BackgroundBrushChanged;
+			UpdateIsInContrastMode();
+			UpdateBackground();
 
 			containerMargins = new IWpfTextViewMargin[5];
 			containerMargins[0] = CreateContainerMargin(wpfTextViewMarginProviderCollectionProvider, PredefinedMarginNames.Top, true, 0, 0, 3);
@@ -61,7 +66,7 @@ namespace dnSpy.Text.Editor {
 			containerMargins[3] = CreateContainerMargin(wpfTextViewMarginProviderCollectionProvider, PredefinedMarginNames.Left, false, 1, 0, 1);
 			containerMargins[4] = CreateContainerMargin(wpfTextViewMarginProviderCollectionProvider, PredefinedMarginNames.Right, false, 1, 2, 1);
 			Add(TextView.VisualElement, 1, 1, 1);
-			Debug.Assert(!containerMargins.Any(a => a == null));
+			Debug.Assert(!containerMargins.Any(a => a is null));
 
 			if (setFocus) {
 				Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(() => {
@@ -70,6 +75,11 @@ namespace dnSpy.Text.Editor {
 				}));
 			}
 		}
+
+		void ThemeService_ThemeChanged(object sender, ThemeChangedEventArgs e) => UpdateIsInContrastMode();
+
+		void UpdateIsInContrastMode() =>
+			TextView.Options.GlobalOptions.SetOptionValue(DefaultTextViewHostOptions.IsInContrastModeId, themeService.Theme.IsHighContrast);
 
 		IWpfTextViewMargin CreateContainerMargin(IWpfTextViewMarginProviderCollectionProvider wpfTextViewMarginProviderCollectionProvider, string name, bool isHorizontal, int row, int column, int columnSpan) {
 			var margin = new WpfTextViewContainerMargin(wpfTextViewMarginProviderCollectionProvider, this, name, isHorizontal);
@@ -116,6 +126,7 @@ namespace dnSpy.Text.Editor {
 			TextView.Close();
 			IsClosed = true;
 			Closed?.Invoke(this, EventArgs.Empty);
+			themeService.ThemeChanged -= ThemeService_ThemeChanged;
 			TextView.BackgroundBrushChanged -= TextView_BackgroundBrushChanged;
 			foreach (var margin in containerMargins) {
 				margin.VisualElement.MouseDown -= Margin_VisualElement_MouseDown;
@@ -123,9 +134,9 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		public IWpfTextViewMargin GetTextViewMargin(string marginName) {
+		public IWpfTextViewMargin? GetTextViewMargin(string marginName) {
 			foreach (var margin in containerMargins) {
-				if (margin == null)
+				if (margin is null)
 					continue;
 				if (margin.GetTextViewMargin(marginName) is IWpfTextViewMargin result)
 					return result;

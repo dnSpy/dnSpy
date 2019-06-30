@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <summary>
 		/// Text buffer to use or null. Use <see cref="ITextBufferFactoryService"/> to create an instance
 		/// </summary>
-		public ITextBuffer TextBuffer { get; set; }
+		public ITextBuffer? TextBuffer { get; set; }
 
 		/// <summary>
 		/// All <see cref="ITextView"/> roles

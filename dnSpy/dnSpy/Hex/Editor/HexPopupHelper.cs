@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,10 +36,10 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		public static void SetScaleTransform(WpfHexView wpfHexView, FrameworkElement popupElement) {
-			if (wpfHexView == null)
+			if (wpfHexView is null)
 				return;
 			var metroWindow = Window.GetWindow(wpfHexView.VisualElement) as MetroWindow;
-			if (metroWindow == null)
+			if (metroWindow is null)
 				return;
 			metroWindow.SetScaleTransform(popupElement, wpfHexView.ZoomLevel / 100);
 

@@ -1,0 +1,1533 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddBreakpointCommand" xml:space="preserve">
+    <value>_Kesme Noktası Ekle</value>
+  </data>
+  <data name="AddExceptionCommand" xml:space="preserve">
+    <value>E_xception Ekle</value>
+  </data>
+  <data name="AppDomainNotAvailable" xml:space="preserve">
+    <value>&lt;kullanılamaz&gt;</value>
+  </data>
+  <data name="AppMenu_Debug" xml:space="preserve">
+    <value>_Debug</value>
+  </data>
+  <data name="AppTitle_Debugging" xml:space="preserve">
+    <value>Hata ayıklanıyor</value>
+  </data>
+  <data name="AskDeleteAllBreakpoints" xml:space="preserve">
+    <value>Tüm breakpoint'leri silmek istiyor musunuz?</value>
+  </data>
+  <data name="AttachToProcessCommand" xml:space="preserve">
+    <value>_İşleme ekle...</value>
+  </data>
+  <data name="Attach_AttachToProcess" xml:space="preserve">
+    <value>İşleme ekle</value>
+  </data>
+  <data name="Attach_UseDnSpy32" xml:space="preserve">
+    <value>64-bit işlemlere eklemek için dnSpy. exe'yi kullan</value>
+  </data>
+  <data name="Attach_UseDnSpy64" xml:space="preserve">
+    <value>64-bit işlemlere eklemek için dnSpy. exe'yi kullan</value>
+  </data>
+  <data name="BreakCommand" xml:space="preserve">
+    <value>_Hepsini Durdur</value>
+  </data>
+  <data name="BreakpointsCommand" xml:space="preserve">
+    <value>_Kesme noktaları</value>
+  </data>
+  <data name="Button_Attach" xml:space="preserve">
+    <value>_Ekle</value>
+  </data>
+  <data name="Button_Cancel" xml:space="preserve">
+    <value>İptal</value>
+  </data>
+  <data name="Button_OK" xml:space="preserve">
+    <value>Tamam</value>
+  </data>
+  <data name="Button_Refresh" xml:space="preserve">
+    <value>_Yenile</value>
+  </data>
+  <data name="CallStackCommand" xml:space="preserve">
+    <value>_Yığın çağrısı</value>
+  </data>
+  <data name="CallStack_MaxFramesExceeded" xml:space="preserve">
+    <value>dnSpy tarafından desteklenen maksimum çerçeve yığını sayısı aşıldı.</value>
+  </data>
+  <data name="Column_Address" xml:space="preserve">
+    <value>Adres</value>
+  </data>
+  <data name="Column_AppDomain" xml:space="preserve">
+    <value>Uygulama alanı</value>
+  </data>
+  <data name="Column_DynamicModule" xml:space="preserve">
+    <value>Dinamik</value>
+  </data>
+  <data name="Column_InMemoryModule" xml:space="preserve">
+    <value>Bellekte</value>
+  </data>
+  <data name="Column_Module" xml:space="preserve">
+    <value>Modül</value>
+  </data>
+  <data name="Column_Name" xml:space="preserve">
+    <value>İsim</value>
+  </data>
+  <data name="Column_OptimizedModule" xml:space="preserve">
+    <value>Optimize edildi</value>
+  </data>
+  <data name="Column_Order" xml:space="preserve">
+    <value>Sıra</value>
+  </data>
+  <data name="Column_Path" xml:space="preserve">
+    <value>Yol</value>
+  </data>
+  <data name="Column_Process" xml:space="preserve">
+    <value>İşlem</value>
+  </data>
+  <data name="Column_ProcessArchitecture" xml:space="preserve">
+    <value>Kemer</value>
+  </data>
+  <data name="Column_ProcessFilename" xml:space="preserve">
+    <value>Dosya adı</value>
+  </data>
+  <data name="Column_ProcessID" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="Column_ProcessTitle" xml:space="preserve">
+    <value>Başlık</value>
+  </data>
+  <data name="Column_ProcessType" xml:space="preserve">
+    <value>Tip</value>
+  </data>
+  <data name="Column_ThreadAffinityMask" xml:space="preserve">
+    <value>Yakınlık maskesi</value>
+  </data>
+  <data name="Column_ThreadCategory" xml:space="preserve">
+    <value>Kategori</value>
+  </data>
+  <data name="Column_ThreadID" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="Column_ThreadLocation" xml:space="preserve">
+    <value>Konum</value>
+  </data>
+  <data name="Column_ThreadManagedId" xml:space="preserve">
+    <value>Yönetilen Kimlik</value>
+  </data>
+  <data name="Column_ThreadPriority" xml:space="preserve">
+    <value>Öncelik</value>
+  </data>
+  <data name="Column_ThreadState" xml:space="preserve">
+    <value>Durum</value>
+  </data>
+  <data name="Column_ThreadSuspendedCount" xml:space="preserve">
+    <value>Askıya Alınma Sayısı</value>
+  </data>
+  <data name="Column_Timestamp" xml:space="preserve">
+    <value>Zaman bilgisi</value>
+  </data>
+  <data name="Column_Type" xml:space="preserve">
+    <value>Tip</value>
+  </data>
+  <data name="Column_Value" xml:space="preserve">
+    <value>Değer</value>
+  </data>
+  <data name="Column_Version" xml:space="preserve">
+    <value>Versiyon</value>
+  </data>
+  <data name="ContinueDebuggingCommand" xml:space="preserve">
+    <value>_Devam et</value>
+  </data>
+  <data name="CopyCommand" xml:space="preserve">
+    <value>Kop_yala</value>
+  </data>
+  <data name="DbgAsm_Title" xml:space="preserve">
+    <value>Programda hata ayıkla</value>
+  </data>
+  <data name="DbgSettings_AutoOpenLocalsWindow" xml:space="preserve">
+    <value>Hata ayıklayıcı başladığı zaman Locals penceresini göster</value>
+  </data>
+  <data name="DbgSettings_DisableDebuggerDetection" xml:space="preserve">
+    <value>Kodun yönetilen bir hata ayıklayıcıyı algılamasını engelle</value>
+  </data>
+  <data name="DbgSettings_IgnoreBreakInstructions" xml:space="preserve">
+    <value>Debugger.Break()'ı yoksay ve talimatları durdur</value>
+  </data>
+  <data name="DbgSettings_PropertyEvalAndFunctionCalls" xml:space="preserve">
+    <value>Özellik değerlendirmeyi ve diğer örtük işlev çağrılarını etkinleştir</value>
+  </data>
+  <data name="DbgSettings_UseMemoryModules" xml:space="preserve">
+    <value>İşlemci hafızasından yüklenen dosyalarda hata ayıkla (disk dosyalarını kullanmak için işareti kaldırın)</value>
+  </data>
+  <data name="DbgSettings_UseStringConversionFunction" xml:space="preserve">
+    <value>Değişkenler penceresinde objedeki dizi-çevirme fonksiyonunu çağır</value>
+  </data>
+  <data name="StartDebugging2" xml:space="preserve">
+    <value>_Hata ayıklamayı başlat...</value>
+  </data>
+  <data name="DebuggerOptDlgTab" xml:space="preserve">
+    <value>Hata ayıklayıcı</value>
+  </data>
+  <data name="DebugProgramX" xml:space="preserve">
+    <value>_Hata Ayıkla{0}</value>
+  </data>
+  <data name="Debug_EventDescription_Exception" xml:space="preserve">
+    <value>İstisna</value>
+  </data>
+  <data name="Debug_EventDescription_LoadModule1" xml:space="preserve">
+    <value>DYN={0} MEM={1} {2:X8} {3:X8} {4} modülünü yükle</value>
+  </data>
+  <data name="Debug_EventDescription_LoadModule2" xml:space="preserve">
+    <value>A={0:X8} S={1:X8} {2} modülünü yükle</value>
+  </data>
+  <data name="Debug_EventDescription_UnhandledException" xml:space="preserve">
+    <value>İşlenmemiş istisna</value>
+  </data>
+  <data name="DeleteAllBreakpointsCommand" xml:space="preserve">
+    <value>_Tüm kesme noktalarını sil</value>
+  </data>
+  <data name="DeleteBreakpointCommand" xml:space="preserve">
+    <value>Kesme noktasını _sil</value>
+  </data>
+  <data name="DetachAllCommand" xml:space="preserve">
+    <value>_Hepsini çöz</value>
+  </data>
+  <data name="DisableAllBreakpointsCommand" xml:space="preserve">
+    <value>_Kesme noktalarının hepsini devre dışı bırak</value>
+  </data>
+  <data name="EnableAllBreakpointsCommand" xml:space="preserve">
+    <value>_Kesme noktalarının hepsini aktif et</value>
+  </data>
+  <data name="EnableBreakpointCommand" xml:space="preserve">
+    <value>Kesme noktasını _aktif et</value>
+  </data>
+  <data name="EnableBreakpointCommand2" xml:space="preserve">
+    <value>Kesme noktasını _aktif et</value>
+  </data>
+  <data name="ErrorOccurredX" xml:space="preserve">
+    <value>Bir hata meydana geldi:
+
+{0}</value>
+  </data>
+  <data name="Error_CantEvalUnlessDebuggerStopped" xml:space="preserve">
+    <value>Hata ayıklayıcı durmadığı sürece değerlendirilemez</value>
+  </data>
+  <data name="Error_CantEvalWhenUnhandledExceptionHasOccurred" xml:space="preserve">
+    <value>İşlenmemiş bir istisna meydana geldiğinde değerlendirilemez</value>
+  </data>
+  <data name="Error_StartWithoutDebuggingCouldNotStart" xml:space="preserve">
+    <value>'{0}' başlatılamadı
+HATA:{1}</value>
+  </data>
+  <data name="ExceptionSettingsCommand" xml:space="preserve">
+    <value>_İstisna Ayarları</value>
+  </data>
+  <data name="Exceptions_Remove_ToolTip" xml:space="preserve">
+    <value>Listeden bir istisnayı kaldır</value>
+  </data>
+  <data name="Exceptions_RestoreSettings_ToolTip" xml:space="preserve">
+    <value>Listenin varsayılan ayarlarını geri yükle</value>
+  </data>
+  <data name="Exceptions_Search" xml:space="preserve">
+    <value>Ara</value>
+  </data>
+  <data name="Exceptions_Search_ToolTip" xml:space="preserve">
+    <value>Bir istisna için ara</value>
+  </data>
+  <data name="Exceptions_ShowOnlyEnabledExceptions_ToolTip" xml:space="preserve">
+    <value>Sadece etkinleştirilmiş istisnaları göster</value>
+  </data>
+  <data name="FreezeThreadCommand" xml:space="preserve">
+    <value>_Dondur</value>
+  </data>
+  <data name="GoToDisassemblyCommand2" xml:space="preserve">
+    <value>_Ayırmaya git</value>
+  </data>
+  <data name="GoToModuleCommand" xml:space="preserve">
+    <value>Modüle _git</value>
+  </data>
+  <data name="HexDisplayCommand" xml:space="preserve">
+    <value>_Onaltılık görüntüleme</value>
+  </data>
+  <data name="LocalsAddWatchCommand" xml:space="preserve">
+    <value>_Saat ekle</value>
+  </data>
+  <data name="LocalsCollapseChildrenNodesCommand" xml:space="preserve">
+    <value>Çocukları _çöker</value>
+  </data>
+  <data name="LocalsCollapseParentNodeCommand" xml:space="preserve">
+    <value>Temeli _çöker</value>
+  </data>
+  <data name="LocalsCommand" xml:space="preserve">
+    <value>_Yerliler</value>
+  </data>
+  <data name="LocalsCopyValueCommand" xml:space="preserve">
+    <value>_Değeri Kopyala</value>
+  </data>
+  <data name="LocalsEditValueCommand" xml:space="preserve">
+    <value>Değeri _düzenle</value>
+  </data>
+  <data name="LocalsExpandChildrenNodesCommand" xml:space="preserve">
+    <value>Çocuğu _genişlet</value>
+  </data>
+  <data name="LocalsSaveCommand" xml:space="preserve">
+    <value>_Kaydet...</value>
+  </data>
+  <data name="LocalsSave_Error_CouldNotSaveDataToFilename" xml:space="preserve">
+    <value>Veriler {0}'a kaydedilirken hata oluştu
+HATA:{1}</value>
+  </data>
+  <data name="Locals_Ask_TooManyItems" xml:space="preserve">
+    <value>Bu madde {0} dan daha fazla çocuk maddesi içeriyor ve genişletildiğinde gösterdiği madde sayısı limitlenecek.
+
+Genişletmek istediğinizden emin misiniz?</value>
+  </data>
+  <data name="Locals_Error_CantEvaluateWhenThreadIsAtUnsafePoint" xml:space="preserve">
+    <value>Konu tehlikeli bir noktada iken değerlendiremez. Bir adım ilerle veya kesme noktasına gelene kadar devam et.</value>
+  </data>
+  <data name="Locals_Error_EvalDisabledCantCallPropsAndMethods" xml:space="preserve">
+    <value>Özellikleri ve yöntemleri çağırmak şuan için mümkün değil</value>
+  </data>
+  <data name="Locals_Error_EvalTimedOutIsDisabled" xml:space="preserve">
+    <value>Değerlendirme zaman aşımına uğradı ve siz hata ayıklayıcıya devam edene kadar devre dışı bırakıldı.</value>
+  </data>
+  <data name="Locals_Error_EvaluationTimedOut" xml:space="preserve">
+    <value>Değerlendirme zaman aşımına uğradı</value>
+  </data>
+  <data name="MemoryWindowCommand" xml:space="preserve">
+    <value>_Hafıza</value>
+  </data>
+  <data name="ModuleCopyFilenameCommand" xml:space="preserve">
+    <value>Dosya adını kopyala</value>
+  </data>
+  <data name="ModuleSaveModulesTitle" xml:space="preserve">
+    <value>Modülleri Kaydet</value>
+  </data>
+  <data name="ModuleSaveModuleTitle" xml:space="preserve">
+    <value>Modülü Kaydet</value>
+  </data>
+  <data name="ModulesCommand" xml:space="preserve">
+    <value>_Modüller</value>
+  </data>
+  <data name="Module_NoAddress" xml:space="preserve">
+    <value>&lt;adres yok&gt;</value>
+  </data>
+  <data name="OpenContainingFolderCommand" xml:space="preserve">
+    <value>Dosyayı içeren klasörü _aç</value>
+  </data>
+  <data name="OpenModuleFromMemoryCommand" xml:space="preserve">
+    <value>Hafızadan modül aç</value>
+  </data>
+  <data name="RemoveExceptionCommand" xml:space="preserve">
+    <value>_Kaldır</value>
+  </data>
+  <data name="RenameThreadCommand" xml:space="preserve">
+    <value>Yeniden adlandır</value>
+  </data>
+  <data name="RestartCommand" xml:space="preserve">
+    <value>_Yeniden başlat</value>
+  </data>
+  <data name="RestoreDefaultExceptionSettingsCommand" xml:space="preserve">
+    <value>Varsayılan ayarlara geri dön</value>
+  </data>
+  <data name="RunToCursorCommand" xml:space="preserve">
+    <value>Gösterge için _çalıştır</value>
+  </data>
+  <data name="SaveModuleCommand" xml:space="preserve">
+    <value>Modulü kaydet...</value>
+  </data>
+  <data name="SaveModulesCommand" xml:space="preserve">
+    <value>{0} modüllerini kaydet...</value>
+  </data>
+  <data name="SelectAllCommand" xml:space="preserve">
+    <value>Hepsini_seç</value>
+  </data>
+  <data name="SetNextStatementCommand" xml:space="preserve">
+    <value>_Sonraki açıklamaya ayarla</value>
+  </data>
+  <data name="ShortCutAltAsterisk" xml:space="preserve">
+    <value>Alt+Num *</value>
+  </data>
+  <data name="ShortCutKeyAlt4" xml:space="preserve">
+    <value>Alt+4</value>
+  </data>
+  <data name="ShortCutKeyAlt6" xml:space="preserve">
+    <value>Alt+6</value>
+  </data>
+  <data name="ShortCutKeyCtrlA" xml:space="preserve">
+    <value>Ctrl+A</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltB" xml:space="preserve">
+    <value>Ctrl+Alt+B</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltC" xml:space="preserve">
+    <value>Ctrl+Alt+C</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltE" xml:space="preserve">
+    <value>Ctrl+Alt+E</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltH" xml:space="preserve">
+    <value>Ctrl+Alt+H</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltP" xml:space="preserve">
+    <value>Ctrl+Alt+P</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltU" xml:space="preserve">
+    <value>Ctrl+Alt+U</value>
+  </data>
+  <data name="ShortCutKeyCtrlShift_DIGIT" xml:space="preserve">
+    <value>Ctrl+Shift+{0}</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltBreak" xml:space="preserve">
+    <value>Ctrl+Alt+Break</value>
+  </data>
+  <data name="ShortCutKeyCtrlC" xml:space="preserve">
+    <value>Ctrl+C</value>
+  </data>
+  <data name="ShortCutKeyCtrlF10" xml:space="preserve">
+    <value>Ctrl+F10</value>
+  </data>
+  <data name="ShortCutKeyCtrlF5" xml:space="preserve">
+    <value>Ctrl+F5</value>
+  </data>
+  <data name="ShortCutKeyCtrlF9" xml:space="preserve">
+    <value>Ctrl+F9</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftC" xml:space="preserve">
+    <value>Ctrl+Shift+C</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftF10" xml:space="preserve">
+    <value>Ctrl+Shift+F10</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftF5" xml:space="preserve">
+    <value>Ctrl+Shift+F5</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftF9" xml:space="preserve">
+    <value>Ctrl+Shift+F9</value>
+  </data>
+  <data name="ShortCutKeyCtrl_DIGIT" xml:space="preserve">
+    <value>Ctrl+{0}</value>
+  </data>
+  <data name="ShortCutKeyDelete" xml:space="preserve">
+    <value>Del</value>
+  </data>
+  <data name="ShortCutKeyEnter" xml:space="preserve">
+    <value>Enter</value>
+  </data>
+  <data name="ShortCutKeyF10" xml:space="preserve">
+    <value>F10</value>
+  </data>
+  <data name="ShortCutKeyF11" xml:space="preserve">
+    <value>F11</value>
+  </data>
+  <data name="ShortCutKeyF2" xml:space="preserve">
+    <value>F2</value>
+  </data>
+  <data name="ShortCutKeyF5" xml:space="preserve">
+    <value>F5</value>
+  </data>
+  <data name="ShortCutKeyF9" xml:space="preserve">
+    <value>F9</value>
+  </data>
+  <data name="ShortCutKeyInsert" xml:space="preserve">
+    <value>Ins</value>
+  </data>
+  <data name="ShortCutKeyShiftF11" xml:space="preserve">
+    <value>Shift+F11</value>
+  </data>
+  <data name="ShortCutKeyShiftF5" xml:space="preserve">
+    <value>Shift+F5</value>
+  </data>
+  <data name="ShowInMemoryWindowCommand" xml:space="preserve">
+    <value>Hafıza penceresinde göster</value>
+  </data>
+  <data name="ShowInstructionPointerCommand" xml:space="preserve">
+    <value>IP'yi göster</value>
+  </data>
+  <data name="ShowModuleNamesCommand" xml:space="preserve">
+    <value>_Modül isimlerini göster</value>
+  </data>
+  <data name="ShowNamespacesCommand" xml:space="preserve">
+    <value>İsim alanlarını göster</value>
+  </data>
+  <data name="ShowNextStatementCommand" xml:space="preserve">
+    <value>Sonraki açıklamayı _göster</value>
+  </data>
+  <data name="ShowDeclaringTypesCommand" xml:space="preserve">
+    <value>Bildirilen türleri göster</value>
+  </data>
+  <data name="ShowParameterNamesCommand" xml:space="preserve">
+    <value>_Parametre İsimlerini göster</value>
+  </data>
+  <data name="ShowParameterTypesCommand" xml:space="preserve">
+    <value>Parametre _tiplerini göster</value>
+  </data>
+  <data name="ShowParameterValuesCommand" xml:space="preserve">
+    <value>Parametre _değerlerini göster</value>
+  </data>
+  <data name="ShowReturnTypesCommand" xml:space="preserve">
+    <value>Dönüş tiplerini göster</value>
+  </data>
+  <data name="ShowTokensCommand" xml:space="preserve">
+    <value>Token'ları Göster</value>
+  </data>
+  <data name="ShowIntrinsicTypeKeywordsCommand" xml:space="preserve">
+    <value>Asıl Tip Anahtar Kelimeleri göster</value>
+  </data>
+  <data name="StartWithoutDebuggingCommand" xml:space="preserve">
+    <value>Hata _ayıklamadan başla</value>
+  </data>
+  <data name="StatusBar_Ready" xml:space="preserve">
+    <value>Hazır</value>
+  </data>
+  <data name="StatusBar_Running" xml:space="preserve">
+    <value>Çalışıyor...</value>
+  </data>
+  <data name="StepIntoCommand" xml:space="preserve">
+    <value>_'e/a adım at</value>
+  </data>
+  <data name="StepOutCommand" xml:space="preserve">
+    <value>_Dışarı çık</value>
+  </data>
+  <data name="StepOverCommand" xml:space="preserve">
+    <value>_e/a git</value>
+  </data>
+  <data name="StopDebuggingCommand" xml:space="preserve">
+    <value>_Hata ayıklamayı durdur</value>
+  </data>
+  <data name="SwitchToFrameCommand" xml:space="preserve">
+    <value>Çerçeveye _değiştir</value>
+  </data>
+  <data name="SwitchToThreadCommand" xml:space="preserve">
+    <value>Konuya _geç</value>
+  </data>
+  <data name="ThawThreadCommand" xml:space="preserve">
+    <value>_Erime</value>
+  </data>
+  <data name="ThreadsCommand" xml:space="preserve">
+    <value>_Konular</value>
+  </data>
+  <data name="ThreadType_Main" xml:space="preserve">
+    <value>Ana konu</value>
+  </data>
+  <data name="ThreadType_Terminated" xml:space="preserve">
+    <value>Sonlandırılmış Konu</value>
+  </data>
+  <data name="ThreadType_ThreadPool" xml:space="preserve">
+    <value>Konu havuzu</value>
+  </data>
+  <data name="ThreadType_Unknown" xml:space="preserve">
+    <value>Bilinmeyen Konu</value>
+  </data>
+  <data name="ThreadType_Worker" xml:space="preserve">
+    <value>Çalışan Konu</value>
+  </data>
+  <data name="Thread_LocationNotAvailable" xml:space="preserve">
+    <value>&lt;kullanılamaz&gt;</value>
+  </data>
+  <data name="Thread_NoName" xml:space="preserve">
+    <value>&lt;İsim yok&gt;</value>
+  </data>
+  <data name="Thread_Priority_AboveNormal" xml:space="preserve">
+    <value>Normalin üzerinde</value>
+  </data>
+  <data name="Thread_Priority_BelowNormal" xml:space="preserve">
+    <value>Normalin altında</value>
+  </data>
+  <data name="Thread_Priority_Highest" xml:space="preserve">
+    <value>En yüksek</value>
+  </data>
+  <data name="Thread_Priority_Lowest" xml:space="preserve">
+    <value>En düşük</value>
+  </data>
+  <data name="Thread_Priority_Normal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="ToggleBreakpointCommand" xml:space="preserve">
+    <value>Kesme noktasını _değiştir</value>
+  </data>
+  <data name="ToolBarBreakAllToolTip" xml:space="preserve">
+    <value>Hepsini durdur</value>
+  </data>
+  <data name="ToolBarContinueDebuggingButton" xml:space="preserve">
+    <value>Devam et</value>
+  </data>
+  <data name="ToolBarContinueDebuggingToolTip" xml:space="preserve">
+    <value>Devam et</value>
+  </data>
+  <data name="ToolBarDebugAssemblyToolTip" xml:space="preserve">
+    <value>Bir programda hata ayıkla</value>
+  </data>
+  <data name="ToolBarRestartToolTip" xml:space="preserve">
+    <value>Yeniden başlat</value>
+  </data>
+  <data name="ToolBarShowNextStatementToolTip" xml:space="preserve">
+    <value>Sonraki açıklamayı göster</value>
+  </data>
+  <data name="ToolBarStartDebuggingButton" xml:space="preserve">
+    <value>Başlat</value>
+  </data>
+  <data name="ToolBarStepIntoToolTip" xml:space="preserve">
+    <value>'e/a adım at</value>
+  </data>
+  <data name="ToolBarStepOutToolTip" xml:space="preserve">
+    <value>Dışarı çık</value>
+  </data>
+  <data name="ToolBarStepOverToolTip" xml:space="preserve">
+    <value>e/a git</value>
+  </data>
+  <data name="ToolBarStopDebuggingToolTip" xml:space="preserve">
+    <value>Hata ayıklamayı durdur</value>
+  </data>
+  <data name="Window_Breakpoints" xml:space="preserve">
+    <value>Kesme Noktaları</value>
+  </data>
+  <data name="Window_CallStack" xml:space="preserve">
+    <value>Yığın Çağrısı</value>
+  </data>
+  <data name="Window_ExceptionSettings" xml:space="preserve">
+    <value>İstisna Ayarları</value>
+  </data>
+  <data name="Window_Locals" xml:space="preserve">
+    <value>Yereller</value>
+  </data>
+  <data name="Window_Memory_10_MenuItem" xml:space="preserve">
+    <value>Hafıza 1_0</value>
+  </data>
+  <data name="Window_Memory_N" xml:space="preserve">
+    <value>Hafıza {0}</value>
+  </data>
+  <data name="Window_Memory_N_MenuItem" xml:space="preserve">
+    <value>Hafıza _{0}</value>
+  </data>
+  <data name="Window_Memory_N_MenuItem2" xml:space="preserve">
+    <value>Hafıza {0}</value>
+  </data>
+  <data name="Window_Modules" xml:space="preserve">
+    <value>Modüller</value>
+  </data>
+  <data name="Window_Threads" xml:space="preserve">
+    <value>Konular</value>
+  </data>
+  <data name="YesNo_No" xml:space="preserve">
+    <value>Hayır</value>
+  </data>
+  <data name="YesNo_Yes" xml:space="preserve">
+    <value>Evet</value>
+  </data>
+  <data name="DbgSettings_SyntaxHighlight" xml:space="preserve">
+    <value>Sözdizimi vurgulama</value>
+  </data>
+  <data name="LoadModulesCommand" xml:space="preserve">
+    <value>Modülleri aç</value>
+  </data>
+  <data name="LoadXModulesCommand" xml:space="preserve">
+    <value>{0} Modüllerini aç</value>
+  </data>
+  <data name="ShowParameterTypesCommand2" xml:space="preserve">
+    <value>Parametre tiplerini göster</value>
+  </data>
+  <data name="Plugin_ShortDescription" xml:space="preserve">
+    <value>Hata ayıklayıcı</value>
+  </data>
+  <data name="DebugLoggerName" xml:space="preserve">
+    <value>Hata ayıkla</value>
+  </data>
+  <data name="ShowExceptionMessages" xml:space="preserve">
+    <value>_İstisna Mesajları</value>
+  </data>
+  <data name="ShowModuleLoadMessages" xml:space="preserve">
+    <value>_Mesaj yükleme modülü</value>
+  </data>
+  <data name="ShowModuleUnloadMessages" xml:space="preserve">
+    <value>Mesaj _Boşaltma modülü</value>
+  </data>
+  <data name="ShowProcessExitMessages" xml:space="preserve">
+    <value>Mesajlardan çıkma _işlemi</value>
+  </data>
+  <data name="ShowProgramOutputMessages" xml:space="preserve">
+    <value>Program _Çıktısı</value>
+  </data>
+  <data name="ShowStepFilteringMessages" xml:space="preserve">
+    <value>Mesajları filteleme _adımı</value>
+  </data>
+  <data name="ShowThreadExitMessages" xml:space="preserve">
+    <value>Mesajlardan çıkma _konusu</value>
+  </data>
+  <data name="ShowMDAMessages" xml:space="preserve">
+    <value>MDA mesajları</value>
+  </data>
+  <data name="DebugLogAdditionalInformation" xml:space="preserve">
+    <value>Ek bilgi:{0}</value>
+  </data>
+  <data name="DebugLogExceptionHandled" xml:space="preserve">
+    <value>{1}'e istisna {0} eklendi</value>
+  </data>
+  <data name="DebugLogExceptionUnhandled" xml:space="preserve">
+    <value>{1}'de {0} tipinde işlenmemiş bir istisna meydana geldi</value>
+  </data>
+  <data name="DebugLogExitProcess" xml:space="preserve">
+    <value>Program {0}, {1} (0x{1:x}) koduyla çıktı.</value>
+  </data>
+  <data name="DebugLogExitThread" xml:space="preserve">
+    <value>Konu 0x{0:x}, {1} (0x{1:x}) koduyla çıktı.</value>
+  </data>
+  <data name="DebugLogLoadModule" xml:space="preserve">
+    <value>'{0}' yüklendi.</value>
+  </data>
+  <data name="DebugLogMDA" xml:space="preserve">
+    <value>Yönetilen hata ayıklayıcı yardımcı '{0}', '{1}' de bir problem algıladı.</value>
+  </data>
+  <data name="DebugLogUnloadModule" xml:space="preserve">
+    <value>Yüklenmedi '{0}'.</value>
+  </data>
+  <data name="ExceptionMessageIsNull" xml:space="preserve">
+    <value>"&lt;istisna iletisi yok&gt;"</value>
+  </data>
+  <data name="GlyphToolTip_Location" xml:space="preserve">
+    <value>Konum</value>
+  </data>
+  <data name="HexEditorGroup_DebuggerMemory" xml:space="preserve">
+    <value>Hafıza penceresi</value>
+  </data>
+  <data name="BgImgDisplayName_DebuggerMemory" xml:space="preserve">
+    <value>Hex Düzenleyici(Hafıza Penceresi)</value>
+  </data>
+  <data name="DbgAsm_DebugEngine" xml:space="preserve">
+    <value>_Hata ayıklayıcı motoru</value>
+  </data>
+  <data name="DebugWindows" xml:space="preserve">
+    <value>_Pencere</value>
+  </data>
+  <data name="OutputCommand" xml:space="preserve">
+    <value>_Çıktı</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltW_DIGIT" xml:space="preserve">
+    <value>Ctrl+Alt+W, {0}</value>
+  </data>
+  <data name="TerminateAllCommand" xml:space="preserve">
+    <value>Hepsini _Bitir</value>
+  </data>
+  <data name="WatchCommand" xml:space="preserve">
+    <value>_İzle</value>
+  </data>
+  <data name="Window_Watch_10_MenuItem" xml:space="preserve">
+    <value>Saat 1_0</value>
+  </data>
+  <data name="Window_Watch_N" xml:space="preserve">
+    <value>İzle {0}</value>
+  </data>
+  <data name="Window_Watch_N_MenuItem" xml:space="preserve">
+    <value>İzle _{0}</value>
+  </data>
+  <data name="Window_Watch_N_MenuItem2" xml:space="preserve">
+    <value>İzle {0}</value>
+  </data>
+  <data name="Options" xml:space="preserve">
+    <value>_Ayarlar...</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltZ" xml:space="preserve">
+    <value>Ctrl+Alt+Z</value>
+  </data>
+  <data name="ProcessesCommand" xml:space="preserve">
+    <value>_İşlemler</value>
+  </data>
+  <data name="Window_Processes" xml:space="preserve">
+    <value>İşlemler</value>
+  </data>
+  <data name="Column_Debugging" xml:space="preserve">
+    <value>Hata ayıklanıyor</value>
+  </data>
+  <data name="Column_ID" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="Column_State" xml:space="preserve">
+    <value>Durum</value>
+  </data>
+  <data name="Column_Title" xml:space="preserve">
+    <value>Başlık</value>
+  </data>
+  <data name="Process_Paused" xml:space="preserve">
+    <value>Dur</value>
+  </data>
+  <data name="Process_Running" xml:space="preserve">
+    <value>Çalışıyor</value>
+  </data>
+  <data name="Processes_AttachToProcessToolTip" xml:space="preserve">
+    <value>İşleme ekle</value>
+  </data>
+  <data name="Processes_DetachToolTip" xml:space="preserve">
+    <value>Tespit işlemi</value>
+  </data>
+  <data name="Processes_TerminateToolTip" xml:space="preserve">
+    <value>İşlemi bitir</value>
+  </data>
+  <data name="ShortCutKeyCtrlF" xml:space="preserve">
+    <value>Ctrl+F</value>
+  </data>
+  <data name="DetachProcessCommand" xml:space="preserve">
+    <value>_Tespit işlemi</value>
+  </data>
+  <data name="DetachWhenDebuggingStoppedCommand" xml:space="preserve">
+    <value>Hata ayıklama durduğu _zaman tespit</value>
+  </data>
+  <data name="TerminateProcessCommand" xml:space="preserve">
+    <value>İşlemi _bitir</value>
+  </data>
+  <data name="ProcessCommand" xml:space="preserve">
+    <value>İşlem</value>
+  </data>
+  <data name="Column_ProcessName" xml:space="preserve">
+    <value>İşlem adı</value>
+  </data>
+  <data name="AllRemainingExceptionsNotInList" xml:space="preserve">
+    <value>&lt;{0}ın hepsi bu listede değil &gt;</value>
+  </data>
+  <data name="Exceptions_EditConditions_ToolTip" xml:space="preserve">
+    <value>Koşulları düzenle</value>
+  </data>
+  <data name="Column_Conditions" xml:space="preserve">
+    <value>Koşullar</value>
+  </data>
+  <data name="Column_BreakWhenThrown" xml:space="preserve">
+    <value>Atıldığında durdur</value>
+  </data>
+  <data name="Column_Category" xml:space="preserve">
+    <value>Kategori</value>
+  </data>
+  <data name="Exception_Conditions_And" xml:space="preserve">
+    <value>Ve</value>
+  </data>
+  <data name="Exception_Conditions_ModuleNameEquals" xml:space="preserve">
+    <value>Modül adı eşittir</value>
+  </data>
+  <data name="Exception_Conditions_ModuleNameNotEquals" xml:space="preserve">
+    <value>Modül adı eşit değildir</value>
+  </data>
+  <data name="Exceptions_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Tüm istisnalar görünecek şekilde tüm arama kriterlerini sıfırla</value>
+  </data>
+  <data name="Exceptions_AllCategories" xml:space="preserve">
+    <value>Tümü</value>
+  </data>
+  <data name="EditConditionsCommand" xml:space="preserve">
+    <value>Koşulları düzenle...</value>
+  </data>
+  <data name="ExceptionsCommand" xml:space="preserve">
+    <value>İstisnalar</value>
+  </data>
+  <data name="FindCommand" xml:space="preserve">
+    <value>_Bul</value>
+  </data>
+  <data name="Exceptions_NoMatch" xml:space="preserve">
+    <value>Arama kriterlerinizle eşleşen bir istisna tipi yok.</value>
+  </data>
+  <data name="AddExceptionButton" xml:space="preserve">
+    <value>Ekle</value>
+  </data>
+  <data name="ExceptionDescription" xml:space="preserve">
+    <value>İstisna tanımı</value>
+  </data>
+  <data name="Exception_Error_NameCanNotBeEmpty" xml:space="preserve">
+    <value>İsim boş bırakılamaz</value>
+  </data>
+  <data name="EditConditions_Title" xml:space="preserve">
+    <value>Şartları düzenle</value>
+  </data>
+  <data name="Button_AddCondition" xml:space="preserve">
+    <value>Şart _ekle</value>
+  </data>
+  <data name="ModuleBreakpointsCommand" xml:space="preserve">
+    <value>_Modül kesme noktaları</value>
+  </data>
+  <data name="Window_ModuleBreakpoints" xml:space="preserve">
+    <value>Modül kesme noktaları</value>
+  </data>
+  <data name="Breakpoints_AddBreakpoint_ToolTip" xml:space="preserve">
+    <value>Kesme noktası ekle</value>
+  </data>
+  <data name="Breakpoints_RemoveBreakpoint_ToolTip" xml:space="preserve">
+    <value>Kesme noktasını kaldır</value>
+  </data>
+  <data name="EditAppDomainNameCommand" xml:space="preserve">
+    <value>Uygulama Alanı ismini düzenle</value>
+  </data>
+  <data name="EditModuleNameCommand" xml:space="preserve">
+    <value>Modül adını düzenle</value>
+  </data>
+  <data name="EditOrderCommand" xml:space="preserve">
+    <value>Modül yükleme sırasını düzenle</value>
+  </data>
+  <data name="EditProcessNameCommand" xml:space="preserve">
+    <value>İşlem adını düzenle</value>
+  </data>
+  <data name="RemoveAllBreakpointsCommand" xml:space="preserve">
+    <value>Tüm kesme noktalarını kaldır</value>
+  </data>
+  <data name="RemoveBreakpointCommand" xml:space="preserve">
+    <value>Kesme noktasını kaldır</value>
+  </data>
+  <data name="DisableBreakpointCommand3" xml:space="preserve">
+    <value>Kesme noktasını devre dışı bırak</value>
+  </data>
+  <data name="EnableBreakpointCommand3" xml:space="preserve">
+    <value>Kesme noktasını aktif et</value>
+  </data>
+  <data name="DbgSettings_BreakAllProcesses" xml:space="preserve">
+    <value>Bir işlem durduğu zaman tüm kesme noktalarını durdur</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltF10" xml:space="preserve">
+    <value>Ctrl+Alt+F10</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltF11" xml:space="preserve">
+    <value>Ctrl+Alt+F11</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftAltF11" xml:space="preserve">
+    <value>Ctrl+Shift+Alt+F11</value>
+  </data>
+  <data name="StepIntoCurrentProcessCommand" xml:space="preserve">
+    <value>E/a git (Şimdiki işlem)</value>
+  </data>
+  <data name="StepOutCurrentProcessCommand" xml:space="preserve">
+    <value>E/a dan çık (Şimdiki işlem)</value>
+  </data>
+  <data name="StepOverCurrentProcessCommand" xml:space="preserve">
+    <value>Adım at (Şimdiki İşlem)</value>
+  </data>
+  <data name="Processes_BreakProcessToolTip" xml:space="preserve">
+    <value>İşlemi durdur</value>
+  </data>
+  <data name="Processes_ContinueProcessToolTip" xml:space="preserve">
+    <value>İşleme devam et</value>
+  </data>
+  <data name="Processes_StepIntoProcessToolTip" xml:space="preserve">
+    <value>'e/a adım at</value>
+  </data>
+  <data name="Processes_StepOutProcessToolTip" xml:space="preserve">
+    <value>Dışarı çık</value>
+  </data>
+  <data name="Processes_StepOverProcessToolTip" xml:space="preserve">
+    <value>e/a git</value>
+  </data>
+  <data name="StepsOnlyTheCurrentProcess" xml:space="preserve">
+    <value>Sadece şimdiki işleme ilerle</value>
+  </data>
+  <data name="BreakProcessCommand" xml:space="preserve">
+    <value>İşlemi _durdur</value>
+  </data>
+  <data name="ContinueProcessCommand" xml:space="preserve">
+    <value>İşleme _devam et</value>
+  </data>
+  <data name="AttachToProcess_Search_ToolTip" xml:space="preserve">
+    <value>Bir işlemi ara</value>
+  </data>
+  <data name="AutosCommand" xml:space="preserve">
+    <value>_otomatikler</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltV_A" xml:space="preserve">
+    <value>Ctrl+Alt+V, A</value>
+  </data>
+  <data name="Breakpoints_ExportMatchingBreakpoints_ToolTip" xml:space="preserve">
+    <value>Mevcut arama kriterlerleriyle eşleşen tüm kesme noktalarını dışarı aktar</value>
+  </data>
+  <data name="Breakpoints_ImportBreakpoints_ToolTip" xml:space="preserve">
+    <value>Bir dosyadan kesme noktasını içe aktar</value>
+  </data>
+  <data name="ExportSelectedCommand" xml:space="preserve">
+    <value>_Dış aktarım seçildi...</value>
+  </data>
+  <data name="Breakpoints_NoMatch" xml:space="preserve">
+    <value>Arama kriterlerinizle eşleşen bir kesme noktası yok.</value>
+  </data>
+  <data name="Breakpoints_Search" xml:space="preserve">
+    <value>Ara</value>
+  </data>
+  <data name="Breakpoints_Search_ToolTip" xml:space="preserve">
+    <value>Bir kesme noktası ara</value>
+  </data>
+  <data name="Breakpoints_RemoveMatchingBreakpoints_ToolTip" xml:space="preserve">
+    <value>Mevcut arama kriterlerleriyle eşleşen tüm kesme noktalarını kaldır</value>
+  </data>
+  <data name="Breakpoints_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Tüm kesme noktaları görülecek şekilde tüm arama kriterlerini sıfırla</value>
+  </data>
+  <data name="Breakpoints_ToggleMatchingBreakpoints_ToolTip" xml:space="preserve">
+    <value>Mevcut arama kriterleriyle eşleşen tüm kesme noktalarını aktifleştir veya devre dışı bırak</value>
+  </data>
+  <data name="Modules_AllProcesses" xml:space="preserve">
+    <value>Tümü</value>
+  </data>
+  <data name="Modules_NoMatch" xml:space="preserve">
+    <value>Arama kriterlerinizle eşleşen modül yok.</value>
+  </data>
+  <data name="Modules_Search" xml:space="preserve">
+    <value>Ara</value>
+  </data>
+  <data name="Modules_Search_ToolTip" xml:space="preserve">
+    <value>Bir modülü ara</value>
+  </data>
+  <data name="Modules_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Tüm modüller görülecek şekilde tüm arama kriterlerini sıfırla</value>
+  </data>
+  <data name="Modules_Process" xml:space="preserve">
+    <value>İşlem</value>
+  </data>
+  <data name="SearchHelp_ToolTip" xml:space="preserve">
+    <value>Yardım</value>
+  </data>
+  <data name="Column_Condition" xml:space="preserve">
+    <value>Şart</value>
+  </data>
+  <data name="Column_Filter" xml:space="preserve">
+    <value>Filtre</value>
+  </data>
+  <data name="Column_HitCount" xml:space="preserve">
+    <value>Ziyaret sayısı</value>
+  </data>
+  <data name="Column_WhenHit" xml:space="preserve">
+    <value>Ziyaret edildiğinde</value>
+  </data>
+  <data name="Breakpoints_GoToDisassembly_ToolTip" xml:space="preserve">
+    <value>Ayırma ya git</value>
+  </data>
+  <data name="Breakpoints_GoToSourceCode_ToolTip" xml:space="preserve">
+    <value>Kaynak koda git</value>
+  </data>
+  <data name="GoToSourceCodeCommand" xml:space="preserve">
+    <value>Kaynak koda git</value>
+  </data>
+  <data name="Breakpoint_Condition_NoCondition" xml:space="preserve">
+    <value>(şart yok)</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenConditionHasChanged" xml:space="preserve">
+    <value>'{0}' değiştiği zaman</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenConditionIsTrue" xml:space="preserve">
+    <value>'{0}' doğru olduğu zaman</value>
+  </data>
+  <data name="Breakpoint_Filter_NoFilter" xml:space="preserve">
+    <value>(hiçbiri)</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsAMultipleOf" xml:space="preserve">
+    <value>sayaç {0} ın bir katı olduğu zaman</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsEqualTo" xml:space="preserve">
+    <value>sayaç {0} a eşit olduğu zaman</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsGreaterThanOrEqualTo" xml:space="preserve">
+    <value>sayaç {0} dan büyük veya eşit olduğu zaman</value>
+  </data>
+  <data name="Breakpoint_HitCount_NoHitCount" xml:space="preserve">
+    <value>her zaman durdur</value>
+  </data>
+  <data name="Breakpoint_Tracepoint_NoTraceMessage" xml:space="preserve">
+    <value>Dur</value>
+  </data>
+  <data name="Breakpoint_Tracepoint_PrintMessage" xml:space="preserve">
+    <value>'{0}' mesajını yazdır</value>
+  </data>
+  <data name="ShortCutKeyAltEnter" xml:space="preserve">
+    <value>Alt+Enter</value>
+  </data>
+  <data name="SettingsCommand" xml:space="preserve">
+    <value>_Ayarlar</value>
+  </data>
+  <data name="EditBreakpointSettings_Title" xml:space="preserve">
+    <value>Kesme noktaları ayarları</value>
+  </data>
+  <data name="Breakpoint_Condition_IsTrue" xml:space="preserve">
+    <value>Doğrudur</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenChanged" xml:space="preserve">
+    <value>Değiştiğinde</value>
+  </data>
+  <data name="Breakpoint_HitCount_IsAMultipleOf" xml:space="preserve">
+    <value>Bir katıdır</value>
+  </data>
+  <data name="EditBreakpointSettings_ConditionalExpression" xml:space="preserve">
+    <value>Şartlı _istisna</value>
+  </data>
+  <data name="EditBreakpointSettings_Filter" xml:space="preserve">
+    <value>_filte</value>
+  </data>
+  <data name="EditBreakpointSettings_HitCount" xml:space="preserve">
+    <value>_ziyaret sayısı</value>
+  </data>
+  <data name="EditBreakpointSettings_Trace" xml:space="preserve">
+    <value>_Günlük mesajı</value>
+  </data>
+  <data name="GlyphToolTip_Actions" xml:space="preserve">
+    <value>Eylemler:</value>
+  </data>
+  <data name="GlyphToolTip_Conditions" xml:space="preserve">
+    <value>Şartlar:</value>
+  </data>
+  <data name="Breakpoint_Condition_ConditionalExpression" xml:space="preserve">
+    <value>Şartlı açıklamalar:</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenConditionHasChanged2" xml:space="preserve">
+    <value>'{0}' değiştirildi</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenConditionIsTrue2" xml:space="preserve">
+    <value>'{0}' doğrudur</value>
+  </data>
+  <data name="Breakpoint_Filter_Filter" xml:space="preserve">
+    <value>Filtre:'{0}'</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsAMultipleOf2" xml:space="preserve">
+    <value>Vurma sayacı {0} ın bir katıdır</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsEqualTo2" xml:space="preserve">
+    <value>Vurma sayacı {0} a eşit olduğu zaman</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsGreaterThanOrEqualTo2" xml:space="preserve">
+    <value>Vurma sayıcı {0} dan büyük veya eşittir</value>
+  </data>
+  <data name="Breakpoint_Tracepoint_PrintMessage2" xml:space="preserve">
+    <value>Günlük mesajı '{0}', Çıkış penceresine</value>
+  </data>
+  <data name="Breakpoints_GlyphMargin_DisableBreakpoint" xml:space="preserve">
+    <value>Kesme noktasını devre dışı bırak</value>
+  </data>
+  <data name="Breakpoints_GlyphMargin_EnableBreakpoint" xml:space="preserve">
+    <value>Kesme noktasını aktifleştir</value>
+  </data>
+  <data name="Breakpoints_GlyphMargin_ShowSettingsToolTip" xml:space="preserve">
+    <value>Ayarlar...</value>
+  </data>
+  <data name="Breakpoints_GlyphMargin_BreakWhenBreakpointHit" xml:space="preserve">
+    <value>Dur</value>
+  </data>
+  <data name="EditBreakpointSettings_TraceContinue" xml:space="preserve">
+    <value>Uygulamaya devam et</value>
+  </data>
+  <data name="ExportCommand" xml:space="preserve">
+    <value>_dışa aktar...</value>
+  </data>
+  <data name="SettingsCommand2" xml:space="preserve">
+    <value>_ayarlar...</value>
+  </data>
+  <data name="StartDebuggingCommand" xml:space="preserve">
+    <value>Hata ayıklamayı başlat</value>
+  </data>
+  <data name="Breakpoint_Tracepoint_BreakPrintMessage" xml:space="preserve">
+    <value>Durdur ve '{0}' mesajını bas</value>
+  </data>
+  <data name="BreakpointMessage_TheFunctionCanNotBeFound" xml:space="preserve">
+    <value>Bu işlem bulunamadı:{0}</value>
+  </data>
+  <data name="Breakpoints_BreakpointWillNotBeHit" xml:space="preserve">
+    <value>Kesme noktası {0} anınında vurulmayacak</value>
+  </data>
+  <data name="Breakpoints_ModuleNotLoaded" xml:space="preserve">
+    <value>Modül yüklenemedi veya bu modül için herhangi bir simge yüklenmedi.</value>
+  </data>
+  <data name="BreakpointMessage_CouldNotCreateBreakpoint" xml:space="preserve">
+    <value>Kesme noktası oluşturulamadı.</value>
+  </data>
+  <data name="Column_Labels" xml:space="preserve">
+    <value>Etiketler</value>
+  </data>
+  <data name="EditLabelsCommand" xml:space="preserve">
+    <value>Etiketleri düzenle</value>
+  </data>
+  <data name="Threads_FreezeThreads_ToolTip" xml:space="preserve">
+    <value>Konuları dondur</value>
+  </data>
+  <data name="Threads_NoMatch" xml:space="preserve">
+    <value>Arama kriterlerinizle eşleşen bir konu yok.</value>
+  </data>
+  <data name="Threads_Process" xml:space="preserve">
+    <value>İşlem</value>
+  </data>
+  <data name="Threads_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Tüm konular görülecek şekilde tüm arama kriterlerini sıfırla</value>
+  </data>
+  <data name="Threads_Search" xml:space="preserve">
+    <value>Ara</value>
+  </data>
+  <data name="Threads_Search_ToolTip" xml:space="preserve">
+    <value>Bir konu ara</value>
+  </data>
+  <data name="Threads_ThawThreads_ToolTip" xml:space="preserve">
+    <value>Çözülmüş konular</value>
+  </data>
+  <data name="Threads_AllProcesses" xml:space="preserve">
+    <value>Tümü</value>
+  </data>
+  <data name="EditLabelsMsgBoxLabel" xml:space="preserve">
+    <value>Etiketler</value>
+  </data>
+  <data name="EditLabelsTitle" xml:space="preserve">
+    <value>Etiketleri düzenle</value>
+  </data>
+  <data name="Breakpoint_HitCount_CurrentHitCountValue" xml:space="preserve">
+    <value>anlık {0}</value>
+  </data>
+  <data name="ResetBreakpointHitCountCommand" xml:space="preserve">
+    <value>Ziyaret sayısını sıfırla</value>
+  </data>
+  <data name="HelpToolTip" xml:space="preserve">
+    <value>Yardım</value>
+  </data>
+  <data name="FilterExpression_AllVariables" xml:space="preserve">
+    <value>Kullanılabilecek değişkenler:</value>
+  </data>
+  <data name="FilterExpression_Example" xml:space="preserve">
+    <value>Örnek: {0}</value>
+  </data>
+  <data name="TracepointMessage_EscapeSequences" xml:space="preserve">
+    <value>Kaçış dizileri: {0}</value>
+  </data>
+  <data name="TracepointMessage_EvaluateMessage" xml:space="preserve">
+    <value>Ifade xxx i hesaplamak için {xxx} i kullan</value>
+  </data>
+  <data name="TracepointMessage_Example" xml:space="preserve">
+    <value>Örnek: {0}</value>
+  </data>
+  <data name="TracepointMessage_ValidKeywords" xml:space="preserve">
+    <value>Bu anahtar kelimeler kullanılabilir:</value>
+  </data>
+  <data name="CallStackBreakpointCommand" xml:space="preserve">
+    <value>_Kesme noktası</value>
+  </data>
+  <data name="InsertBreakpointCommand" xml:space="preserve">
+    <value>_Kesme noktası ekle</value>
+  </data>
+  <data name="InsertTracepointCommand" xml:space="preserve">
+    <value>_İzleme noktası ekle</value>
+  </data>
+  <data name="UnwindToThisFrameCommand" xml:space="preserve">
+    <value>Bu çerçeveyi _gevşet</value>
+  </data>
+  <data name="GlyphMargin_CurrentStatementToolTip" xml:space="preserve">
+    <value>Bu gerçekleştirilecek sonraki ifade olacaktır.</value>
+  </data>
+  <data name="GlyphMargin_ReturnStatementToolTip" xml:space="preserve">
+    <value>Bu, konu geçerli işleme döndüğünde gerçekleştirilecek ifadedir.</value>
+  </data>
+  <data name="DbgSettings_EnableManagedDebuggingAssistants" xml:space="preserve">
+    <value>Yönetilen Hata Ayıklama Yardımcısı(MDA) yı etkinleştir</value>
+  </data>
+  <data name="DebugStepProcessError" xml:space="preserve">
+    <value>{0}'a geçilemedi</value>
+  </data>
+  <data name="ProcessIsNotPaused" xml:space="preserve">
+    <value>İşlem durdurulmadı</value>
+  </data>
+  <data name="Window_Autos" xml:space="preserve">
+    <value>Otomatikler</value>
+  </data>
+  <data name="DbgSettings_HighlightChangedVariables" xml:space="preserve">
+    <value>Değişkenler penceresinde değişen değişkenleri vurgula</value>
+  </data>
+  <data name="MakeObjectIdCommand" xml:space="preserve">
+    <value>Nesne Kimliği _yarat</value>
+  </data>
+  <data name="LanguageCommand" xml:space="preserve">
+    <value>Dil</value>
+  </data>
+  <data name="DbgSettings_DebugEngine" xml:space="preserve">
+    <value>Hata ayıklama motoru</value>
+  </data>
+  <data name="DbgSettings_Language" xml:space="preserve">
+    <value>Dil</value>
+  </data>
+  <data name="ShortCutKeyCtrlV" xml:space="preserve">
+    <value>Ctrl+V</value>
+  </data>
+  <data name="ClearAllCommand" xml:space="preserve">
+    <value>Hepsini Temizle</value>
+  </data>
+  <data name="DeleteWatchCommand" xml:space="preserve">
+    <value>Saati _sil</value>
+  </data>
+  <data name="PasteCommand" xml:space="preserve">
+    <value>_Yapıştır</value>
+  </data>
+  <data name="ExpressionCausesSideEffectsNoEval" xml:space="preserve">
+    <value>Bu ifade yan etkiler oluşturur ve değerlendirilmeyecektir</value>
+  </data>
+  <data name="RefreshExpressionButtonToolTip" xml:space="preserve">
+    <value>Şimdi değerlendirmek için bu tuşa tıklayın.</value>
+  </data>
+  <data name="ErrorEvaluatingExpression" xml:space="preserve">
+    <value>İfadeyi değerlendiremedi</value>
+  </data>
+  <data name="DeleteObjectIdCommand" xml:space="preserve">
+    <value>Nesne Kimliğini Sil</value>
+  </data>
+  <data name="DbgSettings_ShowRawStructureOfObjects" xml:space="preserve">
+    <value>Değişkenler penceresinde objelerin ham yapısını göster</value>
+  </data>
+  <data name="UnknownValue" xml:space="preserve">
+    <value>&lt;Bilinmiyor&gt;</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>Yenile</value>
+  </data>
+  <data name="DbgSettings_GroupParametersAndLocalsTogether" xml:space="preserve">
+    <value>Grup pararametreleri ve yerliler birlikte</value>
+  </data>
+  <data name="DbgSettings_ShowCompilerGeneratedVariables" xml:space="preserve">
+    <value>Derleyici tarafından oluşturulan değişkenleri göster</value>
+  </data>
+  <data name="DbgSettings_ShowDecompilerGeneratedVariables" xml:space="preserve">
+    <value>Geri derleyici tarafından oluşturulan değişkenleri göster</value>
+  </data>
+  <data name="DbgSettings_SortLocals" xml:space="preserve">
+    <value>Yerlileri sırala</value>
+  </data>
+  <data name="DbgSettings_SortParameters" xml:space="preserve">
+    <value>Parametreleri sırala</value>
+  </data>
+  <data name="DbgSettings_HideCompilerGeneratedMembers" xml:space="preserve">
+    <value>Derleyici tarafından oluşturulmuş üyeleri gizle</value>
+  </data>
+  <data name="FunctionEvaluationDisabled" xml:space="preserve">
+    <value>Örtülü işlev fonksiyonlarının değerlendirilmesi kullanıcı tarafından kapatıldı</value>
+  </data>
+  <data name="DbgSettings_RespectHideMemberAttributes" xml:space="preserve">
+    <value>Üyeleri saklayan niteliklere saygı göster</value>
+  </data>
+  <data name="InternalDebuggerError" xml:space="preserve">
+    <value>İç hata ayıklayıcı hatası</value>
+  </data>
+  <data name="FuncEvalRequiresAllThreadsToRun" xml:space="preserve">
+    <value>Fonksiyon değerlendirmesi tüm konuların çalışmasına ihtiyaç duyar.</value>
+  </data>
+  <data name="DigitSeparatorsCommand" xml:space="preserve">
+    <value>Basamak ayırıcılar</value>
+  </data>
+  <data name="Column_ProcessCommandLine" xml:space="preserve">
+    <value>Komut Satırı</value>
+  </data>
+  <data name="CannotReadLocalOrArgumentMaybeOptimizedAway" xml:space="preserve">
+    <value>Yerel değişken veya argüman elde edilemiyor çünkü bu yönerge uzaklaştırıldığından ötürü, işaretçisinde kullanılamıyor.</value>
+  </data>
+  <data name="ExceptionMessage" xml:space="preserve">
+    <value>Mesaj:{0}</value>
+  </data>
+  <data name="ExceptionName" xml:space="preserve">
+    <value>İstisna:{0}</value>
+  </data>
+  <data name="UnhandledExceptionMessage_ProcessName_ProcessId" xml:space="preserve">
+    <value>{0} da işlenmemiş bir istisna meydana geldi ({1})</value>
+  </data>
+  <data name="StatusBar_BreakpointHit" xml:space="preserve">
+    <value>Kesme Noktası</value>
+  </data>
+  <data name="BreakpointExpressionMustBeABooleanExpression" xml:space="preserve">
+    <value>Kesme noktası ifadesi bir boole ifadesi olmak zorundadır</value>
+  </data>
+  <data name="DbgSettings_SuppressJITOptimization" xml:space="preserve">
+    <value>Modül yüklemesinde JIT optimizasyonunu durdur</value>
+  </data>
+  <data name="DbgSettings_SuppressJITOptimization_ProgramModules" xml:space="preserve">
+    <value>Program modülleri</value>
+  </data>
+  <data name="DbgSettings_SuppressJITOptimization_SystemModules" xml:space="preserve">
+    <value>Sistem modülleri</value>
+  </data>
+  <data name="RuntimeIsUnableToEvaluateExpression" xml:space="preserve">
+    <value>Çalışma bu ifadeyi değerlendiremiyor.</value>
+  </data>
+  <data name="Exceptions_ToggleMatchingExceptions_ToolTip" xml:space="preserve">
+    <value>Mevcut arama kriterleriyle eşleşen tüm istisnaları aktifleştir veya devre dışı bırak</value>
+  </data>
+  <data name="DisableBreakpointCommand2" xml:space="preserve">
+    <value>Kesme noktasını _devre dışı bırak</value>
+  </data>
+  <data name="Exceptions_Add_ToolTip" xml:space="preserve">
+    <value>Listeye bir istisna ekle</value>
+  </data>
+  <data name="AskAppWindowClosingStopDebugging" xml:space="preserve">
+    <value>Hata ayıklamayı durdurmak istiyor musunuz?</value>
+  </data>
+  <data name="DbgSettings_FocusActiveProcess" xml:space="preserve">
+    <value>Hata ayıklanan işleme odaklan</value>
+  </data>
+  <data name="LoadAllModulesCommand" xml:space="preserve">
+    <value>Tüm modülleri aç</value>
+  </data>
+  <data name="DbgSettings_HideDeprecatedError" xml:space="preserve">
+    <value>Değişken penceresinde artık kullanılmayan üyeleri gizle</value>
+  </data>
+  <data name="DbgSettings_ShowReturnValues" xml:space="preserve">
+    <value>Dönüş değerlerini göster</value>
+  </data>
+  <data name="DbgSettings_RedirectGuiConsoleOutput" xml:space="preserve">
+    <value>Çıktı penceresine GUI uygulamalarının konsol çıktısını yeniden yönlendirme</value>
+  </data>
+  <data name="AttachToProcess_MakingAnImageEasierToDebug" xml:space="preserve">
+    <value>Bir görselde hata ayıklamayı kolaylaştır</value>
+  </data>
+  <data name="ShowOnlyPublicMembersCommand" xml:space="preserve">
+    <value>Public Üyeler</value>
+  </data>
+  <data name="DbgSettings_ShowRawLocals" xml:space="preserve">
+    <value>Raw yerlileri göster</value>
+  </data>
+  <data name="DbgSettings_AsyncDebugging" xml:space="preserve">
+    <value>Async Hata Ayıklamasını Etkinleştir</value>
+  </data>
+  <data name="DbgSettings_StepOverPropertiesAndOperators" xml:space="preserve">
+    <value>Özellikleri ve operatörleri adımla</value>
+  </data>
+  <data name="CopyExpressionCommand" xml:space="preserve">
+    <value>Kopyala E_xpression</value>
+  </data>
+  <data name="Error_CouldNotShowDisassembly" xml:space="preserve">
+    <value>Yöntemin kodu bulunamadı. Sürecin duraklatıldığından ve yöntemin atıldığından emin olun.</value>
+  </data>
+  <data name="DisassemblyCommand" xml:space="preserve">
+    <value>Parçala</value>
+  </data>
+  <data name="ShortCutKeyAlt8" xml:space="preserve">
+    <value>Alt+8</value>
+  </data>
+  <data name="DbgSettings_IgnoreUnhandledExceptions" xml:space="preserve">
+    <value>İşlenmeyen istisnaları yoksay</value>
+  </data>
+  <data name="RunWithInvalidExtension" xml:space="preserve">
+    <value>Geçerli bir uzantısı olmayan bu dosyayı çalıştırmak istediğinizden emin misiniz?</value>
+  </data>
+  <data name="DebugWithInvalidExtension" xml:space="preserve">
+    <value>Geçerli bir uzantısı olmayan bu dosyada hata ayıklamak istediğinizden emin misiniz?</value>
+  </data>
+  <data name="Processes_NoMatch" xml:space="preserve">
+    <value>Arama kriterlerinizle eşleşen işlem yok.</value>
+  </data>
+  <data name="Processes_Search" xml:space="preserve">
+    <value>Ara</value>
+  </data>
+  <data name="Processes_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Tüm arama ölçütlerini sıfırlayın, böylece tüm işlemler gösterilsin</value>
+  </data>
+  <data name="Processes_Search_ToolTip" xml:space="preserve">
+    <value>Bir işlemi ara</value>
+  </data>
+  <data name="DbgSettings_FocusDebuggerWhenProcessBreaks" xml:space="preserve">
+    <value>Hata ayıklayıcısını keserken dnSpy'ı ön plana getirin</value>
+  </data>
+  <data name="Column_LoadModule" xml:space="preserve">
+    <value>Load</value>
+  </data>
+</root>

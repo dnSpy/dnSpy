@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <summary>
 		/// Gets the span of this scope
 		/// </summary>
-		public BinSpan Span { get; }
+		public ILSpan Span { get; }
 
 		/// <summary>
 		/// Gets all child scopes
@@ -58,7 +58,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="locals">Locals</param>
 		/// <param name="imports">Imports</param>
 		/// <param name="constants">Constants</param>
-		public MethodDebugScope(BinSpan span, MethodDebugScope[] scopes, SourceLocal[] locals, ImportInfo[] imports, MethodDebugConstant[] constants) {
+		public MethodDebugScope(ILSpan span, MethodDebugScope[] scopes, SourceLocal[] locals, ImportInfo[] imports, MethodDebugConstant[] constants) {
 			Span = span;
 			Scopes = scopes ?? throw new ArgumentNullException(nameof(scopes));
 			Locals = locals ?? throw new ArgumentNullException(nameof(locals));
@@ -135,7 +135,7 @@ namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
 	/// Import info
 	/// </summary>
-	public struct ImportInfo {
+	public readonly struct ImportInfo {
 		/// <summary>
 		/// Target kind
 		/// </summary>
@@ -149,17 +149,17 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <summary>
 		/// Target
 		/// </summary>
-		public string Target { get; }
+		public string? Target { get; }
 
 		/// <summary>
 		/// Alias
 		/// </summary>
-		public string Alias { get; }
+		public string? Alias { get; }
 
 		/// <summary>
 		/// Extern alias
 		/// </summary>
-		public string ExternAlias { get; }
+		public string? ExternAlias { get; }
 
 		/// <summary>
 		/// Constructor
@@ -169,7 +169,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="alias">Alias</param>
 		/// <param name="externAlias">Extern alias</param>
 		/// <param name="importScopeKind">VB import scope kind</param>
-		public ImportInfo(ImportInfoKind targetKind, string target = null, string alias = null, string externAlias = null, VBImportScopeKind importScopeKind = VBImportScopeKind.None) {
+		public ImportInfo(ImportInfoKind targetKind, string? target = null, string? alias = null, string? externAlias = null, VBImportScopeKind importScopeKind = VBImportScopeKind.None) {
 			TargetKind = targetKind;
 			Target = target;
 			Alias = alias;
@@ -177,7 +177,7 @@ namespace dnSpy.Contracts.Decompiler {
 			VBImportScopeKind = importScopeKind;
 		}
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static ImportInfo CreateNamespace(string @namespace) => new ImportInfo(ImportInfoKind.Namespace, target: @namespace);
 		public static ImportInfo CreateNamespace(string @namespace, string externAlias) => new ImportInfo(ImportInfoKind.Namespace, target: @namespace, externAlias: externAlias);
 		public static ImportInfo CreateType(string type) => new ImportInfo(ImportInfoKind.Type, target: type);
@@ -193,13 +193,13 @@ namespace dnSpy.Contracts.Decompiler {
 		public static ImportInfo CreateNamespace(string @namespace, VBImportScopeKind importScopeKind) => new ImportInfo(ImportInfoKind.Namespace, target: @namespace, importScopeKind: importScopeKind);
 		public static ImportInfo CreateMethodToken(string token, VBImportScopeKind importScopeKind) => new ImportInfo(ImportInfoKind.MethodToken, target: token, importScopeKind: importScopeKind);
 		public static ImportInfo CreateDefaultNamespace(string @namespace) => new ImportInfo(ImportInfoKind.DefaultNamespace, target: @namespace);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 
 	/// <summary>
 	/// A constant value
 	/// </summary>
-	public struct MethodDebugConstant {
+	public readonly struct MethodDebugConstant {
 		/// <summary>
 		/// Gets the name of the constant
 		/// </summary>

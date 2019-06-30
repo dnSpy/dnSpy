@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,10 +28,10 @@ namespace dnSpy.Settings {
 		readonly object lockObj;
 		readonly Dictionary<string, string> attributes;
 
-		public Tuple<string, string>[] Attributes {
+		public (string key, string value)[] Attributes {
 			get {
 				lock (lockObj)
-					return attributes.Select(a => Tuple.Create(a.Key, a.Value)).ToArray();
+					return attributes.Select(a => (a.Key, a.Value)).ToArray();
 			}
 		}
 
@@ -41,14 +41,14 @@ namespace dnSpy.Settings {
 		}
 
 		public T Attribute<T>(string name) {
-			Debug.Assert(name != null);
-			if (name == null)
+			Debug.Assert(!(name is null));
+			if (name is null)
 				throw new ArgumentNullException(nameof(name));
 
 			string stringValue;
 			lock (lockObj) {
 				if (!attributes.TryGetValue(name, out stringValue))
-					return default;
+					return default!;
 			}
 
 			var c = TypeDescriptor.GetConverter(typeof(T));
@@ -59,12 +59,12 @@ namespace dnSpy.Settings {
 			}
 			catch (NotSupportedException) {
 			}
-			return default;
+			return default!;
 		}
 
 		public void Attribute<T>(string name, T value) {
-			Debug.Assert(name != null);
-			if (name == null)
+			Debug.Assert(!(name is null));
+			if (name is null)
 				throw new ArgumentNullException(nameof(name));
 
 			var c = TypeDescriptor.GetConverter(typeof(T));
@@ -74,8 +74,8 @@ namespace dnSpy.Settings {
 		}
 
 		public void RemoveAttribute(string name) {
-			Debug.Assert(name != null);
-			if (name == null)
+			Debug.Assert(!(name is null));
+			if (name is null)
 				throw new ArgumentNullException(nameof(name));
 
 			lock (lockObj)

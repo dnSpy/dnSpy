@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -84,10 +84,10 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// <summary>
 		/// Gets the data shown in the UI
 		/// </summary>
-		public sealed override object Text {
+		public sealed override object? Text {
 			get {
 				var cached = cachedText?.Target;
-				if (cached != null)
+				if (!(cached is null))
 					return cached;
 
 				var writer = Cache.GetWriter();
@@ -103,7 +103,16 @@ namespace dnSpy.Contracts.Documents.TreeView {
 				}
 			}
 		}
-		WeakReference cachedText;
+		WeakReference? cachedText;
+
+		/// <summary>
+		/// Writes the contents
+		/// </summary>
+		/// <param name="output">Output</param>
+		/// <param name="decompiler">Decompiler</param>
+		/// <param name="options">Options</param>
+		public void Write(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>
+			WriteCore(output, decompiler, options);
 
 		/// <summary>
 		/// Writes the contents
@@ -118,12 +127,13 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// </summary>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		protected bool GetShowToken(DocumentNodeWriteOptions options) => (options & DocumentNodeWriteOptions.Title) != 0 ? false : Context.ShowToken;
+		protected bool GetShowToken(DocumentNodeWriteOptions options) =>
+			(options & DocumentNodeWriteOptions.ToolTip) != 0 || (options & DocumentNodeWriteOptions.Title) == 0 ? Context.ShowToken : false;
 
 		/// <summary>
 		/// Gets the data shown in a tooltip
 		/// </summary>
-		public sealed override object ToolTip {
+		public sealed override object? ToolTip {
 			get {
 				var writer = Cache.GetWriter();
 				WriteCore(writer, Context.Decompiler, DocumentNodeWriteOptions.ToolTip);
@@ -164,6 +174,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// Constructor
 		/// </summary>
 		protected DocumentTreeNodeData() {
+			Context = null!;
 		}
 
 		/// <summary>
@@ -202,7 +213,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// this value.
 		/// </summary>
 		public int FilterVersion {
-			get { return filterVersion; }
+			get => filterVersion;
 			set {
 				if (filterVersion != value) {
 					filterVersion = value;
@@ -212,8 +223,8 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		}
 		int filterVersion;
 
-		static void Filter(DocumentTreeNodeData node) {
-			if (node == null)
+		static void Filter(DocumentTreeNodeData? node) {
+			if (node is null)
 				return;
 			var res = node.GetFilterType(node.Context.Filter);
 			switch (res) {
@@ -222,7 +233,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 				node.FilterVersion = node.Context.FilterVersion;
 				node.TreeNode.IsHidden = false;
 				var fnode = node as DocumentTreeNodeData;
-				if (fnode != null && fnode.refilter && node.TreeNode.Children.Count > 0)
+				if (!(fnode is null) && fnode.refilter && node.TreeNode.Children.Count > 0)
 					node.OnEnsureChildrenLoaded();
 				break;
 
@@ -248,7 +259,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// <param name="added">Added nodes</param>
 		/// <param name="removed">Removed nodes</param>
 		public sealed override void OnChildrenChanged(TreeNodeData[] added, TreeNodeData[] removed) {
-			if (TreeNode.Parent == null)
+			if (TreeNode.Parent is null)
 				refilter = true;
 			else {
 				if (added.Length > 0) {
@@ -333,6 +344,42 @@ namespace dnSpy.Contracts.Documents.TreeView {
 				dataObject.SetData(DocumentTreeViewConstants.DATAFORMAT_COPIED_ROOT_NODES, data);
 			return dataObject;
 		}
+
+		/// <summary>
+		/// Writes the filename of the module
+		/// </summary>
+		/// <param name="output">Output</param>
+		protected void WriteFilename(ITextColorWriter output) => output.WriteFilename(this.GetModule()?.Location ?? "???");
+
+		/// <summary>
+		/// Writes a module/assembly
+		/// </summary>
+		/// <param name="output">Output</param>
+		/// <param name="scope">Scope</param>
+		protected void WriteScope(ITextColorWriter output, IScope? scope) {
+			if (scope is AssemblyRef asmRef)
+				output.Write(asmRef);
+			else if (scope is ModuleRef modRef)
+				output.WriteModule(modRef.Name);
+			else if (scope is ModuleDef modDef)
+				output.WriteModule(modDef.Name);
+			else
+				output.Write(BoxedTextColor.Error, "???");
+		}
+
+		/// <summary>
+		/// Writes the member
+		/// </summary>
+		/// <param name="output">Output</param>
+		/// <param name="decompiler">Decompiler</param>
+		/// <param name="member">Member</param>
+		protected void WriteMemberRef(ITextColorWriter output, IDecompiler decompiler, IMemberRef member) {
+			decompiler.WriteToolTip(output, member, member as IHasCustomAttribute);
+			if (member.DeclaringType is ITypeDefOrRef declType) {
+				output.WriteLine();
+				decompiler.WriteToolTip(output, declType, declType);
+			}
+		}
 	}
 
 	/// <summary>
@@ -344,37 +391,37 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// </summary>
 		/// <param name="self"></param>
 		/// <returns></returns>
-		public static AssemblyDocumentNode GetAssemblyNode(this TreeNodeData self) => self.GetAncestorOrSelf<AssemblyDocumentNode>();
+		public static AssemblyDocumentNode? GetAssemblyNode(this TreeNodeData? self) => self.GetAncestorOrSelf<AssemblyDocumentNode>();
 
 		/// <summary>
 		/// Gets the <see cref="ModuleDocumentNode"/> owner or null if none was found
 		/// </summary>
 		/// <param name="self"></param>
 		/// <returns></returns>
-		public static ModuleDocumentNode GetModuleNode(this TreeNodeData self) => self.GetAncestorOrSelf<ModuleDocumentNode>();
+		public static ModuleDocumentNode? GetModuleNode(this TreeNodeData? self) => self.GetAncestorOrSelf<ModuleDocumentNode>();
 
 		/// <summary>
 		/// Gets the first <see cref="DsDocumentNode"/> owner or null if none was found
 		/// </summary>
 		/// <param name="self"></param>
 		/// <returns></returns>
-		public static DsDocumentNode GetDocumentNode(this TreeNodeData self) => self.GetAncestorOrSelf<DsDocumentNode>();
+		public static DsDocumentNode? GetDocumentNode(this TreeNodeData? self) => self.GetAncestorOrSelf<DsDocumentNode>();
 
 		/// <summary>
 		/// Gets the <see cref="DsDocumentNode"/> top node or null if none was found
 		/// </summary>
 		/// <param name="self"></param>
 		/// <returns></returns>
-		public static DsDocumentNode GetTopNode(this TreeNodeData self) {
-			var root = self == null ? null : self.TreeNode.TreeView.Root;
-			while (self != null) {
+		public static DsDocumentNode? GetTopNode(this TreeNodeData? self) {
+			var root = self is null ? null : self.TreeNode.TreeView.Root;
+			while (!(self is null)) {
 				if (self is DsDocumentNode found) {
 					var p = found.TreeNode.Parent;
-					if (p == null || p == root)
+					if (p is null || p == root)
 						return found;
 				}
 				var parent = self.TreeNode.Parent;
-				if (parent == null)
+				if (parent is null)
 					break;
 				self = parent.Data;
 			}
@@ -386,9 +433,9 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// </summary>
 		/// <param name="self">This</param>
 		/// <returns></returns>
-		public static ModuleDef GetModule(this TreeNodeData self) {
+		public static ModuleDef? GetModule(this TreeNodeData? self) {
 			var node = self.GetDocumentNode();
-			return node == null ? null : node.Document.ModuleDef;
+			return node is null ? null : node.Document.ModuleDef;
 		}
 	}
 }

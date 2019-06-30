@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,6 +32,6 @@ namespace dnSpy.Debugger.DotNet.CorDebug {
 			ShortDescription = string.Format(dnSpy_Debugger_DotNet_CorDebug_Resources.Plugin_ShortDescription, ".NET Framework, .NET Core"),
 		};
 
-		public void OnEvent(ExtensionEvent @event, object obj) { }
+		public void OnEvent(ExtensionEvent @event, object? obj) { }
 	}
 }

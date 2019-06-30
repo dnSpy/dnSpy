@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -70,18 +70,14 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <summary>
 		/// Gets all new or reformatted spans
 		/// </summary>
-		public NormalizedHexBufferSpanCollection NewOrReformattedSpans {
-			get { return newOrReformattedSpans ?? (newOrReformattedSpans = CreateSpans(NewOrReformattedLines)); }
-		}
-		NormalizedHexBufferSpanCollection newOrReformattedSpans;
+		public NormalizedHexBufferSpanCollection NewOrReformattedSpans => newOrReformattedSpans ??= CreateSpans(NewOrReformattedLines);
+		NormalizedHexBufferSpanCollection? newOrReformattedSpans;
 
 		/// <summary>
 		/// Gets all translated spans
 		/// </summary>
-		public NormalizedHexBufferSpanCollection TranslatedSpans {
-			get { return translatedSpans ?? (translatedSpans = CreateSpans(TranslatedLines)); }
-		}
-		NormalizedHexBufferSpanCollection translatedSpans;
+		public NormalizedHexBufferSpanCollection TranslatedSpans => translatedSpans ??= CreateSpans(TranslatedLines);
+		NormalizedHexBufferSpanCollection? translatedSpans;
 
 		static NormalizedHexBufferSpanCollection CreateSpans(ReadOnlyCollection<HexViewLine> lines) {
 			if (lines.Count == 0)
@@ -102,9 +98,9 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="newOrReformattedLines">New or reformatted lines</param>
 		/// <param name="translatedLines">Translated lines</param>
 		public HexViewLayoutChangedEventArgs(HexViewState oldState, HexViewState newState, IList<HexViewLine> newOrReformattedLines, IList<HexViewLine> translatedLines) {
-			if (newOrReformattedLines == null)
+			if (newOrReformattedLines is null)
 				throw new ArgumentNullException(nameof(newOrReformattedLines));
-			if (translatedLines == null)
+			if (translatedLines is null)
 				throw new ArgumentNullException(nameof(translatedLines));
 			OldViewState = oldState ?? throw new ArgumentNullException(nameof(oldState));
 			NewViewState = newState ?? throw new ArgumentNullException(nameof(newState));

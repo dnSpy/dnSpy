@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -46,11 +46,6 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// Gets the expression evaluator
 		/// </summary>
 		public abstract DbgExpressionEvaluator ExpressionEvaluator { get; }
-
-		/// <summary>
-		/// Gets the value formatter
-		/// </summary>
-		public abstract DbgValueFormatter ValueFormatter { get; }
 
 		/// <summary>
 		/// Gets the formatter
@@ -101,7 +96,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="funcEvalTimeout">Func-eval timeout (func-eval = calling functions in the debugged process) or default instance to use default timeout value</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgEvaluationContext CreateContext(DbgRuntime runtime, DbgCodeLocation location, DbgEvaluationContextOptions options = DbgEvaluationContextOptions.None, TimeSpan funcEvalTimeout = default, CancellationToken cancellationToken = default);
+		public abstract DbgEvaluationContext CreateContext(DbgRuntime runtime, DbgCodeLocation? location, DbgEvaluationContextOptions options = DbgEvaluationContextOptions.None, TimeSpan funcEvalTimeout = default, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Creates an evaluation context
@@ -112,7 +107,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
 		public DbgEvaluationContext CreateContext(DbgStackFrame frame, DbgEvaluationContextOptions options = DbgEvaluationContextOptions.None, TimeSpan funcEvalTimeout = default, CancellationToken cancellationToken = default) {
-			if (frame == null)
+			if (frame is null)
 				throw new ArgumentNullException(nameof(frame));
 			return CreateContext(frame.Runtime, frame.Location, options, funcEvalTimeout, cancellationToken);
 		}
@@ -135,5 +130,11 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// lock owned by a suspended thread.
 		/// </summary>
 		RunAllThreads				= 0x00000001,
+
+		/// <summary>
+		/// If method body info isn't needed, this option should be used. It prevents decompiling the
+		/// method to get sequence points and other debug info. Can be used when formatting stack frames.
+		/// </summary>
+		NoMethodBody				= 0x00000002,
 	}
 }

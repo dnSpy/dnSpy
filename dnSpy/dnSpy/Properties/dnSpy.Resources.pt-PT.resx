@@ -162,9 +162,6 @@
   <data name="Button_Save" xml:space="preserve">
     <value>Guardar...</value>
   </data>
-  <data name="Button_SaveCode" xml:space="preserve">
-    <value>Guardar Código...</value>
-  </data>
   <data name="Button_Yes" xml:space="preserve">
     <value>Sim</value>
   </data>
@@ -268,7 +265,7 @@
     <value>Ir para linha</value>
   </data>
   <data name="GoToReferenceCommand" xml:space="preserve">
-    <value>Ir para referência</value>
+    <value>Ir para Referência</value>
   </data>
   <data name="GoToReferenceKey" xml:space="preserve">
     <value>Duplo Clique</value>
@@ -319,7 +316,7 @@
     <value>Tema</value>
   </data>
   <data name="Menu_View" xml:space="preserve">
-    <value>Vizualizar</value>
+    <value>Visualizar</value>
   </data>
   <data name="Menu_Windows" xml:space="preserve">
     <value>Janela</value>
@@ -367,10 +364,10 @@
     <value>Mover para Grupo de Guias Anterior</value>
   </data>
   <data name="NavigateBackCommand" xml:space="preserve">
-    <value>Navigate Backward</value>
+    <value>Navegar Para Trás</value>
   </data>
   <data name="NavigateForwardCommand" xml:space="preserve">
-    <value>Navigate Forward</value>
+    <value>Navegar Para a Frente</value>
   </data>
   <data name="NewDataIsNotAnImage" xml:space="preserve">
     <value>Os novos dados não são uma imagem.</value>
@@ -475,19 +472,13 @@
     <value>Abrir Lista</value>
   </data>
   <data name="OpenToolBarToolTip" xml:space="preserve">
-    <value>Open</value>
+    <value>Abrir</value>
   </data>
   <data name="OptionsTitle" xml:space="preserve">
     <value>Opções</value>
   </data>
   <data name="Options_Misc_Button_EnableAllWarnings" xml:space="preserve">
     <value>Habilitar todas as mensagens de aviso</value>
-  </data>
-  <data name="Options_Misc_Deserialize" xml:space="preserve">
-    <value>Desserializar tipos em recursos (inseguro)</value>
-  </data>
-  <data name="Options_Misc_Deserialize_ToolTip" xml:space="preserve">
-    <value>Qualquer assembly pode ser carregado e executado com dados a partir dos recursos.</value>
   </data>
   <data name="Options_Misc_UseMmapdIO" xml:space="preserve">
     <value>Usar memória mapeada I/O</value>
@@ -507,9 +498,6 @@
   <data name="SaveResourceButton" xml:space="preserve">
     <value>Guardar</value>
   </data>
-  <data name="SavingCode" xml:space="preserve">
-    <value>Guardando...</value>
-  </data>
   <data name="SearchAbortedMessage" xml:space="preserve">
     <value>Pesquisa interrompida, mais de {0:n0} resultados encontrados.</value>
   </data>
@@ -517,7 +505,7 @@
     <value>_Procurar Assemblies</value>
   </data>
   <data name="SearchAssembliesToolBarToolTip" xml:space="preserve">
-    <value>Search Assemblies</value>
+    <value>Procurar Assemblagens</value>
   </data>
   <data name="Searching" xml:space="preserve">
     <value>Pesquisando...</value>
@@ -729,18 +717,6 @@
   <data name="ToolWindowWinPosButtonToolTip" xml:space="preserve">
     <value>Posição da janela</value>
   </data>
-  <data name="UseNewRendererHeader" xml:space="preserve">
-    <value>Usar o novo formatador de texto</value>
-  </data>
-  <data name="UseNewRendererInfo" xml:space="preserve">
-    <value>O novo formatador de texto é mais rápido, mas não suporta quebra automática ou todos os carateres unicode.</value>
-  </data>
-  <data name="UseNewRenderer_HexEditor" xml:space="preserve">
-    <value>Hex Editor</value>
-  </data>
-  <data name="UseNewRenderer_TextEditor" xml:space="preserve">
-    <value>Editor de texto</value>
-  </data>
   <data name="Theme_Blue" xml:space="preserve">
     <value>Azul</value>
   </data>
@@ -895,7 +871,7 @@
     <value>Output</value>
   </data>
   <data name="Output_ClearAll_ToolTip" xml:space="preserve">
-    <value>Clear All</value>
+    <value>Limpar Tudo</value>
   </data>
   <data name="Output_ShowOutputFrom" xml:space="preserve">
     <value>Mostrar saída de:</value>
@@ -1063,25 +1039,25 @@
     <value>Margem Superior %</value>
   </data>
   <data name="Search_FindNextToolTip" xml:space="preserve">
-    <value>Find next</value>
+    <value>Encontrar seguinte</value>
   </data>
   <data name="Search_FindPreviousToolTip" xml:space="preserve">
-    <value>Find previous</value>
+    <value>Encontrar anterior</value>
   </data>
   <data name="Search_MatchCaseToolTip" xml:space="preserve">
-    <value>Match case</value>
+    <value>Corresponder MAI/MIN</value>
   </data>
   <data name="Search_MatchWholeWordToolTip" xml:space="preserve">
-    <value>Match whole word</value>
+    <value>Corresponder à palavra completa</value>
   </data>
   <data name="Search_ReplaceAllToolTip" xml:space="preserve">
-    <value>Replace all</value>
+    <value>Substituir tudo</value>
   </data>
   <data name="Search_ReplaceNextToolTip" xml:space="preserve">
-    <value>Replace next</value>
+    <value>Substituir seguinte</value>
   </data>
   <data name="Search_UseRegularExpressionsToolTip" xml:space="preserve">
-    <value>Use Regular Expressions</value>
+    <value>Usar Expressões Regulares</value>
   </data>
   <data name="Search_ToggleReplaceModeToolTip" xml:space="preserve">
     <value>Alternar modos de 'localizar e substituir'</value>
@@ -1569,13 +1545,13 @@ Filtro pode ser alterado nas opções do Explorador Assembly.</value>
     <value>CTRL + Shift + A</value>
   </data>
   <data name="ShortCutKeyCtrlShiftR" xml:space="preserve">
-    <value>CTRL+Shift+R</value>
+    <value>Ctrl+Shift+R</value>
   </data>
   <data name="ShortCutKeyCtrlShiftV" xml:space="preserve">
     <value>CTRL + Shift + V</value>
   </data>
   <data name="GoToAbsolutePosition" xml:space="preserve">
-    <value>Position</value>
+    <value>Posição</value>
   </data>
   <data name="GoToCurrentPosition" xml:space="preserve">
     <value>Posição Atual</value>
@@ -1596,7 +1572,7 @@ Filtro pode ser alterado nas opções do Explorador Assembly.</value>
     <value>CTRL + 4</value>
   </data>
   <data name="SelectToNewPosition" xml:space="preserve">
-    <value>_Select to new position</value>
+    <value>_Selecionar nova posição</value>
   </data>
   <data name="ShortCutKeyCtrlO" xml:space="preserve">
     <value>CTRL + O</value>
@@ -1617,25 +1593,25 @@ Filtro pode ser alterado nas opções do Explorador Assembly.</value>
     <value>CTRL + 6</value>
   </data>
   <data name="GoToMetadataCommand" xml:space="preserve">
-    <value>Go to Metadata...</value>
+    <value>Ir para Metadados...</value>
   </data>
   <data name="ShortCutKeyCtrlM" xml:space="preserve">
     <value>CTRL + M</value>
   </data>
   <data name="GoToMetadataInvalidOffsetOrToken" xml:space="preserve">
-    <value>Invalid offset or metadata token</value>
+    <value>Desvio ou símbolo de metadados inválido</value>
   </data>
   <data name="GoToMetadataMethodBody" xml:space="preserve">
-    <value>Method Body</value>
+    <value>Corpo do Método</value>
   </data>
   <data name="GoToMetadataToken" xml:space="preserve">
-    <value>Metadata Token</value>
+    <value>Símbolo de Metadados</value>
   </data>
   <data name="GoToMetadata_Index_Label" xml:space="preserve">
     <value>_Índice</value>
   </data>
   <data name="HexFollowFieldValueReference" xml:space="preserve">
-    <value>Follow Reference</value>
+    <value>Seguir Referência</value>
   </data>
   <data name="ShortCutKeyCtrlF12" xml:space="preserve">
     <value>CTRL + F12</value>
@@ -1644,10 +1620,10 @@ Filtro pode ser alterado nas opções do Explorador Assembly.</value>
     <value>Selecionar Ficheiro</value>
   </data>
   <data name="HexEditorSelectNestedFileCommand" xml:space="preserve">
-    <value>Select Nested File</value>
+    <value>Selecionar Ficheiro Encaixado</value>
   </data>
   <data name="SelectSpecialCommand" xml:space="preserve">
-    <value>Select Special</value>
+    <value>Selecionar Especial</value>
   </data>
   <data name="ShortCutKeyCtrlECtrlF" xml:space="preserve">
     <value>CTRL + E, Ctrl + F</value>
@@ -1656,7 +1632,7 @@ Filtro pode ser alterado nas opções do Explorador Assembly.</value>
     <value>CTRL + E, Ctrl + N</value>
   </data>
   <data name="HexEditorSelectStructureCommand" xml:space="preserve">
-    <value>Select Structure</value>
+    <value>Selecionar Estrutura</value>
   </data>
   <data name="ShortCutKeyCtrlECtrlS" xml:space="preserve">
     <value>CTRL + K, CTRL + S</value>
@@ -1665,13 +1641,13 @@ Filtro pode ser alterado nas opções do Explorador Assembly.</value>
     <value>Editar Campo</value>
   </data>
   <data name="OptionColorizeText" xml:space="preserve">
-    <value>Colorize the text</value>
+    <value>Colorir o texto</value>
   </data>
   <data name="ShortCutKeyAltRightArrow" xml:space="preserve">
-    <value>Alt+Right Arrow</value>
+    <value>Alt+Seta Para A Direita</value>
   </data>
   <data name="ShortCutKeyBackspace" xml:space="preserve">
-    <value>Backspace</value>
+    <value>Retrocesso</value>
   </data>
   <data name="ShortCutKeyCtrlS" xml:space="preserve">
     <value>CTRL + S</value>
@@ -1704,22 +1680,22 @@ Filtro pode ser alterado nas opções do Explorador Assembly.</value>
     <value>Alt+R</value>
   </data>
   <data name="TimestampDateTimeFormat" xml:space="preserve">
-    <value>Timestamp format</value>
+    <value>Formato de Data/Hora</value>
   </data>
   <data name="Window_Bookmarks" xml:space="preserve">
-    <value>Bookmarks</value>
+    <value>Marcadores</value>
   </data>
   <data name="BookmarksOptDlgTab" xml:space="preserve">
-    <value>Bookmarks</value>
+    <value>Marcadores</value>
   </data>
   <data name="BookmarksSettings_SyntaxHighlight" xml:space="preserve">
     <value>Realce de sintaxe</value>
   </data>
   <data name="SearchHelp_ToolTip" xml:space="preserve">
-    <value>Help</value>
+    <value>Ajuda</value>
   </data>
   <data name="Column_Labels" xml:space="preserve">
-    <value>Labels</value>
+    <value>Etiquetas</value>
   </data>
   <data name="Column_Location" xml:space="preserve">
     <value>Localização</value>
@@ -1731,91 +1707,91 @@ Filtro pode ser alterado nas opções do Explorador Assembly.</value>
     <value>Nome</value>
   </data>
   <data name="Bookmarks_NoMatch" xml:space="preserve">
-    <value>No bookmarks match your search filter.</value>
+    <value>Nenhum marcador corresponde ao filtro de pesquisa.</value>
   </data>
   <data name="Bookmarks_Search" xml:space="preserve">
     <value>Pesquisa</value>
   </data>
   <data name="BookmarksCommand" xml:space="preserve">
-    <value>Boo_kmarks</value>
+    <value>Mar_cadores</value>
   </data>
   <data name="BookmarksWindowCommand" xml:space="preserve">
-    <value>_Bookmark Window</value>
+    <value>Janela de _Marcadores</value>
   </data>
   <data name="Bookmarks_ExportMatchingBookmarks_ToolTip" xml:space="preserve">
-    <value>Export all bookmarks matching the current search criteria</value>
+    <value>Exportar todos os marcadores que correspondem ao critério de pesquisa atual</value>
   </data>
   <data name="Bookmarks_GoToLocation_ToolTip" xml:space="preserve">
-    <value>Move the caret to the selected bookmark.</value>
+    <value>Mover o cursor para o marcador selecionado.</value>
   </data>
   <data name="Bookmarks_GoToNextBookmarkInFile_ToolTip" xml:space="preserve">
-    <value>Move the caret to the next bookmark in the current file.</value>
+    <value>Mover o cursor para o marcador seguinte no ficheiro atual.</value>
   </data>
   <data name="Bookmarks_GoToNextBookmarkSameLabel_ToolTip" xml:space="preserve">
-    <value>Move the caret to the next bookmark with the same label.</value>
+    <value>Mover o cursor para o marcador seguinte com a mesma etiqueta.</value>
   </data>
   <data name="Bookmarks_GoToNextBookmark_ToolTip" xml:space="preserve">
-    <value>Move the caret to the next bookmark.</value>
+    <value>Mover o cursor para o marcador seguinte.</value>
   </data>
   <data name="Bookmarks_GoToPreviousBookmarkInFile_ToolTip" xml:space="preserve">
-    <value>Move the caret to the previous bookmark in the current file.</value>
+    <value>Mover o cursor para o marcador anterior no ficheiro atual.</value>
   </data>
   <data name="Bookmarks_GoToPreviousBookmarkSameLabel_ToolTip" xml:space="preserve">
-    <value>Move the caret to the previous bookmark with the same label.</value>
+    <value>Mover o cursor para o marcador anterior com a mesma etiqueta.</value>
   </data>
   <data name="Bookmarks_GoToPreviousBookmark_ToolTip" xml:space="preserve">
-    <value>Move the caret to the previous bookmark.</value>
+    <value>Mover o cursor para o marcador anterior.</value>
   </data>
   <data name="Bookmarks_ImportBookmarks_ToolTip" xml:space="preserve">
-    <value>Import bookmarks from a file</value>
+    <value>Importar marcadores a partir de um ficheiro</value>
   </data>
   <data name="Bookmarks_RemoveBookmark_ToolTip" xml:space="preserve">
-    <value>Remove bookmark</value>
+    <value>Remover marcador</value>
   </data>
   <data name="Bookmarks_RemoveMatchingBookmarks_ToolTip" xml:space="preserve">
-    <value>Remove all bookmarks matching the current search criteria</value>
+    <value>Remover todos os marcadores que correspondem ao critério de pesquisa atual</value>
   </data>
   <data name="Bookmarks_ResetSearchSettings_ToolTip" xml:space="preserve">
-    <value>Reset all search criteria so that all bookmarks are shown</value>
+    <value>Repor todos os critérios de pesquisa para que todos os marcadores sejam mostrados</value>
   </data>
   <data name="Bookmarks_Search_ToolTip" xml:space="preserve">
-    <value>Search for a bookmark</value>
+    <value>Procurar marcador</value>
   </data>
   <data name="Bookmarks_ToggleCreateBookmark_ToolTip" xml:space="preserve">
-    <value>Toggle a bookmark on the current line.</value>
+    <value>Alternar um marcador na linha atual.</value>
   </data>
   <data name="Bookmarks_ToggleMatchingBookmarks_ToolTip" xml:space="preserve">
-    <value>Enable or disable all bookmarks matching the current search criteria</value>
+    <value>Ativar ou desativar todos os marcadores que correspondem ao critério de pesquisa tual</value>
   </data>
   <data name="BookmarkDefaultName" xml:space="preserve">
-    <value>Bookmark{0}</value>
+    <value>Marcador{0}</value>
   </data>
   <data name="RenameCommand" xml:space="preserve">
     <value>Renomear</value>
   </data>
   <data name="GoToBookmarkCommand" xml:space="preserve">
-    <value>Go To Bookmark</value>
+    <value>Ir Para Marcador</value>
   </data>
   <data name="ShortCutKeyCtrl_DIGIT" xml:space="preserve">
     <value>CTRL +{0}</value>
   </data>
   <data name="DisableBookmarkCommand3" xml:space="preserve">
-    <value>Disable Bookmark</value>
+    <value>Desativar Marcador</value>
   </data>
   <data name="EditLabelsCommand" xml:space="preserve">
-    <value>Edit Labels</value>
+    <value>Editar Etiquetas</value>
   </data>
   <data name="EnableBookmarkCommand3" xml:space="preserve">
-    <value>Enable Bookmark</value>
+    <value>Ativar Marcador</value>
   </data>
   <data name="ExportSelectedCommand" xml:space="preserve">
-    <value>_Export Selected...</value>
+    <value>_Exportar Selecionado...</value>
   </data>
   <data name="RemoveAllBookmarksCommand" xml:space="preserve">
-    <value>Remove All Bookmarks</value>
+    <value>Remover Todos os Marcadores</value>
   </data>
   <data name="RemoveBookmarkCommand" xml:space="preserve">
-    <value>Remove Bookmark</value>
+    <value>Remover Marcador</value>
   </data>
   <data name="SelectAllCommand" xml:space="preserve">
     <value>Select _All</value>
@@ -1833,10 +1809,10 @@ Filtro pode ser alterado nas opções do Explorador Assembly.</value>
     <value>F2</value>
   </data>
   <data name="ShowDeclaringTypesCommand" xml:space="preserve">
-    <value>Show Declaring Types</value>
+    <value>Mostrar Tipos Declaradores</value>
   </data>
   <data name="ShowIntrinsicTypeKeywordsCommand" xml:space="preserve">
-    <value>Show Intrinsic Type Keywords</value>
+    <value>Mostrar Palavras-Chave Intrínsecas de Tipo</value>
   </data>
   <data name="ShowModuleNamesCommand" xml:space="preserve">
     <value>Mostrar Module Names</value>
@@ -1860,37 +1836,37 @@ Filtro pode ser alterado nas opções do Explorador Assembly.</value>
     <value>CTRL + K, CTRL + W</value>
   </data>
   <data name="ClearAllBookmarksInDocumentCommand" xml:space="preserve">
-    <value>Clear All Bookmarks In Document</value>
+    <value>Limpar Todos Os Marcadores No Documento</value>
   </data>
   <data name="ClearBookmarksCommand" xml:space="preserve">
-    <value>_Clear Bookmarks</value>
+    <value>_Limpar Marcadores</value>
   </data>
   <data name="DisableAllBookmarksCommand" xml:space="preserve">
-    <value>Disable _All Bookmarks</value>
+    <value>Desativar _Todos os Marcadores</value>
   </data>
   <data name="EnableAllBookmarksCommand" xml:space="preserve">
-    <value>Enable _All Bookmarks</value>
+    <value>Ativar _Todos os Marcadores</value>
   </data>
   <data name="EnableBookmarkCommand" xml:space="preserve">
-    <value>Enable Bookmark</value>
+    <value>Ativar Marcador</value>
   </data>
   <data name="GoToNextBookmarkCommand" xml:space="preserve">
-    <value>Next _Bookmark</value>
+    <value>_Marcador Seguinte</value>
   </data>
   <data name="GoToNextBookmarkInDocumentCommand" xml:space="preserve">
-    <value>N_ext Bookmark In Document</value>
+    <value>Marcador S_eguinte No Documento</value>
   </data>
   <data name="GoToNextBookmarkWithSameLabelCommand" xml:space="preserve">
-    <value>Next Bookmark With Same Label</value>
+    <value>Marcador Seguinte Com a Mesma Etiqueta</value>
   </data>
   <data name="GoToPreviousBookmarkCommand" xml:space="preserve">
-    <value>_Previous Bookmark</value>
+    <value>Marcador _Anterior</value>
   </data>
   <data name="GoToPreviousBookmarkInDocumentCommand" xml:space="preserve">
-    <value>P_revious Bookmark In Document</value>
+    <value>Marcador A_nterior No Documento</value>
   </data>
   <data name="GoToPreviousBookmarkWithSameLabelCommand" xml:space="preserve">
-    <value>Previous Bookmark With Same Label</value>
+    <value>Marcador Anterior Com a Mesma Etiqueta</value>
   </data>
   <data name="ShortCutKeyCtrlK_CtrlK" xml:space="preserve">
     <value>CTRL + K, CTRL + K</value>
@@ -1905,15 +1881,177 @@ Filtro pode ser alterado nas opções do Explorador Assembly.</value>
     <value>CTRL + K, CTRL + P</value>
   </data>
   <data name="ToggleBookmarkCommand" xml:space="preserve">
-    <value>_Toggle Bookmark</value>
+    <value>_Alternar Marcador</value>
   </data>
   <data name="EditLabelsMsgBoxLabel" xml:space="preserve">
-    <value>Labels</value>
+    <value>Etiquetas</value>
   </data>
   <data name="EditLabelsTitle" xml:space="preserve">
-    <value>Edit Labels</value>
+    <value>Editar Etiquetas</value>
   </data>
   <data name="User_Administrator" xml:space="preserve">
-    <value>Administrator</value>
+    <value>Administrador</value>
+  </data>
+  <data name="AllowMoreThanOneInstance" xml:space="preserve">
+    <value>Permitir mais do que uma instância (necessário reiniciar)</value>
+  </data>
+  <data name="DisassemblerDlgTabTitle" xml:space="preserve">
+    <value>Disassembler</value>
+  </data>
+  <data name="CodeStyleDlgTabTitle" xml:space="preserve">
+    <value>Code Style</value>
+  </data>
+  <data name="DisassemblySettings_AddLabels" xml:space="preserve">
+    <value>Add labels</value>
+  </data>
+  <data name="DisassemblySettings_AddLeadingZeroToHexNumbers" xml:space="preserve">
+    <value>Add leading '0' to hex numbers if needed</value>
+  </data>
+  <data name="DisassemblySettings_AlwaysShowMemorySize" xml:space="preserve">
+    <value>Always show size of memory operands</value>
+  </data>
+  <data name="DisassemblySettings_AlwaysShowScale" xml:space="preserve">
+    <value>Always show the scale value</value>
+  </data>
+  <data name="DisassemblySettings_AlwaysShowSegmentRegister" xml:space="preserve">
+    <value>Always show segment registers</value>
+  </data>
+  <data name="DisassemblySettings_DigitSeparator" xml:space="preserve">
+    <value>Digit separator</value>
+  </data>
+  <data name="DisassemblySettings_EmptyLineBetweenBasicBlocks" xml:space="preserve">
+    <value>Add an empty line between blocks</value>
+  </data>
+  <data name="DisassemblySettings_HexPrefix" xml:space="preserve">
+    <value>Hex prefix</value>
+  </data>
+  <data name="DisassemblySettings_HexSuffix" xml:space="preserve">
+    <value>Hex suffix</value>
+  </data>
+  <data name="DisassemblySettings_NewTab" xml:space="preserve">
+    <value>Show disassembly in a new tab</value>
+  </data>
+  <data name="DisassemblySettings_OperandColumn" xml:space="preserve">
+    <value>Operand column</value>
+  </data>
+  <data name="DisassemblySettings_RipRelativeAddresses" xml:space="preserve">
+    <value>RIP-relative addresses</value>
+  </data>
+  <data name="DisassemblySettings_ScaleBeforeIndex" xml:space="preserve">
+    <value>Show scale before index register</value>
+  </data>
+  <data name="DisassemblySettings_BranchLeadingZeroes" xml:space="preserve">
+    <value>Add leading zeroes (branches)</value>
+  </data>
+  <data name="DisassemblySettings_LeadingZeroes" xml:space="preserve">
+    <value>Add leading zeroes</value>
+  </data>
+  <data name="DisassemblySettings_ShowBranchSize" xml:space="preserve">
+    <value>Show branch size</value>
+  </data>
+  <data name="DisassemblySettings_ShowInstructionAddress" xml:space="preserve">
+    <value>Show instruction address</value>
+  </data>
+  <data name="DisassemblySettings_ShowInstructionBytes" xml:space="preserve">
+    <value>Show instruction bytes</value>
+  </data>
+  <data name="DisassemblySettings_ShowZeroDisplacements" xml:space="preserve">
+    <value>Show zero displacements</value>
+  </data>
+  <data name="DisassemblySettings_SignedImmediateOperands" xml:space="preserve">
+    <value>Signed numbers</value>
+  </data>
+  <data name="DisassemblySettings_SignedMemoryDisplacements" xml:space="preserve">
+    <value>Signed displacements</value>
+  </data>
+  <data name="DisassemblySettings_SmallHexNumbersInDecimal" xml:space="preserve">
+    <value>Show small numbers in decimal</value>
+  </data>
+  <data name="DisassemblySettings_SpaceAfterMemoryBracket" xml:space="preserve">
+    <value>Space after memory operand brackets</value>
+  </data>
+  <data name="DisassemblySettings_SpaceAfterOperandSeparator" xml:space="preserve">
+    <value>Space after operand separator</value>
+  </data>
+  <data name="DisassemblySettings_SpacesBetweenMemoryAddOperators" xml:space="preserve">
+    <value>Space between '+'</value>
+  </data>
+  <data name="DisassemblySettings_SpacesBetweenMemoryMulOperators" xml:space="preserve">
+    <value>Space between '*'</value>
+  </data>
+  <data name="DisassemblySettings_UpperCaseAll" xml:space="preserve">
+    <value>Upper case everything</value>
+  </data>
+  <data name="DisassemblySettings_UpperCaseHex" xml:space="preserve">
+    <value>Upper case hex numbers</value>
+  </data>
+  <data name="DisassemblySettings_UpperCaseKeywords" xml:space="preserve">
+    <value>Upper case keywords</value>
+  </data>
+  <data name="DisassemblySettings_UpperCaseMnemonics" xml:space="preserve">
+    <value>Upper case mnemonics</value>
+  </data>
+  <data name="DisassemblySettings_UpperCasePrefixes" xml:space="preserve">
+    <value>Upper case prefixes</value>
+  </data>
+  <data name="DisassemblySettings_UpperCaseRegisters" xml:space="preserve">
+    <value>Upper case registers</value>
+  </data>
+  <data name="DisassemblySettings_UsePseudoOps" xml:space="preserve">
+    <value>Pseudo instructions</value>
+  </data>
+  <data name="DisassemblySettings_X86AssemblerSyntax" xml:space="preserve">
+    <value>Syntax</value>
+  </data>
+  <data name="DisassemblySettings_NakedRegisters" xml:space="preserve">
+    <value>Naked registers</value>
+  </data>
+  <data name="DisassemblySettings_ShowMnemonicSizeSuffix" xml:space="preserve">
+    <value>Always show mnemonic size suffix</value>
+  </data>
+  <data name="DisassemblySettings_SpaceAfterMemoryOperandComma" xml:space="preserve">
+    <value>Space after memory operand comma</value>
+  </data>
+  <data name="DisassemblySettings_UseHexNumbers" xml:space="preserve">
+    <value>Hex numbers</value>
+  </data>
+  <data name="Disassembly_TabTitle" xml:space="preserve">
+    <value>Disassembly</value>
+  </data>
+  <data name="DisassemblySettings_ShowCode" xml:space="preserve">
+    <value>Show decompiled code</value>
+  </data>
+  <data name="DisassemblySettings_ShowILCode" xml:space="preserve">
+    <value>Show IL code</value>
+  </data>
+  <data name="Disassembly_MethodIsNotOptimized" xml:space="preserve">
+    <value>The method is not optimized</value>
+  </data>
+  <data name="DisassemblySettings_ShowSymbolAddress" xml:space="preserve">
+    <value>Show symbol address</value>
+  </data>
+  <data name="Decompile_Timestamp" xml:space="preserve">
+    <value>Data/Hora:</value>
+  </data>
+  <data name="UnknownValue" xml:space="preserve">
+    <value>&lt;Desconhecido&gt;</value>
+  </data>
+  <data name="TypeReferencesFolder" xml:space="preserve">
+    <value>Type References</value>
+  </data>
+  <data name="TreeViewEventsFolder" xml:space="preserve">
+    <value>Eventos</value>
+  </data>
+  <data name="TreeViewFieldsFolder" xml:space="preserve">
+    <value>Campos</value>
+  </data>
+  <data name="TreeViewMethodsFolder" xml:space="preserve">
+    <value>Métodos</value>
+  </data>
+  <data name="TreeViewPropertiesFolder" xml:space="preserve">
+    <value>Propriedades</value>
+  </data>
+  <data name="TreeViewTypesFolder" xml:space="preserve">
+    <value>Types</value>
   </data>
 </root>

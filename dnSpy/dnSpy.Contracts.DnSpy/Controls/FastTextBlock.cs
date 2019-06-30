@@ -1,4 +1,4 @@
-﻿/*
+/*
 	Copyright (c) 2015 Ki
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -36,8 +36,8 @@ namespace dnSpy.Contracts.Controls {
 		}
 
 		public string Text {
-			get { return (string)GetValue(TextProperty); }
-			set { SetValue(TextProperty, value); }
+			get => (string)GetValue(TextProperty);
+			set => SetValue(TextProperty, value);
 		}
 
 		readonly bool useNewFormatter;
@@ -75,7 +75,7 @@ namespace dnSpy.Contracts.Controls {
 			BackgroundProperty = TextElement.BackgroundProperty.AddOwner(typeof(FastTextBlock));
 		}
 
-		static int H(object obj) => obj == null ? 0 : obj.GetHashCode();
+		static int H(object obj) => obj is null ? 0 : obj.GetHashCode();
 
 		int CacheHash() {
 			int hash = 17;
@@ -115,16 +115,20 @@ namespace dnSpy.Contracts.Controls {
 			public override double FontHintingEmSize => 12;
 			public override double FontRenderingEmSize => (double)tb.GetValue(FontSizeProperty);
 			public override Brush ForegroundBrush => (Brush)tb.GetValue(ForegroundProperty);
-			public override TextDecorationCollection TextDecorations => null;
-			public override TextEffectCollection TextEffects => null;
+			public override TextDecorationCollection? TextDecorations => null;
+			public override TextEffectCollection? TextEffects => null;
 			public override Typeface Typeface => tb.GetTypeface();
 		}
 
 		class TextSrc : TextSource, IFastTextSource {
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
 			string text;
 			TextProps props;
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
 
 			public override TextRun GetTextRun(int textSourceCharacterIndex) {
+				Debug.Assert(!(text is null));
+				Debug.Assert(!(props is null));
 				if (textSourceCharacterIndex >= text.Length) {
 					return new TextEndOfParagraph(1);
 				}
@@ -159,13 +163,13 @@ namespace dnSpy.Contracts.Controls {
 			public override double Indent => 0;
 			public override double LineHeight => 0;
 			public override TextAlignment TextAlignment => TextAlignment.Left;
-			public override TextMarkerProperties TextMarkerProperties => null;
+			public override TextMarkerProperties? TextMarkerProperties => null;
 			public override TextWrapping TextWrapping => TextWrapping.NoWrap;
 		}
 
 
-		ITextFormatter fmt = null;
-		TextLine line = null;
+		ITextFormatter? fmt = null;
+		TextLine? line = null;
 
 		Typeface GetTypeface() {
 			var fontFamily = (FontFamily)GetValue(FontFamilyProperty);
@@ -178,10 +182,10 @@ namespace dnSpy.Contracts.Controls {
 		IFastTextSource src;
 
 		void MakeNewText() {
-			if (fmt == null)
+			if (fmt is null)
 				fmt = TextFormatterFactory.GetTextFormatter(this, useNewFormatter);
 
-			if (line != null)
+			if (!(line is null))
 				line.Dispose();
 
 			src.UpdateParent(this);
@@ -190,7 +194,7 @@ namespace dnSpy.Contracts.Controls {
 
 		void EnsureText() {
 			var hash = CacheHash();
-			if (cache != hash || line == null) {
+			if (cache != hash || line is null) {
 				cache = hash;
 				MakeNewText();
 			}
@@ -199,11 +203,13 @@ namespace dnSpy.Contracts.Controls {
 
 		protected override Size MeasureOverride(Size availableSize) {
 			EnsureText();
+			Debug.Assert(!(line is null));
 			return new Size(line.Width, line.Height);
 		}
 
 		protected override void OnRender(DrawingContext drawingContext) {
 			EnsureText();
+			Debug.Assert(!(line is null));
 			line.Draw(drawingContext, new Point(0, 0), InvertAxes.None);
 		}
 	}

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,7 +29,7 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text {
 	[Export(typeof(ITextBufferFactoryService))]
-	sealed class TextBufferFactoryService : ITextBufferFactoryService {
+	sealed class TextBufferFactoryService : ITextBufferFactoryService3 {
 		public IContentType InertContentType { get; }
 		public IContentType PlaintextContentType { get; }
 		public IContentType TextContentType { get; }
@@ -43,26 +43,44 @@ namespace dnSpy.Text {
 			InertContentType = contentTypeRegistryService.GetContentType(ContentTypes.Inert);
 			PlaintextContentType = contentTypeRegistryService.GetContentType(ContentTypes.PlainText);
 			TextContentType = contentTypeRegistryService.GetContentType(ContentTypes.Text);
-			Debug.Assert(InertContentType != null);
-			Debug.Assert(PlaintextContentType != null);
-			Debug.Assert(TextContentType != null);
+			Debug.Assert(!(InertContentType is null));
+			Debug.Assert(!(PlaintextContentType is null));
+			Debug.Assert(!(TextContentType is null));
 		}
 
 		public ITextBuffer CreateTextBuffer() => CreateTextBuffer(TextContentType);
 		public ITextBuffer CreateTextBuffer(IContentType contentType) => CreateTextBuffer(string.Empty, contentType);
 		public ITextBuffer CreateTextBuffer(TextReader reader, IContentType contentType) => CreateTextBuffer(ToString(reader), contentType);
 		public ITextBuffer CreateTextBuffer(string text, IContentType contentType) {
-			if (text == null)
+			if (text is null)
 				throw new ArgumentNullException(nameof(text));
-			if (contentType == null)
+			if (contentType is null)
 				throw new ArgumentNullException(nameof(contentType));
 			var textBuffer = new TextBuffer(contentType, text);
 			TextBufferCreated?.Invoke(this, new TextBufferCreatedEventArgs(textBuffer));
 			return textBuffer;
 		}
 
+		public ITextBuffer CreateTextBuffer(SnapshotSpan span, IContentType contentType) {
+			if (span.Snapshot is null)
+				throw new ArgumentException(nameof(span));
+			return CreateTextBuffer(span.GetText(), contentType);
+		}
+
+		public ITextBuffer CreateTextBuffer(TextReader reader, IContentType contentType, long length, string traceId) {
+			if (reader is null)
+				throw new ArgumentNullException(nameof(reader));
+			throw new NotImplementedException();
+		}
+
+		public ITextBuffer CreateTextBuffer(ITextImage image, IContentType contentType) {
+			if (image is null)
+				throw new ArgumentNullException(nameof(image));
+			return CreateTextBuffer(image.GetText(), contentType);
+		}
+
 		static string ToString(TextReader reader) {
-			if (reader == null)
+			if (reader is null)
 				throw new ArgumentNullException(nameof(reader));
 			var sb = new StringBuilder();
 			var buf = Cache.GetReadBuffer();
@@ -79,7 +97,7 @@ namespace dnSpy.Text {
 		static class Cache {
 			public static void FreeReadBuffer(char[] buffer) => Interlocked.Exchange(ref __readBuffer, new WeakReference(buffer));
 			public static char[] GetReadBuffer() => Interlocked.Exchange(ref __readBuffer, null)?.Target as char[] ?? new char[BUF_LENGTH];
-			static WeakReference __readBuffer;
+			static WeakReference? __readBuffer;
 			const int BUF_LENGTH = 4096;
 		}
 	}

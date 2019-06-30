@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,21 +36,21 @@ namespace dnSpy.Contracts.Search {
 		/// <param name="filter"></param>
 		public ChainDocumentTreeNodeFilter(IDocumentTreeNodeFilter filter) => this.filter = filter;
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public virtual DocumentTreeNodeFilterResult GetResult(FieldDef field) => filter.GetResult(field);
 		public virtual DocumentTreeNodeFilterResult GetResult(PropertyDef prop) => filter.GetResult(prop);
 		public virtual DocumentTreeNodeFilterResult GetResult(EventDef evt) => filter.GetResult(evt);
 		public virtual DocumentTreeNodeFilterResult GetResult(MethodDef method) => filter.GetResult(method);
 		public virtual DocumentTreeNodeFilterResult GetResult(TypeDef type) => filter.GetResult(type);
 		public virtual DocumentTreeNodeFilterResult GetResult(ModuleRef modRef) => filter.GetResult(modRef);
-		public virtual DocumentTreeNodeFilterResult GetResult(BaseTypeFolderNode node) => filter.GetResult(node);
-		public virtual DocumentTreeNodeFilterResult GetResult(DerivedTypesFolderNode node) => filter.GetResult(node);
-		public virtual DocumentTreeNodeFilterResult GetResult(ResourcesFolderNode node) => filter.GetResult(node);
-		public virtual DocumentTreeNodeFilterResult GetResult(ResourceElementNode node) => filter.GetResult(node);
-		public virtual DocumentTreeNodeFilterResult GetResult(ResourceNode node) => filter.GetResult(node);
-		public virtual DocumentTreeNodeFilterResult GetResult(ReferencesFolderNode node) => filter.GetResult(node);
-		public virtual DocumentTreeNodeFilterResult GetResult(DerivedTypeNode node) => filter.GetResult(node);
-		public virtual DocumentTreeNodeFilterResult GetResult(BaseTypeNode node) => filter.GetResult(node);
+		public virtual DocumentTreeNodeFilterResult GetResult(BaseTypeFolderNode? node) => filter.GetResult(node);
+		public virtual DocumentTreeNodeFilterResult GetResult(DerivedTypesFolderNode? node) => filter.GetResult(node);
+		public virtual DocumentTreeNodeFilterResult GetResult(ResourcesFolderNode? node) => filter.GetResult(node);
+		public virtual DocumentTreeNodeFilterResult GetResult(ResourceElementNode? node) => filter.GetResult(node);
+		public virtual DocumentTreeNodeFilterResult GetResult(ResourceNode? node) => filter.GetResult(node);
+		public virtual DocumentTreeNodeFilterResult GetResult(ReferencesFolderNode? node) => filter.GetResult(node);
+		public virtual DocumentTreeNodeFilterResult GetResult(DerivedTypeNode? node) => filter.GetResult(node);
+		public virtual DocumentTreeNodeFilterResult GetResult(BaseTypeNode? node) => filter.GetResult(node);
 		public virtual DocumentTreeNodeFilterResult GetResult(AssemblyRef asmRef) => filter.GetResult(asmRef);
 		public virtual DocumentTreeNodeFilterResult GetResult(ModuleDef mod) => filter.GetResult(mod);
 		public virtual DocumentTreeNodeFilterResult GetResult(AssemblyDef asm) => filter.GetResult(asm);
@@ -63,6 +63,6 @@ namespace dnSpy.Contracts.Search {
 		public virtual DocumentTreeNodeFilterResult GetResult(IDsDocument document) => filter.GetResult(document);
 		public virtual DocumentTreeNodeFilterResult GetResultParamDefs(MethodDef method) => filter.GetResultParamDefs(method);
 		public virtual DocumentTreeNodeFilterResult GetResultAttributes(IHasCustomAttribute hca) => filter.GetResultAttributes(hca);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

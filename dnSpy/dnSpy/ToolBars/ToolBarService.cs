@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -77,7 +77,7 @@ namespace dnSpy.ToolBars {
 		}
 
 		void InitializeToolBarItems() {
-			if (guidToGroups != null)
+			if (!(guidToGroups is null))
 				return;
 
 			var dict = new Dictionary<Guid, Dictionary<string, ToolBarItemGroupMD>>();
@@ -86,7 +86,7 @@ namespace dnSpy.ToolBars {
 
 				ownerGuidString = md.Metadata.OwnerGuid ?? ToolBarConstants.APP_TB_GUID;
 				bool b = Guid.TryParse(ownerGuidString, out var ownerGuid);
-				Debug.Assert(b, string.Format("ToolBarItem: Couldn't parse OwnerGuid property: '{0}'", ownerGuidString));
+				Debug.Assert(b, $"ToolBarItem: Couldn't parse OwnerGuid property: '{ownerGuidString}'");
 				if (!b)
 					continue;
 
@@ -94,7 +94,7 @@ namespace dnSpy.ToolBars {
 				Debug.Assert(b, "ToolBarItem: Group property is empty or null");
 				if (!b)
 					continue;
-				b = Menus.MenuService.ParseGroup(md.Metadata.Group, out double groupOrder, out string groupName);
+				b = Menus.MenuService.ParseGroup(md.Metadata.Group!, out double groupOrder, out string groupName);
 				Debug.Assert(b, "ToolBarItem: Group property must be of the format \"<order>,<name>\" where <order> is a System.Double");
 				if (!b)
 					continue;
@@ -103,7 +103,7 @@ namespace dnSpy.ToolBars {
 					dict.Add(ownerGuid, groupDict = new Dictionary<string, ToolBarItemGroupMD>());
 				if (!groupDict.TryGetValue(groupName, out var mdGroup))
 					groupDict.Add(groupName, mdGroup = new ToolBarItemGroupMD(groupOrder));
-				Debug.Assert(mdGroup.Order == groupOrder, string.Format("ToolBarItem: Group order is different: {0} vs {1}", mdGroup.Order, groupOrder));
+				Debug.Assert(mdGroup.Order == groupOrder, $"ToolBarItem: Group order is different: {mdGroup.Order} vs {groupOrder}");
 				mdGroup.Items.Add(md);
 			}
 
@@ -115,7 +115,7 @@ namespace dnSpy.ToolBars {
 				guidToGroups.Add(kv.Key, groups);
 			}
 		}
-		Dictionary<Guid, List<ToolBarItemGroupMD>> guidToGroups;
+		Dictionary<Guid, List<ToolBarItemGroupMD>>? guidToGroups;
 
 		IEnumerable<ToolBarItemMD> GetToolBarItemMDs() {
 			foreach (var i in tbButtonMef)
@@ -126,9 +126,10 @@ namespace dnSpy.ToolBars {
 		readonly IEnumerable<Lazy<IToolBarButton, IToolBarButtonMetadata>> tbButtonMef;
 		readonly IEnumerable<Lazy<IToolBarObject, IToolBarObjectMetadata>> tbObjectMef;
 
-		public ToolBar InitializeToolBar(ToolBar toolBar, Guid toolBarGuid, IInputElement commandTarget) {
+		public ToolBar InitializeToolBar(ToolBar? toolBar, Guid toolBarGuid, IInputElement? commandTarget) {
 			InitializeToolBarItems();
-			if (toolBar == null) {
+			Debug.Assert(!(guidToGroups is null));
+			if (toolBar is null) {
 				toolBar = new ToolBar();
 				toolBar.FocusVisualStyle = null;
 			}
@@ -156,7 +157,7 @@ namespace dnSpy.ToolBars {
 
 					foreach (var item in items) {
 						var obj = Create(item, ctx, commandTarget);
-						if (obj != null)
+						if (!(obj is null))
 							toolBar.Items.Add(obj);
 					}
 				}
@@ -166,7 +167,7 @@ namespace dnSpy.ToolBars {
 			return toolBar;
 		}
 
-		object Create(ToolBarItemMD md, IToolBarItemContext ctx, IInputElement commandTarget) {
+		object? Create(ToolBarItemMD md, IToolBarItemContext ctx, IInputElement? commandTarget) {
 			if (md is ToolBarButtonMD mdButton)
 				return Create(mdButton, ctx, commandTarget);
 
@@ -177,28 +178,28 @@ namespace dnSpy.ToolBars {
 			return null;
 		}
 
-		object Create(ToolBarButtonMD md, IToolBarItemContext ctx, IInputElement commandTarget) {
+		object Create(ToolBarButtonMD md, IToolBarItemContext ctx, IInputElement? commandTarget) {
 			var item = (IToolBarButton)md.ToolBarItem;
 			var md2 = (IToolBarButtonMetadata)md.Metadata;
 
 			var cmdHolder = item as ICommandHolder;
-			var cmd = cmdHolder != null ? cmdHolder.Command : new RelayCommand(a => item.Execute(ctx), a => item.IsEnabled(ctx));
+			var cmd = !(cmdHolder is null) ? cmdHolder.Command : new RelayCommand(a => item.Execute(ctx), a => item.IsEnabled(ctx));
 
-			string header = ResourceHelper.GetString(item, md2.Header);
-			string icon = md2.Icon;
-			string toolTip = ResourceHelper.GetString(item, md2.ToolTip);
+			var header = ResourceHelper.GetStringOrNull(item, md2.Header);
+			var icon = md2.Icon;
+			var toolTip = ResourceHelper.GetStringOrNull(item, md2.ToolTip);
 			header = item.GetHeader(ctx) ?? header;
 			toolTip = item.GetToolTip(ctx) ?? toolTip;
 
 			var imgRef = item.GetIcon(ctx) ?? ImageReferenceHelper.GetImageReference(item, icon) ?? default;
 			var toggleButtonCmd = item as IToolBarToggleButton;
-			Debug.Assert(md2.IsToggleButton == (toggleButtonCmd != null), "Implement IToolBarToggleButton if IsToggleButton is true");
-			if (toggleButtonCmd != null)
+			Debug.Assert(md2.IsToggleButton == (!(toggleButtonCmd is null)), "Implement IToolBarToggleButton if IsToggleButton is true");
+			if (!(toggleButtonCmd is null))
 				return CreateToggleButton(toggleButtonCmd.GetBinding(ctx), cmd, commandTarget, header, toolTip, imgRef);
 			return new ToolBarButtonVM(cmd, commandTarget, header, toolTip, imgRef);
 		}
 
-		object CreateToggleButton(Binding binding, ICommand command, IInputElement commandTarget, string header, string toolTip, ImageReference imgRef) {
+		object CreateToggleButton(Binding binding, ICommand command, IInputElement? commandTarget, string? header, string? toolTip, ImageReference imgRef) {
 			var sp = new StackPanel();
 			sp.Orientation = Orientation.Horizontal;
 			if (!imgRef.IsDefault)
@@ -210,8 +211,8 @@ namespace dnSpy.ToolBars {
 				});
 			}
 			var checkBox = new CheckBox { Content = sp };
-			Debug.Assert(binding != null);
-			if (binding != null)
+			Debug.Assert(!(binding is null));
+			if (!(binding is null))
 				checkBox.SetBinding(ToggleButton.IsCheckedProperty, binding);
 			if (!string.IsNullOrEmpty(toolTip))
 				checkBox.ToolTip = toolTip;
@@ -219,7 +220,7 @@ namespace dnSpy.ToolBars {
 			return checkBox;
 		}
 
-		object Create(ToolBarObjectMD md, IToolBarItemContext ctx, IInputElement commandTarget) {
+		object Create(ToolBarObjectMD md, IToolBarItemContext ctx, IInputElement? commandTarget) {
 			var item = (IToolBarObject)md.ToolBarItem;
 			return item.GetUIObject(ctx, commandTarget);
 		}

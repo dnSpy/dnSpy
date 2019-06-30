@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,7 +18,9 @@
 */
 
 using System;
+using System.Diagnostics;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
+using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
@@ -28,28 +30,29 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		public DmdEvaluatorImpl(DbgEngineImpl engine) =>
 			this.engine = engine ?? throw new ArgumentNullException(nameof(engine));
 
-		IDmdEvaluatorContext GetEvaluatorContext(object context) {
-			const string errorMessage = nameof(context) + " must not be null and must implement " + nameof(IDmdEvaluatorContext) + ", see class " + nameof(DmdEvaluatorContext);
-			if (context == null)
+		DbgEvaluationInfo GetEvaluationInfo(object? context) {
+			const string errorMessage = nameof(context) + " must not be null and must be a " + nameof(DbgEvaluationInfo);
+			if (context is null)
 				throw new ArgumentNullException(nameof(context), errorMessage);
-			var evalCtx = context as IDmdEvaluatorContext;
-			if (evalCtx == null)
+			var evalInfo = context as DbgEvaluationInfo;
+			if (evalInfo is null)
 				throw new ArgumentException(errorMessage, nameof(context));
-			return evalCtx;
+			return evalInfo;
 		}
 
-		DbgDotNetValue GetDotNetValue(object obj) {
-			if (obj == null)
+		DbgDotNetValue? GetDotNetValue(object? obj) {
+			if (obj is null)
 				return null;
 			var dnValue = obj as DbgDotNetValue;
-			if (dnValue == null)
+			if (dnValue is null)
 				throw new ArgumentException("Value must be a " + nameof(DbgDotNetValue));
 			return dnValue;
 		}
 
 		object GetValueThrow(DbgDotNetValueResult result) {
-			if (result.ErrorMessage != null)
+			if (!(result.ErrorMessage is null))
 				throw new DmdEvaluatorException(result.ErrorMessage);
+			Debug.Assert(!(result.Value is null));
 			if (result.ValueIsException) {
 				var msg = "An exception was thrown: " + result.Value.Type.FullName;
 				result.Value.Dispose();
@@ -58,28 +61,28 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return result.Value;
 		}
 
-		public override object CreateInstance(object context, DmdConstructorInfo ctor, object[] arguments) {
-			var evalCtx = GetEvaluatorContext(context);
-			var res = engine.DotNetRuntime.CreateInstance(evalCtx.EvaluationContext, evalCtx.Frame, ctor, arguments, evalCtx.CancellationToken);
+		public override object? CreateInstance(object? context, DmdConstructorInfo ctor, object?[] arguments) {
+			var evalInfo = GetEvaluationInfo(context);
+			var res = engine.DotNetRuntime.CreateInstance(evalInfo, ctor, arguments, DbgDotNetInvokeOptions.None);
 			return GetValueThrow(res);
 		}
 
-		public override object Invoke(object context, DmdMethodBase method, object obj, object[] arguments) {
-			var evalCtx = GetEvaluatorContext(context);
-			var res = engine.DotNetRuntime.Call(evalCtx.EvaluationContext, evalCtx.Frame, GetDotNetValue(obj), method, arguments, evalCtx.CancellationToken);
+		public override object? Invoke(object? context, DmdMethodBase method, object? obj, object?[] arguments) {
+			var evalInfo = GetEvaluationInfo(context);
+			var res = engine.DotNetRuntime.Call(evalInfo, GetDotNetValue(obj), method, arguments, DbgDotNetInvokeOptions.None);
 			return GetValueThrow(res);
 		}
 
-		public override object LoadField(object context, DmdFieldInfo field, object obj) {
-			var evalCtx = GetEvaluatorContext(context);
-			var res = engine.DotNetRuntime.LoadField(evalCtx.EvaluationContext, evalCtx.Frame, GetDotNetValue(obj), field, evalCtx.CancellationToken);
+		public override object? LoadField(object? context, DmdFieldInfo field, object? obj) {
+			var evalInfo = GetEvaluationInfo(context);
+			var res = engine.DotNetRuntime.LoadField(evalInfo, GetDotNetValue(obj), field);
 			return GetValueThrow(res);
 		}
 
-		public override void StoreField(object context, DmdFieldInfo field, object obj, object value) {
-			var evalCtx = GetEvaluatorContext(context);
-			var errorMessage = engine.DotNetRuntime.StoreField(evalCtx.EvaluationContext, evalCtx.Frame, GetDotNetValue(obj), field, value, evalCtx.CancellationToken);
-			if (errorMessage != null)
+		public override void StoreField(object? context, DmdFieldInfo field, object? obj, object? value) {
+			var evalInfo = GetEvaluationInfo(context);
+			var errorMessage = engine.DotNetRuntime.StoreField(evalInfo, GetDotNetValue(obj), field, value);
+			if (!(errorMessage is null))
 				throw new DmdEvaluatorException(errorMessage);
 		}
 	}

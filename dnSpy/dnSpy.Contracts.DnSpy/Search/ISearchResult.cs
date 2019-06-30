@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.Search {
 		/// <summary>
 		/// Gets the reference
 		/// </summary>
-		object Reference { get; }
+		object? Reference { get; }
 	}
 
 	/// <summary>
@@ -62,6 +62,6 @@ namespace dnSpy.Contracts.Search {
 		/// Gets any extra info related to <see cref="Object"/>. <see cref="BodyResult"/> if the
 		/// method body was searched.
 		/// </summary>
-		object ObjectInfo { get; }
+		object? ObjectInfo { get; }
 	}
 }

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -57,9 +57,9 @@ namespace dnSpy.Documents.Tabs {
 		readonly Dictionary<Key, Item> cachedItems = new Dictionary<Key, Item>();
 
 		sealed class Item {
-			public DocumentViewerContent Content;
+			public DocumentViewerContent? Content;
 			public IContentType ContentType;
-			public WeakReference WeakContent;
+			public WeakReference? WeakContent;
 			DateTime LastHitUTC;
 
 			/// <summary>
@@ -75,7 +75,7 @@ namespace dnSpy.Documents.Tabs {
 
 			public void Hit() {
 				LastHitUTC = DateTime.UtcNow;
-				if (WeakContent != null) {
+				if (!(WeakContent is null)) {
 					Content = (DocumentViewerContent)WeakContent.Target;
 					WeakContent = null;
 				}
@@ -83,12 +83,12 @@ namespace dnSpy.Documents.Tabs {
 
 			public void MakeWeakReference() {
 				var content = Interlocked.CompareExchange(ref Content, null, Content);
-				if (content != null)
+				if (!(content is null))
 					WeakContent = new WeakReference(content);
 			}
 		}
 
-		struct Key : IEquatable<Key> {
+		readonly struct Key : IEquatable<Key> {
 			public readonly IDecompiler Decompiler;
 			public readonly DocumentTreeNodeData[] Nodes;
 			public readonly DecompilerSettingsBase Settings;
@@ -116,7 +116,7 @@ namespace dnSpy.Documents.Tabs {
 				return true;
 			}
 
-			public override bool Equals(object obj) {
+			public override bool Equals(object? obj) {
 				if (!(obj is Key))
 					return false;
 				return Equals((Key)obj);
@@ -141,19 +141,20 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		static void AddTimerWait(DecompilationCache dc) {
-			Timer timer = null;
+			Timer? timer = null;
 			var weakSelf = new WeakReference(dc);
 			timer = new Timer(a => {
-				timer.Dispose();
+				timer!.Dispose();
 				var self = (DecompilationCache)weakSelf.Target;
-				if (self != null) {
+				if (!(self is null)) {
 					self.ClearOld();
 					AddTimerWait(self);
 				}
-			}, null, CLEAR_OLD_ITEMS_EVERY_MS, Timeout.Infinite);
+			}, null, Timeout.Infinite, Timeout.Infinite);
+			timer.Change(CLEAR_OLD_ITEMS_EVERY_MS, Timeout.Infinite);
 		}
 
-		public DocumentViewerContent Lookup(IDecompiler decompiler, DocumentTreeNodeData[] nodes, out IContentType contentType) {
+		public DocumentViewerContent? Lookup(IDecompiler decompiler, DocumentTreeNodeData[] nodes, out IContentType? contentType) {
 			var settings = decompiler.Settings;
 			lock (lockObj) {
 				var key = new Key(decompiler, nodes, settings);
@@ -162,7 +163,7 @@ namespace dnSpy.Documents.Tabs {
 					contentType = item.ContentType;
 					item.Hit();
 					var content = item.Content;
-					if (content == null)
+					if (content is null)
 						cachedItems.Remove(key);
 					return content;
 				}
@@ -184,7 +185,7 @@ namespace dnSpy.Documents.Tabs {
 				foreach (var kv in new List<KeyValuePair<Key, Item>>(cachedItems)) {
 					if (kv.Value.Age.TotalMilliseconds > OLD_ITEM_MS) {
 						kv.Value.MakeWeakReference();
-						if (kv.Value.WeakContent != null && kv.Value.WeakContent.Target == null)
+						if (kv.Value.WeakContent is WeakReference wc && wc.Target is null)
 							cachedItems.Remove(kv.Key);
 					}
 				}
@@ -196,7 +197,7 @@ namespace dnSpy.Documents.Tabs {
 				cachedItems.Clear();
 		}
 
-		public void Clear(HashSet<IDsDocument> modules) {
+		public void Clear(HashSet<IDsDocument?> modules) {
 			lock (lockObj) {
 				foreach (var kv in cachedItems.ToArray()) {
 					if (InModifiedModuleHelper.IsInModifiedModule(modules, kv.Key.Nodes) ||
@@ -208,43 +209,43 @@ namespace dnSpy.Documents.Tabs {
 			}
 		}
 
-		static bool IsInModifiedModule(IDsDocumentService documentService, HashSet<IDsDocument> modules, Item item) {
+		static bool IsInModifiedModule(IDsDocumentService documentService, HashSet<IDsDocument?> modules, Item item) {
 			var result = item.Content;
-			if (result == null && item.WeakContent != null)
+			if (result is null && !(item.WeakContent is null))
 				result = (DocumentViewerContent)item.WeakContent.Target;
 			var refs = result?.ReferenceCollection;
-			if (refs == null)
+			if (refs is null)
 				return false;
 			return InModifiedModuleHelper.IsInModifiedModule(documentService, modules, refs.Select(a => a.Data.Reference));
 		}
 	}
 
 	static class InModifiedModuleHelper {
-		public static bool IsInModifiedModule(HashSet<IDsDocument> modules, IEnumerable<DocumentTreeNodeData> nodes) {
+		public static bool IsInModifiedModule(HashSet<IDsDocument?> modules, IEnumerable<DocumentTreeNodeData> nodes) {
 			foreach (var node in nodes) {
-				var modNode = (DsDocumentNode)node.GetModuleNode() ?? node.GetAssemblyNode();
-				if (modNode == null || modules.Contains(modNode.Document))
+				var modNode = (DsDocumentNode?)node.GetModuleNode() ?? node.GetAssemblyNode();
+				if (modNode is null || modules.Contains(modNode.Document))
 					return true;
 			}
 
 			return false;
 		}
 
-		public static bool IsInModifiedModule(IDsDocumentService documentService, HashSet<IDsDocument> modules, IEnumerable<object> references) {
+		public static bool IsInModifiedModule(IDsDocumentService documentService, HashSet<IDsDocument?> modules, IEnumerable<object?> references) {
 			var checkedAsmRefs = new HashSet<IAssembly>(AssemblyNameComparer.CompareAll);
 			foreach (var r in references.Distinct()) {
-				IAssembly asmRef = null;
-				if (r is IType)
-					asmRef = (r as IType).DefinitionAssembly;
-				if (asmRef == null && r is IMemberRef) {
+				IAssembly? asmRef = null;
+				if (r is IType t)
+					asmRef = t.DefinitionAssembly;
+				if (asmRef is null && r is IMemberRef) {
 					var type = ((IMemberRef)r).DeclaringType;
-					if (type != null)
+					if (!(type is null))
 						asmRef = type.DefinitionAssembly;
 				}
-				if (asmRef != null && !checkedAsmRefs.Contains(asmRef)) {
+				if (!(asmRef is null) && !checkedAsmRefs.Contains(asmRef)) {
 					checkedAsmRefs.Add(asmRef);
 					var asm = documentService.FindAssembly(asmRef);
-					if (asm != null && modules.Contains(asm))
+					if (!(asm is null) && modules.Contains(asm))
 						return true;
 				}
 			}

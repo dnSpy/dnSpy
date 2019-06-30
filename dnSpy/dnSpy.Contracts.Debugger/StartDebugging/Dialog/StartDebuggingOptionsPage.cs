@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -49,14 +49,14 @@ namespace dnSpy.Contracts.Debugger.StartDebugging.Dialog {
 		public abstract double DisplayOrder { get; }
 
 		/// <summary>
-		/// Name of debugger engine shown in the UI, eg. ".NET Framework" or ".NET Core" or "Mono"
+		/// Name of debug engine shown in the UI, eg. ".NET Framework" or ".NET Core" or "Mono"
 		/// </summary>
 		public abstract string DisplayName { get; }
 
 		/// <summary>
 		/// Gets the UI object
 		/// </summary>
-		public abstract object UIObject { get; }
+		public abstract object? UIObject { get; }
 
 		/// <summary>
 		/// true if all options are valid and <see cref="GetOptions"/> can be called.
@@ -78,7 +78,7 @@ namespace dnSpy.Contracts.Debugger.StartDebugging.Dialog {
 		/// <param name="filename">Filename</param>
 		/// <param name="breakKind">Default break kind, see <see cref="PredefinedBreakKinds"/></param>
 		/// <param name="options">Options or null</param>
-		public abstract void InitializeDefaultOptions(string filename, string breakKind, StartDebuggingOptions options);
+		public abstract void InitializeDefaultOptions(string filename, string breakKind, StartDebuggingOptions? options);
 
 		/// <summary>
 		/// Gets all options. This method is only called if <see cref="IsValid"/> returns true
@@ -105,7 +105,7 @@ namespace dnSpy.Contracts.Debugger.StartDebugging.Dialog {
 	/// <summary>
 	/// Contains the options and an optional filename
 	/// </summary>
-	public struct StartDebuggingOptionsInfo {
+	public readonly struct StartDebuggingOptionsInfo {
 		/// <summary>
 		/// Gets the options
 		/// </summary>
@@ -114,17 +114,40 @@ namespace dnSpy.Contracts.Debugger.StartDebugging.Dialog {
 		/// <summary>
 		/// Filename or null
 		/// </summary>
-		public string Filename { get; }
+		public string? Filename { get; }
+
+		/// <summary>
+		/// Gets the flags
+		/// </summary>
+		public StartDebuggingOptionsInfoFlags Flags { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="options">Options</param>
 		/// <param name="filename">Filename or null</param>
-		public StartDebuggingOptionsInfo(StartDebuggingOptions options, string filename = null) {
+		/// <param name="flags">Flags</param>
+		public StartDebuggingOptionsInfo(StartDebuggingOptions options, string? filename, StartDebuggingOptionsInfoFlags flags) {
 			Options = options ?? throw new ArgumentNullException(nameof(options));
 			Filename = filename;
+			Flags = flags;
 		}
+	}
+
+	/// <summary>
+	/// Extra start options
+	/// </summary>
+	[Flags]
+	public enum StartDebuggingOptionsInfoFlags {
+		/// <summary>
+		/// No bit is set
+		/// </summary>
+		None					= 0,
+
+		/// <summary>
+		/// The file extension is not the normal extension
+		/// </summary>
+		WrongExtension			= 0x00000001,
 	}
 
 	/// <summary>
@@ -140,5 +163,15 @@ namespace dnSpy.Contracts.Debugger.StartDebugging.Dialog {
 		/// .NET Core
 		/// </summary>
 		public const double DotNetCore = 1000000;
+
+		/// <summary>
+		/// .NET Mono
+		/// </summary>
+		public const double DotNetMono = DotNetFramework + 1;
+
+		/// <summary>
+		/// .NET Unity
+		/// </summary>
+		public const double DotNetUnity = 1000000;
 	}
 }

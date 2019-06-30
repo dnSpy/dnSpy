@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -40,15 +40,15 @@ namespace dnSpy.Bookmarks.DotNet.TextEditor {
 
 		public override TextViewBookmarkLocationResult? CreateLocation(IDocumentTab tab, ITextView textView, VirtualSnapshotPoint position) {
 			var documentViewer = tab.TryGetDocumentViewer();
-			if (documentViewer == null)
+			if (documentViewer is null)
 				return null;
 			var methodDebugService = documentViewer.GetMethodDebugService();
-			if (methodDebugService == null)
+			if (methodDebugService is null)
 				return null;
 			// A bookmark should be set on the current line if possible, and the current position
 			// isn't necessarily at the start of the line.
 			var startPos = position.Position.GetContainingLine().Start;
-			var methodStatements = methodDebugService.FindByTextPosition(startPos, sameMethod: false);
+			var methodStatements = methodDebugService.FindByTextPosition(startPos, FindByTextPositionOptions.None);
 			if (methodStatements.Count == 0)
 				return null;
 			var textSpan = methodStatements[0].Statement.TextSpan;
@@ -59,7 +59,7 @@ namespace dnSpy.Bookmarks.DotNet.TextEditor {
 
 			var statement = methodStatements[0];
 			var moduleId = moduleIdProvider.Create(statement.Method.Module);
-			var location = dotNetBookmarkLocationFactory.Value.CreateMethodBodyLocation(moduleId, statement.Method.MDToken.Raw, statement.Statement.BinSpan.Start);
+			var location = dotNetBookmarkLocationFactory.Value.CreateMethodBodyLocation(moduleId, statement.Method.MDToken.Raw, statement.Statement.ILSpan.Start);
 			return new TextViewBookmarkLocationResult(location, span);
 		}
 	}

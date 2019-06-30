@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,11 +24,11 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Settings {
-	struct XmlSettingsReader {
+	readonly struct XmlSettingsReader {
 		readonly ISettingsService mgr;
 		readonly string filename;
 
-		public XmlSettingsReader(ISettingsService mgr, string filename = null) {
+		public XmlSettingsReader(ISettingsService mgr, string? filename = null) {
 			this.mgr = mgr;
 			this.filename = filename ?? AppDirectories.SettingsFilename;
 		}
@@ -45,7 +45,7 @@ namespace dnSpy.Settings {
 		void Read(XElement root) {
 			foreach (var xmlSect in root.Elements(XmlSettingsConstants.SECTION_NAME)) {
 				var name = XmlUtils.UnescapeAttributeValue((string)xmlSect.Attribute(XmlSettingsConstants.SECTION_ATTRIBUTE_NAME));
-				if (name == null)
+				if (name is null)
 					continue;
 				if (!Guid.TryParse(name, out var guid))
 					continue;
@@ -67,7 +67,7 @@ namespace dnSpy.Settings {
 
 			foreach (var xmlSect in xml.Elements(XmlSettingsConstants.SECTION_NAME)) {
 				var name = XmlUtils.UnescapeAttributeValue((string)xmlSect.Attribute(XmlSettingsConstants.SECTION_ATTRIBUTE_NAME));
-				if (name == null)
+				if (name is null)
 					continue;
 				var childSection = section.CreateSection(name);
 				ReadSection(xmlSect, childSection, recursionCounter + 1);

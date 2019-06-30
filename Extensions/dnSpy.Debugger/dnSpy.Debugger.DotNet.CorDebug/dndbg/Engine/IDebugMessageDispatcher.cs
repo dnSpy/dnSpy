@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,10 +22,9 @@ using System;
 namespace dndbg.Engine {
 	interface IDebugMessageDispatcher {
 		/// <summary>
-		/// Executes <see cref="action"/> in the dndbg thread. This is typically the GUI thread,
-		/// and must always be the same thread since the debugger isn't thread safe.
+		/// Executes <paramref name="action"/> on the engine thread.
 		/// </summary>
-		/// <param name="action">Code to execute in the dndbg thread</param>
+		/// <param name="action">Code to execute on the dndbg thread</param>
 		void ExecuteAsync(Action action);
 
 		/// <summary>
@@ -36,12 +35,12 @@ namespace dndbg.Engine {
 		/// <param name="waitTime">Time to wait or -1 to wait forever</param>
 		/// <param name="timedOut">Set to true if it timed out</param>
 		/// <returns></returns>
-		object DispatchQueue(TimeSpan waitTime, out bool timedOut);
+		object? DispatchQueue(TimeSpan waitTime, out bool timedOut);
 
 		/// <summary>
 		/// Cancels <see cref="DispatchQueue(TimeSpan,out bool)"/>
 		/// </summary>
 		/// <param name="result">Result</param>
-		void CancelDispatchQueue(object result);
+		void CancelDispatchQueue(object? result);
 	}
 }

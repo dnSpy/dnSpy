@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -90,7 +90,7 @@ namespace dnSpy.Debugger.Exceptions {
 
 		public override event EventHandler<DbgExceptionSettingsModifiedEventArgs> ExceptionSettingsModified;
 		public override void Modify(DbgExceptionIdAndSettings[] settings) {
-			if (settings == null)
+			if (settings is null)
 				throw new ArgumentNullException(nameof(settings));
 			Dbg(() => ModifyCore(settings));
 		}
@@ -102,8 +102,8 @@ namespace dnSpy.Debugger.Exceptions {
 				foreach (var s in settings) {
 					if (!toExceptionInfo.TryGetValue(s.Id, out var info))
 						continue;
-					Debug.Assert(s.Settings.Conditions != null);
-					if (s.Settings.Conditions == null)
+					Debug.Assert(!(s.Settings.Conditions is null));
+					if (s.Settings.Conditions is null)
 						continue;
 					if (info.Settings == s.Settings)
 						continue;
@@ -116,7 +116,7 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 
 		public override void Remove(DbgExceptionId[] ids) {
-			if (ids == null)
+			if (ids is null)
 				throw new ArgumentNullException(nameof(ids));
 			Dbg(() => RemoveCore(ids));
 		}
@@ -137,7 +137,7 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 
 		public override void Add(DbgExceptionSettingsInfo[] settings) {
-			if (settings == null)
+			if (settings is null)
 				throw new ArgumentNullException(nameof(settings));
 			Dbg(() => AddCore(settings));
 		}
@@ -149,7 +149,7 @@ namespace dnSpy.Debugger.Exceptions {
 				foreach (var s in settings) {
 					if (toExceptionInfo.ContainsKey(s.Definition.Id))
 						continue;
-					bool b = s.Definition.Id.Category != null && s.Settings.Conditions != null;
+					bool b = !(s.Definition.Id.Category is null) && !(s.Settings.Conditions is null);
 					Debug.Assert(b);
 					if (!b)
 						continue;
@@ -163,7 +163,7 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 
 		public override bool TryGetDefinition(DbgExceptionId id, out DbgExceptionDefinition definition) {
-			if (id.Category == null)
+			if (id.Category is null)
 				throw new ArgumentException();
 			lock (lockObj) {
 				if (toExceptionInfo.TryGetValue(id, out var info)) {
@@ -176,7 +176,7 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 
 		public override bool TryGetSettings(DbgExceptionId id, out DbgExceptionSettings settings) {
-			if (id.Category == null)
+			if (id.Category is null)
 				throw new ArgumentException();
 			lock (lockObj) {
 				if (toExceptionInfo.TryGetValue(id, out var info)) {
@@ -189,7 +189,7 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 
 		public override DbgExceptionSettings GetSettings(DbgExceptionId id) {
-			if (id.Category == null)
+			if (id.Category is null)
 				throw new ArgumentException();
 			lock (lockObj) {
 				if (toExceptionInfo.TryGetValue(id, out var info))
@@ -203,7 +203,7 @@ namespace dnSpy.Debugger.Exceptions {
 		public override ReadOnlyCollection<DbgExceptionCategoryDefinition> CategoryDefinitions => defaultExceptionDefinitionsProvider.CategoryDefinitions;
 
 		public override bool TryGetCategoryDefinition(string category, out DbgExceptionCategoryDefinition definition) {
-			if (category == null)
+			if (category is null)
 				throw new ArgumentNullException(nameof(category));
 			foreach (var categoryDef in CategoryDefinitions) {
 				if (categoryDef.Name == category) {

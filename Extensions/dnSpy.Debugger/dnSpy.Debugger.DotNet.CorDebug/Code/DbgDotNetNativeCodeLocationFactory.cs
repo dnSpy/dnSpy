@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,13 +21,14 @@ using System;
 using System.ComponentModel.Composition;
 using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug.Code;
 using dnSpy.Contracts.Metadata;
 using dnSpy.Debugger.DotNet.CorDebug.Impl;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Code {
 	abstract class DbgDotNetNativeCodeLocationFactory {
-		public abstract DbgDotNetNativeCodeLocation Create(DbgModule module, ModuleId moduleId, uint token, uint ilOffset, DbgILOffsetMapping ilOffsetMapping, ulong nativeMethodAddress, uint nativeMethodOffset, DnDebuggerObjectHolder<CorCode> corCode);
+		public abstract DbgDotNetNativeCodeLocation Create(DbgModule module, ModuleId moduleId, uint token, uint ilOffset, DbgILOffsetMapping ilOffsetMapping, ulong nativeMethodAddress, ulong nativeMethodOffset, DnDebuggerObjectHolder<CorCode> corCode);
 	}
 
 	[Export(typeof(DbgDotNetNativeCodeLocationFactory))]
@@ -37,10 +38,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Code {
 		[ImportingConstructor]
 		DbgDotNetNativeCodeLocationFactoryImpl(Lazy<DbgManager> dbgManager) => DbgManager = dbgManager;
 
-		public override DbgDotNetNativeCodeLocation Create(DbgModule module, ModuleId moduleId, uint token, uint ilOffset, DbgILOffsetMapping ilOffsetMapping, ulong nativeMethodAddress, uint nativeMethodOffset, DnDebuggerObjectHolder<CorCode> corCode) {
-			if (module == null)
+		public override DbgDotNetNativeCodeLocation Create(DbgModule module, ModuleId moduleId, uint token, uint ilOffset, DbgILOffsetMapping ilOffsetMapping, ulong nativeMethodAddress, ulong nativeMethodOffset, DnDebuggerObjectHolder<CorCode> corCode) {
+			if (module is null)
 				throw new ArgumentNullException(nameof(module));
-			if (corCode == null)
+			if (corCode is null)
 				throw new ArgumentNullException(nameof(corCode));
 			return new DbgDotNetNativeCodeLocationImpl(this, module, moduleId, token, ilOffset, ilOffsetMapping, nativeMethodAddress, nativeMethodOffset, corCode);
 		}

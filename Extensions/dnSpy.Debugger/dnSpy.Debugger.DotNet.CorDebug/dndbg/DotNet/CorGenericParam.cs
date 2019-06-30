@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -107,7 +107,7 @@ namespace dndbg.DotNet {
 			//genericParamConstraints?.Clear();
 
 			var itemTokens = MDAPI.GetGenericParamConstraintTokens(mdi2, token);
-			genericParamConstraints = new LazyList<GenericParamConstraint>(itemTokens.Length, this, itemTokens, (itemTokens2, index) => readerModule.ResolveGenericParamConstraintDontCache(itemTokens[index], GetGenericParamContext(owner)));
+			genericParamConstraints = new LazyList<GenericParamConstraint?, uint[]>(itemTokens.Length, this, itemTokens, (itemTokens2, index) => readerModule.ResolveGenericParamConstraintDontCache(itemTokens2[index], GetGenericParamContext(owner)));
 		}
 	}
 }

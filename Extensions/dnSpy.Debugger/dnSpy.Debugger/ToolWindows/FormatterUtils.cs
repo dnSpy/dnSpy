@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,6 +20,8 @@
 using System;
 using System.Text;
 using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.Text;
+using dnSpy.Contracts.Debugger.Text.DnSpy;
 using dnSpy.Contracts.Text;
 using dnSpy.Debugger.Properties;
 
@@ -32,7 +34,7 @@ namespace dnSpy.Debugger.ToolWindows {
 
 			foreach (var c in s) {
 				if (c < ' ')
-					sb.Append(string.Format("\\u{0:X4}", (ushort)c));
+					sb.Append($"\\u{(ushort)c:X4}");
 				else
 					sb.Append(c);
 			}
@@ -44,56 +46,56 @@ namespace dnSpy.Debugger.ToolWindows {
 			return sb.ToString();
 		}
 
-		public static T Write<T>(this T output, DbgAppDomain appDomain) where T : ITextColorWriter {
-			if (appDomain == null)
-				output.Write(BoxedTextColor.Error, dnSpy_Debugger_Resources.AppDomainNotAvailable);
+		public static T Write<T>(this T output, DbgAppDomain? appDomain) where T : IDbgTextWriter {
+			if (appDomain is null)
+				output.Write(DbgTextColor.Error, dnSpy_Debugger_Resources.AppDomainNotAvailable);
 			else {
-				output.Write(BoxedTextColor.Punctuation, "[");
+				output.Write(DbgTextColor.Punctuation, "[");
 				// Id is always in decimal (same as VS)
-				output.Write(BoxedTextColor.Number, appDomain.Id.ToString());
-				output.Write(BoxedTextColor.Punctuation, "]");
-				output.WriteSpace();
+				output.Write(DbgTextColor.Number, appDomain.Id.ToString());
+				output.Write(DbgTextColor.Punctuation, "]");
+				output.Write(DbgTextColor.Text, " ");
 				var filteredName = FilterName(appDomain.Name, MAX_APP_DOMAIN_NAME);
 				if (HasSameNameAsProcess(appDomain))
-					output.WriteFilename(filteredName);
+					new DbgTextColorWriter(output).WriteFilename(filteredName);
 				else
-					output.Write(BoxedTextColor.String, filteredName);
+					output.Write(DbgTextColor.String, filteredName);
 			}
 			return output;
 		}
 
 		static bool HasSameNameAsProcess(DbgAppDomain ad) {
-			if (ad == null)
+			if (ad is null)
 				return false;
 			var fname = ad.Process.Name;
 			return !string.IsNullOrEmpty(fname) && StringComparer.OrdinalIgnoreCase.Equals(fname, ad.Name);
 		}
 
-		public static T Write<T>(this T output, DbgProcess process, bool useHex) where T : ITextColorWriter {
-			output.Write(BoxedTextColor.Punctuation, "[");
+		public static T Write<T>(this T output, DbgProcess process, bool useHex) where T : IDbgTextWriter {
+			output.Write(DbgTextColor.Punctuation, "[");
 			if (useHex)
-				output.Write(BoxedTextColor.Number, "0x" + process.Id.ToString("X"));
+				output.Write(DbgTextColor.Number, "0x" + process.Id.ToString("X"));
 			else
-				output.Write(BoxedTextColor.Number, process.Id.ToString());
-			output.Write(BoxedTextColor.Punctuation, "]");
-			output.WriteSpace();
-			output.WriteFilename(process.Name);
+				output.Write(DbgTextColor.Number, process.Id.ToString());
+			output.Write(DbgTextColor.Punctuation, "]");
+			output.Write(DbgTextColor.Text, " ");
+			new DbgTextColorWriter(output).WriteFilename(process.Name);
 			return output;
 		}
 
-		public static T WriteYesNoOrNA<T>(this T output, bool? value) where T : ITextColorWriter {
-			if (value != null)
+		public static T WriteYesNoOrNA<T>(this T output, bool? value) where T : IDbgTextWriter {
+			if (!(value is null))
 				output.WriteYesNo(value.Value);
 			else
-				output.Write(BoxedTextColor.Text, "N/A");
+				output.Write(DbgTextColor.Text, "N/A");
 			return output;
 		}
 
-		public static T WriteYesNo<T>(this T output, bool value) where T : ITextColorWriter {
+		public static T WriteYesNo<T>(this T output, bool value) where T : IDbgTextWriter {
 			if (value)
-				output.Write(BoxedTextColor.Text, dnSpy_Debugger_Resources.YesNo_Yes);
+				output.Write(DbgTextColor.Text, dnSpy_Debugger_Resources.YesNo_Yes);
 			else
-				output.Write(BoxedTextColor.Text, dnSpy_Debugger_Resources.YesNo_No);
+				output.Write(DbgTextColor.Text, dnSpy_Debugger_Resources.YesNo_No);
 			return output;
 		}
 	}

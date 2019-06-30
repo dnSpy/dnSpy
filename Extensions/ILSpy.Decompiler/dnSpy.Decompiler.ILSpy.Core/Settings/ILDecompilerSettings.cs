@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using dnSpy.Contracts.Decompiler;
@@ -28,10 +29,16 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 		public ILSettings Settings => ilSettings;
 		readonly ILSettings ilSettings;
 
-		public ILDecompilerSettings(ILSettings ilSettings = null) {
+		public override int Version => ilSettings.SettingsVersion;
+		public override event EventHandler VersionChanged;
+
+		public ILDecompilerSettings(ILSettings? ilSettings = null) {
 			this.ilSettings = ilSettings ?? new ILSettings();
 			options = CreateOptions().ToArray();
+			this.ilSettings.SettingsVersionChanged += ILSettings_SettingsVersionChanged;
 		}
+
+		void ILSettings_SettingsVersionChanged(object sender, EventArgs e) => VersionChanged?.Invoke(this, EventArgs.Empty);
 
 		public override DecompilerSettingsBase Clone() => new ILDecompilerSettings(ilSettings.Clone());
 
@@ -69,9 +76,14 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 				Description = dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_ShowPdbInfo,
 				Name = DecompilerOptionConstants.ShowPdbInfo_NAME,
 			};
+			yield return new DecompilerOption<int>(DecompilerOptionConstants.MaxStringLength_GUID,
+						() => ilSettings.MaxStringLength, a => ilSettings.MaxStringLength = a) {
+				Description = dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_MaxStringLength,
+				Name = DecompilerOptionConstants.MaxStringLength_NAME,
+			};
 		}
 
-		public override bool Equals(object obj) =>
+		public override bool Equals(object? obj) =>
 			obj is ILDecompilerSettings && ilSettings.Equals(((ILDecompilerSettings)obj).ilSettings);
 		public override int GetHashCode() => ilSettings.GetHashCode();
 	}

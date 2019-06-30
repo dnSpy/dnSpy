@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,7 +34,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <summary>
 		/// Creates <see cref="GuidObject"/>s, can be null
 		/// </summary>
-		public Func<GuidObjectsProviderArgs, IEnumerable<GuidObject>> CreateGuidObjects { get; set; }
+		public Func<GuidObjectsProviderArgs, IEnumerable<GuidObject>>? CreateGuidObjects { get; set; }
 
 		/// <summary>
 		/// Clones this
@@ -54,7 +54,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <param name="other">Other instance</param>
 		/// <returns></returns>
 		public HexViewCreatorOptions CopyTo(HexViewCreatorOptions other) {
-			if (other == null)
+			if (other is null)
 				throw new ArgumentNullException(nameof(other));
 			other.MenuGuid = MenuGuid;
 			other.CreateGuidObjects = CreateGuidObjects;

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,7 +26,7 @@ using VSUTIL = Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Hex.Intellisense {
 	abstract class HexIntellisensePresenterFactoryService {
-		public abstract HexIntellisensePresenter TryCreateIntellisensePresenter(HexIntellisenseSession session);
+		public abstract HexIntellisensePresenter? TryCreateIntellisensePresenter(HexIntellisenseSession session);
 	}
 
 	[Export(typeof(HexIntellisensePresenterFactoryService))]
@@ -36,12 +36,12 @@ namespace dnSpy.Hex.Intellisense {
 		[ImportingConstructor]
 		HexIntellisensePresenterFactoryServiceImpl([ImportMany] IEnumerable<Lazy<HexIntellisensePresenterProvider, VSUTIL.IOrderable>> intellisensePresenterProviders) => this.intellisensePresenterProviders = VSUTIL.Orderer.Order(intellisensePresenterProviders).ToArray();
 
-		public override HexIntellisensePresenter TryCreateIntellisensePresenter(HexIntellisenseSession session) {
-			if (session == null)
+		public override HexIntellisensePresenter? TryCreateIntellisensePresenter(HexIntellisenseSession session) {
+			if (session is null)
 				throw new ArgumentNullException(nameof(session));
 			foreach (var lz in intellisensePresenterProviders) {
 				var presenter = lz.Value.TryCreateIntellisensePresenter(session);
-				if (presenter != null)
+				if (!(presenter is null))
 					return presenter;
 			}
 			return null;

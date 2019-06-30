@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -67,8 +67,8 @@ namespace dnSpy.Settings {
 		}
 
 		public void RemoveSection(ISettingsSection section) {
-			Debug.Assert(section != null);
-			if (section == null)
+			Debug.Assert(!(section is null));
+			if (section is null)
 				throw new ArgumentNullException(nameof(section));
 
 			lock (lockObj) {

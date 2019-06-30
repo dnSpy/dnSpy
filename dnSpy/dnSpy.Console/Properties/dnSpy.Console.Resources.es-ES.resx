@@ -1,0 +1,321 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Error1" xml:space="preserve">
+    <value>ERROR: {0}</value>
+  </data>
+  <data name="FileOrDirDoesNotExist" xml:space="preserve">
+    <value>Archivo/directorio '{0}' no existe</value>
+  </data>
+  <data name="InvalidOption" xml:space="preserve">
+    <value>Opción no válida: {0}</value>
+  </data>
+  <data name="InvalidSolutionName" xml:space="preserve">
+    <value>sln name ({0}) debe ser relativo al directorio del proyecto</value>
+  </data>
+  <data name="InvalidToken" xml:space="preserve">
+    <value>Token de metadatos no válido</value>
+  </data>
+  <data name="InvalidVSVersion" xml:space="preserve">
+    <value>Versión no válida de Visual Studio: {0}</value>
+  </data>
+  <data name="LanguageDoesNotExist" xml:space="preserve">
+    <value>Lenguaje '{0}' no existe</value>
+  </data>
+  <data name="Languages" xml:space="preserve">
+    <value>Idiomas:</value>
+  </data>
+  <data name="LanguageXDoesNotExist" xml:space="preserve">
+    <value>Lenguaje '{0}' no existe</value>
+  </data>
+  <data name="MissingAsmSearchPath" xml:space="preserve">
+    <value>Falta ruta de búsqueda de Asamblea</value>
+  </data>
+  <data name="MissingDotNetFilename" xml:space="preserve">
+    <value>Falta nombre de archivo .NET</value>
+  </data>
+  <data name="MissingLanguageName" xml:space="preserve">
+    <value>Falta nombre del idioma</value>
+  </data>
+  <data name="MissingMDToken" xml:space="preserve">
+    <value>Falta símbolo de metadato</value>
+  </data>
+  <data name="MissingNumberOfThreads" xml:space="preserve">
+    <value>No se encuentra el número de subprocesos</value>
+  </data>
+  <data name="MissingOptions" xml:space="preserve">
+    <value>Opción no especificada</value>
+  </data>
+  <data name="MissingOutputDir" xml:space="preserve">
+    <value>Falta directorio de salida</value>
+  </data>
+  <data name="MissingSolutionName" xml:space="preserve">
+    <value>Falta el nombre del archivo .sln</value>
+  </data>
+  <data name="MissingVSVersion" xml:space="preserve">
+    <value>Falta versión de Visual Studio</value>
+  </data>
+  <data name="NoLanguagesFound" xml:space="preserve">
+    <value>No se encontraron idiomas. Asegúrese de que los archivos dll de idioma existan en la misma carpeta que de este programa.</value>
+  </data>
+  <data name="NotDotNetFile" xml:space="preserve">
+    <value>{0} no es un archivo .NET</value>
+  </data>
+  <data name="OnlyOneFileCanBeDecompiled" xml:space="preserve">
+    <value>Solo un archivo se puede descompilar al usar --md</value>
+  </data>
+  <data name="MissingUserGacPath" xml:space="preserve">
+    <value>Falta ruta de usuario GAC</value>
+  </data>
+  <data name="InvalidMemberToDecompile" xml:space="preserve">
+    <value>Sólo tipos, métodos, campos, propiedades y eventos pueden ser descompilados</value>
+  </data>
+  <data name="CouldNotFindTypeX" xml:space="preserve">
+    <value>No se encuentra el tipo tipo {0}</value>
+  </data>
+  <data name="CouldNotResolveGacFileX" xml:space="preserve">
+    <value>No se puede resolver el Cache de Ensamblado Global GAC '{0}'</value>
+  </data>
+  <data name="MissingGacFile" xml:space="preserve">
+    <value>Falta el nombre del cache de ensamblado global GAC</value>
+  </data>
+  <data name="MissingTypeName" xml:space="preserve">
+    <value>Falta el nombre completo del tipo</value>
+  </data>
+  <data name="LanguageXDoesNotSupportProjects" xml:space="preserve">
+    <value>Language {0} no soporta crear archivos de proyecto</value>
+  </data>
+  <data name="LanguageOptions" xml:space="preserve">
+    <value>Opciones de idioma:</value>
+  </data>
+  <data name="LanguageOptionsDesc" xml:space="preserve">
+    <value>Todas las opciones de tipo boolean pueden desactivarse mediante el uso de 'no-' o ' dont-', por ejemplo. --dont-sort-members</value>
+  </data>
+  <data name="MissingOptionArgument" xml:space="preserve">
+    <value>Falta argumento de opción</value>
+  </data>
+  <data name="InvalidGuid" xml:space="preserve">
+    <value>GUID no válido</value>
+  </data>
+  <data name="CmdLineAssembly" xml:space="preserve">
+    <value>asamblea</value>
+  </data>
+  <data name="CmdLineDescription_AsmPath" xml:space="preserve">
+    <value>ruta de búsqueda de conjunto. Las rutas se pueden separar con '{0}' o puede usar múltiples --asm-path's</value>
+  </data>
+  <data name="CmdLineDescription_GACFile" xml:space="preserve">
+    <value>descompilar un ensamblaje del GAC. Use el nombre completo del ensamblaje para usar una versión exacta.</value>
+  </data>
+  <data name="CmdLineDescription_Language" xml:space="preserve">
+    <value>establecer el idioma, el valor predeterminado es C #. Guids puede ser usado.</value>
+  </data>
+  <data name="CmdLineDescription_MDToken" xml:space="preserve">
+    <value>descompilar al miembro con el token de metadatos N a stdout</value>
+  </data>
+  <data name="CmdLineDescription_NoBAML" xml:space="preserve">
+    <value>no descompilar baml de xaml</value>
+  </data>
+  <data name="CmdLineDescription_NoGAC" xml:space="preserve">
+    <value>no utilizar el GAC para ver montajes. Útil con--no-stdlib</value>
+  </data>
+  <data name="CmdLineDescription_NoResources" xml:space="preserve">
+    <value>no Desempaque recursos</value>
+  </data>
+  <data name="CmdLineDescription_NoResX" xml:space="preserve">
+    <value>no crear archivos .resx</value>
+  </data>
+  <data name="CmdLineDescription_NoSLN" xml:space="preserve">
+    <value>no crear un fichero .sln</value>
+  </data>
+  <data name="CmdLineDescription_NoStdLib" xml:space="preserve">
+    <value>los proyectos no hacen referencia a mscorlib</value>
+  </data>
+  <data name="CmdLineDescription_NumberOfThreads" xml:space="preserve">
+    <value>número de subprocesos de trabajo. Por defecto es utilizar un hilo por núcleo del CPU</value>
+  </data>
+  <data name="CmdLineDescription_OutputDirectory" xml:space="preserve">
+    <value>directorio de salida</value>
+  </data>
+  <data name="CmdLineDescription_ProjectGUID" xml:space="preserve">
+    <value>guid del proyecto</value>
+  </data>
+  <data name="CmdLineDescription_RecursiveSearch" xml:space="preserve">
+    <value>búsqueda recursiva de archivos de .NET descompilar</value>
+  </data>
+  <data name="CmdLineDescription_SlnName" xml:space="preserve">
+    <value>nombre del archivo .sln</value>
+  </data>
+  <data name="CmdLineDescription_Type1" xml:space="preserve">
+    <value>descompilar el tipo con el nombre especificado a stdout. Namespace.Name o nombre, mayúsculas y minúsculas</value>
+  </data>
+  <data name="CmdLineDescription_Type2" xml:space="preserve">
+    <value>igual a -t</value>
+  </data>
+  <data name="CmdLineDescription_UserGAC" xml:space="preserve">
+    <value>ruta de búsqueda de conjunto. Las rutas se pueden separar con '{0}' o puede usar múltiples --asm-path's</value>
+  </data>
+  <data name="CmdLineDescription_VSVersion" xml:space="preserve">
+    <value>Versión Visual Studio, 2005, 2008,... {0}</value>
+  </data>
+  <data name="CmdLineLanguage" xml:space="preserve">
+    <value>lang</value>
+  </data>
+  <data name="CmdLineName" xml:space="preserve">
+    <value>nombre</value>
+  </data>
+  <data name="CmdLineOutputDir" xml:space="preserve">
+    <value>outdir</value>
+  </data>
+  <data name="CmdLinePath" xml:space="preserve">
+    <value>ruta de acceso</value>
+  </data>
+  <data name="ExampleDescription1" xml:space="preserve">
+    <value>Descompiles todos los archivos *.dll de .NET en el directorio anterior y guarda los archivos en C:\out\path</value>
+  </data>
+  <data name="ExampleDescription2" xml:space="preserve">
+    <value>Descompiles todos los archivos *.dll de .NET en el directorio anterior y guarda los archivos en C:\out\path</value>
+  </data>
+  <data name="ExampleDescription3" xml:space="preserve">
+    <value>Decompiles todos los archivos *.dll de .NET en el directorio anterior y guarda los archivos en C:\out\path</value>
+  </data>
+  <data name="ExampleDescription4" xml:space="preserve">
+    <value>Descompiles el miembro con token 0x06000123</value>
+  </data>
+  <data name="ExampleDescription5" xml:space="preserve">
+    <value>Decompiles System.Int32 de mscorlib</value>
+  </data>
+  <data name="ExamplesHeader" xml:space="preserve">
+    <value>Ejemplos:</value>
+  </data>
+  <data name="UsageHeader" xml:space="preserve">
+    <value>[options] [fileOrDir1] [fileOrDir2] [...]</value>
+  </data>
+  <data name="CmdLineDescription_NoColor" xml:space="preserve">
+    <value>no colorear el texto</value>
+  </data>
+  <data name="CmdLineDescription_Spaces" xml:space="preserve">
+    <value>Tamaño de una ficha en espacios o 0 para usar una ficha</value>
+  </data>
+  <data name="InvalidSpacesArgument" xml:space="preserve">
+    <value>La fecha debe estar entre {0} y {1}</value>
+  </data>
+  <data name="MissingArgument" xml:space="preserve">
+    <value>Falta de argumento</value>
+  </data>
+</root>

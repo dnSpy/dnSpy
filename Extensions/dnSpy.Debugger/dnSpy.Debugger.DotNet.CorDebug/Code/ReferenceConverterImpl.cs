@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -17,13 +17,13 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Debugger.DotNet.CorDebug.Code;
+using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Documents;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Code {
 	[ExportReferenceConverter]
 	sealed class ReferenceConverterImpl : ReferenceConverter {
-		public override void Convert(ref object reference) {
+		public override void Convert(ref object? reference) {
 			switch (reference) {
 			case DbgDotNetNativeCodeLocationImpl nativeLoc:
 				switch (nativeLoc.ILOffsetMapping) {

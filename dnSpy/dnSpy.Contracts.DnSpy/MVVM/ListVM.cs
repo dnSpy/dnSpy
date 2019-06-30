@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.MVVM {
 	public class ListVM<T> : INotifyPropertyChanged, IDataErrorInfo {
 		/// <summary>The list</summary>
 		protected ObservableCollection<T> list;
-		readonly Action<int, int> onChanged;
+		readonly Action<int, int>? onChanged;
 		int index;
 
 		/// <summary>
@@ -85,7 +85,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// Gets/sets the selected index
 		/// </summary>
 		public int SelectedIndex {
-			get { return index; }
+			get => index;
 			set {
 				if (index != value) {
 					int oldIndex = index;
@@ -104,7 +104,7 @@ namespace dnSpy.Contracts.MVVM {
 		public T SelectedItem {
 			get {
 				if (index < 0 || index >= list.Count)
-					return default;
+					return default!;
 				return list[index];
 			}
 			set {
@@ -117,14 +117,14 @@ namespace dnSpy.Contracts.MVVM {
 		/// Constructor
 		/// </summary>
 		public ListVM()
-			: this((Action<int, int>)null) {
+			: this((Action<int, int>?)null) {
 		}
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="onChanged">Called when the selected item gets changed</param>
-		public ListVM(Action<int, int> onChanged) {
+		public ListVM(Action<int, int>? onChanged) {
 			list = new ObservableCollection<T>();
 			index = -1;
 			this.onChanged = onChanged;
@@ -143,7 +143,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// </summary>
 		/// <param name="list">Initial value</param>
 		/// <param name="onChanged">Called when the selected item gets changed</param>
-		public ListVM(IEnumerable<T> list, Action<int, int> onChanged) {
+		public ListVM(IEnumerable<T> list, Action<int, int>? onChanged) {
 			this.list = new ObservableCollection<T>(list);
 			index = this.list.Count == 0 ? -1 : 0;
 			this.onChanged = onChanged;
@@ -167,7 +167,7 @@ namespace dnSpy.Contracts.MVVM {
 		string IDataErrorInfo.this[string columnName] {
 			get {
 				if (columnName == nameof(SelectedIndex)) {
-					if (DataErrorInfoDelegate != null)
+					if (!(DataErrorInfoDelegate is null))
 						return DataErrorInfoDelegate(this);
 				}
 				return string.Empty;
@@ -177,6 +177,6 @@ namespace dnSpy.Contracts.MVVM {
 		/// <summary>
 		/// Can be set to validate the list
 		/// </summary>
-		public Func<ListVM<T>, string> DataErrorInfoDelegate;
+		public Func<ListVM<T>, string>? DataErrorInfoDelegate;
 	}
 }

@@ -1,4 +1,4 @@
-﻿/*
+/*
 	Copyright (c) 2015 Ki
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -984,7 +984,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 
 		public override void Write(BamlBinaryWriter writer) {
 			writer.Write(TypeId);
-			if (RuntimeName != null) {
+			if (!(RuntimeName is null)) {
 				writer.Write(RuntimeName);
 			}
 		}

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,7 +35,7 @@ namespace dnSpy.Contracts.Hex.Tagging {
 		/// </summary>
 		/// <param name="tagType">Tag type; it must derive from <see cref="HexTag"/></param>
 		public HexTagTypeAttribute(Type tagType) {
-			if (tagType == null)
+			if (tagType is null)
 				throw new ArgumentNullException(nameof(tagType));
 			if (!typeof(HexTag).IsAssignableFrom(tagType))
 				throw new ArgumentOutOfRangeException(nameof(tagType));

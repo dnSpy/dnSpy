@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,33 +24,26 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using dndbg.COM.CorDebug;
-using Microsoft.Win32;
+using dnSpy.Debugger.Shared;
 
 namespace dndbg.Engine {
-	struct CoreCLRInfo {
+	readonly struct CoreCLRInfo {
 		public int ProcessId { get; }
 		public CoreCLRTypeAttachInfo CoreCLRTypeInfo { get; }
 
-		public CoreCLRInfo(int pid, string coreclrFilename, string version, string dbgShimFilename) {
+		public CoreCLRInfo(int pid, string coreclrFilename, string? version, string dbgShimFilename) {
 			ProcessId = pid;
 			CoreCLRTypeInfo = new CoreCLRTypeAttachInfo(version, dbgShimFilename, coreclrFilename);
 		}
 	}
 
 	static class CoreCLRHelper {
-		const string DBGSHIM_FILENAME = "dbgshim.dll";
+		static readonly string dbgshimFilename = FileUtilities.GetNativeDllFilename("dbgshim");
 		delegate int GetStartupNotificationEvent(uint debuggeePID, out IntPtr phStartupEvent);
 		delegate int CloseCLREnumeration(IntPtr pHandleArray, IntPtr pStringArray, uint dwArrayLength);
 		delegate int EnumerateCLRs(uint debuggeePID, out IntPtr ppHandleArrayOut, out IntPtr ppStringArrayOut, out uint pdwArrayLengthOut);
 		delegate int CreateVersionStringFromModule(uint pidDebuggee, [MarshalAs(UnmanagedType.LPWStr)] string szModuleName, [MarshalAs(UnmanagedType.LPWStr)] StringBuilder pBuffer, uint cchBuffer, out uint pdwLength);
-		delegate int CreateDebuggingInterfaceFromVersionEx(CorDebugInterfaceVersion iDebuggerVersion, [MarshalAs(UnmanagedType.LPWStr)] string szDebuggeeVersion, [MarshalAs(UnmanagedType.IUnknown)] out object ppCordb);
-		delegate int CreateDebuggingInterfaceFromVersion([MarshalAs(UnmanagedType.LPWStr)] string szDebuggeeVersion, [MarshalAs(UnmanagedType.IUnknown)] out object ppCordb);
-
-		/// <summary>
-		/// Path to <c>dbgshim.dll</c> that will be used to initialize <c>dbgshim.dll</c> if it hasn't
-		/// been initialized yet.
-		/// </summary>
-		public static string DbgShimPath { get; set; }
+		delegate int CreateDebuggingInterfaceFromVersionEx(CorDebugInterfaceVersion iDebuggerVersion, [MarshalAs(UnmanagedType.LPWStr)] string? szDebuggeeVersion, [MarshalAs(UnmanagedType.IUnknown)] out object ppCordb);
 
 		/// <summary>
 		/// Searches for CoreCLR runtimes in a process
@@ -61,11 +54,11 @@ namespace dndbg.Engine {
 		/// <param name="dbgshimPath">Filename of dbgshim.dll or null if we should look in
 		/// <paramref name="runtimePath"/></param>
 		/// <returns></returns>
-		public unsafe static CoreCLRInfo[] GetCoreCLRInfos(int pid, string runtimePath, string dbgshimPath) {
+		public unsafe static CoreCLRInfo[] GetCoreCLRInfos(int pid, string? runtimePath, string? dbgshimPath) {
 			var dbgShimState = GetOrCreateDbgShimState(runtimePath, dbgshimPath);
-			if (dbgShimState == null)
+			if (dbgShimState is null)
 				return Array.Empty<CoreCLRInfo>();
-			int hr = dbgShimState.EnumerateCLRs((uint)pid, out var pHandleArray, out var pStringArray, out uint dwArrayLength);
+			int hr = dbgShimState.EnumerateCLRs!((uint)pid, out var pHandleArray, out var pStringArray, out uint dwArrayLength);
 			if (hr < 0 || dwArrayLength == 0)
 				return Array.Empty<CoreCLRInfo>();
 			try {
@@ -73,21 +66,21 @@ namespace dndbg.Engine {
 				var psa = (IntPtr*)pStringArray;
 				for (int i = 0; i < ary.Length; i++) {
 					var version = GetVersionStringFromModule(dbgShimState, (uint)pid, psa[i], out string coreclrFilename);
-					ary[i] = new CoreCLRInfo(pid, coreclrFilename, version, dbgShimState.Filename);
+					ary[i] = new CoreCLRInfo(pid, coreclrFilename, version, dbgShimState.Filename!);
 				}
 
 				return ary;
 			}
 			finally {
-				hr = dbgShimState.CloseCLREnumeration(pHandleArray, pStringArray, dwArrayLength);
+				hr = dbgShimState.CloseCLREnumeration!(pHandleArray, pStringArray, dwArrayLength);
 				Debug.Assert(hr >= 0);
 			}
 		}
 
-		static string GetVersionStringFromModule(DbgShimState dbgShimState, uint pid, IntPtr ps, out string coreclrFilename) {
+		static string? GetVersionStringFromModule(DbgShimState dbgShimState, uint pid, IntPtr ps, out string coreclrFilename) {
 			var sb = new StringBuilder(0x1000);
 			coreclrFilename = Marshal.PtrToStringUni(ps);
-			int hr = dbgShimState.CreateVersionStringFromModule(pid, coreclrFilename, sb, (uint)sb.Capacity, out uint verLen);
+			int hr = dbgShimState.CreateVersionStringFromModule!(pid, coreclrFilename, sb, (uint)sb.Capacity, out uint verLen);
 			if (hr != 0) {
 				sb.EnsureCapacity((int)verLen);
 				hr = dbgShimState.CreateVersionStringFromModule(pid, coreclrFilename, sb, (uint)sb.Capacity, out verLen);
@@ -95,24 +88,19 @@ namespace dndbg.Engine {
 			return hr < 0 ? null : sb.ToString();
 		}
 
-		static List<string> GetDbgShimPaths(string runtimePath, string dbgshimPath) {
+		static List<string> GetDbgShimPaths(string? runtimePath, string? dbgshimPath) {
 			var list = new List<string>(3);
 			if (File.Exists(dbgshimPath))
-				list.Add(dbgshimPath);
+				list.Add(dbgshimPath!);
 			if (!string.IsNullOrEmpty(runtimePath)) {
 				var dbgshimPathTemp = GetDbgShimPathFromRuntimePath(runtimePath);
 				if (File.Exists(dbgshimPathTemp))
-					list.Add(dbgshimPathTemp);
+					list.Add(dbgshimPathTemp!);
 			}
-			if (File.Exists(DbgShimPath))
-				list.Add(DbgShimPath);
-			var s = GetDbgShimPathFromRegistry();
-			if (File.Exists(s))
-				list.Add(s);
 			return list;
 		}
 
-		static DbgShimState GetOrCreateDbgShimState(string runtimePath, string dbgshimPath) {
+		static DbgShimState? GetOrCreateDbgShimState(string? runtimePath, string? dbgshimPath) {
 			var paths = GetDbgShimPaths(runtimePath, dbgshimPath);
 			DbgShimState dbgShimState;
 			foreach (var path in paths) {
@@ -137,11 +125,11 @@ namespace dndbg.Engine {
 			dbgShimState.EnumerateCLRs = GetDelegate<EnumerateCLRs>(handle, "EnumerateCLRs");
 			dbgShimState.CreateVersionStringFromModule = GetDelegate<CreateVersionStringFromModule>(handle, "CreateVersionStringFromModule");
 			dbgShimState.CreateDebuggingInterfaceFromVersionEx = GetDelegate<CreateDebuggingInterfaceFromVersionEx>(handle, "CreateDebuggingInterfaceFromVersionEx");
-			if (dbgShimState.GetStartupNotificationEvent == null ||
-				dbgShimState.CloseCLREnumeration == null ||
-				dbgShimState.EnumerateCLRs == null ||
-				dbgShimState.CreateVersionStringFromModule == null ||
-				dbgShimState.CreateDebuggingInterfaceFromVersionEx == null) {
+			if (dbgShimState.GetStartupNotificationEvent is null ||
+				dbgShimState.CloseCLREnumeration is null ||
+				dbgShimState.EnumerateCLRs is null ||
+				dbgShimState.CreateVersionStringFromModule is null ||
+				dbgShimState.CreateDebuggingInterfaceFromVersionEx is null) {
 				NativeMethods.FreeLibrary(handle);
 				return null;
 			}
@@ -151,98 +139,97 @@ namespace dndbg.Engine {
 		}
 		static readonly Dictionary<string, DbgShimState> dbgShimStateDict = new Dictionary<string, DbgShimState>(StringComparer.OrdinalIgnoreCase);
 		sealed class DbgShimState {
-			public string Filename;
+			public string? Filename;
 			public IntPtr Handle;
-			public GetStartupNotificationEvent GetStartupNotificationEvent;
-			public CloseCLREnumeration CloseCLREnumeration;
-			public EnumerateCLRs EnumerateCLRs;
-			public CreateVersionStringFromModule CreateVersionStringFromModule;
-			public CreateDebuggingInterfaceFromVersionEx CreateDebuggingInterfaceFromVersionEx;
+			public GetStartupNotificationEvent? GetStartupNotificationEvent;
+			public CloseCLREnumeration? CloseCLREnumeration;
+			public EnumerateCLRs? EnumerateCLRs;
+			public CreateVersionStringFromModule? CreateVersionStringFromModule;
+			public CreateDebuggingInterfaceFromVersionEx? CreateDebuggingInterfaceFromVersionEx;
 		}
 
-		static T GetDelegate<T>(IntPtr handle, string funcName) where T : class {
+		static T? GetDelegate<T>(IntPtr handle, string funcName) where T : class {
 			var addr = NativeMethods.GetProcAddress(handle, funcName);
 			if (addr == IntPtr.Zero)
 				return null;
 			return (T)(object)Marshal.GetDelegateForFunctionPointer(addr, typeof(T));
 		}
 
-		// We'd most likely find the Silverlight dbgshim.dll in the registry (check the Wow6432Node
-		// path), so disable this method.
-		static readonly bool enable_GetDbgShimPathFromRegistry = false;
-		static string GetDbgShimPathFromRegistry() {
-			if (!enable_GetDbgShimPathFromRegistry)
-				return null;
+		static string? GetDbgShimPathFromRuntimePath(string path) {
 			try {
-				using (var key = Registry.LocalMachine.OpenSubKey(@"Software\Microsoft\.NETFramework"))
-					return key.GetValue("DbgPackShimPath") as string;
+				return Path.Combine(Path.GetDirectoryName(path), dbgshimFilename);
 			}
 			catch {
 			}
 			return null;
 		}
 
-		static string GetDbgShimPathFromRuntimePath(string path) {
-			try {
-				return Path.Combine(Path.GetDirectoryName(path), DBGSHIM_FILENAME);
-			}
-			catch {
-			}
-			return null;
-		}
-
-		public static ICorDebug CreateCorDebug(int pid, CoreCLRTypeAttachInfo info, out string coreclrFilename, out string otherVersion) {
-			coreclrFilename = info.CoreCLRFilename;
+		public static ICorDebug? CreateCorDebug(int pid, CoreCLRTypeAttachInfo info, out string coreclrFilename, out string? otherVersion) {
+			string? clrPath = info.CoreCLRFilename;
 			otherVersion = info.Version;
 
-			if (coreclrFilename == null || otherVersion == null) {
+			if (clrPath is null || otherVersion is null) {
 				var infos = GetCoreCLRInfos(pid, runtimePath: null, dbgshimPath: info.DbgShimFilename);
 				if (infos.Length != 0) {
-					coreclrFilename = coreclrFilename ?? infos[0].CoreCLRTypeInfo.CoreCLRFilename;
-					otherVersion = otherVersion ?? infos[0].CoreCLRTypeInfo.Version;
+					clrPath ??= infos[0].CoreCLRTypeInfo.CoreCLRFilename;
+					otherVersion ??= infos[0].CoreCLRTypeInfo.Version;
 				}
 				else
 					throw new ArgumentException("Couldn't find a CoreCLR process");
 			}
+			coreclrFilename = clrPath ?? throw new ArgumentException($"Couldn't get the CLR path");
 
 			var dbgShimState = GetOrCreateDbgShimState(null, info.DbgShimFilename);
-			if (dbgShimState == null)
+			if (dbgShimState is null)
 				return null;
 
-			int hr = dbgShimState.CreateDebuggingInterfaceFromVersionEx(CorDebugInterfaceVersion.CorDebugVersion_4_0, otherVersion, out object obj);
+			int hr = dbgShimState.CreateDebuggingInterfaceFromVersionEx!(CorDebugInterfaceVersion.CorDebugVersion_4_0, otherVersion, out object obj);
 			return obj as ICorDebug;
 		}
 
-		public unsafe static DnDebugger CreateDnDebugger(DebugProcessOptions options, CoreCLRTypeDebugInfo info, Func<bool> keepWaiting, Func<ICorDebug, string, uint, string, DnDebugger> createDnDebugger) {
+		public unsafe static DnDebugger CreateDnDebugger(DebugProcessOptions options, CoreCLRTypeDebugInfo info, IntPtr outputHandle, IntPtr errorHandle, Func<bool> keepWaiting, Func<ICorDebug, string, uint, string?, DnDebugger> createDnDebugger) {
 			var dbgShimState = GetOrCreateDbgShimState(info.HostFilename, info.DbgShimFilename);
-			if (dbgShimState == null)
-				throw new Exception(string.Format("Could not load dbgshim.dll: '{0}' . Make sure you use the {1}-bit version", info.DbgShimFilename, IntPtr.Size * 8));
+			if (dbgShimState is null)
+				throw new Exception($"Could not load {dbgshimFilename}: '{info.DbgShimFilename}' . Make sure you use the {IntPtr.Size * 8}-bit version");
 
 			var startupEvent = IntPtr.Zero;
 			var hThread = IntPtr.Zero;
 			IntPtr pHandleArray = IntPtr.Zero, pStringArray = IntPtr.Zero;
 			uint dwArrayLength = 0;
 
+			bool useHost = !(info.HostFilename is null);
 			var pi = new PROCESS_INFORMATION();
 			bool error = true, calledSetEvent = false;
 			try {
+				bool inheritHandles = options.InheritHandles;
 				var dwCreationFlags = options.ProcessCreationFlags ?? DebugProcessOptions.DefaultProcessCreationFlags;
 				dwCreationFlags |= ProcessCreationFlags.CREATE_SUSPENDED;
 				var si = new STARTUPINFO();
+				si.hStdOutput = outputHandle;
+				si.hStdError = errorHandle;
+				if (si.hStdOutput != IntPtr.Zero || si.hStdError != IntPtr.Zero) {
+					si.dwFlags |= STARTUPINFO.STARTF_USESTDHANDLES;
+					inheritHandles = true;
+				}
 				si.cb = (uint)(4 * 1 + IntPtr.Size * 3 + 4 * 8 + 2 * 2 + IntPtr.Size * 4);
-				var cmdline = "\"" + info.HostFilename + "\" " + info.HostCommandLine + " \"" + options.Filename + "\"" + (string.IsNullOrEmpty(options.CommandLine) ? string.Empty : " " + options.CommandLine);
-				var env = Win32EnvironmentStringBuilder.CreateEnvironmentUnicodeString(options.Environment);
+				string cmdline;
+				if (useHost)
+					cmdline = "\"" + info.HostFilename + "\" " + info.HostCommandLine + " \"" + options.Filename + "\"" + (string.IsNullOrEmpty(options.CommandLine) ? string.Empty : " " + options.CommandLine);
+				else
+					cmdline = "\"" + options.Filename + "\"" + (string.IsNullOrEmpty(options.CommandLine) ? string.Empty : " " + options.CommandLine);
+				var env = Win32EnvironmentStringBuilder.CreateEnvironmentUnicodeString(options.Environment!);
 				dwCreationFlags |= ProcessCreationFlags.CREATE_UNICODE_ENVIRONMENT;
-				bool b = NativeMethods.CreateProcess(info.HostFilename ?? string.Empty, cmdline, IntPtr.Zero, IntPtr.Zero,
-							options.InheritHandles, dwCreationFlags, env, options.CurrentDirectory,
+				var appName = useHost ? info.HostFilename : options.Filename;
+				bool b = NativeMethods.CreateProcess(appName ?? string.Empty, cmdline, IntPtr.Zero, IntPtr.Zero,
+							inheritHandles, dwCreationFlags, env, options.CurrentDirectory,
 							ref si, out pi);
 				hThread = pi.hThread;
 				if (!b)
-					throw new Exception(string.Format("Could not execute '{0}'", options.Filename));
+					throw new Exception($"Could not execute '{options.Filename}'");
 
-				int hr = dbgShimState.GetStartupNotificationEvent(pi.dwProcessId, out startupEvent);
+				int hr = dbgShimState.GetStartupNotificationEvent!(pi.dwProcessId, out startupEvent);
 				if (hr < 0)
-					throw new Exception(string.Format("GetStartupNotificationEvent failed: 0x{0:X8}", hr));
+					throw new Exception($"GetStartupNotificationEvent failed: 0x{hr:X8}");
 
 				NativeMethods.ResumeThread(hThread);
 
@@ -253,27 +240,36 @@ namespace dndbg.Engine {
 						break;
 
 					if (res == NativeMethods.WAIT_FAILED)
-						throw new Exception(string.Format("Error waiting for startup event: 0x{0:X8}", Marshal.GetLastWin32Error()));
+						throw new Exception($"Error waiting for startup event: 0x{Marshal.GetLastWin32Error():X8}");
 					if (res == NativeMethods.WAIT_TIMEOUT) {
 						if (keepWaiting())
 							continue;
 						throw new TimeoutException("Waiting for CoreCLR timed out. Debug 32-bit .NET Core apps with 32-bit dnSpy (dnSpy-x86.exe), and 64-bit .NET Core apps with 64-bit dnSpy (dnSpy.exe).");
 					}
-					Debug.Fail(string.Format("Unknown result from WaitForMultipleObjects: 0x{0:X8}", res));
+					Debug.Fail($"Unknown result from WaitForMultipleObjects: 0x{res:X8}");
 					throw new Exception("Error waiting for startup event");
 				}
 
-				hr = dbgShimState.EnumerateCLRs(pi.dwProcessId, out pHandleArray, out pStringArray, out dwArrayLength);
-				if (hr < 0 || dwArrayLength == 0)
+				hr = dbgShimState.EnumerateCLRs!(pi.dwProcessId, out pHandleArray, out pStringArray, out dwArrayLength);
+				if (hr < 0 || dwArrayLength == 0) {
+					// CoreCLR doesn't give us a good error code if we try to debug a .NET Core app
+					// with an incompatible bitness:
+					//		x86 tries to debug x64: hr == 0x8007012B (ERROR_PARTIAL_COPY)
+					//		x64 tries to debug x86: hr == 0x00000000 && dwArrayLength == 0x00000000
+					if (IntPtr.Size == 4 && (uint)hr == 0x8007012B)
+						throw new StartDebuggerException(StartDebuggerError.UnsupportedBitness);
+					if (IntPtr.Size == 8 && hr == 0 && dwArrayLength == 0)
+						throw new StartDebuggerException(StartDebuggerError.UnsupportedBitness);
 					throw new Exception("Process started but no CoreCLR found");
+				}
 				var psa = (IntPtr*)pStringArray;
 				var pha = (IntPtr*)pHandleArray;
 				const int index = 0;
 				var version = GetVersionStringFromModule(dbgShimState, pi.dwProcessId, psa[index], out string coreclrFilename);
-				hr = dbgShimState.CreateDebuggingInterfaceFromVersionEx(CorDebugInterfaceVersion.CorDebugVersion_4_0, version, out object obj);
+				hr = dbgShimState.CreateDebuggingInterfaceFromVersionEx!(CorDebugInterfaceVersion.CorDebugVersion_4_0, version, out object obj);
 				var corDebug = obj as ICorDebug;
-				if (corDebug == null)
-					throw new Exception(string.Format("Could not create a ICorDebug: hr=0x{0:X8}", hr));
+				if (corDebug is null)
+					throw new Exception($"Could not create a ICorDebug: hr=0x{hr:X8}");
 				var dbg = createDnDebugger(corDebug, coreclrFilename, pi.dwProcessId, version);
 				for (uint i = 0; i < dwArrayLength; i++)
 					NativeMethods.SetEvent(pha[i]);
@@ -292,7 +288,7 @@ namespace dndbg.Engine {
 				if (hThread != IntPtr.Zero)
 					NativeMethods.CloseHandle(hThread);
 				if (pHandleArray != IntPtr.Zero)
-					dbgShimState.CloseCLREnumeration(pHandleArray, pStringArray, dwArrayLength);
+					dbgShimState.CloseCLREnumeration!(pHandleArray, pStringArray, dwArrayLength);
 				if (error)
 					NativeMethods.TerminateProcess(pi.hProcess, uint.MaxValue);
 				if (pi.hProcess != IntPtr.Zero)

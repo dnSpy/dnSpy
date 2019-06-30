@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -55,7 +55,7 @@ namespace dnSpy.Output.Settings {
 			: base(options) {
 			this.options = options;
 			ShowTimestamps = options.ShowTimestamps;
-			TimestampDateTimeFormat = options.TimestampDateTimeFormat;
+			timestampDateTimeFormat = options.TimestampDateTimeFormat;
 		}
 
 		public override void OnApply() {

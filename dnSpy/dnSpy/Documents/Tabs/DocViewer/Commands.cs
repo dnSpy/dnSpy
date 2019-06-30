@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -91,7 +91,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
 				return false;
 			var uiContext = context.Find<IDocumentViewer>();
-			return uiContext != null && !uiContext.Selection.IsEmpty;
+			return !(uiContext is null) && !uiContext.Selection.IsEmpty;
 		}
 	}
 
@@ -99,15 +99,15 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 	sealed class FindInCodeCommand : MenuItemBase {
 		public override void Execute(IMenuItemContext context) {
 			var elem = GetInputElement();
-			if (elem != null)
+			if (!(elem is null))
 				ApplicationCommands.Find.Execute(null, elem);
 		}
 
-		public override bool IsEnabled(IMenuItemContext context) => GetInputElement() != null;
+		public override bool IsEnabled(IMenuItemContext context) => !(GetInputElement() is null);
 
-		IInputElement GetInputElement() {
+		IInputElement? GetInputElement() {
 			var elem = Keyboard.FocusedElement;
-			return elem != null && ApplicationCommands.Find.CanExecute(null, elem) ? elem : null;
+			return !(elem is null) && ApplicationCommands.Find.CanExecute(null, elem) ? elem : null;
 		}
 	}
 
@@ -116,7 +116,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			: base(cmdId) {
 		}
 
-		protected override ICommandTarget GetCommandTarget(IMenuItemContext context) {
+		protected override ICommandTarget? GetCommandTarget(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
 				return null;
 			return context.Find<IDocumentViewer>()?.TextView.CommandTarget;

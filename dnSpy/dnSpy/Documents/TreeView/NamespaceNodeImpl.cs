@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,7 +33,7 @@ namespace dnSpy.Documents.TreeView {
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) =>
 			dnImgMgr.GetNamespaceImageReference();
 		public override NodePathName NodePathName => new NodePathName(Guid, Name);
-		public override ITreeNodeGroup TreeNodeGroup { get; }
+		public override ITreeNodeGroup? TreeNodeGroup { get; }
 
 		public NamespaceNodeImpl(ITreeNodeGroup treeNodeGroup, string name, List<TypeDef> types)
 			: base(name) {
@@ -44,20 +44,25 @@ namespace dnSpy.Documents.TreeView {
 		public override void Initialize() => TreeNode.LazyLoading = true;
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
-			foreach (var type in typesToCreate)
+			foreach (var type in typesToCreate!)
 				yield return new TypeNodeImpl(Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.TypeTreeNodeGroupNamespace), type);
 			typesToCreate = null;
 		}
-		List<TypeDef> typesToCreate;
+		List<TypeDef>? typesToCreate;
 
-		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>
-			new NodePrinter().WriteNamespace(output, decompiler, Name);
+		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) {
+			new NodeFormatter().WriteNamespace(output, decompiler, Name);
+			if ((options & DocumentNodeWriteOptions.ToolTip) != 0) {
+				output.WriteLine();
+				WriteFilename(output);
+			}
+		}
 
 		public override FilterType GetFilterType(IDocumentTreeNodeFilter filter) {
 			var p = TreeNode.Parent;
-			var parent = p == null ? null : p.Data as ModuleDocumentNode;
-			Debug.Assert(parent != null);
-			if (parent == null)
+			var parent = p is null ? null : p.Data as ModuleDocumentNode;
+			Debug.Assert(!(parent is null));
+			if (parent is null)
 				return FilterType.Default;
 			var res = filter.GetResult(Name, parent.Document);
 			if (res.FilterType != FilterType.Default)

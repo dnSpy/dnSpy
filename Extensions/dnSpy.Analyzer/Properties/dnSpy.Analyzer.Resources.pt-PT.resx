@@ -127,7 +127,7 @@
     <value>Aplicado a</value>
   </data>
   <data name="AssignedByTreeNode" xml:space="preserve">
-    <value>Atribuído por</value>
+    <value>Atribuído Por</value>
   </data>
   <data name="CopyCommand" xml:space="preserve">
     <value>Copiar</value>
@@ -135,20 +135,14 @@
   <data name="DoubleClick" xml:space="preserve">
     <value>Duplo Clique</value>
   </data>
-  <data name="EventAdderTreeNodeName" xml:space="preserve">
-    <value>adicionar</value>
-  </data>
-  <data name="EventRemoverTreeNodeName" xml:space="preserve">
-    <value>remover</value>
-  </data>
   <data name="ExposedByTreeNode" xml:space="preserve">
-    <value>Exposto por</value>
+    <value>Exposto Por</value>
   </data>
   <data name="ExtensionMethodsTreeNode" xml:space="preserve">
-    <value>Métodos de extenção</value>
+    <value>Métodos de Extensão</value>
   </data>
   <data name="GoToReferenceCommand" xml:space="preserve">
-    <value>Ir para referência</value>
+    <value>Ir para Referência</value>
   </data>
   <data name="GoToReferenceInCodeCommand" xml:space="preserve">
     <value>Mostrar referência em método</value>
@@ -177,12 +171,6 @@
   <data name="Plugin_ShortDescription" xml:space="preserve">
     <value>Analisa os assemblies</value>
   </data>
-  <data name="PropertyGetterTreeNode" xml:space="preserve">
-    <value>get</value>
-  </data>
-  <data name="PropertySetterTreeNode" xml:space="preserve">
-    <value>set</value>
-  </data>
   <data name="RaisedByTreeNode" xml:space="preserve">
     <value>Raised Por</value>
   </data>
@@ -199,10 +187,10 @@
     <value>Shift + Duplo Clique</value>
   </data>
   <data name="ShortCutKeyCtrlC" xml:space="preserve">
-    <value>CTRL + C</value>
+    <value>Ctrl+C</value>
   </data>
   <data name="ShortCutKeyCtrlShiftR" xml:space="preserve">
-    <value>CTRL+Shift+R</value>
+    <value>Ctrl+Shift+R</value>
   </data>
   <data name="ShortCutKeyDelete" xml:space="preserve">
     <value>Del</value>
@@ -214,7 +202,7 @@
     <value>Realce de sintaxe</value>
   </data>
   <data name="UsedByTreeNode" xml:space="preserve">
-    <value>Usado Por</value>
+    <value>Utilizado Por</value>
   </data>
   <data name="UsesTreeNode" xml:space="preserve">
     <value>Utiliza</value>

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,7 +36,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 	abstract class DotNetReferenceNavigator : ReferenceNavigator {
 		public const uint EPILOG = 0xFFFFFFFF;
 		public const uint PROLOG = 0xFFFFFFFE;
-		public abstract void GoToLocation(IDocumentTab tab, MethodDef method, ModuleTokenId module, uint offset);
+		public abstract void GoToLocation(IDocumentTab tab, MethodDef method, ModuleTokenId module, uint offset, bool newTab);
 	}
 
 	[ExportReferenceNavigator]
@@ -70,17 +70,17 @@ namespace dnSpy.Debugger.DotNet.Code {
 			return false;
 		}
 
-		ModuleDef GetModule(ModuleId module, ReadOnlyCollection<object> options) =>
+		ModuleDef? GetModule(ModuleId module, ReadOnlyCollection<object> options) =>
 			dbgMetadataService.Value.TryGetMetadata(module, DbgLoadModuleOptions.None);
 
 		bool GoTo(DotNetMethodBodyReference bodyRef, ReadOnlyCollection<object> options) {
 			bool newTab = options.Any(a => StringComparer.Ordinal.Equals(PredefinedReferenceNavigatorOptions.NewTab, a));
 			var module = GetModule(bodyRef.Module, options);
-			if (module == null)
+			if (module is null)
 				return false;
 
 			var method = module.ResolveToken(bodyRef.Token) as MethodDef;
-			if (method == null)
+			if (method is null)
 				return false;
 
 			uint offset = bodyRef.Offset;
@@ -90,21 +90,21 @@ namespace dnSpy.Debugger.DotNet.Code {
 				offset = EPILOG;
 
 			var tab = documentTabService.GetOrCreateActiveTab();
-			GoToLocation(tab, method, new ModuleTokenId(bodyRef.Module, bodyRef.Token), offset);
+			GoToLocation(tab, method, new ModuleTokenId(bodyRef.Module, bodyRef.Token), offset, newTab);
 			return true;
 		}
 
 		bool GoTo(DotNetTokenReference tokenRef, ReadOnlyCollection<object> options) {
 			bool newTab = options.Any(a => StringComparer.Ordinal.Equals(PredefinedReferenceNavigatorOptions.NewTab, a));
 			var module = GetModule(tokenRef.Module, options);
-			if (module == null)
+			if (module is null)
 				return false;
 
 			var def = module.ResolveToken(tokenRef.Token) as IMemberDef;
-			if (def == null)
+			if (def is null)
 				return false;
 
-			bool found = documentTabService.DocumentTreeView.FindNode(def.Module) != null;
+			bool found = !(documentTabService.DocumentTreeView.FindNode(def.Module) is null);
 			if (found) {
 				documentTabService.FollowReference(def, newTab, true, e => {
 					Debug.Assert(e.Tab.UIContext is IDocumentViewer);
@@ -130,22 +130,22 @@ namespace dnSpy.Debugger.DotNet.Code {
 			return true;
 		}
 
-		static bool MoveCaretTo(IDocumentViewer documentViewer, IMemberDef def) {
-			if (documentViewer == null)
+		static bool MoveCaretTo(IDocumentViewer? documentViewer, IMemberDef def) {
+			if (documentViewer is null)
 				return false;
 			var data = documentViewer.ReferenceCollection.FirstOrNull(a => a.Data.IsDefinition && a.Data.Reference == def);
-			if (data == null)
+			if (data is null)
 				return false;
 			documentViewer.MoveCaretToPosition(data.Value.Span.Start);
 			return true;
 		}
 
-		public override void GoToLocation(IDocumentTab tab, MethodDef method, ModuleTokenId module, uint offset) {
+		public override void GoToLocation(IDocumentTab tab, MethodDef method, ModuleTokenId module, uint offset, bool newTab) {
 			bool specialIpOffset;
 			if (offset == EPILOG) {
 				specialIpOffset = true;
 				var mod = dbgMetadataService.Value.TryGetMetadata(module.Module, DbgLoadModuleOptions.AutoLoaded);
-				if (mod?.ResolveToken(module.Token) is MethodDef md && md.Body != null && md.Body.Instructions.Count > 0)
+				if (mod?.ResolveToken(module.Token) is MethodDef md && !(md.Body is null) && md.Body.Instructions.Count > 0)
 					offset = md.Body.Instructions[md.Body.Instructions.Count - 1].Offset;
 				else
 					return;
@@ -157,49 +157,48 @@ namespace dnSpy.Debugger.DotNet.Code {
 			else
 				specialIpOffset = false;
 
-			GoToLocationCore(tab, method, module, offset, specialIpOffset, canRefreshMethods: true);
+			GoToLocationCore(tab, method, module, offset, specialIpOffset, newTab, canRefreshMethods: true);
 		}
 
-		void GoToLocationCore(IDocumentTab tab, MethodDef method, ModuleTokenId module, uint offset, bool specialIpOffset, bool canRefreshMethods) {
+		void GoToLocationCore(IDocumentTab tab, MethodDef method, ModuleTokenId module, uint offset, bool specialIpOffset, bool newTab, bool canRefreshMethods) {
 			uiDispatcher.VerifyAccess();
-			if (tab == null || method == null)
+			if (tab is null || method is null)
 				return;
 
 			// The file could've been added lazily to the list so add a short delay before we select it
 			uiDispatcher.UIBackground(() => {
-				tab.FollowReference(method, false, e => {
-					Debug.Assert(e.Tab == tab);
+				tab.FollowReference(method, newTab, e => {
 					Debug.Assert(e.Tab.UIContext is IDocumentViewer);
 					if (e.Success && !e.HasMovedCaret) {
-						MoveCaretToCurrentStatement(e.Tab.UIContext as IDocumentViewer, method, module, offset, specialIpOffset, canRefreshMethods);
+						MoveCaretToCurrentStatement(e.Tab.UIContext as IDocumentViewer, method, module, offset, specialIpOffset, canRefreshMethods, newTab: false);
 						e.HasMovedCaret = true;
 					}
 				});
 			});
 		}
 
-		bool MoveCaretToCurrentStatement(IDocumentViewer documentViewer, MethodDef method, ModuleTokenId module, uint offset, bool specialIpOffset, bool canRefreshMethods) {
-			if (documentViewer == null)
+		bool MoveCaretToCurrentStatement(IDocumentViewer? documentViewer, MethodDef method, ModuleTokenId module, uint offset, bool specialIpOffset, bool canRefreshMethods, bool newTab) {
+			if (documentViewer is null)
 				return false;
 			if (MoveCaretTo(documentViewer, module, offset))
 				return true;
 			if (!canRefreshMethods)
 				return false;
 
-			RefreshMethodBodies(documentViewer, method, module, offset, specialIpOffset);
+			RefreshMethodBodies(documentViewer, method, module, offset, specialIpOffset, newTab: false);
 
 			return false;
 		}
 
 		static bool MoveCaretTo(IDocumentViewer documentViewer, ModuleTokenId module, uint offset) {
-			if (documentViewer == null)
+			if (documentViewer is null)
 				return false;
 
 			if (!VerifyAndGetCurrentDebuggedMethod(documentViewer, module, out var methodDebugService))
 				return false;
 
-			var sourceStatement = methodDebugService.TryGetMethodDebugInfo(module).GetSourceStatementByCodeOffset(offset);
-			if (sourceStatement == null)
+			var sourceStatement = methodDebugService.TryGetMethodDebugInfo(module)!.GetSourceStatementByCodeOffset(offset);
+			if (sourceStatement is null)
 				return false;
 
 			documentViewer.MoveCaretToPosition(sourceStatement.Value.TextSpan.Start);
@@ -208,10 +207,10 @@ namespace dnSpy.Debugger.DotNet.Code {
 
 		static bool VerifyAndGetCurrentDebuggedMethod(IDocumentViewer documentViewer, ModuleTokenId token, out IMethodDebugService methodDebugService) {
 			methodDebugService = documentViewer.GetMethodDebugService();
-			return methodDebugService.TryGetMethodDebugInfo(token) != null;
+			return !(methodDebugService.TryGetMethodDebugInfo(token) is null);
 		}
 
-		void RefreshMethodBodies(IDocumentViewer documentViewer, MethodDef method, ModuleTokenId module, uint offset, bool specialIpOffset) {
+		void RefreshMethodBodies(IDocumentViewer documentViewer, MethodDef method, ModuleTokenId module, uint offset, bool specialIpOffset, bool newTab) {
 			// If it's in the prolog/epilog, ignore it
 			if (specialIpOffset)
 				return;
@@ -219,25 +218,26 @@ namespace dnSpy.Debugger.DotNet.Code {
 				return;
 
 			var body = method.Body;
-			if (body == null)
+			if (body is null)
 				return;
 			// If the offset is a valid instruction in the body, the method is probably not encrypted
 			if (body.Instructions.Any(i => i.Offset == offset))
 				return;
 
 			var modNode = documentTabService.DocumentTreeView.FindNode(method.Module);
-			if (modNode == null)
+			if (modNode is null)
 				return;
 			if (modNode.Document is MemoryModuleDefDocument memFile)
 				memFile.UpdateMemory();
 			else {
 				var mod = dbgMetadataService.Value.TryGetMetadata(module.Module, DbgLoadModuleOptions.ForceMemory | DbgLoadModuleOptions.AutoLoaded);
-				method = mod?.ResolveToken(module.Token) as MethodDef;
-				if (method == null)
+				var md = mod?.ResolveToken(module.Token) as MethodDef;
+				if (md is null)
 					return;
+				method = md;
 			}
 
-			GoToLocationCore(documentViewer.DocumentTab, method, module, offset, specialIpOffset, canRefreshMethods: false);
+			GoToLocationCore(documentViewer.DocumentTab, method, module, offset, specialIpOffset, newTab, canRefreshMethods: false);
 		}
 	}
 }

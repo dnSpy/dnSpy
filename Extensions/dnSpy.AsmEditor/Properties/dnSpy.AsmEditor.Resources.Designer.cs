@@ -19,7 +19,7 @@ namespace dnSpy.AsmEditor.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class dnSpy_AsmEditor_Resources {
@@ -70,11 +70,20 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add Assembly Reference (Ctrl+O).
+        ///   Looks up a localized string similar to Add Assembly Reference.
         /// </summary>
         public static string AddAssemblyReferenceToolTip {
             get {
                 return ResourceManager.GetString("AddAssemblyReferenceToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Source Code.
+        /// </summary>
+        public static string AddDocumentsToolTip {
+            get {
+                return ResourceManager.GetString("AddDocumentsToolTip", resourceCulture);
             }
         }
         
@@ -97,7 +106,7 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add Assembly Reference (GAC) (Ctrl+Shift+O).
+        ///   Looks up a localized string similar to Add Assembly Reference (GAC).
         /// </summary>
         public static string AddGacReferenceToolTip {
             get {
@@ -616,6 +625,15 @@ namespace dnSpy.AsmEditor.Properties {
         public static string CompileDiagnostics_Header_Severity {
             get {
                 return ResourceManager.GetString("CompileDiagnostics_Header_Severity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Compiler.
+        /// </summary>
+        public static string CompilerDlgTabTitle {
+            get {
+                return ResourceManager.GetString("CompilerDlgTabTitle", resourceCulture);
             }
         }
         
@@ -1570,6 +1588,24 @@ namespace dnSpy.AsmEditor.Properties {
         public static string EditCodeAddClass2 {
             get {
                 return ResourceManager.GetString("EditCodeAddClass2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Class Members.
+        /// </summary>
+        public static string EditCodeAddClassMembers {
+            get {
+                return ResourceManager.GetString("EditCodeAddClassMembers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Class Members ({0})....
+        /// </summary>
+        public static string EditCodeAddClassMembers2 {
+            get {
+                return ResourceManager.GetString("EditCodeAddClassMembers2", resourceCulture);
             }
         }
         
@@ -2555,24 +2591,6 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to _RTSpecialName.
-        /// </summary>
-        public static string Event_RTSpecialName {
-            get {
-                return ResourceManager.GetString("Event_RTSpecialName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to _SpecialName.
-        /// </summary>
-        public static string Event_SpecialName {
-            get {
-                return ResourceManager.GetString("Event_SpecialName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Event Type: {0}.
         /// </summary>
         public static string EventType {
@@ -2681,60 +2699,6 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to _InitOnly.
-        /// </summary>
-        public static string Field_Flags_InitOnly {
-            get {
-                return ResourceManager.GetString("Field_Flags_InitOnly", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to _Literal.
-        /// </summary>
-        public static string Field_Flags_Literal {
-            get {
-                return ResourceManager.GetString("Field_Flags_Literal", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to NotSeriali_zed.
-        /// </summary>
-        public static string Field_Flags_NotSerialized {
-            get {
-                return ResourceManager.GetString("Field_Flags_NotSerialized", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to R_TSpecialName.
-        /// </summary>
-        public static string Field_Flags_RTSpecialName {
-            get {
-                return ResourceManager.GetString("Field_Flags_RTSpecialName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to S_pecialName.
-        /// </summary>
-        public static string Field_Flags_SpecialName {
-            get {
-                return ResourceManager.GetString("Field_Flags_SpecialName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to _Static.
-        /// </summary>
-        public static string Field_Flags_Static {
-            get {
-                return ResourceManager.GetString("Field_Flags_Static", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Initial_Value.
         /// </summary>
         public static string Field_InitialValue {
@@ -2767,69 +2731,6 @@ namespace dnSpy.AsmEditor.Properties {
         public static string Field_RVA {
             get {
                 return ResourceManager.GetString("Field_RVA", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Assembly.
-        /// </summary>
-        public static string FieldAccess_Assembly {
-            get {
-                return ResourceManager.GetString("FieldAccess_Assembly", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Family.
-        /// </summary>
-        public static string FieldAccess_Family {
-            get {
-                return ResourceManager.GetString("FieldAccess_Family", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Family and Assembly.
-        /// </summary>
-        public static string FieldAccess_FamilyAndAssembly {
-            get {
-                return ResourceManager.GetString("FieldAccess_FamilyAndAssembly", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Family or Assembly.
-        /// </summary>
-        public static string FieldAccess_FamilyOrAssembly {
-            get {
-                return ResourceManager.GetString("FieldAccess_FamilyOrAssembly", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Private.
-        /// </summary>
-        public static string FieldAccess_Private {
-            get {
-                return ResourceManager.GetString("FieldAccess_Private", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to PrivateScope.
-        /// </summary>
-        public static string FieldAccess_PrivateScope {
-            get {
-                return ResourceManager.GetString("FieldAccess_PrivateScope", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Public.
-        /// </summary>
-        public static string FieldAccess_Public {
-            get {
-                return ResourceManager.GetString("FieldAccess_Public", resourceCulture);
             }
         }
         
@@ -3284,33 +3185,6 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to _BestFit.
-        /// </summary>
-        public static string ImplMap_BestFit {
-            get {
-                return ResourceManager.GetString("ImplMap_BestFit", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to CallCon_v.
-        /// </summary>
-        public static string ImplMap_CallingConvention {
-            get {
-                return ResourceManager.GetString("ImplMap_CallingConvention", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to C_harSet.
-        /// </summary>
-        public static string ImplMap_CharacterSet {
-            get {
-                return ResourceManager.GetString("ImplMap_CharacterSet", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to _Enable.
         /// </summary>
         public static string ImplMap_Enable {
@@ -3334,42 +3208,6 @@ namespace dnSpy.AsmEditor.Properties {
         public static string ImplMap_Name {
             get {
                 return ResourceManager.GetString("ImplMap_Name", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No_Mangle.
-        /// </summary>
-        public static string ImplMap_NoMangle {
-            get {
-                return ResourceManager.GetString("ImplMap_NoMangle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Supports_LastError.
-        /// </summary>
-        public static string ImplMap_SupportsLastError {
-            get {
-                return ResourceManager.GetString("ImplMap_SupportsLastError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to _ThrowOn....
-        /// </summary>
-        public static string ImplMap_ThrowOn_SHORT {
-            get {
-                return ResourceManager.GetString("ImplMap_ThrowOn_SHORT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ThrowOnUnmappableChar.
-        /// </summary>
-        public static string ImplMap_ThrowOn_ToolTip {
-            get {
-                return ResourceManager.GetString("ImplMap_ThrowOn_ToolTip", resourceCulture);
             }
         }
         
@@ -4022,200 +3860,11 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cod_eType.
-        /// </summary>
-        public static string Method_CodeType {
-            get {
-                return ResourceManager.GetString("Method_CodeType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to _Abstract.
-        /// </summary>
-        public static string Method_Flags_Abstract {
-            get {
-                return ResourceManager.GetString("Method_Flags_Abstract", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Chec_kAccessOnOverride.
-        /// </summary>
-        public static string Method_Flags_CheckAccessOnOverride {
-            get {
-                return ResourceManager.GetString("Method_Flags_CheckAccessOnOverride", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to _Final.
-        /// </summary>
-        public static string Method_Flags_Final {
-            get {
-                return ResourceManager.GetString("Method_Flags_Final", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Hi_deBySig.
-        /// </summary>
-        public static string Method_Flags_HideBySig {
-            get {
-                return ResourceManager.GetString("Method_Flags_HideBySig", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Re_quireSecObject.
-        /// </summary>
-        public static string Method_Flags_RequireSecObject {
-            get {
-                return ResourceManager.GetString("Method_Flags_RequireSecObject", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to R_TSpecialName.
-        /// </summary>
-        public static string Method_Flags_RTSpecialName {
-            get {
-                return ResourceManager.GetString("Method_Flags_RTSpecialName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to S_pecialName.
-        /// </summary>
-        public static string Method_Flags_SpecialName {
-            get {
-                return ResourceManager.GetString("Method_Flags_SpecialName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to _Static.
-        /// </summary>
-        public static string Method_Flags_Static {
-            get {
-                return ResourceManager.GetString("Method_Flags_Static", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to UnmanagedE_xport.
-        /// </summary>
-        public static string Method_Flags_UnmanagedExport {
-            get {
-                return ResourceManager.GetString("Method_Flags_UnmanagedExport", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to _Virtual.
-        /// </summary>
-        public static string Method_Flags_Virtual {
-            get {
-                return ResourceManager.GetString("Method_Flags_Virtual", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ImplFlags.
-        /// </summary>
-        public static string Method_ImplFlags {
-            get {
-                return ResourceManager.GetString("Method_ImplFlags", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A_ggressiveInlining.
-        /// </summary>
-        public static string Method_ImplFlags_AggressiveInlining {
-            get {
-                return ResourceManager.GetString("Method_ImplFlags_AggressiveInlining", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to For_wardRef.
-        /// </summary>
-        public static string Method_ImplFlags_ForwardRef {
-            get {
-                return ResourceManager.GetString("Method_ImplFlags_ForwardRef", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Interna_lCall.
-        /// </summary>
-        public static string Method_ImplFlags_InternalCall {
-            get {
-                return ResourceManager.GetString("Method_ImplFlags_InternalCall", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No_Inlining.
-        /// </summary>
-        public static string Method_ImplFlags_NoInlining {
-            get {
-                return ResourceManager.GetString("Method_ImplFlags_NoInlining", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to NoOptimi_zation.
-        /// </summary>
-        public static string Method_ImplFlags_NoOptimization {
-            get {
-                return ResourceManager.GetString("Method_ImplFlags_NoOptimization", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Prese_rveSig.
-        /// </summary>
-        public static string Method_ImplFlags_PreserveSig {
-            get {
-                return ResourceManager.GetString("Method_ImplFlags_PreserveSig", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Sync_hronized.
-        /// </summary>
-        public static string Method_ImplFlags_Synchronized {
-            get {
-                return ResourceManager.GetString("Method_ImplFlags_Synchronized", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to _ManagedType.
-        /// </summary>
-        public static string Method_ManagedType {
-            get {
-                return ResourceManager.GetString("Method_ManagedType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to _Name.
         /// </summary>
         public static string Method_Name {
             get {
                 return ResourceManager.GetString("Method_Name", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Vta_bleLayout.
-        /// </summary>
-        public static string Method_VtableLayout {
-            get {
-                return ResourceManager.GetString("Method_VtableLayout", resourceCulture);
             }
         }
         
@@ -4279,15 +3928,6 @@ namespace dnSpy.AsmEditor.Properties {
         public static string MethodBody_KeepOldMaxStack_ToolTip {
             get {
                 return ResourceManager.GetString("MethodBody_KeepOldMaxStack_ToolTip", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to _LocalVarSigTok.
-        /// </summary>
-        public static string MethodBody_LocalVariableSignatureToken {
-            get {
-                return ResourceManager.GetString("MethodBody_LocalVariableSignatureToken", resourceCulture);
             }
         }
         
@@ -4391,24 +4031,6 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to E_xplicitThis.
-        /// </summary>
-        public static string MethodSig_ExplicitThis {
-            get {
-                return ResourceManager.GetString("MethodSig_ExplicitThis", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to _HasThis.
-        /// </summary>
-        public static string MethodSig_HasThis {
-            get {
-                return ResourceManager.GetString("MethodSig_HasThis", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Method Parameter Types.
         /// </summary>
         public static string MethodSig_MethodParameterTypes {
@@ -4472,15 +4094,6 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cor20.
-        /// </summary>
-        public static string Module_Cor20 {
-            get {
-                return ResourceManager.GetString("Module_Cor20", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to _Runtime Version.
         /// </summary>
         public static string Module_Cor20_RuntimeVersion {
@@ -4495,24 +4108,6 @@ namespace dnSpy.AsmEditor.Properties {
         public static string Module_DotNetVersion {
             get {
                 return ResourceManager.GetString("Module_DotNetVersion", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Enc_BaseId.
-        /// </summary>
-        public static string Module_EncBaseId {
-            get {
-                return ResourceManager.GetString("Module_EncBaseId", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to EncI_d.
-        /// </summary>
-        public static string Module_EncId {
-            get {
-                return ResourceManager.GetString("Module_EncId", resourceCulture);
             }
         }
         
@@ -4549,60 +4144,6 @@ namespace dnSpy.AsmEditor.Properties {
         public static string Module_EntryPoint_None {
             get {
                 return ResourceManager.GetString("Module_EntryPoint_None", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 32-Bit _Preferred.
-        /// </summary>
-        public static string Module_Flags_Bit32Preferred {
-            get {
-                return ResourceManager.GetString("Module_Flags_Bit32Preferred", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to _32-Bit Required.
-        /// </summary>
-        public static string Module_Flags_Bit32Required {
-            get {
-                return ResourceManager.GetString("Module_Flags_Bit32Required", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to IL _Library.
-        /// </summary>
-        public static string Module_Flags_ILLibrary {
-            get {
-                return ResourceManager.GetString("Module_Flags_ILLibrary", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to _IL Only.
-        /// </summary>
-        public static string Module_Flags_ILOnly {
-            get {
-                return ResourceManager.GetString("Module_Flags_ILOnly", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to _Strong Name Signed.
-        /// </summary>
-        public static string Module_Flags_StrongNameSigned {
-            get {
-                return ResourceManager.GetString("Module_Flags_StrongNameSigned", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to _Track Debug Data.
-        /// </summary>
-        public static string Module_Flags_TrackDebugData {
-            get {
-                return ResourceManager.GetString("Module_Flags_TrackDebugData", resourceCulture);
             }
         }
         
@@ -4652,15 +4193,6 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to _Mvid.
-        /// </summary>
-        public static string Module_Mvid {
-            get {
-                return ResourceManager.GetString("Module_Mvid", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to N_ame.
         /// </summary>
         public static string Module_Name {
@@ -4693,15 +4225,6 @@ namespace dnSpy.AsmEditor.Properties {
         public static string Module_NewGuid3 {
             get {
                 return ResourceManager.GetString("Module_NewGuid3", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to PE.
-        /// </summary>
-        public static string Module_PE {
-            get {
-                return ResourceManager.GetString("Module_PE", resourceCulture);
             }
         }
         
@@ -4783,15 +4306,6 @@ namespace dnSpy.AsmEditor.Properties {
         public static string NetModule_DotNetVersion {
             get {
                 return ResourceManager.GetString("NetModule_DotNetVersion", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to _Mvid.
-        /// </summary>
-        public static string NetModule_Mvid {
-            get {
-                return ResourceManager.GetString("NetModule_Mvid", resourceCulture);
             }
         }
         
@@ -5035,24 +4549,6 @@ namespace dnSpy.AsmEditor.Properties {
         public static string PasteRecordsCommand {
             get {
                 return ResourceManager.GetString("PasteRecordsCommand", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Characteristics.
-        /// </summary>
-        public static string PE_Header_Characteristics {
-            get {
-                return ResourceManager.GetString("PE_Header_Characteristics", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to DllCharacteristics.
-        /// </summary>
-        public static string PE_Header_DllCharacteristics {
-            get {
-                return ResourceManager.GetString("PE_Header_DllCharacteristics", resourceCulture);
             }
         }
         
@@ -5417,6 +4913,33 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to _Replace with NOPs.
+        /// </summary>
+        public static string ReplaceNopsInstrCommand {
+            get {
+                return ResourceManager.GetString("ReplaceNopsInstrCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Replace with NOPs.
+        /// </summary>
+        public static string ReplaceNopsInstrsCommand {
+            get {
+                return ResourceManager.GetString("ReplaceNopsInstrsCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Run NGEN.exe if this assembly is installed in the GAC.
+        /// </summary>
+        public static string RerunNgenIfGacAssembly {
+            get {
+                return ResourceManager.GetString("RerunNgenIfGacAssembly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Color _Depth.
         /// </summary>
         public static string Resource_ColorDepth {
@@ -5584,60 +5107,6 @@ namespace dnSpy.AsmEditor.Properties {
         public static string SaveModule_Cor20_EntryPoint {
             get {
                 return ResourceManager.GetString("SaveModule_Cor20_EntryPoint", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 32-Bit _Preferred.
-        /// </summary>
-        public static string SaveModule_Cor20_Flags_Bit32Preferred {
-            get {
-                return ResourceManager.GetString("SaveModule_Cor20_Flags_Bit32Preferred", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to _32-Bit Required.
-        /// </summary>
-        public static string SaveModule_Cor20_Flags_Bit32Required {
-            get {
-                return ResourceManager.GetString("SaveModule_Cor20_Flags_Bit32Required", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to IL _Library.
-        /// </summary>
-        public static string SaveModule_Cor20_Flags_ILLibrary {
-            get {
-                return ResourceManager.GetString("SaveModule_Cor20_Flags_ILLibrary", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to _IL Only.
-        /// </summary>
-        public static string SaveModule_Cor20_Flags_ILOnly {
-            get {
-                return ResourceManager.GetString("SaveModule_Cor20_Flags_ILOnly", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to _Strong Name Signed.
-        /// </summary>
-        public static string SaveModule_Cor20_Flags_StrongNameSigned {
-            get {
-                return ResourceManager.GetString("SaveModule_Cor20_Flags_StrongNameSigned", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to _Track Debug Data.
-        /// </summary>
-        public static string SaveModule_Cor20_Flags_TrackDebugData {
-            get {
-                return ResourceManager.GetString("SaveModule_Cor20_Flags_TrackDebugData", resourceCulture);
             }
         }
         
@@ -5829,6 +5298,15 @@ namespace dnSpy.AsmEditor.Properties {
         public static string SaveModule_PreserveHeapOffsets {
             get {
                 return ResourceManager.GetString("SaveModule_PreserveHeapOffsets", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy Unkno_wn Metadata Streams.
+        /// </summary>
+        public static string SaveModule_PreserveOtherMetadataStreams {
+            get {
+                return ResourceManager.GetString("SaveModule_PreserveOtherMetadataStreams", resourceCulture);
             }
         }
         
@@ -6260,11 +5738,29 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ctrl+O.
+        /// </summary>
+        public static string ShortCutKeyCtrlO {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ctrl+R.
         /// </summary>
         public static string ShortCutKeyCtrlR {
             get {
                 return ResourceManager.GetString("ShortCutKeyCtrlR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+Shift+A.
+        /// </summary>
+        public static string ShortCutKeyCtrlShiftA {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlShiftA", resourceCulture);
             }
         }
         
@@ -6292,6 +5788,15 @@ namespace dnSpy.AsmEditor.Properties {
         public static string ShortCutKeyCtrlShiftE {
             get {
                 return ResourceManager.GetString("ShortCutKeyCtrlShiftE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+Shift+O.
+        /// </summary>
+        public static string ShortCutKeyCtrlShiftO {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlShiftO", resourceCulture);
             }
         }
         
@@ -6418,6 +5923,15 @@ namespace dnSpy.AsmEditor.Properties {
         public static string ShortCutKeyP {
             get {
                 return ResourceManager.GetString("ShortCutKeyP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to R.
+        /// </summary>
+        public static string ShortCutKeyR {
+            get {
+                return ResourceManager.GetString("ShortCutKeyR", resourceCulture);
             }
         }
         
@@ -6611,56 +6125,11 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A_bstract.
-        /// </summary>
-        public static string Type_Flags_Abstract {
-            get {
-                return ResourceManager.GetString("Type_Flags_Abstract", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Accessibilit_y.
         /// </summary>
         public static string Type_Flags_Accessibility {
             get {
                 return ResourceManager.GetString("Type_Flags_Accessibility", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to BeforeFieldIni_t.
-        /// </summary>
-        public static string Type_Flags_BeforeFieldInit {
-            get {
-                return ResourceManager.GetString("Type_Flags_BeforeFieldInit", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Custo_m.
-        /// </summary>
-        public static string Type_Flags_Custom {
-            get {
-                return ResourceManager.GetString("Type_Flags_Custom", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to _Forwarder.
-        /// </summary>
-        public static string Type_Flags_Forwarder {
-            get {
-                return ResourceManager.GetString("Type_Flags_Forwarder", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to _Import.
-        /// </summary>
-        public static string Type_Flags_Import {
-            get {
-                return ResourceManager.GetString("Type_Flags_Import", resourceCulture);
             }
         }
         
@@ -6683,51 +6152,6 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to _RTSpecialName.
-        /// </summary>
-        public static string Type_Flags_RTSpecialName {
-            get {
-                return ResourceManager.GetString("Type_Flags_RTSpecialName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Seale_d.
-        /// </summary>
-        public static string Type_Flags_Sealed {
-            get {
-                return ResourceManager.GetString("Type_Flags_Sealed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to _Semantics.
-        /// </summary>
-        public static string Type_Flags_Semantics {
-            get {
-                return ResourceManager.GetString("Type_Flags_Semantics", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to S_erializable.
-        /// </summary>
-        public static string Type_Flags_Serializable {
-            get {
-                return ResourceManager.GetString("Type_Flags_Serializable", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to S_pecialName.
-        /// </summary>
-        public static string Type_Flags_SpecialName {
-            get {
-                return ResourceManager.GetString("Type_Flags_SpecialName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Strin_g.
         /// </summary>
         public static string Type_Flags_String {
@@ -6742,15 +6166,6 @@ namespace dnSpy.AsmEditor.Properties {
         public static string Type_Flags_Visibility {
             get {
                 return ResourceManager.GetString("Type_Flags_Visibility", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to _WindowsRuntime.
-        /// </summary>
-        public static string Type_Flags_WindowsRuntime {
-            get {
-                return ResourceManager.GetString("Type_Flags_WindowsRuntime", resourceCulture);
             }
         }
         

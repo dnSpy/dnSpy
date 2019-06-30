@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,7 +35,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		readonly UIDispatcher uiDispatcher;
 		readonly BookmarksService bookmarksService;
 		readonly Lazy<IBookmarksVM> bookmarksVM;
-		Bookmark activeBookmark;
+		Bookmark? activeBookmark;
 		Bookmark[] allBookmarks;
 
 		[ImportingConstructor]
@@ -69,8 +69,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		void UpdateBookmarks_UI() {
 			uiDispatcher.VerifyAccess();
 			if (bookmarksVM.Value.IsOpen) {
-				//TODO: This should be view order
-				var bookmarks = bookmarksVM.Value.AllItems.Select(a => a.Bookmark).ToArray();
+				var bookmarks = bookmarksVM.Value.Sort(bookmarksVM.Value.AllItems).Select(a => a.Bookmark).ToArray();
 				UpdateBookmarks_UI(bookmarks);
 			}
 			else {

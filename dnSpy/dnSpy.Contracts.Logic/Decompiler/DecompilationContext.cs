@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -40,12 +40,19 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <summary>
 		/// Disables assembly loading until Dispose() gets called
 		/// </summary>
-		public Func<IDisposable> GetDisableAssemblyLoad { get; set; }
+		public Func<IDisposable>? GetDisableAssemblyLoad { get; set; }
 
 		/// <summary>
-		/// true to calculate BinSpans. Used when debugging
+		/// true to calculate ILSpans. Used when debugging
 		/// </summary>
-		public bool CalculateBinSpans { get; set; }
+		public bool CalculateILSpans { get; set; }
+
+		/// <summary>
+		/// true to decompile method bodies asynchronously. Should not be enabled when decompiling
+		/// to a project since that code already decompiles one type per CPU core.
+		/// Should also not be enabled when only one method body is decompiled since the code won't be faster.
+		/// </summary>
+		public bool AsyncMethodBodyDecompilation { get; set; }
 
 		/// <summary>
 		/// Constructor
@@ -53,10 +60,11 @@ namespace dnSpy.Contracts.Decompiler {
 		public DecompilationContext() {
 			CancellationToken = CancellationToken.None;
 			IsBodyModified = m => false;
+			AsyncMethodBodyDecompilation = true;
 		}
 
 		/// <summary />
-		public IDisposable DisableAssemblyLoad() => GetDisableAssemblyLoad?.Invoke();
+		public IDisposable? DisableAssemblyLoad() => GetDisableAssemblyLoad?.Invoke();
 
 		/// <summary>
 		/// Gets or creates a cached object

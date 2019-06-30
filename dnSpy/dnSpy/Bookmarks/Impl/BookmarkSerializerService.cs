@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -45,12 +45,12 @@ namespace dnSpy.Bookmarks.Impl {
 		}
 
 		public override void Save(Bookmark[] bookmarks) {
-			if (bookmarks == null)
+			if (bookmarks is null)
 				throw new ArgumentNullException(nameof(bookmarks));
 			if (bookmarks.Length == 0)
 				return;
 			var filename = pickSaveFilename.GetFilename(null, "xml", PickFilenameConstants.XmlFilenameFilter);
-			if (filename == null)
+			if (filename is null)
 				return;
 			var settingsService = settingsServiceFactory.Value.Create();
 			new BookmarksSerializer(settingsService, bookmarkLocationSerializerService.Value).Save(bookmarks);

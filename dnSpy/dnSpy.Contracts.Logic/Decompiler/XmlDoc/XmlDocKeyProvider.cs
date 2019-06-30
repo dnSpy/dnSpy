@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
+// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
@@ -33,8 +33,8 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 		/// <param name="member">Member</param>
 		/// <param name="b">String builder</param>
 		/// <returns></returns>
-		public static StringBuilder GetKey(IMemberRef member, StringBuilder b) {
-			if (member == null)
+		public static StringBuilder? GetKey(IMemberRef member, StringBuilder b) {
+			if (member is null)
 				return null;
 			b.Clear();
 			if (member is ITypeDefOrRef) {
@@ -53,8 +53,8 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 				AppendTypeName(b, member.DeclaringType.ToTypeSig());
 				b.Append('.');
 				b.Append(member.Name.Replace('.', '#'));
-				IList<Parameter> parameters;
-				TypeSig explicitReturnType = null;
+				IList<Parameter>? parameters;
+				TypeSig? explicitReturnType = null;
 				if (member.IsPropertyDef) {
 					parameters = GetParameters((PropertyDef)member).ToList();
 				}
@@ -72,7 +72,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 				else {
 					parameters = null;
 				}
-				if (parameters != null && parameters.Any(a => a.IsNormalMethodParameter)) {
+				if (!(parameters is null) && parameters.Any(a => a.IsNormalMethodParameter)) {
 					b.Append('(');
 					for (int i = 0; i < parameters.Count; i++) {
 						var param = parameters[i];
@@ -84,7 +84,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 					}
 					b.Append(')');
 				}
-				if (explicitReturnType != null) {
+				if (!(explicitReturnType is null)) {
 					b.Append('~');
 					AppendTypeName(b, explicitReturnType);
 				}
@@ -93,14 +93,14 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 		}
 
 		static IEnumerable<Parameter> GetParameters(PropertyDef property) {
-			if (property == null)
+			if (property is null)
 				yield break;
-			if (property.GetMethod != null) {
+			if (!(property.GetMethod is null)) {
 				foreach (var param in property.GetMethod.Parameters)
 					yield return param;
 				yield break;
 			}
-			if (property.SetMethod != null) {
+			if (!(property.SetMethod is null)) {
 				int last = property.SetMethod.Parameters.Count - 1;
 				foreach (var param in property.SetMethod.Parameters) {
 					if (param.Index != last)
@@ -117,10 +117,11 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 		}
 
 		static void AppendTypeName(StringBuilder b, TypeSig type) {
-			if (type == null)
+			type = type.RemovePinnedAndModifiers();
+			if (type is null)
 				return;
 			if (type is GenericInstSig giType) {
-				AppendTypeNameWithArguments(b, giType.GenericType == null ? null : giType.GenericType.TypeDefOrRef, giType.GenericArguments);
+				AppendTypeNameWithArguments(b, giType.GenericType is null ? null : giType.GenericType.TypeDefOrRef, giType.GenericArguments);
 				return;
 			}
 			if (type is ArraySigBase arrayType) {
@@ -159,29 +160,29 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 			}
 			else {
 				var typeRef = type.ToTypeDefOrRef();
-				if (typeRef.DeclaringType != null) {
+				if (!(typeRef.DeclaringType is null)) {
 					AppendTypeName(b, typeRef.DeclaringType.ToTypeSig());
 					b.Append('.');
 					b.Append(typeRef.Name);
 				}
 				else {
-					FullNameCreator.FullNameSB(type, false, null, null, null, b);
+					FullNameFactory.FullNameSB(type, false, null, null, null, b);
 				}
 			}
 		}
 
-		static int AppendTypeNameWithArguments(StringBuilder b, ITypeDefOrRef type, IList<TypeSig> genericArguments) {
-			if (type == null)
+		static int AppendTypeNameWithArguments(StringBuilder b, ITypeDefOrRef? type, IList<TypeSig> genericArguments) {
+			if (type is null)
 				return 0;
 			int outerTypeParameterCount = 0;
-			if (type.DeclaringType != null) {
+			if (!(type.DeclaringType is null)) {
 				ITypeDefOrRef declType = type.DeclaringType;
 				outerTypeParameterCount = AppendTypeNameWithArguments(b, declType, genericArguments);
 				b.Append('.');
 			}
 			else {
 				int len = b.Length;
-				FullNameCreator.NamespaceSB(type, true, b);
+				FullNameFactory.NamespaceSB(type, true, b);
 				if (len != b.Length)
 					b.Append('.');
 			}
@@ -225,10 +226,10 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 		/// <param name="module">Module to search</param>
 		/// <param name="key">Key</param>
 		/// <returns></returns>
-		public static IMemberRef FindMemberByKey(ModuleDef module, string key) {
-			if (module == null)
+		public static IMemberRef? FindMemberByKey(ModuleDef module, string key) {
+			if (module is null)
 				throw new ArgumentNullException(nameof(module));
-			if (key == null || key.Length < 2 || key[1] != ':')
+			if (key is null || key.Length < 2 || key[1] != ':')
 				return null;
 			switch (key[0]) {
 			case 'T':
@@ -246,7 +247,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 			}
 		}
 
-		static IMemberRef FindMember(ModuleDef module, string key, Func<TypeDef, IEnumerable<IMemberRef>> memberSelector) {
+		static IMemberRef? FindMember(ModuleDef module, string key, Func<TypeDef, IEnumerable<IMemberRef>> memberSelector) {
 			int parenPos = key.IndexOf('(');
 			int dotPos;
 			if (parenPos > 0) {
@@ -257,8 +258,8 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 			}
 			if (dotPos < 0)
 				return null;
-			TypeDef type = FindType(module, key.Substring(2, dotPos - 2));
-			if (type == null)
+			TypeDef? type = FindType(module, key.Substring(2, dotPos - 2));
+			if (type is null)
 				return null;
 			string shortName;
 			if (parenPos > 0) {
@@ -267,11 +268,11 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 			else {
 				shortName = key.Substring(dotPos + 1);
 			}
-			IMemberRef shortNameMatch = null;
+			IMemberRef? shortNameMatch = null;
 			var sb = new StringBuilder();
 			foreach (IMemberRef member in memberSelector(type)) {
 				var memberKey = GetKey(member, sb);
-				if (memberKey.CheckEquals(key))
+				if (memberKey?.CheckEquals(key) == true)
 					return member;
 				if (shortName == member.Name.Replace('.', '#'))
 					shortNameMatch = member;
@@ -280,15 +281,15 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 			return shortNameMatch;
 		}
 
-		static TypeDef FindType(ModuleDef module, string name) {
+		static TypeDef? FindType(ModuleDef module, string name) {
 			int pos = name.LastIndexOf('.');
 			if (string.IsNullOrEmpty(name))
 				return null;
-			TypeDef type = module.Find(name, true);
-			if (type == null && pos > 0) { // Original code only entered if ns.Length > 0
+			TypeDef? type = module.Find(name, true);
+			if (type is null && pos > 0) { // Original code only entered if ns.Length > 0
 										   // try if this is a nested type
 				type = FindType(module, name.Substring(0, pos));
-				if (type != null) {
+				if (!(type is null)) {
 					foreach (var nt in type.NestedTypes) {
 						if (nt.Name == name)
 							return nt;

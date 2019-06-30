@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,9 +36,9 @@ namespace dnSpy.Hex.Editor {
 		WpfHexViewMarginInfo[] margins;
 
 		public WpfHexViewContainerMargin(WpfHexViewMarginProviderCollectionProvider wpfHexViewMarginProviderCollectionProvider, WpfHexViewHost wpfHexViewHost, string name, bool isHorizontal) {
-			if (wpfHexViewMarginProviderCollectionProvider == null)
+			if (wpfHexViewMarginProviderCollectionProvider is null)
 				throw new ArgumentNullException(nameof(wpfHexViewMarginProviderCollectionProvider));
-			if (wpfHexViewHost == null)
+			if (wpfHexViewHost is null)
 				throw new ArgumentNullException(nameof(wpfHexViewHost));
 			grid = new Grid();
 			this.name = name ?? throw new ArgumentNullException(nameof(name));
@@ -83,13 +83,13 @@ namespace dnSpy.Hex.Editor {
 			}
 		}
 
-		public override HexViewMargin GetHexViewMargin(string marginName) {
+		public override HexViewMargin? GetHexViewMargin(string marginName) {
 			if (StringComparer.OrdinalIgnoreCase.Equals(marginName, name))
 				return this;
 
 			foreach (var info in margins) {
 				var margin = info.Margin.GetHexViewMargin(marginName);
-				if (margin != null)
+				if (!(margin is null))
 					return margin;
 			}
 

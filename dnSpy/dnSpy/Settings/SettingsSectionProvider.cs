@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -41,8 +41,8 @@ namespace dnSpy.Settings {
 		}
 
 		public ISettingsSection CreateSection(string name) {
-			Debug.Assert(name != null);
-			if (name == null)
+			Debug.Assert(!(name is null));
+			if (name is null)
 				throw new ArgumentNullException(nameof(name));
 
 			var section = new SettingsSection(name);
@@ -52,14 +52,14 @@ namespace dnSpy.Settings {
 		}
 
 		public ISettingsSection GetOrCreateSection(string name) {
-			Debug.Assert(name != null);
-			if (name == null)
+			Debug.Assert(!(name is null));
+			if (name is null)
 				throw new ArgumentNullException(nameof(name));
 
 			ISettingsSection section;
 			lock (lockObj) {
 				section = sections.FirstOrDefault(a => StringComparer.Ordinal.Equals(name, a.Name));
-				if (section != null)
+				if (!(section is null))
 					return section;
 				sections.Add(section = new SettingsSection(name));
 			}
@@ -67,8 +67,8 @@ namespace dnSpy.Settings {
 		}
 
 		public void RemoveSection(string name) {
-			Debug.Assert(name != null);
-			if (name == null)
+			Debug.Assert(!(name is null));
+			if (name is null)
 				throw new ArgumentNullException(nameof(name));
 
 			lock (lockObj) {
@@ -80,8 +80,8 @@ namespace dnSpy.Settings {
 		}
 
 		public void RemoveSection(ISettingsSection section) {
-			Debug.Assert(section != null);
-			if (section == null)
+			Debug.Assert(!(section is null));
+			if (section is null)
 				throw new ArgumentNullException(nameof(section));
 
 			bool b;

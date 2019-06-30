@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,7 +21,7 @@ using System.Diagnostics;
 using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Text.Operations {
-	struct WordParser {
+	readonly struct WordParser {
 		public enum WordKind {
 			Word,
 			Whitespace,

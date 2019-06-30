@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,7 +23,8 @@ using dnSpy.Contracts.Documents.TreeView;
 
 namespace dnSpy.Contracts.Documents.Tabs {
 	/// <summary>
-	/// Contains the data used to generate the content shown in a tab
+	/// Contains the data used to generate the content shown in a tab. If it implements <see cref="IDisposable"/>,
+	/// it gets disposed when it's no longer in use.
 	/// </summary>
 	public abstract class DocumentTabContent {
 		/// <summary>
@@ -62,7 +63,7 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// <summary>
 		/// Gets the tooltip or null if none
 		/// </summary>
-		public virtual object ToolTip => null;
+		public virtual object? ToolTip => null;
 
 		/// <summary>
 		/// true if <see cref="Clone"/> can be called
@@ -86,17 +87,17 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// <summary>
 		/// Written by the owner <see cref="IDocumentTab"/> instance
 		/// </summary>
-		public IDocumentTab DocumentTab {
-			get { return documentTab; }
+		public IDocumentTab? DocumentTab {
+			get => documentTab;
 			set {
-				if (value == null)
+				if (value is null)
 					throw new ArgumentNullException(nameof(value));
-				if (documentTab == null)
+				if (documentTab is null)
 					documentTab = value;
 				else if (documentTab != value)
 					throw new InvalidOperationException();
 			}
 		}
-		IDocumentTab documentTab;
+		IDocumentTab? documentTab;
 	}
 }

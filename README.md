@@ -12,7 +12,7 @@ The following pictures show dnSpy in action. It shows dnSpy editing and debuggin
 
 # Features (see below for more detail)
 
-- Debug .NET Framework and .NET Core assemblies, no source code required
+- Debug .NET Framework, .NET Core and Unity game assemblies, no source code required
 - Edit assemblies in C# or Visual Basic or IL, and edit all metadata
 - Light and dark themes
 - Extensible, write your own extension
@@ -31,7 +31,7 @@ Or build it from source, see the [Wiki](https://github.com/0xd4d/dnSpy/wiki/Buil
 
 # Debugger
 
-- Debug .NET Framework and .NET Core assemblies, no source code required
+- Debug .NET Framework, .NET Core and Unity game assemblies, no source code required
 - Set breakpoints and step into any assembly
 - Locals, watch, autos windows
 - Variables windows supports saving variables (eg. decrypted byte arrays) to disk or view them in the hex editor (memory window)

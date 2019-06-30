@@ -1,0 +1,439 @@
+<Exceptions>
+	<CategoryDef Name="DotNet" DisplayName="Common Language Runtime Exceptions" ShortDisplayName=".NET" />
+	<CategoryDef Name="MDA" DisplayName="Managed Debugging Assistants" ShortDisplayName="MDA" />
+	<ExceptionDefs Category="DotNet">
+		<Exception Name="Microsoft.JScript.JScriptException" />
+		<Exception Name="System.AccessViolationException" Flags="stop2" />
+		<Exception Name="System.AggregateException" Flags="stop2" />
+		<Exception Name="System.AppDomainUnloadedException" />
+		<Exception Name="System.ApplicationException" Flags="stop2" />
+		<Exception Name="System.ArgumentException" Flags="stop2" />
+		<Exception Name="System.ArgumentNullException" Flags="stop2" />
+		<Exception Name="System.ArgumentOutOfRangeException" Flags="stop2" />
+		<Exception Name="System.ArithmeticException" Flags="stop2" />
+		<Exception Name="System.ArrayTypeMismatchException" Flags="stop2" />
+		<Exception Name="System.BadImageFormatException" Flags="stop2" />
+		<Exception Name="System.CannotUnloadAppDomainException" Flags="stop2" />
+		<Exception Name="System.Collections.Generic.KeyNotFoundException" Flags="stop2" />
+		<Exception Name="System.ComponentModel.Composition.ChangeRejectedException" Flags="stop2" />
+		<Exception Name="System.ComponentModel.Composition.CompositionContractMismatchException" Flags="stop2" />
+		<Exception Name="System.ComponentModel.Composition.CompositionException" Flags="stop2" />
+		<Exception Name="System.ComponentModel.Composition.ImportCardinalityMismatchException" Flags="stop2" />
+		<Exception Name="System.ComponentModel.Composition.Primitives.ComposablePartException" Flags="stop2" />
+		<Exception Name="System.ComponentModel.DataAnnotations.ValidationException" Flags="stop2" />
+		<Exception Name="System.ComponentModel.Design.CheckoutException" Flags="stop2" />
+		<Exception Name="System.ComponentModel.Design.ExceptionCollection" Flags="stop2" />
+		<Exception Name="System.ComponentModel.Design.Serialization.CodeDomSerializerException" Flags="stop2" />
+		<Exception Name="System.ComponentModel.InvalidEnumArgumentException" Flags="stop2" />
+		<Exception Name="System.ComponentModel.LicenseException" Flags="stop2" />
+		<Exception Name="System.ComponentModel.WarningException" Flags="stop2" />
+		<Exception Name="System.ComponentModel.Win32Exception" Flags="stop2" />
+		<Exception Name="System.Configuration.ConfigurationErrorsException" Flags="stop2" />
+		<Exception Name="System.Configuration.ConfigurationException" Flags="stop2" />
+		<Exception Name="System.Configuration.Install.InstallException" Flags="stop2" />
+		<Exception Name="System.Configuration.Provider.ProviderException" Flags="stop2" />
+		<Exception Name="System.Configuration.SettingsPropertyCannotBeSetForAnonymousUserException" Flags="stop2" />
+		<Exception Name="System.Configuration.SettingsPropertyIsReadOnlyException" Flags="stop2" />
+		<Exception Name="System.Configuration.SettingsPropertyNotFoundException" Flags="stop2" />
+		<Exception Name="System.Configuration.SettingsPropertyWrongTypeException" Flags="stop2" />
+		<Exception Name="System.ContextMarshalException" Flags="stop2" />
+		<Exception Name="System.Data.Common.DbException" Flags="stop2" />
+		<Exception Name="System.Data.ConstraintException" Flags="stop2" />
+		<Exception Name="System.Data.DataException" Flags="stop2" />
+		<Exception Name="System.Data.DBConcurrencyException" Flags="stop2" />
+		<Exception Name="System.Data.DeletedRowInaccessibleException" Flags="stop2" />
+		<Exception Name="System.Data.DuplicateNameException" Flags="stop2" />
+		<Exception Name="System.Data.EvaluateException" Flags="stop2" />
+		<Exception Name="System.Data.InRowChangingEventException" Flags="stop2" />
+		<Exception Name="System.Data.InvalidConstraintException" Flags="stop2" />
+		<Exception Name="System.Data.InvalidExpressionException" Flags="stop2" />
+		<Exception Name="System.Data.Linq.ChangeConflictException" Flags="stop2" />
+		<Exception Name="System.Data.Linq.DuplicateKeyException" Flags="stop2" />
+		<Exception Name="System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException" Flags="stop2" />
+		<Exception Name="System.Data.MissingPrimaryKeyException" Flags="stop2" />
+		<Exception Name="System.Data.NoNullAllowedException" Flags="stop2" />
+		<Exception Name="System.Data.Odbc.OdbcException" Flags="stop2" />
+		<Exception Name="System.Data.OleDb.OleDbException" Flags="stop2" />
+		<Exception Name="System.Data.OperationAbortedException" Flags="stop2" />
+		<Exception Name="System.Data.OracleClient.OracleException" Flags="stop2" />
+		<Exception Name="System.Data.ReadOnlyException" Flags="stop2" />
+		<Exception Name="System.Data.RowNotInTableException" Flags="stop2" />
+		<Exception Name="System.Data.SqlClient.SqlException" Flags="stop2" />
+		<Exception Name="System.Data.SqlTypes.SqlException" Flags="stop2" />
+		<Exception Name="System.Data.SqlTypes.SqlNotFilledException" Flags="stop2" />
+		<Exception Name="System.Data.SqlTypes.SqlNullValueException" Flags="stop2" />
+		<Exception Name="System.Data.SqlTypes.SqlTruncateException" Flags="stop2" />
+		<Exception Name="System.Data.SqlTypes.SqlTypeException" Flags="stop2" />
+		<Exception Name="System.Data.StrongTypingException" Flags="stop2" />
+		<Exception Name="System.Data.SyntaxErrorException" Flags="stop2" />
+		<Exception Name="System.Data.TypedDataSetGeneratorException" Flags="stop2" />
+		<Exception Name="System.Data.VersionNotFoundException" Flags="stop2" />
+		<Exception Name="System.DataMisalignedException" Flags="stop2" />
+		<Exception Name="System.Deployment.Application.DependentPlatformMissingException" Flags="stop2" />
+		<Exception Name="System.Deployment.Application.DeploymentDownloadException" Flags="stop2" />
+		<Exception Name="System.Deployment.Application.DeploymentException" Flags="stop2" />
+		<Exception Name="System.Deployment.Application.InvalidDeploymentException" Flags="stop2" />
+		<Exception Name="System.Deployment.Application.TrustNotGrantedException" Flags="stop2" />
+		<Exception Name="System.Diagnostics.Eventing.Reader.EventLogException" Flags="stop2" />
+		<Exception Name="System.Diagnostics.Eventing.Reader.EventLogInvalidDataException" Flags="stop2" />
+		<Exception Name="System.Diagnostics.Eventing.Reader.EventLogNotFoundException" Flags="stop2" />
+		<Exception Name="System.Diagnostics.Eventing.Reader.EventLogProviderDisabledException" Flags="stop2" />
+		<Exception Name="System.Diagnostics.Eventing.Reader.EventLogReadingException" Flags="stop2" />
+		<Exception Name="System.DirectoryServices.AccountManagement.MultipleMatchesException" Flags="stop2" />
+		<Exception Name="System.DirectoryServices.AccountManagement.NoMatchingPrincipalException" Flags="stop2" />
+		<Exception Name="System.DirectoryServices.AccountManagement.PasswordException" Flags="stop2" />
+		<Exception Name="System.DirectoryServices.AccountManagement.PrincipalException" Flags="stop2" />
+		<Exception Name="System.DirectoryServices.AccountManagement.PrincipalExistsException" Flags="stop2" />
+		<Exception Name="System.DirectoryServices.AccountManagement.PrincipalOperationException" Flags="stop2" />
+		<Exception Name="System.DirectoryServices.AccountManagement.PrincipalServerDownException" Flags="stop2" />
+		<Exception Name="System.DirectoryServices.ActiveDirectory.ActiveDirectoryObjectExistsException" Flags="stop2" />
+		<Exception Name="System.DirectoryServices.ActiveDirectory.ActiveDirectoryObjectNotFoundException" Flags="stop2" />
+		<Exception Name="System.DirectoryServices.ActiveDirectory.ActiveDirectoryOperationException" Flags="stop2" />
+		<Exception Name="System.DirectoryServices.ActiveDirectory.ActiveDirectoryServerDownException" Flags="stop2" />
+		<Exception Name="System.DirectoryServices.ActiveDirectory.ForestTrustCollisionException" Flags="stop2" />
+		<Exception Name="System.DirectoryServices.ActiveDirectory.SyncFromAllServersOperationException" Flags="stop2" />
+		<Exception Name="System.DirectoryServices.DirectoryServicesCOMException" Flags="stop2" />
+		<Exception Name="System.DirectoryServices.Protocols.BerConversionException" Flags="stop2" />
+		<Exception Name="System.DirectoryServices.Protocols.DirectoryException" Flags="stop2" />
+		<Exception Name="System.DirectoryServices.Protocols.DirectoryOperationException" Flags="stop2" />
+		<Exception Name="System.DirectoryServices.Protocols.DsmlInvalidDocumentException" Flags="stop2" />
+		<Exception Name="System.DirectoryServices.Protocols.ErrorResponseException" Flags="stop2" />
+		<Exception Name="System.DirectoryServices.Protocols.LdapException" Flags="stop2" />
+		<Exception Name="System.DirectoryServices.Protocols.TlsOperationException" Flags="stop2" />
+		<Exception Name="System.DivideByZeroException" Flags="stop2" />
+		<Exception Name="System.DllNotFoundException" Flags="stop2" />
+		<Exception Name="System.Drawing.Printing.InvalidPrinterException" Flags="stop2" />
+		<Exception Name="System.DuplicateWaitObjectException" Flags="stop2" />
+		<Exception Name="System.EnterpriseServices.RegistrationException" Flags="stop2" />
+		<Exception Name="System.EnterpriseServices.ServicedComponentException" Flags="stop2" />
+		<Exception Name="System.EntryPointNotFoundException" Flags="stop2" />
+		<Exception Name="System.Exception" Flags="stop2" />
+		<Exception Name="System.ExecutionEngineException" Flags="stop2" />
+		<Exception Name="System.FieldAccessException" Flags="stop2" />
+		<Exception Name="System.FormatException" Flags="stop2" />
+		<Exception Name="System.IdentityModel.Selectors.CardSpaceException" Flags="stop2" />
+		<Exception Name="System.IdentityModel.Selectors.IdentityValidationException" Flags="stop2" />
+		<Exception Name="System.IdentityModel.Selectors.PolicyValidationException" Flags="stop2" />
+		<Exception Name="System.IdentityModel.Selectors.ServiceBusyException" Flags="stop2" />
+		<Exception Name="System.IdentityModel.Selectors.ServiceNotStartedException" Flags="stop2" />
+		<Exception Name="System.IdentityModel.Selectors.StsCommunicationException" Flags="stop2" />
+		<Exception Name="System.IdentityModel.Selectors.UnsupportedPolicyOptionsException" Flags="stop2" />
+		<Exception Name="System.IdentityModel.Selectors.UntrustedRecipientException" Flags="stop2" />
+		<Exception Name="System.IdentityModel.Selectors.UserCancellationException" Flags="stop2" />
+		<Exception Name="System.IdentityModel.Tokens.SecurityTokenException" Flags="stop2" />
+		<Exception Name="System.IdentityModel.Tokens.SecurityTokenValidationException" Flags="stop2" />
+		<Exception Name="System.IndexOutOfRangeException" Flags="stop2" />
+		<Exception Name="System.InsufficientMemoryException" Flags="stop2" />
+		<Exception Name="System.InvalidCastException" Flags="stop2" />
+		<Exception Name="System.InvalidOperationException" Flags="stop2" />
+		<Exception Name="System.InvalidProgramException" Flags="stop2" />
+		<Exception Name="System.InvalidTimeZoneException" Flags="stop2" />
+		<Exception Name="System.IO.DirectoryNotFoundException" Flags="stop2" />
+		<Exception Name="System.IO.DriveNotFoundException" Flags="stop2" />
+		<Exception Name="System.IO.EndOfStreamException" Flags="stop2" />
+		<Exception Name="System.IO.FileFormatException" Flags="stop2" />
+		<Exception Name="System.IO.FileLoadException" Flags="stop2" />
+		<Exception Name="System.IO.FileNotFoundException" Flags="stop2" />
+		<Exception Name="System.IO.InternalBufferOverflowException" Flags="stop2" />
+		<Exception Name="System.IO.InvalidDataException" Flags="stop2" />
+		<Exception Name="System.IO.IOException" Flags="stop2" />
+		<Exception Name="System.IO.IsolatedStorage.IsolatedStorageException" Flags="stop2" />
+		<Exception Name="System.IO.Log.ReservationNotFoundException" Flags="stop2" />
+		<Exception Name="System.IO.Log.SequenceFullException" Flags="stop2" />
+		<Exception Name="System.IO.PathTooLongException" Flags="stop2" />
+		<Exception Name="System.IO.PipeException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.ActionPreferenceStopException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.ApplicationFailedException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.ArgumentTransformationMetadataException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.CmdletInvocationException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.CmdletProviderInvocationException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.CommandNotFoundException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.DriveNotFoundException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.ExtendedTypeSystemException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.GetValueException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.GetValueInvocationException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.HaltCommandException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.Host.HostException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.Host.PromptingException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.IncompleteParseException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.ItemNotFoundException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.MetadataException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.MethodException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.MethodInvocationException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.ParameterBindingException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.ParentContainsErrorRecordException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.ParseException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.ParsingMetadataException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.PipelineClosedException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.PipelineStoppedException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.ProviderInvocationException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.ProviderNameAmbiguousException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.ProviderNotFoundException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.PSArgumentException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.PSArgumentNullException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.PSArgumentOutOfRangeException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.PSInvalidCastException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.PSInvalidOperationException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.PSNotImplementedException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.PSNotSupportedException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.PSObjectDisposedException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.PSSecurityException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.RedirectedException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.RemoteException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.Runspaces.InvalidPipelineStateException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.Runspaces.InvalidRunspaceStateException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.Runspaces.PSConsoleLoadException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.Runspaces.PSSnapInException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.Runspaces.RunspaceConfigurationAttributeException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.Runspaces.RunspaceConfigurationTypeException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.RuntimeException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.ScriptCallDepthException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.ScriptRequiresException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.SessionStateException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.SessionStateOverflowException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.SessionStateUnauthorizedAccessException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.SetValueException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.SetValueInvocationException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.ValidationMetadataException" Flags="stop2" />
+		<Exception Name="System.Management.Automation.WildcardPatternException" Flags="stop2" />
+		<Exception Name="System.Management.InstanceNotFoundException" Flags="stop2" />
+		<Exception Name="System.Management.Instrumentation.WmiProviderInstallationException" Flags="stop2" />
+		<Exception Name="System.Management.InstrumentationBaseException" Flags="stop2" />
+		<Exception Name="System.Management.InstrumentationException" Flags="stop2" />
+		<Exception Name="System.Management.ManagementException" Flags="stop2" />
+		<Exception Name="System.MemberAccessException" Flags="stop2" />
+		<Exception Name="System.Messaging.MessageQueueException" Flags="stop2" />
+		<Exception Name="System.MethodAccessException" Flags="stop2" />
+		<Exception Name="System.MissingFieldException" Flags="stop2" />
+		<Exception Name="System.MissingMemberException" Flags="stop2" />
+		<Exception Name="System.MissingMethodException" Flags="stop2" />
+		<Exception Name="System.MulticastNotSupportedException" Flags="stop2" />
+		<Exception Name="System.Net.CookieException" Flags="stop2" />
+		<Exception Name="System.Net.HttpListenerException" Flags="stop2" />
+		<Exception Name="System.Net.Mail.SmtpException" Flags="stop2" />
+		<Exception Name="System.Net.Mail.SmtpFailedRecipientException" Flags="stop2" />
+		<Exception Name="System.Net.Mail.SmtpFailedRecipientsException" Flags="stop2" />
+		<Exception Name="System.Net.NetworkInformation.NetworkInformationException" Flags="stop2" />
+		<Exception Name="System.Net.NetworkInformation.PingException" Flags="stop2" />
+		<Exception Name="System.Net.PeerToPeer.PeerToPeerException" Flags="stop2" />
+		<Exception Name="System.Net.ProtocolViolationException" Flags="stop2" />
+		<Exception Name="System.Net.Sockets.SocketException" Flags="stop2" />
+		<Exception Name="System.Net.WebException" Flags="stop2" />
+		<Exception Name="System.NotCancelableException" Flags="stop2" />
+		<Exception Name="System.NotFiniteNumberException" Flags="stop2" />
+		<Exception Name="System.NotImplementedException" Flags="stop2" />
+		<Exception Name="System.NotSupportedException" Flags="stop2" />
+		<Exception Name="System.NullReferenceException" Flags="stop2" />
+		<Exception Name="System.ObjectDisposedException" Flags="stop2" />
+		<Exception Name="System.OperationCanceledException" Flags="stop2" />
+		<Exception Name="System.OutOfMemoryException" Flags="stop2" />
+		<Exception Name="System.OverflowException" Flags="stop2" />
+		<Exception Name="System.PlatformNotSupportedException" Flags="stop2" />
+		<Exception Name="System.Printing.PrintCommitAttributesException" Flags="stop2" />
+		<Exception Name="System.Printing.PrintingCanceledException" Flags="stop2" />
+		<Exception Name="System.Printing.PrintJobException" Flags="stop2" />
+		<Exception Name="System.Printing.PrintQueueException" Flags="stop2" />
+		<Exception Name="System.Printing.PrintServerException" Flags="stop2" />
+		<Exception Name="System.Printing.PrintSystemException" Flags="stop2" />
+		<Exception Name="System.RankException" Flags="stop2" />
+		<Exception Name="System.Reflection.AmbiguousMatchException" Flags="stop2" />
+		<Exception Name="System.Reflection.InvalidFilterCriteriaException" Flags="stop2" />
+		<Exception Name="System.Reflection.MissingMetadataException" Flags="stop1, stop2" />
+		<Exception Name="System.Reflection.MissingRuntimeArtifactException" Flags="stop1, stop2" />
+		<Exception Name="System.Reflection.ReflectionTypeLoadException" Flags="stop2" />
+		<Exception Name="System.Reflection.TargetException" Flags="stop2" />
+		<Exception Name="System.Reflection.TargetInvocationException" Flags="stop2" />
+		<Exception Name="System.Reflection.TargetParameterCountException" Flags="stop2" />
+		<Exception Name="System.Resources.MissingManifestResourceException" Flags="stop2" />
+		<Exception Name="System.Resources.MissingSatelliteAssemblyException" Flags="stop2" />
+		<Exception Name="System.Runtime.InteropServices.COMException" Flags="stop2" />
+		<Exception Name="System.Runtime.InteropServices.ComObjectInUseException" Flags="stop2" />
+		<Exception Name="System.Runtime.InteropServices.ExternalException" Flags="stop2" />
+		<Exception Name="System.Runtime.InteropServices.InvalidComObjectException" Flags="stop2" />
+		<Exception Name="System.Runtime.InteropServices.InvalidOleVariantTypeException" Flags="stop2" />
+		<Exception Name="System.Runtime.InteropServices.MarshalDirectiveException" Flags="stop2" />
+		<Exception Name="System.Runtime.InteropServices.SafeArrayRankMismatchException" Flags="stop2" />
+		<Exception Name="System.Runtime.InteropServices.SafeArrayTypeMismatchException" Flags="stop2" />
+		<Exception Name="System.Runtime.InteropServices.SEHException" Flags="stop2" />
+		<Exception Name="System.Runtime.Remoting.MetadataServices.SUDSGeneratorException" Flags="stop2" />
+		<Exception Name="System.Runtime.Remoting.MetadataServices.SUDSParserException" Flags="stop2" />
+		<Exception Name="System.Runtime.Remoting.RemotingException" Flags="stop2" />
+		<Exception Name="System.Runtime.Remoting.RemotingTimeoutException" Flags="stop2" />
+		<Exception Name="System.Runtime.Remoting.ServerException" Flags="stop2" />
+		<Exception Name="System.Runtime.Serialization.InvalidDataContractException" Flags="stop2" />
+		<Exception Name="System.Runtime.Serialization.SerializationException" Flags="stop2" />
+		<Exception Name="System.Security.AccessControl.PrivilegeNotHeldException" Flags="stop2" />
+		<Exception Name="System.Security.Authentication.AuthenticationException" Flags="stop2" />
+		<Exception Name="System.Security.Authentication.InvalidCredentialException" Flags="stop2" />
+		<Exception Name="System.Security.Cryptography.CryptographicException" Flags="stop2" />
+		<Exception Name="System.Security.Cryptography.CryptographicUnexpectedOperationException" Flags="stop2" />
+		<Exception Name="System.Security.HostProtectionException" Flags="stop2" />
+		<Exception Name="System.Security.Policy.PolicyException" Flags="stop2" />
+		<Exception Name="System.Security.Principal.IdentityNotMappedExceptionn" Flags="stop2" />
+		<Exception Name="System.Security.RightsManagement.RightsManagementException" Flags="stop2" />
+		<Exception Name="System.Security.SecurityException" Flags="stop2" />
+		<Exception Name="System.Security.VerificationException" Flags="stop2" />
+		<Exception Name="System.Security.XmlSyntaxException" Flags="stop2" />
+		<Exception Name="System.ServiceModel.ActionNotSupportedException" Flags="stop2" />
+		<Exception Name="System.ServiceModel.AddressAccessDeniedException" Flags="stop2" />
+		<Exception Name="System.ServiceModel.AddressAlreadyInUseException" Flags="stop2" />
+		<Exception Name="System.ServiceModel.Channels.InvalidChannelBindingException" Flags="stop2" />
+		<Exception Name="System.ServiceModel.Channels.PnrpPeerResolver+PnrpException" Flags="stop2" />
+		<Exception Name="System.ServiceModel.ChannelTerminatedException" Flags="stop2" />
+		<Exception Name="System.ServiceModel.CommunicationException" Flags="stop2" />
+		<Exception Name="System.ServiceModel.CommunicationObjectAbortedException" Flags="stop2" />
+		<Exception Name="System.ServiceModel.CommunicationObjectFaultedException" Flags="stop2" />
+		<Exception Name="System.ServiceModel.Dispatcher.FilterInvalidBodyAccessException" Flags="stop2" />
+		<Exception Name="System.ServiceModel.Dispatcher.InvalidBodyAccessException" Flags="stop2" />
+		<Exception Name="System.ServiceModel.Dispatcher.MessageFilterException" Flags="stop2" />
+		<Exception Name="System.ServiceModel.Dispatcher.MultipleFilterMatchesException" Flags="stop2" />
+		<Exception Name="System.ServiceModel.Dispatcher.NavigatorInvalidBodyAccessException" Flags="stop2" />
+		<Exception Name="System.ServiceModel.Dispatcher.XPathNavigatorException" Flags="stop2" />
+		<Exception Name="System.ServiceModel.EndpointNotFoundException" Flags="stop2" />
+		<Exception Name="System.ServiceModel.FaultException" Flags="stop2" />
+		<Exception Name="System.ServiceModel.FaultException`1" Flags="stop2" />
+		<Exception Name="System.ServiceModel.InvalidMessageContractException" Flags="stop2" />
+		<Exception Name="System.ServiceModel.MessageHeaderException" Flags="stop2" />
+		<Exception Name="System.ServiceModel.MsmqException" Flags="stop2" />
+		<Exception Name="System.ServiceModel.MsmqPoisonMessageException" Flags="stop2" />
+		<Exception Name="System.ServiceModel.PoisonMessageException" Flags="stop2" />
+		<Exception Name="System.ServiceModel.ProtocolException" Flags="stop2" />
+		<Exception Name="System.ServiceModel.QuotaExceededException" Flags="stop2" />
+		<Exception Name="System.ServiceModel.Security.ExpiredSecurityTokenException" Flags="stop2" />
+		<Exception Name="System.ServiceModel.Security.MessageSecurityException" Flags="stop2" />
+		<Exception Name="System.ServiceModel.Security.SecurityAccessDeniedException" Flags="stop2" />
+		<Exception Name="System.ServiceModel.Security.SecurityNegotiationException" Flags="stop2" />
+		<Exception Name="System.ServiceModel.ServerTooBusyException" Flags="stop2" />
+		<Exception Name="System.ServiceModel.ServiceActivationException" Flags="stop2" />
+		<Exception Name="System.ServiceProcess.TimeoutException" Flags="stop2" />
+		<Exception Name="System.StackOverflowException" Flags="stop2" />
+		<Exception Name="System.SystemException" Flags="stop2" />
+		<Exception Name="System.Text.DecoderFallbackException" Flags="stop2" />
+		<Exception Name="System.Text.EncoderFallbackException" Flags="stop2" />
+		<Exception Name="System.Threading.AbandonedMutexException" Flags="stop2" />
+		<Exception Name="System.Threading.LockRecursionException" Flags="stop2" />
+		<Exception Name="System.Threading.SemaphoreFullException" Flags="stop2" />
+		<Exception Name="System.Threading.SynchronizationLockException" Flags="stop2" />
+		<Exception Name="System.Threading.Tasks.TaskCanceledException" Flags="stop2" />
+		<Exception Name="System.Threading.ThreadAbortException" />
+		<Exception Name="System.Threading.ThreadInterruptedException" Flags="stop2" />
+		<Exception Name="System.Threading.ThreadStartException" Flags="stop2" />
+		<Exception Name="System.Threading.ThreadStateException" Flags="stop2" />
+		<Exception Name="System.Threading.WaitHandleCannotBeOpenedException" Flags="stop2" />
+		<Exception Name="System.TimeoutException" Flags="stop2" />
+		<Exception Name="System.TimeZoneNotFoundException" Flags="stop2" />
+		<Exception Name="System.Transactions.TransactionAbortedException" Flags="stop2" />
+		<Exception Name="System.Transactions.TransactionException" Flags="stop2" />
+		<Exception Name="System.Transactions.TransactionInDoubtException" Flags="stop2" />
+		<Exception Name="System.Transactions.TransactionManagerCommunicationException" Flags="stop2" />
+		<Exception Name="System.Transactions.TransactionPromotionException" Flags="stop2" />
+		<Exception Name="System.TypeAccessException" Flags="stop2" />
+		<Exception Name="System.TypeInitializationException" Flags="stop2" />
+		<Exception Name="System.TypeLoadException" Flags="stop2" />
+		<Exception Name="System.TypeUnloadedException" Flags="stop2" />
+		<Exception Name="System.UnauthorizedAccessException" Flags="stop2" />
+		<Exception Name="System.UriFormatException" Flags="stop2" />
+		<Exception Name="System.Web.Caching.DatabaseNotEnabledForNotificationException" Flags="stop2" />
+		<Exception Name="System.Web.Caching.TableNotEnabledForNotificationException" Flags="stop2" />
+		<Exception Name="System.Web.HttpCompileException" Flags="stop2" />
+		<Exception Name="System.Web.HttpException" Flags="stop2" />
+		<Exception Name="System.Web.HttpParseException" Flags="stop2" />
+		<Exception Name="System.Web.HttpRequestValidationException" Flags="stop2" />
+		<Exception Name="System.Web.HttpUnhandledException" Flags="stop2" />
+		<Exception Name="System.Web.Management.SqlExecutionException" Flags="stop2" />
+		<Exception Name="System.Web.Security.MembershipCreateUserException" Flags="stop2" />
+		<Exception Name="System.Web.Security.MembershipPasswordException" Flags="stop2" />
+		<Exception Name="System.Web.Services.Protocols.SoapException" Flags="stop2" />
+		<Exception Name="System.Web.Services.Protocols.SoapHeaderException" Flags="stop2" />
+		<Exception Name="System.Web.UI.ViewStateException" Flags="stop2" />
+		<Exception Name="System.Windows.Automation.ElementNotAvailableException" Flags="stop2" />
+		<Exception Name="System.Windows.Automation.ElementNotEnabledException" Flags="stop2" />
+		<Exception Name="System.Windows.Automation.NoClickablePointException" Flags="stop2" />
+		<Exception Name="System.Windows.Automation.ProxyAssemblyNotLoadedException" Flags="stop2" />
+		<Exception Name="System.Windows.Controls.PrintDialogException" Flags="stop2" />
+		<Exception Name="System.Windows.Forms.AxHost+InvalidActiveXStateException" Flags="stop2" />
+		<Exception Name="System.Windows.Markup.XamlParseException" Flags="stop1, stop2" />
+		<Exception Name="System.Windows.Media.Animation.AnimationException" Flags="stop2" />
+		<Exception Name="System.Windows.Media.InvalidWmpVersionException" Flags="stop2" />
+		<Exception Name="System.Windows.ResourceReferenceKeyNotFoundException" Flags="stop2" />
+		<Exception Name="System.Windows.Xps.XpsException" Flags="stop2" />
+		<Exception Name="System.Windows.Xps.XpsPackagingException" Flags="stop2" />
+		<Exception Name="System.Windows.Xps.XpsSerializationException" Flags="stop2" />
+		<Exception Name="System.Windows.Xps.XpsWriterException" Flags="stop2" />
+		<Exception Name="System.Workflow.Activities.EventDeliveryFailedException" Flags="stop2" />
+		<Exception Name="System.Workflow.Activities.Rules.RuleEvaluationException" Flags="stop2" />
+		<Exception Name="System.Workflow.Activities.Rules.RuleEvaluationIncompatibleTypesException" Flags="stop2" />
+		<Exception Name="System.Workflow.Activities.Rules.RuleException" Flags="stop2" />
+		<Exception Name="System.Workflow.Activities.Rules.RuleSetValidationException" Flags="stop2" />
+		<Exception Name="System.Workflow.Activities.WorkflowAuthorizationException" Flags="stop2" />
+		<Exception Name="System.Workflow.ComponentModel.Compiler.WorkflowValidationFailedException" Flags="stop2" />
+		<Exception Name="System.Workflow.ComponentModel.Serialization.WorkflowMarkupSerializationException" Flags="stop2" />
+		<Exception Name="System.Workflow.ComponentModel.WorkflowTerminatedException" Flags="stop2" />
+		<Exception Name="System.Workflow.Runtime.Hosting.PersistenceException" Flags="stop2" />
+		<Exception Name="System.Workflow.Runtime.Tracking.TrackingProfileDeserializationException" Flags="stop2" />
+		<Exception Name="System.Workflow.Runtime.WorkflowOwnershipException" Flags="stop2" />
+		<Exception Name="System.Xml.Schema.XmlSchemaException" Flags="stop2" />
+		<Exception Name="System.Xml.Schema.XmlSchemaInferenceException" Flags="stop2" />
+		<Exception Name="System.Xml.Schema.XmlSchemaValidationException" Flags="stop2" />
+		<Exception Name="System.Xml.XmlException" Flags="stop2" />
+		<Exception Name="System.Xml.XPath.XPathException" Flags="stop2" />
+		<Exception Name="System.Xml.Xsl.XsltCompileException" Flags="stop2" />
+		<Exception Name="System.Xml.Xsl.XsltException" Flags="stop2" />
+	</ExceptionDefs>
+	<ExceptionDefs Category="DotNet">
+		<Exception Name="UnityEngine.AndroidJavaException" />
+		<Exception Name="UnityEngine.Assertions.AssertionException" />
+		<Exception Name="UnityEngine.ExitGUIException" />
+		<Exception Name="UnityEngine.MissingComponentException" />
+		<Exception Name="UnityEngine.MissingReferenceException" />
+		<Exception Name="UnityEngine.PlayerPrefsException" />
+		<Exception Name="UnityEngine.UnassignedReferenceException" />
+		<Exception Name="UnityEngine.UnityException" />
+	</ExceptionDefs>
+	<ExceptionDefs Category="MDA">
+		<Exception Name="AsynchronousThreadAbort" />
+		<Exception Name="BindingFailure" />
+		<Exception Name="CallbackOnCollectedDelegate" Flags="stop1" />
+		<Exception Name="ContextSwitchDeadlock" Flags="stop1" />
+		<Exception Name="DangerousThreadingAPI" />
+		<Exception Name="DateTimeInvalidLocalFormat" Flags="stop1" />
+		<Exception Name="DirtyCastAndCallOnInterface" />
+		<Exception Name="DisconnectedContext" Flags="stop1" />
+		<Exception Name="DllMainReturnsFalse" />
+		<Exception Name="ExceptionSwallowedOnCallFromCom" />
+		<Exception Name="FailedQI" />
+		<Exception Name="FatalExecutionEngineError" Flags="stop1" />
+		<Exception Name="GcManagedToUnmanaged" />
+		<Exception Name="GcUnmanagedToManaged" />
+		<Exception Name="IllegalPrepareConstrainedRegion" />
+		<Exception Name="InvalidApartmentStateChange" />
+		<Exception Name="InvalidCERCall" />
+		<Exception Name="InvalidConfigFile" />
+		<Exception Name="InvalidFunctionPointerInDelegate" Flags="stop1" />
+		<Exception Name="InvalidGCHandleCookie" />
+		<Exception Name="InvalidIUnknown" />
+		<Exception Name="InvalidMemberDeclaration" Flags="stop1" />
+		<Exception Name="InvalidOverlappedToPinvoke" />
+		<Exception Name="InvalidVariant" Flags="stop1" />
+		<Exception Name="JitCompilationStart" />
+		<Exception Name="LoaderLock" Flags="stop1" />
+		<Exception Name="LoadFromContext" />
+		<Exception Name="MarshalCleanupError" />
+		<Exception Name="Marshaling" />
+		<Exception Name="MemberInfoCacheCreation" />
+		<Exception Name="ModuloObjectHashcode" />
+		<Exception Name="NonComVisibleBaseClass" Flags="stop1" />
+		<Exception Name="NotMarshalable" />
+		<Exception Name="OpenGenericCERCall" />
+		<Exception Name="OverlappedFreeError" />
+		<Exception Name="PInvokeLog" />
+		<Exception Name="PInvokeStackImbalance" Flags="stop1" />
+		<Exception Name="RaceOnRCWCleanup" Flags="stop1" />
+		<Exception Name="Reentrancy" Flags="stop1" />
+		<Exception Name="ReleaseHandleFailed" />
+		<Exception Name="ReportAvOnComRelease" />
+		<Exception Name="StreamWriterBufferedDataLost" />
+		<Exception Name="VirtualCERCall" />
+		<Exception Name="XmlValidationError" />
+	</ExceptionDefs>
+</Exceptions>

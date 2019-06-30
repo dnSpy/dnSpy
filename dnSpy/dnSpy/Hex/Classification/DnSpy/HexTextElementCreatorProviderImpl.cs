@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -39,7 +39,7 @@ namespace dnSpy.Hex.Classification.DnSpy {
 
 		public override HexTextElementCreator Create() => Create(CT.ContentTypes.DefaultHexToolTip);
 		public override HexTextElementCreator Create(string contentType) {
-			if (contentType == null)
+			if (contentType is null)
 				throw new ArgumentNullException(nameof(contentType));
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
 			return new HexTextElementCreatorImpl(textElementProvider, classificationFormatMap, contentType);

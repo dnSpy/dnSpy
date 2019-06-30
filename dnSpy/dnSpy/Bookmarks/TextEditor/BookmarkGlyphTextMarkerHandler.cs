@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,20 +26,20 @@ using dnSpy.Contracts.Text.Editor;
 
 namespace dnSpy.Bookmarks.TextEditor {
 	abstract class BookmarkGlyphTextMarkerHandler : IGlyphTextMarkerHandler {
-		public abstract IGlyphTextMarkerHandlerMouseProcessor MouseProcessor { get; }
+		public abstract IGlyphTextMarkerHandlerMouseProcessor? MouseProcessor { get; }
 		public abstract IEnumerable<GuidObject> GetContextMenuObjects(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker, Point marginRelativePoint);
-		public abstract GlyphTextMarkerToolTip GetToolTipContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker);
-		public abstract FrameworkElement GetPopupContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker);
+		public abstract GlyphTextMarkerToolTip? GetToolTipContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker);
+		public abstract FrameworkElement? GetPopupContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker);
 	}
 
 	[Export(typeof(BookmarkGlyphTextMarkerHandler))]
 	sealed class BookmarkGlyphTextMarkerHandlerImpl : BookmarkGlyphTextMarkerHandler {
-		public override IGlyphTextMarkerHandlerMouseProcessor MouseProcessor => null;
-		public override FrameworkElement GetPopupContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker) => null;
-		public override GlyphTextMarkerToolTip GetToolTipContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker) => null;
+		public override IGlyphTextMarkerHandlerMouseProcessor? MouseProcessor => null;
+		public override FrameworkElement? GetPopupContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker) => null;
+		public override GlyphTextMarkerToolTip? GetToolTipContent(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker) => null;
 
 		public override IEnumerable<GuidObject> GetContextMenuObjects(IGlyphTextMarkerHandlerContext context, IGlyphTextMarker marker, Point marginRelativePoint) {
-			var bm = (Bookmark)marker.Tag;
+			var bm = (Bookmark)marker.Tag!;
 			yield return new GuidObject(MenuConstants.GUIDOBJ_BOOKMARK_GUID, bm);
 		}
 	}

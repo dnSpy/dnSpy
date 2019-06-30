@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,9 +19,10 @@
 
 using System;
 using dnSpy.Contracts.Debugger.Exceptions;
+using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.Debugger.ToolWindows.Exceptions {
-	sealed class ExceptionCategoryVM {
+	sealed class ExceptionCategoryVM : ViewModelBase {
 		public string DisplayName { get; }
 		public string ShortDisplayName { get; }
 		public DbgExceptionCategoryDefinition? Definition { get; }

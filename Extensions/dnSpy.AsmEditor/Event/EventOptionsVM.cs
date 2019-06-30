@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,20 +34,20 @@ namespace dnSpy.AsmEditor.Event {
 		readonly EventDefOptions origOptions;
 
 		public IDnlibTypePicker DnlibTypePicker {
-			set { dnlibTypePicker = value; }
+			set => dnlibTypePicker = value;
 		}
-		IDnlibTypePicker dnlibTypePicker;
+		IDnlibTypePicker? dnlibTypePicker;
 
 		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
 		public ICommand PickAddMethodCommand => new RelayCommand(a => PickAddMethod());
 		public ICommand PickInvokeMethodCommand => new RelayCommand(a => PickInvokeMethod());
 		public ICommand PickRemoveMethodCommand => new RelayCommand(a => PickRemoveMethod());
-		public ICommand ClearAddMethodCommand => new RelayCommand(a => AddMethod = null, a => AddMethod != null);
-		public ICommand ClearInvokeMethodCommand => new RelayCommand(a => InvokeMethod = null, a => InvokeMethod != null);
-		public ICommand ClearRemoveMethodCommand => new RelayCommand(a => RemoveMethod = null, a => RemoveMethod != null);
+		public ICommand ClearAddMethodCommand => new RelayCommand(a => AddMethod = null, a => !(AddMethod is null));
+		public ICommand ClearInvokeMethodCommand => new RelayCommand(a => InvokeMethod = null, a => !(InvokeMethod is null));
+		public ICommand ClearRemoveMethodCommand => new RelayCommand(a => RemoveMethod = null, a => !(RemoveMethod is null));
 
 		public EventAttributes Attributes {
-			get { return attributes; }
+			get => attributes;
 			set {
 				if (attributes != value) {
 					attributes = value;
@@ -60,13 +60,13 @@ namespace dnSpy.AsmEditor.Event {
 		EventAttributes attributes;
 
 		public bool SpecialName {
-			get { return GetFlagValue(EventAttributes.SpecialName); }
-			set { SetFlagValue(EventAttributes.SpecialName, value); }
+			get => GetFlagValue(EventAttributes.SpecialName);
+			set => SetFlagValue(EventAttributes.SpecialName, value);
 		}
 
 		public bool RTSpecialName {
-			get { return GetFlagValue(EventAttributes.RTSpecialName); }
-			set { SetFlagValue(EventAttributes.RTSpecialName, value); }
+			get => GetFlagValue(EventAttributes.RTSpecialName);
+			set => SetFlagValue(EventAttributes.RTSpecialName, value);
 		}
 
 		bool GetFlagValue(EventAttributes flag) => (Attributes & flag) != 0;
@@ -78,8 +78,8 @@ namespace dnSpy.AsmEditor.Event {
 				Attributes &= ~flag;
 		}
 
-		public string Name {
-			get { return name; }
+		public string? Name {
+			get => name;
 			set {
 				if (name != value) {
 					name = value;
@@ -87,11 +87,11 @@ namespace dnSpy.AsmEditor.Event {
 				}
 			}
 		}
-		UTF8String name;
+		UTF8String? name;
 
-		public TypeSig EventTypeSig {
-			get { return TypeSigCreator.TypeSig; }
-			set { TypeSigCreator.TypeSig = value; }
+		public TypeSig? EventTypeSig {
+			get => TypeSigCreator.TypeSig;
+			set => TypeSigCreator.TypeSig = value;
 		}
 
 		public string EventTypeHeader => string.Format(dnSpy_AsmEditor_Resources.EventType, TypeSigCreator.TypeSigDnlibFullName);
@@ -99,10 +99,10 @@ namespace dnSpy.AsmEditor.Event {
 		public string AddMethodFullName => GetFullName(AddMethod);
 		public string InvokeMethodFullName => GetFullName(InvokeMethod);
 		public string RemoveMethodFullName => GetFullName(RemoveMethod);
-		static string GetFullName(MethodDef md) => md == null ? "null" : md.FullName;
+		static string GetFullName(MethodDef? md) => md is null ? "null" : md.FullName;
 
-		public MethodDef AddMethod {
-			get { return addMethod; }
+		public MethodDef? AddMethod {
+			get => addMethod;
 			set {
 				if (addMethod != value) {
 					addMethod = value;
@@ -111,10 +111,10 @@ namespace dnSpy.AsmEditor.Event {
 				}
 			}
 		}
-		MethodDef addMethod;
+		MethodDef? addMethod;
 
-		public MethodDef InvokeMethod {
-			get { return invokeMethod; }
+		public MethodDef? InvokeMethod {
+			get => invokeMethod;
 			set {
 				if (invokeMethod != value) {
 					invokeMethod = value;
@@ -123,10 +123,10 @@ namespace dnSpy.AsmEditor.Event {
 				}
 			}
 		}
-		MethodDef invokeMethod;
+		MethodDef? invokeMethod;
 
-		public MethodDef RemoveMethod {
-			get { return removeMethod; }
+		public MethodDef? RemoveMethod {
+			get => removeMethod;
 			set {
 				if (removeMethod != value) {
 					removeMethod = value;
@@ -135,7 +135,7 @@ namespace dnSpy.AsmEditor.Event {
 				}
 			}
 		}
-		MethodDef removeMethod;
+		MethodDef? removeMethod;
 
 		public MethodDefsVM OtherMethodsVM { get; }
 		public CustomAttributesVM CustomAttributesVM { get; }
@@ -150,7 +150,7 @@ namespace dnSpy.AsmEditor.Event {
 				CanAddGenericMethodVar = true,
 				OwnerType = ownerType,
 			};
-			if (ownerType != null && ownerType.GenericParameters.Count == 0)
+			if (!(ownerType is null) && ownerType.GenericParameters.Count == 0)
 				typeSigCreatorOptions.CanAddGenericTypeVar = false;
 			TypeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
 			TypeSigCreator.PropertyChanged += typeSigCreator_PropertyChanged;
@@ -172,27 +172,27 @@ namespace dnSpy.AsmEditor.Event {
 
 		void Reinitialize() => InitializeFrom(origOptions);
 
-		MethodDef PickMethod(MethodDef origMethod) {
-			if (dnlibTypePicker == null)
+		MethodDef? PickMethod(MethodDef? origMethod) {
+			if (dnlibTypePicker is null)
 				throw new InvalidOperationException();
 			return dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Method, new SameModuleDocumentTreeNodeFilter(ownerModule, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.MethodDef)), origMethod, ownerModule);
 		}
 
 		void PickAddMethod() {
 			var method = PickMethod(AddMethod);
-			if (method != null)
+			if (!(method is null))
 				AddMethod = method;
 		}
 
 		void PickInvokeMethod() {
 			var method = PickMethod(InvokeMethod);
-			if (method != null)
+			if (!(method is null))
 				InvokeMethod = method;
 		}
 
 		void PickRemoveMethod() {
 			var method = PickMethod(RemoveMethod);
-			if (method != null)
+			if (!(method is null))
 				RemoveMethod = method;
 		}
 
@@ -217,7 +217,7 @@ namespace dnSpy.AsmEditor.Event {
 			options.InvokeMethod = InvokeMethod;
 			options.RemoveMethod = RemoveMethod;
 			options.OtherMethods.Clear();
-			options.OtherMethods.AddRange(OtherMethodsVM.Collection.Select(a => a.Method));
+			options.OtherMethods.AddRange(OtherMethodsVM.Collection.Select(a => a.Method!));
 			options.CustomAttributes.Clear();
 			options.CustomAttributes.AddRange(CustomAttributesVM.Collection.Select(a => a.CreateCustomAttributeOptions().Create()));
 			return options;

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -52,7 +52,7 @@ namespace dnSpy.Hex.Editor.Search {
 		public abstract void FindNext(bool forward);
 		public abstract void FindNextSelected(bool forward);
 		public abstract CommandTargetStatus CanExecuteSearchControl(Guid group, int cmdId);
-		public abstract CommandTargetStatus ExecuteSearchControl(Guid group, int cmdId, object args, ref object result);
+		public abstract CommandTargetStatus ExecuteSearchControl(Guid group, int cmdId, object? args, ref object? result);
 		public abstract IEnumerable<HexBufferSpan> GetSpans(NormalizedHexBufferSpanCollection spans);
 		public abstract void RegisterHexMarkerListener(IHexMarkerListener listener);
 	}
@@ -61,15 +61,15 @@ namespace dnSpy.Hex.Editor.Search {
 		void RaiseTagsChanged(HexBufferSpan span);
 	}
 
-	sealed class DataKindVM {
+	sealed class DataKindVM : ViewModelBase {
 		public HexDataKind DataKind { get; }
 		public string DisplayName { get; }
 		public string InputGestureText { get; }
 
-		public DataKindVM(HexDataKind dataKind, string displayName, string inputGestureText = null) {
+		public DataKindVM(HexDataKind dataKind, string displayName, string? inputGestureText = null) {
 			DataKind = dataKind;
 			DisplayName = displayName;
-			InputGestureText = inputGestureText == null ? string.Empty : "(" + inputGestureText + ")";
+			InputGestureText = inputGestureText is null ? string.Empty : "(" + inputGestureText + ")";
 		}
 	}
 
@@ -77,12 +77,12 @@ namespace dnSpy.Hex.Editor.Search {
 		public event PropertyChangedEventHandler PropertyChanged;
 		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[Export(typeof(HexAdornmentLayerDefinition))]
 		[VSUTIL.Name(PredefinedHexAdornmentLayers.Search)]
 		[HexLayerKind(HexLayerKind.Overlay)]
 		static HexAdornmentLayerDefinition searchServiceAdornmentLayerDefinition;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 
 		enum SearchKind {
 			None,
@@ -109,7 +109,7 @@ namespace dnSpy.Hex.Editor.Search {
 		}
 
 		public bool FoundMatch {
-			get { return foundMatch; }
+			get => foundMatch;
 			set {
 				if (foundMatch != value) {
 					foundMatch = value;
@@ -120,7 +120,7 @@ namespace dnSpy.Hex.Editor.Search {
 		bool foundMatch;
 
 		public bool Searching {
-			get { return searching; }
+			get => searching;
 			set {
 				if (searching != value) {
 					searching = value;
@@ -131,8 +131,8 @@ namespace dnSpy.Hex.Editor.Search {
 		bool searching;
 
 		public string SearchString {
-			get { return searchString; }
-			set { SetSearchString(value); }
+			get => searchString;
+			set => SetSearchString(value);
 		}
 		string searchString;
 
@@ -169,7 +169,7 @@ namespace dnSpy.Hex.Editor.Search {
 		public ICommand ToggleFindReplaceCommand => new RelayCommand(a => ToggleFindReplace(), a => CanToggleFindReplace);
 
 		public string ReplaceString {
-			get { return replaceString; }
+			get => replaceString;
 			set {
 				if (replaceString != value) {
 					replaceString = value ?? string.Empty;
@@ -181,7 +181,7 @@ namespace dnSpy.Hex.Editor.Search {
 		string replaceString;
 
 		public bool MatchCase {
-			get { return matchCase; }
+			get => matchCase;
 			set {
 				if (matchCase != value) {
 					matchCase = value;
@@ -194,7 +194,7 @@ namespace dnSpy.Hex.Editor.Search {
 		bool matchCase;
 
 		public bool IsBigEndian {
-			get { return isBigEndian; }
+			get => isBigEndian;
 			set {
 				if (isBigEndian != value) {
 					isBigEndian = value;
@@ -207,14 +207,14 @@ namespace dnSpy.Hex.Editor.Search {
 		bool isBigEndian;
 
 		public HexDataKind DataKind {
-			get { return selectedDataKindVM.DataKind; }
-			set { SelectedDataKindVM = dataKinds.First(a => a.DataKind == value); }
+			get => selectedDataKindVM.DataKind;
+			set => SelectedDataKindVM = dataKinds.First(a => a.DataKind == value);
 		}
 
 		public System.Collections.IList DataKinds => dataKinds;
 		readonly ObservableCollection<DataKindVM> dataKinds;
 		public object SelectedDataKindVM {
-			get { return selectedDataKindVM; }
+			get => selectedDataKindVM;
 			set {
 				if (selectedDataKindVM != value) {
 					selectedDataKindVM = (DataKindVM)value;
@@ -241,8 +241,7 @@ namespace dnSpy.Hex.Editor.Search {
 			new DataKindVM(HexDataKind.Single, "Single"),
 			new DataKindVM(HexDataKind.Double, "Double"),
 		};
-		static string GetStringDataKind(string encodingName) =>
-			string.Format("String ({0})", encodingName);
+		static string GetStringDataKind(string encodingName) => $"String ({encodingName})";
 
 		readonly WpfHexView wpfHexView;
 		readonly HexEditorOperations editorOperations;
@@ -250,12 +249,12 @@ namespace dnSpy.Hex.Editor.Search {
 		readonly SearchSettings searchSettings;
 		readonly IMessageBoxService messageBoxService;
 		readonly List<IHexMarkerListener> listeners;
-		SearchControl searchControl;
+		SearchControl? searchControl;
 		SearchControlPosition searchControlPosition;
-		HexAdornmentLayer layer;
+		HexAdornmentLayer? layer;
 
 		public HexViewSearchServiceImpl(WpfHexView wpfHexView, HexSearchServiceFactory hexSearchServiceFactory, SearchSettings searchSettings, IMessageBoxService messageBoxService, HexEditorOperationsFactoryService editorOperationsFactoryService) {
-			if (editorOperationsFactoryService == null)
+			if (editorOperationsFactoryService is null)
 				throw new ArgumentNullException(nameof(editorOperationsFactoryService));
 			dataKinds = new ObservableCollection<DataKindVM>(dataKindVMList);
 			selectedDataKindVM = dataKinds.First();
@@ -280,6 +279,7 @@ namespace dnSpy.Hex.Editor.Search {
 				return CommandTargetStatus.NotHandled;
 			if (!IsSearchControlVisible)
 				return CommandTargetStatus.NotHandled;
+			Debug.Assert(!(searchControl is null));
 
 			if (inIncrementalSearch) {
 				if (group == CommandConstants.HexEditorGroup) {
@@ -310,11 +310,12 @@ namespace dnSpy.Hex.Editor.Search {
 			return CommandTargetStatus.LetWpfHandleCommand;
 		}
 
-		public override CommandTargetStatus ExecuteSearchControl(Guid group, int cmdId, object args, ref object result) {
+		public override CommandTargetStatus ExecuteSearchControl(Guid group, int cmdId, object? args, ref object? result) {
 			if (wpfHexView.IsClosed)
 				return CommandTargetStatus.NotHandled;
 			if (!IsSearchControlVisible)
 				return CommandTargetStatus.NotHandled;
+			Debug.Assert(!(searchControl is null));
 
 			if (group == CommandConstants.HexEditorGroup && cmdId == (int)HexEditorIds.CANCEL) {
 				if (inIncrementalSearch)
@@ -333,7 +334,7 @@ namespace dnSpy.Hex.Editor.Search {
 
 					case HexEditorIds.TYPECHAR:
 						var s = args as string;
-						if (s != null && s.IndexOfAny(CT.LineConstants.newLineChars) < 0)
+						if (!(s is null) && s.IndexOfAny(CT.LineConstants.newLineChars) < 0)
 							SetIncrementalSearchString(SearchString + s);
 						else
 							CancelIncrementalSearch();
@@ -388,7 +389,7 @@ namespace dnSpy.Hex.Editor.Search {
 		}
 		bool isIncrementalSearchCaretMove;
 
-		bool IsSearchControlVisible => layer != null && !layer.IsEmpty;
+		bool IsSearchControlVisible => !(layer is null) && !layer.IsEmpty;
 
 		void UseGlobalSettingsIfUiIsHidden(bool canOverwriteSearchString) {
 			if (!IsSearchControlVisible)
@@ -417,7 +418,7 @@ namespace dnSpy.Hex.Editor.Search {
 		void ShowSearchControl(SearchKind searchKind, bool canOverwriteSearchString) {
 			UseGlobalSettingsIfUiIsHidden(canOverwriteSearchString);
 			bool wasShown = IsSearchControlVisible;
-			if (searchControl == null) {
+			if (searchControl is null) {
 				searchControl = new SearchControl { DataContext = this };
 				searchControl.InputBindings.Add(new KeyBinding(new RelayCommand(a => CloseSearchControl()), new KeyGesture(Key.Escape, ModifierKeys.None)));
 				searchControl.InputBindings.Add(new KeyBinding(new RelayCommand(a => ShowFind()), new KeyGesture(Key.F, ModifierKeys.Control)));
@@ -446,7 +447,7 @@ namespace dnSpy.Hex.Editor.Search {
 				searchControl.SizeChanged += SearchControl_SizeChanged;
 				searchControl.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
 			}
-			if (layer == null)
+			if (layer is null)
 				layer = wpfHexView.GetAdornmentLayer(PredefinedHexAdornmentLayers.Search);
 			if (layer.IsEmpty) {
 				layer.AddAdornment(VSTE.AdornmentPositioningBehavior.OwnerControlled, (HexBufferSpan?)null, null, searchControl, null);
@@ -465,7 +466,7 @@ namespace dnSpy.Hex.Editor.Search {
 		static void SelectAllWhenFocused(TextBox textBox) =>
 			textBox.GotKeyboardFocus += (s, e) => textBox.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => textBox.SelectAll()));
 
-		public bool HasSearchControlFocus => searchControl != null && searchControl.IsKeyboardFocusWithin;
+		public bool HasSearchControlFocus => !(searchControl is null) && searchControl.IsKeyboardFocusWithin;
 		void SearchControl_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) => OnPropertyChanged(nameof(HasSearchControlFocus));
 		void SearchControl_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
 			CloseSearchControlIfIncrementalSearch();
@@ -524,7 +525,8 @@ namespace dnSpy.Hex.Editor.Search {
 		}
 
 		void FocusSearchStringTextBox() {
-			Action callback = null;
+			Debug.Assert(!(searchControl is null));
+			Action? callback = null;
 			// If it hasn't been loaded yet, it has no binding and we must select it in its Loaded event
 			if (searchControl.searchStringTextBox.Text.Length == 0 && SearchString.Length != 0)
 				callback = () => searchControl.searchStringTextBox.SelectAll();
@@ -534,7 +536,8 @@ namespace dnSpy.Hex.Editor.Search {
 		}
 
 		void FocusReplaceStringTextBox() {
-			Action callback = null;
+			Debug.Assert(!(searchControl is null));
+			Action? callback = null;
 			// If it hasn't been loaded yet, it has no binding and we must select it in its Loaded event
 			if (searchControl.replaceStringTextBox.Text.Length == 0 && ReplaceString.Length != 0)
 				callback = () => searchControl.replaceStringTextBox.SelectAll();
@@ -544,14 +547,14 @@ namespace dnSpy.Hex.Editor.Search {
 		}
 
 		void RepositionControl(bool recalcSize = false) {
-			Debug.Assert(searchControl != null);
+			Debug.Assert(!(searchControl is null));
 			if (recalcSize)
 				searchControl.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
 			PositionSearchControl(SearchControlPosition.Default);
 		}
 
-		Rect TopRightRect => new Rect(wpfHexView.ViewportWidth - searchControl.DesiredSize.Width, 0, searchControl.DesiredSize.Width, searchControl.DesiredSize.Height);
-		Rect BottomRightRect => new Rect(wpfHexView.ViewportWidth - searchControl.DesiredSize.Width, wpfHexView.ViewportHeight - searchControl.DesiredSize.Height, searchControl.DesiredSize.Width, searchControl.DesiredSize.Height);
+		Rect TopRightRect => new Rect(wpfHexView.ViewportWidth - searchControl!.DesiredSize.Width, 0, searchControl.DesiredSize.Width, searchControl.DesiredSize.Height);
+		Rect BottomRightRect => new Rect(wpfHexView.ViewportWidth - searchControl!.DesiredSize.Width, wpfHexView.ViewportHeight - searchControl.DesiredSize.Height, searchControl.DesiredSize.Width, searchControl.DesiredSize.Height);
 
 		void PositionSearchControl(Rect rect) => PositionSearchControl(rect.Left, rect.Top);
 		void PositionSearchControl(double left, double top) {
@@ -618,7 +621,7 @@ namespace dnSpy.Hex.Editor.Search {
 
 		bool Intersects(HexBufferSpan fullSpan, HexViewLine line, Rect rect) {
 			var span = fullSpan.Intersection(line.BufferSpan);
-			if (span == null || span.Value.Length == 0)
+			if (span is null || span.Value.Length == 0)
 				return false;
 			var allBounds = line.GetNormalizedTextBounds(span.Value, HexSpanSelectionFlags.Selection);
 			if (allBounds.Count == 0)
@@ -643,7 +646,7 @@ namespace dnSpy.Hex.Editor.Search {
 		}
 
 		void CloseSearchControl() {
-			if (layer == null || layer.IsEmpty) {
+			if (layer is null || layer.IsEmpty) {
 				Debug.Assert(searchKind == SearchKind.None && searchControlPosition == SearchControlPosition.Default);
 				return;
 			}
@@ -662,12 +665,12 @@ namespace dnSpy.Hex.Editor.Search {
 		}
 		HexBufferPoint? incrementalStartPosition;
 
-		string TryGetSearchStringAtPoint(HexBufferPoint point) =>
+		string? TryGetSearchStringAtPoint(HexBufferPoint point) =>
 			// The text editor can find the current word, but there's not much we can do
 			// so return null.
 			null;
 
-		string TryGetSearchStringFromSelection() {
+		string? TryGetSearchStringFromSelection() {
 			if (wpfHexView.Selection.IsEmpty)
 				return null;
 
@@ -685,7 +688,7 @@ namespace dnSpy.Hex.Editor.Search {
 				byte b = buffer.ReadByte(pos);
 				chars[j++] = ToHexChar(b >> 4, upper);
 				chars[j++] = ToHexChar(b & 0x0F, upper);
-				pos = pos + 1;
+				pos++;
 			}
 			return new string(chars);
 		}
@@ -696,8 +699,8 @@ namespace dnSpy.Hex.Editor.Search {
 			return (char)(val - 10 + (upper ? (int)'A' : (int)'a'));
 		}
 
-		string TryGetSearchStringAtCaret() {
-			string s;
+		string? TryGetSearchStringAtCaret() {
+			string? s;
 			if (!wpfHexView.Selection.IsEmpty)
 				s = TryGetSearchStringFromSelection();
 			else
@@ -709,12 +712,12 @@ namespace dnSpy.Hex.Editor.Search {
 
 		void UpdateSearchStringFromCaretPosition(bool canSearch) {
 			var newSearchString = TryGetSearchStringAtCaret();
-			if (newSearchString != null)
+			if (!(newSearchString is null))
 				SetSearchString(newSearchString, canSearch);
 		}
 
 		public override void ShowFind() {
-			if (IsSearchControlVisible && searchControl.IsKeyboardFocusWithin) {
+			if (IsSearchControlVisible && searchControl!.IsKeyboardFocusWithin) {
 				SetSearchKind(SearchKind.Find);
 				FocusSearchStringTextBox();
 				return;
@@ -726,7 +729,7 @@ namespace dnSpy.Hex.Editor.Search {
 		}
 
 		public override void ShowReplace() {
-			if (IsSearchControlVisible && searchControl.IsKeyboardFocusWithin) {
+			if (IsSearchControlVisible && searchControl!.IsKeyboardFocusWithin) {
 				SetSearchKind(SearchKind.Replace);
 				FocusSearchStringTextBox();
 				return;
@@ -772,10 +775,12 @@ namespace dnSpy.Hex.Editor.Search {
 			}
 		}
 
-		bool IsReplaceStringValid() => DataParser.TryParseData(ReplaceString, DataKind, IsBigEndian) != null;
+		bool IsReplaceStringValid() => !(DataParser.TryParseData(ReplaceString, DataKind, IsBigEndian) is null);
 
-		byte[] TryGetReplaceStringData(HexBufferSpan replaceSpan) {
+		byte[]? TryGetReplaceStringData(HexBufferSpan replaceSpan) {
 			var data = DataParser.TryParseData(ReplaceString, DataKind, IsBigEndian);
+			if (data is null)
+				return null;
 			if (data.LongLength == replaceSpan.Length)
 				return data;
 			var newData = new byte[replaceSpan.Length >= ulong.MaxValue ? ulong.MaxValue : replaceSpan.Length.ToUInt64()];
@@ -792,15 +797,15 @@ namespace dnSpy.Hex.Editor.Search {
 				return;
 
 			var res = ReplaceFindNextCore();
-			if (res == null)
+			if (res is null)
 				return;
 
 			var vres = res.Value;
 			if (!wpfHexView.Selection.IsEmpty && wpfHexView.Selection.StreamSelectionSpan == vres) {
 				try {
 					var newData = TryGetReplaceStringData(res.Value);
-					Debug.Assert(newData != null && newData.Length == res.Value.Length);
-					if (newData == null || newData.Length != res.Value.Length)
+					Debug.Assert(!(newData is null) && newData.Length == res.Value.Length);
+					if (newData is null || newData.Length != res.Value.Length)
 						return;
 
 					using (var ed = wpfHexView.Buffer.CreateEdit()) {
@@ -820,7 +825,7 @@ namespace dnSpy.Hex.Editor.Search {
 				wpfHexView.Caret.MoveTo(res.Value.IsEmpty ? res.Value.Start : res.Value.End - 1);
 
 				res = ReplaceFindNextCore();
-				if (res == null)
+				if (res is null)
 					return;
 				ShowSearchResult(res.Value);
 			}
@@ -833,10 +838,10 @@ namespace dnSpy.Hex.Editor.Search {
 				return null;
 			var options = GetFindOptions(SearchKind.Replace, true);
 			var hexSearchService = hexSearchServiceFactory.TryCreateHexSearchService(DataKind, SearchString, (options & OurFindOptions.MatchCase) != 0, IsBigEndian);
-			if (hexSearchService == null)
+			if (hexSearchService is null)
 				return null;
 			var startingPosition = GetStartingPosition(SearchKind.Replace, options, restart: true);
-			if (startingPosition == null)
+			if (startingPosition is null)
 				return null;
 			var searchRange = wpfHexView.BufferLines.BufferSpan;
 			return hexSearchService.Find(searchRange, startingPosition.Value, ToHexFindOptions(options), CancellationToken.None);
@@ -862,13 +867,13 @@ namespace dnSpy.Hex.Editor.Search {
 
 			var oldVersion = wpfHexView.Buffer.Version;
 			try {
-				byte[] newData = null;
+				byte[]? newData = null;
 				using (var ed = wpfHexView.Buffer.CreateEdit()) {
 					foreach (var res in GetAllResultsForReplaceAll()) {
-						if (newData == null)
+						if (newData is null)
 							newData = TryGetReplaceStringData(res);
-						Debug.Assert(newData != null && newData.Length == res.Length);
-						if (newData == null || newData.Length != res.Length)
+						Debug.Assert(!(newData is null) && newData.Length == res.Length);
+						if (newData is null || newData.Length != res.Length)
 							return;
 						// Ignore errors due to read-only regions
 						ed.Replace(res.Span.Start, newData);
@@ -901,7 +906,7 @@ namespace dnSpy.Hex.Editor.Search {
 			options |= OurFindOptions.NoOverlaps;
 			var startingPosition = searchRange.Start;
 			var hexSearchService = hexSearchServiceFactory.TryCreateHexSearchService(DataKind, SearchString, (options & OurFindOptions.MatchCase) != 0, IsBigEndian);
-			if (hexSearchService == null)
+			if (hexSearchService is null)
 				return Array.Empty<HexBufferSpan>();
 			return hexSearchService.FindAll(searchRange, startingPosition, ToHexFindOptions(options), CancellationToken.None);
 		}
@@ -928,7 +933,7 @@ namespace dnSpy.Hex.Editor.Search {
 			case SearchKind.IncrementalSearchForward:
 				if (SearchString.Any(c => char.IsUpper(c)))
 					options |= OurFindOptions.MatchCase;
-				if (forward == null)
+				if (forward is null)
 					forward = searchKind == SearchKind.IncrementalSearchForward;
 				break;
 
@@ -991,16 +996,16 @@ namespace dnSpy.Hex.Editor.Search {
 
 		void FindNextCore(OurFindOptions options, HexBufferPoint? startingPosition, bool isIncrementalSearch) {
 			CancelFindAsyncSearcher();
-			if (startingPosition == null)
+			if (startingPosition is null)
 				return;
 
 			var searchOptions = new SearchOptions(wpfHexView.BufferLines.BufferSpan, startingPosition.Value, DataKind, SearchString, options, IsBigEndian);
-			IAsyncSearcher findAsyncSearcherTmp = null;
+			IAsyncSearcher? findAsyncSearcherTmp = null;
 			findAsyncSearcherTmp = FindAsync(searchOptions, (result, foundSpan) => {
 				if (findAsyncSearcher != findAsyncSearcherTmp)
 					return;
 				CancelFindAsyncSearcher();
-				if (foundSpan != null) {
+				if (!(foundSpan is null)) {
 					try {
 						isIncrementalSearchCaretMove = isIncrementalSearch;
 						ShowSearchResult(foundSpan.Value);
@@ -1012,7 +1017,7 @@ namespace dnSpy.Hex.Editor.Search {
 			});
 			findAsyncSearcher = findAsyncSearcherTmp;
 		}
-		IAsyncSearcher findAsyncSearcher;
+		IAsyncSearcher? findAsyncSearcher;
 
 		void CancelFindAsyncSearcher() {
 			findAsyncSearcher?.CancelAndDispose();
@@ -1025,9 +1030,9 @@ namespace dnSpy.Hex.Editor.Search {
 			Other,
 		}
 
-		IAsyncSearcher FindAsync(SearchOptions searchOptions, Action<FindAsyncResult, HexBufferSpan?> onCompleted) {
+		IAsyncSearcher? FindAsync(SearchOptions searchOptions, Action<FindAsyncResult, HexBufferSpan?> onCompleted) {
 			var hexSearchService = hexSearchServiceFactory.TryCreateHexSearchService(searchOptions.DataKind, searchOptions.SearchString, (searchOptions.FindOptions & OurFindOptions.MatchCase) != 0, searchOptions.IsBigEndian);
-			if (hexSearchService == null) {
+			if (hexSearchService is null) {
 				onCompleted(FindAsyncResult.InvalidSearchOptions, null);
 				return null;
 			}
@@ -1041,7 +1046,7 @@ namespace dnSpy.Hex.Editor.Search {
 				bool wasInList = asyncSearchers.Remove(searcher);
 				Searching = asyncSearchers.Count != 0;
 				var ex = t.Exception;
-				Debug.Assert(ex == null);
+				Debug.Assert(ex is null);
 				if (wasInList && !searcherWasCanceled && !t.IsCanceled && !t.IsFaulted)
 					searcher.RaiseCompleted(FindAsyncResult.HasResult, t.Result);
 				else
@@ -1133,7 +1138,7 @@ namespace dnSpy.Hex.Editor.Search {
 
 		void FindNextSelectedCore(bool forward, bool restart) {
 			var newSearchString = TryGetSearchStringAtCaret();
-			if (newSearchString == null)
+			if (newSearchString is null)
 				return;
 
 			ShowSearchControl(SearchKind.Find, canOverwriteSearchString: false);
@@ -1151,13 +1156,13 @@ namespace dnSpy.Hex.Editor.Search {
 
 		public override IEnumerable<HexBufferSpan> GetSpans(NormalizedHexBufferSpanCollection spans) {
 			var searchService = hexMarkerSearchService;
-			if (searchService == null)
+			if (searchService is null)
 				yield break;
 			var validSpan = wpfHexView.BufferLines.BufferSpan;
 			int lengthLessOne = searchService.ByteCount - 1;
 			foreach (var span in spans) {
 				var overlap = validSpan.Overlap(span);
-				if (overlap == null)
+				if (overlap is null)
 					continue;
 				var start = validSpan.Start.Position + lengthLessOne <= overlap.Value.Start.Position ? overlap.Value.Start - lengthLessOne : validSpan.Start;
 				var end = new HexBufferPoint(validSpan.Buffer, HexPosition.Min(overlap.Value.End.Position + lengthLessOne, validSpan.End));
@@ -1202,27 +1207,27 @@ namespace dnSpy.Hex.Editor.Search {
 			}
 			var searchOptions = new SearchOptions(searchRange, startingPosition, DataKind, SearchString, options, IsBigEndian);
 
-			IAsyncSearcher searcher = null;
+			IAsyncSearcher? searcher = null;
 			searcher = FindAsync(searchOptions, (result, foundSpan) => {
 				if (result == FindAsyncResult.InvalidSearchOptions) {
-					bool refresh = hexMarkerSearchService != null;
+					bool refresh = !(hexMarkerSearchService is null);
 					hexMarkerSearchService = null;
 					if (refresh)
 						RefreshAllTags();
 					// We could be here if the input string is invalid, in which case we tell the user there was nothing found
 					FoundMatch = SearchString.Length == 0;
 				}
-				else if (result == FindAsyncResult.HasResult && searcher != null && searcher.HexSearchService == hexMarkerSearchService) {
-					FoundMatch = foundSpan != null;
-					lastMatch = foundSpan == null ? HexPosition.Zero : foundSpan.Value.Span.Start;
+				else if (result == FindAsyncResult.HasResult && !(searcher is null) && searcher.HexSearchService == hexMarkerSearchService) {
+					FoundMatch = !(foundSpan is null);
+					lastMatch = foundSpan is null ? HexPosition.Zero : foundSpan.Value.Span.Start;
 				}
 			});
 			hexMarkerSearchService = searcher?.HexSearchService;
 			RefreshAllTags();
 		}
 		HexPosition lastMatch;
-		HexSearchService hexMarkerSearchService;
-		IAsyncSearcher hexMarkerAsyncSearcher;
+		HexSearchService? hexMarkerSearchService;
+		IAsyncSearcher? hexMarkerAsyncSearcher;
 
 		void CancelAsyncSearch() {
 			hexMarkerAsyncSearcher?.CancelAndDispose();

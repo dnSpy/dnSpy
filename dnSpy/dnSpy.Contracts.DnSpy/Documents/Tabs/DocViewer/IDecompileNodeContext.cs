@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -60,11 +60,11 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// <summary>
 		/// Sets the content type. See also <see cref="ContentTypeString"/>
 		/// </summary>
-		IContentType ContentType { get; set; }
+		IContentType? ContentType { get; set; }
 
 		/// <summary>
 		/// Sets the content type. See also <see cref="ContentType"/>
 		/// </summary>
-		string ContentTypeString { get; set; }
+		string? ContentTypeString { get; set; }
 	}
 }

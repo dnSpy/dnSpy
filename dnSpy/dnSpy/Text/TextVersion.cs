@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,33 +23,33 @@ using System.Diagnostics;
 using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Text {
-	sealed class TextVersion : ITextVersion {
+	sealed class TextVersion : ITextVersion2 {
 		public ITextBuffer TextBuffer { get; }
-		public int VersionNumber { get; }
-		public int ReiteratedVersionNumber { get; }
-		public int Length { get; }
-		public ITextVersion Next { get; private set; }
-		public INormalizedTextChangeCollection Changes { get; private set; }
+		public int VersionNumber => textImageVersion.VersionNumber;
+		public int ReiteratedVersionNumber => textImageVersion.ReiteratedVersionNumber;
+		public int Length => textImageVersion.Length;
+		public ITextVersion? Next { get; private set; }
+		public INormalizedTextChangeCollection? Changes => textImageVersion.Changes;
+		public ITextImageVersion ImageVersion => textImageVersion;
 
-		public TextVersion(ITextBuffer textBuffer, int length, int versionNumber, int reiteratedVersionNumber) {
+		readonly TextImageVersion textImageVersion;
+
+		public TextVersion(ITextBuffer textBuffer, int length, int versionNumber, int reiteratedVersionNumber, object identifier) {
 			if (length < 0)
 				throw new ArgumentOutOfRangeException(nameof(length));
 			TextBuffer = textBuffer;
-			VersionNumber = versionNumber;
-			ReiteratedVersionNumber = reiteratedVersionNumber;
-			Length = length;
+			textImageVersion = new TextImageVersion(length, versionNumber, reiteratedVersionNumber, identifier);
 		}
 
 		public TextVersion SetChanges(IList<ITextChange> changes, int? reiteratedVersionNumber = null) {
 			var normalizedChanges = NormalizedTextChangeCollection.Create(changes);
-			if (reiteratedVersionNumber == null)
-				reiteratedVersionNumber = changes.Count == 0 ? ReiteratedVersionNumber : VersionNumber + 1;
+			int reiterVerNum = reiteratedVersionNumber ?? (changes.Count == 0 ? ReiteratedVersionNumber : VersionNumber + 1);
 			int newLength = Length;
 			foreach (var c in normalizedChanges)
 				newLength += c.Delta;
 			Debug.Assert(newLength >= 0);
-			var newVersion = new TextVersion(TextBuffer, newLength, VersionNumber + 1, reiteratedVersionNumber.Value);
-			Changes = normalizedChanges;
+			var newVersion = new TextVersion(TextBuffer, newLength, VersionNumber + 1, reiterVerNum, textImageVersion.Identifier);
+			textImageVersion.SetChanges(normalizedChanges, newVersion.textImageVersion);
 			Next = newVersion;
 			return newVersion;
 		}

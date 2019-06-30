@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -39,7 +39,7 @@ namespace dnSpy.Contracts.Hex.Intellisense {
 		/// Removes the session from the top of the stack
 		/// </summary>
 		/// <returns></returns>
-		public abstract HexIntellisenseSession PopSession();
+		public abstract HexIntellisenseSession? PopSession();
 
 		/// <summary>
 		/// Moves a session to the top of the stack
@@ -55,7 +55,7 @@ namespace dnSpy.Contracts.Hex.Intellisense {
 		/// <summary>
 		/// Gets the session at the top of the stack or null if none
 		/// </summary>
-		public abstract HexIntellisenseSession TopSession { get; }
+		public abstract HexIntellisenseSession? TopSession { get; }
 
 		/// <summary>
 		/// Collapses all sessions

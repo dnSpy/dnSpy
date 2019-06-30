@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
@@ -46,14 +47,14 @@ namespace dnSpy.Text.Editor {
 		protected readonly IClassificationFormatMap classificationFormatMap;
 		readonly Layer textLayer;
 		Dictionary<object, Line> identityTagToLine;
-		TextParagraphProperties defaultTextParagraphProperties;
-		TextFormatter textFormatter;
+		TextParagraphProperties? defaultTextParagraphProperties;
+		TextFormatter? textFormatter;
 		bool useDisplayMode;
 		int currentMaxLineDigits;
 		double lineNumberTextRight;
 
 		protected LineNumberMarginBase(string marginName, IWpfTextViewHost wpfTextViewHost, IClassificationFormatMapService classificationFormatMapService, ITextFormatterProvider textFormatterProvider) {
-			if (classificationFormatMapService == null)
+			if (classificationFormatMapService is null)
 				throw new ArgumentNullException(nameof(classificationFormatMapService));
 			identityTagToLine = new Dictionary<object, Line>();
 			this.marginName = marginName ?? throw new ArgumentNullException(nameof(marginName));
@@ -71,7 +72,7 @@ namespace dnSpy.Text.Editor {
 
 		void UpdateVisibility() => Visibility = Enabled ? Visibility.Visible : Visibility.Collapsed;
 
-		public ITextViewMargin GetTextViewMargin(string marginName) =>
+		public ITextViewMargin? GetTextViewMargin(string marginName) =>
 			StringComparer.OrdinalIgnoreCase.Equals(marginName, this.marginName) ? this : null;
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
@@ -156,7 +157,7 @@ namespace dnSpy.Text.Editor {
 			if (wpfTextViewHost.IsClosed)
 				return;
 			var textViewLines = wpfTextViewHost.TextView.TextViewLines;
-			if (textViewLines == null)
+			if (textViewLines is null)
 				return;
 
 			foreach (var viewLine in newOrReformattedLines) {
@@ -172,11 +173,12 @@ namespace dnSpy.Text.Editor {
 				}
 			}
 			var newDict = new Dictionary<object, Line>();
-			LineNumberState lineNumberState = null;
+			LineNumberState? lineNumberState = null;
 			foreach (var viewLine in textViewLines) {
 				var lineNumber = GetLineNumber(viewLine, ref lineNumberState);
-				if (lineNumber == null)
+				if (lineNumber is null)
 					continue;
+				Debug.Assert(!(lineNumberState is null));
 
 				if (!identityTagToLine.TryGetValue(viewLine.IdentityTag, out var line) || line.Number != lineNumber)
 					line = CreateLine(viewLine, lineNumberState, lineNumber.Value);
@@ -192,22 +194,22 @@ namespace dnSpy.Text.Editor {
 		}
 
 		protected class LineNumberState {
-			public ITextSnapshotLine SnapshotLine;
+			public ITextSnapshotLine? SnapshotLine;
 		}
 
-		protected abstract int? GetLineNumber(ITextViewLine viewLine, ref LineNumberState state);
+		protected abstract int? GetLineNumber(ITextViewLine viewLine, ref LineNumberState? state);
 
 		string GetLineNumberString(int lineNumber) => lineNumber.ToString(CultureInfo.CurrentUICulture.NumberFormat);
 
 		Line CreateLine(ITextViewLine viewLine, LineNumberState lineNumberState, int lineNumber) {
 			var lineNumberString = GetLineNumberString(lineNumber);
 			var lineNumberSource = new LineNumberSource(lineNumberString, GetLineNumberTextFormattingRunProperties(viewLine, lineNumberState, lineNumber));
-			var textLine = textFormatter.FormatLine(lineNumberSource, 0, 0, defaultTextParagraphProperties, null);
+			var textLine = textFormatter!.FormatLine(lineNumberSource, 0, 0, defaultTextParagraphProperties, null);
 			return new Line(lineNumber, textLine, lineNumberTextRight, viewLine.TextTop + viewLine.Baseline - textLine.TextBaseline);
 		}
 
 		protected abstract TextFormattingRunProperties GetLineNumberTextFormattingRunProperties(ITextViewLine viewLine, LineNumberState state, int lineNumber);
-		protected abstract TextFormattingRunProperties GetDefaultTextFormattingRunProperties();
+		protected abstract TextFormattingRunProperties? GetDefaultTextFormattingRunProperties();
 		protected virtual void OnTextPropertiesChangedCore() { }
 
 		void OnTextPropertiesChanged() {
@@ -215,15 +217,15 @@ namespace dnSpy.Text.Editor {
 			useDisplayMode = wpfTextViewHost.TextView.FormattedLineSource.UseDisplayMode;
 			var textFormattingMode = useDisplayMode ? TextFormattingMode.Display : TextFormattingMode.Ideal;
 			var defaultProps = GetDefaultTextFormattingRunProperties();
-			if (defaultProps == null)
+			if (defaultProps is null)
 				return;
 			var brush = defaultProps.BackgroundBrush ?? Brushes.Transparent;
 			if (brush.CanFreeze)
 				brush.Freeze();
 			Background = brush;
-#pragma warning disable 0618 // Type or member is obsolete
+#pragma warning disable CS0618 // Type or member is obsolete
 			var ft = new FormattedText("8", defaultProps.CultureInfo, FlowDirection.LeftToRight, defaultProps.Typeface, defaultProps.FontRenderingEmSize, defaultProps.ForegroundBrush, null, textFormattingMode);
-#pragma warning restore 0618 // Type or member is obsolete
+#pragma warning restore CS0618 // Type or member is obsolete
 			currentMaxLineDigits = GetMaxLineDigits();
 			int maxLineNumberValue = Math.Min(int.MaxValue, (int)(Math.Pow(10, currentMaxLineDigits) - 1));
 			// Just in case non-digits are part of the string, calculate max string length
@@ -306,7 +308,7 @@ namespace dnSpy.Text.Editor {
 			}
 
 			public Visual GetOrCreateVisual() {
-				if (drawingVisual == null) {
+				if (drawingVisual is null) {
 					drawingVisual = new DrawingVisual();
 					var dc = drawingVisual.RenderOpen();
 					textLine.Draw(dc, new Point(right - textLine.Width, top), InvertAxes.None);
@@ -314,7 +316,7 @@ namespace dnSpy.Text.Editor {
 				}
 				return drawingVisual;
 			}
-			DrawingVisual drawingVisual;
+			DrawingVisual? drawingVisual;
 
 			public void Dispose() {
 				drawingVisual = null;
@@ -325,7 +327,7 @@ namespace dnSpy.Text.Editor {
 		sealed class LineCollection : UIElement {
 			readonly List<LineInfo> lines;
 
-			struct LineInfo {
+			readonly struct LineInfo {
 				public Line Line { get; }
 				public Visual Visual { get; }
 				public LineInfo(Line line) {

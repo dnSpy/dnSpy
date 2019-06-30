@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,11 +29,11 @@ namespace dnSpy.Debugger.DotNet.Dialogs.DebugProgram {
 		public override Guid? GetEngineGuid(string filename) {
 			if (!File.Exists(filename))
 				return null;
+			if (!PortableExecutableFileHelpers.IsExecutable(filename))
+				return null;
 			try {
 				using (var peImage = new PEImage(filename)) {
 					if ((peImage.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) != 0)
-						return null;
-					if (peImage.ImageNTHeaders.OptionalHeader.DataDirectories.Length <= 14)
 						return null;
 					var dd = peImage.ImageNTHeaders.OptionalHeader.DataDirectories[14];
 					if (dd.VirtualAddress == 0 || dd.Size < 0x48)
@@ -41,17 +41,17 @@ namespace dnSpy.Debugger.DotNet.Dialogs.DebugProgram {
 
 					using (var mod = ModuleDefMD.Load(peImage, new ModuleCreationOptions())) {
 						var asm = mod.Assembly;
-						if (asm == null)
+						if (asm is null)
 							return null;
 
 						var defaultGuid = PredefinedGenericDebugEngineGuids.DotNetFramework;
 						var ca = asm.CustomAttributes.Find("System.Runtime.Versioning.TargetFrameworkAttribute");
-						if (ca == null)
+						if (ca is null)
 							return defaultGuid;
 						if (ca.ConstructorArguments.Count != 1)
 							return defaultGuid;
 						string s = ca.ConstructorArguments[0].Value as UTF8String;
-						if (s == null)
+						if (s is null)
 							return defaultGuid;
 
 						// See corclr/src/mscorlib/src/System/Runtime/Versioning/BinaryCompatibility.cs

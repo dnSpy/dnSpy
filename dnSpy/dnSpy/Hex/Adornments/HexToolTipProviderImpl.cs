@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,13 +31,13 @@ namespace dnSpy.Hex.Adornments {
 	sealed class HexToolTipProviderImpl : HexToolTipProvider {
 		readonly WpfHexView wpfHexView;
 		readonly HexSpaceReservationManager spaceReservationManager;
-		HexSpaceReservationAgent toolTipAgent;
+		HexSpaceReservationAgent? toolTipAgent;
 
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[Export(typeof(HexSpaceReservationManagerDefinition))]
 		[VSUTIL.Name(PredefinedHexSpaceReservationManagerNames.ToolTip)]
 		static readonly HexSpaceReservationManagerDefinition toolTipSpaceReservationManagerDefinition;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 
 		public HexToolTipProviderImpl(WpfHexView wpfHexView) {
 			this.wpfHexView = wpfHexView ?? throw new ArgumentNullException(nameof(wpfHexView));
@@ -45,14 +45,14 @@ namespace dnSpy.Hex.Adornments {
 		}
 
 		public override void ClearToolTip() {
-			if (toolTipAgent != null)
+			if (!(toolTipAgent is null))
 				spaceReservationManager.RemoveAgent(toolTipAgent);
 		}
 
 		public override void ShowToolTip(HexBufferSpan bufferSpan, HexSpanSelectionFlags flags, object toolTipContent, VSTA.PopupStyles style) {
 			if (bufferSpan.IsDefault)
 				throw new ArgumentException();
-			if (toolTipContent == null)
+			if (toolTipContent is null)
 				throw new ArgumentNullException(nameof(toolTipContent));
 			if ((style & (VSTA.PopupStyles.DismissOnMouseLeaveText | VSTA.PopupStyles.DismissOnMouseLeaveTextOrContent)) == (VSTA.PopupStyles.DismissOnMouseLeaveText | VSTA.PopupStyles.DismissOnMouseLeaveTextOrContent))
 				throw new ArgumentOutOfRangeException(nameof(style));
@@ -60,7 +60,7 @@ namespace dnSpy.Hex.Adornments {
 			ClearToolTip();
 
 			var uiElement = GetUIElement(toolTipContent);
-			if (uiElement == null)
+			if (uiElement is null)
 				throw new ArgumentException();
 
 			spaceReservationManager.AgentChanged += SpaceReservationManager_AgentChanged;
@@ -75,7 +75,7 @@ namespace dnSpy.Hex.Adornments {
 			}
 		}
 
-		UIElement GetUIElement(object toolTipContent) {
+		UIElement? GetUIElement(object toolTipContent) {
 			if (toolTipContent is UIElement elem)
 				return elem;
 			if (toolTipContent is string s)

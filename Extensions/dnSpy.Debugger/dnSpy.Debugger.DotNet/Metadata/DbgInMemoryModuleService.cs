@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
 using dnSpy.Contracts.Debugger;
@@ -33,8 +34,8 @@ using dnSpy.Debugger.DotNet.UI;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	abstract class DbgInMemoryModuleService {
-		public abstract ModuleDef LoadModule(DbgModule module);
-		public abstract ModuleDef FindModule(DbgModule module);
+		public abstract ModuleDef? LoadModule(DbgModule module);
+		public abstract ModuleDef? FindModule(DbgModule module);
 	}
 
 	[Export(typeof(DbgInMemoryModuleService))]
@@ -59,14 +60,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		sealed class RuntimeInfo {
 			readonly DbgInMemoryModuleServiceImpl owner;
 			public DbgAssemblyInfoProvider AssemblyInfoProvider { get; }
-			public DbgDynamicModuleProvider DynamicModuleProvider { get; }
-			public ClassLoader ClassLoader { get; }
-			public RuntimeInfo(DbgInMemoryModuleServiceImpl owner, DbgAssemblyInfoProvider dbgAssemblyInfoProvider, DbgDynamicModuleProvider dbgDynamicModuleProvider, ClassLoader classLoader) {
+			public DbgDynamicModuleProvider? DynamicModuleProvider { get; }
+			public ClassLoader? ClassLoader { get; }
+			public RuntimeInfo(DbgInMemoryModuleServiceImpl owner, DbgAssemblyInfoProvider dbgAssemblyInfoProvider, DbgDynamicModuleProvider? dbgDynamicModuleProvider, ClassLoader? classLoader) {
 				this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
 				AssemblyInfoProvider = dbgAssemblyInfoProvider ?? throw new ArgumentNullException(nameof(dbgAssemblyInfoProvider));
 				DynamicModuleProvider = dbgDynamicModuleProvider;
-				ClassLoader = classLoader ?? throw new ArgumentNullException(nameof(classLoader));
-				if (dbgDynamicModuleProvider != null)
+				ClassLoader = classLoader;
+				if (!(dbgDynamicModuleProvider is null))
 					dbgDynamicModuleProvider.ClassLoaded += DbgDynamicModuleProvider_ClassLoaded;
 			}
 
@@ -110,7 +111,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				foreach (var r in process.Runtimes) {
 					if (!TryGetRuntimeInfo(r, out var info))
 						continue;
-					info.ClassLoader.LoadNewClasses();
+					info.ClassLoader?.LoadNewClasses();
 				}
 			}
 		}
@@ -119,11 +120,15 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			if (e.Added) {
 				foreach (var r in e.Objects) {
 					var assemblyInfoProvider = dbgAssemblyInfoProviderService.Create(r);
-					if (assemblyInfoProvider == null)
+					if (assemblyInfoProvider is null)
 						continue;
 
+					ClassLoader? classLoader;
 					var dynamicModuleProvider = dbgDynamicModuleProviderService.Create(r);
-					var classLoader = classLoaderFactory.Create(r, dynamicModuleProvider);
+					if (dynamicModuleProvider is null)
+						classLoader = null;
+					else
+						classLoader = classLoaderFactory.Create(r, dynamicModuleProvider);
 
 					r.GetOrCreateData(() => new RuntimeInfo(this, assemblyInfoProvider, dynamicModuleProvider, classLoader));
 					r.ModulesChanged += DbgRuntime_ModulesChanged;
@@ -135,26 +140,26 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			}
 		}
 
-		void DbgDynamicModuleProvider_ClassLoaded(RuntimeInfo info, ClassLoadedEventArgs e) => info.ClassLoader.LoadClass(e.Module, e.LoadedClassToken);
-		bool TryGetRuntimeInfo(DbgRuntime runtime, out RuntimeInfo info) => runtime.TryGetData(out info);
+		void DbgDynamicModuleProvider_ClassLoaded(RuntimeInfo info, ClassLoadedEventArgs e) => info.ClassLoader?.LoadClass(e.Module, e.LoadedClassToken);
+		bool TryGetRuntimeInfo(DbgRuntime runtime, [NotNullWhenTrue] out RuntimeInfo? info) => runtime.TryGetData(out info);
 
 		void DbgRuntime_ModulesChanged(object sender, DbgCollectionChangedEventArgs<DbgModule> e) {
 			if (e.Added) {
 				if (!TryGetRuntimeInfo((DbgRuntime)sender, out var info))
 					return;
 
-				List<(DbgModule manifestModule, DbgModule module)> list = null;
+				List<(DbgModule manifestModule, DbgModule module)>? list = null;
 				foreach (var module in e.Objects) {
 					var manifestModule = info.AssemblyInfoProvider.GetManifestModule(module);
 					// If it's the manifest module, it can't possibly have been inserted in the treeview
-					if (manifestModule == null || manifestModule == module)
+					if (manifestModule is null || manifestModule == module)
 						continue;
 
-					if (list == null)
+					if (list is null)
 						list = new List<(DbgModule, DbgModule)>();
 					list.Add((manifestModule, module));
 				}
-				if (list != null) {
+				if (!(list is null)) {
 					uiDispatcher.UI(() => {
 						foreach (var t in list)
 							OnModuleAdded_UI(info, t.manifestModule, t.module);
@@ -170,7 +175,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			// new netmodule node to the assembly in the treeview.
 
 			// Update a dynamic assembly, if one exists
-			if (info.DynamicModuleProvider != null) {
+			if (!(info.DynamicModuleProvider is null)) {
 				var manifestKey = DynamicModuleDefDocument.CreateKey(manifestModule);
 				var asmFile = FindDocument(manifestKey);
 				if (documentTreeView.Value.FindNode(asmFile) is AssemblyDocumentNode asmNode) {
@@ -178,10 +183,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					asmNode.TreeNode.EnsureChildrenLoaded();
 					Debug.Assert(asmNode.TreeNode.Children.Count >= 1);
 					var moduleNode = asmNode.TreeNode.DataChildren.OfType<ModuleDocumentNode>().FirstOrDefault(a => moduleKey.Equals(a.Document.Key));
-					Debug.Assert(moduleNode == null);
-					if (moduleNode == null) {
+					Debug.Assert(moduleNode is null);
+					if (moduleNode is null) {
 						var md = info.DynamicModuleProvider.GetDynamicMetadata(module, out var moduleId);
-						if (md != null) {
+						if (!(md is null)) {
 							UpdateResolver(md);
 							var newFile = new DynamicModuleDefDocument(moduleId, module, md, UseDebugSymbols);
 							asmNode.Document.Children.Add(newFile);
@@ -201,21 +206,22 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					asmNode.TreeNode.EnsureChildrenLoaded();
 					Debug.Assert(asmNode.TreeNode.Children.Count >= 1);
 					var moduleNode = asmNode.TreeNode.DataChildren.OfType<ModuleDocumentNode>().FirstOrDefault(a => moduleKey.Equals(a.Document.Key));
-					Debug.Assert(moduleNode == null);
-					if (moduleNode == null) {
-						MemoryModuleDefDocument newFile = null;
+					Debug.Assert(moduleNode is null);
+					if (moduleNode is null) {
+						MemoryModuleDefDocument? newFile = null;
 						try {
 							newFile = MemoryModuleDefDocument.Create(this, module, UseDebugSymbols);
 						}
 						catch {
 						}
 
-						Debug.Assert(newFile != null);
-						if (newFile != null) {
+						Debug.Assert(!(newFile is null));
+						if (!(newFile is null)) {
+							Debug.Assert(!(newFile.ModuleDef is null));
 							UpdateResolver(newFile.ModuleDef);
 							asmNode.Document.Children.Add(newFile);
 							RemoveFromAssembly(newFile.ModuleDef);
-							asmNode.Document.ModuleDef.Assembly.Modules.Add(newFile.ModuleDef);
+							asmNode.Document.ModuleDef!.Assembly.Modules.Add(newFile.ModuleDef);
 							asmNode.TreeNode.Children.Add(documentTreeView.Value.TreeView.Create(documentTreeView.Value.CreateNode(asmNode, newFile)));
 						}
 					}
@@ -225,36 +231,36 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		static void RemoveFromAssembly(ModuleDef module) {
 			// It could be a netmodule that contains an AssemblyDef row, if so remove it from the assembly
-			if (module.Assembly != null)
+			if (!(module.Assembly is null))
 				module.Assembly.Modules.Remove(module);
 		}
 
 		void UpdateResolver(ModuleDef module) {
-			if (module != null)
+			if (!(module is null))
 				module.Context = DsDotNetDocumentBase.CreateModuleContext(documentProvider.AssemblyResolver);
 		}
 
-		IDsDocument FindDocument(IDsDocumentNameKey key) => documentProvider.Find(key);
+		IDsDocument? FindDocument(IDsDocumentNameKey key) => documentProvider.Find(key);
 
-		public override ModuleDef LoadModule(DbgModule module) {
-			if (module == null)
+		public override ModuleDef? LoadModule(DbgModule module) {
+			if (module is null)
 				throw new ArgumentNullException(nameof(module));
 			if (module.IsDynamic)
 				return LoadDynamicModule(module);
 			return LoadMemoryModule(module);
 		}
 
-		ModuleDef LoadDynamicModule(DbgModule module) {
-			if (module == null)
+		ModuleDef? LoadDynamicModule(DbgModule module) {
+			if (module is null)
 				throw new ArgumentNullException(nameof(module));
 
 			var doc = FindDynamicModule(module);
-			if (doc != null)
+			if (!(doc is null))
 				return doc;
 
 			if (!TryGetRuntimeInfo(module.Runtime, out var info))
 				return null;
-			if (info.DynamicModuleProvider == null)
+			if (info.DynamicModuleProvider is null)
 				return null;
 
 			if (module.Process.State != DbgProcessState.Paused)
@@ -266,7 +272,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 			lock (lockObj) {
 				doc = FindDynamicModule(module);
-				if (doc != null)
+				if (!(doc is null))
 					return doc;
 
 				var modules = info.AssemblyInfoProvider.GetAssemblyModules(module);
@@ -275,20 +281,20 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				var manifestDnModule = modules[0];
 				var manifestKey = DynamicModuleDefDocument.CreateKey(manifestDnModule);
 				var manMod = FindDocument(manifestKey);
-				Debug.Assert(manMod == null);
-				if (manMod != null)
+				Debug.Assert(manMod is null);
+				if (!(manMod is null))
 					return null;
 
 				var manDoc = FindDynamicModule(manifestDnModule);
-				Debug.Assert(manDoc == null);
-				if (manDoc != null)
+				Debug.Assert(manDoc is null);
+				if (!(manDoc is null))
 					return null;
 
 				var files = new List<DynamicModuleDefDocument>(modules.Length);
-				DynamicModuleDefDocument resDoc = null;
+				DynamicModuleDefDocument? resDoc = null;
 				foreach (var m in modules) {
 					var md = info.DynamicModuleProvider.GetDynamicMetadata(m, out var moduleId);
-					if (md == null)
+					if (md is null)
 						continue;
 					UpdateResolver(md);
 					var newDoc = new DynamicModuleDefDocument(moduleId, m, md, UseDebugSymbols);
@@ -308,8 +314,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			}
 		}
 
-		ModuleDef LoadMemoryModule(DbgModule module) {
-			if (module == null)
+		ModuleDef? LoadMemoryModule(DbgModule module) {
+			if (module is null)
 				throw new ArgumentNullException(nameof(module));
 
 			if (!TryGetRuntimeInfo(module.Runtime, out var info))
@@ -320,13 +326,13 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				return null;
 
 			var doc = FindMemoryModule(module);
-			if (doc != null)
+			if (!(doc is null))
 				return doc;
 
-			MemoryModuleDefDocument result = null;
+			MemoryModuleDefDocument? result = null;
 			lock (lockObj) {
 				doc = FindMemoryModule(module);
-				if (doc != null)
+				if (!(doc is null))
 					return doc;
 
 				var modules = info.AssemblyInfoProvider.GetAssemblyModules(module);
@@ -335,13 +341,13 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				var manifestModule = modules[0];
 				var manifestKey = MemoryModuleDefDocument.CreateKey(manifestModule.Process, manifestModule.Address);
 				var manMod = FindDocument(manifestKey);
-				Debug.Assert(manMod == null);
-				if (manMod != null)
+				Debug.Assert(manMod is null);
+				if (!(manMod is null))
 					return null;
 
 				var manDoc = FindMemoryModule(manifestModule);
-				Debug.Assert(manDoc == null);
-				if (manDoc != null)
+				Debug.Assert(manDoc is null);
+				if (!(manDoc is null))
 					return null;
 
 				var docs = new List<MemoryModuleDefDocument>(modules.Length);
@@ -349,7 +355,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					MemoryModuleDefDocument modDoc;
 					try {
 						modDoc = MemoryModuleDefDocument.Create(this, m, UseDebugSymbols);
-						UpdateResolver(modDoc.ModuleDef);
+						UpdateResolver(modDoc.ModuleDef!);
 						if (m == module)
 							result = modDoc;
 					}
@@ -359,21 +365,21 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					}
 					docs.Add(modDoc);
 				}
-				Debug.Assert(result != null);
-				if (docs.Count == 0 || result == null)
+				Debug.Assert(!(result is null));
+				if (docs.Count == 0 || result is null)
 					return null;
 				var asmFile = MemoryModuleDefDocument.CreateAssembly(docs);
 				var asm = docs[0].AssemblyDef;
-				if (asm == null) {
+				if (asm is null) {
 					if (docs.Count > 1) {
-						asm = docs[0].ModuleDef.UpdateRowId(new AssemblyDefUser("???"));
+						asm = docs[0].ModuleDef!.UpdateRowId(new AssemblyDefUser("???"));
 						asm.Modules.Add(docs[0].ModuleDef);
 					}
 				}
-				asm.Modules.Clear();
+				asm?.Modules.Clear();
 				for (int i = 0; i < docs.Count; i++) {
-					RemoveFromAssembly(docs[i].ModuleDef);
-					asm.Modules.Add(docs[i].ModuleDef);
+					RemoveFromAssembly(docs[i].ModuleDef!);
+					asm!.Modules.Add(docs[i].ModuleDef);
 				}
 
 				var addedFile = documentProvider.GetOrAdd(asmFile);
@@ -389,8 +395,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return result.ModuleDef;
 		}
 
-		public override ModuleDef FindModule(DbgModule module) {
-			if (module == null)
+		public override ModuleDef? FindModule(DbgModule module) {
+			if (module is null)
 				throw new ArgumentNullException(nameof(module));
 			if (module.IsDynamic)
 				return FindDynamicModule(module);
@@ -398,14 +404,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return FindMemoryModule(module) ?? FindDynamicModule(module);
 		}
 
-		ModuleDef FindDynamicModule(DbgModule module) {
-			if (module == null)
+		ModuleDef? FindDynamicModule(DbgModule module) {
+			if (module is null)
 				throw new ArgumentNullException(nameof(module));
 			return AllDynamicModuleDefDocuments.FirstOrDefault(a => a.DbgModule == module)?.ModuleDef;
 		}
 
-		ModuleDef FindMemoryModule(DbgModule module) {
-			if (module == null)
+		ModuleDef? FindMemoryModule(DbgModule module) {
+			if (module is null)
 				throw new ArgumentNullException(nameof(module));
 			if (!module.HasAddress)
 				return null;
@@ -418,10 +424,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		void Initialize_UI(RuntimeInfo info, DynamicModuleDefDocument[] docs) {
 			uiDispatcher.VerifyAccess();
-			Debug.Assert(info.DynamicModuleProvider != null);
-			if (info.DynamicModuleProvider == null)
+			Debug.Assert(!(info.DynamicModuleProvider is null));
+			if (info.DynamicModuleProvider is null)
 				return;
-			info.ClassLoader.LoadEverything_UI(docs);
+			info.ClassLoader?.LoadEverything_UI(docs);
 		}
 
 		internal void UpdateModuleMemory(MemoryModuleDefDocument document) {
@@ -440,7 +446,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		void RefreshBodies(MemoryModuleDefDocument document) {
 			uiDispatcher.VerifyAccess();
 
-			if (document.ModuleDef.EnableTypeDefFindCache) {
+			if (document.ModuleDef!.EnableTypeDefFindCache) {
 				document.ModuleDef.EnableTypeDefFindCache = false;
 				document.ModuleDef.EnableTypeDefFindCache = true;
 			}
@@ -449,7 +455,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			// got modified (eg. decrypted in memory)
 			for (uint rid = 1; ; rid++) {
 				var md = document.ModuleDef.ResolveToken(new MDToken(Table.Method, rid)) as MethodDef;
-				if (md == null)
+				if (md is null)
 					break;
 				methodAnnotations.Value.SetBodyModified(md, false);
 				md.FreeMethodBody();

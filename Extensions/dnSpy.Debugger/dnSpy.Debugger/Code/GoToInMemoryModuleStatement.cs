@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -49,7 +49,7 @@ namespace dnSpy.Debugger.Code {
 
 		void UpdateLocation() {
 			var location = dbgCallStackService.Value.ActiveFrame?.Location;
-			if (location == null)
+			if (location is null)
 				return;
 			referenceNavigatorService.Value.GoTo(location);
 		}

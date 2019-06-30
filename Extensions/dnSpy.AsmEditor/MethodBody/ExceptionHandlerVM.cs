@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,15 +34,15 @@ namespace dnSpy.AsmEditor.MethodBody {
 		readonly ExceptionHandlerOptions origOptions;
 
 		public ITypeSigCreator TypeSigCreator {
-			set { typeSigCreator = value; }
+			set => typeSigCreator = value;
 		}
-		ITypeSigCreator typeSigCreator;
+		ITypeSigCreator? typeSigCreator;
 
 		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
 		public ICommand EditCatchTypeCommand => new RelayCommand(a => EditCatchType());
 
 		public int Index {
-			get { return index; }
+			get => index;
 			set {
 				if (index != value) {
 					index = value;
@@ -58,8 +58,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public ListVM<InstructionVM> HandlerStartVM { get; }
 		public ListVM<InstructionVM> HandlerEndVM { get; }
 
-		public ITypeDefOrRef CatchType {
-			get { return catchType; }
+		public ITypeDefOrRef? CatchType {
+			get => catchType;
 			set {
 				if (catchType != value) {
 					catchType = value;
@@ -67,7 +67,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				}
 			}
 		}
-		ITypeDefOrRef catchType;
+		ITypeDefOrRef? catchType;
 
 		internal static readonly EnumVM[] exceptionHandlerTypeList = new EnumVM[] {
 			new EnumVM(ExceptionHandlerType.Catch, "Catch"),
@@ -99,10 +99,10 @@ namespace dnSpy.AsmEditor.MethodBody {
 		string VerifyInstruction(ListVM<InstructionVM> list) {
 			var item = list.SelectedItem;
 			var instr = item as InstructionVM;
-			if (item != null && instr == null)
+			if (!(item is null) && instr is null)
 				return dnSpy_AsmEditor_Resources.Error_OnlyInstrsCanBeSelected;
 
-			if (instr != null && instr.Index == -1)
+			if (!(instr is null) && instr.Index == -1)
 				return dnSpy_AsmEditor_Resources.Error_InstrHasBeenRemoved;
 
 			return string.Empty;
@@ -119,7 +119,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		void EditCatchType() {
-			if (typeSigCreator == null)
+			if (typeSigCreator is null)
 				throw new InvalidOperationException();
 
 			var newType = typeSigCreator.Create(typeSigCreatorOptions, CatchType.ToTypeSig(), out bool canceled);
@@ -142,9 +142,9 @@ namespace dnSpy.AsmEditor.MethodBody {
 			HandlerTypeVM.SelectedItem = options.HandlerType;
 		}
 
-		static InstructionVM RemoveNullInstance(InstructionVM vm) {
-			Debug.Assert(vm != null);
-			if (vm == null || vm == InstructionVM.Null)
+		static InstructionVM? RemoveNullInstance(InstructionVM? vm) {
+			Debug.Assert(!(vm is null));
+			if (vm is null || vm == InstructionVM.Null)
 				return null;
 			return vm;
 		}
@@ -156,7 +156,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			options.HandlerStart = RemoveNullInstance(HandlerStartVM.SelectedItem);
 			options.HandlerEnd = RemoveNullInstance(HandlerEndVM.SelectedItem);
 			options.CatchType = CatchType;
-			options.HandlerType = (ExceptionHandlerType)HandlerTypeVM.SelectedItem;
+			options.HandlerType = (ExceptionHandlerType)HandlerTypeVM.SelectedItem!;
 			return options;
 		}
 

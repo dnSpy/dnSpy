@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,7 +32,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="machine">Machine</param>
 		/// <returns></returns>
 		public static DmdRuntime CreateRuntime(DmdEvaluator evaluator, DmdImageFileMachine machine) {
-			if (evaluator == null)
+			if (evaluator is null)
 				throw new ArgumentNullException(nameof(evaluator));
 			return new DmdRuntimeImpl(evaluator, machine);
 		}

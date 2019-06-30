@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -45,19 +45,19 @@ namespace dnSpy.AsmEditor.Compiler {
 			: base(EditCodeCommandConstants.EditCodeGroup, (int)cmdId) {
 		}
 
-		protected override CodeEditorContext CreateContext(IMenuItemContext context) {
+		protected override CodeEditorContext? CreateContext(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_CODE_EDITOR_GUID))
 				return null;
 			var codeEditor = context.Find<ICodeEditor>();
-			if (codeEditor == null)
+			if (codeEditor is null)
 				return null;
 			var vm = EditCodeVM.TryGet(codeEditor.TextView);
-			if (vm == null)
+			if (vm is null)
 				return null;
 			return new CodeEditorContext(vm, codeEditor);
 		}
 
-		protected override ICommandTarget GetCommandTarget(CodeEditorContext context) => context.CodeEditor.TextView.CommandTarget;
+		protected override ICommandTarget? GetCommandTarget(CodeEditorContext context) => context.CodeEditor.TextView.CommandTarget;
 	}
 
 	[ExportMenuItem(Header = "res:Button_Compile", Icon = DsImagesAttribute.BuildSolution, InputGestureText = "res:ShortCutKeyF6", Group = MenuConstants.GROUP_CTX_CODEEDITOR_COMPILE, Order = 0)]

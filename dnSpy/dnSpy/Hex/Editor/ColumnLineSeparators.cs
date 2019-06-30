@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -61,7 +61,7 @@ namespace dnSpy.Hex.Editor {
 		ColumnLineSeparatorServiceProviderImpl(HexEditorFormatMapService editorFormatMapService) => this.editorFormatMapService = editorFormatMapService;
 
 		public override void InstallLineSeparatorService(WpfHexView wpfHexView) {
-			if (wpfHexView == null)
+			if (wpfHexView is null)
 				throw new ArgumentNullException(nameof(wpfHexView));
 			wpfHexView.Properties.GetOrCreateSingletonProperty(typeof(ColumnLineSeparatorService), () => new ColumnLineSeparatorService(wpfHexView, editorFormatMapService));
 		}
@@ -70,7 +70,7 @@ namespace dnSpy.Hex.Editor {
 	sealed class ColumnLineSeparatorService {
 		readonly WpfHexView wpfHexView;
 		readonly VSTC.IEditorFormatMap editorFormatMap;
-		HexAdornmentLayer adornmentLayer;
+		HexAdornmentLayer? adornmentLayer;
 		bool enabled;
 		readonly List<LineElement> lineElements;
 
@@ -94,9 +94,9 @@ namespace dnSpy.Hex.Editor {
 			readonly double x;
 			readonly double top;
 			readonly double bottom;
-			readonly Pen pen;
+			readonly Pen? pen;
 
-			public LineElement(LineElementKind kind, double x, double top, double bottom, Pen pen) {
+			public LineElement(LineElementKind kind, double x, double top, double bottom, Pen? pen) {
 				Canvas.SetTop(this, top);
 				Kind = kind;
 				this.x = x;
@@ -111,17 +111,17 @@ namespace dnSpy.Hex.Editor {
 			}
 		}
 
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[Export(typeof(HexAdornmentLayerDefinition))]
 		[VSUTIL.Name(PredefinedHexAdornmentLayers.ColumnLineSeparator)]
 		[VSUTIL.Order(After = PredefinedHexAdornmentLayers.BottomLayer, Before = PredefinedHexAdornmentLayers.TopLayer)]
 		[VSUTIL.Order(After = PredefinedHexAdornmentLayers.Selection, Before = PredefinedHexAdornmentLayers.Text)]
 		[VSUTIL.Order(After = PredefinedHexAdornmentLayers.TextMarker)]
 		static HexAdornmentLayerDefinition theAdornmentLayerDefinition;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 
 		public ColumnLineSeparatorService(WpfHexView wpfHexView, HexEditorFormatMapService editorFormatMapService) {
-			if (editorFormatMapService == null)
+			if (editorFormatMapService is null)
 				throw new ArgumentNullException(nameof(editorFormatMapService));
 			lineElements = new List<LineElement>();
 			this.wpfHexView = wpfHexView ?? throw new ArgumentNullException(nameof(wpfHexView));
@@ -138,7 +138,7 @@ namespace dnSpy.Hex.Editor {
 			enabled = newEnabled;
 
 			if (enabled) {
-				if (adornmentLayer == null)
+				if (adornmentLayer is null)
 					adornmentLayer = wpfHexView.GetAdornmentLayer(PredefinedHexAdornmentLayers.ColumnLineSeparator);
 				HookEnabledEvents();
 			}
@@ -184,7 +184,7 @@ namespace dnSpy.Hex.Editor {
 			else
 				UpdateLineElementPositions(e);
 		}
-		HexBufferLineFormatter latestBufferLines;
+		HexBufferLineFormatter? latestBufferLines;
 
 		void UpdateLineElementPositions(HexViewLayoutChangedEventArgs e) {
 			var d = e.NewViewState.ViewportTop - e.OldViewState.ViewportTop;
@@ -232,6 +232,7 @@ namespace dnSpy.Hex.Editor {
 			RemoveAllLines();
 			if (!enabled)
 				return;
+			Debug.Assert(!(adornmentLayer is null));
 
 			if (wpfHexView.ViewportHeight == 0)
 				return;
@@ -267,24 +268,21 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		const double PEN_THICKNESS = 1.0;
-		static Pen GetPen(ResourceDictionary props, HexColumnLineKind lineKind) {
-			Color? color;
-			SolidColorBrush scBrush;
-
-			Pen newPen;
-			if ((color = props[VSTC.EditorFormatDefinition.ForegroundColorId] as Color?) != null) {
-				var brush = new SolidColorBrush(color.Value);
+		static Pen? GetPen(ResourceDictionary props, HexColumnLineKind lineKind) {
+			Pen? newPen;
+			if (props[VSTC.EditorFormatDefinition.ForegroundColorId] is Color color) {
+				var brush = new SolidColorBrush(color);
 				brush.Freeze();
 				newPen = InitializePen(new Pen(brush, PEN_THICKNESS), lineKind);
 				newPen.Freeze();
 			}
-			else if ((scBrush = props[VSTC.EditorFormatDefinition.ForegroundBrushId] as SolidColorBrush) != null) {
+			else if (props[VSTC.EditorFormatDefinition.ForegroundBrushId] is SolidColorBrush scBrush) {
 				if (scBrush.CanFreeze)
 					scBrush.Freeze();
 				newPen = InitializePen(new Pen(scBrush, PEN_THICKNESS), lineKind);
 				newPen.Freeze();
 			}
-			else if ((newPen = props[VSTC.MarkerFormatDefinition.BorderId] as Pen) != null) {
+			else if (!((newPen = props[VSTC.MarkerFormatDefinition.BorderId] as Pen) is null)) {
 				if (newPen.CanFreeze)
 					newPen.Freeze();
 			}

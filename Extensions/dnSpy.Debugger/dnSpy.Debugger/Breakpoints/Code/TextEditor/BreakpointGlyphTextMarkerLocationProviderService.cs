@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,7 +27,7 @@ using dnSpy.Contracts.Text.Editor;
 
 namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 	abstract class DbgBreakpointGlyphTextMarkerLocationProviderService {
-		public abstract GlyphTextMarkerLocationInfo GetLocation(DbgCodeBreakpoint breakpoint);
+		public abstract GlyphTextMarkerLocationInfo? GetLocation(DbgCodeBreakpoint breakpoint);
 	}
 
 	[Export(typeof(DbgBreakpointGlyphTextMarkerLocationProviderService))]
@@ -38,12 +38,12 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		DbgBreakpointGlyphTextMarkerLocationProviderServiceImpl([ImportMany] IEnumerable<Lazy<DbgBreakpointGlyphTextMarkerLocationProvider, IDbgBreakpointGlyphTextMarkerLocationProviderMetadata>> dbgBreakpointGlyphTextMarkerLocationProviders) =>
 			this.dbgBreakpointGlyphTextMarkerLocationProviders = dbgBreakpointGlyphTextMarkerLocationProviders.OrderBy(a => a.Metadata.Order).ToArray();
 
-		public override GlyphTextMarkerLocationInfo GetLocation(DbgCodeBreakpoint breakpoint) {
-			if (breakpoint == null)
+		public override GlyphTextMarkerLocationInfo? GetLocation(DbgCodeBreakpoint breakpoint) {
+			if (breakpoint is null)
 				throw new ArgumentNullException(nameof(breakpoint));
 			foreach (var lz in dbgBreakpointGlyphTextMarkerLocationProviders) {
 				var loc = lz.Value.GetLocation(breakpoint);
-				if (loc != null)
+				if (!(loc is null))
 					return loc;
 			}
 			return null;

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,7 +25,7 @@ using System.IO;
 using dnlib.DotNet;
 
 namespace dndbg.Engine {
-	struct DnModuleId : IEquatable<DnModuleId> {
+	readonly struct DnModuleId : IEquatable<DnModuleId> {
 		[Flags]
 		enum Flags : byte {
 			IsDynamic		= 0x01,
@@ -81,7 +81,7 @@ namespace dndbg.Engine {
 		/// <param name="isInMemory">true if it's an in-memory module</param>
 		/// <param name="nameOnly">true if <paramref name="asmFullName"/> is ignored</param>
 		public DnModuleId(string asmFullName, string moduleName, bool isDynamic, bool isInMemory, bool nameOnly) {
-			Debug.Assert(asmFullName == null || !asmFullName.Contains("\\:"));
+			Debug.Assert(asmFullName is null || !asmFullName.Contains("\\:"));
 			this.asmFullName = asmFullName ?? string.Empty;
 			this.moduleName = moduleName ?? string.Empty;
 			flags = 0;
@@ -103,7 +103,8 @@ namespace dndbg.Engine {
 
 		static string GetFullName(string filename) {
 			try {
-				return Path.GetFullPath(filename);
+				if (!string.IsNullOrEmpty(filename))
+					return Path.GetFullPath(filename);
 			}
 			catch {
 			}
@@ -180,7 +181,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		/// <param name="obj">Other instance</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is DnModuleId other && Equals(other);
+		public override bool Equals(object? obj) => obj is DnModuleId other && Equals(other);
 
 		/// <summary>
 		/// GetHashCode()
@@ -196,8 +197,8 @@ namespace dndbg.Engine {
 		/// <returns></returns>
 		public override string ToString() {
 			if (ModuleNameOnly)
-				return string.Format("DYN={0} MEM={1} [{2}]", IsDynamic ? 1 : 0, IsInMemory ? 1 : 0, ModuleName);
-			return string.Format("DYN={0} MEM={1} {2} [{3}]", IsDynamic ? 1 : 0, IsInMemory ? 1 : 0, AssemblyFullName, ModuleName);
+				return $"DYN={(IsDynamic ? 1 : 0)} MEM={(IsInMemory ? 1 : 0)} [{ModuleName}]";
+			return $"DYN={(IsDynamic ? 1 : 0)} MEM={(IsInMemory ? 1 : 0)} {AssemblyFullName} [{ModuleName}]";
 		}
 	}
 }

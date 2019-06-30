@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,13 +31,13 @@ namespace dnSpy.Text.Adornments {
 	sealed class ToolTipProvider : IToolTipProvider {
 		readonly IWpfTextView wpfTextView;
 		readonly ISpaceReservationManager spaceReservationManager;
-		ISpaceReservationAgent toolTipAgent;
+		ISpaceReservationAgent? toolTipAgent;
 
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[Export(typeof(SpaceReservationManagerDefinition))]
 		[Name(PredefinedSpaceReservationManagerNames.ToolTip)]
 		static readonly SpaceReservationManagerDefinition toolTipSpaceReservationManagerDefinition;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 
 		public ToolTipProvider(IWpfTextView wpfTextView) {
 			this.wpfTextView = wpfTextView ?? throw new ArgumentNullException(nameof(wpfTextView));
@@ -45,22 +45,22 @@ namespace dnSpy.Text.Adornments {
 		}
 
 		public void ClearToolTip() {
-			if (toolTipAgent != null)
+			if (!(toolTipAgent is null))
 				spaceReservationManager.RemoveAgent(toolTipAgent);
 		}
 
 		public void ShowToolTip(ITrackingSpan span, object toolTipContent) {
-			if (span == null)
+			if (span is null)
 				throw new ArgumentNullException(nameof(span));
-			if (toolTipContent == null)
+			if (toolTipContent is null)
 				throw new ArgumentNullException(nameof(toolTipContent));
 			ShowToolTip(span, toolTipContent, PopupStyles.None);
 		}
 
 		public void ShowToolTip(ITrackingSpan span, object toolTipContent, PopupStyles style) {
-			if (span == null)
+			if (span is null)
 				throw new ArgumentNullException(nameof(span));
-			if (toolTipContent == null)
+			if (toolTipContent is null)
 				throw new ArgumentNullException(nameof(toolTipContent));
 			if ((style & (PopupStyles.DismissOnMouseLeaveText | PopupStyles.DismissOnMouseLeaveTextOrContent)) == (PopupStyles.DismissOnMouseLeaveText | PopupStyles.DismissOnMouseLeaveTextOrContent))
 				throw new ArgumentOutOfRangeException(nameof(style));
@@ -68,7 +68,7 @@ namespace dnSpy.Text.Adornments {
 			ClearToolTip();
 
 			var uiElement = GetUIElement(toolTipContent);
-			if (uiElement == null)
+			if (uiElement is null)
 				throw new ArgumentException();
 
 			spaceReservationManager.AgentChanged += SpaceReservationManager_AgentChanged;
@@ -83,7 +83,7 @@ namespace dnSpy.Text.Adornments {
 			}
 		}
 
-		UIElement GetUIElement(object toolTipContent) {
+		UIElement? GetUIElement(object toolTipContent) {
 			if (toolTipContent is UIElement elem)
 				return elem;
 			if (toolTipContent is string s)

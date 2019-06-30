@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Debugger.CallStack {
 		/// <summary>
 		/// Gets the selected thread. This is identical to <see cref="DbgManager.CurrentThread"/>
 		/// </summary>
-		public abstract DbgThread Thread { get; }
+		public abstract DbgThread? Thread { get; }
 
 		/// <summary>
 		/// Index of active thread. This could be invalid if <see cref="Frames"/> is empty
@@ -38,7 +38,7 @@ namespace dnSpy.Contracts.Debugger.CallStack {
 		/// <summary>
 		/// Gets the active frame or null if <see cref="Frames"/> is empty
 		/// </summary>
-		public DbgStackFrame ActiveFrame => Frames.ActiveStackFrame;
+		public DbgStackFrame? ActiveFrame => Frames.ActiveStackFrame;
 
 		/// <summary>
 		/// Gets all frames. This is a truncated list if there are too many frames
@@ -54,7 +54,7 @@ namespace dnSpy.Contracts.Debugger.CallStack {
 	/// <summary>
 	/// Frames changed event args
 	/// </summary>
-	public struct FramesChangedEventArgs {
+	public readonly struct FramesChangedEventArgs {
 		/// <summary>
 		/// true if there are new frames available
 		/// </summary>
@@ -79,7 +79,7 @@ namespace dnSpy.Contracts.Debugger.CallStack {
 	/// <summary>
 	/// Contains the stack frames and related info
 	/// </summary>
-	public struct DbgCallStackFramesInfo {
+	public readonly struct DbgCallStackFramesInfo {
 		/// <summary>
 		/// Gets all frames
 		/// </summary>
@@ -98,7 +98,7 @@ namespace dnSpy.Contracts.Debugger.CallStack {
 		/// <summary>
 		/// Gets the active frame or null if <see cref="Frames"/> is empty
 		/// </summary>
-		public DbgStackFrame ActiveStackFrame => (uint)ActiveFrameIndex < (uint)Frames.Count ? Frames[ActiveFrameIndex] : null;
+		public DbgStackFrame? ActiveStackFrame => (uint)ActiveFrameIndex < (uint)Frames.Count ? Frames[ActiveFrameIndex] : null;
 
 		/// <summary>
 		/// Constructor

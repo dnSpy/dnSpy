@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,22 +32,20 @@ namespace dnSpy.Language.Intellisense {
 	[Name(PredefinedIntellisensePresenterProviders.DefaultCompletionPresenter)]
 	[ContentType(ContentTypes.Any)]
 	sealed class CompletionPresenterProvider : IIntellisensePresenterProvider {
-		readonly IImageMonikerService imageMonikerService;
 		readonly Lazy<ICompletionTextElementProviderService> completionTextElementProviderService;
 		readonly Lazy<IUIElementProvider<Completion, ICompletionSession>, IOrderableContentTypeMetadata>[] completionUIElementProviders;
 
 		[ImportingConstructor]
-		CompletionPresenterProvider(IImageMonikerService imageMonikerService, Lazy<ICompletionTextElementProviderService> completionTextElementProviderService, [ImportMany] IEnumerable<Lazy<IUIElementProvider<Completion, ICompletionSession>, IOrderableContentTypeMetadata>> completionUIElementProviders) {
-			this.imageMonikerService = imageMonikerService;
+		CompletionPresenterProvider(Lazy<ICompletionTextElementProviderService> completionTextElementProviderService, [ImportMany] IEnumerable<Lazy<IUIElementProvider<Completion, ICompletionSession>, IOrderableContentTypeMetadata>> completionUIElementProviders) {
 			this.completionTextElementProviderService = completionTextElementProviderService;
 			this.completionUIElementProviders = Orderer.Order(completionUIElementProviders).ToArray();
 		}
 
-		public IIntellisensePresenter TryCreateIntellisensePresenter(IIntellisenseSession session) {
+		public IIntellisensePresenter? TryCreateIntellisensePresenter(IIntellisenseSession session) {
 			var completionSession = session as ICompletionSession;
-			if (completionSession == null)
+			if (completionSession is null)
 				return null;
-			return new CompletionPresenter(imageMonikerService, completionSession, completionTextElementProviderService.Value.Create(), completionUIElementProviders);
+			return new CompletionPresenter(completionSession, completionTextElementProviderService.Value.Create(), completionUIElementProviders);
 		}
 	}
 }

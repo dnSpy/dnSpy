@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,33 +19,35 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
 	/// Type name
 	/// </summary>
-	public struct DmdTypeName {
+	public readonly struct DmdTypeName {
 		/// <summary>
 		/// Namespace or null
 		/// </summary>
-		public string Namespace;
+		public readonly string? Namespace;
 
 		/// <summary>
 		/// Name
 		/// </summary>
-		public string Name;
+		public readonly string Name;
 
 		/// <summary>
 		/// Nested type names, separated with '+'
 		/// </summary>
-		public string Extra;
+		public readonly string? Extra;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="namespace">Namespace or null</param>
 		/// <param name="name">Name</param>
-		public DmdTypeName(string @namespace, string name) {
+		public DmdTypeName(string? @namespace, string name) {
 			Namespace = @namespace;
 			Name = name;
 			Extra = null;
@@ -57,7 +59,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="namespace">Namespace or null</param>
 		/// <param name="name">Name</param>
 		/// <param name="extra">Nested type names, separated with '+'</param>
-		public DmdTypeName(string @namespace, string name, string extra) {
+		public DmdTypeName(string? @namespace, string name, string extra) {
 			Namespace = @namespace;
 			Name = name;
 			Extra = extra;
@@ -70,21 +72,24 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <returns></returns>
 		public static DmdTypeName Create(DmdType type) {
 			if (type.TypeSignatureKind == DmdTypeSignatureKind.Type) {
+				Debug.Assert(!(type.MetadataName is null));
 				var declType = type.DeclaringType;
-				if ((object)declType == null)
+				if (declType is null)
 					return new DmdTypeName(type.MetadataNamespace, type.MetadataName);
+				Debug.Assert(!(declType.MetadataName is null));
 
-				if ((object)declType.DeclaringType == null)
+				if (declType.DeclaringType is null)
 					return new DmdTypeName(declType.MetadataNamespace, declType.MetadataName, type.MetadataName);
 
-				var list = ListCache<DmdType>.AllocList();
+				List<DmdType>? list = ListCache<DmdType>.AllocList();
 				for (;;) {
-					if ((object)type.DeclaringType == null)
+					if (type.DeclaringType is null)
 						break;
 					list.Add(type);
 					type = type.DeclaringType;
 				}
-				var sb = ObjectCache.AllocStringBuilder();
+				Debug.Assert(!(type.MetadataName is null));
+				StringBuilder? sb = ObjectCache.AllocStringBuilder();
 				for (int i = list.Count - 1; i >= 0; i--) {
 					if (i != list.Count - 1)
 						sb.Append('+');
@@ -102,12 +107,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <returns></returns>
 		public override string ToString() {
-			if (Namespace == null) {
-				if (Extra == null)
+			if (Namespace is null) {
+				if (Extra is null)
 					return Name;
 				return Name + "+" + Extra;
 			}
-			if (Extra == null)
+			if (Extra is null)
 				return Namespace + "." + Name;
 			return Namespace + "." + Name + "+" + Extra;
 		}

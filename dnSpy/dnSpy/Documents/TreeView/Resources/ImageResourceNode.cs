@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,31 +36,31 @@ using dnSpy.Properties;
 namespace dnSpy.Documents.TreeView.Resources {
 	[ExportResourceNodeProvider(Order = DocumentTreeViewConstants.ORDER_RSRCPROVIDER_IMAGE_RESOURCE_NODE)]
 	sealed class ImageResourceNodeProvider : IResourceNodeProvider {
-		public ResourceNode Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup) {
+		public ResourceNode? Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup) {
 			var er = resource as EmbeddedResource;
-			if (er == null)
+			if (er is null)
 				return null;
 
-			er.Data.Position = 0;
-			if (!CouldBeImage(er.Name, er.Data))
+			var reader = er.CreateReader();
+			if (!CouldBeImage(er.Name, ref reader))
 				return null;
 
 			return new ImageResourceNodeImpl(treeNodeGroup, er);
 		}
 
-		public ResourceElementNode Create(ModuleDef module, ResourceElement resourceElement, ITreeNodeGroup treeNodeGroup) {
+		public ResourceElementNode? Create(ModuleDef module, ResourceElement resourceElement, ITreeNodeGroup treeNodeGroup) {
 			if (resourceElement.ResourceData.Code != ResourceTypeCode.ByteArray && resourceElement.ResourceData.Code != ResourceTypeCode.Stream)
 				return null;
 
 			var data = (byte[])((BuiltInResourceData)resourceElement.ResourceData).Data;
-			var stream = MemoryImageStream.Create(data);
-			if (!CouldBeImage(resourceElement.Name, stream))
+			var reader = ByteArrayDataReaderFactory.CreateReader(data);
+			if (!CouldBeImage(resourceElement.Name, ref reader))
 				return null;
 
 			return new ImageResourceElementNodeImpl(treeNodeGroup, resourceElement);
 		}
 
-		static bool CouldBeImage(string name, IBinaryReader reader) => CouldBeImage(name) || CouldBeImage(reader);
+		static bool CouldBeImage(string name, ref DataReader reader) => CouldBeImage(name) || CouldBeImage(ref reader);
 
 		static readonly string[] fileExtensions = {
 			".png",
@@ -77,7 +77,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 			return false;
 		}
 
-		static bool CouldBeImage(IBinaryReader reader) {
+		static bool CouldBeImage(ref DataReader reader) {
 			reader.Position = 0;
 			if (reader.Length < 0x16)
 				return false;
@@ -128,13 +128,13 @@ namespace dnSpy.Documents.TreeView.Resources {
 
 		public ImageResourceNodeImpl(ITreeNodeGroup treeNodeGroup, EmbeddedResource resource)
 			: base(treeNodeGroup, resource) {
-			imageData = resource.GetResourceData();
+			imageData = resource.CreateReader().ToArray();
 			imageSource = ImageResourceUtilities.CreateImageSource(imageData);
 		}
 
 		public override void WriteShort(IDecompilerOutput output, IDecompiler decompiler, bool showOffset) {
 			var documentViewerOutput = output as IDocumentViewerOutput;
-			if (documentViewerOutput != null) {
+			if (!(documentViewerOutput is null)) {
 				documentViewerOutput.AddUIElement(() => {
 					return new System.Windows.Controls.Image {
 						Source = imageSource,
@@ -143,7 +143,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 			}
 
 			base.WriteShort(output, decompiler, showOffset);
-			if (documentViewerOutput != null) {
+			if (!(documentViewerOutput is null)) {
 				documentViewerOutput.AddButton(dnSpy_Resources.SaveResourceButton, () => Save());
 				documentViewerOutput.WriteLine();
 				documentViewerOutput.WriteLine();
@@ -157,8 +157,8 @@ namespace dnSpy.Documents.TreeView.Resources {
 	}
 
 	sealed class ImageResourceElementNodeImpl : ImageResourceElementNode {
-		ImageSource imageSource;
-		byte[] imageData;
+		ImageSource? imageSource;
+		byte[]? imageData;
 
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.IMAGE_RESOURCE_ELEMENT_NODE_GUID);
 		protected override ImageReference GetIcon() => DsImages.Image;
@@ -196,7 +196,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 			yield return new ResourceData(ResourceElement.Name, token => new MemoryStream(id));
 		}
 
-		public override string CheckCanUpdateData(ResourceElement newResElem) {
+		public override string? CheckCanUpdateData(ResourceElement newResElem) {
 			var res = base.CheckCanUpdateData(newResElem);
 			if (!string.IsNullOrEmpty(res))
 				return res;

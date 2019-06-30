@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,13 +18,13 @@
 */
 
 namespace dnSpy.AsmEditor.ViewHelpers {
-	interface IEdit<T> {
+	interface IEdit<T> where T : class {
 		/// <summary>
 		/// Lets the user edit the object. Returns null if user canceled.
 		/// </summary>
 		/// <param name="title">Window UI title</param>
 		/// <param name="obj">The object to edit</param>
 		/// <returns></returns>
-		T Edit(string title, T obj);
+		T? Edit(string? title, T obj);
 	}
 }

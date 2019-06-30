@@ -1,4 +1,4 @@
-﻿/*
+/*
 	Copyright (c) 2015 Ki
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -51,14 +51,14 @@ namespace dnSpy.MainApp.Settings {
 				int count = 0;
 				try {
 					foreach (var ext in openExtensions) {
-						string name;
+						string? name;
 						using (var key = Registry.CurrentUser.OpenSubKey(@"Software\Classes\." + ext))
-							name = key == null ? null : key.GetValue(string.Empty) as string;
+							name = key is null ? null : key.GetValue(string.Empty) as string;
 						if (string.IsNullOrEmpty(name))
 							continue;
 
 						using (var key = Registry.CurrentUser.OpenSubKey(@"Software\Classes\" + name + @"\shell\" + EXPLORER_MENU_TEXT)) {
-							if (key != null)
+							if (!(key is null))
 								count++;
 						}
 					}
@@ -70,20 +70,28 @@ namespace dnSpy.MainApp.Settings {
 					null;
 			}
 			set {
-				if (value == null)
+				if (value is null)
 					return;
 				bool enabled = value.Value;
 
 				var path = Assembly.GetEntryAssembly().Location;
+#if NETCOREAPP
+				// Use the native exe and not the managed file
+				path = Path.ChangeExtension(path, "exe");
+				if (!File.Exists(path)) {
+					// All .NET files could be in a bin sub dir
+					path = Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(path)), Path.GetFileName(path));
+				}
+#endif
 				if (!File.Exists(path)) {
 					messageBoxService.Show("Cannot locate dnSpy!");
 					return;
 				}
-				path = string.Format("\"{0}\" -- \"%1\"", path);
+				path = $"\"{path}\" -- \"%1\"";
 
 				try {
 					foreach (var ext in openExtensions) {
-						string name;
+						string? name;
 						using (var key = Registry.CurrentUser.OpenSubKey(@"Software\Classes\." + ext))
 							name = key?.GetValue(string.Empty) as string;
 

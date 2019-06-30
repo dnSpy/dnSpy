@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,9 +23,9 @@ using System.Collections.ObjectModel;
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class DmdCreatedParameterInfo : DmdParameterInfoBase {
 		public override DmdType ParameterType { get; }
-		public override string Name => originalParameter.Name;
+		public override string? Name => originalParameter.Name;
 		public override bool HasDefaultValue => originalParameter.HasDefaultValue;
-		public override object RawDefaultValue => originalParameter.RawDefaultValue;
+		public override object? RawDefaultValue => originalParameter.RawDefaultValue;
 		public override int Position => originalParameter.Position;
 		public override DmdParameterAttributes Attributes => originalParameter.Attributes;
 		public override DmdMemberInfo Member { get; }

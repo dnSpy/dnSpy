@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,12 +26,12 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 		/// </summary>
 		public static DecompilerSettingsService __Instance_DONT_USE {
 			get {
-				if (__instance_DONT_USE == null)
+				if (__instance_DONT_USE is null)
 					Interlocked.CompareExchange(ref __instance_DONT_USE, new DecompilerSettingsService(), null);
-				return __instance_DONT_USE;
+				return __instance_DONT_USE!;
 			}
 		}
-		static DecompilerSettingsService __instance_DONT_USE;
+		static DecompilerSettingsService? __instance_DONT_USE;
 
 		protected DecompilerSettingsService() {
 			CSharpVBDecompilerSettings = new CSharpVBDecompilerSettings();

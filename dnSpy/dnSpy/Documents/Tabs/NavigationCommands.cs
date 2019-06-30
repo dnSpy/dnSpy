@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,7 +36,7 @@ namespace dnSpy.Documents.Tabs {
 		public BrowseBackCommand()
 			: base(NavigationCommands.BrowseBack) {
 		}
-		public override string GetToolTip(IToolBarItemContext context) => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.NavigateBackCommand, dnSpy_Resources.ShortCutKeyBackspace);
+		public override string? GetToolTip(IToolBarItemContext context) => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.NavigateBackCommand, dnSpy_Resources.ShortCutKeyBackspace);
 	}
 
 	[ExportToolBarButton(OwnerGuid = ToolBarConstants.APP_TB_GUID, Icon = DsImagesAttribute.Forwards, Group = ToolBarConstants.GROUP_APP_TB_MAIN_NAVIGATION, Order = 10)]
@@ -44,7 +44,7 @@ namespace dnSpy.Documents.Tabs {
 		public BrowseForwardCommand()
 			: base(NavigationCommands.BrowseForward) {
 		}
-		public override string GetToolTip(IToolBarItemContext context) => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.NavigateForwardCommand, dnSpy_Resources.ShortCutKeyAltRightArrow);
+		public override string? GetToolTip(IToolBarItemContext context) => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.NavigateForwardCommand, dnSpy_Resources.ShortCutKeyAltRightArrow);
 	}
 
 	[ExportAutoLoaded]
@@ -54,7 +54,7 @@ namespace dnSpy.Documents.Tabs {
 		[ImportingConstructor]
 		NavigationCommandInstaller(IDocumentTabService documentTabService, IAppWindow appWindow) {
 			this.documentTabService = documentTabService;
-			Debug.Assert(Application.Current != null && Application.Current.MainWindow != null);
+			Debug.Assert(!(Application.Current is null) && !(Application.Current.MainWindow is null));
 			var cmds = appWindow.MainWindowCommands;
 			cmds.Add(NavigationCommands.BrowseBack, new RelayCommand(a => BrowseBack(), a => CanBrowseBack));
 			cmds.Add(NavigationCommands.BrowseForward, new RelayCommand(a => BrowseForward(), a => CanBrowseForward));
@@ -65,7 +65,7 @@ namespace dnSpy.Documents.Tabs {
 		void BrowseBack() {
 			if (!CanBrowseBack)
 				return;
-			documentTabService.ActiveTab.NavigateBackward();
+			documentTabService.ActiveTab!.NavigateBackward();
 		}
 
 		bool CanBrowseForward => documentTabService.ActiveTab?.CanNavigateForward == true;
@@ -73,7 +73,7 @@ namespace dnSpy.Documents.Tabs {
 		void BrowseForward() {
 			if (!CanBrowseForward)
 				return;
-			documentTabService.ActiveTab.NavigateForward();
+			documentTabService.ActiveTab!.NavigateForward();
 		}
 	}
 }

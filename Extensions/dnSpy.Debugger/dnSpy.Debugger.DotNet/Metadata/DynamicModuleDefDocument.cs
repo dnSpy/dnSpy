@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,7 +29,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		sealed class DocKey : IDsDocumentNameKey {
 			readonly DbgModule module;
 			public DocKey(DbgModule module) => this.module = module ?? throw new ArgumentNullException(nameof(module));
-			public override bool Equals(object obj) => obj is DocKey o && module == o.module;
+			public override bool Equals(object? obj) => obj is DocKey o && module == o.module;
 			public override int GetHashCode() => module.GetHashCode();
 		}
 
@@ -48,19 +48,19 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		public static DynamicModuleDefDocument CreateAssembly(List<DynamicModuleDefDocument> files) {
 			var manifest = files[0];
-			var file = new DynamicModuleDefDocument(manifest.ModuleId, manifest.DbgModule, manifest.ModuleDef, false);
+			var file = new DynamicModuleDefDocument(manifest.ModuleId, manifest.DbgModule, manifest.ModuleDef!, false);
 			file.files = new List<DynamicModuleDefDocument>(files);
 			return file;
 		}
 
 		protected override TList<IDsDocument> CreateChildren() {
 			var list = new TList<IDsDocument>();
-			if (files != null) {
+			if (!(files is null)) {
 				list.AddRange(files);
 				files = null;
 			}
 			return list;
 		}
-		List<DynamicModuleDefDocument> files;
+		List<DynamicModuleDefDocument>? files;
 	}
 }

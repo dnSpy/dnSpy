@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,7 +23,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 	sealed class UndoObject : IUndoObject {
 		public bool IsDirty { get; set; }
 		public int SavedCommand { get; set; }
-		public object Value { get; set; }
+		public object? Value { get; set; }
 
 		public UndoObject() {
 		}

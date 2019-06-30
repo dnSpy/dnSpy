@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -61,7 +61,7 @@ namespace dnSpy.Contracts.Hex.Files.PE {
 			formatter.WriteUInt32(ReadValue());
 			formatter.WriteSpace();
 			formatter.Write("(", PredefinedClassifiedTextTags.Punctuation);
-			formatter.Write(ReadDateTime().ToString(CultureInfo.CurrentCulture.DateTimeFormat), PredefinedClassifiedTextTags.Text);
+			formatter.Write(ReadDateTime().ToLocalTime().ToString(CultureInfo.CurrentCulture.DateTimeFormat), PredefinedClassifiedTextTags.Text);
 			formatter.Write(")", PredefinedClassifiedTextTags.Punctuation);
 		}
 	}
@@ -94,7 +94,7 @@ namespace dnSpy.Contracts.Hex.Files.PE {
 		/// <returns></returns>
 		public override HexSpan? GetFieldReferenceSpan(HexBufferFile file) {
 			var peHeaders = file.GetHeaders<PeHeaders>();
-			if (peHeaders == null)
+			if (peHeaders is null)
 				return null;
 			var rva = ReadValue();
 			if (rva == 0)

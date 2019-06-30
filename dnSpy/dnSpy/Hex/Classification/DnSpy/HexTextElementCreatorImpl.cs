@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -41,7 +41,7 @@ namespace dnSpy.Hex.Classification.DnSpy {
 			writer = new CTC.TextClassifierTextColorWriter();
 		}
 
-		public override FrameworkElement CreateTextElement(bool colorize, string tag) {
+		public override FrameworkElement CreateTextElement(bool colorize, string? tag) {
 			var context = new CTC.TextClassifierContext(writer.Text, tag, colorize, writer.Colors);
 			return textElementProvider.CreateTextElement(classificationFormatMap, context, contentType, CTC.TextElementFlags.Wrap);
 		}

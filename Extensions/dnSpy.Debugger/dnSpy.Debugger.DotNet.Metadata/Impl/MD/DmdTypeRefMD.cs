@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,21 +19,23 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using dnlib.DotNet.MD;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 	sealed class DmdTypeRefMD : DmdTypeRef {
 		public override DmdTypeScope TypeScope { get; }
-		public override string MetadataNamespace { get; }
-		public override string MetadataName { get; }
+		public override string? MetadataNamespace { get; }
+		public override string? MetadataName { get; }
 
 		readonly DmdEcma335MetadataReader reader;
 		readonly int declTypeToken;
 
-		public DmdTypeRefMD(DmdEcma335MetadataReader reader, uint rid, IList<DmdCustomModifier> customModifiers) : base(reader.Module, rid, customModifiers) {
+		public DmdTypeRefMD(DmdEcma335MetadataReader reader, uint rid, IList<DmdCustomModifier>? customModifiers) : base(reader.Module, rid, customModifiers) {
 			this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
 
-			var row = reader.TablesStream.ReadTypeRefRow(rid);
+			bool b = reader.TablesStream.TryReadTypeRefRow(rid, out var row);
+			Debug.Assert(b);
 			var ns = reader.StringsStream.Read(row.Namespace);
 			MetadataNamespace = string.IsNullOrEmpty(ns) ? null : ns;
 			MetadataName = reader.StringsStream.ReadNoNull(row.Name);
@@ -51,7 +53,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 				break;
 
 			case 0x1A:
-				var moduleRefRow = reader.TablesStream.ReadModuleRefRow(resScopeToken & 0x00FFFFFF) ?? new RawModuleRefRow();
+				reader.TablesStream.TryReadModuleRefRow(resScopeToken & 0x00FFFFFF, out var moduleRefRow);
 				var moduleName = reader.StringsStream.ReadNoNull(moduleRefRow.Name);
 				TypeScope = new DmdTypeScope(reader.GetName(), moduleName);
 				break;
@@ -67,7 +69,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		}
 
 		protected override int GetDeclaringTypeRefToken() => declTypeToken;
-		public override DmdType WithCustomModifiers(IList<DmdCustomModifier> customModifiers) => AppDomain.Intern(new DmdTypeRefMD(reader, Rid, VerifyCustomModifiers(customModifiers)));
+		public override DmdType WithCustomModifiers(IList<DmdCustomModifier>? customModifiers) => AppDomain.Intern(new DmdTypeRefMD(reader, Rid, VerifyCustomModifiers(customModifiers)));
 		public override DmdType WithoutCustomModifiers() => GetCustomModifiers().Count == 0 ? this : AppDomain.Intern(new DmdTypeRefMD(reader, Rid, null));
 	}
 }

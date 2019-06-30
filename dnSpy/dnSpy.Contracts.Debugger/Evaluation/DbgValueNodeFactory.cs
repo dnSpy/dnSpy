@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,8 +18,6 @@
 */
 
 using System;
-using System.Threading;
-using dnSpy.Contracts.Debugger.CallStack;
 
 namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// <summary>
@@ -32,49 +30,41 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public abstract DbgLanguage Language { get; }
 
 		/// <summary>
-		/// Creates <see cref="DbgValueNode"/>s. It blocks the current thread.
+		/// Creates <see cref="DbgValueNode"/>s
 		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="expression">Expression</param>
 		/// <param name="nodeOptions">Value node options</param>
 		/// <param name="options">Eval options</param>
-		/// <param name="expressionEvaluatorState">State created by <see cref="DbgExpressionEvaluator.CreateExpressionEvaluatorState"/> or null to store the state in <paramref name="context"/></param>
-		/// <param name="cancellationToken">Cancellation token</param>
+		/// <param name="expressionEvaluatorState">State created by <see cref="DbgExpressionEvaluator.CreateExpressionEvaluatorState"/> or null to store the state in <paramref name="evalInfo"/>'s context</param>
 		/// <returns></returns>
-		public DbgCreateValueNodeResult Create(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgValueNodeEvaluationOptions nodeOptions, DbgEvaluationOptions options, object expressionEvaluatorState, CancellationToken cancellationToken = default) =>
-			Create(context, frame, new[] { new DbgExpressionEvaluationInfo(expression, nodeOptions, options, expressionEvaluatorState) }, cancellationToken)[0];
+		public DbgCreateValueNodeResult Create(DbgEvaluationInfo evalInfo, string expression, DbgValueNodeEvaluationOptions nodeOptions, DbgEvaluationOptions options, object? expressionEvaluatorState) =>
+			Create(evalInfo, new[] { new DbgExpressionEvaluationInfo(expression, nodeOptions, options, expressionEvaluatorState) })[0];
 
 		/// <summary>
-		/// Creates a <see cref="DbgValueNode"/>. It blocks the current thread until the evaluation is complete.
-		/// The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues.
+		/// Creates a <see cref="DbgValueNode"/>. The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues.
 		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="expressions">Expressions to evaluate</param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgCreateValueNodeResult[] Create(DbgEvaluationContext context, DbgStackFrame frame, DbgExpressionEvaluationInfo[] expressions, CancellationToken cancellationToken = default);
+		public abstract DbgCreateValueNodeResult[] Create(DbgEvaluationInfo evalInfo, DbgExpressionEvaluationInfo[] expressions);
 
 		/// <summary>
-		/// Creates <see cref="DbgValueNode"/>s. It blocks the current thread.
-		/// The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues.
+		/// Creates <see cref="DbgValueNode"/>s. The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues.
 		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="objectIds">Object ids</param>
 		/// <param name="options">Options</param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgValueNode[] Create(DbgEvaluationContext context, DbgStackFrame frame, DbgObjectId[] objectIds, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken = default);
+		public abstract DbgValueNode[] Create(DbgEvaluationInfo evalInfo, DbgObjectId[] objectIds, DbgValueNodeEvaluationOptions options);
 	}
 
 	/// <summary>
 	/// Contains the created <see cref="DbgValueNode"/> or an error message
 	/// </summary>
-	public struct DbgCreateValueNodeResult {
+	public readonly struct DbgCreateValueNodeResult {
 		/// <summary>
-		/// Gets the created node or null if there was an error
+		/// Gets the created node
 		/// </summary>
 		public DbgValueNode ValueNode { get; }
 

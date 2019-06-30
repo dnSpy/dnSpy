@@ -1,4 +1,4 @@
-﻿/*
+/*
 	Copyright (c) 2015 Ki
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -84,7 +84,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 					else
 						assembly = Module.Context.AssemblyResolver.Resolve(assemblyName, Module);
 
-					if (assembly == null)
+					if (assembly is null)
 						assembly = assemblyName;
 				}
 				else

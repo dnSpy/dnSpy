@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,15 +30,15 @@ using Microsoft.VisualStudio.Text.Operations;
 
 namespace dnSpy.Output {
 	sealed class OutputBufferVM : ViewModelBase, IOutputTextPane {
-		public IInputElement FocusedElement => logEditor.FocusedElement;
-		public object TextEditorUIObject => logEditor.UIObject;
+		public IInputElement? FocusedElement => logEditor.FocusedElement;
+		public object? TextEditorUIObject => logEditor.UIObject;
 		public double ZoomLevel => logEditor.TextView.ZoomLevel;
 
 		public Guid Guid { get; }
 		public string Name { get; }
 
 		public int Index {
-			get { return index; }
+			get => index;
 			set {
 				if (index != value) {
 					index = value;
@@ -60,13 +60,13 @@ namespace dnSpy.Output {
 		}
 
 		public WordWrapStyles WordWrapStyle {
-			get { return logEditor.WordWrapStyle; }
-			set { logEditor.WordWrapStyle = value; }
+			get => logEditor.WordWrapStyle;
+			set => logEditor.WordWrapStyle = value;
 		}
 
 		public bool ShowLineNumbers {
-			get { return logEditor.ShowLineNumbers; }
-			set { logEditor.ShowLineNumbers = value; }
+			get => logEditor.ShowLineNumbers;
+			set => logEditor.ShowLineNumbers = value;
 		}
 
 		bool ShowTimestamps => logEditor.TextView.Options.GetOptionValue(DefaultOutputOptions.ShowTimestampsId);
@@ -105,11 +105,11 @@ namespace dnSpy.Output {
 
 		public string GetText() => logEditor.GetText();
 		public ICachedWriter CreateWriter() => new CachedWriter(this);
-		public void Write(object color, string s) => WriteInternal(color, s);
-		public void Write(TextColor color, string s) => WriteInternal(color.Box(), s);
-		public void WriteLine(TextColor color, string s) => WriteLine(color.Box(), s);
+		public void Write(object color, string? s) => WriteInternal(color, s);
+		public void Write(TextColor color, string? s) => WriteInternal(color.Box(), s);
+		public void WriteLine(TextColor color, string? s) => WriteLine(color.Box(), s);
 
-		public void WriteLine(object color, string s) {
+		public void WriteLine(object color, string? s) {
 			WriteInternal(color, s);
 			WriteInternal(BoxedTextColor.Text, Environment.NewLine);
 		}
@@ -119,8 +119,8 @@ namespace dnSpy.Output {
 				WriteInternal(t.Color, t.Text);
 		}
 
-		void WriteInternal(object color, string text) {
-			if (text == null)
+		void WriteInternal(object color, string? text) {
+			if (text is null)
 				return;
 			int so = 0;
 			while (so < text.Length) {

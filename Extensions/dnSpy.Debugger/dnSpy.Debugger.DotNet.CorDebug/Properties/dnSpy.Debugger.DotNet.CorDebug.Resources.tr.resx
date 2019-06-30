@@ -1,0 +1,280 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="DbgAsm_Args" xml:space="preserve">
+    <value>Argümanlar</value>
+  </data>
+  <data name="DbgAsm_BreakAt" xml:space="preserve">
+    <value>_Atla</value>
+  </data>
+  <data name="DbgAsm_Host" xml:space="preserve">
+    <value>_Ana bilgisayar</value>
+  </data>
+  <data name="DbgAsm_HostArgs" xml:space="preserve">
+    <value>Ana bilgisayar argümanları</value>
+  </data>
+  <data name="DbgAsm_WorkingDir" xml:space="preserve">
+    <value>_Çalışma dizini</value>
+  </data>
+  <data name="DbgBreak_CreateProcessEvent" xml:space="preserve">
+    <value>SüreçYarat</value>
+  </data>
+  <data name="DbgBreak_Dont" xml:space="preserve">
+    <value>Bozma</value>
+  </data>
+  <data name="DbgBreak_EntryPoint" xml:space="preserve">
+    <value>Giriş Noktası</value>
+  </data>
+  <data name="Error_CouldNotFindDotNetCoreHost" xml:space="preserve">
+    <value>.Net Core host '{0}' bulunamadı</value>
+  </data>
+  <data name="Error_CouldNotStartDebugger" xml:space="preserve">
+    <value>Hata ayıklayıcı {0} çalıştırılamadı</value>
+  </data>
+  <data name="Error_CouldNotStartDebuggerCheckAccessToFile" xml:space="preserve">
+    <value>Hata ayıklayıcı başlatılamadı. '{0}' dosyasına erişiminiz olduğundan emin olun
+
+Hata:{1}</value>
+  </data>
+  <data name="Error_CouldNotStartDebuggerRequireAdminPrivLvl" xml:space="preserve">
+    <value>Hata ayıklayıcı başlatılamadı. Hata ayıklayıcı programı yönetici izinleri gerektirir. Yönetici izniyle beraber dnSpy'ı tekrar başlatın ve işlemi tekrar deneyin.</value>
+  </data>
+  <data name="Error_FileDoesNotExist" xml:space="preserve">
+    <value>Dosya mevcut değil</value>
+  </data>
+  <data name="Error_MissingFilename" xml:space="preserve">
+    <value>Eksik dosya adı</value>
+  </data>
+  <data name="Plugin_ShortDescription" xml:space="preserve">
+    <value>Hata Ayıklayıcı ({0})</value>
+  </data>
+  <data name="Thread_UserState_Background" xml:space="preserve">
+    <value>Arka plan</value>
+  </data>
+  <data name="Thread_UserState_Stopped" xml:space="preserve">
+    <value>Durdu</value>
+  </data>
+  <data name="Thread_UserState_StopRequested" xml:space="preserve">
+    <value>DurmaTalepedildi</value>
+  </data>
+  <data name="Thread_UserState_Suspended" xml:space="preserve">
+    <value>Askıya alındı</value>
+  </data>
+  <data name="Thread_UserState_SuspendRequested" xml:space="preserve">
+    <value>AskıyaalınmaTalepedildi</value>
+  </data>
+  <data name="Thread_UserState_ThreadPool" xml:space="preserve">
+    <value>KonuHavuzu</value>
+  </data>
+  <data name="Thread_UserState_UnsafePoint" xml:space="preserve">
+    <value>TehlikeliNokta</value>
+  </data>
+  <data name="Thread_UserState_Unstarted" xml:space="preserve">
+    <value>Başlamamış</value>
+  </data>
+  <data name="Thread_UserState_WaitSleepJoin" xml:space="preserve">
+    <value>BekleUyuKatıl</value>
+  </data>
+  <data name="UseDnSpy64ExeToDebug32" xml:space="preserve">
+    <value>32-bit uygulamalardaki hataları ayıklamak için dnSpy 32-bit kullanın.</value>
+  </data>
+  <data name="UseDnSpyExeToDebug64" xml:space="preserve">
+    <value>64 bit uygulamalarda hata ayıklamak için 64 bit dnSpy kullanın.</value>
+  </data>
+  <data name="ExceptionMessageIsNull" xml:space="preserve">
+    <value>"&lt; istisna mesajı yok &gt;"</value>
+  </data>
+  <data name="Error_CouldNotStartDebugger2" xml:space="preserve">
+    <value>Hata ayıklayıcı başlatılamadı.
+
+Hata:{0}</value>
+  </data>
+  <data name="Error_CouldNotAttachToProcess" xml:space="preserve">
+    <value>{0} ı işlemek için eklenemedi</value>
+  </data>
+  <data name="Error_ProcessIsAlreadyBeingDebugged" xml:space="preserve">
+    <value>Başka işlemler zaten işlem {0} 'ın hatalarını ayıklıyor</value>
+  </data>
+  <data name="StackFrame_NativeFrame" xml:space="preserve">
+    <value>Yerli Çerçeve {0}</value>
+  </data>
+  <data name="StackFrame_AppdomainTransition" xml:space="preserve">
+    <value>Uygulama alanı geçişi</value>
+  </data>
+  <data name="StackFrame_ClassInit" xml:space="preserve">
+    <value>Class Init</value>
+  </data>
+  <data name="StackFrame_Exception" xml:space="preserve">
+    <value>İstisna</value>
+  </data>
+  <data name="StackFrame_FunctionEvaluation" xml:space="preserve">
+    <value>Fonksiyon değerlendirmesi</value>
+  </data>
+  <data name="StackFrame_InternalCall" xml:space="preserve">
+    <value>Dahili Çağrı</value>
+  </data>
+  <data name="StackFrame_InternalFrame" xml:space="preserve">
+    <value>İç çerçeve ({0})</value>
+  </data>
+  <data name="StackFrame_JITCompilation" xml:space="preserve">
+    <value>JIT Derlemesi</value>
+  </data>
+  <data name="StackFrame_LightweightFunction" xml:space="preserve">
+    <value>Lightweight fonksiyonu</value>
+  </data>
+  <data name="StackFrame_ManagedToNativeTransition" xml:space="preserve">
+    <value>Yerel geçiş başarılı</value>
+  </data>
+  <data name="StackFrame_NativeToManagedTransition" xml:space="preserve">
+    <value>Başarılan geçişe yerli</value>
+  </data>
+  <data name="StackFrame_Security" xml:space="preserve">
+    <value>Güvenlik</value>
+  </data>
+  <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
+    <value>IL dengesi {0}</value>
+  </data>
+  <data name="GlyphToolTip_line_0_character_1" xml:space="preserve">
+    <value>hat {0} karakter {1}</value>
+  </data>
+  <data name="GlyphToolTip_NativeAddress" xml:space="preserve">
+    <value>adres {0}</value>
+  </data>
+  <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
+    <value>Bir sonraki ifade ayarlanamadı.</value>
+  </data>
+  <data name="Error_CouldNotBreakProcess" xml:space="preserve">
+    <value>İşlem durdurulamadı. Hata: 0x{0:X8}</value>
+  </data>
+  <data name="InternalDebuggerError" xml:space="preserve">
+    <value>İç hata ayıklayıcı hatası</value>
+  </data>
+  <data name="Error_CLRDebuggerErrorOccurred" xml:space="preserve">
+    <value>Bir CLR hata ayıklayıcı hatası meydana geldi. Hata ayıklanan süreci sonlandırıp tekrar deneyin.
+
+HR: 0x{0:X8}
+Hata: 0x{1:X8}</value>
+  </data>
+  <data name="DbgAsm_UseHostExecutable" xml:space="preserve">
+    <value>Ana bilgisayar da yürütülebilir</value>
+  </data>
+  <data name="DbgAsm_Executable" xml:space="preserve">
+    <value>Çalıştırılabilir</value>
+  </data>
+</root>

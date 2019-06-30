@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,10 +21,10 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text {
 	static class ContentTypeRegistryServiceExtensions {
-		public static IContentType GetContentType(this IContentTypeRegistryService contentTypeRegistryService, IContentType contentType, string contentTypeString) {
-			if (contentType != null)
+		public static IContentType? GetContentType(this IContentTypeRegistryService contentTypeRegistryService, IContentType? contentType, string? contentTypeString) {
+			if (!(contentType is null))
 				return contentType;
-			if (contentTypeString != null)
+			if (!(contentTypeString is null))
 				return contentTypeRegistryService.GetContentType(contentTypeString);
 			return null;
 		}

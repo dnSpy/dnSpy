@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,7 +32,7 @@ namespace dnSpy.Documents.TreeView {
 		public override NodePathName NodePathName => new NodePathName(Guid, TypeDef.Namespace + "." + TypeDef.Name);
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) =>
 			dnImgMgr.GetImageReference(TypeDef);
-		public override ITreeNodeGroup TreeNodeGroup { get; }
+		public override ITreeNodeGroup? TreeNodeGroup { get; }
 
 		public TypeNodeImpl(ITreeNodeGroup treeNodeGroup, TypeDef type)
 			: base(type) => TreeNodeGroup = treeNodeGroup;
@@ -58,8 +58,15 @@ namespace dnSpy.Documents.TreeView {
 				yield return new TypeNodeImpl(Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.TypeTreeNodeGroupType), t);
 		}
 
-		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>
-			new NodePrinter().Write(output, decompiler, TypeDef, GetShowToken(options));
+		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) {
+			if ((options & DocumentNodeWriteOptions.ToolTip) != 0) {
+				WriteMemberRef(output, decompiler, TypeDef);
+				output.WriteLine();
+				WriteFilename(output);
+			}
+			else
+				new NodeFormatter().Write(output, decompiler, TypeDef, GetShowToken(options));
+		}
 
 		public override FilterType GetFilterType(IDocumentTreeNodeFilter filter) {
 			var res = filter.GetResult(TypeDef);

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,6 +33,16 @@ namespace dnSpy.Contracts.Decompiler {
 		public abstract DecompilerSettingsBase Clone();
 
 		/// <summary>
+		/// Version number that gets incremented whenever the options change
+		/// </summary>
+		public abstract int Version { get; }
+
+		/// <summary>
+		/// Raised when <see cref="Version"/> is changed
+		/// </summary>
+		public abstract event EventHandler VersionChanged;
+
+		/// <summary>
 		/// Gets all options
 		/// </summary>
 		public abstract IEnumerable<IDecompilerOption> Options { get; }
@@ -42,14 +52,14 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="guid">Guid</param>
 		/// <returns></returns>
-		public IDecompilerOption TryGetOption(Guid guid) => Options.FirstOrDefault(a => a.Guid == guid);
+		public IDecompilerOption? TryGetOption(Guid guid) => Options.FirstOrDefault(a => a.Guid == guid);
 
 		/// <summary>
 		/// Returns an option or null
 		/// </summary>
 		/// <param name="name">Name</param>
 		/// <returns></returns>
-		public IDecompilerOption TryGetOption(string name) => Options.FirstOrDefault(a => StringComparer.Ordinal.Equals(a.Name, name));
+		public IDecompilerOption? TryGetOption(string name) => Options.FirstOrDefault(a => StringComparer.Ordinal.Equals(a.Name, name));
 
 		/// <summary>
 		/// Returns a boolean or false if the option doesn't exist
@@ -70,7 +80,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="obj">Other object, may be null</param>
 		/// <returns></returns>
-		public abstract override bool Equals(object obj);
+		public abstract override bool Equals(object? obj);
 
 		/// <summary>
 		/// Gets the hash code of this instance

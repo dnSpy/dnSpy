@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -37,7 +37,7 @@ using dnSpy.UI;
 using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
-	interface IBookmarksVM {
+	interface IBookmarksVM : IGridViewColumnDescsProvider {
 		bool IsOpen { get; set; }
 		bool IsVisible { get; set; }
 		BulkObservableCollection<BookmarkVM> AllItems { get; }
@@ -46,12 +46,14 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		string GetSearchHelpText();
 		event EventHandler OnShowChanged;
 		event EventHandler AllItemsFiltered;
+		IEnumerable<BookmarkVM> Sort(IEnumerable<BookmarkVM> bookmarks);
 	}
 
 	[Export(typeof(IBookmarksVM))]
-	sealed class BookmarksVM : ViewModelBase, IBookmarksVM, ILazyToolWindowVM {
+	sealed class BookmarksVM : ViewModelBase, IBookmarksVM, ILazyToolWindowVM, IComparer<BookmarkVM> {
 		public BulkObservableCollection<BookmarkVM> AllItems { get; }
 		public ObservableCollection<BookmarkVM> SelectedItems { get; }
+		public GridViewColumnDescs Descs { get; }
 
 		public bool IsOpen {
 			get => lazyToolWindowVMHelper.IsOpen;
@@ -91,22 +93,22 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		IEditValueProvider NameEditValueProvider {
 			get {
 				bookmarkContext.UIDispatcher.VerifyAccess();
-				if (nameEditValueProvider == null)
+				if (nameEditValueProvider is null)
 					nameEditValueProvider = editValueProviderService.Create(ContentTypes.BookmarksWindowName, Array.Empty<string>());
 				return nameEditValueProvider;
 			}
 		}
-		IEditValueProvider nameEditValueProvider;
+		IEditValueProvider? nameEditValueProvider;
 
 		IEditValueProvider LabelsEditValueProvider {
 			get {
 				bookmarkContext.UIDispatcher.VerifyAccess();
-				if (labelsEditValueProvider == null)
+				if (labelsEditValueProvider is null)
 					labelsEditValueProvider = editValueProviderService.Create(ContentTypes.BookmarksWindowLabels, Array.Empty<string>());
 				return labelsEditValueProvider;
 			}
 		}
-		IEditValueProvider labelsEditValueProvider;
+		IEditValueProvider? labelsEditValueProvider;
 
 		public event EventHandler OnShowChanged;
 		public event EventHandler AllItemsFiltered;
@@ -141,11 +143,20 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			this.bookmarkLocationFormatterService = bookmarkLocationFormatterService;
 			this.editValueProviderService = editValueProviderService;
 			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
-			bookmarkContext = new BookmarkContext(uiDispatcher, classificationFormatMap, textElementProvider, new SearchMatcher(searchColumnDefinitions)) {
+			bookmarkContext = new BookmarkContext(uiDispatcher, classificationFormatMap, textElementProvider, new SearchMatcher(searchColumnDefinitions), bookmarkFormatterProvider.Create()) {
 				SyntaxHighlight = bookmarksSettings.SyntaxHighlight,
-				Formatter = bookmarkFormatterProvider.Create(),
 			};
+			Descs = new GridViewColumnDescs {
+				Columns = new GridViewColumnDesc[] {
+					new GridViewColumnDesc(BookmarksWindowColumnIds.Name, dnSpy_Resources.Column_Name),
+					new GridViewColumnDesc(BookmarksWindowColumnIds.Labels, dnSpy_Resources.Column_Labels),
+					new GridViewColumnDesc(BookmarksWindowColumnIds.Location, dnSpy_Resources.Column_Location),
+					new GridViewColumnDesc(BookmarksWindowColumnIds.Module, dnSpy_Resources.Column_Module),
+				},
+			};
+			Descs.SortedColumnChanged += (a, b) => SortList();
 		}
+
 		// Don't change the order of these instances without also updating input passed to SearchMatcher.IsMatchAll()
 		static readonly SearchColumnDefinition[] searchColumnDefinitions = new SearchColumnDefinition[] {
 			new SearchColumnDefinition(PredefinedTextClassifierTags.BookmarksWindowName, "n", dnSpy_Resources.Column_Name),
@@ -359,13 +370,12 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		// UI thread
 		int GetInsertionIndex_UI(BookmarkVM vm) {
 			Debug.Assert(bookmarkContext.UIDispatcher.CheckAccess());
-			var comparer = BookmarkVMComparer.Instance;
 			var list = AllItems;
 			int lo = 0, hi = list.Count - 1;
 			while (lo <= hi) {
 				int index = (lo + hi) / 2;
 
-				int c = comparer.Compare(vm, list[index]);
+				int c = Compare(vm, list[index]);
 				if (c < 0)
 					hi = index - 1;
 				else if (c > 0)
@@ -382,21 +392,81 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			if (string.IsNullOrWhiteSpace(filterText))
 				filterText = string.Empty;
 			bookmarkContext.SearchMatcher.SetSearchText(filterText);
+			SortList(filterText);
+		}
 
+		// UI thread
+		void SortList() {
+			bookmarkContext.UIDispatcher.VerifyAccess();
+			SortList(filterText);
+		}
+
+		// UI thread
+		void SortList(string filterText) {
+			bookmarkContext.UIDispatcher.VerifyAccess();
 			var newList = new List<BookmarkVM>(GetFilteredItems_UI(filterText));
-			newList.Sort(BookmarkVMComparer.Instance);
+			newList.Sort(this);
 			AllItems.Reset(newList);
 			InitializeNothingMatched(filterText);
 			AllItemsFiltered?.Invoke(this, EventArgs.Empty);
+		}
+
+		// UI thread
+		IEnumerable<BookmarkVM> IBookmarksVM.Sort(IEnumerable<BookmarkVM> bookmarks) {
+			bookmarkContext.UIDispatcher.VerifyAccess();
+			var list = new List<BookmarkVM>(bookmarks);
+			list.Sort(this);
+			return list;
 		}
 
 		void InitializeNothingMatched() => InitializeNothingMatched(filterText);
 		void InitializeNothingMatched(string filterText) =>
 			NothingMatched = AllItems.Count == 0 && !string.IsNullOrWhiteSpace(filterText);
 
-		sealed class BookmarkVMComparer : IComparer<BookmarkVM> {
-			public static readonly IComparer<BookmarkVM> Instance = new BookmarkVMComparer();
-			public int Compare(BookmarkVM x, BookmarkVM y) => x.Order - y.Order;
+		public int Compare(BookmarkVM x, BookmarkVM y) {
+			Debug.Assert(bookmarkContext.UIDispatcher.CheckAccess());
+			var (desc, dir) = Descs.SortedColumn;
+
+			int id;
+			if (desc is null || dir == GridViewSortDirection.Default) {
+				id = BookmarksWindowColumnIds.Default_Order;
+				dir = GridViewSortDirection.Ascending;
+			}
+			else
+				id = desc.Id;
+
+			int diff;
+			switch (id) {
+			case BookmarksWindowColumnIds.Default_Order:
+				diff = x.Order - y.Order;
+				break;
+
+			case BookmarksWindowColumnIds.Name:
+				diff = StringComparer.OrdinalIgnoreCase.Compare(GetName_UI(x), GetName_UI(y));
+				break;
+
+			case BookmarksWindowColumnIds.Labels:
+				diff = StringComparer.OrdinalIgnoreCase.Compare(GetLabels_UI(x), GetLabels_UI(y));
+				break;
+
+			case BookmarksWindowColumnIds.Location:
+				diff = StringComparer.OrdinalIgnoreCase.Compare(GetLocation_UI(x), GetLocation_UI(y));
+				break;
+
+			case BookmarksWindowColumnIds.Module:
+				diff = StringComparer.OrdinalIgnoreCase.Compare(GetModule_UI(x), GetModule_UI(y));
+				break;
+
+			default:
+				throw new InvalidOperationException();
+			}
+
+			if (diff == 0)
+				diff = x.Order - y.Order;
+			Debug.Assert(dir == GridViewSortDirection.Ascending || dir == GridViewSortDirection.Descending);
+			if (dir == GridViewSortDirection.Descending)
+				diff = -diff;
+			return diff;
 		}
 
 		// UI thread

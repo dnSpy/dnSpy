@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,36 +24,36 @@ using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.Module {
 	sealed class NetModuleOptionsVM : ViewModelBase {
-		public string Name {
-			get { return name; }
+		public string? Name {
+			get => name;
 			set {
-				if (!value.Equals(name, StringComparison.Ordinal)) {
+				if (!StringComparer.Ordinal.Equals(name, value)) {
 					name = value;
 					OnPropertyChanged(nameof(Name));
 				}
 			}
 		}
-		string name;
+		string? name;
 
 		internal static readonly EnumVM[] clrVersionList = new EnumVM[] {
 			new EnumVM(Module.ClrVersion.CLR10, "1.0"),
 			new EnumVM(Module.ClrVersion.CLR11, "1.1"),
 			new EnumVM(Module.ClrVersion.CLR20, "2.0 - 3.5"),
-			new EnumVM(Module.ClrVersion.CLR40, "4.0 - 4.7"),
+			new EnumVM(Module.ClrVersion.CLR40, "4.0 - 4.8"),
 		};
 
 		public EnumListVM ClrVersion { get; } = new EnumListVM(clrVersionList);
 		public GuidVM Mvid { get; }
 		public ICommand GenerateNewMvidCommand => new RelayCommand(a => Mvid.Value = Guid.NewGuid());
 
-		public NetModuleOptionsVM(ModuleDef module = null) {
+		public NetModuleOptionsVM(ModuleDef? module = null) {
 			Name = "MyNetModule.netmodule";
 			Mvid = new GuidVM(Guid.NewGuid(), a => HasErrorUpdated());
 			ClrVersion.SelectedItem = GetClrVersion(module);
 		}
 
-		static Module.ClrVersion GetClrVersion(ModuleDef module) {
-			if (module == null)
+		static Module.ClrVersion GetClrVersion(ModuleDef? module) {
+			if (module is null)
 				return Module.ClrVersion.DefaultVersion;
 
 			if (module.IsClr10) return Module.ClrVersion.CLR10;
@@ -67,7 +67,7 @@ namespace dnSpy.AsmEditor.Module {
 		public NetModuleOptions CreateNetModuleOptions() {
 			var options = new NetModuleOptions();
 			options.Name = Name ?? UTF8String.Empty;
-			options.ClrVersion = (ClrVersion)ClrVersion.SelectedItem;
+			options.ClrVersion = (ClrVersion)ClrVersion.SelectedItem!;
 			options.Mvid = Mvid.Value;
 			return options;
 		}

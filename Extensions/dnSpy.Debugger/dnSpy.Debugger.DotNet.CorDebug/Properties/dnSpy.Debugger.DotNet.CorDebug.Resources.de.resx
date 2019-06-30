@@ -120,9 +120,6 @@
   <data name="DbgAsm_Args" xml:space="preserve">
     <value>A_rgumente</value>
   </data>
-  <data name="DbgAsm_Assembly" xml:space="preserve">
-    <value>_Assembly</value>
-  </data>
   <data name="DbgAsm_BreakAt" xml:space="preserve">
     <value>Unter_breche bei</value>
   </data>
@@ -143,27 +140,6 @@
   </data>
   <data name="DbgBreak_EntryPoint" xml:space="preserve">
     <value>Einstiegspunkt</value>
-  </data>
-  <data name="DbgBreak_ExeFirstLoadClassEvent" xml:space="preserve">
-    <value>Exe's erstes LoadClass Ereignis</value>
-  </data>
-  <data name="DbgBreak_ExeLoadModuleEvent" xml:space="preserve">
-    <value>Exe's LoadModule Ereignis</value>
-  </data>
-  <data name="DbgBreak_FirstCreateAppDomainEvent" xml:space="preserve">
-    <value>Erstes CreateAppDomain Ereignis</value>
-  </data>
-  <data name="DbgBreak_FirstCreateThreadEvent" xml:space="preserve">
-    <value>Erstes CreateThread Ereignis</value>
-  </data>
-  <data name="DbgBreak_FirstLoadClassEvent" xml:space="preserve">
-    <value>Erstes LoadClass Ereignis</value>
-  </data>
-  <data name="DbgBreak_FirstLoadModuleEvent" xml:space="preserve">
-    <value>Erstes LoadModule Ereignis</value>
-  </data>
-  <data name="DbgBreak_ModuleClassConstructorOrEntryPoint" xml:space="preserve">
-    <value>Modul .cctor oder Einstiegspunkt</value>
   </data>
   <data name="Error_CouldNotFindDotNetCoreHost" xml:space="preserve">
     <value>Konnte .NET Core Host '{0}' nicht finden</value>
@@ -216,10 +192,10 @@ Fehler: {1}</value>
     <value>WaitSleepJoin</value>
   </data>
   <data name="UseDnSpy64ExeToDebug32" xml:space="preserve">
-    <value>Verwende dnSpy-x86.exe zum Debuggen von 32-Bit Applikationen.</value>
+    <value>Verwende 32-bit dnSpy um 32-bit Applikationen zu debuggen.</value>
   </data>
   <data name="UseDnSpyExeToDebug64" xml:space="preserve">
-    <value>Verwende dnSpy.exe zum Debuggen von 64-Bit Applikationen.</value>
+    <value>Verwende 64-bit dnSpy um 64-bit Applikationen zu debuggen.</value>
   </data>
   <data name="ExceptionMessageIsNull" xml:space="preserve">
     <value>"&lt;keine Ausnahmemeldung&gt;"</value>
@@ -245,7 +221,7 @@ Fehler: {0}</value>
     <value>Init-Klasse</value>
   </data>
   <data name="StackFrame_Exception" xml:space="preserve">
-    <value>Ausname</value>
+    <value>Ausnahme</value>
   </data>
   <data name="StackFrame_FunctionEvaluation" xml:space="preserve">
     <value>Funktionsauswertung</value>
@@ -294,5 +270,11 @@ Fehler: {0}</value>
 
 HR: 0x{0:X8}
 Error: 0x{1:X8}</value>
+  </data>
+  <data name="DbgAsm_UseHostExecutable" xml:space="preserve">
+    <value>Ausführbaren Host verwenden</value>
+  </data>
+  <data name="DbgAsm_Executable" xml:space="preserve">
+    <value>Ausführbare _Datei</value>
   </data>
 </root>

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// Hex line span
 	/// </summary>
-	public struct HexLineSpan {
+	public readonly struct HexLineSpan {
 		/// <summary>
 		/// true if this is a default instance that hasn't been initialized
 		/// </summary>
@@ -48,7 +48,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// true if it's a text span
 		/// </summary>
-		public bool IsTextSpan => TextSpan != null;
+		public bool IsTextSpan => !(TextSpan is null);
 
 		/// <summary>
 		/// Constructor
@@ -69,7 +69,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="line">Line</param>
 		/// <param name="textSpan">Text span</param>
 		public HexLineSpan(HexBufferLine line, VST.Span textSpan) {
-			if (line == null)
+			if (line is null)
 				throw new ArgumentNullException(nameof(line));
 			BufferSpan = line.BufferSpan;
 			SelectionFlags = null;

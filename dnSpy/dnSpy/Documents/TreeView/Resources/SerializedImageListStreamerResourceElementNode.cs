@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
@@ -33,11 +34,11 @@ using dnSpy.Contracts.TreeView;
 namespace dnSpy.Documents.TreeView.Resources {
 	[ExportResourceNodeProvider(Order = DocumentTreeViewConstants.ORDER_RSRCPROVIDER_SERIALIZED_IMAGE_LIST_STREAMER_RESOURCE_ELEMENT_NODE)]
 	sealed class SerializedImageListStreamerResourceElementNodeProvider : IResourceNodeProvider {
-		public ResourceNode Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup) => null;
+		public ResourceNode? Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup) => null;
 
-		public ResourceElementNode Create(ModuleDef module, ResourceElement resourceElement, ITreeNodeGroup treeNodeGroup) {
+		public ResourceElementNode? Create(ModuleDef module, ResourceElement resourceElement, ITreeNodeGroup treeNodeGroup) {
 			var serializedData = resourceElement.ResourceData as BinaryResourceData;
-			if (serializedData == null)
+			if (serializedData is null)
 				return null;
 
 			if (SerializedImageListStreamerUtilities.GetImageData(module, serializedData.TypeName, serializedData.Data, out var imageData))
@@ -48,11 +49,11 @@ namespace dnSpy.Documents.TreeView.Resources {
 	}
 
 	sealed class SerializedImageListStreamerResourceElementNodeImpl : SerializedImageListStreamerResourceElementNode {
-		ImageListOptions imageListOptions;
-		byte[] imageData;
+		ImageListOptions? imageListOptions;
+		byte[]? imageData;
 
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.SERIALIZED_IMAGE_LIST_STREAMER_RESOURCE_ELEMENT_NODE_GUID);
-		public override ImageListOptions ImageListOptions => new ImageListOptions(imageListOptions) { Name = Name };
+		public override ImageListOptions ImageListOptions => new ImageListOptions(imageListOptions!) { Name = Name };
 		protected override ImageReference GetIcon() => DsImages.Image;
 
 		public SerializedImageListStreamerResourceElementNodeImpl(ITreeNodeGroup treeNodeGroup, ResourceElement resourceElement, byte[] imageData)
@@ -64,6 +65,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 		}
 
 		public override void WriteShort(IDecompilerOutput output, IDecompiler decompiler, bool showOffset) {
+			Debug.Assert(!(imageListOptions is null));
 			if (output is IDocumentViewerOutput documentViewerOutput) {
 				for (int i = 0; i < imageListOptions.ImageSources.Count; i++) {
 					if (i > 0)
@@ -85,7 +87,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 			yield return new ResourceData(ResourceElement.Name, token => new MemoryStream(id));
 		}
 
-		public override string CheckCanUpdateData(ResourceElement newResElem) {
+		public override string? CheckCanUpdateData(ResourceElement newResElem) {
 			var res = base.CheckCanUpdateData(newResElem);
 			if (!string.IsNullOrEmpty(res))
 				return res;
@@ -97,6 +99,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 
 			var binData = (BinaryResourceData)newResElem.ResourceData;
 			SerializedImageListStreamerUtilities.GetImageData(this.GetModule(), binData.TypeName, binData.Data, out var imageData);
+			Debug.Assert(!(imageData is null));
 			InitializeImageData(imageData);
 		}
 	}

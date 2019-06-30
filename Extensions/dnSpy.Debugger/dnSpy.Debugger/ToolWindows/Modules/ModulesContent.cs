@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -42,16 +42,16 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 	[Export(typeof(IModulesContent))]
 	sealed class ModulesContent : IModulesContent {
-		public object UIObject => modulesControl;
-		public IInputElement FocusedElement => modulesControl.ListView;
-		public FrameworkElement ZoomElement => modulesControl;
+		public object? UIObject => modulesControl;
+		public IInputElement? FocusedElement => modulesControl.ListView;
+		public FrameworkElement? ZoomElement => modulesControl;
 		public ListView ListView => modulesControl.ListView;
 		public ModulesOperations Operations { get; }
 
 		readonly ModulesControl modulesControl;
 		readonly IModulesVM modulesVM;
 
-		sealed class ControlVM {
+		sealed class ControlVM : ViewModelBase {
 			public IModulesVM VM { get; }
 			ModulesOperations Operations { get; }
 

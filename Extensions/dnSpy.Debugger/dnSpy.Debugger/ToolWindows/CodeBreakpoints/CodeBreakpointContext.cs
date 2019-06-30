@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,6 +18,7 @@
 */
 
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
+using dnSpy.Contracts.Debugger.Text.DnSpy;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.ToolWindows.Search;
 using dnSpy.Debugger.Breakpoints.Code;
@@ -29,7 +30,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		UIDispatcher UIDispatcher { get; }
 		IClassificationFormatMap ClassificationFormatMap { get; }
 		ITextElementProvider TextElementProvider { get; }
-		TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
+		DbgTextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
 		CodeBreakpointFormatter Formatter { get; }
 		BreakpointConditionsFormatter BreakpointConditionsFormatter { get; }
 		DbgBreakpointLocationFormatterOptions BreakpointLocationFormatterOptions { get; }
@@ -42,7 +43,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		public UIDispatcher UIDispatcher { get; }
 		public IClassificationFormatMap ClassificationFormatMap { get; }
 		public ITextElementProvider TextElementProvider { get; }
-		public TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
+		public DbgTextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
 		public CodeBreakpointFormatter Formatter { get; set; }
 		public BreakpointConditionsFormatter BreakpointConditionsFormatter { get; }
 		public DbgBreakpointLocationFormatterOptions BreakpointLocationFormatterOptions { get; set; }
@@ -50,14 +51,15 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		public DbgCodeBreakpointHitCountService2 DbgCodeBreakpointHitCountService { get; }
 		public SearchMatcher SearchMatcher { get; }
 
-		public CodeBreakpointContext(UIDispatcher uiDispatcher, IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider, BreakpointConditionsFormatter breakpointConditionsFormatter, DbgCodeBreakpointHitCountService2 dbgCodeBreakpointHitCountService, SearchMatcher searchMatcher) {
+		public CodeBreakpointContext(UIDispatcher uiDispatcher, IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider, BreakpointConditionsFormatter breakpointConditionsFormatter, DbgCodeBreakpointHitCountService2 dbgCodeBreakpointHitCountService, SearchMatcher searchMatcher, CodeBreakpointFormatter formatter) {
 			UIDispatcher = uiDispatcher;
 			ClassificationFormatMap = classificationFormatMap;
 			TextElementProvider = textElementProvider;
-			TextClassifierTextColorWriter = new TextClassifierTextColorWriter();
+			TextClassifierTextColorWriter = new DbgTextClassifierTextColorWriter();
 			BreakpointConditionsFormatter = breakpointConditionsFormatter;
 			DbgCodeBreakpointHitCountService = dbgCodeBreakpointHitCountService;
 			SearchMatcher = searchMatcher;
+			Formatter = formatter;
 		}
 	}
 }

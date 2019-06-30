@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,8 +31,8 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		readonly FrameworkElement glyphMargin;
 		readonly IInputElement focusedElement;
 		bool loaded;
-		DispatcherTimer timer;
-		Storyboard fadeOutStoryboard;
+		DispatcherTimer? timer;
+		Storyboard? fadeOutStoryboard;
 
 		public BreakpointGlyphPopupControl(BreakpointGlyphPopupVM vm, FrameworkElement glyphMargin) {
 			InitializeComponent();
@@ -45,7 +45,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		}
 
 		void RemoveFadeOut() {
-			if (fadeOutStoryboard != null) {
+			if (!(fadeOutStoryboard is null)) {
 				fadeOutStoryboard.Completed -= FadeOutStoryboard_Completed;
 				fadeOutStoryboard.Stop();
 				fadeOutStoryboard = null;
@@ -69,7 +69,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			if (loaded)
 				return;
 			loaded = true;
-			if (focusedElement != null)
+			if (!(focusedElement is null))
 				focusedElement.LostKeyboardFocus += FocusedElement_LostKeyboardFocus;
 			glyphMargin.MouseEnter += GlyphMargin_MouseEnter;
 			glyphMargin.MouseLeave += GlyphMargin_MouseLeave;
@@ -98,7 +98,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 
 		void StopTimer() {
 			RemoveFadeOut();
-			if (timer == null)
+			if (timer is null)
 				return;
 			timer.Stop();
 			timer.Tick -= Timer_Tick;
@@ -108,7 +108,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		void StartTimerIfNeeded() {
 			if (IsMouseWithinControls)
 				return;
-			if (timer != null)
+			if (!(timer is null))
 				return;
 			timer = new DispatcherTimer(DispatcherPriority.Normal, Dispatcher);
 			timer.Tick += Timer_Tick;
@@ -121,7 +121,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			if (Parent is Popup popup)
 				popup.IsOpen = false;
 
-			if (focusedElement != null)
+			if (!(focusedElement is null))
 				focusedElement.LostKeyboardFocus -= FocusedElement_LostKeyboardFocus;
 			glyphMargin.MouseEnter -= GlyphMargin_MouseEnter;
 			glyphMargin.MouseLeave -= GlyphMargin_MouseLeave;

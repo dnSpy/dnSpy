@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Hex.Files {
 	/// <summary>
 	/// Enum field info
 	/// </summary>
-	public struct EnumFieldInfo {
+	public readonly struct EnumFieldInfo {
 		/// <summary>
 		/// Gets the enum field value
 		/// </summary>

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,7 +35,7 @@ namespace dndbg.Engine {
 	sealed class DnAnyDebugEventBreakpoint : DnBreakpoint {
 		internal Func<AnyDebugEventBreakpointConditionContext, bool> Condition { get; }
 
-		internal DnAnyDebugEventBreakpoint(Func<AnyDebugEventBreakpointConditionContext, bool> cond) => Condition = cond ?? defaultCond;
+		internal DnAnyDebugEventBreakpoint(Func<AnyDebugEventBreakpointConditionContext, bool>? cond) => Condition = cond ?? defaultCond;
 		static readonly Func<AnyDebugEventBreakpointConditionContext, bool> defaultCond = a => true;
 	}
 }

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.Debugger.Text.DnSpy;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.ToolWindows.Search;
 using Microsoft.VisualStudio.Text.Classification;
@@ -25,7 +26,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 	interface IAttachToProcessContext {
 		IClassificationFormatMap ClassificationFormatMap { get; }
 		ITextElementProvider TextElementProvider { get; }
-		TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
+		DbgTextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
 		ProgramFormatter Formatter { get; }
 		bool SyntaxHighlight { get; }
 		SearchMatcher SearchMatcher { get; }
@@ -34,16 +35,17 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 	sealed class AttachToProcessContext : IAttachToProcessContext {
 		public IClassificationFormatMap ClassificationFormatMap { get; }
 		public ITextElementProvider TextElementProvider { get; }
-		public TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
-		public ProgramFormatter Formatter { get; set; }
+		public DbgTextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
+		public ProgramFormatter Formatter { get; }
 		public bool SyntaxHighlight { get; set; }
 		public SearchMatcher SearchMatcher { get; }
 
-		public AttachToProcessContext(IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider, SearchMatcher searchMatcher) {
+		public AttachToProcessContext(IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider, SearchMatcher searchMatcher, ProgramFormatter formatter) {
 			ClassificationFormatMap = classificationFormatMap;
 			TextElementProvider = textElementProvider;
-			TextClassifierTextColorWriter = new TextClassifierTextColorWriter();
+			TextClassifierTextColorWriter = new DbgTextClassifierTextColorWriter();
 			SearchMatcher = searchMatcher;
+			Formatter = formatter;
 		}
 	}
 }

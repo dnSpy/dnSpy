@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,14 +32,14 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			: this(ownerModule, null) {
 		}
 
-		public EditMethodDef(ModuleDef ownerModule, Window ownerWindow) {
+		public EditMethodDef(ModuleDef ownerModule, Window? ownerWindow) {
 			this.ownerModule = ownerModule;
 			dnlibTypePicker = new DnlibTypePicker(ownerWindow);
 		}
 
-		public MethodDefVM Edit(string title, MethodDefVM vm) {
+		public MethodDefVM? Edit(string? title, MethodDefVM vm) {
 			var method = dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Method, new SameModuleDocumentTreeNodeFilter(ownerModule, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.MethodDef)), vm.Method, ownerModule);
-			if (method == null)
+			if (method is null)
 				return null;
 
 			vm.Method = method;

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,13 +33,13 @@ namespace dnSpy.Hex.Editor {
 		HexStructureInfoAggregatorFactoryImpl([ImportMany] IEnumerable<Lazy<HexStructureInfoProviderFactory, VSUTIL.IOrderable>> hexStructureInfoProviderFactories) => this.hexStructureInfoProviderFactories = VSUTIL.Orderer.Order(hexStructureInfoProviderFactories).ToArray();
 
 		public override HexStructureInfoAggregator Create(HexView hexView) {
-			if (hexView == null)
+			if (hexView is null)
 				throw new ArgumentNullException(nameof(hexView));
 			return hexView.Properties.GetOrCreateSingletonProperty(typeof(HexStructureInfoAggregatorImpl), () => {
 				var list = new List<HexStructureInfoProvider>(hexStructureInfoProviderFactories.Length);
 				foreach (var lz in hexStructureInfoProviderFactories) {
 					var provider = lz.Value.Create(hexView);
-					if (provider != null)
+					if (!(provider is null))
 						list.Add(provider);
 				}
 				return new HexStructureInfoAggregatorImpl(list.ToArray());

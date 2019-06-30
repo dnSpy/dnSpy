@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,7 +35,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		[ImportingConstructor]
 		OpenFromGACTextClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) => gacMatchHighlightClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.GacMatchHighlight);
 
-		public ITextClassifier Create(IContentType contentType) => new OpenFromGACTextClassifier(gacMatchHighlightClassificationType);
+		public ITextClassifier? Create(IContentType contentType) => new OpenFromGACTextClassifier(gacMatchHighlightClassificationType);
 	}
 
 	sealed class OpenFromGACTextClassifier : ITextClassifier {
@@ -45,7 +45,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 
 		public IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context) {
 			var gacContext = context as OpenFromGACTextClassifierContext;
-			if (gacContext == null)
+			if (gacContext is null)
 				yield break;
 			if (gacContext.Tag != PredefinedTextClassifierTags.GacDialogName && gacContext.Tag != PredefinedTextClassifierTags.GacDialogVersion)
 				yield break;

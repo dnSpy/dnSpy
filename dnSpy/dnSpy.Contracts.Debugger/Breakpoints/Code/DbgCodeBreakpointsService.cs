@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -67,7 +67,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// </summary>
 		/// <param name="breakpoint">Breakpoint info</param>
 		/// <returns></returns>
-		public DbgCodeBreakpoint Add(DbgCodeBreakpointInfo breakpoint) => Add(new[] { breakpoint }).FirstOrDefault();
+		public DbgCodeBreakpoint? Add(DbgCodeBreakpointInfo breakpoint) => Add(new[] { breakpoint }).FirstOrDefault();
 
 		/// <summary>
 		/// Adds breakpoints. Duplicate breakpoints are ignored.
@@ -93,7 +93,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// </summary>
 		/// <param name="location">Location</param>
 		/// <returns></returns>
-		public abstract DbgCodeBreakpoint TryGetBreakpoint(DbgCodeLocation location);
+		public abstract DbgCodeBreakpoint? TryGetBreakpoint(DbgCodeLocation location);
 
 		/// <summary>
 		/// Removes all visible breakpoints
@@ -109,7 +109,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// <summary>
 	/// <see cref="DbgCodeBreakpoint.BoundBreakpointsMessage"/> changed event args
 	/// </summary>
-	public struct DbgBoundBreakpointsMessageChangedEventArgs {
+	public readonly struct DbgBoundBreakpointsMessageChangedEventArgs {
 		/// <summary>
 		/// Gets all breakpoints
 		/// </summary>
@@ -126,7 +126,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// <summary>
 	/// Breakpoint and old settings
 	/// </summary>
-	public struct DbgCodeBreakpointAndOldSettings {
+	public readonly struct DbgCodeBreakpointAndOldSettings {
 		/// <summary>
 		/// Gets the breakpoint
 		/// </summary>
@@ -151,7 +151,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// <summary>
 	/// Breakpoints modified event args
 	/// </summary>
-	public struct DbgBreakpointsModifiedEventArgs {
+	public readonly struct DbgBreakpointsModifiedEventArgs {
 		/// <summary>
 		/// Gets the breakpoints
 		/// </summary>
@@ -168,7 +168,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// <summary>
 	/// Breakpoint and settings
 	/// </summary>
-	public struct DbgCodeBreakpointAndSettings {
+	public readonly struct DbgCodeBreakpointAndSettings {
 		/// <summary>
 		/// Gets the breakpoint
 		/// </summary>
@@ -193,7 +193,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// <summary>
 	/// Info needed to add a breakpoint
 	/// </summary>
-	public struct DbgCodeBreakpointInfo {
+	public readonly struct DbgCodeBreakpointInfo {
 		/// <summary>
 		/// Breakpoint location
 		/// </summary>

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -40,7 +40,7 @@ namespace dnSpy.Contracts.Bookmarks.TextEditor {
 	/// <summary>
 	/// Text view location
 	/// </summary>
-	public struct TextViewBookmarkLocationResult {
+	public readonly struct TextViewBookmarkLocationResult {
 		/// <summary>
 		/// Gets the bookmark location
 		/// </summary>
@@ -57,7 +57,7 @@ namespace dnSpy.Contracts.Bookmarks.TextEditor {
 		/// <param name="location">Location</param>
 		/// <param name="span">Text view span</param>
 		public TextViewBookmarkLocationResult(BookmarkLocation location, SnapshotSpan span) {
-			if (span.Snapshot == null)
+			if (span.Snapshot is null)
 				throw new ArgumentException();
 			Location = location ?? throw new ArgumentNullException(nameof(location));
 			Span = new VirtualSnapshotSpan(span);
@@ -69,7 +69,7 @@ namespace dnSpy.Contracts.Bookmarks.TextEditor {
 		/// <param name="location">Location</param>
 		/// <param name="span">Text view span</param>
 		public TextViewBookmarkLocationResult(BookmarkLocation location, VirtualSnapshotSpan span) {
-			if (span.Snapshot == null)
+			if (span.Snapshot is null)
 				throw new ArgumentException();
 			Location = location ?? throw new ArgumentNullException(nameof(location));
 			Span = span;

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,12 +25,12 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		/// <summary>
 		/// Edit assembly and module attributes
 		/// </summary>
-		Assembly,
+		EditAssembly,
 
 		/// <summary>
 		/// Edit method
 		/// </summary>
-		Method,
+		EditMethod,
 
 		/// <summary>
 		/// Add class
@@ -41,5 +41,10 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		/// Edit an existing class
 		/// </summary>
 		EditClass,
+
+		/// <summary>
+		/// Add members
+		/// </summary>
+		AddMembers,
 	}
 }

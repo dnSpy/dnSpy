@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -121,6 +121,11 @@ namespace dnSpy.Contracts.Debugger {
 		/// The program was paused by the user, or because some other program was paused for some other reason (<see cref="DbgMessageBreakEventArgs"/>)
 		/// </summary>
 		Break,
+
+		/// <summary>
+		/// Message from the debugged program (<see cref="DbgMessageAsyncProgramMessageEventArgs"/>)
+		/// </summary>
+		AsyncProgramMessage,
 	}
 
 	/// <summary>
@@ -459,14 +464,14 @@ namespace dnSpy.Contracts.Debugger {
 		/// <summary>
 		/// Gets the thread or null if it's unknown
 		/// </summary>
-		public DbgThread Thread { get; }
+		public DbgThread? Thread { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="runtime">Runtime</param>
 		/// <param name="thread">Thread or null if it's unknown</param>
-		public DbgMessageEntryPointBreakEventArgs(DbgRuntime runtime, DbgThread thread) {
+		public DbgMessageEntryPointBreakEventArgs(DbgRuntime runtime, DbgThread? thread) {
 			Runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			Thread = thread;
 		}
@@ -494,7 +499,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// <summary>
 		/// Gets the thread or null if it's unknown
 		/// </summary>
-		public DbgThread Thread { get; }
+		public DbgThread? Thread { get; }
 
 		/// <summary>
 		/// Constructor
@@ -502,7 +507,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// <param name="message">Message</param>
 		/// <param name="runtime">Runtime</param>
 		/// <param name="thread">Thread or null if it's unknown</param>
-		public DbgMessageProgramMessageEventArgs(string message, DbgRuntime runtime, DbgThread thread) {
+		public DbgMessageProgramMessageEventArgs(string message, DbgRuntime runtime, DbgThread? thread) {
 			Message = message ?? throw new ArgumentNullException(nameof(message));
 			Runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			Thread = thread;
@@ -526,14 +531,14 @@ namespace dnSpy.Contracts.Debugger {
 		/// <summary>
 		/// Gets the thread or null if it's unknown
 		/// </summary>
-		public DbgThread Thread { get; }
+		public DbgThread? Thread { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="boundBreakpoint">Bound breakpoint</param>
 		/// <param name="thread">Thread or null if it's unknown</param>
-		public DbgMessageBoundBreakpointEventArgs(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread) {
+		public DbgMessageBoundBreakpointEventArgs(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread? thread) {
 			BoundBreakpoint = boundBreakpoint ?? throw new ArgumentNullException(nameof(boundBreakpoint));
 			Thread = thread;
 		}
@@ -556,14 +561,14 @@ namespace dnSpy.Contracts.Debugger {
 		/// <summary>
 		/// Gets the thread or null if it's unknown
 		/// </summary>
-		public DbgThread Thread { get; }
+		public DbgThread? Thread { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="runtime">Runtime</param>
 		/// <param name="thread">Thread or null if it's unknown</param>
-		public DbgMessageProgramBreakEventArgs(DbgRuntime runtime, DbgThread thread) {
+		public DbgMessageProgramBreakEventArgs(DbgRuntime runtime, DbgThread? thread) {
 			Runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			Thread = thread;
 		}
@@ -591,19 +596,19 @@ namespace dnSpy.Contracts.Debugger {
 		/// <summary>
 		/// Gets the error message or null if none
 		/// </summary>
-		public string Error { get; }
+		public string? Error { get; }
 
 		/// <summary>
 		/// true if there was an error. Error message is in <see cref="Error"/>
 		/// </summary>
-		public bool HasError => Error != null;
+		public bool HasError => !(Error is null);
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="thread">Thread</param>
 		/// <param name="error">Error message or null if none</param>
-		public DbgMessageStepCompleteEventArgs(DbgThread thread, string error) {
+		public DbgMessageStepCompleteEventArgs(DbgThread thread, string? error) {
 			Thread = thread ?? throw new ArgumentNullException(nameof(thread));
 			Error = error;
 		}
@@ -636,12 +641,12 @@ namespace dnSpy.Contracts.Debugger {
 		/// <summary>
 		/// Gets the error message or null if none
 		/// </summary>
-		public string Error { get; }
+		public string? Error { get; }
 
 		/// <summary>
 		/// true if there was an error. Error message is in <see cref="Error"/>
 		/// </summary>
-		public bool HasError => Error != null;
+		public bool HasError => !(Error is null);
 
 		/// <summary>
 		/// Constructor
@@ -649,7 +654,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// <param name="thread">Thread</param>
 		/// <param name="framesInvalidated">true if all frames in the thread have been invalidated</param>
 		/// <param name="error">Error message or null if none</param>
-		public DbgMessageSetIPCompleteEventArgs(DbgThread thread, bool framesInvalidated, string error) {
+		public DbgMessageSetIPCompleteEventArgs(DbgThread thread, bool framesInvalidated, string? error) {
 			Thread = thread ?? throw new ArgumentNullException(nameof(thread));
 			FramesInvalidated = framesInvalidated;
 			Error = error;
@@ -718,16 +723,73 @@ namespace dnSpy.Contracts.Debugger {
 		/// <summary>
 		/// Gets the thread or null if it's unknown
 		/// </summary>
-		public DbgThread Thread { get; }
+		public DbgThread? Thread { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="runtime">Runtime</param>
 		/// <param name="thread">Thread or null if it's unknown</param>
-		public DbgMessageBreakEventArgs(DbgRuntime runtime, DbgThread thread) {
+		public DbgMessageBreakEventArgs(DbgRuntime runtime, DbgThread? thread) {
 			Runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			Thread = thread;
+		}
+	}
+
+	/// <summary>
+	/// Message source kind
+	/// </summary>
+	public enum AsyncProgramMessageSource {
+		/// <summary>
+		/// Some other source
+		/// </summary>
+		Other,
+
+		/// <summary>
+		/// Standard output text
+		/// </summary>
+		StandardOutput,
+
+		/// <summary>
+		/// Standard error text
+		/// </summary>
+		StandardError,
+	}
+
+	/// <summary>
+	/// Message from the debugged program (<see cref="DbgMessageKind.AsyncProgramMessage"/>)
+	/// </summary>
+	public sealed class DbgMessageAsyncProgramMessageEventArgs : DbgMessageEventArgs {
+		/// <summary>
+		/// Returns <see cref="DbgMessageKind.AsyncProgramMessage"/>
+		/// </summary>
+		public override DbgMessageKind Kind => DbgMessageKind.AsyncProgramMessage;
+
+		/// <summary>
+		/// Gets the message source kind
+		/// </summary>
+		public AsyncProgramMessageSource Source { get; }
+
+		/// <summary>
+		/// Gets the text
+		/// </summary>
+		public string Message { get; }
+
+		/// <summary>
+		/// Gets the runtime
+		/// </summary>
+		public DbgRuntime Runtime { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="source">Source</param>
+		/// <param name="message">Message</param>
+		/// <param name="runtime">Runtime</param>
+		public DbgMessageAsyncProgramMessageEventArgs(AsyncProgramMessageSource source, string message, DbgRuntime runtime) {
+			Source = source;
+			Message = message ?? throw new ArgumentNullException(nameof(message));
+			Runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 		}
 	}
 }

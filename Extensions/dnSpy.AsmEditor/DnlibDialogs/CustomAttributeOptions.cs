@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,8 +23,8 @@ using dnlib.DotNet;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class CustomAttributeOptions {
-		public byte[] RawData;
-		public ICustomAttributeType Constructor;
+		public byte[]? RawData;
+		public ICustomAttributeType? Constructor;
 		public List<CAArgument> ConstructorArguments = new List<CAArgument>();
 		public List<CANamedArgument> NamedArguments = new List<CANamedArgument>();
 
@@ -39,7 +39,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		public CustomAttribute Create() {
-			if (RawData != null)
+			if (!(RawData is null))
 				return new CustomAttribute(Constructor, RawData);
 			return new CustomAttribute(Constructor, ConstructorArguments, NamedArguments);
 		}

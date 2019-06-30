@@ -1,0 +1,2315 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppendObject" xml:space="preserve">
+    <value>Objektum hozzáfűzése</value>
+  </data>
+  <data name="AppendType" xml:space="preserve">
+    <value>Típus hozzáfűzése</value>
+  </data>
+  <data name="AssemblyDlg_Main_CB_DisableJITCompileOpt" xml:space="preserve">
+    <value>JIT fordító optimalizálásának _letiltása</value>
+  </data>
+  <data name="AssemblyDlg_Main_CB_EnableJITCompTrck" xml:space="preserve">
+    <value>JIT fordító követésének _engedélyezése</value>
+  </data>
+  <data name="AssemblyDlg_Main_CB_ProcessArchSpec" xml:space="preserve">
+    <value>_Megadott processzor architektúra</value>
+  </data>
+  <data name="AssemblyDlg_Main_CB_PublicKey" xml:space="preserve">
+    <value>Nyilvános _Kulcs</value>
+  </data>
+  <data name="AssemblyDlg_Main_CB_Retargetable" xml:space="preserve">
+    <value>Framework _módosítás</value>
+  </data>
+  <data name="AssemblyDlg_Main_ContentType" xml:space="preserve">
+    <value>_Tartalom típus</value>
+  </data>
+  <data name="AssemblyDlg_Main_Culture" xml:space="preserve">
+    <value>_Kultúra</value>
+  </data>
+  <data name="AssemblyDlg_Main_DotNetVersion" xml:space="preserve">
+    <value>.NET _Verzió</value>
+  </data>
+  <data name="AssemblyDlg_Main_HashAlgorithm" xml:space="preserve">
+    <value>_Hash algoritmus</value>
+  </data>
+  <data name="AssemblyDlg_Main_Name" xml:space="preserve">
+    <value>_Név</value>
+  </data>
+  <data name="AssemblyDlg_Main_ProcessorArch" xml:space="preserve">
+    <value>_Processzor architektúra</value>
+  </data>
+  <data name="AssemblyDlg_Main_PublicKey" xml:space="preserve">
+    <value>_Nyilvános kulcs</value>
+  </data>
+  <data name="AssemblyDlg_Main_Version" xml:space="preserve">
+    <value>_Verzió</value>
+  </data>
+  <data name="Button_Add" xml:space="preserve">
+    <value>_Hozzáad</value>
+  </data>
+  <data name="Button_Add2" xml:space="preserve">
+    <value>_Hozzáad...</value>
+  </data>
+  <data name="Button_Cancel" xml:space="preserve">
+    <value>_Mégsem</value>
+  </data>
+  <data name="Button_Delete" xml:space="preserve">
+    <value>_Törlés</value>
+  </data>
+  <data name="Button_Edit" xml:space="preserve">
+    <value>_Szerkesztés...</value>
+  </data>
+  <data name="Button_OK" xml:space="preserve">
+    <value>_OK</value>
+  </data>
+  <data name="Button_Remove" xml:space="preserve">
+    <value>_Eltávolít</value>
+  </data>
+  <data name="Button_RestoreSettings" xml:space="preserve">
+    <value>Alaphelyzet</value>
+  </data>
+  <data name="CA_NA_Name" xml:space="preserve">
+    <value>_Név</value>
+  </data>
+  <data name="CA_NA_PropertyFieldTypeToolTip" xml:space="preserve">
+    <value>Tulajdonság/Mező típus</value>
+  </data>
+  <data name="ClearCharacter" xml:space="preserve">
+    <value>T</value>
+  </data>
+  <data name="ClearCharacter_ToolTip" xml:space="preserve">
+    <value>Objektumok törlése</value>
+  </data>
+  <data name="ClearTypesCharacter" xml:space="preserve">
+    <value>T</value>
+  </data>
+  <data name="ClearTypesCharacter_ToolTip" xml:space="preserve">
+    <value>Típusok törlése</value>
+  </data>
+  <data name="ConstantDlg_Constant" xml:space="preserve">
+    <value>Konstans</value>
+  </data>
+  <data name="ConstructorArguments" xml:space="preserve">
+    <value>Konstruktor argumentumok</value>
+  </data>
+  <data name="CopyAsTextCommand" xml:space="preserve">
+    <value>Másolás _szövegként</value>
+  </data>
+  <data name="CopyCommand" xml:space="preserve">
+    <value>_Másolás</value>
+  </data>
+  <data name="CopyILBytesCommand" xml:space="preserve">
+    <value>IL bájtok másolása</value>
+  </data>
+  <data name="CopyILBytesKey" xml:space="preserve">
+    <value>Ctrl+B</value>
+  </data>
+  <data name="CouldNotResolveType" xml:space="preserve">
+    <value>A típus nem oldható fel. Győződjön meg róla, hogy a szerelvénye betöltődött!</value>
+  </data>
+  <data name="CreateAssemblyCommand" xml:space="preserve">
+    <value>Szerelvény létrehozása...</value>
+  </data>
+  <data name="CreateAssemblyCommand2" xml:space="preserve">
+    <value>Szerelvény létrehozása</value>
+  </data>
+  <data name="CreateConstant_Title" xml:space="preserve">
+    <value>Konstans létrehozása</value>
+  </data>
+  <data name="CreateCustomAttribute" xml:space="preserve">
+    <value>Egyéni attribútum létrehozása</value>
+  </data>
+  <data name="CreateEventCommand" xml:space="preserve">
+    <value>Esemény létrehozása...</value>
+  </data>
+  <data name="CreateEventCommand2" xml:space="preserve">
+    <value>Esemény létrehozása</value>
+  </data>
+  <data name="CreateFieldCommand" xml:space="preserve">
+    <value>Mező létrehozása...</value>
+  </data>
+  <data name="CreateFieldCommand2" xml:space="preserve">
+    <value>Mező létrehozása</value>
+  </data>
+  <data name="CreateFieldTypeSig" xml:space="preserve">
+    <value>TypeSig mező létrehozása</value>
+  </data>
+  <data name="CreateFnPtrMethodSignature" xml:space="preserve">
+    <value>FnPtr metódus szignatúra létrehozása</value>
+  </data>
+  <data name="CreateGenericInstanceTypeArguments" xml:space="preserve">
+    <value>Generikus példány típus argumentumok létrehozása</value>
+  </data>
+  <data name="CreateGenericParameter" xml:space="preserve">
+    <value>Általálnos paraméter létrehozása</value>
+  </data>
+  <data name="CreateGenericParameterConstraint" xml:space="preserve">
+    <value>Általános paraméter megkötés létrehozása</value>
+  </data>
+  <data name="CreateMethodOverride" xml:space="preserve">
+    <value>Metódus felültöltés létrehozása</value>
+  </data>
+  <data name="CreateMethodSignature" xml:space="preserve">
+    <value>Metódus szignatúra létrehozása</value>
+  </data>
+  <data name="CreateParameter" xml:space="preserve">
+    <value>Paraméter létrehozása</value>
+  </data>
+  <data name="CreatePropertySignature" xml:space="preserve">
+    <value>Tulajdonság szignatúra létrehozása</value>
+  </data>
+  <data name="CreateReturnType" xml:space="preserve">
+    <value>Visszatérési típus létrehozása</value>
+  </data>
+  <data name="CreateSecurityAttribute" xml:space="preserve">
+    <value>Biztonsági attribútum létrehozása</value>
+  </data>
+  <data name="CreateSecurityDeclaration" xml:space="preserve">
+    <value>Biztonsági deklaráció létrehozása</value>
+  </data>
+  <data name="CreateType" xml:space="preserve">
+    <value>Típus létrehozása</value>
+  </data>
+  <data name="CreateTypeSig" xml:space="preserve">
+    <value>TypeSig létrehozása</value>
+  </data>
+  <data name="CreateTypeSpec" xml:space="preserve">
+    <value>TypeSpec létrehozása</value>
+  </data>
+  <data name="Create_N_TypeSigs" xml:space="preserve">
+    <value>{0} TypeSig létrehozása</value>
+  </data>
+  <data name="Create_TypeSig" xml:space="preserve">
+    <value>Egy TypeSig létrehozása</value>
+  </data>
+  <data name="Create_TypeSigs" xml:space="preserve">
+    <value>TypeSig-ek létrehozása</value>
+  </data>
+  <data name="Create_TypeSigs_N_Left" xml:space="preserve">
+    <value>{0} TypeSig maradt</value>
+  </data>
+  <data name="Create_TypeSigs_OneLeft" xml:space="preserve">
+    <value>Egy TypeSig maradt</value>
+  </data>
+  <data name="CustomAttributesTab" xml:space="preserve">
+    <value>Egyéni Attribútumok</value>
+  </data>
+  <data name="CutCommand" xml:space="preserve">
+    <value>_Kivágás</value>
+  </data>
+  <data name="DeleteCommandKey" xml:space="preserve">
+    <value>Del</value>
+    <comment>the delete key</comment>
+  </data>
+  <data name="DeleteEventCommand" xml:space="preserve">
+    <value>Esemény törlése</value>
+  </data>
+  <data name="DeleteEvents" xml:space="preserve">
+    <value>{0} esemény törlése</value>
+  </data>
+  <data name="DeleteFieldCommand" xml:space="preserve">
+    <value>Mező törlése</value>
+  </data>
+  <data name="DeleteFieldsCommand" xml:space="preserve">
+    <value>{0} mező törlése</value>
+  </data>
+  <data name="DeleteX" xml:space="preserve">
+    <value>{0} törlése</value>
+  </data>
+  <data name="DisableMMapIOCommand" xml:space="preserve">
+    <value>Memóriába leképezett I/O letiltása</value>
+  </data>
+  <data name="EditAssemblyCommand" xml:space="preserve">
+    <value>Szerelvény szerkesztése...</value>
+  </data>
+  <data name="EditAssemblyCommand2" xml:space="preserve">
+    <value>Szerelvény szerkesztése</value>
+  </data>
+  <data name="EditCustomAttribute" xml:space="preserve">
+    <value>Egyéni attribútum szerkesztése</value>
+  </data>
+  <data name="EditEventCommand" xml:space="preserve">
+    <value>Esemény szerkesztése...</value>
+  </data>
+  <data name="EditEventCommand2" xml:space="preserve">
+    <value>Esemény szerkesztése</value>
+  </data>
+  <data name="EditFieldCommand" xml:space="preserve">
+    <value>Mező szerkesztése...</value>
+  </data>
+  <data name="EditFieldCommand2" xml:space="preserve">
+    <value>Mező szerkesztése</value>
+  </data>
+  <data name="EditGenericParameter" xml:space="preserve">
+    <value>Általálnos paraméter szerkesztése</value>
+  </data>
+  <data name="EditGenericParameterConstraint" xml:space="preserve">
+    <value>Általános paraméter megkötés szerkesztése</value>
+  </data>
+  <data name="EditMemberRef" xml:space="preserve">
+    <value>MemberRef szerkesztése</value>
+  </data>
+  <data name="EditMethodOverride" xml:space="preserve">
+    <value>Metódus felültöltés szerkesztése</value>
+  </data>
+  <data name="EditMethodSpec" xml:space="preserve">
+    <value>MethodSpec szerkesztése</value>
+  </data>
+  <data name="EditParamDef" xml:space="preserve">
+    <value>ParamDef szerkesztése</value>
+  </data>
+  <data name="EditParameter" xml:space="preserve">
+    <value>Paraméter szerkesztése</value>
+  </data>
+  <data name="EditSecurityAttribute" xml:space="preserve">
+    <value>Biztonsági attribútum szerkesztése</value>
+  </data>
+  <data name="EditSecurityDeclaration" xml:space="preserve">
+    <value>Biztonsági deklaráció szerkesztése</value>
+  </data>
+  <data name="EnumType" xml:space="preserve">
+    <value>Enum: {0}</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>&lt;hiba&gt;</value>
+  </data>
+  <data name="EventType" xml:space="preserve">
+    <value>Esemény típus: {0}</value>
+  </data>
+  <data name="Event_ClearCharacter" xml:space="preserve">
+    <value>T</value>
+  </data>
+  <data name="Event_ClearCharacter_ToolTip" xml:space="preserve">
+    <value>null-ra állítás</value>
+  </data>
+  <data name="Event_InvokeMethod" xml:space="preserve">
+    <value>_Meghívás...</value>
+  </data>
+  <data name="Event_Name" xml:space="preserve">
+    <value>_Név</value>
+  </data>
+  <data name="Event_RemoveMethod" xml:space="preserve">
+    <value>_Eltávolítás...</value>
+  </data>
+  <data name="FieldType" xml:space="preserve">
+    <value>Mező típus: {0}</value>
+  </data>
+  <data name="Field_Access" xml:space="preserve">
+    <value>_Hozzáférés</value>
+  </data>
+  <data name="Field_DefaultValueInfo" xml:space="preserve">
+    <value>Alapértelmezett érték ehhez a mezőhöz</value>
+  </data>
+  <data name="Field_Flags" xml:space="preserve">
+    <value>Jelzők</value>
+  </data>
+  <data name="Field_InitialValue" xml:space="preserve">
+    <value>Kezdeti_Érték</value>
+  </data>
+  <data name="Field_Name" xml:space="preserve">
+    <value>_Név</value>
+  </data>
+  <data name="Field_Offset" xml:space="preserve">
+    <value>_Eltolás</value>
+  </data>
+  <data name="Field_RVA" xml:space="preserve">
+    <value>_RVA</value>
+  </data>
+  <data name="GenericParameterNumber" xml:space="preserve">
+    <value>gparam({0})</value>
+  </data>
+  <data name="GP_Class" xml:space="preserve">
+    <value>_Osztály</value>
+  </data>
+  <data name="GP_Constraints" xml:space="preserve">
+    <value>Megszorítások</value>
+  </data>
+  <data name="GP_DefaultConstructor" xml:space="preserve">
+    <value>_Alapértelmezett ctor</value>
+  </data>
+  <data name="GP_Kind" xml:space="preserve">
+    <value>Fajta</value>
+  </data>
+  <data name="GP_Kind_ToolTip" xml:space="preserve">
+    <value>Csak akkor használt, ha az MD fejléc verziója 1.1 (0x0101). Sosem 1.1 ezért a fajta figyelmen kívül hagyva.</value>
+  </data>
+  <data name="GP_Name" xml:space="preserve">
+    <value>_Név</value>
+  </data>
+  <data name="GP_Number" xml:space="preserve">
+    <value>_Szám</value>
+  </data>
+  <data name="GP_Struct" xml:space="preserve">
+    <value>_Struktúra</value>
+  </data>
+  <data name="GP_Variance" xml:space="preserve">
+    <value>_Variancia</value>
+  </data>
+  <data name="HexNode_Cor20Header_Flags_32BitPref" xml:space="preserve">
+    <value>32-bit preferált</value>
+  </data>
+  <data name="HexNode_Cor20Header_Flags_32BitReqd" xml:space="preserve">
+    <value>32-bit szükséges</value>
+  </data>
+  <data name="HexNode_Cor20Header_Flags_ILLibrary" xml:space="preserve">
+    <value>IL Könyvtár</value>
+  </data>
+  <data name="HexNode_Cor20Header_Flags_IL_Only" xml:space="preserve">
+    <value>Csak IL</value>
+  </data>
+  <data name="HexNode_Cor20Header_Flags_NativeEntryPoint" xml:space="preserve">
+    <value>Natív EntryPoint</value>
+  </data>
+  <data name="HexNode_Cor20Header_Flags_StrongNameSigned" xml:space="preserve">
+    <value>Erős név aláírva</value>
+  </data>
+  <data name="HexNode_Cor20Header_Flags_TrackDebugData" xml:space="preserve">
+    <value>Debug adat követése</value>
+  </data>
+  <data name="HexNode_Cor20_Header" xml:space="preserve">
+    <value>Cor20 fejléc</value>
+  </data>
+  <data name="HexNode_DOSHeader" xml:space="preserve">
+    <value>DOS fejléc</value>
+  </data>
+  <data name="HexNode_FileHeader" xml:space="preserve">
+    <value>Fájl fejléc</value>
+  </data>
+  <data name="HexNode_OptHeader32" xml:space="preserve">
+    <value>Opcionális fejléc (32 bit)</value>
+  </data>
+  <data name="HexNode_OptHeader64" xml:space="preserve">
+    <value>Opcionális fejléc (64 bit)</value>
+  </data>
+  <data name="ImplMapTab" xml:space="preserve">
+    <value>ImplMap</value>
+  </data>
+  <data name="ImplMap_Enable" xml:space="preserve">
+    <value>_Engedélyez</value>
+  </data>
+  <data name="ImplMap_Module" xml:space="preserve">
+    <value>Mo_dul</value>
+  </data>
+  <data name="ImplMap_Name" xml:space="preserve">
+    <value>_Név</value>
+  </data>
+  <data name="MainTab" xml:space="preserve">
+    <value>Alap</value>
+  </data>
+  <data name="MarshalType" xml:space="preserve">
+    <value>Marsall típusa: {0}</value>
+  </data>
+  <data name="MarshalTypeTab" xml:space="preserve">
+    <value>Marsall típus</value>
+  </data>
+  <data name="MarshalType_Array" xml:space="preserve">
+    <value>_Tömb</value>
+  </data>
+  <data name="MarshalType_ByRef" xml:space="preserve">
+    <value>_ByRef</value>
+  </data>
+  <data name="MarshalType_Cookie" xml:space="preserve">
+    <value>Sü_ti</value>
+  </data>
+  <data name="MarshalType_Data" xml:space="preserve">
+    <value>A_dat</value>
+  </data>
+  <data name="MarshalType_ElemType" xml:space="preserve">
+    <value>Elem_Type</value>
+  </data>
+  <data name="MarshalType_Enable" xml:space="preserve">
+    <value>_Engedélyez</value>
+  </data>
+  <data name="MarshalType_EnumNotInitialized" xml:space="preserve">
+    <value>&lt;Nem Inicializált&gt;</value>
+  </data>
+  <data name="MarshalType_Flags" xml:space="preserve">
+    <value>_Jelzők</value>
+  </data>
+  <data name="MarshalType_GUID" xml:space="preserve">
+    <value>_GUID</value>
+  </data>
+  <data name="MarshalType_NativeType" xml:space="preserve">
+    <value>_NativeType</value>
+  </data>
+  <data name="MarshalType_Nothing" xml:space="preserve">
+    <value>semmi</value>
+  </data>
+  <data name="MarshalType_NumElems" xml:space="preserve">
+    <value>_NumElems</value>
+  </data>
+  <data name="MarshalType_ParamIndex" xml:space="preserve">
+    <value>ParamIndex</value>
+  </data>
+  <data name="MarshalType_ParamIndex2" xml:space="preserve">
+    <value>_ParamIndex</value>
+  </data>
+  <data name="MarshalType_ParamNum" xml:space="preserve">
+    <value>_ParamNum</value>
+  </data>
+  <data name="MarshalType_Reserved" xml:space="preserve">
+    <value>_Fenntartott</value>
+  </data>
+  <data name="MarshalType_Size" xml:space="preserve">
+    <value>_Méret</value>
+  </data>
+  <data name="MarshalType_Vector" xml:space="preserve">
+    <value>Vek_tor</value>
+  </data>
+  <data name="MarshalType_VT" xml:space="preserve">
+    <value>_VT</value>
+  </data>
+  <data name="MemberRef_Class" xml:space="preserve">
+    <value>Osztály</value>
+  </data>
+  <data name="MemberRef_ClassTab" xml:space="preserve">
+    <value>Osztály</value>
+  </data>
+  <data name="MemberRef_FieldSigTab" xml:space="preserve">
+    <value>FieldSig</value>
+  </data>
+  <data name="MemberRef_InitFromField" xml:space="preserve">
+    <value>Inicializálás mezőből...</value>
+  </data>
+  <data name="MemberRef_InitFromMethod" xml:space="preserve">
+    <value>Inicializálás metódusból...</value>
+  </data>
+  <data name="MemberRef_MethodDef" xml:space="preserve">
+    <value>_MethodDef</value>
+  </data>
+  <data name="MemberRef_MethodDef_ToolTip" xml:space="preserve">
+    <value>Osztály inicializálása MethodDef-hez</value>
+  </data>
+  <data name="MemberRef_MethodSigTab" xml:space="preserve">
+    <value>MethodSig</value>
+  </data>
+  <data name="MemberRef_ModuleRef" xml:space="preserve">
+    <value>Mo_duleRef</value>
+  </data>
+  <data name="MemberRef_ModuleRef_ToolTip" xml:space="preserve">
+    <value>Osztály inicializálása ModuleRef-hez</value>
+  </data>
+  <data name="MemberRef_Name" xml:space="preserve">
+    <value>_Név</value>
+  </data>
+  <data name="MemberRef_Type" xml:space="preserve">
+    <value>_Típus</value>
+  </data>
+  <data name="MemberRef_TypeSpec" xml:space="preserve">
+    <value>Type_Spec</value>
+  </data>
+  <data name="MemberRef_TypeSpec_ToolTip" xml:space="preserve">
+    <value>Osztály inicializálása egy TypeSpec-re</value>
+  </data>
+  <data name="MemberRef_Type_ToolTip" xml:space="preserve">
+    <value>Osztály inicializálása egy típusra</value>
+  </data>
+  <data name="MethodCantBeNull" xml:space="preserve">
+    <value>Metódus nem lehet null</value>
+  </data>
+  <data name="MethodInstantiationTypesTab" xml:space="preserve">
+    <value>Metódus példányosítási típusok</value>
+  </data>
+  <data name="MethodSig_CallingConv" xml:space="preserve">
+    <value>Hívási konvenció</value>
+  </data>
+  <data name="MethodSig_MethodParameterTypes" xml:space="preserve">
+    <value>Metódus paraméter típusok</value>
+  </data>
+  <data name="MethodSig_MethodVarArgParameterTypes" xml:space="preserve">
+    <value>Metódus VarArg paraméter típusok</value>
+  </data>
+  <data name="MethodSig_NumGenerics" xml:space="preserve">
+    <value># Generiku_sok</value>
+  </data>
+  <data name="MethodSig_ReturnType" xml:space="preserve">
+    <value>_Visszatérési típus...</value>
+  </data>
+  <data name="MethodSpec_Method" xml:space="preserve">
+    <value>_Metódus</value>
+  </data>
+  <data name="MethodsTab" xml:space="preserve">
+    <value>Metódusok</value>
+  </data>
+  <data name="MoveDownCommand" xml:space="preserve">
+    <value>Mozgatás _lefelé</value>
+  </data>
+  <data name="MoveDown_ToolTip" xml:space="preserve">
+    <value>Mozgatás lefelé</value>
+  </data>
+  <data name="MoveUpCommand" xml:space="preserve">
+    <value>Mozgatás _felfelé</value>
+  </data>
+  <data name="MoveUp_ToolTip" xml:space="preserve">
+    <value>Mozgatás felfelé</value>
+  </data>
+  <data name="NamedArguments" xml:space="preserve">
+    <value>Nevesített argumentumok</value>
+  </data>
+  <data name="NoName" xml:space="preserve">
+    <value>&lt;&lt;névtelen&gt;&gt;</value>
+  </data>
+  <data name="NotGenericType" xml:space="preserve">
+    <value>{0} nem egy általános típus</value>
+  </data>
+  <data name="OtherMethodsTab" xml:space="preserve">
+    <value>Egyéb metódusok</value>
+  </data>
+  <data name="ParamDef_Flags" xml:space="preserve">
+    <value>Jelzők</value>
+  </data>
+  <data name="ParamDef_Flags_In" xml:space="preserve">
+    <value>_Bemenet</value>
+  </data>
+  <data name="ParamDef_Flags_Optional" xml:space="preserve">
+    <value>O_pcionális</value>
+  </data>
+  <data name="ParamDef_Flags_Out" xml:space="preserve">
+    <value>_Kimenet</value>
+  </data>
+  <data name="ParamDef_Name" xml:space="preserve">
+    <value>_Név</value>
+  </data>
+  <data name="ParamDef_Sequence" xml:space="preserve">
+    <value>_Szekvencia</value>
+  </data>
+  <data name="ParamDef_Sequence_ToolTip" xml:space="preserve">
+    <value>A 0. szekvencia a visszatérési érték, az 1. az első paraméter, stb</value>
+  </data>
+  <data name="ParameterNumber" xml:space="preserve">
+    <value>param({0})</value>
+  </data>
+  <data name="ParameterReturn" xml:space="preserve">
+    <value>param(return)</value>
+  </data>
+  <data name="Parameter_DefaultValueInfo" xml:space="preserve">
+    <value>Alapértelmezett érték ehhez a paraméterhez</value>
+  </data>
+  <data name="PasteAfterSelectionCommand" xml:space="preserve">
+    <value>Beillesztés a _kijelölés után</value>
+  </data>
+  <data name="PasteCommand" xml:space="preserve">
+    <value>_Beillesztés</value>
+  </data>
+  <data name="PickMember_OpenAsmToolTip" xml:space="preserve">
+    <value>Szerelvény vagy NetModul megnyitása</value>
+  </data>
+  <data name="PickMember_Search" xml:space="preserve">
+    <value>_Keresés</value>
+  </data>
+  <data name="PickMember_SelectCorrectNode" xml:space="preserve">
+    <value>Válasszon ki egy helyes csomópontot</value>
+  </data>
+  <data name="PickMember_TypeMustBeSelected" xml:space="preserve">
+    <value>Egy típust ki kell választani.</value>
+  </data>
+  <data name="Pick_Constructor" xml:space="preserve">
+    <value>Válasszon konstruktort</value>
+  </data>
+  <data name="Pick_EnumType" xml:space="preserve">
+    <value>Válasszon Enum típust</value>
+  </data>
+  <data name="Pick_Type" xml:space="preserve">
+    <value>Válasszon típust</value>
+  </data>
+  <data name="RawCustomAttributeBlob" xml:space="preserve">
+    <value>Nyers Blob</value>
+  </data>
+  <data name="RawCustomAttributeBlob2" xml:space="preserve">
+    <value>&lt;nyers blob&gt;</value>
+  </data>
+  <data name="RemoveAssembliesCommand" xml:space="preserve">
+    <value>{0} szerelvény eltávolítása</value>
+  </data>
+  <data name="RemoveAssemblyCommand" xml:space="preserve">
+    <value>Szerelvény eltávolítása</value>
+  </data>
+  <data name="RemoveCharacter" xml:space="preserve">
+    <value>R</value>
+  </data>
+  <data name="RemoveCharacter_ToolTip" xml:space="preserve">
+    <value>Utolsó objektum törlése</value>
+  </data>
+  <data name="RemoveCommand" xml:space="preserve">
+    <value>{0} törlése</value>
+  </data>
+  <data name="RemoveLastTypeCharacter" xml:space="preserve">
+    <value>R</value>
+  </data>
+  <data name="RemoveLastTypeCharacter_ToolTip" xml:space="preserve">
+    <value>Utolsó típus törlése</value>
+  </data>
+  <data name="ReturnTypeRequired" xml:space="preserve">
+    <value>Visszatérési típus szükséges</value>
+  </data>
+  <data name="SecurityDeclarationsTab" xml:space="preserve">
+    <value>Sec Decls</value>
+  </data>
+  <data name="ShortCutKeyA" xml:space="preserve">
+    <value>A</value>
+  </data>
+  <data name="ShortcutKeyAltEnter" xml:space="preserve">
+    <value>Alt+Enter</value>
+  </data>
+  <data name="ShortCutKeyC" xml:space="preserve">
+    <value>T</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltV" xml:space="preserve">
+    <value>Ctrl+Alt+V</value>
+  </data>
+  <data name="ShortCutKeyCtrlC" xml:space="preserve">
+    <value>Ctrl+C</value>
+  </data>
+  <data name="ShortCutKeyCtrlDel" xml:space="preserve">
+    <value>Ctrl+Del</value>
+  </data>
+  <data name="ShortCutKeyCtrlT" xml:space="preserve">
+    <value>Ctrl+T</value>
+  </data>
+  <data name="ShortCutKeyCtrlV" xml:space="preserve">
+    <value>Ctrl+V</value>
+  </data>
+  <data name="ShortCutKeyCtrlX" xml:space="preserve">
+    <value>Ctrl+X</value>
+  </data>
+  <data name="ShortCutKeyD" xml:space="preserve">
+    <value>D</value>
+  </data>
+  <data name="ShortCutKeyF" xml:space="preserve">
+    <value>F</value>
+  </data>
+  <data name="ShortCutKeyU" xml:space="preserve">
+    <value>U</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Típus: {0}</value>
+  </data>
+  <data name="TypeMustBeGeneric" xml:space="preserve">
+    <value>A típusnak általános típusnak kell lennie</value>
+  </data>
+  <data name="TypeSigCreator_Array" xml:space="preserve">
+    <value>_Tömb</value>
+  </data>
+  <data name="TypeSigCreator_Array_LowerBounds" xml:space="preserve">
+    <value>_Alsó határ</value>
+  </data>
+  <data name="TypeSigCreator_Array_LowerBounds_ToolTip" xml:space="preserve">
+    <value>Tömb alsó határai vesszővel elválasztva (előjeles egészek)</value>
+  </data>
+  <data name="TypeSigCreator_Array_Rank" xml:space="preserve">
+    <value>Ran_g</value>
+  </data>
+  <data name="TypeSigCreator_Array_Sizes" xml:space="preserve">
+    <value>_Méretek</value>
+  </data>
+  <data name="TypeSigCreator_Array_Sizes_ToolTip" xml:space="preserve">
+    <value>Tömb méretek vesszővel elválasztva (előjel nélküli egészek)</value>
+  </data>
+  <data name="TypeSigCreator_Array_ToolTip" xml:space="preserve">
+    <value>Típus többdimenziós tömbbé konvertálása</value>
+  </data>
+  <data name="TypeSigCreator_ByRef" xml:space="preserve">
+    <value>_ByRef</value>
+  </data>
+  <data name="TypeSigCreator_ByRef_ToolTip" xml:space="preserve">
+    <value>Típus hivatkozássá alakítása</value>
+  </data>
+  <data name="TypeSigCreator_Clear" xml:space="preserve">
+    <value>_Tisztít</value>
+  </data>
+  <data name="TypeSigCreator_Clear_ToolTip" xml:space="preserve">
+    <value>Típus törlése</value>
+  </data>
+  <data name="TypeSigCreator_CModOpt" xml:space="preserve">
+    <value>CModOp_t</value>
+  </data>
+  <data name="TypeSigCreator_CModOpt_ToolTip" xml:space="preserve">
+    <value>Opcionális C módosító hozzáadása</value>
+  </data>
+  <data name="TypeSigCreator_CModReqd" xml:space="preserve">
+    <value>C_ModReqd</value>
+  </data>
+  <data name="TypeSigCreator_CModReqd_ToolTip" xml:space="preserve">
+    <value>Szükséges C módosító hozzáadása</value>
+  </data>
+  <data name="TypeSigCreator_FnPtr" xml:space="preserve">
+    <value>_FnPtr</value>
+  </data>
+  <data name="TypeSigCreator_FnPtr_ToolTip" xml:space="preserve">
+    <value>Függvény mutató hozzáadása</value>
+  </data>
+  <data name="TypeSigCreator_GenericInst" xml:space="preserve">
+    <value>_GenericInst</value>
+  </data>
+  <data name="TypeSigCreator_GenericInst_ToolTip" xml:space="preserve">
+    <value>Általános példány típus hozzáadása</value>
+  </data>
+  <data name="TypeSigCreator_GenericsCount" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="TypeSigCreator_GenericsCount_ToolTip" xml:space="preserve">
+    <value>Típus/metódus generikus változók száma</value>
+  </data>
+  <data name="TypeSigCreator_MultidimensionalArray" xml:space="preserve">
+    <value>Többdimenziós tömb</value>
+  </data>
+  <data name="TypeSigCreator_MVar" xml:space="preserve">
+    <value>_MVar</value>
+  </data>
+  <data name="TypeSigCreator_MVar_ToolTip" xml:space="preserve">
+    <value>Metódus generikus változó hozzádása</value>
+  </data>
+  <data name="TypeSigCreator_Pinned" xml:space="preserve">
+    <value>_Kitűzött</value>
+  </data>
+  <data name="TypeSigCreator_Pinned_ToolTip" xml:space="preserve">
+    <value>Kitűzött változóvá alakítás</value>
+  </data>
+  <data name="TypeSigCreator_Pointer" xml:space="preserve">
+    <value>_Mutató</value>
+  </data>
+  <data name="TypeSigCreator_Pointer_ToolTip" xml:space="preserve">
+    <value>Típus mutatóvá alakítása</value>
+  </data>
+  <data name="TypeSigCreator_Remove_ToolTip" xml:space="preserve">
+    <value>Utoljára hozzáadott típus törlése</value>
+  </data>
+  <data name="TypeSigCreator_SZArray" xml:space="preserve">
+    <value>S_Z Tömb</value>
+  </data>
+  <data name="TypeSigCreator_SZArray_ToolTip" xml:space="preserve">
+    <value>Típus átalakítása egy dimenziós, nulla alsó határú tömbbé</value>
+  </data>
+  <data name="TypeSigCreator_Type" xml:space="preserve">
+    <value>_Típus</value>
+  </data>
+  <data name="TypeSigCreator_Type_ToolTip" xml:space="preserve">
+    <value>Típus hozzáadása</value>
+  </data>
+  <data name="TypeSigCreator_Var" xml:space="preserve">
+    <value>_Var</value>
+  </data>
+  <data name="TypeSigCreator_Var_ToolTip" xml:space="preserve">
+    <value>Típus generikus változó hozzáadása</value>
+  </data>
+  <data name="TypeTab" xml:space="preserve">
+    <value>Típus</value>
+  </data>
+  <data name="Unknown" xml:space="preserve">
+    <value>Ismeretlen</value>
+  </data>
+  <data name="UnknownBytesMsg" xml:space="preserve">
+    <value>Néhány másolt bájt ismeretlen, mert a metódus szerkesztve lett. Az új token-ek és karakterlánc eltolások csak akkor lesznek ismertek, ha a fájlt elmenti, majd újra megnyitja.</value>
+  </data>
+  <data name="UnknownEnum" xml:space="preserve">
+    <value>Ismeretlen enum</value>
+  </data>
+  <data name="Value" xml:space="preserve">
+    <value>É_rték</value>
+  </data>
+  <data name="ValueType_ToolTip" xml:space="preserve">
+    <value>Értéktípus</value>
+  </data>
+  <data name="XML" xml:space="preserve">
+    <value>_XML</value>
+  </data>
+  <data name="AddExistingNetModuleToAssemblyCommand" xml:space="preserve">
+    <value>Létező NetModul hozzáadása a szerelvényhez...</value>
+  </data>
+  <data name="AddExistingNetModuleToAssemblyCommand2" xml:space="preserve">
+    <value>Létező NetModul hozzáadása a szerelvényhez</value>
+  </data>
+  <data name="AddNewNetModuleToAssemblyCommand" xml:space="preserve">
+    <value>Új NetModul hozzáadása a szerelvényhez...</value>
+  </data>
+  <data name="AddNewNetModuleToAssemblyCommand2" xml:space="preserve">
+    <value>Új NetModul hozzáadása a szerelvényhez</value>
+  </data>
+  <data name="AllFiles" xml:space="preserve">
+    <value>Minden fájl</value>
+  </data>
+  <data name="AskCancelSave" xml:space="preserve">
+    <value>Biztos, hogy megszakítja a mentést?</value>
+  </data>
+  <data name="AskCancelSaveCloseWindow" xml:space="preserve">
+    <value>A mentés megszakítva.
+Biztos, hogy bezárja az ablakot?</value>
+  </data>
+  <data name="AskDeleteField" xml:space="preserve">
+    <value>Lehet olyan kód pár szerelvényben, ami hivatkozik erre a mezőre. Biztos, hogy törölni akarja a mezőt?</value>
+  </data>
+  <data name="AskDeleteMethod" xml:space="preserve">
+    <value>Lehet olyan kód pár szerelvényben, ami hivatkozik erre a metódusra. Biztos, hogy törölni akarja a metódust?</value>
+  </data>
+  <data name="AskDeleteType" xml:space="preserve">
+    <value>Lehet olyan kód pár szerelvényben, ami hivatkozik erre a típusra. Biztos, hogy törölni akarja a típust?</value>
+  </data>
+  <data name="AskExitUnsavedFile" xml:space="preserve">
+    <value>Egy fájl nincs mentve. Szeretné menteni kilépés előtt?</value>
+  </data>
+  <data name="AskExitUnsavedFiles" xml:space="preserve">
+    <value>{0} fájl nincs mentve. Szeretne menteni kilépés előtt?</value>
+  </data>
+  <data name="AskLoadAssembliesLoseChanges" xml:space="preserve">
+    <value>Biztos, hogy be akarja tölteni az új szerelvényeket és elveszíteni az összes módosítást?</value>
+  </data>
+  <data name="AskReloadAssembliesLoseChanges" xml:space="preserve">
+    <value>Biztos, hogy újra be akarja tölteni az összes szerelvényt és elveszíteni az összes módosítást?</value>
+  </data>
+  <data name="AskSaveFile" xml:space="preserve">
+    <value>A fájl még nem lett mentve. Szeretné menteni mielőtt folytatná?</value>
+  </data>
+  <data name="AskSaveFiles" xml:space="preserve">
+    <value>A fájlok még nem lettek mentve. Szeretne menteni mielőtt folytatná?</value>
+  </data>
+  <data name="BaseTypeTab" xml:space="preserve">
+    <value>Alaptípus</value>
+  </data>
+  <data name="BaseTypeX" xml:space="preserve">
+    <value>Alaptípus: {0}</value>
+  </data>
+  <data name="Button_Append" xml:space="preserve">
+    <value>_Hozzáfűz</value>
+  </data>
+  <data name="Button_Assembly" xml:space="preserve">
+    <value>Szerelvény</value>
+  </data>
+  <data name="ConvAssemblyToNetModuleCommand" xml:space="preserve">
+    <value>Szerelvény átalakítása NetModullá</value>
+  </data>
+  <data name="ConvertUncondBranchCommand" xml:space="preserve">
+    <value>Feltétel nélküli á_ggá alakítás</value>
+  </data>
+  <data name="ConvertUncondBranchesCommand" xml:space="preserve">
+    <value>Feltétel nélküli ága_kká alakítás</value>
+  </data>
+  <data name="ConvNetModuleToAssemblyCommand" xml:space="preserve">
+    <value>NetModule szerelvénnyé alakítása</value>
+  </data>
+  <data name="CopyAsTextCommand2" xml:space="preserve">
+    <value>Másolás _szövegként</value>
+  </data>
+  <data name="CopyFileOffsetCommand" xml:space="preserve">
+    <value>Fájl eltolás másolása</value>
+  </data>
+  <data name="CopyFileOffsetsCommand" xml:space="preserve">
+    <value>Fájl eltolás másolása</value>
+  </data>
+  <data name="CopyMetaDataToken" xml:space="preserve">
+    <value>_MD token másolása</value>
+  </data>
+  <data name="CopyMetaDataTokens" xml:space="preserve">
+    <value>_MD token másolása</value>
+  </data>
+  <data name="CopyRVACommand" xml:space="preserve">
+    <value>_RVA másolása</value>
+  </data>
+  <data name="CopyRVAsCommand" xml:space="preserve">
+    <value>_RVA másolása</value>
+  </data>
+  <data name="CreateAnExceptionCatchType" xml:space="preserve">
+    <value>Kivétel kezelés típus létrehozása</value>
+  </data>
+  <data name="CreateAssemblyLinkedResourceCommand" xml:space="preserve">
+    <value>Szerelvényhez kötött erőforrás létrehozása...</value>
+  </data>
+  <data name="CreateAssemblyLinkedResourceCommand2" xml:space="preserve">
+    <value>Szerelvényhez kötött erőforrás létrehozása</value>
+  </data>
+  <data name="CreateBitMapIconResourceCommand" xml:space="preserve">
+    <value>System.Data.Bitmap/Icon erőforrás létrehozása...</value>
+  </data>
+  <data name="CreateBitMapIconResourceCommand2" xml:space="preserve">
+    <value>System.Data.Bitmap/Icon erőforrás létrehozása</value>
+  </data>
+  <data name="CreateByteArrayResourceCommand" xml:space="preserve">
+    <value>Bájt tömb erőforrás létrehozása...</value>
+  </data>
+  <data name="CreateByteArrayResourceCommand2" xml:space="preserve">
+    <value>Bájt tömb erőforrás létrehozása</value>
+  </data>
+  <data name="CreateFileLinkedResourceCommand" xml:space="preserve">
+    <value>Fájlhoz kötött erőforrás létrehozása...</value>
+  </data>
+  <data name="CreateFileLinkedResourceCommand2" xml:space="preserve">
+    <value>Fájlhoz kötött erőforrás létrehozása</value>
+  </data>
+  <data name="CreateFileResourceCommand" xml:space="preserve">
+    <value>Fájl erőforrás létrehozása...</value>
+  </data>
+  <data name="CreateFileResourceCommand2" xml:space="preserve">
+    <value>Fájl erőforrás létrehozása</value>
+  </data>
+  <data name="CreateImageListStreamerResourceCommand" xml:space="preserve">
+    <value>System.Windows.Forms.ImageListStreamer erőforrás létrehozása...</value>
+  </data>
+  <data name="CreateImageListStreamerResourceCommand2" xml:space="preserve">
+    <value>System.Windows.Forms.ImageListStreamer erőforrás létrehozása</value>
+  </data>
+  <data name="CreateInterfaceImpl" xml:space="preserve">
+    <value>Interfész megvalósítás létrehozása</value>
+  </data>
+  <data name="CreateLocalType" xml:space="preserve">
+    <value>Helyi típus létrehozása</value>
+  </data>
+  <data name="CreateMethodCommand" xml:space="preserve">
+    <value>Metódus létrehozása...</value>
+  </data>
+  <data name="CreateMethodCommand2" xml:space="preserve">
+    <value>Metódus létrehozása</value>
+  </data>
+  <data name="CreateMethodSig" xml:space="preserve">
+    <value>MethodSig létrehozása</value>
+  </data>
+  <data name="CreateMultiFileResourceCommand" xml:space="preserve">
+    <value>Több fájlos erőforrás létrehozása...</value>
+  </data>
+  <data name="CreateMultiFileResourceCommand2" xml:space="preserve">
+    <value>Több fájlos erőforrás létrehozása</value>
+  </data>
+  <data name="CreateNestedTypeCommand" xml:space="preserve">
+    <value>Beágyazott típus létrehozása...</value>
+  </data>
+  <data name="CreateNestedTypeCommand2" xml:space="preserve">
+    <value>Beágyazott típus létrehozása</value>
+  </data>
+  <data name="CreateNetModuleCommand" xml:space="preserve">
+    <value>NetModule létrehozása...</value>
+  </data>
+  <data name="CreateNetModuleCommand2" xml:space="preserve">
+    <value>NetModule létrehozása</value>
+  </data>
+  <data name="CreatePropertyCommand" xml:space="preserve">
+    <value>Tulajdonság létrehozása...</value>
+  </data>
+  <data name="CreatePropertyCommand2" xml:space="preserve">
+    <value>Tulajdonság létrehozása</value>
+  </data>
+  <data name="CreateResourceCommand" xml:space="preserve">
+    <value>Erőforrás létrehozása...</value>
+  </data>
+  <data name="CreateResourceCommand2" xml:space="preserve">
+    <value>Erőforrás létrehozása</value>
+  </data>
+  <data name="CreateStreamResourceCommand" xml:space="preserve">
+    <value>System.IO.Stream erőforrás létrehozása...</value>
+  </data>
+  <data name="CreateStreamResourceCommand2" xml:space="preserve">
+    <value>System.IO.Stream erőforrás létrehozása</value>
+  </data>
+  <data name="CreateTypeCommand" xml:space="preserve">
+    <value>Típus létrehozása...</value>
+  </data>
+  <data name="CreateTypeCommand2" xml:space="preserve">
+    <value>Típus létrehozása</value>
+  </data>
+  <data name="DeleteMethodCommand" xml:space="preserve">
+    <value>Metódus törlése</value>
+  </data>
+  <data name="DeleteMethodsCommand" xml:space="preserve">
+    <value>{0} metódus törlése</value>
+  </data>
+  <data name="DeleteNamespaceCommand" xml:space="preserve">
+    <value>Névtér törlése</value>
+  </data>
+  <data name="DeleteNamespacesCommand" xml:space="preserve">
+    <value>{0} névtér törlése</value>
+  </data>
+  <data name="DeletePropertiesCommand" xml:space="preserve">
+    <value>{0} tulajdonság törlése</value>
+  </data>
+  <data name="DeletePropertyCommand" xml:space="preserve">
+    <value>Tulajdonság törlése</value>
+  </data>
+  <data name="DeleteResourceCommand" xml:space="preserve">
+    <value>Erőforrás törlése</value>
+  </data>
+  <data name="DeleteResourcesCommand" xml:space="preserve">
+    <value>{0} erőforrás törlése</value>
+  </data>
+  <data name="DeleteTypeCommand" xml:space="preserve">
+    <value>Típus törlése</value>
+  </data>
+  <data name="DeleteTypesCommand" xml:space="preserve">
+    <value>{0} típus törlése</value>
+  </data>
+  <data name="EditFieldMemberRef" xml:space="preserve">
+    <value>MemberRef mező szerkesztése</value>
+  </data>
+  <data name="EditILInstructionsCommand" xml:space="preserve">
+    <value>IL _utasítások szerkesztése...</value>
+  </data>
+  <data name="EditInterfaceImpl" xml:space="preserve">
+    <value>Interfész megvalósítás szerkesztése</value>
+  </data>
+  <data name="EditMethodBodyCommand" xml:space="preserve">
+    <value>Metódus törzs szerkesztése...</value>
+  </data>
+  <data name="EditMethodBodyCommand2" xml:space="preserve">
+    <value>Metódus törzs szerkesztése</value>
+  </data>
+  <data name="EditMethodCommand" xml:space="preserve">
+    <value>Metódus szerkesztése...</value>
+  </data>
+  <data name="EditMethodCommand2" xml:space="preserve">
+    <value>Metódus szerkesztése</value>
+  </data>
+  <data name="EditMethodMemberRef" xml:space="preserve">
+    <value>Metódus MemberRef szerkesztése</value>
+  </data>
+  <data name="EditModuleCommand" xml:space="preserve">
+    <value>Modul szerkesztése...</value>
+  </data>
+  <data name="EditModuleCommand2" xml:space="preserve">
+    <value>Modul szerkesztése</value>
+  </data>
+  <data name="EditNamespace" xml:space="preserve">
+    <value>Névtér szerkesztése</value>
+  </data>
+  <data name="EditOperand_Field" xml:space="preserve">
+    <value>_Mező...</value>
+  </data>
+  <data name="EditOperand_Field_MemberRef" xml:space="preserve">
+    <value>_Mező MemberRef...</value>
+  </data>
+  <data name="EditOperand_Method" xml:space="preserve">
+    <value>M_etódus...</value>
+  </data>
+  <data name="EditOperand_MethodSpec" xml:space="preserve">
+    <value>Met_hodSpec...</value>
+  </data>
+  <data name="EditOperand_Method_MemberRef" xml:space="preserve">
+    <value>M_etódus MemberRef...</value>
+  </data>
+  <data name="EditOperand_Type" xml:space="preserve">
+    <value>_Típus...</value>
+  </data>
+  <data name="EditOperand_TypeSpec" xml:space="preserve">
+    <value>Type_Spec...</value>
+  </data>
+  <data name="EditPropertyCommand" xml:space="preserve">
+    <value>Tulajdonság szerkesztése...</value>
+  </data>
+  <data name="EditPropertyCommand2" xml:space="preserve">
+    <value>Tulajdonság szerkesztése</value>
+  </data>
+  <data name="EditResourceCommand" xml:space="preserve">
+    <value>Erőforrás szerkesztése...</value>
+  </data>
+  <data name="EditResourceCommand2" xml:space="preserve">
+    <value>Erőforrás szerkesztése</value>
+  </data>
+  <data name="EditResource_ContainsNoMetadata" xml:space="preserve">
+    <value>_Nem tartalmaz metaadatot</value>
+  </data>
+  <data name="EditResource_File" xml:space="preserve">
+    <value>_Fájl</value>
+  </data>
+  <data name="EditResource_Hash" xml:space="preserve">
+    <value>_Hash</value>
+  </data>
+  <data name="EditSwitchInstructionOperand" xml:space="preserve">
+    <value>Switch operandus szerkesztése</value>
+  </data>
+  <data name="EditTypeCommand" xml:space="preserve">
+    <value>Típus szerkesztése...</value>
+  </data>
+  <data name="EditTypeCommand2" xml:space="preserve">
+    <value>Típus szerkesztése</value>
+  </data>
+  <data name="EH_Command1" xml:space="preserve">
+    <value>Új kivételkezelő hozzáadása a kijelölés _előtt</value>
+  </data>
+  <data name="EH_Command2" xml:space="preserve">
+    <value>Új kivételkezelő hozzáadása a kijelölés _után</value>
+  </data>
+  <data name="EH_Command3" xml:space="preserve">
+    <value>Új kivételkezelő hozzá_adása</value>
+  </data>
+  <data name="EH_Command4" xml:space="preserve">
+    <value>Kivételkezelő e_ltávolítása</value>
+  </data>
+  <data name="EH_Command5" xml:space="preserve">
+    <value>Kivételkezelők e_ltávolítása</value>
+  </data>
+  <data name="EH_Command6" xml:space="preserve">
+    <value>Összes kivételkezelő el_távolítása</value>
+  </data>
+  <data name="EmptyFilename" xml:space="preserve">
+    <value>&lt;üres fájlnév&gt;</value>
+  </data>
+  <data name="Error_AssemblyFieldMustNotBeEmpty" xml:space="preserve">
+    <value>A szerelvény nem lehet üres.</value>
+  </data>
+  <data name="Error_CouldNotFindMethod" xml:space="preserve">
+    <value>A metódus nem található: {0}</value>
+  </data>
+  <data name="Error_CouldNotFindTypeOrItsAssembly" xml:space="preserve">
+    <value>A típus vagy a szerelvénye nem található.</value>
+  </data>
+  <data name="Error_CouldNotLoadType" xml:space="preserve">
+    <value>A(z) '{0}' típus nem tölthető be: {1}</value>
+  </data>
+  <data name="Error_CouldNotSerializeImages" xml:space="preserve">
+    <value>A képek nem szerializálhatók. Hiba: {0}</value>
+  </data>
+  <data name="Error_DeSerializationDisabledInSettings" xml:space="preserve">
+    <value>(Vissza)szerializáció le van tiltva a beállításokban.</value>
+  </data>
+  <data name="Error_EmptyImageList" xml:space="preserve">
+    <value>Nem lehet létrehozni üres kép listát</value>
+  </data>
+  <data name="Error_Filename_ContainsInvalidPathCharacter" xml:space="preserve">
+    <value>Az fájlnév legalább egy helytelen karaktert tartalmaz.</value>
+  </data>
+  <data name="Error_Filename_Empty" xml:space="preserve">
+    <value>A fájlnév nem lehet üres.</value>
+  </data>
+  <data name="Error_Filename_FolderDoesNotExist" xml:space="preserve">
+    <value>"{0}" mappa nem létezik.</value>
+  </data>
+  <data name="Error_Filename_FolderExists" xml:space="preserve">
+    <value>Már létezik egy fájl a célmappáéval megegyező névvel.</value>
+  </data>
+  <data name="Error_Filename_OnlyWhitespace" xml:space="preserve">
+    <value>A fájlnév nem állhat csak üres karakterekből</value>
+  </data>
+  <data name="Error_Filename_ReservedOSFilename" xml:space="preserve">
+    <value>A fájlnév egy fenntartott operációs rendszer fájlnév, nem használható.</value>
+  </data>
+  <data name="Error_Filename_TooLong" xml:space="preserve">
+    <value>A fájlnév túl hosszú.</value>
+  </data>
+  <data name="Error_InstrHasBeenRemoved" xml:space="preserve">
+    <value>Az utasítás törölve lett</value>
+  </data>
+  <data name="Error_InstrTargetHasBeenRemoved" xml:space="preserve">
+    <value>Az utasítás cél törölve lett</value>
+  </data>
+  <data name="Error_InvalidResourceData" xml:space="preserve">
+    <value>Ez az adat nem használható: {0}</value>
+  </data>
+  <data name="Error_LocalHasBeenRemoved" xml:space="preserve">
+    <value>A local el lett távolítva</value>
+  </data>
+  <data name="Error_NewResourceDataMustBeImage" xml:space="preserve">
+    <value>Az új adatnak képnek kell lennie. Hiba: {0}</value>
+  </data>
+  <data name="Error_NotNetModule" xml:space="preserve">
+    <value>{0} nem egy NetModule</value>
+  </data>
+  <data name="Error_NotSNKFile" xml:space="preserve">
+    <value>'{0}' nem egy erős nevű kulcsfájl (snk)</value>
+  </data>
+  <data name="Error_OnlyInstrsCanBeSelected" xml:space="preserve">
+    <value>Csak utasításokat lehet kijelölni</value>
+  </data>
+  <data name="Error_OpenFile" xml:space="preserve">
+    <value>Hiba a fájl megnyitása során: {0}</value>
+  </data>
+  <data name="Error_OpenImage" xml:space="preserve">
+    <value>A fájl nem megnyitható vagy nem kép. Hiba: {0}</value>
+  </data>
+  <data name="Error_OpMustBeField" xml:space="preserve">
+    <value>Az operandusnak mezőnek kell lennie</value>
+  </data>
+  <data name="Error_OpMustBeInstr" xml:space="preserve">
+    <value>Az operandusnak utasításnak kell lennie</value>
+  </data>
+  <data name="Error_OpMustBeListInstrs" xml:space="preserve">
+    <value>Az operandusnak utasítás listának kell lennie</value>
+  </data>
+  <data name="Error_OpMustBeLocal" xml:space="preserve">
+    <value>Az operandusnak local-nak kell lennie</value>
+  </data>
+  <data name="Error_OpMustBeMethod" xml:space="preserve">
+    <value>Az operandusnak metódusnak kell lennie</value>
+  </data>
+  <data name="Error_OpMustBeMethodSig" xml:space="preserve">
+    <value>Az operandusnak metódus szignatúrának kell lennie</value>
+  </data>
+  <data name="Error_OpMustBeParam" xml:space="preserve">
+    <value>Az operandusnak paraméternek kell lennie</value>
+  </data>
+  <data name="Error_OpMustBeType" xml:space="preserve">
+    <value>Az operandusnak típusnak kell lennie</value>
+  </data>
+  <data name="Error_OpMustBeTypeMethodField" xml:space="preserve">
+    <value>Az operandusnak típusnak, metódusnak, mezőnek kell lennie</value>
+  </data>
+  <data name="Error_ReadingFiles" xml:space="preserve">
+    <value>Hiba a fájl olvasásakor: {0}</value>
+  </data>
+  <data name="Error_SwitchInstrTargetHasBeenRemoved" xml:space="preserve">
+    <value>A switch utasítás célja el lett távolítva</value>
+  </data>
+  <data name="Error_VersionStringTooLong" xml:space="preserve">
+    <value>A verzió karakterlánc túl hosszú</value>
+  </data>
+  <data name="ExceptionHandlersTab" xml:space="preserve">
+    <value>Kivétel kezelők</value>
+  </data>
+  <data name="GenericParametersTab" xml:space="preserve">
+    <value>Általános param-ok</value>
+  </data>
+  <data name="GoToMetaDataTableRowCommand" xml:space="preserve">
+    <value>Ugrás MD tábla sorra ({0:X8})</value>
+  </data>
+  <data name="GoToMetaDataTableRowCommand2" xml:space="preserve">
+    <value>Ugrás MD tábla sorra...</value>
+  </data>
+  <data name="GoToMetaDataTableRowTitle" xml:space="preserve">
+    <value>Ugrás MD tábla sorra</value>
+  </data>
+  <data name="GoToMetaDataTableRow_InvalidMetadataToken" xml:space="preserve">
+    <value>Hibás metaadat token: 0x{0:X8}</value>
+  </data>
+  <data name="GoToMetaDataTableRow_MetadataToken" xml:space="preserve">
+    <value>_Metaadat token</value>
+  </data>
+  <data name="GoToMetaDataTableRow_TokenDoesNotExist" xml:space="preserve">
+    <value>Token {0:X8} nem található a metaadatok között</value>
+  </data>
+  <data name="GoToRowIdentifierCommand" xml:space="preserve">
+    <value>_Ugrás RID-hez...</value>
+  </data>
+  <data name="GoToRowIdentifier_InvalidRowIdentifier" xml:space="preserve">
+    <value>Érvénytelen RID: {0}</value>
+  </data>
+  <data name="GoToRowIdentifier_Title" xml:space="preserve">
+    <value>Ugrás RID-hez</value>
+  </data>
+  <data name="HexCopyMethodBodyCommand" xml:space="preserve">
+    <value>Metódus törzs hexa másolása</value>
+  </data>
+  <data name="HexNode_PE" xml:space="preserve">
+    <value>PE</value>
+  </data>
+  <data name="HexNode_PE_Section" xml:space="preserve">
+    <value>Szakasz</value>
+  </data>
+  <data name="HexNode_StorageHeader" xml:space="preserve">
+    <value>Tárolási fejléc</value>
+  </data>
+  <data name="HexNode_StorageSignature" xml:space="preserve">
+    <value>Tárolási aláírás</value>
+  </data>
+  <data name="HexNode_StorageStream" xml:space="preserve">
+    <value>Tárolási folyam</value>
+  </data>
+  <data name="HexNode_TablesStream" xml:space="preserve">
+    <value>Tábla folyam</value>
+  </data>
+  <data name="HexPasteMethodBodyCommand" xml:space="preserve">
+    <value>Metódus törzs hexa beillesztése</value>
+  </data>
+  <data name="HexWriteEmptyMethodBodyCommand" xml:space="preserve">
+    <value>Üres törzs hexa írása</value>
+  </data>
+  <data name="HexWriteReturnFalseBodyCommand" xml:space="preserve">
+    <value>'return false' törzs hexa írása</value>
+  </data>
+  <data name="HexWriteReturnTrueBodyCommand" xml:space="preserve">
+    <value>'return true' törzs hexa írása</value>
+  </data>
+  <data name="Hex_Undo_Message_InsertBytes" xml:space="preserve">
+    <value>Bájt beszúrása</value>
+  </data>
+  <data name="Images" xml:space="preserve">
+    <value>Képek</value>
+  </data>
+  <data name="Index" xml:space="preserve">
+    <value>Index</value>
+  </data>
+  <data name="Info" xml:space="preserve">
+    <value>Infó</value>
+  </data>
+  <data name="InstructionOperand" xml:space="preserve">
+    <value>Operandus</value>
+  </data>
+  <data name="Instr_Command1" xml:space="preserve">
+    <value>Új utasítás hozzáadása a kijelölés _előtt</value>
+  </data>
+  <data name="Instr_Command2" xml:space="preserve">
+    <value>Új utasítás hozzáadása a kijelölés _után</value>
+  </data>
+  <data name="Instr_Command3" xml:space="preserve">
+    <value>Új utasítás _hozzáfűzése</value>
+  </data>
+  <data name="Instr_Command4" xml:space="preserve">
+    <value>Utasítás el_távolítása</value>
+  </data>
+  <data name="Instr_Command5" xml:space="preserve">
+    <value>Utasítások el_távolítása</value>
+  </data>
+  <data name="Instr_Command6" xml:space="preserve">
+    <value>_Minden utasítás eltávolítása</value>
+  </data>
+  <data name="InterfacesTab" xml:space="preserve">
+    <value>Interfészek</value>
+  </data>
+  <data name="InvertBranchCommand" xml:space="preserve">
+    <value>Ág _invertálása</value>
+  </data>
+  <data name="InvertBranchesCommand" xml:space="preserve">
+    <value>Ágak _invertálása</value>
+  </data>
+  <data name="LocalName" xml:space="preserve">
+    <value>Név</value>
+  </data>
+  <data name="LocalsTab" xml:space="preserve">
+    <value>Helyi</value>
+  </data>
+  <data name="LocalType" xml:space="preserve">
+    <value>Típus</value>
+  </data>
+  <data name="Local_Command1" xml:space="preserve">
+    <value>Új helyi változó hozzáadása a ki_jelölés előtt</value>
+  </data>
+  <data name="Local_Command2" xml:space="preserve">
+    <value>Új helyi változó hozzáadása a kije_lölés után</value>
+  </data>
+  <data name="Local_Command3" xml:space="preserve">
+    <value>Új helyi változó _hozzáfűzése</value>
+  </data>
+  <data name="Local_Command4" xml:space="preserve">
+    <value>Helyi változó eltá_volítása</value>
+  </data>
+  <data name="Local_Command5" xml:space="preserve">
+    <value>Helyi változók eltávolí_tása</value>
+  </data>
+  <data name="Local_Command6" xml:space="preserve">
+    <value>_Minden helyi változó eltávolítása</value>
+  </data>
+  <data name="Local_CompilerGenerated_Character" xml:space="preserve">
+    <value>T</value>
+  </data>
+  <data name="Local_CompilerGenerated_Character_ToolTip" xml:space="preserve">
+    <value>Fordító által generált</value>
+  </data>
+  <data name="Local_Pinned_Character" xml:space="preserve">
+    <value>P</value>
+  </data>
+  <data name="Local_Pinned_Character_ToolTip" xml:space="preserve">
+    <value>Rögzített</value>
+  </data>
+  <data name="MDWriterOptionsTab" xml:space="preserve">
+    <value>MD író beállításai</value>
+  </data>
+  <data name="MetadataTab" xml:space="preserve">
+    <value>Metaadat</value>
+  </data>
+  <data name="MethodBodyType_IL" xml:space="preserve">
+    <value>IL</value>
+  </data>
+  <data name="MethodBodyType_Native" xml:space="preserve">
+    <value>Natív</value>
+  </data>
+  <data name="MethodBodyType_None" xml:space="preserve">
+    <value>Nincs</value>
+  </data>
+  <data name="MethodBody_CodeType" xml:space="preserve">
+    <value>_Kód típus</value>
+  </data>
+  <data name="MethodBody_HeaderOffset" xml:space="preserve">
+    <value>_Fejléc eltolás</value>
+  </data>
+  <data name="MethodBody_HeaderRVA" xml:space="preserve">
+    <value>Fejléc _RVA</value>
+  </data>
+  <data name="MethodBody_InitLocals" xml:space="preserve">
+    <value>Hely_i változók inicializálása</value>
+  </data>
+  <data name="MethodBody_KeepOldMaxStack" xml:space="preserve">
+    <value>Régi MaxStack megt_artása</value>
+  </data>
+  <data name="MethodBody_KeepOldMaxStack_ToolTip" xml:space="preserve">
+    <value>Ne számolja újra a MaxStack értékét mentéskor</value>
+  </data>
+  <data name="MethodBody_MaxStack" xml:space="preserve">
+    <value>_MaxStack</value>
+  </data>
+  <data name="MethodBody_RVA" xml:space="preserve">
+    <value>_RVA</value>
+  </data>
+  <data name="MethodBody_Type" xml:space="preserve">
+    <value>_Törzs típus</value>
+  </data>
+  <data name="MethodOverridesTab" xml:space="preserve">
+    <value>Felülírások</value>
+  </data>
+  <data name="MethodParametersTab" xml:space="preserve">
+    <value>Paraméterek</value>
+  </data>
+  <data name="MethodSignatureTab" xml:space="preserve">
+    <value>Szignatúra</value>
+  </data>
+  <data name="Method_Name" xml:space="preserve">
+    <value>_Név</value>
+  </data>
+  <data name="Module_DotNetVersion" xml:space="preserve">
+    <value>.NET _Verzió</value>
+  </data>
+  <data name="Module_EntryPoint" xml:space="preserve">
+    <value>Belépési pont</value>
+  </data>
+  <data name="Module_EntryPoint_Managed" xml:space="preserve">
+    <value>Mene_dzselt</value>
+  </data>
+  <data name="Module_EntryPoint_Native" xml:space="preserve">
+    <value>Natív</value>
+  </data>
+  <data name="Module_EntryPoint_None" xml:space="preserve">
+    <value>Nincs</value>
+  </data>
+  <data name="Module_GUIDs" xml:space="preserve">
+    <value>GUID-ok</value>
+  </data>
+  <data name="Module_Metadata" xml:space="preserve">
+    <value>Metadata</value>
+  </data>
+  <data name="Module_ModuleType" xml:space="preserve">
+    <value>Modul _típus</value>
+  </data>
+  <data name="Module_Name" xml:space="preserve">
+    <value>_Név</value>
+  </data>
+  <data name="MoveTypesToEmptyNamespaceCommand" xml:space="preserve">
+    <value>Típusok mozgatása üres névtérbe</value>
+  </data>
+  <data name="Namespace_Name" xml:space="preserve">
+    <value>_Név</value>
+  </data>
+  <data name="NetModule_DotNetVersion" xml:space="preserve">
+    <value>.NET _Verzió</value>
+  </data>
+  <data name="NetModule_Name" xml:space="preserve">
+    <value>_Név</value>
+  </data>
+  <data name="NodesUseHexEditorMsg" xml:space="preserve">
+    <value>Minden lentebbi fa elem a hexa szerkesztőt használja a PE fájl módosításához</value>
+  </data>
+  <data name="NopInstrCommand" xml:space="preserve">
+    <value>_NOP utasítás</value>
+  </data>
+  <data name="NopInstrsCommand" xml:space="preserve">
+    <value>_NOP utasítások</value>
+  </data>
+  <data name="Offset" xml:space="preserve">
+    <value>Eltolás</value>
+  </data>
+  <data name="OpenHexEditorCommand" xml:space="preserve">
+    <value>He_xa szerkesztő megnyitása</value>
+  </data>
+  <data name="OptimizeAllInstructionsCommand" xml:space="preserve">
+    <value>Minden utasítás optimali_zálása</value>
+  </data>
+  <data name="Padding" xml:space="preserve">
+    <value>igazítás</value>
+  </data>
+  <data name="PasteRecordsCommand" xml:space="preserve">
+    <value>{0} _rekord beillesztése @ {1:X8}, RID {2}</value>
+  </data>
+  <data name="PropertyX" xml:space="preserve">
+    <value>Tulajdonság: {0}</value>
+  </data>
+  <data name="Property_DefaultValue" xml:space="preserve">
+    <value>Ennek a tulajdonságnak az alapértelmezett értéke</value>
+  </data>
+  <data name="Property_GetterMethods" xml:space="preserve">
+    <value>Getter-ek</value>
+  </data>
+  <data name="Property_Name" xml:space="preserve">
+    <value>_Név</value>
+  </data>
+  <data name="Property_OtherMethods" xml:space="preserve">
+    <value>Egyéb metódusok</value>
+  </data>
+  <data name="Property_SetterMethods" xml:space="preserve">
+    <value>Setter-ek</value>
+  </data>
+  <data name="Property_Signature" xml:space="preserve">
+    <value>Aláírás</value>
+  </data>
+  <data name="RawSaveResourceCommand" xml:space="preserve">
+    <value>{0} nyers mentése</value>
+  </data>
+  <data name="RawSaveResourcesCommand" xml:space="preserve">
+    <value>{0} erőforrás nyers mentése</value>
+  </data>
+  <data name="RawSaveResourcesSubDirectoriesCommand" xml:space="preserve">
+    <value>{0} nyers erőforrás mentése almappákba</value>
+  </data>
+  <data name="RedoCommand" xml:space="preserve">
+    <value>Ismétlés</value>
+  </data>
+  <data name="RedoToolBarToolTip" xml:space="preserve">
+    <value>Ismétlés</value>
+  </data>
+  <data name="RemoveAndAddPopsCommand" xml:space="preserve">
+    <value>Pop-ok _eltávolítása és hozzáadása</value>
+  </data>
+  <data name="RemoveNetModuleCommand" xml:space="preserve">
+    <value>NetModule eltávolítása a szerelvényből</value>
+  </data>
+  <data name="RenameNamespaceCommand" xml:space="preserve">
+    <value>Névtér átnevezése</value>
+  </data>
+  <data name="Resource_ColorDepth" xml:space="preserve">
+    <value>Szín_mélység</value>
+  </data>
+  <data name="Resource_ColorDepth_16Bit" xml:space="preserve">
+    <value>16-bit</value>
+  </data>
+  <data name="Resource_ColorDepth_24Bit" xml:space="preserve">
+    <value>24-bit</value>
+  </data>
+  <data name="Resource_ColorDepth_32Bit" xml:space="preserve">
+    <value>32-bit</value>
+  </data>
+  <data name="Resource_ColorDepth_4Bit" xml:space="preserve">
+    <value>4-bit</value>
+  </data>
+  <data name="Resource_ColorDepth_8Bit" xml:space="preserve">
+    <value>8-bit</value>
+  </data>
+  <data name="Resource_Data" xml:space="preserve">
+    <value>A_dat</value>
+  </data>
+  <data name="Resource_Name" xml:space="preserve">
+    <value>_Név</value>
+  </data>
+  <data name="Resource_Size" xml:space="preserve">
+    <value>_Méret</value>
+  </data>
+  <data name="Resource_TransparentColor" xml:space="preserve">
+    <value>Á_tlátszó szín</value>
+  </data>
+  <data name="Resource_Type" xml:space="preserve">
+    <value>_Típus</value>
+  </data>
+  <data name="Resource_Value" xml:space="preserve">
+    <value>É_rték</value>
+  </data>
+  <data name="RowIdentifier" xml:space="preserve">
+    <value>RID</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>_Mentés...</value>
+  </data>
+  <data name="SaveAllCommand" xml:space="preserve">
+    <value>Min_den mentése...</value>
+  </data>
+  <data name="SaveAllToolBarToolTip" xml:space="preserve">
+    <value>Minden mentése</value>
+  </data>
+  <data name="SaveModuleCommand" xml:space="preserve">
+    <value>_Modul mentése...</value>
+  </data>
+  <data name="SaveModuleCommand2" xml:space="preserve">
+    <value>Modul mentése</value>
+  </data>
+  <data name="SaveModulesCommand" xml:space="preserve">
+    <value>_Modulok mentése...</value>
+  </data>
+  <data name="SaveModules_CancelingSave" xml:space="preserve">
+    <value>Mentés megszakítása. Kérem várjon...</value>
+  </data>
+  <data name="SaveModules_Close" xml:space="preserve">
+    <value>_Bezár</value>
+  </data>
+  <data name="SaveModules_ErrorsInLog" xml:space="preserve">
+    <value>Hibák vannak a naplóban:</value>
+  </data>
+  <data name="SaveModules_FileHasErrors" xml:space="preserve">
+    <value>#{0} fájl ({1}) hibás</value>
+  </data>
+  <data name="SaveModules_Log_AccessError" xml:space="preserve">
+    <value>Hozzáférési hiba: {0}</value>
+  </data>
+  <data name="SaveModules_Log_AllFilesWritten" xml:space="preserve">
+    <value>Minden fájl lemezre lett írva.</value>
+  </data>
+  <data name="SaveModules_Log_Exception" xml:space="preserve">
+    <value>Kivétel történt
+
+{0}</value>
+  </data>
+  <data name="SaveModules_Log_FileError" xml:space="preserve">
+    <value>Fájl hiba: {0}</value>
+  </data>
+  <data name="SaveModules_Log_SaveWasCanceled" xml:space="preserve">
+    <value>A mentést a felhasználó megszakította.</value>
+  </data>
+  <data name="SaveModules_Log_WritingFile" xml:space="preserve">
+    <value>{0} írása...</value>
+  </data>
+  <data name="SaveModules_Options" xml:space="preserve">
+    <value>_Beállítások...</value>
+  </data>
+  <data name="SaveModules_SaveAll" xml:space="preserve">
+    <value>Minden menté_se</value>
+  </data>
+  <data name="SaveModules_SavedFiles" xml:space="preserve">
+    <value>Fájlok, amik mentve lesznek:</value>
+  </data>
+  <data name="SaveModules_Title" xml:space="preserve">
+    <value>Modulok mentése</value>
+  </data>
+  <data name="SaveModule_AddPECheckSum" xml:space="preserve">
+    <value>PE ellenőrző összeg hozzá_adása</value>
+  </data>
+  <data name="SaveModule_CreateHeapEvenIfEmpty" xml:space="preserve">
+    <value>Halom létrehozása akkor is, ha üres</value>
+  </data>
+  <data name="SaveModule_Filename" xml:space="preserve">
+    <value>_Fájlnév</value>
+  </data>
+  <data name="SaveModule_KeepOldMaxStack" xml:space="preserve">
+    <value>Régi MaxStack érté_k megtartása</value>
+  </data>
+  <data name="SaveModule_KeepOldMaxStack_ToolTip" xml:space="preserve">
+    <value>A metódus MaxStack értékének használata új MaxStack érték számítása helyett.
+Akkor kell, ha a metódusok még mindig összezavartak</value>
+  </data>
+  <data name="SaveModule_MetadataHeaderOptions" xml:space="preserve">
+    <value>Metaadat fejléc opciók</value>
+  </data>
+  <data name="SaveModule_MiscOptions" xml:space="preserve">
+    <value>Egyéb opciók</value>
+  </data>
+  <data name="SaveModule_ModuleType" xml:space="preserve">
+    <value>Modul _típus</value>
+  </data>
+  <data name="SaveModule_PreserveExtraSigData" xml:space="preserve">
+    <value>E_xtra aláírás adatok megőrzése</value>
+  </data>
+  <data name="SaveModule_PreserveExtraSigData_ToolTip" xml:space="preserve">
+    <value>Az aláírás után minden extra adat megőrzése.
+Néhány kódtitkosító adatot helyez el itt</value>
+  </data>
+  <data name="SaveModule_PreserveHeapOffsets" xml:space="preserve">
+    <value>Halom eltolások megőrzése</value>
+  </data>
+  <data name="SaveModule_PreserveTokens" xml:space="preserve">
+    <value>Minden MD token megta_rtása</value>
+  </data>
+  <data name="SaveModule_PreserveTokens_ToolTip" xml:space="preserve">
+    <value>Ha a fájl még mindig összezavart, a RID-eket lehet, hogy meg kell őrizni</value>
+  </data>
+  <data name="SaveModule_ShareMethodBodies" xml:space="preserve">
+    <value>Osztott metódus _törzsek</value>
+  </data>
+  <data name="SaveModule_ShareMethodBodies_ToolTip" xml:space="preserve">
+    <value>Azon .NET metódusok, amiknek pontosan ugyan az a kódja, osztott metódus törzset használnak.
+A kimeneti fájl egy kicsit kisebb lesz</value>
+  </data>
+  <data name="SaveModule_Title" xml:space="preserve">
+    <value>Modul mentése</value>
+  </data>
+  <data name="SaveModule_UseMixedMode" xml:space="preserve">
+    <value>Kevert _módú modul</value>
+  </data>
+  <data name="SaveModule_UseMixedMode_ToolTip" xml:space="preserve">
+    <value>Ellenőrizni kell, hogy ez nem kevert módú modul (pl. C++/.NET).
+A legtöbb beállítás újra lesz inicializálva ha ez a jelölőnégyzet változik</value>
+  </data>
+  <data name="SaveModule_WritePdb" xml:space="preserve">
+    <value>_PDB fájl mentése</value>
+  </data>
+  <data name="SaveResourceCommand" xml:space="preserve">
+    <value>{0} mentése</value>
+  </data>
+  <data name="SaveResourcesCommand" xml:space="preserve">
+    <value>{0} erőforrás mentése</value>
+  </data>
+  <data name="SaveResourcesSubDirectoriesCommand" xml:space="preserve">
+    <value>{0} erőforrás mentése almappákba</value>
+  </data>
+  <data name="ShortCutKeyB" xml:space="preserve">
+    <value>B</value>
+  </data>
+  <data name="ShortCutKeyCtrlF" xml:space="preserve">
+    <value>Ctrl+F</value>
+  </data>
+  <data name="ShortCutKeyCtrlG" xml:space="preserve">
+    <value>Ctrl+G</value>
+  </data>
+  <data name="ShortCutKeyCtrlM" xml:space="preserve">
+    <value>Ctrl+M</value>
+  </data>
+  <data name="ShortCutKeyCtrlR" xml:space="preserve">
+    <value>Ctrl+R</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftC" xml:space="preserve">
+    <value>Ctrl+Shift+C</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftD" xml:space="preserve">
+    <value>Ctrl+Shift+D</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftS" xml:space="preserve">
+    <value>Ctrl+Shift+S</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftT" xml:space="preserve">
+    <value>Ctrl+Shift+T</value>
+  </data>
+  <data name="ShortCutKeyCtrlY" xml:space="preserve">
+    <value>Ctrl+Y</value>
+  </data>
+  <data name="ShortCutKeyCtrlZ" xml:space="preserve">
+    <value>Ctrl+Z</value>
+  </data>
+  <data name="ShortCutKeyI" xml:space="preserve">
+    <value>I</value>
+  </data>
+  <data name="ShortCutKeyN" xml:space="preserve">
+    <value>N</value>
+  </data>
+  <data name="ShortCutKeyO" xml:space="preserve">
+    <value>O</value>
+  </data>
+  <data name="ShortCutKeyP" xml:space="preserve">
+    <value>P</value>
+  </data>
+  <data name="ShortCutKeyR" xml:space="preserve">
+    <value>R</value>
+  </data>
+  <data name="ShortCutKeyS" xml:space="preserve">
+    <value>S</value>
+  </data>
+  <data name="ShortCutKeyShiftAltR" xml:space="preserve">
+    <value>Shift+Alt+R</value>
+  </data>
+  <data name="ShowDataInHexEditorCommand" xml:space="preserve">
+    <value>Adat megjelenítése he_xa szerkesztőben</value>
+  </data>
+  <data name="ShowInHexEditorCommand" xml:space="preserve">
+    <value>Megjelenítés he_xa szerkesztőben</value>
+  </data>
+  <data name="ShowInHexEditorCommand2" xml:space="preserve">
+    <value>Megjelenítés hexa szerkesztőben</value>
+  </data>
+  <data name="ShowInitialValueInHexEditorCommand" xml:space="preserve">
+    <value>Kezdeti érték megjelenítése hexa szerkesztőben</value>
+  </data>
+  <data name="ShowInstrsInHexEditorCommand" xml:space="preserve">
+    <value>Utasítások mutatása hexa szerkesztőben</value>
+  </data>
+  <data name="ShowMethodBodyInHexEditorCommand" xml:space="preserve">
+    <value>Metódus törzs mutatása hexa szerkesztőben</value>
+  </data>
+  <data name="SimplifyAllInstructionsCommand" xml:space="preserve">
+    <value>Minden uta_sítás egyszerűsítése</value>
+  </data>
+  <data name="SortMetadataTableCommand" xml:space="preserve">
+    <value>Táblázat rendezé_se</value>
+  </data>
+  <data name="SortSelectionCommand" xml:space="preserve">
+    <value>Kijelölés _rendezése</value>
+  </data>
+  <data name="TablesHeapOptionsTab" xml:space="preserve">
+    <value>Tábla Halom Beállítások</value>
+  </data>
+  <data name="Token" xml:space="preserve">
+    <value>Token</value>
+  </data>
+  <data name="TooManyBytesSelected" xml:space="preserve">
+    <value>Túl sok bájtnyi adatot jelölt ki</value>
+  </data>
+  <data name="Type_ClassSize" xml:space="preserve">
+    <value>Osztá_ly méret</value>
+  </data>
+  <data name="Type_Name" xml:space="preserve">
+    <value>_Név</value>
+  </data>
+  <data name="Type_Namespace" xml:space="preserve">
+    <value>_Névtér</value>
+  </data>
+  <data name="Type_PackingSize" xml:space="preserve">
+    <value>Csomagolt mé_ret</value>
+  </data>
+  <data name="UndoCommand" xml:space="preserve">
+    <value>Visszavonás</value>
+  </data>
+  <data name="UndoToolBarToolTip" xml:space="preserve">
+    <value>Visszavonás</value>
+  </data>
+  <data name="UnsavedFile" xml:space="preserve">
+    <value>Van egy nem mentett fájl.</value>
+  </data>
+  <data name="UnsavedFiles" xml:space="preserve">
+    <value>{0} nem mentett fájl van megnyitva.</value>
+  </data>
+  <data name="XBytes" xml:space="preserve">
+    <value>{0} bájt</value>
+  </data>
+  <data name="AddAfterSelInstr_ToolTip" xml:space="preserve">
+    <value>Utasítás hozzáadása a kijelölt utasítás után</value>
+  </data>
+  <data name="InstructionsTab" xml:space="preserve">
+    <value>Utasítások</value>
+  </data>
+  <data name="Module_NewGuid1" xml:space="preserve">
+    <value>_Új</value>
+  </data>
+  <data name="Module_NewGuid2" xml:space="preserve">
+    <value>_Új</value>
+  </data>
+  <data name="Module_NewGuid3" xml:space="preserve">
+    <value>Ú_j</value>
+  </data>
+  <data name="NetModule_NewGuid1" xml:space="preserve">
+    <value>Ú_j</value>
+  </data>
+  <data name="Pick_Assembly" xml:space="preserve">
+    <value>Válasszon egy szerelvényt</value>
+  </data>
+  <data name="Pick_EntryPoint" xml:space="preserve">
+    <value>Válasszon egy belépési pontot</value>
+  </data>
+  <data name="Pick_Field" xml:space="preserve">
+    <value>Válasszon egy mezőt</value>
+  </data>
+  <data name="Pick_GenericType" xml:space="preserve">
+    <value>Válasszon egy általános típust</value>
+  </data>
+  <data name="Pick_Method" xml:space="preserve">
+    <value>Válasszon egy metódust</value>
+  </data>
+  <data name="Pick_Module" xml:space="preserve">
+    <value>Válasszon egy modult</value>
+  </data>
+  <data name="ExceptionHandler_Column_CatchType" xml:space="preserve">
+    <value>CatchType</value>
+  </data>
+  <data name="ExceptionHandler_Column_FilterStart" xml:space="preserve">
+    <value>FilterStart</value>
+  </data>
+  <data name="ExceptionHandler_Column_HandlerEnd" xml:space="preserve">
+    <value>HandlerEnd</value>
+  </data>
+  <data name="ExceptionHandler_Column_HandlerStart" xml:space="preserve">
+    <value>HandlerStart</value>
+  </data>
+  <data name="ExceptionHandler_Column_TryEnd" xml:space="preserve">
+    <value>TryEnd</value>
+  </data>
+  <data name="ExceptionHandler_Column_TryStart" xml:space="preserve">
+    <value>TryStart</value>
+  </data>
+  <data name="ExceptionHandler_Column_Type" xml:space="preserve">
+    <value>Típus</value>
+  </data>
+  <data name="Flags" xml:space="preserve">
+    <value>Jelzők</value>
+  </data>
+  <data name="MethodBody_Column_OpCode" xml:space="preserve">
+    <value>OpCode</value>
+  </data>
+  <data name="Column_Metadata_RID" xml:space="preserve">
+    <value>RID</value>
+  </data>
+  <data name="EditResource_Visibility" xml:space="preserve">
+    <value>_Láthatóság</value>
+  </data>
+  <data name="GP_GenericParamConstraints" xml:space="preserve">
+    <value>Megszorítások</value>
+  </data>
+  <data name="Metadata_Sorted_Rows" xml:space="preserve">
+    <value>Rendezett</value>
+  </data>
+  <data name="Metadata_Valid_Rows" xml:space="preserve">
+    <value>Érvényes</value>
+  </data>
+  <data name="Method_Access" xml:space="preserve">
+    <value>Hozzáférés</value>
+  </data>
+  <data name="Module_Cor20_RuntimeVersion" xml:space="preserve">
+    <value>Futtatási kö_rnyezet verzió</value>
+  </data>
+  <data name="Module_Metadata_HeaderVersion" xml:space="preserve">
+    <value>_Fejléc verzió</value>
+  </data>
+  <data name="Module_Metadata_VersionString" xml:space="preserve">
+    <value>_VersionString</value>
+  </data>
+  <data name="Module_PE_Machine" xml:space="preserve">
+    <value>_Gép</value>
+  </data>
+  <data name="Property_Flags_RTSpecialName" xml:space="preserve">
+    <value>_RTSpecialName</value>
+  </data>
+  <data name="Property_Flags_SpecialName" xml:space="preserve">
+    <value>_SpecialName</value>
+  </data>
+  <data name="SaveModule_Cor20_EntryPoint" xml:space="preserve">
+    <value>B_elépési pont</value>
+  </data>
+  <data name="SaveModule_Cor20_MajorRuntimeVersion" xml:space="preserve">
+    <value>_Major RT Ver</value>
+  </data>
+  <data name="SaveModule_Cor20_MinorRuntimeVersion" xml:space="preserve">
+    <value>Mino_r RT Ver</value>
+  </data>
+  <data name="SaveModule_Metadata_MajorVersion" xml:space="preserve">
+    <value>_FőVerzió</value>
+  </data>
+  <data name="SaveModule_Metadata_MinorVersion" xml:space="preserve">
+    <value>AlVe_rzió</value>
+  </data>
+  <data name="SaveModule_Metadata_Reserved1" xml:space="preserve">
+    <value>Fenntartott_1</value>
+  </data>
+  <data name="SaveModule_Metadata_Reserved2" xml:space="preserve">
+    <value>Fenntartott_2</value>
+  </data>
+  <data name="SaveModule_Metadata_Signature" xml:space="preserve">
+    <value>_Szignatúra</value>
+  </data>
+  <data name="SaveModule_Metadata_StorageFlags" xml:space="preserve">
+    <value>S_torageFlags</value>
+  </data>
+  <data name="SaveModule_Metadata_VersionString" xml:space="preserve">
+    <value>_VersionString</value>
+  </data>
+  <data name="SaveModule_PE_Machine" xml:space="preserve">
+    <value>_Gép</value>
+  </data>
+  <data name="SaveModule_PE_Subsystem" xml:space="preserve">
+    <value>_Alrendszer</value>
+  </data>
+  <data name="SaveModule_TablesHeap_ExtraData" xml:space="preserve">
+    <value>Extra_Data</value>
+  </data>
+  <data name="SaveModule_TablesHeap_HasDeletedRows" xml:space="preserve">
+    <value>_VannakTöröltSorok</value>
+  </data>
+  <data name="SaveModule_TablesHeap_MajorVersion" xml:space="preserve">
+    <value>Fő_Verzió</value>
+  </data>
+  <data name="SaveModule_TablesHeap_MinorVersion" xml:space="preserve">
+    <value>F_enntartott1</value>
+  </data>
+  <data name="SaveModule_TablesHeap_Reserved1" xml:space="preserve">
+    <value>F_enntartott1</value>
+  </data>
+  <data name="SaveModule_TablesHeap_UseENC" xml:space="preserve">
+    <value>#-tábla _használata</value>
+  </data>
+  <data name="CustomAttribute_NamedArg_Field" xml:space="preserve">
+    <value>Mező</value>
+  </data>
+  <data name="CustomAttribute_NamedArg_Property" xml:space="preserve">
+    <value>Tulajdonság</value>
+  </data>
+  <data name="SaveModules_FixErrorsByEditingSettings" xml:space="preserve">
+    <value>-- Javítsa a hibákat a beállítások módosításával.</value>
+  </data>
+  <data name="GoToMetaDataTableRow_RID" xml:space="preserve">
+    <value>_RID</value>
+  </data>
+  <data name="Plugin_ShortDescription" xml:space="preserve">
+    <value>Szerelvény szerkesztő</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftE" xml:space="preserve">
+    <value>Ctrl+Shift+E</value>
+  </data>
+  <data name="EditMethodBodyCode" xml:space="preserve">
+    <value>Metódus ({0}) szerkesztése...</value>
+  </data>
+  <data name="EditCodeTitle" xml:space="preserve">
+    <value>Kód szerkesztése</value>
+  </data>
+  <data name="Decompiling" xml:space="preserve">
+    <value>Visszafordítás...</value>
+  </data>
+  <data name="CompileDiagnostics_Header_Code" xml:space="preserve">
+    <value>Kód</value>
+  </data>
+  <data name="CompileDiagnostics_Header_Description" xml:space="preserve">
+    <value>Leírás</value>
+  </data>
+  <data name="CompileDiagnostics_Header_File" xml:space="preserve">
+    <value>Fájl</value>
+  </data>
+  <data name="CompileDiagnostics_Header_Line" xml:space="preserve">
+    <value>Sor</value>
+  </data>
+  <data name="Button_Compile" xml:space="preserve">
+    <value>Fordít</value>
+  </data>
+  <data name="StatusError" xml:space="preserve">
+    <value>Hiba</value>
+  </data>
+  <data name="StatusHidden" xml:space="preserve">
+    <value>Rejtett</value>
+  </data>
+  <data name="StatusInfo" xml:space="preserve">
+    <value>Infó</value>
+  </data>
+  <data name="StatusWarning" xml:space="preserve">
+    <value>Figyelmeztetés</value>
+  </data>
+  <data name="AddAssemblyReferenceToolTip" xml:space="preserve">
+    <value>Szerelvény hivatkozás hozzáadása</value>
+  </data>
+  <data name="AddGacReferenceToolTip" xml:space="preserve">
+    <value>Szerelvény hivatkozás hozzáadása (GAC)</value>
+  </data>
+  <data name="Error_CouldNotAddAssemblyReferences" xml:space="preserve">
+    <value>A szerelvény referenciákat nem sikerült hozzáadni.</value>
+  </data>
+  <data name="EditMethodCode" xml:space="preserve">
+    <value>Metódus kód szerkesztése</value>
+  </data>
+  <data name="ERR_IM_AddingRemovingStaticFromEditedMethodNotSupported" xml:space="preserve">
+    <value>A 'static' vagy 'shared' hozzáadása vagy eltávolítása a szerkesztett metódusoknál nem támogatott: {0}</value>
+  </data>
+  <data name="ERR_IM_CouldNotFindEditedMethod" xml:space="preserve">
+    <value>A szerkesztett metódus nem található. Győződjön meg róla, hogy nem adta hozzá vagy távolította el a 'static' vagy 'shared' módosítót vagy nem változtatta meg a paraméterek típusát, a visszatérési értéket vagy a metódus nevét: {0}</value>
+  </data>
+  <data name="ERR_IM_CouldNotFindField" xml:space="preserve">
+    <value>A mező nem található: {0}</value>
+  </data>
+  <data name="ERR_IM_CouldNotFindMethod" xml:space="preserve">
+    <value>A metódus nem található: {0}</value>
+  </data>
+  <data name="ERR_IM_CouldNotFindMethodType" xml:space="preserve">
+    <value>A szerkesztett metódus típus nem található: {0}</value>
+  </data>
+  <data name="ERR_IM_CouldNotFindType" xml:space="preserve">
+    <value>A típus nem található: {0}</value>
+  </data>
+  <data name="ERR_IM_RenamingVirtualEventsIsNotSupported" xml:space="preserve">
+    <value>A virtuális események átnevezése nem támogatott: {0}</value>
+  </data>
+  <data name="ERR_IM_RenamingVirtualMethodsIsNotSupported" xml:space="preserve">
+    <value>A virtuális metódusok átnevezése nem támogatott: {0}</value>
+  </data>
+  <data name="ERR_IM_RenamingVirtualPropsIsNotSupported" xml:space="preserve">
+    <value>A virtuális tulajdonságok átnevezése nem támogatott: {0}</value>
+  </data>
+  <data name="FindCommand" xml:space="preserve">
+    <value>Keresés</value>
+  </data>
+  <data name="IncrementalSearchCommand" xml:space="preserve">
+    <value>Növekményes keresés</value>
+  </data>
+  <data name="ShortCutKeyCtrlI" xml:space="preserve">
+    <value>Ctrl+I</value>
+  </data>
+  <data name="ShortCutKeyF6" xml:space="preserve">
+    <value>F6</value>
+  </data>
+  <data name="Button_Cancel2" xml:space="preserve">
+    <value>Mégsem</value>
+  </data>
+  <data name="EditAssemblyCode" xml:space="preserve">
+    <value>Szerelvény jellemzők szerkesztése</value>
+  </data>
+  <data name="EditCodeAddClass" xml:space="preserve">
+    <value>Osztály hozzáadása</value>
+  </data>
+  <data name="MergeWithAssemblyCommand" xml:space="preserve">
+    <value>Összevonás szerelvénnyel...</value>
+  </data>
+  <data name="MergeWithAssemblyCommand2" xml:space="preserve">
+    <value>Összevonás szerelvénnyel</value>
+  </data>
+  <data name="EditAssemblyCode2" xml:space="preserve">
+    <value>Szerelvény jellemző ({0}) szerkesztése...</value>
+  </data>
+  <data name="EditCodeAddClass2" xml:space="preserve">
+    <value>Osztály ({0}) hozzáadása...</value>
+  </data>
+  <data name="EditCodeEditClass" xml:space="preserve">
+    <value>Osztály szerkesztése</value>
+  </data>
+  <data name="EditCodeEditClass2" xml:space="preserve">
+    <value>Osztály ({0}) szerkesztése...</value>
+  </data>
+  <data name="ERR_IM_CouldNotFindEditedType" xml:space="preserve">
+    <value>A szerkesztett típus nem található: {0}</value>
+  </data>
+  <data name="CloseOldInMemoryModules" xml:space="preserve">
+    <value>Régi In-Memory modulok bezárása</value>
+  </data>
+  <data name="CloseAllMissingFilesCommand" xml:space="preserve">
+    <value>Minden hiányzó fájl bezárása</value>
+  </data>
+  <data name="CompileDiagnostics_Header_Severity" xml:space="preserve">
+    <value>Súlyosság</value>
+  </data>
+  <data name="ParamDef_Flags_Lcid" xml:space="preserve">
+    <value>Lcid</value>
+  </data>
+  <data name="ParamDef_Flags_Retval" xml:space="preserve">
+    <value>Retval</value>
+  </data>
+  <data name="AddDocumentsToolTip" xml:space="preserve">
+    <value>Forráskód hozzáadása</value>
+  </data>
+  <data name="ShortCutKeyCtrlO" xml:space="preserve">
+    <value>Ctrl+O</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftA" xml:space="preserve">
+    <value>Ctrl+Shift+A</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftO" xml:space="preserve">
+    <value>Ctrl+Shift+O</value>
+  </data>
+  <data name="EditCodeAddClassMembers" xml:space="preserve">
+    <value>Osztálytagok hozzáadása</value>
+  </data>
+  <data name="EditCodeAddClassMembers2" xml:space="preserve">
+    <value>Osztálytagok ({0}) hozzáadása...</value>
+  </data>
+  <data name="SaveModule_PreserveOtherMetadataStreams" xml:space="preserve">
+    <value>Isme_retlen metaadat folyamok másolása</value>
+  </data>
+  <data name="RerunNgenIfGacAssembly" xml:space="preserve">
+    <value>NGEN.exe futtatása, ha ez a szerelvény a GAC-ba van telepítve</value>
+  </data>
+  <data name="CompilerDlgTabTitle" xml:space="preserve">
+    <value>Fordító</value>
+  </data>
+  <data name="ReplaceNopsInstrCommand" xml:space="preserve">
+    <value>Cse_re NOP-okra</value>
+  </data>
+  <data name="ReplaceNopsInstrsCommand" xml:space="preserve">
+    <value>Cse_re NOP-okra</value>
+  </data>
+  <data name="Type_Flags_Accessibility" xml:space="preserve">
+    <value>Hozzáférhe_tőség</value>
+  </data>
+  <data name="Type_Flags_Kind" xml:space="preserve">
+    <value>_Kind</value>
+  </data>
+  <data name="Type_Flags_Layout" xml:space="preserve">
+    <value>Layo_ut</value>
+  </data>
+  <data name="Type_Flags_String" xml:space="preserve">
+    <value>Strin_g</value>
+  </data>
+  <data name="Type_Flags_Visibility" xml:space="preserve">
+    <value>Lá_thatóság</value>
+  </data>
+</root>

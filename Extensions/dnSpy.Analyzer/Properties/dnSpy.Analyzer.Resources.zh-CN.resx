@@ -127,7 +127,7 @@
     <value>已应用到</value>
   </data>
   <data name="AssignedByTreeNode" xml:space="preserve">
-    <value>被赋值</value>
+    <value>被赋值于</value>
   </data>
   <data name="CopyCommand" xml:space="preserve">
     <value>复制(_Y)</value>
@@ -135,29 +135,23 @@
   <data name="DoubleClick" xml:space="preserve">
     <value>双击</value>
   </data>
-  <data name="EventAdderTreeNodeName" xml:space="preserve">
-    <value>添加</value>
-  </data>
-  <data name="EventRemoverTreeNodeName" xml:space="preserve">
-    <value>移除</value>
-  </data>
   <data name="ExposedByTreeNode" xml:space="preserve">
-    <value>被公开</value>
+    <value>被公开于</value>
   </data>
   <data name="ExtensionMethodsTreeNode" xml:space="preserve">
     <value>扩展方法</value>
   </data>
   <data name="GoToReferenceCommand" xml:space="preserve">
-    <value>转到引用</value>
+    <value>转到引用(_G)</value>
   </data>
   <data name="GoToReferenceInCodeCommand" xml:space="preserve">
     <value>显示方法内的引用</value>
   </data>
   <data name="GoToReferenceInCodeNewTabCommand" xml:space="preserve">
-    <value>显示方法内引用（新标签）</value>
+    <value>显示方法内的引用（新标签页）(_T)</value>
   </data>
   <data name="GoToReferenceNewTabCommand" xml:space="preserve">
-    <value>转到引用（新标签）(_B)</value>
+    <value>转到引用（新标签页）(_B)</value>
   </data>
   <data name="HidesParent" xml:space="preserve">
     <value>隐藏</value>
@@ -177,20 +171,14 @@
   <data name="Plugin_ShortDescription" xml:space="preserve">
     <value>分析程序集</value>
   </data>
-  <data name="PropertyGetterTreeNode" xml:space="preserve">
-    <value>get</value>
-  </data>
-  <data name="PropertySetterTreeNode" xml:space="preserve">
-    <value>set</value>
-  </data>
   <data name="RaisedByTreeNode" xml:space="preserve">
-    <value>被触发</value>
+    <value>被触发于</value>
   </data>
   <data name="ReadByTreeNode" xml:space="preserve">
-    <value>被读取</value>
+    <value>读取于</value>
   </data>
   <data name="RemoveCommand" xml:space="preserve">
-    <value>移除(_R)</value>
+    <value>去除(_R)</value>
   </data>
   <data name="Searching" xml:space="preserve">
     <value>搜索中…</value>
@@ -208,7 +196,7 @@
     <value>Del</value>
   </data>
   <data name="ShowMetadataTokensCommand" xml:space="preserve">
-    <value>显示Tokens</value>
+    <value>显示标记</value>
   </data>
   <data name="SyntaxHighlightCommand" xml:space="preserve">
     <value>语法高亮</value>

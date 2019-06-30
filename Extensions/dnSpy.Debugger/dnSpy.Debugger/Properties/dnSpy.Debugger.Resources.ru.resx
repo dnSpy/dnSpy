@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -141,17 +141,11 @@
   <data name="Attach_AttachToProcess" xml:space="preserve">
     <value>Присоединиться к процессу</value>
   </data>
-  <data name="Attach_AttachToProcess32" xml:space="preserve">
-    <value>Присоединиться к процессу (только 32-bit)</value>
-  </data>
-  <data name="Attach_AttachToProcess64" xml:space="preserve">
-    <value>Присоединиться к процессу (только 64-bit)</value>
-  </data>
   <data name="Attach_UseDnSpy32" xml:space="preserve">
-    <value>Используйте dnSpy.exe для присоединения к 64-битным процессам</value>
+    <value>Используйте 64-битный dnSpy для присоединения к 64-битным процессам</value>
   </data>
   <data name="Attach_UseDnSpy64" xml:space="preserve">
-    <value>Используйте dnSpy-x86.exe для присоединения к 32-битным процессам</value>
+    <value>Используйте 32-бит dnSpy для присоединения к 32-битным процессам</value>
   </data>
   <data name="BreakCommand" xml:space="preserve">
     <value>Прер_вать все</value>
@@ -181,7 +175,7 @@
     <value>Адрес</value>
   </data>
   <data name="Column_AppDomain" xml:space="preserve">
-    <value>Домен приложения</value>
+    <value>AppDomain</value>
   </data>
   <data name="Column_DynamicModule" xml:space="preserve">
     <value>Дин. модуль</value>
@@ -270,8 +264,8 @@
   <data name="DbgSettings_AutoOpenLocalsWindow" xml:space="preserve">
     <value>Показать окно локальных переменных при старте дебаггера</value>
   </data>
-  <data name="DbgSettings_DisableManagedDebuggerDetection" xml:space="preserve">
-    <value>Запретить коду определять управляемый отладчик</value>
+  <data name="DbgSettings_DisableDebuggerDetection" xml:space="preserve">
+    <value>Запретить коду определять отладчик</value>
   </data>
   <data name="DbgSettings_IgnoreBreakInstructions" xml:space="preserve">
     <value>Игнорировать Debugger.Break() и другие инструкции останова</value>
@@ -333,14 +327,14 @@
 {0}</value>
   </data>
   <data name="Error_CantEvalUnlessDebuggerStopped" xml:space="preserve">
-    <value>Не могу вычислить пока дебаггер остановлен</value>
+    <value>Не могу вычислить пока отладчик остановлен</value>
   </data>
   <data name="Error_CantEvalWhenUnhandledExceptionHasOccurred" xml:space="preserve">
-    <value>Не могу вычислить пока появляется необработанное исключение</value>
+    <value>Не могу вычислить пока имеется необработанное исключение</value>
   </data>
   <data name="Error_StartWithoutDebuggingCouldNotStart" xml:space="preserve">
     <value>Не могу запустить '{0}'
-ОШИБКА: {0}</value>
+ОШИБКА: {1}</value>
   </data>
   <data name="ExceptionSettingsCommand" xml:space="preserve">
     <value>Настройки и_сключений</value>
@@ -362,9 +356,6 @@
   </data>
   <data name="FreezeThreadCommand" xml:space="preserve">
     <value>_Заморозить</value>
-  </data>
-  <data name="GoToDisassemblyCommand" xml:space="preserve">
-    <value>К дизассемблированному коду</value>
   </data>
   <data name="GoToDisassemblyCommand2" xml:space="preserve">
     <value>К _дизассемблированному коду</value>
@@ -400,7 +391,7 @@
     <value>_Сохранить...</value>
   </data>
   <data name="LocalsSave_Error_CouldNotSaveDataToFilename" xml:space="preserve">
-    <value>Ошибка при сохранении данных в '{0}'
+    <value>Ошибка сохранения данных в '{0}'
 ОШИБКА: {1}</value>
   </data>
   <data name="Locals_Ask_TooManyItems" xml:space="preserve">
@@ -427,7 +418,7 @@
     <value>Копировать имя файла</value>
   </data>
   <data name="ModuleSaveModulesTitle" xml:space="preserve">
-    <value>Сохранить модули</value>
+    <value>Сохранение модулей</value>
   </data>
   <data name="ModuleSaveModuleTitle" xml:space="preserve">
     <value>Сохранение модуля</value>
@@ -778,7 +769,7 @@
     <value>Сообщения фильтрации _шагов</value>
   </data>
   <data name="ShowThreadExitMessages" xml:space="preserve">
-    <value>Сообщения о выходе _потока</value>
+    <value>Сообщения о завершении _потока</value>
   </data>
   <data name="ShowMDAMessages" xml:space="preserve">
     <value>Сообщения MDA</value>
@@ -793,7 +784,7 @@
     <value>В {1} произошло необработанное исключение типа '{0}'</value>
   </data>
   <data name="DebugLogExitProcess" xml:space="preserve">
-    <value>Программа «{0}» завершилась с кодом {1} (0x{1:x}).</value>
+    <value>Программа '{0}' завершилась с кодом {1} (0x{1:x}).</value>
   </data>
   <data name="DebugLogExitThread" xml:space="preserve">
     <value>Поток 0x{0:x} завершился с кодом {1} (0x{1:x}).</value>
@@ -892,7 +883,7 @@
     <value>Ctrl+F</value>
   </data>
   <data name="DetachProcessCommand" xml:space="preserve">
-    <value>_Отсоединение Процесса</value>
+    <value>_Отсоединиться от процесса</value>
   </data>
   <data name="DetachWhenDebuggingStoppedCommand" xml:space="preserve">
     <value>Отсоединить, _когда отладка завершится</value>
@@ -1387,79 +1378,79 @@
     <value>Показывать сырую структуру объектов в окнах переменных</value>
   </data>
   <data name="UnknownValue" xml:space="preserve">
-    <value>&lt;Unknown&gt;</value>
+    <value>&lt;Неизвестно&gt;</value>
   </data>
   <data name="Refresh" xml:space="preserve">
     <value>Обновить</value>
   </data>
   <data name="DbgSettings_GroupParametersAndLocalsTogether" xml:space="preserve">
-    <value>Group parameters and locals together</value>
+    <value>Группировать параметры и локальные переменные вместе</value>
   </data>
   <data name="DbgSettings_ShowCompilerGeneratedVariables" xml:space="preserve">
-    <value>Show compiler generated variables</value>
+    <value>Показывать созданные компилятором переменные</value>
   </data>
   <data name="DbgSettings_ShowDecompilerGeneratedVariables" xml:space="preserve">
-    <value>Show decompiler generated variables</value>
+    <value>Показывать созданные декомпилятором переменные</value>
   </data>
   <data name="DbgSettings_SortLocals" xml:space="preserve">
-    <value>Sort locals</value>
+    <value>Сортировать локальные переменные</value>
   </data>
   <data name="DbgSettings_SortParameters" xml:space="preserve">
-    <value>Sort parameters</value>
+    <value>Сортировать параметры</value>
   </data>
   <data name="DbgSettings_HideCompilerGeneratedMembers" xml:space="preserve">
-    <value>Hide compiler generated members</value>
+    <value>Скрыть созданные компилятором члены</value>
   </data>
   <data name="FunctionEvaluationDisabled" xml:space="preserve">
-    <value>Implicit function evaluation is turned off by the user</value>
+    <value>Вычисление неявных функций отключено пользователем</value>
   </data>
   <data name="DbgSettings_RespectHideMemberAttributes" xml:space="preserve">
-    <value>Respect attributes that hide members</value>
+    <value>Соблюдать атрибуты, скрывающие члены</value>
   </data>
   <data name="InternalDebuggerError" xml:space="preserve">
-    <value>Internal debugger error</value>
+    <value>Внутренняя ошибка отладчика</value>
   </data>
   <data name="FuncEvalRequiresAllThreadsToRun" xml:space="preserve">
-    <value>The function evaluation requires all threads to run.</value>
+    <value>Вычисление функции требует выполнения всех потоков.</value>
   </data>
   <data name="DigitSeparatorsCommand" xml:space="preserve">
-    <value>Digit Separators</value>
+    <value>Разделители цифр</value>
   </data>
   <data name="Column_ProcessCommandLine" xml:space="preserve">
-    <value>Command Line</value>
+    <value>Командная строка</value>
   </data>
   <data name="CannotReadLocalOrArgumentMaybeOptimizedAway" xml:space="preserve">
-    <value>Cannot obtain value of the local variable or argument because it is not available at this instruction pointer, possibly because it has been optimized away.</value>
+    <value>Не удалось получить значение локальной переменной или аргумента, потому что он недоступен для текущего указателя инструкций, возможно потому, что он был оптимизирован.</value>
   </data>
   <data name="ExceptionMessage" xml:space="preserve">
-    <value>Message: {0}</value>
+    <value>Сообщение: {0}</value>
   </data>
   <data name="ExceptionName" xml:space="preserve">
-    <value>Exception: {0}</value>
+    <value>Исключение: {0}</value>
   </data>
   <data name="UnhandledExceptionMessage_ProcessName_ProcessId" xml:space="preserve">
-    <value>An unhandled exception occurred in {0} ({1})</value>
+    <value>Необработанное исключение произошло в {0} ({1})</value>
   </data>
   <data name="StatusBar_BreakpointHit" xml:space="preserve">
     <value>Точки останова</value>
   </data>
   <data name="BreakpointExpressionMustBeABooleanExpression" xml:space="preserve">
-    <value>The breakpoint expression must be a boolean expression</value>
+    <value>Выражение точки останова должно быть типа boolean</value>
   </data>
   <data name="DbgSettings_SuppressJITOptimization" xml:space="preserve">
-    <value>Suppress JIT optimization on module load</value>
+    <value>Отключить JIT-оптимизацию при загрузке модуля</value>
   </data>
   <data name="DbgSettings_SuppressJITOptimization_ProgramModules" xml:space="preserve">
-    <value>Program modules</value>
+    <value>Модули программы</value>
   </data>
   <data name="DbgSettings_SuppressJITOptimization_SystemModules" xml:space="preserve">
-    <value>System modules</value>
+    <value>Системные модули</value>
   </data>
   <data name="RuntimeIsUnableToEvaluateExpression" xml:space="preserve">
-    <value>The runtime is unable to evaluate this expression.</value>
+    <value>Среда выполнения не может вычислить это выражение.</value>
   </data>
   <data name="Exceptions_ToggleMatchingExceptions_ToolTip" xml:space="preserve">
-    <value>Enable or disable all exceptions matching the current search criteria</value>
+    <value>Включает или выключает все исключения, соответствующие текущему условию поиска</value>
   </data>
   <data name="DisableBreakpointCommand2" xml:space="preserve">
     <value>В_ыключить точку останова</value>
@@ -1471,6 +1462,72 @@
     <value>Вы хотите остановить отладку?</value>
   </data>
   <data name="DbgSettings_FocusActiveProcess" xml:space="preserve">
-    <value>Give focus to debugged process</value>
+    <value>Установить фокус на отлаживаемый процесс</value>
+  </data>
+  <data name="LoadAllModulesCommand" xml:space="preserve">
+    <value>Открыть все модули</value>
+  </data>
+  <data name="DbgSettings_HideDeprecatedError" xml:space="preserve">
+    <value>Скрыть deprecated члены в окнах переменных</value>
+  </data>
+  <data name="DbgSettings_ShowReturnValues" xml:space="preserve">
+    <value>Показывать возвращаемые значения</value>
+  </data>
+  <data name="DbgSettings_RedirectGuiConsoleOutput" xml:space="preserve">
+    <value>Перенаправить вывод консоли GUI-приложений в Окно вывода</value>
+  </data>
+  <data name="AttachToProcess_MakingAnImageEasierToDebug" xml:space="preserve">
+    <value>Как сделать образ легче отлаживаемым</value>
+  </data>
+  <data name="ShowOnlyPublicMembersCommand" xml:space="preserve">
+    <value>Открытые члены</value>
+  </data>
+  <data name="DbgSettings_ShowRawLocals" xml:space="preserve">
+    <value>Показывать сырые локальные переменные</value>
+  </data>
+  <data name="DbgSettings_AsyncDebugging" xml:space="preserve">
+    <value>Включить асинхронную отладку</value>
+  </data>
+  <data name="DbgSettings_StepOverPropertiesAndOperators" xml:space="preserve">
+    <value>Обход свойств и операторов</value>
+  </data>
+  <data name="CopyExpressionCommand" xml:space="preserve">
+    <value>Копировать и_сключение</value>
+  </data>
+  <data name="Error_CouldNotShowDisassembly" xml:space="preserve">
+    <value>Не удалось найти код метода. Убедитесь, что процесс приостановлен, и что этот метод был скомпилирован.</value>
+  </data>
+  <data name="DisassemblyCommand" xml:space="preserve">
+    <value>_Disassembly</value>
+  </data>
+  <data name="ShortCutKeyAlt8" xml:space="preserve">
+    <value>Alt+8</value>
+  </data>
+  <data name="DbgSettings_IgnoreUnhandledExceptions" xml:space="preserve">
+    <value>Игнорировать необработанные исключения</value>
+  </data>
+  <data name="RunWithInvalidExtension" xml:space="preserve">
+    <value>Вы уверены, что вы хотите запустить этот файл, который не имеет допустимое расширение?</value>
+  </data>
+  <data name="DebugWithInvalidExtension" xml:space="preserve">
+    <value>Вы уверены, что вы хотите запустить этот файл, который не имеет допустимое расширение?</value>
+  </data>
+  <data name="Processes_NoMatch" xml:space="preserve">
+    <value>Нет процессов соответствующих условиям поиска.</value>
+  </data>
+  <data name="Processes_Search" xml:space="preserve">
+    <value>Поиск</value>
+  </data>
+  <data name="Processes_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Сбросить все критерии поиска, чтобы отображались все процессы</value>
+  </data>
+  <data name="Processes_Search_ToolTip" xml:space="preserve">
+    <value>Поиск процесса</value>
+  </data>
+  <data name="DbgSettings_FocusDebuggerWhenProcessBreaks" xml:space="preserve">
+    <value>Bring dnSpy to the foreground when breaking in the debugger</value>
+  </data>
+  <data name="Column_LoadModule" xml:space="preserve">
+    <value>Load</value>
   </data>
 </root>

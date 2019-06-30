@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -42,7 +42,7 @@ namespace dnSpy.Debugger.Impl {
 				break;
 
 			default:
-				if (list == null) {
+				if (list is null) {
 					Debug.Assert(count == 2);
 					list = new List<DbgBreakInfo>(count + 1) { info0, info1 };
 				}

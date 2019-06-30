@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,7 +24,7 @@ using Microsoft.VisualStudio.Text.Editor;
 namespace dnSpy.Text.Editor {
 	static class SelectionUtilities {
 		public static SnapshotSpan GetLineAnchorSpan(ITextSelection textSelection) {
-			if (textSelection == null)
+			if (textSelection is null)
 				throw new ArgumentNullException(nameof(textSelection));
 			if (textSelection.IsEmpty)
 				return textSelection.TextView.Caret.ContainingTextViewLine.ExtentIncludingLineBreak;

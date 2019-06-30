@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -38,7 +38,7 @@ namespace dnSpy.Hex.Editor {
 	[Export(typeof(CurrentValueHighlighterProvider))]
 	sealed class CurrentValueHighlighterProviderImpl : CurrentValueHighlighterProvider {
 		public override CurrentValueHighlighter Get(WpfHexView wpfHexView) {
-			if (wpfHexView == null)
+			if (wpfHexView is null)
 				throw new ArgumentNullException(nameof(wpfHexView));
 			return wpfHexView.Properties.GetOrCreateSingletonProperty(typeof(CurrentValueHighlighter), () => new CurrentValueHighlighter(wpfHexView));
 		}
@@ -52,10 +52,10 @@ namespace dnSpy.Hex.Editor {
 		[ImportingConstructor]
 		CurrentValueHighlighterHexViewTaggerProvider(CurrentValueHighlighterProvider currentValueHighlighterProvider) => this.currentValueHighlighterProvider = currentValueHighlighterProvider;
 
-		public override IHexTagger<T> CreateTagger<T>(HexView hexView, HexBuffer buffer) {
+		public override IHexTagger<T>? CreateTagger<T>(HexView hexView, HexBuffer buffer) {
 			var wpfHexView = hexView as WpfHexView;
-			Debug.Assert(wpfHexView != null);
-			if (wpfHexView != null) {
+			Debug.Assert(!(wpfHexView is null));
+			if (!(wpfHexView is null)) {
 				return wpfHexView.Properties.GetOrCreateSingletonProperty(typeof(CurrentValueHighlighterTagger), () =>
 					new CurrentValueHighlighterTagger(currentValueHighlighterProvider.Get(wpfHexView))) as IHexTagger<T>;
 			}
@@ -144,7 +144,7 @@ namespace dnSpy.Hex.Editor {
 			savedValue = null;
 			UpdateCurrentValue();
 		}
-		SavedValue savedValue;
+		SavedValue? savedValue;
 
 		sealed class SavedValue {
 			public byte[] Data { get; }
@@ -168,8 +168,8 @@ namespace dnSpy.Hex.Editor {
 				BufferSpan.Buffer.ReadBytes(BufferSpan.Start, Data);
 			}
 
-			public bool TryUpdate(HexCellPosition cellPosition, HexBufferLine line, HexCell cell) {
-				if (cell == null)
+			public bool TryUpdate(HexCellPosition cellPosition, HexBufferLine line, HexCell? cell) {
+				if (cell is null)
 					return false;
 				var oldBufferSpan = BufferSpan;
 				Debug.Assert(cell.BufferSpan.Length <= Data.Length);
@@ -238,8 +238,8 @@ namespace dnSpy.Hex.Editor {
 				return;
 			}
 
-			if (delayDispatcherTimer == null) {
-				if (savedValue != null && !TryUpdateCurrentValue())
+			if (delayDispatcherTimer is null) {
+				if (!(savedValue is null) && !TryUpdateCurrentValue())
 					return;
 				savedValue = null;
 				// Make sure old highlighting gets cleared immediately
@@ -254,12 +254,12 @@ namespace dnSpy.Hex.Editor {
 			delayDispatcherTimer.Tick += Timer_Tick;
 			delayDispatcherTimer.Start();
 		}
-		DispatcherTimer delayDispatcherTimer;
+		DispatcherTimer? delayDispatcherTimer;
 
 		void StopTimer() {
 			var timer = delayDispatcherTimer;
 			delayDispatcherTimer = null;
-			if (timer != null) {
+			if (!(timer is null)) {
 				timer.Stop();
 				timer.Tick -= Timer_Tick;
 			}
@@ -294,7 +294,7 @@ namespace dnSpy.Hex.Editor {
 			var line = wpfHexView.Caret.ContainingHexViewLine.BufferLine;
 			var cell = isValues ? line.ValueCells.GetCell(bufferPos) : line.AsciiCells.GetCell(bufferPos);
 
-			if (savedValue == null || savedValue.Column != pos.ActiveColumn || savedValue.ValuesFormat != bufferLines.ValuesFormat)
+			if (savedValue is null || savedValue.Column != pos.ActiveColumn || savedValue.ValuesFormat != bufferLines.ValuesFormat)
 				savedValue = new SavedValue(bufferLines.ValuesFormat, isValues ? bufferLines.BytesPerValue : 1, pos.ActivePosition, cell?.BufferSpan ?? new HexBufferSpan(bufferLines.BufferSpan.Start, bufferLines.BufferSpan.Start));
 			else if (!savedValue.TryUpdate(pos.ActivePosition, line, cell))
 				return false;
@@ -302,14 +302,14 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		void Buffer_BufferSpanInvalidated(object sender, HexBufferSpanInvalidatedEventArgs e) {
-			if (savedValue.BufferSpan.Span.OverlapsWith(e.Span)) {
+			if (!(savedValue is null) && savedValue.BufferSpan.Span.OverlapsWith(e.Span)) {
 				if (!savedValue.UpdateValue())
 					RefreshAll();
 			}
 		}
 
 		void Buffer_ChangedLowPriority(object sender, HexContentChangedEventArgs e) {
-			if (savedValue != null) {
+			if (!(savedValue is null)) {
 				foreach (var change in e.Changes) {
 					if (savedValue.BufferSpan.Span.OverlapsWith(change.OldSpan)) {
 						if (!savedValue.UpdateValue())
@@ -325,29 +325,29 @@ namespace dnSpy.Hex.Editor {
 				yield break;
 			if (!enabled)
 				yield break;
-			if (savedValue == null)
+			if (savedValue is null)
 				yield break;
 			var cells = (savedValue.Column == HexColumnType.Values ? context.Line.ValueCells : context.Line.AsciiCells).GetVisibleCells();
 			var markerTag = savedValue.Column == HexColumnType.Values ? valueCellMarkerTag : asciiCellMarkerTag;
 
 			// PERF: Select more than one cell if there are multiple consecutive cells with the same value.
 			// Improves perf when selecting a common value, eg. 00.
-			HexCell startCell = null;
-			HexCell lastCell = null;
+			HexCell? startCell = null;
+			HexCell? lastCell = null;
 			foreach (var cell in cells) {
 				if (!savedValue.HasSameValueAs(context.Line, cell))
 					continue;
-				if (startCell == null)
+				if (startCell is null)
 					startCell = lastCell = cell;
-				else if (lastCell.Index + 1 != cell.Index) {
+				else if (lastCell!.Index + 1 != cell.Index) {
 					yield return new HexTextTagSpan<HexMarkerTag>(VST.Span.FromBounds(startCell.CellSpan.Start, lastCell.CellSpan.End), markerTag);
 					startCell = lastCell = cell;
 				}
 				else
 					lastCell = cell;
 			}
-			if (startCell != null)
-				yield return new HexTextTagSpan<HexMarkerTag>(VST.Span.FromBounds(startCell.CellSpan.Start, lastCell.CellSpan.End), markerTag);
+			if (!(startCell is null))
+				yield return new HexTextTagSpan<HexMarkerTag>(VST.Span.FromBounds(startCell.CellSpan.Start, lastCell!.CellSpan.End), markerTag);
 		}
 		static readonly HexMarkerTag valueCellMarkerTag = new HexMarkerTag(CTC.ThemeClassificationTypeNameKeys.HexCurrentValueCell);
 		static readonly HexMarkerTag asciiCellMarkerTag = new HexMarkerTag(CTC.ThemeClassificationTypeNameKeys.HexCurrentAsciiCell);
@@ -357,11 +357,11 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		internal void Register(CurrentValueHighlighterTagger currentValueHighlighterTagger) {
-			if (this.currentValueHighlighterTagger != null)
+			if (!(this.currentValueHighlighterTagger is null))
 				throw new InvalidOperationException();
 			this.currentValueHighlighterTagger = currentValueHighlighterTagger ?? throw new ArgumentNullException(nameof(currentValueHighlighterTagger));
 		}
-		CurrentValueHighlighterTagger currentValueHighlighterTagger;
+		CurrentValueHighlighterTagger? currentValueHighlighterTagger;
 
 		void WpfHexView_Closed(object sender, EventArgs e) {
 			wpfHexView.Closed -= WpfHexView_Closed;

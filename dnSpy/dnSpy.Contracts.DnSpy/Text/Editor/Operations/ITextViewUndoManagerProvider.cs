@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -16,6 +16,8 @@
     You should have received a copy of the GNU General Public License
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+using System.Runtime.CompilerServices;
 
 namespace dnSpy.Contracts.Text.Editor.Operations {
 	/// <summary>
@@ -35,7 +37,7 @@ namespace dnSpy.Contracts.Text.Editor.Operations {
 		/// <param name="textView">Text view</param>
 		/// <param name="manager">Updated with the existing instance or null if none exists</param>
 		/// <returns></returns>
-		bool TryGetTextViewUndoManager(IDsWpfTextView textView, out ITextViewUndoManager manager);
+		bool TryGetTextViewUndoManager(IDsWpfTextView textView, [NotNullWhenTrue] out ITextViewUndoManager? manager);
 
 		/// <summary>
 		/// Removes the cached <see cref="ITextViewUndoManager"/> instance, if any.

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,9 +23,9 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 	/// <summary>
 	/// Exception ID
 	/// </summary>
-	public struct DbgExceptionId : IEquatable<DbgExceptionId> {
+	public readonly struct DbgExceptionId : IEquatable<DbgExceptionId> {
 		readonly string category;
-		readonly string name;
+		readonly string? name;
 		readonly int code;
 		readonly Flags flags;
 
@@ -47,7 +47,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// <summary>
 		/// Name of exception (case insensitive). This property is only valid if <see cref="HasName"/> is true
 		/// </summary>
-		public string Name => name;
+		public string? Name => name;
 
 		/// <summary>
 		/// Exception code. This property is only valid if <see cref="HasCode"/> is true
@@ -113,10 +113,10 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 			: this(category, (int)code) {
 		}
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DbgExceptionId left, DbgExceptionId right) => left.Equals(right);
 		public static bool operator !=(DbgExceptionId left, DbgExceptionId right) => !left.Equals(right);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Equals()
@@ -144,7 +144,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is DbgExceptionId other && Equals(other);
+		public override bool Equals(object? obj) => obj is DbgExceptionId other && Equals(other);
 
 		/// <summary>
 		/// Gets the hashcode
@@ -164,7 +164,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// </summary>
 		/// <returns></returns>
 		public override string ToString() {
-			if (category == null)
+			if (category is null)
 				return "<not-initialized>";
 			switch (Kind) {
 			case DbgExceptionIdKind.DefaultId:	return category + " - <<default>>";

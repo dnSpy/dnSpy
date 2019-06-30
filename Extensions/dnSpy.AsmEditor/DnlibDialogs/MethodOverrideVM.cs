@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,7 +30,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public string FullName => methodOverride.MethodDeclaration.ToString();
 
 		public IMethodDefOrRef MethodBody {
-			get { return methodOverride.MethodBody; }
+			get => methodOverride.MethodBody;
 			set {
 				if (methodOverride.MethodBody != value) {
 					methodOverride.MethodBody = value;
@@ -40,7 +40,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		public IMethodDefOrRef MethodDeclaration {
-			get { return methodOverride.MethodDeclaration; }
+			get => methodOverride.MethodDeclaration;
 			set {
 				if (methodOverride.MethodDeclaration != value) {
 					methodOverride.MethodDeclaration = value;

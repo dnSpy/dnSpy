@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,12 +20,13 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.BackgroundImage;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.BackgroundImage {
-	struct ImageSettingsInfo {
+	readonly struct ImageSettingsInfo {
 		public Lazy<IBackgroundImageOptionDefinition, IBackgroundImageOptionDefinitionMetadata> Lazy { get; }
 		public RawSettings RawSettings { get; }
 		public ImageSettingsInfo(Lazy<IBackgroundImageOptionDefinition, IBackgroundImageOptionDefinitionMetadata> lazy, RawSettings rawSettings) {
@@ -38,7 +39,7 @@ namespace dnSpy.BackgroundImage {
 		IBackgroundImageSettings GetSettings(Lazy<IBackgroundImageOptionDefinition, IBackgroundImageOptionDefinitionMetadata> lazySettings);
 		ImageSettingsInfo[] GetRawSettings();
 		void SetRawSettings(RawSettings[] settings);
-		string LastSelectedId { get; set; }
+		string? LastSelectedId { get; set; }
 	}
 
 	[Export(typeof(IBackgroundImageSettingsService))]
@@ -46,21 +47,21 @@ namespace dnSpy.BackgroundImage {
 		static readonly Guid SETTINGS_GUID = new Guid("7CAEF193-7F6A-4710-8E47-547A71D6FDBC");
 		const string SettingsName = "Settings";
 
-		public string LastSelectedId { get; set; }
+		public string? LastSelectedId { get; set; }
 
 		readonly ISettingsService settingsService;
 		readonly Dictionary<string, SettingsInfo> settingsInfos;
 
 		sealed class SettingsInfo {
 			public Lazy<IBackgroundImageOptionDefinition, IBackgroundImageOptionDefinitionMetadata> Lazy { get; }
-			public ISettingsSection SettingsSection { get; set; }
+			public ISettingsSection? SettingsSection { get; set; }
 			public BackgroundImageSettings BackgroundImageSettings { get; }
 			public RawSettings RawSettings { get; }
 
 			public SettingsInfo(Lazy<IBackgroundImageOptionDefinition, IBackgroundImageOptionDefinitionMetadata> lazy) {
 				Lazy = lazy;
 				var defaultSettings = lazy.Value.GetDefaultImageSettings();
-				RawSettings = defaultSettings == null ? new RawSettings(lazy.Value.Id) : new RawSettings(lazy.Value.Id, defaultSettings);
+				RawSettings = defaultSettings is null ? new RawSettings(lazy.Value.Id) : new RawSettings(lazy.Value.Id, defaultSettings);
 				BackgroundImageSettings = new BackgroundImageSettings(RawSettings);
 			}
 		}
@@ -82,6 +83,7 @@ namespace dnSpy.BackgroundImage {
 				var rawSettings = new RawSettings(section);
 				if (!rawSettings.IsValid)
 					continue;
+				Debug.Assert(!(rawSettings.Id is null));
 				if (!settingsInfos.TryGetValue(rawSettings.Id, out var info))
 					continue;
 				if (!allSettingsIds.Contains(rawSettings.Id))
@@ -107,10 +109,10 @@ namespace dnSpy.BackgroundImage {
 		}
 
 		public void SetRawSettings(RawSettings[] settings) {
-			if (settings == null)
+			if (settings is null)
 				throw new ArgumentNullException(nameof(settings));
 			foreach (var rs in settings) {
-				if (rs.Id == null)
+				if (rs.Id is null)
 					continue;
 				if (!settingsInfos.TryGetValue(rs.Id, out var info))
 					continue;
@@ -120,7 +122,7 @@ namespace dnSpy.BackgroundImage {
 				info.BackgroundImageSettings.RaiseSettingsChanged();
 				if (info.Lazy.Value.UserVisible) {
 					var rootSection = settingsService.GetOrCreateSection(SETTINGS_GUID);
-					if (info.SettingsSection != null)
+					if (!(info.SettingsSection is null))
 						rootSection.RemoveSection(info.SettingsSection);
 					info.SettingsSection = rootSection.CreateSection(SettingsName);
 					info.RawSettings.SaveSettings(info.SettingsSection);

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -62,7 +62,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public EnumListVM CallConv { get; } = new EnumListVM(callConvList);
 
 		public bool IsEnabled {
-			get { return isEnabled; }
+			get => isEnabled;
 			set {
 				if (isEnabled != value) {
 					isEnabled = value;
@@ -73,7 +73,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		bool isEnabled = true;
 
 		public string Name {
-			get { return name; }
+			get => name;
 			set {
 				if (name != value) {
 					name = value;
@@ -83,8 +83,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		string name = string.Empty;
 
-		public string ModuleName {
-			get { return moduleName; }
+		public string? ModuleName {
+			get => moduleName;
 			set {
 				if (moduleName != value) {
 					moduleName = value;
@@ -92,7 +92,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 			}
 		}
-		string moduleName = string.Empty;
+		string? moduleName = string.Empty;
 
 		public PInvokeAttributes Attributes {
 			get {
@@ -101,10 +101,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 							PInvokeAttributes.ThrowOnUnmappableCharMask |
 							PInvokeAttributes.CallConvMask;
 				return (attributes & ~mask) |
-					(PInvokeAttributes)((int)(DnlibDialogs.CharSet)CharSet.SelectedItem << 1) |
-					(PInvokeAttributes)((int)(DnlibDialogs.BestFit)BestFit.SelectedItem << 4) |
-					(PInvokeAttributes)((int)(DnlibDialogs.ThrowOnUnmappableChar)ThrowOnUnmappableChar.SelectedItem << 12) |
-					(PInvokeAttributes)((int)(DnlibDialogs.CallConv)CallConv.SelectedItem << 8);
+					(PInvokeAttributes)((int)(DnlibDialogs.CharSet)CharSet.SelectedItem! << 1) |
+					(PInvokeAttributes)((int)(DnlibDialogs.BestFit)BestFit.SelectedItem! << 4) |
+					(PInvokeAttributes)((int)(DnlibDialogs.ThrowOnUnmappableChar)ThrowOnUnmappableChar.SelectedItem! << 12) |
+					(PInvokeAttributes)((int)(DnlibDialogs.CallConv)CallConv.SelectedItem! << 8);
 			}
 			set {
 				if (attributes != value) {
@@ -118,13 +118,13 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		PInvokeAttributes attributes;
 
 		public bool NoMangle {
-			get { return GetFlagValue(PInvokeAttributes.NoMangle); }
-			set { SetFlagValue(PInvokeAttributes.NoMangle, value); }
+			get => GetFlagValue(PInvokeAttributes.NoMangle);
+			set => SetFlagValue(PInvokeAttributes.NoMangle, value);
 		}
 
 		public bool SupportsLastError {
-			get { return GetFlagValue(PInvokeAttributes.SupportsLastError); }
-			set { SetFlagValue(PInvokeAttributes.SupportsLastError, value); }
+			get => GetFlagValue(PInvokeAttributes.SupportsLastError);
+			set => SetFlagValue(PInvokeAttributes.SupportsLastError, value);
 		}
 
 		bool GetFlagValue(PInvokeAttributes flag) => (Attributes & flag) != 0;
@@ -136,16 +136,16 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				Attributes &= ~flag;
 		}
 
-		public ImplMap ImplMap {
+		public ImplMap? ImplMap {
 			get {
 				if (!IsEnabled)
 					return null;
-				ModuleRef modRef = ModuleName == null ? null : ownerModule.UpdateRowId(new ModuleRefUser(ownerModule, ModuleName));
+				var modRef = ModuleName is null ? null : ownerModule.UpdateRowId(new ModuleRefUser(ownerModule, ModuleName));
 				return ownerModule.UpdateRowId(new ImplMapUser(modRef, Name, Attributes));
 			}
 			set {
-				IsEnabled = value != null;
-				if (value == null)
+				IsEnabled = !(value is null);
+				if (value is null)
 					return;
 
 				Name = value.Name;

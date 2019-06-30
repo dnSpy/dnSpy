@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
+// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
@@ -30,14 +30,14 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 	/// Helps finding and loading .xml documentation.
 	/// </summary>
 	public static class XmlDocLoader {
-		static readonly Lazy<XmlDocumentationProvider> mscorlibDocumentation = new Lazy<XmlDocumentationProvider>(LoadMscorlibDocumentation);
-		static readonly ConditionalWeakTable<object, XmlDocumentationProvider> cache = new ConditionalWeakTable<object, XmlDocumentationProvider>();
+		static readonly Lazy<XmlDocumentationProvider?> mscorlibDocumentation = new Lazy<XmlDocumentationProvider?>(LoadMscorlibDocumentation);
+		static readonly ConditionalWeakTable<object, XmlDocumentationProvider?> cache = new ConditionalWeakTable<object, XmlDocumentationProvider?>();
 		static readonly string[] refAsmPathsV4;
 
-		static XmlDocumentationProvider LoadMscorlibDocumentation() {
-			string xmlDocFile = FindXmlDocumentation("mscorlib.dll", MDHeaderRuntimeVersion.MS_CLR_40)
+		static XmlDocumentationProvider? LoadMscorlibDocumentation() {
+			string? xmlDocFile = FindXmlDocumentation("mscorlib.dll", MDHeaderRuntimeVersion.MS_CLR_40)
 				?? FindXmlDocumentation("mscorlib.dll", MDHeaderRuntimeVersion.MS_CLR_20);
-			if (xmlDocFile != null)
+			if (!(xmlDocFile is null))
 				return XmlDocumentationProvider.Create(xmlDocFile);
 			else
 				return null;
@@ -46,15 +46,15 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 		/// <summary>
 		/// mscorlib documentation
 		/// </summary>
-		public static XmlDocumentationProvider MscorlibDocumentation => mscorlibDocumentation.Value;
+		public static XmlDocumentationProvider? MscorlibDocumentation => mscorlibDocumentation.Value;
 
 		/// <summary>
 		/// Loads XML documentation
 		/// </summary>
 		/// <param name="module">Module</param>
 		/// <returns></returns>
-		public static XmlDocumentationProvider LoadDocumentation(ModuleDef module) {
-			if (module == null)
+		public static XmlDocumentationProvider? LoadDocumentation(ModuleDef module) {
+			if (module is null)
 				throw new ArgumentNullException(nameof(module));
 			return LoadDocumentation(module, module.Location, module.RuntimeVersion);
 		}
@@ -66,18 +66,18 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 		/// <param name="assemblyFilename">Filename of the assembly or module</param>
 		/// <param name="runtimeVersion">Optional runtime version, eg. <see cref="ModuleDef.RuntimeVersion"/></param>
 		/// <returns></returns>
-		public static XmlDocumentationProvider LoadDocumentation(object key, string assemblyFilename, string runtimeVersion = null) {
-			if (key == null)
+		public static XmlDocumentationProvider? LoadDocumentation(object key, string assemblyFilename, string? runtimeVersion = null) {
+			if (key is null)
 				throw new ArgumentNullException(nameof(key));
-			if (assemblyFilename == null)
+			if (assemblyFilename is null)
 				throw new ArgumentNullException(nameof(assemblyFilename));
 			lock (cache) {
 				if (!cache.TryGetValue(key, out var xmlDoc)) {
-					string xmlDocFile = LookupLocalizedXmlDoc(assemblyFilename);
-					if (xmlDocFile == null) {
+					string? xmlDocFile = LookupLocalizedXmlDoc(assemblyFilename);
+					if (xmlDocFile is null) {
 						xmlDocFile = FindXmlDocumentation(Path.GetFileName(assemblyFilename), runtimeVersion);
 					}
-					xmlDoc = xmlDocFile == null ? null : XmlDocumentationProvider.Create(xmlDocFile);
+					xmlDoc = xmlDocFile is null ? null : XmlDocumentationProvider.Create(xmlDocFile);
 					cache.Add(key, xmlDoc);
 				}
 				return xmlDoc;
@@ -123,10 +123,10 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 		static readonly string referenceAssembliesPath;
 		static readonly string frameworkPath;
 
-		static string FindXmlDocumentation(string assemblyFileName, string runtime) {
+		static string? FindXmlDocumentation(string assemblyFileName, string? runtime) {
 			if (string.IsNullOrEmpty(assemblyFileName))
 				return null;
-			if (runtime == null)
+			if (runtime is null)
 				runtime = MDHeaderRuntimeVersion.MS_CLR_40;
 			if (runtime.StartsWith(MDHeaderRuntimeVersion.MS_CLR_10_PREFIX_X86RETAIL) ||
 				runtime == MDHeaderRuntimeVersion.MS_CLR_10_RETAIL ||
@@ -134,7 +134,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 				runtime = MDHeaderRuntimeVersion.MS_CLR_10;
 			runtime = FixRuntimeString(runtime);
 
-			string fileName;
+			string? fileName;
 			if (runtime.StartsWith(MDHeaderRuntimeVersion.MS_CLR_10_PREFIX))
 				fileName = LookupLocalizedXmlDoc(Path.Combine(frameworkPath, runtime, assemblyFileName))
 					?? LookupLocalizedXmlDoc(Path.Combine(frameworkPath, "v1.0.3705", assemblyFileName));
@@ -152,7 +152,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 				fileName = null;
 				foreach (var path in refAsmPathsV4) {
 					fileName = LookupLocalizedXmlDoc(Path.Combine(path, assemblyFileName));
-					if (fileName != null)
+					if (!(fileName is null))
 						break;
 				}
 				fileName = fileName
@@ -180,7 +180,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 			return runtime.Substring(0, min);
 		}
 
-		static string LookupLocalizedXmlDoc(string assemblyFileName) {
+		static string? LookupLocalizedXmlDoc(string assemblyFileName) {
 			if (string.IsNullOrEmpty(assemblyFileName))
 				return null;
 

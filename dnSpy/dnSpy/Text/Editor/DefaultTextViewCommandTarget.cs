@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,7 +34,7 @@ namespace dnSpy.Text.Editor {
 		[ImportingConstructor]
 		DefaultTextViewCommandTargetFilterProvider(Lazy<IEditorOperationsFactoryService> editorOperationsFactoryService) => this.editorOperationsFactoryService = editorOperationsFactoryService;
 
-		public ICommandTargetFilter Create(object target) {
+		public ICommandTargetFilter? Create(object target) {
 			if (target is ITextView textView)
 				return new DefaultTextViewCommandTarget(textView, editorOperationsFactoryService.Value);
 			return null;
@@ -45,7 +45,7 @@ namespace dnSpy.Text.Editor {
 		readonly ITextView textView;
 
 		IEditorOperations EditorOperations { get; }
-		IEditorOperations2 EditorOperations2 => EditorOperations as IEditorOperations2;
+		IEditorOperations2? EditorOperations2 => EditorOperations as IEditorOperations2;
 
 		public DefaultTextViewCommandTarget(ITextView textView, IEditorOperationsFactoryService editorOperationsFactoryService) {
 			this.textView = textView ?? throw new ArgumentNullException(nameof(textView));
@@ -332,12 +332,12 @@ namespace dnSpy.Text.Editor {
 			return CommandTargetStatus.NotHandled;
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args = null) {
-			object result = null;
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args = null) {
+			object? result = null;
 			return Execute(group, cmdId, args, ref result);
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) {
 			if (IsReadOnly && IsEditCommand(group, cmdId))
 				return CommandTargetStatus.NotHandled;
 
@@ -362,7 +362,7 @@ namespace dnSpy.Text.Editor {
 			else if (group == CommandConstants.TextEditorGroup) {
 				switch ((TextEditorIds)cmdId) {
 				case TextEditorIds.BACKSPACE:
-					if (EditorOperations.ProvisionalCompositionSpan != null)
+					if (!(EditorOperations.ProvisionalCompositionSpan is null))
 						EditorOperations.InsertText(string.Empty);
 					else
 						EditorOperations.Backspace();

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -48,7 +48,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
 	/// A <see cref="DmdType"/> scope
 	/// </summary>
-	public struct DmdTypeScope {
+	public readonly struct DmdTypeScope {
 		/// <summary>
 		/// An instance whose <see cref="Kind"/> equals <see cref="DmdTypeScopeKind.Invalid"/>
 		/// </summary>
@@ -62,12 +62,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the data: <see cref="DmdModule"/>, <see cref="string"/> (<see cref="DmdTypeScopeKind.ModuleRef"/>), <see cref="IDmdAssemblyName"/>
 		/// </summary>
-		public object Data { get; }
+		public object? Data { get; }
 
 		/// <summary>
 		/// Used if it's a module reference. This is the assembly name (<see cref="IDmdAssemblyName"/>)
 		/// </summary>
-		public object Data2 { get; }
+		public object? Data2 { get; }
 
 		DmdTypeScope(DmdTypeScopeKind kind) {
 			if (kind != DmdTypeScopeKind.Invalid)
@@ -115,9 +115,9 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public override string ToString() {
 			switch (Kind) {
 			case DmdTypeScopeKind.Invalid:		return "<invalid>";
-			case DmdTypeScopeKind.Module:		return "Module: " + Data.ToString();
-			case DmdTypeScopeKind.ModuleRef:	return "ModuleRef: " + Data.ToString() + ": " + Data2.ToString();
-			case DmdTypeScopeKind.AssemblyRef:	return "Assembly: " + Data.ToString();
+			case DmdTypeScopeKind.Module:		return "Module: " + Data!.ToString();
+			case DmdTypeScopeKind.ModuleRef:	return "ModuleRef: " + Data!.ToString() + ": " + Data2!.ToString();
+			case DmdTypeScopeKind.AssemblyRef:	return "Assembly: " + Data!.ToString();
 			default:							throw new InvalidOperationException();
 			}
 		}

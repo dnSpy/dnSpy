@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,7 +21,6 @@ using System;
 using System.Diagnostics;
 using dndbg.DotNet;
 using dndbg.Engine;
-using dnlib.IO;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
@@ -36,11 +35,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		internal void RaiseTypeLoaded(DmdTypeLoadedEventArgs e) => TypeLoaded?.Invoke(this, e);
 
 		sealed class DmdDataStreamImpl : DmdDataStream {
-			readonly IBinaryReader reader;
-			public DmdDataStreamImpl(IBinaryReader reader) => this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
+			readonly ProcessBinaryReader reader;
+			public DmdDataStreamImpl(ProcessBinaryReader reader) => this.reader = reader;
 			public override long Position {
 				get => reader.Position;
-				set => reader.Position = value;
+				set => reader.Position = (uint)value;
 			}
 			public override long Length => reader.Length;
 			public override byte ReadByte() => reader.ReadByte();
@@ -50,14 +49,14 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			public override float ReadSingle() => reader.ReadSingle();
 			public override double ReadDouble() => reader.ReadDouble();
 			public override byte[] ReadBytes(int length) => reader.ReadBytes(length);
-			public override void Dispose() => reader.Dispose();
+			public override void Dispose() { }
 		}
 
-		public override DmdDataStream TryGetMethodBody(DmdModule module, int metadataToken, uint rva) {
+		public override DmdDataStream? TryGetMethodBody(DmdModule module, int metadataToken, uint rva) {
 			engine.VerifyCorDebugThread();
 
 			var dbgModule = module.GetDebuggerModule();
-			if (dbgModule == null || !engine.TryGetDnModule(dbgModule, out var dnModule))
+			if (dbgModule is null || !engine.TryGetDnModule(dbgModule, out var dnModule))
 				throw new InvalidOperationException();
 
 			// rva can be 0 if it's a dynamic module. module.Address will also be 0.
@@ -66,8 +65,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 			var func = dnModule.CorModule.GetFunctionFromToken((uint)metadataToken);
 			var ilCode = func?.ILCode;
-			if (ilCode == null)
+			if (ilCode is null)
 				return null;
+			Debug.Assert(!(func is null));
 			ulong addr = ilCode.Address;
 			if (addr == 0)
 				return null;

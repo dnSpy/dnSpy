@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,7 +23,7 @@ using ICSharpCode.Decompiler.Disassembler;
 
 namespace dnSpy.Decompiler.ILSpy.Core.IL {
 	static class ILDecompilerUtils {
-		public static bool Write(IDecompilerOutput output, IMemberRef member) {
+		public static bool Write(IDecompilerOutput output, IMemberRef? member) {
 			if (member is IMethod method && method.IsMethod) {
 				method.WriteMethodTo(output);
 				return true;

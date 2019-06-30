@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -37,7 +37,7 @@ namespace dnSpy.Text.CodeEditor {
 		[ImportingConstructor]
 		CodeEditorOptionsService(ITextViewOptionsGroupService textViewOptionsGroupService, IContentTypeRegistryService contentTypeRegistryService, [ImportMany] IEnumerable<Lazy<CodeEditorOptionsDefinition, ICodeEditorOptionsDefinitionMetadata>> codeEditorOptionsDefinitions) {
 			var group = textViewOptionsGroupService.GetGroup(PredefinedTextViewGroupNames.CodeEditor);
-			Options = codeEditorOptionsDefinitions.Select(a => CodeEditorOptions.TryCreate(group, contentTypeRegistryService, a.Metadata)).Where(a => a != null).ToArray();
+			Options = codeEditorOptionsDefinitions.Select(a => CodeEditorOptions.TryCreate(group, contentTypeRegistryService, a.Metadata)).OfType<CodeEditorOptions>().ToArray();
 		}
 	}
 }

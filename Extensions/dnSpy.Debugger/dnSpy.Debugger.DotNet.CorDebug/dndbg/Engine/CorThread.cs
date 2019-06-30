@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,21 +22,14 @@ using System.Collections.Generic;
 using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
-	sealed class CorThread : COMObject<ICorDebugThread>, IEquatable<CorThread> {
-		/// <summary>
-		/// Gets the process or null
-		/// </summary>
-		public CorProcess Process {
+	sealed class CorThread : COMObject<ICorDebugThread>, IEquatable<CorThread?> {
+		public CorProcess? Process {
 			get {
 				int hr = obj.GetProcess(out var process);
-				return hr < 0 || process == null ? null : new CorProcess(process);
+				return hr < 0 || process is null ? null : new CorProcess(process);
 			}
 		}
 
-		/// <summary>
-		/// Gets the thread ID (calls ICorDebugThread::GetID()). This is not necessarily the OS
-		/// thread ID in V2 or later, see <see cref="VolatileThreadId"/>
-		/// </summary>
 		public int ThreadId {
 			get {
 				int hr = obj.GetID(out int tid);
@@ -44,53 +37,37 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets the AppDomain or null
-		/// </summary>
-		public CorAppDomain AppDomain {
+		public CorAppDomain? AppDomain {
 			get {
 				int hr = obj.GetAppDomain(out var appDomain);
-				return hr < 0 || appDomain == null ? null : new CorAppDomain(appDomain);
+				return hr < 0 || appDomain is null ? null : new CorAppDomain(appDomain);
 			}
 		}
 
-		/// <summary>
-		/// Gets the OS thread ID (calls ICorDebugThread2::GetVolatileOSThreadID()) or -1. This value
-		/// can change during execution of the thread.
-		/// </summary>
 		public int VolatileThreadId {
 			get {
 				var th2 = obj as ICorDebugThread2;
-				if (th2 == null)
+				if (th2 is null)
 					return -1;
 				int hr = th2.GetVolatileOSThreadID(out int tid);
 				return hr < 0 ? -1 : tid;
 			}
 		}
 
-		/// <summary>
-		/// Gets the active chain or null
-		/// </summary>
-		public CorChain ActiveChain {
+		public CorChain? ActiveChain {
 			get {
 				int hr = obj.GetActiveChain(out var chain);
-				return hr < 0 || chain == null ? null : new CorChain(chain);
+				return hr < 0 || chain is null ? null : new CorChain(chain);
 			}
 		}
 
-		/// <summary>
-		/// Gets the active frame or null
-		/// </summary>
-		public CorFrame ActiveFrame {
+		public CorFrame? ActiveFrame {
 			get {
 				int hr = obj.GetActiveFrame(out var frame);
-				return hr < 0 || frame == null ? null : new CorFrame(frame);
+				return hr < 0 || frame is null ? null : new CorFrame(frame);
 			}
 		}
 
-		/// <summary>
-		/// Gets all chains
-		/// </summary>
 		public IEnumerable<CorChain> Chains {
 			get {
 				int hr = obj.EnumerateChains(out var chainEnum);
@@ -98,22 +75,15 @@ namespace dndbg.Engine {
 					yield break;
 				for (;;) {
 					hr = chainEnum.Next(1, out var chain, out uint count);
-					if (hr != 0 || chain == null)
+					if (hr != 0 || chain is null)
 						break;
 					yield return new CorChain(chain);
 				}
 			}
 		}
 
-		/// <summary>
-		/// Gets all frames in all chains
-		/// </summary>
 		public IEnumerable<CorFrame> AllFrames => GetAllFrames(new ICorDebugFrame[1]);
 
-		/// <summary>
-		/// Gets all frames in all chains
-		/// </summary>
-		/// <param name="frames">Frames buffer</param>
 		public IEnumerable<CorFrame> GetAllFrames(ICorDebugFrame[] frames) {
 			foreach (var chain in Chains) {
 				foreach (var frame in chain.GetFrames(frames))
@@ -121,10 +91,6 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets the current thread handle. It's owned by the CLR debugger. The handle may change as
-		/// the process executes, and may be different for different parts of the thread.
-		/// </summary>
 		public IntPtr Handle {
 			get {
 				int hr = obj.GetHandle(out var handle);
@@ -132,19 +98,9 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// true if the thread is running
-		/// </summary>
 		public bool IsRunning => State == CorDebugThreadState.THREAD_RUN;
-
-		/// <summary>
-		/// true if the thread is suspended
-		/// </summary>
 		public bool IsSuspended => State == CorDebugThreadState.THREAD_SUSPEND;
 
-		/// <summary>
-		/// Gets/sets the thread state
-		/// </summary>
 		public CorDebugThreadState State {
 			get {
 				int hr = obj.GetDebugState(out var state);
@@ -155,66 +111,13 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets the current exception or null
-		/// </summary>
-		public CorValue CurrentException {
+		public CorValue? CurrentException {
 			get {
 				int hr = obj.GetCurrentException(out var value);
-				return hr < 0 || value == null ? null : new CorValue(value);
+				return hr < 0 || value is null ? null : new CorValue(value);
 			}
 		}
 
-		/// <summary>
-		/// true if a termination of the thread has been requested.
-		/// </summary>
-		public bool StopRequested => (UserState & CorDebugUserState.USER_STOP_REQUESTED) != 0;
-
-		/// <summary>
-		/// true if a suspension of the thread has been requested.
-		/// </summary>
-		public bool SuspendRequested => (UserState & CorDebugUserState.USER_SUSPEND_REQUESTED) != 0;
-
-		/// <summary>
-		/// true if the thread is running in the background.
-		/// </summary>
-		public bool IsBackground => (UserState & CorDebugUserState.USER_BACKGROUND) != 0;
-
-		/// <summary>
-		/// true if the thread has not started executing.
-		/// </summary>
-		public bool IsUnstarted => (UserState & CorDebugUserState.USER_UNSTARTED) != 0;
-
-		/// <summary>
-		/// true if the thread has been terminated.
-		/// </summary>
-		public bool IsStopped => (UserState & CorDebugUserState.USER_STOPPED) != 0;
-
-		/// <summary>
-		/// true if the thread is waiting for another thread to complete a task.
-		/// </summary>
-		public bool IsWaitSleepJoin => (UserState & CorDebugUserState.USER_WAIT_SLEEP_JOIN) != 0;
-
-		/// <summary>
-		/// true if the thread has been suspended. Use <see cref="IsSuspended"/> instead of this property.
-		/// </summary>
-		public bool IsUserStateSuspended => (UserState & CorDebugUserState.USER_SUSPENDED) != 0;
-
-		/// <summary>
-		/// true if the thread is at an unsafe point. That is, the thread is at a point in execution where it may block garbage collection.
-		/// 
-		/// Debug events may be dispatched from unsafe points, but suspending a thread at an unsafe point will very likely cause a deadlock until the thread is resumed. The safe and unsafe points are determined by the just-in-time (JIT) and garbage collection implementation.
-		/// </summary>
-		public bool IsUnsafePoint => (UserState & CorDebugUserState.USER_UNSAFE_POINT) != 0;
-
-		/// <summary>
-		/// true if the thread is from the thread pool.
-		/// </summary>
-		public bool IsThreadPool => (UserState & CorDebugUserState.USER_THREADPOOL) != 0;
-
-		/// <summary>
-		/// Gets the user state of this thread
-		/// </summary>
 		public CorDebugUserState UserState {
 			get {
 				int hr = obj.GetUserState(out var state);
@@ -222,13 +125,10 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets the CLR thread object
-		/// </summary>
-		public CorValue Object {
+		public CorValue? Object {
 			get {
 				int hr = obj.GetObject(out var value);
-				return hr < 0 || value == null ? null : new CorValue(value);
+				return hr < 0 || value is null ? null : new CorValue(value);
 			}
 		}
 
@@ -238,41 +138,28 @@ namespace dndbg.Engine {
 
 		public bool InterceptCurrentException(CorFrame frame) {
 			var t2 = obj as ICorDebugThread2;
-			if (t2 == null)
+			if (t2 is null)
 				return false;
 			int hr = t2.InterceptCurrentException(frame.RawObject);
 			return hr >= 0;
 		}
 
-		public CorValue GetCurrentCustomDebuggerNotification() {
+		public CorValue? GetCurrentCustomDebuggerNotification() {
 			var t4 = obj as ICorDebugThread4;
-			if (t4 == null)
+			if (t4 is null)
 				return null;
 			int hr = t4.GetCurrentCustomDebuggerNotification(out var value);
-			return hr < 0 || value == null ? null : new CorValue(value);
+			return hr < 0 || value is null ? null : new CorValue(value);
 		}
 
-		/// <summary>
-		/// Returns a new <see cref="CorEval"/> or null if there was an error
-		/// </summary>
-		/// <returns></returns>
-		public CorEval CreateEval() {
+		public CorEval? CreateEval() {
 			int hr = obj.CreateEval(out var eval);
-			return hr < 0 || eval == null ? null : new CorEval(eval);
+			return hr < 0 || eval is null ? null : new CorEval(eval);
 		}
 
-		public static bool operator ==(CorThread a, CorThread b) {
-			if (ReferenceEquals(a, b))
-				return true;
-			if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
-				return false;
-			return a.Equals(b);
-		}
-
-		public static bool operator !=(CorThread a, CorThread b) => !(a == b);
-		public bool Equals(CorThread other) => !ReferenceEquals(other, null) && RawObject == other.RawObject;
-		public override bool Equals(object obj) => Equals(obj as CorThread);
+		public bool Equals(CorThread? other) => !(other is null) && RawObject == other.RawObject;
+		public override bool Equals(object? obj) => Equals(obj as CorThread);
 		public override int GetHashCode() => RawObject.GetHashCode();
-		public override string ToString() => string.Format("[Thread] TID={0}, VTID={1} State={2} UserState={3}", ThreadId, VolatileThreadId, State, UserState);
+		public override string ToString() => $"[Thread] TID={ThreadId}, VTID={VolatileThreadId} State={State} UserState={UserState}";
 	}
 }

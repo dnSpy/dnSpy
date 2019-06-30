@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -55,7 +55,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <param name="columns">All columns</param>
 		/// <param name="rowSize">Row size</param>
 		public TableInfo(Table table, string name, ColumnInfo[] columns, int rowSize = 0) {
-			if (columns == null)
+			if (columns is null)
 				throw new ArgumentNullException(nameof(columns));
 			Table = table;
 			Name = name ?? throw new ArgumentNullException(nameof(name));

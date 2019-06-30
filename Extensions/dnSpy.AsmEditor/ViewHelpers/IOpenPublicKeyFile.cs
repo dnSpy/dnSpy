@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,6 +26,6 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 		/// if the user didn't open a public key file.
 		/// </summary>
 		/// <returns></returns>
-		PublicKey Open();
+		PublicKey? Open();
 	}
 }

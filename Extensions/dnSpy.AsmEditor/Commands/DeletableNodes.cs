@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,11 +26,11 @@ using dnSpy.Contracts.Documents.TreeView;
 namespace dnSpy.AsmEditor.Commands {
 	struct DeletableNodes<T> where T : DocumentTreeNodeData {
 		readonly T[] nodes;
-		DocumentTreeNodeData[] parents;
+		DocumentTreeNodeData[]? parents;
 
 		public int Count => nodes.Length;
 		public T[] Nodes => nodes;
-		public DocumentTreeNodeData[] Parents => parents;
+		public DocumentTreeNodeData[]? Parents => parents;
 
 		public DeletableNodes(T node)
 			: this(new[] { node }) {
@@ -46,14 +46,14 @@ namespace dnSpy.AsmEditor.Commands {
 		/// The model (dnlib) elements must be deleted after this method is called, not before.
 		/// </summary>
 		public void Delete() {
-			Debug.Assert(parents == null);
-			if (parents != null)
+			Debug.Assert(parents is null);
+			if (!(parents is null))
 				throw new ArgumentException("Nodes have already been deleted");
 
 			parents = new DocumentTreeNodeData[nodes.Length];
 			for (int i = 0; i < nodes.Length; i++) {
 				var node = nodes[i];
-				var parent = (DocumentTreeNodeData)node.TreeNode.Parent.Data;
+				var parent = (DocumentTreeNodeData)node.TreeNode.Parent!.Data;
 				parents[i] = parent;
 
 				parent.TreeNode.Children.Remove(node.TreeNode);
@@ -65,8 +65,8 @@ namespace dnSpy.AsmEditor.Commands {
 		/// The model (dnlib) elements must be restored before this method is called, not after.
 		/// </summary>
 		public void Restore() {
-			Debug.Assert(parents != null);
-			if (parents == null)
+			Debug.Assert(!(parents is null));
+			if (parents is null)
 				throw new ArgumentException("Nodes have already been restored");
 
 			for (int i = nodes.Length - 1; i >= 0; i--) {

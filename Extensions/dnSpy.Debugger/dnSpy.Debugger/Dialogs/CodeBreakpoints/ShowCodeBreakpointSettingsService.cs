@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -57,12 +57,12 @@ namespace dnSpy.Debugger.Dialogs.CodeBreakpoints {
 		}
 
 		public override void Edit(DbgCodeBreakpoint[] breakpoints) {
-			if (breakpoints == null)
+			if (breakpoints is null)
 				throw new ArgumentNullException(nameof(breakpoints));
 			if (breakpoints.Length == 0)
 				return;
 			var newSettings = Show(breakpoints[0].Settings);
-			if (newSettings != null)
+			if (!(newSettings is null))
 				dbgCodeBreakpointsService.Value.Modify(breakpoints.Select(a => new DbgCodeBreakpointAndSettings(a, newSettings.Value)).ToArray());
 		}
 	}

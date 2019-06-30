@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.ToolBars {
 	/// </summary>
 	public abstract class ToolBarObjectBase : IToolBarObject {
 		/// <inheritdoc/>
-		public abstract object GetUIObject(IToolBarItemContext context, IInputElement commandTarget);
+		public abstract object GetUIObject(IToolBarItemContext context, IInputElement? commandTarget);
 		/// <inheritdoc/>
 		public bool IsVisible(IToolBarItemContext context) => true;
 	}

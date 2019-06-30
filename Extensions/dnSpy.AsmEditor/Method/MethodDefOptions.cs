@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,9 +28,9 @@ namespace dnSpy.AsmEditor.Method {
 		public MethodAttributes Attributes;
 		public MethodSemanticsAttributes SemanticsAttributes;
 		public RVA RVA;
-		public UTF8String Name;
-		public MethodSig MethodSig;
-		public ImplMap ImplMap;
+		public UTF8String? Name;
+		public MethodSig? MethodSig;
+		public ImplMap? ImplMap;
 		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
 		public List<DeclSecurity> DeclSecurities = new List<DeclSecurity>();
 		public List<ParamDef> ParamDefs = new List<ParamDef>();
@@ -72,7 +72,7 @@ namespace dnSpy.AsmEditor.Method {
 			method.GenericParameters.Clear();
 			method.GenericParameters.AddRange(GenericParameters);
 			method.Overrides.Clear();
-			method.Overrides.AddRange(Overrides.Select(e => e.MethodBody != null ? e : new MethodOverride(method, e.MethodDeclaration)));
+			method.Overrides.AddRange(Overrides.Select(e => !(e.MethodBody is null) ? e : new MethodOverride(method, e.MethodDeclaration)));
 			method.Parameters.UpdateParameterTypes();
 			return method;
 		}

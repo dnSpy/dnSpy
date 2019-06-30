@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,11 +26,11 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		public BreakpointKind Kind { get; }
 		public ImageReference? ImageReference { get; }
 		public string MarkerTypeName { get; }
-		public string SelectedMarkerTypeName { get; }
-		public IClassificationType ClassificationType { get; }
+		public string? SelectedMarkerTypeName { get; }
+		public IClassificationType? ClassificationType { get; }
 		public int ZIndex { get; }
 
-		public BreakpointInfo(BreakpointKind kind, string markerTypeName, string selectedMarkerTypeName, IClassificationType classificationType, int zIndex) {
+		public BreakpointInfo(BreakpointKind kind, string markerTypeName, string? selectedMarkerTypeName, IClassificationType? classificationType, int zIndex) {
 			Kind = kind;
 			ImageReference = BreakpointImageUtilities.GetImage(kind);
 			MarkerTypeName = markerTypeName ?? throw new ArgumentNullException(nameof(markerTypeName));

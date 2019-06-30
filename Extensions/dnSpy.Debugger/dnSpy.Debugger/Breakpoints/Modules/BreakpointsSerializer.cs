@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,7 +24,7 @@ using dnSpy.Contracts.Debugger.Breakpoints.Modules;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Debugger.Breakpoints.Modules {
-	struct BreakpointsSerializer {
+	readonly struct BreakpointsSerializer {
 		static readonly Guid SETTINGS_GUID = new Guid("A7C5956E-593B-4B04-A237-F837CF17E44E");
 
 		readonly ISettingsService settingsService;
@@ -36,16 +36,17 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 			var settings = new List<DbgModuleBreakpointSettings>();
 			foreach (var bpSect in section.SectionsWithName("Breakpoint")) {
 				var isEnabled = bpSect.Attribute<bool?>("IsEnabled");
-				if (isEnabled == null)
+				if (isEnabled is null)
 					continue;
 				var bpSettings = new DbgModuleBreakpointSettings {
 					IsEnabled = isEnabled.Value,
 					ModuleName = bpSect.Attribute<string>("ModuleName"),
 					IsDynamic = bpSect.Attribute<bool?>("IsDynamic"),
 					IsInMemory = bpSect.Attribute<bool?>("IsInMemory"),
+					IsLoaded = bpSect.Attribute<bool?>("IsLoaded"),
 					Order = bpSect.Attribute<int?>("Order"),
 					AppDomainName = bpSect.Attribute<string>("AppDomainName"),
-					ProcessName = bpSect.Attribute<string>("ProcessName")
+					ProcessName = bpSect.Attribute<string>("ProcessName"),
 				};
 				settings.Add(bpSettings);
 			}
@@ -60,11 +61,13 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 				bpSect.Attribute("IsEnabled", bpSettings.IsEnabled);
 				if (!string.IsNullOrEmpty(bpSettings.ModuleName))
 					bpSect.Attribute("ModuleName", bpSettings.ModuleName);
-				if (bpSettings.IsDynamic != null)
+				if (!(bpSettings.IsDynamic is null))
 					bpSect.Attribute("IsDynamic", bpSettings.IsDynamic);
-				if (bpSettings.IsInMemory != null)
+				if (!(bpSettings.IsInMemory is null))
 					bpSect.Attribute("IsInMemory", bpSettings.IsInMemory);
-				if (bpSettings.Order != null)
+				if (!(bpSettings.IsLoaded is null))
+					bpSect.Attribute("IsLoaded", bpSettings.IsLoaded);
+				if (!(bpSettings.Order is null))
 					bpSect.Attribute("Order", bpSettings.Order);
 				if (!string.IsNullOrEmpty(bpSettings.AppDomainName))
 					bpSect.Attribute("AppDomainName", bpSettings.AppDomainName);

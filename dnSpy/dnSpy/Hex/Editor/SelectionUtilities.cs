@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,7 +24,7 @@ using dnSpy.Contracts.Hex.Editor;
 namespace dnSpy.Hex.Editor {
 	static class SelectionUtilities {
 		public static HexBufferSpan GetLineAnchorSpan(HexSelection selection) {
-			if (selection == null)
+			if (selection is null)
 				throw new ArgumentNullException(nameof(selection));
 			if (selection.IsEmpty)
 				return selection.HexView.Caret.ContainingHexViewLine.BufferSpan;

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,8 +31,8 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="type">Type</param>
 		/// <returns></returns>
-		public virtual object GetColor(TypeDef type) {
-			if (type == null)
+		public virtual object GetColor(TypeDef? type) {
+			if (type is null)
 				return BoxedTextColor.Text;
 
 			if (type.IsInterface)
@@ -47,14 +47,14 @@ namespace dnSpy.Contracts.Decompiler {
 
 			if (type.IsSealed && type.IsAbstract) {
 				var bt = type.BaseType;
-				if (bt != null && bt.DefinitionAssembly.IsCorLib()) {
+				if (!(bt is null) && bt.DefinitionAssembly.IsCorLib()) {
 					if (bt is TypeRef baseTr) {
 						if (baseTr.Namespace == systemString && baseTr.Name == objectString)
 							return BoxedTextColor.StaticType;
 					}
 					else {
 						var baseTd = bt as TypeDef;
-						if (baseTd.Namespace == systemString && baseTd.Name == objectString)
+						if (!(baseTd is null) && baseTd.Namespace == systemString && baseTd.Name == objectString)
 							return BoxedTextColor.StaticType;
 					}
 				}
@@ -72,12 +72,12 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="type">Type</param>
 		/// <returns></returns>
-		public virtual object GetColor(TypeRef type) {
-			if (type == null)
+		public virtual object GetColor(TypeRef? type) {
+			if (type is null)
 				return BoxedTextColor.Text;
 
 			var td = type.Resolve();
-			if (td != null)
+			if (!(td is null))
 				return GetColor(td);
 
 			return BoxedTextColor.Type;
@@ -91,13 +91,13 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="memberRef">Member</param>
 		/// <returns></returns>
-		public virtual object GetColor(IMemberRef memberRef) {
-			if (memberRef == null)
+		public virtual object GetColor(IMemberRef? memberRef) {
+			if (memberRef is null)
 				return BoxedTextColor.Text;
 
 			if (memberRef.IsField) {
 				var fd = ((IField)memberRef).ResolveFieldDef();
-				if (fd == null)
+				if (fd is null)
 					return BoxedTextColor.InstanceField;
 				if (fd.DeclaringType.IsEnum)
 					return BoxedTextColor.EnumField;
@@ -109,13 +109,13 @@ namespace dnSpy.Contracts.Decompiler {
 			}
 			if (memberRef.IsMethod) {
 				var mr = (IMethod)memberRef;
-				if (mr.MethodSig == null)
+				if (mr.MethodSig is null)
 					return BoxedTextColor.InstanceMethod;
 				var md = mr.ResolveMethodDef();
-				if (md != null && md.IsConstructor)
+				if (!(md is null) && md.IsConstructor)
 					return GetColor(md.DeclaringType);
 				if (!mr.MethodSig.HasThis) {
-					if (md != null && md.IsDefined(systemRuntimeCompilerServicesString, extensionAttributeString))
+					if (!(md is null) && md.IsDefined(systemRuntimeCompilerServicesString, extensionAttributeString))
 						return BoxedTextColor.ExtensionMethod;
 					return BoxedTextColor.StaticMethod;
 				}
@@ -157,8 +157,8 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="genericSig">Generic signature</param>
 		/// <returns></returns>
-		public virtual object GetColor(GenericSig genericSig) {
-			if (genericSig == null)
+		public virtual object GetColor(GenericSig? genericSig) {
+			if (genericSig is null)
 				return BoxedTextColor.Text;
 
 			return genericSig.IsMethodVar ? BoxedTextColor.MethodGenericParameter : BoxedTextColor.TypeGenericParameter;
@@ -169,21 +169,21 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="genericParam">Generic parameter</param>
 		/// <returns></returns>
-		public virtual object GetColor(GenericParam genericParam) {
-			if (genericParam == null)
+		public virtual object GetColor(GenericParam? genericParam) {
+			if (genericParam is null)
 				return BoxedTextColor.Text;
 
-			if (genericParam.DeclaringType != null)
+			if (!(genericParam.DeclaringType is null))
 				return BoxedTextColor.TypeGenericParameter;
 
-			if (genericParam.DeclaringMethod != null)
+			if (!(genericParam.DeclaringMethod is null))
 				return BoxedTextColor.MethodGenericParameter;
 
 			return BoxedTextColor.TypeGenericParameter;
 		}
 
 		static object GetColor(MethodDef method, object staticValue, object instanceValue) {
-			if (method == null)
+			if (method is null)
 				return instanceValue;
 			if (method.IsStatic)
 				return staticValue;
@@ -195,8 +195,8 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="exportedType">Exported type</param>
 		/// <returns></returns>
-		public virtual object GetColor(ExportedType exportedType) {
-			if (exportedType == null)
+		public virtual object GetColor(ExportedType? exportedType) {
+			if (exportedType is null)
 				return BoxedTextColor.Text;
 
 			return GetColor(exportedType.ToTypeRef());
@@ -207,9 +207,9 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="typeSig">Type signature</param>
 		/// <returns></returns>
-		public virtual object GetColor(TypeSig typeSig) {
+		public virtual object GetColor(TypeSig? typeSig) {
 			typeSig = typeSig.RemovePinnedAndModifiers();
-			if (typeSig == null)
+			if (typeSig is null)
 				return BoxedTextColor.Text;
 
 			if (typeSig is TypeDefOrRefSig tdr)
@@ -226,8 +226,8 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="obj">Object, eg. an instruction operand</param>
 		/// <returns></returns>
-		public virtual object GetColor(object obj) {
-			if (obj == null)
+		public virtual object GetColor(object? obj) {
+			if (obj is null)
 				return BoxedTextColor.Text;
 
 			if (obj is byte || obj is sbyte ||
@@ -296,14 +296,14 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="type">Type</param>
 		/// <returns></returns>
-		public override object GetColor(TypeDef type) {
+		public override object GetColor(TypeDef? type) {
 			if (IsModule(type))
 				return BoxedTextColor.Module;
 			return base.GetColor(type);
 		}
 
-		static bool IsModule(TypeDef type) =>
-			type != null && type.DeclaringType == null && type.IsSealed && type.IsDefined(stringMicrosoftVisualBasicCompilerServices, stringStandardModuleAttribute);
+		static bool IsModule(TypeDef? type) =>
+			!(type is null) && type.DeclaringType is null && type.IsSealed && type.IsDefined(stringMicrosoftVisualBasicCompilerServices, stringStandardModuleAttribute);
 		static readonly UTF8String stringMicrosoftVisualBasicCompilerServices = new UTF8String("Microsoft.VisualBasic.CompilerServices");
 		static readonly UTF8String stringStandardModuleAttribute = new UTF8String("StandardModuleAttribute");
 	}

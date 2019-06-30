@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,9 +24,9 @@ using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Controls.ToolWindows;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
-using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.Breakpoints.Code;
 using dnSpy.Debugger.UI;
@@ -42,8 +42,8 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			}
 		}
 
-		public string ErrorToolTip => errorToolTip;
-		string errorToolTip;
+		public string? ErrorToolTip => errorToolTip;
+		string? errorToolTip;
 
 		public ImageReference ImageReference => BreakpointImageUtilities.GetImage(breakpointKind);
 
@@ -79,13 +79,13 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			BreakpointLocationFormatter.PropertyChanged += DbgBreakpointLocationFormatter_PropertyChanged;
 		}
 
-		internal static ReadOnlyCollection<string> CreateLabelsCollection(string s) =>
-			new ReadOnlyCollection<string>(s.Split(new[] { CodeBreakpointFormatter.LabelsSeparatorChar }, StringSplitOptions.RemoveEmptyEntries).Select(a => a.Trim()).ToArray());
+		internal static ReadOnlyCollection<string> CreateLabelsCollection(string? s) =>
+			new ReadOnlyCollection<string>((s ?? string.Empty).Split(new[] { CodeBreakpointFormatter.LabelsSeparatorChar }, StringSplitOptions.RemoveEmptyEntries).Select(a => a.Trim()).ToArray());
 
 		// UI thread
 		internal string GetLabelsString() {
 			Context.UIDispatcher.VerifyAccess();
-			var output = new StringBuilderTextColorOutput();
+			var output = new DbgStringBuilderTextWriter();
 			Context.Formatter.WriteLabels(output, this);
 			return output.ToString();
 		}
@@ -160,9 +160,9 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		}
 
 		static bool LabelsEquals(ReadOnlyCollection<string> a, ReadOnlyCollection<string> b) {
-			if (a == null)
+			if (a is null)
 				a = emptyLabels;
-			if (b == null)
+			if (b is null)
 				b = emptyLabels;
 			if (a == b)
 				return true;

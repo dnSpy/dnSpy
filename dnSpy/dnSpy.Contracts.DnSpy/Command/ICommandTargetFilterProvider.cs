@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.Command {
 		/// </summary>
 		/// <param name="target">Target object</param>
 		/// <returns></returns>
-		ICommandTargetFilter Create(object target);
+		ICommandTargetFilter? Create(object target);
 	}
 
 	/// <summary>Metadata</summary>

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,16 +35,16 @@ namespace dnSpy.Documents.TreeView.Resources {
 		public ResourceNodeFactory([ImportMany] IEnumerable<Lazy<IResourceNodeProvider, IResourceNodeProviderMetadata>> resourceNodeProviders) => this.resourceNodeProviders = resourceNodeProviders.OrderBy(a => a.Metadata.Order).ToArray();
 
 		public ResourceNode Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup) {
-			if (module == null)
+			if (module is null)
 				throw new ArgumentNullException(nameof(module));
-			if (resource == null)
+			if (resource is null)
 				throw new ArgumentNullException(nameof(resource));
-			if (treeNodeGroup == null)
+			if (treeNodeGroup is null)
 				throw new ArgumentNullException(nameof(treeNodeGroup));
 			foreach (var provider in resourceNodeProviders) {
 				try {
 					var node = provider.Value.Create(module, resource, treeNodeGroup);
-					if (node != null)
+					if (!(node is null))
 						return node;
 				}
 				catch {
@@ -54,16 +54,16 @@ namespace dnSpy.Documents.TreeView.Resources {
 		}
 
 		public ResourceElementNode Create(ModuleDef module, ResourceElement resourceElement, ITreeNodeGroup treeNodeGroup) {
-			if (module == null)
+			if (module is null)
 				throw new ArgumentNullException(nameof(module));
-			if (resourceElement == null)
+			if (resourceElement is null)
 				throw new ArgumentNullException(nameof(resourceElement));
-			if (treeNodeGroup == null)
+			if (treeNodeGroup is null)
 				throw new ArgumentNullException(nameof(treeNodeGroup));
 			foreach (var provider in resourceNodeProviders) {
 				try {
 					var node = provider.Value.Create(module, resourceElement, treeNodeGroup);
-					if (node != null)
+					if (!(node is null))
 						return node;
 				}
 				catch {

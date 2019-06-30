@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,7 +20,6 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using dnSpy.Debugger.Utilities;
 
 namespace dnSpy.Debugger.Attach {
 	// MS forces us to use an undocumented function and structures to get the command line.
@@ -74,7 +73,7 @@ namespace dnSpy.Debugger.Attach {
 			public const int SIZE = 16;
 		}
 
-		public static string TryGetCommandLine(IntPtr hProcess) {
+		public static string? TryGetCommandLine(IntPtr hProcess) {
 			try {
 				return TryGetCommandLineCore(hProcess);
 			}
@@ -95,10 +94,8 @@ namespace dnSpy.Debugger.Attach {
 		const int CommandLineOffset32 = 0x40;
 		const int CommandLineOffset64 = 0x70;
 
-		static string TryGetCommandLineCore(IntPtr hProcess) {
-			int ptrSize = ProcessUtilities.GetBitness(hProcess) / 8;
-			if (ptrSize == 8 && IntPtr.Size == 4)
-				return null;// Can't read it
+		static string? TryGetCommandLineCore(IntPtr hProcess) {
+			int ptrSize = IntPtr.Size;
 
 			ushort cmdlineLength;
 			IntPtr cmdlineBuffer;

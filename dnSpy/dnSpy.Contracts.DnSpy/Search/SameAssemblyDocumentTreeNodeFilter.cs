@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -39,7 +39,7 @@ namespace dnSpy.Contracts.Search {
 			this.allowedMod = allowedMod;
 		}
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public override DocumentTreeNodeFilterResult GetResult(AssemblyDef asm) {
 			if (asm != allowedAsm)
 				return new DocumentTreeNodeFilterResult(FilterType.Hide, false);
@@ -47,10 +47,10 @@ namespace dnSpy.Contracts.Search {
 		}
 
 		public override DocumentTreeNodeFilterResult GetResult(ModuleDef mod) {
-			if (allowedAsm == null && mod != allowedMod)
+			if (allowedAsm is null && mod != allowedMod)
 				return new DocumentTreeNodeFilterResult(FilterType.Hide, false);
 			return base.GetResult(mod);
 		}
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

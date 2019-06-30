@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,15 +26,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public abstract int MDStreamVersion { get; }
 		public abstract string ModuleScopeName { get; }
 		public abstract string ImageRuntimeVersion { get; }
-		public abstract DmdMethodInfo EntryPoint { get; }
+		public abstract DmdMethodInfo? EntryPoint { get; }
 		public abstract DmdTypeDef[] GetTypes();
 		public abstract DmdTypeRef[] GetExportedTypes();
-		public abstract DmdMethodBase ResolveMethod(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options);
-		public abstract DmdFieldInfo ResolveField(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options);
-		public abstract DmdType ResolveType(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options);
-		public abstract DmdMemberInfo ResolveMember(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options);
-		public abstract DmdMethodSignature ResolveMethodSignature(int metadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments, DmdResolveOptions options);
-		public abstract byte[] ResolveSignature(int metadataToken);
+		public abstract DmdMethodBase? ResolveMethod(int metadataToken, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments, DmdResolveOptions options);
+		public abstract DmdFieldInfo? ResolveField(int metadataToken, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments, DmdResolveOptions options);
+		public abstract DmdType? ResolveType(int metadataToken, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments, DmdResolveOptions options);
+		public abstract DmdMemberInfo? ResolveMember(int metadataToken, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments, DmdResolveOptions options);
+		public abstract DmdMethodSignature? ResolveMethodSignature(int metadataToken, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments, DmdResolveOptions options);
+		public abstract byte[]? ResolveSignature(int metadataToken);
 		public abstract string ResolveString(int metadataToken);
 		public abstract void GetPEKind(out DmdPortableExecutableKinds peKind, out DmdImageFileMachine machine);
 		public abstract DmdReadOnlyAssemblyName GetName();
@@ -45,7 +45,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public abstract event EventHandler<DmdTypesUpdatedEventArgs> TypesUpdated;
 	}
 
-	struct DmdTypesUpdatedEventArgs {
+	readonly struct DmdTypesUpdatedEventArgs {
 		/// <summary>
 		/// Tokens of updated types
 		/// </summary>

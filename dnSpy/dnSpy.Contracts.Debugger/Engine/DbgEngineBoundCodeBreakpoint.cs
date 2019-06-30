@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -92,7 +92,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="module">New <see cref="DbgBoundCodeBreakpoint.Module"/> value</param>
 		/// <param name="address">New <see cref="DbgBoundCodeBreakpoint.Address"/> value</param>
 		/// <param name="message">New <see cref="DbgBoundCodeBreakpoint.Message"/> value</param>
-		public abstract void Update(UpdateOptions options, DbgModule module = null, ulong address = 0, DbgEngineBoundCodeBreakpointMessage message = default);
+		public abstract void Update(UpdateOptions options, DbgModule? module = null, ulong address = 0, DbgEngineBoundCodeBreakpointMessage message = default);
 	}
 
 	/// <summary>
@@ -128,7 +128,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 	/// <summary>
 	/// Bound breakpoint message
 	/// </summary>
-	public struct DbgEngineBoundCodeBreakpointMessage {
+	public readonly struct DbgEngineBoundCodeBreakpointMessage {
 		/// <summary>
 		/// Message kind
 		/// </summary>

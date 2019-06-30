@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,12 +18,11 @@
 */
 
 using System;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.Evaluation.ViewModel;
 
 namespace dnSpy.Debugger.Evaluation.UI {
-	struct ValueNodesProviderResult {
+	readonly struct ValueNodesProviderResult {
 		public DbgValueNodeInfo[] Nodes { get; }
 		public bool RecreateAllNodes { get; }
 
@@ -35,7 +34,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 
 	abstract class VariablesWindowValueNodesProvider {
 		public virtual event EventHandler NodesChanged { add { } remove { } }
-		public abstract ValueNodesProviderResult GetNodes(DbgEvaluationContext context, DbgLanguage language, DbgStackFrame frame, DbgEvaluationOptions options, DbgValueNodeEvaluationOptions nodeEvalOptions);
+		public abstract ValueNodesProviderResult GetNodes(DbgEvaluationInfo evalInfo, DbgLanguage language, DbgEvaluationOptions options, DbgValueNodeEvaluationOptions nodeEvalOptions, DbgValueFormatterOptions nameFormatterOptions);
 		public virtual DbgValueNodeInfo[] GetDefaultNodes() => Array.Empty<DbgValueNodeInfo>();
 
 		/// <summary>
@@ -52,16 +51,18 @@ namespace dnSpy.Debugger.Evaluation.UI {
 		public virtual bool CanAddRemoveExpressions => false;
 		public virtual void DeleteExpressions(string[] ids) => throw new NotSupportedException();
 		public virtual void ClearAllExpressions() => throw new NotSupportedException();
-		public virtual void EditExpression(string id, string expression) => throw new NotSupportedException();
+		public virtual void EditExpression(string? id, string expression) => throw new NotSupportedException();
 		public virtual void AddExpressions(string[] expressions) => throw new NotSupportedException();
 	}
 
 	sealed class VariablesWindowVMOptions {
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
 		public VariablesWindowValueNodesProvider VariablesWindowValueNodesProvider { get; set; }
 		public string WindowContentType { get; set; }
 		public string NameColumnName { get; set; }
 		public string ValueColumnName { get; set; }
 		public string TypeColumnName { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
 		public VariablesWindowKind VariablesWindowKind { get; set; }
 		public Guid VariablesWindowGuid { get; set; }
 	}

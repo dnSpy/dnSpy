@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,8 +33,8 @@ namespace dnSpy.Contracts.Debugger {
 		/// <returns></returns>
 		public static IDbgDotNetRuntime GetDotNetRuntime(this DbgRuntime runtime) {
 			var dnRuntime = runtime.InternalRuntime as IDbgDotNetRuntime;
-			Debug.Assert(dnRuntime != null);
-			if (dnRuntime == null)
+			Debug.Assert(!(dnRuntime is null));
+			if (dnRuntime is null)
 				throw new InvalidOperationException(nameof(DbgRuntime.InternalRuntime) + " must implement " + nameof(IDbgDotNetRuntime));
 			return dnRuntime;
 		}

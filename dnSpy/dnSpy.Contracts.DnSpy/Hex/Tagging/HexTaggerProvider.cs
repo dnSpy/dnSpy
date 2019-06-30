@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,6 +33,6 @@ namespace dnSpy.Contracts.Hex.Tagging {
 		/// <typeparam name="T">Tag type</typeparam>
 		/// <param name="buffer">Hex buffer</param>
 		/// <returns></returns>
-		public abstract IHexTagger<T> CreateTagger<T>(HexBuffer buffer) where T : HexTag;
+		public abstract IHexTagger<T>? CreateTagger<T>(HexBuffer buffer) where T : HexTag;
 	}
 }

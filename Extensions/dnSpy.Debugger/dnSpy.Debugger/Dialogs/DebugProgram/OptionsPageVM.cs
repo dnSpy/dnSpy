@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,16 +21,17 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using dnSpy.Contracts.Debugger.StartDebugging.Dialog;
+using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.Debugger.Dialogs.DebugProgram {
-	sealed class OptionsPageVM {
+	sealed class OptionsPageVM : ViewModelBase {
 		internal StartDebuggingOptionsPage StartDebuggingOptionsPage { get; }
 		internal Guid PageGuid => StartDebuggingOptionsPage.Guid;
 
 		public bool IsValid => StartDebuggingOptionsPage.IsValid;
 		public event EventHandler IsValidChanged;
 
-		public object UIObject => StartDebuggingOptionsPage.UIObject;
+		public object? UIObject => StartDebuggingOptionsPage.UIObject;
 		public string Name => StartDebuggingOptionsPage.DisplayName;
 
 		public OptionsPageVM(StartDebuggingOptionsPage page) {

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,7 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 
 namespace dnSpy.Contracts.Debugger.Breakpoints.Code.FilterExpressionEvaluator {
 	/// <summary>
@@ -33,7 +33,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code.FilterExpressionEvaluator {
 		/// </summary>
 		/// <param name="expr">Filter expression</param>
 		/// <returns></returns>
-		public abstract string IsValidExpression(string expr);
+		public abstract string? IsValidExpression(string expr);
 
 		/// <summary>
 		/// Evaluates <paramref name="expr"/> and returns the result of the expression.
@@ -48,13 +48,13 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code.FilterExpressionEvaluator {
 		/// </summary>
 		/// <param name="output">Output</param>
 		/// <param name="expr">Expression</param>
-		public abstract void Write(ITextColorWriter output, string expr);
+		public abstract void Write(IDbgTextWriter output, string expr);
 	}
 
 	/// <summary>
 	/// Result of evaluating a filter expression
 	/// </summary>
-	public struct DbgFilterExpressionEvaluatorResult {
+	public readonly struct DbgFilterExpressionEvaluatorResult {
 		/// <summary>
 		/// Result if <see cref="HasError"/> is false
 		/// </summary>
@@ -63,12 +63,12 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code.FilterExpressionEvaluator {
 		/// <summary>
 		/// Error message if <see cref="HasError"/> is true
 		/// </summary>
-		public string Error { get; }
+		public string? Error { get; }
 
 		/// <summary>
 		/// true if there was an error
 		/// </summary>
-		public bool HasError => Error != null;
+		public bool HasError => !(Error is null);
 
 		/// <summary>
 		/// Constructor

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
@@ -72,11 +73,11 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			this.dbgTextViewCodeLocationService = dbgTextViewCodeLocationService;
 		}
 
-		ITextView GetTextView() => GetTextView(documentTabService.Value.ActiveTab);
-		ITextView GetTextView(IDocumentTab tab) => (tab?.UIContext as IDocumentViewer)?.TextView;
+		ITextView? GetTextView() => GetTextView(documentTabService.Value.ActiveTab);
+		ITextView? GetTextView(IDocumentTab? tab) => (tab?.UIContext as IDocumentViewer)?.TextView;
 
-		struct LocationsResult : IDisposable {
-			public DbgTextViewBreakpointLocationResult? locRes;
+		readonly struct LocationsResult : IDisposable {
+			public readonly DbgTextViewBreakpointLocationResult? locRes;
 			readonly Lazy<DbgManager> dbgManager;
 			readonly List<DbgCodeLocation> allLocations;
 
@@ -92,11 +93,12 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			}
 		}
 
-		LocationsResult GetLocations(IDocumentTab tab, VirtualSnapshotPoint? position) {
+		LocationsResult GetLocations(IDocumentTab? tab, VirtualSnapshotPoint? position) {
 			var allLocations = new List<DbgCodeLocation>();
 			var textView = GetTextView(tab);
-			if (textView == null)
+			if (textView is null)
 				return new LocationsResult(dbgManager, null, allLocations);
+			Debug.Assert(!(tab is null));
 			var pos = position ?? textView.Caret.Position.VirtualBufferPosition;
 			if (pos.Position.Snapshot != textView.TextSnapshot)
 				throw new ArgumentException();
@@ -104,7 +106,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			foreach (var loc in dbgTextViewCodeLocationService.Value.CreateLocation(tab, textView, pos))
 				UpdateResult(allLocations, textView, ref res, loc, useIfSameSpan: false);
 			SnapshotSpan span;
-			if (res != null) {
+			if (!(res is null)) {
 				var resSpan = res.Value.Span.SnapshotSpan;
 				var newStart = Min(pos.Position, resSpan.Start);
 				var newEnd = Max(pos.Position, resSpan.End);
@@ -121,15 +123,15 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		static SnapshotPoint Max(SnapshotPoint a, SnapshotPoint b) => a >= b ? a : b;
 
 		static void UpdateResult(List<DbgCodeLocation> allLocations, ITextView textView, ref DbgTextViewBreakpointLocationResult? res, DbgTextViewBreakpointLocationResult? result, bool useIfSameSpan) {
-			if (result?.Locations == null)
+			if (result?.Locations is null)
 				return;
 			allLocations.AddRange(result.Value.Locations);
 			if (result.Value.Span.Snapshot != textView.TextSnapshot)
 				return;
-			if (res == null)
+			if (res is null)
 				res = result;
 			else if (useIfSameSpan) {
-				if (result.Value.Span.Start <= res.Value.Span.Start)
+				if (result.Value.Span.Start == res.Value.Span.Start)
 					res = result;
 			}
 			else if (result.Value.Span.Start < res.Value.Span.Start)
@@ -154,7 +156,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			}
 		}
 
-		IDocumentTab GetTab(ITextView textView) {
+		IDocumentTab? GetTab(ITextView textView) {
 			foreach (var g in documentTabService.Value.TabGroupService.TabGroups) {
 				foreach (var t in g.TabContents) {
 					var tab = t as IDocumentTab;
@@ -176,11 +178,11 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		public override bool CanToggleCreateBreakpoint => GetToggleCreateBreakpointKind() != ToggleCreateBreakpointKind.None;
 		public override void ToggleCreateBreakpoint() => ToggleCreateBreakpoint(GetToggleCreateBreakpointInfo(documentTabService.Value.ActiveTab, null));
 
-		struct ToggleCreateBreakpointInfoResult : IDisposable {
+		readonly struct ToggleCreateBreakpointInfoResult : IDisposable {
 			readonly Lazy<DbgManager> dbgManager;
-			public ToggleCreateBreakpointKind kind;
-			public DbgCodeBreakpoint[] breakpoints;
-			public DbgCodeLocation[] locations;
+			public readonly ToggleCreateBreakpointKind kind;
+			public readonly DbgCodeBreakpoint[] breakpoints;
+			public readonly DbgCodeLocation[] locations;
 			public ToggleCreateBreakpointInfoResult(Lazy<DbgManager> dbgManager, ToggleCreateBreakpointKind kind, DbgCodeBreakpoint[] breakpoints, DbgCodeLocation[] locations) {
 				this.dbgManager = dbgManager;
 				this.kind = kind;
@@ -189,22 +191,22 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			}
 
 			public void Dispose() {
-				if (locations != null && locations.Length > 0)
+				if (!(locations is null) && locations.Length > 0)
 					dbgManager.Value.Close(locations);
 			}
 		}
 
-		ToggleCreateBreakpointInfoResult GetToggleCreateBreakpointInfo(IDocumentTab tab, VirtualSnapshotPoint? position) {
+		ToggleCreateBreakpointInfoResult GetToggleCreateBreakpointInfo(IDocumentTab? tab, VirtualSnapshotPoint? position) {
 			using (var info = GetLocations(tab, position)) {
 				var locRes = info.locRes;
-				var bps = locRes == null ? Array.Empty<DbgCodeBreakpoint>() : GetBreakpoints(locRes.Value);
+				var bps = locRes is null ? Array.Empty<DbgCodeBreakpoint>() : GetBreakpoints(locRes.Value);
 				if (bps.Length != 0) {
 					if (bps.All(a => a.IsEnabled))
 						return new ToggleCreateBreakpointInfoResult(dbgManager, ToggleCreateBreakpointKind.Delete, bps, Array.Empty<DbgCodeLocation>());
 					return new ToggleCreateBreakpointInfoResult(dbgManager, ToggleCreateBreakpointKind.Enable, bps, Array.Empty<DbgCodeLocation>());
 				}
 				else {
-					if (locRes == null || locRes.Value.Locations.Length == 0)
+					if (locRes is null || locRes.Value.Locations.Length == 0)
 						return new ToggleCreateBreakpointInfoResult(dbgManager, ToggleCreateBreakpointKind.None, Array.Empty<DbgCodeBreakpoint>(), Array.Empty<DbgCodeLocation>());
 					return new ToggleCreateBreakpointInfoResult(dbgManager, ToggleCreateBreakpointKind.Add, Array.Empty<DbgCodeBreakpoint>(), locRes.Value.Locations.Select(a => a.Clone()).ToArray());
 				}

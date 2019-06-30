@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,7 +34,7 @@ namespace dnSpy.Commands {
 		WeakReference weakSourceElement;
 		WeakReference weakTarget;
 
-		struct CommandTargetFilterInfo {
+		readonly struct CommandTargetFilterInfo {
 			public ICommandTargetFilter Filter { get; }
 			public double Order { get; }
 
@@ -45,25 +45,25 @@ namespace dnSpy.Commands {
 		}
 
 		sealed class CommandTargetCollection : ICommandTargetCollection {
-			RegisteredCommandElement registeredCommandElement;
+			RegisteredCommandElement? registeredCommandElement;
 
 			public CommandTargetCollection(RegisteredCommandElement registeredCommandElement) => this.registeredCommandElement = registeredCommandElement;
 
 			public CommandTargetStatus CanExecute(Guid group, int cmdId) {
-				if (registeredCommandElement?.TryGetTargetOrUnregister() == null) {
+				if (registeredCommandElement?.TryGetTargetOrUnregister() is null) {
 					registeredCommandElement = null;
 					return CommandTargetStatus.NotHandled;
 				}
 				return registeredCommandElement.CanExecute(group, cmdId);
 			}
 
-			public CommandTargetStatus Execute(Guid group, int cmdId, object args = null) {
-				object result = null;
+			public CommandTargetStatus Execute(Guid group, int cmdId, object? args = null) {
+				object? result = null;
 				return Execute(group, cmdId, args, ref result);
 			}
 
-			public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
-				if (registeredCommandElement?.TryGetTargetOrUnregister() == null) {
+			public CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) {
+				if (registeredCommandElement?.TryGetTargetOrUnregister() is null) {
 					registeredCommandElement = null;
 					return CommandTargetStatus.NotHandled;
 				}
@@ -71,9 +71,9 @@ namespace dnSpy.Commands {
 			}
 
 			public void AddFilter(ICommandTargetFilter filter, double order) =>
-				registeredCommandElement.AddFilter(filter, order);
+				registeredCommandElement?.AddFilter(filter, order);
 			public void RemoveFilter(ICommandTargetFilter filter) =>
-				registeredCommandElement.RemoveFilter(filter);
+				registeredCommandElement?.RemoveFilter(filter);
 		}
 
 		sealed class NextCommandTarget : ICommandTarget {
@@ -88,29 +88,29 @@ namespace dnSpy.Commands {
 			public CommandTargetStatus CanExecute(Guid group, int cmdId) {
 				var filter = filterWeakRef.Target as ICommandTargetFilter;
 				var owner = ownerWeakRef.Target as RegisteredCommandElement;
-				if (filter != null && owner != null)
+				if (!(filter is null) && !(owner is null))
 					return owner.CanExecuteNext(filter, group, cmdId);
 				return CommandTargetStatus.NotHandled;
 			}
 
-			public CommandTargetStatus Execute(Guid group, int cmdId, object args = null) {
-				object result = null;
+			public CommandTargetStatus Execute(Guid group, int cmdId, object? args = null) {
+				object? result = null;
 				return Execute(group, cmdId, args, ref result);
 			}
 
-			public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
+			public CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) {
 				var filter = filterWeakRef.Target as ICommandTargetFilter;
 				var owner = ownerWeakRef.Target as RegisteredCommandElement;
-				if (filter != null && owner != null)
+				if (!(filter is null) && !(owner is null))
 					owner.ExecuteNext(filter, group, cmdId, args, ref result);
 				return CommandTargetStatus.NotHandled;
 			}
 		}
 
 		public RegisteredCommandElement(CommandService commandService, UIElement sourceElement, KeyShortcutCollection keyShortcutCollection, object target) {
-			if (sourceElement == null)
+			if (sourceElement is null)
 				throw new ArgumentNullException(nameof(sourceElement));
-			if (target == null)
+			if (target is null)
 				throw new ArgumentNullException(nameof(target));
 			this.commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
 			weakSourceElement = new WeakReference(sourceElement);
@@ -122,12 +122,12 @@ namespace dnSpy.Commands {
 			sourceElement.PreviewTextInput += SourceElement_PreviewTextInput;
 		}
 
-		UIElement TryGetSourceElement() => weakSourceElement.Target as UIElement;
+		UIElement? TryGetSourceElement() => weakSourceElement.Target as UIElement;
 		object TryGetTarget() => weakTarget.Target as object;
 
-		object TryGetTargetOrUnregister() {
+		object? TryGetTargetOrUnregister() {
 			var target = TryGetTarget();
-			if (target != null)
+			if (!(target is null))
 				return target;
 
 			Unregister();
@@ -137,7 +137,7 @@ namespace dnSpy.Commands {
 		CommandInfo GetCommand(KeyEventArgs e, object target, out bool waitForSecondKey) {
 			var keyInput = new KeyInput(e);
 			ProviderAndCommand result;
-			if (prevKey != null) {
+			if (!(prevKey is null)) {
 				waitForSecondKey = false;
 				var keyShortcut = new KeyShortcut(prevKey.Value, keyInput);
 				result = keyShortcutCollection.GetTwoKeyShortcuts(keyShortcut).FirstOrDefault();
@@ -162,7 +162,7 @@ namespace dnSpy.Commands {
 
 		void SourceElement_PreviewKeyDown(object sender, KeyEventArgs e) {
 			var target = TryGetTargetOrUnregister();
-			if (target == null)
+			if (target is null)
 				return;
 			var cmd = GetCommand(e, target, out bool waitForSecondKey);
 			if (waitForSecondKey) {
@@ -176,28 +176,28 @@ namespace dnSpy.Commands {
 			if (CommandTarget.CanExecute(cmd.Group, cmd.ID) != CommandTargetStatus.Handled)
 				return;
 
-			object result = null;
+			object? result = null;
 			var res = CommandTarget.Execute(cmd.Group, cmd.ID, cmd.Arguments, ref result);
 			if (res == CommandTargetStatus.Handled)
 				e.Handled = true;
 		}
 
 		void SourceElement_PreviewTextInput(object sender, TextCompositionEventArgs e) {
-			Debug.Assert(prevKey == null);
+			Debug.Assert(prevKey is null);
 			prevKey = null;
 			var target = TryGetTargetOrUnregister();
-			if (target == null)
+			if (target is null)
 				return;
 
 			var cmd = commandService.CreateCommandInfo(target, e.Text);
-			if (cmd == null)
+			if (cmd is null)
 				return;
 
 			ExecuteCommand(cmd.Value, e);
 		}
 
 		CommandTargetStatus CanExecute(Guid group, int cmdId) => CanExecute(0, group, cmdId);
-		CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) =>
+		CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) =>
 			Execute(0, group, cmdId, args, ref result);
 
 		CommandTargetStatus CanExecuteNext(ICommandTargetFilter filter, Guid group, int cmdId) {
@@ -207,7 +207,7 @@ namespace dnSpy.Commands {
 			return CanExecute(index + 1, group, cmdId);
 		}
 
-		CommandTargetStatus ExecuteNext(ICommandTargetFilter filter, Guid group, int cmdId, object args, ref object result) {
+		CommandTargetStatus ExecuteNext(ICommandTargetFilter filter, Guid group, int cmdId, object? args, ref object? result) {
 			int index = IndexOf(filter);
 			if (index < 0)
 				return CommandTargetStatus.NotHandled;
@@ -229,7 +229,7 @@ namespace dnSpy.Commands {
 			return CommandTargetStatus.NotHandled;
 		}
 
-		CommandTargetStatus Execute(int currentIndex, Guid group, int cmdId, object args, ref object result) {
+		CommandTargetStatus Execute(int currentIndex, Guid group, int cmdId, object? args, ref object? result) {
 			if (currentIndex < 0)
 				throw new ArgumentOutOfRangeException(nameof(currentIndex));
 			var infos = commandTargetInfos.ToArray();
@@ -263,7 +263,7 @@ namespace dnSpy.Commands {
 		}
 
 		public void AddFilter(ICommandTargetFilter filter, double order) {
-			if (filter == null)
+			if (filter is null)
 				throw new ArgumentNullException(nameof(filter));
 			if (IndexOf(filter) >= 0)
 				throw new ArgumentException("Filter has already been added to the list");
@@ -273,7 +273,7 @@ namespace dnSpy.Commands {
 		}
 
 		public void RemoveFilter(ICommandTargetFilter filter) {
-			if (filter == null)
+			if (filter is null)
 				throw new ArgumentNullException(nameof(filter));
 			int index = IndexOf(filter);
 			if (index < 0)
@@ -283,7 +283,7 @@ namespace dnSpy.Commands {
 
 		public void Unregister() {
 			var sourceElement = TryGetSourceElement();
-			if (sourceElement != null) {
+			if (!(sourceElement is null)) {
 				sourceElement.PreviewKeyDown -= SourceElement_PreviewKeyDown;
 				sourceElement.PreviewTextInput -= SourceElement_PreviewTextInput;
 			}

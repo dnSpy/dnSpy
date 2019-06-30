@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,7 +35,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// extensions are "exe" and "dll" but not ".exe"</param>
 		/// <param name="filter">Filename filter or null</param>
 		/// <returns></returns>
-		string GetFilename(string currentFileName, string defaultExtension, string filter = null);
+		string? GetFilename(string? currentFileName, string? defaultExtension, string? filter = null);
 
 		/// <summary>
 		/// Lets the user pick filenames. Returns an empty array if the user canceled the dialog box.
@@ -45,7 +45,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// extensions are "exe" and "dll" but not ".exe"</param>
 		/// <param name="filter">Filename filter or null</param>
 		/// <returns></returns>
-		string[] GetFilenames(string currentFileName, string defaultExtension, string filter = null);
+		string[] GetFilenames(string? currentFileName, string? defaultExtension, string? filter = null);
 	}
 
 	/// <summary>
@@ -54,7 +54,7 @@ namespace dnSpy.Contracts.MVVM {
 	[Export(typeof(IPickFilename))]
 	public sealed class PickFilename : IPickFilename {
 		/// <inheritdoc/>
-		public string GetFilename(string currentFileName, string defaultExtension, string filter) {
+		public string? GetFilename(string? currentFileName, string? defaultExtension, string? filter) {
 			var dialog = new OpenFileDialog() {
 				Filter = string.IsNullOrEmpty(filter) ? PickFilenameConstants.AnyFilenameFilter : filter,
 				RestoreDirectory = true,
@@ -71,7 +71,7 @@ namespace dnSpy.Contracts.MVVM {
 		}
 
 		/// <inheritdoc/>
-		public string[] GetFilenames(string currentFileName, string defaultExtension, string filter = null) {
+		public string[] GetFilenames(string? currentFileName, string? defaultExtension, string? filter = null) {
 			var dialog = new OpenFileDialog() {
 				Filter = string.IsNullOrEmpty(filter) ? PickFilenameConstants.AnyFilenameFilter : filter,
 				RestoreDirectory = true,

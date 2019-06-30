@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,15 +30,12 @@ namespace dnSpy.Decompiler {
 	}
 
 	class DecompilerServiceSettings : ViewModelBase, IDecompilerServiceSettings {
-		protected virtual void OnModified() { }
-
 		public Guid LanguageGuid {
-			get { return languageGuid; }
+			get => languageGuid;
 			set {
 				if (languageGuid != value) {
 					languageGuid = value;
 					OnPropertyChanged(nameof(LanguageGuid));
-					OnModified();
 				}
 			}
 		}
@@ -55,16 +52,12 @@ namespace dnSpy.Decompiler {
 		DecompilerServiceSettingsImpl(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			LanguageGuid = sect.Attribute<Guid?>(nameof(LanguageGuid)) ?? LanguageGuid;
-			disableSave = false;
+			PropertyChanged += DecompilerServiceSettingsImpl_PropertyChanged;
 		}
-		readonly bool disableSave;
 
-		protected override void OnModified() {
-			if (disableSave)
-				return;
+		void DecompilerServiceSettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(LanguageGuid), LanguageGuid);
 		}

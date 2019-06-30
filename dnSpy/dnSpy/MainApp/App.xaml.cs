@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -47,7 +47,7 @@ using dnSpy.Culture;
 using dnSpy.Documents.Tabs.Dialogs;
 using dnSpy.Extension;
 using dnSpy.Images;
-using dnSpy.Roslyn.Shared.Text.Classification;
+using dnSpy.Roslyn.Text.Classification;
 using dnSpy.Scripting;
 using dnSpy.Settings;
 using Microsoft.VisualStudio.Composition;
@@ -73,35 +73,37 @@ namespace dnSpy.MainApp {
 			}
 		}
 
-		static void ShowException(Exception ex) {
+		static void ShowException(Exception? ex) {
 			string msg = ex?.ToString() ?? "Unknown exception";
-			MessageBox.Show(msg, "dnSpy", MessageBoxButton.OK, MessageBoxImage.Error);
+			MessageBox.Show(msg, Constants.DnSpy, MessageBoxButton.OK, MessageBoxImage.Error);
 		}
 
 		readonly ResourceManagerTokenCacheImpl resourceManagerTokenCacheImpl;
 		long resourceManagerTokensOffset;
-		volatile Assembly[] mefAssemblies;
-		AppWindow appWindow;
-		ExtensionService extensionService;
-		IDsLoaderService dsLoaderService;
+		volatile Assembly[]? mefAssemblies;
+		AppWindow? appWindow;
+		ExtensionService? extensionService;
+		IDsLoaderService? dsLoaderService;
 		readonly List<LoadedExtension> loadedExtensions = new List<LoadedExtension>();
 		readonly IAppCommandLineArgs args;
-		ExportProvider exportProvider;
+		ExportProvider? exportProvider;
+#if NETCOREAPP
+		readonly NetCoreAssemblyLoader netCoreAssemblyLoader = new NetCoreAssemblyLoader(System.Runtime.Loader.AssemblyLoadContext.Default);
+#endif
 
 		Task<ExportProvider> initializeMEFTask;
-		Stopwatch startupStopwatch;
+		Stopwatch? startupStopwatch;
 		public App(bool readSettings, Stopwatch startupStopwatch) {
+			resourceManagerTokenCacheImpl = new ResourceManagerTokenCacheImpl();
+
 			// PERF: Init MEF on a BG thread. Results in slightly faster startup, eg. InitializeComponent() becomes a 'free' call on this UI thread
 			initializeMEFTask = Task.Run(() => InitializeMEF(readSettings, useCache: readSettings));
 			this.startupStopwatch = startupStopwatch;
 
-			resourceManagerTokenCacheImpl = new ResourceManagerTokenCacheImpl();
 			resourceManagerTokenCacheImpl.TokensUpdated += ResourceManagerTokenCacheImpl_TokensUpdated;
 			ResourceHelper.SetResourceManagerTokenCache(resourceManagerTokenCacheImpl);
 			args = new AppCommandLineArgs();
 			AppDirectories.SetSettingsFilename(args.SettingsFilename);
-			if (args.SingleInstance)
-				SwitchToOtherInstance();
 
 			AddAppContextFixes();
 			InstallExceptionHandlers();
@@ -111,12 +113,21 @@ namespace dnSpy.MainApp {
 			Exit += App_Exit;
 		}
 
-		// These can also be put in the App.config file (semicolon-separated) but I prefer code in
-		// this case.
 		void AddAppContextFixes() {
 			// This prevents a thin line between the tab item and its content when dpi is eg. 144.
 			// It's hard to miss if you check the Options dialog box.
 			AppContext.SetSwitch("Switch.MS.Internal.DoNotApplyLayoutRoundingToMarginsAndBorderThickness", true);
+
+#if NETFRAMEWORK
+			// Workaround for a bug
+			//		Switch.System.Windows.Controls.Grid.StarDefinitionsCanExceedAvailableSpace=true
+			//		https://docs.microsoft.com/en-us/dotnet/framework/migration-guide/runtime/4.7-4.7.1#resizing-a-grid-can-hang
+			// Repro: DPI=120%, .NET Framework 4.7.1, open the File, View, or Window menus
+			//		https://github.com/0xd4d/dnSpy/issues/734
+			//		https://github.com/0xd4d/dnSpy/issues/735
+			// This has been fixed in .NET Core 3.0 and .NET Framework 4.8
+			AppContext.SetSwitch("Switch.System.Windows.Controls.Grid.StarDefinitionsCanExceedAvailableSpace", true);
+#endif
 		}
 
 		ExportProvider InitializeMEF(bool readSettings, bool useCache) {
@@ -140,11 +151,11 @@ namespace dnSpy.MainApp {
 		}
 
 		static string GetCachedCompositionConfigurationFilename() {
-			var profileDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "dnSpy", "Startup");
-			return Path.Combine(profileDir, "dnSpy-mef-info-" + (IntPtr.Size == 4 ? "32" : "64") + ".bin");
+			var profileDir = BGJitUtils.GetFolder();
+			return Path.Combine(profileDir, Constants.DnSpyFile + "-mef-info.bin");
 		}
 
-		IExportProviderFactory TryCreateExportProviderFactoryCached(Resolver resolver, bool useCache, out long resourceManagerTokensOffset) {
+		IExportProviderFactory? TryCreateExportProviderFactoryCached(Resolver resolver, bool useCache, out long resourceManagerTokensOffset) {
 			resourceManagerTokensOffset = -1;
 			if (!useCache)
 				return null;
@@ -157,13 +168,14 @@ namespace dnSpy.MainApp {
 			}
 		}
 
-		IExportProviderFactory TryCreateExportProviderFactoryCachedCore(Resolver resolver, out long resourceManagerTokensOffset) {
+		IExportProviderFactory? TryCreateExportProviderFactoryCachedCore(Resolver resolver, out long resourceManagerTokensOffset) {
+			Debug.Assert(!(mefAssemblies is null));
 			resourceManagerTokensOffset = -1;
 			var filename = GetCachedCompositionConfigurationFilename();
 			if (!File.Exists(filename))
 				return null;
 
-			Stream cachedStream = null;
+			Stream? cachedStream = null;
 			try {
 				try {
 					cachedStream = File.OpenRead(filename);
@@ -184,7 +196,7 @@ namespace dnSpy.MainApp {
 				cachedStream?.Dispose();
 			}
 
-			bool IsFileIOException(Exception ex) => ex is IOException || ex is UnauthorizedAccessException || ex is SecurityException;
+			static bool IsFileIOException(Exception ex) => ex is IOException || ex is UnauthorizedAccessException || ex is SecurityException;
 		}
 
 		IExportProviderFactory CreateExportProviderFactorySlow(Resolver resolver) {
@@ -192,14 +204,17 @@ namespace dnSpy.MainApp {
 			var parts = discovery.CreatePartsAsync(mefAssemblies).Result;
 			Debug.Assert(parts.ThrowOnErrors() == parts);
 
-			var catalog = ComposableCatalog.Create(resolver).AddParts(parts).WithDesktopSupport();
+			var catalog = ComposableCatalog.Create(resolver).AddParts(parts);
 			var config = CompositionConfiguration.Create(catalog);
+			// If this fails/throws, one of the following is probably true:
+			//	- you didn't build all projects or all files aren't in the same output dir
+			//	- netcoreapp: dnSpy isn't the startup project (eg. dnSpy-x86 is)
 			Debug.Assert(config.ThrowOnErrors() == config);
 
 			writingCachedMefFile = true;
 			Task.Run(() => SaveMefStateAsync(config)).ContinueWith(t => {
 				var ex = t.Exception;
-				Debug.Assert(ex == null);
+				Debug.Assert(ex is null);
 				writingCachedMefFile = false;
 			}, CancellationToken.None);
 
@@ -208,6 +223,7 @@ namespace dnSpy.MainApp {
 
 		bool writingCachedMefFile;
 		async Task SaveMefStateAsync(CompositionConfiguration config) {
+			Debug.Assert(!(mefAssemblies is null));
 			string filename = GetCachedCompositionConfigurationFilename();
 			bool fileCreated = false;
 			bool deleteFile = true;
@@ -247,6 +263,7 @@ namespace dnSpy.MainApp {
 		}
 
 		void UpdateResourceManagerTokens() {
+			Debug.Assert(!(mefAssemblies is null));
 			var tokensOffset = resourceManagerTokensOffset;
 			if (tokensOffset < 0)
 				return;
@@ -275,11 +292,14 @@ namespace dnSpy.MainApp {
 		}
 
 		Assembly[] GetAssemblies() {
+#if NETCOREAPP
+			netCoreAssemblyLoader.AddSearchPath(AppDirectories.BinDirectory);
+#endif
 			var list = new List<Assembly>();
 			list.Add(GetType().Assembly);
 			// dnSpy.Contracts.DnSpy
 			list.Add(typeof(MetroWindow).Assembly);
-			// dnSpy.Roslyn.Shared
+			// dnSpy.Roslyn
 			list.Add(typeof(RoslynClassifier).Assembly);
 			// Microsoft.VisualStudio.Text.Logic (needed for the editor option definitions)
 			list.Add(typeof(Microsoft.VisualStudio.Text.Editor.ConvertTabsToSpaces).Assembly);
@@ -289,6 +309,8 @@ namespace dnSpy.MainApp {
 			list.Add(typeof(Microsoft.VisualStudio.Text.Editor.HighlightCurrentLineOption).Assembly);
 			// dnSpy.Roslyn.EditorFeatures
 			list.Add(typeof(Roslyn.EditorFeatures.Dummy).Assembly);
+			// dnSpy.Roslyn.CSharp.EditorFeatures
+			list.Add(typeof(Roslyn.CSharp.EditorFeatures.Dummy).Assembly);
 			// dnSpy.Roslyn.VisualBasic.EditorFeatures
 			list.Add(typeof(Roslyn.VisualBasic.EditorFeatures.Dummy).Assembly);
 			foreach (var asm in LoadExtensionAssemblies())
@@ -297,11 +319,15 @@ namespace dnSpy.MainApp {
 		}
 
 		Assembly[] LoadExtensionAssemblies() {
-			var dir = Path.GetDirectoryName(GetType().Assembly.Location);
+			var dir = AppDirectories.BinDirectory;
 			// Load the modules in a predictable order or multicore-JIT could stop recording. See
 			// "Understanding Background JIT compilation -> What can go wrong with background JIT compilation"
 			// in the PerfView docs for more info.
 			var files = GetExtensionFiles(dir).OrderBy(a => a, StringComparer.OrdinalIgnoreCase).ToArray();
+#if NETCOREAPP
+			foreach (var file in files)
+				netCoreAssemblyLoader.AddSearchPath(Path.GetDirectoryName(file));
+#endif
 			var asms = new List<Assembly>();
 			foreach (var file in files) {
 				try {
@@ -368,7 +394,7 @@ namespace dnSpy.MainApp {
 
 		bool CanLoadExtension(Assembly asm) {
 			var ourPublicKeyToken = GetType().Assembly.GetName().GetPublicKeyToken();
-			var minimumVersion = new Version(3, 0, 0, 0);
+			var minimumVersion = new Version(5, 0, 0, 0);
 			foreach (var a in asm.GetReferencedAssemblies()) {
 				if (!Equals(ourPublicKeyToken, a.GetPublicKeyToken()))
 					continue;
@@ -379,7 +405,7 @@ namespace dnSpy.MainApp {
 		}
 
 		static bool Equals(byte[] a, byte[] b) {
-			if (a == null || b == null || a.Length != b.Length)
+			if (a is null || b is null || a.Length != b.Length)
 				return false;
 			for (int i = 0; i < a.Length; i++) {
 				if (a[i] != b[i])
@@ -408,14 +434,14 @@ namespace dnSpy.MainApp {
 		}
 		static readonly IntPtr COPYDATASTRUCT_dwData = new IntPtr(0x11C9B152);
 		static readonly IntPtr COPYDATASTRUCT_result = new IntPtr(0x615F9D6E);
-		const string COPYDATASTRUCT_HEADER = "dnSpy";	// One line only
+		const string COPYDATASTRUCT_HEADER = Constants.DnSpy;	// One line only
 
 		void SwitchToOtherInstance() => EnumWindows(EnumWindowsHandler, IntPtr.Zero);
 
 		unsafe bool EnumWindowsHandler(IntPtr hWnd, IntPtr lParam) {
 			var sb = new StringBuilder(256);
 			GetWindowText(hWnd, sb, sb.Capacity);
-			if (sb.ToString().StartsWith("dnSpy ", StringComparison.Ordinal)) {
+			if (sb.ToString().StartsWith(Constants.DnSpy + " ", StringComparison.Ordinal)) {
 				var args = Environment.GetCommandLineArgs();
 				args[0] = COPYDATASTRUCT_HEADER;
 				var msg = string.Join(Environment.NewLine, args);
@@ -455,11 +481,12 @@ namespace dnSpy.MainApp {
 		}
 
 		void MainWindow_SourceInitialized(object sender, EventArgs e) {
+			Debug.Assert(!(appWindow is null));
 			appWindow.MainWindow.SourceInitialized -= MainWindow_SourceInitialized;
 
 			var hwndSource = PresentationSource.FromVisual(appWindow.MainWindow) as HwndSource;
-			Debug.Assert(hwndSource != null);
-			if (hwndSource != null)
+			Debug.Assert(!(hwndSource is null));
+			if (!(hwndSource is null))
 				hwndSource.AddHook(WndProc);
 		}
 
@@ -468,7 +495,7 @@ namespace dnSpy.MainApp {
 			dsLoaderService?.Save();
 			try {
 				var settingsService = exportProvider?.GetExportedValue<SettingsService>();
-				if (settingsService != null)
+				if (!(settingsService is null))
 					new XmlSettingsWriter(settingsService).Write();
 			}
 			catch {
@@ -487,13 +514,13 @@ namespace dnSpy.MainApp {
 		void FixEditorContextMenuStyle() {
 			var module = typeof(ContextMenu).Module;
 			var type = module.GetType("System.Windows.Documents.TextEditorContextMenu+EditorContextMenu", false, false);
-			Debug.Assert(type != null);
-			if (type == null)
+			Debug.Assert(!(type is null));
+			if (type is null)
 				return;
 			const string styleKey = "EditorContextMenuStyle";
 			var style = Resources[styleKey];
-			Debug.Assert(style != null);
-			if (style == null)
+			Debug.Assert(!(style is null));
+			if (style is null)
 				return;
 			Resources.Remove(styleKey);
 			Resources.Add(type, style);
@@ -503,6 +530,9 @@ namespace dnSpy.MainApp {
 			base.OnStartup(e);
 
 			exportProvider = initializeMEFTask.GetAwaiter().GetResult();
+
+			if (args.SingleInstance && !exportProvider.GetExportedValue<AppSettingsImpl>().AllowMoreThanOneInstance)
+				SwitchToOtherInstance();
 
 			var cultureService = exportProvider.GetExportedValue<CultureService>();
 			cultureService.Initialize(args);
@@ -529,7 +559,7 @@ namespace dnSpy.MainApp {
 		}
 
 		void DsLoaderService_OnAppLoaded(object sender, EventArgs e) {
-			startupStopwatch.Stop();
+			startupStopwatch!.Stop();
 			DnSpyEventSource.Log.StartupStop();
 			var sw = startupStopwatch;
 			startupStopwatch = null;
@@ -537,9 +567,9 @@ namespace dnSpy.MainApp {
 			if (args.ShowStartupTime)
 				ShowElapsedTime(sw);
 
-			dsLoaderService.OnAppLoaded -= DsLoaderService_OnAppLoaded;
-			appWindow.AppLoaded = true;
-			extensionService.OnAppLoaded();
+			dsLoaderService!.OnAppLoaded -= DsLoaderService_OnAppLoaded;
+			appWindow!.AppLoaded = true;
+			extensionService!.OnAppLoaded();
 			HandleAppArgs(args);
 		}
 
@@ -547,14 +577,16 @@ namespace dnSpy.MainApp {
 		static void ShowElapsedTime(Stopwatch sw) => MsgBox.Instance.Show($"{sw.ElapsedMilliseconds} ms, {sw.ElapsedTicks} ticks");
 
 		void HandleAppArgs(IAppCommandLineArgs appArgs) {
+			Debug.Assert(!(exportProvider is null));
+			Debug.Assert(!(appWindow is null));
 			if (appArgs.Activate && appWindow.MainWindow.WindowState == WindowState.Minimized)
 				WindowUtils.SetState(appWindow.MainWindow, WindowState.Normal);
 
 			var decompiler = GetDecompiler(appArgs.Language);
-			if (decompiler != null)
+			if (!(decompiler is null))
 				exportProvider.GetExportedValue<IDecompilerService>().Decompiler = decompiler;
 
-			if (appArgs.FullScreen != null)
+			if (!(appArgs.FullScreen is null))
 				appWindow.MainWindow.IsFullScreen = appArgs.FullScreen.Value;
 
 			if (appArgs.NewTab)
@@ -573,18 +605,20 @@ namespace dnSpy.MainApp {
 		}
 
 		void HandleAppArgs2(IAppCommandLineArgs appArgs) {
+			Debug.Assert(!(exportProvider is null));
 			foreach (var handler in exportProvider.GetExports<IAppCommandLineArgsHandler>().OrderBy(a => a.Value.Order))
 				handler.Value.OnNewArgs(appArgs);
 		}
 
-		IDecompiler GetDecompiler(string language) {
+		IDecompiler? GetDecompiler(string language) {
+			Debug.Assert(!(exportProvider is null));
 			if (string.IsNullOrEmpty(language))
 				return null;
 
 			var decompilerService = exportProvider.GetExportedValue<IDecompilerService>();
 			if (Guid.TryParse(language, out var guid)) {
 				var lang = decompilerService.Find(guid);
-				if (lang != null)
+				if (!(lang is null))
 					return lang;
 			}
 

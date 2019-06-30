@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,8 +23,8 @@ using dnlib.DotNet.Pdb;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class LocalOptions {
-		public TypeSig Type;
-		public string Name;
+		public TypeSig? Type;
+		public string? Name;
 		public PdbLocalAttributes Attributes;
 
 		public LocalOptions() {

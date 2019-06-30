@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		public string Name { get; }
 
 		/// <summary>
-		/// Gets the stream. Can be called in any thread.
+		/// Gets the stream. Can be called on any thread.
 		/// </summary>
 		/// <param name="token">Cancellation token</param>
 		/// <returns></returns>
@@ -43,9 +43,9 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// Constructor
 		/// </summary>
 		/// <param name="name">Name</param>
-		/// <param name="getStream">Returns the stream. It can be called in any thread.</param>
+		/// <param name="getStream">Returns the stream. It can be called on any thread.</param>
 		public ResourceData(string name, Func<CancellationToken, Stream> getStream) {
-			Name = name;
+			Name = Uri.UnescapeDataString(name);
 			this.getStream = getStream;
 		}
 	}

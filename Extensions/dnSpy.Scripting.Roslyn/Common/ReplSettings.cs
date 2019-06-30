@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.ComponentModel;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Text.Editor;
@@ -25,27 +26,23 @@ using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Scripting.Roslyn.Common {
 	abstract class ReplSettings : ViewModelBase {
-		protected virtual void OnModified() { }
-
 		public WordWrapStyles WordWrapStyle {
-			get { return wordWrapStyle; }
+			get => wordWrapStyle;
 			set {
 				if (wordWrapStyle != value) {
 					wordWrapStyle = value;
 					OnPropertyChanged(nameof(WordWrapStyle));
-					OnModified();
 				}
 			}
 		}
 		WordWrapStyles wordWrapStyle = WordWrapStylesConstants.DefaultValue;
 
 		public bool ShowLineNumbers {
-			get { return showLineNumbers; }
+			get => showLineNumbers;
 			set {
 				if (showLineNumbers != value) {
 					showLineNumbers = value;
 					OnPropertyChanged(nameof(ShowLineNumbers));
-					OnModified();
 				}
 			}
 		}
@@ -60,17 +57,13 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			this.settingsService = settingsService;
 			this.guid = guid;
 
-			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(guid);
 			WordWrapStyle = sect.Attribute<WordWrapStyles?>(nameof(WordWrapStyle)) ?? WordWrapStyle;
 			ShowLineNumbers = sect.Attribute<bool?>(nameof(ShowLineNumbers)) ?? ShowLineNumbers;
-			disableSave = false;
+			PropertyChanged += ReplSettingsImplBase_PropertyChanged;
 		}
-		readonly bool disableSave;
 
-		protected override void OnModified() {
-			if (disableSave)
-				return;
+		void ReplSettingsImplBase_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(guid);
 			sect.Attribute(nameof(WordWrapStyle), WordWrapStyle);
 			sect.Attribute(nameof(ShowLineNumbers), ShowLineNumbers);

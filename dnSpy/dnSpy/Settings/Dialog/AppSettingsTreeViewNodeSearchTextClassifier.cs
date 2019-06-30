@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,7 +35,7 @@ namespace dnSpy.Settings.Dialog {
 		[ImportingConstructor]
 		AppSettingsTreeViewNodeSearchTextClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) => appSettingsTreeViewNodeMatchHighlightClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.AppSettingsTreeViewNodeMatchHighlight);
 
-		public ITextClassifier Create(IContentType contentType) => new AppSettingsTreeViewNodeSearchTextClassifier(appSettingsTreeViewNodeMatchHighlightClassificationType);
+		public ITextClassifier? Create(IContentType contentType) => new AppSettingsTreeViewNodeSearchTextClassifier(appSettingsTreeViewNodeMatchHighlightClassificationType);
 	}
 
 	sealed class AppSettingsTreeViewNodeSearchTextClassifier : ITextClassifier {
@@ -45,7 +45,7 @@ namespace dnSpy.Settings.Dialog {
 
 		public IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context) {
 			var tvContext = context as AppSettingsTreeViewNodeClassifierContext;
-			if (tvContext == null)
+			if (tvContext is null)
 				yield break;
 			foreach (var span in tvContext.SearchMatcher.GetMatchSpans(tvContext.Text))
 				yield return new TextClassificationTag(span, appSettingsTreeViewNodeMatchHighlightClassificationType);

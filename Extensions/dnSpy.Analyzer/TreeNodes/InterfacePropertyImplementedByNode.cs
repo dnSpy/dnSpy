@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
+// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
@@ -28,49 +28,63 @@ using dnSpy.Contracts.Text;
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class InterfacePropertyImplementedByNode : SearchNode {
 		readonly PropertyDef analyzedProperty;
-		readonly MethodDef analyzedMethod;
+		readonly MethodDef? analyzedMethod;
+		readonly bool isGetter;
 
 		public InterfacePropertyImplementedByNode(PropertyDef analyzedProperty) {
 			this.analyzedProperty = analyzedProperty ?? throw new ArgumentNullException(nameof(analyzedProperty));
-			analyzedMethod = this.analyzedProperty.GetMethod ?? this.analyzedProperty.SetMethod;
+			if (!(this.analyzedProperty.GetMethod is null)) {
+				analyzedMethod = this.analyzedProperty.GetMethod;
+				isGetter = true;
+			}
+			else {
+				analyzedMethod = this.analyzedProperty.SetMethod;
+				isGetter = false;
+			}
 		}
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
 			output.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.ImplementedByTreeNode);
 
 		protected override IEnumerable<AnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
-			if (analyzedMethod == null)
+			if (analyzedMethod is null)
 				return new List<AnalyzerTreeNodeData>();
 			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNodeData>(Context.DocumentService, analyzedMethod, FindReferencesInType);
 			return analyzer.PerformAnalysis(ct);
 		}
 
 		IEnumerable<AnalyzerTreeNodeData> FindReferencesInType(TypeDef type) {
-			if (analyzedMethod == null)
+			if (analyzedMethod is null)
 				yield break;
-			if (!type.HasInterfaces)
+			if (type.IsInterface)
 				yield break;
-			var iff = type.Interfaces.FirstOrDefault(i => new SigComparer().Equals(i.Interface, analyzedMethod.DeclaringType));
-			ITypeDefOrRef implementedInterfaceRef = iff?.Interface;
-			if (implementedInterfaceRef == null)
+			var implementedInterfaceRef = InterfaceMethodImplementedByNode.GetInterface(type, analyzedMethod.DeclaringType);
+			if (implementedInterfaceRef is null)
 				yield break;
 
-			//TODO: Can we compare property sigs too?
-			foreach (PropertyDef property in type.Properties.Where(e => e.Name == analyzedProperty.Name)) {
-				MethodDef accessor = property.GetMethod ?? property.SetMethod;
-				if (accessor != null && TypesHierarchyHelpers.MatchInterfaceMethod(accessor, analyzedMethod, implementedInterfaceRef)) {
+			foreach (PropertyDef property in type.Properties.Where(e => e.Name.EndsWith(analyzedProperty.Name))) {
+				MethodDef accessor = isGetter ? property.GetMethod : property.SetMethod;
+				// Don't include abstract accessors, they don't implement anything
+				if (accessor is null || !accessor.IsVirtual || accessor.IsAbstract)
+					continue;
+				if (accessor.HasOverrides && accessor.Overrides.Any(m => CheckEquals(m.MethodDeclaration.ResolveMethodDef(), analyzedMethod))) {
 					yield return new PropertyNode(property) { Context = Context };
+					yield break;
 				}
 			}
 
-			foreach (PropertyDef property in type.Properties.Where(e => e.Name.EndsWith(analyzedProperty.Name))) {
-				MethodDef accessor = property.GetMethod ?? property.SetMethod;
-				if (accessor != null && accessor.HasOverrides && accessor.Overrides.Any(m => m.MethodDeclaration.ResolveMethodDef() == analyzedMethod)) {
+			foreach (PropertyDef property in type.Properties.Where(e => e.Name == analyzedProperty.Name)) {
+				MethodDef accessor = isGetter ? property.GetMethod : property.SetMethod;
+				// Don't include abstract accessors, they don't implement anything
+				if (accessor is null || !accessor.IsVirtual || accessor.IsAbstract)
+					continue;
+				if (TypesHierarchyHelpers.MatchInterfaceMethod(accessor, analyzedMethod, implementedInterfaceRef)) {
 					yield return new PropertyNode(property) { Context = Context };
+					yield break;
 				}
 			}
 		}
 
-		public static bool CanShow(PropertyDef property) => property.DeclaringType.IsInterface;
+		public static bool CanShow(PropertyDef property) => property.DeclaringType.IsInterface && (property.GetMethod ?? property.SetMethod) is MethodDef accessor && (accessor.IsVirtual || accessor.IsAbstract);
 	}
 }

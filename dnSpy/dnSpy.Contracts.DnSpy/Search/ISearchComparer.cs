@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,6 +28,6 @@ namespace dnSpy.Contracts.Search {
 		/// <param name="text">String representation of <paramref name="obj"/> or null</param>
 		/// <param name="obj">Original object</param>
 		/// <returns></returns>
-		bool IsMatch(string text, object obj);
+		bool IsMatch(string? text, object? obj);
 	}
 }

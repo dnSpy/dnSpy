@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -76,14 +76,14 @@ namespace dnSpy.Analyzer.TreeNodes {
 			e.CanExecute = AnalyzeCommand.CanAnalyze(TextEditor_GetMemberRef(), decompilerService.Decompiler);
 		void TextEditor_Executed(object sender, ExecutedRoutedEventArgs e) =>
 			AnalyzeCommand.Analyze(toolWindowService, analyzerService, decompilerService.Decompiler, TextEditor_GetMemberRef());
-		IMemberRef TextEditor_GetMemberRef() =>
+		IMemberRef? TextEditor_GetMemberRef() =>
 			(documentTabService.ActiveTab?.UIContext as IDocumentViewer)?.SelectedReference?.Data.Reference as IMemberRef;
 		void DocumentTreeView_CanExecute(object sender, CanExecuteRoutedEventArgs e) =>
 			e.CanExecute = AnalyzeCommand.CanAnalyze(DocumentTreeView_GetMemberRef(), decompilerService.Decompiler);
 		void DocumentTreeView_Executed(object sender, ExecutedRoutedEventArgs e) =>
 			AnalyzeCommand.Analyze(toolWindowService, analyzerService, decompilerService.Decompiler, DocumentTreeView_GetMemberRef());
 
-		IMemberRef DocumentTreeView_GetMemberRef() {
+		IMemberRef? DocumentTreeView_GetMemberRef() {
 			var nodes = documentTabService.DocumentTreeView.TreeView.TopLevelSelection;
 			var node = nodes.Length == 0 ? null : nodes[0] as IMDTokenNode;
 			return node?.Reference as IMemberRef;
@@ -94,7 +94,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		void AnalyzerTreeView_Executed(object sender, ExecutedRoutedEventArgs e) =>
 			AnalyzeCommand.Analyze(toolWindowService, analyzerService, decompilerService.Decompiler, AnalyzerTreeView_GetMemberRef());
 
-		IMemberRef AnalyzerTreeView_GetMemberRef() {
+		IMemberRef? AnalyzerTreeView_GetMemberRef() {
 			var nodes = analyzerService.Value.TreeView.TopLevelSelection;
 			var node = nodes.Length == 0 ? null : nodes[0] as IMDTokenNode;
 			return node?.Reference as IMemberRef;
@@ -104,7 +104,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			e.CanExecute = AnalyzeCommand.CanAnalyze(SearchListBox_GetMemberRef(e.Source as ListBox), decompilerService.Decompiler);
 		void SearchListBox_Executed(object sender, ExecutedRoutedEventArgs e) =>
 			AnalyzeCommand.Analyze(toolWindowService, analyzerService, decompilerService.Decompiler, SearchListBox_GetMemberRef(e.Source as ListBox));
-		IMemberRef SearchListBox_GetMemberRef(ListBox listBox) =>
+		IMemberRef? SearchListBox_GetMemberRef(ListBox? listBox) =>
 			(listBox?.SelectedItem as ISearchResultReferenceProvider)?.Reference as IMemberRef;
 	}
 
@@ -123,17 +123,17 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 
 			public override bool IsVisible(IMenuItemContext context) => GetMemberRefs(context).Any();
-			IEnumerable<IMemberRef> GetMemberRefs(IMenuItemContext context) =>
+			IEnumerable<IMemberRef?> GetMemberRefs(IMenuItemContext context) =>
 				GetMemberRefs(context, MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID, false, decompilerService);
 
-			internal static IEnumerable<IMemberRef> GetMemberRefs(IMenuItemContext context, string guid, bool checkRoot, IDecompilerService decompilerService) {
+			internal static IEnumerable<IMemberRef?> GetMemberRefs(IMenuItemContext context, string guid, bool checkRoot, IDecompilerService decompilerService) {
 				if (context.CreatorObject.Guid != new Guid(guid))
 					yield break;
 				var nodes = context.Find<TreeNodeData[]>();
-				if (nodes == null)
+				if (nodes is null)
 					yield break;
 
-				if (checkRoot && nodes.All(a => a.TreeNode.Parent != null && a.TreeNode.Parent.Parent == null))
+				if (checkRoot && nodes.All(a => !(a.TreeNode.Parent is null) && a.TreeNode.Parent.Parent is null))
 					yield break;
 
 				foreach (var node in nodes) {
@@ -160,7 +160,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 
 			public override bool IsVisible(IMenuItemContext context) => GetMemberRefs(context).Any();
-			IEnumerable<IMemberRef> GetMemberRefs(IMenuItemContext context) =>
+			IEnumerable<IMemberRef?> GetMemberRefs(IMenuItemContext context) =>
 				FilesCommand.GetMemberRefs(context, MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID, true, decompilerService);
 			public override void Execute(IMenuItemContext context) =>
 				Analyze(toolWindowService, analyzerService, decompilerService.Decompiler, GetMemberRefs(context));
@@ -188,7 +188,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 					yield break;
 
 				var @ref = context.Find<TextReference>();
-				if (@ref != null) {
+				if (!(@ref is null)) {
 					if (@ref.Reference is IMemberRef mr)
 						yield return mr;
 				}
@@ -218,7 +218,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				Analyze(toolWindowService, analyzerService, decompilerService.Decompiler, GetMemberRefs(context));
 		}
 
-		public static bool CanAnalyze(IMemberRef member, IDecompiler decompiler) {
+		public static bool CanAnalyze(IMemberRef? member, IDecompiler decompiler) {
 			member = ResolveReference(member);
 			return member is TypeDef ||
 					member is FieldDef ||
@@ -227,12 +227,12 @@ namespace dnSpy.Analyzer.TreeNodes {
 					EventNode.CanShow(member, decompiler);
 		}
 
-		static void Analyze(IDsToolWindowService toolWindowService, Lazy<IAnalyzerService> analyzerService, IDecompiler decompiler, IEnumerable<IMemberRef> mrs) {
+		static void Analyze(IDsToolWindowService toolWindowService, Lazy<IAnalyzerService> analyzerService, IDecompiler decompiler, IEnumerable<IMemberRef?> mrs) {
 			foreach (var mr in mrs)
 				Analyze(toolWindowService, analyzerService, decompiler, mr);
 		}
 
-		public static void Analyze(IDsToolWindowService toolWindowService, Lazy<IAnalyzerService> analyzerService, IDecompiler decompiler, IMemberRef member) {
+		public static void Analyze(IDsToolWindowService toolWindowService, Lazy<IAnalyzerService> analyzerService, IDecompiler decompiler, IMemberRef? member) {
 			var memberDef = ResolveReference(member);
 
 			if (memberDef is TypeDef type) {
@@ -251,22 +251,22 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 
 			var propertyAnalyzer = PropertyNode.TryCreateAnalyzer(member, decompiler);
-			if (propertyAnalyzer != null) {
+			if (!(propertyAnalyzer is null)) {
 				toolWindowService.Show(AnalyzerToolWindowContent.THE_GUID);
 				analyzerService.Value.Add(propertyAnalyzer);
 			}
 
 			var eventAnalyzer = EventNode.TryCreateAnalyzer(member, decompiler);
-			if (eventAnalyzer != null) {
+			if (!(eventAnalyzer is null)) {
 				toolWindowService.Show(AnalyzerToolWindowContent.THE_GUID);
 				analyzerService.Value.Add(eventAnalyzer);
 			}
 		}
 
-		static IMemberDef ResolveReference(object reference) {
+		static IMemberDef? ResolveReference(object? reference) {
 			if (reference is ITypeDefOrRef)
 				return ((ITypeDefOrRef)reference).ResolveTypeDef();
-			else if (reference is IMethod && ((IMethod)reference).MethodSig != null)
+			else if (reference is IMethod && !(((IMethod)reference).MethodSig is null))
 				return ((IMethod)reference).ResolveMethodDef();
 			else if (reference is IField)
 				return ((IField)reference).ResolveFieldDef();
@@ -289,23 +289,23 @@ namespace dnSpy.Analyzer.TreeNodes {
 			cmds.Add(ApplicationCommands.Delete, (s, e) => DeleteNodes(), (s, e) => e.CanExecute = CanDeleteNodes, ModifierKeys.None, Key.Delete);
 		}
 
-		bool CanDeleteNodes => GetNodes() != null;
+		bool CanDeleteNodes => !(GetNodes() is null);
 		void DeleteNodes() => DeleteNodes(GetNodes());
-		TreeNodeData[] GetNodes() => GetNodes(analyzerService.Value.TreeView.TopLevelSelection);
+		TreeNodeData[]? GetNodes() => GetNodes(analyzerService.Value.TreeView.TopLevelSelection);
 
-		internal static TreeNodeData[] GetNodes(TreeNodeData[] nodes) {
-			if (nodes == null)
+		internal static TreeNodeData[]? GetNodes(TreeNodeData[] nodes) {
+			if (nodes is null)
 				return null;
-			if (nodes.Length == 0 || !nodes.All(a => a.TreeNode.Parent != null && a.TreeNode.Parent.Parent == null))
+			if (nodes.Length == 0 || !nodes.All(a => !(a.TreeNode.Parent is null) && a.TreeNode.Parent.Parent is null))
 				return null;
 			return nodes;
 		}
 
-		internal static void DeleteNodes(TreeNodeData[] nodes) {
-			if (nodes != null) {
+		internal static void DeleteNodes(TreeNodeData[]? nodes) {
+			if (!(nodes is null)) {
 				foreach (var node in nodes) {
 					AnalyzerTreeNodeData.CancelSelfAndChildren(node);
-					node.TreeNode.Parent.Children.Remove(node.TreeNode);
+					node.TreeNode.Parent!.Children.Remove(node.TreeNode);
 				}
 			}
 		}
@@ -313,9 +313,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 	[ExportMenuItem(Header = "res:RemoveCommand", Icon = DsImagesAttribute.Cancel, InputGestureText = "res:ShortCutKeyDelete", Group = MenuConstants.GROUP_CTX_ANALYZER_OTHER, Order = 10)]
 	sealed class RemoveAnalyzeCtxMenuCommand : MenuItemBase {
-		public override bool IsVisible(IMenuItemContext context) => GetNodes(context) != null;
+		public override bool IsVisible(IMenuItemContext context) => !(GetNodes(context) is null);
 
-		static TreeNodeData[] GetNodes(IMenuItemContext context) {
+		static TreeNodeData[]? GetNodes(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID))
 				return null;
 			return RemoveAnalyzeCommand.GetNodes(context.Find<TreeNodeData[]>());

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,7 +26,7 @@ namespace dnSpy.Contracts.MVVM {
 	/// </summary>
 	public sealed class RelayCommand : ICommand {
 		readonly Action<object> exec;
-		readonly Predicate<object> canExec;
+		readonly Predicate<object>? canExec;
 
 		/// <summary>
 		/// Constructor
@@ -34,16 +34,16 @@ namespace dnSpy.Contracts.MVVM {
 		/// <param name="exec">Called when the command gets executed</param>
 		/// <param name="canExec">Gets called to check whether <paramref name="exec"/> can execute,
 		/// may be null</param>
-		public RelayCommand(Action<object> exec, Predicate<object> canExec = null) {
+		public RelayCommand(Action<object> exec, Predicate<object>? canExec = null) {
 			this.exec = exec ?? throw new ArgumentNullException(nameof(exec));
 			this.canExec = canExec;
 		}
 
-		bool ICommand.CanExecute(object parameter) => canExec == null ? true : canExec(parameter);
+		bool ICommand.CanExecute(object parameter) => canExec is null ? true : canExec(parameter);
 
 		event EventHandler ICommand.CanExecuteChanged {
-			add { CommandManager.RequerySuggested += value; }
-			remove { CommandManager.RequerySuggested -= value; }
+			add => CommandManager.RequerySuggested += value;
+			remove => CommandManager.RequerySuggested -= value;
 		}
 
 		void ICommand.Execute(object parameter) => exec(parameter);

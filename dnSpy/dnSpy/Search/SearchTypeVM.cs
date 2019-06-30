@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,11 +25,11 @@ namespace dnSpy.Search {
 	sealed class SearchTypeVM : ViewModelBase {
 		public ImageReference Image { get; }
 		public string Name { get; }
-		public string ToolTip { get; }
+		public string? ToolTip { get; }
 		public SearchType SearchType { get; }
 		public VisibleMembersFlags Flags { get; }
 
-		public SearchTypeVM(SearchType searchType, string name, string toolTip, ImageReference imageReference, VisibleMembersFlags flags) {
+		public SearchTypeVM(SearchType searchType, string name, string? toolTip, ImageReference imageReference, VisibleMembersFlags flags) {
 			SearchType = searchType;
 			Name = name;
 			ToolTip = toolTip;

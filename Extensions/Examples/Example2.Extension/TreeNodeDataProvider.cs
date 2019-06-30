@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using dnSpy.Contracts.Decompiler;
@@ -41,7 +41,7 @@ namespace Example2.Extension {
 			output.Write(BoxedTextColor.Text, "Assembly Child");
 
 		// If you don't want the node to be appended to the children, override this
-		public override ITreeNodeGroup TreeNodeGroup => TreeNodeGroupImpl.Instance;
+		public override ITreeNodeGroup? TreeNodeGroup => TreeNodeGroupImpl.Instance;
 
 		sealed class TreeNodeGroupImpl : ITreeNodeGroup {
 			public static readonly TreeNodeGroupImpl Instance = new TreeNodeGroupImpl(1);
@@ -55,8 +55,8 @@ namespace Example2.Extension {
 					return 0;
 				var a = x as AssemblyChildNode;
 				var b = y as AssemblyChildNode;
-				if (a == null) return -1;
-				if (b == null) return 1;
+				if (a is null) return -1;
+				if (b is null) return 1;
 				// More checks can be added here...
 				return 0;
 			}
@@ -101,7 +101,7 @@ namespace Example2.Extension {
 			// If you don't want the output to be cached, call DisableCaching()
 			bool cacheOutput = true;
 			if (!cacheOutput)
-				(context.Output as IDocumentViewerOutput).DisableCaching();
+				(context.Output as IDocumentViewerOutput)?.DisableCaching();
 
 			// Create the output and a few references that other code in this extension will use, eg.
 			// to show a tooltip when hovering over the reference.
@@ -122,7 +122,7 @@ namespace Example2.Extension {
 		}
 
 		// If you don't want the node to be appended to the children, override this
-		public override ITreeNodeGroup TreeNodeGroup => TreeNodeGroupImpl.Instance;
+		public override ITreeNodeGroup? TreeNodeGroup => TreeNodeGroupImpl.Instance;
 
 		sealed class TreeNodeGroupImpl : ITreeNodeGroup {
 			// Make sure the order is unique. 0 is already used by the PE node, so use 1
@@ -137,8 +137,8 @@ namespace Example2.Extension {
 					return 0;
 				var a = x as ModuleChildNode;
 				var b = y as ModuleChildNode;
-				if (a == null) return -1;
-				if (b == null) return 1;
+				if (a is null) return -1;
+				if (b is null) return 1;
 				// More checks can be added here...
 				return 0;
 			}
@@ -160,7 +160,7 @@ namespace Example2.Extension {
 		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>
 			output.Write(BoxedTextColor.Comment, Message);
 
-		public override ITreeNodeGroup TreeNodeGroup => TreeNodeGroupImpl.Instance;
+		public override ITreeNodeGroup? TreeNodeGroup => TreeNodeGroupImpl.Instance;
 
 		sealed class TreeNodeGroupImpl : ITreeNodeGroup {
 			public static readonly TreeNodeGroupImpl Instance = new TreeNodeGroupImpl(0);
@@ -174,8 +174,8 @@ namespace Example2.Extension {
 					return 0;
 				var a = x as SomeMessageNode;
 				var b = y as SomeMessageNode;
-				if (a == null) return -1;
-				if (b == null) return 1;
+				if (a is null) return -1;
+				if (b is null) return 1;
 				return StringComparer.OrdinalIgnoreCase.Compare(a.Message, b.Message);
 			}
 		}
@@ -187,11 +187,11 @@ namespace Example2.Extension {
 	sealed class SomeMessageNodeDecompiler : IDecompileNode {
 		public bool Decompile(IDecompileNodeContext context, DocumentTreeNodeData node) {
 			var msgNode = node as SomeMessageNode;
-			if (msgNode == null)
+			if (msgNode is null)
 				return false;
 
 			context.Decompiler.WriteCommentLine(context.Output, "The secret message has been decrypted.");
-			context.Decompiler.WriteCommentLine(context.Output, string.Format("The message is: {0}", msgNode.Message));
+			context.Decompiler.WriteCommentLine(context.Output, $"The message is: {msgNode.Message}");
 			context.ContentTypeString = ContentTypes.PlainText;
 			return true;
 		}

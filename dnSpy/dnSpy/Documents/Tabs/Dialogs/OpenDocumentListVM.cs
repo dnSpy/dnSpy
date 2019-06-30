@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -43,8 +43,8 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		readonly ObservableCollection<DocumentListVM> documentListColl;
 		readonly ListCollectionView collectionView;
 
-		public object SelectedItem {
-			get { return selectedItem; }
+		public object? SelectedItem {
+			get => selectedItem;
 			set {
 				if (selectedItem != value) {
 					selectedItem = value;
@@ -52,16 +52,16 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 				}
 			}
 		}
-		object selectedItem;
+		object? selectedItem;
 
 		public DocumentListVM[] SelectedItems {
-			get { return selectedItems; }
-			set { selectedItems = value ?? Array.Empty<DocumentListVM>(); }
+			get => selectedItems;
+			set => selectedItems = value ?? Array.Empty<DocumentListVM>();
 		}
 		DocumentListVM[] selectedItems;
 
 		public bool SearchingForDefaultLists {
-			get { return searchingForDefaultLists; }
+			get => searchingForDefaultLists;
 			set {
 				if (searchingForDefaultLists != value) {
 					searchingForDefaultLists = value;
@@ -74,8 +74,8 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 
 		public bool NotSearchingForDefaultLists => !SearchingForDefaultLists;
 
-		public string SearchText {
-			get { return searchText; }
+		public string? SearchText {
+			get => searchText;
 			set {
 				if (searchText != value) {
 					searchText = value;
@@ -84,10 +84,10 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 				}
 			}
 		}
-		string searchText;
+		string? searchText;
 
 		public bool ShowSavedLists {
-			get { return showSavedLists; }
+			get => showSavedLists;
 			set {
 				if (showSavedLists != value) {
 					showSavedLists = value;
@@ -156,7 +156,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		}
 
 		bool CalculateIsVisible(DocumentListVM vm, string filterText) {
-			Debug.Assert(filterText != null && filterText.Trim().ToUpperInvariant() == filterText);
+			Debug.Assert(!(filterText is null) && filterText.Trim().ToUpperInvariant() == filterText);
 			if (string.IsNullOrEmpty(filterText) && !ShowSavedLists)
 				return true;
 			if (ShowSavedLists && !vm.IsUserList)
@@ -229,9 +229,9 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 			var b = y as DocumentListVM;
 			if (a == b)
 				return 0;
-			if (a == null)
+			if (a is null)
 				return -1;
-			if (b == null)
+			if (b is null)
 				return 1;
 			return StringComparer.OrdinalIgnoreCase.Compare(a.Name, b.Name);
 		}

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -45,13 +45,13 @@ namespace dnSpy.Contracts.Controls {
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		protected void okButton_Click(object sender, RoutedEventArgs e) => ClickOK();
+		protected void okButton_Click(object? sender, RoutedEventArgs? e) => ClickOK();
 
 		/// <summary>
 		/// Cancel button handler
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		protected void cancelButton_Click(object sender, RoutedEventArgs e) => ClickCancel();
+		protected void cancelButton_Click(object? sender, RoutedEventArgs? e) => ClickCancel();
 	}
 }

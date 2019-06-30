@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		[ImportingConstructor]
 		GlyphTextMarkerMouseProcessorProvider(Lazy<TextViewBreakpointService> textViewBreakpointService) => this.textViewBreakpointService = textViewBreakpointService;
 
-		public IGlyphTextMarkerMouseProcessor GetAssociatedMouseProcessor(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin margin) =>
+		public IGlyphTextMarkerMouseProcessor? GetAssociatedMouseProcessor(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin margin) =>
 			new GlyphTextMarkerMouseProcessor(wpfTextViewHost, textViewBreakpointService);
 	}
 
@@ -50,7 +50,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			wpfTextViewHost.TextView.LayoutChanged += TextView_LayoutChanged;
 		}
 
-		WeakReference leftButtonDownLineIdentityTagWeakReference;
+		WeakReference? leftButtonDownLineIdentityTagWeakReference;
 
 		void ClearPressedLine() => leftButtonDownLineIdentityTagWeakReference = null;
 

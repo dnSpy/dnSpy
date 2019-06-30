@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -58,14 +58,14 @@ namespace dnSpy.Decompiler.ILSpy.Core.XmlDoc {
 
 		public SubString? Current => current;
 
-		object IEnumerator.Current {
+		object? IEnumerator.Current {
 			get { Debug.Fail("'this' was boxed"); return current; }
 		}
 
 		public void Dispose() { }
 
 		public bool MoveNext() {
-			if (indent == null) {
+			if (indent is null) {
 				for (;;) {
 					if (!iter.MoveNext())
 						return false;
@@ -105,7 +105,7 @@ start2:
 		}
 
 		void Trim(out int trimmedIndex, out int trimmedEnd) {
-			Debug.Assert(indent != null);
+			Debug.Assert(!(indent is null));
 
 			int index = iter.Current.Index;
 			int end = index + iter.Current.Length;

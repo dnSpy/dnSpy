@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,12 +24,13 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// Compares types, members, parameters
 	/// </summary>
 	public sealed class DmdMemberInfoEqualityComparer :
-			IEqualityComparer<DmdMemberInfo>, IEqualityComparer<DmdType>, IEqualityComparer<DmdFieldInfo>,
-			IEqualityComparer<DmdMethodBase>, IEqualityComparer<DmdConstructorInfo>, IEqualityComparer<DmdMethodInfo>,
-			IEqualityComparer<DmdPropertyInfo>, IEqualityComparer<DmdEventInfo>, IEqualityComparer<DmdParameterInfo>,
-			IEqualityComparer<DmdMethodSignature>, IEqualityComparer<IDmdAssemblyName>, IEqualityComparer<DmdCustomModifier> {
+			IEqualityComparer<DmdMemberInfo?>, IEqualityComparer<DmdType?>, IEqualityComparer<DmdFieldInfo?>,
+			IEqualityComparer<DmdMethodBase?>, IEqualityComparer<DmdConstructorInfo?>, IEqualityComparer<DmdMethodInfo?>,
+			IEqualityComparer<DmdPropertyInfo?>, IEqualityComparer<DmdEventInfo?>, IEqualityComparer<DmdParameterInfo?>,
+			IEqualityComparer<DmdMethodSignature?>, IEqualityComparer<IDmdAssemblyName?>, IEqualityComparer<DmdCustomModifier> {
 		/// <summary>
-		/// Should be used when comparing types that aren't part of a member signature. Custom modifiers are ignored.
+		/// Should be used when comparing types that aren't part of a member signature. Custom modifiers and
+		/// MD arrays' lower bounds and sizes are ignored.
 		/// </summary>
 		public static readonly DmdMemberInfoEqualityComparer DefaultType = new DmdMemberInfoEqualityComparer(DefaultTypeOptions);
 
@@ -37,7 +38,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Should be used when comparing member signatures or when comparing types in member signatures.
 		/// Custom modifiers are compared and types are checked for equivalence.
 		/// </summary>
-		public static readonly DmdMemberInfoEqualityComparer DefaultMember = new DmdMemberInfoEqualityComparer(DefaultTypeOptions | DmdSigComparerOptions.CompareCustomModifiers | DmdSigComparerOptions.CheckTypeEquivalence);
+		public static readonly DmdMemberInfoEqualityComparer DefaultMember = new DmdMemberInfoEqualityComparer(DmdSigComparerOptions.CompareDeclaringType | DmdSigComparerOptions.CompareCustomModifiers | DmdSigComparerOptions.CheckTypeEquivalence);
 
 		/// <summary>
 		/// Should be used when comparing parameters
@@ -57,7 +58,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the default options used by <see cref="DefaultType"/>
 		/// </summary>
-		public const DmdSigComparerOptions DefaultTypeOptions = DmdSigComparerOptions.CompareDeclaringType;
+		public const DmdSigComparerOptions DefaultTypeOptions = DmdSigComparerOptions.CompareDeclaringType | DmdSigComparerOptions.IgnoreMultiDimensionalArrayLowerBoundsAndSizes;
+
+		/// <summary>
+		/// Gets the options
+		/// </summary>
+		public DmdSigComparerOptions Options => options;
 
 		readonly DmdSigComparerOptions options;
 
@@ -67,31 +73,31 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="options">Options</param>
 		public DmdMemberInfoEqualityComparer(DmdSigComparerOptions options) => this.options = options;
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
-		public bool Equals(DmdMemberInfo x, DmdMemberInfo y) => new DmdSigComparer(options).Equals(x, y);
-		public int GetHashCode(DmdMemberInfo obj) => new DmdSigComparer(options).GetHashCode(obj);
-		public bool Equals(DmdType x, DmdType y) => new DmdSigComparer(options).Equals(x, y);
-		public int GetHashCode(DmdType obj) => new DmdSigComparer(options).GetHashCode(obj);
-		public bool Equals(DmdFieldInfo x, DmdFieldInfo y) => new DmdSigComparer(options).Equals(x, y);
-		public int GetHashCode(DmdFieldInfo obj) => new DmdSigComparer(options).GetHashCode(obj);
-		public bool Equals(DmdMethodBase x, DmdMethodBase y) => new DmdSigComparer(options).Equals(x, y);
-		public int GetHashCode(DmdMethodBase obj) => new DmdSigComparer(options).GetHashCode(obj);
-		public bool Equals(DmdConstructorInfo x, DmdConstructorInfo y) => new DmdSigComparer(options).Equals(x, y);
-		public int GetHashCode(DmdConstructorInfo obj) => new DmdSigComparer(options).GetHashCode(obj);
-		public bool Equals(DmdMethodInfo x, DmdMethodInfo y) => new DmdSigComparer(options).Equals(x, y);
-		public int GetHashCode(DmdMethodInfo obj) => new DmdSigComparer(options).GetHashCode(obj);
-		public bool Equals(DmdPropertyInfo x, DmdPropertyInfo y) => new DmdSigComparer(options).Equals(x, y);
-		public int GetHashCode(DmdPropertyInfo obj) => new DmdSigComparer(options).GetHashCode(obj);
-		public bool Equals(DmdEventInfo x, DmdEventInfo y) => new DmdSigComparer(options).Equals(x, y);
-		public int GetHashCode(DmdEventInfo obj) => new DmdSigComparer(options).GetHashCode(obj);
-		public bool Equals(DmdParameterInfo x, DmdParameterInfo y) => new DmdSigComparer(options).Equals(x, y);
-		public int GetHashCode(DmdParameterInfo obj) => new DmdSigComparer(options).GetHashCode(obj);
-		public bool Equals(DmdMethodSignature x, DmdMethodSignature y) => new DmdSigComparer(options).Equals(x, y);
-		public int GetHashCode(DmdMethodSignature obj) => new DmdSigComparer(options).GetHashCode(obj);
-		public bool Equals(IDmdAssemblyName x, IDmdAssemblyName y) => new DmdSigComparer(options).Equals(x, y);
-		public int GetHashCode(IDmdAssemblyName obj) => new DmdSigComparer(options).GetHashCode(obj);
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+		public bool Equals(DmdMemberInfo? x, DmdMemberInfo? y) => new DmdSigComparer(options).Equals(x, y);
+		public int GetHashCode(DmdMemberInfo? obj) => new DmdSigComparer(options).GetHashCode(obj);
+		public bool Equals(DmdType? x, DmdType? y) => new DmdSigComparer(options).Equals(x, y);
+		public int GetHashCode(DmdType? obj) => new DmdSigComparer(options).GetHashCode(obj);
+		public bool Equals(DmdFieldInfo? x, DmdFieldInfo? y) => new DmdSigComparer(options).Equals(x, y);
+		public int GetHashCode(DmdFieldInfo? obj) => new DmdSigComparer(options).GetHashCode(obj);
+		public bool Equals(DmdMethodBase? x, DmdMethodBase? y) => new DmdSigComparer(options).Equals(x, y);
+		public int GetHashCode(DmdMethodBase? obj) => new DmdSigComparer(options).GetHashCode(obj);
+		public bool Equals(DmdConstructorInfo? x, DmdConstructorInfo? y) => new DmdSigComparer(options).Equals(x, y);
+		public int GetHashCode(DmdConstructorInfo? obj) => new DmdSigComparer(options).GetHashCode(obj);
+		public bool Equals(DmdMethodInfo? x, DmdMethodInfo? y) => new DmdSigComparer(options).Equals(x, y);
+		public int GetHashCode(DmdMethodInfo? obj) => new DmdSigComparer(options).GetHashCode(obj);
+		public bool Equals(DmdPropertyInfo? x, DmdPropertyInfo? y) => new DmdSigComparer(options).Equals(x, y);
+		public int GetHashCode(DmdPropertyInfo? obj) => new DmdSigComparer(options).GetHashCode(obj);
+		public bool Equals(DmdEventInfo? x, DmdEventInfo? y) => new DmdSigComparer(options).Equals(x, y);
+		public int GetHashCode(DmdEventInfo? obj) => new DmdSigComparer(options).GetHashCode(obj);
+		public bool Equals(DmdParameterInfo? x, DmdParameterInfo? y) => new DmdSigComparer(options).Equals(x, y);
+		public int GetHashCode(DmdParameterInfo? obj) => new DmdSigComparer(options).GetHashCode(obj);
+		public bool Equals(DmdMethodSignature? x, DmdMethodSignature? y) => new DmdSigComparer(options).Equals(x, y);
+		public int GetHashCode(DmdMethodSignature? obj) => new DmdSigComparer(options).GetHashCode(obj);
+		public bool Equals(IDmdAssemblyName? x, IDmdAssemblyName? y) => new DmdSigComparer(options).Equals(x, y);
+		public int GetHashCode(IDmdAssemblyName? obj) => new DmdSigComparer(options).GetHashCode(obj);
 		public bool Equals(DmdCustomModifier x, DmdCustomModifier y) => new DmdSigComparer(options).Equals(x, y);
 		public int GetHashCode(DmdCustomModifier obj) => new DmdSigComparer(options).GetHashCode(obj);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

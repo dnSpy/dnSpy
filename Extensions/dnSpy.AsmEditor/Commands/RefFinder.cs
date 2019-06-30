@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -17,26 +17,30 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
 
 namespace dnSpy.AsmEditor.Commands {
 	static class RefFinder {
-		const SigComparerOptions SigComparerOptionsFlags =
+		const SigComparerOptions TypeSigComparerOptionsFlags =
 			SigComparerOptions.CompareDeclaringTypes |
 			SigComparerOptions.CompareAssemblyPublicKeyToken |
 			SigComparerOptions.TypeRefCanReferenceGlobalType |
 			SigComparerOptions.PrivateScopeIsComparable |
 			SigComparerOptions.DontProjectWinMDRefs;
-		public static readonly TypeEqualityComparer TypeEqualityComparerInstance = new TypeEqualityComparer(SigComparerOptionsFlags);
-		public static readonly FieldEqualityComparer FieldEqualityComparerInstance = new FieldEqualityComparer(SigComparerOptionsFlags);
-		public static readonly MethodEqualityComparer MethodEqualityComparerInstance = new MethodEqualityComparer(SigComparerOptionsFlags);
+		const SigComparerOptions MemberSigComparerOptionsFlags =
+			SigComparerOptions.CompareAssemblyPublicKeyToken |
+			SigComparerOptions.TypeRefCanReferenceGlobalType |
+			SigComparerOptions.PrivateScopeIsComparable |
+			SigComparerOptions.DontProjectWinMDRefs;
+		public static readonly TypeEqualityComparer TypeEqualityComparerInstance = new TypeEqualityComparer(TypeSigComparerOptionsFlags);
 
 		public static IEnumerable<AssemblyRef> FindAssemblyRefsToThisModule(ModuleDef module) {
-			if (module == null || !module.IsManifestModule)
+			if (module is null || !module.IsManifestModule)
 				yield break;
 			var asm = module.Assembly;
-			if (asm == null)
+			if (asm is null)
 				yield break;
 
 			foreach (var tr in FindTypeRefsToThisModule(module)) {
@@ -57,6 +61,54 @@ namespace dnSpy.AsmEditor.Commands {
 		public static IEnumerable<MemberRef> FindMemberRefsToThisModule(ModuleDef module) {
 			var finder = new MemberFinder().FindAll(module);
 			return finder.MemberRefs.Keys;
+		}
+
+		public static bool Equals(MemberRef mr, FieldDef field) {
+			if (mr is null || field is null)
+				return false;
+			if (!mr.IsFieldRef)
+				return false;
+			if (!new SigComparer(MemberSigComparerOptionsFlags).Equals(mr, field))
+				return false;
+			return Equals(mr.Class, field.DeclaringType);
+		}
+
+		public static bool Equals(MemberRef mr, MethodDef method) {
+			if (mr is null || method is null)
+				return false;
+			if (!mr.IsMethodRef)
+				return false;
+			if (!new SigComparer(MemberSigComparerOptionsFlags).Equals(mr, method))
+				return false;
+			return Equals(mr.Class, method.DeclaringType);
+		}
+
+		static bool Equals(IMemberRefParent @class, TypeDef type) {
+			if (@class is null || type is null)
+				return false;
+			if (@class is TypeDef td)
+				return TypeEqualityComparerInstance.Equals(td, type);
+			if (@class is TypeRef tr)
+				return TypeEqualityComparerInstance.Equals(tr, type);
+			if (@class is TypeSpec ts) {
+				var typeSig = ts.TypeSig.RemovePinnedAndModifiers();
+				var tdrSig = typeSig as TypeDefOrRefSig;
+				if (tdrSig is null && typeSig is GenericInstSig gis)
+					tdrSig = gis.GenericType;
+				if (!(tdrSig is null)) {
+					if (tdrSig.TypeDefOrRef is TypeDef td2)
+						return TypeEqualityComparerInstance.Equals(td2, type);
+					if (tdrSig.TypeDefOrRef is TypeRef tr2)
+						return TypeEqualityComparerInstance.Equals(tr2, type);
+					return false;
+				}
+				return false;
+			}
+			if (@class is MethodDef md)
+				return TypeEqualityComparerInstance.Equals(md.DeclaringType, type);
+			if (@class is ModuleRef mr)
+				return type.IsGlobalModuleType && StringComparer.OrdinalIgnoreCase.Equals(mr.Name, type.Module.Name);
+			return false;
 		}
 	}
 }

@@ -1,0 +1,2060 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="About_Issues" xml:space="preserve">
+    <value>_Cuestiones</value>
+  </data>
+  <data name="About_LatestBuild" xml:space="preserve">
+    <value>Última _compilación</value>
+  </data>
+  <data name="About_LatestRelease" xml:space="preserve">
+    <value>_Último lanzamiento</value>
+  </data>
+  <data name="About_Menu" xml:space="preserve">
+    <value>_Acerca de</value>
+  </data>
+  <data name="About_SourceCode" xml:space="preserve">
+    <value>_Código fuente</value>
+  </data>
+  <data name="About_TabTitle" xml:space="preserve">
+    <value>Acerca de</value>
+  </data>
+  <data name="AllFiles" xml:space="preserve">
+    <value>Todos los archivos</value>
+  </data>
+  <data name="AssemblyExplorerCommand" xml:space="preserve">
+    <value>Ex_plorador de ensamblados</value>
+  </data>
+  <data name="AssemblyExplorerKey" xml:space="preserve">
+    <value>Ctrl+Alt+L</value>
+  </data>
+  <data name="AssemblyExplorerTitle" xml:space="preserve">
+    <value>Explorador de ensamblados</value>
+  </data>
+  <data name="BaseTypeFolder" xml:space="preserve">
+    <value>Tipo base e Interfaces</value>
+  </data>
+  <data name="Button_Cancel" xml:space="preserve">
+    <value>_Cancelar</value>
+  </data>
+  <data name="Button_No" xml:space="preserve">
+    <value>_No</value>
+  </data>
+  <data name="Button_OK" xml:space="preserve">
+    <value>_Aceptar</value>
+  </data>
+  <data name="Button_Save" xml:space="preserve">
+    <value>_Guardar...</value>
+  </data>
+  <data name="Button_Yes" xml:space="preserve">
+    <value>_Sí</value>
+  </data>
+  <data name="CantConvertInputToType" xml:space="preserve">
+    <value>No se puede convertir la entrada para el tipo deseado: {0}</value>
+  </data>
+  <data name="CloseAllTabGroupsButThisCommand" xml:space="preserve">
+    <value>Cerrar todos los grupos de pestaña menos este</value>
+  </data>
+  <data name="CloseAllTabsButThisCommand" xml:space="preserve">
+    <value>Cierre _Todas Menos Esta</value>
+  </data>
+  <data name="CloseAllTabsCommand" xml:space="preserve">
+    <value>C_errar todas las pestañas</value>
+  </data>
+  <data name="CloseTabCommand" xml:space="preserve">
+    <value>_Cerrar</value>
+  </data>
+  <data name="CloseTabGroupCommand" xml:space="preserve">
+    <value>Cerrar pestaña de grupo</value>
+  </data>
+  <data name="CopyCommand" xml:space="preserve">
+    <value>Cop_iar</value>
+  </data>
+  <data name="CopyKey" xml:space="preserve">
+    <value>Ctrl+C</value>
+  </data>
+  <data name="CopyMDTokenCommand" xml:space="preserve">
+    <value>_Copiar Token MD</value>
+  </data>
+  <data name="CouldNotStartBrowser" xml:space="preserve">
+    <value>No se pudo iniciar el navegador</value>
+  </data>
+  <data name="DecompilationCanceled" xml:space="preserve">
+    <value>La operación fue cancelada</value>
+  </data>
+  <data name="DecompilationException" xml:space="preserve">
+    <value>Se produjo un error</value>
+  </data>
+  <data name="DecompileCancelButton" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="Decompiling" xml:space="preserve">
+    <value>Descompilando...</value>
+  </data>
+  <data name="DerivedTypes" xml:space="preserve">
+    <value>Tipos Derivados</value>
+  </data>
+  <data name="DotNetExes" xml:space="preserve">
+    <value>Ejecutables .NET</value>
+  </data>
+  <data name="EmptyTabTitle" xml:space="preserve">
+    <value>&lt;vacio&gt;</value>
+  </data>
+  <data name="ExceptionMessage" xml:space="preserve">
+    <value>Se ha producido una excepción:</value>
+  </data>
+  <data name="ExitAppCommand" xml:space="preserve">
+    <value>_Salir</value>
+  </data>
+  <data name="ExitAppKey" xml:space="preserve">
+    <value>Alt+F4</value>
+  </data>
+  <data name="ExplorerOpenWithDnSpy" xml:space="preserve">
+    <value>Abrir con dnSpy</value>
+  </data>
+  <data name="FindCommand" xml:space="preserve">
+    <value>_Buscar</value>
+  </data>
+  <data name="FindCommand2" xml:space="preserve">
+    <value>Buscar</value>
+  </data>
+  <data name="FindKey" xml:space="preserve">
+    <value>Ctrl+F</value>
+  </data>
+  <data name="FullScreenCommand" xml:space="preserve">
+    <value>Pantalla completa</value>
+  </data>
+  <data name="FullScreenKey" xml:space="preserve">
+    <value>Mayús+Alt+Entrar</value>
+  </data>
+  <data name="FullScreenToolBarCommand" xml:space="preserve">
+    <value>Pantalla completa</value>
+  </data>
+  <data name="GoToEntryPointCommand" xml:space="preserve">
+    <value>Ir a punto de _Entrada</value>
+  </data>
+  <data name="GoToGlobalCctorCommand" xml:space="preserve">
+    <value>Ir al módulo de &lt; &gt; .ccto_r</value>
+  </data>
+  <data name="GoToLine_EnterLineNum" xml:space="preserve">
+    <value>Introduzca un número de línea</value>
+  </data>
+  <data name="GoToLine_InvalidLine" xml:space="preserve">
+    <value>Línea inválida: {0}</value>
+  </data>
+  <data name="GoToLine_Label" xml:space="preserve">
+    <value>_Línea [, columna]</value>
+  </data>
+  <data name="GoToLine_Title" xml:space="preserve">
+    <value>Ir a la línea</value>
+  </data>
+  <data name="GoToReferenceCommand" xml:space="preserve">
+    <value>Ir a referencia</value>
+  </data>
+  <data name="GoToReferenceKey" xml:space="preserve">
+    <value>Double click</value>
+  </data>
+  <data name="GoToTokenCommand" xml:space="preserve">
+    <value>Ir a M_D Token...</value>
+  </data>
+  <data name="GoToTokenKey" xml:space="preserve">
+    <value>Ctrl+D</value>
+  </data>
+  <data name="GoToToken_CouldNotResolve" xml:space="preserve">
+    <value>No se pudo resolver el token de referencia del miembro: 0x{0: X8}</value>
+  </data>
+  <data name="GoToToken_InvalidToken" xml:space="preserve">
+    <value>Token de metadatos inválido: 0x{0:X8}</value>
+  </data>
+  <data name="GoToToken_Label" xml:space="preserve">
+    <value>Ficha de _Metadata</value>
+  </data>
+  <data name="GoToToken_Title" xml:space="preserve">
+    <value>Ir a la ficha de MD</value>
+  </data>
+  <data name="HideAllToolWindowsCommand" xml:space="preserve">
+    <value>Oc_ultar todas las pestañas</value>
+  </data>
+  <data name="HideToolWindowCommand" xml:space="preserve">
+    <value>_Ocultar</value>
+  </data>
+  <data name="HighlightLine" xml:space="preserve">
+    <value>Resalta la línea actual</value>
+  </data>
+  <data name="InvalidInputTextMessageBox" xml:space="preserve">
+    <value>El texto no es válido</value>
+  </data>
+  <data name="LoadingDnSpyPleaseWait" xml:space="preserve">
+    <value>Cargando dnSpy. Por favor, espere...</value>
+  </data>
+  <data name="Menu_Edit" xml:space="preserve">
+    <value>_Editar</value>
+  </data>
+  <data name="Menu_File" xml:space="preserve">
+    <value>_Archivo</value>
+  </data>
+  <data name="Menu_Help" xml:space="preserve">
+    <value>A_yuda</value>
+  </data>
+  <data name="Menu_Themes" xml:space="preserve">
+    <value>_Tema</value>
+  </data>
+  <data name="Menu_View" xml:space="preserve">
+    <value>_Ver</value>
+  </data>
+  <data name="Menu_Windows" xml:space="preserve">
+    <value>Ve_ntana</value>
+  </data>
+  <data name="MergeAllTabGroupsCommand" xml:space="preserve">
+    <value>Combinar todas las pestañas de grupo</value>
+  </data>
+  <data name="MessageBoxDontShowAgain" xml:space="preserve">
+    <value>_No mostrar nuevamente</value>
+  </data>
+  <data name="MoveAllTabsToNextTabGroupCommand" xml:space="preserve">
+    <value>Mover todo a la siguiente pestaña de grupo</value>
+  </data>
+  <data name="MoveAllToPreviousTabGroupCommand" xml:space="preserve">
+    <value>Mover todo a la pestaña anterior de grupo</value>
+  </data>
+  <data name="MoveBottomCommand" xml:space="preserve">
+    <value>_Abajo</value>
+  </data>
+  <data name="MoveLeftCommand" xml:space="preserve">
+    <value>_Izquierda</value>
+  </data>
+  <data name="MoveRightCommand" xml:space="preserve">
+    <value>_Derecha</value>
+  </data>
+  <data name="MoveTabGroupAfterNextTabGroupCommand" xml:space="preserve">
+    <value>Mover ficha grupo después de la siguiente ficha grupo</value>
+  </data>
+  <data name="MoveTabGroupBeforePreviousTabGroupCommand" xml:space="preserve">
+    <value>Mover ficha grupo anterior ficha grupo</value>
+  </data>
+  <data name="MoveToNextTabGroupCommand" xml:space="preserve">
+    <value>Mover al grupo de Ne_xt ficha</value>
+  </data>
+  <data name="MoveToolWindowCommand" xml:space="preserve">
+    <value>_Mover</value>
+  </data>
+  <data name="MoveToolWindowGroupCommand" xml:space="preserve">
+    <value>Mover _Grupo</value>
+  </data>
+  <data name="MoveTopCommand" xml:space="preserve">
+    <value>_Arriba</value>
+  </data>
+  <data name="MoveToPreviousTabGroupCommand" xml:space="preserve">
+    <value>Mover al grupo de P_revious ficha</value>
+  </data>
+  <data name="NavigateBackCommand" xml:space="preserve">
+    <value>Navegar hacia atrás</value>
+  </data>
+  <data name="NavigateForwardCommand" xml:space="preserve">
+    <value>Navegar hacia adelante</value>
+  </data>
+  <data name="NewDataIsNotAnImage" xml:space="preserve">
+    <value>Los nuevos datos no están una imagen.</value>
+  </data>
+  <data name="NewHorizontalTabGroupCommand" xml:space="preserve">
+    <value>Nuevo grupo de ficha de Hori_zontal</value>
+  </data>
+  <data name="NewTabCommand" xml:space="preserve">
+    <value>Nueva _pestaña</value>
+  </data>
+  <data name="NewVerticalTabGroupCommand" xml:space="preserve">
+    <value>Nuevo grupo de ficha de _Vertical</value>
+  </data>
+  <data name="NewWindowCommand" xml:space="preserve">
+    <value>_Nueva ventana</value>
+  </data>
+  <data name="OpenCommand" xml:space="preserve">
+    <value>_Abrir...</value>
+  </data>
+  <data name="OpenContainingFolderCommand" xml:space="preserve">
+    <value>_Abrir carpeta contenedora</value>
+  </data>
+  <data name="OpenGACCommand" xml:space="preserve">
+    <value>Abrir emsamblados _GAC...</value>
+  </data>
+  <data name="OpenGAC_CreatedBy_Label" xml:space="preserve">
+    <value>Creado por:</value>
+  </data>
+  <data name="OpenGAC_FileVersion_Label" xml:space="preserve">
+    <value>Archivo de la versión:</value>
+  </data>
+  <data name="OpenGAC_Name_Column" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="OpenGAC_Name_Label" xml:space="preserve">
+    <value>Nombre:</value>
+  </data>
+  <data name="OpenGAC_Path_Label" xml:space="preserve">
+    <value>Ruta:</value>
+  </data>
+  <data name="OpenGAC_ShowDupes_CheckBox" xml:space="preserve">
+    <value>_Mostrar duplicados</value>
+  </data>
+  <data name="OpenGAC_ShowFiles" xml:space="preserve">
+    <value>Mostrando {0:n0} de {1:n0} archivos</value>
+  </data>
+  <data name="OpenGAC_Title" xml:space="preserve">
+    <value>Abrir ensamblados GAC</value>
+  </data>
+  <data name="OpenGAC_Version_Column" xml:space="preserve">
+    <value>Versión</value>
+  </data>
+  <data name="OpenGAC_Version_Label" xml:space="preserve">
+    <value>Versión:</value>
+  </data>
+  <data name="OpenInNewTabCommand" xml:space="preserve">
+    <value>Abrir en nueva _pestaña</value>
+  </data>
+  <data name="OpenInNewTabKey" xml:space="preserve">
+    <value>Ctrl+T</value>
+  </data>
+  <data name="OpenInNewTabKey2" xml:space="preserve">
+    <value>Ctrl+F12</value>
+  </data>
+  <data name="OpenInNewTabKey3" xml:space="preserve">
+    <value>Ctrl+Click</value>
+  </data>
+  <data name="OpenKey" xml:space="preserve">
+    <value>Ctrl+O</value>
+  </data>
+  <data name="OpenListCommand" xml:space="preserve">
+    <value>Abrir L_ista de ensamblados...</value>
+  </data>
+  <data name="OpenList_AskForName" xml:space="preserve">
+    <value>_Nombre</value>
+  </data>
+  <data name="OpenList_Files_Column" xml:space="preserve">
+    <value>Archivos</value>
+  </data>
+  <data name="OpenList_MissingName" xml:space="preserve">
+    <value>Falta el nombre</value>
+  </data>
+  <data name="OpenList_Name_Column" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="OpenList_New_Button" xml:space="preserve">
+    <value>_Nuevo...</value>
+  </data>
+  <data name="OpenList_Open_Button" xml:space="preserve">
+    <value>_Abrir</value>
+  </data>
+  <data name="OpenList_Remove_Button" xml:space="preserve">
+    <value>_Eliminar</value>
+  </data>
+  <data name="OpenList_SavedLists_CheckBox" xml:space="preserve">
+    <value>Listas gu_ardadas</value>
+  </data>
+  <data name="OpenList_Search_Label" xml:space="preserve">
+    <value>_Buscar</value>
+  </data>
+  <data name="OpenList_Title" xml:space="preserve">
+    <value>Abrir lista</value>
+  </data>
+  <data name="OpenToolBarToolTip" xml:space="preserve">
+    <value>Abrir</value>
+  </data>
+  <data name="OptionsTitle" xml:space="preserve">
+    <value>Opciones</value>
+  </data>
+  <data name="Options_Misc_Button_EnableAllWarnings" xml:space="preserve">
+    <value>Habilitar todos los mensajes de advertencia</value>
+  </data>
+  <data name="Options_Misc_UseMmapdIO" xml:space="preserve">
+    <value>Utilizar ficheros de mappeo en memoria I/O</value>
+  </data>
+  <data name="ReferencesFolder" xml:space="preserve">
+    <value>Referencias</value>
+  </data>
+  <data name="ReloadAsmsCommand" xml:space="preserve">
+    <value>_Recargar todos los ensamblados</value>
+  </data>
+  <data name="ResourcesFolder" xml:space="preserve">
+    <value>Recursos</value>
+  </data>
+  <data name="SaveKey" xml:space="preserve">
+    <value>Ctrl+S</value>
+  </data>
+  <data name="SaveResourceButton" xml:space="preserve">
+    <value>Guardar</value>
+  </data>
+  <data name="SearchAbortedMessage" xml:space="preserve">
+    <value>Búsqueda abortada, más de {0:n0} resultados encontrado.</value>
+  </data>
+  <data name="SearchAssembliesCommand" xml:space="preserve">
+    <value>_Buscar ensamblados</value>
+  </data>
+  <data name="SearchAssembliesToolBarToolTip" xml:space="preserve">
+    <value>Buscar ensamblados</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>Buscando...</value>
+  </data>
+  <data name="SearchMsdnCommand" xml:space="preserve">
+    <value>Búsqueda _MSDN</value>
+  </data>
+  <data name="SearchWindow_Options" xml:space="preserve">
+    <value>Opciones</value>
+  </data>
+  <data name="SearchWindow_SearchFor" xml:space="preserve">
+    <value>Buscar por:</value>
+  </data>
+  <data name="ShowCodeCommand" xml:space="preserve">
+    <value>_Código</value>
+  </data>
+  <data name="ShowCodeKey" xml:space="preserve">
+    <value>Ctrl+Alt+0</value>
+  </data>
+  <data name="OpenInNewTabKey4" xml:space="preserve">
+    <value>Shift+Doble click</value>
+  </data>
+  <data name="SyntaxHighlightCommand" xml:space="preserve">
+    <value>Resaltar sintaxis</value>
+  </data>
+  <data name="TabsDlg_Activate_Button" xml:space="preserve">
+    <value>_Activar</value>
+  </data>
+  <data name="TabsDlg_CloseWindow_Button" xml:space="preserve">
+    <value>_Cerrar ventana</value>
+  </data>
+  <data name="TabsDlg_Module_Column" xml:space="preserve">
+    <value>Módulo</value>
+  </data>
+  <data name="TabsDlg_Name_Column" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="TabsDlg_Path_Column" xml:space="preserve">
+    <value>Ruta</value>
+  </data>
+  <data name="TabsDlg_Title" xml:space="preserve">
+    <value>Ventanas</value>
+  </data>
+  <data name="UnknownError" xml:space="preserve">
+    <value>Se ha producido un error desconocido</value>
+  </data>
+  <data name="UseHorizontalTabGroupsCommand" xml:space="preserve">
+    <value>Use grupos de pestaña Horizontales</value>
+  </data>
+  <data name="UseVerticalTabGroupsCommand" xml:space="preserve">
+    <value>Uso de grupos de la pestaña Vertical</value>
+  </data>
+  <data name="WindowsCommand" xml:space="preserve">
+    <value>_Ventanas...</value>
+  </data>
+  <data name="WordWrapHeader" xml:space="preserve">
+    <value>_Ajuste de línea</value>
+  </data>
+  <data name="CloseTabButtonToolTip" xml:space="preserve">
+    <value>Cerrar</value>
+  </data>
+  <data name="DisplaySettings_DecompileType" xml:space="preserve">
+    <value>Descompilar clase envolvente de un miembro en lugar de los miembros de la clase</value>
+  </data>
+  <data name="DisplaySettings_HighlightReferences" xml:space="preserve">
+    <value>Resaltar referencias</value>
+  </data>
+  <data name="DisplaySettings_RestoreTabs" xml:space="preserve">
+    <value>Restaurar las pestañas al iniciar</value>
+  </data>
+  <data name="DisplaySettings_ShowAssemblyPublicKeyToken" xml:space="preserve">
+    <value>Mostrar token de clave pública del ensamblado</value>
+  </data>
+  <data name="DisplaySettings_ShowAssemblyVersion" xml:space="preserve">
+    <value>Mostrar la versión del ensamblado</value>
+  </data>
+  <data name="DisplaySettings_ShowLineNumbers" xml:space="preserve">
+    <value>Mostrar números de línea</value>
+  </data>
+  <data name="DisplaySettings_ShowTokens" xml:space="preserve">
+    <value>Mostrar tokens de metadatos</value>
+  </data>
+  <data name="OptionsCommand" xml:space="preserve">
+    <value>_Opciones...</value>
+  </data>
+  <data name="SearchWindow_AllAbove" xml:space="preserve">
+    <value>Todo lo anterior</value>
+  </data>
+  <data name="SearchWindow_AllAbove_Key" xml:space="preserve">
+    <value>Ctrl+B</value>
+  </data>
+  <data name="SearchWindow_Assembly" xml:space="preserve">
+    <value>Ensamblado</value>
+  </data>
+  <data name="SearchWindow_AssemblyRef" xml:space="preserve">
+    <value>Referencia de ensamblado</value>
+  </data>
+  <data name="SearchWindow_CaseSensitiveSearch" xml:space="preserve">
+    <value>Búsqueda de mayúsculas y minúsculas</value>
+  </data>
+  <data name="SearchWindow_Class" xml:space="preserve">
+    <value>Clase</value>
+  </data>
+  <data name="SearchWindow_DecompileResources" xml:space="preserve">
+    <value>Decompilar recursos (ej. XAML)</value>
+  </data>
+  <data name="SearchWindow_Delegate" xml:space="preserve">
+    <value>Delegado</value>
+  </data>
+  <data name="SearchWindow_Enum" xml:space="preserve">
+    <value>Enum</value>
+  </data>
+  <data name="SearchWindow_Event" xml:space="preserve">
+    <value>Evento</value>
+  </data>
+  <data name="SearchWindow_Event_Key" xml:space="preserve">
+    <value>Ctrl+E</value>
+  </data>
+  <data name="SearchWindow_Field" xml:space="preserve">
+    <value>Campo</value>
+  </data>
+  <data name="SearchWindow_Field_Key" xml:space="preserve">
+    <value>Ctrl+F</value>
+  </data>
+  <data name="SearchWindow_Generic" xml:space="preserve">
+    <value>Tipo genérico</value>
+  </data>
+  <data name="SearchWindow_Interface" xml:space="preserve">
+    <value>Interfaz</value>
+  </data>
+  <data name="SearchWindow_Literal" xml:space="preserve">
+    <value>Número/Cadena</value>
+  </data>
+  <data name="SearchWindow_Literal_Key" xml:space="preserve">
+    <value>Ctrl+L</value>
+  </data>
+  <data name="SearchWindow_Local" xml:space="preserve">
+    <value>Local</value>
+  </data>
+  <data name="SearchWindow_Local_Key" xml:space="preserve">
+    <value>Ctrl+I</value>
+  </data>
+  <data name="SearchWindow_MatchAny" xml:space="preserve">
+    <value>Coincidir con cualquier término de búsqueda</value>
+  </data>
+  <data name="SearchWindow_MatchWholeWords" xml:space="preserve">
+    <value>Emparejar palabras completas</value>
+  </data>
+  <data name="SearchWindow_Member" xml:space="preserve">
+    <value>Miembro</value>
+  </data>
+  <data name="SearchWindow_Member_Key" xml:space="preserve">
+    <value>Ctrl+U</value>
+  </data>
+  <data name="SearchWindow_Method" xml:space="preserve">
+    <value>Método</value>
+  </data>
+  <data name="SearchWindow_Method_Key" xml:space="preserve">
+    <value>Ctrl+M</value>
+  </data>
+  <data name="SearchWindow_Module" xml:space="preserve">
+    <value>Módulo</value>
+  </data>
+  <data name="SearchWindow_ModuleRef" xml:space="preserve">
+    <value>Referencia de Módulo</value>
+  </data>
+  <data name="SearchWindow_Namespace" xml:space="preserve">
+    <value>Espacio de nombres</value>
+  </data>
+  <data name="SearchWindow_NonGeneric" xml:space="preserve">
+    <value>Tipo no genérico</value>
+  </data>
+  <data name="SearchWindow_Parameter" xml:space="preserve">
+    <value>Parámetro</value>
+  </data>
+  <data name="SearchWindow_ParameterLocal" xml:space="preserve">
+    <value>Parámetro/Local</value>
+  </data>
+  <data name="SearchWindow_ParameterLocal_Key" xml:space="preserve">
+    <value>Ctrl+N</value>
+  </data>
+  <data name="SearchWindow_Parameter_Key" xml:space="preserve">
+    <value>Ctrl+J</value>
+  </data>
+  <data name="SearchWindow_Property" xml:space="preserve">
+    <value>Propiedad</value>
+  </data>
+  <data name="SearchWindow_Property_Key" xml:space="preserve">
+    <value>Ctrl+P</value>
+  </data>
+  <data name="SearchWindow_Resource" xml:space="preserve">
+    <value>Recurso</value>
+  </data>
+  <data name="SearchWindow_Resource_Key" xml:space="preserve">
+    <value>Ctrl+R</value>
+  </data>
+  <data name="SearchWindow_Struct" xml:space="preserve">
+    <value>Estructura</value>
+  </data>
+  <data name="SearchWindow_Title" xml:space="preserve">
+    <value>Buscar</value>
+  </data>
+  <data name="SearchWindow_Type" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
+  <data name="SearchWindow_Type_Key" xml:space="preserve">
+    <value>Ctrl+T</value>
+  </data>
+  <data name="ToolWindowWinPosButtonToolTip" xml:space="preserve">
+    <value>Posición de la ventana</value>
+  </data>
+  <data name="Theme_Blue" xml:space="preserve">
+    <value>_Azul</value>
+  </data>
+  <data name="Theme_Dark" xml:space="preserve">
+    <value>_Oscuro</value>
+  </data>
+  <data name="Theme_HighContrast" xml:space="preserve">
+    <value>Contraste _elevado</value>
+  </data>
+  <data name="Theme_Light" xml:space="preserve">
+    <value>_Claro</value>
+  </data>
+  <data name="OpenGAC_Search_ToolTip" xml:space="preserve">
+    <value>Buscar</value>
+  </data>
+  <data name="LanguageCommand" xml:space="preserve">
+    <value>Idioma</value>
+  </data>
+  <data name="Language_OperatingSystemLanguage" xml:space="preserve">
+    <value>Sistema</value>
+  </data>
+  <data name="LanguageSwitchMessage" xml:space="preserve">
+    <value>Debe reiniciar dnSpy para que el cambio de idioma surta efecto.</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftO" xml:space="preserve">
+    <value>Ctrl+Mayús+O</value>
+  </data>
+  <data name="SortAsmsCommand" xml:space="preserve">
+    <value>Or_denar ensamblados</value>
+  </data>
+  <data name="AskReadSettings" xml:space="preserve">
+    <value>¿Desea cargar la configuración guardada?</value>
+  </data>
+  <data name="ExportToProjectCommand" xml:space="preserve">
+    <value>Exportar pro_yecto...</value>
+  </data>
+  <data name="ExportToProject_Title" xml:space="preserve">
+    <value>Exportar proyecto</value>
+  </data>
+  <data name="Error_FileAlreadyExists" xml:space="preserve">
+    <value>Ya existe un archivo con el mismo nombre de la carpeta destino.</value>
+  </data>
+  <data name="Error_MissingDestinationFolder" xml:space="preserve">
+    <value>Falta la carpeta destino.</value>
+  </data>
+  <data name="ExportToProject_Button_Export" xml:space="preserve">
+    <value>_Exportar</value>
+  </data>
+  <data name="ExportToProject_CreateResX" xml:space="preserve">
+    <value>Crear archivos .res_x</value>
+  </data>
+  <data name="ExportToProject_DecompileXaml" xml:space="preserve">
+    <value>Decompilar _baml a xaml</value>
+  </data>
+  <data name="ExportToProject_DestinationFolder" xml:space="preserve">
+    <value>_Carpeta</value>
+  </data>
+  <data name="ExportToProject_ExportFileMessage" xml:space="preserve">
+    <value>Se descompilará un archivo. Seleccione más de un Asamblado para descompilar más de un archivo.</value>
+  </data>
+  <data name="ExportToProject_ExportNFilesMessage" xml:space="preserve">
+    <value>Se descompilarán {0:n0} archivos.</value>
+  </data>
+  <data name="ExportToProject_Language" xml:space="preserve">
+    <value>_Idioma</value>
+  </data>
+  <data name="ExportToProject_OpenProjectInVisualStudio" xml:space="preserve">
+    <value>_Abrir proyecto en Visual Studio</value>
+  </data>
+  <data name="ExportToProject_ProjectVersion" xml:space="preserve">
+    <value>_Versión</value>
+  </data>
+  <data name="ExportToProject_SolutionFilename" xml:space="preserve">
+    <value>_Solución</value>
+  </data>
+  <data name="ExportToProject_UnpackResources" xml:space="preserve">
+    <value>_Desempaquetar recursos</value>
+  </data>
+  <data name="Error_MissingFilename" xml:space="preserve">
+    <value>Nombre de archivo faltante</value>
+  </data>
+  <data name="Button_Close" xml:space="preserve">
+    <value>_Cerrar</value>
+  </data>
+  <data name="ErrorExceptionOccurred" xml:space="preserve">
+    <value>Se ha producido un error
+
+{0}</value>
+  </data>
+  <data name="ExportToProject_ErrorLogMsg" xml:space="preserve">
+    <value>Registro de errores</value>
+  </data>
+  <data name="DecompilerDlgTabTitle" xml:space="preserve">
+    <value>Descompilador</value>
+  </data>
+  <data name="MemberKind_Events" xml:space="preserve">
+    <value>Eventos</value>
+  </data>
+  <data name="MemberKind_Fields" xml:space="preserve">
+    <value>Campos</value>
+  </data>
+  <data name="MemberKind_Methods" xml:space="preserve">
+    <value>Métodos</value>
+  </data>
+  <data name="MemberKind_NestedTypes" xml:space="preserve">
+    <value>Tipos Anidados</value>
+  </data>
+  <data name="MemberKind_Properties" xml:space="preserve">
+    <value>Propiedades</value>
+  </data>
+  <data name="AboutScreen_LicenseInfo" xml:space="preserve">
+    <value>dnSpy está licenciado bajo GPLv3.</value>
+  </data>
+  <data name="AboutScreen_LoadedFiles" xml:space="preserve">
+    <value>Archivos cargados:</value>
+  </data>
+  <data name="SearchWindow_SearchGacAssemblies" xml:space="preserve">
+    <value>Buscar en ensamblados GAC</value>
+  </data>
+  <data name="SearchWindow_Where_AllFiles" xml:space="preserve">
+    <value>Todos los archivos</value>
+  </data>
+  <data name="SearchWindow_Where_FilesInSameFolder" xml:space="preserve">
+    <value>Archivos en la misma carpeta</value>
+  </data>
+  <data name="SearchWindow_Where_SelectedFiles" xml:space="preserve">
+    <value>Archivos seleccionados</value>
+  </data>
+  <data name="SearchWindow_Where_SelectedType" xml:space="preserve">
+    <value>Tipo seleccionado</value>
+  </data>
+  <data name="GoToResourceCommand" xml:space="preserve">
+    <value>Ir a recur_so</value>
+  </data>
+  <data name="CollapseTreeViewNodesCommand" xml:space="preserve">
+    <value>Colapsar la vista del árbol de nodos</value>
+  </data>
+  <data name="CloseAllCommand" xml:space="preserve">
+    <value>Cerrar todo</value>
+  </data>
+  <data name="ExportToProject_NewGuid" xml:space="preserve">
+    <value>_Nuevo</value>
+  </data>
+  <data name="ExportToProject_ProjectGuid" xml:space="preserve">
+    <value>GUID del _Proyecto</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftP" xml:space="preserve">
+    <value>Ctrl+Shift+P</value>
+  </data>
+  <data name="About_Wiki" xml:space="preserve">
+    <value>_Wiki</value>
+  </data>
+  <data name="Window_Output" xml:space="preserve">
+    <value>Resultado</value>
+  </data>
+  <data name="Output_ClearAll_ToolTip" xml:space="preserve">
+    <value>Borrar todo</value>
+  </data>
+  <data name="Output_ShowOutputFrom" xml:space="preserve">
+    <value>_Mostrar salida de:</value>
+  </data>
+  <data name="Output_WordWrap_ToolTip" xml:space="preserve">
+    <value>Alternar el ajuste de la palabra</value>
+  </data>
+  <data name="ShortCutKeyAlt2" xml:space="preserve">
+    <value>Alt + 2</value>
+  </data>
+  <data name="Window_Output2" xml:space="preserve">
+    <value>_Salida</value>
+  </data>
+  <data name="Output_Save_ToolTip" xml:space="preserve">
+    <value>Guardar</value>
+  </data>
+  <data name="ClearAllCommand" xml:space="preserve">
+    <value>Borrar todo</value>
+  </data>
+  <data name="ShortCutKeyCtrlL" xml:space="preserve">
+    <value>Ctrl+L</value>
+  </data>
+  <data name="TextFiles" xml:space="preserve">
+    <value>Archivos de Texto</value>
+  </data>
+  <data name="ShowLineNumbersCommand" xml:space="preserve">
+    <value>Mostar números de línea</value>
+  </data>
+  <data name="ShortCutKeyCtrlDIGIT" xml:space="preserve">
+    <value>Ctrl+{0}</value>
+  </data>
+  <data name="ShowTimestampsCommand" xml:space="preserve">
+    <value>Mostrar fecha y hora</value>
+  </data>
+  <data name="ShortCutKeyCtrlECtrlW" xml:space="preserve">
+    <value>Ctrl+E, Ctrl+W</value>
+  </data>
+  <data name="ShortCutKeyCtrlF4" xml:space="preserve">
+    <value>Ctrl+F4</value>
+  </data>
+  <data name="ShortCutKeyShiftEsc" xml:space="preserve">
+    <value>Mayús+Esc</value>
+  </data>
+  <data name="Window_Close" xml:space="preserve">
+    <value>Cerrar</value>
+  </data>
+  <data name="Window_Maximize" xml:space="preserve">
+    <value>Maximizar</value>
+  </data>
+  <data name="Window_Minimize" xml:space="preserve">
+    <value>Minimizar</value>
+  </data>
+  <data name="Window_Restore" xml:space="preserve">
+    <value>Restaurar hacia abajo</value>
+  </data>
+  <data name="BackgroundImageOptDlgTab" xml:space="preserve">
+    <value>Imagen de fondo</value>
+  </data>
+  <data name="BgImgDisplayName_CodeEditor" xml:space="preserve">
+    <value>Editor de código</value>
+  </data>
+  <data name="BgImgDisplayName_Default" xml:space="preserve">
+    <value>Otras ventanas de texto</value>
+  </data>
+  <data name="BgImgDisplayName_DocumentViewer" xml:space="preserve">
+    <value>Visor de texto principal</value>
+  </data>
+  <data name="BgImgDisplayName_Logger" xml:space="preserve">
+    <value>Ventana de registro</value>
+  </data>
+  <data name="BgImgDisplayName_REPL" xml:space="preserve">
+    <value>Ventana REPL</value>
+  </data>
+  <data name="BgImgSettings_Direction" xml:space="preserve">
+    <value>Dirección</value>
+  </data>
+  <data name="BgImgSettings_HorizontalOffset" xml:space="preserve">
+    <value>Offset horizontal</value>
+  </data>
+  <data name="BgImgSettings_Images" xml:space="preserve">
+    <value>Agregar rutas de acceso a imágenes y carpetas de la imagen, una ruta por línea:</value>
+  </data>
+  <data name="BgImgSettings_Interval" xml:space="preserve">
+    <value>Intérvalo</value>
+  </data>
+  <data name="BgImgSettings_MaxHeight" xml:space="preserve">
+    <value>Altura Máxima</value>
+  </data>
+  <data name="BgImgSettings_MaxWidth" xml:space="preserve">
+    <value>Anchura máxima</value>
+  </data>
+  <data name="BgImgSettings_Opacity" xml:space="preserve">
+    <value>Opacidad</value>
+  </data>
+  <data name="BgImgSettings_Placement" xml:space="preserve">
+    <value>Colocación</value>
+  </data>
+  <data name="BgImgSettings_RandomImage" xml:space="preserve">
+    <value>Imagen al azar</value>
+  </data>
+  <data name="BgImgSettings_Reset" xml:space="preserve">
+    <value>Restablecer</value>
+  </data>
+  <data name="BgImgSettings_Zoom" xml:space="preserve">
+    <value>Zoom %</value>
+  </data>
+  <data name="BgImgSettings_ShowImages" xml:space="preserve">
+    <value>Mostrar imágenes</value>
+  </data>
+  <data name="BgImgSettings_Stretch" xml:space="preserve">
+    <value>Expandir</value>
+  </data>
+  <data name="BgImgSettings_VerticalOffset" xml:space="preserve">
+    <value>Offset vertical</value>
+  </data>
+  <data name="ImagePlacement_Bottom" xml:space="preserve">
+    <value>Parte inferior</value>
+  </data>
+  <data name="ImagePlacement_BottomLeft" xml:space="preserve">
+    <value>Abajo Izquierda</value>
+  </data>
+  <data name="ImagePlacement_BottomRight" xml:space="preserve">
+    <value>Abajo a la derecha</value>
+  </data>
+  <data name="ImagePlacement_Center" xml:space="preserve">
+    <value>Centro</value>
+  </data>
+  <data name="ImagePlacement_Left" xml:space="preserve">
+    <value>Izquierdo</value>
+  </data>
+  <data name="ImagePlacement_Right" xml:space="preserve">
+    <value>Derecho</value>
+  </data>
+  <data name="ImagePlacement_Top" xml:space="preserve">
+    <value>Arriba</value>
+  </data>
+  <data name="ImagePlacement_TopLeft" xml:space="preserve">
+    <value>Arriba a la izquierda</value>
+  </data>
+  <data name="ImagePlacement_TopRight" xml:space="preserve">
+    <value>Arriba a la derecha</value>
+  </data>
+  <data name="StretchDirection_Both" xml:space="preserve">
+    <value>Ambos</value>
+  </data>
+  <data name="StretchDirection_DownOnly" xml:space="preserve">
+    <value>Sólo abajo</value>
+  </data>
+  <data name="StretchDirection_UpOnly" xml:space="preserve">
+    <value>Sólo arriba</value>
+  </data>
+  <data name="Files_Images" xml:space="preserve">
+    <value>Imágenes</value>
+  </data>
+  <data name="BgImgSettings_BottomMarginPercent" xml:space="preserve">
+    <value>% De margen inferior</value>
+  </data>
+  <data name="BgImgSettings_LeftMarginPercent" xml:space="preserve">
+    <value>% De margen izquierda</value>
+  </data>
+  <data name="BgImgSettings_RightMarginPercent" xml:space="preserve">
+    <value>% De margen derecha</value>
+  </data>
+  <data name="BgImgSettings_TopMarginPercent" xml:space="preserve">
+    <value>% De margen superior</value>
+  </data>
+  <data name="Search_FindNextToolTip" xml:space="preserve">
+    <value>Buscar siguiente</value>
+  </data>
+  <data name="Search_FindPreviousToolTip" xml:space="preserve">
+    <value>Buscar anterior</value>
+  </data>
+  <data name="Search_MatchCaseToolTip" xml:space="preserve">
+    <value>Coincidir Mayús/Minus</value>
+  </data>
+  <data name="Search_MatchWholeWordToolTip" xml:space="preserve">
+    <value>Coincidir palabra completa</value>
+  </data>
+  <data name="Search_ReplaceAllToolTip" xml:space="preserve">
+    <value>Reemplazar todo</value>
+  </data>
+  <data name="Search_ReplaceNextToolTip" xml:space="preserve">
+    <value>Reemplace el siguiente</value>
+  </data>
+  <data name="Search_UseRegularExpressionsToolTip" xml:space="preserve">
+    <value>Usar expresiones regulares</value>
+  </data>
+  <data name="Search_ToggleReplaceModeToolTip" xml:space="preserve">
+    <value>Alternar entre modos de buscar y reemplazar</value>
+  </data>
+  <data name="Search_CloseToolTip" xml:space="preserve">
+    <value>Cerrar</value>
+  </data>
+  <data name="IncrementalSearchCommand" xml:space="preserve">
+    <value>Búsqueda incremental</value>
+  </data>
+  <data name="ShortCutKeyCtrlI" xml:space="preserve">
+    <value>Ctrl+I</value>
+  </data>
+  <data name="ShortCutKeyAltPlusAnyKey" xml:space="preserve">
+    <value>Alt +{0}</value>
+  </data>
+  <data name="SignatureHelp_Signature_N_of_TotalCount" xml:space="preserve">
+    <value>{0} de {1}</value>
+  </data>
+  <data name="UriFollowLinkMessage" xml:space="preserve">
+    <value>CTRL + clic para seguir el enlace</value>
+  </data>
+  <data name="EnvironmentSettings" xml:space="preserve">
+    <value>Entorno</value>
+  </data>
+  <data name="GeneralSettings" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="GeneralSettings_Theme" xml:space="preserve">
+    <value>Tema</value>
+  </data>
+  <data name="IntegrateWithWindowsExplorer" xml:space="preserve">
+    <value>Integrar con explorador de Windows</value>
+  </data>
+  <data name="AssemblyExplorerSettings_Order" xml:space="preserve">
+    <value>Aviso (necesita reiniciar)</value>
+  </data>
+  <data name="AssemblyExplorerSettings_SingleClickExpandNodes" xml:space="preserve">
+    <value>Con un solo clic expande los nodos</value>
+  </data>
+  <data name="AssemblyExplorerSettings_SyntaxHighlight" xml:space="preserve">
+    <value>Resaltado de sintaxis</value>
+  </data>
+  <data name="FontSettings" xml:space="preserve">
+    <value>Fuente</value>
+  </data>
+  <data name="CodeEditorSettings" xml:space="preserve">
+    <value>Editor de texto</value>
+  </data>
+  <data name="TabsSettings" xml:space="preserve">
+    <value>Pestañas</value>
+  </data>
+  <data name="TextEditorConvertTabsToSpaces" xml:space="preserve">
+    <value>Convertir tabulaciones en s_paces</value>
+  </data>
+  <data name="TextEditorLineNumbers" xml:space="preserve">
+    <value>_Línea de números</value>
+  </data>
+  <data name="TextEditorVirtualSpace" xml:space="preserve">
+    <value>Espacio _Virtual</value>
+  </data>
+  <data name="TextEditorWordWrap" xml:space="preserve">
+    <value>_Ajuste de línea</value>
+  </data>
+  <data name="TextEditorIndentSize" xml:space="preserve">
+    <value>_Indentar tamaño</value>
+  </data>
+  <data name="TextEditorTabSize" xml:space="preserve">
+    <value>Tamaño de la _Pestaña</value>
+  </data>
+  <data name="TextViewerSettings" xml:space="preserve">
+    <value>Visor de texto</value>
+  </data>
+  <data name="AdvancedSettings" xml:space="preserve">
+    <value>Avanzado</value>
+  </data>
+  <data name="ScrollBarsSettings" xml:space="preserve">
+    <value>Barras de desplazamiento</value>
+  </data>
+  <data name="TextEditorCompressEmptyOrWhitespaceLines" xml:space="preserve">
+    <value>Comprimir las líneas en blanco</value>
+  </data>
+  <data name="TextEditorCompressNonLetterLines" xml:space="preserve">
+    <value>Comprimir las líneas que no tienen algún caracteres alfanuméricos</value>
+  </data>
+  <data name="TextEditorGlyphMargin" xml:space="preserve">
+    <value>Margen del indicador</value>
+  </data>
+  <data name="TextEditorHighlightCurrentLine" xml:space="preserve">
+    <value>Resalta la línea actual</value>
+  </data>
+  <data name="TextEditorHighlightMatchingBrace" xml:space="preserve">
+    <value>Resaltar llaves</value>
+  </data>
+  <data name="TextEditorHighlightRelatedKeywords" xml:space="preserve">
+    <value>Destacar palabras claves relacionadas</value>
+  </data>
+  <data name="TextEditorHorizontalScrollBar" xml:space="preserve">
+    <value>Mostrar barra de desplazamiento _horizontal</value>
+  </data>
+  <data name="TextEditorLineHeight" xml:space="preserve">
+    <value>Altura de línea</value>
+  </data>
+  <data name="TextEditorLineSeparators" xml:space="preserve">
+    <value>Mostrar procedimiento separador de líneas</value>
+  </data>
+  <data name="TextEditorMargins" xml:space="preserve">
+    <value>Márgenes</value>
+  </data>
+  <data name="TextEditorMinimumLineSpacing" xml:space="preserve">
+    <value>No agregue interlineado adicional</value>
+  </data>
+  <data name="TextEditorMouseWheelZoom" xml:space="preserve">
+    <value>Zoom de la rueda del ratón</value>
+  </data>
+  <data name="TextEditorReferenceHighlighting" xml:space="preserve">
+    <value>Resaltar referencias</value>
+  </data>
+  <data name="TextEditorSelectionMargin" xml:space="preserve">
+    <value>Margen de selección</value>
+  </data>
+  <data name="TextEditorShowStructureLines" xml:space="preserve">
+    <value>Mostrar guías de sangrado</value>
+  </data>
+  <data name="TextEditorVerticalScrollBar" xml:space="preserve">
+    <value>Mostrar barra de desplazamiento _vertical</value>
+  </data>
+  <data name="TextEditorZoom" xml:space="preserve">
+    <value>Aumentar/Disminuir</value>
+  </data>
+  <data name="TextEditorZoomControl" xml:space="preserve">
+    <value>Control de zoom</value>
+  </data>
+  <data name="OutputWindowSettings" xml:space="preserve">
+    <value>Ventana de salida</value>
+  </data>
+  <data name="TextEditorShowTimestamps" xml:space="preserve">
+    <value>Mostrar fecha y hora</value>
+  </data>
+  <data name="ReplSettings" xml:space="preserve">
+    <value>REPL</value>
+  </data>
+  <data name="AssemblyExplorerSettings_Filter" xml:space="preserve">
+    <value>Filtro de objetos arrastrados</value>
+  </data>
+  <data name="DocumentFilterType_All" xml:space="preserve">
+    <value>Todos</value>
+  </data>
+  <data name="DocumentFilterType_AllSupported" xml:space="preserve">
+    <value>Todos los archivos soportados</value>
+  </data>
+  <data name="DocumentFilterType_DotNetOnly" xml:space="preserve">
+    <value>.Net Solamentre</value>
+  </data>
+  <data name="AssemblyExplorer_AllFilesFilteredOut" xml:space="preserve">
+    <value>Todos los archivos han sido filtrados. El filtro se puede cambiar en opciones de explorador de ensamblado.</value>
+  </data>
+  <data name="BlockStructureLineKind_DashedLines" xml:space="preserve">
+    <value>Línea de trazos</value>
+  </data>
+  <data name="BlockStructureLineKind_SolidLines" xml:space="preserve">
+    <value>Líneas sólidas</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftK" xml:space="preserve">
+    <value>Ctrl + Mayús + K</value>
+  </data>
+  <data name="BgImgDisplayName_HexEditor" xml:space="preserve">
+    <value>Editor Hexadecimal</value>
+  </data>
+  <data name="HexEditorGroup_Default" xml:space="preserve">
+    <value>Predeterminado</value>
+  </data>
+  <data name="HexEditorSettings" xml:space="preserve">
+    <value>Editor Hexadecimal</value>
+  </data>
+  <data name="HexEditorEncoding" xml:space="preserve">
+    <value>Codificando</value>
+  </data>
+  <data name="HexEditorGroupSizeInBytes" xml:space="preserve">
+    <value>Tamaño del grupo</value>
+  </data>
+  <data name="HexEditorHighlightCurrentValue" xml:space="preserve">
+    <value>Resalta la línea actual</value>
+  </data>
+  <data name="HexEditorOffsetFormat" xml:space="preserve">
+    <value>Offset</value>
+  </data>
+  <data name="HexEditorOffsetLowerCaseHex" xml:space="preserve">
+    <value>Hexagonal de minúsculas (offset)</value>
+  </data>
+  <data name="HexEditorValuesLowerCaseHex" xml:space="preserve">
+    <value>Hexagonal de minúsculas (valores)</value>
+  </data>
+  <data name="BlockStructureLineKind_None" xml:space="preserve">
+    <value>Ninguno</value>
+  </data>
+  <data name="HexEditorShowColumnLineSeparators" xml:space="preserve">
+    <value>Mostrar separadores de línea de columna</value>
+  </data>
+  <data name="GoToOffset_Offset_Label" xml:space="preserve">
+    <value>D_esplazamiento</value>
+  </data>
+  <data name="GoToOffset_Title" xml:space="preserve">
+    <value>Ir al Offset</value>
+  </data>
+  <data name="HexEditorSelect_End" xml:space="preserve">
+    <value>_Fin</value>
+  </data>
+  <data name="HexEditorSelect_Start" xml:space="preserve">
+    <value>_Inicio</value>
+  </data>
+  <data name="HexEditorSelect_Title" xml:space="preserve">
+    <value>Selecciona</value>
+  </data>
+  <data name="InvalidValue" xml:space="preserve">
+    <value>Valor no válido</value>
+  </data>
+  <data name="ValueMustBeWithinRange" xml:space="preserve">
+    <value>Valor debe estar entre {0} y {1}</value>
+  </data>
+  <data name="AnErrorOccurred" xml:space="preserve">
+    <value>Se ha producido un error:
+
+{0}</value>
+  </data>
+  <data name="HexEditorSaveSelection_Title" xml:space="preserve">
+    <value>Guardar selección 0x{0:X}-0x{1:X}</value>
+  </data>
+  <data name="Button_DefaultSettings" xml:space="preserve">
+    <value>Configuración _Predeterminada</value>
+  </data>
+  <data name="Button_RestoreSettings" xml:space="preserve">
+    <value>Restablecer</value>
+  </data>
+  <data name="BytesPerLineCommand" xml:space="preserve">
+    <value>Bytes por línea</value>
+  </data>
+  <data name="ClearByteCommand" xml:space="preserve">
+    <value>Borrar Byte</value>
+  </data>
+  <data name="ClearSelectedBytesCommand" xml:space="preserve">
+    <value>Borrar Bytes seleccionados</value>
+  </data>
+  <data name="CopyCSharpArrayCommand" xml:space="preserve">
+    <value>Copie la matriz C#</value>
+  </data>
+  <data name="CopyOffsetCommand" xml:space="preserve">
+    <value>Copiar Offset</value>
+  </data>
+  <data name="CopySpecialCommand" xml:space="preserve">
+    <value>Copia especial</value>
+  </data>
+  <data name="CopyTextCommand" xml:space="preserve">
+    <value>Copiar texto</value>
+  </data>
+  <data name="CopyUnicodeStringCommand" xml:space="preserve">
+    <value>Copiar cadena Unicode</value>
+  </data>
+  <data name="CopyUTF8StringCommand" xml:space="preserve">
+    <value>Copiar cadena UTF-8</value>
+  </data>
+  <data name="CopyVisualBasicArrayCommand" xml:space="preserve">
+    <value>Copia de matriz Visual Basic</value>
+  </data>
+  <data name="FillSelectionCommand" xml:space="preserve">
+    <value>Rellenar la selección con el Byte...</value>
+  </data>
+  <data name="FillSelection_Label" xml:space="preserve">
+    <value>_Byte</value>
+  </data>
+  <data name="FillSelection_Title" xml:space="preserve">
+    <value>Introducir valor</value>
+  </data>
+  <data name="GoToOffsetCommand" xml:space="preserve">
+    <value>Ir al Offset...</value>
+  </data>
+  <data name="HexEditorSaveSelectionCommand" xml:space="preserve">
+    <value>Guardar Se_lección...</value>
+  </data>
+  <data name="HexEditorSelectCommand" xml:space="preserve">
+    <value>Seleccionar...</value>
+  </data>
+  <data name="HexEditorSettingsCommand" xml:space="preserve">
+    <value>Configuración...</value>
+  </data>
+  <data name="HexEditor_BytesPerLine_16" xml:space="preserve">
+    <value>_16 Bytes</value>
+  </data>
+  <data name="HexEditor_BytesPerLine_32" xml:space="preserve">
+    <value>_32 Bytes</value>
+  </data>
+  <data name="HexEditor_BytesPerLine_48" xml:space="preserve">
+    <value>_48 Bytes</value>
+  </data>
+  <data name="HexEditor_BytesPerLine_64" xml:space="preserve">
+    <value>_64 Bytes</value>
+  </data>
+  <data name="HexEditor_BytesPerLine_8" xml:space="preserve">
+    <value>_8 Bytes</value>
+  </data>
+  <data name="HexEditor_BytesPerLine_FitToWidth" xml:space="preserve">
+    <value>_Ajustar al ancho</value>
+  </data>
+  <data name="LocalHexSettings_BaseOffset" xml:space="preserve">
+    <value>_Base offset</value>
+  </data>
+  <data name="LocalHexSettings_BaseOffset_ToolTip" xml:space="preserve">
+    <value>Este valor se suma al iniciar desplazamiento antes de que se muestra en la pantalla</value>
+  </data>
+  <data name="LocalHexSettings_BytesPerLine" xml:space="preserve">
+    <value>B_ytes por línea</value>
+  </data>
+  <data name="LocalHexSettings_EndOffset" xml:space="preserve">
+    <value>Offset _Final</value>
+  </data>
+  <data name="LocalHexSettings_OffsetBitSize" xml:space="preserve">
+    <value>Tamaño del bi_t del offset</value>
+  </data>
+  <data name="LocalHexSettings_ShowASCII" xml:space="preserve">
+    <value>_Mostrar ASCII</value>
+  </data>
+  <data name="LocalHexSettings_ShowOffset" xml:space="preserve">
+    <value>S_how Offset</value>
+  </data>
+  <data name="LocalHexSettings_ShowValues" xml:space="preserve">
+    <value>Ver _Valores</value>
+  </data>
+  <data name="LocalHexSettings_StartOffset" xml:space="preserve">
+    <value>Offset de Inicio</value>
+  </data>
+  <data name="LocalHexSettings_Title" xml:space="preserve">
+    <value>Configuración local del Editor Hexadecimal</value>
+  </data>
+  <data name="LocalHexSettings_UseRelOffsets" xml:space="preserve">
+    <value>Usar Offsets _Relativos</value>
+  </data>
+  <data name="LocalHexSettings_UseRelOffsets_ToolTip" xml:space="preserve">
+    <value>Todos los offsets son relativos al inicio del offset</value>
+  </data>
+  <data name="LocalHexSettings_ValueFormat" xml:space="preserve">
+    <value>Valor _Formato</value>
+  </data>
+  <data name="PasteCommand" xml:space="preserve">
+    <value>_Pegar</value>
+  </data>
+  <data name="PasteDotNetMetaDataBlobCommand" xml:space="preserve">
+    <value>_Pegar (Datos #Blob)</value>
+  </data>
+  <data name="PasteSpecialCommand" xml:space="preserve">
+    <value>Pegado especial</value>
+  </data>
+  <data name="PasteUnicodeCommand" xml:space="preserve">
+    <value>Pasta (Unicode)</value>
+  </data>
+  <data name="PasteUTF8Command" xml:space="preserve">
+    <value>_Pegar (UTF-8)</value>
+  </data>
+  <data name="ShortCutKeyCtrl8" xml:space="preserve">
+    <value>Ctrl+8</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltO" xml:space="preserve">
+    <value>Ctrl+Alt+O</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltS" xml:space="preserve">
+    <value>Ctrl+Alt+S</value>
+  </data>
+  <data name="ShortCutKeyCtrlB" xml:space="preserve">
+    <value>Ctrl+B</value>
+  </data>
+  <data name="ShortCutKeyCtrlD" xml:space="preserve">
+    <value>Ctrl+D</value>
+  </data>
+  <data name="ShortCutKeyCtrlG" xml:space="preserve">
+    <value>Ctrl+G</value>
+  </data>
+  <data name="ShortCutKeyCtrlShift8" xml:space="preserve">
+    <value>Ctrl+Mayús+8</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftB" xml:space="preserve">
+    <value>Ctrl+Mayús+B</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftC" xml:space="preserve">
+    <value>Ctrl+Mayús+C</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftD" xml:space="preserve">
+    <value>Ctrl+Mayús+D</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftH" xml:space="preserve">
+    <value>Ctrl+Mayus+H</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftU" xml:space="preserve">
+    <value>Ctrl+Mayús+U</value>
+  </data>
+  <data name="ShortCutKeyCtrlU" xml:space="preserve">
+    <value>Ctrl+U</value>
+  </data>
+  <data name="ShortCutKeyCtrlV" xml:space="preserve">
+    <value>Ctrl+V</value>
+  </data>
+  <data name="ShortCutKeyDelete" xml:space="preserve">
+    <value>Eliminar</value>
+    <comment>the delete key</comment>
+  </data>
+  <data name="ShowAllBytesCommand" xml:space="preserve">
+    <value>Mostrar todos los Bytes</value>
+  </data>
+  <data name="ShowOnlySelectedBytesCommand" xml:space="preserve">
+    <value>Mostrar sólo Bytes seleccionados</value>
+  </data>
+  <data name="ValueFormatCommand" xml:space="preserve">
+    <value>Valor Formato</value>
+  </data>
+  <data name="ShortCutKeyF5" xml:space="preserve">
+    <value>F5</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>Refresco</value>
+  </data>
+  <data name="TextEditor" xml:space="preserve">
+    <value>Editor de texto</value>
+  </data>
+  <data name="Search_BigEndianToolTip" xml:space="preserve">
+    <value>Big endian</value>
+  </data>
+  <data name="ShortCutKeyAlt8" xml:space="preserve">
+    <value>Alt+4</value>
+  </data>
+  <data name="ShortCutKeyAltH" xml:space="preserve">
+    <value>Alt + H</value>
+  </data>
+  <data name="ShortCutKeyAltU" xml:space="preserve">
+    <value>Alt+U</value>
+  </data>
+  <data name="ShortCutKeyCtrlF" xml:space="preserve">
+    <value>Ctrl+F</value>
+  </data>
+  <data name="PasteUnicodeAndLength7Command" xml:space="preserve">
+    <value>Pegar (Unicode y longitud)</value>
+  </data>
+  <data name="PasteUTF8AndLength7Command" xml:space="preserve">
+    <value>Pegar (Unicode y longitud)</value>
+  </data>
+  <data name="ShortCutKeyCtrlKCtrl8" xml:space="preserve">
+    <value>Ctrl+E, Ctrl+W</value>
+  </data>
+  <data name="ShortCutKeyCtrlKCtrlU" xml:space="preserve">
+    <value>Ctrl+K, Ctrl+U</value>
+  </data>
+  <data name="HexGoToCodeOrStructure" xml:space="preserve">
+    <value>Ir a código o estructura</value>
+  </data>
+  <data name="ShortCutKeyF12" xml:space="preserve">
+    <value>F12</value>
+  </data>
+  <data name="HexEditorHighlightStructureUnderMouseCursor" xml:space="preserve">
+    <value>Destacar la estructura bajo el cursor del ratón</value>
+  </data>
+  <data name="HexToolTipIndex" xml:space="preserve">
+    <value>índice</value>
+  </data>
+  <data name="HexToolTipOffset" xml:space="preserve">
+    <value>offset</value>
+  </data>
+  <data name="BigEndian" xml:space="preserve">
+    <value>Big Endian</value>
+  </data>
+  <data name="CopyDataCommand" xml:space="preserve">
+    <value>Copia {0}</value>
+  </data>
+  <data name="CopyAbsoluteFileOffsetCommand" xml:space="preserve">
+    <value>Copia Offset absoluto</value>
+  </data>
+  <data name="CopyFileOffsetCommand" xml:space="preserve">
+    <value>Copia archivo Offset</value>
+  </data>
+  <data name="CopyRVACommand" xml:space="preserve">
+    <value>Copia RVA</value>
+  </data>
+  <data name="CopyValueCommand" xml:space="preserve">
+    <value>Copiar valor</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftQ" xml:space="preserve">
+    <value>Ctrl+Mayús+Q</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftA" xml:space="preserve">
+    <value>Ctrl+Mayús+A</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftR" xml:space="preserve">
+    <value>Ctrl+Mayu+R</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftV" xml:space="preserve">
+    <value>Ctrl+Mayús+V</value>
+  </data>
+  <data name="GoToAbsolutePosition" xml:space="preserve">
+    <value>Posición</value>
+  </data>
+  <data name="GoToCurrentPosition" xml:space="preserve">
+    <value>Posición actual</value>
+  </data>
+  <data name="GoToFilePosition" xml:space="preserve">
+    <value>Archivo</value>
+  </data>
+  <data name="ShortCutKeyCtrl1" xml:space="preserve">
+    <value>Ctrl + 1</value>
+  </data>
+  <data name="ShortCutKeyCtrl2" xml:space="preserve">
+    <value>Ctrl + 2</value>
+  </data>
+  <data name="ShortCutKeyCtrl3" xml:space="preserve">
+    <value>Ctrl + 3</value>
+  </data>
+  <data name="ShortCutKeyCtrl4" xml:space="preserve">
+    <value>Ctrl + 4</value>
+  </data>
+  <data name="SelectToNewPosition" xml:space="preserve">
+    <value>_Seleccionar nueva posición</value>
+  </data>
+  <data name="ShortCutKeyCtrlO" xml:space="preserve">
+    <value>Ctrl+O</value>
+  </data>
+  <data name="SelectLength" xml:space="preserve">
+    <value>Longitud</value>
+  </data>
+  <data name="GoToMetadata_Title" xml:space="preserve">
+    <value>Ir a metadatos</value>
+  </data>
+  <data name="GoToMetadata_Token_Label" xml:space="preserve">
+    <value>_Token</value>
+  </data>
+  <data name="ShortCutKeyCtrl5" xml:space="preserve">
+    <value>Ctrl + 5</value>
+  </data>
+  <data name="ShortCutKeyCtrl6" xml:space="preserve">
+    <value>Ctrl + 6</value>
+  </data>
+  <data name="GoToMetadataCommand" xml:space="preserve">
+    <value>Ir a metadatos...</value>
+  </data>
+  <data name="ShortCutKeyCtrlM" xml:space="preserve">
+    <value>Ctrl+M</value>
+  </data>
+  <data name="GoToMetadataInvalidOffsetOrToken" xml:space="preserve">
+    <value>Offset no válido o el token de metadatos</value>
+  </data>
+  <data name="GoToMetadataMethodBody" xml:space="preserve">
+    <value>Cuerpo del método</value>
+  </data>
+  <data name="GoToMetadataToken" xml:space="preserve">
+    <value>Token de metadato</value>
+  </data>
+  <data name="GoToMetadata_Index_Label" xml:space="preserve">
+    <value>_Indice</value>
+  </data>
+  <data name="HexFollowFieldValueReference" xml:space="preserve">
+    <value>Seguir referencia</value>
+  </data>
+  <data name="ShortCutKeyCtrlF12" xml:space="preserve">
+    <value>Ctrl+F12</value>
+  </data>
+  <data name="HexEditorSelectFileCommand" xml:space="preserve">
+    <value>Selecciona archivo</value>
+  </data>
+  <data name="HexEditorSelectNestedFileCommand" xml:space="preserve">
+    <value>Seleccione Archivo anidado</value>
+  </data>
+  <data name="SelectSpecialCommand" xml:space="preserve">
+    <value>Selección especial</value>
+  </data>
+  <data name="ShortCutKeyCtrlECtrlF" xml:space="preserve">
+    <value>Ctrl + E, Ctrl + F</value>
+  </data>
+  <data name="ShortCutKeyCtrlECtrlN" xml:space="preserve">
+    <value>Ctrl + E, Ctrl + N</value>
+  </data>
+  <data name="HexEditorSelectStructureCommand" xml:space="preserve">
+    <value>Selecciona estructura</value>
+  </data>
+  <data name="ShortCutKeyCtrlECtrlS" xml:space="preserve">
+    <value>Ctrl + E, Ctrl + S</value>
+  </data>
+  <data name="HexEditFieldCommand" xml:space="preserve">
+    <value>Edita campo</value>
+  </data>
+  <data name="OptionColorizeText" xml:space="preserve">
+    <value>Colorea el texto</value>
+  </data>
+  <data name="ShortCutKeyAltRightArrow" xml:space="preserve">
+    <value>Alt + flecha derecha</value>
+  </data>
+  <data name="ShortCutKeyBackspace" xml:space="preserve">
+    <value>Retroceso</value>
+  </data>
+  <data name="ShortCutKeyCtrlS" xml:space="preserve">
+    <value>Ctrl+S</value>
+  </data>
+  <data name="ShortCutKeyAltA" xml:space="preserve">
+    <value>Alt+A</value>
+  </data>
+  <data name="ShortCutKeyAltB" xml:space="preserve">
+    <value>Alt + B</value>
+  </data>
+  <data name="ShortCutKeyAltC" xml:space="preserve">
+    <value>Alt + C</value>
+  </data>
+  <data name="ShortCutKeyAltE" xml:space="preserve">
+    <value>Atl + E</value>
+  </data>
+  <data name="ShortCutKeyAltW" xml:space="preserve">
+    <value>Alt + W</value>
+  </data>
+  <data name="ShortCutKeyEsc" xml:space="preserve">
+    <value>Escape</value>
+  </data>
+  <data name="ShortCutKeyShiftF3" xml:space="preserve">
+    <value>Mayús + F3</value>
+  </data>
+  <data name="ShortCutKeyF3" xml:space="preserve">
+    <value>F3</value>
+  </data>
+  <data name="ShortCutKeyAltR" xml:space="preserve">
+    <value>Alt + R</value>
+  </data>
+  <data name="TimestampDateTimeFormat" xml:space="preserve">
+    <value>Formato de fecha y hora</value>
+  </data>
+  <data name="Window_Bookmarks" xml:space="preserve">
+    <value>Marcadores</value>
+  </data>
+  <data name="BookmarksOptDlgTab" xml:space="preserve">
+    <value>Marcadores</value>
+  </data>
+  <data name="BookmarksSettings_SyntaxHighlight" xml:space="preserve">
+    <value>Resaltado de sintaxis</value>
+  </data>
+  <data name="SearchHelp_ToolTip" xml:space="preserve">
+    <value>Ayuda</value>
+  </data>
+  <data name="Column_Labels" xml:space="preserve">
+    <value>Etiquetas</value>
+  </data>
+  <data name="Column_Location" xml:space="preserve">
+    <value>Ubicación</value>
+  </data>
+  <data name="Column_Module" xml:space="preserve">
+    <value>Módulo</value>
+  </data>
+  <data name="Column_Name" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="Bookmarks_NoMatch" xml:space="preserve">
+    <value>No hay marcadores coincidentes con el filtro de búsqueda.</value>
+  </data>
+  <data name="Bookmarks_Search" xml:space="preserve">
+    <value>Buscar</value>
+  </data>
+  <data name="BookmarksCommand" xml:space="preserve">
+    <value>Boo_kmarks</value>
+  </data>
+  <data name="BookmarksWindowCommand" xml:space="preserve">
+    <value>Ventana _Bookmark</value>
+  </data>
+  <data name="Bookmarks_ExportMatchingBookmarks_ToolTip" xml:space="preserve">
+    <value>Exportar todos los marcadores con el actual criterio de búsqueda</value>
+  </data>
+  <data name="Bookmarks_GoToLocation_ToolTip" xml:space="preserve">
+    <value>Mueva el cursor al marcador seleccionado.</value>
+  </data>
+  <data name="Bookmarks_GoToNextBookmarkInFile_ToolTip" xml:space="preserve">
+    <value>Mueva el cursor al marcador siguiente en el archivo actual.</value>
+  </data>
+  <data name="Bookmarks_GoToNextBookmarkSameLabel_ToolTip" xml:space="preserve">
+    <value>Mueva el cursor al marcador siguiente con la misma etiqueta.</value>
+  </data>
+  <data name="Bookmarks_GoToNextBookmark_ToolTip" xml:space="preserve">
+    <value>Mueva el cursor al marcador siguiente.</value>
+  </data>
+  <data name="Bookmarks_GoToPreviousBookmarkInFile_ToolTip" xml:space="preserve">
+    <value>Mueva el cursor al marcador anterior en el archivo actual.</value>
+  </data>
+  <data name="Bookmarks_GoToPreviousBookmarkSameLabel_ToolTip" xml:space="preserve">
+    <value>Mueva el cursor al marcador anterior con la misma etiqueta.</value>
+  </data>
+  <data name="Bookmarks_GoToPreviousBookmark_ToolTip" xml:space="preserve">
+    <value>Mueva el cursor al marcador anterior.</value>
+  </data>
+  <data name="Bookmarks_ImportBookmarks_ToolTip" xml:space="preserve">
+    <value>Importar marcadores desde un archivo</value>
+  </data>
+  <data name="Bookmarks_RemoveBookmark_ToolTip" xml:space="preserve">
+    <value>Eliminar marcador</value>
+  </data>
+  <data name="Bookmarks_RemoveMatchingBookmarks_ToolTip" xml:space="preserve">
+    <value>Eliminar todos los marcadores con el actual criterio de búsqueda</value>
+  </data>
+  <data name="Bookmarks_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Restablecer todos los criterios de búsqueda para que se muestren todos los marcadores</value>
+  </data>
+  <data name="Bookmarks_Search_ToolTip" xml:space="preserve">
+    <value>Búsqueda de un marcador</value>
+  </data>
+  <data name="Bookmarks_ToggleCreateBookmark_ToolTip" xml:space="preserve">
+    <value>Cambiar un marcador en la línea actual.</value>
+  </data>
+  <data name="Bookmarks_ToggleMatchingBookmarks_ToolTip" xml:space="preserve">
+    <value>Activar o desactivar todos los marcadores con el actual criterio de búsqueda</value>
+  </data>
+  <data name="BookmarkDefaultName" xml:space="preserve">
+    <value>Marcador{0}</value>
+  </data>
+  <data name="RenameCommand" xml:space="preserve">
+    <value>Renombrar</value>
+  </data>
+  <data name="GoToBookmarkCommand" xml:space="preserve">
+    <value>Ir a marcador</value>
+  </data>
+  <data name="ShortCutKeyCtrl_DIGIT" xml:space="preserve">
+    <value>Ctrl+{0}</value>
+  </data>
+  <data name="DisableBookmarkCommand3" xml:space="preserve">
+    <value>Deshabilitar el marcador</value>
+  </data>
+  <data name="EditLabelsCommand" xml:space="preserve">
+    <value>Editar etiqueta</value>
+  </data>
+  <data name="EnableBookmarkCommand3" xml:space="preserve">
+    <value>Deshabilitar el marcador</value>
+  </data>
+  <data name="ExportSelectedCommand" xml:space="preserve">
+    <value>_Exportar seleccionado...</value>
+  </data>
+  <data name="RemoveAllBookmarksCommand" xml:space="preserve">
+    <value>Eliminar todos los marcadores</value>
+  </data>
+  <data name="RemoveBookmarkCommand" xml:space="preserve">
+    <value>Eliminar marcador</value>
+  </data>
+  <data name="SelectAllCommand" xml:space="preserve">
+    <value>Seleccionar _Todos</value>
+  </data>
+  <data name="ShortCutKeyCtrlA" xml:space="preserve">
+    <value>Ctrl+A</value>
+  </data>
+  <data name="ShortCutKeyCtrlC" xml:space="preserve">
+    <value>Ctrl+C</value>
+  </data>
+  <data name="ShortCutKeyEnter" xml:space="preserve">
+    <value>Entrar</value>
+  </data>
+  <data name="ShortCutKeyF2" xml:space="preserve">
+    <value>F2</value>
+  </data>
+  <data name="ShowDeclaringTypesCommand" xml:space="preserve">
+    <value>Ver declaración de tipos</value>
+  </data>
+  <data name="ShowIntrinsicTypeKeywordsCommand" xml:space="preserve">
+    <value>Mostrar palabras claves de tipo intrínseco</value>
+  </data>
+  <data name="ShowModuleNamesCommand" xml:space="preserve">
+    <value>Mostrar nombres de _Módulos</value>
+  </data>
+  <data name="ShowNamespacesCommand" xml:space="preserve">
+    <value>Mostrar los espacios de nombres</value>
+  </data>
+  <data name="ShowParameterNamesCommand" xml:space="preserve">
+    <value>Mostrar nombres de _Parameter</value>
+  </data>
+  <data name="ShowParameterTypesCommand2" xml:space="preserve">
+    <value>Mostrar tipos de parámetros</value>
+  </data>
+  <data name="ShowReturnTypesCommand" xml:space="preserve">
+    <value>Mostrar tipos de devolución</value>
+  </data>
+  <data name="ShowTokensCommand" xml:space="preserve">
+    <value>Mostrar Tokens</value>
+  </data>
+  <data name="ShortCutKeyCtrlK_CtrlW" xml:space="preserve">
+    <value>Ctrl + K, Ctrl + W</value>
+  </data>
+  <data name="ClearAllBookmarksInDocumentCommand" xml:space="preserve">
+    <value>Borrar todos los marcadores en el documento</value>
+  </data>
+  <data name="ClearBookmarksCommand" xml:space="preserve">
+    <value>_Limpiar favoritos</value>
+  </data>
+  <data name="DisableAllBookmarksCommand" xml:space="preserve">
+    <value>Desactivar _Todos los marcadores</value>
+  </data>
+  <data name="EnableAllBookmarksCommand" xml:space="preserve">
+    <value>Habilitar _Todos los marcadores</value>
+  </data>
+  <data name="EnableBookmarkCommand" xml:space="preserve">
+    <value>Habilitar marcador</value>
+  </data>
+  <data name="GoToNextBookmarkCommand" xml:space="preserve">
+    <value>Siguiente _Bookmark</value>
+  </data>
+  <data name="GoToNextBookmarkInDocumentCommand" xml:space="preserve">
+    <value>P_róximo Bookmark en el documento</value>
+  </data>
+  <data name="GoToNextBookmarkWithSameLabelCommand" xml:space="preserve">
+    <value>Marcador siguiente con la misma etiqueta</value>
+  </data>
+  <data name="GoToPreviousBookmarkCommand" xml:space="preserve">
+    <value>Marcador _Anterior</value>
+  </data>
+  <data name="GoToPreviousBookmarkInDocumentCommand" xml:space="preserve">
+    <value>A_nterior Bookmark en el documento</value>
+  </data>
+  <data name="GoToPreviousBookmarkWithSameLabelCommand" xml:space="preserve">
+    <value>Marcador anterior con la misma etiqueta</value>
+  </data>
+  <data name="ShortCutKeyCtrlK_CtrlK" xml:space="preserve">
+    <value>Ctrl + K, Ctrl + K</value>
+  </data>
+  <data name="ShortCutKeyCtrlK_CtrlL" xml:space="preserve">
+    <value>Ctrl + K, Ctrl + L</value>
+  </data>
+  <data name="ShortCutKeyCtrlK_CtrlN" xml:space="preserve">
+    <value>Ctrl + K, Ctrl + N</value>
+  </data>
+  <data name="ShortCutKeyCtrlK_CtrlP" xml:space="preserve">
+    <value>Ctrl + K, Ctrl + P</value>
+  </data>
+  <data name="ToggleBookmarkCommand" xml:space="preserve">
+    <value>_Alternar marcadores</value>
+  </data>
+  <data name="EditLabelsMsgBoxLabel" xml:space="preserve">
+    <value>Etiquetas</value>
+  </data>
+  <data name="EditLabelsTitle" xml:space="preserve">
+    <value>Editar etiqueta</value>
+  </data>
+  <data name="User_Administrator" xml:space="preserve">
+    <value>Administrador</value>
+  </data>
+  <data name="AllowMoreThanOneInstance" xml:space="preserve">
+    <value>Permite más de una instancia (reiniciar)</value>
+  </data>
+  <data name="DisassemblerDlgTabTitle" xml:space="preserve">
+    <value>Desensamblador</value>
+  </data>
+  <data name="CodeStyleDlgTabTitle" xml:space="preserve">
+    <value>Estilo de Código</value>
+  </data>
+  <data name="DisassemblySettings_AddLabels" xml:space="preserve">
+    <value>Añadir etiqueta</value>
+  </data>
+  <data name="DisassemblySettings_AddLeadingZeroToHexNumbers" xml:space="preserve">
+    <value>Añadir líder '0' a hexadecimales números si es necesario</value>
+  </data>
+  <data name="DisassemblySettings_AlwaysShowMemorySize" xml:space="preserve">
+    <value>Mostrar siempre el tamaño de los operandos de memoria</value>
+  </data>
+  <data name="DisassemblySettings_AlwaysShowScale" xml:space="preserve">
+    <value>Muestra siempre el valor de escala</value>
+  </data>
+  <data name="DisassemblySettings_AlwaysShowSegmentRegister" xml:space="preserve">
+    <value>Mostrar registros de segmento</value>
+  </data>
+  <data name="DisassemblySettings_DigitSeparator" xml:space="preserve">
+    <value>Separador de dígitos</value>
+  </data>
+  <data name="DisassemblySettings_EmptyLineBetweenBasicBlocks" xml:space="preserve">
+    <value>Añadir una línea en blanco entre los bloques de</value>
+  </data>
+  <data name="DisassemblySettings_HexPrefix" xml:space="preserve">
+    <value>Prefijo de número hexagonal</value>
+  </data>
+  <data name="DisassemblySettings_HexSuffix" xml:space="preserve">
+    <value>Sufijo de número hexagonal</value>
+  </data>
+  <data name="DisassemblySettings_NewTab" xml:space="preserve">
+    <value>Mostrar desensamblado en una pestaña nueva</value>
+  </data>
+  <data name="DisassemblySettings_OperandColumn" xml:space="preserve">
+    <value>Columna de operando</value>
+  </data>
+  <data name="DisassemblySettings_RipRelativeAddresses" xml:space="preserve">
+    <value>Direcciones relativas a RIP</value>
+  </data>
+  <data name="DisassemblySettings_ScaleBeforeIndex" xml:space="preserve">
+    <value>Mostrar escala antes de registro de índice</value>
+  </data>
+  <data name="DisassemblySettings_BranchLeadingZeroes" xml:space="preserve">
+    <value>Añadir ceros iniciales (ramas)</value>
+  </data>
+  <data name="DisassemblySettings_LeadingZeroes" xml:space="preserve">
+    <value>Añadir ceros iniciales</value>
+  </data>
+  <data name="DisassemblySettings_ShowBranchSize" xml:space="preserve">
+    <value>Mostrar tamaño de la rama</value>
+  </data>
+  <data name="DisassemblySettings_ShowInstructionAddress" xml:space="preserve">
+    <value>Mostrar dirección de instrucción</value>
+  </data>
+  <data name="DisassemblySettings_ShowInstructionBytes" xml:space="preserve">
+    <value>Ver instrucción bytes</value>
+  </data>
+  <data name="DisassemblySettings_ShowZeroDisplacements" xml:space="preserve">
+    <value>Mostrar cero desplazamientos</value>
+  </data>
+  <data name="DisassemblySettings_SignedImmediateOperands" xml:space="preserve">
+    <value>Números firmados</value>
+  </data>
+  <data name="DisassemblySettings_SignedMemoryDisplacements" xml:space="preserve">
+    <value>Desplazamientos firmados</value>
+  </data>
+  <data name="DisassemblySettings_SmallHexNumbersInDecimal" xml:space="preserve">
+    <value>Ver pequeños números en decimal</value>
+  </data>
+  <data name="DisassemblySettings_SpaceAfterMemoryBracket" xml:space="preserve">
+    <value>Espacio después de los soportes del operando de memoria</value>
+  </data>
+  <data name="DisassemblySettings_SpaceAfterOperandSeparator" xml:space="preserve">
+    <value>Espacio después de separador operando</value>
+  </data>
+  <data name="DisassemblySettings_SpacesBetweenMemoryAddOperators" xml:space="preserve">
+    <value>Espacio entre '+'</value>
+  </data>
+  <data name="DisassemblySettings_SpacesBetweenMemoryMulOperators" xml:space="preserve">
+    <value>Espacio entre '+'</value>
+  </data>
+  <data name="DisassemblySettings_UpperCaseAll" xml:space="preserve">
+    <value>Todo letras mayúsculas</value>
+  </data>
+  <data name="DisassemblySettings_UpperCaseHex" xml:space="preserve">
+    <value>Mayúscula número hexadecimal</value>
+  </data>
+  <data name="DisassemblySettings_UpperCaseKeywords" xml:space="preserve">
+    <value>Letras mayúsculas</value>
+  </data>
+  <data name="DisassemblySettings_UpperCaseMnemonics" xml:space="preserve">
+    <value>Mnemónicos de mayúsculas</value>
+  </data>
+  <data name="DisassemblySettings_UpperCasePrefixes" xml:space="preserve">
+    <value>Prefijos de mayúscula</value>
+  </data>
+  <data name="DisassemblySettings_UpperCaseRegisters" xml:space="preserve">
+    <value>Registro en mayúscula</value>
+  </data>
+  <data name="DisassemblySettings_UsePseudoOps" xml:space="preserve">
+    <value>Pseudo instrucciones</value>
+  </data>
+  <data name="DisassemblySettings_X86AssemblerSyntax" xml:space="preserve">
+    <value>Sintaxis de</value>
+  </data>
+  <data name="DisassemblySettings_NakedRegisters" xml:space="preserve">
+    <value>Registros desnudos</value>
+  </data>
+  <data name="DisassemblySettings_ShowMnemonicSizeSuffix" xml:space="preserve">
+    <value>Mostrar siempre el sufijo de tamaño mnemónico</value>
+  </data>
+  <data name="DisassemblySettings_SpaceAfterMemoryOperandComma" xml:space="preserve">
+    <value>Espacio después de los soportes del operando de memoria</value>
+  </data>
+  <data name="DisassemblySettings_UseHexNumbers" xml:space="preserve">
+    <value>Números hexadecimales</value>
+  </data>
+  <data name="Disassembly_TabTitle" xml:space="preserve">
+    <value>Desensamblado</value>
+  </data>
+  <data name="DisassemblySettings_ShowCode" xml:space="preserve">
+    <value>Mostrar código descompilado</value>
+  </data>
+  <data name="DisassemblySettings_ShowILCode" xml:space="preserve">
+    <value>Mostrar código IL</value>
+  </data>
+  <data name="Disassembly_MethodIsNotOptimized" xml:space="preserve">
+    <value>El método no está optimizado</value>
+  </data>
+  <data name="DisassemblySettings_ShowSymbolAddress" xml:space="preserve">
+    <value>Mostrar la dirección del símbolo</value>
+  </data>
+  <data name="Decompile_Timestamp" xml:space="preserve">
+    <value>Fecha/Hora:</value>
+  </data>
+  <data name="UnknownValue" xml:space="preserve">
+    <value>&lt; desconocido &gt;</value>
+  </data>
+  <data name="TypeReferencesFolder" xml:space="preserve">
+    <value>Tipos de referencias</value>
+  </data>
+  <data name="TreeViewEventsFolder" xml:space="preserve">
+    <value>Eventos</value>
+  </data>
+  <data name="TreeViewFieldsFolder" xml:space="preserve">
+    <value>Campos</value>
+  </data>
+  <data name="TreeViewMethodsFolder" xml:space="preserve">
+    <value>Métodos</value>
+  </data>
+  <data name="TreeViewPropertiesFolder" xml:space="preserve">
+    <value>Propiedades</value>
+  </data>
+  <data name="TreeViewTypesFolder" xml:space="preserve">
+    <value>Tipos</value>
+  </data>
+</root>

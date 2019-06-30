@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,6 +22,7 @@ using System.ComponentModel.Composition;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.Engine;
+using dnSpy.Debugger.DotNet.CorDebug.Impl.Attach;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	[ExportDbgEngineProvider]
@@ -32,7 +33,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		DbgEngineProviderImpl(Lazy<DbgEngineImplDependencies> dbgEngineImplDependencies) =>
 			this.dbgEngineImplDependencies = dbgEngineImplDependencies;
 
-		public override DbgEngine Create(DbgManager dbgManager, DebugProgramOptions options) {
+		public override DbgEngine? Create(DbgManager dbgManager, DebugProgramOptions options) {
 			switch (options) {
 			case DotNetFrameworkStartDebuggingOptions _:
 				return new DotNetFrameworkDbgEngineImpl(dbgEngineImplDependencies.Value, dbgManager, DbgStartKind.Start);

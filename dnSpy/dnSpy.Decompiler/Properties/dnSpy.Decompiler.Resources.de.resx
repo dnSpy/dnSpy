@@ -142,16 +142,16 @@
     <value>Dekompiliere BAML</value>
   </data>
   <data name="MSBuild_FailedToCreateProjectFile" xml:space="preserve">
-    <value>Fehler beim Erstellen der Projekt-Datei {0}, Ausnahmemeldung: {1}</value>
+    <value>Fehler beim Erstellen der Projekt-Datei {0}, Fehlermeldung: {1}</value>
   </data>
   <data name="MSBuild_FailedToCreateSolutionFile" xml:space="preserve">
     <value>Fehler beim Erstellen der Projektmappe {0}, Ausnahmemeldung: {1}</value>
   </data>
   <data name="MSBuild_FileCreationFailed2" xml:space="preserve">
-    <value>Fehlgeschlagen, Beschreibung = {0}, Ausnahmemeldung: {1}</value>
+    <value>Fehlgeschlagen, Beschreibung = {0}, Fehlermeldung: {1}</value>
   </data>
   <data name="MSBuild_FileCreationFailed3" xml:space="preserve">
-    <value>Dateierstellung fehlgeschlagen ({0}), Beschreibung = {1}, Ausnahmemeldung: {2}</value>
+    <value>Dateierstellung fehlgeschlagen ({0}), Beschreibung = {1}, Fehlermeldung: {2}</value>
   </data>
   <data name="ToolTip_Constant" xml:space="preserve">
     <value>Konstante</value>

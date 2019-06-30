@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -40,7 +40,7 @@ namespace dnSpy.Bookmarks.DotNet.TextEditor {
 
 		public override TextViewBookmarkLocationResult? CreateLocation(IDocumentTab tab, ITextView textView, VirtualSnapshotPoint position) {
 			var documentViewer = tab.TryGetDocumentViewer();
-			if (documentViewer == null)
+			if (documentViewer is null)
 				return null;
 
 			// A bookmark should be set on the current line if possible, and the current position
@@ -50,7 +50,7 @@ namespace dnSpy.Bookmarks.DotNet.TextEditor {
 				if (!data.Data.IsDefinition)
 					continue;
 				var def = data.Data.Reference as IMemberDef;
-				if (def == null)
+				if (def is null)
 					continue;
 				var span = data.Span;
 

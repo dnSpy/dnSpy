@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,6 +26,7 @@ using dnSpy.Contracts.TreeView.Text;
 
 namespace dnSpy.Analyzer {
 	sealed class AnalyzerTreeNodeDataContext : IAnalyzerTreeNodeDataContext {
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
 		public IDotNetImageService DotNetImageService { get; set; }
 		public ITreeView TreeView { get; set; }
 		public IDecompiler Decompiler { get; set; }
@@ -36,5 +37,6 @@ namespace dnSpy.Analyzer {
 		public bool SingleClickExpandsChildren { get; set; }
 		public bool SyntaxHighlight { get; set; }
 		public bool UseNewRenderer { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
 	}
 }

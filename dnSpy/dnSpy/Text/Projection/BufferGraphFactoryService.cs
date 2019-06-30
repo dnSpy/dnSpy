@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,7 +26,7 @@ namespace dnSpy.Text.Projection {
 	[Export(typeof(IBufferGraphFactoryService))]
 	sealed class BufferGraphFactoryService : IBufferGraphFactoryService {
 		public IBufferGraph CreateBufferGraph(ITextBuffer textBuffer) {
-			if (textBuffer == null)
+			if (textBuffer is null)
 				throw new ArgumentNullException(nameof(textBuffer));
 			return textBuffer.Properties.GetOrCreateSingletonProperty(typeof(BufferGraph), () => new BufferGraph(textBuffer));
 		}

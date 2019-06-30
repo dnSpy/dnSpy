@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,24 +28,24 @@ using WF = System.Windows.Forms;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
 	sealed class EditImage : IEdit<ImageVM> {
-		readonly Window ownerWindow;
+		readonly Window? ownerWindow;
 
 		public EditImage()
 			: this(null) {
 		}
 
-		public EditImage(Window ownerWindow) => this.ownerWindow = ownerWindow;
+		public EditImage(Window? ownerWindow) => this.ownerWindow = ownerWindow;
 
-		public ImageVM Edit(string title, ImageVM mo) {
+		public ImageVM? Edit(string? title, ImageVM mo) {
 			var dlg = new WF.OpenFileDialog {
 				RestoreDirectory = true,
 				Multiselect = false,
-				Filter = string.Format("{1}|*.png;*.gif;*.bmp;*.dib;*.jpg;*.jpeg;*.jpe;*.jif;*.jfif;*.jfi;*.ico|{0} (*.*)|*.*", dnSpy_AsmEditor_Resources.AllFiles, dnSpy_AsmEditor_Resources.Images),
+				Filter = $"{dnSpy_AsmEditor_Resources.Images}|*.png;*.gif;*.bmp;*.dib;*.jpg;*.jpeg;*.jpe;*.jif;*.jfif;*.jfi;*.ico|{dnSpy_AsmEditor_Resources.AllFiles} (*.*)|*.*",
 			};
 			if (dlg.ShowDialog() != WF.DialogResult.OK)
 				return null;
 
-			Stream imgStream = null;
+			Stream? imgStream = null;
 			try {
 				var bimg = new BitmapImage();
 				bimg.BeginInit();
@@ -56,7 +56,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 				return mo;
 			}
 			catch (Exception ex) {
-				if (imgStream != null)
+				if (!(imgStream is null))
 					imgStream.Dispose();
 				MsgBox.Instance.Show(string.Format(dnSpy_AsmEditor_Resources.Error_OpenImage, ex.Message), MsgBoxButton.OK, ownerWindow);
 				return null;

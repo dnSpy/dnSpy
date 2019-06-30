@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
+// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
@@ -44,7 +44,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			foreach (MethodDef method in type.Methods) {
 				if (method.IsStatic && HasExtensionAttribute(method)) {
 					int skip = GetParametersSkip(method.Parameters);
-					if (method.Parameters.Count > skip && new SigComparer().Equals(analyzedType, method.Parameters[skip].Type)) {
+					if (method.Parameters.Count > skip && new SigComparer().Equals(analyzedType, method.Parameters[skip].Type?.GetScopeType())) {
 						yield return new MethodNode(method) { Context = Context };
 					}
 				}
@@ -52,14 +52,14 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		static int GetParametersSkip(IList<Parameter> parameters) {
-			if (parameters == null || parameters.Count == 0)
+			if (parameters is null || parameters.Count == 0)
 				return 0;
 			if (parameters[0].IsHiddenThisParameter)
 				return 1;
 			return 0;
 		}
 
-		bool HasExtensionAttribute(IHasCustomAttribute p) => p.CustomAttributes.Find("System.Runtime.CompilerServices.ExtensionAttribute") != null;
+		bool HasExtensionAttribute(IHasCustomAttribute p) => !(p.CustomAttributes.Find("System.Runtime.CompilerServices.ExtensionAttribute") is null);
 
 		// show on all types except static classes
 		public static bool CanShow(TypeDef type) => !(type.IsAbstract && type.IsSealed);

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,7 +23,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
 	/// A required or optional custom modifier
 	/// </summary>
-	public struct DmdCustomModifier : IEquatable<DmdCustomModifier> {
+	public readonly struct DmdCustomModifier : IEquatable<DmdCustomModifier> {
 		/// <summary>
 		/// true if it's a required C modifier
 		/// </summary>
@@ -49,10 +49,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			IsRequired = isRequired;
 		}
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DmdCustomModifier left, DmdCustomModifier right) => DmdMemberInfoEqualityComparer.DefaultCustomModifier.Equals(left, right);
 		public static bool operator !=(DmdCustomModifier left, DmdCustomModifier right) => !DmdMemberInfoEqualityComparer.DefaultCustomModifier.Equals(left, right);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Equals()
@@ -66,7 +66,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is DmdCustomModifier other && Equals(other);
+		public override bool Equals(object? obj) => obj is DmdCustomModifier other && Equals(other);
 
 		/// <summary>
 		/// GetHashCode()

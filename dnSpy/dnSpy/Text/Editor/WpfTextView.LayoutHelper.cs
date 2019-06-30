@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -39,10 +39,10 @@ namespace dnSpy.Text.Editor {
 			readonly HashSet<ITextViewLine> oldVisibleLines;
 
 			public double NewViewportTop { get; private set; }
-			public List<PhysicalLine> AllVisiblePhysicalLines { get; private set; }
-			public List<IWpfTextViewLine> AllVisibleLines { get; private set; }
-			public List<IWpfTextViewLine> NewOrReformattedLines { get; private set; }
-			public List<IWpfTextViewLine> TranslatedLines { get; private set; }
+			public List<PhysicalLine>? AllVisiblePhysicalLines { get; private set; }
+			public List<IWpfTextViewLine>? AllVisibleLines { get; private set; }
+			public List<IWpfTextViewLine>? NewOrReformattedLines { get; private set; }
+			public List<IWpfTextViewLine>? TranslatedLines { get; private set; }
 			readonly double requestedViewportTop;
 
 			public LayoutHelper(ILineTransformProvider lineTransformProvider, double newViewportTop, HashSet<ITextViewLine> oldVisibleLines, List<PhysicalLine> oldLines, IFormattedLineSource formattedLineSource, ITextViewModel textViewModel, ITextSnapshot visualSnapshot, ITextSnapshot editSnapshot) {
@@ -63,7 +63,7 @@ namespace dnSpy.Text.Editor {
 				}
 			}
 
-			struct LineInfo {
+			readonly struct LineInfo {
 				public IFormattedLine Line { get; }
 				public double Y { get; }
 				public LineInfo(IFormattedLine line, double y) {
@@ -97,11 +97,11 @@ namespace dnSpy.Text.Editor {
 				// just like in VS' IWpfTextViewLine collection.
 				var firstInfo = infos[0];
 				var prevLine = AddLineTransform(GetLineBefore(firstInfo.Line), firstInfo.Y, ViewRelativePosition.Bottom);
-				if (prevLine != null)
+				if (!(prevLine is null))
 					infos.Insert(0, new LineInfo(prevLine, firstInfo.Y - prevLine.Height));
 				var lastInfo = infos[infos.Count - 1];
 				var nextLine = AddLineTransform(GetLineAfter(lastInfo.Line), lastInfo.Y + lastInfo.Line.Height, ViewRelativePosition.Top);
-				if (nextLine != null)
+				if (!(nextLine is null))
 					infos.Add(new LineInfo(nextLine, lastInfo.Y + lastInfo.Line.Height));
 
 				var keptLines = new HashSet<PhysicalLine>();
@@ -165,6 +165,7 @@ namespace dnSpy.Text.Editor {
 			List<LineInfo> CreateLineInfos(SnapshotPoint bufferPosition, ViewRelativePosition relativeTo, double verticalDistance, double viewportHeightOverride) {
 				var lineInfos = new List<LineInfo>();
 				var startLine = GetLine(bufferPosition);
+				Debug.Assert(!(startLine is null));
 
 				double newViewportBottom = NewViewportTop + viewportHeightOverride;
 				double lineStartY;
@@ -179,7 +180,7 @@ namespace dnSpy.Text.Editor {
 					lineStartY -= startLine.Height;
 				}
 
-				var currentLine = startLine;
+				IFormattedLine? currentLine = startLine;
 				double y = lineStartY;
 				if (y + currentLine.Height > NewViewportTop) {
 					for (;;) {
@@ -187,7 +188,7 @@ namespace dnSpy.Text.Editor {
 						if (y <= NewViewportTop)
 							break;
 						currentLine = AddLineTransform(GetLineBefore(currentLine), y, ViewRelativePosition.Bottom);
-						if (currentLine == null)
+						if (currentLine is null)
 							break;
 						y -= currentLine.Height;
 					}
@@ -197,7 +198,7 @@ namespace dnSpy.Text.Editor {
 				currentLine = startLine;
 				for (y = lineStartY + currentLine.Height; y < newViewportBottom;) {
 					currentLine = AddLineTransform(GetLineAfter(currentLine), y, ViewRelativePosition.Top);
-					if (currentLine == null)
+					if (currentLine is null)
 						break;
 					lineInfos.Add(new LineInfo(currentLine, y));
 					y += currentLine.Height;
@@ -219,8 +220,8 @@ namespace dnSpy.Text.Editor {
 				return lineInfos;
 			}
 
-			IFormattedLine AddLineTransform(IFormattedLine line, double yPosition, ViewRelativePosition placement) {
-				if (line != null) {
+			IFormattedLine? AddLineTransform(IFormattedLine? line, double yPosition, ViewRelativePosition placement) {
+				if (!(line is null)) {
 					var lineTransform = lineTransformProvider.GetLineTransform(line, yPosition, placement);
 					if (lineTransform != line.LineTransform) {
 						line.SetLineTransform(lineTransform);
@@ -230,9 +231,9 @@ namespace dnSpy.Text.Editor {
 				return line;
 			}
 
-			IFormattedLine GetLine(SnapshotPoint point) => GetPhysicalLine(point).FindFormattedLineByBufferPosition(point);
+			IFormattedLine? GetLine(SnapshotPoint point) => GetPhysicalLine(point).FindFormattedLineByBufferPosition(point);
 
-			IFormattedLine GetLineBefore(IFormattedLine line) {
+			IFormattedLine? GetLineBefore(IFormattedLine line) {
 				var physLine = GetPhysicalLine(line);
 				int index = physLine.Lines.IndexOf(line);
 				if (index < 0)
@@ -245,7 +246,7 @@ namespace dnSpy.Text.Editor {
 				return physLine.Lines[physLine.Lines.Count - 1];
 			}
 
-			IFormattedLine GetLineAfter(IFormattedLine line) {
+			IFormattedLine? GetLineAfter(IFormattedLine line) {
 				var physLine = GetPhysicalLine(line);
 				int index = physLine.Lines.IndexOf(line);
 				if (index < 0)

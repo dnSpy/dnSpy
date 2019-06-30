@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -40,11 +40,6 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// Gets the expression evaluator
 		/// </summary>
 		public abstract DbgEngineExpressionEvaluator ExpressionEvaluator { get; }
-
-		/// <summary>
-		/// Gets the value formatter
-		/// </summary>
-		public abstract DbgEngineValueFormatter ValueFormatter { get; }
 
 		/// <summary>
 		/// Gets the formatter
@@ -88,6 +83,6 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// <param name="location">Location or null</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract void InitializeContext(DbgEvaluationContext context, DbgCodeLocation location, CancellationToken cancellationToken);
+		public abstract void InitializeContext(DbgEvaluationContext context, DbgCodeLocation? location, CancellationToken cancellationToken);
 	}
 }

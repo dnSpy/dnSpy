@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,16 +18,17 @@
 */
 
 using System;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 
 namespace dnSpy.Debugger.Text {
-	struct ClassifiedTextCollection : IEquatable<ClassifiedTextCollection> {
-		public bool IsDefault => Result == null;
+	readonly struct ClassifiedTextCollection : IEquatable<ClassifiedTextCollection> {
+		public static readonly ClassifiedTextCollection Empty = default;
+		public bool IsDefault => Result is null;
 		public ClassifiedText[] Result { get; }
 
 		public ClassifiedTextCollection(ClassifiedText[] result) => Result = result ?? throw new ArgumentNullException(nameof(result));
 
-		public void WriteTo(ITextColorWriter output) {
+		public void WriteTo(IDbgTextWriter output) {
 			foreach (var info in Result)
 				output.Write(info.Color, info.Text);
 		}
@@ -37,7 +38,7 @@ namespace dnSpy.Debugger.Text {
 			var b = other.Result;
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (a.Length != b.Length)
 				return false;
@@ -49,11 +50,11 @@ namespace dnSpy.Debugger.Text {
 		}
 	}
 
-	struct ClassifiedText : IEquatable<ClassifiedText> {
-		public object Color { get; }
+	readonly struct ClassifiedText : IEquatable<ClassifiedText> {
+		public DbgTextColor Color { get; }
 		public string Text { get; }
 
-		public ClassifiedText(object color, string text) {
+		public ClassifiedText(DbgTextColor color, string text) {
 			Color = color;
 			Text = text;
 		}

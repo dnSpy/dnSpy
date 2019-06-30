@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using dnlib.DotNet.MD;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
@@ -35,27 +36,26 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			MethodImplementationFlags = (DmdMethodImplAttributes)row.ImplFlags;
 			Attributes = (DmdMethodAttributes)row.Flags;
 			Name = name ?? throw new ArgumentNullException(nameof(name));
-			methodSignature = reader.ReadMethodSignature(row.Signature, DeclaringType.GetGenericArguments(), GetGenericArguments(), isProperty: false);
+			methodSignature = reader.ReadMethodSignature(row.Signature, DeclaringType!.GetGenericArguments(), GetGenericArguments(), isProperty: false);
 		}
 
-		protected override DmdType[] CreateGenericParameters() => reader.CreateGenericParameters(this);
+		protected override DmdType[]? CreateGenericParameters() => reader.CreateGenericParameters(this);
 
-		public override DmdMethodBody GetMethodBody() => reader.GetMethodBody(this, DeclaringType.GetGenericArguments(), GetGenericArguments());
-		internal override DmdMethodBody GetMethodBody(IList<DmdType> genericMethodArguments) => reader.GetMethodBody(this, DeclaringType.GetGenericArguments(), genericMethodArguments);
+		public override DmdMethodBody? GetMethodBody() => reader.GetMethodBody(this, DeclaringType!.GetGenericArguments(), GetGenericArguments());
+		internal override DmdMethodBody? GetMethodBody(IList<DmdType> genericMethodArguments) => reader.GetMethodBody(this, DeclaringType!.GetGenericArguments(), genericMethodArguments);
 		public override DmdMethodSignature GetMethodSignature() => methodSignature;
-		protected override (DmdParameterInfo returnParameter, DmdParameterInfo[] parameters) CreateParameters() => reader.CreateParameters(this, createReturnParameter: true);
-		protected override (DmdCustomAttributeData[] cas, DmdCustomAttributeData[] sas, DmdImplMap? implMap) CreateCustomAttributes() {
+		protected override (DmdParameterInfo? returnParameter, DmdParameterInfo[] parameters) CreateParameters() => reader.CreateParameters(this, createReturnParameter: true);
+		protected override (DmdCustomAttributeData[]? cas, DmdCustomAttributeData[]? sas, DmdImplMap? implMap) CreateCustomAttributes() {
 			var cas = reader.ReadCustomAttributes(MetadataToken);
 			var sas = reader.ReadSecurityAttributes(MetadataToken);
 			DmdImplMap? implMap;
 			if (IsPinvokeImpl) {
-				var row = reader.TablesStream.ReadImplMapRow(reader.Metadata.GetImplMapRid(Table.Method, Rid));
-				if (row == null)
+				if (!reader.TablesStream.TryReadImplMapRow(reader.Metadata.GetImplMapRid(Table.Method, Rid), out var row))
 					implMap = null;
 				else {
 					var name = reader.StringsStream.ReadNoNull(row.ImportName);
-					var modRow = reader.TablesStream.ReadModuleRefRow(row.ImportScope);
-					var module = reader.StringsStream.ReadNoNull(modRow?.Name ?? 0);
+					reader.TablesStream.TryReadModuleRefRow(row.ImportScope, out var modRow);
+					var module = reader.StringsStream.ReadNoNull(modRow.Name);
 					implMap = new DmdImplMap((DmdPInvokeAttributes)row.MappingFlags, name, module);
 				}
 			}
@@ -64,9 +64,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			return (cas, sas, implMap);
 		}
 
-		internal override DmdMethodSignature GetMethodSignatureCore(IList<DmdType> genericMethodArguments) {
-			var row = reader.TablesStream.ReadMethodRow(Rid);
-			return reader.ReadMethodSignature(row.Signature, DeclaringType.GetGenericArguments(), genericMethodArguments, isProperty: false);
+		private protected override DmdMethodSignature GetMethodSignatureCore(IList<DmdType> genericMethodArguments) {
+			bool b = reader.TablesStream.TryReadMethodRow(Rid, out var row);
+			Debug.Assert(b);
+			return reader.ReadMethodSignature(row.Signature, DeclaringType!.GetGenericArguments(), genericMethodArguments, isProperty: false);
 		}
 
 		protected override uint GetRVA() => reader.GetRVA(this);

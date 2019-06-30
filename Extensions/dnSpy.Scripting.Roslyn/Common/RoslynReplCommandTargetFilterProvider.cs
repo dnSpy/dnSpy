@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,7 +25,7 @@ using Microsoft.VisualStudio.Text.Editor;
 namespace dnSpy.Scripting.Roslyn.Common {
 	[ExportCommandTargetFilterProvider(RoslynReplCommandConstants.CommandTargetFilter_RoslynREPL)]
 	sealed class RoslynReplCommandTargetFilterProvider : ICommandTargetFilterProvider {
-		public ICommandTargetFilter Create(object target) {
+		public ICommandTargetFilter? Create(object target) {
 			var textView = target as ITextView;
 			if (textView?.Roles.Contains(PredefinedDsTextViewRoles.RoslynRepl) != true)
 				return null;

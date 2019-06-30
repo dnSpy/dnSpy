@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,13 +27,15 @@ namespace dnSpy.AsmEditor.Assembly {
 		public Version Version;
 		public AssemblyAttributes Attributes;
 		public PublicKey PublicKey;
-		public UTF8String Name;
-		public string Culture;
+		public UTF8String? Name;
+		public string? Culture;
 		public Module.ClrVersion ClrVersion;
 		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
 		public List<DeclSecurity> DeclSecurities = new List<DeclSecurity>();
 
 		public AssemblyOptions() {
+			Version = null!;
+			PublicKey = null!;
 		}
 
 		public AssemblyOptions(AssemblyDef asm) {

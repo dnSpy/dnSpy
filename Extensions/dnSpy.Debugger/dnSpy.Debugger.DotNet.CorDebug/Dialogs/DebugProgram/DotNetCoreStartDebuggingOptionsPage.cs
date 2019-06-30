@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,12 +18,14 @@
 */
 
 using System;
+using System.IO;
 using System.Windows.Input;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.StartDebugging;
 using dnSpy.Contracts.Debugger.StartDebugging.Dialog;
 using dnSpy.Contracts.MVVM;
+using dnSpy.Debugger.DotNet.CorDebug.Utilities;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
 	sealed class DotNetCoreStartDebuggingOptionsPage : DotNetStartDebuggingOptionsPage {
@@ -31,6 +33,19 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
 		public override double DisplayOrder => PredefinedStartDebuggingOptionsPageDisplayOrders.DotNetCore;
 		// Shouldn't be localized
 		public override string DisplayName => ".NET Core";
+
+		public bool UseHost {
+			get => useHost;
+			set {
+				if (useHost != value) {
+					useHost = value;
+					OnPropertyChanged(nameof(UseHost));
+					OnPropertyChanged(nameof(HostFilename));
+					UpdateIsValid();
+				}
+			}
+		}
+		bool useHost;
 
 		public string HostFilename {
 			get => hostFilename;
@@ -56,15 +71,17 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
 		}
 		string hostArguments = string.Empty;
 
-		public ICommand PickHostFilenameCommand => new RelayCommand(a => PickNewHostFilename());
+		public ICommand PickHostFilenameCommand => new RelayCommand(a => PickNewHostFilename(), a => CanPickNewHostFilename);
 
 		public DotNetCoreStartDebuggingOptionsPage(IPickFilename pickFilename, IPickDirectory pickDirectory)
 			: base(pickFilename, pickDirectory) {
 		}
 
+		bool CanPickNewHostFilename => UseHost;
+
 		void PickNewHostFilename() {
 			var newFilename = pickFilename.GetFilename(HostFilename, "exe", PickFilenameConstants.ExecutableFilter);
-			if (newFilename == null)
+			if (newFilename is null)
 				return;
 
 			HostFilename = newFilename;
@@ -72,7 +89,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
 
 		protected override void PickNewFilename() {
 			var newFilename = pickFilename.GetFilename(Filename, "dll", PickFilenameConstants.DotNetAssemblyOrModuleFilter);
-			if (newFilename == null)
+			if (newFilename is null)
 				return;
 
 			Filename = newFilename;
@@ -80,19 +97,20 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
 
 		public override void InitializePreviousOptions(StartDebuggingOptions options) {
 			var dncOptions = options as DotNetCoreStartDebuggingOptions;
-			if (dncOptions == null)
+			if (dncOptions is null)
 				return;
 			Initialize(dncOptions);
 		}
 
-		public override void InitializeDefaultOptions(string filename, string breakKind, StartDebuggingOptions options) =>
+		public override void InitializeDefaultOptions(string filename, string breakKind, StartDebuggingOptions? options) =>
 			Initialize(GetDefaultOptions(filename, breakKind, options));
 
-		DotNetCoreStartDebuggingOptions GetDefaultOptions(string filename, string breakKind, StartDebuggingOptions options) {
+		DotNetCoreStartDebuggingOptions GetDefaultOptions(string filename, string breakKind, StartDebuggingOptions? options) {
 			bool isExe = PortableExecutableFileHelpers.IsExecutable(filename);
 			if (isExe) {
 				var dncOptions = CreateOptions(breakKind);
 				Initialize(filename, dncOptions);
+				dncOptions.UseHost = !DotNetCoreGenericDebugEngineGuidProvider.IsDotNetCoreAppHostFilename(filename);
 				return dncOptions;
 			}
 			else {
@@ -108,16 +126,24 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
 
 		void Initialize(DotNetCoreStartDebuggingOptions options) {
 			base.Initialize(options);
-			HostFilename = options.Host;
-			HostArguments = options.HostArguments;
+			UseHost = options.UseHost;
+			HostFilename = options.Host ?? string.Empty;
+			HostArguments = options.HostArguments ?? string.Empty;
 		}
 
 		public override StartDebuggingOptionsInfo GetOptions() {
 			var options = GetOptions(new DotNetCoreStartDebuggingOptions {
+				UseHost = UseHost,
 				Host = HostFilename,
 				HostArguments = HostArguments,
 			});
-			return new StartDebuggingOptionsInfo(options, options.Filename);
+			var flags = StartDebuggingOptionsInfoFlags.None;
+			if (File.Exists(options.Filename)) {
+				var extension = Path.GetExtension(options.Filename);
+				if (!StringComparer.OrdinalIgnoreCase.Equals(extension, ".exe") && !StringComparer.OrdinalIgnoreCase.Equals(extension, ".dll"))
+					flags |= StartDebuggingOptionsInfoFlags.WrongExtension;
+			}
+			return new StartDebuggingOptionsInfo(options, options.Filename, flags);
 		}
 
 		public override bool SupportsDebugEngine(Guid engineGuid, out double order) {
@@ -136,7 +162,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
 
 		protected override string Verify(string columnName) {
 			if (columnName == nameof(HostFilename)) {
-				if (!string.IsNullOrWhiteSpace(HostFilename))
+				if (UseHost && !string.IsNullOrWhiteSpace(HostFilename))
 					return VerifyFilename(HostFilename);
 			}
 			else if (columnName == nameof(Filename))

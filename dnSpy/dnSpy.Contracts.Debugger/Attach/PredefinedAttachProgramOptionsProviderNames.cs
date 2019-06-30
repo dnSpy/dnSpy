@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,5 +31,15 @@ namespace dnSpy.Contracts.Debugger.Attach {
 		/// .NET Core
 		/// </summary>
 		public const string DotNetCore = nameof(DotNetCore);
+
+		/// <summary>
+		/// Unity Editor
+		/// </summary>
+		public const string UnityEditor = nameof(UnityEditor);
+
+		/// <summary>
+		/// Unity Player
+		/// </summary>
+		public const string UnityPlayer = nameof(UnityPlayer);
 	}
 }

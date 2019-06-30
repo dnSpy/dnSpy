@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,7 +18,7 @@
 */
 
 using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -45,8 +45,8 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		public ICommand ExportProjectsCommand => new RelayCommand(a => ExportProjects(), a => CanExportProjects);
 		public ICommand GenerateNewProjectGuidCommand => new RelayCommand(a => ProjectGuid.Value = Guid.NewGuid());
 
-		public string Directory {
-			get { return directory; }
+		public string? Directory {
+			get => directory;
 			set {
 				if (directory != value) {
 					directory = value;
@@ -55,10 +55,10 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 				}
 			}
 		}
-		string directory;
+		string? directory;
 
-		public string SolutionFilename {
-			get { return solutionFilename; }
+		public string? SolutionFilename {
+			get => solutionFilename;
 			set {
 				if (solutionFilename != value) {
 					solutionFilename = value;
@@ -67,10 +67,10 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 				}
 			}
 		}
-		string solutionFilename;
+		string? solutionFilename;
 
 		public bool CreateSolution {
-			get { return createSolution; }
+			get => createSolution;
 			set {
 				if (createSolution != value) {
 					createSolution = value;
@@ -82,16 +82,16 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		bool createSolution;
 
 		public ProjectVersion ProjectVersion {
-			get { return (ProjectVersion)ProjectVersionVM.SelectedItem; }
-			set { ProjectVersionVM.SelectedItem = value; }
+			get => (ProjectVersion)ProjectVersionVM.SelectedItem!;
+			set => ProjectVersionVM.SelectedItem = value;
 		}
 
 		public EnumListVM ProjectVersionVM { get; } = new EnumListVM(EnumVM.Create(typeof(ProjectVersion)));
-		public IEnumerable<IDecompiler> AllDecompilers => decompilerService.AllDecompilers.Where(a => a.ProjectFileExtension != null);
-		readonly IDecompilerService decompilerService;
+		public ObservableCollection<DecompilerVM> AllDecompilers => allDecompilers;
+		readonly ObservableCollection<DecompilerVM> allDecompilers;
 
-		public IDecompiler Decompiler {
-			get { return decompiler; }
+		public DecompilerVM Decompiler {
+			get => decompiler;
 			set {
 				if (decompiler != value) {
 					decompiler = value;
@@ -99,12 +99,12 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 				}
 			}
 		}
-		IDecompiler decompiler;
+		DecompilerVM decompiler;
 
 		public NullableGuidVM ProjectGuid { get; }
 
 		public bool DontReferenceStdLib {
-			get { return dontReferenceStdLib; }
+			get => dontReferenceStdLib;
 			set {
 				if (dontReferenceStdLib != value) {
 					dontReferenceStdLib = value;
@@ -115,7 +115,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		bool dontReferenceStdLib;
 
 		public bool UnpackResources {
-			get { return unpackResources; }
+			get => unpackResources;
 			set {
 				if (unpackResources != value) {
 					unpackResources = value;
@@ -128,7 +128,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		bool unpackResources;
 
 		public bool CreateResX {
-			get { return createResX; }
+			get => createResX;
 			set {
 				if (createResX != value) {
 					createResX = value;
@@ -139,7 +139,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		bool createResX;
 
 		public bool DecompileXaml {
-			get { return decompileXaml; }
+			get => decompileXaml;
 			set {
 				if (decompileXaml != value) {
 					decompileXaml = value;
@@ -150,7 +150,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		bool decompileXaml;
 
 		public bool OpenProject {
-			get { return openProject; }
+			get => openProject;
 			set {
 				if (openProject != value) {
 					openProject = value;
@@ -163,10 +163,10 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		public bool CanDecompileBaml => UnpackResources && canDecompileBaml;
 		readonly bool canDecompileBaml;
 
-		public bool CanCreateResX => UnpackResources && TheState == State.Editing;
+		public bool CanCreateResX => UnpackResources && TheState == State.Editing && false;// See ProjectModuleOptions.CreateResX
 
-		public string FilesToExportMessage {
-			get { return filesToExportMessage; }
+		public string? FilesToExportMessage {
+			get => filesToExportMessage;
 			set {
 				if (filesToExportMessage != value) {
 					filesToExportMessage = value;
@@ -174,10 +174,10 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 				}
 			}
 		}
-		string filesToExportMessage;
+		string? filesToExportMessage;
 
 		public bool IsIndeterminate {
-			get { return isIndeterminate; }
+			get => isIndeterminate;
 			set {
 				if (isIndeterminate != value) {
 					isIndeterminate = value;
@@ -188,7 +188,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		bool isIndeterminate;
 
 		public double ProgressMinimum {
-			get { return progressMinimum; }
+			get => progressMinimum;
 			set {
 				if (progressMinimum != value) {
 					progressMinimum = value;
@@ -199,7 +199,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		double progressMinimum;
 
 		public double ProgressMaximum {
-			get { return progressMaximum; }
+			get => progressMaximum;
 			set {
 				if (progressMaximum != value) {
 					progressMaximum = value;
@@ -210,7 +210,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		double progressMaximum;
 
 		public double TotalProgress {
-			get { return totalProgress; }
+			get => totalProgress;
 			set {
 				if (totalProgress != value) {
 					totalProgress = value;
@@ -221,7 +221,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		double totalProgress;
 
 		State TheState {
-			get { return state; }
+			get => state;
 			set {
 				if (state != value) {
 					state = value;
@@ -244,7 +244,6 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 
 		public ExportToProjectVM(IPickDirectory pickDirectory, IDecompilerService decompilerService, IExportTask exportTask, bool canDecompileBaml) {
 			this.pickDirectory = pickDirectory;
-			this.decompilerService = decompilerService;
 			this.exportTask = exportTask;
 			this.canDecompileBaml = canDecompileBaml;
 			unpackResources = true;
@@ -252,7 +251,8 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 			decompileXaml = canDecompileBaml;
 			createSolution = true;
 			ProjectVersionVM.SelectedItem = ProjectVersion.VS2010;
-			decompiler = decompilerService.AllDecompilers.FirstOrDefault(a => a.ProjectFileExtension != null);
+			allDecompilers = new ObservableCollection<DecompilerVM>(decompilerService.AllDecompilers.Where(a => !(a.ProjectFileExtension is null)).Select(a => new DecompilerVM(a)));
+			decompiler = allDecompilers.FirstOrDefault();
 			isIndeterminate = false;
 			ProjectGuid = new NullableGuidVM(Guid.NewGuid(), a => HasErrorUpdated());
 		}
@@ -261,7 +261,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 
 		void PickDestDir() {
 			var newDir = pickDirectory.GetDirectory(Directory);
-			if (newDir != null)
+			if (!(newDir is null))
 				Directory = newDir;
 		}
 
@@ -294,7 +294,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		}
 
 		public string ErrorLog {
-			get { return errorLog; }
+			get => errorLog;
 			set {
 				if (errorLog != value) {
 					errorLog = value;
@@ -305,7 +305,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		string errorLog = string.Empty;
 
 		public bool ExportErrors {
-			get { return exportErrors; }
+			get => exportErrors;
 			set {
 				if (exportErrors != value) {
 					exportErrors = value;
@@ -318,7 +318,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 
 		public bool NoExportErrors => !exportErrors;
 
-		protected override string Verify(string columnName) {
+		protected override string? Verify(string columnName) {
 			if (columnName == nameof(Directory)) {
 				if (string.IsNullOrWhiteSpace(Directory))
 					return dnSpy_Resources.Error_MissingDestinationFolder;
@@ -338,5 +338,11 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 			!string.IsNullOrEmpty(Verify(nameof(Directory))) ||
 			!string.IsNullOrEmpty(Verify(nameof(SolutionFilename))) ||
 			ProjectGuid.HasError;
+	}
+
+	sealed class DecompilerVM : ViewModelBase {
+		public IDecompiler Decompiler { get; }
+		public string UniqueNameUI => Decompiler.UniqueNameUI;
+		public DecompilerVM(IDecompiler decompiler) => Decompiler = decompiler;
 	}
 }

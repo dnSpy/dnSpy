@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace dnSpy.Hex.Operations {
@@ -25,7 +26,7 @@ namespace dnSpy.Hex.Operations {
 			: base(pattern) {
 		}
 
-		protected override bool Initialize(string pattern, out byte[] lowerBytes, out byte[] upperBytes, out byte[] charLengths) =>
+		protected override bool Initialize(string pattern, [NotNullWhenTrue] out byte[]? lowerBytes, [NotNullWhenTrue] out byte[]? upperBytes, [NotNullWhenTrue] out byte[]? charLengths) =>
 			Initialize(Encoding.UTF8, pattern, out lowerBytes, out upperBytes, out charLengths);
 	}
 }

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,8 +23,8 @@ namespace dnSpy.Contracts.Command {
 	/// <summary>
 	/// Keyboard shortcut and command
 	/// </summary>
-	public struct CommandShortcut {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+	public readonly struct CommandShortcut {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public KeyShortcut KeyShortcut { get; }
 		public CommandInfo CommandInfo { get; }
 
@@ -43,5 +43,5 @@ namespace dnSpy.Contracts.Command {
 			CommandInfo = cmd;
 		}
 	}
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

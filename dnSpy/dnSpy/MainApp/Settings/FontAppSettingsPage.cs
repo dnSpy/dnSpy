@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Globalization;
@@ -63,8 +62,8 @@ namespace dnSpy.MainApp.Settings {
 	}
 
 	sealed class FontCollection : ViewModelBase {
-		public FontFamilyVM[] FontFamilies {
-			get { return fontFamilies; }
+		public FontFamilyVM[]? FontFamilies {
+			get => fontFamilies;
 			set {
 				if (fontFamilies != value) {
 					fontFamilies = value;
@@ -72,22 +71,19 @@ namespace dnSpy.MainApp.Settings {
 				}
 			}
 		}
-		FontFamilyVM[] fontFamilies;
+		FontFamilyVM[]? fontFamilies;
 	}
 
-	sealed class FontAppSettingsPage : AppSettingsPage, INotifyPropertyChanged {
+	sealed class FontAppSettingsPage : AppSettingsPage {
 		public override Guid ParentGuid => new Guid(AppSettingsConstants.GUID_ENVIRONMENT);
 		public override Guid Guid => new Guid("915F7258-1441-4F80-9DB2-6DF6948C2E09");
 		public override double Order => AppSettingsConstants.ORDER_ENVIRONMENT_FONT;
 		public override string Title => dnSpy_Resources.FontSettings;
-		public override object UIObject => this;
-
-		public event PropertyChangedEventHandler PropertyChanged;
-		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+		public override object? UIObject => this;
 
 		public ObservableCollection<FontAndColorOptionsVM> FontAndColorOptions { get; }
-		public FontAndColorOptionsVM SelectedFontAndColorOptions {
-			get { return selectedFontAndColorOptions; }
+		public FontAndColorOptionsVM? SelectedFontAndColorOptions {
+			get => selectedFontAndColorOptions;
 			set {
 				if (selectedFontAndColorOptions != value) {
 					selectedFontAndColorOptions = value;
@@ -95,14 +91,14 @@ namespace dnSpy.MainApp.Settings {
 				}
 			}
 		}
-		FontAndColorOptionsVM selectedFontAndColorOptions;
+		FontAndColorOptionsVM? selectedFontAndColorOptions;
 
 		readonly FontAppSettingsPageOptions fontAppSettingsPageOptions;
 		readonly FontCollection allFonts;
 		readonly FontCollection monospacedFonts;
 
 		public FontAppSettingsPage(FontAndColorOptions[] options, FontAppSettingsPageOptions fontAppSettingsPageOptions) {
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			this.fontAppSettingsPageOptions = fontAppSettingsPageOptions;
 			allFonts = new FontCollection();
@@ -148,18 +144,18 @@ namespace dnSpy.MainApp.Settings {
 		}
 
 		public override void OnClosed() {
-			fontAppSettingsPageOptions.SelectedIndex = FontAndColorOptions.IndexOf(SelectedFontAndColorOptions);
+			fontAppSettingsPageOptions.SelectedIndex = FontAndColorOptions.IndexOf(SelectedFontAndColorOptions!);
 			foreach (var options in FontAndColorOptions)
 				options.OnClosed();
 		}
 	}
 
 	sealed class FontAndColorOptionsVM : ViewModelBase {
-		public string DisplayName => options.DisplayName;
+		public string? DisplayName => options.DisplayName;
 		public string Name => options.Name;
 
 		public FontFamilyVM FontFamilyVM {
-			get { return fontFamilyVM; }
+			get => fontFamilyVM;
 			set {
 				if (fontFamilyVM != value) {
 					fontFamilyVM = value;
@@ -171,9 +167,9 @@ namespace dnSpy.MainApp.Settings {
 		FontFamilyVM fontFamilyVM;
 
 		public FontFamily FontFamily {
-			get { return options.FontOption.FontFamily; }
+			get => options.FontOption.FontFamily;
 			set {
-				if (options.FontOption.FontFamily == null || options.FontOption.FontFamily.Source != value.Source) {
+				if (options.FontOption.FontFamily is null || options.FontOption.FontFamily.Source != value.Source) {
 					options.FontOption.FontFamily = value;
 					OnPropertyChanged(nameof(FontFamily));
 				}
@@ -181,7 +177,7 @@ namespace dnSpy.MainApp.Settings {
 		}
 
 		public double FontSize {
-			get { return options.FontOption.FontSize; }
+			get => options.FontOption.FontSize;
 			set {
 				if (options.FontOption.FontSize != value) {
 					options.FontOption.FontSize = FontUtilities.FilterFontSize(value);
@@ -213,9 +209,9 @@ namespace dnSpy.MainApp.Settings {
 			IsMonospaced = FontUtilities.IsMonospacedFont(ff);
 		}
 
-		public override bool Equals(object obj) {
+		public override bool Equals(object? obj) {
 			var other = obj as FontFamilyVM;
-			return other != null &&
+			return !(other is null) &&
 				FontFamily.Equals(other.FontFamily);
 		}
 
@@ -223,7 +219,7 @@ namespace dnSpy.MainApp.Settings {
 	}
 
 	sealed class FontFamilyVMConverter : IValueConverter {
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
+		public object? Convert(object value, Type targetType, object parameter, CultureInfo culture) {
 			var vm = (FontFamilyVM)value;
 			if (!vm.IsMonospaced)
 				return new TextBlock { Text = vm.FontFamily.Source };

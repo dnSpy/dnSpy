@@ -177,6 +177,9 @@
   <data name="DecompilerSettings_MaxArrayElements" xml:space="preserve">
     <value>要显示的数组元素最大数量</value>
   </data>
+  <data name="DecompilerSettings_MaxStringLength" xml:space="preserve">
+    <value>最大字符串长度</value>
+  </data>
   <data name="DecompilerSettings_MemberAddPrivateModifier" xml:space="preserve">
     <value>添加private标识符到类成员</value>
   </data>
@@ -187,7 +190,7 @@
     <value>每行显示一个自定义属性</value>
   </data>
   <data name="DecompilerSettings_RemoveEmptyDefaultCtors" xml:space="preserve">
-    <value>删除空的默认构造函数</value>
+    <value>去除空的默认构造函数</value>
   </data>
   <data name="DecompilerSettings_RemoveNewDelegateClass" xml:space="preserve">
     <value>将 “new delegate-class(xxx)” 替换为 “xxx”</value>
@@ -205,13 +208,13 @@
     <value>显示行号和文件名（如果可用）</value>
   </data>
   <data name="DecompilerSettings_ShowTokensRvasOffsets" xml:space="preserve">
-    <value>显示token，RVA和file offset</value>
+    <value>显示标记，RVA和文件偏移</value>
   </data>
   <data name="DecompilerSettings_ShowXMLDocComments" xml:space="preserve">
     <value>在反编译的代码中显示 XML 文档</value>
   </data>
   <data name="DecompilerSettings_SortCustomAttributes" xml:space="preserve">
-    <value>排序自定义标签</value>
+    <value>排序自定义特性</value>
   </data>
   <data name="DecompilerSettings_SortMethods" xml:space="preserve">
     <value>排序方法、 字段、 属性、 事件和类型</value>

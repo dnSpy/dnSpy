@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,12 +34,12 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <summary>
 		/// File offset of resource or 0
 		/// </summary>
-		ulong FileOffset { get; }
+		uint FileOffset { get; }
 
 		/// <summary>
 		/// Length of the resource
 		/// </summary>
-		ulong Length { get; }
+		uint Length { get; }
 
 		/// <summary>
 		/// Gets the resource data
@@ -65,6 +65,6 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <param name="token">Cancellation token</param>
 		/// <param name="canDecompile">true if the callee can decompile (eg. XAML), false otherwise</param>
 		/// <returns></returns>
-		string ToString(CancellationToken token, bool canDecompile);
+		string? ToString(CancellationToken token, bool canDecompile);
 	}
 }

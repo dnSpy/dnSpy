@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -40,7 +40,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		}
 
 		static string Filter(string s) {
-			if (s == null)
+			if (s is null)
 				return string.Empty;
 			const int MAX = 512;
 			if (s.Length > MAX)

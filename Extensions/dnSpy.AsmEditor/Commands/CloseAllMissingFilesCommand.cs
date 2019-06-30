@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -42,15 +42,15 @@ namespace dnSpy.AsmEditor.Commands {
 			this.appService = appService;
 		}
 
-		UnknownDocumentNode[] GetNodes() {
+		UnknownDocumentNode[]? GetNodes() {
 			var nodes = documentTreeView.TreeView.Root.DataChildren.OfType<UnknownDocumentNode>().ToArray();
 			return nodes.Length == 0 ? null : nodes;
 		}
 
-		public override bool IsEnabled(IMenuItemContext context) => GetNodes() != null;
+		public override bool IsEnabled(IMenuItemContext context) => !(GetNodes() is null);
 		public override void Execute(IMenuItemContext context) {
 			var nodes = GetNodes();
-			if (nodes != null)
+			if (!(nodes is null))
 				RemoveAssemblyCommand.Execute(undoCommandService, documentSaver, appService, nodes);
 		}
 	}

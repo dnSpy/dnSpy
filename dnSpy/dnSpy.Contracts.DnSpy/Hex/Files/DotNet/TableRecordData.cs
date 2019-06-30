@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -50,7 +50,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <param name="tablesHeap">Owner heap</param>
 		public TableRecordData(string tableName, MDToken token, HexBufferSpan span, BufferField[] fields, TablesHeap tablesHeap)
 			: base(tableName, span) {
-			if (fields == null)
+			if (fields is null)
 				throw new ArgumentNullException(nameof(fields));
 			if (fields.Length == 0)
 				throw new ArgumentOutOfRangeException(nameof(fields));

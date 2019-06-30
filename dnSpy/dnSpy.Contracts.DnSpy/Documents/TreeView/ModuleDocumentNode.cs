@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,14 +31,14 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// </summary>
 		public new IDsDotNetDocument Document => (IDsDotNetDocument)base.Document;
 
-		IMDTokenProvider IMDTokenNode.Reference => Document.ModuleDef;
+		IMDTokenProvider? IMDTokenNode.Reference => Document.ModuleDef;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="document">Document</param>
 		protected ModuleDocumentNode(IDsDotNetDocument document)
-			: base(document) => Debug.Assert(document.ModuleDef != null);
+			: base(document) => Debug.Assert(!(document.ModuleDef is null));
 
 		/// <summary>
 		/// Creates a <see cref="NamespaceNode"/>
@@ -52,6 +52,6 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// </summary>
 		/// <param name="ns">Namespace</param>
 		/// <returns></returns>
-		public abstract NamespaceNode FindNode(string ns);
+		public abstract NamespaceNode? FindNode(string? ns);
 	}
 }

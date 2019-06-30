@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,131 +18,56 @@
 */
 
 using System;
-using dnlib.DotNet;
-using dnSpy.Contracts.Debugger.Breakpoints.Code;
+using dndbg.Engine;
+using dnSpy.Contracts.Debugger;
+using dnSpy.Contracts.Debugger.Code;
+using dnSpy.Contracts.Debugger.DotNet.Code;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug.Code;
-using dnSpy.Contracts.Decompiler;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Metadata;
+using dnSpy.Debugger.DotNet.CorDebug.Impl;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Code {
-	sealed class DbgBreakpointLocationFormatterImpl : DbgBreakpointLocationFormatter {
-		readonly DbgDotNetNativeCodeLocationImpl location;
-		readonly BreakpointFormatterServiceImpl owner;
+	sealed class DbgDotNetNativeCodeLocationImpl : DbgDotNetNativeCodeLocation {
+		public override string Type => PredefinedDbgCodeLocationTypes.DotNetCorDebugNative;
+		public override ModuleId Module { get; }
+		public override uint Token { get; }
+		public override uint Offset { get; }
+		public override DbgILOffsetMapping ILOffsetMapping { get; }
+		public DnDebuggerObjectHolder<CorCode> CorCode { get; }
+		public override DbgModule? DbgModule { get; }
+		public override DbgDotNetNativeFunctionAddress NativeAddress { get; }
 
-		public DbgBreakpointLocationFormatterImpl(BreakpointFormatterServiceImpl owner, DbgDotNetNativeCodeLocationImpl location) {
+		internal DbgBreakpointLocationFormatterImpl? Formatter { get; set; }
+
+		readonly DbgDotNetNativeCodeLocationFactoryImpl owner;
+
+		public DbgDotNetNativeCodeLocationImpl(DbgDotNetNativeCodeLocationFactoryImpl owner, DbgModule module, ModuleId moduleId, uint token, uint offset, DbgILOffsetMapping ilOffsetMapping, ulong nativeMethodAddress, ulong nativeMethodOffset, DnDebuggerObjectHolder<CorCode> corCode) {
 			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
-			this.location = location ?? throw new ArgumentNullException(nameof(location));
+			Module = moduleId;
+			Token = token;
+			Offset = offset;
+			ILOffsetMapping = ilOffsetMapping;
+			NativeAddress = new DbgDotNetNativeFunctionAddress(nativeMethodAddress, nativeMethodOffset);
+			CorCode = corCode ?? throw new ArgumentNullException(nameof(corCode));
+			DbgModule = module ?? throw new ArgumentNullException(nameof(module));
 		}
 
-		public override void Dispose() => location.Formatter = null;
+		public override DbgCodeLocation Clone() =>
+			owner.Create(DbgModule!, Module, Token, Offset, ILOffsetMapping, NativeAddress.Address, NativeAddress.Offset, CorCode.AddRef());
 
-		internal void RefreshName() => RaiseNameChanged();
+		public override void Close() => owner.DbgManager.Value.Close(this);
+		protected override void CloseCore(DbgDispatcher dispatcher) => CorCode.Close();
 
-		string GetHexPrefix() {
-			if (owner.MethodDecompiler.GenericGuid == DecompilerConstants.LANGUAGE_VISUALBASIC)
-				return "&H";
-			return "0x";
-		}
+		public override bool Equals(object? obj) =>
+			obj is DbgDotNetNativeCodeLocationImpl other &&
+			CorCode.Object?.Equals(other.CorCode.Object) == true &&
+			Module == other.Module &&
+			Token == other.Token &&
+			Offset == other.Offset &&
+			ILOffsetMapping == other.ILOffsetMapping &&
+			NativeAddress.Address == other.NativeAddress.Address &&
+			NativeAddress.Offset == other.NativeAddress.Offset;
 
-		void WriteILOffset(ITextColorWriter output, uint offset) {
-			// Offsets are always in hex
-			if (offset <= ushort.MaxValue)
-				output.Write(BoxedTextColor.Number, GetHexPrefix() + offset.ToString("X4"));
-			else
-				output.Write(BoxedTextColor.Number, GetHexPrefix() + offset.ToString("X8"));
-		}
-
-		void WriteToken(ITextColorWriter output, uint token) =>
-			output.Write(BoxedTextColor.Number, GetHexPrefix() + token.ToString("X8"));
-
-		public override void WriteName(ITextColorWriter output, DbgBreakpointLocationFormatterOptions options) {
-			bool printedToken = false;
-			if ((options & DbgBreakpointLocationFormatterOptions.Tokens) != 0) {
-				WriteToken(output, location.Token);
-				output.WriteSpace();
-				printedToken = true;
-			}
-
-			var method = owner.GetDefinition<MethodDef>(location.Module, location.Token);
-			if (method == null) {
-				if (printedToken)
-					output.Write(BoxedTextColor.Error, "???");
-				else
-					WriteToken(output, location.Token);
-			}
-			else
-				owner.MethodDecompiler.Write(output, method, GetFormatterOptions(options));
-
-			switch (location.ILOffsetMapping) {
-			case DbgILOffsetMapping.Exact:
-			case DbgILOffsetMapping.Approximate:
-				output.WriteSpace();
-				output.Write(BoxedTextColor.Operator, "+");
-				output.WriteSpace();
-				if (location.ILOffsetMapping == DbgILOffsetMapping.Approximate)
-					output.Write(BoxedTextColor.Operator, "~");
-				WriteILOffset(output, location.Offset);
-				break;
-
-			case DbgILOffsetMapping.Prolog:
-				WriteText(output, "prolog");
-				break;
-
-			case DbgILOffsetMapping.Epilog:
-				WriteText(output, "epilog");
-				break;
-
-			case DbgILOffsetMapping.Unknown:
-			case DbgILOffsetMapping.NoInfo:
-			case DbgILOffsetMapping.UnmappedAddress:
-				WriteText(output, "???");
-				break;
-
-			default: throw new InvalidOperationException();
-			}
-
-			output.WriteSpace();
-			output.Write(BoxedTextColor.Punctuation, "(");
-			output.Write(BoxedTextColor.Number, GetHexPrefix() + location.NativeMethodAddress.ToString("X8"));
-			output.Write(BoxedTextColor.Operator, "+");
-			output.Write(BoxedTextColor.Number,
-				(options & DbgBreakpointLocationFormatterOptions.Decimal) != 0 ?
-				location.NativeMethodOffset.ToString() :
-				GetHexPrefix() + location.NativeMethodOffset.ToString("X"));
-			output.Write(BoxedTextColor.Punctuation, ")");
-		}
-
-		static void WriteText(ITextColorWriter output, string text) {
-			output.WriteSpace();
-			output.Write(BoxedTextColor.Punctuation, "(");
-			output.Write(BoxedTextColor.Text, text);
-			output.Write(BoxedTextColor.Punctuation, ")");
-		}
-
-		FormatterOptions GetFormatterOptions(DbgBreakpointLocationFormatterOptions options) {
-			FormatterOptions flags = 0;
-			if ((options & DbgBreakpointLocationFormatterOptions.ModuleNames) != 0)
-				flags |= FormatterOptions.ShowModuleNames;
-			if ((options & DbgBreakpointLocationFormatterOptions.ParameterTypes) != 0)
-				flags |= FormatterOptions.ShowParameterTypes;
-			if ((options & DbgBreakpointLocationFormatterOptions.ParameterNames) != 0)
-				flags |= FormatterOptions.ShowParameterNames;
-			if ((options & DbgBreakpointLocationFormatterOptions.DeclaringTypes) != 0)
-				flags |= FormatterOptions.ShowDeclaringTypes;
-			if ((options & DbgBreakpointLocationFormatterOptions.ReturnTypes) != 0)
-				flags |= FormatterOptions.ShowReturnTypes;
-			if ((options & DbgBreakpointLocationFormatterOptions.Namespaces) != 0)
-				flags |= FormatterOptions.ShowNamespaces;
-			if ((options & DbgBreakpointLocationFormatterOptions.IntrinsicTypeKeywords) != 0)
-				flags |= FormatterOptions.ShowIntrinsicTypeKeywords;
-			if ((options & DbgBreakpointLocationFormatterOptions.DigitSeparators) != 0)
-				flags |= FormatterOptions.DigitSeparators;
-			if ((options & DbgBreakpointLocationFormatterOptions.Decimal) != 0)
-				flags |= FormatterOptions.UseDecimal;
-			return flags;
-		}
-
-		public override void WriteModule(ITextColorWriter output) =>
-			output.WriteFilename(location.Module.ModuleName);
+		public override int GetHashCode() => Module.GetHashCode() ^ (int)Token ^ (int)Offset ^ (int)ILOffsetMapping ^ NativeAddress.Address.GetHashCode() ^ NativeAddress.Offset.GetHashCode() ^ CorCode.HashCode;
 	}
 }

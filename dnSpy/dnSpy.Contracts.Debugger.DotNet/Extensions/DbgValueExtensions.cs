@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,6 +29,6 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// </summary>
 		/// <param name="value">Value</param>
 		/// <returns></returns>
-		public static DbgDotNetValue GetDotNetValue(this DbgValue value) => value.InternalValue as DbgDotNetValue;
+		public static DbgDotNetValue? GetDotNetValue(this DbgValue value) => value.InternalValue as DbgDotNetValue;
 	}
 }

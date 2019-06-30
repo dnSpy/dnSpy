@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -41,14 +41,14 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		const int DEFAULT_DELAY_SEARCH_MS = 100;
 
 		public IOpenAssembly OpenAssembly {
-			set { openAssembly = value; }
+			set => openAssembly = value;
 		}
-		IOpenAssembly openAssembly;
+		IOpenAssembly? openAssembly;
 
 		public ICommand OpenCommand => new RelayCommand(a => OpenNewAssembly(), a => CanOpenAssembly);
 
 		public bool CanOpenAssembly {
-			get { return true; }
+			get => true;
 			set {
 				if (canOpenAssembly != value) {
 					canOpenAssembly = value;
@@ -58,13 +58,13 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		bool canOpenAssembly = true;
 
-		public object SelectedItem {
-			get { return selectedItem; }
+		public object? SelectedItem {
+			get => selectedItem;
 			set {
 				if (selectedItem != value) {
 					selectedItem = value;
 					OnPropertyChanged(nameof(SelectedItem));
-					if (value != null) {
+					if (!(value is null)) {
 						searchResult = null;
 						OnPropertyChanged(nameof(SearchResult));
 					}
@@ -72,31 +72,31 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 			}
 		}
-		object selectedItem;
+		object? selectedItem;
 
-		public object SelectedDnlibObject {
+		public object? SelectedDnlibObject {
 			get {
 				var res = SearchResult;
-				if (res != null) {
+				if (!(res is null)) {
 					var obj = res.Object;
 
-					if (obj is AssemblyDef && filter.GetResult(obj as AssemblyDef).IsMatch)
+					if (obj is AssemblyDef && filter.GetResult((AssemblyDef)obj).IsMatch)
 						return res.Document;
-					if (obj is ModuleDef && filter.GetResult(obj as ModuleDef).IsMatch)
+					if (obj is ModuleDef && filter.GetResult((ModuleDef)obj).IsMatch)
 						return res.Document;
-					if (obj is IDsDocument && filter.GetResult(obj as IDsDocument).IsMatch)
+					if (obj is IDsDocument && filter.GetResult((IDsDocument)obj).IsMatch)
 						return (IDsDocument)obj;
 					if (obj is string && filter.GetResult((string)obj, res.Document).IsMatch)
 						return (string)obj;
-					if (obj is TypeDef && filter.GetResult(obj as TypeDef).IsMatch)
+					if (obj is TypeDef && filter.GetResult((TypeDef)obj).IsMatch)
 						return obj;
-					if (obj is FieldDef && filter.GetResult(obj as FieldDef).IsMatch)
+					if (obj is FieldDef && filter.GetResult((FieldDef)obj).IsMatch)
 						return obj;
-					if (obj is MethodDef && filter.GetResult(obj as MethodDef).IsMatch)
+					if (obj is MethodDef && filter.GetResult((MethodDef)obj).IsMatch)
 						return obj;
-					if (obj is PropertyDef && filter.GetResult(obj as PropertyDef).IsMatch)
+					if (obj is PropertyDef && filter.GetResult((PropertyDef)obj).IsMatch)
 						return obj;
-					if (obj is EventDef && filter.GetResult(obj as EventDef).IsMatch)
+					if (obj is EventDef && filter.GetResult((EventDef)obj).IsMatch)
 						return obj;
 					if (obj is AssemblyRef && filter.GetResult((AssemblyRef)obj).IsMatch)
 						return (AssemblyRef)obj;
@@ -105,28 +105,28 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 
 				var item = documentTreeView.TreeView.FromImplNode(SelectedItem);
-				if (item != null) {
-					if (item is AssemblyDocumentNode && filter.GetResult((item as AssemblyDocumentNode).Document.AssemblyDef).IsMatch)
+				if (!(item is null)) {
+					if (item is AssemblyDocumentNode && filter.GetResult(((AssemblyDocumentNode)item).Document.AssemblyDef!).IsMatch)
 						return ((AssemblyDocumentNode)item).Document;
-					else if (item is ModuleDocumentNode && filter.GetResult((item as ModuleDocumentNode).Document.ModuleDef).IsMatch)
+					else if (item is ModuleDocumentNode && filter.GetResult(((ModuleDocumentNode)item).Document.ModuleDef!).IsMatch)
 						return ((ModuleDocumentNode)item).Document;
-					else if (item is DsDocumentNode && filter.GetResult((item as DsDocumentNode).Document).IsMatch)
+					else if (item is DsDocumentNode && filter.GetResult(((DsDocumentNode)item).Document).IsMatch)
 						return ((DsDocumentNode)item).Document;
-					if (item is NamespaceNode && filter.GetResult((item as NamespaceNode).Name, ((item as NamespaceNode).TreeNode.Parent.Data as ModuleDocumentNode).Document).IsMatch)
+					if (item is NamespaceNode && filter.GetResult(((NamespaceNode)item).Name, ((ModuleDocumentNode)((NamespaceNode)item).TreeNode.Parent!.Data).Document).IsMatch)
 						return ((NamespaceNode)item).Name;
-					if (item is TypeNode && filter.GetResult((item as TypeNode).TypeDef).IsMatch)
+					if (item is TypeNode && filter.GetResult(((TypeNode)item).TypeDef).IsMatch)
 						return ((TypeNode)item).TypeDef;
-					if (item is FieldNode && filter.GetResult((item as FieldNode).FieldDef).IsMatch)
+					if (item is FieldNode && filter.GetResult(((FieldNode)item).FieldDef).IsMatch)
 						return ((FieldNode)item).FieldDef;
-					if (item is MethodNode && filter.GetResult((item as MethodNode).MethodDef).IsMatch)
+					if (item is MethodNode && filter.GetResult(((MethodNode)item).MethodDef).IsMatch)
 						return ((MethodNode)item).MethodDef;
-					if (item is PropertyNode && filter.GetResult((item as PropertyNode).PropertyDef).IsMatch)
+					if (item is PropertyNode && filter.GetResult(((PropertyNode)item).PropertyDef).IsMatch)
 						return ((PropertyNode)item).PropertyDef;
-					if (item is EventNode && filter.GetResult((item as EventNode).EventDef).IsMatch)
+					if (item is EventNode && filter.GetResult(((EventNode)item).EventDef).IsMatch)
 						return ((EventNode)item).EventDef;
-					if (item is AssemblyReferenceNode && filter.GetResult((item as AssemblyReferenceNode).AssemblyRef).IsMatch)
+					if (item is AssemblyReferenceNode && filter.GetResult(((AssemblyReferenceNode)item).AssemblyRef).IsMatch)
 						return ((AssemblyReferenceNode)item).AssemblyRef;
-					if (item is ModuleReferenceNode && filter.GetResult((item as ModuleReferenceNode).ModuleRef).IsMatch)
+					if (item is ModuleReferenceNode && filter.GetResult(((ModuleReferenceNode)item).ModuleRef).IsMatch)
 						return ((ModuleReferenceNode)item).ModuleRef;
 				}
 
@@ -135,7 +135,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		public bool TooManyResults {
-			get { return tooManyResults; }
+			get => tooManyResults;
 			set {
 				if (tooManyResults != value) {
 					tooManyResults = value;
@@ -150,8 +150,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		public ObservableCollection<ISearchResult> SearchResults { get; }
 
-		public ISearchResult SelectedSearchResult {
-			get { return selectedSearchResult; }
+		public ISearchResult? SelectedSearchResult {
+			get => selectedSearchResult;
 			set {
 				if (selectedSearchResult != value) {
 					selectedSearchResult = value;
@@ -159,10 +159,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 			}
 		}
-		ISearchResult selectedSearchResult;
+		ISearchResult? selectedSearchResult;
 
 		public string SearchText {
-			get { return searchText; }
+			get => searchText;
 			set {
 				if (searchText != value) {
 					bool hasSearchTextChanged = string.IsNullOrEmpty(searchText) != string.IsNullOrEmpty(value);
@@ -179,13 +179,13 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		public bool HasSearchText => !string.IsNullOrEmpty(searchText);
 
-		public ISearchResult SearchResult {
-			get { return searchResult; }
+		public ISearchResult? SearchResult {
+			get => searchResult;
 			set {
 				if (searchResult != value) {
 					searchResult = value;
 					OnPropertyChanged(nameof(SearchResult));
-					if (value != null) {
+					if (!(value is null)) {
 						selectedItem = null;
 						OnPropertyChanged(nameof(SelectedItem));
 					}
@@ -193,12 +193,13 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 			}
 		}
-		ISearchResult searchResult;
+		ISearchResult? searchResult;
 
-		public IEnumerable<IDecompiler> AllLanguages => decompilerService.AllDecompilers;
+		public ObservableCollection<DecompilerVM> AllLanguages => allDecompilers;
+		readonly ObservableCollection<DecompilerVM> allDecompilers;
 
-		public IDecompiler Language {
-			get { return decompiler; }
+		public DecompilerVM Language {
+			get => decompiler;
 			set {
 				if (decompiler != value) {
 					decompiler = value;
@@ -207,7 +208,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 			}
 		}
-		IDecompiler decompiler;
+		DecompilerVM decompiler;
 		readonly IDecompilerService decompilerService;
 		readonly IDocumentTreeView documentTreeView;
 		readonly IDocumentTreeNodeFilter filter;
@@ -224,7 +225,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			this.fileSearcherProvider = fileSearcherProvider;
 			this.decompilerService = decompilerService;
 			this.documentTreeView = documentTreeView;
-			decompiler = decompilerService.Decompiler;
+			allDecompilers = new ObservableCollection<DecompilerVM>(decompilerService.AllDecompilers.Select(a => new DecompilerVM(a)));
+			decompiler = allDecompilers.FirstOrDefault(a => a.Decompiler == decompilerService.Decompiler);
 			this.filter = filter;
 			delayedSearch = new DelayedAction(DEFAULT_DELAY_SEARCH_MS, DelayStartSearch);
 			SearchResults = new ObservableCollection<ISearchResult>();
@@ -242,9 +244,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			RefreshTreeView();
 		}
 
-		public bool SelectItem(object item) {
+		public bool SelectItem(object? item) {
 			var node = documentTreeView.FindNode(item);
-			if (node == null)
+			if (node is null)
 				return false;
 
 			documentTreeView.TreeView.SelectItems(new TreeNodeData[] { node });
@@ -254,16 +256,16 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		void RefreshTreeView() {
-			documentTreeView.SetDecompiler(Language);
+			documentTreeView.SetDecompiler(Language.Decompiler);
 			Restart();
 		}
 
 		void OpenNewAssembly() {
-			if (openAssembly == null)
+			if (openAssembly is null)
 				throw new InvalidOperationException();
 
 			var file = openAssembly.Open();
-			if (file == null)
+			if (file is null)
 				return;
 
 			documentTreeView.DocumentService.GetOrAdd(file);
@@ -283,25 +285,25 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				};
 				fileSearcher = fileSearcherProvider.Create(options, documentTreeView);
 				fileSearcher.SyntaxHighlight = SyntaxHighlight;
-				fileSearcher.Decompiler = Language;
+				fileSearcher.Decompiler = Language.Decompiler;
 				fileSearcher.OnSearchCompleted += FileSearcher_OnSearchCompleted;
 				fileSearcher.OnNewSearchResults += FileSearcher_OnNewSearchResults;
 				fileSearcher.Start(documentTreeView.TreeView.Root.DataChildren.OfType<DsDocumentNode>());
 			}
 		}
-		IDocumentSearcher fileSearcher;
+		IDocumentSearcher? fileSearcher;
 		bool searchCompleted;
 
 		void FileSearcher_OnSearchCompleted(object sender, EventArgs e) {
-			if (sender == null || sender != fileSearcher || searchCompleted)
+			if (sender is null || sender != fileSearcher || searchCompleted)
 				return;
 			searchCompleted = true;
-			SearchResults.Remove(fileSearcher.SearchingResult);
+			SearchResults.Remove(fileSearcher!.SearchingResult!);
 			TooManyResults = fileSearcher.TooManyResults;
 		}
 
 		void FileSearcher_OnNewSearchResults(object sender, SearchResultEventArgs e) {
-			if (sender == null || sender != fileSearcher)
+			if (sender is null || sender != fileSearcher)
 				return;
 			Debug.Assert(!searchCompleted);
 			if (searchCompleted)
@@ -330,18 +332,18 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		void CancelSearch() {
 			TooManyResults = false;
 			delayedSearch.Cancel();
-			if (fileSearcher != null) {
+			if (!(fileSearcher is null)) {
 				fileSearcher.Cancel();
 				fileSearcher = null;
 			}
 			searchCompleted = false;
 		}
 
-		protected override string Verify(string columnName) {
+		protected override string? Verify(string columnName) {
 			if (columnName == nameof(SelectedItem) || columnName == nameof(SearchResult)) {
-				if (SelectedItem == null && SearchResult == null)
+				if (SelectedItem is null && SearchResult is null)
 					return dnSpy_AsmEditor_Resources.PickMember_TypeMustBeSelected;
-				if (SelectedDnlibObject == null)
+				if (SelectedDnlibObject is null)
 					return GetErrorMessage();
 				return string.Empty;
 			}
@@ -366,9 +368,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public int Compare(object x, object y) {
 			var a = x as ISearchResult;
 			var b = y as ISearchResult;
-			if (a == null)
+			if (a is null)
 				return 1;
-			if (b == null)
+			if (b is null)
 				return -1;
 			if (a == b)
 				return 0;

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,9 +19,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
@@ -35,31 +33,34 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public DbgEngineTypeVariablesProviderImpl(DbgDotNetEngineValueNodeFactory valueNodeFactory) =>
 			this.valueNodeFactory = valueNodeFactory ?? throw new ArgumentNullException(nameof(valueNodeFactory));
 
-		public override DbgEngineValueNode[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
-			var dispatcher = context.Runtime.GetDotNetRuntime().Dispatcher;
+		public override DbgEngineValueNode[] GetNodes(DbgEvaluationInfo evalInfo, DbgValueNodeEvaluationOptions options) {
+			var dispatcher = evalInfo.Runtime.GetDotNetRuntime().Dispatcher;
 			if (dispatcher.CheckAccess())
-				return GetNodesCore(context, frame, options, cancellationToken);
-			return GetNodes(dispatcher, context, frame, options, cancellationToken);
+				return GetNodesCore(evalInfo, options);
+			return GetNodes(dispatcher, evalInfo, options);
 
-			DbgEngineValueNode[] GetNodes(DbgDotNetDispatcher dispatcher2, DbgEvaluationContext context2, DbgStackFrame frame2, DbgValueNodeEvaluationOptions options2, CancellationToken cancellationToken2) =>
-				dispatcher2.InvokeRethrow(() => GetNodesCore(context2, frame2, options2, cancellationToken2));
+			DbgEngineValueNode[] GetNodes(DbgDotNetDispatcher dispatcher2, DbgEvaluationInfo evalInfo2, DbgValueNodeEvaluationOptions options2) {
+				if (!dispatcher2.TryInvokeRethrow(() => GetNodesCore(evalInfo2, options2), out var result))
+					result = Array.Empty<DbgEngineValueNode>();
+				return result;
+			}
 		}
 
-		DbgEngineValueNode[] GetNodesCore(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
+		DbgEngineValueNode[] GetNodesCore(DbgEvaluationInfo evalInfo, DbgValueNodeEvaluationOptions options) {
 			try {
-				var runtime = context.Runtime.GetDotNetRuntime();
-				var method = runtime.GetFrameMethod(context, frame, cancellationToken);
-				if ((object)method == null)
+				var runtime = evalInfo.Runtime.GetDotNetRuntime();
+				var method = runtime.GetFrameMethod(evalInfo);
+				if (method is null)
 					return Array.Empty<DbgEngineValueNode>();
 
 				IList<DmdType> genericTypeParameters, genericTypeArguments;
 				IList<DmdType> genericMethodParameters, genericMethodArguments;
 
-				genericTypeArguments = method.ReflectedType.GetGenericArguments();
+				genericTypeArguments = method.ReflectedType!.GetGenericArguments();
 				genericMethodArguments = method.GetGenericArguments();
 
 				genericTypeParameters = genericTypeArguments.Count == 0 ? genericTypeArguments : method.ReflectedType.GetGenericTypeDefinition().GetGenericArguments();
-				genericMethodParameters = genericMethodArguments.Count == 0 ? genericMethodArguments : method.Module.ResolveMethod(method.MetadataToken).GetGenericArguments();
+				genericMethodParameters = genericMethodArguments.Count == 0 ? genericMethodArguments : method.Module.ResolveMethod(method.MetadataToken)!.GetGenericArguments();
 				if (genericTypeParameters.Count != genericTypeArguments.Count)
 					throw new InvalidOperationException();
 				if (genericMethodParameters.Count != genericMethodArguments.Count)
@@ -79,11 +80,11 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					throw new InvalidOperationException();
 
 				var res = new DbgEngineValueNode[1];
-				res[0] = valueNodeFactory.CreateTypeVariables(context, frame, infos, cancellationToken);
+				res[0] = valueNodeFactory.CreateTypeVariables(evalInfo, infos);
 				return res;
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {
-				return valueNodeFactory.CreateInternalErrorResult(context, frame, cancellationToken);
+				return valueNodeFactory.CreateInternalErrorResult(evalInfo);
 			}
 		}
 	}

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -17,13 +17,11 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-
 namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
 	/// Instruction bytes reader
 	/// </summary>
-	public interface IInstructionBytesReader : IDisposable {
+	public interface IInstructionBytesReader {
 		/// <summary>
 		/// true if it's reading the original bytes, false if the method has been modified
 		/// </summary>

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -48,7 +49,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// Gets the app domain or null if it's a process thread
 		/// </summary>
 		/// <returns></returns>
-		public abstract DbgAppDomain AppDomain { get; }
+		public abstract DbgAppDomain? AppDomain { get; }
 
 		/// <summary>
 		/// true if this is the main thread
@@ -66,7 +67,7 @@ namespace dnSpy.Contracts.Debugger {
 		public abstract ulong Id { get; }
 
 		/// <summary>
-		/// Gets the managed id of this thread or null if it's not a managed thread
+		/// Gets the managed id of this thread or null if it's unknown or if it's not a managed thread
 		/// </summary>
 		public abstract ulong? ManagedId { get; }
 
@@ -116,8 +117,8 @@ namespace dnSpy.Contracts.Debugger {
 		/// Gets the top stack frame or null if there's none
 		/// </summary>
 		/// <returns></returns>
-		public DbgStackFrame GetTopStackFrame() {
-			DbgStackWalker stackWalker = null;
+		public DbgStackFrame? GetTopStackFrame() {
+			DbgStackWalker? stackWalker = null;
 			try {
 				stackWalker = CreateStackWalker();
 				var frames = stackWalker.GetNextStackFrames(1);
@@ -125,8 +126,30 @@ namespace dnSpy.Contracts.Debugger {
 				return frames.Length == 0 ? null : frames[0];
 			}
 			finally {
-				if (stackWalker != null)
-					Process.DbgManager.Close(stackWalker);
+				stackWalker?.Close();
+			}
+		}
+
+		/// <summary>
+		/// Gets the first <paramref name="count"/> frames.
+		/// The returned frame count can be less than <paramref name="count"/> if there's not enough frames available.
+		/// </summary>
+		/// <param name="count">Max number of frames to return</param>
+		/// <returns></returns>
+		public DbgStackFrame[] GetFrames(int count) {
+			if (count < 0)
+				throw new ArgumentOutOfRangeException(nameof(count));
+			if (count == 0)
+				return Array.Empty<DbgStackFrame>();
+			DbgStackWalker? stackWalker = null;
+			try {
+				stackWalker = CreateStackWalker();
+				var frames = stackWalker.GetNextStackFrames(count);
+				Debug.Assert(frames.Length <= count);
+				return frames;
+			}
+			finally {
+				stackWalker?.Close();
 			}
 		}
 

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,16 +28,16 @@ namespace dnSpy.AsmEditor.Module {
 		public Guid? Mvid;
 		public Guid? EncId;
 		public Guid? EncBaseId;
-		public UTF8String Name;
+		public UTF8String? Name;
 		public ModuleKind Kind;
 		public Characteristics Characteristics;
 		public DllCharacteristics DllCharacteristics;
-		public string RuntimeVersion;
+		public string? RuntimeVersion;
 		public Machine Machine;
 		public ComImageFlags Cor20HeaderFlags;
 		public uint? Cor20HeaderRuntimeVersion;
 		public ushort? TablesHeaderVersion;
-		public IManagedEntryPoint ManagedEntryPoint;
+		public IManagedEntryPoint? ManagedEntryPoint;
 		public RVA NativeEntryPoint;
 		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
 
@@ -75,7 +75,7 @@ namespace dnSpy.AsmEditor.Module {
 			module.Cor20HeaderFlags = Cor20HeaderFlags;
 			module.Cor20HeaderRuntimeVersion = Cor20HeaderRuntimeVersion;
 			module.TablesHeaderVersion = TablesHeaderVersion;
-			if (ManagedEntryPoint != null)
+			if (!(ManagedEntryPoint is null))
 				module.ManagedEntryPoint = ManagedEntryPoint;
 			else
 				module.NativeEntryPoint = NativeEntryPoint;

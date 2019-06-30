@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.Extension {
 		/// </summary>
 		/// <param name="event">Event</param>
 		/// <param name="obj">Data, see <see cref="ExtensionEvent"/></param>
-		void OnEvent(ExtensionEvent @event, object obj);
+		void OnEvent(ExtensionEvent @event, object? obj);
 
 		/// <summary>
 		/// Gets the <see cref="Extension.ExtensionInfo"/> instance

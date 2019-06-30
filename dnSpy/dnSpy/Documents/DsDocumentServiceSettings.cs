@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,19 +29,16 @@ namespace dnSpy.Documents {
 	}
 
 	class DsDocumentServiceSettings : ViewModelBase, IDsDocumentServiceSettings {
-		protected virtual void OnModified() { }
-
 		public bool UseMemoryMappedIO {
-			get { return useMemoryMappedIO; }
+			get => useMemoryMappedIO;
 			set {
 				if (useMemoryMappedIO != value) {
 					useMemoryMappedIO = value;
 					OnPropertyChanged(nameof(UseMemoryMappedIO));
-					OnModified();
 				}
 			}
 		}
-		bool useMemoryMappedIO = true;
+		bool useMemoryMappedIO = false;
 	}
 
 	[Export, Export(typeof(IDsDocumentServiceSettings))]
@@ -54,16 +51,12 @@ namespace dnSpy.Documents {
 		DsDocumentServiceSettingsImpl(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			UseMemoryMappedIO = sect.Attribute<bool?>(nameof(UseMemoryMappedIO)) ?? UseMemoryMappedIO;
-			disableSave = false;
+			PropertyChanged += DsDocumentServiceSettingsImpl_PropertyChanged;
 		}
-		readonly bool disableSave;
 
-		protected override void OnModified() {
-			if (disableSave)
-				return;
+		void DsDocumentServiceSettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(UseMemoryMappedIO), UseMemoryMappedIO);
 		}

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,7 +30,7 @@ using dnSpy.Contracts.TreeView;
 namespace dnSpy.Documents.TreeView {
 	sealed class UnknownDocumentNodeImpl : UnknownDocumentNode {
 		public UnknownDocumentNodeImpl(IDsDocument document)
-			: base(document) => Debug.Assert(document.PEImage == null && document.ModuleDef == null);
+			: base(document) => Debug.Assert(document.PEImage is null && document.ModuleDef is null);
 
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.UNKNOWN_DOCUMENT_NODE_GUID);
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => DsImages.AssemblyError;
@@ -41,6 +41,6 @@ namespace dnSpy.Documents.TreeView {
 		}
 
 		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>
-			new NodePrinter().Write(output, decompiler, Document);
+			new NodeFormatter().Write(output, decompiler, Document);
 	}
 }

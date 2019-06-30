@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,6 +25,11 @@ using dnlib.DotNet;
 
 namespace dnSpy.Decompiler.MSBuild {
 	sealed class FilenameCreator {
+		// Max length of a filename, excluding extension
+		const int MaxNameLength = 60;
+		// Max length of a directory name part
+		const int MaxDirNameLength = 40;
+
 		public string DefaultNamespace => defaultNamespace;
 		readonly string defaultNamespace;
 
@@ -46,7 +51,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		}
 
 		public string Create(string fileExt, string fullName) {
-			Debug.Assert(fileExt != null && fileExt.Length > 1 && fileExt[0] == '.');
+			Debug.Assert(!(fileExt is null) && fileExt.Length > 1 && fileExt[0] == '.');
 			string name = StripDefaultNamespace(fullName);
 			if (string.IsNullOrEmpty(name))
 				name = fullName;
@@ -54,7 +59,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		}
 
 		public string CreateFromNamespaceName(string fileExt, string ns, string name) {
-			Debug.Assert(fileExt != null && fileExt.Length > 1 && fileExt[0] == '.');
+			Debug.Assert(!(fileExt is null) && fileExt.Length > 1 && fileExt[0] == '.');
 			var list = GetNamespaceParts(ns);
 			list.Add(name);
 			return Create(list.ToArray(), fileExt);
@@ -84,8 +89,10 @@ namespace dnSpy.Decompiler.MSBuild {
 		string Create(string[] parts, string fileExt) {
 			fileExt = FilenameUtils.CleanName(fileExt);
 			string tempName = string.Empty;
-			foreach (var part in parts) {
-				tempName = Path.Combine(tempName, FilenameUtils.CleanName(part));
+			for (int i = 0; i < parts.Length; i++) {
+				var part = parts[i];
+				int maxLen = i == parts.Length - 1 ? MaxNameLength : MaxDirNameLength;
+				tempName = Path.Combine(tempName, FixLongName(FilenameUtils.CleanName(part), maxLen));
 			}
 			tempName = Path.Combine(baseDir, tempName);
 			var newName = tempName + fileExt;
@@ -103,7 +110,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		public string Create(ModuleDef module) {
 			string name;
 			var asm = module.Assembly;
-			if (asm != null && module.IsManifestModule)
+			if (!(asm is null) && module.IsManifestModule)
 				name = module.Assembly.Name;
 			else
 				name = FileUtils.GetFilename(module.Name);
@@ -111,7 +118,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		}
 
 		string Create(string name) {
-			name = Path.Combine(baseDir, FilenameUtils.CleanName(name));
+			name = Path.Combine(baseDir, FixLongName(FilenameUtils.CleanName(name), MaxNameLength));
 			if (usedNames.Contains(name)) {
 				var tempName = name;
 				for (int i = 2; ; i++) {
@@ -122,6 +129,12 @@ namespace dnSpy.Decompiler.MSBuild {
 			}
 			usedNames.Add(name);
 			return name;
+		}
+
+		static string FixLongName(string name, int maxLen) {
+			if (name.Length <= maxLen)
+				return name;
+			return name.Substring(0, maxLen);
 		}
 
 		public string CreateFromNamespaceFilename(string @namespace, string filename) {

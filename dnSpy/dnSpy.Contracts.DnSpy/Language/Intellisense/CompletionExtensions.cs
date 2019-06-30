@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,11 +25,11 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// </summary>
 	static class CompletionExtensions {
 		/// <summary>
-		/// Gets the filter text or null. This is <see cref="IDsCompletion.FilterText"/> or <see cref="Completion.DisplayText"/>
-		/// if <paramref name="completion"/> is not a <see cref="IDsCompletion"/>
+		/// Gets the filter text or null. This is <see cref="DsCompletion.FilterText"/> or <see cref="Completion.DisplayText"/>
+		/// if <paramref name="completion"/> is not a <see cref="DsCompletion"/>
 		/// </summary>
 		/// <param name="completion">Completion</param>
 		/// <returns></returns>
-		public static string TryGetFilterText(this Completion completion) => (completion as IDsCompletion)?.FilterText ?? completion.DisplayText;
+		public static string? TryGetFilterText(this Completion completion) => (completion as DsCompletion)?.FilterText ?? completion.DisplayText;
 	}
 }

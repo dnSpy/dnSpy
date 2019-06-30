@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,7 +31,7 @@ namespace dnSpy.AsmEditor.Commands {
 			get { yield return ownerNode; }
 		}
 
-		struct MethodState {
+		readonly struct MethodState {
 			readonly Emit.MethodBody body;
 			readonly MethodDefOptions methodDefOptions;
 			readonly bool isBodyModified;
@@ -63,9 +63,10 @@ namespace dnSpy.AsmEditor.Commands {
 
 		public EditedMethodUpdater(Lazy<IMethodAnnotations> methodAnnotations, ModuleDocumentNode modNode, MethodDef originalMethod, Emit.MethodBody newBody, MethodDefOptions methodDefOptions) {
 			this.methodAnnotations = methodAnnotations;
-			ownerNode = modNode.Context.DocumentTreeView.FindNode(originalMethod);
-			if (ownerNode == null)
+			var node = modNode.Context.DocumentTreeView.FindNode(originalMethod);
+			if (node is null)
 				throw new InvalidOperationException();
+			ownerNode = node;
 			method = originalMethod;
 			originalMethodState = new MethodState(originalMethod, methodAnnotations.Value.IsBodyModified(method));
 			newMethodState = new MethodState(newBody, methodDefOptions, true);

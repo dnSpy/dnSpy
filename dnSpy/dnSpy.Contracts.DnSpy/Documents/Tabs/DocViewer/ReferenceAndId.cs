@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,24 +23,24 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 	/// <summary>
 	/// Reference and id. Created from a <see cref="SpanReference"/>
 	/// </summary>
-	public struct ReferenceAndId {
+	public readonly struct ReferenceAndId {
 		/// <summary>
 		/// Gets the reference
 		/// </summary>
-		public object Reference { get; }
+		public object? Reference { get; }
 
 		/// <summary>
 		/// Id or null (eg. <see cref="PredefinedSpanReferenceIds.HighlightRelatedKeywords"/>). This is used to enable
 		/// or disable the reference. If null, it's always enabled.
 		/// </summary>
-		public string Id { get; }
+		public string? Id { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="reference">Reference</param>
 		/// <param name="id">Reference id or null, eg. <see cref="PredefinedSpanReferenceIds.HighlightRelatedKeywords"/></param>
-		public ReferenceAndId(object reference, string id) {
+		public ReferenceAndId(object? reference, string? id) {
 			Reference = reference;
 			Id = id;
 		}

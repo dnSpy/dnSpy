@@ -1,4 +1,4 @@
-﻿/*
+/*
     Copyright (C) 2017 HoLLy
 
     This file is part of dnSpy
@@ -31,29 +31,42 @@ namespace dnSpy.Analyzer.TreeNodes {
 	/// </summary>
 	sealed class MethodOverriddenNode : SearchNode {
 		readonly MethodDef analyzedMethod;
+		readonly List<TypeDef> analyzedTypes;
 
-		public MethodOverriddenNode(MethodDef analyzedMethod) =>
+		public MethodOverriddenNode(MethodDef analyzedMethod) {
 			this.analyzedMethod = analyzedMethod ?? throw new ArgumentNullException(nameof(analyzedMethod));
+			analyzedTypes = new List<TypeDef> { analyzedMethod.DeclaringType };
+		}
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
 			output.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.OverridesTreeNode);
 
 		protected override IEnumerable<AnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
-			var type = analyzedMethod.DeclaringType.BaseType.ResolveTypeDef();
-			while (type != null) {
-				foreach (var method in type.Methods) {
-					if (TypesHierarchyHelpers.IsBaseMethod(method, analyzedMethod)) {
-						yield return new MethodNode(method) { Context = Context };
-						yield break;
+			AddTypeEquivalentTypes(Context.DocumentService, analyzedTypes[0], analyzedTypes);
+			var overrides = analyzedMethod.Overrides;
+			foreach (var declType in analyzedTypes) {
+				if (overrides.Count > 0) {
+					bool matched = false;
+					foreach (var o in overrides) {
+						if (o.MethodDeclaration.ResolveMethodDef() is MethodDef method && (method.IsVirtual || method.IsAbstract)) {
+							matched = true;
+							yield return new MethodNode(method) { Context = Context };
+						}
 					}
+					if (matched)
+						yield break;
 				}
-				type = type.BaseType.ResolveTypeDef();
+				foreach (var method in TypesHierarchyHelpers.FindBaseMethods(analyzedMethod, declType)) {
+					if (!(method.IsVirtual || method.IsAbstract))
+						continue;
+					yield return new MethodNode(method) { Context = Context };
+					yield break;
+				}
 			}
 		}
 
 		public static bool CanShow(MethodDef method) =>
-			method.DeclaringType.BaseType != null &&
-			method.IsVirtual &&
-			!method.DeclaringType.IsInterface;
+			!(method.DeclaringType.BaseType is null) &&
+			(method.IsVirtual || method.IsAbstract) && method.IsReuseSlot;
 	}
 }

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using dnlib.DotNet;
 
 namespace dnSpy.Contracts.Decompiler {
@@ -27,7 +28,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <summary>
 		/// Gets the real local or parameter or null if it's a decompiler generated variable
 		/// </summary>
-		IVariable Variable { get; }
+		IVariable? Variable { get; }
 
 		/// <summary>
 		/// true if this is a local
@@ -50,8 +51,39 @@ namespace dnSpy.Contracts.Decompiler {
 		TypeSig Type { get; }
 
 		/// <summary>
+		/// Gets the hoisted field or null if it's not a hoisted local/parameter
+		/// </summary>
+		FieldDef? HoistedField { get; }
+
+		/// <summary>
+		/// Gets the flags
+		/// </summary>
+		SourceVariableFlags Flags { get; }
+
+		/// <summary>
 		/// true if this is a decompiler generated variable
 		/// </summary>
 		bool IsDecompilerGenerated { get; }
+	}
+
+	/// <summary>
+	/// <see cref="ISourceVariable"/> flags
+	/// </summary>
+	[Flags]
+	public enum SourceVariableFlags {
+		/// <summary>
+		/// No bit is set
+		/// </summary>
+		None					= 0,
+
+		/// <summary>
+		/// Decompiler generated variable
+		/// </summary>
+		DecompilerGenerated		= 0x00000001,
+
+		/// <summary>
+		/// Readonly reference, eg. a 'ref readonly' local
+		/// </summary>
+		ReadOnlyReference		= 0x00000002,
 	}
 }

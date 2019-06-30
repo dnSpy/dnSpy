@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -44,7 +44,7 @@ namespace dnSpy.Contracts.Scripting {
 		/// </summary>
 		/// <param name="message">Message</param>
 		/// <param name="innerException">Inner exception or null</param>
-		public ScriptException(string message, Exception innerException)
+		public ScriptException(string message, Exception? innerException)
 			: base(message, innerException) {
 		}
 	}

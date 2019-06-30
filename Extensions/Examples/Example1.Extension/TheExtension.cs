@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using dnSpy.Contracts.Extension;
 
 // Each extension should export one class implementing IExtension
@@ -17,7 +17,7 @@ namespace Example1.Extension {
 			ShortDescription = "Example1 extension",
 		};
 
-		public void OnEvent(ExtensionEvent @event, object obj) {
+		public void OnEvent(ExtensionEvent @event, object? obj) {
 			// We don't care about any events
 		}
 	}

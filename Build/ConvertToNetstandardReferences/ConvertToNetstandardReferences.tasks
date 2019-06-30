@@ -1,0 +1,12 @@
+<Project>
+	<UsingTask AssemblyFile="$(MSBuildThisFileDirectory)..\compiled\ConvertToNetstandardReferences.dll" TaskName="ConvertToNetstandardReferences.ConvertToNetstandardReferences" />
+	<Target Name="ConvertToNetstandardReferences" AfterTargets="ResolveAssemblyReferences">
+		<ConvertToNetstandardReferences ReferencePath="@(ReferencePath)" DestinationDirectory="$(IntermediateOutputPath)ConvertToNetstandardReferences">
+			<Output ItemName="_ConvertToNetstandardReferences_OutputReferencePath" TaskParameter="OutputReferencePath" />
+		</ConvertToNetstandardReferences>
+		<ItemGroup>
+			<ReferencePath Remove="@(ReferencePath)" />
+			<ReferencePath Include="@(_ConvertToNetstandardReferences_OutputReferencePath)" />
+		</ItemGroup>
+	</Target>
+</Project>

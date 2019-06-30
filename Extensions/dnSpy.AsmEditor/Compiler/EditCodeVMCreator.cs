@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,34 +29,37 @@ using dnSpy.Contracts.AsmEditor.Compiler;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Images;
+using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.Compiler {
 	[Export(typeof(EditCodeVMCreator))]
 	sealed class EditCodeVMCreator {
-		readonly IRawModuleBytesProvider rawModuleBytesProvider;
+		readonly RawModuleBytesProvider rawModuleBytesProvider;
 		readonly IOpenFromGAC openFromGAC;
 		readonly IOpenAssembly openAssembly;
+		readonly IPickFilename pickFilename;
 		readonly IDecompilerService decompilerService;
 		readonly ILanguageCompilerProvider[] languageCompilerProviders;
 
 		[ImportingConstructor]
-		EditCodeVMCreator(IRawModuleBytesProvider rawModuleBytesProvider, IOpenFromGAC openFromGAC, IDocumentTreeView documentTreeView, IDecompilerService decompilerService, [ImportMany] IEnumerable<ILanguageCompilerProvider> languageCompilerProviders) {
+		EditCodeVMCreator(RawModuleBytesProvider rawModuleBytesProvider, IOpenFromGAC openFromGAC, IPickFilename pickFilename, IDocumentTreeView documentTreeView, IDecompilerService decompilerService, [ImportMany] IEnumerable<ILanguageCompilerProvider> languageCompilerProviders) {
 			this.rawModuleBytesProvider = rawModuleBytesProvider;
 			this.openFromGAC = openFromGAC;
 			openAssembly = new OpenAssembly(documentTreeView.DocumentService);
+			this.pickFilename = pickFilename;
 			this.decompilerService = decompilerService;
 			this.languageCompilerProviders = languageCompilerProviders.OrderBy(a => a.Order).ToArray();
 		}
 
-		public bool CanCreate(CompilationKind kind) => GetLanguageCompilerProvider(kind) != null;
+		public bool CanCreate(CompilationKind kind) => !(GetLanguageCompilerProvider(kind) is null);
 
 		(IDecompiler decompiler, ILanguageCompilerProvider languageCompilerProvider)? GetLanguageCompilerProvider(CompilationKind kind) {
 			var language = TryGetUsedLanguage(kind);
-			if (language == null)
+			if (language is null)
 				return null;
 
 			var serviceCreator = languageCompilerProviders.FirstOrDefault(a => a.Language == language.GenericGuid);
-			if (serviceCreator == null)
+			if (serviceCreator is null)
 				return null;
 			if (!serviceCreator.CanCompile(kind))
 				return null;
@@ -69,31 +72,33 @@ namespace dnSpy.AsmEditor.Compiler {
 			return info?.languageCompilerProvider.Icon;
 		}
 
-		public string GetHeader(CompilationKind kind) {
+		public string? GetHeader(CompilationKind kind) {
 			var info = GetLanguageCompilerProvider(kind);
-			if (info == null)
+			if (info is null)
 				return null;
 			switch (kind) {
-			case CompilationKind.Assembly:		return string.Format(dnSpy_AsmEditor_Resources.EditAssemblyCode2, info.Value.decompiler.GenericNameUI);
-			case CompilationKind.Method:		return string.Format(dnSpy_AsmEditor_Resources.EditMethodBodyCode, info.Value.decompiler.GenericNameUI);
+			case CompilationKind.EditAssembly:	return string.Format(dnSpy_AsmEditor_Resources.EditAssemblyCode2, info.Value.decompiler.GenericNameUI);
+			case CompilationKind.EditMethod:	return string.Format(dnSpy_AsmEditor_Resources.EditMethodBodyCode, info.Value.decompiler.GenericNameUI);
 			case CompilationKind.AddClass:		return string.Format(dnSpy_AsmEditor_Resources.EditCodeAddClass2, info.Value.decompiler.GenericNameUI);
 			case CompilationKind.EditClass:		return string.Format(dnSpy_AsmEditor_Resources.EditCodeEditClass2, info.Value.decompiler.GenericNameUI);
+			case CompilationKind.AddMembers:	return string.Format(dnSpy_AsmEditor_Resources.EditCodeAddClassMembers2, info.Value.decompiler.GenericNameUI);
 			default: throw new ArgumentOutOfRangeException(nameof(kind));
 			}
 		}
 
 		bool IsSupportedLanguage(IDecompiler decompiler, CompilationKind kind) {
-			if (decompiler == null)
+			if (decompiler is null)
 				return false;
 
 			switch (kind) {
-			case CompilationKind.Assembly:
+			case CompilationKind.EditAssembly:
 				if (!decompiler.CanDecompile(DecompilationType.AssemblyInfo))
 					return false;
 				break;
 
-			case CompilationKind.Method:
+			case CompilationKind.EditMethod:
 			case CompilationKind.EditClass:
+			case CompilationKind.AddMembers:
 				if (!decompiler.CanDecompile(DecompilationType.TypeMethods))
 					return false;
 				break;
@@ -116,32 +121,92 @@ namespace dnSpy.AsmEditor.Compiler {
 					decompilerService.AllDecompilers.FirstOrDefault(a => IsSupportedLanguage(a, kind));
 		}
 
+		ImageReference GetAddDocumentsImage(ILanguageCompilerProvider languageCompilerProvider) =>
+			languageCompilerProvider.Icon ?? DsImages.CSFileNode;
+
 		public EditCodeVM CreateEditMethodCode(MethodDef method, IList<MethodSourceStatement> statements) {
-			var info = GetLanguageCompilerProvider(CompilationKind.Method);
-			if (info == null)
+			var info = GetLanguageCompilerProvider(CompilationKind.EditMethod);
+			if (info is null)
 				throw new InvalidOperationException();
-			return new EditMethodCodeVM(rawModuleBytesProvider, openFromGAC, openAssembly, info.Value.languageCompilerProvider.Create(CompilationKind.Method), info.Value.decompiler, method, statements);
+			var options = new EditCodeVMOptions(
+				rawModuleBytesProvider,
+				openFromGAC,
+				openAssembly,
+				pickFilename,
+				info.Value.languageCompilerProvider.Create(CompilationKind.EditMethod),
+				info.Value.decompiler,
+				method.Module,
+				GetAddDocumentsImage(info.Value.languageCompilerProvider)
+			);
+			return new EditMethodCodeVM(options, method, statements);
 		}
 
 		public EditCodeVM CreateEditAssembly(ModuleDef module) {
-			var info = GetLanguageCompilerProvider(CompilationKind.Assembly);
-			if (info == null)
+			var info = GetLanguageCompilerProvider(CompilationKind.EditAssembly);
+			if (info is null)
 				throw new InvalidOperationException();
-			return new EditAssemblyVM(rawModuleBytesProvider, openFromGAC, openAssembly, info.Value.languageCompilerProvider.Create(CompilationKind.Assembly), info.Value.decompiler, module);
+			var options = new EditCodeVMOptions(
+				rawModuleBytesProvider,
+				openFromGAC,
+				openAssembly,
+				pickFilename,
+				info.Value.languageCompilerProvider.Create(CompilationKind.EditAssembly),
+				info.Value.decompiler,
+				module,
+				GetAddDocumentsImage(info.Value.languageCompilerProvider)
+			);
+			return new EditAssemblyVM(options);
 		}
 
 		public EditCodeVM CreateAddClass(ModuleDef module) {
 			var info = GetLanguageCompilerProvider(CompilationKind.AddClass);
-			if (info == null)
+			if (info is null)
 				throw new InvalidOperationException();
-			return new AddClassVM(rawModuleBytesProvider, openFromGAC, openAssembly, info.Value.languageCompilerProvider.Create(CompilationKind.AddClass), info.Value.decompiler, module);
+			var options = new EditCodeVMOptions(
+				rawModuleBytesProvider,
+				openFromGAC,
+				openAssembly,
+				pickFilename,
+				info.Value.languageCompilerProvider.Create(CompilationKind.AddClass),
+				info.Value.decompiler,
+				module,
+				GetAddDocumentsImage(info.Value.languageCompilerProvider)
+			);
+			return new AddClassVM(options);
 		}
 
 		public EditCodeVM CreateEditClass(IMemberDef def, IList<MethodSourceStatement> statements) {
 			var info = GetLanguageCompilerProvider(CompilationKind.EditClass);
-			if (info == null)
+			if (info is null)
 				throw new InvalidOperationException();
-			return new EditClassVM(rawModuleBytesProvider, openFromGAC, openAssembly, info.Value.languageCompilerProvider.Create(CompilationKind.EditClass), info.Value.decompiler, def, statements);
+			var options = new EditCodeVMOptions(
+				rawModuleBytesProvider,
+				openFromGAC,
+				openAssembly,
+				pickFilename,
+				info.Value.languageCompilerProvider.Create(CompilationKind.EditClass),
+				info.Value.decompiler,
+				def.Module,
+				GetAddDocumentsImage(info.Value.languageCompilerProvider)
+			);
+			return new EditClassVM(options, def, statements);
+		}
+
+		public EditCodeVM CreateAddMembers(IMemberDef def) {
+			var info = GetLanguageCompilerProvider(CompilationKind.AddMembers);
+			if (info is null)
+				throw new InvalidOperationException();
+			var options = new EditCodeVMOptions(
+				rawModuleBytesProvider,
+				openFromGAC,
+				openAssembly,
+				pickFilename,
+				info.Value.languageCompilerProvider.Create(CompilationKind.AddMembers),
+				info.Value.decompiler,
+				def.Module,
+				GetAddDocumentsImage(info.Value.languageCompilerProvider)
+			);
+			return new AddMembersCodeVM(options, def);
 		}
 	}
 }

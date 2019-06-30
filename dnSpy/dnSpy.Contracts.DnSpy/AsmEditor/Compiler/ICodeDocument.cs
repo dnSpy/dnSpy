@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,11 +29,6 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		/// Name of document
 		/// </summary>
 		string Name { get; }
-
-		/// <summary>
-		/// Name of document without the extension. Identical to <see cref="IDecompiledDocument.NameNoExtension"/>
-		/// </summary>
-		string NameNoExtension { get; }
 
 		/// <summary>
 		/// Gets the text view

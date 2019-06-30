@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,7 +36,7 @@ namespace dnSpy.Hex.Editor {
 		[ImportingConstructor]
 		OffsetHexMouseProcessorProvider(OffsetCursorProviderService offsetCursorProviderService) => this.offsetCursorProviderService = offsetCursorProviderService;
 
-		public override HexMouseProcessor GetAssociatedProcessor(WpfHexView wpfHexView) =>
+		public override HexMouseProcessor? GetAssociatedProcessor(WpfHexView wpfHexView) =>
 			new OffsetHexMouseProcessor(offsetCursorProviderService.Get(wpfHexView), wpfHexView);
 	}
 
@@ -77,7 +77,7 @@ namespace dnSpy.Hex.Editor {
 		[ImportingConstructor]
 		OffsetHexCursorProviderFactory(OffsetCursorProviderService offsetCursorProviderService) => this.offsetCursorProviderService = offsetCursorProviderService;
 
-		public override HexCursorProvider Create(WpfHexView wpfHexView) =>
+		public override HexCursorProvider? Create(WpfHexView wpfHexView) =>
 			new OffsetHexCursorProvider(offsetCursorProviderService.Get(wpfHexView));
 	}
 
@@ -108,7 +108,7 @@ namespace dnSpy.Hex.Editor {
 		public event EventHandler CursorInfoChanged;
 
 		public HexCursorInfo CursorInfo {
-			get { return cursorInfo; }
+			get => cursorInfo;
 			set {
 				if (cursorInfo != value) {
 					cursorInfo = value;

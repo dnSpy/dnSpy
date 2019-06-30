@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -37,15 +37,15 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		void DbgManager_IsDebuggingChanged(object sender, EventArgs e) {
 			var dbgManager = (DbgManager)sender;
 			if (!dbgManager.IsDebugging) {
-				List<DbgCodeBreakpoint> bpsToRemove = null;
+				List<DbgCodeBreakpoint>? bpsToRemove = null;
 				foreach (var bp in dbgCodeBreakpointsService.Value.Breakpoints) {
 					if (bp.IsTemporary) {
-						if (bpsToRemove == null)
+						if (bpsToRemove is null)
 							bpsToRemove = new List<DbgCodeBreakpoint>();
 						bpsToRemove.Add(bp);
 					}
 				}
-				if (bpsToRemove != null)
+				if (!(bpsToRemove is null))
 					dbgCodeBreakpointsService.Value.Remove(bpsToRemove.ToArray());
 			}
 		}

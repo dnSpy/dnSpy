@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,8 +36,8 @@ namespace dnSpy.Controls {
 		WpfFocusService([ImportMany] IEnumerable<Lazy<IWpfFocusChecker>> checkers) => this.checkers = checkers.ToArray();
 
 		public void Focus(IInputElement element) {
-			Debug.Assert(element != null && element.Focusable);
-			if (element == null || !element.Focusable)
+			Debug.Assert(!(element is null) && element.Focusable);
+			if (element is null || !element.Focusable)
 				return;
 			if (CanFocus)
 				element.Focus();

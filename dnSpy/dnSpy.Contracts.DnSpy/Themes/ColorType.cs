@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,7 +22,7 @@ namespace dnSpy.Contracts.Themes {
 	/// Color type
 	/// </summary>
 	public enum ColorType : uint {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		// The order and names of the following constants must match dnSpy.Contracts.Text.TextColor
 		Text = 0x00004000,
 		FirstNR = Text, // Text should be first so ToString() picks it instead of FirstNR
@@ -324,6 +324,24 @@ namespace dnSpy.Contracts.Themes {
 		DebugObjectIdName,
 		DebuggerDisplayAttributeEval,
 		DebuggerNoStringQuotesEval,
+		DebugViewPropertyName,
+		AsmComment,
+		AsmDirective,
+		AsmPrefix,
+		AsmMnemonic,
+		AsmKeyword,
+		AsmOperator,
+		AsmPunctuation,
+		AsmNumber,
+		AsmRegister,
+		AsmSelectorValue,
+		AsmLabelAddress,
+		AsmFunctionAddress,
+		AsmLabel,
+		AsmFunction,
+		AsmData,
+		AsmAddress,
+		AsmHexBytes,
 
 		// Must be last in this group
 		LastNR,
@@ -768,10 +786,13 @@ namespace dnSpy.Contracts.Themes {
 		DebuggerBreakpointGlyphMarginControlBorder,
 		DebuggerBreakpointGlyphMarginControlBackground,
 		DebuggerBreakpointGlyphMarginControlHoverBackground,
+		HyperlinkNormal,
+		HyperlinkMouseOver,
+		HyperlinkDisabled,
 
 		// Add new color types before this comment
 
 		LastUI,
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -17,18 +17,18 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Globalization;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.Breakpoints.Code.TextEditor;
-using dnSpy.Contracts.Debugger.DotNet.CorDebug.Code;
+using dnSpy.Contracts.Debugger.DotNet.Code;
+using dnSpy.Contracts.Debugger.Text;
+using dnSpy.Contracts.Debugger.Text.DnSpy;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Metadata;
-using dnSpy.Contracts.Text;
 using dnSpy.Debugger.DotNet.CorDebug.Code;
 using dnSpy.Debugger.DotNet.CorDebug.Properties;
 using Microsoft.VisualStudio.Text;
@@ -42,55 +42,56 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Breakpoints.TextEditor {
 		[ImportingConstructor]
 		DbgBreakpointGlyphFormatterImpl(IDecompilerService decompilerService) => this.decompilerService = decompilerService;
 
-		public override bool WriteLocation(ITextColorWriter output, DbgCodeBreakpoint breakpoint, ITextView textView, SnapshotSpan span) {
+		public override bool WriteLocation(IDbgTextWriter output, DbgCodeBreakpoint breakpoint, ITextView textView, SnapshotSpan span) {
 			if (breakpoint.Location is DbgDotNetNativeCodeLocationImpl location)
 				return WriteLocation(output, textView, span, location);
 
 			return false;
 		}
 
-		bool WriteLocation(ITextColorWriter output, ITextView textView, SnapshotSpan span, DbgDotNetNativeCodeLocationImpl location) {
+		bool WriteLocation(IDbgTextWriter output, ITextView textView, SnapshotSpan span, DbgDotNetNativeCodeLocationImpl location) {
 			var line = span.Start.GetContainingLine();
-			output.Write(BoxedTextColor.Text, string.Format(dnSpy_Debugger_DotNet_CorDebug_Resources.GlyphToolTip_line_0_character_1,
+			output.Write(DbgTextColor.Text, string.Format(dnSpy_Debugger_DotNet_CorDebug_Resources.GlyphToolTip_line_0_character_1,
 				(line.LineNumber + 1).ToString(CultureInfo.CurrentUICulture),
 				(span.Start - line.Start + 1).ToString(CultureInfo.CurrentUICulture)));
-			output.WriteSpace();
+			output.Write(DbgTextColor.Text, " ");
 			switch (location.ILOffsetMapping) {
 			case DbgILOffsetMapping.Exact:
 			case DbgILOffsetMapping.Approximate:
 				var prefix = location.ILOffsetMapping == DbgILOffsetMapping.Approximate ? "~0x" : "0x";
-				output.Write(BoxedTextColor.Text, string.Format(dnSpy_Debugger_DotNet_CorDebug_Resources.GlyphToolTip_IL_offset_0, prefix + location.Offset.ToString("X4")));
+				output.Write(DbgTextColor.Text, string.Format(dnSpy_Debugger_DotNet_CorDebug_Resources.GlyphToolTip_IL_offset_0, prefix + location.Offset.ToString("X4")));
 				break;
 
 			case DbgILOffsetMapping.Prolog:
-				output.Write(BoxedTextColor.Text, string.Format(dnSpy_Debugger_DotNet_CorDebug_Resources.GlyphToolTip_IL_offset_0, "(prolog)"));
+				output.Write(DbgTextColor.Text, string.Format(dnSpy_Debugger_DotNet_CorDebug_Resources.GlyphToolTip_IL_offset_0, "(prolog)"));
 				break;
 
 			case DbgILOffsetMapping.Epilog:
-				output.Write(BoxedTextColor.Text, string.Format(dnSpy_Debugger_DotNet_CorDebug_Resources.GlyphToolTip_IL_offset_0, "(epilog)"));
+				output.Write(DbgTextColor.Text, string.Format(dnSpy_Debugger_DotNet_CorDebug_Resources.GlyphToolTip_IL_offset_0, "(epilog)"));
 				break;
 
 			case DbgILOffsetMapping.Unknown:
 			case DbgILOffsetMapping.NoInfo:
 			case DbgILOffsetMapping.UnmappedAddress:
-				output.Write(BoxedTextColor.Text, string.Format(dnSpy_Debugger_DotNet_CorDebug_Resources.GlyphToolTip_IL_offset_0, "(???)"));
+				output.Write(DbgTextColor.Text, string.Format(dnSpy_Debugger_DotNet_CorDebug_Resources.GlyphToolTip_IL_offset_0, "(???)"));
 				break;
 
-			default: throw new InvalidOperationException();
+			default:
+				Debug.Fail($"Unknown IL offset mapping: {location.ILOffsetMapping}");
+				goto case DbgILOffsetMapping.Unknown;
 			}
-			output.WriteSpace();
-			var addr = location.NativeMethodAddress + location.NativeMethodOffset;
-			output.Write(BoxedTextColor.Text, string.Format(dnSpy_Debugger_DotNet_CorDebug_Resources.GlyphToolTip_NativeAddress, "0x" + addr.ToString("X8")));
+			output.Write(DbgTextColor.Text, " ");
+			output.Write(DbgTextColor.Text, string.Format(dnSpy_Debugger_DotNet_CorDebug_Resources.GlyphToolTip_NativeAddress, "0x" + location.NativeAddress.IP.ToString("X8")));
 
 			var documentViewer = textView.TextBuffer.TryGetDocumentViewer();
-			Debug.Assert(documentViewer != null);
+			Debug.Assert(!(documentViewer is null));
 			var statement = documentViewer?.GetMethodDebugService().FindByCodeOffset(new ModuleTokenId(location.Module, location.Token), location.Offset);
-			Debug.Assert((documentViewer != null) == (statement != null));
-			if (statement != null) {
-				output.Write(BoxedTextColor.Text, " ('");
+			Debug.Assert((!(documentViewer is null)) == (!(statement is null)));
+			if (!(statement is null)) {
+				output.Write(DbgTextColor.Text, " ('");
 				var decompiler = (documentViewer?.DocumentTab.Content as IDecompilerTabContent)?.Decompiler ?? decompilerService.Decompiler;
-				decompiler.Write(output, statement.Value.Method, FormatterOptions.Default);
-				output.Write(BoxedTextColor.Text, "')");
+				decompiler.Write(new DbgTextColorWriter(output), statement.Value.Method, FormatterOptions.Default);
+				output.Write(DbgTextColor.Text, "')");
 			}
 
 			return true;

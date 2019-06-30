@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -44,17 +44,17 @@ namespace dnSpy.Language.Intellisense {
 			this.completionSourceProviders = Orderer.Order(completionSourceProviders).ToArray();
 		}
 
-		public ICompletionSession TriggerCompletion(ITextView textView) {
-			if (textView == null)
+		public ICompletionSession? TriggerCompletion(ITextView textView) {
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			var triggerPoint = textView.TextSnapshot.CreateTrackingPoint(textView.Caret.Position.BufferPosition.Position, PointTrackingMode.Negative, TrackingFidelityMode.Forward);
 			return TriggerCompletion(textView, triggerPoint, trackCaret: true);
 		}
 
-		public ICompletionSession TriggerCompletion(ITextView textView, ITrackingPoint triggerPoint, bool trackCaret) {
-			if (textView == null)
+		public ICompletionSession? TriggerCompletion(ITextView textView, ITrackingPoint triggerPoint, bool trackCaret) {
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
-			if (triggerPoint == null)
+			if (triggerPoint is null)
 				throw new ArgumentNullException(nameof(triggerPoint));
 			var session = CreateCompletionSession(textView, triggerPoint, trackCaret);
 			session.Start();
@@ -62,9 +62,9 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		public ICompletionSession CreateCompletionSession(ITextView textView, ITrackingPoint triggerPoint, bool trackCaret) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
-			if (triggerPoint == null)
+			if (triggerPoint is null)
 				throw new ArgumentNullException(nameof(triggerPoint));
 			var stack = intellisenseSessionStackMapService.Value.GetStackForTextView(textView);
 			var session = new CompletionSession(textView, triggerPoint, trackCaret, intellisensePresenterFactoryService.Value, completionSourceProviders);
@@ -74,20 +74,20 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		public void DismissAllSessions(ITextView textView) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			foreach (var session in GetSessions(textView))
 				session.Dismiss();
 		}
 
 		public bool IsCompletionActive(ITextView textView) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			return GetSessions(textView).Count != 0;
 		}
 
 		public ReadOnlyCollection<ICompletionSession> GetSessions(ITextView textView) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			var stack = intellisenseSessionStackMapService.Value.GetStackForTextView(textView);
 			return new ReadOnlyCollection<ICompletionSession>(stack.Sessions.OfType<ICompletionSession>().ToArray());

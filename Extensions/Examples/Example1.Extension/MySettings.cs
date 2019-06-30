@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
@@ -7,41 +8,34 @@ using dnSpy.Contracts.Settings;
 
 namespace Example1.Extension {
 	class MySettings : ViewModelBase {
-		// overridden by the global settings class. Hooking the PropertyChanged event could be used too
-		protected virtual void OnModified() {
-		}
-
 		public bool BoolOption1 {
-			get { return boolOption1; }
+			get => boolOption1;
 			set {
 				if (boolOption1 != value) {
 					boolOption1 = value;
 					OnPropertyChanged(nameof(BoolOption1));
-					OnModified();
 				}
 			}
 		}
 		bool boolOption1 = true;
 
 		public bool BoolOption2 {
-			get { return boolOption2; }
+			get => boolOption2;
 			set {
 				if (boolOption2 != value) {
 					boolOption2 = value;
 					OnPropertyChanged(nameof(BoolOption2));
-					OnModified();
 				}
 			}
 		}
 		bool boolOption2 = false;
 
 		public string StringOption3 {
-			get { return stringOption3; }
+			get => stringOption3;
 			set {
 				if (stringOption3 != value) {
 					stringOption3 = value;
 					OnPropertyChanged(nameof(StringOption3));
-					OnModified();
 				}
 			}
 		}
@@ -73,22 +67,15 @@ namespace Example1.Extension {
 			// Read the settings from the file or use the default values if our settings haven't
 			// been saved to it yet.
 
-			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			BoolOption1 = sect.Attribute<bool?>(nameof(BoolOption1)) ?? BoolOption1;
 			BoolOption2 = sect.Attribute<bool?>(nameof(BoolOption2)) ?? BoolOption2;
 			StringOption3 = sect.Attribute<string>(nameof(StringOption3)) ?? StringOption3;
-			disableSave = false;
+			PropertyChanged += MySettingsImpl_PropertyChanged;
 		}
-		readonly bool disableSave;
 
-		// Called by the base class
-		protected override void OnModified() {
-			if (disableSave)
-				return;
-
+		void MySettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			// Save the settings
-
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(BoolOption1), BoolOption1);
 			sect.Attribute(nameof(BoolOption2), BoolOption2);

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,13 +30,13 @@ namespace dnSpy.Contracts.Debugger {
 		/// </summary>
 		/// <param name="runtime">Debugger runtime</param>
 		/// <returns></returns>
-		public static DmdRuntime GetReflectionRuntime(this DbgRuntime runtime) => (runtime.InternalRuntime as DbgDotNetInternalRuntime)?.ReflectionRuntime;
+		public static DmdRuntime? GetReflectionRuntime(this DbgRuntime runtime) => (runtime.InternalRuntime as DbgDotNetInternalRuntime)?.ReflectionRuntime;
 
 		/// <summary>
 		/// Gets the internal .NET runtime or null if it's not a managed runtime
 		/// </summary>
 		/// <param name="runtime"></param>
 		/// <returns></returns>
-		public static DbgDotNetInternalRuntime GetDotNetInternalRuntime(this DbgRuntime runtime) => runtime.InternalRuntime as DbgDotNetInternalRuntime;
+		public static DbgDotNetInternalRuntime? GetDotNetInternalRuntime(this DbgRuntime runtime) => runtime.InternalRuntime as DbgDotNetInternalRuntime;
 	}
 }

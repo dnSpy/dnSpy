@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -46,7 +46,7 @@ namespace dnSpy.Contracts.Text {
 		/// </summary>
 		/// <param name="point">Position</param>
 		public TextEditorPosition(VirtualSnapshotPoint point) {
-			if (point.Position.Snapshot == null)
+			if (point.Position.Snapshot is null)
 				throw new ArgumentException();
 			Position = point.Position.Position;
 			VirtualSpaces = point.VirtualSpaces;

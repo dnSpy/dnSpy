@@ -88,7 +88,7 @@
 		<color name="assembly" fg="#C4C4C4" />
 		<color name="assemblyexe" fg="#F0CA93" />
 		<color name="assemblymodule" fg="#B17FD7" />
-		<color name="directorypart" fg="#FFD700" />
+		<color name="directorypart" fg="#DCDCDC" />
 		<color name="filenamenoextension" fg="#569CD6" />
 		<color name="fileextension" fg="#9B9B82" />
 		<color name="error" fg="Red" />
@@ -159,7 +159,7 @@
 		<color name="currentline" fg="#464646" />
 		<color name="currentlinenofocus" fg="#464646" />
 		<color name="hextext" fg="#DCDCDC" bg="#1E1E1E" />
-		<color name="hexoffset" fg="#FF497F49" />
+		<color name="hexoffset" fg="#FF806F4D" />
 		<color name="hexbyte0" fg="#FF396339" />
 		<color name="hexbyte1" fg="#FF497F49" />
 		<color name="hexbyteerror" fg="#FFFF0066" />
@@ -216,7 +216,7 @@
 		<color name="glyphmargin" bg="#FF333333" />
 		<color name="bracematching" bg="#FF0E4583" />
 		<color name="lineseparator" fg="#FFA5A5A5" />
-		<color name="findmatchhighlightmarker" bg="#FF773800" />
+		<color name="findmatchhighlightmarker" bg="#FF773800" fg="#FF000000" />
 		<color name="blockstructurenamespace" fg="#FF4C4C4C" />
 		<color name="blockstructuretype" fg="#FF135647" />
 		<color name="blockstructuremodule" fg="#FF135647" />
@@ -299,6 +299,24 @@
 		<color name="debugobjectidname" fg="#DCDCDC" />
 		<color name="debuggerdisplayattributeeval" fg="#6BF0FF" />
 		<color name="debuggernostringquoteseval" fg="#6BF0FF" />
+		<color name="debugviewpropertyname" fg="#248F8F" />
+		<color name="asmcomment" fg="#57A64A" />
+		<color name="asmdirective" fg="#6F42C1" />
+		<color name="asmprefix" fg="#DC5663" />
+		<color name="asmmnemonic" fg="#DC5663" />
+		<color name="asmkeyword" fg="#569CD6" />
+		<color name="asmoperator" fg="#B4B4B4" />
+		<color name="asmpunctuation" fg="#DCDCDC" />
+		<color name="asmnumber" fg="#B5CEA8" />
+		<color name="asmregister" fg="#F89554" />
+		<color name="asmselectorvalue" fg="#B5CEA8" />
+		<color name="asmlabeladdress" fg="#B5CEA8" />
+		<color name="asmfunctionaddress" fg="#B5CEA8" />
+		<color name="asmlabel" fg="#806F4D" />
+		<color name="asmfunction" fg="#33CC33" />
+		<color name="asmdata" fg="#AA70FF" />
+		<color name="asmaddress" fg="#B5CEA8" />
+		<color name="asmhexbytes" fg="#808080" />
 
 		<color name="systemcolorscontrol" bg="#303030" />
 		<color name="systemcolorscontroldark" bg="#606060" />
@@ -728,5 +746,8 @@
 		<color name="debuggerbreakpointglyphmargincontrolborder" bg="#FF2D2D30" />
 		<color name="debuggerbreakpointglyphmargincontrolbackground" bg="#FF3F3F46" />
 		<color name="debuggerbreakpointglyphmargincontrolhoverbackground" bg="#FF52B0EF" />
+		<color name="hyperlinknormal" bg="#FF59B1CC" />
+		<color name="hyperlinkmouseover" bg="#FFB0CC80" />
+		<color name="hyperlinkdisabled" bg="#FF6D6D6D" />
 	</colors>
 </theme>

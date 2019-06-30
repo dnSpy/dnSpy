@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,7 +30,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		readonly LineSeparator[] lineSeparators;
 
 		public LineSeparatorCollection(LineSeparator[] lineSeparators) {
-			if (lineSeparators == null)
+			if (lineSeparators is null)
 				throw new ArgumentNullException(nameof(lineSeparators));
 #if DEBUG
 			for (int i = 1; i < lineSeparators.Length; i++) {

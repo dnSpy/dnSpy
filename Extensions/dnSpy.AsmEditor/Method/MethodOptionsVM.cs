@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,7 +22,6 @@ using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.DnlibDialogs;
-using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.MVVM;
 
@@ -59,24 +58,16 @@ namespace dnSpy.AsmEditor.Method {
 
 		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
 
-		internal static readonly EnumVM[] codeTypeList = EnumVM.Create(typeof(Method.CodeType));
+		internal static readonly EnumVM[] codeTypeList = EnumVM.Create(typeof(CodeType));
 		public EnumListVM CodeType { get; } = new EnumListVM(codeTypeList);
 
-		static readonly EnumVM[] managedTypeList = EnumVM.Create(typeof(Method.ManagedType));
+		static readonly EnumVM[] managedTypeList = EnumVM.Create(typeof(ManagedType));
 		public EnumListVM ManagedType { get; } = new EnumListVM(managedTypeList);
 
-		static readonly EnumVM[] methodAccessList = new EnumVM[] {
-			new EnumVM(Method.MethodAccess.PrivateScope, dnSpy_AsmEditor_Resources.FieldAccess_PrivateScope),
-			new EnumVM(Method.MethodAccess.Private, dnSpy_AsmEditor_Resources.FieldAccess_Private),
-			new EnumVM(Method.MethodAccess.FamANDAssem, dnSpy_AsmEditor_Resources.FieldAccess_FamilyAndAssembly),
-			new EnumVM(Method.MethodAccess.Assembly, dnSpy_AsmEditor_Resources.FieldAccess_Assembly),
-			new EnumVM(Method.MethodAccess.Family, dnSpy_AsmEditor_Resources.FieldAccess_Family),
-			new EnumVM(Method.MethodAccess.FamORAssem, dnSpy_AsmEditor_Resources.FieldAccess_FamilyOrAssembly),
-			new EnumVM(Method.MethodAccess.Public, dnSpy_AsmEditor_Resources.FieldAccess_Public),
-		};
+		static readonly EnumVM[] methodAccessList = EnumVM.Create(typeof(MethodAccess));
 		public EnumListVM MethodAccess { get; } = new EnumListVM(methodAccessList);
 
-		static readonly EnumVM[] vtableLayoutList = EnumVM.Create(typeof(Method.VtableLayout));
+		static readonly EnumVM[] vtableLayoutList = EnumVM.Create(typeof(VtableLayout));
 		public EnumListVM VtableLayout { get; } = new EnumListVM(vtableLayoutList);
 
 		public MethodImplAttributes ImplAttributes {
@@ -84,8 +75,8 @@ namespace dnSpy.AsmEditor.Method {
 				var mask = MethodImplAttributes.CodeTypeMask |
 							MethodImplAttributes.ManagedMask;
 				return (implAttributes & ~mask) |
-					(MethodImplAttributes)((int)(Method.CodeType)CodeType.SelectedItem << 0) |
-					(MethodImplAttributes)((int)(Method.ManagedType)ManagedType.SelectedItem << 2);
+					(MethodImplAttributes)((int)(CodeType)CodeType.SelectedItem! << 0) |
+					(MethodImplAttributes)((int)(ManagedType)ManagedType.SelectedItem! << 2);
 			}
 			set {
 				if (implAttributes != value) {
@@ -98,6 +89,8 @@ namespace dnSpy.AsmEditor.Method {
 					OnPropertyChanged(nameof(NoInlining));
 					OnPropertyChanged(nameof(AggressiveInlining));
 					OnPropertyChanged(nameof(NoOptimization));
+					OnPropertyChanged(nameof(AggressiveOptimization));
+					OnPropertyChanged(nameof(SecurityMitigations));
 					HasErrorUpdated();
 				}
 			}
@@ -105,38 +98,48 @@ namespace dnSpy.AsmEditor.Method {
 		MethodImplAttributes implAttributes;
 
 		public bool ForwardRef {
-			get { return GetFlagValue(MethodImplAttributes.ForwardRef); }
-			set { SetFlagValue(MethodImplAttributes.ForwardRef, value); }
+			get => GetFlagValue(MethodImplAttributes.ForwardRef);
+			set => SetFlagValue(MethodImplAttributes.ForwardRef, value);
 		}
 
 		public bool PreserveSig {
-			get { return GetFlagValue(MethodImplAttributes.PreserveSig); }
-			set { SetFlagValue(MethodImplAttributes.PreserveSig, value); }
+			get => GetFlagValue(MethodImplAttributes.PreserveSig);
+			set => SetFlagValue(MethodImplAttributes.PreserveSig, value);
 		}
 
 		public bool InternalCall {
-			get { return GetFlagValue(MethodImplAttributes.InternalCall); }
-			set { SetFlagValue(MethodImplAttributes.InternalCall, value); }
+			get => GetFlagValue(MethodImplAttributes.InternalCall);
+			set => SetFlagValue(MethodImplAttributes.InternalCall, value);
 		}
 
 		public bool Synchronized {
-			get { return GetFlagValue(MethodImplAttributes.Synchronized); }
-			set { SetFlagValue(MethodImplAttributes.Synchronized, value); }
+			get => GetFlagValue(MethodImplAttributes.Synchronized);
+			set => SetFlagValue(MethodImplAttributes.Synchronized, value);
 		}
 
 		public bool NoInlining {
-			get { return GetFlagValue(MethodImplAttributes.NoInlining); }
-			set { SetFlagValue(MethodImplAttributes.NoInlining, value); }
+			get => GetFlagValue(MethodImplAttributes.NoInlining);
+			set => SetFlagValue(MethodImplAttributes.NoInlining, value);
 		}
 
 		public bool AggressiveInlining {
-			get { return GetFlagValue(MethodImplAttributes.AggressiveInlining); }
-			set { SetFlagValue(MethodImplAttributes.AggressiveInlining, value); }
+			get => GetFlagValue(MethodImplAttributes.AggressiveInlining);
+			set => SetFlagValue(MethodImplAttributes.AggressiveInlining, value);
 		}
 
 		public bool NoOptimization {
-			get { return GetFlagValue(MethodImplAttributes.NoOptimization); }
-			set { SetFlagValue(MethodImplAttributes.NoOptimization, value); }
+			get => GetFlagValue(MethodImplAttributes.NoOptimization);
+			set => SetFlagValue(MethodImplAttributes.NoOptimization, value);
+		}
+
+		public bool AggressiveOptimization {
+			get => GetFlagValue(MethodImplAttributes.AggressiveOptimization);
+			set => SetFlagValue(MethodImplAttributes.AggressiveOptimization, value);
+		}
+
+		public bool SecurityMitigations {
+			get => GetFlagValue((MethodImplAttributes)0x0400);
+			set => SetFlagValue((MethodImplAttributes)0x0400, value);
 		}
 
 		bool GetFlagValue(MethodImplAttributes flag) => (ImplAttributes & flag) != 0;
@@ -153,8 +156,8 @@ namespace dnSpy.AsmEditor.Method {
 				var mask = MethodAttributes.MemberAccessMask |
 							MethodAttributes.VtableLayoutMask;
 				return (attributes & ~mask) |
-					(MethodAttributes)((int)(Method.MethodAccess)MethodAccess.SelectedItem << 0) |
-					(MethodAttributes)((int)(Method.VtableLayout)VtableLayout.SelectedItem << 8);
+					(MethodAttributes)((int)(MethodAccess)MethodAccess.SelectedItem! << 0) |
+					(MethodAttributes)((int)(VtableLayout)VtableLayout.SelectedItem! << 8);
 			}
 			set {
 				if (attributes != value) {
@@ -183,63 +186,63 @@ namespace dnSpy.AsmEditor.Method {
 		MethodAttributes attributes;
 
 		public bool Static {
-			get { return GetFlagValue(MethodAttributes.Static); }
-			set { SetFlagValue(MethodAttributes.Static, value); }
+			get => GetFlagValue(MethodAttributes.Static);
+			set => SetFlagValue(MethodAttributes.Static, value);
 		}
 
 		public bool Final {
-			get { return GetFlagValue(MethodAttributes.Final); }
-			set { SetFlagValue(MethodAttributes.Final, value); }
+			get => GetFlagValue(MethodAttributes.Final);
+			set => SetFlagValue(MethodAttributes.Final, value);
 		}
 
 		public bool Virtual {
-			get { return GetFlagValue(MethodAttributes.Virtual); }
-			set { SetFlagValue(MethodAttributes.Virtual, value); }
+			get => GetFlagValue(MethodAttributes.Virtual);
+			set => SetFlagValue(MethodAttributes.Virtual, value);
 		}
 
 		public bool HideBySig {
-			get { return GetFlagValue(MethodAttributes.HideBySig); }
-			set { SetFlagValue(MethodAttributes.HideBySig, value); }
+			get => GetFlagValue(MethodAttributes.HideBySig);
+			set => SetFlagValue(MethodAttributes.HideBySig, value);
 		}
 
 		public bool CheckAccessOnOverride {
-			get { return GetFlagValue(MethodAttributes.CheckAccessOnOverride); }
-			set { SetFlagValue(MethodAttributes.CheckAccessOnOverride, value); }
+			get => GetFlagValue(MethodAttributes.CheckAccessOnOverride);
+			set => SetFlagValue(MethodAttributes.CheckAccessOnOverride, value);
 		}
 
 		public bool Abstract {
-			get { return GetFlagValue(MethodAttributes.Abstract); }
-			set { SetFlagValue(MethodAttributes.Abstract, value); }
+			get => GetFlagValue(MethodAttributes.Abstract);
+			set => SetFlagValue(MethodAttributes.Abstract, value);
 		}
 
 		public bool SpecialName {
-			get { return GetFlagValue(MethodAttributes.SpecialName); }
-			set { SetFlagValue(MethodAttributes.SpecialName, value); }
+			get => GetFlagValue(MethodAttributes.SpecialName);
+			set => SetFlagValue(MethodAttributes.SpecialName, value);
 		}
 
 		public bool PinvokeImpl {
-			get { return GetFlagValue(MethodAttributes.PinvokeImpl); }
-			set { SetFlagValue(MethodAttributes.PinvokeImpl, value); }
+			get => GetFlagValue(MethodAttributes.PinvokeImpl);
+			set => SetFlagValue(MethodAttributes.PinvokeImpl, value);
 		}
 
 		public bool UnmanagedExport {
-			get { return GetFlagValue(MethodAttributes.UnmanagedExport); }
-			set { SetFlagValue(MethodAttributes.UnmanagedExport, value); }
+			get => GetFlagValue(MethodAttributes.UnmanagedExport);
+			set => SetFlagValue(MethodAttributes.UnmanagedExport, value);
 		}
 
 		public bool RTSpecialName {
-			get { return GetFlagValue(MethodAttributes.RTSpecialName); }
-			set { SetFlagValue(MethodAttributes.RTSpecialName, value); }
+			get => GetFlagValue(MethodAttributes.RTSpecialName);
+			set => SetFlagValue(MethodAttributes.RTSpecialName, value);
 		}
 
 		public bool HasSecurity {
-			get { return GetFlagValue(MethodAttributes.HasSecurity); }
-			set { SetFlagValue(MethodAttributes.HasSecurity, value); }
+			get => GetFlagValue(MethodAttributes.HasSecurity);
+			set => SetFlagValue(MethodAttributes.HasSecurity, value);
 		}
 
 		public bool RequireSecObject {
-			get { return GetFlagValue(MethodAttributes.RequireSecObject); }
-			set { SetFlagValue(MethodAttributes.RequireSecObject, value); }
+			get => GetFlagValue(MethodAttributes.RequireSecObject);
+			set => SetFlagValue(MethodAttributes.RequireSecObject, value);
 		}
 
 		bool GetFlagValue(MethodAttributes flag) => (Attributes & flag) != 0;
@@ -251,8 +254,8 @@ namespace dnSpy.AsmEditor.Method {
 				Attributes &= ~flag;
 		}
 
-		public string Name {
-			get { return name; }
+		public string? Name {
+			get => name;
 			set {
 				if (name != value) {
 					name = value;
@@ -260,21 +263,21 @@ namespace dnSpy.AsmEditor.Method {
 				}
 			}
 		}
-		UTF8String name;
+		UTF8String? name;
 
-		public ImplMap ImplMap {
-			get { return ImplMapVM.ImplMap; }
-			set { ImplMapVM.ImplMap = value; }
+		public ImplMap? ImplMap {
+			get => ImplMapVM.ImplMap;
+			set => ImplMapVM.ImplMap = value;
 		}
 
 		public ImplMapVM ImplMapVM { get; }
 
-		public MethodSig MethodSig {
-			get { return MethodSigCreator.MethodSig; }
-			set { MethodSigCreator.MethodSig = value; }
+		public MethodSig? MethodSig {
+			get => MethodSigCreator.MethodSig;
+			set => MethodSigCreator.MethodSig = value;
 		}
 
-		public string MethodSigHeader => string.Format("MethodSig: {0}", MethodSigCreator.HasError ? "null" : MethodSigCreator.MethodSig.ToString());
+		public string MethodSigHeader => $"MethodSig: {(MethodSigCreator.HasError ? "null" : MethodSigCreator.MethodSig!.ToString())}";
 
 		public MethodSigCreatorVM MethodSigCreator { get; }
 		public CustomAttributesVM CustomAttributesVM { get; }
@@ -285,16 +288,16 @@ namespace dnSpy.AsmEditor.Method {
 
 		readonly ModuleDef ownerModule;
 
-		public MethodOptionsVM(MethodDefOptions options, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType, MethodDef ownerMethod) {
+		public MethodOptionsVM(MethodDefOptions options, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef? ownerType, MethodDef? ownerMethod) {
 			this.ownerModule = ownerModule;
 			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, decompilerService) {
 				IsLocal = false,
 				CanAddGenericTypeVar = true,
-				CanAddGenericMethodVar = ownerMethod == null || ownerMethod.GenericParameters.Count > 0,
+				CanAddGenericMethodVar = ownerMethod is null || ownerMethod.GenericParameters.Count > 0,
 				OwnerType = ownerType,
 				OwnerMethod = ownerMethod,
 			};
-			if (ownerType != null && ownerType.GenericParameters.Count == 0)
+			if (!(ownerType is null) && ownerType.GenericParameters.Count == 0)
 				typeSigCreatorOptions.CanAddGenericTypeVar = false;
 
 			var methodSigCreatorOptions = new MethodSigCreatorOptions(typeSigCreatorOptions);
@@ -344,10 +347,10 @@ namespace dnSpy.AsmEditor.Method {
 			Name = options.Name;
 			MethodSig = options.MethodSig;
 			ImplMap = options.ImplMap;
-			CodeType.SelectedItem = (Method.CodeType)((int)(options.ImplAttributes & MethodImplAttributes.CodeTypeMask) >> 0);
-			ManagedType.SelectedItem = (Method.ManagedType)((int)(options.ImplAttributes & MethodImplAttributes.ManagedMask) >> 2);
-			MethodAccess.SelectedItem = (Method.MethodAccess)((int)(options.Attributes & MethodAttributes.MemberAccessMask) >> 0);
-			VtableLayout.SelectedItem = (Method.VtableLayout)((int)(options.Attributes & MethodAttributes.VtableLayoutMask) >> 8);
+			CodeType.SelectedItem = (CodeType)((int)(options.ImplAttributes & MethodImplAttributes.CodeTypeMask) >> 0);
+			ManagedType.SelectedItem = (ManagedType)((int)(options.ImplAttributes & MethodImplAttributes.ManagedMask) >> 2);
+			MethodAccess.SelectedItem = (MethodAccess)((int)(options.Attributes & MethodAttributes.MemberAccessMask) >> 0);
+			VtableLayout.SelectedItem = (VtableLayout)((int)(options.Attributes & MethodAttributes.VtableLayoutMask) >> 8);
 			CustomAttributesVM.InitializeFrom(options.CustomAttributes);
 			DeclSecuritiesVM.InitializeFrom(options.DeclSecurities);
 			ParamDefsVM.InitializeFrom(options.ParamDefs);
@@ -359,7 +362,7 @@ namespace dnSpy.AsmEditor.Method {
 			options.ImplAttributes = ImplAttributes;
 			options.Attributes = Attributes;
 			options.Name = Name;
-			options.MethodSig = MethodSig;
+			options.MethodSig = MethodSig!;
 			options.ImplMap = PinvokeImpl ? ImplMap : null;
 			options.CustomAttributes.Clear();
 			options.CustomAttributes.AddRange(CustomAttributesVM.Collection.Select(a => a.CreateCustomAttributeOptions().Create()));

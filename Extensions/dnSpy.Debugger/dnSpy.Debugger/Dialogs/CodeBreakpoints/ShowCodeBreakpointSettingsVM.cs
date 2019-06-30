@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -50,7 +50,7 @@ namespace dnSpy.Debugger.Dialogs.CodeBreakpoints {
 		public EnumListVM ConditionalExpression_Items => conditionalExpression_Items;
 		readonly EnumListVM conditionalExpression_Items = new EnumListVM(conditionList);
 
-		public string ConditionalExpression_Text {
+		public string? ConditionalExpression_Text {
 			get => conditionalExpression_Text;
 			set {
 				if (conditionalExpression_Text == value)
@@ -59,7 +59,7 @@ namespace dnSpy.Debugger.Dialogs.CodeBreakpoints {
 				OnPropertyChanged(nameof(ConditionalExpression_Text));
 			}
 		}
-		string conditionalExpression_Text;
+		string? conditionalExpression_Text;
 
 		public bool EnableHitCount {
 			get => enableHitCount;
@@ -95,7 +95,7 @@ namespace dnSpy.Debugger.Dialogs.CodeBreakpoints {
 		}
 		bool enableFilter;
 
-		public string Filter_Text {
+		public string? Filter_Text {
 			get => filter_Text;
 			set {
 				if (filter_Text == value)
@@ -105,7 +105,7 @@ namespace dnSpy.Debugger.Dialogs.CodeBreakpoints {
 				StartVerifyFilterTimer();
 			}
 		}
-		string filter_Text;
+		string? filter_Text;
 
 		public bool EnableTrace {
 			get => enableTrace;
@@ -118,7 +118,7 @@ namespace dnSpy.Debugger.Dialogs.CodeBreakpoints {
 		}
 		bool enableTrace;
 
-		public string Trace_Text {
+		public string? Trace_Text {
 			get => trace_Text;
 			set {
 				if (trace_Text == value)
@@ -127,7 +127,7 @@ namespace dnSpy.Debugger.Dialogs.CodeBreakpoints {
 				OnPropertyChanged(nameof(Trace_Text));
 			}
 		}
-		string trace_Text;
+		string? trace_Text;
 
 		public bool Trace_Continue {
 			get => trace_Continue;
@@ -174,7 +174,7 @@ namespace dnSpy.Debugger.Dialogs.CodeBreakpoints {
 		}
 
 		void Initialize(DbgCodeBreakpointCondition? condition) {
-			if (condition == null) {
+			if (condition is null) {
 				EnableConditionalExpression = false;
 				ConditionalExpression_Items.SelectedIndex = 0;
 				ConditionalExpression_Text = string.Empty;
@@ -187,7 +187,7 @@ namespace dnSpy.Debugger.Dialogs.CodeBreakpoints {
 		}
 
 		void Initialize(DbgCodeBreakpointHitCount? hitCount) {
-			if (hitCount == null) {
+			if (hitCount is null) {
 				EnableHitCount = false;
 				HitCount_Items.SelectedIndex = 0;
 				HitCount_Text.Value = 1;
@@ -200,7 +200,7 @@ namespace dnSpy.Debugger.Dialogs.CodeBreakpoints {
 		}
 
 		void Initialize(DbgCodeBreakpointFilter? filter) {
-			if (filter == null) {
+			if (filter is null) {
 				EnableFilter = false;
 				Filter_Text = string.Empty;
 			}
@@ -211,7 +211,7 @@ namespace dnSpy.Debugger.Dialogs.CodeBreakpoints {
 		}
 
 		void Initialize(DbgCodeBreakpointTrace? trace) {
-			if (trace == null) {
+			if (trace is null) {
 				EnableTrace = false;
 				Trace_Text = string.Empty;
 				Trace_Continue = true;
@@ -234,13 +234,13 @@ namespace dnSpy.Debugger.Dialogs.CodeBreakpoints {
 		DbgCodeBreakpointCondition? GetCondition() {
 			if (!EnableConditionalExpression)
 				return null;
-			return new DbgCodeBreakpointCondition((DbgCodeBreakpointConditionKind)ConditionalExpression_Items.SelectedItem, ConditionalExpression_Text ?? string.Empty);
+			return new DbgCodeBreakpointCondition((DbgCodeBreakpointConditionKind)ConditionalExpression_Items.SelectedItem!, ConditionalExpression_Text ?? string.Empty);
 		}
 
 		DbgCodeBreakpointHitCount? GetHitCount() {
 			if (!EnableHitCount)
 				return null;
-			return new DbgCodeBreakpointHitCount((DbgCodeBreakpointHitCountKind)HitCount_Items.SelectedItem, HitCount_Text.Value);
+			return new DbgCodeBreakpointHitCount((DbgCodeBreakpointHitCountKind)HitCount_Items.SelectedItem!, HitCount_Text.Value);
 		}
 
 		DbgCodeBreakpointFilter? GetFilter() {
@@ -296,7 +296,7 @@ $TNAME");
 			showMessage(sb.ToString());
 		}
 
-		protected override string Verify(string columnName) {
+		protected override string? Verify(string columnName) {
 			if (columnName == nameof(Filter_Text))
 				return EnableFilter ? lastFilterError : null;
 			return base.Verify(columnName);
@@ -317,18 +317,18 @@ $TNAME");
 			HasErrorUpdated();
 		}
 
-		public bool HasFilterExpressionError => EnableFilter && lastFilterError != null;
-		public string FilterExpressionError => EnableFilter ? lastFilterError : null;
-		string lastFilterError;
+		public bool HasFilterExpressionError => EnableFilter && !(lastFilterError is null);
+		public string? FilterExpressionError => EnableFilter ? lastFilterError : null;
+		string? lastFilterError;
 
 		void StartVerifyFilterTimer() {
-			if (verifyFilterTimer != null)
+			if (!(verifyFilterTimer is null))
 				return;
 			verifyFilterTimer = new Timer(1000);
 			verifyFilterTimer.Elapsed += VerifyFilterTimer_Elapsed;
 			verifyFilterTimer.Start();
 		}
-		Timer verifyFilterTimer;
+		Timer? verifyFilterTimer;
 
 		void StopVerifyFilterTimer() {
 			verifyFilterTimer?.Stop();

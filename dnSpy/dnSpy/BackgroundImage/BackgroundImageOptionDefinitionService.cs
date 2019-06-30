@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,7 +28,7 @@ using Microsoft.VisualStudio.Text.Editor;
 namespace dnSpy.BackgroundImage {
 	interface IBackgroundImageOptionDefinitionService {
 		Lazy<IBackgroundImageOptionDefinition, IBackgroundImageOptionDefinitionMetadata> GetOptionDefinition(IWpfTextView wpfTextView);
-		Lazy<IBackgroundImageOptionDefinition, IBackgroundImageOptionDefinitionMetadata> GetOptionDefinition(WpfHexView wpfTextView);
+		Lazy<IBackgroundImageOptionDefinition, IBackgroundImageOptionDefinitionMetadata> GetOptionDefinition(WpfHexView wpfHexView);
 		Lazy<IBackgroundImageOptionDefinition, IBackgroundImageOptionDefinitionMetadata>[] AllSettings { get; }
 	}
 
@@ -49,9 +49,9 @@ namespace dnSpy.BackgroundImage {
 			throw new InvalidOperationException();
 		}
 
-		public Lazy<IBackgroundImageOptionDefinition, IBackgroundImageOptionDefinitionMetadata> GetOptionDefinition(WpfHexView wpfTextView) {
+		public Lazy<IBackgroundImageOptionDefinition, IBackgroundImageOptionDefinitionMetadata> GetOptionDefinition(WpfHexView wpfHexView) {
 			foreach (var lz in backgroundImageOptionDefinitions) {
-				if ((lz.Value as IBackgroundImageOptionDefinition2)?.IsSupported(wpfTextView) == true)
+				if (lz.Value.IsSupported(wpfHexView))
 					return lz;
 			}
 			throw new InvalidOperationException();

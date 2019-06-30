@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,9 +19,7 @@
 
 using System;
 using System.Globalization;
-using System.Threading;
-using dnSpy.Contracts.Debugger.CallStack;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 
 namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// <summary>
@@ -46,22 +44,22 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <summary>
 		/// true if this is an error value node
 		/// </summary>
-		public bool HasError => ErrorMessage != null;
+		public bool HasError => !(ErrorMessage is null);
 
 		/// <summary>
 		/// Gets the error message or null
 		/// </summary>
-		public abstract string ErrorMessage { get; }
+		public abstract string? ErrorMessage { get; }
 
 		/// <summary>
 		/// true if <see cref="Value"/> is not null
 		/// </summary>
-		public bool HasValue => Value != null;
+		public bool HasValue => !(Value is null);
 
 		/// <summary>
 		/// Gets the value or null if there's none
 		/// </summary>
-		public abstract DbgValue Value { get; }
+		public abstract DbgValue? Value { get; }
 
 		/// <summary>
 		/// true if it's a node that has an <see cref="Expression"/> can be evaluated, false if it's a non-value node, eg. 'Type variables', 'Raw View', etc.
@@ -99,111 +97,102 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// Number of children. This property is called as late as possible and can be lazily initialized.
 		/// It's assumed to be 0 if <see cref="HasChildren"/> is false.
 		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame</param>
-		/// <param name="cancellationToken">Cancellation token</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <returns></returns>
-		public abstract ulong GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken);
+		public abstract ulong GetChildCount(DbgEvaluationInfo evalInfo);
 
 		/// <summary>
-		/// Creates new children. This method blocks the current thread until the children have been created.
-		/// The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues
+		/// Creates new children. The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues
 		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="index">Index of first child</param>
 		/// <param name="count">Max number of children to return</param>
 		/// <param name="options">Options</param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgValueNode[] GetChildren(DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken = default);
+		public abstract DbgValueNode[] GetChildren(DbgEvaluationInfo evalInfo, ulong index, int count, DbgValueNodeEvaluationOptions options);
 
 		/// <summary>
-		/// Formats the name. This method blocks the current thread until all requested values have been formatted
+		/// Formats the name
 		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame</param>
-		/// <param name="output">Output</param>
-		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
-		/// <param name="cancellationToken">Cancellation token</param>
-		public void FormatName(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, CultureInfo cultureInfo = null, CancellationToken cancellationToken = default) =>
-			Format(context, frame, new DbgValueNodeFormatParameters { NameOutput = output ?? throw new ArgumentNullException(nameof(output)) }, cultureInfo, cancellationToken);
-
-		/// <summary>
-		/// Formats the value. This method blocks the current thread until all requested values have been formatted
-		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="output">Output</param>
 		/// <param name="options">Formatter options</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
-		/// <param name="cancellationToken">Cancellation token</param>
-		public void FormatValue(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgValueFormatterOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken = default) =>
-			Format(context, frame, new DbgValueNodeFormatParameters {
+		public void FormatName(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgValueFormatterOptions options, CultureInfo? cultureInfo = null) =>
+			Format(evalInfo, new DbgValueNodeFormatParameters {
+				NameOutput = output ?? throw new ArgumentNullException(nameof(output)),
+				NameFormatterOptions = options,
+			}, cultureInfo);
+
+		/// <summary>
+		/// Formats the value
+		/// </summary>
+		/// <param name="evalInfo">Evaluation info</param>
+		/// <param name="output">Output</param>
+		/// <param name="options">Formatter options</param>
+		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
+		public void FormatValue(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgValueFormatterOptions options, CultureInfo? cultureInfo) =>
+			Format(evalInfo, new DbgValueNodeFormatParameters {
 				ValueOutput = output ?? throw new ArgumentNullException(nameof(output)),
 				ValueFormatterOptions = options,
-			}, cultureInfo, cancellationToken);
+			}, cultureInfo);
 
 		/// <summary>
-		/// Formats the expected type ("field" type). This method blocks the current thread until all requested values have been formatted
+		/// Formats the expected type ("field" type)
 		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="output">Output</param>
 		/// <param name="options">Formatter options</param>
+		/// <param name="valueOptions">Value options</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
-		/// <param name="cancellationToken">Cancellation token</param>
-		public void FormatExpectedType(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgValueFormatterTypeOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken = default) =>
-			Format(context, frame, new DbgValueNodeFormatParameters {
+		public void FormatExpectedType(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgValueFormatterTypeOptions options, DbgValueFormatterOptions valueOptions, CultureInfo? cultureInfo) =>
+			Format(evalInfo, new DbgValueNodeFormatParameters {
 				ExpectedTypeOutput = output ?? throw new ArgumentNullException(nameof(output)),
 				ExpectedTypeFormatterOptions = options,
-			}, cultureInfo, cancellationToken);
+				TypeFormatterOptions = valueOptions,
+			}, cultureInfo);
 
 		/// <summary>
-		/// Formats the actual type (value type). This method blocks the current thread until all requested values have been formatted
+		/// Formats the actual type (value type)
 		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="output">Output</param>
 		/// <param name="options">Formatter options</param>
+		/// <param name="valueOptions">Value options</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
-		/// <param name="cancellationToken">Cancellation token</param>
-		public void FormatActualType(DbgEvaluationContext context, DbgStackFrame frame, ITextColorWriter output, DbgValueFormatterTypeOptions options, CultureInfo cultureInfo, CancellationToken cancellationToken = default) =>
-			Format(context, frame, new DbgValueNodeFormatParameters {
+		public void FormatActualType(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgValueFormatterTypeOptions options, DbgValueFormatterOptions valueOptions, CultureInfo? cultureInfo) =>
+			Format(evalInfo, new DbgValueNodeFormatParameters {
 				ActualTypeOutput = output ?? throw new ArgumentNullException(nameof(output)),
 				ActualTypeFormatterOptions = options,
-			}, cultureInfo, cancellationToken);
+				TypeFormatterOptions = valueOptions,
+			}, cultureInfo);
 
 		/// <summary>
-		/// Formats the name, value, and type. This method blocks the current thread until all requested values have been formatted
+		/// Formats the name, value, and type
 		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="options">Options</param>
 		/// <param name="cultureInfo">Culture or null to use invariant culture</param>
-		/// <param name="cancellationToken">Cancellation token</param>
-		public abstract void Format(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo, CancellationToken cancellationToken = default);
+		public abstract void Format(DbgEvaluationInfo evalInfo, IDbgValueNodeFormatParameters options, CultureInfo? cultureInfo);
 
 		/// <summary>
-		/// Writes a new value. It blocks the current thread until the assignment is complete.
+		/// Writes a new value
 		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="expression">Source expression (rhs)</param>
 		/// <param name="options">Options</param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgValueNodeAssignmentResult Assign(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken = default);
+		public abstract DbgValueNodeAssignmentResult Assign(DbgEvaluationInfo evalInfo, string expression, DbgEvaluationOptions options);
 	}
 
 	/// <summary>
 	/// Assignment result
 	/// </summary>
-	public struct DbgValueNodeAssignmentResult {
+	public readonly struct DbgValueNodeAssignmentResult {
 		/// <summary>
 		/// Gets the error message or null if none
 		/// </summary>
-		public string Error { get; }
+		public string? Error { get; }
 
 		/// <summary>
 		/// Gets the flags
@@ -215,7 +204,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// </summary>
 		/// <param name="flags">Result flags</param>
 		/// <param name="error">Error message or null if none</param>
-		public DbgValueNodeAssignmentResult(DbgEEAssignmentResultFlags flags, string error) {
+		public DbgValueNodeAssignmentResult(DbgEEAssignmentResultFlags flags, string? error) {
 			Flags = flags;
 			Error = error;
 		}
@@ -228,27 +217,37 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <summary>
 		/// Used when writing the name or null if it's not written
 		/// </summary>
-		ITextColorWriter NameOutput { get; }
+		IDbgTextWriter? NameOutput { get; }
 
 		/// <summary>
 		/// Used when writing the value or null if it's not written
 		/// </summary>
-		ITextColorWriter ValueOutput { get; }
+		IDbgTextWriter? ValueOutput { get; }
 
 		/// <summary>
 		/// Used when writing the expected type ("field" type) or null if it's not written
 		/// </summary>
-		ITextColorWriter ExpectedTypeOutput { get; }
+		IDbgTextWriter? ExpectedTypeOutput { get; }
 
 		/// <summary>
 		/// Used when writing the actual type (value type) or null if it's not written
 		/// </summary>
-		ITextColorWriter ActualTypeOutput { get; }
+		IDbgTextWriter? ActualTypeOutput { get; }
+
+		/// <summary>
+		/// Name formatter options
+		/// </summary>
+		DbgValueFormatterOptions NameFormatterOptions { get; }
 
 		/// <summary>
 		/// Value formatter options
 		/// </summary>
 		DbgValueFormatterOptions ValueFormatterOptions { get; }
+
+		/// <summary>
+		/// Type formatter options
+		/// </summary>
+		DbgValueFormatterOptions TypeFormatterOptions { get; }
 
 		/// <summary>
 		/// Expected type formatter options
@@ -262,11 +261,13 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 	}
 
 	sealed class DbgValueNodeFormatParameters : IDbgValueNodeFormatParameters {
-		public ITextColorWriter NameOutput { get; set; }
-		public ITextColorWriter ValueOutput { get; set; }
-		public ITextColorWriter ExpectedTypeOutput { get; set; }
-		public ITextColorWriter ActualTypeOutput { get; set; }
+		public IDbgTextWriter? NameOutput { get; set; }
+		public IDbgTextWriter? ValueOutput { get; set; }
+		public IDbgTextWriter? ExpectedTypeOutput { get; set; }
+		public IDbgTextWriter? ActualTypeOutput { get; set; }
+		public DbgValueFormatterOptions NameFormatterOptions { get; set; }
 		public DbgValueFormatterOptions ValueFormatterOptions { get; set; }
+		public DbgValueFormatterOptions TypeFormatterOptions { get; set; }
 		public DbgValueFormatterTypeOptions ExpectedTypeFormatterOptions { get; set; }
 		public DbgValueFormatterTypeOptions ActualTypeFormatterOptions { get; set; }
 	}

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Debugger {
 	/// <summary>
 	/// Contains state and localized state that can be shown in the UI
 	/// </summary>
-	public struct DbgStateInfo : IEquatable<DbgStateInfo> {
+	public readonly struct DbgStateInfo : IEquatable<DbgStateInfo> {
 		/// <summary>
 		/// Non-localized string
 		/// </summary>
@@ -52,10 +52,10 @@ namespace dnSpy.Contracts.Debugger {
 			LocalizedState = localizedState ?? localizedState ?? throw new ArgumentNullException(nameof(localizedState));
 		}
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DbgStateInfo left, DbgStateInfo right) => left.Equals(right);
 		public static bool operator !=(DbgStateInfo left, DbgStateInfo right) => !left.Equals(right);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Equals()
@@ -69,7 +69,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is DbgStateInfo info && Equals(info);
+		public override bool Equals(object? obj) => obj is DbgStateInfo info && Equals(info);
 
 		/// <summary>
 		/// Gets the hash code

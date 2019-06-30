@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -148,7 +148,7 @@ namespace dnSpy.Contracts.Debugger {
 		Connected,
 
 		/// <summary>
-		/// It broke due to some debug message. <see cref="DbgBreakInfo.Data"/> is a <see cref="DbgMessageEventArgs"/>
+		/// It's paused due to some debug message. <see cref="DbgBreakInfo.Data"/> is a <see cref="DbgMessageEventArgs"/>
 		/// </summary>
 		Message,
 	}
@@ -156,7 +156,7 @@ namespace dnSpy.Contracts.Debugger {
 	/// <summary>
 	/// Break info
 	/// </summary>
-	public struct DbgBreakInfo {
+	public readonly struct DbgBreakInfo {
 		/// <summary>
 		/// Gets the kind
 		/// </summary>
@@ -165,14 +165,14 @@ namespace dnSpy.Contracts.Debugger {
 		/// <summary>
 		/// Gets the data, see <see cref="DbgBreakInfoKind"/> for more info
 		/// </summary>
-		public object Data { get; }
+		public object? Data { get; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="kind">Kind</param>
 		/// <param name="data">Data</param>
-		public DbgBreakInfo(DbgBreakInfoKind kind, object data) {
+		public DbgBreakInfo(DbgBreakInfoKind kind, object? data) {
 			Kind = kind;
 			Data = data;
 		}
@@ -193,11 +193,12 @@ namespace dnSpy.Contracts.Debugger {
 		public override string ToString() {
 			switch (Kind) {
 			case DbgBreakInfoKind.Unknown:
+			case DbgBreakInfoKind.Connected:
 			default:
 				return Kind.ToString();
 
 			case DbgBreakInfoKind.Message:
-				return $"Debug message: {((DbgMessageEventArgs)Data).Kind}";
+				return $"Debug message: {((DbgMessageEventArgs)Data!).Kind}";
 			}
 		}
 	}

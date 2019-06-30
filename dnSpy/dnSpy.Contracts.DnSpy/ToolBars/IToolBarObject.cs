@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,7 +33,7 @@ namespace dnSpy.Contracts.ToolBars {
 		/// <param name="context">Context</param>
 		/// <param name="commandTarget">Command target for toolbar items, eg. the owner window, or null</param>
 		/// <returns></returns>
-		object GetUIObject(IToolBarItemContext context, IInputElement commandTarget);
+		object GetUIObject(IToolBarItemContext context, IInputElement? commandTarget);
 	}
 
 	/// <summary>Metadata</summary>

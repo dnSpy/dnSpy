@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
-using dnSpy.Roslyn.Internal.Helpers;
 using Microsoft.CodeAnalysis;
 using SIGHLP = Microsoft.CodeAnalysis.SignatureHelp;
 

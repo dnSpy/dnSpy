@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,19 +25,20 @@ using System.Linq;
 using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Attach;
-using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Debugger.DotNet.CorDebug.Impl;
+using dnSpy.Debugger.DotNet.CorDebug.Impl.Attach;
 using dnSpy.Debugger.DotNet.CorDebug.Utilities;
+using dnSpy.Debugger.Shared;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.AttachToProcess {
 	[ExportAttachProgramOptionsProviderFactory(PredefinedAttachProgramOptionsProviderNames.DotNetCore)]
 	sealed class DotNetCoreAttachProgramOptionsProviderFactory : AttachProgramOptionsProviderFactory {
-		public override AttachProgramOptionsProvider Create() => new DotNetCoreAttachProgramOptionsProvider();
+		public override AttachProgramOptionsProvider? Create(bool allFactories) => new DotNetCoreAttachProgramOptionsProvider();
 	}
 
 	sealed class DotNetCoreAttachProgramOptionsProvider : AttachProgramOptionsProvider {
 		public override IEnumerable<AttachProgramOptions> Create(AttachProgramOptionsProviderContext context) {
-			foreach (var process in DebuggableProcesses.GetProcesses(context.CancellationToken)) {
+			foreach (var process in DebuggableProcesses.GetProcesses(context.ProcessIds, context.IsValidProcess, context.CancellationToken)) {
 				ProcessModule[] modules;
 				try {
 					modules = process.Modules.Cast<ProcessModule>().ToArray();
@@ -45,10 +46,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.AttachToProcess {
 				catch {
 					continue;
 				}
+				var coreclrFilename = FileUtilities.GetNativeDllFilename("coreclr");
 				foreach (var module in modules) {
 					var moduleFilename = module.FileName;
 					var dllName = Path.GetFileName(moduleFilename);
-					if (dllName.Equals("coreclr.dll", StringComparison.OrdinalIgnoreCase)) {
+					if (dllName.Equals(coreclrFilename, StringComparison.OrdinalIgnoreCase)) {
 						foreach (var info in TryGetCoreCLRInfos(process, moduleFilename)) {
 							context.CancellationToken.ThrowIfCancellationRequested();
 							yield return info;
@@ -64,21 +66,21 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.AttachToProcess {
 			int bitness = IntPtr.Size * 8;
 			var dbgShimFilename = DotNetCoreHelpers.GetDebugShimFilename(bitness);
 			foreach (var ccInfo in CoreCLRHelper.GetCoreCLRInfos(process.Id, coreclrFilename, dbgShimFilename))
-				yield return new DotNetCoreAttachProgramOptions((uint)process.Id, ccInfo.CoreCLRTypeInfo.Version, ccInfo.CoreCLRTypeInfo.CoreCLRFilename);
+				yield return new DotNetCoreAttachProgramOptions(process.Id, ccInfo.CoreCLRTypeInfo.Version, ccInfo.CoreCLRTypeInfo.CoreCLRFilename);
 		}
 	}
 
 	sealed class DotNetCoreAttachProgramOptions : AttachProgramOptions {
-		public override ulong ProcessId { get; }
+		public override int ProcessId { get; }
 		public override RuntimeId RuntimeId { get; }
 		public override string RuntimeName { get; }
 		public override Guid RuntimeGuid => PredefinedDbgRuntimeGuids.DotNetCore_Guid;
 		public override Guid RuntimeKindGuid => PredefinedDbgRuntimeKindGuids.DotNet_Guid;
 
-		readonly string clrModuleVersion;
-		readonly string coreCLRFilename;
+		readonly string ?clrModuleVersion;
+		readonly string? coreCLRFilename;
 
-		public DotNetCoreAttachProgramOptions(ulong pid, string clrModuleVersion, string coreCLRFilename) {
+		public DotNetCoreAttachProgramOptions(int pid, string? clrModuleVersion, string? coreCLRFilename) {
 			ProcessId = pid;
 			RuntimeId = new DotNetCoreRuntimeId(clrModuleVersion);
 			RuntimeName = "CoreCLR " + clrModuleVersion;

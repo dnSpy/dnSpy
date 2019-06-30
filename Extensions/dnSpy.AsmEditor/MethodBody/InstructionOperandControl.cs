@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -50,38 +50,38 @@ namespace dnSpy.AsmEditor.MethodBody {
 			new FrameworkPropertyMetadata(null));
 
 		public InstructionOperandVM InstructionOperandVM {
-			get { return (InstructionOperandVM)GetValue(InstructionOperandVMProperty); }
-			set { SetValue(InstructionOperandVMProperty, value); }
+			get => (InstructionOperandVM)GetValue(InstructionOperandVMProperty);
+			set => SetValue(InstructionOperandVMProperty, value);
 		}
 
 		public Style TextBoxStyle {
-			get { return (Style)GetValue(TextBoxStyleProperty); }
-			set { SetValue(TextBoxStyleProperty, value); }
+			get => (Style)GetValue(TextBoxStyleProperty);
+			set => SetValue(TextBoxStyleProperty, value);
 		}
 
 		public Style ComboBoxStyle {
-			get { return (Style)GetValue(ComboBoxStyleProperty); }
-			set { SetValue(ComboBoxStyleProperty, value); }
+			get => (Style)GetValue(ComboBoxStyleProperty);
+			set => SetValue(ComboBoxStyleProperty, value);
 		}
 
 		public DataTemplate ComboBoxItemTemplate {
-			get { return (DataTemplate)GetValue(ComboBoxItemTemplateProperty); }
-			set { SetValue(ComboBoxItemTemplateProperty, value); }
+			get => (DataTemplate)GetValue(ComboBoxItemTemplateProperty);
+			set => SetValue(ComboBoxItemTemplateProperty, value);
 		}
 
 		public DataTemplate ComboBoxSelectionBoxItemTemplate {
-			get { return (DataTemplate)GetValue(ComboBoxSelectionBoxItemTemplateProperty); }
-			set { SetValue(ComboBoxSelectionBoxItemTemplateProperty, value); }
+			get => (DataTemplate)GetValue(ComboBoxSelectionBoxItemTemplateProperty);
+			set => SetValue(ComboBoxSelectionBoxItemTemplateProperty, value);
 		}
 
 		public Style ButtonStyle {
-			get { return (Style)GetValue(ButtonStyleProperty); }
-			set { SetValue(ButtonStyleProperty, value); }
+			get => (Style)GetValue(ButtonStyleProperty);
+			set => SetValue(ButtonStyleProperty, value);
 		}
 
 		public ICommand ButtonCommand {
-			get { return (ICommand)GetValue(ButtonCommandProperty); }
-			set { SetValue(ButtonCommandProperty, value); }
+			get => (ICommand)GetValue(ButtonCommandProperty);
+			set => SetValue(ButtonCommandProperty, value);
 		}
 
 		static void OnInstructionOperandVMChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
@@ -90,9 +90,9 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		void OnInstructionOperandVMChanged(InstructionOperandVM oldValue, InstructionOperandVM newValue) {
-			if (oldValue != null)
+			if (!(oldValue is null))
 				oldValue.PropertyChanged -= instructionOperandVM_PropertyChanged;
-			if (newValue != null) {
+			if (!(newValue is null)) {
 				newValue.PropertyChanged += instructionOperandVM_PropertyChanged;
 				InitializeOperandType(newValue);
 			}
@@ -120,7 +120,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				// switching from a textbox opcode to a non-textbox opcode and back to the textbox
 				// again. Only solution seems to be to create a new textbox.
 				var textBox = Content as TextBox;
-				if (textBox == null) {
+				if (textBox is null) {
 					textBox = new TextBox();
 					var binding = new Binding(nameof(InstructionOperandVM) + "." + nameof(InstructionOperandVM.Text) + "." + nameof(InstructionOperandVM.Text.StringValue)) {
 						Source = this,
@@ -144,7 +144,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			case InstructionOperandType.MethodSig:
 			case InstructionOperandType.SwitchTargets:
 				var button = Content as FastClickButton;
-				if (button == null) {
+				if (button is null) {
 					button = new FastClickButton();
 					var binding = new Binding(nameof(InstructionOperandVM) + "." + nameof(InstructionOperandVM.Other)) {
 						Source = this,
@@ -172,7 +172,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			case InstructionOperandType.Local:
 			case InstructionOperandType.Parameter:
 				var comboBox = Content as ComboBox;
-				if (comboBox == null) {
+				if (comboBox is null) {
 					comboBox = new ComboBox();
 					comboBox.ItemTemplate = (DataTemplate)GetValue(ComboBoxItemTemplateProperty);
 					ComboBoxAttachedProps.SetSelectionBoxItemTemplate(comboBox, (DataTemplate)GetValue(ComboBoxSelectionBoxItemTemplateProperty));

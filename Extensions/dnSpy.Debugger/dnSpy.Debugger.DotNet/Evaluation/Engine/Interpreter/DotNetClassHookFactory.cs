@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,7 +26,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		public abstract IEnumerable<DotNetClassHookInfo> Create(IDebuggerRuntime runtime);
 	}
 
-	struct DotNetClassHookInfo {
+	readonly struct DotNetClassHookInfo {
 		public DotNetClassHook Hook { get; }
 		public DmdTypeName? TypeName { get; }
 		public DmdWellKnownType? WellKnownType { get; }

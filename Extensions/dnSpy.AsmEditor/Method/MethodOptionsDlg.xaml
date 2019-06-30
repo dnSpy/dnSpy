@@ -1,5 +1,5 @@
-﻿<!--
-    Copyright (C) 2014-2017 de4dot@gmail.com
+<!--
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,8 +20,6 @@
              x:ClassModifier="internal"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:dnlibdlgs="clr-namespace:dnSpy.AsmEditor.DnlibDialogs"
              xmlns:winlocal="clr-namespace:dnSpy.Contracts.Controls;assembly=dnSpy.Contracts.DnSpy"
              xmlns:mvvmvc="clr-namespace:dnSpy.Contracts.MVVM.Converters;assembly=dnSpy.Contracts.DnSpy"
@@ -66,7 +64,7 @@
                             <TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="nameTextBox" Text="{Binding Name, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
                         </Grid>
 
-                        <GroupBox Grid.Row="1" Header="{x:Static p:dnSpy_AsmEditor_Resources.Method_ImplFlags}">
+                        <GroupBox Grid.Row="1" Header="ImplFlags">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />
@@ -78,13 +76,15 @@
                                     <RowDefinition />
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
-                                <CheckBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding ForwardRef}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Method_ImplFlags_ForwardRef}" />
-                                <CheckBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding PreserveSig}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Method_ImplFlags_PreserveSig}" />
-                                <CheckBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding InternalCall}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Method_ImplFlags_InternalCall}" />
-                                <CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding Synchronized}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Method_ImplFlags_Synchronized}" />
-                                <CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding NoInlining}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Method_ImplFlags_NoInlining}" />
-                                <CheckBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding AggressiveInlining}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Method_ImplFlags_AggressiveInlining}" />
-                                <CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding NoOptimization}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Method_ImplFlags_NoOptimization}" />
+                                <CheckBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding ForwardRef}" Content="ForwardRef" />
+                                <CheckBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding PreserveSig}" Content="PreserveSig" />
+                                <CheckBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding InternalCall}" Content="InternalCall" />
+                                <CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding Synchronized}" Content="Synchronized" />
+                                <CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding NoInlining}" Content="NoInlining" />
+                                <CheckBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding AggressiveInlining}" Content="AggressiveInlining" />
+                                <CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding NoOptimization}" Content="NoOptimization" />
+                                <CheckBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding AggressiveOptimization}" Content="AggressiveOptimization" />
+                                <CheckBox Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding SecurityMitigations}" Content="SecurityMitigations" />
                             </Grid>
                         </GroupBox>
 
@@ -101,16 +101,16 @@
                                     <RowDefinition />
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
-                                <CheckBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding Static}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Method_Flags_Static}" />
-                                <CheckBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding Final}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Method_Flags_Final}" />
-                                <CheckBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding Virtual}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Method_Flags_Virtual}" />
-                                <CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding HideBySig}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Method_Flags_HideBySig}" />
-                                <CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding CheckAccessOnOverride}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Method_Flags_CheckAccessOnOverride}" />
-                                <CheckBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding Abstract}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Method_Flags_Abstract}" />
-                                <CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding SpecialName}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Method_Flags_SpecialName}" />
-                                <CheckBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding RTSpecialName}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Method_Flags_RTSpecialName}" />
-                                <CheckBox Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding UnmanagedExport}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Method_Flags_UnmanagedExport}" />
-                                <CheckBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding RequireSecObject}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Method_Flags_RequireSecObject}" />
+                                <CheckBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding Static}" Content="Static" />
+                                <CheckBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding Final}" Content="Final" />
+                                <CheckBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding Virtual}" Content="Virtual" />
+                                <CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding HideBySig}" Content="HideBySig" />
+                                <CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding CheckAccessOnOverride}" Content="CheckAccessOnOverride" />
+                                <CheckBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding Abstract}" Content="Abstract" />
+                                <CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding SpecialName}" Content="SpecialName" />
+                                <CheckBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding RTSpecialName}" Content="RTSpecialName" />
+                                <CheckBox Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding UnmanagedExport}" Content="UnmanagedExport" />
+                                <CheckBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding RequireSecObject}" Content="RequireSecObject" />
                             </Grid>
                         </GroupBox>
 
@@ -126,14 +126,14 @@
                                 <RowDefinition />
                             </Grid.RowDefinitions>
 
-                            <Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=codeTypeComboBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Method_CodeType}" />
+                            <Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=codeTypeComboBox}" Content="CodeType" />
                             <ComboBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="codeTypeComboBox" HorizontalAlignment="Stretch" DisplayMemberPath="Name" ItemsSource="{Binding CodeType.Items}" SelectedIndex="{Binding CodeType.SelectedIndex}" VerticalContentAlignment="Center" />
-                            <Label Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Target="{Binding ElementName=managedTypeComboBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Method_ManagedType}" />
+                            <Label Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Target="{Binding ElementName=managedTypeComboBox}" Content="ManagedType" />
                             <ComboBox Grid.Row="0" Grid.Column="3" Margin="5 0 0 0" Name="managedTypeComboBox" HorizontalAlignment="Stretch" DisplayMemberPath="Name" ItemsSource="{Binding ManagedType.Items}" SelectedIndex="{Binding ManagedType.SelectedIndex}" VerticalContentAlignment="Center" />
 
                             <Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=accessComboBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Method_Access}" />
                             <ComboBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Name="accessComboBox" HorizontalAlignment="Stretch" DisplayMemberPath="Name" ItemsSource="{Binding MethodAccess.Items}" SelectedIndex="{Binding MethodAccess.SelectedIndex}" VerticalContentAlignment="Center" />
-                            <Label Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" Target="{Binding ElementName=vtableLayoutComboBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Method_VtableLayout}" />
+                            <Label Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" Target="{Binding ElementName=vtableLayoutComboBox}" Content="VtableLayout" />
                             <ComboBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" Name="vtableLayoutComboBox" HorizontalAlignment="Stretch" DisplayMemberPath="Name" ItemsSource="{Binding VtableLayout.Items}" SelectedIndex="{Binding VtableLayout.SelectedIndex}" VerticalContentAlignment="Center" />
                         </Grid>
                     </Grid>

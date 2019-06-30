@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,13 +18,12 @@
 */
 
 using System;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Debugger.ToolWindows.CallStack {
 	abstract class CallStackDisplaySettingsBase : CallStackDisplaySettings {
-		protected virtual void OnModified() { }
-
 		readonly object lockObj;
 
 		protected CallStackDisplaySettingsBase() => lockObj = new object();
@@ -40,10 +39,8 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 					modified = showReturnTypes != value;
 					showReturnTypes = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(ShowReturnTypes));
-					OnModified();
-				}
 			}
 		}
 		bool showReturnTypes = false;
@@ -59,10 +56,8 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 					modified = showParameterTypes != value;
 					showParameterTypes = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(ShowParameterTypes));
-					OnModified();
-				}
 			}
 		}
 		bool showParameterTypes = true;
@@ -78,10 +73,8 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 					modified = showParameterNames != value;
 					showParameterNames = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(ShowParameterNames));
-					OnModified();
-				}
 			}
 		}
 		bool showParameterNames = true;
@@ -97,10 +90,8 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 					modified = showParameterValues != value;
 					showParameterValues = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(ShowParameterValues));
-					OnModified();
-				}
 			}
 		}
 		bool showParameterValues = false;
@@ -116,10 +107,8 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 					modified = showFunctionOffset != value;
 					showFunctionOffset = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(ShowFunctionOffset));
-					OnModified();
-				}
 			}
 		}
 		bool showFunctionOffset = true;
@@ -135,10 +124,8 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 					modified = showModuleNames != value;
 					showModuleNames = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(ShowModuleNames));
-					OnModified();
-				}
 			}
 		}
 		bool showModuleNames = true;
@@ -154,10 +141,8 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 					modified = showDeclaringTypes != value;
 					showDeclaringTypes = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(ShowDeclaringTypes));
-					OnModified();
-				}
 			}
 		}
 		bool showDeclaringTypes = true;
@@ -173,10 +158,8 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 					modified = showNamespaces != value;
 					showNamespaces = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(ShowNamespaces));
-					OnModified();
-				}
 			}
 		}
 		bool showNamespaces = true;
@@ -192,10 +175,8 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 					modified = showIntrinsicTypeKeywords != value;
 					showIntrinsicTypeKeywords = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(ShowIntrinsicTypeKeywords));
-					OnModified();
-				}
 			}
 		}
 		bool showIntrinsicTypeKeywords = true;
@@ -211,10 +192,8 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 					modified = showTokens != value;
 					showTokens = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(ShowTokens));
-					OnModified();
-				}
 			}
 		}
 		bool showTokens = false;
@@ -230,7 +209,6 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		CallStackDisplaySettingsImpl(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			ShowReturnTypes = sect.Attribute<bool?>(nameof(ShowReturnTypes)) ?? ShowReturnTypes;
 			ShowParameterTypes = sect.Attribute<bool?>(nameof(ShowParameterTypes)) ?? ShowParameterTypes;
@@ -242,13 +220,10 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			ShowNamespaces = sect.Attribute<bool?>(nameof(ShowNamespaces)) ?? ShowNamespaces;
 			ShowIntrinsicTypeKeywords = sect.Attribute<bool?>(nameof(ShowIntrinsicTypeKeywords)) ?? ShowIntrinsicTypeKeywords;
 			ShowTokens = sect.Attribute<bool?>(nameof(ShowTokens)) ?? ShowTokens;
-			disableSave = false;
+			PropertyChanged += CallStackDisplaySettingsImpl_PropertyChanged;
 		}
-		readonly bool disableSave;
 
-		protected override void OnModified() {
-			if (disableSave)
-				return;
+		void CallStackDisplaySettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(ShowReturnTypes), ShowReturnTypes);
 			sect.Attribute(nameof(ShowParameterTypes), ShowParameterTypes);

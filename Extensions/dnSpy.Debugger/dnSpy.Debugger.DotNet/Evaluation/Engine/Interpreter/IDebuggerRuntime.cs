@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,7 +25,7 @@ using dnSpy.Debugger.DotNet.Metadata;
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 	interface IDebuggerRuntime {
 		void CreateVariable(DmdType type, string name, Guid customTypeInfoPayloadTypeId, byte[] customTypeInfoPayload);
-		DbgDotNetValue CreateValue(object value);
+		DbgDotNetValue CreateValue(object? value, DmdType targetType);
 		DbgDotNetValue GetException();
 		DbgDotNetValue GetStowedException();
 		DbgDotNetValue GetReturnValue(int index);

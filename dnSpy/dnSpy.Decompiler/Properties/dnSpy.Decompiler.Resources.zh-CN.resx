@@ -235,21 +235,21 @@
     <value>&lt;未知&gt;</value>
   </data>
   <data name="CSharp_Awaitable_Method" xml:space="preserve">
-    <value>awaitable</value>
+    <value>可等待</value>
   </data>
   <data name="CSharp_Deprecated_Member" xml:space="preserve">
-    <value>deprecated</value>
+    <value>废弃的</value>
   </data>
   <data name="CSharp_Extension_Method" xml:space="preserve">
-    <value>extension</value>
+    <value>扩展</value>
   </data>
   <data name="VisualBasic_Awaitable_Method" xml:space="preserve">
-    <value>Awaitable</value>
+    <value>可等待</value>
   </data>
   <data name="VisualBasic_Deprecated_Member" xml:space="preserve">
-    <value>Deprecated</value>
+    <value>废弃的</value>
   </data>
   <data name="VisualBasic_Extension_Method" xml:space="preserve">
-    <value>Extension</value>
+    <value>扩展</value>
   </data>
 </root>

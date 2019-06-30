@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -44,7 +44,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			this.debuggerSettings = debuggerSettings;
 		}
 
-		public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag =>
+		public ITagger<T>? CreateTagger<T>(ITextBuffer buffer) where T : ITag =>
 			new TheTagger(stringClassificationTag, debuggerSettings) as ITagger<T>;
 	}
 
@@ -61,7 +61,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			this.debuggerSettings = debuggerSettings;
 		}
 
-		public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag =>
+		public ITagger<T>? CreateTagger<T>(ITextBuffer buffer) where T : ITag =>
 			new TheTagger(stringClassificationTag, debuggerSettings) as ITagger<T>;
 	}
 

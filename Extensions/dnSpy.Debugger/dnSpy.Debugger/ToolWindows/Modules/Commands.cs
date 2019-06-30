@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -67,7 +67,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 		protected ModulesCtxMenuCommand(Lazy<IModulesContent> modulesContent) => this.modulesContent = modulesContent;
 
-		protected sealed override ModulesCtxMenuContext CreateContext(IMenuItemContext context) {
+		protected sealed override ModulesCtxMenuContext? CreateContext(IMenuItemContext context) {
 			if (!(context.CreatorObject.Object is ListView))
 				return null;
 			if (context.CreatorObject.Object != modulesContent.Value.ListView)
@@ -120,14 +120,26 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 		public override void Execute(ModulesCtxMenuContext context) => context.Operations.LoadModules();
 		public override bool IsEnabled(ModulesCtxMenuContext context) => context.Operations.CanLoadModules;
-		public override string GetHeader(ModulesCtxMenuContext context) {
+		public override string? GetHeader(ModulesCtxMenuContext context) {
 			if (context.Operations.LoadModulesCount <= 1)
 				return dnSpy_Debugger_Resources.LoadModulesCommand;
 			return string.Format(dnSpy_Debugger_Resources.LoadXModulesCommand, context.Operations.LoadModulesCount);
 		}
 	}
 
-	[ExportMenuItem(Header = "res:OpenModuleFromMemoryCommand", Icon = DsImagesAttribute.ModulePublic, Group = MenuConstants.GROUP_CTX_DBG_MODULES_GOTO, Order = 20)]
+	[ExportMenuItem(Header = "res:LoadAllModulesCommand", Icon = DsImagesAttribute.ModulePublic, Group = MenuConstants.GROUP_CTX_DBG_MODULES_GOTO, Order = 20)]
+	sealed class LoadAllModulesModulesCtxMenuCommand : ModulesCtxMenuCommand {
+		[ImportingConstructor]
+		LoadAllModulesModulesCtxMenuCommand(Lazy<IModulesContent> modulesContent)
+			: base(modulesContent) {
+		}
+
+		public override void Execute(ModulesCtxMenuContext context) => context.Operations.LoadAllModules();
+		public override bool IsEnabled(ModulesCtxMenuContext context) => context.Operations.CanLoadAllModules;
+		public override bool IsVisible(ModulesCtxMenuContext context) => IsEnabled(context);
+	}
+
+	[ExportMenuItem(Header = "res:OpenModuleFromMemoryCommand", Icon = DsImagesAttribute.ModulePublic, Group = MenuConstants.GROUP_CTX_DBG_MODULES_GOTO, Order = 30)]
 	sealed class OpemModuleFromMemoryModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		[ImportingConstructor]
 		OpemModuleFromMemoryModulesCtxMenuCommand(Lazy<IModulesContent> modulesContent)
@@ -174,8 +186,8 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 		IEnumerable<CreatedMenuItem> IMenuItemProvider.Create(IMenuItemContext context) {
 			var ctx = CreateContext(context);
-			Debug.Assert(ctx != null);
-			if (ctx == null)
+			Debug.Assert(!(ctx is null));
+			if (ctx is null)
 				yield break;
 
 			for (int i = 0; i < subCmds.Length; i++) {
@@ -241,7 +253,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		public override void Execute(ModulesCtxMenuContext context) => context.Operations.Save();
 		public override bool IsEnabled(ModulesCtxMenuContext context) => context.Operations.CanSave;
 
-		public override string GetHeader(ModulesCtxMenuContext context) {
+		public override string? GetHeader(ModulesCtxMenuContext context) {
 			var count = context.Operations.GetSaveModuleCount();
 			return count > 1 ?
 				string.Format(dnSpy_Debugger_Resources.SaveModulesCommand, count) :

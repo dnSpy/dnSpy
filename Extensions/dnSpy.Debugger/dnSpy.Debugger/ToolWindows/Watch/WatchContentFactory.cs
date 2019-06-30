@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,6 +24,7 @@ using dnSpy.Debugger.Evaluation.UI;
 
 namespace dnSpy.Debugger.ToolWindows.Watch {
 	abstract class WatchContentFactory {
+		public abstract bool TryGetContent(int index, out WatchContent watchContent);
 		public abstract WatchContent GetContent(int index);
 	}
 
@@ -42,9 +43,14 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 			this.watchVariablesWindowValueNodesProviderService = watchVariablesWindowValueNodesProviderService;
 		}
 
+		public override bool TryGetContent(int index, out WatchContent watchContent) {
+			watchContent = contents[index];
+			return !(watchContent is null);
+		}
+
 		public override WatchContent GetContent(int index) {
 			var content = contents[index];
-			if (content == null)
+			if (content is null)
 				contents[index] = content = new WatchContent(index, watchVariablesWindowValueNodesProviderService.Value.Get(index), wpfCommandService, variablesWindowVMFactory.Value);
 			return content;
 		}

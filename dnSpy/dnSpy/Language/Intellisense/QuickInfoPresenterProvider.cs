@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,9 +28,9 @@ namespace dnSpy.Language.Intellisense {
 	[Name(PredefinedIntellisensePresenterProviders.DefaultQuickInfoPresenter)]
 	[ContentType(ContentTypes.Any)]
 	sealed class QuickInfoPresenterProvider : IIntellisensePresenterProvider {
-		public IIntellisensePresenter TryCreateIntellisensePresenter(IIntellisenseSession session) {
+		public IIntellisensePresenter? TryCreateIntellisensePresenter(IIntellisenseSession session) {
 			var quickInfoSession = session as IQuickInfoSession;
-			if (quickInfoSession == null)
+			if (quickInfoSession is null)
 				return null;
 			if (quickInfoSession.TrackMouse)
 				return new QuickInfoPresenter(quickInfoSession);

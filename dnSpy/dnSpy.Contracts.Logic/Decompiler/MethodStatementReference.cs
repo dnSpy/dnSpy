@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -50,9 +50,9 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public override bool Equals(object obj) {
+		public override bool Equals(object? obj) {
 			var other = obj as MethodStatementReference;
-			return other != null &&
+			return !(other is null) &&
 				Method == other.Method &&
 				Offset == other.Offset;
 		}

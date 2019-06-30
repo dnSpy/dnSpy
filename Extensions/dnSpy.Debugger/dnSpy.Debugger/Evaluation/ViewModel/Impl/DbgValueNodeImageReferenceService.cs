@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 		[ImportingConstructor]
 		DbgValueNodeImageReferenceServiceImpl() {
-			const int TOTAL_COUNT = 95;
+			const int TOTAL_COUNT = 110;
 			toImageReference = new Dictionary<string, ImageReference>(TOTAL_COUNT, StringComparer.Ordinal) {
 				{ PredefinedDbgValueNodeImageNames.Edit, DsImages.Edit },
 				{ PredefinedDbgValueNodeImageNames.Information, DsImages.StatusInformation },
@@ -56,10 +56,14 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				{ PredefinedDbgValueNodeImageNames.ObjectId, DsImages.FieldPublic },
 				{ PredefinedDbgValueNodeImageNames.ObjectAddress, DsImages.FieldPublic },
 				{ PredefinedDbgValueNodeImageNames.EEVariable, DsImages.FieldPublic },
+				{ PredefinedDbgValueNodeImageNames.Pointer, DsImages.FieldPublic },
+				{ PredefinedDbgValueNodeImageNames.DereferencedPointer, DsImages.FieldPublic },
 				{ PredefinedDbgValueNodeImageNames.InstanceMembers, DsImages.ClassPublic },
 				{ PredefinedDbgValueNodeImageNames.StaticMembers, DsImages.ClassPublic },
 				{ PredefinedDbgValueNodeImageNames.RawView, DsImages.FieldPublic },
 				{ PredefinedDbgValueNodeImageNames.ResultsView, DsImages.MethodPublic },
+				{ PredefinedDbgValueNodeImageNames.DynamicView, DsImages.MethodPublic },
+				{ PredefinedDbgValueNodeImageNames.DynamicViewElement, DsImages.Property },
 				{ PredefinedDbgValueNodeImageNames.ExceptionInternal, DsImages.ExceptionInternal },
 				{ PredefinedDbgValueNodeImageNames.ExceptionPrivate, DsImages.ExceptionPrivate },
 				{ PredefinedDbgValueNodeImageNames.ExceptionProtected, DsImages.ExceptionProtected },
@@ -92,6 +96,16 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				{ PredefinedDbgValueNodeImageNames.EnumerationItemFamilyAndAssembly, DsImages.EnumerationItemInternal },
 				{ PredefinedDbgValueNodeImageNames.EnumerationItemFamilyOrAssembly, DsImages.EnumerationItemShortcut },
 				{ PredefinedDbgValueNodeImageNames.EnumerationItemCompilerControlled, DsImages.EnumerationItemSealed },
+				{ PredefinedDbgValueNodeImageNames.Module, DsImages.ModulePublic },
+				{ PredefinedDbgValueNodeImageNames.ModuleInternal, DsImages.ModuleInternal },
+				{ PredefinedDbgValueNodeImageNames.ModulePrivate, DsImages.ModulePrivate },
+				{ PredefinedDbgValueNodeImageNames.ModuleProtected, DsImages.ModuleProtected },
+				{ PredefinedDbgValueNodeImageNames.ModulePublic, DsImages.ModulePublic },
+				{ PredefinedDbgValueNodeImageNames.Delegate, DsImages.DelegatePublic },
+				{ PredefinedDbgValueNodeImageNames.DelegateInternal, DsImages.DelegateInternal },
+				{ PredefinedDbgValueNodeImageNames.DelegatePrivate, DsImages.DelegatePrivate },
+				{ PredefinedDbgValueNodeImageNames.DelegateProtected, DsImages.DelegateProtected },
+				{ PredefinedDbgValueNodeImageNames.DelegatePublic, DsImages.DelegatePublic },
 				{ PredefinedDbgValueNodeImageNames.Constant, DsImages.ConstantPublic },
 				{ PredefinedDbgValueNodeImageNames.ConstantPrivate, DsImages.ConstantPrivate },
 				{ PredefinedDbgValueNodeImageNames.ConstantPublic, DsImages.ConstantPublic },
@@ -108,6 +122,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				{ PredefinedDbgValueNodeImageNames.FieldFamilyAndAssembly, DsImages.FieldInternal },
 				{ PredefinedDbgValueNodeImageNames.FieldFamilyOrAssembly, DsImages.FieldShortcut },
 				{ PredefinedDbgValueNodeImageNames.FieldCompilerControlled, DsImages.FieldSealed },
+				{ PredefinedDbgValueNodeImageNames.ExtensionMethod, DsImages.ExtensionMethod },
 				{ PredefinedDbgValueNodeImageNames.Method, DsImages.MethodPublic },
 				{ PredefinedDbgValueNodeImageNames.MethodPrivate, DsImages.MethodPrivate },
 				{ PredefinedDbgValueNodeImageNames.MethodPublic, DsImages.MethodPublic },
@@ -137,7 +152,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		public override ImageReference GetImageReference(string imageName) {
-			if (imageName == null)
+			if (imageName is null)
 				return ImageReference.None;
 			if (toImageReference.TryGetValue(imageName, out var imgRef))
 				return imgRef;

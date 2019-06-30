@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows.Threading;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger;
@@ -44,7 +45,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		}
 
 		public void Save(ModuleVM[] modules) {
-			if (modules == null)
+			if (modules is null)
 				throw new ArgumentNullException(nameof(modules));
 			var list = new(DbgModule module, string filename)[modules.Length];
 			if (modules.Length == 1) {
@@ -72,7 +73,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 				messageBoxService.Show(string.Format(dnSpy_Debugger_Resources.ErrorOccurredX, error));
 		}
 
-		bool ShowDialog((DbgModule module, string filename)[] list, out string error) {
+		bool ShowDialog((DbgModule module, string filename)[] list, [NotNullWhenFalse] out string? error) {
 			error = null;
 			var data = new ProgressVM(Dispatcher.CurrentDispatcher, new PEFilesSaver(list));
 			var win = new ProgressDlg();
@@ -90,13 +91,13 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			return false;
 		}
 
-		static string GetModuleFilename(DbgModule module) {
+		static string? GetModuleFilename(DbgModule module) {
 			if (module.IsDynamic)
 				return null;
 			return module.Name;
 		}
 
-		static string GetDefaultExtension(string name, bool isExe) {
+		static string GetDefaultExtension(string? name, bool isExe) {
 			try {
 				var ext = Path.GetExtension(name);
 				if (ext.Length > 0 && ext[0] == '.')

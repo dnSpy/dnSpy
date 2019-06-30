@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,15 +29,12 @@ namespace dnSpy.Output {
 	}
 
 	class OutputServiceSettings : ViewModelBase, IOutputServiceSettings {
-		protected virtual void OnModified() { }
-
 		public Guid SelectedGuid {
-			get { return selectedGuid; }
+			get => selectedGuid;
 			set {
 				if (selectedGuid != value) {
 					selectedGuid = value;
 					OnPropertyChanged(nameof(SelectedGuid));
-					OnModified();
 				}
 			}
 		}
@@ -54,16 +51,12 @@ namespace dnSpy.Output {
 		OutputServiceSettingsImpl(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			SelectedGuid = sect.Attribute<Guid?>(nameof(SelectedGuid)) ?? SelectedGuid;
-			disableSave = false;
+			PropertyChanged += OutputServiceSettingsImpl_PropertyChanged;
 		}
-		readonly bool disableSave;
 
-		protected override void OnModified() {
-			if (disableSave)
-				return;
+		void OutputServiceSettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(SelectedGuid), SelectedGuid);
 		}

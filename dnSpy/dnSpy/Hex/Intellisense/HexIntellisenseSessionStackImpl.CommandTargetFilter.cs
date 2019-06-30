@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -39,7 +39,7 @@ namespace dnSpy.Hex.Intellisense {
 				Debug.Assert(!hasHookedKeyboard);
 				if (hasHookedKeyboard)
 					return;
-				if (wpfHexView == null)
+				if (wpfHexView is null)
 					return;
 				wpfHexView.CommandTarget.AddFilter(this, CommandTargetFilterOrder.HexIntellisenseSessionStack);
 				hasHookedKeyboard = true;
@@ -48,7 +48,7 @@ namespace dnSpy.Hex.Intellisense {
 			public void UnhookKeyboard() {
 				if (!hasHookedKeyboard)
 					return;
-				if (wpfHexView == null)
+				if (wpfHexView is null)
 					return;
 				wpfHexView.CommandTarget.RemoveFilter(this);
 				hasHookedKeyboard = false;
@@ -56,21 +56,21 @@ namespace dnSpy.Hex.Intellisense {
 
 			public CommandTargetStatus CanExecute(Guid group, int cmdId) {
 				if (group == CommandConstants.HexEditorGroup) {
-					if (TryGetIntellisenseKeyboardCommand((HexEditorIds)cmdId) != null)
+					if (!(TryGetIntellisenseKeyboardCommand((HexEditorIds)cmdId) is null))
 						return CommandTargetStatus.Handled;
 				}
 				return CommandTargetStatus.NotHandled;
 			}
 
-			public CommandTargetStatus Execute(Guid group, int cmdId, object args) {
-				object result = null;
+			public CommandTargetStatus Execute(Guid group, int cmdId, object? args) {
+				object? result = null;
 				return Execute(group, cmdId, args, ref result);
 			}
 
-			public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
+			public CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) {
 				if (group == CommandConstants.HexEditorGroup) {
 					var command = TryGetIntellisenseKeyboardCommand((HexEditorIds)cmdId);
-					if (command != null && owner.ExecuteKeyboardCommand(command.Value))
+					if (!(command is null) && owner.ExecuteKeyboardCommand(command.Value))
 						return CommandTargetStatus.Handled;
 				}
 				return CommandTargetStatus.NotHandled;

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,7 +30,8 @@ namespace dnSpy.Contracts.App {
 		const string DNSPY_SETTINGS_FILENAME = "dnSpy.xml";
 
 		/// <summary>
-		/// Base directory of dnSpy binaries
+		/// Base directory of dnSpy binaries. If all files have been moved to a 'bin' sub dir,
+		/// this is the path of the bin sub dir.
 		/// </summary>
 		public static string BinDirectory { get; }
 
@@ -46,7 +47,7 @@ namespace dnSpy.Contracts.App {
 		public static string SettingsFilename => settingsFilename;
 		static string settingsFilename;
 
-		internal static void SetSettingsFilename(string filename) {
+		internal static void SetSettingsFilename(string? filename) {
 			if (hasCalledSetSettingsFilename)
 				throw new InvalidOperationException();
 			hasCalledSetSettingsFilename = true;
@@ -56,7 +57,8 @@ namespace dnSpy.Contracts.App {
 		static bool hasCalledSetSettingsFilename = false;
 
 		static AppDirectories() {
-			BinDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+			// This assembly is always in the bin sub dir if one exists
+			BinDirectory = Path.GetDirectoryName(typeof(AppDirectories).Assembly.Location);
 			settingsFilename = Path.Combine(BinDirectory, DNSPY_SETTINGS_FILENAME);
 			if (File.Exists(settingsFilename))
 				DataDirectory = BinDirectory;

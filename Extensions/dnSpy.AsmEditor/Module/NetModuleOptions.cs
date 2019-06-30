@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,7 +22,7 @@ using dnlib.DotNet;
 
 namespace dnSpy.AsmEditor.Module {
 	sealed class NetModuleOptions {
-		public UTF8String Name { get; set; }
+		public UTF8String? Name { get; set; }
 		public ClrVersion ClrVersion { get; set; }
 		public Guid Mvid { get; set; }
 	}

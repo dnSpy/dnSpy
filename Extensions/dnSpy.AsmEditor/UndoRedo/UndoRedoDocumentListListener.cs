@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -65,7 +65,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 						dnSpy_AsmEditor_Resources.AskLoadAssembliesLoseChanges;
 
 			var msg = count == 1 ? dnSpy_AsmEditor_Resources.UnsavedFile : string.Format(dnSpy_AsmEditor_Resources.UnsavedFiles, count);
-			var res = messageBoxService.Show(string.Format("{0} {1}", msg, question), MsgBoxButton.Yes | MsgBoxButton.No);
+			var res = messageBoxService.Show($"{msg} {question}", MsgBoxButton.Yes | MsgBoxButton.No);
 			return res == MsgBoxButton.Yes;
 		}
 	}

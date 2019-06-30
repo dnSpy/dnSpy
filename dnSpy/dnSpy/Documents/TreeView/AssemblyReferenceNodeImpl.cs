@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,7 +34,7 @@ namespace dnSpy.Documents.TreeView {
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.ASSEMBLYREF_NODE_GUID);
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => dnImgMgr.GetImageReferenceAssemblyRef();
 		public override NodePathName NodePathName => new NodePathName(Guid, AssemblyRef.FullName);
-		public override ITreeNodeGroup TreeNodeGroup { get; }
+		public override ITreeNodeGroup? TreeNodeGroup { get; }
 
 		readonly WeakReference asmRefOwnerModule;
 
@@ -48,16 +48,23 @@ namespace dnSpy.Documents.TreeView {
 		}
 
 		public override void Initialize() => TreeNode.LazyLoading = true;
-		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>
-			new NodePrinter().Write(output, decompiler, AssemblyRef, GetShowToken(options));
+		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) {
+			if ((options & DocumentNodeWriteOptions.ToolTip) != 0) {
+				output.Write(AssemblyRef);
+				output.WriteLine();
+				WriteFilename(output);
+			}
+			else
+				new NodeFormatter().Write(output, decompiler, AssemblyRef, GetShowToken(options));
+		}
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
 			var document = Context.DocumentTreeView.DocumentService.Resolve(AssemblyRef, (ModuleDef)asmRefOwnerModule.Target) as IDsDotNetDocument;
-			if (document == null)
+			if (document is null)
 				yield break;
 			var mod = document.ModuleDef;
-			Debug.Assert(mod != null);
-			if (mod == null)
+			Debug.Assert(!(mod is null));
+			if (mod is null)
 				yield break;
 			foreach (var asmRef in mod.GetAssemblyRefs())
 				yield return new AssemblyReferenceNodeImpl(Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.AssemblyRefTreeNodeGroupAssemblyRef), mod, asmRef);

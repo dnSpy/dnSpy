@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,10 +26,10 @@ namespace dnSpy.Hex.Adornments {
 	[Export(typeof(HexToolTipProviderFactory))]
 	sealed class HexToolTipProviderFactoryImpl : HexToolTipProviderFactory {
 		public override HexToolTipProvider GetToolTipProvider(HexView hexView) {
-			if (hexView == null)
+			if (hexView is null)
 				throw new ArgumentNullException(nameof(hexView));
 			var wpfHexView = hexView as WpfHexView;
-			if (wpfHexView == null)
+			if (wpfHexView is null)
 				throw new ArgumentException();
 			return wpfHexView.Properties.GetOrCreateSingletonProperty(typeof(HexToolTipProviderImpl), () => new HexToolTipProviderImpl(wpfHexView));
 		}

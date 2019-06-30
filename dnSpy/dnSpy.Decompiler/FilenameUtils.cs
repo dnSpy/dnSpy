@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -40,15 +40,15 @@ namespace dnSpy.Decompiler {
 				text = text.Substring(0, pos);
 			text = text.Trim();
 
-			char[] textChars = null;
+			char[]? textChars = null;
 			for (int i = 0; i < text.Length; i++) {
 				if (invalidFileNameChars.Contains(text[i])) {
-					if (textChars == null)
+					if (textChars is null)
 						textChars = text.ToCharArray();
 					textChars[i] = '-';
 				}
 			}
-			if (textChars != null)
+			if (!(textChars is null))
 				text = new string(textChars);
 
 			if (ReservedFileNames.Contains(text))

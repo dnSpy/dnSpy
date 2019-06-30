@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,7 +24,7 @@ namespace dnSpy.Debugger.DbgUI {
 		public abstract bool IsDebugging { get; }
 		public abstract bool CanStartWithoutDebugging { get; }
 		public abstract void StartWithoutDebugging();
-		public abstract string GetCurrentExecutableFilename();
+		public abstract string? GetCurrentExecutableFilename();
 		public abstract bool CanDebugProgram { get; }
 		public abstract void DebugProgram(bool pauseAtEntryPoint);
 		public abstract bool CanAttachProgram { get; }
@@ -57,6 +57,8 @@ namespace dnSpy.Debugger.DbgUI {
 		public abstract void StepOverCurrentProcess();
 		public abstract bool CanStepOutCurrentProcess { get; }
 		public abstract void StepOutCurrentProcess();
+		public abstract bool CanGoToDisassembly { get; }
+		public abstract void GoToDisassembly();
 		public abstract bool CanToggleCreateBreakpoint { get; }
 		public abstract void ToggleCreateBreakpoint();
 		public abstract ToggleCreateBreakpointKind GetToggleCreateBreakpointKind();

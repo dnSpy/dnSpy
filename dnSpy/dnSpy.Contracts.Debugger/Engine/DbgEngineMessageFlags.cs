@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -39,5 +39,10 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// Set if the process should continue if possible, eg. it's a func-eval and an event occured.
 		/// </summary>
 		Continue				= 0x00000002,
+
+		/// <summary>
+		/// Set if the process is running
+		/// </summary>
+		Running					= 0x00000004,
 	}
 }

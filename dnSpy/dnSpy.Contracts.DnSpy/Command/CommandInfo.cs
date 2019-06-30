@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Command {
 	/// <summary>
 	/// Command data
 	/// </summary>
-	public struct CommandInfo {
+	public readonly struct CommandInfo {
 		/// <summary>
 		/// Gets the group
 		/// </summary>
@@ -37,7 +37,7 @@ namespace dnSpy.Contracts.Command {
 		/// <summary>
 		/// Gets the arguments or null
 		/// </summary>
-		public object Arguments { get; }
+		public object? Arguments { get; }
 
 		/// <summary>
 		/// Constructor
@@ -45,7 +45,7 @@ namespace dnSpy.Contracts.Command {
 		/// <param name="group">Command group, eg. <see cref="CommandConstants.StandardGroup"/></param>
 		/// <param name="id">Command id</param>
 		/// <param name="arguments">Command arguments or null</param>
-		public CommandInfo(Guid group, int id, object arguments = null) {
+		public CommandInfo(Guid group, int id, object? arguments = null) {
 			Group = group;
 			ID = id;
 			Arguments = arguments;

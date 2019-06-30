@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,7 +28,7 @@ using dnSpy.Hex.MEF;
 
 namespace dnSpy.Hex.Tagging {
 	[Export(typeof(HexTaggerFactory))]
-	public sealed class HexTaggerFactory {
+	sealed class HexTaggerFactory {
 		readonly Lazy<HexTaggerProvider, INamedTaggerMetadata>[] hexBufferTaggerProviders;
 		readonly Lazy<HexViewTaggerProvider, IViewTaggerMetadata>[] hexViewTaggerProviders;
 
@@ -44,11 +44,11 @@ namespace dnSpy.Hex.Tagging {
 
 			var type = typeof(T);
 			foreach (var info in hexViewTaggerProviders) {
-				if (info.Metadata.TextViewRoles != null && !hexView.Roles.ContainsAny(info.Metadata.TextViewRoles))
+				if (!(info.Metadata.TextViewRoles is null) && !hexView.Roles.ContainsAny(info.Metadata.TextViewRoles))
 					continue;
 				if (CanCreateTagger(type, info.Metadata.TagTypes)) {
 					var tagger = info.Value.CreateTagger<T>(hexView, buffer);
-					if (tagger != null)
+					if (!(tagger is null))
 						yield return tagger;
 				}
 			}
@@ -59,7 +59,7 @@ namespace dnSpy.Hex.Tagging {
 			foreach (var info in hexBufferTaggerProviders) {
 				if (CanCreateTagger(type, info.Metadata.TagTypes)) {
 					var tagger = info.Value.CreateTagger<T>(buffer);
-					if (tagger != null)
+					if (!(tagger is null))
 						yield return tagger;
 				}
 			}

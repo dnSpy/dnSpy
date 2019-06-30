@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,16 +32,16 @@ namespace dnSpy.AsmEditor.Hex {
 		[ImportingConstructor]
 		HexTabSaverProvider(Lazy<IDocumentSaver> documentSaver) => this.documentSaver = documentSaver;
 
-		public ITabSaver Create(IDocumentTab tab) => HexTabSaver.TryCreate(documentSaver, tab);
+		public ITabSaver? Create(IDocumentTab tab) => HexTabSaver.TryCreate(documentSaver, tab);
 	}
 
 	sealed class HexTabSaver : ITabSaver {
 		public bool CanSave => true;
-		public string MenuHeader => dnSpy_AsmEditor_Resources.Save;
+		public string? MenuHeader => dnSpy_AsmEditor_Resources.Save;
 
-		public static ITabSaver TryCreate(Lazy<IDocumentSaver> documentSaver, IDocumentTab tab) {
+		public static ITabSaver? TryCreate(Lazy<IDocumentSaver> documentSaver, IDocumentTab tab) {
 			var uiContext = tab.UIContext as HexViewDocumentTabUIContext;
-			if (uiContext == null)
+			if (uiContext is null)
 				return null;
 			var buffer = uiContext.HexView.Buffer;
 			return new HexTabSaver(documentSaver, buffer);

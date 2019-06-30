@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -56,7 +56,7 @@ namespace dnSpy.Bookmarks.Commands {
 			public EnableAllBookmarksCommand(Lazy<MainMenuOperations> mainMenuOperations) => this.mainMenuOperations = mainMenuOperations;
 			public override void Execute(IMenuItemContext context) => mainMenuOperations.Value.EnableAllBookmarks();
 			public override bool IsEnabled(IMenuItemContext context) => mainMenuOperations.Value.CanEnableAllBookmarks;
-			public override string GetHeader(IMenuItemContext context) {
+			public override string? GetHeader(IMenuItemContext context) {
 				switch (mainMenuOperations.Value.GetEnableAllBookmarksKind()) {
 				case EnableAllBookmarksKind.None:
 				case EnableAllBookmarksKind.Enable:		return dnSpy_Resources.EnableAllBookmarksCommand;

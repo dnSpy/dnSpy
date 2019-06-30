@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -47,13 +47,13 @@ namespace dnSpy.BackgroundImage {
 		}
 
 		public IImageSourceService Create(IWpfTextView wpfTextView) {
-			if (wpfTextView == null)
+			if (wpfTextView is null)
 				throw new ArgumentNullException(nameof(wpfTextView));
 			return Create(backgroundImageOptionDefinitionService.GetOptionDefinition(wpfTextView));
 		}
 
 		public IImageSourceService Create(WpfHexView wpfHexView) {
-			if (wpfHexView == null)
+			if (wpfHexView is null)
 				throw new ArgumentNullException(nameof(wpfHexView));
 			return Create(backgroundImageOptionDefinitionService.GetOptionDefinition(wpfHexView));
 		}

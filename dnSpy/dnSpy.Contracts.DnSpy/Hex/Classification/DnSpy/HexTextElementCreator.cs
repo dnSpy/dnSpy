@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -44,9 +44,9 @@ namespace dnSpy.Contracts.Hex.Classification.DnSpy {
 		/// <summary>
 		/// Creates the text element
 		/// </summary>
-		/// <param name="tag">Tag (<see cref="CTC.PredefinedTextClassifierTags"/>), can be null</param>
 		/// <param name="colorize">true if it should be colorized</param>
+		/// <param name="tag">Tag (<see cref="CTC.PredefinedTextClassifierTags"/>), can be null</param>
 		/// <returns></returns>
-		public abstract FrameworkElement CreateTextElement(bool colorize = true, string tag = null);
+		public abstract FrameworkElement CreateTextElement(bool colorize = true, string? tag = null);
 	}
 }

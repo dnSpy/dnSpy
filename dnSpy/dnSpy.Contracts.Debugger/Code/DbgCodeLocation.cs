@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,14 +30,13 @@ namespace dnSpy.Contracts.Debugger.Code {
 		public abstract string Type { get; }
 
 		/// <summary>
-		/// Clones this instance. The returned instance can be used to create a breakpoint. If the cloned instance
-		/// isn't used, it must be closed (see <see cref="Close"/>)
+		/// Clones this instance. The returned instance can be used to create a breakpoint. Use <see cref="Close"/> to close it.
 		/// </summary>
 		/// <returns></returns>
 		public abstract DbgCodeLocation Clone();
 
 		/// <summary>
-		/// Closes this instance (it calls <see cref="DbgManager.Close(DbgObject)"/>)
+		/// Closes this instance
 		/// </summary>
 		public abstract void Close();
 
@@ -46,7 +45,7 @@ namespace dnSpy.Contracts.Debugger.Code {
 		/// </summary>
 		/// <param name="obj">Object</param>
 		/// <returns></returns>
-		public abstract override bool Equals(object obj);
+		public abstract override bool Equals(object? obj);
 
 		/// <summary>
 		/// Gets the hash code

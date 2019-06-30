@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,7 +36,7 @@ namespace dnSpy.Documents.Tabs {
 		/// <param name="nodes">Nodes</param>
 		/// <param name="contentType">Content type</param>
 		/// <returns></returns>
-		DocumentViewerContent Lookup(IDecompiler decompiler, DocumentTreeNodeData[] nodes, out IContentType contentType);
+		DocumentViewerContent? Lookup(IDecompiler decompiler, DocumentTreeNodeData[] nodes, out IContentType? contentType);
 
 		/// <summary>
 		/// Cache decompiled output
@@ -56,6 +56,6 @@ namespace dnSpy.Documents.Tabs {
 		/// Clear everything referencing <paramref name="modules"/>
 		/// </summary>
 		/// <param name="modules">Module</param>
-		void Clear(HashSet<IDsDocument> modules);
+		void Clear(HashSet<IDsDocument?> modules);
 	}
 }

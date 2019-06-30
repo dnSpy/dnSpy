@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.ToolWindows.App {
 		/// </summary>
 		/// <param name="guid">Guid, see <see cref="ToolWindowContent.Guid"/></param>
 		/// <returns></returns>
-		ToolWindowContent GetOrCreate(Guid guid);
+		ToolWindowContent? GetOrCreate(Guid guid);
 
 		/// <summary>
 		/// Gets the tool windows it can create

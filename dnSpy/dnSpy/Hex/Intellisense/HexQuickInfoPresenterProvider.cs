@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,9 +25,9 @@ namespace dnSpy.Hex.Intellisense {
 	[Export(typeof(HexIntellisensePresenterProvider))]
 	[VSUTIL.Name(PredefinedHexIntellisensePresenterProviders.DefaultQuickInfoPresenter)]
 	sealed class HexQuickInfoPresenterProvider : HexIntellisensePresenterProvider {
-		public override HexIntellisensePresenter TryCreateIntellisensePresenter(HexIntellisenseSession session) {
+		public override HexIntellisensePresenter? TryCreateIntellisensePresenter(HexIntellisenseSession session) {
 			var quickInfoSession = session as HexQuickInfoSession;
-			if (quickInfoSession == null)
+			if (quickInfoSession is null)
 				return null;
 			if (quickInfoSession.TrackMouse)
 				return new HexQuickInfoPresenter(quickInfoSession);

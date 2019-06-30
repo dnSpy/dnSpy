@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,11 +35,9 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <returns></returns>
 		public int Compare(T x, T y) {
 			int c = StringComparer.OrdinalIgnoreCase.Compare(x.Name, y.Name);
-			if (c != 0)
-				return c;
+			if (c != 0) return c;
 			c = x.MDToken.Raw.CompareTo(y.MDToken.Raw);
-			if (c != 0)
-				return c;
+			if (c != 0) return c;
 			return x.GetHashCode().CompareTo(y.GetHashCode());
 		}
 	}
@@ -52,6 +50,16 @@ namespace dnSpy.Contracts.Decompiler {
 		/// Gets the instance
 		/// </summary>
 		public static readonly TypeDefComparer Instance = new TypeDefComparer();
+	}
+
+	/// <summary>
+	/// <see cref="MemberRef"/> comparer
+	/// </summary>
+	public sealed class MemberRefComparer : MemberRefComparer<MemberRef> {
+		/// <summary>
+		/// Gets the instance
+		/// </summary>
+		public static readonly MemberRefComparer Instance = new MemberRefComparer();
 	}
 
 	/// <summary>
@@ -99,20 +107,125 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="x">First instance to compare</param>
 		/// <param name="y">Second instance to compare</param>
 		/// <returns></returns>
-		public int Compare(MethodDef x, MethodDef y) {
+		public int Compare(MethodDef x, MethodDef y) => MethodRefComparer.Instance.Compare(x, y);
+	}
+
+	/// <summary>
+	/// Method reference comparer
+	/// </summary>
+	public sealed class MethodRefComparer : IComparer<IMethod> {
+		/// <summary>
+		/// Gets the instance
+		/// </summary>
+		public static readonly MethodRefComparer Instance = new MethodRefComparer();
+
+		/// <summary>
+		/// Compares two instances
+		/// </summary>
+		/// <param name="x">First instance to compare</param>
+		/// <param name="y">Second instance to compare</param>
+		/// <returns></returns>
+		public int Compare(IMethod x, IMethod y) {
 			int c = StringComparer.OrdinalIgnoreCase.Compare(x.Name, y.Name);
 			if (c != 0)
 				return c;
-			c = x.MethodSig.GetParamCount().CompareTo(y.MethodSig.GetParamCount());
-			if (c != 0)
-				return c;
+			return CompareNoName(x, y);
+		}
+
+		internal static int CompareNoName(IMethod x, IMethod y) {
+			int c = x.MethodSig.GetParamCount().CompareTo(y.MethodSig.GetParamCount());
+			if (c != 0) return c;
 			c = x.MethodSig.GetGenParamCount().CompareTo(y.MethodSig.GetGenParamCount());
-			if (c != 0)
-				return c;
+			if (c != 0) return c;
 			c = x.MDToken.Raw.CompareTo(y.MDToken.Raw);
-			if (c != 0)
-				return c;
+			if (c != 0) return c;
 			return x.GetHashCode().CompareTo(y.GetHashCode());
+		}
+	}
+
+	/// <summary>
+	/// Property reference comparer
+	/// </summary>
+	public sealed class PropertyRefComparer : IComparer<IMethod> {
+		/// <summary>
+		/// Gets the instance
+		/// </summary>
+		public static readonly PropertyRefComparer Instance = new PropertyRefComparer();
+
+		static int GetAccessor(string name, out string propName) {
+			if (name.StartsWith("get_")) {
+				propName = name.Substring(4);
+				return 0;
+			}
+			if (name.StartsWith("set_")) {
+				propName = name.Substring(4);
+				return 1;
+			}
+			propName = name;
+			return int.MaxValue;
+		}
+
+		/// <summary>
+		/// Compares two instances
+		/// </summary>
+		/// <param name="x">First instance to compare</param>
+		/// <param name="y">Second instance to compare</param>
+		/// <returns></returns>
+		public int Compare(IMethod x, IMethod y) {
+			string xn = x.Name;
+			string yn = y.Name;
+			int xacc = GetAccessor(xn, out var xPropName);
+			int yacc = GetAccessor(yn, out var yPropName);
+			int c = StringComparer.OrdinalIgnoreCase.Compare(xPropName, yPropName);
+			if (c != 0) return c;
+			c = xacc - yacc;
+			if (c != 0) return c;
+			return MethodRefComparer.CompareNoName(x, y);
+		}
+	}
+
+	/// <summary>
+	/// Event reference comparer
+	/// </summary>
+	public sealed class EventRefComparer : IComparer<IMethod> {
+		/// <summary>
+		/// Gets the instance
+		/// </summary>
+		public static readonly EventRefComparer Instance = new EventRefComparer();
+
+		static int GetAccessor(string name, out string propName) {
+			if (name.StartsWith("add_")) {
+				propName = name.Substring(4);
+				return 0;
+			}
+			if (name.StartsWith("remove_")) {
+				propName = name.Substring(7);
+				return 1;
+			}
+			if (name.StartsWith("raise_")) {
+				propName = name.Substring(6);
+				return 2;
+			}
+			propName = name;
+			return int.MaxValue;
+		}
+
+		/// <summary>
+		/// Compares two instances
+		/// </summary>
+		/// <param name="x">First instance to compare</param>
+		/// <param name="y">Second instance to compare</param>
+		/// <returns></returns>
+		public int Compare(IMethod x, IMethod y) {
+			string xn = x.Name;
+			string yn = y.Name;
+			int xacc = GetAccessor(xn, out var xPropName);
+			int yacc = GetAccessor(yn, out var yPropName);
+			int c = StringComparer.OrdinalIgnoreCase.Compare(xPropName, yPropName);
+			if (c != 0) return c;
+			c = xacc - yacc;
+			if (c != 0) return c;
+			return MethodRefComparer.CompareNoName(x, y);
 		}
 	}
 }

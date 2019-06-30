@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,11 +25,11 @@ namespace dnSpy.Text.Editor {
 	sealed class AdornmentLayerElement : IAdornmentLayerElement {
 		public UIElement Adornment { get; }
 		public AdornmentPositioningBehavior Behavior { get; }
-		public AdornmentRemovedCallback RemovedCallback { get; }
+		public AdornmentRemovedCallback? RemovedCallback { get; }
 		public object Tag { get; }
 		public SnapshotSpan? VisualSpan { get; private set; }
 
-		public AdornmentLayerElement(AdornmentPositioningBehavior behavior, SnapshotSpan? visualSpan, object tag, UIElement adornment, AdornmentRemovedCallback removedCallback) {
+		public AdornmentLayerElement(AdornmentPositioningBehavior behavior, SnapshotSpan? visualSpan, object tag, UIElement adornment, AdornmentRemovedCallback? removedCallback) {
 			Adornment = adornment;
 			Behavior = behavior;
 			RemovedCallback = removedCallback;
@@ -38,7 +38,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public void OnLayoutChanged(ITextSnapshot textSnapshot) {
-			if (VisualSpan == null)
+			if (VisualSpan is null)
 				return;
 			VisualSpan = VisualSpan.Value.TranslateTo(textSnapshot, SpanTrackingMode.EdgeInclusive);
 		}

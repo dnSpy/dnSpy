@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,7 +32,7 @@ namespace dnSpy.Hex.Commands {
 		public ICommand ResetToDefaultCommand => new RelayCommand(a => ResetToDefault(), a => ResetToDefaultCanExecute());
 
 		public bool ShowOffsetColumn {
-			get { return showOffset; }
+			get => showOffset;
 			set {
 				if (showOffset != value) {
 					showOffset = value;
@@ -43,7 +43,7 @@ namespace dnSpy.Hex.Commands {
 		bool showOffset;
 
 		public bool ShowValuesColumn {
-			get { return showValues; }
+			get => showValues;
 			set {
 				if (showValues != value) {
 					showValues = value;
@@ -54,7 +54,7 @@ namespace dnSpy.Hex.Commands {
 		bool showValues;
 
 		public bool ShowAsciiColumn {
-			get { return showAscii; }
+			get => showAscii;
 			set {
 				if (showAscii != value) {
 					showAscii = value;
@@ -65,7 +65,7 @@ namespace dnSpy.Hex.Commands {
 		bool showAscii;
 
 		public bool UseRelativePositions {
-			get { return useRelativeOffsets; }
+			get => useRelativeOffsets;
 			set {
 				if (useRelativeOffsets != value) {
 					useRelativeOffsets = value;
@@ -102,7 +102,7 @@ namespace dnSpy.Hex.Commands {
 			Reinitialize();
 		}
 
-		public LocalGroupOptions TryGetLocalGroupOptions() {
+		public LocalGroupOptions? TryGetLocalGroupOptions() {
 			var options = new LocalGroupOptions();
 			options.ShowOffsetColumn = ShowOffsetColumn;
 			options.ShowValuesColumn = ShowValuesColumn;
@@ -120,7 +120,7 @@ namespace dnSpy.Hex.Commands {
 			if (OffsetBitSizeVM.HasError)
 				return null;
 			options.OffsetBitSize = OffsetBitSizeVM.Value;
-			options.HexValuesDisplayFormat = (HexValuesDisplayFormat)HexValuesDisplayFormatVM.SelectedItem;
+			options.HexValuesDisplayFormat = (HexValuesDisplayFormat)HexValuesDisplayFormatVM.SelectedItem!;
 			if (BytesPerLineVM.HasError)
 				return null;
 			options.BytesPerLine = BytesPerLineVM.Value;

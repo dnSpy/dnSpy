@@ -162,9 +162,6 @@
   <data name="Button_Save" xml:space="preserve">
     <value>_Speichern...</value>
   </data>
-  <data name="Button_SaveCode" xml:space="preserve">
-    <value>Code _speichern...</value>
-  </data>
   <data name="Button_Yes" xml:space="preserve">
     <value>_Ja</value>
   </data>
@@ -196,7 +193,7 @@
     <value>MD-Token _kopieren</value>
   </data>
   <data name="CouldNotStartBrowser" xml:space="preserve">
-    <value>Konnte Browser nicht starten</value>
+    <value>Browser konnte nicht gestartet werden</value>
   </data>
   <data name="DecompilationCanceled" xml:space="preserve">
     <value>Der Vorgang wurde abgebrochen</value>
@@ -292,7 +289,7 @@
     <value>Gehe zu MD Token</value>
   </data>
   <data name="HideAllToolWindowsCommand" xml:space="preserve">
-    <value>_Verstecke alle Registerkarten</value>
+    <value>Alle Registerkarten _verstecken</value>
   </data>
   <data name="HideToolWindowCommand" xml:space="preserve">
     <value>_Ausblenden</value>
@@ -325,16 +322,16 @@
     <value>_Fenster</value>
   </data>
   <data name="MergeAllTabGroupsCommand" xml:space="preserve">
-    <value>Führe alle Registergruppen zusammen</value>
+    <value>Alle Registergruppen zusammenführen</value>
   </data>
   <data name="MessageBoxDontShowAgain" xml:space="preserve">
     <value>_Nicht wieder anzeigen</value>
   </data>
   <data name="MoveAllTabsToNextTabGroupCommand" xml:space="preserve">
-    <value>Verschiebe alle in nächste Registergruppe</value>
+    <value>Alle in nächste Registergruppe verschieben</value>
   </data>
   <data name="MoveAllToPreviousTabGroupCommand" xml:space="preserve">
-    <value>Verschiebe alle in vorherige Registergruppe</value>
+    <value>Alle in vorherige Registergruppe verschieben</value>
   </data>
   <data name="MoveBottomCommand" xml:space="preserve">
     <value>_Unten</value>
@@ -346,10 +343,10 @@
     <value>_Rechts</value>
   </data>
   <data name="MoveTabGroupAfterNextTabGroupCommand" xml:space="preserve">
-    <value>Verschiebe Registergruppe hinter nächste Registergruppe</value>
+    <value>Registergruppe hinter nächste Registergruppe verschieben</value>
   </data>
   <data name="MoveTabGroupBeforePreviousTabGroupCommand" xml:space="preserve">
-    <value>Verschiebe Registergruppe vor vorherige Registergruppe</value>
+    <value>Registergruppe vor vorherige Registergruppe verschieben</value>
   </data>
   <data name="MoveToNextTabGroupCommand" xml:space="preserve">
     <value>Gehe zu _nächster Registergruppe</value>
@@ -483,12 +480,6 @@
   <data name="Options_Misc_Button_EnableAllWarnings" xml:space="preserve">
     <value>Aktiviere alle Warnung</value>
   </data>
-  <data name="Options_Misc_Deserialize" xml:space="preserve">
-    <value>Deserialisiere Typen in Ressourcen (unsicher)</value>
-  </data>
-  <data name="Options_Misc_Deserialize_ToolTip" xml:space="preserve">
-    <value>Jede Assembly könnte mit den Daten aus den Ressourcen geladen und ausgeführt werden.</value>
-  </data>
   <data name="Options_Misc_UseMmapdIO" xml:space="preserve">
     <value>Nutze Memory-Mapped I/O</value>
   </data>
@@ -507,9 +498,6 @@
   <data name="SaveResourceButton" xml:space="preserve">
     <value>Speichern</value>
   </data>
-  <data name="SavingCode" xml:space="preserve">
-    <value>Speichere...</value>
-  </data>
   <data name="SearchAbortedMessage" xml:space="preserve">
     <value>Suche abgebrochen, mehr als {0:n0} Ergebnisse gefunden.</value>
   </data>
@@ -520,7 +508,7 @@
     <value>Assemblies suchen</value>
   </data>
   <data name="Searching" xml:space="preserve">
-    <value>Suche...</value>
+    <value>Suchen...</value>
   </data>
   <data name="SearchMsdnCommand" xml:space="preserve">
     <value>_MSDN durchsuchen</value>
@@ -655,7 +643,7 @@
     <value>Strg+L</value>
   </data>
   <data name="SearchWindow_Local" xml:space="preserve">
-    <value>Lokal</value>
+    <value>Feld</value>
   </data>
   <data name="SearchWindow_Local_Key" xml:space="preserve">
     <value>Strg+I</value>
@@ -694,7 +682,7 @@
     <value>Parameter</value>
   </data>
   <data name="SearchWindow_ParameterLocal" xml:space="preserve">
-    <value>Parameter/Lokal</value>
+    <value>Parameter/Feld</value>
   </data>
   <data name="SearchWindow_ParameterLocal_Key" xml:space="preserve">
     <value>Strg+N</value>
@@ -728,18 +716,6 @@
   </data>
   <data name="ToolWindowWinPosButtonToolTip" xml:space="preserve">
     <value>Fensterposition</value>
-  </data>
-  <data name="UseNewRendererHeader" xml:space="preserve">
-    <value>Neuen Textformatierer benutzen</value>
-  </data>
-  <data name="UseNewRendererInfo" xml:space="preserve">
-    <value>Der neue Textformatierer ist schneller, unterstützt aber keinen Zeilenumbruch oder alle Unicode Zeichen.</value>
-  </data>
-  <data name="UseNewRenderer_HexEditor" xml:space="preserve">
-    <value>Hex Editor</value>
-  </data>
-  <data name="UseNewRenderer_TextEditor" xml:space="preserve">
-    <value>Text Editor</value>
   </data>
   <data name="Theme_Blue" xml:space="preserve">
     <value>_Blau</value>
@@ -1350,7 +1326,7 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Visual-Basic-Array kopieren</value>
   </data>
   <data name="FillSelectionCommand" xml:space="preserve">
-    <value>Fülle Auswahl mit Byte...</value>
+    <value>Auswahl mit Byte füllen...</value>
   </data>
   <data name="FillSelection_Label" xml:space="preserve">
     <value>_Byte</value>
@@ -1362,7 +1338,7 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Gehe zu Versatz...</value>
   </data>
   <data name="HexEditorSaveSelectionCommand" xml:space="preserve">
-    <value>Speichere Auswah_l...</value>
+    <value>Auswah_l speichern...</value>
   </data>
   <data name="HexEditorSelectCommand" xml:space="preserve">
     <value>Auswählen...</value>
@@ -1485,7 +1461,7 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Strg+V</value>
   </data>
   <data name="ShortCutKeyDelete" xml:space="preserve">
-    <value>Löschen</value>
+    <value>Entf</value>
     <comment>the delete key</comment>
   </data>
   <data name="ShowAllBytesCommand" xml:space="preserve">
@@ -1666,7 +1642,7 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Strg+E, Strg+S</value>
   </data>
   <data name="HexEditFieldCommand" xml:space="preserve">
-    <value>Bearbeite Feld</value>
+    <value>Feld bearbeiten</value>
   </data>
   <data name="OptionColorizeText" xml:space="preserve">
     <value>Den Text einfärben</value>
@@ -1858,7 +1834,7 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Rückgabetypen anzeigen</value>
   </data>
   <data name="ShowTokensCommand" xml:space="preserve">
-    <value>Tokens zeigen</value>
+    <value>Tokens anzeigen</value>
   </data>
   <data name="ShortCutKeyCtrlK_CtrlW" xml:space="preserve">
     <value>Strg+K, Strg+W</value>
@@ -1919,5 +1895,167 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
   </data>
   <data name="User_Administrator" xml:space="preserve">
     <value>Administrator</value>
+  </data>
+  <data name="AllowMoreThanOneInstance" xml:space="preserve">
+    <value>Mehr als eine Instanz erlauben (Neustart erforderlich)</value>
+  </data>
+  <data name="DisassemblerDlgTabTitle" xml:space="preserve">
+    <value>Disassembler</value>
+  </data>
+  <data name="CodeStyleDlgTabTitle" xml:space="preserve">
+    <value>Codestil</value>
+  </data>
+  <data name="DisassemblySettings_AddLabels" xml:space="preserve">
+    <value>Beschriftung hinzufügen</value>
+  </data>
+  <data name="DisassemblySettings_AddLeadingZeroToHexNumbers" xml:space="preserve">
+    <value>Falls nötig führende '0' bei Hex-Zahlen hinzufügen</value>
+  </data>
+  <data name="DisassemblySettings_AlwaysShowMemorySize" xml:space="preserve">
+    <value>Immer Größe des Speicheroperands anzeigen</value>
+  </data>
+  <data name="DisassemblySettings_AlwaysShowScale" xml:space="preserve">
+    <value>Immer den Skalenwert anzeigen</value>
+  </data>
+  <data name="DisassemblySettings_AlwaysShowSegmentRegister" xml:space="preserve">
+    <value>Immer Segment Register anzeigen</value>
+  </data>
+  <data name="DisassemblySettings_DigitSeparator" xml:space="preserve">
+    <value>Zahlen mit Unterstrich unterteilen</value>
+  </data>
+  <data name="DisassemblySettings_EmptyLineBetweenBasicBlocks" xml:space="preserve">
+    <value>Leerzeile zwischen Blöcken einfügen</value>
+  </data>
+  <data name="DisassemblySettings_HexPrefix" xml:space="preserve">
+    <value>Hex-Präfix</value>
+  </data>
+  <data name="DisassemblySettings_HexSuffix" xml:space="preserve">
+    <value>Hex-Suffix</value>
+  </data>
+  <data name="DisassemblySettings_NewTab" xml:space="preserve">
+    <value>Disassembly in neuem Tab anzeigen</value>
+  </data>
+  <data name="DisassemblySettings_OperandColumn" xml:space="preserve">
+    <value>Operand-Spalte</value>
+  </data>
+  <data name="DisassemblySettings_RipRelativeAddresses" xml:space="preserve">
+    <value>RIP-relative Adressen</value>
+  </data>
+  <data name="DisassemblySettings_ScaleBeforeIndex" xml:space="preserve">
+    <value>Skala vor dem Indexregister anzeigen</value>
+  </data>
+  <data name="DisassemblySettings_BranchLeadingZeroes" xml:space="preserve">
+    <value>Führende Nullen hinzufügen (Zweige)</value>
+  </data>
+  <data name="DisassemblySettings_LeadingZeroes" xml:space="preserve">
+    <value>Führende Nullen hinzufügen</value>
+  </data>
+  <data name="DisassemblySettings_ShowBranchSize" xml:space="preserve">
+    <value>Zweiggröße anzeigen</value>
+  </data>
+  <data name="DisassemblySettings_ShowInstructionAddress" xml:space="preserve">
+    <value>Adresse der Instruktion anzeigen</value>
+  </data>
+  <data name="DisassemblySettings_ShowInstructionBytes" xml:space="preserve">
+    <value>Bytes der Instruktion anzeigen</value>
+  </data>
+  <data name="DisassemblySettings_ShowZeroDisplacements" xml:space="preserve">
+    <value>Null Verschiebungen anzeigen</value>
+  </data>
+  <data name="DisassemblySettings_SignedImmediateOperands" xml:space="preserve">
+    <value>Signierte Nummern</value>
+  </data>
+  <data name="DisassemblySettings_SignedMemoryDisplacements" xml:space="preserve">
+    <value>Vorzeichenbehaftete Verschiebungen</value>
+  </data>
+  <data name="DisassemblySettings_SmallHexNumbersInDecimal" xml:space="preserve">
+    <value>Kleine Zahlen als Dezimalzahl anzeigen</value>
+  </data>
+  <data name="DisassemblySettings_SpaceAfterMemoryBracket" xml:space="preserve">
+    <value>Leerzeichen nach Speicheroperandenklammern</value>
+  </data>
+  <data name="DisassemblySettings_SpaceAfterOperandSeparator" xml:space="preserve">
+    <value>Leerzeichen nach Operandentrennzeichen</value>
+  </data>
+  <data name="DisassemblySettings_SpacesBetweenMemoryAddOperators" xml:space="preserve">
+    <value>Leerzeichen zwischen '+'</value>
+  </data>
+  <data name="DisassemblySettings_SpacesBetweenMemoryMulOperators" xml:space="preserve">
+    <value>Leerzeichen zwischen '*'</value>
+  </data>
+  <data name="DisassemblySettings_UpperCaseAll" xml:space="preserve">
+    <value>Alles groß schreiben</value>
+  </data>
+  <data name="DisassemblySettings_UpperCaseHex" xml:space="preserve">
+    <value>Hexadezimalzahlen groß schreiben</value>
+  </data>
+  <data name="DisassemblySettings_UpperCaseKeywords" xml:space="preserve">
+    <value>Schlüsselwörter groß schreiben</value>
+  </data>
+  <data name="DisassemblySettings_UpperCaseMnemonics" xml:space="preserve">
+    <value>Befehle groß schreiben</value>
+  </data>
+  <data name="DisassemblySettings_UpperCasePrefixes" xml:space="preserve">
+    <value>Präfixe groß schreiben</value>
+  </data>
+  <data name="DisassemblySettings_UpperCaseRegisters" xml:space="preserve">
+    <value>Register groß schreiben</value>
+  </data>
+  <data name="DisassemblySettings_UsePseudoOps" xml:space="preserve">
+    <value>Pseudo Instruktionen</value>
+  </data>
+  <data name="DisassemblySettings_X86AssemblerSyntax" xml:space="preserve">
+    <value>Syntax</value>
+  </data>
+  <data name="DisassemblySettings_NakedRegisters" xml:space="preserve">
+    <value>Blanke Register</value>
+  </data>
+  <data name="DisassemblySettings_ShowMnemonicSizeSuffix" xml:space="preserve">
+    <value>Immer mnemonisches Größen-Suffix anzeigen</value>
+  </data>
+  <data name="DisassemblySettings_SpaceAfterMemoryOperandComma" xml:space="preserve">
+    <value>Leerzeichen nach Speicheroperand Komma</value>
+  </data>
+  <data name="DisassemblySettings_UseHexNumbers" xml:space="preserve">
+    <value>Hexadezimalzahlen verwenden</value>
+  </data>
+  <data name="Disassembly_TabTitle" xml:space="preserve">
+    <value>Disassembly</value>
+  </data>
+  <data name="DisassemblySettings_ShowCode" xml:space="preserve">
+    <value>Dekompilierten Code anzeigen</value>
+  </data>
+  <data name="DisassemblySettings_ShowILCode" xml:space="preserve">
+    <value>IL-Code anzeigen</value>
+  </data>
+  <data name="Disassembly_MethodIsNotOptimized" xml:space="preserve">
+    <value>Die Methode ist nicht optimiert</value>
+  </data>
+  <data name="DisassemblySettings_ShowSymbolAddress" xml:space="preserve">
+    <value>Adresse des Symbols anzeigen</value>
+  </data>
+  <data name="Decompile_Timestamp" xml:space="preserve">
+    <value>Zeitstempel:</value>
+  </data>
+  <data name="UnknownValue" xml:space="preserve">
+    <value>&lt;Unbekannt&gt;</value>
+  </data>
+  <data name="TypeReferencesFolder" xml:space="preserve">
+    <value>Type References</value>
+  </data>
+  <data name="TreeViewEventsFolder" xml:space="preserve">
+    <value>Ereignisse</value>
+  </data>
+  <data name="TreeViewFieldsFolder" xml:space="preserve">
+    <value>Felder</value>
+  </data>
+  <data name="TreeViewMethodsFolder" xml:space="preserve">
+    <value>Methoden</value>
+  </data>
+  <data name="TreeViewPropertiesFolder" xml:space="preserve">
+    <value>Eigenschaften</value>
+  </data>
+  <data name="TreeViewTypesFolder" xml:space="preserve">
+    <value>Types</value>
   </data>
 </root>

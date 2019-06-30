@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -38,7 +38,7 @@ namespace dnSpy.Hex.Files {
 		}
 
 		public override HexFileStructureInfoService Create(HexView hexView) {
-			if (hexView == null)
+			if (hexView is null)
 				throw new ArgumentNullException(nameof(hexView));
 			return hexView.Properties.GetOrCreateSingletonProperty(typeof(HexFileStructureInfoServiceImpl),
 				() => new HexFileStructureInfoServiceImpl(hexView, hexBufferFileServiceFactory, hexFileStructureInfoProviderFactories));

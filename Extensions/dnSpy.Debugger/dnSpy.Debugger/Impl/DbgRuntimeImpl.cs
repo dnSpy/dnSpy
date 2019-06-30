@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -115,9 +115,9 @@ namespace dnSpy.Debugger.Impl {
 			currentThread = new CurrentObject<DbgThreadImpl>(thread, currentThread.Break);
 		}
 
-		internal DbgThread SetBreakThread(DbgThreadImpl thread, bool tryOldCurrentThread = false) {
+		internal DbgThread? SetBreakThread(DbgThreadImpl? thread, bool tryOldCurrentThread = false) {
 			Dispatcher.VerifyAccess();
-			DbgThreadImpl newCurrent, newBreak;
+			DbgThreadImpl? newCurrent, newBreak;
 			lock (lockObj) {
 				newBreak = GetThread_NoLock(thread);
 				if (tryOldCurrentThread && currentThread.Current?.IsClosed == false)
@@ -125,12 +125,12 @@ namespace dnSpy.Debugger.Impl {
 				else
 					newCurrent = newBreak;
 			}
-			Debug.Assert((newBreak != null) == (newCurrent != null));
+			Debug.Assert((!(newBreak is null)) == (!(newCurrent is null)));
 			currentThread = new CurrentObject<DbgThreadImpl>(newCurrent, newBreak);
 			return newCurrent;
 		}
 
-		DbgThreadImpl GetThread_NoLock(DbgThreadImpl thread) {
+		DbgThreadImpl? GetThread_NoLock(DbgThreadImpl? thread) {
 			if (thread?.IsClosed == false)
 				return thread;
 			return threads.FirstOrDefault(a => a.IsMain) ?? (threads.Count == 0 ? null : threads[0]);
@@ -150,8 +150,8 @@ namespace dnSpy.Debugger.Impl {
 
 		internal void Remove_DbgThread(DbgAppDomainImpl appDomain, DbgEngineMessageFlags messageFlags) {
 			Dispatcher.VerifyAccess();
-			List<DbgThread> threadsToRemove = null;
-			List<DbgModule> modulesToRemove = null;
+			List<DbgThread>? threadsToRemove = null;
+			List<DbgModule>? modulesToRemove = null;
 			lock (lockObj) {
 				bool b = appDomains.Remove(appDomain);
 				if (!b)
@@ -159,7 +159,7 @@ namespace dnSpy.Debugger.Impl {
 				for (int i = threads.Count - 1; i >= 0; i--) {
 					var thread = threads[i];
 					if (thread.AppDomain == appDomain) {
-						if (threadsToRemove == null)
+						if (threadsToRemove is null)
 							threadsToRemove = new List<DbgThread>();
 						threadsToRemove.Add(thread);
 						threads.RemoveAt(i);
@@ -168,24 +168,24 @@ namespace dnSpy.Debugger.Impl {
 				for (int i = modules.Count - 1; i >= 0; i--) {
 					var module = modules[i];
 					if (module.AppDomain == appDomain) {
-						if (modulesToRemove == null)
+						if (modulesToRemove is null)
 							modulesToRemove = new List<DbgModule>();
 						modulesToRemove.Add(module);
 						modules.RemoveAt(i);
 					}
 				}
 			}
-			if (threadsToRemove != null && threadsToRemove.Count != 0)
+			if (!(threadsToRemove is null) && threadsToRemove.Count != 0)
 				ThreadsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgThread>(threadsToRemove, added: false));
-			if (modulesToRemove != null && modulesToRemove.Count != 0)
+			if (!(modulesToRemove is null) && modulesToRemove.Count != 0)
 				ModulesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgModule>(modulesToRemove, added: false));
 			owner.RemoveAppDomain_DbgThread(this, appDomain, messageFlags);
 			AppDomainsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgAppDomain>(appDomain, added: false));
-			if (threadsToRemove != null) {
+			if (!(threadsToRemove is null)) {
 				foreach (var thread in threadsToRemove)
 					thread.Close(Dispatcher);
 			}
-			if (modulesToRemove != null) {
+			if (!(modulesToRemove is null)) {
 				foreach (var module in modulesToRemove)
 					module.Close(Dispatcher);
 			}
@@ -239,23 +239,14 @@ namespace dnSpy.Debugger.Impl {
 		internal void Thaw(DbgThreadImpl thread) => Engine.Thaw(thread);
 
 		internal DbgStackWalker CreateStackWalker(DbgThreadImpl thread) {
-			var stackWalker = owner.Dispatcher2.Invoke(() => CreateStackWalker_DbgThread(thread));
-			if (stackWalker == null) {
-				// Invoke() returns null if shutdown has started but we can't return null
-				stackWalker = new DbgStackWalkerImpl(thread, new NullDbgEngineStackWalker());
-			}
-			CloseOnContinue(stackWalker);
-			return stackWalker;
-		}
-
-		DbgStackWalker CreateStackWalker_DbgThread(DbgThreadImpl thread) {
-			Dispatcher.VerifyAccess();
 			DbgEngineStackWalker engineStackWalker;
 			if (Engine.IsClosed)
 				engineStackWalker = new NullDbgEngineStackWalker();
 			else
 				engineStackWalker = Engine.CreateStackWalker(thread);
-			return new DbgStackWalkerImpl(thread, engineStackWalker);
+			var stackWalker = new DbgStackWalkerImpl(thread, engineStackWalker);
+			CloseOnContinue(stackWalker);
+			return stackWalker;
 		}
 
 		sealed class NullDbgEngineStackWalker : DbgEngineStackWalker {
@@ -274,7 +265,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		public override void CloseOnContinue(DbgObject obj) {
-			if (obj == null)
+			if (obj is null)
 				throw new ArgumentNullException(nameof(obj));
 			lock (lockObj) {
 				if (IsClosed)
@@ -285,7 +276,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		public override void CloseOnContinue(IEnumerable<DbgObject> objs) {
-			if (objs == null)
+			if (objs is null)
 				throw new ArgumentNullException(nameof(objs));
 			lock (lockObj) {
 				if (IsClosed)
@@ -296,7 +287,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		public override void CloseOnExit(IEnumerable<DbgObject> objs) {
-			if (objs == null)
+			if (objs is null)
 				throw new ArgumentNullException(nameof(objs));
 			lock (lockObj) {
 				if (IsClosed)
@@ -307,7 +298,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		public override void CloseOnExit(IEnumerable<IDisposable> objs) {
-			if (objs == null)
+			if (objs is null)
 				throw new ArgumentNullException(nameof(objs));
 			lock (lockObj) {
 				if (!IsClosed) {

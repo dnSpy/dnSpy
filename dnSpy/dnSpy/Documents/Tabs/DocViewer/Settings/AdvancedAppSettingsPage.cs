@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,6 +32,6 @@ namespace dnSpy.Documents.Tabs.DocViewer.Settings {
 			: base(options) {
 		}
 
-		public override string[] GetSearchStrings() => BlockStructureLineKindVM.Items.Select(a => a.Name).ToArray();
+		public override string[]? GetSearchStrings() => BlockStructureLineKindVM.Items.Select(a => a.Name).ToArray();
 	}
 }

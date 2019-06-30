@@ -226,10 +226,10 @@
     <value>Der Typ konnte nicht aufgelöst werden. Stellen Sie sicher, dass dessen Assembly bereits geladen wurde.</value>
   </data>
   <data name="CreateAssemblyCommand" xml:space="preserve">
-    <value>Erstelle Assembly...</value>
+    <value>Assembly erstellen...</value>
   </data>
   <data name="CreateAssemblyCommand2" xml:space="preserve">
-    <value>Erstelle Assembly</value>
+    <value>Assembly erstellen</value>
   </data>
   <data name="CreateConstant_Title" xml:space="preserve">
     <value>Erstelle Konstante</value>
@@ -238,16 +238,16 @@
     <value>Erstelle benutzerdefiniertes Attribut</value>
   </data>
   <data name="CreateEventCommand" xml:space="preserve">
-    <value>Erstelle Event...</value>
+    <value>Ereignis erstellen...</value>
   </data>
   <data name="CreateEventCommand2" xml:space="preserve">
-    <value>Erstelle Event</value>
+    <value>Ereignis erstellen</value>
   </data>
   <data name="CreateFieldCommand" xml:space="preserve">
-    <value>Erstelle Feld...</value>
+    <value>Feld erstellen...</value>
   </data>
   <data name="CreateFieldCommand2" xml:space="preserve">
-    <value>Erstelle Feld</value>
+    <value>Feld erstellen</value>
   </data>
   <data name="CreateFieldTypeSig" xml:space="preserve">
     <value>Erstelle TypeSig Feld</value>
@@ -320,10 +320,10 @@
     <comment>the delete key</comment>
   </data>
   <data name="DeleteEventCommand" xml:space="preserve">
-    <value>Lösche Event</value>
+    <value>Ereignis löschen</value>
   </data>
   <data name="DeleteEvents" xml:space="preserve">
-    <value>Lösche {0} Events</value>
+    <value>{0} Ereignisse löschen</value>
   </data>
   <data name="DeleteFieldCommand" xml:space="preserve">
     <value>Lösche Feld</value>
@@ -338,25 +338,25 @@
     <value>Deaktiviere Memory Mapped I/O</value>
   </data>
   <data name="EditAssemblyCommand" xml:space="preserve">
-    <value>Bearbeite Assembly...</value>
+    <value>Assembly bearbeiten...</value>
   </data>
   <data name="EditAssemblyCommand2" xml:space="preserve">
-    <value>Bearbeite Assembly</value>
+    <value>Assembly bearbeiten</value>
   </data>
   <data name="EditCustomAttribute" xml:space="preserve">
     <value>Bearbeite benutzerdefiniertes Attribut</value>
   </data>
   <data name="EditEventCommand" xml:space="preserve">
-    <value>Bearbeite Event...</value>
+    <value>Ereignis bearbeiten...</value>
   </data>
   <data name="EditEventCommand2" xml:space="preserve">
-    <value>Bearbeite Event</value>
+    <value>Ereignis bearbeiten</value>
   </data>
   <data name="EditFieldCommand" xml:space="preserve">
-    <value>Bearbeite Feld...</value>
+    <value>Feld bearbeiten...</value>
   </data>
   <data name="EditFieldCommand2" xml:space="preserve">
-    <value>Bearbeite Feld</value>
+    <value>Feld bearbeiten</value>
   </data>
   <data name="EditGenericParameter" xml:space="preserve">
     <value>Bearbeite generische Parameter</value>
@@ -392,7 +392,7 @@
     <value>&lt;Fehler&gt;</value>
   </data>
   <data name="EventType" xml:space="preserve">
-    <value>Event Typ: {0}</value>
+    <value>Ereignistyp: {0}</value>
   </data>
   <data name="Event_ClearCharacter" xml:space="preserve">
     <value>C</value>
@@ -409,33 +409,6 @@
   <data name="Event_RemoveMethod" xml:space="preserve">
     <value>_Entfernen...</value>
   </data>
-  <data name="Event_RTSpecialName" xml:space="preserve">
-    <value>_RTSpecialName</value>
-  </data>
-  <data name="Event_SpecialName" xml:space="preserve">
-    <value>_SpecialName</value>
-  </data>
-  <data name="FieldAccess_Assembly" xml:space="preserve">
-    <value>Assembly</value>
-  </data>
-  <data name="FieldAccess_Family" xml:space="preserve">
-    <value>Family</value>
-  </data>
-  <data name="FieldAccess_FamilyAndAssembly" xml:space="preserve">
-    <value>Family und Assembly</value>
-  </data>
-  <data name="FieldAccess_FamilyOrAssembly" xml:space="preserve">
-    <value>Family oder Assembly</value>
-  </data>
-  <data name="FieldAccess_Private" xml:space="preserve">
-    <value>Privat</value>
-  </data>
-  <data name="FieldAccess_PrivateScope" xml:space="preserve">
-    <value>PrivateScope</value>
-  </data>
-  <data name="FieldAccess_Public" xml:space="preserve">
-    <value>Öffentlich</value>
-  </data>
   <data name="FieldType" xml:space="preserve">
     <value>Feldtyp: {0}</value>
   </data>
@@ -447,24 +420,6 @@
   </data>
   <data name="Field_Flags" xml:space="preserve">
     <value>Flags</value>
-  </data>
-  <data name="Field_Flags_InitOnly" xml:space="preserve">
-    <value>_InitOnly</value>
-  </data>
-  <data name="Field_Flags_Literal" xml:space="preserve">
-    <value>_Literal</value>
-  </data>
-  <data name="Field_Flags_NotSerialized" xml:space="preserve">
-    <value>NotSeriali_zed</value>
-  </data>
-  <data name="Field_Flags_RTSpecialName" xml:space="preserve">
-    <value>R_TSpecialName</value>
-  </data>
-  <data name="Field_Flags_SpecialName" xml:space="preserve">
-    <value>S_pecialName</value>
-  </data>
-  <data name="Field_Flags_Static" xml:space="preserve">
-    <value>_Statisch</value>
   </data>
   <data name="Field_InitialValue" xml:space="preserve">
     <value>Initial_wert</value>
@@ -539,22 +494,13 @@
     <value>Datei-Header</value>
   </data>
   <data name="HexNode_OptHeader32" xml:space="preserve">
-    <value>Optionaler Header (32-bit)</value>
+    <value>Optionaler Header (32-Bit)</value>
   </data>
   <data name="HexNode_OptHeader64" xml:space="preserve">
     <value>Optionaler Header (64-bit)</value>
   </data>
   <data name="ImplMapTab" xml:space="preserve">
     <value>ImplMap</value>
-  </data>
-  <data name="ImplMap_BestFit" xml:space="preserve">
-    <value>_BestFit</value>
-  </data>
-  <data name="ImplMap_CallingConvention" xml:space="preserve">
-    <value>CallCon_v</value>
-  </data>
-  <data name="ImplMap_CharacterSet" xml:space="preserve">
-    <value>C_harSet</value>
   </data>
   <data name="ImplMap_Enable" xml:space="preserve">
     <value>_Aktivieren</value>
@@ -564,18 +510,6 @@
   </data>
   <data name="ImplMap_Name" xml:space="preserve">
     <value>_Name</value>
-  </data>
-  <data name="ImplMap_NoMangle" xml:space="preserve">
-    <value>No_Mangle</value>
-  </data>
-  <data name="ImplMap_SupportsLastError" xml:space="preserve">
-    <value>Supports_LastError</value>
-  </data>
-  <data name="ImplMap_ThrowOn_SHORT" xml:space="preserve">
-    <value>_ThrowOn...</value>
-  </data>
-  <data name="ImplMap_ThrowOn_ToolTip" xml:space="preserve">
-    <value>ThrowOnUnmappableChar</value>
   </data>
   <data name="MainTab" xml:space="preserve">
     <value>Hauptmenü</value>
@@ -697,12 +631,6 @@
   <data name="MethodSig_CallingConv" xml:space="preserve">
     <value>Ca_lling Conv</value>
   </data>
-  <data name="MethodSig_ExplicitThis" xml:space="preserve">
-    <value>E_xplicitThis</value>
-  </data>
-  <data name="MethodSig_HasThis" xml:space="preserve">
-    <value>_HasThis</value>
-  </data>
   <data name="MethodSig_MethodParameterTypes" xml:space="preserve">
     <value>Methoden Parameter Typen</value>
   </data>
@@ -809,10 +737,10 @@
     <value>&lt;raw blob&gt;</value>
   </data>
   <data name="RemoveAssembliesCommand" xml:space="preserve">
-    <value>Entferne {0} Assemblys</value>
+    <value>{0} Assemblys entfernen</value>
   </data>
   <data name="RemoveAssemblyCommand" xml:space="preserve">
-    <value>Entferne Assembly</value>
+    <value>Assembly entfernen</value>
   </data>
   <data name="RemoveCharacter" xml:space="preserve">
     <value>R</value>
@@ -821,7 +749,7 @@
     <value>Entfernt das letzte Objekt</value>
   </data>
   <data name="RemoveCommand" xml:space="preserve">
-    <value>Entferne {0}</value>
+    <value>{0} entfernen</value>
   </data>
   <data name="RemoveLastTypeCharacter" xml:space="preserve">
     <value>R</value>
@@ -1004,10 +932,10 @@
     <value>_XML</value>
   </data>
   <data name="AddExistingNetModuleToAssemblyCommand" xml:space="preserve">
-    <value>Füge vorhandenes NetModule der Assembly hinzu...</value>
+    <value>Vorhandenes NetModule der Assembly hinzufügen...</value>
   </data>
   <data name="AddExistingNetModuleToAssemblyCommand2" xml:space="preserve">
-    <value>Füge vorhandenes NetModule der Assembly hinzu</value>
+    <value>Vorhandenes NetModule der Assembly hinzufügen</value>
   </data>
   <data name="AddNewNetModuleToAssemblyCommand" xml:space="preserve">
     <value>Neues NetModule in Assembly hinzufügen...</value>
@@ -1019,20 +947,20 @@
     <value>Alle Dateien</value>
   </data>
   <data name="AskCancelSave" xml:space="preserve">
-    <value>Sind Sie sicher, dass Sie den Speichervorgang abbrechen möchten?</value>
+    <value>Möchten Sie den Speichervorgang wirklich abbrechen?</value>
   </data>
   <data name="AskCancelSaveCloseWindow" xml:space="preserve">
     <value>Der Speichervorgang wird abgebrochen.
-Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
+Möchten Sie das Fenster wirklich schließen?</value>
   </data>
   <data name="AskDeleteField" xml:space="preserve">
-    <value>Code in einer anderen Assembly könnte auf dieses Feld verweisen. Sind Sie sicher, dass Sie das Feld löschen möchten?</value>
+    <value>Code in einer anderen Assembly könnte auf dieses Feld verweisen. Möchten Sie das Feld wirklich löschen?</value>
   </data>
   <data name="AskDeleteMethod" xml:space="preserve">
-    <value>Code in einer anderen Assembly könnte auf diese Methode verweisen. Sind Sie sicher, dass Sie die Methode löschen möchten?</value>
+    <value>Code in einer anderen Assembly könnte auf diese Methode verweisen. Möchten Sie die Methode wirklich löschen?</value>
   </data>
   <data name="AskDeleteType" xml:space="preserve">
-    <value>Code in einer anderen Assembly könnte auf diesen Typ verweisen. Sind Sie sicher, dass Sie den Typ löschen möchten?</value>
+    <value>Code in einer anderen Assembly könnte auf diesen Typ verweisen. Möchten Sie den Typ wirklich löschen?</value>
   </data>
   <data name="AskExitUnsavedFile" xml:space="preserve">
     <value>Es gibt eine nicht gespeicherte Datei. Möchten Sie sie vor dem Beenden speichern?</value>
@@ -1041,10 +969,10 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Es gibt {0} nicht gespeicherte Dateien. Möchten Sie sie vor dem Beenden speichern?</value>
   </data>
   <data name="AskLoadAssembliesLoseChanges" xml:space="preserve">
-    <value>Sind Sie sicher, dass Sie neue Assemblys laden und alle Änderungen verwerfen möchten?</value>
+    <value>Möchten Sie wirklich neue Assemblys laden und alle Änderungen verwerfen?</value>
   </data>
   <data name="AskReloadAssembliesLoseChanges" xml:space="preserve">
-    <value>Sind Sie sicher, dass Sie alle Assemblys neu laden und alle Änderungen verwerfen möchten?</value>
+    <value>Möchten Sie wirklich alle Assemblys neu laden und alle Änderungen verwerfen?</value>
   </data>
   <data name="AskSaveFile" xml:space="preserve">
     <value>Die Datei wurde noch nicht gespeichert. Möchten Sie sie speichern bevor Sie fortfahren?</value>
@@ -1065,16 +993,16 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Assembly</value>
   </data>
   <data name="ConvAssemblyToNetModuleCommand" xml:space="preserve">
-    <value>Konvertiere Assembly zu NetModule</value>
+    <value>Assembly zu NetModule konvertieren</value>
   </data>
   <data name="ConvertUncondBranchCommand" xml:space="preserve">
-    <value>Konvertiere zu bedingungslosen Zweig</value>
+    <value>Zu _bedingungslosen Zweig konvertieren</value>
   </data>
   <data name="ConvertUncondBranchesCommand" xml:space="preserve">
-    <value>Konvertiere zu bedingungslosen Zweigen</value>
+    <value>Zu _bedingungslosen Zweigen konvertieren</value>
   </data>
   <data name="ConvNetModuleToAssemblyCommand" xml:space="preserve">
-    <value>Konvertiere NetModule zu Assembly</value>
+    <value>NetModule zu Assembly konvertieren</value>
   </data>
   <data name="CopyAsTextCommand2" xml:space="preserve">
     <value>Als _Text kopieren</value>
@@ -1101,40 +1029,40 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Erstelle einen Ausnahmefangtyp</value>
   </data>
   <data name="CreateAssemblyLinkedResourceCommand" xml:space="preserve">
-    <value>Erstelle verlinkte Assembly Resource...</value>
+    <value>Assemblyverweis Ressource erstellen...</value>
   </data>
   <data name="CreateAssemblyLinkedResourceCommand2" xml:space="preserve">
-    <value>Erstelle verlinkte Assembly Resource</value>
+    <value>Assemblyverweis Ressource erstellen</value>
   </data>
   <data name="CreateBitMapIconResourceCommand" xml:space="preserve">
-    <value>Erstelle System.Data.Bitmap/Icon Resource...</value>
+    <value>System.Data.Bitmap/Icon Ressource erstellen...</value>
   </data>
   <data name="CreateBitMapIconResourceCommand2" xml:space="preserve">
-    <value>Erstelle System.Data.Bitmap/Icon Resource</value>
+    <value>System.Data.Bitmap/Icon Ressource erstellen</value>
   </data>
   <data name="CreateByteArrayResourceCommand" xml:space="preserve">
-    <value>Erstelle Byte Array Ressource...</value>
+    <value>Byte Array Ressource erstellen...</value>
   </data>
   <data name="CreateByteArrayResourceCommand2" xml:space="preserve">
-    <value>Erstelle Byte Array Ressource</value>
+    <value>Byte Array Ressource erstellen</value>
   </data>
   <data name="CreateFileLinkedResourceCommand" xml:space="preserve">
-    <value>Erstelle verknüpfte Datei Resource...</value>
+    <value>Dateiverweis Ressource erstellen...</value>
   </data>
   <data name="CreateFileLinkedResourceCommand2" xml:space="preserve">
-    <value>Erstelle verknüpfte Datei Resource</value>
+    <value>Dateiverweis Ressource erstellen</value>
   </data>
   <data name="CreateFileResourceCommand" xml:space="preserve">
-    <value>Erstelle Datei Ressource...</value>
+    <value>Datei Ressource erstellen...</value>
   </data>
   <data name="CreateFileResourceCommand2" xml:space="preserve">
-    <value>Erstelle Datei Ressource</value>
+    <value>Datei Ressource erstellen</value>
   </data>
   <data name="CreateImageListStreamerResourceCommand" xml:space="preserve">
-    <value>Erstelle System.Windows.Forms.ImageListStream Ressource...</value>
+    <value>System.Windows.Forms.ImageListStream Ressource erstellen...</value>
   </data>
   <data name="CreateImageListStreamerResourceCommand2" xml:space="preserve">
-    <value>Erstelle System.Windows.Forms.ImageListStream Ressource</value>
+    <value>System.Windows.Forms.ImageListStream Ressource erstellen</value>
   </data>
   <data name="CreateInterfaceImpl" xml:space="preserve">
     <value>Erstelle Schnittstellenimplementation</value>
@@ -1143,115 +1071,115 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Erstelle lokalen Typ</value>
   </data>
   <data name="CreateMethodCommand" xml:space="preserve">
-    <value>Erstelle Methode...</value>
+    <value>Methode erstellen...</value>
   </data>
   <data name="CreateMethodCommand2" xml:space="preserve">
-    <value>Erstelle Methode</value>
+    <value>Methode erstellen</value>
   </data>
   <data name="CreateMethodSig" xml:space="preserve">
     <value>Erstelle Methodensignatur</value>
   </data>
   <data name="CreateMultiFileResourceCommand" xml:space="preserve">
-    <value>Erstelle Multi-Datei Ressource...</value>
+    <value>Multi-Datei Ressource erstellen...</value>
   </data>
   <data name="CreateMultiFileResourceCommand2" xml:space="preserve">
-    <value>Erstelle Multi-Datei Ressource</value>
+    <value>Multi-Datei Ressource erstellen</value>
   </data>
   <data name="CreateNestedTypeCommand" xml:space="preserve">
-    <value>Erstelle geschachtelten Typ...</value>
+    <value>Geschachtelten Typ erstellen...</value>
   </data>
   <data name="CreateNestedTypeCommand2" xml:space="preserve">
-    <value>Erstelle geschachtelten Typ</value>
+    <value>Geschachtelten Typ erstellen</value>
   </data>
   <data name="CreateNetModuleCommand" xml:space="preserve">
-    <value>Erstelle NetModule...</value>
+    <value>NetModule erstellen...</value>
   </data>
   <data name="CreateNetModuleCommand2" xml:space="preserve">
-    <value>Erstelle NetModule</value>
+    <value>NetModule erstellen</value>
   </data>
   <data name="CreatePropertyCommand" xml:space="preserve">
-    <value>Erstelle Eigenschaft...</value>
+    <value>Eigenschaft erstellen...</value>
   </data>
   <data name="CreatePropertyCommand2" xml:space="preserve">
-    <value>Erstelle Eigenschaft</value>
+    <value>Eigenschaft erstellen</value>
   </data>
   <data name="CreateResourceCommand" xml:space="preserve">
-    <value>Erstelle Ressource...</value>
+    <value>Ressource erstellen...</value>
   </data>
   <data name="CreateResourceCommand2" xml:space="preserve">
-    <value>Erstelle Ressource</value>
+    <value>Ressource erstellen</value>
   </data>
   <data name="CreateStreamResourceCommand" xml:space="preserve">
-    <value>Erstelle System.IO.Stream Ressource...</value>
+    <value>System.IO.Stream Ressource erstellen...</value>
   </data>
   <data name="CreateStreamResourceCommand2" xml:space="preserve">
-    <value>Erstelle System.IO.Stream Ressource</value>
+    <value>System.IO.Stream Ressource erstellen</value>
   </data>
   <data name="CreateTypeCommand" xml:space="preserve">
-    <value>Erstelle Typ...</value>
+    <value>Typ erstellen...</value>
   </data>
   <data name="CreateTypeCommand2" xml:space="preserve">
-    <value>Erstelle Typ</value>
+    <value>Typ erstellen</value>
   </data>
   <data name="DeleteMethodCommand" xml:space="preserve">
-    <value>Lösche Methode</value>
+    <value>Methode löschen</value>
   </data>
   <data name="DeleteMethodsCommand" xml:space="preserve">
-    <value>Lösche {0} Methoden</value>
+    <value>{0} Methoden löschen</value>
   </data>
   <data name="DeleteNamespaceCommand" xml:space="preserve">
-    <value>Lösche Namensraum</value>
+    <value>Namensraum löschen</value>
   </data>
   <data name="DeleteNamespacesCommand" xml:space="preserve">
-    <value>Lösche {0} Namensräume</value>
+    <value>{0} Namensräume löschen</value>
   </data>
   <data name="DeletePropertiesCommand" xml:space="preserve">
-    <value>Lösche {0} Eigenschaften</value>
+    <value>{0} Eigenschaften löschen</value>
   </data>
   <data name="DeletePropertyCommand" xml:space="preserve">
-    <value>Lösche Eigenschaft</value>
+    <value>Eigenschaft löschen</value>
   </data>
   <data name="DeleteResourceCommand" xml:space="preserve">
-    <value>Lösche Ressource</value>
+    <value>Ressource löschen</value>
   </data>
   <data name="DeleteResourcesCommand" xml:space="preserve">
-    <value>Lösche {0} Ressourcen</value>
+    <value>{0} Ressourcen löschen</value>
   </data>
   <data name="DeleteTypeCommand" xml:space="preserve">
-    <value>Lösche Typ</value>
+    <value>Typ löschen</value>
   </data>
   <data name="DeleteTypesCommand" xml:space="preserve">
-    <value>Lösche {0} Typen</value>
+    <value>{0} Typen löschen</value>
   </data>
   <data name="EditFieldMemberRef" xml:space="preserve">
     <value>Bearbeite Feld Memberverweis</value>
   </data>
   <data name="EditILInstructionsCommand" xml:space="preserve">
-    <value>Bearbeite IL Instruktione_n...</value>
+    <value>IL Instruktione_n bearbeiten...</value>
   </data>
   <data name="EditInterfaceImpl" xml:space="preserve">
     <value>Bearbeite Schnittstellenimplementation</value>
   </data>
   <data name="EditMethodBodyCommand" xml:space="preserve">
-    <value>Bearbeite Methodenrumpf...</value>
+    <value>Methodenrumpf bearbeiten...</value>
   </data>
   <data name="EditMethodBodyCommand2" xml:space="preserve">
-    <value>Bearbeite Methodenrumpf</value>
+    <value>Methodenrumpf bearbeiten</value>
   </data>
   <data name="EditMethodCommand" xml:space="preserve">
-    <value>Bearbeite Methode...</value>
+    <value>Methode bearbeiten...</value>
   </data>
   <data name="EditMethodCommand2" xml:space="preserve">
-    <value>Bearbeite Methode</value>
+    <value>Methode bearbeiten</value>
   </data>
   <data name="EditMethodMemberRef" xml:space="preserve">
     <value>Bearbeite Methoden Memberverweis</value>
   </data>
   <data name="EditModuleCommand" xml:space="preserve">
-    <value>Bearbeite Modul...</value>
+    <value>Modul bearbeiten...</value>
   </data>
   <data name="EditModuleCommand2" xml:space="preserve">
-    <value>Bearbeite Modul</value>
+    <value>Modul bearbeiten</value>
   </data>
   <data name="EditNamespace" xml:space="preserve">
     <value>Bearbeite Namensraum</value>
@@ -1278,16 +1206,16 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Typ_spezifikation...</value>
   </data>
   <data name="EditPropertyCommand" xml:space="preserve">
-    <value>Bearbeite Eigenschaft...</value>
+    <value>Eigenschaft bearbeiten...</value>
   </data>
   <data name="EditPropertyCommand2" xml:space="preserve">
-    <value>Bearbeite Eigenschaft</value>
+    <value>Eigenschaft bearbeiten</value>
   </data>
   <data name="EditResourceCommand" xml:space="preserve">
-    <value>Bearbeite Ressource...</value>
+    <value>Ressource bearbeiten...</value>
   </data>
   <data name="EditResourceCommand2" xml:space="preserve">
-    <value>Bearbeite Ressource</value>
+    <value>Ressource bearbeiten</value>
   </data>
   <data name="EditResource_ContainsNoMetadata" xml:space="preserve">
     <value>_Enthält keine Metadaten</value>
@@ -1299,13 +1227,13 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>_Hash</value>
   </data>
   <data name="EditSwitchInstructionOperand" xml:space="preserve">
-    <value>Bearbeite Switch Operand</value>
+    <value>Switch Operand bearbeiten</value>
   </data>
   <data name="EditTypeCommand" xml:space="preserve">
-    <value>Bearbeite Typ...</value>
+    <value>Typ bearbeiten...</value>
   </data>
   <data name="EditTypeCommand2" xml:space="preserve">
-    <value>Bearbeite Typ</value>
+    <value>Typ bearbeiten</value>
   </data>
   <data name="EH_Command1" xml:space="preserve">
     <value>Neuen Ausnahmebehandler vor Auswahl hinzufügen</value>
@@ -1314,16 +1242,16 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Neuen Ausnahmebehandler nach Auswahl hinzufügen</value>
   </data>
   <data name="EH_Command3" xml:space="preserve">
-    <value>_Füge neuen Ausnahmebehandler an</value>
+    <value>Neuen Ausnahmebehandler an_fügen</value>
   </data>
   <data name="EH_Command4" xml:space="preserve">
-    <value>_Entferne Ausnahmebehandler</value>
+    <value>Ausnahmebehandler _entfernen</value>
   </data>
   <data name="EH_Command5" xml:space="preserve">
-    <value>_Entferne Ausnahmebehandler</value>
+    <value>Ausnahmebehandler _entfernen</value>
   </data>
   <data name="EH_Command6" xml:space="preserve">
-    <value>_Entferne alle Ausnahmebehandler</value>
+    <value>Alle Ausnahmebehandler _entfernen</value>
   </data>
   <data name="EmptyFilename" xml:space="preserve">
     <value>&lt;leere Dateiname&gt;</value>
@@ -1362,10 +1290,10 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Ein Ordner mit demselben Namen wie der Dateiname existiert bereits.</value>
   </data>
   <data name="Error_Filename_OnlyWhitespace" xml:space="preserve">
-    <value>Der Dateiname kann nicht nur Leerzeichen enthalten</value>
+    <value>Der Dateiname kann nicht nur aus Leerzeichen bestehen</value>
   </data>
   <data name="Error_Filename_ReservedOSFilename" xml:space="preserve">
-    <value>Der Dateiname ist ein reservierter Betriebssystem-Dateinamen und kann nicht verwendet werden.</value>
+    <value>Der Dateiname ist ein reservierter Betriebssystem-Dateiname und kann nicht verwendet werden.</value>
   </data>
   <data name="Error_Filename_TooLong" xml:space="preserve">
     <value>Dateiname ist zu lang.</value>
@@ -1380,7 +1308,7 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Kann die Daten nicht nutzen: {0}</value>
   </data>
   <data name="Error_LocalHasBeenRemoved" xml:space="preserve">
-    <value>Local wurde entfernt</value>
+    <value>Feld wurde entfernt</value>
   </data>
   <data name="Error_NewResourceDataMustBeImage" xml:space="preserve">
     <value>Neue Daten müssen ein Image sein. Fehler: {0}</value>
@@ -1410,7 +1338,7 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Operand muss eine Liste von Anweisungen sein</value>
   </data>
   <data name="Error_OpMustBeLocal" xml:space="preserve">
-    <value>Operand muss eine Lokale sein</value>
+    <value>Operand muss ein Feld sein</value>
   </data>
   <data name="Error_OpMustBeMethod" xml:space="preserve">
     <value>Operand muss eine Methode sein</value>
@@ -1527,22 +1455,22 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Neue Instruktion _anfügen</value>
   </data>
   <data name="Instr_Command4" xml:space="preserve">
-    <value>_Entferne Instruktion</value>
+    <value>Instruktion _entfernen</value>
   </data>
   <data name="Instr_Command5" xml:space="preserve">
-    <value>_Entferne Instruktionen</value>
+    <value>Instruktionen _entfernen</value>
   </data>
   <data name="Instr_Command6" xml:space="preserve">
-    <value>Remo_ve alle Anweisungen</value>
+    <value>Alle Instruktionen _entfernen</value>
   </data>
   <data name="InterfacesTab" xml:space="preserve">
     <value>Interfaces</value>
   </data>
   <data name="InvertBranchCommand" xml:space="preserve">
-    <value>_Invert branch</value>
+    <value>Zweig _invertieren</value>
   </data>
   <data name="InvertBranchesCommand" xml:space="preserve">
-    <value>_Invert Branches</value>
+    <value>Zweige _invertieren</value>
   </data>
   <data name="LocalName" xml:space="preserve">
     <value>Name</value>
@@ -1554,19 +1482,19 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Typ</value>
   </data>
   <data name="Local_Command1" xml:space="preserve">
-    <value>Neue Local vor Auswahl hinzufügen</value>
+    <value>Neues Feld vor Auswahl hinzufügen</value>
   </data>
   <data name="Local_Command2" xml:space="preserve">
-    <value>Neue Local nach Auswahl hinzufügen</value>
+    <value>Neues Feld nach Auswahl hinzufügen</value>
   </data>
   <data name="Local_Command3" xml:space="preserve">
-    <value>_Append Neue Lokale</value>
+    <value>Neues Feld _anfügen</value>
   </data>
   <data name="Local_Command4" xml:space="preserve">
-    <value>_Entferne Local</value>
+    <value>Feld _entfernen</value>
   </data>
   <data name="Local_Command5" xml:space="preserve">
-    <value>_Entferne Felder</value>
+    <value>Felder _entfernen</value>
   </data>
   <data name="Local_Command6" xml:space="preserve">
     <value>Alle Felder _entfernen</value>
@@ -1581,7 +1509,7 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>P</value>
   </data>
   <data name="Local_Pinned_Character_ToolTip" xml:space="preserve">
-    <value>Fixierte</value>
+    <value>Fixiert</value>
   </data>
   <data name="MDWriterOptionsTab" xml:space="preserve">
     <value>MD Schreiboptionen</value>
@@ -1611,13 +1539,10 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Felder _initialisieren</value>
   </data>
   <data name="MethodBody_KeepOldMaxStack" xml:space="preserve">
-    <value>_Keep alten MaxStack</value>
+    <value>MaxStac_k beibehalten</value>
   </data>
   <data name="MethodBody_KeepOldMaxStack_ToolTip" xml:space="preserve">
-    <value>Berechne nicht den MaxStack-Wert, beim Speichern der Datei</value>
-  </data>
-  <data name="MethodBody_LocalVariableSignatureToken" xml:space="preserve">
-    <value>_LocalVarSigTok</value>
+    <value>MaxStack-Wert beim Speichern der Datei nicht neu berechnen</value>
   </data>
   <data name="MethodBody_MaxStack" xml:space="preserve">
     <value>_MaxStack</value>
@@ -1668,7 +1593,7 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>N_ame</value>
   </data>
   <data name="MoveTypesToEmptyNamespaceCommand" xml:space="preserve">
-    <value>Verschiebe Typen zum leeren Namespace</value>
+    <value>Typen in leeren Namespace verschieben</value>
   </data>
   <data name="Namespace_Name" xml:space="preserve">
     <value>_Name</value>
@@ -1686,22 +1611,22 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>_NOP Instruktion</value>
   </data>
   <data name="NopInstrsCommand" xml:space="preserve">
-    <value>_NOP Instruktion</value>
+    <value>_NOP Instruktionen</value>
   </data>
   <data name="Offset" xml:space="preserve">
     <value>Offset</value>
   </data>
   <data name="OpenHexEditorCommand" xml:space="preserve">
-    <value>Öffne He_x-Editor</value>
+    <value>He_x-Editor öffnen</value>
   </data>
   <data name="OptimizeAllInstructionsCommand" xml:space="preserve">
-    <value>Optimi_ze alle Anweisungen</value>
+    <value>Alle Instruktionen _optimieren</value>
   </data>
   <data name="Padding" xml:space="preserve">
     <value>pad</value>
   </data>
   <data name="PasteRecordsCommand" xml:space="preserve">
-    <value>_Paste {0} Datensätze @ {1:X8}, RID {2}</value>
+    <value>{0} Datensätze @ {1:X8}, RID {2} _einfügen</value>
   </data>
   <data name="PropertyX" xml:space="preserve">
     <value>Eigenschaft: {0}</value>
@@ -1725,25 +1650,25 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Signatur</value>
   </data>
   <data name="RawSaveResourceCommand" xml:space="preserve">
-    <value>RAW speichern {0}</value>
+    <value>{0} roh speichern</value>
   </data>
   <data name="RawSaveResourcesCommand" xml:space="preserve">
-    <value>RAW speichern {0} Ressourcen</value>
+    <value>{0} Ressourcen roh speichern</value>
   </data>
   <data name="RawSaveResourcesSubDirectoriesCommand" xml:space="preserve">
-    <value>RAW speichern {0} Ressourcen, nutze Sub-dirs</value>
+    <value>{0} Ressourcen mit Unterverzeichnissen roh speichern</value>
   </data>
   <data name="RedoCommand" xml:space="preserve">
-    <value>Nochmal</value>
+    <value>Wiederholen</value>
   </data>
   <data name="RedoToolBarToolTip" xml:space="preserve">
-    <value>Nochmal</value>
+    <value>Wiederholen</value>
   </data>
   <data name="RemoveAndAddPopsCommand" xml:space="preserve">
-    <value>R_emove und Pops hinzufügen</value>
+    <value>_Entfernen und pop-Instruktionen hinzufügen</value>
   </data>
   <data name="RemoveNetModuleCommand" xml:space="preserve">
-    <value>Entferne NetModule von Assembly</value>
+    <value>NetModule von Assembly entfernen</value>
   </data>
   <data name="RenameNamespaceCommand" xml:space="preserve">
     <value>Namespace umbenennen</value>
@@ -1758,7 +1683,7 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>24-bit</value>
   </data>
   <data name="Resource_ColorDepth_32Bit" xml:space="preserve">
-    <value>32-bit</value>
+    <value>32-Bit</value>
   </data>
   <data name="Resource_ColorDepth_4Bit" xml:space="preserve">
     <value>4-bit</value>
@@ -1859,7 +1784,7 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>_Dateiname</value>
   </data>
   <data name="SaveModule_KeepOldMaxStack" xml:space="preserve">
-    <value>_Behalte alten MaxStack Wert bei</value>
+    <value>MaxStac_k Wert beibehalten</value>
   </data>
   <data name="SaveModule_KeepOldMaxStack_ToolTip" xml:space="preserve">
     <value>Verwenden Sie den MaxStack Wert von der Methode anstelle der Berechnung eines neuen MaxStack-Wert. Erforderlich, wenn die Methoden noch obfuskiert sind</value>
@@ -1913,7 +1838,7 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>{0} Ressourcen speichern</value>
   </data>
   <data name="SaveResourcesSubDirectoriesCommand" xml:space="preserve">
-    <value>{0} Ressourcen speichern, verwende Unterverzeichnisse</value>
+    <value>{0} Ressourcen mit Unterverzeichnissen speichern</value>
   </data>
   <data name="ShortCutKeyB" xml:space="preserve">
     <value>B</value>
@@ -1960,6 +1885,9 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
   <data name="ShortCutKeyP" xml:space="preserve">
     <value>P</value>
   </data>
+  <data name="ShortCutKeyR" xml:space="preserve">
+    <value>R</value>
+  </data>
   <data name="ShortCutKeyS" xml:space="preserve">
     <value>S</value>
   </data>
@@ -1967,22 +1895,22 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Umschalt+Alt+R</value>
   </data>
   <data name="ShowDataInHexEditorCommand" xml:space="preserve">
-    <value>Zeige Daten in He_x Editor</value>
+    <value>Daten im He_x Editor zeigen</value>
   </data>
   <data name="ShowInHexEditorCommand" xml:space="preserve">
-    <value>Zeige in He_x Editor</value>
+    <value>Im He_x Editor zeigen</value>
   </data>
   <data name="ShowInHexEditorCommand2" xml:space="preserve">
-    <value>Zeige in Hex Editor</value>
+    <value>Im Hex Editor zeigen</value>
   </data>
   <data name="ShowInitialValueInHexEditorCommand" xml:space="preserve">
-    <value>Zeige initialen Wert im Hex Editor</value>
+    <value>Initialen Wert im Hex Editor zeigen</value>
   </data>
   <data name="ShowInstrsInHexEditorCommand" xml:space="preserve">
-    <value>Zeige Instruktion in He_x Editor</value>
+    <value>Instruktionen im He_x Editor zeigen</value>
   </data>
   <data name="ShowMethodBodyInHexEditorCommand" xml:space="preserve">
-    <value>Zeige Methodenrumpf in Hex Editor</value>
+    <value>Methodenrumpf im Hex Editor zeigen</value>
   </data>
   <data name="SimplifyAllInstructionsCommand" xml:space="preserve">
     <value>Alle Instruktionen _vereinfachen</value>
@@ -2110,98 +2038,8 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
   <data name="Method_Access" xml:space="preserve">
     <value>Zugriff</value>
   </data>
-  <data name="Method_CodeType" xml:space="preserve">
-    <value>Cod_etyp</value>
-  </data>
-  <data name="Method_Flags_Abstract" xml:space="preserve">
-    <value>Abstrakt</value>
-  </data>
-  <data name="Method_Flags_CheckAccessOnOverride" xml:space="preserve">
-    <value>Chec_kAccessOnOverride</value>
-  </data>
-  <data name="Method_Flags_Final" xml:space="preserve">
-    <value>_Final</value>
-  </data>
-  <data name="Method_Flags_HideBySig" xml:space="preserve">
-    <value>Hi_deBySig</value>
-  </data>
-  <data name="Method_Flags_RequireSecObject" xml:space="preserve">
-    <value>Re_quireSecObject</value>
-  </data>
-  <data name="Method_Flags_RTSpecialName" xml:space="preserve">
-    <value>R_TSpecialName</value>
-  </data>
-  <data name="Method_Flags_SpecialName" xml:space="preserve">
-    <value>S_pecialName</value>
-  </data>
-  <data name="Method_Flags_Static" xml:space="preserve">
-    <value>_Statisch</value>
-  </data>
-  <data name="Method_Flags_UnmanagedExport" xml:space="preserve">
-    <value>UnmanagedE_xport</value>
-  </data>
-  <data name="Method_Flags_Virtual" xml:space="preserve">
-    <value>_Virtuell</value>
-  </data>
-  <data name="Method_ImplFlags" xml:space="preserve">
-    <value>ImplFlags</value>
-  </data>
-  <data name="Method_ImplFlags_AggressiveInlining" xml:space="preserve">
-    <value>A_ggressiveInlining</value>
-  </data>
-  <data name="Method_ImplFlags_ForwardRef" xml:space="preserve">
-    <value>For_wardRef</value>
-  </data>
-  <data name="Method_ImplFlags_InternalCall" xml:space="preserve">
-    <value>Interna_lCall</value>
-  </data>
-  <data name="Method_ImplFlags_NoInlining" xml:space="preserve">
-    <value>No_Inlining</value>
-  </data>
-  <data name="Method_ImplFlags_NoOptimization" xml:space="preserve">
-    <value>NoOptimi_zation</value>
-  </data>
-  <data name="Method_ImplFlags_PreserveSig" xml:space="preserve">
-    <value>Prese_rveSig</value>
-  </data>
-  <data name="Method_ImplFlags_Synchronized" xml:space="preserve">
-    <value>Synchronisiert</value>
-  </data>
-  <data name="Method_ManagedType" xml:space="preserve">
-    <value>_Verwalteter Typ</value>
-  </data>
-  <data name="Method_VtableLayout" xml:space="preserve">
-    <value>Vta_bleLayout</value>
-  </data>
-  <data name="Module_Cor20" xml:space="preserve">
-    <value>Cor20</value>
-  </data>
   <data name="Module_Cor20_RuntimeVersion" xml:space="preserve">
     <value>_Laufzeitversion</value>
-  </data>
-  <data name="Module_EncBaseId" xml:space="preserve">
-    <value>Enc_BaseId</value>
-  </data>
-  <data name="Module_EncId" xml:space="preserve">
-    <value>EncI_d</value>
-  </data>
-  <data name="Module_Flags_Bit32Preferred" xml:space="preserve">
-    <value>32-Bit _bevorzugt</value>
-  </data>
-  <data name="Module_Flags_Bit32Required" xml:space="preserve">
-    <value>_32-Bit bevorzugt</value>
-  </data>
-  <data name="Module_Flags_ILLibrary" xml:space="preserve">
-    <value>IL _Bibliothek</value>
-  </data>
-  <data name="Module_Flags_ILOnly" xml:space="preserve">
-    <value>Nur _IL</value>
-  </data>
-  <data name="Module_Flags_StrongNameSigned" xml:space="preserve">
-    <value>Mit _starken Name signiert</value>
-  </data>
-  <data name="Module_Flags_TrackDebugData" xml:space="preserve">
-    <value>_Verfolge Debug Daten</value>
   </data>
   <data name="Module_Metadata_HeaderVersion" xml:space="preserve">
     <value>_Header Version</value>
@@ -2209,23 +2047,8 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
   <data name="Module_Metadata_VersionString" xml:space="preserve">
     <value>_Versionszeichenfolge</value>
   </data>
-  <data name="Module_Mvid" xml:space="preserve">
-    <value>_Mvid</value>
-  </data>
-  <data name="Module_PE" xml:space="preserve">
-    <value>PE</value>
-  </data>
   <data name="Module_PE_Machine" xml:space="preserve">
     <value>_Maschine</value>
-  </data>
-  <data name="NetModule_Mvid" xml:space="preserve">
-    <value>_Mvid</value>
-  </data>
-  <data name="PE_Header_Characteristics" xml:space="preserve">
-    <value>Characteristics</value>
-  </data>
-  <data name="PE_Header_DllCharacteristics" xml:space="preserve">
-    <value>DllCharacteristics</value>
   </data>
   <data name="Property_Flags_RTSpecialName" xml:space="preserve">
     <value>_RTSpecialName</value>
@@ -2235,24 +2058,6 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
   </data>
   <data name="SaveModule_Cor20_EntryPoint" xml:space="preserve">
     <value>_Einstiegspunkt</value>
-  </data>
-  <data name="SaveModule_Cor20_Flags_Bit32Preferred" xml:space="preserve">
-    <value>32-Bit _bevorzugt</value>
-  </data>
-  <data name="SaveModule_Cor20_Flags_Bit32Required" xml:space="preserve">
-    <value>_32-Bit bevorzugt</value>
-  </data>
-  <data name="SaveModule_Cor20_Flags_ILLibrary" xml:space="preserve">
-    <value>IL _Bibliothek</value>
-  </data>
-  <data name="SaveModule_Cor20_Flags_ILOnly" xml:space="preserve">
-    <value>Nur _IL</value>
-  </data>
-  <data name="SaveModule_Cor20_Flags_StrongNameSigned" xml:space="preserve">
-    <value>Mit _starken Name signiert</value>
-  </data>
-  <data name="SaveModule_Cor20_Flags_TrackDebugData" xml:space="preserve">
-    <value>_Verfolge Debug Daten</value>
   </data>
   <data name="SaveModule_Cor20_MajorRuntimeVersion" xml:space="preserve">
     <value>_Majorversion der Laufzeit</value>
@@ -2304,54 +2109,6 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
   </data>
   <data name="SaveModule_TablesHeap_UseENC" xml:space="preserve">
     <value>_Use #-Tabelle</value>
-  </data>
-  <data name="Type_Flags_Abstract" xml:space="preserve">
-    <value>A_bstract</value>
-  </data>
-  <data name="Type_Flags_Accessibility" xml:space="preserve">
-    <value>Accessibilit_y</value>
-  </data>
-  <data name="Type_Flags_BeforeFieldInit" xml:space="preserve">
-    <value>BeforeFieldIni_t</value>
-  </data>
-  <data name="Type_Flags_Custom" xml:space="preserve">
-    <value>Custo_m</value>
-  </data>
-  <data name="Type_Flags_Forwarder" xml:space="preserve">
-    <value>_Forwarder</value>
-  </data>
-  <data name="Type_Flags_Import" xml:space="preserve">
-    <value>_Import</value>
-  </data>
-  <data name="Type_Flags_Kind" xml:space="preserve">
-    <value>_Kind</value>
-  </data>
-  <data name="Type_Flags_Layout" xml:space="preserve">
-    <value>Layo_ut</value>
-  </data>
-  <data name="Type_Flags_RTSpecialName" xml:space="preserve">
-    <value>_RTSpecialName</value>
-  </data>
-  <data name="Type_Flags_Sealed" xml:space="preserve">
-    <value>Seale_d</value>
-  </data>
-  <data name="Type_Flags_Semantics" xml:space="preserve">
-    <value>_Semantics</value>
-  </data>
-  <data name="Type_Flags_Serializable" xml:space="preserve">
-    <value>S_erializable</value>
-  </data>
-  <data name="Type_Flags_SpecialName" xml:space="preserve">
-    <value>S_pecialName</value>
-  </data>
-  <data name="Type_Flags_String" xml:space="preserve">
-    <value>Strin_g</value>
-  </data>
-  <data name="Type_Flags_Visibility" xml:space="preserve">
-    <value>Visibilit_y</value>
-  </data>
-  <data name="Type_Flags_WindowsRuntime" xml:space="preserve">
-    <value>_Windows Laufzeitumgebung</value>
   </data>
   <data name="CustomAttribute_NamedArg_Field" xml:space="preserve">
     <value>Feld</value>
@@ -2408,10 +2165,10 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Warnung</value>
   </data>
   <data name="AddAssemblyReferenceToolTip" xml:space="preserve">
-    <value>Verweis hinzufügen (Strg+O)</value>
+    <value>Verweis auf Assembly hinzufügen</value>
   </data>
   <data name="AddGacReferenceToolTip" xml:space="preserve">
-    <value>Verweis hinzufügen (GAC) (Strg+Umschalt+O)</value>
+    <value>Verweis auf Assembly (GAC) hinzufügen</value>
   </data>
   <data name="Error_CouldNotAddAssemblyReferences" xml:space="preserve">
     <value>Konnte den Verweis auf die Asssembly nicht hinzufügen.</value>
@@ -2474,7 +2231,7 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Mit Assembly zusammenführen</value>
   </data>
   <data name="EditAssemblyCode2" xml:space="preserve">
-    <value>Assemblyattribute bearbeiten ({0})...</value>
+    <value>Assemblyattribute ({0}) bearbeiten...</value>
   </data>
   <data name="EditCodeAddClass2" xml:space="preserve">
     <value>Klasse ({0}) hinzufügen...</value>
@@ -2502,5 +2259,53 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
   </data>
   <data name="ParamDef_Flags_Retval" xml:space="preserve">
     <value>Retval</value>
+  </data>
+  <data name="AddDocumentsToolTip" xml:space="preserve">
+    <value>Quellcode hinzufügen</value>
+  </data>
+  <data name="ShortCutKeyCtrlO" xml:space="preserve">
+    <value>Strg+O</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftA" xml:space="preserve">
+    <value>Strg+Umschalt+A</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftO" xml:space="preserve">
+    <value>Strg+Umschalt+O</value>
+  </data>
+  <data name="EditCodeAddClassMembers" xml:space="preserve">
+    <value>Klassenmember hinzufügen</value>
+  </data>
+  <data name="EditCodeAddClassMembers2" xml:space="preserve">
+    <value>Klassenmember ({0}) hinzufügen...</value>
+  </data>
+  <data name="SaveModule_PreserveOtherMetadataStreams" xml:space="preserve">
+    <value>Unbekannte Metadatenströme kopieren</value>
+  </data>
+  <data name="RerunNgenIfGacAssembly" xml:space="preserve">
+    <value>Starten Sie NGEN.exe, wenn diese Assembly im GAC installiert ist</value>
+  </data>
+  <data name="CompilerDlgTabTitle" xml:space="preserve">
+    <value>Compiler</value>
+  </data>
+  <data name="ReplaceNopsInstrCommand" xml:space="preserve">
+    <value>Mit NOPs e_rsetzen</value>
+  </data>
+  <data name="ReplaceNopsInstrsCommand" xml:space="preserve">
+    <value>Mit NOPs e_rsetzen</value>
+  </data>
+  <data name="Type_Flags_Accessibility" xml:space="preserve">
+    <value>Accessibilit_y</value>
+  </data>
+  <data name="Type_Flags_Kind" xml:space="preserve">
+    <value>_Kind</value>
+  </data>
+  <data name="Type_Flags_Layout" xml:space="preserve">
+    <value>Layo_ut</value>
+  </data>
+  <data name="Type_Flags_String" xml:space="preserve">
+    <value>Strin_g</value>
+  </data>
+  <data name="Type_Flags_Visibility" xml:space="preserve">
+    <value>Visibilit_y</value>
   </data>
 </root>

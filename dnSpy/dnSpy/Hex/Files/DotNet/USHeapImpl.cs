@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,23 +19,24 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Files;
 using dnSpy.Contracts.Hex.Files.DotNet;
 
 namespace dnSpy.Hex.Files.DotNet {
 	sealed class USHeapImpl : USHeap, IDotNetHeap {
-		public override DotNetMetadataHeaders Metadata => metadata;
-		DotNetMetadataHeaders metadata;
-		USString[] usStringInfos;
+		public override DotNetMetadataHeaders Metadata => metadata!;
+		DotNetMetadataHeaders? metadata;
+		USString[]? usStringInfos;
 
 		public USHeapImpl(HexBufferSpan span)
 			: base(span) {
 		}
 
-		public override ComplexData GetStructure(HexPosition position) {
+		public override ComplexData? GetStructure(HexPosition position) {
 			var info = GetStringInfo(position);
-			if (info != null)
+			if (!(info is null))
 				return new USHeapRecordData(Span.Buffer, info.Value.LengthSpan, info.Value.StringSpan, info.Value.TerminalByteSpan, this);
 
 			return null;
@@ -47,11 +48,12 @@ namespace dnSpy.Hex.Files.DotNet {
 			var index = GetIndex(position);
 			if (index < 0)
 				return null;
+			Debug.Assert(!(usStringInfos is null));
 			return usStringInfos[index];
 		}
 
 		void Initialize() {
-			if (usStringInfos != null)
+			if (!(usStringInfos is null))
 				return;
 			usStringInfos = CreateUSStringInfos();
 		}
@@ -85,9 +87,10 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		int GetIndex(HexPosition position) {
 			var array = usStringInfos;
-			if (array == null) {
+			if (array is null) {
 				Initialize();
 				array = usStringInfos;
+				Debug.Assert(!(array is null));
 			}
 			int lo = 0, hi = array.Length - 1;
 			while (lo <= hi) {
@@ -107,7 +110,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		void IDotNetHeap.SetMetadata(DotNetMetadataHeaders metadata) => this.metadata = metadata;
 	}
 
-	struct USString {
+	readonly struct USString {
 		public HexSpan FullSpan => HexSpan.FromBounds(LengthSpan.Start, TerminalByteSpan.End);
 		public HexSpan LengthSpan { get; }
 		public HexSpan StringSpan { get; }

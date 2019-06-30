@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -37,14 +37,12 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public bool DontShowSignatureFullName { get; set; }
 
 		public TypeSigCreatorOptions TypeSigCreatorOptions {
-			get { return typeSigCreatorOptions; }
-			set {
-				typeSigCreatorOptions = value ?? throw new ArgumentNullException(nameof(value));
-			}
+			get => typeSigCreatorOptions;
+			set => typeSigCreatorOptions = value ?? throw new ArgumentNullException(nameof(value));
 		}
 		TypeSigCreatorOptions typeSigCreatorOptions;
 
-		public MethodSigCreatorOptions(TypeSigCreatorOptions typeSigCreatorOptions) => TypeSigCreatorOptions = typeSigCreatorOptions;
+		public MethodSigCreatorOptions(TypeSigCreatorOptions typeSigCreatorOptions) => this.typeSigCreatorOptions = typeSigCreatorOptions;
 
 		public MethodSigCreatorOptions Clone() {
 			var clone = (MethodSigCreatorOptions)MemberwiseClone();

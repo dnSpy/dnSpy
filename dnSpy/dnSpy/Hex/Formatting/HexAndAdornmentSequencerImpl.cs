@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -51,21 +51,21 @@ namespace dnSpy.Hex.Formatting {
 		}
 
 		public override HexAndAdornmentCollection CreateHexAndAdornmentCollection(HexBufferLine line) {
-			if (line == null)
+			if (line is null)
 				throw new ArgumentNullException(nameof(line));
 			if (line.Buffer != hexView.Buffer)
 				throw new ArgumentException();
 			var lineSpan = line.TextSpan;
 
-			List<AdornmentElementAndSpan> adornmentList = null;
+			List<AdornmentElementAndSpan>? adornmentList = null;
 			foreach (var tagSpan in hexTagAggregator.GetAllTags(new HexTaggerContext(line, lineSpan))) {
-				if (adornmentList == null)
+				if (adornmentList is null)
 					adornmentList = new List<AdornmentElementAndSpan>();
 				adornmentList.Add(new AdornmentElementAndSpan(new HexAdornmentElementImpl(tagSpan), tagSpan.Span));
 			}
 
 			// Common case
-			if (adornmentList == null) {
+			if (adornmentList is null) {
 				var elem = new HexSequenceElementImpl(lineSpan);
 				return new HexAndAdornmentCollectionImpl(this, new[] { elem });
 			}
@@ -88,7 +88,7 @@ namespace dnSpy.Hex.Formatting {
 					sequenceList.Add(new HexSequenceElementImpl(textSpan));
 				if (info.Span.Start != end || (info.Span.Length == 0 && info.AdornmentElement.Affinity == VST.PositionAffinity.Predecessor)) {
 					bool canAppend = true;
-					if (lastAddedAdornment != null && lastAddedAdornment.Value.Span.End > info.Span.Start)
+					if (!(lastAddedAdornment is null) && lastAddedAdornment.Value.Span.End > info.Span.Start)
 						canAppend = false;
 					if (canAppend) {
 						sequenceList.Add(info.AdornmentElement);
@@ -119,7 +119,7 @@ namespace dnSpy.Hex.Formatting {
 			}
 		}
 
-		struct AdornmentElementAndSpan {
+		readonly struct AdornmentElementAndSpan {
 			public VST.Span Span { get; }
 			public HexAdornmentElementImpl AdornmentElement { get; }
 			public AdornmentElementAndSpan(HexAdornmentElementImpl adornmentElement, VST.Span span) {

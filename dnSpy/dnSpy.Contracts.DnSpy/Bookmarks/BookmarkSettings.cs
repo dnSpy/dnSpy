@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -40,10 +40,10 @@ namespace dnSpy.Contracts.Bookmarks {
 		/// </summary>
 		public ReadOnlyCollection<string> Labels { get; set; }
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(BookmarkSettings left, BookmarkSettings right) => left.Equals(right);
 		public static bool operator !=(BookmarkSettings left, BookmarkSettings right) => !left.Equals(right);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Compares this instance to <paramref name="other"/>
@@ -55,10 +55,10 @@ namespace dnSpy.Contracts.Bookmarks {
 			StringComparer.Ordinal.Equals(Name ?? string.Empty, other.Name ?? string.Empty) &&
 			LabelsEquals(Labels, other.Labels);
 
-		static bool LabelsEquals(ReadOnlyCollection<string> a, ReadOnlyCollection<string> b) {
-			if (a == null)
+		static bool LabelsEquals(ReadOnlyCollection<string>? a, ReadOnlyCollection<string>? b) {
+			if (a is null)
 				a = emptyLabels;
-			if (b == null)
+			if (b is null)
 				b = emptyLabels;
 			if (a == b)
 				return true;
@@ -84,7 +84,7 @@ namespace dnSpy.Contracts.Bookmarks {
 		/// </summary>
 		/// <param name="obj">Other instance</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is BookmarkSettings other && Equals(other);
+		public override bool Equals(object? obj) => obj is BookmarkSettings other && Equals(other);
 
 		/// <summary>
 		/// Gets the hash code

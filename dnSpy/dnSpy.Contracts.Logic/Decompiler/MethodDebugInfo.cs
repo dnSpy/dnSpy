@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,18 +19,27 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using dnlib.DotNet;
 
 namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
-	/// Method statements
+	/// Method debug info
 	/// </summary>
 	public sealed class MethodDebugInfo {
 		/// <summary>
+		/// Compiler name (<see cref="PredefinedCompilerNames"/>) or null
+		/// </summary>
+		public string? CompilerName { get; }
+
+		/// <summary>
 		/// Decompiler options version number
 		/// </summary>
-		public int DecompilerOptionsVersion { get; }
+		public int DecompilerSettingsVersion { get; }
+
+		/// <summary>
+		/// Gets the state machine kind
+		/// </summary>
+		public StateMachineKind StateMachineKind { get; }
 
 		/// <summary>
 		/// Gets the method
@@ -38,9 +47,24 @@ namespace dnSpy.Contracts.Decompiler {
 		public MethodDef Method { get; }
 
 		/// <summary>
-		/// Gets all statements, sorted by <see cref="BinSpan.Start"/>
+		/// Gets the kickoff method or null
+		/// </summary>
+		public MethodDef? KickoffMethod { get; }
+
+		/// <summary>
+		/// Gets the parameters. There could be missing parameters, in which case use <see cref="Method"/>. This array isn't sorted.
+		/// </summary>
+		public SourceParameter[] Parameters { get; }
+
+		/// <summary>
+		/// Gets all statements, sorted by <see cref="ILSpan.Start"/>
 		/// </summary>
 		public SourceStatement[] Statements { get; }
+
+		/// <summary>
+		/// Gets async info or null if none
+		/// </summary>
+		public AsyncMethodDebugInfo? AsyncInfo { get; }
 
 		/// <summary>
 		/// Gets the root scope
@@ -60,21 +84,30 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="decompilerOptionsVersion">Decompiler options version number. This version number should get incremented when the options change.</param>
+		/// <param name="compilerName">Compiler name (<see cref="PredefinedCompilerNames"/>) or null</param>
+		/// <param name="decompilerSettingsVersion">Decompiler settings version number. This version number should get incremented when the settings change.</param>
+		/// <param name="stateMachineKind">State machine kind</param>
 		/// <param name="method">Method</param>
+		/// <param name="kickoffMethod">Kickoff method or null</param>
+		/// <param name="parameters">Parameters or null</param>
 		/// <param name="statements">Statements</param>
 		/// <param name="scope">Root scope</param>
 		/// <param name="methodSpan">Method span or null to calculate it from <paramref name="statements"/></param>
-		public MethodDebugInfo(int decompilerOptionsVersion, MethodDef method, SourceStatement[] statements, MethodDebugScope scope, TextSpan? methodSpan) {
-			if (statements == null)
+		/// <param name="asyncMethodDebugInfo">Async info or null</param>
+		public MethodDebugInfo(string? compilerName, int decompilerSettingsVersion, StateMachineKind stateMachineKind, MethodDef method, MethodDef? kickoffMethod, SourceParameter[]? parameters, SourceStatement[] statements, MethodDebugScope scope, TextSpan? methodSpan, AsyncMethodDebugInfo? asyncMethodDebugInfo) {
+			if (statements is null)
 				throw new ArgumentNullException(nameof(statements));
+			CompilerName = compilerName;
 			Method = method ?? throw new ArgumentNullException(nameof(method));
+			KickoffMethod = kickoffMethod;
+			Parameters = parameters ?? Array.Empty<SourceParameter>();
 			if (statements.Length > 1)
 				Array.Sort(statements, SourceStatement.SpanStartComparer);
-			DecompilerOptionsVersion = decompilerOptionsVersion;
+			DecompilerSettingsVersion = decompilerSettingsVersion;
 			Statements = statements;
 			Scope = scope ?? throw new ArgumentNullException(nameof(scope));
 			Span = methodSpan ?? CalculateMethodSpan(statements) ?? new TextSpan(0, 0);
+			AsyncInfo = asyncMethodDebugInfo;
 		}
 
 		static TextSpan? CalculateMethodSpan(SourceStatement[] statements) {
@@ -87,77 +120,6 @@ namespace dnSpy.Contracts.Decompiler {
 					max = statement.TextSpan.End;
 			}
 			return min <= max ? TextSpan.FromBounds(min, max) : (TextSpan?)null;
-		}
-
-		/// <summary>
-		/// Gets step ranges
-		/// </summary>
-		/// <param name="sourceStatement">Source statement</param>
-		/// <returns></returns>
-		public uint[] GetRanges(SourceStatement sourceStatement) {
-			var list = new List<BinSpan>(GetUnusedBinSpans().Length + 1);
-			list.Add(sourceStatement.BinSpan);
-			list.AddRange(GetUnusedBinSpans());
-
-			var orderedList = BinSpan.OrderAndCompactList(list);
-			if (orderedList.Count == 0)
-				return Array.Empty<uint>();
-			var binSpanArray = new uint[orderedList.Count * 2];
-			for (int i = 0; i < orderedList.Count; i++) {
-				binSpanArray[i * 2 + 0] = orderedList[i].Start;
-				binSpanArray[i * 2 + 1] = orderedList[i].End;
-			}
-			return binSpanArray;
-		}
-
-		/// <summary>
-		/// Gets unused step ranges
-		/// </summary>
-		/// <returns></returns>
-		public uint[] GetUnusedRanges() {
-			var orderedList = GetUnusedBinSpans();
-			if (orderedList.Length == 0)
-				return Array.Empty<uint>();
-			var binSpanArray = new uint[orderedList.Length * 2];
-			for (int i = 0; i < orderedList.Length; i++) {
-				binSpanArray[i * 2 + 0] = orderedList[i].Start;
-				binSpanArray[i * 2 + 1] = orderedList[i].End;
-			}
-			return binSpanArray;
-		}
-
-		BinSpan[] GetUnusedBinSpans() {
-			if (cachedUnusedBinSpans != null)
-				return cachedUnusedBinSpans;
-			var list = new List<BinSpan>(Statements.Length);
-			foreach (var s in Statements)
-				list.Add(s.BinSpan);
-			return cachedUnusedBinSpans = GetUnusedBinSpans(list).ToArray();
-		}
-		BinSpan[] cachedUnusedBinSpans;
-
-		List<BinSpan> GetUnusedBinSpans(List<BinSpan> list) {
-			uint codeSize = (uint)Method.Body.GetCodeSize();
-			list = BinSpan.OrderAndCompact(list);
-			var res = new List<BinSpan>();
-			if (list.Count == 0) {
-				if (codeSize > 0)
-					res.Add(new BinSpan(0, codeSize));
-				return res;
-			}
-			uint prevEnd = 0;
-			for (int i = 0; i < list.Count; i++) {
-				var span = list[i];
-				Debug.Assert(span.Start >= prevEnd);
-				uint length = span.Start - prevEnd;
-				if (length > 0)
-					res.Add(new BinSpan(prevEnd, length));
-				prevEnd = span.End;
-			}
-			Debug.Assert(prevEnd <= codeSize);
-			if (prevEnd < codeSize)
-				res.Add(new BinSpan(prevEnd, codeSize - prevEnd));
-			return res;
 		}
 
 		/// <summary>
@@ -176,11 +138,16 @@ namespace dnSpy.Contracts.Decompiler {
 				if (statement.TextSpan.Start <= textPosition) {
 					if (textPosition < statement.TextSpan.End)
 						return statement;
-					if (textPosition == statement.TextSpan.End)
-						intersection = statement;
+					if (textPosition == statement.TextSpan.End) {
+						// If it matches more than one statement, pick the smallest one. More specifically,
+						// use the first statement if they're identical; that way we use the smallest
+						// IL offset since Statements is sorted by IL offset.
+						if (intersection is null || statement.TextSpan.Start > intersection.Value.TextSpan.Start)
+							intersection = statement;
+					}
 				}
 			}
-			if (intersection != null)
+			if (!(intersection is null))
 				return intersection;
 
 			var list = new List<SourceStatement>();
@@ -192,7 +159,7 @@ namespace dnSpy.Contracts.Decompiler {
 				var d = Math.Abs(a.TextSpan.Start - textPosition) - Math.Abs(b.TextSpan.Start - textPosition);
 				if (d != 0)
 					return d;
-				return (int)(a.BinSpan.Start - b.BinSpan.Start);
+				return (int)(a.ILSpan.Start - b.ILSpan.Start);
 			});
 			if (list.Count > 0)
 				return list[0];
@@ -206,10 +173,30 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <returns></returns>
 		public SourceStatement? GetSourceStatementByCodeOffset(uint ilOffset) {
 			foreach (var statement in Statements) {
-				if (statement.BinSpan.Start <= ilOffset && ilOffset < statement.BinSpan.End)
+				if (statement.ILSpan.Start <= ilOffset && ilOffset < statement.ILSpan.End)
 					return statement;
 			}
 			return null;
 		}
+	}
+
+	/// <summary>
+	/// State machine kind
+	/// </summary>
+	public enum StateMachineKind {
+		/// <summary>
+		/// Not a state machine
+		/// </summary>
+		None,
+
+		/// <summary>
+		/// Iterator method state machine
+		/// </summary>
+		IteratorMethod,
+
+		/// <summary>
+		/// Async method state machine
+		/// </summary>
+		AsyncMethod,
 	}
 }

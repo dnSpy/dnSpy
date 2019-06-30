@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,7 +35,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		[ImportingConstructor]
 		OpenDocumentListTextClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) => documentListMatchHighlightClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.DocumentListMatchHighlight);
 
-		public ITextClassifier Create(IContentType contentType) => new OpenDocumentListTextClassifier(documentListMatchHighlightClassificationType);
+		public ITextClassifier? Create(IContentType contentType) => new OpenDocumentListTextClassifier(documentListMatchHighlightClassificationType);
 	}
 
 	sealed class OpenDocumentListTextClassifier : ITextClassifier {
@@ -45,7 +45,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 
 		public IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context) {
 			var listContext = context as OpenDocumentListTextClassifierContext;
-			if (listContext == null)
+			if (listContext is null)
 				yield break;
 			if (listContext.Tag != PredefinedTextClassifierTags.DocListDialogName)
 				yield break;

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,7 +21,7 @@ namespace dnSpy.Contracts.Menus {
 	/// <summary>
 	/// Data passed to <see cref="IGuidObjectsProvider.GetGuidObjects(GuidObjectsProviderArgs)"/>
 	/// </summary>
-	public struct GuidObjectsProviderArgs {
+	public readonly struct GuidObjectsProviderArgs {
 		/// <summary>
 		/// The owner object (<see cref="IMenuItemContext.CreatorObject"/>)
 		/// </summary>

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 	/// <summary>
 	/// Module info
 	/// </summary>
-	public struct DbgModuleBreakpointInfo {
+	public readonly struct DbgModuleBreakpointInfo {
 		/// <summary>
 		/// Name of module
 		/// </summary>
@@ -38,6 +38,11 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 		/// true if in-memory
 		/// </summary>
 		public bool IsInMemory { get; }
+
+		/// <summary>
+		/// true if it was loaded, false if it was unloaded
+		/// </summary>
+		public bool IsLoaded { get; }
 
 		/// <summary>
 		/// Order
@@ -58,12 +63,14 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 		/// Constructor
 		/// </summary>
 		/// <param name="module">Module</param>
-		public DbgModuleBreakpointInfo(DbgModule module) {
-			if (module == null)
+		/// <param name="isLoaded">true if it was loaded, false if it was unloaded</param>
+		public DbgModuleBreakpointInfo(DbgModule module, bool isLoaded) {
+			if (module is null)
 				throw new ArgumentNullException(nameof(module));
 			ModuleName = module.Name ?? string.Empty;
 			IsDynamic = module.IsDynamic;
 			IsInMemory = module.IsInMemory;
+			IsLoaded = isLoaded;
 			Order = module.Order;
 			AppDomainName = module.AppDomain?.Name ?? string.Empty;
 			ProcessName = module.Process.Name;

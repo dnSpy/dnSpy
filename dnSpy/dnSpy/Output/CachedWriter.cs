@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,16 +34,16 @@ namespace dnSpy.Output {
 
 		public void Dispose() => Flush();
 		public void Write(IEnumerable<ColorAndText> text) => cachedList.AddRange(text);
-		public void Write(object color, string text) => cachedList.Add(new ColorAndText(color, text));
-		public void Write(TextColor color, string text) => cachedList.Add(new ColorAndText(color, text));
-		public void WriteLine(TextColor color, string text) => WriteLine(color.Box(), text);
+		public void Write(object color, string? text) => cachedList.Add(new ColorAndText(color, text ?? string.Empty));
+		public void Write(TextColor color, string? text) => cachedList.Add(new ColorAndText(color, text ?? string.Empty));
+		public void WriteLine(TextColor color, string? text) => WriteLine(color.Box(), text);
 
 		public void Flush() {
 			owner.Write(cachedList);
 			cachedList.Clear();
 		}
 
-		public void WriteLine(object color, string text) {
+		public void WriteLine(object color, string? text) {
 			Write(color, text);
 			Write(color, Environment.NewLine);
 		}

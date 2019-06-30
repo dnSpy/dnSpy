@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,9 +28,9 @@ namespace dnSpy.Settings.Fonts {
 		public override Guid ThemeGuid { get; }
 
 		public override FontFamily FontFamily {
-			get { return fontFamily; }
+			get => fontFamily;
 			set {
-				if (value == null)
+				if (value is null)
 					throw new ArgumentNullException(nameof(value));
 				if (fontFamily.Source != value.Source) {
 					fontFamily = value;
@@ -41,7 +41,7 @@ namespace dnSpy.Settings.Fonts {
 		FontFamily fontFamily;
 
 		public override double FontSize {
-			get { return fontSize; }
+			get => fontSize;
 			set {
 				var newValue = FontUtilities.FilterFontSize(value);
 				if (fontSize != newValue) {

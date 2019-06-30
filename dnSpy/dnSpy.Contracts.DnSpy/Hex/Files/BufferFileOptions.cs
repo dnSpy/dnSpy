@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,11 +23,11 @@ namespace dnSpy.Contracts.Hex.Files {
 	/// <summary>
 	/// <see cref="HexBufferFile"/> options
 	/// </summary>
-	public struct BufferFileOptions {
+	public readonly struct BufferFileOptions {
 		/// <summary>
 		/// true if this is a default instance that hasn't been initialized
 		/// </summary>
-		public bool IsDefault => Name == null;
+		public bool IsDefault => Name is null;
 
 		/// <summary>
 		/// Span of file

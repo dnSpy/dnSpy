@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,6 +24,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Contracts.Extension;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Debugger.Evaluation.ViewModel;
 
@@ -37,26 +38,44 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			Loader(Lazy<VariablesWindowOperations> variablesWindowOperations) => VariablesWindowControl.variablesWindowOperations = variablesWindowOperations;
 		}
 
-		public ListView ListView => treeViewContentPresenter.Content as ListView;
+		public ListView? ListView => treeViewContentPresenter.Content as ListView;
 		public VariablesWindowControl() => InitializeComponent();
-		public void SetTreeView(ITreeView treeView) {
-			var listView = (ListView)treeView?.UIObject;
+		public void SetTreeView(ITreeView treeView, VariablesWindowKind windowKind) {
+			var listView = (ListView?)treeView?.UIObject;
 			if (treeViewContentPresenter.Content == listView)
 				return;
 			if (treeViewContentPresenter.Content is UIElement oldElem)
 				oldElem.PreviewTextInput -= TreeView_PreviewTextInput;
-			if (listView != null)
+			if (!(listView is null))
 				listView.PreviewTextInput += TreeView_PreviewTextInput;
 			treeViewContentPresenter.Content = listView;
-			if (listView != null) {
+			if (!(listView is null)) {
+				AutomationPeerMemoryLeakWorkaround.SetEmptyCount(listView, GetEmptyCount(windowKind));
 				var gridView = (GridView)FindResource("GridView");
 				listView.View = gridView;
 			}
 		}
 
+		static int GetEmptyCount(VariablesWindowKind windowKind) {
+			switch (windowKind) {
+			case VariablesWindowKind.Watch:
+				// The edit text box is always present when the window is open
+				return 1;
+
+			case VariablesWindowKind.None:
+			case VariablesWindowKind.Locals:
+			case VariablesWindowKind.Autos:
+				return 0;
+
+			default:
+				Debug.Fail($"Unknown vars window kind: {windowKind}");
+				return 0;
+			}
+		}
+
 		void TreeView_PreviewTextInput(object sender, TextCompositionEventArgs e) {
-			Debug.Assert(variablesWindowOperations != null);
-			if (variablesWindowOperations == null)
+			Debug.Assert(!(variablesWindowOperations is null));
+			if (variablesWindowOperations is null)
 				return;
 			if (!(treeViewContentPresenter.Content is ListView listView) || listView.SelectedItems.Count != 1)
 				return;

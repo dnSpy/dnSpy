@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,7 +22,7 @@ using dnSpy.Contracts.Images;
 
 namespace dnSpy.Images {
 	static class ImageReferenceHelper {
-		public static ImageReference? GetImageReference(object item, string iconName) {
+		public static ImageReference? GetImageReference(object item, string? iconName) {
 			if (string.IsNullOrEmpty(iconName))
 				return null;
 			int colonIndex = iconName.IndexOf(':');

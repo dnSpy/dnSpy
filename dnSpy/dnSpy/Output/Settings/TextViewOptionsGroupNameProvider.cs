@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,7 +24,7 @@ using Microsoft.VisualStudio.Text.Editor;
 namespace dnSpy.Output.Settings {
 	[ExportTextViewOptionsGroupNameProvider]
 	sealed class TextViewOptionsGroupNameProvider : ITextViewOptionsGroupNameProvider {
-		public string TryGetGroupName(IWpfTextView textView) {
+		public string? TryGetGroupName(IWpfTextView textView) {
 			if (textView.Roles.Contains(PredefinedDsTextViewRoles.OutputTextPane))
 				return PredefinedTextViewGroupNames.OutputWindow;
 			return null;

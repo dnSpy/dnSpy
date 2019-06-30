@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,15 +30,12 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 	}
 
 	class ExportToProjectSettings : ViewModelBase, IExportToProjectSettings {
-		protected virtual void OnModified() { }
-
 		public ProjectVersion ProjectVersion {
-			get { return projectVersion; }
+			get => projectVersion;
 			set {
 				if (projectVersion != value) {
 					projectVersion = value;
 					OnPropertyChanged(nameof(ProjectVersion));
-					OnModified();
 				}
 			}
 		}
@@ -55,16 +52,12 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		ExportToProjectSettingsImpl(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			ProjectVersion = sect.Attribute<ProjectVersion?>(nameof(ProjectVersion)) ?? ProjectVersion;
-			disableSave = false;
+			PropertyChanged += ExportToProjectSettingsImpl_PropertyChanged;
 		}
-		readonly bool disableSave;
 
-		protected override void OnModified() {
-			if (disableSave)
-				return;
+		void ExportToProjectSettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(ProjectVersion), ProjectVersion);
 		}

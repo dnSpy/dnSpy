@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -40,7 +40,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 		public readonly StringBuilder XmlDoc_StringBuilder;
 
 		readonly Dictionary<ModuleDef, bool> hasXmlDocFile;
-		ModuleDef lastModule;
+		ModuleDef? lastModule;
 		bool lastModuleResult;
 
 		public AstBuilderState(int settingsVersion) {

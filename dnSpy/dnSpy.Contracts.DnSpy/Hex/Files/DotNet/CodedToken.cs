@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -127,7 +127,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <param name="bits">Number of bits used to encode token type</param>
 		/// <param name="tableTypes">All table types</param>
 		public CodedToken(int bits, Table[] tableTypes) {
-			if (tableTypes == null)
+			if (tableTypes is null)
 				throw new ArgumentNullException(nameof(tableTypes));
 			Bits = bits;
 			mask = (1 << bits) - 1;

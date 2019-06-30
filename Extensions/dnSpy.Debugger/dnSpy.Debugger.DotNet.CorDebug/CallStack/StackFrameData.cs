@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,11 +19,9 @@
 
 using System.Collections.Generic;
 using dnSpy.Contracts.Debugger.Engine.CallStack;
-using dnSpy.Debugger.DotNet.CorDebug.Text;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 	sealed class StackFrameData {
 		public readonly List<DbgEngineStackFrame> DbgEngineStackFrameList = new List<DbgEngineStackFrame>();
-		public readonly TypeOutputTextColorWriter TypeOutputTextColorWriter = new TypeOutputTextColorWriter();
 	}
 }

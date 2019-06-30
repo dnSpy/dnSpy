@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,10 +21,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using dnlib.IO;
 
 namespace dndbg.DotNet {
-	sealed class ProcessBinaryReader : IBinaryReader {
+	sealed class ProcessBinaryReader {
 		const int CACHE_SIZE = 0x100;
 		readonly IProcessReader reader;
 		readonly ulong baseAddress;
@@ -45,8 +44,8 @@ namespace dndbg.DotNet {
 		public long Length => long.MaxValue;
 
 		public long Position {
-			get { return (long)(address - baseAddress); }
-			set { address = baseAddress + (ulong)value; }
+			get => (long)(address - baseAddress);
+			set => address = baseAddress + (ulong)value;
 		}
 
 		public void Dispose() => (reader as IDisposable)?.Dispose();
@@ -64,7 +63,7 @@ namespace dndbg.DotNet {
 			return data;
 		}
 
-		public byte[] ReadBytesUntilByte(byte b) {
+		public byte[]? ReadBytesUntilByte(byte b) {
 			var list = new List<byte>();
 			var origAddr = address;
 			const int MAX_BYTES_TO_CHECK = 0x10000;

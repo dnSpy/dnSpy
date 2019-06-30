@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -37,6 +37,6 @@ namespace dnSpy.Scripting.Roslyn.Commands {
 		/// <param name="id">ID</param>
 		/// <param name="arguments">Arguments or null</param>
 		/// <returns></returns>
-		public static CommandInfo ToCommandInfo(this RoslynReplIds id, object arguments) => new CommandInfo(RoslynReplCommandConstants.RoslynReplGroup, (int)id, arguments);
+		public static CommandInfo ToCommandInfo(this RoslynReplIds id, object? arguments) => new CommandInfo(RoslynReplCommandConstants.RoslynReplGroup, (int)id, arguments);
 	}
 }

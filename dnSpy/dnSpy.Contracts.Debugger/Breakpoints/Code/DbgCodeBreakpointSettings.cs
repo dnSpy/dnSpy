@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -55,10 +55,10 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// </summary>
 		public ReadOnlyCollection<string> Labels { get; set; }
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DbgCodeBreakpointSettings left, DbgCodeBreakpointSettings right) => left.Equals(right);
 		public static bool operator !=(DbgCodeBreakpointSettings left, DbgCodeBreakpointSettings right) => !left.Equals(right);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Compares this instance to <paramref name="other"/>
@@ -73,10 +73,10 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 			Trace == other.Trace &&
 			LabelsEquals(Labels, other.Labels);
 
-		static bool LabelsEquals(ReadOnlyCollection<string> a, ReadOnlyCollection<string> b) {
-			if (a == null)
+		static bool LabelsEquals(ReadOnlyCollection<string>? a, ReadOnlyCollection<string>? b) {
+			if (a is null)
 				a = emptyLabels;
-			if (b == null)
+			if (b is null)
 				b = emptyLabels;
 			if (a == b)
 				return true;
@@ -102,7 +102,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// </summary>
 		/// <param name="obj">Other instance</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is DbgCodeBreakpointSettings other && Equals(other);
+		public override bool Equals(object? obj) => obj is DbgCodeBreakpointSettings other && Equals(other);
 
 		/// <summary>
 		/// Gets the hash code
@@ -135,7 +135,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// <summary>
 	/// Code breakpoint condition
 	/// </summary>
-	public struct DbgCodeBreakpointCondition : IEquatable<DbgCodeBreakpointCondition> {
+	public readonly struct DbgCodeBreakpointCondition : IEquatable<DbgCodeBreakpointCondition> {
 		/// <summary>
 		/// Condition kind
 		/// </summary>
@@ -156,10 +156,10 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 			Condition = condition ?? throw new ArgumentNullException(nameof(condition));
 		}
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DbgCodeBreakpointCondition left, DbgCodeBreakpointCondition right) => left.Equals(right);
 		public static bool operator !=(DbgCodeBreakpointCondition left, DbgCodeBreakpointCondition right) => !left.Equals(right);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Compares this instance to <paramref name="other"/>
@@ -173,7 +173,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// </summary>
 		/// <param name="obj">Other instance</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is DbgCodeBreakpointCondition other && Equals(other);
+		public override bool Equals(object? obj) => obj is DbgCodeBreakpointCondition other && Equals(other);
 
 		/// <summary>
 		/// Gets the hash code
@@ -211,7 +211,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// <summary>
 	/// Hit count
 	/// </summary>
-	public struct DbgCodeBreakpointHitCount : IEquatable<DbgCodeBreakpointHitCount> {
+	public readonly struct DbgCodeBreakpointHitCount : IEquatable<DbgCodeBreakpointHitCount> {
 		/// <summary>
 		/// Hit count kind
 		/// </summary>
@@ -232,10 +232,10 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 			Count = count;
 		}
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DbgCodeBreakpointHitCount left, DbgCodeBreakpointHitCount right) => left.Equals(right);
 		public static bool operator !=(DbgCodeBreakpointHitCount left, DbgCodeBreakpointHitCount right) => !left.Equals(right);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Compares this instance to <paramref name="other"/>
@@ -249,7 +249,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// </summary>
 		/// <param name="obj">Other instance</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is DbgCodeBreakpointHitCount other && Equals(other);
+		public override bool Equals(object? obj) => obj is DbgCodeBreakpointHitCount other && Equals(other);
 
 		/// <summary>
 		/// Gets the hash code
@@ -267,7 +267,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// <summary>
 	/// Code breakpoint filter
 	/// </summary>
-	public struct DbgCodeBreakpointFilter : IEquatable<DbgCodeBreakpointFilter> {
+	public readonly struct DbgCodeBreakpointFilter : IEquatable<DbgCodeBreakpointFilter> {
 		/// <summary>
 		/// Filter
 		/// </summary>
@@ -279,10 +279,10 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// <param name="filter">Filter</param>
 		public DbgCodeBreakpointFilter(string filter) => Filter = filter ?? throw new ArgumentNullException(nameof(filter));
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DbgCodeBreakpointFilter left, DbgCodeBreakpointFilter right) => left.Equals(right);
 		public static bool operator !=(DbgCodeBreakpointFilter left, DbgCodeBreakpointFilter right) => !left.Equals(right);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Compares this instance to <paramref name="other"/>
@@ -296,7 +296,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// </summary>
 		/// <param name="obj">Other instance</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is DbgCodeBreakpointFilter other && Equals(other);
+		public override bool Equals(object? obj) => obj is DbgCodeBreakpointFilter other && Equals(other);
 
 		/// <summary>
 		/// Gets the hash code
@@ -314,7 +314,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// <summary>
 	/// Code breakpoint trace message
 	/// </summary>
-	public struct DbgCodeBreakpointTrace : IEquatable<DbgCodeBreakpointTrace> {
+	public readonly struct DbgCodeBreakpointTrace : IEquatable<DbgCodeBreakpointTrace> {
 		/// <summary>
 		/// Message
 		/// </summary>
@@ -335,10 +335,10 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 			Continue = @continue;
 		}
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DbgCodeBreakpointTrace left, DbgCodeBreakpointTrace right) => left.Equals(right);
 		public static bool operator !=(DbgCodeBreakpointTrace left, DbgCodeBreakpointTrace right) => !left.Equals(right);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Compares this instance to <paramref name="other"/>
@@ -352,7 +352,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// </summary>
 		/// <param name="obj">Other instance</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is DbgCodeBreakpointTrace other && Equals(other);
+		public override bool Equals(object? obj) => obj is DbgCodeBreakpointTrace other && Equals(other);
 
 		/// <summary>
 		/// Gets the hash code

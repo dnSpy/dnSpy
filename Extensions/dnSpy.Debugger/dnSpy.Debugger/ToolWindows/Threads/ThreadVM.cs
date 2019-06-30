@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,12 +20,15 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
+using System.Threading;
 using dnSpy.Contracts.Controls.ToolWindows;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
+using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
-using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Debugger.Native;
 using dnSpy.Debugger.Properties;
@@ -112,9 +115,9 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 		public ThreadPriority Priority {
 			get {
-				if (hThread == null)
+				if (hThread is null)
 					OpenThread_UI();
-				if (priority == null)
+				if (priority is null)
 					priority = CalculateThreadPriority_UI();
 				return priority.Value;
 			}
@@ -123,9 +126,9 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 		public ulong AffinityMask {
 			get {
-				if (hThread == null)
+				if (hThread is null)
 					OpenThread_UI();
-				if (affinityMask == null)
+				if (affinityMask is null)
 					affinityMask = CalculateAffinityMask_UI();
 				return affinityMask.Value;
 			}
@@ -144,16 +147,19 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		public IEditableValue NameEditableValue { get; }
 		public IEditValueProvider NameEditValueProvider { get; }
 
+		readonly DbgLanguageService dbgLanguageService;
 		readonly ThreadCategoryService threadCategoryService;
 		bool initializeThreadCategory;
-		SafeAccessTokenHandle hThread;
+		SafeAccessTokenHandle? hThread;
 
-		public ThreadVM(DbgThread thread, IThreadContext context, int order, ThreadCategoryService threadCategoryService, IEditValueProvider nameEditValueProvider) {
+		public ThreadVM(DbgLanguageService dbgLanguageService, DbgThread thread, IThreadContext context, int order, ThreadCategoryService threadCategoryService, IEditValueProvider nameEditValueProvider) {
+			categoryText = null!;
+			this.dbgLanguageService = dbgLanguageService ?? throw new ArgumentNullException(nameof(dbgLanguageService));
 			Thread = thread ?? throw new ArgumentNullException(nameof(thread));
 			Context = context ?? throw new ArgumentNullException(nameof(context));
 			Order = order;
 			NameEditValueProvider = nameEditValueProvider ?? throw new ArgumentNullException(nameof(nameEditValueProvider));
-			NameEditableValue = new EditableValueImpl(() => Thread.HasName() ? Thread.UIName : string.Empty, s => Thread.UIName = s);
+			NameEditableValue = new EditableValueImpl(() => Thread.HasName() ? Thread.UIName : string.Empty, s => Thread.UIName = s ?? string.Empty);
 			this.threadCategoryService = threadCategoryService ?? throw new ArgumentNullException(nameof(threadCategoryService));
 			initializeThreadCategory = true;
 			thread.PropertyChanged += DbgThread_PropertyChanged;
@@ -162,17 +168,17 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		// UI thread
 		ThreadPriority CalculateThreadPriority_UI() {
 			Context.UIDispatcher.VerifyAccess();
-			Debug.Assert(hThread != null);
-			if (hThread == null || hThread.IsInvalid)
-				return (ThreadPriority)int.MinValue;
+			Debug.Assert(!(hThread is null));
+			if (hThread is null || hThread.IsInvalid)
+				return ThreadPriority.Normal;
 			return (ThreadPriority)NativeMethods.GetThreadPriority(hThread.DangerousGetHandle());
 		}
 
 		// UI thread
 		ulong CalculateAffinityMask_UI() {
 			Context.UIDispatcher.VerifyAccess();
-			Debug.Assert(hThread != null);
-			if (hThread == null || hThread.IsInvalid)
+			Debug.Assert(!(hThread is null));
+			if (hThread is null || hThread.IsInvalid)
 				return 0;
 			var affinityMask = NativeMethods.SetThreadAffinityMask(hThread.DangerousGetHandle(), new IntPtr(-1));
 			if (affinityMask != IntPtr.Zero)
@@ -219,6 +225,12 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		}
 
 		// UI thread
+		internal void RefreshLanguageFields_UI() {
+			locationCachedOutput = default;
+			OnPropertyChanged(nameof(LocationObject));
+		}
+
+		// UI thread
 		internal void RefreshAppDomainNames_UI(DbgAppDomain appDomain) {
 			Context.UIDispatcher.VerifyAccess();
 			if (Thread.AppDomain == appDomain)
@@ -228,7 +240,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		// UI thread
 		internal void UpdateFields_UI() {
 			Context.UIDispatcher.VerifyAccess();
-			if (hThread == null)
+			if (hThread is null)
 				OpenThread_UI();
 
 			locationCachedOutput = default;
@@ -311,7 +323,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		// UI thread
 		void OpenThread_UI() {
 			Context.UIDispatcher.VerifyAccess();
-			if (hThread != null)
+			if (!(hThread is null))
 				return;
 			const int dwDesiredAccess = NativeMethods.THREAD_QUERY_INFORMATION | NativeMethods.THREAD_SET_INFORMATION;
 			hThread = NativeMethods.OpenThread(dwDesiredAccess, false, (uint)Thread.Id);
@@ -326,39 +338,55 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		// UI thread
 		ClassifiedTextCollection CreateLocationCachedOutput() {
 			Context.UIDispatcher.VerifyAccess();
-			DbgStackWalker stackWalker = null;
-			DbgStackFrame[] frames = null;
+			DbgStackWalker? stackWalker = null;
+			DbgStackFrame[]? frames = null;
+			DbgEvaluationContext? context = null;
 			try {
 				stackWalker = Thread.CreateStackWalker();
 				frames = stackWalker.GetNextStackFrames(1);
 				if (frames.Length == 0)
-					return new ClassifiedTextCollection(new[] { new ClassifiedText(BoxedTextColor.Text, dnSpy_Debugger_Resources.Thread_LocationNotAvailable) });
+					return new ClassifiedTextCollection(new[] { new ClassifiedText(DbgTextColor.Text, dnSpy_Debugger_Resources.Thread_LocationNotAvailable) });
 				else {
 					Debug.Assert(frames.Length == 1);
-					var options =
-						DbgStackFrameFormatOptions.ShowModuleNames |
-						DbgStackFrameFormatOptions.ShowParameterTypes |
-						DbgStackFrameFormatOptions.ShowParameterNames |
-						DbgStackFrameFormatOptions.ShowDeclaringTypes |
-						DbgStackFrameFormatOptions.ShowNamespaces |
-						DbgStackFrameFormatOptions.ShowIntrinsicTypeKeywords |
-						DbgStackFrameFormatOptions.ShowFunctionOffset;
-					if (!Context.UseHexadecimal)
-						options |= DbgStackFrameFormatOptions.UseDecimal;
-					if (Context.DigitSeparators)
-						options |= DbgStackFrameFormatOptions.DigitSeparators;
-					frames[0].Format(Context.ClassifiedTextWriter, options);
+					var frame = frames[0];
+					var language = dbgLanguageService.GetCurrentLanguage(Thread.Runtime.RuntimeKindGuid);
+					const DbgEvaluationContextOptions ctxOptions = DbgEvaluationContextOptions.NoMethodBody;
+					CancellationToken cancellationToken = default;
+					const CultureInfo? cultureInfo = null;
+					context = language.CreateContext(frame, ctxOptions);
+					var evalInfo = new DbgEvaluationInfo(context, frame, cancellationToken);
+					language.Formatter.FormatFrame(evalInfo, Context.ClassifiedTextWriter, GetStackFrameFormatterOptions(), DbgValueFormatterOptions.None, cultureInfo);
 					return Context.ClassifiedTextWriter.GetClassifiedText();
 				}
 			}
 			finally {
-				if (frames != null && frames.Length != 0) {
+				if (!(frames is null) && frames.Length != 0) {
 					Debug.Assert(frames.Length == 1);
-					Thread.Process.DbgManager.Close(new DbgObject[] { stackWalker, frames[0] });
+					Thread.Process.DbgManager.Close(new DbgObject[] { stackWalker!, frames[0] });
 				}
 				else
 					stackWalker?.Close();
+				context?.Close();
 			}
+		}
+
+		// random thread
+		DbgStackFrameFormatterOptions GetStackFrameFormatterOptions() {
+			var options =
+				DbgStackFrameFormatterOptions.ModuleNames |
+				DbgStackFrameFormatterOptions.ParameterTypes |
+				DbgStackFrameFormatterOptions.ParameterNames |
+				DbgStackFrameFormatterOptions.DeclaringTypes |
+				DbgStackFrameFormatterOptions.Namespaces |
+				DbgStackFrameFormatterOptions.IntrinsicTypeKeywords |
+				DbgStackFrameFormatterOptions.IP;
+			if (!Context.UseHexadecimal)
+				options |= DbgStackFrameFormatterOptions.Decimal;
+			if (Context.DigitSeparators)
+				options |= DbgStackFrameFormatterOptions.DigitSeparators;
+			if (Context.FullString)
+				options |= DbgStackFrameFormatterOptions.FullString;
+			return options;
 		}
 
 		// UI thread

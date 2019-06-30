@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -44,7 +44,7 @@ namespace dnSpy.Hex.Intellisense {
 				var list = new List<HexIntellisenseController>(intellisenseControllerProviders.Length);
 				foreach (var provider in intellisenseControllerProviders) {
 					var controller = provider.Value.TryCreateIntellisenseController(hexView);
-					if (controller != null)
+					if (!(controller is null))
 						list.Add(controller);
 				}
 				intellisenseControllers = list.ToArray();

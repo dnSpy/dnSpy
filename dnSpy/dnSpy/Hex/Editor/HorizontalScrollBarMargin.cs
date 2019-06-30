@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,7 +33,7 @@ namespace dnSpy.Hex.Editor {
 	[VSUTIL.Name(PredefinedHexMarginNames.HorizontalScrollBar)]
 	[VSTE.TextViewRole(PredefinedHexViewRoles.Interactive)]
 	sealed class HorizontalScrollBarMarginProvider : WpfHexViewMarginProvider {
-		public override WpfHexViewMargin CreateMargin(WpfHexViewHost wpfHexViewHost, WpfHexViewMargin marginContainer) =>
+		public override WpfHexViewMargin? CreateMargin(WpfHexViewHost wpfHexViewHost, WpfHexViewMargin marginContainer) =>
 			new HorizontalScrollBarMargin(wpfHexViewHost);
 	}
 
@@ -66,7 +66,7 @@ namespace dnSpy.Hex.Editor {
 
 		void UpdateVisibility() => theScrollBar.Visibility = Enabled ? Visibility.Visible : Visibility.Collapsed;
 
-		public override HexViewMargin GetHexViewMargin(string marginName) =>
+		public override HexViewMargin? GetHexViewMargin(string marginName) =>
 			StringComparer.OrdinalIgnoreCase.Equals(PredefinedHexMarginNames.HorizontalScrollBar, marginName) ? this : null;
 
 		void OnScroll(double value) {

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Threading;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Classification;
@@ -42,11 +43,11 @@ namespace dnSpy.Hex.Formatting {
 		}
 
 		public override string GenerateHtmlFragment(NormalizedHexBufferSpanCollection spans, HexBufferLineFormatter bufferLines, string delimiter, CancellationToken cancellationToken) {
-			if (spans == null)
+			if (spans is null)
 				throw new ArgumentNullException(nameof(spans));
-			if (bufferLines == null)
+			if (bufferLines is null)
 				throw new ArgumentNullException(nameof(bufferLines));
-			if (delimiter == null)
+			if (delimiter is null)
 				throw new ArgumentNullException(nameof(delimiter));
 			if (spans.Count != 0 && spans[0].Buffer != bufferLines.Buffer)
 				throw new ArgumentException();
@@ -55,21 +56,21 @@ namespace dnSpy.Hex.Formatting {
 		}
 
 		public override string GenerateHtmlFragment(NormalizedHexBufferSpanCollection spans, HexView hexView, string delimiter, CancellationToken cancellationToken) {
-			if (spans == null)
+			if (spans is null)
 				throw new ArgumentNullException(nameof(spans));
-			if (hexView == null)
+			if (hexView is null)
 				throw new ArgumentNullException(nameof(hexView));
-			if (delimiter == null)
+			if (delimiter is null)
 				throw new ArgumentNullException(nameof(delimiter));
 
 			return GenerateHtmlFragmentCore(hexView.BufferLines, spans, hexView, delimiter, cancellationToken);
 		}
 
-		string GenerateHtmlFragmentCore(HexBufferLineFormatter bufferLines, NormalizedHexBufferSpanCollection spans, HexView hexView, string delimiter, CancellationToken cancellationToken) {
-			HexClassifier classifier = null;
+		string GenerateHtmlFragmentCore(HexBufferLineFormatter bufferLines, NormalizedHexBufferSpanCollection spans, HexView? hexView, string delimiter, CancellationToken cancellationToken) {
+			HexClassifier? classifier = null;
 			try {
 				VSTC.IClassificationFormatMap classificationFormatMap;
-				if (hexView != null) {
+				if (!(hexView is null)) {
 					classifier = viewClassifierAggregatorService.GetClassifier(hexView);
 					classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(hexView);
 				}
@@ -80,12 +81,14 @@ namespace dnSpy.Hex.Formatting {
 
 				const int tabSize = 4;
 				var builder = new HexHtmlBuilder(classificationFormatMap, delimiter, tabSize);
-				if (spans.Count != 0)
+				if (spans.Count != 0) {
+					Debug.Assert(!(classifier is null));
 					builder.Add(bufferLines, classifier, spans, cancellationToken);
+				}
 				return builder.Create();
 			}
 			finally {
-				classifier.Dispose();
+				classifier?.Dispose();
 			}
 		}
 	}

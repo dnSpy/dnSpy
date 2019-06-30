@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -48,7 +48,7 @@ namespace dnSpy.TreeView {
 		void InitializeGuidToProvider(IEnumerable<Lazy<ITreeNodeDataProvider, ITreeNodeDataProviderMetadata>> treeNodeDataProviders) {
 			foreach (var provider in treeNodeDataProviders.OrderBy(a => a.Metadata.Order)) {
 				bool b = Guid.TryParse(provider.Metadata.Guid, out var guid);
-				Debug.Assert(b, string.Format("Couldn't parse guid: '{0}'", provider.Metadata.Guid));
+				Debug.Assert(b, $"Couldn't parse guid: '{provider.Metadata.Guid}'");
 				if (!b)
 					continue;
 

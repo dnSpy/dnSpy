@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,9 +26,6 @@ using dndbg.COM.MetaData;
 using dndbg.DotNet;
 
 namespace dndbg.Engine {
-	/// <summary>
-	/// A loaded assembly
-	/// </summary>
 	sealed class DnAssembly {
 		readonly DebuggerCollection<ICorDebugModule, DnModule> modules;
 
@@ -60,35 +57,20 @@ namespace dndbg.Engine {
 		/// </summary>
 		public string FullName {
 			get {
-				if (fullName == null) {
+				if (fullName is null) {
 					Debug.Assert(modules.Count != 0);
 					if (modules.Count == 0)
 						return Name;
 					Interlocked.CompareExchange(ref fullName, CorAssembly.FullName, null);
 				}
-				return fullName;
+				return fullName!;
 			}
 		}
-		string fullName;
+		string? fullName;
 
-		/// <summary>
-		/// true if the assembly has been unloaded
-		/// </summary>
 		public bool HasUnloaded { get; private set; }
-
-		/// <summary>
-		/// Gets the owner debugger
-		/// </summary>
 		public DnDebugger Debugger => AppDomain.Debugger;
-
-		/// <summary>
-		/// Gets the owner process
-		/// </summary>
 		public DnProcess Process => AppDomain.Process;
-
-		/// <summary>
-		/// Gets the owner AppDomain
-		/// </summary>
 		public DnAppDomain AppDomain { get; }
 
 		internal DnAssembly(DnAppDomain appDomain, ICorDebugAssembly assembly, int uniqueId, int uniqueIdProcess, int uniqueIdAppDomain) {
@@ -103,12 +85,8 @@ namespace dndbg.Engine {
 		DnModule CreateModule(ICorDebugModule comModule) =>
 			new DnModule(this, comModule, Debugger.GetNextModuleId(), Process.GetNextModuleId(), AppDomain.GetNextModuleId());
 		internal void SetHasUnloaded() => HasUnloaded = true;
-		internal DnModule TryAdd(ICorDebugModule comModule) => modules.Add(comModule);
+		internal DnModule? TryAdd(ICorDebugModule? comModule) => modules.Add(comModule);
 
-		/// <summary>
-		/// Gets all modules, sorted on the order they were created
-		/// </summary>
-		/// <returns></returns>
 		public DnModule[] Modules {
 			get {
 				Debugger.DebugVerifyThread();
@@ -118,12 +96,7 @@ namespace dndbg.Engine {
 			}
 		}
 
-		/// <summary>
-		/// Gets a module or null
-		/// </summary>
-		/// <param name="comModule">Module</param>
-		/// <returns></returns>
-		public DnModule TryGetModule(ICorDebugModule comModule) {
+		public DnModule? TryGetModule(ICorDebugModule? comModule) {
 			Debugger.DebugVerifyThread();
 			return modules.TryGet(comModule);
 		}
@@ -142,12 +115,12 @@ namespace dndbg.Engine {
 			var modules = this.modules.GetAll();
 			for (int i = 0; i < modules.Length; i++) {
 				var module = modules[i];
-				if (module.CorModuleDef != null) {
-					Debug.Assert(corAssemblyDef != null);
+				if (!(module.CorModuleDef is null)) {
+					Debug.Assert(!(corAssemblyDef is null));
 					continue;
 				}
 				module.CorModuleDef = new CorModuleDef(module.CorModule.GetMetaDataInterface<IMetaDataImport>(), new CorModuleDefHelper(module));
-				if (corAssemblyDef == null)
+				if (corAssemblyDef is null)
 					corAssemblyDef = new CorAssemblyDef(module.CorModuleDef, 1);
 				corAssemblyDef.Modules.Add(module.CorModuleDef);
 				module.CorModuleDef.Initialize();
@@ -157,8 +130,8 @@ namespace dndbg.Engine {
 			foreach (var m in created)
 				Debugger.CorModuleDefCreated(m);
 		}
-		CorAssemblyDef corAssemblyDef;
+		CorAssemblyDef? corAssemblyDef;
 
-		public override string ToString() => string.Format("{0} {1}", UniqueId, Name);
+		public override string ToString() => $"{UniqueId} {Name}";
 	}
 }

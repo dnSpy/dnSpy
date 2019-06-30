@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,7 +29,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 	[ContentType(ContentTypes.Xaml)]
 	[ContentType(ContentTypes.Xml)]
 	sealed class XmlDocumentWriterProvider : IDocumentWriterProvider {
-		public IDocumentWriter Create(IContentType contentType) => new XmlDocumentWriter(contentType.IsOfType(ContentTypes.Xaml));
+		public IDocumentWriter? Create(IContentType contentType) => new XmlDocumentWriter(contentType.IsOfType(ContentTypes.Xaml));
 	}
 
 	sealed class XmlDocumentWriter : IDocumentWriter {

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -67,11 +67,10 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		void MarkAsSaved(IUndoObject obj);
 		IEnumerable<IUndoObject> UndoObjects { get; }
 		IEnumerable<IUndoObject> RedoObjects { get; }
-		void CallGc();
 		bool CachedHasModifiedDocuments { get; }
 		IEnumerable<object> GetModifiedDocuments();
 		IEnumerable<IUndoObject> GetAllObjects();
-		IUndoObject GetUndoObject(object obj);
+		IUndoObject? GetUndoObject(object obj);
 		IEnumerable<object> GetUniqueDocuments(IEnumerable<object> docs);
 		void ClearRedo();
 	}
@@ -81,13 +80,13 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		readonly List<UndoState> undoCommands = new List<UndoState>();
 		readonly List<UndoState> redoCommands = new List<UndoState>();
 		readonly Lazy<IUndoableDocumentsProvider>[] undoableDocumentsProviders;
-		UndoState currentCommands;
+		UndoState? currentCommands;
 		int commandCounter;
 		int currentCommandCounter;
 
 		public event EventHandler<UndoCommandServiceEventArgs> OnEvent;
 
-		void NotifyEvent(UndoCommandServiceEventType type, IUndoObject obj = null) {
+		void NotifyEvent(UndoCommandServiceEventType type, IUndoObject? obj = null) {
 			UndoRedoChanged();
 			OnEvent?.Invoke(this, new UndoCommandServiceEventArgs(type, obj));
 		}
@@ -110,7 +109,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 			}
 		}
 
-		struct BeginEndAdder : IDisposable {
+		readonly struct BeginEndAdder : IDisposable {
 			readonly UndoCommandService mgr;
 
 			public BeginEndAdder(UndoCommandService mgr) {
@@ -124,10 +123,10 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		public bool CanUndo => undoCommands.Count != 0;
 		public bool CanRedo => redoCommands.Count != 0;
 		public int NumberOfModifiedDocuments => GetModifiedDocuments().Count();
-		bool IsAdding => currentCommands != null;
+		bool IsAdding => !(currentCommands is null);
 
 		public void Add(IUndoCommand command) {
-			if (currentCommands == null) {
+			if (currentCommands is null) {
 				using (BeginAdd())
 					Add(command);
 			}
@@ -145,16 +144,16 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		/// method to stop adding more commands to the same group.
 		/// </summary>
 		BeginEndAdder BeginAdd() {
-			Debug.Assert(currentCommands == null);
-			if (currentCommands != null)
+			Debug.Assert(currentCommands is null);
+			if (!(currentCommands is null))
 				throw new InvalidOperationException();
 
 			return new BeginEndAdder(this);
 		}
 
 		void BeginAddInternal() {
-			Debug.Assert(currentCommands == null);
-			if (currentCommands != null)
+			Debug.Assert(currentCommands is null);
+			if (!(currentCommands is null))
 				throw new InvalidOperationException();
 
 			int prev = currentCommandCounter;
@@ -163,80 +162,47 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		}
 
 		void EndAddInternal() {
-			Debug.Assert(currentCommands != null);
-			if (currentCommands == null)
+			Debug.Assert(!(currentCommands is null));
+			if (currentCommands is null)
 				throw new InvalidOperationException();
 
 			currentCommands.Commands.TrimExcess();
 			undoCommands.Add(currentCommands);
 
-			bool callGc = NeedsToCallGc(redoCommands);
 			Clear(redoCommands);
-			if (callGc)
-				CallGc();
 
 			UpdateAssemblySavedStateRedo(currentCommands);
 			currentCommands = null;
 			NotifyEvent(UndoCommandServiceEventType.Add);
 		}
 
-		static bool NeedsToCallGc(List<UndoState> list) {
-			foreach (var state in list) {
-				foreach (var c in state.Commands) {
-					if (c is IGCUndoCommand c2 && c2.CallGarbageCollectorAfterDispose)
-						return true;
-				}
-			}
-			return false;
-		}
+		public void ClearRedo() => Clear(false, true);
+		public void Clear() => Clear(true, true);
 
-		public void ClearRedo() => Clear(false, true, redoCommands.Count != 0);
-		public void Clear() => Clear(true, true, undoCommands.Count != 0 || redoCommands.Count != 0);
-
-		void Clear(bool clearUndo, bool clearRedo, bool forceCallGc) {
-			Debug.Assert(currentCommands == null);
-			if (currentCommands != null)
+		void Clear(bool clearUndo, bool clearRedo) {
+			Debug.Assert(currentCommands is null);
+			if (!(currentCommands is null))
 				throw new InvalidOperationException();
 
-			bool callGc = forceCallGc;
 			if (clearUndo) {
-				callGc |= NeedsToCallGc(undoCommands);
 				Clear(undoCommands);
 				NotifyEvent(UndoCommandServiceEventType.ClearUndo);
 			}
 			if (clearRedo) {
-				callGc |= NeedsToCallGc(redoCommands);
 				Clear(redoCommands);
 				NotifyEvent(UndoCommandServiceEventType.ClearRedo);
 			}
 
-			if (callGc)
-				CallGc();
-
 			if (clearUndo && clearRedo) {
 				foreach (var p in undoableDocumentsProviders) {
 					foreach (var uo in p.Value.GetObjects()) {
-						Debug.Assert(uo != null);
-						if (uo != null && !IsModified(uo))
+						Debug.Assert(!(uo is null));
+						if (!(uo is null) && !IsModified(uo))
 							uo.SavedCommand = 0;
 					}
 				}
 			}
 		}
-
-		public void CallGc() {
-			if (!callingGc) {
-				callingGc = true;
-				// Some removed assemblies need to be GC'd. The AssemblyList already does this but
-				// we might cache them so we need to call the GC again.
-				Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(delegate {
-					callingGc = false;
-					GC.Collect();
-					GC.WaitForPendingFinalizers();
-				}));
-			}
-		}
-		bool callingGc = false;
 
 		static void Clear(List<UndoState> list) {
 			foreach (var group in list) {
@@ -250,8 +216,8 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		}
 
 		public void Undo() {
-			Debug.Assert(currentCommands == null);
-			if (currentCommands != null)
+			Debug.Assert(currentCommands is null);
+			if (!(currentCommands is null))
 				throw new InvalidOperationException();
 
 			if (undoCommands.Count == 0)
@@ -268,8 +234,8 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		}
 
 		public void Redo() {
-			Debug.Assert(currentCommands == null);
-			if (currentCommands != null)
+			Debug.Assert(currentCommands is null);
+			if (!(currentCommands is null))
 				throw new InvalidOperationException();
 
 			if (redoCommands.Count == 0)
@@ -316,11 +282,11 @@ namespace dnSpy.AsmEditor.UndoRedo {
 			var hash = new HashSet<object>();
 			foreach (var p in undoableDocumentsProviders) {
 				foreach (var uo in p.Value.GetObjects()) {
-					Debug.Assert(uo != null);
-					if (uo != null && IsModified(uo)) {
+					Debug.Assert(!(uo is null));
+					if (!(uo is null) && IsModified(uo)) {
 						var doc = p.Value.GetDocument(uo);
-						Debug.Assert(doc != null);
-						if (doc == null)
+						Debug.Assert(!(doc is null));
+						if (doc is null)
 							throw new InvalidOperationException();
 						hash.Add(doc);
 					}
@@ -329,10 +295,10 @@ namespace dnSpy.AsmEditor.UndoRedo {
 			return hash;
 		}
 
-		object GetDocument(IUndoObject uo) {
+		object? GetDocument(IUndoObject uo) {
 			foreach (var p in undoableDocumentsProviders) {
 				var doc = p.Value.GetDocument(uo);
-				if (doc != null)
+				if (!(doc is null))
 					return doc;
 			}
 
@@ -344,10 +310,10 @@ namespace dnSpy.AsmEditor.UndoRedo {
 			var hash = new HashSet<object>();
 			foreach (var doc in docs) {
 				var uo = GetUndoObject(doc);
-				if (uo == null)
+				if (uo is null)
 					continue;
 				var doc2 = GetDocument(uo);
-				if (doc2 == null)
+				if (doc2 is null)
 					continue;
 
 				hash.Add(doc2);
@@ -406,19 +372,19 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		IEnumerable<IUndoObject> GetModifiedObjects(IUndoCommand command) {
 			foreach (var obj in command.ModifiedObjects) {
 				var uo = GetUndoObject(obj);
-				if (uo != null)
+				if (!(uo is null))
 					yield return uo;
 			}
 		}
 
-		public IUndoObject GetUndoObject(object obj) {
+		public IUndoObject? GetUndoObject(object obj) {
 			foreach (var up in undoableDocumentsProviders) {
 				var uo = up.Value.GetUndoObject(obj);
-				if (uo != null)
+				if (!(uo is null))
 					return uo;
 			}
 
-			Debug.Fail(string.Format("Unknown modified object: {0}: {1}", obj?.GetType(), obj));
+			Debug.Fail($"Unknown modified object: {obj?.GetType()}: {obj}");
 			return null;
 		}
 
@@ -434,7 +400,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 						break;
 				}
 
-				Debug.Assert(found, string.Format("Unknown modified object: {0}: {1}", obj?.GetType(), obj));
+				Debug.Assert(found, $"Unknown modified object: {obj?.GetType()}: {obj}");
 			}
 		}
 
@@ -447,11 +413,11 @@ namespace dnSpy.AsmEditor.UndoRedo {
 			foreach (var grp in list) {
 				foreach (var cmd in grp.Commands) {
 					var cmd2 = cmd as IUndoCommand2;
-					if (cmd2 == null)
+					if (cmd2 is null)
 						continue;
 					foreach (var obj in cmd2.NonModifiedObjects) {
 						var uo = GetUndoObject(obj);
-						if (uo != null)
+						if (!(uo is null))
 							yield return uo;
 					}
 				}

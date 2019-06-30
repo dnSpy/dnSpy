@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,8 +20,8 @@
 using System;
 using dnSpy.Contracts.Controls.ToolWindows;
 using dnSpy.Contracts.Debugger.Breakpoints.Modules;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.MVVM;
-using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Utilities;
 using dnSpy.Debugger.UI;
@@ -52,6 +52,15 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 				if (settings.IsInMemory == value)
 					return;
 				ModuleBreakpoint.IsInMemory = value;
+			}
+		}
+
+		public bool? IsLoaded {
+			get => settings.IsLoaded;
+			set {
+				if (settings.IsLoaded == value)
+					return;
+				ModuleBreakpoint.IsLoaded = value;
 			}
 		}
 
@@ -89,24 +98,24 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			settings = ModuleBreakpoint.Settings;
 		}
 
-		string ConvertEditedString(string s) {
+		string? ConvertEditedString(string? s) {
 			if (string.IsNullOrWhiteSpace(s))
 				return null;
 			return s.Trim();
 		}
 
 		string OrderToNumber() {
-			var writer = new StringBuilderTextColorOutput();
+			var writer = new DbgStringBuilderTextWriter();
 			Context.Formatter.WriteOrder(writer, ModuleBreakpoint);
 			return writer.ToString();
 		}
 
-		void WriteOrder(string value) {
+		void WriteOrder(string? value) {
 			if (string.IsNullOrWhiteSpace(value))
 				ModuleBreakpoint.Order = null;
 			else {
 				var order = SimpleTypeConverter.ParseInt32(value, int.MinValue, int.MaxValue, out var error);
-				if (error == null)
+				if (error is null)
 					ModuleBreakpoint.Order = order;
 				else {
 					// Keep original value
@@ -136,6 +145,8 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 				OnPropertyChanged(nameof(IsDynamic));
 			if (oldSettings.IsInMemory != newSettings.IsInMemory)
 				OnPropertyChanged(nameof(IsInMemory));
+			if (oldSettings.IsLoaded != newSettings.IsLoaded)
+				OnPropertyChanged(nameof(IsLoaded));
 			if (oldSettings.Order != newSettings.Order)
 				OnPropertyChanged(nameof(OrderObject));
 			if (oldSettings.ProcessName != newSettings.ProcessName)

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Threading;
 using dnlib.DotNet;
 using dnSpy.Contracts.Documents;
@@ -31,7 +32,7 @@ namespace dnSpy.Documents {
 		readonly object lockObj = new object();
 		readonly Dictionary<Key, bool> infos = new Dictionary<Key, bool>();
 
-		struct Key : IEquatable<Key> {
+		readonly struct Key : IEquatable<Key> {
 			public readonly WeakReference method;
 			readonly int hc;
 
@@ -43,38 +44,36 @@ namespace dnSpy.Documents {
 			public bool Equals(Key other) {
 				var m = method.Target;
 				var om = other.method.Target;
-				if (m == null || om == null)
+				if (m is null || om is null)
 					return false;
 				return m == om;
 			}
 
-			public override bool Equals(object obj) {
+			public override bool Equals(object? obj) {
 				if (!(obj is Key))
 					return false;
 				return Equals((Key)obj);
 			}
 
 			public override int GetHashCode() => hc;
-
-			public override string ToString() {
-				var m = method.Target;
-				return m == null ? null : m.ToString();
-			}
+			public override string? ToString() => method.Target?.ToString();
 		}
 
 		MethodAnnotations() => AddTimerWait(this);
 
 		static void AddTimerWait(MethodAnnotations ma) {
-			Timer timer = null;
+			Timer? timer = null;
 			WeakReference weakSelf = new WeakReference(ma);
 			timer = new Timer(a => {
+				Debug.Assert(!(timer is null));
 				timer.Dispose();
 				var self = (MethodAnnotations)weakSelf.Target;
-				if (self != null) {
+				if (!(self is null)) {
 					self.ClearGarbageCollectedItems();
 					AddTimerWait(self);
 				}
-			}, null, DELETE_GCD_ITEMS_EVERY_MS, Timeout.Infinite);
+			}, null, Timeout.Infinite, Timeout.Infinite);
+			timer.Change(DELETE_GCD_ITEMS_EVERY_MS, Timeout.Infinite);
 		}
 
 		public bool IsBodyModified(MethodDef method) {
@@ -97,7 +96,7 @@ namespace dnSpy.Documents {
 		void ClearGarbageCollectedItems() {
 			lock (lockObj) {
 				foreach (var kv in new List<KeyValuePair<Key, bool>>(infos)) {
-					if (kv.Key.method.Target == null)
+					if (kv.Key.method.Target is null)
 						infos.Remove(kv.Key);
 				}
 			}

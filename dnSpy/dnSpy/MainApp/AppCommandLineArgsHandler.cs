@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -46,10 +46,10 @@ namespace dnSpy.MainApp {
 				toolWindowService.Close(info.Guid);
 			foreach (var info in GetToolWindowInfos(args.ShowToolWindow)) {
 				var content = toolWindowService.Show(info.Guid, info.Location);
-				Debug.Assert(content != null);
-				if (content == null)
+				Debug.Assert(!(content is null));
+				if (content is null)
 					continue;
-				if (info.Location == null)
+				if (info.Location is null)
 					continue;
 				if (toolWindowService.CanMove(content, info.Location.Value))
 					toolWindowService.Move(content, info.Location.Value);

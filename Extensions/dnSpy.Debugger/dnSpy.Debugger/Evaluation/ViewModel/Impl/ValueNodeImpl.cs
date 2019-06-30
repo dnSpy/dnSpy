@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,13 +21,12 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Threading;
 using System.Windows.Input;
 using dnSpy.Contracts.Controls.ToolWindows;
 using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
-using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Debugger.Properties;
 using dnSpy.Debugger.Text;
@@ -60,49 +59,50 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public override FormatterObject<ValueNode> ValueObject => new FormatterObject<ValueNode>(this, Context.ValueColumnName);
 		public override FormatterObject<ValueNode> TypeObject => new FormatterObject<ValueNode>(this, Context.TypeColumnName);
 
-		public override ClassifiedTextCollection CachedName {
+		public override ref readonly ClassifiedTextCollection CachedName {
 			get {
 				if (cachedName.IsDefault)
 					InitializeCachedText();
-				return cachedName;
+				return ref cachedName;
 			}
 		}
 
-		public override ClassifiedTextCollection CachedValue {
+		public override ref readonly ClassifiedTextCollection CachedValue {
 			get {
 				if (cachedValue.IsDefault)
 					InitializeCachedText();
-				return cachedValue;
+				return ref cachedValue;
 			}
 		}
 
-		public override ClassifiedTextCollection CachedExpectedType {
+		public override ref readonly ClassifiedTextCollection CachedExpectedType {
 			get {
 				if (cachedExpectedType.IsDefault)
 					InitializeCachedText();
-				return cachedExpectedType;
+				return ref cachedExpectedType;
 			}
 		}
 
 		/// <summary>
 		/// It's default if it's identical to <see cref="CachedExpectedType"/>
 		/// </summary>
-		public override ClassifiedTextCollection CachedActualType_OrDefaultInstance {
+		public override ref readonly ClassifiedTextCollection CachedActualType_OrDefaultInstance {
 			get {
 				// Check cachedExpectedType and not cachedActualType since cachedActualType
 				// is default if it equals cachedExpectedType
 				if (cachedExpectedType.IsDefault)
 					InitializeCachedText();
-				return cachedActualType;
+				return ref cachedActualType;
 			}
 		}
 
-		public override ClassifiedTextCollection OldCachedValue => oldCachedValue;
+		public override ref readonly ClassifiedTextCollection OldCachedValue => ref oldCachedValue;
 
 		void InitializeCachedText() {
 			var p = Context.ValueNodeFormatParameters;
 			p.Initialize(cachedName.IsDefault, cachedValue.IsDefault, cachedExpectedType.IsDefault);
-			RawNode.Format(Context.EvaluationContext, Context.StackFrame, p, Context.FormatCulture);
+			if (!(Context.EvaluationInfo is null))
+				RawNode.Format(Context.EvaluationInfo, p, Context.FormatCulture);
 			if (cachedName.IsDefault)
 				cachedName = p.NameOutput.GetClassifiedText();
 			if (cachedValue.IsDefault)
@@ -124,8 +124,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		ClassifiedTextCollection oldCachedValue;
 
 		public IValueNodesContext Context { get; }
-		public override string RootId => rootId;
-		string rootId;
+		public override string? RootId => rootId;
+		string? rootId;
 
 		public bool IsDisabled => IsInvalid || Context.IsWindowReadOnly;
 
@@ -152,22 +152,22 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public override IEditValueProvider NameEditValueProvider => Context.NameEditValueProvider;
 		public override IEditableValue NameEditableValue {
 			get {
-				if (nameEditableValue == null)
+				if (nameEditableValue is null)
 					nameEditableValue = new EditableValueImpl(() => GetNameExpression(), s => SaveNameExpression(s), () => CanEditNameExpression(), IsEditNode ? EditableValueOptions.SingleClick : EditableValueOptions.None);
 				return nameEditableValue;
 			}
 		}
-		IEditableValue nameEditableValue;
+		IEditableValue? nameEditableValue;
 
 		public override IEditValueProvider ValueEditValueProvider => Context.ValueEditValueProvider;
 		public override IEditableValue ValueEditableValue {
 			get {
-				if (valueEditableValue == null)
+				if (valueEditableValue is null)
 					valueEditableValue = new EditableValueImpl(() => GetEditableValue(), s => SaveEditableValue(s), () => CanEditValue());
 				return valueEditableValue;
 			}
 		}
-		IEditableValue valueEditableValue;
+		IEditableValue? valueEditableValue;
 
 		public static ValueNodeImpl CreateEditNode(IValueNodesContext context) => new ValueNodeImpl(context);
 
@@ -180,12 +180,12 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			__rawNode_DONT_USE = new EditRawNode();
 		}
 
-		public ValueNodeImpl(IValueNodesContext context, DbgValueNode rootValueNode, string rootId, string expression, string errorMessage) {
+		public ValueNodeImpl(IValueNodesContext context, DbgValueNode? rootValueNode, string? rootId, string? expression, string? errorMessage) {
 			IsRoot = true;
 			Context = context ?? throw new ArgumentNullException(nameof(context));
 			this.rootId = rootId;
-			if (rootValueNode == null) {
-				__rawNode_DONT_USE = new ErrorRawNode(expression, errorMessage);
+			if (rootValueNode is null) {
+				__rawNode_DONT_USE = new ErrorRawNode(expression!, errorMessage!);
 				IsInvalid = true;
 			}
 			else {
@@ -194,12 +194,12 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			}
 		}
 
-		public void Reuse(DbgValueNode rootValueNode, string rootId, string expression, string errorMessage) {
+		public void Reuse(DbgValueNode? rootValueNode, string? rootId, string? expression, string? errorMessage) {
 			this.rootId = rootId;
 			oldCachedValue = default;
 			disableHighlightingOnReuse = false;
-			if (rootValueNode == null) {
-				__rawNode_DONT_USE = new ErrorRawNode(expression, errorMessage);
+			if (rootValueNode is null) {
+				__rawNode_DONT_USE = new ErrorRawNode(expression!, errorMessage!);
 				IsInvalid = true;
 			}
 			else {
@@ -215,25 +215,27 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			__rawNode_DONT_USE = parent.CreateChild(debuggerValueNodeChanged, this, childIndex);
 		}
 
-		internal bool IsEditNode => IsRoot && Context.EditValueNodeExpression.SupportsEditExpression && RootId == null;
+		internal bool IsEditNode => IsRoot && Context.EditValueNodeExpression.SupportsEditExpression && RootId is null;
 
-		internal bool CanEditNameExpression() => IsRoot && Context.EditValueNodeExpression.SupportsEditExpression && !Context.IsWindowReadOnly && Context.EvaluationContext != null && Context.StackFrame != null;
+		internal bool CanEditNameExpression() => IsRoot && Context.EditValueNodeExpression.SupportsEditExpression && !Context.IsWindowReadOnly && !(Context.EvaluationInfo is null);
 
 		EditableValueTextInfo GetNameExpression() {
 			if (!CanEditNameExpression())
 				throw new InvalidOperationException();
 			var text = Context.ExpressionToEdit;
 			Context.ExpressionToEdit = null;
-			if (text != null)
+			if (!(text is null))
 				return new EditableValueTextInfo(text, EditValueFlags.None);
-			var output = new StringBuilderTextColorOutput();
-			RawNode.FormatName(Context.EvaluationContext, Context.StackFrame, output, Context.FormatCulture);
-			return new EditableValueTextInfo(output.ToString());
+			// Always use the expression since the Name column could've been replaced with any random
+			// text if DebuggerDisplayAttribute.Name property isn't null.
+			return new EditableValueTextInfo(RawNode.Expression, EditValueFlags.SelectText);
 		}
 
-		void SaveNameExpression(string expression) {
+		void SaveNameExpression(string? expression) {
 			if (!CanEditNameExpression())
 				throw new InvalidOperationException();
+			if (expression is null)
+				expression = string.Empty;
 			if (GetNameExpression().Text == expression)
 				return;
 			disableHighlightingOnReuse = true;
@@ -243,30 +245,34 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				Context.EditValueNodeExpression.EditExpression(RootId, expression);
 		}
 
-		internal bool CanEditValue() => !RawNode.IsReadOnly && !Context.IsWindowReadOnly && Context.EvaluationContext != null && Context.StackFrame != null;
+		internal bool CanEditValue() => !RawNode.IsReadOnly && !Context.IsWindowReadOnly && !(Context.EvaluationInfo is null);
 
 		EditableValueTextInfo GetEditableValue() {
 			if (!CanEditValue())
 				throw new InvalidOperationException();
+			Debug.Assert(!(Context.EvaluationInfo is null));
 			var text = Context.ExpressionToEdit;
 			Context.ExpressionToEdit = null;
-			if (text != null)
+			if (!(text is null))
 				return new EditableValueTextInfo(text, EditValueFlags.None);
-			var output = new StringBuilderTextColorOutput();
-			var options = Context.ValueNodeFormatParameters.ValueFormatterOptions & ~DbgValueFormatterOptions.Display;
-			RawNode.FormatValue(Context.EvaluationContext, Context.StackFrame, output, options, Context.FormatCulture);
+			var output = new DbgStringBuilderTextWriter();
+			var options = Context.ValueNodeFormatParameters.ValueFormatterOptions | DbgValueFormatterOptions.Edit;
+			RawNode.FormatValue(Context.EvaluationInfo, output, options, Context.FormatCulture);
 			return new EditableValueTextInfo(output.ToString());
 		}
 
-		void SaveEditableValue(string expression) {
+		void SaveEditableValue(string? expression) {
 			if (!CanEditValue())
 				throw new InvalidOperationException();
+			if (expression is null)
+				expression = string.Empty;
+			Debug.Assert(!(Context.EvaluationInfo is null));
 			if (GetEditableValue().Text == expression)
 				return;
-			var res = RawNode.Assign(Context.EvaluationContext, Context.StackFrame, expression, Context.EvaluationOptions);
-			if (res.Error == null)
+			var res = RawNode.Assign(Context.EvaluationInfo, expression, Context.EvaluationOptions);
+			if (res.Error is null)
 				oldCachedValue = cachedValue;
-			bool retry = res.Error != null &&
+			bool retry = !(res.Error is null) &&
 				(res.Flags & DbgEEAssignmentResultFlags.CompilerError) != 0 &&
 				(res.Flags & DbgEEAssignmentResultFlags.ExecutedCode) == 0 &&
 				CanEditValue();
@@ -303,18 +309,19 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
-			Debug.Assert(RawNode.HasInitializedUnderlyingData);
 			if (RawNode.HasChildren == false)
 				yield break;
+			Debug.Assert(RawNode.HasInitializedUnderlyingData);
 
 			if (IsInvalid) {
 				ResetLazyLoading();
 				yield break;
 			}
 
-			var childCountTmp = RawNode.GetChildCount(Context.EvaluationContext, Context.StackFrame, CancellationToken.None);
+			Debug.Assert(!(Context.EvaluationInfo is null));
+			var childCountTmp = RawNode.GetChildCount(Context.EvaluationInfo);
 			cachedChildCount = childCountTmp;
-			if (childCountTmp == null) {
+			if (childCountTmp is null) {
 				ResetLazyLoading();
 				yield break;
 			}
@@ -356,16 +363,16 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 		// If it's a new value, then reset everything, else try to re-use it so eg. expanded arrays
 		// or classes don't get collapsed again.
-		internal void SetDebuggerValueNodeForRoot(DbgValueNodeInfo info) {
+		internal void SetDebuggerValueNodeForRoot(in DbgValueNodeInfo info) {
 			if (!IsRoot)
 				throw new InvalidOperationException();
 			rootId = info.Id;
 			SetDebuggerValueNode(info);
 		}
 
-		internal void SetDebuggerValueNode(DbgValueNodeInfo info) {
-			if (info.Node == null) {
-				var newNode = info.CausesSideEffects ? null : new ErrorRawNode(info.Expression, info.ErrorMessage);
+		internal void SetDebuggerValueNode(in DbgValueNodeInfo info) {
+			if (info.Node is null) {
+				var newNode = info.CausesSideEffects ? null : new ErrorRawNode(info.Expression!, info.ErrorMessage!);
 				InvalidateNodes(newNode, recursionCounter: 0);
 			}
 			else if (info.Node.HasError) {
@@ -377,8 +384,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 		const int MAX_TREEVIEW_RECURSION = 30;
 
-		RawNode CreateNewNode(RawNode newNode) {
-			if (newNode != null)
+		RawNode CreateNewNode(RawNode? newNode) {
+			if (!(newNode is null))
 				return newNode;
 			if (RawNode is ErrorRawNode errorNode)
 				return errorNode;
@@ -389,7 +396,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			return new CachedRawNode(RawNode.CanEvaluateExpression, RawNode.Expression, RawNode.ImageName, RawNode.HasChildren, cachedChildCount, cachedName, cachedValue, cachedExpectedType, cachedActualType);
 		}
 
-		void InvalidateNodes(RawNode newNode, int recursionCounter) {
+		void InvalidateNodes(RawNode? newNode, int recursionCounter) {
 			__rawNode_DONT_USE = CreateNewNode(newNode);
 			oldCachedValue = cachedValue;
 			// Don't show the value as changed if it's an error message
@@ -418,7 +425,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		bool SetDebuggerValueNode(DebuggerValueRawNode newNode, int recursionCounter) {
-			Debug.Assert(newNode != null);
+			Debug.Assert(!(newNode is null));
 			var oldNode = __rawNode_DONT_USE;
 			__rawNode_DONT_USE = newNode;
 			oldCachedValue = cachedValue;
@@ -441,13 +448,13 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				for (int i = 0; i < count; i++) {
 					var childNode = (ValueNodeImpl)children[i].Data;
 					var childRawNode = childNode.RawNode as ChildDbgValueRawNode;
-					if (childRawNode != null && !childRawNode.HasInitializedUnderlyingData) {
+					if (!(childRawNode is null) && !childRawNode.HasInitializedUnderlyingData) {
 						childRawNode.SetParent(newNode, null);
 						continue;
 					}
 
 					// Check if we must read the value. If its treenode is expanded, it must be read now, else it can be delayed
-					if (childRawNode != null && childNode.TreeNode.IsExpanded) {
+					if (!(childRawNode is null) && childNode.TreeNode.IsExpanded) {
 						var newChildValue = Context.ValueNodeReader.GetDebuggerNodeForReuse(newNode, (uint)i);
 						// We have to create a new one here and can't reuse the existing ChildDbgValueRawNode by
 						// calling its SetParent() method. Otherwise IsSame() above will compare the same
@@ -460,7 +467,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 					}
 					else {
 						// It's safe to read the underlying data lazily
-						if (childRawNode != null)
+						if (!(childRawNode is null))
 							childRawNode.SetParent(newNode, null);
 						else
 							childNode.__rawNode_DONT_USE = new ChildDbgValueRawNode(debuggerValueNodeChanged, childNode, newNode, (uint)i, Context.ValueNodeReader);
@@ -482,7 +489,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 		bool IsSame(RawNode oldNode, DebuggerValueRawNode newNode) {
 			// If any one of them is null (even if both are null), they're not the same
-			if (oldNode == null || newNode == null)
+			if (oldNode is null || newNode is null)
 				return false;
 
 			Debug.Assert(oldNode.HasInitializedUnderlyingData);
@@ -499,14 +506,14 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				var oldCount = GetChildCount(oldNode);
 				var newCount = GetChildCount(newNode);
 				// If any one of them is null, it's unknown and never matches the other one even if it's also null
-				if (oldCount == null || newCount == null || oldCount != newCount)
+				if (oldCount is null || newCount is null || oldCount != newCount)
 					return false;
 			}
 
 			return true;
 		}
 
-		ulong? GetChildCount(RawNode node) => node.HasChildren == false ? 0 : node.GetChildCount(Context.EvaluationContext, Context.StackFrame, CancellationToken.None);
+		ulong? GetChildCount(RawNode node) => node.HasChildren == false ? 0 : node.GetChildCount(Context.EvaluationInfo!);
 
 		// Don't allow refreshing the value if it's an EmptyCachedRawNode since it doesn't have the original expression
 		bool CanRefreshExpression => IsInvalid && RawNode.CanEvaluateExpression && !string.IsNullOrEmpty(RawNode.Expression);
@@ -517,8 +524,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			if (Context.IsWindowReadOnly)
 				return;
 			var res = Context.ValueNodeReader.Evaluate(RawNode.Expression);
-			if (res.Node == null)
-				res = new DbgValueNodeInfo(RootId ?? res.Expression, res.Expression, res.ErrorMessage, res.CausesSideEffects);
+			if (res.Node is null)
+				res = new DbgValueNodeInfo(RootId ?? res.Expression!, res.Expression!, res.ErrorMessage!, res.CausesSideEffects);
 			SetDebuggerValueNode(res);
 		}
 
@@ -554,9 +561,9 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		bool IsEditingValue() => nameEditableValue?.IsEditingValue == true || valueEditableValue?.IsEditingValue == true;
 
 		internal void ClearEditingValueProperties() {
-			if (nameEditableValue != null)
+			if (!(nameEditableValue is null))
 				nameEditableValue.IsEditingValue = false;
-			if (valueEditableValue != null)
+			if (!(valueEditableValue is null))
 				valueEditableValue.IsEditingValue = false;
 		}
 	}

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,11 +29,11 @@ namespace dnSpy.Menus {
 		readonly MenuService menuService;
 		readonly FrameworkElement element;
 		readonly Guid guid;
-		readonly IGuidObjectsProvider provider;
-		readonly IContextMenuInitializer initCtxMenu;
+		readonly IGuidObjectsProvider? provider;
+		readonly IContextMenuInitializer? initCtxMenu;
 		readonly Guid ctxMenuGuid;
 
-		public ContextMenuProvider(MenuService menuService, FrameworkElement elem, Guid guid, IGuidObjectsProvider provider, IContextMenuInitializer initCtxMenu, Guid? ctxMenuGuid) {
+		public ContextMenuProvider(MenuService menuService, FrameworkElement elem, Guid guid, IGuidObjectsProvider? provider, IContextMenuInitializer? initCtxMenu, Guid? ctxMenuGuid) {
 			this.menuService = menuService;
 			element = elem;
 			this.guid = guid;
@@ -49,7 +49,7 @@ namespace dnSpy.Menus {
 				return false;
 
 			var o = e.OriginalSource as DependencyObject;
-			while (o != null) {
+			while (!(o is null)) {
 				if (o == element)
 					return false;
 
@@ -68,7 +68,7 @@ namespace dnSpy.Menus {
 				return;
 
 			bool? b = menuService.ShowContextMenu(e, element, ctxMenuGuid, ctxMenuGuid, new GuidObject(guid, element), provider, initCtxMenu, e.CursorLeft == -1 && e.CursorTop == -1);
-			if (b == null)
+			if (b is null)
 				return;
 			if (!b.Value)
 				e.Handled = true;

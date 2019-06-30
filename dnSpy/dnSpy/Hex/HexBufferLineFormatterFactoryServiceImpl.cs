@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,9 +25,9 @@ namespace dnSpy.Hex {
 	[Export(typeof(HexBufferLineFormatterFactoryService))]
 	sealed class HexBufferLineFormatterFactoryServiceImpl : HexBufferLineFormatterFactoryService {
 		public override HexBufferLineFormatter Create(HexBuffer buffer, HexBufferLineFormatterOptions options) {
-			if (buffer == null)
+			if (buffer is null)
 				throw new ArgumentNullException(nameof(buffer));
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			return new HexBufferLineFormatterImpl(buffer, options);
 		}

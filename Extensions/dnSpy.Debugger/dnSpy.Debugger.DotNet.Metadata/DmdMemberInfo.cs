@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,30 +25,30 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
 	/// Base class of all types, fields, methods, constructors, properties, events
 	/// </summary>
-	public abstract class DmdMemberInfo : DmdObject, IDmdCustomAttributeProvider, IDmdSecurityAttributeProvider, IEquatable<DmdMemberInfo> {
+	public abstract class DmdMemberInfo : DmdObject, IDmdCustomAttributeProvider, IDmdSecurityAttributeProvider, IEquatable<DmdMemberInfo?> {
 		/// <summary>
 		/// Dummy abstract method to make sure no-one outside this assembly can create their own <see cref="DmdMemberInfo"/>
 		/// </summary>
-		internal abstract void YouCantDeriveFromThisClass();
+		private protected abstract void YouCantDeriveFromThisClass();
 
 		/// <summary>
 		/// Resolves a member reference and throws if it doesn't exist
 		/// </summary>
 		/// <returns></returns>
-		public DmdMemberInfo ResolveMember() => ResolveMember(throwOnError: true);
+		public DmdMemberInfo ResolveMember() => ResolveMember(throwOnError: true)!;
 
 		/// <summary>
 		/// Resolves a member reference and returns null if it doesn't exist
 		/// </summary>
 		/// <returns></returns>
-		public DmdMemberInfo ResolveMemberNoThrow() => ResolveMember(throwOnError: false);
+		public DmdMemberInfo? ResolveMemberNoThrow() => ResolveMember(throwOnError: false);
 
 		/// <summary>
 		/// Resolves a member reference
 		/// </summary>
 		/// <param name="throwOnError">true to throw if it doesn't exist, false to return null if it doesn't exist</param>
 		/// <returns></returns>
-		public abstract DmdMemberInfo ResolveMember(bool throwOnError);
+		public abstract DmdMemberInfo? ResolveMember(bool throwOnError);
 
 		/// <summary>
 		/// Gets the AppDomain
@@ -68,12 +68,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the declaring type. This is the type that declares the member, see also <see cref="ReflectedType"/>
 		/// </summary>
-		public abstract DmdType DeclaringType { get; }
+		public abstract DmdType? DeclaringType { get; }
 
 		/// <summary>
 		/// Gets the reflected type. This is the type that owns this member, see also <see cref="DeclaringType"/>
 		/// </summary>
-		public abstract DmdType ReflectedType { get; }
+		public abstract DmdType? ReflectedType { get; }
 
 		/// <summary>
 		/// Gets the metadata token
@@ -89,6 +89,17 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// true if it's a reference to another type or member, eg. a TypeRef, MemberRef
 		/// </summary>
 		public abstract bool IsMetadataReference { get; }
+
+		/// <summary>
+		/// Checks if this instance and <paramref name="other"/> have the same metadata definition
+		/// </summary>
+		/// <param name="other">Other member</param>
+		/// <returns></returns>
+		public bool HasSameMetadataDefinitionAs(DmdMemberInfo other) {
+			if (other is null)
+				throw new ArgumentNullException(nameof(other));
+			return other.Module == Module && other.MetadataToken == MetadataToken && MetadataToken != 0;
+		}
 
 		/// <summary>
 		/// Gets the security attributes
@@ -126,7 +137,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="attributeType">Custom attribute type</param>
 		/// <param name="inherit">true to check custom attributes in all base classes</param>
 		/// <returns></returns>
-		public virtual bool IsDefined(DmdType attributeType, bool inherit) => CustomAttributesHelper.IsDefined(GetCustomAttributesData(), attributeType);
+		public virtual bool IsDefined(DmdType? attributeType, bool inherit) => CustomAttributesHelper.IsDefined(GetCustomAttributesData(), attributeType);
 
 		/// <summary>
 		/// Checks if a custom attribute is present
@@ -142,7 +153,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="attributeTypeFullName">Full name of the custom attribute type</param>
 		/// <param name="inherit">true to check custom attributes in all base classes</param>
 		/// <returns></returns>
-		public virtual DmdCustomAttributeData FindCustomAttribute(string attributeTypeFullName, bool inherit) => CustomAttributesHelper.Find(GetCustomAttributesData(), attributeTypeFullName);
+		public virtual DmdCustomAttributeData? FindCustomAttribute(string attributeTypeFullName, bool inherit) => CustomAttributesHelper.Find(GetCustomAttributesData(), attributeTypeFullName);
 
 		/// <summary>
 		/// Finds a custom attribute
@@ -150,7 +161,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="attributeType">Custom attribute type</param>
 		/// <param name="inherit">true to check custom attributes in all base classes</param>
 		/// <returns></returns>
-		public virtual DmdCustomAttributeData FindCustomAttribute(DmdType attributeType, bool inherit) => CustomAttributesHelper.Find(GetCustomAttributesData(), attributeType);
+		public virtual DmdCustomAttributeData? FindCustomAttribute(DmdType? attributeType, bool inherit) => CustomAttributesHelper.Find(GetCustomAttributesData(), attributeType);
 
 		/// <summary>
 		/// Finds a custom attribute
@@ -158,26 +169,26 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="attributeType">Custom attribute type</param>
 		/// <param name="inherit">true to check custom attributes in all base classes</param>
 		/// <returns></returns>
-		public virtual DmdCustomAttributeData FindCustomAttribute(Type attributeType, bool inherit) => CustomAttributesHelper.Find(GetCustomAttributesData(), DmdTypeUtilities.ToDmdType(attributeType, AppDomain));
+		public virtual DmdCustomAttributeData? FindCustomAttribute(Type attributeType, bool inherit) => CustomAttributesHelper.Find(GetCustomAttributesData(), DmdTypeUtilities.ToDmdType(attributeType, AppDomain));
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
-		public static bool operator ==(DmdMemberInfo left, DmdMemberInfo right) => left is DmdType ? DmdMemberInfoEqualityComparer.DefaultType.Equals(left, right) : DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
-		public static bool operator !=(DmdMemberInfo left, DmdMemberInfo right) => !(left is DmdType ? DmdMemberInfoEqualityComparer.DefaultType.Equals(left, right) : DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right));
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+		public static bool operator ==(DmdMemberInfo? left, DmdMemberInfo? right) => left is DmdType ? DmdMemberInfoEqualityComparer.DefaultType.Equals(left, right) : DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right);
+		public static bool operator !=(DmdMemberInfo? left, DmdMemberInfo? right) => !(left is DmdType ? DmdMemberInfoEqualityComparer.DefaultType.Equals(left, right) : DmdMemberInfoEqualityComparer.DefaultMember.Equals(left, right));
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Equals()
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		public bool Equals(DmdMemberInfo other) => this is DmdType ? DmdMemberInfoEqualityComparer.DefaultType.Equals(this, other) : DmdMemberInfoEqualityComparer.DefaultMember.Equals(this, other);
+		public bool Equals(DmdMemberInfo? other) => this is DmdType ? DmdMemberInfoEqualityComparer.DefaultType.Equals(this, other) : DmdMemberInfoEqualityComparer.DefaultMember.Equals(this, other);
 
 		/// <summary>
 		/// Equals()
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public abstract override bool Equals(object obj);
+		public abstract override bool Equals(object? obj);
 
 		/// <summary>
 		/// GetHashCode()
@@ -189,6 +200,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// ToString()
 		/// </summary>
 		/// <returns></returns>
-		public abstract override string ToString();
+		public abstract override string? ToString();
 	}
 }

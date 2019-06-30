@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,10 +19,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace dnSpy.Language.Intellisense {
-	abstract class QuickInfoPresenterBase : IIntellisensePresenter, IIntellisenseCommandTarget {
+	abstract class QuickInfoPresenterBase : IIntellisensePresenter, IIntellisenseCommandTarget, INotifyPropertyChanged {
+		public event PropertyChangedEventHandler PropertyChanged { add { } remove { } }
 		public IIntellisenseSession Session => session;
 		public IList<object> QuickInfoContent => session.QuickInfoContent;
 

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -63,7 +63,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Constructor
 		/// </summary>
 		/// <param name="field">Field that couldn't be resolved</param>
-		public FieldResolveException(DmdFieldInfo field) : base("Couldn't resolve field: " + field.ToString() + ", type: " + field.DeclaringType.ToString()) => Field = field;
+		public FieldResolveException(DmdFieldInfo field) : base("Couldn't resolve field: " + field.ToString() + ", type: " + field.DeclaringType!.ToString()) => Field = field;
 	}
 
 	/// <summary>
@@ -80,6 +80,6 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Constructor
 		/// </summary>
 		/// <param name="method">Method that couldn't be resolved</param>
-		public MethodResolveException(DmdMethodBase method) : base("Couldn't resolve method: " + method.ToString() + ", type: " + method.DeclaringType.ToString()) => Method = method;
+		public MethodResolveException(DmdMethodBase method) : base("Couldn't resolve method: " + method.ToString() + ", type: " + method.DeclaringType!.ToString()) => Method = method;
 	}
 }

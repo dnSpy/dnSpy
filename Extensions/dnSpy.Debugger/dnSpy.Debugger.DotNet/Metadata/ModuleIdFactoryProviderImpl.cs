@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,7 +29,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		[ImportingConstructor]
 		ModuleIdFactoryProviderImpl(DsDocumentProvider documentProvider) => this.documentProvider = documentProvider;
 
-		public IModuleIdFactory Create() => new ModuleIdFactory(documentProvider);
+		public IModuleIdFactory? Create() => new ModuleIdFactory(documentProvider);
 
 		sealed class ModuleIdFactory : IModuleIdFactory {
 			readonly DsDocumentProvider documentProvider;

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,6 +23,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.Debugger.ToolWindows.CallStack {
@@ -38,16 +39,16 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 
 	[Export(typeof(ICallStackContent))]
 	sealed class CallStackContent : ICallStackContent {
-		public object UIObject => callStackControl;
-		public IInputElement FocusedElement => callStackControl.ListView;
-		public FrameworkElement ZoomElement => callStackControl;
+		public object? UIObject => callStackControl;
+		public IInputElement? FocusedElement => callStackControl.ListView;
+		public FrameworkElement? ZoomElement => callStackControl;
 		public ListView ListView => callStackControl.ListView;
 		public CallStackOperations Operations { get; }
 
 		readonly CallStackControl callStackControl;
 		readonly ICallStackVM callStackVM;
 
-		sealed class ControlVM {
+		sealed class ControlVM : ViewModelBase {
 			public ICallStackVM VM { get; }
 			CallStackOperations Operations { get; }
 

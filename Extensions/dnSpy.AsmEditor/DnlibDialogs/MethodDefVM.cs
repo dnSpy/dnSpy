@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,10 +23,10 @@ using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class MethodDefVM : ViewModelBase {
-		readonly MethodDef origMethod;
+		readonly MethodDef? origMethod;
 
-		public MethodDef Method {
-			get { return method; }
+		public MethodDef? Method {
+			get => method;
 			set {
 				if (method != value) {
 					method = value;
@@ -35,16 +35,16 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 			}
 		}
-		MethodDef method;
+		MethodDef? method;
 
 		public string FullName {
 			get {
 				var md = Method;
-				return md == null ? "null" : md.FullName;
+				return md is null ? "null" : md.FullName;
 			}
 		}
 
-		public MethodDefVM(MethodDef method) {
+		public MethodDefVM(MethodDef? method) {
 			origMethod = method;
 
 			Reinitialize();
@@ -52,9 +52,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		void Reinitialize() => Method = origMethod;
 
-		protected override string Verify(string columnName) {
+		protected override string? Verify(string columnName) {
 			if (columnName == nameof(Method)) {
-				if (Method == null)
+				if (Method is null)
 					return dnSpy_AsmEditor_Resources.MethodCantBeNull;
 				return string.Empty;
 			}
@@ -62,6 +62,6 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			return string.Empty;
 		}
 
-		public override bool HasError => Method != null;
+		public override bool HasError => !(Method is null);
 	}
 }

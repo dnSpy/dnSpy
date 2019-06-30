@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,7 +34,7 @@ namespace dnSpy.Contracts.Images {
 		/// </summary>
 		/// <param name="name">Name from <see cref="ImageReference.Name"/> but with any options removed from the string</param>
 		/// <returns></returns>
-		ImageSourceInfo[] GetImageSourceInfos(string name);
+		ImageSourceInfo[]? GetImageSourceInfos(string name);
 	}
 
 	/// <summary>Metadata</summary>
@@ -64,10 +64,6 @@ namespace dnSpy.Contracts.Images {
 			Type = type ?? throw new ArgumentNullException(nameof(type));
 			Order = order;
 		}
-
-		/// <summary>Constructor</summary>
-		/// <param name="order">Order of this instance</param>
-		internal ExportImageSourceInfoProviderAttribute(double order) => Order = order;
 
 		/// <summary>
 		/// Gets the type

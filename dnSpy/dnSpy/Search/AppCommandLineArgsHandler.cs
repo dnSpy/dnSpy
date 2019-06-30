@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -43,17 +43,17 @@ namespace dnSpy.Search {
 			var loc = GetSearchLocation(args.SearchIn);
 			var typ = GetSearchType(args.SearchFor);
 
-			if (loc != null) {
+			if (!(loc is null)) {
 				show = true;
 				searchService.Value.SearchLocation = loc.Value;
 			}
 
-			if (typ != null) {
+			if (!(typ is null)) {
 				show = true;
 				searchService.Value.SearchType = typ.Value;
 			}
 
-			if (args.SearchText != null) {
+			if (!(args.SearchText is null)) {
 				show = true;
 				searchService.Value.SearchText = args.SearchText;
 			}
@@ -85,7 +85,7 @@ namespace dnSpy.Search {
 			case "selected-type":
 				return SearchLocation.SelectedType;
 			}
-			Debug.Fail(string.Format("Unknown search loc: {0}", searchLocation));
+			Debug.Fail($"Unknown search loc: {searchLocation}");
 			return null;
 		}
 
@@ -175,7 +175,7 @@ namespace dnSpy.Search {
 			case "constant":
 				return SearchType.Literal;
 			}
-			Debug.Fail(string.Format("Unknown search type: {0}", searchType));
+			Debug.Fail($"Unknown search type: {searchType}");
 			return null;
 		}
 	}

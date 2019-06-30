@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,7 +24,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using dnlib.DotNet;
-using dnlib.IO;
 using dnSpy.AsmEditor.Commands;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.UndoRedo;
@@ -96,9 +95,9 @@ namespace dnSpy.AsmEditor.Compiler {
 			public override void Execute(CodeContext context) => MergeWithAssemblyCommand.Execute(pickFilename, addUpdatedNodesHelperProvider, undoCommandService, appService, context.Nodes);
 		}
 
-		static bool CanExecute(DocumentTreeNodeData[] nodes) => nodes.Length == 1 && GetModuleNode(nodes[0]) != null;
+		static bool CanExecute(DocumentTreeNodeData[] nodes) => nodes.Length == 1 && !(GetModuleNode(nodes[0]) is null);
 
-		static ModuleDocumentNode GetModuleNode(DocumentTreeNodeData node) {
+		static ModuleDocumentNode? GetModuleNode(DocumentTreeNodeData node) {
 			if (node is AssemblyDocumentNode asmNode) {
 				asmNode.TreeNode.EnsureChildrenLoaded();
 				return asmNode.TreeNode.DataChildren.FirstOrDefault() as ModuleDocumentNode;
@@ -112,30 +111,30 @@ namespace dnSpy.AsmEditor.Compiler {
 				return;
 
 			var modNode = GetModuleNode(nodes[0]);
-			Debug.Assert(modNode != null);
-			if (modNode == null)
+			Debug.Assert(!(modNode is null));
+			if (modNode is null)
 				return;
 			var module = modNode.Document.ModuleDef;
-			Debug.Assert(module != null);
-			if (module == null)
+			Debug.Assert(!(module is null));
+			if (module is null)
 				throw new InvalidOperationException();
 
 			var filename = pickFilename.GetFilename(null, "dll", PickFilenameConstants.DotNetAssemblyOrModuleFilter);
 			var result = GetModuleBytes(filename);
-			if (result == null)
+			if (result is null)
 				return;
 
 			// This is a basic assembly merger, we don't support merging dependencies. It would require
 			// fixing all refs to the dep and redirect them to the new defs that now exist in 'module'.
 			var asm = module.Assembly;
-			if (asm != null && result.Value.Assembly != null) {
+			if (!(asm is null) && !(result.Value.Assembly is null)) {
 				if (IsNonSupportedAssembly(module, asm, result.Value.Assembly)) {
 					Contracts.App.MsgBox.Instance.Show($"Can't merge with {result.Value.Assembly} because it's a dependency");
 					return;
 				}
 			}
 
-			var importer = new ModuleImporter(module, EditCodeVM.makeEverythingPublic);
+			var importer = new ModuleImporter(module, module.Context.AssemblyResolver);
 			try {
 				importer.Import(result.Value.RawBytes, result.Value.DebugFile, ModuleImporterOptions.None);
 			}
@@ -157,24 +156,24 @@ namespace dnSpy.AsmEditor.Compiler {
 			return false;
 		}
 
-		struct ModuleResult {
-			public IAssembly Assembly { get; }
+		readonly struct ModuleResult {
+			public IAssembly? Assembly { get; }
 			public byte[] RawBytes { get; }
 			public DebugFileResult DebugFile { get; }
-			public ModuleResult(IAssembly assembly, byte[] bytes, DebugFileResult debugFile) {
+			public ModuleResult(IAssembly? assembly, byte[] bytes, DebugFileResult debugFile) {
 				Assembly = assembly;
 				RawBytes = bytes;
 				DebugFile = debugFile;
 			}
 		}
 
-		static ModuleResult? GetModuleBytes(string filename) {
+		static ModuleResult? GetModuleBytes(string? filename) {
 			if (!File.Exists(filename))
 				return null;
 			try {
 				using (var module = ModuleDefMD.Load(filename)) {
 					// It's a .NET file, return all bytes
-					var bytes = module.MetaData.PEImage.CreateFullStream().ReadAllBytes();
+					var bytes = module.Metadata.PEImage.CreateReader().ToArray();
 					var asm = module.Assembly?.ToAssemblyRef();
 					var debugFile = GetDebugFile(module);
 					return new ModuleResult(asm, bytes, debugFile);
@@ -189,11 +188,13 @@ namespace dnSpy.AsmEditor.Compiler {
 			var pdbFilename = Path.ChangeExtension(module.Location, "pdb");
 			try {
 				var pdbBytes = File.ReadAllBytes(pdbFilename);
-				string pdbMagic = "Microsoft C/C++ MSF 7.00\r\n";
+
+				const string pdbMagic = "Microsoft C/C++ MSF 7.00\r\n";
 				if (pdbBytes.Length > pdbMagic.Length && Encoding.ASCII.GetString(pdbBytes, 0, pdbMagic.Length) == pdbMagic)
 					return new DebugFileResult(DebugFileFormat.Pdb, pdbBytes);
 
-				//TODO: Support portable pdb and embedded pdb
+				if (pdbBytes.Length >= 4 && BitConverter.ToUInt32(pdbBytes, 0) == 0x424A5342)
+					return new DebugFileResult(DebugFileFormat.PortablePdb, pdbBytes);
 			}
 			catch {
 			}

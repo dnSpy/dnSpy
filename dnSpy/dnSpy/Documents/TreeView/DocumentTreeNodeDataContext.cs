@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -46,14 +46,15 @@ namespace dnSpy.Documents.TreeView {
 			TreeViewNodeTextElementProvider = treeViewNodeTextElementProvider;
 			FilterVersion = 1;
 			CanDragAndDrop = true;
+			Decompiler = null!;
 		}
 
 		public void Clear() {
-			DocumentTreeView = null;
-			Decompiler = null;
-			ResourceNodeFactory = null;
-			Filter = null;
-			TreeViewNodeTextElementProvider = null;
+			DocumentTreeView = null!;
+			Decompiler = null!;
+			ResourceNodeFactory = null!;
+			Filter = null!;
+			TreeViewNodeTextElementProvider = null!;
 		}
 	}
 }

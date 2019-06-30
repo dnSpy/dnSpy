@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -84,12 +84,12 @@ namespace dnSpy.Decompiler.MSBuild {
 			this.decompiler = decompiler;
 		}
 
-		CilBody GetInitializeComponentBody() {
+		CilBody? GetInitializeComponentBody() {
 			var m = type.FindMethods("InitializeComponent").FirstOrDefault(a => a.Parameters.Count == 1 && !a.IsStatic);
 			return m?.Body;
 		}
 
-		string GetStartupUri(CilBody body) =>
+		string? GetStartupUri(CilBody body) =>
 			body?.Instructions.Where(a => a.Operand is string && ((string)a.Operand).EndsWith(".xaml", StringComparison.OrdinalIgnoreCase)).Select(a => (string)a.Operand).FirstOrDefault();
 
 		public override void Create(DecompileContext ctx) {
@@ -110,10 +110,10 @@ namespace dnSpy.Decompiler.MSBuild {
 				}
 
 				var body = GetInitializeComponentBody();
-				Debug.Assert(body != null);
-				if (body != null) {
+				Debug.Assert(!(body is null));
+				if (!(body is null)) {
 					var startupUri = GetStartupUri(body);
-					if (startupUri != null)
+					if (!(startupUri is null))
 						writer.WriteAttributeString("StartupUri", startupUri);
 
 					foreach (var info in GetEvents(body))
@@ -133,14 +133,14 @@ namespace dnSpy.Decompiler.MSBuild {
 				if (instrs[i].OpCode.Code != Code.Ldftn && instrs[i].OpCode.Code != Code.Ldvirtftn)
 					continue;
 				var m = instrs[i].Operand as MethodDef;
-				if (m == null)
+				if (m is null)
 					continue;
 				if (instrs[i + 1].OpCode.Code != Code.Newobj)
 					continue;
 				if (instrs[i + 2].OpCode.Code != Code.Call)
 					continue;
 				var addMethod = instrs[i + 2].Operand as IMethod;
-				if (addMethod == null || addMethod.MethodSig.GetParamCount() != 1)
+				if (addMethod is null || addMethod.MethodSig.GetParamCount() != 1)
 					continue;
 				if (!addMethod.Name.StartsWith("add_"))
 					continue;

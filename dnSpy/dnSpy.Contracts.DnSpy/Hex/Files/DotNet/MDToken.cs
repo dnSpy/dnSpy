@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 	/// <summary>
 	/// MetaData token
 	/// </summary>
-	public struct MDToken : IEquatable<MDToken>, IComparable<MDToken> {
+	public readonly struct MDToken : IEquatable<MDToken>, IComparable<MDToken> {
 		/// <summary>
 		/// Mask to get the rid from a raw metadata token
 		/// </summary>
@@ -46,30 +46,22 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <summary>
 		/// Returns the table type
 		/// </summary>
-		public Table Table {
-			get { return ToTable(token); }
-		}
+		public Table Table => ToTable(token);
 
 		/// <summary>
 		/// Returns the row id
 		/// </summary>
-		public uint Rid {
-			get { return ToRID(token); }
-		}
+		public uint Rid => ToRID(token);
 
 		/// <summary>
 		/// Returns the raw token
 		/// </summary>
-		public uint Raw {
-			get { return token; }
-		}
+		public uint Raw => token;
 
 		/// <summary>
 		/// Returns <c>true</c> if it's a <c>null</c> token
 		/// </summary>
-		public bool IsNull {
-			get { return Rid == 0; }
-		}
+		public bool IsNull => Rid == 0;
 
 		/// <summary>
 		/// Constructor
@@ -178,7 +170,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		public bool Equals(MDToken other) => CompareTo(other) == 0;
 
 		/// <inheritdoc/>
-		public override bool Equals(object obj) {
+		public override bool Equals(object? obj) {
 			if (!(obj is MDToken))
 				return false;
 			return Equals((MDToken)obj);
@@ -188,6 +180,6 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		public override int GetHashCode() => (int)token;
 
 		/// <inheritdoc/>
-		public override string ToString() => string.Format("{0:X8}", token);
+		public override string ToString() => token.ToString("X8");
 	}
 }

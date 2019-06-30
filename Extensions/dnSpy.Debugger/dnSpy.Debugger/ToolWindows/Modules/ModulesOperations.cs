@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,9 +28,9 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.References;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Hex;
-using dnSpy.Contracts.Text;
 using dnSpy.Debugger.Modules;
 using dnSpy.Debugger.ToolWindows.Memory;
 using dnSpy.Debugger.UI;
@@ -48,6 +48,8 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		public abstract int LoadModulesCount { get; }
 		public abstract bool CanLoadModules { get; }
 		public abstract void LoadModules();
+		public abstract bool CanLoadAllModules { get; }
+		public abstract void LoadAllModules();
 		public abstract bool CanShowInMemoryWindow { get; }
 		public abstract void ShowInMemoryWindow(int windowIndex);
 		public abstract void ShowInMemoryWindow();
@@ -76,8 +78,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 		BulkObservableCollection<ModuleVM> AllItems => modulesVM.AllItems;
 		ObservableCollection<ModuleVM> SelectedItems => modulesVM.SelectedItems;
-		//TODO: This should be view order
-		IEnumerable<ModuleVM> SortedSelectedItems => SelectedItems.OrderBy(a => a.Order);
+		IEnumerable<ModuleVM> SortedSelectedItems => modulesVM.Sort(SelectedItems);
 
 		[ImportingConstructor]
 		ModulesOperationsImpl(IModulesVM modulesVM, DebuggerSettings debuggerSettings, Lazy<ModulesSaver> modulesSaver, Lazy<MemoryWindowService> memoryWindowService, Lazy<ReferenceNavigatorService> referenceNavigatorService, Lazy<IModuleLoader> moduleLoader) {
@@ -91,30 +92,72 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 
 		public override bool CanCopy => SelectedItems.Count != 0;
 		public override void Copy() {
-			var output = new StringBuilderTextColorOutput();
+			var output = new DbgStringBuilderTextWriter();
 			foreach (var vm in SortedSelectedItems) {
 				var formatter = vm.Context.Formatter;
-				formatter.WriteName(output, vm.Module);
-				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteOptimized(output, vm.Module);
-				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteDynamic(output, vm.Module);
-				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteInMemory(output, vm.Module);
-				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteOrder(output, vm.Module);
-				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteVersion(output, vm.Module);
-				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteTimestamp(output, vm.Module);
-				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteAddress(output, vm.Module);
-				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteProcess(output, vm.Module);
-				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WriteAppDomain(output, vm.Module);
-				output.Write(BoxedTextColor.Text, "\t");
-				formatter.WritePath(output, vm.Module);
+				bool needTab = false;
+				foreach (var column in modulesVM.Descs.Columns) {
+					if (!column.IsVisible)
+						continue;
+					if (column.Name == string.Empty)
+						continue;
+
+					if (needTab)
+						output.Write(DbgTextColor.Text, "\t");
+					switch (column.Id) {
+					case ModulesWindowColumnIds.Icon:
+						break;
+
+					case ModulesWindowColumnIds.Name:
+						formatter.WriteName(output, vm.Module);
+						break;
+
+					case ModulesWindowColumnIds.OptimizedModule:
+						formatter.WriteOptimized(output, vm.Module);
+						break;
+
+					case ModulesWindowColumnIds.DynamicModule:
+						formatter.WriteDynamic(output, vm.Module);
+						break;
+
+					case ModulesWindowColumnIds.InMemoryModule:
+						formatter.WriteInMemory(output, vm.Module);
+						break;
+
+					case ModulesWindowColumnIds.Order:
+						formatter.WriteOrder(output, vm.Module);
+						break;
+
+					case ModulesWindowColumnIds.Version:
+						formatter.WriteVersion(output, vm.Module);
+						break;
+
+					case ModulesWindowColumnIds.Timestamp:
+						formatter.WriteTimestamp(output, vm.Module);
+						break;
+
+					case ModulesWindowColumnIds.Address:
+						formatter.WriteAddress(output, vm.Module);
+						break;
+
+					case ModulesWindowColumnIds.Process:
+						formatter.WriteProcess(output, vm.Module);
+						break;
+
+					case ModulesWindowColumnIds.AppDomain:
+						formatter.WriteAppDomain(output, vm.Module);
+						break;
+
+					case ModulesWindowColumnIds.Path:
+						formatter.WritePath(output, vm.Module);
+						break;
+
+					default:
+						throw new InvalidOperationException();
+					}
+
+					needTab = true;
+				}
 				output.WriteLine();
 			}
 			var s = output.ToString();
@@ -148,16 +191,25 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		public override bool CanLoadModules => SelectedItems.Count > 1;
 		public override void LoadModules() {
 			if (CanLoadModules)
-				moduleLoader.Value.LoadModules(SelectedItems.Select(a => a.Module).ToArray(), useMemory: false);
+				LoadModules(SelectedItems);
 		}
 
-		public override bool CanShowInMemoryWindow => GetShowInMemoryWindowModule() != null;
+		public override bool CanLoadAllModules => AllItems.Count > 0;
+		public override void LoadAllModules() {
+			if (CanLoadAllModules)
+				LoadModules(AllItems);
+		}
+
+		void LoadModules(IList<ModuleVM> modules) =>
+			moduleLoader.Value.LoadModules(modules.Select(a => a.Module).ToArray(), DbgLoadModuleReferenceHandlerOptions.None);
+
+		public override bool CanShowInMemoryWindow => !(GetShowInMemoryWindowModule() is null);
 		public override void ShowInMemoryWindow(int windowIndex) {
 			if ((uint)windowIndex >= (uint)MemoryWindowsHelper.NUMBER_OF_MEMORY_WINDOWS)
 				throw new ArgumentOutOfRangeException(nameof(windowIndex));
 			ShowInMemoryWindowCore(windowIndex);
 		}
-		ModuleVM GetShowInMemoryWindowModule() {
+		ModuleVM? GetShowInMemoryWindowModule() {
 			if (SelectedItems.Count != 1)
 				return null;
 			var vm = SelectedItems[0];
@@ -168,12 +220,12 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		public override void ShowInMemoryWindow() => ShowInMemoryWindowCore(null);
 		void ShowInMemoryWindowCore(int? windowIndex) {
 			var vm = GetShowInMemoryWindowModule();
-			if (vm != null) {
+			if (!(vm is null)) {
 				var start = new HexPosition(vm.Module.Address);
 				var end = start + vm.Module.Size;
 				Debug.Assert(end <= HexPosition.MaxEndPosition);
 				if (end <= HexPosition.MaxEndPosition) {
-					if (windowIndex != null)
+					if (!(windowIndex is null))
 						memoryWindowService.Value.Show(vm.Module.Process.Id, HexSpan.FromBounds(start, end), windowIndex.Value);
 					else
 						memoryWindowService.Value.Show(vm.Module.Process.Id, HexSpan.FromBounds(start, end));
@@ -188,20 +240,20 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			set => debuggerSettings.UseHexadecimal = value;
 		}
 
-		public override bool CanOpenContainingFolder => GetFilename() != null;
+		public override bool CanOpenContainingFolder => !(GetFilename() is null);
 		public override void OpenContainingFolder() {
 			var filename = GetFilename();
-			if (filename == null)
+			if (filename is null)
 				return;
 			// Known problem: explorer can't show files in the .NET 2.0 GAC.
-			var args = string.Format("/select,{0}", filename);
+			var args = $"/select,{filename}";
 			try {
-				Process.Start(new ProcessStartInfo("explorer.exe", args));
+				Process.Start(new ProcessStartInfo("explorer.exe", args) { UseShellExecute = false });
 			}
 			catch {
 			}
 		}
-		string GetFilename() {
+		string? GetFilename() {
 			if (SelectedItems.Count != 1)
 				return null;
 			var path = SelectedItems[0].Module.Filename;

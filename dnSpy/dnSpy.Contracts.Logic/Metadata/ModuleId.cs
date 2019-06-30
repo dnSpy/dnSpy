@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Metadata {
 	/// <summary>
 	/// Module ID
 	/// </summary>
-	public struct ModuleId : IEquatable<ModuleId> {
+	public readonly struct ModuleId : IEquatable<ModuleId> {
 		[Flags]
 		enum Flags : byte {
 			IsDynamic		= 0x01,
@@ -83,8 +83,8 @@ namespace dnSpy.Contracts.Metadata {
 		/// <param name="isDynamic">true if it's a dynamic module</param>
 		/// <param name="isInMemory">true if it's an in-memory module</param>
 		/// <param name="nameOnly">true if <paramref name="asmFullName"/> is ignored</param>
-		public ModuleId(string asmFullName, string moduleName, bool isDynamic, bool isInMemory, bool nameOnly) {
-			Debug.Assert(asmFullName == null || !asmFullName.Contains("\\:"));
+		public ModuleId(string? asmFullName, string moduleName, bool isDynamic, bool isInMemory, bool nameOnly) {
+			Debug.Assert(asmFullName is null || !asmFullName.Contains("\\:"));
 			this.asmFullName = asmFullName ?? string.Empty;
 			this.moduleName = moduleName ?? string.Empty;
 			flags = 0;
@@ -106,7 +106,8 @@ namespace dnSpy.Contracts.Metadata {
 
 		static string GetFullName(string filename) {
 			try {
-				return Path.GetFullPath(filename);
+				if (!string.IsNullOrEmpty(filename))
+					return Path.GetFullPath(filename);
 			}
 			catch {
 			}
@@ -149,7 +150,7 @@ namespace dnSpy.Contracts.Metadata {
 		/// <param name="isInMemory">true if it's an in-memory module</param>
 		/// <param name="moduleNameOnly">true if <paramref name="asmFullName"/> is ignored</param>
 		/// <returns></returns>
-		public static ModuleId Create(string asmFullName, string moduleName, bool isDynamic, bool isInMemory, bool moduleNameOnly) =>
+		public static ModuleId Create(string? asmFullName, string moduleName, bool isDynamic, bool isInMemory, bool moduleNameOnly) =>
 			new ModuleId(asmFullName, moduleName, isDynamic, isInMemory, moduleNameOnly);
 
 		/// <summary>
@@ -183,7 +184,7 @@ namespace dnSpy.Contracts.Metadata {
 		/// </summary>
 		/// <param name="obj">Other instance</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is ModuleId other && Equals(other);
+		public override bool Equals(object? obj) => obj is ModuleId other && Equals(other);
 
 		/// <summary>
 		/// GetHashCode()
@@ -199,8 +200,8 @@ namespace dnSpy.Contracts.Metadata {
 		/// <returns></returns>
 		public override string ToString() {
 			if (ModuleNameOnly)
-				return string.Format("DYN={0} MEM={1} [{2}]", IsDynamic ? 1 : 0, IsInMemory ? 1 : 0, ModuleName);
-			return string.Format("DYN={0} MEM={1} {2} [{3}]", IsDynamic ? 1 : 0, IsInMemory ? 1 : 0, AssemblyFullName, ModuleName);
+				return $"DYN={(IsDynamic ? 1 : 0)} MEM={(IsInMemory ? 1 : 0)} [{ModuleName}]";
+			return $"DYN={(IsDynamic ? 1 : 0)} MEM={(IsInMemory ? 1 : 0)} {AssemblyFullName} [{ModuleName}]";
 		}
 	}
 }

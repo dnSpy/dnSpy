@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -39,9 +39,9 @@ namespace dnSpy.MainApp {
 		const string LOCATION_GUID_ATTR = "g";
 		const string LOCATION_ATTR = "l";
 
-		public StackedContentState HorizontalContentState;
-		public StackedContentState VerticalContentState;
-		public ToolWindowUIState LeftState, RightState, TopState, BottomState;
+		public StackedContentState? HorizontalContentState;
+		public StackedContentState? VerticalContentState;
+		public ToolWindowUIState? LeftState, RightState, TopState, BottomState;
 		public readonly Dictionary<Guid, AppToolWindowLocation> SavedLocations = new Dictionary<Guid, AppToolWindowLocation>();
 
 		public MainWindowControlState Read(ISettingsSection section) {
@@ -50,7 +50,7 @@ namespace dnSpy.MainApp {
 
 			foreach (var twSect in section.SectionsWithName(TOOLWINDOWUI_SECT)) {
 				var state = ToolWindowUIState.TryDeserialize(twSect);
-				if (state == null)
+				if (state is null)
 					continue;
 				switch (state.Location) {
 				case AppToolWindowLocation.Left:	LeftState = state; break;
@@ -63,7 +63,7 @@ namespace dnSpy.MainApp {
 			foreach (var locSect in section.SectionsWithName(LOCATION_SECT)) {
 				var guid = locSect.Attribute<Guid?>(LOCATION_GUID_ATTR);
 				var loc = locSect.Attribute<AppToolWindowLocation?>(LOCATION_ATTR);
-				if (guid == null || loc == null)
+				if (guid is null || loc is null)
 					continue;
 				if (!IsValid(loc.Value))
 					continue;
@@ -80,19 +80,19 @@ namespace dnSpy.MainApp {
 			value == AppToolWindowLocation.Bottom;
 
 		public void Write(ISettingsSection section) {
-			Debug.Assert(HorizontalContentState != null && VerticalContentState != null);
-			if (HorizontalContentState != null)
+			Debug.Assert(!(HorizontalContentState is null) && !(VerticalContentState is null));
+			if (!(HorizontalContentState is null))
 				StackedContentStateSerializer.Serialize(section.GetOrCreateSection(HORIZONTALCONTENT_SECT), HorizontalContentState);
-			if (VerticalContentState != null)
+			if (!(VerticalContentState is null))
 				StackedContentStateSerializer.Serialize(section.GetOrCreateSection(VERTICALCONTENT_SECT), VerticalContentState);
-			Debug.Assert(LeftState != null && RightState != null && TopState != null && BottomState != null);
-			if (LeftState != null)
+			Debug.Assert(!(LeftState is null) && !(RightState is null) && !(TopState is null) && !(BottomState is null));
+			if (!(LeftState is null))
 				ToolWindowUIState.Serialize(section.CreateSection(TOOLWINDOWUI_SECT), LeftState);
-			if (RightState != null)
+			if (!(RightState is null))
 				ToolWindowUIState.Serialize(section.CreateSection(TOOLWINDOWUI_SECT), RightState);
-			if (TopState != null)
+			if (!(TopState is null))
 				ToolWindowUIState.Serialize(section.CreateSection(TOOLWINDOWUI_SECT), TopState);
-			if (BottomState != null)
+			if (!(BottomState is null))
 				ToolWindowUIState.Serialize(section.CreateSection(TOOLWINDOWUI_SECT), BottomState);
 			foreach (var kv in SavedLocations) {
 				var sect = section.CreateSection(LOCATION_SECT);
@@ -110,7 +110,7 @@ namespace dnSpy.MainApp {
 		const string STACKEDCONTENTSTATE_SECTION = "StackedContent";
 
 		public AppToolWindowLocation Location;
-		public StackedContentState StackedContentState;
+		public StackedContentState? StackedContentState;
 		public int Index;
 		public bool IsHorizontal;
 		public List<ToolWindowGroupState> Groups { get; }
@@ -121,7 +121,7 @@ namespace dnSpy.MainApp {
 			Location = location;
 			StackedContentState = ((ToolWindowGroupService)ui.ToolWindowGroupService).StackedContentState;
 			var groups = ui.ToolWindowGroupService.TabGroups.ToList();
-			Index = groups.IndexOf(ui.ToolWindowGroupService.ActiveTabGroup);
+			Index = groups.IndexOf(ui.ToolWindowGroupService.ActiveTabGroup!);
 			IsHorizontal = ui.ToolWindowGroupService.IsHorizontal;
 			foreach (var g in groups)
 				Groups.Add(new ToolWindowGroupState().Save(g));
@@ -154,18 +154,18 @@ namespace dnSpy.MainApp {
 				mgr.ActiveTabGroup = groups[Index];
 			else if (groups.Count > 0)
 				mgr.ActiveTabGroup = groups[0];
-			((ToolWindowGroupService)mgr).StackedContentState = StackedContentState;
+			((ToolWindowGroupService)mgr).StackedContentState = StackedContentState!;
 			foreach (var g in groups) {
 				if (!g.TabContents.Any())
 					mgr.Close(g);
 			}
 		}
 
-		public static ToolWindowUIState TryDeserialize(ISettingsSection section) {
+		public static ToolWindowUIState? TryDeserialize(ISettingsSection section) {
 			var location = section.Attribute<AppToolWindowLocation?>(LOCATION_ATTR);
 			int? index = section.Attribute<int?>(INDEX_ATTR);
 			bool? isHorizontal = section.Attribute<bool?>(ISHORIZONTAL_ATTR);
-			if (location == null || index == null || isHorizontal == null)
+			if (location is null || index is null || isHorizontal is null)
 				return null;
 			var state = new ToolWindowUIState();
 			state.Location = location.Value;
@@ -174,13 +174,13 @@ namespace dnSpy.MainApp {
 
 			foreach (var sect in section.SectionsWithName(GROUP_SECT)) {
 				var content = ToolWindowGroupState.TryDeserialize(sect);
-				if (content == null)
+				if (content is null)
 					return null;
 				state.Groups.Add(content);
 			}
 
 			state.StackedContentState = StackedContentStateSerializer.TryDeserialize(section.GetOrCreateSection(STACKEDCONTENTSTATE_SECTION));
-			if (state.StackedContentState == null)
+			if (state.StackedContentState is null)
 				return null;
 
 			return state;
@@ -192,8 +192,8 @@ namespace dnSpy.MainApp {
 			section.Attribute(ISHORIZONTAL_ATTR, state.IsHorizontal);
 			foreach (var content in state.Groups)
 				ToolWindowGroupState.Serialize(section.CreateSection(GROUP_SECT), content);
-			Debug.Assert(state.StackedContentState != null);
-			if (state.StackedContentState != null)
+			Debug.Assert(!(state.StackedContentState is null));
+			if (!(state.StackedContentState is null))
 				StackedContentStateSerializer.Serialize(section.GetOrCreateSection(STACKEDCONTENTSTATE_SECTION), state.StackedContentState);
 		}
 	}
@@ -207,16 +207,16 @@ namespace dnSpy.MainApp {
 
 		public ToolWindowGroupState() => Contents = new List<ToolWindowContentState>();
 
-		public static ToolWindowGroupState TryDeserialize(ISettingsSection section) {
+		public static ToolWindowGroupState? TryDeserialize(ISettingsSection section) {
 			int? index = section.Attribute<int?>(INDEX_ATTR);
-			if (index == null)
+			if (index is null)
 				return null;
 			var state = new ToolWindowGroupState();
 			state.Index = index.Value;
 
 			foreach (var sect in section.SectionsWithName(CONTENT_SECT)) {
 				var content = ToolWindowContentState.TryDeserialize(sect);
-				if (content == null)
+				if (content is null)
 					return null;
 				state.Contents.Add(content);
 			}
@@ -232,7 +232,7 @@ namespace dnSpy.MainApp {
 
 		public ToolWindowGroupState Save(IToolWindowGroup g) {
 			var contents = g.TabContents.ToList();
-			Index = contents.IndexOf(g.ActiveTabContent);
+			Index = contents.IndexOf(g.ActiveTabContent!);
 			foreach (var c in contents)
 				Contents.Add(new ToolWindowContentState().Save(c));
 			return this;
@@ -249,9 +249,9 @@ namespace dnSpy.MainApp {
 
 		public ToolWindowContentState(Guid guid) => Guid = guid;
 
-		public static ToolWindowContentState TryDeserialize(ISettingsSection section) {
+		public static ToolWindowContentState? TryDeserialize(ISettingsSection section) {
 			var guid = section.Attribute<Guid?>(GUID_ATTR);
-			if (guid == null)
+			if (guid is null)
 				return null;
 
 			return new ToolWindowContentState(guid.Value);
@@ -273,7 +273,7 @@ namespace dnSpy.MainApp {
 		readonly Lazy<IToolWindowContentProvider>[] mainToolWindowContentProviders;
 		readonly Dictionary<Guid, AppToolWindowLocation> savedLocations;
 
-		public object UIObject => horizontalContent.UIObject;
+		public object? UIObject => horizontalContent.UIObject;
 
 		[ImportingConstructor]
 		MainWindowControl(IToolWindowServiceProvider toolWindowServiceProvider, [ImportMany] Lazy<IToolWindowContentProvider>[] mainToolWindowContentProviders) {
@@ -301,7 +301,7 @@ namespace dnSpy.MainApp {
 
 			public double Length { get; set; }
 			public bool IsAdded { get; set; }
-			public IStackedContentChild StackedContentChild { get; set; }
+			public IStackedContentChild? StackedContentChild { get; set; }
 
 			public ToolWindowUI(MainWindowControl mainWindowControl, AppToolWindowLocation location, double length, StackedContent<IStackedContentChild> stackedContent, bool insertLast, IToolWindowGroupService mgr) {
 				this.mainWindowControl = mainWindowControl;
@@ -315,9 +315,11 @@ namespace dnSpy.MainApp {
 
 			void ToolWindowGroupService_TabGroupCollectionChanged(object sender, ToolWindowGroupCollectionChangedEventArgs e) => mainWindowControl.TabGroupCollectionChanged(this);
 
+			const double DEFAULT_MIN_HEIGHT = 20;
+			const double DEFAULT_MIN_WIDTH = 20;
 			public StackedContentChildInfo GetSizeInfo() => new StackedContentChildInfo {
-				Horizontal = new GridChildLength(new GridLength(Length, GridUnitType.Pixel)),
-				Vertical = new GridChildLength(new GridLength(Length, GridUnitType.Pixel)),
+				Horizontal = new GridChildLength(new GridLength(Length, GridUnitType.Pixel), min: DEFAULT_MIN_WIDTH),
+				Vertical = new GridChildLength(new GridLength(Length, GridUnitType.Pixel), min: DEFAULT_MIN_HEIGHT),
 			};
 		}
 
@@ -328,7 +330,7 @@ namespace dnSpy.MainApp {
 			foreach (var kv in state.SavedLocations)
 				savedLocations[kv.Key] = kv.Value;
 
-			if (state.LeftState != null && state.RightState != null && state.TopState != null && state.BottomState != null) {
+			if (!(state.LeftState is null) && !(state.RightState is null) && !(state.TopState is null) && !(state.BottomState is null)) {
 				state.LeftState.Restore(this, toolWindowUIs[AppToolWindowLocation.Left]);
 				state.RightState.Restore(this, toolWindowUIs[AppToolWindowLocation.Right]);
 				state.TopState.Restore(this, toolWindowUIs[AppToolWindowLocation.Top]);
@@ -337,7 +339,7 @@ namespace dnSpy.MainApp {
 			else
 				RestoreDefault();
 
-			if (state.HorizontalContentState != null && state.VerticalContentState != null) {
+			if (!(state.HorizontalContentState is null) && !(state.VerticalContentState is null)) {
 				horizontalContent.State = state.HorizontalContentState;
 				verticalContent.State = state.VerticalContentState;
 			}
@@ -411,16 +413,16 @@ namespace dnSpy.MainApp {
 		}
 
 		public void Show(ToolWindowContent content, AppToolWindowLocation? location) {
-			if (content == null)
+			if (content is null)
 				throw new ArgumentNullException(nameof(content));
 			Show(content, GetLocation(content.Guid, location), true, true);
 		}
 
 		void Show(ToolWindowContent content, AppToolWindowLocation location, bool active, bool focus) {
-			if (content == null)
+			if (content is null)
 				throw new ArgumentNullException(nameof(content));
 			var t = GetToolWindowGroup(content);
-			if (t != null) {
+			if (!(t is null)) {
 				if (active)
 					t.Value.group.ActiveTabContent = content;
 				if (focus)
@@ -438,7 +440,7 @@ namespace dnSpy.MainApp {
 				throw new ArgumentException();
 			Show(ui);
 			var g = ui.ToolWindowGroupService.ActiveTabGroup;
-			if (g == null)
+			if (g is null)
 				g = ui.ToolWindowGroupService.Create();
 			return g;
 		}
@@ -453,9 +455,9 @@ namespace dnSpy.MainApp {
 
 		internal bool TryAdd(ToolWindowUI ui, IToolWindowGroup g, Guid guid) {
 			var content = Create(guid);
-			if (content == null)
+			if (content is null)
 				return false;
-			if (GetToolWindowGroup(content) != null)
+			if (!(GetToolWindowGroup(content) is null))
 				return false;
 
 			g.Add(content);
@@ -467,19 +469,19 @@ namespace dnSpy.MainApp {
 				return;
 			SaveUILengths();
 			int index = ui.InsertLast ? ui.StackedContent.Count : 0;
-			if (ui.StackedContentChild == null)
+			if (ui.StackedContentChild is null)
 				ui.StackedContentChild = StackedContentChildImpl.GetOrCreate(ui.ToolWindowGroupService, ui.ToolWindowGroupService.UIObject);
 			ui.StackedContent.AddChild(ui.StackedContentChild, ui.GetSizeInfo(), index);
 			ui.IsAdded = true;
 		}
 
-		public bool IsShown(ToolWindowContent content) => GetToolWindowGroup(content) != null;
-		public bool IsShown(Guid guid) => GetToolWindowGroup(guid) != null;
+		public bool IsShown(ToolWindowContent content) => !(GetToolWindowGroup(content) is null);
+		public bool IsShown(Guid guid) => !(GetToolWindowGroup(guid) is null);
 
 		void Hide(ToolWindowUI ui) {
 			Debug.Assert(!ui.ToolWindowGroupService.TabGroups.Any());
 			SaveLength(ui);
-			ui.StackedContent.Remove(ui.StackedContentChild);
+			ui.StackedContent.Remove(ui.StackedContentChild!);
 			ui.IsAdded = false;
 		}
 
@@ -487,32 +489,32 @@ namespace dnSpy.MainApp {
 			foreach (var ui in toolWindowUIs.Values) {
 				if (ui.IsAdded) {
 					SaveLength(ui);
-					ui.StackedContent.UpdateSize(ui.StackedContentChild, ui.GetSizeInfo());
+					ui.StackedContent.UpdateSize(ui.StackedContentChild!, ui.GetSizeInfo());
 				}
 			}
 		}
 
 		void SaveLength(ToolWindowUI ui) {
-			var length = ui.StackedContent.GetLength(ui.StackedContentChild);
+			var length = ui.StackedContent.GetLength(ui.StackedContentChild!);
 			Debug.Assert(length.IsAbsolute);
 			ui.Length = length.Value;
 		}
 
-		public ToolWindowContent Show(Guid guid, AppToolWindowLocation? location) => Show(guid, GetLocation(guid, location), true, true);
+		public ToolWindowContent? Show(Guid guid, AppToolWindowLocation? location) => Show(guid, GetLocation(guid, location), true, true);
 
-		ToolWindowContent Show(Guid guid, AppToolWindowLocation location, bool active, bool focus) {
+		ToolWindowContent? Show(Guid guid, AppToolWindowLocation location, bool active, bool focus) {
 			var content = Create(guid);
-			Debug.Assert(content != null);
-			if (content == null)
+			Debug.Assert(!(content is null));
+			if (content is null)
 				return null;
 			Show(content, location, active, focus);
 			return content;
 		}
 
-		ToolWindowContent Create(Guid guid) {
+		ToolWindowContent? Create(Guid guid) {
 			foreach (var provider in mainToolWindowContentProviders) {
 				var content = provider.Value.GetOrCreate(guid);
-				if (content != null)
+				if (!(content is null))
 					return content;
 			}
 			return null;
@@ -535,7 +537,7 @@ namespace dnSpy.MainApp {
 			return null;
 		}
 
-		(ToolWindowUI ui, IToolWindowGroup group)? GetToolWindowGroup(ToolWindowContent content) {
+		(ToolWindowUI ui, IToolWindowGroup group)? GetToolWindowGroup(ToolWindowContent? content) {
 			foreach (var ui in toolWindowUIs.Values) {
 				foreach (var g in ui.ToolWindowGroupService.TabGroups) {
 					if (g.TabContents.Contains(content))
@@ -554,11 +556,11 @@ namespace dnSpy.MainApp {
 		}
 
 		public void Close(ToolWindowContent content) {
-			if (content == null)
+			if (content is null)
 				throw new ArgumentNullException(nameof(content));
 			var t = GetToolWindowGroup(content);
-			Debug.Assert(t != null);
-			if (t == null)
+			Debug.Assert(!(t is null));
+			if (t is null)
 				throw new InvalidOperationException();
 			t.Value.group.Close(content);
 		}
@@ -566,11 +568,12 @@ namespace dnSpy.MainApp {
 		public void Close(Guid guid) {
 			if (!IsShown(guid))
 				return;
-			Close(Create(guid));
+			if (Create(guid) is ToolWindowContent content)
+				Close(content);
 		}
 
 		public bool Owns(IToolWindowGroup toolWindowGroup) {
-			if (toolWindowGroup == null)
+			if (toolWindowGroup is null)
 				return false;
 			foreach (var ui in toolWindowUIs.Values) {
 				if (ui.ToolWindowGroupService.TabGroups.Contains(toolWindowGroup))
@@ -579,20 +582,21 @@ namespace dnSpy.MainApp {
 			return false;
 		}
 
-		public bool CanMove(ToolWindowContent content, AppToolWindowLocation location) {
+		public bool CanMove(ToolWindowContent? content, AppToolWindowLocation location) {
 			var t = GetToolWindowGroup(content);
 			location = Convert(location);
-			if (t == null || t.Value.ui.Location == location)
+			if (t is null || t.Value.ui.Location == location)
 				return false;
 
 			return true;
 		}
 
-		public void Move(ToolWindowContent content, AppToolWindowLocation location) {
+		public void Move(ToolWindowContent? content, AppToolWindowLocation location) {
 			var t = GetToolWindowGroup(content);
 			location = Convert(location);
-			if (t == null || t.Value.ui.Location == location)
+			if (t is null || t.Value.ui.Location == location)
 				return;
+			Debug.Assert(!(content is null));
 
 			var g = GetOrCreateGroup(location);
 			t.Value.group.MoveTo(g, content);
@@ -600,32 +604,32 @@ namespace dnSpy.MainApp {
 		}
 
 		public bool CanMove(IToolWindowGroup group, AppToolWindowLocation location) {
-			if (group == null)
+			if (group is null)
 				return false;
 			var t = GetToolWindowGroup(group);
 			location = Convert(location);
-			if (t == null || t.Value.ui.Location == location || !t.Value.group.TabContents.Any())
+			if (t is null || t.Value.ui.Location == location || !t.Value.group.TabContents.Any())
 				return false;
 
 			return true;
 		}
 
 		public void Move(IToolWindowGroup group, AppToolWindowLocation location) {
-			if (group == null)
+			if (group is null)
 				return;
 			var t = GetToolWindowGroup(group);
 			location = Convert(location);
-			if (t == null || t.Value.ui.Location == location || !t.Value.group.TabContents.Any())
+			if (t is null || t.Value.ui.Location == location || !t.Value.group.TabContents.Any())
 				return;
 
 			var activeContent = t.Value.group.ActiveTabContent;
-			Debug.Assert(activeContent != null);
+			Debug.Assert(!(activeContent is null));
 			foreach (var c in t.Value.group.TabContents.ToArray())
 				Move(c, location);
-			if (activeContent != null) {
+			if (!(activeContent is null)) {
 				var t2 = GetToolWindowGroup(activeContent);
-				Debug.Assert(t2 != null);
-				if (t2 != null) {
+				Debug.Assert(!(t2 is null));
+				if (!(t2 is null)) {
 					t2.Value.group.ActiveTabContent = activeContent;
 				}
 			}

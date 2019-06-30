@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,7 +33,9 @@ namespace dndbg.Engine {
 	}
 
 	sealed class DebugOptions {
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
 		public DebugOptionsProvider DebugOptionsProvider { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
 		public CorDebugIntercept StepperInterceptMask { get; set; } = CorDebugIntercept.INTERCEPT_NONE;
 		public CorDebugUnmappedStop StepperUnmappedStopMask { get; set; } = CorDebugUnmappedStop.STOP_NONE;
 		public bool StepperJMC { get; set; } = false;

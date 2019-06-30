@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.App {
 		/// </summary>
 		/// <param name="ownerWindow">Owner window or null</param>
 		/// <returns></returns>
-		string[] GetPaths(Window ownerWindow = null);
+		string[] GetPaths(Window? ownerWindow = null);
 
 		/// <summary>
 		/// Returns an array of selected GAC assemblies
@@ -38,6 +38,6 @@ namespace dnSpy.Contracts.App {
 		/// <param name="selectAssembly">true to select the assembly in <c>Assembly Explorer</c></param>
 		/// <param name="ownerWindow">Owner window or null</param>
 		/// <returns></returns>
-		ModuleDef[] OpenAssemblies(bool selectAssembly, Window ownerWindow = null);
+		ModuleDef[] OpenAssemblies(bool selectAssembly, Window? ownerWindow = null);
 	}
 }

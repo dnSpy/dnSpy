@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,12 +36,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		}
 
 		sealed class State {
-			public DebuggerRuntimeImpl DebuggerRuntime;
+			public DebuggerRuntimeImpl? DebuggerRuntime;
 		}
 
 		public override DebuggerRuntime2 Create(DbgRuntime runtime) {
 			var state = StateWithKey<State>.GetOrCreate(runtime, this);
-			if (state.DebuggerRuntime == null)
+			if (state.DebuggerRuntime is null)
 				state.DebuggerRuntime = new DebuggerRuntimeImpl(dbgObjectIdService, runtime.GetDotNetRuntime(), runtime.Process.PointerSize, dotNetClassHookFactories);
 			return state.DebuggerRuntime;
 		}

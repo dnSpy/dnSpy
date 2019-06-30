@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,15 +22,15 @@ using System.Collections.Generic;
 using System.Text;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Attach;
-using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Debugger.DotNet.CorDebug.Impl;
+using dnSpy.Debugger.DotNet.CorDebug.Impl.Attach;
 using dnSpy.Debugger.DotNet.CorDebug.Native;
 using DEMH = dndbg.COM.MetaHost;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.AttachToProcess {
 	[ExportAttachProgramOptionsProviderFactory(PredefinedAttachProgramOptionsProviderNames.DotNetFramework)]
 	sealed class DotNetFrameworkAttachProgramOptionsProviderFactory : AttachProgramOptionsProviderFactory {
-		public override AttachProgramOptionsProvider Create() => new DotNetFrameworkAttachProgramOptionsProvider();
+		public override AttachProgramOptionsProvider? Create(bool allFactories) => new DotNetFrameworkAttachProgramOptionsProvider();
 	}
 
 	sealed class DotNetFrameworkAttachProgramOptionsProvider : AttachProgramOptionsProvider {
@@ -38,7 +38,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.AttachToProcess {
 			var clsid = new Guid("9280188D-0E8E-4867-B30C-7FA83884E8DE");
 			var riid = typeof(DEMH.ICLRMetaHost).GUID;
 			var mh = (DEMH.ICLRMetaHost)NativeMethods.CLRCreateInstance(ref clsid, ref riid);
-			foreach (var process in DebuggableProcesses.GetProcesses(context.CancellationToken)) {
+			foreach (var process in DebuggableProcesses.GetProcesses(context.ProcessIds, context.IsValidProcess, context.CancellationToken)) {
 				int hr = mh.EnumerateLoadedRuntimes(process.Handle, out var iter);
 				if (hr >= 0) {
 					for (;;) {
@@ -54,7 +54,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.AttachToProcess {
 						sb.EnsureCapacity((int)chBuffer);
 						hr = rtInfo.GetVersionString(sb, ref chBuffer);
 
-						yield return new DotNetFrameworkAttachProgramOptions((uint)process.Id, sb.ToString());
+						yield return new DotNetFrameworkAttachProgramOptions(process.Id, sb.ToString());
 					}
 				}
 			}
@@ -62,7 +62,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.AttachToProcess {
 	}
 
 	sealed class DotNetFrameworkAttachProgramOptions : AttachProgramOptions {
-		public override ulong ProcessId { get; }
+		public override int ProcessId { get; }
 		public override RuntimeId RuntimeId { get; }
 		public override string RuntimeName { get; }
 		public override Guid RuntimeGuid => PredefinedDbgRuntimeGuids.DotNetFramework_Guid;
@@ -70,7 +70,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.AttachToProcess {
 
 		readonly string debuggeeVersion;
 
-		public DotNetFrameworkAttachProgramOptions(ulong pid, string clrVersion) {
+		public DotNetFrameworkAttachProgramOptions(int pid, string clrVersion) {
 			ProcessId = pid;
 			RuntimeId = new DotNetFrameworkRuntimeId(clrVersion);
 			RuntimeName = "CLR " + clrVersion;

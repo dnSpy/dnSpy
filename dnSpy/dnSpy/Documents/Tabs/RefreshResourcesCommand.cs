@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -71,20 +71,20 @@ namespace dnSpy.Documents.Tabs {
 			if (modifiedResourceNodes.Count == 0)
 				return;
 
-			var ownerNodes = new HashSet<ResourcesFolderNode>();
+			var ownerNodes = new HashSet<ResourcesFolderNode?>();
 			foreach (var node in modifiedResourceNodes) {
 				var owner = node.GetAncestorOrSelf<ResourcesFolderNode>();
-				if (owner != null)
+				if (!(owner is null))
 					ownerNodes.Add(owner);
 			}
 			if (ownerNodes.Count == 0)
 				return;
 
-			decompilationCache.Clear(new HashSet<IDsDocument>(ownerNodes.Select(a => {
+			decompilationCache.Clear(new HashSet<IDsDocument?>(ownerNodes.Select(a => {
 				var mod = a.GetModuleNode();
-				Debug.Assert(mod != null);
+				Debug.Assert(!(mod is null));
 				return mod?.Document;
-			}).Where(a => a != null)));
+			}).Where(a => !(a is null))));
 
 			var tabs = new List<IDocumentTab>();
 			foreach (var tab in documentTabService.VisibleFirstTabs) {

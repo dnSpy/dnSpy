@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,9 +22,11 @@ using dnSpy.Contracts.TreeView.Text;
 
 namespace dnSpy.Settings.Dialog {
 	sealed class PageContext {
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
 		public IPageUIObjectLoader PageUIObjectLoader { get; set; }
 		public ITreeView TreeView { get; set; }
 		public ITreeViewNodeTextElementProvider TreeViewNodeTextElementProvider { get; set; }
 		public SearchMatcher SearchMatcher { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
 	}
 }

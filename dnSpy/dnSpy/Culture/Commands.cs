@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -87,15 +87,15 @@ namespace dnSpy.Culture {
 		public int Compare(LanguageInfo x, LanguageInfo y) {
 			if (x == y)
 				return 0;
-			if (x == null)
+			if (x is null)
 				return -1;
-			if (y == null)
+			if (y is null)
 				return 1;
 			int o = ToNumber(x.Type).CompareTo(ToNumber(y.Type));
 			if (o != 0)
 				return o;
 			if (x.Type == LanguageType.CultureInfo) {
-				o = StringComparer.CurrentCultureIgnoreCase.Compare(x.CultureInfo.NativeName, y.CultureInfo.NativeName);
+				o = StringComparer.CurrentCultureIgnoreCase.Compare(x.CultureInfo?.NativeName, y.CultureInfo?.NativeName);
 				if (o != 0)
 					return o;
 			}

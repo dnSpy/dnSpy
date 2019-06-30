@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,7 +23,7 @@ using dnSpy.Contracts.Documents.Tabs;
 
 namespace dnSpy.Documents.Tabs {
 	sealed class AsyncShowResult : IAsyncShowResult {
-		public Exception Exception { get; }
+		public Exception? Exception { get; }
 		public bool IsCanceled { get; }
 		public bool CanShowOutput { get; }
 

@@ -1,4 +1,4 @@
-﻿/*
+/*
 	Copyright (c) 2015 Ki
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -43,9 +43,9 @@ namespace dnSpy.BamlDecompiler.Handlers {
 			XamlResourceKey key;
 			do {
 				key = XamlResourceKey.FindKeyInAncestors(found.Parent, out found);
-			} while (key != null && record.StaticResourceId >= key.StaticResources.Count);
+			} while (!(key is null) && record.StaticResourceId >= key.StaticResources.Count);
 
-			if (key == null)
+			if (key is null)
 				throw new Exception("Cannot find StaticResource @" + node.Record.Position);
 
 			var resNode = key.StaticResources[record.StaticResourceId];

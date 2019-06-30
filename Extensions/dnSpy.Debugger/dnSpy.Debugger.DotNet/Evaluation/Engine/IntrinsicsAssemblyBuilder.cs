@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,7 +24,7 @@ using dnlib.DotNet.Emit;
 using dnlib.DotNet.Writer;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
-	struct IntrinsicsAssemblyBuilder {
+	readonly struct IntrinsicsAssemblyBuilder {
 		readonly ModuleDef module;
 		readonly TypeDef intrinsicsType;
 		readonly ICorLibTypes corlibTypes;
@@ -32,9 +32,10 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		readonly TypeSig typeTypeSig;
 		readonly TypeSig guidTypeSig;
 
-		public IntrinsicsAssemblyBuilder(string corlibAssemblyFullName) {
+		public IntrinsicsAssemblyBuilder(string corlibAssemblyFullName, string imageRuntimeVersion) {
 			var corlibRef = new AssemblyRefUser(new AssemblyNameInfo(corlibAssemblyFullName));
 			module = new ModuleDefUser(Guid.NewGuid().ToString(), Guid.NewGuid(), corlibRef);
+			module.RuntimeVersion = imageRuntimeVersion;
 			module.Kind = ModuleKind.Dll;
 			var asm = new AssemblyDefUser(Guid.NewGuid().ToString());
 			asm.Modules.Add(module);

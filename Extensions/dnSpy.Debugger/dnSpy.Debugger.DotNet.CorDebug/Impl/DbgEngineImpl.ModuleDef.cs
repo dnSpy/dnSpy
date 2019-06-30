@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,18 +26,18 @@ using dnSpy.Debugger.DotNet.Metadata;
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	abstract partial class DbgEngineImpl {
 		sealed class AppDomainModuleState {
-			public ModuleContext ModuleContext;
+			public ModuleContext? ModuleContext;
 		}
 
 		void DnDebugger_OnCorModuleDefCreated(object sender, CorModuleDefCreatedEventArgs e) {
 			debuggerThread.VerifyAccess();
 			var appDomain = TryGetEngineAppDomain(e.Module.AppDomain)?.AppDomain;
-			Debug.Assert(appDomain != null);
-			if (appDomain != null) {
+			Debug.Assert(!(appDomain is null));
+			if (!(appDomain is null)) {
 				var state = appDomain.GetOrCreateData<AppDomainModuleState>();
-				if (state.ModuleContext == null) {
+				if (state.ModuleContext is null) {
 					var reflectionAppDomain = appDomain.GetReflectionAppDomain();
-					Debug.Assert(reflectionAppDomain != null);
+					Debug.Assert(!(reflectionAppDomain is null));
 					state.ModuleContext = CreateModuleContext(reflectionAppDomain);
 				}
 				e.CorModuleDef.Context = state.ModuleContext;

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,13 +28,13 @@ using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.Field {
 	enum FieldAccess {
-		PrivateScope	= (int)FieldAttributes.PrivateScope >> 0,
-		Private			= (int)FieldAttributes.Private >> 0,
-		FamANDAssem		= (int)FieldAttributes.FamANDAssem >> 0,
-		Assembly		= (int)FieldAttributes.Assembly >> 0,
-		Family			= (int)FieldAttributes.Family >> 0,
-		FamORAssem		= (int)FieldAttributes.FamORAssem >> 0,
-		Public			= (int)FieldAttributes.Public >> 0,
+		PrivateScope	= (int)FieldAttributes.PrivateScope,
+		Private			= (int)FieldAttributes.Private,
+		FamANDAssem		= (int)FieldAttributes.FamANDAssem,
+		Assembly		= (int)FieldAttributes.Assembly,
+		Family			= (int)FieldAttributes.Family,
+		FamORAssem		= (int)FieldAttributes.FamORAssem,
+		Public			= (int)FieldAttributes.Public,
 	}
 
 	sealed class FieldOptionsVM : ViewModelBase {
@@ -42,22 +42,11 @@ namespace dnSpy.AsmEditor.Field {
 
 		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
 
-		static readonly EnumVM[] fieldAccessList = new EnumVM[] {
-			new EnumVM(Field.FieldAccess.PrivateScope, dnSpy_AsmEditor_Resources.FieldAccess_PrivateScope),
-			new EnumVM(Field.FieldAccess.Private, dnSpy_AsmEditor_Resources.FieldAccess_Private),
-			new EnumVM(Field.FieldAccess.FamANDAssem, dnSpy_AsmEditor_Resources.FieldAccess_FamilyAndAssembly),
-			new EnumVM(Field.FieldAccess.Assembly, dnSpy_AsmEditor_Resources.FieldAccess_Assembly),
-			new EnumVM(Field.FieldAccess.Family, dnSpy_AsmEditor_Resources.FieldAccess_Family),
-			new EnumVM(Field.FieldAccess.FamORAssem, dnSpy_AsmEditor_Resources.FieldAccess_FamilyOrAssembly),
-			new EnumVM(Field.FieldAccess.Public, dnSpy_AsmEditor_Resources.FieldAccess_Public),
-		};
+		static readonly EnumVM[] fieldAccessList = EnumVM.Create(typeof(FieldAccess));
 		public EnumListVM FieldAccess { get; } = new EnumListVM(fieldAccessList);
 
 		public FieldAttributes Attributes {
-			get {
-				return (attributes & ~FieldAttributes.FieldAccessMask) |
-					(FieldAttributes)((int)(Field.FieldAccess)FieldAccess.SelectedItem << 0);
-			}
+			get => (attributes & ~FieldAttributes.FieldAccessMask) | (FieldAttributes)(FieldAccess)FieldAccess.SelectedItem!;
 			set {
 				if (attributes != value) {
 					attributes = value;
@@ -83,53 +72,53 @@ namespace dnSpy.AsmEditor.Field {
 		FieldAttributes attributes;
 
 		public bool Static {
-			get { return GetFlagValue(FieldAttributes.Static); }
-			set { SetFlagValue(FieldAttributes.Static, value); }
+			get => GetFlagValue(FieldAttributes.Static);
+			set => SetFlagValue(FieldAttributes.Static, value);
 		}
 
 		public bool InitOnly {
-			get { return GetFlagValue(FieldAttributes.InitOnly); }
-			set { SetFlagValue(FieldAttributes.InitOnly, value); }
+			get => GetFlagValue(FieldAttributes.InitOnly);
+			set => SetFlagValue(FieldAttributes.InitOnly, value);
 		}
 
 		public bool Literal {
-			get { return GetFlagValue(FieldAttributes.Literal); }
-			set { SetFlagValue(FieldAttributes.Literal, value); }
+			get => GetFlagValue(FieldAttributes.Literal);
+			set => SetFlagValue(FieldAttributes.Literal, value);
 		}
 
 		public bool NotSerialized {
-			get { return GetFlagValue(FieldAttributes.NotSerialized); }
-			set { SetFlagValue(FieldAttributes.NotSerialized, value); }
+			get => GetFlagValue(FieldAttributes.NotSerialized);
+			set => SetFlagValue(FieldAttributes.NotSerialized, value);
 		}
 
 		public bool SpecialName {
-			get { return GetFlagValue(FieldAttributes.SpecialName); }
-			set { SetFlagValue(FieldAttributes.SpecialName, value); }
+			get => GetFlagValue(FieldAttributes.SpecialName);
+			set => SetFlagValue(FieldAttributes.SpecialName, value);
 		}
 
 		public bool PinvokeImpl {
-			get { return GetFlagValue(FieldAttributes.PinvokeImpl); }
-			set { SetFlagValue(FieldAttributes.PinvokeImpl, value); }
+			get => GetFlagValue(FieldAttributes.PinvokeImpl);
+			set => SetFlagValue(FieldAttributes.PinvokeImpl, value);
 		}
 
 		public bool RTSpecialName {
-			get { return GetFlagValue(FieldAttributes.RTSpecialName); }
-			set { SetFlagValue(FieldAttributes.RTSpecialName, value); }
+			get => GetFlagValue(FieldAttributes.RTSpecialName);
+			set => SetFlagValue(FieldAttributes.RTSpecialName, value);
 		}
 
 		public bool HasFieldMarshal {
-			get { return GetFlagValue(FieldAttributes.HasFieldMarshal); }
-			set { SetFlagValue(FieldAttributes.HasFieldMarshal, value); }
+			get => GetFlagValue(FieldAttributes.HasFieldMarshal);
+			set => SetFlagValue(FieldAttributes.HasFieldMarshal, value);
 		}
 
 		public bool HasDefault {
-			get { return GetFlagValue(FieldAttributes.HasDefault); }
-			set { SetFlagValue(FieldAttributes.HasDefault, value); }
+			get => GetFlagValue(FieldAttributes.HasDefault);
+			set => SetFlagValue(FieldAttributes.HasDefault, value);
 		}
 
 		public bool HasFieldRVA {
-			get { return GetFlagValue(FieldAttributes.HasFieldRVA); }
-			set { SetFlagValue(FieldAttributes.HasFieldRVA, value); }
+			get => GetFlagValue(FieldAttributes.HasFieldRVA);
+			set => SetFlagValue(FieldAttributes.HasFieldRVA, value);
 		}
 
 		bool GetFlagValue(FieldAttributes flag) => (Attributes & flag) != 0;
@@ -141,8 +130,8 @@ namespace dnSpy.AsmEditor.Field {
 				Attributes &= ~flag;
 		}
 
-		public string Name {
-			get { return name; }
+		public string? Name {
+			get => name;
 			set {
 				if (name != value) {
 					name = value;
@@ -150,26 +139,26 @@ namespace dnSpy.AsmEditor.Field {
 				}
 			}
 		}
-		UTF8String name;
+		UTF8String? name;
 
-		public TypeSig FieldTypeSig {
-			get { return TypeSigCreator.TypeSig; }
-			set { TypeSigCreator.TypeSig = value; }
+		public TypeSig? FieldTypeSig {
+			get => TypeSigCreator.TypeSig;
+			set => TypeSigCreator.TypeSig = value;
 		}
 
 		public string FieldTypeHeader => string.Format(dnSpy_AsmEditor_Resources.FieldType, TypeSigCreator.TypeSigDnlibFullName);
 
 		public TypeSigCreatorVM TypeSigCreator { get; }
-		public Constant Constant => HasDefault ? ownerModule.UpdateRowId(new ConstantUser(ConstantVM.Value)) : null;
+		public Constant? Constant => HasDefault ? ownerModule.UpdateRowId(new ConstantUser(ConstantVM.Value)) : null;
 		public ConstantVM ConstantVM { get; }
 		public MarshalTypeVM MarshalTypeVM { get; }
 		public NullableUInt32VM FieldOffset { get; }
 		public HexStringVM InitialValue { get; }
 		public UInt32VM RVA { get; }
 
-		public ImplMap ImplMap {
-			get { return ImplMapVM.ImplMap; }
-			set { ImplMapVM.ImplMap = value; }
+		public ImplMap? ImplMap {
+			get => ImplMapVM.ImplMap;
+			set => ImplMapVM.ImplMap = value;
 		}
 
 		public ImplMapVM ImplMapVM { get; }
@@ -187,7 +176,7 @@ namespace dnSpy.AsmEditor.Field {
 				CanAddGenericMethodVar = false,
 				OwnerType = ownerType,
 			};
-			if (ownerType != null && ownerType.GenericParameters.Count == 0)
+			if (!(ownerType is null) && ownerType.GenericParameters.Count == 0)
 				typeSigCreatorOptions.CanAddGenericTypeVar = false;
 			TypeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
 			TypeSigCreator.PropertyChanged += typeSigCreator_PropertyChanged;
@@ -249,9 +238,9 @@ namespace dnSpy.AsmEditor.Field {
 			FieldOffset.Value = options.FieldOffset;
 			MarshalTypeVM.Type = options.MarshalType;
 			RVA.Value = (uint)options.RVA;
-			InitialValue.Value = options.InitialValue;
+			InitialValue.Value = options.InitialValue!;
 			ImplMap = options.ImplMap;
-			if (options.Constant != null) {
+			if (!(options.Constant is null)) {
 				HasDefault = true;
 				ConstantVM.Value = options.Constant.Value;
 			}
@@ -267,7 +256,7 @@ namespace dnSpy.AsmEditor.Field {
 			options.Attributes = Attributes;
 			options.Name = Name;
 			var typeSig = FieldTypeSig;
-			options.FieldSig = typeSig == null ? null : new FieldSig(typeSig);
+			options.FieldSig = typeSig is null ? null : new FieldSig(typeSig);
 			options.FieldOffset = FieldOffset.Value;
 			options.MarshalType = HasFieldMarshal ? MarshalTypeVM.Type : null;
 			options.RVA = (dnlib.PE.RVA)RVA.Value;

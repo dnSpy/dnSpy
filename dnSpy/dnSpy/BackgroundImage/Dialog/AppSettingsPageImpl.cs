@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
@@ -55,21 +54,18 @@ namespace dnSpy.BackgroundImage.Dialog {
 		}
 	}
 
-	sealed class AppSettingsPageImpl : AppSettingsPage, INotifyPropertyChanged {
+	sealed class AppSettingsPageImpl : AppSettingsPage {
 		public override Guid Guid => new Guid("A36F0A79-E8D0-44C5-8F22-A50B28F6117E");
 		public override double Order => AppSettingsConstants.ORDER_BACKGROUNDIMAGE;
 		public override string Title => dnSpy_Resources.BackgroundImageOptDlgTab;
-		public override object UIObject => this;
-
-		public event PropertyChangedEventHandler PropertyChanged;
-		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+		public override object? UIObject => this;
 
 		public ICommand ResetCommand => new RelayCommand(a => ResetSettings(), a => CanResetSettings);
 		public ICommand PickFilenamesCommand => new RelayCommand(a => PickFilenames(), a => CanPickFilenames);
 		public ICommand PickDirectoryCommand => new RelayCommand(a => PickDirectory(), a => CanPickDirectory);
 
 		public Settings CurrentItem {
-			get { return currentItem; }
+			get => currentItem;
 			set {
 				if (currentItem != value) {
 					currentItem = value;
@@ -97,7 +93,7 @@ namespace dnSpy.BackgroundImage.Dialog {
 		Settings currentItem;
 
 		public string Images {
-			get { return currentItem.Images; }
+			get => currentItem.Images;
 			set {
 				if (currentItem.Images != value) {
 					currentItem.Images = value;
@@ -107,7 +103,7 @@ namespace dnSpy.BackgroundImage.Dialog {
 		}
 
 		public bool IsRandom {
-			get { return currentItem.RawSettings.IsRandom; }
+			get => currentItem.RawSettings.IsRandom;
 			set {
 				if (currentItem.RawSettings.IsRandom != value) {
 					currentItem.RawSettings.IsRandom = value;
@@ -117,7 +113,7 @@ namespace dnSpy.BackgroundImage.Dialog {
 		}
 
 		public bool IsEnabled {
-			get { return currentItem.RawSettings.IsEnabled; }
+			get => currentItem.RawSettings.IsEnabled;
 			set {
 				if (currentItem.RawSettings.IsEnabled != value) {
 					currentItem.RawSettings.IsEnabled = value;
@@ -190,8 +186,10 @@ namespace dnSpy.BackgroundImage.Dialog {
 		readonly IPickFilename pickFilename;
 		readonly IPickDirectory pickDirectory;
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
 		public AppSettingsPageImpl(IBackgroundImageSettingsService backgroundImageSettingsService, IPickFilename pickFilename, IPickDirectory pickDirectory, ImageSettingsInfo[] settings) {
-			if (settings == null)
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
+			if (settings is null)
 				throw new ArgumentNullException(nameof(settings));
 			if (settings.Length == 0)
 				throw new ArgumentException();
@@ -200,9 +198,9 @@ namespace dnSpy.BackgroundImage.Dialog {
 			this.pickFilename = pickFilename ?? throw new ArgumentNullException(nameof(pickFilename));
 			this.pickDirectory = pickDirectory ?? throw new ArgumentNullException(nameof(pickDirectory));
 			Settings = new ObservableCollection<Settings>(settings.OrderBy(a => a.Lazy.Value.UIOrder).Select(a => new Settings(a)));
-			stretchVM = new EnumListVM(EnumVM.Create(false, typeof(Stretch)), (a, b) => currentItem.RawSettings.Stretch = (Stretch)stretchVM.SelectedItem);
-			stretchDirectionVM = new EnumListVM(stretchDirectionList, (a, b) => currentItem.RawSettings.StretchDirection = (StretchDirection)stretchDirectionVM.SelectedItem);
-			imagePlacementVM = new EnumListVM(imagePlacementList, (a, b) => currentItem.RawSettings.ImagePlacement = (ImagePlacement)imagePlacementVM.SelectedItem);
+			stretchVM = new EnumListVM(EnumVM.Create(false, typeof(Stretch)), (a, b) => currentItem.RawSettings.Stretch = (Stretch)stretchVM.SelectedItem!);
+			stretchDirectionVM = new EnumListVM(stretchDirectionList, (a, b) => currentItem.RawSettings.StretchDirection = (StretchDirection)stretchDirectionVM.SelectedItem!);
+			imagePlacementVM = new EnumListVM(imagePlacementList, (a, b) => currentItem.RawSettings.ImagePlacement = (ImagePlacement)imagePlacementVM.SelectedItem!);
 			opacityVM = new DoubleVM(a => { if (!opacityVM.HasError) currentItem.RawSettings.Opacity = FilterOpacity(opacityVM.Value); });
 			horizontalOffsetVM = new DoubleVM(a => { if (!horizontalOffsetVM.HasError) currentItem.RawSettings.HorizontalOffset = FilterOffset(horizontalOffsetVM.Value); });
 			verticalOffsetVM = new DoubleVM(a => { if (!verticalOffsetVM.HasError) currentItem.RawSettings.VerticalOffset = FilterOffset(verticalOffsetVM.Value); });
@@ -287,7 +285,7 @@ namespace dnSpy.BackgroundImage.Dialog {
 		bool CanPickDirectory => IsEnabled;
 		void PickDirectory() => AddToImages(new[] { pickDirectory.GetDirectory(GetLastDirectory()) });
 
-		string GetLastDirectory() {
+		string? GetLastDirectory() {
 			foreach (var t in Images.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).Reverse()) {
 				var f = t.Trim();
 				if (Directory.Exists(f))
@@ -303,7 +301,7 @@ namespace dnSpy.BackgroundImage.Dialog {
 			return null;
 		}
 
-		void AddToImages(string[] filenames) {
+		void AddToImages(string?[] filenames) {
 			var images = Images;
 			foreach (var name in filenames) {
 				if (string.IsNullOrWhiteSpace(name))
@@ -321,14 +319,14 @@ namespace dnSpy.BackgroundImage.Dialog {
 		public override void OnClosed() =>
 			backgroundImageSettingsService.LastSelectedId = currentItem.Id;
 
-		public override string[] GetSearchStrings() =>
+		public override string[]? GetSearchStrings() =>
 			StretchVM.Items.Select(a => a.Name).
 			Concat(StretchDirectionVM.Items.Select(a => a.Name)).
 			Concat(ImagePlacementVM.Items.Select(a => a.Name)).
 			Concat(Settings.Select(a => a.Name)).ToArray();
 	}
 
-	sealed class Settings {
+	sealed class Settings : ViewModelBase {
 		public RawSettings RawSettings { get; }
 
 		public string Id { get; }

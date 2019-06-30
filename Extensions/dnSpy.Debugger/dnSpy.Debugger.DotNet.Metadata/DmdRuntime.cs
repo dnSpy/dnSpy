@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,7 +25,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Dummy abstract method to make sure no-one outside this assembly can create their own <see cref="DmdRuntime"/>
 		/// </summary>
-		internal abstract void YouCantDeriveFromThisClass();
+		private protected abstract void YouCantDeriveFromThisClass();
 
 		/// <summary>
 		/// Gets the size of a pointer in bytes
@@ -48,19 +48,19 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="id">AppDomain id</param>
 		/// <returns></returns>
-		public abstract DmdAppDomain GetAppDomain(int id);
+		public abstract DmdAppDomain? GetAppDomain(int id);
 
 		/// <summary>
-		/// Creates an app domain
+		/// Creates an AppDomain
 		/// </summary>
 		/// <param name="id">AppDomain id, must be a unique identifier</param>
 		/// <returns></returns>
 		public abstract DmdAppDomain CreateAppDomain(int id);
 
 		/// <summary>
-		/// Removes an app domain
+		/// Removes an AppDomain
 		/// </summary>
-		/// <param name="appDomain">App domain to remove</param>
+		/// <param name="appDomain">AppDomain to remove</param>
 		public abstract void Remove(DmdAppDomain appDomain);
 	}
 }

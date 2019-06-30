@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -42,11 +42,13 @@ namespace dnSpy.AsmEditor.Commands {
 
 		public NamespaceNodeCreator(string ns, ModuleDocumentNode modNode) {
 			this.modNode = modNode;
-			nsNode = modNode.FindNode(ns);
-			if (nsNode == null) {
-				nsNode = modNode.Create(ns);
+
+			var newNsNode = modNode.FindNode(ns);
+			if (newNsNode is null) {
+				newNsNode = modNode.Create(ns);
 				nsNodeCreated = true;
 			}
+			nsNode = newNsNode;
 		}
 
 		/// <summary>

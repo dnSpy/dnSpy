@@ -136,7 +136,7 @@
     <value>Zeige vorherigen Befehl</value>
   </data>
   <data name="HelpCtrlA" xml:space="preserve">
-    <value>Wähle Eingabetext. Drücke erneut, um alle Texte zu markieren</value>
+    <value>Eingabetext markieren. Erneut drücken, um alles zu markieren</value>
   </data>
   <data name="HelpCtrlAltDown" xml:space="preserve">
     <value>Zeige nächsten Befehl entsprechend des aktuellen Eingabetextes</value>
@@ -187,7 +187,7 @@
     <value>Ausführungsmodul zurücksetzen.</value>
   </data>
   <data name="Script_ToolTip_ClearScreen" xml:space="preserve">
-    <value>Leere den Bildschirm</value>
+    <value>Bildschirminhalt löschen</value>
   </data>
   <data name="Script_ToolTip_HistoryNext" xml:space="preserve">
     <value>Verlauf vorwärts</value>
@@ -250,7 +250,7 @@
     <value>Zurücksetzen der Ausführungsumgebung</value>
   </data>
   <data name="ClearScreenCommand" xml:space="preserve">
-    <value>Leere den Bildschirm</value>
+    <value>Bildschirminhalt löschen</value>
   </data>
   <data name="ShortCutKeyCtrlL" xml:space="preserve">
     <value>Strg+L</value>

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -37,7 +37,7 @@ namespace dnSpy.Contracts.Settings.HexGroups {
 		/// </summary>
 		/// <param name="hexView">Hex view</param>
 		/// <returns></returns>
-		public abstract string TryGetGroupName(WpfHexView hexView);
+		public abstract string? TryGetGroupName(WpfHexView hexView);
 	}
 
 	/// <summary>Metadata</summary>

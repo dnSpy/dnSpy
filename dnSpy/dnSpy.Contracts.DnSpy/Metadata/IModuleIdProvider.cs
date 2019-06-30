@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,6 +29,6 @@ namespace dnSpy.Contracts.Metadata {
 		/// </summary>
 		/// <param name="module">Module or null</param>
 		/// <returns></returns>
-		ModuleId Create(ModuleDef module);
+		ModuleId Create(ModuleDef? module);
 	}
 }

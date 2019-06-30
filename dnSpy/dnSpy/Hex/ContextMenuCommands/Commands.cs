@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -55,14 +55,14 @@ namespace dnSpy.Hex.ContextMenuCommands {
 			: base(guid, cmdId) {
 		}
 
-		protected override HexViewContext CreateContext(IMenuItemContext context) {
+		protected override HexViewContext? CreateContext(IMenuItemContext context) {
 			var hexView = context.Find<HexView>();
-			if (hexView == null)
+			if (hexView is null)
 				return null;
 			return new HexViewContext(hexView);
 		}
 
-		protected override ICommandTarget GetCommandTarget(HexViewContext context) => context.HexView.CommandTarget;
+		protected override ICommandTarget? GetCommandTarget(HexViewContext context) => context.HexView.CommandTarget;
 		protected bool IsReadOnly(HexViewContext context) => context.HexView.Buffer.IsReadOnly || context.HexView.Options.DoesViewProhibitUserInput();
 	}
 
@@ -133,7 +133,7 @@ namespace dnSpy.Hex.ContextMenuCommands {
 			: base(HexEditorIds.DELETE) {
 		}
 		public override bool IsVisible(HexViewContext context) => !IsReadOnly(context) && base.IsVisible(context);
-		public override string GetHeader(HexViewContext context) => !context.HexView.Selection.IsEmpty ? dnSpy_Resources.ClearSelectedBytesCommand : dnSpy_Resources.ClearByteCommand;
+		public override string? GetHeader(HexViewContext context) => !context.HexView.Selection.IsEmpty ? dnSpy_Resources.ClearSelectedBytesCommand : dnSpy_Resources.ClearByteCommand;
 	}
 
 	[ExportMenuItem(Header = "res:FillSelectionCommand", Icon = DsImagesAttribute.Fill, Group = MenuConstants.GROUP_CTX_HEXVIEW_EDIT, Order = 10)]
@@ -191,8 +191,8 @@ namespace dnSpy.Hex.ContextMenuCommands {
 
 		public IEnumerable<CreatedMenuItem> Create(IMenuItemContext context) {
 			var ctx = CreateContext(context);
-			Debug.Assert(ctx != null);
-			if (ctx == null)
+			Debug.Assert(!(ctx is null));
+			if (ctx is null)
 				yield break;
 			var hexView = ctx.HexView;
 
@@ -217,8 +217,8 @@ namespace dnSpy.Hex.ContextMenuCommands {
 
 		public IEnumerable<CreatedMenuItem> Create(IMenuItemContext context) {
 			var ctx = CreateContext(context);
-			Debug.Assert(ctx != null);
-			if (ctx == null)
+			Debug.Assert(!(ctx is null));
+			if (ctx is null)
 				yield break;
 			var hexView = ctx.HexView;
 
@@ -317,7 +317,7 @@ namespace dnSpy.Hex.ContextMenuCommands {
 			: base(HexEditorIds.CopyUInt16) {
 		}
 
-		public override string GetHeader(HexViewContext context) => string.Format(dnSpy_Resources.CopyDataCommand, "UInt16");
+		public override string? GetHeader(HexViewContext context) => string.Format(dnSpy_Resources.CopyDataCommand, "UInt16");
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.COPY_SPECIAL_GUID, Group = Constants.GROUP_COPY_SPECIAL, Order = 90)]
@@ -326,7 +326,7 @@ namespace dnSpy.Hex.ContextMenuCommands {
 			: base(HexEditorIds.CopyUInt16BigEndian) {
 		}
 
-		public override string GetHeader(HexViewContext context) => string.Format(dnSpy_Resources.CopyDataCommand, "UInt16" + " (" + dnSpy_Resources.BigEndian + ")");
+		public override string? GetHeader(HexViewContext context) => string.Format(dnSpy_Resources.CopyDataCommand, "UInt16" + " (" + dnSpy_Resources.BigEndian + ")");
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.COPY_SPECIAL_GUID, InputGestureText = "res:ShortCutKeyCtrlShiftQ", Group = Constants.GROUP_COPY_SPECIAL, Order = 100)]
@@ -335,7 +335,7 @@ namespace dnSpy.Hex.ContextMenuCommands {
 			: base(HexEditorIds.CopyUInt32) {
 		}
 
-		public override string GetHeader(HexViewContext context) => string.Format(dnSpy_Resources.CopyDataCommand, "UInt32");
+		public override string? GetHeader(HexViewContext context) => string.Format(dnSpy_Resources.CopyDataCommand, "UInt32");
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.COPY_SPECIAL_GUID, Group = Constants.GROUP_COPY_SPECIAL, Order = 110)]
@@ -344,7 +344,7 @@ namespace dnSpy.Hex.ContextMenuCommands {
 			: base(HexEditorIds.CopyUInt32BigEndian) {
 		}
 
-		public override string GetHeader(HexViewContext context) => string.Format(dnSpy_Resources.CopyDataCommand, "UInt32" + " (" + dnSpy_Resources.BigEndian + ")");
+		public override string? GetHeader(HexViewContext context) => string.Format(dnSpy_Resources.CopyDataCommand, "UInt32" + " (" + dnSpy_Resources.BigEndian + ")");
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.COPY_SPECIAL_GUID, Group = Constants.GROUP_COPY_SPECIAL, Order = 120)]
@@ -353,7 +353,7 @@ namespace dnSpy.Hex.ContextMenuCommands {
 			: base(HexEditorIds.CopyUInt64) {
 		}
 
-		public override string GetHeader(HexViewContext context) => string.Format(dnSpy_Resources.CopyDataCommand, "UInt64");
+		public override string? GetHeader(HexViewContext context) => string.Format(dnSpy_Resources.CopyDataCommand, "UInt64");
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.COPY_SPECIAL_GUID, Group = Constants.GROUP_COPY_SPECIAL, Order = 130)]
@@ -362,7 +362,7 @@ namespace dnSpy.Hex.ContextMenuCommands {
 			: base(HexEditorIds.CopyUInt64BigEndian) {
 		}
 
-		public override string GetHeader(HexViewContext context) => string.Format(dnSpy_Resources.CopyDataCommand, "UInt64" + " (" + dnSpy_Resources.BigEndian + ")");
+		public override string? GetHeader(HexViewContext context) => string.Format(dnSpy_Resources.CopyDataCommand, "UInt64" + " (" + dnSpy_Resources.BigEndian + ")");
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.COPY_SPECIAL_GUID, Header = "res:CopyFileOffsetCommand", InputGestureText = "res:ShortCutKeyCtrlShiftO", Group = Constants.GROUP_COPY_SPECIAL, Order = 140)]

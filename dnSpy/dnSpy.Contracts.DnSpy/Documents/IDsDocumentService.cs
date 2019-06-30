@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -60,7 +60,7 @@ namespace dnSpy.Contracts.Documents {
 		/// <param name="delayLoad">true to delay load</param>
 		/// <param name="data">Data passed to listeners</param>
 		/// <returns></returns>
-		IDsDocument ForceAdd(IDsDocument document, bool delayLoad, object data);
+		IDsDocument ForceAdd(IDsDocument document, bool delayLoad, object? data);
 
 		/// <summary>
 		/// Creates a new <see cref="IDsDocument"/> instance or returns an existing one. null is
@@ -70,7 +70,7 @@ namespace dnSpy.Contracts.Documents {
 		/// <param name="isAutoLoaded">New value of <see cref="IDsDocument.IsAutoLoaded"/> if the
 		/// document gets created.</param>
 		/// <returns></returns>
-		IDsDocument TryGetOrCreate(DsDocumentInfo info, bool isAutoLoaded = false);
+		IDsDocument? TryGetOrCreate(DsDocumentInfo info, bool isAutoLoaded = false);
 
 		/// <summary>
 		/// Tries to create a new <see cref="IDsDocument"/> without adding it to the list. null is
@@ -78,7 +78,7 @@ namespace dnSpy.Contracts.Documents {
 		/// </summary>
 		/// <param name="info">Document info</param>
 		/// <returns></returns>
-		IDsDocument TryCreateOnly(DsDocumentInfo info);
+		IDsDocument? TryCreateOnly(DsDocumentInfo info);
 
 		/// <summary>
 		/// Resolves an assembly. Returns null if it couldn't be resolved.
@@ -86,21 +86,29 @@ namespace dnSpy.Contracts.Documents {
 		/// <param name="asm">Assembly</param>
 		/// <param name="sourceModule">The module that needs to resolve an assembly or null</param>
 		/// <returns></returns>
-		IDsDocument Resolve(IAssembly asm, ModuleDef sourceModule);
+		IDsDocument? Resolve(IAssembly asm, ModuleDef? sourceModule);
 
 		/// <summary>
 		/// Returns an assembly or null if it's not in the list
 		/// </summary>
 		/// <param name="assembly">Assembly</param>
 		/// <returns></returns>
-		IDsDocument FindAssembly(IAssembly assembly);
+		IDsDocument? FindAssembly(IAssembly assembly);
+
+		/// <summary>
+		/// Returns an assembly or null if it's not in the list
+		/// </summary>
+		/// <param name="assembly">Assembly</param>
+		/// <param name="options">Options</param>
+		/// <returns></returns>
+		IDsDocument? FindAssembly(IAssembly assembly, FindAssemblyOptions options);
 
 		/// <summary>
 		/// Returns an inserted <see cref="IDsDocument"/> instance or null
 		/// </summary>
 		/// <param name="key">Key</param>
 		/// <returns></returns>
-		IDsDocument Find(IDsDocumentNameKey key);
+		IDsDocument? Find(IDsDocumentNameKey key);
 
 		/// <summary>
 		/// Removes a document
@@ -121,7 +129,7 @@ namespace dnSpy.Contracts.Documents {
 
 		/// <summary>
 		/// Can be called once to set a delegate instance that will execute code in a certain
-		/// thread. <see cref="CollectionChanged"/> can be called in any thread unless this method
+		/// thread. <see cref="CollectionChanged"/> can be called on any thread unless this method
 		/// gets called.
 		/// </summary>
 		/// <param name="action">Action</param>
@@ -140,5 +148,45 @@ namespace dnSpy.Contracts.Documents {
 		/// The assembly resolver it uses
 		/// </summary>
 		IAssemblyResolver AssemblyResolver { get; }
+	}
+
+	/// <summary>
+	/// Find assembly options
+	/// </summary>
+	public enum FindAssemblyOptions {
+		/// <summary>
+		/// No option is enabled
+		/// </summary>
+		None				= 0,
+
+		/// <summary>
+		/// Compare assembly simple name
+		/// </summary>
+		Name				= 0x00000001,
+
+		/// <summary>
+		/// Compare assembly version
+		/// </summary>
+		Version				= 0x00000002,
+
+		/// <summary>
+		/// Compare assembly public key token
+		/// </summary>
+		PublicKeyToken		= 0x00000004,
+
+		/// <summary>
+		/// Compare assembly culture
+		/// </summary>
+		Culture				= 0x00000008,
+
+		/// <summary>
+		/// Compare content type
+		/// </summary>
+		ContentType			= 0x00000010,
+
+		/// <summary>
+		/// Compare assembly simple name, version, public key token, locale and content type
+		/// </summary>
+		All					= Name | Version | PublicKeyToken | Culture | ContentType,
 	}
 }

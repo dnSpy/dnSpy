@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,13 +30,13 @@ namespace dnSpy.Contracts.Debugger {
 		/// </summary>
 		/// <param name="module">Debugger module</param>
 		/// <returns></returns>
-		public static DmdModule GetReflectionModule(this DbgModule module) => (module.InternalModule as DbgDotNetInternalModule)?.ReflectionModule;
+		public static DmdModule? GetReflectionModule(this DbgModule module) => (module.InternalModule as DbgDotNetInternalModule)?.ReflectionModule;
 
 		/// <summary>
 		/// Gets the internal .NET module or null if it's not a managed module
 		/// </summary>
 		/// <param name="module"></param>
 		/// <returns></returns>
-		public static DbgDotNetInternalModule GetDotNetInternalModule(this DbgModule module) => module.InternalModule as DbgDotNetInternalModule;
+		public static DbgDotNetInternalModule? GetDotNetInternalModule(this DbgModule module) => module.InternalModule as DbgDotNetInternalModule;
 	}
 }

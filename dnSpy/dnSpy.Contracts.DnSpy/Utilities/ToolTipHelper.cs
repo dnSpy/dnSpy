@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,7 +19,7 @@
 
 namespace dnSpy.Contracts.Utilities {
 	static class ToolTipHelper {
-		public static string AddKeyboardShortcut(string tooltip, string shortcut) {
+		public static string AddKeyboardShortcut(string tooltip, string? shortcut) {
 			if (string.IsNullOrEmpty(shortcut))
 				return tooltip;
 			return $"{tooltip} ({shortcut})";

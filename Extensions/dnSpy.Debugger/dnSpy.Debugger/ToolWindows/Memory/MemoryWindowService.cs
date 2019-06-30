@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,8 +28,8 @@ using VSTE = Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Debugger.ToolWindows.Memory {
 	abstract class MemoryWindowService {
-		public abstract void Show(ulong pid, HexSpan span);
-		public abstract void Show(ulong pid, HexSpan span, int windowIndex);
+		public abstract void Show(int pid, HexSpan span);
+		public abstract void Show(int pid, HexSpan span, int windowIndex);
 	}
 
 	[Export(typeof(MemoryWindowService))]
@@ -45,22 +45,22 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			this.processHexBufferProvider = processHexBufferProvider;
 		}
 
-		public override void Show(ulong pid, HexSpan span) {
+		public override void Show(int pid, HexSpan span) {
 			var mc = GetMemoryToolWindowContent(span);
-			if (mc == null)
+			if (mc is null)
 				mc = memoryToolWindowContentProvider.Value.Contents[0].Content;
 			ShowInMemoryWindow(pid, mc, span);
 		}
 
-		public override void Show(ulong pid, HexSpan span, int windowIndex) {
+		public override void Show(int pid, HexSpan span, int windowIndex) {
 			var mc = GetMemoryToolWindowContent(windowIndex);
-			Debug.Assert(mc != null);
-			if (mc == null)
+			Debug.Assert(!(mc is null));
+			if (mc is null)
 				return;
 			ShowInMemoryWindow(pid, mc, span);
 		}
 
-		void ShowInMemoryWindow(ulong pid, MemoryToolWindowContent mc, HexSpan span) {
+		void ShowInMemoryWindow(int pid, MemoryToolWindowContent mc, HexSpan span) {
 			processHexBufferProvider.Value.SetProcessStream(mc.HexView.Buffer, pid);
 			MakeSureAddressCanBeShown(mc, span);
 			toolWindowService.Show(mc);
@@ -69,7 +69,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 
 		static void SelectAndMoveCaret(WpfHexView hexView, HexSpan span) {
 			if (!hexView.VisualElement.IsLoaded) {
-				RoutedEventHandler loaded = null;
+				RoutedEventHandler? loaded = null;
 				loaded = (s, e) => {
 					hexView.VisualElement.Loaded -= loaded;
 					InitializeHexView(hexView, span);
@@ -119,7 +119,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			return span.Start >= hb.BufferLines.StartPosition && span.End <= hb.BufferLines.EndPosition;
 		}
 
-		MemoryToolWindowContent GetMemoryToolWindowContent(HexSpan span) {
+		MemoryToolWindowContent? GetMemoryToolWindowContent(HexSpan span) {
 			foreach (var info in memoryToolWindowContentProvider.Value.Contents) {
 				var mc = info.Content;
 				if (CanShowAll(mc, span))
@@ -128,7 +128,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			return null;
 		}
 
-		MemoryToolWindowContent GetMemoryToolWindowContent(int windowIndex) {
+		MemoryToolWindowContent? GetMemoryToolWindowContent(int windowIndex) {
 			if ((uint)windowIndex >= memoryToolWindowContentProvider.Value.Contents.Length)
 				return null;
 			return memoryToolWindowContentProvider.Value.Contents[windowIndex].Content;

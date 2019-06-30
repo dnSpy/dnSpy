@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Contracts.Text;
-using dnSpy.Text.MEF;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Tagging;
@@ -42,8 +41,8 @@ namespace dnSpy.Text.Classification {
 			this.classifierProviders = classifierProviders.ToArray();
 		}
 
-		public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag {
-			if (buffer == null)
+		public ITagger<T>? CreateTagger<T>(ITextBuffer buffer) where T : ITag {
+			if (buffer is null)
 				throw new ArgumentNullException(nameof(buffer));
 
 			var classifiers = GetClassifiers(buffer).ToArray();
@@ -59,7 +58,7 @@ namespace dnSpy.Text.Classification {
 				foreach (var ct in info.Metadata.ContentTypes) {
 					if (bufferContentType.IsOfType(ct)) {
 						var classifier = info.Value.GetClassifier(buffer);
-						if (classifier != null)
+						if (!(classifier is null))
 							yield return classifier;
 						break;
 					}

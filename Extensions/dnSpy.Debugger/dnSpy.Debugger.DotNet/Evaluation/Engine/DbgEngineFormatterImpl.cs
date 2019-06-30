@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,10 +18,11 @@
 */
 
 using System;
+using System.Globalization;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	sealed class DbgEngineFormatterImpl : DbgEngineFormatter {
@@ -30,16 +31,35 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		public DbgEngineFormatterImpl(DbgDotNetFormatter formatter) =>
 			this.formatter = formatter ?? throw new ArgumentNullException(nameof(formatter));
 
-		public override void FormatExceptionName(DbgEvaluationContext context, ITextColorWriter output, uint id) =>
+		public override void FormatExceptionName(DbgEvaluationContext context, IDbgTextWriter output, uint id) =>
 			formatter.FormatExceptionName(context, output, id);
 
-		public override void FormatStowedExceptionName(DbgEvaluationContext context, ITextColorWriter output, uint id) =>
+		public override void FormatStowedExceptionName(DbgEvaluationContext context, IDbgTextWriter output, uint id) =>
 			formatter.FormatStowedExceptionName(context, output, id);
 
-		public override void FormatReturnValueName(DbgEvaluationContext context, ITextColorWriter output, uint id) =>
+		public override void FormatReturnValueName(DbgEvaluationContext context, IDbgTextWriter output, uint id) =>
 			formatter.FormatReturnValueName(context, output, id);
 
-		public override void FormatObjectIdName(DbgEvaluationContext context, ITextColorWriter output, uint id) =>
+		public override void FormatObjectIdName(DbgEvaluationContext context, IDbgTextWriter output, uint id) =>
 			formatter.FormatObjectIdName(context, output, id);
+
+		public override void FormatFrame(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo? cultureInfo) =>
+			formatter.FormatFrame(evalInfo, output, options, valueOptions, cultureInfo);
+
+		public override void FormatValue(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgEngineValue value, DbgValueFormatterOptions options, CultureInfo? cultureInfo) {
+			var valueImpl = value as DbgEngineValueImpl;
+			if (valueImpl is null)
+				throw new ArgumentException();
+			var dnValue = valueImpl.DotNetValue;
+			formatter.FormatValue(evalInfo, output, dnValue, options, cultureInfo);
+		}
+
+		public override void FormatType(DbgEvaluationInfo evalInfo, IDbgTextWriter output, DbgEngineValue value, DbgValueFormatterTypeOptions options, CultureInfo? cultureInfo) {
+			var valueImpl = value as DbgEngineValueImpl;
+			if (valueImpl is null)
+				throw new ArgumentException();
+			var dnValue = valueImpl.DotNetValue;
+			formatter.FormatType(evalInfo, output, dnValue.Type, null, options, cultureInfo);
+		}
 	}
 }

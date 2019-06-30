@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -50,7 +50,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// <summary>
 		/// Gets the module or null if none
 		/// </summary>
-		public abstract DbgModule Module { get; }
+		public abstract DbgModule? Module { get; }
 
 		/// <summary>
 		/// Gets the address of the breakpoint. This property is valid if <see cref="HasAddress"/> is true
@@ -91,7 +91,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// <summary>
 	/// Bound breakpoint message
 	/// </summary>
-	public struct DbgBoundCodeBreakpointMessage : IEquatable<DbgBoundCodeBreakpointMessage> {
+	public readonly struct DbgBoundCodeBreakpointMessage : IEquatable<DbgBoundCodeBreakpointMessage> {
 		/// <summary>
 		/// No error/warning message
 		/// </summary>
@@ -117,10 +117,10 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 			Message = message ?? throw new ArgumentNullException(nameof(message));
 		}
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DbgBoundCodeBreakpointMessage left, DbgBoundCodeBreakpointMessage right) => left.Equals(right);
 		public static bool operator !=(DbgBoundCodeBreakpointMessage left, DbgBoundCodeBreakpointMessage right) => !left.Equals(right);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Compares this instance to <paramref name="other"/>
@@ -134,7 +134,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// </summary>
 		/// <param name="obj">Object</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is DbgBoundCodeBreakpointMessage other && Equals(other);
+		public override bool Equals(object? obj) => obj is DbgBoundCodeBreakpointMessage other && Equals(other);
 
 		/// <summary>
 		/// Gets the hash code

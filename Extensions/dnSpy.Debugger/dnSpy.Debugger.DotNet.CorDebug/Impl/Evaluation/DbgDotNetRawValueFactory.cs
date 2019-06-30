@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,15 +28,15 @@ using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
-	struct DbgDotNetRawValueFactory {
+	readonly struct DbgDotNetRawValueFactory {
 		readonly DbgEngineImpl engine;
 
 		public DbgDotNetRawValueFactory(DbgEngineImpl engine) => this.engine = engine;
 
 		static DbgDotNetRawValueFactory() {
 			var ctor = typeof(DateTime).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { typeof(ulong) }, null);
-			Debug.Assert(ctor != null);
-			if (ctor != null) {
+			Debug.Assert(!(ctor is null));
+			if (!(ctor is null)) {
 				var dm = new DynamicMethod("DateTime_ctor_UInt64", typeof(DateTime), new[] { typeof(ulong) }, true);
 				var ilg = dm.GetILGenerator();
 				ilg.Emit(OpCodes.Ldarg_0);
@@ -50,154 +50,155 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		public DbgDotNetRawValue Create(CorValue value, DmdType type) => Create(value, type, 0);
 
 		DbgDotNetRawValue Create(CorValue value, DmdType type, int recursionCounter) {
+			CorValue? v = value;
 			if (recursionCounter > 1)
-				return GetRawValueDefault(value, type);
+				return GetRawValueDefault(v, type);
 
-			if (value.IsNull)
-				return GetRawValueDefault(value, type);
+			if (v.IsNull)
+				return GetRawValueDefault(v, type);
 
 			if (type.IsByRef) {
-				value = value.DereferencedValue;
-				if (value == null)
+				v = v.GetDereferencedValue(out int hr);
+				if (v is null)
 					return new DbgDotNetRawValue(DbgSimpleValueType.Other);
-				type = GetType(type.AppDomain, value);
+				type = GetType(type.AppDomain, v);
 			}
 
-			if (value.IsReference) {
-				if (value.ElementType == CorElementType.Ptr || value.ElementType == CorElementType.FnPtr) {
+			if (v.IsReference) {
+				if (v.ElementType == CorElementType.Ptr || v.ElementType == CorElementType.FnPtr) {
 					if (type.AppDomain.Runtime.PointerSize == 4)
-						return new DbgDotNetRawValue(DbgSimpleValueType.Ptr32, (uint)value.ReferenceAddress);
-					return new DbgDotNetRawValue(DbgSimpleValueType.Ptr64, value.ReferenceAddress);
+						return new DbgDotNetRawValue(DbgSimpleValueType.Ptr32, (uint)v.ReferenceAddress);
+					return new DbgDotNetRawValue(DbgSimpleValueType.Ptr64, v.ReferenceAddress);
 				}
-				value = value.DereferencedValue;
-				if (value == null)
+				v = v.GetDereferencedValue(out int hr);
+				if (v is null)
 					return new DbgDotNetRawValue(DbgSimpleValueType.Other);
-				type = GetType(type.AppDomain, value);
+				type = GetType(type.AppDomain, v);
 			}
 
-			if (value.IsBox) {
-				value = value.BoxedValue;
-				if (value == null)
+			if (v.IsBox) {
+				v = v.GetBoxedValue(out int hr);
+				if (v is null)
 					return new DbgDotNetRawValue(DbgSimpleValueType.Other);
-				type = GetType(type.AppDomain, value);
+				type = GetType(type.AppDomain, v);
 			}
 
-			if (value.IsReference)
+			if (v.IsReference)
 				return new DbgDotNetRawValue(DbgSimpleValueType.Other);
-			Debug.Assert(value.IsArray == type.IsArray);
-			Debug.Assert(value.IsString == (type == type.AppDomain.System_String));
-			if (value.IsBox || value.IsArray)
+			Debug.Assert(v.IsArray == type.IsArray);
+			Debug.Assert(v.IsString == (type == type.AppDomain.System_String));
+			if (v.IsBox || v.IsArray)
 				return new DbgDotNetRawValue(DbgSimpleValueType.Other);
-			if (value.IsString) {
+			if (v.IsString) {
 				if (type == type.AppDomain.System_String)
-					return new DbgDotNetRawValue(DbgSimpleValueType.StringUtf16, value.String);
+					return new DbgDotNetRawValue(DbgSimpleValueType.StringUtf16, v.String);
 				return new DbgDotNetRawValue(DbgSimpleValueType.Other);
 			}
 
 			var valueType = type.IsEnum ? type.GetEnumUnderlyingType() : type;
-			byte[] data;
+			byte[]? data;
 			switch (DmdType.GetTypeCode(valueType)) {
 			case TypeCode.Boolean:
-				if (value.Size != 1)
+				if (v.Size != 1)
 					break;
-				data = value.ReadGenericValue();
-				if (data == null)
+				data = v.ReadGenericValue();
+				if (data is null)
 					break;
 				return new DbgDotNetRawValue(DbgSimpleValueType.Boolean, data[0] != 0);
 
 			case TypeCode.Char:
-				if (value.Size != 2)
+				if (v.Size != 2)
 					break;
-				data = value.ReadGenericValue();
-				if (data == null)
+				data = v.ReadGenericValue();
+				if (data is null)
 					break;
 				return new DbgDotNetRawValue(DbgSimpleValueType.CharUtf16, BitConverter.ToChar(data, 0));
 
 			case TypeCode.SByte:
-				if (value.Size != 1)
+				if (v.Size != 1)
 					break;
-				data = value.ReadGenericValue();
-				if (data == null)
+				data = v.ReadGenericValue();
+				if (data is null)
 					break;
 				return new DbgDotNetRawValue(DbgSimpleValueType.Int8, (sbyte)data[0]);
 
 			case TypeCode.Byte:
-				if (value.Size != 1)
+				if (v.Size != 1)
 					break;
-				data = value.ReadGenericValue();
-				if (data == null)
+				data = v.ReadGenericValue();
+				if (data is null)
 					break;
 				return new DbgDotNetRawValue(DbgSimpleValueType.UInt8, data[0]);
 
 			case TypeCode.Int16:
-				if (value.Size != 2)
+				if (v.Size != 2)
 					break;
-				data = value.ReadGenericValue();
-				if (data == null)
+				data = v.ReadGenericValue();
+				if (data is null)
 					break;
 				return new DbgDotNetRawValue(DbgSimpleValueType.Int16, BitConverter.ToInt16(data, 0));
 
 			case TypeCode.UInt16:
-				if (value.Size != 2)
+				if (v.Size != 2)
 					break;
-				data = value.ReadGenericValue();
-				if (data == null)
+				data = v.ReadGenericValue();
+				if (data is null)
 					break;
 				return new DbgDotNetRawValue(DbgSimpleValueType.UInt16, BitConverter.ToUInt16(data, 0));
 
 			case TypeCode.Int32:
-				if (value.Size != 4)
+				if (v.Size != 4)
 					break;
-				data = value.ReadGenericValue();
-				if (data == null)
+				data = v.ReadGenericValue();
+				if (data is null)
 					break;
 				return new DbgDotNetRawValue(DbgSimpleValueType.Int32, BitConverter.ToInt32(data, 0));
 
 			case TypeCode.UInt32:
-				if (value.Size != 4)
+				if (v.Size != 4)
 					break;
-				data = value.ReadGenericValue();
-				if (data == null)
+				data = v.ReadGenericValue();
+				if (data is null)
 					break;
 				return new DbgDotNetRawValue(DbgSimpleValueType.UInt32, BitConverter.ToUInt32(data, 0));
 
 			case TypeCode.Int64:
-				if (value.Size != 8)
+				if (v.Size != 8)
 					break;
-				data = value.ReadGenericValue();
-				if (data == null)
+				data = v.ReadGenericValue();
+				if (data is null)
 					break;
 				return new DbgDotNetRawValue(DbgSimpleValueType.Int64, BitConverter.ToInt64(data, 0));
 
 			case TypeCode.UInt64:
-				if (value.Size != 8)
+				if (v.Size != 8)
 					break;
-				data = value.ReadGenericValue();
-				if (data == null)
+				data = v.ReadGenericValue();
+				if (data is null)
 					break;
 				return new DbgDotNetRawValue(DbgSimpleValueType.UInt64, BitConverter.ToUInt64(data, 0));
 
 			case TypeCode.Single:
-				if (value.Size != 4)
+				if (v.Size != 4)
 					break;
-				data = value.ReadGenericValue();
-				if (data == null)
+				data = v.ReadGenericValue();
+				if (data is null)
 					break;
 				return new DbgDotNetRawValue(DbgSimpleValueType.Float32, BitConverter.ToSingle(data, 0));
 
 			case TypeCode.Double:
-				if (value.Size != 8)
+				if (v.Size != 8)
 					break;
-				data = value.ReadGenericValue();
-				if (data == null)
+				data = v.ReadGenericValue();
+				if (data is null)
 					break;
 				return new DbgDotNetRawValue(DbgSimpleValueType.Float64, BitConverter.ToDouble(data, 0));
 
 			case TypeCode.Decimal:
-				if (value.Size != 16)
+				if (v.Size != 16)
 					break;
-				data = value.ReadGenericValue();
-				if (data == null)
+				data = v.ReadGenericValue();
+				if (data is null)
 					break;
 
 				var decimalBits = new int[4];
@@ -213,51 +214,75 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				return new DbgDotNetRawValue(DbgSimpleValueType.Decimal, default(decimal));
 
 			case TypeCode.DateTime:
-				if (value.Size != 8)
+				if (v.Size != 8)
 					break;
-				data = value.ReadGenericValue();
-				if (data == null)
+				data = v.ReadGenericValue();
+				if (data is null)
 					break;
-				if (DateTime_ctor_UInt64 != null)
+				if (!(DateTime_ctor_UInt64 is null))
 					return new DbgDotNetRawValue(DbgSimpleValueType.DateTime, DateTime_ctor_UInt64(BitConverter.ToUInt64(data, 0)));
 				return new DbgDotNetRawValue(DbgSimpleValueType.DateTime, default(DateTime));
 
 			default:
 				if (type == type.AppDomain.System_IntPtr) {
-					if (value.Size != (uint)type.AppDomain.Runtime.PointerSize)
+					if (v.Size != (uint)type.AppDomain.Runtime.PointerSize)
 						break;
-					data = value.ReadGenericValue();
-					if (data == null)
+					data = v.ReadGenericValue();
+					if (data is null)
 						break;
 					if (type.AppDomain.Runtime.PointerSize == 4)
 						return new DbgDotNetRawValue(DbgSimpleValueType.Ptr32, (uint)BitConverter.ToInt32(data, 0));
 					return new DbgDotNetRawValue(DbgSimpleValueType.Ptr64, (ulong)BitConverter.ToInt64(data, 0));
 				}
 				else if (type == type.AppDomain.System_UIntPtr) {
-					if (value.Size != (uint)type.AppDomain.Runtime.PointerSize)
+					if (v.Size != (uint)type.AppDomain.Runtime.PointerSize)
 						break;
-					data = value.ReadGenericValue();
-					if (data == null)
+					data = v.ReadGenericValue();
+					if (data is null)
 						break;
 					if (type.AppDomain.Runtime.PointerSize == 4)
 						return new DbgDotNetRawValue(DbgSimpleValueType.Ptr32, BitConverter.ToUInt32(data, 0));
 					return new DbgDotNetRawValue(DbgSimpleValueType.Ptr64, BitConverter.ToUInt64(data, 0));
 				}
 				else if (type.IsNullable) {
-					if (!value.GetNullableValue(out var nullableValue))
+					if (!GetNullableValue(type, v, out var nullableValue))
 						break;
-					if (nullableValue == null)
+					if (nullableValue is null)
 						return new DbgDotNetRawValue(DbgSimpleValueType.Other, null);
 					return Create(nullableValue, type.GetNullableElementType(), recursionCounter + 1);
 				}
 				break;
 			}
 
-			return GetRawValueDefault(value, type);
+			return GetRawValueDefault(v, type);
 		}
 
 		DmdType GetType(DmdAppDomain appDomain, CorValue value) =>
 			new ReflectionTypeCreator(engine, appDomain).Create(value.ExactType);
+
+		bool GetNullableValue(DmdType nullableType, CorValue nullableValue, out CorValue? value) {
+			value = null;
+			var info = NullableTypeUtils.TryGetNullableFields(nullableType);
+			if (info.hasValueField is null)
+				return false;
+			Debug.Assert(!(info.valueField is null));
+
+			var cls = nullableValue.ExactType?.Class;
+			var hasValueValue = nullableValue.GetFieldValue(cls, (uint)info.hasValueField.MetadataToken);
+			if (hasValueValue is null)
+				return false;
+			var rawValue = hasValueValue.ReadGenericValue();
+			if (rawValue is null || rawValue.Length != 1)
+				return false;
+			if (rawValue[0] == 0)
+				return true;
+
+			var valueValue = nullableValue.GetFieldValue(cls, (uint)info.valueField.MetadataToken);
+			if (valueValue is null)
+				return false;
+			value = valueValue;
+			return true;
+		}
 
 		DbgDotNetRawValue GetRawValueDefault(CorValue value, DmdType type) {
 			if (value.IsNull)

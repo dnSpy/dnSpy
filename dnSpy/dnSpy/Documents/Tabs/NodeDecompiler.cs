@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,12 +20,14 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Documents.TreeView.Resources;
 using dnSpy.Contracts.Text;
+using dnSpy.Properties;
 
 namespace dnSpy.Documents.Tabs {
 	enum NodeType {
@@ -54,20 +56,21 @@ namespace dnSpy.Documents.Tabs {
 		Message,
 	}
 
-	struct NodeDecompiler {
+	readonly struct NodeDecompiler {
 		readonly Func<Func<object>, object> execInThread;
 		readonly IDecompilerOutput output;
 		readonly IDecompiler decompiler;
 		readonly DecompilationContext decompilationContext;
-		readonly IDecompileNodeContext decompileNodeContext;
+		readonly IDecompileNodeContext? decompileNodeContext;
 
-		public NodeDecompiler(Func<Func<object>, object> execInThread, IDecompilerOutput output, IDecompiler decompiler, DecompilationContext decompilationContext, IDecompileNodeContext decompileNodeContext = null) {
+		public NodeDecompiler(Func<Func<object>, object> execInThread, IDecompilerOutput output, IDecompiler decompiler, DecompilationContext decompilationContext, IDecompileNodeContext? decompileNodeContext = null) {
 			this.execInThread = execInThread;
 			this.output = output;
 			this.decompiler = decompiler;
 			this.decompilationContext = decompilationContext;
 			this.decompileNodeContext = decompileNodeContext;
-			this.decompileNodeContext.ContentTypeString = decompiler.ContentTypeString;
+			if (!(this.decompileNodeContext is null))
+				this.decompileNodeContext.ContentTypeString = decompiler.ContentTypeString;
 		}
 
 		static readonly object lockObj = new object();
@@ -81,11 +84,11 @@ namespace dnSpy.Documents.Tabs {
 				break;
 
 			case NodeType.Assembly:
-				decompiler.Decompile(((AssemblyDocumentNode)node).Document.AssemblyDef, output, decompilationContext);
+				decompiler.Decompile(((AssemblyDocumentNode)node).Document.AssemblyDef!, output, decompilationContext);
 				break;
 
 			case NodeType.Module:
-				decompiler.Decompile(((ModuleDocumentNode)node).Document.ModuleDef, output, decompilationContext);
+				decompiler.Decompile(((ModuleDocumentNode)node).Document.ModuleDef!, output, decompilationContext);
 				break;
 
 			case NodeType.Type:
@@ -169,7 +172,7 @@ namespace dnSpy.Documents.Tabs {
 				break;
 
 			default:
-				Debug.Fail(string.Format("Unknown NodeType: {0}", nodeType));
+				Debug.Fail($"Unknown NodeType: {nodeType}");
 				goto case NodeType.Unknown;
 			}
 		}
@@ -183,7 +186,7 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		void DecompileUnknown(DocumentTreeNodeData node) {
-			if (node is IDecompileSelf decompileSelf && decompileNodeContext != null) {
+			if (node is IDecompileSelf decompileSelf && !(decompileNodeContext is null)) {
 				if (decompileSelf.Decompile(decompileNodeContext))
 					return;
 			}
@@ -212,7 +215,22 @@ namespace dnSpy.Documents.Tabs {
 			decompiler.DecompileNamespace(node.Name, children, output, decompilationContext);
 		}
 
-		void Decompile(PEDocumentNode node) => decompiler.WriteCommentLine(output, node.Document.Filename);
+		void Decompile(PEDocumentNode node) {
+			decompiler.WriteCommentLine(output, node.Document.Filename);
+			var peImage = node.Document.PEImage;
+			if (!(peImage is null)) {
+				var timestampLine = dnSpy_Resources.Decompile_Timestamp + " ";
+				uint ts = peImage.ImageNTHeaders.FileHeader.TimeDateStamp;
+				if ((int)ts > 0) {
+					var date = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(ts).ToLocalTime();
+					var dateString = date.ToString(CultureInfo.CurrentUICulture.DateTimeFormat);
+					timestampLine += $"{ts:X8} ({dateString})";
+				}
+				else
+					timestampLine += $"{dnSpy_Resources.UnknownValue} ({ts:X8})";
+				decompiler.WriteCommentLine(output, timestampLine);
+			}
+		}
 
 		void Decompile(ReferencesFolderNode node) {
 			foreach (var child in GetChildren(node)) {

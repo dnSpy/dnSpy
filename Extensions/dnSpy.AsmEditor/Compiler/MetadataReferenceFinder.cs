@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,7 +23,7 @@ using System.Threading;
 using dnlib.DotNet;
 
 namespace dnSpy.AsmEditor.Compiler {
-	struct MetadataReferenceFinder {
+	readonly struct MetadataReferenceFinder {
 		readonly ModuleDef module;
 		readonly CancellationToken cancellationToken;
 		readonly Dictionary<IAssembly, AssemblyDef> assemblies;
@@ -59,7 +59,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		IEnumerable<AssemblyDef> GetAssemblies(ModuleDef module, IEnumerable<string> extraAssemblyReferences) {
 			var asm = module.Assembly;
-			if (asm != null) {
+			if (!(asm is null)) {
 				foreach (var a in GetAssemblies(asm))
 					yield return a;
 			}
@@ -67,7 +67,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			foreach (var asmRef in GetAssemblyRefs(module, extraAssemblyReferences)) {
 				cancellationToken.ThrowIfCancellationRequested();
 				asm = module.Context.AssemblyResolver.Resolve(asmRef, module);
-				if (asm == null)
+				if (asm is null)
 					continue;
 				foreach (var a in GetAssemblies(asm))
 					yield return a;
@@ -79,7 +79,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				yield return a;
 			foreach (var s in extraAssemblyReferences) {
 				var info = new AssemblyNameInfo(s);
-				if (info.Version != null)
+				if (!(info.Version is null))
 					yield return info;
 			}
 		}
@@ -94,7 +94,32 @@ namespace dnSpy.AsmEditor.Compiler {
 					yield return a;
 			}
 		}
-		static readonly PublicKeyToken contractsPublicKeyToken = new PublicKeyToken("b03f5f7f11d50a3a");
+		static readonly PublicKeyToken[] contractsPublicKeyTokens = new PublicKeyToken[] {
+			// Normal contract asms
+			new PublicKeyToken("b03f5f7f11d50a3a"),
+			// netstandard
+			new PublicKeyToken("cc7b13ffcd2ddd51"),
+		};
+
+		static bool IsPublicKeyToken(PublicKeyToken[] tokens, PublicKeyToken? token) {
+			if (token is null)
+				return false;
+			foreach (var t in tokens) {
+				if (token.Equals(t))
+					return true;
+			}
+			return false;
+		}
+
+		static bool IsOtherReferenceAssembly(IAssembly assembly) {
+			string name = assembly.Name;
+			if (PublicKeyBase.IsNullOrEmpty2(assembly.PublicKeyOrToken)) {
+				const string UnityEngine = "UnityEngine";
+				if (StringComparer.OrdinalIgnoreCase.Equals(name, UnityEngine) || name.StartsWith(UnityEngine + ".", StringComparison.OrdinalIgnoreCase))
+					return true;
+			}
+			return false;
+		}
 
 		IEnumerable<AssemblyDef> GetResolvedContractAssemblies(ModuleDef module) {
 			var nonContractAsms = new HashSet<IAssembly>(AssemblyNameComparer.CompareAll);
@@ -102,19 +127,19 @@ namespace dnSpy.AsmEditor.Compiler {
 			while (stack.Count > 0) {
 				cancellationToken.ThrowIfCancellationRequested();
 				var asmRef = stack.Pop();
-				if (!contractsPublicKeyToken.Equals(asmRef.PublicKeyOrToken?.Token))
+				if (!IsPublicKeyToken(contractsPublicKeyTokens, asmRef.PublicKeyOrToken?.Token) && !IsOtherReferenceAssembly(asmRef))
 					continue;
 				if (checkedContractsAssemblies.Contains(asmRef))
 					continue;
 				checkedContractsAssemblies.Add(asmRef);
 
 				var contractsAsm = module.Context.AssemblyResolver.Resolve(asmRef, module);
-				if (contractsAsm != null) {
+				if (!(contractsAsm is null)) {
 					yield return contractsAsm;
 					foreach (var m in contractsAsm.Modules) {
 						foreach (var ar in m.GetAssemblyRefs()) {
 							cancellationToken.ThrowIfCancellationRequested();
-							if (contractsPublicKeyToken.Equals(ar.PublicKeyOrToken))
+							if (IsPublicKeyToken(contractsPublicKeyTokens, ar.PublicKeyOrToken?.Token) || IsOtherReferenceAssembly(ar))
 								stack.Push(ar);
 							else
 								nonContractAsms.Add(ar);
@@ -125,7 +150,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			foreach (var asmRef in nonContractAsms) {
 				cancellationToken.ThrowIfCancellationRequested();
 				var asm = module.Context.AssemblyResolver.Resolve(asmRef, module);
-				if (asm != null)
+				if (!(asm is null))
 					yield return asm;
 			}
 		}

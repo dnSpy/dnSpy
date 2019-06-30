@@ -1,5 +1,5 @@
-﻿<!--
-    Copyright (C) 2014-2017 de4dot@gmail.com
+<!--
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,8 +20,6 @@
              x:ClassModifier="internal"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:mvvmvc="clr-namespace:dnSpy.Contracts.MVVM.Converters;assembly=dnSpy.Contracts.DnSpy"
              xmlns:vc="clr-namespace:dnSpy.AsmEditor.DnlibDialogs.Converters"
              xmlns:dnlibdlgs="clr-namespace:dnSpy.AsmEditor.DnlibDialogs"
@@ -91,15 +89,15 @@
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
 
-                                <Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=mvidTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Module_Mvid}" />
+                                <Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=mvidTextBox}" Content="Mvid" />
                                 <TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="mvidTextBox" Text="{Binding Mvid.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
                                 <Button Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.Module_NewGuid1}" Command="{Binding GenerateNewMvidCommand}" />
 
-                                <Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=encIdTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Module_EncId}" />
+                                <Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=encIdTextBox}" Content="EncId" />
                                 <TextBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Name="encIdTextBox" Text="{Binding EncId.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
                                 <Button Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.Module_NewGuid2}" Command="{Binding GenerateNewEncIdCommand}" />
 
-                                <Label Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=encBaseIdTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Module_EncBaseId}" />
+                                <Label Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=encBaseIdTextBox}" Content="EncBaseId" />
                                 <TextBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" Name="encBaseIdTextBox" Text="{Binding EncBaseId.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
                                 <Button Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.Module_NewGuid3}" Command="{Binding GenerateNewEncBaseIdCommand}" />
                             </Grid>
@@ -145,7 +143,7 @@
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
-            <TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.Module_Cor20}">
+            <TabItem Header="Cor20">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <StackPanel>
                         <Grid>
@@ -172,18 +170,18 @@
                                     <ColumnDefinition />
                                     <ColumnDefinition />
                                 </Grid.ColumnDefinitions>
-                                <CheckBox Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" IsChecked="{Binding ILOnly}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Module_Flags_ILOnly}" />
-                                <CheckBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" IsChecked="{Binding ILLibrary}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Module_Flags_ILLibrary}" />
-                                <CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding Bit32Required}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Module_Flags_Bit32Required}" />
-                                <CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding Bit32Preferred}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Module_Flags_Bit32Preferred}" />
-                                <CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding TrackDebugData}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Module_Flags_TrackDebugData}" />
-                                <CheckBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding StrongNameSigned}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Module_Flags_StrongNameSigned}" />
+                                <CheckBox Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" IsChecked="{Binding ILOnly}" Content="ILOnly" />
+                                <CheckBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" IsChecked="{Binding ILLibrary}" Content="ILLibrary" />
+                                <CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding Bit32Required}" Content="32BitRequired" />
+                                <CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding Bit32Preferred}" Content="32BitPreferred" />
+                                <CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding TrackDebugData}" Content="TrackDebugData" />
+                                <CheckBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding StrongNameSigned}" Content="StrongNameSigned" />
                             </Grid>
                         </GroupBox>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
-            <TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.Module_PE}">
+            <TabItem Header="PE">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <StackPanel>
                         <Grid>
@@ -201,7 +199,7 @@
                                 <ComboBox Name="machineComboBox" Margin="5 0 0 0" DisplayMemberPath="Name" ItemsSource="{Binding Machine.Items}" SelectedIndex="{Binding Machine.SelectedIndex}" Width="100" VerticalContentAlignment="Center" />
                             </StackPanel>
 
-                            <GroupBox Grid.Row="1" Header="{x:Static p:dnSpy_AsmEditor_Resources.PE_Header_Characteristics}" Margin="0 5 0 0">
+                            <GroupBox Grid.Row="1" Header="Characteristics" Margin="0 5 0 0">
                                 <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition />
@@ -236,7 +234,7 @@
                                 </Grid>
                             </GroupBox>
 
-                            <GroupBox Grid.Row="2" Header="{x:Static p:dnSpy_AsmEditor_Resources.PE_Header_DllCharacteristics}" Margin="0 5 0 0">
+                            <GroupBox Grid.Row="2" Header="DllCharacteristics" Margin="0 5 0 0">
                                 <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition />

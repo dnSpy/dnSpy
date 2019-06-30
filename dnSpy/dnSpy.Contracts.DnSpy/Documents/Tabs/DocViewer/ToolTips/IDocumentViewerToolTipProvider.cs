@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer.ToolTips {
 		/// <param name="context">Context</param>
 		/// <param name="ref">Reference</param>
 		/// <returns></returns>
-		object Create(IDocumentViewerToolTipProviderContext context, object @ref);
+		object? Create(IDocumentViewerToolTipProviderContext context, object? @ref);
 	}
 
 	/// <summary>Metadata</summary>

@@ -177,6 +177,9 @@
   <data name="DecompilerSettings_MaxArrayElements" xml:space="preserve">
     <value>Максимальное количество отображаемых элементов массива</value>
   </data>
+  <data name="DecompilerSettings_MaxStringLength" xml:space="preserve">
+    <value>Максимальная длина строки</value>
+  </data>
   <data name="DecompilerSettings_MemberAddPrivateModifier" xml:space="preserve">
     <value>Добавить модификатор 'private' к членам типа</value>
   </data>
@@ -193,13 +196,13 @@
     <value>Заменить «new delegate-class(xxx)» на «xxx»</value>
   </data>
   <data name="DecompilerSettings_ShowCompilerGeneratedTypes" xml:space="preserve">
-    <value>Показать скрытые типы и методы, созданные компилятором</value>
+    <value>Показывать скрытые типы и методы, созданные компилятором</value>
   </data>
   <data name="DecompilerSettings_ShowILComments" xml:space="preserve">
-    <value>Показать комментарии к IL инструкциям</value>
+    <value>Показать комментарии к IL-инструкциям</value>
   </data>
   <data name="DecompilerSettings_ShowILInstrBytes" xml:space="preserve">
-    <value>Показывать байты инструкций IL</value>
+    <value>Показывать байты IL-инструкций</value>
   </data>
   <data name="DecompilerSettings_ShowPdbInfo" xml:space="preserve">
     <value>Показать номера строк и имена файлов, если имеются</value>

@@ -19,7 +19,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class dnSpy_Debugger_DotNet_CorDebug_Resources {
@@ -71,20 +71,20 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to _Assembly.
-        /// </summary>
-        public static string DbgAsm_Assembly {
-            get {
-                return ResourceManager.GetString("DbgAsm_Assembly", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to _Break at.
         /// </summary>
         public static string DbgAsm_BreakAt {
             get {
                 return ResourceManager.GetString("DbgAsm_BreakAt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to E_xecutable.
+        /// </summary>
+        public static string DbgAsm_Executable {
+            get {
+                return ResourceManager.GetString("DbgAsm_Executable", resourceCulture);
             }
         }
         
@@ -103,6 +103,15 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Properties {
         public static string DbgAsm_HostArgs {
             get {
                 return ResourceManager.GetString("DbgAsm_HostArgs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use host executable.
+        /// </summary>
+        public static string DbgAsm_UseHostExecutable {
+            get {
+                return ResourceManager.GetString("DbgAsm_UseHostExecutable", resourceCulture);
             }
         }
         
@@ -139,69 +148,6 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Properties {
         public static string DbgBreak_EntryPoint {
             get {
                 return ResourceManager.GetString("DbgBreak_EntryPoint", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Exe&apos;s First LoadClass Event.
-        /// </summary>
-        public static string DbgBreak_ExeFirstLoadClassEvent {
-            get {
-                return ResourceManager.GetString("DbgBreak_ExeFirstLoadClassEvent", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Exe&apos;s LoadModule Event.
-        /// </summary>
-        public static string DbgBreak_ExeLoadModuleEvent {
-            get {
-                return ResourceManager.GetString("DbgBreak_ExeLoadModuleEvent", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to First CreateAppDomain Event.
-        /// </summary>
-        public static string DbgBreak_FirstCreateAppDomainEvent {
-            get {
-                return ResourceManager.GetString("DbgBreak_FirstCreateAppDomainEvent", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to First CreateThread Event.
-        /// </summary>
-        public static string DbgBreak_FirstCreateThreadEvent {
-            get {
-                return ResourceManager.GetString("DbgBreak_FirstCreateThreadEvent", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to First LoadClass Event.
-        /// </summary>
-        public static string DbgBreak_FirstLoadClassEvent {
-            get {
-                return ResourceManager.GetString("DbgBreak_FirstLoadClassEvent", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to First LoadModule Event.
-        /// </summary>
-        public static string DbgBreak_FirstLoadModuleEvent {
-            get {
-                return ResourceManager.GetString("DbgBreak_FirstLoadModuleEvent", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Module .cctor or Entry Point.
-        /// </summary>
-        public static string DbgBreak_ModuleClassConstructorOrEntryPoint {
-            get {
-                return ResourceManager.GetString("DbgBreak_ModuleClassConstructorOrEntryPoint", resourceCulture);
             }
         }
         
@@ -564,7 +510,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Use dnSpy-x86.exe to debug 32-bit applications..
+        ///   Looks up a localized string similar to Use 32-bit dnSpy to debug 32-bit applications..
         /// </summary>
         public static string UseDnSpy64ExeToDebug32 {
             get {
@@ -573,7 +519,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Use dnSpy.exe to debug 64-bit applications..
+        ///   Looks up a localized string similar to Use 64-bit dnSpy to debug 64-bit applications..
         /// </summary>
         public static string UseDnSpyExeToDebug64 {
             get {

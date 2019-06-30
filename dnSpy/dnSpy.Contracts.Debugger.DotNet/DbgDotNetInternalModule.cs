@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,6 +27,6 @@ namespace dnSpy.Contracts.Debugger.DotNet {
 		/// <summary>
 		/// Gets the reflection module or null if this isn't a managed module
 		/// </summary>
-		public abstract DmdModule ReflectionModule { get; }
+		public abstract DmdModule? ReflectionModule { get; }
 	}
 }

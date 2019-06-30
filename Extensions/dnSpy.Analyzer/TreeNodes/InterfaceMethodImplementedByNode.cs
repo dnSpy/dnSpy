@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
+// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
@@ -40,27 +40,50 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		IEnumerable<AnalyzerTreeNodeData> FindReferencesInType(TypeDef type) {
-			if (!type.HasInterfaces)
+			if (type.IsInterface)
 				yield break;
-			var iff = type.Interfaces.FirstOrDefault(i => new SigComparer().Equals(i.Interface, analyzedMethod.DeclaringType));
-			ITypeDefOrRef implementedInterfaceRef = iff?.Interface;
-			if (implementedInterfaceRef == null)
+			var implementedInterfaceRef = GetInterface(type, analyzedMethod.DeclaringType);
+			if (implementedInterfaceRef is null)
 				yield break;
 
-			//TODO: Can we compare method sigs too?
-			foreach (MethodDef method in type.Methods.Where(m => m.Name == analyzedMethod.Name)) {
-				if (TypesHierarchyHelpers.MatchInterfaceMethod(method, analyzedMethod, implementedInterfaceRef)) {
+			foreach (MethodDef method in type.Methods) {
+				// Don't include abstract methods, they don't implement anything
+				if (!method.IsVirtual || method.IsAbstract)
+					continue;
+				if (method.HasOverrides && method.Overrides.Any(m => CheckEquals(m.MethodDeclaration.ResolveMethodDef(), analyzedMethod))) {
 					yield return new MethodNode(method) { Context = Context };
+					yield break;
 				}
 			}
 
-			foreach (MethodDef method in type.Methods) {
-				if (method.HasOverrides && method.Overrides.Any(m => m.MethodDeclaration.ResolveMethodDef() == analyzedMethod)) {
+			foreach (MethodDef method in type.Methods.Where(m => m.Name == analyzedMethod.Name)) {
+				// Don't include abstract methods, they don't implement anything
+				if (!method.IsVirtual || method.IsAbstract)
+					continue;
+				if (TypesHierarchyHelpers.MatchInterfaceMethod(method, analyzedMethod, implementedInterfaceRef)) {
 					yield return new MethodNode(method) { Context = Context };
+					yield break;
 				}
 			}
 		}
 
-		public static bool CanShow(MethodDef method) => method.DeclaringType.IsInterface;
+		internal static ITypeDefOrRef? GetInterface(TypeDef type, TypeDef interfaceType) {
+			foreach (var t in TypesHierarchyHelpers.GetTypeAndBaseTypes(type)) {
+				var td = t.Resolve();
+				if (td is null)
+					break;
+				foreach (var ii in td.Interfaces) {
+					var genericArgs = t is GenericInstSig ? ((GenericInstSig)t).GenericArguments : null;
+					var iface = GenericArgumentResolver.Resolve(ii.Interface.ToTypeSig(), genericArgs, null);
+					if (iface is null)
+						continue;
+					if (new SigComparer().Equals(ii.Interface.GetScopeType(), interfaceType))
+						return iface.ToTypeDefOrRef();
+				}
+			}
+			return null;
+		}
+
+		public static bool CanShow(MethodDef method) => method.DeclaringType.IsInterface && (method.IsVirtual || method.IsAbstract);
 	}
 }

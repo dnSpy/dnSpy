@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,7 +36,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 				if (TimeDateStampVM.DataFieldVM.HasError)
 					return string.Empty;
 
-				var date = EpochToDate((uint)TimeDateStampVM.DataFieldVM.ObjectValue);
+				var date = EpochToDate((uint)TimeDateStampVM.DataFieldVM.ObjectValue!).ToLocalTime();
 				return date.ToString(CultureInfo.CurrentCulture.DateTimeFormat);
 			}
 		}

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,12 +24,12 @@ namespace dnSpy.Contracts.Metadata {
 	/// <summary>
 	/// <see cref="ModuleId"/> and token
 	/// </summary>
-	public struct ModuleTokenId : IEquatable<ModuleTokenId> {
+	public readonly struct ModuleTokenId : IEquatable<ModuleTokenId> {
 		/// <summary>
 		/// Gets the module id
 		/// </summary>
 		public ModuleId Module => module;
-		/*readonly*/ ModuleId module;
+		readonly ModuleId module;
 
 		/// <summary>
 		/// Gets the token in the module
@@ -78,7 +78,7 @@ namespace dnSpy.Contracts.Metadata {
 		/// </summary>
 		/// <param name="obj">Object</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is ModuleTokenId && Equals((ModuleTokenId)obj);
+		public override bool Equals(object? obj) => obj is ModuleTokenId && Equals((ModuleTokenId)obj);
 
 		/// <summary>
 		/// GetHashCode()

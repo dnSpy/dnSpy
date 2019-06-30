@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,147 +20,168 @@
 using System;
 using System.Globalization;
 using System.Linq;
-using System.Threading;
 using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 	sealed class DbgEngineValueNodeImpl : DbgEngineValueNode {
-		public override string ErrorMessage => dnValueNode.ErrorMessage;
-		public override DbgEngineValue Value => value;
+		public override string? ErrorMessage => dnValueNode.ErrorMessage;
+		public override DbgEngineValue? Value => value;
 		public override string Expression => dnValueNode.Expression;
 		public override string ImageName => dnValueNode.ImageName;
-		public override bool IsReadOnly => value == null || dnValueNode.IsReadOnly;
+		public override bool IsReadOnly => value is null || dnValueNode.IsReadOnly;
 		public override bool CausesSideEffects => dnValueNode.CausesSideEffects;
 		public override bool? HasChildren => dnValueNode.HasChildren;
 
 		readonly DbgDotNetEngineValueNodeFactoryImpl owner;
 		readonly DbgDotNetValueNode dnValueNode;
-		readonly DbgEngineValueImpl value;
+		readonly DbgEngineValueImpl? value;
 
 		public DbgEngineValueNodeImpl(DbgDotNetEngineValueNodeFactoryImpl owner, DbgDotNetValueNode dnValueNode) {
-			if (dnValueNode == null)
+			if (dnValueNode is null)
 				throw new ArgumentNullException(nameof(dnValueNode));
 			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
 			var dnValue = dnValueNode.Value;
-			value = dnValue == null ? null : new DbgEngineValueImpl(dnValue);
+			value = dnValue is null ? null : new DbgEngineValueImpl(dnValue);
 			this.dnValueNode = dnValueNode;
 		}
 
-		public override ulong GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
-			var dispatcher = context.Runtime.GetDotNetRuntime().Dispatcher;
+		public override ulong GetChildCount(DbgEvaluationInfo evalInfo) {
+			var dispatcher = evalInfo.Runtime.GetDotNetRuntime().Dispatcher;
 			if (dispatcher.CheckAccess())
-				return GetChildCountCore(context, frame, cancellationToken);
-			return GetChildCount(dispatcher, context, frame, cancellationToken);
+				return GetChildCountCore(evalInfo);
+			return GetChildCount(dispatcher, evalInfo);
 
-			ulong GetChildCount(DbgDotNetDispatcher dispatcher2, DbgEvaluationContext context2, DbgStackFrame frame2, CancellationToken cancellationToken2) =>
-				dispatcher2.InvokeRethrow(() => GetChildCountCore(context2, frame2, cancellationToken2));
+			ulong GetChildCount(DbgDotNetDispatcher dispatcher2, DbgEvaluationInfo evalInfo2) {
+				if (!dispatcher2.TryInvokeRethrow(() => GetChildCountCore(evalInfo2), out var result))
+					result = 0;
+				return result;
+			}
 		}
 
-		ulong GetChildCountCore(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) =>
-			dnValueNode.GetChildCount(context, frame, cancellationToken);
+		ulong GetChildCountCore(DbgEvaluationInfo evalInfo) =>
+			dnValueNode.GetChildCount(evalInfo);
 
-		public override DbgEngineValueNode[] GetChildren(DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
-			var dispatcher = context.Runtime.GetDotNetRuntime().Dispatcher;
+		public override DbgEngineValueNode[] GetChildren(DbgEvaluationInfo evalInfo, ulong index, int count, DbgValueNodeEvaluationOptions options) {
+			var dispatcher = evalInfo.Runtime.GetDotNetRuntime().Dispatcher;
 			if (dispatcher.CheckAccess())
-				return GetChildrenCore(context, frame, index, count, options, cancellationToken);
-			return GetChildren(dispatcher, context, frame, index, count, options, cancellationToken);
+				return GetChildrenCore(evalInfo, index, count, options);
+			return GetChildren(dispatcher, evalInfo, index, count, options);
 
-			DbgEngineValueNode[] GetChildren(DbgDotNetDispatcher dispatcher2, DbgEvaluationContext context2, DbgStackFrame frame2, ulong index2, int count2, DbgValueNodeEvaluationOptions options2, CancellationToken cancellationToken2) =>
-				dispatcher2.InvokeRethrow(() => GetChildrenCore(context2, frame2, index2, count2, options2, cancellationToken2));
+			DbgEngineValueNode[] GetChildren(DbgDotNetDispatcher dispatcher2, DbgEvaluationInfo evalInfo2, ulong index2, int count2, DbgValueNodeEvaluationOptions options2) {
+				if (!dispatcher2.TryInvokeRethrow(() => GetChildrenCore(evalInfo2, index2, count2, options2), out var result))
+					result = Array.Empty<DbgEngineValueNode>();
+				return result;
+			}
 		}
 
-		DbgEngineValueNode[] GetChildrenCore(DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
-			DbgEngineValueNode[] res = null;
-			DbgDotNetValueNode[] dnNodes = null;
+		DbgEngineValueNode[] GetChildrenCore(DbgEvaluationInfo evalInfo, ulong index, int count, DbgValueNodeEvaluationOptions options) {
+			DbgEngineValueNode[]? res = null;
+			DbgDotNetValueNode[]? dnNodes = null;
 			try {
-				dnNodes = dnValueNode.GetChildren(context, frame, index, count, options, cancellationToken);
+				dnNodes = dnValueNode.GetChildren(evalInfo, index, count, options);
 				res = new DbgEngineValueNode[dnNodes.Length];
 				for (int i = 0; i < res.Length; i++) {
-					cancellationToken.ThrowIfCancellationRequested();
+					evalInfo.CancellationToken.ThrowIfCancellationRequested();
 					res[i] = owner.Create(dnNodes[i]);
 				}
 			}
 			catch (Exception ex) {
-				if (res != null)
-					context.Runtime.Process.DbgManager.Close(res.Where(a => a != null));
-				if (dnNodes != null)
-					context.Runtime.Process.DbgManager.Close(dnNodes);
+				if (!(res is null))
+					evalInfo.Runtime.Process.DbgManager.Close(res.Where(a => !(a is null)));
+				if (!(dnNodes is null))
+					evalInfo.Runtime.Process.DbgManager.Close(dnNodes);
 				if (!ExceptionUtils.IsInternalDebuggerError(ex))
 					throw;
 				res = new DbgEngineValueNode[count];
 				for (int i = 0; i < res.Length; i++)
-					res[i] = owner.CreateError(context, frame, DbgDotNetEngineValueNodeFactoryExtensions.errorName, PredefinedEvaluationErrorMessages.InternalDebuggerError, "<expression>", false, cancellationToken);
+					res[i] = owner.CreateError(evalInfo, DbgDotNetEngineValueNodeFactoryExtensions.errorName, PredefinedEvaluationErrorMessages.InternalDebuggerError, "<expression>", false);
 				return res;
 			}
 			return res;
 		}
 
-		public override void Format(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo, CancellationToken cancellationToken) {
-			var dispatcher = context.Runtime.GetDotNetRuntime().Dispatcher;
+		public override void Format(DbgEvaluationInfo evalInfo, IDbgValueNodeFormatParameters options, CultureInfo? cultureInfo) {
+			var dispatcher = evalInfo.Runtime.GetDotNetRuntime().Dispatcher;
 			if (dispatcher.CheckAccess())
-				FormatCore(context, frame, options, cultureInfo, cancellationToken);
+				FormatCore(evalInfo, options, cultureInfo);
 			else
-				Format2(dispatcher, context, frame, options, cultureInfo, cancellationToken);
+				Format2(dispatcher, evalInfo, options, cultureInfo);
 
-			void Format2(DbgDotNetDispatcher dispatcher2, DbgEvaluationContext context2, DbgStackFrame frame2, IDbgValueNodeFormatParameters options2, CultureInfo cultureInfo2, CancellationToken cancellationToken2) =>
-				dispatcher2.InvokeRethrow(() => FormatCore(context2, frame2, options2, cultureInfo2, cancellationToken2));
+			void Format2(DbgDotNetDispatcher dispatcher2, DbgEvaluationInfo evalInfo2, IDbgValueNodeFormatParameters options2, CultureInfo? cultureInfo2) =>
+				dispatcher2.TryInvokeRethrow(() => FormatCore(evalInfo2, options2, cultureInfo2));
 		}
 
-		void FormatCore(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo, CancellationToken cancellationToken) {
-			context.Runtime.GetDotNetRuntime().Dispatcher.VerifyAccess();
-			if (options.NameOutput != null)
-				dnValueNode.Name.WriteTo(options.NameOutput);
+		void FormatCore(DbgEvaluationInfo evalInfo, IDbgValueNodeFormatParameters options, CultureInfo? cultureInfo) {
+			evalInfo.Runtime.GetDotNetRuntime().Dispatcher.VerifyAccess();
+			DbgValueFormatterOptions formatterOptions;
+			DbgValueFormatterTypeOptions typeFormatterOptions;
 			var formatter = owner.Formatter;
 			var dnValue = value?.DotNetValue;
-			if (options.ExpectedTypeOutput != null) {
-				if (dnValueNode.FormatExpectedType(context, frame, options.ExpectedTypeOutput, cultureInfo, cancellationToken)) {
+			if (!(options.NameOutput is null)) {
+				formatterOptions = PredefinedFormatSpecifiers.GetValueFormatterOptions(dnValueNode.FormatSpecifiers, options.NameFormatterOptions);
+				if (dnValueNode.FormatName(evalInfo, options.NameOutput, formatter, formatterOptions, cultureInfo)) {
+					// Nothing
+				}
+				else
+					dnValueNode.Name.WriteTo(options.NameOutput);
+				evalInfo.CancellationToken.ThrowIfCancellationRequested();
+			}
+			if (!(options.ExpectedTypeOutput is null)) {
+				formatterOptions = PredefinedFormatSpecifiers.GetValueFormatterOptions(dnValueNode.FormatSpecifiers, options.TypeFormatterOptions);
+				typeFormatterOptions = PredefinedFormatSpecifiers.GetValueFormatterTypeOptions(dnValueNode.FormatSpecifiers, options.ExpectedTypeFormatterOptions);
+				if (dnValueNode.FormatExpectedType(evalInfo, options.ExpectedTypeOutput, formatter, typeFormatterOptions, formatterOptions, cultureInfo)) {
 					// Nothing
 				}
 				else if (dnValueNode.ExpectedType is DmdType expectedType)
-					formatter.FormatType(context, options.ExpectedTypeOutput, expectedType, null, options.ExpectedTypeFormatterOptions, cultureInfo);
-				cancellationToken.ThrowIfCancellationRequested();
+					formatter.FormatType(evalInfo, options.ExpectedTypeOutput, expectedType, null, typeFormatterOptions, cultureInfo);
+				evalInfo.CancellationToken.ThrowIfCancellationRequested();
 			}
-			if (options.ActualTypeOutput != null) {
-				if (dnValueNode.FormatActualType(context, frame, options.ActualTypeOutput, cultureInfo, cancellationToken)) {
+			if (!(options.ActualTypeOutput is null)) {
+				formatterOptions = PredefinedFormatSpecifiers.GetValueFormatterOptions(dnValueNode.FormatSpecifiers, options.TypeFormatterOptions);
+				typeFormatterOptions = PredefinedFormatSpecifiers.GetValueFormatterTypeOptions(dnValueNode.FormatSpecifiers, options.ActualTypeFormatterOptions);
+				if (dnValueNode.FormatActualType(evalInfo, options.ActualTypeOutput, formatter, typeFormatterOptions, formatterOptions, cultureInfo)) {
 					// Nothing
 				}
 				else if (dnValueNode.ActualType is DmdType actualType)
-					formatter.FormatType(context, options.ActualTypeOutput, actualType, dnValue, options.ActualTypeFormatterOptions, cultureInfo);
-				cancellationToken.ThrowIfCancellationRequested();
+					formatter.FormatType(evalInfo, options.ActualTypeOutput, actualType, dnValue, typeFormatterOptions, cultureInfo);
+				evalInfo.CancellationToken.ThrowIfCancellationRequested();
 			}
-			if (options.ValueOutput != null) {
-				if (dnValueNode.FormatValue(context, frame, options.ValueOutput, cultureInfo, cancellationToken)) {
+			if (!(options.ValueOutput is null)) {
+				formatterOptions = PredefinedFormatSpecifiers.GetValueFormatterOptions(dnValueNode.FormatSpecifiers, options.ValueFormatterOptions);
+				if (dnValueNode.FormatValue(evalInfo, options.ValueOutput, formatter, formatterOptions, cultureInfo)) {
 					// Nothing
 				}
-				else if (dnValue != null)
-					formatter.FormatValue(context, options.ValueOutput, frame, dnValue, options.ValueFormatterOptions, cultureInfo, cancellationToken);
+				else if (!(dnValue is null))
+					formatter.FormatValue(evalInfo, options.ValueOutput, dnValue, formatterOptions, cultureInfo);
 				else if (ErrorMessage is string errorMessage)
-					options.ValueOutput.Write(BoxedTextColor.Error, owner.ErrorMessagesHelper.GetErrorMessage(errorMessage));
-				cancellationToken.ThrowIfCancellationRequested();
+					options.ValueOutput.Write(DbgTextColor.Error, owner.ErrorMessagesHelper.GetErrorMessage(errorMessage));
+				evalInfo.CancellationToken.ThrowIfCancellationRequested();
 			}
 		}
 
-		public override DbgEngineValueNodeAssignmentResult Assign(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
-			var dispatcher = context.Runtime.GetDotNetRuntime().Dispatcher;
+		public override DbgEngineValueNodeAssignmentResult Assign(DbgEvaluationInfo evalInfo, string expression, DbgEvaluationOptions options) {
+			var dispatcher = evalInfo.Runtime.GetDotNetRuntime().Dispatcher;
 			if (dispatcher.CheckAccess())
-				return AssignCore(context, frame, expression, options, cancellationToken);
-			return Assign(dispatcher, context, frame, expression, options, cancellationToken);
+				return AssignCore(evalInfo, expression, options);
+			return Assign(dispatcher, evalInfo, expression, options);
 
-			DbgEngineValueNodeAssignmentResult Assign(DbgDotNetDispatcher dispatcher2, DbgEvaluationContext context2, DbgStackFrame frame2, string expression2, DbgEvaluationOptions options2, CancellationToken cancellationToken2) =>
-				dispatcher2.InvokeRethrow(() => AssignCore(context2, frame2, expression2, options2, cancellationToken2));
+			DbgEngineValueNodeAssignmentResult Assign(DbgDotNetDispatcher dispatcher2, DbgEvaluationInfo evalInfo2, string expression2, DbgEvaluationOptions options2) {
+				if (!dispatcher2.TryInvokeRethrow(() => AssignCore(evalInfo2, expression2, options2), out var result))
+					result = new DbgEngineValueNodeAssignmentResult(DbgEEAssignmentResultFlags.None, DispatcherConstants.ProcessExitedError);
+				return result;
+			}
 		}
 
-		DbgEngineValueNodeAssignmentResult AssignCore(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
+		DbgEngineValueNodeAssignmentResult AssignCore(DbgEvaluationInfo evalInfo, string expression, DbgEvaluationOptions options) {
 			try {
-				var ee = context.Language.ExpressionEvaluator;
-				var res = ee.Assign(context, frame, Expression, expression, options, cancellationToken);
+				var ee = evalInfo.Context.Language.ExpressionEvaluator;
+				var res = ee.Assign(evalInfo, Expression, expression, options);
 				return new DbgEngineValueNodeAssignmentResult(res.Flags, res.Error);
 			}
 			catch (Exception ex) when (ExceptionUtils.IsInternalDebuggerError(ex)) {

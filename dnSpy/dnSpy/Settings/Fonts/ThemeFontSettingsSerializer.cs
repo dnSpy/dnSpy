@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -45,7 +45,7 @@ namespace dnSpy.Settings.Fonts {
 		readonly Dictionary<string, ISettingsSection> toThemeFontSettingsSection;
 		readonly Dictionary<FontSettingsKey, ISettingsSection> toFontSettingsSection;
 
-		struct FontSettingsKey : IEquatable<FontSettingsKey> {
+		readonly struct FontSettingsKey : IEquatable<FontSettingsKey> {
 			readonly string name;
 			readonly Guid themeGuid;
 			public FontSettingsKey(string name, Guid themeGuid) {
@@ -53,7 +53,7 @@ namespace dnSpy.Settings.Fonts {
 				this.themeGuid = themeGuid;
 			}
 			public bool Equals(FontSettingsKey other) => StringComparer.Ordinal.Equals(name, other.name) && themeGuid == other.themeGuid;
-			public override bool Equals(object obj) => obj is FontSettingsKey && Equals((FontSettingsKey)obj);
+			public override bool Equals(object? obj) => obj is FontSettingsKey && Equals((FontSettingsKey)obj);
 			public override int GetHashCode() => StringComparer.Ordinal.GetHashCode(name) ^ themeGuid.GetHashCode();
 		}
 
@@ -68,9 +68,9 @@ namespace dnSpy.Settings.Fonts {
 			var list = new List<ThemeFontSettingsData>();
 			foreach (var tfsSection in rootSection.SectionsWithName(ThemeFontSettingsSection)) {
 				var name = tfsSection.Attribute<string>(ThemeFontSettingsAttrName);
-				if (name == null)
+				if (name is null)
 					continue;
-				if (TryGetThemeFontSettingsSection(name) != null) {
+				if (!(TryGetThemeFontSettingsSection(name) is null)) {
 					rootSection.RemoveSection(tfsSection);
 					continue;
 				}
@@ -80,10 +80,10 @@ namespace dnSpy.Settings.Fonts {
 		}
 
 		public override void Remove(string name) {
-			if (name == null)
+			if (name is null)
 				throw new ArgumentNullException(nameof(name));
 			var section = TryGetThemeFontSettingsSection(name);
-			if (section != null)
+			if (!(section is null))
 				rootSection.RemoveSection(section);
 		}
 
@@ -93,7 +93,7 @@ namespace dnSpy.Settings.Fonts {
 				var themeGuid = fontSection.Attribute<Guid?>(FontSettingsAttrThemeGuid);
 				var fontFamily = fontSection.Attribute<string>(FontSettingsAttrFontFamily);
 				var fontSize = fontSection.Attribute<double?>(FontSettingsAttrFontSize);
-				if (themeGuid == null || string.IsNullOrWhiteSpace(fontFamily) || fontSize == null || TryGetThemeFontSettingsSection(name, themeGuid.Value) != null) {
+				if (themeGuid is null || string.IsNullOrWhiteSpace(fontFamily) || fontSize is null || !(TryGetThemeFontSettingsSection(name, themeGuid.Value) is null)) {
 					tfsSection.RemoveSection(fontSection);
 					continue;
 				}
@@ -105,7 +105,7 @@ namespace dnSpy.Settings.Fonts {
 		}
 
 		public override void Serialize(FontSettings fontSettings) {
-			if (fontSettings == null)
+			if (fontSettings is null)
 				throw new ArgumentNullException(nameof(fontSettings));
 			var section = GetThemeFontSettingsSection(fontSettings.ThemeFontSettings.Name, fontSettings.ThemeGuid);
 			section.Attribute(FontSettingsAttrFontFamily, fontSettings.FontFamily.Source);
@@ -124,7 +124,7 @@ namespace dnSpy.Settings.Fonts {
 
 		ISettingsSection GetThemeFontSettingsSection(string name) {
 			var section = TryGetThemeFontSettingsSection(name);
-			if (section != null)
+			if (!(section is null))
 				return section;
 			section = rootSection.CreateSection(ThemeFontSettingsSection);
 			section.Attribute(ThemeFontSettingsAttrName, name);
@@ -135,7 +135,7 @@ namespace dnSpy.Settings.Fonts {
 		ISettingsSection GetThemeFontSettingsSection(string name, Guid themeGuid) {
 			var tfsSection = GetThemeFontSettingsSection(name);
 			var section = TryGetThemeFontSettingsSection(name, themeGuid);
-			if (section != null)
+			if (!(section is null))
 				return section;
 			section = tfsSection.CreateSection(FontSettingsSection);
 			section.Attribute(FontSettingsAttrThemeGuid, themeGuid);

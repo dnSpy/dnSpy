@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,7 +26,7 @@ namespace dnSpy.Contracts.Text {
 		/// </summary>
 		/// <param name="extension">File extension, with or without the period</param>
 		/// <returns></returns>
-		internal static string TryGetContentTypeStringByExtension(string extension) {
+		internal static string? TryGetContentTypeStringByExtension(string extension) {
 			var comparer = StringComparer.InvariantCultureIgnoreCase;
 			if (comparer.Equals(extension, ".txt") || comparer.Equals(extension, "txt"))
 				return ContentTypes.PlainText;

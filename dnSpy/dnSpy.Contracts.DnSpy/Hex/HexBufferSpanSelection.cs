@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// Buffer span and selection flags
 	/// </summary>
-	public struct HexBufferSpanSelection : IEquatable<HexBufferSpanSelection> {
+	public readonly struct HexBufferSpanSelection : IEquatable<HexBufferSpanSelection> {
 		/// <summary>
 		/// true if this is a default instance that hasn't been initialized
 		/// </summary>
@@ -35,7 +35,7 @@ namespace dnSpy.Contracts.Hex {
 		public HexBufferSpan BufferSpan { get; }
 
 		/// <summary>
-		/// Selection flags or null
+		/// Selection flags
 		/// </summary>
 		public HexSpanSelectionFlags SelectionFlags { get; }
 
@@ -63,7 +63,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="obj">Object</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is HexBufferSpanSelection && Equals((HexBufferSpanSelection)obj);
+		public override bool Equals(object? obj) => obj is HexBufferSpanSelection && Equals((HexBufferSpanSelection)obj);
 
 		/// <summary>
 		/// GetHashCode()

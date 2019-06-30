@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,7 +26,7 @@ namespace dnSpy.Hex.HexEditor {
 		public override Guid Guid => guid;
 		public override double Order => order;
 		public override string Title => title;
-		public override object UIObject => null;
+		public override object? UIObject => null;
 		public override void OnApply() { }
 		readonly Guid guid;
 		readonly double order;

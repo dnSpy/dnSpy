@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -60,10 +60,10 @@ namespace dnSpy.BackgroundImage {
 		readonly IThemeService themeService;
 		readonly IBackgroundImageSettings backgroundImageSettings;
 		readonly List<IImageSourceServiceListener> listeners;
-		ImageIterator imageIterator;
+		ImageIterator? imageIterator;
 		bool enabled;
 
-		public ImageSource ImageSource => imageIterator.ImageSource;
+		public ImageSource ImageSource => imageIterator!.ImageSource;
 		public Stretch Stretch => backgroundImageSettings.Stretch;
 		public StretchDirection StretchDirection => backgroundImageSettings.StretchDirection;
 		public double Opacity => backgroundImageSettings.Opacity;
@@ -79,12 +79,12 @@ namespace dnSpy.BackgroundImage {
 		public ImagePlacement ImagePlacement => backgroundImageSettings.ImagePlacement;
 
 		sealed class ImageIterator : IDisposable {
-			ImageInfo currentImageInfo;
+			ImageInfo? currentImageInfo;
 			FilenameIterator[] filenameIterators;
 			int currentFilenameIteratorIndex;
-			EnumeratorInfo currentEnumeratorInfo;
+			EnumeratorInfo? currentEnumeratorInfo;
 			bool isRandom;
-			ITheme theme;
+			ITheme? theme;
 
 			sealed class EnumeratorInfo {
 				public FilenameIterator Iterator { get; }
@@ -107,13 +107,13 @@ namespace dnSpy.BackgroundImage {
 
 			public ImageSource ImageSource {
 				get {
-					if (currentImageInfo == null)
+					if (currentImageInfo is null)
 						throw new InvalidOperationException();
 					return currentImageInfo.ImageSource;
 				}
 			}
 
-			public bool HasImageSource => currentImageInfo != null;
+			public bool HasImageSource => !(currentImageInfo is null);
 			public bool HasThemeImages => filenameIterators.Any(a => a.SourceOptions.HasThemeImages);
 
 			sealed class SourceOptions {
@@ -253,11 +253,11 @@ namespace dnSpy.BackgroundImage {
 			}
 
 			public void SetImagePaths(string[] imagePaths, bool isRandom, ITheme theme) {
-				if (imagePaths == null)
+				if (imagePaths is null)
 					throw new ArgumentNullException(nameof(imagePaths));
 				var list = new List<FilenameIterator>(imagePaths.Length);
 				foreach (var pathInfo in imagePaths) {
-					if (pathInfo == null)
+					if (pathInfo is null)
 						continue;
 
 					var path = pathInfo;
@@ -311,6 +311,7 @@ namespace dnSpy.BackgroundImage {
 			}
 
 			List<string> GetAllFilenames() {
+				Debug.Assert(!(theme is null));
 				if (cachedAllFilenamesListWeakRef?.Target is List<string> list && (DateTimeOffset.UtcNow - cachedTime).TotalMilliseconds <= cachedFilenamesMaxMilliseconds)
 					return list;
 
@@ -325,27 +326,27 @@ namespace dnSpy.BackgroundImage {
 				cachedAllFilenamesListWeakRef = new WeakReference(list = hash.ToList());
 				return list;
 			}
-			WeakReference cachedAllFilenamesListWeakRef;
+			WeakReference? cachedAllFilenamesListWeakRef;
 			DateTimeOffset cachedTime;
 			const double cachedFilenamesMaxMilliseconds = 5 * 1000;
 
-			ImageInfo TryCreateNextImageSource(List<string> filenames) {
+			ImageInfo? TryCreateNextImageSource(List<string> filenames) {
 				foreach (var filename in filenames) {
 					var imgInfo = TryCreateImageSource(filename);
-					if (imgInfo != null)
+					if (!(imgInfo is null))
 						return imgInfo;
 				}
 
 				return null;
 			}
 
-			ImageInfo TryCreateNextImageSource() {
+			ImageInfo? TryCreateNextImageSource() {
 				if (filenameIterators.Length == 0)
 					return null;
-				if (currentEnumeratorInfo == null)
+				if (currentEnumeratorInfo is null)
 					currentEnumeratorInfo = new EnumeratorInfo(filenameIterators[currentFilenameIteratorIndex]);
 				var imgInfo = TryCreateNextImageSource(currentEnumeratorInfo);
-				if (imgInfo != null)
+				if (!(imgInfo is null))
 					return imgInfo;
 
 				int baseIndex = currentFilenameIteratorIndex;
@@ -358,21 +359,22 @@ namespace dnSpy.BackgroundImage {
 					currentEnumeratorInfo = new EnumeratorInfo(filenameIterators[currentFilenameIteratorIndex]);
 
 					imgInfo = TryCreateNextImageSource(currentEnumeratorInfo);
-					if (imgInfo != null)
+					if (!(imgInfo is null))
 						return imgInfo;
 				}
 
 				return null;
 			}
 
-			ImageInfo TryCreateNextImageSource(EnumeratorInfo info) {
-				if (info == null)
+			ImageInfo? TryCreateNextImageSource(EnumeratorInfo info) {
+				Debug.Assert(!(theme is null));
+				if (info is null)
 					return null;
 				if (!info.Iterator.SourceOptions.IsSupportedTheme(theme))
 					return null;
 				while (info.Enumerator.MoveNext()) {
 					var imgInfo = TryCreateImageSource(info.Enumerator.Current);
-					if (imgInfo != null)
+					if (!(imgInfo is null))
 						return imgInfo;
 				}
 				return null;
@@ -390,10 +392,10 @@ namespace dnSpy.BackgroundImage {
 				"file://",
 			};
 
-			ImageInfo TryCreateImageSource(string filename) {
+			ImageInfo? TryCreateImageSource(string filename) {
 				if (!HasAllowedUriScheme(filename) && !File.Exists(filename))
 					return null;
-				if (currentImageInfo != null && StringComparer.InvariantCultureIgnoreCase.Equals(filename, currentImageInfo.Filename))
+				if (!(currentImageInfo is null) && StringComparer.InvariantCultureIgnoreCase.Equals(filename, currentImageInfo.Filename))
 					return currentImageInfo;
 				try {
 					// Make sure \\?\C:\some\path\image.png won't throw an exception
@@ -416,17 +418,17 @@ namespace dnSpy.BackgroundImage {
 		}
 
 		void ThemeService_ThemeChangedLowPriority(object sender, ThemeChangedEventArgs e) {
-			if (backgroundImageSettings.IsEnabled && imageIterator.HasThemeImages)
+			if (backgroundImageSettings.IsEnabled && imageIterator!.HasThemeImages)
 				OnSettingsChanged();
 		}
 
 		public void Register(IImageSourceServiceListener listener) {
-			if (listener == null)
+			if (listener is null)
 				throw new ArgumentNullException(nameof(listener));
 			if (listeners.Contains(listener))
 				throw new InvalidOperationException();
 			if (listeners.Count == 0) {
-				Debug.Assert(imageIterator == null);
+				Debug.Assert(imageIterator is null);
 				imageIterator = new ImageIterator(backgroundImageSettings.IsRandom);
 				backgroundImageSettings.SettingsChanged += BackgroundImageSettings_SettingsChanged;
 				themeService.ThemeChangedLowPriority += ThemeService_ThemeChangedLowPriority;
@@ -440,7 +442,7 @@ namespace dnSpy.BackgroundImage {
 		}
 
 		public void Unregister(IImageSourceServiceListener listener) {
-			if (listener == null)
+			if (listener is null)
 				throw new ArgumentNullException(nameof(listener));
 			int index = listeners.IndexOf(listener);
 			if (index < 0)
@@ -450,7 +452,7 @@ namespace dnSpy.BackgroundImage {
 				DisposeTimer();
 				backgroundImageSettings.SettingsChanged -= BackgroundImageSettings_SettingsChanged;
 				themeService.ThemeChangedLowPriority -= ThemeService_ThemeChangedLowPriority;
-				Debug.Assert(imageIterator != null);
+				Debug.Assert(!(imageIterator is null));
 				imageIterator.Dispose();
 				imageIterator = null;
 			}
@@ -459,7 +461,7 @@ namespace dnSpy.BackgroundImage {
 		void BackgroundImageSettings_SettingsChanged(object sender, EventArgs e) => OnSettingsChanged();
 
 		void UpdateEnabled() {
-			bool newEnabled = backgroundImageSettings.IsEnabled && imageIterator.HasImageSource;
+			bool newEnabled = backgroundImageSettings.IsEnabled && imageIterator!.HasImageSource;
 			if (newEnabled != enabled) {
 				enabled = newEnabled;
 				UpdateTimer();
@@ -476,7 +478,7 @@ namespace dnSpy.BackgroundImage {
 
 		void NotifyImageChanged() {
 			if (enabled) {
-				Debug.Assert(imageIterator.HasImageSource);
+				Debug.Assert(imageIterator!.HasImageSource);
 				foreach (var listener in listeners)
 					listener.OnImageChanged();
 			}
@@ -484,17 +486,17 @@ namespace dnSpy.BackgroundImage {
 
 		void OnSettingsChanged() {
 			if (backgroundImageSettings.IsEnabled)
-				imageIterator.SetImagePaths(backgroundImageSettings.Images, backgroundImageSettings.IsRandom, themeService.Theme);
+				imageIterator!.SetImagePaths(backgroundImageSettings.Images, backgroundImageSettings.IsRandom, themeService.Theme);
 			UpdateEnabled();
 			UpdateTimer();
 			NotifySettingsChanged();
 		}
-		DispatcherTimer dispatcherTimer;
+		DispatcherTimer? dispatcherTimer;
 
 		void TimerHandlerShowNextImage(object sender, EventArgs e) {
 			if (dispatcherTimer != sender)
 				return;
-			if (imageIterator == null)
+			if (imageIterator is null)
 				return;
 			if (imageIterator.NextImageSource()) {
 				UpdateEnabled();
@@ -506,7 +508,7 @@ namespace dnSpy.BackgroundImage {
 			const double minimumMilliseconds = 50;
 			if (!enabled || backgroundImageSettings.Interval < TimeSpan.FromMilliseconds(minimumMilliseconds))
 				DisposeTimer();
-			else if (dispatcherTimer != null) {
+			else if (!(dispatcherTimer is null)) {
 				// Settings got changed, always write the value even if it's identical. If we
 				// don't, the next image could be shown in eg. 1 second.
 				dispatcherTimer.Interval = backgroundImageSettings.Interval;
@@ -516,7 +518,7 @@ namespace dnSpy.BackgroundImage {
 		}
 
 		void DisposeTimer() {
-			if (dispatcherTimer == null)
+			if (dispatcherTimer is null)
 				return;
 			dispatcherTimer.Stop();
 			dispatcherTimer = null;
@@ -524,7 +526,7 @@ namespace dnSpy.BackgroundImage {
 
 		void NotifySettingsChanged() {
 			if (enabled) {
-				Debug.Assert(imageIterator.HasImageSource);
+				Debug.Assert(imageIterator!.HasImageSource);
 				foreach (var listener in listeners)
 					listener.OnSettingsChanged();
 			}

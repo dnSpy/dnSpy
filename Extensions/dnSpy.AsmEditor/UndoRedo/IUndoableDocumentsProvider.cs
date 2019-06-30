@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,8 +22,8 @@ using System.Collections.Generic;
 namespace dnSpy.AsmEditor.UndoRedo {
 	interface IUndoableDocumentsProvider {
 		IEnumerable<IUndoObject> GetObjects();
-		IUndoObject GetUndoObject(object obj);
+		IUndoObject? GetUndoObject(object obj);
 		bool OnExecutedOneCommand(IUndoObject obj);
-		object GetDocument(IUndoObject obj);
+		object? GetDocument(IUndoObject obj);
 	}
 }

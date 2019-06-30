@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -66,7 +66,7 @@ namespace dnSpy.Text.Groups {
 
 		ITextViewOptionsGroup ITextViewOptionsGroupService.GetGroup(string name) => GetGroup(name);
 		TextViewOptionsGroup GetGroup(string name) {
-			if (name == null)
+			if (name is null)
 				throw new ArgumentNullException(nameof(name));
 			if (!nameToGroup.TryGetValue(name, out var group)) {
 				var defaultOptions = GetDefaultOptions(name);
@@ -82,13 +82,13 @@ namespace dnSpy.Text.Groups {
 					continue;
 				options.AddRange(lz.Value.GetOptions());
 			}
-			return options.Where(a => a.ContentType != null && a.Name != null && a.Type != null).ToArray();
+			return options.Where(a => !(a.ContentType is null) && !(a.Name is null) && !(a.Type is null)).ToArray();
 		}
 
 		void ITextViewOptionsGroupServiceImpl.TextViewCreated(ITextView textView) {
 			var wpfTextView = textView as IWpfTextView;
-			Debug.Assert(wpfTextView != null);
-			if (wpfTextView == null)
+			Debug.Assert(!(wpfTextView is null));
+			if (wpfTextView is null)
 				return;
 
 			Debug.Assert(!wpfTextView.IsClosed);
@@ -97,7 +97,7 @@ namespace dnSpy.Text.Groups {
 
 			foreach (var lz in textViewOptionsGroupNameProviders) {
 				var name = lz.Value.TryGetGroupName(wpfTextView);
-				if (name != null) {
+				if (!(name is null)) {
 					var group = GetGroup(name);
 					group.TextViewCreated(wpfTextView);
 					break;

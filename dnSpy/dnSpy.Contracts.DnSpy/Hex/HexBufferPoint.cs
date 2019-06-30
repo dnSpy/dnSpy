@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,11 +23,11 @@ namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// Contains a <see cref="HexBuffer"/> and a position
 	/// </summary>
-	public struct HexBufferPoint : IEquatable<HexBufferPoint>, IComparable<HexBufferPoint> {
+	public readonly struct HexBufferPoint : IEquatable<HexBufferPoint>, IComparable<HexBufferPoint> {
 		/// <summary>
 		/// true if this is a default instance that hasn't been initialized
 		/// </summary>
-		public bool IsDefault => Buffer == null;
+		public bool IsDefault => Buffer is null;
 
 		/// <summary>
 		/// Gets the buffer
@@ -90,7 +90,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <returns></returns>
 		public HexPosition Difference(HexBufferPoint other) => other - this;
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static HexPosition operator -(HexBufferPoint left, HexBufferPoint right) => left.Position - right.Position;
 		public static HexBufferPoint operator -(HexBufferPoint point, HexPosition value) => point.Subtract(value);
 		public static HexBufferPoint operator +(HexBufferPoint point, HexPosition value) => point.Add(value);
@@ -100,7 +100,7 @@ namespace dnSpy.Contracts.Hex {
 		public static bool operator <=(HexBufferPoint a, HexBufferPoint b) => a.CompareTo(b) <= 0;
 		public static bool operator >(HexBufferPoint a, HexBufferPoint b) => a.CompareTo(b) > 0;
 		public static bool operator >=(HexBufferPoint a, HexBufferPoint b) => a.CompareTo(b) >= 0;
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Compares this instance with <paramref name="other"/>
@@ -125,7 +125,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="obj">Object</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is HexBufferPoint && Equals((HexBufferPoint)obj);
+		public override bool Equals(object? obj) => obj is HexBufferPoint && Equals((HexBufferPoint)obj);
 
 		/// <summary>
 		/// GetHashCode()
@@ -138,7 +138,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <returns></returns>
 		public override string ToString() {
-			if (Buffer == null)
+			if (Buffer is null)
 				return "uninit";
 			var b = TryGetByte();
 			var bs = b < 0 ? "??" : b.ToString("X2");

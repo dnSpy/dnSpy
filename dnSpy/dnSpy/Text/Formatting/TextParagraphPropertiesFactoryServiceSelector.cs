@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,7 +21,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
-using dnSpy.Text.MEF;
 using Microsoft.VisualStudio.Text.Formatting;
 using Microsoft.VisualStudio.Utilities;
 
@@ -30,7 +29,7 @@ namespace dnSpy.Text.Formatting {
 	sealed class TextParagraphPropertiesFactoryServiceSelector : ITextParagraphPropertiesFactoryServiceSelector {
 		readonly IContentTypeRegistryService contentTypeRegistryService;
 		readonly Lazy<ITextParagraphPropertiesFactoryService, IContentTypeMetadata>[] textParagraphPropertiesFactoryServices;
-		ProviderSelector<ITextParagraphPropertiesFactoryService, IContentTypeMetadata> providerSelector;
+		ProviderSelector<ITextParagraphPropertiesFactoryService, IContentTypeMetadata>? providerSelector;
 
 		[ImportingConstructor]
 		TextParagraphPropertiesFactoryServiceSelector(IContentTypeRegistryService contentTypeRegistryService, [ImportMany] IEnumerable<Lazy<ITextParagraphPropertiesFactoryService, IContentTypeMetadata>> textParagraphPropertiesFactoryServices) {
@@ -38,8 +37,8 @@ namespace dnSpy.Text.Formatting {
 			this.textParagraphPropertiesFactoryServices = textParagraphPropertiesFactoryServices.ToArray();
 		}
 
-		public ITextParagraphPropertiesFactoryService Select(IContentType contentType) {
-			if (providerSelector == null)
+		public ITextParagraphPropertiesFactoryService? Select(IContentType contentType) {
+			if (providerSelector is null)
 				providerSelector = new ProviderSelector<ITextParagraphPropertiesFactoryService, IContentTypeMetadata>(contentTypeRegistryService, textParagraphPropertiesFactoryServices);
 			return providerSelector.GetProviders(contentType).FirstOrDefault()?.Value;
 		}

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,9 +19,8 @@
 
 using System;
 using System.Globalization;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Text.Classification;
+using dnSpy.Contracts.Debugger.Text.DnSpy;
 using dnSpy.Debugger.UI;
 using dnSpy.Debugger.UI.Wpf;
 using Microsoft.VisualStudio.Text.Classification;
@@ -34,7 +33,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		DbgValueNodeReader ValueNodeReader { get; }
 		IClassificationFormatMap ClassificationFormatMap { get; }
 		ITextBlockContentInfoFactory TextBlockContentInfoFactory { get; }
-		TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
+		DbgTextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
 		int UIVersion { get; }
 		ValueNodeFormatter Formatter { get; }
 		bool SyntaxHighlight { get; }
@@ -48,12 +47,11 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		ShowMessageBox ShowMessageBox { get; }
 		LanguageEditValueProvider ValueEditValueProvider { get; }
 		LanguageEditValueProvider NameEditValueProvider { get; }
-		DbgEvaluationContext EvaluationContext { get; }
-		Action<string, bool> OnValueNodeAssigned { get; }
-		DbgStackFrame StackFrame { get; }
+		DbgEvaluationInfo? EvaluationInfo { get; }
+		Action<string?, bool> OnValueNodeAssigned { get; }
 		DbgEvaluationOptions EvaluationOptions { get; }
 		DbgValueNodeEvaluationOptions ValueNodeEvaluationOptions { get; }
-		string ExpressionToEdit { get; set; }
+		string? ExpressionToEdit { get; set; }
 		bool IsWindowReadOnly { get; }
 		CultureInfo FormatCulture { get; }
 	}
@@ -65,7 +63,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public DbgValueNodeReader ValueNodeReader { get; }
 		public IClassificationFormatMap ClassificationFormatMap { get; }
 		public ITextBlockContentInfoFactory TextBlockContentInfoFactory { get; }
-		public TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
+		public DbgTextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
 		public int UIVersion { get; set; }
 		public ValueNodeFormatter Formatter { get; }
 		public bool SyntaxHighlight { get; set; }
@@ -79,16 +77,15 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public ShowMessageBox ShowMessageBox { get; }
 		public LanguageEditValueProvider ValueEditValueProvider { get; }
 		public LanguageEditValueProvider NameEditValueProvider { get; }
-		public DbgEvaluationContext EvaluationContext { get; set; }
-		public Action<string, bool> OnValueNodeAssigned { get; }
-		public DbgStackFrame StackFrame { get; set; }
+		public DbgEvaluationInfo? EvaluationInfo { get; set; }
+		public Action<string?, bool> OnValueNodeAssigned { get; }
 		public DbgEvaluationOptions EvaluationOptions { get; set; }
 		public DbgValueNodeEvaluationOptions ValueNodeEvaluationOptions { get; set; }
-		public string ExpressionToEdit { get; set; }
+		public string? ExpressionToEdit { get; set; }
 		public bool IsWindowReadOnly { get; set; }
 		public CultureInfo FormatCulture { get; }
 
-		public ValueNodesContext(UIDispatcher uiDispatcher, IEditValueNodeExpression editValueNodeExpression, string windowContentType, string nameColumnName, string valueColumnName, string typeColumnName, LanguageEditValueProviderFactory languageEditValueProviderFactory, DbgValueNodeImageReferenceService dbgValueNodeImageReferenceService, DbgValueNodeReader dbgValueNodeReader, IClassificationFormatMap classificationFormatMap, ITextBlockContentInfoFactory textBlockContentInfoFactory, CultureInfo formatCulture, ShowMessageBox showMessageBox, Action<string, bool> onValueNodeAssigned) {
+		public ValueNodesContext(UIDispatcher uiDispatcher, IEditValueNodeExpression editValueNodeExpression, string windowContentType, string nameColumnName, string valueColumnName, string typeColumnName, LanguageEditValueProviderFactory languageEditValueProviderFactory, DbgValueNodeImageReferenceService dbgValueNodeImageReferenceService, DbgValueNodeReader dbgValueNodeReader, IClassificationFormatMap classificationFormatMap, ITextBlockContentInfoFactory textBlockContentInfoFactory, CultureInfo formatCulture, ShowMessageBox showMessageBox, Action<string?, bool> onValueNodeAssigned) {
 			UIDispatcher = uiDispatcher;
 			EditValueNodeExpression = editValueNodeExpression;
 			WindowContentType = windowContentType;
@@ -103,7 +100,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			ValueNodeReader = dbgValueNodeReader;
 			ClassificationFormatMap = classificationFormatMap;
 			TextBlockContentInfoFactory = textBlockContentInfoFactory;
-			TextClassifierTextColorWriter = new TextClassifierTextColorWriter();
+			TextClassifierTextColorWriter = new DbgTextClassifierTextColorWriter();
 			Formatter = new ValueNodeFormatter();
 			ValueNodeFormatParameters = new DbgValueNodeFormatParameters();
 			FormatCulture = formatCulture;

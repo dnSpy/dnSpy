@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
+// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
@@ -33,10 +33,10 @@ namespace dnSpy.Decompiler.ILSpy.Core.XmlDoc {
 		public void Run(AstNode node) {
 			if (node is EntityDeclaration) {
 				IMemberRef mr = node.Annotation<IMemberRef>();
-				if (mr != null && mr.Module != null) {
+				if (!(mr is null) && !(mr.Module is null)) {
 					var xmldoc = XmlDocLoader.LoadDocumentation(mr.Module);
-					if (xmldoc != null) {
-						string doc = xmldoc.GetDocumentation(XmlDocKeyProvider.GetKey(mr, stringBuilder));
+					if (!(xmldoc is null)) {
+						var doc = xmldoc.GetDocumentation(XmlDocKeyProvider.GetKey(mr, stringBuilder));
 						if (!string.IsNullOrEmpty(doc)) {
 							InsertXmlDocumentation(node, doc);
 						}
@@ -52,7 +52,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.XmlDoc {
 		void InsertXmlDocumentation(AstNode node, string doc) {
 			foreach (var info in new XmlDocLine(doc)) {
 				stringBuilder.Clear();
-				if (info != null) {
+				if (!(info is null)) {
 					stringBuilder.Append(' ');
 					info.Value.WriteTo(stringBuilder);
 				}

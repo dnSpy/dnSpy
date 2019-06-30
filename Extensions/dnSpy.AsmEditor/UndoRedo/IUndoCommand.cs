@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -48,9 +48,5 @@ namespace dnSpy.AsmEditor.UndoRedo {
 
 	interface IUndoCommand2 : IUndoCommand {
 		IEnumerable<object> NonModifiedObjects { get; }
-	}
-
-	interface IGCUndoCommand : IUndoCommand {
-		bool CallGarbageCollectorAfterDispose { get; }
 	}
 }

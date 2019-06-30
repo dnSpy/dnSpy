@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -131,7 +131,7 @@ namespace dnSpy.Text.Operations {
 		}
 
 		public void AddUserInput(string text, bool clearSearchText = true) {
-			if (text == null)
+			if (text is null)
 				throw new ArgumentNullException(nameof(text));
 			if (!UpdateCaretForEdit())
 				return;
@@ -139,19 +139,19 @@ namespace dnSpy.Text.Operations {
 			var firstSpan = default(SnapshotSpan);
 			using (var ed = wpfTextView.TextBuffer.CreateEdit()) {
 				foreach (var span in GetNormalizedSpansToReplaceWithText()) {
-					Debug.Assert(span.Snapshot != null);
-					if (firstSpan.Snapshot == null)
+					Debug.Assert(!(span.Snapshot is null));
+					if (firstSpan.Snapshot is null)
 						firstSpan = span;
 					ed.Replace(span, s);
 				}
 				ed.Apply();
 			}
-			Debug.Assert(firstSpan.Snapshot != null);
+			Debug.Assert(!(firstSpan.Snapshot is null));
 			wpfTextView.Selection.Clear();
 			wpfTextView.Caret.MoveTo(new SnapshotPoint(wpfTextView.TextSnapshot, firstSpan.Start.Position + s.Length));
 			wpfTextView.Caret.EnsureVisible();
 			if (clearSearchText)
-				replEditor.SearchText = null;
+				replEditor.SearchText = string.Empty;
 		}
 
 		public void AddUserInput(Span span, string text, bool clearSearchText = true) {
@@ -159,7 +159,7 @@ namespace dnSpy.Text.Operations {
 				throw new ArgumentOutOfRangeException(nameof(span));
 			if (span.End > wpfTextView.TextSnapshot.Length)
 				throw new ArgumentOutOfRangeException(nameof(span));
-			if (text == null)
+			if (text is null)
 				throw new ArgumentNullException(nameof(text));
 			if (!UpdateCaretForEdit())
 				return;
@@ -172,7 +172,7 @@ namespace dnSpy.Text.Operations {
 			wpfTextView.Caret.MoveTo(new SnapshotPoint(wpfTextView.TextSnapshot, span.Start + s.Length));
 			wpfTextView.Caret.EnsureVisible();
 			if (clearSearchText)
-				replEditor.SearchText = null;
+				replEditor.SearchText = string.Empty;
 		}
 
 		public bool Backspace() {
@@ -181,7 +181,7 @@ namespace dnSpy.Text.Operations {
 			if (!wpfTextView.Selection.IsEmpty)
 				AddUserInput(string.Empty);
 			else {
-				int start = replEditor.FilterOffset(replEditor.OffsetOfPrompt.Value);
+				int start = replEditor.FilterOffset(replEditor.OffsetOfPrompt!.Value);
 				int offs = CaretOffset;
 				if (offs <= start)
 					return false;
@@ -382,7 +382,7 @@ namespace dnSpy.Text.Operations {
 		}
 
 		public bool InsertFile(string filePath) {
-			if (filePath == null)
+			if (filePath is null)
 				throw new ArgumentNullException(nameof(filePath));
 			AddUserInput(File.ReadAllText(filePath));
 			return true;

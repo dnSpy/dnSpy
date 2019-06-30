@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -17,9 +17,9 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Documents;
-using dnSpy.Contracts.Text;
 
 namespace dnSpy.Contracts.Debugger.CallStack {
 	/// <summary>
@@ -37,6 +37,11 @@ namespace dnSpy.Contracts.Debugger.CallStack {
 		public DbgRuntime Runtime => Thread.Runtime;
 
 		/// <summary>
+		/// Gets the AppDomain or null if it's unknown
+		/// </summary>
+		public DbgAppDomain? AppDomain => Module?.AppDomain ?? Thread.AppDomain;
+
+		/// <summary>
 		/// Gets the thread
 		/// </summary>
 		public abstract DbgThread Thread { get; }
@@ -45,12 +50,17 @@ namespace dnSpy.Contracts.Debugger.CallStack {
 		/// Gets the location or null if none. Can be passed to <see cref="ReferenceNavigatorService.GoTo(object, object[])"/>
 		/// or can be used to create a breakpoint if you call <see cref="DbgCodeLocation.Clone"/>
 		/// </summary>
-		public abstract DbgCodeLocation Location { get; }
+		public abstract DbgCodeLocation? Location { get; }
 
 		/// <summary>
 		/// Gets the module or null if it's unknown
 		/// </summary>
-		public abstract DbgModule Module { get; }
+		public abstract DbgModule? Module { get; }
+
+		/// <summary>
+		/// Gets the flags
+		/// </summary>
+		public abstract DbgStackFrameFlags Flags { get; }
 
 		/// <summary>
 		/// Gets the offset of the IP relative to the start of the function
@@ -68,22 +78,28 @@ namespace dnSpy.Contracts.Debugger.CallStack {
 		public bool HasFunctionToken => FunctionToken != uint.MaxValue;
 
 		/// <summary>
-		/// Formats the stack frame
-		/// </summary>
-		/// <param name="writer">Writer</param>
-		/// <param name="options">Options</param>
-		public abstract void Format(ITextColorWriter writer, DbgStackFrameFormatOptions options);
-
-		/// <summary>
-		/// ToString()
-		/// </summary>
-		/// <param name="options">Options</param>
-		/// <returns></returns>
-		public abstract string ToString(DbgStackFrameFormatOptions options);
-
-		/// <summary>
 		/// Closes this instance
 		/// </summary>
 		public void Close() => Thread.Process.DbgManager.Close(this);
+	}
+
+	/// <summary>
+	/// Stack frame flags
+	/// </summary>
+	[Flags]
+	public enum DbgStackFrameFlags {
+		/// <summary>
+		/// No bit is set
+		/// </summary>
+		None					= 0,
+
+		/// <summary>
+		/// Set if <see cref="DbgStackFrame.Location"/> is the next statement to execute in this frame. It's also
+		/// possible to set a BP at that location.
+		/// 
+		/// It's false if <see cref="DbgStackFrame.Location"/> is just an approximate location and it's not safe
+		/// to set a BP at the location.
+		/// </summary>
+		LocationIsNextStatement	= 0x00000001,
 	}
 }

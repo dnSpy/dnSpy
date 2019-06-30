@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,24 +18,20 @@
 */
 
 using System;
-using System.ComponentModel;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Properties;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.Settings {
-	abstract class GeneralAppSettingsPageBase : AppSettingsPage, INotifyPropertyChanged {
+	abstract class GeneralAppSettingsPageBase : AppSettingsPage {
 		public sealed override string Title => dnSpy_Resources.GeneralSettings;
-		public sealed override object UIObject => this;
-
-		public event PropertyChangedEventHandler PropertyChanged;
-		protected void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+		public sealed override object? UIObject => this;
 
 		public bool UseVirtualSpaceEnabled => UseVirtualSpace || !WordWrap;
 		public bool WordWrapEnabled => WordWrap || !UseVirtualSpace;
 
 		public bool UseVirtualSpace {
-			get { return useVirtualSpace; }
+			get => useVirtualSpace;
 			set {
 				if (useVirtualSpace != value) {
 					useVirtualSpace = value;
@@ -48,7 +44,7 @@ namespace dnSpy.Text.Settings {
 		bool useVirtualSpace;
 
 		public bool WordWrap {
-			get { return wordWrap; }
+			get => wordWrap;
 			set {
 				if (wordWrap != value) {
 					wordWrap = value;
@@ -61,7 +57,7 @@ namespace dnSpy.Text.Settings {
 		bool wordWrap;
 
 		public bool WordWrapVisualGlyphs {
-			get { return wordWrapVisualGlyphs; }
+			get => wordWrapVisualGlyphs;
 			set {
 				if (wordWrapVisualGlyphs != value) {
 					wordWrapVisualGlyphs = value;
@@ -72,7 +68,7 @@ namespace dnSpy.Text.Settings {
 		bool wordWrapVisualGlyphs;
 
 		public bool ShowLineNumbers {
-			get { return showLineNumbers; }
+			get => showLineNumbers;
 			set {
 				if (showLineNumbers != value) {
 					showLineNumbers = value;
@@ -83,7 +79,7 @@ namespace dnSpy.Text.Settings {
 		bool showLineNumbers;
 
 		public bool HighlightCurrentLine {
-			get { return highlightCurrentLine; }
+			get => highlightCurrentLine;
 			set {
 				if (highlightCurrentLine != value) {
 					highlightCurrentLine = value;

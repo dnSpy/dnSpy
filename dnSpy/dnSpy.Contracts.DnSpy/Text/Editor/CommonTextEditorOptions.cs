@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,12 +27,12 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <summary>
 		/// Content type or null
 		/// </summary>
-		public IContentType ContentType { get; set; }
+		public IContentType? ContentType { get; set; }
 
 		/// <summary>
 		/// Content type string or null
 		/// </summary>
-		public string ContentTypeString { get; set; }
+		public string? ContentTypeString { get; set; }
 
 		/// <summary>
 		/// Constructor

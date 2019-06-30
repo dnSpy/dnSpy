@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,7 +25,7 @@ using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	static class DlgUtils {
-		public static string ValueToString(object value, TypeSig storageType) {
+		public static string ValueToString(object? value, TypeSig? storageType) {
 			var t = storageType.RemovePinnedAndModifiers();
 			bool addCast = t.GetElementType() == ElementType.Object;
 			if (t is SZArraySig)
@@ -33,10 +33,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			return ValueToString(value, addCast);
 		}
 
-		static string AddCast(string s, bool addCast, string cast) => addCast ? string.Format("({0}){1}", cast, s) : s;
+		static string AddCast(string s, bool addCast, string cast) => addCast ? $"({cast}){s}" : s;
 
-		public static string ValueToString(object value, bool addCast) {
-			if (value == null)
+		public static string ValueToString(object? value, bool addCast) {
+			if (value is null)
 				return "null";
 
 			switch (ModelUtils.GetElementType(value.GetType())) {
@@ -55,7 +55,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			case ElementType.String:return SimpleTypeConverter.ToString((string)value, true);
 			}
 			if (value is TypeSig)
-				return string.Format("typeof({0})", value);
+				return $"typeof({value})";
 
 			var valueType = value.GetType();
 			if (value is IList<bool>)
@@ -94,11 +94,11 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		static string ArrayToString(object value, Type type) {
 			var list = value as System.Collections.IList;
-			if (list == null)
-				return string.Format("({0}[])null", type.FullName);
+			if (list is null)
+				return $"({type.FullName}[])null";
 
 			var sb = new StringBuilder();
-			sb.Append(string.Format("new {0}[] {{", type.FullName));
+			sb.Append($"new {type.FullName}[] {{");
 			for (int i = 0; i < list.Count; i++) {
 				if (i > 0)
 					sb.Append(',');

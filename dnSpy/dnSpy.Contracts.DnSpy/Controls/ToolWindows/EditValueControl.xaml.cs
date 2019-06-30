@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,7 +26,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 
 namespace dnSpy.Contracts.Controls.ToolWindows {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 	public sealed partial class EditValueControl : UserControl {
 		public static readonly DependencyProperty ReadOnlyContentProperty =
 			DependencyProperty.Register(nameof(ReadOnlyContent), typeof(object), typeof(EditValueControl),
@@ -61,8 +61,8 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 			set => SetValue(EditValueProviderProperty, value);
 		}
 
-		IEditValue editValue;
-		WeakReference oldKeyboardFocus;
+		IEditValue? editValue;
+		WeakReference? oldKeyboardFocus;
 
 		public EditValueControl() {
 			Loaded += EditValueControl_Loaded;
@@ -110,7 +110,7 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 			base.OnMouseLeftButtonUp(e);
 		}
 
-		void OnEditableValuePropertyChanged(IEditableValue oldValue, IEditableValue newValue, bool force) {
+		void OnEditableValuePropertyChanged(IEditableValue? oldValue, IEditableValue? newValue, bool force) {
 			if (!force && !isLoaded)
 				return;
 			CancelEdit(oldValue);
@@ -121,14 +121,14 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 
 		void OnEditValueProviderPropertyChanged() => CancelEdit(EditableValue);
 
-		void HookEvents(IEditableValue editableValue) {
-			if (editableValue == null)
+		void HookEvents(IEditableValue? editableValue) {
+			if (editableValue is null)
 				return;
 			editableValue.PropertyChanged += EditableValue_PropertyChanged;
 		}
 
-		void UnhookEvents(IEditableValue editableValue) {
-			if (editableValue == null)
+		void UnhookEvents(IEditableValue? editableValue) {
+			if (editableValue is null)
 				return;
 			editableValue.PropertyChanged -= EditableValue_PropertyChanged;
 		}
@@ -143,8 +143,8 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 				OnIsEditingValueChanged(editableValue);
 		}
 
-		void OnIsEditingValueChanged(IEditableValue editableValue) {
-			if (editableValue == null)
+		void OnIsEditingValueChanged(IEditableValue? editableValue) {
+			if (editableValue is null)
 				return;
 			if (!editableValue.CanEdit) {
 				CancelEdit(editableValue);
@@ -157,10 +157,10 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 			}
 
 			DisposeEditValue();
-			Debug.Assert(editValue == null);
+			Debug.Assert(editValue is null);
 			var info = editableValue.GetText();
 			editValue = EditValueProvider?.Create(info.Text, info.Flags);
-			if (editValue == null) {
+			if (editValue is null) {
 				CancelEdit(editableValue);
 				return;
 			}
@@ -174,10 +174,10 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 			editValue.EditCompleted += EditValue_EditCompleted;
 		}
 
-		static UIElement GetUIElement(object obj) => obj as UIElement ?? new ContentPresenter { Content = obj };
+		static UIElement GetUIElement(object? obj) => obj as UIElement ?? new ContentPresenter { Content = obj };
 
-		void CancelEdit(IEditableValue editableValue) {
-			if (editableValue != null)
+		void CancelEdit(IEditableValue? editableValue) {
+			if (!(editableValue is null))
 				editableValue.IsEditingValue = false;
 			RemoveEditControl();
 		}
@@ -193,7 +193,7 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 
 		void DisposeEditValue() {
 			RestoreOldKeyboardFocus();
-			if (editValue == null)
+			if (editValue is null)
 				return;
 			editValue.EditCompleted -= EditValue_EditCompleted;
 			editValue.Dispose();
@@ -201,7 +201,7 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 		}
 
 		void RestoreOldKeyboardFocus() {
-			if (editValue == null)
+			if (editValue is null)
 				return;
 			// Don't give back focus if the user canceled it by clicking somewhere with the mouse.
 			// Only do it if the user pressed Esc or Enter
@@ -217,7 +217,7 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 			RestoreOldKeyboardFocus();
 			RemoveEditControl();
 			var editableValue = EditableValue;
-			if (editableValue == null)
+			if (editableValue is null)
 				return;
 			Debug.Assert(editableValue.IsEditingValue);
 			if (!editableValue.IsEditingValue)
@@ -226,10 +226,10 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 			Debug.Assert(editableValue.CanEdit);
 			if (!editableValue.CanEdit)
 				return;
-			if (e.NewText == null)
+			if (e.NewText is null)
 				return;
 			editableValue.SetText(e.NewText);
 		}
 	}
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

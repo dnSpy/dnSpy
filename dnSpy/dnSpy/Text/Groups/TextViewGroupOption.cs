@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,11 +22,11 @@ using dnSpy.Contracts.Settings.Groups;
 
 namespace dnSpy.Text.Groups {
 	sealed class TextViewGroupOption {
-		public string OptionId => Definition.Name;
-		public object DefaultValue => Definition.DefaultValue;
+		public string OptionId { get; }
+		public object? DefaultValue => Definition.DefaultValue;
 
-		public object Value {
-			get { return theValue; }
+		public object? Value {
+			get => theValue;
 			set {
 				if (!Equals(theValue, value)) {
 					theValue = value;
@@ -34,7 +34,7 @@ namespace dnSpy.Text.Groups {
 				}
 			}
 		}
-		object theValue;
+		object? theValue;
 
 		public ContentTypeOptionDefinition Definition { get; }
 
@@ -44,6 +44,7 @@ namespace dnSpy.Text.Groups {
 			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
 			Definition = definition ?? throw new ArgumentNullException(nameof(definition));
 			theValue = Definition.DefaultValue;
+			OptionId = Definition.Name ?? throw new ArgumentException();
 		}
 	}
 }

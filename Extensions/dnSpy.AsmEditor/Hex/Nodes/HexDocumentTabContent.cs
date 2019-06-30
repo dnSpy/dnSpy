@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,7 +28,7 @@ using dnSpy.Contracts.Settings;
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	[ExportDocumentTabContentFactory(Order = TabConstants.ORDER_HEXDOCUMENTTABCONTENTFACTORY)]
 	sealed class HexDocumentTabContentFactory : IDocumentTabContentFactory {
-		public DocumentTabContent Create(IDocumentTabContentFactoryContext context) {
+		public DocumentTabContent? Create(IDocumentTabContentFactoryContext context) {
 			if (context.Nodes.Length == 1) {
 				if (context.Nodes[0] is HexNode hexNode)
 					return new HexDocumentTabContent(hexNode);
@@ -41,17 +41,17 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		public Guid? Serialize(DocumentTabContent content, ISettingsSection section) {
 			var dc = content as HexDocumentTabContent;
-			if (dc == null)
+			if (dc is null)
 				return null;
 
 			return GUID_SerializedContent;
 		}
 
-		public DocumentTabContent Deserialize(Guid guid, ISettingsSection section, IDocumentTabContentFactoryContext context) {
+		public DocumentTabContent? Deserialize(Guid guid, ISettingsSection section, IDocumentTabContentFactoryContext context) {
 			if (guid != GUID_SerializedContent)
 				return null;
 			var hexNode = context.Nodes.Length != 1 ? null : context.Nodes[0] as HexNode;
-			if (hexNode == null)
+			if (hexNode is null)
 				return null;
 
 			return new HexDocumentTabContent(hexNode);
@@ -63,8 +63,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			get { yield return hexNode; }
 		}
 
-		public override string Title => hexNode.ToString();
-		public override object ToolTip => hexNode.ToString();
+		public override string Title => hexNode.ToString(DocumentNodeWriteOptions.Title);
+		public override object? ToolTip => hexNode.ToString(DocumentNodeWriteOptions.Title | DocumentNodeWriteOptions.ToolTip);
 
 		readonly HexNode hexNode;
 
@@ -76,9 +76,9 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 	}
 
 	sealed class HexDocumentTabUIContext : DocumentTabUIContext {
-		public override IInputElement FocusedElement => uiObj is ScrollViewer ? (IInputElement)((ScrollViewer)uiObj).Content : uiObj;
-		public override FrameworkElement ZoomElement => uiObj is ScrollViewer ? (FrameworkElement)((ScrollViewer)uiObj).Content : uiObj;
-		public override object UIObject => uiObj;
+		public override IInputElement? FocusedElement => uiObj is ScrollViewer ? (IInputElement)((ScrollViewer)uiObj).Content : uiObj;
+		public override FrameworkElement? ZoomElement => uiObj is ScrollViewer ? (FrameworkElement)((ScrollViewer)uiObj).Content : uiObj;
+		public override object? UIObject => uiObj;
 
 		readonly FrameworkElement uiObj;
 

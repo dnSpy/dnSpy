@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,12 +26,12 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
-using dnSpy.Contracts.Themes;
 using dnSpy.Text.WPF;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Adornments;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 using Microsoft.VisualStudio.Text.Formatting;
 using Microsoft.VisualStudio.Text.Tagging;
 using Microsoft.VisualStudio.Utilities;
@@ -40,7 +40,7 @@ namespace dnSpy.Text.Editor {
 	[Export(typeof(ITextMarkerProviderFactory))]
 	sealed class TextMarkerProviderFactory : ITextMarkerProviderFactory {
 		public SimpleTagger<TextMarkerTag> GetTextMarkerTagger(ITextBuffer textBuffer) {
-			if (textBuffer == null)
+			if (textBuffer is null)
 				throw new ArgumentNullException(nameof(textBuffer));
 			return textBuffer.Properties.GetOrCreateSingletonProperty(() => new SimpleTagger<TextMarkerTag>(textBuffer));
 		}
@@ -57,8 +57,8 @@ namespace dnSpy.Text.Editor {
 		[ImportingConstructor]
 		TextMarkerServiceTaggerProvider(ITextMarkerProviderFactory textMarkerProviderFactory) => this.textMarkerProviderFactory = textMarkerProviderFactory;
 
-		public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag {
-			if (buffer == null)
+		public ITagger<T>? CreateTagger<T>(ITextBuffer buffer) where T : ITag {
+			if (buffer is null)
 				throw new ArgumentNullException(nameof(buffer));
 			return textMarkerProviderFactory.GetTextMarkerTagger(buffer) as ITagger<T>;
 		}
@@ -71,21 +71,19 @@ namespace dnSpy.Text.Editor {
 	sealed class TextMarkerServiceWpfTextViewCreationListener : IWpfTextViewCreationListener {
 		readonly IViewTagAggregatorFactoryService viewTagAggregatorFactoryService;
 		readonly IEditorFormatMapService editorFormatMapService;
-		readonly IThemeService themeService;
 
 		[ImportingConstructor]
-		TextMarkerServiceWpfTextViewCreationListener(IViewTagAggregatorFactoryService viewTagAggregatorFactoryService, IEditorFormatMapService editorFormatMapService, IThemeService themeService) {
+		TextMarkerServiceWpfTextViewCreationListener(IViewTagAggregatorFactoryService viewTagAggregatorFactoryService, IEditorFormatMapService editorFormatMapService) {
 			this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
 			this.editorFormatMapService = editorFormatMapService;
-			this.themeService = themeService;
 		}
 
 		public void TextViewCreated(IWpfTextView textView) =>
-			new TextMarkerService(textView, viewTagAggregatorFactoryService.CreateTagAggregator<ITextMarkerTag>(textView), editorFormatMapService.GetEditorFormatMap(textView), themeService);
+			new TextMarkerService(textView, viewTagAggregatorFactoryService.CreateTagAggregator<ITextMarkerTag>(textView), editorFormatMapService.GetEditorFormatMap(textView));
 	}
 
 	sealed class TextMarkerService {
-#pragma warning disable 0169
+#pragma warning disable CS0169
 		[Export(typeof(AdornmentLayerDefinition))]
 		[Name(PredefinedDsAdornmentLayers.NegativeTextMarkerLayer)]
 		[Order(After = PredefinedDsAdornmentLayers.BottomLayer, Before = PredefinedDsAdornmentLayers.TopLayer)]
@@ -99,7 +97,7 @@ namespace dnSpy.Text.Editor {
 		[Order(After = PredefinedDsAdornmentLayers.BottomLayer, Before = PredefinedDsAdornmentLayers.TopLayer)]
 		[Order(Before = PredefinedAdornmentLayers.Selection, After = PredefinedAdornmentLayers.Outlining)]
 		static AdornmentLayerDefinition textMarkerAdornmentLayerDefinition;
-#pragma warning restore 0169
+#pragma warning restore CS0169
 
 		readonly IWpfTextView wpfTextView;
 		readonly ITagAggregator<ITextMarkerTag> tagAggregator;
@@ -107,18 +105,18 @@ namespace dnSpy.Text.Editor {
 		readonly IAdornmentLayer textMarkerAdornmentLayer;
 		readonly IAdornmentLayer negativeTextMarkerAdornmentLayer;
 		readonly List<MarkerElement> markerElements;
-		readonly IThemeService themeService;
 		bool useReducedOpacityForHighContrast;
+		bool isInContrastMode;
 
-		public TextMarkerService(IWpfTextView wpfTextView, ITagAggregator<ITextMarkerTag> tagAggregator, IEditorFormatMap editorFormatMap, IThemeService themeService) {
+		public TextMarkerService(IWpfTextView wpfTextView, ITagAggregator<ITextMarkerTag> tagAggregator, IEditorFormatMap editorFormatMap) {
 			this.wpfTextView = wpfTextView ?? throw new ArgumentNullException(nameof(wpfTextView));
 			this.tagAggregator = tagAggregator ?? throw new ArgumentNullException(nameof(tagAggregator));
 			this.editorFormatMap = editorFormatMap ?? throw new ArgumentNullException(nameof(editorFormatMap));
-			this.themeService = themeService ?? throw new ArgumentNullException(nameof(themeService));
 			textMarkerAdornmentLayer = wpfTextView.GetAdornmentLayer(PredefinedAdornmentLayers.TextMarker);
 			negativeTextMarkerAdornmentLayer = wpfTextView.GetAdornmentLayer(PredefinedDsAdornmentLayers.NegativeTextMarkerLayer);
 			markerElements = new List<MarkerElement>();
 			useReducedOpacityForHighContrast = wpfTextView.Options.GetOptionValue(DefaultWpfViewOptions.UseReducedOpacityForHighContrastOptionId);
+			isInContrastMode = wpfTextView.Options.IsInContrastMode();
 			onRemovedDelegate = OnRemoved;
 			wpfTextView.Closed += WpfTextView_Closed;
 			wpfTextView.LayoutChanged += WpfTextView_LayoutChanged;
@@ -129,8 +127,15 @@ namespace dnSpy.Text.Editor {
 
 		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultWpfViewOptions.UseReducedOpacityForHighContrastOptionName) {
+				bool old = ShouldUseHighContrastOpacity;
 				useReducedOpacityForHighContrast = wpfTextView.Options.GetOptionValue(DefaultWpfViewOptions.UseReducedOpacityForHighContrastOptionId);
-				if (themeService.Theme.IsHighContrast)
+				if (old != ShouldUseHighContrastOpacity)
+					RefreshExistingMarkers();
+			}
+			else if (e.OptionId == DefaultTextViewHostOptions.IsInContrastModeName) {
+				bool old = ShouldUseHighContrastOpacity;
+				isInContrastMode = wpfTextView.Options.IsInContrastMode();
+				if (old != ShouldUseHighContrastOpacity)
 					RefreshExistingMarkers();
 			}
 		}
@@ -138,10 +143,10 @@ namespace dnSpy.Text.Editor {
 		sealed class MarkerElement : UIElement {
 			readonly Geometry geometry;
 
-			public Brush BackgroundBrush {
-				get { return backgroundBrush; }
+			public Brush? BackgroundBrush {
+				get => backgroundBrush;
 				set {
-					if (value == null)
+					if (value is null)
 						throw new ArgumentNullException(nameof(value));
 					if (!BrushComparer.Equals(value, backgroundBrush)) {
 						backgroundBrush = value;
@@ -149,10 +154,10 @@ namespace dnSpy.Text.Editor {
 					}
 				}
 			}
-			Brush backgroundBrush;
+			Brush? backgroundBrush;
 
-			public Pen Pen {
-				get { return pen; }
+			public Pen? Pen {
+				get => pen;
 				set {
 					if (pen != value) {
 						pen = value;
@@ -160,14 +165,14 @@ namespace dnSpy.Text.Editor {
 					}
 				}
 			}
-			Pen pen;
+			Pen? pen;
 
 			public SnapshotSpan Span { get; private set; }
 			public string Type { get; }
 			public int ZIndex { get; }
 
 			public MarkerElement(SnapshotSpan span, string type, int zIndex, Geometry geometry) {
-				if (span.Snapshot == null)
+				if (span.Snapshot is null)
 					throw new ArgumentException();
 				Span = span;
 				Type = type ?? throw new ArgumentNullException(nameof(type));
@@ -225,18 +230,18 @@ namespace dnSpy.Text.Editor {
 			if (wpfTextView.IsClosed)
 				return;
 			wpfTextView.VisualElement.Dispatcher.VerifyAccess();
-			List<SnapshotSpan> intersectionSpans = null;
+			List<SnapshotSpan>? intersectionSpans = null;
 			foreach (var mappingSpan in e.Spans) {
 				foreach (var span in mappingSpan.GetSpans(wpfTextView.TextSnapshot)) {
 					var intersection = wpfTextView.TextViewLines.FormattedSpan.Intersection(span);
-					if (intersection != null) {
-						if (intersectionSpans == null)
+					if (!(intersection is null)) {
+						if (intersectionSpans is null)
 							intersectionSpans = new List<SnapshotSpan>();
 						intersectionSpans.Add(intersection.Value);
 					}
 				}
 			}
-			if (intersectionSpans != null)
+			if (!(intersectionSpans is null))
 				UpdateRange(new NormalizedSnapshotSpanCollection(intersectionSpans));
 		}
 
@@ -254,13 +259,13 @@ namespace dnSpy.Text.Editor {
 
 		void AddMarkerElements(NormalizedSnapshotSpanCollection spans) {
 			foreach (var tag in tagAggregator.GetTags(spans)) {
-				if (tag.Tag?.Type == null)
+				if (tag.Tag?.Type is null)
 					continue;
 				foreach (var span in tag.Span.GetSpans(wpfTextView.TextSnapshot)) {
 					if (!span.IntersectsWith(wpfTextView.TextViewLines.FormattedSpan))
 						continue;
 					var markerElement = TryCreateMarkerElement(span, tag.Tag);
-					if (markerElement == null)
+					if (markerElement is null)
 						continue;
 					var layer = markerElement.ZIndex < 0 ? negativeTextMarkerAdornmentLayer : textMarkerAdornmentLayer;
 					bool added = layer.AddAdornment(AdornmentPositioningBehavior.TextRelative, markerElement.Span, null, markerElement, onRemovedDelegate);
@@ -288,25 +293,23 @@ namespace dnSpy.Text.Editor {
 			textMarkerAdornmentLayer.RemoveAllAdornments();
 		}
 
-		Brush GetBackgroundBrush(ResourceDictionary props) {
-			Color? color;
-			SolidColorBrush scBrush;
-			Brush fillBrush;
+		bool ShouldUseHighContrastOpacity => useReducedOpacityForHighContrast && isInContrastMode;
 
+		Brush GetBackgroundBrush(ResourceDictionary props) {
 			const double BG_BRUSH_OPACITY = 0.8;
 			const double BG_BRUSH_HIGHCONTRAST_OPACITY = 0.5;
 			Brush newBrush;
-			if ((color = props[EditorFormatDefinition.BackgroundColorId] as Color?) != null) {
-				newBrush = new SolidColorBrush(color.Value);
+			if (props[EditorFormatDefinition.BackgroundColorId] is Color color) {
+				newBrush = new SolidColorBrush(color);
 				newBrush.Opacity = BG_BRUSH_OPACITY;
 				newBrush.Freeze();
 			}
-			else if ((scBrush = props[EditorFormatDefinition.BackgroundBrushId] as SolidColorBrush) != null) {
+			else if (props[EditorFormatDefinition.BackgroundBrushId] is SolidColorBrush scBrush) {
 				newBrush = new SolidColorBrush(scBrush.Color);
 				newBrush.Opacity = BG_BRUSH_OPACITY;
 				newBrush.Freeze();
 			}
-			else if ((fillBrush = props[MarkerFormatDefinition.FillId] as Brush) != null) {
+			else if (props[MarkerFormatDefinition.FillId] is Brush fillBrush) {
 				newBrush = fillBrush;
 				if (newBrush.CanFreeze)
 					newBrush.Freeze();
@@ -317,7 +320,7 @@ namespace dnSpy.Text.Editor {
 				newBrush.Freeze();
 			}
 
-			if (useReducedOpacityForHighContrast && themeService.Theme.IsHighContrast) {
+			if (ShouldUseHighContrastOpacity) {
 				newBrush = newBrush.Clone();
 				newBrush.Opacity = BG_BRUSH_HIGHCONTRAST_OPACITY;
 				if (newBrush.CanFreeze)
@@ -327,25 +330,22 @@ namespace dnSpy.Text.Editor {
 			return newBrush;
 		}
 
-		Pen GetPen(ResourceDictionary props) {
-			Color? color;
-			SolidColorBrush scBrush;
-
+		Pen? GetPen(ResourceDictionary props) {
 			const double PEN_THICKNESS = 0.5;
-			Pen newPen;
-			if ((color = props[EditorFormatDefinition.ForegroundColorId] as Color?) != null) {
-				var brush = new SolidColorBrush(color.Value);
+			Pen? newPen;
+			if (props[EditorFormatDefinition.ForegroundColorId] is Color color) {
+				var brush = new SolidColorBrush(color);
 				brush.Freeze();
 				newPen = new Pen(brush, PEN_THICKNESS);
 				newPen.Freeze();
 			}
-			else if ((scBrush = props[EditorFormatDefinition.ForegroundBrushId] as SolidColorBrush) != null) {
+			else if (props[EditorFormatDefinition.ForegroundBrushId] is SolidColorBrush scBrush) {
 				if (scBrush.CanFreeze)
 					scBrush.Freeze();
 				newPen = new Pen(scBrush, PEN_THICKNESS);
 				newPen.Freeze();
 			}
-			else if ((newPen = props[MarkerFormatDefinition.BorderId] as Pen) != null) {
+			else if (!((newPen = props[MarkerFormatDefinition.BorderId] as Pen) is null)) {
 				if (newPen.CanFreeze)
 					newPen.Freeze();
 			}
@@ -353,10 +353,10 @@ namespace dnSpy.Text.Editor {
 			return newPen;
 		}
 
-		MarkerElement TryCreateMarkerElement(SnapshotSpan span, ITextMarkerTag tag) {
-			Debug.Assert(tag.Type != null);
+		MarkerElement? TryCreateMarkerElement(SnapshotSpan span, ITextMarkerTag tag) {
+			Debug.Assert(!(tag.Type is null));
 			var geo = wpfTextView.TextViewLines.GetMarkerGeometry(span);
-			if (geo == null)
+			if (geo is null)
 				return null;
 
 			var type = tag.Type ?? string.Empty;

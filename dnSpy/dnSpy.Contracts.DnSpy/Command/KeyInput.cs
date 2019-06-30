@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,8 +21,8 @@ using System;
 using System.Windows.Input;
 
 namespace dnSpy.Contracts.Command {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
-	public struct KeyInput : IEquatable<KeyInput> {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+	public readonly struct KeyInput : IEquatable<KeyInput> {
 		public static readonly KeyInput Default = new KeyInput(Key.None, ModifierKeys.None);
 
 		public Key Key { get; }
@@ -50,7 +50,7 @@ namespace dnSpy.Contracts.Command {
 		public static bool operator ==(KeyInput a, KeyInput b) => a.Equals(b);
 		public static bool operator !=(KeyInput a, KeyInput b) => !a.Equals(b);
 		public bool Equals(KeyInput other) => Key == other.Key && Modifiers == other.Modifiers;
-		public override bool Equals(object obj) => obj is KeyInput && Equals((KeyInput)obj);
+		public override bool Equals(object? obj) => obj is KeyInput && Equals((KeyInput)obj);
 		public override int GetHashCode() => ((int)Key).GetHashCode() ^ ((int)Modifiers).GetHashCode();
 		public override string ToString() => Modifiers == ModifierKeys.None ? GetKeyName() : $"{GetModifiers()}+{GetKeyName()}";
 
@@ -76,5 +76,5 @@ namespace dnSpy.Contracts.Command {
 			return Key.ToString();
 		}
 	}
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

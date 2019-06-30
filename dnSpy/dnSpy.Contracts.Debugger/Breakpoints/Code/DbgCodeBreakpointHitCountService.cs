@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -53,7 +53,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// <summary>
 	/// Breakpoint and hit count
 	/// </summary>
-	public struct DbgCodeBreakpointAndHitCount {
+	public readonly struct DbgCodeBreakpointAndHitCount {
 		/// <summary>
 		/// Gets the breakpoint
 		/// </summary>
@@ -78,7 +78,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 	/// <summary>
 	/// <see cref="DbgCodeBreakpointHitCountService.HitCountChanged"/> event args
 	/// </summary>
-	public struct DbgHitCountChangedEventArgs {
+	public readonly struct DbgHitCountChangedEventArgs {
 		/// <summary>
 		/// Gets breakpoints and hit counts
 		/// </summary>

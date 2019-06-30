@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -42,6 +42,6 @@ namespace dnSpy.Contracts.MVVM {
 		/// </summary>
 		/// <param name="element">Element</param>
 		/// <returns></returns>
-		public static bool GetIsDraggable(FrameworkElement element) => element != null && (bool)element.GetValue(IsDraggableProperty);
+		public static bool GetIsDraggable(FrameworkElement? element) => !(element is null) && (bool)element.GetValue(IsDraggableProperty);
 	}
 }

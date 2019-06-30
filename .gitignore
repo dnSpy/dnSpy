@@ -1,12 +1,8 @@
 .vs/
 bin/
 obj/
-*.suo
 *.user
 _ReSharper*/
 *.ReSharper
-*.patch
-/packages
-*.ide/
-*.tmp_proj
-project.lock.json
+*_wpftmp.csproj
+launchSettings.json

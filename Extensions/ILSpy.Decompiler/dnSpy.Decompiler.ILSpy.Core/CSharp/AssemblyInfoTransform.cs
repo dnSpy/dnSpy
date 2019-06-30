@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,25 +28,36 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 		public void Run(AstNode compilationUnit) {
 			foreach (var attrSect in compilationUnit.Descendants.OfType<AttributeSection>()) {
 				var attr = attrSect.Descendants.OfType<Attribute>().FirstOrDefault();
-				Debug.Assert(attr != null);
-				if (attr == null)
+				Debug.Assert(!(attr is null));
+				if (attr is null)
 					continue;
-				var ca = attr.Annotation<CustomAttribute>();
-				if (ca == null)
-					continue;
-				if (!Compare(ca.AttributeType, systemRuntimeVersioningString, targetFrameworkAttributeString) &&
-					!Compare(ca.AttributeType, systemSecurityString, unverifiableCodeAttributeString))
-					continue;
-				attrSect.Remove();
+				bool remove = false;
+				if (!remove && attr.Annotation<CustomAttribute>() is CustomAttribute ca) {
+					remove =
+						Compare(ca.AttributeType, systemRuntimeVersioningString, targetFrameworkAttributeString) ||
+						Compare(ca.AttributeType, systemSecurityString, unverifiableCodeAttributeString) ||
+						Compare(ca.AttributeType, systemRuntimeCompilerServicesyString, compilationRelaxationsAttributeString) ||
+						Compare(ca.AttributeType, systemRuntimeCompilerServicesyString, runtimeCompatibilityAttributeString) ||
+						Compare(ca.AttributeType, systemDiagnosticsString, debuggableAttributeString);
+				}
+				if (!remove && attr.Annotation<SecurityAttribute>() is SecurityAttribute)
+					remove = true;
+				if (remove)
+					attrSect.Remove();
 			}
 		}
 		static readonly UTF8String systemRuntimeVersioningString = new UTF8String("System.Runtime.Versioning");
 		static readonly UTF8String targetFrameworkAttributeString = new UTF8String("TargetFrameworkAttribute");
 		static readonly UTF8String systemSecurityString = new UTF8String("System.Security");
 		static readonly UTF8String unverifiableCodeAttributeString = new UTF8String("UnverifiableCodeAttribute");
+		static readonly UTF8String systemRuntimeCompilerServicesyString = new UTF8String("System.Runtime.CompilerServices");
+		static readonly UTF8String compilationRelaxationsAttributeString = new UTF8String("CompilationRelaxationsAttribute");
+		static readonly UTF8String runtimeCompatibilityAttributeString = new UTF8String("RuntimeCompatibilityAttribute");
+		static readonly UTF8String systemDiagnosticsString = new UTF8String("System.Diagnostics");
+		static readonly UTF8String debuggableAttributeString = new UTF8String("DebuggableAttribute");
 
 		static bool Compare(ITypeDefOrRef type, UTF8String expNs, UTF8String expName) {
-			if (type == null)
+			if (type is null)
 				return false;
 
 			if (type is TypeRef tr)

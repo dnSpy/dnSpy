@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -39,18 +39,18 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		[ImportingConstructor]
 		HexAddressReferenceFileTabContentCreator(Lazy<IHexViewDocumentTabContentCreator> hexViewDocumentTabContentCreator, IDocumentTreeView documentTreeView) => this.hexViewDocumentTabContentCreator = hexViewDocumentTabContentCreator;
 
-		public DocumentTabReferenceResult Create(IDocumentTabService documentTabService, DocumentTabContent sourceContent, object @ref) {
+		public DocumentTabReferenceResult? Create(IDocumentTabService documentTabService, DocumentTabContent? sourceContent, object? @ref) {
 			var addrRef = @ref as AddressReference;
-			if (addrRef == null)
+			if (addrRef is null)
 				addrRef = (@ref as TextReference)?.Reference as AddressReference;
-			if (addrRef != null)
+			if (!(addrRef is null))
 				return Create(addrRef, documentTabService.DocumentTreeView);
 			return null;
 		}
 
-		DocumentTabReferenceResult Create(AddressReference addrRef, IDocumentTreeView documentTreeView) {
+		DocumentTabReferenceResult? Create(AddressReference addrRef, IDocumentTreeView documentTreeView) {
 			var content = hexViewDocumentTabContentCreator.Value.TryCreate(addrRef.Filename);
-			if (content == null)
+			if (content is null)
 				return null;
 			var fileOffset = GetFileOffset(addrRef, documentTreeView);
 			return new DocumentTabReferenceResult(content, null, e => CreateHandler(e, content, fileOffset, addrRef));
@@ -62,8 +62,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 			Debug.Assert(e.Tab.Content == content);
 			var uiContext = e.Tab.UIContext as HexViewDocumentTabUIContext;
-			Debug.Assert(uiContext != null);
-			if (uiContext == null || fileOffset == null)
+			Debug.Assert(!(uiContext is null));
+			if (uiContext is null || fileOffset is null)
 				return;
 
 			var start = fileOffset.Value;
@@ -79,7 +79,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 				return;
 
 			if (!uiContext.HexView.VisualElement.IsLoaded) {
-				RoutedEventHandler loaded = null;
+				RoutedEventHandler? loaded = null;
 				loaded = (s, e2) => {
 					uiContext.HexView.VisualElement.Loaded -= loaded;
 					InitializeHexView(uiContext.HexView, start, end);
@@ -119,10 +119,10 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 				return null;
 
 			var file = documentTreeView.GetAllCreatedDocumentNodes().FirstOrDefault(a => StringComparer.OrdinalIgnoreCase.Equals(a.Document.Filename, addrRef.Filename));
-			if (file == null)
+			if (file is null)
 				return null;
 			var pe = file.Document.PEImage;
-			if (pe == null)
+			if (pe is null)
 				return null;
 			return (ulong)pe.ToFileOffset((RVA)addrRef.Address);
 		}

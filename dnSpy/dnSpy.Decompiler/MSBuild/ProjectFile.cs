@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,10 +22,10 @@ namespace dnSpy.Decompiler.MSBuild {
 		public abstract string Description { get; }
 		public abstract string Filename { get; }
 		public abstract BuildAction BuildAction { get; }
-		public ProjectFile DependentUpon { get; set; }
-		public string SubType { get; set; }
-		public string Generator { get; set; }
-		public ProjectFile LastGenOutput { get; set; }
+		public ProjectFile? DependentUpon { get; set; }
+		public string? SubType { get; set; }
+		public string? Generator { get; set; }
+		public ProjectFile? LastGenOutput { get; set; }
 		public bool AutoGen { get; set; }
 		public bool DesignTime { get; set; }
 		public bool DesignTimeSharedInput { get; set; }

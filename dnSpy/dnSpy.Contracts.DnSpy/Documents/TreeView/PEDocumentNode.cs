@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,13 +28,13 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// <summary>
 		/// true if it's an .exe file, false if it's a .dll file
 		/// </summary>
-		public bool IsExe => (Document.PEImage.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) == 0;
+		public bool IsExe => (Document.PEImage!.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) == 0;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="document">Document</param>
 		protected PEDocumentNode(IDsDocument document)
-			: base(document) => Debug.Assert(document.PEImage != null && document.ModuleDef == null);
+			: base(document) => Debug.Assert(!(document.PEImage is null) && document.ModuleDef is null);
 	}
 }

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,12 +35,12 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// Gets all hex changes or null if this is the latest version
 		/// </summary>
-		public abstract NormalizedHexChangeCollection Changes { get; }
+		public abstract NormalizedHexChangeCollection? Changes { get; }
 
 		/// <summary>
 		/// Next version or null if this is the latest version
 		/// </summary>
-		public abstract HexVersion Next { get; }
+		public abstract HexVersion? Next { get; }
 
 		/// <summary>
 		/// Version number

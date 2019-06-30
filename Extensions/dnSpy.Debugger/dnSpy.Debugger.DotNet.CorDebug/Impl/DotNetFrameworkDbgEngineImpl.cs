@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,6 +25,7 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.Engine;
+using dnSpy.Debugger.DotNet.CorDebug.Impl.Attach;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	sealed class DotNetFrameworkDbgEngineImpl : DbgEngineImpl {
@@ -34,11 +35,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		public override DbgEngineRuntimeInfo RuntimeInfo {
 			get {
-				Debug.Assert(runtimeInfo != null);
+				Debug.Assert(!(runtimeInfo is null));
 				return runtimeInfo;
 			}
 		}
-		DbgEngineRuntimeInfo runtimeInfo;
+		DbgEngineRuntimeInfo? runtimeInfo;
 
 		public DotNetFrameworkDbgEngineImpl(DbgEngineImplDependencies deps, DbgManager dbgManager, DbgStartKind startKind)
 			: base(deps, dbgManager, startKind) {
@@ -61,7 +62,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	sealed class DotNetFrameworkRuntimeId : RuntimeId {
 		readonly string version;
 		public DotNetFrameworkRuntimeId(string version) => this.version = version;
-		public override bool Equals(object obj) => obj is DotNetFrameworkRuntimeId other && StringComparer.Ordinal.Equals(version, other.version);
+		public override bool Equals(object? obj) => obj is DotNetFrameworkRuntimeId other && StringComparer.Ordinal.Equals(version, other.version);
 		public override int GetHashCode() => StringComparer.Ordinal.GetHashCode(version);
 	}
 }

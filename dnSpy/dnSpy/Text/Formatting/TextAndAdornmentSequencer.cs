@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -48,9 +48,9 @@ namespace dnSpy.Text.Formatting {
 			SequenceChanged?.Invoke(this, new TextAndAdornmentSequenceChangedEventArgs(e.Span));
 
 		public ITextAndAdornmentCollection CreateTextAndAdornmentCollection(ITextSnapshotLine topLine, ITextSnapshot sourceTextSnapshot) {
-			if (topLine == null)
+			if (topLine is null)
 				throw new ArgumentNullException(nameof(topLine));
-			if (sourceTextSnapshot == null)
+			if (sourceTextSnapshot is null)
 				throw new ArgumentNullException(nameof(sourceTextSnapshot));
 			if (topLine.Snapshot.TextBuffer != TopBuffer)
 				throw new InvalidOperationException();
@@ -63,9 +63,9 @@ namespace dnSpy.Text.Formatting {
 		}
 
 		public ITextAndAdornmentCollection CreateTextAndAdornmentCollection(SnapshotSpan topSpan, ITextSnapshot sourceTextSnapshot) {
-			if (topSpan.Snapshot == null)
+			if (topSpan.Snapshot is null)
 				throw new ArgumentException();
-			if (sourceTextSnapshot == null)
+			if (sourceTextSnapshot is null)
 				throw new ArgumentNullException(nameof(sourceTextSnapshot));
 			if (topSpan.Snapshot.TextBuffer != TopBuffer)
 				throw new InvalidOperationException();
@@ -75,9 +75,9 @@ namespace dnSpy.Text.Formatting {
 			if (SourceBuffer != TopBuffer)
 				throw new NotSupportedException();
 
-			List<AdornmentElementAndSpan> adornmentList = null;
+			List<AdornmentElementAndSpan>? adornmentList = null;
 			foreach (var tagSpan in tagAggregator.GetTags(topSpan)) {
-				if (adornmentList == null)
+				if (adornmentList is null)
 					adornmentList = new List<AdornmentElementAndSpan>();
 				var spans = tagSpan.Span.GetSpans(sourceTextSnapshot);
 				Debug.Assert(spans.Count == 1);
@@ -87,7 +87,7 @@ namespace dnSpy.Text.Formatting {
 			}
 
 			// Common case
-			if (adornmentList == null) {
+			if (adornmentList is null) {
 				var elem = new TextSequenceElement(BufferGraph.CreateMappingSpan(topSpan, SpanTrackingMode.EdgeExclusive));
 				return new TextAndAdornmentCollection(this, new[] { elem });
 			}
@@ -110,7 +110,7 @@ namespace dnSpy.Text.Formatting {
 					sequenceList.Add(new TextSequenceElement(BufferGraph.CreateMappingSpan(textSpan, SpanTrackingMode.EdgeExclusive)));
 				if (info.Span.Start != end || (info.Span.Length == 0 && info.AdornmentElement.Affinity == PositionAffinity.Predecessor)) {
 					bool canAppend = true;
-					if (lastAddedAdornment != null && lastAddedAdornment.Value.Span.End > info.Span.Start)
+					if (!(lastAddedAdornment is null) && lastAddedAdornment.Value.Span.End > info.Span.Start)
 						canAppend = false;
 					if (canAppend) {
 						sequenceList.Add(info.AdornmentElement);
@@ -141,7 +141,7 @@ namespace dnSpy.Text.Formatting {
 			}
 		}
 
-		struct AdornmentElementAndSpan {
+		readonly struct AdornmentElementAndSpan {
 			public Span Span { get; }
 			public AdornmentElement AdornmentElement { get; }
 			public AdornmentElementAndSpan(AdornmentElement adornmentElement, Span span) {

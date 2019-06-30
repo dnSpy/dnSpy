@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 	/// Default <see cref="ITreeNodeGroup"/> instances
 	/// </summary>
 	public enum DocumentTreeNodeGroupType {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		AssemblyRefTreeNodeGroupReferences,
 		AssemblyRefTreeNodeGroupAssemblyRef,
 		ModuleRefTreeNodeGroupReferences,
@@ -47,6 +47,17 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		PropertyTreeNodeGroupType,
 		ResourceTreeNodeGroup,
 		ResourceElementTreeNodeGroup,
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+		TypeReferenceTreeNodeGroupTypeReferences,
+		TypeSpecsFolderTreeNodeGroupTypeReference,
+		MethodReferencesFolderTreeNodeGroupTypeReference,
+		PropertyReferencesFolderTreeNodeGroupTypeReference,
+		EventReferencesFolderTreeNodeGroupTypeReference,
+		FieldReferencesFolderTreeNodeGroupTypeReference,
+		TypeSpecTreeNodeGroupTypeSpecsFolder,
+		MethodReferenceTreeNodeGroupMethodReferencesFolder,
+		PropertyReferenceTreeNodeGroupPropertyReferencesFolder,
+		EventReferenceTreeNodeGroupEventReferencesFolder,
+		FieldReferenceTreeNodeGroupFieldReferencesFolder,
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

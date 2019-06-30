@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -38,13 +38,13 @@ namespace dnSpy.Text.Classification {
 		}
 
 		public IClassifier GetClassifier(ITextBuffer textBuffer) {
-			if (textBuffer == null)
+			if (textBuffer is null)
 				throw new ArgumentNullException(nameof(textBuffer));
 			return new ClassifierAggregator(synchronousBufferTagAggregatorFactoryService, classificationTypeRegistryService, textBuffer);
 		}
 
 		public ISynchronousClassifier GetSynchronousClassifier(ITextBuffer textBuffer) {
-			if (textBuffer == null)
+			if (textBuffer is null)
 				throw new ArgumentNullException(nameof(textBuffer));
 			return new ClassifierAggregator(synchronousBufferTagAggregatorFactoryService, classificationTypeRegistryService, textBuffer);
 		}

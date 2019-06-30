@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -52,7 +52,7 @@ namespace dnSpy.Settings.AppearanceCategory {
 		}
 
 		public ITextAppearanceCategory GetSettings(string category) {
-			if (category == null)
+			if (category is null)
 				throw new ArgumentNullException(nameof(category));
 			if (!categoryToTextAppearanceCategoryDefinition.TryGetValue(category, out var settings))
 				throw new ArgumentOutOfRangeException(nameof(category));

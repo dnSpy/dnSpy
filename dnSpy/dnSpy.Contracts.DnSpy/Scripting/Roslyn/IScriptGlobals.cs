@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -58,7 +58,7 @@ namespace dnSpy.Contracts.Scripting.Roslyn {
 		/// Prints text to the screen
 		/// </summary>
 		/// <param name="text">Text</param>
-		new void PrintError(string text);
+		new void PrintError(string? text);
 
 		/// <summary>
 		/// Prints text to the screen
@@ -71,7 +71,7 @@ namespace dnSpy.Contracts.Scripting.Roslyn {
 		/// Prints text followed by a new line to the screen
 		/// </summary>
 		/// <param name="text">Text or null</param>
-		new void PrintLineError(string text);
+		new void PrintLineError(string? text);
 
 		/// <summary>
 		/// Prints text followed by a new line to the screen
@@ -85,20 +85,20 @@ namespace dnSpy.Contracts.Scripting.Roslyn {
 		/// </summary>
 		/// <param name="color">Color</param>
 		/// <param name="text">Text</param>
-		new void Print(object color, string text);
+		new void Print(object? color, string? text);
 
 		/// <summary>
 		/// Prints text to the screen
 		/// </summary>
 		/// <param name="color">Color</param>
 		/// <param name="text">Text</param>
-		new void Print(TextColor color, string text);
+		new void Print(TextColor color, string? text);
 
 		/// <summary>
 		/// Prints text to the screen
 		/// </summary>
 		/// <param name="text">Text</param>
-		new void Print(string text);
+		new void Print(string? text);
 
 		/// <summary>
 		/// Prints text to the screen
@@ -106,7 +106,7 @@ namespace dnSpy.Contracts.Scripting.Roslyn {
 		/// <param name="color">Color</param>
 		/// <param name="fmt">Format</param>
 		/// <param name="args">Args</param>
-		new void Print(object color, string fmt, params object[] args);
+		new void Print(object? color, string fmt, params object[] args);
 
 		/// <summary>
 		/// Prints text to the screen
@@ -128,20 +128,20 @@ namespace dnSpy.Contracts.Scripting.Roslyn {
 		/// </summary>
 		/// <param name="color">Color</param>
 		/// <param name="text">Text or null</param>
-		new void PrintLine(object color, string text);
+		new void PrintLine(object? color, string? text);
 
 		/// <summary>
 		/// Prints text followed by a new line to the screen
 		/// </summary>
 		/// <param name="color">Color</param>
 		/// <param name="text">Text or null</param>
-		new void PrintLine(TextColor color, string text);
+		new void PrintLine(TextColor color, string? text);
 
 		/// <summary>
 		/// Prints text followed by a new line to the screen
 		/// </summary>
 		/// <param name="text">Text or null</param>
-		new void PrintLine(string text = null);
+		new void PrintLine(string? text = null);
 
 		/// <summary>
 		/// Prints text followed by a new line to the screen
@@ -149,7 +149,7 @@ namespace dnSpy.Contracts.Scripting.Roslyn {
 		/// <param name="color">Color</param>
 		/// <param name="fmt">Format</param>
 		/// <param name="args">Args</param>
-		new void PrintLine(object color, string fmt, params object[] args);
+		new void PrintLine(object? color, string fmt, params object[] args);
 
 		/// <summary>
 		/// Prints text followed by a new line to the screen
@@ -171,7 +171,7 @@ namespace dnSpy.Contracts.Scripting.Roslyn {
 		/// </summary>
 		/// <param name="value">Value, can be null</param>
 		/// <param name="color">Color</param>
-		new void Print(object value, object color);
+		new void Print(object value, object? color);
 
 		/// <summary>
 		/// Formats and prints a value to the screen
@@ -185,7 +185,7 @@ namespace dnSpy.Contracts.Scripting.Roslyn {
 		/// </summary>
 		/// <param name="value">Value or null</param>
 		/// <param name="color">Color</param>
-		new void PrintLine(object value, object color);
+		new void PrintLine(object value, object? color);
 
 		/// <summary>
 		/// Formats and prints a value followed by a new line to the screen
@@ -199,7 +199,7 @@ namespace dnSpy.Contracts.Scripting.Roslyn {
 		/// </summary>
 		/// <param name="ex">Exception</param>
 		/// <param name="color">Color</param>
-		new void Print(Exception ex, object color);
+		new void Print(Exception ex, object? color);
 
 		/// <summary>
 		/// Formats and prints an exception to the screen
@@ -213,7 +213,7 @@ namespace dnSpy.Contracts.Scripting.Roslyn {
 		/// </summary>
 		/// <param name="ex">Exception</param>
 		/// <param name="color">Color</param>
-		new void PrintLine(Exception ex, object color);
+		new void PrintLine(Exception ex, object? color);
 
 		/// <summary>
 		/// Formats and prints an exception followed by a new line to the screen
@@ -259,14 +259,14 @@ namespace dnSpy.Contracts.Scripting.Roslyn {
 		/// </summary>
 		/// <typeparam name="T">Type of service</typeparam>
 		/// <returns></returns>
-		T Resolve<T>();
+		T Resolve<T>() where T : class;
 
 		/// <summary>
 		/// Resolves a service or returns null if not found
 		/// </summary>
 		/// <typeparam name="T">Type of service</typeparam>
 		/// <returns></returns>
-		T TryResolve<T>();
+		T? TryResolve<T>() where T : class;
 
 		/// <summary>
 		/// Shows a message box
@@ -275,7 +275,7 @@ namespace dnSpy.Contracts.Scripting.Roslyn {
 		/// <param name="buttons">Buttons that should be present</param>
 		/// <param name="ownerWindow">Owner window or null to use the main window</param>
 		/// <returns></returns>
-		MsgBoxButton Show(string message, MsgBoxButton buttons = MsgBoxButton.OK, Window ownerWindow = null);
+		MsgBoxButton Show(string message, MsgBoxButton buttons = MsgBoxButton.OK, Window? ownerWindow = null);
 
 		/// <summary>
 		/// Shows a message box with buttons OK and Cancel
@@ -283,7 +283,7 @@ namespace dnSpy.Contracts.Scripting.Roslyn {
 		/// <param name="message">Message to show</param>
 		/// <param name="ownerWindow">Owner window or null to use the main window</param>
 		/// <returns></returns>
-		MsgBoxButton ShowOKCancel(string message, Window ownerWindow = null);
+		MsgBoxButton ShowOKCancel(string message, Window? ownerWindow = null);
 
 		/// <summary>
 		/// Shows a message box with buttons OK and Cancel
@@ -291,7 +291,7 @@ namespace dnSpy.Contracts.Scripting.Roslyn {
 		/// <param name="message">Message to show</param>
 		/// <param name="ownerWindow">Owner window or null to use the main window</param>
 		/// <returns></returns>
-		MsgBoxButton ShowOC(string message, Window ownerWindow = null);
+		MsgBoxButton ShowOC(string message, Window? ownerWindow = null);
 
 		/// <summary>
 		/// Shows a message box with buttons Yes and No
@@ -299,7 +299,7 @@ namespace dnSpy.Contracts.Scripting.Roslyn {
 		/// <param name="message">Message to show</param>
 		/// <param name="ownerWindow">Owner window or null to use the main window</param>
 		/// <returns></returns>
-		MsgBoxButton ShowYesNo(string message, Window ownerWindow = null);
+		MsgBoxButton ShowYesNo(string message, Window? ownerWindow = null);
 
 		/// <summary>
 		/// Shows a message box with buttons Yes and No
@@ -307,7 +307,7 @@ namespace dnSpy.Contracts.Scripting.Roslyn {
 		/// <param name="message">Message to show</param>
 		/// <param name="ownerWindow">Owner window or null to use the main window</param>
 		/// <returns></returns>
-		MsgBoxButton ShowYN(string message, Window ownerWindow = null);
+		MsgBoxButton ShowYN(string message, Window? ownerWindow = null);
 
 		/// <summary>
 		/// Shows a message box with buttons Yes, No and Cancel
@@ -315,7 +315,7 @@ namespace dnSpy.Contracts.Scripting.Roslyn {
 		/// <param name="message">Message to show</param>
 		/// <param name="ownerWindow">Owner window or null to use the main window</param>
 		/// <returns></returns>
-		MsgBoxButton ShowYesNoCancel(string message, Window ownerWindow = null);
+		MsgBoxButton ShowYesNoCancel(string message, Window? ownerWindow = null);
 
 		/// <summary>
 		/// Shows a message box with buttons Yes, No and Cancel
@@ -323,7 +323,7 @@ namespace dnSpy.Contracts.Scripting.Roslyn {
 		/// <param name="message">Message to show</param>
 		/// <param name="ownerWindow">Owner window or null to use the main window</param>
 		/// <returns></returns>
-		MsgBoxButton ShowYNC(string message, Window ownerWindow = null);
+		MsgBoxButton ShowYNC(string message, Window? ownerWindow = null);
 
 		/// <summary>
 		/// Asks the user for a value and returns it or the default value (eg. null or 0) if the
@@ -339,7 +339,7 @@ namespace dnSpy.Contracts.Scripting.Roslyn {
 		/// it's a valid value, else an error message to show to the user.</param>
 		/// <param name="ownerWindow">Owner window or null to use the main window</param>
 		/// <returns></returns>
-		T Ask<T>(string labelMessage, string defaultText = null, string title = null, Func<string, T> converter = null, Func<string, string> verifier = null, Window ownerWindow = null);
+		T Ask<T>(string labelMessage, string? defaultText = null, string? title = null, Func<string, T>? converter = null, Func<string, string>? verifier = null, Window? ownerWindow = null);
 
 		/// <summary>
 		/// Shows an exception message
@@ -347,6 +347,6 @@ namespace dnSpy.Contracts.Scripting.Roslyn {
 		/// <param name="exception">Exception</param>
 		/// <param name="msg">Message to show or null</param>
 		/// <param name="ownerWindow">Owner window or null to use the main window</param>
-		void Show(Exception exception, string msg = null, Window ownerWindow = null);
+		void Show(Exception exception, string? msg = null, Window? ownerWindow = null);
 	}
 }

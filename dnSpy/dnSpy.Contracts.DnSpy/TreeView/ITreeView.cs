@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -73,7 +73,7 @@ namespace dnSpy.Contracts.TreeView {
 		/// <summary>
 		/// Gets the selected node or null
 		/// </summary>
-		TreeNodeData SelectedItem { get; }
+		TreeNodeData? SelectedItem { get; }
 
 		/// <summary>
 		/// Gets all selected items
@@ -105,14 +105,14 @@ namespace dnSpy.Contracts.TreeView {
 		/// </summary>
 		/// <param name="selectedItem">Selected item</param>
 		/// <returns></returns>
-		TreeNodeData FromImplNode(object selectedItem);
+		TreeNodeData? FromImplNode(object? selectedItem);
 
 		/// <summary>
 		/// Converts <paramref name="node"/> to the real tree node
 		/// </summary>
 		/// <param name="node">Node</param>
 		/// <returns></returns>
-		object ToImplNode(TreeNodeData node);
+		object? ToImplNode(TreeNodeData node);
 
 		/// <summary>
 		/// Collapses all unselected nodes

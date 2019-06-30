@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -95,7 +95,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		void SelectNextCommand();
 
 		/// <summary>
-		/// Gets all code
+		/// Gets all selected code
 		/// </summary>
 		/// <returns></returns>
 		string GetCode();
@@ -106,7 +106,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="text">Text</param>
 		/// <param name="color">Color</param>
 		/// <param name="startOnNewLine">true to print the text on a new line</param>
-		void OutputPrint(string text, object color, bool startOnNewLine = false);
+		void OutputPrint(string? text, object color, bool startOnNewLine = false);
 
 		/// <summary>
 		/// Adds script output. This method can be called from any thread
@@ -114,7 +114,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="text">Text</param>
 		/// <param name="color">Color</param>
 		/// <param name="startOnNewLine">true to print the text on a new line</param>
-		void OutputPrint(string text, TextColor color, bool startOnNewLine = false);
+		void OutputPrint(string? text, TextColor color, bool startOnNewLine = false);
 
 		/// <summary>
 		/// Adds script output and a new line. This method can be called from any thread
@@ -122,7 +122,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="text">Text</param>
 		/// <param name="color">Color</param>
 		/// <param name="startOnNewLine">true to print the text on a new line</param>
-		void OutputPrintLine(string text, object color, bool startOnNewLine = false);
+		void OutputPrintLine(string? text, object color, bool startOnNewLine = false);
 
 		/// <summary>
 		/// Adds script output and a new line. This method can be called from any thread
@@ -130,7 +130,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="text">Text</param>
 		/// <param name="color">Color</param>
 		/// <param name="startOnNewLine">true to print the text on a new line</param>
-		void OutputPrintLine(string text, TextColor color, bool startOnNewLine = false);
+		void OutputPrintLine(string? text, TextColor color, bool startOnNewLine = false);
 
 		/// <summary>
 		/// Adds script output. This method can be called from any thread

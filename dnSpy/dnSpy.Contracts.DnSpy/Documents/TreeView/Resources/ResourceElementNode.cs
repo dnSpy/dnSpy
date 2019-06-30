@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,8 +25,8 @@ using dnlib.DotNet;
 using dnlib.DotNet.Resources;
 using dnlib.IO;
 using dnSpy.Contracts.Decompiler;
+using dnSpy.Contracts.DnSpy.Properties;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.Properties;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Contracts.Utilities;
@@ -48,8 +48,18 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		public string Name => resourceElement.Name;
 
 		/// <inheritdoc/>
-		protected sealed override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>
-			output.WriteFilename(resourceElement.Name);
+		protected sealed override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) {
+			output.WriteFilename(Uri.UnescapeDataString(resourceElement.Name));
+			if ((options & DocumentNodeWriteOptions.ToolTip) != 0) {
+				if (TreeNode.Parent?.Data is ResourceNode parentNode) {
+					output.WriteLine();
+					output.WriteFilename(parentNode.Name);
+				}
+				output.WriteLine();
+				WriteFilename(output);
+			}
+		}
+
 		/// <inheritdoc/>
 		protected sealed override ImageReference? GetExpandedIcon(IDotNetImageService dnImgMgr) => null;
 
@@ -74,17 +84,17 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <summary>
 		/// Gets the file offset of the resource
 		/// </summary>
-		public ulong FileOffset {
+		public uint FileOffset {
 			get {
 				GetModuleOffset(out var fo);
-				return (ulong)fo;
+				return (uint)fo;
 			}
 		}
 
 		/// <summary>
 		/// Gets the length of the resource
 		/// </summary>
-		public ulong Length => (ulong)(resourceElement.ResourceData.EndOffset - resourceElement.ResourceData.StartOffset);
+		public uint Length => resourceElement.ResourceData.EndOffset - resourceElement.ResourceData.StartOffset;
 
 		/// <summary>
 		/// Gets the RVA of the resource
@@ -92,18 +102,18 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		public uint RVA {
 			get {
 				var module = GetModuleOffset(out var fo);
-				if (module == null)
+				if (module is null)
 					return 0;
 
-				return (uint)module.MetaData.PEImage.ToRVA(fo);
+				return (uint)module.Metadata.PEImage.ToRVA(fo);
 			}
 		}
 
-		ModuleDefMD GetModuleOffset(out FileOffset fileOffset) {
+		ModuleDefMD? GetModuleOffset(out FileOffset fileOffset) {
 			fileOffset = 0;
 
 			var module = this.GetModule() as ModuleDefMD;//TODO: Support CorModuleDef
-			if (module == null)
+			if (module is null)
 				return null;
 
 			fileOffset = resourceElement.ResourceData.StartOffset;
@@ -111,7 +121,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		}
 
 		/// <inheritdoc/>
-		public override ITreeNodeGroup TreeNodeGroup => treeNodeGroup;
+		public override ITreeNodeGroup? TreeNodeGroup => treeNodeGroup;
 		readonly ITreeNodeGroup treeNodeGroup;
 
 		/// <summary>
@@ -199,7 +209,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 
 				default:
 					var binData = resourceElement.ResourceData as BinaryResourceData;
-					if (binData != null)
+					if (!(binData is null))
 						return string.Format(dnSpy_Contracts_DnSpy_Resources.NumberOfBytesAndType, binData.Data.Length, binData.TypeName);
 					return resourceElement.ResourceData.ToString();
 				}
@@ -212,7 +222,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <param name="token">Cancellation token</param>
 		/// <param name="canDecompile">true if the data can be decompiled</param>
 		/// <returns></returns>
-		public virtual string ToString(CancellationToken token, bool canDecompile) => null;
+		public virtual string? ToString(CancellationToken token, bool canDecompile) => null;
 
 		/// <inheritdoc/>
 		public IEnumerable<ResourceData> GetResourceData(ResourceDataType type) {
@@ -243,77 +253,77 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 				break;
 
 			case ResourceTypeCode.String:
-				writer.Write((string)builtin.Data);
+				writer.Write((string)builtin!.Data);
 				break;
 
 			case ResourceTypeCode.Boolean:
-				writer.Write((bool)builtin.Data);
+				writer.Write((bool)builtin!.Data);
 				break;
 
 			case ResourceTypeCode.Char:
-				writer.Write((ushort)(char)builtin.Data);
+				writer.Write((ushort)(char)builtin!.Data);
 				break;
 
 			case ResourceTypeCode.Byte:
-				writer.Write((byte)builtin.Data);
+				writer.Write((byte)builtin!.Data);
 				break;
 
 			case ResourceTypeCode.SByte:
-				writer.Write((sbyte)builtin.Data);
+				writer.Write((sbyte)builtin!.Data);
 				break;
 
 			case ResourceTypeCode.Int16:
-				writer.Write((short)builtin.Data);
+				writer.Write((short)builtin!.Data);
 				break;
 
 			case ResourceTypeCode.UInt16:
-				writer.Write((ushort)builtin.Data);
+				writer.Write((ushort)builtin!.Data);
 				break;
 
 			case ResourceTypeCode.Int32:
-				writer.Write((int)builtin.Data);
+				writer.Write((int)builtin!.Data);
 				break;
 
 			case ResourceTypeCode.UInt32:
-				writer.Write((uint)builtin.Data);
+				writer.Write((uint)builtin!.Data);
 				break;
 
 			case ResourceTypeCode.Int64:
-				writer.Write((long)builtin.Data);
+				writer.Write((long)builtin!.Data);
 				break;
 
 			case ResourceTypeCode.UInt64:
-				writer.Write((ulong)builtin.Data);
+				writer.Write((ulong)builtin!.Data);
 				break;
 
 			case ResourceTypeCode.Single:
-				writer.Write((float)builtin.Data);
+				writer.Write((float)builtin!.Data);
 				break;
 
 			case ResourceTypeCode.Double:
-				writer.Write((double)builtin.Data);
+				writer.Write((double)builtin!.Data);
 				break;
 
 			case ResourceTypeCode.Decimal:
-				writer.Write((decimal)builtin.Data);
+				writer.Write((decimal)builtin!.Data);
 				break;
 
 			case ResourceTypeCode.DateTime:
-				writer.Write(((DateTime)builtin.Data).ToBinary());
+				writer.Write(((DateTime)builtin!.Data).ToBinary());
 				break;
 
 			case ResourceTypeCode.TimeSpan:
-				writer.Write(((TimeSpan)builtin.Data).Ticks);
+				writer.Write(((TimeSpan)builtin!.Data).Ticks);
 				break;
 
 			case ResourceTypeCode.ByteArray:
 			case ResourceTypeCode.Stream:
 				// Don't write array length, just the data
-				writer.Write((byte[])builtin.Data);
+				writer.Write((byte[])builtin!.Data);
 				break;
 
 			default:
-				writer.Write(bin.Data);
+				writer.Write(bin!.Data);
 				break;
 			}
 
@@ -328,7 +338,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// </summary>
 		/// <param name="newResElem">New data</param>
 		/// <returns></returns>
-		public virtual string CheckCanUpdateData(ResourceElement newResElem) {
+		public virtual string? CheckCanUpdateData(ResourceElement newResElem) {
 			if (resourceElement.ResourceData.Code.FixUserType() != newResElem.ResourceData.Code.FixUserType())
 				return dnSpy_Contracts_DnSpy_Resources.ResourceTypeCantBeChanged;
 

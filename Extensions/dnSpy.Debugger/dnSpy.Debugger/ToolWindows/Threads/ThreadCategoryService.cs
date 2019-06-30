@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,7 +25,7 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Images;
 
 namespace dnSpy.Debugger.ToolWindows.Threads {
-	struct CategoryInfo {
+	readonly struct CategoryInfo {
 		public ImageReference Image { get; }
 		public string Category { get; }
 		public CategoryInfo(ImageReference image, string category) {
@@ -49,7 +49,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		public override CategoryInfo GetInfo(string kind) {
 			foreach (var lz in threadCategoryProviders) {
 				var info = lz.Value.GetCategory(kind);
-				if (info != null) {
+				if (!(info is null)) {
 					var imgRef = info.Value.Image as ImageReference? ?? ImageReference.None;
 					return new CategoryInfo(imgRef, info.Value.Category);
 				}

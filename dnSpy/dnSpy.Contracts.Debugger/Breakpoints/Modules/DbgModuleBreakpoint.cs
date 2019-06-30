@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -40,7 +40,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 		/// <summary>
 		/// Name of module (case insensitive) or null/empty string if any name. Wildcards can be used
 		/// </summary>
-		public abstract string ModuleName { get; set; }
+		public abstract string? ModuleName { get; set; }
 
 		/// <summary>
 		/// true if dynamic, false if not dynamic, and null if any value
@@ -53,6 +53,11 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 		public abstract bool? IsInMemory { get; set; }
 
 		/// <summary>
+		/// true if it was loaded, false if it was unloaded, and null if any value
+		/// </summary>
+		public abstract bool? IsLoaded { get; set; }
+
+		/// <summary>
 		/// Order or null if any value
 		/// </summary>
 		public abstract int? Order { get; set; }
@@ -60,12 +65,12 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Modules {
 		/// <summary>
 		/// App domain name (case insensitive) or null/empty string if any name. Wildcards can be used
 		/// </summary>
-		public abstract string AppDomainName { get; set; }
+		public abstract string? AppDomainName { get; set; }
 
 		/// <summary>
 		/// Process name (case insensitive) or null/empty string if any name. Wildcards can be used
 		/// </summary>
-		public abstract string ProcessName { get; set; }
+		public abstract string? ProcessName { get; set; }
 
 		/// <summary>
 		/// Removes this breakpoint from the module breakpoints list

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,9 +18,9 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Windows.Input;
 using dnlib.DotNet;
-using dnlib.Threading;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Contracts.MVVM;
@@ -38,25 +38,25 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 	sealed class MethodSigCreatorVM : ViewModelBase {
 		public ITypeSigCreator TypeSigCreator {
-			set { typeSigCreator = value; }
+			set => typeSigCreator = value;
 		}
-		ITypeSigCreator typeSigCreator;
+		ITypeSigCreator? typeSigCreator;
 
 		public ICommand AddReturnTypeCommand => new RelayCommand(a => AddReturnType());
 
-		public PropertySig PropertySig {
-			get { return CreateSig(new PropertySig()); }
-			set { WriteSignature(value); }
+		public PropertySig? PropertySig {
+			get => CreateSig(new PropertySig());
+			set => WriteSignature(value);
 		}
 
-		public MethodSig MethodSig {
-			get { return CreateSig(new MethodSig()); }
-			set { WriteSignature(value); }
+		public MethodSig? MethodSig {
+			get => CreateSig(new MethodSig());
+			set => WriteSignature(value);
 		}
 
-		public MethodBaseSig MethodBaseSig {
-			get { return IsPropertySig ? (MethodBaseSig)PropertySig : MethodSig; }
-			set { WriteSignature(value); }
+		public MethodBaseSig? MethodBaseSig {
+			get => IsPropertySig ? (MethodBaseSig?)PropertySig : MethodSig;
+			set => WriteSignature(value);
 		}
 
 		public bool ShowSignatureFullName => !options.DontShowSignatureFullName;
@@ -66,15 +66,15 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		public string SignatureFullName {
 			get {
-				var sig = MethodBaseSig;
+				var sig = MethodBaseSig!;
 				if (sig.GenParamCount > 100)
 					sig.GenParamCount = 100;
-				return FullNameCreator.MethodBaseSigFullName(null, null, sig, options.TypeSigCreatorOptions.OwnerMethod, null);
+				return FullNameFactory.MethodBaseSigFullName(null, null, sig, options.TypeSigCreatorOptions.OwnerMethod, null);
 			}
 		}
 
 		public CallingConvention CallingConvention {
-			get { return callingConvention; }
+			get => callingConvention;
 			set {
 				if (callingConvention != value) {
 					callingConvention = value;
@@ -89,18 +89,18 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		CallingConvention callingConvention;
 
 		public bool IsGeneric {
-			get { return GetFlags(dnlib.DotNet.CallingConvention.Generic); }
-			set { SetFlags(dnlib.DotNet.CallingConvention.Generic, value); }
+			get => GetFlags(dnlib.DotNet.CallingConvention.Generic);
+			set => SetFlags(dnlib.DotNet.CallingConvention.Generic, value);
 		}
 
 		public bool HasThis {
-			get { return GetFlags(dnlib.DotNet.CallingConvention.HasThis); }
-			set { SetFlags(dnlib.DotNet.CallingConvention.HasThis, value); }
+			get => GetFlags(dnlib.DotNet.CallingConvention.HasThis);
+			set => SetFlags(dnlib.DotNet.CallingConvention.HasThis, value);
 		}
 
 		public bool ExplicitThis {
-			get { return GetFlags(dnlib.DotNet.CallingConvention.ExplicitThis); }
-			set { SetFlags(dnlib.DotNet.CallingConvention.ExplicitThis, value); }
+			get => GetFlags(dnlib.DotNet.CallingConvention.ExplicitThis);
+			set => SetFlags(dnlib.DotNet.CallingConvention.ExplicitThis, value);
 		}
 
 		bool GetFlags(dnlib.DotNet.CallingConvention flag) => (CallingConvention & flag) != 0;
@@ -115,8 +115,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public EnumListVM MethodCallingConv { get; }
 		internal static readonly EnumVM[] methodCallingConvList = EnumVM.Create(typeof(MethodCallingConv));
 
-		public TypeSig ReturnType {
-			get { return retType; }
+		public TypeSig? ReturnType {
+			get => retType;
 			set {
 				if (retType != value) {
 					retType = value;
@@ -127,18 +127,18 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 			}
 		}
-		TypeSig retType;
+		TypeSig? retType;
 
 		public UInt32VM GenericParameterCount { get; }
 
-		public string Title {
+		public string? Title {
 			get {
 				if (!string.IsNullOrEmpty(title))
 					return title;
 				return IsPropertySig ? dnSpy_AsmEditor_Resources.CreatePropertySignature : dnSpy_AsmEditor_Resources.CreateMethodSignature;
 			}
 		}
-		string title;
+		string? title;
 
 		public CreateTypeSigArrayVM ParametersCreateTypeSigArray { get; }
 		public CreateTypeSigArrayVM SentinelCreateTypeSigArray { get; }
@@ -156,7 +156,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			GenericParameterCount = new UInt32VM(0, a => {
 				HasErrorUpdated();
 				OnPropertyChanged(nameof(SignatureFullName));
-				if (GenericParameterCount != null && !GenericParameterCount.HasError)
+				if (!(GenericParameterCount is null) && !GenericParameterCount.HasError)
 					IsGeneric = GenericParameterCount.Value != 0;
 			}) {
 				Min = ModelUtils.COMPRESSED_UINT32_MIN,
@@ -166,7 +166,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				if (!IsMethodSig)
 					throw new InvalidOperationException();
 				CallingConvention = (CallingConvention & ~dnlib.DotNet.CallingConvention.Mask) |
-					(dnlib.DotNet.CallingConvention)(MethodCallingConv)MethodCallingConv.SelectedItem;
+					(dnlib.DotNet.CallingConvention)(MethodCallingConv)MethodCallingConv.SelectedItem!;
 			});
 			if (!CanHaveSentinel) {
 				MethodCallingConv.Items.RemoveAt(MethodCallingConv.GetIndex(DnlibDialogs.MethodCallingConv.VarArg));
@@ -185,12 +185,12 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			sig.Params.AddRange(ParametersCreateTypeSigArray.TypeSigArray);
 			sig.GenParamCount = GenericParameterCount.HasError ? 0 : GenericParameterCount.Value;
 			var sentAry = SentinelCreateTypeSigArray.TypeSigArray;
-			sig.ParamsAfterSentinel = sentAry.Length == 0 ? null : ThreadSafeListCreator.Create<TypeSig>(sentAry);
+			sig.ParamsAfterSentinel = sentAry.Length == 0 ? null : new List<TypeSig>(sentAry);
 			return sig;
 		}
 
-		void WriteSignature(MethodBaseSig sig) {
-			if (sig == null) {
+		void WriteSignature(MethodBaseSig? sig) {
+			if (sig is null) {
 				CallingConvention = 0;
 				ReturnType = null;
 				ParametersCreateTypeSigArray.TypeSigCollection.Clear();
@@ -204,31 +204,31 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				ParametersCreateTypeSigArray.TypeSigCollection.AddRange(sig.Params);
 				GenericParameterCount.Value = sig.GenParamCount;
 				SentinelCreateTypeSigArray.TypeSigCollection.Clear();
-				if (sig.ParamsAfterSentinel != null)
+				if (!(sig.ParamsAfterSentinel is null))
 					SentinelCreateTypeSigArray.TypeSigCollection.AddRange(sig.ParamsAfterSentinel);
 			}
 		}
 
 		void AddReturnType() {
-			if (typeSigCreator == null)
+			if (typeSigCreator is null)
 				throw new InvalidOperationException();
 
 			var newTypeSig = typeSigCreator.Create(options.TypeSigCreatorOptions.Clone(dnSpy_AsmEditor_Resources.CreateReturnType), ReturnType, out bool canceled);
-			if (newTypeSig != null)
+			if (!(newTypeSig is null))
 				ReturnType = newTypeSig;
 		}
 
-		protected override string Verify(string columnName) {
+		protected override string? Verify(string columnName) {
 			if (columnName == nameof(ReturnType))
-				return ReturnType != null ? string.Empty : dnSpy_AsmEditor_Resources.ReturnTypeRequired;
+				return !(ReturnType is null) ? string.Empty : dnSpy_AsmEditor_Resources.ReturnTypeRequired;
 			return string.Empty;
 		}
 
-		public override bool HasError => GenericParameterCount.HasError || ReturnType == null;
+		public override bool HasError => GenericParameterCount.HasError || ReturnType is null;
 
 		public string ErrorText {
 			get {
-				string err;
+				string? err;
 				if (!string.IsNullOrEmpty(err = Verify(nameof(ReturnType))))
 					return err;
 

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,11 +33,11 @@ namespace dnSpy.Hex.Formatting {
 		FormattedHexSourceFactoryServiceImpl(TF.ITextFormatterProvider textFormatterProvider) => this.textFormatterProvider = textFormatterProvider;
 
 		public override HexFormattedLineSource Create(double baseIndent, bool useDisplayMode, HexClassifier aggregateClassifier, HexAndAdornmentSequencer sequencer, VSTC.IClassificationFormatMap classificationFormatMap) {
-			if (aggregateClassifier == null)
+			if (aggregateClassifier is null)
 				throw new ArgumentNullException(nameof(aggregateClassifier));
-			if (sequencer == null)
+			if (sequencer is null)
 				throw new ArgumentNullException(nameof(sequencer));
-			if (classificationFormatMap == null)
+			if (classificationFormatMap is null)
 				throw new ArgumentNullException(nameof(classificationFormatMap));
 			return new HexFormattedLineSourceImpl(textFormatterProvider, baseIndent, useDisplayMode, aggregateClassifier, sequencer, classificationFormatMap);
 		}

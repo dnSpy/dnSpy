@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -41,7 +41,7 @@ namespace dnSpy.Text.Classification {
 		}
 
 		public IClassificationFormatMap GetClassificationFormatMap(string category) {
-			if (category == null)
+			if (category is null)
 				throw new ArgumentNullException(nameof(category));
 			var editorFormatMap = editorFormatMapService.GetEditorFormatMap(category);
 			if (toCategoryMap.TryGetValue(editorFormatMap, out var map))
@@ -60,7 +60,7 @@ namespace dnSpy.Text.Classification {
 		}
 
 		public IClassificationFormatMap GetClassificationFormatMap(ITextView textView) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			return textView.Properties.GetOrCreateSingletonProperty(typeof(ViewClassificationFormatMap), () => CreateViewClassificationFormatMap(textView));
 		}

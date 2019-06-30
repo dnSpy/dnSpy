@@ -1,5 +1,5 @@
-﻿<!--
-    Copyright (C) 2014-2017 de4dot@gmail.com
+<!--
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,8 +20,6 @@
              x:ClassModifier="internal"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:dnlibdlgs="clr-namespace:dnSpy.AsmEditor.DnlibDialogs"
              xmlns:winlocal="clr-namespace:dnSpy.Contracts.Controls;assembly=dnSpy.Contracts.DnSpy"
              xmlns:mvvmvc="clr-namespace:dnSpy.Contracts.MVVM.Converters;assembly=dnSpy.Contracts.DnSpy"
@@ -89,15 +87,15 @@
                                     <ColumnDefinition />
                                     <ColumnDefinition />
                                 </Grid.ColumnDefinitions>
-                                <CheckBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding Abstract}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Type_Flags_Abstract}" />
-                                <CheckBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding Sealed}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Type_Flags_Sealed}" />
-                                <CheckBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding Serializable}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Type_Flags_Serializable}" />
-                                <CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding Import}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Type_Flags_Import}" />
-                                <CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding SpecialName}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Type_Flags_SpecialName}" />
-                                <CheckBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding RTSpecialName}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Type_Flags_RTSpecialName}" />
-                                <CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding WindowsRuntime}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Type_Flags_WindowsRuntime}" />
-                                <CheckBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding BeforeFieldInit}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Type_Flags_BeforeFieldInit}" />
-                                <CheckBox Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding Forwarder}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Type_Flags_Forwarder}" />
+                                <CheckBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding Abstract}" Content="Abstract" />
+                                <CheckBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding Sealed}" Content="Sealed" />
+                                <CheckBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding Serializable}" Content="Serializable" />
+                                <CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding Import}" Content="Import" />
+                                <CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding SpecialName}" Content="SpecialName" />
+                                <CheckBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding RTSpecialName}" Content="RTSpecialName" />
+                                <CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding WindowsRuntime}" Content="WindowsRuntime" />
+                                <CheckBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding BeforeFieldInit}" Content="BeforeFieldInit" />
+                                <CheckBox Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding Forwarder}" Content="Forwarder" />
                             </Grid>
                         </GroupBox>
 
@@ -124,9 +122,9 @@
 
                             <Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.Type_Flags_String}" Target="{Binding ElementName=stringFormatComboBox}" />
                             <ComboBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="stringFormatComboBox" DisplayMemberPath="Name" ItemsSource="{Binding TypeStringFormat.Items}" SelectedIndex="{Binding TypeStringFormat.SelectedIndex}" VerticalContentAlignment="Center" />
-                            <Label Grid.Row="1" Grid.Column="2" Margin="0 5 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.Type_Flags_Semantics}" Target="{Binding ElementName=semanticsComboBox}" />
+                            <Label Grid.Row="1" Grid.Column="2" Margin="0 5 0 0" Content="Semantics" Target="{Binding ElementName=semanticsComboBox}" />
                             <ComboBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="semanticsComboBox" DisplayMemberPath="Name" ItemsSource="{Binding TypeSemantics.Items}" SelectedIndex="{Binding TypeSemantics.SelectedIndex}" VerticalContentAlignment="Center" />
-                            <Label Grid.Row="1" Grid.Column="4" Margin="0 5 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.Type_Flags_Custom}" Target="{Binding ElementName=customFormatComboBox}" />
+                            <Label Grid.Row="1" Grid.Column="4" Margin="0 5 0 0" Content="Custom" Target="{Binding ElementName=customFormatComboBox}" />
                             <ComboBox Grid.Row="1" Grid.Column="5" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="customFormatComboBox" DisplayMemberPath="Name" ItemsSource="{Binding TypeCustomFormat.Items}" SelectedIndex="{Binding TypeCustomFormat.SelectedIndex}" VerticalContentAlignment="Center" />
                         </Grid>
                     </Grid>

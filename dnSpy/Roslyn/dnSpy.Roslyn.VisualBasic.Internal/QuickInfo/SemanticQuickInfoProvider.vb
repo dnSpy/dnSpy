@@ -1,9 +1,8 @@
-﻿' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 Imports System.Composition
 Imports System.Threading
-Imports dnSpy.Roslyn.Internal.Extensions
-Imports dnSpy.Roslyn.Internal.Helpers
+Imports System.Threading.Tasks
 Imports dnSpy.Roslyn.Internal.QuickInfo
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Shared.Extensions
@@ -106,7 +105,7 @@ Namespace Global.Microsoft.CodeAnalysis.Editor.VisualBasic.QuickInfo
 
 			Dim semantics = Await document.GetSemanticModelForNodeAsync(token.Parent, cancellationToken).ConfigureAwait(False)
 
-			Dim types = declarators.SelectMany(Function(d) d.Names).Select(
+			Dim types = dnSpy.Roslyn.Utilities2.EnumerableExtensions2.WhereNotNull(declarators.SelectMany(Function(d) d.Names).Select(
 				Function(n)
 					Dim symbol = semantics.GetDeclaredSymbol(n, cancellationToken)
 					If symbol Is Nothing Then
@@ -120,7 +119,7 @@ Namespace Global.Microsoft.CodeAnalysis.Editor.VisualBasic.QuickInfo
 					Else
 						Return Nothing
 					End If
-				End Function).WhereNotNull().Distinct().ToList()
+				End Function)).Distinct().ToList()
 
 			If types.Count = 0 Then
 				Return Nothing

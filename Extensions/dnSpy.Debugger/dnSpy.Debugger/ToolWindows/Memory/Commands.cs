@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -54,11 +54,11 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 		ProcessesContextMenuEntry(ProcessHexBufferProvider processHexBufferProvider) => this.processHexBufferProvider = processHexBufferProvider;
 
 		public override void Execute(Context context) { }
-		protected override Context CreateContext(IMenuItemContext context) => CreateContext(processHexBufferProvider, context);
+		protected override Context? CreateContext(IMenuItemContext context) => CreateContext(processHexBufferProvider, context);
 
-		internal static Context CreateContext(ProcessHexBufferProvider processHexBufferProvider, IMenuItemContext context) {
+		internal static Context? CreateContext(ProcessHexBufferProvider processHexBufferProvider, IMenuItemContext context) {
 			var hexView = context.Find<HexView>();
-			if (hexView == null)
+			if (hexView is null)
 				return null;
 			if (!processHexBufferProvider.IsValidBuffer(hexView.Buffer))
 				return null;
@@ -77,8 +77,8 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 
 		IEnumerable<CreatedMenuItem> IMenuItemProvider.Create(IMenuItemContext context) {
 			var ctx = ProcessesContextMenuEntry.CreateContext(processHexBufferProvider, context);
-			Debug.Assert(ctx != null);
-			if (ctx == null)
+			Debug.Assert(!(ctx is null));
+			if (ctx is null)
 				yield break;
 
 			var currentPid = processHexBufferProvider.GetProcessId(ctx.Buffer);
@@ -92,11 +92,11 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			}
 		}
 
-		string GetProcessHeader(Process process, ulong pid) {
+		string GetProcessHeader(Process? process, int pid) {
 			try {
-				if (process != null) {
+				if (!(process is null)) {
 					var title = Filter(process.MainWindowTitle, 200);
-					var name = process.MainModule.ModuleName;
+					var name = GetProcessName(process);
 					if (string.IsNullOrWhiteSpace(title))
 						return $"{pid} {name}";
 					return $"{pid} {name} - {title}";
@@ -105,6 +105,15 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			catch {
 			}
 			return pid.ToString();
+		}
+
+		static string GetProcessName(Process process) {
+			try {
+				return process.MainModule.ModuleName;
+			}
+			catch {
+			}
+			return process.ProcessName;
 		}
 
 		static string Filter(string s, int maxLength) {

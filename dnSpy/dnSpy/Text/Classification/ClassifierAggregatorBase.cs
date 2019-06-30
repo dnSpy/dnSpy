@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -43,7 +43,7 @@ namespace dnSpy.Text.Classification {
 		}
 
 		void TagAggregator_TagsChanged(object sender, TagsChangedEventArgs e) {
-			if (ClassificationChanged == null)
+			if (ClassificationChanged is null)
 				return;
 			foreach (var span in e.Span.GetSpans(textBuffer))
 				ClassificationChanged?.Invoke(this, new ClassificationChangedEventArgs(span));
@@ -61,18 +61,18 @@ namespace dnSpy.Text.Classification {
 			GetClassificationSpansCore(span, cancellationToken);
 
 		IList<ClassificationSpan> GetClassificationSpansCore(SnapshotSpan span, CancellationToken? cancellationToken) {
-			if (span.Snapshot == null)
+			if (span.Snapshot is null)
 				throw new ArgumentException();
 			if (span.Length == 0)
 				return Array.Empty<ClassificationSpan>();
 
 			var list = new List<ClassificationSpan>();
 			var targetSnapshot = span.Snapshot;
-			var tags = cancellationToken != null ? tagAggregator.GetTags(span, cancellationToken.Value) : tagAggregator.GetTags(span);
+			var tags = !(cancellationToken is null) ? tagAggregator.GetTags(span, cancellationToken.Value) : tagAggregator.GetTags(span);
 			foreach (var mspan in tags) {
 				foreach (var s in mspan.Span.GetSpans(textBuffer)) {
 					var overlap = span.Overlap(s.TranslateTo(targetSnapshot, SpanTrackingMode.EdgeExclusive));
-					if (overlap != null)
+					if (!(overlap is null))
 						list.Add(new ClassificationSpan(overlap.Value, mspan.Tag.ClassificationType));
 				}
 			}

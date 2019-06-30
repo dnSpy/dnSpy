@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -43,9 +43,9 @@ namespace dnSpy.Hex {
 		readonly HexBufferImpl hexBufferImpl;
 		readonly List<HexChange> changes;
 		readonly int? reiteratedVersionNumber;
-		readonly object editTag;
+		readonly object? editTag;
 
-		public HexEditImpl(HexBufferImpl hexBufferImpl, int? reiteratedVersionNumber, object editTag) {
+		public HexEditImpl(HexBufferImpl hexBufferImpl, int? reiteratedVersionNumber, object? editTag) {
 			this.hexBufferImpl = hexBufferImpl ?? throw new ArgumentNullException(nameof(hexBufferImpl));
 			changes = new List<HexChange>();
 			this.reiteratedVersionNumber = reiteratedVersionNumber;

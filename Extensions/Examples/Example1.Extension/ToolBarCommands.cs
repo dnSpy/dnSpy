@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Controls;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Images;
@@ -34,6 +34,6 @@ namespace Example1.Extension {
 			comboBox.SelectedIndex = 1;
 		}
 
-		public override object GetUIObject(IToolBarItemContext context, IInputElement commandTarget) => comboBox;
+		public override object GetUIObject(IToolBarItemContext context, IInputElement? commandTarget) => comboBox;
 	}
 }

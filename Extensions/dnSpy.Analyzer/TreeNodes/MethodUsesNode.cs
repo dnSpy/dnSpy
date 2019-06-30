@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
+// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
@@ -38,7 +38,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
 			output.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.UsesTreeNode);
 
-		struct DefRef<T> where T : IDnlibDef {
+		readonly struct DefRef<T> where T : IDnlibDef {
 			public readonly T Def;
 			public readonly SourceRef SourceRef;
 			public DefRef(T def, SourceRef sourceRef) {
@@ -60,7 +60,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			foreach (Instruction instr in analyzedMethod.Body.Instructions) {
 				if (instr.Operand is IMethod mr && !mr.IsField) {
 					MethodDef def = mr.ResolveMethodDef();
-					if (def != null)
+					if (!(def is null))
 						yield return new DefRef<MethodDef>(def, new SourceRef(analyzedMethod, instr.Offset, instr.Operand as IMDTokenProvider));
 				}
 			}
@@ -70,7 +70,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			foreach (Instruction instr in analyzedMethod.Body.Instructions) {
 				if (instr.Operand is IField fr && !fr.IsMethod) {
 					FieldDef def = fr.ResolveFieldDef();
-					if (def != null)
+					if (!(def is null))
 						yield return new DefRef<FieldDef>(def, new SourceRef(analyzedMethod, instr.Offset, instr.Operand as IMDTokenProvider));
 				}
 			}

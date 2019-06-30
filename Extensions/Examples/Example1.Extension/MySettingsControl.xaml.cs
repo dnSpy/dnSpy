@@ -1,4 +1,4 @@
-﻿using System.Windows.Controls;
+using System.Windows.Controls;
 
 namespace Example1.Extension {
 	public partial class MySettingsControl : UserControl {

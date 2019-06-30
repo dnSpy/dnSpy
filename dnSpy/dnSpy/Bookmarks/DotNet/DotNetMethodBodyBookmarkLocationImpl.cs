@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,7 +28,7 @@ namespace dnSpy.Bookmarks.DotNet {
 		public override uint Token { get; }
 		public override uint Offset { get; }
 
-		public DotNetBookmarkLocationFormatter Formatter { get; set; }
+		public DotNetBookmarkLocationFormatter? Formatter { get; set; }
 
 		public DotNetMethodBodyBookmarkLocationImpl(ModuleId module, uint token, uint offset) {
 			Module = module;
@@ -38,7 +38,7 @@ namespace dnSpy.Bookmarks.DotNet {
 
 		protected override void CloseCore() { }
 
-		public override bool Equals(object obj) =>
+		public override bool Equals(object? obj) =>
 			obj is DotNetMethodBodyBookmarkLocationImpl other &&
 			Module == other.Module &&
 			Token == other.Token &&

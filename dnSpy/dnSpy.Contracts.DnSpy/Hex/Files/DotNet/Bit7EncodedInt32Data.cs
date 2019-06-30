@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -41,7 +41,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		public override void WriteValue(HexFieldFormatter formatter) {
 			var pos = Span.Span.Start;
 			var value = Utils.Read7BitEncodedInt32(Span.Buffer, ref pos);
-			if (value == null)
+			if (value is null)
 				formatter.WriteUnknownValue();
 			else
 				formatter.WriteInt32(value.Value);

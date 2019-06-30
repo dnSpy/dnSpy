@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,7 +35,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			if (caretPos.Affinity == PositionAffinity.Predecessor && pos.Position != 0) {
 				pos = pos - 1;
 				var prevSpanData = spanReferenceCollection.Find(pos.Position);
-				if (prevSpanData == null || prevSpanData.Value.Span.End != pos.Position)
+				if (prevSpanData is null || prevSpanData.Value.Span.End != pos.Position)
 					return prevSpanData;
 				else
 					return null;

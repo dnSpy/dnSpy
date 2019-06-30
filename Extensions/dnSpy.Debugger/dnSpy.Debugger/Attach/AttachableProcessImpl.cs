@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,7 +23,7 @@ using dnSpy.Contracts.Debugger.Attach;
 
 namespace dnSpy.Debugger.Attach {
 	sealed class AttachableProcessImpl : AttachableProcess {
-		public override ulong ProcessId => attachableProcessInfo.ProcessId;
+		public override int ProcessId => attachableProcessInfo.ProcessId;
 		public override RuntimeId RuntimeId => attachableProcessInfo.RuntimeId;
 		public override Guid RuntimeGuid => attachableProcessInfo.RuntimeGuid;
 		public override Guid RuntimeKindGuid => attachableProcessInfo.RuntimeKindGuid;
@@ -31,7 +31,8 @@ namespace dnSpy.Debugger.Attach {
 		public override string Name => attachableProcessInfo.Name;
 		public override string Title => attachableProcessInfo.Title;
 		public override string Filename => attachableProcessInfo.Filename;
-		public override string Architecture => attachableProcessInfo.Architecture;
+		public override DbgArchitecture Architecture => attachableProcessInfo.Architecture;
+		public override DbgOperatingSystem OperatingSystem => attachableProcessInfo.OperatingSystem;
 
 		readonly DbgManager dbgManager;
 		readonly AttachProgramOptions attachProgramOptions;

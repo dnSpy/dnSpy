@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,7 +29,7 @@ namespace dnSpy.Text {
 		int position;
 
 		public TrackingPoint(ITextVersion textVersion, int position, PointTrackingMode trackingMode, TrackingFidelityMode trackingFidelity) {
-			if (textVersion == null)
+			if (textVersion is null)
 				throw new ArgumentNullException(nameof(textVersion));
 			if ((uint)position > (uint)textVersion.Length)
 				throw new ArgumentOutOfRangeException(nameof(position));
@@ -44,7 +44,7 @@ namespace dnSpy.Text {
 		public SnapshotPoint GetPoint(ITextSnapshot snapshot) => new SnapshotPoint(snapshot, GetPosition(snapshot.Version));
 		public int GetPosition(ITextSnapshot snapshot) => GetPosition(snapshot.Version);
 		public int GetPosition(ITextVersion version) {
-			if (version == null)
+			if (version is null)
 				throw new ArgumentNullException(nameof(version));
 			if (version == textVersion)
 				return position;

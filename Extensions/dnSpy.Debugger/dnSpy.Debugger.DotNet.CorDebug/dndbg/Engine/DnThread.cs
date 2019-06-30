@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,9 +21,6 @@ using System.Collections.Generic;
 using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
-	/// <summary>
-	/// A debugged .NET thread
-	/// </summary>
 	sealed class DnThread {
 		public CorThread CorThread { get; }
 
@@ -37,58 +34,21 @@ namespace dndbg.Engine {
 		/// </summary>
 		public int UniqueIdProcess { get; }
 
-		/// <summary>
-		/// Gets the thread ID (calls ICorDebugThread::GetID()). This is not necessarily the OS
-		/// thread ID in V2 or later, see <see cref="VolatileThreadId"/>
-		/// </summary>
 		public int ThreadId => CorThread.ThreadId;
-
-		/// <summary>
-		/// Gets the OS thread ID (calls ICorDebugThread2::GetVolatileOSThreadID()) or -1. This value
-		/// can change during execution of the thread.
-		/// </summary>
 		public int VolatileThreadId => CorThread.VolatileThreadId;
-
-		/// <summary>
-		/// true if the thread has exited
-		/// </summary>
 		public bool HasExited { get; private set; }
 
-		/// <summary>
-		/// Gets the AppDomain or null if none
-		/// </summary>
-		public DnAppDomain AppDomainOrNull {
+		public DnAppDomain? AppDomainOrNull {
 			get {
 				var comAppDomain = CorThread.AppDomain;
-				return comAppDomain == null ? null : Process.TryGetValidAppDomain(comAppDomain.RawObject);
+				return comAppDomain is null ? null : Process.TryGetValidAppDomain(comAppDomain.RawObject);
 			}
 		}
 
-		/// <summary>
-		/// Gets the owner debugger
-		/// </summary>
 		public DnDebugger Debugger => Process.Debugger;
-
-		/// <summary>
-		/// Gets the owner process
-		/// </summary>
 		public DnProcess Process { get; }
-
-		/// <summary>
-		/// Gets all chains
-		/// </summary>
 		public IEnumerable<CorChain> Chains => CorThread.Chains;
-
-		/// <summary>
-		/// Gets all frames in all chains
-		/// </summary>
 		public IEnumerable<CorFrame> AllFrames => CorThread.AllFrames;
-
-		/// <summary>
-		/// Gets all frames in all chains
-		/// </summary>
-		/// <param name="frames">Frames buffer</param>
-		/// <returns></returns>
 		public IEnumerable<CorFrame> GetAllFrames(ICorDebugFrame[] frames) => CorThread.GetAllFrames(frames);
 
 		internal DnThread(DnProcess ownerProcess, ICorDebugThread thread, int uniqueId, int uniqueIdProcess) {
@@ -109,6 +69,6 @@ namespace dndbg.Engine {
 
 		internal void NameChanged() { }
 
-		public override string ToString() => string.Format("{0} {1} {2}", UniqueId, ThreadId, VolatileThreadId);
+		public override string ToString() => $"{UniqueId} {ThreadId} {VolatileThreadId}";
 	}
 }

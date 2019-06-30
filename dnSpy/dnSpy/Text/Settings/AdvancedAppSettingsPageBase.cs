@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,22 +18,18 @@
 */
 
 using System;
-using System.ComponentModel;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Properties;
 
 namespace dnSpy.Text.Settings {
-	abstract class AdvancedAppSettingsPageBase : AppSettingsPage, INotifyPropertyChanged {
+	abstract class AdvancedAppSettingsPageBase : AppSettingsPage {
 		public sealed override string Title => dnSpy_Resources.AdvancedSettings;
-		public sealed override object UIObject => this;
-
-		public event PropertyChangedEventHandler PropertyChanged;
-		protected void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+		public sealed override object? UIObject => this;
 
 		public bool ReferenceHighlighting {
-			get { return referenceHighlighting; }
+			get => referenceHighlighting;
 			set {
 				if (referenceHighlighting != value) {
 					referenceHighlighting = value;
@@ -44,7 +40,7 @@ namespace dnSpy.Text.Settings {
 		bool referenceHighlighting;
 
 		public bool HighlightRelatedKeywords {
-			get { return highlightRelatedKeywords; }
+			get => highlightRelatedKeywords;
 			set {
 				if (highlightRelatedKeywords != value) {
 					highlightRelatedKeywords = value;
@@ -55,7 +51,7 @@ namespace dnSpy.Text.Settings {
 		bool highlightRelatedKeywords;
 
 		public bool HighlightMatchingBrace {
-			get { return highlightMatchingBrace; }
+			get => highlightMatchingBrace;
 			set {
 				if (highlightMatchingBrace != value) {
 					highlightMatchingBrace = value;
@@ -66,7 +62,7 @@ namespace dnSpy.Text.Settings {
 		bool highlightMatchingBrace;
 
 		public bool LineSeparators {
-			get { return lineSeparators; }
+			get => lineSeparators;
 			set {
 				if (lineSeparators != value) {
 					lineSeparators = value;
@@ -77,7 +73,7 @@ namespace dnSpy.Text.Settings {
 		bool lineSeparators;
 
 		public bool ShowBlockStructure {
-			get { return showBlockStructure; }
+			get => showBlockStructure;
 			set {
 				if (showBlockStructure != value) {
 					showBlockStructure = value;
@@ -89,8 +85,8 @@ namespace dnSpy.Text.Settings {
 
 		public EnumListVM BlockStructureLineKindVM { get; }
 		public BlockStructureLineKind BlockStructureLineKind {
-			get { return (BlockStructureLineKind)BlockStructureLineKindVM.SelectedItem; }
-			set { BlockStructureLineKindVM.SelectedItem = value; }
+			get => (BlockStructureLineKind)BlockStructureLineKindVM.SelectedItem!;
+			set => BlockStructureLineKindVM.SelectedItem = value;
 		}
 		static readonly EnumVM[] blockStructureLineKindList = new EnumVM[5] {
 			new EnumVM(BlockStructureLineKind.Solid, dnSpy_Resources.BlockStructureLineKind_SolidLines),
@@ -102,7 +98,7 @@ namespace dnSpy.Text.Settings {
 		static string GetDashedText(int px) => dnSpy_Resources.BlockStructureLineKind_DashedLines + " (" + px.ToString() + "px)";
 
 		public bool CompressEmptyOrWhitespaceLines {
-			get { return compressEmptyOrWhitespaceLines; }
+			get => compressEmptyOrWhitespaceLines;
 			set {
 				if (compressEmptyOrWhitespaceLines != value) {
 					compressEmptyOrWhitespaceLines = value;
@@ -113,7 +109,7 @@ namespace dnSpy.Text.Settings {
 		bool compressEmptyOrWhitespaceLines;
 
 		public bool CompressNonLetterLines {
-			get { return compressNonLetterLines; }
+			get => compressNonLetterLines;
 			set {
 				if (compressNonLetterLines != value) {
 					compressNonLetterLines = value;
@@ -124,7 +120,7 @@ namespace dnSpy.Text.Settings {
 		bool compressNonLetterLines;
 
 		public bool MinimumLineSpacing {
-			get { return minimumLineSpacing; }
+			get => minimumLineSpacing;
 			set {
 				if (minimumLineSpacing != value) {
 					minimumLineSpacing = value;
@@ -135,7 +131,7 @@ namespace dnSpy.Text.Settings {
 		bool minimumLineSpacing;
 
 		public bool SelectionMargin {
-			get { return selectionMargin; }
+			get => selectionMargin;
 			set {
 				if (selectionMargin != value) {
 					selectionMargin = value;
@@ -146,7 +142,7 @@ namespace dnSpy.Text.Settings {
 		bool selectionMargin;
 
 		public bool GlyphMargin {
-			get { return glyphMargin; }
+			get => glyphMargin;
 			set {
 				if (glyphMargin != value) {
 					glyphMargin = value;
@@ -157,7 +153,7 @@ namespace dnSpy.Text.Settings {
 		bool glyphMargin;
 
 		public bool MouseWheelZoom {
-			get { return mouseWheelZoom; }
+			get => mouseWheelZoom;
 			set {
 				if (mouseWheelZoom != value) {
 					mouseWheelZoom = value;
@@ -168,7 +164,7 @@ namespace dnSpy.Text.Settings {
 		bool mouseWheelZoom;
 
 		public bool ZoomControl {
-			get { return zoomControl; }
+			get => zoomControl;
 			set {
 				if (zoomControl != value) {
 					zoomControl = value;
@@ -179,7 +175,7 @@ namespace dnSpy.Text.Settings {
 		bool zoomControl;
 
 		public bool ForceClearTypeIfNeeded {
-			get { return forceClearTypeIfNeeded; }
+			get => forceClearTypeIfNeeded;
 			set {
 				if (forceClearTypeIfNeeded != value) {
 					forceClearTypeIfNeeded = value;

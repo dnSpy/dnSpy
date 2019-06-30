@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Diagnostics;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 
@@ -27,11 +28,11 @@ namespace dnSpy.Contracts.Decompiler {
 	/// </summary>
 	public sealed class SourceLocal : ISourceVariable {
 		/// <summary>
-		/// The local or null if it's a decompiler generated local (see <see cref="IsDecompilerGenerated"/>)
+		/// The local or null
 		/// </summary>
-		public Local Local { get; }
+		public Local? Local { get; }
 
-		IVariable ISourceVariable.Variable => Local;
+		IVariable? ISourceVariable.Variable => Local;
 		bool ISourceVariable.IsLocal => true;
 		bool ISourceVariable.IsParameter => false;
 
@@ -46,20 +47,55 @@ namespace dnSpy.Contracts.Decompiler {
 		public TypeSig Type { get; }
 
 		/// <summary>
+		/// Gets the hoisted field or null if it's not a hoisted local
+		/// </summary>
+		public FieldDef? HoistedField { get; }
+
+		/// <summary>
+		/// Gets the flags
+		/// </summary>
+		public SourceVariableFlags Flags { get; }
+
+		/// <summary>
 		/// true if this is a decompiler generated local
 		/// </summary>
-		public bool IsDecompilerGenerated => Local == null;
+		public bool IsDecompilerGenerated => (Flags & SourceVariableFlags.DecompilerGenerated) != 0;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="local">Local or null if it's a decompiler generated local</param>
+		/// <param name="local">Local or null</param>
 		/// <param name="name">Name used by the decompiler</param>
 		/// <param name="type">Type of local</param>
-		public SourceLocal(Local local, string name, TypeSig type) {
+		/// <param name="flags">Flags</param>
+		public SourceLocal(Local? local, string name, TypeSig type, SourceVariableFlags flags) {
+			Debug.Assert((flags & SourceVariableFlags.DecompilerGenerated) == 0);
 			Local = local;
 			Name = name ?? throw new ArgumentNullException(nameof(name));
 			Type = type ?? throw new ArgumentNullException(nameof(type));
+			// It's decompiler generated if Local is null && HoistedField is null
+			if (local is null)
+				flags |= SourceVariableFlags.DecompilerGenerated;
+			else
+				flags &= ~SourceVariableFlags.DecompilerGenerated;
+			Flags = flags;
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="local">Local or null</param>
+		/// <param name="name">Name used by the decompiler</param>
+		/// <param name="hoistedField">Hoisted field</param>
+		/// <param name="flags">Flags</param>
+		public SourceLocal(Local? local, string name, FieldDef hoistedField, SourceVariableFlags flags) {
+			Debug.Assert((flags & SourceVariableFlags.DecompilerGenerated) == 0);
+			Local = local;
+			Name = name ?? throw new ArgumentNullException(nameof(name));
+			HoistedField = hoistedField ?? throw new ArgumentNullException(nameof(hoistedField));
+			Type = hoistedField.FieldType;
+			// It's decompiler generated if Local is null && HoistedField is null
+			Flags = flags & ~SourceVariableFlags.DecompilerGenerated;
 		}
 	}
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.Composition;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -71,29 +71,29 @@ namespace Example1.Extension {
 	sealed class TextEditorCommand3 : MenuItemBase {
 		public override void Execute(IMenuItemContext context) {
 			var md = GetTokenObj(context);
-			if (md != null) {
+			if (!(md is null)) {
 				try {
-					Clipboard.SetText(string.Format("{0:X8}", md.MDToken.Raw));
+					Clipboard.SetText($"{md.MDToken.Raw:X8}");
 				}
 				catch (ExternalException) { }
 			}
 		}
 
-		public override string GetHeader(IMenuItemContext context) {
+		public override string? GetHeader(IMenuItemContext context) {
 			var md = GetTokenObj(context);
-			if (md == null)
+			if (md is null)
 				return "Copy token";
-			return string.Format("Copy token {0:X8}", md.MDToken.Raw);
+			return $"Copy token {md.MDToken.Raw:X8}";
 		}
 
-		IMDTokenProvider GetTokenObj(IMenuItemContext context) {
+		IMDTokenProvider? GetTokenObj(IMenuItemContext context) {
 			// Only show this in the document viewer
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
 				return null;
 
 			// All references in the text editor are stored in TextReferences
 			var textRef = context.Find<TextReference>();
-			if (textRef == null)
+			if (textRef is null)
 				return null;
 
 			return textRef.Reference as IMDTokenProvider;
@@ -101,28 +101,28 @@ namespace Example1.Extension {
 
 		// Only show this in the document viewer
 		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID);
-		public override bool IsEnabled(IMenuItemContext context) => GetTokenObj(context) != null;
+		public override bool IsEnabled(IMenuItemContext context) => !(GetTokenObj(context) is null);
 	}
 
 	[ExportMenuItem(Group = Constants.GROUP_TEXTEDITOR, Order = 30)]
 	sealed class TextEditorCommand4 : MenuItemBase {
 		public override void Execute(IMenuItemContext context) {
 			var documentViewer = GetDocumentViewer(context);
-			if (documentViewer != null) {
+			if (!(documentViewer is null)) {
 				try {
 					var lineColumn = GetLineColumn(documentViewer.Caret.Position.VirtualBufferPosition);
-					Clipboard.SetText(string.Format("Line,col: {0},{1}", lineColumn.Line + 1, lineColumn.Column + 1));
+					Clipboard.SetText($"Line,col: {lineColumn.Line + 1},{lineColumn.Column + 1}");
 				}
 				catch (ExternalException) { }
 			}
 		}
 
-		public override string GetHeader(IMenuItemContext context) {
+		public override string? GetHeader(IMenuItemContext context) {
 			var documentViewer = GetDocumentViewer(context);
-			if (documentViewer == null)
+			if (documentViewer is null)
 				return "Copy line and column";
 			var lineColumn = GetLineColumn(documentViewer.Caret.Position.VirtualBufferPosition);
-			return string.Format("Copy line,col {0},{1}", lineColumn.Line + 1, lineColumn.Column + 1);
+			return $"Copy line,col {lineColumn.Line + 1},{lineColumn.Column + 1}";
 		}
 
 		LineColumn GetLineColumn(VirtualSnapshotPoint point) {
@@ -140,7 +140,7 @@ namespace Example1.Extension {
 			}
 		}
 
-		IDocumentViewer GetDocumentViewer(IMenuItemContext context) {
+		IDocumentViewer? GetDocumentViewer(IMenuItemContext context) {
 			// Only show this in the document viewer
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
 				return null;
@@ -150,6 +150,6 @@ namespace Example1.Extension {
 
 		// Only show this in the document viewer
 		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID);
-		public override bool IsEnabled(IMenuItemContext context) => GetDocumentViewer(context) != null;
+		public override bool IsEnabled(IMenuItemContext context) => !(GetDocumentViewer(context) is null);
 	}
 }

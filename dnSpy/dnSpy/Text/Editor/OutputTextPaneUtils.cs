@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,9 +34,9 @@ namespace dnSpy.Text.Editor {
 		/// <param name="outputTextPane">Output text pane</param>
 		/// <param name="textView">Log editor text view</param>
 		public static void AddInstance(IOutputTextPane outputTextPane, ITextView textView) {
-			if (outputTextPane == null)
+			if (outputTextPane is null)
 				throw new ArgumentNullException(nameof(outputTextPane));
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			textView.Properties.AddProperty(Key, outputTextPane);
 		}
@@ -47,7 +47,7 @@ namespace dnSpy.Text.Editor {
 		/// <param name="textView">Text view</param>
 		/// <returns></returns>
 		public static IOutputTextPane TryGetInstance(ITextView textView) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			textView.Properties.TryGetProperty(Key, out IOutputTextPane outputTextPane);
 			return outputTextPane;

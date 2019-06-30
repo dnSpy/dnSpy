@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,7 +19,7 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.VisualStudio.Imaging.Interop;
+using dnSpy.Contracts.Images;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 
@@ -27,23 +27,22 @@ namespace dnSpy.Contracts.Language.Intellisense {
 	/// <summary>
 	/// A completion item
 	/// </summary>
-	public class DsCompletion : Completion4, IDsCompletion {
+	public class DsCompletion : Completion2 {
+		/// <summary>
+		/// Gets the suffix or null
+		/// </summary>
+		public string? Suffix { get; }
+
 		/// <summary>
 		/// Gets the text that is used to filter this item
 		/// </summary>
-		public string FilterText { get; protected set; }
+		public string FilterText { get; }
 
 		/// <summary>
 		/// Gets the icon
 		/// </summary>
-		public override ImageMoniker IconMoniker => iconMoniker ?? (iconMoniker = GetIconMoniker()).Value;
-		ImageMoniker? iconMoniker;
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		public DsCompletion() {
-		}
+		public virtual ImageReference ImageReference => (imageReference ??= GetImageReference()).Value;
+		ImageReference? imageReference;
 
 		/// <summary>
 		/// Constructor
@@ -52,24 +51,25 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// <param name="filterText">Text used to filter out items or null to use <paramref name="displayText"/></param>
 		/// <param name="insertionText">Text that gets inserted in the text buffer or null to use <paramref name="displayText"/></param>
 		/// <param name="description">Description or null</param>
-		/// <param name="iconMoniker">Icon moniker or null</param>
+		/// <param name="imageReference">Icon moniker or null</param>
 		/// <param name="iconAutomationText">Icon automation text or null</param>
 		/// <param name="attributeIcons">Attribute icons shown on the right side</param>
 		/// <param name="suffix">Text shown after the normal completion text</param>
-		public DsCompletion(string displayText, string filterText = null, string insertionText = null, string description = null, ImageMoniker iconMoniker = default, string iconAutomationText = null, IEnumerable<CompletionIcon2> attributeIcons = null, string suffix = null)
-			: base(displayText, insertionText, description, default, iconAutomationText, attributeIcons, suffix) {
-			if (displayText == null)
+		public DsCompletion(string displayText, string? filterText = null, string? insertionText = null, string? description = null, ImageReference imageReference = default, string? iconAutomationText = null, IEnumerable<DsCompletionIcon>? attributeIcons = null, string? suffix = null)
+			: base(displayText, insertionText, description, default, iconAutomationText, attributeIcons) {
+			if (displayText is null)
 				throw new ArgumentNullException(nameof(displayText));
 			FilterText = filterText ?? displayText;
 			InsertionText = insertionText ?? displayText;
-			this.iconMoniker = iconMoniker.Id == 0 && iconMoniker.Guid == Guid.Empty ? (ImageMoniker?)null : iconMoniker;
+			Suffix = suffix;
+			this.imageReference = imageReference.IsDefault ? (ImageReference?)null : imageReference;
 		}
 
 		/// <summary>
-		/// Gets the image reference. Only called if <see cref="IconMoniker"/> hasn't been initialized.
+		/// Gets the image reference. Only called if <see cref="ImageReference"/> hasn't been initialized.
 		/// </summary>
 		/// <returns></returns>
-		protected virtual ImageMoniker GetIconMoniker() => default;
+		protected virtual ImageReference GetImageReference() => default;
 
 		/// <summary>
 		/// Adds the new text to the text buffer

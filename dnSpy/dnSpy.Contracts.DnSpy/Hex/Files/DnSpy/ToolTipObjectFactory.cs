@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,6 +34,6 @@ namespace dnSpy.Contracts.Hex.Files.DnSpy {
 		/// </summary>
 		/// <param name="content">Content</param>
 		/// <returns></returns>
-		public abstract object Create(HexToolTipContent content);
+		public abstract object? Create(HexToolTipContent content);
 	}
 }

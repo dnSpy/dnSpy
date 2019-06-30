@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -122,7 +122,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 		bool hasCompleted;
 
-		public string CurrentItemName {
+		public string? CurrentItemName {
 			get => currentItemName;
 			set {
 				uiDispatcher.VerifyAccess();
@@ -132,7 +132,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				}
 			}
 		}
-		string currentItemName;
+		string? currentItemName;
 
 		void LoadFiles_EngineThread() {
 			bool wasCanceled;
@@ -162,7 +162,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 							continue;
 
 						UI(() => CurrentItemName = CalculateCurrentItemName(document));
-						document.ModuleDef.LoadEverything(new CancellationTokenImpl(cancellationToken));
+						document.ModuleDef!.LoadEverything(new CancellationTokenImpl(cancellationToken));
 
 						// Make sure the cache is cleared since there could be new types
 						if (document.ModuleDef.EnableTypeDefFindCache) {
@@ -185,12 +185,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public event EventHandler OnCompleted;
 
 		string CalculateCurrentItemName(DynamicModuleDefDocument document) {
-			var module = document.ModuleDef;
+			var module = document.ModuleDef!;
 			var sb = new StringBuilder();
 			sb.Append($"({Array.IndexOf(documents, document) + 1}/{documents.Length}): ");
 
 			var asm = module.Assembly;
-			if (asm != null) {
+			if (!(asm is null)) {
 				if (module.IsManifestModule)
 					sb.Append(asm.FullName);
 				else

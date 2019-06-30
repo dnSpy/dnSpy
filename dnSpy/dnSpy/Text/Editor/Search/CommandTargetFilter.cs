@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -44,12 +44,12 @@ namespace dnSpy.Text.Editor.Search {
 			return CommandTargetStatus.NotHandled;
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args = null) {
-			object result = null;
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args = null) {
+			object? result = null;
 			return Execute(group, cmdId, args, ref result);
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) {
 			if (group == CommandConstants.StandardGroup) {
 				switch ((StandardIds)cmdId) {
 				case StandardIds.Find:
@@ -99,12 +99,12 @@ namespace dnSpy.Text.Editor.Search {
 
 		public CommandTargetStatus CanExecute(Guid group, int cmdId) => searchService.CanExecuteSearchControl(group, cmdId);
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args = null) {
-			object result = null;
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args = null) {
+			object? result = null;
 			return Execute(group, cmdId, args, ref result);
 		}
 
-		public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) =>
+		public CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) =>
 			searchService.ExecuteSearchControl(group, cmdId, args, ref result);
 
 		public void SetNextCommandTarget(ICommandTarget commandTarget) { }

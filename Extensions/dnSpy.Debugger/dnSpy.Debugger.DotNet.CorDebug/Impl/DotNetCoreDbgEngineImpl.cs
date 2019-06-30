@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,6 +26,7 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using dnSpy.Contracts.Debugger.Engine;
+using dnSpy.Debugger.DotNet.CorDebug.Impl.Attach;
 using dnSpy.Debugger.DotNet.CorDebug.Properties;
 using dnSpy.Debugger.DotNet.CorDebug.Utilities;
 
@@ -37,11 +38,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		public override DbgEngineRuntimeInfo RuntimeInfo {
 			get {
-				Debug.Assert(runtimeInfo != null);
+				Debug.Assert(!(runtimeInfo is null));
 				return runtimeInfo;
 			}
 		}
-		DbgEngineRuntimeInfo runtimeInfo;
+		DbgEngineRuntimeInfo? runtimeInfo;
 
 		int Bitness => IntPtr.Size * 8;
 
@@ -58,8 +59,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		protected override CLRTypeDebugInfo CreateDebugInfo(CorDebugStartDebuggingOptions options) {
 			var dncOptions = (DotNetCoreStartDebuggingOptions)options;
-			string hostFilename;
-			if (string.IsNullOrWhiteSpace(dncOptions.Host)) {
+			string? hostFilename;
+			if (!dncOptions.UseHost)
+				hostFilename = null;
+			else if (string.IsNullOrWhiteSpace(dncOptions.Host)) {
 				hostFilename = DotNetCoreHelpers.GetPathToDotNetExeHost(Bitness);
 				if (!File.Exists(hostFilename))
 					throw new Exception(string.Format(dnSpy_Debugger_DotNet_CorDebug_Resources.Error_CouldNotFindDotNetCoreHost, DotNetCoreHelpers.DotNetExeName));
@@ -84,9 +87,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	}
 
 	sealed class DotNetCoreRuntimeId : RuntimeId {
-		readonly string version;
-		public DotNetCoreRuntimeId(string version) => this.version = version;
-		public override bool Equals(object obj) => obj is DotNetCoreRuntimeId other && StringComparer.Ordinal.Equals(version, other.version);
+		readonly string? version;
+		public DotNetCoreRuntimeId(string? version) => this.version = version;
+		public override bool Equals(object? obj) => obj is DotNetCoreRuntimeId other && StringComparer.Ordinal.Equals(version, other.version);
 		public override int GetHashCode() => StringComparer.Ordinal.GetHashCode(version);
 	}
 }

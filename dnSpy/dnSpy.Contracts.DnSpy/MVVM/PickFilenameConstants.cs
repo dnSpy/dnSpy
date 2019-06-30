@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -17,14 +17,14 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Properties;
+using dnSpy.Contracts.DnSpy.Properties;
 
 namespace dnSpy.Contracts.MVVM {
 	/// <summary>
 	/// Pick filename constants
 	/// </summary>
 	public static class PickFilenameConstants {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static readonly string ImagesFilter = $"{dnSpy_Contracts_DnSpy_Resources.Files_Images}|*.png;*.gif;*.bmp;*.dib;*.jpg;*.jpeg;*.jpe;*.jif;*.jfif;*.jfi;*.ico;*.cur|{dnSpy_Contracts_DnSpy_Resources.AllFiles} (*.*)|*.*";
 		public static readonly string StrongNameKeyFilter = $"{dnSpy_Contracts_DnSpy_Resources.Files_StrongNameKeyFiles} (*.snk)|*.snk|{dnSpy_Contracts_DnSpy_Resources.AllFiles} (*.*)|*.*";
 		public static readonly string AnyFilenameFilter = $"{dnSpy_Contracts_DnSpy_Resources.AllFiles} (*.*)|*.*";
@@ -33,6 +33,6 @@ namespace dnSpy.Contracts.MVVM {
 		public static readonly string NetModuleFilter = $"{dnSpy_Contracts_DnSpy_Resources.Files_DotNetNetModules} (*.netmodule)|*.netmodule|{dnSpy_Contracts_DnSpy_Resources.AllFiles} (*.*)|*.*";
 		public static readonly string ExecutableFilter = $"{dnSpy_Contracts_DnSpy_Resources.Files_Executables} (*.exe)|*.exe|{dnSpy_Contracts_DnSpy_Resources.AllFiles} (*.*)|*.*";
 		public static readonly string XmlFilenameFilter = $"{dnSpy_Contracts_DnSpy_Resources.Files_XmlFiles} (*.xml)|*.xml|{dnSpy_Contracts_DnSpy_Resources.AllFiles} (*.*)|*.*";
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

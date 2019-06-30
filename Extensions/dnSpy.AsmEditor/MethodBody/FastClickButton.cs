@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,7 +26,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 	sealed class FastClickButton : Button {
 		protected override void OnClick() {
 			var cmd = Command;
-			if (cmd != null) {
+			if (!(cmd is null)) {
 				if (cmd.CanExecute(CommandParameter))
 					cmd.Execute(CommandParameter);
 			}

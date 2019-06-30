@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -44,9 +44,9 @@ namespace dnSpy.Language.Intellisense {
 			this.classificationFormatMapService = classificationFormatMapService;
 		}
 
-		public IIntellisensePresenter TryCreateIntellisensePresenter(IIntellisenseSession session) {
+		public IIntellisensePresenter? TryCreateIntellisensePresenter(IIntellisenseSession session) {
 			var signatureHelpSession = session as ISignatureHelpSession;
-			if (signatureHelpSession == null)
+			if (signatureHelpSession is null)
 				return null;
 			return new SignatureHelpPresenter(signatureHelpSession, textBufferFactoryService, contentTypeRegistryService, classifierAggregatorService, classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc));
 		}

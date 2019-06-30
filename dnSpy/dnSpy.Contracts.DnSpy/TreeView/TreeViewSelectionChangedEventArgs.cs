@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -39,7 +39,7 @@ namespace dnSpy.Contracts.TreeView {
 		/// </summary>
 		/// <param name="added">Added nodes or null</param>
 		/// <param name="removed">Removed nodes or null</param>
-		public TreeViewSelectionChangedEventArgs(TreeNodeData[] added, TreeNodeData[] removed) {
+		public TreeViewSelectionChangedEventArgs(TreeNodeData[]? added, TreeNodeData[]? removed) {
 			Added = added ?? Array.Empty<TreeNodeData>();
 			Removed = removed ?? Array.Empty<TreeNodeData>();
 		}

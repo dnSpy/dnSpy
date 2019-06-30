@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,7 +28,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Dummy abstract method to make sure no-one outside this assembly can create their own <see cref="DmdAppDomain"/>
 		/// </summary>
-		internal abstract void YouCantDeriveFromThisClass();
+		private protected abstract void YouCantDeriveFromThisClass();
 
 		/// <summary>
 		/// Gets the runtime
@@ -62,7 +62,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="assemblyLocation">Location of the assembly or an empty string (<see cref="DmdAssembly.Location"/>)</param>
 		/// <param name="assemblySimpleName">The assembly's simple name or null if it's unknown</param>
 		/// <returns></returns>
-		public DmdAssembly CreateSyntheticAssembly(Func<DmdLazyMetadataBytes> getMetadata, bool isInMemory, bool isDynamic, string fullyQualifiedName, string assemblyLocation, string assemblySimpleName) =>
+		public DmdAssembly CreateSyntheticAssembly(Func<DmdLazyMetadataBytes> getMetadata, bool isInMemory, bool isDynamic, string fullyQualifiedName, string assemblyLocation, string? assemblySimpleName) =>
 			CreateAssembly(getMetadata, isInMemory, isDynamic, fullyQualifiedName, assemblyLocation, assemblySimpleName: assemblySimpleName, isSynthetic: true, addAssembly: false);
 
 		/// <summary>
@@ -77,7 +77,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="isSynthetic">true if it's a synthetic assembly; it's not loaded in the debugged process</param>
 		/// <param name="addAssembly">true if the assembly should be added to the AppDomain</param>
 		/// <returns></returns>
-		public DmdAssembly CreateAssembly(Func<DmdLazyMetadataBytes> getMetadata, bool isInMemory, bool isDynamic, string fullyQualifiedName, string assemblyLocation, string assemblySimpleName, bool isSynthetic, bool addAssembly) =>
+		public DmdAssembly CreateAssembly(Func<DmdLazyMetadataBytes> getMetadata, bool isInMemory, bool isDynamic, string fullyQualifiedName, string assemblyLocation, string? assemblySimpleName, bool isSynthetic, bool addAssembly) =>
 			CreateAssembly(getMetadata, new DmdCreateAssemblyInfo(isInMemory, isDynamic, isSynthetic, addAssembly, fullyQualifiedName, assemblyLocation, assemblySimpleName));
 
 		/// <summary>
@@ -98,8 +98,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>). See <see cref="DmdModule.GetFullyQualifiedName(bool, bool, string)"/></param>
 		/// <param name="assemblyLocation">Location of the assembly or an empty string (<see cref="DmdAssembly.Location"/>)</param>
 		/// <returns></returns>
-		public DmdAssembly CreateAssembly(string filename, bool isFileLayout = true, bool isInMemory = false, bool isDynamic = false, string fullyQualifiedName = null, string assemblyLocation = null) {
-			if (filename == null)
+		public DmdAssembly CreateAssembly(string filename, bool isFileLayout = true, bool isInMemory = false, bool isDynamic = false, string? fullyQualifiedName = null, string? assemblyLocation = null) {
+			if (filename is null)
 				throw new ArgumentNullException(nameof(filename));
 			return CreateAssembly(() => new DmdLazyMetadataBytesFile(filename, isFileLayout), isInMemory, isDynamic, fullyQualifiedName ?? filename, assemblyLocation ?? filename);
 		}
@@ -129,7 +129,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="assemblyLocation">Location of the assembly or an empty string (<see cref="DmdAssembly.Location"/>)</param>
 		/// <returns></returns>
 		public DmdAssembly CreateAssembly(byte[] assemblyBytes, bool isFileLayout, bool isInMemory, bool isDynamic, string fullyQualifiedName, string assemblyLocation) {
-			if (assemblyBytes == null)
+			if (assemblyBytes is null)
 				throw new ArgumentNullException(nameof(assemblyBytes));
 			return CreateAssembly(() => new DmdLazyMetadataBytesArray(assemblyBytes, isFileLayout), isInMemory, isDynamic, fullyQualifiedName, assemblyLocation);
 		}
@@ -145,12 +145,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>). See <see cref="DmdModule.GetFullyQualifiedName(bool, bool, string)"/></param>
 		/// <param name="assemblyLocation">Location of the assembly or an empty string (<see cref="DmdAssembly.Location"/>)</param>
 		/// <returns></returns>
-		public DmdAssembly CreateAssembly(object comMetadata, DmdDynamicModuleHelper dynamicModuleHelper, DmdDispatcher dispatcher, bool isInMemory, bool isDynamic, string fullyQualifiedName, string assemblyLocation = null) {
-			if (comMetadata == null)
+		public DmdAssembly CreateAssembly(object comMetadata, DmdDynamicModuleHelper dynamicModuleHelper, DmdDispatcher dispatcher, bool isInMemory, bool isDynamic, string fullyQualifiedName, string? assemblyLocation = null) {
+			if (comMetadata is null)
 				throw new ArgumentNullException(nameof(comMetadata));
-			if (dynamicModuleHelper == null)
+			if (dynamicModuleHelper is null)
 				throw new ArgumentNullException(nameof(dynamicModuleHelper));
-			if (dispatcher == null)
+			if (dispatcher is null)
 				throw new ArgumentNullException(nameof(dispatcher));
 			var mdi = comMetadata as Impl.COMD.IMetaDataImport2 ?? throw new ArgumentException("Only IMetaDataImport is supported");
 			return CreateAssembly(() => new DmdLazyMetadataBytesCom(mdi, dynamicModuleHelper, dispatcher), isInMemory, isDynamic, fullyQualifiedName, assemblyLocation ?? string.Empty);
@@ -177,8 +177,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="isDynamic">true if it's a dynamic module (types can be added at runtime) (<see cref="DmdModule.IsDynamic"/>)</param>
 		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>). See <see cref="DmdModule.GetFullyQualifiedName(bool, bool, string)"/></param>
 		/// <returns></returns>
-		public DmdModule CreateModule(DmdAssembly assembly, string filename, bool isFileLayout = true, bool isInMemory = false, bool isDynamic = false, string fullyQualifiedName = null) {
-			if (filename == null)
+		public DmdModule CreateModule(DmdAssembly assembly, string filename, bool isFileLayout = true, bool isInMemory = false, bool isDynamic = false, string? fullyQualifiedName = null) {
+			if (filename is null)
 				throw new ArgumentNullException(nameof(filename));
 			return CreateModule(assembly, () => new DmdLazyMetadataBytesFile(filename, isFileLayout), isInMemory, isDynamic, fullyQualifiedName ?? filename);
 		}
@@ -208,7 +208,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>). See <see cref="DmdModule.GetFullyQualifiedName(bool, bool, string)"/></param>
 		/// <returns></returns>
 		public DmdModule CreateModule(DmdAssembly assembly, byte[] moduleBytes, bool isFileLayout, bool isInMemory, bool isDynamic, string fullyQualifiedName) {
-			if (moduleBytes == null)
+			if (moduleBytes is null)
 				throw new ArgumentNullException(nameof(moduleBytes));
 			return CreateModule(assembly, () => new DmdLazyMetadataBytesArray(moduleBytes, isFileLayout), isInMemory, isDynamic, fullyQualifiedName);
 		}
@@ -225,11 +225,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>). See <see cref="DmdModule.GetFullyQualifiedName(bool, bool, string)"/></param>
 		/// <returns></returns>
 		public DmdModule CreateModule(DmdAssembly assembly, object comMetadata, DmdDynamicModuleHelper dynamicModuleHelper, DmdDispatcher dispatcher, bool isInMemory, bool isDynamic, string fullyQualifiedName) {
-			if (comMetadata == null)
+			if (comMetadata is null)
 				throw new ArgumentNullException(nameof(comMetadata));
-			if (dynamicModuleHelper == null)
+			if (dynamicModuleHelper is null)
 				throw new ArgumentNullException(nameof(dynamicModuleHelper));
-			if (dispatcher == null)
+			if (dispatcher is null)
 				throw new ArgumentNullException(nameof(dispatcher));
 			var mdi = comMetadata as Impl.COMD.IMetaDataImport2 ?? throw new ArgumentException("Only IMetaDataImport is supported");
 			return CreateModule(assembly, () => new DmdLazyMetadataBytesCom(mdi, dynamicModuleHelper, dispatcher), isInMemory, isDynamic, fullyQualifiedName);
@@ -257,7 +257,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Adds and removes an assembly
 		/// </summary>
-		public struct TemporaryAssemblyDisposable : IDisposable {
+		public readonly struct TemporaryAssemblyDisposable : IDisposable {
 			readonly DmdAssembly assembly;
 			internal TemporaryAssemblyDisposable(DmdAssembly assembly) {
 				this.assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
@@ -288,14 +288,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="simpleName">Simple name of the assembly, eg. "System"</param>
 		/// <returns></returns>
-		public abstract DmdAssembly GetAssembly(string simpleName);
+		public abstract DmdAssembly? GetAssembly(string simpleName);
 
 		/// <summary>
 		/// Gets an assembly or returns null if there's no such assembly
 		/// </summary>
 		/// <param name="name">Assembly name</param>
 		/// <returns></returns>
-		public abstract DmdAssembly GetAssembly(IDmdAssemblyName name);
+		public abstract DmdAssembly? GetAssembly(IDmdAssemblyName name);
 
 		/// <summary>
 		/// Loads an assembly
@@ -303,7 +303,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="assemblyName">Full assembly name</param>
 		/// <returns></returns>
-		public DmdAssembly Load(object context, string assemblyName) => Load(context, new DmdReadOnlyAssemblyName(assemblyName));
+		public DmdAssembly? Load(object? context, string assemblyName) => Load(context, new DmdReadOnlyAssemblyName(assemblyName));
 
 		/// <summary>
 		/// Loads an assembly
@@ -311,7 +311,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="name">Assembly name</param>
 		/// <returns></returns>
-		public abstract DmdAssembly Load(object context, IDmdAssemblyName name);
+		public abstract DmdAssembly? Load(object? context, IDmdAssemblyName name);
 
 		/// <summary>
 		/// Loads an assembly. Will fail on .NET Core 1.x (but not on .NET Core 2.x or later)
@@ -319,7 +319,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="assemblyFile">Assembly name or path to assembly</param>
 		/// <returns></returns>
-		public abstract DmdAssembly LoadFrom(object context, string assemblyFile);
+		public abstract DmdAssembly? LoadFrom(object? context, string assemblyFile);
 
 		/// <summary>
 		/// Loads an assembly. Will fail on .NET Core 1.x (but not on .NET Core 2.x or later)
@@ -327,26 +327,26 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="context">Evaluation context</param>
 		/// <param name="path">Path to assembly</param>
 		/// <returns></returns>
-		public abstract DmdAssembly LoadFile(object context, string path);
+		public abstract DmdAssembly? LoadFile(object? context, string path);
 
 		/// <summary>
 		/// Gets the core library (eg. mscorlib if it's .NET Framework)
 		/// </summary>
-		public abstract DmdAssembly CorLib { get; }
+		public abstract DmdAssembly? CorLib { get; }
 
 		/// <summary>
 		/// Checks if a well known type exists in one of the loaded assemblies
 		/// </summary>
 		/// <param name="wellKnownType">Well known type</param>
 		/// <returns></returns>
-		public bool HasWellKnownType(DmdWellKnownType wellKnownType) => (object)GetWellKnownType(wellKnownType, isOptional: true) != null;
+		public bool HasWellKnownType(DmdWellKnownType wellKnownType) => !(GetWellKnownType(wellKnownType, isOptional: true) is null);
 
 		/// <summary>
 		/// Gets a well known type
 		/// </summary>
 		/// <param name="wellKnownType">Well known type</param>
 		/// <returns></returns>
-		public DmdType GetWellKnownType(DmdWellKnownType wellKnownType) => GetWellKnownType(wellKnownType, isOptional: false);
+		public DmdType GetWellKnownType(DmdWellKnownType wellKnownType) => GetWellKnownType(wellKnownType, isOptional: false)!;
 
 		/// <summary>
 		/// Gets a well known type
@@ -354,12 +354,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="wellKnownType">Well known type</param>
 		/// <param name="isOptional">Used if the type couldn't be found. If true, null is returned, and if false, an exception is thrown</param>
 		/// <returns></returns>
-		public DmdType GetWellKnownType(DmdWellKnownType wellKnownType, bool isOptional) =>
+		public DmdType? GetWellKnownType(DmdWellKnownType wellKnownType, bool isOptional) =>
 			GetWellKnownType(wellKnownType, isOptional, onlyCorlib: false);
 
-		internal abstract DmdType GetWellKnownType(DmdWellKnownType wellKnownType, bool isOptional, bool onlyCorlib);
+		internal abstract DmdType? GetWellKnownType(DmdWellKnownType wellKnownType, bool isOptional, bool onlyCorlib);
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public DmdType System_Object => GetWellKnownType(DmdWellKnownType.System_Object);
 		public DmdType System_Enum => GetWellKnownType(DmdWellKnownType.System_Enum);
 		public DmdType System_MulticastDelegate => GetWellKnownType(DmdWellKnownType.System_MulticastDelegate);
@@ -404,7 +404,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public DmdType System_IAsyncResult => GetWellKnownType(DmdWellKnownType.System_IAsyncResult);
 		public DmdType System_AsyncCallback => GetWellKnownType(DmdWellKnownType.System_AsyncCallback);
 		public DmdType System_Type => GetWellKnownType(DmdWellKnownType.System_Type);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Returns a cached type if present else the input type
@@ -421,7 +421,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="customModifiers">Custom modifiers or null</param>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DmdType MakePointerType(DmdType elementType, IList<DmdCustomModifier> customModifiers, DmdMakeTypeOptions options = DmdMakeTypeOptions.None);
+		public abstract DmdType MakePointerType(DmdType elementType, IList<DmdCustomModifier>? customModifiers, DmdMakeTypeOptions options = DmdMakeTypeOptions.None);
 
 		/// <summary>
 		/// Makes a by-ref type
@@ -430,7 +430,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="customModifiers">Custom modifiers or null</param>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DmdType MakeByRefType(DmdType elementType, IList<DmdCustomModifier> customModifiers, DmdMakeTypeOptions options = DmdMakeTypeOptions.None);
+		public abstract DmdType MakeByRefType(DmdType elementType, IList<DmdCustomModifier>? customModifiers, DmdMakeTypeOptions options = DmdMakeTypeOptions.None);
 
 		/// <summary>
 		/// Makes a SZ array type
@@ -439,7 +439,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="customModifiers">Custom modifiers or null</param>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DmdType MakeArrayType(DmdType elementType, IList<DmdCustomModifier> customModifiers, DmdMakeTypeOptions options = DmdMakeTypeOptions.None);
+		public abstract DmdType MakeArrayType(DmdType elementType, IList<DmdCustomModifier>? customModifiers, DmdMakeTypeOptions options = DmdMakeTypeOptions.None);
 
 		/// <summary>
 		/// Makes a multi-dimensional array type
@@ -451,7 +451,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="customModifiers">Custom modifiers or null</param>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DmdType MakeArrayType(DmdType elementType, int rank, IList<int> sizes, IList<int> lowerBounds, IList<DmdCustomModifier> customModifiers, DmdMakeTypeOptions options = DmdMakeTypeOptions.None);
+		public abstract DmdType MakeArrayType(DmdType elementType, int rank, IList<int> sizes, IList<int> lowerBounds, IList<DmdCustomModifier>? customModifiers, DmdMakeTypeOptions options = DmdMakeTypeOptions.None);
 
 		/// <summary>
 		/// Makes a generic type
@@ -461,7 +461,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="customModifiers">Custom modifiers or null</param>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DmdType MakeGenericType(DmdType genericTypeDefinition, IList<DmdType> typeArguments, IList<DmdCustomModifier> customModifiers, DmdMakeTypeOptions options = DmdMakeTypeOptions.None);
+		public abstract DmdType MakeGenericType(DmdType genericTypeDefinition, IList<DmdType> typeArguments, IList<DmdCustomModifier>? customModifiers, DmdMakeTypeOptions options = DmdMakeTypeOptions.None);
 
 		/// <summary>
 		/// Makes a generic method
@@ -479,7 +479,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="customModifiers">Custom modifiers or null</param>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DmdType MakeFunctionPointerType(DmdMethodSignature methodSignature, IList<DmdCustomModifier> customModifiers, DmdMakeTypeOptions options = DmdMakeTypeOptions.None);
+		public abstract DmdType MakeFunctionPointerType(DmdMethodSignature methodSignature, IList<DmdCustomModifier>? customModifiers, DmdMakeTypeOptions options = DmdMakeTypeOptions.None);
 
 		/// <summary>
 		/// Makes a function pointer type
@@ -492,7 +492,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="customModifiers">Custom modifiers or null</param>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DmdType MakeFunctionPointerType(DmdSignatureCallingConvention flags, int genericParameterCount, DmdType returnType, IList<DmdType> parameterTypes, IList<DmdType> varArgsParameterTypes, IList<DmdCustomModifier> customModifiers, DmdMakeTypeOptions options = DmdMakeTypeOptions.None);
+		public abstract DmdType MakeFunctionPointerType(DmdSignatureCallingConvention flags, int genericParameterCount, DmdType returnType, IList<DmdType> parameterTypes, IList<DmdType> varArgsParameterTypes, IList<DmdCustomModifier>? customModifiers, DmdMakeTypeOptions options = DmdMakeTypeOptions.None);
 
 		/// <summary>
 		/// Makes a generic type parameter
@@ -512,7 +512,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="customModifiers">Custom modifiers or null</param>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DmdType MakeGenericTypeParameter(int position, DmdType declaringType, string name, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier> customModifiers, DmdMakeTypeOptions options = DmdMakeTypeOptions.None);
+		public abstract DmdType MakeGenericTypeParameter(int position, DmdType declaringType, string name, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier>? customModifiers, DmdMakeTypeOptions options = DmdMakeTypeOptions.None);
 
 		/// <summary>
 		/// Makes a generic method parameter
@@ -532,21 +532,21 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="customModifiers">Custom modifiers or null</param>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DmdType MakeGenericMethodParameter(int position, DmdMethodBase declaringMethod, string name, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier> customModifiers, DmdMakeTypeOptions options = DmdMakeTypeOptions.None);
+		public abstract DmdType MakeGenericMethodParameter(int position, DmdMethodBase declaringMethod, string name, DmdGenericParameterAttributes attributes, IList<DmdCustomModifier>? customModifiers, DmdMakeTypeOptions options = DmdMakeTypeOptions.None);
 
 		/// <summary>
 		/// Gets a type
 		/// </summary>
 		/// <param name="type">Type</param>
 		/// <returns></returns>
-		public DmdType GetType(Type type) => GetType(type, DmdGetTypeOptions.None);
+		public DmdType? GetType(Type type) => GetType(type, DmdGetTypeOptions.None);
 
 		/// <summary>
 		/// Gets a type and throws if it couldn't be found
 		/// </summary>
 		/// <param name="type"></param>
 		/// <returns></returns>
-		public DmdType GetTypeThrow(Type type) => GetType(type, DmdGetTypeOptions.ThrowOnError);
+		public DmdType GetTypeThrow(Type type) => GetType(type, DmdGetTypeOptions.ThrowOnError)!;
 
 		/// <summary>
 		/// Gets a type
@@ -554,8 +554,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="type">Type</param>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public DmdType GetType(Type type, DmdGetTypeOptions options) {
-			if ((object)type == null)
+		public DmdType? GetType(Type type, DmdGetTypeOptions options) {
+			if (type is null)
 				throw new ArgumentNullException(nameof(type));
 			return GetType(type.AssemblyQualifiedName, options);
 		}
@@ -567,7 +567,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// Version, public key token and culture are optional.</param>
 		/// <param name="options">Options</param>
 		/// <returns></returns>
-		public abstract DmdType GetType(string typeName, DmdGetTypeOptions options);
+		public abstract DmdType? GetType(string typeName, DmdGetTypeOptions options);
 
 		/// <summary>
 		/// Gets a type
@@ -575,7 +575,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="typeName">Full name of the type (<see cref="DmdType.FullName"/>) or the assembly qualified name (<see cref="DmdType.AssemblyQualifiedName"/>).
 		/// Version, public key token and culture are optional.</param>
 		/// <returns></returns>
-		public DmdType GetType(string typeName) => GetType(typeName, DmdGetTypeOptions.None);
+		public DmdType? GetType(string typeName) => GetType(typeName, DmdGetTypeOptions.None);
 
 		/// <summary>
 		/// Gets a type and throws if it couldn't be found
@@ -583,7 +583,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="typeName">Full name of the type (<see cref="DmdType.FullName"/>) or the assembly qualified name (<see cref="DmdType.AssemblyQualifiedName"/>).
 		/// Version, public key token and culture are optional.</param>
 		/// <returns></returns>
-		public DmdType GetTypeThrow(string typeName) => GetType(typeName, DmdGetTypeOptions.ThrowOnError);
+		public DmdType GetTypeThrow(string typeName) => GetType(typeName, DmdGetTypeOptions.ThrowOnError)!;
 
 		/// <summary>
 		/// Creates a new instance of a type
@@ -592,7 +592,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="ctor">Constructor</param>
 		/// <param name="parameters">Parameters passed to the method</param>
 		/// <returns></returns>
-		public abstract object CreateInstance(object context, DmdConstructorInfo ctor, object[] parameters);
+		public abstract object? CreateInstance(object? context, DmdConstructorInfo ctor, object?[] parameters);
 
 		/// <summary>
 		/// Executes a method
@@ -602,7 +602,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="obj">Instance object or null if it's a static method</param>
 		/// <param name="parameters">Parameters passed to the method</param>
 		/// <returns></returns>
-		public abstract object Invoke(object context, DmdMethodBase method, object obj, object[] parameters);
+		public abstract object? Invoke(object? context, DmdMethodBase method, object? obj, object?[]? parameters);
 
 		/// <summary>
 		/// Loads a field
@@ -611,7 +611,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="field">Field</param>
 		/// <param name="obj">Instance object or null if it's a static field</param>
 		/// <returns></returns>
-		public abstract object LoadField(object context, DmdFieldInfo field, object obj);
+		public abstract object? LoadField(object? context, DmdFieldInfo field, object? obj);
 
 		/// <summary>
 		/// Stores a value in a field
@@ -620,7 +620,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="field">Field</param>
 		/// <param name="obj">Instance object or null if it's a static field</param>
 		/// <param name="value">Value to store in the field</param>
-		public abstract void StoreField(object context, DmdFieldInfo field, object obj, object value);
+		public abstract void StoreField(object? context, DmdFieldInfo field, object? obj, object? value);
 	}
 
 	/// <summary>
@@ -685,7 +685,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		Synthetic			= 0x00000004,
 
 		/// <summary>
-		/// Don't add the assembly to the app domain
+		/// Don't add the assembly to the AppDomain
 		/// </summary>
 		DontAddAssembly		= 0x00000008,
 
@@ -703,7 +703,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
 	/// Info needed when creating an assembly
 	/// </summary>
-	public struct DmdCreateAssemblyInfo {
+	public readonly struct DmdCreateAssemblyInfo {
 		/// <summary>
 		/// Gets the options
 		/// </summary>
@@ -722,7 +722,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the assembly's simple name or null if it's unknown
 		/// </summary>
-		public string AssemblySimpleName { get; }
+		public string? AssemblySimpleName { get; }
 
 		/// <summary>
 		/// Constructor
@@ -731,7 +731,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>). See <see cref="DmdModule.GetFullyQualifiedName(bool, bool, string)"/></param>
 		/// <param name="assemblyLocation">Location of the assembly or an empty string (<see cref="DmdAssembly.Location"/>)</param>
 		/// <param name="assemblySimpleName">The assembly's simple name or null if it's unknown</param>
-		public DmdCreateAssemblyInfo(DmdCreateAssemblyOptions options, string fullyQualifiedName, string assemblyLocation, string assemblySimpleName) {
+		public DmdCreateAssemblyInfo(DmdCreateAssemblyOptions options, string fullyQualifiedName, string assemblyLocation, string? assemblySimpleName) {
 			if ((options & (DmdCreateAssemblyOptions.IsEXE | DmdCreateAssemblyOptions.IsDLL)) == (DmdCreateAssemblyOptions.IsEXE | DmdCreateAssemblyOptions.IsDLL))
 				throw new ArgumentException();
 			Options = options;
@@ -750,7 +750,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="fullyQualifiedName">The fully qualified name of the module (<see cref="DmdModule.FullyQualifiedName"/>). See <see cref="DmdModule.GetFullyQualifiedName(bool, bool, string)"/></param>
 		/// <param name="assemblyLocation">Location of the assembly or an empty string (<see cref="DmdAssembly.Location"/>)</param>
 		/// <param name="assemblySimpleName">The assembly's simple name or null if it's unknown</param>
-		public DmdCreateAssemblyInfo(bool isInMemory, bool isDynamic, bool isSynthetic, bool addAssembly, string fullyQualifiedName, string assemblyLocation, string assemblySimpleName)
+		public DmdCreateAssemblyInfo(bool isInMemory, bool isDynamic, bool isSynthetic, bool addAssembly, string fullyQualifiedName, string assemblyLocation, string? assemblySimpleName)
 			: this(GetOptions(isInMemory, isDynamic, isSynthetic, addAssembly), fullyQualifiedName, assemblyLocation, assemblySimpleName) {
 		}
 

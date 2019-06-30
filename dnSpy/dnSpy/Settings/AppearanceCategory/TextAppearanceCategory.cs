@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,14 +36,14 @@ namespace dnSpy.Settings.AppearanceCategory {
 	}
 
 	sealed class TextAppearanceCategory : ITextAppearanceCategory {
-		public string DisplayName => def.DisplayName;
+		public string? DisplayName => def.DisplayName;
 		public string Category => def.Category;
 		public bool IsUserVisible => def.IsUserVisible;
 		public ThemeFontSettings ThemeFontSettings { get; }
 
 		readonly TextAppearanceCategoryDefinition def;
-		ResourceDictionary resourceDictionary;
-		FontSettings activeFontSettings;
+		ResourceDictionary? resourceDictionary;
+		FontSettings? activeFontSettings;
 
 		public TextAppearanceCategory(TextAppearanceCategoryDefinition def, ThemeFontSettings themeFontSettings) {
 			this.def = def ?? throw new ArgumentNullException(nameof(def));
@@ -61,7 +61,7 @@ namespace dnSpy.Settings.AppearanceCategory {
 			var newActive = ThemeFontSettings.Active;
 			if (activeFontSettings == newActive)
 				return;
-			if (activeFontSettings != null)
+			if (!(activeFontSettings is null))
 				activeFontSettings.PropertyChanged -= ActiveFontSettings_PropertyChanged;
 			activeFontSettings = newActive;
 			activeFontSettings.PropertyChanged += ActiveFontSettings_PropertyChanged;
@@ -83,12 +83,13 @@ namespace dnSpy.Settings.AppearanceCategory {
 
 		public ResourceDictionary CreateResourceDictionary(ITheme theme) {
 			Debug.Assert(theme.Guid == activeFontSettings?.ThemeGuid);
-			if (resourceDictionary == null)
+			if (resourceDictionary is null)
 				resourceDictionary = CreateResourceDictionaryCore(theme);
 			return resourceDictionary;
 		}
 
 		ResourceDictionary CreateResourceDictionaryCore(ITheme theme) {
+			Debug.Assert(!(activeFontSettings is null));
 			var res = new ResourceDictionary();
 
 			var tc = theme.GetColor(def.ColorType);

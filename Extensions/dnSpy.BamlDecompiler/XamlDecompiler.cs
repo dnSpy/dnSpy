@@ -1,4 +1,4 @@
-﻿/*
+/*
 	Copyright (c) 2015 Ki
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -53,7 +53,7 @@ namespace dnSpy.BamlDecompiler {
 				pass.Run(ctx, xaml);
 			}
 
-			if (assemblyReferences != null)
+			if (!(assemblyReferences is null))
 				assemblyReferences.AddRange(ctx.Baml.AssemblyIdMap.Select(a => a.Value.AssemblyFullName));
 
 			return xaml;

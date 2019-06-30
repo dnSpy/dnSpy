@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -1865,6 +1865,18 @@ namespace dnSpy.Themes {
 				DefaultBackground = "#FF52B0EF",
 				BackgroundResourceKey = "DebuggerBreakpointGlyphMarginControlHoverBackground",
 			},
+			new BrushColorInfo(ColorType.HyperlinkNormal, "") {
+				DefaultBackground = "#FF0066CC",
+				BackgroundResourceKey = "HyperlinkNormal",
+			},
+			new BrushColorInfo(ColorType.HyperlinkMouseOver, "") {
+				DefaultBackground = "Red",
+				BackgroundResourceKey = "HyperlinkMouseOver",
+			},
+			new BrushColorInfo(ColorType.HyperlinkDisabled, "") {
+				DefaultBackground = "#FF6D6D6D",
+				BackgroundResourceKey = "HyperlinkDisabled",
+			},
 			new BrushColorInfo(ColorType.LineNumber, "Line number"),
 			new BrushColorInfo(ColorType.ReplLineNumberInput1, "REPL line number #1 (input)"),
 			new BrushColorInfo(ColorType.ReplLineNumberInput2, "REPL line number #2 (input)"),
@@ -2187,6 +2199,24 @@ namespace dnSpy.Themes {
 							new BrushColorInfo(ColorType.DebugObjectIdName, ""),
 							new BrushColorInfo(ColorType.DebuggerDisplayAttributeEval, ""),
 							new BrushColorInfo(ColorType.DebuggerNoStringQuotesEval, ""),
+							new BrushColorInfo(ColorType.DebugViewPropertyName, ""),
+							new BrushColorInfo(ColorType.AsmComment, ""),
+							new BrushColorInfo(ColorType.AsmDirective, ""),
+							new BrushColorInfo(ColorType.AsmPrefix, ""),
+							new BrushColorInfo(ColorType.AsmMnemonic, ""),
+							new BrushColorInfo(ColorType.AsmKeyword, ""),
+							new BrushColorInfo(ColorType.AsmOperator, ""),
+							new BrushColorInfo(ColorType.AsmPunctuation, ""),
+							new BrushColorInfo(ColorType.AsmNumber, ""),
+							new BrushColorInfo(ColorType.AsmRegister, ""),
+							new BrushColorInfo(ColorType.AsmSelectorValue, ""),
+							new BrushColorInfo(ColorType.AsmLabelAddress, ""),
+							new BrushColorInfo(ColorType.AsmFunctionAddress, ""),
+							new BrushColorInfo(ColorType.AsmLabel, ""),
+							new BrushColorInfo(ColorType.AsmFunction, ""),
+							new BrushColorInfo(ColorType.AsmData, ""),
+							new BrushColorInfo(ColorType.AsmAddress, ""),
+							new BrushColorInfo(ColorType.AsmHexBytes, ""),
 						},
 					},
 				},

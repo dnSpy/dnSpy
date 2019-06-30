@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -228,7 +228,7 @@ namespace dnSpy.Contracts.Hex {
 			while (pos > HexPosition.Zero) {
 				var testPos = pos >= d ? pos - d : HexPosition.Zero;
 				var info = GetSpanInfo(testPos);
-				if (d < ulong.MaxValue)
+				if (d < 0x8000_0000_0000_0000)
 					d <<= 1;
 				if (info.HasData == validData && info.Span.End >= bestGuess) {
 					bestGuess = info.Span.Start;
@@ -245,7 +245,7 @@ namespace dnSpy.Contracts.Hex {
 						return lastCorrectDataPos ?? bestGuess;
 					info = GetSpanInfo(pos);
 					if (info.HasData == validData) {
-						if (lastCorrectDataPos == null)
+						if (lastCorrectDataPos is null)
 							lastCorrectDataPos = info.Span.Start;
 					}
 					else {
@@ -284,7 +284,7 @@ namespace dnSpy.Contracts.Hex {
 			var pos = span.Start;
 			for (;;) {
 				var info = GetNextValidSpan(pos, span.End, fullSpan);
-				if (info == null)
+				if (info is null)
 					break;
 				yield return info.Value;
 				pos = info.Value.End;
@@ -304,7 +304,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="reiteratedVersionNumber">Use by undo/redo to restore a previous version</param>
 		/// <param name="editTag">Edit tag, can be anything</param>
 		/// <returns></returns>
-		public abstract HexEdit CreateEdit(int? reiteratedVersionNumber, object editTag);
+		public abstract HexEdit CreateEdit(int? reiteratedVersionNumber, object? editTag);
 
 		/// <summary>
 		/// Replaces the <see cref="byte"/> at <paramref name="position"/> with <paramref name="value"/>
@@ -628,7 +628,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="position">Position</param>
 		/// <param name="destination">Destination array</param>
 		public void ReadBytes(HexPosition position, byte[] destination) {
-			if (destination == null)
+			if (destination is null)
 				throw new ArgumentNullException(nameof(destination));
 			ReadBytes(position, destination, 0, destination.LongLength);
 		}

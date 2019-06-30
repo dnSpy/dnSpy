@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -59,7 +59,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 
 		protected BreakpointsCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointsContent) => this.codeBreakpointsContent = codeBreakpointsContent;
 
-		protected sealed override CodeBreakpointsCtxMenuContext CreateContext(IMenuItemContext context) {
+		protected sealed override CodeBreakpointsCtxMenuContext? CreateContext(IMenuItemContext context) {
 			if (!(context.CreatorObject.Object is ListView))
 				return null;
 			if (context.CreatorObject.Object != codeBreakpointsContent.Value.ListView)
@@ -103,7 +103,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		public override bool IsEnabled(CodeBreakpointsCtxMenuContext context) => context.Operations.CanGoToSourceCode;
 	}
 
-	[ExportMenuItem(Header = "res:GoToDisassemblyCommand", Icon = DsImagesAttribute.DisassemblyWindow, Group = MenuConstants.GROUP_CTX_DBG_CODEBPS_CODE, Order = 10)]
+	[ExportMenuItem(Header = "res:GoToDisassemblyCommand2", Icon = DsImagesAttribute.DisassemblyWindow, Group = MenuConstants.GROUP_CTX_DBG_CODEBPS_CODE, Order = 10)]
 	sealed class GoToDisassemblyBreakpointsCtxMenuCommand : BreakpointsCtxMenuCommand {
 		[ImportingConstructor]
 		GoToDisassemblyBreakpointsCtxMenuCommand(Lazy<ICodeBreakpointsContent> codeBreakpointesContent)

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
+// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
@@ -44,8 +44,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 			foreach (EventDef eventDef in type.Events) {
 				if (TypesHierarchyHelpers.IsBaseEvent(analyzedEvent, eventDef)) {
-					MethodDef anyAccessor = eventDef.AddMethod ?? eventDef.RemoveMethod;
-					if (anyAccessor == null)
+					MethodDef anyAccessor = eventDef.AddMethod ?? eventDef.RemoveMethod ?? eventDef.InvokeMethod;
+					if (anyAccessor is null)
 						continue;
 					bool hidesParent = !anyAccessor.IsVirtual ^ anyAccessor.IsNewSlot;
 					yield return new EventNode(eventDef, hidesParent) { Context = Context };
@@ -53,9 +53,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 		}
 
-		public static bool CanShow(EventDef property) {
-			var accessor = property.AddMethod ?? property.RemoveMethod;
-			return accessor != null && accessor.IsVirtual && !accessor.IsFinal && !accessor.DeclaringType.IsInterface;
+		public static bool CanShow(EventDef @event) {
+			var accessor = @event.AddMethod ?? @event.RemoveMethod ?? @event.InvokeMethod;
+			return !(accessor is null) && accessor.IsVirtual && !accessor.IsFinal && !accessor.DeclaringType.IsInterface;
 		}
 	}
 }

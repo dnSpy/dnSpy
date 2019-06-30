@@ -19,10 +19,10 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using dnlib.DotNet;
-using dnlib.Threading;
 using dnSpy.Analyzer.Properties;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Text;
@@ -30,19 +30,18 @@ using dnSpy.Contracts.Text;
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class AttributeAppliedToNode : SearchNode {
 		readonly TypeDef analyzedType;
-		readonly string attributeName;
+		readonly List<TypeDef> analyzedTypes;
+		readonly bool includeAllModules;
 
-		AttributeTargets usage = AttributeTargets.All;
-		bool allowMutiple;
-		bool inherited = true;
-		ConcurrentDictionary<MethodDef, int> foundMethods;
+		readonly AttributeTargets usage;
+		ConcurrentDictionary<MethodDef, int>? foundMethods;
 
 		public static bool CanShow(TypeDef type) => type.IsClass && IsCustomAttribute(type);
 
 		static bool IsCustomAttribute(TypeDef type) {
-			while (type != null) {
+			while (!(type is null)) {
 				var bt = type.BaseType.ResolveTypeDef();
-				if (bt == null)
+				if (bt is null)
 					return false;
 				if (bt.FullName == "System.Attribute")
 					return true;
@@ -53,39 +52,11 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		public AttributeAppliedToNode(TypeDef analyzedType) {
 			this.analyzedType = analyzedType ?? throw new ArgumentNullException(nameof(analyzedType));
-			attributeName = this.analyzedType.FullName;
-			GetAttributeUsage();
-		}
-
-		void GetAttributeUsage() {
-			if (analyzedType.HasCustomAttributes) {
-				foreach (CustomAttribute ca in analyzedType.CustomAttributes) {
-					ITypeDefOrRef t = ca.AttributeType;
-					if (t != null && t.Name == "AttributeUsageAttribute" && t.Namespace == "System" &&
-						ca.ConstructorArguments.Count > 0 &&
-						ca.ConstructorArguments[0].Value is int) {
-						usage = (AttributeTargets)ca.ConstructorArguments[0].Value;
-						if (ca.ConstructorArguments.Count > 2) {
-							if (ca.ConstructorArguments[1].Value is bool)
-								allowMutiple = (bool)ca.ConstructorArguments[1].Value;
-							if (ca.ConstructorArguments[2].Value is bool)
-								inherited = (bool)ca.ConstructorArguments[2].Value;
-						}
-						foreach (var namedArgument in ca.Properties) {
-							switch (namedArgument.Name) {
-							case "AllowMultiple":
-								if (namedArgument.Argument.Value is bool)
-									allowMutiple = (bool)namedArgument.Argument.Value;
-								break;
-							case "Inherited":
-								if (namedArgument.Argument.Value is bool)
-									inherited = (bool)namedArgument.Argument.Value;
-								break;
-							}
-						}
-					}
-				}
-			}
+			analyzedTypes = new List<TypeDef> { analyzedType };
+			includeAllModules = CustomAttributesUtils.IsPseudoCustomAttributeType(analyzedType);
+			var ca = analyzedType.CustomAttributes.Find("System.AttributeUsageAttribute");
+			if (!(ca is null) && ca.ConstructorArguments.Count == 1 && ca.ConstructorArguments[0].Value is int)
+				usage = (AttributeTargets)ca.ConstructorArguments[0].Value;
 		}
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
@@ -94,9 +65,16 @@ namespace dnSpy.Analyzer.TreeNodes {
 		protected override IEnumerable<AnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
 			foundMethods = new ConcurrentDictionary<MethodDef, int>();
 
-			//get the assemblies to search
-			var currentAssembly = analyzedType.Module.Assembly;
-			var modules = analyzedType.IsPublic ? GetReferencingModules(analyzedType.Module, ct) : GetModuleAndAnyFriends(analyzedType.Module, ct);
+			AddTypeEquivalentTypes(Context.DocumentService, analyzedType, analyzedTypes);
+			IEnumerable<(ModuleDef module, ITypeDefOrRef type)> modules;
+			if (includeAllModules)
+				modules = GetAllModules(analyzedType.Module, ct);
+			else if (TIAHelper.IsTypeDefEquivalent(analyzedType))
+				modules = GetTypeEquivalentModulesAndTypes(analyzedTypes);
+			else if (IsPublic(analyzedType))
+				modules = GetReferencingModules(analyzedType.Module, ct);
+			else
+				modules = GetModuleAndAnyFriends(analyzedType.Module, ct);
 
 			var results = modules.AsParallel().WithCancellation(ct).SelectMany(a => FindReferencesInModule(new[] { a.Item1 }, a.Item2, ct));
 
@@ -106,15 +84,27 @@ namespace dnSpy.Analyzer.TreeNodes {
 			foundMethods = null;
 		}
 
+		static bool IsPublic(TypeDef type) {
+			for (;;) {
+				if (type.DeclaringType is TypeDef declType) {
+					if (!(type.IsNestedFamily || type.IsNestedFamilyOrAssembly || type.IsNestedPublic))
+						return false;
+					type = declType;
+				}
+				else
+					return type.IsPublic;
+			}
+		}
+
 		IEnumerable<AnalyzerTreeNodeData> FindReferencesInModule(IEnumerable<ModuleDef> modules, ITypeDefOrRef tr, CancellationToken ct) {
+			var trScopeType = tr.GetScopeType();
 			var checkedAsms = new HashSet<AssemblyDef>();
 			foreach (var module in modules) {
 				if ((usage & AttributeTargets.Assembly) != 0) {
 					AssemblyDef asm = module.Assembly;
-					if (asm != null && !checkedAsms.Contains(asm) && asm.HasCustomAttributes) {
-						checkedAsms.Add(asm);
-						foreach (var attribute in asm.CustomAttributes) {
-							if (new SigComparer().Equals(attribute.AttributeType, tr)) {
+					if (!(asm is null) && checkedAsms.Add(asm)) {
+						foreach (var attribute in asm.GetCustomAttributes()) {
+							if (new SigComparer().Equals(attribute.AttributeType?.GetScopeType(), trScopeType)) {
 								yield return new AssemblyNode(asm) { Context = Context };
 								break;
 							}
@@ -125,38 +115,47 @@ namespace dnSpy.Analyzer.TreeNodes {
 				ct.ThrowIfCancellationRequested();
 
 				if ((usage & AttributeTargets.Module) != 0) {
-					if (module.HasCustomAttributes) {
-						foreach (var attribute in module.CustomAttributes) {
-							if (new SigComparer().Equals(attribute.AttributeType, tr)) {
-								yield return new ModuleNode(module) { Context = Context };
-								break;
-							}
+					foreach (var attribute in module.GetCustomAttributes()) {
+						if (new SigComparer().Equals(attribute.AttributeType?.GetScopeType(), trScopeType)) {
+							yield return new ModuleNode(module) { Context = Context };
+							break;
 						}
 					}
 				}
 
 				ct.ThrowIfCancellationRequested();
 
-				foreach (TypeDef type in TreeTraversal.PreOrder(module.Types, t => t.NestedTypes)) {
-					ct.ThrowIfCancellationRequested();
-					foreach (var result in FindReferencesWithinInType(type, tr)) {
+				if ((usage & (AttributeTargets.Class | AttributeTargets.Enum | AttributeTargets.Interface | AttributeTargets.Struct | AttributeTargets.GenericParameter | AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event | AttributeTargets.Method | AttributeTargets.Constructor | AttributeTargets.ReturnValue | AttributeTargets.Parameter)) != 0) {
+					foreach (TypeDef type in TreeTraversal.PreOrder(module.Types, t => t.NestedTypes)) {
 						ct.ThrowIfCancellationRequested();
-						yield return result;
+						foreach (var result in FindReferencesWithinInType(type, tr)) {
+							ct.ThrowIfCancellationRequested();
+							yield return result;
+						}
 					}
 				}
 			}
 		}
 
 		IEnumerable<AnalyzerTreeNodeData> FindReferencesWithinInType(TypeDef type, ITypeDefOrRef attrTypeRef) {
-
+			var attrTypeRefScopeType = attrTypeRef.GetScopeType();
 			bool searchRequired = (type.IsClass && usage.HasFlag(AttributeTargets.Class))
 				|| (type.IsEnum && usage.HasFlag(AttributeTargets.Enum))
 				|| (type.IsInterface && usage.HasFlag(AttributeTargets.Interface))
 				|| (type.IsValueType && usage.HasFlag(AttributeTargets.Struct));
 			if (searchRequired) {
-				if (type.HasCustomAttributes) {
-					foreach (var attribute in type.CustomAttributes) {
-						if (new SigComparer().Equals(attribute.AttributeType, attrTypeRef)) {
+				foreach (var attribute in type.GetCustomAttributes()) {
+					if (new SigComparer().Equals(attribute.AttributeType?.GetScopeType(), attrTypeRefScopeType)) {
+						yield return new TypeNode(type) { Context = Context };
+						break;
+					}
+				}
+			}
+
+			if ((usage & AttributeTargets.GenericParameter) != 0 && type.HasGenericParameters) {
+				foreach (var parameter in type.GenericParameters) {
+					foreach (var attribute in parameter.GetCustomAttributes()) {
+						if (new SigComparer().Equals(attribute.AttributeType?.GetScopeType(), attrTypeRefScopeType)) {
 							yield return new TypeNode(type) { Context = Context };
 							break;
 						}
@@ -164,27 +163,12 @@ namespace dnSpy.Analyzer.TreeNodes {
 				}
 			}
 
-			if ((usage & AttributeTargets.GenericParameter) != 0 && type.HasGenericParameters) {
-				foreach (var parameter in type.GenericParameters) {
-					if (parameter.HasCustomAttributes) {
-						foreach (var attribute in parameter.CustomAttributes) {
-							if (new SigComparer().Equals(attribute.AttributeType, attrTypeRef)) {
-								yield return new TypeNode(type) { Context = Context };
-								break;
-							}
-						}
-					}
-				}
-			}
-
 			if ((usage & AttributeTargets.Field) != 0 && type.HasFields) {
 				foreach (var field in type.Fields) {
-					if (field.HasCustomAttributes) {
-						foreach (var attribute in field.CustomAttributes) {
-							if (new SigComparer().Equals(attribute.AttributeType, attrTypeRef)) {
-								yield return new FieldNode(field) { Context = Context };
-								break;
-							}
+					foreach (var attribute in field.GetCustomAttributes()) {
+						if (new SigComparer().Equals(attribute.AttributeType?.GetScopeType(), attrTypeRefScopeType)) {
+							yield return new FieldNode(field) { Context = Context };
+							break;
 						}
 					}
 				}
@@ -192,48 +176,41 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 			if (((usage & AttributeTargets.Property) != 0) && type.HasProperties) {
 				foreach (var property in type.Properties) {
-					if (property.HasCustomAttributes) {
-						foreach (var attribute in property.CustomAttributes) {
-							if (new SigComparer().Equals(attribute.AttributeType, attrTypeRef)) {
-								yield return new PropertyNode(property) { Context = Context };
-								break;
-							}
+					foreach (var attribute in property.GetCustomAttributes()) {
+						if (new SigComparer().Equals(attribute.AttributeType?.GetScopeType(), attrTypeRefScopeType)) {
+							yield return new PropertyNode(property) { Context = Context };
+							break;
 						}
 					}
 				}
 			}
 			if (((usage & AttributeTargets.Event) != 0) && type.HasEvents) {
-				foreach (var _event in type.Events) {
-					if (_event.HasCustomAttributes) {
-						foreach (var attribute in _event.CustomAttributes) {
-							if (new SigComparer().Equals(attribute.AttributeType, attrTypeRef)) {
-								yield return new EventNode(_event) { Context = Context };
-								break;
-							}
+				foreach (var @event in type.Events) {
+					foreach (var attribute in @event.GetCustomAttributes()) {
+						if (new SigComparer().Equals(attribute.AttributeType?.GetScopeType(), attrTypeRefScopeType)) {
+							yield return new EventNode(@event) { Context = Context };
+							break;
 						}
 					}
 				}
 			}
 
-			if (type.HasMethods) {
+			if ((usage & (AttributeTargets.Method | AttributeTargets.Constructor | AttributeTargets.ReturnValue | AttributeTargets.Parameter)) != 0 && type.HasMethods) {
 				foreach (var method in type.Methods) {
 					bool found = false;
 					if ((usage & (AttributeTargets.Method | AttributeTargets.Constructor)) != 0) {
-						if (method.HasCustomAttributes) {
-							foreach (var attribute in method.CustomAttributes) {
-								if (new SigComparer().Equals(attribute.AttributeType, attrTypeRef)) {
-									found = true;
-									break;
-								}
+						foreach (var attribute in method.GetCustomAttributes()) {
+							if (new SigComparer().Equals(attribute.AttributeType?.GetScopeType(), attrTypeRefScopeType)) {
+								found = true;
+								break;
 							}
 						}
 					}
 					if (!found &&
 						((usage & AttributeTargets.ReturnValue) != 0) &&
-						method.Parameters.ReturnParameter.HasParamDef &&
-						method.Parameters.ReturnParameter.ParamDef.HasCustomAttributes) {
-						foreach (var attribute in method.Parameters.ReturnParameter.ParamDef.CustomAttributes) {
-							if (new SigComparer().Equals(attribute.AttributeType, attrTypeRef)) {
+						method.Parameters.ReturnParameter.ParamDef is ParamDef retParamDef) {
+						foreach (var attribute in retParamDef.GetCustomAttributes()) {
+							if (new SigComparer().Equals(attribute.AttributeType?.GetScopeType(), attrTypeRefScopeType)) {
 								found = true;
 								break;
 							}
@@ -246,8 +223,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 						foreach (var parameter in method.Parameters.Where(param => param.HasParamDef)) {
 							if (parameter.IsHiddenThisParameter)
 								continue;
-							foreach (var attribute in parameter.ParamDef.CustomAttributes) {
-								if (new SigComparer().Equals(attribute.AttributeType, attrTypeRef)) {
+							foreach (var attribute in parameter.ParamDef.GetCustomAttributes()) {
+								if (new SigComparer().Equals(attribute.AttributeType?.GetScopeType(), attrTypeRefScopeType)) {
 									found = true;
 									break;
 								}
@@ -264,91 +241,68 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 		}
 
-		bool HasAlreadyBeenFound(MethodDef method) => !foundMethods.TryAdd(method, 0);
+		bool HasAlreadyBeenFound(MethodDef method) => !foundMethods!.TryAdd(method, 0);
 
-		IEnumerable<Tuple<ModuleDef, ITypeDefOrRef>> GetReferencingModules(ModuleDef mod, CancellationToken ct) {
+		IEnumerable<(ModuleDef module, ITypeDefOrRef type)> GetAllModules(ModuleDef mod, CancellationToken ct) {
+			foreach (var doc in Context.DocumentService.GetDocuments()) {
+				if (!(doc.ModuleDef is ModuleDef module))
+					continue;
+				var typeRef = GetScopeTypeRefInModule(module) ?? module.Import(analyzedType);
+				yield return (module, typeRef);
+			}
+		}
+
+		IEnumerable<(ModuleDef module, ITypeDefOrRef type)> GetReferencingModules(ModuleDef mod, CancellationToken ct) {
 			var asm = mod.Assembly;
-			if (asm == null) {
-				yield return new Tuple<ModuleDef, ITypeDefOrRef>(mod, analyzedType);
+			if (asm is null) {
+				yield return (mod, analyzedType);
 				yield break;
 			}
 
-			foreach (var m in asm.Modules.GetSafeEnumerable())
-				yield return new Tuple<ModuleDef, ITypeDefOrRef>(m, analyzedType);
+			foreach (var m in asm.Modules)
+				yield return (m, analyzedType);
 
-			var assemblies = Context.DocumentService.GetDocuments().Where(a => a.AssemblyDef != null);
+			var modules = Context.DocumentService.GetDocuments().Where(a => SearchNode.CanIncludeModule(mod, a.ModuleDef));
 
-			foreach (var assembly in assemblies) {
+			foreach (var module in modules) {
+				Debug.Assert(!(module.ModuleDef is null));
 				ct.ThrowIfCancellationRequested();
-				bool found = false;
-				foreach (var reference in assembly.AssemblyDef.Modules.GetSafeEnumerable().SelectMany(module => module.GetAssemblyRefs())) {
-					if (AssemblyNameComparer.CompareAll.CompareTo(asm, reference) == 0) {
-						found = true;
-						break;
-					}
-				}
-				if (found) {
-					var typeref = GetScopeTypeRefInAssembly(assembly.AssemblyDef);
-					if (typeref != null) {
-						foreach (var m in assembly.AssemblyDef.Modules.GetSafeEnumerable())
-							yield return new Tuple<ModuleDef, ITypeDefOrRef>(m, typeref);
-					}
-				}
+				var typeref = GetScopeTypeRefInModule(module.ModuleDef);
+				if (!(typeref is null))
+					yield return (module.ModuleDef, typeref);
 			}
 		}
 
-		IEnumerable<Tuple<ModuleDef, ITypeDefOrRef>> GetModuleAndAnyFriends(ModuleDef mod, CancellationToken ct) {
+		IEnumerable<(ModuleDef module, ITypeDefOrRef type)> GetModuleAndAnyFriends(ModuleDef mod, CancellationToken ct) {
 			var asm = mod.Assembly;
-			if (asm == null) {
-				yield return new Tuple<ModuleDef, ITypeDefOrRef>(mod, analyzedType);
+			if (asm is null) {
+				yield return (mod, analyzedType);
 				yield break;
 			}
 
-			foreach (var m in asm.Modules.GetSafeEnumerable())
-				yield return new Tuple<ModuleDef, ITypeDefOrRef>(m, analyzedType);
+			foreach (var m in asm.Modules)
+				yield return (m, analyzedType);
 
-			if (asm.HasCustomAttributes) {
-				var attributes = asm.CustomAttributes
-					.Where(attr => attr.TypeFullName == "System.Runtime.CompilerServices.InternalsVisibleToAttribute");
-				var friendAssemblies = new HashSet<string>();
-				foreach (var attribute in attributes) {
-					if (attribute.ConstructorArguments.Count == 0)
-						continue;
-					string assemblyName = attribute.ConstructorArguments[0].Value as UTF8String;
-					if (assemblyName == null)
-						continue;
-					assemblyName = assemblyName.Split(',')[0]; // strip off any public key info
-					friendAssemblies.Add(assemblyName);
-				}
-
-				if (friendAssemblies.Count > 0) {
-					var assemblies = Context.DocumentService.GetDocuments().Where(a => a.AssemblyDef != null);
-
-					foreach (var assembly in assemblies) {
-						ct.ThrowIfCancellationRequested();
-						if (friendAssemblies.Contains(assembly.AssemblyDef.Name)) {
-							var typeref = GetScopeTypeRefInAssembly(assembly.AssemblyDef);
-							if (typeref != null) {
-								foreach (var m in assembly.AssemblyDef.Modules.GetSafeEnumerable())
-									yield return new Tuple<ModuleDef, ITypeDefOrRef>(m, typeref);
-							}
-						}
+			var friendAssemblies = GetFriendAssemblies(Context.DocumentService, mod, out var modules);
+			if (friendAssemblies.Count > 0) {
+				foreach (var module in modules) {
+					Debug.Assert(!(module.ModuleDef is null));
+					ct.ThrowIfCancellationRequested();
+					if (module.AssemblyDef is null || friendAssemblies.Contains(module.AssemblyDef.Name)) {
+						var typeref = GetScopeTypeRefInModule(module.ModuleDef);
+						if (!(typeref is null))
+							yield return (module.ModuleDef, typeref);
 					}
 				}
 			}
 		}
 
-		ITypeDefOrRef GetScopeTypeRefInAssembly(AssemblyDef asm) {
-			foreach (var mod in asm.Modules.GetSafeEnumerable()) {
-				foreach (var typeref in mod.GetTypeRefs()) {
-					if (new SigComparer().Equals(analyzedType, typeref))
-						return typeref;
-				}
+		ITypeDefOrRef? GetScopeTypeRefInModule(ModuleDef mod) {
+			foreach (var typeref in mod.GetTypeRefs()) {
+				if (new SigComparer().Equals(analyzedType, typeref))
+					return typeref;
 			}
 			return null;
 		}
-	}
-	static class ExtensionMethods {
-		public static bool HasCustomAttribute(this IMemberRef member, string attributeTypeName) => false;
 	}
 }

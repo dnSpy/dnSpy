@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -71,7 +71,7 @@ namespace dndbg.DotNet {
 					return;
 				}
 
-				if (parameterList == null)
+				if (parameterList is null)
 					parameterList = new ParameterList(this, ownerType);
 
 				declaringType2 = ownerType;
@@ -130,7 +130,7 @@ namespace dndbg.DotNet {
 		void InitDeclSecurities_NoLock() => declSecurities = null;
 		protected override void InitializeDeclSecurities() =>
 			readerModule.InitDeclSecurities(this, ref declSecurities);
-		protected override MethodBody GetMethodBody_NoLock() =>
+		protected override MethodBody? GetMethodBody_NoLock() =>
 			readerModule.ReadMethodBody(this, origRva, origAttributes, origImplAttributes, new GenericParamContext(ownerType, this));
 
 		public void UpdateParams() {
@@ -153,7 +153,7 @@ namespace dndbg.DotNet {
 				newItems[i] = readerModule.Register(new CorParamDef(readerModule, itemRid, this), cmd => cmd.Initialize());
 			}
 
-			paramDefs = new LazyList<ParamDef>(itemTokens.Length, this, itemTokens, (itemTokens2, index) => newItems[index].Item);
+			paramDefs = new LazyList<ParamDef, MemberInfo<CorParamDef>[]>(itemTokens.Length, this, newItems, (newItems2, index) => newItems2[index].Item);
 		}
 
 		public void UpdateGenericParams() {
@@ -176,7 +176,7 @@ namespace dndbg.DotNet {
 				newItems[i] = readerModule.Register(new CorGenericParam(readerModule, itemRid, this), cmd => cmd.Initialize());
 			}
 
-			genericParameters = new LazyList<GenericParam>(itemTokens.Length, this, itemTokens, (itemTokens2, index) => newItems[index].Item);
+			genericParameters = new LazyList<GenericParam, MemberInfo<CorGenericParam>[]>(itemTokens.Length, this, newItems, (newItems2, index) => newItems2[index].Item);
 		}
 
 		protected override void InitializeOverrides() {
@@ -184,17 +184,17 @@ namespace dndbg.DotNet {
 			Interlocked.CompareExchange(ref overrides, tmp, null);
 		}
 
-		protected override ImplMap GetImplMap_NoLock() {
+		protected override ImplMap? GetImplMap_NoLock() {
 			var mdi = readerModule.MetaDataImport;
 			uint token = OriginalToken.Raw;
 
 			var name = MDAPI.GetPinvokeMapName(mdi, token);
-			if (name == null)
+			if (name is null)
 				return null;
 			if (!MDAPI.GetPinvokeMapProps(mdi, token, out var attrs, out uint moduleToken))
 				return null;
 			var mr = readerModule.ResolveToken(moduleToken) as ModuleRef;
-			if (mr == null)
+			if (mr is null)
 				return null;
 
 			return readerModule.UpdateRowId(new ImplMapUser(mr, name, attrs));

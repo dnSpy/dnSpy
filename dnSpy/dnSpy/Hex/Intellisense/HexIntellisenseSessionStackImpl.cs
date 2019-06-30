@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,7 +32,7 @@ using VSTA = Microsoft.VisualStudio.Text.Adornments;
 namespace dnSpy.Hex.Intellisense {
 	sealed partial class HexIntellisenseSessionStackImpl : HexIntellisenseSessionStack {
 		public override ReadOnlyObservableCollection<HexIntellisenseSession> Sessions { get; }
-		public override HexIntellisenseSession TopSession => sessions.Count == 0 ? null : sessions[0];
+		public override HexIntellisenseSession? TopSession => sessions.Count == 0 ? null : sessions[0];
 
 		readonly WpfHexView wpfHexView;
 		readonly ObservableCollection<HexIntellisenseSession> sessions;
@@ -44,12 +44,12 @@ namespace dnSpy.Hex.Intellisense {
 
 		sealed class SessionState {
 			public HexIntellisenseSession Session { get; }
-			public HexSpaceReservationManager SpaceReservationManager { get; private set; }
-			public HexSpaceReservationAgent SpaceReservationAgent;
-			public IHexPopupIntellisensePresenter PopupIntellisensePresenter { get; set; }
+			public HexSpaceReservationManager? SpaceReservationManager { get; private set; }
+			public HexSpaceReservationAgent? SpaceReservationAgent;
+			public IHexPopupIntellisensePresenter? PopupIntellisensePresenter { get; set; }
 			public SessionState(HexIntellisenseSession session) => Session = session;
 			public void SetSpaceReservationManager(HexSpaceReservationManager manager) {
-				if (SpaceReservationManager != null)
+				if (!(SpaceReservationManager is null))
 					throw new InvalidOperationException();
 				SpaceReservationManager = manager ?? throw new ArgumentNullException(nameof(manager));
 			}
@@ -128,7 +128,7 @@ namespace dnSpy.Hex.Intellisense {
 		public override void PushSession(HexIntellisenseSession session) {
 			if (wpfHexView.IsClosed)
 				throw new InvalidOperationException();
-			if (session == null)
+			if (session is null)
 				throw new ArgumentNullException(nameof(session));
 			if (sessions.Contains(session))
 				throw new InvalidOperationException();
@@ -140,7 +140,7 @@ namespace dnSpy.Hex.Intellisense {
 			PresenterUpdated(session);
 		}
 
-		public override HexIntellisenseSession PopSession() {
+		public override HexIntellisenseSession? PopSession() {
 			if (wpfHexView.IsClosed)
 				throw new InvalidOperationException();
 			if (sessions.Count == 0)
@@ -153,7 +153,7 @@ namespace dnSpy.Hex.Intellisense {
 		public override void MoveSessionToTop(HexIntellisenseSession session) {
 			if (wpfHexView.IsClosed)
 				throw new InvalidOperationException();
-			if (session == null)
+			if (session is null)
 				throw new ArgumentNullException(nameof(session));
 			int index = sessions.IndexOf(session);
 			if (index < 0)
@@ -199,7 +199,7 @@ namespace dnSpy.Hex.Intellisense {
 			return sessionState;
 		}
 
-		SessionState TryGetSessionState(HexSpaceReservationAgent agent) {
+		SessionState? TryGetSessionState(HexSpaceReservationAgent? agent) {
 			foreach (var sessionState in sessionStates) {
 				if (sessionState.SpaceReservationAgent == agent)
 					return sessionState;
@@ -207,7 +207,7 @@ namespace dnSpy.Hex.Intellisense {
 			return null;
 		}
 
-		SessionState TryGetSessionState(IHexPopupIntellisensePresenter popupPresenter) {
+		SessionState? TryGetSessionState(IHexPopupIntellisensePresenter popupPresenter) {
 			foreach (var sessionState in sessionStates) {
 				if (sessionState.PopupIntellisensePresenter == popupPresenter)
 					return sessionState;
@@ -217,14 +217,15 @@ namespace dnSpy.Hex.Intellisense {
 
 		void PresenterUpdated(HexIntellisenseSession session) {
 			var sessionState = GetSessionState(session);
-			if (sessionState.SpaceReservationAgent != null)
-				sessionState.SpaceReservationManager.RemoveAgent(sessionState.SpaceReservationAgent);
-			Debug.Assert(sessionState.SpaceReservationAgent == null);
+			if (!(sessionState.SpaceReservationAgent is null))
+				sessionState.SpaceReservationManager!.RemoveAgent(sessionState.SpaceReservationAgent);
+			Debug.Assert(sessionState.SpaceReservationAgent is null);
 
 			var presenter = session.Presenter;
 			if (presenter is IHexPopupIntellisensePresenter popupPresenter) {
-				if (sessionState.SpaceReservationManager == null) {
+				if (sessionState.SpaceReservationManager is null) {
 					sessionState.SetSpaceReservationManager(wpfHexView.GetSpaceReservationManager(popupPresenter.SpaceReservationManagerName));
+					Debug.Assert(!(sessionState.SpaceReservationManager is null));
 					sessionState.SpaceReservationManager.AgentChanged += SpaceReservationManager_AgentChanged;
 				}
 				UnregisterPopupIntellisensePresenterEvents(sessionState.PopupIntellisensePresenter);
@@ -233,7 +234,7 @@ namespace dnSpy.Hex.Intellisense {
 
 				var presentationSpan = popupPresenter.PresentationSpan;
 				var surfaceElement = popupPresenter.SurfaceElement;
-				if (!presentationSpan.IsDefault && surfaceElement != null) {
+				if (!presentationSpan.IsDefault && !(surfaceElement is null)) {
 					sessionState.SpaceReservationAgent = sessionState.SpaceReservationManager.CreatePopupAgent(presentationSpan, popupPresenter.PopupStyles, surfaceElement);
 					sessionState.SpaceReservationManager.AddAgent(sessionState.SpaceReservationAgent);
 				}
@@ -242,20 +243,20 @@ namespace dnSpy.Hex.Intellisense {
 				if (presenter is IHexCustomIntellisensePresenter customPresenter)
 					customPresenter.Render();
 				else
-					Debug.Assert(presenter == null, $"Unsupported presenter: {presenter?.GetType()}");
+					Debug.Assert(presenter is null, $"Unsupported presenter: {presenter?.GetType()}");
 			}
 		}
 
-		void RegisterPopupIntellisensePresenterEvents(IHexPopupIntellisensePresenter popupPresenter) {
-			if (popupPresenter != null) {
+		void RegisterPopupIntellisensePresenterEvents(IHexPopupIntellisensePresenter? popupPresenter) {
+			if (!(popupPresenter is null)) {
 				popupPresenter.PopupStylesChanged += PopupIntellisensePresenter_PopupStylesChanged;
 				popupPresenter.PresentationSpanChanged += PopupIntellisensePresenter_PresentationSpanChanged;
 				popupPresenter.SurfaceElementChanged += PopupIntellisensePresenter_SurfaceElementChanged;
 			}
 		}
 
-		void UnregisterPopupIntellisensePresenterEvents(IHexPopupIntellisensePresenter popupPresenter) {
-			if (popupPresenter != null) {
+		void UnregisterPopupIntellisensePresenterEvents(IHexPopupIntellisensePresenter? popupPresenter) {
+			if (!(popupPresenter is null)) {
 				popupPresenter.PopupStylesChanged -= PopupIntellisensePresenter_PopupStylesChanged;
 				popupPresenter.PresentationSpanChanged -= PopupIntellisensePresenter_PresentationSpanChanged;
 				popupPresenter.SurfaceElementChanged -= PopupIntellisensePresenter_SurfaceElementChanged;
@@ -277,15 +278,15 @@ namespace dnSpy.Hex.Intellisense {
 				return;
 			}
 			var sessionState = TryGetSessionState(popupPresenter);
-			Debug.Assert(sessionState != null);
-			if (sessionState == null)
+			Debug.Assert(!(sessionState is null));
+			if (sessionState is null)
 				return;
 			if (propertyName == nameof(popupPresenter.PresentationSpan) || propertyName == nameof(popupPresenter.PopupStyles)) {
 				var presentationSpan = popupPresenter.PresentationSpan;
-				if (presentationSpan.IsDefault || sessionState.SpaceReservationAgent == null)
+				if (presentationSpan.IsDefault || sessionState.SpaceReservationAgent is null)
 					PresenterUpdated(popupPresenter.Session);
 				else
-					sessionState.SpaceReservationManager.UpdatePopupAgent(sessionState.SpaceReservationAgent, presentationSpan, popupPresenter.PopupStyles);
+					sessionState.SpaceReservationManager!.UpdatePopupAgent(sessionState.SpaceReservationAgent, presentationSpan, popupPresenter.PopupStyles);
 			}
 			else if (propertyName == nameof(popupPresenter.SurfaceElement))
 				PresenterUpdated(popupPresenter.Session);
@@ -295,7 +296,7 @@ namespace dnSpy.Hex.Intellisense {
 			if (wpfHexView.IsClosed)
 				return;
 			var sessionState = TryGetSessionState(e.OldAgent);
-			if (sessionState != null) {
+			if (!(sessionState is null)) {
 				sessionState.SpaceReservationAgent = null;
 				// Its popup was hidden, so dismiss the session
 				sessionState.Session.Dismiss();
@@ -304,8 +305,8 @@ namespace dnSpy.Hex.Intellisense {
 
 		void Session_Dismissed(object sender, EventArgs e) {
 			var session = sender as HexIntellisenseSession;
-			Debug.Assert(session != null);
-			if (session == null)
+			Debug.Assert(!(session is null));
+			if (session is null)
 				return;
 			int index = sessions.IndexOf(session);
 			Debug.Assert(index >= 0);
@@ -321,9 +322,9 @@ namespace dnSpy.Hex.Intellisense {
 			session.Dismissed -= Session_Dismissed;
 			session.PresenterChanged -= Session_PresenterChanged;
 			var sessionState = GetSessionState(session);
-			if (sessionState.SpaceReservationAgent != null)
-				sessionState.SpaceReservationManager.RemoveAgent(sessionState.SpaceReservationAgent);
-			if (sessionState.SpaceReservationManager != null)
+			if (!(sessionState.SpaceReservationAgent is null))
+				sessionState.SpaceReservationManager!.RemoveAgent(sessionState.SpaceReservationAgent);
+			if (!(sessionState.SpaceReservationManager is null))
 				sessionState.SpaceReservationManager.AgentChanged -= SpaceReservationManager_AgentChanged;
 			UnregisterPopupIntellisensePresenterEvents(sessionState.PopupIntellisensePresenter);
 			sessionStates.Remove(sessionState);

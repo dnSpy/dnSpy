@@ -136,10 +136,10 @@
     <value>Отменить загрузку модулей?</value>
   </data>
   <data name="CantEvaluateWhenCurrentFrameIsNative" xml:space="preserve">
-    <value>Can't evaluate expressions when current stack frame is a native stack frame</value>
+    <value>Нельзя вычислить выражения если текущий стек native</value>
   </data>
   <data name="DecompilerGeneratedVariablesCanNotBeEvaluated" xml:space="preserve">
-    <value>Decompiler generated variables can't be evaluated</value>
+    <value>Созданные декомпилятором переменные не могу быть вычислены</value>
   </data>
   <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
     <value>Смещение в IL {0}</value>
@@ -148,7 +148,7 @@
     <value>линия {0} символ {1}</value>
   </data>
   <data name="InternalDebuggerError" xml:space="preserve">
-    <value>Internal debugger error</value>
+    <value>Внутренняя ошибка отладчика</value>
   </data>
   <data name="LoadModule_InfoText" xml:space="preserve">
     <value>Загрузка модуля. Это может занять некоторое время.</value>
@@ -157,27 +157,33 @@
     <value>Загрузка динамических модулей</value>
   </data>
   <data name="Method_X_ThrewAnExceptionOfType_Y" xml:space="preserve">
-    <value>'{0}' threw an exception of type '{1}'</value>
+    <value>'{0}' бросил исключение типа '{1}'</value>
   </data>
   <data name="ModuleMetadataNotFoundOrInvalid" xml:space="preserve">
-    <value>The metadata of the module couldn't be found or it is invalid</value>
+    <value>Метаданные модуля не найдены или невалидны</value>
   </data>
   <data name="Module_BreakProcessBeforeLoadingDynamicModules" xml:space="preserve">
     <value>Перед загрузкой динамических модулей необходимо остановить процесс.</value>
   </data>
   <data name="NoDotNetObjectFoundAtAddress" xml:space="preserve">
-    <value>No object found at the given address</value>
+    <value>По заданному адресу объект не найден</value>
   </data>
   <data name="NoExceptionOnTheCurrentThread" xml:space="preserve">
-    <value>There is no exception on the current thread</value>
+    <value>В текущем потоке нет исключения</value>
   </data>
   <data name="ReloadAllMethodBodiesCommand" xml:space="preserve">
-    <value>Перегрузить тела всех методов</value>
+    <value>Перезагрузить тела всех методов</value>
   </data>
   <data name="ReturnValueNotAvailable" xml:space="preserve">
-    <value>Return value is not currently available</value>
+    <value>Возвращаемое значение сейчас недоступно</value>
+  </data>
+  <data name="StepFilter_SteppingOverOperator" xml:space="preserve">
+    <value>Шаг внутрь: в обход оператора '{0}'.</value>
+  </data>
+  <data name="StepFilter_SteppingOverProperty" xml:space="preserve">
+    <value>Шаг внутрь: в обход свойства '{0}'.</value>
   </data>
   <data name="UnknownVariableOrObjectId" xml:space="preserve">
-    <value>Unknown variable or object ID</value>
+    <value>Неизвестная идентификатор переменной или объекта</value>
   </data>
 </root>

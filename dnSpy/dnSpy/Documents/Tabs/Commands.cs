@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -55,7 +55,7 @@ namespace dnSpy.Documents.Tabs {
 			appWindow.MainWindowCommands.Add(ApplicationCommands.Open, (s, e) => { Open(); e.Handled = true; }, (s, e) => e.CanExecute = true);
 		}
 
-		static readonly string DotNetAssemblyOrModuleFilter = string.Format("{0} (*.exe, *.dll, *.netmodule, *.winmd)|*.exe;*.dll;*.netmodule;*.winmd|{1} (*.*)|*.*", dnSpy_Resources.DotNetExes, dnSpy_Resources.AllFiles);
+		static readonly string DotNetAssemblyOrModuleFilter = $"{dnSpy_Resources.DotNetExes} (*.exe, *.dll, *.netmodule, *.winmd)|*.exe;*.dll;*.netmodule;*.winmd|{dnSpy_Resources.AllFiles} (*.*)|*.*";
 
 		void Open() {
 			var openDlg = new OpenFileDialog {
@@ -81,7 +81,7 @@ namespace dnSpy.Documents.Tabs {
 		public ToolbarFileOpenCommand()
 			: base(ApplicationCommands.Open) {
 		}
-		public override string GetToolTip(IToolBarItemContext context) => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.OpenToolBarToolTip, dnSpy_Resources.ShortCutKeyCtrlO);
+		public override string? GetToolTip(IToolBarItemContext context) => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.OpenToolBarToolTip, dnSpy_Resources.ShortCutKeyCtrlO);
 	}
 
 	[ExportAutoLoaded]
@@ -147,7 +147,7 @@ namespace dnSpy.Documents.Tabs {
 
 			var flvm = win.SelectedItems.FirstOrDefault();
 			var oldSelected = documentListService.SelectedDocumentList;
-			if (flvm != null) {
+			if (!(flvm is null)) {
 				documentListLoader.SaveCurrentDocumentsToList();
 				documentListService.Add(flvm.DocumentList);
 				documentListService.SelectedDocumentList = flvm.DocumentList;
@@ -155,7 +155,7 @@ namespace dnSpy.Documents.Tabs {
 
 			vm.Save();
 
-			if (flvm == null)
+			if (flvm is null)
 				return;
 			var documentList = flvm.DocumentList;
 			if (documentList == oldSelected)
@@ -219,7 +219,7 @@ namespace dnSpy.Documents.Tabs {
 			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_MAINWINDOW);
 			cmds.Add(ShowCodeEditorRoutedCommand,
 				(s, e) => documentTabService.ActiveTab?.TrySetFocus(),
-				(s, e) => e.CanExecute = documentTabService.ActiveTab != null,
+				(s, e) => e.CanExecute = !(documentTabService.ActiveTab is null),
 				ModifierKeys.Control | ModifierKeys.Alt, Key.D0,
 				ModifierKeys.Control | ModifierKeys.Alt, Key.NumPad0,
 				ModifierKeys.None, Key.F7);
@@ -236,9 +236,9 @@ namespace dnSpy.Documents.Tabs {
 
 	[ExportMenuItem(Header = "res:OpenContainingFolderCommand", Group = MenuConstants.GROUP_CTX_DOCUMENTS_OTHER, Order = 30)]
 	sealed class OpenContainingFolderCtxMenuCommand : MenuItemBase {
-		public override bool IsVisible(IMenuItemContext context) => GetFilename(context) != null;
+		public override bool IsVisible(IMenuItemContext context) => !(GetFilename(context) is null);
 
-		static string GetFilename(IMenuItemContext context) {
+		static string? GetFilename(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID))
 				return null;
 			var nodes = context.Find<TreeNodeData[]>();
@@ -254,11 +254,11 @@ namespace dnSpy.Documents.Tabs {
 		public override void Execute(IMenuItemContext context) {
 			// Known problem: explorer can't show files in the .NET 2.0 GAC.
 			var filename = GetFilename(context);
-			if (filename == null)
+			if (filename is null)
 				return;
-			var args = string.Format("/select,{0}", filename);
+			var args = $"/select,{filename}";
 			try {
-				Process.Start(new ProcessStartInfo("explorer.exe", args));
+				Process.Start(new ProcessStartInfo("explorer.exe", args) { UseShellExecute = false });
 			}
 			catch (IOException) {
 			}

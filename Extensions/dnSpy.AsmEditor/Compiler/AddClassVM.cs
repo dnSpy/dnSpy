@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,30 +18,25 @@
 */
 
 using System.Threading.Tasks;
-using dnlib.DotNet;
-using dnSpy.AsmEditor.ViewHelpers;
-using dnSpy.Contracts.App;
 using dnSpy.Contracts.AsmEditor.Compiler;
-using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.AsmEditor.Compiler {
 	sealed class AddClassVM : EditCodeVM {
 		sealed class AddClassDecompileCodeState : DecompileCodeState {
 		}
 
-		public AddClassVM(IRawModuleBytesProvider rawModuleBytesProvider, IOpenFromGAC openFromGAC, IOpenAssembly openAssembly, ILanguageCompiler languageCompiler, IDecompiler decompiler, ModuleDef module)
-			: base(rawModuleBytesProvider, openFromGAC, openAssembly, languageCompiler, decompiler, module) => StartDecompile();
+		public AddClassVM(EditCodeVMOptions options) : base(options, null) => StartDecompile();
 
 		protected override DecompileCodeState CreateDecompileCodeState() =>
 			new AddClassDecompileCodeState();
 
 		protected override Task<DecompileAsyncResult> DecompileAsync(DecompileCodeState decompileCodeState) {
 			var result = new DecompileAsyncResult();
-			result.AddDocument(MAIN_CODE_NAME, string.Empty, null);
+			result.AddDocument(MainCodeName, string.Empty, null);
 			return Task.FromResult(result);
 		}
 
 		protected override void Import(ModuleImporter importer, CompilationResult result) =>
-			importer.Import(result.RawFile, result.DebugFile, ModuleImporterOptions.None);
+			importer.Import(result.RawFile!, result.DebugFile, ModuleImporterOptions.None);
 	}
 }

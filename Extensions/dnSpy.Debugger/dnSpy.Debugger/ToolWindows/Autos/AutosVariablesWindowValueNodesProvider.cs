@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,16 +18,15 @@
 */
 
 using System;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.Evaluation.UI;
 using dnSpy.Debugger.Evaluation.ViewModel;
 
 namespace dnSpy.Debugger.ToolWindows.Autos {
 	sealed class AutosVariablesWindowValueNodesProvider : VariablesWindowValueNodesProvider {
-		public override ValueNodesProviderResult GetNodes(DbgEvaluationContext context, DbgLanguage language, DbgStackFrame frame, DbgEvaluationOptions evalOptions, DbgValueNodeEvaluationOptions nodeEvalOptions) {
-			var returnValues = language.ReturnValuesProvider.GetNodes(context, frame, nodeEvalOptions);
-			var variables = language.AutosProvider.GetNodes(context, frame, nodeEvalOptions);
+		public override ValueNodesProviderResult GetNodes(DbgEvaluationInfo evalInfo, DbgLanguage language, DbgEvaluationOptions evalOptions, DbgValueNodeEvaluationOptions nodeEvalOptions, DbgValueFormatterOptions nameFormatterOptions) {
+			var returnValues = language.ReturnValuesProvider.GetNodes(evalInfo, nodeEvalOptions);
+			var variables = language.AutosProvider.GetNodes(evalInfo, nodeEvalOptions);
 
 			var res = new DbgValueNodeInfo[returnValues.Length + variables.Length];
 			int ri = 0;

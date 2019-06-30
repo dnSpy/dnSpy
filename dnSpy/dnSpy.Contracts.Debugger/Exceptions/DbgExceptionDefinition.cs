@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 	/// <summary>
 	/// Exception definition
 	/// </summary>
-	public struct DbgExceptionDefinition {
+	public readonly struct DbgExceptionDefinition {
 		/// <summary>
 		/// Exception ID
 		/// </summary>
@@ -37,7 +37,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// <summary>
 		/// Description shown in the UI or null
 		/// </summary>
-		public string Description { get; }
+		public string? Description { get; }
 
 		/// <summary>
 		/// Constructor
@@ -54,8 +54,8 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// <param name="id">Exception id</param>
 		/// <param name="flags">Flags</param>
 		/// <param name="description">Description shown in the UI or null</param>
-		public DbgExceptionDefinition(DbgExceptionId id, DbgExceptionDefinitionFlags flags, string description) {
-			if (id.Category == null)
+		public DbgExceptionDefinition(DbgExceptionId id, DbgExceptionDefinitionFlags flags, string? description) {
+			if (id.Category is null)
 				throw new ArgumentException();
 			Id = id;
 			Flags = flags;
@@ -66,6 +66,6 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// ToString()
 		/// </summary>
 		/// <returns></returns>
-		public override string ToString() => Description == null ? $"{Id} - {Flags}" : $"{Id} ({Description}) - {Flags}";
+		public override string ToString() => Description is null ? $"{Id} - {Flags}" : $"{Id} ({Description}) - {Flags}";
 	}
 }

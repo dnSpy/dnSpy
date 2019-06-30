@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,10 +30,10 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		public Parameter Parameter { get; }
 
-		IVariable ISourceVariable.Variable => Parameter;
+		IVariable? ISourceVariable.Variable => Parameter;
 		bool ISourceVariable.IsLocal => false;
 		bool ISourceVariable.IsParameter => true;
-		bool ISourceVariable.IsDecompilerGenerated => false;
+		bool ISourceVariable.IsDecompilerGenerated => (Flags & SourceVariableFlags.DecompilerGenerated) != 0;
 
 		/// <summary>
 		/// Gets the name of the parameter the decompiler used. It could be different from the real name if the decompiler renamed it.
@@ -46,15 +46,42 @@ namespace dnSpy.Contracts.Decompiler {
 		public TypeSig Type { get; }
 
 		/// <summary>
+		/// Gets the hoisted field or null if it's not a hoisted parameter
+		/// </summary>
+		public FieldDef? HoistedField { get; }
+
+		/// <summary>
+		/// Gets the flags
+		/// </summary>
+		public SourceVariableFlags Flags { get; }
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="parameter">Parameter</param>
 		/// <param name="name">Name used by the decompiler</param>
 		/// <param name="type">Type of local</param>
-		public SourceParameter(Parameter parameter, string name, TypeSig type) {
+		/// <param name="flags">Flags</param>
+		public SourceParameter(Parameter parameter, string name, TypeSig type, SourceVariableFlags flags) {
 			Parameter = parameter ?? throw new ArgumentNullException(nameof(parameter));
 			Name = name ?? throw new ArgumentNullException(nameof(name));
 			Type = type ?? throw new ArgumentNullException(nameof(type));
+			Flags = flags;
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="parameter">Parameter</param>
+		/// <param name="name">Name used by the decompiler</param>
+		/// <param name="hoistedField">Hoisted field</param>
+		/// <param name="flags">Flags</param>
+		public SourceParameter(Parameter parameter, string name, FieldDef hoistedField, SourceVariableFlags flags) {
+			Parameter = parameter ?? throw new ArgumentNullException(nameof(parameter));
+			Name = name ?? throw new ArgumentNullException(nameof(name));
+			HoistedField = hoistedField ?? throw new ArgumentNullException(nameof(hoistedField));
+			Type = hoistedField.FieldType;
+			Flags = flags;
 		}
 	}
 }

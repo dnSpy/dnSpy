@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,11 +26,11 @@ namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// Hex cell collection
 	/// </summary>
-	public struct HexCellCollection {
+	public readonly struct HexCellCollection {
 		/// <summary>
 		/// true if this is a default instance that hasn't been initialized
 		/// </summary>
-		public bool IsDefault => cells == null;
+		public bool IsDefault => cells is null;
 
 		/// <summary>
 		/// Gets the empty collection
@@ -62,7 +62,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="cells">All cells</param>
 		public HexCellCollection(HexCell[] cells) {
-			if (cells == null)
+			if (cells is null)
 				throw new ArgumentNullException(nameof(cells));
 			for (int i = 0; i < cells.Length; i++) {
 				if (cells[i].HasData) {
@@ -99,7 +99,7 @@ done:;
 		/// </summary>
 		/// <param name="point">Point</param>
 		/// <returns></returns>
-		public HexCell GetCell(HexBufferPoint point) {
+		public HexCell? GetCell(HexBufferPoint point) {
 			int index = GetStartIndex(point);
 			if (validStart <= index && index < validEnd)
 				return cells[index];

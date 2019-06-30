@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -54,7 +54,7 @@ namespace dnSpy.Hex.Tagging {
 		[ImportingConstructor]
 		DefaultTaggerProvider(HexClassificationTags hexClassificationTags) => this.hexClassificationTags = hexClassificationTags;
 
-		public override IHexTagger<T> CreateTagger<T>(HexBuffer buffer) =>
+		public override IHexTagger<T>? CreateTagger<T>(HexBuffer buffer) =>
 			new DefaultTagger(hexClassificationTags) as IHexTagger<T>;
 	}
 
@@ -117,7 +117,7 @@ namespace dnSpy.Hex.Tagging {
 			}
 
 			var allValid = context.Line.HexBytes.AllValid;
-			if (allValid == null) {
+			if (allValid is null) {
 				foreach (var cell in context.Line.ValueCells.GetVisibleCells()) {
 					if (!IsValid(cell, context.Line))
 						yield return new HexTextTagSpan<HexClassificationTag>(cell.FullSpan, hexClassificationTags.HexErrorTag);

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -59,10 +59,10 @@ namespace dnSpy.Contracts.Menus {
 		/// </summary>
 		/// <param name="context">Context</param>
 		/// <returns></returns>
-		protected abstract ICommandTarget GetCommandTarget(IMenuItemContext context);
+		protected abstract ICommandTarget? GetCommandTarget(IMenuItemContext context);
 
 		/// <inheritdoc/>
-		public override bool IsVisible(IMenuItemContext context) => GetCommandTarget(context) != null;
+		public override bool IsVisible(IMenuItemContext context) => !(GetCommandTarget(context) is null);
 
 		/// <inheritdoc/>
 		public override bool IsEnabled(IMenuItemContext context) => GetCommandTarget(context)?.CanExecute(group, cmdId) == CommandTargetStatus.Handled;
@@ -109,10 +109,10 @@ namespace dnSpy.Contracts.Menus {
 		/// </summary>
 		/// <param name="context">Context</param>
 		/// <returns></returns>
-		protected abstract ICommandTarget GetCommandTarget(TContext context);
+		protected abstract ICommandTarget? GetCommandTarget(TContext context);
 
 		/// <inheritdoc/>
-		public override bool IsVisible(TContext context) => GetCommandTarget(context) != null;
+		public override bool IsVisible(TContext context) => !(GetCommandTarget(context) is null);
 
 		/// <inheritdoc/>
 		public override bool IsEnabled(TContext context) => GetCommandTarget(context)?.CanExecute(group, cmdId) == CommandTargetStatus.Handled;

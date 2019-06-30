@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -51,7 +51,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// The value. It's only valid if <see cref="HasRawValue"/> is true. A null value is a valid value.
 		/// If it's an enum value, it's stored as the enum's underlying type (eg. <see cref="int"/>)
 		/// </summary>
-		public abstract object RawValue { get; }
+		public abstract object? RawValue { get; }
 
 		/// <summary>
 		/// Gets the address of the value or null if there's no address available.
@@ -178,7 +178,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// <summary>
 	/// Contains the address and length of a value
 	/// </summary>
-	public struct DbgRawAddressValue {
+	public readonly struct DbgRawAddressValue {
 		/// <summary>
 		/// Gets the address
 		/// </summary>

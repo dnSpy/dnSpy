@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,7 +30,7 @@ using dnSpy.Contracts.MVVM;
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class InstructionVM : ViewModelBase, IIndexedItem {
 		public static readonly InstructionVM Null = new InstructionVM(false);
-		InstructionOptions origOptions;
+		InstructionOptions? origOptions;
 
 		static readonly Code[] codeList;
 
@@ -53,7 +53,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
 
 		public int Index {
-			get { return index; }
+			get => index;
 			set {
 				if (index != value) {
 					index = value;
@@ -64,7 +64,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		int index;
 
 		public uint Offset {
-			get { return offset; }
+			get => offset;
 			set {
 				if (offset != value) {
 					offset = value;
@@ -77,14 +77,14 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public ListVM<Code> CodeVM { get; }
 
 		public Code Code {
-			get { return (Code)CodeVM.SelectedItem; }
-			set { CodeVM.SelectedItem = value; }
+			get => CodeVM.SelectedItem;
+			set => CodeVM.SelectedItem = value;
 		}
 
 		public InstructionOperandVM InstructionOperandVM { get; }
 
-		public SequencePoint SequencePoint {
-			get { return sequencePoint; }
+		public SequencePoint? SequencePoint {
+			get => sequencePoint;
 			set {
 				if (sequencePoint != value) {
 					sequencePoint = value;
@@ -92,9 +92,11 @@ namespace dnSpy.AsmEditor.MethodBody {
 				}
 			}
 		}
-		SequencePoint sequencePoint;
+		SequencePoint? sequencePoint;
 
 		InstructionVM(bool dummy) {
+			InstructionOperandVM = null!;
+			CodeVM = null!;
 		}
 
 		public InstructionVM() {
@@ -123,7 +125,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			case InstructionOperandType.Single:
 			case InstructionOperandType.Double:
 			case InstructionOperandType.String:
-				if (!InstructionOperandVM.Text.HasError)
+				if (!InstructionOperandVM.Text!.HasError)
 					return new Instruction(opCode, InstructionOperandVM.Text.ObjectValue);
 				return new Instruction(opCode);
 
@@ -136,7 +138,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 			case InstructionOperandType.SwitchTargets:
 				var list = InstructionOperandVM.Other as IList<InstructionVM>;
-				if (list != null)
+				if (!(list is null))
 					return new Instruction(opCode, new Instruction[list.Count]);
 				return new Instruction(opCode, Array.Empty<Instruction>());
 
@@ -182,7 +184,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 			case OperandType.InlineSwitch:
 				var targets = InstructionOperandVM.Value as System.Collections.IList;
-				return opCode.Size + 4 + (targets == null ? 0 : targets.Count * 4);
+				return opCode.Size + 4 + (targets is null ? 0 : targets.Count * 4);
 
 			case OperandType.InlineVar:
 				return opCode.Size + 2;
@@ -199,7 +201,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			Reinitialize();
 		}
 
-		void Reinitialize() => InitializeFrom(origOptions);
+		void Reinitialize() => InitializeFrom(origOptions!);
 		public InstructionOptions CreateInstructionOptions() => CopyTo(new InstructionOptions());
 
 		public void InitializeFrom(InstructionOptions options) {

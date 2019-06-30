@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -53,6 +53,7 @@ namespace dnSpy.AsmEditor.Compiler {
 					}
 					InputBindings.Add(new KeyBinding(vm.AddGacReferenceCommand, Key.O, ModifierKeys.Control | ModifierKeys.Shift));
 					InputBindings.Add(new KeyBinding(vm.AddAssemblyReferenceCommand, Key.O, ModifierKeys.Control));
+					InputBindings.Add(new KeyBinding(vm.AddDocumentsCommand, Key.A, ModifierKeys.Control | ModifierKeys.Shift));
 					InputBindings.Add(new KeyBinding(vm.GoToNextDiagnosticCommand, Key.F4, ModifierKeys.None));
 					InputBindings.Add(new KeyBinding(vm.GoToNextDiagnosticCommand, Key.F8, ModifierKeys.None));
 					InputBindings.Add(new KeyBinding(vm.GoToPreviousDiagnosticCommand, Key.F4, ModifierKeys.Shift));
@@ -90,8 +91,8 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			var vm = DataContext as EditCodeVM;
 			var diag = diagnosticsListView.SelectedItem as CompilerDiagnosticVM;
-			Debug.Assert(vm != null && diag != null);
-			if (vm == null || diag == null)
+			Debug.Assert(!(vm is null) && !(diag is null));
+			if (vm is null || diag is null)
 				return;
 
 			vm.MoveTo(diag);
@@ -105,7 +106,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		void DiagnosticsListView_SelectionChanged(object sender, SelectionChangedEventArgs e) {
 			var item = diagnosticsListView.SelectedItem;
-			if (item == null)
+			if (item is null)
 				return;
 			diagnosticsListView.ScrollIntoView(item);
 		}

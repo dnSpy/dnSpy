@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,18 +26,18 @@ using System.Security.Permissions;
 using System.Text;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
-	struct DmdDeclSecurityReader : IDisposable {
+	readonly struct DmdDeclSecurityReader : IDisposable {
 		readonly DmdDataStream reader;
 		readonly DmdModule module;
 		readonly IList<DmdType> genericTypeArguments;
 
 		public static DmdCustomAttributeData[] Read(DmdModule module, DmdDataStream signature, SecurityAction action) => Read(module, signature, action, null);
-		public static DmdCustomAttributeData[] Read(DmdModule module, DmdDataStream signature, SecurityAction action, IList<DmdType> genericTypeArguments) {
+		public static DmdCustomAttributeData[] Read(DmdModule module, DmdDataStream signature, SecurityAction action, IList<DmdType>? genericTypeArguments) {
 			using (var reader = new DmdDeclSecurityReader(module, signature, genericTypeArguments))
 				return reader.Read(action);
 		}
 
-		DmdDeclSecurityReader(DmdModule module, DmdDataStream reader, IList<DmdType> genericTypeArguments) {
+		DmdDeclSecurityReader(DmdModule module, DmdDataStream reader, IList<DmdType>? genericTypeArguments) {
 			this.reader = reader;
 			this.module = module;
 			this.genericTypeArguments = genericTypeArguments ?? Array.Empty<DmdType>();
@@ -69,7 +69,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			int numAttrs = (int)reader.ReadCompressedUInt32();
 			var res = new DmdCustomAttributeData[numAttrs];
 
-			IList<DmdType> genericTypeArguments = null;
+			IList<DmdType>? genericTypeArguments = null;
 			int w = 0;
 			for (int i = 0; i < numAttrs; i++) {
 				var name = ReadUTF8String();
@@ -77,11 +77,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				reader.ReadCompressedUInt32();// int blobLength
 				int numNamedArgs = (int)reader.ReadCompressedUInt32();
 				var namedArgs = DmdCustomAttributeReader.ReadNamedArguments(module, reader, type, numNamedArgs, genericTypeArguments);
-				if (namedArgs == null)
+				if (namedArgs is null)
 					throw new IOException();
 				var (ctor, ctorArguments) = GetConstructor(type, action);
-				Debug.Assert((object)ctor != null);
-				if ((object)ctor == null)
+				Debug.Assert(!(ctor is null));
+				if (ctor is null)
 					continue;
 				res[w++] = new DmdCustomAttributeData(ctor, ctorArguments, namedArgs, isPseudoCustomAttribute: false);
 			}
@@ -101,19 +101,19 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			var type = module.AppDomain.GetWellKnownType(DmdWellKnownType.System_Security_Permissions_PermissionSetAttribute);
 			var (ctor, ctorArguments) = GetConstructor(type, action);
 			var xmlProp = type.GetProperty("XML", module.AppDomain.System_String, Array.Empty<DmdType>());
-			Debug.Assert((object)ctor != null);
-			Debug.Assert((object)xmlProp != null);
-			if ((object)ctor == null || (object)xmlProp == null)
+			Debug.Assert(!(ctor is null));
+			Debug.Assert(!(xmlProp is null));
+			if (ctor is null || xmlProp is null)
 				return Array.Empty<DmdCustomAttributeData>();
 			var namedArguments = new[] { new DmdCustomAttributeNamedArgument(xmlProp, new DmdCustomAttributeTypedArgument(module.AppDomain.System_String, xml)) };
 			return new[] { new DmdCustomAttributeData(ctor, ctorArguments, namedArguments, isPseudoCustomAttribute: false) };
 		}
 
-		static (DmdConstructorInfo ctor, IList<DmdCustomAttributeTypedArgument> constructorArguments) GetConstructor(DmdType type, SecurityAction action) {
+		static (DmdConstructorInfo ctor, IList<DmdCustomAttributeTypedArgument>? constructorArguments) GetConstructor(DmdType type, SecurityAction action) {
 			var appDomain = type.AppDomain;
 			var securityActionType = appDomain.GetWellKnownType(DmdWellKnownType.System_Security_Permissions_SecurityAction);
 			var ctor = type.GetConstructor(new[] { securityActionType });
-			if ((object)ctor != null) {
+			if (!(ctor is null)) {
 				var ctorArgs = new[] { new DmdCustomAttributeTypedArgument(securityActionType, (int)action) };
 				return (ctor, ctorArgs);
 			}

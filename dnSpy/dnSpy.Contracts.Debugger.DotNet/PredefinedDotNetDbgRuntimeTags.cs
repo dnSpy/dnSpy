@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -41,5 +41,10 @@ namespace dnSpy.Contracts.Debugger.DotNet {
 		/// .NET Mono runtime
 		/// </summary>
 		public const string DotNetMono = nameof(DotNetMono);
+
+		/// <summary>
+		/// .NET Unity runtime
+		/// </summary>
+		public const string DotNetUnity = nameof(DotNetUnity);
 	}
 }

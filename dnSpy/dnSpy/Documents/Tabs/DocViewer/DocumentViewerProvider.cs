@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -46,13 +46,13 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		sealed class DocumentViewerHelper : IDocumentViewerHelper {
-			public IDocumentViewerHelper RealInstance { get; set; }
+			public IDocumentViewerHelper? RealInstance { get; set; }
 			public void FollowReference(TextReference textRef, bool newTab) => RealInstance?.FollowReference(textRef, newTab);
 			public void SetActive() => RealInstance?.SetActive();
 			public void SetFocus() => RealInstance?.SetFocus();
 		}
 
-		public DocumentTabUIContext Create<T>() where T : class {
+		public DocumentTabUIContext? Create<T>() where T : class {
 			if (typeof(T) == typeof(IDocumentViewer)) {
 				var helper = new DocumentViewerHelper();
 				var uiCtxCtrl = new DocumentViewerControl(textBufferFactoryService, dsTextEditorFactoryService, helper);

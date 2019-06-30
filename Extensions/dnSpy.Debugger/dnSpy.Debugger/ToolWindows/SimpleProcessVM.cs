@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,7 +24,7 @@ using dnSpy.Contracts.MVVM;
 namespace dnSpy.Debugger.ToolWindows {
 	sealed class SimpleProcessVM : ViewModelBase {
 		public string Name { get; private set; }
-		public DbgProcess Process { get; }
+		public DbgProcess? Process { get; }
 		public SimpleProcessVM(string name) => Name = name ?? throw new ArgumentNullException(nameof(name));
 		public SimpleProcessVM(DbgProcess process, bool useHex) {
 			Process = process ?? throw new ArgumentNullException(nameof(process));
@@ -33,7 +33,7 @@ namespace dnSpy.Debugger.ToolWindows {
 		static string GetProcessName(DbgProcess process, bool useHex) =>
 			"[" + (useHex ? "0x" + process.Id.ToString("X") : process.Id.ToString()) + "]" + (string.IsNullOrEmpty(process.Name) ? string.Empty : " " + process.Name);
 		public void UpdateName(bool useHex) {
-			if (Process != null) {
+			if (!(Process is null)) {
 				var newName = GetProcessName(Process, useHex);
 				if (Name != newName) {
 					Name = newName;

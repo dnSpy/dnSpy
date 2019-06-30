@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -39,7 +39,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Evaluation {
 		/// <param name="value">Value created by this runtime</param>
 		/// <param name="id">Unique id</param>
 		/// <returns></returns>
-		public abstract DbgEngineObjectId CreateObjectId(DbgEngineValue value, uint id);
+		public abstract DbgEngineObjectId? CreateObjectId(DbgEngineValue value, uint id);
 
 		/// <summary>
 		/// Checks if an object id and a value refer to the same data

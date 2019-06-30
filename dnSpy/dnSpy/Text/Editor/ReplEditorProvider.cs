@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -54,6 +54,6 @@ namespace dnSpy.Text.Editor {
 			this.textViewUndoManagerProvider = textViewUndoManagerProvider;
 		}
 
-		public IReplEditor Create(ReplEditorOptions options) => new ReplEditor(options, dsTextEditorFactoryService, contentTypeRegistryService, textBufferFactoryService, editorOperationsFactoryService, editorOptionsFactoryService, classificationTypeRegistryService, themeClassificationTypeService, pickSaveFilename, textViewUndoManagerProvider);
+		public IReplEditor Create(ReplEditorOptions? options) => new ReplEditor(options, dsTextEditorFactoryService, contentTypeRegistryService, textBufferFactoryService, editorOperationsFactoryService, editorOptionsFactoryService, classificationTypeRegistryService, themeClassificationTypeService, pickSaveFilename, textViewUndoManagerProvider);
 	}
 }

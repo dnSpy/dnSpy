@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -47,57 +47,58 @@ namespace dnSpy.AsmEditor.MethodBody {
 			sealed class DummyPrinter : ISimpleILPrinter {
 				public double Order => 0;
 
-				public bool Write(IDecompilerOutput output, IMemberRef member) {
-					if (member == null || member is GenericParam)
+				public bool Write(IDecompilerOutput output, IMemberRef? member) {
+					if (member is null || member is GenericParam)
 						return false;
 					Write(output, member);
 					return true;
 				}
 
-				public void Write(IDecompilerOutput output, TypeSig type) => Write(output, type);
+				public void Write(IDecompilerOutput output, TypeSig? type) => Write(output, (object?)type);
 
-				public void Write(IDecompilerOutput output, MethodSig sig) => Write(output, sig);
+				public void Write(IDecompilerOutput output, MethodSig? sig) => Write(output, (object?)sig);
 
-				void Write(IDecompilerOutput output, object value) => output.Write(string.Format("Missing ISimpleILPrinter: {0}", value), BoxedTextColor.Text);
+				void Write(IDecompilerOutput output, object? value) => output.Write($"Missing ISimpleILPrinter: {value}", BoxedTextColor.Text);
 			}
 		}
 
-		public static bool IsNull(object op) =>
-			op == null ||
+		public static bool IsNull(object? op) =>
+			op is null ||
 			op == NullParameter ||
 			op == InstructionVM.Null ||
 			op == LocalVM.Null;
 
-		public static object TryGetVM(Dictionary<object, object> ops, object objModel) {
-			if (objModel == null)
+		public static object? TryGetVM(Dictionary<object, object> ops, object? objModel) {
+			if (objModel is null)
 				return null;
 			if (!ops.TryGetValue(objModel, out object objVm))
 				return objModel;
 			return objVm;
 		}
 
-		public static object TryGetModel(Dictionary<object, object> ops, object objVm) {
+		public static object? TryGetModel(Dictionary<object, object> ops, object? objVm) {
 			if (IsNull(objVm))
 				return null;
+			Debug.Assert(!(objVm is null));
 			if (!ops.TryGetValue(objVm, out object objModel))
 				return objVm;
 			return objModel;
 		}
 
-		public static object ToOperandVM(Dictionary<object, object> ops, object operand) {
+		public static object? ToOperandVM(Dictionary<object, object> ops, object? operand) {
 			if (operand is IList<Instruction> targets) {
-				var newTargets = new InstructionVM[targets.Count];
+				var newTargets = new InstructionVM?[targets.Count];
 				for (int i = 0; i < newTargets.Length; i++)
-					newTargets[i] = (InstructionVM)TryGetVM(ops, (object)targets[i] ?? InstructionVM.Null);
+					newTargets[i] = (InstructionVM?)TryGetVM(ops, (object)targets[i] ?? InstructionVM.Null);
 				return newTargets;
 			}
 
 			return TryGetVM(ops, operand);
 		}
 
-		public static object ToOperandModel(Dictionary<object, object> ops, object operand) {
+		public static object? ToOperandModel(Dictionary<object, object> ops, object? operand) {
 			if (operand is IList<InstructionVM> targets) {
-				var newTargets = new Instruction[targets.Count];
+				var newTargets = new Instruction?[targets.Count];
 				for (int i = 0; i < newTargets.Length; i++)
 					newTargets[i] = TryGetModel(ops, targets[i]) as Instruction;
 				return newTargets;
@@ -329,21 +330,21 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 		}
 
-		static T ReadList<T>(IList<T> list, int index) {
-			if (list == null || index < 0 || index >= list.Count)
-				return default;
+		static T? ReadList<T>(IList<T>? list, int index) where T : class {
+			if (list is null || index < 0 || index >= list.Count)
+				return null;
 			return list[index];
 		}
 
 		public static void OptimizeMacros(this IList<InstructionVM> instrs) {
 			foreach (var instr in instrs) {
-				Parameter arg;
-				LocalVM local;
+				Parameter? arg;
+				LocalVM? local;
 				switch (instr.Code) {
 				case Code.Ldarg:
 				case Code.Ldarg_S:
 					arg = instr.InstructionOperandVM.Value as Parameter;
-					if (arg == null)
+					if (arg is null)
 						break;
 					if (arg.Index == 0)
 						instr.Code = Code.Ldarg_0;
@@ -359,7 +360,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 				case Code.Ldarga:
 					arg = instr.InstructionOperandVM.Value as Parameter;
-					if (arg == null)
+					if (arg is null)
 						break;
 					if (byte.MinValue <= arg.Index && arg.Index <= byte.MaxValue)
 						instr.Code = Code.Ldarga_S;
@@ -402,7 +403,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				case Code.Ldloc:
 				case Code.Ldloc_S:
 					local = instr.InstructionOperandVM.Value as LocalVM;
-					if (local == null)
+					if (local is null)
 						break;
 					if (local.Index == 0)
 						instr.Code = Code.Ldloc_0;
@@ -418,7 +419,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 				case Code.Ldloca:
 					local = instr.InstructionOperandVM.Value as LocalVM;
-					if (local == null)
+					if (local is null)
 						break;
 					if (byte.MinValue <= local.Index && local.Index <= byte.MaxValue)
 						instr.Code = Code.Ldloca_S;
@@ -426,7 +427,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 				case Code.Starg:
 					arg = instr.InstructionOperandVM.Value as Parameter;
-					if (arg == null)
+					if (arg is null)
 						break;
 					if (byte.MinValue <= arg.Index && arg.Index <= byte.MaxValue)
 						instr.Code = Code.Starg_S;
@@ -435,7 +436,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				case Code.Stloc:
 				case Code.Stloc_S:
 					local = instr.InstructionOperandVM.Value as LocalVM;
-					if (local == null)
+					if (local is null)
 						break;
 					if (local.Index == 0)
 						instr.Code = Code.Stloc_0;
@@ -500,7 +501,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 					default: continue;
 					}
 					var targetInstr = instr.InstructionOperandVM.Value as InstructionVM;
-					if (targetInstr == null)
+					if (targetInstr is null)
 						continue;
 
 					int afterShortInstr;
@@ -527,11 +528,12 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 		}
 
-		public static void WriteObject(ITextColorWriter output, object obj, WriteObjectFlags flags = WriteObjectFlags.None) {
+		public static void WriteObject(ITextColorWriter output, object? obj, WriteObjectFlags flags = WriteObjectFlags.None) {
 			if (IsNull(obj)) {
 				output.Write(BoxedTextColor.Keyword, "null");
 				return;
 			}
+			Debug.Assert(!(obj is null));
 
 			if (obj is IMemberRef mr) {
 				if (simpleILPrinter.Write(TextColorWriterToDecompilerOutput.Create(output), mr))
@@ -574,8 +576,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 				return;
 			}
 
-			if (obj is TypeSig) {
-				simpleILPrinter.Write(TextColorWriterToDecompilerOutput.Create(output), obj as TypeSig);
+			if (obj is TypeSig ts) {
+				simpleILPrinter.Write(TextColorWriterToDecompilerOutput.Create(output), ts);
 				return;
 			}
 
@@ -590,16 +592,16 @@ namespace dnSpy.AsmEditor.MethodBody {
 			output.Write(BoxedTextColor.Text, obj.ToString());
 		}
 
-		static string GetLocalName(string name, int index) {
+		static string GetLocalName(string? name, int index) {
 			if (!string.IsNullOrEmpty(name))
 				return name;
-			return string.Format("V_{0}", index);
+			return $"V_{index}";
 		}
 
-		static string GetParameterName(string name, int index) {
+		static string GetParameterName(string? name, int index) {
 			if (!string.IsNullOrEmpty(name))
 				return name;
-			return string.Format("A_{0}", index);
+			return $"A_{index}";
 		}
 
 		static void WriteLocalParameterIndex(this ITextColorWriter output, int index) {
@@ -649,7 +651,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			output.Write(BoxedTextColor.Number, instr.Index.ToString());
 			output.WriteSpace();
 			output.Write(BoxedTextColor.Punctuation, "(");
-			output.Write(BoxedTextColor.Number, string.Format("{0:X4}", instr.Offset));
+			output.Write(BoxedTextColor.Label, instr.Offset.ToString("X4"));
 			output.Write(BoxedTextColor.Punctuation, ")");
 		}
 

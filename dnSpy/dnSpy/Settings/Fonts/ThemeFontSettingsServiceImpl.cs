@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -51,13 +51,13 @@ namespace dnSpy.Settings.Fonts {
 
 			foreach (var data in themeFontSettingsSerializer.Deserialize()) {
 				var themeSettings = TryGetSettings(data.Name);
-				if (themeSettings == null) {
+				if (themeSettings is null) {
 					themeFontSettingsSerializer.Remove(data.Name);
 					continue;
 				}
 				foreach (var fs in data.FontSettings) {
 					var fontSettings = themeSettings.GetSettings(fs.ThemeGuid);
-					if (fontSettings == null)
+					if (fontSettings is null)
 						continue;
 					fontSettings.FontFamily = new FontFamily(fs.FontFamily);
 					fontSettings.FontSize = fs.FontSize;
@@ -83,13 +83,13 @@ namespace dnSpy.Settings.Fonts {
 
 		public override ThemeFontSettings GetSettings(string name) {
 			var settings = TryGetSettings(name);
-			if (settings == null)
+			if (settings is null)
 				throw new ArgumentOutOfRangeException(nameof(name));
 			return settings;
 		}
 
-		ThemeFontSettingsImpl TryGetSettings(string name) {
-			if (name == null)
+		ThemeFontSettingsImpl? TryGetSettings(string name) {
+			if (name is null)
 				throw new ArgumentNullException(nameof(name));
 			if (toSettings.TryGetValue(name, out var settings))
 				return settings;
@@ -107,7 +107,7 @@ namespace dnSpy.Settings.Fonts {
 
 		DefaultFontInfo TextEditorDefaultFontInfo {
 			get {
-				if (textEditorDefaultFontInfo.FontFamily == null)
+				if (textEditorDefaultFontInfo.FontFamily is null)
 					textEditorDefaultFontInfo = new DefaultFontInfo(new FontFamily(FontUtilities.GetDefaultTextEditorFont()), FontUtilities.DEFAULT_FONT_SIZE);
 				return textEditorDefaultFontInfo;
 			}
@@ -116,7 +116,7 @@ namespace dnSpy.Settings.Fonts {
 
 		DefaultFontInfo HexEditorDefaultFontInfo {
 			get {
-				if (hexEditorDefaultFontInfo.FontFamily == null)
+				if (hexEditorDefaultFontInfo.FontFamily is null)
 					hexEditorDefaultFontInfo = new DefaultFontInfo(new FontFamily(FontUtilities.GetDefaultMonospacedFont()), FontUtilities.DEFAULT_FONT_SIZE);
 				return hexEditorDefaultFontInfo;
 			}
@@ -125,7 +125,7 @@ namespace dnSpy.Settings.Fonts {
 
 		DefaultFontInfo MonospacedDefaultFontInfo {
 			get {
-				if (uiDefaultFontInfo.FontFamily == null)
+				if (uiDefaultFontInfo.FontFamily is null)
 					monospacedDefaultFontInfo = new DefaultFontInfo(new FontFamily(FontUtilities.GetDefaultMonospacedFont()), FontUtilities.DEFAULT_FONT_SIZE);
 				return monospacedDefaultFontInfo;
 			}
@@ -134,7 +134,7 @@ namespace dnSpy.Settings.Fonts {
 
 		DefaultFontInfo UIDefaultFontInfo {
 			get {
-				if (uiDefaultFontInfo.FontFamily == null)
+				if (uiDefaultFontInfo.FontFamily is null)
 					uiDefaultFontInfo = new DefaultFontInfo(SystemFonts.MessageFontFamily, SystemFonts.MessageFontSize);
 				return uiDefaultFontInfo;
 			}

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Documents {
 	/// <summary>
 	/// Document info
 	/// </summary>
-	public struct DsDocumentInfo {
+	public readonly struct DsDocumentInfo {
 		/// <summary>
 		/// Name, eg. filename if <see cref="Type"/> is <see cref="DocumentConstants.DOCUMENTTYPE_FILE"/>
 		/// </summary>
@@ -76,6 +76,6 @@ namespace dnSpy.Contracts.Documents {
 		/// ToString()
 		/// </summary>
 		/// <returns></returns>
-		public override string ToString() => string.Format("{0} {1}", Name, Type);
+		public override string ToString() => $"{Name} {Type}";
 	}
 }

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -92,14 +92,14 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// </summary>
 		/// <param name="bufferPosition">Position</param>
 		/// <returns></returns>
-		public abstract HexViewLine GetHexViewLineContainingBufferPosition(HexBufferPoint bufferPosition);
+		public abstract HexViewLine? GetHexViewLineContainingBufferPosition(HexBufferPoint bufferPosition);
 
 		/// <summary>
 		/// Gets the line containing <paramref name="y"/>
 		/// </summary>
 		/// <param name="y">Y position</param>
 		/// <returns></returns>
-		public abstract HexViewLine GetHexViewLineContainingYCoordinate(double y);
+		public abstract HexViewLine? GetHexViewLineContainingYCoordinate(double y);
 
 		/// <summary>
 		/// Gets all lines intersecting with <paramref name="bufferSpan"/>

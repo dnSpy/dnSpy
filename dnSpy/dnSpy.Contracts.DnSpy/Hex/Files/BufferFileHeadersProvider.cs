@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,6 +31,6 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// Returns headers or null. This method is called after <see cref="StructureProvider.GetHeaders{THeader}"/>
 		/// </summary>
 		/// <returns></returns>
-		public abstract THeader GetHeaders<THeader>() where THeader : class, IBufferFileHeaders;
+		public abstract THeader? GetHeaders<THeader>() where THeader : class, IBufferFileHeaders;
 	}
 }

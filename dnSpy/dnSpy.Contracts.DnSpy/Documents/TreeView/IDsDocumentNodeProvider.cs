@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,7 +33,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// <param name="owner">Owner node or null if owner is the root node</param>
 		/// <param name="document">New document</param>
 		/// <returns></returns>
-		DsDocumentNode Create(IDocumentTreeView documentTreeView, DsDocumentNode owner, IDsDocument document);
+		DsDocumentNode? Create(IDocumentTreeView documentTreeView, DsDocumentNode? owner, IDsDocument document);
 	}
 
 	/// <summary>Metadata</summary>

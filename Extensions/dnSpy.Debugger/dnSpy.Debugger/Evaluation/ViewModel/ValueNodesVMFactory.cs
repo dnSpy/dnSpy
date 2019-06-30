@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -38,6 +38,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 	}
 
 	sealed class ValueNodesVMOptions {
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
 		public ValueNodesProvider NodesProvider { get; set; }
 
 		/// <summary>
@@ -66,5 +67,6 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 		public ShowMessageBox ShowMessageBox { get; set; }
 
 		public Guid TreeViewGuid { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
 	}
 }

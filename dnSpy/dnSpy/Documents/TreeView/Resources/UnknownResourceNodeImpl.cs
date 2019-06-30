@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.IO;
 using System.Threading;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
@@ -45,15 +44,15 @@ namespace dnSpy.Documents.TreeView.Resources {
 			}
 		}
 
-		public override string ToString(CancellationToken token, bool canDecompile) {
+		public override string? ToString(CancellationToken token, bool canDecompile) {
 			if (Resource is EmbeddedResource er)
-				return ResourceUtilities.TryGetString(new MemoryStream(er.GetResourceData()));
+				return ResourceUtilities.TryGetString(er.CreateReader().AsStream());
 			return null;
 		}
 
 		public bool Decompile(IDecompileNodeContext context) {
 			if (Resource is EmbeddedResource er)
-				return ResourceUtilities.Decompile(context, new MemoryStream(er.GetResourceData()), er.Name);
+				return ResourceUtilities.Decompile(context, er.CreateReader().AsStream(), er.Name);
 			return false;
 		}
 	}

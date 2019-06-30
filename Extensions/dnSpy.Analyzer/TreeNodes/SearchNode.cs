@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
+// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
@@ -16,9 +16,12 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
+using dnlib.DotNet;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.TreeView;
@@ -35,24 +38,24 @@ namespace dnSpy.Analyzer.TreeNodes {
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => DsImages.Search;
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
-			Debug.Assert(asyncFetchChildrenHelper == null);
+			Debug.Assert(asyncFetchChildrenHelper is null);
 			asyncFetchChildrenHelper = new AsyncFetchChildrenHelper(this, () => asyncFetchChildrenHelper = null);
 			yield break;
 		}
-		AsyncFetchChildrenHelper asyncFetchChildrenHelper;
+		AsyncFetchChildrenHelper? asyncFetchChildrenHelper;
 
 		protected abstract IEnumerable<AnalyzerTreeNodeData> FetchChildren(CancellationToken ct);
 		internal IEnumerable<AnalyzerTreeNodeData> FetchChildrenInternal(CancellationToken token) => FetchChildren(token);
 
 		public override void OnIsVisibleChanged() {
-			if (!TreeNode.IsVisible && asyncFetchChildrenHelper != null && !asyncFetchChildrenHelper.CompletedSuccessfully) {
+			if (!TreeNode.IsVisible && !(asyncFetchChildrenHelper is null) && !asyncFetchChildrenHelper.CompletedSuccessfully) {
 				CancelAndClearChildren();
 				TreeNode.LazyLoading = true;
 			}
  		}
 
 		public override void OnIsExpandedChanged(bool isExpanded) {
-			if (!isExpanded && asyncFetchChildrenHelper != null && !asyncFetchChildrenHelper.CompletedSuccessfully) {
+			if (!isExpanded && !(asyncFetchChildrenHelper is null) && !asyncFetchChildrenHelper.CompletedSuccessfully) {
 				CancelAndClearChildren();
 				TreeNode.LazyLoading = true;
 			}
@@ -86,5 +89,94 @@ namespace dnSpy.Analyzer.TreeNodes {
 			asyncFetchChildrenHelper?.Cancel();
 			asyncFetchChildrenHelper = null;
 		}
+
+		internal static bool CanIncludeModule(ModuleDef targetModule, ModuleDef? module) {
+			if (module is null)
+				return false;
+			if (targetModule == module)
+				return false;
+			if (!(targetModule.Assembly is null) && targetModule.Assembly == module.Assembly)
+				return false;
+			return true;
+		}
+
+		internal static HashSet<string> GetFriendAssemblies(IDsDocumentService documentService, ModuleDef mod, out IDsDocument[] modules) {
+			var asm = mod.Assembly;
+			Debug.Assert(!(asm is null));
+			var friendAssemblies = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			foreach (var attribute in asm.CustomAttributes.FindAll("System.Runtime.CompilerServices.InternalsVisibleToAttribute")) {
+				if (attribute.ConstructorArguments.Count == 0)
+					continue;
+				string assemblyName = attribute.ConstructorArguments[0].Value as UTF8String;
+				if (assemblyName is null)
+					continue;
+				assemblyName = new AssemblyNameInfo(assemblyName).Name;
+				friendAssemblies.Add(assemblyName);
+			}
+			modules = documentService.GetDocuments().Where(a => CanIncludeModule(mod, a.ModuleDef)).ToArray();
+			foreach (var module in modules) {
+				Debug.Assert(!(module.ModuleDef is null));
+				var asm2 = module.AssemblyDef;
+				if (asm2 is null)
+					continue;
+				foreach (var attribute in asm2.CustomAttributes.FindAll("System.Runtime.CompilerServices.IgnoresAccessChecksToAttribute")) {
+					string assemblyName = attribute.ConstructorArguments[0].Value as UTF8String;
+					if (assemblyName is null)
+						continue;
+					assemblyName = new AssemblyNameInfo(assemblyName).Name;
+					if (StringComparer.OrdinalIgnoreCase.Equals(asm.Name.String, assemblyName))
+						friendAssemblies.Add(asm2.Name);
+				}
+			}
+			return friendAssemblies;
+		}
+
+		internal static void AddTypeEquivalentTypes(IDsDocumentService documentService, TypeDef analyzedType, List<TypeDef> analyzedTypes) {
+			Debug.Assert(analyzedTypes.Count == 1 && analyzedTypes[0] == analyzedType);
+			if (!TIAHelper.IsTypeDefEquivalent(analyzedType))
+				return;
+			foreach (var document in documentService.GetDocuments()) {
+				foreach (var type in GetTypeEquivalentTypes(document.AssemblyDef, document.ModuleDef, analyzedType)) {
+					if (type != analyzedType)
+						analyzedTypes.Add(type);
+				}
+			}
+		}
+
+		static IEnumerable<TypeDef> GetTypeEquivalentTypes(AssemblyDef? assembly, ModuleDef? module, TypeDef type) {
+			Debug.Assert(TIAHelper.IsTypeDefEquivalent(type));
+			var typeRef = new ModuleDefUser("dummy").Import(type);
+			foreach (var mod in GetModules(assembly, module)) {
+				var otherType = mod.Find(typeRef);
+				if (otherType != type && TIAHelper.IsTypeDefEquivalent(otherType) &&
+					new SigComparer().Equals(otherType, type) &&
+					!new SigComparer(SigComparerOptions.DontCheckTypeEquivalence).Equals(otherType, type)) {
+					yield return otherType;
+				}
+			}
+		}
+
+		static IEnumerable<ModuleDef> GetModules(AssemblyDef? assembly, ModuleDef? module) {
+			if (!(assembly is null)) {
+				foreach (var mod in assembly.Modules)
+					yield return mod;
+			}
+			else {
+				Debug.Assert(!(module is null));
+				yield return module;
+			}
+		}
+
+		protected static IEnumerable<(ModuleDef module, ITypeDefOrRef type)> GetTypeEquivalentModulesAndTypes(List<TypeDef> analyzedTypes) {
+			foreach (var type in analyzedTypes)
+				yield return (type.Module, type);
+		}
+
+		internal static IEnumerable<ModuleDef> GetTypeEquivalentModules(List<TypeDef> analyzedTypes) {
+			foreach (var type in analyzedTypes)
+				yield return type.Module;
+		}
+
+		protected static bool CheckEquals(IMemberRef? mr1, IMemberRef? mr2) => Helpers.CheckEquals(mr1, mr2);
 	}
 }

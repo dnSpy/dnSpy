@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -37,7 +37,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <param name="structure">Structure</param>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public virtual HexIndexes[] GetSubStructureIndexes(HexBufferFile file, ComplexData structure, HexPosition position) => null;
+		public virtual HexIndexes[]? GetSubStructureIndexes(HexBufferFile file, ComplexData structure, HexPosition position) => null;
 
 		/// <summary>
 		/// Returns a tooltip or null
@@ -46,7 +46,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <param name="structure">Structure</param>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public virtual object GetToolTip(HexBufferFile file, ComplexData structure, HexPosition position) => null;
+		public virtual object? GetToolTip(HexBufferFile file, ComplexData structure, HexPosition position) => null;
 
 		/// <summary>
 		/// Returns a reference or null
@@ -55,7 +55,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <param name="structure">Structure</param>
 		/// <param name="position">Position</param>
 		/// <returns></returns>
-		public virtual object GetReference(HexBufferFile file, ComplexData structure, HexPosition position) => null;
+		public virtual object? GetReference(HexBufferFile file, ComplexData structure, HexPosition position) => null;
 
 		/// <summary>
 		/// Returns the span the field value references or null. The span can be empty.
@@ -70,7 +70,7 @@ namespace dnSpy.Contracts.Hex.Files {
 	/// <summary>
 	/// Indexes
 	/// </summary>
-	public struct HexIndexes {
+	public readonly struct HexIndexes {
 		/// <summary>
 		/// Gets the start index
 		/// </summary>

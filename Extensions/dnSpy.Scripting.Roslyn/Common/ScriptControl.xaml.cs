@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,6 +25,6 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			InitializeComponent();
 		}
 
-		public void SetTextEditorObject(object obj) => textEditorContentPresenter.Content = obj;
+		public void SetTextEditorObject(object? obj) => textEditorContentPresenter.Content = obj;
 	}
 }

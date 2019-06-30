@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,65 +19,18 @@
 
 namespace dndbg.Engine {
 	enum DebuggerPauseReason {
-		/// <summary>
-		/// Some unknown reason
-		/// </summary>
 		Other,
-
-		/// <summary>
-		/// An unhandled exception
-		/// </summary>
+		AsyncStepperBreakpoint,
 		UnhandledException,
-
-		/// <summary>
-		/// An exception
-		/// </summary>
 		Exception,
-
-		/// <summary>
-		/// A <see cref="DnDebugEventBreakpoint"/> breakpoint got triggered
-		/// </summary>
 		DebugEventBreakpoint,
-
-		/// <summary>
-		/// A <see cref="DnAnyDebugEventBreakpoint"/> breakpoint got triggered
-		/// </summary>
 		AnyDebugEventBreakpoint,
-
-		/// <summary>
-		/// A 'break' IL instruction was executed
-		/// </summary>
 		Break,
-
-		/// <summary>
-		/// An IL code breakpoint got triggered
-		/// </summary>
 		ILCodeBreakpoint,
-
-		/// <summary>
-		/// A native code breakpoint got triggered
-		/// </summary>
 		NativeCodeBreakpoint,
-
-		/// <summary>
-		/// TryBreakProcesses() was called
-		/// </summary>
 		UserBreak,
-
-		/// <summary>
-		/// Evaluation completed
-		/// </summary>
 		Eval,
-
-		/// <summary>
-		/// Breakpoint at entry point or Module .cctor got hit
-		/// </summary>
 		EntryPointBreakpoint,
-
-		/// <summary>
-		/// Start of user pause reasons
-		/// </summary>
-		UserReason = 0x10000000,
 	}
 
 	class DebuggerPauseState {
@@ -103,10 +56,10 @@ namespace dndbg.Engine {
 
 	sealed class ILCodeBreakpointPauseState : DebuggerPauseState {
 		public DnILCodeBreakpoint Breakpoint { get; }
-		public CorAppDomain CorAppDomain { get; }
-		public CorThread CorThread { get; }
+		public CorAppDomain? CorAppDomain { get; }
+		public CorThread? CorThread { get; }
 
-		public ILCodeBreakpointPauseState(DnILCodeBreakpoint bp, CorAppDomain corAppDomain, CorThread corThread)
+		public ILCodeBreakpointPauseState(DnILCodeBreakpoint bp, CorAppDomain? corAppDomain, CorThread? corThread)
 			: base(DebuggerPauseReason.ILCodeBreakpoint) {
 			Breakpoint = bp;
 			CorAppDomain = corAppDomain;
@@ -116,10 +69,10 @@ namespace dndbg.Engine {
 
 	sealed class NativeCodeBreakpointPauseState : DebuggerPauseState {
 		public DnNativeCodeBreakpoint Breakpoint { get; }
-		public CorAppDomain CorAppDomain { get; }
-		public CorThread CorThread { get; }
+		public CorAppDomain? CorAppDomain { get; }
+		public CorThread? CorThread { get; }
 
-		public NativeCodeBreakpointPauseState(DnNativeCodeBreakpoint bp, CorAppDomain corAppDomain, CorThread corThread)
+		public NativeCodeBreakpointPauseState(DnNativeCodeBreakpoint bp, CorAppDomain? corAppDomain, CorThread? corThread)
 			: base(DebuggerPauseReason.NativeCodeBreakpoint) {
 			Breakpoint = bp;
 			CorAppDomain = corAppDomain;
@@ -128,11 +81,10 @@ namespace dndbg.Engine {
 	}
 
 	sealed class BreakPauseState : DebuggerPauseState {
-		public DnNativeCodeBreakpoint Breakpoint { get; }
-		public CorAppDomain CorAppDomain { get; }
-		public CorThread CorThread { get; }
+		public CorAppDomain? CorAppDomain { get; }
+		public CorThread? CorThread { get; }
 
-		public BreakPauseState(CorAppDomain corAppDomain, CorThread corThread)
+		public BreakPauseState(CorAppDomain? corAppDomain, CorThread? corThread)
 			: base(DebuggerPauseReason.Break) {
 			CorAppDomain = corAppDomain;
 			CorThread = corThread;
@@ -140,10 +92,10 @@ namespace dndbg.Engine {
 	}
 
 	sealed class EntryPointBreakpointPauseState : DebuggerPauseState {
-		public CorAppDomain CorAppDomain { get; }
-		public CorThread CorThread { get; }
+		public CorAppDomain? CorAppDomain { get; }
+		public CorThread? CorThread { get; }
 
-		public EntryPointBreakpointPauseState(CorAppDomain corAppDomain, CorThread corThread)
+		public EntryPointBreakpointPauseState(CorAppDomain? corAppDomain, CorThread? corThread)
 			: base(DebuggerPauseReason.EntryPointBreakpoint) {
 			CorAppDomain = corAppDomain;
 			CorThread = corThread;

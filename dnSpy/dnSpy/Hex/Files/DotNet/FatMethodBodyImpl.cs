@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,8 +30,8 @@ namespace dnSpy.Hex.Files.DotNet {
 		public override StructField<UInt32Data> CodeSize { get; }
 		public override StructField<TokenData> LocalVarSigTok { get; }
 		public override StructField<VirtualArrayData<ByteData>> Instructions { get; }
-		public override StructField<VirtualArrayData<ByteData>> Padding { get; }
-		public override StructField<ExceptionHandlerTable> EHTable { get; }
+		public override StructField<VirtualArrayData<ByteData>>? Padding { get; }
+		public override StructField<ExceptionHandlerTable>? EHTable { get; }
 
 		protected override BufferField[] Fields { get; }
 
@@ -75,9 +75,9 @@ namespace dnSpy.Hex.Files.DotNet {
 				LocalVarSigTok,
 				Instructions,
 			};
-			if (Padding != null)
+			if (!(Padding is null))
 				fields.Add(Padding);
-			if (EHTable != null)
+			if (!(EHTable is null))
 				fields.Add(EHTable);
 			Fields = fields.ToArray();
 		}

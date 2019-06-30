@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -37,7 +37,7 @@ namespace dnSpy.Contracts.Settings.AppearanceCategory {
 		/// <summary>
 		/// Text shown in the UI
 		/// </summary>
-		public abstract string DisplayName { get; }
+		public abstract string? DisplayName { get; }
 
 		/// <summary>
 		/// Appearance category, eg. <see cref="AppearanceCategoryConstants.TextEditor"/>

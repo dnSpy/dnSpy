@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,7 +36,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public const string ContentDataId = "DocumentViewerUIElement-ContentDataId";
 	}
 
-	struct DocumentViewerUIElement {
+	readonly struct DocumentViewerUIElement {
 		public int Position { get; }
 		public Func<UIElement> CreateElement { get; }
 		public DocumentViewerUIElement(int position, Func<UIElement> createElement) {
@@ -51,7 +51,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public static readonly DocumentViewerUIElementCollection Empty = new DocumentViewerUIElementCollection(Array.Empty<DocumentViewerUIElement>());
 
 		public int Count => elements.Length;
-		public DocumentViewerUIElement this[int index] => elements[index];
+		public ref readonly DocumentViewerUIElement this[int index] => ref elements[index];
 
 		readonly DocumentViewerUIElement[] elements;
 
@@ -106,7 +106,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		[ImportingConstructor]
 		DocumentViewerUIElementTaggerProvider(IDocumentViewerUIElementServiceProvider documentViewerUIElementServiceProvider) => this.documentViewerUIElementServiceProvider = documentViewerUIElementServiceProvider;
 
-		public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag {
+		public ITagger<T>? CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag {
 			if (textView.TextBuffer != buffer)
 				return null;
 			// We can't call textView.TextBuffer.TryGetDocumentViewer() since it hasn't completely
@@ -159,7 +159,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		readonly ITextView textView;
 		readonly Dictionary<int, UIElement> cachedUIElements;
 		DocumentViewerUIElementCollection collection;
-		IDocumentViewerUIElementTagger tagger;
+		IDocumentViewerUIElementTagger? tagger;
 		int textVersionNumber;
 
 		public DocumentViewerUIElementService(ITextView textView) {
@@ -182,7 +182,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		public void RegisterTagger(IDocumentViewerUIElementTagger tagger) {
-			if (this.tagger != null)
+			if (!(this.tagger is null))
 				throw new InvalidOperationException();
 			this.tagger = tagger ?? throw new ArgumentNullException(nameof(tagger));
 		}
@@ -207,10 +207,10 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 					if (!cachedUIElements.TryGetValue(index, out var uiElem)) {
 						uiElem = info.CreateElement();
 						cachedUIElements.Add(index, uiElem);
-						Debug.Assert(uiElem != null);
+						Debug.Assert(!(uiElem is null));
 						uiElem?.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
 					}
-					if (uiElem == null)
+					if (uiElem is null)
 						continue;
 
 					var textHeight = Math.Ceiling(uiElem.DesiredSize.Height);

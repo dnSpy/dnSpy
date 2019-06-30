@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 	/// Default <see cref="WpfHexViewHost"/> options
 	/// </summary>
 	public static class DefaultHexViewHostOptions {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public const string HorizontalScrollBarName = "HexViewHost/HorizontalScrollBar";
 		public static readonly VSTE.EditorOptionKey<bool> HorizontalScrollBarId = new VSTE.EditorOptionKey<bool>(HorizontalScrollBarName);
 		public const string VerticalScrollBarName = "HexViewHost/VerticalScrollBar";
@@ -35,6 +35,8 @@ namespace dnSpy.Contracts.Hex.Editor {
 		public static readonly VSTE.EditorOptionKey<bool> ZoomControlId = new VSTE.EditorOptionKey<bool>(ZoomControlName);
 		public const string GlyphMarginName = "HexViewHost/GlyphMargin";
 		public static readonly VSTE.EditorOptionKey<bool> GlyphMarginId = new VSTE.EditorOptionKey<bool>(GlyphMarginName);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+		public const string IsInContrastModeName = "HexViewHost/IsInContrastMode";
+		public static readonly VSTE.EditorOptionKey<bool> IsInContrastModeId = new VSTE.EditorOptionKey<bool>(IsInContrastModeName);
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

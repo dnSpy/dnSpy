@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,8 +35,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// </summary>
 		public DsDocumentNode[] Nodes { get; private set; }
 
-		NotifyDocumentTreeViewCollectionChangedEventArgs() {
-		}
+		NotifyDocumentTreeViewCollectionChangedEventArgs(DsDocumentNode[] nodes) => Nodes = nodes;
 
 		/// <summary>
 		/// Creates a <see cref="NotifyDocumentTreeViewCollection.Clear"/> instance
@@ -44,10 +43,9 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// <param name="clearedDocuments">All cleared documents</param>
 		/// <returns></returns>
 		public static NotifyDocumentTreeViewCollectionChangedEventArgs CreateClear(DsDocumentNode[] clearedDocuments) {
-			Debug.Assert(clearedDocuments != null);
-			var e = new NotifyDocumentTreeViewCollectionChangedEventArgs();
+			Debug.Assert(!(clearedDocuments is null));
+			var e = new NotifyDocumentTreeViewCollectionChangedEventArgs(clearedDocuments);
 			e.Type = NotifyDocumentTreeViewCollection.Clear;
-			e.Nodes = clearedDocuments;
 			return e;
 		}
 
@@ -57,10 +55,9 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// <param name="document">Added document</param>
 		/// <returns></returns>
 		public static NotifyDocumentTreeViewCollectionChangedEventArgs CreateAdd(DsDocumentNode document) {
-			Debug.Assert(document != null);
-			var e = new NotifyDocumentTreeViewCollectionChangedEventArgs();
+			Debug.Assert(!(document is null));
+			var e = new NotifyDocumentTreeViewCollectionChangedEventArgs(new DsDocumentNode[] { document });
 			e.Type = NotifyDocumentTreeViewCollection.Add;
-			e.Nodes = new DsDocumentNode[] { document };
 			return e;
 		}
 
@@ -70,10 +67,9 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// <param name="documents">Removed documents</param>
 		/// <returns></returns>
 		public static NotifyDocumentTreeViewCollectionChangedEventArgs CreateRemove(DsDocumentNode[] documents) {
-			Debug.Assert(documents != null);
-			var e = new NotifyDocumentTreeViewCollectionChangedEventArgs();
+			Debug.Assert(!(documents is null));
+			var e = new NotifyDocumentTreeViewCollectionChangedEventArgs(documents);
 			e.Type = NotifyDocumentTreeViewCollection.Remove;
-			e.Nodes = documents;
 			return e;
 		}
 	}

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,20 +27,20 @@ namespace dnSpy.Language.Intellisense {
 	sealed partial class IntellisenseSessionStack {
 		sealed class CommandTargetFilter : ICommandTargetFilter {
 			readonly IntellisenseSessionStack owner;
-			readonly IDsWpfTextView wpfTextView;
+			readonly IDsWpfTextView? wpfTextView;
 			bool hasHookedKeyboard;
 
 			public CommandTargetFilter(IntellisenseSessionStack owner) {
 				this.owner = owner;
 				wpfTextView = owner.wpfTextView as IDsWpfTextView;
-				Debug.Assert(wpfTextView != null);
+				Debug.Assert(!(wpfTextView is null));
 			}
 
 			public void HookKeyboard() {
 				Debug.Assert(!hasHookedKeyboard);
 				if (hasHookedKeyboard)
 					return;
-				if (wpfTextView == null)
+				if (wpfTextView is null)
 					return;
 				wpfTextView.CommandTarget.AddFilter(this, CommandTargetFilterOrder.IntellisenseSessionStack);
 				hasHookedKeyboard = true;
@@ -49,7 +49,7 @@ namespace dnSpy.Language.Intellisense {
 			public void UnhookKeyboard() {
 				if (!hasHookedKeyboard)
 					return;
-				if (wpfTextView == null)
+				if (wpfTextView is null)
 					return;
 				wpfTextView.CommandTarget.RemoveFilter(this);
 				hasHookedKeyboard = false;
@@ -57,21 +57,21 @@ namespace dnSpy.Language.Intellisense {
 
 			public CommandTargetStatus CanExecute(Guid group, int cmdId) {
 				if (group == CommandConstants.TextEditorGroup) {
-					if (TryGetIntellisenseKeyboardCommand((TextEditorIds)cmdId) != null)
+					if (!(TryGetIntellisenseKeyboardCommand((TextEditorIds)cmdId) is null))
 						return CommandTargetStatus.Handled;
 				}
 				return CommandTargetStatus.NotHandled;
 			}
 
-			public CommandTargetStatus Execute(Guid group, int cmdId, object args) {
-				object result = null;
+			public CommandTargetStatus Execute(Guid group, int cmdId, object? args) {
+				object? result = null;
 				return Execute(group, cmdId, args, ref result);
 			}
 
-			public CommandTargetStatus Execute(Guid group, int cmdId, object args, ref object result) {
+			public CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) {
 				if (group == CommandConstants.TextEditorGroup) {
 					var command = TryGetIntellisenseKeyboardCommand((TextEditorIds)cmdId);
-					if (command != null && owner.ExecuteKeyboardCommand(command.Value))
+					if (!(command is null) && owner.ExecuteKeyboardCommand(command.Value))
 						return CommandTargetStatus.Handled;
 				}
 				return CommandTargetStatus.NotHandled;

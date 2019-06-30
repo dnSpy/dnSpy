@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -39,12 +39,11 @@ namespace dnSpy.Scripting.Roslyn.CSharp {
 		protected override string Logo {
 			get {
 				// This is how MS gets the version, see roslyn/src/Interactive/EditorFeatures/CSharp/Interactive/CSharpReplServiceProvider.cs
-				return string.Format("Microsoft (R) Roslyn C# Compiler version {0}",
-					FileVersionInfo.GetVersionInfo(typeof(CSharpCommandLineArguments).Assembly.Location).FileVersion);
+				return $"Microsoft (R) Roslyn C# Compiler version {FileVersionInfo.GetVersionInfo(typeof(CSharpCommandLineArguments).Assembly.Location).FileVersion}";
 			}
 		}
 
-		static readonly string CODEFILTERTEXT = string.Format("{1} (*.csx)|*.csx|{0} (*.*)|*.*", dnSpy_Scripting_Roslyn_Resources.AllFiles, dnSpy_Scripting_Roslyn_Resources.CSharpScriptFiles);
+		static readonly string CODEFILTERTEXT = $"{dnSpy_Scripting_Roslyn_Resources.CSharpScriptFiles} (*.csx)|*.csx|{dnSpy_Scripting_Roslyn_Resources.AllFiles} (*.*)|*.*";
 
 		protected override string Help => dnSpy_Scripting_Roslyn_Resources.HelpString;
 		protected override ObjectFormatter ObjectFormatter => CSharpObjectFormatter.Instance;
@@ -58,7 +57,7 @@ namespace dnSpy.Scripting.Roslyn.CSharp {
 			: base(replEditor, settings, serviceLocator) {
 		}
 
-		protected override Script<T> Create<T>(string code, ScriptOptions options, Type globalsType, InteractiveAssemblyLoader assemblyLoader) =>
+		protected override Script<T> Create<T>(string code, ScriptOptions options, Type globalsType, InteractiveAssemblyLoader? assemblyLoader) =>
 			CSharpScript.Create<T>(code, options, globalsType, assemblyLoader);
 
 		protected override bool IsCompleteSubmission(string text) =>
@@ -69,13 +68,13 @@ namespace dnSpy.Scripting.Roslyn.CSharp {
 			SyntaxFactory.ParseSyntaxTree(code, parseOptions, cancellationToken: cancellationToken);
 
 		protected override Compilation CreateScriptCompilation(string assemblyName, SyntaxTree syntaxTree,
-			IEnumerable<MetadataReference> references, CompilationOptions options,
+			IEnumerable<MetadataReference>? references, CompilationOptions options,
 			Compilation previousScriptCompilation, Type returnType, Type globalsType) =>
 			CSharpCompilation.CreateScriptCompilation(assemblyName, syntaxTree, references, (CSharpCompilationOptions)options, (CSharpCompilation)previousScriptCompilation, returnType, globalsType);
 
 		protected override void InitializeUserScriptOptions(UserScriptOptions options) {
 			var rspFile = GetResponseFile("CSharpInteractive.rsp");
-			if (rspFile == null)
+			if (rspFile is null)
 				return;
 			ReplEditor.OutputPrintLine(string.Format(dnSpy_Scripting_Roslyn_Resources.LoadingContextFromFile, Path.GetFileName(rspFile)), BoxedTextColor.ReplOutputText);
 

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="metadataToken">Metadata token of the method</param>
 		/// <param name="rva">RVA of method body</param>
 		/// <returns></returns>
-		public abstract DmdDataStream TryGetMethodBody(DmdModule module, int metadataToken, uint rva);
+		public abstract DmdDataStream? TryGetMethodBody(DmdModule module, int metadataToken, uint rva);
 
 		/// <summary>
 		/// Raised when a new type in this module is loaded. It must be raised on the COM thread.
@@ -46,7 +46,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
 	/// Class loaded event args
 	/// </summary>
-	public struct DmdTypeLoadedEventArgs {
+	public readonly struct DmdTypeLoadedEventArgs {
 		/// <summary>
 		/// Gets the metadata token of the type that got loaded
 		/// </summary>

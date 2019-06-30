@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,8 +24,8 @@ using dnlib.DotNet.Pdb;
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class InstructionOptions {
 		public Code Code;
-		public object Operand;
-		public SequencePoint SequencePoint;//TODO: Use this
+		public object? Operand;
+		public SequencePoint? SequencePoint;//TODO: Use this
 
 		public InstructionOptions() {
 		}

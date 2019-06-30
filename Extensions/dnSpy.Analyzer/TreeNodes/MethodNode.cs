@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
+// Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop Team
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
@@ -30,10 +30,12 @@ namespace dnSpy.Analyzer.TreeNodes {
 	class MethodNode : EntityNode {
 		readonly MethodDef analyzedMethod;
 		readonly bool hidesParent;
+		readonly bool isSetter;
 
-		public MethodNode(MethodDef analyzedMethod, bool hidesParent = false) {
+		public MethodNode(MethodDef analyzedMethod, bool hidesParent = false, bool isSetter = false) {
 			this.analyzedMethod = analyzedMethod ?? throw new ArgumentNullException(nameof(analyzedMethod));
 			this.hidesParent = hidesParent;
+			this.isSetter = isSetter;
 		}
 
 		public override void Initialize() => TreeNode.LazyLoading = true;
@@ -48,17 +50,17 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 			decompiler.WriteType(output, analyzedMethod.DeclaringType, true);
 			output.Write(BoxedTextColor.Operator, ".");
-			new NodePrinter().Write(output, decompiler, analyzedMethod, Context.ShowToken);
+			new NodeFormatter().Write(output, decompiler, analyzedMethod, Context.ShowToken);
 		}
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
 			if (analyzedMethod.HasBody)
 				yield return new MethodUsesNode(analyzedMethod);
 
-			if (analyzedMethod.IsVirtual && !(analyzedMethod.IsNewSlot && analyzedMethod.IsFinal))
-				yield return new VirtualMethodUsedByNode(analyzedMethod);
+			if ((analyzedMethod.IsVirtual || analyzedMethod.IsAbstract) && !(analyzedMethod.IsNewSlot && analyzedMethod.IsFinal))
+				yield return new VirtualMethodUsedByNode(analyzedMethod, isSetter);
 			else
-				yield return new MethodUsedByNode(analyzedMethod);
+				yield return new MethodUsedByNode(analyzedMethod, isSetter);
 
 			if (MethodOverriddenNode.CanShow(analyzedMethod))
 				yield return new MethodOverriddenNode(analyzedMethod);
@@ -70,7 +72,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				yield return new InterfaceMethodImplementedByNode(analyzedMethod);
 		}
 
-		public override IMemberRef Member => analyzedMethod;
-		public override IMDTokenProvider Reference => analyzedMethod;
+		public override IMemberRef? Member => analyzedMethod;
+		public override IMDTokenProvider? Reference => analyzedMethod;
 	}
 }

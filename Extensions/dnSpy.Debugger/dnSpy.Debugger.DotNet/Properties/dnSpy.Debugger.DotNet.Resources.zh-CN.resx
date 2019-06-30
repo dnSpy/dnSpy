@@ -118,13 +118,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddClassBreakpointCommand" xml:space="preserve">
-    <value>添加类断点</value>
+    <value>添加类断点(_A)</value>
   </data>
   <data name="AddClassTracepointCommand" xml:space="preserve">
-    <value>添加类跟踪点</value>
+    <value>添加类跟踪点(_A)</value>
   </data>
   <data name="AddMethodBreakpointCommand" xml:space="preserve">
-    <value>添加方法断点</value>
+    <value>添加方法断点(_A)</value>
   </data>
   <data name="BreakWhenExceptionThrownCommand" xml:space="preserve">
     <value>引发异常时中断</value>
@@ -176,6 +176,12 @@
   </data>
   <data name="ReturnValueNotAvailable" xml:space="preserve">
     <value>返回值当前不可用</value>
+  </data>
+  <data name="StepFilter_SteppingOverOperator" xml:space="preserve">
+    <value>步入：跨越运算符“{0}”。</value>
+  </data>
+  <data name="StepFilter_SteppingOverProperty" xml:space="preserve">
+    <value>步入：跨越属性“{0}”。</value>
   </data>
   <data name="UnknownVariableOrObjectId" xml:space="preserve">
     <value>未知变量或对象ID</value>

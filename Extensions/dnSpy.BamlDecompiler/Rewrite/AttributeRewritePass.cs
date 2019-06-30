@@ -1,4 +1,4 @@
-﻿/*
+/*
 	Copyright (c) 2015 Ki
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -50,7 +50,7 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 
 		bool RewriteElement(XamlContext ctx, XElement parent, XElement elem) {
 			var property = elem.Annotation<XamlProperty>();
-			if (property == null && elem.Name != key)
+			if (property is null && elem.Name != key)
 				return false;
 
 			if (elem.HasAttributes || elem.HasElements)

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Globalization;
@@ -28,7 +29,7 @@ using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Evaluation;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Debugger.Evaluation;
 
 namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
@@ -44,21 +45,40 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 		}
 	}
 
-	sealed class StringBuilderTextColorWriter : ITextColorWriter {
-		StringBuilder sb;
+	sealed class StringBuilderTextColorWriter : IDbgTextWriter {
+		StringBuilder? sb;
 		public void SetStringBuilder(StringBuilder sb) => this.sb = sb;
-		public void Write(object color, string text) => sb.Append(text);
-		public void Write(TextColor color, string text) => sb.Append(text);
+		public void Write(DbgTextColor color, string? text) => sb!.Append(text);
 	}
 
 	abstract class TracepointMessageCreator {
 		public abstract string Create(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, DbgCodeBreakpointTrace trace);
-		public abstract void Write(ITextColorWriter output, DbgCodeBreakpointTrace trace);
+		public abstract void Write(IDbgTextWriter output, DbgCodeBreakpointTrace trace);
 	}
 
 	[Export(typeof(TracepointMessageCreator))]
 	[Export(typeof(TracepointMessageCreatorImpl))]
 	sealed class TracepointMessageCreatorImpl : TracepointMessageCreator {
+		const DbgStackFrameFormatterOptions AddressFormatterOptions =
+			DbgStackFrameFormatterOptions.ParameterTypes |
+			DbgStackFrameFormatterOptions.IP |
+			DbgStackFrameFormatterOptions.DeclaringTypes |
+			DbgStackFrameFormatterOptions.Namespaces |
+			DbgStackFrameFormatterOptions.IntrinsicTypeKeywords;
+		const DbgStackFrameFormatterOptions CallerFormatterOptions =
+			DbgStackFrameFormatterOptions.DeclaringTypes |
+			DbgStackFrameFormatterOptions.Namespaces |
+			DbgStackFrameFormatterOptions.IntrinsicTypeKeywords;
+		const DbgStackFrameFormatterOptions CallStackFormatterOptions =
+			DbgStackFrameFormatterOptions.DeclaringTypes |
+			DbgStackFrameFormatterOptions.Namespaces |
+			DbgStackFrameFormatterOptions.IntrinsicTypeKeywords;
+		const DbgStackFrameFormatterOptions FunctionFormatterOptions =
+			DbgStackFrameFormatterOptions.ParameterTypes |
+			DbgStackFrameFormatterOptions.DeclaringTypes |
+			DbgStackFrameFormatterOptions.Namespaces |
+			DbgStackFrameFormatterOptions.IntrinsicTypeKeywords;
+
 		readonly object lockObj;
 		readonly DbgLanguageService dbgLanguageService;
 		readonly DebuggerSettings debuggerSettings;
@@ -66,13 +86,13 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 		readonly TracepointMessageParser tracepointMessageParser;
 		readonly StringBuilderTextColorWriter stringBuilderTextColorWriter;
 		Dictionary<string, ParsedTracepointMessage> toParsedMessage;
-		WeakReference toParsedMessageWeakRef;
+		WeakReference? toParsedMessageWeakRef;
 		StringBuilder output;
 
-		DbgBoundCodeBreakpoint boundBreakpoint;
-		DbgThread thread;
-		DbgStackWalker stackWalker;
-		DbgStackFrame[] stackFrames;
+		DbgBoundCodeBreakpoint? boundBreakpoint;
+		DbgThread? thread;
+		DbgStackWalker? stackWalker;
+		DbgStackFrame[]? stackFrames;
 
 		[ImportingConstructor]
 		TracepointMessageCreatorImpl(DbgLanguageService dbgLanguageService, DebuggerSettings debuggerSettings, DbgEvalFormatterSettings dbgEvalFormatterSettings) {
@@ -104,10 +124,10 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 		}
 
 		public override string Create(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, DbgCodeBreakpointTrace trace) {
-			if (boundBreakpoint == null)
+			if (boundBreakpoint is null)
 				throw new ArgumentNullException(nameof(boundBreakpoint));
 			var text = trace.Message;
-			if (text == null)
+			if (text is null)
 				return string.Empty;
 			try {
 				output.Clear();
@@ -117,7 +137,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 				int maxFrames = parsed.MaxFrames;
 				if (parsed.Evaluates && maxFrames < 1)
 					maxFrames = 1;
-				if (maxFrames > 0 && thread != null) {
+				if (maxFrames > 0 && !(thread is null)) {
 					stackWalker = thread.CreateStackWalker();
 					stackFrames = stackWalker.GetNextStackFrames(maxFrames);
 				}
@@ -127,9 +147,9 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			finally {
 				this.boundBreakpoint = null;
 				this.thread = null;
-				if (stackWalker != null) {
+				if (!(stackWalker is null)) {
 					stackWalker.Close();
-					boundBreakpoint.Process.DbgManager.Close(stackFrames);
+					boundBreakpoint.Process.DbgManager.Close(stackFrames!);
 					stackWalker = null;
 					stackFrames = null;
 				}
@@ -150,48 +170,40 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			}
 		}
 
-		DbgStackFrame TryGetFrame(int i) {
+		DbgStackFrame? TryGetFrame(int i) {
 			var frames = stackFrames;
-			if (frames == null || (uint)i >= (uint)frames.Length)
+			if (frames is null || (uint)i >= (uint)frames.Length)
 				return null;
 			return frames[i];
 		}
 
 		void Write(ParsedTracepointMessage parsed, string tracepointMessage) {
-			DbgStackFrame frame;
+			Debug.Assert(!(boundBreakpoint is null));
+			DbgStackFrame? frame;
 			foreach (var part in parsed.Parts) {
 				switch (part.Kind) {
 				case TracepointMessageKind.WriteText:
-					Write(part.String);
+					Write(part.String!);
 					break;
 
 				case TracepointMessageKind.WriteEvaluatedExpression:
 					frame = TryGetFrame(0);
-					if (frame == null)
+					if (frame is null)
 						WriteError();
 					else {
-						var language = dbgLanguageService.GetCurrentLanguage(thread.Runtime.RuntimeKindGuid);
+						var language = dbgLanguageService.GetCurrentLanguage(thread!.Runtime.RuntimeKindGuid);
 						var cancellationToken = CancellationToken.None;
 						var state = GetTracepointEvalState(boundBreakpoint, language, frame, tracepointMessage, cancellationToken);
+						Debug.Assert(!(part.String is null));
 						var eeState = state.GetExpressionEvaluatorState(part.String);
-						var evalRes = language.ExpressionEvaluator.Evaluate(state.Context, frame, part.String, DbgEvaluationOptions.Expression, eeState, cancellationToken);
-						Write(state.Context, frame, language, evalRes, part.Flags, cancellationToken);
+						var evalInfo = new DbgEvaluationInfo(state.Context!, frame, cancellationToken);
+						var evalRes = language.ExpressionEvaluator.Evaluate(evalInfo, part.String, DbgEvaluationOptions.Expression, eeState);
+						Write(evalInfo, language, evalRes);
 					}
 					break;
 
 				case TracepointMessageKind.WriteAddress:
-					frame = TryGetFrame(part.Number);
-					if (frame != null) {
-						const DbgStackFrameFormatOptions options =
-							DbgStackFrameFormatOptions.ShowParameterTypes |
-							DbgStackFrameFormatOptions.ShowFunctionOffset |
-							DbgStackFrameFormatOptions.ShowDeclaringTypes |
-							DbgStackFrameFormatOptions.ShowNamespaces |
-							DbgStackFrameFormatOptions.ShowIntrinsicTypeKeywords;
-						frame.Format(stringBuilderTextColorWriter, options);
-					}
-					else
-						WriteError();
+					WriteFrame(part.Number, AddressFormatterOptions);
 					break;
 
 				case TracepointMessageKind.WriteAppDomainId:
@@ -207,21 +219,12 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 					break;
 
 				case TracepointMessageKind.WriteCaller:
-					frame = TryGetFrame(part.Number);
-					if (frame != null) {
-						const DbgStackFrameFormatOptions options =
-							DbgStackFrameFormatOptions.ShowDeclaringTypes |
-							DbgStackFrameFormatOptions.ShowNamespaces |
-							DbgStackFrameFormatOptions.ShowIntrinsicTypeKeywords;
-						frame.Format(stringBuilderTextColorWriter, options);
-					}
-					else
-						WriteError();
+					WriteFrame(part.Number, CallerFormatterOptions);
 					break;
 
 				case TracepointMessageKind.WriteCallerModule:
 					var module = TryGetFrame(part.Number)?.Module;
-					if (module != null)
+					if (!(module is null))
 						Write(module.Filename);
 					else
 						WriteError();
@@ -229,7 +232,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 
 				case TracepointMessageKind.WriteCallerOffset:
 					frame = TryGetFrame(part.Number);
-					if (frame != null) {
+					if (!(frame is null)) {
 						Write("0x");
 						Write(frame.FunctionOffset.ToString("X8"));
 					}
@@ -239,7 +242,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 
 				case TracepointMessageKind.WriteCallerToken:
 					frame = TryGetFrame(part.Number);
-					if (frame != null && frame.HasFunctionToken) {
+					if (!(frame is null) && frame.HasFunctionToken) {
 						Write("0x");
 						Write(frame.FunctionToken.ToString("X8"));
 					}
@@ -251,31 +254,17 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 					int maxFrames = part.Number;
 					for (int i = 0; i < maxFrames; i++) {
 						frame = TryGetFrame(i);
-						if (frame == null)
+						if (frame is null)
 							break;
 						Write("\t");
-						const DbgStackFrameFormatOptions options =
-							DbgStackFrameFormatOptions.ShowDeclaringTypes |
-							DbgStackFrameFormatOptions.ShowNamespaces |
-							DbgStackFrameFormatOptions.ShowIntrinsicTypeKeywords;
-						frame.Format(stringBuilderTextColorWriter, options);
+						WriteFrame(frame, CallStackFormatterOptions);
 						Write(Environment.NewLine);
 					}
 					Write("\t");
 					break;
 
 				case TracepointMessageKind.WriteFunction:
-					frame = TryGetFrame(part.Number);
-					if (frame != null) {
-						const DbgStackFrameFormatOptions options =
-							DbgStackFrameFormatOptions.ShowParameterTypes |
-							DbgStackFrameFormatOptions.ShowDeclaringTypes |
-							DbgStackFrameFormatOptions.ShowNamespaces |
-							DbgStackFrameFormatOptions.ShowIntrinsicTypeKeywords;
-						frame.Format(stringBuilderTextColorWriter, options);
-					}
-					else
-						WriteError();
+					WriteFrame(part.Number, FunctionFormatterOptions);
 					break;
 
 				case TracepointMessageKind.WriteManagedId:
@@ -299,7 +288,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 					break;
 
 				case TracepointMessageKind.WriteThreadId:
-					if (thread == null)
+					if (thread is null)
 						WriteError();
 					else {
 						Write("0x");
@@ -309,7 +298,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 
 				case TracepointMessageKind.WriteThreadName:
 					var name = thread?.UIName;
-					if (name == null)
+					if (name is null)
 						WriteError();
 					else
 						Write(name);
@@ -320,11 +309,41 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			}
 		}
 
+		void WriteFrame(int index, DbgStackFrameFormatterOptions frameOptions) => WriteFrame(TryGetFrame(index), frameOptions);
+
+		void WriteFrame(DbgStackFrame? frame, DbgStackFrameFormatterOptions frameOptions) {
+			if (!(frame is null)) {
+				if (!debuggerSettings.UseHexadecimal)
+					frameOptions |= DbgStackFrameFormatterOptions.Decimal;
+				if (debuggerSettings.UseDigitSeparators)
+					frameOptions |= DbgStackFrameFormatterOptions.DigitSeparators;
+				if (debuggerSettings.FullString)
+					frameOptions |= DbgStackFrameFormatterOptions.FullString;
+
+				var language = dbgLanguageService.GetCurrentLanguage(thread!.Runtime.RuntimeKindGuid);
+				const DbgValueFormatterOptions valueOptions = DbgValueFormatterOptions.None;
+				const CultureInfo? cultureInfo = null;
+				var cancellationToken = CancellationToken.None;
+				DbgEvaluationContext? context = null;
+				try {
+					const DbgEvaluationContextOptions ctxOptions = DbgEvaluationContextOptions.NoMethodBody;
+					context = language.CreateContext(frame, options: ctxOptions, cancellationToken: cancellationToken);
+					var evalInfo = new DbgEvaluationInfo(context, frame, cancellationToken);
+					language.Formatter.FormatFrame(evalInfo, stringBuilderTextColorWriter, frameOptions, valueOptions, cultureInfo);
+				}
+				finally {
+					context?.Close();
+				}
+			}
+			else
+				WriteError();
+		}
+
 		void Write(string s) => output.Append(s);
 		void WriteError() => Write("???");
 
-		public override void Write(ITextColorWriter output, DbgCodeBreakpointTrace trace) {
-			if (output == null)
+		public override void Write(IDbgTextWriter output, DbgCodeBreakpointTrace trace) {
+			if (output is null)
 				throw new ArgumentNullException(nameof(output));
 			var msg = trace.Message ?? string.Empty;
 			var parsed = tracepointMessageParser.Parse(msg);
@@ -332,13 +351,13 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			foreach (var part in parsed.Parts) {
 				switch (part.Kind) {
 				case TracepointMessageKind.WriteText:
-					output.Write(BoxedTextColor.String, msg.Substring(pos, part.Length));
+					output.Write(DbgTextColor.String, msg.Substring(pos, part.Length));
 					break;
 
 				case TracepointMessageKind.WriteEvaluatedExpression:
-					output.Write(BoxedTextColor.Punctuation, msg.Substring(pos, 1));
-					output.Write(BoxedTextColor.Text, msg.Substring(pos + 1, part.Length - 2));
-					output.Write(BoxedTextColor.Punctuation, msg.Substring(pos + part.Length - 1, 1));
+					output.Write(DbgTextColor.Punctuation, msg.Substring(pos, 1));
+					output.Write(DbgTextColor.Text, msg.Substring(pos + 1, part.Length - 2));
+					output.Write(DbgTextColor.Punctuation, msg.Substring(pos + part.Length - 1, 1));
 					break;
 
 				case TracepointMessageKind.WriteAddress:
@@ -355,7 +374,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 				case TracepointMessageKind.WriteProcessName:
 				case TracepointMessageKind.WriteThreadId:
 				case TracepointMessageKind.WriteThreadName:
-					output.Write(BoxedTextColor.Keyword, msg.Substring(pos, part.Length));
+					output.Write(DbgTextColor.Keyword, msg.Substring(pos, part.Length));
 					break;
 
 				default: throw new InvalidOperationException();
@@ -366,24 +385,24 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 		}
 
 		sealed class TracepointEvalState : IDisposable {
-			public DbgLanguage Language;
-			public string TracepointMessage;
+			public DbgLanguage? Language;
+			public string? TracepointMessage;
 
-			public DbgEvaluationContext Context {
+			public DbgEvaluationContext? Context {
 				get => context;
 				set {
 					context?.Close();
 					context = value;
 				}
 			}
-			DbgEvaluationContext context;
+			DbgEvaluationContext? context;
 
-			public readonly Dictionary<string, object> ExpressionEvaluatorStates = new Dictionary<string, object>(StringComparer.Ordinal);
+			public readonly Dictionary<string, object?> ExpressionEvaluatorStates = new Dictionary<string, object?>(StringComparer.Ordinal);
 
-			public object GetExpressionEvaluatorState(string expression) {
+			public object? GetExpressionEvaluatorState(string expression) {
 				if (ExpressionEvaluatorStates.TryGetValue(expression, out var state))
 					return state;
-				state = Language.ExpressionEvaluator.CreateExpressionEvaluatorState();
+				state = Language!.ExpressionEvaluator.CreateExpressionEvaluatorState();
 				ExpressionEvaluatorStates[expression] = state;
 				return state;
 			}
@@ -407,37 +426,38 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			return state;
 		}
 
-		void Write(DbgEvaluationContext context, DbgStackFrame frame, DbgLanguage language, DbgEvaluationResult evalRes, TracepointMessageFlags flags, CancellationToken cancellationToken) {
-			if (evalRes.Error != null) {
+		void Write(DbgEvaluationInfo evalInfo, DbgLanguage language, in DbgEvaluationResult evalRes) {
+			if (!(evalRes.Error is null)) {
 				Write("<<<");
 				Write(PredefinedEvaluationErrorMessagesHelper.GetErrorMessage(evalRes.Error));
 				Write(">>>");
 			}
 			else {
-				var options = GetValueFormatterOptions(flags, isDisplay: true);
-				const CultureInfo cultureInfo = null;
-				language.ValueFormatter.Format(context, frame, stringBuilderTextColorWriter, evalRes.Value, options, cultureInfo, cancellationToken);
+				var options = GetValueFormatterOptions(evalRes.FormatSpecifiers, isEdit: false);
+				const CultureInfo? cultureInfo = null;
+				Debug.Assert(!(evalRes.Value is null));
+				language.Formatter.FormatValue(evalInfo, stringBuilderTextColorWriter, evalRes.Value, options, cultureInfo);
 				evalRes.Value.Close();
 			}
 		}
 
-		DbgValueFormatterOptions GetValueFormatterOptions(TracepointMessageFlags flags, bool isDisplay) {
+		DbgValueFormatterOptions GetValueFormatterOptions(ReadOnlyCollection<string> formatSpecifiers, bool isEdit) {
 			var options = DbgValueFormatterOptions.FuncEval | DbgValueFormatterOptions.ToString;
-			if (isDisplay)
-				options |= DbgValueFormatterOptions.Display;
-			if ((flags & TracepointMessageFlags.Decimal) != 0 || ((flags & TracepointMessageFlags.Hexadecimal) == 0 && !debuggerSettings.UseHexadecimal))
+			if (isEdit)
+				options |= DbgValueFormatterOptions.Edit;
+			if (!debuggerSettings.UseHexadecimal)
 				options |= DbgValueFormatterOptions.Decimal;
 			if (debuggerSettings.UseDigitSeparators)
 				options |= DbgValueFormatterOptions.DigitSeparators;
-			if ((flags & TracepointMessageFlags.NoQuotes) != 0)
-				options |= DbgValueFormatterOptions.NoStringQuotes;
+			if (debuggerSettings.FullString)
+				options |= DbgValueFormatterOptions.FullString;
 			if (dbgEvalFormatterSettings.ShowNamespaces)
 				options |= DbgValueFormatterOptions.Namespaces;
 			if (dbgEvalFormatterSettings.ShowIntrinsicTypeKeywords)
 				options |= DbgValueFormatterOptions.IntrinsicTypeKeywords;
 			if (dbgEvalFormatterSettings.ShowTokens)
 				options |= DbgValueFormatterOptions.Tokens;
-			return options;
+			return PredefinedFormatSpecifiers.GetValueFormatterOptions(formatSpecifiers, options);
 		}
 	}
 }

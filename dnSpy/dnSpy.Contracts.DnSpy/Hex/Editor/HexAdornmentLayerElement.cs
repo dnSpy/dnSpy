@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -43,12 +43,12 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <summary>
 		/// Called when the adornment is removed
 		/// </summary>
-		public abstract VSTE.AdornmentRemovedCallback RemovedCallback { get; }
+		public abstract VSTE.AdornmentRemovedCallback? RemovedCallback { get; }
 
 		/// <summary>
 		/// Gets the tag
 		/// </summary>
-		public abstract object Tag { get; }
+		public abstract object? Tag { get; }
 
 		/// <summary>
 		/// Buffer span

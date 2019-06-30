@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,25 +18,21 @@
 */
 
 using System;
-using System.ComponentModel;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Properties;
 using dnSpy.Text.Editor;
 
 namespace dnSpy.Text.Settings {
-	abstract class TabsAppSettingsPageBase : AppSettingsPage, INotifyPropertyChanged {
+	abstract class TabsAppSettingsPageBase : AppSettingsPage {
 		public sealed override string Title => dnSpy_Resources.TabsSettings;
-		public sealed override object UIObject => this;
-
-		public event PropertyChangedEventHandler PropertyChanged;
-		protected void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+		public sealed override object? UIObject => this;
 
 		public Int32VM TabSizeVM { get; }
 		public Int32VM IndentSizeVM { get; }
 
 		public bool ConvertTabsToSpaces {
-			get { return convertTabsToSpaces; }
+			get => convertTabsToSpaces;
 			set {
 				if (convertTabsToSpaces != value) {
 					convertTabsToSpaces = value;

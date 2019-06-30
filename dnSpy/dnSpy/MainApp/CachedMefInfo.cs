@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,6 +34,21 @@ namespace dnSpy.MainApp {
 			this.stream = stream;
 		}
 
+		static string GetPathToClrDll() {
+#if NETFRAMEWORK
+			const string clrDllFilename = "clr.dll";
+#elif NETCOREAPP
+			const string clrDllFilename = "coreclr.dll";
+#else
+#error Unknown target framework
+#endif
+			var basePath = Path.GetDirectoryName(typeof(void).Assembly.Location);
+			var filename = Path.Combine(basePath, clrDllFilename);
+			if (File.Exists(filename))
+				return filename;
+			throw new InvalidProgramException("Couldn't find " + clrDllFilename);
+		}
+
 		public void WriteFile(int[] tokens, out long resourceManagerTokensOffset) {
 			Debug.Assert(assemblies.Length == tokens.Length);
 			stream.Position = 0;
@@ -43,7 +58,7 @@ namespace dnSpy.MainApp {
 			// VS-MEF serializes metadata tokens. I don't know if eg. mscorlib tokens could be saved
 			// in the file so record some extra info in this file so we won't load it if eg. clr.dll
 			// or mscorlib.dll got updated.
-			WriteFile(writer, Path.Combine(Path.GetDirectoryName(typeof(void).Assembly.Location), "clr.dll"));
+			WriteFile(writer, GetPathToClrDll());
 			WriteAssembly(writer, typeof(void).Assembly);
 
 			writer.Write(assemblies.Length);
@@ -97,7 +112,7 @@ namespace dnSpy.MainApp {
 			if (reader.ReadUInt32() != SIG)
 				return false;
 
-			if (!CheckFile(reader, Path.Combine(Path.GetDirectoryName(typeof(void).Assembly.Location), "clr.dll")))
+			if (!CheckFile(reader, GetPathToClrDll()))
 				return false;
 			if (!CheckAssembly(reader, typeof(void).Assembly))
 				return false;

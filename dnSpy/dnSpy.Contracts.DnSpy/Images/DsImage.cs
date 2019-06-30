@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -40,8 +40,8 @@ namespace dnSpy.Contracts.Images {
 		/// Gets/sets the image reference, eg. <see cref="DsImages.Assembly"/>
 		/// </summary>
 		public ImageReference ImageReference {
-			get { return (ImageReference)GetValue(ImageReferenceProperty); }
-			set { SetValue(ImageReferenceProperty, value); }
+			get => (ImageReference)GetValue(ImageReferenceProperty);
+			set => SetValue(ImageReferenceProperty, value);
 		}
 
 		/// <summary>
@@ -86,7 +86,7 @@ namespace dnSpy.Contracts.Images {
 		/// <param name="depo">Object</param>
 		/// <param name="value">Value</param>
 		/// <returns></returns>
-		public static void SetBackgroundBrush(DependencyObject depo, Brush value) => depo.SetValue(BackgroundBrushProperty, value);
+		public static void SetBackgroundBrush(DependencyObject depo, Brush? value) => depo.SetValue(BackgroundBrushProperty, value);
 
 		/// <summary>
 		/// Zoom attached property

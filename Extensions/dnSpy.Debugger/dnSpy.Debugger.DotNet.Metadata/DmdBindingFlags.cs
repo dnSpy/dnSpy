@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,7 +25,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 	/// </summary>
 	[Flags]
 	public enum DmdBindingFlags {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		Default					= 0,
 		IgnoreCase				= 0x00000001,
 		DeclaredOnly			= 0x00000002,
@@ -46,6 +46,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		SuppressChangeType		= 0x00020000,
 		OptionalParamBinding	= 0x00040000,
 		IgnoreReturn			= 0x01000000,
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+		Inaccessible			= int.MinValue,
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

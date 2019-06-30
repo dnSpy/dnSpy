@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,8 +26,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 	sealed class ModuleNode : EntityNode {
 		readonly ModuleDef module;
 
-		public override IMemberRef Member => null;
-		public override IMDTokenProvider Reference => module;
+		public override IMemberRef? Member => null;
+		public override IMDTokenProvider? Reference => module;
 
 		public ModuleNode(ModuleDef module) => this.module = module;
 

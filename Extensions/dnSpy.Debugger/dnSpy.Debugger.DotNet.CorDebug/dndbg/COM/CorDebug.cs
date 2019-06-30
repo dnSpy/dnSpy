@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -17,18 +17,15 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// Code generated from: C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6\Include\um\cordebug.idl
-// File date: 2015-06-19
-// SHA-1: f8592546655cc6bf15c24f661bf397f962e4de5e
-
+#nullable disable
 using System;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
 using dndbg.Engine;
 
-#pragma warning disable 0108 // Member hides inherited member; missing new keyword
-#pragma warning disable 0649
+#pragma warning disable CS0108 // Member hides inherited member; missing new keyword
+#pragma warning disable CS0649
 namespace dndbg.COM.CorDebug {
 	enum CorDebugInterfaceVersion {
 		CorDebugInvalidVersion = 0,
@@ -173,6 +170,16 @@ namespace dndbg.COM.CorDebug {
 		public uint Length;
 		uint pad;
 	};
+	struct ILToNativeMap {
+		public uint ilOffset;
+		public uint nativeStartOffset;
+		public uint nativeEndOffset;
+	}
+	enum CorDebugIlToNativeMappingTypes {
+		NO_MAPPING = -1,
+		PROLOG     = -2,
+		EPILOG     = -3
+	}
 	[StructLayout(LayoutKind.Sequential)]
 	struct CorDebugExceptionObjectStackFrame {
 		[MarshalAs(UnmanagedType.Interface)]
@@ -182,17 +189,8 @@ namespace dndbg.COM.CorDebug {
 		public bool isLastForeignExceptionFrame;
 	}
 	enum CorDebugJITCompilerFlags : uint {
-		/// <summary>
-		/// Specifies that the compiler should track compilation data, and allows optimizations.
-		/// </summary>
 		CORDEBUG_JIT_DEFAULT = 0x1,
-		/// <summary>
-		/// Specifies that the compiler should track compilation data, but disables optimizations.
-		/// </summary>
 		CORDEBUG_JIT_DISABLE_OPTIMIZATION = 0x3,
-		/// <summary>
-		/// Specifies that the compiler should track compilation data, disables optimizations, and enables Edit and Continue technologies.
-		/// </summary>
 		CORDEBUG_JIT_ENABLE_ENC = 0x7
 	}
 	struct PROCESS_INFORMATION {
@@ -203,6 +201,7 @@ namespace dndbg.COM.CorDebug {
 	}
 	[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
 	struct STARTUPINFO {
+		public const uint STARTF_USESTDHANDLES = 0x00000100;
 		public uint cb;
 		public string lpReserved;
 		public string lpDesktop;
@@ -284,57 +283,18 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Flags]
 	enum CorDebugChainReason {
-		/// <summary>
-		/// No call chain has been initiated.
-		/// </summary>
 		CHAIN_NONE,
-		/// <summary>
-		/// The chain was initiated by a constructor.
-		/// </summary>
 		CHAIN_CLASS_INIT,
-		/// <summary>
-		/// The chain was initiated by an exception filter.
-		/// </summary>
 		CHAIN_EXCEPTION_FILTER,
-		/// <summary>
-		/// The chain was initiated by code that enforces security.
-		/// </summary>
 		CHAIN_SECURITY = 4,
-		/// <summary>
-		/// The chain was initiated by a context policy.
-		/// </summary>
 		CHAIN_CONTEXT_POLICY = 8,
-		/// <summary>
-		/// Not used.
-		/// </summary>
 		CHAIN_INTERCEPTION = 16,
-		/// <summary>
-		/// Not used.
-		/// </summary>
 		CHAIN_PROCESS_START = 32,
-		/// <summary>
-		/// The chain was initiated by the start of a thread execution.
-		/// </summary>
 		CHAIN_THREAD_START = 64,
-		/// <summary>
-		/// The chain was initiated by entry into managed code.
-		/// </summary>
 		CHAIN_ENTER_MANAGED = 128,
-		/// <summary>
-		/// The chain was initiated by entry into unmanaged code.
-		/// </summary>
 		CHAIN_ENTER_UNMANAGED = 256,
-		/// <summary>
-		/// Not used.
-		/// </summary>
 		CHAIN_DEBUGGER_EVAL = 512,
-		/// <summary>
-		/// Not used.
-		/// </summary>
 		CHAIN_CONTEXT_SWITCH = 1024,
-		/// <summary>
-		/// The chain was initiated by a function evaluation.
-		/// </summary>
 		CHAIN_FUNC_EVAL = 2048
 	}
 	enum CorDebugCodeInvokeKind {
@@ -360,45 +320,17 @@ namespace dndbg.COM.CorDebug {
 		DEBUG_EVENT_KIND_MANAGED_EXCEPTION_UNHANDLED
 	}
 	enum CorDebugExceptionCallbackType {
-		/// <summary>
-		/// An exception was thrown.
-		/// </summary>
 		DEBUG_EXCEPTION_FIRST_CHANCE = 1,
-		/// <summary>
-		/// The exception windup process entered user code.
-		/// </summary>
 		DEBUG_EXCEPTION_USER_FIRST_CHANCE,
-		/// <summary>
-		/// The exception windup process found a catch block in user code.
-		/// </summary>
 		DEBUG_EXCEPTION_CATCH_HANDLER_FOUND,
-		/// <summary>
-		/// The exception was not handled.
-		/// </summary>
 		DEBUG_EXCEPTION_UNHANDLED
 	}
 	enum CorDebugExceptionFlags : uint {
-		/// <summary>
-		/// There is no exception.
-		/// </summary>
 		DEBUG_EXCEPTION_NONE,
-		/// <summary>
-		/// The exception is interceptable.
-		/// 
-		/// The timing of the exception may still be such that the debugger cannot intercept it.
-		/// For example, if there is no managed code below the current callback or the exception
-		/// event resulted from a just-in-time (JIT) attachment, the exception cannot be intercepted.
-		/// </summary>
 		DEBUG_EXCEPTION_CAN_BE_INTERCEPTED
 	}
 	enum CorDebugExceptionUnwindCallbackType {
-		/// <summary>
-		/// The beginning of the unwind process.
-		/// </summary>
 		DEBUG_EXCEPTION_UNWIND_BEGIN = 1,
-		/// <summary>
-		/// The exception was intercepted.
-		/// </summary>
 		DEBUG_EXCEPTION_INTERCEPTED
 	}
 	enum CorDebugGCType {
@@ -406,15 +338,7 @@ namespace dndbg.COM.CorDebug {
 		CorDebugServerGC
 	}
 	enum CorDebugHandleType {
-		/// <summary>
-		/// The handle is strong, which prevents an object from being reclaimed by garbage collection.
-		/// </summary>
 		HANDLE_STRONG = 1,
-		/// <summary>
-		/// The handle is weak, which does not prevent an object from being reclaimed by garbage collection.
-		/// 
-		/// The handle becomes invalid when the object is collected.
-		/// </summary>
 		HANDLE_WEAK_TRACK_RESURRECTION
 	}
 	enum CorDebugIntercept {
@@ -427,89 +351,32 @@ namespace dndbg.COM.CorDebug {
 		INTERCEPT_ALL = 65535
 	}
 	enum CorDebugInternalFrameType {
-		/// <summary>
-		/// A null value. The ICorDebugInternalFrame::GetFrameType method never returns this value.
-		/// </summary>
 		STUBFRAME_NONE,
-		/// <summary>
-		/// A managed-to-unmanaged stub frame.
-		/// </summary>
 		STUBFRAME_M2U,
-		/// <summary>
-		/// An unmanaged-to-managed stub frame.
-		/// </summary>
 		STUBFRAME_U2M,
-		/// <summary>
-		/// A transition between application domains.
-		/// </summary>
 		STUBFRAME_APPDOMAIN_TRANSITION,
-		/// <summary>
-		/// A lightweight method call.
-		/// </summary>
 		STUBFRAME_LIGHTWEIGHT_FUNCTION,
-		/// <summary>
-		/// The start of function evaluation.
-		/// </summary>
 		STUBFRAME_FUNC_EVAL,
-		/// <summary>
-		/// An internal call into the common language runtime.
-		/// </summary>
 		STUBFRAME_INTERNALCALL,
-		/// <summary>
-		/// The start of a class initialization.
-		/// </summary>
 		STUBFRAME_CLASS_INIT,
-		/// <summary>
-		/// An exception that is thrown.
-		/// </summary>
 		STUBFRAME_EXCEPTION,
-		/// <summary>
-		/// A frame used for code access security.
-		/// </summary>
 		STUBFRAME_SECURITY,
-		/// <summary>
-		/// The runtime is JIT-compiling a method.
-		/// </summary>
 		STUBFRAME_JIT_COMPILATION
 	}
 	[Flags]
 	enum CorDebugMappingResult {
-		/// <summary>
-		/// The native code is in the prolog, so the value of the IP is 0.
-		/// </summary>
 		MAPPING_PROLOG = 1,
-		/// <summary>
-		/// The native code is in an epilog, so the value of the IP is the address of the last instruction of the method.
-		/// </summary>
 		MAPPING_EPILOG,
-		/// <summary>
-		/// No mapping information is available for the method, so the value of the IP is 0.
-		/// </summary>
 		MAPPING_NO_INFO = 4,
-		/// <summary>
-		/// Although there is mapping information for the method, the current address cannot be mapped to Microsoft intermediate language (MSIL) code. The value of the IP is 0.
-		/// </summary>
 		MAPPING_UNMAPPED_ADDRESS = 8,
-		/// <summary>
-		/// Either the method maps exactly to MSIL code or the frame has been interpreted, so the value of the IP is accurate.
-		/// </summary>
 		MAPPING_EXACT = 16,
-		/// <summary>
-		/// The method was successfully mapped, but the value of the IP may be approximate.
-		/// </summary>
 		MAPPING_APPROXIMATE = 32
 	}
 	[Flags]
 	enum CorDebugMDAFlags {
-		/// <summary>
-		/// The thread on which the MDA was fired has slipped since the MDA was fired.
-		/// </summary>
 		MDA_FLAG_SLIP = 2
 	}
 	enum CorDebugNGENPolicy {
-		/// <summary>
-		/// In a Windows 8.x Store app, the use of images from the local native image cache is disabled. In a desktop app, this setting has no effect.
-		/// </summary>
 		DISABLE_LOCAL_NIC = 1
 	}
 	enum CorDebugPlatform {
@@ -642,43 +509,16 @@ namespace dndbg.COM.CorDebug {
 		FLUSH_ALL
 	}
 	enum CorDebugStepReason {
-		/// <summary>
-		/// Stepping completed normally, within the same function.
-		/// </summary>
 		STEP_NORMAL,
-		/// <summary>
-		/// Stepping continued normally, after the function returned.
-		/// </summary>
 		STEP_RETURN,
-		/// <summary>
-		/// Stepping continued normally, at the beginning of a newly called function.
-		/// </summary>
 		STEP_CALL,
-		/// <summary>
-		/// An exception was generated and control was passed to an exception filter.
-		/// </summary>
 		STEP_EXCEPTION_FILTER,
-		/// <summary>
-		/// An exception was generated and control was passed to an exception handler.
-		/// </summary>
 		STEP_EXCEPTION_HANDLER,
-		/// <summary>
-		/// Control was passed to an interceptor.
-		/// </summary>
 		STEP_INTERCEPT,
-		/// <summary>
-		/// The thread exited before the step was completed.
-		/// </summary>
 		STEP_EXIT
 	}
 	enum CorDebugThreadState {
-		/// <summary>
-		/// The thread runs freely, unless a debug event occurs.
-		/// </summary>
 		THREAD_RUN,
-		/// <summary>
-		/// The thread cannot run.
-		/// </summary>
 		THREAD_SUSPEND
 	}
 	enum CorDebugUnmappedStop {
@@ -692,43 +532,14 @@ namespace dndbg.COM.CorDebug {
 	}
 	[Flags]
 	enum CorDebugUserState {
-		/// <summary>
-		/// A termination of the thread has been requested.
-		/// </summary>
 		USER_STOP_REQUESTED = 1,
-		/// <summary>
-		/// A suspension of the thread has been requested.
-		/// </summary>
 		USER_SUSPEND_REQUESTED,
-		/// <summary>
-		/// The thread is running in the background.
-		/// </summary>
 		USER_BACKGROUND = 4,
-		/// <summary>
-		/// The thread has not started executing.
-		/// </summary>
 		USER_UNSTARTED = 8,
-		/// <summary>
-		/// The thread has been terminated.
-		/// </summary>
 		USER_STOPPED = 16,
-		/// <summary>
-		/// The thread is waiting for another thread to complete a task.
-		/// </summary>
 		USER_WAIT_SLEEP_JOIN = 32,
-		/// <summary>
-		/// The thread has been suspended.
-		/// </summary>
 		USER_SUSPENDED = 64,
-		/// <summary>
-		/// The thread is at an unsafe point. That is, the thread is at a point in execution where it may block garbage collection.
-		/// 
-		/// Debug events may be dispatched from unsafe points, but suspending a thread at an unsafe point will very likely cause a deadlock until the thread is resumed. The safe and unsafe points are determined by the just-in-time (JIT) and garbage collection implementation.
-		/// </summary>
 		USER_UNSAFE_POINT = 128,
-		/// <summary>
-		/// The thread is from the thread pool.
-		/// </summary>
 		USER_THREADPOOL = 256
 	}
 	enum CorGCReferenceType {
@@ -1001,7 +812,8 @@ namespace dndbg.COM.CorDebug {
 		void GetCode([In] uint startOffset, [In] uint endOffset, [In] uint cBufferAlloc, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugCode buffer, out uint pcBufferSize);
 		[PreserveSig]
 		int GetVersionNumber(out uint nVersion);
-		void GetILToNativeMapping([In] uint cMap, out uint pcMap, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugCode map);
+		[PreserveSig]
+		int GetILToNativeMapping([In] uint cMap, out uint pcMap, [Out] IntPtr map);
 		void GetEnCRemapSequencePoints([In] uint cMap, out uint pcMap, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugCode offsets);
 	}
 	[Guid("5F696509-452F-4436-A3FE-4D11FE7E2347"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -1015,7 +827,47 @@ namespace dndbg.COM.CorDebug {
 	[Guid("D13D3E88-E1F2-4020-AA1D-3D162DCBE966"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport, SuppressUnmanagedCodeSecurity]
 	interface ICorDebugCode3 {
-		void GetReturnValueLiveOffset([In] uint ILoffset, [In] uint bufferSize, out uint pFetched, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugCode3 pOffsets);
+		[PreserveSig]
+		int GetReturnValueLiveOffset([In] uint ILoffset, [In] uint bufferSize, out uint pFetched, [MarshalAs(UnmanagedType.LPArray)] [Out] uint[] pOffsets);
+	}
+	[Guid("18221FA4-20CB-40FA-B19D-9F91C4FA8C14"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	[ComImport, SuppressUnmanagedCodeSecurity]
+	interface ICorDebugCode4 {
+		[PreserveSig]
+		int EnumerateVariableHomes([MarshalAs(UnmanagedType.Interface)] out ICorDebugVariableHomeEnum ppEnum);
+	}
+	[Guid("E76B7A57-4F7A-4309-85A7-5D918C3DEAF7"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	[ComImport, SuppressUnmanagedCodeSecurity]
+	interface ICorDebugVariableHomeEnum : ICorDebugEnum {
+		void Skip([In] uint celt);
+		void Reset();
+		void Clone([MarshalAs(UnmanagedType.Interface)] out ICorDebugEnum ppEnum);
+		void GetCount(out uint pcelt);
+		[PreserveSig]
+		int Next([In] uint celt, [MarshalAs(UnmanagedType.LPArray)] [Out] ICorDebugVariableHome[] homes, out uint pceltFetched);
+	};
+	enum VariableLocationType {
+		VLT_REGISTER,
+		VLT_REGISTER_RELATIVE,
+		VLT_INVALID
+	}
+	[Guid("50847B8D-F43F-41B0-924C-6383A5F2278B"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	[ComImport, SuppressUnmanagedCodeSecurity]
+	interface ICorDebugVariableHome {
+		[PreserveSig]
+		int GetCode([MarshalAs(UnmanagedType.Interface)] out ICorDebugCode ppCode);
+		[PreserveSig]
+		int GetSlotIndex(out int pSlotIndex);
+		[PreserveSig]
+		int GetArgumentIndex(out int pArgumentIndex);
+		[PreserveSig]
+		int GetLiveRange(out uint pStartOffset, out uint pEndOffset);
+		[PreserveSig]
+		int GetLocationType(out VariableLocationType pLocationType);
+		[PreserveSig]
+		int GetRegister(out CorDebugRegister pRegister);
+		[PreserveSig]
+		int GetOffset(out int pOffset);
 	}
 	[Guid("55E96461-9645-45E4-A2FF-0367877ABCDE"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport, SuppressUnmanagedCodeSecurity]
@@ -1412,7 +1264,8 @@ namespace dndbg.COM.CorDebug {
 	[Guid("9A9E2ED6-04DF-4FE0-BB50-CAB64126AD24"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport, SuppressUnmanagedCodeSecurity]
 	interface ICorDebugILFrame3 {
-		void GetReturnValueForILOffset(uint ILoffset, [MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppReturnValue);
+		[PreserveSig]
+		int GetReturnValueForILOffset(uint ILoffset, [MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppReturnValue);
 	}
 	[Guid("AD914A30-C6D1-4AC5-9C5E-577F3BAA8A45"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport, SuppressUnmanagedCodeSecurity]
@@ -2132,13 +1985,7 @@ namespace dndbg.COM.CorDebug {
 		void Next();
 	}
 	enum ILCodeKind {
-		/// <summary>
-		/// The debugger does not have access to information from ReJIT instrumentation.
-		/// </summary>
 		ILCODE_ORIGINAL_IL = 1,
-		/// <summary>
-		/// The debugger has access to information from ReJIT instrumentation.
-		/// </summary>
 		ILCODE_REJIT_IL
 	}
 	[Guid("0C733A30-2A1C-11CE-ADE5-00AA0044773D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -2181,5 +2028,5 @@ namespace dndbg.COM.CorDebug {
 		AlwaysShowUpdates
 	}
 }
-#pragma warning restore 0649
-#pragma warning restore 0108 // Member hides inherited member; missing new keyword
+#pragma warning restore CS0649
+#pragma warning restore CS0108 // Member hides inherited member; missing new keyword

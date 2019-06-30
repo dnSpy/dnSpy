@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -48,7 +48,7 @@ namespace dnSpy.Hex.Formatting {
 				if (!hexView.Roles.ContainsAny(lz.Metadata.TextViewRoles))
 					continue;
 				var source = lz.Value.Create(hexView);
-				if (source != null)
+				if (!(source is null))
 					list.Add(source);
 			}
 			return new HexLineTransformProviderImpl(list.ToArray(), removeExtraTextLineVerticalPixels);

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -60,7 +60,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			output.Write(BoxedTextColor.Number, SectionNumber.ToString());
 			output.Write(BoxedTextColor.Punctuation, ":");
 			output.WriteSpace();
-			output.Write(BoxedTextColor.HexPeSectionName, string.Format("{0}", imageSectionHeaderVM.NameVM.String));
+			output.Write(BoxedTextColor.HexPeSectionName, imageSectionHeaderVM.NameVM.String);
 		}
 	}
 }

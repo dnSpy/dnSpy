@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,7 +33,7 @@ namespace dnSpy.Documents {
 				if (doc.Info.Type == DocumentConstants.DOCUMENTTYPE_FILE && string.IsNullOrEmpty(doc.Info.Name))
 					continue;
 				var document = documentService.TryGetOrCreate(doc.Info, doc.IsAutoLoaded);
-				if (document != null && !hash.Contains(document)) {
+				if (!(document is null) && !hash.Contains(document)) {
 					hash.Add(document);
 					loadedDocuments.Add(document);
 				}

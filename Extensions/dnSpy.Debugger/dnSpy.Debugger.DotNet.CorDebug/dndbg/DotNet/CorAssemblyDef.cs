@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -46,11 +46,11 @@ namespace dndbg.DotNet {
 			uint token = OriginalToken.Raw;
 
 			Name = MDAPI.GetAssemblySimpleName(mdai, token) ?? string.Empty;
-			Version = MDAPI.GetAssemblyVersionAndLocale(mdai, token, out string locale) ?? new Version(0, 0, 0, 0);
+			Version = MDAPI.GetAssemblyVersionAndLocale(mdai, token, out var locale) ?? new Version(0, 0, 0, 0);
 			Culture = locale ?? string.Empty;
 			HashAlgorithm = MDAPI.GetAssemblyHashAlgorithm(mdai, token) ?? AssemblyHashAlgorithm.SHA1;
 			Attributes = MDAPI.GetAssemblyAttributes(mdai, token) ?? AssemblyAttributes.None;
-			PublicKey = MDAPI.GetAssemblyPublicKey(mdai, token) ?? new PublicKey((byte[])null);
+			PublicKey = MDAPI.GetAssemblyPublicKey(mdai, token) ?? new PublicKey((byte[]?)null);
 		}
 	}
 }

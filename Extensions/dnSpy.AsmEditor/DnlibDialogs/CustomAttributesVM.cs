@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,7 +23,7 @@ using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class CustomAttributesVM : ListVM<CustomAttributeVM, CustomAttribute> {
-		public CustomAttributesVM(ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType = null, MethodDef ownerMethod = null)
+		public CustomAttributesVM(ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef? ownerType = null, MethodDef? ownerMethod = null)
 			: base(dnSpy_AsmEditor_Resources.EditCustomAttribute, dnSpy_AsmEditor_Resources.CreateCustomAttribute, ownerModule, decompilerService, ownerType, ownerMethod) {
 		}
 

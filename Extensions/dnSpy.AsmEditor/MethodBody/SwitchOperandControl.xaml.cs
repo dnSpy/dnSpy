@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,7 +22,7 @@ using System.Windows.Controls;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed partial class SwitchOperandControl : UserControl {
-		SwitchOperandsListHelper switchOperandsListHelper;
+		SwitchOperandsListHelper? switchOperandsListHelper;
 
 		public SwitchOperandControl() {
 			InitializeComponent();
@@ -31,7 +31,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		void SwitchOperandControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e) {
 			var data = DataContext as SwitchOperandVM;
-			if (data == null)
+			if (data is null)
 				return;
 
 			switchOperandsListHelper = new SwitchOperandsListHelper(listBox);

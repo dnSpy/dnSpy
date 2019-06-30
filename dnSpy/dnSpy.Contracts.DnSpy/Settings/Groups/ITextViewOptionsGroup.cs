@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -60,7 +60,7 @@ namespace dnSpy.Contracts.Settings.Groups {
 		/// <param name="contentType">Content type, eg. <see cref="ContentTypes.CSharpRoslyn"/></param>
 		/// <param name="optionId">Option name</param>
 		/// <returns></returns>
-		object GetOptionValue(string contentType, string optionId);
+		object? GetOptionValue(string contentType, string optionId);
 
 		/// <summary>
 		/// Gets the current value
@@ -77,7 +77,7 @@ namespace dnSpy.Contracts.Settings.Groups {
 		/// <param name="contentType">Content type, eg. <see cref="ContentTypes.CSharpRoslyn"/></param>
 		/// <param name="optionId">Option name</param>
 		/// <param name="value">New value</param>
-		void SetOptionValue(string contentType, string optionId, object value);
+		void SetOptionValue(string contentType, string optionId, object? value);
 
 		/// <summary>
 		/// Writes a new value

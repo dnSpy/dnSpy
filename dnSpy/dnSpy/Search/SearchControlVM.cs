@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -51,7 +51,7 @@ namespace dnSpy.Search {
 		public ISearchSettings SearchSettings { get; }
 
 		public bool TooManyResults {
-			get { return tooManyResults; }
+			get => tooManyResults;
 			set {
 				if (tooManyResults != value) {
 					tooManyResults = value;
@@ -72,7 +72,7 @@ namespace dnSpy.Search {
 		public ObservableCollection<SearchTypeVM> SearchTypeVMs { get; }
 
 		public SearchTypeVM SelectedSearchTypeVM {
-			get { return selectedSearchTypeVM; }
+			get => selectedSearchTypeVM;
 			set {
 				if (selectedSearchTypeVM != value) {
 					selectedSearchTypeVM = value;
@@ -88,8 +88,8 @@ namespace dnSpy.Search {
 
 		public ObservableCollection<ISearchResult> SearchResults { get; }
 
-		public ISearchResult SelectedSearchResult {
-			get { return selectedSearchResult; }
+		public ISearchResult? SelectedSearchResult {
+			get => selectedSearchResult;
 			set {
 				if (selectedSearchResult != value) {
 					selectedSearchResult = value;
@@ -97,10 +97,10 @@ namespace dnSpy.Search {
 				}
 			}
 		}
-		ISearchResult selectedSearchResult;
+		ISearchResult? selectedSearchResult;
 
 		public string SearchText {
-			get { return searchText; }
+			get => searchText;
 			set {
 				if (searchText != value) {
 					searchText = value;
@@ -109,15 +109,15 @@ namespace dnSpy.Search {
 				}
 			}
 		}
-		string searchText;
+		string searchText = string.Empty;
 		readonly DelayedAction delayedSearch;
 
 		public IDecompiler Decompiler {
-			get { return decompiler; }
+			get => decompiler;
 			set {
 				if (decompiler != value) {
 					decompiler = value;
-					if (fileSearcher != null)
+					if (!(fileSearcher is null))
 						fileSearcher.Decompiler = decompiler;
 				}
 			}
@@ -127,9 +127,11 @@ namespace dnSpy.Search {
 		readonly IDocumentSearcherProvider fileSearcherProvider;
 		readonly IDocumentTreeView documentTreeView;
 
-		public SearchControlVM(IDocumentSearcherProvider fileSearcherProvider, IDocumentTreeView documentTreeView, ISearchSettings searchSettings) {
+		public SearchControlVM(IDocumentSearcherProvider fileSearcherProvider, IDocumentTreeView documentTreeView, ISearchSettings searchSettings, IDecompiler decompiler) {
+			this.selectedSearchTypeVM = null!;
 			this.fileSearcherProvider = fileSearcherProvider;
 			this.documentTreeView = documentTreeView;
+			this.decompiler = decompiler;
 			SearchSettings = searchSettings;
 			searchSettings.PropertyChanged += SearchSettings_PropertyChanged;
 			delayedSearch = new DelayedAction(DEFAULT_DELAY_SEARCH_MS, DelayStartSearch);
@@ -168,7 +170,7 @@ namespace dnSpy.Search {
 			SelectedSearchTypeVM = SearchTypeVMs.First(a => a.SearchType == SearchType.Any);
 		}
 
-		void Add(SearchType searchType, string name, ImageReference icon, string toolTip, VisibleMembersFlags flags) =>
+		void Add(SearchType searchType, string name, ImageReference icon, string? toolTip, VisibleMembersFlags flags) =>
 			SearchTypeVMs.Add(new SearchTypeVM(searchType, name, toolTip, icon, flags));
 		void DelayStartSearch() => Restart();
 
@@ -193,7 +195,7 @@ namespace dnSpy.Search {
 				fileSearcher.OnSearchCompleted += FileSearcher_OnSearchCompleted;
 				fileSearcher.OnNewSearchResults += FileSearcher_OnNewSearchResults;
 
-				switch ((SearchLocation)SearchLocationVM.SelectedItem) {
+				switch ((SearchLocation)SearchLocationVM.SelectedItem!) {
 				case SearchLocation.AllFiles:
 					fileSearcher.Start(GetAllFilesToSearch());
 					break;
@@ -215,7 +217,7 @@ namespace dnSpy.Search {
 				}
 			}
 		}
-		IDocumentSearcher fileSearcher;
+		IDocumentSearcher? fileSearcher;
 		bool searchCompleted;
 
 		bool CanSearchFile(DsDocumentNode node) =>
@@ -223,7 +225,7 @@ namespace dnSpy.Search {
 		IEnumerable<DsDocumentNode> GetAllFilesToSearch() =>
 			documentTreeView.TreeView.Root.DataChildren.OfType<DsDocumentNode>().Where(a => CanSearchFile(a));
 		IEnumerable<DsDocumentNode> GetSelectedFilesToSearch() =>
-			documentTreeView.TreeView.TopLevelSelection.Select(a => a.GetTopNode()).Where(a => a != null && CanSearchFile(a)).Distinct();
+			documentTreeView.TreeView.TopLevelSelection.Select(a => a.GetTopNode()).Where(a => !(a is null) && CanSearchFile(a)).Distinct()!;
 
 		IEnumerable<DsDocumentNode> GetAllFilesInSameDirToSearch() {
 			var dirsEnum = GetSelectedFilesToSearch().Where(a => File.Exists(a.Document.Filename)).Select(a => Path.GetDirectoryName(a.Document.Filename));
@@ -232,25 +234,26 @@ namespace dnSpy.Search {
 		}
 
 		IEnumerable<SearchTypeInfo> GetSelectedTypeToSearch() {
-			foreach (var node in documentTreeView.TreeView.TopLevelSelection.Select(a => a.GetAncestorOrSelf<TypeNode>()).Where(a => a != null).Distinct()) {
+			foreach (var node in documentTreeView.TreeView.TopLevelSelection.Select(a => a.GetAncestorOrSelf<TypeNode>()).Where(a => !(a is null)).Distinct()) {
 				var fileNode = node.GetDocumentNode();
-				Debug.Assert(fileNode != null);
-				if (fileNode == null)
+				Debug.Assert(!(fileNode is null));
+				if (fileNode is null)
 					continue;
 				yield return new SearchTypeInfo(fileNode.Document, node.TypeDef);
 			}
 		}
 
 		void FileSearcher_OnSearchCompleted(object sender, EventArgs e) {
-			if (sender == null || sender != fileSearcher || searchCompleted)
+			if (sender is null || sender != fileSearcher || searchCompleted)
 				return;
+			Debug.Assert(!(fileSearcher is null));
 			searchCompleted = true;
-			SearchResults.Remove(fileSearcher.SearchingResult);
+			SearchResults.Remove(fileSearcher.SearchingResult!);
 			TooManyResults = fileSearcher.TooManyResults;
 		}
 
 		void FileSearcher_OnNewSearchResults(object sender, SearchResultEventArgs e) {
-			if (sender == null || sender != fileSearcher)
+			if (sender is null || sender != fileSearcher)
 				return;
 			Debug.Assert(!searchCompleted);
 			if (searchCompleted)
@@ -285,7 +288,7 @@ namespace dnSpy.Search {
 		void CancelSearch() {
 			TooManyResults = false;
 			delayedSearch.Cancel();
-			if (fileSearcher != null) {
+			if (!(fileSearcher is null)) {
 				fileSearcher.Cancel();
 				fileSearcher = null;
 			}
@@ -295,7 +298,7 @@ namespace dnSpy.Search {
 		void SearchSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			switch (e.PropertyName) {
 			case nameof(SearchSettings.SyntaxHighlight):
-				if (fileSearcher != null)
+				if (!(fileSearcher is null))
 					fileSearcher.SyntaxHighlight = SearchSettings.SyntaxHighlight;
 				break;
 			case nameof(SearchSettings.MatchWholeWords):
@@ -313,9 +316,9 @@ namespace dnSpy.Search {
 		public int Compare(object x, object y) {
 			var a = x as ISearchResult;
 			var b = y as ISearchResult;
-			if (a == null)
+			if (a is null)
 				return 1;
-			if (b == null)
+			if (b is null)
 				return -1;
 			if (a == b)
 				return 0;

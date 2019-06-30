@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,8 +19,7 @@
 
 using System;
 using System.Diagnostics;
-using System.Threading;
-using dnSpy.Contracts.Debugger.CallStack;
+using System.Runtime.CompilerServices;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.Metadata;
@@ -42,20 +41,19 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		public virtual bool IsNull => false;
 
 		/// <summary>
-		/// Gets the referenced value if it's a by-ref
+		/// Gets the referenced value if it's a by-ref or a pointer
 		/// </summary>
 		/// <returns></returns>
-		public virtual DbgDotNetValue LoadIndirect() => null;
+		public virtual DbgDotNetValueResult LoadIndirect() =>
+			DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 
 		/// <summary>
-		/// Writes to the referenced valued. The return value is null or an error message.
+		/// Writes to the referenced value (by-ref or pointer). The return value is null or an error message.
 		/// </summary>
-		/// <param name="context">Context</param>
-		/// <param name="frame">Stack frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="value">Value to store: A <see cref="DbgDotNetValue"/> or a primitive number or a string or arrays of primitive numbers / strings</param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public virtual string StoreIndirect(DbgEvaluationContext context, DbgStackFrame frame, object value, CancellationToken cancellationToken) =>
+		public virtual string? StoreIndirect(DbgEvaluationInfo evalInfo, object? value) =>
 			PredefinedEvaluationErrorMessages.InternalDebuggerError;
 
 		/// <summary>
@@ -74,11 +72,19 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="elementCount">Total number of elements in the array</param>
 		/// <param name="dimensionInfos">Dimension base indexes and lengths</param>
 		/// <returns></returns>
-		public virtual bool GetArrayInfo(out uint elementCount, out DbgDotNetArrayDimensionInfo[] dimensionInfos) {
+		public virtual bool GetArrayInfo(out uint elementCount, [NotNullWhenTrue] out DbgDotNetArrayDimensionInfo[]? dimensionInfos) {
 			elementCount = 0;
 			dimensionInfos = null;
 			return false;
 		}
+
+		/// <summary>
+		/// Gets the address of the element at <paramref name="index"/> in the array or null if it's not supported.
+		/// This method can be called even if it's a multi-dimensional array.
+		/// </summary>
+		/// <param name="index">Zero-based index of the element</param>
+		/// <returns></returns>
+		public virtual DbgDotNetValueResult? GetArrayElementAddressAt(uint index) => null;
 
 		/// <summary>
 		/// Gets the element at <paramref name="index"/> in the array. This method can be called even if it's
@@ -86,30 +92,27 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// </summary>
 		/// <param name="index">Zero-based index of the element</param>
 		/// <returns></returns>
-		public virtual DbgDotNetValue GetArrayElementAt(uint index) => null;
+		public virtual DbgDotNetValueResult GetArrayElementAt(uint index) =>
+			DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 
 		/// <summary>
 		/// Stores a value at <paramref name="index"/> in the array. This method can be called even if it's
 		/// a multi-dimensional array.
 		/// The return value is null or an error message.
 		/// </summary>
-		/// <param name="context">Context</param>
-		/// <param name="frame">Stack frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="index">Zero-based index of the element</param>
 		/// <param name="value">Value to store: A <see cref="DbgDotNetValue"/> or a primitive number or a string or arrays of primitive numbers / strings</param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public virtual string SetArrayElementAt(DbgEvaluationContext context, DbgStackFrame frame, uint index, object value, CancellationToken cancellationToken) =>
+		public virtual string? SetArrayElementAt(DbgEvaluationInfo evalInfo, uint index, object? value) =>
 			PredefinedEvaluationErrorMessages.InternalDebuggerError;
 
 		/// <summary>
 		/// Boxes the value type, returns null on failure
 		/// </summary>
-		/// <param name="context">Context</param>
-		/// <param name="frame">Stack frame</param>
-		/// <param name="cancellationToken">Cancellation token</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <returns></returns>
-		public virtual DbgDotNetValue Box(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) => null;
+		public virtual DbgDotNetValueResult? Box(DbgEvaluationInfo evalInfo) => null;
 
 		/// <summary>
 		/// Gets the address of the value or null if there's no address available.
@@ -132,7 +135,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// Returns the <see cref="IDbgDotNetRuntime"/> instance or null if it's unknown
 		/// </summary>
 		/// <returns></returns>
-		public virtual IDbgDotNetRuntime TryGetDotNetRuntime() => null;
+		public virtual IDbgDotNetRuntime? TryGetDotNetRuntime() => null;
 
 		/// <summary>
 		/// Called when its owner (<see cref="DbgEngineValue"/>) gets closed
@@ -143,7 +146,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 	/// <summary>
 	/// Contains base index and length of an array dimension
 	/// </summary>
-	public struct DbgDotNetArrayDimensionInfo {
+	public readonly struct DbgDotNetArrayDimensionInfo {
 		/// <summary>
 		/// Base index
 		/// </summary>
@@ -168,7 +171,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 	/// <summary>
 	/// Raw value
 	/// </summary>
-	public struct DbgDotNetRawValue {
+	public readonly struct DbgDotNetRawValue {
 		/// <summary>
 		/// Type of the value
 		/// </summary>
@@ -183,7 +186,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// The value. It's only valid if <see cref="HasRawValue"/> is true. A null value is a valid value.
 		/// If it's an enum value, it's stored as the enum's underlying type (eg. <see cref="int"/>)
 		/// </summary>
-		public object RawValue { get; }
+		public object? RawValue { get; }
 
 		/// <summary>
 		/// Constructor
@@ -201,7 +204,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// </summary>
 		/// <param name="valueType">Type</param>
 		/// <param name="rawValue">Value</param>
-		public DbgDotNetRawValue(DbgSimpleValueType valueType, object rawValue) {
+		public DbgDotNetRawValue(DbgSimpleValueType valueType, object? rawValue) {
 			Debug.Assert(valueType != DbgSimpleValueType.Void);
 			ValueType = valueType;
 			HasRawValue = true;

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,9 +29,9 @@ using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.Documents.Tabs {
 	static class GoToEntryPointCommand {
-		internal static ModuleDef GetCurrentModule(IDocumentTabService documentTabService) {
+		internal static ModuleDef? GetCurrentModule(IDocumentTabService documentTabService) {
 			var tab = documentTabService.ActiveTab;
-			if (tab == null)
+			if (tab is null)
 				return null;
 			return tab.Content.Nodes.FirstOrDefault().GetModule();
 		}
@@ -43,18 +43,18 @@ namespace dnSpy.Documents.Tabs {
 			[ImportingConstructor]
 			CodeCommand(IDocumentTabService documentTabService) => this.documentTabService = documentTabService;
 
-			public override bool IsVisible(IMenuItemContext context) => GetEntryPoint(documentTabService, context) != null;
+			public override bool IsVisible(IMenuItemContext context) => !(GetEntryPoint(documentTabService, context) is null);
 
-			static MethodDef GetEntryPoint(IDocumentTabService documentTabService, IMenuItemContext context) {
+			static MethodDef? GetEntryPoint(IDocumentTabService documentTabService, IMenuItemContext context) {
 				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
 					return null;
 				var module = GetCurrentModule(documentTabService);
-				return module == null ? null : module.EntryPoint as MethodDef;
+				return module?.EntryPoint;
 			}
 
 			public override void Execute(IMenuItemContext context) {
 				var ep = GetEntryPoint(documentTabService, context);
-				if (ep != null)
+				if (!(ep is null))
 					documentTabService.FollowReference(ep);
 			}
 		}
@@ -66,20 +66,20 @@ namespace dnSpy.Documents.Tabs {
 			[ImportingConstructor]
 			DocumentsCommand(IDocumentTabService documentTabService) => this.documentTabService = documentTabService;
 
-			public override bool IsVisible(IMenuItemContext context) => GetEntryPoint(context) != null;
+			public override bool IsVisible(IMenuItemContext context) => !(GetEntryPoint(context) is null);
 
-			static MethodDef GetEntryPoint(IMenuItemContext context) {
+			static MethodDef? GetEntryPoint(IMenuItemContext context) {
 				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID))
 					return null;
 				var nodes = context.Find<TreeNodeData[]>();
-				var node = nodes == null || nodes.Length == 0 ? null : nodes[0];
+				var node = nodes is null || nodes.Length == 0 ? null : nodes[0];
 				var module = node.GetModule();
-				return module == null ? null : module.EntryPoint as MethodDef;
+				return module?.EntryPoint;
 			}
 
 			public override void Execute(IMenuItemContext context) {
 				var ep = GetEntryPoint(context);
-				if (ep != null)
+				if (!(ep is null))
 					documentTabService.FollowReference(ep);
 			}
 		}
@@ -93,21 +93,21 @@ namespace dnSpy.Documents.Tabs {
 			[ImportingConstructor]
 			CodeCommand(IDocumentTabService documentTabService) => this.documentTabService = documentTabService;
 
-			public override bool IsVisible(IMenuItemContext context) => GetModuleCctor(documentTabService, context) != null;
+			public override bool IsVisible(IMenuItemContext context) => !(GetModuleCctor(documentTabService, context) is null);
 
-			static MethodDef GetModuleCctor(IDocumentTabService documentTabService, IMenuItemContext context) {
+			static MethodDef? GetModuleCctor(IDocumentTabService documentTabService, IMenuItemContext context) {
 				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
 					return null;
 				var module = GoToEntryPointCommand.GetCurrentModule(documentTabService);
-				if (module == null)
+				if (module is null)
 					return null;
 				var gt = module.GlobalType;
-				return gt == null ? null : gt.FindStaticConstructor();
+				return gt?.FindStaticConstructor();
 			}
 
 			public override void Execute(IMenuItemContext context) {
 				var ep = GetModuleCctor(documentTabService, context);
-				if (ep != null)
+				if (!(ep is null))
 					documentTabService.FollowReference(ep);
 			}
 		}
@@ -119,23 +119,23 @@ namespace dnSpy.Documents.Tabs {
 			[ImportingConstructor]
 			DocumentsCommand(IDocumentTabService documentTabService) => this.documentTabService = documentTabService;
 
-			public override bool IsVisible(IMenuItemContext context) => GetModuleCctor(context) != null;
+			public override bool IsVisible(IMenuItemContext context) => !(GetModuleCctor(context) is null);
 
-			static MethodDef GetModuleCctor(IMenuItemContext context) {
+			static MethodDef? GetModuleCctor(IMenuItemContext context) {
 				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID))
 					return null;
 				var nodes = context.Find<TreeNodeData[]>();
-				var node = nodes == null || nodes.Length == 0 ? null : nodes[0];
+				var node = nodes is null || nodes.Length == 0 ? null : nodes[0];
 				var module = node.GetModule();
-				if (module == null)
+				if (module is null)
 					return null;
 				var gt = module.GlobalType;
-				return gt == null ? null : gt.FindStaticConstructor();
+				return gt?.FindStaticConstructor();
 			}
 
 			public override void Execute(IMenuItemContext context) {
 				var ep = GetModuleCctor(context);
-				if (ep != null)
+				if (!(ep is null))
 					documentTabService.FollowReference(ep);
 			}
 		}

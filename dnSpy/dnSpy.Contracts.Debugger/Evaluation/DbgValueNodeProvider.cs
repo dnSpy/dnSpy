@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,8 +18,6 @@
 */
 
 using System;
-using System.Threading;
-using dnSpy.Contracts.Debugger.CallStack;
 
 namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// <summary>
@@ -32,15 +30,12 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public abstract DbgLanguage Language { get; }
 
 		/// <summary>
-		/// Gets all values. It blocks the current thread until the method is complete.
-		/// The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues.
+		/// Gets all values. The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues.
 		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="options">Options</param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgValueNode[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken = default);
+		public abstract DbgValueNode[] GetNodes(DbgEvaluationInfo evalInfo, DbgValueNodeEvaluationOptions options);
 	}
 
 	/// <summary>
@@ -62,6 +57,11 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// Show decompiler generated variables (<see cref="DebuggerSettings.ShowDecompilerGeneratedVariables"/>)
 		/// </summary>
 		ShowDecompilerGeneratedVariables	= 0x00000002,
+
+		/// <summary>
+		/// Show raw locals (<see cref="DebuggerSettings.ShowRawLocals"/>)
+		/// </summary>
+		ShowRawLocals						= 0x00000004,
 	}
 
 	/// <summary>
@@ -74,16 +74,13 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		public abstract DbgLanguage Language { get; }
 
 		/// <summary>
-		/// Gets all values. It blocks the current thread until the method is complete.
-		/// The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues.
+		/// Gets all values. The returned <see cref="DbgValueNode"/>s are automatically closed when their runtime continues.
 		/// </summary>
-		/// <param name="context">Evaluation context</param>
-		/// <param name="frame">Frame</param>
+		/// <param name="evalInfo">Evaluation info</param>
 		/// <param name="options">Options</param>
 		/// <param name="localsOptions">Locals value node provider options</param>
-		/// <param name="cancellationToken">Cancellation token</param>
 		/// <returns></returns>
-		public abstract DbgLocalsValueNodeInfo[] GetNodes(DbgEvaluationContext context, DbgStackFrame frame, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions, CancellationToken cancellationToken = default);
+		public abstract DbgLocalsValueNodeInfo[] GetNodes(DbgEvaluationInfo evalInfo, DbgValueNodeEvaluationOptions options, DbgLocalsValueNodeEvaluationOptions localsOptions);
 	}
 
 	/// <summary>
@@ -114,7 +111,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 	/// <summary>
 	/// Contains a value node and its kind
 	/// </summary>
-	public struct DbgLocalsValueNodeInfo {
+	public readonly struct DbgLocalsValueNodeInfo {
 		/// <summary>
 		/// What kind of value this is (local or parameter)
 		/// </summary>

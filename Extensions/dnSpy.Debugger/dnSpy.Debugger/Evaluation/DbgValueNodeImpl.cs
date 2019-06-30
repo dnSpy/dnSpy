@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,9 +19,7 @@
 
 using System;
 using System.Globalization;
-using System.Threading;
 using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.CallStack;
@@ -30,8 +28,8 @@ namespace dnSpy.Debugger.Evaluation {
 	sealed class DbgValueNodeImpl : DbgValueNode {
 		public override DbgLanguage Language { get; }
 		public override DbgRuntime Runtime { get; }
-		public override string ErrorMessage => PredefinedEvaluationErrorMessagesHelper.GetErrorMessage(engineValueNode.ErrorMessage);
-		public override DbgValue Value => value;
+		public override string? ErrorMessage => PredefinedEvaluationErrorMessagesHelper.GetErrorMessageOrNull(engineValueNode.ErrorMessage);
+		public override DbgValue? Value => value;
 		public override bool CanEvaluateExpression => true;
 		public override string Expression => engineValueNode.Expression;
 		public override string ImageName => engineValueNode.ImageName;
@@ -40,76 +38,64 @@ namespace dnSpy.Debugger.Evaluation {
 		public override bool? HasChildren => engineValueNode.HasChildren;
 
 		readonly DbgEngineValueNode engineValueNode;
-		readonly DbgValueImpl value;
+		readonly DbgValueImpl? value;
 
 		public DbgValueNodeImpl(DbgLanguage language, DbgRuntime runtime, DbgEngineValueNode engineValueNode) {
 			Runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
 			Language = language ?? throw new ArgumentNullException(nameof(language));
 			this.engineValueNode = engineValueNode ?? throw new ArgumentNullException(nameof(engineValueNode));
 			var engineValue = engineValueNode.Value;
-			if (engineValue != null)
+			if (!(engineValue is null))
 				value = new DbgValueImpl(runtime, engineValue);
 			else if (!engineValueNode.IsReadOnly)
 				throw new InvalidOperationException();
 		}
 
-		public override ulong GetChildCount(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
-			if (context == null)
-				throw new ArgumentNullException(nameof(context));
-			if (!(context is DbgEvaluationContextImpl))
+		public override ulong GetChildCount(DbgEvaluationInfo evalInfo) {
+			if (evalInfo is null)
+				throw new ArgumentNullException(nameof(evalInfo));
+			if (!(evalInfo.Context is DbgEvaluationContextImpl))
 				throw new ArgumentException();
-			if (context.Language != Language)
+			if (evalInfo.Context.Language != Language)
 				throw new ArgumentException();
-			if (context.Runtime != Runtime)
+			if (evalInfo.Context.Runtime != Runtime)
 				throw new ArgumentException();
-			if (frame == null)
-				throw new ArgumentNullException(nameof(frame));
-			if (frame.Runtime != Runtime)
-				throw new ArgumentException();
-			return engineValueNode.GetChildCount(context, frame, cancellationToken);
+			return engineValueNode.GetChildCount(evalInfo);
 		}
 
-		public override DbgValueNode[] GetChildren(DbgEvaluationContext context, DbgStackFrame frame, ulong index, int count, DbgValueNodeEvaluationOptions options, CancellationToken cancellationToken) {
-			if (context == null)
-				throw new ArgumentNullException(nameof(context));
-			if (!(context is DbgEvaluationContextImpl))
+		public override DbgValueNode[] GetChildren(DbgEvaluationInfo evalInfo, ulong index, int count, DbgValueNodeEvaluationOptions options) {
+			if (evalInfo is null)
+				throw new ArgumentNullException(nameof(evalInfo));
+			if (!(evalInfo.Context is DbgEvaluationContextImpl))
 				throw new ArgumentException();
-			if (context.Language != Language)
+			if (evalInfo.Context.Language != Language)
 				throw new ArgumentException();
-			if (context.Runtime != Runtime)
-				throw new ArgumentException();
-			if (frame == null)
-				throw new ArgumentNullException(nameof(frame));
-			if (frame.Runtime != Runtime)
+			if (evalInfo.Context.Runtime != Runtime)
 				throw new ArgumentException();
 			if (count < 0)
 				throw new ArgumentOutOfRangeException(nameof(count));
-			var engineNodes = engineValueNode.GetChildren(context, frame, index, count, options, cancellationToken);
+			var engineNodes = engineValueNode.GetChildren(evalInfo, index, count, options);
 			return DbgValueNodeUtils.ToValueNodeArray(Language, Runtime, engineNodes);
 		}
 
-		public override void Format(DbgEvaluationContext context, DbgStackFrame frame, IDbgValueNodeFormatParameters options, CultureInfo cultureInfo, CancellationToken cancellationToken) {
-			if (context == null)
-				throw new ArgumentNullException(nameof(context));
-			if (!(context is DbgEvaluationContextImpl))
+		public override void Format(DbgEvaluationInfo evalInfo, IDbgValueNodeFormatParameters options, CultureInfo? cultureInfo) {
+			if (evalInfo is null)
+				throw new ArgumentNullException(nameof(evalInfo));
+			if (!(evalInfo.Context is DbgEvaluationContextImpl))
 				throw new ArgumentException();
-			if (context.Language != Language)
+			if (evalInfo.Context.Language != Language)
 				throw new ArgumentException();
-			if (context.Runtime != Runtime)
+			if (evalInfo.Context.Runtime != Runtime)
 				throw new ArgumentException();
-			if (frame == null)
-				throw new ArgumentNullException(nameof(frame));
-			if (!(frame is DbgStackFrameImpl))
+			if (!(evalInfo.Frame is DbgStackFrameImpl))
 				throw new ArgumentException();
-			if (frame.Runtime != Runtime)
-				throw new ArgumentException();
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
-			engineValueNode.Format(context, frame, options, cultureInfo, cancellationToken);
+			engineValueNode.Format(evalInfo, options, cultureInfo);
 		}
 
 		DbgValueNodeAssignmentResult CreateResult(DbgEngineValueNodeAssignmentResult result) {
-			if (result.Error != null) {
+			if (!(result.Error is null)) {
 				if (engineValueNode.Value != value?.EngineValue)
 					throw new InvalidOperationException();
 				return new DbgValueNodeAssignmentResult(result.Flags, PredefinedEvaluationErrorMessagesHelper.GetErrorMessage(result.Error));
@@ -117,28 +103,24 @@ namespace dnSpy.Debugger.Evaluation {
 			return new DbgValueNodeAssignmentResult(result.Flags, result.Error);
 		}
 
-		public override DbgValueNodeAssignmentResult Assign(DbgEvaluationContext context, DbgStackFrame frame, string expression, DbgEvaluationOptions options, CancellationToken cancellationToken) {
-			if (context == null)
-				throw new ArgumentNullException(nameof(context));
-			if (!(context is DbgEvaluationContextImpl))
+		public override DbgValueNodeAssignmentResult Assign(DbgEvaluationInfo evalInfo, string expression, DbgEvaluationOptions options) {
+			if (evalInfo is null)
+				throw new ArgumentNullException(nameof(evalInfo));
+			if (!(evalInfo.Context is DbgEvaluationContextImpl))
 				throw new ArgumentException();
-			if (context.Language != Language)
+			if (evalInfo.Context.Language != Language)
 				throw new ArgumentException();
-			if (context.Runtime != Runtime)
+			if (evalInfo.Context.Runtime != Runtime)
 				throw new ArgumentException();
-			if (frame == null)
-				throw new ArgumentNullException(nameof(frame));
-			if (!(frame is DbgStackFrameImpl))
+			if (!(evalInfo.Frame is DbgStackFrameImpl))
 				throw new ArgumentException();
-			if (frame.Runtime != Runtime)
-				throw new ArgumentException();
-			if (expression == null)
+			if (expression is null)
 				throw new ArgumentNullException(nameof(expression));
 			if (IsReadOnly)
 				throw new InvalidOperationException();
-			if (engineValueNode.ErrorMessage != null)
+			if (!(engineValueNode.ErrorMessage is null))
 				throw new NotSupportedException();
-			return CreateResult(engineValueNode.Assign(context, frame, expression, options, cancellationToken));
+			return CreateResult(engineValueNode.Assign(evalInfo, expression, options));
 		}
 
 		protected override void CloseCore(DbgDispatcher dispatcher) {

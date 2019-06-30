@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,14 +18,13 @@
 */
 
 using System;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Bookmarks;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Bookmarks.Settings {
 	class BookmarksSettingsBase : BookmarksSettings {
-		protected virtual void OnModified() { }
-
 		readonly object lockObj;
 
 		protected BookmarksSettingsBase() => lockObj = new object();
@@ -41,10 +40,8 @@ namespace dnSpy.Bookmarks.Settings {
 					modified = syntaxHighlight != value;
 					syntaxHighlight = value;
 				}
-				if (modified) {
+				if (modified)
 					OnPropertyChanged(nameof(SyntaxHighlight));
-					OnModified();
-				}
 			}
 		}
 		bool syntaxHighlight = true;
@@ -68,16 +65,12 @@ namespace dnSpy.Bookmarks.Settings {
 		BookmarksSettingsImpl(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			SyntaxHighlight = sect.Attribute<bool?>(nameof(SyntaxHighlight)) ?? SyntaxHighlight;
-			disableSave = false;
+			PropertyChanged += BookmarksSettingsImpl_PropertyChanged;
 		}
-		readonly bool disableSave;
 
-		protected override void OnModified() {
-			if (disableSave)
-				return;
+		void BookmarksSettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(SyntaxHighlight), SyntaxHighlight);
 		}

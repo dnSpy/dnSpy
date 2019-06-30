@@ -118,10 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddClassBreakpointCommand" xml:space="preserve">
-    <value>Adicionar Interrupção de Classe</value>
+    <value>Adicionar Breakpoint de Classe</value>
   </data>
   <data name="AddClassTracepointCommand" xml:space="preserve">
-    <value>Add Class Tracepoint</value>
+    <value>Adicionar Tracepoint de Classe</value>
   </data>
   <data name="AddMethodBreakpointCommand" xml:space="preserve">
     <value>Adicionar interrupção de Método</value>
@@ -130,25 +130,25 @@
     <value>Break When Thrown</value>
   </data>
   <data name="Button_Cancel" xml:space="preserve">
-    <value>Cancelar</value>
+    <value>_Cancelar</value>
   </data>
   <data name="CancelLoadingModulesMessage" xml:space="preserve">
-    <value>Cancel loading modules?</value>
+    <value>Cancelar o carregamento de módulos?</value>
   </data>
   <data name="CantEvaluateWhenCurrentFrameIsNative" xml:space="preserve">
-    <value>Can't evaluate expressions when current stack frame is a native stack frame</value>
+    <value>Não é possível avaliar expressões quando a estrutura de pilha atual é a estrutura de pilha nativa</value>
   </data>
   <data name="DecompilerGeneratedVariablesCanNotBeEvaluated" xml:space="preserve">
-    <value>Decompiler generated variables can't be evaluated</value>
+    <value>As variáveis geradas pelo descompilador não podem ser avaliadas</value>
   </data>
   <data name="GlyphToolTip_IL_offset_0" xml:space="preserve">
-    <value>IL offset {0}</value>
+    <value>Desvio de IL {0}</value>
   </data>
   <data name="GlyphToolTip_line_0_character_1" xml:space="preserve">
     <value>linha {0} caráter {1}</value>
   </data>
   <data name="InternalDebuggerError" xml:space="preserve">
-    <value>Internal debugger error</value>
+    <value>Erro interno do depurador</value>
   </data>
   <data name="LoadModule_InfoText" xml:space="preserve">
     <value>Carregando o módulo. Se é um módulo grande, isso pode demorar um pouco.</value>
@@ -157,27 +157,33 @@
     <value>Carregando Módulos Dinâmicos</value>
   </data>
   <data name="Method_X_ThrewAnExceptionOfType_Y" xml:space="preserve">
-    <value>'{0}' threw an exception of type '{1}'</value>
+    <value>'{0}' emitiu uma exceção do tipo '{1}'</value>
   </data>
   <data name="ModuleMetadataNotFoundOrInvalid" xml:space="preserve">
-    <value>The metadata of the module couldn't be found or it is invalid</value>
+    <value>Não foi possível encontrar os metadados do módulo ou são inválidos</value>
   </data>
   <data name="Module_BreakProcessBeforeLoadingDynamicModules" xml:space="preserve">
     <value>Você deve quebrar o processo antes que módulos dinâmicos possam ser carregados.</value>
   </data>
   <data name="NoDotNetObjectFoundAtAddress" xml:space="preserve">
-    <value>No object found at the given address</value>
+    <value>Nenhum objeto encontrado no endereço dado</value>
   </data>
   <data name="NoExceptionOnTheCurrentThread" xml:space="preserve">
-    <value>There is no exception on the current thread</value>
+    <value>Não existe nenhuma exceção na thread atual</value>
   </data>
   <data name="ReloadAllMethodBodiesCommand" xml:space="preserve">
     <value>Recarregar todos os corpos de método</value>
   </data>
   <data name="ReturnValueNotAvailable" xml:space="preserve">
-    <value>Return value is not currently available</value>
+    <value>O valor de retorno não está disponível atualmente</value>
+  </data>
+  <data name="StepFilter_SteppingOverOperator" xml:space="preserve">
+    <value>Step into: Stepping over operator '{0}'.</value>
+  </data>
+  <data name="StepFilter_SteppingOverProperty" xml:space="preserve">
+    <value>Step into: Stepping over property '{0}'.</value>
   </data>
   <data name="UnknownVariableOrObjectId" xml:space="preserve">
-    <value>Unknown variable or object ID</value>
+    <value>Variável ou ID de objeto desconhecido</value>
   </data>
 </root>

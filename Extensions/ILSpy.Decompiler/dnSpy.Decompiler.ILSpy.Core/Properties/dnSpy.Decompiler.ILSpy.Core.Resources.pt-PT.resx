@@ -177,20 +177,23 @@
   <data name="DecompilerSettings_MaxArrayElements" xml:space="preserve">
     <value>Número máximo de elementos em array para mostrar</value>
   </data>
+  <data name="DecompilerSettings_MaxStringLength" xml:space="preserve">
+    <value>Max string length</value>
+  </data>
   <data name="DecompilerSettings_MemberAddPrivateModifier" xml:space="preserve">
-    <value>Add 'private' modifier to type members</value>
+    <value>Adicionar o modificador 'private' aos membros de tipo</value>
   </data>
   <data name="DecompilerSettings_ObjectOrCollectionInitializers" xml:space="preserve">
     <value>Descompilar objetos ou inicializadores de coleção</value>
   </data>
   <data name="DecompilerSettings_OneCustomAttributePerLine" xml:space="preserve">
-    <value>Show one custom attribute per line</value>
+    <value>Mostrar um atributo personalizado por linha</value>
   </data>
   <data name="DecompilerSettings_RemoveEmptyDefaultCtors" xml:space="preserve">
     <value>Remover construtores padrão vazios</value>
   </data>
   <data name="DecompilerSettings_RemoveNewDelegateClass" xml:space="preserve">
-    <value>Replace 'new delegate-class(xxx)' with 'xxx'</value>
+    <value>Substituir 'new delegate-class(xxx)' por 'xxx'</value>
   </data>
   <data name="DecompilerSettings_ShowCompilerGeneratedTypes" xml:space="preserve">
     <value>Mostrar tipos e métodos escondidos gerados pelo compilador</value>
@@ -202,7 +205,7 @@
     <value>Mostrar bytes de instruções IL </value>
   </data>
   <data name="DecompilerSettings_ShowPdbInfo" xml:space="preserve">
-    <value>Show line numbers and filenames if available</value>
+    <value>Mostrar números de linha e nomes de ficheiro se disponíveis</value>
   </data>
   <data name="DecompilerSettings_ShowTokensRvasOffsets" xml:space="preserve">
     <value>Mostrar tokens, RVAs e offsets de ficheiros</value>
@@ -220,7 +223,7 @@
     <value>Posicionar diretivas 'Sistema' primeiro ao ordenar usings</value>
   </data>
   <data name="DecompilerSettings_TypeAddInternalModifier" xml:space="preserve">
-    <value>Add 'internal' modifier to types</value>
+    <value>Adicionar o modificador 'internal' aos tipos</value>
   </data>
   <data name="DecompilerSettings_UseLocalNameFromSyms" xml:space="preserve">
     <value>Usar nomes de variáveis de símbolos de depuração, se disponível</value>

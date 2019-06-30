@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -43,10 +43,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return parameters;
 		}
 
-		protected override DmdType[] CreateGenericParameters() => null;
-		protected override (DmdCustomAttributeData[] cas, DmdCustomAttributeData[] sas) CreateCustomAttributes() => (null, null);
-		public override DmdMethodBody GetMethodBody() => null;
-		internal override DmdMethodBody GetMethodBody(IList<DmdType> genericMethodArguments) => null;
+		protected override DmdType[]? CreateGenericParameters() => null;
+		protected override (DmdCustomAttributeData[]? cas, DmdCustomAttributeData[]? sas) CreateCustomAttributes() => (null, null);
+		public override DmdMethodBody? GetMethodBody() => null;
+		internal override DmdMethodBody? GetMethodBody(IList<DmdType> genericMethodArguments) => null;
 		public override DmdMethodSignature GetMethodSignature() => methodSignature;
 		protected override uint GetRVA() => 0;
 	}

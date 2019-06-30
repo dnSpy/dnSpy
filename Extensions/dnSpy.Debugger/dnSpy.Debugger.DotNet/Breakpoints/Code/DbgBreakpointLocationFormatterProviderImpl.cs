@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,11 +32,11 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code {
 		DbgBreakpointLocationFormatterProviderImpl(Lazy<BreakpointFormatterService> breakpointFormatterService) =>
 			this.breakpointFormatterService = breakpointFormatterService;
 
-		public override DbgBreakpointLocationFormatter Create(DbgCodeLocation location) {
+		public override DbgBreakpointLocationFormatter? Create(DbgCodeLocation location) {
 			switch (location) {
 			case DbgDotNetCodeLocationImpl loc:
 				var formatter = loc.Formatter;
-				if (formatter != null)
+				if (!(formatter is null))
 					return formatter;
 				formatter = breakpointFormatterService.Value.Create(loc);
 				loc.Formatter = formatter;

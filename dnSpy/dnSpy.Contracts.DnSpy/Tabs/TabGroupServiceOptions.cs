@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,12 +29,12 @@ namespace dnSpy.Contracts.Tabs {
 		/// <summary>
 		/// A style or a resource key or null to use the default style
 		/// </summary>
-		public object TabControlStyle { get; set; }
+		public object? TabControlStyle { get; set; }
 
 		/// <summary>
 		/// A style or a resource key or null to use the default style
 		/// </summary>
-		public object TabItemStyle { get; set; }
+		public object? TabItemStyle { get; set; }
 
 		/// <summary>
 		/// Guid to use to initialize the context menu if <see cref="InitializeContextMenu"/> is null
@@ -45,7 +45,7 @@ namespace dnSpy.Contracts.Tabs {
 		/// Called in the <see cref="ITabGroup"/> constructor to initialize the context menu. If
 		/// null, the instance itself initializes it using <see cref="TabGroupGuid"/>
 		/// </summary>
-		public Func<IMenuService, ITabGroup, FrameworkElement, IContextMenuProvider> InitializeContextMenu;
+		public Func<IMenuService, ITabGroup, FrameworkElement, IContextMenuProvider>? InitializeContextMenu;
 
 		/// <summary>
 		/// Default constructor

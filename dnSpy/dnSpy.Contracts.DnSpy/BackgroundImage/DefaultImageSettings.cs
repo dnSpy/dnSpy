@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,7 +29,7 @@ namespace dnSpy.Contracts.BackgroundImage {
 		/// <summary>
 		/// All images or null to use the default value. This can be filenames, folders, or pack:// URIs
 		/// </summary>
-		public string[] Images { get; set; }
+		public string[]? Images { get; set; }
 
 		/// <summary>
 		/// Stretch value or null to use the default value

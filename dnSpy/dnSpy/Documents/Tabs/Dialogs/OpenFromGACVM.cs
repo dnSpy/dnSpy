@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -47,8 +47,8 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		readonly ObservableCollection<GACFileVM> gacFileList;
 		readonly ListCollectionView collectionView;
 
-		public object SelectedItem {
-			get { return selectedItem; }
+		public object? SelectedItem {
+			get => selectedItem;
 			set {
 				if (selectedItem != value) {
 					selectedItem = value;
@@ -56,10 +56,10 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 				}
 			}
 		}
-		object selectedItem;
+		object? selectedItem;
 
 		public bool SearchingGAC {
-			get { return searchingGAC; }
+			get => searchingGAC;
 			set {
 				if (searchingGAC != value) {
 					searchingGAC = value;
@@ -72,8 +72,8 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 
 		public bool NotSearchingGAC => !SearchingGAC;
 
-		public string SearchText {
-			get { return searchText; }
+		public string? SearchText {
+			get => searchText;
 			set {
 				if (searchText != value) {
 					searchText = value;
@@ -82,10 +82,10 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 				}
 			}
 		}
-		string searchText;
+		string? searchText;
 
 		public bool ShowDuplicates {
-			get { return showDuplicates; }
+			get => showDuplicates;
 			set {
 				if (showDuplicates != value) {
 					showDuplicates = value;
@@ -153,7 +153,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		}
 
 		bool CalculateIsVisible(GACFileVM vm, string filterText) {
-			Debug.Assert(filterText != null && filterText.Trim().ToUpperInvariant() == filterText);
+			Debug.Assert(!(filterText is null) && filterText.Trim().ToUpperInvariant() == filterText);
 			if (!ShowDuplicates && vm.IsDuplicate)
 				return false;
 			if (string.IsNullOrEmpty(filterText))
@@ -188,13 +188,13 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		public bool Equals(GACFileVM x, GACFileVM y) {
 			if (x == y)
 				return true;
-			if (x == null || y == null)
+			if (x is null || y is null)
 				return false;
 			return new AssemblyNameComparer(flags).Equals(x.Assembly, y.Assembly);
 		}
 
 		public int GetHashCode(GACFileVM obj) {
-			if (obj == null)
+			if (obj is null)
 				return 0;
 			return new AssemblyNameComparer(flags).GetHashCode(obj.Assembly);
 		}
@@ -206,9 +206,9 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 			var b = y as GACFileVM;
 			if (a == b)
 				return 0;
-			if (a == null)
+			if (a is null)
 				return -1;
-			if (b == null)
+			if (b is null)
 				return 1;
 			return new AssemblyNameComparer(AssemblyNameComparerFlags.All).CompareTo(a.Assembly, b.Assembly);
 		}

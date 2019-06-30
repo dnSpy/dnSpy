@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -17,8 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Threading;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.Metadata;
@@ -26,30 +24,26 @@ using dnSpy.Debugger.DotNet.Metadata;
 namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 	sealed class DefaultLocalsProviderImpl : VariablesProvider {
 		readonly IDbgDotNetRuntime runtime;
-		public DefaultLocalsProviderImpl(IDbgDotNetRuntime runtime) => this.runtime = runtime;
-
-		DbgEvaluationContext context;
-		DbgStackFrame frame;
-		CancellationToken cancellationToken;
-
-		public override void Initialize(DbgEvaluationContext context, DbgStackFrame frame, DmdMethodBase method, DmdMethodBody body, CancellationToken cancellationToken) {
-			this.context = context;
-			this.frame = frame;
-			this.cancellationToken = cancellationToken;
+		public DefaultLocalsProviderImpl(IDbgDotNetRuntime runtime) {
+			evalInfo = null!;
+			this.runtime = runtime;
 		}
 
-		public override DbgDotNetValueResult GetVariable(int index) =>
-			runtime.GetLocalValue(context, frame, (uint)index, cancellationToken);
+		DbgEvaluationInfo evalInfo;
 
-		public override string SetVariable(int index, DmdType targetType, object value) =>
-			runtime.SetLocalValue(context, frame, (uint)index, targetType, value, cancellationToken);
+		public override void Initialize(DbgEvaluationInfo evalInfo, DmdMethodBase method, DmdMethodBody body) => this.evalInfo = evalInfo;
+
+		public override DbgDotNetValue? GetValueAddress(int index, DmdType targetType) =>
+			runtime.GetLocalValueAddress(evalInfo, (uint)index, targetType);
+
+		public override DbgDotNetValueResult GetVariable(int index) =>
+			runtime.GetLocalValue(evalInfo, (uint)index);
+
+		public override string? SetVariable(int index, DmdType targetType, object? value) =>
+			runtime.SetLocalValue(evalInfo, (uint)index, targetType, value);
 
 		public override bool CanDispose(DbgDotNetValue value) => true;
 
-		public override void Clear() {
-			context = null;
-			frame = null;
-			cancellationToken = default;
-		}
+		public override void Clear() => evalInfo = null!;
 	}
 }

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -37,21 +37,21 @@ namespace dnSpy.Debugger.Impl {
 		readonly DbgCurrentThread dbgCurrentThread;
 
 		sealed class DbgCurrentProcess : DbgCurrentObject<DbgProcess> {
-			public override DbgProcess Current {
+			public override DbgProcess? Current {
 				get {
 					lock (owner.lockObj)
 						return currentProcess.Current;
 				}
 				set {
-					if (value == null)
+					if (value is null)
 						throw new ArgumentNullException(nameof(value));
 					var process = value as DbgProcessImpl;
-					if (process == null)
+					if (process is null)
 						throw new ArgumentOutOfRangeException(nameof(value));
 					owner.DbgThread(() => owner.SetCurrentProcess_DbgThread(process));
 				}
 			}
-			public override DbgProcess Break {
+			public override DbgProcess? Break {
 				get {
 					lock (owner.lockObj)
 						return currentProcess.Break;
@@ -63,21 +63,21 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		sealed class DbgCurrentRuntime : DbgCurrentObject<DbgRuntime> {
-			public override DbgRuntime Current {
+			public override DbgRuntime? Current {
 				get {
 					lock (owner.lockObj)
 						return currentRuntime.Current;
 				}
 				set {
-					if (value == null)
+					if (value is null)
 						throw new ArgumentNullException(nameof(value));
 					var runtime = value as DbgRuntimeImpl;
-					if (runtime == null)
+					if (runtime is null)
 						throw new ArgumentOutOfRangeException(nameof(value));
 					owner.DbgThread(() => owner.SetCurrentRuntime_DbgThread(runtime));
 				}
 			}
-			public override DbgRuntime Break {
+			public override DbgRuntime? Break {
 				get {
 					lock (owner.lockObj)
 						return currentRuntime.Break;
@@ -89,21 +89,21 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		sealed class DbgCurrentThread : DbgCurrentObject<DbgThread> {
-			public override DbgThread Current {
+			public override DbgThread? Current {
 				get {
 					lock (owner.lockObj)
 						return currentThread.Current;
 				}
 				set {
-					if (value == null)
+					if (value is null)
 						throw new ArgumentNullException(nameof(value));
 					var thread = value as DbgThreadImpl;
-					if (thread == null)
+					if (thread is null)
 						throw new ArgumentOutOfRangeException(nameof(value));
 					owner.DbgThread(() => owner.SetCurrentThread_DbgThread(thread));
 				}
 			}
-			public override DbgThread Break {
+			public override DbgThread? Break {
 				get {
 					lock (owner.lockObj)
 						return currentThread.Break;
@@ -126,7 +126,7 @@ namespace dnSpy.Debugger.Impl {
 
 		void SetCurrentProcess_DbgThread(DbgProcessImpl newProcess) {
 			Dispatcher.VerifyAccess();
-			if (newProcess == null || newProcess.State != DbgProcessState.Paused)
+			if (newProcess is null || newProcess.State != DbgProcessState.Paused)
 				return;
 
 			DbgCurrentObjectChangedEventArgs<DbgProcess> processEventArgs;
@@ -148,8 +148,7 @@ namespace dnSpy.Debugger.Impl {
 
 		void SetCurrentRuntime_DbgThread(DbgRuntimeImpl newRuntime) {
 			Dispatcher.VerifyAccess();
-			var newProcess = (DbgProcessImpl)newRuntime?.Process;
-			if (newProcess == null || newProcess.State != DbgProcessState.Paused || newRuntime.IsClosed)
+			if (!(newRuntime?.Process is DbgProcessImpl newProcess) || newProcess.State != DbgProcessState.Paused || newRuntime.IsClosed)
 				return;
 
 			DbgCurrentObjectChangedEventArgs<DbgProcess> processEventArgs;
@@ -173,8 +172,7 @@ namespace dnSpy.Debugger.Impl {
 
 		void SetCurrentThread_DbgThread(DbgThreadImpl newThread) {
 			Dispatcher.VerifyAccess();
-			var newProcess = (DbgProcessImpl)newThread?.Process;
-			if (newProcess == null || newProcess.State != DbgProcessState.Paused || newThread.IsClosed)
+			if (!(newThread?.Process is DbgProcessImpl newProcess) || newProcess.State != DbgProcessState.Paused || newThread.IsClosed)
 				return;
 
 			DbgCurrentObjectChangedEventArgs<DbgProcess> processEventArgs;
@@ -203,14 +201,14 @@ namespace dnSpy.Debugger.Impl {
 			DbgCurrentObjectChangedEventArgs<DbgRuntime> runtimeEventArgs;
 			DbgCurrentObjectChangedEventArgs<DbgThread> threadEventArgs;
 			lock (lockObj) {
-				if (!forceSet && dbgCurrentProcess.currentProcess.Current != null)
+				if (!forceSet && !(dbgCurrentProcess.currentProcess.Current is null))
 					return false;
 				var info = GetEngineInfo_NoLock(engine);
 				var process = info.Process;
 				var runtime = info.Runtime;
 				var newCurrentProcess = new CurrentObject<DbgProcessImpl>(process, process);
 				var newCurrentRuntime = new CurrentObject<DbgRuntimeImpl>(runtime, runtime);
-				var newCurrentThread = runtime.CurrentThread;
+				var newCurrentThread = runtime?.CurrentThread ?? default;
 				processEventArgs = new DbgCurrentObjectChangedEventArgs<DbgProcess>(currentChanged: dbgCurrentProcess.currentProcess.Current != newCurrentProcess.Current, breakChanged: dbgCurrentProcess.currentProcess.Break != newCurrentProcess.Break);
 				runtimeEventArgs = new DbgCurrentObjectChangedEventArgs<DbgRuntime>(currentChanged: dbgCurrentRuntime.currentRuntime.Current != newCurrentRuntime.Current, breakChanged: dbgCurrentRuntime.currentRuntime.Break != newCurrentRuntime.Break);
 				threadEventArgs = new DbgCurrentObjectChangedEventArgs<DbgThread>(currentChanged: dbgCurrentThread.currentThread.Current != newCurrentThread.Current, breakChanged: dbgCurrentThread.currentThread.Break != newCurrentThread.Break);
@@ -244,8 +242,8 @@ namespace dnSpy.Debugger.Impl {
 			RaiseCurrentObjectEvents_DbgThread(processEventArgs, runtimeEventArgs, threadEventArgs);
 		}
 
-		DbgProcessImpl GetProcess_NoLock(DbgProcessImpl current, DbgProcessImpl @default) {
-			if (current == null)
+		DbgProcessImpl GetProcess_NoLock(DbgProcessImpl? current, DbgProcessImpl @default) {
+			if (current is null)
 				return @default;
 			switch (current.State) {
 			case DbgProcessState.Running:

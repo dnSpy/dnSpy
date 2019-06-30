@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,7 +33,7 @@ namespace dnSpy.Contracts.TreeView {
 		/// Gets the parent or null if it is the root node or if it hasn't been inserted into the
 		/// treeview yet.
 		/// </summary>
-		ITreeNode Parent { get; }
+		ITreeNode? Parent { get; }
 
 		/// <summary>
 		/// Gets all children or an empty list if <see cref="LazyLoading"/> is true. See also

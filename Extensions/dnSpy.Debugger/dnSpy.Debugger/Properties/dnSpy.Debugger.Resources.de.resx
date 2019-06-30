@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -121,7 +121,7 @@
     <value>_Haltepunkt hinzufügen</value>
   </data>
   <data name="AddExceptionCommand" xml:space="preserve">
-    <value>E_xception hinzufügen</value>
+    <value>_Ausnahme hinzufügen</value>
   </data>
   <data name="AppDomainNotAvailable" xml:space="preserve">
     <value>&lt;nicht verfügbar&gt;</value>
@@ -141,17 +141,11 @@
   <data name="Attach_AttachToProcess" xml:space="preserve">
     <value>An den Prozess anhängen</value>
   </data>
-  <data name="Attach_AttachToProcess32" xml:space="preserve">
-    <value>An den Prozess anhängen (nur 32-bit)</value>
-  </data>
-  <data name="Attach_AttachToProcess64" xml:space="preserve">
-    <value>An den Prozess anhängen (nur 64-bit)</value>
-  </data>
   <data name="Attach_UseDnSpy32" xml:space="preserve">
-    <value>Verwende dnSpy.exe beim Anhängen an 64-bit Prozesse</value>
+    <value>Verwende 64-Bit dnSpy um sich an 64-Bit Prozesse anzuhängen</value>
   </data>
   <data name="Attach_UseDnSpy64" xml:space="preserve">
-    <value>Verwende dnSpy-x86.exe beim Anhängen an 32-bit Prozesse</value>
+    <value>Verwende 32-Bit dnSpy um sich an 32-Bit Prozesse anzuhängen</value>
   </data>
   <data name="BreakCommand" xml:space="preserve">
     <value>Alle unter_brechen</value>
@@ -208,7 +202,7 @@
     <value>Prozess</value>
   </data>
   <data name="Column_ProcessArchitecture" xml:space="preserve">
-    <value>Bogen</value>
+    <value>Arch</value>
   </data>
   <data name="Column_ProcessFilename" xml:space="preserve">
     <value>Dateiname</value>
@@ -270,8 +264,8 @@
   <data name="DbgSettings_AutoOpenLocalsWindow" xml:space="preserve">
     <value>Locals-Fenster beim Start des Debuggers anzeigen</value>
   </data>
-  <data name="DbgSettings_DisableManagedDebuggerDetection" xml:space="preserve">
-    <value>Erkennung eines verwaltenden Debuggers im Code verhindern</value>
+  <data name="DbgSettings_DisableDebuggerDetection" xml:space="preserve">
+    <value>Verhindern, dass der Code den Debugger erkennt</value>
   </data>
   <data name="DbgSettings_IgnoreBreakInstructions" xml:space="preserve">
     <value>Debugger.Break() und break Instruktionen ignorieren</value>
@@ -295,7 +289,7 @@
     <value>_Debugge {0}</value>
   </data>
   <data name="Debug_EventDescription_Exception" xml:space="preserve">
-    <value>Ausname</value>
+    <value>Ausnahme</value>
   </data>
   <data name="Debug_EventDescription_LoadModule1" xml:space="preserve">
     <value>LoadModule DYN ={0} MEM ={1} {2:X8} {3:X8} {4}</value>
@@ -339,8 +333,8 @@
     <value>Auswerten nicht möglich wenn eine unbehandelte Ausnahme auftrat</value>
   </data>
   <data name="Error_StartWithoutDebuggingCouldNotStart" xml:space="preserve">
-    <value>Konnte '{0}' nicht starten
-ERROR: {0}</value>
+    <value>'{0}' konnte nicht gestartet werden
+FEHLER: {1}</value>
   </data>
   <data name="ExceptionSettingsCommand" xml:space="preserve">
     <value>Ausnahme_einstellungen</value>
@@ -362,9 +356,6 @@ ERROR: {0}</value>
   </data>
   <data name="FreezeThreadCommand" xml:space="preserve">
     <value>Ein_frieren</value>
-  </data>
-  <data name="GoToDisassemblyCommand" xml:space="preserve">
-    <value>Gehe zu Disassembly</value>
   </data>
   <data name="GoToDisassemblyCommand2" xml:space="preserve">
     <value>Gehe zu _Disassembly</value>
@@ -409,7 +400,7 @@ FEHLER: {1}</value>
 Sind Sie sicher, dass Sie es ausklappen möchten?</value>
   </data>
   <data name="Locals_Error_CantEvaluateWhenThreadIsAtUnsafePoint" xml:space="preserve">
-    <value>Kann nicht auswerten wann der Thread an einem unsicheren Punkt ist. Entweder einen Schritt oder bis zum nächsten Haltepunkt ausführen.</value>
+    <value>Kann nicht auswerten wenn sich der Thread an einem unsicheren Punkt befindet. Entweder einen Schritt oder bis zum nächsten Haltepunkt ausführen.</value>
   </data>
   <data name="Locals_Error_EvalDisabledCantCallPropsAndMethods" xml:space="preserve">
     <value>Es ist derzeit nicht möglich, Eigenschaften und Methoden aufrufen</value>
@@ -595,7 +586,7 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>Rückgabetypen anzeigen</value>
   </data>
   <data name="ShowTokensCommand" xml:space="preserve">
-    <value>Tokens zeigen</value>
+    <value>Tokens anzeigen</value>
   </data>
   <data name="ShowIntrinsicTypeKeywordsCommand" xml:space="preserve">
     <value>Intrinsische Typschlüsselwörter anzeigen</value>
@@ -1180,7 +1171,7 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>_Trefferanzahl</value>
   </data>
   <data name="EditBreakpointSettings_Trace" xml:space="preserve">
-    <value>_Meldung im Ausgabefenster protokollieren</value>
+    <value>_Meldung protokollieren</value>
   </data>
   <data name="GlyphToolTip_Actions" xml:space="preserve">
     <value>Aktionen:</value>
@@ -1324,7 +1315,7 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>_Ablaufverfolgungspunkt einfügen</value>
   </data>
   <data name="UnwindToThisFrameCommand" xml:space="preserve">
-    <value>Bis z_u diesem Frame abwickeln</value>
+    <value>Bi_s zu diesem Frame entladen</value>
   </data>
   <data name="GlyphMargin_CurrentStatementToolTip" xml:space="preserve">
     <value>Dies ist die nächste Anweisung, die ausgeführt wird.</value>
@@ -1348,7 +1339,7 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>Geänderte Variablen in den Variablenfenstern hervorheben</value>
   </data>
   <data name="MakeObjectIdCommand" xml:space="preserve">
-    <value>Objekt-ID erstellen</value>
+    <value>Objekt-ID e_rstellen</value>
   </data>
   <data name="LanguageCommand" xml:space="preserve">
     <value>Sprache</value>
@@ -1444,22 +1435,22 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>Haltepunkt</value>
   </data>
   <data name="BreakpointExpressionMustBeABooleanExpression" xml:space="preserve">
-    <value>Der Haltepunkt Ausdruck muss ein Boolescher Ausdruck sein</value>
+    <value>Die Haltepunktbedingung muss als boolescher Vorgang ausgewertet werden.</value>
   </data>
   <data name="DbgSettings_SuppressJITOptimization" xml:space="preserve">
-    <value>Suppress JIT optimization on module load</value>
+    <value>JIT-Optimierung beim Laden des Moduls unterdrücken</value>
   </data>
   <data name="DbgSettings_SuppressJITOptimization_ProgramModules" xml:space="preserve">
-    <value>Program modules</value>
+    <value>Programm Module</value>
   </data>
   <data name="DbgSettings_SuppressJITOptimization_SystemModules" xml:space="preserve">
-    <value>System modules</value>
+    <value>System Module</value>
   </data>
   <data name="RuntimeIsUnableToEvaluateExpression" xml:space="preserve">
-    <value>The runtime is unable to evaluate this expression.</value>
+    <value>Die Laufzeit kann diesen Ausdruck nicht auswerten.</value>
   </data>
   <data name="Exceptions_ToggleMatchingExceptions_ToolTip" xml:space="preserve">
-    <value>Enable or disable all exceptions matching the current search criteria</value>
+    <value>Alle Ausnahmen aktivieren bzw. deaktivieren, die mit den aktuellen Suchkriterien übereinstimmen</value>
   </data>
   <data name="DisableBreakpointCommand2" xml:space="preserve">
     <value>Haltepunkt _deaktivieren</value>
@@ -1471,6 +1462,72 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>Möchten Sie das Debuggen beenden?</value>
   </data>
   <data name="DbgSettings_FocusActiveProcess" xml:space="preserve">
-    <value>Give focus to debugged process</value>
+    <value>Fokussiere debuggten Prozess</value>
+  </data>
+  <data name="LoadAllModulesCommand" xml:space="preserve">
+    <value>Alle Module öffnen</value>
+  </data>
+  <data name="DbgSettings_HideDeprecatedError" xml:space="preserve">
+    <value>Veraltete Felder im Variablen-Fenster ausblenden</value>
+  </data>
+  <data name="DbgSettings_ShowReturnValues" xml:space="preserve">
+    <value>Rückgabewerte anzeigen</value>
+  </data>
+  <data name="DbgSettings_RedirectGuiConsoleOutput" xml:space="preserve">
+    <value>Konsolen-Output von GUI-Applikationen zum Ausgabe-Fenster umleiten</value>
+  </data>
+  <data name="AttachToProcess_MakingAnImageEasierToDebug" xml:space="preserve">
+    <value>Debug Erleichterung für ein Abbild</value>
+  </data>
+  <data name="ShowOnlyPublicMembersCommand" xml:space="preserve">
+    <value>Öffentliche Member</value>
+  </data>
+  <data name="DbgSettings_ShowRawLocals" xml:space="preserve">
+    <value>RAW locals anzeigen</value>
+  </data>
+  <data name="DbgSettings_AsyncDebugging" xml:space="preserve">
+    <value>Asynchrones Debugging aktivieren</value>
+  </data>
+  <data name="DbgSettings_StepOverPropertiesAndOperators" xml:space="preserve">
+    <value>Eigenschaften und Operatoren überspringen</value>
+  </data>
+  <data name="CopyExpressionCommand" xml:space="preserve">
+    <value>Ausdruck kopieren</value>
+  </data>
+  <data name="Error_CouldNotShowDisassembly" xml:space="preserve">
+    <value>Der Code der Methode konnte nicht gefunden werden. Stellen Sie sicher, dass der Prozess pausiert ist und die Methode gejittet wurde.</value>
+  </data>
+  <data name="DisassemblyCommand" xml:space="preserve">
+    <value>_Disassembly</value>
+  </data>
+  <data name="ShortCutKeyAlt8" xml:space="preserve">
+    <value>Alt+8</value>
+  </data>
+  <data name="DbgSettings_IgnoreUnhandledExceptions" xml:space="preserve">
+    <value>Unbehandelte Ausnahmen ignorieren</value>
+  </data>
+  <data name="RunWithInvalidExtension" xml:space="preserve">
+    <value>Möchten Sie diese Datei ohne gültige Endung wirklich ausführen?</value>
+  </data>
+  <data name="DebugWithInvalidExtension" xml:space="preserve">
+    <value>Möchten Sie diese Datei ohne gültige Endung wirklich debuggen?</value>
+  </data>
+  <data name="Processes_NoMatch" xml:space="preserve">
+    <value>Keine Prozesse stimmen mit dem Suchtext überein.</value>
+  </data>
+  <data name="Processes_Search" xml:space="preserve">
+    <value>Suchen</value>
+  </data>
+  <data name="Processes_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Setzen Sie alle Suchkriterien zurück, sodass alle Prozesse angezeigt werden</value>
+  </data>
+  <data name="Processes_Search_ToolTip" xml:space="preserve">
+    <value>Nach einem Prozess suchen</value>
+  </data>
+  <data name="DbgSettings_FocusDebuggerWhenProcessBreaks" xml:space="preserve">
+    <value>Hole dnSpy in den Vordergrund, wenn der Debugger hält</value>
+  </data>
+  <data name="Column_LoadModule" xml:space="preserve">
+    <value>Load</value>
   </data>
 </root>

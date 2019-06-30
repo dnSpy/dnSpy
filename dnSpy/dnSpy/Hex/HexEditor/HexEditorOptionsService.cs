@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,7 +36,7 @@ namespace dnSpy.Hex.HexEditor {
 		[ImportingConstructor]
 		HexEditorOptionsServiceImpl(HexViewOptionsGroupService hexViewOptionsGroupService, [ImportMany] IEnumerable<Lazy<HexEditorOptionsDefinition, IHexEditorOptionsDefinitionMetadata>> hexEditorOptionsDefinitions) {
 			var group = hexViewOptionsGroupService.GetGroup(PredefinedHexViewGroupNames.HexEditor);
-			Options = hexEditorOptionsDefinitions.Select(a => HexEditorOptions.TryCreate(group, a.Metadata)).Where(a => a != null).ToArray();
+			Options = hexEditorOptionsDefinitions.Select(a => HexEditorOptions.TryCreate(group, a.Metadata)).OfType< HexEditorOptions>().ToArray();
 		}
 	}
 }

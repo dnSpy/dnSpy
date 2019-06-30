@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,6 +19,7 @@
 
 using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
 
@@ -35,14 +36,14 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <param name="serializedData">Serialized data</param>
 		/// <param name="imageData">Updated with the image data</param>
 		/// <returns></returns>
-		public static bool GetImageData(ModuleDef module, string typeName, byte[] serializedData, out byte[] imageData) {
+		public static bool GetImageData(ModuleDef? module, string typeName, byte[] serializedData, [NotNullWhenTrue] out byte[]? imageData) {
 			imageData = null;
 			if (CouldBeBitmap(module, typeName)) {
 				var dict = Deserializer.Deserialize(SystemDrawingBitmap.DefinitionAssembly.FullName, SystemDrawingBitmap.ReflectionFullName, serializedData);
 				// Bitmap loops over every item looking for "Data" (case insensitive)
 				foreach (var v in dict.Values) {
 					var d = v.Value as byte[];
-					if (d == null)
+					if (d is null)
 						continue;
 					if ("Data".Equals(v.Name, StringComparison.OrdinalIgnoreCase)) {
 						imageData = d;
@@ -57,14 +58,14 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 				if (!dict.TryGetValue("IconData", out var info))
 					return false;
 				imageData = info.Value as byte[];
-				return imageData != null;
+				return !(imageData is null);
 			}
 
 			return false;
 		}
 
-		static bool CouldBeBitmap(ModuleDef module, string name) => CheckType(module, name, SystemDrawingBitmap);
-		static bool CouldBeIcon(ModuleDef module, string name) => CheckType(module, name, SystemDrawingIcon);
+		static bool CouldBeBitmap(ModuleDef? module, string name) => CheckType(module, name, SystemDrawingBitmap);
+		static bool CouldBeIcon(ModuleDef? module, string name) => CheckType(module, name, SystemDrawingIcon);
 
 		/// <summary>
 		/// Checks whether the type matches an expected type
@@ -73,11 +74,11 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <param name="name">Type name</param>
 		/// <param name="expectedType">Expected type</param>
 		/// <returns></returns>
-		public static bool CheckType(ModuleDef module, string name, TypeRef expectedType) {
-			if (module == null)
+		public static bool CheckType(ModuleDef? module, string name, TypeRef expectedType) {
+			if (module is null)
 				module = new ModuleDefUser();
 			var tr = TypeNameParser.ParseReflection(module, name, null);
-			if (tr == null)
+			if (tr is null)
 				return false;
 
 			var flags = AssemblyNameComparerFlags.All & ~AssemblyNameComparerFlags.Version;

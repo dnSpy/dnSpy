@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
 	/// Method and statement
 	/// </summary>
-	public struct MethodSourceStatement : IEquatable<MethodSourceStatement> {
+	public readonly struct MethodSourceStatement : IEquatable<MethodSourceStatement> {
 		/// <summary>
 		/// Gets the method
 		/// </summary>
@@ -73,7 +73,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is MethodSourceStatement && Equals((MethodSourceStatement)obj);
+		public override bool Equals(object? obj) => obj is MethodSourceStatement && Equals((MethodSourceStatement)obj);
 
 		/// <summary>
 		/// GetHashCode()

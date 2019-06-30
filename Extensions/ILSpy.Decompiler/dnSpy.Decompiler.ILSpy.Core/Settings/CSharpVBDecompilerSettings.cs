@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -30,10 +31,16 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 		public DecompilerSettings Settings => decompilerSettings;
 		readonly DecompilerSettings decompilerSettings;
 
-		public CSharpVBDecompilerSettings(DecompilerSettings decompilerSettings = null) {
+		public override int Version => decompilerSettings.SettingsVersion;
+		public override event EventHandler VersionChanged;
+
+		public CSharpVBDecompilerSettings(DecompilerSettings? decompilerSettings = null) {
 			this.decompilerSettings = decompilerSettings ?? new DecompilerSettings();
 			options = CreateOptions().ToArray();
+			this.decompilerSettings.SettingsVersionChanged += DecompilerSettings_SettingsVersionChanged;
 		}
+
+		void DecompilerSettings_SettingsVersionChanged(object sender, EventArgs e) => VersionChanged?.Invoke(this, EventArgs.Empty);
 
 		public override DecompilerSettingsBase Clone() => new CSharpVBDecompilerSettings(decompilerSettings.Clone());
 
@@ -176,6 +183,11 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 				Description = dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_MaxArrayElements,
 				Name = DecompilerOptionConstants.MaxArrayElements_NAME,
 			};
+			yield return new DecompilerOption<int>(DecompilerOptionConstants.MaxStringLength_GUID,
+						() => decompilerSettings.MaxStringLength, a => decompilerSettings.MaxStringLength = a) {
+				Description = dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_MaxStringLength,
+				Name = DecompilerOptionConstants.MaxStringLength_NAME,
+			};
 			yield return new DecompilerOption<bool>(DecompilerOptionConstants.SortCustomAttributes_GUID,
 						() => decompilerSettings.SortCustomAttributes, a => decompilerSettings.SortCustomAttributes = a) {
 				Description = dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_SortCustomAttributes,
@@ -234,7 +246,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 		}
 
 		void SetMemberOrder(string s) {
-			if (s == null || s.Length != 5)
+			if (s is null || s.Length != 5)
 				return;
 			decompilerSettings.DecompilationObject0 = GetDecompilationObject(s[0]) ?? decompilerSettings.DecompilationObject0;
 			decompilerSettings.DecompilationObject1 = GetDecompilationObject(s[1]) ?? decompilerSettings.DecompilationObject1;
@@ -254,9 +266,9 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 			return null;
 		}
 
-		public override bool Equals(object obj) {
+		public override bool Equals(object? obj) {
 			var other = obj as CSharpVBDecompilerSettings;
-			return other != null && decompilerSettings.Equals(other.decompilerSettings);
+			return !(other is null) && decompilerSettings.Equals(other.decompilerSettings);
 		}
 
 		public override int GetHashCode() => decompilerSettings.GetHashCode();

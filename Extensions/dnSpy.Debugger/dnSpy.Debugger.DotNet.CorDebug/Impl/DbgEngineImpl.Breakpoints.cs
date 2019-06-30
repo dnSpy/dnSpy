@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -38,6 +38,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			public DbgEngineBoundCodeBreakpoint EngineBoundCodeBreakpoint { get; set; }
 			public DbgEngineImpl Engine { get; }
 			public BoundBreakpointData(DbgEngineImpl engine, ModuleId module, DnCodeBreakpoint breakpoint) {
+				EngineBoundCodeBreakpoint = null!;
 				Engine = engine ?? throw new ArgumentNullException(nameof(engine));
 				Module = module;
 				Breakpoint = breakpoint ?? throw new ArgumentNullException(nameof(breakpoint));
@@ -51,11 +52,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			}
 		}
 
-		void SendCodeBreakpointHitMessage_CorDebug(DnCodeBreakpoint breakpoint, DbgThread thread) {
+		void SendCodeBreakpointHitMessage_CorDebug(DnCodeBreakpoint breakpoint, DbgThread? thread) {
 			debuggerThread.VerifyAccess();
-			var bpData = (BoundBreakpointData)breakpoint.Tag;
-			Debug.Assert(bpData != null);
-			if (bpData != null)
+			var bpData = (BoundBreakpointData?)breakpoint.Tag;
+			Debug.Assert(!(bpData is null));
+			if (!(bpData is null))
 				SendMessage(new DbgMessageBreakpoint(bpData.EngineBoundCodeBreakpoint.BoundCodeBreakpoint, thread, GetMessageFlags()));
 			else
 				SendMessage(new DbgMessageBreak(thread, GetMessageFlags()));
@@ -74,7 +75,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			debuggerThread.VerifyAccess();
 			DnBreakpoint[] breakpointsToRemove;
 			lock (lockObj) {
-				breakpointsToRemove = pendingBreakpointsToRemove.ToArray();
+				breakpointsToRemove = pendingBreakpointsToRemove.Count == 0 ? Array.Empty<DnBreakpoint>() : pendingBreakpointsToRemove.ToArray();
 				pendingBreakpointsToRemove.Clear();
 			}
 			foreach (var bp in breakpointsToRemove)
@@ -84,6 +85,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		static Dictionary<ModuleId, List<DbgDotNetCodeLocation>> CreateDotNetCodeLocationDictionary(DbgCodeLocation[] locations) {
 			var dict = new Dictionary<ModuleId, List<DbgDotNetCodeLocation>>();
 			foreach (var location in locations) {
+				if (location.IsClosed)
+					continue;
 				if (location is DbgDotNetCodeLocation loc) {
 					if (!dict.TryGetValue(loc.Module, out var list))
 						dict.Add(loc.Module, list = new List<DbgDotNetCodeLocation>());
@@ -96,8 +99,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		Dictionary<ModuleId, List<DbgDotNetNativeCodeLocationImpl>> CreateDotNetNativeCodeLocationDictionary(DbgCodeLocation[] locations) {
 			var dict = new Dictionary<ModuleId, List<DbgDotNetNativeCodeLocationImpl>>();
 			foreach (var location in locations) {
+				if (location.IsClosed)
+					continue;
 				if (location is DbgDotNetNativeCodeLocationImpl loc) {
-					if (loc.CorCode.Object == null || loc.CorCode.Engine != this)
+					if (loc.CorCode.Object is null || loc.CorCode.Engine != this)
 						continue;
 					if (!dict.TryGetValue(loc.Module, out var list))
 						dict.Add(loc.Module, list = new List<DbgDotNetNativeCodeLocationImpl>());
@@ -129,8 +134,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				}
 				if (nativeDict.TryGetValue(data.ModuleId, out var nativeModuleLocations)) {
 					foreach (var location in nativeModuleLocations) {
-						var nbp = dnDebugger.CreateNativeBreakpoint(location.CorCode.Object, location.NativeMethodOffset, null);
-						var address = location.NativeMethodAddress + location.NativeMethodOffset;
+						if (!(location.CorCode.Object is CorCode code))
+							continue;
+						var nbp = dnDebugger.CreateNativeBreakpoint(code, (uint)location.NativeAddress.Offset, null);
+						var address = location.NativeAddress.IP;
 						var msg = GetBoundBreakpointMessage(nbp);
 						var bpData = new BoundBreakpointData(this, location.Module, nbp);
 						createdBreakpoints.Add(new DbgBoundCodeBreakpointInfo<BoundBreakpointData>(location, module, address, msg, bpData));
@@ -139,7 +146,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			}
 			var boundBreakpoints = objectFactory.Create(createdBreakpoints.ToArray());
 			foreach (var ebp in boundBreakpoints) {
-				var bpData = ebp.BoundCodeBreakpoint.GetData<BoundBreakpointData>();
+				if (!ebp.BoundCodeBreakpoint.TryGetData(out BoundBreakpointData? bpData)) {
+					Debug.Assert(ebp.BoundCodeBreakpoint.IsClosed);
+					continue;
+				}
 				bpData.EngineBoundCodeBreakpoint = ebp;
 				bpData.Breakpoint.Tag = bpData;
 			}
@@ -159,13 +169,13 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				goto case DnCodeBreakpointError.OtherError;
 			}
 
-			string GetFunctionName(DnCodeBreakpoint cbp) => $"0x{cbp.Token:X8} ({cbp.Module.ModuleName})";
+			static string GetFunctionName(DnCodeBreakpoint cbp) => $"0x{cbp.Token:X8} ({cbp.Module.ModuleName})";
 		}
 
 		Dictionary<ModuleId, List<BoundBreakpointData>> CreateBoundBreakpointsDictionary(DbgBoundCodeBreakpoint[] boundBreakpoints) {
 			var dict = new Dictionary<ModuleId, List<BoundBreakpointData>>();
 			foreach (var bound in boundBreakpoints) {
-				if (!bound.TryGetData(out BoundBreakpointData bpData) || bpData.Engine != this)
+				if (!bound.TryGetData(out BoundBreakpointData? bpData) || bpData.Engine != this)
 					continue;
 				if (!dict.TryGetValue(bpData.Module, out var list))
 					dict.Add(bpData.Module, list = new List<BoundBreakpointData>());
@@ -186,6 +196,30 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			}
 			if (bpsToRemove.Count > 0)
 				bpsToRemove[0].EngineBoundCodeBreakpoint.Remove(bpsToRemove.Select(a => a.EngineBoundCodeBreakpoint).ToArray());
+		}
+
+		internal DnNativeCodeBreakpoint CreateNativeBreakpointForGetReturnValue(CorCode code, uint offset, Action<CorThread?> callback) {
+			debuggerThread.VerifyAccess();
+			return dnDebugger.CreateNativeBreakpoint(code, offset, ctx => { callback(ctx.E.CorThread); return false; });
+		}
+
+		internal void RemoveNativeBreakpointForGetReturnValue(DnNativeCodeBreakpoint breakpoint) {
+			debuggerThread.VerifyAccess();
+			dnDebugger.RemoveBreakpoint(breakpoint);
+		}
+
+		internal DnILCodeBreakpoint CreateBreakpointForStepper(DbgModule module, uint token, uint offset, Func<CorThread?, bool> callback) {
+			debuggerThread.VerifyAccess();
+			return dnDebugger.CreateBreakpoint(GetModuleId(module).ToDnModuleId(), token, offset, ctx => {
+				if (callback(ctx.E.CorThread))
+					ctx.E.AddPauseReason(DebuggerPauseReason.AsyncStepperBreakpoint);
+				return false;
+			});
+		}
+
+		internal void RemoveBreakpointForStepper(DnILCodeBreakpoint breakpoint) {
+			debuggerThread.VerifyAccess();
+			dnDebugger.RemoveBreakpoint(breakpoint);
 		}
 	}
 }

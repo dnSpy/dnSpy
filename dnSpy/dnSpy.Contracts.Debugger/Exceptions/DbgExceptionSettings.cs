@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,7 +24,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 	/// <summary>
 	/// Exception settings
 	/// </summary>
-	public struct DbgExceptionSettings : IEquatable<DbgExceptionSettings> {
+	public readonly struct DbgExceptionSettings : IEquatable<DbgExceptionSettings> {
 		/// <summary>
 		/// Flags
 		/// </summary>
@@ -40,16 +40,16 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// </summary>
 		/// <param name="flags">Flags</param>
 		/// <param name="conditions">Conditions or null</param>
-		public DbgExceptionSettings(DbgExceptionDefinitionFlags flags, ReadOnlyCollection<DbgExceptionConditionSettings> conditions = null) {
+		public DbgExceptionSettings(DbgExceptionDefinitionFlags flags, ReadOnlyCollection<DbgExceptionConditionSettings>? conditions = null) {
 			Flags = flags;
-			Conditions = conditions == null || conditions.Count == 0 ? emptyConditionsCollection : conditions;
+			Conditions = conditions is null || conditions.Count == 0 ? emptyConditionsCollection : conditions;
 		}
 		static readonly ReadOnlyCollection<DbgExceptionConditionSettings> emptyConditionsCollection = new ReadOnlyCollection<DbgExceptionConditionSettings>(Array.Empty<DbgExceptionConditionSettings>());
 
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 		public static bool operator ==(DbgExceptionSettings left, DbgExceptionSettings right) => left.Equals(right);
 		public static bool operator !=(DbgExceptionSettings left, DbgExceptionSettings right) => !left.Equals(right);
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 		/// <summary>
 		/// Equals()
@@ -62,10 +62,10 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 			return Equals(Conditions, other.Conditions);
 		}
 
-		static bool Equals(ReadOnlyCollection<DbgExceptionConditionSettings> a, ReadOnlyCollection<DbgExceptionConditionSettings> b) {
+		static bool Equals(ReadOnlyCollection<DbgExceptionConditionSettings>? a, ReadOnlyCollection<DbgExceptionConditionSettings>? b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (a.Count != b.Count)
 				return false;
@@ -83,7 +83,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public override bool Equals(object obj) => obj is DbgExceptionSettings other && Equals(other);
+		public override bool Equals(object? obj) => obj is DbgExceptionSettings other && Equals(other);
 
 		/// <summary>
 		/// Gets the hash code
@@ -91,7 +91,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// <returns></returns>
 		public override int GetHashCode() {
 			int hc = (int)Flags;
-			if (Conditions != null) {
+			if (!(Conditions is null)) {
 				foreach (var c in Conditions)
 					hc ^= (int)c.ConditionType ^ StringComparer.Ordinal.GetHashCode(c.Condition ?? string.Empty);
 			}

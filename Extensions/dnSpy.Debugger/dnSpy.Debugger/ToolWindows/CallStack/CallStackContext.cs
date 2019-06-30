@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -17,8 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Debugger.CallStack;
-using dnSpy.Contracts.Text.Classification;
+using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Contracts.Debugger.Text.DnSpy;
 using dnSpy.Debugger.Text;
 using dnSpy.Debugger.UI;
 using dnSpy.Debugger.UI.Wpf;
@@ -29,31 +29,34 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		UIDispatcher UIDispatcher { get; }
 		IClassificationFormatMap ClassificationFormatMap { get; }
 		ITextBlockContentInfoFactory TextBlockContentInfoFactory { get; }
-		TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
+		DbgTextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
 		int UIVersion { get; }
 		CallStackFormatter Formatter { get; }
 		bool SyntaxHighlight { get; }
 		ClassifiedTextWriter ClassifiedTextWriter { get; }
-		DbgStackFrameFormatOptions StackFrameFormatOptions { get; }
+		DbgStackFrameFormatterOptions StackFrameFormatterOptions { get; }
+		DbgValueFormatterOptions ValueFormatterOptions { get; }
 	}
 
 	sealed class CallStackContext : ICallStackContext {
 		public UIDispatcher UIDispatcher { get; }
 		public IClassificationFormatMap ClassificationFormatMap { get; }
 		public ITextBlockContentInfoFactory TextBlockContentInfoFactory { get; }
-		public TextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
+		public DbgTextClassifierTextColorWriter TextClassifierTextColorWriter { get; }
 		public int UIVersion { get; set; }
 		public CallStackFormatter Formatter { get; set; }
 		public bool SyntaxHighlight { get; set; }
 		public ClassifiedTextWriter ClassifiedTextWriter { get; }
-		public DbgStackFrameFormatOptions StackFrameFormatOptions { get; set; }
+		public DbgStackFrameFormatterOptions StackFrameFormatterOptions { get; set; }
+		public DbgValueFormatterOptions ValueFormatterOptions { get; set; }
 
-		public CallStackContext(UIDispatcher uiDispatcher, IClassificationFormatMap classificationFormatMap, ITextBlockContentInfoFactory textBlockContentInfoFactory) {
+		public CallStackContext(UIDispatcher uiDispatcher, IClassificationFormatMap classificationFormatMap, ITextBlockContentInfoFactory textBlockContentInfoFactory, CallStackFormatter formatter) {
 			UIDispatcher = uiDispatcher;
 			ClassificationFormatMap = classificationFormatMap;
 			TextBlockContentInfoFactory = textBlockContentInfoFactory;
-			TextClassifierTextColorWriter = new TextClassifierTextColorWriter();
+			TextClassifierTextColorWriter = new DbgTextClassifierTextColorWriter();
 			ClassifiedTextWriter = new ClassifiedTextWriter();
+			Formatter = formatter;
 		}
 	}
 }

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,7 +26,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 	sealed partial class XmlParser {
 		sealed class XamlAttributeParser {
 			readonly XmlParser owner;
-			string text;
+			string? text;
 			int textPosition;
 			int textEnd;
 			const int MAX_RECURSION = 50;
@@ -55,7 +55,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				RelativeSource,
 			}
 
-			struct Token {
+			readonly struct Token {
 				public Span Span { get; }
 				public TokenKind Kind { get; }
 				public Token(Span span, TokenKind kind) {
@@ -64,7 +64,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				}
 			}
 
-			struct NameToken {
+			readonly struct NameToken {
 				public bool HasNamespace => Namespace.Kind != TokenKind.EOF;
 				public Span Span => HasNamespace ? Span.FromBounds(Namespace.Span.Start, Name.Span.End) : Name.Span;
 				public Token FirstToken => HasNamespace ? Namespace : Name;
@@ -72,13 +72,13 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				public Token Colon { get; }
 				public Token Name { get; }
 
-				public NameToken(Token name) {
+				public NameToken(in Token name) {
 					Namespace = new Token(new Span(0, 0), TokenKind.EOF);
 					Colon = new Token(new Span(0, 0), TokenKind.EOF);
 					Name = name;
 				}
 
-				public NameToken(Token @namespace, Token colon, Token name) {
+				public NameToken(in Token @namespace, in Token colon, in Token name) {
 					Namespace = @namespace;
 					Colon = colon;
 					Name = name;
@@ -104,10 +104,10 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				GetNextToken();
 			}
 
-			void SaveReference(NameToken name, XmlNameReferenceKind refKind) =>
+			void SaveReference(in NameToken name, XmlNameReferenceKind refKind) =>
 				owner.SaveReference(name.HasNamespace, name.Namespace.Span, name.Name.Span, refKind, findDefsOnly: false);
 
-			MarkupExtensionKind GetMarkupExtensionKind(NameToken name) {
+			MarkupExtensionKind GetMarkupExtensionKind(in NameToken name) {
 				// This code assumes default namespaces are used
 				if (name.HasNamespace) {
 					if (owner.Equals(name.Namespace.Span, "x")) {
@@ -132,7 +132,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				return MarkupExtensionKind.Unknown;
 			}
 
-			void ReadMarkupExtension(Token openCurlyBraceToken) {
+			void ReadMarkupExtension(in Token openCurlyBraceToken) {
 				Debug.Assert(openCurlyBraceToken.Kind == TokenKind.OpenCurlyBrace);
 
 				if (++recursionCounter > MAX_RECURSION) {
@@ -142,7 +142,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 				try {
 					var markupExtName = ReadNameToken();
-					if (markupExtName == null) {
+					if (markupExtName is null) {
 						Error();
 						return;
 					}
@@ -165,7 +165,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 						case TokenKind.Name:
 							Undo(token);
-							var name = ReadNameToken().Value;
+							var name = ReadNameToken()!.Value;// Undo() was called so force '!'
 
 							SkipNamesAndPeriods();
 							if (PeekToken().Kind == TokenKind.Equals) {
@@ -249,22 +249,22 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				return new NameToken(first, colon, last);
 			}
 
-			void Undo(Token token) {
-				Debug.Assert(cachedToken == null);
-				if (cachedToken != null)
+			void Undo(in Token token) {
+				Debug.Assert(cachedToken is null);
+				if (!(cachedToken is null))
 					throw new InvalidOperationException();
 				cachedToken = token;
 			}
 
 			Token PeekToken() {
-				if (cachedToken != null)
+				if (!(cachedToken is null))
 					return cachedToken.Value;
 				cachedToken = GetNextToken();
 				return cachedToken.Value;
 			}
 
 			Token GetNextToken() {
-				if (cachedToken != null) {
+				if (!(cachedToken is null)) {
 					var token = cachedToken.Value;
 					cachedToken = null;
 					return token;
@@ -275,7 +275,8 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			Token? cachedToken;
 
 			Token ReadTokenCore() {
-				Debug.Assert(cachedToken == null);
+				Debug.Assert(!(text is null));
+				Debug.Assert(cachedToken is null);
 
 				SkipWhitespace();
 				int startPos = textPosition;
@@ -324,12 +325,14 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			}
 
 			int NextChar() {
+				Debug.Assert(!(text is null));
 				if (textPosition >= textEnd)
 					return -1;
 				return text[textPosition++];
 			}
 
 			int PeekChar() {
+				Debug.Assert(!(text is null));
 				if (textPosition >= textEnd)
 					return -1;
 				return text[textPosition];

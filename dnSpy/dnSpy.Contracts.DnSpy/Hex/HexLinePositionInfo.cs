@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.Hex {
 	/// <summary>
 	/// Line position info
 	/// </summary>
-	public struct HexLinePositionInfo {
+	public readonly struct HexLinePositionInfo {
 		/// <summary>
 		/// Gets the type
 		/// </summary>
@@ -72,7 +72,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// Gets the cell if any
 		/// </summary>
-		public HexCell Cell { get; }
+		public HexCell? Cell { get; }
 
 		HexLinePositionInfo(HexLinePositionInfoType type, int position, int cellPosition) {
 			Type = type;
@@ -115,7 +115,7 @@ namespace dnSpy.Contracts.Hex {
 		public static HexLinePositionInfo CreateValue(int linePosition, HexCell cell) {
 			if (linePosition < 0)
 				throw new ArgumentOutOfRangeException(nameof(linePosition));
-			if (cell == null)
+			if (cell is null)
 				throw new ArgumentNullException(nameof(cell));
 			return new HexLinePositionInfo(HexLinePositionInfoType.ValueCell, linePosition, cell);
 		}
@@ -129,7 +129,7 @@ namespace dnSpy.Contracts.Hex {
 		public static HexLinePositionInfo CreateValueCellSeparator(int linePosition, HexCell cell) {
 			if (linePosition < 0)
 				throw new ArgumentOutOfRangeException(nameof(linePosition));
-			if (cell == null)
+			if (cell is null)
 				throw new ArgumentNullException(nameof(cell));
 			return new HexLinePositionInfo(HexLinePositionInfoType.ValueCellSeparator, linePosition, cell);
 		}
@@ -143,7 +143,7 @@ namespace dnSpy.Contracts.Hex {
 		public static HexLinePositionInfo CreateAscii(int linePosition, HexCell cell) {
 			if (linePosition < 0)
 				throw new ArgumentOutOfRangeException(nameof(linePosition));
-			if (cell == null)
+			if (cell is null)
 				throw new ArgumentNullException(nameof(cell));
 			return new HexLinePositionInfo(HexLinePositionInfoType.AsciiCell, linePosition, cell);
 		}

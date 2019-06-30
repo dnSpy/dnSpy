@@ -166,7 +166,7 @@
     <value>variável local</value>
   </data>
   <data name="ToolTip_NMethodOverloads" xml:space="preserve">
-    <value>sobrecargas de {0}</value>
+    <value>{0} sobrecargas</value>
   </data>
   <data name="ToolTip_OneMethodOverload" xml:space="preserve">
     <value>1 sobrecarga</value>
@@ -178,10 +178,10 @@
     <value>Tipos:</value>
   </data>
   <data name="Decompile_AnyCPU32BitPreferred" xml:space="preserve">
-    <value>AnyCPU (32-bit preferred)</value>
+    <value>AnyCPU (32-bit preferido)</value>
   </data>
   <data name="Decompile_AnyCPU64BitPreferred" xml:space="preserve">
-    <value>AnyCPU (64-bit preferred)</value>
+    <value>AnyCPU (64-bit preferido)</value>
   </data>
   <data name="Decompile_Architecture" xml:space="preserve">
     <value>Arquitetura:</value>
@@ -202,7 +202,7 @@
     <value>Este assembly contém o código não gerenciado.</value>
   </data>
   <data name="Decompile_Timestamp" xml:space="preserve">
-    <value>Timestamp:</value>
+    <value>Data/Hora:</value>
   </data>
   <data name="MSBuild_CreateResource" xml:space="preserve">
     <value>Criar recurso {0}</value>
@@ -232,24 +232,24 @@
     <value>Criar ficheiro ResX</value>
   </data>
   <data name="UnknownValue" xml:space="preserve">
-    <value>&lt;Unknown&gt;</value>
+    <value>&lt;Desconhecido&gt;</value>
   </data>
   <data name="CSharp_Awaitable_Method" xml:space="preserve">
     <value>awaitable</value>
   </data>
   <data name="CSharp_Deprecated_Member" xml:space="preserve">
-    <value>deprecated</value>
+    <value>obsoleto</value>
   </data>
   <data name="CSharp_Extension_Method" xml:space="preserve">
-    <value>extension</value>
+    <value>extensão</value>
   </data>
   <data name="VisualBasic_Awaitable_Method" xml:space="preserve">
     <value>Awaitable</value>
   </data>
   <data name="VisualBasic_Deprecated_Member" xml:space="preserve">
-    <value>Deprecated</value>
+    <value>Obsoleto</value>
   </data>
   <data name="VisualBasic_Extension_Method" xml:space="preserve">
-    <value>Extension</value>
+    <value>Extensão</value>
   </data>
 </root>

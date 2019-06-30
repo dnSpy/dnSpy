@@ -1,0 +1,1532 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddBreakpointCommand" xml:space="preserve">
+    <value>_Додати точку зупинки</value>
+  </data>
+  <data name="AddExceptionCommand" xml:space="preserve">
+    <value>Додати Виключення</value>
+  </data>
+  <data name="AppDomainNotAvailable" xml:space="preserve">
+    <value>&lt;не доступне&gt;</value>
+  </data>
+  <data name="AppMenu_Debug" xml:space="preserve">
+    <value>_Відлагодження</value>
+  </data>
+  <data name="AppTitle_Debugging" xml:space="preserve">
+    <value>Відлагодження</value>
+  </data>
+  <data name="AskDeleteAllBreakpoints" xml:space="preserve">
+    <value>Ви бажаєте видалити усі точки зупинки?</value>
+  </data>
+  <data name="AttachToProcessCommand" xml:space="preserve">
+    <value>Приєднатись до _Процесу...</value>
+  </data>
+  <data name="Attach_AttachToProcess" xml:space="preserve">
+    <value>Приєднатись до Процесу</value>
+  </data>
+  <data name="Attach_UseDnSpy32" xml:space="preserve">
+    <value>Використовуйте 64-біт dnSpy для приєднання до 64-біт процесів</value>
+  </data>
+  <data name="Attach_UseDnSpy64" xml:space="preserve">
+    <value>Використовуйте 32-біт dnSpy для приєднання до 32-біт процесів</value>
+  </data>
+  <data name="BreakCommand" xml:space="preserve">
+    <value>Перервати Усе</value>
+  </data>
+  <data name="BreakpointsCommand" xml:space="preserve">
+    <value>Точки зупинок</value>
+  </data>
+  <data name="Button_Attach" xml:space="preserve">
+    <value>_Приєднатись</value>
+  </data>
+  <data name="Button_Cancel" xml:space="preserve">
+    <value>Відміна</value>
+  </data>
+  <data name="Button_OK" xml:space="preserve">
+    <value>Так</value>
+  </data>
+  <data name="Button_Refresh" xml:space="preserve">
+    <value>Оновити</value>
+  </data>
+  <data name="CallStackCommand" xml:space="preserve">
+    <value>Стек викликів</value>
+  </data>
+  <data name="CallStack_MaxFramesExceeded" xml:space="preserve">
+    <value>Перевищено максимальна к-сть фреймів стеку, що підтримуються dnSpy</value>
+  </data>
+  <data name="Column_Address" xml:space="preserve">
+    <value>Адреса</value>
+  </data>
+  <data name="Column_AppDomain" xml:space="preserve">
+    <value>AppDomain</value>
+  </data>
+  <data name="Column_DynamicModule" xml:space="preserve">
+    <value>Dynamic</value>
+  </data>
+  <data name="Column_InMemoryModule" xml:space="preserve">
+    <value>InMemory</value>
+  </data>
+  <data name="Column_Module" xml:space="preserve">
+    <value>Модуль</value>
+  </data>
+  <data name="Column_Name" xml:space="preserve">
+    <value>Назва</value>
+  </data>
+  <data name="Column_OptimizedModule" xml:space="preserve">
+    <value>Оптимізовано</value>
+  </data>
+  <data name="Column_Order" xml:space="preserve">
+    <value>Порядок</value>
+  </data>
+  <data name="Column_Path" xml:space="preserve">
+    <value>Шлях</value>
+  </data>
+  <data name="Column_Process" xml:space="preserve">
+    <value>Процес</value>
+  </data>
+  <data name="Column_ProcessArchitecture" xml:space="preserve">
+    <value>Архітектура</value>
+  </data>
+  <data name="Column_ProcessFilename" xml:space="preserve">
+    <value>Назва файлу</value>
+  </data>
+  <data name="Column_ProcessID" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="Column_ProcessTitle" xml:space="preserve">
+    <value>Заголовок</value>
+  </data>
+  <data name="Column_ProcessType" xml:space="preserve">
+    <value>Тип</value>
+  </data>
+  <data name="Column_ThreadAffinityMask" xml:space="preserve">
+    <value>Affinity Mask</value>
+  </data>
+  <data name="Column_ThreadCategory" xml:space="preserve">
+    <value>Категорія</value>
+  </data>
+  <data name="Column_ThreadID" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="Column_ThreadLocation" xml:space="preserve">
+    <value>Розташування</value>
+  </data>
+  <data name="Column_ThreadManagedId" xml:space="preserve">
+    <value>Managed ID</value>
+  </data>
+  <data name="Column_ThreadPriority" xml:space="preserve">
+    <value>Пріоритет</value>
+  </data>
+  <data name="Column_ThreadState" xml:space="preserve">
+    <value>Стан</value>
+  </data>
+  <data name="Column_ThreadSuspendedCount" xml:space="preserve">
+    <value>Лічильник зупинок</value>
+  </data>
+  <data name="Column_Timestamp" xml:space="preserve">
+    <value>Час</value>
+  </data>
+  <data name="Column_Type" xml:space="preserve">
+    <value>Тип</value>
+  </data>
+  <data name="Column_Value" xml:space="preserve">
+    <value>Значення</value>
+  </data>
+  <data name="Column_Version" xml:space="preserve">
+    <value>Версія</value>
+  </data>
+  <data name="ContinueDebuggingCommand" xml:space="preserve">
+    <value>Продовжити</value>
+  </data>
+  <data name="CopyCommand" xml:space="preserve">
+    <value>Копіювати</value>
+  </data>
+  <data name="DbgAsm_Title" xml:space="preserve">
+    <value>Відлагодження</value>
+  </data>
+  <data name="DbgSettings_AutoOpenLocalsWindow" xml:space="preserve">
+    <value>Показати вікно локальних змінних при старті дебагера</value>
+  </data>
+  <data name="DbgSettings_DisableDebuggerDetection" xml:space="preserve">
+    <value>Заборонити коду виявляти дебагер</value>
+  </data>
+  <data name="DbgSettings_IgnoreBreakInstructions" xml:space="preserve">
+    <value>Ігнорувати Debugger.Break() та інші операції зупинок</value>
+  </data>
+  <data name="DbgSettings_PropertyEvalAndFunctionCalls" xml:space="preserve">
+    <value>Дозволити обчислення властивостей та інші неявні виклики функцій</value>
+  </data>
+  <data name="DbgSettings_UseMemoryModules" xml:space="preserve">
+    <value>Відлагоджувати файли, завантажені із пам'яті процесу (зніміть прапорець для того, щоб використати файли із диску)</value>
+  </data>
+  <data name="DbgSettings_UseStringConversionFunction" xml:space="preserve">
+    <value>Викликати функцію конвертування стрічок у вікнах змінних</value>
+  </data>
+  <data name="StartDebugging2" xml:space="preserve">
+    <value>_Запустити відладку...</value>
+  </data>
+  <data name="DebuggerOptDlgTab" xml:space="preserve">
+    <value>Відладчик</value>
+  </data>
+  <data name="DebugProgramX" xml:space="preserve">
+    <value>_Відлагодити {0}</value>
+  </data>
+  <data name="Debug_EventDescription_Exception" xml:space="preserve">
+    <value>Виключення</value>
+  </data>
+  <data name="Debug_EventDescription_LoadModule1" xml:space="preserve">
+    <value>LoadModule DYN={0} MEM={1} {2:X8} {3:X8} {4}</value>
+  </data>
+  <data name="Debug_EventDescription_LoadModule2" xml:space="preserve">
+    <value>LoadModule A={0:X8} S={1:X8} {2}</value>
+  </data>
+  <data name="Debug_EventDescription_UnhandledException" xml:space="preserve">
+    <value>Необроблене виключення</value>
+  </data>
+  <data name="DeleteAllBreakpointsCommand" xml:space="preserve">
+    <value>Видалити усі точки зупинок</value>
+  </data>
+  <data name="DeleteBreakpointCommand" xml:space="preserve">
+    <value>Видалити брейкпоінт</value>
+  </data>
+  <data name="DetachAllCommand" xml:space="preserve">
+    <value>Від'єднатись від усіх</value>
+  </data>
+  <data name="DisableAllBreakpointsCommand" xml:space="preserve">
+    <value>Заборонити усі точки зупинок</value>
+  </data>
+  <data name="EnableAllBreakpointsCommand" xml:space="preserve">
+    <value>Включити усі точки зупинок</value>
+  </data>
+  <data name="EnableBreakpointCommand" xml:space="preserve">
+    <value>Ввімкнути точку зупинки</value>
+  </data>
+  <data name="EnableBreakpointCommand2" xml:space="preserve">
+    <value>Ввімкнути точку зупинки</value>
+  </data>
+  <data name="ErrorOccurredX" xml:space="preserve">
+    <value>Трапилась помилка:
+
+{0}</value>
+  </data>
+  <data name="Error_CantEvalUnlessDebuggerStopped" xml:space="preserve">
+    <value>Не можу вирахувати поки дебагер зупинений</value>
+  </data>
+  <data name="Error_CantEvalWhenUnhandledExceptionHasOccurred" xml:space="preserve">
+    <value>Не вдалося оцінити, коли сталася необроблена виняткова ситуація</value>
+  </data>
+  <data name="Error_StartWithoutDebuggingCouldNotStart" xml:space="preserve">
+    <value>Не вдалося запустити '{0}' Помилка: {1}</value>
+  </data>
+  <data name="ExceptionSettingsCommand" xml:space="preserve">
+    <value>Налаштування виключень</value>
+  </data>
+  <data name="Exceptions_Remove_ToolTip" xml:space="preserve">
+    <value>Видалити виключення зі списку</value>
+  </data>
+  <data name="Exceptions_RestoreSettings_ToolTip" xml:space="preserve">
+    <value>Відновити список параметрів за замовчуванням</value>
+  </data>
+  <data name="Exceptions_Search" xml:space="preserve">
+    <value>Пошук</value>
+  </data>
+  <data name="Exceptions_Search_ToolTip" xml:space="preserve">
+    <value>Пошук виключення</value>
+  </data>
+  <data name="Exceptions_ShowOnlyEnabledExceptions_ToolTip" xml:space="preserve">
+    <value>Показати лише ввімкнуті винятки</value>
+  </data>
+  <data name="FreezeThreadCommand" xml:space="preserve">
+    <value>Заморозити</value>
+  </data>
+  <data name="GoToDisassemblyCommand2" xml:space="preserve">
+    <value>До _дизасембльованого коду</value>
+  </data>
+  <data name="GoToModuleCommand" xml:space="preserve">
+    <value>Перейти _до модуля</value>
+  </data>
+  <data name="HexDisplayCommand" xml:space="preserve">
+    <value>_Hex відображення</value>
+  </data>
+  <data name="LocalsAddWatchCommand" xml:space="preserve">
+    <value>Додати watch</value>
+  </data>
+  <data name="LocalsCollapseChildrenNodesCommand" xml:space="preserve">
+    <value>_Згорнути дочірні вузли</value>
+  </data>
+  <data name="LocalsCollapseParentNodeCommand" xml:space="preserve">
+    <value>З_горнути батька</value>
+  </data>
+  <data name="LocalsCommand" xml:space="preserve">
+    <value>_Локальні змінні</value>
+  </data>
+  <data name="LocalsCopyValueCommand" xml:space="preserve">
+    <value>Копіювати значення</value>
+  </data>
+  <data name="LocalsEditValueCommand" xml:space="preserve">
+    <value>_Змінити значення</value>
+  </data>
+  <data name="LocalsExpandChildrenNodesCommand" xml:space="preserve">
+    <value>_Розгорнути дочірні вузли</value>
+  </data>
+  <data name="LocalsSaveCommand" xml:space="preserve">
+    <value>Зберегти...</value>
+  </data>
+  <data name="LocalsSave_Error_CouldNotSaveDataToFilename" xml:space="preserve">
+    <value>Помилка при збереженні даних в '{0}'
+ПОМИЛКА: {1}</value>
+  </data>
+  <data name="Locals_Ask_TooManyItems" xml:space="preserve">
+    <value>У цього елементу більше {0} дочірніх елементів, їх відображення буде обмежене.
+
+Ви переконані, що хочете розгорнути елемент?</value>
+  </data>
+  <data name="Locals_Error_CantEvaluateWhenThreadIsAtUnsafePoint" xml:space="preserve">
+    <value>Не можливо вичислити, коли потік в небезпечному стані. Перейдіть через виклик чи запустіть до точки зупинки.</value>
+  </data>
+  <data name="Locals_Error_EvalDisabledCantCallPropsAndMethods" xml:space="preserve">
+    <value>Зараз неможливо викликати властивості і методи</value>
+  </data>
+  <data name="Locals_Error_EvalTimedOutIsDisabled" xml:space="preserve">
+    <value>Час виконання вийшов. Обчислення буде відключене до тих пір, поки ви не продовжите відладку.</value>
+  </data>
+  <data name="Locals_Error_EvaluationTimedOut" xml:space="preserve">
+    <value>Минув час операції</value>
+  </data>
+  <data name="MemoryWindowCommand" xml:space="preserve">
+    <value>_Пам'ять</value>
+  </data>
+  <data name="ModuleCopyFilenameCommand" xml:space="preserve">
+    <value>Копіювати ім'я файлу</value>
+  </data>
+  <data name="ModuleSaveModulesTitle" xml:space="preserve">
+    <value>Зберегти модулі</value>
+  </data>
+  <data name="ModuleSaveModuleTitle" xml:space="preserve">
+    <value>Зберегти модуль</value>
+  </data>
+  <data name="ModulesCommand" xml:space="preserve">
+    <value>М_одулі</value>
+  </data>
+  <data name="Module_NoAddress" xml:space="preserve">
+    <value>&lt;нема адреси&gt;</value>
+  </data>
+  <data name="OpenContainingFolderCommand" xml:space="preserve">
+    <value>_Відкрити каталог</value>
+  </data>
+  <data name="OpenModuleFromMemoryCommand" xml:space="preserve">
+    <value>Відкрити модуль із пам'яті</value>
+  </data>
+  <data name="RemoveExceptionCommand" xml:space="preserve">
+    <value>_Видалити</value>
+  </data>
+  <data name="RenameThreadCommand" xml:space="preserve">
+    <value>Перейменувати</value>
+  </data>
+  <data name="RestartCommand" xml:space="preserve">
+    <value>_Рестарт</value>
+  </data>
+  <data name="RestoreDefaultExceptionSettingsCommand" xml:space="preserve">
+    <value>Відновити типові значення</value>
+  </data>
+  <data name="RunToCursorCommand" xml:space="preserve">
+    <value>В_иконати до курсору</value>
+  </data>
+  <data name="SaveModuleCommand" xml:space="preserve">
+    <value>Зберегти модуль...</value>
+  </data>
+  <data name="SaveModulesCommand" xml:space="preserve">
+    <value>Зберегти {0} модулів...</value>
+  </data>
+  <data name="SelectAllCommand" xml:space="preserve">
+    <value>Вибр_ати усе</value>
+  </data>
+  <data name="SetNextStatementCommand" xml:space="preserve">
+    <value>Встановити на_ступну інструкцію</value>
+  </data>
+  <data name="ShortCutAltAsterisk" xml:space="preserve">
+    <value>Alt+Num *</value>
+  </data>
+  <data name="ShortCutKeyAlt4" xml:space="preserve">
+    <value>Alt+4</value>
+  </data>
+  <data name="ShortCutKeyAlt6" xml:space="preserve">
+    <value>Alt+6</value>
+  </data>
+  <data name="ShortCutKeyCtrlA" xml:space="preserve">
+    <value>Ctrl+A</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltB" xml:space="preserve">
+    <value>Ctrl+Alt+B</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltC" xml:space="preserve">
+    <value>Ctrl+Alt+C</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltE" xml:space="preserve">
+    <value>Ctrl+Alt+E</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltH" xml:space="preserve">
+    <value>Ctrl+Alt+H</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltP" xml:space="preserve">
+    <value>Ctrl+Alt+P</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltU" xml:space="preserve">
+    <value>Ctrl+Alt+U</value>
+  </data>
+  <data name="ShortCutKeyCtrlShift_DIGIT" xml:space="preserve">
+    <value>Ctrl+Shift+{0}</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltBreak" xml:space="preserve">
+    <value>Ctrl+Alt+Break</value>
+  </data>
+  <data name="ShortCutKeyCtrlC" xml:space="preserve">
+    <value>Ctrl+C</value>
+  </data>
+  <data name="ShortCutKeyCtrlF10" xml:space="preserve">
+    <value>Ctrl+F10</value>
+  </data>
+  <data name="ShortCutKeyCtrlF5" xml:space="preserve">
+    <value>Ctrl+F5</value>
+  </data>
+  <data name="ShortCutKeyCtrlF9" xml:space="preserve">
+    <value>Ctrl+F9</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftC" xml:space="preserve">
+    <value>Ctrl+Shift+C</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftF10" xml:space="preserve">
+    <value>Ctrl+Shift+F10</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftF5" xml:space="preserve">
+    <value>Ctrl+Shift+F5</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftF9" xml:space="preserve">
+    <value>Ctrl+Shift+F9</value>
+  </data>
+  <data name="ShortCutKeyCtrl_DIGIT" xml:space="preserve">
+    <value>Ctrl+{0}</value>
+  </data>
+  <data name="ShortCutKeyDelete" xml:space="preserve">
+    <value>Видалити</value>
+  </data>
+  <data name="ShortCutKeyEnter" xml:space="preserve">
+    <value>Enter</value>
+  </data>
+  <data name="ShortCutKeyF10" xml:space="preserve">
+    <value>F10</value>
+  </data>
+  <data name="ShortCutKeyF11" xml:space="preserve">
+    <value>F11</value>
+  </data>
+  <data name="ShortCutKeyF2" xml:space="preserve">
+    <value>F2</value>
+  </data>
+  <data name="ShortCutKeyF5" xml:space="preserve">
+    <value>F5</value>
+  </data>
+  <data name="ShortCutKeyF9" xml:space="preserve">
+    <value>F9</value>
+  </data>
+  <data name="ShortCutKeyInsert" xml:space="preserve">
+    <value>Ins</value>
+  </data>
+  <data name="ShortCutKeyShiftF11" xml:space="preserve">
+    <value>Shift+F11</value>
+  </data>
+  <data name="ShortCutKeyShiftF5" xml:space="preserve">
+    <value>Shift+F5</value>
+  </data>
+  <data name="ShowInMemoryWindowCommand" xml:space="preserve">
+    <value>Показати у вікні пам'яті</value>
+  </data>
+  <data name="ShowInstructionPointerCommand" xml:space="preserve">
+    <value>Показати IP</value>
+  </data>
+  <data name="ShowModuleNamesCommand" xml:space="preserve">
+    <value>Показати імена _модулів</value>
+  </data>
+  <data name="ShowNamespacesCommand" xml:space="preserve">
+    <value>Показати простори імен</value>
+  </data>
+  <data name="ShowNextStatementCommand" xml:space="preserve">
+    <value>По_казати наступну інструкцію</value>
+  </data>
+  <data name="ShowDeclaringTypesCommand" xml:space="preserve">
+    <value>Показати оголошення типів</value>
+  </data>
+  <data name="ShowParameterNamesCommand" xml:space="preserve">
+    <value>Показати імена _параметрів</value>
+  </data>
+  <data name="ShowParameterTypesCommand" xml:space="preserve">
+    <value>Показати _типи параметрів</value>
+  </data>
+  <data name="ShowParameterValuesCommand" xml:space="preserve">
+    <value>Показати _значення параметрів</value>
+  </data>
+  <data name="ShowReturnTypesCommand" xml:space="preserve">
+    <value>Показати тип повернення</value>
+  </data>
+  <data name="ShowTokensCommand" xml:space="preserve">
+    <value>Показувати токени</value>
+  </data>
+  <data name="ShowIntrinsicTypeKeywordsCommand" xml:space="preserve">
+    <value>Показати ключові слова вбудованих типів</value>
+  </data>
+  <data name="StartWithoutDebuggingCommand" xml:space="preserve">
+    <value>Старт б_ез відладки</value>
+  </data>
+  <data name="StatusBar_Ready" xml:space="preserve">
+    <value>Готовий</value>
+  </data>
+  <data name="StatusBar_Running" xml:space="preserve">
+    <value>Працює...</value>
+  </data>
+  <data name="StepIntoCommand" xml:space="preserve">
+    <value>Крок_всередину</value>
+  </data>
+  <data name="StepOutCommand" xml:space="preserve">
+    <value>Крок _наверх</value>
+  </data>
+  <data name="StepOverCommand" xml:space="preserve">
+    <value>Крок _через</value>
+  </data>
+  <data name="StopDebuggingCommand" xml:space="preserve">
+    <value>Зупинити _відладку</value>
+  </data>
+  <data name="SwitchToFrameCommand" xml:space="preserve">
+    <value>_Перемикнутись на фрейм</value>
+  </data>
+  <data name="SwitchToThreadCommand" xml:space="preserve">
+    <value>_Перемикнутись на потік</value>
+  </data>
+  <data name="ThawThreadCommand" xml:space="preserve">
+    <value>_Розморозити</value>
+  </data>
+  <data name="ThreadsCommand" xml:space="preserve">
+    <value>По_токи</value>
+  </data>
+  <data name="ThreadType_Main" xml:space="preserve">
+    <value>Головний потік</value>
+  </data>
+  <data name="ThreadType_Terminated" xml:space="preserve">
+    <value>Завершений</value>
+  </data>
+  <data name="ThreadType_ThreadPool" xml:space="preserve">
+    <value>Пул потоків</value>
+  </data>
+  <data name="ThreadType_Unknown" xml:space="preserve">
+    <value>Невідомий потік</value>
+  </data>
+  <data name="ThreadType_Worker" xml:space="preserve">
+    <value>Робочий потік</value>
+  </data>
+  <data name="Thread_LocationNotAvailable" xml:space="preserve">
+    <value>&lt;не доступне&gt;</value>
+  </data>
+  <data name="Thread_NoName" xml:space="preserve">
+    <value>&lt;Без імені&gt;</value>
+  </data>
+  <data name="Thread_Priority_AboveNormal" xml:space="preserve">
+    <value>Вище середнього</value>
+  </data>
+  <data name="Thread_Priority_BelowNormal" xml:space="preserve">
+    <value>Нижче середнього</value>
+  </data>
+  <data name="Thread_Priority_Highest" xml:space="preserve">
+    <value>Найвищий</value>
+  </data>
+  <data name="Thread_Priority_Lowest" xml:space="preserve">
+    <value>Найнижчий</value>
+  </data>
+  <data name="Thread_Priority_Normal" xml:space="preserve">
+    <value>Звичайний</value>
+  </data>
+  <data name="ToggleBreakpointCommand" xml:space="preserve">
+    <value>Переключити точку зупинки</value>
+  </data>
+  <data name="ToolBarBreakAllToolTip" xml:space="preserve">
+    <value>Перервати Усе</value>
+  </data>
+  <data name="ToolBarContinueDebuggingButton" xml:space="preserve">
+    <value>Продовжити</value>
+  </data>
+  <data name="ToolBarContinueDebuggingToolTip" xml:space="preserve">
+    <value>Продовжити</value>
+  </data>
+  <data name="ToolBarDebugAssemblyToolTip" xml:space="preserve">
+    <value>Відлагодження</value>
+  </data>
+  <data name="ToolBarRestartToolTip" xml:space="preserve">
+    <value>Перезапустити</value>
+  </data>
+  <data name="ToolBarShowNextStatementToolTip" xml:space="preserve">
+    <value>Показати наступний оператор</value>
+  </data>
+  <data name="ToolBarStartDebuggingButton" xml:space="preserve">
+    <value>Старт</value>
+  </data>
+  <data name="ToolBarStepIntoToolTip" xml:space="preserve">
+    <value>Крок всередину</value>
+  </data>
+  <data name="ToolBarStepOutToolTip" xml:space="preserve">
+    <value>Крок наверх</value>
+  </data>
+  <data name="ToolBarStepOverToolTip" xml:space="preserve">
+    <value>Крок через</value>
+  </data>
+  <data name="ToolBarStopDebuggingToolTip" xml:space="preserve">
+    <value>Зупинити відлагодження</value>
+  </data>
+  <data name="Window_Breakpoints" xml:space="preserve">
+    <value>Точки зупинки</value>
+  </data>
+  <data name="Window_CallStack" xml:space="preserve">
+    <value>Стек викликів</value>
+  </data>
+  <data name="Window_ExceptionSettings" xml:space="preserve">
+    <value>Налаштування виключень</value>
+  </data>
+  <data name="Window_Locals" xml:space="preserve">
+    <value>Локальні змінні</value>
+  </data>
+  <data name="Window_Memory_10_MenuItem" xml:space="preserve">
+    <value>Пам'ять 1_0</value>
+  </data>
+  <data name="Window_Memory_N" xml:space="preserve">
+    <value>Пам'ять {0}</value>
+  </data>
+  <data name="Window_Memory_N_MenuItem" xml:space="preserve">
+    <value>Пам'ять _{0}</value>
+  </data>
+  <data name="Window_Memory_N_MenuItem2" xml:space="preserve">
+    <value>Пам'ять {0}</value>
+  </data>
+  <data name="Window_Modules" xml:space="preserve">
+    <value>Модулі</value>
+  </data>
+  <data name="Window_Threads" xml:space="preserve">
+    <value>Потоки</value>
+  </data>
+  <data name="YesNo_No" xml:space="preserve">
+    <value>Ні</value>
+  </data>
+  <data name="YesNo_Yes" xml:space="preserve">
+    <value>Так</value>
+  </data>
+  <data name="DbgSettings_SyntaxHighlight" xml:space="preserve">
+    <value>Підсвітка синтаксису</value>
+  </data>
+  <data name="LoadModulesCommand" xml:space="preserve">
+    <value>Завантажити модулі</value>
+  </data>
+  <data name="LoadXModulesCommand" xml:space="preserve">
+    <value>Завантажити {0} модулів</value>
+  </data>
+  <data name="ShowParameterTypesCommand2" xml:space="preserve">
+    <value>Показати типи параметрів</value>
+  </data>
+  <data name="Plugin_ShortDescription" xml:space="preserve">
+    <value>Відладчик</value>
+  </data>
+  <data name="DebugLoggerName" xml:space="preserve">
+    <value>Відладка</value>
+  </data>
+  <data name="ShowExceptionMessages" xml:space="preserve">
+    <value>_Повідомлення про виключення</value>
+  </data>
+  <data name="ShowModuleLoadMessages" xml:space="preserve">
+    <value>Повідомлення _завантаження модуля</value>
+  </data>
+  <data name="ShowModuleUnloadMessages" xml:space="preserve">
+    <value>Повідомлення _вивантаження модуля</value>
+  </data>
+  <data name="ShowProcessExitMessages" xml:space="preserve">
+    <value>Повідомлення виходу _процесу</value>
+  </data>
+  <data name="ShowProgramOutputMessages" xml:space="preserve">
+    <value>_Вивід програми</value>
+  </data>
+  <data name="ShowStepFilteringMessages" xml:space="preserve">
+    <value>Повідомлення фільтрації _кроків</value>
+  </data>
+  <data name="ShowThreadExitMessages" xml:space="preserve">
+    <value>Повідомлення про вихід _потоку</value>
+  </data>
+  <data name="ShowMDAMessages" xml:space="preserve">
+    <value>Повідомлення MDA</value>
+  </data>
+  <data name="DebugLogAdditionalInformation" xml:space="preserve">
+    <value>Додаткова інформація: {0}</value>
+  </data>
+  <data name="DebugLogExceptionHandled" xml:space="preserve">
+    <value>Виключення: '{0}' в {1}</value>
+  </data>
+  <data name="DebugLogExceptionUnhandled" xml:space="preserve">
+    <value>В {1} відбулось неопрацьоване  виключення типу '{0}'</value>
+  </data>
+  <data name="DebugLogExitProcess" xml:space="preserve">
+    <value>Програма «{0}» завершилась із кодом {1} (0x{1:x}).</value>
+  </data>
+  <data name="DebugLogExitThread" xml:space="preserve">
+    <value>Потік 0x{0:x} завершився із кодом {1} (0x{1:x}).</value>
+  </data>
+  <data name="DebugLogLoadModule" xml:space="preserve">
+    <value>Завантажений "{0}".</value>
+  </data>
+  <data name="DebugLogMDA" xml:space="preserve">
+    <value>Помічник керованої відладки '{0}' знайшов проблему у '{1}'.</value>
+  </data>
+  <data name="DebugLogUnloadModule" xml:space="preserve">
+    <value>Вивантажений "{0}".</value>
+  </data>
+  <data name="ExceptionMessageIsNull" xml:space="preserve">
+    <value>«&lt;повідомлення без виключення&gt;»</value>
+  </data>
+  <data name="GlyphToolTip_Location" xml:space="preserve">
+    <value>Розташування</value>
+  </data>
+  <data name="HexEditorGroup_DebuggerMemory" xml:space="preserve">
+    <value>Пам"ять</value>
+  </data>
+  <data name="BgImgDisplayName_DebuggerMemory" xml:space="preserve">
+    <value>Hex-редактор (пам'ять)</value>
+  </data>
+  <data name="DbgAsm_DebugEngine" xml:space="preserve">
+    <value>_Двигун відладки</value>
+  </data>
+  <data name="DebugWindows" xml:space="preserve">
+    <value>_Вікна</value>
+  </data>
+  <data name="OutputCommand" xml:space="preserve">
+    <value>_Вивід</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltW_DIGIT" xml:space="preserve">
+    <value>Ctrl+Alt+W, {0}</value>
+  </data>
+  <data name="TerminateAllCommand" xml:space="preserve">
+    <value>_Завершити все</value>
+  </data>
+  <data name="WatchCommand" xml:space="preserve">
+    <value>_Watch</value>
+  </data>
+  <data name="Window_Watch_10_MenuItem" xml:space="preserve">
+    <value>Watch 1_0</value>
+  </data>
+  <data name="Window_Watch_N" xml:space="preserve">
+    <value>Watch {0}</value>
+  </data>
+  <data name="Window_Watch_N_MenuItem" xml:space="preserve">
+    <value>Watch _{0}</value>
+  </data>
+  <data name="Window_Watch_N_MenuItem2" xml:space="preserve">
+    <value>Watch {0}</value>
+  </data>
+  <data name="Options" xml:space="preserve">
+    <value>_Параметри...</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltZ" xml:space="preserve">
+    <value>Ctrl+Alt+Z</value>
+  </data>
+  <data name="ProcessesCommand" xml:space="preserve">
+    <value>_Процесси</value>
+  </data>
+  <data name="Window_Processes" xml:space="preserve">
+    <value>Процеси</value>
+  </data>
+  <data name="Column_Debugging" xml:space="preserve">
+    <value>Відлагодження</value>
+  </data>
+  <data name="Column_ID" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="Column_State" xml:space="preserve">
+    <value>Стан</value>
+  </data>
+  <data name="Column_Title" xml:space="preserve">
+    <value>Заголовок</value>
+  </data>
+  <data name="Process_Paused" xml:space="preserve">
+    <value>Зупинений</value>
+  </data>
+  <data name="Process_Running" xml:space="preserve">
+    <value>Виконується</value>
+  </data>
+  <data name="Processes_AttachToProcessToolTip" xml:space="preserve">
+    <value>Приєднатись до Процесу</value>
+  </data>
+  <data name="Processes_DetachToolTip" xml:space="preserve">
+    <value>Від'єднати процес</value>
+  </data>
+  <data name="Processes_TerminateToolTip" xml:space="preserve">
+    <value>Припинити процес</value>
+  </data>
+  <data name="ShortCutKeyCtrlF" xml:space="preserve">
+    <value>Ctrl+F</value>
+  </data>
+  <data name="DetachProcessCommand" xml:space="preserve">
+    <value>Від'єднати процес</value>
+  </data>
+  <data name="DetachWhenDebuggingStoppedCommand" xml:space="preserve">
+    <value>Від'єднати, _коли відладка завершиться</value>
+  </data>
+  <data name="TerminateProcessCommand" xml:space="preserve">
+    <value>_Завершити процес</value>
+  </data>
+  <data name="ProcessCommand" xml:space="preserve">
+    <value>Процес</value>
+  </data>
+  <data name="Column_ProcessName" xml:space="preserve">
+    <value>Ім'я процесу</value>
+  </data>
+  <data name="AllRemainingExceptionsNotInList" xml:space="preserve">
+    <value>&lt;Все {0} не в цьому списку&gt;</value>
+  </data>
+  <data name="Exceptions_EditConditions_ToolTip" xml:space="preserve">
+    <value>Редагувати умови</value>
+  </data>
+  <data name="Column_Conditions" xml:space="preserve">
+    <value>Умови</value>
+  </data>
+  <data name="Column_BreakWhenThrown" xml:space="preserve">
+    <value>Зупинити при з'явленні виключення</value>
+  </data>
+  <data name="Column_Category" xml:space="preserve">
+    <value>Категорія</value>
+  </data>
+  <data name="Exception_Conditions_And" xml:space="preserve">
+    <value>І</value>
+  </data>
+  <data name="Exception_Conditions_ModuleNameEquals" xml:space="preserve">
+    <value>Імя модуля рівно</value>
+  </data>
+  <data name="Exception_Conditions_ModuleNameNotEquals" xml:space="preserve">
+    <value>Ім'я модуля не рівно</value>
+  </data>
+  <data name="Exceptions_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Скинути всі критерії пошуку, щоб показати всі виключення</value>
+  </data>
+  <data name="Exceptions_AllCategories" xml:space="preserve">
+    <value>Всі</value>
+  </data>
+  <data name="EditConditionsCommand" xml:space="preserve">
+    <value>Змінити умови...</value>
+  </data>
+  <data name="ExceptionsCommand" xml:space="preserve">
+    <value>Виключення</value>
+  </data>
+  <data name="FindCommand" xml:space="preserve">
+    <value>_Пошук</value>
+  </data>
+  <data name="Exceptions_NoMatch" xml:space="preserve">
+    <value>Немає типів виключень, що відповідають умові пошуку.</value>
+  </data>
+  <data name="AddExceptionButton" xml:space="preserve">
+    <value>Додати</value>
+  </data>
+  <data name="ExceptionDescription" xml:space="preserve">
+    <value>Опис винятоку</value>
+  </data>
+  <data name="Exception_Error_NameCanNotBeEmpty" xml:space="preserve">
+    <value>Ім'я не може бути пустим</value>
+  </data>
+  <data name="EditConditions_Title" xml:space="preserve">
+    <value>Редагувати умови</value>
+  </data>
+  <data name="Button_AddCondition" xml:space="preserve">
+    <value>_Додати умову</value>
+  </data>
+  <data name="ModuleBreakpointsCommand" xml:space="preserve">
+    <value>Точки зупинки модуля</value>
+  </data>
+  <data name="Window_ModuleBreakpoints" xml:space="preserve">
+    <value>Точки зупинки модуля</value>
+  </data>
+  <data name="Breakpoints_AddBreakpoint_ToolTip" xml:space="preserve">
+    <value>Додати точку зупинки</value>
+  </data>
+  <data name="Breakpoints_RemoveBreakpoint_ToolTip" xml:space="preserve">
+    <value>Видалити точки зупинки</value>
+  </data>
+  <data name="EditAppDomainNameCommand" xml:space="preserve">
+    <value>Редагувати ім'я AppDomain</value>
+  </data>
+  <data name="EditModuleNameCommand" xml:space="preserve">
+    <value>Редагувати ім'я модуля</value>
+  </data>
+  <data name="EditOrderCommand" xml:space="preserve">
+    <value>Змінити порядок завантаження модуля</value>
+  </data>
+  <data name="EditProcessNameCommand" xml:space="preserve">
+    <value>Редагувати ім'я процесу</value>
+  </data>
+  <data name="RemoveAllBreakpointsCommand" xml:space="preserve">
+    <value>Видалити усі точки зупинок</value>
+  </data>
+  <data name="RemoveBreakpointCommand" xml:space="preserve">
+    <value>Видалити точки зупинки</value>
+  </data>
+  <data name="DisableBreakpointCommand3" xml:space="preserve">
+    <value>Вимкнути точку зупинки</value>
+  </data>
+  <data name="EnableBreakpointCommand3" xml:space="preserve">
+    <value>Увімкнути точку зупинки</value>
+  </data>
+  <data name="DbgSettings_BreakAllProcesses" xml:space="preserve">
+    <value>Перервати усі процеси при перериванні одного</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltF10" xml:space="preserve">
+    <value>Ctrl+Alt+F10</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltF11" xml:space="preserve">
+    <value>Ctrl+Alt+F11</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftAltF11" xml:space="preserve">
+    <value>Ctrl+Shift+Alt+F11</value>
+  </data>
+  <data name="StepIntoCurrentProcessCommand" xml:space="preserve">
+    <value>Крок із заходом (поточний процес)</value>
+  </data>
+  <data name="StepOutCurrentProcessCommand" xml:space="preserve">
+    <value>Крок із виходом (поточний процес)</value>
+  </data>
+  <data name="StepOverCurrentProcessCommand" xml:space="preserve">
+    <value>Крок з обходом (поточний процес)</value>
+  </data>
+  <data name="Processes_BreakProcessToolTip" xml:space="preserve">
+    <value>Перервати процес</value>
+  </data>
+  <data name="Processes_ContinueProcessToolTip" xml:space="preserve">
+    <value>Продовжити процес</value>
+  </data>
+  <data name="Processes_StepIntoProcessToolTip" xml:space="preserve">
+    <value>Крок всередину</value>
+  </data>
+  <data name="Processes_StepOutProcessToolTip" xml:space="preserve">
+    <value>Крок наверх</value>
+  </data>
+  <data name="Processes_StepOverProcessToolTip" xml:space="preserve">
+    <value>Крок через</value>
+  </data>
+  <data name="StepsOnlyTheCurrentProcess" xml:space="preserve">
+    <value>Крокувати лише в поточному процесі</value>
+  </data>
+  <data name="BreakProcessCommand" xml:space="preserve">
+    <value>_Перервати процес</value>
+  </data>
+  <data name="ContinueProcessCommand" xml:space="preserve">
+    <value>_Продовжити процес</value>
+  </data>
+  <data name="AttachToProcess_Search_ToolTip" xml:space="preserve">
+    <value>Пошук процесу</value>
+  </data>
+  <data name="AutosCommand" xml:space="preserve">
+    <value>_Автоматичні</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltV_A" xml:space="preserve">
+    <value>Ctrl+Alt+V, A</value>
+  </data>
+  <data name="Breakpoints_ExportMatchingBreakpoints_ToolTip" xml:space="preserve">
+    <value>Експорт усіх точок зупинки, що відповідають поточній умові пошуку</value>
+  </data>
+  <data name="Breakpoints_ImportBreakpoints_ToolTip" xml:space="preserve">
+    <value>Імпортувати точки зупинок із файлу</value>
+  </data>
+  <data name="ExportSelectedCommand" xml:space="preserve">
+    <value>_Експортувати обране...</value>
+  </data>
+  <data name="Breakpoints_NoMatch" xml:space="preserve">
+    <value>Нема точок зупинки, що відповідають умові пошуку.</value>
+  </data>
+  <data name="Breakpoints_Search" xml:space="preserve">
+    <value>Пошук</value>
+  </data>
+  <data name="Breakpoints_Search_ToolTip" xml:space="preserve">
+    <value>Пошук точки зупину</value>
+  </data>
+  <data name="Breakpoints_RemoveMatchingBreakpoints_ToolTip" xml:space="preserve">
+    <value>Видалити усі точки зупинок, що відповідають поточному фільтру</value>
+  </data>
+  <data name="Breakpoints_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Скинути всі критерії пошуку, щоб показати всі точки зупинки</value>
+  </data>
+  <data name="Breakpoints_ToggleMatchingBreakpoints_ToolTip" xml:space="preserve">
+    <value>Включення чи виключення усіх точок зупинки, що відповідають поточній умові пошуку</value>
+  </data>
+  <data name="Modules_AllProcesses" xml:space="preserve">
+    <value>Всі</value>
+  </data>
+  <data name="Modules_NoMatch" xml:space="preserve">
+    <value>Немає модулів, що відповідають умові пошуку.</value>
+  </data>
+  <data name="Modules_Search" xml:space="preserve">
+    <value>Пошук</value>
+  </data>
+  <data name="Modules_Search_ToolTip" xml:space="preserve">
+    <value>Пошук модуля</value>
+  </data>
+  <data name="Modules_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Скинути всі критерії пошуку, щоб показанти всі модулі</value>
+  </data>
+  <data name="Modules_Process" xml:space="preserve">
+    <value>Процес</value>
+  </data>
+  <data name="SearchHelp_ToolTip" xml:space="preserve">
+    <value>Допомога</value>
+  </data>
+  <data name="Column_Condition" xml:space="preserve">
+    <value>Умова</value>
+  </data>
+  <data name="Column_Filter" xml:space="preserve">
+    <value>Фільтр</value>
+  </data>
+  <data name="Column_HitCount" xml:space="preserve">
+    <value>Число попадань</value>
+  </data>
+  <data name="Column_WhenHit" xml:space="preserve">
+    <value>При попаданні</value>
+  </data>
+  <data name="Breakpoints_GoToDisassembly_ToolTip" xml:space="preserve">
+    <value>До дизасембльованого коду</value>
+  </data>
+  <data name="Breakpoints_GoToSourceCode_ToolTip" xml:space="preserve">
+    <value>Перейти до джерельного коду</value>
+  </data>
+  <data name="GoToSourceCodeCommand" xml:space="preserve">
+    <value>Перейти до джерельного коду</value>
+  </data>
+  <data name="Breakpoint_Condition_NoCondition" xml:space="preserve">
+    <value>(нема умови)</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenConditionHasChanged" xml:space="preserve">
+    <value>коли '{0}' змінилось</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenConditionIsTrue" xml:space="preserve">
+    <value>коли '{0}' істинно</value>
+  </data>
+  <data name="Breakpoint_Filter_NoFilter" xml:space="preserve">
+    <value>(Нічого)</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsAMultipleOf" xml:space="preserve">
+    <value>коли число попадань кратне {0}</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsEqualTo" xml:space="preserve">
+    <value>коли число попадань рівне {0}</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsGreaterThanOrEqualTo" xml:space="preserve">
+    <value>коли число попадань більше чи рівне {0}</value>
+  </data>
+  <data name="Breakpoint_HitCount_NoHitCount" xml:space="preserve">
+    <value>зупиняти завжди</value>
+  </data>
+  <data name="Breakpoint_Tracepoint_NoTraceMessage" xml:space="preserve">
+    <value>Зупинений</value>
+  </data>
+  <data name="Breakpoint_Tracepoint_PrintMessage" xml:space="preserve">
+    <value>Роздрукувати повідомлення '{0} '</value>
+  </data>
+  <data name="ShortCutKeyAltEnter" xml:space="preserve">
+    <value>Alt+Enter</value>
+  </data>
+  <data name="SettingsCommand" xml:space="preserve">
+    <value>_Налаштування</value>
+  </data>
+  <data name="EditBreakpointSettings_Title" xml:space="preserve">
+    <value>Параметри точки зупинки</value>
+  </data>
+  <data name="Breakpoint_Condition_IsTrue" xml:space="preserve">
+    <value>Істина</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenChanged" xml:space="preserve">
+    <value>При зміні</value>
+  </data>
+  <data name="Breakpoint_HitCount_IsAMultipleOf" xml:space="preserve">
+    <value>Кратно</value>
+  </data>
+  <data name="EditBreakpointSettings_ConditionalExpression" xml:space="preserve">
+    <value>Умовний _вираз</value>
+  </data>
+  <data name="EditBreakpointSettings_Filter" xml:space="preserve">
+    <value>_Фільтр</value>
+  </data>
+  <data name="EditBreakpointSettings_HitCount" xml:space="preserve">
+    <value>_Кількість попадань</value>
+  </data>
+  <data name="EditBreakpointSettings_Trace" xml:space="preserve">
+    <value>_Log Повідомленя</value>
+  </data>
+  <data name="GlyphToolTip_Actions" xml:space="preserve">
+    <value>Дії:</value>
+  </data>
+  <data name="GlyphToolTip_Conditions" xml:space="preserve">
+    <value>Умови:</value>
+  </data>
+  <data name="Breakpoint_Condition_ConditionalExpression" xml:space="preserve">
+    <value>Умовний вираз:</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenConditionHasChanged2" xml:space="preserve">
+    <value>'{0}' було змінено</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenConditionIsTrue2" xml:space="preserve">
+    <value>'{0}' істинно</value>
+  </data>
+  <data name="Breakpoint_Filter_Filter" xml:space="preserve">
+    <value>Фільтр: '{0}'</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsAMultipleOf2" xml:space="preserve">
+    <value>К-сть попадань кратно {0}</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsEqualTo2" xml:space="preserve">
+    <value>К-сть попадань рівно {0}</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsGreaterThanOrEqualTo2" xml:space="preserve">
+    <value>Кількість попадань більше чи рівне {0}</value>
+  </data>
+  <data name="Breakpoint_Tracepoint_PrintMessage2" xml:space="preserve">
+    <value>Вивести повідомлення '{0}', в вікно виводу</value>
+  </data>
+  <data name="Breakpoints_GlyphMargin_DisableBreakpoint" xml:space="preserve">
+    <value>Вимкнути точку зупинки</value>
+  </data>
+  <data name="Breakpoints_GlyphMargin_EnableBreakpoint" xml:space="preserve">
+    <value>Увімкнути точку зупинки</value>
+  </data>
+  <data name="Breakpoints_GlyphMargin_ShowSettingsToolTip" xml:space="preserve">
+    <value>Налаштування...</value>
+  </data>
+  <data name="Breakpoints_GlyphMargin_BreakWhenBreakpointHit" xml:space="preserve">
+    <value>Зупинений</value>
+  </data>
+  <data name="EditBreakpointSettings_TraceContinue" xml:space="preserve">
+    <value>Продовжити виконання</value>
+  </data>
+  <data name="ExportCommand" xml:space="preserve">
+    <value>Експорт...</value>
+  </data>
+  <data name="SettingsCommand2" xml:space="preserve">
+    <value>На_лаштування...</value>
+  </data>
+  <data name="StartDebuggingCommand" xml:space="preserve">
+    <value>Запустити відладку</value>
+  </data>
+  <data name="Breakpoint_Tracepoint_BreakPrintMessage" xml:space="preserve">
+    <value>Зупинитись та вивести повідомлення '{0}'</value>
+  </data>
+  <data name="BreakpointMessage_TheFunctionCanNotBeFound" xml:space="preserve">
+    <value>Функція не знайдена: {0}</value>
+  </data>
+  <data name="Breakpoints_BreakpointWillNotBeHit" xml:space="preserve">
+    <value>Точка зупинки не може бути досягнута. {0}</value>
+  </data>
+  <data name="Breakpoints_ModuleNotLoaded" xml:space="preserve">
+    <value>Модуль не може бути завантажений чи не можуть бути завантажені символи для цього модуля.</value>
+  </data>
+  <data name="BreakpointMessage_CouldNotCreateBreakpoint" xml:space="preserve">
+    <value>Не можливо створити точку зупинки.</value>
+  </data>
+  <data name="Column_Labels" xml:space="preserve">
+    <value>Мітки</value>
+  </data>
+  <data name="EditLabelsCommand" xml:space="preserve">
+    <value>Редагувати Мітки</value>
+  </data>
+  <data name="Threads_FreezeThreads_ToolTip" xml:space="preserve">
+    <value>Заморозити потоки</value>
+  </data>
+  <data name="Threads_NoMatch" xml:space="preserve">
+    <value>Ні один потік не відповідає фільтру.</value>
+  </data>
+  <data name="Threads_Process" xml:space="preserve">
+    <value>Процес</value>
+  </data>
+  <data name="Threads_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Скинути усі пошукові умови так, щоб потоки стали видимі</value>
+  </data>
+  <data name="Threads_Search" xml:space="preserve">
+    <value>Пошук</value>
+  </data>
+  <data name="Threads_Search_ToolTip" xml:space="preserve">
+    <value>Пошук потоку</value>
+  </data>
+  <data name="Threads_ThawThreads_ToolTip" xml:space="preserve">
+    <value>Розморозити потоки</value>
+  </data>
+  <data name="Threads_AllProcesses" xml:space="preserve">
+    <value>Всі</value>
+  </data>
+  <data name="EditLabelsMsgBoxLabel" xml:space="preserve">
+    <value>Мітки</value>
+  </data>
+  <data name="EditLabelsTitle" xml:space="preserve">
+    <value>Редагувати Мітки</value>
+  </data>
+  <data name="Breakpoint_HitCount_CurrentHitCountValue" xml:space="preserve">
+    <value>в даний час {0}</value>
+  </data>
+  <data name="ResetBreakpointHitCountCommand" xml:space="preserve">
+    <value>Скинути лічильник зупинок</value>
+  </data>
+  <data name="HelpToolTip" xml:space="preserve">
+    <value>Допомога</value>
+  </data>
+  <data name="FilterExpression_AllVariables" xml:space="preserve">
+    <value>Змінні, що можуть бути використані:</value>
+  </data>
+  <data name="FilterExpression_Example" xml:space="preserve">
+    <value>Приклад: {0}</value>
+  </data>
+  <data name="TracepointMessage_EscapeSequences" xml:space="preserve">
+    <value>Escape-послідовності: {0}</value>
+  </data>
+  <data name="TracepointMessage_EvaluateMessage" xml:space="preserve">
+    <value>Використовуйте {xxx}, щоб обчислити вираз xxx</value>
+  </data>
+  <data name="TracepointMessage_Example" xml:space="preserve">
+    <value>Приклад: {0}</value>
+  </data>
+  <data name="TracepointMessage_ValidKeywords" xml:space="preserve">
+    <value>Можуть бути використані наступні ключові слова:</value>
+  </data>
+  <data name="CallStackBreakpointCommand" xml:space="preserve">
+    <value>_Точка зупинки</value>
+  </data>
+  <data name="InsertBreakpointCommand" xml:space="preserve">
+    <value>Вставити т_очку зупинки</value>
+  </data>
+  <data name="InsertTracepointCommand" xml:space="preserve">
+    <value>Вставити то_чку трасування</value>
+  </data>
+  <data name="UnwindToThisFrameCommand" xml:space="preserve">
+    <value>_Відмотати до цього фрейму</value>
+  </data>
+  <data name="GlyphMargin_CurrentStatementToolTip" xml:space="preserve">
+    <value>Це наступна інструкція, що буде виконана.</value>
+  </data>
+  <data name="GlyphMargin_ReturnStatementToolTip" xml:space="preserve">
+    <value>Це наступна інструкція, що буде виконана після повернення потоку із поточної функції.</value>
+  </data>
+  <data name="DbgSettings_EnableManagedDebuggingAssistants" xml:space="preserve">
+    <value>Ввімкнути помічник відладки керованого коду (MDA)</value>
+  </data>
+  <data name="DebugStepProcessError" xml:space="preserve">
+    <value>Не можливо перейти: {0}</value>
+  </data>
+  <data name="ProcessIsNotPaused" xml:space="preserve">
+    <value>Процес не призупинено</value>
+  </data>
+  <data name="Window_Autos" xml:space="preserve">
+    <value>Авто змінні</value>
+  </data>
+  <data name="DbgSettings_HighlightChangedVariables" xml:space="preserve">
+    <value>Виділяти змінені змінні у вікнах змінних</value>
+  </data>
+  <data name="MakeObjectIdCommand" xml:space="preserve">
+    <value>_Створити Object ID</value>
+  </data>
+  <data name="LanguageCommand" xml:space="preserve">
+    <value>Мова</value>
+  </data>
+  <data name="DbgSettings_DebugEngine" xml:space="preserve">
+    <value>Двигун відладки</value>
+  </data>
+  <data name="DbgSettings_Language" xml:space="preserve">
+    <value>Мова</value>
+  </data>
+  <data name="ShortCutKeyCtrlV" xml:space="preserve">
+    <value>Ctrl+V</value>
+  </data>
+  <data name="ClearAllCommand" xml:space="preserve">
+    <value>Очистити все</value>
+  </data>
+  <data name="DeleteWatchCommand" xml:space="preserve">
+    <value>В_идалити watch</value>
+  </data>
+  <data name="PasteCommand" xml:space="preserve">
+    <value>_Вставити</value>
+  </data>
+  <data name="ExpressionCausesSideEffectsNoEval" xml:space="preserve">
+    <value>Цей вираз викликає побічні ефекти та не буде обчислений</value>
+  </data>
+  <data name="RefreshExpressionButtonToolTip" xml:space="preserve">
+    <value>Натисніть цю кнопку, щоб обчислити прямо зараз.</value>
+  </data>
+  <data name="ErrorEvaluatingExpression" xml:space="preserve">
+    <value>Не можливо обчислити вираз</value>
+  </data>
+  <data name="DeleteObjectIdCommand" xml:space="preserve">
+    <value>Видалити Object ID</value>
+  </data>
+  <data name="DbgSettings_ShowRawStructureOfObjects" xml:space="preserve">
+    <value>Показати сиру структуру об'єктів у вікнах змінних</value>
+  </data>
+  <data name="UnknownValue" xml:space="preserve">
+    <value>&lt;Невідомо&gt;</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>Оновити</value>
+  </data>
+  <data name="DbgSettings_GroupParametersAndLocalsTogether" xml:space="preserve">
+    <value>Групувати разом параметри і локальні змінні</value>
+  </data>
+  <data name="DbgSettings_ShowCompilerGeneratedVariables" xml:space="preserve">
+    <value>Показати змінні, створені компілятором</value>
+  </data>
+  <data name="DbgSettings_ShowDecompilerGeneratedVariables" xml:space="preserve">
+    <value>Показати змінні, створені декомпілятором</value>
+  </data>
+  <data name="DbgSettings_SortLocals" xml:space="preserve">
+    <value>Сортувати локальні змінні</value>
+  </data>
+  <data name="DbgSettings_SortParameters" xml:space="preserve">
+    <value>Параметри сортування</value>
+  </data>
+  <data name="DbgSettings_HideCompilerGeneratedMembers" xml:space="preserve">
+    <value>Приховати створені компілятором конструкції</value>
+  </data>
+  <data name="FunctionEvaluationDisabled" xml:space="preserve">
+    <value>Обчислення неявних функцій відключено користувачем</value>
+  </data>
+  <data name="DbgSettings_RespectHideMemberAttributes" xml:space="preserve">
+    <value>Поважати атрибути, які ховають члени</value>
+  </data>
+  <data name="InternalDebuggerError" xml:space="preserve">
+    <value>Внутрішня помилка дебагера</value>
+  </data>
+  <data name="FuncEvalRequiresAllThreadsToRun" xml:space="preserve">
+    <value>Обчислення функції вимагає виконання усіх потоків.</value>
+  </data>
+  <data name="DigitSeparatorsCommand" xml:space="preserve">
+    <value>Розділювачі цифр</value>
+  </data>
+  <data name="Column_ProcessCommandLine" xml:space="preserve">
+    <value>Командний рядок</value>
+  </data>
+  <data name="CannotReadLocalOrArgumentMaybeOptimizedAway" xml:space="preserve">
+    <value>Не вдалось отримати значення локальної змінної чи аргументу, тому що він недоступний для поточного вказівника інструкцій, можливо тому, що він був оптимізований.</value>
+  </data>
+  <data name="ExceptionMessage" xml:space="preserve">
+    <value>Повідомлення: {0}</value>
+  </data>
+  <data name="ExceptionName" xml:space="preserve">
+    <value>Виключення: {0}</value>
+  </data>
+  <data name="UnhandledExceptionMessage_ProcessName_ProcessId" xml:space="preserve">
+    <value>Необроблена виняткова ситуація в {0} ({1})</value>
+  </data>
+  <data name="StatusBar_BreakpointHit" xml:space="preserve">
+    <value>Точка зупинки</value>
+  </data>
+  <data name="BreakpointExpressionMustBeABooleanExpression" xml:space="preserve">
+    <value>Вираз точки зупинки має бути типу boolean</value>
+  </data>
+  <data name="DbgSettings_SuppressJITOptimization" xml:space="preserve">
+    <value>Відключити JIT-оптимізацію при завантаженні модуля</value>
+  </data>
+  <data name="DbgSettings_SuppressJITOptimization_ProgramModules" xml:space="preserve">
+    <value>Модулі програми</value>
+  </data>
+  <data name="DbgSettings_SuppressJITOptimization_SystemModules" xml:space="preserve">
+    <value>Системні модулі</value>
+  </data>
+  <data name="RuntimeIsUnableToEvaluateExpression" xml:space="preserve">
+    <value>Середовище виконання не може обчислити цей вираз.</value>
+  </data>
+  <data name="Exceptions_ToggleMatchingExceptions_ToolTip" xml:space="preserve">
+    <value>Включити чи виключити усі виключення, що відповідають поточній умові пошуку</value>
+  </data>
+  <data name="DisableBreakpointCommand2" xml:space="preserve">
+    <value>_Вимкнути точку зупинки</value>
+  </data>
+  <data name="Exceptions_Add_ToolTip" xml:space="preserve">
+    <value>Додати виключення у список</value>
+  </data>
+  <data name="AskAppWindowClosingStopDebugging" xml:space="preserve">
+    <value>Ви бажаєте зупинити відладку?</value>
+  </data>
+  <data name="DbgSettings_FocusActiveProcess" xml:space="preserve">
+    <value>Перемістити фокус в процес, що відлагоджується</value>
+  </data>
+  <data name="LoadAllModulesCommand" xml:space="preserve">
+    <value>Відкрити усі модулі</value>
+  </data>
+  <data name="DbgSettings_HideDeprecatedError" xml:space="preserve">
+    <value>Скрити deprecated члени в вікнах змінних</value>
+  </data>
+  <data name="DbgSettings_ShowReturnValues" xml:space="preserve">
+    <value>Відображати значення, що вертаються</value>
+  </data>
+  <data name="DbgSettings_RedirectGuiConsoleOutput" xml:space="preserve">
+    <value>Перенаправити вивід консолі GUI-програм в Вікно виводу</value>
+  </data>
+  <data name="AttachToProcess_MakingAnImageEasierToDebug" xml:space="preserve">
+    <value>Зробити збірку легшою до відладки</value>
+  </data>
+  <data name="ShowOnlyPublicMembersCommand" xml:space="preserve">
+    <value>Відкриті члени</value>
+  </data>
+  <data name="DbgSettings_ShowRawLocals" xml:space="preserve">
+    <value>Показати сирі локальні змінні</value>
+  </data>
+  <data name="DbgSettings_AsyncDebugging" xml:space="preserve">
+    <value>Ввімкнути асинхронну відладку</value>
+  </data>
+  <data name="DbgSettings_StepOverPropertiesAndOperators" xml:space="preserve">
+    <value>Обхід властивостей та операторів</value>
+  </data>
+  <data name="CopyExpressionCommand" xml:space="preserve">
+    <value>Копіювати в_иключення</value>
+  </data>
+  <data name="Error_CouldNotShowDisassembly" xml:space="preserve">
+    <value>Не вдалося знайти код методу. Переконайтеся, що процес зупинився і що метод був jitted.</value>
+  </data>
+  <data name="DisassemblyCommand" xml:space="preserve">
+    <value>_Disassembly</value>
+  </data>
+  <data name="ShortCutKeyAlt8" xml:space="preserve">
+    <value>Alt+8</value>
+  </data>
+  <data name="DbgSettings_IgnoreUnhandledExceptions" xml:space="preserve">
+    <value>Ігнорувати необроблені виключення</value>
+  </data>
+  <data name="RunWithInvalidExtension" xml:space="preserve">
+    <value>Ви впевнені, що бажаєте запустити цей файл без вірного розширення?</value>
+  </data>
+  <data name="DebugWithInvalidExtension" xml:space="preserve">
+    <value>Ви впевнені, що хочете відлагоджувати файл без вірного розширення?</value>
+  </data>
+  <data name="Processes_NoMatch" xml:space="preserve">
+    <value>Жоден процесс не відповідає пошуковому запиту.</value>
+  </data>
+  <data name="Processes_Search" xml:space="preserve">
+    <value>Пошук</value>
+  </data>
+  <data name="Processes_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Скинути усі критерії пошуку та показати усі процеси</value>
+  </data>
+  <data name="Processes_Search_ToolTip" xml:space="preserve">
+    <value>Пошук процесу</value>
+  </data>
+  <data name="DbgSettings_FocusDebuggerWhenProcessBreaks" xml:space="preserve">
+    <value>Bring dnSpy to the foreground when breaking in the debugger</value>
+  </data>
+  <data name="Column_LoadModule" xml:space="preserve">
+    <value>Load</value>
+  </data>
+</root>

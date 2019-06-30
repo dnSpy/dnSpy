@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -40,7 +40,7 @@ namespace dnSpy.Hex.Editor {
 		[ImportingConstructor]
 		VerticalScrollBarMarginProvider(HexScrollMapFactoryService scrollMapFactoryService) => this.scrollMapFactoryService = scrollMapFactoryService;
 
-		public override WpfHexViewMargin CreateMargin(WpfHexViewHost wpfHexViewHost, WpfHexViewMargin marginContainer) =>
+		public override WpfHexViewMargin? CreateMargin(WpfHexViewHost wpfHexViewHost, WpfHexViewMargin marginContainer) =>
 			new VerticalScrollBarMargin(scrollMapFactoryService, wpfHexViewHost);
 	}
 
@@ -79,7 +79,7 @@ namespace dnSpy.Hex.Editor {
 		readonly HexScrollMap scrollMap;
 
 		public VerticalScrollBarMargin(HexScrollMapFactoryService scrollMapFactoryService, WpfHexViewHost wpfHexViewHost) {
-			if (scrollMapFactoryService == null)
+			if (scrollMapFactoryService is null)
 				throw new ArgumentNullException(nameof(scrollMapFactoryService));
 			theScrollBar = new TheScrollBar(this);
 			this.wpfHexViewHost = wpfHexViewHost ?? throw new ArgumentNullException(nameof(wpfHexViewHost));
@@ -95,7 +95,7 @@ namespace dnSpy.Hex.Editor {
 
 		void UpdateVisibility() => theScrollBar.Visibility = Enabled ? Visibility.Visible : Visibility.Collapsed;
 
-		public override HexViewMargin GetHexViewMargin(string marginName) =>
+		public override HexViewMargin? GetHexViewMargin(string marginName) =>
 			StringComparer.OrdinalIgnoreCase.Equals(PredefinedHexMarginNames.VerticalScrollBar, marginName) ? this : null;
 
 		void ScrollMap_MappingChanged(object sender, EventArgs e) => UpdateMinMax();

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,7 +34,7 @@ namespace dnSpy.Text.Classification {
 		readonly ITextClassifier[] textClassifiers;
 
 		public TextClassifierAggregator(IClassificationTypeRegistryService classificationTypeRegistryService, IEnumerable<ITextClassifier> textClassifiers) {
-			if (textClassifiers == null)
+			if (textClassifiers is null)
 				throw new ArgumentNullException(nameof(textClassifiers));
 			this.classificationTypeRegistryService = classificationTypeRegistryService ?? throw new ArgumentNullException(nameof(classificationTypeRegistryService));
 			this.textClassifiers = textClassifiers.ToArray();

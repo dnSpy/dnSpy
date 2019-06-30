@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -37,8 +37,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 		readonly ImageCor20HeaderVM imageCor20HeaderVM;
 
-		public static ImageCor20HeaderNode Create(ImageCor20HeaderVM cor20) {
-			if (cor20 != null)
+		public static ImageCor20HeaderNode? Create(ImageCor20HeaderVM? cor20) {
+			if (!(cor20 is null))
 				return new ImageCor20HeaderNode(cor20);
 			return null;
 		}

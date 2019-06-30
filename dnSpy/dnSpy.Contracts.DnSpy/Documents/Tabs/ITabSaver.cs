@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// <summary>
 		/// Gets the menu header, eg. "_Save..." or null to use the default "_Save..." string
 		/// </summary>
-		string MenuHeader { get; }
+		string? MenuHeader { get; }
 
 		/// <summary>
 		/// Saves the tab

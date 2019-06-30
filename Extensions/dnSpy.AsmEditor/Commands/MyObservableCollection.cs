@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,7 +27,7 @@ namespace dnSpy.AsmEditor.Commands {
 		void OnPropertyChanged(string propName) => OnPropertyChanged(new PropertyChangedEventArgs(propName));
 
 		public bool IsEnabled {
-			get { return isEnabled; }
+			get => isEnabled;
 			set {
 				if (isEnabled != value) {
 					isEnabled = value;
@@ -38,7 +38,7 @@ namespace dnSpy.AsmEditor.Commands {
 		bool isEnabled = true;
 
 		public int SelectedIndex {
-			get { return selectedIndex; }
+			get => selectedIndex;
 			set {
 				if (selectedIndex != value) {
 					selectedIndex = value;

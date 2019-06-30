@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,8 +29,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			this.dnValue = dnValue;
 		}
 
-		protected override DbgDotNetValue ReadValue() => dnValue;
-		protected override void WriteValue(object value) => throw new NotImplementedException();
+		protected override DbgDotNetValue? ReadValue() => dnValue;
+		protected override void WriteValue(object? value) => throw new NotImplementedException();
 
 		public override bool Equals(AddressILValue other) =>
 			other is UnboxAddressILValue addr &&

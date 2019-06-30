@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,10 +24,10 @@ using System.Collections.ObjectModel;
 namespace dnSpy.Debugger.DotNet.Metadata {
 	static class ReadOnlyCollectionHelpers {
 		public static ReadOnlyCollection<T> Empty<T>() => EmptyClass<T>.Empty;
-		public static ReadOnlyCollection<T> Create<T>(T[] array) =>
-			array == null || array.Length == 0 ? EmptyClass<T>.Empty : new ReadOnlyCollection<T>(array);
-		public static ReadOnlyCollection<T> Create<T>(IList<T> list) =>
-			list == null || list.Count == 0 ? EmptyClass<T>.Empty : list as ReadOnlyCollection<T> ?? new ReadOnlyCollection<T>(list);
+		public static ReadOnlyCollection<T> Create<T>(T[]? array) =>
+			array is null || array.Length == 0 ? EmptyClass<T>.Empty : new ReadOnlyCollection<T>(array);
+		public static ReadOnlyCollection<T> Create<T>(IList<T>? list) =>
+			list is null || list.Count == 0 ? EmptyClass<T>.Empty : list as ReadOnlyCollection<T> ?? new ReadOnlyCollection<T>(list);
 		static class EmptyClass<T> {
 			internal static readonly ReadOnlyCollection<T> Empty = new ReadOnlyCollection<T>(Array.Empty<T>());
 		}

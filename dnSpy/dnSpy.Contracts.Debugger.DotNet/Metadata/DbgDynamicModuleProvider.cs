@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -44,7 +44,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Metadata {
 		/// <param name="module">Module</param>
 		/// <param name="moduleId">Module id</param>
 		/// <returns></returns>
-		public abstract ModuleDef GetDynamicMetadata(DbgModule module, out ModuleId moduleId);
+		public abstract ModuleDef? GetDynamicMetadata(DbgModule module, out ModuleId moduleId);
 
 		/// <summary>
 		/// Gets all modified types. This method is called on the engine thread (see <see cref="BeginInvoke(Action)"/>)
@@ -71,7 +71,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Metadata {
 	/// <summary>
 	/// Class loaded event args
 	/// </summary>
-	public struct ClassLoadedEventArgs {
+	public readonly struct ClassLoadedEventArgs {
 		/// <summary>
 		/// Module
 		/// </summary>

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,7 +19,7 @@
 
 using System;
 using System.Threading;
-using System.Windows.Threading;
+using dnSpy.Debugger.Shared;
 
 namespace dnSpy.Debugger.Impl {
 	sealed class DebuggerThread {
@@ -27,16 +27,16 @@ namespace dnSpy.Debugger.Impl {
 
 		readonly Thread debuggerThread;
 		volatile bool terminate;
-		AutoResetEvent callDispatcherRunEvent;
+		AutoResetEvent? callDispatcherRunEvent;
 		readonly string threadName;
 
 		public DebuggerThread(string threadName) {
+			Dispatcher = null!;
 			this.threadName = threadName;
 			var autoResetEvent = new AutoResetEvent(false);
 			callDispatcherRunEvent = new AutoResetEvent(false);
 			debuggerThread = new Thread(() => DebuggerThreadProc(autoResetEvent));
 			debuggerThread.IsBackground = true;
-			debuggerThread.SetApartmentState(ApartmentState.STA);
 			debuggerThread.Start();
 
 			try {
@@ -51,10 +51,10 @@ namespace dnSpy.Debugger.Impl {
 
 		void DebuggerThreadProc(AutoResetEvent autoResetEvent) {
 			Thread.CurrentThread.Name = threadName;
-			Dispatcher = Dispatcher.CurrentDispatcher;
+			Dispatcher = new Dispatcher();
 			autoResetEvent.Set();
 
-			callDispatcherRunEvent.WaitOne();
+			callDispatcherRunEvent!.WaitOne();
 			callDispatcherRunEvent.Close();
 			callDispatcherRunEvent = null;
 
@@ -62,13 +62,13 @@ namespace dnSpy.Debugger.Impl {
 				Dispatcher.Run();
 		}
 
-		internal void CallDispatcherRun() => callDispatcherRunEvent.Set();
+		internal void CallDispatcherRun() => callDispatcherRunEvent!.Set();
 
 		internal void Terminate() {
 			terminate = true;
 			try { callDispatcherRunEvent?.Set(); } catch (ObjectDisposedException) { }
-			if (Dispatcher != null && !Dispatcher.HasShutdownStarted && !Dispatcher.HasShutdownFinished)
-				Dispatcher.BeginInvokeShutdown(DispatcherPriority.Send);
+			if (!(Dispatcher is null) && !Dispatcher.HasShutdownStarted && !Dispatcher.HasShutdownFinished)
+				Dispatcher.BeginInvokeShutdown();
 		}
 	}
 }

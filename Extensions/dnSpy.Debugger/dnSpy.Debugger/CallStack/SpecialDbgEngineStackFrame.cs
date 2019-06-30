@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,22 +18,26 @@
 */
 
 using System;
+using System.Globalization;
+using System.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Debugger.Engine.CallStack;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Evaluation;
+using dnSpy.Contracts.Debugger.Text;
 
 namespace dnSpy.Debugger.CallStack {
 	sealed class SpecialDbgEngineStackFrame : DbgEngineStackFrame {
-		public override DbgCodeLocation Location { get; }
-		public override DbgModule Module { get; }
+		public override DbgCodeLocation? Location { get; }
+		public override DbgModule? Module { get; }
+		public override DbgStackFrameFlags Flags => DbgStackFrameFlags.None;
 		public override uint FunctionOffset { get; }
 		public override uint FunctionToken { get; }
 
 		readonly string name;
 
-		public SpecialDbgEngineStackFrame(string name, DbgCodeLocation location, DbgModule module, uint functionOffset, uint functionToken) {
+		public SpecialDbgEngineStackFrame(string name, DbgCodeLocation? location, DbgModule? module, uint functionOffset, uint functionToken) {
 			this.name = name ?? throw new ArgumentNullException(nameof(name));
 			Location = location;
 			Module = module;
@@ -41,10 +45,11 @@ namespace dnSpy.Debugger.CallStack {
 			FunctionToken = functionToken;
 		}
 
-		public override void Format(ITextColorWriter writer, DbgStackFrameFormatOptions options) {
-			writer.Write(BoxedTextColor.Punctuation, "[");
-			writer.Write(BoxedTextColor.Text, name);
-			writer.Write(BoxedTextColor.Punctuation, "]");
+		public override bool TryFormat(DbgEvaluationContext context, IDbgTextWriter output, DbgStackFrameFormatterOptions options, DbgValueFormatterOptions valueOptions, CultureInfo? cultureInfo, CancellationToken cancellationToken) {
+			output.Write(DbgTextColor.Punctuation, "[");
+			output.Write(DbgTextColor.Text, name);
+			output.Write(DbgTextColor.Punctuation, "]");
+			return true;
 		}
 
 		public override void OnFrameCreated(DbgStackFrame frame) { }

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,7 +31,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		readonly MethodBodyRvaAndRid[] methodBodyRvas;
 		readonly HexSpan methodBodiesSpan;
 
-		struct MethodBodyRvaAndRid {
+		readonly struct MethodBodyRvaAndRid {
 			// This is an RVA instead of a HexPosition so it's not needed to translate all method
 			// bodies' RVAs to HexPositions.
 			public uint Rva { get; }
@@ -53,9 +53,9 @@ namespace dnSpy.Hex.Files.DotNet {
 			}
 		}
 
-		public DotNetMethodProviderImpl(HexBufferFile file, PeHeaders peHeaders, TablesHeap tablesHeap)
+		public DotNetMethodProviderImpl(HexBufferFile file, PeHeaders peHeaders, TablesHeap? tablesHeap)
 			: base(file) {
-			if (file == null)
+			if (file is null)
 				throw new ArgumentNullException(nameof(file));
 			this.peHeaders = peHeaders ?? throw new ArgumentNullException(nameof(peHeaders));
 			methodBodyRvas = CreateMethodBodyRvas(tablesHeap?.MDTables[(int)Table.Method]);
@@ -71,8 +71,8 @@ namespace dnSpy.Hex.Files.DotNet {
 			return HexSpan.FromBounds(peHeaders.RvaToBufferPosition(methodBodyRvas[0].Rva), info.Span.End);
 		}
 
-		MethodBodyRvaAndRid[] CreateMethodBodyRvas(MDTable methodTable) {
-			if (methodTable == null)
+		MethodBodyRvaAndRid[] CreateMethodBodyRvas(MDTable? methodTable) {
+			if (methodTable is null)
 				return Array.Empty<MethodBodyRvaAndRid>();
 			var list = new List<MethodBodyRvaAndRid>((int)methodTable.Rows);
 			var recordPos = methodTable.Span.Start;
@@ -107,7 +107,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			if (endPos < methodBodyPosition)
 				endPos = methodBodyPosition;
 			var info = new MethodBodyReader(File, tokens, methodBodyPosition, endPos).Read();
-			if (info != null)
+			if (!(info is null))
 				return info.Value;
 
 			// The file could be obfuscated (encrypted methods), assume the method ends at the next method body RVA
@@ -119,7 +119,7 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		public override bool IsMethodPosition(HexPosition position) => methodBodiesSpan.Contains(position);
 
-		public override DotNetMethodBody GetMethodBody(HexPosition position) {
+		public override DotNetMethodBody? GetMethodBody(HexPosition position) {
 			if (!IsMethodPosition(position))
 				return null;
 
@@ -158,7 +158,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			while (lo <= hi) {
 				int index = (lo + hi) / 2;
 
-				var info = array[index];
+				ref readonly var info = ref array[index];
 				if (rva < info.Rva)
 					hi = index - 1;
 				else if (rva > info.Rva)

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -54,11 +54,11 @@ namespace dnSpy.MainApp {
 			aboutContentType = contentTypeRegistryService.GetContentType(ContentTypes.AboutDnSpy);
 		}
 
-		public DocumentTabContent Create(IDocumentTabContentFactoryContext context) => null;
+		public DocumentTabContent? Create(IDocumentTabContentFactoryContext context) => null;
 
 		static readonly Guid GUID_SerializedContent = new Guid("1C931C0F-D968-4664-B22D-87287A226EEC");
 
-		public DocumentTabContent Deserialize(Guid guid, ISettingsSection section, IDocumentTabContentFactoryContext context) {
+		public DocumentTabContent? Deserialize(Guid guid, ISettingsSection section, IDocumentTabContentFactoryContext context) {
 			if (guid == GUID_SerializedContent)
 				return new AboutScreenDocumentTabContent(documentViewerContentFactoryProvider, appWindow, extensionService, aboutContentType);
 			return null;
@@ -190,7 +190,14 @@ namespace dnSpy.MainApp {
 		}
 
 		void Write(IDecompilerOutput output) {
-			output.WriteLine(string.Format("dnSpy {0}", appWindow.AssemblyInformationalVersion), BoxedTextColor.Text);
+#if NETFRAMEWORK
+			const string frameworkName = ".NET Framework";
+#elif NETCOREAPP
+			const string frameworkName = ".NET Core";
+#else
+#error Unknown target framework
+#endif
+			output.WriteLine($"{Constants.DnSpy} {appWindow.AssemblyInformationalVersion} ({frameworkName})", BoxedTextColor.Text);
 			output.WriteLine();
 			output.WriteLine(dnSpy_Resources.AboutScreen_LicenseInfo, BoxedTextColor.Text);
 			output.WriteLine();
@@ -212,7 +219,7 @@ namespace dnSpy.MainApp {
 			using (var streamReader = new StreamReader(stream, Encoding.UTF8)) {
 				for (;;) {
 					var line = streamReader.ReadLine();
-					if (line == null)
+					if (line is null)
 						break;
 					output.WriteLine(line, BoxedTextColor.Text);
 				}
@@ -225,7 +232,7 @@ namespace dnSpy.MainApp {
 			const int MAX_SHORT_LEN = 128;
 			if (s.Length > MAX_SHORT_LEN)
 				s = s.Substring(0, MAX_SHORT_LEN) + "[...]";
-			output.WriteLine(string.Format("\t{0}", s), BoxedTextColor.Text);
+			output.WriteLine($"\t{s}", BoxedTextColor.Text);
 		}
 
 		List<Info> GetInfos() {

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -60,16 +60,16 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// <summary>
 		/// Exception message or null if none
 		/// </summary>
-		public abstract string Message { get; }
+		public abstract string? Message { get; }
 
 		/// <summary>
 		/// Thread where exception was thrown or null if it's not known
 		/// </summary>
-		public abstract DbgThread Thread { get; }
+		public abstract DbgThread? Thread { get; }
 
 		/// <summary>
 		/// Module where exception was thrown or null if it's not known
 		/// </summary>
-		public abstract DbgModule Module { get; }
+		public abstract DbgModule? Module { get; }
 	}
 }

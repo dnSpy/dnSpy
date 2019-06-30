@@ -1,80 +1,42 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\..\DnSpyCommon.props" />
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8B774E77-C956-4ABC-BBFE-8756CB4111C8}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>dnSpy.Roslyn.VisualBasic.Internal</RootNamespace>
-    <AssemblyName>Roslyn.Services.Editor.VisualBasic.UnitTests</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
     <SignAssembly>True</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\dnSpy.Roslyn.Internal\RoslynInternalKey.Private.snk</AssemblyOriginatorKeyFile>
-    <Features>strict</Features>
+    <AssemblyOriginatorKeyFile>..\..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
     <MyType>Windows</MyType>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <DefineDebug>true</DefineDebug>
-    <DefineTrace>true</DefineTrace>
-    <OutputPath>..\..\dnSpy\bin\Debug\</OutputPath>
-    <DocumentationFile>..\..\dnSpy\bin\Debug\Roslyn.Services.Editor.VisualBasic.UnitTests.xml</DocumentationFile>
+    <MakeEverythingPublicAssemblies>Microsoft.CodeAnalysis;Microsoft.CodeAnalysis.Workspaces;Microsoft.CodeAnalysis.Features;Microsoft.CodeAnalysis.VisualBasic;Microsoft.CodeAnalysis.VisualBasic.Features;Microsoft.CodeAnalysis.VisualBasic.Workspaces;</MakeEverythingPublicAssemblies>
+    <MakeEverythingPublicIVTString>$(AssemblyName), PublicKey=0024000004800000940000000602000000240000525341310004000001000100858d4f2519af95faeca8d359daa2078b20826765450f330daff3c5ec378adf9eb8e168eff8069ba51e15c1992d0d72b73129ed7a014f62863fa80a80dd9b010b8211c4d4c70ed26b9b65370007b0341685c98cc4cd2d16814d9581db82b382fb8ee838e1b8a2bd1c759e43ddda209e35cde530a7ba6a517787c04a3f283ea1b5</MakeEverythingPublicIVTString>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+    <DefineConstants />
+    <VBRuntime>Embed</VBRuntime>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DefineTrace>true</DefineTrace>
+    <DefineDebug>true</DefineDebug>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <DefineDebug>false</DefineDebug>
     <DefineTrace>true</DefineTrace>
-    <Optimize>true</Optimize>
-    <OutputPath>..\..\dnSpy\bin\Release\</OutputPath>
-    <DocumentationFile>..\..\dnSpy\bin\Release\Roslyn.Services.Editor.VisualBasic.UnitTests.xml</DocumentationFile>
-    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+    <DefineDebug>false</DefineDebug>
   </PropertyGroup>
+
   <PropertyGroup>
     <OptionExplicit>On</OptionExplicit>
-  </PropertyGroup>
-  <PropertyGroup>
     <OptionCompare>Binary</OptionCompare>
-  </PropertyGroup>
-  <PropertyGroup>
     <OptionStrict>Off</OptionStrict>
-  </PropertyGroup>
-  <PropertyGroup>
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
+
+  <Import Project="$(MSBuildProjectDirectory)\..\..\..\Build\MakeEverythingPublic\MakeEverythingPublic.tasks" />
+
   <ItemGroup>
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
+    <ProjectReference Include="..\dnSpy.Roslyn.Internal\dnSpy.Roslyn.Internal.csproj" />
   </ItemGroup>
+
   <ItemGroup>
-    <Import Include="Microsoft.VisualBasic" />
-    <Import Include="System" />
-    <Import Include="System.Collections" />
-    <Import Include="System.Collections.Generic" />
-    <Import Include="System.Data" />
-    <Import Include="System.Diagnostics" />
-    <Import Include="System.Linq" />
-    <Import Include="System.Xml.Linq" />
-    <Import Include="System.Threading.Tasks" />
+    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.Features" Version="$(RoslynVersion)" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="My Project\AssemblyInfo.vb" />
-    <Compile Include="QuickInfo\SemanticQuickInfoProvider.vb" />
-    <Compile Include="SmartIndent\SpecialFormattingRule.vb" />
-    <Compile Include="SmartIndent\VisualBasicIndentationService.Indenter.vb" />
-    <Compile Include="SmartIndent\VisualBasicIndentationService.vb" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\dnSpy.Roslyn.Internal\dnSpy.Roslyn.Internal.csproj">
-      <Project>{c5f25f3e-b8ef-4a8f-8bd6-5b9863a56fe2}</Project>
-      <Name>dnSpy.Roslyn.Internal</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="project.json" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
+
 </Project>

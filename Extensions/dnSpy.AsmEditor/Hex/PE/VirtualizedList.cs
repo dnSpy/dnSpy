@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,32 +36,32 @@ namespace dnSpy.AsmEditor.Hex.PE {
 			this.createItem = createItem;
 		}
 
-		public T TryGet(int index) {
+		public T? TryGet(int index) {
 			Debug.Assert(0 <= index && index < list.Length);
 			if ((uint)index >= (uint)list.Length)
 				return null;
-			return (T)list[index]?.Target;
+			return (T?)list[index]?.Target;
 		}
 
 		public T this[int index] {
 			get {
 				T obj;
 				var weakRef = list[index];
-				if (weakRef == null) {
+				if (weakRef is null) {
 					list[index] = new WeakReference(obj = createItem(index));
 					return obj;
 				}
 
 				obj = (T)weakRef.Target;
-				if (obj == null)
+				if (obj is null)
 					weakRef.Target = obj = createItem(index);
 				return obj;
 			}
 		}
 
 		object IList.this[int index] {
-			get { return this[index]; }
-			set { Debug.Fail("Method shouldn't be called"); }
+			get => this[index];
+			set => Debug.Fail("Method shouldn't be called");
 		}
 
 		public int Count => list.Length;

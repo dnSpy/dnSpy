@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,14 +25,14 @@ using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class SwitchOperandVM : ViewModelBase {
-		readonly IList<InstructionVM> origInstructions;
+		readonly IList<InstructionVM>? origInstructions;
 
 		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
 		public ICommand AddInstructionCommand => new RelayCommand(a => AddInstruction(), a => AddInstructionCanExecute());
 		public ICommand AppendInstructionCommand => new RelayCommand(a => AppendInstruction(), a => AppendInstructionCanExecute());
 
 		public int SelectedIndex {
-			get { return selectedIndex; }
+			get => selectedIndex;
 			set {
 				if (selectedIndex != value) {
 					selectedIndex = value;
@@ -45,7 +45,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public IndexObservableCollection<SwitchInstructionVM> InstructionsListVM { get; }
 		public ListVM<InstructionVM> AllInstructionsVM { get; }
 
-		public SwitchOperandVM(IList<InstructionVM> allInstrs, IList<InstructionVM> instrs) {
+		public SwitchOperandVM(IList<InstructionVM> allInstrs, IList<InstructionVM>? instrs) {
 			AllInstructionsVM = new ListVM<InstructionVM>(allInstrs);
 			origInstructions = instrs;
 			InstructionsListVM = new IndexObservableCollection<SwitchInstructionVM>();
@@ -61,9 +61,9 @@ namespace dnSpy.AsmEditor.MethodBody {
 		bool AppendInstructionCanExecute() => true;
 		void Reinitialize() => InitializeFrom(origInstructions);
 
-		public void InitializeFrom(IList<InstructionVM> instrs) {
+		public void InitializeFrom(IList<InstructionVM>? instrs) {
 			InstructionsListVM.Clear();
-			if (instrs != null)
+			if (!(instrs is null))
 				InstructionsListVM.AddRange(instrs.Select(a => new SwitchInstructionVM(a)));
 			SelectedIndex = InstructionsListVM.Count == 0 ? -1 : 0;
 		}

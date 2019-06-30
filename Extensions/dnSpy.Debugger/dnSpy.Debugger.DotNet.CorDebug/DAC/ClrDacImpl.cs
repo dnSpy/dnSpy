@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using dnSpy.Contracts.Disassembly;
 using Microsoft.Diagnostics.Runtime;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.DAC {
@@ -55,9 +56,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.DAC {
 			clrDacDebugger.ClrDacTerminated -= ClrDacDebugger_ClrDacTerminated;
 			Flush();
 			dataTarget.Dispose();
-			dataTarget = null;
-			clrRuntime = null;
-			clrDacDebugger = null;
+			dataTarget = null!;
+			clrRuntime = null!;
+			clrDacDebugger = null!;
 		}
 
 		public override ClrDacThreadInfo? GetThreadInfo(int tid) {
@@ -100,6 +101,41 @@ namespace dnSpy.Debugger.DotNet.CorDebug.DAC {
 			if (thread.IsSTA) flags |= ClrDacThreadFlags.IsSTA;
 			if (thread.IsMTA) flags |= ClrDacThreadFlags.IsMTA;
 			return new ClrDacThreadInfo(thread.ManagedThreadId, flags);
+		}
+
+		public override bool TryGetSymbolCore(ulong address, out SymbolResolverResult result) {
+			const ulong MIN_ADDR = 0x10000;
+			if (address < MIN_ADDR) {
+				result = default;
+				return false;
+			}
+
+			string name;
+
+			name = clrRuntime.GetJitHelperFunctionName(address);
+			if (!(name is null)) {
+				result = new SymbolResolverResult(SymbolKind.Function, name, address);
+				return true;
+			}
+
+			name = clrRuntime.GetMethodTableName(address);
+			if (!(name is null)) {
+				result = new SymbolResolverResult(SymbolKind.Data, "methodtable(" + name + ")", address);
+				return true;
+			}
+
+			var method = clrRuntime.GetMethodByAddress(address);
+			if (method is null && (address & ((uint)clrRuntime.PointerSize - 1)) == 0) {
+				if (clrRuntime.ReadPointer(address, out ulong newAddress) && newAddress >= MIN_ADDR)
+					method = clrRuntime.GetMethodByAddress(newAddress);
+			}
+			if (!(method is null)) {
+				result = new SymbolResolverResult(SymbolKind.Function, method.ToString(), address);
+				return true;
+			}
+
+			result = default;
+			return false;
 		}
 	}
 }

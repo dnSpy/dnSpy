@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,8 +19,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Windows.Threading;
 using dnSpy.Contracts.Debugger.Engine;
+using dnSpy.Debugger.Shared;
 
 namespace dnSpy.Debugger.Impl {
 	sealed partial class DbgManagerImpl {
@@ -28,7 +28,7 @@ namespace dnSpy.Debugger.Impl {
 			const int breakTimeoutMilliseconds = 5000;
 			readonly DbgManagerImpl owner;
 			readonly List<Info> infos;
-			DispatcherTimer timer;
+			DispatcherTimer? timer;
 
 			sealed class Info {
 				public EngineInfo EngineInfo { get; }
@@ -55,20 +55,19 @@ namespace dnSpy.Debugger.Impl {
 						info.EngineInfo.Engine.Break();
 				}
 				if (!CheckIsDone_NoLock()) {
-					timer = new DispatcherTimer(DispatcherPriority.Send, owner.WpfDispatcher);
-					timer.Interval = TimeSpan.FromMilliseconds(breakTimeoutMilliseconds);
+					timer = new DispatcherTimer(owner.InternalDispatcher, TimeSpan.FromMilliseconds(breakTimeoutMilliseconds));
 					timer.Tick += Timer_Tick_DbgThread;
 					timer.Start();
 				}
 			}
 
 			void DoneStep1_NoLock(out bool canNotify) {
-				if (timer != null) {
+				if (!(timer is null)) {
 					timer.Tick -= Timer_Tick_DbgThread;
 					timer.Stop();
 					timer = null;
 				}
-				canNotify = owner.breakAllHelper != null;
+				canNotify = !(owner.breakAllHelper is null);
 				owner.breakAllHelper = null;
 			}
 

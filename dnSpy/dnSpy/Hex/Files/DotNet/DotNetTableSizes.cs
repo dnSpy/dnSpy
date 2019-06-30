@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,6 +20,7 @@
 // from dnlib
 
 using System;
+using System.Diagnostics;
 using dnSpy.Contracts.Hex.Files.DotNet;
 
 namespace dnSpy.Hex.Files.DotNet {
@@ -30,8 +31,8 @@ namespace dnSpy.Hex.Files.DotNet {
 		bool bigStrings;
 		bool bigGuid;
 		bool bigBlob;
-		uint[] rowCounts;
-		TableInfo[] tableInfos;
+		uint[]? rowCounts;
+		TableInfo[]? tableInfos;
 
 		/// <summary>
 		/// Initializes the table sizes
@@ -41,6 +42,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		/// <param name="bigBlob"><c>true</c> if #Blob size >= 0x10000</param>
 		/// <param name="rowCounts">Count of rows in each table</param>
 		public void InitializeSizes(bool bigStrings, bool bigGuid, bool bigBlob, uint[] rowCounts) {
+			Debug.Assert(!(tableInfos is null));
 			this.bigStrings = bigStrings;
 			this.bigGuid = bigGuid;
 			this.bigBlob = bigBlob;
@@ -61,6 +63,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		}
 
 		int GetSize(ColumnSize columnSize) {
+			Debug.Assert(!(rowCounts is null));
 			if (ColumnSize.Module <= columnSize && columnSize <= ColumnSize.CustomDebugInformation) {
 				int table = (int)(columnSize - ColumnSize.Module);
 				uint count = table >= rowCounts.Length ? 0 : rowCounts[table];
@@ -83,7 +86,7 @@ namespace dnSpy.Hex.Files.DotNet {
 				case ColumnSize.ResolutionScope:	info = CodedToken.ResolutionScope; break;
 				case ColumnSize.TypeOrMethodDef:	info = CodedToken.TypeOrMethodDef; break;
 				case ColumnSize.HasCustomDebugInformation:info = CodedToken.HasCustomDebugInformation; break;
-				default: throw new InvalidOperationException(string.Format("Invalid ColumnSize: {0}", columnSize));
+				default: throw new InvalidOperationException($"Invalid ColumnSize: {columnSize}");
 				}
 				uint maxRows = 0;
 				foreach (var tableType in info.TableTypes) {
@@ -108,7 +111,7 @@ namespace dnSpy.Hex.Files.DotNet {
 				case ColumnSize.Blob:	return bigBlob ? 4 : 2;
 				}
 			}
-			throw new InvalidOperationException(string.Format("Invalid ColumnSize: {0}", columnSize));
+			throw new InvalidOperationException($"Invalid ColumnSize: {columnSize}");
 		}
 
 		/// <summary>

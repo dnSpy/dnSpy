@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,7 +31,7 @@ namespace dnSpy.Hex.Editor {
 	sealed class TextLayer : UIElement {
 		readonly List<LineInfo> lines;
 
-		struct LineInfo {
+		readonly struct LineInfo {
 			public HexFormattedLine Line { get; }
 			public Visual Visual { get; }
 			public LineInfo(HexFormattedLine line) {
@@ -41,7 +41,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		public TextLayer(HexAdornmentLayer adornmentLayer) {
-			if (adornmentLayer == null)
+			if (adornmentLayer is null)
 				throw new ArgumentNullException(nameof(adornmentLayer));
 			lines = new List<LineInfo>();
 			adornmentLayer.AddAdornment(VSTE.AdornmentPositioningBehavior.OwnerControlled, (HexBufferSpan?)null, null, this, null);

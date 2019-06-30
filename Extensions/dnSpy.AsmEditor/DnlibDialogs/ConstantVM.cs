@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,13 +25,13 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class ConstantVM : ViewModelBase {
 		public ConstantTypeVM ConstantTypeVM { get; }
 
-		public object Value {
-			get { return ConstantTypeVM.ValueNoSpecialNull; }
-			set { ConstantTypeVM.Value = value; }
+		public object? Value {
+			get => ConstantTypeVM.ValueNoSpecialNull;
+			set => ConstantTypeVM.Value = value;
 		}
 
 		public bool IsEnabled {
-			get { return isEnabled; }
+			get => isEnabled;
 			set {
 				if (isEnabled != value) {
 					isEnabled = value;
@@ -43,8 +43,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		bool isEnabled = true;
 
-		public string ConstantCheckBoxToolTip {
-			get { return constantCheckBoxToolTip; }
+		public string? ConstantCheckBoxToolTip {
+			get => constantCheckBoxToolTip;
 			set {
 				if (constantCheckBoxToolTip != value) {
 					constantCheckBoxToolTip = value;
@@ -52,7 +52,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 			}
 		}
-		string constantCheckBoxToolTip;
+		string? constantCheckBoxToolTip;
 
 		static readonly ConstantType[] constantTypes = new ConstantType[] {
 			ConstantType.Null,
@@ -71,7 +71,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			ConstantType.String,
 		};
 
-		public ConstantVM(ModuleDef ownerModule, object value, string constantCheckBoxToolTip) {
+		public ConstantVM(ModuleDef ownerModule, object? value, string constantCheckBoxToolTip) {
 			ConstantTypeVM = new ConstantTypeVM(ownerModule, value, constantTypes, true, false);
 			ConstantCheckBoxToolTip = constantCheckBoxToolTip;
 			ConstantTypeVM.PropertyChanged += ConstantTypeVM_PropertyChanged;

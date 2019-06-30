@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,19 +24,19 @@ using VSTF = Microsoft.VisualStudio.Text.Formatting;
 namespace dnSpy.Hex.Editor {
 	static class HexViewLineExtensions {
 		public static bool IsVisible(this HexViewLine line) {
-			if (line == null)
+			if (line is null)
 				throw new ArgumentNullException(nameof(line));
 			return line.VisibilityState == VSTF.VisibilityState.FullyVisible || line.VisibilityState == VSTF.VisibilityState.PartiallyVisible;
 		}
 
 		public static bool IsFirstDocumentLine(this HexViewLine line) {
-			if (line == null)
+			if (line is null)
 				throw new ArgumentNullException(nameof(line));
 			return line.BufferLine.LineNumber == 0;
 		}
 
 		public static bool IsLastDocumentLine(this HexViewLine line) {
-			if (line == null)
+			if (line is null)
 				throw new ArgumentNullException(nameof(line));
 			return line.BufferLine.LineNumber + 1 == line.BufferLine.LineProvider.LineCount;
 		}

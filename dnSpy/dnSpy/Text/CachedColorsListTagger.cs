@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,22 +34,27 @@ namespace dnSpy.Text {
 	[ContentType(ContentTypes.Any)]
 	sealed class CachedColorsListTaggerProvider : ITaggerProvider {
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
+		readonly IClassificationTypeRegistryService classificationTypeRegistryService;
 
 		[ImportingConstructor]
-		CachedColorsListTaggerProvider(IThemeClassificationTypeService themeClassificationTypeService) => this.themeClassificationTypeService = themeClassificationTypeService;
+		CachedColorsListTaggerProvider(IThemeClassificationTypeService themeClassificationTypeService, IClassificationTypeRegistryService classificationTypeRegistryService) {
+			this.themeClassificationTypeService = themeClassificationTypeService;
+			this.classificationTypeRegistryService = classificationTypeRegistryService;
+		}
 
-		public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag {
+		public ITagger<T>? CreateTagger<T>(ITextBuffer buffer) where T : ITag {
 			if (buffer.Properties.TryGetProperty(typeof(CachedColorsListTagger), out CachedColorsListTagger colorizer)) {
 				colorizer.ThemeClassificationTypeService = themeClassificationTypeService;
+				colorizer.ClassificationTypeRegistryService = classificationTypeRegistryService;
 				return colorizer as ITagger<T>;
 			}
 			return null;
 		}
 
 		public static void AddColorizer(ITextBuffer textBuffer, CachedColorsList cachedColorsList) {
-			if (textBuffer == null)
+			if (textBuffer is null)
 				throw new ArgumentNullException(nameof(textBuffer));
-			if (cachedColorsList == null)
+			if (cachedColorsList is null)
 				throw new ArgumentNullException(nameof(cachedColorsList));
 			textBuffer.Properties.GetOrCreateSingletonProperty(typeof(CachedColorsListTagger), () => CachedColorsListTagger.Create(cachedColorsList));
 		}
@@ -57,9 +62,10 @@ namespace dnSpy.Text {
 
 	sealed class CachedColorsListTagger : ITagger<IClassificationTag> {
 		readonly CachedColorsList cachedColorsList;
-		IClassificationType textClassificationType;
+		IClassificationType? textClassificationType;
 
-		public IThemeClassificationTypeService ThemeClassificationTypeService { get; internal set; }
+		public IThemeClassificationTypeService? ThemeClassificationTypeService { get; internal set; }
+		public IClassificationTypeRegistryService? ClassificationTypeRegistryService { get; internal set; }
 
 		CachedColorsListTagger(CachedColorsList cachedColorsList) => this.cachedColorsList = cachedColorsList;
 
@@ -72,10 +78,11 @@ namespace dnSpy.Text {
 			new CachedColorsListTagger(cachedColorsList);
 
 		public IEnumerable<ITagSpan<IClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans) {
-			Debug.Assert(ThemeClassificationTypeService != null);
-			if (ThemeClassificationTypeService == null)
+			Debug.Assert(!(ThemeClassificationTypeService is null));
+			Debug.Assert(!(ClassificationTypeRegistryService is null));
+			if (ThemeClassificationTypeService is null || ClassificationTypeRegistryService is null)
 				yield break;
-			if (textClassificationType == null)
+			if (textClassificationType is null)
 				textClassificationType = ThemeClassificationTypeService.GetClassificationType(TextColor.Text);
 
 			var snapshot = spans[0].Snapshot;
@@ -97,7 +104,7 @@ namespace dnSpy.Text {
 					if (realSpan.End > snapshot.Length)
 						break;
 
-					var ct = info.Data as IClassificationType ?? ThemeClassificationTypeService.GetClassificationType(info.Data as TextColor? ?? TextColor.Text);
+					var ct = ColorUtils.GetClassificationType(ClassificationTypeRegistryService, ThemeClassificationTypeService, info.Data);
 					if (ct != textClassificationType)
 						yield return new TagSpan<IClassificationTag>(new SnapshotSpan(snapshot, realSpan), new ClassificationTag(ct));
 					index++;

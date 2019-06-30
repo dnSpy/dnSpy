@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,45 +28,45 @@ using dnSpy.Contracts.Text;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	static class BodyCommandUtils {
-		public static IList<MethodSourceStatement> GetStatements(IMenuItemContext context) {
-			if (context == null)
+		public static IList<MethodSourceStatement>? GetStatements(IMenuItemContext? context, FindByTextPositionOptions options) {
+			if (context is null)
 				return null;
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
 				return null;
-			var uiContext = context.Find<IDocumentViewer>();
-			if (uiContext == null)
+			var documentViewer = context.Find<IDocumentViewer>();
+			if (documentViewer is null)
 				return null;
 			var pos = context.Find<TextEditorPosition>();
-			if (pos == null)
+			if (pos is null)
 				return null;
-			return GetStatements(uiContext, pos.Position);
+			return GetStatements(documentViewer, pos.Position, options);
 		}
 
-		public static IList<MethodSourceStatement> GetStatements(IDocumentViewer documentViewer, int textPosition) {
-			if (documentViewer == null)
+		public static IList<MethodSourceStatement>? GetStatements(IDocumentViewer? documentViewer, int textPosition, FindByTextPositionOptions options) {
+			if (documentViewer is null)
 				return null;
 			var methodDebugService = documentViewer.GetMethodDebugService();
-			var methodStatements = methodDebugService.FindByTextPosition(textPosition, sameMethod: true);
+			var methodStatements = methodDebugService.FindByTextPosition(textPosition, options | FindByTextPositionOptions.SameMethod);
 			return methodStatements.Count == 0 ? null : methodStatements;
 		}
 
-		public static uint[] GetInstructionOffsets(MethodDef method, IList<MethodSourceStatement> list) {
-			if (method == null)
+		public static uint[]? GetInstructionOffsets(MethodDef? method, IList<MethodSourceStatement> list) {
+			if (method is null)
 				return null;
 			var body = method.Body;
-			if (body == null)
+			if (body is null)
 				return null;
 
 			var foundInstrs = new HashSet<uint>();
 			// The instructions' offset field is assumed to be valid
 			var instrs = body.Instructions.Select(a => a.Offset).ToArray();
-			foreach (var binSpan in list.Select(a => a.Statement.BinSpan)) {
-				int index = Array.BinarySearch(instrs, binSpan.Start);
+			foreach (var ilSpan in list.Select(a => a.Statement.ILSpan)) {
+				int index = Array.BinarySearch(instrs, ilSpan.Start);
 				if (index < 0)
 					continue;
 				for (int i = index; i < instrs.Length; i++) {
 					uint instrOffset = instrs[i];
-					if (instrOffset >= binSpan.End)
+					if (instrOffset >= ilSpan.End)
 						break;
 
 					foundInstrs.Add(instrOffset);

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,11 +27,11 @@ namespace dnSpy.Contracts.Extension {
 		/// <summary>
 		/// Short description or null
 		/// </summary>
-		public string ShortDescription { get; set; }
+		public string? ShortDescription { get; set; }
 
 		/// <summary>
 		/// Copyright message or null to get it from the assembly's <see cref="AssemblyCopyrightAttribute"/>
 		/// </summary>
-		public string Copyright { get; set; }
+		public string? Copyright { get; set; }
 	}
 }

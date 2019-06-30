@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,10 +27,10 @@ using dnSpy.Debugger.UI;
 namespace dnSpy.Debugger.Evaluation.ViewModel {
 	abstract class ValueNode : TreeNodeData {
 		public override Guid Guid => Guid.Empty;
-		public override object Text => null;
-		public override object ToolTip => null;
+		public override object? Text => null;
+		public override object? ToolTip => null;
 
-		public abstract string RootId { get; }
+		public abstract string? RootId { get; }
 
 		// Used by XAML
 		public abstract bool IsInvalid { get; protected set; }
@@ -45,10 +45,10 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 		public abstract IEditValueProvider ValueEditValueProvider { get; }
 
 		// Used by formatter
-		public abstract ClassifiedTextCollection CachedName { get; }
-		public abstract ClassifiedTextCollection CachedValue { get; }
-		public abstract ClassifiedTextCollection CachedExpectedType { get; }
-		public abstract ClassifiedTextCollection CachedActualType_OrDefaultInstance { get; }
-		public abstract ClassifiedTextCollection OldCachedValue { get; }
+		public abstract ref readonly ClassifiedTextCollection CachedName { get; }
+		public abstract ref readonly ClassifiedTextCollection CachedValue { get; }
+		public abstract ref readonly ClassifiedTextCollection CachedExpectedType { get; }
+		public abstract ref readonly ClassifiedTextCollection CachedActualType_OrDefaultInstance { get; }
+		public abstract ref readonly ClassifiedTextCollection OldCachedValue { get; }
 	}
 }

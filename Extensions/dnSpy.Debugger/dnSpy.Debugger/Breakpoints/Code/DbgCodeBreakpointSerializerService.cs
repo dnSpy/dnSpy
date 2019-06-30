@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -45,12 +45,12 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		}
 
 		public override void Save(DbgCodeBreakpoint[] breakpoints) {
-			if (breakpoints == null)
+			if (breakpoints is null)
 				throw new ArgumentNullException(nameof(breakpoints));
 			if (breakpoints.Length == 0)
 				return;
 			var filename = pickSaveFilename.GetFilename(null, "xml", PickFilenameConstants.XmlFilenameFilter);
-			if (filename == null)
+			if (filename is null)
 				return;
 			var settingsService = settingsServiceFactory.Value.Create();
 			new BreakpointsSerializer(settingsService, dbgCodeLocationSerializerService.Value).Save(breakpoints);

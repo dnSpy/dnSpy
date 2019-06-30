@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using dnSpy.Contracts.Hex;
@@ -27,15 +26,12 @@ using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Properties;
 
 namespace dnSpy.Hex.Settings {
-	abstract class GeneralAppSettingsPageBase : AppSettingsPage, INotifyPropertyChanged {
+	abstract class GeneralAppSettingsPageBase : AppSettingsPage {
 		public sealed override string Title => dnSpy_Resources.GeneralSettings;
-		public sealed override object UIObject => this;
-
-		public event PropertyChangedEventHandler PropertyChanged;
-		protected void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+		public sealed override object? UIObject => this;
 
 		public bool EnableHighlightCurrentLine {
-			get { return enableHighlightCurrentLine; }
+			get => enableHighlightCurrentLine;
 			set {
 				if (enableHighlightCurrentLine != value) {
 					enableHighlightCurrentLine = value;
@@ -46,7 +42,7 @@ namespace dnSpy.Hex.Settings {
 		bool enableHighlightCurrentLine;
 
 		public bool HighlightStructureUnderMouseCursor {
-			get { return highlightStructureUnderMouseCursor; }
+			get => highlightStructureUnderMouseCursor;
 			set {
 				if (highlightStructureUnderMouseCursor != value) {
 					highlightStructureUnderMouseCursor = value;
@@ -57,7 +53,7 @@ namespace dnSpy.Hex.Settings {
 		bool highlightStructureUnderMouseCursor;
 
 		public bool HighlightCurrentValue {
-			get { return highlightCurrentValue; }
+			get => highlightCurrentValue;
 			set {
 				if (highlightCurrentValue != value) {
 					highlightCurrentValue = value;
@@ -68,7 +64,7 @@ namespace dnSpy.Hex.Settings {
 		bool highlightCurrentValue;
 
 		public bool HighlightActiveColumn {
-			get { return highlightActiveColumn; }
+			get => highlightActiveColumn;
 			set {
 				if (highlightActiveColumn != value) {
 					highlightActiveColumn = value;
@@ -79,7 +75,7 @@ namespace dnSpy.Hex.Settings {
 		bool highlightActiveColumn;
 
 		public bool ValuesLowerCaseHex {
-			get { return valuesLowerCaseHex; }
+			get => valuesLowerCaseHex;
 			set {
 				if (valuesLowerCaseHex != value) {
 					valuesLowerCaseHex = value;
@@ -90,7 +86,7 @@ namespace dnSpy.Hex.Settings {
 		bool valuesLowerCaseHex;
 
 		public bool OffsetLowerCaseHex {
-			get { return offsetLowerCaseHex; }
+			get => offsetLowerCaseHex;
 			set {
 				if (offsetLowerCaseHex != value) {
 					offsetLowerCaseHex = value;
@@ -101,7 +97,7 @@ namespace dnSpy.Hex.Settings {
 		bool offsetLowerCaseHex;
 
 		public bool EnableColorization {
-			get { return enableColorization; }
+			get => enableColorization;
 			set {
 				if (enableColorization != value) {
 					enableColorization = value;
@@ -115,8 +111,8 @@ namespace dnSpy.Hex.Settings {
 
 		public EnumListVM HexOffsetFormatVM { get; }
 		public HexOffsetFormat HexOffsetFormat {
-			get { return (HexOffsetFormat)HexOffsetFormatVM.SelectedItem; }
-			set { HexOffsetFormatVM.SelectedItem = value; }
+			get => (HexOffsetFormat)HexOffsetFormatVM.SelectedItem!;
+			set => HexOffsetFormatVM.SelectedItem = value;
 		}
 		static readonly EnumVM[] hexOffsetFormatList = new EnumVM[] {
 			new EnumVM(HexOffsetFormat.Hex, "6789ABCD"),
@@ -126,9 +122,9 @@ namespace dnSpy.Hex.Settings {
 		};
 
 		public EnumListVM EncodingInfoVM { get; }
-		public EncodingInfo EncodingInfo {
-			get { return (EncodingInfo)EncodingInfoVM.SelectedItem; }
-			set { EncodingInfoVM.SelectedItem = value; }
+		public EncodingInfo? EncodingInfo {
+			get => (EncodingInfo?)EncodingInfoVM.SelectedItem;
+			set => EncodingInfoVM.SelectedItem = value;
 		}
 
 		readonly CommonEditorOptions options;
@@ -148,10 +144,10 @@ namespace dnSpy.Hex.Settings {
 			EnableColorization = options.EnableColorization;
 			GroupSizeInBytesVM.Value = options.GroupSizeInBytes;
 			HexOffsetFormat = options.HexOffsetFormat;
-			EncodingInfo = GetEncodingInfo(options.EncodingCodePage) ?? GetEncodingInfo(Encoding.UTF8.CodePage) ?? (EncodingInfo)EncodingInfoVM.Items.FirstOrDefault()?.Value;
+			EncodingInfo = GetEncodingInfo(options.EncodingCodePage) ?? GetEncodingInfo(Encoding.UTF8.CodePage) ?? (EncodingInfo?)EncodingInfoVM.Items.FirstOrDefault()?.Value;
 		}
 
-		EncodingInfo GetEncodingInfo(int codePage) {
+		EncodingInfo? GetEncodingInfo(int codePage) {
 			foreach (var vm in EncodingInfoVM.Items) {
 				var info = (EncodingInfo)vm.Value;
 				if (info.CodePage == codePage)
@@ -174,7 +170,7 @@ namespace dnSpy.Hex.Settings {
 				options.GroupSizeInBytes = GroupSizeInBytesVM.Value;
 
 			var encodingInfo = EncodingInfo;
-			if (encodingInfo != null)
+			if (!(encodingInfo is null))
 				options.EncodingCodePage = encodingInfo.CodePage;
 		}
 	}

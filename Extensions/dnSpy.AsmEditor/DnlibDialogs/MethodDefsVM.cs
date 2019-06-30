@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,7 +22,7 @@ using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class MethodDefsVM : ListVM<MethodDefVM, MethodDef> {
-		public MethodDefsVM(ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType = null, MethodDef ownerMethod = null)
+		public MethodDefsVM(ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef? ownerType = null, MethodDef? ownerMethod = null)
 			: base(null, null, ownerModule, decompilerService, ownerType, ownerMethod) {
 		}
 

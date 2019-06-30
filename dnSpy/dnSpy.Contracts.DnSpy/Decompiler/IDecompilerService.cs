@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -45,7 +45,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="guid">Language guid, see <see cref="IDecompiler.UniqueGuid"/> and <see cref="IDecompiler.GenericGuid"/></param>
 		/// <returns></returns>
-		IDecompiler Find(Guid guid);
+		IDecompiler? Find(Guid guid);
 
 		/// <summary>
 		/// Finds a <see cref="IDecompiler"/> instance. Returns the first one if the language wasn't found

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,20 +24,22 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
-using System.Windows.Threading;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Engine;
 using dnSpy.Debugger.Native;
+using dnSpy.Debugger.Shared;
 using dnSpy.Debugger.Utilities;
 using Microsoft.Win32.SafeHandles;
 
 namespace dnSpy.Debugger.Impl {
 	unsafe sealed class DbgProcessImpl : DbgProcess, IIsRunningProvider {
 		public override DbgManager DbgManager => owner;
-		public override ulong Id { get; }
+		public override int Id { get; }
 		public override int Bitness { get; }
-		public override DbgMachine Machine { get; }
+		public override DbgArchitecture Architecture { get; }
+		public override DbgOperatingSystem OperatingSystem { get; }
 		public override string Filename { get; }
 		public override string Name { get; }
 
@@ -77,7 +79,7 @@ namespace dnSpy.Debugger.Impl {
 		static bool StringArrayEquals(IList<string> a, IList<string> b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (a.Count != b.Count)
 				return false;
@@ -132,7 +134,7 @@ namespace dnSpy.Debugger.Impl {
 		readonly SafeProcessHandle hProcess;
 		CurrentObject<DbgRuntimeImpl> currentRuntime;
 
-		public DbgProcessImpl(DbgManagerImpl owner, Dispatcher dispatcher, ulong pid, DbgProcessState state, bool shouldDetach) {
+		public DbgProcessImpl(DbgManagerImpl owner, Dispatcher dispatcher, int pid, DbgProcessState state, bool shouldDetach) {
 			lockObj = new object();
 			engineInfos = new List<EngineInfo>();
 			threads = new List<DbgThread>();
@@ -144,14 +146,17 @@ namespace dnSpy.Debugger.Impl {
 
 			const int dwDesiredAccess = NativeMethods.PROCESS_VM_OPERATION | NativeMethods.PROCESS_VM_READ |
 				NativeMethods.PROCESS_VM_WRITE | NativeMethods.PROCESS_QUERY_LIMITED_INFORMATION;
-			hProcess = NativeMethods.OpenProcess(dwDesiredAccess, false, (int)pid);
+			hProcess = NativeMethods.OpenProcess(dwDesiredAccess, false, pid);
 			if (hProcess.IsInvalid)
-				throw new InvalidOperationException($"Couldn't open process {pid}");
+				throw new InvalidOperationException($"Couldn't open process {pid}, error: 0x{Marshal.GetLastWin32Error():X8}");
 
 			Bitness = ProcessUtilities.GetBitness(hProcess.DangerousGetHandle());
-			Machine = GetMachine(Bitness);
-			Filename = GetProcessFilename(pid) ?? string.Empty;
-			Name = Path.GetFileName(Filename);
+			Architecture = GetArchitecture(Bitness);
+			OperatingSystem = GetOperatingSystem();
+			var info = GetProcessName(pid);
+			Filename = info.filename ?? string.Empty;
+			Name = info.name ?? string.Empty;
+			debugging = CalculateDebugging_NoLock();
 
 			new DelayedIsRunningHelper(this, dispatcher, RaiseDelayedIsRunningChanged_DbgThread);
 		}
@@ -163,7 +168,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		// DbgManager thread
-		void UpdateRuntime_DbgThread(DbgRuntimeImpl runtime) {
+		void UpdateRuntime_DbgThread(DbgRuntimeImpl? runtime) {
 			owner.Dispatcher.VerifyAccess();
 			lock (lockObj) {
 				var newCurrent = GetRuntime_NoLock(currentRuntime.Current, runtime);
@@ -172,8 +177,8 @@ namespace dnSpy.Debugger.Impl {
 			}
 		}
 
-		DbgRuntimeImpl GetRuntime_NoLock(DbgRuntimeImpl runtime, DbgRuntimeImpl defaultRuntime) {
-			if (runtime != null) {
+		DbgRuntimeImpl? GetRuntime_NoLock(DbgRuntimeImpl? runtime, DbgRuntimeImpl? defaultRuntime) {
+			if (!(runtime is null)) {
 				var info = engineInfos.First(a => a.Runtime == runtime);
 				if (info.IsPaused || owner.GetDelayedIsRunning_DbgThread(info.Engine) == false)
 					return runtime;
@@ -182,9 +187,9 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		// DbgManager thread
-		internal void SetPaused_DbgThread(DbgRuntimeImpl runtime) {
+		internal void SetPaused_DbgThread(DbgRuntimeImpl? runtime) {
 			owner.Dispatcher.VerifyAccess();
-			if (runtime == null)
+			if (runtime is null)
 				return;
 			lock (lockObj) {
 				var info = engineInfos.First(a => a.Runtime == runtime);
@@ -194,9 +199,9 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		// DbgManager thread
-		internal void SetRunning_DbgThread(DbgRuntimeImpl runtime) {
+		internal void SetRunning_DbgThread(DbgRuntimeImpl? runtime) {
 			owner.Dispatcher.VerifyAccess();
-			if (runtime == null)
+			if (runtime is null)
 				return;
 			lock (lockObj) {
 				var info = engineInfos.First(a => a.Runtime == runtime);
@@ -217,7 +222,7 @@ namespace dnSpy.Debugger.Impl {
 			}
 		}
 
-		internal DbgEngine TryGetEngine(DbgRuntime runtime) {
+		internal DbgEngine? TryGetEngine(DbgRuntime? runtime) {
 			lock (lockObj) {
 				foreach (var info in engineInfos) {
 					if (info.Runtime == runtime)
@@ -236,27 +241,60 @@ namespace dnSpy.Debugger.Impl {
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 		}
 
-		static string GetProcessFilename(ulong pid) {
+		static (string? filename, string? name) GetProcessName(int pid) {
+			string? name = null;
+			string? filename = null;
 			try {
-				using (var p = Process.GetProcessById((int)pid))
-					return p.MainModule.FileName;
+				using (var p = Process.GetProcessById(pid)) {
+					name = p.ProcessName;
+					// Could throw
+					filename = p.MainModule.FileName;
+					name = Path.GetFileName(filename);
+				}
 			}
 			catch {
 			}
-			return string.Empty;
+			return (filename, name);
 		}
 
-		static DbgMachine GetMachine(int bitness) {
-			// We only allow debugging on the same computer and this is x86 or x64
-			switch (bitness) {
-			case 32: return DbgMachine.X86;
-			case 64: return DbgMachine.X64;
-			default: throw new ArgumentOutOfRangeException(nameof(bitness));
+		static DbgArchitecture GetArchitecture(int bitness) {
+			// We only allow debugging on the same computer
+			switch (RuntimeInformation.ProcessArchitecture) {
+			case System.Runtime.InteropServices.Architecture.X86:
+			case System.Runtime.InteropServices.Architecture.X64:
+				if (bitness == 32)
+					return DbgArchitecture.X86;
+				if (bitness == 64)
+					return DbgArchitecture.X64;
+				throw new ArgumentOutOfRangeException(nameof(bitness));
+
+			case System.Runtime.InteropServices.Architecture.Arm:
+			case System.Runtime.InteropServices.Architecture.Arm64:
+				if (bitness == 32)
+					return DbgArchitecture.Arm;
+				if (bitness == 64)
+					return DbgArchitecture.Arm64;
+				throw new ArgumentOutOfRangeException(nameof(bitness));
+
+			default:
+				throw new InvalidOperationException($"Unknown CPU arch: {RuntimeInformation.ProcessArchitecture}");
 			}
 		}
 
+		static DbgOperatingSystem GetOperatingSystem() {
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+				return DbgOperatingSystem.Windows;
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+				return DbgOperatingSystem.MacOS;
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+				return DbgOperatingSystem.Linux;
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Create("FREEBSD")))
+				return DbgOperatingSystem.FreeBSD;
+			throw new InvalidOperationException("Unknown operating system");
+		}
+
 		public unsafe override void ReadMemory(ulong address, byte[] destination, int destinationIndex, int size) {
-			if (destination == null)
+			if (destination is null)
 				throw new ArgumentNullException(nameof(destination));
 			if (destinationIndex < 0)
 				throw new ArgumentOutOfRangeException(nameof(destinationIndex));
@@ -271,6 +309,10 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		public override void ReadMemory(ulong address, void* destination, int size) {
+			if (destination is null && size != 0)
+				throw new ArgumentNullException(nameof(destination));
+			if (size < 0)
+				throw new ArgumentOutOfRangeException(nameof(size));
 			var dest = (byte*)destination;
 			if (hProcess.IsClosed || (Bitness == 32 && address > uint.MaxValue)) {
 				Clear(dest, size);
@@ -311,7 +353,7 @@ namespace dnSpy.Debugger.Impl {
 		unsafe void Clear(byte* destination, int size) => Memset.Clear(destination, 0, size);
 
 		public unsafe override void WriteMemory(ulong address, byte[] source, int sourceIndex, int size) {
-			if (source == null)
+			if (source is null)
 				throw new ArgumentNullException(nameof(source));
 			if (sourceIndex < 0)
 				throw new ArgumentOutOfRangeException(nameof(sourceIndex));
@@ -416,8 +458,8 @@ namespace dnSpy.Debugger.Impl {
 				IsDebuggingChanged?.Invoke(this, EventArgs.Empty);
 		}
 
-		internal (DbgRuntimeImpl runtime, bool hasMoreRuntimes) Remove_DbgThread(DbgEngine engine) {
-			DbgRuntimeImpl runtime = null;
+		internal (DbgRuntimeImpl? runtime, bool hasMoreRuntimes) Remove_DbgThread(DbgEngine engine) {
+			DbgRuntimeImpl? runtime = null;
 			bool hasMoreRuntimes;
 			lock (lockObj) {
 				for (int i = 0; i < engineInfos.Count; i++) {
@@ -457,7 +499,7 @@ namespace dnSpy.Debugger.Impl {
 				ThreadsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgThread>(removedThreads, added: false));
 			if (raiseDebuggingChanged)
 				OnPropertyChanged(nameof(Debugging));
-			if (runtime != null)
+			if (!(runtime is null))
 				RuntimesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgRuntime>(runtime, added: false));
 		}
 

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,9 +18,7 @@
 */
 
 using System;
-using System.Threading;
 using dnSpy.Contracts.Debugger;
-using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 
@@ -43,18 +41,14 @@ namespace dnSpy.Debugger.Evaluation {
 			return value;
 		}
 
-		public override DbgValue GetValue(DbgEvaluationContext context, DbgStackFrame frame, CancellationToken cancellationToken) {
-			if (context == null)
-				throw new ArgumentNullException(nameof(context));
-			if (!(context is DbgEvaluationContextImpl))
+		public override DbgValue GetValue(DbgEvaluationInfo evalInfo) {
+			if (evalInfo is null)
+				throw new ArgumentNullException(nameof(evalInfo));
+			if (!(evalInfo.Context is DbgEvaluationContextImpl))
 				throw new ArgumentException();
-			if (context.Runtime != Runtime)
+			if (evalInfo.Context.Runtime != Runtime)
 				throw new ArgumentException();
-			if (frame == null)
-				throw new ArgumentNullException(nameof(frame));
-			if (frame.Runtime != Runtime)
-				throw new ArgumentException();
-			return CreateResult(EngineObjectId.GetValue(context, frame, cancellationToken));
+			return CreateResult(EngineObjectId.GetValue(evalInfo));
 		}
 
 		public override void Remove() => owner.Remove(new[] { this });

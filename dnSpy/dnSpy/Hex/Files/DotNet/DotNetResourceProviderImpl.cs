@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,7 +32,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		readonly PeHeaders peHeaders;
 		readonly ResourceInfo[] resourceInfos;
 
-		struct ResourceInfo {
+		readonly struct ResourceInfo {
 			public uint Token { get; }
 			public HexSpan Span { get; }
 			public string FilteredName { get; }
@@ -53,10 +53,10 @@ namespace dnSpy.Hex.Files.DotNet {
 			}
 		}
 
-		public DotNetResourceProviderImpl(HexBufferFile file, PeHeaders peHeaders, DotNetMetadataHeaders metadataHeaders, HexSpan? resourcesSpan)
+		public DotNetResourceProviderImpl(HexBufferFile file, PeHeaders peHeaders, DotNetMetadataHeaders? metadataHeaders, HexSpan? resourcesSpan)
 			: base(file) {
 			this.peHeaders = peHeaders ?? throw new ArgumentNullException(nameof(peHeaders));
-			if (metadataHeaders?.TablesStream != null && resourcesSpan != null) {
+			if (!(metadataHeaders?.TablesStream is null) && !(resourcesSpan is null)) {
 				Debug.Assert(file.Span.Contains(resourcesSpan.Value));// Verified by caller
 				ResourcesSpan = resourcesSpan.Value;
 				resourceInfos = CreateResourceInfos(file, metadataHeaders.TablesStream.MDTables[(int)Table.ManifestResource], metadataHeaders.StringsStream);
@@ -79,8 +79,8 @@ namespace dnSpy.Hex.Files.DotNet {
 		}
 		static readonly string[] defaultTags = new string[] { PredefinedBufferFileTags.DotNetResources };
 
-		ResourceInfo[] CreateResourceInfos(HexBufferFile file, MDTable resourceTable, StringsHeap stringsHeap) {
-			if (resourceTable == null)
+		ResourceInfo[] CreateResourceInfos(HexBufferFile file, MDTable resourceTable, StringsHeap? stringsHeap) {
+			if (resourceTable is null)
 				return Array.Empty<ResourceInfo>();
 			var list = new List<ResourceInfo>((int)resourceTable.Rows);
 
@@ -101,7 +101,7 @@ namespace dnSpy.Hex.Files.DotNet {
 					continue;
 
 				var resourceSpan = GetResourceSpan(file.Buffer, offset);
-				if (resourceSpan == null)
+				if (resourceSpan is null)
 					continue;
 
 				var token = new MDToken(Table.ManifestResource, rid);
@@ -126,7 +126,7 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		public override bool IsResourcePosition(HexPosition position) => ResourcesSpan.Contains(position);
 
-		public override DotNetEmbeddedResource GetResource(HexPosition position) {
+		public override DotNetEmbeddedResource? GetResource(HexPosition position) {
 			if (!IsResourcePosition(position))
 				return null;
 			int index = GetIndex(position);

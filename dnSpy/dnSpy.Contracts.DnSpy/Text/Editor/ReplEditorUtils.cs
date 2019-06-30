@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,9 +33,9 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="replEditor">REPL editor</param>
 		/// <param name="textView">REPL editor text view</param>
 		public static void AddInstance(IReplEditor replEditor, ITextView textView) {
-			if (replEditor == null)
+			if (replEditor is null)
 				throw new ArgumentNullException(nameof(replEditor));
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			textView.Properties.AddProperty(Key, replEditor);
 		}
@@ -46,7 +46,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <param name="textView">Text view</param>
 		/// <returns></returns>
 		public static IReplEditor TryGetInstance(ITextView textView) {
-			if (textView == null)
+			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			textView.Properties.TryGetProperty(Key, out IReplEditor replEditor);
 			return replEditor;

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,6 +35,6 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// <summary>
 		/// Gets the source tab content or null
 		/// </summary>
-		DocumentTabContent SourceContent { get; }
+		DocumentTabContent? SourceContent { get; }
 	}
 }

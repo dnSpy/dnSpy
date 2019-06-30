@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,7 +20,7 @@
 using System.Diagnostics.Tracing;
 
 namespace dnSpy.Contracts.ETW {
-#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 	[EventSource(Name = "dnSpy")]
 	public sealed class DnSpyEventSource : EventSource {
 		public static readonly DnSpyEventSource Log = new DnSpyEventSource();
@@ -55,6 +55,11 @@ namespace dnSpy.Contracts.ETW {
 		public void ShowDocumentTabContentStart() => WriteEvent(11);
 		[Event(12)]
 		public void ShowDocumentTabContentStop() => WriteEvent(12);
+
+		[Event(13)]
+		public void EditCodePatchModuleStart(string Filename) => WriteEvent(13, Filename);
+		[Event(14)]
+		public void EditCodePatchModuleStop(string Filename) => WriteEvent(14, Filename);
 	}
-#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

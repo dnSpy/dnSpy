@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,6 +35,6 @@ namespace dnSpy.Contracts.Command {
 		/// <param name="id">ID</param>
 		/// <param name="arguments">Arguments or null</param>
 		/// <returns></returns>
-		public static CommandInfo ToCommandInfo(this TextReferenceIds id, object arguments) => new CommandInfo(CommandConstants.TextReferenceGroup, (int)id, arguments);
+		public static CommandInfo ToCommandInfo(this TextReferenceIds id, object? arguments) => new CommandInfo(CommandConstants.TextReferenceGroup, (int)id, arguments);
 	}
 }

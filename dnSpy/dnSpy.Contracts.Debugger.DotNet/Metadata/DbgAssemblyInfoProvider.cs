@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,7 +29,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="module">A module in some assembly</param>
 		/// <returns></returns>
-		public DbgModule GetManifestModule(DbgModule module) => GetAssemblyModules(module).FirstOrDefault();
+		public DbgModule? GetManifestModule(DbgModule module) => GetAssemblyModules(module).FirstOrDefault();
 
 		/// <summary>
 		/// Gets all modules in an assembly or an empty array if it's not part of an assembly.

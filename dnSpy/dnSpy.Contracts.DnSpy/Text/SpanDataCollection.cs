@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -53,7 +53,7 @@ namespace dnSpy.Contracts.Text {
 		/// </summary>
 		/// <param name="spanDataArray">Span and data collection</param>
 		public SpanDataCollection(SpanData<TData>[] spanDataArray) {
-			if (spanDataArray == null)
+			if (spanDataArray is null)
 				throw new ArgumentNullException(nameof(spanDataArray));
 #if DEBUG
 			for (int i = 1; i < spanDataArray.Length; i++) {
@@ -196,7 +196,7 @@ namespace dnSpy.Contracts.Text {
 	/// Span and data
 	/// </summary>
 	/// <typeparam name="TData">Type of data</typeparam>
-	public struct SpanData<TData> {
+	public readonly struct SpanData<TData> {
 		/// <summary>
 		/// Gets the span
 		/// </summary>
@@ -228,7 +228,7 @@ namespace dnSpy.Contracts.Text {
 	/// Builds a <see cref="SpanDataCollection{TData}"/>
 	/// </summary>
 	/// <typeparam name="TData">Type of data</typeparam>
-	public struct SpanDataCollectionBuilder<TData> {
+	public readonly struct SpanDataCollectionBuilder<TData> {
 		readonly List<SpanData<TData>> list;
 
 		/// <summary>

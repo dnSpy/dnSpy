@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -45,11 +45,11 @@ namespace dnSpy.Text.Tagging {
 
 			var type = typeof(T);
 			foreach (var info in textViewTaggerProviders) {
-				if (info.Metadata.TextViewRoles != null && !textView.Roles.ContainsAny(info.Metadata.TextViewRoles))
+				if (!(info.Metadata.TextViewRoles is null) && !textView.Roles.ContainsAny(info.Metadata.TextViewRoles))
 					continue;
 				if (CanCreateTagger(contentType, type, info.Metadata.ContentTypes, info.Metadata.TagTypes)) {
 					var tagger = info.Value.CreateTagger<T>(textView, textBuffer);
-					if (tagger != null)
+					if (!(tagger is null))
 						yield return tagger;
 				}
 			}
@@ -60,7 +60,7 @@ namespace dnSpy.Text.Tagging {
 			foreach (var info in textBufferTaggerProviders) {
 				if (CanCreateTagger(contentType, type, info.Metadata.ContentTypes, info.Metadata.TagTypes)) {
 					var tagger = info.Value.CreateTagger<T>(textBuffer);
-					if (tagger != null)
+					if (!(tagger is null))
 						yield return tagger;
 				}
 			}

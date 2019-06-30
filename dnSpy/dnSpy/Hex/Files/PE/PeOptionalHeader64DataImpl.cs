@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -125,8 +125,8 @@ namespace dnSpy.Hex.Files.PE {
 			};
 		}
 
-		public static PeOptionalHeader64Data TryCreate(HexBufferFile file, HexPosition position, uint size) {
-			if (file == null)
+		public static PeOptionalHeader64Data? TryCreate(HexBufferFile file, HexPosition position, uint size) {
+			if (file is null)
 				throw new ArgumentNullException(nameof(file));
 			if (size < 0x70)
 				return null;

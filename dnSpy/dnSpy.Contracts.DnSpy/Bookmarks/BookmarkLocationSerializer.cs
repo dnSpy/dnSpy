@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -39,7 +39,7 @@ namespace dnSpy.Contracts.Bookmarks {
 		/// </summary>
 		/// <param name="section">Serialized section</param>
 		/// <returns></returns>
-		public abstract BookmarkLocation Deserialize(ISettingsSection section);
+		public abstract BookmarkLocation? Deserialize(ISettingsSection? section);
 	}
 
 	/// <summary>Metadata</summary>

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -66,7 +66,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		public object ConditionsObject => new FormatterObject<ExceptionVM>(this, PredefinedTextClassifierTags.ExceptionSettingsWindowConditions);
 		internal int Order { get; }
 
-		public ExceptionVM(DbgExceptionSettingsInfo info, IExceptionContext context, int order) {
+		public ExceptionVM(in DbgExceptionSettingsInfo info, IExceptionContext context, int order) {
 			Definition = info.Definition;
 			settings = info.Settings;
 			Context = context ?? throw new ArgumentNullException(nameof(context));
@@ -76,7 +76,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		static bool Equals(ReadOnlyCollection<DbgExceptionConditionSettings> a, ReadOnlyCollection<DbgExceptionConditionSettings> b) {
 			if (a == b)
 				return true;
-			if (a == null || b == null)
+			if (a is null || b is null)
 				return false;
 			if (a.Count != b.Count)
 				return false;

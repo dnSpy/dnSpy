@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,9 +36,9 @@ namespace dnSpy.Hex {
 		protected HexOffsetFormatter(int bitSize, bool lowerCaseHex, string prefix, string suffix, HexOffsetFormat format) {
 			if (bitSize <= 0 || (bitSize % 4) != 0)
 				throw new ArgumentOutOfRangeException(nameof(bitSize));
-			if (prefix == null)
+			if (prefix is null)
 				throw new ArgumentNullException(nameof(prefix));
-			if (suffix == null)
+			if (suffix is null)
 				throw new ArgumentNullException(nameof(suffix));
 			FormattedLength = prefix.Length + bitSize / 4 + suffix.Length;
 			this.prefix = prefix;

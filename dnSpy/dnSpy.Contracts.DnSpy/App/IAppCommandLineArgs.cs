@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.App {
 	/// </summary>
 	public interface IAppCommandLineArgs {
 		/// <summary>Settings filename</summary>
-		string SettingsFilename { get; }
+		string? SettingsFilename { get; }
 
 		/// <summary>Filenames to load</summary>
 		IEnumerable<string> Filenames { get; }
@@ -53,7 +53,7 @@ namespace dnSpy.Contracts.App {
 		bool NewTab { get; }
 
 		/// <summary>Search string or null if none</summary>
-		string SearchText { get; }
+		string? SearchText { get; }
 
 		/// <summary>Search type</summary>
 		string SearchFor { get; }
@@ -79,6 +79,18 @@ namespace dnSpy.Contracts.App {
 		/// <summary>Show start up time</summary>
 		bool ShowStartupTime { get; }
 
+		/// <summary>Attach to this process, unless it's 0</summary>
+		int DebugAttachPid { get; }
+
+		/// <summary>Event handle duplicated into the postmortem debugger process</summary>
+		uint DebugEvent { get; }
+
+		/// <summary>Address of a JIT_DEBUG_INFO structure allocated in the target process' address space (https://docs.microsoft.com/en-us/windows-hardware/drivers/debugger/-jdinfo--use-jit-debug-info-) </summary>
+		ulong JitDebugInfo { get; }
+
+		/// <summary>Attach to this process name, unless it's empty. Can contain wildcards.</summary>
+		string DebugAttachProcess { get; }
+
 		/// <summary>
 		/// Returns true if the argument is present
 		/// </summary>
@@ -91,12 +103,12 @@ namespace dnSpy.Contracts.App {
 		/// </summary>
 		/// <param name="argName">Argument name, eg. <c>--my-arg</c></param>
 		/// <returns></returns>
-		string GetArgumentValue(string argName);
+		string? GetArgumentValue(string argName);
 
 		/// <summary>
 		/// Gets all user arguments and values
 		/// </summary>
 		/// <returns></returns>
-		IEnumerable<Tuple<string, string>> GetArguments();
+		IEnumerable<(string argument, string value)> GetArguments();
 	}
 }

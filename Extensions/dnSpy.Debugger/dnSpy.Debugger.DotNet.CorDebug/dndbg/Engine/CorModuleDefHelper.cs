@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,6 +20,7 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using dndbg.DotNet;
 using dnlib.DotNet;
 using dnlib.IO;
@@ -29,7 +30,7 @@ namespace dndbg.Engine {
 	sealed class CorModuleDefHelper : ICorModuleDefHelper {
 		const ulong FAT_HEADER_SIZE = 3 * 4;
 		readonly DnModule module;
-		ImageSectionHeader[] sectionHeaders;
+		ImageSectionHeader[]? sectionHeaders;
 
 		public CorModuleDefHelper(DnModule module) {
 			this.module = module;
@@ -39,12 +40,12 @@ namespace dndbg.Engine {
 		public IAssembly CorLib {
 			get {
 				var corAsm = module.AppDomain.Assemblies.FirstOrDefault();
-				Debug.Assert(corAsm != null);
-				if (corAsm == null)
+				Debug.Assert(!(corAsm is null));
+				if (corAsm is null)
 					return AssemblyRefUser.CreateMscorlibReferenceCLR20();
 				var corMod = corAsm.Modules.FirstOrDefault();
-				Debug.Assert(corMod != null);
-				if (corMod == null)
+				Debug.Assert(!(corMod is null));
+				if (corMod is null)
 					return AssemblyRefUser.CreateMscorlibReferenceCLR20();
 				return corMod.GetOrCreateCorModuleDef().Assembly;
 			}
@@ -54,7 +55,7 @@ namespace dndbg.Engine {
 		public bool IsInMemory => module.IsInMemory;
 		public bool? IsCorLib => module.Assembly.UniqueIdAppDomain == 0 && module.UniqueIdAppDomain == 0;
 
-		public string Filename {
+		public string? Filename {
 			get {
 				if (module.IsInMemory)
 					return null;
@@ -64,76 +65,81 @@ namespace dndbg.Engine {
 
 		public bool IsManifestModule => module.CorModule.IsManifestModule;
 
-		public IBinaryReader CreateBodyReader(uint bodyRva, uint mdToken) {
+		public bool TryCreateBodyReader(uint bodyRva, uint mdToken, out DataReader reader) {
+			reader = default;
+
 			// bodyRva can be 0 if it's a dynamic module. this.module.Address will also be 0.
 			if (!module.IsDynamic && bodyRva == 0)
-				return null;
+				return false;
 
 			var func = module.CorModule.GetFunctionFromToken(mdToken);
 			var ilCode = func?.ILCode;
-			if (ilCode == null)
-				return null;
+			if (ilCode is null)
+				return false;
+			Debug.Assert(!(func is null));
 			ulong addr = ilCode.Address;
 			if (addr == 0)
-				return null;
+				return false;
 
 			Debug.Assert(addr >= FAT_HEADER_SIZE);
 			if (addr < FAT_HEADER_SIZE)
-				return null;
+				return false;
 
 			if (module.IsDynamic) {
 				// It's always a fat header, see COMDynamicWrite::SetMethodIL() (coreclr/src/vm/comdynamic.cpp)
 				addr -= FAT_HEADER_SIZE;
-				var reader = new ProcessBinaryReader(new CorProcessReader(module.Process), 0);
-				Debug.Assert((reader.Position = (long)addr) == (long)addr);
-				Debug.Assert((reader.ReadByte() & 7) == 3);
-				Debug.Assert((reader.Position = (long)addr + 4) == (long)addr + 4);
-				Debug.Assert(reader.ReadUInt32() == ilCode.Size);
-				reader.Position = (long)addr;
-				return reader;
+				var procReader = new ProcessBinaryReader(new CorProcessReader(module.Process), 0);
+				Debug.Assert((procReader.Position = (long)addr) == (long)addr);
+				Debug.Assert((procReader.ReadByte() & 7) == 3);
+				Debug.Assert((procReader.Position = (long)addr + 4) == (long)addr + 4);
+				Debug.Assert(procReader.ReadUInt32() == ilCode.Size);
+				procReader.Position = (long)addr;
+				reader = new DataReader(new ProcessDataStream(procReader), 0, uint.MaxValue);
+				return true;
 			}
 			else {
 				uint codeSize = ilCode.Size;
 				// The address to the code is returned but we want the header. Figure out whether
 				// it's the 1-byte or fat header.
-				var reader = new ProcessBinaryReader(new CorProcessReader(module.Process), 0);
+				var procReader = new ProcessBinaryReader(new CorProcessReader(module.Process), 0);
 				uint locVarSigTok = func.LocalVarSigToken;
 				bool isBig = codeSize >= 0x40 || (locVarSigTok & 0x00FFFFFF) != 0;
 				if (!isBig) {
-					reader.Position = (long)addr - 1;
-					byte b = reader.ReadByte();
+					procReader.Position = (long)addr - 1;
+					byte b = procReader.ReadByte();
 					var type = b & 7;
 					if ((type == 2 || type == 6) && (b >> 2) == codeSize) {
 						// probably small header
 						isBig = false;
 					}
 					else {
-						reader.Position = (long)addr - (long)FAT_HEADER_SIZE + 4;
-						uint headerCodeSize = reader.ReadUInt32();
-						uint headerLocVarSigTok = reader.ReadUInt32();
+						procReader.Position = (long)addr - (long)FAT_HEADER_SIZE + 4;
+						uint headerCodeSize = procReader.ReadUInt32();
+						uint headerLocVarSigTok = procReader.ReadUInt32();
 						bool valid = headerCodeSize == codeSize &&
 							(locVarSigTok & 0x00FFFFFF) == (headerLocVarSigTok & 0x00FFFFFF) &&
 							((locVarSigTok & 0x00FFFFFF) == 0 || locVarSigTok == headerLocVarSigTok);
 						Debug.Assert(valid);
 						if (!valid)
-							return null;
+							return false;
 						isBig = true;
 					}
 				}
 
-				reader.Position = (long)addr - (long)(isBig ? FAT_HEADER_SIZE : 1);
-				return reader;
+				procReader.Position = (long)addr - (long)(isBig ? FAT_HEADER_SIZE : 1);
+				reader = new DataReader(new ProcessDataStream(procReader), 0, uint.MaxValue);
+				return true;
 			}
 		}
 
-		public byte[] ReadFieldInitialValue(uint fieldRva, uint fdToken, int size) {
+		public byte[]? ReadFieldInitialValue(uint fieldRva, uint fdToken, int size) {
 			if (module.IsDynamic)
 				return null;
 
 			return ReadFromRVA(fieldRva, size);
 		}
 
-		byte[] ReadFromRVA(uint rva, int size) {
+		byte[]? ReadFromRVA(uint rva, int size) {
 			if (module.IsDynamic)
 				return null;
 
@@ -143,12 +149,12 @@ namespace dndbg.Engine {
 				return null;
 
 			var offs = RVAToAddressOffset(rva);
-			if (offs == null)
+			if (offs is null)
 				return null;
 			addr += offs.Value;
 
 			var data = module.Process.CorProcess.ReadMemory(addr, size);
-			Debug.Assert(data != null && data.Length == size);
+			Debug.Assert(!(data is null) && data.Length == size);
 			return data;
 		}
 
@@ -171,7 +177,7 @@ namespace dndbg.Engine {
 
 		ImageSectionHeader[] GetOrCreateSectionHeaders() {
 			var h = sectionHeaders;
-			if (h != null)
+			if (!(h is null))
 				return h;
 
 			try {
@@ -189,14 +195,20 @@ namespace dndbg.Engine {
 			return sectionHeaders = Array.Empty<ImageSectionHeader>();
 		}
 
-		public IImageStream CreateResourceStream(uint offset) {
+		public bool TryCreateResourceStream(uint offset, [NotNullWhenTrue] out DataReaderFactory? dataReaderFactory, out uint resourceOffset, out uint resourceLength) {
 			if (module.IsDynamic) {
 				//TODO: 
-				return null;
+				dataReaderFactory = null;
+				resourceOffset = 0;
+				resourceLength = 0;
+				return false;
 			}
 
 			//TODO: See ModuleDefMD.CreateResourceStream()
-			return null;
+			dataReaderFactory = null;
+			resourceOffset = 0;
+			resourceLength = 0;
+			return false;
 		}
 	}
 }

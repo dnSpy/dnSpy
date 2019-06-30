@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,10 +23,10 @@ using System.Windows.Data;
 
 namespace dnSpy.Language.Intellisense {
 	sealed class FilterToolTipConverter : IMultiValueConverter {
-		public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
+		public object? Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
 			var filterVM = (FilterVM)values[0];
 			var presenter = (CompletionPresenter)values[1];
-			if (filterVM == null || presenter == null)
+			if (filterVM is null || presenter is null)
 				return null;
 			return presenter.GetToolTip(filterVM);
 		}

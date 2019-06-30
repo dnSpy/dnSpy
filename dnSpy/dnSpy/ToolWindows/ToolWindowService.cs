@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -42,7 +42,7 @@ namespace dnSpy.ToolWindows {
 		}
 
 		TabGroupServiceOptions Convert(ToolWindowGroupServiceOptions options) {
-			if (options == null)
+			if (options is null)
 				options = new ToolWindowGroupServiceOptions();
 			return new TabGroupServiceOptions {
 				TabControlStyle = options.TabControlStyle ?? "ToolWindowGroupTabControlStyle",
@@ -54,7 +54,7 @@ namespace dnSpy.ToolWindows {
 		sealed class InitializeContextMenuHelper {
 			readonly Guid tabGroupGuid;
 
-			public ToolWindowGroupService ToolWindowGroupService { get; set; }
+			public ToolWindowGroupService? ToolWindowGroupService { get; set; }
 
 			public InitializeContextMenuHelper(Guid tabGroupGuid) => this.tabGroupGuid = tabGroupGuid;
 
@@ -70,11 +70,11 @@ namespace dnSpy.ToolWindows {
 				}
 
 				public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsProviderArgs args) {
-					Debug.Assert(owner.ToolWindowGroupService != null);
-					if (owner.ToolWindowGroupService != null) {
+					Debug.Assert(!(owner.ToolWindowGroupService is null));
+					if (!(owner.ToolWindowGroupService is null)) {
 						var twg = owner.ToolWindowGroupService.GetToolWindowGroup(tabGroup);
-						Debug.Assert(twg != null);
-						if (twg != null)
+						Debug.Assert(!(twg is null));
+						if (!(twg is null))
 							yield return new GuidObject(MenuConstants.GUIDOBJ_TOOLWINDOWGROUP_GUID, twg);
 					}
 				}

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2014-2017 de4dot@gmail.com
+/*
+    Copyright (C) 2014-2019 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,7 +23,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
 using dnSpy.Contracts.Debugger.Code;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Debugger.Text;
 
 namespace dnSpy.Debugger.Breakpoints.Code {
 	abstract class DbgBreakpointLocationFormatterService {
@@ -39,13 +39,13 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			this.dbgBreakpointLocationFormatterProviders = dbgBreakpointLocationFormatterProviders.ToArray();
 
 		public override DbgBreakpointLocationFormatter GetFormatter(DbgCodeLocation location) {
-			if (location == null)
+			if (location is null)
 				throw new ArgumentNullException(nameof(location));
 			var type = location.Type;
 			foreach (var lz in dbgBreakpointLocationFormatterProviders) {
 				if (Array.IndexOf(lz.Metadata.Types, type) >= 0) {
 					var formatter = lz.Value.Create(location);
-					if (formatter != null)
+					if (!(formatter is null))
 						return formatter;
 				}
 			}
@@ -56,8 +56,8 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 	sealed class NullDbgBreakpointLocationFormatter : DbgBreakpointLocationFormatter {
 		public static readonly NullDbgBreakpointLocationFormatter Instance = new NullDbgBreakpointLocationFormatter();
 		NullDbgBreakpointLocationFormatter() { }
-		public override void WriteName(ITextColorWriter output, DbgBreakpointLocationFormatterOptions options) { }
-		public override void WriteModule(ITextColorWriter output) { }
+		public override void WriteName(IDbgTextWriter output, DbgBreakpointLocationFormatterOptions options) { }
+		public override void WriteModule(IDbgTextWriter output) { }
 		public override void Dispose() { }
 	}
 }
