@@ -355,7 +355,7 @@ namespace dnSpy.Documents.TreeView {
 
 		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) {
 			if ((options & DocumentNodeWriteOptions.ToolTip) != 0) {
-				WriteMemberRef(output, decompiler, MethodRef);
+				WriteMemberRef(output, decompiler, MethodRef.ResolveMethodDef() ?? MethodRef);
 				output.WriteLine();
 				WriteScope(output, MethodRef.DeclaringType.Scope);
 			}
@@ -405,7 +405,7 @@ namespace dnSpy.Documents.TreeView {
 
 		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) {
 			if ((options & DocumentNodeWriteOptions.ToolTip) != 0) {
-				WriteMemberRef(output, decompiler, PropertyRef);
+				WriteMemberRef(output, decompiler, TryResolveDef(out var property, out _) ? (IMemberRef)property : PropertyRef);
 				output.WriteLine();
 				WriteScope(output, PropertyRef.DeclaringType.Scope);
 			}
@@ -451,7 +451,7 @@ namespace dnSpy.Documents.TreeView {
 
 		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) {
 			if ((options & DocumentNodeWriteOptions.ToolTip) != 0) {
-				WriteMemberRef(output, decompiler, EventRef);
+				WriteMemberRef(output, decompiler, TryResolveDef(out var @event, out _) ? (IMemberRef)@event : EventRef);
 				output.WriteLine();
 				WriteScope(output, EventRef.DeclaringType.Scope);
 			}
@@ -481,7 +481,7 @@ namespace dnSpy.Documents.TreeView {
 
 		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) {
 			if ((options & DocumentNodeWriteOptions.ToolTip) != 0) {
-				WriteMemberRef(output, decompiler, FieldRef);
+				WriteMemberRef(output, decompiler, (IMemberRef)FieldRef.ResolveFieldDef() ?? FieldRef);
 				output.WriteLine();
 				WriteScope(output, FieldRef.DeclaringType.Scope);
 			}
