@@ -20,7 +20,6 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Text;
 
 namespace AppHostPatcher {
@@ -35,7 +34,9 @@ namespace AppHostPatcher {
 		const int maxPathBytes = 1024;
 
 		static string ChangeExecutableExtension(string apphostExe) =>
-			RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? Path.ChangeExtension(apphostExe, ".dll") : apphostExe + ".dll";
+			// Windows apphosts have an .exe extension. Don't call Path.ChangeExtension() unless it's guaranteed
+			// to have an .exe extension, eg. 'some.file' => 'some.file.dll', not 'some.dll'
+			apphostExe.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) ? Path.ChangeExtension(apphostExe, ".dll") : apphostExe + ".dll";
 
 		static int Main(string[] args) {
 			try {

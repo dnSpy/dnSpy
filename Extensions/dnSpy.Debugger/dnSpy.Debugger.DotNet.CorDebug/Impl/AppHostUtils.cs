@@ -21,7 +21,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using dnSpy.Debugger.DotNet.CorDebug.Utilities;
@@ -57,14 +56,16 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			// to override this path so it should be identical to apphostname with a dll extension,
 			// unless someone patched the apphost exe (eg. dnSpy).
 
-			dllFilename = null;
-			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
-				if (!StringComparer.OrdinalIgnoreCase.Equals(Path.GetExtension(filename), ".exe"))
-					return false;
-				dllFilename = Path.ChangeExtension(filename, "dll");
-			}
-			else
+			// Windows apphosts have an .exe extension. Don't call Path.ChangeExtension() unless it's guaranteed
+			// to have an .exe extension, eg. 'some.file' => 'some.file.dll', not 'some.dll'
+			if (filename.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
+				dllFilename = Path.ChangeExtension(filename, ".dll");
+			else if (!filename.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
 				dllFilename = filename + ".dll";
+			else {
+				dllFilename = null;
+				return false;
+			}
 			if (!File.Exists(dllFilename))
 				return false;
 			if (PortableExecutableFileHelpers.IsPE(filename, out bool isExe, out bool hasDotNetMetadata) && (!isExe || hasDotNetMetadata))
