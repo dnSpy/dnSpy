@@ -78,9 +78,15 @@ namespace AppHostInfoGenerator {
 			"2.0.0-preview1-002111-00",
 		};
 		const string NuGetPackageDownloadUrlFormatString = "https://www.nuget.org/api/v2/package/{0}/{1}";
+		const string TizenNuGetPackageDownloadUrlFormatString = "https://tizen.myget.org/F/dotnet-core/api/v2/package/{0}/{1}";
 		static readonly byte[] appHostRelPathHash = Encoding.ASCII.GetBytes("c3ab8ff13720e8ad9047dd39466b3c89" + "74e592c2fa383d4a3960714caef0c4f2");
 		const int HashSize = 0x2000;
 		const int MinHashSize = 0x800;
+
+		enum NuGetSource {
+			NuGet,
+			Tizen,
+		}
 
 		static int Main(string[] args) {
 			try {
@@ -95,7 +101,7 @@ namespace AppHostInfoGenerator {
 					Console.WriteLine($"Runtime version: {version}");
 
 					byte[] fileData;
-					fileData = DownloadNuGetPackage("Microsoft.NETCore.DotNetAppHost", version);
+					fileData = DownloadNuGetPackage("Microsoft.NETCore.DotNetAppHost", version, NuGetSource.NuGet);
 					using (var zip = new ZipArchive(new MemoryStream(fileData), ZipArchiveMode.Read, leaveOpen: false)) {
 						var runtimeJsonString = GetFileAsString(zip, "runtime.json");
 						var runtimeJson = (JObject)JsonConvert.DeserializeObject(runtimeJsonString);
@@ -116,11 +122,23 @@ namespace AppHostInfoGenerator {
 							var runtimePackageVersion = (string)((JValue)dotNetAppHostProperty.Value).Value;
 							Console.WriteLine();
 							Console.WriteLine($"{runtimePackageName} {runtimePackageVersion}");
-							if (!TryDownloadNuGetPackage(runtimePackageName, runtimePackageVersion, out var ridData)) {
-								var error = $"***ERROR: 404 NOT FOUND: Couldn't download {runtimePackageName} = {runtimePackageVersion}";
-								errors.Add(error);
-								Console.WriteLine(error);
-								continue;
+							NuGetSource nugetSource;
+							if (runtimeName.StartsWith("tizen.", StringComparison.Ordinal))
+								nugetSource = NuGetSource.Tizen;
+							else
+								nugetSource = NuGetSource.NuGet;
+							bool couldDownload = TryDownloadNuGetPackage(runtimePackageName, runtimePackageVersion, nugetSource, out var ridData);
+							if (!couldDownload) {
+								if (nugetSource == NuGetSource.Tizen) {
+									nugetSource = NuGetSource.NuGet;
+									couldDownload = TryDownloadNuGetPackage(runtimePackageName, runtimePackageVersion, nugetSource, out ridData);
+								}
+								if (!couldDownload) {
+									var error = $"***ERROR: 404 NOT FOUND: Couldn't download {runtimePackageName} = {runtimePackageVersion}";
+									errors.Add(error);
+									Console.WriteLine(error);
+									continue;
+								}
 							}
 							using (var ridZip = new ZipArchive(new MemoryStream(ridData), ZipArchiveMode.Read, leaveOpen: false)) {
 								var appHostEntries = GetAppHostEntries(ridZip).ToArray();
@@ -393,16 +411,27 @@ namespace AppHostInfoGenerator {
 			return true;
 		}
 
-		static byte[] DownloadNuGetPackage(string packageName, string version) {
-			var url = string.Format(NuGetPackageDownloadUrlFormatString, packageName, version);
+		static byte[] DownloadNuGetPackage(string packageName, string version, NuGetSource nugetSource) {
+			string formatString;
+			switch (nugetSource) {
+			case NuGetSource.NuGet:
+				formatString = NuGetPackageDownloadUrlFormatString;
+				break;
+			case NuGetSource.Tizen:
+				formatString = TizenNuGetPackageDownloadUrlFormatString;
+				break;
+			default:
+				throw new ArgumentOutOfRangeException(nameof(nugetSource));
+			}
+			var url = string.Format(formatString, packageName, version);
 			Console.WriteLine($"Downloading {url}");
 			using (var wc = new WebClient())
 				return wc.DownloadData(url);
 		}
 
-		static bool TryDownloadNuGetPackage(string packageName, string version, [NotNullWhenTrue] out byte[]? data) {
+		static bool TryDownloadNuGetPackage(string packageName, string version, NuGetSource nugetSource, [NotNullWhenTrue] out byte[]? data) {
 			try {
-				data = DownloadNuGetPackage(packageName, version);
+				data = DownloadNuGetPackage(packageName, version, nugetSource);
 				return true;
 			}
 			catch (WebException wex) when (wex.Response is HttpWebResponse responce && responce.StatusCode == HttpStatusCode.NotFound) {
