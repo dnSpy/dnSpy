@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using dnlib.DotNet;
@@ -31,12 +32,45 @@ namespace dnSpy.Analyzer.TreeNodes {
 	sealed class MethodUsedByNode : SearchNode {
 		readonly MethodDef analyzedMethod;
 		readonly bool isSetter;
+		readonly UTF8String? implMapName;
+		readonly string? implMapModule;
 		PropertyDef? property;
 		ConcurrentDictionary<MethodDef, int>? foundMethods;
 
 		public MethodUsedByNode(MethodDef analyzedMethod, bool isSetter) {
 			this.analyzedMethod = analyzedMethod ?? throw new ArgumentNullException(nameof(analyzedMethod));
 			this.isSetter = isSetter;
+			if (analyzedMethod.ImplMap is ImplMap implMap) {
+				implMapName = GetDllImportMethodName(analyzedMethod, implMap);
+				implMapModule = NormalizeModuleName(implMap.Module?.Name);
+			}
+		}
+
+		static UTF8String GetDllImportMethodName(MethodDef method, ImplMap implMap) {
+			if (!UTF8String.IsNullOrEmpty(implMap.Name))
+				return implMap.Name;
+			return method.Name;
+		}
+
+		static string NormalizeModuleName(string name) {
+			if (string.IsNullOrEmpty(name))
+				return string.Empty;
+			if (name.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
+				name = name.Substring(0, name.Length - 4);
+			else {
+				if (name.StartsWith("lib", StringComparison.Ordinal))
+					name = name.Substring(3);
+
+				if (name.EndsWith(".so", StringComparison.Ordinal))
+					name = name.Substring(0, name.Length - 3);
+				else if (name.EndsWith(".dylib", StringComparison.OrdinalIgnoreCase))
+					name = name.Substring(0, name.Length - 6);
+				else if (name.EndsWith(".a", StringComparison.Ordinal))
+					name = name.Substring(0, name.Length - 2);
+				else if (name.EndsWith(".sl", StringComparison.Ordinal))
+					name = name.Substring(0, name.Length - 3);
+			}
+			return name;
 		}
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
@@ -48,8 +82,13 @@ namespace dnSpy.Analyzer.TreeNodes {
 			if (isSetter)
 				property = analyzedMethod.DeclaringType.Properties.FirstOrDefault(a => a.SetMethod == analyzedMethod);
 
-			var includeAllModules = !(property is null) && CustomAttributesUtils.IsPseudoCustomAttributeType(analyzedMethod.DeclaringType);
-			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNodeData>(Context.DocumentService, analyzedMethod, FindReferencesInType, includeAllModules);
+			var includeAllModules = (!(property is null) && CustomAttributesUtils.IsPseudoCustomAttributeType(analyzedMethod.DeclaringType)) || !(implMapName is null);
+			var options = ScopedWhereUsedAnalyzerOptions.None;
+			if (includeAllModules)
+				options |= ScopedWhereUsedAnalyzerOptions.IncludeAllModules;
+			if (!(implMapName is null))
+				options |= ScopedWhereUsedAnalyzerOptions.ForcePublic;
+			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNodeData>(Context.DocumentService, analyzedMethod, FindReferencesInType, options);
 			foreach (var child in analyzer.PerformAnalysis(ct)) {
 				yield return child;
 			}
@@ -75,12 +114,27 @@ namespace dnSpy.Analyzer.TreeNodes {
 				if (!method.HasBody)
 					continue;
 				Instruction? foundInstr = null;
-				foreach (Instruction instr in method.Body.Instructions) {
-					if (instr.Operand is IMethod mr && !mr.IsField && mr.Name == name &&
-						Helpers.IsReferencedBy(analyzedMethod.DeclaringType, mr.DeclaringType) &&
-						CheckEquals(mr.ResolveMethodDef(), analyzedMethod)) {
-						foundInstr = instr;
-						break;
+				if (!(implMapName is null)) {
+					foreach (var instr in method.Body.Instructions) {
+						if (instr.Operand is IMethod mr && !mr.IsField &&
+							mr.ResolveMethodDef() is MethodDef md &&
+							// DllImport methods are the same if module + func name are identical
+							md?.ImplMap is ImplMap otherImplMap &&
+							implMapName == GetDllImportMethodName(md, otherImplMap) &&
+							StringComparer.OrdinalIgnoreCase.Equals(implMapModule, NormalizeModuleName(otherImplMap.Module?.Name))) {
+							foundInstr = instr;
+							break;
+						}
+					}
+				}
+				else {
+					foreach (var instr in method.Body.Instructions) {
+						if (instr.Operand is IMethod mr && !mr.IsField && mr.Name == name &&
+							Helpers.IsReferencedBy(analyzedMethod.DeclaringType, mr.DeclaringType) &&
+							CheckEquals(mr.ResolveMethodDef(), analyzedMethod)) {
+							foundInstr = instr;
+							break;
+						}
 					}
 				}
 

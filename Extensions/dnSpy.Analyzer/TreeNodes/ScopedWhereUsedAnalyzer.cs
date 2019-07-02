@@ -25,6 +25,22 @@ using dnlib.DotNet;
 using dnSpy.Contracts.Documents;
 
 namespace dnSpy.Analyzer.TreeNodes {
+	[Flags]
+	enum ScopedWhereUsedAnalyzerOptions {
+		None						= 0,
+
+		/// <summary>
+		/// Search all modules, eg. used if it's a type opted in to type equivalence, or DllImport methods, or COM types/members.
+		/// </summary>
+		IncludeAllModules			= 0x00000001,
+
+		/// <summary>
+		/// Force accessibility to public, eg. used by DllImport methods since DllImport methods with
+		/// the same name and module are considered to be the same method.
+		/// </summary>
+		ForcePublic					= 0x00000002,
+	}
+
 	/// <summary>
 	/// Determines the accessibility domain of a member for where-used analysis.
 	/// </summary>
@@ -32,7 +48,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		readonly IDsDocumentService documentService;
 		readonly TypeDef analyzedType;
 		readonly List<ModuleDef> allModules;
-		readonly bool includeAllModules;
+		readonly ScopedWhereUsedAnalyzerOptions options;
 		TypeDef typeScope;
 
 		internal List<ModuleDef> AllModules => allModules;
@@ -41,34 +57,36 @@ namespace dnSpy.Analyzer.TreeNodes {
 		Accessibility typeAccessibility = Accessibility.Public;
 		readonly Func<TypeDef, IEnumerable<T>> typeAnalysisFunction;
 
-		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, TypeDef analyzedType, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction, bool includeAllModules = false) {
+		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, TypeDef analyzedType, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction, ScopedWhereUsedAnalyzerOptions options = ScopedWhereUsedAnalyzerOptions.None) {
 			this.analyzedType = analyzedType;
 			typeScope = analyzedType;
 			this.typeAnalysisFunction = typeAnalysisFunction;
 			this.documentService = documentService;
 			allModules = new List<ModuleDef>();
-			this.includeAllModules = includeAllModules;
+			this.options = options;
 		}
 
-		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, MethodDef method, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction, bool includeAllModules = false)
-			: this(documentService, method.DeclaringType, typeAnalysisFunction, includeAllModules) => memberAccessibility = GetMethodAccessibility(method);
+		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, MethodDef method, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction, ScopedWhereUsedAnalyzerOptions options = ScopedWhereUsedAnalyzerOptions.None)
+			: this(documentService, method.DeclaringType, typeAnalysisFunction, options) => memberAccessibility = GetMethodAccessibility(method, options);
 
-		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, PropertyDef property, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction, bool includeAllModules = false)
-			: this(documentService, property.DeclaringType, typeAnalysisFunction, includeAllModules) {
-			Accessibility getterAccessibility = (property.GetMethod is null) ? Accessibility.Private : GetMethodAccessibility(property.GetMethod);
-			Accessibility setterAccessibility = (property.SetMethod is null) ? Accessibility.Private : GetMethodAccessibility(property.SetMethod);
+		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, PropertyDef property, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction, ScopedWhereUsedAnalyzerOptions options = ScopedWhereUsedAnalyzerOptions.None)
+			: this(documentService, property.DeclaringType, typeAnalysisFunction, options) {
+			var getterAccessibility = property.GetMethod is null ? Accessibility.Private : GetMethodAccessibility(property.GetMethod, options);
+			var setterAccessibility = property.SetMethod is null ? Accessibility.Private : GetMethodAccessibility(property.SetMethod, options);
 			memberAccessibility = (Accessibility)Math.Max((int)getterAccessibility, (int)setterAccessibility);
 		}
 
-		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, EventDef eventDef, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction)
-			: this(documentService, eventDef.DeclaringType, typeAnalysisFunction) =>
-			// we only have to check the accessibility of the the get method
-			// [CLS Rule 30: The accessibility of an event and of its accessors shall be identical.]
-			memberAccessibility = GetMethodAccessibility(eventDef.AddMethod);
+		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, EventDef eventDef, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction, ScopedWhereUsedAnalyzerOptions options = ScopedWhereUsedAnalyzerOptions.None)
+			: this(documentService, eventDef.DeclaringType, typeAnalysisFunction, options) {
+			var adderAccessibility = eventDef.AddMethod is null ? Accessibility.Private : GetMethodAccessibility(eventDef.AddMethod, options);
+			var removerAccessibility = eventDef.RemoveMethod is null ? Accessibility.Private : GetMethodAccessibility(eventDef.RemoveMethod, options);
+			var invokerAccessibility = eventDef.InvokeMethod is null ? Accessibility.Private : GetMethodAccessibility(eventDef.InvokeMethod, options);
+			memberAccessibility = (Accessibility)Math.Max(Math.Max((int)adderAccessibility, (int)removerAccessibility), (int)invokerAccessibility);
+		}
 
-		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, FieldDef field, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction, bool includeAllModules = false)
-			: this(documentService, field.DeclaringType, typeAnalysisFunction, includeAllModules) {
-			switch (field.Attributes & FieldAttributes.FieldAccessMask) {
+		public ScopedWhereUsedAnalyzer(IDsDocumentService documentService, FieldDef field, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction, ScopedWhereUsedAnalyzerOptions options = ScopedWhereUsedAnalyzerOptions.None)
+			: this(documentService, field.DeclaringType, typeAnalysisFunction, options) {
+			switch ((options & ScopedWhereUsedAnalyzerOptions.ForcePublic) != 0 ? FieldAttributes.Public : field.Attributes & FieldAttributes.FieldAccessMask) {
 			case FieldAttributes.Private:
 			default:
 				memberAccessibility = Accessibility.Private;
@@ -92,9 +110,11 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 		}
 
-		Accessibility GetMethodAccessibility(MethodDef method) {
+		Accessibility GetMethodAccessibility(MethodDef method, ScopedWhereUsedAnalyzerOptions options) {
 			if (method is null)
 				return 0;
+			if ((options & ScopedWhereUsedAnalyzerOptions.ForcePublic) != 0)
+				return Accessibility.Public;
 			Accessibility accessibility;
 			switch (method.Attributes & MethodAttributes.MemberAccessMask) {
 			case MethodAttributes.Private:
@@ -152,13 +172,21 @@ namespace dnSpy.Analyzer.TreeNodes {
 				typeScope = typeScope.DeclaringType;
 			}
 
-			if (typeScope.IsNotPublic &&
+			if (GetTypeAccessibility(typeScope) == Accessibility.Internal &&
 				((int)typeAccessibility > (int)Accessibility.Internal)) {
 				typeAccessibility = Accessibility.Internal;
 			}
 		}
 
-		static Accessibility GetNestedTypeAccessibility(TypeDef type) {
+		Accessibility GetTypeAccessibility(TypeDef type) {
+			if ((options & ScopedWhereUsedAnalyzerOptions.ForcePublic) != 0)
+				return Accessibility.Public;
+			return type.IsNotPublic ? Accessibility.Internal : Accessibility.Public;
+		}
+
+		Accessibility GetNestedTypeAccessibility(TypeDef type) {
+			if ((options & ScopedWhereUsedAnalyzerOptions.ForcePublic) != 0)
+				return Accessibility.Public;
 			Accessibility result;
 			switch (type.Attributes & TypeAttributes.VisibilityMask) {
 			case TypeAttributes.NestedPublic:
@@ -199,7 +227,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		IEnumerable<T> FindReferencesInAssemblyAndFriends(CancellationToken ct) {
 			IEnumerable<ModuleDef> modules;
-			if (includeAllModules)
+			if ((options & ScopedWhereUsedAnalyzerOptions.IncludeAllModules) != 0)
 				modules = documentService.GetDocuments().Select(a => a.ModuleDef).OfType<ModuleDef>();
 			else if (TIAHelper.IsTypeDefEquivalent(analyzedType)) {
 				var analyzedTypes = new List<TypeDef> { analyzedType };
@@ -214,7 +242,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		IEnumerable<T> FindReferencesGlobal(CancellationToken ct) {
 			IEnumerable<ModuleDef> modules;
-			if (includeAllModules)
+			if ((options & ScopedWhereUsedAnalyzerOptions.IncludeAllModules) != 0)
 				modules = documentService.GetDocuments().Select(a => a.ModuleDef).OfType<ModuleDef>();
 			else if (TIAHelper.IsTypeDefEquivalent(analyzedType)) {
 				var analyzedTypes = new List<TypeDef> { analyzedType };

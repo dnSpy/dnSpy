@@ -36,7 +36,12 @@ namespace dnSpy.Analyzer.TreeNodes {
 			output.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.UsedByTreeNode);
 
 		protected override IEnumerable<AnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
-			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNodeData>(Context.DocumentService, analyzedType, FindTypeUsage, includeAllModules: CustomAttributesUtils.IsPseudoCustomAttributeType(analyzedType) || CustomAttributesUtils.IsPseudoCustomAttributeOtherType(analyzedType));
+			bool includeAllModules = CustomAttributesUtils.IsPseudoCustomAttributeType(analyzedType) ||
+				CustomAttributesUtils.IsPseudoCustomAttributeOtherType(analyzedType);
+			var options = ScopedWhereUsedAnalyzerOptions.None;
+			if (includeAllModules)
+				options |= ScopedWhereUsedAnalyzerOptions.IncludeAllModules;
+			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNodeData>(Context.DocumentService, analyzedType, FindTypeUsage, options);
 			return analyzer.PerformAnalysis(ct)
 				.Cast<EntityNode>()
 				.Where(n => n.Member!.DeclaringType != analyzedType)

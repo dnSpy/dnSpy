@@ -46,7 +46,10 @@ namespace dnSpy.Analyzer.TreeNodes {
 			foundMethods = new Lazy<Hashtable>(LazyThreadSafetyMode.ExecutionAndPublication);
 
 			var includeAllModules = showWrites && CustomAttributesUtils.IsPseudoCustomAttributeType(analyzedField.DeclaringType);
-			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNodeData>(Context.DocumentService, analyzedField, FindReferencesInType, includeAllModules);
+			var options = ScopedWhereUsedAnalyzerOptions.None;
+			if (includeAllModules)
+				options |= ScopedWhereUsedAnalyzerOptions.IncludeAllModules;
+			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNodeData>(Context.DocumentService, analyzedField, FindReferencesInType, options);
 			foreach (var child in analyzer.PerformAnalysis(ct)) {
 				yield return child;
 			}
