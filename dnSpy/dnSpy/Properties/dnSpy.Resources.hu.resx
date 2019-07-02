@@ -2041,7 +2041,7 @@ A szűrő a Szerelvény Böngésző beállításainál módosítható.</value>
     <value>&lt;Ismeretlen&gt;</value>
   </data>
   <data name="TypeReferencesFolder" xml:space="preserve">
-    <value>Type References</value>
+    <value>Típus hivatkozások</value>
   </data>
   <data name="TreeViewEventsFolder" xml:space="preserve">
     <value>Események</value>
@@ -2056,6 +2056,6 @@ A szűrő a Szerelvény Böngésző beállításainál módosítható.</value>
     <value>Tulajdonságok</value>
   </data>
   <data name="TreeViewTypesFolder" xml:space="preserve">
-    <value>Types</value>
+    <value>Típusok</value>
   </data>
 </root>

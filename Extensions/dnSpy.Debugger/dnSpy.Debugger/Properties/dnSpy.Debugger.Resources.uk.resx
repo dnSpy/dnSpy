@@ -1524,9 +1524,9 @@
     <value>Пошук процесу</value>
   </data>
   <data name="DbgSettings_FocusDebuggerWhenProcessBreaks" xml:space="preserve">
-    <value>Bring dnSpy to the foreground when breaking in the debugger</value>
+    <value>Винести dnSpy на перідній фон, коли спрацює точка зупинки в дебагері</value>
   </data>
   <data name="Column_LoadModule" xml:space="preserve">
-    <value>Load</value>
+    <value>Зааантажити</value>
   </data>
 </root>

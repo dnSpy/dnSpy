@@ -2041,7 +2041,7 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>&lt;Unbekannt&gt;</value>
   </data>
   <data name="TypeReferencesFolder" xml:space="preserve">
-    <value>Type References</value>
+    <value>Typverweise</value>
   </data>
   <data name="TreeViewEventsFolder" xml:space="preserve">
     <value>Ereignisse</value>
@@ -2056,6 +2056,6 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Eigenschaften</value>
   </data>
   <data name="TreeViewTypesFolder" xml:space="preserve">
-    <value>Types</value>
+    <value>Typen</value>
   </data>
 </root>

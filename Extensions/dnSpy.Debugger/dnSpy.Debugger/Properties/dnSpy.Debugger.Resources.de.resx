@@ -1528,6 +1528,6 @@ Sind Sie sicher, dass Sie es ausklappen möchten?</value>
     <value>Hole dnSpy in den Vordergrund, wenn der Debugger hält</value>
   </data>
   <data name="Column_LoadModule" xml:space="preserve">
-    <value>Load</value>
+    <value>Lade</value>
   </data>
 </root>

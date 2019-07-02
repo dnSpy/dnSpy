@@ -1864,10 +1864,10 @@
     <value>_Попередня Закладка</value>
   </data>
   <data name="GoToPreviousBookmarkInDocumentCommand" xml:space="preserve">
-    <value>П_опередня закладка в документі</value>
+    <value>П_опередня Закладка в Документі</value>
   </data>
   <data name="GoToPreviousBookmarkWithSameLabelCommand" xml:space="preserve">
-    <value>Попередня Закладка із тою ж Міткою</value>
+    <value>Попередня Закладка із Тою ж Міткою</value>
   </data>
   <data name="ShortCutKeyCtrlK_CtrlK" xml:space="preserve">
     <value>Ctrl+K, Ctrl+K</value>
@@ -1882,7 +1882,7 @@
     <value>Ctrl+K, Ctrl+P</value>
   </data>
   <data name="ToggleBookmarkCommand" xml:space="preserve">
-    <value>Перемикати закладку</value>
+    <value>_Перемикати Закладку</value>
   </data>
   <data name="EditLabelsMsgBoxLabel" xml:space="preserve">
     <value>Мітки</value>
@@ -2038,7 +2038,7 @@
     <value>&lt;Невідомо&gt;</value>
   </data>
   <data name="TypeReferencesFolder" xml:space="preserve">
-    <value>Type References</value>
+    <value>Посилання Типів</value>
   </data>
   <data name="TreeViewEventsFolder" xml:space="preserve">
     <value>Події</value>
@@ -2053,6 +2053,6 @@
     <value>Властивості</value>
   </data>
   <data name="TreeViewTypesFolder" xml:space="preserve">
-    <value>Types</value>
+    <value>Типи</value>
   </data>
 </root>
