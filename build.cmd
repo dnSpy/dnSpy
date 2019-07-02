@@ -11,8 +11,7 @@ REM dotnet publish -c Release -f netcoreapp3.0 -r win-x64 --self-contained
 REM ...add commands to patch apphost and move files to bin sub dir, see below...
 
 echo Building .NET Framework x86 and x64 binaries
-msbuild -v:m -t:Restore -p:Configuration=Release -p:TargetFramework=net472 || goto :error
-msbuild -v:m -t:Build   -p:Configuration=Release -p:TargetFramework=net472 || goto :error
+msbuild -v:m -restore -t:Build -p:Configuration=Release -p:TargetFramework=net472 || goto :error
 REM move all files to a bin sub dir but keep the exe files
 ren dnSpy\dnSpy\bin\Release\net472 bin || goto :error
 mkdir dnSpy\dnSpy\bin\Release\net472 || goto :error
@@ -28,8 +27,7 @@ move dnSpy\dnSpy\bin\Release\net472\bin\dnSpy.Console.exe.config dnSpy\dnSpy\bin
 move dnSpy\dnSpy\bin\Release\net472\bin\dnSpy.Console.pdb dnSpy\dnSpy\bin\Release\net472 || goto :error
 
 echo Building .NET Core x86 binaries
-msbuild -v:m -t:Restore -p:Configuration=Release -p:TargetFramework=netcoreapp3.0 -p:RuntimeIdentifier=win-x86 -p:SelfContained=True || goto :error
-msbuild -v:m -t:Publish -p:Configuration=Release -p:TargetFramework=netcoreapp3.0 -p:RuntimeIdentifier=win-x86 -p:SelfContained=True || goto :error
+msbuild -v:m -restore -t:Publish -p:Configuration=Release -p:TargetFramework=netcoreapp3.0 -p:RuntimeIdentifier=win-x86 -p:SelfContained=True || goto :error
 REM move all files to a bin sub dir but keep the exe apphosts
 ren dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x86\publish tmpbin || goto :error
 mkdir dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x86\publish || goto :error
@@ -41,8 +39,7 @@ Build\AppHostPatcher\bin\Release\net472\AppHostPatcher.exe dnSpy\dnSpy\bin\Relea
 Build\AppHostPatcher\bin\Release\net472\AppHostPatcher.exe dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x86\publish\dnSpy.Console.exe -d bin || goto :error
 
 echo Building .NET Core x64 binaries
-msbuild -v:m -t:Restore -p:Configuration=Release -p:TargetFramework=netcoreapp3.0 -p:RuntimeIdentifier=win-x64 -p:SelfContained=True || goto :error
-msbuild -v:m -t:Publish -p:Configuration=Release -p:TargetFramework=netcoreapp3.0 -p:RuntimeIdentifier=win-x64 -p:SelfContained=True || goto :error
+msbuild -v:m -restore -t:Publish -p:Configuration=Release -p:TargetFramework=netcoreapp3.0 -p:RuntimeIdentifier=win-x64 -p:SelfContained=True || goto :error
 REM move all files to a bin sub dir but keep the exe apphosts
 ren dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x64\publish tmpbin || goto :error
 mkdir dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x64\publish || goto :error
