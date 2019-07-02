@@ -151,6 +151,16 @@ namespace AppHostInfoGenerator {
 									int relPathOffset = GetOffset(appHostData, appHostRelPathHash);
 									if (relPathOffset < 0)
 										throw new InvalidOperationException($"Couldn't get offset of hash in apphost: '{info.entry.FullName}'");
+									bool mustBeZero = false;
+									for (int i = 0; i < AppHostInfo.MaxAppHostRelPathLength; i++) {
+										byte b = appHostData[relPathOffset + i];
+										if (mustBeZero) {
+											if (b != 0)
+												throw new InvalidOperationException($"Not zero padded or the string data is smaller");
+										}
+										else
+											mustBeZero = b == 0;
+									}
 									var exeReader = new BinaryReader(new MemoryStream(appHostData));
 									if (!ExeUtils.TryGetTextSectionInfo(exeReader, out var textOffset, out var textSize))
 										throw new InvalidOperationException("Could not get .text offset/size");
@@ -165,9 +175,41 @@ namespace AppHostInfoGenerator {
 
 				if (newInfos.Count > 0) {
 					Console.WriteLine();
-					Console.WriteLine($"New apphost infos:");
-					foreach (var info in newInfos)
-						Serialize(info);
+					Console.WriteLine($"All apphost infos:");
+					var allInfos = new List<AppHostInfo>(newInfos);
+					allInfos.AddRange(AppHostInfoData.KnownAppHostInfos);
+
+					var stringsTable = new Dictionary<string, uint>(StringComparer.Ordinal);
+					var serializedData = AppHostInfoData.serializedAppHostInfos;
+					if (serializedData.Length > 0) {
+						int o = 0;
+						uint numStrings = AppHostInfoData.DeserializeCompressedUInt32(serializedData, ref o);
+						for (uint i = 0; i < numStrings; i++)
+							stringsTable.Add(AppHostInfoData.DeserializeString(serializedData, ref o), i);
+					}
+
+					foreach (var info in allInfos) {
+						if (!stringsTable.ContainsKey(info.Rid))
+							stringsTable.Add(info.Rid, (uint)stringsTable.Count);
+					}
+					foreach (var info in allInfos) {
+						if (!stringsTable.ContainsKey(info.Version))
+							stringsTable.Add(info.Version, (uint)stringsTable.Count);
+					}
+
+					int expectedStringIndex = 0;
+					SerializeCompressedUInt32((uint)stringsTable.Count, "StringsTableCount");
+					foreach (var kv in stringsTable.OrderBy(a => a.Value)) {
+						if (kv.Value != expectedStringIndex)
+							throw new InvalidOperationException();
+						SerializeString(kv.Key, null);
+						expectedStringIndex++;
+					}
+					foreach (var info in allInfos) {
+						if (info.Rid.Length == 0 || info.Version.Length == 0)
+							throw new InvalidOperationException();
+						Serialize(info, stringsTable);
+					}
 					Console.WriteLine($"{newInfos.Count} new infos");
 					Console.WriteLine("********************************************************");
 					Console.WriteLine($"*** UPDATE {nameof(AppHostInfoData)}.{nameof(AppHostInfoData.SerializedAppHostInfosCount)} from {AppHostInfoData.SerializedAppHostInfosCount} to {newInfos.Count + AppHostInfoData.SerializedAppHostInfosCount}");
@@ -244,10 +286,10 @@ namespace AppHostInfoGenerator {
 			static int ByteArrayGetHashCode(byte[] a) => BitConverter.ToInt32(a, 0);
 		}
 
-		static void Serialize(in AppHostInfo info) {
+		static void Serialize(in AppHostInfo info, Dictionary<string, uint> stringsTable) {
 			Console.WriteLine();
-			SerializeString(info.Rid, nameof(info.Rid));
-			SerializeString(info.Version, nameof(info.Version));
+			SerializeString(info.Rid, nameof(info.Rid), stringsTable);
+			SerializeString(info.Version, nameof(info.Version), stringsTable);
 			SerializeCompressedUInt32(info.RelPathOffset, nameof(info.RelPathOffset));
 			SerializeCompressedUInt32(info.HashDataOffset, nameof(info.HashDataOffset));
 			SerializeCompressedUInt32(info.HashDataSize, nameof(info.HashDataSize));
@@ -256,14 +298,24 @@ namespace AppHostInfoGenerator {
 		}
 		const string serializeIndent = "\t\t\t";
 
-		static void WriteComment(string name, string? origValue) {
-			if (origValue is null)
+		static void WriteComment(string? name, string? origValue) {
+			if (name is null) {
+				if (!(origValue is null))
+					Console.Write($"// {origValue}");
+			}
+			else if (origValue is null)
 				Console.Write($"// {name}");
 			else
 				Console.Write($"// {name} = {origValue}");
 		}
 
-		static void SerializeString(string value, string name) {
+		static void SerializeString(string value, string name, Dictionary<string, uint> stringsTable) {
+			uint index = stringsTable[value];
+			var commentValue = $"string({index}) = {value}";
+			SerializeCompressedUInt32(index, name, commentValue);
+		}
+
+		static void SerializeString(string value, string? name) {
 			var encoding = AppHostInfoData.StringEncoding;
 			var data = encoding.GetBytes(value);
 			if (encoding.GetString(data) != value)
@@ -271,7 +323,7 @@ namespace AppHostInfoGenerator {
 			SerializeByteArray(data, name, value, needLength: true);
 		}
 
-		static void SerializeCompressedUInt32(uint value, string name) {
+		static void SerializeCompressedUInt32(uint value, string name, string? commentValue = null) {
 			Console.Write(serializeIndent);
 
 			if (value <= 0x7F)
@@ -283,7 +335,9 @@ namespace AppHostInfoGenerator {
 			else
 				throw new InvalidOperationException();
 
-			WriteComment(name, "0x" + value.ToString("X8"));
+			if (commentValue is null)
+				commentValue = "0x" + value.ToString("X8");
+			WriteComment(name, commentValue);
 			Console.WriteLine();
 		}
 
@@ -296,7 +350,7 @@ namespace AppHostInfoGenerator {
 			Console.WriteLine();
 		}
 
-		static void SerializeByteArray(byte[] value, string name, string? origValue, bool needLength) {
+		static void SerializeByteArray(byte[] value, string? name, string? origValue, bool needLength) {
 			Console.Write(serializeIndent);
 			if (value.Length > byte.MaxValue)
 				throw new InvalidOperationException();
