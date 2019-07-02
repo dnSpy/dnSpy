@@ -123,7 +123,14 @@ namespace dnSpy.Search {
 			}
 
 			if (o is MethodDef md) {
-				output.Write(Context.Decompiler.MetadataTextColorProvider.GetColor(md), IdentifierEscaper.Escape(md.Name));
+				var methodNameColor = Context.Decompiler.MetadataTextColorProvider.GetColor(md);
+				output.Write(methodNameColor, IdentifierEscaper.Escape(md.Name));
+				if (md.ImplMap is ImplMap implMap && !UTF8String.IsNullOrEmpty(implMap.Name) && implMap.Name != md.Name) {
+					output.WriteSpace();
+					output.Write(BoxedTextColor.Punctuation, "(");
+					output.Write(methodNameColor, IdentifierEscaper.Escape(implMap.Name));
+					output.Write(BoxedTextColor.Punctuation, ")");
+				}
 				return;
 			}
 
