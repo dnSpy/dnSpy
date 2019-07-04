@@ -33,12 +33,31 @@ using Mono.Debugger.Soft;
 
 namespace dnSpy.Debugger.DotNet.Mono.Impl {
 	sealed partial class DbgEngineImpl {
-		internal int? OffsetToStringData => objectConstants?.OffsetToStringData;
-		internal int? OffsetToArrayData => objectConstants?.OffsetToArrayData;
+		internal int? OffsetToStringData {
+			get {
+				debuggerThread.VerifyAccess();
+				InitializeObjectConstantsCore_MonoDebug();
+				return objectConstants?.OffsetToStringData;
+			}
+		}
+
+		internal int? OffsetToArrayData {
+			get {
+				debuggerThread.VerifyAccess();
+				InitializeObjectConstantsCore_MonoDebug();
+				return objectConstants?.OffsetToArrayData;
+			}
+		}
+
 		ObjectConstants? objectConstants;
 		bool canInitializeObjectConstants;
 
 		void InitializeObjectConstants_MonoDebug() {
+			// Don't do a thing, it sometimes hangs somewhere in mono. It's less likely to
+			// hang if the process has run for a few seconds.
+			// The properties above will call the next method.
+		}
+		void InitializeObjectConstantsCore_MonoDebug() {
 			debuggerThread.VerifyAccess();
 			if (!canInitializeObjectConstants)
 				return;
