@@ -20,10 +20,16 @@
 using System.Diagnostics;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
+#if APPHOSTINFO_STRINGS
 	[DebuggerDisplay("{Rid} {Version} Offset={RelPathOffset}")]
+#else
+	[DebuggerDisplay("Offset={RelPathOffset}")]
+#endif
 	readonly struct AppHostInfo {
+#if APPHOSTINFO_STRINGS
 		public readonly string Rid;
 		public readonly string Version;
+#endif
 		public readonly uint RelPathOffset;
 		public readonly uint HashDataOffset;
 		public readonly uint HashDataSize;
@@ -35,9 +41,15 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		public const int MaxAppHostRelPathLength = 1024;
 		public const int DefaultHashSize = 0x2000;
 
-		public AppHostInfo(string rid, string version, uint relPathOffset, uint hashDataOffset, uint hashDataSize, byte[] hash, byte lastByte) {
+		public AppHostInfo(
+#if APPHOSTINFO_STRINGS
+			string rid, string version,
+#endif
+			uint relPathOffset, uint hashDataOffset, uint hashDataSize, byte[] hash, byte lastByte) {
+#if APPHOSTINFO_STRINGS
 			Rid = rid;
 			Version = version;
+#endif
 			RelPathOffset = relPathOffset;
 			HashDataOffset = hashDataOffset;
 			HashDataSize = hashDataSize;

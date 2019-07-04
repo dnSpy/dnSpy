@@ -186,6 +186,8 @@ namespace AppHostInfoGenerator {
 				if (newInfos.Count > 0) {
 					Console.WriteLine();
 					Console.WriteLine($"All apphost infos:");
+					var addedInfos = new HashSet<AppHostInfo>(AppHostInfoDupeEqualityComparer.Instance);
+
 					var allInfos = new List<AppHostInfo>(newInfos);
 					allInfos.AddRange(AppHostInfoData.KnownAppHostInfos);
 
@@ -196,6 +198,11 @@ namespace AppHostInfoGenerator {
 						uint numStrings = AppHostInfoData.DeserializeCompressedUInt32(serializedData, ref o);
 						for (uint i = 0; i < numStrings; i++)
 							stringsTable.Add(AppHostInfoData.DeserializeString(serializedData, ref o), i);
+#if !APPHOSTINFO_STRINGS
+#error APPHOSTINFO_STRINGS must be defined at the project level so strings can be restored
+#endif
+						if (numStrings == 0)
+							throw new InvalidOperationException("No strings");
 					}
 
 					foreach (var info in allInfos) {
@@ -208,6 +215,7 @@ namespace AppHostInfoGenerator {
 					}
 
 					int expectedStringIndex = 0;
+					Console.WriteLine("#if APPHOSTINFO_STRINGS");
 					SerializeCompressedUInt32((uint)stringsTable.Count, "StringsTableCount");
 					foreach (var kv in stringsTable.OrderBy(a => a.Value)) {
 						if (kv.Value != expectedStringIndex)
@@ -215,14 +223,20 @@ namespace AppHostInfoGenerator {
 						SerializeString(kv.Key, null);
 						expectedStringIndex++;
 					}
+					Console.WriteLine("#endif");
+					int numDupes = 0;
 					foreach (var info in allInfos) {
 						if (info.Rid.Length == 0 || info.Version.Length == 0)
 							throw new InvalidOperationException();
-						Serialize(info, stringsTable);
+						bool dupe = !addedInfos.Add(info);
+						if (dupe)
+							numDupes++;
+						Serialize(info, stringsTable, dupe);
 					}
 					Console.WriteLine($"{newInfos.Count} new infos");
 					Console.WriteLine("********************************************************");
-					Console.WriteLine($"*** UPDATE {nameof(AppHostInfoData)}.{nameof(AppHostInfoData.SerializedAppHostInfosCount)} from {AppHostInfoData.SerializedAppHostInfosCount} to {newInfos.Count + AppHostInfoData.SerializedAppHostInfosCount}");
+					Console.WriteLine($"*** UPDATE {nameof(AppHostInfoData)}.{nameof(AppHostInfoData.SerializedAppHostInfosCount)} from {AppHostInfoData.SerializedAppHostInfosCount} to {newInfos.Count + AppHostInfoData.SerializedAppHostInfosCount} (dupes)");
+					Console.WriteLine($"*** UPDATE {nameof(AppHostInfoData)}.{nameof(AppHostInfoData.SerializedAppHostInfosCount)} from {AppHostInfoData.SerializedAppHostInfosCount} to {newInfos.Count + AppHostInfoData.SerializedAppHostInfosCount - numDupes} (no dupes)");
 					Console.WriteLine("********************************************************");
 				}
 				else
@@ -270,6 +284,20 @@ namespace AppHostInfoGenerator {
 			}
 		}
 
+		sealed class AppHostInfoDupeEqualityComparer : IEqualityComparer<AppHostInfo> {
+			public static readonly AppHostInfoDupeEqualityComparer Instance = new AppHostInfoDupeEqualityComparer();
+			AppHostInfoDupeEqualityComparer() { }
+
+			public bool Equals(AppHostInfo x, AppHostInfo y) =>
+				x.RelPathOffset == y.RelPathOffset &&
+				x.HashDataOffset == y.HashDataOffset &&
+				x.HashDataSize == y.HashDataSize &&
+				AppHostInfoEqualityComparer.ByteArrayEquals(x.Hash, y.Hash);
+
+			public int GetHashCode(AppHostInfo obj) =>
+				(int)(obj.RelPathOffset ^ obj.HashDataOffset ^ obj.HashDataSize) ^ AppHostInfoEqualityComparer.ByteArrayGetHashCode(obj.Hash);
+		}
+
 		sealed class AppHostInfoEqualityComparer : IEqualityComparer<AppHostInfo> {
 			public static readonly AppHostInfoEqualityComparer Instance = new AppHostInfoEqualityComparer();
 			AppHostInfoEqualityComparer() { }
@@ -280,9 +308,9 @@ namespace AppHostInfoGenerator {
 				ByteArrayEquals(x.Hash, y.Hash);
 
 			public int GetHashCode(AppHostInfo obj) =>
-				(int)(obj.RelPathOffset ^ obj.HashDataOffset ^ obj.HashDataSize) ^ ByteArrayGetHashCode(obj.Hash);
+				(int)(obj.HashDataOffset ^ obj.HashDataSize) ^ ByteArrayGetHashCode(obj.Hash);
 
-			static bool ByteArrayEquals(byte[] a, byte[] b) {
+			internal static bool ByteArrayEquals(byte[] a, byte[] b) {
 				if (a.Length != b.Length)
 					return false;
 				for (int i = 0; i < a.Length; i++) {
@@ -293,19 +321,25 @@ namespace AppHostInfoGenerator {
 			}
 
 			// It's a sha1 hash, return the 1st 4 bytes
-			static int ByteArrayGetHashCode(byte[] a) => BitConverter.ToInt32(a, 0);
+			internal static int ByteArrayGetHashCode(byte[] a) => BitConverter.ToInt32(a, 0);
 		}
 
-		static void Serialize(in AppHostInfo info, Dictionary<string, uint> stringsTable) {
+		static void Serialize(in AppHostInfo info, Dictionary<string, uint> stringsTable, bool dupe) {
 			Console.WriteLine();
+			if (dupe)
+				Console.WriteLine("#if APPHOSTINFO_STRINGS // dupe");
+			Console.WriteLine("#if APPHOSTINFO_STRINGS");
 			SerializeString(info.Rid, nameof(info.Rid), stringsTable);
 			SerializeString(info.Version, nameof(info.Version), stringsTable);
+			Console.WriteLine("#endif");
 			SerializeCompressedUInt32(info.RelPathOffset, nameof(info.RelPathOffset));
 			SerializeCompressedUInt32(info.HashDataOffset, nameof(info.HashDataOffset));
 			if (info.HashDataSize != AppHostInfo.DefaultHashSize)
 				throw new InvalidOperationException($"{nameof(info.HashDataSize)} = 0x{info.HashDataSize:X} != 0x{AppHostInfo.DefaultHashSize:X}");
 			SerializeByteArray(info.Hash, nameof(info.Hash), null, needLength: false);
 			SerializeByte(info.LastByte, nameof(info.LastByte));
+			if (dupe)
+				Console.WriteLine("#endif // dupe");
 		}
 		const string serializeIndent = "\t\t\t";
 
