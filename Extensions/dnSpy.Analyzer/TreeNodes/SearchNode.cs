@@ -135,7 +135,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			Debug.Assert(analyzedTypes.Count == 1 && analyzedTypes[0] == analyzedType);
 			if (!TIAHelper.IsTypeDefEquivalent(analyzedType))
 				return;
-			foreach (var document in documentService.GetDocuments()) {
+			foreach (var document in documentService.GetDocuments().Where(a => !(a.ModuleDef is null))) {
 				foreach (var type in GetTypeEquivalentTypes(document.AssemblyDef, document.ModuleDef, analyzedType)) {
 					if (type != analyzedType)
 						analyzedTypes.Add(type);
@@ -162,8 +162,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 					yield return mod;
 			}
 			else {
-				Debug.Assert(!(module is null));
-				yield return module;
+				if (!(module is null))
+					yield return module;
 			}
 		}
 
