@@ -82,7 +82,6 @@ namespace AppHostInfoGenerator {
 		const string TizenNuGetPackageDownloadUrlFormatString = "https://tizen.myget.org/F/dotnet-core/api/v2/package/{0}/{1}";
 		static readonly byte[] appHostRelPathHash = Encoding.UTF8.GetBytes("c3ab8ff13720e8ad9047dd39466b3c89" + "74e592c2fa383d4a3960714caef0c4f2" + "\0");
 		static readonly byte[] appHostSignature = Encoding.UTF8.GetBytes("c3ab8ff13720e8ad9047dd39466b3c89" + "\0");
-		const int HashSize = 0x2000;
 		const int MinHashSize = 0x800;
 
 		enum NuGetSource {
@@ -303,7 +302,8 @@ namespace AppHostInfoGenerator {
 			SerializeString(info.Version, nameof(info.Version), stringsTable);
 			SerializeCompressedUInt32(info.RelPathOffset, nameof(info.RelPathOffset));
 			SerializeCompressedUInt32(info.HashDataOffset, nameof(info.HashDataOffset));
-			SerializeCompressedUInt32(info.HashDataSize, nameof(info.HashDataSize));
+			if (info.HashDataSize != AppHostInfo.DefaultHashSize)
+				throw new InvalidOperationException($"{nameof(info.HashDataSize)} = 0x{info.HashDataSize:X} != 0x{AppHostInfo.DefaultHashSize:X}");
 			SerializeByteArray(info.Hash, nameof(info.Hash), null, needLength: false);
 			SerializeByte(info.LastByte, nameof(info.LastByte));
 		}
@@ -387,7 +387,7 @@ namespace AppHostInfoGenerator {
 
 		static bool TryHashData(byte[] appHostData, int relPathOffset, int textOffset, int textSize, out int hashDataOffset, out int hashDataSize, [NotNullWhenTrue] out byte[]? hash, out byte lastByte) {
 			hashDataOffset = textOffset;
-			hashDataSize = Math.Min(textSize, HashSize);
+			hashDataSize = Math.Min(textSize, AppHostInfo.DefaultHashSize);
 			int hashDataSizeEnd = hashDataOffset + hashDataSize;
 			int relPathOffsetEnd = relPathOffset + AppHostInfo.MaxAppHostRelPathLength;
 			if ((hashDataOffset >= relPathOffsetEnd || hashDataSizeEnd <= relPathOffset) && hashDataSize >= MinHashSize) {

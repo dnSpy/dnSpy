@@ -33,6 +33,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		public readonly byte LastByte;
 
 		public const int MaxAppHostRelPathLength = 1024;
+		public const int DefaultHashSize = 0x2000;
 
 		public AppHostInfo(string rid, string version, uint relPathOffset, uint hashDataOffset, uint hashDataSize, byte[] hash, byte lastByte) {
 			Rid = rid;
