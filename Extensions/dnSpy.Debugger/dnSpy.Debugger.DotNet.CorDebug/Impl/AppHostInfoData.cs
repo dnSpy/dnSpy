@@ -62,7 +62,6 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			// ***ERROR: 404 NOT FOUND: Couldn't download runtime.tizen.4.0.0-armel.Microsoft.NETCore.DotNetAppHost = 2.1.3
 			// ***ERROR: 404 NOT FOUND: Couldn't download runtime.tizen.5.0.0-armel.Microsoft.NETCore.DotNetAppHost = 2.1.3
 			// ***ERROR: 404 NOT FOUND: Couldn't download runtime.tizen.4.0.0-armel.Microsoft.NETCore.DotNetAppHost = 2.1.2
-			// ***ERROR: 404 NOT FOUND: Couldn't download runtime.alpine.3.6-x64.Microsoft.NETCore.DotNetAppHost = 2.1.0-rc1
 			// ***ERROR: 404 NOT FOUND: Couldn't download runtime.tizen.4.0.0-armel.Microsoft.NETCore.DotNetAppHost = 2.1.0-rc1
 			// ***ERROR: 404 NOT FOUND: Couldn't download runtime.tizen.4.0.0-armel.Microsoft.NETCore.DotNetAppHost = 2.1.0-preview2-26406-04
 			// ***ERROR: 404 NOT FOUND: Couldn't download runtime.tizen.4.0.0-armel.Microsoft.NETCore.DotNetAppHost = 2.1.0-preview1-26216-03
@@ -2448,6 +2447,14 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			0x86, 0x86, 0x71, 0x3D, 0x3E, 0x58, 0x44, 0x80, 0x4B, 0x59, 0xBE, 0x49, 0xFC, 0x8C, 0xD9, 0xC4, 0x77, 0x38, 0x46, 0xF3,// Hash
 			0x00,// LastByte
 
+			0x0E,// Rid = string(14) = alpine.3.6-x64
+			0x2A,// Version = string(42) = 2.1.0-rc1
+			0xC0, 0x01, 0xD0, 0x10,// RelPathOffset = 0x0001D010
+			0xC0, 0x00, 0xB6, 0x00,// HashDataOffset = 0x0000B600
+			0xA0, 0x00,// HashDataSize = 0x00002000
+			0xBB, 0xC8, 0x16, 0x64, 0x98, 0x88, 0x3D, 0x51, 0xCB, 0x7B, 0xC8, 0x45, 0xE6, 0x23, 0xAD, 0xA2, 0xEE, 0x99, 0x4D, 0x1A,// Hash
+			0x8D,// LastByte
+
 			0x00,// Rid = string(0) = linux-arm
 			0x2A,// Version = string(42) = 2.1.0-rc1
 			0xC0, 0x01, 0x22, 0x1C,// RelPathOffset = 0x0001221C
@@ -3274,7 +3281,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 			// NOTE: Update SerializedAppHostInfosCount below when adding more serialized data
 		};
-		public const int SerializedAppHostInfosCount = 393;
+		public const int SerializedAppHostInfosCount = 394;
 		public static readonly AppHostInfo[] KnownAppHostInfos = CreateAppHostInfos(serializedAppHostInfos, SerializedAppHostInfosCount);
 
 		static AppHostInfo[] CreateAppHostInfos(byte[] serializedData, int elemCount) {

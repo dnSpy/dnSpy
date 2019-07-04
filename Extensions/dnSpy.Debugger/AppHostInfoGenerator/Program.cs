@@ -78,6 +78,7 @@ namespace AppHostInfoGenerator {
 			"2.0.0-preview1-002111-00",
 		};
 		const string NuGetPackageDownloadUrlFormatString = "https://www.nuget.org/api/v2/package/{0}/{1}";
+		const string DotNetMyGetPackageDownloadUrlFormatString = "https://dotnet.myget.org/F/dotnet-core/api/v2/package/{0}/{1}";
 		const string TizenNuGetPackageDownloadUrlFormatString = "https://tizen.myget.org/F/dotnet-core/api/v2/package/{0}/{1}";
 		static readonly byte[] appHostRelPathHash = Encoding.UTF8.GetBytes("c3ab8ff13720e8ad9047dd39466b3c89" + "74e592c2fa383d4a3960714caef0c4f2" + "\0");
 		static readonly byte[] appHostSignature = Encoding.UTF8.GetBytes("c3ab8ff13720e8ad9047dd39466b3c89" + "\0");
@@ -86,8 +87,12 @@ namespace AppHostInfoGenerator {
 
 		enum NuGetSource {
 			NuGet,
-			Tizen,
+			DotNetMyGet,
+			TizenMyGet,
 		}
+
+		static readonly NuGetSource[] dotnetNugetSources = new[] { NuGetSource.NuGet, NuGetSource.DotNetMyGet };
+		static readonly NuGetSource[] tizenNugetSources = new[] { NuGetSource.TizenMyGet, NuGetSource.NuGet };
 
 		static int Main(string[] args) {
 			try {
@@ -123,24 +128,26 @@ namespace AppHostInfoGenerator {
 							var runtimePackageVersion = (string)((JValue)dotNetAppHostProperty.Value).Value;
 							Console.WriteLine();
 							Console.WriteLine($"{runtimePackageName} {runtimePackageVersion}");
-							NuGetSource nugetSource;
+							NuGetSource[] nugetSources;
 							if (runtimeName.StartsWith("tizen.", StringComparison.Ordinal))
-								nugetSource = NuGetSource.Tizen;
+								nugetSources = tizenNugetSources;
 							else
-								nugetSource = NuGetSource.NuGet;
-							bool couldDownload = TryDownloadNuGetPackage(runtimePackageName, runtimePackageVersion, nugetSource, out var ridData);
-							if (!couldDownload) {
-								if (nugetSource == NuGetSource.Tizen) {
-									nugetSource = NuGetSource.NuGet;
-									couldDownload = TryDownloadNuGetPackage(runtimePackageName, runtimePackageVersion, nugetSource, out ridData);
-								}
-								if (!couldDownload) {
-									var error = $"***ERROR: 404 NOT FOUND: Couldn't download {runtimePackageName} = {runtimePackageVersion}";
-									errors.Add(error);
-									Console.WriteLine(error);
-									continue;
+								nugetSources = dotnetNugetSources;
+							bool couldDownload = false;
+							byte[]? ridData = null;
+							foreach (var nugetSource in nugetSources) {
+								if (TryDownloadNuGetPackage(runtimePackageName, runtimePackageVersion, nugetSource, out ridData)) {
+									couldDownload = true;
+									break;
 								}
 							}
+							if (!couldDownload) {
+								var error = $"***ERROR: 404 NOT FOUND: Couldn't download {runtimePackageName} = {runtimePackageVersion}";
+								errors.Add(error);
+								Console.WriteLine(error);
+								continue;
+							}
+							Debug.Assert(!(ridData is null));
 							using (var ridZip = new ZipArchive(new MemoryStream(ridData), ZipArchiveMode.Read, leaveOpen: false)) {
 								var appHostEntries = GetAppHostEntries(ridZip).ToArray();
 								if (appHostEntries.Length == 0)
@@ -475,7 +482,10 @@ namespace AppHostInfoGenerator {
 			case NuGetSource.NuGet:
 				formatString = NuGetPackageDownloadUrlFormatString;
 				break;
-			case NuGetSource.Tizen:
+			case NuGetSource.DotNetMyGet:
+				formatString = DotNetMyGetPackageDownloadUrlFormatString;
+				break;
+			case NuGetSource.TizenMyGet:
 				formatString = TizenNuGetPackageDownloadUrlFormatString;
 				break;
 			default:
