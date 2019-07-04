@@ -38,8 +38,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		static readonly int MaxAppHostExeSize = CalculateMaxAppHostExeSize();
 		const string AppHostExeUnpatched = "c3ab8ff13720e8ad9047dd39466b3c89" + "74e592c2fa383d4a3960714caef0c4f2";
-		static readonly byte[] AppHostExeUnpatchedSignature = Encoding.UTF8.GetBytes(AppHostExeUnpatched);
-		static readonly byte[] AppHostExeSignature = Encoding.UTF8.GetBytes("c3ab8ff13720e8ad9047dd39466b3c89");
+		static readonly byte[] AppHostExeUnpatchedSignature = Encoding.UTF8.GetBytes(AppHostExeUnpatched + "\0");
+		static readonly byte[] AppHostExeSignature = Encoding.UTF8.GetBytes("c3ab8ff13720e8ad9047dd39466b3c89" + "\0");
 
 		internal static bool IsDotNetCoreAppHost(string filename, [NotNullWhenTrue] out string? dllFilename) {
 			// We detect the apphost.exe like so:

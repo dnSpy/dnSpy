@@ -79,7 +79,8 @@ namespace AppHostInfoGenerator {
 		};
 		const string NuGetPackageDownloadUrlFormatString = "https://www.nuget.org/api/v2/package/{0}/{1}";
 		const string TizenNuGetPackageDownloadUrlFormatString = "https://tizen.myget.org/F/dotnet-core/api/v2/package/{0}/{1}";
-		static readonly byte[] appHostRelPathHash = Encoding.ASCII.GetBytes("c3ab8ff13720e8ad9047dd39466b3c89" + "74e592c2fa383d4a3960714caef0c4f2");
+		static readonly byte[] appHostRelPathHash = Encoding.UTF8.GetBytes("c3ab8ff13720e8ad9047dd39466b3c89" + "74e592c2fa383d4a3960714caef0c4f2" + "\0");
+		static readonly byte[] appHostSignature = Encoding.UTF8.GetBytes("c3ab8ff13720e8ad9047dd39466b3c89" + "\0");
 		const int HashSize = 0x2000;
 		const int MinHashSize = 0x800;
 
@@ -151,6 +152,9 @@ namespace AppHostInfoGenerator {
 									int relPathOffset = GetOffset(appHostData, appHostRelPathHash);
 									if (relPathOffset < 0)
 										throw new InvalidOperationException($"Couldn't get offset of hash in apphost: '{info.entry.FullName}'");
+									int sigOffset = GetOffset(appHostData, appHostSignature);
+									if (sigOffset < 0)
+										throw new InvalidOperationException($"Couldn't get offset of sig in apphost: '{info.entry.FullName}'");
 									bool mustBeZero = false;
 									for (int i = 0; i < AppHostInfo.MaxAppHostRelPathLength; i++) {
 										byte b = appHostData[relPathOffset + i];
