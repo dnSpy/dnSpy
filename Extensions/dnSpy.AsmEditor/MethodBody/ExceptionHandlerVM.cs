@@ -70,10 +70,10 @@ namespace dnSpy.AsmEditor.MethodBody {
 		ITypeDefOrRef? catchType;
 
 		internal static readonly EnumVM[] exceptionHandlerTypeList = new EnumVM[] {
-			new EnumVM(ExceptionHandlerType.Catch, "Catch"),
-			new EnumVM(ExceptionHandlerType.Filter, "Filter"),
-			new EnumVM(ExceptionHandlerType.Finally, "Finally"),
-			new EnumVM(ExceptionHandlerType.Fault, "Fault"),
+			new EnumVM(ExceptionHandlerType.Catch),
+			new EnumVM(ExceptionHandlerType.Filter),
+			new EnumVM(ExceptionHandlerType.Finally),
+			new EnumVM(ExceptionHandlerType.Fault),
 		};
 		public EnumListVM HandlerTypeVM { get; }
 
