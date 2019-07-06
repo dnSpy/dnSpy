@@ -57,6 +57,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 			var ca = analyzedType.CustomAttributes.Find("System.AttributeUsageAttribute");
 			if (!(ca is null) && ca.ConstructorArguments.Count == 1 && ca.ConstructorArguments[0].Value is int)
 				usage = (AttributeTargets)ca.ConstructorArguments[0].Value;
+			else
+				usage = AttributeTargets.All;
 		}
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
