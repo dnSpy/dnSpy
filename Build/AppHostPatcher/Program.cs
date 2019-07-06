@@ -38,6 +38,9 @@ namespace AppHostPatcher {
 			// to have an .exe extension, eg. 'some.file' => 'some.file.dll', not 'some.dll'
 			apphostExe.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) ? Path.ChangeExtension(apphostExe, ".dll") : apphostExe + ".dll";
 
+		static string GetPathSeparator(string apphostExe) =>
+			apphostExe.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) ? @"\" : "/";
+
 		static int Main(string[] args) {
 			try {
 				string apphostExe, origPath, newPath;
@@ -45,7 +48,7 @@ namespace AppHostPatcher {
 					if (args[1] == "-d") {
 						apphostExe = args[0];
 						origPath = Path.GetFileName(ChangeExecutableExtension(apphostExe));
-						newPath = Path.Combine(args[2], origPath);
+						newPath = args[2] + GetPathSeparator(apphostExe) + origPath;
 					}
 					else {
 						apphostExe = args[0];
