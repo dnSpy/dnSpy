@@ -1,7 +1,7 @@
 namespace System.Runtime.CompilerServices {
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 	[AttributeUsage(AttributeTargets.Parameter, AllowMultiple = false)]
-	public class NotNullWhenFalseAttribute : Attribute {
+	public sealed class NotNullWhenFalseAttribute : Attribute {
 		public NotNullWhenFalseAttribute() { }
 	}
 	[AttributeUsage(AttributeTargets.Parameter, AllowMultiple = false)]

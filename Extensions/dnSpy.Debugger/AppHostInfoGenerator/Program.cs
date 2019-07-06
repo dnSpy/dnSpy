@@ -32,7 +32,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace AppHostInfoGenerator {
-	static class Program {
+	sealed class Program : IDisposable {
 		// Add new versions from: https://www.nuget.org/packages/Microsoft.NETCore.DotNetAppHost/
 		// The code ignores known versions so all versions can be added.
 		//	^(\S+)\s.*		=>		\t\t\t"\1",
@@ -93,8 +93,61 @@ namespace AppHostInfoGenerator {
 		static readonly NuGetSource[] dotnetNugetSources = new[] { NuGetSource.NuGet, NuGetSource.DotNetMyGet };
 		static readonly NuGetSource[] tizenNugetSources = new[] { NuGetSource.TizenMyGet, NuGetSource.NuGet };
 
+		const string defaultFilename = nameof(AppHostInfoData) + ".g.cs";
+		static void Usage() =>
+			Console.WriteLine("Usage: AppHostInfoGenerator [path-to-" + defaultFilename + "]");
+
 		static int Main(string[] args) {
+			string filename;
+			switch (args.Length) {
+			case 0:
+				filename = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(typeof(Program).Assembly.Location), "..", "..", "..", "..", "dnSpy.Debugger.DotNet.CorDebug", "Impl", defaultFilename));
+				break;
+			case 1:
+				filename = args[0];
+				break;
+			default:
+				Usage();
+				return 1;
+			}
+			using (var p = new Program(filename))
+				return p.DoIt();
+		}
+
+		readonly TextWriter output;
+
+		Program(string filename) =>
+			output = new StreamWriter(filename, append: false, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true));
+
+		public void Dispose() => output.Dispose();
+
+		int DoIt() {
 			try {
+				output.WriteLine("/*");
+				output.WriteLine("    Copyright (C) 2014-2019 de4dot@gmail.com");
+				output.WriteLine();
+				output.WriteLine("    This file is part of dnSpy");
+				output.WriteLine();
+				output.WriteLine("    dnSpy is free software: you can redistribute it and/or modify");
+				output.WriteLine("    it under the terms of the GNU General Public License as published by");
+				output.WriteLine("    the Free Software Foundation, either version 3 of the License, or");
+				output.WriteLine("    (at your option) any later version.");
+				output.WriteLine();
+				output.WriteLine("    dnSpy is distributed in the hope that it will be useful,");
+				output.WriteLine("    but WITHOUT ANY WARRANTY; without even the implied warranty of");
+				output.WriteLine("    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the");
+				output.WriteLine("    GNU General Public License for more details.");
+				output.WriteLine();
+				output.WriteLine("    You should have received a copy of the GNU General Public License");
+				output.WriteLine("    along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.");
+				output.WriteLine("*/");
+				output.WriteLine();
+				output.WriteLine("// This is a generated file, use the AppHostInfoGenerator project to update it");
+				output.WriteLine("#nullable enable");
+				output.WriteLine();
+				output.WriteLine("namespace dnSpy.Debugger.DotNet.CorDebug.Impl {");
+				output.WriteLine("\tstatic partial class AppHostInfoData {");
+
 				var knownVersions = new HashSet<string>(AppHostInfoData.KnownAppHostInfos.Select(a => a.Version), StringComparer.Ordinal);
 				var newInfos = new List<AppHostInfo>();
 				var errors = new List<string>();
@@ -183,64 +236,79 @@ namespace AppHostInfoGenerator {
 					}
 				}
 
-				if (newInfos.Count > 0) {
-					Console.WriteLine();
-					Console.WriteLine($"All apphost infos:");
-					var addedInfos = new HashSet<AppHostInfo>(AppHostInfoDupeEqualityComparer.Instance);
+				errors.AddRange(AppHostInfoData.GetErrors());
+#if !APPHOSTINFO_ERROR_STRINGS
+#error APPHOSTINFO_ERROR_STRINGS must be defined at the project level so error strings can be restored
+#endif
+				output.WriteLine("#if APPHOSTINFO_ERROR_STRINGS");
+				output.WriteLine("\t\tpublic static string[] GetErrors() =>");
+				output.WriteLine("\t\t\tnew string[] {");
+				foreach (var error in errors)
+					output.WriteLine(serializeIndent + "\"" + error + "\",");
+				output.WriteLine("\t\t\t};");
+				output.WriteLine("#endif");
+				output.WriteLine();
 
-					var allInfos = new List<AppHostInfo>(newInfos);
-					allInfos.AddRange(AppHostInfoData.KnownAppHostInfos);
+				var addedInfos = new HashSet<AppHostInfo>(AppHostInfoDupeEqualityComparer.Instance);
 
-					var stringsTable = new Dictionary<string, uint>(StringComparer.Ordinal);
-					var serializedData = AppHostInfoData.serializedAppHostInfos;
-					if (serializedData.Length > 0) {
-						int o = 0;
-						uint numStrings = AppHostInfoData.DeserializeCompressedUInt32(serializedData, ref o);
-						for (uint i = 0; i < numStrings; i++)
-							stringsTable.Add(AppHostInfoData.DeserializeString(serializedData, ref o), i);
+				var allInfos = new List<AppHostInfo>(newInfos);
+				allInfos.AddRange(AppHostInfoData.KnownAppHostInfos);
+
+				var stringsTable = new Dictionary<string, uint>(StringComparer.Ordinal);
+				var serializedData = AppHostInfoData.GetSerializedAppHostInfos();
+				if (serializedData.Length > 0) {
+					int o = 0;
+					uint numStrings = AppHostInfoData.DeserializeCompressedUInt32(serializedData, ref o);
+					for (uint i = 0; i < numStrings; i++)
+						stringsTable.Add(AppHostInfoData.DeserializeString(serializedData, ref o), i);
 #if !APPHOSTINFO_STRINGS
 #error APPHOSTINFO_STRINGS must be defined at the project level so strings can be restored
 #endif
-						if (numStrings == 0)
-							throw new InvalidOperationException("No strings");
-					}
-
-					foreach (var info in allInfos) {
-						if (!stringsTable.ContainsKey(info.Rid))
-							stringsTable.Add(info.Rid, (uint)stringsTable.Count);
-					}
-					foreach (var info in allInfos) {
-						if (!stringsTable.ContainsKey(info.Version))
-							stringsTable.Add(info.Version, (uint)stringsTable.Count);
-					}
-
-					int expectedStringIndex = 0;
-					Console.WriteLine("#if APPHOSTINFO_STRINGS");
-					SerializeCompressedUInt32((uint)stringsTable.Count, "StringsTableCount");
-					foreach (var kv in stringsTable.OrderBy(a => a.Value)) {
-						if (kv.Value != expectedStringIndex)
-							throw new InvalidOperationException();
-						SerializeString(kv.Key, null);
-						expectedStringIndex++;
-					}
-					Console.WriteLine("#endif");
-					int numDupes = 0;
-					foreach (var info in allInfos) {
-						if (info.Rid.Length == 0 || info.Version.Length == 0)
-							throw new InvalidOperationException();
-						bool dupe = !addedInfos.Add(info);
-						if (dupe)
-							numDupes++;
-						Serialize(info, stringsTable, dupe);
-					}
-					Console.WriteLine($"{newInfos.Count} new infos");
-					Console.WriteLine("********************************************************");
-					Console.WriteLine($"*** UPDATE {nameof(AppHostInfoData)}.{nameof(AppHostInfoData.SerializedAppHostInfosCount)} from {AppHostInfoData.SerializedAppHostInfosCount} to {newInfos.Count + AppHostInfoData.SerializedAppHostInfosCount} (dupes)");
-					Console.WriteLine($"*** UPDATE {nameof(AppHostInfoData)}.{nameof(AppHostInfoData.SerializedAppHostInfosCount)} from {AppHostInfoData.SerializedAppHostInfosCount} to {newInfos.Count + AppHostInfoData.SerializedAppHostInfosCount - numDupes} (no dupes)");
-					Console.WriteLine("********************************************************");
+					if (numStrings == 0)
+						throw new InvalidOperationException("No strings");
 				}
-				else
-					Console.WriteLine("No new apphosts found");
+
+				foreach (var info in allInfos) {
+					if (!stringsTable.ContainsKey(info.Rid))
+						stringsTable.Add(info.Rid, (uint)stringsTable.Count);
+				}
+				foreach (var info in allInfos) {
+					if (!stringsTable.ContainsKey(info.Version))
+						stringsTable.Add(info.Version, (uint)stringsTable.Count);
+				}
+
+				int expectedStringIndex = 0;
+				output.WriteLine("\t\tpublic static byte[] GetSerializedAppHostInfos() =>");
+				output.WriteLine("\t\t\tnew byte[] {");
+				output.WriteLine("#if APPHOSTINFO_STRINGS");
+				SerializeCompressedUInt32((uint)stringsTable.Count, "StringsTableCount");
+				foreach (var kv in stringsTable.OrderBy(a => a.Value)) {
+					if (kv.Value != expectedStringIndex)
+						throw new InvalidOperationException();
+					SerializeString(kv.Key, null);
+					expectedStringIndex++;
+				}
+				output.WriteLine("#endif");
+				int numDupes = 0;
+				foreach (var info in allInfos) {
+					if (info.Rid.Length == 0 || info.Version.Length == 0)
+						throw new InvalidOperationException();
+					bool dupe = !addedInfos.Add(info);
+					if (dupe)
+						numDupes++;
+					Serialize(info, stringsTable, dupe);
+				}
+				output.WriteLine("\t\t\t};");
+				output.WriteLine("\t\tpublic const int SerializedAppHostInfosCount =");
+				output.WriteLine("#if APPHOSTINFO_DUPES");
+				output.WriteLine($"\t\t\t{allInfos.Count};");
+				output.WriteLine("#else");
+				output.WriteLine($"\t\t\t{allInfos.Count - numDupes};");
+				output.WriteLine("#endif");
+				output.WriteLine("\t}");
+				output.WriteLine("}");
+
+				Console.WriteLine($"{newInfos.Count} new infos");
 
 				var hashes = new Dictionary<AppHostInfo, List<AppHostInfo>>(AppHostInfoEqualityComparer.Instance);
 				foreach (var info in AppHostInfoData.KnownAppHostInfos.Concat(newInfos)) {
@@ -267,13 +335,6 @@ namespace AppHostInfoGenerator {
 						foreach (var info2 in list)
 							Console.WriteLine($"\t{info2.Rid} {info2.Version} RelPathOffset=0x{info2.RelPathOffset.ToString("X8")}");
 					}
-				}
-
-				if (errors.Count > 0) {
-					Console.WriteLine();
-					Console.WriteLine("All download errors:");
-					foreach (var error in errors)
-						Console.WriteLine($"\t{error}");
 				}
 
 				return 0;
@@ -324,14 +385,17 @@ namespace AppHostInfoGenerator {
 			internal static int ByteArrayGetHashCode(byte[] a) => BitConverter.ToInt32(a, 0);
 		}
 
-		static void Serialize(in AppHostInfo info, Dictionary<string, uint> stringsTable, bool dupe) {
-			Console.WriteLine();
+		void Serialize(in AppHostInfo info, Dictionary<string, uint> stringsTable, bool dupe) {
+			output.WriteLine();
+#if !APPHOSTINFO_DUPES
+#error APPHOSTINFO_DUPES must be defined at the project level so all data can be restored
+#endif
 			if (dupe)
-				Console.WriteLine("#if APPHOSTINFO_STRINGS // dupe");
-			Console.WriteLine("#if APPHOSTINFO_STRINGS");
+				output.WriteLine("#if APPHOSTINFO_DUPES");
+			output.WriteLine("#if APPHOSTINFO_STRINGS");
 			SerializeString(info.Rid, nameof(info.Rid), stringsTable);
 			SerializeString(info.Version, nameof(info.Version), stringsTable);
-			Console.WriteLine("#endif");
+			output.WriteLine("#endif");
 			SerializeCompressedUInt32(info.RelPathOffset, nameof(info.RelPathOffset));
 			SerializeCompressedUInt32(info.HashDataOffset, nameof(info.HashDataOffset));
 			if (info.HashDataSize != AppHostInfo.DefaultHashSize)
@@ -339,28 +403,28 @@ namespace AppHostInfoGenerator {
 			SerializeByteArray(info.Hash, nameof(info.Hash), null, needLength: false);
 			SerializeByte(info.LastByte, nameof(info.LastByte));
 			if (dupe)
-				Console.WriteLine("#endif // dupe");
+				output.WriteLine("#endif");
 		}
-		const string serializeIndent = "\t\t\t";
+		const string serializeIndent = "\t\t\t\t";
 
-		static void WriteComment(string? name, string? origValue) {
+		void WriteComment(string? name, string? origValue) {
 			if (name is null) {
 				if (!(origValue is null))
-					Console.Write($"// {origValue}");
+					output.Write($"// {origValue}");
 			}
 			else if (origValue is null)
-				Console.Write($"// {name}");
+				output.Write($"// {name}");
 			else
-				Console.Write($"// {name} = {origValue}");
+				output.Write($"// {name} = {origValue}");
 		}
 
-		static void SerializeString(string value, string name, Dictionary<string, uint> stringsTable) {
+		void SerializeString(string value, string name, Dictionary<string, uint> stringsTable) {
 			uint index = stringsTable[value];
 			var commentValue = $"string({index}) = {value}";
 			SerializeCompressedUInt32(index, name, commentValue);
 		}
 
-		static void SerializeString(string value, string? name) {
+		void SerializeString(string value, string? name) {
 			var encoding = AppHostInfoData.StringEncoding;
 			var data = encoding.GetBytes(value);
 			if (encoding.GetString(data) != value)
@@ -368,55 +432,55 @@ namespace AppHostInfoGenerator {
 			SerializeByteArray(data, name, value, needLength: true);
 		}
 
-		static void SerializeCompressedUInt32(uint value, string name, string? commentValue = null) {
-			Console.Write(serializeIndent);
+		void SerializeCompressedUInt32(uint value, string name, string? commentValue = null) {
+			output.Write(serializeIndent);
 
 			if (value <= 0x7F)
-				Console.Write($"0x{((byte)value).ToString("X2")},");
+				output.Write($"0x{((byte)value).ToString("X2")},");
 			else if (value <= 0x3FFF)
-				Console.Write($"0x{((byte)((value >> 8) | 0x80)).ToString("X2")}, 0x{((byte)value).ToString("X2")},");
+				output.Write($"0x{((byte)((value >> 8) | 0x80)).ToString("X2")}, 0x{((byte)value).ToString("X2")},");
 			else if (value <= 0x1FFFFFFF)
-				Console.Write($"0x{((byte)((value >> 24) | 0xC0)).ToString("X2")}, 0x{((byte)(value >> 16)).ToString("X2")}, 0x{((byte)(value >> 8)).ToString("X2")}, 0x{((byte)value).ToString("X2")},");
+				output.Write($"0x{((byte)((value >> 24) | 0xC0)).ToString("X2")}, 0x{((byte)(value >> 16)).ToString("X2")}, 0x{((byte)(value >> 8)).ToString("X2")}, 0x{((byte)value).ToString("X2")},");
 			else
 				throw new InvalidOperationException();
 
 			if (commentValue is null)
 				commentValue = "0x" + value.ToString("X8");
 			WriteComment(name, commentValue);
-			Console.WriteLine();
+			output.WriteLine();
 		}
 
-		static void SerializeByte(byte value, string name) {
-			Console.Write(serializeIndent);
+		void SerializeByte(byte value, string name) {
+			output.Write(serializeIndent);
 
-			Console.Write($"0x{value.ToString("X2")},");
+			output.Write($"0x{value.ToString("X2")},");
 
 			WriteComment(name, null);
-			Console.WriteLine();
+			output.WriteLine();
 		}
 
-		static void SerializeByteArray(byte[] value, string? name, string? origValue, bool needLength) {
-			Console.Write(serializeIndent);
+		void SerializeByteArray(byte[] value, string? name, string? origValue, bool needLength) {
+			output.Write(serializeIndent);
 			if (value.Length > byte.MaxValue)
 				throw new InvalidOperationException();
 
 			bool needComma = false;
 			if (needLength) {
-				Console.Write("0x");
-				Console.Write(value.Length.ToString("X2"));
+				output.Write("0x");
+				output.Write(value.Length.ToString("X2"));
 				needComma = true;
 			}
 			for (int i = 0; i < value.Length; i++) {
 				if (needComma)
-					Console.Write(", ");
-				Console.Write("0x");
-				Console.Write(value[i].ToString("X2"));
+					output.Write(", ");
+				output.Write("0x");
+				output.Write(value[i].ToString("X2"));
 				needComma = true;
 			}
-			Console.Write(',');
+			output.Write(',');
 
 			WriteComment(name, origValue);
-			Console.WriteLine();
+			output.WriteLine();
 		}
 
 		static bool TryHashData(byte[] appHostData, int relPathOffset, int textOffset, int textSize, out int hashDataOffset, out int hashDataSize, [NotNullWhenTrue] out byte[]? hash, out byte lastByte) {

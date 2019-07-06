@@ -12,12 +12,13 @@
     <NullableContextOptions>enable</NullableContextOptions>
     <OutputType>Exe</OutputType>
 
-    <DefineConstants>$(DefineConstants);APPHOSTINFO_STRINGS</DefineConstants>
+    <DefineConstants>$(DefineConstants);APPHOSTINFO_STRINGS;APPHOSTINFO_DUPES;APPHOSTINFO_ERROR_STRINGS</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Include="..\dnSpy.Debugger.DotNet.CorDebug\Impl\AppHostInfo.cs" Link="AppHostInfo.cs" />
     <Compile Include="..\dnSpy.Debugger.DotNet.CorDebug\Impl\AppHostInfoData.cs" Link="AppHostInfoData.cs" />
+    <Compile Include="..\dnSpy.Debugger.DotNet.CorDebug\Impl\AppHostInfoData.g.cs" Link="AppHostInfoData.g.cs" />
     <Compile Include="..\dnSpy.Debugger.DotNet.CorDebug\Impl\ExeUtils.cs" Link="ExeUtils.cs" />
   </ItemGroup>
 
