@@ -27,6 +27,8 @@ using dnSpy.Contracts.Text;
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class TypeExposedByNode : SearchNode {
 		readonly TypeDef analyzedType;
+		Guid comGuid;
+		bool isComType;
 
 		public TypeExposedByNode(TypeDef analyzedType) => this.analyzedType = analyzedType ?? throw new ArgumentNullException(nameof(analyzedType));
 
@@ -34,7 +36,15 @@ namespace dnSpy.Analyzer.TreeNodes {
 			output.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.ExposedByTreeNode);
 
 		protected override IEnumerable<AnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
-			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNodeData>(Context.DocumentService, analyzedType, FindReferencesInType);
+			bool includeAllModules;
+			isComType = ComUtils.IsComType(analyzedType, out comGuid);
+			includeAllModules = isComType;
+			var options = ScopedWhereUsedAnalyzerOptions.None;
+			if (includeAllModules)
+				options |= ScopedWhereUsedAnalyzerOptions.IncludeAllModules;
+			if (isComType)
+				options |= ScopedWhereUsedAnalyzerOptions.ForcePublic;
+			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNodeData>(Context.DocumentService, analyzedType, FindReferencesInType, options);
 			return analyzer.PerformAnalysis(ct);
 		}
 
@@ -77,6 +87,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 				return CheckType(ts, recursionCounter + 1);
 			if (type is TypeSpec typeSpec)
 				return CheckType(typeSpec.TypeSig, recursionCounter + 1);
+			if (isComType && type.Resolve() is TypeDef td && ComUtils.ComEquals(td, ref comGuid))
+				return true;
 			return new SigComparer().Equals(analyzedType, type);
 		}
 

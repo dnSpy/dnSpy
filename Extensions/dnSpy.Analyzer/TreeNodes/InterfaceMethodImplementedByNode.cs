@@ -28,6 +28,9 @@ using dnSpy.Contracts.Text;
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class InterfaceMethodImplementedByNode : SearchNode {
 		readonly MethodDef analyzedMethod;
+		Guid comGuid;
+		bool isComType;
+		int vtblIndex;
 
 		public InterfaceMethodImplementedByNode(MethodDef analyzedMethod) => this.analyzedMethod = analyzedMethod ?? throw new ArgumentNullException(nameof(analyzedMethod));
 
@@ -35,7 +38,14 @@ namespace dnSpy.Analyzer.TreeNodes {
 			output.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.ImplementedByTreeNode);
 
 		protected override IEnumerable<AnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
-			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNodeData>(Context.DocumentService, analyzedMethod, FindReferencesInType);
+			ComUtils.GetMemberInfo(analyzedMethod, out isComType, out comGuid, out vtblIndex);
+			bool includeAllModules = isComType;
+			var options = ScopedWhereUsedAnalyzerOptions.None;
+			if (includeAllModules)
+				options |= ScopedWhereUsedAnalyzerOptions.IncludeAllModules;
+			if (isComType)
+				options |= ScopedWhereUsedAnalyzerOptions.ForcePublic;
+			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNodeData>(Context.DocumentService, analyzedMethod, FindReferencesInType, options);
 			return analyzer.PerformAnalysis(ct);
 		}
 
@@ -43,28 +53,54 @@ namespace dnSpy.Analyzer.TreeNodes {
 			if (type.IsInterface)
 				yield break;
 			var implementedInterfaceRef = GetInterface(type, analyzedMethod.DeclaringType);
-			if (implementedInterfaceRef is null)
-				yield break;
+			var comIface = isComType ? GetComInterface(type, ref comGuid) : null;
 
-			foreach (MethodDef method in type.Methods) {
+			foreach (var method in type.Methods) {
 				// Don't include abstract methods, they don't implement anything
 				if (!method.IsVirtual || method.IsAbstract)
 					continue;
-				if (method.HasOverrides && method.Overrides.Any(m => CheckEquals(m.MethodDeclaration.ResolveMethodDef(), analyzedMethod))) {
+				if (method.HasOverrides && method.Overrides.Any(m => CheckOverride(m))) {
 					yield return new MethodNode(method) { Context = Context };
 					yield break;
 				}
 			}
 
-			foreach (MethodDef method in type.Methods.Where(m => m.Name == analyzedMethod.Name)) {
-				// Don't include abstract methods, they don't implement anything
-				if (!method.IsVirtual || method.IsAbstract)
-					continue;
-				if (TypesHierarchyHelpers.MatchInterfaceMethod(method, analyzedMethod, implementedInterfaceRef)) {
-					yield return new MethodNode(method) { Context = Context };
-					yield break;
+			if (!(comIface is null) && ComUtils.GetMethod(comIface, vtblIndex) is MethodDef comIfaceMethod) {
+				foreach (var method in type.Methods) {
+					// Don't include abstract methods, they don't implement anything
+					if (!method.IsVirtual || method.IsAbstract)
+						continue;
+					if (TypesHierarchyHelpers.MatchInterfaceMethod(method, comIfaceMethod, comIface)) {
+						yield return new MethodNode(method) { Context = Context };
+						yield break;
+					}
 				}
 			}
+
+			if (!(implementedInterfaceRef is null)) {
+				foreach (var method in type.Methods) {
+					// Don't include abstract methods, they don't implement anything
+					if (!method.IsVirtual || method.IsAbstract)
+						continue;
+					if (method.Name != analyzedMethod.Name)
+						continue;
+					if (TypesHierarchyHelpers.MatchInterfaceMethod(method, analyzedMethod, implementedInterfaceRef)) {
+						yield return new MethodNode(method) { Context = Context };
+						yield break;
+					}
+				}
+			}
+		}
+
+		bool CheckOverride(MethodOverride m) {
+			if (!(m.MethodDeclaration.ResolveMethodDef() is MethodDef method))
+				return false;
+			if (isComType) {
+				ComUtils.GetMemberInfo(method, out bool otherIsComType, out var otherComGuid, out int otherVtblIndex);
+				if (otherIsComType && otherComGuid == comGuid && otherVtblIndex == vtblIndex)
+					return true;
+			}
+			return CheckEquals(method, analyzedMethod);
 		}
 
 		internal static ITypeDefOrRef? GetInterface(TypeDef type, TypeDef interfaceType) {
@@ -79,6 +115,19 @@ namespace dnSpy.Analyzer.TreeNodes {
 						continue;
 					if (new SigComparer().Equals(ii.Interface.GetScopeType(), interfaceType))
 						return iface.ToTypeDefOrRef();
+				}
+			}
+			return null;
+		}
+
+		static TypeDef? GetComInterface(TypeDef type, ref Guid comGuid) {
+			foreach (var t in TypesHierarchyHelpers.GetTypeAndBaseTypes(type)) {
+				var td = t.Resolve();
+				if (td is null)
+					break;
+				foreach (var ii in td.Interfaces) {
+					if (ii.Interface.GetScopeType().ResolveTypeDef() is TypeDef iface && ComUtils.ComEquals(iface, ref comGuid))
+						return iface;
 				}
 			}
 			return null;

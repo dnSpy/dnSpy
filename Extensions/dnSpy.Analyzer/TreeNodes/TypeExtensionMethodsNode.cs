@@ -27,6 +27,8 @@ using dnSpy.Contracts.Text;
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class TypeExtensionMethodsNode : SearchNode {
 		readonly TypeDef analyzedType;
+		Guid comGuid;
+		bool isComType;
 
 		public TypeExtensionMethodsNode(TypeDef analyzedType) => this.analyzedType = analyzedType ?? throw new ArgumentNullException(nameof(analyzedType));
 
@@ -34,7 +36,15 @@ namespace dnSpy.Analyzer.TreeNodes {
 			output.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.ExtensionMethodsTreeNode);
 
 		protected override IEnumerable<AnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
-			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNodeData>(Context.DocumentService, analyzedType, FindReferencesInType);
+			bool includeAllModules;
+			isComType = ComUtils.IsComType(analyzedType, out comGuid);
+			includeAllModules = isComType;
+			var options = ScopedWhereUsedAnalyzerOptions.None;
+			if (includeAllModules)
+				options |= ScopedWhereUsedAnalyzerOptions.IncludeAllModules;
+			if (isComType)
+				options |= ScopedWhereUsedAnalyzerOptions.ForcePublic;
+			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNodeData>(Context.DocumentService, analyzedType, FindReferencesInType, options);
 			return analyzer.PerformAnalysis(ct);
 		}
 
@@ -44,7 +54,11 @@ namespace dnSpy.Analyzer.TreeNodes {
 			foreach (MethodDef method in type.Methods) {
 				if (method.IsStatic && HasExtensionAttribute(method)) {
 					int skip = GetParametersSkip(method.Parameters);
-					if (method.Parameters.Count > skip && new SigComparer().Equals(analyzedType, method.Parameters[skip].Type?.GetScopeType())) {
+					if (method.Parameters.Count <= skip)
+						continue;
+					var paramType = method.Parameters[skip].Type?.GetScopeType();
+					if (new SigComparer().Equals(analyzedType, paramType) ||
+						(isComType && paramType.Resolve() is TypeDef td && ComUtils.ComEquals(td, ref comGuid))) {
 						yield return new MethodNode(method) { Context = Context };
 					}
 				}

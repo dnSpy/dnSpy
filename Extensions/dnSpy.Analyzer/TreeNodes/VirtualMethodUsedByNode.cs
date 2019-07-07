@@ -34,6 +34,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 		PropertyDef? property;
 		ConcurrentDictionary<MethodDef, int>? foundMethods;
 		MethodDef? baseMethod;
+		Guid comGuid;
+		bool isComType;
+		int vtblIndex;
 
 		public VirtualMethodUsedByNode(MethodDef analyzedMethod, bool isSetter) {
 			this.analyzedMethod = analyzedMethod ?? throw new ArgumentNullException(nameof(analyzedMethod));
@@ -50,9 +53,13 @@ namespace dnSpy.Analyzer.TreeNodes {
 				property = analyzedMethod.DeclaringType.Properties.FirstOrDefault(a => a.SetMethod == analyzedMethod);
 
 			var includeAllModules = !(property is null) && CustomAttributesUtils.IsPseudoCustomAttributeType(analyzedMethod.DeclaringType);
+			ComUtils.GetMemberInfo(analyzedMethod, out isComType, out comGuid, out vtblIndex);
+			includeAllModules |= isComType;
 			var options = ScopedWhereUsedAnalyzerOptions.None;
 			if (includeAllModules)
 				options |= ScopedWhereUsedAnalyzerOptions.IncludeAllModules;
+			if (isComType)
+				options |= ScopedWhereUsedAnalyzerOptions.ForcePublic;
 			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNodeData>(Context.DocumentService, analyzedMethod, FindReferencesInType, options);
 			foreach (var child in analyzer.PerformAnalysis(ct)) {
 				yield return child;
@@ -96,17 +103,34 @@ namespace dnSpy.Analyzer.TreeNodes {
 					continue;
 				Instruction? foundInstr = null;
 				foreach (Instruction instr in method.Body.Instructions) {
-					if (instr.Operand is IMethod mr && !mr.IsField && mr.Name == name) {
+					if (!(instr.Operand is IMethod mr) || mr.IsField)
+						continue;
+					MethodDef? md = null;
+
+					if (isComType) {
+						if (instr.OpCode.Code == Code.Call || instr.OpCode.Code == Code.Callvirt) {
+							md ??= mr.ResolveMethodDef();
+							if (!(md is null)) {
+								ComUtils.GetMemberInfo(md, out bool otherIsComType, out var otherComGuid, out int otherVtblIndex);
+								if (otherIsComType && comGuid == otherComGuid && vtblIndex == otherVtblIndex) {
+									foundInstr = instr;
+									break;
+								}
+							}
+						}
+					}
+
+					if (mr.Name == name) {
 						// explicit call to the requested method 
 						if ((instr.OpCode.Code == Code.Call || instr.OpCode.Code == Code.Callvirt)
 							&& Helpers.IsReferencedBy(analyzedMethod.DeclaringType, mr.DeclaringType)
-							&& CheckEquals(mr.ResolveMethodDef(), analyzedMethod)) {
+							&& CheckEquals(md ??= mr.ResolveMethodDef(), analyzedMethod)) {
 							foundInstr = instr;
 							break;
 						}
 						// virtual call to base method
 						if (instr.OpCode.Code == Code.Callvirt) {
-							MethodDef md = mr.ResolveMethodDef();
+							md ??= mr.ResolveMethodDef();
 							if (md is null) {
 								// cannot resolve the operand, so ignore this method
 								break;

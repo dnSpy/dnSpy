@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using dnlib.DotNet;
@@ -28,6 +29,9 @@ using dnSpy.Contracts.Text;
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class TypeUsedByNode : SearchNode {
 		readonly TypeDef analyzedType;
+		Guid comGuid;
+		bool isComType;
+		HashSet<ITypeDefOrRef>? allTypes;
 
 		public TypeUsedByNode(TypeDef analyzedType) =>
 			this.analyzedType = analyzedType ?? throw new ArgumentNullException(nameof(analyzedType));
@@ -36,17 +40,28 @@ namespace dnSpy.Analyzer.TreeNodes {
 			output.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.UsedByTreeNode);
 
 		protected override IEnumerable<AnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
+			allTypes = new HashSet<ITypeDefOrRef>();
+			allTypes.Add(analyzedType);
+
 			bool includeAllModules = CustomAttributesUtils.IsPseudoCustomAttributeType(analyzedType) ||
 				CustomAttributesUtils.IsPseudoCustomAttributeOtherType(analyzedType);
+			isComType = ComUtils.IsComType(analyzedType, out comGuid);
+			includeAllModules |= isComType;
 			var options = ScopedWhereUsedAnalyzerOptions.None;
 			if (includeAllModules)
 				options |= ScopedWhereUsedAnalyzerOptions.IncludeAllModules;
+			if (isComType)
+				options |= ScopedWhereUsedAnalyzerOptions.ForcePublic;
 			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNodeData>(Context.DocumentService, analyzedType, FindTypeUsage, options);
-			return analyzer.PerformAnalysis(ct)
+			var result = analyzer.PerformAnalysis(ct)
 				.Cast<EntityNode>()
-				.Where(n => n.Member!.DeclaringType != analyzedType)
+				.Where(n => !allTypes.Contains(n.Member!.DeclaringType))
 				.Distinct(AnalyzerEntityTreeNodeComparer.Instance)
 				.Concat(FindGlobalUsage(analyzer.AllModules));
+			foreach (var n in result)
+				yield return n;
+
+			allTypes = null;
 		}
 
 		IEnumerable<EntityNode> FindGlobalUsage(List<ModuleDef> allModules) {
@@ -73,6 +88,12 @@ namespace dnSpy.Analyzer.TreeNodes {
 				yield break;
 			if (new SigComparer().Equals(type, analyzedType))
 				yield break;
+			if (isComType && ComUtils.ComEquals(type, ref comGuid)) {
+				Debug.Assert(!(allTypes is null));
+				lock (allTypes)
+					allTypes.Add(type);
+				yield break;
+			}
 
 			if (IsUsedInTypeDef(type))
 				yield return new TypeNode(type) { Context = Context };
@@ -248,7 +269,13 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		bool IsUsedInMethodParameters(IEnumerable<Parameter> parameters) => parameters.Any(IsUsedInMethodParameter);
 		bool IsUsedInMethodParameter(Parameter parameter) => !parameter.IsHiddenThisParameter && TypeMatches(parameter.Type);
-		bool TypeMatches(IType? tref) => !(tref is null) && new SigComparer().Equals(analyzedType, tref?.GetScopeType());
+
+		bool TypeMatches(IType? tref) {
+			if (isComType && tref.Resolve() is TypeDef td && ComUtils.ComEquals(td, ref comGuid))
+				return true;
+			return !(tref is null) && new SigComparer().Equals(analyzedType, tref?.GetScopeType());
+		}
+
 		public static bool CanShow(TypeDef? type) => !(type is null);
 	}
 
