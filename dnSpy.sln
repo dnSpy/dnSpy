@@ -15,9 +15,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{84
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ILSpy.Decompiler", "ILSpy.Decompiler", "{6C439ABB-7252-4F00-9A21-121C11E98895}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnSpy-x86", "dnSpy\dnSpy-x86\dnSpy-x86.csproj", "{0F407613-E15D-4FB5-89DF-EE866DB6A7EC}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnSpy", "dnSpy\dnSpy\dnSpy.csproj", "{722257A9-1B14-4D63-B886-18A4229AF4EB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnSpy-x86", "dnSpy\dnSpy-x86\dnSpy-x86.csproj", "{0F407613-E15D-4FB5-89DF-EE866DB6A7EC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnSpy.Console", "dnSpy\dnSpy.Console\dnSpy.Console.csproj", "{DA111693-97C8-413B-9102-4DCBEE8885B7}"
 EndProject
