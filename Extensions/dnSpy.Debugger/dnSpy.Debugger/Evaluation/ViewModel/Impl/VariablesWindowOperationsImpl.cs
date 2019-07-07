@@ -60,12 +60,14 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			this.messageBoxService = messageBoxService;
 		}
 
-		bool CanExecCommands(IValueNodesVM vm) {
+		bool CanExecCommands(IValueNodesVM vm) => CanExecCommands(vm, isWatch: false);
+
+		bool CanExecCommands(IValueNodesVM vm, bool isWatch) {
 			if (vm is null)
 				return false;
 			if (!vm.IsOpen)
 				return false;
-			if (vm.IsReadOnly)
+			if (!isWatch && vm.IsReadOnly)
 				return false;
 
 			return true;
@@ -245,7 +247,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		public override bool SupportsDeleteWatch(IValueNodesVM vm) => !(vm is null) && vm.CanAddRemoveExpressions;
-		public override bool CanDeleteWatch(IValueNodesVM vm) => CanExecCommands(vm) && SupportsDeleteWatch(vm) && HasSelectedNodes(vm);
+		public override bool CanDeleteWatch(IValueNodesVM vm) => CanExecCommands(vm, isWatch: true) && SupportsDeleteWatch(vm) && HasSelectedNodes(vm);
 		public override void DeleteWatch(IValueNodesVM vm) {
 			if (!CanDeleteWatch(vm))
 				return;
