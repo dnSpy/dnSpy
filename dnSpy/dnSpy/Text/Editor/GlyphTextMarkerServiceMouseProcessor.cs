@@ -414,9 +414,9 @@ namespace dnSpy.Text.Editor {
 
 			if (toolTipLine != line) {
 				CloseToolTip();
+				toolTipLine = line;
 				toolTipDispatcherTimer.Interval = TimeSpan.FromMilliseconds(TOOLTIP_WAIT_MILLISECONDS);
 				toolTipDispatcherTimer.Start();
-				toolTipLine = line;
 			}
 		}
 
