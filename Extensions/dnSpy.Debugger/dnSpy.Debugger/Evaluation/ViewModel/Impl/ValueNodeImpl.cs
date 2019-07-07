@@ -101,8 +101,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		void InitializeCachedText() {
 			var p = Context.ValueNodeFormatParameters;
 			p.Initialize(cachedName.IsDefault, cachedValue.IsDefault, cachedExpectedType.IsDefault);
-			if (!(Context.EvaluationInfo is null))
-				RawNode.Format(Context.EvaluationInfo, p, Context.FormatCulture);
+			RawNode.Format(Context.EvaluationInfo, p, Context.FormatCulture);
 			if (cachedName.IsDefault)
 				cachedName = p.NameOutput.GetClassifiedText();
 			if (cachedValue.IsDefault)
