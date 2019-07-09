@@ -6,3 +6,4 @@ _ReSharper*/
 *.ReSharper
 *_wpftmp.csproj
 launchSettings.json
+.idea/

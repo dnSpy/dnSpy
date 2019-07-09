@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.Utilities {
 	/// <summary>
 	/// UI utilities
 	/// </summary>
-	static class UIUtilities {
+	public static class UIUtilities {
 		/// <summary>
 		/// Gets the parent
 		/// </summary>
