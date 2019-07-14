@@ -87,7 +87,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 
 			var key = new ModuleTokenId(moduleId.Value, token);
 			var decompilerDebugInfo = methodDebugService.TryGetMethodDebugInfo(key);
-			DbgMethodDebugInfo debugInfo;
+			DbgMethodDebugInfo? debugInfo;
 			DbgMethodDebugInfo? stateMachineDebugInfo = null;
 			int methodVersion;
 			if (!(decompilerDebugInfo is null)) {
