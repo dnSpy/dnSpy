@@ -51,6 +51,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			if (!StringComparer.OrdinalIgnoreCase.Equals(x.CultureName ?? string.Empty, y.CultureName ?? string.Empty))
 				return false;
 
+			if (x.ContentType != y.ContentType)
+				return false;
+
 			return ignorePublicKeyToken || PublicKeyTokenEquals(x.GetPublicKeyToken(), y.GetPublicKeyToken());
 		}
 
