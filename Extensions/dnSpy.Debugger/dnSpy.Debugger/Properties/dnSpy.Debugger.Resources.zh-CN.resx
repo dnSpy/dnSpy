@@ -289,7 +289,7 @@
     <value>调试 {0} (_D)</value>
   </data>
   <data name="Debug_EventDescription_Exception" xml:space="preserve">
-    <value>例外</value>
+    <value>异常</value>
   </data>
   <data name="Debug_EventDescription_LoadModule1" xml:space="preserve">
     <value>加载模块 DYN={0} MEM={1} {2:X8} {3:X8} {4}</value>
@@ -1405,7 +1405,7 @@
     <value>隐式函数求值被用户关闭</value>
   </data>
   <data name="DbgSettings_RespectHideMemberAttributes" xml:space="preserve">
-    <value>遵守隐藏成员的属性</value>
+    <value>遵守隐藏成员的特性</value>
   </data>
   <data name="InternalDebuggerError" xml:space="preserve">
     <value>内部调试器错误</value>
@@ -1528,6 +1528,6 @@
     <value>当调试器被中断时，将dnSpy带到前台</value>
   </data>
   <data name="Column_LoadModule" xml:space="preserve">
-    <value>Load</value>
+    <value>加载</value>
   </data>
 </root>

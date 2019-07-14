@@ -1526,6 +1526,6 @@ Voulez-vous vraiment étendre cet élément ?</value>
     <value>Apportez dnSpy en premier plan lors de la rupture du débogueur</value>
   </data>
   <data name="Column_LoadModule" xml:space="preserve">
-    <value>Load</value>
+    <value>Charger</value>
   </data>
 </root>

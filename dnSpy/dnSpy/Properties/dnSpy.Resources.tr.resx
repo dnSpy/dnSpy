@@ -205,7 +205,7 @@
     <value>İptal</value>
   </data>
   <data name="Decompiling" xml:space="preserve">
-    <value>Dekompilasyon...</value>
+    <value>Derleniyor...</value>
   </data>
   <data name="DerivedTypes" xml:space="preserve">
     <value>Türemiş Türler</value>
@@ -2037,7 +2037,7 @@ Filtre Assembly Explorer seçeneklerinden değiştirilebilir.</value>
     <value>&lt;Bilinmiyor&gt;</value>
   </data>
   <data name="TypeReferencesFolder" xml:space="preserve">
-    <value>Type References</value>
+    <value>Tür referansları</value>
   </data>
   <data name="TreeViewEventsFolder" xml:space="preserve">
     <value>Olaylar</value>
@@ -2052,6 +2052,6 @@ Filtre Assembly Explorer seçeneklerinden değiştirilebilir.</value>
     <value>Özellikler</value>
   </data>
   <data name="TreeViewTypesFolder" xml:space="preserve">
-    <value>Types</value>
+    <value>Türler</value>
   </data>
 </root>

@@ -124,7 +124,7 @@
     <value>反汇编BAML</value>
   </data>
   <data name="BamlSettings_NewLineOnAttributes" xml:space="preserve">
-    <value>每行一个标签</value>
+    <value>每行一个特性</value>
   </data>
   <data name="BamlSettings_UseTabs" xml:space="preserve">
     <value>使用Tab缩进</value>

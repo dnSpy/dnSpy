@@ -1807,7 +1807,7 @@
     <value>保留堆偏移量</value>
   </data>
   <data name="SaveModule_PreserveTokens" xml:space="preserve">
-    <value>保留所有 MD 标记(_R)</value>
+    <value>保留所有MD标记(_R)</value>
   </data>
   <data name="SaveModule_PreserveTokens_ToolTip" xml:space="preserve">
     <value>如果文件仍然被混淆，行ID可能需要被保留。</value>

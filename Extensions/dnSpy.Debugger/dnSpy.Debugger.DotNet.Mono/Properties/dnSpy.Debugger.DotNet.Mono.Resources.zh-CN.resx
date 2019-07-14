@@ -223,7 +223,7 @@
     <value>运行环境不支持设置新语句</value>
   </data>
   <data name="AttachToProcessXCommand" xml:space="preserve">
-    <value>附加到进程 ({0})(_A)...</value>
+    <value>附加到进程 ({0})...</value>
   </data>
   <data name="UnityEditor" xml:space="preserve">
     <value>编辑器</value>

@@ -244,7 +244,7 @@
     <value>Shift+Alt+Enter</value>
   </data>
   <data name="FullScreenToolBarCommand" xml:space="preserve">
-    <value>Повноекранний режим</value>
+    <value>Повноекранний Режим</value>
   </data>
   <data name="GoToEntryPointCommand" xml:space="preserve">
     <value>Іти в _Точку Входу</value>
@@ -1906,7 +1906,7 @@
     <value>Додати мітки</value>
   </data>
   <data name="DisassemblySettings_AddLeadingZeroToHexNumbers" xml:space="preserve">
-    <value>Додавати ведучий '0' для hex-чисел</value>
+    <value>Додавати ведучий '0' для hex-чисел якщо треба</value>
   </data>
   <data name="DisassemblySettings_AlwaysShowMemorySize" xml:space="preserve">
     <value>Завжди показувати розмір операндів пам'яті</value>
@@ -1921,7 +1921,7 @@
     <value>Розділювач цифр</value>
   </data>
   <data name="DisassemblySettings_EmptyLineBetweenBasicBlocks" xml:space="preserve">
-    <value>Додати порожній рядок між блоками</value>
+    <value>Додавати порожній рядок між блоками</value>
   </data>
   <data name="DisassemblySettings_HexPrefix" xml:space="preserve">
     <value>Hex префікс</value>
@@ -1945,7 +1945,7 @@
     <value>Додати нулі попереду (переходи)</value>
   </data>
   <data name="DisassemblySettings_LeadingZeroes" xml:space="preserve">
-    <value>Додати нулі попереду</value>
+    <value>Додавати нулі попереду</value>
   </data>
   <data name="DisassemblySettings_ShowBranchSize" xml:space="preserve">
     <value>Показати розмір бренча</value>
@@ -1999,7 +1999,7 @@
     <value>Регістри у верхньому регістрі</value>
   </data>
   <data name="DisassemblySettings_UsePseudoOps" xml:space="preserve">
-    <value>Псевдо інструкції</value>
+    <value>Псевдо-інструкції</value>
   </data>
   <data name="DisassemblySettings_X86AssemblerSyntax" xml:space="preserve">
     <value>Синтаксис</value>
@@ -2017,13 +2017,13 @@
     <value>Hex-числа</value>
   </data>
   <data name="Disassembly_TabTitle" xml:space="preserve">
-    <value>Дизассембльований код</value>
+    <value>Дизасембльований код</value>
   </data>
   <data name="DisassemblySettings_ShowCode" xml:space="preserve">
     <value>Показати декомпільований код</value>
   </data>
   <data name="DisassemblySettings_ShowILCode" xml:space="preserve">
-    <value>Показувати IL код</value>
+    <value>Показати IL код</value>
   </data>
   <data name="Disassembly_MethodIsNotOptimized" xml:space="preserve">
     <value>Метод не оптимізований</value>
@@ -2032,7 +2032,7 @@
     <value>Показувати адресу символу</value>
   </data>
   <data name="Decompile_Timestamp" xml:space="preserve">
-    <value>Часові відмітка:</value>
+    <value>Часова відмітка:</value>
   </data>
   <data name="UnknownValue" xml:space="preserve">
     <value>&lt;Невідомо&gt;</value>

@@ -2040,7 +2040,7 @@
     <value>&lt;未知&gt;</value>
   </data>
   <data name="TypeReferencesFolder" xml:space="preserve">
-    <value>Type References</value>
+    <value>类型引用</value>
   </data>
   <data name="TreeViewEventsFolder" xml:space="preserve">
     <value>事件</value>
@@ -2055,6 +2055,6 @@
     <value>属性</value>
   </data>
   <data name="TreeViewTypesFolder" xml:space="preserve">
-    <value>Types</value>
+    <value>类型</value>
   </data>
 </root>

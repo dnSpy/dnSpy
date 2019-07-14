@@ -221,7 +221,7 @@
     <value>类初始化</value>
   </data>
   <data name="StackFrame_Exception" xml:space="preserve">
-    <value>例外</value>
+    <value>异常</value>
   </data>
   <data name="StackFrame_FunctionEvaluation" xml:space="preserve">
     <value>函数求值</value>
