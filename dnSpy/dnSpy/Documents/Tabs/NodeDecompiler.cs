@@ -248,7 +248,7 @@ namespace dnSpy.Documents.Tabs {
 				if (child is ResourceNode)
 					Decompile((ResourceNode)child);
 				else
-					DecompileUnknown(child);
+					Decompile(child);
 			}
 		}
 
@@ -269,7 +269,7 @@ namespace dnSpy.Documents.Tabs {
 				if (child is ResourceElementNode)
 					Decompile((ResourceElementNode)child);
 				else
-					DecompileUnknown(child);
+					Decompile(child);
 			}
 		}
 

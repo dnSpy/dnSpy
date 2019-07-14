@@ -33,7 +33,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 	/// <summary>
 	/// Resource node base class
 	/// </summary>
-	public abstract class ResourceNode : DocumentTreeNodeData, IResourceDataProvider {
+	public abstract class ResourceNode : DocumentTreeNodeData, IResourceNode {
 		/// <summary>
 		/// Gets the resource
 		/// </summary>
@@ -107,14 +107,17 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 			}
 		}
 
-		ModuleDefMD? GetModuleOffset(out FileOffset fileOffset) {
+		ModuleDefMD? GetModuleOffset(out FileOffset fileOffset) =>
+			GetModuleOffset(this, Resource, out fileOffset);
+
+		internal static ModuleDefMD? GetModuleOffset(DocumentTreeNodeData node, Resource resource, out FileOffset fileOffset) {
 			fileOffset = 0;
 
-			var er = Resource as EmbeddedResource;
+			var er = resource as EmbeddedResource;
 			if (er is null)
 				return null;
 
-			var module = this.GetModule() as ModuleDefMD;//TODO: Support CorModuleDef
+			var module = node.GetModule() as ModuleDefMD;//TODO: Support CorModuleDef
 			if (module is null)
 				return null;
 
@@ -203,5 +206,40 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 
 		/// <inheritdoc/>
 		public sealed override FilterType GetFilterType(IDocumentTreeNodeFilter filter) => filter.GetResult(this).FilterType;
+
+		sealed class Data {
+			public readonly Resource Resource;
+			public Data(Resource resource) => Resource = resource;
+		}
+
+		/// <summary>
+		/// Gets the resource or null
+		/// </summary>
+		/// <param name="node">Node</param>
+		/// <returns></returns>
+		public static Resource? GetResource(DocumentTreeNodeData node) {
+			if (node is ResourceNode resourceNode)
+				return resourceNode.Resource;
+			if (node.TryGetData(out Data? data))
+				return data.Resource;
+			return null;
+		}
+
+		/// <summary>
+		/// Adds the resource to a resource node
+		/// </summary>
+		/// <param name="node">Node</param>
+		/// <param name="resource">Resource</param>
+		public static void AddResource(DocumentTreeNodeData node, Resource resource) {
+			if (node is ResourceNode resourceNode) {
+				if (resourceNode.Resource != resource)
+					throw new InvalidOperationException();
+			}
+			else {
+				if (node.TryGetData<Data>(out _))
+					throw new InvalidOperationException();
+				node.AddData(new Data(resource));
+			}
+		}
 	}
 }

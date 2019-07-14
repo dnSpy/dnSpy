@@ -24,6 +24,7 @@ using System.Diagnostics;
 using System.Linq;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.Commands;
+using dnSpy.AsmEditor.Resources;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Documents.TreeView.Resources;
@@ -102,10 +103,13 @@ namespace dnSpy.AsmEditor.Compiler {
 				var rsrcListNode = GetResourceListTreeNode(modNode);
 				Debug.Assert(!(rsrcListNode is null));
 				if (!(rsrcListNode is null)) {
-					var newNodes = new ResourceNode[importer.NewResources.Length];
+					var newNodes = new NodeAndResource[importer.NewResources.Length];
 					var treeNodeGroup = documentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.ResourceTreeNodeGroup);
-					for (int i = 0; i < newNodes.Length; i++)
-						newNodes[i] = (ResourceNode)documentTreeView.TreeView.Create(resourceNodeFactory.Value.Create(module, importer.NewResources[i], treeNodeGroup)).Data;
+					for (int i = 0; i < newNodes.Length; i++) {
+						var resource = importer.NewResources[i];
+						var node = (DocumentTreeNodeData)documentTreeView.TreeView.Create(resourceNodeFactory.Value.Create(module, resource, treeNodeGroup)).Data;
+						newNodes[i] = new NodeAndResource(node);
+					}
 					resourceNodeCreator = new ResourceNodeCreator(rsrcListNode, newNodes);
 				}
 			}

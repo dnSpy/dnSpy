@@ -35,7 +35,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 	/// <summary>
 	/// Resource element node base class
 	/// </summary>
-	public abstract class ResourceElementNode : DocumentTreeNodeData, IResourceDataProvider {
+	public abstract class ResourceElementNode : DocumentTreeNodeData, IResourceNode {
 		/// <summary>
 		/// Gets the resource element
 		/// </summary>
@@ -109,10 +109,13 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 			}
 		}
 
-		ModuleDefMD? GetModuleOffset(out FileOffset fileOffset) {
+		ModuleDefMD? GetModuleOffset(out FileOffset fileOffset) =>
+			GetModuleOffset(this, resourceElement, out fileOffset);
+
+		internal static ModuleDefMD? GetModuleOffset(DocumentTreeNodeData node, ResourceElement resourceElement, out FileOffset fileOffset) {
 			fileOffset = 0;
 
-			var module = this.GetModule() as ModuleDefMD;//TODO: Support CorModuleDef
+			var module = node.GetModule() as ModuleDefMD;//TODO: Support CorModuleDef
 			if (module is null)
 				return null;
 
@@ -242,7 +245,9 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <returns></returns>
 		protected abstract IEnumerable<ResourceData> GetDeserializedData();
 
-		IEnumerable<ResourceData> GetSerializedData() {
+		IEnumerable<ResourceData> GetSerializedData() => GetSerializedData(resourceElement);
+
+		internal static IEnumerable<ResourceData> GetSerializedData(ResourceElement resourceElement) {
 			var outStream = new MemoryStream();
 			var writer = new BinaryWriter(outStream);
 
@@ -355,5 +360,40 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 
 		/// <inheritdoc/>
 		public sealed override FilterType GetFilterType(IDocumentTreeNodeFilter filter) => filter.GetResult(this).FilterType;
+
+		sealed class Data {
+			public readonly ResourceElement ResourceElement;
+			public Data(ResourceElement resourceElement) => ResourceElement = resourceElement;
+		}
+
+		/// <summary>
+		/// Gets the resource element or null
+		/// </summary>
+		/// <param name="node">Node</param>
+		/// <returns></returns>
+		public static ResourceElement? GetResourceElement(DocumentTreeNodeData node) {
+			if (node is ResourceElementNode resourceElementNode)
+				return resourceElementNode.ResourceElement;
+			if (node.TryGetData(out Data? data))
+				return data.ResourceElement;
+			return null;
+		}
+
+		/// <summary>
+		/// Adds the resource element to a resource element node
+		/// </summary>
+		/// <param name="node">Node</param>
+		/// <param name="resourceElement">Resource element</param>
+		public static void AddResourceElement(DocumentTreeNodeData node, ResourceElement resourceElement) {
+			if (node is ResourceElementNode resourceElementNode) {
+				if (resourceElementNode.ResourceElement != resourceElement)
+					throw new InvalidOperationException();
+			}
+			else {
+				if (node.TryGetData<Data>(out _))
+					throw new InvalidOperationException();
+				node.AddData(new Data(resourceElement));
+			}
+		}
 	}
 }

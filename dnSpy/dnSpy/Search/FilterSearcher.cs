@@ -272,7 +272,7 @@ namespace dnSpy.Search {
 			}
 		}
 
-		string? ToString(IResourceDataProvider resource) {
+		string? ToString(IResourceNode resource) {
 			try {
 				return resource.ToString(options.CancellationToken, options.SearchDecompiledData);
 			}

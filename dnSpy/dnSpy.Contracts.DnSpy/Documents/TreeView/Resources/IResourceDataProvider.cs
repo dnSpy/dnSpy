@@ -19,6 +19,9 @@
 
 using System.Collections.Generic;
 using System.Threading;
+using dnlib.DotNet;
+using dnlib.DotNet.Resources;
+using dnlib.IO;
 using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.Contracts.Documents.TreeView.Resources {
@@ -47,7 +50,12 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <param name="type">Type of data</param>
 		/// <returns></returns>
 		IEnumerable<ResourceData> GetResourceData(ResourceDataType type);
+	}
 
+	/// <summary>
+	/// Implemented by all resource nodes, and contains all raw data, RVA, and size
+	/// </summary>
+	public interface IResourceNode : IResourceDataProvider {
 		/// <summary>
 		/// Write a short string (typically one line) to <paramref name="output"/>
 		/// </summary>
@@ -66,5 +74,102 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <param name="canDecompile">true if the callee can decompile (eg. XAML), false otherwise</param>
 		/// <returns></returns>
 		string? ToString(CancellationToken token, bool canDecompile);
+	}
+
+	/// <summary>
+	/// Utils
+	/// </summary>
+	public static class ResourceDataProviderUtils {
+		/// <summary>
+		/// Gets a <see cref="IResourceDataProvider"/> if <paramref name="node"/> is a resource node, else returns null
+		/// </summary>
+		/// <param name="node">Node</param>
+		/// <returns></returns>
+		public static IResourceDataProvider? GetResourceDataProvider(DocumentTreeNodeData node) {
+			if (node is IResourceDataProvider provider)
+				return provider;
+			if (ResourceNode.GetResource(node) is Resource resource)
+				return new ResourceNode_ResourceDataProvider(node, resource);
+			if (ResourceElementNode.GetResourceElement(node) is ResourceElement resourceElement)
+				return new ResourceElementNode_ResourceDataProvider(node, resourceElement);
+			return null;
+		}
+
+		sealed class ResourceNode_ResourceDataProvider : IResourceDataProvider {
+			public uint FileOffset {
+				get {
+					GetModuleOffset(out var fo);
+					return (uint)fo;
+				}
+			}
+
+			public uint Length {
+				get {
+					var er = resource as EmbeddedResource;
+					return er is null ? 0 : er.Length;
+				}
+			}
+
+			public uint RVA {
+				get {
+					var module = GetModuleOffset(out var fo);
+					if (module is null)
+						return 0;
+
+					return (uint)module.Metadata.PEImage.ToRVA(fo);
+				}
+			}
+
+			ModuleDefMD? GetModuleOffset(out FileOffset fileOffset) =>
+				ResourceNode.GetModuleOffset(node, resource, out fileOffset);
+
+			readonly DocumentTreeNodeData node;
+			readonly Resource resource;
+
+			public ResourceNode_ResourceDataProvider(DocumentTreeNodeData node, Resource resource) {
+				this.node = node;
+				this.resource = resource;
+			}
+
+			public IEnumerable<ResourceData> GetResourceData(ResourceDataType type) {
+				if (resource is EmbeddedResource er)
+					yield return new ResourceData(resource.Name, ct => er.CreateReader().AsStream());
+			}
+		}
+
+		sealed class ResourceElementNode_ResourceDataProvider : IResourceDataProvider {
+			public uint FileOffset {
+				get {
+					GetModuleOffset(out var fo);
+					return (uint)fo;
+				}
+			}
+
+			public uint Length => resourceElement.ResourceData.EndOffset - resourceElement.ResourceData.StartOffset;
+
+			public uint RVA {
+				get {
+					var module = GetModuleOffset(out var fo);
+					if (module is null)
+						return 0;
+
+					return (uint)module.Metadata.PEImage.ToRVA(fo);
+				}
+			}
+
+			ModuleDefMD? GetModuleOffset(out FileOffset fileOffset) =>
+				ResourceElementNode.GetModuleOffset(node, resourceElement, out fileOffset);
+
+			readonly DocumentTreeNodeData node;
+			readonly ResourceElement resourceElement;
+
+			public ResourceElementNode_ResourceDataProvider(DocumentTreeNodeData node, ResourceElement resourceElement) {
+				this.node = node;
+				this.resourceElement = resourceElement;
+			}
+
+			public IEnumerable<ResourceData> GetResourceData(ResourceDataType type) =>
+				ResourceElementNode.GetSerializedData(resourceElement);
+		}
 	}
 }

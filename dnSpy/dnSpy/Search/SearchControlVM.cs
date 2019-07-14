@@ -225,7 +225,7 @@ namespace dnSpy.Search {
 		IEnumerable<DsDocumentNode> GetAllFilesToSearch() =>
 			documentTreeView.TreeView.Root.DataChildren.OfType<DsDocumentNode>().Where(a => CanSearchFile(a));
 		IEnumerable<DsDocumentNode> GetSelectedFilesToSearch() =>
-			documentTreeView.TreeView.TopLevelSelection.Select(a => a.GetTopNode()).Where(a => !(a is null) && CanSearchFile(a)).Distinct()!;
+			documentTreeView.TreeView.TopLevelSelection.Select(a => a.GetDocumentNode()).Where(a => !(a is null) && CanSearchFile(a)).Distinct()!;
 
 		IEnumerable<DsDocumentNode> GetAllFilesInSameDirToSearch() {
 			var dirsEnum = GetSelectedFilesToSearch().Where(a => File.Exists(a.Document.Filename)).Select(a => Path.GetDirectoryName(a.Document.Filename));

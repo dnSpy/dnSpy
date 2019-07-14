@@ -17,21 +17,22 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnlib.DotNet;
+using System;
+using System.Diagnostics;
 using dnlib.DotNet.Resources;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Documents.TreeView.Resources;
-using dnSpy.Contracts.TreeView;
 
-namespace dnSpy.Documents.TreeView.Resources {
-	[ExportResourceNodeProvider(Order = DocumentTreeViewConstants.ORDER_RSRCPROVIDER_UNKNOWNSERIALIZEDRSRCELEM)]
-	sealed class UnknownSerializedResourceElementNodeProvider : IResourceNodeProvider {
-		public DocumentTreeNodeData? Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup) => null;
+namespace dnSpy.AsmEditor.Resources {
+	readonly struct NodeAndResourceElement {
+		public DocumentTreeNodeData Node => node;
+		public ResourceElement ResourceElement => ResourceElementNode.GetResourceElement(node) ?? throw new InvalidOperationException();
 
-		public DocumentTreeNodeData? Create(ModuleDef module, ResourceElement resourceElement, ITreeNodeGroup treeNodeGroup) {
-			if (resourceElement.ResourceData is BinaryResourceData)
-				return new UnknownSerializedResourceElementNode(treeNodeGroup, resourceElement);
-			return null;
+		readonly DocumentTreeNodeData node;
+
+		public NodeAndResourceElement(DocumentTreeNodeData node) {
+			Debug.Assert(!(ResourceElementNode.GetResourceElement(node) is null));
+			this.node = node;
 		}
 	}
 }

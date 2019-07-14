@@ -454,13 +454,13 @@ namespace dnSpy.Documents.TreeView {
 
 		public int Compare(TreeNodeData x, TreeNodeData y) {
 			if (x == y) return 0;
-			var a = x as ResourceNode;
-			var b = y as ResourceNode;
-			if (a is null) return -1;
-			if (b is null) return 1;
-			int c = StringComparer.OrdinalIgnoreCase.Compare(a.Resource.Name, b.Resource.Name);
+			var ra = ResourceNode.GetResource((DocumentTreeNodeData)x);
+			var rb = ResourceNode.GetResource((DocumentTreeNodeData)y);
+			if (ra is null) return -1;
+			if (rb is null) return 1;
+			int c = StringComparer.OrdinalIgnoreCase.Compare(ra.Name, rb.Name);
 			if (c != 0) return c;
-			return a.Resource.MDToken.Raw.CompareTo(b.Resource.MDToken.Raw);
+			return ra.MDToken.Raw.CompareTo(rb.MDToken.Raw);
 		}
 	}
 
@@ -471,14 +471,14 @@ namespace dnSpy.Documents.TreeView {
 
 		public int Compare(TreeNodeData x, TreeNodeData y) {
 			if (x == y) return 0;
-			var a = x as ResourceElementNode;
-			var b = y as ResourceElementNode;
-			if (a is null) return -1;
-			if (b is null) return 1;
-			int c = StringComparer.OrdinalIgnoreCase.Compare(a.ResourceElement.Name, b.ResourceElement.Name);
+			var ra = ResourceElementNode.GetResourceElement((DocumentTreeNodeData)x);
+			var rb = ResourceElementNode.GetResourceElement((DocumentTreeNodeData)y);
+			if (ra is null) return -1;
+			if (rb is null) return 1;
+			int c = StringComparer.OrdinalIgnoreCase.Compare(ra.Name, rb.Name);
 			if (c != 0) return c;
-			int cx = (int)a.ResourceElement.ResourceData.Code.FixUserType();
-			int cy = (int)b.ResourceElement.ResourceData.Code.FixUserType();
+			int cx = (int)ra.ResourceData.Code.FixUserType();
+			int cy = (int)rb.ResourceData.Code.FixUserType();
 			return cx.CompareTo(cy);
 		}
 	}

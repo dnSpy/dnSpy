@@ -23,6 +23,7 @@ using System.Diagnostics;
 using System.Linq;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnlib.DotNet.Resources;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Documents.TreeView;
@@ -223,7 +224,7 @@ namespace dnSpy.Documents.Tabs {
 			if (resSetNode is null)
 				return;
 			resSetNode.TreeNode.EnsureChildrenLoaded();
-			var resNode = resSetNode.TreeNode.DataChildren.FirstOrDefault(a => a is ResourceElementNode && ((ResourceElementNode)a).Name == resRef.ResourceName);
+			var resNode = resSetNode.TreeNode.DataChildren.FirstOrDefault(a => ResourceElementNode.GetResourceElement((DocumentTreeNodeData)a) is ResourceElement resourceElement && resourceElement.Name == resRef.ResourceName);
 			Debug.Assert(!(resNode is null));
 			if (resNode is null)
 				return;

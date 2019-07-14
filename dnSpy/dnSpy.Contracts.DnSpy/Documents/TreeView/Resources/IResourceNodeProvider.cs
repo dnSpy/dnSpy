@@ -30,22 +30,22 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 	/// </summary>
 	public interface IResourceNodeProvider {
 		/// <summary>
-		/// Creates a <see cref="ResourceNode"/> instance or returns null
+		/// Creates a resource node (eg. <see cref="ResourceNode"/>) instance or returns null
 		/// </summary>
 		/// <param name="module">Owner module</param>
 		/// <param name="resource">Resource</param>
 		/// <param name="treeNodeGroup">Group</param>
 		/// <returns></returns>
-		ResourceNode? Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup);
+		DocumentTreeNodeData? Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup);
 
 		/// <summary>
-		/// Creates a <see cref="ResourceElementNode"/> instance or returns null
+		/// Creates a resource element node (eg. <see cref="ResourceElementNode"/>) instance or returns null
 		/// </summary>
 		/// <param name="module">Owner module</param>
 		/// <param name="resourceElement">Resource</param>
 		/// <param name="treeNodeGroup">Group</param>
 		/// <returns></returns>
-		ResourceElementNode? Create(ModuleDef module, ResourceElement resourceElement, ITreeNodeGroup treeNodeGroup);
+		DocumentTreeNodeData? Create(ModuleDef module, ResourceElement resourceElement, ITreeNodeGroup treeNodeGroup);
 	}
 
 	/// <summary>Metadata</summary>

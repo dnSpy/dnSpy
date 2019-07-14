@@ -354,8 +354,8 @@ namespace dnSpy.AsmEditor.Hex {
 			if (context.Reference is AddressReference addr && File.Exists(addr.Filename))
 				return addr;
 
-			if (context.Reference is IResourceDataProvider rsrc && rsrc.FileOffset != 0) {
-				var name = GetFilename((DocumentTreeNodeData)rsrc);
+			if (context.Reference is DocumentTreeNodeData node && ResourceDataProviderUtils.GetResourceDataProvider(node) is IResourceDataProvider rsrc && rsrc.FileOffset != 0) {
+				var name = GetFilename((DocumentTreeNodeData)node.TreeNode.Parent!.Data);
 				if (!string.IsNullOrEmpty(name))
 					return new AddressReference(name, false, rsrc.FileOffset, rsrc.Length);
 			}
@@ -774,8 +774,8 @@ namespace dnSpy.AsmEditor.Hex {
 			if (context.Nodes is null || context.Nodes.Length != 1)
 				return null;
 
-			if (context.Nodes[0] is IResourceDataProvider rsrc && rsrc.FileOffset != 0) {
-				var mod = (rsrc as DocumentTreeNodeData).GetModule();
+			if (context.Nodes[0] is DocumentTreeNodeData node && ResourceDataProviderUtils.GetResourceDataProvider(node) is IResourceDataProvider rsrc && rsrc.FileOffset != 0) {
+				var mod = node.GetParentModule();
 				if (!(mod is null) && File.Exists(mod.Location))
 					return new AddressReference(mod.Location, false, rsrc.FileOffset, rsrc.Length);
 			}

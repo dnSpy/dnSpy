@@ -34,7 +34,7 @@ using dnSpy.Properties;
 namespace dnSpy.Documents.TreeView.Resources {
 	[ExportResourceNodeProvider(Order = DocumentTreeViewConstants.ORDER_RSRCPROVIDER_RSRCELEMSET)]
 	sealed class ResourceElementSetNodeProvider : IResourceNodeProvider {
-		public ResourceNode? Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup) {
+		public DocumentTreeNodeData? Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup) {
 			var er = resource as EmbeddedResource;
 			if (er is null)
 				return null;
@@ -43,7 +43,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 			return new ResourceElementSetNodeImpl(treeNodeGroup, module, er);
 		}
 
-		public ResourceElementNode? Create(ModuleDef module, ResourceElement resourceElement, ITreeNodeGroup treeNodeGroup) => null;
+		public DocumentTreeNodeData? Create(ModuleDef module, ResourceElement resourceElement, ITreeNodeGroup treeNodeGroup) => null;
 	}
 
 	sealed class ResourceElementSetNodeImpl : ResourceElementSetNode {
@@ -69,8 +69,12 @@ namespace dnSpy.Documents.TreeView.Resources {
 
 		protected override IEnumerable<ResourceData> GetDeserializedData() {
 			TreeNode.EnsureChildrenLoaded();
-			foreach (IResourceDataProvider node in TreeNode.DataChildren) {
-				foreach (var data in node.GetResourceData(ResourceDataType.Deserialized))
+			foreach (DocumentTreeNodeData node in TreeNode.DataChildren) {
+				var provider = ResourceDataProviderUtils.GetResourceDataProvider(node);
+				Debug.Assert(!(provider is null));
+				if (provider is null)
+					continue;
+				foreach (var data in provider.GetResourceData(ResourceDataType.Deserialized))
 					yield return data;
 			}
 		}
@@ -96,8 +100,13 @@ namespace dnSpy.Documents.TreeView.Resources {
 			TreeNode.EnsureChildrenLoaded();
 			var outStream = new MemoryStream();
 			var resources = new ResourceElementSet();
-			foreach (ResourceElementNode child in TreeNode.DataChildren)
-				resources.Add(child.ResourceElement);
+			foreach (DocumentTreeNodeData child in TreeNode.DataChildren) {
+				var resourceElement = ResourceElementNode.GetResourceElement(child);
+				if (resourceElement is null)
+					throw new InvalidOperationException();
+				resources.Add(resourceElement);
+			}
+
 			ResourceWriter.Write(module, outStream, resources);
 			Resource = new EmbeddedResource(Resource.Name, outStream.ToArray(), Resource.Attributes);
 		}
