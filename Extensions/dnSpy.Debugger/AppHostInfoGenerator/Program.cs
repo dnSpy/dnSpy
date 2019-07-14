@@ -435,14 +435,21 @@ namespace AppHostInfoGenerator {
 		void SerializeCompressedUInt32(uint value, string name, string? commentValue = null) {
 			output.Write(serializeIndent);
 
-			if (value <= 0x7F)
-				output.Write($"0x{((byte)value).ToString("X2")},");
-			else if (value <= 0x3FFF)
-				output.Write($"0x{((byte)((value >> 8) | 0x80)).ToString("X2")}, 0x{((byte)value).ToString("X2")},");
-			else if (value <= 0x1FFFFFFF)
-				output.Write($"0x{((byte)((value >> 24) | 0xC0)).ToString("X2")}, 0x{((byte)(value >> 16)).ToString("X2")}, 0x{((byte)(value >> 8)).ToString("X2")}, 0x{((byte)value).ToString("X2")},");
-			else
-				throw new InvalidOperationException();
+			bool needSpace = false;
+			var currentValue = value;
+			for (;;) {
+				if (needSpace)
+					output.Write(" ");
+				needSpace = true;
+				uint v = currentValue;
+				if (v < 0x80)
+					output.Write($"0x{((byte)currentValue).ToString("X2")},");
+				else
+					output.Write($"0x{((byte)(currentValue | 0x80)).ToString("X2")},");
+				currentValue >>= 7;
+				if (currentValue == 0)
+					break;
+			}
 
 			if (commentValue is null)
 				commentValue = "0x" + value.ToString("X8");

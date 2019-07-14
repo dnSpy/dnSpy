@@ -66,13 +66,13 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		}
 
 		internal static uint DeserializeCompressedUInt32(byte[] data, ref int o) {
-			byte b = data[o++];
-			if ((b & 0x80) == 0)
-				return b;
-			if ((b & 0xC0) == 0x80)
-				return (uint)(((b & 0x3F) << 8) | data[o++]);
-			if ((b & 0xE0) == 0xC0)
-				return (uint)(((b & 0x1F) << 24) | (data[o++] << 16) | (data[o++] << 8) | data[o++]);
+			uint result = 0;
+			for (int shift = 0; shift < 32; shift += 7) {
+				uint b = data[o++];
+				if ((b & 0x80) == 0)
+					return result | (b << shift);
+				result |= (b & 0x7F) << shift;
+			}
 			throw new InvalidOperationException();
 		}
 
