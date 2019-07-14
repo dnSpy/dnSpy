@@ -26,6 +26,7 @@ using System.Linq;
 using System.Threading;
 using dnlib.DotNet;
 using dnlib.PE;
+using dnSpy.Contracts.DnSpy.Metadata;
 using dnSpy.Contracts.Documents;
 
 namespace dnSpy.Documents {
@@ -90,12 +91,12 @@ namespace dnSpy.Documents {
 		public IDsDocumentServiceSettings Settings { get; }
 
 		[ImportingConstructor]
-		public DsDocumentService(IDsDocumentServiceSettings documentServiceSettings, [ImportMany] IDsDocumentProvider[] documentProviders) {
+		public DsDocumentService(IDsDocumentServiceSettings documentServiceSettings, [ImportMany] IDsDocumentProvider[] documentProviders, [ImportMany] Lazy<IRuntimeAssemblyResolver, IRuntimeAssemblyResolverMetadata>[] runtimeAsmResolvers) {
 			rwLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
 			documents = new List<DocumentInfo>();
 			tempCacheLock = new object();
 			tempCache = new HashSet<IDsDocument>();
-			assemblyResolver = new AssemblyResolver(this);
+			assemblyResolver = new AssemblyResolver(this, runtimeAsmResolvers.OrderBy(a => a.Metadata.Order).ToArray());
 			this.documentProviders = documentProviders.OrderBy(a => a.Order).ToArray();
 			Settings = documentServiceSettings;
 		}
@@ -404,18 +405,30 @@ namespace dnSpy.Documents {
 
 		public IDsDocument? TryCreateOnly(DsDocumentInfo info) => TryCreateDocument(info);
 
-		public IDsDocument CreateDocument(DsDocumentInfo documentInfo, string filename, bool isModule) {
-			try {
-				// Quick check to prevent exceptions from being thrown
-				if (!File.Exists(filename))
-					return new DsUnknownDocument(filename);
+		public IDsDocument CreateDocument(DsDocumentInfo documentInfo, string filename, bool isModule) =>
+			CreateDocumentCore(documentInfo, null, filename, true, isModule);
 
+		public IDsDocument CreateDocument(DsDocumentInfo documentInfo, byte[] fileData, string? filename, bool isFileLayout, bool isModule) =>
+			CreateDocumentCore(documentInfo, fileData, filename ?? string.Empty, isFileLayout, isModule);
+
+		IDsDocument CreateDocumentCore(DsDocumentInfo documentInfo, byte[]? fileData, string filename, bool isFileLayout, bool isModule) {
+			try {
 				IPEImage peImage;
 
-				if (Settings.UseMemoryMappedIO)
-					peImage = new PEImage(filename);
-				else
-					peImage = new PEImage(File.ReadAllBytes(filename), filename);
+				if (!(fileData is null))
+					peImage = new PEImage(fileData, filename, isFileLayout ? ImageLayout.File : ImageLayout.Memory, verify: true);
+				else {
+					Debug.Assert(isFileLayout);
+
+					// Quick check to prevent exceptions from being thrown
+					if (!File.Exists(filename))
+						return new DsUnknownDocument(filename);
+
+					if (Settings.UseMemoryMappedIO)
+						peImage = new PEImage(filename);
+					else
+						peImage = new PEImage(File.ReadAllBytes(filename), filename);
+				}
 
 				var dotNetDir = peImage.ImageNTHeaders.OptionalHeader.DataDirectories[14];
 				// Mono doesn't check that the Size field is >= 0x48

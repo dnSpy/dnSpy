@@ -17,8 +17,9 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel.Composition;
-using System.Linq;
+using dnSpy.Contracts.DnSpy.Metadata;
 using dnSpy.Contracts.Documents;
 
 namespace dnSpy.Documents {
@@ -26,13 +27,15 @@ namespace dnSpy.Documents {
 	sealed class DsDocumentServiceProvider : IDsDocumentServiceProvider {
 		readonly IDsDocumentServiceSettings documentServiceSettings;
 		readonly IDsDocumentProvider[] documentProviders;
+		readonly Lazy<IRuntimeAssemblyResolver, IRuntimeAssemblyResolverMetadata>[] runtimeAsmResolvers;
 
 		[ImportingConstructor]
-		DsDocumentServiceProvider(IDsDocumentServiceSettings documentServiceSettings, [ImportMany] IDsDocumentProvider[] documentProviders) {
+		DsDocumentServiceProvider(IDsDocumentServiceSettings documentServiceSettings, [ImportMany] IDsDocumentProvider[] documentProviders, [ImportMany] Lazy<IRuntimeAssemblyResolver, IRuntimeAssemblyResolverMetadata>[] runtimeAsmResolvers) {
 			this.documentServiceSettings = documentServiceSettings;
-			this.documentProviders = documentProviders.ToArray();
+			this.documentProviders = documentProviders;
+			this.runtimeAsmResolvers = runtimeAsmResolvers;
 		}
 
-		public IDsDocumentService Create() => new DsDocumentService(documentServiceSettings, documentProviders);
+		public IDsDocumentService Create() => new DsDocumentService(documentServiceSettings, documentProviders, runtimeAsmResolvers);
 	}
 }

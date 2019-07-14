@@ -145,6 +145,17 @@ namespace dnSpy.Contracts.Documents {
 		IDsDocument CreateDocument(DsDocumentInfo documentInfo, string filename, bool isModule = false);
 
 		/// <summary>
+		/// Creates a <see cref="IDsDocument"/>
+		/// </summary>
+		/// <param name="documentInfo">Document info</param>
+		/// <param name="fileData">File data</param>
+		/// <param name="filename">Filename or null/empty string if it's unknown</param>
+		/// <param name="isFileLayout">true if it's file layout, false if it's memory layout</param>
+		/// <param name="isModule">true if it's a module, false if it's an assembly</param>
+		/// <returns></returns>
+		IDsDocument CreateDocument(DsDocumentInfo documentInfo, byte[] fileData, string? filename, bool isFileLayout, bool isModule = false);
+
+		/// <summary>
 		/// The assembly resolver it uses
 		/// </summary>
 		IAssemblyResolver AssemblyResolver { get; }

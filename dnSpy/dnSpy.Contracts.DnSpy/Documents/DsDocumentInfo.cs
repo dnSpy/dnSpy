@@ -26,10 +26,16 @@ namespace dnSpy.Contracts.Documents {
 	/// </summary>
 	public readonly struct DsDocumentInfo {
 		/// <summary>
-		/// Name, eg. filename if <see cref="Type"/> is <see cref="DocumentConstants.DOCUMENTTYPE_FILE"/>
+		/// Name, eg. filename if <see cref="Type"/> is <see cref="DocumentConstants.DOCUMENTTYPE_FILE"/> or
+		/// <see cref="DocumentConstants.DOCUMENTTYPE_INMEMORY"/> (can be empty)
 		/// </summary>
 		public string Name => name ?? string.Empty;
 		readonly string name;
+
+		/// <summary>
+		/// Optional data used by some types
+		/// </summary>
+		public object? Data { get; }
 
 		/// <summary>
 		/// Document type, eg. <see cref="DocumentConstants.DOCUMENTTYPE_FILE"/>
@@ -63,6 +69,18 @@ namespace dnSpy.Contracts.Documents {
 		}
 
 		/// <summary>
+		/// Creates a <see cref="DsDocumentInfo"/> used by in-memory files
+		/// </summary>
+		/// <param name="getFileData">Creates the file data</param>
+		/// <param name="filename">Filename or null/empty string if it's unknown</param>
+		/// <returns></returns>
+		public static DsDocumentInfo CreateInMemory(Func<(byte[]? filedata, bool isFileLayout)> getFileData, string? filename) {
+			if (getFileData is null)
+				throw new ArgumentNullException(nameof(getFileData));
+			return new DsDocumentInfo(filename ?? string.Empty, DocumentConstants.DOCUMENTTYPE_INMEMORY, getFileData);
+		}
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="name">Name, see <see cref="Name"/></param>
@@ -70,6 +88,19 @@ namespace dnSpy.Contracts.Documents {
 		public DsDocumentInfo(string name, Guid type) {
 			this.name = name ?? string.Empty;
 			Type = type;
+			Data = null;
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="name">Name, see <see cref="Name"/></param>
+		/// <param name="type">Type, see <see cref="Type"/></param>
+		/// <param name="data">Data, see <see cref="Data"/></param>
+		public DsDocumentInfo(string name, Guid type, object? data) {
+			this.name = name ?? string.Empty;
+			Type = type;
+			Data = data;
 		}
 
 		/// <summary>

@@ -35,6 +35,10 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		public static void Save(ISettingsSection section, DsDocumentInfo info) {
+			// Assume that instances with a non-null Data property can't be serialized
+			if (!(info.Data is null))
+				return;
+
 			section.Attribute(DOCUMENTINFO_NAME_ATTR, info.Name);
 			if (info.Type != DocumentConstants.DOCUMENTTYPE_FILE)
 				section.Attribute(DOCUMENTINFO_TYPE_ATTR, info.Type);

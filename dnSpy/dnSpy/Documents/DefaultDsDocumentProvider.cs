@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dnlib.DotNet;
@@ -29,6 +30,17 @@ namespace dnSpy.Documents {
 		public double Order => DocumentConstants.ORDER_DEFAULT_DOCUMENT_PROVIDER;
 
 		public IDsDocument? Create(IDsDocumentService documentService, DsDocumentInfo documentInfo) {
+			if (documentInfo.Type == DocumentConstants.DOCUMENTTYPE_INMEMORY) {
+				var getFileData = documentInfo.Data as Func<(byte[]? filedata, bool isFileLayout)>;
+				Debug.Assert(!(getFileData is null));
+				if (!(getFileData is null)) {
+					var info = getFileData();
+					if (!(info.filedata is null))
+						return documentService.CreateDocument(documentInfo, info.filedata, documentInfo.Name, info.isFileLayout);
+				}
+				return null;
+			}
+
 			var filename = GetFilename(documentInfo);
 			if (!(filename is null))
 				return documentService.CreateDocument(documentInfo, filename);
@@ -49,6 +61,10 @@ namespace dnSpy.Documents {
 				return GetGacFilename(documentInfo.Name);
 			if (documentInfo.Type == DocumentConstants.DOCUMENTTYPE_REFASM)
 				return GetRefFileFilename(documentInfo.Name);
+			if (documentInfo.Type == DocumentConstants.DOCUMENTTYPE_INMEMORY) {
+				if (!string.IsNullOrEmpty(documentInfo.Name))
+					return documentInfo.Name;
+			}
 			return null;
 		}
 

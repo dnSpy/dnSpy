@@ -24,12 +24,14 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using dnlib.DotNet;
 using dnlib.PE;
+using dnSpy.Contracts.DnSpy.Metadata;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.Documents {
 	sealed class AssemblyResolver : IAssemblyResolver {
 		readonly DsDocumentService documentService;
+		readonly Lazy<IRuntimeAssemblyResolver, IRuntimeAssemblyResolverMetadata>[] runtimeAsmResolvers;
 		readonly FailedAssemblyResolveCache failedAssemblyResolveCache;
 		readonly DotNetCorePathProvider dotNetCorePathProvider;
 
@@ -47,8 +49,9 @@ namespace dnSpy.Documents {
 		const string UnityEngineFilename = "UnityEngine.dll";
 		const string SelfContainedDotNetCoreFilename = "System.Private.CoreLib.dll";
 
-		public AssemblyResolver(DsDocumentService documentService) {
+		public AssemblyResolver(DsDocumentService documentService, Lazy<IRuntimeAssemblyResolver, IRuntimeAssemblyResolverMetadata>[] runtimeAsmResolvers) {
 			this.documentService = documentService;
+			this.runtimeAsmResolvers = runtimeAsmResolvers;
 			failedAssemblyResolveCache = new FailedAssemblyResolveCache();
 			dotNetCorePathProvider = new DotNetCorePathProvider();
 		}
@@ -93,10 +96,10 @@ namespace dnSpy.Documents {
 			}
 		}
 
-		AssemblyDef? IAssemblyResolver.Resolve(IAssembly assembly, ModuleDef sourceModule) =>
+		AssemblyDef? IAssemblyResolver.Resolve(IAssembly assembly, ModuleDef? sourceModule) =>
 			Resolve(assembly, sourceModule)?.AssemblyDef;
 
-		IDsDocument? Resolve(IAssembly assembly, ModuleDef sourceModule) {
+		IDsDocument? Resolve(IAssembly assembly, ModuleDef? sourceModule) {
 			if (assembly.IsContentTypeWindowsRuntime) {
 				if (failedAssemblyResolveCache.IsFailed(assembly))
 					return null;
@@ -113,6 +116,29 @@ namespace dnSpy.Documents {
 					failedAssemblyResolveCache.MarkFailed(assembly);
 				return document;
 			}
+		}
+
+		IDsDocument? TryRuntimeAssemblyResolvers(IAssembly assembly, ModuleDef? sourceModule) {
+			foreach (var lz in runtimeAsmResolvers) {
+				var result = lz.Value.Resolve(assembly, sourceModule);
+				if (!result.IsDefault) {
+					if (!string.IsNullOrEmpty(result.Filename)) {
+						var file = documentService.Find(FilenameKey.CreateFullPath(result.Filename), checkTempCache: true);
+						if (!(file is null))
+							return file;
+					}
+
+					if (!(result.GetFileData is null))
+						return documentService.TryGetOrCreateInternal(DsDocumentInfo.CreateInMemory(result.GetFileData, result.Filename), true, true);
+					if (!string.IsNullOrEmpty(result.Filename))
+						return documentService.TryGetOrCreateInternal(DsDocumentInfo.CreateDocument(result.Filename), true, true);
+
+					Debug.Fail("Shouldn't be reached");
+					return null;
+				}
+			}
+
+			return null;
 		}
 
 		enum FrameworkKind {
@@ -157,7 +183,7 @@ namespace dnSpy.Documents {
 		}
 		internal void OnAssembliesCleared() => frameworkInfos = Array.Empty<FrameworkPathInfo>();
 
-		FrameworkKind GetFrameworkKind(ModuleDef module, out Version? netCoreVersion, out string? sourceModuleDirectoryHint) {
+		FrameworkKind GetFrameworkKind(ModuleDef? module, out Version? netCoreVersion, out string? sourceModuleDirectoryHint) {
 			if (module is null) {
 				netCoreVersion = null;
 				sourceModuleDirectoryHint = null;
@@ -459,7 +485,7 @@ namespace dnSpy.Documents {
 			return true;
 		}
 
-		IDsDocument? ResolveNormal(IAssembly assembly, ModuleDef sourceModule) {
+		IDsDocument? ResolveNormal(IAssembly assembly, ModuleDef? sourceModule) {
 			var fwkKind = GetFrameworkKind(sourceModule, out var netCoreVersion, out var sourceModuleDirectoryHint);
 			if (fwkKind == FrameworkKind.DotNetCore && !dotNetCorePathProvider.HasDotNetCore)
 				fwkKind = FrameworkKind.DotNetFramework4;
@@ -499,6 +525,10 @@ namespace dnSpy.Documents {
 					gacVersion = -1;
 				}
 
+				document = TryRuntimeAssemblyResolvers(assembly, sourceModule);
+				if (!(document is null))
+					return document;
+
 				options = DsDocumentService.DefaultOptions;
 				// If the assembly was redirected, always compare the version number. This prevents resolving
 				// mscorlib 2.0 when a .NET 4 app references a .NET 2.0-3.5 dll. We should get mscorlib 4.0.
@@ -536,6 +566,10 @@ namespace dnSpy.Documents {
 			case FrameworkKind.Unity:
 			case FrameworkKind.SelfContainedDotNetCore:
 			case FrameworkKind.WindowsUniversal:
+				document = TryRuntimeAssemblyResolvers(assembly, sourceModule);
+				if (!(document is null))
+					return document;
+
 				// If it's a self-contained .NET Core app, we don't need the version since we must only search
 				// the current directory.
 				Debug.Assert(fwkKind == FrameworkKind.DotNetCore || netCoreVersion is null);
@@ -687,10 +721,16 @@ namespace dnSpy.Documents {
 			}
 		}
 
-		IDsDocument? ResolveWinMD(IAssembly assembly, ModuleDef sourceModule) {
-			var existingDocument = documentService.FindAssembly(assembly, DsDocumentService.DefaultOptions);
-			if (!(existingDocument is null))
-				return existingDocument;
+		IDsDocument? ResolveWinMD(IAssembly assembly, ModuleDef? sourceModule) {
+			IDsDocument? document;
+
+			document = TryRuntimeAssemblyResolvers(assembly, sourceModule);
+			if (!(document is null))
+				return document;
+
+			document = documentService.FindAssembly(assembly, DsDocumentService.DefaultOptions);
+			if (!(document is null))
+				return document;
 
 			foreach (var winmdPath in GacInfo.WinmdPaths) {
 				string file;

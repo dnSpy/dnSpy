@@ -50,6 +50,12 @@ namespace dnSpy.Contracts.Documents {
 		public static readonly Guid DOCUMENTTYPE_REFASM = new Guid("75AB0E5C-D1D7-4811-93E1-0AF26CE3856C");
 
 		/// <summary>
+		/// An in-memory (byte[]) assembly. <see cref="DsDocumentInfo.Name"/> is the filename or an empty
+		/// string. <see cref="DsDocumentInfo.Data"/> is a 'Func&lt;(byte[]? filedata, bool isFileLayout)&gt;'
+		/// </summary>
+		public static readonly Guid DOCUMENTTYPE_INMEMORY = new Guid("132577A9-1DD6-423E-BE23-8F78795C6092");
+
+		/// <summary>
 		/// String separating assembly full name and reference assembly path
 		/// </summary>
 		public static readonly string REFERENCE_ASSEMBLY_SEPARATOR = "|";
