@@ -100,7 +100,7 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 			}
 		}
 
-		(MethodDebugInfo debugInfo, MethodDebugInfo? stateMachineDebugInfoOrNull) TryDecompileCode(MethodDef method, uint methodToken, DecompilationContext ctx, DecompilerOutputImpl output) {
+		(MethodDebugInfo debugInfo, MethodDebugInfo? stateMachineDebugInfo) TryDecompileCode(MethodDef method, uint methodToken, DecompilationContext ctx, DecompilerOutputImpl output) {
 			output.Initialize(methodToken);
 			decompiler.Decompile(method, output, ctx);
 			var info = output.TryGetMethodDebugInfo();

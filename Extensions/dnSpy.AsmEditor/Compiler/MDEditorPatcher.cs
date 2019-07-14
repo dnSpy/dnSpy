@@ -37,7 +37,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly RawModuleBytes moduleData;
 		readonly byte* peFile;
 		readonly IAssembly tempAssembly;
-		readonly TypeDef? nonNestedEditedTypeOrNull;
+		readonly TypeDef? nonNestedEditedType;
 		readonly RemappedTypeTokens remappedTypeTokens;
 		readonly List<byte> sigBuilder;
 		readonly MetadataEditor mdEditor;
@@ -47,12 +47,12 @@ namespace dnSpy.AsmEditor.Compiler {
 		bool UpdateTypeReferences => (options & MDEditorPatcherOptions.UpdateTypeReferences) != 0;
 		bool AllowInternalAccess => (options & MDEditorPatcherOptions.AllowInternalAccess) != 0;
 
-		public MDEditorPatcher(RawModuleBytes moduleData, MetadataEditor mdEditor, IAssembly tempAssembly, TypeDef? nonNestedEditedTypeOrNull, MDEditorPatcherOptions options) {
+		public MDEditorPatcher(RawModuleBytes moduleData, MetadataEditor mdEditor, IAssembly tempAssembly, TypeDef? nonNestedEditedType, MDEditorPatcherOptions options) {
 			this.moduleData = moduleData;
 			peFile = (byte*)moduleData.Pointer;
 			this.tempAssembly = tempAssembly;
-			this.nonNestedEditedTypeOrNull = nonNestedEditedTypeOrNull;
-			remappedTypeTokens = new RemappedTypeTokens(nonNestedEditedTypeOrNull);
+			this.nonNestedEditedType = nonNestedEditedType;
+			remappedTypeTokens = new RemappedTypeTokens(nonNestedEditedType);
 			sigBuilder = new List<byte>();
 			this.mdEditor = mdEditor;
 			this.options = options;
@@ -66,11 +66,11 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		public void Patch(ModuleDef module) {
-			if (UpdateTypeReferences && !(nonNestedEditedTypeOrNull is null)) {
-				if (nonNestedEditedTypeOrNull.Module == module)
-					DeleteTypeDef(mdEditor, nonNestedEditedTypeOrNull);
-				PatchTypeRefsToEditedType(nonNestedEditedTypeOrNull);
-				PatchTypeTokenReferences(nonNestedEditedTypeOrNull);
+			if (UpdateTypeReferences && !(nonNestedEditedType is null)) {
+				if (nonNestedEditedType.Module == module)
+					DeleteTypeDef(mdEditor, nonNestedEditedType);
+				PatchTypeRefsToEditedType(nonNestedEditedType);
+				PatchTypeTokenReferences(nonNestedEditedType);
 			}
 			if (AllowInternalAccess)
 				AddInternalsVisibleToAttribute();

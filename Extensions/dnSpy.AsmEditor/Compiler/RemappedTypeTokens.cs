@@ -33,11 +33,11 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		public int Count => dict.Count;
 
-		public RemappedTypeTokens(TypeDef? enclosingTypeOrNull) {
+		public RemappedTypeTokens(TypeDef? enclosingType) {
 			dict = new Dictionary<uint, uint>();
 			minNestedToken = uint.MaxValue;
 			maxNestedToken = uint.MinValue;
-			enclosingTypeToken = enclosingTypeOrNull?.MDToken.Raw ?? uint.MaxValue;
+			enclosingTypeToken = enclosingType?.MDToken.Raw ?? uint.MaxValue;
 			enclosingTypeNewToken = uint.MaxValue;
 		}
 

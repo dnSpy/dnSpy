@@ -231,7 +231,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			return GetInterpreterStateCommon(evalInfo, type.Module, 0, type.Module, type.MetadataToken, 0, null, aliases, typeReferences, options, expression, stateObj, type, out evalExprState);
 		}
 
-		EvaluateImplResult? GetInterpreterStateCommon(DbgEvaluationInfo evalInfo, DmdModule? reflectionModuleOrNull, int debugInfoVersion, object memberModule, int memberToken, int memberVersion, DbgMethodDebugScope? scope, DbgDotNetAlias[] aliases, DmdType[] typeReferences, DbgEvaluationOptions options, string expression, object? stateObj, DmdType? type, out EvaluateImplExpressionState? evalExprState) {
+		EvaluateImplResult? GetInterpreterStateCommon(DbgEvaluationInfo evalInfo, DmdModule? reflectionModule, int debugInfoVersion, object memberModule, int memberToken, int memberVersion, DbgMethodDebugScope? scope, DbgDotNetAlias[] aliases, DmdType[] typeReferences, DbgEvaluationOptions options, string expression, object? stateObj, DmdType? type, out EvaluateImplExpressionState? evalExprState) {
 			evalExprState = null;
 			EvaluateImplExpressionState? evalState;
 			if (!(stateObj is null)) {
@@ -243,8 +243,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			else
 				evalState = evalInfo.Context.GetOrCreateData<EvaluateImplExpressionState>();
 
-			var refsResult = !(reflectionModuleOrNull is null) ?
-				dbgModuleReferenceProvider.GetModuleReferences(evalInfo.Runtime, reflectionModuleOrNull, typeReferences) :
+			var refsResult = !(reflectionModule is null) ?
+				dbgModuleReferenceProvider.GetModuleReferences(evalInfo.Runtime, reflectionModule, typeReferences) :
 				dbgModuleReferenceProvider.GetModuleReferences(evalInfo.Runtime, evalInfo.Frame, typeReferences);
 			if (!(refsResult.ErrorMessage is null))
 				return new EvaluateImplResult(refsResult.ErrorMessage, CreateName(expression), null, null, 0, PredefinedDbgValueNodeImageNames.Error, null);

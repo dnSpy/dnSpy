@@ -85,7 +85,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				this.appService = appService;
 			}
 
-			public override bool IsEnabled(CodeContext context) => !EditILInstructionsCommand.IsVisibleInternal(context.MenuItemContextOrNull) && context.IsDefinition && EditMethodBodyILCommand.CanExecute(context.Nodes);
+			public override bool IsEnabled(CodeContext context) => !EditILInstructionsCommand.IsVisibleInternal(context.MenuItemContext) && context.IsDefinition && EditMethodBodyILCommand.CanExecute(context.Nodes);
 			public override void Execute(CodeContext context) => EditMethodBodyILCommand.Execute(methodAnnotations, undoCommandService, appService, context.Nodes);
 		}
 

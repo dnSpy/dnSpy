@@ -63,7 +63,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		ThreadProperties GetThreadProperties_CorDebug(DnThread thread, ThreadProperties? oldProperties, bool isCreateThread, bool forceReadName, bool isMainThread) {
 			debuggerThread.VerifyAccess();
-			var appDomain = TryGetEngineAppDomain(thread.AppDomainOrNull)?.AppDomain;
+			var appDomain = TryGetEngineAppDomain(thread.AppDomain)?.AppDomain;
 			ulong id = (uint)thread.VolatileThreadId;
 
 			// If it was created, it could already have a new name so always try to read it

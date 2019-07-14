@@ -1567,7 +1567,7 @@ namespace dndbg.Engine {
 				return;
 
 			var thread = process.GetMainThread();
-			var appDomain = thread is null ? process.GetMainAppDomain() : thread.AppDomainOrNull;
+			var appDomain = thread is null ? process.GetMainAppDomain() : thread.AppDomain;
 			AddDebuggerState(new DebuggerState(null, process, appDomain, thread) {
 				PauseStates = new DebuggerPauseState[] {
 					new DebuggerPauseState(DebuggerPauseReason.UserBreak),

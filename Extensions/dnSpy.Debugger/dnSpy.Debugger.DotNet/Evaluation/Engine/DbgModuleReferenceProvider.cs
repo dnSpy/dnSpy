@@ -149,14 +149,14 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		readonly struct ModuleInfo {
 			public readonly DmdModule Module;
-			public readonly DbgModule? DebuggerModuleOrNull;
+			public readonly DbgModule? DebuggerModule;
 			public readonly int DynamicModuleVersion;
 			public readonly int DebuggerModuleVersion;
 			public ModuleInfo(DmdModule module) {
 				Module = module;
-				DebuggerModuleOrNull = module.GetDebuggerModule();
+				DebuggerModule = module.GetDebuggerModule();
 				DynamicModuleVersion = module.DynamicModuleVersion;
-				DebuggerModuleVersion = DebuggerModuleOrNull?.RefreshedVersion ?? -1;
+				DebuggerModuleVersion = DebuggerModule?.RefreshedVersion ?? -1;
 			}
 		}
 
@@ -353,7 +353,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		DbgModuleReference? GetOrCreateModuleReference(RuntimeState rtState, DbgRuntime runtime, in ModuleInfo modInfo) {
 			DbgModuleReferenceImpl? modRef;
-			var module = modInfo.DebuggerModuleOrNull ?? modInfo.Module.GetDebuggerModule();
+			var module = modInfo.DebuggerModule ?? modInfo.Module.GetDebuggerModule();
 			if (module?.HasAddress == true) {
 				var key = new RuntimeState.Key(module.ImageLayout == DbgImageLayout.File, module.Address, module.Size);
 				if (!rtState.ModuleReferences.TryGetValue(key, out modRef)) {
@@ -492,7 +492,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				var am = a[i];
 				if (am != info.Module || am.DynamicModuleVersion != info.DynamicModuleVersion)
 					return false;
-				var dm = info.DebuggerModuleOrNull ?? am.GetDebuggerModule();
+				var dm = info.DebuggerModule ?? am.GetDebuggerModule();
 				if (!(dm is null) && dm.RefreshedVersion != info.DebuggerModuleVersion)
 					return false;
 			}

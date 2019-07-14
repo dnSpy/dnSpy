@@ -92,7 +92,7 @@ namespace dndbg.Engine {
 			assemblies.Remove(comAssembly);
 		}
 
-		public DnThread[] Threads => Process.Threads.Where(t => t.AppDomainOrNull == this).ToArray();
+		public DnThread[] Threads => Process.Threads.Where(t => t.AppDomain == this).ToArray();
 
 		public IEnumerable<DnModule> Modules {
 			get {

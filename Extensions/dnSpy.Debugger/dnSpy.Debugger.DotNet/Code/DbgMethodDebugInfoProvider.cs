@@ -33,14 +33,14 @@ using dnSpy.Decompiler.Utils;
 namespace dnSpy.Debugger.DotNet.Code {
 	readonly struct MethodDebugInfoResult {
 		public int MethodVersion { get; }
-		public DbgMethodDebugInfo DebugInfoOrNull { get; }
-		public DbgMethodDebugInfo? StateMachineDebugInfoOrNull { get; }
-		public MethodDebugInfoResult(int methodVersion, DbgMethodDebugInfo debugInfo, DbgMethodDebugInfo? stateMachineDebugInfoOrNull) {
+		public DbgMethodDebugInfo? DebugInfo { get; }
+		public DbgMethodDebugInfo? StateMachineDebugInfo { get; }
+		public MethodDebugInfoResult(int methodVersion, DbgMethodDebugInfo? debugInfo, DbgMethodDebugInfo? stateMachineDebugInfo) {
 			if (methodVersion < 1)
 				throw new ArgumentOutOfRangeException(nameof(methodVersion));
 			MethodVersion = methodVersion;
-			DebugInfoOrNull = debugInfo;
-			StateMachineDebugInfoOrNull = stateMachineDebugInfoOrNull;
+			DebugInfo = debugInfo;
+			StateMachineDebugInfo = stateMachineDebugInfo;
 		}
 	}
 
@@ -122,8 +122,8 @@ namespace dnSpy.Debugger.DotNet.Code {
 				for (int i = debugInfos.Count - 1; i >= 0; i--) {
 					var info = debugInfos[i];
 					if (info.key.Equals(key)) {
-						if ((!(info.result.DebugInfoOrNull is null) && info.result.DebugInfoOrNull.DebugInfoVersion != decompiler.Settings.Version) ||
-							(!(info.result.StateMachineDebugInfoOrNull is null) && info.result.StateMachineDebugInfoOrNull.DebugInfoVersion != decompiler.Settings.Version)) {
+						if ((!(info.result.DebugInfo is null) && info.result.DebugInfo.DebugInfoVersion != decompiler.Settings.Version) ||
+							(!(info.result.StateMachineDebugInfo is null) && info.result.StateMachineDebugInfo.DebugInfoVersion != decompiler.Settings.Version)) {
 							debugInfos.RemoveAt(i);
 							continue;
 						}
@@ -137,7 +137,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 			}
 
 			var result = GetMethodDebugInfoNonCached(decompiler, mdModule, token, cancellationToken);
-			if (result.DebugInfoOrNull is null)
+			if (result.DebugInfo is null)
 				return default;
 			lock (state.LockObj) {
 				if (debugInfos.Count == MAX_CACHED_DEBUG_INFOS)
@@ -179,7 +179,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 
 			// We don't support EnC so the version is always 1
 			const int methodVersion = 1;
-			return new MethodDebugInfoResult(methodVersion, info.debugInfo, info.stateMachineDebugInfoOrNull);
+			return new MethodDebugInfoResult(methodVersion, info.debugInfo, info.stateMachineDebugInfo);
 		}
 
 		static class DecompilerOutputImplCache {
@@ -193,7 +193,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 			}
 		}
 
-		(DbgMethodDebugInfo debugInfo, DbgMethodDebugInfo? stateMachineDebugInfoOrNull) TryDecompileAndGetDebugInfo(IDecompiler decompiler, MethodDef method, uint methodToken, DecompilationContext decContext, CancellationToken cancellationToken) {
+		(DbgMethodDebugInfo debugInfo, DbgMethodDebugInfo? stateMachineDebugInfo) TryDecompileAndGetDebugInfo(IDecompiler decompiler, MethodDef method, uint methodToken, DecompilationContext decContext, CancellationToken cancellationToken) {
 			DecompilerOutputImpl? output = DecompilerOutputImplCache.Alloc();
 			output.Initialize(methodToken);
 			decompiler.Decompile(method, output, decContext);

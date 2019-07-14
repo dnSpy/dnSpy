@@ -150,7 +150,7 @@ namespace dndbg.Engine {
 			var threads = Threads;
 			var appDomain = GetMainAppDomain();
 			foreach (var thread in threads) {
-				if (thread.AppDomainOrNull == appDomain)
+				if (thread.AppDomain == appDomain)
 					return thread;
 			}
 			return threads.Length == 0 ? null : threads[0];

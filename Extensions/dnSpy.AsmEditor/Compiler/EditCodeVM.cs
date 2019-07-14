@@ -145,7 +145,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		protected readonly ModuleDef sourceModule;
 		readonly AssemblyNameInfo tempAssembly;
 
-		protected EditCodeVM(EditCodeVMOptions options, TypeDef? typeToEditOrNull) {
+		protected EditCodeVM(EditCodeVMOptions options, TypeDef? typeToEdit) {
 			Debug.Assert(options.Decompiler.CanDecompile(DecompilationType.TypeMethods));
 			OwnerWindow = null!;
 			openFromGAC = options.OpenFromGAC;
@@ -156,10 +156,10 @@ namespace dnSpy.AsmEditor.Compiler {
 			sourceModule = options.SourceModule;
 			AddDocumentsImage = options.AddDocumentsImage;
 			currentReferences = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-			if (!(typeToEditOrNull is null)) {
-				Debug.Assert(typeToEditOrNull.Module == sourceModule);
-				while (!(typeToEditOrNull.DeclaringType is null))
-					typeToEditOrNull = typeToEditOrNull.DeclaringType;
+			if (!(typeToEdit is null)) {
+				Debug.Assert(typeToEdit.Module == sourceModule);
+				while (!(typeToEdit.DeclaringType is null))
+					typeToEdit = typeToEdit.DeclaringType;
 			}
 			tempAssembly = new AssemblyNameInfo {
 				HashAlgId = AssemblyHashAlgorithm.SHA1,
@@ -172,7 +172,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				tempAssembly.PublicKeyOrToken = new PublicKey(publicKeyData);
 				tempAssembly.Attributes |= AssemblyAttributes.PublicKey;
 			}
-			assemblyReferenceResolver = new AssemblyReferenceResolver(options.RawModuleBytesProvider, sourceModule.Context.AssemblyResolver, tempAssembly, sourceModule, typeToEditOrNull);
+			assemblyReferenceResolver = new AssemblyReferenceResolver(options.RawModuleBytesProvider, sourceModule.Context.AssemblyResolver, tempAssembly, sourceModule, typeToEdit);
 		}
 		static readonly byte[] publicKeyData = new byte[] {
 			0x00, 0x24, 0x00, 0x00, 0x04, 0x80, 0x00, 0x00, 0x94, 0x00, 0x00, 0x00, 0x06, 0x02, 0x00, 0x00,

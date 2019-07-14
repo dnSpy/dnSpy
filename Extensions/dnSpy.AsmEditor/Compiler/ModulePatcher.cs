@@ -28,14 +28,14 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly bool isFileLayout;
 		readonly IAssembly tempAssembly;
 		readonly ModuleDef editedModule;
-		readonly TypeDef? nonNestedEditedTypeOrNull;
+		readonly TypeDef? nonNestedEditedType;
 
-		public ModulePatcher(RawModuleBytes moduleData, bool isFileLayout, IAssembly tempAssembly, ModuleDef editedModule, TypeDef? nonNestedEditedTypeOrNull) {
+		public ModulePatcher(RawModuleBytes moduleData, bool isFileLayout, IAssembly tempAssembly, ModuleDef editedModule, TypeDef? nonNestedEditedType) {
 			this.moduleData = moduleData;
 			this.isFileLayout = isFileLayout;
 			this.tempAssembly = tempAssembly;
 			this.editedModule = editedModule;
-			this.nonNestedEditedTypeOrNull = nonNestedEditedTypeOrNull;
+			this.nonNestedEditedType = nonNestedEditedType;
 		}
 
 		public unsafe bool Patch(ModuleDef module, out RawModuleBytes newModuleData) {
@@ -44,9 +44,9 @@ namespace dnSpy.AsmEditor.Compiler {
 			// NOTE: We can't remove the type from the corlib (eg. mscorlib) because the compiler
 			// (Roslyn) won't recognize it as the corlib if it has any AssemblyRefs.
 			// A possible fix is to add a new netmodule to the corlib assembly.
-			bool fixTypeDefRefs = !(nonNestedEditedTypeOrNull is null) &&
-				MDPatcherUtils.ExistsInMetadata(nonNestedEditedTypeOrNull) &&
-				MDPatcherUtils.ReferencesModule(module, nonNestedEditedTypeOrNull?.Module) &&
+			bool fixTypeDefRefs = !(nonNestedEditedType is null) &&
+				MDPatcherUtils.ExistsInMetadata(nonNestedEditedType) &&
+				MDPatcherUtils.ReferencesModule(module, nonNestedEditedType?.Module) &&
 				!module.Assembly.IsCorLib();
 			bool addIVT = module == editedModule || MDPatcherUtils.HasModuleInternalAccess(module, editedModule);
 			if (fixTypeDefRefs || addIVT) {
@@ -60,7 +60,7 @@ namespace dnSpy.AsmEditor.Compiler {
 						options |= MDEditorPatcherOptions.UpdateTypeReferences;
 					if (addIVT)
 						options |= MDEditorPatcherOptions.AllowInternalAccess;
-					var patcher = new MDEditorPatcher(moduleData, mdEditor, tempAssembly, nonNestedEditedTypeOrNull, options);
+					var patcher = new MDEditorPatcher(moduleData, mdEditor, tempAssembly, nonNestedEditedType, options);
 					patcher.Patch(module);
 					if (mdEditor.MustRewriteMetadata()) {
 						var stream = new MDWriterMemoryStream();

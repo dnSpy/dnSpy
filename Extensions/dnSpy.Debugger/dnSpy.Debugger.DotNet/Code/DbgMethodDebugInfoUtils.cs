@@ -144,7 +144,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 			for (int i = 0; i < stepInfos.Length; i++)
 				newStepInfos[i] = new DbgAsyncStepInfo(stepInfos[i].YieldOffset, stepInfos[i].ResumeMethod, stepInfos[i].ResumeOffset);
 
-			return new DbgAsyncMethodDebugInfo(newStepInfos, asyncInfo.BuilderFieldOrNull, asyncInfo.CatchHandlerOffset, asyncInfo.SetResultOffset);
+			return new DbgAsyncMethodDebugInfo(newStepInfos, asyncInfo.BuilderField, asyncInfo.CatchHandlerOffset, asyncInfo.SetResultOffset);
 		}
 	}
 }

@@ -74,12 +74,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		readonly DmdMetadataReader metadataReader;
 		readonly bool isExe;
 
-		public DmdAssemblyImpl(DmdAppDomainImpl appDomain, DmdMetadataReader metadataReader, string location, string? assemblySimpleNameOrNull, bool isExe) {
+		public DmdAssemblyImpl(DmdAppDomainImpl appDomain, DmdMetadataReader metadataReader, string location, string? assemblySimpleName, bool isExe) {
 			modules = new List<DmdModuleImpl>();
 			this.appDomain = appDomain ?? throw new ArgumentNullException(nameof(appDomain));
 			this.metadataReader = metadataReader ?? throw new ArgumentNullException(nameof(metadataReader));
 			Location = location ?? throw new ArgumentNullException(nameof(location));
-			assemblySimpleName = assemblySimpleNameOrNull;
+			this.assemblySimpleName = assemblySimpleName;
 			this.isExe = isExe;
 		}
 

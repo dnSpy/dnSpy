@@ -27,12 +27,12 @@ namespace dnSpy.AsmEditor.Commands {
 	sealed class CodeContext {
 		public DocumentTreeNodeData[] Nodes { get; }
 		public bool IsDefinition { get; }
-		public IMenuItemContext? MenuItemContextOrNull { get; }
+		public IMenuItemContext? MenuItemContext { get; }
 
 		public CodeContext(DocumentTreeNodeData[] nodes, bool isDefinition, IMenuItemContext? menuItemContext) {
 			Nodes = nodes ?? Array.Empty<DocumentTreeNodeData>();
 			IsDefinition = isDefinition;
-			MenuItemContextOrNull = menuItemContext;
+			MenuItemContext = menuItemContext;
 		}
 	}
 

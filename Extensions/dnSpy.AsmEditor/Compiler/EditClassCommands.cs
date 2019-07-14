@@ -100,7 +100,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			public override ImageReference? GetIcon(CodeContext context) => editCodeVMCreator.GetIcon(CompilationKind.EditClass);
 			public override string? GetHeader(CodeContext context) => editCodeVMCreator.GetHeader(CompilationKind.EditClass);
-			public override bool IsEnabled(CodeContext context) => !EditClass2Command.IsVisibleInternal(editCodeVMCreator, context.MenuItemContextOrNull) && EditClassCommand.CanExecute(editCodeVMCreator, context.Nodes);
+			public override bool IsEnabled(CodeContext context) => !EditClass2Command.IsVisibleInternal(editCodeVMCreator, context.MenuItemContext) && EditClassCommand.CanExecute(editCodeVMCreator, context.Nodes);
 			public override void Execute(CodeContext context) => EditClassCommand.Execute(editCodeVMCreator, addUpdatedNodesHelperProvider, undoCommandService, appService, context.Nodes);
 		}
 

@@ -169,16 +169,16 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 		DbgLanguageDebugInfo? CreateDebugInfo(DbgEvaluationContext context, IDbgDotNetCodeLocation location, CancellationToken cancellationToken) {
 			var result = dbgMethodDebugInfoProvider.GetMethodDebugInfo(context.Runtime, decompiler, location, cancellationToken);
-			if (result.DebugInfoOrNull is null)
+			if (result.DebugInfo is null)
 				return null;
 
 			var runtime = context.Runtime.GetDotNetRuntime();
 			if (location.DbgModule is null || !runtime.TryGetMethodToken(location.DbgModule, (int)location.Token, out int methodToken, out int localVarSigTok)) {
 				methodToken = (int)location.Token;
-				localVarSigTok = (int)((result.StateMachineDebugInfoOrNull ?? result.DebugInfoOrNull)?.Method.Body?.LocalVarSigTok ?? 0);
+				localVarSigTok = (int)((result.StateMachineDebugInfo ?? result.DebugInfo)?.Method.Body?.LocalVarSigTok ?? 0);
 			}
 
-			return new DbgLanguageDebugInfo(result.DebugInfoOrNull, methodToken, localVarSigTok, result.MethodVersion, location.Offset);
+			return new DbgLanguageDebugInfo(result.DebugInfo, methodToken, localVarSigTok, result.MethodVersion, location.Offset);
 		}
 	}
 }

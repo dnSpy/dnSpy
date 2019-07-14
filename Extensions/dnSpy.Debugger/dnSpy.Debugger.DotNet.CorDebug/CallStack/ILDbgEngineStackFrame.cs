@@ -130,7 +130,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 		}
 
 		internal DmdModule GetReflectionModule() => Module!.GetReflectionModule() ?? throw new InvalidOperationException();
-		internal CorAppDomain GetCorAppDomain() => dnThread.AppDomainOrNull?.CorAppDomain ?? throw new InvalidOperationException();
+		internal CorAppDomain GetCorAppDomain() => dnThread.AppDomain?.CorAppDomain ?? throw new InvalidOperationException();
 
 		internal void GetFrameMethodInfo(out DmdModule? module, out int methodMetadataToken, out IList<DmdType> genericTypeArguments, out IList<DmdType> genericMethodArguments) {
 			engine.VerifyCorDebugThread();

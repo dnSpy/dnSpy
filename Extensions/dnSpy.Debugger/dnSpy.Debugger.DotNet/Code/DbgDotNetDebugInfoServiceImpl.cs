@@ -88,7 +88,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 			var key = new ModuleTokenId(moduleId.Value, token);
 			var decompilerDebugInfo = methodDebugService.TryGetMethodDebugInfo(key);
 			DbgMethodDebugInfo debugInfo;
-			DbgMethodDebugInfo? stateMachineDebugInfoOrNull = null;
+			DbgMethodDebugInfo? stateMachineDebugInfo = null;
 			int methodVersion;
 			if (!(decompilerDebugInfo is null)) {
 				methodVersion = 1;
@@ -98,11 +98,11 @@ namespace dnSpy.Debugger.DotNet.Code {
 				var cancellationToken = CancellationToken.None;
 				var result = dbgMethodDebugInfoProvider.Value.GetMethodDebugInfo(decompilerService.Value.Decompiler, module, token, cancellationToken);
 				methodVersion = result.MethodVersion;
-				debugInfo = result.DebugInfoOrNull;
-				stateMachineDebugInfoOrNull = result.StateMachineDebugInfoOrNull;
+				debugInfo = result.DebugInfo;
+				stateMachineDebugInfo = result.StateMachineDebugInfo;
 			}
 
-			return new MethodDebugInfoResult(methodVersion, debugInfo, stateMachineDebugInfoOrNull);
+			return new MethodDebugInfoResult(methodVersion, debugInfo, stateMachineDebugInfo);
 		}
 	}
 }
