@@ -60,13 +60,14 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Code {
 
 		public override bool Equals(object? obj) =>
 			obj is DbgDotNetNativeCodeLocationImpl other &&
-			CorCode.Object?.Equals(other.CorCode.Object) == true &&
+			((object)this == other ||
+			(CorCode.Object?.Equals(other.CorCode.Object) == true &&
 			Module == other.Module &&
 			Token == other.Token &&
 			Offset == other.Offset &&
 			ILOffsetMapping == other.ILOffsetMapping &&
 			NativeAddress.Address == other.NativeAddress.Address &&
-			NativeAddress.Offset == other.NativeAddress.Offset;
+			NativeAddress.Offset == other.NativeAddress.Offset));
 
 		public override int GetHashCode() => Module.GetHashCode() ^ (int)Token ^ (int)Offset ^ (int)ILOffsetMapping ^ NativeAddress.Address.GetHashCode() ^ NativeAddress.Offset.GetHashCode() ^ CorCode.HashCode;
 	}
