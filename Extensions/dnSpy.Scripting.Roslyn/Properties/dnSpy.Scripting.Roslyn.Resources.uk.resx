@@ -124,7 +124,7 @@
     <value>+ додаткові {0} помилки</value>
   </data>
   <data name="CopyCommand" xml:space="preserve">
-    <value>Копіювати</value>
+    <value>К_опіювати</value>
   </data>
   <data name="CutCommand" xml:space="preserve">
     <value>В_ирізати</value>
@@ -250,7 +250,7 @@
     <value>Скидання середовища виконання</value>
   </data>
   <data name="ClearScreenCommand" xml:space="preserve">
-    <value>Очистити екран</value>
+    <value>Очистити Екран</value>
   </data>
   <data name="ShortCutKeyCtrlL" xml:space="preserve">
     <value>CTRL + L</value>

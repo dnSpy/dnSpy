@@ -1525,7 +1525,7 @@
     <value>搜索进程</value>
   </data>
   <data name="DbgSettings_FocusDebuggerWhenProcessBreaks" xml:space="preserve">
-    <value>当调试器被中断时，将dnSpy带到前台</value>
+    <value>当调试器中断时，将dnSpy带到最前</value>
   </data>
   <data name="Column_LoadModule" xml:space="preserve">
     <value>加载</value>

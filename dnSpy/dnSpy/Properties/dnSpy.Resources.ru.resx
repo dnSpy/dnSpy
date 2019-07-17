@@ -2057,4 +2057,10 @@
   <data name="TreeViewTypesFolder" xml:space="preserve">
     <value>Типы</value>
   </data>
+  <data name="NumberBaseFormatString" xml:space="preserve">
+    <value>Base {0}:</value>
+  </data>
+  <data name="RawValue" xml:space="preserve">
+    <value>Raw:</value>
+  </data>
 </root>

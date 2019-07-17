@@ -1813,7 +1813,7 @@
     <value>Показати Оголошення Типів</value>
   </data>
   <data name="ShowIntrinsicTypeKeywordsCommand" xml:space="preserve">
-    <value>Показати ключові слова вбудованих типів</value>
+    <value>Показати Ключові Слова Вбудованих Типів</value>
   </data>
   <data name="ShowModuleNamesCommand" xml:space="preserve">
     <value>Показати Імена _Модулів</value>
@@ -2054,5 +2054,11 @@
   </data>
   <data name="TreeViewTypesFolder" xml:space="preserve">
     <value>Типи</value>
+  </data>
+  <data name="NumberBaseFormatString" xml:space="preserve">
+    <value>Base {0}:</value>
+  </data>
+  <data name="RawValue" xml:space="preserve">
+    <value>Raw:</value>
   </data>
 </root>
