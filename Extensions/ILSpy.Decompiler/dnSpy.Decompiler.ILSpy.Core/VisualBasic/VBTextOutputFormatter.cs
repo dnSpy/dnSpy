@@ -223,7 +223,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 		}
 		bool canPrintAccessor = true;
 
-		public void WriteToken(string token, object data) {
+		public void WriteToken(string token, object data, object? reference) {
 			var memberRef = GetCurrentMemberReference();
 			var node = nodeStack.Peek();
 
@@ -241,6 +241,8 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 
 			if (addRef)
 				output.Write(token, memberRef, DecompilerReferenceFlags.None, data);
+			else if (!(reference is null))
+				output.Write(token, reference, DecompilerReferenceFlags.Local | DecompilerReferenceFlags.Hidden | DecompilerReferenceFlags.NoFollow, data);
 			else
 				output.Write(token, data);
 		}

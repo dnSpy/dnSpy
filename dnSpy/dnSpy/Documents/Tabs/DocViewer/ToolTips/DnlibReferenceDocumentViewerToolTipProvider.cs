@@ -34,20 +34,22 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 	[ExportDocumentViewerToolTipProvider(TabConstants.ORDER_DNLIBREFTOOLTIPCONTENTPROVIDER)]
 	sealed class DnlibReferenceDocumentViewerToolTipProvider : IDocumentViewerToolTipProvider {
 		public object? Create(IDocumentViewerToolTipProviderContext context, object? @ref) {
-			if (@ref is GenericParam gp)
+			switch (@ref) {
+			case GenericParam gp:
 				return Create(context, gp);
-			if (@ref is IMemberRef mr)
+			case IMemberRef mr:
 				return Create(context, mr);
-			if (@ref is Parameter pd)
+			case Parameter pd:
 				return Create(context, new SourceParameter(pd, pd.Name, pd.Type, SourceVariableFlags.None));
-			if (@ref is SourceParameter p)
+			case SourceParameter p:
 				return Create(context, p);
-			if (@ref is SourceLocal l)
+			case SourceLocal l:
 				return Create(context, l);
-			if (@ref is OpCode opc)
+			case OpCode opc:
 				return Create(context, opc);
-			if (@ref is NamespaceReference nsr)
+			case NamespaceReference nsr:
 				return Create(context, nsr);
+			}
 			return null;
 		}
 
