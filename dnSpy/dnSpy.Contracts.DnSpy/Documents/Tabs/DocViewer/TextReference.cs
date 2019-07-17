@@ -56,6 +56,11 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		public bool IsHidden => (Flags & DecompilerReferenceFlags.Hidden) != 0;
 
 		/// <summary>
+		/// true if reference can't be followed
+		/// </summary>
+		public bool NoFollow => (Flags & DecompilerReferenceFlags.NoFollow) != 0;
+
+		/// <summary>
 		/// Gets the span or null if it's unknown
 		/// </summary>
 		public Span? Span { get; }

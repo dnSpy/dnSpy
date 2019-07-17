@@ -253,6 +253,8 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		internal bool GoTo(SpanData<ReferenceInfo>? spanData, bool newTab, bool followLocalRefs, bool canRecordHistory, bool canFollowReference, MoveCaretOptions options) {
 			if (spanData is null)
 				return false;
+			if (spanData.Value.Data.NoFollow)
+				return false;
 
 			// When opening a new tab, the textview isn't visible and has a 0 height, so wait until it's visible
 			// before moving the caret.
@@ -267,6 +269,8 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		bool GoToCore(SpanData<ReferenceInfo> spanData, bool newTab, bool followLocalRefs, bool canRecordHistory, bool canFollowReference, MoveCaretOptions options) {
 			Debug.Assert(spanData.Span.End <= wpfTextViewHost.TextView.TextSnapshot.Length);
 			if (spanData.Span.End > wpfTextViewHost.TextView.TextSnapshot.Length)
+				return false;
+			if (spanData.Data.NoFollow)
 				return false;
 
 			if (newTab) {
@@ -477,9 +481,9 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			}
 
 			var spanData = GetCurrentReferenceInfo();
-			if (!(spanData is null) && !spanData.Value.Data.IsHidden) {
+			if (!(spanData is null) && !spanData.Value.Data.IsHidden && !spanData.Value.Data.NoFollow) {
 				foreach (var newSpanData in GetReferenceInfosFrom(spanData.Value.Span.Start, forward)) {
-					if (!newSpanData.Data.IsHidden && SpanDataReferenceInfoExtensions.CompareReferences(newSpanData.Data, spanData.Value.Data)) {
+					if (!newSpanData.Data.IsHidden && !newSpanData.Data.NoFollow && SpanDataReferenceInfoExtensions.CompareReferences(newSpanData.Data, spanData.Value.Data)) {
 						MoveCaretToSpan(newSpanData.Span, MoveCaretOptions.Focus | MoveCaretOptions.Select);
 						break;
 					}

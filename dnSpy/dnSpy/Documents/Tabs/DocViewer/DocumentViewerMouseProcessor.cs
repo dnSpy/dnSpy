@@ -156,6 +156,8 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			var spanData = documentViewer.Content.ReferenceCollection.Find(pos, false);
 			if (spanData is null)
 				return new MouseReferenceInfo(null, spanData, loc.Position);
+			if (spanData.Value.Data.NoFollow)
+				return new MouseReferenceInfo(null, null, loc.Position);
 			if (spanData.Value.Data.Reference is null)
 				return new MouseReferenceInfo(null, spanData, loc.Position);
 			if (Keyboard.Modifiers != ModifierKeys.Control) {

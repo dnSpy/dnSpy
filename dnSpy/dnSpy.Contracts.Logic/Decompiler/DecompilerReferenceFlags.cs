@@ -49,5 +49,10 @@ namespace dnSpy.Contracts.Decompiler {
 		/// Reference shouldn't be highlighted
 		/// </summary>
 		Hidden						= 0x00000008,
+
+		/// <summary>
+		/// Don't allow to follow the reference
+		/// </summary>
+		NoFollow					= 0x00000010,
 	}
 }

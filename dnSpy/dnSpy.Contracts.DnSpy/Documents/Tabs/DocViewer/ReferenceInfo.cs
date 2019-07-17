@@ -58,6 +58,11 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		public bool IsHidden => (Flags & DecompilerReferenceFlags.Hidden) != 0;
 
 		/// <summary>
+		/// true if reference can't be followed
+		/// </summary>
+		public bool NoFollow => (Flags & DecompilerReferenceFlags.NoFollow) != 0;
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="reference">Reference or null</param>

@@ -339,7 +339,12 @@ namespace dnSpy.Documents.Tabs {
 			documentViewer = context.Find<IDocumentViewer>();
 			if (documentViewer is null)
 				return null;
-			return context.Find<TextReference>();
+			var textRef = context.Find<TextReference>();
+			if (textRef is null)
+				return null;
+			if (textRef.NoFollow)
+				return null;
+			return textRef;
 		}
 
 		public override string? GetInputGestureText(IMenuItemContext context) =>

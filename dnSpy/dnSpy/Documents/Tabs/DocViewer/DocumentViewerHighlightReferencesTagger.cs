@@ -244,7 +244,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 						Debug.Assert(spanData.Span.End <= snapshot.Length);
 						if (spanData.Span.End > snapshot.Length)
 							continue;
-						if (spanData.Data.IsHidden)
+						if (spanData.Data.IsHidden || spanData.Data.NoFollow)
 							continue;
 						var tag = TryGetTextMarkerTag(spanData);
 						if (tag is null)
