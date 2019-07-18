@@ -122,7 +122,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 
 		object CreateDouble(IDocumentViewerToolTipProviderContext context, double value) {
 			const string format = "G17";
-			ulong rawValue = BitConverter.ToUInt32(BitConverter.GetBytes(value), 0);
+			ulong rawValue = BitConverter.ToUInt64(BitConverter.GetBytes(value), 0);
 			return CreateFloat(context, value.ToString(), format, value.ToString(format),
 				() => rawValue.ToString("X16"));
 		}
