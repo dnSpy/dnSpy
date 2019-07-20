@@ -198,6 +198,9 @@
   <data name="ShowMetadataTokensCommand" xml:space="preserve">
     <value>نمایش توکن ها(Tokens)</value>
   </data>
+  <data name="SingleClickExpandNodes" xml:space="preserve">
+    <value>تک کلیک برای گسترش گره ها</value>
+  </data>
   <data name="SyntaxHighlightCommand" xml:space="preserve">
     <value>قالب برجسته</value>
   </data>

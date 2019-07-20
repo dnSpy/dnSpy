@@ -198,6 +198,9 @@
   <data name="ShowMetadataTokensCommand" xml:space="preserve">
     <value>Token-ek mutatása</value>
   </data>
+  <data name="SingleClickExpandNodes" xml:space="preserve">
+    <value>Egy kattintás kinyitja a csomópontot</value>
+  </data>
   <data name="SyntaxHighlightCommand" xml:space="preserve">
     <value>Szintaxis kiemelése</value>
   </data>

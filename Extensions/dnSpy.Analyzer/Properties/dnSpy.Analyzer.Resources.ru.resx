@@ -198,6 +198,9 @@
   <data name="ShowMetadataTokensCommand" xml:space="preserve">
     <value>Показать токены</value>
   </data>
+  <data name="SingleClickExpandNodes" xml:space="preserve">
+    <value>Разворачивать узлы одиночным щелчком</value>
+  </data>
   <data name="SyntaxHighlightCommand" xml:space="preserve">
     <value>Подсветка синтаксиса</value>
   </data>

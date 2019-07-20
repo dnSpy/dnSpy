@@ -198,6 +198,9 @@
   <data name="ShowMetadataTokensCommand" xml:space="preserve">
     <value>Motrer les tokens</value>
   </data>
+  <data name="SingleClickExpandNodes" xml:space="preserve">
+    <value>Un clic simple ouvre les noeuds</value>
+  </data>
   <data name="SyntaxHighlightCommand" xml:space="preserve">
     <value>Coloration syntaxique</value>
   </data>

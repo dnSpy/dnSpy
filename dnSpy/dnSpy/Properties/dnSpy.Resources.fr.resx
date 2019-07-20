@@ -831,8 +831,8 @@
   <data name="AboutScreen_LoadedFiles" xml:space="preserve">
     <value>Fichiers chargés :</value>
   </data>
-  <data name="SearchWindow_SearchGacAssemblies" xml:space="preserve">
-    <value>Rechercher dans le GAC</value>
+  <data name="SearchWindow_SearchFrameworkAssemblies" xml:space="preserve">
+    <value>Search in framework assemblies</value>
   </data>
   <data name="SearchWindow_Where_AllFiles" xml:space="preserve">
     <value>Tous les fichiers</value>

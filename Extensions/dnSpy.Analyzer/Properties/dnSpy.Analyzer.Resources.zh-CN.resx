@@ -198,6 +198,9 @@
   <data name="ShowMetadataTokensCommand" xml:space="preserve">
     <value>显示标记</value>
   </data>
+  <data name="SingleClickExpandNodes" xml:space="preserve">
+    <value>单击展开节点</value>
+  </data>
   <data name="SyntaxHighlightCommand" xml:space="preserve">
     <value>语法高亮</value>
   </data>

@@ -198,6 +198,9 @@
   <data name="ShowMetadataTokensCommand" xml:space="preserve">
     <value>Token'ları Göster</value>
   </data>
+  <data name="SingleClickExpandNodes" xml:space="preserve">
+    <value>Tek tıklama düğümleri genişletir</value>
+  </data>
   <data name="SyntaxHighlightCommand" xml:space="preserve">
     <value>Sözdizimi Renklendirme</value>
   </data>
