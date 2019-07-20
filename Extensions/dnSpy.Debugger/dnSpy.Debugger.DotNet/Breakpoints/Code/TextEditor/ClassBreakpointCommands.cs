@@ -163,55 +163,63 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 	}
 
 	static class AddMethodBreakpointCtxMenuCommands {
-		internal static IMDTokenProvider? GetReference(IMenuItemContext context, Guid guid) {
+		internal static IMDTokenProvider? GetReference(IMenuItemContext context, Guid guid) =>
+			GetReferences(context, guid).FirstOrDefault();
+
+		static IEnumerable<IMDTokenProvider> GetReferences(IMenuItemContext context, Guid guid) {
 			if (context.CreatorObject.Guid != guid)
-				return null;
+				yield break;
 
 			var @ref = context.Find<TextReference>();
 			if (!(@ref is null)) {
 				var realRef = @ref.Reference;
 				if (realRef is Parameter)
 					realRef = ((Parameter)realRef).ParamDef;
-				if (realRef is IMDTokenProvider)
-					return (IMDTokenProvider)realRef;
+				if (realRef is IMDTokenProvider) {
+					yield return (IMDTokenProvider)realRef;
+					yield break;
+				}
 			}
 
 			var nodes = context.Find<TreeNodeData[]>();
 			if (!(nodes is null) && nodes.Length != 0) {
-				if (nodes[0] is IMDTokenNode node)
-					return node.Reference;
+				foreach (var node in nodes) {
+					if (node is IMDTokenNode tokenNode && tokenNode.Reference is IMDTokenProvider tokenProvider)
+						yield return tokenProvider;
+				}
+				yield break;
 			}
-
-			return null;
 		}
 
 		static IMethod[]? GetMethodReferences(IMenuItemContext context, Guid guid) {
-			var @ref = GetReference(context, guid);
+			var methods = new List<IMethod>();
+			foreach (var @ref in GetReferences(context, guid)) {
+				switch (@ref) {
+				case IMethod methodRef:
+					if (methodRef.IsMethod)
+						methods.Add(methodRef);
+					break;
 
-			if (@ref is IMethod methodRef)
-				return methodRef.IsMethod ? new[] { methodRef } : null;
+				case PropertyDef prop: {
+					methods.AddRange(prop.GetMethods);
+					methods.AddRange(prop.SetMethods);
+					methods.AddRange(prop.OtherMethods);
+					break;
+				}
 
-			if (@ref is PropertyDef prop) {
-				var list = new List<IMethod>();
-				list.AddRange(prop.GetMethods);
-				list.AddRange(prop.SetMethods);
-				list.AddRange(prop.OtherMethods);
-				return list.Count == 0 ? null : list.ToArray();
+				case EventDef evt:
+					if (!(evt.AddMethod is null))
+						methods.Add(evt.AddMethod);
+					if (!(evt.RemoveMethod is null))
+						methods.Add(evt.RemoveMethod);
+					if (!(evt.InvokeMethod is null))
+						methods.Add(evt.InvokeMethod);
+					methods.AddRange(evt.OtherMethods);
+					break;
+				}
 			}
 
-			if (@ref is EventDef evt) {
-				var list = new List<IMethod>();
-				if (!(evt.AddMethod is null))
-					list.Add(evt.AddMethod);
-				if (!(evt.RemoveMethod is null))
-					list.Add(evt.RemoveMethod);
-				if (!(evt.InvokeMethod is null))
-					list.Add(evt.InvokeMethod);
-				list.AddRange(evt.OtherMethods);
-				return list.Count == 0 ? null : list.ToArray();
-			}
-
-			return null;
+			return methods.Count == 0 ? null : methods.ToArray();
 		}
 
 		abstract class MenuItemCommon : MenuItemBase {
