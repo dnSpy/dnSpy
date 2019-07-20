@@ -2061,4 +2061,7 @@
   <data name="RawValue" xml:space="preserve">
     <value>Необроблене:</value>
   </data>
+  <data name="RecentFilesCommand" xml:space="preserve">
+    <value>Recent _Files</value>
+  </data>
 </root>

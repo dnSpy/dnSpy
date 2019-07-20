@@ -2060,4 +2060,7 @@ Filtre Assembly Explorer seçeneklerinden değiştirilebilir.</value>
   <data name="RawValue" xml:space="preserve">
     <value>Raw:</value>
   </data>
+  <data name="RecentFilesCommand" xml:space="preserve">
+    <value>Recent _Files</value>
+  </data>
 </root>
