@@ -833,8 +833,8 @@
   <data name="AboutScreen_LoadedFiles" xml:space="preserve">
     <value>Loaded files:</value>
   </data>
-  <data name="SearchWindow_SearchGacAssemblies" xml:space="preserve">
-    <value>Search in GAC assemblies</value>
+  <data name="SearchWindow_SearchFrameworkAssemblies" xml:space="preserve">
+    <value>Search in framework assemblies</value>
   </data>
   <data name="SearchWindow_Where_AllFiles" xml:space="preserve">
     <value>All Files</value>

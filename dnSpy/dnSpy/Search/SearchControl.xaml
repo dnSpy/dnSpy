@@ -64,7 +64,7 @@
                 <CheckBox Margin="0 5 5 0" Content="{x:Static p:dnSpy_Resources.SearchWindow_CaseSensitiveSearch}" IsChecked="{Binding SearchSettings.CaseSensitive}" />
                 <CheckBox Margin="0 5 5 0" Content="{x:Static p:dnSpy_Resources.SearchWindow_MatchAny}" IsChecked="{Binding SearchSettings.MatchAnySearchTerm}" />
                 <CheckBox Margin="0 5 5 0" Content="{x:Static p:dnSpy_Resources.SearchWindow_DecompileResources}" IsChecked="{Binding SearchSettings.SearchDecompiledData}" />
-                <CheckBox Margin="0 5 5 0" Content="{x:Static p:dnSpy_Resources.SearchWindow_SearchGacAssemblies}" IsChecked="{Binding SearchSettings.SearchGacAssemblies}" />
+                <CheckBox Margin="0 5 5 0" Content="{x:Static p:dnSpy_Resources.SearchWindow_SearchFrameworkAssemblies}" IsChecked="{Binding SearchSettings.SearchFrameworkAssemblies}" />
             </WrapPanel>
         </Grid>
         <!-- VirtualizingStackPanel.VirtualizationMode="Recycling" isn't used, see https://github.com/0xd4d/dnSpy/issues/1163 -->

@@ -174,15 +174,15 @@ namespace dnSpy.Search {
 		public override void Execute(IMenuItemContext context) => searchSettings.SearchDecompiledData = !searchSettings.SearchDecompiledData;
 	}
 
-	[ExportMenuItem(Header = "res:SearchWindow_SearchGacAssemblies", Group = MenuConstants.GROUP_CTX_SEARCH_OPTIONS, Order = 50)]
-	sealed class SearchGacAssembliesCtxMenuCommand : MenuItemBase {
+	[ExportMenuItem(Header = "res:SearchWindow_SearchFrameworkAssemblies", Group = MenuConstants.GROUP_CTX_SEARCH_OPTIONS, Order = 50)]
+	sealed class SearchFrameworkAssembliesCtxMenuCommand : MenuItemBase {
 		readonly SearchSettingsImpl searchSettings;
 
 		[ImportingConstructor]
-		SearchGacAssembliesCtxMenuCommand(SearchSettingsImpl searchSettings) => this.searchSettings = searchSettings;
+		SearchFrameworkAssembliesCtxMenuCommand(SearchSettingsImpl searchSettings) => this.searchSettings = searchSettings;
 
 		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_SEARCH_GUID);
-		public override bool IsChecked(IMenuItemContext context) => searchSettings.SearchGacAssemblies;
-		public override void Execute(IMenuItemContext context) => searchSettings.SearchGacAssemblies = !searchSettings.SearchGacAssemblies;
+		public override bool IsChecked(IMenuItemContext context) => searchSettings.SearchFrameworkAssemblies;
+		public override void Execute(IMenuItemContext context) => searchSettings.SearchFrameworkAssemblies = !searchSettings.SearchFrameworkAssemblies;
 	}
 }

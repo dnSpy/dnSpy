@@ -30,7 +30,7 @@ namespace dnSpy.Search {
 		bool CaseSensitive { get; set; }
 		bool MatchAnySearchTerm { get; set; }
 		bool SearchDecompiledData { get; set; }
-		bool SearchGacAssemblies { get; set; }
+		bool SearchFrameworkAssemblies { get; set; }
 	}
 
 	class SearchSettings : ViewModelBase, ISearchSettings {
@@ -89,16 +89,16 @@ namespace dnSpy.Search {
 		}
 		bool searchDecompiledData = true;
 
-		public bool SearchGacAssemblies {
-			get => searchGacAssemblies;
+		public bool SearchFrameworkAssemblies {
+			get => searchFrameworkAssemblies;
 			set {
-				if (searchGacAssemblies != value) {
-					searchGacAssemblies = value;
-					OnPropertyChanged(nameof(SearchGacAssemblies));
+				if (searchFrameworkAssemblies != value) {
+					searchFrameworkAssemblies = value;
+					OnPropertyChanged(nameof(SearchFrameworkAssemblies));
 				}
 			}
 		}
-		bool searchGacAssemblies = true;
+		bool searchFrameworkAssemblies = true;
 
 		public SearchSettings Clone() => CopyTo(new SearchSettings());
 
@@ -108,7 +108,7 @@ namespace dnSpy.Search {
 			other.CaseSensitive = CaseSensitive;
 			other.MatchAnySearchTerm = MatchAnySearchTerm;
 			other.SearchDecompiledData = SearchDecompiledData;
-			other.SearchGacAssemblies = SearchGacAssemblies;
+			other.SearchFrameworkAssemblies = SearchFrameworkAssemblies;
 			return other;
 		}
 	}
@@ -129,7 +129,7 @@ namespace dnSpy.Search {
 			CaseSensitive = sect.Attribute<bool?>(nameof(CaseSensitive)) ?? CaseSensitive;
 			MatchAnySearchTerm = sect.Attribute<bool?>(nameof(MatchAnySearchTerm)) ?? MatchAnySearchTerm;
 			SearchDecompiledData = sect.Attribute<bool?>(nameof(SearchDecompiledData)) ?? SearchDecompiledData;
-			SearchGacAssemblies = sect.Attribute<bool?>(nameof(SearchGacAssemblies)) ?? SearchGacAssemblies;
+			SearchFrameworkAssemblies = sect.Attribute<bool?>(nameof(SearchFrameworkAssemblies)) ?? SearchFrameworkAssemblies;
 			PropertyChanged += SearchSettingsImpl_PropertyChanged;
 		}
 
@@ -140,7 +140,7 @@ namespace dnSpy.Search {
 			sect.Attribute(nameof(CaseSensitive), CaseSensitive);
 			sect.Attribute(nameof(MatchAnySearchTerm), MatchAnySearchTerm);
 			sect.Attribute(nameof(SearchDecompiledData), SearchDecompiledData);
-			sect.Attribute(nameof(SearchGacAssemblies), SearchGacAssemblies);
+			sect.Attribute(nameof(SearchFrameworkAssemblies), SearchFrameworkAssemblies);
 		}
 	}
 }

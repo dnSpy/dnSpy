@@ -221,7 +221,7 @@ namespace dnSpy.Search {
 		bool searchCompleted;
 
 		bool CanSearchFile(DsDocumentNode node) =>
-			SearchSettings.SearchGacAssemblies || !GacInfo.IsGacPath(node.Document.Filename);
+			SearchSettings.SearchFrameworkAssemblies || !GacInfo.IsGacPath(node.Document.Filename);
 		IEnumerable<DsDocumentNode> GetAllFilesToSearch() =>
 			documentTreeView.TreeView.Root.DataChildren.OfType<DsDocumentNode>().Where(a => CanSearchFile(a));
 		IEnumerable<DsDocumentNode> GetSelectedFilesToSearch() =>
@@ -305,7 +305,7 @@ namespace dnSpy.Search {
 			case nameof(SearchSettings.CaseSensitive):
 			case nameof(SearchSettings.MatchAnySearchTerm):
 			case nameof(SearchSettings.SearchDecompiledData):
-			case nameof(SearchSettings.SearchGacAssemblies):
+			case nameof(SearchSettings.SearchFrameworkAssemblies):
 				Restart();
 				break;
 			}
