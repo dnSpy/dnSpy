@@ -195,4 +195,16 @@ namespace dnSpy.Analyzer {
 		public override bool IsChecked(IMenuItemContext context) => analyzerSettings.SyntaxHighlight;
 		public override void Execute(IMenuItemContext context) => analyzerSettings.SyntaxHighlight = !analyzerSettings.SyntaxHighlight;
 	}
+
+	[ExportMenuItem(Header = "res:SingleClickExpandNodes", Group = MenuConstants.GROUP_CTX_ANALYZER_OPTIONS, Order = 20)]
+	sealed class SingleClickExpandNodesCtxMenuCommand : MenuItemBase {
+		readonly AnalyzerSettingsImpl analyzerSettings;
+
+		[ImportingConstructor]
+		SingleClickExpandNodesCtxMenuCommand(AnalyzerSettingsImpl analyzerSettings) => this.analyzerSettings = analyzerSettings;
+
+		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID);
+		public override bool IsChecked(IMenuItemContext context) => analyzerSettings.SingleClickExpandsChildren;
+		public override void Execute(IMenuItemContext context) => analyzerSettings.SingleClickExpandsChildren = !analyzerSettings.SingleClickExpandsChildren;
+	}
 }

@@ -304,6 +304,15 @@ namespace dnSpy.Analyzer.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Single-click expands nodes.
+        /// </summary>
+        public static string SingleClickExpandNodes {
+            get {
+                return ResourceManager.GetString("SingleClickExpandNodes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Syntax Highlight.
         /// </summary>
         public static string SyntaxHighlightCommand {

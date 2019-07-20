@@ -183,6 +183,10 @@ namespace dnSpy.Analyzer {
 				context.SyntaxHighlight = analyzerSettings.SyntaxHighlight;
 				RefreshNodes();
 				break;
+
+			case nameof(analyzerSettings.SingleClickExpandsChildren):
+				context.SingleClickExpandsChildren = analyzerSettings.SingleClickExpandsChildren;
+				break;
 			}
 		}
 
