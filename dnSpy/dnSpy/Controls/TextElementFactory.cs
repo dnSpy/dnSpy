@@ -81,7 +81,7 @@ namespace dnSpy.Controls {
 			bool filterOutNewLines = (flags & TextElementFlags.FilterOutNewLines) != 0;
 			if (tags.Count != 0) {
 				if (useFastTextBlock) {
-					return new FastTextBlock((flags & TextElementFlags.NewFormatter) != 0, new TextSrc {
+					return new FastTextBlock(new TextSrc {
 						text = ToString(WpfUnicodeUtils.ReplaceBadChars(text), filterOutNewLines),
 						classificationFormatMap = classificationFormatMap,
 						tagsList = tags.ToArray(),
@@ -97,7 +97,7 @@ namespace dnSpy.Controls {
 
 			FrameworkElement fwElem;
 			if (useFastTextBlock) {
-				fwElem = new FastTextBlock((flags & TextElementFlags.NewFormatter) != 0) {
+				fwElem = new FastTextBlock() {
 					Text = ToString(WpfUnicodeUtils.ReplaceBadChars(text), filterOutNewLines)
 				};
 			}

@@ -55,7 +55,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				try {
 					Write(writer, Context.Decompiler);
 					var classifierContext = new TreeViewNodeClassifierContext(writer.Text, Context.TreeView, this, isToolTip: false, colorize: Context.SyntaxHighlight, colors: writer.Colors);
-					var elem = Context.TreeViewNodeTextElementProvider.CreateTextElement(classifierContext, TreeViewContentTypes.TreeViewNodeAnalyzer, TextElementFlags.FilterOutNewLines | (Context.UseNewRenderer ? TextElementFlags.NewFormatter : 0));
+					var elem = Context.TreeViewNodeTextElementProvider.CreateTextElement(classifierContext, TreeViewContentTypes.TreeViewNodeAnalyzer, TextElementFlags.FilterOutNewLines);
 					cachedText = new WeakReference(elem);
 					return elem;
 				}

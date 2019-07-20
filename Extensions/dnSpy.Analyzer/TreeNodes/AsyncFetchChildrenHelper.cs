@@ -75,7 +75,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 					try {
 						writer.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.Searching);
 						var classifierContext = new TreeViewNodeClassifierContext(writer.Text, context.TreeView, this, isToolTip: false, colorize: context.SyntaxHighlight, colors: writer.Colors);
-						var elem = context.TreeViewNodeTextElementProvider.CreateTextElement(classifierContext, TreeViewContentTypes.TreeViewNodeAnalyzer, TextElementFlags.FilterOutNewLines | (context.UseNewRenderer ? TextElementFlags.NewFormatter : 0));
+						var elem = context.TreeViewNodeTextElementProvider.CreateTextElement(classifierContext, TreeViewContentTypes.TreeViewNodeAnalyzer, TextElementFlags.FilterOutNewLines);
 						return elem;
 					}
 					finally {

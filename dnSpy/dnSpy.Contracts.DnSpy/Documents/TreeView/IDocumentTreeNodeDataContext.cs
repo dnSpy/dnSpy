@@ -82,11 +82,6 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		bool ShowToken { get; }
 
 		/// <summary>
-		/// true to use the new optimized renderer. It doesn't support all unicode chars or word wrapping
-		/// </summary>
-		bool UseNewRenderer { get; }
-
-		/// <summary>
 		/// true to deserialize resources
 		/// </summary>
 		bool DeserializeResources { get; }

@@ -109,7 +109,6 @@ namespace dnSpy.Documents.TreeView {
 				ShowAssemblyPublicKeyToken = documentTreeViewSettings.ShowAssemblyPublicKeyToken,
 				ShowToken = documentTreeViewSettings.ShowToken,
 				Decompiler = decompilerService.Decompiler,
-				UseNewRenderer = false,
 				DeserializeResources = documentTreeViewSettings.DeserializeResources,
 				CanDragAndDrop = isGlobal,
 			};

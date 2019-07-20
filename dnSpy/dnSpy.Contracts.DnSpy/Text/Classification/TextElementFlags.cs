@@ -37,11 +37,6 @@ namespace dnSpy.Contracts.Text.Classification {
 		FilterOutNewLines				= 0x00000001,
 
 		/// <summary>
-		/// Use the new text formatter, it's faster but doesn't support word wrap or all unicode characters
-		/// </summary>
-		NewFormatter					= 0x00000002,
-
-		/// <summary>
 		/// Mask to get word wrap enum
 		/// </summary>
 		WrapMask						= 0x0000000C,

@@ -35,7 +35,6 @@ namespace dnSpy.Documents.TreeView {
 		public bool ShowAssemblyVersion { get; internal set; }
 		public bool ShowAssemblyPublicKeyToken { get; internal set; }
 		public bool ShowToken { get; internal set; }
-		public bool UseNewRenderer { get; internal set; }
 		public bool DeserializeResources { get; internal set; }
 		public bool CanDragAndDrop { get; set; }
 

@@ -25,7 +25,6 @@ using dnSpy.Contracts.TreeView.Text;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	interface IAnalyzerTreeNodeDataContext {
-		bool UseNewRenderer { get; }
 		bool SingleClickExpandsChildren { get; }
 		bool SyntaxHighlight { get; }
 		bool ShowToken { get; }

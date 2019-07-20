@@ -112,7 +112,6 @@ namespace dnSpy.Analyzer {
 				ShowToken = analyzerSettings.ShowToken,
 				SingleClickExpandsChildren = analyzerSettings.SingleClickExpandsChildren,
 				SyntaxHighlight = analyzerSettings.SyntaxHighlight,
-				UseNewRenderer = analyzerSettings.UseNewRenderer,
 				AnalyzerService = this,
 			};
 
@@ -182,11 +181,6 @@ namespace dnSpy.Analyzer {
 
 			case nameof(analyzerSettings.SyntaxHighlight):
 				context.SyntaxHighlight = analyzerSettings.SyntaxHighlight;
-				RefreshNodes();
-				break;
-
-			case nameof(analyzerSettings.UseNewRenderer):
-				context.UseNewRenderer = analyzerSettings.UseNewRenderer;
 				RefreshNodes();
 				break;
 			}

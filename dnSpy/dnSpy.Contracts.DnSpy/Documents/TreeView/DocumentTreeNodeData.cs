@@ -95,7 +95,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 				try {
 					WriteCore(writer, Context.Decompiler, DocumentNodeWriteOptions.None);
 					var classifierContext = new TreeViewNodeClassifierContext(writer.Text, Context.DocumentTreeView.TreeView, this, isToolTip: false, colorize: Context.SyntaxHighlight, colors: writer.Colors);
-					var elem = Context.TreeViewNodeTextElementProvider.CreateTextElement(classifierContext, TreeViewContentTypes.TreeViewNodeAssemblyExplorer, TextElementFlags.FilterOutNewLines | (Context.UseNewRenderer ? TextElementFlags.NewFormatter : 0));
+					var elem = Context.TreeViewNodeTextElementProvider.CreateTextElement(classifierContext, TreeViewContentTypes.TreeViewNodeAssemblyExplorer, TextElementFlags.FilterOutNewLines);
 					cachedText = new WeakReference(elem);
 					return elem;
 				}
@@ -139,7 +139,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 				var writer = Cache.GetWriter();
 				WriteCore(writer, Context.Decompiler, DocumentNodeWriteOptions.ToolTip);
 				var classifierContext = new TreeViewNodeClassifierContext(writer.Text, Context.DocumentTreeView.TreeView, this, isToolTip: true, colorize: Context.SyntaxHighlight, colors: writer.Colors);
-				var elem = Context.TreeViewNodeTextElementProvider.CreateTextElement(classifierContext, TreeViewContentTypes.TreeViewNodeAssemblyExplorer, Context.UseNewRenderer ? TextElementFlags.NewFormatter : 0);
+				var elem = Context.TreeViewNodeTextElementProvider.CreateTextElement(classifierContext, TreeViewContentTypes.TreeViewNodeAssemblyExplorer, TextElementFlags.None);
 				Cache.FreeWriter(writer);
 				return elem;
 			}

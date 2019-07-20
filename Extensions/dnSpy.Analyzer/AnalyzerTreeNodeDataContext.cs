@@ -36,7 +36,6 @@ namespace dnSpy.Analyzer {
 		public bool ShowToken { get; set; }
 		public bool SingleClickExpandsChildren { get; set; }
 		public bool SyntaxHighlight { get; set; }
-		public bool UseNewRenderer { get; set; }
 #pragma warning restore CS8618 // Non-nullable field is uninitialized.
 	}
 }

@@ -40,14 +40,11 @@ namespace dnSpy.Contracts.Controls {
 			set => SetValue(TextProperty, value);
 		}
 
-		readonly bool useNewFormatter;
-
-		public FastTextBlock(bool useNewFormatter)
-			: this(useNewFormatter, new TextSrc()) {
+		public FastTextBlock()
+			: this(new TextSrc()) {
 		}
 
-		public FastTextBlock(bool useNewFormatter, IFastTextSource src) {
-			this.useNewFormatter = useNewFormatter;
+		public FastTextBlock(IFastTextSource src) {
 			this.src = src;
 		}
 
@@ -168,7 +165,7 @@ namespace dnSpy.Contracts.Controls {
 		}
 
 
-		ITextFormatter? fmt = null;
+		TextFormatter? fmt = null;
 		TextLine? line = null;
 
 		Typeface GetTypeface() {
@@ -183,7 +180,7 @@ namespace dnSpy.Contracts.Controls {
 
 		void MakeNewText() {
 			if (fmt is null)
-				fmt = TextFormatterFactory.GetTextFormatter(this, useNewFormatter);
+				fmt = TextFormatterFactory.GetTextFormatter(this);
 
 			if (!(line is null))
 				line.Dispose();
@@ -212,5 +209,13 @@ namespace dnSpy.Contracts.Controls {
 			Debug.Assert(!(line is null));
 			line.Draw(drawingContext, new Point(0, 0), InvertAxes.None);
 		}
+	}
+
+	static class TextFormatterFactory {
+		static readonly TextFormatter TextFormatter_Ideal = TextFormatter.Create(TextFormattingMode.Ideal);
+		static readonly TextFormatter TextFormatter_Display = TextFormatter.Create(TextFormattingMode.Display);
+
+		public static TextFormatter GetTextFormatter(DependencyObject owner) =>
+			TextOptions.GetTextFormattingMode(owner) == TextFormattingMode.Ideal ? TextFormatter_Ideal : TextFormatter_Display;
 	}
 }
