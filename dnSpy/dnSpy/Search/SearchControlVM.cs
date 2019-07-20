@@ -77,7 +77,7 @@ namespace dnSpy.Search {
 				if (selectedSearchTypeVM != value) {
 					selectedSearchTypeVM = value;
 					OnPropertyChanged(nameof(SelectedSearchTypeVM));
-					Restart();
+					SearchSettings.SearchType = selectedSearchTypeVM.SearchType;
 				}
 			}
 		}
@@ -133,14 +133,13 @@ namespace dnSpy.Search {
 			this.documentTreeView = documentTreeView;
 			this.decompiler = decompiler;
 			SearchSettings = searchSettings;
-			searchSettings.PropertyChanged += SearchSettings_PropertyChanged;
 			delayedSearch = new DelayedAction(DEFAULT_DELAY_SEARCH_MS, DelayStartSearch);
 			SearchTypeVMs = new ObservableCollection<SearchTypeVM>();
 			SearchResults = new ObservableCollection<ISearchResult>();
 			searchResultsCollectionView = (ListCollectionView)CollectionViewSource.GetDefaultView(SearchResults);
 			searchResultsCollectionView.CustomSort = new SearchResult_Comparer();
-			SearchLocationVM = new EnumListVM(searchLocationList, (a, b) => Restart());
-			SearchLocationVM.SelectedItem = SearchLocation.AllFiles;
+			SearchLocationVM = new EnumListVM(searchLocationList, (a, b) => SearchSettings.SearchLocation = (SearchLocation)SearchLocationVM.SelectedItem!);
+			SearchLocationVM.SelectedItem = SearchSettings.SearchLocation;
 
 			Add(SearchType.AssemblyDef, dnSpy_Resources.SearchWindow_Assembly, DsImages.Assembly, null, VisibleMembersFlags.AssemblyDef);
 			Add(SearchType.ModuleDef, dnSpy_Resources.SearchWindow_Module, DsImages.ModulePublic, null, VisibleMembersFlags.ModuleDef);
@@ -167,8 +166,13 @@ namespace dnSpy.Search {
 			Add(SearchType.Any, dnSpy_Resources.SearchWindow_AllAbove, DsImages.ClassPublic, dnSpy_Resources.SearchWindow_AllAbove_Key, VisibleMembersFlags.TreeViewAll | VisibleMembersFlags.ParamDef | VisibleMembersFlags.Local);
 			Add(SearchType.Literal, dnSpy_Resources.SearchWindow_Literal, DsImages.ConstantPublic, dnSpy_Resources.SearchWindow_Literal_Key, VisibleMembersFlags.MethodBody | VisibleMembersFlags.FieldDef | VisibleMembersFlags.ParamDef | VisibleMembersFlags.PropertyDef | VisibleMembersFlags.Resource | VisibleMembersFlags.ResourceElement | VisibleMembersFlags.Attributes);
 
-			SelectedSearchTypeVM = SearchTypeVMs.First(a => a.SearchType == SearchType.Any);
+			UpdateSearchType();
+			searchSettings.PropertyChanged += SearchSettings_PropertyChanged;
 		}
+
+		void UpdateSearchType() =>
+			SelectedSearchTypeVM = SearchTypeVMs.FirstOrDefault(a => a.SearchType == SearchSettings.SearchType) ??
+			SearchTypeVMs.First(a => a.SearchType == SearchType.Any);
 
 		void Add(SearchType searchType, string name, ImageReference icon, string? toolTip, VisibleMembersFlags flags) =>
 			SearchTypeVMs.Add(new SearchTypeVM(searchType, name, toolTip, icon, flags));
@@ -297,6 +301,14 @@ namespace dnSpy.Search {
 
 		void SearchSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			switch (e.PropertyName) {
+			case nameof(SearchSettings.SearchLocation):
+				SearchLocationVM.SelectedItem = SearchSettings.SearchLocation;
+				Restart();
+				break;
+			case nameof(SearchSettings.SearchType):
+				UpdateSearchType();
+				Restart();
+				break;
 			case nameof(SearchSettings.SyntaxHighlight):
 				if (!(fileSearcher is null))
 					fileSearcher.SyntaxHighlight = SearchSettings.SyntaxHighlight;

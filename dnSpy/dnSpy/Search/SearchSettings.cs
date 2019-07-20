@@ -25,6 +25,8 @@ using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Search {
 	interface ISearchSettings : INotifyPropertyChanged {
+		SearchLocation SearchLocation { get; set; }
+		SearchType SearchType { get; set; }
 		bool SyntaxHighlight { get; set; }
 		bool MatchWholeWords { get; set; }
 		bool CaseSensitive { get; set; }
@@ -34,6 +36,28 @@ namespace dnSpy.Search {
 	}
 
 	class SearchSettings : ViewModelBase, ISearchSettings {
+		public SearchLocation SearchLocation {
+			get => searchLocation;
+			set {
+				if (searchLocation != value) {
+					searchLocation = value;
+					OnPropertyChanged(nameof(SearchLocation));
+				}
+			}
+		}
+		SearchLocation searchLocation = SearchLocation.AllFiles;
+
+		public SearchType SearchType {
+			get => searchType;
+			set {
+				if (searchType != value) {
+					searchType = value;
+					OnPropertyChanged(nameof(SearchType));
+				}
+			}
+		}
+		SearchType searchType = SearchType.Any;
+
 		public bool SyntaxHighlight {
 			get => syntaxHighlight;
 			set {
@@ -103,6 +127,8 @@ namespace dnSpy.Search {
 		public SearchSettings Clone() => CopyTo(new SearchSettings());
 
 		public SearchSettings CopyTo(SearchSettings other) {
+			other.SearchLocation = SearchLocation;
+			other.SearchType = SearchType;
 			other.SyntaxHighlight = SyntaxHighlight;
 			other.MatchWholeWords = MatchWholeWords;
 			other.CaseSensitive = CaseSensitive;
@@ -124,6 +150,8 @@ namespace dnSpy.Search {
 			this.settingsService = settingsService;
 
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
+			SearchLocation = sect.Attribute<SearchLocation?>(nameof(SearchLocation)) ?? SearchLocation;
+			SearchType = sect.Attribute<SearchType?>(nameof(SearchType)) ?? SearchType;
 			SyntaxHighlight = sect.Attribute<bool?>(nameof(SyntaxHighlight)) ?? SyntaxHighlight;
 			MatchWholeWords = sect.Attribute<bool?>(nameof(MatchWholeWords)) ?? MatchWholeWords;
 			CaseSensitive = sect.Attribute<bool?>(nameof(CaseSensitive)) ?? CaseSensitive;
@@ -135,6 +163,8 @@ namespace dnSpy.Search {
 
 		void SearchSettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
+			sect.Attribute(nameof(SearchLocation), SearchLocation);
+			sect.Attribute(nameof(SearchType), SearchType);
 			sect.Attribute(nameof(SyntaxHighlight), SyntaxHighlight);
 			sect.Attribute(nameof(MatchWholeWords), MatchWholeWords);
 			sect.Attribute(nameof(CaseSensitive), CaseSensitive);
