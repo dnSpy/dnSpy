@@ -55,9 +55,9 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 
 		static readonly (int @base, int groupSize)[] numberBases = new (int, int)[] {
 			(2, 4),
-			(8, 0),
-			(10, 0),
-			(16, 0),
+			(8, 4),
+			(10, 3),
+			(16, 4),
 		};
 		object Create(IDocumentViewerToolTipProviderContext context, Func<StringBuilder, int, string> toBase) {
 			var provider = context.Create();
