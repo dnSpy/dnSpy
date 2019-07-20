@@ -45,6 +45,7 @@ using dnSpy.Contracts.Settings;
 using dnSpy.Controls;
 using dnSpy.Culture;
 using dnSpy.Documents.Tabs.Dialogs;
+using dnSpy.Documents.TreeView;
 using dnSpy.Extension;
 using dnSpy.Images;
 using dnSpy.Roslyn.Text.Classification;
@@ -593,8 +594,10 @@ namespace dnSpy.MainApp {
 				exportProvider.GetExportedValue<IDocumentTabService>().OpenEmptyTab();
 
 			var files = appArgs.Filenames.ToArray();
-			if (files.Length > 0)
-				OpenDocumentsHelper.OpenDocuments(exportProvider.GetExportedValue<IDocumentTabService>().DocumentTreeView, appWindow.MainWindow, files, false);
+			if (files.Length > 0) {
+				var mruList = exportProvider.GetExportedValue<AssemblyExplorerMostRecentlyUsedList>();
+				OpenDocumentsHelper.OpenDocuments(exportProvider.GetExportedValue<IDocumentTabService>().DocumentTreeView, appWindow.MainWindow, mruList, files, false);
+			}
 
 			// The files were lazily added to the treeview. Make sure they've been added to the TV
 			// before we process the remaining command line args.

@@ -3765,6 +3765,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Recent _Files.
+        /// </summary>
+        public static string RecentFilesCommand {
+            get {
+                return ResourceManager.GetString("RecentFilesCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to References.
         /// </summary>
         public static string ReferencesFolder {

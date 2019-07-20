@@ -23,11 +23,13 @@ using System.Linq;
 using System.Windows;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.MVVM.Dialogs;
+using dnSpy.Documents.TreeView;
 
 namespace dnSpy.Documents {
 	sealed class DsDocumentLoader : IProgressTask, IDsDocumentLoader {
 		readonly IDsDocumentService documentService;
 		readonly Window ownerWindow;
+		readonly AssemblyExplorerMostRecentlyUsedList? mruList;
 		readonly HashSet<IDsDocument> hash;
 		readonly List<IDsDocument> loadedDocuments;
 		DocumentToLoad[]? documentsToLoad;
@@ -36,9 +38,10 @@ namespace dnSpy.Documents {
 		public double ProgressMinimum => 0;
 		public double ProgressMaximum { get; set; }
 
-		public DsDocumentLoader(IDsDocumentService documentService, Window ownerWindow) {
+		public DsDocumentLoader(IDsDocumentService documentService, Window ownerWindow, AssemblyExplorerMostRecentlyUsedList? mruList) {
 			this.documentService = documentService;
 			this.ownerWindow = ownerWindow;
+			this.mruList = mruList;
 			loadedDocuments = new List<IDsDocument>();
 			hash = new HashSet<IDsDocument>();
 		}
@@ -65,8 +68,10 @@ namespace dnSpy.Documents {
 			if (!(document is null) && !hash.Contains(document)) {
 				loadedDocuments.Add(document);
 				hash.Add(document);
-				if (!f.IsAutoLoaded)
+				if (!f.IsAutoLoaded) {
 					document.IsAutoLoaded = f.IsAutoLoaded;
+					mruList?.Add(document.Filename);
+				}
 			}
 		}
 

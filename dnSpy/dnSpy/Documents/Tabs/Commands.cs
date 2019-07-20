@@ -18,12 +18,14 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Input;
+using System.Windows.Threading;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Documents;
@@ -38,6 +40,7 @@ using dnSpy.Contracts.ToolBars;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Contracts.Utilities;
 using dnSpy.Documents.Tabs.Dialogs;
+using dnSpy.Documents.TreeView;
 using dnSpy.Properties;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.Win32;
@@ -47,11 +50,13 @@ namespace dnSpy.Documents.Tabs {
 	sealed class OpenFileInit : IAutoLoaded {
 		readonly IDocumentTreeView documentTreeView;
 		readonly IAppWindow appWindow;
+		readonly AssemblyExplorerMostRecentlyUsedList mruList;
 
 		[ImportingConstructor]
-		OpenFileInit(IDocumentTreeView documentTreeView, IAppWindow appWindow) {
+		OpenFileInit(IDocumentTreeView documentTreeView, IAppWindow appWindow, AssemblyExplorerMostRecentlyUsedList mruList) {
 			this.documentTreeView = documentTreeView;
 			this.appWindow = appWindow;
+			this.mruList = mruList;
 			appWindow.MainWindowCommands.Add(ApplicationCommands.Open, (s, e) => { Open(); e.Handled = true; }, (s, e) => e.CanExecute = true);
 		}
 
@@ -65,7 +70,7 @@ namespace dnSpy.Documents.Tabs {
 			};
 			if (openDlg.ShowDialog() != true)
 				return;
-			OpenDocumentsHelper.OpenDocuments(documentTreeView, appWindow.MainWindow, openDlg.FileNames);
+			OpenDocumentsHelper.OpenDocuments(documentTreeView, appWindow.MainWindow, mruList, openDlg.FileNames);
 		}
 	}
 
@@ -161,11 +166,81 @@ namespace dnSpy.Documents.Tabs {
 			if (documentList == oldSelected)
 				return;
 
-			documentListLoader.Load(documentList, new DsDocumentLoader(documentService, appWindow.MainWindow));
+			documentListLoader.Load(documentList, new DsDocumentLoader(documentService, appWindow.MainWindow, null));
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:ReloadAsmsCommand", Group = MenuConstants.GROUP_APP_MENU_FILE_OPEN, Order = 30)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Guid = Guid, Header = "res:RecentFilesCommand", Group = MenuConstants.GROUP_APP_MENU_FILE_OPEN, Order = 30)]
+	sealed class RecentFilesCommandItem : MenuItemBase {
+		public const string Guid = "2C57024A-6226-486B-8DD7-202333BC848A";
+		readonly AssemblyExplorerMostRecentlyUsedList mruList;
+		[ImportingConstructor]
+		RecentFilesCommandItem(AssemblyExplorerMostRecentlyUsedList mruList) => this.mruList = mruList;
+		public override void Execute(IMenuItemContext context) => Debug.Fail("Shouldn't execute");
+		public override bool IsEnabled(IMenuItemContext context) => mruList.RecentFiles.Length > 0;
+	}
+
+	[ExportMenuItem(OwnerGuid = RecentFilesCommandItem.Guid, Group = "0,A8109840-1340-42BB-85C5-D753FD41AA86", Order = 0)]
+	sealed class RecentFilesCommand : MenuItemBase, IMenuItemProvider {
+		const int MaxFilenameLength = 100;
+		readonly IDocumentTreeView documentTreeView;
+		readonly AssemblyExplorerMostRecentlyUsedList mruList;
+
+		[ImportingConstructor]
+		RecentFilesCommand(IDocumentTreeView documentTreeView, AssemblyExplorerMostRecentlyUsedList mruList) {
+			this.documentTreeView = documentTreeView;
+			this.mruList = mruList;
+		}
+
+		public override void Execute(IMenuItemContext context) { }
+
+		sealed class MyMenuItem : MenuItemBase {
+			readonly Action<IMenuItemContext> action;
+			public MyMenuItem(Action<IMenuItemContext> action) => this.action = action;
+			public override void Execute(IMenuItemContext context) => action(context);
+		}
+
+		static string GetHeader(int i, string filename) {
+			string s;
+			if (i == 10)
+				s = "1_0";
+			else if (i > 10)
+				s = i.ToString();
+			else
+				s = $"_{i}";
+			return $"{s} {UIUtilities.EscapeMenuItemHeader(GetShortFilename(filename))}";
+		}
+
+		static string GetShortFilename(string filename) {
+			if (filename.Length > MaxFilenameLength)
+				filename = "[...]" + filename.Substring(filename.Length - MaxFilenameLength);
+			return filename;
+		}
+
+		public IEnumerable<CreatedMenuItem> Create(IMenuItemContext context) {
+			var files = mruList.RecentFiles;
+			for (int i = 0; i < files.Length; i++) {
+				var filename = files[i];
+				var attr = new ExportMenuItemAttribute { Header = GetHeader(i + 1, filename) };
+				var item = new MyMenuItem(ctx => OpenFile(filename));
+				yield return new CreatedMenuItem(attr, item);
+			}
+		}
+
+		void OpenFile(string filename) {
+			var document = documentTreeView.DocumentService.TryGetOrCreate(DsDocumentInfo.CreateDocument(filename));
+			if (document is null)
+				return;
+			mruList.Add(document.Filename);
+			Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
+				var node = documentTreeView.FindNode(document);
+				if (!(node is null))
+					documentTreeView.TreeView.SelectItems(new[] { node });
+			}));
+		}
+	}
+
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:ReloadAsmsCommand", Group = MenuConstants.GROUP_APP_MENU_FILE_OPEN, Order = 40)]
 	sealed class ReloadCommand : MenuItemBase {
 		readonly IDocumentListLoader documentListLoader;
 
@@ -176,7 +251,7 @@ namespace dnSpy.Documents.Tabs {
 		public override void Execute(IMenuItemContext context) => documentListLoader.Reload();
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:CloseAllCommand", Icon = DsImagesAttribute.CloseAll, Group = MenuConstants.GROUP_APP_MENU_FILE_OPEN, Order = 40)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:CloseAllCommand", Icon = DsImagesAttribute.CloseAll, Group = MenuConstants.GROUP_APP_MENU_FILE_OPEN, Order = 50)]
 	sealed class CloseAllDocumentsCommand : MenuItemBase {
 		readonly IDocumentListLoader documentListLoader;
 

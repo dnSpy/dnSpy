@@ -26,6 +26,7 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text.Classification;
+using dnSpy.Documents.TreeView;
 using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Documents.Tabs.Dialogs {
@@ -33,13 +34,15 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 	sealed class OpenFromGAC : IOpenFromGAC {
 		readonly IAppWindow appWindow;
 		readonly IDocumentTreeView documentTreeView;
+		readonly AssemblyExplorerMostRecentlyUsedList mruList;
 		readonly IClassificationFormatMap classificationFormatMap;
 		readonly ITextElementProvider textElementProvider;
 
 		[ImportingConstructor]
-		OpenFromGAC(IAppWindow appWindow, IDocumentTreeView documentTreeView, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
+		OpenFromGAC(IAppWindow appWindow, IDocumentTreeView documentTreeView, AssemblyExplorerMostRecentlyUsedList mruList, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider) {
 			this.appWindow = appWindow;
 			this.documentTreeView = documentTreeView;
+			this.mruList = mruList;
 			classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
 			this.textElementProvider = textElementProvider;
 		}
@@ -56,6 +59,6 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		}
 
 		public ModuleDef[] OpenAssemblies(bool selectAssembly, Window? ownerWindow) =>
-			OpenDocumentsHelper.OpenDocuments(documentTreeView, appWindow.MainWindow, GetPaths(ownerWindow), selectAssembly).Select(a => a.ModuleDef).OfType<ModuleDef>().ToArray();
+			OpenDocumentsHelper.OpenDocuments(documentTreeView, appWindow.MainWindow, mruList, GetPaths(ownerWindow), selectAssembly).Select(a => a.ModuleDef).OfType<ModuleDef>().ToArray();
 	}
 }

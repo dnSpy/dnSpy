@@ -24,11 +24,12 @@ using System.Windows;
 using System.Windows.Threading;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Documents.TreeView;
+using dnSpy.Documents.TreeView;
 
 namespace dnSpy.Documents.Tabs.Dialogs {
 	static class OpenDocumentsHelper {
-		internal static IDsDocument[] OpenDocuments(IDocumentTreeView documentTreeView, Window ownerWindow, IEnumerable<string> filenames, bool selectDocument = true) {
-			var documentLoader = new DsDocumentLoader(documentTreeView.DocumentService, ownerWindow);
+		internal static IDsDocument[] OpenDocuments(IDocumentTreeView documentTreeView, Window ownerWindow, AssemblyExplorerMostRecentlyUsedList mruList, IEnumerable<string> filenames, bool selectDocument = true) {
+			var documentLoader = new DsDocumentLoader(documentTreeView.DocumentService, ownerWindow, mruList);
 			var loadedDocuments = documentLoader.Load(filenames.Select(a => new DocumentToLoad(DsDocumentInfo.CreateDocument(a))));
 			var document = loadedDocuments.Length == 0 ? null : loadedDocuments[loadedDocuments.Length - 1];
 			if (selectDocument && !(document is null)) {

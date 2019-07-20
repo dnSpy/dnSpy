@@ -62,6 +62,6 @@ namespace dnSpy.Documents.TreeView {
 		}
 
 		public IDocumentTreeView Create(IDocumentTreeNodeFilter? filter) =>
-			new DocumentTreeView(false, filter, treeViewService, decompilerService, documentServiceProvider.Create(), documentTreeViewSettings, menuService, dotNetImageService, wpfCommandService, resourceNodeFactory, dsDocumentNodeProviders.ToArray(), mefFinders.ToArray(), treeViewNodeTextElementProvider);
+			new DocumentTreeView(false, filter, treeViewService, decompilerService, documentServiceProvider.Create(), documentTreeViewSettings, menuService, dotNetImageService, wpfCommandService, resourceNodeFactory, dsDocumentNodeProviders.ToArray(), mefFinders.ToArray(), treeViewNodeTextElementProvider, null);
 	}
 }
