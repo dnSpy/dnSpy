@@ -225,7 +225,7 @@ namespace dnSpy.Search {
 		bool searchCompleted;
 
 		bool CanSearchFile(DsDocumentNode node) =>
-			SearchSettings.SearchFrameworkAssemblies || !GacInfo.IsGacPath(node.Document.Filename);
+			SearchSettings.SearchFrameworkAssemblies || !FrameworkFileUtils.IsFrameworkAssembly(node.Document.Filename, node.Document.AssemblyDef?.Name);
 		IEnumerable<DsDocumentNode> GetAllFilesToSearch() =>
 			documentTreeView.TreeView.Root.DataChildren.OfType<DsDocumentNode>().Where(a => CanSearchFile(a));
 		IEnumerable<DsDocumentNode> GetSelectedFilesToSearch() =>
