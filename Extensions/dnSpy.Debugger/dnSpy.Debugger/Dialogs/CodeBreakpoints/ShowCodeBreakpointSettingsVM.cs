@@ -336,7 +336,7 @@ $TNAME");
 			verifyFilterTimer = null;
 		}
 
-		void VerifyFilterTimer_Elapsed(object sender, ElapsedEventArgs e) => UI(VerifyFilterTimer_Elapsed_UI);
+		void VerifyFilterTimer_Elapsed(object? sender, ElapsedEventArgs e) => UI(VerifyFilterTimer_Elapsed_UI);
 		void VerifyFilterTimer_Elapsed_UI() {
 			StopVerifyFilterTimer();
 			VerifyFilterExpression();

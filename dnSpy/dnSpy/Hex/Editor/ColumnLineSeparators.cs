@@ -158,7 +158,7 @@ namespace dnSpy.Hex.Editor {
 			editorFormatMap.FormatMappingChanged -= EditorFormatMap_FormatMappingChanged;
 		}
 
-		void Options_OptionChanged(object sender, VSTE.EditorOptionChangedEventArgs e) {
+		void Options_OptionChanged(object? sender, VSTE.EditorOptionChangedEventArgs e) {
 			switch (e.OptionId) {
 			case DefaultHexViewOptions.ShowColumnLinesName:
 				UpdateEnabled();
@@ -173,7 +173,7 @@ namespace dnSpy.Hex.Editor {
 			}
 		}
 
-		void WpfHexView_LayoutChanged(object sender, HexViewLayoutChangedEventArgs e) {
+		void WpfHexView_LayoutChanged(object? sender, HexViewLayoutChangedEventArgs e) {
 			bool recreate = false;
 			if (latestBufferLines != wpfHexView.BufferLines)
 				recreate = true;
@@ -194,7 +194,7 @@ namespace dnSpy.Hex.Editor {
 				Canvas.SetTop(lineElement, Canvas.GetTop(lineElement) + d);
 		}
 
-		void EditorFormatMap_FormatMappingChanged(object sender, VSTC.FormatItemsEventArgs e) {
+		void EditorFormatMap_FormatMappingChanged(object? sender, VSTC.FormatItemsEventArgs e) {
 			if (wpfHexView.IsClosed)
 				return;
 
@@ -359,7 +359,7 @@ namespace dnSpy.Hex.Editor {
 			lineElements.Clear();
 		}
 
-		void WpfHexView_Closed(object sender, EventArgs e) {
+		void WpfHexView_Closed(object? sender, EventArgs e) {
 			RemoveAllLines();
 			latestBufferLines = null;
 			wpfHexView.Closed -= WpfHexView_Closed;

@@ -63,7 +63,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			PropertyChanged += ReplSettingsImplBase_PropertyChanged;
 		}
 
-		void ReplSettingsImplBase_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void ReplSettingsImplBase_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(guid);
 			sect.Attribute(nameof(WordWrapStyle), WordWrapStyle);
 			sect.Attribute(nameof(ShowLineNumbers), ShowLineNumbers);

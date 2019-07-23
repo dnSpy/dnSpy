@@ -88,8 +88,8 @@ namespace dnSpy.Hex.Intellisense.DnSpy {
 				quickInfoSession = null;
 		}
 
-		void QuickInfoSession_Dismissed(object sender, EventArgs e) {
-			var qiSession = (HexQuickInfoSession)sender;
+		void QuickInfoSession_Dismissed(object? sender, EventArgs e) {
+			var qiSession = (HexQuickInfoSession)sender!;
 			qiSession.Dismissed -= QuickInfoSession_Dismissed;
 			Debug.Assert(qiSession == quickInfoSession);
 			if (qiSession == quickInfoSession)

@@ -201,13 +201,13 @@ namespace dnSpy.AsmEditor.Field {
 			Reinitialize();
 		}
 
-		void constantVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void constantVM_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == nameof(ConstantVM.IsEnabled))
 				HasDefault = ConstantVM.IsEnabled;
 			HasErrorUpdated();
 		}
 
-		void marshalTypeVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void marshalTypeVM_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == nameof(MarshalTypeVM.IsEnabled))
 				HasFieldMarshal = MarshalTypeVM.IsEnabled;
 			else if (e.PropertyName == nameof(MarshalTypeVM.TypeString))
@@ -215,13 +215,13 @@ namespace dnSpy.AsmEditor.Field {
 			HasErrorUpdated();
 		}
 
-		void implMapVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void implMapVM_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == nameof(ImplMapVM.IsEnabled))
 				PinvokeImpl = ImplMapVM.IsEnabled;
 			HasErrorUpdated();
 		}
 
-		void typeSigCreator_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void typeSigCreator_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == nameof(TypeSigCreator.TypeSigDnlibFullName))
 				OnPropertyChanged(nameof(FieldTypeHeader));
 			HasErrorUpdated();

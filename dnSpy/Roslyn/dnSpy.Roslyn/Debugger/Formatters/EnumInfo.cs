@@ -52,7 +52,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 			if (count <= 0)
 				return new EnumInfo(hasFlagsAttribute, Array.Empty<EnumFieldInfo>());
 
-			var infos = new EnumFieldInfo[count];
+			EnumFieldInfo[]? infos = new EnumFieldInfo[count];
 			int w = 0;
 			for (int i = 0; i < fields.Count; i++) {
 				var field = fields[i];
@@ -62,11 +62,11 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 					continue;
 				if (w >= infos.Length)
 					Array.Resize(ref infos, w + 1);
-				infos[w++] = new EnumFieldInfo(field, value);
+				infos![w++] = new EnumFieldInfo(field, value);
 			}
 			if (infos.Length != w)
 				Array.Resize(ref infos, w);
-			return new EnumInfo(hasFlagsAttribute, infos);
+			return new EnumInfo(hasFlagsAttribute, infos!);
 		}
 	}
 

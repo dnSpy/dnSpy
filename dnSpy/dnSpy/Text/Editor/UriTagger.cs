@@ -51,7 +51,7 @@ namespace dnSpy.Text.Editor {
 			UpdateOptions();
 		}
 
-		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) => UpdateOptions();
+		void Options_OptionChanged(object? sender, EditorOptionChangedEventArgs e) => UpdateOptions();
 		void UpdateOptions() {
 			bool newValue = textView.Options.GetOptionValue(DefaultTextViewOptions.DisplayUrlsAsHyperlinksId);
 			if (newValue == enableLinks)
@@ -123,7 +123,7 @@ namespace dnSpy.Text.Editor {
 			return null;
 		}
 
-		void TextView_Closed(object sender, EventArgs e) {
+		void TextView_Closed(object? sender, EventArgs e) {
 			textView.Closed -= TextView_Closed;
 			textView.Options.OptionChanged -= Options_OptionChanged;
 		}

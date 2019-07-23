@@ -46,7 +46,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 			appWindow.MainWindowClosing += AppWindow_MainWindowClosing;
 		}
 
-		void AppWindow_MainWindowClosing(object sender, CancelEventArgs e) {
+		void AppWindow_MainWindowClosing(object? sender, CancelEventArgs e) {
 			var count = undoCommandService.Value.NumberOfModifiedDocuments;
 			if (count == 0)
 				return;

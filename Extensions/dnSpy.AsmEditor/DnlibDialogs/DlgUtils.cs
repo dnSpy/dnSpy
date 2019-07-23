@@ -42,16 +42,16 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			switch (ModelUtils.GetElementType(value.GetType())) {
 			case ElementType.Boolean:return SimpleTypeConverter.ToString((bool)value);
 			case ElementType.Char:	return SimpleTypeConverter.ToString((char)value);
-			case ElementType.I1:	return AddCast(SimpleTypeConverter.ToString((sbyte)value), addCast, value.GetType().FullName);
-			case ElementType.U1:	return AddCast(SimpleTypeConverter.ToString((byte)value), addCast, value.GetType().FullName);
-			case ElementType.I2:	return AddCast(SimpleTypeConverter.ToString((short)value), addCast, value.GetType().FullName);
-			case ElementType.U2:	return AddCast(SimpleTypeConverter.ToString((ushort)value), addCast, value.GetType().FullName);
-			case ElementType.I4:	return AddCast(SimpleTypeConverter.ToString((int)value), addCast, value.GetType().FullName);
-			case ElementType.U4:	return AddCast(SimpleTypeConverter.ToString((uint)value), addCast, value.GetType().FullName);
-			case ElementType.I8:	return AddCast(SimpleTypeConverter.ToString((long)value), addCast, value.GetType().FullName);
-			case ElementType.U8:	return AddCast(SimpleTypeConverter.ToString((ulong)value), addCast, value.GetType().FullName);
-			case ElementType.R4:	return AddCast(SimpleTypeConverter.ToString((float)value), addCast, value.GetType().FullName);
-			case ElementType.R8:	return AddCast(SimpleTypeConverter.ToString((double)value), addCast, value.GetType().FullName);
+			case ElementType.I1:	return AddCast(SimpleTypeConverter.ToString((sbyte)value), addCast, value.GetType().FullName!);
+			case ElementType.U1:	return AddCast(SimpleTypeConverter.ToString((byte)value), addCast, value.GetType().FullName!);
+			case ElementType.I2:	return AddCast(SimpleTypeConverter.ToString((short)value), addCast, value.GetType().FullName!);
+			case ElementType.U2:	return AddCast(SimpleTypeConverter.ToString((ushort)value), addCast, value.GetType().FullName!);
+			case ElementType.I4:	return AddCast(SimpleTypeConverter.ToString((int)value), addCast, value.GetType().FullName!);
+			case ElementType.U4:	return AddCast(SimpleTypeConverter.ToString((uint)value), addCast, value.GetType().FullName!);
+			case ElementType.I8:	return AddCast(SimpleTypeConverter.ToString((long)value), addCast, value.GetType().FullName!);
+			case ElementType.U8:	return AddCast(SimpleTypeConverter.ToString((ulong)value), addCast, value.GetType().FullName!);
+			case ElementType.R4:	return AddCast(SimpleTypeConverter.ToString((float)value), addCast, value.GetType().FullName!);
+			case ElementType.R8:	return AddCast(SimpleTypeConverter.ToString((double)value), addCast, value.GetType().FullName!);
 			case ElementType.String:return SimpleTypeConverter.ToString((string)value, true);
 			}
 			if (value is TypeSig)

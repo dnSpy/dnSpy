@@ -77,7 +77,7 @@ namespace dnSpy.Hex.Operations {
 			HexView.Closed += HexView_Closed;
 		}
 
-		void HexView_Closed(object sender, EventArgs e) {
+		void HexView_Closed(object? sender, EventArgs e) {
 			HexView.Closed -= HexView_Closed;
 			HexEditorOperationsFactoryServiceImpl.RemoveFromProperties(this);
 		}

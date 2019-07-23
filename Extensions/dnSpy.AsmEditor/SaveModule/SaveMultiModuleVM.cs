@@ -271,7 +271,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			});
 		}
 
-		void moduleSaver_OnWritingFile(object sender, ModuleSaverWriteEventArgs e) {
+		void moduleSaver_OnWritingFile(object? sender, ModuleSaverWriteEventArgs e) {
 			if (e.Starting) {
 				ExecInOldThread(() => {
 					CurrentFileName = e.File.FileName;
@@ -285,8 +285,8 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 		Dictionary<SaveOptionsVM, bool> savedFile = new Dictionary<SaveOptionsVM, bool>();
 
-		void moduleSaver_OnProgressUpdated(object sender, EventArgs e) {
-			var moduleSaver = (ModuleSaver)sender;
+		void moduleSaver_OnProgressUpdated(object? sender, EventArgs e) {
+			var moduleSaver = (ModuleSaver)sender!;
 			double totalProgress = 100 * moduleSaver.TotalProgress;
 			double currentFileProgress = 100 * moduleSaver.CurrentFileProgress;
 			ExecInOldThread(() => {
@@ -295,7 +295,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			});
 		}
 
-		void moduleSaver_OnLogMessage(object sender, ModuleSaverLogEventArgs e) =>
+		void moduleSaver_OnLogMessage(object? sender, ModuleSaverLogEventArgs e) =>
 			AsyncAddMessage(e.Message, e.Event == ModuleSaverLogEvent.Error || e.Event == ModuleSaverLogEvent.Warning, true);
 
 		void AsyncAddMessage(string msg, bool isError, bool canIgnore) {

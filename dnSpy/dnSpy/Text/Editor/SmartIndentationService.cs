@@ -76,13 +76,13 @@ namespace dnSpy.Text.Editor {
 				SmartIndent = smartIndentationService.CreateSmartIndent(textView);
 			}
 
-			void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
+			void Options_OptionChanged(object? sender, EditorOptionChangedEventArgs e) {
 				if (e.OptionId == DefaultDsOptions.IndentStyleOptionName)
 					CleanUp();
 			}
 
-			void TextDataModel_ContentTypeChanged(object sender, TextDataModelContentTypeChangedEventArgs e) => CleanUp();
-			void TextView_Closed(object sender, EventArgs e) => CleanUp();
+			void TextDataModel_ContentTypeChanged(object? sender, TextDataModelContentTypeChangedEventArgs e) => CleanUp();
+			void TextView_Closed(object? sender, EventArgs e) => CleanUp();
 
 			void CleanUp() {
 				textView.Closed -= TextView_Closed;

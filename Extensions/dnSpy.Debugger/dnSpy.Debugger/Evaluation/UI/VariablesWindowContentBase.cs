@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			variablesWindowControl.DataContext = variablesWindowVM;
 		}
 
-		void VariablesWindowVM_TreeViewChanged(object sender, EventArgs e) => variablesWindowControl.SetTreeView(variablesWindowVM!.TreeView, variablesWindowVM.VM.VariablesWindowKind);
+		void VariablesWindowVM_TreeViewChanged(object? sender, EventArgs e) => variablesWindowControl.SetTreeView(variablesWindowVM!.TreeView, variablesWindowVM.VM.VariablesWindowKind);
 
 		public void Focus() {
 			var listView = variablesWindowControl.ListView;

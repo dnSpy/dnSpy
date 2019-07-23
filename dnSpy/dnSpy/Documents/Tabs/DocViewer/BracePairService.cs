@@ -255,7 +255,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			UpdateBraceMatching();
 		}
 
-		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
+		void Options_OptionChanged(object? sender, EditorOptionChangedEventArgs e) {
 			if (textView.IsClosed)
 				return;
 			if (e.OptionId == DefaultDsTextViewOptions.BraceMatchingName)
@@ -294,7 +294,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			return null;
 		}
 
-		void Caret_PositionChanged(object sender, CaretPositionChangedEventArgs e) => UpdateBracePairs();
+		void Caret_PositionChanged(object? sender, CaretPositionChangedEventArgs e) => UpdateBracePairs();
 
 		void UpdateBracePairs(bool refresh = true) {
 			var newBracePair = GetCurrentBracePair();
@@ -375,7 +375,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			}
 		}
 
-		void TextView_Closed(object sender, EventArgs e) {
+		void TextView_Closed(object? sender, EventArgs e) {
 			currentBracePair = null;
 			bracePairCollection = BracePairCollection.Empty;
 			textView.Closed -= TextView_Closed;

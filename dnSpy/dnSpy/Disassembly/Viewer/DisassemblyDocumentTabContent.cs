@@ -50,7 +50,7 @@ namespace dnSpy.Disassembly.Viewer {
 			contentProvider.OnContentChanged += DisassemblyContentProvider_OnContentChanged;
 		}
 
-		void DisassemblyContentProvider_OnContentChanged(object sender, EventArgs e) {
+		void DisassemblyContentProvider_OnContentChanged(object? sender, EventArgs e) {
 			if (disposed)
 				return;
 			cachedDocumentViewerContent = null;

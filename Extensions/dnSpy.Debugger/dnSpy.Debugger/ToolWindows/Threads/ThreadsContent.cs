@@ -91,7 +91,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_THREADS_LISTVIEW, threadsControl.ListView);
 		}
 
-		void ThreadsControl_ThreadsListViewDoubleClick(object sender, EventArgs e) {
+		void ThreadsControl_ThreadsListViewDoubleClick(object? sender, EventArgs e) {
 			bool newTab = Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Control;
 			if (!Operations.IsEditingValues && Operations.CanSwitchToThread)
 				Operations.SwitchToThread(newTab);

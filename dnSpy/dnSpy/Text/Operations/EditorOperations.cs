@@ -86,7 +86,7 @@ namespace dnSpy.Text.Operations {
 		}
 		ITextStructureNavigator? textStructureNavigator;
 
-		void OnContentTypeChanged(object sender, TextDataModelContentTypeChangedEventArgs e) =>
+		void OnContentTypeChanged(object? sender, TextDataModelContentTypeChangedEventArgs e) =>
 			// The TextStructureNavigator prop checks it for null and re-initializes it. The reason that we
 			// don't just call GetTextStructureNavigator() now is that the ITextStructureNavigatorSelectorService
 			// instance will remove the cached navigator instance from its ContentTypeChanged handler. If this
@@ -103,7 +103,7 @@ namespace dnSpy.Text.Operations {
 			this.htmlBuilderService = htmlBuilderService ?? throw new ArgumentNullException(nameof(htmlBuilderService));
 		}
 
-		void TextView_Closed(object sender, EventArgs e) {
+		void TextView_Closed(object? sender, EventArgs e) {
 			TextView.Closed -= TextView_Closed;
 			TextView.TextViewModel.DataModel.ContentTypeChanged -= OnContentTypeChanged;
 			EditorOperationsFactoryService.RemoveFromProperties(this);

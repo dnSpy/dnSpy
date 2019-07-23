@@ -188,7 +188,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			PropertyChanged += DbgCodeBreakpointDisplaySettingsImpl_PropertyChanged;
 		}
 
-		void DbgCodeBreakpointDisplaySettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void DbgCodeBreakpointDisplaySettingsImpl_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(ShowTokens), ShowTokens);
 			sect.Attribute(nameof(ShowModuleNames), ShowModuleNames);

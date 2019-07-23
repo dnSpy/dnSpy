@@ -52,7 +52,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 		}
 
-		void DmdMetadataReader_TypesUpdated(object sender, DmdTypesUpdatedEventArgs e) => typesUpdated?.Invoke(this, e);
+		void DmdMetadataReader_TypesUpdated(object? sender, DmdTypesUpdatedEventArgs e) => typesUpdated?.Invoke(this, e);
 		public override event EventHandler<DmdTypesUpdatedEventArgs> TypesUpdated {
 			add => typesUpdated += value;
 			remove => typesUpdated -= value;

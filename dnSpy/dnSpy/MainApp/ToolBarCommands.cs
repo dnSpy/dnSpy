@@ -93,7 +93,7 @@ namespace dnSpy.MainApp {
 		}
 
 		void UpdateSelectedItem() => SelectedItem = infos.First(a => a.Decompiler == decompilerService.Decompiler);
-		void DecompilerService_DecompilerChanged(object sender, EventArgs e) => UpdateSelectedItem();
+		void DecompilerService_DecompilerChanged(object? sender, EventArgs e) => UpdateSelectedItem();
 		public override object GetUIObject(IToolBarItemContext context, IInputElement? commandTarget) => comboBox;
 	}
 

@@ -233,13 +233,13 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 		void NotifyProgressUpdated() => OnProgressUpdated?.Invoke(this, EventArgs.Empty);
 
-		void ModuleWriter_ProgressUpdated(object sender, ModuleWriterProgressEventArgs e) {
+		void ModuleWriter_ProgressUpdated(object? sender, ModuleWriterProgressEventArgs e) {
 			ThrowIfCanceled();
 			((ModuleFileProgress)fileProgress!).CurrentProgress = e.Progress;
 			NotifyProgressUpdated();
 		}
 
-		void ILogger.Log(object sender, LoggerEvent loggerEvent, string format, params object[] args) {
+		void ILogger.Log(object? sender, LoggerEvent loggerEvent, string format, params object[] args) {
 			ThrowIfCanceled();
 			if (!(OnLogMessage is null)) {
 				var evtType =

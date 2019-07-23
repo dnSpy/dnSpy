@@ -38,7 +38,7 @@ namespace dnSpy.Hex.Commands {
 			Loaded += OnLoaded;
 		}
 
-		void OnLoaded(object sender, RoutedEventArgs e) {
+		void OnLoaded(object? sender, RoutedEventArgs e) {
 			Loaded -= OnLoaded;
 			numberTextBox.SelectAll();
 		}

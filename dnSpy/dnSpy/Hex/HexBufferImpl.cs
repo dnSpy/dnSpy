@@ -68,7 +68,7 @@ namespace dnSpy.Hex {
 			}
 		}
 
-		void HexBufferStream_BufferStreamSpanInvalidated(object sender, HexBufferStreamSpanInvalidatedEventArgs e) =>
+		void HexBufferStream_BufferStreamSpanInvalidated(object? sender, HexBufferStreamSpanInvalidatedEventArgs e) =>
 			bufferSpanInvalidated?.Invoke(this, new HexBufferSpanInvalidatedEventArgs(e.Span));
 
 		void CreateNewVersion(IList<HexChange> changes, int? reiteratedVersionNumber = null) =>

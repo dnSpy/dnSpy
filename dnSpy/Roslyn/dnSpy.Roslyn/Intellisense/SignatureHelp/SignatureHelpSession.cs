@@ -169,7 +169,7 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 				session.SelectedSignature = selectedSig;
 		}
 
-		void Session_Dismissed(object sender, EventArgs e) => Dispose();
+		void Session_Dismissed(object? sender, EventArgs e) => Dispose();
 
 		void InitializeSignatures(ITrackingSpan applicableToSpan, SignatureHelpResult signatureHelpResult) {
 			Debug.Assert(!(signatureHelpResult.Items is null));

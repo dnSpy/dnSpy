@@ -417,7 +417,7 @@ namespace dnSpy.BackgroundImage {
 			listeners = new List<IImageSourceServiceListener>();
 		}
 
-		void ThemeService_ThemeChangedLowPriority(object sender, ThemeChangedEventArgs e) {
+		void ThemeService_ThemeChangedLowPriority(object? sender, ThemeChangedEventArgs e) {
 			if (backgroundImageSettings.IsEnabled && imageIterator!.HasThemeImages)
 				OnSettingsChanged();
 		}
@@ -458,7 +458,7 @@ namespace dnSpy.BackgroundImage {
 			}
 		}
 
-		void BackgroundImageSettings_SettingsChanged(object sender, EventArgs e) => OnSettingsChanged();
+		void BackgroundImageSettings_SettingsChanged(object? sender, EventArgs e) => OnSettingsChanged();
 
 		void UpdateEnabled() {
 			bool newEnabled = backgroundImageSettings.IsEnabled && imageIterator!.HasImageSource;
@@ -493,7 +493,7 @@ namespace dnSpy.BackgroundImage {
 		}
 		DispatcherTimer? dispatcherTimer;
 
-		void TimerHandlerShowNextImage(object sender, EventArgs e) {
+		void TimerHandlerShowNextImage(object? sender, EventArgs e) {
 			if (dispatcherTimer != sender)
 				return;
 			if (imageIterator is null)

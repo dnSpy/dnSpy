@@ -420,7 +420,7 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 			if (assembly is null || assembly.Length == 0)
 				return new DbgDotNetCompilationResult(Array.Empty<byte>(), Array.Empty<DbgDotNetCompiledExpressionResult>());
 
-			var compiledExpressions = new DbgDotNetCompiledExpressionResult[infos.Length];
+			DbgDotNetCompiledExpressionResult[]? compiledExpressions = new DbgDotNetCompiledExpressionResult[infos.Length];
 			int w = 0;
 			for (int i = 0; i < infos.Length; i++) {
 				var info = infos[i];
@@ -501,7 +501,7 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 			}
 			if (compiledExpressions.Length != w)
 				Array.Resize(ref compiledExpressions, w);
-			return new DbgDotNetCompilationResult(assembly, compiledExpressions);
+			return new DbgDotNetCompilationResult(assembly, compiledExpressions!);
 		}
 
 		static ImmutableArray<MetadataBlock> CreateMetadataBlock(DbgModuleReference[] references) {

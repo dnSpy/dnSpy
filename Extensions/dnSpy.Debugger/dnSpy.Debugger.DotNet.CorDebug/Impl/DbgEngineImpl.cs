@@ -341,9 +341,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			hProcess_debuggee?.Close();
 		}
 
-		void DnDebugger_OnAttachComplete(object sender, EventArgs e) => DetectMainThread();
+		void DnDebugger_OnAttachComplete(object? sender, EventArgs e) => DetectMainThread();
 
-		void DnDebugger_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
+		void DnDebugger_OnProcessStateChanged(object? sender, DebuggerEventArgs e) {
 			Debug.Assert(!(sender is null) && sender == dnDebugger);
 
 			if (dnDebugger.ProcessState == DebuggerProcessState.Terminated) {
@@ -418,12 +418,12 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			}
 		}
 
-		void DnDebugger_OnRedirectedOutput(object sender, RedirectedOutputEventArgs e) {
+		void DnDebugger_OnRedirectedOutput(object? sender, RedirectedOutputEventArgs e) {
 			var source = e.IsStandardOutput ? AsyncProgramMessageSource.StandardOutput : AsyncProgramMessageSource.StandardError;
 			SendMessage(new DbgMessageAsyncProgramMessage(source, e.Text));
 		}
 
-		void DnDebugger_OnNameChanged(object sender, NameChangedDebuggerEventArgs e) {
+		void DnDebugger_OnNameChanged(object? sender, NameChangedDebuggerEventArgs e) {
 			TryGetEngineAppDomain(e.AppDomain)?.UpdateName(e.AppDomain?.Name);
 			OnNewThreadName_CorDebug(e.Thread);
 		}
@@ -439,7 +439,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			return engineAppDomain;
 		}
 
-		void DnDebugger_OnAppDomainAdded(object sender, AppDomainDebuggerEventArgs e) {
+		void DnDebugger_OnAppDomainAdded(object? sender, AppDomainDebuggerEventArgs e) {
 			Debug.Assert(!(objectFactory is null));
 			if (e.Added) {
 				e.ShouldPause = true;
@@ -579,7 +579,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			}
 		}
 
-		void DnDebugger_OnModuleAdded(object sender, ModuleDebuggerEventArgs e) {
+		void DnDebugger_OnModuleAdded(object? sender, ModuleDebuggerEventArgs e) {
 			Debug.Assert(!(objectFactory is null));
 			if (e.Added) {
 				e.ShouldPause = true;

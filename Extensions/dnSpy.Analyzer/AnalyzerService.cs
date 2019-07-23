@@ -135,7 +135,7 @@ namespace dnSpy.Analyzer {
 			cmds.Add(command, ModifierKeys.Shift, Key.Enter);
 		}
 
-		void DocumentTabService_FileModified(object sender, DocumentModifiedEventArgs e) {
+		void DocumentTabService_FileModified(object? sender, DocumentModifiedEventArgs e) {
 			AnalyzerTreeNodeData.HandleModelUpdated(TreeView.Root, e.Documents);
 			RefreshNodes();
 		}
@@ -147,7 +147,7 @@ namespace dnSpy.Analyzer {
 				node.Activate();
 		}
 
-		void DocumentService_CollectionChanged(object sender, NotifyDocumentCollectionChangedEventArgs e) {
+		void DocumentService_CollectionChanged(object? sender, NotifyDocumentCollectionChangedEventArgs e) {
 			switch (e.Type) {
 			case NotifyDocumentCollectionType.Clear:
 				ClearAll();
@@ -166,13 +166,13 @@ namespace dnSpy.Analyzer {
 			}
 		}
 
-		void DecompilerService_DecompilerChanged(object sender, EventArgs e) {
-			context.Decompiler = ((IDecompilerService)sender).Decompiler;
+		void DecompilerService_DecompilerChanged(object? sender, EventArgs e) {
+			context.Decompiler = ((IDecompilerService)sender!).Decompiler;
 			RefreshNodes();
 		}
 
-		void AnalyzerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			var analyzerSettings = (IAnalyzerSettings)sender;
+		void AnalyzerSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
+			var analyzerSettings = (IAnalyzerSettings)sender!;
 			switch (e.PropertyName) {
 			case nameof(analyzerSettings.ShowToken):
 				context.ShowToken = analyzerSettings.ShowToken;

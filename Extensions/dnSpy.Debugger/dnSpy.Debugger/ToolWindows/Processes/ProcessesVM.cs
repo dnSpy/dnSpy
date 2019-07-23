@@ -194,13 +194,13 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		}
 
 		// UI thread
-		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) {
+		void ClassificationFormatMap_ClassificationFormatMappingChanged(object? sender, EventArgs e) {
 			processContext.UIDispatcher.VerifyAccess();
 			RefreshThemeFields_UI();
 		}
 
 		// random thread
-		void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) =>
+		void DebuggerSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e) =>
 			UI(() => DebuggerSettings_PropertyChanged_UI(e.PropertyName));
 
 		// UI thread
@@ -239,14 +239,14 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		void UI(Action callback) => processContext.UIDispatcher.UI(callback);
 
 		// DbgManager thread
-		void DbgManager_DelayedIsRunningChanged(object sender, EventArgs e) => UI(() => {
+		void DbgManager_DelayedIsRunningChanged(object? sender, EventArgs e) => UI(() => {
 			// If all processes are running and the window is hidden, hide it now
 			if (!IsVisible)
 				lazyToolWindowVMHelper.TryHideWindow();
 		});
 
 		// DbgManager thread
-		void DbgManager_ProcessesChanged(object sender, DbgCollectionChangedEventArgs<DbgProcess> e) {
+		void DbgManager_ProcessesChanged(object? sender, DbgCollectionChangedEventArgs<DbgProcess> e) {
 			if (e.Added)
 				UI(() => AddItems_UI(e.Objects));
 			else {
@@ -261,7 +261,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 		}
 
 		// DbgManager thread
-		void DbgManager_CurrentProcessChanged(object sender, DbgCurrentObjectChangedEventArgs<DbgProcess> e) =>
+		void DbgManager_CurrentProcessChanged(object? sender, DbgCurrentObjectChangedEventArgs<DbgProcess> e) =>
 			UI(() => UpdateCurrentProcess_UI());
 
 		// UI thread

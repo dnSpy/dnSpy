@@ -88,7 +88,7 @@ namespace dnSpy.Debugger.Impl {
 				}
 			}
 
-			void BoundCodeBreakpointsService_BreakpointsChanged(object sender, DbgCollectionChangedEventArgs<DbgCodeBreakpoint> e) {
+			void BoundCodeBreakpointsService_BreakpointsChanged(object? sender, DbgCollectionChangedEventArgs<DbgCodeBreakpoint> e) {
 				Dispatcher.VerifyAccess();
 				if (e.Added)
 					AddBoundBreakpoints_DbgThread(e.Objects);
@@ -96,7 +96,7 @@ namespace dnSpy.Debugger.Impl {
 					RemoveBoundBreakpoints_DbgThread(e.Objects);
 			}
 
-			void BoundCodeBreakpointsService_BreakpointsModified(object sender, DbgBreakpointsModifiedEventArgs e) {
+			void BoundCodeBreakpointsService_BreakpointsModified(object? sender, DbgBreakpointsModifiedEventArgs e) {
 				Dispatcher.VerifyAccess();
 				if (!owner.IsDebugging)
 					return;

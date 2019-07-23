@@ -260,7 +260,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		}
 
 		// DbgManager thread
-		void DbgThread_PropertyChanged(object sender, PropertyChangedEventArgs e) =>
+		void DbgThread_PropertyChanged(object? sender, PropertyChangedEventArgs e) =>
 			Context.UIDispatcher.UI(() => DbgThread_PropertyChanged_UI(e.PropertyName));
 
 		// UI thread

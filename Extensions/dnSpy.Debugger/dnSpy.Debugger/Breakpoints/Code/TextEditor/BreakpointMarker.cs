@@ -100,7 +100,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			dbgCodeBreakpointsService.BoundBreakpointsMessageChanged += DbgCodeBreakpointsService_BoundBreakpointsMessageChanged;
 		}
 
-		void DbgCodeBreakpointsService_BoundBreakpointsMessageChanged(object sender, DbgBoundBreakpointsMessageChangedEventArgs e) =>
+		void DbgCodeBreakpointsService_BoundBreakpointsMessageChanged(object? sender, DbgBoundBreakpointsMessageChangedEventArgs e) =>
 			UI(() => OnBreakpointsModified_UI(e.Breakpoints));
 
 		sealed class BreakpointData {
@@ -110,7 +110,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			public BreakpointData(GlyphTextMarkerLocationInfo location) => Location = location ?? throw new ArgumentNullException(nameof(location));
 		}
 
-		void DbgCodeBreakpointsService_BreakpointsChanged(object sender, DbgCollectionChangedEventArgs<DbgCodeBreakpoint> e) {
+		void DbgCodeBreakpointsService_BreakpointsChanged(object? sender, DbgCollectionChangedEventArgs<DbgCodeBreakpoint> e) {
 			if (e.Added)
 				UI(() => OnBreakpointsAdded_UI(e));
 			else {
@@ -146,7 +146,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			glyphTextMarkerService.Value.Remove(list.Select(a => a.data.Marker).OfType<IGlyphTextMarker>());
 		}
 
-		void DbgCodeBreakpointsService_BreakpointsModified(object sender, DbgBreakpointsModifiedEventArgs e) =>
+		void DbgCodeBreakpointsService_BreakpointsModified(object? sender, DbgBreakpointsModifiedEventArgs e) =>
 			UI(() => OnBreakpointsModified_UI(e.Breakpoints.Select(a => a.Breakpoint).ToArray()));
 
 		void OnBreakpointsModified_UI(IList<DbgCodeBreakpoint> breakpoints) {

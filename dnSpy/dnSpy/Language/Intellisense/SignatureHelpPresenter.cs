@@ -129,7 +129,7 @@ namespace dnSpy.Language.Intellisense {
 			UpdatePresentationSpan();
 		}
 
-		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) {
+		void ClassificationFormatMap_ClassificationFormatMappingChanged(object? sender, EventArgs e) {
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SignatureDocumentationObject)));
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SignatureObject)));
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ParameterNameObject)));
@@ -170,11 +170,11 @@ namespace dnSpy.Language.Intellisense {
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasParameter)));
 		}
 
-		void Signature_CurrentParameterChanged(object sender, CurrentParameterChangedEventArgs e) => UpdateCurrentParameter();
-		void Session_SelectedSignatureChanged(object sender, SelectedSignatureChangedEventArgs e) => UpdateSelectedSignature();
+		void Signature_CurrentParameterChanged(object? sender, CurrentParameterChangedEventArgs e) => UpdateCurrentParameter();
+		void Session_SelectedSignatureChanged(object? sender, SelectedSignatureChangedEventArgs e) => UpdateSelectedSignature();
 
 		bool inCollectionChangedUpdate;
-		void Signatures_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
+		void Signatures_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
 			if (session.IsDismissed)
 				return;
 			if (inCollectionChangedUpdate)
@@ -214,7 +214,7 @@ namespace dnSpy.Language.Intellisense {
 			return currSpan?.Snapshot.CreateTrackingSpan(currSpan.Value.Span, spanTrackingMode ?? SpanTrackingMode.EdgeInclusive);
 		}
 
-		void Control_MouseDown(object sender, MouseButtonEventArgs e) => IncrementSelectedSignature(1);
+		void Control_MouseDown(object? sender, MouseButtonEventArgs e) => IncrementSelectedSignature(1);
 
 		object? CreateSignatureCountObject() {
 			if (session.IsDismissed)
@@ -293,7 +293,7 @@ namespace dnSpy.Language.Intellisense {
 			signatureClassifier = null;
 		}
 
-		void SignatureClassifier_ClassificationChanged(object sender, ClassificationChangedEventArgs e) => DelayReclassifySignature();
+		void SignatureClassifier_ClassificationChanged(object? sender, ClassificationChangedEventArgs e) => DelayReclassifySignature();
 
 		void DelayReclassifySignature() {
 			if (session.IsDismissed)
@@ -430,7 +430,7 @@ namespace dnSpy.Language.Intellisense {
 			session.SelectedSignature = sigs[index];
 		}
 
-		void Session_Dismissed(object sender, EventArgs e) {
+		void Session_Dismissed(object? sender, EventArgs e) {
 			signatureTextBuffer.Properties.RemoveProperty(SignatureHelpConstants.SessionBufferKey);
 			otherTextBuffer.Properties.RemoveProperty(SignatureHelpConstants.SessionBufferKey);
 			otherTextBuffer.Properties.RemoveProperty(SignatureHelpConstants.SignatureHelpClassifierContextBufferKey);

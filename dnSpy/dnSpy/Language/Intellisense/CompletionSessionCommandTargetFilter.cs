@@ -43,7 +43,7 @@ namespace dnSpy.Language.Intellisense {
 			minimumCaretPosition = span is null ? 0 : span.Value.Start.Position;
 		}
 
-		void Caret_PositionChanged(object sender, CaretPositionChangedEventArgs e) {
+		void Caret_PositionChanged(object? sender, CaretPositionChangedEventArgs e) {
 			if (e.NewPosition.VirtualSpaces > 0)
 				completionSession.Dismiss();
 			else {

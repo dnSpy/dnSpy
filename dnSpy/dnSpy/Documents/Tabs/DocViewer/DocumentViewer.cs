@@ -195,7 +195,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			return true;
 		}
 
-		void VisualElement_Loaded(object sender, RoutedEventArgs e) {
+		void VisualElement_Loaded(object? sender, RoutedEventArgs e) {
 			documentViewerControl.TextView.VisualElement.Loaded -= VisualElement_Loaded;
 			if (cachedEditorPositionState is null)
 				return;

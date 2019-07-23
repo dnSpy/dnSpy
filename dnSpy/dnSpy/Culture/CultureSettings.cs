@@ -56,7 +56,7 @@ namespace dnSpy.Culture {
 			PropertyChanged += CultureSettingsImpl_PropertyChanged;
 		}
 
-		void CultureSettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void CultureSettingsImpl_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(UIName), UIName);
 		}

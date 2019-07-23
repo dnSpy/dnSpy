@@ -145,7 +145,7 @@ namespace dnSpy.Roslyn.Compiler {
 			workspace.AddProject(roslynProjInfo);
 		}
 
-		void Workspace_WorkspaceChanged(object sender, WorkspaceChangeEventArgs e) {
+		void Workspace_WorkspaceChanged(object? sender, WorkspaceChangeEventArgs e) {
 			if (isDisposed)
 				return;
 			if (e.Kind == WorkspaceChangeKind.DocumentChanged) {

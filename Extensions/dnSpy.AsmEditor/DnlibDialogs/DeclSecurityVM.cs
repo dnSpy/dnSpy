@@ -98,8 +98,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			Reinitialize();
 		}
 
-		void SecurityAttributesVM_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) => HasErrorUpdated();
-		void CustomAttributesVM_PropertyChanged(object sender, PropertyChangedEventArgs e) => HasErrorUpdated();
+		void SecurityAttributesVM_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) => HasErrorUpdated();
+		void CustomAttributesVM_PropertyChanged(object? sender, PropertyChangedEventArgs e) => HasErrorUpdated();
 
 		void OnDeclSecVerChanged() {
 			OnPropertyChanged(nameof(IsV1));

@@ -52,7 +52,7 @@ namespace dnSpy.Hex.Intellisense {
 					hexView.Closed += HexView_Closed;
 			}
 
-			void HexView_Closed(object sender, EventArgs e) {
+			void HexView_Closed(object? sender, EventArgs e) {
 				hexView.Closed -= HexView_Closed;
 				foreach (var controller in intellisenseControllers)
 					controller.Detach(hexView);

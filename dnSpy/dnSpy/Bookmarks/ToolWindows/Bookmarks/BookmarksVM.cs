@@ -226,13 +226,13 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		}
 
 		// UI thread
-		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) {
+		void ClassificationFormatMap_ClassificationFormatMappingChanged(object? sender, EventArgs e) {
 			bookmarkContext.UIDispatcher.VerifyAccess();
 			RefreshThemeFields_UI();
 		}
 
 		// random thread
-		void BookmarksSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) =>
+		void BookmarksSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e) =>
 			UI(() => BookmarksSettings_PropertyChanged_UI(e.PropertyName));
 
 		// UI thread
@@ -245,7 +245,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		}
 
 		// random thread
-		void BookmarkDisplaySettings_PropertyChanged(object sender, PropertyChangedEventArgs e) =>
+		void BookmarkDisplaySettings_PropertyChanged(object? sender, PropertyChangedEventArgs e) =>
 			UI(() => BookmarkDisplaySettings_PropertyChanged_UI(e.PropertyName));
 
 		// UI thread
@@ -321,7 +321,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		void UI(Action callback) => bookmarkContext.UIDispatcher.UI(callback);
 
 		// BM thread
-		void BookmarksService_BookmarksChanged(object sender, CollectionChangedEventArgs<Bookmark> e) {
+		void BookmarksService_BookmarksChanged(object? sender, CollectionChangedEventArgs<Bookmark> e) {
 			BMThread_VerifyAccess();
 			if (e.Added)
 				UI(() => AddItems_UI(e.Objects));
@@ -338,7 +338,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		}
 
 		// BM thread
-		void BookmarksService_BookmarksModified(object sender, BookmarksModifiedEventArgs e) {
+		void BookmarksService_BookmarksModified(object? sender, BookmarksModifiedEventArgs e) {
 			BMThread_VerifyAccess();
 			UI(() => {
 				foreach (var info in e.Bookmarks) {

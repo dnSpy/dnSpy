@@ -245,7 +245,7 @@ namespace dnSpy.AsmEditor.Hex {
 			return true;
 		}
 
-		void VisualElement_Loaded(object sender, RoutedEventArgs e) {
+		void VisualElement_Loaded(object? sender, RoutedEventArgs e) {
 			HexView.VisualElement.Loaded -= VisualElement_Loaded;
 			if (cachedHexViewUIState is null)
 				return;

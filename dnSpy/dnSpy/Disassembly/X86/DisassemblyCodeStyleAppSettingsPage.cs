@@ -171,7 +171,7 @@ namespace dnSpy.Disassembly.X86 {
 			return boolSetting;
 		}
 
-		void DisasmBooleanSetting_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void DisasmBooleanSetting_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == nameof(DisasmBooleanSetting.Disassembly))
 				return;
 			RefreshDisassembly();

@@ -41,7 +41,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			appWindow.MainWindow.KeyDown += MainWindow_KeyDown;
 		}
 
-		void MainWindow_KeyDown(object sender, KeyEventArgs e) {
+		void MainWindow_KeyDown(object? sender, KeyEventArgs e) {
 			if (!waitingForSecondKey && e.KeyboardDevice.Modifiers == ModifierKeys.Control && e.Key == Key.E) {
 				waitingForSecondKey = true;
 				e.Handled = true;

@@ -38,8 +38,8 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 
 		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) => dbgManager.IsDebuggingChanged += DbgManager_IsDebuggingChanged;
 
-		void DbgManager_IsDebuggingChanged(object sender, EventArgs e) {
-			var dbgManager = (DbgManager)sender;
+		void DbgManager_IsDebuggingChanged(object? sender, EventArgs e) {
+			var dbgManager = (DbgManager)sender!;
 			if (dbgManager.IsDebugging && debuggerSettings.AutoOpenLocalsWindow)
 				uiDispatcher.UI(() => toolWindowsOperations.Value.ShowLocals());
 		}

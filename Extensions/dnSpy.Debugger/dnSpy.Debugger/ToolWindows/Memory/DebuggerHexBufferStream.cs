@@ -104,7 +104,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			stream.BufferStreamSpanInvalidated -= Stream_BufferStreamSpanInvalidated;
 		}
 
-		void Stream_BufferStreamSpanInvalidated(object sender, HexBufferStreamSpanInvalidatedEventArgs e) {
+		void Stream_BufferStreamSpanInvalidated(object? sender, HexBufferStreamSpanInvalidatedEventArgs e) {
 			if (IsDisposed)
 				return;
 			if (stream != sender)

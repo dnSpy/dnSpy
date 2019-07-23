@@ -64,7 +64,7 @@ namespace dnSpy.Themes {
 			PropertyChanged += ThemeSettings_PropertyChanged;
 		}
 
-		void ThemeSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void ThemeSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(ThemeGuid), ThemeGuid);
 			sect.Attribute(nameof(ShowAllThemes), ShowAllThemes);

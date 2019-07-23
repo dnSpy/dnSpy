@@ -79,8 +79,8 @@ namespace dnSpy.Roslyn.Intellisense.QuickInfo {
 			return true;
 		}
 
-		void QuickInfoSession_Disposed(object sender, EventArgs e) {
-			var session = (QuickInfoSession)sender;
+		void QuickInfoSession_Disposed(object? sender, EventArgs e) {
+			var session = (QuickInfoSession)sender!;
 			session.Disposed -= QuickInfoSession_Disposed;
 			if (session == currentQuickInfoSession)
 				currentQuickInfoSession = null;

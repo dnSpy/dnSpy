@@ -79,7 +79,7 @@ namespace dnSpy.Language.Intellisense {
 				}
 			}
 
-			void TextView_Closed(object sender, EventArgs e) {
+			void TextView_Closed(object? sender, EventArgs e) {
 				foreach (var info in controllerInfos)
 					info.Controller?.Detach(textView);
 				textView.Closed -= TextView_Closed;

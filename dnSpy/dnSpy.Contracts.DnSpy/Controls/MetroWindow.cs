@@ -244,12 +244,12 @@ namespace dnSpy.Contracts.Controls {
 				border.Loaded += border_Loaded;
 			}
 
-			void border_Loaded(object sender, RoutedEventArgs e) {
+			void border_Loaded(object? sender, RoutedEventArgs e) {
 				border.Loaded -= border_Loaded;
 				UpdatePadding(metroWindow);
 			}
 
-			void MetroWindow_StateChanged(object sender, EventArgs e) => UpdatePadding((MetroWindow)sender);
+			void MetroWindow_StateChanged(object? sender, EventArgs e) => UpdatePadding((MetroWindow)sender!);
 
 			void UpdatePadding(MetroWindow window) {
 				Debug.Assert(!(window is null));

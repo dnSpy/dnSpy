@@ -160,7 +160,7 @@ namespace dnSpy.Commands {
 		}
 		KeyInput? prevKey;
 
-		void SourceElement_PreviewKeyDown(object sender, KeyEventArgs e) {
+		void SourceElement_PreviewKeyDown(object? sender, KeyEventArgs e) {
 			var target = TryGetTargetOrUnregister();
 			if (target is null)
 				return;
@@ -182,7 +182,7 @@ namespace dnSpy.Commands {
 				e.Handled = true;
 		}
 
-		void SourceElement_PreviewTextInput(object sender, TextCompositionEventArgs e) {
+		void SourceElement_PreviewTextInput(object? sender, TextCompositionEventArgs e) {
 			Debug.Assert(prevKey is null);
 			prevKey = null;
 			var target = TryGetTargetOrUnregister();

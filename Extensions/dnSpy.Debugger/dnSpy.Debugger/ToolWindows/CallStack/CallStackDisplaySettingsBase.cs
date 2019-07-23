@@ -223,7 +223,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			PropertyChanged += CallStackDisplaySettingsImpl_PropertyChanged;
 		}
 
-		void CallStackDisplaySettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void CallStackDisplaySettingsImpl_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(ShowReturnTypes), ShowReturnTypes);
 			sect.Attribute(nameof(ShowParameterTypes), ShowParameterTypes);

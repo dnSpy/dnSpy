@@ -376,7 +376,7 @@ namespace dnSpy.Debugger.Impl {
 			return false;
 		}
 
-		void DbgEngine_Message(object sender, DbgEngineMessage e) {
+		void DbgEngine_Message(object? sender, DbgEngineMessage e) {
 			if (sender is null)
 				throw new ArgumentNullException(nameof(sender));
 			if (e is null)
@@ -1158,7 +1158,7 @@ namespace dnSpy.Debugger.Impl {
 				return !debuggedRuntimes.Contains(new ProcessKey(pid, rid));
 		}
 
-		void DbgModuleMemoryRefreshedNotifier_ModulesRefreshed(object sender, ModulesRefreshedEventArgs e) =>
+		void DbgModuleMemoryRefreshedNotifier_ModulesRefreshed(object? sender, ModulesRefreshedEventArgs e) =>
 			DbgThread(() => DbgModuleMemoryRefreshedNotifier_ModulesRefreshed_DbgThread(e));
 
 		public override event EventHandler<ModulesRefreshedEventArgs> ModulesRefreshed;

@@ -63,9 +63,9 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			fadeOutStoryboard.Begin();
 		}
 
-		void FadeOutStoryboard_Completed(object sender, EventArgs e) => ClosePopup();
+		void FadeOutStoryboard_Completed(object? sender, EventArgs e) => ClosePopup();
 
-		void BreakpointGlyphPopupControl_Loaded(object sender, RoutedEventArgs e) {
+		void BreakpointGlyphPopupControl_Loaded(object? sender, RoutedEventArgs e) {
 			if (loaded)
 				return;
 			loaded = true;
@@ -77,12 +77,12 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			StartTimerIfNeeded();
 		}
 
-		void BreakpointGlyphPopupControl_Unloaded(object sender, RoutedEventArgs e) => ClosePopup();
-		void FocusedElement_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) => ClosePopup();
-		void BreakpointGlyphPopupVM_BeforeExecuteCommand(object sender, EventArgs e) => ClosePopup();
-		void Timer_Tick(object sender, EventArgs e) => FadeOut();
-		void GlyphMargin_MouseEnter(object sender, MouseEventArgs e) => StopTimer();
-		void GlyphMargin_MouseLeave(object sender, MouseEventArgs e) => StartTimerIfNeeded();
+		void BreakpointGlyphPopupControl_Unloaded(object? sender, RoutedEventArgs e) => ClosePopup();
+		void FocusedElement_LostKeyboardFocus(object? sender, KeyboardFocusChangedEventArgs e) => ClosePopup();
+		void BreakpointGlyphPopupVM_BeforeExecuteCommand(object? sender, EventArgs e) => ClosePopup();
+		void Timer_Tick(object? sender, EventArgs e) => FadeOut();
+		void GlyphMargin_MouseEnter(object? sender, MouseEventArgs e) => StopTimer();
+		void GlyphMargin_MouseLeave(object? sender, MouseEventArgs e) => StartTimerIfNeeded();
 
 		protected override void OnMouseEnter(MouseEventArgs e) {
 			base.OnMouseEnter(e);

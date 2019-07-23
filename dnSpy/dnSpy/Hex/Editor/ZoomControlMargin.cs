@@ -109,7 +109,7 @@ namespace dnSpy.Hex.Editor {
 
 			static readonly VSTE.ZoomLevelConverter zoomLevelConverter = new VSTE.ZoomLevelConverter();
 
-			void ZoomControlMargin_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
+			void ZoomControlMargin_IsVisibleChanged(object? sender, DependencyPropertyChangedEventArgs e) {
 				if (Visibility == Visibility.Visible) {
 					originalZoomLevel = null;
 					owner.RegisterEvents();
@@ -130,7 +130,7 @@ namespace dnSpy.Hex.Editor {
 			}
 			WpfHexViewMargin? horizontalScrollBarMargin;
 
-			void VisualElement_SizeChanged(object sender, SizeChangedEventArgs e) =>
+			void VisualElement_SizeChanged(object? sender, SizeChangedEventArgs e) =>
 				Height = e.NewSize.Height;
 
 			public void UpdateTextWithZoomLevel() {
@@ -178,7 +178,7 @@ namespace dnSpy.Hex.Editor {
 		public override HexViewMargin? GetHexViewMargin(string marginName) =>
 			StringComparer.OrdinalIgnoreCase.Equals(PredefinedHexMarginNames.ZoomControl, marginName) ? this : null;
 
-		void Options_OptionChanged(object sender, VSTE.EditorOptionChangedEventArgs e) {
+		void Options_OptionChanged(object? sender, VSTE.EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultHexViewHostOptions.ZoomControlName || e.OptionId == DefaultHexViewHostOptions.HorizontalScrollBarName)
 				UpdateVisibility();
 			else if (!Enabled) {
@@ -188,7 +188,7 @@ namespace dnSpy.Hex.Editor {
 				zoomControl.UpdateTextWithZoomLevel();
 		}
 
-		void HexView_ZoomLevelChanged(object sender, VSTE.ZoomLevelChangedEventArgs e) => zoomControl.UpdateTextWithZoomLevel();
+		void HexView_ZoomLevelChanged(object? sender, VSTE.ZoomLevelChangedEventArgs e) => zoomControl.UpdateTextWithZoomLevel();
 
 		bool hasRegisteredEvents;
 		void RegisterEvents() {

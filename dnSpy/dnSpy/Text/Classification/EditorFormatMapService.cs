@@ -76,8 +76,8 @@ namespace dnSpy.Text.Classification {
 			return new TextViewEditorFormatMap(textView, this);
 		}
 
-		void TextView_Closed(object sender, EventArgs e) {
-			var textView = (ITextView)sender;
+		void TextView_Closed(object? sender, EventArgs e) {
+			var textView = (ITextView)sender!;
 			textView.Closed -= TextView_Closed;
 			var map = (ViewEditorFormatMap)textView.Properties[typeof(ViewEditorFormatMap)];
 			textView.Properties.RemoveProperty(typeof(ViewEditorFormatMap));

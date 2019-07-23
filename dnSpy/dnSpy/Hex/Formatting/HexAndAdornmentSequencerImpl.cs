@@ -42,7 +42,7 @@ namespace dnSpy.Hex.Formatting {
 
 		public override event EventHandler<HexAndAdornmentSequenceChangedEventArgs> SequenceChanged;
 
-		void HexTagAggregator_TagsChanged(object sender, HexTagsChangedEventArgs e) =>
+		void HexTagAggregator_TagsChanged(object? sender, HexTagsChangedEventArgs e) =>
 			SequenceChanged?.Invoke(this, new HexAndAdornmentSequenceChangedEventArgs(e.Span));
 
 		public override HexAndAdornmentCollection CreateHexAndAdornmentCollection(HexBufferPoint position) {
@@ -164,7 +164,7 @@ namespace dnSpy.Hex.Formatting {
 			}
 		}
 
-		void HexView_Closed(object sender, EventArgs e) {
+		void HexView_Closed(object? sender, EventArgs e) {
 			Debug.Assert(hexView.Properties.ContainsProperty(typeof(HexAndAdornmentSequencer)));
 			hexView.Properties.RemoveProperty(typeof(HexAndAdornmentSequencer));
 			hexView.Closed -= HexView_Closed;

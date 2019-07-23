@@ -148,7 +148,7 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 			PropertyChanged += OutputLoggerSettingsImpl_PropertyChanged;
 		}
 
-		void OutputLoggerSettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void OutputLoggerSettingsImpl_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(ShowExceptionMessages), ShowExceptionMessages);
 			sect.Attribute(nameof(ShowStepFilteringMessages), ShowStepFilteringMessages);

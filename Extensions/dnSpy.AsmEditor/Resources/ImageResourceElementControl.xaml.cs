@@ -34,6 +34,6 @@ namespace dnSpy.AsmEditor.Resources {
 			Loaded += ImageResourceElementControl_Loaded;
 		}
 
-		void ImageResourceElementControl_Loaded(object sender, RoutedEventArgs e) => nameTextBox.Focus();
+		void ImageResourceElementControl_Loaded(object? sender, RoutedEventArgs e) => nameTextBox.Focus();
 	}
 }

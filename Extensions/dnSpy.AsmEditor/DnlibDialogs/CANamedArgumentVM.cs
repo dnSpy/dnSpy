@@ -194,7 +194,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			CAArgumentVM.StorageType = GetType((ConstantType)ConstantTypeEnumList.SelectedItem);
 		}
 
-		void caArgumentVM_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
+		void caArgumentVM_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e) {
 			if (e.PropertyName == "Modified")
 				modified = true;
 			if (e.PropertyName == nameof(CAArgumentVM.IsEnabled))

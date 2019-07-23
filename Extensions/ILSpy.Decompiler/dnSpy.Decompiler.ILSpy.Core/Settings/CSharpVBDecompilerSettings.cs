@@ -40,7 +40,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 			this.decompilerSettings.SettingsVersionChanged += DecompilerSettings_SettingsVersionChanged;
 		}
 
-		void DecompilerSettings_SettingsVersionChanged(object sender, EventArgs e) => VersionChanged?.Invoke(this, EventArgs.Empty);
+		void DecompilerSettings_SettingsVersionChanged(object? sender, EventArgs e) => VersionChanged?.Invoke(this, EventArgs.Empty);
 
 		public override DecompilerSettingsBase Clone() => new CSharpVBDecompilerSettings(decompilerSettings.Clone());
 

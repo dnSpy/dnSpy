@@ -835,7 +835,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 				}
 			}
 
-			void AsyncBreakpointState_Hit(object sender, AsyncBreakpointState bpState) => yieldTaskCompletionSource.TrySetResult(bpState);
+			void AsyncBreakpointState_Hit(object? sender, AsyncBreakpointState bpState) => yieldTaskCompletionSource.TrySetResult(bpState);
 
 			internal Task<DbgThread> SetResumeBreakpoint(DbgThread thread, DbgModule module) {
 				Debug.Assert(yieldTaskCompletionSource.Task.IsCompleted);
@@ -931,7 +931,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 				yieldBreakpoint.Hit += YieldBreakpoint_Hit;
 			}
 
-			void YieldBreakpoint_Hit(object sender, DbgDotNetStepperBreakpointEventArgs e) {
+			void YieldBreakpoint_Hit(object? sender, DbgDotNetStepperBreakpointEventArgs e) {
 				Debug.Assert(!(Hit is null));
 				e.Pause = true;
 				Hit?.Invoke(this, this);

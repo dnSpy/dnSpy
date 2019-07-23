@@ -104,7 +104,7 @@ namespace dnSpy.Text.Editor {
 			UpdateLineSeparator();
 		}
 
-		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
+		void Options_OptionChanged(object? sender, EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultDsTextViewOptions.LineSeparatorsName)
 				UpdateLineSeparator();
 		}
@@ -134,7 +134,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		void EditorFormatMap_FormatMappingChanged(object sender, FormatItemsEventArgs e) {
+		void EditorFormatMap_FormatMappingChanged(object? sender, FormatItemsEventArgs e) {
 			if (e.ChangedItems.Contains(ThemeClassificationTypeNameKeys.LineSeparator))
 				UpdateLineSeparatorBrush();
 		}
@@ -184,7 +184,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		void TagAggregator_BatchedTagsChanged(object sender, BatchedTagsChangedEventArgs e) {
+		void TagAggregator_BatchedTagsChanged(object? sender, BatchedTagsChangedEventArgs e) {
 			wpfTextView.VisualElement.Dispatcher.VerifyAccess();
 			if (wpfTextView.IsClosed || tagAggregator != sender)
 				return;
@@ -297,7 +297,7 @@ namespace dnSpy.Text.Editor {
 			Debug.Assert(lineSeparatorElements.Count == usedLines.Count);
 		}
 
-		void WpfTextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) {
+		void WpfTextView_LayoutChanged(object? sender, TextViewLayoutChangedEventArgs e) {
 			UpdateLines(e.NewOrReformattedLines);
 			if (e.HorizontalTranslation) {
 				foreach (var elem in lineSeparatorElements)
@@ -329,7 +329,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		void WpfTextView_Closed(object sender, EventArgs e) {
+		void WpfTextView_Closed(object? sender, EventArgs e) {
 			RemoveAllLineSeparatorElements();
 			wpfTextView.Closed -= WpfTextView_Closed;
 			wpfTextView.Options.OptionChanged -= Options_OptionChanged;

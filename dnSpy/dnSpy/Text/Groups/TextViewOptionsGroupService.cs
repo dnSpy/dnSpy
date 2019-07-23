@@ -39,7 +39,7 @@ namespace dnSpy.Text.Groups {
 			textEditorFactoryService.TextViewCreated += TextEditorFactoryService_TextViewCreated;
 		}
 
-		void TextEditorFactoryService_TextViewCreated(object sender, TextViewCreatedEventArgs e) =>
+		void TextEditorFactoryService_TextViewCreated(object? sender, TextViewCreatedEventArgs e) =>
 			textViewOptionsGroupService.Value.TextViewCreated(e.TextView);
 	}
 

@@ -52,7 +52,7 @@ namespace dnSpy.Settings.AppearanceCategory {
 			UpdateActive();
 		}
 
-		void ThemeFontSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void ThemeFontSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == nameof(ThemeFontSettings.Active))
 				UpdateActive();
 		}
@@ -67,7 +67,7 @@ namespace dnSpy.Settings.AppearanceCategory {
 			activeFontSettings.PropertyChanged += ActiveFontSettings_PropertyChanged;
 		}
 
-		void ActiveFontSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void ActiveFontSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == nameof(activeFontSettings.FontFamily) || e.PropertyName == nameof(activeFontSettings.FontSize))
 				RaiseSettingsChanged();
 		}

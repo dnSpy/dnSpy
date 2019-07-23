@@ -151,13 +151,13 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			Reinitialize();
 		}
 
-		void constantVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void constantVM_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == nameof(ConstantVM.IsEnabled))
 				HasDefault = ConstantVM.IsEnabled;
 			HasErrorUpdated();
 		}
 
-		void marshalTypeVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void marshalTypeVM_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == nameof(MarshalTypeVM.IsEnabled))
 				HasFieldMarshal = MarshalTypeVM.IsEnabled;
 			else if (e.PropertyName == nameof(MarshalTypeVM.TypeString))

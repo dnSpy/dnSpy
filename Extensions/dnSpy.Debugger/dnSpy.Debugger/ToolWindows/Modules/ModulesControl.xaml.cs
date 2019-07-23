@@ -33,7 +33,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			SearchTextBox.GotKeyboardFocus += SearchTextBox_GotKeyboardFocus;
 		}
 
-		void SearchTextBox_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) =>
+		void SearchTextBox_GotKeyboardFocus(object? sender, KeyboardFocusChangedEventArgs e) =>
 			Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => SearchTextBox.SelectAll()));
 
 		public void FocusSearchTextBox() {
@@ -41,7 +41,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			SearchTextBox.SelectAll();
 		}
 
-		void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
+		void ListView_MouseDoubleClick(object? sender, MouseButtonEventArgs e) {
 			if (!UIUtilities.IsLeftDoubleClick<ListViewItem>(listView, e))
 				return;
 			ModulesListViewDoubleClick?.Invoke(this, EventArgs.Empty);

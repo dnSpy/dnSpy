@@ -239,8 +239,8 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 			completionSession.Start();
 		}
 
-		void CompletionSession_Dismissed(object sender, EventArgs e) {
-			var session = (ICompletionSession)sender;
+		void CompletionSession_Dismissed(object? sender, EventArgs e) {
+			var session = (ICompletionSession)sender!;
 			session.Dismissed -= CompletionSession_Dismissed;
 			if (completionSession == session)
 				completionSession = null;

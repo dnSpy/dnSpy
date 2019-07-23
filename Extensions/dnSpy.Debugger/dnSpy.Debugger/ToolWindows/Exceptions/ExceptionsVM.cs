@@ -246,7 +246,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		}
 
 		// DbgManager thread
-		void DbgExceptionSettingsService_ExceptionsChanged(object sender, DbgCollectionChangedEventArgs<DbgExceptionSettingsInfo> e) {
+		void DbgExceptionSettingsService_ExceptionsChanged(object? sender, DbgCollectionChangedEventArgs<DbgExceptionSettingsInfo> e) {
 			dbgManager.Value.Dispatcher.VerifyAccess();
 			if (e.Added)
 				UI(() => AddItems_UI(e.Objects));
@@ -266,7 +266,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		}
 
 		// DbgManager thread
-		void DbgExceptionSettingsService_ExceptionSettingsModified(object sender, DbgExceptionSettingsModifiedEventArgs e) {
+		void DbgExceptionSettingsService_ExceptionSettingsModified(object? sender, DbgExceptionSettingsModifiedEventArgs e) {
 			dbgManager.Value.Dispatcher.VerifyAccess();
 			UI(() => {
 				foreach (var info in e.IdAndSettings) {
@@ -277,13 +277,13 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		}
 
 		// UI thread
-		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) {
+		void ClassificationFormatMap_ClassificationFormatMappingChanged(object? sender, EventArgs e) {
 			exceptionContext.UIDispatcher.VerifyAccess();
 			RefreshThemeFields_UI();
 		}
 
 		// random thread
-		void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) =>
+		void DebuggerSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e) =>
 			UI(() => DebuggerSettings_PropertyChanged_UI(e.PropertyName));
 
 		// UI thread

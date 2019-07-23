@@ -204,7 +204,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 			}
 		}
 
-		void AttachProgramOptionsAggregator_AttachProgramOptionsAdded(object sender, AttachProgramOptionsAddedEventArgs e) {
+		void AttachProgramOptionsAggregator_AttachProgramOptionsAdded(object? sender, AttachProgramOptionsAddedEventArgs e) {
 			uiDispatcher.VerifyAccess();
 			if (attachProgramOptionsAggregator != sender)
 				return;
@@ -239,7 +239,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 			return hi + 1;
 		}
 
-		void AttachProgramOptionsAggregator_Completed(object sender, EventArgs e) {
+		void AttachProgramOptionsAggregator_Completed(object? sender, EventArgs e) {
 			uiDispatcher.VerifyAccess();
 			if (attachProgramOptionsAggregator != sender)
 				return;

@@ -182,8 +182,8 @@ namespace dnSpy.Debugger.Exceptions {
 
 		static bool IsValid(DbgExceptionConditionType type) => (uint)type <= (uint)DbgExceptionConditionType.ModuleNameNotEquals;
 
-		void DbgExceptionSettingsService_ExceptionsChanged(object sender, DbgCollectionChangedEventArgs<DbgExceptionSettingsInfo> e) => Save();
-		void DbgExceptionSettingsService_ExceptionSettingsModified(object sender, DbgExceptionSettingsModifiedEventArgs e) => Save();
+		void DbgExceptionSettingsService_ExceptionsChanged(object? sender, DbgCollectionChangedEventArgs<DbgExceptionSettingsInfo> e) => Save();
+		void DbgExceptionSettingsService_ExceptionSettingsModified(object? sender, DbgExceptionSettingsModifiedEventArgs e) => Save();
 
 		void Save() {
 			dbgDispatcherProvider.VerifyAccess();

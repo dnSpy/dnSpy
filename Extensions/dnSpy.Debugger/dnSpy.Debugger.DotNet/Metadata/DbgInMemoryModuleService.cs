@@ -71,7 +71,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					dbgDynamicModuleProvider.ClassLoaded += DbgDynamicModuleProvider_ClassLoaded;
 			}
 
-			void DbgDynamicModuleProvider_ClassLoaded(object sender, ClassLoadedEventArgs e) => owner.DbgDynamicModuleProvider_ClassLoaded(this, e);
+			void DbgDynamicModuleProvider_ClassLoaded(object? sender, ClassLoadedEventArgs e) => owner.DbgDynamicModuleProvider_ClassLoaded(this, e);
 		}
 
 		[ImportingConstructor]
@@ -90,7 +90,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) => dbgManager.ProcessesChanged += DbgManager_ProcessesChanged;
 
-		void DbgManager_ProcessesChanged(object sender, DbgCollectionChangedEventArgs<DbgProcess> e) {
+		void DbgManager_ProcessesChanged(object? sender, DbgCollectionChangedEventArgs<DbgProcess> e) {
 			if (e.Added) {
 				foreach (var p in e.Objects) {
 					p.RuntimesChanged += DbgProcess_RuntimesChanged;
@@ -105,8 +105,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			}
 		}
 
-		void DbgProcess_IsRunningChanged(object sender, EventArgs e) {
-			var process = (DbgProcess)sender;
+		void DbgProcess_IsRunningChanged(object? sender, EventArgs e) {
+			var process = (DbgProcess)sender!;
 			if (process.State == DbgProcessState.Paused) {
 				foreach (var r in process.Runtimes) {
 					if (!TryGetRuntimeInfo(r, out var info))
@@ -116,7 +116,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			}
 		}
 
-		void DbgProcess_RuntimesChanged(object sender, DbgCollectionChangedEventArgs<DbgRuntime> e) {
+		void DbgProcess_RuntimesChanged(object? sender, DbgCollectionChangedEventArgs<DbgRuntime> e) {
 			if (e.Added) {
 				foreach (var r in e.Objects) {
 					var assemblyInfoProvider = dbgAssemblyInfoProviderService.Create(r);
@@ -143,9 +143,9 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		void DbgDynamicModuleProvider_ClassLoaded(RuntimeInfo info, ClassLoadedEventArgs e) => info.ClassLoader?.LoadClass(e.Module, e.LoadedClassToken);
 		bool TryGetRuntimeInfo(DbgRuntime runtime, [NotNullWhenTrue] out RuntimeInfo? info) => runtime.TryGetData(out info);
 
-		void DbgRuntime_ModulesChanged(object sender, DbgCollectionChangedEventArgs<DbgModule> e) {
+		void DbgRuntime_ModulesChanged(object? sender, DbgCollectionChangedEventArgs<DbgModule> e) {
 			if (e.Added) {
-				if (!TryGetRuntimeInfo((DbgRuntime)sender, out var info))
+				if (!TryGetRuntimeInfo((DbgRuntime)sender!, out var info))
 					return;
 
 				List<(DbgModule manifestModule, DbgModule module)>? list = null;

@@ -69,7 +69,7 @@ namespace dnSpy.Hex.Intellisense {
 			HexView.Closed += HexView_Closed;
 		}
 
-		void HexView_Closed(object sender, EventArgs e) {
+		void HexView_Closed(object? sender, EventArgs e) {
 			if (!IsDismissed)
 				Dismiss();
 		}

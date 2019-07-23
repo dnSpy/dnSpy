@@ -254,7 +254,7 @@ namespace dnSpy.MainApp {
 			}
 		}
 
-		void ResourceManagerTokenCacheImpl_TokensUpdated(object sender, EventArgs e) => OnTokensUpdated();
+		void ResourceManagerTokenCacheImpl_TokensUpdated(object? sender, EventArgs e) => OnTokensUpdated();
 
 		void OnTokensUpdated() {
 			if (writingCachedMefFile)
@@ -481,7 +481,7 @@ namespace dnSpy.MainApp {
 			return COPYDATASTRUCT_result;
 		}
 
-		void MainWindow_SourceInitialized(object sender, EventArgs e) {
+		void MainWindow_SourceInitialized(object? sender, EventArgs e) {
 			Debug.Assert(!(appWindow is null));
 			appWindow.MainWindow.SourceInitialized -= MainWindow_SourceInitialized;
 
@@ -491,7 +491,7 @@ namespace dnSpy.MainApp {
 				hwndSource.AddHook(WndProc);
 		}
 
-		void App_Exit(object sender, ExitEventArgs e) {
+		void App_Exit(object? sender, ExitEventArgs e) {
 			extensionService?.OnAppExit();
 			dsLoaderService?.Save();
 			try {
@@ -559,7 +559,7 @@ namespace dnSpy.MainApp {
 			win.Show();
 		}
 
-		void DsLoaderService_OnAppLoaded(object sender, EventArgs e) {
+		void DsLoaderService_OnAppLoaded(object? sender, EventArgs e) {
 			startupStopwatch!.Stop();
 			DnSpyEventSource.Log.StartupStop();
 			var sw = startupStopwatch;

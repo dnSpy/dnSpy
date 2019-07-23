@@ -81,7 +81,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		}
 
 		// DbgManager thread
-		void DbgModule_PropertyChanged(object sender, PropertyChangedEventArgs e) =>
+		void DbgModule_PropertyChanged(object? sender, PropertyChangedEventArgs e) =>
 			Context.UIDispatcher.UI(() => DbgModule_PropertyChanged_UI(e.PropertyName));
 
 		// UI thread

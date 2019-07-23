@@ -75,7 +75,7 @@ namespace dnSpy.Text.Editor {
 		public ITextViewMargin? GetTextViewMargin(string marginName) =>
 			StringComparer.OrdinalIgnoreCase.Equals(marginName, this.marginName) ? this : null;
 
-		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
+		void Options_OptionChanged(object? sender, EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultTextViewHostOptions.LineNumberMarginName)
 				UpdateVisibility();
 			else if (!Enabled) {
@@ -90,7 +90,7 @@ namespace dnSpy.Text.Editor {
 		void UpdateForceClearTypeIfNeeded() =>
 			TextFormattingUtilities.UpdateForceClearTypeIfNeeded(this, wpfTextViewHost.TextView.Options.IsForceClearTypeIfNeededEnabled(), classificationFormatMap);
 
-		void LineNumberMargin_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
+		void LineNumberMargin_IsVisibleChanged(object? sender, DependencyPropertyChangedEventArgs e) {
 			if (Visibility == Visibility.Visible) {
 				if (!hasRegisteredEvents) {
 					RegisterEvents();
@@ -118,7 +118,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		void TextBuffer_ChangedLowPriority(object sender, TextContentChangedEventArgs e) => UpdateMaxLineDigits();
+		void TextBuffer_ChangedLowPriority(object? sender, TextContentChangedEventArgs e) => UpdateMaxLineDigits();
 
 		protected virtual int? GetMaxLineDigitsCore() => null;
 
@@ -138,12 +138,12 @@ namespace dnSpy.Text.Editor {
 				OnTextPropertiesChanged();
 		}
 
-		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) {
+		void ClassificationFormatMap_ClassificationFormatMappingChanged(object? sender, EventArgs e) {
 			UpdateForceClearTypeIfNeeded();
 			OnTextPropertiesChanged();
 		}
 
-		void TextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) {
+		void TextView_LayoutChanged(object? sender, TextViewLayoutChangedEventArgs e) {
 			if (useDisplayMode != wpfTextViewHost.TextView.FormattedLineSource.UseDisplayMode)
 				OnTextPropertiesChanged();
 			if (e.VerticalTranslation)

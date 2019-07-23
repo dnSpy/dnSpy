@@ -39,7 +39,7 @@ namespace dnSpy.Debugger.Exceptions {
 
 		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) => dbgManager.MessageExceptionThrown += DbgManager_MessageExceptionThrown;
 
-		void DbgManager_MessageExceptionThrown(object sender, DbgMessageExceptionThrownEventArgs e) =>
+		void DbgManager_MessageExceptionThrown(object? sender, DbgMessageExceptionThrownEventArgs e) =>
 			e.Pause = ShouldBreak(e.Exception);
 
 		bool ShouldBreak(DbgException exception) {

@@ -84,8 +84,8 @@ namespace dnSpy.Text.Editor {
 			return mgr;
 		}
 
-		void SpaceReservationManager_GotAggregateFocus(object sender, EventArgs e) => UpdateAggregateFocus();
-		void SpaceReservationManager_LostAggregateFocus(object sender, EventArgs e) => UpdateAggregateFocus();
+		void SpaceReservationManager_GotAggregateFocus(object? sender, EventArgs e) => UpdateAggregateFocus();
+		void SpaceReservationManager_LostAggregateFocus(object? sender, EventArgs e) => UpdateAggregateFocus();
 
 		void UpdateAggregateFocus() {
 			if (wpfTextView.IsClosed)
@@ -119,7 +119,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		void WpfTextView_Closed(object sender, EventArgs e) {
+		void WpfTextView_Closed(object? sender, EventArgs e) {
 			wpfTextView.Closed -= WpfTextView_Closed;
 			for (int i = 0; i < spaceReservationManagers.Length; i++) {
 				var mgr = spaceReservationManagers[i];

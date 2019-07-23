@@ -557,7 +557,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public DmdType? GetType(Type type, DmdGetTypeOptions options) {
 			if (type is null)
 				throw new ArgumentNullException(nameof(type));
-			return GetType(type.AssemblyQualifiedName, options);
+			var assemblyQualifiedName = type.AssemblyQualifiedName ?? throw new ArgumentException();
+			return GetType(assemblyQualifiedName, options);
 		}
 
 		/// <summary>

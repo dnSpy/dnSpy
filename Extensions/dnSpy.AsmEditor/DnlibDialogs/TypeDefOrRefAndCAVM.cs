@@ -55,7 +55,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			Reinitialize();
 		}
 
-		void TypeSigCreator_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void TypeSigCreator_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == nameof(TypeSigCreator.TypeSigDnlibFullName))
 				OnPropertyChanged(nameof(FullName));
 			HasErrorUpdated();

@@ -634,7 +634,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			return GenericArgumentResolver.Resolve(msig, typeGenArgs, methodGenArgs);
 		}
 
-		void InstructionsListVM_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
+		void InstructionsListVM_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
 			if (!(e.NewItems is null))
 				InstallInstructionHandlers(e.NewItems);
 
@@ -658,14 +658,14 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 		}
 
-		void instr_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void instr_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == nameof(InstructionVM.HasError))
 				CallHasErrorUpdated();
 			else if (!InstructionsListVM.DisableAutoUpdateProps && e.PropertyName == nameof(InstructionVM.Code))
 				InstructionsUpdateIndexes(0);
 		}
 
-		void InstructionOperandVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void InstructionOperandVM_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			if (!disableInstrOpUpdate && e.PropertyName == "Modified") {
 				try {
 					disableInstrOpUpdate = true;
@@ -679,7 +679,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 		bool disableInstrOpUpdate = false;
 
-		void LocalsListVM_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
+		void LocalsListVM_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
 			if (!(e.NewItems is null)) {
 				foreach (LocalVM local in e.NewItems) {
 					local.PropertyChanged -= local_PropertyChanged;
@@ -691,7 +691,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				CallHasErrorUpdated();
 		}
 
-		void local_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void local_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == nameof(LocalVM.HasError))
 				CallHasErrorUpdated();
 			if (!LocalsListVM.DisableAutoUpdateProps && (e.PropertyName == nameof(LocalVM.Index) || e.PropertyName == nameof(LocalVM.Name))) {
@@ -700,7 +700,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 		}
 
-		void ExceptionHandlersListVM_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
+		void ExceptionHandlersListVM_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
 			if (!(e.NewItems is null)) {
 				foreach (ExceptionHandlerVM eh in e.NewItems) {
 					eh.PropertyChanged -= eh_PropertyChanged;
@@ -720,7 +720,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 		}
 
-		void eh_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void eh_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == nameof(ExceptionHandlerVM.HasError))
 				CallHasErrorUpdated();
 		}

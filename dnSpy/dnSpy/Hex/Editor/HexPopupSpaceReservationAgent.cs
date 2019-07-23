@@ -68,8 +68,8 @@ namespace dnSpy.Hex.Editor {
 			};
 		}
 
-		void Content_GotFocus(object sender, RoutedEventArgs e) => GotFocus?.Invoke(this, EventArgs.Empty);
-		void Content_LostFocus(object sender, RoutedEventArgs e) => LostFocus?.Invoke(this, EventArgs.Empty);
+		void Content_GotFocus(object? sender, RoutedEventArgs e) => GotFocus?.Invoke(this, EventArgs.Empty);
+		void Content_LostFocus(object? sender, RoutedEventArgs e) => LostFocus?.Invoke(this, EventArgs.Empty);
 
 		internal void Update(HexLineSpan lineSpan, VSTA.PopupStyles style) {
 			if (lineSpan.IsDefault)
@@ -321,23 +321,23 @@ namespace dnSpy.Hex.Editor {
 			return false;
 		}
 
-		void Content_MouseLeave(object sender, MouseEventArgs e) {
+		void Content_MouseLeave(object? sender, MouseEventArgs e) {
 			if (!popup.IsOpen)
 				return;
 			if (!IsMouseOverValidLocation(e))
 				spaceReservationManager.RemoveAgent(this);
 		}
 
-		void VisualElement_PreviewMouseMove(object sender, MouseEventArgs e) {
+		void VisualElement_PreviewMouseMove(object? sender, MouseEventArgs e) {
 			if (!popup.IsOpen)
 				return;
 			if (!IsMouseOverValidLocation(e))
 				spaceReservationManager.RemoveAgent(this);
 		}
 
-		void WpfHexView_LostAggregateFocus(object sender, EventArgs e) => spaceReservationManager.RemoveAgent(this);
-		void Window_LocationChanged(object sender, EventArgs e) => spaceReservationManager.RemoveAgent(this);
-		void Content_SizeChanged(object sender, SizeChangedEventArgs e) => wpfHexView.QueueSpaceReservationStackRefresh();
+		void WpfHexView_LostAggregateFocus(object? sender, EventArgs e) => spaceReservationManager.RemoveAgent(this);
+		void Window_LocationChanged(object? sender, EventArgs e) => spaceReservationManager.RemoveAgent(this);
+		void Content_SizeChanged(object? sender, SizeChangedEventArgs e) => wpfHexView.QueueSpaceReservationStackRefresh();
 
 		void AddEvents() {
 			wpfHexView.LostAggregateFocus += WpfHexView_LostAggregateFocus;

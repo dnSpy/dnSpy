@@ -70,9 +70,9 @@ namespace dnSpy.Text.Editor {
 			mouseProcessorCollection = new MouseProcessorCollection(wpfTextView.VisualElement, manipulationElem, new DefaultTextViewMouseProcessor(wpfTextView, editorOperationsFactoryService), list.ToArray(), allowEventDelegate);
 		}
 
-		void TextDataModel_ContentTypeChanged(object sender, TextDataModelContentTypeChangedEventArgs e) => Reinitialize();
+		void TextDataModel_ContentTypeChanged(object? sender, TextDataModelContentTypeChangedEventArgs e) => Reinitialize();
 
-		void WpfTextView_Closed(object sender, EventArgs e) {
+		void WpfTextView_Closed(object? sender, EventArgs e) {
 			wpfTextView.Closed -= WpfTextView_Closed;
 			wpfTextView.TextDataModel.ContentTypeChanged -= TextDataModel_ContentTypeChanged;
 			mouseProcessorCollection?.Dispose();

@@ -101,7 +101,7 @@ namespace dnSpy.Tabs {
 			ResetBindings();
 		}
 
-		void ZoomElement_PreviewMouseWheel(object sender, MouseWheelEventArgs e) {
+		void ZoomElement_PreviewMouseWheel(object? sender, MouseWheelEventArgs e) {
 			if (Keyboard.Modifiers != ModifierKeys.Control)
 				return;
 
@@ -177,13 +177,13 @@ namespace dnSpy.Tabs {
 			return null;
 		}
 
-		void MetroWindow_WindowDpiChanged(object sender, EventArgs e) {
+		void MetroWindow_WindowDpiChanged(object? sender, EventArgs e) {
 			Debug.Assert(!(sender is null) && sender == metroWindow);
 			((MetroWindow)sender).SetScaleTransform(zoomElement, currentZoomValue);
 		}
 
-		void ZoomElement_Loaded(object sender, RoutedEventArgs e) {
-			var fe = (FrameworkElement)sender;
+		void ZoomElement_Loaded(object? sender, RoutedEventArgs e) {
+			var fe = (FrameworkElement)sender!;
 			fe.Loaded -= ZoomElement_Loaded;
 			if (!(zoomElement is null))
 				AddScaleTransform();

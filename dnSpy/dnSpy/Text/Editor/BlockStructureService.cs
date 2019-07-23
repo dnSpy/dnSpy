@@ -124,7 +124,7 @@ namespace dnSpy.Text.Editor {
 			public LineColorInfo(string type) => Type = type;
 		}
 
-		void EditorFormatMap_FormatMappingChanged(object sender, FormatItemsEventArgs e) {
+		void EditorFormatMap_FormatMappingChanged(object? sender, FormatItemsEventArgs e) {
 			if (wpfTextView.IsClosed)
 				return;
 
@@ -220,7 +220,7 @@ namespace dnSpy.Text.Editor {
 		static readonly IEnumerable<double> dashed_3_3_DashStyle = new ReadOnlyCollection<double>(new double[] { 3, 3 });
 		static readonly IEnumerable<double> dashed_4_4_DashStyle = new ReadOnlyCollection<double>(new double[] { 4, 4 });
 
-		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
+		void Options_OptionChanged(object? sender, EditorOptionChangedEventArgs e) {
 			if (wpfTextView.IsClosed)
 				return;
 			if (e.OptionId == DefaultTextViewOptions.ShowBlockStructureName)
@@ -497,7 +497,7 @@ done:
 			}
 		}
 
-		void WpfTextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) {
+		void WpfTextView_LayoutChanged(object? sender, TextViewLayoutChangedEventArgs e) {
 			if (xPosCache.TryUpdateState())
 				RepaintAllLines();
 			else
@@ -550,7 +550,7 @@ done:
 				editorFormatMap.FormatMappingChanged -= EditorFormatMap_FormatMappingChanged;
 		}
 
-		void WpfTextView_Closed(object sender, EventArgs e) {
+		void WpfTextView_Closed(object? sender, EventArgs e) {
 			UnregisterEvents();
 			RemoveAllLineElements();
 			ClearXPosCache();

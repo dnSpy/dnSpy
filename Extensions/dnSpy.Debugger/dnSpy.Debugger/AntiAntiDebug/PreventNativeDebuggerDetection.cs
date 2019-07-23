@@ -78,7 +78,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 				dbgManager.MessageProcessCreated += DbgManager_MessageProcessCreated;
 		}
 
-		void DbgManager_MessageProcessCreated(object sender, DbgMessageProcessCreatedEventArgs e) => HookFuncs(e.Process);
+		void DbgManager_MessageProcessCreated(object? sender, DbgMessageProcessCreatedEventArgs e) => HookFuncs(e.Process);
 
 		void HookFuncs(DbgProcess process) {
 			var key = new Key(process.Architecture, process.OperatingSystem);

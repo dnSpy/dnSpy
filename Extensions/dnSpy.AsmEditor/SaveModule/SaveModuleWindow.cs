@@ -28,12 +28,12 @@ namespace dnSpy.AsmEditor.SaveModule {
 	class SaveModuleWindow : WindowBase {
 		public SaveModuleWindow() => Loaded += SaveMultiModule_Loaded;
 
-		void SaveMultiModule_Loaded(object sender, RoutedEventArgs e) {
+		void SaveMultiModule_Loaded(object? sender, RoutedEventArgs e) {
 			var data = (SaveMultiModuleVM)DataContext;
 			data.OnSavedEvent += SaveMultiModuleVM_OnSavedEvent;
 		}
 
-		void SaveMultiModuleVM_OnSavedEvent(object sender, EventArgs e) {
+		void SaveMultiModuleVM_OnSavedEvent(object? sender, EventArgs e) {
 			var data = (SaveMultiModuleVM)DataContext;
 			if (!data.HasError)
 				okButton_Click(null, null);

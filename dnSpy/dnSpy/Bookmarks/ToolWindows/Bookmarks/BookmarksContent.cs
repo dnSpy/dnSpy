@@ -117,13 +117,13 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			bookmarksControl.ListView.PreviewKeyDown += ListView_PreviewKeyDown;
 		}
 
-		void BookmarksControl_BookmarksListViewDoubleClick(object sender, EventArgs e) {
+		void BookmarksControl_BookmarksListViewDoubleClick(object? sender, EventArgs e) {
 			bool newTab = Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Control;
 			if (!Operations.IsEditingValues && Operations.CanGoToLocation)
 				Operations.GoToLocation(newTab);
 		}
 
-		void ListView_PreviewKeyDown(object sender, KeyEventArgs e) {
+		void ListView_PreviewKeyDown(object? sender, KeyEventArgs e) {
 			if (!e.Handled) {
 				// Use a KeyDown handler. If we add this as a key command to the listview, the textview
 				// (used when editing eg. labels) won't see the space.

@@ -37,8 +37,8 @@ namespace dnSpy.Text.Projection {
 				throw new NotSupportedException();
 		}
 
-		void TextBuffer_ContentTypeChanged(object sender, ContentTypeChangedEventArgs e) {
-			var buffer = (ITextBuffer)sender;
+		void TextBuffer_ContentTypeChanged(object? sender, ContentTypeChangedEventArgs e) {
+			var buffer = (ITextBuffer)sender!;
 			GraphBufferContentTypeChanged?.Invoke(this, new GraphBufferContentTypeChangedEventArgs(buffer, e.BeforeContentType, e.AfterContentType));
 		}
 

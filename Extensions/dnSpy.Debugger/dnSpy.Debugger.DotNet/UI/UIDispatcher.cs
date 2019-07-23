@@ -27,7 +27,7 @@ using dnSpy.Contracts.App;
 namespace dnSpy.Debugger.DotNet.UI {
 	[Export(typeof(UIDispatcher))]
 	sealed class UIDispatcher {
-		static readonly FieldInfo _disableProcessingCountFieldInfo;
+		static readonly FieldInfo? _disableProcessingCountFieldInfo;
 		static UIDispatcher() {
 			_disableProcessingCountFieldInfo = typeof(Dispatcher).GetField("_disableProcessingCount", BindingFlags.NonPublic | BindingFlags.Instance);
 			Debug.Assert(!(_disableProcessingCountFieldInfo is null));

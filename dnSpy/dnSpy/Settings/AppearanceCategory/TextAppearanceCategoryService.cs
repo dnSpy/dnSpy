@@ -44,7 +44,7 @@ namespace dnSpy.Settings.AppearanceCategory {
 			}
 		}
 
-		void ThemeService_ThemeChangedHighPriority(object sender, ThemeChangedEventArgs e) {
+		void ThemeService_ThemeChangedHighPriority(object? sender, ThemeChangedEventArgs e) {
 			foreach (var settings in categoryToTextAppearanceCategoryDefinition.Values)
 				settings.ClearCache();
 			foreach (var settings in categoryToTextAppearanceCategoryDefinition.Values)

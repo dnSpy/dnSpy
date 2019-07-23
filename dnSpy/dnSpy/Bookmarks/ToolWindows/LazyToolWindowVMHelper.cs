@@ -107,7 +107,7 @@ namespace dnSpy.Bookmarks.ToolWindows {
 			}
 		}
 
-		void Timer_Tick_UI(object sender, EventArgs e) {
+		void Timer_Tick_UI(object? sender, EventArgs e) {
 			if (timer != sender)
 				return;
 			StopTimer();

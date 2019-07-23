@@ -25,7 +25,7 @@ namespace dnSpy.Text.Editor {
 	abstract class DsScrollBar : ScrollBar {
 		protected DsScrollBar() => Scroll += DsScrollBar_Scroll;
 
-		void DsScrollBar_Scroll(object sender, ScrollEventArgs e) => OnScroll(e);
+		void DsScrollBar_Scroll(object? sender, ScrollEventArgs e) => OnScroll(e);
 
 		// The ScrollBar class doesn't send a scroll event when the user Shift+Clicks
 		protected override void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e) {

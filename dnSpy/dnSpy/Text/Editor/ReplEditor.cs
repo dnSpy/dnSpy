@@ -121,7 +121,7 @@ namespace dnSpy.Text.Editor {
 			CustomLineNumberMargin.SetOwner(wpfTextView, new ReplCustomLineNumberMarginOwner(this, themeClassificationTypeService));
 		}
 
-		void WpfTextView_Closed(object sender, EventArgs e) {
+		void WpfTextView_Closed(object? sender, EventArgs e) {
 			StopRefreshTimer();
 			wpfTextView.Options.OptionChanged -= Options_OptionChanged;
 			wpfTextView.TextBuffer.ChangedLowPriority -= TextBuffer_ChangedLowPriority;
@@ -130,7 +130,7 @@ namespace dnSpy.Text.Editor {
 			wpfTextView.VisualElement.Loaded -= WpfTextView_Loaded;
 		}
 
-		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
+		void Options_OptionChanged(object? sender, EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultReplEditorOptions.RefreshScreenOnChangeName)
 				UpdateRefreshScreenOnChange();
 		}
@@ -141,7 +141,7 @@ namespace dnSpy.Text.Editor {
 				StopRefreshTimer();
 		}
 
-		void TextBuffer_ChangedLowPriority(object sender, TextContentChangedEventArgs e) {
+		void TextBuffer_ChangedLowPriority(object? sender, TextContentChangedEventArgs e) {
 			wpfTextView.VisualElement.Dispatcher.VerifyAccess();
 			if (ChangedUserInput(e))
 				DelayScreenRefresh();
@@ -184,7 +184,7 @@ namespace dnSpy.Text.Editor {
 			wpfTextView.InvalidateClassifications(new SnapshotSpan(snapshot, Span.FromBounds(offs, snapshot.Length)));
 		}
 
-		void RefreshScreenHandler(object sender, EventArgs e) {
+		void RefreshScreenHandler(object? sender, EventArgs e) {
 			StopRefreshTimer();
 			RefreshScreen();
 		}
@@ -405,7 +405,7 @@ namespace dnSpy.Text.Editor {
 		}
 		int docVersion;
 
-		async void TextBuffer_Changed(object sender, TextContentChangedEventArgs e) {
+		async void TextBuffer_Changed(object? sender, TextContentChangedEventArgs e) {
 			if (!IsCommandMode)
 				return;
 			Debug.Assert(!(OffsetOfPrompt is null));
@@ -571,7 +571,7 @@ namespace dnSpy.Text.Editor {
 		// visible. The first lines won't be shown at all (you have to scroll up to see them). I could
 		// only reproduce it at startup when the REPL editor was the active tool window and at least one
 		// other decompilation tab was opened at the same time.
-		void WpfTextView_Loaded(object sender, RoutedEventArgs e) {
+		void WpfTextView_Loaded(object? sender, RoutedEventArgs e) {
 			wpfTextView.VisualElement.Loaded -= WpfTextView_Loaded;
 			if (wpfTextView.TextSnapshot.Length != 0) {
 				wpfTextView.DisplayTextLineContainingBufferPosition(new SnapshotPoint(wpfTextView.TextSnapshot, 0), 0, ViewRelativePosition.Top);

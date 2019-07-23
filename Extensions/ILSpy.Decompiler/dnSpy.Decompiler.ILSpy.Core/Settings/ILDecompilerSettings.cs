@@ -38,7 +38,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 			this.ilSettings.SettingsVersionChanged += ILSettings_SettingsVersionChanged;
 		}
 
-		void ILSettings_SettingsVersionChanged(object sender, EventArgs e) => VersionChanged?.Invoke(this, EventArgs.Empty);
+		void ILSettings_SettingsVersionChanged(object? sender, EventArgs e) => VersionChanged?.Invoke(this, EventArgs.Empty);
 
 		public override DecompilerSettingsBase Clone() => new ILDecompilerSettings(ilSettings.Clone());
 

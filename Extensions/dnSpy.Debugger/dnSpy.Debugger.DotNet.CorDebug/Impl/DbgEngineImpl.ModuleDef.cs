@@ -29,7 +29,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			public ModuleContext? ModuleContext;
 		}
 
-		void DnDebugger_OnCorModuleDefCreated(object sender, CorModuleDefCreatedEventArgs e) {
+		void DnDebugger_OnCorModuleDefCreated(object? sender, CorModuleDefCreatedEventArgs e) {
 			debuggerThread.VerifyAccess();
 			var appDomain = TryGetEngineAppDomain(e.Module.AppDomain)?.AppDomain;
 			Debug.Assert(!(appDomain is null));

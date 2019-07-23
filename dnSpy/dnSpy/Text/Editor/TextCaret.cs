@@ -83,15 +83,15 @@ namespace dnSpy.Text.Editor {
 			InputMethod.SetIsInputMethodSuspended(textView.VisualElement, true);
 		}
 
-		void TextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) {
+		void TextView_LayoutChanged(object? sender, TextViewLayoutChangedEventArgs e) {
 			if (e.OldSnapshot != e.NewSnapshot)
 				OnImplicitCaretPositionChanged();
 			if (imeState.CompositionStarted)
 				MoveImeCompositionWindow();
 		}
 
-		void VisualElement_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) => InitializeIME();
-		void VisualElement_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) => StopIME(true);
+		void VisualElement_GotKeyboardFocus(object? sender, KeyboardFocusChangedEventArgs e) => InitializeIME();
+		void VisualElement_LostKeyboardFocus(object? sender, KeyboardFocusChangedEventArgs e) => StopIME(true);
 
 		void CancelCompositionString() {
 			if (imeState.Context == IntPtr.Zero)
@@ -285,7 +285,7 @@ namespace dnSpy.Text.Editor {
 			ImeState.ImmSetCompositionWindow(imeState.Context, ref compForm);
 		}
 
-		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
+		void Options_OptionChanged(object? sender, EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultTextViewOptions.UseVirtualSpaceName) {
 				if (currentPosition.VirtualSpaces > 0 && textView.Selection.Mode != TextSelectionMode.Box && !textView.Options.IsVirtualSpaceEnabled())
 					MoveTo(currentPosition.Position);
@@ -298,11 +298,11 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		void TextBuffer_ContentTypeChanged(object sender, ContentTypeChangedEventArgs e) =>
+		void TextBuffer_ContentTypeChanged(object? sender, ContentTypeChangedEventArgs e) =>
 			// The value is cached, make sure it uses the latest snapshot
 			OnImplicitCaretPositionChanged();
 
-		void TextBuffer_ChangedHighPriority(object sender, TextContentChangedEventArgs e) {
+		void TextBuffer_ChangedHighPriority(object? sender, TextContentChangedEventArgs e) {
 			// The value is cached, make sure it uses the latest snapshot
 			OnImplicitCaretPositionChanged();
 			if (textView.Options.IsAutoScrollEnabled()) {

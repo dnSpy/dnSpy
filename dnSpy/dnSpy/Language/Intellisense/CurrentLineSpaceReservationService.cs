@@ -92,7 +92,7 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		void ISpaceReservationAgent.Hide() => wpfTextView.Caret.PositionChanged -= Caret_PositionChanged;
-		void Caret_PositionChanged(object sender, CaretPositionChangedEventArgs e) => wpfTextView.QueueSpaceReservationStackRefresh();
+		void Caret_PositionChanged(object? sender, CaretPositionChangedEventArgs e) => wpfTextView.QueueSpaceReservationStackRefresh();
 
 		Rect WpfTextViewRectToScreenRect(Rect wpfTextViewRect) {
 			wpfTextViewRect.X -= wpfTextView.ViewportLeft;
@@ -132,13 +132,13 @@ namespace dnSpy.Language.Intellisense {
 			ActiveSessions++;
 		}
 
-		void Session_Dismissed(object sender, EventArgs e) {
-			var session = (IIntellisenseSession)sender;
+		void Session_Dismissed(object? sender, EventArgs e) {
+			var session = (IIntellisenseSession)sender!;
 			session.Dismissed -= Session_Dismissed;
 			ActiveSessions--;
 		}
 
-		void WpfTextView_Closed(object sender, EventArgs e) {
+		void WpfTextView_Closed(object? sender, EventArgs e) {
 			wpfTextView.Closed -= WpfTextView_Closed;
 			wpfTextView.Caret.PositionChanged -= Caret_PositionChanged;
 		}

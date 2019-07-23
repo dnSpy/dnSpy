@@ -247,7 +247,7 @@ namespace dnSpy.Search {
 			}
 		}
 
-		void FileSearcher_OnSearchCompleted(object sender, EventArgs e) {
+		void FileSearcher_OnSearchCompleted(object? sender, EventArgs e) {
 			if (sender is null || sender != fileSearcher || searchCompleted)
 				return;
 			Debug.Assert(!(fileSearcher is null));
@@ -256,7 +256,7 @@ namespace dnSpy.Search {
 			TooManyResults = fileSearcher.TooManyResults;
 		}
 
-		void FileSearcher_OnNewSearchResults(object sender, SearchResultEventArgs e) {
+		void FileSearcher_OnNewSearchResults(object? sender, SearchResultEventArgs e) {
 			if (sender is null || sender != fileSearcher)
 				return;
 			Debug.Assert(!searchCompleted);
@@ -299,7 +299,7 @@ namespace dnSpy.Search {
 			searchCompleted = false;
 		}
 
-		void SearchSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void SearchSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			switch (e.PropertyName) {
 			case nameof(SearchSettings.SearchLocation):
 				SearchLocationVM.SelectedItem = SearchSettings.SearchLocation;

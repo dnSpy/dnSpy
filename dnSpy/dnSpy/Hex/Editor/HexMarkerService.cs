@@ -97,7 +97,7 @@ namespace dnSpy.Hex.Editor {
 			editorFormatMap.FormatMappingChanged += EditorFormatMap_FormatMappingChanged;
 		}
 
-		void Options_OptionChanged(object sender, VSTE.EditorOptionChangedEventArgs e) {
+		void Options_OptionChanged(object? sender, VSTE.EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultWpfHexViewOptions.UseReducedOpacityForHighContrastOptionName) {
 				bool old = ShouldUseHighContrastOpacity;
 				useReducedOpacityForHighContrast = wpfHexView.Options.GetOptionValue(DefaultWpfHexViewOptions.UseReducedOpacityForHighContrastOptionId);
@@ -159,7 +159,7 @@ namespace dnSpy.Hex.Editor {
 			}
 		}
 
-		void EditorFormatMap_FormatMappingChanged(object sender, VSTC.FormatItemsEventArgs e) {
+		void EditorFormatMap_FormatMappingChanged(object? sender, VSTC.FormatItemsEventArgs e) {
 			if (markerElements.Count == 0)
 				return;
 
@@ -195,7 +195,7 @@ namespace dnSpy.Hex.Editor {
 			}
 		}
 
-		void TagAggregator_BatchedTagsChanged(object sender, HexBatchedTagsChangedEventArgs e) {
+		void TagAggregator_BatchedTagsChanged(object? sender, HexBatchedTagsChangedEventArgs e) {
 			if (wpfHexView.IsClosed)
 				return;
 			wpfHexView.VisualElement.Dispatcher.VerifyAccess();
@@ -374,7 +374,7 @@ namespace dnSpy.Hex.Editor {
 			return markerElement;
 		}
 
-		void WpfHexView_LayoutChanged(object sender, HexViewLayoutChangedEventArgs e) => UpdateLines(e.NewOrReformattedLines);
+		void WpfHexView_LayoutChanged(object? sender, HexViewLayoutChangedEventArgs e) => UpdateLines(e.NewOrReformattedLines);
 		void UpdateLines(IList<HexViewLine> newOrReformattedLines) {
 			if (newOrReformattedLines.Count == wpfHexView.HexViewLines.Count)
 				RemoveAllMarkerElements();
@@ -386,7 +386,7 @@ namespace dnSpy.Hex.Editor {
 			UpdateRange(spans);
 		}
 
-		void WpfHexView_Closed(object sender, EventArgs e) {
+		void WpfHexView_Closed(object? sender, EventArgs e) {
 			RemoveAllMarkerElements();
 			wpfHexView.Closed -= WpfHexView_Closed;
 			wpfHexView.LayoutChanged -= WpfHexView_LayoutChanged;

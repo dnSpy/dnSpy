@@ -76,7 +76,7 @@ namespace dnSpy.Documents.Tabs {
 			PropertyChanged += DocumentTabServiceSettingsImpl_PropertyChanged;
 		}
 
-		void DocumentTabServiceSettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void DocumentTabServiceSettingsImpl_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(RestoreTabs), RestoreTabs);
 			sect.Attribute(nameof(DecompileFullType), DecompileFullType);

@@ -101,7 +101,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			modified = false;
 		}
 
-		void ConstantTypeVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void ConstantTypeVM_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == "Modified") {
 				OnPropertyChanged("Modified");
 				modified = true;

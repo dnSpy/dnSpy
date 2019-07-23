@@ -65,8 +65,8 @@ namespace dnSpy.Text.Editor {
 			};
 		}
 
-		void Content_GotFocus(object sender, RoutedEventArgs e) => GotFocus?.Invoke(this, EventArgs.Empty);
-		void Content_LostFocus(object sender, RoutedEventArgs e) => LostFocus?.Invoke(this, EventArgs.Empty);
+		void Content_GotFocus(object? sender, RoutedEventArgs e) => GotFocus?.Invoke(this, EventArgs.Empty);
+		void Content_LostFocus(object? sender, RoutedEventArgs e) => LostFocus?.Invoke(this, EventArgs.Empty);
 
 		internal void Update(ITrackingSpan visualSpan, PopupStyles style) {
 			if ((style & (PopupStyles.DismissOnMouseLeaveText | PopupStyles.DismissOnMouseLeaveTextOrContent)) == (PopupStyles.DismissOnMouseLeaveText | PopupStyles.DismissOnMouseLeaveTextOrContent))
@@ -305,23 +305,23 @@ namespace dnSpy.Text.Editor {
 			return false;
 		}
 
-		void Content_MouseLeave(object sender, MouseEventArgs e) {
+		void Content_MouseLeave(object? sender, MouseEventArgs e) {
 			if (!popup.IsOpen)
 				return;
 			if (!IsMouseOverValidLocation(e))
 				spaceReservationManager.RemoveAgent(this);
 		}
 
-		void VisualElement_PreviewMouseMove(object sender, MouseEventArgs e) {
+		void VisualElement_PreviewMouseMove(object? sender, MouseEventArgs e) {
 			if (!popup.IsOpen)
 				return;
 			if (!IsMouseOverValidLocation(e))
 				spaceReservationManager.RemoveAgent(this);
 		}
 
-		void WpfTextView_LostAggregateFocus(object sender, EventArgs e) => spaceReservationManager.RemoveAgent(this);
-		void Window_LocationChanged(object sender, EventArgs e) => spaceReservationManager.RemoveAgent(this);
-		void Content_SizeChanged(object sender, SizeChangedEventArgs e) => wpfTextView.QueueSpaceReservationStackRefresh();
+		void WpfTextView_LostAggregateFocus(object? sender, EventArgs e) => spaceReservationManager.RemoveAgent(this);
+		void Window_LocationChanged(object? sender, EventArgs e) => spaceReservationManager.RemoveAgent(this);
+		void Content_SizeChanged(object? sender, SizeChangedEventArgs e) => wpfTextView.QueueSpaceReservationStackRefresh();
 
 		void AddEvents() {
 			wpfTextView.LostAggregateFocus += WpfTextView_LostAggregateFocus;

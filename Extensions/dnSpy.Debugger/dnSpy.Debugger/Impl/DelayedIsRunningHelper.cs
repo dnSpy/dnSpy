@@ -44,20 +44,20 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		// DbgManager thread
-		void OnIsDebuggingChanged(object sender, EventArgs e) {
+		void OnIsDebuggingChanged(object? sender, EventArgs e) {
 			if (!owner.IsDebugging)
 				timer.Stop();
 		}
 
 		// DbgManager thread
-		void OnIsRunningChanged(object sender, EventArgs e) {
+		void OnIsRunningChanged(object? sender, EventArgs e) {
 			timer.Stop();
 			if (owner.IsRunning)
 				timer.Start();
 		}
 
 		// DbgManager thread
-		void Timer_Tick_DbgThread(object sender, EventArgs e) {
+		void Timer_Tick_DbgThread(object? sender, EventArgs e) {
 			timer.Stop();
 			raiseDelayedIsRunningChanged_DbgThread();
 		}

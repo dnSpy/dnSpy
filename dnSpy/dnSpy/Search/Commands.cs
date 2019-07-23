@@ -52,8 +52,8 @@ namespace dnSpy.Search {
 			cmds.Add(SearchRoutedCommand, Search, CanSearch);
 		}
 
-		void CanSearch(object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = true;
-		void Search(object sender, ExecutedRoutedEventArgs e) => toolWindowService.Show(SearchToolWindowContent.THE_GUID);
+		void CanSearch(object? sender, CanExecuteRoutedEventArgs e) => e.CanExecute = true;
+		void Search(object? sender, ExecutedRoutedEventArgs e) => toolWindowService.Show(SearchToolWindowContent.THE_GUID);
 	}
 
 	[ExportToolBarButton(Icon = DsImagesAttribute.Search, Group = ToolBarConstants.GROUP_APP_TB_MAIN_SEARCH, Order = 0)]

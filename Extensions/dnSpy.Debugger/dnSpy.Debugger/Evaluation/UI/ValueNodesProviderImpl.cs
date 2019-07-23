@@ -104,21 +104,21 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			CallOnIsDebuggingChanged(dbgManager.Value.IsDebugging);
 		}
 
-		void DbgManager_IsDebuggingChanged(object sender, EventArgs e) => CallOnIsDebuggingChanged(dbgManager.Value.IsDebugging);
+		void DbgManager_IsDebuggingChanged(object? sender, EventArgs e) => CallOnIsDebuggingChanged(dbgManager.Value.IsDebugging);
 
 		void CallOnIsDebuggingChanged(bool isDebugging) => UI(() => variablesWindowValueNodesProvider.OnIsDebuggingChanged(isDebugging));
 
-		void DbgLanguageService_LanguageChanged(object sender, DbgLanguageChangedEventArgs e) {
+		void DbgLanguageService_LanguageChanged(object? sender, DbgLanguageChangedEventArgs e) {
 			var thread = dbgManager.Value.CurrentThread.Current;
 			if (thread is null || thread.Runtime.RuntimeKindGuid != e.RuntimeKindGuid)
 				return;
 			UI(() => RefreshNodes_UI());
 		}
 
-		void DbgCallStackService_FramesChanged(object sender, FramesChangedEventArgs e) =>
+		void DbgCallStackService_FramesChanged(object? sender, FramesChangedEventArgs e) =>
 			UI(() => RefreshNodes_UI());
 
-		void VariablesWindowValueNodesProvider_NodesChanged(object sender, EventArgs e) =>
+		void VariablesWindowValueNodesProvider_NodesChanged(object? sender, EventArgs e) =>
 			UI(() => RefreshNodes_UI());
 
 		void RefreshNodes_UI() {

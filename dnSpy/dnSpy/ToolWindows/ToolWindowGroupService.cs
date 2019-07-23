@@ -88,7 +88,7 @@ namespace dnSpy.ToolWindows {
 		internal IToolWindowGroup? GetToolWindowGroup(ITabGroup? tabGroup) => ToolWindowGroup.GetToolWindowGroup(tabGroup);
 		static ToolWindowContent? GetToolWindowContent(ITabContent? selected) => ((TabContentImpl?)selected)?.Content;
 
-		void TabGroupService_TabSelectionChanged(object sender, TabSelectedEventArgs e) {
+		void TabGroupService_TabSelectionChanged(object? sender, TabSelectedEventArgs e) {
 			if (!(e.Selected is null)) {
 				Debug.Assert(e.TabGroup.ActiveTabContent == e.Selected);
 				e.TabGroup.SetFocus(e.Selected);
@@ -96,9 +96,9 @@ namespace dnSpy.ToolWindows {
 			tabSelectionChanged.Raise(this, new ToolWindowSelectedEventArgs(GetToolWindowGroup(e.TabGroup)!, GetToolWindowContent(e.Selected), GetToolWindowContent(e.Unselected)));
 		}
 
-		void TabGroupService_TabGroupSelectionChanged(object sender, TabGroupSelectedEventArgs e) =>
+		void TabGroupService_TabGroupSelectionChanged(object? sender, TabGroupSelectedEventArgs e) =>
 			tabGroupSelectionChanged.Raise(this, new ToolWindowGroupSelectedEventArgs(GetToolWindowGroup(e.Selected), GetToolWindowGroup(e.Unselected)));
-		void TabGroupService_TabGroupCollectionChanged(object sender, TabGroupCollectionChangedEventArgs e) =>
+		void TabGroupService_TabGroupCollectionChanged(object? sender, TabGroupCollectionChangedEventArgs e) =>
 			toolWindowGroupCollectionChanged.Raise(this, new ToolWindowGroupCollectionChangedEventArgs(e.Added, GetToolWindowGroup(e.TabGroup)!));
 		public IToolWindowGroup Create() => new ToolWindowGroup(this, tabGroupService.Create());
 

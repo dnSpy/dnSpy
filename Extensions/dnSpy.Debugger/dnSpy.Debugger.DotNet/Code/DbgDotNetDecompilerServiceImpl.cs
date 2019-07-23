@@ -45,7 +45,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 			SetDecompiler(dbgLanguageService.GetCurrentLanguage(PredefinedDbgRuntimeKindGuids.DotNet_Guid));
 		}
 
-		void DbgLanguageService_LanguageChanged(object sender, DbgLanguageChangedEventArgs e) {
+		void DbgLanguageService_LanguageChanged(object? sender, DbgLanguageChangedEventArgs e) {
 			if (e.RuntimeKindGuid == PredefinedDbgRuntimeKindGuids.DotNet_Guid)
 				SetDecompiler(e.Language);
 		}

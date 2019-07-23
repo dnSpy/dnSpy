@@ -60,8 +60,8 @@ namespace dnSpy.Hex.Tagging {
 				owner.GetAllTags(context, cancellationToken);
 
 			public bool IsBatchedTagsChangedHooked => !(BatchedTagsChanged is null);
-			public void RaiseTagsChanged(object sender, HexTagsChangedEventArgs e) => TagsChanged?.Invoke(sender, e);
-			public void RaiseBatchedTagsChanged(object sender, HexBatchedTagsChangedEventArgs e) => BatchedTagsChanged?.Invoke(sender, e);
+			public void RaiseTagsChanged(object? sender, HexTagsChangedEventArgs e) => TagsChanged?.Invoke(sender, e);
+			public void RaiseBatchedTagsChanged(object? sender, HexBatchedTagsChangedEventArgs e) => BatchedTagsChanged?.Invoke(sender, e);
 			protected override void DisposeCore() => owner.Dispose();
 		}
 
@@ -164,7 +164,7 @@ namespace dnSpy.Hex.Tagging {
 			taggers = Array.Empty<IHexTagger<T>>();
 		}
 
-		void Tagger_TagsChanged(object sender, HexBufferSpanEventArgs e) =>
+		void Tagger_TagsChanged(object? sender, HexBufferSpanEventArgs e) =>
 			// Use original sender, not us
 			RaiseTagsChanged(e.Span, sender);
 

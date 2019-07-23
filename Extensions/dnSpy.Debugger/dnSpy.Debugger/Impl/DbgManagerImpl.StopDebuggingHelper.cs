@@ -71,7 +71,7 @@ namespace dnSpy.Debugger.Impl {
 			}
 
 			// DbgManager thread
-			void Timer_Tick_DbgThread(object sender, EventArgs e) {
+			void Timer_Tick_DbgThread(object? sender, EventArgs e) {
 				lock (lockObj) {
 					if (timer != sender)
 						return;
@@ -81,7 +81,7 @@ namespace dnSpy.Debugger.Impl {
 			}
 
 			// DbgManager thread
-			void DbgManager_ProcessesChanged(object sender, DbgCollectionChangedEventArgs<DbgProcess> e) {
+			void DbgManager_ProcessesChanged(object? sender, DbgCollectionChangedEventArgs<DbgProcess> e) {
 				if (!e.Added) {
 					bool raiseEvent = false;
 					lock (lockObj) {

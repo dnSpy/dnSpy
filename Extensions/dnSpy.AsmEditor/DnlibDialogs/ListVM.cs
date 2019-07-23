@@ -77,7 +77,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			((INotifyPropertyChanged)Collection).PropertyChanged += Collection_PropertyChanged;
 		}
 
-		void Collection_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void Collection_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == nameof(Collection.IsEnabled))
 				IsEnabled = Collection.IsEnabled;
 		}

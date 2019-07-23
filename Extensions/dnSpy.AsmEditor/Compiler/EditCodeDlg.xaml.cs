@@ -66,8 +66,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			diagnosticsListView.SelectionChanged += DiagnosticsListView_SelectionChanged;
 		}
 
-		void EditCodeVM_CodeCompiled(object sender, EventArgs e) {
-			((EditCodeVM)sender).CodeCompiled -= EditCodeVM_CodeCompiled;
+		void EditCodeVM_CodeCompiled(object? sender, EventArgs e) {
+			((EditCodeVM)sender!).CodeCompiled -= EditCodeVM_CodeCompiled;
 			ClickOK();
 		}
 
@@ -85,7 +85,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			decompilingControl.Visibility = Visibility.Collapsed;
 		}
 
-		void diagnosticsListView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
+		void diagnosticsListView_MouseDoubleClick(object? sender, MouseButtonEventArgs e) {
 			if (!UIUtilities.IsLeftDoubleClick<ListViewItem>(diagnosticsListView, e))
 				return;
 
@@ -98,13 +98,13 @@ namespace dnSpy.AsmEditor.Compiler {
 			vm.MoveTo(diag);
 		}
 
-		void EditCodeVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			var vm = (EditCodeVM)sender;
+		void EditCodeVM_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
+			var vm = (EditCodeVM)sender!;
 			if (e.PropertyName == nameof(vm.SelectedDocument))
 				UIUtilities.Focus(vm.SelectedDocument?.TextView.VisualElement);
 		}
 
-		void DiagnosticsListView_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+		void DiagnosticsListView_SelectionChanged(object? sender, SelectionChangedEventArgs e) {
 			var item = diagnosticsListView.SelectedItem;
 			if (item is null)
 				return;

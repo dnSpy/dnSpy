@@ -152,19 +152,19 @@ namespace dnSpy.Text.Groups {
 				owner.InitializeOptions(textView, null, textView.TextDataModel.ContentType, force: true);
 			}
 
-			void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
+			void Options_OptionChanged(object? sender, EditorOptionChangedEventArgs e) {
 				if (textView.IsClosed)
 					return;
 				owner.OptionChanged(textView, e);
 			}
 
-			void TextDataModel_ContentTypeChanged(object sender, TextDataModelContentTypeChangedEventArgs e) {
+			void TextDataModel_ContentTypeChanged(object? sender, TextDataModelContentTypeChangedEventArgs e) {
 				if (textView.IsClosed)
 					return;
 				owner.InitializeOptions(textView, e.BeforeContentType, e.AfterContentType, force: false);
 			}
 
-			void TextView_Closed(object sender, EventArgs e) {
+			void TextView_Closed(object? sender, EventArgs e) {
 				textView.Closed -= TextView_Closed;
 				textView.Options.OptionChanged -= Options_OptionChanged;
 				textView.TextDataModel.ContentTypeChanged -= TextDataModel_ContentTypeChanged;

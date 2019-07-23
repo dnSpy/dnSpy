@@ -119,8 +119,8 @@ namespace dnSpy.Text.Editor {
 		}
 
 		bool CanUse(IWpfTextViewMarginMetadata md) => wpfTextViewHost.TextView.TextDataModel.ContentType.IsOfAnyType(md.ContentTypes);
-		void TextDataModel_ContentTypeChanged(object sender, TextDataModelContentTypeChangedEventArgs e) => UpdateMargins();
-		void WpfTextViewHost_Closed(object sender, EventArgs e) => Dispose();
+		void TextDataModel_ContentTypeChanged(object? sender, TextDataModelContentTypeChangedEventArgs e) => UpdateMargins();
+		void WpfTextViewHost_Closed(object? sender, EventArgs e) => Dispose();
 
 		public void Dispose() {
 			wpfTextViewHost.Closed -= WpfTextViewHost_Closed;

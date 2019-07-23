@@ -405,13 +405,13 @@ namespace dnSpy.Text.Editor.Search {
 			textBox.GotKeyboardFocus += (s, e) => textBox.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => textBox.SelectAll()));
 
 		public bool HasSearchControlFocus => !(searchControl is null) && searchControl.IsKeyboardFocusWithin;
-		void SearchControl_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) => OnPropertyChanged(nameof(HasSearchControlFocus));
-		void SearchControl_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
+		void SearchControl_LostKeyboardFocus(object? sender, KeyboardFocusChangedEventArgs e) => OnPropertyChanged(nameof(HasSearchControlFocus));
+		void SearchControl_GotKeyboardFocus(object? sender, KeyboardFocusChangedEventArgs e) {
 			CloseSearchControlIfIncrementalSearch();
 			OnPropertyChanged(nameof(HasSearchControlFocus));
 		}
 
-		void SearchControl_MouseDown(object sender, MouseButtonEventArgs e) => CloseSearchControlIfIncrementalSearch();
+		void SearchControl_MouseDown(object? sender, MouseButtonEventArgs e) => CloseSearchControlIfIncrementalSearch();
 		void CloseSearchControlIfIncrementalSearch() {
 			if (wpfTextView.IsClosed)
 				return;
@@ -457,7 +457,7 @@ namespace dnSpy.Text.Editor.Search {
 			incrementalStartPosition = null;
 		}
 
-		void Caret_PositionChanged(object sender, CaretPositionChangedEventArgs e) {
+		void Caret_PositionChanged(object? sender, CaretPositionChangedEventArgs e) {
 			if (!isIncrementalSearchCaretMove)
 				CancelIncrementalSearch();
 		}
@@ -522,7 +522,7 @@ namespace dnSpy.Text.Editor.Search {
 			}
 		}
 
-		void SearchControl_SizeChanged(object sender, SizeChangedEventArgs e) =>
+		void SearchControl_SizeChanged(object? sender, SizeChangedEventArgs e) =>
 			PositionSearchControl(searchControlPosition);
 
 		sealed class PositionInfo {
@@ -1135,7 +1135,7 @@ namespace dnSpy.Text.Editor.Search {
 				listener.RaiseTagsChanged(span);
 		}
 
-		void WpfTextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) {
+		void WpfTextView_LayoutChanged(object? sender, TextViewLayoutChangedEventArgs e) {
 			Debug.Assert(IsSearchControlVisible);
 			if (!IsSearchControlVisible)
 				return;
@@ -1149,7 +1149,7 @@ namespace dnSpy.Text.Editor.Search {
 			}
 		}
 
-		void WpfTextView_Closed(object sender, EventArgs e) {
+		void WpfTextView_Closed(object? sender, EventArgs e) {
 			CloseSearchControl();
 			wpfTextView.Closed -= WpfTextView_Closed;
 			wpfTextView.LayoutChanged -= WpfTextView_LayoutChanged;

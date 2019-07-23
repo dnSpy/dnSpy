@@ -148,7 +148,7 @@ namespace dnSpy.Roslyn.Compiler.VisualBasic {
 			PropertyChanged += VisualBasicCompilerSettingsImpl_PropertyChanged;
 		}
 
-		void VisualBasicCompilerSettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void VisualBasicCompilerSettingsImpl_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(PreprocessorSymbols), PreprocessorSymbols);
 			sect.Attribute(nameof(Optimize), Optimize);

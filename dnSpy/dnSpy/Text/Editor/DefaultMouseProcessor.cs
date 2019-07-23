@@ -22,28 +22,28 @@ using System.Windows.Input;
 
 namespace dnSpy.Text.Editor {
 	class DefaultMouseProcessor {
-		public virtual void OnDragEnter(object sender, DragEventArgs e) { }
-		public virtual void OnDragLeave(object sender, DragEventArgs e) { }
-		public virtual void OnDragOver(object sender, DragEventArgs e) { }
-		public virtual void OnDrop(object sender, DragEventArgs e) { }
-		public virtual void OnGiveFeedback(object sender, GiveFeedbackEventArgs e) { }
-		public virtual void OnMouseDown(object sender, MouseButtonEventArgs e) { }
-		public virtual void OnMouseEnter(object sender, MouseEventArgs e) { }
-		public virtual void OnMouseLeave(object sender, MouseEventArgs e) { }
-		public virtual void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e) { }
-		public virtual void OnMouseLeftButtonUp(object sender, MouseButtonEventArgs e) { }
-		public virtual void OnMouseMove(object sender, MouseEventArgs e) { }
-		public virtual void OnMouseRightButtonDown(object sender, MouseButtonEventArgs e) { }
-		public virtual void OnMouseRightButtonUp(object sender, MouseButtonEventArgs e) { }
-		public virtual void OnMouseUp(object sender, MouseButtonEventArgs e) { }
-		public virtual void OnMouseWheel(object sender, MouseWheelEventArgs e) { }
-		public virtual void OnQueryContinueDrag(object sender, QueryContinueDragEventArgs e) { }
-		public virtual void OnManipulationCompleted(object sender, ManipulationCompletedEventArgs e) { }
-		public virtual void OnManipulationDelta(object sender, ManipulationDeltaEventArgs e) { }
-		public virtual void OnManipulationInertiaStarting(object sender, ManipulationInertiaStartingEventArgs e) { }
-		public virtual void OnManipulationStarting(object sender, ManipulationStartingEventArgs e) { }
-		public virtual void OnStylusSystemGesture(object sender, StylusSystemGestureEventArgs e) { }
-		public virtual void OnTouchDown(object sender, TouchEventArgs e) { }
-		public virtual void OnTouchUp(object sender, TouchEventArgs e) { }
+		public virtual void OnDragEnter(object? sender, DragEventArgs e) { }
+		public virtual void OnDragLeave(object? sender, DragEventArgs e) { }
+		public virtual void OnDragOver(object? sender, DragEventArgs e) { }
+		public virtual void OnDrop(object? sender, DragEventArgs e) { }
+		public virtual void OnGiveFeedback(object? sender, GiveFeedbackEventArgs e) { }
+		public virtual void OnMouseDown(object? sender, MouseButtonEventArgs e) { }
+		public virtual void OnMouseEnter(object? sender, MouseEventArgs e) { }
+		public virtual void OnMouseLeave(object? sender, MouseEventArgs e) { }
+		public virtual void OnMouseLeftButtonDown(object? sender, MouseButtonEventArgs e) { }
+		public virtual void OnMouseLeftButtonUp(object? sender, MouseButtonEventArgs e) { }
+		public virtual void OnMouseMove(object? sender, MouseEventArgs e) { }
+		public virtual void OnMouseRightButtonDown(object? sender, MouseButtonEventArgs e) { }
+		public virtual void OnMouseRightButtonUp(object? sender, MouseButtonEventArgs e) { }
+		public virtual void OnMouseUp(object? sender, MouseButtonEventArgs e) { }
+		public virtual void OnMouseWheel(object? sender, MouseWheelEventArgs e) { }
+		public virtual void OnQueryContinueDrag(object? sender, QueryContinueDragEventArgs e) { }
+		public virtual void OnManipulationCompleted(object? sender, ManipulationCompletedEventArgs e) { }
+		public virtual void OnManipulationDelta(object? sender, ManipulationDeltaEventArgs e) { }
+		public virtual void OnManipulationInertiaStarting(object? sender, ManipulationInertiaStartingEventArgs e) { }
+		public virtual void OnManipulationStarting(object? sender, ManipulationStartingEventArgs e) { }
+		public virtual void OnStylusSystemGesture(object? sender, StylusSystemGestureEventArgs e) { }
+		public virtual void OnTouchDown(object? sender, TouchEventArgs e) { }
+		public virtual void OnTouchUp(object? sender, TouchEventArgs e) { }
 	}
 }

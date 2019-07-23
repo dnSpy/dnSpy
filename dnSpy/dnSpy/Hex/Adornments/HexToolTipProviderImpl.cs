@@ -68,7 +68,7 @@ namespace dnSpy.Hex.Adornments {
 			spaceReservationManager.AddAgent(toolTipAgent);
 		}
 
-		void SpaceReservationManager_AgentChanged(object sender, HexSpaceReservationAgentChangedEventArgs e) {
+		void SpaceReservationManager_AgentChanged(object? sender, HexSpaceReservationAgentChangedEventArgs e) {
 			if (e.OldAgent == toolTipAgent) {
 				spaceReservationManager.AgentChanged -= SpaceReservationManager_AgentChanged;
 				toolTipAgent = null;

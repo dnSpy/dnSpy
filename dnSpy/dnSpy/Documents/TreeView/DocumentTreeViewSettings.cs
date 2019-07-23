@@ -192,7 +192,7 @@ namespace dnSpy.Documents.TreeView {
 			PropertyChanged += DocumentTreeViewSettingsImpl_PropertyChanged;
 		}
 
-		void DocumentTreeViewSettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void DocumentTreeViewSettingsImpl_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(SyntaxHighlight), SyntaxHighlight);
 			sect.Attribute(nameof(SingleClickExpandsTreeViewChildren), SingleClickExpandsTreeViewChildren);

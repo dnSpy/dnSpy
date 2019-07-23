@@ -49,7 +49,7 @@ namespace dnSpy.Text.Editor {
 			return false;
 		}
 
-		public override void OnMouseRightButtonDown(object sender, MouseButtonEventArgs e) {
+		public override void OnMouseRightButtonDown(object? sender, MouseButtonEventArgs e) {
 			e.Handled = true;
 			var mouseLoc = GetLocation(e);
 			wpfTextView.Caret.MoveTo(mouseLoc.TextViewLine, mouseLoc.Point.X, true);
@@ -81,7 +81,7 @@ namespace dnSpy.Text.Editor {
 				editorOperations.MoveCaret(mouseLoc.TextViewLine, 0, extendSelection);
 		}
 
-		public override void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
+		public override void OnMouseLeftButtonDown(object? sender, MouseButtonEventArgs e) {
 			e.Handled = true;
 			var mouseLoc = GetLocation(e);
 			int clickCount = e.ClickCount;
@@ -144,7 +144,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		public override void OnMouseLeftButtonUp(object sender, MouseButtonEventArgs e) {
+		public override void OnMouseLeftButtonUp(object? sender, MouseButtonEventArgs e) {
 			bool oldMouseCaptured = mouseCaptured;
 			CancelMouseLeftButtonSelection();
 			if (oldMouseCaptured) {
@@ -180,7 +180,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		public override void OnMouseMove(object sender, MouseEventArgs e) {
+		public override void OnMouseMove(object? sender, MouseEventArgs e) {
 			if (e.LeftButton == MouseButtonState.Pressed) {
 				if (!(mouseLeftDownInfo is null) && !mouseLeftDownInfo.Value.TryAdvanceVersion(wpfTextView.TextSnapshot.Version)) {
 					CancelMouseLeftButtonSelection();

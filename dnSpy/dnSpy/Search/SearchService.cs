@@ -168,7 +168,7 @@ namespace dnSpy.Search {
 			searchControl.InputBindings.Add(new KeyBinding(command, new KeyGesture(key, ModifierKeys.Control)));
 		}
 
-		void DocumentService_CollectionChanged(object sender, NotifyDocumentCollectionChangedEventArgs e) {
+		void DocumentService_CollectionChanged(object? sender, NotifyDocumentCollectionChangedEventArgs e) {
 			switch (e.Type) {
 			case NotifyDocumentCollectionType.Clear:
 				vmSearch.Clear();
@@ -193,8 +193,8 @@ namespace dnSpy.Search {
 			}
 		}
 
-		void DecompilerService_DecompilerChanged(object sender, EventArgs e) {
-			var decompilerService = (IDecompilerService)sender;
+		void DecompilerService_DecompilerChanged(object? sender, EventArgs e) {
+			var decompilerService = (IDecompilerService)sender!;
 			vmSearch.Decompiler = decompilerService.Decompiler;
 			RefreshSearchResults();
 		}
@@ -204,10 +204,10 @@ namespace dnSpy.Search {
 			RefreshComboBox();
 		}
 
-		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) => RefreshUI();
+		void ClassificationFormatMap_ClassificationFormatMappingChanged(object? sender, EventArgs e) => RefreshUI();
 
-		void SearchSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			var searchSettings = (ISearchSettings)sender;
+		void SearchSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
+			var searchSettings = (ISearchSettings)sender!;
 			if (e.PropertyName == nameof(searchSettings.SyntaxHighlight))
 				RefreshSearchResults();
 		}

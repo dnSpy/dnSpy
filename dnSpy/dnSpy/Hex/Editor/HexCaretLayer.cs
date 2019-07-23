@@ -177,7 +177,7 @@ namespace dnSpy.Hex.Editor {
 			AddAdornment();
 		}
 
-		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) {
+		void ClassificationFormatMap_ClassificationFormatMappingChanged(object? sender, EventArgs e) {
 			activeCaretBrush = null;
 			activeOverwriteCaretBrush = null;
 			inactiveCaretBrush = null;
@@ -185,19 +185,19 @@ namespace dnSpy.Hex.Editor {
 			InvalidateVisual();
 		}
 
-		void VisualElement_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
+		void VisualElement_IsVisibleChanged(object? sender, DependencyPropertyChangedEventArgs e) {
 			if (!layer.HexView.VisualElement.IsVisible)
 				StopTimer();
 			else
 				UpdateCaretProperties();
 		}
 
-		void VisualElement_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
+		void VisualElement_GotKeyboardFocus(object? sender, KeyboardFocusChangedEventArgs e) {
 			if (!IsHidden)
 				UpdateCaretProperties();
 		}
 
-		void VisualElement_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
+		void VisualElement_LostKeyboardFocus(object? sender, KeyboardFocusChangedEventArgs e) {
 			layer.Opacity = 0;
 			StopTimer();
 		}
@@ -213,7 +213,7 @@ namespace dnSpy.Hex.Editor {
 			public bool Equals(SelectionState other) => state == other.state;
 		}
 
-		void Selection_SelectionChanged(object sender, EventArgs e) {
+		void Selection_SelectionChanged(object? sender, EventArgs e) {
 			if (!new SelectionState(layer.HexView.Selection).Equals(oldSelectionState)) {
 				// Delay this because the caret's position hasn't been updated yet.
 				layer.HexView.VisualElement.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(UpdateCaretProperties));
@@ -340,7 +340,7 @@ namespace dnSpy.Hex.Editor {
 				dispatcherTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(blinkTimeMs), DispatcherPriority.Background, OnToggleBlink, layer.HexView.VisualElement.Dispatcher);
 		}
 
-		void OnToggleBlink(object sender, EventArgs e) =>
+		void OnToggleBlink(object? sender, EventArgs e) =>
 			layer.Opacity = layer.Opacity == 0 ? 1 : 0;
 
 		protected override void OnRender(DrawingContext drawingContext) {

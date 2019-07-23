@@ -446,7 +446,7 @@ namespace dnSpy.Text.Editor {
 		readonly DispatcherTimer toolTipDispatcherTimer;
 		const int TOOLTIP_WAIT_MILLISECONDS = 150;
 
-		void ToolTipDispatcherTimer_Tick(object sender, EventArgs e) {
+		void ToolTipDispatcherTimer_Tick(object? sender, EventArgs e) {
 			if (wpfTextViewHost.IsClosed || toolTipLine is null || toolTipDispatcherTimer != sender) {
 				CloseToolTip();
 				return;
@@ -526,7 +526,7 @@ namespace dnSpy.Text.Editor {
 			popup.IsOpen = true;
 		}
 
-		void TextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) {
+		void TextView_LayoutChanged(object? sender, TextViewLayoutChangedEventArgs e) {
 			bool refresh = !(toolTipLine is null) || popup.IsOpen;
 			if (popup.IsOpen) {
 				if (e.OldSnapshot != e.NewSnapshot)
@@ -565,9 +565,9 @@ namespace dnSpy.Text.Editor {
 		}
 
 		// Clean up once it's closed
-		void Popup_Closed(object sender, EventArgs e) => ClosePopup();
+		void Popup_Closed(object? sender, EventArgs e) => ClosePopup();
 
-		void TextView_Closed(object sender, EventArgs e) {
+		void TextView_Closed(object? sender, EventArgs e) {
 			glyphTextViewMarkerService.RemoveGlyphTextMarkerListener(this);
 			CloseToolTip();
 			ClosePopup();

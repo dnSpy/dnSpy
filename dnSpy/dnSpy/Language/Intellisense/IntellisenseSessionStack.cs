@@ -68,14 +68,14 @@ namespace dnSpy.Language.Intellisense {
 			wpfTextView.VisualElement.KeyUp += VisualElement_KeyUp;
 		}
 
-		void ClearOpacityTimer_Tick(object sender, EventArgs e) {
+		void ClearOpacityTimer_Tick(object? sender, EventArgs e) {
 			clearOpacityTimer.Stop();
 			if (wpfTextView.IsClosed)
 				return;
 			SetOpacity(0.3);
 		}
 
-		void VisualElement_KeyUp(object sender, KeyEventArgs e) {
+		void VisualElement_KeyUp(object? sender, KeyEventArgs e) {
 			if (wpfTextView.IsClosed)
 				return;
 			if (clearOpacityTimer.IsEnabled)
@@ -84,7 +84,7 @@ namespace dnSpy.Language.Intellisense {
 				SetOpacity(1);
 		}
 
-		void VisualElement_KeyDown(object sender, KeyEventArgs e) {
+		void VisualElement_KeyDown(object? sender, KeyEventArgs e) {
 			if (wpfTextView.IsClosed)
 				return;
 			var key = e.Key == Key.System ? e.SystemKey : e.Key;
@@ -174,10 +174,10 @@ namespace dnSpy.Language.Intellisense {
 				allSessions[i].Collapse();
 		}
 
-		void Session_PresenterChanged(object sender, EventArgs e) {
+		void Session_PresenterChanged(object? sender, EventArgs e) {
 			if (wpfTextView.IsClosed)
 				return;
-			PresenterUpdated((IIntellisenseSession)sender);
+			PresenterUpdated((IIntellisenseSession)sender!);
 		}
 
 		int GetSessionStateIndex(IIntellisenseSession session) {
@@ -262,14 +262,14 @@ namespace dnSpy.Language.Intellisense {
 			}
 		}
 
-		void PopupIntellisensePresenter_SurfaceElementChanged(object sender, EventArgs e) =>
-			PopupIntellisensePresenter_PropertyChanged((IPopupIntellisensePresenter)sender, nameof(IPopupIntellisensePresenter.SurfaceElement));
+		void PopupIntellisensePresenter_SurfaceElementChanged(object? sender, EventArgs e) =>
+			PopupIntellisensePresenter_PropertyChanged((IPopupIntellisensePresenter)sender!, nameof(IPopupIntellisensePresenter.SurfaceElement));
 
-		void PopupIntellisensePresenter_PresentationSpanChanged(object sender, EventArgs e) =>
-			PopupIntellisensePresenter_PropertyChanged((IPopupIntellisensePresenter)sender, nameof(IPopupIntellisensePresenter.PresentationSpan));
+		void PopupIntellisensePresenter_PresentationSpanChanged(object? sender, EventArgs e) =>
+			PopupIntellisensePresenter_PropertyChanged((IPopupIntellisensePresenter)sender!, nameof(IPopupIntellisensePresenter.PresentationSpan));
 
-		void PopupIntellisensePresenter_PopupStylesChanged(object sender, ValueChangedEventArgs<PopupStyles> e) =>
-			PopupIntellisensePresenter_PropertyChanged((IPopupIntellisensePresenter)sender, nameof(IPopupIntellisensePresenter.PopupStyles));
+		void PopupIntellisensePresenter_PopupStylesChanged(object? sender, ValueChangedEventArgs<PopupStyles> e) =>
+			PopupIntellisensePresenter_PropertyChanged((IPopupIntellisensePresenter)sender!, nameof(IPopupIntellisensePresenter.PopupStyles));
 
 		void PopupIntellisensePresenter_PropertyChanged(IPopupIntellisensePresenter popupPresenter, string propertyName) {
 			if (wpfTextView.IsClosed) {
@@ -291,7 +291,7 @@ namespace dnSpy.Language.Intellisense {
 				PresenterUpdated(popupPresenter.Session);
 		}
 
-		void SpaceReservationManager_AgentChanged(object sender, SpaceReservationAgentChangedEventArgs e) {
+		void SpaceReservationManager_AgentChanged(object? sender, SpaceReservationAgentChangedEventArgs e) {
 			if (wpfTextView.IsClosed)
 				return;
 			var sessionState = TryGetSessionState(e.OldAgent);
@@ -302,7 +302,7 @@ namespace dnSpy.Language.Intellisense {
 			}
 		}
 
-		void Session_Dismissed(object sender, EventArgs e) {
+		void Session_Dismissed(object? sender, EventArgs e) {
 			var session = sender as IIntellisenseSession;
 			Debug.Assert(!(session is null));
 			if (session is null)
@@ -333,7 +333,7 @@ namespace dnSpy.Language.Intellisense {
 			}
 		}
 
-		void WpfTextView_Closed(object sender, EventArgs e) {
+		void WpfTextView_Closed(object? sender, EventArgs e) {
 			clearOpacityTimer.Stop();
 			CollapseAllSessionsCore();
 			while (sessions.Count > 0)

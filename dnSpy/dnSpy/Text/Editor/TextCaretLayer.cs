@@ -102,25 +102,25 @@ namespace dnSpy.Text.Editor {
 			AddAdornment();
 		}
 
-		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) {
+		void ClassificationFormatMap_ClassificationFormatMappingChanged(object? sender, EventArgs e) {
 			caretBrush = null;
 			overwriteCaretBrush = null;
 			InvalidateVisual();
 		}
 
-		void VisualElement_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
+		void VisualElement_IsVisibleChanged(object? sender, DependencyPropertyChangedEventArgs e) {
 			if (!layer.TextView.VisualElement.IsVisible)
 				StopTimer();
 			else
 				UpdateCaretProperties();
 		}
 
-		void VisualElement_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
+		void VisualElement_GotKeyboardFocus(object? sender, KeyboardFocusChangedEventArgs e) {
 			if (!IsHidden)
 				UpdateCaretProperties();
 		}
 
-		void VisualElement_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
+		void VisualElement_LostKeyboardFocus(object? sender, KeyboardFocusChangedEventArgs e) {
 			layer.Opacity = 0;
 			StopTimer();
 		}
@@ -136,7 +136,7 @@ namespace dnSpy.Text.Editor {
 			public bool Equals(SelectionState other) => state == other.state;
 		}
 
-		void Selection_SelectionChanged(object sender, EventArgs e) {
+		void Selection_SelectionChanged(object? sender, EventArgs e) {
 			if (!new SelectionState(layer.TextView.Selection).Equals(oldSelectionState)) {
 				// Delay this because the caret's position hasn't been updated yet.
 				layer.TextView.VisualElement.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(UpdateCaretProperties));
@@ -145,7 +145,7 @@ namespace dnSpy.Text.Editor {
 		SelectionState oldSelectionState;
 
 		internal void CaretPositionChanged() => UpdateCaretProperties();
-		void TextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) => UpdateCaretProperties();
+		void TextView_LayoutChanged(object? sender, TextViewLayoutChangedEventArgs e) => UpdateCaretProperties();
 
 		public void SetImeStarted(bool started) {
 			if (imeStarted == started)
@@ -229,7 +229,7 @@ namespace dnSpy.Text.Editor {
 				dispatcherTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(blinkTimeMs), DispatcherPriority.Background, OnToggleBlink, layer.TextView.VisualElement.Dispatcher);
 		}
 
-		void OnToggleBlink(object sender, EventArgs e) =>
+		void OnToggleBlink(object? sender, EventArgs e) =>
 			layer.Opacity = layer.Opacity == 0 ? 1 : 0;
 
 		protected override void OnRender(DrawingContext drawingContext) {

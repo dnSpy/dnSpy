@@ -102,7 +102,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			return vm;
 		}
 
-		void ValueNodesVM_OnVariableChanged(object sender, EventArgs e) {
+		void ValueNodesVM_OnVariableChanged(object? sender, EventArgs e) {
 			uiDispatcher.VerifyAccess();
 			foreach (var vm in allValueNodesVMs) {
 				if (vm != sender)
@@ -112,7 +112,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 		internal void OnStart(DbgManager dbgManager) => dbgManager.ModulesRefreshed += DbgManager_ModulesRefreshed;
 
-		void DbgManager_ModulesRefreshed(object sender, ModulesRefreshedEventArgs e) =>
+		void DbgManager_ModulesRefreshed(object? sender, ModulesRefreshedEventArgs e) =>
 			uiDispatcher.UI(() => OnModulesRefreshed());
 
 		void OnModulesRefreshed() {

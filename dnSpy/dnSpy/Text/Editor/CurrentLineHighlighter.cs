@@ -83,7 +83,7 @@ namespace dnSpy.Text.Editor {
 			UpdateEnableState();
 		}
 
-		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
+		void Options_OptionChanged(object? sender, EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultWpfViewOptions.EnableHighlightCurrentLineName)
 				UpdateEnableState();
 		}
@@ -151,10 +151,10 @@ namespace dnSpy.Text.Editor {
 				adornmentLayer.RemoveAllAdornments();
 		}
 
-		void WpfTextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) => PositionLineElement();
-		void Caret_PositionChanged(object sender, CaretPositionChangedEventArgs e) => PositionLineElement();
+		void WpfTextView_LayoutChanged(object? sender, TextViewLayoutChangedEventArgs e) => PositionLineElement();
+		void Caret_PositionChanged(object? sender, CaretPositionChangedEventArgs e) => PositionLineElement();
 
-		void Selection_SelectionChanged(object sender, EventArgs e) {
+		void Selection_SelectionChanged(object? sender, EventArgs e) {
 			bool newSelectionIsEmpty = wpfTextView.Selection.IsEmpty;
 			if (selectionIsEmpty == newSelectionIsEmpty)
 				return;
@@ -162,8 +162,8 @@ namespace dnSpy.Text.Editor {
 			PositionLineElement();
 		}
 
-		void WpfTextView_GotAggregateFocus(object sender, EventArgs e) => UpdateFocus();
-		void WpfTextView_LostAggregateFocus(object sender, EventArgs e) => UpdateFocus();
+		void WpfTextView_GotAggregateFocus(object? sender, EventArgs e) => UpdateFocus();
+		void WpfTextView_LostAggregateFocus(object? sender, EventArgs e) => UpdateFocus();
 
 		void UpdateFocus() {
 			bool newIsActive = wpfTextView.HasAggregateFocus;
@@ -179,14 +179,14 @@ namespace dnSpy.Text.Editor {
 			currentLineHighlighterElement.BackgroundBrush = ResourceDictionaryUtilities.GetBackgroundBrush(props);
 		}
 
-		void EditorFormatMap_FormatMappingChanged(object sender, FormatItemsEventArgs e) {
+		void EditorFormatMap_FormatMappingChanged(object? sender, FormatItemsEventArgs e) {
 			if ((isActive && e.ChangedItems.Contains(ThemeClassificationTypeNameKeys.CurrentLine)) ||
 				(!isActive && e.ChangedItems.Contains(ThemeClassificationTypeNameKeys.CurrentLineNoFocus))) {
 				UpdateLineElementBrushes();
 			}
 		}
 
-		void WpfTextView_Closed(object sender, EventArgs e) {
+		void WpfTextView_Closed(object? sender, EventArgs e) {
 			wpfTextView.Closed -= WpfTextView_Closed;
 			wpfTextView.Options.OptionChanged -= Options_OptionChanged;
 			UnregisterEnabledEvents();

@@ -60,7 +60,7 @@ namespace dnSpy.Hex.Intellisense {
 			}
 		}
 
-		void Session_Dismissed(object sender, EventArgs e) {
+		void Session_Dismissed(object? sender, EventArgs e) {
 			session.Dismissed -= Session_Dismissed;
 			OnSessionDismissed();
 		}

@@ -101,7 +101,7 @@ namespace dnSpy.Contracts.MVVM {
 			UpdateColumns();
 		}
 
-		void GridView_Columns_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
+		void GridView_Columns_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
 			Debug.Assert(!(descsProvider is null));
 			var gridView = (GridView)listView.View;
 			var columns = gridView.Columns;
@@ -109,12 +109,12 @@ namespace dnSpy.Contracts.MVVM {
 			descsProvider.Descs.Columns = columns.Select(a => toDesc[a]).ToArray();
 		}
 
-		void OnSortedColumnChanged(object sender, EventArgs e) {
+		void OnSortedColumnChanged(object? sender, EventArgs e) {
 			Debug.Assert(descsProvider?.Descs == sender);
 			UpdateColumns();
 		}
 
-		void ListView_Click(object sender, RoutedEventArgs e) {
+		void ListView_Click(object? sender, RoutedEventArgs e) {
 			var column = (e.OriginalSource as GridViewColumnHeader)?.Column;
 			if (column is null || !toDesc.TryGetValue(column, out var desc))
 				return;

@@ -268,7 +268,7 @@ namespace dnSpy.Text.Editor {
 		DispatcherTimer? screenRefreshTimer;
 
 		void RefreshScreen() => DelayLayoutLines(true);
-		void RefreshScreenHandler(object sender, EventArgs e) {
+		void RefreshScreenHandler(object? sender, EventArgs e) {
 			StopRefreshTimer();
 			RefreshScreen();
 		}
@@ -278,7 +278,7 @@ namespace dnSpy.Text.Editor {
 			screenRefreshTimer = null;
 		}
 
-		void DataModel_ContentTypeChanged(object sender, TextDataModelContentTypeChangedEventArgs e) {
+		void DataModel_ContentTypeChanged(object? sender, TextDataModelContentTypeChangedEventArgs e) {
 			recreateLineTransformProvider = true;
 
 			// Refresh all lines since IFormattedTextSourceFactoryService uses the content type to
@@ -288,7 +288,7 @@ namespace dnSpy.Text.Editor {
 			NotifyTextViewCreated(e.AfterContentType, e.BeforeContentType);
 		}
 
-		void TextBuffer_ChangedLowPriority(object sender, TextContentChangedEventArgs e) {
+		void TextBuffer_ChangedLowPriority(object? sender, TextContentChangedEventArgs e) {
 			foreach (var c in e.Changes) {
 				if (c.OldSpan.Length > 0)
 					InvalidateSpan(new SnapshotSpan(e.Before, c.OldSpan));
@@ -300,17 +300,17 @@ namespace dnSpy.Text.Editor {
 				DelayScreenRefresh();
 		}
 
-		void AggregateClassifier_ClassificationChanged(object sender, ClassificationChangedEventArgs e) =>
+		void AggregateClassifier_ClassificationChanged(object? sender, ClassificationChangedEventArgs e) =>
 			Dispatcher.BeginInvoke(new Action(() => InvalidateSpan(e.ChangeSpan)), DispatcherPriority.Normal);
 
-		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) => Dispatcher.BeginInvoke(new Action(() => {
+		void ClassificationFormatMap_ClassificationFormatMappingChanged(object? sender, EventArgs e) => Dispatcher.BeginInvoke(new Action(() => {
 			if (IsClosed)
 				return;
 			UpdateForceClearTypeIfNeeded();
 			InvalidateFormattedLineSource(true);
 		}), DispatcherPriority.Normal);
 
-		void EditorFormatMap_FormatMappingChanged(object sender, FormatItemsEventArgs e) {
+		void EditorFormatMap_FormatMappingChanged(object? sender, FormatItemsEventArgs e) {
 			if (e.ChangedItems.Contains(EditorFormatMapConstants.TextViewBackgroundId))
 				UpdateBackground();
 		}
@@ -320,7 +320,7 @@ namespace dnSpy.Text.Editor {
 			Background = ResourceDictionaryUtilities.GetBackgroundBrush(bgProps, SystemColors.WindowBrush);
 		}
 
-		void TextAndAdornmentSequencer_SequenceChanged(object sender, TextAndAdornmentSequenceChangedEventArgs e) =>
+		void TextAndAdornmentSequencer_SequenceChanged(object? sender, TextAndAdornmentSequenceChangedEventArgs e) =>
 			Dispatcher.BeginInvoke(new Action(() => InvalidateSpans(e.Span.GetSpans(TextBuffer))), DispatcherPriority.Normal);
 
 		void InvalidateSpans(IEnumerable<SnapshotSpan> spans) {
@@ -390,7 +390,7 @@ namespace dnSpy.Text.Editor {
 				InvalidateFormattedLineSource(true);
 		}
 
-		void EditorOptions_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
+		void EditorOptions_OptionChanged(object? sender, EditorOptionChangedEventArgs e) {
 			UpdateOption(e.OptionId);
 			if (e.OptionId == DefaultTextViewOptions.WordWrapStyleName) {
 				if ((Options.WordWrapStyle() & WordWrapStyles.WordWrap) != 0)
@@ -457,8 +457,8 @@ namespace dnSpy.Text.Editor {
 			base.OnIsKeyboardFocusWithinChanged(e);
 		}
 
-		void SpaceReservationStack_GotAggregateFocus(object sender, EventArgs e) => UpdateKeyboardFocus();
-		void SpaceReservationStack_LostAggregateFocus(object sender, EventArgs e) => UpdateKeyboardFocus();
+		void SpaceReservationStack_GotAggregateFocus(object? sender, EventArgs e) => UpdateKeyboardFocus();
+		void SpaceReservationStack_LostAggregateFocus(object? sender, EventArgs e) => UpdateKeyboardFocus();
 
 		bool hasKeyboardFocus;
 		bool updateKeyboardFocusInProgress;
@@ -891,7 +891,7 @@ namespace dnSpy.Text.Editor {
 		}
 		MetroWindow? metroWindow;
 
-		void WpfTextView_Loaded(object sender, RoutedEventArgs e) {
+		void WpfTextView_Loaded(object? sender, RoutedEventArgs e) {
 			Loaded -= WpfTextView_Loaded;
 			var window = Window.GetWindow(this);
 			metroWindow = window as MetroWindow;
@@ -904,7 +904,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		void MetroWindow_WindowDpiChanged(object sender, EventArgs e) {
+		void MetroWindow_WindowDpiChanged(object? sender, EventArgs e) {
 			Debug.Assert(!(sender is null) && sender == metroWindow);
 			((MetroWindow)sender).SetScaleTransform(this, ZoomLevel / 100);
 		}
@@ -954,7 +954,7 @@ namespace dnSpy.Text.Editor {
 		}
 		bool queueSpaceReservationStackRefreshInProgress;
 
-		void WpfTextView_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) =>
+		void WpfTextView_IsVisibleChanged(object? sender, DependencyPropertyChangedEventArgs e) =>
 			QueueSpaceReservationStackRefresh();
 
 		public bool IsMouseOverOverlayLayerElement(MouseEventArgs e) => overlayAdornmentLayerCollection.IsMouseOverOverlayLayerElement(e);

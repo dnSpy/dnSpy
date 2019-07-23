@@ -78,7 +78,7 @@ namespace dnSpy.Language.Intellisense {
 			TextView.Closed += TextView_Closed;
 		}
 
-		void Caret_PositionChanged(object sender, CaretPositionChangedEventArgs e) {
+		void Caret_PositionChanged(object? sender, CaretPositionChangedEventArgs e) {
 			if (IsDismissed)
 				return;
 			var caretPos = TextView.Caret.Position;
@@ -113,7 +113,7 @@ namespace dnSpy.Language.Intellisense {
 			return span.IntersectsWith(new SnapshotSpan(caretPos.BufferPosition, 0));
 		}
 
-		void TextView_Closed(object sender, EventArgs e) {
+		void TextView_Closed(object? sender, EventArgs e) {
 			if (!IsDismissed)
 				Dismiss();
 		}

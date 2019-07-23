@@ -120,25 +120,25 @@ namespace dnSpy.Text.Editor {
 			ActivationTracksFocus = true;
 		}
 
-		void TextBuffer_ChangedHighPriority(object sender, TextContentChangedEventArgs e) {
+		void TextBuffer_ChangedHighPriority(object? sender, TextContentChangedEventArgs e) {
 			var newAnchorPoint = anchorPoint.TranslateTo(TextView.TextSnapshot);
 			var newActivePoint = activePoint.TranslateTo(TextView.TextSnapshot);
 			Select(newAnchorPoint, newActivePoint);
 		}
 
-		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
+		void Options_OptionChanged(object? sender, EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultTextViewOptions.UseVirtualSpaceName) {
 				if (Mode == TextSelectionMode.Stream && !TextView.Options.IsVirtualSpaceEnabled())
 					Select(new VirtualSnapshotPoint(AnchorPoint.Position), new VirtualSnapshotPoint(ActivePoint.Position));
 			}
 		}
 
-		void TextView_GotAggregateFocus(object sender, EventArgs e) {
+		void TextView_GotAggregateFocus(object? sender, EventArgs e) {
 			if (ActivationTracksFocus)
 				IsActive = true;
 		}
 
-		void TextView_LostAggregateFocus(object sender, EventArgs e) {
+		void TextView_LostAggregateFocus(object? sender, EventArgs e) {
 			if (ActivationTracksFocus)
 				IsActive = false;
 		}

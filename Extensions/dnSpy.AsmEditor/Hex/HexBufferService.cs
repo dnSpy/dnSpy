@@ -56,7 +56,7 @@ namespace dnSpy.AsmEditor.Hex {
 			undoCommandService.OnEvent += UndoCommandService_OnEvent;
 		}
 
-		void UndoCommandService_OnEvent(object sender, UndoCommandServiceEventArgs e) {
+		void UndoCommandService_OnEvent(object? sender, UndoCommandServiceEventArgs e) {
 			var buffer = HexUndoableDocumentsProvider.TryGetHexBuffer(e.UndoObject);
 			if (buffer is null)
 				return;

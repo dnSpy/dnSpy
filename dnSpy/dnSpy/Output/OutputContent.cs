@@ -91,7 +91,7 @@ namespace dnSpy.Output {
 			outputControl.PreviewKeyDown += OutputControl_PreviewKeyDown;
 		}
 
-		void OutputControl_PreviewKeyDown(object sender, KeyEventArgs e) {
+		void OutputControl_PreviewKeyDown(object? sender, KeyEventArgs e) {
 			if (!waitingForSecondKey && e.KeyboardDevice.Modifiers == ModifierKeys.Control && e.Key == Key.E) {
 				waitingForSecondKey = true;
 				e.Handled = true;

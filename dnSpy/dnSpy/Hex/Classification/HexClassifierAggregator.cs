@@ -42,7 +42,7 @@ namespace dnSpy.Hex.Classification {
 			hexTagAggregator.TagsChanged += HexTagAggregator_TagsChanged;
 		}
 
-		void HexTagAggregator_TagsChanged(object sender, HexTagsChangedEventArgs e) =>
+		void HexTagAggregator_TagsChanged(object? sender, HexTagsChangedEventArgs e) =>
 			ClassificationChanged?.Invoke(this, new HexClassificationChangedEventArgs(e.Span));
 
 		sealed class HexClassificationSpanComparer : IComparer<HexClassificationSpan> {

@@ -44,7 +44,7 @@ namespace dnSpy.Menus {
 			elem.ContextMenuOpening += FrameworkElement_ContextMenuOpening;
 		}
 
-		bool IsIgnored(object sender, ContextMenuEventArgs e) {
+		bool IsIgnored(object? sender, ContextMenuEventArgs e) {
 			if (!(element is ListBox))
 				return false;
 
@@ -63,7 +63,7 @@ namespace dnSpy.Menus {
 			return true;
 		}
 
-		void FrameworkElement_ContextMenuOpening(object sender, ContextMenuEventArgs e) {
+		void FrameworkElement_ContextMenuOpening(object? sender, ContextMenuEventArgs e) {
 			if (IsIgnored(sender, e))
 				return;
 

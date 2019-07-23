@@ -35,7 +35,7 @@ namespace dnSpy.Hex.Tagging {
 			Initialize();
 		}
 
-		void HexView_Closed(object sender, EventArgs e) => Dispose();
+		void HexView_Closed(object? sender, EventArgs e) => Dispose();
 
 		public override void Dispose() {
 			base.Dispose();

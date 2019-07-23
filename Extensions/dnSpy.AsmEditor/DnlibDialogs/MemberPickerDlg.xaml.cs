@@ -62,8 +62,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			InputBindings.Add(new KeyBinding(cmd, Key.F, ModifierKeys.Control));
 		}
 
-		void MemberPickerVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			var vm = (MemberPickerVM)sender;
+		void MemberPickerVM_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
+			var vm = (MemberPickerVM)sender!;
 			if (e.PropertyName == nameof(MemberPickerVM.TooManyResults)) {
 				if (vm.TooManyResults)
 					listBox.SetResourceReference(Control.BorderBrushProperty, "CommonControlsTextBoxBorderError");

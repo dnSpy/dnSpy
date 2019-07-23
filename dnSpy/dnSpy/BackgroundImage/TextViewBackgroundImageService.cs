@@ -43,7 +43,7 @@ namespace dnSpy.BackgroundImage {
 			wpfTextView.Closed += WpfTextView_Closed;
 		}
 
-		void WpfTextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) {
+		void WpfTextView_LayoutChanged(object? sender, TextViewLayoutChangedEventArgs e) {
 			if (e.OldViewState.ViewportWidth != e.NewViewState.ViewportWidth)
 				UpdateImagePosition();
 			else if (e.OldViewState.ViewportHeight != e.NewViewState.ViewportHeight)
@@ -76,7 +76,7 @@ namespace dnSpy.BackgroundImage {
 		protected override void AddImageToAdornmentLayerCore(Image image) =>
 			adornmentLayer!.AddAdornment(AdornmentPositioningBehavior.OwnerControlled, null, null, image, null);
 
-		void WpfTextView_Closed(object sender, EventArgs e) {
+		void WpfTextView_Closed(object? sender, EventArgs e) {
 			ViewClosed();
 			wpfTextView.Closed -= WpfTextView_Closed;
 			wpfTextView.LayoutChanged -= WpfTextView_LayoutChanged;

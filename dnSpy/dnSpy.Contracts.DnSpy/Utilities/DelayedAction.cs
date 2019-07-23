@@ -40,7 +40,7 @@ namespace dnSpy.Contracts.Utilities {
 			dispatcherTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(milliseconds), DispatcherPriority.Send, StartIt, Dispatcher.CurrentDispatcher);
 		}
 
-		void StartIt(object sender, EventArgs e) {
+		void StartIt(object? sender, EventArgs e) {
 			dispatcherTimer.Stop();
 			action();
 		}

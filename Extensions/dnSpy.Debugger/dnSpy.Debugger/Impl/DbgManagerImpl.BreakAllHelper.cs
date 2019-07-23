@@ -78,7 +78,7 @@ namespace dnSpy.Debugger.Impl {
 					owner.BreakCompleted_DbgThread(success);
 			}
 
-			void Timer_Tick_DbgThread(object sender, EventArgs e) {
+			void Timer_Tick_DbgThread(object? sender, EventArgs e) {
 				bool canNotify;
 				lock (owner.lockObj)
 					DoneStep1_NoLock(out canNotify);

@@ -54,7 +54,7 @@ namespace dnSpy.Language.Intellisense {
 			session.ApplicableToSpanChanged += Session_ApplicableToSpanChanged;
 		}
 
-		void Session_ApplicableToSpanChanged(object sender, EventArgs e) {
+		void Session_ApplicableToSpanChanged(object? sender, EventArgs e) {
 			if (session.IsDismissed)
 				return;
 			PresentationSpan = session.ApplicableToSpan;

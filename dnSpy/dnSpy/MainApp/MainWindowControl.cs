@@ -313,7 +313,7 @@ namespace dnSpy.MainApp {
 				ToolWindowGroupService.TabGroupCollectionChanged += ToolWindowGroupService_TabGroupCollectionChanged;
 			}
 
-			void ToolWindowGroupService_TabGroupCollectionChanged(object sender, ToolWindowGroupCollectionChangedEventArgs e) => mainWindowControl.TabGroupCollectionChanged(this);
+			void ToolWindowGroupService_TabGroupCollectionChanged(object? sender, ToolWindowGroupCollectionChangedEventArgs e) => mainWindowControl.TabGroupCollectionChanged(this);
 
 			const double DEFAULT_MIN_HEIGHT = 20;
 			const double DEFAULT_MIN_WIDTH = 20;

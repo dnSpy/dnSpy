@@ -76,7 +76,7 @@ namespace dnSpy.Text.Editor {
 		public ITextViewMargin? GetTextViewMargin(string marginName) =>
 			StringComparer.OrdinalIgnoreCase.Equals(PredefinedMarginNames.ZoomControl, marginName) ? this : null;
 
-		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
+		void Options_OptionChanged(object? sender, EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultTextViewHostOptions.ZoomControlName || e.OptionId == DefaultTextViewHostOptions.HorizontalScrollBarName)
 				UpdateVisibility();
 			else if (!Enabled) {
@@ -136,7 +136,7 @@ namespace dnSpy.Text.Editor {
 		}
 		static readonly ZoomLevelConverter zoomLevelConverter = new ZoomLevelConverter();
 
-		void ZoomControlMargin_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
+		void ZoomControlMargin_IsVisibleChanged(object? sender, DependencyPropertyChangedEventArgs e) {
 			if (Visibility == Visibility.Visible) {
 				originalZoomLevel = null;
 				RegisterEvents();
@@ -157,10 +157,10 @@ namespace dnSpy.Text.Editor {
 		}
 		IWpfTextViewMargin? horizontalScrollBarMargin;
 
-		void VisualElement_SizeChanged(object sender, SizeChangedEventArgs e) =>
+		void VisualElement_SizeChanged(object? sender, SizeChangedEventArgs e) =>
 			Height = e.NewSize.Height;
 
-		void TextView_ZoomLevelChanged(object sender, ZoomLevelChangedEventArgs e) => UpdateTextWithZoomLevel();
+		void TextView_ZoomLevelChanged(object? sender, ZoomLevelChangedEventArgs e) => UpdateTextWithZoomLevel();
 		void UpdateTextWithZoomLevel() {
 			var s = zoomLevelConverter.Convert(TextViewZoomLevel, typeof(string), null, CultureInfo.CurrentUICulture) as string;
 			Text = s ?? TextViewZoomLevel.ToString("F0");

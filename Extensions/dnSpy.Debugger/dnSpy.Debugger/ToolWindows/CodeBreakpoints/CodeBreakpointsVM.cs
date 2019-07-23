@@ -158,7 +158,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		};
 
 		// DbgManager thread
-		void DbgCodeBreakpointHitCountService_HitCountChanged(object sender, DbgHitCountChangedEventArgs e) =>
+		void DbgCodeBreakpointHitCountService_HitCountChanged(object? sender, DbgHitCountChangedEventArgs e) =>
 			UI(() => DbgCodeBreakpointHitCountService_HitCountChanged_UI(e.Breakpoints));
 
 		// UI thread
@@ -234,13 +234,13 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		}
 
 		// UI thread
-		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) {
+		void ClassificationFormatMap_ClassificationFormatMappingChanged(object? sender, EventArgs e) {
 			codeBreakpointContext.UIDispatcher.VerifyAccess();
 			RefreshThemeFields_UI();
 		}
 
 		// random thread
-		void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) =>
+		void DebuggerSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e) =>
 			UI(() => DebuggerSettings_PropertyChanged_UI(e.PropertyName));
 
 		// UI thread
@@ -260,7 +260,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		}
 
 		// random thread
-		void DbgCodeBreakpointDisplaySettings_PropertyChanged(object sender, PropertyChangedEventArgs e) =>
+		void DbgCodeBreakpointDisplaySettings_PropertyChanged(object? sender, PropertyChangedEventArgs e) =>
 			UI(() => DbgCodeBreakpointDisplaySettings_PropertyChanged_UI(e.PropertyName));
 
 		// UI thread
@@ -334,7 +334,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		void UI(Action callback) => codeBreakpointContext.UIDispatcher.UI(callback);
 
 		// DbgManager thread
-		void DbgCodeBreakpointsService_BreakpointsChanged(object sender, DbgCollectionChangedEventArgs<DbgCodeBreakpoint> e) {
+		void DbgCodeBreakpointsService_BreakpointsChanged(object? sender, DbgCollectionChangedEventArgs<DbgCodeBreakpoint> e) {
 			dbgManager.Value.Dispatcher.VerifyAccess();
 			if (e.Added)
 				UI(() => AddItems_UI(e.Objects));
@@ -351,7 +351,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		}
 
 		// DbgManager thread
-		void DbgCodeBreakpointsService_BreakpointsModified(object sender, DbgBreakpointsModifiedEventArgs e) {
+		void DbgCodeBreakpointsService_BreakpointsModified(object? sender, DbgBreakpointsModifiedEventArgs e) {
 			dbgManager.Value.Dispatcher.VerifyAccess();
 			UI(() => {
 				foreach (var info in e.Breakpoints) {
@@ -367,7 +367,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		}
 
 		// DbgManager thread
-		void DbgCodeBreakpointsService_BoundBreakpointsMessageChanged(object sender, DbgBoundBreakpointsMessageChangedEventArgs e) =>
+		void DbgCodeBreakpointsService_BoundBreakpointsMessageChanged(object? sender, DbgBoundBreakpointsMessageChangedEventArgs e) =>
 			UI(() => OnBoundBreakpointsMessageChanged_UI(e.Breakpoints));
 
 		// UI thread

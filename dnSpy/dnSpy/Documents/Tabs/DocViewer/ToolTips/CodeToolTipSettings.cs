@@ -56,7 +56,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 			PropertyChanged += CodeToolTipSettingsImpl_PropertyChanged;
 		}
 
-		void CodeToolTipSettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void CodeToolTipSettingsImpl_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(SyntaxHighlight), SyntaxHighlight);
 		}

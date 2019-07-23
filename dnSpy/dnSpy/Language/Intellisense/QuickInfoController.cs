@@ -36,7 +36,7 @@ namespace dnSpy.Language.Intellisense {
 		public void ConnectSubjectBuffer(ITextBuffer subjectBuffer) { }
 		public void DisconnectSubjectBuffer(ITextBuffer subjectBuffer) { }
 
-		void TextView_MouseHover(object sender, MouseHoverEventArgs e) {
+		void TextView_MouseHover(object? sender, MouseHoverEventArgs e) {
 			var pos = e.TextPosition.GetPoint(textView.TextBuffer, PositionAffinity.Successor);
 			if (pos is null)
 				return;

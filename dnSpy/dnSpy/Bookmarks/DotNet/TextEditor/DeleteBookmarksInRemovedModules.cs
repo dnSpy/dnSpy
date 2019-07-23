@@ -53,7 +53,7 @@ namespace dnSpy.Bookmarks.DotNet.TextEditor {
 			documentTabService.Value.DocumentCollectionChanged += DocumentTabService_FileCollectionChanged;
 		}
 
-		void DocumentTabService_FileCollectionChanged(object sender, NotifyDocumentCollectionChangedEventArgs e) {
+		void DocumentTabService_FileCollectionChanged(object? sender, NotifyDocumentCollectionChangedEventArgs e) {
 			Debug.Assert(!(bookmarksService is null));
 			if (bookmarksService is null)
 				return;

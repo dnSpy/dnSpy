@@ -76,7 +76,7 @@ namespace dnSpy.Text.Adornments {
 			spaceReservationManager.AddAgent(toolTipAgent);
 		}
 
-		void SpaceReservationManager_AgentChanged(object sender, SpaceReservationAgentChangedEventArgs e) {
+		void SpaceReservationManager_AgentChanged(object? sender, SpaceReservationAgentChangedEventArgs e) {
 			if (e.OldAgent == toolTipAgent) {
 				spaceReservationManager.AgentChanged -= SpaceReservationManager_AgentChanged;
 				toolTipAgent = null;

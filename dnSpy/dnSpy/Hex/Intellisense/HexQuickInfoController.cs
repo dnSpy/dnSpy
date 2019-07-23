@@ -33,7 +33,7 @@ namespace dnSpy.Hex.Intellisense {
 			hexView.MouseHover += HexView_MouseHover;
 		}
 
-		void HexView_MouseHover(object sender, HexMouseHoverEventArgs e) {
+		void HexView_MouseHover(object? sender, HexMouseHoverEventArgs e) {
 			var posInfo = e.Line.GetLinePositionInfo(e.TextPosition);
 			HexCellPosition triggerPoint;
 			if (posInfo.IsAsciiCell && posInfo.Cell!.HasData)

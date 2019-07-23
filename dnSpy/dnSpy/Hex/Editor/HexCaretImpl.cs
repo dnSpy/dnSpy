@@ -93,7 +93,7 @@ namespace dnSpy.Hex.Editor {
 			OnBufferLinesChanged();
 		}
 
-		void HexView_BufferLinesChanged(object sender, BufferLinesChangedEventArgs e) {
+		void HexView_BufferLinesChanged(object? sender, BufferLinesChangedEventArgs e) {
 			OnBufferLinesChanged();
 			savePreferredCoordinates = true;
 		}
@@ -174,11 +174,11 @@ namespace dnSpy.Hex.Editor {
 			return cell.BufferSpan.Contains(oldPos.BufferPosition);
 		}
 
-		void HexView_ZoomLevelChanged(object sender, VSTE.ZoomLevelChangedEventArgs e) =>
+		void HexView_ZoomLevelChanged(object? sender, VSTE.ZoomLevelChangedEventArgs e) =>
 			savePreferredCoordinates = true;
 		bool savePreferredCoordinates;
 
-		void HexView_LayoutChanged(object sender, HexViewLayoutChangedEventArgs e) {
+		void HexView_LayoutChanged(object? sender, HexViewLayoutChangedEventArgs e) {
 			hexCaretLayer.OnLayoutChanged(e);
 			if (savePreferredCoordinates) {
 				savePreferredCoordinates = false;
@@ -189,8 +189,8 @@ namespace dnSpy.Hex.Editor {
 				MoveImeCompositionWindow();
 		}
 
-		void VisualElement_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) => InitializeIME();
-		void VisualElement_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) => StopIME(true);
+		void VisualElement_GotKeyboardFocus(object? sender, KeyboardFocusChangedEventArgs e) => InitializeIME();
+		void VisualElement_LostKeyboardFocus(object? sender, KeyboardFocusChangedEventArgs e) => StopIME(true);
 
 		void CancelCompositionString() {
 			if (imeState.Context == IntPtr.Zero)
@@ -407,7 +407,7 @@ namespace dnSpy.Hex.Editor {
 			ImeState.ImmSetCompositionWindow(imeState.Context, ref compForm);
 		}
 
-		void Options_OptionChanged(object sender, VSTE.EditorOptionChangedEventArgs e) {
+		void Options_OptionChanged(object? sender, VSTE.EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultHexViewOptions.ViewProhibitUserInputName) {
 				StopIME(false);
 				InitializeIME();

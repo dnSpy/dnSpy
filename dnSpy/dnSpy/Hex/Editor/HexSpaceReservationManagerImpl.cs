@@ -115,8 +115,8 @@ namespace dnSpy.Hex.Editor {
 			wpfHexView.QueueSpaceReservationStackRefresh();
 		}
 
-		void HexSpaceReservationAgent_GotFocus(object sender, EventArgs e) => UpdateAggregateFocus();
-		void HexSpaceReservationAgent_LostFocus(object sender, EventArgs e) => UpdateAggregateFocus();
+		void HexSpaceReservationAgent_GotFocus(object? sender, EventArgs e) => UpdateAggregateFocus();
+		void HexSpaceReservationAgent_LostFocus(object? sender, EventArgs e) => UpdateAggregateFocus();
 
 		void UpdateAggregateFocus() {
 			bool newValue = CalculateAggregateFocus();
@@ -154,7 +154,7 @@ namespace dnSpy.Hex.Editor {
 			UpdateAggregateFocus();
 		}
 
-		void WpfHexView_Closed(object sender, EventArgs e) {
+		void WpfHexView_Closed(object? sender, EventArgs e) {
 			while (spaceReservationAgents.Count > 0)
 				RemoveAgent(spaceReservationAgents[spaceReservationAgents.Count - 1]);
 			wpfHexView.Closed -= WpfHexView_Closed;

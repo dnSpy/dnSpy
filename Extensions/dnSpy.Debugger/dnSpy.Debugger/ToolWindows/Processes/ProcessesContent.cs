@@ -103,7 +103,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			wpfCommandService.Add(ControlConstants.GUID_DEBUGGER_PROCESSES_LISTVIEW, processesControl.ListView);
 		}
 
-		void ProcessesControl_ProcessesListViewDoubleClick(object sender, EventArgs e) {
+		void ProcessesControl_ProcessesListViewDoubleClick(object? sender, EventArgs e) {
 			bool newTab = Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Control;
 			if (Operations.CanSetCurrentProcess)
 				Operations.SetCurrentProcess(newTab);

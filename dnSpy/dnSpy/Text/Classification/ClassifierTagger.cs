@@ -45,7 +45,7 @@ namespace dnSpy.Text.Classification {
 			}
 		}
 
-		void Classifier_ClassificationChanged(object sender, ClassificationChangedEventArgs e) =>
+		void Classifier_ClassificationChanged(object? sender, ClassificationChangedEventArgs e) =>
 			TagsChanged?.Invoke(this, new SnapshotSpanEventArgs(e.ChangeSpan));
 
 		public void Dispose() {

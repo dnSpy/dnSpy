@@ -39,7 +39,7 @@ namespace dnSpy.Debugger.Dialogs.DebugProgram {
 			StartDebuggingOptionsPage.PropertyChanged += StartDebuggingOptionsPage_PropertyChanged;
 		}
 
-		void StartDebuggingOptionsPage_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void StartDebuggingOptionsPage_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			Debug.Assert(sender == StartDebuggingOptionsPage);
 			if (e.PropertyName == nameof(StartDebuggingOptionsPage.IsValid))
 				IsValidChanged?.Invoke(this, EventArgs.Empty);

@@ -69,7 +69,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
+		void Options_OptionChanged(object? sender, EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultDsTextViewOptions.CompressEmptyOrWhitespaceLinesName || e.OptionId == DefaultDsTextViewOptions.CompressNonLetterLinesName)
 				InitializeOptions(true);
 		}
@@ -122,7 +122,7 @@ namespace dnSpy.Text.Editor {
 			return isBlank ? LineKind.EmptyOrWhitespace : LineKind.NoLettersDigits;
 		}
 
-		void TextView_Closed(object sender, EventArgs e) {
+		void TextView_Closed(object? sender, EventArgs e) {
 			textView.Closed -= TextView_Closed;
 			textView.Options.OptionChanged -= Options_OptionChanged;
 		}

@@ -64,8 +64,8 @@ namespace dnSpy.Bookmarks.Impl {
 			uiDispatcher.UI(() => ignoreSave = false);
 		}
 
-		void BookmarksService_BookmarksChanged(object sender, CollectionChangedEventArgs<Bookmark> e) => Save();
-		void BookmarksService_BookmarksModified(object sender, BookmarksModifiedEventArgs e) => Save();
+		void BookmarksService_BookmarksChanged(object? sender, CollectionChangedEventArgs<Bookmark> e) => Save();
+		void BookmarksService_BookmarksModified(object? sender, BookmarksModifiedEventArgs e) => Save();
 
 		void Save() {
 			uiDispatcher.VerifyAccess();

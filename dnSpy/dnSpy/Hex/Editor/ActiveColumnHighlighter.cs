@@ -143,12 +143,12 @@ namespace dnSpy.Hex.Editor {
 			wpfHexView.Caret.PositionChanged -= Caret_PositionChanged;
 		}
 
-		void Caret_PositionChanged(object sender, HexCaretPositionChangedEventArgs e) {
+		void Caret_PositionChanged(object? sender, HexCaretPositionChangedEventArgs e) {
 			if (e.OldPosition.Position.ActiveColumn != e.NewPosition.Position.ActiveColumn)
 				RecreateRectangles();
 		}
 
-		void Options_OptionChanged(object sender, VSTE.EditorOptionChangedEventArgs e) {
+		void Options_OptionChanged(object? sender, VSTE.EditorOptionChangedEventArgs e) {
 			switch (e.OptionId) {
 			case DefaultHexViewOptions.HighlightActiveColumnName:
 				UpdateEnabled();
@@ -156,7 +156,7 @@ namespace dnSpy.Hex.Editor {
 			}
 		}
 
-		void WpfHexView_LayoutChanged(object sender, HexViewLayoutChangedEventArgs e) {
+		void WpfHexView_LayoutChanged(object? sender, HexViewLayoutChangedEventArgs e) {
 			bool recreate = false;
 			if (latestBufferLines != wpfHexView.BufferLines)
 				recreate = true;
@@ -177,7 +177,7 @@ namespace dnSpy.Hex.Editor {
 				Canvas.SetTop(rectElem, Canvas.GetTop(rectElem) + d);
 		}
 
-		void EditorFormatMap_FormatMappingChanged(object sender, VSTC.FormatItemsEventArgs e) {
+		void EditorFormatMap_FormatMappingChanged(object? sender, VSTC.FormatItemsEventArgs e) {
 			if (wpfHexView.IsClosed)
 				return;
 			bool refresh = e.ChangedItems.Contains(CTC.ThemeClassificationTypeNameKeys.HexHighlightedValuesColumn) ||
@@ -293,7 +293,7 @@ namespace dnSpy.Hex.Editor {
 			rectangleElements.Clear();
 		}
 
-		void WpfHexView_Closed(object sender, EventArgs e) {
+		void WpfHexView_Closed(object? sender, EventArgs e) {
 			RemoveAllRectangles();
 			latestBufferLines = null;
 			wpfHexView.Closed -= WpfHexView_Closed;

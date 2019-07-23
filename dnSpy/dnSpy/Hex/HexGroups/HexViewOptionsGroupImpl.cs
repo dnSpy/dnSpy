@@ -129,13 +129,13 @@ namespace dnSpy.Hex.HexGroups {
 				owner.InitializeOptions(hexView);
 			}
 
-			void Options_OptionChanged(object sender, VSTE.EditorOptionChangedEventArgs e) {
+			void Options_OptionChanged(object? sender, VSTE.EditorOptionChangedEventArgs e) {
 				if (hexView.IsClosed)
 					return;
 				owner.OptionChanged(hexView, e);
 			}
 
-			void HexView_Closed(object sender, EventArgs e) {
+			void HexView_Closed(object? sender, EventArgs e) {
 				hexView.Closed -= HexView_Closed;
 				hexView.Options.OptionChanged -= Options_OptionChanged;
 				owner.Closed(hexView);

@@ -164,7 +164,7 @@ namespace dnSpy.AsmEditor.Event {
 			Reinitialize();
 		}
 
-		void typeSigCreator_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void typeSigCreator_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == nameof(TypeSigCreator.TypeSigDnlibFullName))
 				OnPropertyChanged(nameof(EventTypeHeader));
 			HasErrorUpdated();

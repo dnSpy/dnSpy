@@ -131,7 +131,7 @@ namespace dnSpy.Hex.Editor {
 			wpfHexView.LayoutChanged += WpfHexView_LayoutChanged;
 		}
 
-		void Selection_SelectionChanged(object sender, EventArgs e) => UpdateIsSelected();
+		void Selection_SelectionChanged(object? sender, EventArgs e) => UpdateIsSelected();
 
 		void UpdateIsSelected() {
 			if (adornmentTagInfos.Count == 0)
@@ -206,7 +206,7 @@ namespace dnSpy.Hex.Editor {
 			}
 		}
 
-		void WpfHexView_LayoutChanged(object sender, HexViewLayoutChangedEventArgs e) {
+		void WpfHexView_LayoutChanged(object? sender, HexViewLayoutChangedEventArgs e) {
 			if (adornmentTagInfos.Count > 0) {
 				Debug.Assert(!(layer is null));
 				currentLineIdentityTags.Clear();
@@ -376,13 +376,13 @@ namespace dnSpy.Hex.Editor {
 
 		double Filter(double value) => value < 0 || value == double.PositiveInfinity || double.IsNaN(value) ? 0 : value;
 
-		void TagAggregator_TagsChanged(object sender, HexTagsChangedEventArgs e) {
+		void TagAggregator_TagsChanged(object? sender, HexTagsChangedEventArgs e) {
 			if (wpfHexView.IsClosed)
 				return;
 			tagger?.RefreshSpans(new HexBufferSpanEventArgs(e.Span));
 		}
 
-		void WpfHexView_Closed(object sender, EventArgs e) {
+		void WpfHexView_Closed(object? sender, EventArgs e) {
 			wpfHexView.Closed -= WpfHexView_Closed;
 			wpfHexView.LayoutChanged -= WpfHexView_LayoutChanged;
 			wpfHexView.Selection.SelectionChanged -= Selection_SelectionChanged;

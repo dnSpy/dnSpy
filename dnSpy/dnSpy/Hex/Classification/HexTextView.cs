@@ -36,7 +36,7 @@ namespace dnSpy.Hex.Classification {
 			hexView.Closed += HexView_Closed;
 		}
 
-		void HexView_Closed(object sender, EventArgs e) {
+		void HexView_Closed(object? sender, EventArgs e) {
 			hexView.Closed -= HexView_Closed;
 			Closed?.Invoke(this, EventArgs.Empty);
 			hexView.Properties.RemoveProperty(typeof(HexTextView));

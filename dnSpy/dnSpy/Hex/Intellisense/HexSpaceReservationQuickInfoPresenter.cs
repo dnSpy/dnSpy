@@ -56,7 +56,7 @@ namespace dnSpy.Hex.Intellisense {
 			session.ApplicableToSpanChanged += Session_ApplicableToSpanChanged;
 		}
 
-		void Session_ApplicableToSpanChanged(object sender, EventArgs e) {
+		void Session_ApplicableToSpanChanged(object? sender, EventArgs e) {
 			if (session.IsDismissed)
 				return;
 			SetPresentationSpan(session.ApplicableToSpan, session.TriggerPoint);

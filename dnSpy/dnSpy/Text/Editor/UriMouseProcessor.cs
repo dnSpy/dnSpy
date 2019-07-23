@@ -78,8 +78,8 @@ namespace dnSpy.Text.Editor {
 		static readonly MouseEventArgs defaultMouseEventArgs = new MouseEventArgs(Mouse.PrimaryDevice, 0);
 
 		void UpdateIsControlDown(KeyEventArgs e) => IsControlDown = (e.KeyboardDevice.Modifiers & ModifierKeys.Control) != 0;
-		void VisualElement_PreviewKeyUp(object sender, KeyEventArgs e) => UpdateIsControlDown(e);
-		void VisualElement_PreviewKeyDown(object sender, KeyEventArgs e) => UpdateIsControlDown(e);
+		void VisualElement_PreviewKeyUp(object? sender, KeyEventArgs e) => UpdateIsControlDown(e);
+		void VisualElement_PreviewKeyDown(object? sender, KeyEventArgs e) => UpdateIsControlDown(e);
 
 		IMappingTagSpan<IUrlTag>? GetUriSpan(MouseEventArgs e) {
 			if (!IsControlDown)
@@ -128,7 +128,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		void WpfTextView_Closed(object sender, EventArgs e) {
+		void WpfTextView_Closed(object? sender, EventArgs e) {
 			wpfTextView.VisualElement.PreviewKeyDown -= VisualElement_PreviewKeyDown;
 			wpfTextView.VisualElement.PreviewKeyUp -= VisualElement_PreviewKeyUp;
 			wpfTextView.Closed -= WpfTextView_Closed;

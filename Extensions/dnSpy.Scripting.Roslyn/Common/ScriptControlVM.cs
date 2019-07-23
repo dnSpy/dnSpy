@@ -181,7 +181,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			ShowLineNumbers = replSettings.ShowLineNumbers;
 		}
 
-		void ReplSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void ReplSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == nameof(replSettings.WordWrapStyle))
 				WordWrapStyle = replSettings.WordWrapStyle;
 			else if (e.PropertyName == nameof(replSettings.ShowLineNumbers))
@@ -202,7 +202,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		}
 		bool hasInitialized;
 
-		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
+		void Options_OptionChanged(object? sender, EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultTextViewOptions.WordWrapStyleName) {
 				OnPropertyChanged(nameof(WordWrap));
 				replSettings.WordWrapStyle = WordWrapStyle;

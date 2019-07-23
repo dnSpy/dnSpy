@@ -166,17 +166,17 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		}
 
 		// DbgManager thread
-		void DbgLanguageService_LanguageChanged(object sender, DbgLanguageChangedEventArgs e) => UI(() => RefreshLanguage_UI());
+		void DbgLanguageService_LanguageChanged(object? sender, DbgLanguageChangedEventArgs e) => UI(() => RefreshLanguage_UI());
 
 		// UI thread
-		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) {
+		void ClassificationFormatMap_ClassificationFormatMappingChanged(object? sender, EventArgs e) {
 			callStackContext.UIDispatcher.VerifyAccess();
 			callStackContext.UIVersion++;
 			RefreshThemeFields_UI();
 		}
 
 		// random thread
-		void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) =>
+		void DebuggerSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e) =>
 			UI(() => DebuggerSettings_PropertyChanged_UI(e.PropertyName));
 
 		// UI thread
@@ -211,7 +211,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		}
 
 		// random thread
-		void CallStackDisplaySettings_PropertyChanged(object sender, PropertyChangedEventArgs e) =>
+		void CallStackDisplaySettings_PropertyChanged(object? sender, PropertyChangedEventArgs e) =>
 			UI(() => CallStackDisplaySettings_PropertyChanged_UI(e.PropertyName));
 
 		// UI thread
@@ -290,7 +290,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		void UI(Action callback) => callStackContext.UIDispatcher.UI(callback);
 
 		// DbgManager thread
-		void DbgCallStackService_FramesChanged(object sender, FramesChangedEventArgs e) {
+		void DbgCallStackService_FramesChanged(object? sender, FramesChangedEventArgs e) {
 			var framesInfo = dbgCallStackService.Value.Frames;
 			var thread = dbgCallStackService.Value.Thread;
 			if (e.FramesChanged)
@@ -307,23 +307,23 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		}
 
 		// DbgManager thread
-		void DbgManager_DelayedIsRunningChanged(object sender, EventArgs e) => UI(() => {
+		void DbgManager_DelayedIsRunningChanged(object? sender, EventArgs e) => UI(() => {
 			// If all processes are running and the window is hidden, hide it now
 			if (!IsVisible)
 				lazyToolWindowVMHelper.TryHideWindow();
 		});
 
 		// DbgManager thread
-		void DbgCodeBreakpointsService_BreakpointsModified(object sender, DbgBreakpointsModifiedEventArgs e) =>
+		void DbgCodeBreakpointsService_BreakpointsModified(object? sender, DbgBreakpointsModifiedEventArgs e) =>
 			UI(() => RefreshBreakpoints_UI(e.Breakpoints.Select(a => a.Breakpoint)));
 
 		// DbgManager thread
-		void DbgCodeBreakpointsService_BreakpointsChanged(object sender, DbgCollectionChangedEventArgs<DbgCodeBreakpoint> e) =>
+		void DbgCodeBreakpointsService_BreakpointsChanged(object? sender, DbgCollectionChangedEventArgs<DbgCodeBreakpoint> e) =>
 			UI(() => RefreshBreakpoints_UI(e));
 
 		// DbgManager thread
-		void DbgCodeBreakpoint_BoundBreakpointsMessageChanged(object sender, EventArgs e) =>
-			UI(() => RefreshBreakpoints_UI(new[] { (DbgCodeBreakpoint)sender }));
+		void DbgCodeBreakpoint_BoundBreakpointsMessageChanged(object? sender, EventArgs e) =>
+			UI(() => RefreshBreakpoints_UI(new[] { (DbgCodeBreakpoint)sender! }));
 
 		// UI thread
 		void RefreshBreakpoints_UI(DbgCollectionChangedEventArgs<DbgCodeBreakpoint> e) {

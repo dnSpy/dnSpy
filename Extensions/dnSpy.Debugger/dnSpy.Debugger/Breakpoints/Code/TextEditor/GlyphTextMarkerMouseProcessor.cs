@@ -69,9 +69,9 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 
 		public override void OnMouseEnter(IGlyphTextMarkerMouseProcessorContext context, MouseEventArgs e) => ClearPressedLine();
 		public override void OnMouseLeave(IGlyphTextMarkerMouseProcessorContext context, MouseEventArgs e) => ClearPressedLine();
-		void TextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) => ClearPressedLine();
+		void TextView_LayoutChanged(object? sender, TextViewLayoutChangedEventArgs e) => ClearPressedLine();
 
-		void TextView_Closed(object sender, EventArgs e) {
+		void TextView_Closed(object? sender, EventArgs e) {
 			ClearPressedLine();
 			wpfTextViewHost.TextView.Closed -= TextView_Closed;
 			wpfTextViewHost.TextView.LayoutChanged -= TextView_LayoutChanged;

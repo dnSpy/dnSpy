@@ -73,14 +73,14 @@ namespace dnSpy.MainApp {
 			window.ContentRendered += Window_ContentRendered;
 		}
 
-		void Window_ContentRendered(object sender, EventArgs e) {
+		void Window_ContentRendered(object? sender, EventArgs e) {
 			window.ContentRendered -= Window_ContentRendered;
 			if (!settings.IsFullScreen)
 				WindowUtils.SetState(window, settings.WindowState);
 			window.IsFullScreen = settings.IsFullScreen;
 		}
 
-		void Window_SourceInitialized(object sender, EventArgs e) {
+		void Window_SourceInitialized(object? sender, EventArgs e) {
 			window.SourceInitialized -= Window_SourceInitialized;
 			if (settings.Bounds == Rect.Empty) {
 				window.Height = defaultWindowLocation.Height;

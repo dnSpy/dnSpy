@@ -86,8 +86,8 @@ namespace dnSpy.ToolWindows {
 
 		void UpdateZoomElement() => elementZoomer.InstallZoom(Content, Content.ZoomElement);
 
-		void ContentPresenter_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
-			var cp = (ContentPresenter)sender;
+		void ContentPresenter_IsVisibleChanged(object? sender, DependencyPropertyChangedEventArgs e) {
+			var cp = (ContentPresenter)sender!;
 			cp.IsVisibleChanged -= ContentPresenter_IsVisibleChanged;
 
 			if ((bool)e.NewValue)
@@ -243,7 +243,7 @@ namespace dnSpy.ToolWindows {
 				npc.PropertyChanged -= ToolWindowContent_PropertyChanged;
 		}
 
-		void ToolWindowContent_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void ToolWindowContent_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == nameof(ToolWindowContent.Title))
 				OnPropertyChanged(nameof(Title));
 			else if (e.PropertyName == nameof(ToolWindowContent.ToolTip))

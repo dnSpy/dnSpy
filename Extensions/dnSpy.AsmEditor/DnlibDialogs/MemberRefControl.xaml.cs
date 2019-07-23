@@ -35,6 +35,6 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			Loaded += MemberRefControl_Loaded;
 		}
 
-		void MemberRefControl_Loaded(object sender, RoutedEventArgs e) => nameTextBox.Focus();
+		void MemberRefControl_Loaded(object? sender, RoutedEventArgs e) => nameTextBox.Focus();
 	}
 }

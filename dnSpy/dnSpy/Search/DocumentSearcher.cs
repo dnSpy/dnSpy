@@ -106,7 +106,7 @@ namespace dnSpy.Search {
 
 		public ISearchResult? SearchingResult { get; set; }
 
-		void SearchNewThread(object o) {
+		void SearchNewThread(object? o) {
 			try {
 				var searchMsg = SearchResult.CreateMessage(filterSearcherOptions.Context, dnSpy_Resources.Searching, BoxedTextColor.Text, true);
 				SearchingResult = searchMsg;

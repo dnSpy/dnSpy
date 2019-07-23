@@ -64,7 +64,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		void MouseElement_DragEnter(object sender, DragEventArgs e) {
+		void MouseElement_DragEnter(object? sender, DragEventArgs e) {
 			foreach (var m in mouseProcessors) {
 				if (e.Handled)
 					break;
@@ -76,7 +76,7 @@ namespace dnSpy.Text.Editor {
 				m.PostprocessDragEnter(e);
 		}
 
-		void MouseElement_DragLeave(object sender, DragEventArgs e) {
+		void MouseElement_DragLeave(object? sender, DragEventArgs e) {
 			foreach (var m in mouseProcessors) {
 				if (e.Handled)
 					break;
@@ -88,7 +88,7 @@ namespace dnSpy.Text.Editor {
 				m.PostprocessDragLeave(e);
 		}
 
-		void MouseElement_DragOver(object sender, DragEventArgs e) {
+		void MouseElement_DragOver(object? sender, DragEventArgs e) {
 			foreach (var m in mouseProcessors) {
 				if (e.Handled)
 					break;
@@ -100,7 +100,7 @@ namespace dnSpy.Text.Editor {
 				m.PostprocessDragOver(e);
 		}
 
-		void MouseElement_Drop(object sender, DragEventArgs e) {
+		void MouseElement_Drop(object? sender, DragEventArgs e) {
 			foreach (var m in mouseProcessors) {
 				if (e.Handled)
 					break;
@@ -112,7 +112,7 @@ namespace dnSpy.Text.Editor {
 				m.PostprocessDrop(e);
 		}
 
-		void MouseElement_GiveFeedback(object sender, GiveFeedbackEventArgs e) {
+		void MouseElement_GiveFeedback(object? sender, GiveFeedbackEventArgs e) {
 			foreach (var m in mouseProcessors) {
 				if (e.Handled)
 					break;
@@ -134,7 +134,7 @@ namespace dnSpy.Text.Editor {
 			return false;
 		}
 
-		void MouseElement_MouseDown(object sender, MouseButtonEventArgs e) {
+		void MouseElement_MouseDown(object? sender, MouseButtonEventArgs e) {
 			if (!allowEvent(e))
 				return;
 			bool focused = e.ChangedButton != MouseButton.Left && e.ChangedButton != MouseButton.Right && TryFocusMouseElement(e.Handled);
@@ -150,7 +150,7 @@ namespace dnSpy.Text.Editor {
 			e.Handled |= focused;
 		}
 
-		void MouseElement_MouseEnter(object sender, MouseEventArgs e) {
+		void MouseElement_MouseEnter(object? sender, MouseEventArgs e) {
 			if (!allowEvent(e))
 				return;
 			foreach (var m in mouseProcessors) {
@@ -164,7 +164,7 @@ namespace dnSpy.Text.Editor {
 				m.PostprocessMouseEnter(e);
 		}
 
-		void MouseElement_MouseLeave(object sender, MouseEventArgs e) {
+		void MouseElement_MouseLeave(object? sender, MouseEventArgs e) {
 			if (!allowEvent(e))
 				return;
 			foreach (var m in mouseProcessors) {
@@ -178,7 +178,7 @@ namespace dnSpy.Text.Editor {
 				m.PostprocessMouseLeave(e);
 		}
 
-		void MouseElement_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
+		void MouseElement_MouseLeftButtonDown(object? sender, MouseButtonEventArgs e) {
 			if (!allowEvent(e))
 				return;
 			bool focused = TryFocusMouseElement(e.Handled);
@@ -194,7 +194,7 @@ namespace dnSpy.Text.Editor {
 			e.Handled |= focused;
 		}
 
-		void MouseElement_MouseLeftButtonUp(object sender, MouseButtonEventArgs e) {
+		void MouseElement_MouseLeftButtonUp(object? sender, MouseButtonEventArgs e) {
 			if (!allowEvent(e))
 				return;
 			foreach (var m in mouseProcessors) {
@@ -208,7 +208,7 @@ namespace dnSpy.Text.Editor {
 				m.PostprocessMouseLeftButtonUp(e);
 		}
 
-		void MouseElement_MouseMove(object sender, MouseEventArgs e) {
+		void MouseElement_MouseMove(object? sender, MouseEventArgs e) {
 			if (!allowEvent(e))
 				return;
 			foreach (var m in mouseProcessors) {
@@ -222,7 +222,7 @@ namespace dnSpy.Text.Editor {
 				m.PostprocessMouseMove(e);
 		}
 
-		void MouseElement_MouseRightButtonDown(object sender, MouseButtonEventArgs e) {
+		void MouseElement_MouseRightButtonDown(object? sender, MouseButtonEventArgs e) {
 			if (!allowEvent(e))
 				return;
 			bool focused = TryFocusMouseElement(e.Handled);
@@ -238,7 +238,7 @@ namespace dnSpy.Text.Editor {
 			e.Handled |= focused;
 		}
 
-		void MouseElement_MouseRightButtonUp(object sender, MouseButtonEventArgs e) {
+		void MouseElement_MouseRightButtonUp(object? sender, MouseButtonEventArgs e) {
 			if (!allowEvent(e))
 				return;
 			foreach (var m in mouseProcessors) {
@@ -252,7 +252,7 @@ namespace dnSpy.Text.Editor {
 				m.PostprocessMouseRightButtonUp(e);
 		}
 
-		void MouseElement_MouseUp(object sender, MouseButtonEventArgs e) {
+		void MouseElement_MouseUp(object? sender, MouseButtonEventArgs e) {
 			if (!allowEvent(e))
 				return;
 			foreach (var m in mouseProcessors) {
@@ -266,7 +266,7 @@ namespace dnSpy.Text.Editor {
 				m.PostprocessMouseUp(e);
 		}
 
-		void MouseElement_MouseWheel(object sender, MouseWheelEventArgs e) {
+		void MouseElement_MouseWheel(object? sender, MouseWheelEventArgs e) {
 			if (!allowEvent(e))
 				return;
 			foreach (var m in mouseProcessors) {
@@ -280,7 +280,7 @@ namespace dnSpy.Text.Editor {
 				m.PostprocessMouseWheel(e);
 		}
 
-		void MouseElement_QueryContinueDrag(object sender, QueryContinueDragEventArgs e) {
+		void MouseElement_QueryContinueDrag(object? sender, QueryContinueDragEventArgs e) {
 			foreach (var m in mouseProcessors) {
 				if (e.Handled)
 					break;
@@ -292,7 +292,7 @@ namespace dnSpy.Text.Editor {
 				m.PostprocessQueryContinueDrag(e);
 		}
 
-		void ManipulationElement_ManipulationCompleted(object sender, ManipulationCompletedEventArgs e) {
+		void ManipulationElement_ManipulationCompleted(object? sender, ManipulationCompletedEventArgs e) {
 			foreach (var m in mouseProcessors) {
 				if (e.Handled)
 					break;
@@ -304,7 +304,7 @@ namespace dnSpy.Text.Editor {
 				(m as IMouseProcessor2)?.PostprocessManipulationCompleted(e);
 		}
 
-		void ManipulationElement_ManipulationDelta(object sender, ManipulationDeltaEventArgs e) {
+		void ManipulationElement_ManipulationDelta(object? sender, ManipulationDeltaEventArgs e) {
 			foreach (var m in mouseProcessors) {
 				if (e.Handled)
 					break;
@@ -316,7 +316,7 @@ namespace dnSpy.Text.Editor {
 				(m as IMouseProcessor2)?.PostprocessManipulationDelta(e);
 		}
 
-		void ManipulationElement_ManipulationInertiaStarting(object sender, ManipulationInertiaStartingEventArgs e) {
+		void ManipulationElement_ManipulationInertiaStarting(object? sender, ManipulationInertiaStartingEventArgs e) {
 			foreach (var m in mouseProcessors) {
 				if (e.Handled)
 					break;
@@ -328,7 +328,7 @@ namespace dnSpy.Text.Editor {
 				(m as IMouseProcessor2)?.PostprocessManipulationInertiaStarting(e);
 		}
 
-		void ManipulationElement_ManipulationStarting(object sender, ManipulationStartingEventArgs e) {
+		void ManipulationElement_ManipulationStarting(object? sender, ManipulationStartingEventArgs e) {
 			foreach (var m in mouseProcessors) {
 				if (e.Handled)
 					break;
@@ -340,7 +340,7 @@ namespace dnSpy.Text.Editor {
 				(m as IMouseProcessor2)?.PostprocessManipulationStarting(e);
 		}
 
-		void ManipulationElement_StylusSystemGesture(object sender, StylusSystemGestureEventArgs e) {
+		void ManipulationElement_StylusSystemGesture(object? sender, StylusSystemGestureEventArgs e) {
 			foreach (var m in mouseProcessors) {
 				if (e.Handled)
 					break;
@@ -352,7 +352,7 @@ namespace dnSpy.Text.Editor {
 				(m as IMouseProcessor2)?.PostprocessStylusSystemGesture(e);
 		}
 
-		void ManipulationElement_TouchDown(object sender, TouchEventArgs e) {
+		void ManipulationElement_TouchDown(object? sender, TouchEventArgs e) {
 			foreach (var m in mouseProcessors) {
 				if (e.Handled)
 					break;
@@ -364,7 +364,7 @@ namespace dnSpy.Text.Editor {
 				(m as IMouseProcessor2)?.PostprocessTouchDown(e);
 		}
 
-		void ManipulationElement_TouchUp(object sender, TouchEventArgs e) {
+		void ManipulationElement_TouchUp(object? sender, TouchEventArgs e) {
 			foreach (var m in mouseProcessors) {
 				if (e.Handled)
 					break;

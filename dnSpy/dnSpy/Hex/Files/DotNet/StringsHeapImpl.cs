@@ -134,7 +134,7 @@ namespace dnSpy.Hex.Files.DotNet {
 				list.Add((kv.Key, kv.Value.ToArray()));
 			list.Sort((a, b) => a.pos.CompareTo(b.pos));
 
-			var infos = new KnownStringInfo[list.Count];
+			KnownStringInfo[]? infos = new KnownStringInfo[list.Count];
 			var start = Span.Span.Start;
 			var end = Span.Span.End;
 			int i;
@@ -149,7 +149,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			if (i != infos.Length)
 				Array.Resize(ref infos, i);
 
-			return infos;
+			return infos!;
 		}
 		// Sorted on Table and column position so we read from increasing positions
 		static readonly TableInitInfo[] tableInitInfos = new TableInitInfo[] {

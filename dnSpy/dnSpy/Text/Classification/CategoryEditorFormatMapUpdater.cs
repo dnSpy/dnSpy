@@ -45,8 +45,8 @@ namespace dnSpy.Text.Classification {
 			InitializeAll();
 		}
 
-		void TextAppearanceCategory_SettingsChanged(object sender, EventArgs e) => InitializeAll();
-		void ThemeService_ThemeChangedHighPriority(object sender, ThemeChangedEventArgs e) => InitializeAll();
+		void TextAppearanceCategory_SettingsChanged(object? sender, EventArgs e) => InitializeAll();
+		void ThemeService_ThemeChangedHighPriority(object? sender, ThemeChangedEventArgs e) => InitializeAll();
 
 		void InitializeAll() {
 			bool callBeginEndUpdate = !editorFormatMap.IsInBatchUpdate;

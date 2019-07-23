@@ -119,7 +119,7 @@ namespace dnSpy.Text.Classification {
 			ReinitializeCache();
 		}
 
-		void EditorFormatMap_FormatMappingChanged(object sender, FormatItemsEventArgs e) {
+		void EditorFormatMap_FormatMappingChanged(object? sender, FormatItemsEventArgs e) {
 			ReinitializeCache();
 			ClassificationFormatMappingChanged?.Invoke(this, EventArgs.Empty);
 		}

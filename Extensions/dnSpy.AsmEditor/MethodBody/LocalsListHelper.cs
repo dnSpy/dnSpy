@@ -54,7 +54,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			AddStandardMenuHandlers();
 		}
 
-		void coll_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
+		void coll_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
 			if (!(e.NewItems is null))
 				InitializeLocals(e.NewItems);
 		}

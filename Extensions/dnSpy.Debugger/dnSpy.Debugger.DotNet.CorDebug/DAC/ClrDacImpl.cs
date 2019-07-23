@@ -47,10 +47,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.DAC {
 			toClrThreadInitd = false;
 		}
 
-		void ClrDacDebugger_ClrDacPaused(object sender, EventArgs e) => Flush();
-		void ClrDacDebugger_ClrDacRunning(object sender, EventArgs e) => Flush();
+		void ClrDacDebugger_ClrDacPaused(object? sender, EventArgs e) => Flush();
+		void ClrDacDebugger_ClrDacRunning(object? sender, EventArgs e) => Flush();
 
-		void ClrDacDebugger_ClrDacTerminated(object sender, EventArgs e) {
+		void ClrDacDebugger_ClrDacTerminated(object? sender, EventArgs e) {
 			clrDacDebugger.ClrDacPaused -= ClrDacDebugger_ClrDacPaused;
 			clrDacDebugger.ClrDacRunning -= ClrDacDebugger_ClrDacRunning;
 			clrDacDebugger.ClrDacTerminated -= ClrDacDebugger_ClrDacTerminated;

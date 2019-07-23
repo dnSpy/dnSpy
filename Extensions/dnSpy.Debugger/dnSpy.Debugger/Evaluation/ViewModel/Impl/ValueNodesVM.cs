@@ -118,20 +118,20 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		// UI thread
-		void ValueNodesProvider_NodesChanged(object sender, EventArgs e) {
+		void ValueNodesProvider_NodesChanged(object? sender, EventArgs e) {
 			valueNodesContext.UIDispatcher.VerifyAccess();
 			RecreateRootChildren_UI();
 		}
 
 		// UI thread
-		void ValueNodesProvider_IsReadOnlyChanged(object sender, EventArgs e) {
+		void ValueNodesProvider_IsReadOnlyChanged(object? sender, EventArgs e) {
 			valueNodesContext.UIDispatcher.VerifyAccess();
 			valueNodesContext.IsWindowReadOnly = valueNodesProvider.IsReadOnly;
 			RefreshThemeFields_UI();
 		}
 
 		// UI thread
-		void ValueNodesProvider_LanguageChanged(object sender, EventArgs e) {
+		void ValueNodesProvider_LanguageChanged(object? sender, EventArgs e) {
 			valueNodesContext.UIDispatcher.VerifyAccess();
 			valueNodesContext.NameEditValueProvider.Language = valueNodesProvider.Language;
 			valueNodesContext.ValueEditValueProvider.Language = valueNodesProvider.Language;
@@ -139,7 +139,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		// random thread
-		void DbgObjectIdService_ObjectIdsChanged(object sender, EventArgs e) {
+		void DbgObjectIdService_ObjectIdsChanged(object? sender, EventArgs e) {
 			if (refreshNameFields)
 				return;
 			refreshNameFields = true;
@@ -475,14 +475,14 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		void UI(Action callback) => valueNodesContext.UIDispatcher.UI(callback);
 
 		// UI thread
-		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) {
+		void ClassificationFormatMap_ClassificationFormatMappingChanged(object? sender, EventArgs e) {
 			valueNodesContext.UIDispatcher.VerifyAccess();
 			valueNodesContext.UIVersion++;
 			RefreshThemeFields_UI();
 		}
 
 		// random thread
-		void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) =>
+		void DebuggerSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e) =>
 			UI(() => DebuggerSettings_PropertyChanged_UI(e.PropertyName));
 
 		// UI thread
@@ -519,7 +519,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		// random thread
-		void DbgEvalFormatterSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) =>
+		void DbgEvalFormatterSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e) =>
 			UI(() => DbgEvalFormatterSettings_PropertyChanged_UI(e.PropertyName));
 
 		// UI thread

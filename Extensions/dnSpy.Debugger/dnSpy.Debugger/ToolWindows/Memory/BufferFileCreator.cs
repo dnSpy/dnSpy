@@ -44,7 +44,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			processHexBufferProvider.HexBufferInfoCreated += ProcessHexBufferProvider_HexBufferInfoCreated;
 
 		// UI thread
-		void ProcessHexBufferProvider_HexBufferInfoCreated(object sender, HexBufferInfoCreatedEventArgs e) {
+		void ProcessHexBufferProvider_HexBufferInfoCreated(object? sender, HexBufferInfoCreatedEventArgs e) {
 			uiDispatcher.VerifyAccess();
 			new ModuleListener(hexBufferFileServiceFactory.Value, e.HexBufferInfo, uiDispatcher);
 		}
@@ -121,7 +121,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			}
 
 			// DbgThread
-			void Process_RuntimesChanged(object sender, DbgCollectionChangedEventArgs<DbgRuntime> e) =>
+			void Process_RuntimesChanged(object? sender, DbgCollectionChangedEventArgs<DbgRuntime> e) =>
 				UI(() => Process_RuntimesChanged_UI(e.Objects, e.Added));
 
 			// UI thread
@@ -145,8 +145,8 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			}
 
 			// DbgThread
-			void DbgRuntime_ModulesChanged(object sender, DbgCollectionChangedEventArgs<DbgModule> e) =>
-				UI(() => DbgRuntime_ModulesChanged_UI((DbgRuntime)sender, e.Objects, e.Added));
+			void DbgRuntime_ModulesChanged(object? sender, DbgCollectionChangedEventArgs<DbgModule> e) =>
+				UI(() => DbgRuntime_ModulesChanged_UI((DbgRuntime)sender!, e.Objects, e.Added));
 
 			// UI thread
 			void DbgRuntime_ModulesChanged_UI(DbgRuntime runtime, IList<DbgModule> modules, bool added) {
@@ -201,13 +201,13 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			}
 
 			// UI thread
-			void HexBufferInfo_UnderlyingProcessChanged(object sender, EventArgs e) {
+			void HexBufferInfo_UnderlyingProcessChanged(object? sender, EventArgs e) {
 				uiDispatcher.VerifyAccess();
 				OnProcessChanged_UI();
 			}
 
 			// UI thread
-			void Buffer_Disposed(object sender, EventArgs e) {
+			void Buffer_Disposed(object? sender, EventArgs e) {
 				uiDispatcher.VerifyAccess();
 				OnProcessChanged_UI(null);
 				disposed = true;

@@ -201,7 +201,7 @@ namespace dnSpy.Controls {
 
 		static bool ImageReference_Equals(ImageReference a, ImageReference b) => a.Assembly == b.Assembly && a.Name == b.Name;
 
-		protected override void Node_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		protected override void Node_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			base.Node_PropertyChanged(sender, e);
 
 			UpdateChildren(sender as SharpTreeNode);

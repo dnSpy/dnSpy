@@ -56,7 +56,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 			PropertyChanged += TabsVMSettingsImpl_PropertyChanged;
 		}
 
-		void TabsVMSettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void TabsVMSettingsImpl_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(SyntaxHighlight), SyntaxHighlight);
 		}

@@ -35,12 +35,12 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 			dbgManager.MessageModuleUnloaded += DbgManager_MessageModuleUnloaded;
 		}
 
-		void DbgManager_MessageModuleLoaded(object sender, DbgMessageModuleLoadedEventArgs e) {
+		void DbgManager_MessageModuleLoaded(object? sender, DbgMessageModuleLoadedEventArgs e) {
 			if (dbgModuleBreakpointsService.IsMatch(new DbgModuleBreakpointInfo(e.Module, isLoaded: true)))
 				e.Pause = true;
 		}
 
-		void DbgManager_MessageModuleUnloaded(object sender, DbgMessageModuleUnloadedEventArgs e) {
+		void DbgManager_MessageModuleUnloaded(object? sender, DbgMessageModuleUnloadedEventArgs e) {
 			if (dbgModuleBreakpointsService.IsMatch(new DbgModuleBreakpointInfo(e.Module, isLoaded: false)))
 				e.Pause = true;
 		}

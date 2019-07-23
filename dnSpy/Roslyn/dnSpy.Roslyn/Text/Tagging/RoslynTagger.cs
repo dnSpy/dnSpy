@@ -47,7 +47,7 @@ namespace dnSpy.Roslyn.Text.Tagging {
 			roslynDocumentChangedService.DocumentChanged += RoslynDocumentChangedService_DocumentChanged;
 		}
 
-		void RoslynDocumentChangedService_DocumentChanged(object sender, RoslynDocumentChangedEventArgs e) {
+		void RoslynDocumentChangedService_DocumentChanged(object? sender, RoslynDocumentChangedEventArgs e) {
 			var snapshot = e.Snapshot;
 			if (textBuffer == snapshot.TextBuffer)
 				RefreshAllTags(snapshot);

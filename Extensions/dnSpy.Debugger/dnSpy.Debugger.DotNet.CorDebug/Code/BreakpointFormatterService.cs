@@ -47,7 +47,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Code {
 			dbgDotNetDecompilerService.DecompilerChanged += DbgDotNetDecompilerService_DecompilerChanged;
 		}
 
-		void DbgDotNetDecompilerService_DecompilerChanged(object sender, EventArgs e) {
+		void DbgDotNetDecompilerService_DecompilerChanged(object? sender, EventArgs e) {
 			foreach (var bp in dbgCodeBreakpointsService.Value.Breakpoints) {
 				if (bp.IsHidden)
 					continue;

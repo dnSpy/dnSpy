@@ -58,7 +58,7 @@ namespace dnSpy.Hex.Editor {
 			return false;
 		}
 
-		public override void OnMouseRightButtonDown(object sender, MouseButtonEventArgs e) {
+		public override void OnMouseRightButtonDown(object? sender, MouseButtonEventArgs e) {
 			e.Handled = true;
 			var mouseLoc = GetLocation(e);
 			wpfHexView.Caret.MoveTo(mouseLoc.HexViewLine, mouseLoc.Point.X, HexMoveToFlags.CaptureHorizontalPosition);
@@ -72,7 +72,7 @@ namespace dnSpy.Hex.Editor {
 		void SelectToMousePosition(HexMouseLocation mouseLoc, bool extendSelection) =>
 			editorOperations.MoveCaret(mouseLoc.HexViewLine, mouseLoc.Point.X, extendSelection, hexMoveToFlags);
 
-		public override void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
+		public override void OnMouseLeftButtonDown(object? sender, MouseButtonEventArgs e) {
 			e.Handled = true;
 			var mouseLoc = GetLocation(e);
 			bool isOffsetColumn = mouseLoc.HexViewLine.BufferLine.GetLinePositionInfo(mouseLoc.Position).IsOffset;
@@ -122,7 +122,7 @@ namespace dnSpy.Hex.Editor {
 			public bool TryUpdateBufferLines(HexBufferLineFormatter bufferLines) => BufferLines == bufferLines;
 		}
 
-		public override void OnMouseLeftButtonUp(object sender, MouseButtonEventArgs e) {
+		public override void OnMouseLeftButtonUp(object? sender, MouseButtonEventArgs e) {
 			bool oldMouseCaptured = mouseCaptured;
 			CancelMouseLeftButtonSelection();
 			if (oldMouseCaptured) {
@@ -158,7 +158,7 @@ namespace dnSpy.Hex.Editor {
 			}
 		}
 
-		public override void OnMouseMove(object sender, MouseEventArgs e) {
+		public override void OnMouseMove(object? sender, MouseEventArgs e) {
 			if (e.LeftButton == MouseButtonState.Pressed) {
 				if (!(mouseLeftDownInfo is null) && !mouseLeftDownInfo.Value.TryUpdateBufferLines(wpfHexView.BufferLines)) {
 					CancelMouseLeftButtonSelection();

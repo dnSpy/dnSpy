@@ -27,6 +27,6 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			Loaded += ParamDefControl_Loaded;
 		}
 
-		void ParamDefControl_Loaded(object sender, RoutedEventArgs e) => nameTextBox.Focus();
+		void ParamDefControl_Loaded(object? sender, RoutedEventArgs e) => nameTextBox.Focus();
 	}
 }

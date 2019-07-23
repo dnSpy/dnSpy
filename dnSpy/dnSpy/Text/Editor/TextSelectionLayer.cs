@@ -75,7 +75,7 @@ namespace dnSpy.Text.Editor {
 			return ResourceDictionaryUtilities.GetBackgroundBrush(props, IsActive ? SystemColors.HighlightBrush : SystemColors.GrayTextBrush);
 		}
 
-		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
+		void Options_OptionChanged(object? sender, EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultTextViewHostOptions.IsInContrastModeName)
 				UpdateIsInContrastModeOption();
 		}
@@ -87,14 +87,14 @@ namespace dnSpy.Text.Editor {
 				layer.Opacity = newValue;
 		}
 
-		void EditorFormatMap_FormatMappingChanged(object sender, FormatItemsEventArgs e) {
+		void EditorFormatMap_FormatMappingChanged(object? sender, FormatItemsEventArgs e) {
 			if ((IsActive && e.ChangedItems.Contains(ThemeClassificationTypeNameKeys.SelectedText)) ||
 				(!IsActive && e.ChangedItems.Contains(ThemeClassificationTypeNameKeys.InactiveSelectedText))) {
 				UpdateBackgroundBrush();
 			}
 		}
 
-		void TextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) {
+		void TextView_LayoutChanged(object? sender, TextViewLayoutChangedEventArgs e) {
 			if (e.OldSnapshot != e.NewSnapshot)
 				SetNewSelection();
 			else if (e.NewOrReformattedLines.Count > 0 || e.TranslatedLines.Count > 0 || e.VerticalTranslation)
@@ -185,7 +185,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public void OnModeUpdated() => SetNewSelection();
-		void TextSelection_SelectionChanged(object sender, EventArgs e) => SetNewSelection();
+		void TextSelection_SelectionChanged(object? sender, EventArgs e) => SetNewSelection();
 
 		sealed class MarkerElement : UIElement {
 			readonly Geometry geometry;

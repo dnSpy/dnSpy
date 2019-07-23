@@ -398,7 +398,7 @@ namespace dnSpy.Debugger.Impl {
 			}
 		}
 
-		void DbgRuntime_ThreadsChanged(object sender, DbgCollectionChangedEventArgs<DbgThread> e) {
+		void DbgRuntime_ThreadsChanged(object? sender, DbgCollectionChangedEventArgs<DbgThread> e) {
 			lock (lockObj) {
 				if (e.Added)
 					threads.AddRange(e.Objects);

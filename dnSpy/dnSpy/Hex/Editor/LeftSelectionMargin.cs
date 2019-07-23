@@ -63,7 +63,7 @@ namespace dnSpy.Hex.Editor {
 			VisualElement.MouseMove += VisualElement_MouseMove;
 		}
 
-		void HexView_ZoomLevelChanged(object sender, VSTE.ZoomLevelChangedEventArgs e) => VisualElement.LayoutTransform = e.ZoomTransform;
+		void HexView_ZoomLevelChanged(object? sender, VSTE.ZoomLevelChangedEventArgs e) => VisualElement.LayoutTransform = e.ZoomTransform;
 
 		protected override void DisposeCore() {
 			wpfHexViewHost.HexView.ZoomLevelChanged -= HexView_ZoomLevelChanged;
@@ -73,7 +73,7 @@ namespace dnSpy.Hex.Editor {
 			base.DisposeCore();
 		}
 
-		void VisualElement_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
+		void VisualElement_MouseLeftButtonDown(object? sender, MouseButtonEventArgs e) {
 			if (VisualElement.CaptureMouse()) {
 				var line = HexMouseLocation.Create(wpfHexViewHost.HexView, e, insertionPosition: false).HexViewLine;
 				editorOperations.SelectLine(line, (Keyboard.Modifiers & ModifierKeys.Shift) != 0);
@@ -84,7 +84,7 @@ namespace dnSpy.Hex.Editor {
 		}
 		bool mouseCaptured;
 
-		void VisualElement_MouseMove(object sender, MouseEventArgs e) {
+		void VisualElement_MouseMove(object? sender, MouseEventArgs e) {
 			if (mouseCaptured) {
 				var mouseLoc = HexMouseLocation.Create(wpfHexViewHost.HexView, e, insertionPosition: false);
 				var line = mouseLoc.HexViewLine;
@@ -102,7 +102,7 @@ namespace dnSpy.Hex.Editor {
 			}
 		}
 
-		void VisualElement_MouseLeftButtonUp(object sender, MouseButtonEventArgs e) {
+		void VisualElement_MouseLeftButtonUp(object? sender, MouseButtonEventArgs e) {
 			if (mouseCaptured) {
 				mouseCaptured = false;
 				VisualElement.ReleaseMouseCapture();

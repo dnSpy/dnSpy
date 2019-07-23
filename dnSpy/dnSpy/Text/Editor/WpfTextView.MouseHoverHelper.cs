@@ -48,7 +48,7 @@ namespace dnSpy.Text.Editor {
 				owner.IsVisibleChanged += WpfTextView_IsVisibleChanged;
 			}
 
-			void WpfTextView_MouseMove(object sender, MouseEventArgs e) {
+			void WpfTextView_MouseMove(object? sender, MouseEventArgs e) {
 				if (owner.IsClosed || owner.IsMouseOverOverlayLayerElement(e)) {
 					ClearMouseHoverPositionAndStopTimer();
 					return;
@@ -83,17 +83,17 @@ namespace dnSpy.Text.Editor {
 				}
 			}
 
-			void WpfTextView_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
+			void WpfTextView_IsVisibleChanged(object? sender, DependencyPropertyChangedEventArgs e) {
 				if (owner.IsClosed || !owner.IsVisible)
 					ClearMouseHoverPositionAndStopTimer();
 				else
 					UpdateTimer();
 			}
 
-			void WpfTextView_MouseDown(object sender, MouseButtonEventArgs e) => StopTimer();
-			void WpfTextView_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) => StopTimer();
-			void WpfTextView_MouseRightButtonDown(object sender, MouseButtonEventArgs e) => StopTimer();
-			void WpfTextView_MouseLeave(object sender, MouseEventArgs e) => ClearMouseHoverPositionAndStopTimer();
+			void WpfTextView_MouseDown(object? sender, MouseButtonEventArgs e) => StopTimer();
+			void WpfTextView_MouseLeftButtonDown(object? sender, MouseButtonEventArgs e) => StopTimer();
+			void WpfTextView_MouseRightButtonDown(object? sender, MouseButtonEventArgs e) => StopTimer();
+			void WpfTextView_MouseLeave(object? sender, MouseEventArgs e) => ClearMouseHoverPositionAndStopTimer();
 
 			public event EventHandler<MouseHoverEventArgs> MouseHover {
 				add {
@@ -129,7 +129,7 @@ namespace dnSpy.Text.Editor {
 			}
 			Stopwatch? timerStart;
 
-			void Timer_Tick(object sender, EventArgs e) {
+			void Timer_Tick(object? sender, EventArgs e) {
 				if (owner.IsClosed || !owner.IsVisible || position is null || position.Value > owner.TextSnapshot.Length) {
 					ClearMouseHoverPositionAndStopTimer();
 					return;

@@ -56,7 +56,7 @@ namespace dnSpy.Output {
 			PropertyChanged += OutputServiceSettingsImpl_PropertyChanged;
 		}
 
-		void OutputServiceSettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void OutputServiceSettingsImpl_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(SelectedGuid), SelectedGuid);
 		}

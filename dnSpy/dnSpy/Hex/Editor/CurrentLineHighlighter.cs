@@ -84,7 +84,7 @@ namespace dnSpy.Hex.Editor {
 			UpdateEnableState();
 		}
 
-		void Options_OptionChanged(object sender, VSTE.EditorOptionChangedEventArgs e) {
+		void Options_OptionChanged(object? sender, VSTE.EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultWpfHexViewOptions.EnableHighlightCurrentLineName)
 				UpdateEnableState();
 		}
@@ -152,10 +152,10 @@ namespace dnSpy.Hex.Editor {
 				adornmentLayer.RemoveAllAdornments();
 		}
 
-		void WpfHexView_LayoutChanged(object sender, HexViewLayoutChangedEventArgs e) => PositionLineElement();
-		void Caret_PositionChanged(object sender, HexCaretPositionChangedEventArgs e) => PositionLineElement();
+		void WpfHexView_LayoutChanged(object? sender, HexViewLayoutChangedEventArgs e) => PositionLineElement();
+		void Caret_PositionChanged(object? sender, HexCaretPositionChangedEventArgs e) => PositionLineElement();
 
-		void Selection_SelectionChanged(object sender, EventArgs e) {
+		void Selection_SelectionChanged(object? sender, EventArgs e) {
 			bool newSelectionIsEmpty = wpfHexView.Selection.IsEmpty;
 			if (selectionIsEmpty == newSelectionIsEmpty)
 				return;
@@ -163,8 +163,8 @@ namespace dnSpy.Hex.Editor {
 			PositionLineElement();
 		}
 
-		void WpfHexView_GotAggregateFocus(object sender, EventArgs e) => UpdateFocus();
-		void WpfHexView_LostAggregateFocus(object sender, EventArgs e) => UpdateFocus();
+		void WpfHexView_GotAggregateFocus(object? sender, EventArgs e) => UpdateFocus();
+		void WpfHexView_LostAggregateFocus(object? sender, EventArgs e) => UpdateFocus();
 
 		void UpdateFocus() {
 			bool newIsActive = wpfHexView.HasAggregateFocus;
@@ -180,14 +180,14 @@ namespace dnSpy.Hex.Editor {
 			currentLineHighlighterElement.BackgroundBrush = TE.ResourceDictionaryUtilities.GetBackgroundBrush(props);
 		}
 
-		void EditorFormatMap_FormatMappingChanged(object sender, VSTC.FormatItemsEventArgs e) {
+		void EditorFormatMap_FormatMappingChanged(object? sender, VSTC.FormatItemsEventArgs e) {
 			if ((isActive && e.ChangedItems.Contains(CTC.ThemeClassificationTypeNameKeys.HexCurrentLine)) ||
 				(!isActive && e.ChangedItems.Contains(CTC.ThemeClassificationTypeNameKeys.HexCurrentLineNoFocus))) {
 				UpdateLineElementBrushes();
 			}
 		}
 
-		void WpfHexView_Closed(object sender, EventArgs e) {
+		void WpfHexView_Closed(object? sender, EventArgs e) {
 			wpfHexView.Closed -= WpfHexView_Closed;
 			wpfHexView.Options.OptionChanged -= Options_OptionChanged;
 			UnregisterEnabledEvents();

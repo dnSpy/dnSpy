@@ -68,15 +68,15 @@ namespace dnSpy.Settings.Fonts {
 		}
 		readonly bool canSerialize;
 
-		void FontSetting_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void FontSetting_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			if (!canSerialize)
 				return;
-			var fontSettings = (FontSettings)sender;
+			var fontSettings = (FontSettings)sender!;
 			if (e.PropertyName == nameof(fontSettings.FontFamily) || e.PropertyName == nameof(fontSettings.FontSize))
 				themeFontSettingsSerializer.Serialize(fontSettings);
 		}
 
-		void ThemeService_ThemeChangedHighPriority(object sender, ThemeChangedEventArgs e) {
+		void ThemeService_ThemeChangedHighPriority(object? sender, ThemeChangedEventArgs e) {
 			foreach (var settings in toSettings.Values.ToArray())
 				settings.SetActive(themeService.Theme.Guid);
 		}
@@ -102,7 +102,7 @@ namespace dnSpy.Settings.Fonts {
 			return settings;
 		}
 
-		void Settings_FontSettingsCreated(object sender, FontSettingsCreatedEventArgs e) =>
+		void Settings_FontSettingsCreated(object? sender, FontSettingsCreatedEventArgs e) =>
 			e.FontSettings.PropertyChanged += FontSetting_PropertyChanged;
 
 		DefaultFontInfo TextEditorDefaultFontInfo {

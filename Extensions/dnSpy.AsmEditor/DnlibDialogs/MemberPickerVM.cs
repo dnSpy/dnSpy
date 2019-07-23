@@ -294,7 +294,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		IDocumentSearcher? fileSearcher;
 		bool searchCompleted;
 
-		void FileSearcher_OnSearchCompleted(object sender, EventArgs e) {
+		void FileSearcher_OnSearchCompleted(object? sender, EventArgs e) {
 			if (sender is null || sender != fileSearcher || searchCompleted)
 				return;
 			searchCompleted = true;
@@ -302,7 +302,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			TooManyResults = fileSearcher.TooManyResults;
 		}
 
-		void FileSearcher_OnNewSearchResults(object sender, SearchResultEventArgs e) {
+		void FileSearcher_OnNewSearchResults(object? sender, SearchResultEventArgs e) {
 			if (sender is null || sender != fileSearcher)
 				return;
 			Debug.Assert(!searchCompleted);

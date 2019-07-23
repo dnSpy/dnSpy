@@ -235,7 +235,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 		}
 
-		void coll_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
+		void coll_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
 			if (!(e.NewItems is null))
 				InitializeInstructions(e.NewItems);
 		}

@@ -73,7 +73,7 @@ namespace dnSpy.Hex.Editor {
 			HexView.BufferLinesChanged += HexView_BufferLinesChanged;
 		}
 
-		void HexView_BufferLinesChanged(object sender, BufferLinesChangedEventArgs e) {
+		void HexView_BufferLinesChanged(object? sender, BufferLinesChangedEventArgs e) {
 			var newActivePoint = Filter(activePoint);
 			var newAnchorPoint = Filter(anchorPoint);
 			if (newActivePoint != activePoint || newAnchorPoint != anchorPoint)
@@ -88,12 +88,12 @@ namespace dnSpy.Hex.Editor {
 			return position;
 		}
 
-		void HexView_GotAggregateFocus(object sender, EventArgs e) {
+		void HexView_GotAggregateFocus(object? sender, EventArgs e) {
 			if (ActivationTracksFocus)
 				IsActive = true;
 		}
 
-		void HexView_LostAggregateFocus(object sender, EventArgs e) {
+		void HexView_LostAggregateFocus(object? sender, EventArgs e) {
 			if (ActivationTracksFocus)
 				IsActive = false;
 		}

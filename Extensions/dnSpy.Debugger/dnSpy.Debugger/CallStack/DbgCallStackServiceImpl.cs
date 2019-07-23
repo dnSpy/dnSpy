@@ -95,12 +95,12 @@ namespace dnSpy.Debugger.CallStack {
 			FramesChanged?.Invoke(this, new FramesChangedEventArgs(framesChanged: false, activeFrameIndexChanged: true));
 		}
 
-		void DbgManager_MessageSetIPComplete(object sender, DbgMessageSetIPCompleteEventArgs e) {
+		void DbgManager_MessageSetIPComplete(object? sender, DbgMessageSetIPCompleteEventArgs e) {
 			if (e.FramesInvalidated && dbgManager!.CurrentThread.Current == e.Thread)
 				RefreshAllFrames_DbgThread();
 		}
 
-		void DbgManager_CurrentThreadChanged(object sender, DbgCurrentObjectChangedEventArgs<DbgThread> e) {
+		void DbgManager_CurrentThreadChanged(object? sender, DbgCurrentObjectChangedEventArgs<DbgThread> e) {
 			if (e.CurrentChanged)
 				RefreshAllFrames_DbgThread();
 		}
@@ -121,7 +121,7 @@ namespace dnSpy.Debugger.CallStack {
 				process.IsRunningChanged += DbgProcess_IsRunningChanged;
 		}
 
-		void DbgProcess_IsRunningChanged(object sender, EventArgs e) {
+		void DbgProcess_IsRunningChanged(object? sender, EventArgs e) {
 			if (currentThreadProcess != sender)
 				return;
 			Debug.Assert(!(currentThreadProcess is null));

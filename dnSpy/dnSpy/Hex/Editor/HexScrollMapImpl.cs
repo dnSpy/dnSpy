@@ -40,13 +40,13 @@ namespace dnSpy.Hex.Editor {
 			HexView.Closed += HexView_Closed;
 		}
 
-		void HexView_LayoutChanged(object sender, HexViewLayoutChangedEventArgs e) {
+		void HexView_LayoutChanged(object? sender, HexViewLayoutChangedEventArgs e) {
 			if (e.OldViewState.ViewportHeight != e.NewViewState.ViewportHeight)
 				UpdateCachedState();
 		}
 
-		void HexView_Closed(object sender, EventArgs e) => Dispose();
-		void HexView_BufferLinesChanged(object sender, BufferLinesChangedEventArgs e) => UpdateCachedState();
+		void HexView_Closed(object? sender, EventArgs e) => Dispose();
+		void HexView_BufferLinesChanged(object? sender, BufferLinesChangedEventArgs e) => UpdateCachedState();
 
 		void UpdateCachedState() {
 			var lineCount = HexView.BufferLines.LineCount;

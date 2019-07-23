@@ -66,7 +66,7 @@ namespace dnSpy.Hex.Editor {
 			mouseProcessorCollection = new HexMouseProcessorCollection(wpfHexView.VisualElement, manipulationElem, new DefaultHexViewMouseProcessor(wpfHexView, editorOperationsFactoryService), list.ToArray(), allowEventDelegate);
 		}
 
-		void WpfHexView_Closed(object sender, EventArgs e) {
+		void WpfHexView_Closed(object? sender, EventArgs e) {
 			wpfHexView.Closed -= WpfHexView_Closed;
 			mouseProcessorCollection?.Dispose();
 		}

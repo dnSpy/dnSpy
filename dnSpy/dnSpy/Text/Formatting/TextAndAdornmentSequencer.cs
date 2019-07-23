@@ -44,7 +44,7 @@ namespace dnSpy.Text.Formatting {
 
 		public event EventHandler<TextAndAdornmentSequenceChangedEventArgs> SequenceChanged;
 
-		void TagAggregator_TagsChanged(object sender, TagsChangedEventArgs e) =>
+		void TagAggregator_TagsChanged(object? sender, TagsChangedEventArgs e) =>
 			SequenceChanged?.Invoke(this, new TextAndAdornmentSequenceChangedEventArgs(e.Span));
 
 		public ITextAndAdornmentCollection CreateTextAndAdornmentCollection(ITextSnapshotLine topLine, ITextSnapshot sourceTextSnapshot) {
@@ -167,7 +167,7 @@ namespace dnSpy.Text.Formatting {
 			public AdornmentElement(IMappingTagSpan<SpaceNegotiatingAdornmentTag> tagSpan) => this.tagSpan = tagSpan ?? throw new ArgumentNullException(nameof(tagSpan));
 		}
 
-		void TextView_Closed(object sender, EventArgs e) {
+		void TextView_Closed(object? sender, EventArgs e) {
 			Debug.Assert(textView.Properties.ContainsProperty(typeof(ITextAndAdornmentSequencer)));
 			textView.Properties.RemoveProperty(typeof(ITextAndAdornmentSequencer));
 			textView.Closed -= TextView_Closed;

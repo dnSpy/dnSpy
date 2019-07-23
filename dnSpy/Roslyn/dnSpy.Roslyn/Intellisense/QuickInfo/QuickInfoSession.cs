@@ -90,8 +90,8 @@ namespace dnSpy.Roslyn.Intellisense.QuickInfo {
 			return null;
 		}
 
-		void Session_Dismissed(object sender, EventArgs e) {
-			var session = (IQuickInfoSession)sender;
+		void Session_Dismissed(object? sender, EventArgs e) {
+			var session = (IQuickInfoSession)sender!;
 			session.Dismissed -= Session_Dismissed;
 			session.Properties.RemoveProperty(thisInstanceKey);
 			Dispose();

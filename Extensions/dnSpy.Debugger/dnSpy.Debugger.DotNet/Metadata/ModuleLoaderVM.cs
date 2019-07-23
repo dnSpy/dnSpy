@@ -64,7 +64,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				dbgDynamicModuleProvider.BeginInvoke(LoadFiles_EngineThread);
 		}
 
-		void DbgRuntime_Closed(object sender, EventArgs e) => Cancel();
+		void DbgRuntime_Closed(object? sender, EventArgs e) => Cancel();
 
 		public bool CanCancel => cancelling == 0;
 		volatile int cancelling;

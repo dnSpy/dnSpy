@@ -60,14 +60,14 @@ namespace dnSpy.Controls {
 
 		public WinSysButton() => Loaded += WinSysButton_Loaded;
 
-		void WinSysButton_Loaded(object sender, RoutedEventArgs e) {
+		void WinSysButton_Loaded(object? sender, RoutedEventArgs e) {
 			Loaded -= WinSysButton_Loaded;
 			window = Window.GetWindow(this);
 			if (!(window is null)) // null if in design mode
 				window.StateChanged += window_StateChanged;
 		}
 
-		void window_StateChanged(object sender, EventArgs e) => OnWinSysTypeChanged(WinSysType);
+		void window_StateChanged(object? sender, EventArgs e) => OnWinSysTypeChanged(WinSysType);
 		static void OnWinSysTypeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) =>
 			((WinSysButton)d).OnWinSysTypeChanged((WinSysType)e.NewValue);
 

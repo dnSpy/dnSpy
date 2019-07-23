@@ -49,7 +49,7 @@ namespace dnSpy.Controls {
 			MetroWindow.MetroWindowCreated += MetroWindow_MetroWindowCreated;
 		}
 
-		void MetroWindow_MetroWindowCreated(object sender, MetroWindowCreatedEventArgs e) {
+		void MetroWindow_MetroWindowCreated(object? sender, MetroWindowCreatedEventArgs e) {
 			e.MetroWindow.WindowDpiChanged += MetroWindow_WindowDpiChanged;
 			e.MetroWindow.Closed += MetroWindow_Closed;
 			UpdateMainWindowDpi(e.MetroWindow);
@@ -60,14 +60,14 @@ namespace dnSpy.Controls {
 				MainWindowDpi = window.WindowDpi;
 		}
 
-		void MetroWindow_WindowDpiChanged(object sender, EventArgs e) {
-			var window = (MetroWindow)sender;
+		void MetroWindow_WindowDpiChanged(object? sender, EventArgs e) {
+			var window = (MetroWindow)sender!;
 			UpdateMainWindowDpi(window);
 			DpiChanged?.Invoke(this, new WindowDpiChangedEventArgs(window));
 		}
 
-		void MetroWindow_Closed(object sender, EventArgs e) {
-			var window = (MetroWindow)sender;
+		void MetroWindow_Closed(object? sender, EventArgs e) {
+			var window = (MetroWindow)sender!;
 			window.WindowDpiChanged -= MetroWindow_WindowDpiChanged;
 			window.Closed -= MetroWindow_Closed;
 		}

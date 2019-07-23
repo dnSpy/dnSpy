@@ -52,7 +52,7 @@ namespace dnSpy.MainApp {
 			PropertyChanged += AppSettingsImpl_PropertyChanged;
 		}
 
-		void AppSettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void AppSettingsImpl_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(AllowMoreThanOneInstance), AllowMoreThanOneInstance);
 		}

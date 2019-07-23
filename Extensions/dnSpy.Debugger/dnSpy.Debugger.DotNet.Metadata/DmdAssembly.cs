@@ -124,7 +124,8 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public DmdType? GetType(Type type, DmdGetTypeOptions options) {
 			if (type is null)
 				throw new ArgumentNullException(nameof(type));
-			return GetType(type.FullName, options);
+			var fullname = type.FullName ?? throw new ArgumentException();
+			return GetType(fullname, options);
 		}
 
 		/// <summary>

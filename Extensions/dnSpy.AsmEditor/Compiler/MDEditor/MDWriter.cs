@@ -68,10 +68,10 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 			public uint SizeOfRawData { get; set; }
 
 			public PESection(string name, uint characteristics) {
-				var bytes = Encoding.ASCII.GetBytes(name);
+				byte[]? bytes = Encoding.ASCII.GetBytes(name);
 				if (bytes.Length != 8)
 					Array.Resize(ref bytes, 8);
-				Name = bytes;
+				Name = bytes!;
 				Characteristics = characteristics;
 				SectionData = new List<PESectionData>();
 			}

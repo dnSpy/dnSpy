@@ -210,7 +210,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			}
 		}
 
-		void DnDebugger_OnThreadAdded(object sender, ThreadDebuggerEventArgs e) {
+		void DnDebugger_OnThreadAdded(object? sender, ThreadDebuggerEventArgs e) {
 			Debug.Assert(!(objectFactory is null));
 			if (e.Added) {
 				bool isMainThread = IsMainThread(e.Thread);

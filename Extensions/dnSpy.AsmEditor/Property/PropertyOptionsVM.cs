@@ -128,13 +128,13 @@ namespace dnSpy.AsmEditor.Property {
 			Reinitialize();
 		}
 
-		void constantVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void constantVM_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == nameof(ConstantVM.IsEnabled))
 				HasDefault = ConstantVM.IsEnabled;
 			HasErrorUpdated();
 		}
 
-		void methodSigCreator_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void methodSigCreator_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			HasErrorUpdated();
 			OnPropertyChanged(nameof(PropertySigHeader));
 		}

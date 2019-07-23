@@ -243,7 +243,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				owner.TextView.ViewportHeightChanged += TextView_ViewportHeightChanged;
 			}
 
-			void TextView_ViewportHeightChanged(object sender, EventArgs e) {
+			void TextView_ViewportHeightChanged(object? sender, EventArgs e) {
 				Debug.Assert(owner.TextView.ViewportHeight != 0);
 				owner.TextView.ViewportHeightChanged -= TextView_ViewportHeightChanged;
 				owner.GoToCore(spanData, newTab, followLocalRefs, canRecordHistory, canFollowReference, options);

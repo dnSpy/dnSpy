@@ -32,7 +32,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			Loaded += MethodBodyControl_Loaded;
 		}
 
-		void MethodBodyControl_Loaded(object sender, RoutedEventArgs e) {
+		void MethodBodyControl_Loaded(object? sender, RoutedEventArgs e) {
 			Loaded -= MethodBodyControl_Loaded;
 			SetFocusToControl();
 		}
@@ -48,7 +48,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				rvaTextBox.Focus();
 		}
 
-		void MethodBodyControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e) {
+		void MethodBodyControl_DataContextChanged(object? sender, DependencyPropertyChangedEventArgs e) {
 			var data = DataContext as MethodBodyVM;
 			if (data is null)
 				return;

@@ -237,7 +237,7 @@ namespace dnSpy_Console {
 			if (!(asm is null)) {
 				foreach (var type in asm.GetTypes()) {
 					if (!type.IsAbstract && !type.IsInterface && typeof(IDecompilerProvider).IsAssignableFrom(type)) {
-						var p = (IDecompilerProvider)Activator.CreateInstance(type);
+						var p = (IDecompilerProvider)Activator.CreateInstance(type)!;
 						foreach (var l in p.Create())
 							yield return l;
 					}
@@ -259,7 +259,7 @@ namespace dnSpy_Console {
 		static T TryCreateType<T>(string asmName, string typeFullName) {
 			var asm = TryLoad(asmName);
 			var type = asm?.GetType(typeFullName);
-			return type is null ? default! : (T)Activator.CreateInstance(type);
+			return type is null ? default! : (T)Activator.CreateInstance(type)!;
 		}
 
 		public int Run(string[] args) {

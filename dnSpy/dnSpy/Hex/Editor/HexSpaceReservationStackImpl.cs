@@ -85,8 +85,8 @@ namespace dnSpy.Hex.Editor {
 			return mgr;
 		}
 
-		void HexSpaceReservationManager_GotAggregateFocus(object sender, EventArgs e) => UpdateAggregateFocus();
-		void HexSpaceReservationManager_LostAggregateFocus(object sender, EventArgs e) => UpdateAggregateFocus();
+		void HexSpaceReservationManager_GotAggregateFocus(object? sender, EventArgs e) => UpdateAggregateFocus();
+		void HexSpaceReservationManager_LostAggregateFocus(object? sender, EventArgs e) => UpdateAggregateFocus();
 
 		void UpdateAggregateFocus() {
 			if (wpfHexView.IsClosed)
@@ -120,7 +120,7 @@ namespace dnSpy.Hex.Editor {
 			}
 		}
 
-		void WpfHexView_Closed(object sender, EventArgs e) {
+		void WpfHexView_Closed(object? sender, EventArgs e) {
 			wpfHexView.Closed -= WpfHexView_Closed;
 			for (int i = 0; i < spaceReservationManagers.Length; i++) {
 				var mgr = spaceReservationManagers[i];

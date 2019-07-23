@@ -61,7 +61,7 @@ namespace dnSpy.Text.Editor {
 			Background = Brushes.Transparent;
 		}
 
-		void TextView_ZoomLevelChanged(object sender, ZoomLevelChangedEventArgs e) => LayoutTransform = e.ZoomTransform;
+		void TextView_ZoomLevelChanged(object? sender, ZoomLevelChangedEventArgs e) => LayoutTransform = e.ZoomTransform;
 		protected override void DisposeInternal() => wpfTextViewHost.TextView.ZoomLevelChanged -= TextView_ZoomLevelChanged;
 
 		protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e) {

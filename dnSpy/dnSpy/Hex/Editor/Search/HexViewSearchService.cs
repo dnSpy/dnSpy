@@ -467,13 +467,13 @@ namespace dnSpy.Hex.Editor.Search {
 			textBox.GotKeyboardFocus += (s, e) => textBox.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => textBox.SelectAll()));
 
 		public bool HasSearchControlFocus => !(searchControl is null) && searchControl.IsKeyboardFocusWithin;
-		void SearchControl_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) => OnPropertyChanged(nameof(HasSearchControlFocus));
-		void SearchControl_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
+		void SearchControl_LostKeyboardFocus(object? sender, KeyboardFocusChangedEventArgs e) => OnPropertyChanged(nameof(HasSearchControlFocus));
+		void SearchControl_GotKeyboardFocus(object? sender, KeyboardFocusChangedEventArgs e) {
 			CloseSearchControlIfIncrementalSearch();
 			OnPropertyChanged(nameof(HasSearchControlFocus));
 		}
 
-		void SearchControl_MouseDown(object sender, MouseButtonEventArgs e) => CloseSearchControlIfIncrementalSearch();
+		void SearchControl_MouseDown(object? sender, MouseButtonEventArgs e) => CloseSearchControlIfIncrementalSearch();
 		void CloseSearchControlIfIncrementalSearch() {
 			if (wpfHexView.IsClosed)
 				return;
@@ -519,7 +519,7 @@ namespace dnSpy.Hex.Editor.Search {
 			incrementalStartPosition = null;
 		}
 
-		void Caret_PositionChanged(object sender, HexCaretPositionChangedEventArgs e) {
+		void Caret_PositionChanged(object? sender, HexCaretPositionChangedEventArgs e) {
 			if (!isIncrementalSearchCaretMove)
 				CancelIncrementalSearch();
 		}
@@ -584,7 +584,7 @@ namespace dnSpy.Hex.Editor.Search {
 			}
 		}
 
-		void SearchControl_SizeChanged(object sender, SizeChangedEventArgs e) =>
+		void SearchControl_SizeChanged(object? sender, SizeChangedEventArgs e) =>
 			PositionSearchControl(searchControlPosition);
 
 		sealed class PositionInfo {
@@ -1241,7 +1241,7 @@ namespace dnSpy.Hex.Editor.Search {
 				listener.RaiseTagsChanged(span);
 		}
 
-		void WpfHexView_LayoutChanged(object sender, HexViewLayoutChangedEventArgs e) {
+		void WpfHexView_LayoutChanged(object? sender, HexViewLayoutChangedEventArgs e) {
 			Debug.Assert(IsSearchControlVisible);
 			if (!IsSearchControlVisible)
 				return;
@@ -1253,15 +1253,15 @@ namespace dnSpy.Hex.Editor.Search {
 				CancelIncrementalSearchAndUpdateMarkers();
 		}
 
-		void WpfHexView_BufferLinesChanged(object sender, BufferLinesChangedEventArgs e) => CancelIncrementalSearchAndUpdateMarkers();
-		void Buffer_BufferSpanInvalidated(object sender, HexBufferSpanInvalidatedEventArgs e) => CancelIncrementalSearchAndUpdateMarkers();
+		void WpfHexView_BufferLinesChanged(object? sender, BufferLinesChangedEventArgs e) => CancelIncrementalSearchAndUpdateMarkers();
+		void Buffer_BufferSpanInvalidated(object? sender, HexBufferSpanInvalidatedEventArgs e) => CancelIncrementalSearchAndUpdateMarkers();
 
 		void CancelIncrementalSearchAndUpdateMarkers() {
 			CancelIncrementalSearch();
 			UpdateHexMarkerSearch();
 		}
 
-		void WpfHexView_Closed(object sender, EventArgs e) {
+		void WpfHexView_Closed(object? sender, EventArgs e) {
 			CloseSearchControl();
 			CancelAllAsyncSearches();
 			wpfHexView.Closed -= WpfHexView_Closed;

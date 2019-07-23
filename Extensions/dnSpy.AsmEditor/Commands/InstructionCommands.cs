@@ -55,9 +55,9 @@ namespace dnSpy.AsmEditor.Commands {
 			cmds.Add(CopyILBytesCommand, CopyILBytesExecuted, CopyILBytesCanExecute, ModifierKeys.Control, Key.B);
 		}
 
-		void CopyILBytesCanExecute(object sender, CanExecuteRoutedEventArgs e) =>
+		void CopyILBytesCanExecute(object? sender, CanExecuteRoutedEventArgs e) =>
 			e.CanExecute = CopyILBytesCodeCommand.CanExecute(documentTabService.ActiveTab.TryGetDocumentViewer());
-		void CopyILBytesExecuted(object sender, ExecutedRoutedEventArgs e) =>
+		void CopyILBytesExecuted(object? sender, ExecutedRoutedEventArgs e) =>
 			CopyILBytesCodeCommand.Execute(documentTabService.ActiveTab.TryGetDocumentViewer(), methodAnnotations);
 	}
 

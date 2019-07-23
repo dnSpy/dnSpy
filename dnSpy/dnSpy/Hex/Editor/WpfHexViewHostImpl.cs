@@ -78,7 +78,7 @@ namespace dnSpy.Hex.Editor {
 			}
 		}
 
-		void ThemeService_ThemeChanged(object sender, ThemeChangedEventArgs e) => UpdateIsInContrastMode();
+		void ThemeService_ThemeChanged(object? sender, ThemeChangedEventArgs e) => UpdateIsInContrastMode();
 
 		void UpdateIsInContrastMode() =>
 			HexView.Options.GlobalOptions.SetOptionValue(DefaultHexViewHostOptions.IsInContrastModeId, themeService.Theme.IsHighContrast);
@@ -90,7 +90,7 @@ namespace dnSpy.Hex.Editor {
 			return margin;
 		}
 
-		void Margin_VisualElement_MouseDown(object sender, MouseButtonEventArgs e) {
+		void Margin_VisualElement_MouseDown(object? sender, MouseButtonEventArgs e) {
 			if (!contentControl.IsKeyboardFocusWithin)
 				HexView.VisualElement.Focus();
 		}
@@ -105,7 +105,7 @@ namespace dnSpy.Hex.Editor {
 				Grid.SetColumnSpan(elem, columnSpan);
 		}
 
-		void HexView_BackgroundBrushChanged(object sender, VSTE.BackgroundBrushChangedEventArgs e) => UpdateBackground();
+		void HexView_BackgroundBrushChanged(object? sender, VSTE.BackgroundBrushChangedEventArgs e) => UpdateBackground();
 		void UpdateBackground() => grid.Background = HexView.Background;
 
 		static Grid CreateGrid() {
@@ -152,7 +152,7 @@ namespace dnSpy.Hex.Editor {
 			return SystemParameters.WheelScrollLines;
 		}
 
-		void ContentControl_MouseWheel(object sender, MouseWheelEventArgs e) {
+		void ContentControl_MouseWheel(object? sender, MouseWheelEventArgs e) {
 			if (!IsClosed && !e.Handled) {
 				e.Handled = true;
 				if (e.Delta == 0)

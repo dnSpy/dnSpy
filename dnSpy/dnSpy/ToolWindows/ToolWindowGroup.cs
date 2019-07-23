@@ -48,7 +48,7 @@ namespace dnSpy.ToolWindows {
 			TabGroup.TabContentAttached += TabGroup_TabContentAttached;
 		}
 
-		void TabGroup_TabContentAttached(object sender, TabContentAttachedEventArgs e) {
+		void TabGroup_TabContentAttached(object? sender, TabContentAttachedEventArgs e) {
 			var impl = e.TabContent as TabContentImpl;
 			Debug.Assert(!(impl is null));
 			if (impl is null)

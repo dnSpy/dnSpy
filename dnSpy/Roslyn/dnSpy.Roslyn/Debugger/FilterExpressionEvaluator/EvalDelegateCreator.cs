@@ -260,8 +260,8 @@ namespace dnSpy.Roslyn.Debugger.FilterExpressionEvaluator {
 			}
 			throw new EvalDelegateCreatorException();
 		}
-		static readonly SR.MethodInfo SystemString_op_Equality = typeof(FilterExpressionMethods).GetMethod("StringEquals");
-		static readonly SR.MethodInfo SystemString_op_Inequality = typeof(FilterExpressionMethods).GetMethod("StringNotEquals");
+		static readonly SR.MethodInfo SystemString_op_Equality = typeof(FilterExpressionMethods).GetMethod(nameof(FilterExpressionMethods.StringEquals))!;
+		static readonly SR.MethodInfo SystemString_op_Inequality = typeof(FilterExpressionMethods).GetMethod(nameof(FilterExpressionMethods.StringNotEquals))!;
 
 		static bool IsBoolean_StringString(MethodSig sig) {
 			if (sig.RetType.ElementType != ElementType.Boolean)

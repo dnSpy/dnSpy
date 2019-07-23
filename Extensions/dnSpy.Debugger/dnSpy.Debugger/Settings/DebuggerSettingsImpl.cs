@@ -716,7 +716,7 @@ namespace dnSpy.Debugger.Settings {
 			PropertyChanged += DebuggerSettingsImpl_PropertyChanged;
 		}
 
-		void DebuggerSettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void DebuggerSettingsImpl_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(UseHexadecimal), UseHexadecimal);
 			sect.Attribute(nameof(SyntaxHighlight), SyntaxHighlight);

@@ -45,7 +45,7 @@ namespace dnSpy.Text.Classification {
 
 		protected void Initialize() => UpdateAppearanceMap();
 
-		protected void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
+		protected void Options_OptionChanged(object? sender, EditorOptionChangedEventArgs e) {
 			if (e.OptionId == appearanceCategoryName)
 				UpdateAppearanceMap();
 		}
@@ -64,7 +64,7 @@ namespace dnSpy.Text.Classification {
 			FormatMappingChanged?.Invoke(this, new FormatItemsEventArgs(new ReadOnlyCollection<string>(viewProps.ToArray())));
 		}
 
-		void CategoryMap_FormatMappingChanged(object sender, FormatItemsEventArgs e) =>
+		void CategoryMap_FormatMappingChanged(object? sender, FormatItemsEventArgs e) =>
 			FormatMappingChanged?.Invoke(this, e);
 
 		public void BeginBatchUpdate() => categoryMap.BeginBatchUpdate();

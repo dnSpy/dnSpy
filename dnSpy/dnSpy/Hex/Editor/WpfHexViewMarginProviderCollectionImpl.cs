@@ -114,7 +114,7 @@ namespace dnSpy.Hex.Editor {
 			return true;
 		}
 
-		void WpfHexViewHost_Closed(object sender, EventArgs e) => Dispose();
+		void WpfHexViewHost_Closed(object? sender, EventArgs e) => Dispose();
 
 		public override void Dispose() {
 			wpfHexViewHost.Closed -= WpfHexViewHost_Closed;

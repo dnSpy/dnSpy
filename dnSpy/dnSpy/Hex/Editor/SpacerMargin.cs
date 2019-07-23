@@ -75,7 +75,7 @@ namespace dnSpy.Hex.Editor {
 		public override HexViewMargin? GetHexViewMargin(string marginName) =>
 			StringComparer.OrdinalIgnoreCase.Equals(marginName, PredefinedHexMarginNames.Spacer) ? this : null;
 
-		void Options_OptionChanged(object sender, VSTE.EditorOptionChangedEventArgs e) {
+		void Options_OptionChanged(object? sender, VSTE.EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultHexViewHostOptions.SelectionMarginName)
 				UpdateVisibility();
 		}

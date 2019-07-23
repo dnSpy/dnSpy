@@ -97,7 +97,7 @@ namespace dnSpy.Debugger.Evaluation {
 			PropertyChanged += DbgEvalFormatterSettingsImpl_PropertyChanged;
 		}
 
-		void DbgEvalFormatterSettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void DbgEvalFormatterSettingsImpl_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(ShowNamespaces), ShowNamespaces);
 			sect.Attribute(nameof(ShowIntrinsicTypeKeywords), ShowIntrinsicTypeKeywords);

@@ -76,7 +76,7 @@ namespace dnSpy.Hex.Editor {
 			return TE.ResourceDictionaryUtilities.GetBackgroundBrush(props, IsActive ? SystemColors.HighlightBrush : SystemColors.GrayTextBrush);
 		}
 
-		void Options_OptionChanged(object sender, VSTE.EditorOptionChangedEventArgs e) {
+		void Options_OptionChanged(object? sender, VSTE.EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultHexViewHostOptions.IsInContrastModeName)
 				UpdateIsInContrastModeOption();
 		}
@@ -88,14 +88,14 @@ namespace dnSpy.Hex.Editor {
 				layer.Opacity = newValue;
 		}
 
-		void EditorFormatMap_FormatMappingChanged(object sender, VSTC.FormatItemsEventArgs e) {
+		void EditorFormatMap_FormatMappingChanged(object? sender, VSTC.FormatItemsEventArgs e) {
 			if ((IsActive && e.ChangedItems.Contains(CTC.ThemeClassificationTypeNameKeys.HexSelection)) ||
 				(!IsActive && e.ChangedItems.Contains(CTC.ThemeClassificationTypeNameKeys.HexInactiveSelectedText))) {
 				UpdateBackgroundBrush();
 			}
 		}
 
-		void HexView_LayoutChanged(object sender, HexViewLayoutChangedEventArgs e) {
+		void HexView_LayoutChanged(object? sender, HexViewLayoutChangedEventArgs e) {
 			if (e.NewOrReformattedLines.Count > 0 || e.TranslatedLines.Count > 0 || e.VerticalTranslation)
 				SetNewSelection();
 		}
@@ -136,7 +136,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		public void OnModeUpdated() => SetNewSelection();
-		void HexSelection_SelectionChanged(object sender, EventArgs e) => SetNewSelection();
+		void HexSelection_SelectionChanged(object? sender, EventArgs e) => SetNewSelection();
 
 		sealed class MarkerElement : UIElement {
 			readonly Geometry geometry;

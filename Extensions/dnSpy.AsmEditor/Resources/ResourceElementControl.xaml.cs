@@ -36,7 +36,7 @@ namespace dnSpy.AsmEditor.Resources {
 			Loaded += ResourceElementControl_Loaded;
 		}
 
-		void ResourceElementControl_Loaded(object sender, RoutedEventArgs e) {
+		void ResourceElementControl_Loaded(object? sender, RoutedEventArgs e) {
 			var vm = DataContext as ResourceElementVM;
 			Debug.Assert(!(vm is null));
 			if (!(vm is null) && !string.IsNullOrEmpty(vm.Name) && vm.IsSingleLineValue)

@@ -53,7 +53,7 @@ namespace dnSpy.Debugger.Evaluation {
 			runtime.CloseOnContinue(continueContext);
 		}
 
-		void DbgContinueContext_Closed(object sender, EventArgs e) {
+		void DbgContinueContext_Closed(object? sender, EventArgs e) {
 			continueContext.Closed -= DbgContinueContext_Closed;
 			if (!IsClosed && !Runtime.IsClosed) {
 				lock (lockObj) {

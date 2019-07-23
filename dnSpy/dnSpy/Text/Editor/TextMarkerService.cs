@@ -125,7 +125,7 @@ namespace dnSpy.Text.Editor {
 			editorFormatMap.FormatMappingChanged += EditorFormatMap_FormatMappingChanged;
 		}
 
-		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
+		void Options_OptionChanged(object? sender, EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultWpfViewOptions.UseReducedOpacityForHighContrastOptionName) {
 				bool old = ShouldUseHighContrastOpacity;
 				useReducedOpacityForHighContrast = wpfTextView.Options.GetOptionValue(DefaultWpfViewOptions.UseReducedOpacityForHighContrastOptionId);
@@ -190,7 +190,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		void EditorFormatMap_FormatMappingChanged(object sender, FormatItemsEventArgs e) {
+		void EditorFormatMap_FormatMappingChanged(object? sender, FormatItemsEventArgs e) {
 			if (markerElements.Count == 0)
 				return;
 
@@ -226,7 +226,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		void TagAggregator_BatchedTagsChanged(object sender, BatchedTagsChangedEventArgs e) {
+		void TagAggregator_BatchedTagsChanged(object? sender, BatchedTagsChangedEventArgs e) {
 			if (wpfTextView.IsClosed)
 				return;
 			wpfTextView.VisualElement.Dispatcher.VerifyAccess();
@@ -368,7 +368,7 @@ namespace dnSpy.Text.Editor {
 			return markerElement;
 		}
 
-		void WpfTextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) => UpdateLines(e.NewOrReformattedLines, e.OldSnapshot, e.NewSnapshot);
+		void WpfTextView_LayoutChanged(object? sender, TextViewLayoutChangedEventArgs e) => UpdateLines(e.NewOrReformattedLines, e.OldSnapshot, e.NewSnapshot);
 		void UpdateLines(IList<ITextViewLine> newOrReformattedLines, ITextSnapshot oldSnapshot, ITextSnapshot newSnapshot) {
 			if (newOrReformattedLines.Count == wpfTextView.TextViewLines.Count)
 				RemoveAllMarkerElements();
@@ -386,7 +386,7 @@ namespace dnSpy.Text.Editor {
 			UpdateRange(spans);
 		}
 
-		void WpfTextView_Closed(object sender, EventArgs e) {
+		void WpfTextView_Closed(object? sender, EventArgs e) {
 			RemoveAllMarkerElements();
 			wpfTextView.Closed -= WpfTextView_Closed;
 			wpfTextView.LayoutChanged -= WpfTextView_LayoutChanged;

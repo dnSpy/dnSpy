@@ -57,7 +57,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 			PropertyChanged += ExportToProjectSettingsImpl_PropertyChanged;
 		}
 
-		void ExportToProjectSettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void ExportToProjectSettingsImpl_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(ProjectVersion), ProjectVersion);
 		}

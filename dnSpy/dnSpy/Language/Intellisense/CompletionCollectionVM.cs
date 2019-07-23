@@ -52,7 +52,7 @@ namespace dnSpy.Language.Intellisense {
 			ReinitializeList();
 		}
 
-		void CompletionList_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
+		void CompletionList_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
 			int i;
 			switch (e.Action) {
 			case NotifyCollectionChangedAction.Add:

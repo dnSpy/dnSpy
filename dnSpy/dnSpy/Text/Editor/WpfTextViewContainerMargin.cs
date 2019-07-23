@@ -46,7 +46,7 @@ namespace dnSpy.Text.Editor {
 			UpdateMarginChildren();
 		}
 
-		void WpfTextViewMarginProviderCollection_MarginsChanged(object sender, EventArgs e) => UpdateMarginChildren();
+		void WpfTextViewMarginProviderCollection_MarginsChanged(object? sender, EventArgs e) => UpdateMarginChildren();
 
 		void UpdateMarginChildren() {
 			margins = wpfTextViewMarginProviderCollection.Margins;

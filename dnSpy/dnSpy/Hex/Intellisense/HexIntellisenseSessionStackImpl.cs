@@ -69,14 +69,14 @@ namespace dnSpy.Hex.Intellisense {
 			wpfHexView.VisualElement.KeyUp += VisualElement_KeyUp;
 		}
 
-		void ClearOpacityTimer_Tick(object sender, EventArgs e) {
+		void ClearOpacityTimer_Tick(object? sender, EventArgs e) {
 			clearOpacityTimer.Stop();
 			if (wpfHexView.IsClosed)
 				return;
 			SetOpacity(0.3);
 		}
 
-		void VisualElement_KeyUp(object sender, KeyEventArgs e) {
+		void VisualElement_KeyUp(object? sender, KeyEventArgs e) {
 			if (wpfHexView.IsClosed)
 				return;
 			if (clearOpacityTimer.IsEnabled)
@@ -85,7 +85,7 @@ namespace dnSpy.Hex.Intellisense {
 				SetOpacity(1);
 		}
 
-		void VisualElement_KeyDown(object sender, KeyEventArgs e) {
+		void VisualElement_KeyDown(object? sender, KeyEventArgs e) {
 			if (wpfHexView.IsClosed)
 				return;
 			var key = e.Key == Key.System ? e.SystemKey : e.Key;
@@ -175,10 +175,10 @@ namespace dnSpy.Hex.Intellisense {
 				allSessions[i].Collapse();
 		}
 
-		void Session_PresenterChanged(object sender, EventArgs e) {
+		void Session_PresenterChanged(object? sender, EventArgs e) {
 			if (wpfHexView.IsClosed)
 				return;
-			PresenterUpdated((HexIntellisenseSession)sender);
+			PresenterUpdated((HexIntellisenseSession)sender!);
 		}
 
 		int GetSessionStateIndex(HexIntellisenseSession session) {
@@ -263,14 +263,14 @@ namespace dnSpy.Hex.Intellisense {
 			}
 		}
 
-		void PopupIntellisensePresenter_SurfaceElementChanged(object sender, EventArgs e) =>
-			PopupIntellisensePresenter_PropertyChanged((IHexPopupIntellisensePresenter)sender, nameof(IHexPopupIntellisensePresenter.SurfaceElement));
+		void PopupIntellisensePresenter_SurfaceElementChanged(object? sender, EventArgs e) =>
+			PopupIntellisensePresenter_PropertyChanged((IHexPopupIntellisensePresenter)sender!, nameof(IHexPopupIntellisensePresenter.SurfaceElement));
 
-		void PopupIntellisensePresenter_PresentationSpanChanged(object sender, EventArgs e) =>
-			PopupIntellisensePresenter_PropertyChanged((IHexPopupIntellisensePresenter)sender, nameof(IHexPopupIntellisensePresenter.PresentationSpan));
+		void PopupIntellisensePresenter_PresentationSpanChanged(object? sender, EventArgs e) =>
+			PopupIntellisensePresenter_PropertyChanged((IHexPopupIntellisensePresenter)sender!, nameof(IHexPopupIntellisensePresenter.PresentationSpan));
 
-		void PopupIntellisensePresenter_PopupStylesChanged(object sender, VSLI.ValueChangedEventArgs<VSTA.PopupStyles> e) =>
-			PopupIntellisensePresenter_PropertyChanged((IHexPopupIntellisensePresenter)sender, nameof(IHexPopupIntellisensePresenter.PopupStyles));
+		void PopupIntellisensePresenter_PopupStylesChanged(object? sender, VSLI.ValueChangedEventArgs<VSTA.PopupStyles> e) =>
+			PopupIntellisensePresenter_PropertyChanged((IHexPopupIntellisensePresenter)sender!, nameof(IHexPopupIntellisensePresenter.PopupStyles));
 
 		void PopupIntellisensePresenter_PropertyChanged(IHexPopupIntellisensePresenter popupPresenter, string propertyName) {
 			if (wpfHexView.IsClosed) {
@@ -292,7 +292,7 @@ namespace dnSpy.Hex.Intellisense {
 				PresenterUpdated(popupPresenter.Session);
 		}
 
-		void SpaceReservationManager_AgentChanged(object sender, HexSpaceReservationAgentChangedEventArgs e) {
+		void SpaceReservationManager_AgentChanged(object? sender, HexSpaceReservationAgentChangedEventArgs e) {
 			if (wpfHexView.IsClosed)
 				return;
 			var sessionState = TryGetSessionState(e.OldAgent);
@@ -303,7 +303,7 @@ namespace dnSpy.Hex.Intellisense {
 			}
 		}
 
-		void Session_Dismissed(object sender, EventArgs e) {
+		void Session_Dismissed(object? sender, EventArgs e) {
 			var session = sender as HexIntellisenseSession;
 			Debug.Assert(!(session is null));
 			if (session is null)
@@ -334,7 +334,7 @@ namespace dnSpy.Hex.Intellisense {
 			}
 		}
 
-		void WpfHexView_Closed(object sender, EventArgs e) {
+		void WpfHexView_Closed(object? sender, EventArgs e) {
 			clearOpacityTimer.Stop();
 			CollapseAllSessionsCore();
 			while (sessions.Count > 0)

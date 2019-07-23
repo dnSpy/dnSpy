@@ -52,13 +52,13 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			dbgManager.IsDebuggingChanged += DbgManager_IsDebuggingChanged;
 		}
 
-		void DbgCodeBreakpointsService_BreakpointsChanged(object sender, DbgCollectionChangedEventArgs<DbgCodeBreakpoint> e) =>
+		void DbgCodeBreakpointsService_BreakpointsChanged(object? sender, DbgCollectionChangedEventArgs<DbgCodeBreakpoint> e) =>
 			BreakpointsChanged?.Invoke(this, e);
 
-		void DbgCodeBreakpointsService_BreakpointsModified(object sender, DbgBreakpointsModifiedEventArgs e) =>
+		void DbgCodeBreakpointsService_BreakpointsModified(object? sender, DbgBreakpointsModifiedEventArgs e) =>
 			BreakpointsModified?.Invoke(this, e);
 
-		void DbgManager_IsDebuggingChanged(object sender, EventArgs e) =>
+		void DbgManager_IsDebuggingChanged(object? sender, EventArgs e) =>
 			dbgCodeBreakpointsService.UpdateIsDebugging_DbgThread(dbgManager.IsDebugging);
 
 		public override DbgBoundCodeBreakpoint[] AddBoundBreakpoints_DbgThread(IList<DbgBoundCodeBreakpoint> boundBreakpoints) =>

@@ -109,7 +109,7 @@ namespace dnSpy.Text.Tagging {
 			return GetTags(new NormalizedSnapshotSpanCollection(span), cancellationToken);
 		}
 
-		void TextBuffer_ContentTypeChanged(object sender, ContentTypeChangedEventArgs e) {
+		void TextBuffer_ContentTypeChanged(object? sender, ContentTypeChangedEventArgs e) {
 			RecreateTaggers();
 			RaiseTagsChanged(new SnapshotSpan(TextBuffer.CurrentSnapshot, 0, TextBuffer.CurrentSnapshot.Length));
 		}
@@ -132,7 +132,7 @@ namespace dnSpy.Text.Tagging {
 			taggers = Array.Empty<ITagger<T>>();
 		}
 
-		void Tagger_TagsChanged(object sender, SnapshotSpanEventArgs e) =>
+		void Tagger_TagsChanged(object? sender, SnapshotSpanEventArgs e) =>
 			// Use original sender, not us
 			RaiseTagsChanged(e.Span, sender);
 

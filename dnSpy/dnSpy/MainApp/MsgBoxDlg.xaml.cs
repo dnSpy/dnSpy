@@ -35,7 +35,7 @@ namespace dnSpy.MainApp {
 			IsVisibleChanged += MsgBoxDlg_IsVisibleChanged;
 		}
 
-		void MsgBoxDlg_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
+		void MsgBoxDlg_IsVisibleChanged(object? sender, DependencyPropertyChangedEventArgs e) {
 			var vm = DataContext as MsgBoxVM;
 			if (vm is null)
 				return;

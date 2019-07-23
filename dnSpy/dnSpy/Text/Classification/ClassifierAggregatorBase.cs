@@ -42,7 +42,7 @@ namespace dnSpy.Text.Classification {
 			tagAggregator.TagsChanged += TagAggregator_TagsChanged;
 		}
 
-		void TagAggregator_TagsChanged(object sender, TagsChangedEventArgs e) {
+		void TagAggregator_TagsChanged(object? sender, TagsChangedEventArgs e) {
 			if (ClassificationChanged is null)
 				return;
 			foreach (var span in e.Span.GetSpans(textBuffer))

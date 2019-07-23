@@ -49,8 +49,8 @@ namespace dnSpy.Text.Operations {
 			});
 		}
 
-		static void TextBuffer_ContentTypeChanged(object sender, ContentTypeChangedEventArgs e) {
-			var textBuffer = (ITextBuffer)sender;
+		static void TextBuffer_ContentTypeChanged(object? sender, ContentTypeChangedEventArgs e) {
+			var textBuffer = (ITextBuffer)sender!;
 			textBuffer.ContentTypeChanged -= TextBuffer_ContentTypeChanged;
 			bool b = textBuffer.Properties.RemoveProperty(typeof(ITextStructureNavigator));
 			Debug.Assert(b);

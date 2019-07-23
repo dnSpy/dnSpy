@@ -41,7 +41,7 @@ namespace dnSpy.Output.Settings {
 			Default = new OutputWindowOptions(group, contentTypeRegistryService.GetContentType(ContentTypes.Any));
 		}
 
-		void TextViewOptionsGroup_TextViewOptionChanged(object sender, TextViewOptionChangedEventArgs e) =>
+		void TextViewOptionsGroup_TextViewOptionChanged(object? sender, TextViewOptionChangedEventArgs e) =>
 			OptionChanged?.Invoke(this, new OptionChangedEventArgs(e.ContentType, e.OptionId));
 	}
 }

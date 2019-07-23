@@ -42,9 +42,9 @@ namespace dnSpy.Documents.Tabs {
 			documentTreeViewSettings.PropertyChanged += DocumentTreeViewSettings_PropertyChanged;
 		}
 
-		void DocumentTreeViewSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void DocumentTreeViewSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == nameof(IDocumentTreeViewSettings.DeserializeResources)) {
-				var documentTreeViewSettings = (IDocumentTreeViewSettings)sender;
+				var documentTreeViewSettings = (IDocumentTreeViewSettings)sender!;
 				if (documentTreeViewSettings.DeserializeResources)
 					DeserializeResources();
 			}

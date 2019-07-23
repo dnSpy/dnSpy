@@ -98,7 +98,7 @@ namespace dnSpy.Hex.Editor {
 		public override HexViewMargin? GetHexViewMargin(string marginName) =>
 			StringComparer.OrdinalIgnoreCase.Equals(PredefinedHexMarginNames.VerticalScrollBar, marginName) ? this : null;
 
-		void ScrollMap_MappingChanged(object sender, EventArgs e) => UpdateMinMax();
+		void ScrollMap_MappingChanged(object? sender, EventArgs e) => UpdateMinMax();
 
 		void UpdateMinMax() {
 			theScrollBar.Minimum = scrollMap.Start;
@@ -133,12 +133,12 @@ namespace dnSpy.Hex.Editor {
 			}
 		}
 
-		void Options_OptionChanged(object sender, VSTE.EditorOptionChangedEventArgs e) {
+		void Options_OptionChanged(object? sender, VSTE.EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultHexViewHostOptions.VerticalScrollBarName)
 				UpdateVisibility();
 		}
 
-		void VerticalScrollBarMargin_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
+		void VerticalScrollBarMargin_IsVisibleChanged(object? sender, DependencyPropertyChangedEventArgs e) {
 			if (theScrollBar.Visibility == Visibility.Visible) {
 				RegisterEvents();
 				UpdateMinMax();
@@ -150,7 +150,7 @@ namespace dnSpy.Hex.Editor {
 				UnregisterEvents();
 		}
 
-		void HexView_LayoutChanged(object sender, HexViewLayoutChangedEventArgs e) {
+		void HexView_LayoutChanged(object? sender, HexViewLayoutChangedEventArgs e) {
 			theScrollBar.LargeChange = scrollMap.ThumbSize;
 			theScrollBar.ViewportSize = scrollMap.ThumbSize;
 			theScrollBar.Value = scrollMap.GetCoordinateAtBufferPosition(FirstVisibleLinePoint);

@@ -44,7 +44,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				Breakpoint = breakpoint ?? throw new ArgumentNullException(nameof(breakpoint));
 				Breakpoint.ErrorChanged += Breakpoint_ErrorChanged;
 			}
-			void Breakpoint_ErrorChanged(object sender, EventArgs e) =>
+			void Breakpoint_ErrorChanged(object? sender, EventArgs e) =>
 				EngineBoundCodeBreakpoint.UpdateMessage(GetBoundBreakpointMessage(Breakpoint));
 			public void Dispose() {
 				Breakpoint.ErrorChanged -= Breakpoint_ErrorChanged;

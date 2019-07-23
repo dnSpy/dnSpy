@@ -144,7 +144,7 @@ namespace dnSpy.Disassembly.Viewer {
 			PropertyChanged += OnPropertyChanged;
 		}
 
-		void OnPropertyChanged(object sender, PropertyChangedEventArgs e) => Save();
+		void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) => Save();
 
 		void Save() {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);

@@ -127,7 +127,7 @@ namespace dnSpy.Text.Editor {
 			wpfTextView.LayoutChanged += WpfTextView_LayoutChanged;
 		}
 
-		void Selection_SelectionChanged(object sender, EventArgs e) => UpdateIsSelected();
+		void Selection_SelectionChanged(object? sender, EventArgs e) => UpdateIsSelected();
 
 		void UpdateIsSelected() {
 			if (adornmentTagInfos.Count == 0)
@@ -172,7 +172,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		void WpfTextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) {
+		void WpfTextView_LayoutChanged(object? sender, TextViewLayoutChangedEventArgs e) {
 			if (adornmentTagInfos.Count > 0) {
 				Debug.Assert(!(layer is null));
 				currentLineIdentityTags.Clear();
@@ -322,14 +322,14 @@ namespace dnSpy.Text.Editor {
 
 		double Filter(double value) => value < 0 || value == double.PositiveInfinity || double.IsNaN(value) ? 0 : value;
 
-		void TagAggregator_TagsChanged(object sender, TagsChangedEventArgs e) {
+		void TagAggregator_TagsChanged(object? sender, TagsChangedEventArgs e) {
 			if (wpfTextView.IsClosed)
 				return;
 			foreach (var span in e.Span.GetSpans(wpfTextView.TextBuffer.CurrentSnapshot))
 				tagger?.RefreshSpans(new SnapshotSpanEventArgs(span));
 		}
 
-		void WpfTextView_Closed(object sender, EventArgs e) {
+		void WpfTextView_Closed(object? sender, EventArgs e) {
 			wpfTextView.Closed -= WpfTextView_Closed;
 			wpfTextView.LayoutChanged -= WpfTextView_LayoutChanged;
 			wpfTextView.Selection.SelectionChanged -= Selection_SelectionChanged;

@@ -286,13 +286,13 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		}
 
 		// UI thread
-		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) {
+		void ClassificationFormatMap_ClassificationFormatMappingChanged(object? sender, EventArgs e) {
 			moduleContext.UIDispatcher.VerifyAccess();
 			RefreshThemeFields_UI();
 		}
 
 		// random thread
-		void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) =>
+		void DebuggerSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e) =>
 			UI(() => DebuggerSettings_PropertyChanged_UI(e.PropertyName));
 
 		// UI thread
@@ -333,7 +333,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		void UI(Action callback) => moduleContext.UIDispatcher.UI(callback);
 
 		// DbgManager thread
-		void DbgManager_ProcessesChanged(object sender, DbgCollectionChangedEventArgs<DbgProcess> e) {
+		void DbgManager_ProcessesChanged(object? sender, DbgCollectionChangedEventArgs<DbgProcess> e) {
 			if (e.Added) {
 				foreach (var p in e.Objects)
 					InitializeProcess_DbgThread(p);
@@ -361,7 +361,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		}
 
 		// DbgManager thread
-		void DbgProcess_RuntimesChanged(object sender, DbgCollectionChangedEventArgs<DbgRuntime> e) {
+		void DbgProcess_RuntimesChanged(object? sender, DbgCollectionChangedEventArgs<DbgRuntime> e) {
 			if (e.Added) {
 				foreach (var r in e.Objects)
 					InitializeRuntime_DbgThread(r);
@@ -386,7 +386,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		}
 
 		// DbgManager thread
-		void DbgRuntime_AppDomainsChanged(object sender, DbgCollectionChangedEventArgs<DbgAppDomain> e) {
+		void DbgRuntime_AppDomainsChanged(object? sender, DbgCollectionChangedEventArgs<DbgAppDomain> e) {
 			if (e.Added) {
 				foreach (var a in e.Objects)
 					InitializeAppDomain_DbgThread(a);
@@ -413,7 +413,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		}
 
 		// DbgManager thread
-		void DbgRuntime_ModulesChanged(object sender, DbgCollectionChangedEventArgs<DbgModule> e) {
+		void DbgRuntime_ModulesChanged(object? sender, DbgCollectionChangedEventArgs<DbgModule> e) {
 			if (e.Added)
 				UI(() => AddItems_UI(e.Objects));
 			else {
@@ -426,10 +426,10 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		}
 
 		// DbgManager thread
-		void DbgAppDomain_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void DbgAppDomain_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == nameof(DbgAppDomain.Name) || e.PropertyName == nameof(DbgAppDomain.Id)) {
 				UI(() => {
-					var appDomain = (DbgAppDomain)sender;
+					var appDomain = (DbgAppDomain)sender!;
 					foreach (var vm in realAllItems)
 						vm.RefreshAppDomainNames_UI(appDomain);
 				});

@@ -129,14 +129,14 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 			session.Restart(position, triggerInfo);
 		}
 
-		void SignatureHelpSession_Disposed(object sender, EventArgs e) {
-			var session = (SignatureHelpSession)sender;
+		void SignatureHelpSession_Disposed(object? sender, EventArgs e) {
+			var session = (SignatureHelpSession)sender!;
 			session.Disposed -= SignatureHelpSession_Disposed;
 			if (this.session == session)
 				this.session = null;
 		}
 
-		void Caret_PositionChanged(object sender, CaretPositionChangedEventArgs e) {
+		void Caret_PositionChanged(object? sender, CaretPositionChangedEventArgs e) {
 			if (session is null)
 				return;
 			// PERF: retriggering is very slow

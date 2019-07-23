@@ -44,7 +44,7 @@ namespace dnSpy.BackgroundImage {
 			wpfHexView.Closed += WpfHexView_Closed;
 		}
 
-		void WpfHexView_LayoutChanged(object sender, HexViewLayoutChangedEventArgs e) {
+		void WpfHexView_LayoutChanged(object? sender, HexViewLayoutChangedEventArgs e) {
 			if (e.OldViewState.ViewportWidth != e.NewViewState.ViewportWidth)
 				UpdateImagePosition();
 			else if (e.OldViewState.ViewportHeight != e.NewViewState.ViewportHeight)
@@ -77,7 +77,7 @@ namespace dnSpy.BackgroundImage {
 		protected override void AddImageToAdornmentLayerCore(Image image) =>
 			adornmentLayer!.AddAdornment(VSTE.AdornmentPositioningBehavior.OwnerControlled, (HexBufferSpan?)null, null, image, null);
 
-		void WpfHexView_Closed(object sender, EventArgs e) {
+		void WpfHexView_Closed(object? sender, EventArgs e) {
 			ViewClosed();
 			wpfHexView.Closed -= WpfHexView_Closed;
 			wpfHexView.LayoutChanged -= WpfHexView_LayoutChanged;

@@ -206,7 +206,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			return raiseBoundBreakpointsMessageChanged;
 		}
 
-		void DbgBoundCodeBreakpoint_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void DbgBoundCodeBreakpoint_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			owner.DbgDispatcher.VerifyAccess();
 			if (e.PropertyName == nameof(DbgBoundCodeBreakpoint.Message)) {
 				bool raiseBoundBreakpointsMessageChanged;

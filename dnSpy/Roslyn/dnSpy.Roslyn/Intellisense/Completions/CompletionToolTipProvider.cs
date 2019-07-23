@@ -109,8 +109,8 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 			}
 
 			void InitializeDefaultDocumentation() => Visibility = Visibility.Collapsed;
-			void AsyncToolTipContent_Unloaded(object sender, RoutedEventArgs e) => Cancel();
-			void Session_Dismissed(object sender, EventArgs e) => Cancel();
+			void AsyncToolTipContent_Unloaded(object? sender, RoutedEventArgs e) => Cancel();
+			void Session_Dismissed(object? sender, EventArgs e) => Cancel();
 
 			public void Cancel() {
 				if (disposed)

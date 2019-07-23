@@ -113,7 +113,7 @@ namespace dnSpy.Images {
 			return list;
 		}
 
-		void ThemeService_ThemeChangedHighPriority(object sender, ThemeChangedEventArgs e) {
+		void ThemeService_ThemeChangedHighPriority(object? sender, ThemeChangedEventArgs e) {
 			imageCache.Clear();
 			isHighContrast = themeService.Theme.IsHighContrast;
 		}

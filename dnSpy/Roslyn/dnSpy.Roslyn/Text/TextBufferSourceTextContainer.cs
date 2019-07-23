@@ -45,7 +45,7 @@ namespace dnSpy.Roslyn.Text {
 			}
 		}
 
-		void TextBuffer_Changed(object sender, TextContentChangedEventArgs e) =>
+		void TextBuffer_Changed(object? sender, TextContentChangedEventArgs e) =>
 			realTextChangedEvent?.Invoke(this, e.ToTextChangeEventArgs());
 
 		public TextBufferSourceTextContainer(ITextBuffer textBuffer) => TextBuffer = textBuffer;

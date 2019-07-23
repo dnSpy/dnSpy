@@ -60,7 +60,7 @@ namespace dnSpy.Contracts.MVVM.Dialogs {
 				e.Cancel = true;
 		}
 
-		void ProgressVM_OnCompleted(object sender, EventArgs e) => OnCompleted();
+		void ProgressVM_OnCompleted(object? sender, EventArgs e) => OnCompleted();
 
 		void OnCompleted() {
 			var data = DataContext as ProgressVM;

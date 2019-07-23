@@ -71,7 +71,7 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 		}
 		bool isLoaded;
 
-		void EditValueControl_Loaded(object sender, RoutedEventArgs e) {
+		void EditValueControl_Loaded(object? sender, RoutedEventArgs e) {
 			// Loaded can be raised multiple times without an Unloaded event
 			if (isLoaded)
 				return;
@@ -79,7 +79,7 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 			OnEditableValuePropertyChanged(EditableValue, EditableValue, true);
 		}
 
-		void EditValueControl_Unloaded(object sender, RoutedEventArgs e) {
+		void EditValueControl_Unloaded(object? sender, RoutedEventArgs e) {
 			if (!isLoaded)
 				return;
 			isLoaded = false;
@@ -133,8 +133,8 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 			editableValue.PropertyChanged -= EditableValue_PropertyChanged;
 		}
 
-		void EditableValue_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			var editableValue = (IEditableValue)sender;
+		void EditableValue_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
+			var editableValue = (IEditableValue)sender!;
 			if (editableValue != EditableValue) {
 				UnhookEvents(editableValue);
 				return;
@@ -210,7 +210,7 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 			oldKeyboardFocus = null;
 		}
 
-		void EditValue_EditCompleted(object sender, EditCompletedEventArgs e) {
+		void EditValue_EditCompleted(object? sender, EditCompletedEventArgs e) {
 			if (editValue != sender)
 				return;
 

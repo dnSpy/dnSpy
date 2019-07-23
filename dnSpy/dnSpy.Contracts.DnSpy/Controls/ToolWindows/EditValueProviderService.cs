@@ -113,7 +113,7 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 				Content = wpfTextView.VisualElement;
 			}
 
-			void WpfTextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) {
+			void WpfTextView_LayoutChanged(object? sender, TextViewLayoutChangedEventArgs e) {
 				var height = wpfTextView.TextViewLines[0].Height;
 				if (height != lastHeight) {
 					lastHeight = height;
@@ -154,7 +154,7 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 			return instance;
 		}
 
-		void VisualElement_Loaded(object sender, RoutedEventArgs e) {
+		void VisualElement_Loaded(object? sender, RoutedEventArgs e) {
 			wpfTextView.VisualElement.Loaded -= VisualElement_Loaded;
 			wpfTextView.VisualElement.Focus();
 			var snapshot = wpfTextView.TextSnapshot;
@@ -165,7 +165,7 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 			wpfTextView.LostAggregateFocus += WpfTextView_LostAggregateFocus;
 		}
 
-		void WpfTextView_LostAggregateFocus(object sender, EventArgs e) => Cancel();
+		void WpfTextView_LostAggregateFocus(object? sender, EventArgs e) => Cancel();
 		public void Cancel() => OnEditCompleted(null);
 		public void Commit() => OnEditCompleted(wpfTextView.TextBuffer.CurrentSnapshot.GetText());
 

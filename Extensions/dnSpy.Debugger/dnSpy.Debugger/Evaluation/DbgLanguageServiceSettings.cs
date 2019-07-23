@@ -37,7 +37,7 @@ namespace dnSpy.Debugger.Evaluation {
 			dbgLanguageService.LanguageChanged += DbgLanguageService_LanguageChanged;
 		}
 
-		void DbgLanguageService_LanguageChanged(object sender, DbgLanguageChangedEventArgs e) => Save((DbgLanguageService2)sender);
+		void DbgLanguageService_LanguageChanged(object? sender, DbgLanguageChangedEventArgs e) => Save((DbgLanguageService2)sender!);
 
 		void Load(DbgLanguageService2 dbgLanguageService) {
 			var rootSect = settingsService.GetOrCreateSection(SETTINGS_GUID);

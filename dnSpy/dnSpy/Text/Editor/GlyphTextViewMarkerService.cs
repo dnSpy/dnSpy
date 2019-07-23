@@ -240,7 +240,7 @@ namespace dnSpy.Text.Editor {
 		}
 		bool hasHookedCaretPositionChanged;
 
-		void Caret_PositionChanged(object sender, CaretPositionChangedEventArgs e) {
+		void Caret_PositionChanged(object? sender, CaretPositionChangedEventArgs e) {
 			Debug.Assert(markerAndSpanCollection.SelectedMarkersInDocumentCount > 0);
 			var oldMarkers = GetMarkers(e.OldPosition.VirtualBufferPosition);
 			var newMarkers = GetMarkers(e.NewPosition.VirtualBufferPosition);
@@ -361,7 +361,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		void EditorFormatMap_FormatMappingChanged(object sender, FormatItemsEventArgs e) {
+		void EditorFormatMap_FormatMappingChanged(object? sender, FormatItemsEventArgs e) {
 			if (TextView.IsClosed)
 				return;
 			if (markerElements.Count == 0)
@@ -397,7 +397,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		void GlyphTextMarkerTagAggregator_BatchedTagsChanged(object sender, BatchedTagsChangedEventArgs e) {
+		void GlyphTextMarkerTagAggregator_BatchedTagsChanged(object? sender, BatchedTagsChangedEventArgs e) {
 			TextView.VisualElement.Dispatcher.VerifyAccess();
 			if (TextView.IsClosed)
 				return;
@@ -543,7 +543,7 @@ namespace dnSpy.Text.Editor {
 			return span.Start <= pos.Position && pos.Position <= span.End;
 		}
 
-		void WpfTextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) => UpdateLines(e.NewOrReformattedLines);
+		void WpfTextView_LayoutChanged(object? sender, TextViewLayoutChangedEventArgs e) => UpdateLines(e.NewOrReformattedLines);
 		void UpdateLines(IList<ITextViewLine> newOrReformattedLines) {
 			if (newOrReformattedLines.Count == TextView.TextViewLines.Count)
 				RemoveAllMarkerElements();
@@ -633,7 +633,7 @@ namespace dnSpy.Text.Editor {
 			return new SnapshotSpan(snapshot, span.Value);
 		}
 
-		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
+		void Options_OptionChanged(object? sender, EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultWpfViewOptions.UseReducedOpacityForHighContrastOptionName) {
 				bool old = ShouldUseHighContrastOpacity;
 				useReducedOpacityForHighContrast = TextView.Options.GetOptionValue(DefaultWpfViewOptions.UseReducedOpacityForHighContrastOptionId);
@@ -648,7 +648,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		void GlyphTextMarkerServiceImpl_MarkerAdded(object sender, GlyphTextMarkerAddedEventArgs e) {
+		void GlyphTextMarkerServiceImpl_MarkerAdded(object? sender, GlyphTextMarkerAddedEventArgs e) {
 			if (TextView.IsClosed)
 				return;
 			if (!e.Marker.TextViewFilter(TextView))
@@ -658,7 +658,7 @@ namespace dnSpy.Text.Editor {
 			Refresh(e.Marker);
 		}
 
-		void GlyphTextMarkerServiceImpl_MarkerRemoved(object sender, GlyphTextMarkerRemovedEventArgs e) {
+		void GlyphTextMarkerServiceImpl_MarkerRemoved(object? sender, GlyphTextMarkerRemovedEventArgs e) {
 			if (TextView.IsClosed)
 				return;
 			bool removed = markerAndSpanCollection.Remove(e.Marker);
@@ -669,7 +669,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		void GlyphTextMarkerServiceImpl_MarkersRemoved(object sender, GlyphTextMarkersRemovedEventArgs e) {
+		void GlyphTextMarkerServiceImpl_MarkersRemoved(object? sender, GlyphTextMarkersRemovedEventArgs e) {
 			if (TextView.IsClosed)
 				return;
 			bool removed = markerAndSpanCollection.Remove(e.Markers);
@@ -684,7 +684,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		void GlyphTextMarkerServiceImpl_GetGlyphTextMarkerAndSpan(object sender, GetGlyphTextMarkerAndSpanEventArgs e) {
+		void GlyphTextMarkerServiceImpl_GetGlyphTextMarkerAndSpan(object? sender, GetGlyphTextMarkerAndSpanEventArgs e) {
 			if (e.TextView != TextView)
 				return;
 			e.Result = GetGlyphTextMarkerAndSpan(e.Span);
@@ -835,7 +835,7 @@ namespace dnSpy.Text.Editor {
 			return wpfLine;
 		}
 
-		void WpfTextView_Closed(object sender, EventArgs e) {
+		void WpfTextView_Closed(object? sender, EventArgs e) {
 			TextView.Closed -= WpfTextView_Closed;
 			TextView.LayoutChanged -= WpfTextView_LayoutChanged;
 			TextView.Options.OptionChanged -= Options_OptionChanged;

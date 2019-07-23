@@ -187,7 +187,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 		void UI(Action callback) => uiDispatcher.UI(callback);
 
 		// DbgManager thread
-		void DbgManager_ProcessesChanged(object sender, DbgCollectionChangedEventArgs<DbgProcess> e) =>
+		void DbgManager_ProcessesChanged(object? sender, DbgCollectionChangedEventArgs<DbgProcess> e) =>
 			InitializeProcesses_DbgManager(e.Objects, e.Added);
 
 		// DbgManager thread
@@ -283,9 +283,9 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 		}
 
 		// UI thread
-		void Buffer_ChangedLowPriority(object sender, HexContentChangedEventArgs e) {
+		void Buffer_ChangedLowPriority(object? sender, HexContentChangedEventArgs e) {
 			uiDispatcher.VerifyAccess();
-			var callerState = TryGetBufferState_UI((HexBuffer)sender);
+			var callerState = TryGetBufferState_UI((HexBuffer)sender!);
 			foreach (var bufferState in bufferStates) {
 				if (bufferState == callerState)
 					continue;
@@ -298,9 +298,9 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 		}
 
 		// UI thread
-		void Buffer_Disposed(object sender, EventArgs e) {
+		void Buffer_Disposed(object? sender, EventArgs e) {
 			uiDispatcher.VerifyAccess();
-			var buffer = (HexBuffer)sender;
+			var buffer = (HexBuffer)sender!;
 			buffer.Disposed -= Buffer_Disposed;
 			buffer.ChangedLowPriority -= Buffer_ChangedLowPriority;
 			var bufferState = TryGetBufferState_UI(buffer);

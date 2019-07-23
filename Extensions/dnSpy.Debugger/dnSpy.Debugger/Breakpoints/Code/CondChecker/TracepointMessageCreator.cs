@@ -39,8 +39,8 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 		[ImportingConstructor]
 		ClearParsedMessages(TracepointMessageCreatorImpl tracepointMessageCreatorImpl) => this.tracepointMessageCreatorImpl = tracepointMessageCreatorImpl;
 		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) => dbgManager.IsDebuggingChanged += DbgManager_IsDebuggingChanged;
-		void DbgManager_IsDebuggingChanged(object sender, EventArgs e) {
-			var dbgManager = (DbgManager)sender;
+		void DbgManager_IsDebuggingChanged(object? sender, EventArgs e) {
+			var dbgManager = (DbgManager)sender!;
 			tracepointMessageCreatorImpl.OnIsDebuggingChanged(dbgManager.IsDebugging);
 		}
 	}

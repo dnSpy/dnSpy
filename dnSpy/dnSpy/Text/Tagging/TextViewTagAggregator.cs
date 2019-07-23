@@ -35,7 +35,7 @@ namespace dnSpy.Text.Tagging {
 			Initialize();
 		}
 
-		void TextView_Closed(object sender, EventArgs e) => Dispose();
+		void TextView_Closed(object? sender, EventArgs e) => Dispose();
 
 		public override void Dispose() {
 			base.Dispose();

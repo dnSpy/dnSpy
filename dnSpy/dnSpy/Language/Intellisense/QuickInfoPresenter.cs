@@ -89,11 +89,11 @@ namespace dnSpy.Language.Intellisense {
 			return true;
 		}
 
-		void Popup_MouseLeave(object sender, MouseEventArgs e) => DismissIfNeeded(e);
-		void VisualElement_MouseLeave(object sender, MouseEventArgs e) => DismissIfNeeded(e);
-		void TextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) => session.Dismiss();
-		void Caret_PositionChanged(object sender, CaretPositionChangedEventArgs e) => session.Dismiss();
-		void VisualElement_MouseMove(object sender, MouseEventArgs e) => DismissIfNeeded(e);
+		void Popup_MouseLeave(object? sender, MouseEventArgs e) => DismissIfNeeded(e);
+		void VisualElement_MouseLeave(object? sender, MouseEventArgs e) => DismissIfNeeded(e);
+		void TextView_LayoutChanged(object? sender, TextViewLayoutChangedEventArgs e) => session.Dismiss();
+		void Caret_PositionChanged(object? sender, CaretPositionChangedEventArgs e) => session.Dismiss();
+		void VisualElement_MouseMove(object? sender, MouseEventArgs e) => DismissIfNeeded(e);
 
 		void DismissIfNeeded(MouseEventArgs e) {
 			if (session.IsDismissed)

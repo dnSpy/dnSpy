@@ -157,7 +157,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 		}
 
 		// DbgManager thread
-		void DbgManager_DelayedIsRunningChanged(object sender, EventArgs e) {
+		void DbgManager_DelayedIsRunningChanged(object? sender, EventArgs e) {
 			// If all processes are running and the window is hidden, hide it now
 			if (!IsVisible)
 				UI(() => lazyToolWindowVMHelper.TryHideWindow());

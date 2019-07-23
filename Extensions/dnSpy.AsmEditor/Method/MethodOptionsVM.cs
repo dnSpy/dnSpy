@@ -323,7 +323,7 @@ namespace dnSpy.AsmEditor.Method {
 			Reinitialize();
 		}
 
-		void methodSigCreator_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void methodSigCreator_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == nameof(MethodSigCreator.HasThis)) {
 				if (Static != !MethodSigCreator.HasThis)
 					Static = !MethodSigCreator.HasThis;
@@ -332,7 +332,7 @@ namespace dnSpy.AsmEditor.Method {
 			OnPropertyChanged(nameof(MethodSigHeader));
 		}
 
-		void implMapVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void implMapVM_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == nameof(ImplMapVM.IsEnabled))
 				PinvokeImpl = ImplMapVM.IsEnabled;
 			HasErrorUpdated();

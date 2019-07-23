@@ -101,7 +101,7 @@ namespace dnSpy.MainApp {
 			this.window.IsEnabled = false;
 		}
 
-		void Window_ContentRendered(object sender, EventArgs e) {
+		void Window_ContentRendered(object? sender, EventArgs e) {
 			window!.ContentRendered -= Window_ContentRendered;
 			loaderEnumerator = LoadCode().GetEnumerator();
 			StartLoadAllCodeDelay();

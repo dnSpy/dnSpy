@@ -161,7 +161,7 @@ namespace dnSpy.Search {
 			PropertyChanged += SearchSettingsImpl_PropertyChanged;
 		}
 
-		void SearchSettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void SearchSettingsImpl_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(SearchLocation), SearchLocation);
 			sect.Attribute(nameof(SearchType), SearchType);

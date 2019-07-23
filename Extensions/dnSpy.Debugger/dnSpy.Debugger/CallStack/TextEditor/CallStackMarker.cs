@@ -70,7 +70,7 @@ namespace dnSpy.Debugger.CallStack.TextEditor {
 
 		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) { }
 
-		void DbgCallStackService_FramesChanged(object sender, FramesChangedEventArgs e) => UI(() => UpdateMarkers(updateActiveStatements: e.FramesChanged));
+		void DbgCallStackService_FramesChanged(object? sender, FramesChangedEventArgs e) => UI(() => UpdateMarkers(updateActiveStatements: e.FramesChanged));
 
 		void UpdateMarkers(bool updateActiveStatements) {
 			SetCurrentProcess(dbgCallStackService.Thread?.Process);
@@ -88,7 +88,7 @@ namespace dnSpy.Debugger.CallStack.TextEditor {
 				process.IsRunningChanged += DbgProcess_IsRunningChanged;
 		}
 
-		void DbgProcess_IsRunningChanged(object sender, EventArgs e) {
+		void DbgProcess_IsRunningChanged(object? sender, EventArgs e) {
 			if (currentProcess != sender)
 				return;
 			if (currentProcess!.IsRunning) {

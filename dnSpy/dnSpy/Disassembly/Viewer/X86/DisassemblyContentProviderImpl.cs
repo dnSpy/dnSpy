@@ -179,7 +179,7 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 			return output.Create(disasmInfo.contentKind);
 		}
 
-		void DisassemblyContentSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void DisassemblyContentSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			bool refresh;
 			switch (e.PropertyName) {
 			case nameof(DisassemblyContentSettings.ShowInstructionAddress):
@@ -218,17 +218,17 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 				RefreshContent();
 		}
 
-		void MasmDisassemblySettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void MasmDisassemblySettings_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			if (disasmSettings.X86Disassembler == X86Disassembler.Masm)
 				RefreshContent();
 		}
 
-		void NasmDisassemblySettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void NasmDisassemblySettings_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			if (disasmSettings.X86Disassembler == X86Disassembler.Nasm)
 				RefreshContent();
 		}
 
-		void GasDisassemblySettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void GasDisassemblySettings_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			if (disasmSettings.X86Disassembler == X86Disassembler.Gas)
 				RefreshContent();
 		}

@@ -37,7 +37,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		void IDbgCodeBreakpointsServiceListener.Initialize(DbgCodeBreakpointsService dbgCodeBreakpointsService) =>
 			dbgCodeBreakpointsService.BreakpointsModified += DbgCodeBreakpointsService_BreakpointsModified;
 
-		void DbgCodeBreakpointsService_BreakpointsModified(object sender, DbgBreakpointsModifiedEventArgs e) {
+		void DbgCodeBreakpointsService_BreakpointsModified(object? sender, DbgBreakpointsModifiedEventArgs e) {
 			List<DbgCodeBreakpoint>? resetThese = null;
 			foreach (var info in e.Breakpoints) {
 				if (!(info.OldSettings.HitCount is null))

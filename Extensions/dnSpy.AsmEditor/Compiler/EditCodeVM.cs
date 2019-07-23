@@ -97,7 +97,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				codeDocument.TextView.VisualElement.SizeChanged += VisualElement_SizeChanged;
 			}
 
-			void VisualElement_SizeChanged(object sender, SizeChangedEventArgs e) {
+			void VisualElement_SizeChanged(object? sender, SizeChangedEventArgs e) {
 				if (e.NewSize.Height == 0)
 					return;
 				codeDocument.TextView.VisualElement.SizeChanged -= VisualElement_SizeChanged;

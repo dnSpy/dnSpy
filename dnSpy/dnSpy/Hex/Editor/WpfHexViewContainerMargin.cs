@@ -49,7 +49,7 @@ namespace dnSpy.Hex.Editor {
 			UpdateMarginChildren();
 		}
 
-		void WpfHexViewMarginProviderCollection_MarginsChanged(object sender, EventArgs e) => UpdateMarginChildren();
+		void WpfHexViewMarginProviderCollection_MarginsChanged(object? sender, EventArgs e) => UpdateMarginChildren();
 
 		void UpdateMarginChildren() {
 			margins = wpfHexViewMarginProviderCollection.Margins;

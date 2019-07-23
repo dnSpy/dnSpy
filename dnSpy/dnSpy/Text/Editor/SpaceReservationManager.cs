@@ -114,8 +114,8 @@ namespace dnSpy.Text.Editor {
 			wpfTextView.QueueSpaceReservationStackRefresh();
 		}
 
-		void SpaceReservationAgent_GotFocus(object sender, EventArgs e) => UpdateAggregateFocus();
-		void SpaceReservationAgent_LostFocus(object sender, EventArgs e) => UpdateAggregateFocus();
+		void SpaceReservationAgent_GotFocus(object? sender, EventArgs e) => UpdateAggregateFocus();
+		void SpaceReservationAgent_LostFocus(object? sender, EventArgs e) => UpdateAggregateFocus();
 
 		void UpdateAggregateFocus() {
 			bool newValue = CalculateAggregateFocus();
@@ -153,7 +153,7 @@ namespace dnSpy.Text.Editor {
 			UpdateAggregateFocus();
 		}
 
-		void WpfTextView_Closed(object sender, EventArgs e) {
+		void WpfTextView_Closed(object? sender, EventArgs e) {
 			while (spaceReservationAgents.Count > 0)
 				RemoveAgent(spaceReservationAgents[spaceReservationAgents.Count - 1]);
 			wpfTextView.Closed -= WpfTextView_Closed;

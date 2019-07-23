@@ -181,7 +181,7 @@ namespace dnSpy.Documents.Tabs {
 			TabGroupService.TabGroupSelectionChanged += TabGroupService_TabGroupSelectionChanged;
 		}
 
-		void TreeView_NodeRemoved(object sender, TreeViewNodeRemovedEventArgs e) {
+		void TreeView_NodeRemoved(object? sender, TreeViewNodeRemovedEventArgs e) {
 			if (!e.Removed)
 				return;
 
@@ -211,14 +211,14 @@ namespace dnSpy.Documents.Tabs {
 
 		public event EventHandler<NotifyDocumentCollectionChangedEventArgs> DocumentCollectionChanged;
 		bool disable_DocumentCollectionChanged = false;
-		void DocumentService_CollectionChanged(object sender, NotifyDocumentCollectionChangedEventArgs e) => CallDocumentCollectionChanged(e);
+		void DocumentService_CollectionChanged(object? sender, NotifyDocumentCollectionChangedEventArgs e) => CallDocumentCollectionChanged(e);
 		void CallDocumentCollectionChanged(NotifyDocumentCollectionChangedEventArgs e) {
 			if (disable_DocumentCollectionChanged)
 				return;
 			DocumentCollectionChanged?.Invoke(this, e);
 		}
 
-		void TabGroupService_TabGroupSelectionChanged(object sender, TabGroupSelectedEventArgs e) {
+		void TabGroupService_TabGroupSelectionChanged(object? sender, TabGroupSelectedEventArgs e) {
 			if (!(e.Unselected is null)) {
 				var impl = (TabContentImpl?)e.Unselected.ActiveTabContent;
 				if (!(impl is null))
@@ -233,7 +233,7 @@ namespace dnSpy.Documents.Tabs {
 			}
 		}
 
-		void TabGroupService_TabSelectionChanged(object sender, TabSelectedEventArgs e) {
+		void TabGroupService_TabSelectionChanged(object? sender, TabSelectedEventArgs e) {
 			if (!(e.Unselected is null)) {
 				var impl = (TabContentImpl)e.Unselected;
 				impl.OnUnselected();
@@ -247,7 +247,7 @@ namespace dnSpy.Documents.Tabs {
 			}
 		}
 
-		void DocumentTreeView_NodeActivated(object sender, DocumentTreeNodeActivatedEventArgs e) {
+		void DocumentTreeView_NodeActivated(object? sender, DocumentTreeNodeActivatedEventArgs e) {
 			e.Handled = true;
 
 			if (e.Node is AssemblyReferenceNode asmRefNode) {
@@ -326,15 +326,15 @@ namespace dnSpy.Documents.Tabs {
 			}));
 		}
 
-		void DocumentTreeView_NodesTextChanged(object sender, EventArgs e) {
+		void DocumentTreeView_NodesTextChanged(object? sender, EventArgs e) {
 			foreach (var impl in AllTabContentImpls)
 				impl.UpdateTitleAndToolTip();
 		}
 
-		void DocumentTreeView_SelectionChanged(object sender, TreeViewSelectionChangedEventArgs e) {
+		void DocumentTreeView_SelectionChanged(object? sender, TreeViewSelectionChangedEventArgs e) {
 			if (disableSelectionChangedEventCounter > 0)
 				return;
-			var nodes = ((IDocumentTreeView)sender).TreeView.TopLevelSelection.OfType<DocumentTreeNodeData>().ToArray();
+			var nodes = ((IDocumentTreeView)sender!).TreeView.TopLevelSelection.OfType<DocumentTreeNodeData>().ToArray();
 
 			// Prevent a new empty tab from opening when closing the last tab
 			if (nodes.Length == 0 && ActiveTabContentImpl is null)
@@ -451,7 +451,7 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		bool isTreeViewVisible = true;
-		void TreeView_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
+		void TreeView_IsVisibleChanged(object? sender, DependencyPropertyChangedEventArgs e) {
 			if ((bool)e.NewValue) {
 				isTreeViewVisible = true;
 				OnNewTabContentShown(ActiveTabContentImpl);

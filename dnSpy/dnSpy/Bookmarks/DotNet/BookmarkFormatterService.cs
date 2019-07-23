@@ -47,7 +47,7 @@ namespace dnSpy.Bookmarks.DotNet {
 			uiDispatcher.UI(() => decompilerService.Value.DecompilerChanged += DecompilerService_DecompilerChanged);
 		}
 
-		void DecompilerService_DecompilerChanged(object sender, EventArgs e) {
+		void DecompilerService_DecompilerChanged(object? sender, EventArgs e) {
 			foreach (var bm in bookmarksService.Value.Bookmarks) {
 				if (bm.Location is IDotNetBookmarkLocation location)
 					location.Formatter?.RefreshLocation();

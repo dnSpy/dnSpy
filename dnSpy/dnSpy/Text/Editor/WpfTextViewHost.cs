@@ -76,7 +76,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		void ThemeService_ThemeChanged(object sender, ThemeChangedEventArgs e) => UpdateIsInContrastMode();
+		void ThemeService_ThemeChanged(object? sender, ThemeChangedEventArgs e) => UpdateIsInContrastMode();
 
 		void UpdateIsInContrastMode() =>
 			TextView.Options.GlobalOptions.SetOptionValue(DefaultTextViewHostOptions.IsInContrastModeId, themeService.Theme.IsHighContrast);
@@ -88,7 +88,7 @@ namespace dnSpy.Text.Editor {
 			return margin;
 		}
 
-		void Margin_VisualElement_MouseDown(object sender, MouseButtonEventArgs e) {
+		void Margin_VisualElement_MouseDown(object? sender, MouseButtonEventArgs e) {
 			if (!IsKeyboardFocusWithin)
 				TextView.VisualElement.Focus();
 		}
@@ -103,7 +103,7 @@ namespace dnSpy.Text.Editor {
 				Grid.SetColumnSpan(elem, columnSpan);
 		}
 
-		void TextView_BackgroundBrushChanged(object sender, BackgroundBrushChangedEventArgs e) => UpdateBackground();
+		void TextView_BackgroundBrushChanged(object? sender, BackgroundBrushChangedEventArgs e) => UpdateBackground();
 		void UpdateBackground() => grid.Background = TextView.Background;
 
 		static Grid CreateGrid() {

@@ -444,7 +444,7 @@ namespace dnSpy.Documents.Tabs {
 				this.uiel.IsVisibleChanged += UIElement_IsVisibleChanged;
 			}
 
-			void UIElement_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
+			void UIElement_IsVisibleChanged(object? sender, DependencyPropertyChangedEventArgs e) {
 				uiel.IsVisibleChanged -= UIElement_IsVisibleChanged;
 				exec();
 			}

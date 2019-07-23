@@ -59,7 +59,7 @@ namespace dnSpy.Text.Editor {
 			tagAggregator.TagsChanged += TagAggregator_TagsChanged;
 		}
 
-		void TagAggregator_TagsChanged(object sender, TagsChangedEventArgs e) {
+		void TagAggregator_TagsChanged(object? sender, TagsChangedEventArgs e) {
 			foreach (var span in e.Span.GetSpans(textBuffer))
 				TagsChanged?.Invoke(this, new SnapshotSpanEventArgs(span));
 		}

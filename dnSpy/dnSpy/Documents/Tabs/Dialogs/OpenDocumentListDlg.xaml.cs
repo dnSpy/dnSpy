@@ -40,7 +40,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 			InputBindings.Add(new KeyBinding(cmd, Key.F, ModifierKeys.Control));
 		}
 
-		void ListView_KeyDown(object sender, KeyEventArgs e) {
+		void ListView_KeyDown(object? sender, KeyEventArgs e) {
 			if (e.Key == Key.Delete && Keyboard.Modifiers == ModifierKeys.None) {
 				if (DataContext is OpenDocumentListVM vm && vm.CanRemove)
 					vm.Remove();
@@ -49,7 +49,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 			}
 		}
 
-		void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+		void ListView_SelectionChanged(object? sender, SelectionChangedEventArgs e) {
 			if (DataContext is OpenDocumentListVM vm)
 				vm.SelectedItems = listView.SelectedItems.OfType<DocumentListVM>().ToArray();
 		}
@@ -68,7 +68,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 				id.Dispose();
 		}
 
-		void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
+		void ListView_MouseDoubleClick(object? sender, MouseButtonEventArgs e) {
 			if (!UIUtilities.IsLeftDoubleClick<ListViewItem>(listView, e))
 				return;
 			ClickOK();

@@ -43,7 +43,7 @@ namespace dnSpy.Text.Editor.Operations {
 			TextView.Closed += TextView_Closed;
 		}
 
-		void TextView_Closed(object sender, EventArgs e) => textViewUndoManagerProvider.RemoveTextViewUndoManager(TextView);
+		void TextView_Closed(object? sender, EventArgs e) => textViewUndoManagerProvider.RemoveTextViewUndoManager(TextView);
 
 		public void ClearUndoHistory() {
 			textBufferUndoManager.UnregisterUndoHistory();

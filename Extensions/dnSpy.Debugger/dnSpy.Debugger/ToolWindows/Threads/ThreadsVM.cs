@@ -289,10 +289,10 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		}
 
 		// DbgManager thread
-		void DbgLanguageService_LanguageChanged(object sender, DbgLanguageChangedEventArgs e) => UI(() => RefreshLanguageFields_UI());
+		void DbgLanguageService_LanguageChanged(object? sender, DbgLanguageChangedEventArgs e) => UI(() => RefreshLanguageFields_UI());
 
 		// DbgManager thread
-		void DbgManager_DelayedIsRunningChanged(object sender, EventArgs e) {
+		void DbgManager_DelayedIsRunningChanged(object? sender, EventArgs e) {
 			// If all processes are running and the window is hidden, hide it now
 			if (!IsVisible)
 				UI(() => lazyToolWindowVMHelper.TryHideWindow());
@@ -343,14 +343,14 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		}
 
 		// UI thread
-		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) {
+		void ClassificationFormatMap_ClassificationFormatMappingChanged(object? sender, EventArgs e) {
 			threadContext.UIDispatcher.VerifyAccess();
 			threadContext.UIVersion++;
 			RefreshThemeFields_UI();
 		}
 
 		// random thread
-		void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) =>
+		void DebuggerSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e) =>
 			UI(() => DebuggerSettings_PropertyChanged_UI(e.PropertyName));
 
 		// UI thread
@@ -407,7 +407,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		void UI(Action callback) => threadContext.UIDispatcher.UI(callback);
 
 		// DbgManager thread
-		void DbgManager_ProcessesChanged(object sender, DbgCollectionChangedEventArgs<DbgProcess> e) {
+		void DbgManager_ProcessesChanged(object? sender, DbgCollectionChangedEventArgs<DbgProcess> e) {
 			if (e.Added) {
 				foreach (var p in e.Objects)
 					InitializeProcess_DbgThread(p);
@@ -425,7 +425,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		}
 
 		// DbgManager thread
-		void DbgProcess_RuntimesChanged(object sender, DbgCollectionChangedEventArgs<DbgRuntime> e) {
+		void DbgProcess_RuntimesChanged(object? sender, DbgCollectionChangedEventArgs<DbgRuntime> e) {
 			if (e.Added) {
 				foreach (var r in e.Objects)
 					InitializeRuntime_DbgThread(r);
@@ -437,7 +437,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		}
 
 		// DbgManager thread
-		void DbgRuntime_AppDomainsChanged(object sender, DbgCollectionChangedEventArgs<DbgAppDomain> e) {
+		void DbgRuntime_AppDomainsChanged(object? sender, DbgCollectionChangedEventArgs<DbgAppDomain> e) {
 			if (e.Added) {
 				foreach (var a in e.Objects)
 					InitializeAppDomain_DbgThread(a);
@@ -449,8 +449,8 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		}
 
 		// DbgManager thread
-		void DbgProcess_IsRunningChanged(object sender, EventArgs e) {
-			var process = (DbgProcess)sender;
+		void DbgProcess_IsRunningChanged(object? sender, EventArgs e) {
+			var process = (DbgProcess)sender!;
 			if (process.State == DbgProcessState.Terminated)
 				return;
 
@@ -469,7 +469,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		}
 
 		// DbgManager thread
-		void DbgManager_CurrentThreadChanged(object sender, DbgCurrentObjectChangedEventArgs<DbgThread> e) =>
+		void DbgManager_CurrentThreadChanged(object? sender, DbgCurrentObjectChangedEventArgs<DbgThread> e) =>
 			UI(() => UpdateCurrentThread_UI());
 
 		// UI thread
@@ -491,8 +491,8 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		}
 
 		// DbgManager thread
-		void DbgProcess_DelayedIsRunningChanged(object sender, EventArgs e) {
-			var process = (DbgProcess)sender;
+		void DbgProcess_DelayedIsRunningChanged(object? sender, EventArgs e) {
+			var process = (DbgProcess)sender!;
 			var state = process.GetOrCreateData<ProcessState>();
 			Debug.Assert(process.IsRunning);
 			state.IgnoreThreadsChangedEvent = process.IsRunning;
@@ -503,8 +503,8 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		}
 
 		// DbgManager thread
-		void DbgProcess_ThreadsChanged(object sender, DbgCollectionChangedEventArgs<DbgThread> e) {
-			var process = (DbgProcess)sender;
+		void DbgProcess_ThreadsChanged(object? sender, DbgCollectionChangedEventArgs<DbgThread> e) {
+			var process = (DbgProcess)sender!;
 			var state = process.GetOrCreateData<ProcessState>();
 			if (state.IgnoreThreadsChangedEvent)
 				return;
@@ -523,10 +523,10 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		}
 
 		// DbgManager thread
-		void DbgAppDomain_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void DbgAppDomain_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == nameof(DbgAppDomain.Name) || e.PropertyName == nameof(DbgAppDomain.Id)) {
 				UI(() => {
-					var appDomain = (DbgAppDomain)sender;
+					var appDomain = (DbgAppDomain)sender!;
 					foreach (var vm in realAllItems)
 						vm.RefreshAppDomainNames_UI(appDomain);
 				});

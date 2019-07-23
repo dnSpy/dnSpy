@@ -73,7 +73,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			}
 		}
 
-		void TreeView_PreviewTextInput(object sender, TextCompositionEventArgs e) {
+		void TreeView_PreviewTextInput(object? sender, TextCompositionEventArgs e) {
 			Debug.Assert(!(variablesWindowOperations is null));
 			if (variablesWindowOperations is null)
 				return;

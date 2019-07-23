@@ -91,7 +91,7 @@ namespace dnSpy.Hex.Editor {
 			offsetCursorProvider.CursorInfoChanged += OffsetCursorProvider_CursorInfoChanged;
 		}
 
-		void OffsetCursorProvider_CursorInfoChanged(object sender, EventArgs e) => CursorInfoChanged?.Invoke(this, EventArgs.Empty);
+		void OffsetCursorProvider_CursorInfoChanged(object? sender, EventArgs e) => CursorInfoChanged?.Invoke(this, EventArgs.Empty);
 	}
 
 	abstract class OffsetCursorProviderService {

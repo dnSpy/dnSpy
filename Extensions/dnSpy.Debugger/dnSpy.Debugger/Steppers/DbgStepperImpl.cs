@@ -55,7 +55,7 @@ namespace dnSpy.Debugger.Steppers {
 			engineStepper.StepComplete += DbgEngineStepper_StepComplete;
 		}
 
-		void DbgEngineStepper_StepComplete(object sender, DbgEngineStepCompleteEventArgs e) =>
+		void DbgEngineStepper_StepComplete(object? sender, DbgEngineStepCompleteEventArgs e) =>
 			Dispatcher.BeginInvoke(() => DbgEngineStepper_StepComplete_DbgThread(e));
 
 		void DbgEngineStepper_StepComplete_DbgThread(DbgEngineStepCompleteEventArgs e) {

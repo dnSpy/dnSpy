@@ -290,7 +290,7 @@ namespace dnSpy.Hex.Editor {
 				cachedCursor = Cursor;
 			}
 
-			void Provider_CursorInfoChanged(object sender, EventArgs e) {
+			void Provider_CursorInfoChanged(object? sender, EventArgs e) {
 				var providerInfo = providerInfos.FirstOrDefault(a => a.Provider == sender);
 				Debug.Assert(!(providerInfo is null));
 				if (providerInfo is null)
@@ -342,7 +342,7 @@ namespace dnSpy.Hex.Editor {
 		DispatcherTimer? screenRefreshTimer;
 
 		void RefreshScreen() => DelayLayoutLines(true);
-		void RefreshScreenHandler(object sender, EventArgs e) {
+		void RefreshScreenHandler(object? sender, EventArgs e) {
 			StopRefreshTimer();
 			RefreshScreen();
 		}
@@ -352,13 +352,13 @@ namespace dnSpy.Hex.Editor {
 			screenRefreshTimer = null;
 		}
 
-		void Buffer_BufferSpanInvalidated(object sender, HexBufferSpanInvalidatedEventArgs e) {
+		void Buffer_BufferSpanInvalidated(object? sender, HexBufferSpanInvalidatedEventArgs e) {
 			if (e.Span.Length > 0)
 				InvalidateSpan(new HexBufferSpan(Buffer, e.Span));
 			BufferChangedCommon();
 		}
 
-		void HexBuffer_ChangedLowPriority(object sender, HexContentChangedEventArgs e) {
+		void HexBuffer_ChangedLowPriority(object? sender, HexContentChangedEventArgs e) {
 			foreach (var c in e.Changes) {
 				if (c.OldSpan.Length > 0)
 					InvalidateSpan(new HexBufferSpan(Buffer, c.OldSpan));
@@ -374,17 +374,17 @@ namespace dnSpy.Hex.Editor {
 				DelayScreenRefresh();
 		}
 
-		void AggregateClassifier_ClassificationChanged(object sender, HexClassificationChangedEventArgs e) =>
+		void AggregateClassifier_ClassificationChanged(object? sender, HexClassificationChangedEventArgs e) =>
 			canvas.Dispatcher.BeginInvoke(new Action(() => InvalidateSpan(e.ChangeSpan)), DispatcherPriority.Normal);
 
-		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) => canvas.Dispatcher.BeginInvoke(new Action(() => {
+		void ClassificationFormatMap_ClassificationFormatMappingChanged(object? sender, EventArgs e) => canvas.Dispatcher.BeginInvoke(new Action(() => {
 			if (IsClosed)
 				return;
 			UpdateForceClearTypeIfNeeded();
 			InvalidateFormattedLineSource(true);
 		}), DispatcherPriority.Normal);
 
-		void EditorFormatMap_FormatMappingChanged(object sender, VSTC.FormatItemsEventArgs e) {
+		void EditorFormatMap_FormatMappingChanged(object? sender, VSTC.FormatItemsEventArgs e) {
 			if (e.ChangedItems.Contains(CTC.EditorFormatMapConstants.TextViewBackgroundId))
 				UpdateBackground();
 		}
@@ -394,7 +394,7 @@ namespace dnSpy.Hex.Editor {
 			Background = TE.ResourceDictionaryUtilities.GetBackgroundBrush(bgProps, SystemColors.WindowBrush);
 		}
 
-		void HexAndAdornmentSequencer_SequenceChanged(object sender, HexAndAdornmentSequenceChangedEventArgs e) =>
+		void HexAndAdornmentSequencer_SequenceChanged(object? sender, HexAndAdornmentSequenceChangedEventArgs e) =>
 			canvas.Dispatcher.BeginInvoke(new Action(() => InvalidateSpan(e.Span)), DispatcherPriority.Normal);
 
 		void InvalidateSpans(IEnumerable<HexBufferSpan> spans) {
@@ -464,7 +464,7 @@ namespace dnSpy.Hex.Editor {
 				InvalidateFormattedLineSource(true);
 		}
 
-		void EditorOptions_OptionChanged(object sender, VSTE.EditorOptionChangedEventArgs e) {
+		void EditorOptions_OptionChanged(object? sender, VSTE.EditorOptionChangedEventArgs e) {
 			UpdateOption(e.OptionId);
 			if (e.OptionId == DefaultHexViewOptions.RefreshScreenOnChangeName) {
 				if (!Options.IsRefreshScreenOnChangeEnabled())
@@ -505,8 +505,8 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		void OnIsKeyboardFocusWithinChanged(DependencyPropertyChangedEventArgs e) => UpdateKeyboardFocus();
-		void SpaceReservationStack_GotAggregateFocus(object sender, EventArgs e) => UpdateKeyboardFocus();
-		void SpaceReservationStack_LostAggregateFocus(object sender, EventArgs e) => UpdateKeyboardFocus();
+		void SpaceReservationStack_GotAggregateFocus(object? sender, EventArgs e) => UpdateKeyboardFocus();
+		void SpaceReservationStack_LostAggregateFocus(object? sender, EventArgs e) => UpdateKeyboardFocus();
 
 		bool hasKeyboardFocus;
 		bool updateKeyboardFocusInProgress;
@@ -1009,7 +1009,7 @@ namespace dnSpy.Hex.Editor {
 		}
 		MetroWindow? metroWindow;
 
-		void WpfHexView_Loaded(object sender, RoutedEventArgs e) {
+		void WpfHexView_Loaded(object? sender, RoutedEventArgs e) {
 			canvas.Loaded -= WpfHexView_Loaded;
 			var window = Window.GetWindow(canvas);
 			metroWindow = window as MetroWindow;
@@ -1022,7 +1022,7 @@ namespace dnSpy.Hex.Editor {
 			}
 		}
 
-		void MetroWindow_WindowDpiChanged(object sender, EventArgs e) {
+		void MetroWindow_WindowDpiChanged(object? sender, EventArgs e) {
 			Debug.Assert(!(sender is null) && sender == metroWindow);
 			((MetroWindow)sender).SetScaleTransform(canvas, ZoomLevel / 100);
 		}
@@ -1078,7 +1078,7 @@ namespace dnSpy.Hex.Editor {
 		}
 		bool queueSpaceReservationStackRefreshInProgress;
 
-		void WpfHexView_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) =>
+		void WpfHexView_IsVisibleChanged(object? sender, DependencyPropertyChangedEventArgs e) =>
 			QueueSpaceReservationStackRefresh();
 
 		internal bool IsMouseOverOverlayLayerElement(MouseEventArgs e) => overlayAdornmentLayerCollection.IsMouseOverOverlayLayerElement(e);

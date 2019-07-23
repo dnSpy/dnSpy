@@ -596,7 +596,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			if (ridList.Count == 0)
 				return Array.Empty<DmdCustomAttributeData>();
 
-			var res = new DmdCustomAttributeData[ridList.Count];
+			DmdCustomAttributeData[]? res = new DmdCustomAttributeData[ridList.Count];
 			int w = 0;
 			for (int i = 0; i < ridList.Count; i++) {
 				if (!TablesStream.TryReadCustomAttributeRow(ridList[i], out var row))
@@ -615,7 +615,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			}
 			if (res.Length != w)
 				Array.Resize(ref res, w);
-			return res;
+			return res!;
 		}
 
 		protected override DmdCustomAttributeData[] ReadAssemblySecurityAttributes(uint rid) => ReadSecurityAttributesCore(Table.Assembly, rid);

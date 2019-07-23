@@ -75,12 +75,12 @@ namespace dnSpy.Hex.Editor {
 			wpfHexViewHost.HexView.ViewportLeft = value;
 		}
 
-		void Options_OptionChanged(object sender, VSTE.EditorOptionChangedEventArgs e) {
+		void Options_OptionChanged(object? sender, VSTE.EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultHexViewHostOptions.HorizontalScrollBarName)
 				UpdateVisibility();
 		}
 
-		void HorizontalScrollBarMargin_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
+		void HorizontalScrollBarMargin_IsVisibleChanged(object? sender, DependencyPropertyChangedEventArgs e) {
 			if (theScrollBar.Visibility == Visibility.Visible) {
 				RegisterEvents();
 				theScrollBar.IsEnabled = true;
@@ -93,7 +93,7 @@ namespace dnSpy.Hex.Editor {
 				UnregisterEvents();
 		}
 
-		void HexView_LayoutChanged(object sender, HexViewLayoutChangedEventArgs e) {
+		void HexView_LayoutChanged(object? sender, HexViewLayoutChangedEventArgs e) {
 			theScrollBar.LargeChange = wpfHexViewHost.HexView.ViewportWidth;
 			theScrollBar.ViewportSize = wpfHexViewHost.HexView.ViewportWidth;
 			UpdateMaximum();

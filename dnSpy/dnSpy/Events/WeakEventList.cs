@@ -30,7 +30,7 @@ namespace dnSpy.Events {
 
 		abstract class Info {
 			public abstract bool IsAlive { get; }
-			public abstract void Execute(object source, TEventArgs e);
+			public abstract void Execute(object? source, TEventArgs e);
 			public abstract bool Equals(EventHandler<TEventArgs> h);
 			public static Info Create(EventHandler<TEventArgs> h) {
 				if (h.Target is null)
@@ -48,7 +48,7 @@ namespace dnSpy.Events {
 
 		sealed class HardRefInfo : Info {
 			public override bool IsAlive => true;
-			public override void Execute(object source, TEventArgs e) => handler(source, e);
+			public override void Execute(object? source, TEventArgs e) => handler(source, e);
 			public override bool Equals(EventHandler<TEventArgs> h) => handler == h;
 
 			readonly EventHandler<TEventArgs> handler;
@@ -59,10 +59,10 @@ namespace dnSpy.Events {
 		sealed class InstanceInfo : Info {
 			public override bool IsAlive => !(target.Target is null);
 
-			public override void Execute(object source, TEventArgs e) {
+			public override void Execute(object? source, TEventArgs e) {
 				var self = target.Target;
 				if (!(self is null))
-					methodInfo.Invoke(self, new object[] { source, e });
+					methodInfo.Invoke(self, new object?[] { source, e });
 			}
 
 			public override bool Equals(EventHandler<TEventArgs> h) =>
@@ -98,7 +98,7 @@ namespace dnSpy.Events {
 			}
 		}
 
-		public void Raise(object sender, TEventArgs e) {
+		public void Raise(object? sender, TEventArgs e) {
 			if (handlers.Count == 0)
 				return;
 			var newList = new List<Info>(handlers.Count);

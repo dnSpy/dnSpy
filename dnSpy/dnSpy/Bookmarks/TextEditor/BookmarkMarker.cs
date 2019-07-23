@@ -79,7 +79,7 @@ namespace dnSpy.Bookmarks.TextEditor {
 			public BookmarkData(GlyphTextMarkerLocationInfo location) => Location = location ?? throw new ArgumentNullException(nameof(location));
 		}
 
-		void BookmarksService_BookmarksChanged(object sender, CollectionChangedEventArgs<Bookmark> e) {
+		void BookmarksService_BookmarksChanged(object? sender, CollectionChangedEventArgs<Bookmark> e) {
 			if (e.Added)
 				UI(() => OnBookmarksAdded_UI(e));
 			else {
@@ -113,7 +113,7 @@ namespace dnSpy.Bookmarks.TextEditor {
 			glyphTextMarkerService.Value.Remove(list.Select(a => a.data.Marker).OfType<IGlyphTextMarker>());
 		}
 
-		void BookmarksService_BookmarksModified(object sender, BookmarksModifiedEventArgs e) =>
+		void BookmarksService_BookmarksModified(object? sender, BookmarksModifiedEventArgs e) =>
 			UI(() => OnBookmarksModified_UI(e.Bookmarks.Select(a => a.Bookmark).ToArray()));
 
 		void OnBookmarksModified_UI(IList<Bookmark> bookmarks) {

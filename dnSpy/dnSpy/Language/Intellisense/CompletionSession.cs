@@ -80,7 +80,7 @@ namespace dnSpy.Language.Intellisense {
 			TextView.Closed += TextView_Closed;
 		}
 
-		void TextView_Closed(object sender, EventArgs e) {
+		void TextView_Closed(object? sender, EventArgs e) {
 			if (!IsDismissed)
 				Dismiss();
 		}

@@ -170,8 +170,8 @@ namespace dnSpy.Hex.Intellisense {
 			}
 		}
 
-		void Session_Dismissed(object sender, EventArgs e) {
-			var session = (HexQuickInfoSession)sender;
+		void Session_Dismissed(object? sender, EventArgs e) {
+			var session = (HexQuickInfoSession)sender!;
 			session.Dismissed -= Session_Dismissed;
 			RemoveToolTipInfo();
 		}
@@ -228,7 +228,7 @@ namespace dnSpy.Hex.Intellisense {
 			UpdateHighlightStructureUnderMouseCursor();
 		}
 
-		void Options_OptionChanged(object sender, VSTE.EditorOptionChangedEventArgs e) {
+		void Options_OptionChanged(object? sender, VSTE.EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultHexViewOptions.HighlightStructureUnderMouseCursorName)
 				UpdateHighlightStructureUnderMouseCursor();
 		}
@@ -327,7 +327,7 @@ namespace dnSpy.Hex.Intellisense {
 		}
 		IHexToolTipServiceTagger? tagger;
 
-		void HexView_Closed(object sender, EventArgs e) {
+		void HexView_Closed(object? sender, EventArgs e) {
 			hexView.Closed -= HexView_Closed;
 			hexView.Options.OptionChanged -= Options_OptionChanged;
 			tagAggregator.Dispose();

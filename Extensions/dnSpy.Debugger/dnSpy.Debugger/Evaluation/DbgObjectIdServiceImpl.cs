@@ -54,7 +54,7 @@ namespace dnSpy.Debugger.Evaluation {
 			});
 		}
 
-		void DbgRuntimeObjectIdService_ObjectIdsChanged(object sender, EventArgs e) => ObjectIdsChanged?.Invoke(this, EventArgs.Empty);
+		void DbgRuntimeObjectIdService_ObjectIdsChanged(object? sender, EventArgs e) => ObjectIdsChanged?.Invoke(this, EventArgs.Empty);
 
 		public override bool CanCreateObjectId(DbgValue value, CreateObjectIdOptions options) {
 			if (value is null)

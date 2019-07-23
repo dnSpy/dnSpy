@@ -40,7 +40,7 @@ namespace dnSpy.Debugger.DbgUI {
 
 		protected abstract void ActivateMainWindow();
 
-		void DbgManager_ProcessPaused(object sender, ProcessPausedEventArgs e) {
+		void DbgManager_ProcessPaused(object? sender, ProcessPausedEventArgs e) {
 			Debug.Assert(dbgCallStackService.Thread == e.Thread);
 			var info = GetLocation();
 			if (!(info.location is null)) {

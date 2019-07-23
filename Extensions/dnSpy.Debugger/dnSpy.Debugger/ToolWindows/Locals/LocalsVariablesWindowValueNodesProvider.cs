@@ -52,7 +52,7 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 			}
 		}
 
-		void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void DebuggerSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			switch (e.PropertyName) {
 			case nameof(DebuggerSettings.SortParameters):
 			case nameof(DebuggerSettings.SortLocals):
@@ -67,7 +67,7 @@ namespace dnSpy.Debugger.ToolWindows.Locals {
 			}
 		}
 
-		void DbgObjectIdService_ObjectIdsChanged(object sender, EventArgs e) => NodesChanged?.Invoke(this, EventArgs.Empty);
+		void DbgObjectIdService_ObjectIdsChanged(object? sender, EventArgs e) => NodesChanged?.Invoke(this, EventArgs.Empty);
 
 		sealed class DbgObjectIdComparer : IComparer<DbgObjectId> {
 			public static readonly DbgObjectIdComparer Instance = new DbgObjectIdComparer();

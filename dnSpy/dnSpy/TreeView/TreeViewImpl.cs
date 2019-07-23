@@ -101,14 +101,14 @@ namespace dnSpy.TreeView {
 			sharpTreeView.Root = root.Node;
 		}
 
-		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) => RefreshAllNodes();
+		void ClassificationFormatMap_ClassificationFormatMappingChanged(object? sender, EventArgs e) => RefreshAllNodes();
 
 		void IDisposable.Dispose() {
 			classificationFormatMap.ClassificationFormatMappingChanged -= ClassificationFormatMap_ClassificationFormatMappingChanged;
 			sharpTreeView.SelectionChanged -= SharpTreeView_SelectionChanged;
 		}
 
-		void SharpTreeView_SelectionChanged(object sender, SelectionChangedEventArgs e) =>
+		void SharpTreeView_SelectionChanged(object? sender, SelectionChangedEventArgs e) =>
 			SelectionChanged?.Invoke(this, Convert(e));
 
 		static TreeViewSelectionChangedEventArgs Convert(SelectionChangedEventArgs e) {

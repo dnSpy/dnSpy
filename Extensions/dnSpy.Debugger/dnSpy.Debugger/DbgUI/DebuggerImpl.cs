@@ -88,7 +88,7 @@ namespace dnSpy.Debugger.DbgUI {
 			UI(() => appWindow.Value.MainWindowClosing += AppWindow_MainWindowClosing);
 		}
 
-		void AppWindow_MainWindowClosing(object sender, CancelEventArgs e) {
+		void AppWindow_MainWindowClosing(object? sender, CancelEventArgs e) {
 			if (IsDebugging) {
 				var result = messageBoxService.Value.ShowIgnorableMessage(new Guid("B4B8E13C-B7B7-490A-953B-8ED8EAE7C170"), dnSpy_Debugger_Resources.AskAppWindowClosingStopDebugging, MsgBoxButton.Yes | MsgBoxButton.No);
 				if (result == MsgBoxButton.None || result == MsgBoxButton.No)
@@ -385,7 +385,7 @@ namespace dnSpy.Debugger.DbgUI {
 			dbgManager.DbgManagerMessage += DbgManager_DbgManagerMessage;
 		}
 
-		void DbgManager_DbgManagerMessage(object sender, DbgManagerMessageEventArgs e) {
+		void DbgManager_DbgManagerMessage(object? sender, DbgManagerMessageEventArgs e) {
 			switch (e.MessageKind) {
 			case PredefinedDbgManagerMessageKinds.ErrorUser:
 				UI(() => ShowError_UI(e.Message));
@@ -393,15 +393,15 @@ namespace dnSpy.Debugger.DbgUI {
 			}
 		}
 
-		void DbgManager_MessageSetIPComplete(object sender, DbgMessageSetIPCompleteEventArgs e) {
+		void DbgManager_MessageSetIPComplete(object? sender, DbgMessageSetIPCompleteEventArgs e) {
 			if (!(e.Error is null))
 				UI(() => ShowError_UI(e.Error));
 		}
 
-		void DbgManager_MessageUserMessage(object sender, DbgMessageUserMessageEventArgs e) =>
+		void DbgManager_MessageUserMessage(object? sender, DbgMessageUserMessageEventArgs e) =>
 			UI(() => ShowError_UI(e.Message));
 
-		void DbgManager_MessageExceptionThrown(object sender, DbgMessageExceptionThrownEventArgs e) {
+		void DbgManager_MessageExceptionThrown(object? sender, DbgMessageExceptionThrownEventArgs e) {
 			if (!debuggerSettings.IgnoreUnhandledExceptions && e.Exception.IsUnhandled) {
 				e.Pause = true;
 				UI(() => ShowUnhandledException_UI(e));
@@ -431,8 +431,8 @@ namespace dnSpy.Debugger.DbgUI {
 			messageBoxService.Value.Show(error);
 		}
 
-		void DbgManager_IsDebuggingChanged(object sender, EventArgs e) {
-			var dbgManager = (DbgManager)sender;
+		void DbgManager_IsDebuggingChanged(object? sender, EventArgs e) {
+			var dbgManager = (DbgManager)sender!;
 			UI(() => {
 				var newIsDebugging = dbgManager.IsDebugging;
 				if (newIsDebugging == oldIsDebugging)
@@ -456,8 +456,8 @@ namespace dnSpy.Debugger.DbgUI {
 		void SetRunningStatusMessage_UI() => SetStatusMessage_UI(dnSpy_Debugger_Resources.StatusBar_Running);
 		void SetStatusMessage_UI(string message) => appWindow.Value.StatusBar.Show(message);
 
-		void DbgManager_IsRunningChanged(object sender, EventArgs e) {
-			var dbgManager = (DbgManager)sender;
+		void DbgManager_IsRunningChanged(object? sender, EventArgs e) {
+			var dbgManager = (DbgManager)sender!;
 			var breakInfos = dbgManager.CurrentRuntime.Break?.BreakInfos ?? (IList<DbgBreakInfo>)Array.Empty<DbgBreakInfo>();
 			UI(() => {
 				var newIsRunning = dbgManager.IsRunning;

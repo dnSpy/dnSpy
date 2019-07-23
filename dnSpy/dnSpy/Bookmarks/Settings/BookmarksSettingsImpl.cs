@@ -70,7 +70,7 @@ namespace dnSpy.Bookmarks.Settings {
 			PropertyChanged += BookmarksSettingsImpl_PropertyChanged;
 		}
 
-		void BookmarksSettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void BookmarksSettingsImpl_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(SyntaxHighlight), SyntaxHighlight);
 		}

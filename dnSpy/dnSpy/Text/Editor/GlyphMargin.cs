@@ -159,7 +159,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void UpdateVisibility() => Visibility = Enabled ? Visibility.Visible : Visibility.Collapsed;
-		void TextView_ZoomLevelChanged(object sender, ZoomLevelChangedEventArgs e) {
+		void TextView_ZoomLevelChanged(object? sender, ZoomLevelChangedEventArgs e) {
 			LayoutTransform = e.ZoomTransform;
 			DsImage.SetZoom(this, e.NewZoomLevel / 100);
 		}
@@ -167,7 +167,7 @@ namespace dnSpy.Text.Editor {
 		public ITextViewMargin? GetTextViewMargin(string marginName) =>
 			StringComparer.OrdinalIgnoreCase.Equals(marginName, PredefinedMarginNames.Glyph) ? this : null;
 
-		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
+		void Options_OptionChanged(object? sender, EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultTextViewHostOptions.GlyphMarginName)
 				UpdateVisibility();
 		}
@@ -256,10 +256,10 @@ namespace dnSpy.Text.Editor {
 			InitializeGlyphFactories(null, wpfTextViewHost.TextView.TextDataModel.ContentType);
 		}
 
-		void TextDataModel_ContentTypeChanged(object sender, TextDataModelContentTypeChangedEventArgs e) =>
+		void TextDataModel_ContentTypeChanged(object? sender, TextDataModelContentTypeChangedEventArgs e) =>
 			InitializeGlyphFactories(e.BeforeContentType, e.AfterContentType);
 
-		void GlyphMargin_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
+		void GlyphMargin_IsVisibleChanged(object? sender, DependencyPropertyChangedEventArgs e) {
 			if (Visibility == Visibility.Visible && !wpfTextViewHost.IsClosed) {
 				Initialize();
 				RegisterEvents();
@@ -282,7 +282,7 @@ namespace dnSpy.Text.Editor {
 			OnNewLayout(wpfTextViewHost.TextView.TextViewLines, Array.Empty<ITextViewLine>());
 		}
 
-		void TextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) {
+		void TextView_LayoutChanged(object? sender, TextViewLayoutChangedEventArgs e) {
 			if (e.OldViewState.ViewportTop != e.NewViewState.ViewportTop)
 				SetTop(iconCanvas, -wpfTextViewHost.TextView.ViewportTop);
 			OnNewLayout(e.NewOrReformattedLines, e.TranslatedLines);
@@ -363,7 +363,7 @@ namespace dnSpy.Text.Editor {
 			return icons;
 		}
 
-		void TagAggregator_BatchedTagsChanged(object sender, BatchedTagsChangedEventArgs e) {
+		void TagAggregator_BatchedTagsChanged(object? sender, BatchedTagsChangedEventArgs e) {
 			Dispatcher.VerifyAccess();
 			HashSet<ITextViewLine>? checkedLines = null;
 			foreach (var mappingSpan in e.Spans) {
@@ -405,7 +405,7 @@ namespace dnSpy.Text.Editor {
 			AddLine(lineInfos, line);
 		}
 
-		void EditorFormatMap_FormatMappingChanged(object sender, FormatItemsEventArgs e) {
+		void EditorFormatMap_FormatMappingChanged(object? sender, FormatItemsEventArgs e) {
 			if (e.ChangedItems.Contains(ThemeClassificationTypeNameKeys.GlyphMargin))
 				UpdateBackground();
 		}

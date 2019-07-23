@@ -231,7 +231,7 @@ namespace dnSpy.AsmEditor.Commands {
 			}
 		}
 
-		void listBox_KeyDown(object sender, KeyEventArgs e) {
+		void listBox_KeyDown(object? sender, KeyEventArgs e) {
 			if (e.OriginalSource is TextBox || e.OriginalSource is ComboBox || e.OriginalSource is ComboBoxItem)
 				return;
 

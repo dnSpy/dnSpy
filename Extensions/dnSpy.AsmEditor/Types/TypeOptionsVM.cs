@@ -295,7 +295,7 @@ namespace dnSpy.AsmEditor.Types {
 			Reinitialize();
 		}
 
-		void typeSigCreator_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void typeSigCreator_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			InitializeTypeKind();
 			if (e.PropertyName == nameof(TypeSigCreator.TypeSigDnlibFullName))
 				OnPropertyChanged(nameof(BaseTypeHeader));

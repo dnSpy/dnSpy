@@ -162,7 +162,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		void UpdateVisibility() => canvas.Visibility = Enabled ? Visibility.Visible : Visibility.Collapsed;
-		void HexView_ZoomLevelChanged(object sender, VSTE.ZoomLevelChangedEventArgs e) {
+		void HexView_ZoomLevelChanged(object? sender, VSTE.ZoomLevelChangedEventArgs e) {
 			canvas.LayoutTransform = e.ZoomTransform;
 			DsImage.SetZoom(canvas, e.NewZoomLevel / 100);
 		}
@@ -170,7 +170,7 @@ namespace dnSpy.Hex.Editor {
 		public override HexViewMargin? GetHexViewMargin(string marginName) =>
 			StringComparer.OrdinalIgnoreCase.Equals(marginName, PredefinedHexMarginNames.Glyph) ? this : null;
 
-		void Options_OptionChanged(object sender, VSTE.EditorOptionChangedEventArgs e) {
+		void Options_OptionChanged(object? sender, VSTE.EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultHexViewHostOptions.GlyphMarginName)
 				UpdateVisibility();
 		}
@@ -252,7 +252,7 @@ namespace dnSpy.Hex.Editor {
 			InitializeGlyphFactories();
 		}
 
-		void GlyphMargin_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
+		void GlyphMargin_IsVisibleChanged(object? sender, DependencyPropertyChangedEventArgs e) {
 			if (canvas.Visibility == Visibility.Visible && !wpfHexViewHost.IsClosed) {
 				Initialize();
 				RegisterEvents();
@@ -276,7 +276,7 @@ namespace dnSpy.Hex.Editor {
 			OnNewLayout(wpfHexViewHost.HexView.HexViewLines, Array.Empty<HexViewLine>());
 		}
 
-		void HexView_LayoutChanged(object sender, HexViewLayoutChangedEventArgs e) {
+		void HexView_LayoutChanged(object? sender, HexViewLayoutChangedEventArgs e) {
 			if (e.OldViewState.ViewportTop != e.NewViewState.ViewportTop)
 				Canvas.SetTop(iconCanvas, -wpfHexViewHost.HexView.ViewportTop);
 			OnNewLayout(e.NewOrReformattedLines, e.TranslatedLines);
@@ -362,7 +362,7 @@ namespace dnSpy.Hex.Editor {
 				yield return tagSpan.Tag;
 		}
 
-		void TagAggregator_BatchedTagsChanged(object sender, HexBatchedTagsChangedEventArgs e) {
+		void TagAggregator_BatchedTagsChanged(object? sender, HexBatchedTagsChangedEventArgs e) {
 			canvas.Dispatcher.VerifyAccess();
 			HashSet<HexViewLine>? checkedLines = null;
 			foreach (var span in e.Spans)
@@ -402,7 +402,7 @@ namespace dnSpy.Hex.Editor {
 			AddLine(lineInfos, line);
 		}
 
-		void EditorFormatMap_FormatMappingChanged(object sender, VSTC.FormatItemsEventArgs e) {
+		void EditorFormatMap_FormatMappingChanged(object? sender, VSTC.FormatItemsEventArgs e) {
 			if (e.ChangedItems.Contains(CTC.ThemeClassificationTypeNameKeys.HexGlyphMargin))
 				UpdateBackground();
 		}

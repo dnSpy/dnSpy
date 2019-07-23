@@ -29,9 +29,9 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 	sealed class DeserializedDataInfo {
 		public Type ObjectType { get; }
 		public string Name { get; }
-		public object Value { get; }
+		public object? Value { get; }
 
-		public DeserializedDataInfo(Type objectType, string name, object value) {
+		public DeserializedDataInfo(Type objectType, string name, object? value) {
 			ObjectType = objectType;
 			Name = name;
 			Value = value;

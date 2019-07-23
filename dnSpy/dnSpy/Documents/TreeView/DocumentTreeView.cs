@@ -75,7 +75,7 @@ namespace dnSpy.Documents.TreeView {
 		public event EventHandler<TreeViewSelectionChangedEventArgs> SelectionChanged;
 		bool disable_SelectionChanged = false;
 
-		void TreeView_SelectionChanged(object sender, TreeViewSelectionChangedEventArgs e) {
+		void TreeView_SelectionChanged(object? sender, TreeViewSelectionChangedEventArgs e) {
 			if (disable_SelectionChanged)
 				return;
 			SelectionChanged?.Invoke(this, e);
@@ -206,8 +206,8 @@ namespace dnSpy.Documents.TreeView {
 				a();
 		}
 
-		void DocumentTreeViewSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			var documentTreeViewSettings = (IDocumentTreeViewSettings)sender;
+		void DocumentTreeViewSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
+			var documentTreeViewSettings = (IDocumentTreeViewSettings)sender!;
 			switch (e.PropertyName) {
 			case nameof(documentTreeViewSettings.SyntaxHighlight):
 				context.SyntaxHighlight = documentTreeViewSettings.SyntaxHighlight;
@@ -247,7 +247,7 @@ namespace dnSpy.Documents.TreeView {
 
 		public event EventHandler<EventArgs> NodesTextChanged;
 		void NotifyNodesTextRefreshed() => NodesTextChanged?.Invoke(this, EventArgs.Empty);
-		void DecompilerService_DecompilerChanged(object sender, EventArgs e) => UpdateDecompiler(((IDecompilerService)sender).Decompiler);
+		void DecompilerService_DecompilerChanged(object? sender, EventArgs e) => UpdateDecompiler(((IDecompilerService)sender!).Decompiler);
 
 		void UpdateDecompiler(IDecompiler newDecompiler) {
 			context.Decompiler = newDecompiler;
@@ -278,7 +278,7 @@ namespace dnSpy.Documents.TreeView {
 
 		void RefreshNodes() => TreeView.RefreshAllNodes();
 
-		void DocumentService_CollectionChanged(object sender, NotifyDocumentCollectionChangedEventArgs e) {
+		void DocumentService_CollectionChanged(object? sender, NotifyDocumentCollectionChangedEventArgs e) {
 			switch (e.Type) {
 			case NotifyDocumentCollectionType.Add:
 				DsDocumentNode newNode;

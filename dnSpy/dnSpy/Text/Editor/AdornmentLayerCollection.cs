@@ -66,7 +66,7 @@ namespace dnSpy.Text.Editor {
 			return adornmentLayers.Count;
 		}
 
-		void WpfTextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) {
+		void WpfTextView_LayoutChanged(object? sender, TextViewLayoutChangedEventArgs e) {
 			if (Width != wpfTextView.VisualElement.ActualWidth || Height != wpfTextView.VisualElement.ActualHeight) {
 				Width = wpfTextView.VisualElement.ActualWidth;
 				Height = wpfTextView.VisualElement.ActualHeight;
@@ -86,7 +86,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		void WpfTextView_Closed(object sender, EventArgs e) {
+		void WpfTextView_Closed(object? sender, EventArgs e) {
 			wpfTextView.Closed -= WpfTextView_Closed;
 			wpfTextView.LayoutChanged -= WpfTextView_LayoutChanged;
 		}

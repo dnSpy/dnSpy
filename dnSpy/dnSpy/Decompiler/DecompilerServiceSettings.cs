@@ -57,7 +57,7 @@ namespace dnSpy.Decompiler {
 			PropertyChanged += DecompilerServiceSettingsImpl_PropertyChanged;
 		}
 
-		void DecompilerServiceSettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void DecompilerServiceSettingsImpl_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(LanguageGuid), LanguageGuid);
 		}

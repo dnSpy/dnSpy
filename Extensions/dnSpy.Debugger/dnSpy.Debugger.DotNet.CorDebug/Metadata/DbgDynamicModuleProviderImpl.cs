@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Metadata {
 			engine.ClassLoaded += DbgEngineImpl_ClassLoaded;
 		}
 
-		void DbgEngineImpl_ClassLoaded(object sender, ClassLoadedEventArgs e) => ClassLoaded?.Invoke(this, e);
+		void DbgEngineImpl_ClassLoaded(object? sender, ClassLoadedEventArgs e) => ClassLoaded?.Invoke(this, e);
 		public override void BeginInvoke(Action callback) => engine.CorDebugThread(callback);
 		T Invoke<T>(Func<T> callback) => engine.InvokeCorDebugThread(callback);
 

@@ -188,7 +188,7 @@ namespace dnSpy.Bookmarks.Impl {
 			PropertyChanged += BookmarkDisplaySettingsImpl_PropertyChanged;
 		}
 
-		void BookmarkDisplaySettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void BookmarkDisplaySettingsImpl_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(ShowTokens), ShowTokens);
 			sect.Attribute(nameof(ShowModuleNames), ShowModuleNames);

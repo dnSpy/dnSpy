@@ -108,7 +108,7 @@ namespace dnSpy.Debugger.ToolWindows {
 			}
 		}
 
-		void Timer_Tick_UI(object sender, EventArgs e) {
+		void Timer_Tick_UI(object? sender, EventArgs e) {
 			if (timer != sender)
 				return;
 			StopTimer();
@@ -157,7 +157,7 @@ namespace dnSpy.Debugger.ToolWindows {
 		protected override void OnHide() => dbgManager.Value.IsDebuggingChanged -= DbgManager_IsDebuggingChanged;
 		protected override void OnIsVisibleChanged() => CheckCanLazyInitialize();
 
-		void DbgManager_IsDebuggingChanged(object sender, EventArgs e) {
+		void DbgManager_IsDebuggingChanged(object? sender, EventArgs e) {
 			if (!dbgManager.Value.IsDebugging) {
 				UI(() => {
 					// We've already checked IsDebugging above. It's possible that it's now

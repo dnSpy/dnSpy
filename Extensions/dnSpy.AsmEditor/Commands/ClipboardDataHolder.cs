@@ -46,23 +46,23 @@ namespace dnSpy.AsmEditor.Commands {
 			}
 
 			public object? GetData(Type format) => GetData(format.FullName);
-			public object? GetData(string format) => GetData(format, true);
+			public object? GetData(string? format) => GetData(format, true);
 
-			public object? GetData(string format, bool autoConvert) {
+			public object? GetData(string? format, bool autoConvert) {
 				if (format != dataFormat)
 					return null;
 				return serializedData;
 			}
 
 			public bool GetDataPresent(Type format) => GetDataPresent(format.FullName);
-			public bool GetDataPresent(string format) => GetDataPresent(format, true);
-			public bool GetDataPresent(string format, bool autoConvert) => format == dataFormat;
+			public bool GetDataPresent(string? format) => GetDataPresent(format, true);
+			public bool GetDataPresent(string? format, bool autoConvert) => format == dataFormat;
 			public string[] GetFormats() => GetFormats(true);
 			public string[] GetFormats(bool autoConvert) => new string[] { dataFormat };
 			public void SetData(object data) => SetData(data.GetType(), data);
 			public void SetData(Type format, object data) => SetData(format.FullName, data, true);
-			public void SetData(string format, object data) => SetData(format, data, true);
-			public void SetData(string format, object data, bool autoConvert) => Debug.Fail("Shouldn't be here");
+			public void SetData(string? format, object data) => SetData(format, data, true);
+			public void SetData(string? format, object data, bool autoConvert) => Debug.Fail("Shouldn't be here");
 		}
 
 		static string GetDataFormat(Type type) => type.FullName + suffix;

@@ -109,7 +109,7 @@ namespace dnSpy.Roslyn.Compiler.CSharp {
 			PropertyChanged += CSharpCompilerSettingsImpl_PropertyChanged;
 		}
 
-		void CSharpCompilerSettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void CSharpCompilerSettingsImpl_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(PreprocessorSymbols), PreprocessorSymbols);
 			sect.Attribute(nameof(Optimize), Optimize);

@@ -74,7 +74,7 @@ namespace Example1.Extension {
 			PropertyChanged += MySettingsImpl_PropertyChanged;
 		}
 
-		void MySettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void MySettingsImpl_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			// Save the settings
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(BoolOption1), BoolOption1);

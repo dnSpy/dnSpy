@@ -124,7 +124,7 @@ namespace dnSpy.Language.Intellisense {
 			UpdateFilterCollection();
 		}
 
-		void CompletionsListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
+		void CompletionsListBox_MouseDoubleClick(object? sender, MouseButtonEventArgs e) {
 			var item = control.completionsListBox.SelectedItem as CompletionVM;
 			if (item is null)
 				return;
@@ -138,7 +138,7 @@ namespace dnSpy.Language.Intellisense {
 			session.Commit();
 		}
 
-		void TextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) {
+		void TextView_LayoutChanged(object? sender, TextViewLayoutChangedEventArgs e) {
 			if (!(wpfTextView is null) && oldZoomLevel != wpfTextView.ZoomLevel) {
 				oldZoomLevel = wpfTextView.ZoomLevel;
 				HideToolTip();
@@ -147,7 +147,7 @@ namespace dnSpy.Language.Intellisense {
 				HideToolTip();
 		}
 
-		void ToolTipTimer_Tick(object sender, EventArgs e) {
+		void ToolTipTimer_Tick(object? sender, EventArgs e) {
 			toolTipTimer.Stop();
 			if (session.IsDismissed)
 				return;
@@ -249,11 +249,11 @@ namespace dnSpy.Language.Intellisense {
 		// this if the user uses the mouse, else we do it immediately. If we don't do it immediately,
 		// we'll miss typed characters if the user types fast (the listbox gets the typed chars).
 		bool isMouseSelection;
-		void CompletionsListBox_PreviewMouseDown(object sender, MouseButtonEventArgs e) => isMouseSelection = true;
-		void CompletionsListBox_PreviewMouseUp(object sender, MouseButtonEventArgs e) => isMouseSelection = false;
-		void CompletionsListBox_MouseLeave(object sender, MouseEventArgs e) => isMouseSelection = false;
+		void CompletionsListBox_PreviewMouseDown(object? sender, MouseButtonEventArgs e) => isMouseSelection = true;
+		void CompletionsListBox_PreviewMouseUp(object? sender, MouseButtonEventArgs e) => isMouseSelection = false;
+		void CompletionsListBox_MouseLeave(object? sender, MouseEventArgs e) => isMouseSelection = false;
 
-		void CompletionsListBox_Loaded(object sender, RoutedEventArgs e) {
+		void CompletionsListBox_Loaded(object? sender, RoutedEventArgs e) {
 			control.completionsListBox.Loaded -= CompletionsListBox_Loaded;
 			if (control.completionsListBox.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated)
 				InitializeLoaded();
@@ -261,7 +261,7 @@ namespace dnSpy.Language.Intellisense {
 				control.completionsListBox.ItemContainerGenerator.StatusChanged += ItemContainerGenerator_StatusChanged;
 		}
 
-		void ItemContainerGenerator_StatusChanged(object sender, EventArgs e) {
+		void ItemContainerGenerator_StatusChanged(object? sender, EventArgs e) {
 			if (control.completionsListBox.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated) {
 				control.completionsListBox.ItemContainerGenerator.StatusChanged -= ItemContainerGenerator_StatusChanged;
 				InitializeLoaded();
@@ -298,14 +298,14 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		// Make sure the text view gets focus again whenever the listbox gets focus
-		void Control_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
+		void Control_GotKeyboardFocus(object? sender, KeyboardFocusChangedEventArgs e) {
 			if (!isMouseSelection)
 				(session.TextView as IWpfTextView)?.VisualElement.Focus();
 			else
 				control.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => (session.TextView as IWpfTextView)?.VisualElement.Focus()));
 		}
 
-		void Control_SizeChanged(object sender, SizeChangedEventArgs e) {
+		void Control_SizeChanged(object? sender, SizeChangedEventArgs e) {
 			// Prevent the control from getting thinner when pressing PageUp/Down
 			if (control.MinWidth != e.NewSize.Width)
 				control.MinWidth = e.NewSize.Width;
@@ -313,7 +313,7 @@ namespace dnSpy.Language.Intellisense {
 			HideToolTip();
 		}
 
-		void VisualElement_PreviewKeyDown(object sender, KeyEventArgs e) {
+		void VisualElement_PreviewKeyDown(object? sender, KeyEventArgs e) {
 			if (e.Handled)
 				return;
 			if (e.KeyboardDevice.Modifiers != ModifierKeys.Alt)
@@ -362,7 +362,7 @@ namespace dnSpy.Language.Intellisense {
 			}
 		}
 
-		void TextBuffer_ChangedLowPriority(object sender, TextContentChangedEventArgs e) => Refilter();
+		void TextBuffer_ChangedLowPriority(object? sender, TextContentChangedEventArgs e) => Refilter();
 
 		void Refilter() {
 			if (!session.IsDismissed) {
@@ -376,7 +376,7 @@ namespace dnSpy.Language.Intellisense {
 			}
 		}
 
-		void CompletionsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+		void CompletionsListBox_SelectionChanged(object? sender, SelectionChangedEventArgs e) {
 			if (e.AddedItems is null || e.AddedItems.Count < 1)
 				return;
 			Debug.Assert(e.AddedItems.Count == 1);
@@ -482,8 +482,8 @@ namespace dnSpy.Language.Intellisense {
 				WpfUtils.ScrollSelectedItemIntoView(control.completionsListBox, center);
 		}
 
-		void TextView_LostAggregateFocus(object sender, EventArgs e) => session.Dismiss();
-		void CompletionSession_SelectedCompletionSetChanged(object sender, ValueChangedEventArgs<CompletionSet> e) {
+		void TextView_LostAggregateFocus(object? sender, EventArgs e) => session.Dismiss();
+		void CompletionSession_SelectedCompletionSetChanged(object? sender, ValueChangedEventArgs<CompletionSet> e) {
 			UpdateSelectedCompletion();
 			UpdateFilterCollection();
 		}
@@ -556,7 +556,7 @@ namespace dnSpy.Language.Intellisense {
 			DelayShowToolTip();
 		}
 
-		void CompletionSet_SelectionStatusChanged(object sender, ValueChangedEventArgs<CompletionSelectionStatus> e) {
+		void CompletionSet_SelectionStatusChanged(object? sender, ValueChangedEventArgs<CompletionSelectionStatus> e) {
 			Debug.Assert(currentCompletionSet == sender);
 			UpdateSelectedItem();
 		}
@@ -577,7 +577,7 @@ namespace dnSpy.Language.Intellisense {
 			}
 		}
 
-		void CompletionSession_Dismissed(object sender, EventArgs e) {
+		void CompletionSession_Dismissed(object? sender, EventArgs e) {
 			UnregisterCompletionSetEvents();
 			DisposeFilters();
 			toolTipTimer.Stop();

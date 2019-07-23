@@ -66,7 +66,7 @@ namespace dnSpy.Contracts.MVVM {
 
 			var automationPeer = UIElementAutomationPeer.FromElement(itemsControl);
 			if (!(automationPeer is null)) {
-				PropertyInfo prop;
+				PropertyInfo? prop;
 				MethodInfo? getMethod;
 
 				if (automationPeer is ItemsControlAutomationPeer) {

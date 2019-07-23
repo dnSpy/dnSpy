@@ -67,7 +67,7 @@ namespace dnSpy.Debugger.Dialogs.DebugProgram {
 		}
 		static readonly Guid dotNetFrameworkPageGuid = new Guid("3FB8FCB5-AECE-443A-ABDE-601F2C23F1C1");
 
-		void OptionsPageVM_IsValidChanged(object sender, EventArgs e) => HasErrorUpdated();
+		void OptionsPageVM_IsValidChanged(object? sender, EventArgs e) => HasErrorUpdated();
 		public override bool HasError => optionsPages_selectedItem?.IsValid != true;
 
 		public void Close() {

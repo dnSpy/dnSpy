@@ -25,7 +25,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed partial class ListVMControl : UserControl {
 		public ListVMControl() => InitializeComponent();
 
-		void listBox_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
+		void listBox_MouseDoubleClick(object? sender, MouseButtonEventArgs e) {
 			if (!UIUtilities.IsLeftDoubleClick<ListBoxItem>(listBox, e))
 				return;
 			if (DataContext is ListVM data)

@@ -91,7 +91,7 @@ namespace dnSpy.Analyzer {
 			PropertyChanged += AnalyzerSettingsImpl_PropertyChanged;
 		}
 
-		void AnalyzerSettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void AnalyzerSettingsImpl_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(SyntaxHighlight), SyntaxHighlight);
 			sect.Attribute(nameof(ShowToken), ShowToken);

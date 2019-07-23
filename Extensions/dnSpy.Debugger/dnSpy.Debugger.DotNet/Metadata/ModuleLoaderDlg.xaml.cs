@@ -52,7 +52,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				e.Cancel = true;
 		}
 
-		void ModuleLoaderVM_OnCompleted(object sender, EventArgs e) => OnCompleted();
+		void ModuleLoaderVM_OnCompleted(object? sender, EventArgs e) => OnCompleted();
 
 		void OnCompleted() {
 			var data = DataContext as ModuleLoaderVM;

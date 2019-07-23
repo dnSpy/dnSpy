@@ -83,7 +83,7 @@ namespace dnSpy.Hex.Commands {
 			hexView.Closed += HexView_Closed;
 		}
 
-		void HexView_Closed(object sender, EventArgs e) {
+		void HexView_Closed(object? sender, EventArgs e) {
 			HexView.Closed -= HexView_Closed;
 			HexCommandOperationsFactoryServiceImpl.RemoveFromProperties(this);
 		}

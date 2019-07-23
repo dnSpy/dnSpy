@@ -268,7 +268,7 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 
 					if ((formatterOptions & InternalFormatterOptions.InstructionBytes) != 0) {
 						var code = instrs[j].Code;
-						var codeBytes = code.Array;
+						var codeBytes = code.Array!;
 						for (int k = 0; k < code.Count; k++) {
 							byte b = codeBytes[k + code.Offset];
 							output.Write(b.ToString(upperCaseHex ? "X2" : "x2"), BoxedTextColor.AsmHexBytes);

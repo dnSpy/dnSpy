@@ -31,7 +31,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			textBlock.Text = message;
 		}
 
-		void button_Click(object sender, RoutedEventArgs e) {
+		void button_Click(object? sender, RoutedEventArgs e) {
 			onCancel();
 			button.IsEnabled = false;
 		}

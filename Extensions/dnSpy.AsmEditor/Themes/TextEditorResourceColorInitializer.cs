@@ -36,7 +36,7 @@ namespace dnSpy.AsmEditor.Themes {
 			InitializeResources();
 		}
 
-		void ThemeService_ThemeChanged(object sender, ThemeChangedEventArgs e) => InitializeResources();
+		void ThemeService_ThemeChanged(object? sender, ThemeChangedEventArgs e) => InitializeResources();
 
 		void InitializeResources() {
 			var theme = themeService.Theme;

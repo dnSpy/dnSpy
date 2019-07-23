@@ -235,13 +235,13 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		}
 
 		// UI thread
-		void ClassificationFormatMap_ClassificationFormatMappingChanged(object sender, EventArgs e) {
+		void ClassificationFormatMap_ClassificationFormatMappingChanged(object? sender, EventArgs e) {
 			moduleBreakpointContext.UIDispatcher.VerifyAccess();
 			RefreshThemeFields_UI();
 		}
 
 		// random thread
-		void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) =>
+		void DebuggerSettings_PropertyChanged(object? sender, PropertyChangedEventArgs e) =>
 			UI(() => DebuggerSettings_PropertyChanged_UI(e.PropertyName));
 
 		// UI thread
@@ -270,7 +270,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		void UI(Action callback) => moduleBreakpointContext.UIDispatcher.UI(callback);
 
 		// DbgManager thread
-		void DbgModuleBreakpointsService_BreakpointsChanged(object sender, DbgCollectionChangedEventArgs<DbgModuleBreakpoint> e) {
+		void DbgModuleBreakpointsService_BreakpointsChanged(object? sender, DbgCollectionChangedEventArgs<DbgModuleBreakpoint> e) {
 			dbgManager.Value.Dispatcher.VerifyAccess();
 			if (e.Added)
 				UI(() => AddItems_UI(e.Objects));
@@ -287,7 +287,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		}
 
 		// DbgManager thread
-		void DbgModuleBreakpointsService_BreakpointsModified(object sender, DbgBreakpointsModifiedEventArgs e) {
+		void DbgModuleBreakpointsService_BreakpointsModified(object? sender, DbgBreakpointsModifiedEventArgs e) {
 			dbgManager.Value.Dispatcher.VerifyAccess();
 			UI(() => {
 				foreach (var info in e.Breakpoints) {

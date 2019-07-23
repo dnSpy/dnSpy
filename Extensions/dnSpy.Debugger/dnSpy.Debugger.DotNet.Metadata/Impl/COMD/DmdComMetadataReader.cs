@@ -258,7 +258,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			}
 		}
 
-		void DmdDynamicModuleHelper_TypeLoaded_COMThread(object sender, DmdTypeLoadedEventArgs e) {
+		void DmdDynamicModuleHelper_TypeLoaded_COMThread(object? sender, DmdTypeLoadedEventArgs e) {
 			dispatcher.VerifyAccess();
 			bool b = (e.MetadataToken >> 24) == 0x02 && (e.MetadataToken & 0x00FFFFFF) != 0 && MDAPI.IsValidToken(MetaDataImport, (uint)e.MetadataToken);
 			Debug.Assert(b);
@@ -1082,7 +1082,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			if (tokens.Length == 0)
 				return Array.Empty<DmdCustomAttributeData>();
 
-			var res = new DmdCustomAttributeData[tokens.Length];
+			DmdCustomAttributeData[]? res = new DmdCustomAttributeData[tokens.Length];
 			int w = 0;
 			for (int i = 0; i < tokens.Length; i++) {
 				var info = MDAPI.GetCustomAttributeBlob(MetaDataImport, tokens[i]);
@@ -1101,7 +1101,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			}
 			if (res.Length != w)
 				Array.Resize(ref res, w);
-			return res;
+			return res!;
 		}
 
 		protected override DmdCustomAttributeData[] ReadAssemblySecurityAttributes(uint rid) => ReadSecurityAttributesCore(0x20000000 + rid);

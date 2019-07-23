@@ -79,7 +79,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			IsEnabled = ConstantTypeVM.IsEnabled;
 		}
 
-		void ConstantTypeVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void ConstantTypeVM_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == nameof(ConstantTypeVM.Value))
 				OnPropertyChanged(nameof(Value));
 			else if (e.PropertyName == nameof(ConstantTypeVM.IsEnabled))

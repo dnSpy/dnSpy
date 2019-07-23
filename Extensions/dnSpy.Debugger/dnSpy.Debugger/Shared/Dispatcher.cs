@@ -158,10 +158,10 @@ namespace dnSpy.Debugger.Shared {
 		public SynchronizationContextImpl(Dispatcher dispatcher) =>
 			this.dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
 
-		public override void Send(SendOrPostCallback d, object state) =>
+		public override void Send(SendOrPostCallback d, object? state) =>
 			dispatcher.Invoke(() => d.Invoke(state));
 
-		public override void Post(SendOrPostCallback d, object state) =>
+		public override void Post(SendOrPostCallback d, object? state) =>
 			dispatcher.BeginInvoke(() => d.Invoke(state));
 
 		public override SynchronizationContext CreateCopy() =>

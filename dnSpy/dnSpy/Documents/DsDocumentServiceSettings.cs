@@ -56,7 +56,7 @@ namespace dnSpy.Documents {
 			PropertyChanged += DsDocumentServiceSettingsImpl_PropertyChanged;
 		}
 
-		void DsDocumentServiceSettingsImpl_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void DsDocumentServiceSettingsImpl_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			sect.Attribute(nameof(UseMemoryMappedIO), UseMemoryMappedIO);
 		}

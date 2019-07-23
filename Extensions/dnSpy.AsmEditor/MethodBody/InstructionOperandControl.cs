@@ -98,9 +98,9 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 		}
 
-		void instructionOperandVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void instructionOperandVM_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == nameof(MethodBody.InstructionOperandVM.InstructionOperandType))
-				InitializeOperandType((InstructionOperandVM)sender);
+				InitializeOperandType((InstructionOperandVM)sender!);
 		}
 
 		void InitializeOperandType(InstructionOperandVM instructionOperandVM) {

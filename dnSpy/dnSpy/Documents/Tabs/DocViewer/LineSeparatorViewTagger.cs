@@ -97,7 +97,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 		static readonly ILineSeparatorTag lineSeparatorTag = new LineSeparatorTag(true);
 
-		void TextView_Closed(object sender, EventArgs e) {
+		void TextView_Closed(object? sender, EventArgs e) {
 			lineSeparatorCollection = LineSeparatorCollection.Empty;
 			textView.Closed -= TextView_Closed;
 		}

@@ -91,9 +91,9 @@ namespace dnSpy.Hex.Editor {
 			UpdateEnabled();
 		}
 
-		void Selection_SelectionChanged(object sender, EventArgs e) => UpdateEnabled();
+		void Selection_SelectionChanged(object? sender, EventArgs e) => UpdateEnabled();
 
-		void Options_OptionChanged(object sender, VSTE.EditorOptionChangedEventArgs e) {
+		void Options_OptionChanged(object? sender, VSTE.EditorOptionChangedEventArgs e) {
 			if (e.OptionId == DefaultHexViewOptions.HighlightCurrentValueName)
 				UpdateEnabled();
 		}
@@ -129,12 +129,12 @@ namespace dnSpy.Hex.Editor {
 			wpfHexView.Buffer.BufferSpanInvalidated -= Buffer_BufferSpanInvalidated;
 		}
 
-		void WpfHexView_BufferLinesChanged(object sender, BufferLinesChangedEventArgs e) =>
+		void WpfHexView_BufferLinesChanged(object? sender, BufferLinesChangedEventArgs e) =>
 			wpfHexView.VisualElement.Dispatcher.BeginInvoke(DispatcherPriority.Send, new Action(ReinitializeCurrentValue));
 
 		void RefreshAll() => currentValueHighlighterTagger?.RaiseTagsChanged(new HexBufferSpan(new HexBufferPoint(wpfHexView.Buffer, 0), new HexBufferPoint(wpfHexView.Buffer, HexPosition.MaxEndPosition)));
 
-		void Caret_PositionChanged(object sender, HexCaretPositionChangedEventArgs e) => DelayUpdateCurrentValue();
+		void Caret_PositionChanged(object? sender, HexCaretPositionChangedEventArgs e) => DelayUpdateCurrentValue();
 
 		void ReinitializeCurrentValue() {
 			if (wpfHexView.IsClosed)
@@ -265,8 +265,8 @@ namespace dnSpy.Hex.Editor {
 			}
 		}
 
-		void Timer_Tick(object sender, EventArgs e) {
-			var timer = (DispatcherTimer)sender;
+		void Timer_Tick(object? sender, EventArgs e) {
+			var timer = (DispatcherTimer)sender!;
 			timer.Tick -= Timer_Tick;
 			timer.Stop();
 			if (delayDispatcherTimer != timer)
@@ -301,14 +301,14 @@ namespace dnSpy.Hex.Editor {
 			return true;
 		}
 
-		void Buffer_BufferSpanInvalidated(object sender, HexBufferSpanInvalidatedEventArgs e) {
+		void Buffer_BufferSpanInvalidated(object? sender, HexBufferSpanInvalidatedEventArgs e) {
 			if (!(savedValue is null) && savedValue.BufferSpan.Span.OverlapsWith(e.Span)) {
 				if (!savedValue.UpdateValue())
 					RefreshAll();
 			}
 		}
 
-		void Buffer_ChangedLowPriority(object sender, HexContentChangedEventArgs e) {
+		void Buffer_ChangedLowPriority(object? sender, HexContentChangedEventArgs e) {
 			if (!(savedValue is null)) {
 				foreach (var change in e.Changes) {
 					if (savedValue.BufferSpan.Span.OverlapsWith(change.OldSpan)) {
@@ -363,7 +363,7 @@ namespace dnSpy.Hex.Editor {
 		}
 		CurrentValueHighlighterTagger? currentValueHighlighterTagger;
 
-		void WpfHexView_Closed(object sender, EventArgs e) {
+		void WpfHexView_Closed(object? sender, EventArgs e) {
 			wpfHexView.Closed -= WpfHexView_Closed;
 			wpfHexView.Selection.SelectionChanged -= Selection_SelectionChanged;
 			wpfHexView.Options.OptionChanged -= Options_OptionChanged;

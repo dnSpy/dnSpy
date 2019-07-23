@@ -37,8 +37,8 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 
 		void IDbgManagerStartListener.OnStart(DbgManager dbgManager) => dbgManager.IsDebuggingChanged += DbgManager_IsDebuggingChanged;
 
-		void DbgManager_IsDebuggingChanged(object sender, EventArgs e) {
-			var dbgManager = (DbgManager)sender;
+		void DbgManager_IsDebuggingChanged(object? sender, EventArgs e) {
+			var dbgManager = (DbgManager)sender!;
 			if (!dbgManager.IsDebugging)
 				uiDispatcher.UIBackground(() => MemLeakFix());
 		}

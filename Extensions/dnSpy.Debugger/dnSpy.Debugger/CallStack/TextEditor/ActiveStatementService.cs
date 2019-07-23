@@ -66,7 +66,7 @@ namespace dnSpy.Debugger.CallStack.TextEditor {
 		public IEnumerable<ITagSpan<ITextMarkerTag>> GetTags(NormalizedSnapshotSpanCollection spans) =>
 			activeStatementService.GetTags(this, spans);
 
-		void TextView_Closed(object sender, EventArgs e) {
+		void TextView_Closed(object? sender, EventArgs e) {
 			TextView.Closed -= TextView_Closed;
 			activeStatementService.OnDisposed(this);
 		}

@@ -101,7 +101,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		void UI(Action callback) => Context.UIDispatcher.UI(callback);
 
 		// random thread
-		void BookmarkLocationFormatter_PropertyChanged(object sender, PropertyChangedEventArgs e) =>
+		void BookmarkLocationFormatter_PropertyChanged(object? sender, PropertyChangedEventArgs e) =>
 			UI(() => BookmarkLocationFormatter_PropertyChanged_UI(e.PropertyName));
 
 		// UI thread

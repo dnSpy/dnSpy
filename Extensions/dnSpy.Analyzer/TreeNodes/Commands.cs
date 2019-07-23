@@ -68,19 +68,19 @@ namespace dnSpy.Analyzer.TreeNodes {
 			cmds.Add(AnalyzeRoutedCommand, ShowAnalyzerExecuted, ShowAnalyzerCanExecute, ModifierKeys.Control | ModifierKeys.Shift, Key.R);
 		}
 
-		void ShowAnalyzerCanExecute(object sender, CanExecuteRoutedEventArgs e) =>
+		void ShowAnalyzerCanExecute(object? sender, CanExecuteRoutedEventArgs e) =>
 			e.CanExecute = toolWindowService.IsShown(AnalyzerToolWindowContent.THE_GUID);
-		void ShowAnalyzerExecuted(object sender, ExecutedRoutedEventArgs e) =>
+		void ShowAnalyzerExecuted(object? sender, ExecutedRoutedEventArgs e) =>
 			toolWindowService.Show(AnalyzerToolWindowContent.THE_GUID);
-		void TextEditor_CanExecute(object sender, CanExecuteRoutedEventArgs e) =>
+		void TextEditor_CanExecute(object? sender, CanExecuteRoutedEventArgs e) =>
 			e.CanExecute = AnalyzeCommand.CanAnalyze(TextEditor_GetMemberRef(), decompilerService.Decompiler);
-		void TextEditor_Executed(object sender, ExecutedRoutedEventArgs e) =>
+		void TextEditor_Executed(object? sender, ExecutedRoutedEventArgs e) =>
 			AnalyzeCommand.Analyze(toolWindowService, analyzerService, decompilerService.Decompiler, TextEditor_GetMemberRef());
 		IMemberRef? TextEditor_GetMemberRef() =>
 			(documentTabService.ActiveTab?.UIContext as IDocumentViewer)?.SelectedReference?.Data.Reference as IMemberRef;
-		void DocumentTreeView_CanExecute(object sender, CanExecuteRoutedEventArgs e) =>
+		void DocumentTreeView_CanExecute(object? sender, CanExecuteRoutedEventArgs e) =>
 			e.CanExecute = AnalyzeCommand.CanAnalyze(DocumentTreeView_GetMemberRef(), decompilerService.Decompiler);
-		void DocumentTreeView_Executed(object sender, ExecutedRoutedEventArgs e) =>
+		void DocumentTreeView_Executed(object? sender, ExecutedRoutedEventArgs e) =>
 			AnalyzeCommand.Analyze(toolWindowService, analyzerService, decompilerService.Decompiler, DocumentTreeView_GetMemberRef());
 
 		IMemberRef? DocumentTreeView_GetMemberRef() {
@@ -89,9 +89,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 			return node?.Reference as IMemberRef;
 		}
 
-		void AnalyzerTreeView_CanExecute(object sender, CanExecuteRoutedEventArgs e) =>
+		void AnalyzerTreeView_CanExecute(object? sender, CanExecuteRoutedEventArgs e) =>
 			e.CanExecute = AnalyzeCommand.CanAnalyze(AnalyzerTreeView_GetMemberRef(), decompilerService.Decompiler);
-		void AnalyzerTreeView_Executed(object sender, ExecutedRoutedEventArgs e) =>
+		void AnalyzerTreeView_Executed(object? sender, ExecutedRoutedEventArgs e) =>
 			AnalyzeCommand.Analyze(toolWindowService, analyzerService, decompilerService.Decompiler, AnalyzerTreeView_GetMemberRef());
 
 		IMemberRef? AnalyzerTreeView_GetMemberRef() {
@@ -100,9 +100,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 			return node?.Reference as IMemberRef;
 		}
 
-		void SearchListBox_CanExecute(object sender, CanExecuteRoutedEventArgs e) =>
+		void SearchListBox_CanExecute(object? sender, CanExecuteRoutedEventArgs e) =>
 			e.CanExecute = AnalyzeCommand.CanAnalyze(SearchListBox_GetMemberRef(e.Source as ListBox), decompilerService.Decompiler);
-		void SearchListBox_Executed(object sender, ExecutedRoutedEventArgs e) =>
+		void SearchListBox_Executed(object? sender, ExecutedRoutedEventArgs e) =>
 			AnalyzeCommand.Analyze(toolWindowService, analyzerService, decompilerService.Decompiler, SearchListBox_GetMemberRef(e.Source as ListBox));
 		IMemberRef? SearchListBox_GetMemberRef(ListBox? listBox) =>
 			(listBox?.SelectedItem as ISearchResultReferenceProvider)?.Reference as IMemberRef;
