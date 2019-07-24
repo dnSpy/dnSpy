@@ -74,7 +74,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.AttachToProcess {
 		static Process[] GetProcesses(int[] processIds) {
 			if (processIds.Length == 0)
 				return Process.GetProcesses();
-			Process[]? processes = new Process[processIds.Length];
+			var processes = new Process[processIds.Length];
 			try {
 				int w = 0;
 				for (int i = 0; i < processIds.Length; i++) {
@@ -90,11 +90,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.AttachToProcess {
 					w++;
 				}
 				if (w != processes.Length)
-					Array.Resize(ref processes, w);
-				return processes!;
+					Array.Resize(ref processes!, w);
+				return processes;
 			}
 			catch {
-				foreach (var p in processes!)
+				foreach (var p in processes)
 					p?.Dispose();
 				throw;
 			}

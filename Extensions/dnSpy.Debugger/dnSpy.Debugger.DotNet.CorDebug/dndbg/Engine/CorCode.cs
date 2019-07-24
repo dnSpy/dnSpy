@@ -196,13 +196,13 @@ namespace dndbg.Engine {
 				return Array.Empty<uint>();
 			if (totalSize == 0)
 				return Array.Empty<uint>();
-			uint[]? res = new uint[totalSize];
+			var res = new uint[totalSize];
 			hr = c3.GetReturnValueLiveOffset(ilOffset, (uint)res.Length, out uint fetched, res);
 			if (hr < 0)
 				return Array.Empty<uint>();
 			if (fetched != (uint)res.Length)
-				Array.Resize(ref res, (int)fetched);
-			return res!;
+				Array.Resize(ref res!, (int)fetched);
+			return res;
 		}
 
 		public bool Equals(CorCode? other) => !(other is null) && RawObject == other.RawObject;

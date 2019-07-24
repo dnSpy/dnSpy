@@ -1082,7 +1082,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			if (tokens.Length == 0)
 				return Array.Empty<DmdCustomAttributeData>();
 
-			DmdCustomAttributeData[]? res = new DmdCustomAttributeData[tokens.Length];
+			var res = new DmdCustomAttributeData[tokens.Length];
 			int w = 0;
 			for (int i = 0; i < tokens.Length; i++) {
 				var info = MDAPI.GetCustomAttributeBlob(MetaDataImport, tokens[i]);
@@ -1100,8 +1100,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 				res[w++] = ca;
 			}
 			if (res.Length != w)
-				Array.Resize(ref res, w);
-			return res!;
+				Array.Resize(ref res!, w);
+			return res;
 		}
 
 		protected override DmdCustomAttributeData[] ReadAssemblySecurityAttributes(uint rid) => ReadSecurityAttributesCore(0x20000000 + rid);

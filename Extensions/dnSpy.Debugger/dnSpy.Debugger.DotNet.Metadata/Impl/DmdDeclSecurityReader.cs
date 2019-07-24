@@ -67,7 +67,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		// Reads the new (.NET 2.0+) DeclSecurity blob format
 		DmdCustomAttributeData[] ReadBinaryFormat(SecurityAction action) {
 			int numAttrs = (int)reader.ReadCompressedUInt32();
-			DmdCustomAttributeData[]? res = new DmdCustomAttributeData[numAttrs];
+			var res = new DmdCustomAttributeData[numAttrs];
 
 			IList<DmdType>? genericTypeArguments = null;
 			int w = 0;
@@ -88,10 +88,10 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			if (res.Length != w) {
 				if (w == 0)
 					return Array.Empty<DmdCustomAttributeData>();
-				Array.Resize(ref res, w);
+				Array.Resize(ref res!, w);
 			}
 
-			return res!;
+			return res;
 		}
 
 		// Reads the old (.NET 1.x) DeclSecurity blob format

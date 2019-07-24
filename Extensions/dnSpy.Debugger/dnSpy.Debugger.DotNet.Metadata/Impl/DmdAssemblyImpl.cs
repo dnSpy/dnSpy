@@ -193,7 +193,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			var exportedTypes = metadataReader.GetExportedTypes();
 			if (exportedTypes.Length == 0)
 				return Array.Empty<DmdType>();
-			DmdType[]? res = new DmdType[exportedTypes.Length];
+			var res = new DmdType[exportedTypes.Length];
 			int w = 0;
 			foreach (var type in exportedTypes) {
 				if (IsTypeForwarder(type))
@@ -202,9 +202,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			if (res.Length != w) {
 				if (w == 0)
 					return Array.Empty<DmdType>();
-				Array.Resize(ref res, w);
+				Array.Resize(ref res!, w);
 			}
-			return res!;
+			return res;
 		}
 
 		static bool IsTypeForwarder(DmdType type) {
