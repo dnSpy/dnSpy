@@ -2,8 +2,9 @@
 echo dotnet SDK version
 dotnet --version
 msbuild -version
-csc -version
-vbc -version
+REM not in the path
+REM csc -version
+REM vbc -version
 
 REM The reason we don't use dotnet build is that dotnet build doesn't support COM references yet https://github.com/0xd4d/dnSpy/issues/1053
 REM dotnet build -c Release -f net472
