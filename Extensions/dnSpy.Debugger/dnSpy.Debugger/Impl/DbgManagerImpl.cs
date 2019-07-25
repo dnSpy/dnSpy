@@ -449,9 +449,9 @@ namespace dnSpy.Debugger.Impl {
 			return info;
 		}
 
-		DbgRuntime GetRuntime(DbgEngine engine) {
+		DbgRuntime? GetRuntime(DbgEngine engine) {
 			lock (lockObj)
-				return GetEngineInfo_NoLock(engine).Runtime!;
+				return GetEngineInfo_NoLock(engine).Runtime;
 		}
 
 		DbgProcessImpl GetOrCreateProcess_DbgThread(int pid, DbgStartKind startKind, out bool createdProcess) {
@@ -775,19 +775,31 @@ namespace dnSpy.Debugger.Impl {
 
 		void OnEntryPointBreak_DbgThread(DbgEngine engine, DbgMessageEntryPointBreak e) {
 			Dispatcher.VerifyAccess();
-			var ep = new DbgMessageEntryPointBreakEventArgs(GetRuntime(engine), e.Thread);
+			var runtime = GetRuntime(engine);
+			Debug.Assert(!(runtime is null));
+			if (runtime is null)
+				return;
+			var ep = new DbgMessageEntryPointBreakEventArgs(runtime, e.Thread);
 			OnConditionalBreak_DbgThread(engine, ep, ep.Thread, e.MessageFlags | DbgEngineMessageFlags.Pause);
 		}
 
 		void OnProgramMessage_DbgThread(DbgEngine engine, DbgMessageProgramMessage e) {
 			Dispatcher.VerifyAccess();
-			var ep = new DbgMessageProgramMessageEventArgs(e.Message, GetRuntime(engine), e.Thread);
+			var runtime = GetRuntime(engine);
+			Debug.Assert(!(runtime is null));
+			if (runtime is null)
+				return;
+			var ep = new DbgMessageProgramMessageEventArgs(e.Message, runtime, e.Thread);
 			OnConditionalBreak_DbgThread(engine, ep, ep.Thread, e.MessageFlags);
 		}
 
 		void OnAsyncProgramMessage_DbgThread(DbgEngine engine, DbgMessageAsyncProgramMessage e) {
 			Dispatcher.VerifyAccess();
-			var ep = new DbgMessageAsyncProgramMessageEventArgs(e.Source, e.Message, GetRuntime(engine));
+			var runtime = GetRuntime(engine);
+			Debug.Assert(!(runtime is null));
+			if (runtime is null)
+				return;
+			var ep = new DbgMessageAsyncProgramMessageEventArgs(e.Source, e.Message, runtime);
 			OnConditionalBreak_DbgThread(engine, ep, null, e.MessageFlags | DbgEngineMessageFlags.Running);
 		}
 
@@ -799,7 +811,11 @@ namespace dnSpy.Debugger.Impl {
 
 		void OnProgramBreak_DbgThread(DbgEngine engine, DbgMessageProgramBreak e) {
 			Dispatcher.VerifyAccess();
-			var eb = new DbgMessageProgramBreakEventArgs(GetRuntime(engine), e.Thread);
+			var runtime = GetRuntime(engine);
+			Debug.Assert(!(runtime is null));
+			if (runtime is null)
+				return;
+			var eb = new DbgMessageProgramBreakEventArgs(runtime, e.Thread);
 			var flags = e.MessageFlags;
 			if (!debuggerSettings.IgnoreBreakInstructions && (e.MessageFlags & DbgEngineMessageFlags.Continue) == 0)
 				flags |= DbgEngineMessageFlags.Pause;
