@@ -614,7 +614,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 				res[w++] = ca;
 			}
 			if (res.Length != w)
-				Array.Resize(ref res!, w);
+				Array.Resize(ref res, w);
 			return res;
 		}
 

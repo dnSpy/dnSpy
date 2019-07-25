@@ -500,7 +500,7 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 				compiledExpressions[w++] = DbgDotNetCompiledExpressionResult.Create(typeName, info.MethodName, info.LocalName, displayName, flags, imageName, customTypeInfo, null, resultFlags, info.Index);
 			}
 			if (compiledExpressions.Length != w)
-				Array.Resize(ref compiledExpressions!, w);
+				Array.Resize(ref compiledExpressions, w);
 			return new DbgDotNetCompilationResult(assembly, compiledExpressions);
 		}
 

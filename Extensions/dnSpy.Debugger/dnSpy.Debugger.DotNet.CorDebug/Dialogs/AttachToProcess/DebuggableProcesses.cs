@@ -90,7 +90,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.AttachToProcess {
 					w++;
 				}
 				if (w != processes.Length)
-					Array.Resize(ref processes!, w);
+					Array.Resize(ref processes, w);
 				return processes;
 			}
 			catch {

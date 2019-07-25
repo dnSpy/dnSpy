@@ -61,11 +61,11 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 				if (!NumberUtils.TryConvertIntegerToUInt64ZeroExtend(field.GetRawConstantValue(), out var value))
 					continue;
 				if (w >= infos.Length)
-					Array.Resize(ref infos!, w + 1);
+					Array.Resize(ref infos, w + 1);
 				infos[w++] = new EnumFieldInfo(field, value);
 			}
 			if (infos.Length != w)
-				Array.Resize(ref infos!, w);
+				Array.Resize(ref infos, w);
 			return new EnumInfo(hasFlagsAttribute, infos);
 		}
 	}

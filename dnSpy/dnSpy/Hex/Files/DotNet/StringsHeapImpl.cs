@@ -147,7 +147,7 @@ namespace dnSpy.Hex.Files.DotNet {
 				infos[i] = new KnownStringInfo(span, kv.tokens);
 			}
 			if (i != infos.Length)
-				Array.Resize(ref infos!, i);
+				Array.Resize(ref infos, i);
 
 			return infos;
 		}

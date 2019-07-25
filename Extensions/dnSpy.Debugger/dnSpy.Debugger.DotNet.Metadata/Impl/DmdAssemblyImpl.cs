@@ -202,7 +202,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			if (res.Length != w) {
 				if (w == 0)
 					return Array.Empty<DmdType>();
-				Array.Resize(ref res!, w);
+				Array.Resize(ref res, w);
 			}
 			return res;
 		}

@@ -201,7 +201,7 @@ namespace dndbg.Engine {
 			if (hr < 0)
 				return Array.Empty<uint>();
 			if (fetched != (uint)res.Length)
-				Array.Resize(ref res!, (int)fetched);
+				Array.Resize(ref res, (int)fetched);
 			return res;
 		}
 
