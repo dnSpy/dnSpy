@@ -19,7 +19,7 @@
 
 using System;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
@@ -128,7 +128,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			return (uint)arrayMirror.Length;
 		}
 
-		public override bool GetArrayInfo(out uint elementCount, [NotNullWhenTrue] out DbgDotNetArrayDimensionInfo[]? dimensionInfos) {
+		public override bool GetArrayInfo(out uint elementCount, [NotNullWhen(true)] out DbgDotNetArrayDimensionInfo[]? dimensionInfos) {
 			if (Type.IsArray) {
 				if (engine.CheckMonoDebugThread())
 					return GetArrayInfo_MonoDebug(out elementCount, out dimensionInfos);
@@ -147,7 +147,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			return false;
 		}
 
-		bool GetArrayInfo_MonoDebug(out uint elementCount, [NotNullWhenTrue] out DbgDotNetArrayDimensionInfo[]? dimensionInfos) {
+		bool GetArrayInfo_MonoDebug(out uint elementCount, [NotNullWhen(true)] out DbgDotNetArrayDimensionInfo[]? dimensionInfos) {
 			Debug.Assert(Type.IsArray);
 			engine.VerifyMonoDebugThread();
 			var arrayMirror = value as ArrayMirror;

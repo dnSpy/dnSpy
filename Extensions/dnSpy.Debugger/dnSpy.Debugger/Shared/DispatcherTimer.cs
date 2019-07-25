@@ -39,7 +39,7 @@ namespace dnSpy.Debugger.Shared {
 			this.interval = interval;
 		}
 
-		void OnTimerCallback(object state) {
+		void OnTimerCallback(object? state) {
 			lock (lockObj) {
 				if (timer is null)
 					return;

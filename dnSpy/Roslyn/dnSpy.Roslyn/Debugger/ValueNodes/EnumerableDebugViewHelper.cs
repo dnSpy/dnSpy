@@ -92,6 +92,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 				var icollectionType = appDomain.GetWellKnownType(DmdWellKnownType.System_Collections_ICollection, isOptional: true);
 				if (!objType.CanCastTo(icollectionType))
 					return default;
+				Debug.Assert(!(icollectionType is null));
 
 				var type = appDomain.CorLib?.GetType("System.Collections." + nameof(ArrayList));
 				var ctor = type?.GetMethod(DmdConstructorInfo.ConstructorName, DmdSignatureCallingConvention.HasThis,

@@ -68,7 +68,7 @@ namespace dnSpy.Disassembly.X86 {
 
 		static ArraySegment<byte> GetBytes(ArraySegment<byte> code, ulong address, ref Instruction instr) {
 			int index = (int)(instr.IP - address);
-			return new ArraySegment<byte>(code.Array, code.Offset + index, instr.ByteLength);
+			return new ArraySegment<byte>(code.Array!, code.Offset + index, instr.ByteLength);
 		}
 
 		static string GetLabel(int index) => LABEL_PREFIX + index.ToString();

@@ -222,7 +222,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			uint recSize = mdTable.RowSize;
 			bool bigStrings = colInfo1.Size == 4;
 			uint tokenBase = new MDToken(mdTable.Table, 0).Raw;
-			List<uint> list;
+			List<uint>? list;
 			for (uint rid = 1; rid <= rows; rid++, recPos += recSize) {
 				uint offs1, offs2;
 				if (bigStrings) {

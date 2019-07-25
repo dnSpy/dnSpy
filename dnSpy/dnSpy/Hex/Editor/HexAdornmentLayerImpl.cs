@@ -88,8 +88,8 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		internal bool IsMouseOverOverlayLayerElement(MouseEventArgs e) {
-			foreach (UIElement elem in canvas.Children) {
-				if (elem.IsMouseOver)
+			foreach (UIElement? elem in canvas.Children) {
+				if (elem!.IsMouseOver)
 					return true;
 			}
 			return false;

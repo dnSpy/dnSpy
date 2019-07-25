@@ -149,7 +149,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// Returns the result from <see cref="TextWriter"/>'s <see cref="object.ToString"/> method
 		/// </summary>
 		/// <returns></returns>
-		public override string ToString() => writer.ToString();
+		public override string ToString() => writer.ToString()!;
 
 		/// <summary>
 		/// Disposes this instance and its underlying <see cref="TextWriter"/>

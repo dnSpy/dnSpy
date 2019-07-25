@@ -19,6 +19,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using dndbg.COM.CorDebug;
@@ -189,7 +190,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				return obj.Value?.ArrayCount ?? 0;
 		}
 
-		public override bool GetArrayInfo(out uint elementCount, [NotNullWhenTrue] out DbgDotNetArrayDimensionInfo[]? dimensionInfos) {
+		public override bool GetArrayInfo(out uint elementCount, [NotNullWhen(true)] out DbgDotNetArrayDimensionInfo[]? dimensionInfos) {
 			if (Type.IsArray) {
 				if (engine.CheckCorDebugThread())
 					return GetArrayInfo_CorDebug(out elementCount, out dimensionInfos);
@@ -208,7 +209,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			return false;
 		}
 
-		bool GetArrayInfo_CorDebug(out uint elementCount, [NotNullWhenTrue] out DbgDotNetArrayDimensionInfo[]? dimensionInfos) {
+		bool GetArrayInfo_CorDebug(out uint elementCount, [NotNullWhen(true)] out DbgDotNetArrayDimensionInfo[]? dimensionInfos) {
 			Debug.Assert(Type.IsArray);
 			engine.VerifyCorDebugThread();
 			var corValue = TryGetCorValue();

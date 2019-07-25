@@ -361,7 +361,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 					bool b = bpToVM.TryGetValue(breakpoint, out var vm);
 					Debug.Assert(b);
 					if (b)
-						vm.UpdateSettings_UI(breakpoint.Settings);
+						vm!.UpdateSettings_UI(breakpoint.Settings);
 				}
 			});
 		}
@@ -380,7 +380,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 				Debug.Assert(b);
 				if (!b)
 					continue;
-				vm.UpdateImageAndMessage_UI();
+				vm!.UpdateImageAndMessage_UI();
 			}
 		}
 

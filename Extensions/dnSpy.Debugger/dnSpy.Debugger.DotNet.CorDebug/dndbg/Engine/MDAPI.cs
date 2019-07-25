@@ -169,7 +169,7 @@ namespace dndbg.Engine {
 			if (hr < 0)
 				return null;
 
-			return chImportName <= 1 ? string.Empty : new string(nameBuf, 0, (int)chImportName - 1);
+			return chImportName <= 1 ? string.Empty : new string(nameBuf!, 0, (int)chImportName - 1);
 		}
 
 		public unsafe static string? GetMemberRefName(IMetaDataImport? mdi, uint token) {
@@ -186,7 +186,7 @@ namespace dndbg.Engine {
 			if (hr < 0)
 				return null;
 
-			return chMember <= 1 ? string.Empty : new string(nameBuf, 0, (int)chMember - 1);
+			return chMember <= 1 ? string.Empty : new string(nameBuf!, 0, (int)chMember - 1);
 		}
 
 		public unsafe static uint GetMemberRefClassToken(IMetaDataImport? mdi, uint token) {
@@ -285,7 +285,7 @@ namespace dndbg.Engine {
 
 			if (chMethod <= 1)
 				return string.Empty;
-			return new string(nameBuf, 0, (int)chMethod - 1);
+			return new string(nameBuf!, 0, (int)chMethod - 1);
 		}
 
 		public static unsafe bool GetMethodAttributes(IMetaDataImport? mdi, uint token, out MethodAttributes dwAttr, out MethodImplAttributes dwImplFlags) {
@@ -472,7 +472,7 @@ namespace dndbg.Engine {
 			if (hr < 0)
 				return null;
 
-			return chName <= 1 ? string.Empty : new string(nameBuf, 0, (int)chName - 1);
+			return chName <= 1 ? string.Empty : new string(nameBuf!, 0, (int)chName - 1);
 		}
 
 		public unsafe static bool GetParamSeqAndAttrs(IMetaDataImport? mdi, uint token, out uint seq, out ParamAttributes attrs) {
@@ -532,7 +532,7 @@ namespace dndbg.Engine {
 
 			if (chName <= 1)
 				return string.Empty;
-			return new string(nameBuf, 0, (int)chName - 1);
+			return new string(nameBuf!, 0, (int)chName - 1);
 		}
 
 		public static unsafe uint GetTypeRefResolutionScope(IMetaDataImport? mdi, uint token) {
@@ -603,7 +603,7 @@ namespace dndbg.Engine {
 
 			if (chTypeDef <= 1)
 				return string.Empty;
-			return new string(nameBuf, 0, (int)chTypeDef - 1);
+			return new string(nameBuf!, 0, (int)chTypeDef - 1);
 		}
 
 		public static unsafe TypeAttributes? GetTypeDefAttributes(IMetaDataImport? mdi, uint token) {
@@ -659,7 +659,7 @@ namespace dndbg.Engine {
 
 			if (chName <= 1)
 				return string.Empty;
-			return new string(nameBuf, 0, (int)chName - 1);
+			return new string(nameBuf!, 0, (int)chName - 1);
 		}
 
 		public static unsafe bool GetGenericParamNumAndAttrs(IMetaDataImport2? mdi2, uint token, out ushort number, out GenericParamAttributes attrs) {
@@ -831,7 +831,7 @@ namespace dndbg.Engine {
 
 			if (chField <= 1)
 				return string.Empty;
-			return new string(nameBuf, 0, (int)chField - 1);
+			return new string(nameBuf!, 0, (int)chField - 1);
 		}
 
 		public unsafe static uint[] GetFieldTokens(IMetaDataImport? mdi, uint token) {
@@ -962,7 +962,7 @@ namespace dndbg.Engine {
 			if (hr < 0)
 				return null;
 
-			return chEvent <= 1 ? string.Empty : new string(nameBuf, 0, (int)chEvent - 1);
+			return chEvent <= 1 ? string.Empty : new string(nameBuf!, 0, (int)chEvent - 1);
 		}
 
 		public unsafe static uint GetEventTypeToken(IMetaDataImport? mdi, uint token) {
@@ -1094,7 +1094,7 @@ namespace dndbg.Engine {
 			if (hr < 0)
 				return null;
 
-			return chProperty <= 1 ? string.Empty : new string(nameBuf, 0, (int)chProperty - 1);
+			return chProperty <= 1 ? string.Empty : new string(nameBuf!, 0, (int)chProperty - 1);
 		}
 
 		public unsafe static bool GetPropertyGetterSetter(IMetaDataImport? mdi, uint token, out uint mdGetter, out uint mdSetter) {
@@ -1206,7 +1206,7 @@ namespace dndbg.Engine {
 
 			if (chName <= 1)
 				return string.Empty;
-			return new string(nameBuf, 0, (int)chName - 1);
+			return new string(nameBuf!, 0, (int)chName - 1);
 		}
 
 		public unsafe static Version? GetAssemblyRefVersionAndLocale(IMetaDataAssemblyImport? mdai, uint token, out string? locale) {
@@ -1226,7 +1226,7 @@ namespace dndbg.Engine {
 			if (hr != 0)
 				return null;
 
-			locale = data.cbLocale <= 1 ? string.Empty : new string(nameBuf, 0, (int)data.cbLocale - 1);
+			locale = data.cbLocale <= 1 ? string.Empty : new string(nameBuf!, 0, (int)data.cbLocale - 1);
 			return new Version(data.usMajorVersion, data.usMinorVersion, data.usBuildNumber, data.usRevisionNumber);
 		}
 
@@ -1279,7 +1279,7 @@ namespace dndbg.Engine {
 
 			if (chName <= 1)
 				return string.Empty;
-			return new string(nameBuf, 0, (int)chName - 1);
+			return new string(nameBuf!, 0, (int)chName - 1);
 		}
 
 		public unsafe static Version? GetAssemblyVersionAndLocale(IMetaDataAssemblyImport? mdai, uint token, out string? locale) {
@@ -1299,7 +1299,7 @@ namespace dndbg.Engine {
 			if (hr != 0)
 				return null;
 
-			locale = data.cbLocale <= 1 ? string.Empty : new string(nameBuf, 0, (int)data.cbLocale - 1);
+			locale = data.cbLocale <= 1 ? string.Empty : new string(nameBuf!, 0, (int)data.cbLocale - 1);
 			return new Version(data.usMajorVersion, data.usMinorVersion, data.usBuildNumber, data.usRevisionNumber);
 		}
 
@@ -1362,7 +1362,7 @@ namespace dndbg.Engine {
 
 			if (ccBufSize <= 1)
 				return string.Empty;
-			return new string(nameBuf, 0, (int)ccBufSize - 1);
+			return new string(nameBuf!, 0, (int)ccBufSize - 1);
 		}
 
 		public unsafe static string? GetModuleName(IMetaDataImport? mdi) {
@@ -1381,7 +1381,7 @@ namespace dndbg.Engine {
 
 			if (cchName <= 1)
 				return string.Empty;
-			return new string(nameBuf, 0, (int)cchName - 1);
+			return new string(nameBuf!, 0, (int)cchName - 1);
 		}
 
 		public unsafe static Guid? GetModuleMvid(IMetaDataImport? mdi) {
@@ -1410,7 +1410,7 @@ namespace dndbg.Engine {
 
 			if (chName <= 1)
 				return string.Empty;
-			return new string(nameBuf, 0, (int)chName - 1);
+			return new string(nameBuf!, 0, (int)chName - 1);
 		}
 
 		public unsafe static string? GetUserString(IMetaDataImport? mdi, uint token) {
@@ -1428,7 +1428,7 @@ namespace dndbg.Engine {
 
 			if (chString == 0)
 				return string.Empty;
-			return new string(stringBuf, 0, (int)chString);
+			return new string(stringBuf!, 0, (int)chString);
 		}
 
 		public unsafe static byte[]? GetCustomAttributeByName(IMetaDataImport? mdi, uint token, string name) {
@@ -1518,7 +1518,7 @@ namespace dndbg.Engine {
 			if (hr < 0)
 				return null;
 
-			return chName <= 1 ? string.Empty : new string(nameBuf, 0, (int)chName - 1);
+			return chName <= 1 ? string.Empty : new string(nameBuf!, 0, (int)chName - 1);
 		}
 
 		public unsafe static byte[]? GetFileHash(IMetaDataAssemblyImport? mdai, uint token) {
@@ -1580,7 +1580,7 @@ namespace dndbg.Engine {
 			if (hr < 0)
 				return null;
 
-			return chName <= 1 ? string.Empty : new string(nameBuf, 0, (int)chName - 1);
+			return chName <= 1 ? string.Empty : new string(nameBuf!, 0, (int)chName - 1);
 		}
 
 		public unsafe static bool GetExportedTypeProps(IMetaDataAssemblyImport? mdai, uint token, out uint implementation, out uint typeDefId, out TypeAttributes attrs) {
@@ -1646,7 +1646,7 @@ namespace dndbg.Engine {
 			if (hr < 0)
 				return null;
 
-			return chName <= 1 ? string.Empty : new string(nameBuf, 0, (int)chName - 1);
+			return chName <= 1 ? string.Empty : new string(nameBuf!, 0, (int)chName - 1);
 		}
 
 		public unsafe static bool GetManifestResourceProps(IMetaDataAssemblyImport? mdai, uint token, out uint offset, out uint implementation, out ManifestResourceAttributes attrs) {

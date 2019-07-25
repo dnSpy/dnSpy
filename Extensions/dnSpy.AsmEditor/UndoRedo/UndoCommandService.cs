@@ -23,7 +23,6 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
-using System.Windows.Threading;
 
 namespace dnSpy.AsmEditor.UndoRedo {
 	interface IUndoCommandService {

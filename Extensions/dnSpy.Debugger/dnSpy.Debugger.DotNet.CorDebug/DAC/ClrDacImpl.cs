@@ -130,7 +130,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.DAC {
 					method = clrRuntime.GetMethodByAddress(newAddress);
 			}
 			if (!(method is null)) {
-				result = new SymbolResolverResult(SymbolKind.Function, method.ToString(), address);
+				result = new SymbolResolverResult(SymbolKind.Function, method.ToString()!, address);
 				return true;
 			}
 

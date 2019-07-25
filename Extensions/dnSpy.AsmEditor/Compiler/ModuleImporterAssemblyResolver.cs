@@ -18,7 +18,7 @@
 */
 
 using System;
-using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 using dnlib.DotNet;
 using dnlib.PE;
 using dnSpy.Contracts.AsmEditor.Compiler;
@@ -60,7 +60,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			return null;
 		}
 
-		bool TryResolve(IAssembly assemblyReference, AssemblyNameComparer comparer, [NotNullWhenTrue] out AssemblyDef? assembly) {
+		bool TryResolve(IAssembly assemblyReference, AssemblyNameComparer comparer, [NotNullWhen(true)] out AssemblyDef? assembly) {
 			foreach (var reference in references) {
 				if (comparer.Equals(reference.Assembly, assemblyReference)) {
 					assembly = GetModule(reference)?.Assembly;

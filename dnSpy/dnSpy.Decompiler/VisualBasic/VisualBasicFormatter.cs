@@ -604,7 +604,7 @@ namespace dnSpy.Decompiler.VisualBasic {
 
 			default:
 				Debug.Fail($"Unknown constant: '{obj}'");
-				OutputWrite(obj.ToString(), BoxedTextColor.Text);
+				OutputWrite(obj.ToString() ?? "???", BoxedTextColor.Text);
 				break;
 			}
 		}

@@ -21,8 +21,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.Engine;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
@@ -118,7 +118,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			}
 		}
 
-		bool TryGetFormatter(string guidString, [NotNullWhenTrue] out Lazy<DbgDotNetFormatter, IDbgDotNetFormatterMetadata>? formatter) {
+		bool TryGetFormatter(string guidString, [NotNullWhen(true)] out Lazy<DbgDotNetFormatter, IDbgDotNetFormatterMetadata>? formatter) {
 			formatter = null;
 			bool b = Guid.TryParse(guidString, out var languageGuid);
 			Debug.Assert(b);

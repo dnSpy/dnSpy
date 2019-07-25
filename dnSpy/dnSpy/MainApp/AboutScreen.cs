@@ -134,7 +134,7 @@ namespace dnSpy.MainApp {
 					}
 					catch {
 					}
-					return Assembly.GetName().Version.ToString();
+					return Assembly.GetName().Version!.ToString();
 				}
 			}
 
@@ -215,7 +215,7 @@ namespace dnSpy.MainApp {
 		void WriteResourceFile(IDecompilerOutput output, string name, bool addNewLine = true) {
 			if (addNewLine)
 				output.WriteLine();
-			using (var stream = GetType().Assembly.GetManifestResourceStream(name))
+			using (var stream = GetType().Assembly.GetManifestResourceStream(name)!)
 			using (var streamReader = new StreamReader(stream, Encoding.UTF8)) {
 				for (;;) {
 					var line = streamReader.ReadLine();

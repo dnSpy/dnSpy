@@ -24,7 +24,6 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger.Exceptions;
 
@@ -45,7 +44,7 @@ namespace dnSpy.Debugger.Exceptions {
 					if (Path.IsPathRooted(file))
 						filename = file;
 					else
-						filename = Path.Combine(Path.GetDirectoryName(p.Value.GetType().Assembly.Location), file);
+						filename = Path.Combine(Path.GetDirectoryName(p.Value.GetType().Assembly.Location)!, file);
 					if (!File.Exists(filename))
 						continue;
 					xmlFiles.Add(filename);

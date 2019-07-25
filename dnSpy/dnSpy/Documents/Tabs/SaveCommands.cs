@@ -173,7 +173,7 @@ namespace dnSpy.Documents.Tabs {
 					string? guidFormat = null;
 					int guidNum = 0;
 					if (hasProjectGuid) {
-						string guidStr = vm.ProjectGuid.Value.ToString();
+						string guidStr = vm.ProjectGuid.Value.ToString()!;
 						guidNum = int.Parse(guidStr.Substring(36 - 8, 8), NumberStyles.HexNumber);
 						guidFormat = guidStr.Substring(0, 36 - 8) + "{0:X8}";
 					}
@@ -183,7 +183,7 @@ namespace dnSpy.Documents.Tabs {
 							UnpackResources = vm.UnpackResources,
 							CreateResX = vm.CreateResX,
 							DecompileXaml = vm.DecompileXaml,
-							ProjectGuid = hasProjectGuid ? new Guid(string.Format(guidFormat, guidNum++)) : Guid.NewGuid(),
+							ProjectGuid = hasProjectGuid ? new Guid(string.Format(guidFormat!, guidNum++)) : Guid.NewGuid(),
 						};
 						if (!(bamlDecompiler is null)) {
 							var o = BamlDecompilerOptions.Create(vm.Decompiler.Decompiler);

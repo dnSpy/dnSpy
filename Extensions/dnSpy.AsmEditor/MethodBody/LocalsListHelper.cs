@@ -60,8 +60,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		void InitializeLocals(System.Collections.IList list) {
-			foreach (LocalVM local in list)
-				local.TypeSigCreator = typeSigCreator;
+			foreach (LocalVM? local in list)
+				local!.TypeSigCreator = typeSigCreator;
 		}
 
 		protected override void CopyItemsAsText(LocalVM[] locals) {

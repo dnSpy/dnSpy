@@ -281,7 +281,7 @@ namespace dnSpy.Decompiler.MSBuild {
 
 			var filename = file.Filename;
 			var name = Path.GetFileNameWithoutExtension(file.Filename);
-			filename = Path.Combine(Path.GetDirectoryName(filename), name + ".xaml");
+			filename = Path.Combine(Path.GetDirectoryName(filename)!, name + ".xaml");
 
 			var newFile = new XamlTypeProjectFile(file.Type, filename + Options.Decompiler.FileExtension, Options.DecompilationContext, Options.Decompiler, createDecompilerOutput);
 			Files.Add(newFile);
@@ -484,7 +484,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			if (set is null)
 				return null;
 
-			var dirName = Path.GetDirectoryName(nonSatFile.Filename);
+			var dirName = Path.GetDirectoryName(nonSatFile.Filename)!;
 			var dir = Directory.Length + 1 > dirName.Length ? string.Empty : dirName.Substring(Directory.Length + 1);
 			name = Path.GetFileNameWithoutExtension(nonSatFile.Filename);
 			ext = Path.GetExtension(nonSatFile.Filename);

@@ -461,10 +461,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				case DmdTypeScopeKind.Module:
 					return at.Data == bt.Data;
 				case DmdTypeScopeKind.ModuleRef:
-					return StringComparer.OrdinalIgnoreCase.Equals(((DmdModule)at.Data).ScopeName, (string)bt.Data) &&
-						Equals(((DmdModule)at.Data).Assembly.GetName(), (IDmdAssemblyName)bt.Data2);
+					return StringComparer.OrdinalIgnoreCase.Equals(((DmdModule)at.Data!).ScopeName, (string)bt.Data!) &&
+						Equals(((DmdModule)at.Data).Assembly.GetName(), (IDmdAssemblyName)bt.Data2!);
 				case DmdTypeScopeKind.AssemblyRef:
-					return Equals(((DmdModule)at.Data).Assembly.GetName(), (IDmdAssemblyName)bt.Data);
+					return Equals(((DmdModule)at.Data!).Assembly.GetName(), (IDmdAssemblyName)bt.Data!);
 				default:
 					throw new InvalidOperationException();
 				}
@@ -474,13 +474,13 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				case DmdTypeScopeKind.Invalid:
 					return false;
 				case DmdTypeScopeKind.Module:
-					return StringComparer.OrdinalIgnoreCase.Equals((string)at.Data, ((DmdModule)bt.Data).ScopeName) &&
-						Equals((IDmdAssemblyName)at.Data2, ((DmdModule)bt.Data).Assembly.GetName());
+					return StringComparer.OrdinalIgnoreCase.Equals((string)at.Data!, ((DmdModule)bt.Data!).ScopeName) &&
+						Equals((IDmdAssemblyName)at.Data2!, ((DmdModule)bt.Data).Assembly.GetName());
 				case DmdTypeScopeKind.ModuleRef:
-					return StringComparer.OrdinalIgnoreCase.Equals((string)at.Data, (string)bt.Data) &&
-						Equals((IDmdAssemblyName)at.Data2, (IDmdAssemblyName)bt.Data2);
+					return StringComparer.OrdinalIgnoreCase.Equals((string)at.Data!, (string)bt.Data!) &&
+						Equals((IDmdAssemblyName)at.Data2!, (IDmdAssemblyName)bt.Data2!);
 				case DmdTypeScopeKind.AssemblyRef:
-					return Equals((IDmdAssemblyName)at.Data2, (IDmdAssemblyName)bt.Data);
+					return Equals((IDmdAssemblyName)at.Data2!, (IDmdAssemblyName)bt.Data!);
 				default:
 					throw new InvalidOperationException();
 				}
@@ -490,11 +490,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				case DmdTypeScopeKind.Invalid:
 					return false;
 				case DmdTypeScopeKind.Module:
-					return Equals((IDmdAssemblyName)at.Data, ((DmdModule)bt.Data).Assembly.GetName());
+					return Equals((IDmdAssemblyName)at.Data!, ((DmdModule)bt.Data!).Assembly.GetName());
 				case DmdTypeScopeKind.ModuleRef:
-					return Equals((IDmdAssemblyName)at.Data, (IDmdAssemblyName)bt.Data2);
+					return Equals((IDmdAssemblyName)at.Data!, (IDmdAssemblyName)bt.Data2!);
 				case DmdTypeScopeKind.AssemblyRef:
-					return Equals((IDmdAssemblyName)at.Data, (IDmdAssemblyName)bt.Data);
+					return Equals((IDmdAssemblyName)at.Data!, (IDmdAssemblyName)bt.Data!);
 				default:
 					throw new InvalidOperationException();
 				}

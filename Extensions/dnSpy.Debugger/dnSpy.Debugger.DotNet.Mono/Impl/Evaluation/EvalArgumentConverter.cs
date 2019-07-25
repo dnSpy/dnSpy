@@ -164,7 +164,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 					return new EvalArgumentResult(CreatePointerLikeValue(defaultType, ((IntPtr)value).ToInt64(), out type));
 				if (value.GetType() == typeof(UIntPtr))
 					return new EvalArgumentResult(CreatePointerLikeValue(defaultType, (long)((UIntPtr)value).ToUInt64(), out type));
-				if (value is Array array && array.Rank == 1 && value.GetType().GetElementType().MakeArrayType() == value.GetType()) {
+				if (value is Array array && array.Rank == 1 && value.GetType().GetElementType()!.MakeArrayType() == value.GetType()) {
 					switch (Type.GetTypeCode(value.GetType().GetElementType())) {
 					case TypeCode.Boolean:
 						var ba = (bool[])value;

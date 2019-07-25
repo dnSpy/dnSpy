@@ -237,7 +237,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 				method = md;
 			}
 
-			GoToLocationCore(documentViewer.DocumentTab, method, module, offset, specialIpOffset, newTab, canRefreshMethods: false);
+			GoToLocationCore(documentViewer.DocumentTab!, method, module, offset, specialIpOffset, newTab, canRefreshMethods: false);
 		}
 	}
 }

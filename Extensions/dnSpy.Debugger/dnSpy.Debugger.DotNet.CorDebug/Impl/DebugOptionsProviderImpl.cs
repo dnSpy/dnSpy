@@ -49,7 +49,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				return false;
 
 			var dnDebugger = module.Process.Debugger;
-			if (IsInDirOrSubDir(Path.GetDirectoryName(dnDebugger.CLRPath), filename))
+			if (IsInDirOrSubDir(Path.GetDirectoryName(dnDebugger.CLRPath)!, filename))
 				return false;
 
 			return true;

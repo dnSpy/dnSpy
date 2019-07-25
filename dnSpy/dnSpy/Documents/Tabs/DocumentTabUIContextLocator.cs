@@ -43,7 +43,7 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		T GetOrCreate<T>(object key, Func<ReferenceResult<T>> creator) where T : class {
-			if (strongCachedInstances.TryGetValue(key, out object obj))
+			if (strongCachedInstances.TryGetValue(key, out var obj))
 				return (T)obj;
 			if (weakCachedInstances.TryGetValue(key, out var weakRef)) {
 				obj = weakRef.Target;

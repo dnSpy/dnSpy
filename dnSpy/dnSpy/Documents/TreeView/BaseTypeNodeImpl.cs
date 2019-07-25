@@ -39,11 +39,11 @@ namespace dnSpy.Documents.TreeView {
 			return isBaseType ? DsImages.ClassPublic : DsImages.InterfacePublic;
 		}
 
-		ITypeDefOrRef TryGetTypeDefOrRef() => (ITypeDefOrRef)weakRefTypeDefOrRef.Target;
+		ITypeDefOrRef? TryGetTypeDefOrRef() => (ITypeDefOrRef?)weakRefTypeDefOrRef.Target;
 		public override ITypeDefOrRef TypeDefOrRef => TryGetTypeDefOrRef() ?? new TypeRefUser(new ModuleDefUser("???"), "???");
 
 		TypeDef? TryGetTypeDef() {
-			var td = (TypeDef)weakRefResolvedTypeDef.Target;
+			var td = (TypeDef?)weakRefResolvedTypeDef.Target;
 			if (!(td is null))
 				return td;
 			td = TryGetTypeDefOrRef().ResolveTypeDef();
@@ -69,7 +69,10 @@ namespace dnSpy.Documents.TreeView {
 		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) {
 			var tdr = TryGetTypeDefOrRef();
 			if ((options & DocumentNodeWriteOptions.ToolTip) != 0) {
-				WriteMemberRef(output, decompiler, tdr);
+				if (tdr is null)
+					output.Write(BoxedTextColor.Error, "???");
+				else
+					WriteMemberRef(output, decompiler, tdr);
 				output.WriteLine();
 				WriteFilename(output);
 			}

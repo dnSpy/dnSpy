@@ -345,7 +345,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 					bool b = bmToVM.TryGetValue(info.Bookmark, out var vm);
 					Debug.Assert(b);
 					if (b)
-						vm.UpdateSettings_UI(info.Bookmark.Settings);
+						vm!.UpdateSettings_UI(info.Bookmark.Settings);
 				}
 			});
 		}

@@ -32,7 +32,7 @@ namespace dnSpy.Documents.TreeView {
 		public override NodePathName NodePathName => new NodePathName(Guid, TypeDef.FullName);
 		public override ITreeNodeGroup? TreeNodeGroup { get; }
 		public override TypeDef TypeDef => TryGetTypeDef() ?? new TypeDefUser("???");
-		TypeDef TryGetTypeDef() => (TypeDef)weakRefTypeDef.Target;
+		TypeDef? TryGetTypeDef() => (TypeDef?)weakRefTypeDef.Target;
 		readonly WeakReference weakRefTypeDef;
 
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) {
@@ -67,7 +67,10 @@ namespace dnSpy.Documents.TreeView {
 		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) {
 			var td = TryGetTypeDef();
 			if ((options & DocumentNodeWriteOptions.ToolTip) != 0) {
-				WriteMemberRef(output, decompiler, td);
+				if (td is null)
+					output.Write(BoxedTextColor.Error, "???");
+				else
+					WriteMemberRef(output, decompiler, td);
 				output.WriteLine();
 				WriteFilename(output);
 			}

@@ -55,8 +55,8 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 			toModuleInfo = new Dictionary<string, ModuleInfo>(netProcess.Modules.Count, StringComparer.OrdinalIgnoreCase);
 			hookedFuncs = new HashSet<(string dllName, string funcName)>();
 			simplePatches = new List<SimpleAPIPatch>();
-			foreach (ProcessModule module in netProcess.Modules) {
-				var info = new ModuleInfo(module);
+			foreach (ProcessModule? module in netProcess.Modules) {
+				var info = new ModuleInfo(module!);
 				toModuleInfo[info.Name] = info;
 			}
 		}

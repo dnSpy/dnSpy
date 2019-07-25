@@ -95,12 +95,12 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		void Hook(NotifyCollectionChangedEventArgs e) {
 			if (!(e.OldItems is null)) {
-				foreach (INotifyPropertyChanged i in e.OldItems)
-					i.PropertyChanged -= arg_PropertyChanged;
+				foreach (INotifyPropertyChanged? i in e.OldItems)
+					i!.PropertyChanged -= arg_PropertyChanged;
 			}
 			if (!(e.NewItems is null)) {
-				foreach (INotifyPropertyChanged i in e.NewItems)
-					i.PropertyChanged += arg_PropertyChanged;
+				foreach (INotifyPropertyChanged? i in e.NewItems)
+					i!.PropertyChanged += arg_PropertyChanged;
 			}
 		}
 

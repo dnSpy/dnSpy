@@ -201,7 +201,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 	}
 
 	sealed class GACFileVM_Comparer : System.Collections.IComparer {
-		public int Compare(object x, object y) {
+		public int Compare(object? x, object? y) {
 			var a = x as GACFileVM;
 			var b = y as GACFileVM;
 			if (a == b)

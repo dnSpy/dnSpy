@@ -761,6 +761,7 @@ namespace dnSpy.Text.Editor {
 			Debug.Assert(!(layoutHelper.AllVisibleLines is null));
 			Debug.Assert(!(layoutHelper.NewOrReformattedLines is null));
 			Debug.Assert(!(layoutHelper.TranslatedLines is null));
+			Debug.Assert(!(layoutHelper.AllVisiblePhysicalLines is null));
 
 			visiblePhysicalLines.AddRange(layoutHelper.AllVisiblePhysicalLines);
 			wpfTextViewLineCollection = new WpfTextViewLineCollection(this, TextSnapshot, layoutHelper.AllVisibleLines);

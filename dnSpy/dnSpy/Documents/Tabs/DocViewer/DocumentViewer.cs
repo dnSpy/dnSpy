@@ -269,7 +269,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
 			if (key is null)
 				throw new ArgumentNullException(nameof(key));
-			outputData.TryGetValue(key, out object data);
+			outputData.TryGetValue(key, out var data);
 			return data;
 		}
 		readonly Dictionary<object, object> outputData = new Dictionary<object, object>();

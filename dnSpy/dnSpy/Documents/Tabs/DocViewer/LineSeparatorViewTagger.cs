@@ -65,7 +65,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public static LineSeparatorViewTagger GetInstance(ITextView textView) =>
 			textView.Properties.GetOrCreateSingletonProperty(typeof(LineSeparatorViewTagger), () => new LineSeparatorViewTagger(textView));
 
-		public void SetLineSeparatorCollection(LineSeparatorCollection coll) {
+		public void SetLineSeparatorCollection(LineSeparatorCollection? coll) {
 			if (textView.IsClosed)
 				return;
 			if (coll is null)

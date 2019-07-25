@@ -35,7 +35,7 @@ namespace dnSpy.Settings {
 		}
 
 		public void Write() {
-			Directory.CreateDirectory(Path.GetDirectoryName(filename));
+			Directory.CreateDirectory(Path.GetDirectoryName(filename)!);
 			var doc = new XDocument(new XElement(XmlSettingsConstants.XML_ROOT_NAME));
 			Write(doc.Root);
 			doc.Save(filename);

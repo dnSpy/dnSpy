@@ -95,7 +95,7 @@ namespace dnSpy.AsmEditor.Resources {
 			if (!string.IsNullOrEmpty(SerializationUtilities.Deserialize(data, out var obj)))
 				return string.Empty;
 
-			return SerializationUtilities.ConvertObjectToString(obj!);
+			return SerializationUtilities.ConvertObjectToString(obj!) ?? string.Empty;
 		}
 
 		string GetSerializedData(out object? obj) {

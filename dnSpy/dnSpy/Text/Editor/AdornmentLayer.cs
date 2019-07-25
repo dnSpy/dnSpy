@@ -86,7 +86,8 @@ namespace dnSpy.Text.Editor {
 		}
 
 		internal bool IsMouseOverOverlayLayerElement(MouseEventArgs e) {
-			foreach (UIElement elem in Children) {
+			foreach (UIElement? elem in Children) {
+				Debug.Assert(!(elem is null));
 				if (elem.IsMouseOver)
 					return true;
 			}

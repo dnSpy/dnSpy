@@ -21,7 +21,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Threading;
 using dnSpy.Contracts.Hex;
@@ -41,9 +41,9 @@ namespace dnSpy.Hex.Operations {
 			Debug.Assert(valid);
 		}
 
-		protected abstract bool Initialize(string pattern, [NotNullWhenTrue] out byte[]? lowerBytes, [NotNullWhenTrue] out byte[]? upperBytes, [NotNullWhenTrue] out byte[]? charLengths);
+		protected abstract bool Initialize(string pattern, [NotNullWhen(true)] out byte[]? lowerBytes, [NotNullWhen(true)] out byte[]? upperBytes, [NotNullWhen(true)] out byte[]? charLengths);
 
-		protected bool Initialize(Encoding encoding, string pattern, [NotNullWhenTrue] out byte[]? lowerBytes, [NotNullWhenTrue] out byte[]? upperBytes, [NotNullWhenTrue] out byte[]? charLengths) {
+		protected bool Initialize(Encoding encoding, string pattern, [NotNullWhen(true)] out byte[]? lowerBytes, [NotNullWhen(true)] out byte[]? upperBytes, [NotNullWhen(true)] out byte[]? charLengths) {
 			lowerBytes = null;
 			upperBytes = null;
 			charLengths = null;
@@ -72,7 +72,7 @@ namespace dnSpy.Hex.Operations {
 			return true;
 		}
 
-		bool GetCharLengths(Encoding encoding, string s, [NotNullWhenTrue] out byte[]? charLengths, [NotNullWhenTrue] out byte[]? encodedBytes) {
+		bool GetCharLengths(Encoding encoding, string s, [NotNullWhen(true)] out byte[]? charLengths, [NotNullWhen(true)] out byte[]? encodedBytes) {
 			charLengths = null;
 			encodedBytes = null;
 

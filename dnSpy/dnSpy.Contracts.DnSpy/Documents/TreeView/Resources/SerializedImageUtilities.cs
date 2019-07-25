@@ -18,8 +18,8 @@
 */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Runtime.CompilerServices;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
 
@@ -36,7 +36,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <param name="serializedData">Serialized data</param>
 		/// <param name="imageData">Updated with the image data</param>
 		/// <returns></returns>
-		public static bool GetImageData(ModuleDef? module, string typeName, byte[] serializedData, [NotNullWhenTrue] out byte[]? imageData) {
+		public static bool GetImageData(ModuleDef? module, string typeName, byte[] serializedData, [NotNullWhen(true)] out byte[]? imageData) {
 			imageData = null;
 			if (CouldBeBitmap(module, typeName)) {
 				var dict = Deserializer.Deserialize(SystemDrawingBitmap.DefinitionAssembly.FullName, SystemDrawingBitmap.ReflectionFullName, serializedData);

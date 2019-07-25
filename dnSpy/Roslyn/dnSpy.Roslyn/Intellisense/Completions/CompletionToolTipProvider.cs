@@ -52,9 +52,8 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 			if (elementType != UIElementType.Tooltip)
 				return null;
 
-			var lastAsyncToolTipContent = lastAsyncToolTipContentWeakReference?.Target as AsyncToolTipContent;
-			if (lastAsyncToolTipContent?.Session == context) {
-				lastAsyncToolTipContent!.Cancel();
+			if (lastAsyncToolTipContentWeakReference?.Target is AsyncToolTipContent lastAsyncToolTipContent && lastAsyncToolTipContent.Session == context) {
+				lastAsyncToolTipContent.Cancel();
 				lastAsyncToolTipContentWeakReference = null;
 			}
 

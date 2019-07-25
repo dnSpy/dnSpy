@@ -112,12 +112,12 @@ namespace dnSpy.Settings.Fonts {
 			section.Attribute(FontSettingsAttrFontSize, fontSettings.FontSize);
 		}
 
-		ISettingsSection TryGetThemeFontSettingsSection(string name) {
+		ISettingsSection? TryGetThemeFontSettingsSection(string name) {
 			toThemeFontSettingsSection.TryGetValue(name, out var section);
 			return section;
 		}
 
-		ISettingsSection TryGetThemeFontSettingsSection(string name, Guid themeGuid) {
+		ISettingsSection? TryGetThemeFontSettingsSection(string name, Guid themeGuid) {
 			toFontSettingsSection.TryGetValue(new FontSettingsKey(name, themeGuid), out var section);
 			return section;
 		}

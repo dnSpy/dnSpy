@@ -19,7 +19,7 @@
 
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.AntiAntiDebug;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
@@ -58,7 +58,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.AntiAntiDebug {
 			}
 		}
 
-		void HookX86(DbgNativeFunctionHookContext context, DbgCorDebugInternalRuntime runtime, [NotNullWhenFalse] out string? errorMessage) =>
+		void HookX86(DbgNativeFunctionHookContext context, DbgCorDebugInternalRuntime runtime, [NotNullWhen(false)] out string? errorMessage) =>
 			new ManagedDebuggerPatcherX86(context, runtime).TryPatch(out errorMessage);
 	}
 }

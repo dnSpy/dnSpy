@@ -19,7 +19,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 using VSTE = Microsoft.VisualStudio.Text.Editor;
 using VSUTIL = Microsoft.VisualStudio.Utilities;
 
@@ -91,7 +91,7 @@ namespace dnSpy.Hex.Editor {
 			}
 		}
 
-		bool TryGetValue(string optionId, [NotNullWhenTrue] out object? value) {
+		bool TryGetValue(string optionId, [NotNullWhen(true)] out object? value) {
 			if (!(scope is null) && !service.GetOption(optionId).IsApplicableToScope(scope))
 				throw new InvalidOperationException();
 			HexEditorOptions? p = this;
@@ -115,8 +115,7 @@ namespace dnSpy.Hex.Editor {
 			if (scope is null || service.GetOption(optionId).IsApplicableToScope(scope))
 				OptionChanged?.Invoke(this, new VSTE.EditorOptionChangedEventArgs(optionId));
 			for (int i = weakChildren.Count - 1; i >= 0; i--) {
-				var child = weakChildren[i].Target as HexEditorOptions;
-				if (child is null) {
+				if (!(weakChildren[i].Target is HexEditorOptions child)) {
 					weakChildren.RemoveAt(i);
 					continue;
 				}
@@ -139,7 +138,7 @@ namespace dnSpy.Hex.Editor {
 		public bool ClearOptionValue(string optionId) {
 			if (optionId is null)
 				throw new ArgumentNullException(nameof(optionId));
-			if (parent is null || !dict.TryGetValue(optionId, out object oldValue))
+			if (parent is null || !dict.TryGetValue(optionId, out var oldValue))
 				return false;
 			dict.Remove(optionId);
 			var newValue = GetValueOrDefault(optionId);

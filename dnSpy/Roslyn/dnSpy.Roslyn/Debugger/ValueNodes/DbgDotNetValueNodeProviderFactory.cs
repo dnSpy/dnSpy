@@ -393,7 +393,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			var dict = new Dictionary<string, object>(stringComparer);
 			for (int i = 0; i < memberInfos.Length; i++) {
 				ref var info = ref memberInfos[i];
-				if (dict.TryGetValue(info.Member.Name, out object value)) {
+				if (dict.TryGetValue(info.Member.Name, out var value)) {
 					List<int> list;
 					if (value is int) {
 						list = new List<int>(2);

@@ -19,8 +19,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using dnSpy.Debugger.DotNet.CorDebug.Utilities;
@@ -41,7 +41,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		static readonly byte[] AppHostExeUnpatchedSignature = Encoding.UTF8.GetBytes(AppHostExeUnpatched + "\0");
 		static readonly byte[] AppHostExeSignature = Encoding.UTF8.GetBytes("c3ab8ff13720e8ad9047dd39466b3c89" + "\0");
 
-		internal static bool IsDotNetCoreAppHost(string filename, [NotNullWhenTrue] out string? dllFilename) {
+		internal static bool IsDotNetCoreAppHost(string filename, [NotNullWhen(true)] out string? dllFilename) {
 			// We detect the apphost.exe like so:
 			//	- must have an exe extension
 			//	- must be a PE file and an EXE (DLL bit cleared)
@@ -110,7 +110,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			}
 		}
 
-		internal static bool TryGetAppHostEmbeddedDotNetDllPath(string apphostFilename, out bool couldBeAppHost, [NotNullWhenTrue] out string? dotNetDllPath) {
+		internal static bool TryGetAppHostEmbeddedDotNetDllPath(string apphostFilename, out bool couldBeAppHost, [NotNullWhen(true)] out string? dotNetDllPath) {
 			dotNetDllPath = null;
 			couldBeAppHost = false;
 			if (!File.Exists(apphostFilename))
@@ -129,7 +129,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				if (!ExeUtils.TryGetTextSectionInfo(new BinaryReader(new MemoryStream(data)), out _, out _))
 					return false;
 
-				var basePath = Path.GetDirectoryName(apphostFilename);
+				var basePath = Path.GetDirectoryName(apphostFilename)!;
 				foreach (var info in GetAppHostInfos(data)) {
 					if (!TryGetUtf8StringZ(data, (int)info.RelPathOffset, AppHostInfo.MaxAppHostRelPathLength, out var relPath))
 						continue;
@@ -155,7 +155,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			return false;
 		}
 
-		static bool TryGetUtf8StringZ(byte[] data, int index, int maxLength, [NotNullWhenTrue] out string? relPath) {
+		static bool TryGetUtf8StringZ(byte[] data, int index, int maxLength, [NotNullWhen(true)] out string? relPath) {
 			for (int i = 0; i < maxLength && (uint)(index + i) < (uint)data.Length; i++) {
 				if (data[index + i] == 0) {
 					relPath = Encoding.UTF8.GetString(data, index, i);

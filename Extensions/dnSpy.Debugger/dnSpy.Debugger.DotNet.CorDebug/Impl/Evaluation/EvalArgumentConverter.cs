@@ -137,7 +137,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 						return CreateUInt32(reflectionAppDomain.System_UIntPtr, ((UIntPtr)value).ToUInt32());
 					return CreateUInt64(reflectionAppDomain.System_UIntPtr, ((UIntPtr)value).ToUInt64());
 				}
-				if (value is Array array && array.Rank == 1 && value.GetType().GetElementType().MakeArrayType() == value.GetType()) {
+				if (value is Array array && array.Rank == 1 && value.GetType().GetElementType()!.MakeArrayType() == value.GetType()) {
 					switch (Type.GetTypeCode(value.GetType().GetElementType())) {
 					case TypeCode.Boolean:
 						var ba = (bool[])value;

@@ -21,9 +21,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.StartDebugging;
@@ -111,7 +111,7 @@ namespace dnSpy.Debugger.DbgUI {
 			if (res != true)
 				return default;
 			var info = vm.StartDebuggingOptions;
-			mru.Add(info.Filename, info.Options, vm.SelectedPageGuid);
+			mru.Add(info.Filename!, info.Options, vm.SelectedPageGuid);
 			return (info.Options, info.Flags);
 		}
 
@@ -167,7 +167,7 @@ namespace dnSpy.Debugger.DbgUI {
 			return true;
 		}
 
-		public bool StartWithoutDebugging([NotNullWhenFalse]out string? error) {
+		public bool StartWithoutDebugging([NotNullWhen(false)]out string? error) {
 			if (!TryGetStartWithoutDebuggingInfo(out var filename, out _))
 				throw new InvalidOperationException();
 			return dbgProcessStarterService.Value.TryStart(filename, out error);

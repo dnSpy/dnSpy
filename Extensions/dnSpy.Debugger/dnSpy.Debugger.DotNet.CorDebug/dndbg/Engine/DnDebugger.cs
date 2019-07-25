@@ -198,7 +198,7 @@ namespace dndbg.Engine {
 			DebuggeeVersion = debuggeeVersion ?? string.Empty;
 			OtherVersion = otherVersion ?? string.Empty;
 			CLRPath = clrPath ?? throw new ArgumentNullException(nameof(clrPath));
-			RuntimeDirectory = Path.GetDirectoryName(clrPath);
+			RuntimeDirectory = Path.GetDirectoryName(clrPath)!;
 
 			// I have not tested debugging with CLR 1.x. It's too old to support it so this is a won't fix
 			if (DebuggeeVersion.StartsWith("1."))
@@ -669,7 +669,7 @@ namespace dndbg.Engine {
 			case DebugCallbackKind.StepComplete:
 				var scArgs = (StepCompleteDebugCallbackEventArgs)e;
 				InitializeCurrentDebuggerState(e, null, scArgs.AppDomain, scArgs.Thread);
-				StepInfo stepInfo;
+				StepInfo? stepInfo;
 				var stepperKey = scArgs.CorStepper;
 				if (!(stepperKey is null) && stepInfos.TryGetValue(stepperKey, out stepInfo)) {
 					stepInfos.Remove(stepperKey);

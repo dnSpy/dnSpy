@@ -20,7 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.TreeView;
@@ -373,7 +373,7 @@ namespace dnSpy.Documents.TreeView {
 		// but its assembly won't get GC'd if this class has an indirect ref to it. A weak ref isn't
 		// used since there would be too many weak refs (many member ref tree nodes), and it's
 		// currently not needed (not on a hot path).
-		bool TryResolveDef([NotNullWhenTrue] out PropertyDef? property, [NotNullWhenTrue] out MethodDef? method) {
+		bool TryResolveDef([NotNullWhen(true)] out PropertyDef? property, [NotNullWhen(true)] out MethodDef? method) {
 			property = null;
 			method = PropertyRef.ResolveMethodDef();
 			if (method is null)
@@ -419,7 +419,7 @@ namespace dnSpy.Documents.TreeView {
 		public override NodePathName NodePathName => new NodePathName(Guid, EventRef.FullName);
 		public override ITreeNodeGroup? TreeNodeGroup { get; }
 
-		bool TryResolveDef([NotNullWhenTrue] out EventDef? @event, [NotNullWhenTrue] out MethodDef? method) {
+		bool TryResolveDef([NotNullWhen(true)] out EventDef? @event, [NotNullWhen(true)] out MethodDef? method) {
 			@event = null;
 			method = EventRef.ResolveMethodDef();
 			if (method is null)

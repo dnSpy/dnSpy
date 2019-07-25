@@ -212,7 +212,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 			if (isDynamic) {
 				if (monoModule.Assembly.ManifestModule == monoModule)
-					version = monoModule.Assembly.GetName().Version.ToString();
+					version = monoModule.Assembly.GetName().Version!.ToString();
 			}
 			else if (isInMemory) {
 				Debug.Assert(imageLayout == DbgImageLayout.File, nameof(GetFileVersion) + " assumes file layout");

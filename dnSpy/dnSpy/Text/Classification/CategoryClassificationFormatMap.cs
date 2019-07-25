@@ -225,7 +225,7 @@ namespace dnSpy.Text.Classification {
 		public string GetEditorFormatMapKey(IClassificationType classificationType) {
 			if (classificationType is null)
 				throw new ArgumentNullException(nameof(classificationType));
-			if (!classificationToEditorFormatMapKey.TryGetValue(classificationType.Classification, out string key))
+			if (!classificationToEditorFormatMapKey.TryGetValue(classificationType.Classification, out var key))
 				key = classificationType.Classification;
 			return key;
 		}

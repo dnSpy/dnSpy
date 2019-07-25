@@ -643,8 +643,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		void InstallInstructionHandlers(System.Collections.IList list) {
-			foreach (InstructionVM instr in list) {
-				instr.PropertyChanged -= instr_PropertyChanged;
+			foreach (InstructionVM? instr in list) {
+				instr!.PropertyChanged -= instr_PropertyChanged;
 				instr.PropertyChanged += instr_PropertyChanged;
 				instr.InstructionOperandVM.PropertyChanged -= InstructionOperandVM_PropertyChanged;
 				instr.InstructionOperandVM.PropertyChanged += InstructionOperandVM_PropertyChanged;
@@ -681,8 +681,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		void LocalsListVM_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
 			if (!(e.NewItems is null)) {
-				foreach (LocalVM local in e.NewItems) {
-					local.PropertyChanged -= local_PropertyChanged;
+				foreach (LocalVM? local in e.NewItems) {
+					local!.PropertyChanged -= local_PropertyChanged;
 					local.PropertyChanged += local_PropertyChanged;
 				}
 			}
@@ -702,8 +702,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		void ExceptionHandlersListVM_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
 			if (!(e.NewItems is null)) {
-				foreach (ExceptionHandlerVM eh in e.NewItems) {
-					eh.PropertyChanged -= eh_PropertyChanged;
+				foreach (ExceptionHandlerVM? eh in e.NewItems) {
+					eh!.PropertyChanged -= eh_PropertyChanged;
 					eh.PropertyChanged += eh_PropertyChanged;
 				}
 			}
@@ -711,8 +711,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 			if (!ExceptionHandlersListVM.DisableAutoUpdateProps) {
 				if (e.Action == NotifyCollectionChangedAction.Add) {
 					if (!(e.NewItems is null)) {
-						foreach (ExceptionHandlerVM eh in e.NewItems)
-							eh.InstructionChanged(InstructionsListVM);
+						foreach (ExceptionHandlerVM? eh in e.NewItems)
+							eh!.InstructionChanged(InstructionsListVM);
 					}
 				}
 

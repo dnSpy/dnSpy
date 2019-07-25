@@ -207,8 +207,11 @@ namespace dnSpy.Documents.Tabs {
 				}
 
 				foreach (var sect in root.Elements()) {
-					if (sect.Name == "File")
-						Files.Add(new RefFile(sect, refFilePath));
+					if (sect.Name == "File") {
+						var file = new RefFile(sect, refFilePath);
+						if (!string.IsNullOrEmpty(file.Filename))
+							Files.Add(file);
+					}
 					else
 						Debug.Fail("Unknown section");
 				}
@@ -277,7 +280,7 @@ namespace dnSpy.Documents.Tabs {
 			public string? FileVersion { get; }
 			public string Filename { get; }
 
-			public RefFile(XElement sect, string refFilePath) {
+			public RefFile(XElement sect, string? refFilePath) {
 				foreach (var attr in sect.Attributes()) {
 					switch (attr.Name.ToString()) {
 					case "AssemblyName":
@@ -311,12 +314,18 @@ namespace dnSpy.Documents.Tabs {
 					}
 				}
 
-				var f = Path.Combine(refFilePath, AssemblyName);
-				var fn = f + ".dll";
-				if (!File.Exists(fn))
-					fn = f + ".exe";
-				if (!File.Exists(fn))
+				string fn;
+				try {
+					var f = Path.Combine(refFilePath!, AssemblyName!);
+					fn = f + ".dll";
+					if (!File.Exists(fn))
+						fn = f + ".exe";
+					if (!File.Exists(fn))
+						fn = string.Empty;
+				}
+				catch (ArgumentException) {
 					fn = string.Empty;
+				}
 				Filename = fn;
 			}
 

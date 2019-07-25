@@ -70,14 +70,14 @@ namespace dnSpy.Decompiler.MSBuild {
 			}
 		}
 
-		string GetBaseDirectory(AssemblyDef asm, ModuleDef mod) {
+		string? GetBaseDirectory(AssemblyDef asm, ModuleDef mod) {
 			if (string.IsNullOrEmpty(mod.Location))
-				return string.Empty;
+				return null;
 			try {
 				return Path.GetDirectoryName(mod.Location);
 			}
 			catch {
-				return string.Empty;
+				return null;
 			}
 		}
 

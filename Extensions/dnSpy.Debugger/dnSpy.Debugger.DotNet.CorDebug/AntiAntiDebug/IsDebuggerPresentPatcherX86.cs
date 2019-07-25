@@ -17,8 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Runtime.CompilerServices;
 using dnSpy.Contracts.Debugger.AntiAntiDebug;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
 using Iced.Intel;
@@ -31,7 +31,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.AntiAntiDebug {
 		public IsDebuggerPresentPatcherX86(DbgNativeFunctionHookContext context, DbgCorDebugInternalRuntime runtime)
 			: base(context) => clrFilename = runtime.ClrFilename;
 
-		public bool TryPatchX86([NotNullWhenFalse] out string? errorMessage) {
+		public bool TryPatchX86([NotNullWhen(false)] out string? errorMessage) {
 			var function = functionProvider.GetFunction(IsDebuggerPresentConstants.DllName, IsDebuggerPresentConstants.FuncName);
 			var clrDllName = Path.GetFileName(clrFilename);
 			if (!functionProvider.TryGetModuleAddress(clrDllName, out var clrAddress, out var clrEndAddress)) {
@@ -75,7 +75,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.AntiAntiDebug {
 			return true;
 		}
 
-		public bool TryPatchX64([NotNullWhenFalse] out string? errorMessage) {
+		public bool TryPatchX64([NotNullWhen(false)] out string? errorMessage) {
 			var function = functionProvider.GetFunction(IsDebuggerPresentConstants.DllName, IsDebuggerPresentConstants.FuncName);
 			var clrDllName = Path.GetFileName(clrFilename);
 			if (!functionProvider.TryGetModuleAddress(clrDllName, out var clrAddress, out var clrEndAddress)) {

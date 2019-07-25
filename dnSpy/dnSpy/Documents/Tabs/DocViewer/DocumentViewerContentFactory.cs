@@ -117,7 +117,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				if (id is null)
 					throw new ArgumentNullException(nameof(id));
 
-				if (!customDataDict.TryGetValue(id, out object listObj))
+				if (!customDataDict.TryGetValue(id, out var listObj))
 					return Array.Empty<TData>();
 				var list = (List<TData>)listObj;
 				return list.ToArray();

@@ -123,7 +123,8 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 
 			var allVariables = ilMethod.GetSelfAndChildrenRecursive<ILExpression>().Select(e => e.Operand as ILVariable)
 				.Where(v => !(v is null) && !v.IsParameter).Distinct();
-			foreach (ILVariable v in allVariables) {
+			foreach (var v in allVariables) {
+				Debug.Assert(!(v is null));
 				output.Write(IdentifierEscaper.Escape(v.Name), v.GetTextReferenceObject(), DecompilerReferenceFlags.Local | DecompilerReferenceFlags.Definition, v.IsParameter ? BoxedTextColor.Parameter : BoxedTextColor.Local);
 				if (!(v.Type is null)) {
 					output.Write(" ", BoxedTextColor.Text);
@@ -367,7 +368,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 				inlineVariables = false
 			};
 			string nextName = "ILAst (variable splitting)";
-			foreach (ILAstOptimizationStep step in Enum.GetValues(typeof(ILAstOptimizationStep))) {
+			foreach (ILAstOptimizationStep step in (ILAstOptimizationStep[])Enum.GetValues(typeof(ILAstOptimizationStep))) {
 				yield return new ILAstDecompiler(decompilerSettingsService.ILAstDecompilerSettings, orderUI++, nextName) {
 					uniqueGuid = new Guid($"CB470049-6AFB-4BDB-93DC-1BB9{id++:X8}"),
 					abortBeforeStep = step

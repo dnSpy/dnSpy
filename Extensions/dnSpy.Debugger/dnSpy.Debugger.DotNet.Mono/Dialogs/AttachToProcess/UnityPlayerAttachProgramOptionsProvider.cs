@@ -19,10 +19,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -93,7 +93,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.AttachToProcess {
 		}
 
 		static readonly Regex playerAnnounceStringRegex = new Regex(@"^\[IP\] (\S+) \[Port\] (\d+) \[Flags\] (-?\d+) \[Guid\] (\d+) \[EditorId\] (\d+) \[Version\] (\d+) \[Id\] ([^\(]+)\(([^\)]+)\)(:(\d+))? \[Debug\] (\d+)");
-		bool TryParseUnityPlayerData(string s, [NotNullWhenTrue] out string? ipAddress, out ushort port, [NotNullWhenTrue] out string? playerId) {
+		bool TryParseUnityPlayerData(string s, [NotNullWhen(true)] out string? ipAddress, out ushort port, [NotNullWhen(true)] out string? playerId) {
 			ipAddress = null;
 			port = 0;
 			playerId = null;

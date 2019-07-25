@@ -45,7 +45,7 @@ namespace dnSpy.Settings {
 			if (name is null)
 				throw new ArgumentNullException(nameof(name));
 
-			string stringValue;
+			string? stringValue;
 			lock (lockObj) {
 				if (!attributes.TryGetValue(name, out stringValue))
 					return default!;

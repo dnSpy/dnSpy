@@ -145,7 +145,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			var nameNoExt = resourceName.Substring(0, resourceName.Length - ext.Length);
 			var ns = GetNamespace(resourceName);
 
-			if (partialNamespaceMap.TryGetValue(ns, out string fixedNs))
+			if (partialNamespaceMap.TryGetValue(ns, out var fixedNs))
 				nameNoExt = fixedNs.Replace('.', '/') + "/" + nameNoExt.Substring(ns.Length + 1);
 
 			return filenameCreator.CreateFromRelativePath(nameNoExt, ext);
@@ -185,7 +185,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			var name = partialName;
 			if (!string.IsNullOrEmpty(filenameCreator.DefaultNamespace))
 				name = filenameCreator.DefaultNamespace + "." + name;
-			if (typeToFullNameMap.TryGetValue(name, out string fullName))
+			if (typeToFullNameMap.TryGetValue(name, out var fullName))
 				return fullName;
 			partialTypeToFullNameMap.TryGetValue(partialName, out fullName);
 			return fullName;
@@ -208,7 +208,7 @@ namespace dnSpy.Decompiler.MSBuild {
 					sb.Append(".");
 				sb.Append(parts[i]);
 				var ns = sb.ToString();
-				lowerCaseNsToReal.TryGetValue(ns, out string realNs);
+				lowerCaseNsToReal.TryGetValue(ns, out var realNs);
 				possibleNamespaces.Add(realNs ?? ns);
 			}
 			for (int i = possibleNamespaces.Count - 1; i >= 0; i--) {
@@ -269,7 +269,7 @@ namespace dnSpy.Decompiler.MSBuild {
 
 				var ns = (t.Namespace ?? UTF8String.Empty).String;
 				while (ns.Length > 0) {
-					if (stringCache.TryGetValue(ns, out string tmp))
+					if (stringCache.TryGetValue(ns, out var tmp))
 						ns = tmp;
 					else
 						stringCache[ns] = ns;

@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace dnSpy.Hex.Operations {
@@ -26,7 +26,7 @@ namespace dnSpy.Hex.Operations {
 			: base(pattern) {
 		}
 
-		protected override bool Initialize(string pattern, [NotNullWhenTrue] out byte[]? lowerBytes, [NotNullWhenTrue] out byte[]? upperBytes, [NotNullWhenTrue] out byte[]? charLengths) =>
+		protected override bool Initialize(string pattern, [NotNullWhen(true)] out byte[]? lowerBytes, [NotNullWhen(true)] out byte[]? upperBytes, [NotNullWhen(true)] out byte[]? charLengths) =>
 			Initialize(Encoding.UTF8, pattern, out lowerBytes, out upperBytes, out charLengths);
 	}
 }

@@ -92,8 +92,8 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// <param name="arrayIndex">Index</param>
 		public void CopyTo(Completion[] array, int arrayIndex) => items.CopyTo(array, arrayIndex);
 
-		bool IList.Contains(object value) => ((IList)items).Contains(value);
-		int IList.IndexOf(object value) => ((IList)items).IndexOf(value);
+		bool IList.Contains(object? value) => ((IList)items).Contains(value);
+		int IList.IndexOf(object? value) => ((IList)items).IndexOf(value);
 		void ICollection.CopyTo(Array array, int index) => ((ICollection)items).CopyTo(array, index);
 
 		/// <summary>
@@ -110,7 +110,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		object ICollection.SyncRoot => ((IList)items).SyncRoot;
 		bool ICollection.IsSynchronized => false;
 
-		object IList.this[int index] {
+		object? IList.this[int index] {
 			get => this[index];
 			set => throw new NotSupportedException();
 		}
@@ -120,10 +120,10 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		void IList<Completion>.Insert(int index, Completion item) => throw new NotSupportedException();
 		bool ICollection<Completion>.Remove(Completion item) => throw new NotSupportedException();
 		void IList<Completion>.RemoveAt(int index) => throw new NotSupportedException();
-		int IList.Add(object value) => throw new NotSupportedException();
+		int IList.Add(object? value) => throw new NotSupportedException();
 		void IList.Clear() => throw new NotSupportedException();
-		void IList.Insert(int index, object value) => throw new NotSupportedException();
-		void IList.Remove(object value) => throw new NotSupportedException();
+		void IList.Insert(int index, object? value) => throw new NotSupportedException();
+		void IList.Remove(object? value) => throw new NotSupportedException();
 		void IList.RemoveAt(int index) => throw new NotSupportedException();
 	}
 }

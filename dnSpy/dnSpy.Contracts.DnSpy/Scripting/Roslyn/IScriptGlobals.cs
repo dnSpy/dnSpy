@@ -235,13 +235,13 @@ namespace dnSpy.Contracts.Scripting.Roslyn {
 		ICachedWriter CreateWriter();
 
 		/// <summary>
-		/// Executes <paramref name="action"/> in the UI thread
+		/// Executes <paramref name="action"/> on the UI thread
 		/// </summary>
 		/// <param name="action">Code</param>
 		void UI(Action action);
 
 		/// <summary>
-		/// Executes <paramref name="func"/> in the UI thread
+		/// Executes <paramref name="func"/> on the UI thread
 		/// </summary>
 		/// <typeparam name="T">Return type</typeparam>
 		/// <param name="func">Code</param>

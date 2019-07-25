@@ -116,7 +116,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// </summary>
 		/// <param name="obj">Data</param>
 		/// <returns></returns>
-		public static string ConvertObjectToString(object obj) {
+		public static string? ConvertObjectToString(object obj) {
 			var objType = obj.GetType();
 
 			try {

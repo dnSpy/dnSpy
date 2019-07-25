@@ -159,7 +159,7 @@ namespace dnSpy_Console {
 		public void Write(string text, int index, int length, object color) => AddText(text, index, length, color);
 		public void Write(string text, object? reference, DecompilerReferenceFlags flags, object color) => AddText(text, color);
 		public void Write(string text, int index, int length, object? reference, DecompilerReferenceFlags flags, object color) => AddText(text, index, length, color);
-		public override string ToString() => writer.ToString();
+		public override string ToString() => writer.ToString()!;
 		public void Dispose() => writer.Dispose();
 	}
 
@@ -199,7 +199,7 @@ namespace dnSpy_Console {
 		public DnSpyDecompiler() {
 #if NETCOREAPP
 			// This assembly is always in the bin sub dir if one exists
-			netCoreAssemblyLoader.AddSearchPath(Path.GetDirectoryName(typeof(ILSpan).Assembly.Location));
+			netCoreAssemblyLoader.AddSearchPath(Path.GetDirectoryName(typeof(ILSpan).Assembly.Location)!);
 #endif
 			files = new List<string>();
 			asmPaths = new List<string>();
@@ -393,7 +393,7 @@ namespace dnSpy_Console {
 			return list;
 		}
 
-		void Dump(Exception ex) {
+		void Dump(Exception? ex) {
 			while (!(ex is null)) {
 				Console.WriteLine(dnSpy_Console_Resources.Error1, ex.GetType());
 				Console.WriteLine("  {0}", ex.Message);
@@ -452,7 +452,7 @@ namespace dnSpy_Console {
 
 			bool canParseCommands = true;
 			IDecompiler? lang = null;
-			Dictionary<string, (IDecompilerOption setOption, Action<string?> setOptionValue)>? langDict = null;
+			Dictionary<string, (IDecompilerOption setOption, Action<string> setOptionValue)>? langDict = null;
 			for (int i = 0; i < args.Length; i++) {
 				if (lang is null) {
 					lang = GetLanguage();
@@ -620,7 +620,7 @@ namespace dnSpy_Console {
 						break;
 
 					default:
-						(IDecompilerOption option, Action<string?> setOptionValue) tuple;
+						(IDecompilerOption option, Action<string> setOptionValue) tuple;
 						Debug.Assert(!(langDict is null));
 						if (langDict.TryGetValue(arg, out tuple)) {
 							bool hasArg = tuple.option.Type != typeof(bool);
@@ -628,7 +628,7 @@ namespace dnSpy_Console {
 								throw new ErrorException(dnSpy_Console_Resources.MissingOptionArgument);
 							if (hasArg)
 								i++;
-							tuple.setOptionValue(next);
+							tuple.setOptionValue(next ?? string.Empty);
 							break;
 						}
 
@@ -649,8 +649,8 @@ namespace dnSpy_Console {
 
 		static string ParseString(string s) => s;
 
-		Dictionary<string, (IDecompilerOption option, Action<string?> setOptionValue)> CreateDecompilerOptionsDictionary(IDecompiler decompiler) {
-			var dict = new Dictionary<string, (IDecompilerOption, Action<string?>)>();
+		Dictionary<string, (IDecompilerOption option, Action<string> setOptionValue)> CreateDecompilerOptionsDictionary(IDecompiler decompiler) {
+			var dict = new Dictionary<string, (IDecompilerOption, Action<string>)>();
 
 			if (decompiler is null)
 				return dict;
@@ -663,9 +663,9 @@ namespace dnSpy_Console {
 					dict[GetOptionName(opt, BOOLEAN_DONT_PREFIX)] = (opt, new Action<string?>(a => opt.Value = false));
 				}
 				else if (opt.Type == typeof(int))
-					dict[GetOptionName(opt)] = (opt, new Action<string?>(a => opt.Value = ParseInt32(a)));
+					dict[GetOptionName(opt)] = (opt, new Action<string>(a => opt.Value = ParseInt32(a)));
 				else if (opt.Type == typeof(string))
-					dict[GetOptionName(opt)] = (opt, new Action<string?>(a => opt.Value = ParseString(a)));
+					dict[GetOptionName(opt)] = (opt, new Action<string>(a => opt.Value = ParseString(a)));
 				else
 					Debug.Fail($"Unsupported type: {opt.Type}");
 			}
@@ -825,6 +825,7 @@ namespace dnSpy_Console {
 					var path = Path.GetDirectoryName(file);
 					var name = Path.GetFileName(file);
 					if (Directory.Exists(path)) {
+						Debug.Assert(!(path is null));
 						foreach (var info in DumpDir(path, name))
 							yield return info;
 					}
@@ -949,7 +950,7 @@ namespace dnSpy_Console {
 		ProjectModuleOptions CreateProjectModuleOptions(ModuleDef mod) {
 			mod.EnableTypeDefFindCache = true;
 			((AssemblyResolver)moduleContext.AssemblyResolver).AddToCache(mod);
-			AddSearchPath(Path.GetDirectoryName(mod.Location));
+			AddSearchPath(Path.GetDirectoryName(mod.Location)!);
 			var proj = new ProjectModuleOptions(mod, GetLanguage(), decompilationContext);
 			proj.DontReferenceStdLib = !addCorlibRef;
 			proj.UnpackResources = unpackResources;

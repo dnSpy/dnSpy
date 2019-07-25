@@ -138,7 +138,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 				return false;
 
 			stream.Position = 0;
-			FileType type = GuessFileType.DetectFileType(stream);
+			var type = GuessFileType.DetectFileType(stream);
 			if (type == FileType.Binary)
 				return false;
 

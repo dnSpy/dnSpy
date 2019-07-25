@@ -19,8 +19,8 @@
 
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using dndbg.DotNet;
 using dnlib.DotNet;
 using dnlib.IO;
@@ -195,7 +195,7 @@ namespace dndbg.Engine {
 			return sectionHeaders = Array.Empty<ImageSectionHeader>();
 		}
 
-		public bool TryCreateResourceStream(uint offset, [NotNullWhenTrue] out DataReaderFactory? dataReaderFactory, out uint resourceOffset, out uint resourceLength) {
+		public bool TryCreateResourceStream(uint offset, [NotNullWhen(true)] out DataReaderFactory? dataReaderFactory, out uint resourceOffset, out uint resourceLength) {
 			if (module.IsDynamic) {
 				//TODO: 
 				dataReaderFactory = null;

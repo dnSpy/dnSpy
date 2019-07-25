@@ -44,6 +44,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation.Hooks {
 				// String(char[] value)
 				if (ps[0].IsSZArray && ps[0].GetElementType() == appDomain.System_Char) {
 					var value = runtime.ValueConverter.ToCharArray(arguments[0]);
+					if (value is null)
+						break;//TODO: simulate throw
 					var s = new string(value);
 					return SyntheticValueFactory.TryCreateSyntheticValue(appDomain.System_String, s);
 				}
@@ -73,6 +75,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation.Hooks {
 				// String(char[] value, int startIndex, int length)
 				if (ps[0].IsSZArray && ps[0].GetElementType() == appDomain.System_Char && ps[1] == appDomain.System_Int32 && ps[2] == appDomain.System_Int32) {
 					var value = runtime.ValueConverter.ToCharArray(arguments[0]);
+					if (value is null)
+						break;//TODO: simulate throw
 					int startIndex = runtime.ValueConverter.ToInt32(arguments[1]);
 					int length = runtime.ValueConverter.ToInt32(arguments[2]);
 					var s = new string(value, startIndex, length);

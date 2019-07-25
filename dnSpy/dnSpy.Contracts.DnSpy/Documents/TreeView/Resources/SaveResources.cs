@@ -167,7 +167,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 				var info = fileInfos[i];
 				progress.SetDescription(info.filename);
 				progress.SetTotalProgress(i);
-				Directory.CreateDirectory(Path.GetDirectoryName(info.filename));
+				Directory.CreateDirectory(Path.GetDirectoryName(info.filename)!);
 				var file = File.Create(info.filename);
 				try {
 					var stream = info.data.GetStream(progress.Token);

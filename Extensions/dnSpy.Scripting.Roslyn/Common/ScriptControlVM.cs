@@ -22,9 +22,9 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -398,7 +398,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 						if (isActive) {
 							try {
 								if (!(ex is null))
-									ReplEditor.OutputPrint(Format(ex.InnerException), BoxedTextColor.Error, true);
+									ReplEditor.OutputPrint(Format(ex.InnerException!), BoxedTextColor.Error, true);
 
 								if (!t.IsCanceled && !t.IsFaulted) {
 									oldState.ScriptState = t.Result;
@@ -446,7 +446,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			}
 		}
 
-		bool UnpackScriptCommand(string input, [NotNullWhenTrue] out string? name, [NotNullWhenTrue] out string[]? args) {
+		bool UnpackScriptCommand(string input, [NotNullWhen(true)] out string? name, [NotNullWhen(true)] out string[]? args) {
 			name = null;
 			args = null;
 

@@ -38,12 +38,12 @@ namespace dnSpy.Documents.TreeView {
 			: base(targetNode) {
 			msgNodeGroup = targetNode.Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.MessageTreeNodeGroupDerivedTypes);
 			derivedTypesGroup = targetNode.Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.DerivedTypeTreeNodeGroupDerivedTypes);
-			weakModules = targetNode.Context.DocumentTreeView.DocumentService.GetDocuments().Where(a => !(a.ModuleDef is null)).SelectMany(a => !(a.AssemblyDef is null) ? (IEnumerable<ModuleDef>)a.AssemblyDef.Modules : new[] { a.ModuleDef }).Select(a => new WeakReference(a)).ToArray();
+			weakModules = targetNode.Context.DocumentTreeView.DocumentService.GetDocuments().Where(a => !(a.ModuleDef is null)).SelectMany(a => !(a.AssemblyDef is null) ? (IEnumerable<ModuleDef>)a.AssemblyDef.Modules : new[] { a.ModuleDef! }).Select(a => new WeakReference(a)).ToArray();
 			this.type = type;
 			Start();
 		}
 
-		public static bool QuickCheck(TypeDef type) {
+		public static bool QuickCheck(TypeDef? type) {
 			if (type is null)
 				return false;
 			if (!type.IsInterface && type.IsSealed)
@@ -60,7 +60,7 @@ namespace dnSpy.Documents.TreeView {
 			AddMessageNode(() => new MessageNodeImpl(msgNodeGroup, new Guid(DocumentTreeViewConstants.MESSAGE_NODE_GUID), DsImages.Search, dnSpy_Resources.Searching));
 			foreach (var weakMod in weakModules) {
 				cancellationToken.ThrowIfCancellationRequested();
-				var mod = (ModuleDef)weakMod.Target;
+				var mod = (ModuleDef?)weakMod.Target;
 				if (mod is null)
 					continue;
 

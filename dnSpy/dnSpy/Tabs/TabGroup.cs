@@ -20,8 +20,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -169,7 +169,8 @@ namespace dnSpy.Tabs {
 		}
 
 		TabItemImpl? GetTabItemImpl(ITabContent content) {
-			foreach (TabItemImpl impl in tabControl.Items) {
+			foreach (TabItemImpl? impl in tabControl.Items) {
+				Debug.Assert(!(impl is null));
 				if (impl.TabContent == content)
 					return impl;
 			}
@@ -317,7 +318,7 @@ namespace dnSpy.Tabs {
 
 		bool IsDragArea(object? sender, MouseEventArgs e, TabItem tabItem) => IsDraggableAP.GetIsDraggable(e.OriginalSource as FrameworkElement);
 
-		bool GetTabItem(object? sender, MouseEventArgs e, [NotNullWhenTrue] out TabItemImpl? tabItem, [NotNullWhenTrue] out TabControl? tabControl) {
+		bool GetTabItem(object? sender, MouseEventArgs e, [NotNullWhen(true)] out TabItemImpl? tabItem, [NotNullWhen(true)] out TabControl? tabControl) {
 			tabItem = null;
 			tabControl = null;
 
@@ -375,8 +376,8 @@ namespace dnSpy.Tabs {
 		}
 
 		bool GetInfo(object? sender, DragEventArgs e,
-					[NotNullWhenTrue] out TabItemImpl? tabItemSource, [NotNullWhenTrue] out TabItemImpl? tabItemTarget,
-					[NotNullWhenTrue] out TabGroup? tabGroupSource, [NotNullWhenTrue] out TabGroup? tabGroupTarget,
+					[NotNullWhen(true)] out TabItemImpl? tabItemSource, [NotNullWhen(true)] out TabItemImpl? tabItemTarget,
+					[NotNullWhen(true)] out TabGroup? tabGroupSource, [NotNullWhen(true)] out TabGroup? tabGroupTarget,
 					bool canBeSame) {
 			tabItemSource = tabItemTarget = null;
 			tabGroupSource = tabGroupTarget = null;

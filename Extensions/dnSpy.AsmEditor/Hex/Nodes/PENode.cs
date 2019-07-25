@@ -94,8 +94,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			}
 
 			void Buffer_Changed(object? sender, HexContentChangedEventArgs e) {
-				var node = (PENode)nodeWeakRef.Target;
-				if (!(node is null))
+				if (nodeWeakRef.Target is PENode node)
 					node.Buffer_Changed(sender, e);
 				else {
 					var buffer = (HexBuffer)sender!;

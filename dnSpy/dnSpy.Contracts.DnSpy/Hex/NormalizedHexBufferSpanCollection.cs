@@ -159,7 +159,7 @@ namespace dnSpy.Contracts.Hex {
 			set => throw new NotSupportedException();
 		}
 
-		object IList.this[int index] {
+		object? IList.this[int index] {
 			get => this[index];
 			set => throw new NotSupportedException();
 		}
@@ -193,17 +193,17 @@ namespace dnSpy.Contracts.Hex {
 		void ICollection<HexBufferSpan>.CopyTo(HexBufferSpan[] array, int arrayIndex) => throw new NotImplementedException();
 		int IList<HexBufferSpan>.IndexOf(HexBufferSpan item) => throw new NotImplementedException();
 		void ICollection.CopyTo(Array array, int index) => throw new NotImplementedException();
-		bool IList.Contains(object value) => throw new NotImplementedException();
-		int IList.IndexOf(object value) => throw new NotImplementedException();
+		bool IList.Contains(object? value) => throw new NotImplementedException();
+		int IList.IndexOf(object? value) => throw new NotImplementedException();
 
 		// It's a read-only collection
-		int IList.Add(object value) => throw new NotSupportedException();
+		int IList.Add(object? value) => throw new NotSupportedException();
 		void ICollection<HexBufferSpan>.Add(HexBufferSpan item) => throw new NotSupportedException();
 		void IList.Clear() => throw new NotSupportedException();
 		void ICollection<HexBufferSpan>.Clear() => throw new NotSupportedException();
-		void IList.Insert(int index, object value) => throw new NotSupportedException();
+		void IList.Insert(int index, object? value) => throw new NotSupportedException();
 		void IList<HexBufferSpan>.Insert(int index, HexBufferSpan item) => throw new NotSupportedException();
-		void IList.Remove(object value) => throw new NotSupportedException();
+		void IList.Remove(object? value) => throw new NotSupportedException();
 		bool ICollection<HexBufferSpan>.Remove(HexBufferSpan item) => throw new NotSupportedException();
 		void IList.RemoveAt(int index) => throw new NotSupportedException();
 		void IList<HexBufferSpan>.RemoveAt(int index) => throw new NotSupportedException();

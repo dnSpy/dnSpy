@@ -44,7 +44,7 @@ namespace dnSpy.AsmEditor.Themes {
 			foreach (var f in typeof(TextColor).GetFields()) {
 				if (!f.IsLiteral)
 					continue;
-				var val = (TextColor)f.GetValue(null);
+				var val = (TextColor)f.GetValue(null)!;
 				if (val != TextColor.Last)
 					UpdateTextEditorResource(val, f.Name);
 			}

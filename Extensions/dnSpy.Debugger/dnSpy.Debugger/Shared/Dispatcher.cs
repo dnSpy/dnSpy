@@ -19,7 +19,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -109,7 +109,7 @@ namespace dnSpy.Debugger.Shared {
 			Invoke<object?>(() => { callback(); return null; });
 		}
 
-		bool TryDequeue([NotNullWhenTrue] out Action? callback) {
+		bool TryDequeue([NotNullWhen(true)] out Action? callback) {
 			lock (lockObj) {
 				if (queue.Count == 0) {
 					callback = null;

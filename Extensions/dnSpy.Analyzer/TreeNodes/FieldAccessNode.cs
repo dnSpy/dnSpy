@@ -19,7 +19,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
@@ -143,7 +143,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		static bool HasWrite(IHasCustomAttribute hca, IMemberRef member, bool isField) =>
 			TryGetCAWrite(hca, member, isField, out _);
 
-		static bool TryGetCAWrite(IHasCustomAttribute hca, IMemberRef member, bool isField, [NotNullWhenTrue] out CustomAttribute? customAttribute) {
+		static bool TryGetCAWrite(IHasCustomAttribute hca, IMemberRef member, bool isField, [NotNullWhen(true)] out CustomAttribute? customAttribute) {
 			customAttribute = null;
 			TypeSig? memberType;
 			if (isField)

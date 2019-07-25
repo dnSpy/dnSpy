@@ -21,8 +21,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using dnlib.DotNet;
@@ -228,7 +228,7 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 			return -1;
 		}
 
-		static bool TryGetDotNetRuntime(DbgRuntime dbgRuntime, [NotNullWhenTrue] out IDbgDotNetRuntime? runtime) {
+		static bool TryGetDotNetRuntime(DbgRuntime dbgRuntime, [NotNullWhen(true)] out IDbgDotNetRuntime? runtime) {
 			runtime = null;
 			if (dbgRuntime.Process.State != DbgProcessState.Paused || dbgRuntime.IsClosed)
 				return false;

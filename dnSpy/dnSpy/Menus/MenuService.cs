@@ -130,7 +130,7 @@ namespace dnSpy.Menus {
 				var origList = new List<MenuMD>(list);
 				list.Clear();
 				foreach (var menu in origList) {
-					var guid = new Guid(menu.Metadata.Guid);
+					var guid = new Guid(menu.Metadata.Guid!);
 					if (hash.Contains(guid))
 						continue;
 					hash.Add(guid);
@@ -214,6 +214,7 @@ namespace dnSpy.Menus {
 			bool b = guidToGroups.TryGetValue(ownerMenuGuid, out var groups);
 			if (!b)
 				return false;
+			Debug.Assert(!(groups is null));
 
 			var menu = new ContextMenu();
 			BindBackgroundBrush(menu, isCtxMenu: true);
@@ -378,6 +379,7 @@ namespace dnSpy.Menus {
 			bool b = guidToGroups.TryGetValue(ownerMenuGuid, out var groups);
 			Debug.Assert(b);
 			if (b) {
+				Debug.Assert(!(groups is null));
 				BindBackgroundBrush(menuItem, isCtxMenu);
 				var firstMenuItem = menuItem.Items.Count == 1 ? menuItem.Items[0] as MenuItem : null;
 				var allItems = CreateMenuItems(ctx, groups, commandTarget, firstMenuItem, isCtxMenu);
@@ -392,10 +394,11 @@ namespace dnSpy.Menus {
 			Reinitialize(menuItem);
 			Debug.Assert(!(guidToGroups is null));
 
-			var guid = new Guid(md.Metadata.Guid);
+			var guid = new Guid(md.Metadata.Guid!);
 			bool b = guidToGroups.TryGetValue(guid, out var groups);
 			Debug.Assert(b);
 			if (b) {
+				Debug.Assert(!(groups is null));
 				BindBackgroundBrush(menuItem, isCtxMenu: false);
 				var ctx = new MenuItemContext(guid, true, new GuidObject(guid, null), null);
 				var firstMenuItem = menuItem.Items.Count == 1 ? menuItem.Items[0] as MenuItem : null;
@@ -421,7 +424,7 @@ namespace dnSpy.Menus {
 				return menu;
 
 			foreach (var md in list) {
-				var guid = new Guid(md.Metadata.Guid);
+				var guid = new Guid(md.Metadata.Guid!);
 				if (!guidToGroups.TryGetValue(guid, out var itemGroups))
 					continue;
 

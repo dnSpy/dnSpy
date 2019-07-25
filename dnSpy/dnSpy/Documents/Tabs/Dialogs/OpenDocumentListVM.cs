@@ -224,7 +224,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 	}
 
 	sealed class DocumentListVM_Comparer : System.Collections.IComparer {
-		public int Compare(object x, object y) {
+		public int Compare(object? x, object? y) {
 			var a = x as DocumentListVM;
 			var b = y as DocumentListVM;
 			if (a == b)

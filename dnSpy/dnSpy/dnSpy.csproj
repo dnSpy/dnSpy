@@ -11,7 +11,7 @@
     <AssemblyOriginatorKeyFile>..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <NullableContextOptions>enable</NullableContextOptions>
+    <Nullable>enable</Nullable>
 
     <RuntimeIdentifiers>$(DnSpyRuntimeIdentifiers)</RuntimeIdentifiers>
     <OutputType>WinExe</OutputType>

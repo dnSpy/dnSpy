@@ -114,8 +114,7 @@ namespace dnSpy.Text.Editor {
 			if (scope is null || service.GetOption(optionId).IsApplicableToScope(scope))
 				OptionChanged?.Invoke(this, new EditorOptionChangedEventArgs(optionId));
 			for (int i = weakChildren.Count - 1; i >= 0; i--) {
-				var child = weakChildren[i].Target as EditorOptions;
-				if (child is null) {
+				if (!(weakChildren[i].Target is EditorOptions child)) {
 					weakChildren.RemoveAt(i);
 					continue;
 				}
@@ -138,7 +137,7 @@ namespace dnSpy.Text.Editor {
 		public bool ClearOptionValue(string optionId) {
 			if (optionId is null)
 				throw new ArgumentNullException(nameof(optionId));
-			if (parent is null || !dict.TryGetValue(optionId, out object oldValue))
+			if (parent is null || !dict.TryGetValue(optionId, out var oldValue))
 				return false;
 			dict.Remove(optionId);
 			var newValue = GetValueOrDefault(optionId);

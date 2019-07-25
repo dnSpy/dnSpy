@@ -39,8 +39,8 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 
 		public IEnumerable<GACFileVM> SelectedItems {
 			get {
-				foreach (GACFileVM vm in listView.SelectedItems)
-					yield return vm;
+				foreach (GACFileVM? vm in listView.SelectedItems)
+					yield return vm!;
 			}
 		}
 

@@ -18,7 +18,7 @@
 */
 
 using System.Collections.ObjectModel;
-using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 using dnSpy.Contracts.Debugger.Text;
 using dnSpy.Debugger.DotNet.Metadata;
 
@@ -162,7 +162,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 			return DbgTextColor.InstanceMethod;
 		}
 
-		public static bool TryGetMethodName(string name, [NotNullWhenTrue] out string? containingMethodName, [NotNullWhenTrue] out string? localFunctionName) {
+		public static bool TryGetMethodName(string name, [NotNullWhen(true)] out string? containingMethodName, [NotNullWhen(true)] out string? localFunctionName) {
 			// Some local function metadata names (real names: Method2(), Method3()) (Roslyn: GeneratedNames.MakeLocalFunctionName())
 			//
 			//		<Method1>g__Method20_0

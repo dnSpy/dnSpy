@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 
@@ -206,7 +206,7 @@ namespace dnSpy.Decompiler.Utils {
 		/// <param name="method">A possible state machine MoveNext method</param>
 		/// <param name="kickoffMethod">Updated with kickoff method on success</param>
 		/// <returns></returns>
-		public static bool TryGetKickoffMethod(MethodDef method, [NotNullWhenTrue] out MethodDef? kickoffMethod) {
+		public static bool TryGetKickoffMethod(MethodDef method, [NotNullWhen(true)] out MethodDef? kickoffMethod) {
 			kickoffMethod = null;
 			var declType = method.DeclaringType;
 
@@ -244,7 +244,7 @@ namespace dnSpy.Decompiler.Utils {
 			return false;
 		}
 
-		static bool TryGetKickoffMethodFromAttributes(TypeDef smType, [NotNullWhenTrue] out MethodDef? kickoffMethod) {
+		static bool TryGetKickoffMethodFromAttributes(TypeDef smType, [NotNullWhen(true)] out MethodDef? kickoffMethod) {
 			foreach (var possibleKickoffMethod in smType.DeclaringType.Methods) {
 				if (GetStateMachineTypeFromCustomAttributesCore(possibleKickoffMethod) == smType) {
 					kickoffMethod = possibleKickoffMethod;

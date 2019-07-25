@@ -1286,8 +1286,8 @@ namespace dnSpy.AsmEditor.Hex {
 				return null;
 
 			if (context.CreatorObject.Object is IDocumentViewer uiContext) {
-				tab = uiContext.DocumentTab;
-				var content = uiContext.DocumentTab.Content;
+				tab = uiContext.DocumentTab!;
+				var content = tab.Content;
 				var node = content.Nodes.FirstOrDefault();
 				if (!(node is null))
 					return GetModule(GetModuleNode(node));

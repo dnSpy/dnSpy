@@ -241,8 +241,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		void InitializeInstructions(System.Collections.IList list) {
-			foreach (InstructionVM instr in list)
-				instr.InstructionOperandVM.EditOperand = this;
+			foreach (InstructionVM? instr in list)
+				instr!.InstructionOperandVM.EditOperand = this;
 		}
 
 		protected override void CopyItemsAsText(InstructionVM[] instrs) {
@@ -569,7 +569,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 			createdLocals[LocalVM.Null] = LocalVM.Null;
 
 			// Need to fix references to instructions and locals
-			InstructionVM oldInstr, newInstr;
+			InstructionVM oldInstr;
+			InstructionVM? newInstr;
 			for (int i = 0; i < data.Length; i++) {
 				var instr = data[i];
 				var origInstr = origData[i];

@@ -365,7 +365,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 	}
 
 	sealed class SearchResult_Comparer : System.Collections.IComparer {
-		public int Compare(object x, object y) {
+		public int Compare(object? x, object? y) {
 			var a = x as ISearchResult;
 			var b = y as ISearchResult;
 			if (a is null)

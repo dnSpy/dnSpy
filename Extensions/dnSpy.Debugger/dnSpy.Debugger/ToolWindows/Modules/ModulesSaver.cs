@@ -20,9 +20,10 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows.Threading;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Debugger;
@@ -59,6 +60,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 				var dir = new PickDirectory().GetDirectory(null);
 				if (!Directory.Exists(dir))
 					return;
+				Debug.Assert(!(dir is null));
 				for (int i = 0; i < modules.Length; i++) {
 					var file = modules[i];
 					var filename = file.Module.Name;
@@ -73,7 +75,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 				messageBoxService.Show(string.Format(dnSpy_Debugger_Resources.ErrorOccurredX, error));
 		}
 
-		bool ShowDialog((DbgModule module, string filename)[] list, [NotNullWhenFalse] out string? error) {
+		bool ShowDialog((DbgModule module, string filename)[] list, [NotNullWhen(false)] out string? error) {
 			error = null;
 			var data = new ProgressVM(Dispatcher.CurrentDispatcher, new PEFilesSaver(list));
 			var win = new ProgressDlg();

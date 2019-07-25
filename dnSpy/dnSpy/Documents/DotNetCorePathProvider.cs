@@ -20,9 +20,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using Microsoft.Win32;
 
@@ -67,7 +67,8 @@ namespace dnSpy.Documents {
 				list.AddRange(GetDotNetCorePaths(info.Directory, info.Bitness));
 
 			var paths = from p in list
-						group p by new { Path = Path.GetDirectoryName(Path.GetDirectoryName(p.Path)).ToUpperInvariant(), p.Bitness, Version = new FrameworkVersionIgnoreExtra(p.Version) } into g
+						group p by new { Path = (Path.GetDirectoryName(Path.GetDirectoryName(p.Path)) ?? string.Empty).ToUpperInvariant(), p.Bitness, Version = new FrameworkVersionIgnoreExtra(p.Version) } into g
+						where !string.IsNullOrEmpty(g.Key.Path)
 						select new FrameworkPaths(g.ToArray());
 			var array = paths.ToArray();
 			Array.Sort(array);
@@ -175,7 +176,7 @@ namespace dnSpy.Documents {
 				if (!Directory.Exists(path))
 					continue;
 				try {
-					path = Path.Combine(Path.GetDirectoryName(path), Path.GetFileName(path));
+					path = Path.Combine(Path.GetDirectoryName(path)!, Path.GetFileName(path));
 				}
 				catch (ArgumentException) {
 					continue;
@@ -234,8 +235,8 @@ namespace dnSpy.Documents {
 			// Check default locations
 			var progDirX86 = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
 			var progDir = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-			if (StringComparer.OrdinalIgnoreCase.Equals(progDirX86, progDir))
-				progDir = Path.Combine(Path.GetDirectoryName(progDir), "Program Files");
+			if (!string.IsNullOrEmpty(progDirX86) && StringComparer.OrdinalIgnoreCase.Equals(progDirX86, progDir) && Path.GetDirectoryName(progDir) is string baseDir)
+				progDir = Path.Combine(baseDir, "Program Files");
 			const string dotnetDirName = "dotnet";
 			if (!string.IsNullOrEmpty(progDir))
 				yield return Path.Combine(progDir, dotnetDirName);
@@ -243,7 +244,7 @@ namespace dnSpy.Documents {
 				yield return Path.Combine(progDirX86, dotnetDirName);
 		}
 
-		static bool TryGetInstallLocationFromRegistry(string regPath, [NotNullWhenTrue] out string? installLocation) {
+		static bool TryGetInstallLocationFromRegistry(string regPath, [NotNullWhen(true)] out string? installLocation) {
 			using (var key = Registry.LocalMachine.OpenSubKey(regPath)) {
 				installLocation = key?.GetValue("InstallLocation") as string;
 				return !(installLocation is null);

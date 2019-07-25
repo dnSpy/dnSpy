@@ -19,7 +19,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace dnSpy.Contracts.ToolWindows.Search {
@@ -110,7 +110,7 @@ namespace dnSpy.Contracts.ToolWindows.Search {
 				}
 			}
 
-			bool TryGetDefinition(string word, [NotNullWhenTrue] out SearchColumnDefinition? def, out bool negate) {
+			bool TryGetDefinition(string word, [NotNullWhen(true)] out SearchColumnDefinition? def, out bool negate) {
 				if (word.Length != 0 && word[0] == '-') {
 					foreach (var d in definitions) {
 						if (CompareShortOptionName(word, d.ShortOptionName, out negate)) {

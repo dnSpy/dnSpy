@@ -62,7 +62,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		}
 
 		public void Write() {
-			Directory.CreateDirectory(Path.GetDirectoryName(filename));
+			Directory.CreateDirectory(Path.GetDirectoryName(filename)!);
 			using (var writer = new StreamWriter(filename, false, Encoding.UTF8)) {
 				const string crlf = "\r\n"; // Make sure it's always CRLF
 				writer.Write(crlf);
@@ -133,7 +133,7 @@ namespace dnSpy.Decompiler.MSBuild {
 				foreach (var p in projects) {
 					writer.Write("Project(\"{0}\") = \"{1}\", \"{1}\\{2}\", \"{3}\"" + crlf,
 						p.LanguageGuid.ToString("B").ToUpperInvariant(),
-						Path.GetFileName(Path.GetDirectoryName(p.Filename)),
+						Path.GetFileName(Path.GetDirectoryName(p.Filename)!),
 						Path.GetFileName(p.Filename),
 						p.Guid.ToString("B").ToUpperInvariant()
 					);

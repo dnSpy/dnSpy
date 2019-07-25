@@ -265,7 +265,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public bool CustomMarshalType_Cookie_IsEnabled => IsEnabled;
 		public NullableCompressedUInt32 InterfaceMarshalType_IidParamIndex { get; }
 		public bool InterfaceMarshalType_IidParamIndex_IsEnabled => IsEnabled;
-		public string TypeString => NativeType.SelectedItem!.ToString();
+		public string TypeString => NativeType.SelectedItem!.ToString()!;
 		void TypeStringUpdated() => OnPropertyChanged(nameof(TypeString));
 
 		public MarshalTypeVM(ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef? ownerType, MethodDef? ownerMethod) {

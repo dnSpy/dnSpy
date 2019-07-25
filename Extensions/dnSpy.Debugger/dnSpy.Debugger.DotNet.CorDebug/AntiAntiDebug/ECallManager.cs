@@ -46,8 +46,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.AntiAntiDebug {
 		public ECallManager(int pid, string clrPath) {
 			using (var process = Process.GetProcessById(pid)) {
 				FoundClrModule = false;
-				foreach (ProcessModule mod in process.Modules) {
-					if (StringComparer.OrdinalIgnoreCase.Equals(clrPath, mod.FileName)) {
+				foreach (ProcessModule? mod in process.Modules) {
+					if (StringComparer.OrdinalIgnoreCase.Equals(clrPath, mod!.FileName)) {
 						FoundClrModule = true;
 						Initialize(mod.FileName);
 						clrDllBaseAddress = (ulong)mod.BaseAddress.ToInt64();

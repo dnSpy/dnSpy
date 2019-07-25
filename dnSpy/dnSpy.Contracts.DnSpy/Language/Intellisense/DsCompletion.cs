@@ -41,7 +41,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// <summary>
 		/// Gets the icon
 		/// </summary>
-		public virtual ImageReference ImageReference => (imageReference ??= GetImageReference()).Value;
+		public virtual ImageReference ImageReference => imageReference ??= GetImageReference();
 		ImageReference? imageReference;
 
 		/// <summary>

@@ -42,7 +42,7 @@ namespace dnSpy.MainApp {
 #else
 #error Unknown target framework
 #endif
-			var basePath = Path.GetDirectoryName(typeof(void).Assembly.Location);
+			var basePath = Path.GetDirectoryName(typeof(void).Assembly.Location)!;
 			var filename = Path.Combine(basePath, clrDllFilename);
 			if (File.Exists(filename))
 				return filename;

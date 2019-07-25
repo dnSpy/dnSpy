@@ -39,7 +39,7 @@ namespace dnSpy.Roslyn.Debugger.FilterExpressionEvaluator {
 		static EvalDelegateCreator() {
 			toReflectionOpCode = new Dictionary<OpCode, SRE.OpCode>(0x200);
 			foreach (var info in typeof(SRE.OpCodes).GetFields(SR.BindingFlags.Public | SR.BindingFlags.Static)) {
-				var sreOpCode = (SRE.OpCode)info.GetValue(null);
+				var sreOpCode = (SRE.OpCode)info.GetValue(null)!;
 				int value = (ushort)sreOpCode.Value;
 				OpCode? opCode;
 				switch (value >> 8) {

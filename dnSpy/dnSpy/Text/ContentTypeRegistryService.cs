@@ -109,6 +109,7 @@ namespace dnSpy.Text {
 				Debug.Assert(b);
 				if (!b)
 					return null;
+				Debug.Assert(!(rawCt is null));
 				b = rawContentTypes.Remove(rawCt.Typename);
 				Debug.Assert(b);
 
@@ -147,7 +148,7 @@ namespace dnSpy.Text {
 			var btGuids = baseTypesEnumerable.ToArray();
 			if (btGuids.Any(a => a == UnknownContentTypeName))
 				throw new ArgumentException("Can't derive from the unknown content type", nameof(baseTypesEnumerable));
-			var baseTypes = baseTypesEnumerable.Select(a => GetContentType(a)).ToArray();
+			var baseTypes = baseTypesEnumerable.Select(a => GetContentType(a)).OfType<IContentType>().ToArray();
 			return AddContentType_NoLock(typeName, baseTypes, mimeType);
 		}
 
@@ -170,8 +171,8 @@ namespace dnSpy.Text {
 			return ct;
 		}
 
-		public IContentType GetContentType(string typeName) {
-			ContentType contentType;
+		public IContentType? GetContentType(string typeName) {
+			ContentType? contentType;
 			lock (lockObj)
 				contentTypes.TryGetValue(typeName, out contentType);
 			return contentType;

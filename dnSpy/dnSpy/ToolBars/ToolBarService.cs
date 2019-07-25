@@ -143,7 +143,7 @@ namespace dnSpy.ToolBars {
 
 				var items = new List<ToolBarItemMD>();
 				bool needSeparator = false;
-				foreach (var group in groups) {
+				foreach (var group in groups!) {
 					items.Clear();
 					foreach (var item in group.Items) {
 						if (item.ToolBarItem.IsVisible(ctx))

@@ -19,7 +19,7 @@
 
 using System;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
 using dnSpy.Contracts.Debugger.Evaluation;
 using dnSpy.Debugger.DotNet.Metadata;
@@ -72,7 +72,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation {
 		/// <param name="elementCount">Total number of elements in the array</param>
 		/// <param name="dimensionInfos">Dimension base indexes and lengths</param>
 		/// <returns></returns>
-		public virtual bool GetArrayInfo(out uint elementCount, [NotNullWhenTrue] out DbgDotNetArrayDimensionInfo[]? dimensionInfos) {
+		public virtual bool GetArrayInfo(out uint elementCount, [NotNullWhen(true)] out DbgDotNetArrayDimensionInfo[]? dimensionInfos) {
 			elementCount = 0;
 			dimensionInfos = null;
 			return false;

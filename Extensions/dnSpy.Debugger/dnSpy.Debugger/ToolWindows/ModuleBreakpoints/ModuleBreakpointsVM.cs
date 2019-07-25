@@ -294,7 +294,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 					bool b = bpToVM.TryGetValue(info.Breakpoint, out var vm);
 					Debug.Assert(b);
 					if (b)
-						vm.UpdateSettings_UI(info.Breakpoint.Settings);
+						vm!.UpdateSettings_UI(info.Breakpoint.Settings);
 				}
 			});
 		}

@@ -19,8 +19,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using dnSpy.Contracts.Debugger;
 using Mono.Debugger.Soft;
 
@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			this.thread = thread;
 		}
 
-		public bool TryCreate([NotNullWhenTrue] out ObjectConstants? objectConstants) {
+		public bool TryCreate([NotNullWhen(true)] out ObjectConstants? objectConstants) {
 			try {
 				var offsetToStringData = GetOffsetToStringData();
 				if (!(offsetToStringData is null)) {

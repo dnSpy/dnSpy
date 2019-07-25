@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 
 namespace dnSpy.Contracts.App {
 	/// <summary>
@@ -58,7 +57,7 @@ namespace dnSpy.Contracts.App {
 
 		static AppDirectories() {
 			// This assembly is always in the bin sub dir if one exists
-			BinDirectory = Path.GetDirectoryName(typeof(AppDirectories).Assembly.Location);
+			BinDirectory = Path.GetDirectoryName(typeof(AppDirectories).Assembly.Location)!;
 			settingsFilename = Path.Combine(BinDirectory, DNSPY_SETTINGS_FILENAME);
 			if (File.Exists(settingsFilename))
 				DataDirectory = BinDirectory;

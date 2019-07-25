@@ -134,7 +134,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				var asm = new AssemblyNameInfo(assemblyFullName);
 				if (Path.GetFileName(asm.Name) != asm.Name || asm.Name.Length == 0)
 					return null;
-				var filenameNoExt = Path.Combine(Path.GetDirectoryName(moduleFilename), asm.Name);
+				var filenameNoExt = Path.Combine(Path.GetDirectoryName(moduleFilename)!, asm.Name);
 				var dllFilename = filenameNoExt + ".dll";
 				if (File.Exists(dllFilename))
 					return dllFilename;

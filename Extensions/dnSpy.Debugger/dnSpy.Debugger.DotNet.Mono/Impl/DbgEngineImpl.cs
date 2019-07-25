@@ -21,11 +21,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -282,6 +282,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					filename = startMonoOptions.Filename;
 					if (string.IsNullOrEmpty(filename))
 						throw new Exception("Missing filename");
+					Debug.Assert(!(startMonoOptions.Filename is null));
 					if (connectionPort == 0) {
 						int port = NetUtils.GetConnectionPort();
 						Debug.Assert(port >= 0);
@@ -1052,7 +1053,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			}
 			Debug.Assert(b);
 			if (b)
-				engineAppDomain.UpdateName(monoAppDomain.FriendlyName);
+				engineAppDomain!.UpdateName(monoAppDomain.FriendlyName);
 			return CreateModule(monoAppDomain.Corlib.ManifestModule);
 		}
 
@@ -1122,7 +1123,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			return null;
 		}
 
-		bool TryGetModuleData(DbgModule module, [NotNullWhenTrue] out DbgModuleData? data) {
+		bool TryGetModuleData(DbgModule module, [NotNullWhen(true)] out DbgModuleData? data) {
 			if (module.TryGetData(out data) && data.Engine == this)
 				return true;
 			data = null;
@@ -1246,7 +1247,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			CreateModule(monoModule);
 		}
 
-		internal bool TryGetMonoModule(DbgModule module, [NotNullWhenTrue] out ModuleMirror? monoModule) {
+		internal bool TryGetMonoModule(DbgModule module, [NotNullWhen(true)] out ModuleMirror? monoModule) {
 			if (module.TryGetData(out DbgModuleData? data) && data.Engine == this) {
 				monoModule = data.MonoModule;
 				return true;

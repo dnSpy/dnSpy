@@ -140,7 +140,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public void AddCustomData<TData>(string id, TData data) {
 			VerifyGeneratingOrPostProcessing();
 			List<TData> list;
-			if (customDataDict.TryGetValue(id, out object listObj))
+			if (customDataDict.TryGetValue(id, out var listObj))
 				list = (List<TData>)listObj;
 			else
 				customDataDict.Add(id, list = new List<TData>());

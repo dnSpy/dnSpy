@@ -150,7 +150,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 	}
 
 	interface IDocumentViewerUIElementService {
-		void SetData(DocumentViewerUIElementCollection collection);
+		void SetData(DocumentViewerUIElementCollection? collection);
 		void RegisterTagger(IDocumentViewerUIElementTagger tagger);
 		IEnumerable<ITagSpan<IntraTextAdornmentTag>> GetTags(NormalizedSnapshotSpanCollection spans);
 	}
@@ -169,7 +169,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			textVersionNumber = -1;
 		}
 
-		public void SetData(DocumentViewerUIElementCollection collection) {
+		public void SetData(DocumentViewerUIElementCollection? collection) {
 			textVersionNumber = textView.TextSnapshot.Version.VersionNumber;
 			var newCollection = collection ?? DocumentViewerUIElementCollection.Empty;
 			if (newCollection.Count == 0)

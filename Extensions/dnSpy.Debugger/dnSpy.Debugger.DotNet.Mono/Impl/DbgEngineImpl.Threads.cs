@@ -21,8 +21,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Code;
 using dnSpy.Contracts.Debugger.DotNet.Code;
@@ -278,7 +278,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			debuggerThread.VerifyAccess();
 			if (monoThread is null)
 				return;
-			DbgEngineThread engineThread;
+			DbgEngineThread? engineThread;
 			lock (lockObj) {
 				if (toEngineThread.TryGetValue(monoThread, out engineThread))
 					toEngineThread.Remove(monoThread);
@@ -326,7 +326,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		DbgEngineThread? TryGetEngineThread(ThreadMirror? thread) {
 			if (thread is null)
 				return null;
-			DbgEngineThread engineThread;
+			DbgEngineThread? engineThread;
 			bool b;
 			lock (lockObj)
 				b = toEngineThread.TryGetValue(thread, out engineThread);
@@ -388,7 +388,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			return null;
 		}
 
-		bool VerifySetIPLocation(DbgThreadData threadData, IDbgDotNetCodeLocation location, [NotNullWhenTrue] out MethodMirror? monoMethod, [NotNullWhenTrue] out MDS.StackFrame? frame) {
+		bool VerifySetIPLocation(DbgThreadData threadData, IDbgDotNetCodeLocation location, [NotNullWhen(true)] out MethodMirror? monoMethod, [NotNullWhen(true)] out MDS.StackFrame? frame) {
 			monoMethod = null;
 			frame = null;
 			var frames = threadData.MonoThread.GetFrames();

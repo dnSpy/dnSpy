@@ -48,9 +48,9 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		DecompilationContext DecompilationContext { get; }
 
 		/// <summary>
-		/// Executes <paramref name="func"/> in the UI thread and waits for it to complete, then
+		/// Executes <paramref name="func"/> on the UI thread and waits for it to complete, then
 		/// returns the result to the caller. This can be used to load the node's
-		/// <see cref="ITreeNode.Children"/> property since it can only be loaded in the UI thread.
+		/// <see cref="ITreeNode.Children"/> property since it can only be loaded on the UI thread.
 		/// </summary>
 		/// <typeparam name="T">Return type</typeparam>
 		/// <param name="func">Delegate to execute</param>

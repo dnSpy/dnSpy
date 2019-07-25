@@ -98,8 +98,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		void InitializeExceptionHandlers(System.Collections.IList list) {
-			foreach (ExceptionHandlerVM eh in list)
-				eh.TypeSigCreator = typeSigCreator;
+			foreach (ExceptionHandlerVM? eh in list)
+				eh!.TypeSigCreator = typeSigCreator;
 		}
 
 		protected override void CopyItemsAsText(ExceptionHandlerVM[] ehs) {

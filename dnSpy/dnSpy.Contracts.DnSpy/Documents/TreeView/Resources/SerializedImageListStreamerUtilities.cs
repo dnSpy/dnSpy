@@ -18,10 +18,10 @@
 */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Windows.Forms;
 using System.Windows.Media.Imaging;
@@ -42,7 +42,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <param name="serializedData">Serialized data</param>
 		/// <param name="imageData">Updated with image data</param>
 		/// <returns></returns>
-		public static bool GetImageData(ModuleDef? module, string typeName, byte[] serializedData, [NotNullWhenTrue] out byte[]? imageData) {
+		public static bool GetImageData(ModuleDef? module, string typeName, byte[] serializedData, [NotNullWhen(true)] out byte[]? imageData) {
 			imageData = null;
 			if (!SerializedImageUtilities.CheckType(module, typeName, SystemWindowsFormsImageListStreamer))
 				return false;
@@ -127,6 +127,8 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 			var info = new SerializationInfo(typeof(ImageListStreamer), new FormatterConverter());
 			info.AddValue("Data", imageData);
 			var ctor = typeof(ImageListStreamer).GetConstructor(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(SerializationInfo), typeof(StreamingContext) }, null);
+			if (ctor is null)
+				throw new InvalidOperationException();
 			var streamer = (ImageListStreamer)ctor.Invoke(new object[] { info, new StreamingContext(StreamingContextStates.All) });
 			imageList.ImageStream = streamer;
 

@@ -20,8 +20,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Runtime.CompilerServices;
 using dnlib.DotNet;
 using dnlib.PE;
 using dnSpy.Contracts.DnSpy.Metadata;
@@ -228,7 +228,7 @@ namespace dnSpy.Documents {
 					return fwkKind;
 				}
 
-				var fwkInfo = new FrameworkPathInfo(Path.GetDirectoryName(sourceFilename));
+				var fwkInfo = new FrameworkPathInfo(Path.GetDirectoryName(sourceFilename)!);
 				fwkInfo.FrameworkKind = GetFrameworkKind_Directory(fwkInfo.Directory, out fwkVersion);
 				fwkInfo.FrameworkVersion = fwkVersion;
 				if (fwkInfo.FrameworkKind == FrameworkKind.Unknown) {
@@ -317,7 +317,7 @@ namespace dnSpy.Documents {
 			return FrameworkKind.Unknown;
 		}
 
-		static bool TryParseVersion(string prefix, string tfm, [NotNullWhenTrue] out Version? version) {
+		static bool TryParseVersion(string prefix, string tfm, [NotNullWhen(true)] out Version? version) {
 			if (!tfm.StartsWith(prefix)) {
 				version = null;
 				return false;
@@ -333,7 +333,7 @@ namespace dnSpy.Documents {
 			return false;
 		}
 
-		static bool TryParseNetFrameworkVersion(string prefix, string tfm, [NotNullWhenTrue] out Version? version) {
+		static bool TryParseNetFrameworkVersion(string prefix, string tfm, [NotNullWhen(true)] out Version? version) {
 			if (!tfm.StartsWith(prefix)) {
 				version = null;
 				return false;

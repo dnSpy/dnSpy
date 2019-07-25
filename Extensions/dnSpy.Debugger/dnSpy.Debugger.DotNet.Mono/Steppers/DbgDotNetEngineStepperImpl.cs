@@ -19,7 +19,7 @@
 
 using System;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.Code;
@@ -83,7 +83,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 				frameMethod = frame?.Method;
 			}
 
-			public override bool TryGetLocation([NotNullWhenTrue] out DbgModule? module, out uint token, out uint offset) {
+			public override bool TryGetLocation([NotNullWhen(true)] out DbgModule? module, out uint token, out uint offset) {
 				engine.VerifyMonoDebugThread();
 				module = engine.TryGetModule(frameMethod?.DeclaringType.Module);
 				token = (uint)(frameMethod?.MetadataToken ?? 0);

@@ -19,8 +19,8 @@
 
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using dnSpy.Contracts.Debugger.Exceptions;
 using dnSpy.Contracts.MVVM;
@@ -61,14 +61,14 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 				}
 			}
 
-			public bool TryGetCode(out int code, [NotNullWhenFalse] out string? error) {
+			public bool TryGetCode(out int code, [NotNullWhen(false)] out string? error) {
 				code = SimpleTypeConverter.ParseInt32(StringValue, int.MinValue, int.MaxValue, out error);
 				if (!(error is null))
 					code = (int)SimpleTypeConverter.ParseUInt32(StringValue, uint.MinValue, uint.MaxValue, out error);
 				return error is null;
 			}
 
-			public bool TryGetName([NotNullWhenTrue] out string? name, [NotNullWhenFalse] out string? error) {
+			public bool TryGetName([NotNullWhen(true)] out string? name, [NotNullWhen(false)] out string? error) {
 				name = StringValue;
 				if (string.IsNullOrWhiteSpace(name)) {
 					error = dnSpy_Debugger_Resources.Exception_Error_NameCanNotBeEmpty;

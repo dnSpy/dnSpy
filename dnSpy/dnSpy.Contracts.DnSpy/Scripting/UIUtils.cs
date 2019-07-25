@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Scripting {
 	/// </summary>
 	public static class UIUtils {
 		/// <summary>
-		/// Executes <paramref name="a"/> in the UI thread and then returns
+		/// Executes <paramref name="a"/> on the UI thread and then returns
 		/// </summary>
 		/// <param name="dispatcher">UI dispatcher</param>
 		/// <param name="a">Action</param>
@@ -55,7 +55,7 @@ namespace dnSpy.Contracts.Scripting {
 		}
 
 		/// <summary>
-		/// Executes <paramref name="f"/> in the UI thread and returns the result
+		/// Executes <paramref name="f"/> on the UI thread and returns the result
 		/// </summary>
 		/// <typeparam name="T">Return type</typeparam>
 		/// <param name="dispatcher">UI dispatcher</param>
@@ -74,7 +74,7 @@ namespace dnSpy.Contracts.Scripting {
 				}
 				catch (Exception ex) {
 					exInfo = ExceptionDispatchInfo.Capture(ex);
-					return default;
+					return default!;
 				}
 			}), DispatcherPriority.Send);
 			if (!(exInfo is null))
@@ -108,13 +108,13 @@ namespace dnSpy.Contracts.Scripting {
 						if (enumerator is null)
 							enumerator = getIter().GetEnumerator();
 						if (!(canContinue = enumerator.MoveNext()))
-							return default;
+							return default!;
 						return enumerator.Current;
 					}
 					catch (Exception ex) {
 						canContinue = false;
 						exInfo = ExceptionDispatchInfo.Capture(ex);
-						return default;
+						return default!;
 					}
 				}), DispatcherPriority.Send);
 				if (!(exInfo is null))

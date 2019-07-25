@@ -20,7 +20,7 @@
 using System;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 
 namespace dnSpy.Contracts.Debugger.StartDebugging {
 	/// <summary>
@@ -57,7 +57,7 @@ namespace dnSpy.Contracts.Debugger.StartDebugging {
 		/// <param name="filename">Filename</param>
 		/// <param name="error">Updated with an error message</param>
 		/// <returns></returns>
-		public abstract bool TryStart(string filename, [NotNullWhenFalse] out string? error);
+		public abstract bool TryStart(string filename, [NotNullWhen(false)] out string? error);
 	}
 
 	/// <summary>Metadata</summary>

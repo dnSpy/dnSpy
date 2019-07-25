@@ -67,7 +67,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			get {
 				if (Class is null)
 					return "null";
-				return Class.ToString();
+				return Class.ToString()!;
 			}
 		}
 

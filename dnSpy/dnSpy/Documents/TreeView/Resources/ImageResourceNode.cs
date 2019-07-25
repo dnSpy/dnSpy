@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Media;
 using dnlib.DotNet;
@@ -193,6 +194,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 
 		protected override IEnumerable<ResourceData> GetDeserializedData() {
 			var id = imageData;
+			Debug.Assert(!(id is null));
 			yield return new ResourceData(ResourceElement.Name, token => new MemoryStream(id));
 		}
 

@@ -71,7 +71,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public static object? TryGetVM(Dictionary<object, object> ops, object? objModel) {
 			if (objModel is null)
 				return null;
-			if (!ops.TryGetValue(objModel, out object objVm))
+			if (!ops.TryGetValue(objModel, out var objVm))
 				return objModel;
 			return objVm;
 		}
@@ -80,7 +80,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			if (IsNull(objVm))
 				return null;
 			Debug.Assert(!(objVm is null));
-			if (!ops.TryGetValue(objVm, out object objModel))
+			if (!ops.TryGetValue(objVm, out var objModel))
 				return objVm;
 			return objModel;
 		}

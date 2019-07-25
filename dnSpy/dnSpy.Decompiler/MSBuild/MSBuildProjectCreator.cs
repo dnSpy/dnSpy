@@ -36,7 +36,13 @@ namespace dnSpy.Decompiler.MSBuild {
 		int totalProgress;
 
 		public IEnumerable<string> ProjectFilenames => projects.Select(a => a.Filename);
-		public string SolutionFilename => Path.Combine(options.Directory, options.SolutionFilename);
+
+		public string SolutionFilename {
+			get {
+				Debug.Assert(!(options.SolutionFilename is null));
+				return Path.Combine(options.Directory, options.SolutionFilename);
+			}
+		}
 
 		sealed class MyLogger : IMSBuildProjectWriterLogger {
 			readonly MSBuildProjectCreator owner;

@@ -457,7 +457,7 @@ namespace dnSpy.Search {
 
 		public static bool IsFrameworkAssembly(string filename, string? assemblySimpleName) {
 			// Check if it's in one of the .NET Core runtime dirs
-			if (Directory.Exists(Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(filename))), "Microsoft.NETCore.App")))
+			if (Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(filename))) is string baseDir && Directory.Exists(Path.Combine(baseDir, "Microsoft.NETCore.App")))
 				return true;
 
 			if (!(assemblySimpleName is null)) {

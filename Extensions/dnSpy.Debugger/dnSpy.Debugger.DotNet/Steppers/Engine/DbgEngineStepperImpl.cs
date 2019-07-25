@@ -20,8 +20,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using dnlib.DotNet;
@@ -301,7 +301,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			returnToAwaiterState.taskObjectId = null;
 		}
 
-		bool TryCallSetNotificationForWaitCompletion(DbgThread thread, DbgModule builderFieldModule, uint builderFieldToken, bool value, [NotNullWhenTrue] out DbgDotNetValue? taskValue) {
+		bool TryCallSetNotificationForWaitCompletion(DbgThread thread, DbgModule builderFieldModule, uint builderFieldToken, bool value, [NotNullWhen(true)] out DbgDotNetValue? taskValue) {
 			runtime.Dispatcher.VerifyAccess();
 			DbgEvaluationInfo? evalInfo = null;
 			try {
@@ -613,7 +613,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			return false;
 		}
 
-		bool IsPropertyOrOperatorMethod(DbgThread thread, [NotNullWhenTrue] out DmdMemberInfo? member) {
+		bool IsPropertyOrOperatorMethod(DbgThread thread, [NotNullWhen(true)] out DmdMemberInfo? member) {
 			DbgEvaluationInfo? evalInfo = null;
 			try {
 				evalInfo = CreateEvaluationInfo(thread);

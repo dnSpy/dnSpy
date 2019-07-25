@@ -167,6 +167,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 			var mruSelectionCase = default(MruSelection);
 			var mruSelection = default(MruSelection);
 			if (inputText.Length > 0) {
+				Debug.Assert(!(searchText is null));
 				foreach (var completion in Completions) {
 					if (!completionFilter.IsMatch(completion))
 						continue;

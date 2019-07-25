@@ -18,8 +18,8 @@
 */
 
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.AntiAntiDebug;
 using dnSpy.Contracts.Debugger.DotNet.Mono;
@@ -27,7 +27,7 @@ using dnSpy.Contracts.Debugger.DotNet.Mono;
 namespace dnSpy.Debugger.DotNet.Mono.AntiAntiDebug {
 	// The native API funcs won't return true so disable the fixes
 	abstract class DisableAntiAntiDebugCode : IDbgNativeFunctionHook {
-		static bool TryGetInternalRuntime(DbgProcess process, [NotNullWhenTrue] out DbgMonoDebugInternalRuntime? runtime) {
+		static bool TryGetInternalRuntime(DbgProcess process, [NotNullWhen(true)] out DbgMonoDebugInternalRuntime? runtime) {
 			runtime = null;
 			var dbgRuntime = process.Runtimes.FirstOrDefault();
 			Debug.Assert(!(dbgRuntime is null));

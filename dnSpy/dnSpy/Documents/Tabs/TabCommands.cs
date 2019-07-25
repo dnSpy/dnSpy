@@ -327,7 +327,7 @@ namespace dnSpy.Documents.Tabs {
 		public override void Execute(IMenuItemContext context) {
 			var @ref = GetReference(context, out var documentViewer);
 			if (!(@ref is null))
-				documentViewer!.DocumentTab.FollowReferenceNewTab(@ref);
+				documentViewer!.DocumentTab?.FollowReferenceNewTab(@ref);
 		}
 
 		public override bool IsVisible(IMenuItemContext context) => !(GetReference(context, out var documentViewer) is null);

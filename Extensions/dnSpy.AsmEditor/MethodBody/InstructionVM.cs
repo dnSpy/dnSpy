@@ -39,7 +39,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			foreach (var c in typeof(Code).GetFields()) {
 				if (!c.IsLiteral)
 					continue;
-				hash.Add(((Code)c.GetValue(null)).ToOpCode());
+				hash.Add(((Code)c.GetValue(null)!).ToOpCode());
 			}
 			var remove = new List<OpCode> { OpCodes.UNKNOWN1, OpCodes.UNKNOWN2 };
 			foreach (var r in remove)

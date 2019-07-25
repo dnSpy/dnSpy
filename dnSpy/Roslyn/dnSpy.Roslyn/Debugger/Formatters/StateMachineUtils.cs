@@ -20,15 +20,15 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Roslyn.Debugger.Formatters {
 	static class StateMachineUtils {
 		const string StateMachineTypeNamePrefix = "VB$StateMachine_";
 
-		public static bool TryGetKickoffMethod(DmdMethodBase method, [NotNullWhenTrue] out DmdMethodBase? kickoffMethod) {
+		public static bool TryGetKickoffMethod(DmdMethodBase method, [NotNullWhen(true)] out DmdMethodBase? kickoffMethod) {
 			var name = method.DeclaringType!.MetadataName;
 			char c;
 			if (!string.IsNullOrEmpty(name) && ((c = name[0]) == '<' || (c == 'V' && name.StartsWith(StateMachineTypeNamePrefix, StringComparison.Ordinal)))) {

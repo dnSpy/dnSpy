@@ -62,7 +62,7 @@ namespace dnSpy.Contracts.MVVM {
 				ValidateNames = true,
 			};
 			if (File.Exists(currentFileName))
-				dialog.InitialDirectory = Path.GetDirectoryName(currentFileName);
+				dialog.InitialDirectory = Path.GetDirectoryName(currentFileName)!;
 
 			if (dialog.ShowDialog() != DialogResult.OK)
 				return null;
@@ -80,7 +80,7 @@ namespace dnSpy.Contracts.MVVM {
 				Multiselect = true,
 			};
 			if (File.Exists(currentFileName))
-				dialog.InitialDirectory = Path.GetDirectoryName(currentFileName);
+				dialog.InitialDirectory = Path.GetDirectoryName(currentFileName)!;
 
 			if (dialog.ShowDialog() != DialogResult.OK)
 				return Array.Empty<string>();

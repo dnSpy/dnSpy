@@ -35,7 +35,7 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// <summary>
 		/// Gets the owner tab
 		/// </summary>
-		IDocumentTab DocumentTab { get; }
+		IDocumentTab? DocumentTab { get; }
 
 		/// <summary>
 		/// Gets the document viewer control

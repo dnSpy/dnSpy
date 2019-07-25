@@ -197,7 +197,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 		}
 
 		static string GetLocalizedXmlDocFile(string xmlFileName, string language) {
-			var localizedDirectory = Path.Combine(Path.GetDirectoryName(xmlFileName), language);
+			var localizedDirectory = Path.Combine(Path.GetDirectoryName(xmlFileName)!, language);
 			var localizedXmlDocFile = Path.Combine(localizedDirectory, Path.GetFileName(xmlFileName));
 			return localizedXmlDocFile;
 		}

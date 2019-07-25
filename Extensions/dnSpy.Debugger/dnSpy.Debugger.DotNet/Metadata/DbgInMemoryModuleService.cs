@@ -21,8 +21,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
 using dnSpy.Contracts.Debugger;
@@ -141,7 +141,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		void DbgDynamicModuleProvider_ClassLoaded(RuntimeInfo info, ClassLoadedEventArgs e) => info.ClassLoader?.LoadClass(e.Module, e.LoadedClassToken);
-		bool TryGetRuntimeInfo(DbgRuntime runtime, [NotNullWhenTrue] out RuntimeInfo? info) => runtime.TryGetData(out info);
+		bool TryGetRuntimeInfo(DbgRuntime runtime, [NotNullWhen(true)] out RuntimeInfo? info) => runtime.TryGetData(out info);
 
 		void DbgRuntime_ModulesChanged(object? sender, DbgCollectionChangedEventArgs<DbgModule> e) {
 			if (e.Added) {

@@ -20,8 +20,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
 using dndbg.COM.CorDebug;
@@ -503,14 +503,14 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			throw new InvalidOperationException();
 		}
 
-		bool TryGetModuleData(DbgModule module, [NotNullWhenTrue] out DbgModuleData? data) {
+		bool TryGetModuleData(DbgModule module, [NotNullWhen(true)] out DbgModuleData? data) {
 			if (module.TryGetData(out data) && data.Engine == this)
 				return true;
 			data = null;
 			return false;
 		}
 
-		internal bool TryGetDnModuleAndVersion(DbgModule module, [NotNullWhenTrue] out DnModule? dnModule, out int loadClassVersion) {
+		internal bool TryGetDnModuleAndVersion(DbgModule module, [NotNullWhen(true)] out DnModule? dnModule, out int loadClassVersion) {
 			if (module.TryGetData(out DbgModuleData? data) && data.Engine == this) {
 				dnModule = data.DnModule;
 				loadClassVersion = data.LoadClassVersion;
@@ -521,7 +521,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			return false;
 		}
 
-		internal bool TryGetDnModule(DbgModule module, [NotNullWhenTrue] out DnModule? dnModule) {
+		internal bool TryGetDnModule(DbgModule module, [NotNullWhen(true)] out DnModule? dnModule) {
 			if (module.TryGetData(out DbgModuleData? data) && data.Engine == this) {
 				dnModule = data.DnModule;
 				return true;

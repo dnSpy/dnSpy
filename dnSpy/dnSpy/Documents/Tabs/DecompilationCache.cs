@@ -76,7 +76,7 @@ namespace dnSpy.Documents.Tabs {
 			public void Hit() {
 				LastHitUTC = DateTime.UtcNow;
 				if (!(WeakContent is null)) {
-					Content = (DocumentViewerContent)WeakContent.Target;
+					Content = (DocumentViewerContent?)WeakContent.Target;
 					WeakContent = null;
 				}
 			}
@@ -145,8 +145,7 @@ namespace dnSpy.Documents.Tabs {
 			var weakSelf = new WeakReference(dc);
 			timer = new Timer(a => {
 				timer!.Dispose();
-				var self = (DecompilationCache)weakSelf.Target;
-				if (!(self is null)) {
+				if (weakSelf.Target is DecompilationCache self) {
 					self.ClearOld();
 					AddTimerWait(self);
 				}
@@ -212,7 +211,7 @@ namespace dnSpy.Documents.Tabs {
 		static bool IsInModifiedModule(IDsDocumentService documentService, HashSet<IDsDocument?> modules, Item item) {
 			var result = item.Content;
 			if (result is null && !(item.WeakContent is null))
-				result = (DocumentViewerContent)item.WeakContent.Target;
+				result = (DocumentViewerContent?)item.WeakContent.Target;
 			var refs = result?.ReferenceCollection;
 			if (refs is null)
 				return false;

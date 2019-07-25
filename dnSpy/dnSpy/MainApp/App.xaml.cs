@@ -327,7 +327,7 @@ namespace dnSpy.MainApp {
 			var files = GetExtensionFiles(dir).OrderBy(a => a, StringComparer.OrdinalIgnoreCase).ToArray();
 #if NETCOREAPP
 			foreach (var file in files)
-				netCoreAssemblyLoader.AddSearchPath(Path.GetDirectoryName(file));
+				netCoreAssemblyLoader.AddSearchPath(Path.GetDirectoryName(file)!);
 #endif
 			var asms = new List<Assembly>();
 			foreach (var file in files) {
@@ -390,7 +390,7 @@ namespace dnSpy.MainApp {
 			var config = ExtensionConfigReader.Read(xmlFile);
 			return config.IsSupportedOSversion(Environment.OSVersion.Version) &&
 				config.IsSupportedFrameworkVersion(Environment.Version) &&
-				config.IsSupportedAppVersion(GetType().Assembly.GetName().Version);
+				config.IsSupportedAppVersion(GetType().Assembly.GetName().Version!);
 		}
 
 		bool CanLoadExtension(Assembly asm) {
@@ -405,7 +405,7 @@ namespace dnSpy.MainApp {
 			return true;
 		}
 
-		static bool Equals(byte[] a, byte[] b) {
+		static bool Equals(byte[]? a, byte[]? b) {
 			if (a is null || b is null || a.Length != b.Length)
 				return false;
 			for (int i = 0; i < a.Length; i++) {

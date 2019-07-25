@@ -28,7 +28,7 @@ namespace dnSpy.Language.Intellisense {
 	sealed class CompletionCollectionVM : INotifyCollectionChanged, IList {
 		public event NotifyCollectionChangedEventHandler CollectionChanged;
 
-		public object this[int index] {
+		public object? this[int index] {
 			get => list[index];
 			set => throw new NotImplementedException();
 		}
@@ -59,7 +59,8 @@ namespace dnSpy.Language.Intellisense {
 				Debug.Assert(!(e.NewItems is null));
 				i = e.NewStartingIndex;
 				var newList = new List<CompletionVM>();
-				foreach (Completion c in e.NewItems) {
+				foreach (Completion? c in e.NewItems) {
+					Debug.Assert(!(c is null));
 					var vm = GetOrCreateVM(c);
 					newList.Add(vm);
 					list.Insert(i++, vm);
@@ -70,7 +71,8 @@ namespace dnSpy.Language.Intellisense {
 			case NotifyCollectionChangedAction.Remove:
 				Debug.Assert(!(e.OldItems is null));
 				var oldList = new List<CompletionVM>();
-				foreach (Completion c in e.OldItems) {
+				foreach (Completion? c in e.OldItems) {
+					Debug.Assert(!(c is null));
 					var vm = CompletionVM.TryGet(c);
 					if (!(vm is null))
 						oldList.Add(vm);
@@ -105,15 +107,15 @@ namespace dnSpy.Language.Intellisense {
 				list.Add(GetOrCreateVM(c));
 		}
 
-		public bool Contains(object value) => list.Contains((value as CompletionVM)!);
-		public int IndexOf(object value) => list.IndexOf((value as CompletionVM)!);
+		public bool Contains(object? value) => list.Contains((value as CompletionVM)!);
+		public int IndexOf(object? value) => list.IndexOf((value as CompletionVM)!);
 		public void CopyTo(Array array, int index) => Array.Copy(list.ToArray(), 0, array, index, list.Count);
 		public IEnumerator GetEnumerator() => list.GetEnumerator();
 
-		public int Add(object value) => throw new NotSupportedException();
+		public int Add(object? value) => throw new NotSupportedException();
 		public void Clear() => throw new NotSupportedException();
-		public void Insert(int index, object value) => throw new NotSupportedException();
-		public void Remove(object value) => throw new NotSupportedException();
+		public void Insert(int index, object? value) => throw new NotSupportedException();
+		public void Remove(object? value) => throw new NotSupportedException();
 		public void RemoveAt(int index) => throw new NotSupportedException();
 		public void Dispose() {
 			if (!(completionListNotifyCollectionChanged is null))

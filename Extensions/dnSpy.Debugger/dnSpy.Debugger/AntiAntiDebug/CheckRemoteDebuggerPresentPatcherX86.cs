@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 using dnSpy.Contracts.Debugger.AntiAntiDebug;
 using Iced.Intel;
 using II = Iced.Intel;
@@ -28,7 +28,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 
 		public CheckRemoteDebuggerPresentPatcherX86(DbgNativeFunctionHookContext context) : base(context) => pid = context.Process.Id;
 
-		public bool TryPatchX86([NotNullWhenFalse] out string? errorMessage) {
+		public bool TryPatchX86([NotNullWhen(false)] out string? errorMessage) {
 			var function = functionProvider.GetFunction(CheckRemoteDebuggerPresentConstants.DllName, CheckRemoteDebuggerPresentConstants.FuncName);
 			if (!functionProvider.TryGetFunction("kernel32.dll", "GetProcessId", out var addrGetProcessId)) {
 				errorMessage = "Couldn't get address of GetProcessId";
@@ -89,7 +89,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 			return true;
 		}
 
-		public bool TryPatchX64([NotNullWhenFalse] out string? errorMessage) {
+		public bool TryPatchX64([NotNullWhen(false)] out string? errorMessage) {
 			var function = functionProvider.GetFunction(CheckRemoteDebuggerPresentConstants.DllName, CheckRemoteDebuggerPresentConstants.FuncName);
 			if (!functionProvider.TryGetFunction("kernel32.dll", "GetProcessId", out var addrGetProcessId)) {
 				errorMessage = "Couldn't get address of GetProcessId";

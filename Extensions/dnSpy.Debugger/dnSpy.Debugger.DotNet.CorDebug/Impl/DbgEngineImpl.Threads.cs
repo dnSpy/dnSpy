@@ -21,8 +21,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
@@ -443,7 +443,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		internal DnModuleId? TryGetModuleId(CorFrame frame) => dnDebugger.TryGetModuleId(frame.Function?.Module);
 
-		bool TryGetFrame(DbgThread thread, [NotNullWhenTrue] out CorFrame? frame) {
+		bool TryGetFrame(DbgThread thread, [NotNullWhen(true)] out CorFrame? frame) {
 			debuggerThread.VerifyAccess();
 			frame = null;
 			var data = TryGetThreadData(thread);

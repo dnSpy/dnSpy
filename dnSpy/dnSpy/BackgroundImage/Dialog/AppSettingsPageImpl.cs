@@ -292,7 +292,7 @@ namespace dnSpy.BackgroundImage.Dialog {
 					return f;
 				if (File.Exists(f)) {
 					try {
-						return Path.GetDirectoryName(f);
+						return Path.GetDirectoryName(f)!;
 					}
 					catch {
 					}

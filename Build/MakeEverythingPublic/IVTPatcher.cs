@@ -29,7 +29,6 @@
 // PERF is the same as copying a file since it just patches the data in memory, nothing is rewritten.
 
 using System;
-using System.Text;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
 using dnlib.IO;

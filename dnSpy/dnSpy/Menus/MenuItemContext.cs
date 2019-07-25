@@ -44,7 +44,7 @@ namespace dnSpy.Menus {
 		public T? GetOrCreateState<T>(object key, Func<T> createState) where T : class {
 			Debug.Assert(!(key is null));
 			T? value;
-			if (state.TryGetValue(key, out object o)) {
+			if (state.TryGetValue(key, out var o)) {
 				value = o as T;
 				Debug.Assert(o is null || !(value is null));
 				return value;

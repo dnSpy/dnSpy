@@ -235,7 +235,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 	}
 
 	interface IBracePairService {
-		void SetBracePairCollection(BracePairCollection bracePairCollection);
+		void SetBracePairCollection(BracePairCollection? bracePairCollection);
 		void SetBracePairViewTagger(BracePairViewTagger tagger);
 		IEnumerable<ITagSpan<IBracePairTag>> GetTags(NormalizedSnapshotSpanCollection spans);
 	}
@@ -348,7 +348,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			}
 		}
 
-		public void SetBracePairCollection(BracePairCollection bracePairCollection) {
+		public void SetBracePairCollection(BracePairCollection? bracePairCollection) {
 			this.bracePairCollection = bracePairCollection ?? BracePairCollection.Empty;
 			RefreshAllTags();
 		}

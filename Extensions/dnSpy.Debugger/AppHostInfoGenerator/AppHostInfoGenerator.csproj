@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="..\..\..\DnSpyCommon.props" />
 
@@ -9,7 +9,7 @@
 
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
-    <NullableContextOptions>enable</NullableContextOptions>
+    <Nullable>enable</Nullable>
     <OutputType>Exe</OutputType>
 
     <DefineConstants>$(DefineConstants);APPHOSTINFO_STRINGS;APPHOSTINFO_DUPES;APPHOSTINFO_ERROR_STRINGS</DefineConstants>

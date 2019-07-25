@@ -137,7 +137,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		static string GetFilename(string s) {
 			try {
-				return Path.GetFileName(s);
+				return Path.GetFileName(s)!;
 			}
 			catch {
 			}

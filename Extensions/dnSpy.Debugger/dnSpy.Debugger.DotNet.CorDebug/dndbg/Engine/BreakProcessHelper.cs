@@ -155,7 +155,7 @@ namespace dndbg.Engine {
 
 		string? GetOtherModuleFullName(string name) {
 			try {
-				return Path.Combine(Path.GetDirectoryName(filename), name);
+				return Path.Combine(Path.GetDirectoryName(filename)!, name);
 			}
 			catch {
 			}

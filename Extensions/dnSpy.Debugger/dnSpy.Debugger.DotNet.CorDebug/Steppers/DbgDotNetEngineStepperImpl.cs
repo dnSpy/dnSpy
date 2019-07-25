@@ -20,7 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using dndbg.Engine;
 using dnSpy.Contracts.Debugger;
@@ -59,7 +59,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 				CorFrame = frame ?? throw new ArgumentNullException(nameof(frame));
 			}
 
-			public override bool TryGetLocation([NotNullWhenTrue] out DbgModule? module, out uint token, out uint offset) {
+			public override bool TryGetLocation([NotNullWhen(true)] out DbgModule? module, out uint token, out uint offset) {
 				engine.VerifyCorDebugThread();
 				var func = CorFrame.Function;
 				module = engine.TryGetModule(func?.Module);

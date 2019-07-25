@@ -18,7 +18,7 @@
 */
 
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 using dnSpy.Debugger.DotNet.Metadata;
 using Mono.Debugger.Soft;
 
@@ -27,8 +27,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		readonly Dictionary<TypeMirror, DmdType> toReflectionType = new Dictionary<TypeMirror, DmdType>();
 		readonly Dictionary<DmdType, TypeMirror> toMonoType = new Dictionary<DmdType, TypeMirror>(DmdMemberInfoEqualityComparer.DefaultType);
 
-		public bool TryGetType(TypeMirror monoType, [NotNullWhenTrue] out DmdType? type) => toReflectionType.TryGetValue(monoType, out type);
-		public bool TryGetType(DmdType type, [NotNullWhenTrue] out TypeMirror? monoType) => toMonoType.TryGetValue(type, out monoType);
+		public bool TryGetType(TypeMirror monoType, [NotNullWhen(true)] out DmdType? type) => toReflectionType.TryGetValue(monoType, out type);
+		public bool TryGetType(DmdType type, [NotNullWhen(true)] out TypeMirror? monoType) => toMonoType.TryGetValue(type, out monoType);
 
 		public void Add(TypeMirror monoType, DmdType reflectionType) {
 			toReflectionType[monoType] = reflectionType;

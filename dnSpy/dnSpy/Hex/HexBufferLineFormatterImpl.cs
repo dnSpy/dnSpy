@@ -74,7 +74,7 @@ namespace dnSpy.Hex {
 			foreach (var fi in typeof(HexValuesDisplayFormat).GetFields()) {
 				if (!fi.IsLiteral)
 					continue;
-				var value = (HexValuesDisplayFormat)fi.GetValue(null);
+				var value = (HexValuesDisplayFormat)fi.GetValue(null)!;
 				if (value < HexBufferLineFormatterOptions.HexValuesDisplayFormat_First || value > HexBufferLineFormatterOptions.HexValuesDisplayFormat_Last)
 					throw new InvalidOperationException();
 			}

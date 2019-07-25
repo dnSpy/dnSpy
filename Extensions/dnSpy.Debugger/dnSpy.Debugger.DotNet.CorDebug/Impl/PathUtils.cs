@@ -25,7 +25,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			if (!File.Exists(filename))
 				return filename;
 			try {
-				return Path.GetFullPath(filename);
+				return Path.GetFullPath(filename!);
 			}
 			catch {
 			}

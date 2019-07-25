@@ -323,11 +323,11 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			// VB embeds the used core types. Merge all of them
 			if (HasVBEmbeddedAttribute(sourceType))
-				merge |= hasTargetType && HasVBEmbeddedAttribute(targetType);
+				merge |= hasTargetType && HasVBEmbeddedAttribute(targetType!);
 
 			// C# embeds some attributes if the target framework doesn't have them (Eg. IsByRefLikeAttribute, IsReadOnlyAttribute)
 			if (HasCodeAnalysisEmbeddedAttribute(sourceType))
-				merge |= hasTargetType && HasCodeAnalysisEmbeddedAttribute(targetType);
+				merge |= hasTargetType && HasCodeAnalysisEmbeddedAttribute(targetType!);
 
 			// Merge all embedded COM types
 			if (TIAHelper.IsTypeDefEquivalent(sourceType) && hasTargetType)
@@ -2127,7 +2127,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				if (op is null)
 					continue;
 
-				if (bodyDict.TryGetValue(op, out object obj)) {
+				if (bodyDict.TryGetValue(op, out var obj)) {
 					newInstr.Operand = obj;
 					continue;
 				}
@@ -2167,7 +2167,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		static Instruction? GetInstruction(Dictionary<object, object> dict, Instruction instr) {
-			if (instr is null || !dict.TryGetValue(instr, out object obj))
+			if (instr is null || !dict.TryGetValue(instr, out var obj))
 				return null;
 			return (Instruction)obj;
 		}

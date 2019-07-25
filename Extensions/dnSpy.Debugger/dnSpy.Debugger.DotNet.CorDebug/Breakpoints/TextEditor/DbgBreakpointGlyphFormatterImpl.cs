@@ -89,7 +89,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Breakpoints.TextEditor {
 			Debug.Assert((!(documentViewer is null)) == (!(statement is null)));
 			if (!(statement is null)) {
 				output.Write(DbgTextColor.Text, " ('");
-				var decompiler = (documentViewer?.DocumentTab.Content as IDecompilerTabContent)?.Decompiler ?? decompilerService.Decompiler;
+				var decompiler = (documentViewer?.DocumentTab?.Content as IDecompilerTabContent)?.Decompiler ?? decompilerService.Decompiler;
 				decompiler.Write(new DbgTextColorWriter(output), statement.Value.Method, FormatterOptions.Default);
 				output.Write(DbgTextColor.Text, "')");
 			}

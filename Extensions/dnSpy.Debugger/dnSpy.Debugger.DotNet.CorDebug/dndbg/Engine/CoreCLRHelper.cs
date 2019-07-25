@@ -79,7 +79,7 @@ namespace dndbg.Engine {
 
 		static string? GetVersionStringFromModule(DbgShimState dbgShimState, uint pid, IntPtr ps, out string coreclrFilename) {
 			var sb = new StringBuilder(0x1000);
-			coreclrFilename = Marshal.PtrToStringUni(ps);
+			coreclrFilename = Marshal.PtrToStringUni(ps)!;
 			int hr = dbgShimState.CreateVersionStringFromModule!(pid, coreclrFilename, sb, (uint)sb.Capacity, out uint verLen);
 			if (hr != 0) {
 				sb.EnsureCapacity((int)verLen);
@@ -102,7 +102,7 @@ namespace dndbg.Engine {
 
 		static DbgShimState? GetOrCreateDbgShimState(string? runtimePath, string? dbgshimPath) {
 			var paths = GetDbgShimPaths(runtimePath, dbgshimPath);
-			DbgShimState dbgShimState;
+			DbgShimState? dbgShimState;
 			foreach (var path in paths) {
 				if (dbgShimStateDict.TryGetValue(path, out dbgShimState))
 					return dbgShimState;
@@ -157,7 +157,7 @@ namespace dndbg.Engine {
 
 		static string? GetDbgShimPathFromRuntimePath(string path) {
 			try {
-				return Path.Combine(Path.GetDirectoryName(path), dbgshimFilename);
+				return Path.Combine(Path.GetDirectoryName(path)!, dbgshimFilename);
 			}
 			catch {
 			}

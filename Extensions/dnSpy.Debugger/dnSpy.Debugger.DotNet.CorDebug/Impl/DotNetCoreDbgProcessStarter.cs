@@ -19,8 +19,8 @@
 
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Runtime.CompilerServices;
 using dnSpy.Contracts.Debugger.StartDebugging;
 using dnSpy.Debugger.DotNet.CorDebug.Utilities;
 
@@ -41,11 +41,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			return true;
 		}
 
-		public override bool TryStart(string filename, [NotNullWhenFalse] out string? error) {
+		public override bool TryStart(string filename, [NotNullWhen(false)] out string? error) {
 			var dotnetExeFilename = GetPathToDotNetExeHost();
 			Debug.Assert(!(dotnetExeFilename is null));
 			var startInfo = new ProcessStartInfo(dotnetExeFilename);
-			startInfo.WorkingDirectory = Path.GetDirectoryName(filename);
+			startInfo.WorkingDirectory = Path.GetDirectoryName(filename)!;
 			startInfo.Arguments = $"exec \"{filename}\"";
 			startInfo.UseShellExecute = false;
 			Process.Start(startInfo);

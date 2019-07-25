@@ -181,7 +181,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 			var fileName = target.Replace ("%PROGRAMFILESDIR%", programFilesDir)
 				.Replace ("%CORSYSDIR%", corSysDir);
 			if (!Path.IsPathRooted (fileName))
-				fileName = Path.Combine (Path.GetDirectoryName (xmlFileName), fileName);
+				fileName = Path.Combine (Path.GetDirectoryName (xmlFileName)!, fileName);
 			return LookupLocalizedXmlDoc(fileName);
 		}
 		
@@ -223,7 +223,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 		
 		static string GetLocalizedName(string fileName, string language)
 		{
-			string localizedXmlDocFile = Path.GetDirectoryName(fileName);
+			string localizedXmlDocFile = Path.GetDirectoryName(fileName)!;
 			localizedXmlDocFile = Path.Combine(localizedXmlDocFile, language);
 			localizedXmlDocFile = Path.Combine(localizedXmlDocFile, Path.GetFileName(fileName));
 			return localizedXmlDocFile;
@@ -436,6 +436,6 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 		#endregion
 
 		/// <inheritdoc/>
-		public virtual void OnDeserialization(object sender) => cache = new XmlDocumentationCache();
+		public virtual void OnDeserialization(object? sender) => cache = new XmlDocumentationCache();
 	}
 }

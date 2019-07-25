@@ -53,7 +53,7 @@ namespace dnSpy.Themes {
 			foreach (var fi in typeof(ColorType).GetFields()) {
 				if (!fi.IsLiteral)
 					continue;
-				var val = (ColorType)fi.GetValue(null);
+				var val = (ColorType)fi.GetValue(null)!;
 				if (val == ColorType.LastNR || val == ColorType.LastUI)
 					continue;
 				nameToColorType[fi.Name] = val;
@@ -337,7 +337,7 @@ namespace dnSpy.Themes {
 				Debug.Assert(!(property is null));
 				if (property is null)
 					return null;
-				return (Brush)property.GetValue(null, null);
+				return (Brush)property.GetValue(null, null)!;
 			}
 
 			try {

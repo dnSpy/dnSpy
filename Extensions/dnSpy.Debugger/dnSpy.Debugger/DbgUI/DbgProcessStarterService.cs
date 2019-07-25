@@ -21,15 +21,15 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using dnSpy.Contracts.Debugger.StartDebugging;
 using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.DbgUI {
 	abstract class DbgProcessStarterService {
 		public abstract bool CanStart(string filename, out ProcessStarterResult result);
-		public abstract bool TryStart(string filename, [NotNullWhenFalse] out string? error);
+		public abstract bool TryStart(string filename, [NotNullWhen(false)] out string? error);
 	}
 
 	[Export(typeof(DbgProcessStarterService))]
@@ -52,7 +52,7 @@ namespace dnSpy.Debugger.DbgUI {
 			return false;
 		}
 
-		public override bool TryStart(string filename, [NotNullWhenFalse] out string? error) {
+		public override bool TryStart(string filename, [NotNullWhen(false)] out string? error) {
 			if (filename is null)
 				throw new ArgumentNullException(nameof(filename));
 			bool ok;
@@ -72,7 +72,7 @@ namespace dnSpy.Debugger.DbgUI {
 			return false;
 		}
 
-		bool TryStartCore(string filename, [NotNullWhenFalse] out string? error) {
+		bool TryStartCore(string filename, [NotNullWhen(false)] out string? error) {
 			foreach (var lz in processStarters) {
 				if (lz.Value.IsSupported(filename, out _))
 					return lz.Value.TryStart(filename, out error);

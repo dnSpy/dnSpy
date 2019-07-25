@@ -59,7 +59,7 @@ namespace dnSpy.Documents.TreeView {
 		}
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
-			var document = Context.DocumentTreeView.DocumentService.Resolve(AssemblyRef, (ModuleDef)asmRefOwnerModule.Target) as IDsDotNetDocument;
+			var document = Context.DocumentTreeView.DocumentService.Resolve(AssemblyRef, (ModuleDef?)asmRefOwnerModule.Target) as IDsDotNetDocument;
 			if (document is null)
 				yield break;
 			var mod = document.ModuleDef;

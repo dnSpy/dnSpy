@@ -20,7 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 
 namespace dnSpy.Contracts.Debugger {
@@ -117,7 +117,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// <typeparam name="T">Type of data</typeparam>
 		/// <param name="value">Result</param>
 		/// <returns></returns>
-		public bool TryGetData<T>([NotNullWhenTrue] out T? value) where T : class {
+		public bool TryGetData<T>([NotNullWhen(true)] out T? value) where T : class {
 			lock (lockObj) {
 				if (!(dataList is null)) {
 					var type = typeof(T).TypeHandle;

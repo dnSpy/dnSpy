@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 using dnlib.DotNet;
 using dnlib.IO;
 
@@ -83,6 +83,6 @@ namespace dndbg.DotNet {
 		/// <param name="resourceOffset">Resource offset</param>
 		/// <param name="resourceLength">Resource length</param>
 		/// <returns></returns>
-		bool TryCreateResourceStream(uint offset, [NotNullWhenTrue] out DataReaderFactory? dataReaderFactory, out uint resourceOffset, out uint resourceLength);
+		bool TryCreateResourceStream(uint offset, [NotNullWhen(true)] out DataReaderFactory? dataReaderFactory, out uint resourceOffset, out uint resourceLength);
 	}
 }

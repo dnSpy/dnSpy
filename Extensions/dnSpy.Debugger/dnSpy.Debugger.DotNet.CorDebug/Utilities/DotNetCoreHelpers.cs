@@ -19,11 +19,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Runtime.CompilerServices;
 using dnlib.DotNet;
 using dnlib.PE;
-using dnSpy.Contracts.App;
 using dnSpy.Debugger.Shared;
 using Microsoft.Win32;
 
@@ -42,7 +41,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 				if (!Directory.Exists(path))
 					continue;
 				try {
-					path = Path.Combine(Path.GetDirectoryName(path), Path.GetFileName(path));
+					path = Path.Combine(Path.GetDirectoryName(path)!, Path.GetFileName(path));
 				}
 				catch (ArgumentException) {
 					continue;
@@ -90,8 +89,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 			// Check default locations
 			var progDirX86 = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
 			var progDir = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-			if (StringComparer.OrdinalIgnoreCase.Equals(progDirX86, progDir))
-				progDir = Path.Combine(Path.GetDirectoryName(progDir), "Program Files");
+			if (!string.IsNullOrEmpty(progDirX86) && StringComparer.OrdinalIgnoreCase.Equals(progDirX86, progDir) && Path.GetDirectoryName(progDir) is string baseDir)
+				progDir = Path.Combine(baseDir, "Program Files");
 			const string dotnetDirName = "dotnet";
 			if (!string.IsNullOrEmpty(progDir))
 				yield return Path.Combine(progDir, dotnetDirName);
@@ -99,7 +98,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 				yield return Path.Combine(progDirX86, dotnetDirName);
 		}
 
-		static bool TryGetInstallLocationFromRegistry(string regPath, [NotNullWhenTrue] out string? installLocation) {
+		static bool TryGetInstallLocationFromRegistry(string regPath, [NotNullWhen(true)] out string? installLocation) {
 			using (var key = Registry.LocalMachine.OpenSubKey(regPath)) {
 				installLocation = key?.GetValue("InstallLocation") as string;
 				return !(installLocation is null);
@@ -108,7 +107,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 
 		public static string GetDebugShimFilename(int bitness) {
 #if NETFRAMEWORK
-			var basePath = AppDirectories.BinDirectory;
+			var basePath = Contracts.App.AppDirectories.BinDirectory;
 			basePath = Path.Combine(basePath, "debug", "core");
 			var filename = FileUtilities.GetNativeDllFilename("dbgshim");
 			switch (bitness) {
@@ -118,7 +117,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 			}
 #elif NETCOREAPP
 			var filename = FileUtilities.GetNativeDllFilename("dbgshim");
-			return Path.Combine(Path.GetDirectoryName(typeof(void).Assembly.Location), filename);
+			return Path.Combine(Path.GetDirectoryName(typeof(void).Assembly.Location)!, filename);
 #else
 #error Unknown target framework
 #endif

@@ -146,9 +146,9 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// ToString()
 		/// </summary>
 		/// <returns></returns>
-		public override string ToString() => ToString(false);
+		public override string? ToString() => ToString(false);
 
-		internal string ToString(bool typed) {
+		internal string? ToString(bool typed) {
 			if (Value is null)
 				return typed ? "null" : "(" + ArgumentType?.Name + ")null";
 			if (ArgumentType.IsEnum)
@@ -234,7 +234,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="memberInfo">A property or a field</param>
 		/// <param name="typedArgument"></param>
-		public DmdCustomAttributeNamedArgument([EnsuresNotNull] DmdMemberInfo? memberInfo, DmdCustomAttributeTypedArgument typedArgument) {
+		public DmdCustomAttributeNamedArgument(DmdMemberInfo? memberInfo, DmdCustomAttributeTypedArgument typedArgument) {
 			if (typedArgument.ArgumentType is null)
 				throw new ArgumentException();
 			MemberInfo = memberInfo ?? throw new ArgumentNullException(nameof(memberInfo));
@@ -270,7 +270,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// ToString()
 		/// </summary>
 		/// <returns></returns>
-		public override string ToString() {
+		public override string? ToString() {
 			if (MemberInfo is null)
 				return base.ToString();
 			var argType = MemberInfo is DmdFieldInfo field ? field.FieldType : MemberInfo is DmdPropertyInfo property ? property.PropertyType : null;

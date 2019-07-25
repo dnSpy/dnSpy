@@ -1045,7 +1045,7 @@ namespace dnSpy.Contracts.Utilities {
 		/// <param name="canHaveNull">true if the string value "null" can be converted to a null string</param>
 		/// <param name="error">Updated with error string or null if no error</param>
 		/// <returns></returns>
-		public static string[]? ParseStringList(string s, bool canHaveNull, out string? error) => ParseList(s, out error, ParseStringPart, canHaveNull);
+		public static string?[]? ParseStringList(string s, bool canHaveNull, out string? error) => ParseList(s, out error, ParseStringPart, canHaveNull);
 		static string? ParseStringPart(bool canHaveNull, string s, ref int index, out string? error) => ParseString(s, canHaveNull, ref index, out error);
 	}
 }

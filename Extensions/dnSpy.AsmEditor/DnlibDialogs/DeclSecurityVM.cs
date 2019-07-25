@@ -52,7 +52,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 	sealed class DeclSecurityVM : ViewModelBase {
 		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
-		public string FullName => SecurityActionEnumList.SelectedItem!.ToString();
+		public string FullName => SecurityActionEnumList.SelectedItem!.ToString()!;
 
 		public string? V1XMLString {
 			get => v1XMLString;

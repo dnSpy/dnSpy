@@ -69,7 +69,7 @@ namespace dnSpy.Contracts.Utilities {
 		/// </summary>
 		/// <param name="s"></param>
 		/// <returns></returns>
-		public static string EscapeMenuItemHeader(string s) => NameUtilities.CleanName(s)!.Replace("_", "__");
+		public static string EscapeMenuItemHeader(string s) => NameUtilities.CleanName(s).Replace("_", "__");
 
 		/// <summary>
 		/// Truncates the string after <paramref name="length"/> characters and adds an elipsis at the end.

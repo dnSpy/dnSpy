@@ -67,8 +67,7 @@ namespace dnSpy.Documents {
 			timer = new Timer(a => {
 				Debug.Assert(!(timer is null));
 				timer.Dispose();
-				var self = (MethodAnnotations)weakSelf.Target;
-				if (!(self is null)) {
+				if (weakSelf.Target is MethodAnnotations self) {
 					self.ClearGarbageCollectedItems();
 					AddTimerWait(self);
 				}

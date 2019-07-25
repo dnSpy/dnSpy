@@ -74,13 +74,14 @@ namespace dnSpy.MainApp.Settings {
 					return;
 				bool enabled = value.Value;
 
-				var path = Assembly.GetEntryAssembly().Location;
+				var path = Assembly.GetEntryAssembly()!.Location;
 #if NETCOREAPP
 				// Use the native exe and not the managed file
 				path = Path.ChangeExtension(path, "exe");
 				if (!File.Exists(path)) {
 					// All .NET files could be in a bin sub dir
-					path = Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(path)), Path.GetFileName(path));
+					if (Path.GetDirectoryName(Path.GetDirectoryName(path)) is string baseDir)
+						path = Path.Combine(baseDir, Path.GetFileName(path));
 				}
 #endif
 				if (!File.Exists(path)) {

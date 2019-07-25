@@ -56,8 +56,8 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 
 		public IEnumerable<DocumentListVM> SelectedItems {
 			get {
-				foreach (DocumentListVM vm in listView.SelectedItems)
-					yield return vm;
+				foreach (DocumentListVM? vm in listView.SelectedItems)
+					yield return vm!;
 			}
 		}
 

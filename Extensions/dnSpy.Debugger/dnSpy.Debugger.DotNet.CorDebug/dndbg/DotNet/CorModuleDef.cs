@@ -26,9 +26,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using dndbg.COM.MetaData;
 using dndbg.Engine;
@@ -1162,7 +1162,7 @@ namespace dndbg.DotNet {
 			return new EmbeddedResource(mr.Name, Array.Empty<byte>(), mr.Flags) { Rid = rid, Offset = mr.Offset };
 		}
 
-		bool TryCreateResourceStream(uint offset, [NotNullWhenTrue] out DataReaderFactory? dataReaderFactory, out uint resourceOffset, out uint resourceLength) =>
+		bool TryCreateResourceStream(uint offset, [NotNullWhen(true)] out DataReaderFactory? dataReaderFactory, out uint resourceOffset, out uint resourceLength) =>
 			corModuleDefHelper.TryCreateResourceStream(offset, out dataReaderFactory, out resourceOffset, out resourceLength);
 
 		/// <summary>

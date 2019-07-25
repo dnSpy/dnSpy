@@ -60,8 +60,7 @@ namespace dnSpy.Events {
 			public override bool IsAlive => !(target.Target is null);
 
 			public override void Execute(object? source, TEventArgs e) {
-				var self = target.Target;
-				if (!(self is null))
+				if (target.Target is object self)
 					methodInfo.Invoke(self, new object?[] { source, e });
 			}
 

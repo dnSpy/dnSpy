@@ -78,7 +78,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			if (moduleFilename is null || asmName is null)
 				return null;
 			try {
-				return Path.Combine(Path.GetDirectoryName(moduleFilename), asmName + (isExe ? ".exe" : ".dll"));
+				return Path.Combine(Path.GetDirectoryName(moduleFilename)!, asmName + (isExe ? ".exe" : ".dll"));
 			}
 			catch (ArgumentException) {
 			}

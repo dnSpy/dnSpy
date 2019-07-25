@@ -154,7 +154,8 @@ namespace dnSpy.Output {
 				SelectedOutputBufferVM = OutputBuffers.FirstOrDefault();
 
 			if (!(e.NewItems is null)) {
-				foreach (OutputBufferVM vm in e.NewItems) {
+				foreach (OutputBufferVM? vm in e.NewItems) {
+					Debug.Assert(!(vm is null));
 					if (vm.Guid == prevSelectedGuid && prevSelectedGuid != Guid.Empty) {
 						SelectedOutputBufferVM = vm;
 						prevSelectedGuid = Guid.Empty;

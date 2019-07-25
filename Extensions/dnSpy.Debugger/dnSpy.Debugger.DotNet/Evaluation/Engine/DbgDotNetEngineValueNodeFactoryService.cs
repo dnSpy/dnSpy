@@ -21,8 +21,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.Formatters;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation.ValueNodes;
 using dnSpy.Contracts.Debugger.Engine.Evaluation.Internal;
@@ -76,7 +76,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			return null;
 		}
 
-		bool TryGetFactory(Guid guid, DbgDotNetFormatter formatter, [NotNullWhenTrue] out DbgDotNetEngineValueNodeFactory? factory) {
+		bool TryGetFactory(Guid guid, DbgDotNetFormatter formatter, [NotNullWhen(true)] out DbgDotNetEngineValueNodeFactory? factory) {
 			if (!toLazyFactory.TryGetValue(guid, out var lz)) {
 				factory = null;
 				return false;

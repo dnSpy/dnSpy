@@ -238,9 +238,9 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 
 		SpanData<ReferenceInfo>? GetReference(int position, bool allowIntersection) => documentViewer.Content.ReferenceCollection.Find(position, allowIntersection);
 
-		IDecompiler GetDecompiler() => (documentViewer.DocumentTab.Content as IDecompilerTabContent)?.Decompiler ?? decompilerService.Decompiler;
+		IDecompiler GetDecompiler() => (documentViewer.DocumentTab?.Content as IDecompilerTabContent)?.Decompiler ?? decompilerService.Decompiler;
 
-		object? CreateToolTipContent(IDecompiler decompiler, object @ref) {
+		object? CreateToolTipContent(IDecompiler decompiler, object? @ref) {
 			if (decompiler is null)
 				return null;
 			if (@ref is null)

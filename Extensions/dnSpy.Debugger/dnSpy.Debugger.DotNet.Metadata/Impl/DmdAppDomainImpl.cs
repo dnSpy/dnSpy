@@ -902,20 +902,20 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				return null;
 
 			case DmdTypeScopeKind.Module:
-				module = (DmdModule)typeScope.Data;
+				module = (DmdModule)typeScope.Data!;
 				return Lookup(module, typeRef, ignoreCase) ?? ResolveExportedType(new[] { module }, typeRef, ignoreCase);
 
 			case DmdTypeScopeKind.ModuleRef:
-				assembly = GetAssembly((IDmdAssemblyName)typeScope.Data2);
+				assembly = GetAssembly((IDmdAssemblyName)typeScope.Data2!);
 				if (assembly is null)
 					return null;
-				module = assembly.GetModule((string)typeScope.Data);
+				module = assembly.GetModule((string)typeScope.Data!);
 				if (module is null)
 					return null;
 				return Lookup(module, typeRef, ignoreCase) ?? ResolveExportedType(new[] { module }, typeRef, ignoreCase);
 
 			case DmdTypeScopeKind.AssemblyRef:
-				assembly = GetAssembly((IDmdAssemblyName)typeScope.Data);
+				assembly = GetAssembly((IDmdAssemblyName)typeScope.Data!);
 				if (assembly is null)
 					return null;
 				return Lookup(assembly, typeRef, ignoreCase) ?? ResolveExportedType(assembly.GetModules(), typeRef, ignoreCase);
@@ -937,7 +937,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				var typeScope = nonNested.TypeScope;
 				if (typeScope.Kind != DmdTypeScopeKind.AssemblyRef)
 					return null;
-				var etAsm = GetAssembly((IDmdAssemblyName)typeScope.Data);
+				var etAsm = GetAssembly((IDmdAssemblyName)typeScope.Data!);
 				if (etAsm is null)
 					return null;
 
@@ -953,7 +953,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		DmdTypeRef? FindExportedType(IList<DmdModule> modules, DmdTypeRef typeRef, bool ignoreCase) {
 			foreach (var module in modules) {
-				Dictionary<DmdType, DmdTypeRef> dict;
+				Dictionary<DmdType, DmdTypeRef>? dict;
 				do {
 					lock (exportedTypeLockObj) {
 						if (ignoreCase) {
@@ -1034,7 +1034,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		DmdTypeDef? Lookup(DmdModule module, DmdTypeRef typeRef, bool ignoreCase) {
-			Dictionary<DmdType, DmdTypeDef> dict;
+			Dictionary<DmdType, DmdTypeDef>? dict;
 			do {
 				lock (moduleTypeLockObj) {
 					if (ignoreCase) {

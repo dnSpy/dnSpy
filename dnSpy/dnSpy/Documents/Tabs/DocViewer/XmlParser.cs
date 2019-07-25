@@ -205,7 +205,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 		string GetSubstring(Span span) {
 			var key = new SubString(text, span.Start, span.Length);
-			if (subStringDict.TryGetValue(key, out string s))
+			if (subStringDict.TryGetValue(key, out var s))
 				return s;
 			s = key.ToString();
 			subStringDict[key] = s;
@@ -433,7 +433,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 			public XmlNamespaceDefinition GetOrCreate(string xmlNsAlias) {
 				XmlNamespaces? curr = this;
-				XmlNamespaceDefinition def;
+				XmlNamespaceDefinition? def;
 				while (!(curr is null)) {
 					if (curr.namespaces.TryGetValue(xmlNsAlias, out def))
 						return def;

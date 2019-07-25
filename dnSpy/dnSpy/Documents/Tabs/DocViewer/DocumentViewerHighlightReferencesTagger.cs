@@ -185,6 +185,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				bool b = documentViewerReferenceEnablerProviders.TryGetValue(id, out var lazy);
 				Debug.Assert(b, $"Missing {nameof(IDocumentViewerReferenceEnablerProvider)} for reference id = {id}");
 				if (b) {
+					Debug.Assert(!(lazy is null));
 					refChecker = lazy.Value.Create(documentViewer);
 					if (!(refChecker is null))
 						refChecker.IsEnabledChanged += DocumentViewerReferenceEnabler_IsEnabledChanged;

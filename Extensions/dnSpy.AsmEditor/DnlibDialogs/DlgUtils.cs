@@ -89,7 +89,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			if (value is IList<object>)
 				return ArrayToString(value, typeof(object));
 
-			return value.ToString();
+			return value.ToString() ?? "???";
 		}
 
 		static string ArrayToString(object value, Type type) {

@@ -20,11 +20,11 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
-using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using dnSpy.Debugger.DotNet.CorDebug.Impl;
@@ -104,7 +104,7 @@ namespace AppHostInfoGenerator {
 			string filename;
 			switch (args.Length) {
 			case 0:
-				filename = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(typeof(Program).Assembly.Location), "..", "..", "..", "..", "dnSpy.Debugger.DotNet.CorDebug", "Impl", defaultFilename));
+				filename = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(typeof(Program).Assembly.Location)!, "..", "..", "..", "..", "dnSpy.Debugger.DotNet.CorDebug", "Impl", defaultFilename));
 				break;
 			case 1:
 				filename = args[0];
@@ -493,7 +493,7 @@ namespace AppHostInfoGenerator {
 			output.WriteLine();
 		}
 
-		static bool TryHashData(byte[] appHostData, int relPathOffset, int textOffset, int textSize, out int hashDataOffset, out int hashDataSize, [NotNullWhenTrue] out byte[]? hash, out byte lastByte) {
+		static bool TryHashData(byte[] appHostData, int relPathOffset, int textOffset, int textSize, out int hashDataOffset, out int hashDataSize, [NotNullWhen(true)] out byte[]? hash, out byte lastByte) {
 			hashDataOffset = textOffset;
 			hashDataSize = Math.Min(textSize, AppHostInfo.DefaultHashSize);
 			int hashDataSizeEnd = hashDataOffset + hashDataSize;
@@ -569,7 +569,7 @@ namespace AppHostInfoGenerator {
 			}
 		}
 
-		static bool TryGetRid(string fullName, [NotNullWhenTrue] out string? rid, [NotNullWhenTrue] out string? filename) {
+		static bool TryGetRid(string fullName, [NotNullWhen(true)] out string? rid, [NotNullWhen(true)] out string? filename) {
 			rid = null;
 			filename = null;
 			var parts = fullName.Split('/');
@@ -605,7 +605,7 @@ namespace AppHostInfoGenerator {
 				return wc.DownloadData(url);
 		}
 
-		static bool TryDownloadNuGetPackage(string packageName, string version, NuGetSource nugetSource, [NotNullWhenTrue] out byte[]? data) {
+		static bool TryDownloadNuGetPackage(string packageName, string version, NuGetSource nugetSource, [NotNullWhen(true)] out byte[]? data) {
 			try {
 				data = DownloadNuGetPackage(packageName, version, nugetSource);
 				return true;

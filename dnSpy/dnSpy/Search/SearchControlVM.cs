@@ -233,8 +233,8 @@ namespace dnSpy.Search {
 
 		IEnumerable<DsDocumentNode> GetAllFilesInSameDirToSearch() {
 			var dirsEnum = GetSelectedFilesToSearch().Where(a => File.Exists(a.Document.Filename)).Select(a => Path.GetDirectoryName(a.Document.Filename));
-			var dirs = new HashSet<string>(dirsEnum, StringComparer.OrdinalIgnoreCase);
-			return GetAllFilesToSearch().Where(a => File.Exists(a.Document.Filename) && dirs.Contains(Path.GetDirectoryName(a.Document.Filename)));
+			var dirs = new HashSet<string>(dirsEnum!, StringComparer.OrdinalIgnoreCase);
+			return GetAllFilesToSearch().Where(a => File.Exists(a.Document.Filename) && dirs.Contains(Path.GetDirectoryName(a.Document.Filename)!));
 		}
 
 		IEnumerable<SearchTypeInfo> GetSelectedTypeToSearch() {
@@ -243,7 +243,7 @@ namespace dnSpy.Search {
 				Debug.Assert(!(fileNode is null));
 				if (fileNode is null)
 					continue;
-				yield return new SearchTypeInfo(fileNode.Document, node.TypeDef);
+				yield return new SearchTypeInfo(fileNode.Document, node!.TypeDef);
 			}
 		}
 
@@ -325,7 +325,7 @@ namespace dnSpy.Search {
 	}
 
 	sealed class SearchResult_Comparer : System.Collections.IComparer {
-		public int Compare(object x, object y) {
+		public int Compare(object? x, object? y) {
 			var a = x as ISearchResult;
 			var b = y as ISearchResult;
 			if (a is null)

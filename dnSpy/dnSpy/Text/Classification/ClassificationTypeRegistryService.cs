@@ -69,7 +69,7 @@ namespace dnSpy.Text.Classification {
 					TryCreate(type, 0);
 			}
 
-			IClassificationType TryGet(string type) {
+			IClassificationType? TryGet(string type) {
 				owner.toClassificationType.TryGetValue(type, out var classificationType);
 				return classificationType;
 			}
@@ -88,6 +88,7 @@ namespace dnSpy.Text.Classification {
 				Debug.Assert(b);
 				if (!b)
 					return null;
+				Debug.Assert(!(rawCt is null));
 				b = rawClassificationTypes.Remove(rawCt.Type);
 				Debug.Assert(b);
 
@@ -110,9 +111,7 @@ namespace dnSpy.Text.Classification {
 			toClassificationType = new Dictionary<string, IClassificationType>();
 			transientNameToType = new Dictionary<string, IClassificationType>();
 			new ClassificationTypeCreator(this, classificationTypeDefinitions);
-			transientClassificationType = GetClassificationType(TRANSIENT_NAME);
-			if (transientClassificationType is null)
-				throw new InvalidOperationException();
+			transientClassificationType = GetClassificationType(TRANSIENT_NAME) ?? throw new InvalidOperationException();
 		}
 
 		const string TRANSIENT_NAME = "(TRANSIENT)";
@@ -160,7 +159,7 @@ namespace dnSpy.Text.Classification {
 			return sb.ToString();
 		}
 
-		public IClassificationType GetClassificationType(string type) {
+		public IClassificationType? GetClassificationType(string type) {
 			toClassificationType.TryGetValue(type, out var ct);
 			return ct;
 		}

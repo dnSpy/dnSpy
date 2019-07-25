@@ -117,7 +117,7 @@ namespace dnSpy.MainApp {
 			Debug.Assert(!(attr is null));
 			if (!(attr is null))
 				return attr.InformationalVersion;
-			return asm.GetName().Version.ToString();
+			return asm.GetName().Version!.ToString();
 		}
 
 		static readonly Rect DefaultWindowLocation = new Rect(10, 10, 1300, 730);

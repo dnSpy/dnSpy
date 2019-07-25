@@ -45,7 +45,7 @@ namespace dnSpy.BamlDecompiler {
 			var uiContext = context.Find<IDocumentViewer>();
 			if (uiContext is null)
 				return false;
-			var nodes = uiContext.DocumentTab.Content.Nodes.ToArray();
+			var nodes = uiContext.DocumentTab!.Content.Nodes.ToArray();
 			return nodes.Length == 1 && nodes[0] is BamlResourceElementNode;
 		}
 	}

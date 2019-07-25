@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 
 namespace dnSpy.Contracts.Text.Editor.Operations {
 	/// <summary>
@@ -37,7 +37,7 @@ namespace dnSpy.Contracts.Text.Editor.Operations {
 		/// <param name="textView">Text view</param>
 		/// <param name="manager">Updated with the existing instance or null if none exists</param>
 		/// <returns></returns>
-		bool TryGetTextViewUndoManager(IDsWpfTextView textView, [NotNullWhenTrue] out ITextViewUndoManager? manager);
+		bool TryGetTextViewUndoManager(IDsWpfTextView textView, [NotNullWhen(true)] out ITextViewUndoManager? manager);
 
 		/// <summary>
 		/// Removes the cached <see cref="ITextViewUndoManager"/> instance, if any.

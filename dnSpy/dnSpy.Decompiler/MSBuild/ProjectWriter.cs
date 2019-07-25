@@ -247,13 +247,13 @@ namespace dnSpy.Decompiler.MSBuild {
 				writer.WriteStartElement(ToString(buildAction));
 				writer.WriteAttributeString("Include", GetRelativePath(file.Filename));
 				if (!(file.DependentUpon is null))
-					writer.WriteElementString("DependentUpon", GetRelativePath(Path.GetDirectoryName(file.Filename), file.DependentUpon.Filename));
+					writer.WriteElementString("DependentUpon", GetRelativePath(Path.GetDirectoryName(file.Filename)!, file.DependentUpon.Filename));
 				if (!(file.SubType is null))
 					writer.WriteElementString("SubType", file.SubType);
 				if (!(file.Generator is null))
 					writer.WriteElementString("Generator", file.Generator);
 				if (!(file.LastGenOutput is null))
-					writer.WriteElementString("LastGenOutput", GetRelativePath(Path.GetDirectoryName(file.Filename), file.LastGenOutput.Filename));
+					writer.WriteElementString("LastGenOutput", GetRelativePath(Path.GetDirectoryName(file.Filename)!, file.LastGenOutput.Filename));
 				if (file.AutoGen)
 					writer.WriteElementString("AutoGen", "True");
 				if (file.DesignTime)

@@ -20,7 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.CallStack;
 using dnSpy.Contracts.Debugger.Code;
@@ -111,7 +111,7 @@ namespace dnSpy.Debugger.DotNet.Mono.CallStack {
 			public ILFrameState(ILDbgEngineStackFrame ilFrame) => ILFrame = ilFrame;
 		}
 		public override void OnFrameCreated(DbgStackFrame frame) => frame.GetOrCreateData(() => new ILFrameState(this));
-		internal static bool TryGetEngineStackFrame(DbgStackFrame frame, [NotNullWhenTrue] out ILDbgEngineStackFrame? ilFrame) {
+		internal static bool TryGetEngineStackFrame(DbgStackFrame frame, [NotNullWhen(true)] out ILDbgEngineStackFrame? ilFrame) {
 			if (frame.TryGetData<ILFrameState>(out var data)) {
 				ilFrame = data.ILFrame;
 				return true;

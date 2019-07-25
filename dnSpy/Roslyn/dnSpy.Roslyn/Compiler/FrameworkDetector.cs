@@ -36,7 +36,7 @@ namespace dnSpy.Roslyn.Compiler {
 		public static FrameworkKind GetFrameworkKind(ModuleDef module) {
 			var corlib = module.CorLibTypes.AssemblyRef;
 			var moduleLocation = module.Location;
-			if (File.Exists(moduleLocation) && File.Exists(Path.Combine(Path.GetDirectoryName(moduleLocation), "UnityEngine.dll"))) {
+			if (File.Exists(moduleLocation) && File.Exists(Path.Combine(Path.GetDirectoryName(moduleLocation)!, "UnityEngine.dll"))) {
 				Debug.Assert(corlib.Version.Major == 2 || corlib.Version.Major == 4);
 				return corlib.Version.Major == 2 ? FrameworkKind.Unity2 : FrameworkKind.Unity4;
 			}
