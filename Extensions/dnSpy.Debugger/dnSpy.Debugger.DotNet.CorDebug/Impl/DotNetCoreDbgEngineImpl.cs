@@ -89,7 +89,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	sealed class DotNetCoreRuntimeId : RuntimeId {
 		readonly string? version;
 		public DotNetCoreRuntimeId(string? version) => this.version = version;
-		public override bool Equals(object? obj) => obj is DotNetCoreRuntimeId other && StringComparer.Ordinal.Equals(version, other.version);
+		public override bool Equals(object? obj) => obj is DotNetCoreRuntimeId other && StringComparer.Ordinal.Equals(version ?? string.Empty, other.version ?? string.Empty);
 		public override int GetHashCode() => StringComparer.Ordinal.GetHashCode(version ?? string.Empty);
 	}
 }

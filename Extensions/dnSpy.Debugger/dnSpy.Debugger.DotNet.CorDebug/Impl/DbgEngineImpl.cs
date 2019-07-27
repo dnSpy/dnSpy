@@ -88,6 +88,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		readonly List<DbgDotNetValueImpl> dotNetValuesToCloseOnContinue;
 		readonly List<DbgCorValueHolder> valuesToCloseNow;
 		bool isUnhandledException;
+		bool redirectConsoleOutput;
 
 		protected DbgEngineImpl(DbgEngineImplDependencies deps, DbgManager dbgManager, DbgStartKind startKind) {
 			if (deps is null)
@@ -697,9 +698,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				if (debuggerSettings.RedirectGuiConsoleOutput && PortableExecutableFileHelpers.IsGuiApp(options.Filename))
 					dbgOptions.RedirectConsoleOutput = true;
 
+				redirectConsoleOutput = dbgOptions.RedirectConsoleOutput;
 				dnDebugger = DnDebugger.DebugProcess(dbgOptions);
-				if (dbgOptions.RedirectConsoleOutput)
-					dnDebugger.OnRedirectedOutput += DnDebugger_OnRedirectedOutput;
 				OnDebugProcess(dnDebugger);
 				HookDnDebuggerEvents();
 				return;
@@ -832,6 +832,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			Debug.Assert(Array.IndexOf(objectFactory.Process.Runtimes, runtime) < 0);
 			this.objectFactory = objectFactory;
 			runtime.GetOrCreateData(() => new RuntimeData(this));
+			if (redirectConsoleOutput)
+				CorDebugThread(() => dnDebugger.OnRedirectedOutput += DnDebugger_OnRedirectedOutput);
 		}
 
 		protected override void CloseCore(DbgDispatcher dispatcher) {
