@@ -180,7 +180,15 @@ namespace dnSpy.Debugger.DbgUI {
 			return (null, -1);
 		}
 
-		public override bool CanSetNextStatement => CanExecutePauseCommand && !(dbgManager.Value.CurrentThread.Current is null);
+		public override bool CanSetNextStatement {
+			get {
+				if (!CanExecutePauseCommand || dbgManager.Value.CurrentThread.Current is null)
+					return false;
+				using (var res = GetCurrentTextViewStatementLocation())
+					return !(res.Location is null);
+			}
+		}
+
 		public override void SetNextStatement() {
 			if (!CanSetNextStatement)
 				return;
@@ -295,7 +303,22 @@ namespace dnSpy.Debugger.DbgUI {
 			stepper.Step(step, autoClose: true);
 		}
 
-		public override bool CanGoToDisassembly => CanExecutePauseCommand && !(dbgManager.Value.CurrentThread.Current is null);
+		public override bool CanGoToDisassembly {
+			get {
+				if (!CanExecutePauseCommand || dbgManager.Value.CurrentThread.Current is null)
+					return false;
+				using (var res = GetCurrentTextViewStatementLocation()) {
+					if (!(res.Location is null)) {
+						foreach (var runtime in GetRuntimes()) {
+							if (dbgShowNativeCodeService.Value.CanShowNativeCode(runtime, res.Location))
+								return true;
+						}
+					}
+				}
+				return false;
+			}
+		}
+
 		public override void GoToDisassembly() {
 			if (!CanGoToDisassembly)
 				return;
