@@ -834,7 +834,7 @@
     <value>Betöltött fájlok:</value>
   </data>
   <data name="SearchWindow_SearchFrameworkAssemblies" xml:space="preserve">
-    <value>Search in framework assemblies</value>
+    <value>Keresés a keretrendszer szerelvényei között</value>
   </data>
   <data name="SearchWindow_Where_AllFiles" xml:space="preserve">
     <value>Minden fájl</value>
@@ -2059,12 +2059,12 @@ A szűrő a Szerelvény Böngésző beállításainál módosítható.</value>
     <value>Típusok</value>
   </data>
   <data name="NumberBaseFormatString" xml:space="preserve">
-    <value>Base {0}:</value>
+    <value>Alap {0}:</value>
   </data>
   <data name="RawValue" xml:space="preserve">
-    <value>Raw:</value>
+    <value>Érték:</value>
   </data>
   <data name="RecentFilesCommand" xml:space="preserve">
-    <value>Recent _Files</value>
+    <value>Legutóbbi _fájlok</value>
   </data>
 </root>

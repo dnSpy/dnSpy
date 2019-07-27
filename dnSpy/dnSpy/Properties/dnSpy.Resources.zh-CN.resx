@@ -265,13 +265,13 @@
     <value>转到行</value>
   </data>
   <data name="GoToReferenceCommand" xml:space="preserve">
-    <value>转到引用(_G)</value>
+    <value>转到引用</value>
   </data>
   <data name="GoToReferenceKey" xml:space="preserve">
     <value>双击</value>
   </data>
   <data name="GoToTokenCommand" xml:space="preserve">
-    <value>转到MD标记(_D)...</value>
+    <value>转到MD Token (_D)...</value>
   </data>
   <data name="GoToTokenKey" xml:space="preserve">
     <value>Ctrl+D</value>
@@ -394,7 +394,7 @@
     <value>从GAC打开(_G)...</value>
   </data>
   <data name="OpenGAC_CreatedBy_Label" xml:space="preserve">
-    <value>创建者:</value>
+    <value>被创建于:</value>
   </data>
   <data name="OpenGAC_FileVersion_Label" xml:space="preserve">
     <value>文件版本:</value>
@@ -460,7 +460,7 @@
     <value>打开(_O)</value>
   </data>
   <data name="OpenList_Remove_Button" xml:space="preserve">
-    <value>去除(_R)</value>
+    <value>移除(_R)</value>
   </data>
   <data name="OpenList_SavedLists_CheckBox" xml:space="preserve">
     <value>已保存的列表</value>
@@ -733,10 +733,10 @@
     <value>搜索</value>
   </data>
   <data name="LanguageCommand" xml:space="preserve">
-    <value>语言(_L)</value>
+    <value>语言</value>
   </data>
   <data name="Language_OperatingSystemLanguage" xml:space="preserve">
-    <value>系统(_S)</value>
+    <value>系统</value>
   </data>
   <data name="LanguageSwitchMessage" xml:space="preserve">
     <value>重新启动 dnSpy 后，语言更改才会生效。</value>
@@ -834,7 +834,7 @@
     <value>已加载的文件：</value>
   </data>
   <data name="SearchWindow_SearchFrameworkAssemblies" xml:space="preserve">
-    <value>Search in framework assemblies</value>
+    <value>在框架程序集内搜索</value>
   </data>
   <data name="SearchWindow_Where_AllFiles" xml:space="preserve">
     <value>所有文件</value>
@@ -855,7 +855,7 @@
     <value>折叠树状图节点(_V)</value>
   </data>
   <data name="CloseAllCommand" xml:space="preserve">
-    <value>全部关闭(_C)</value>
+    <value>全部关闭</value>
   </data>
   <data name="ExportToProject_NewGuid" xml:space="preserve">
     <value>新建(_N)</value>
@@ -975,7 +975,7 @@
     <value>随机图片</value>
   </data>
   <data name="BgImgSettings_Reset" xml:space="preserve">
-    <value>重置(_R)</value>
+    <value>重置</value>
   </data>
   <data name="BgImgSettings_Zoom" xml:space="preserve">
     <value>缩放 %</value>
@@ -1068,7 +1068,7 @@
     <value>关闭</value>
   </data>
   <data name="IncrementalSearchCommand" xml:space="preserve">
-    <value>增量搜索(_I)</value>
+    <value>渐进式搜索</value>
   </data>
   <data name="ShortCutKeyCtrlI" xml:space="preserve">
     <value>Ctrl+I</value>
@@ -1292,40 +1292,40 @@
     <value>默认设置(_D)</value>
   </data>
   <data name="Button_RestoreSettings" xml:space="preserve">
-    <value>重置(_R)</value>
+    <value>重置</value>
   </data>
   <data name="BytesPerLineCommand" xml:space="preserve">
-    <value>每行的字节数(_Y)</value>
+    <value>每行的字节数</value>
   </data>
   <data name="ClearByteCommand" xml:space="preserve">
     <value>清除字节</value>
   </data>
   <data name="ClearSelectedBytesCommand" xml:space="preserve">
-    <value>清除选中字节(_C)</value>
+    <value>清除选定字节</value>
   </data>
   <data name="CopyCSharpArrayCommand" xml:space="preserve">
-    <value>复制C#数组(_C)</value>
+    <value>复制 C# 数组</value>
   </data>
   <data name="CopyOffsetCommand" xml:space="preserve">
-    <value>复制偏移量(_C)</value>
+    <value>复制偏移量</value>
   </data>
   <data name="CopySpecialCommand" xml:space="preserve">
-    <value>复制指定(_C)</value>
+    <value>复制指定</value>
   </data>
   <data name="CopyTextCommand" xml:space="preserve">
-    <value>复制文本(_C)</value>
+    <value>复制文本</value>
   </data>
   <data name="CopyUnicodeStringCommand" xml:space="preserve">
-    <value>复制 Unicode 字符串(_C)</value>
+    <value>复制 Unicode 字符串</value>
   </data>
   <data name="CopyUTF8StringCommand" xml:space="preserve">
-    <value>复制 UTF-8 字符串(_C)</value>
+    <value>复制 UTF-8 字符串</value>
   </data>
   <data name="CopyVisualBasicArrayCommand" xml:space="preserve">
-    <value>复制Visual Basic数组(_C)</value>
+    <value>复制 Visual Basic 数组</value>
   </data>
   <data name="FillSelectionCommand" xml:space="preserve">
-    <value>用字节填充选择(_F)...</value>
+    <value>用字节填充选择...</value>
   </data>
   <data name="FillSelection_Label" xml:space="preserve">
     <value>字节(_B)</value>
@@ -1334,31 +1334,31 @@
     <value>输入值</value>
   </data>
   <data name="GoToOffsetCommand" xml:space="preserve">
-    <value>转到偏移量(_G)...</value>
+    <value>转到偏移量...</value>
   </data>
   <data name="HexEditorSaveSelectionCommand" xml:space="preserve">
     <value>保存选中(_L)...</value>
   </data>
   <data name="HexEditorSelectCommand" xml:space="preserve">
-    <value>选择(_S)...</value>
+    <value>选择...</value>
   </data>
   <data name="HexEditorSettingsCommand" xml:space="preserve">
-    <value>设置(_S)...</value>
+    <value>设置...</value>
   </data>
   <data name="HexEditor_BytesPerLine_16" xml:space="preserve">
-    <value>_16 字节</value>
+    <value>16 字节(_1)</value>
   </data>
   <data name="HexEditor_BytesPerLine_32" xml:space="preserve">
-    <value>_32 字节</value>
+    <value>32 字节(_3)</value>
   </data>
   <data name="HexEditor_BytesPerLine_48" xml:space="preserve">
-    <value>_48 字节</value>
+    <value>48 字节(_4)</value>
   </data>
   <data name="HexEditor_BytesPerLine_64" xml:space="preserve">
-    <value>_64 字节</value>
+    <value>64 字节(_6)</value>
   </data>
   <data name="HexEditor_BytesPerLine_8" xml:space="preserve">
-    <value>_8 字节</value>
+    <value>8 字节(_8)</value>
   </data>
   <data name="HexEditor_BytesPerLine_FitToWidth" xml:space="preserve">
     <value>适合宽度(_F)</value>
@@ -1367,7 +1367,7 @@
     <value>基础偏移量(_B)</value>
   </data>
   <data name="LocalHexSettings_BaseOffset_ToolTip" xml:space="preserve">
-    <value>起始偏移量将显示为原值与此数值的和</value>
+    <value>起始偏移量将在显示之前被添加上此值</value>
   </data>
   <data name="LocalHexSettings_BytesPerLine" xml:space="preserve">
     <value>每行的字节数(_Y)</value>
@@ -1406,16 +1406,16 @@
     <value>粘贴(_P)</value>
   </data>
   <data name="PasteDotNetMetaDataBlobCommand" xml:space="preserve">
-    <value>粘贴(#Blob 数据)(_P)</value>
+    <value>粘贴(#Blob 数据)</value>
   </data>
   <data name="PasteSpecialCommand" xml:space="preserve">
-    <value>粘贴指定(_P)</value>
+    <value>粘贴指定</value>
   </data>
   <data name="PasteUnicodeCommand" xml:space="preserve">
-    <value>粘贴 (Unicode)(_P)</value>
+    <value>粘贴 (Unicode)</value>
   </data>
   <data name="PasteUTF8Command" xml:space="preserve">
-    <value>粘贴 (UTF-8)(_P)</value>
+    <value>粘贴 (UTF-8)</value>
   </data>
   <data name="ShortCutKeyCtrl8" xml:space="preserve">
     <value>Ctrl+8</value>
@@ -1467,10 +1467,10 @@
     <value>显示所有字节</value>
   </data>
   <data name="ShowOnlySelectedBytesCommand" xml:space="preserve">
-    <value>仅显示选中字节(_S)</value>
+    <value>仅显示选定字节</value>
   </data>
   <data name="ValueFormatCommand" xml:space="preserve">
-    <value>值格式(_F)</value>
+    <value>值格式</value>
   </data>
   <data name="ShortCutKeyF5" xml:space="preserve">
     <value>F5</value>
@@ -1497,10 +1497,10 @@
     <value>Ctrl+F</value>
   </data>
   <data name="PasteUnicodeAndLength7Command" xml:space="preserve">
-    <value>粘贴 (Unicode及长度)(_P)</value>
+    <value>粘贴 (Unicode 及 长度)</value>
   </data>
   <data name="PasteUTF8AndLength7Command" xml:space="preserve">
-    <value>粘贴 (UTF-8及长度)(_P)</value>
+    <value>粘贴 (UTF-8 及 长度)</value>
   </data>
   <data name="ShortCutKeyCtrlKCtrl8" xml:space="preserve">
     <value>Ctrl+K, Ctrl+8</value>
@@ -1509,7 +1509,7 @@
     <value>Ctrl+K, Ctrl+U</value>
   </data>
   <data name="HexGoToCodeOrStructure" xml:space="preserve">
-    <value>转到代码或结构(_G)</value>
+    <value>转到代码或结构</value>
   </data>
   <data name="ShortCutKeyF12" xml:space="preserve">
     <value>F12</value>
@@ -1527,19 +1527,19 @@
     <value>大端模式</value>
   </data>
   <data name="CopyDataCommand" xml:space="preserve">
-    <value>复制 {0}(_C)</value>
+    <value>复制 {0}</value>
   </data>
   <data name="CopyAbsoluteFileOffsetCommand" xml:space="preserve">
-    <value>复制绝对偏移(_C)</value>
+    <value>复制绝对偏移</value>
   </data>
   <data name="CopyFileOffsetCommand" xml:space="preserve">
-    <value>复制文件偏移(_C)</value>
+    <value>复制文件偏移</value>
   </data>
   <data name="CopyRVACommand" xml:space="preserve">
-    <value>复制RVA(_C)</value>
+    <value>复制RVA</value>
   </data>
   <data name="CopyValueCommand" xml:space="preserve">
-    <value>复制值(_C)</value>
+    <value>复制值</value>
   </data>
   <data name="ShortCutKeyCtrlShiftQ" xml:space="preserve">
     <value>Ctrl+Shift+Q</value>
@@ -1614,19 +1614,19 @@
     <value>索引</value>
   </data>
   <data name="HexFollowFieldValueReference" xml:space="preserve">
-    <value>跟随地址引用(_F)</value>
+    <value>跟随地址引用</value>
   </data>
   <data name="ShortCutKeyCtrlF12" xml:space="preserve">
     <value>Ctrl+F12</value>
   </data>
   <data name="HexEditorSelectFileCommand" xml:space="preserve">
-    <value>选择文件(_S)</value>
+    <value>选择文件</value>
   </data>
   <data name="HexEditorSelectNestedFileCommand" xml:space="preserve">
-    <value>选择嵌套文件(_S)</value>
+    <value>选择嵌套的文件</value>
   </data>
   <data name="SelectSpecialCommand" xml:space="preserve">
-    <value>选择指定(_S)</value>
+    <value>选择指定</value>
   </data>
   <data name="ShortCutKeyCtrlECtrlF" xml:space="preserve">
     <value>Ctrl+E, Ctrl+F</value>
@@ -1635,7 +1635,7 @@
     <value>Ctrl+E, Ctrl+N</value>
   </data>
   <data name="HexEditorSelectStructureCommand" xml:space="preserve">
-    <value>选择结构(_S)</value>
+    <value>选择结构</value>
   </data>
   <data name="ShortCutKeyCtrlECtrlS" xml:space="preserve">
     <value>Ctrl+E, Ctrl+S</value>
@@ -1749,10 +1749,10 @@
     <value>从文件导入书签</value>
   </data>
   <data name="Bookmarks_RemoveBookmark_ToolTip" xml:space="preserve">
-    <value>去除书签</value>
+    <value>移除书签</value>
   </data>
   <data name="Bookmarks_RemoveMatchingBookmarks_ToolTip" xml:space="preserve">
-    <value>去除与当前的搜索条件匹配的所有书签</value>
+    <value>移除与当前的搜索条件匹配的所有书签</value>
   </data>
   <data name="Bookmarks_ResetSearchSettings_ToolTip" xml:space="preserve">
     <value>重置所有搜索条件，以便显示所有书签</value>
@@ -1773,7 +1773,7 @@
     <value>重命名</value>
   </data>
   <data name="GoToBookmarkCommand" xml:space="preserve">
-    <value>转到书签(_G)</value>
+    <value>转到书签</value>
   </data>
   <data name="ShortCutKeyCtrl_DIGIT" xml:space="preserve">
     <value>Ctrl+{0}</value>
@@ -1785,16 +1785,16 @@
     <value>编辑标签</value>
   </data>
   <data name="EnableBookmarkCommand3" xml:space="preserve">
-    <value>启用书签(_E)</value>
+    <value>启用书签</value>
   </data>
   <data name="ExportSelectedCommand" xml:space="preserve">
     <value>导出选中项(_E)...</value>
   </data>
   <data name="RemoveAllBookmarksCommand" xml:space="preserve">
-    <value>去除所有书签</value>
+    <value>移除所有书签</value>
   </data>
   <data name="RemoveBookmarkCommand" xml:space="preserve">
-    <value>去除书签</value>
+    <value>移除书签</value>
   </data>
   <data name="SelectAllCommand" xml:space="preserve">
     <value>全选(_A)</value>
@@ -1839,7 +1839,7 @@
     <value>Ctrl+K, Ctrl+W</value>
   </data>
   <data name="ClearAllBookmarksInDocumentCommand" xml:space="preserve">
-    <value>清除此文档中的所有书签(_C)</value>
+    <value>清除此文档中的所有书签</value>
   </data>
   <data name="ClearBookmarksCommand" xml:space="preserve">
     <value>清除书签(_C)</value>
@@ -1860,7 +1860,7 @@
     <value>此文档中的下一个书签(_E)</value>
   </data>
   <data name="GoToNextBookmarkWithSameLabelCommand" xml:space="preserve">
-    <value>下一个有相同标签的书签(_N)</value>
+    <value>下一个有相同标签的书签</value>
   </data>
   <data name="GoToPreviousBookmarkCommand" xml:space="preserve">
     <value>上一个书签(_P)</value>
@@ -1869,7 +1869,7 @@
     <value>此文档中的上一个书签(_R)</value>
   </data>
   <data name="GoToPreviousBookmarkWithSameLabelCommand" xml:space="preserve">
-    <value>上一个有相同标签的书签(_P)</value>
+    <value>上一个有相同标签的书签</value>
   </data>
   <data name="ShortCutKeyCtrlK_CtrlK" xml:space="preserve">
     <value>Ctrl+K, Ctrl+K</value>
@@ -2058,12 +2058,12 @@
     <value>类型</value>
   </data>
   <data name="NumberBaseFormatString" xml:space="preserve">
-    <value>Base {0}:</value>
+    <value>基础 {0}:</value>
   </data>
   <data name="RawValue" xml:space="preserve">
-    <value>Raw:</value>
+    <value>原始:</value>
   </data>
   <data name="RecentFilesCommand" xml:space="preserve">
-    <value>Recent _Files</value>
+    <value>最近的文件(_F)</value>
   </data>
 </root>

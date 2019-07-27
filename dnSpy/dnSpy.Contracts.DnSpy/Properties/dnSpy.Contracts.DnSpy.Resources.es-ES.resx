@@ -138,7 +138,7 @@
     <value>No se pudo deserializar datos: {0}</value>
   </data>
   <data name="Files_DotNetExecutables" xml:space="preserve">
-    <value>Ejecutables .NET</value>
+    <value>_Archivos recientes</value>
   </data>
   <data name="Files_DotNetNetModules" xml:space="preserve">
     <value>.NET NetModules</value>

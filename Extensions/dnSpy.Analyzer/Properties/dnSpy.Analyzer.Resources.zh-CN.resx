@@ -142,7 +142,7 @@
     <value>扩展方法</value>
   </data>
   <data name="GoToReferenceCommand" xml:space="preserve">
-    <value>转到引用(_G)</value>
+    <value>转到引用</value>
   </data>
   <data name="GoToReferenceInCodeCommand" xml:space="preserve">
     <value>显示方法内的引用</value>
@@ -157,13 +157,13 @@
     <value>隐藏</value>
   </data>
   <data name="ImplementedByTreeNode" xml:space="preserve">
-    <value>被实现</value>
+    <value>实现于</value>
   </data>
   <data name="InstantiatedByTreeNode" xml:space="preserve">
-    <value>被实例化</value>
+    <value>实例化于</value>
   </data>
   <data name="OverriddenByTreeNode" xml:space="preserve">
-    <value>被重写</value>
+    <value>重写于</value>
   </data>
   <data name="OverridesTreeNode" xml:space="preserve">
     <value>重载</value>
@@ -178,7 +178,7 @@
     <value>读取于</value>
   </data>
   <data name="RemoveCommand" xml:space="preserve">
-    <value>去除(_R)</value>
+    <value>移除(_R)</value>
   </data>
   <data name="Searching" xml:space="preserve">
     <value>搜索中…</value>
@@ -205,7 +205,7 @@
     <value>语法高亮</value>
   </data>
   <data name="UsedByTreeNode" xml:space="preserve">
-    <value>被使用</value>
+    <value>被使用于</value>
   </data>
   <data name="UsesTreeNode" xml:space="preserve">
     <value>使用</value>

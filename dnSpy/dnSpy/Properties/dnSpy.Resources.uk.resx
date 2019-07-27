@@ -172,7 +172,7 @@
     <value>Закрити всі вкладки групи, крім цьої</value>
   </data>
   <data name="CloseAllTabsButThisCommand" xml:space="preserve">
-    <value>Закрити _ Усі окрім цієї</value>
+    <value>Закрити _ Усі Окрім Цієї</value>
   </data>
   <data name="CloseAllTabsCommand" xml:space="preserve">
     <value>За_крити усі закладки</value>
@@ -832,7 +832,7 @@
     <value>Завантажені файли:</value>
   </data>
   <data name="SearchWindow_SearchFrameworkAssemblies" xml:space="preserve">
-    <value>Search in framework assemblies</value>
+    <value>Шукати серед збірок фреймворку</value>
   </data>
   <data name="SearchWindow_Where_AllFiles" xml:space="preserve">
     <value>Всі Файли</value>
@@ -2062,6 +2062,6 @@
     <value>Необроблене:</value>
   </data>
   <data name="RecentFilesCommand" xml:space="preserve">
-    <value>Recent _Files</value>
+    <value>Недавні Файли</value>
   </data>
 </root>

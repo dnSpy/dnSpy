@@ -190,7 +190,7 @@
     <value>每行显示一个自定义特性</value>
   </data>
   <data name="DecompilerSettings_RemoveEmptyDefaultCtors" xml:space="preserve">
-    <value>去除空的默认构造函数</value>
+    <value>移除空的默认构造函数</value>
   </data>
   <data name="DecompilerSettings_RemoveNewDelegateClass" xml:space="preserve">
     <value>将 “new delegate-class(xxx)” 替换为 “xxx”</value>

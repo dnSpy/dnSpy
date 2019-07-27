@@ -160,7 +160,7 @@
     <value>取消(_C)</value>
   </data>
   <data name="Button_OK" xml:space="preserve">
-    <value>_OK</value>
+    <value>确定 (_O)</value>
   </data>
   <data name="Button_Refresh" xml:space="preserve">
     <value>刷新(_R)</value>
@@ -340,7 +340,7 @@
     <value>异常设置(_X)</value>
   </data>
   <data name="Exceptions_Remove_ToolTip" xml:space="preserve">
-    <value>从列表中去除异常</value>
+    <value>从列表中移除异常</value>
   </data>
   <data name="Exceptions_RestoreSettings_ToolTip" xml:space="preserve">
     <value>恢复列表到默认设置</value>
@@ -436,7 +436,7 @@
     <value>从内存打开模块</value>
   </data>
   <data name="RemoveExceptionCommand" xml:space="preserve">
-    <value>去除(_R)</value>
+    <value>移除(_R)</value>
   </data>
   <data name="RenameThreadCommand" xml:space="preserve">
     <value>重命名</value>
@@ -556,7 +556,7 @@
     <value>Shift+F5</value>
   </data>
   <data name="ShowInMemoryWindowCommand" xml:space="preserve">
-    <value>在内存窗口中显示(_S)</value>
+    <value>在内存窗口中显示</value>
   </data>
   <data name="ShowInstructionPointerCommand" xml:space="preserve">
     <value>显示IP</value>
@@ -772,7 +772,7 @@
     <value>线程退出消息(_T)</value>
   </data>
   <data name="ShowMDAMessages" xml:space="preserve">
-    <value>MDA消息(_M)</value>
+    <value>MDA消息</value>
   </data>
   <data name="DebugLogAdditionalInformation" xml:space="preserve">
     <value>其他信息: {0}</value>
@@ -964,7 +964,7 @@
     <value>添加断点</value>
   </data>
   <data name="Breakpoints_RemoveBreakpoint_ToolTip" xml:space="preserve">
-    <value>去除断点</value>
+    <value>移除断点</value>
   </data>
   <data name="EditAppDomainNameCommand" xml:space="preserve">
     <value>编辑程序域名称</value>
@@ -979,10 +979,10 @@
     <value>编辑进程名称</value>
   </data>
   <data name="RemoveAllBreakpointsCommand" xml:space="preserve">
-    <value>去除所有断点</value>
+    <value>移除所有断点</value>
   </data>
   <data name="RemoveBreakpointCommand" xml:space="preserve">
-    <value>去除断点</value>
+    <value>移除断点</value>
   </data>
   <data name="DisableBreakpointCommand3" xml:space="preserve">
     <value>禁用断点</value>
@@ -1063,7 +1063,7 @@
     <value>搜索断点</value>
   </data>
   <data name="Breakpoints_RemoveMatchingBreakpoints_ToolTip" xml:space="preserve">
-    <value>去除与当前的搜索条件匹配的所有断点</value>
+    <value>移除与当前的搜索条件匹配的所有断点</value>
   </data>
   <data name="Breakpoints_ResetSearchSettings_ToolTip" xml:space="preserve">
     <value>重置所有搜索条件，以便显示所有断点</value>
@@ -1111,7 +1111,7 @@
     <value>转到源代码</value>
   </data>
   <data name="GoToSourceCodeCommand" xml:space="preserve">
-    <value>转到源代码(_G)</value>
+    <value>转到源代码</value>
   </data>
   <data name="Breakpoint_Condition_NoCondition" xml:space="preserve">
     <value>(没有条件)</value>
@@ -1342,13 +1342,13 @@
     <value>设置对象ID(_M)</value>
   </data>
   <data name="LanguageCommand" xml:space="preserve">
-    <value>语言(_L)</value>
+    <value>语言</value>
   </data>
   <data name="DbgSettings_DebugEngine" xml:space="preserve">
     <value>调试引擎</value>
   </data>
   <data name="DbgSettings_Language" xml:space="preserve">
-    <value>语言(_L)</value>
+    <value>语言</value>
   </data>
   <data name="ShortCutKeyCtrlV" xml:space="preserve">
     <value>Ctrl+V</value>
@@ -1381,7 +1381,7 @@
     <value>&lt;未知&gt;</value>
   </data>
   <data name="Refresh" xml:space="preserve">
-    <value>刷新(_R)</value>
+    <value>刷新</value>
   </data>
   <data name="DbgSettings_GroupParametersAndLocalsTogether" xml:space="preserve">
     <value>组合参数和局部变量</value>
@@ -1414,7 +1414,7 @@
     <value>函数求值需要所有线程都在运行。</value>
   </data>
   <data name="DigitSeparatorsCommand" xml:space="preserve">
-    <value>数字分隔符(_D)</value>
+    <value>数字分隔符</value>
   </data>
   <data name="Column_ProcessCommandLine" xml:space="preserve">
     <value>命令行</value>
@@ -1480,7 +1480,7 @@
     <value>使映像更易于调试</value>
   </data>
   <data name="ShowOnlyPublicMembersCommand" xml:space="preserve">
-    <value>公共成员(_P)</value>
+    <value>公共成员</value>
   </data>
   <data name="DbgSettings_ShowRawLocals" xml:space="preserve">
     <value>显示原始区域变量</value>

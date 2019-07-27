@@ -118,13 +118,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddClassBreakpointCommand" xml:space="preserve">
-    <value>添加类断点(_A)</value>
+    <value>添加类断点</value>
   </data>
   <data name="AddClassTracepointCommand" xml:space="preserve">
-    <value>添加类跟踪点(_A)</value>
+    <value>添加类跟踪点</value>
   </data>
   <data name="AddMethodBreakpointCommand" xml:space="preserve">
-    <value>添加方法断点(_A)</value>
+    <value>添加方法断点</value>
   </data>
   <data name="BreakWhenExceptionThrownCommand" xml:space="preserve">
     <value>引发异常时中断</value>

@@ -211,7 +211,7 @@
     <value>Tipos Derivados</value>
   </data>
   <data name="DotNetExes" xml:space="preserve">
-    <value>Ejecutables .NET</value>
+    <value>_Archivos recientes</value>
   </data>
   <data name="EmptyTabTitle" xml:space="preserve">
     <value>&lt;vacio&gt;</value>
@@ -2064,6 +2064,6 @@
     <value>En bruto:</value>
   </data>
   <data name="RecentFilesCommand" xml:space="preserve">
-    <value>Recent _Files</value>
+    <value>_Archivos recientes</value>
   </data>
 </root>

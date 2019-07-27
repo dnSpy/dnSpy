@@ -181,10 +181,10 @@
     <value>确定(_O)</value>
   </data>
   <data name="Button_Remove" xml:space="preserve">
-    <value>去除(_R)</value>
+    <value>移除(_R)</value>
   </data>
   <data name="Button_RestoreSettings" xml:space="preserve">
-    <value>重置(_R)</value>
+    <value>重置</value>
   </data>
   <data name="CA_NA_Name" xml:space="preserve">
     <value>名称(_N)</value>
@@ -226,7 +226,7 @@
     <value>无法解析此类型。请确保相应的程序集已加载。</value>
   </data>
   <data name="CreateAssemblyCommand" xml:space="preserve">
-    <value>创建程序集(_C)...</value>
+    <value>创建程序集...</value>
   </data>
   <data name="CreateAssemblyCommand2" xml:space="preserve">
     <value>创建程序集</value>
@@ -238,13 +238,13 @@
     <value>创建自定义特性</value>
   </data>
   <data name="CreateEventCommand" xml:space="preserve">
-    <value>创建事件(_C)...</value>
+    <value>创建事件...</value>
   </data>
   <data name="CreateEventCommand2" xml:space="preserve">
     <value>创建事件</value>
   </data>
   <data name="CreateFieldCommand" xml:space="preserve">
-    <value>创建字段(_C)...</value>
+    <value>创建字段...</value>
   </data>
   <data name="CreateFieldCommand2" xml:space="preserve">
     <value>创建字段</value>
@@ -338,10 +338,10 @@
     <value>禁用内存映射 I/O</value>
   </data>
   <data name="EditAssemblyCommand" xml:space="preserve">
-    <value>编辑程序集(_E)...</value>
+    <value>编辑程序集...</value>
   </data>
   <data name="EditAssemblyCommand2" xml:space="preserve">
-    <value>编辑程序集(_E)</value>
+    <value>编辑程序集</value>
   </data>
   <data name="EditCustomAttribute" xml:space="preserve">
     <value>编辑自定义特性</value>
@@ -407,7 +407,7 @@
     <value>名称(_N)</value>
   </data>
   <data name="Event_RemoveMethod" xml:space="preserve">
-    <value>去除(_R)...</value>
+    <value>移除(_R)...</value>
   </data>
   <data name="FieldType" xml:space="preserve">
     <value>字段类型: {0}</value>
@@ -638,7 +638,7 @@
     <value>方法参数类型</value>
   </data>
   <data name="MethodSig_NumGenerics" xml:space="preserve">
-    <value># 通用数字(_s)</value>
+    <value># 通用数字(_S)</value>
   </data>
   <data name="MethodSig_ReturnType" xml:space="preserve">
     <value>返回类型(_U)...</value>
@@ -737,25 +737,25 @@
     <value>&lt;原始Blob&gt;</value>
   </data>
   <data name="RemoveAssembliesCommand" xml:space="preserve">
-    <value>去除 {0} 程序集</value>
+    <value>移除 {0} 程序集</value>
   </data>
   <data name="RemoveAssemblyCommand" xml:space="preserve">
-    <value>去除程序集</value>
+    <value>移除程序集</value>
   </data>
   <data name="RemoveCharacter" xml:space="preserve">
     <value>R</value>
   </data>
   <data name="RemoveCharacter_ToolTip" xml:space="preserve">
-    <value>去除最后的对象</value>
+    <value>移除最后的对象</value>
   </data>
   <data name="RemoveCommand" xml:space="preserve">
-    <value>去除 {0}</value>
+    <value>移除 {0}</value>
   </data>
   <data name="RemoveLastTypeCharacter" xml:space="preserve">
     <value>R</value>
   </data>
   <data name="RemoveLastTypeCharacter_ToolTip" xml:space="preserve">
-    <value>去除最后的类型</value>
+    <value>移除最后类型</value>
   </data>
   <data name="ReturnTypeRequired" xml:space="preserve">
     <value>返回类型是必须的</value>
@@ -890,7 +890,7 @@
     <value>转换类型为指针</value>
   </data>
   <data name="TypeSigCreator_Remove_ToolTip" xml:space="preserve">
-    <value>去除最后添加的类型</value>
+    <value>移除最后添加的类型</value>
   </data>
   <data name="TypeSigCreator_SZArray" xml:space="preserve">
     <value>SZ数组(_Z)</value>
@@ -932,16 +932,16 @@
     <value>_XML</value>
   </data>
   <data name="AddExistingNetModuleToAssemblyCommand" xml:space="preserve">
-    <value>添加现有模块到程序集(_A)...</value>
+    <value>添加现有模块到程序集...</value>
   </data>
   <data name="AddExistingNetModuleToAssemblyCommand2" xml:space="preserve">
-    <value>添加现有模块到程序集(_A)</value>
+    <value>添加现有模块到程序集</value>
   </data>
   <data name="AddNewNetModuleToAssemblyCommand" xml:space="preserve">
-    <value>添加新的模块到程序集(_A)...</value>
+    <value>添加新的模块到程序集...</value>
   </data>
   <data name="AddNewNetModuleToAssemblyCommand2" xml:space="preserve">
-    <value>添加新的模块到程序集(_A)</value>
+    <value>添加新的模块到程序集</value>
   </data>
   <data name="AllFiles" xml:space="preserve">
     <value>所有文件</value>
@@ -1028,37 +1028,37 @@
     <value>创建异常捕获类型</value>
   </data>
   <data name="CreateAssemblyLinkedResourceCommand" xml:space="preserve">
-    <value>创建程序集链接资源(_C)......</value>
+    <value>创建程序集链接资源......</value>
   </data>
   <data name="CreateAssemblyLinkedResourceCommand2" xml:space="preserve">
     <value>创建程序集链接资源</value>
   </data>
   <data name="CreateBitMapIconResourceCommand" xml:space="preserve">
-    <value>创建 System.Data.Bitmap/Icon 资源(_C)...</value>
+    <value>创建 System.Data.Bitmap/Icon 资源...</value>
   </data>
   <data name="CreateBitMapIconResourceCommand2" xml:space="preserve">
     <value>创建 System.Data.Bitmap/Icon 资源</value>
   </data>
   <data name="CreateByteArrayResourceCommand" xml:space="preserve">
-    <value>创建字节数组资源(_C)...</value>
+    <value>创建字节数组资源...</value>
   </data>
   <data name="CreateByteArrayResourceCommand2" xml:space="preserve">
     <value>创建字节数组资源</value>
   </data>
   <data name="CreateFileLinkedResourceCommand" xml:space="preserve">
-    <value>创建链接文件资源(_C)...</value>
+    <value>创建链接文件资源...</value>
   </data>
   <data name="CreateFileLinkedResourceCommand2" xml:space="preserve">
     <value>创建文件链接资源</value>
   </data>
   <data name="CreateFileResourceCommand" xml:space="preserve">
-    <value>创建文件资源(_C)...</value>
+    <value>创建文件资源...</value>
   </data>
   <data name="CreateFileResourceCommand2" xml:space="preserve">
     <value>创建文件资源</value>
   </data>
   <data name="CreateImageListStreamerResourceCommand" xml:space="preserve">
-    <value>创建 System.Windows.Forms.ImageListStreamer 资源(_C)...</value>
+    <value>创建 System.Windows.Forms.ImageListStreamer 资源...</value>
   </data>
   <data name="CreateImageListStreamerResourceCommand2" xml:space="preserve">
     <value>创建 System.Windows.Forms.ImageListStreamer 资源</value>
@@ -1070,7 +1070,7 @@
     <value>创建一个局部类型</value>
   </data>
   <data name="CreateMethodCommand" xml:space="preserve">
-    <value>创建方法(_C)...</value>
+    <value>创建方法...</value>
   </data>
   <data name="CreateMethodCommand2" xml:space="preserve">
     <value>创建方法</value>
@@ -1079,46 +1079,46 @@
     <value>创建方法签名</value>
   </data>
   <data name="CreateMultiFileResourceCommand" xml:space="preserve">
-    <value>创建多文件资源(_C)...</value>
+    <value>创建多文件资源...</value>
   </data>
   <data name="CreateMultiFileResourceCommand2" xml:space="preserve">
     <value>创建多文件资源</value>
   </data>
   <data name="CreateNestedTypeCommand" xml:space="preserve">
-    <value>创建嵌套的类型(_C)...</value>
+    <value>创建嵌套的类型...</value>
   </data>
   <data name="CreateNestedTypeCommand2" xml:space="preserve">
     <value>创建嵌套的类型</value>
   </data>
   <data name="CreateNetModuleCommand" xml:space="preserve">
-    <value>创建模块(_C)...</value>
+    <value>创建模块...</value>
   </data>
   <data name="CreateNetModuleCommand2" xml:space="preserve">
-    <value>创建模块(_C)</value>
+    <value>创建模块</value>
   </data>
   <data name="CreatePropertyCommand" xml:space="preserve">
-    <value>创建属性(_C)...</value>
+    <value>创建属性...</value>
   </data>
   <data name="CreatePropertyCommand2" xml:space="preserve">
     <value>创建属性</value>
   </data>
   <data name="CreateResourceCommand" xml:space="preserve">
-    <value>创建资源(_C)...</value>
+    <value>创建资源...</value>
   </data>
   <data name="CreateResourceCommand2" xml:space="preserve">
     <value>创建资源</value>
   </data>
   <data name="CreateStreamResourceCommand" xml:space="preserve">
-    <value>创建 System.IO.Stream 资源(_C)...</value>
+    <value>创建 System.IO.Stream 资源...</value>
   </data>
   <data name="CreateStreamResourceCommand2" xml:space="preserve">
     <value>创建 System.IO.Stream 资源</value>
   </data>
   <data name="CreateTypeCommand" xml:space="preserve">
-    <value>创建类型(_C)...</value>
+    <value>创建类型...</value>
   </data>
   <data name="CreateTypeCommand2" xml:space="preserve">
-    <value>创建类型(_C)</value>
+    <value>创建类型</value>
   </data>
   <data name="DeleteMethodCommand" xml:space="preserve">
     <value>删除方法</value>
@@ -1160,13 +1160,13 @@
     <value>编辑接口实现</value>
   </data>
   <data name="EditMethodBodyCommand" xml:space="preserve">
-    <value>编辑方法体(_B)...</value>
+    <value>编辑方法体...</value>
   </data>
   <data name="EditMethodBodyCommand2" xml:space="preserve">
     <value>编辑方法体</value>
   </data>
   <data name="EditMethodCommand" xml:space="preserve">
-    <value>编辑方法(_E)...</value>
+    <value>编辑方法...</value>
   </data>
   <data name="EditMethodCommand2" xml:space="preserve">
     <value>编辑方法</value>
@@ -1175,10 +1175,10 @@
     <value>编辑方法成员引用</value>
   </data>
   <data name="EditModuleCommand" xml:space="preserve">
-    <value>编辑模块(_E)...</value>
+    <value>编辑模块...</value>
   </data>
   <data name="EditModuleCommand2" xml:space="preserve">
-    <value>编辑模块(_E)</value>
+    <value>编辑模块</value>
   </data>
   <data name="EditNamespace" xml:space="preserve">
     <value>编辑命名空间</value>
@@ -1187,7 +1187,7 @@
     <value>字段(_F)...</value>
   </data>
   <data name="EditOperand_Field_MemberRef" xml:space="preserve">
-    <value>字段引用成员(_i)</value>
+    <value>字段引用成员(_I)</value>
   </data>
   <data name="EditOperand_Method" xml:space="preserve">
     <value>方法(_M)...</value>
@@ -1211,7 +1211,7 @@
     <value>编辑属性</value>
   </data>
   <data name="EditResourceCommand" xml:space="preserve">
-    <value>编辑资源(_E)...</value>
+    <value>编辑资源...</value>
   </data>
   <data name="EditResourceCommand2" xml:space="preserve">
     <value>编辑资源</value>
@@ -1244,10 +1244,10 @@
     <value>添加新的异常处理(_A)</value>
   </data>
   <data name="EH_Command4" xml:space="preserve">
-    <value>去除异常处理程序(_R)</value>
+    <value>移除异常处理程序(_R)</value>
   </data>
   <data name="EH_Command5" xml:space="preserve">
-    <value>去除异常处理程序(_R)</value>
+    <value>移除异常处理程序(_R)</value>
   </data>
   <data name="EH_Command6" xml:space="preserve">
     <value>删除所有异常处理程序(_V)</value>
@@ -1298,16 +1298,16 @@
     <value>文件名过长。</value>
   </data>
   <data name="Error_InstrHasBeenRemoved" xml:space="preserve">
-    <value>指令已被去除。</value>
+    <value>指令已被移除。</value>
   </data>
   <data name="Error_InstrTargetHasBeenRemoved" xml:space="preserve">
-    <value>目标已经被去除</value>
+    <value>目标已经被移除</value>
   </data>
   <data name="Error_InvalidResourceData" xml:space="preserve">
     <value>不能使用此数据{0}</value>
   </data>
   <data name="Error_LocalHasBeenRemoved" xml:space="preserve">
-    <value>局部变量已被去除</value>
+    <value>局部变量已被移除</value>
   </data>
   <data name="Error_NewResourceDataMustBeImage" xml:space="preserve">
     <value>新数据必须是图像。错误：{0}</value>
@@ -1358,7 +1358,7 @@
     <value>读取文件时出错 ︰ {0}</value>
   </data>
   <data name="Error_SwitchInstrTargetHasBeenRemoved" xml:space="preserve">
-    <value>分支指令目标已经被去除</value>
+    <value>分支指令目标已经被移除</value>
   </data>
   <data name="Error_VersionStringTooLong" xml:space="preserve">
     <value>版本字符串过长</value>
@@ -1370,10 +1370,10 @@
     <value>泛型参数</value>
   </data>
   <data name="GoToMetaDataTableRowCommand" xml:space="preserve">
-    <value>转到 MD 表行 ({0:X8})(_G)</value>
+    <value>转到 MD 表行 ({0:X8})</value>
   </data>
   <data name="GoToMetaDataTableRowCommand2" xml:space="preserve">
-    <value>转到 MD 表行(_G)......</value>
+    <value>转到 MD 表行......</value>
   </data>
   <data name="GoToMetaDataTableRowTitle" xml:space="preserve">
     <value>转到 MD 表行</value>
@@ -1397,7 +1397,7 @@
     <value>跳转到行ID</value>
   </data>
   <data name="HexCopyMethodBodyCommand" xml:space="preserve">
-    <value>十六进制复制方法体(_C)</value>
+    <value>十六进制复制方法体</value>
   </data>
   <data name="HexNode_PE" xml:space="preserve">
     <value>PE</value>
@@ -1418,10 +1418,10 @@
     <value>表流</value>
   </data>
   <data name="HexPasteMethodBodyCommand" xml:space="preserve">
-    <value>十六进制粘贴方法体(_P)</value>
+    <value>十六进制粘贴方法体</value>
   </data>
   <data name="HexWriteEmptyMethodBodyCommand" xml:space="preserve">
-    <value>十六进制写入空方法体(_W)</value>
+    <value>十六进制写入空方法体</value>
   </data>
   <data name="HexWriteReturnFalseBodyCommand" xml:space="preserve">
     <value>十六进制写入方法体“return false”</value>
@@ -1454,13 +1454,13 @@
     <value>添加新指令(_A)</value>
   </data>
   <data name="Instr_Command4" xml:space="preserve">
-    <value>去除指令(_R)</value>
+    <value>移除指令(_R)</value>
   </data>
   <data name="Instr_Command5" xml:space="preserve">
-    <value>去除指令(_R)</value>
+    <value>移除指令(_R)</value>
   </data>
   <data name="Instr_Command6" xml:space="preserve">
-    <value>去除所有指令(_V)</value>
+    <value>移除所有指令(_V)</value>
   </data>
   <data name="InterfacesTab" xml:space="preserve">
     <value>接口</value>
@@ -1490,10 +1490,10 @@
     <value>添加局部变量(_A)</value>
   </data>
   <data name="Local_Command4" xml:space="preserve">
-    <value>去除局部变量(_R)</value>
+    <value>移除局部变量(_R)</value>
   </data>
   <data name="Local_Command5" xml:space="preserve">
-    <value>去除局部变量(_R)</value>
+    <value>移除局部变量(_R)</value>
   </data>
   <data name="Local_Command6" xml:space="preserve">
     <value>删除所有局部变量(_V)</value>
@@ -1574,10 +1574,10 @@
     <value>托管(_G)</value>
   </data>
   <data name="Module_EntryPoint_Native" xml:space="preserve">
-    <value>原生(_N)</value>
+    <value>原生</value>
   </data>
   <data name="Module_EntryPoint_None" xml:space="preserve">
-    <value>无(_N)</value>
+    <value>无</value>
   </data>
   <data name="Module_GUIDs" xml:space="preserve">
     <value>GUIDs</value>
@@ -1649,31 +1649,31 @@
     <value>签名</value>
   </data>
   <data name="RawSaveResourceCommand" xml:space="preserve">
-    <value>直接保存 {0}(_R)</value>
+    <value>直接保存 {0}</value>
   </data>
   <data name="RawSaveResourcesCommand" xml:space="preserve">
-    <value>直接保存 {0} 资源(_R)</value>
+    <value>直接保存 {0} 资源</value>
   </data>
   <data name="RawSaveResourcesSubDirectoriesCommand" xml:space="preserve">
-    <value>以子目录直接保存 {0} 资源(_R)</value>
+    <value>以子目录直接保存 {0} 资源</value>
   </data>
   <data name="RedoCommand" xml:space="preserve">
-    <value>重做(_R)</value>
+    <value>重做</value>
   </data>
   <data name="RedoToolBarToolTip" xml:space="preserve">
-    <value>重做(_R)</value>
+    <value>重做</value>
   </data>
   <data name="RemoveAndAddPopsCommand" xml:space="preserve">
-    <value>去除并添加POP操作(_E)</value>
+    <value>移除并添加POP操作(_E)</value>
   </data>
   <data name="RemoveNetModuleCommand" xml:space="preserve">
-    <value>从程序集去除Net模块(_R)</value>
+    <value>从程序集移除Net模块</value>
   </data>
   <data name="RenameNamespaceCommand" xml:space="preserve">
     <value>重命名命名空间</value>
   </data>
   <data name="Resource_ColorDepth" xml:space="preserve">
-    <value>位深(_D)</value>
+    <value>色彩位深(_D)</value>
   </data>
   <data name="Resource_ColorDepth_16Bit" xml:space="preserve">
     <value>16 位</value>
@@ -1832,10 +1832,10 @@
     <value>保存PDB文件(_P)</value>
   </data>
   <data name="SaveResourceCommand" xml:space="preserve">
-    <value>保存{0}(_S)</value>
+    <value>保存{0}</value>
   </data>
   <data name="SaveResourcesCommand" xml:space="preserve">
-    <value>保存 {0} 资源(_S)</value>
+    <value>保存 {0} 资源</value>
   </data>
   <data name="SaveResourcesSubDirectoriesCommand" xml:space="preserve">
     <value>以子目录保存 {0} 资源(_S)</value>
@@ -1901,16 +1901,16 @@
     <value>在十六进制编辑器中显示(_X)</value>
   </data>
   <data name="ShowInHexEditorCommand2" xml:space="preserve">
-    <value>在十六进制编辑器中显示(_S)</value>
+    <value>在十六进制编辑器中显示</value>
   </data>
   <data name="ShowInitialValueInHexEditorCommand" xml:space="preserve">
-    <value>在十六进制编辑器中显示初始值(_S)</value>
+    <value>在十六进制编辑器中显示初始值</value>
   </data>
   <data name="ShowInstrsInHexEditorCommand" xml:space="preserve">
     <value>在十六进制编辑器中显示指令(_X)</value>
   </data>
   <data name="ShowMethodBodyInHexEditorCommand" xml:space="preserve">
-    <value>在十六进制编辑器中显示方法体(_S)</value>
+    <value>在十六进制编辑器中显示方法体</value>
   </data>
   <data name="SimplifyAllInstructionsCommand" xml:space="preserve">
     <value>简化所有指令(_S)</value>
@@ -1943,10 +1943,10 @@
     <value>封装大小(_Z)</value>
   </data>
   <data name="UndoCommand" xml:space="preserve">
-    <value>撤消(_U)</value>
+    <value>撤消</value>
   </data>
   <data name="UndoToolBarToolTip" xml:space="preserve">
-    <value>撤消(_U)</value>
+    <value>撤消</value>
   </data>
   <data name="UnsavedFile" xml:space="preserve">
     <value>还有一个未保存的文件。</value>
@@ -2129,7 +2129,7 @@
     <value>Ctrl+Shift+E</value>
   </data>
   <data name="EditMethodBodyCode" xml:space="preserve">
-    <value>编辑方法 ({0})(_M)...</value>
+    <value>编辑方法 ({0})...</value>
   </data>
   <data name="EditCodeTitle" xml:space="preserve">
     <value>修改代码</value>
@@ -2177,10 +2177,10 @@
     <value>编辑方法代码</value>
   </data>
   <data name="ERR_IM_AddingRemovingStaticFromEditedMethodNotSupported" xml:space="preserve">
-    <value>不支持在被编辑的方法上添加或去除”静态(static)“或”已共享(Shared)“: {0}</value>
+    <value>不支持在被编辑的方法上添加或移除”静态(static)“或”已共享(Shared)“: {0}</value>
   </data>
   <data name="ERR_IM_CouldNotFindEditedMethod" xml:space="preserve">
-    <value>找不到被编辑的方法。请确保您没有添加或去除”静态(static)“或”已共享(Shared)“，或更改参数类型、返回类型或方法名称: {0}</value>
+    <value>找不到被编辑的方法。请确保您没有添加或移除”静态(static)“或”已共享(Shared)“，或更改参数类型、返回类型或方法名称: {0}</value>
   </data>
   <data name="ERR_IM_CouldNotFindField" xml:space="preserve">
     <value>找不到字段： {0}</value>
@@ -2207,7 +2207,7 @@
     <value>查找</value>
   </data>
   <data name="IncrementalSearchCommand" xml:space="preserve">
-    <value>增量搜索(_I)</value>
+    <value>渐进式搜索</value>
   </data>
   <data name="ShortCutKeyCtrlI" xml:space="preserve">
     <value>Ctrl+I</value>
@@ -2225,31 +2225,31 @@
     <value>添加类</value>
   </data>
   <data name="MergeWithAssemblyCommand" xml:space="preserve">
-    <value>与程序集合并(_M)...</value>
+    <value>与程序集合并...</value>
   </data>
   <data name="MergeWithAssemblyCommand2" xml:space="preserve">
     <value>与程序集合并</value>
   </data>
   <data name="EditAssemblyCode2" xml:space="preserve">
-    <value>编辑程序集特性 ({0})(_E)...</value>
+    <value>编辑程序集特性 ({0})...</value>
   </data>
   <data name="EditCodeAddClass2" xml:space="preserve">
-    <value>添加类 ({0})(_A)...</value>
+    <value>添加类 ({0})...</value>
   </data>
   <data name="EditCodeEditClass" xml:space="preserve">
     <value>编辑类</value>
   </data>
   <data name="EditCodeEditClass2" xml:space="preserve">
-    <value>编辑类 ({0})(_C)...</value>
+    <value>编辑类 ({0})...</value>
   </data>
   <data name="ERR_IM_CouldNotFindEditedType" xml:space="preserve">
     <value>找不到编辑的类型： {0}</value>
   </data>
   <data name="CloseOldInMemoryModules" xml:space="preserve">
-    <value>关闭过时的内存内模块(_C)</value>
+    <value>关闭过时的内存缓存模块</value>
   </data>
   <data name="CloseAllMissingFilesCommand" xml:space="preserve">
-    <value>关闭所有已丢失的文件(_C)</value>
+    <value>关闭所有已丢失的文件</value>
   </data>
   <data name="CompileDiagnostics_Header_Severity" xml:space="preserve">
     <value>严重程度</value>
@@ -2276,7 +2276,7 @@
     <value>添加类成员</value>
   </data>
   <data name="EditCodeAddClassMembers2" xml:space="preserve">
-    <value>添加类成员 ({0})(_A)...</value>
+    <value>添加类成员 ({0})...</value>
   </data>
   <data name="SaveModule_PreserveOtherMetadataStreams" xml:space="preserve">
     <value>复制未知的元数据流(_W)</value>

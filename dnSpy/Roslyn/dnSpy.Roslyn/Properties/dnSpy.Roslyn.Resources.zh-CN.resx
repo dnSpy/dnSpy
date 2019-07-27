@@ -175,7 +175,7 @@
     <value>实例成员</value>
   </data>
   <data name="DebuggerVarsWindow_RawView" xml:space="preserve">
-    <value>Raw 视图</value>
+    <value>原始视图</value>
   </data>
   <data name="DebuggerVarsWindow_ResultsView" xml:space="preserve">
     <value>结果视图</value>
