@@ -161,8 +161,7 @@ namespace AppHostInfoGenerator {
 					Console.WriteLine();
 					Console.WriteLine($"Runtime version: {version}");
 
-					byte[] fileData;
-					fileData = DownloadNuGetPackage("Microsoft.NETCore.DotNetAppHost", version, NuGetSource.NuGet);
+					var fileData = DownloadNuGetPackage("Microsoft.NETCore.DotNetAppHost", version, NuGetSource.NuGet);
 					using (var zip = new ZipArchive(new MemoryStream(fileData), ZipArchiveMode.Read, leaveOpen: false)) {
 						var runtimeJsonString = GetFileAsString(zip, "runtime.json");
 						var runtimeJson = (JObject)JsonConvert.DeserializeObject(runtimeJsonString);
