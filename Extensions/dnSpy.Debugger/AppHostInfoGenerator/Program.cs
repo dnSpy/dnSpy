@@ -170,8 +170,6 @@ namespace AppHostInfoGenerator {
 							if (runtime.Count != 1)
 								throw new InvalidOperationException("Expected 1 child");
 							var dotNetAppHostObject = (JObject)runtime.First;
-							if (dotNetAppHostObject.Count != 1)
-								throw new InvalidOperationException("Expected 1 child");
 							var dotNetAppHostObject2 = (JObject)dotNetAppHostObject["Microsoft.NETCore.DotNetAppHost"];
 							if (dotNetAppHostObject2.Count != 1)
 								throw new InvalidOperationException("Expected 1 child");
@@ -179,7 +177,7 @@ namespace AppHostInfoGenerator {
 							if (dotNetAppHostProperty.Count != 1)
 								throw new InvalidOperationException("Expected 1 child");
 							var runtimePackageName = dotNetAppHostProperty.Name;
-							var runtimePackageVersion = (string)((JValue)dotNetAppHostProperty.Value).Value;
+							var runtimePackageVersion = GetNuGetVersion((string)((JValue)dotNetAppHostProperty.Value).Value);
 							Console.WriteLine();
 							Console.WriteLine($"{runtimePackageName} {runtimePackageVersion}");
 							NuGetSource[] nugetSources;
@@ -345,6 +343,18 @@ namespace AppHostInfoGenerator {
 				Console.WriteLine(ex.ToString());
 				return 1;
 			}
+		}
+
+		static string GetNuGetVersion(string version) {
+			if (version.StartsWith("[")) {
+				var parts = version.Substring(1).Split(',');
+				if (parts.Length != 2)
+					throw new InvalidOperationException();
+				if (!parts[1].EndsWith(" )"))
+					throw new InvalidOperationException();
+				return parts[0];
+			}
+			return version;
 		}
 
 		sealed class AppHostInfoDupeEqualityComparer : IEqualityComparer<AppHostInfo> {
