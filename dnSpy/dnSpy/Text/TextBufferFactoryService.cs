@@ -33,7 +33,7 @@ namespace dnSpy.Text {
 		public IContentType InertContentType { get; }
 		public IContentType PlaintextContentType { get; }
 		public IContentType TextContentType { get; }
-		public event EventHandler<TextBufferCreatedEventArgs> TextBufferCreated;
+		public event EventHandler<TextBufferCreatedEventArgs>? TextBufferCreated;
 
 		readonly IContentTypeRegistryService contentTypeRegistryService;
 
@@ -43,9 +43,9 @@ namespace dnSpy.Text {
 			InertContentType = contentTypeRegistryService.GetContentType(ContentTypes.Inert);
 			PlaintextContentType = contentTypeRegistryService.GetContentType(ContentTypes.PlainText);
 			TextContentType = contentTypeRegistryService.GetContentType(ContentTypes.Text);
-			Debug.Assert(!(InertContentType is null));
-			Debug.Assert(!(PlaintextContentType is null));
-			Debug.Assert(!(TextContentType is null));
+			Debug2.Assert(!(InertContentType is null));
+			Debug2.Assert(!(PlaintextContentType is null));
+			Debug2.Assert(!(TextContentType is null));
 		}
 
 		public ITextBuffer CreateTextBuffer() => CreateTextBuffer(TextContentType);

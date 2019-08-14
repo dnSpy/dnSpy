@@ -68,7 +68,7 @@ namespace dnSpy.Hex.Editor {
 			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsProviderArgs args) {
 				if (handlers is null)
 					InitializeHandlers();
-				Debug.Assert(!(handlers is null));
+				Debug2.Assert(!(handlers is null));
 
 				var point = Mouse.PrimaryDevice.GetPosition(margin.VisualElement);
 

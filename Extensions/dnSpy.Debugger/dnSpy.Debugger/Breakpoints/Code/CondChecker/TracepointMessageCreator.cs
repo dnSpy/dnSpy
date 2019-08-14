@@ -178,7 +178,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 		}
 
 		void Write(ParsedTracepointMessage parsed, string tracepointMessage) {
-			Debug.Assert(!(boundBreakpoint is null));
+			Debug2.Assert(!(boundBreakpoint is null));
 			DbgStackFrame? frame;
 			foreach (var part in parsed.Parts) {
 				switch (part.Kind) {
@@ -194,7 +194,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 						var language = dbgLanguageService.GetCurrentLanguage(thread!.Runtime.RuntimeKindGuid);
 						var cancellationToken = CancellationToken.None;
 						var state = GetTracepointEvalState(boundBreakpoint, language, frame, tracepointMessage, cancellationToken);
-						Debug.Assert(!(part.String is null));
+						Debug2.Assert(!(part.String is null));
 						var eeState = state.GetExpressionEvaluatorState(part.String);
 						var evalInfo = new DbgEvaluationInfo(state.Context!, frame, cancellationToken);
 						var evalRes = language.ExpressionEvaluator.Evaluate(evalInfo, part.String, DbgEvaluationOptions.Expression, eeState);
@@ -435,7 +435,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			else {
 				var options = GetValueFormatterOptions(evalRes.FormatSpecifiers, isEdit: false);
 				const CultureInfo? cultureInfo = null;
-				Debug.Assert(!(evalRes.Value is null));
+				Debug2.Assert(!(evalRes.Value is null));
 				language.Formatter.FormatValue(evalInfo, stringBuilderTextColorWriter, evalRes.Value, options, cultureInfo);
 				evalRes.Value.Close();
 			}

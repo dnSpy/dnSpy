@@ -59,7 +59,7 @@ namespace dnSpy.Language.Intellisense {
 	}
 
 	sealed class SignatureHelpCurrentParameterTagger : ITagger<IClassificationTag> {
-		public event EventHandler<SnapshotSpanEventArgs> TagsChanged { add { } remove { } }
+		public event EventHandler<SnapshotSpanEventArgs>? TagsChanged { add { } remove { } }
 
 		readonly ITextBuffer buffer;
 		readonly ISignatureHelpSession session;
@@ -89,7 +89,7 @@ namespace dnSpy.Language.Intellisense {
 	}
 
 	sealed class SignatureHelpCurrentParameterTaggerEx : ITagger<IClassificationTag> {
-		public event EventHandler<SnapshotSpanEventArgs> TagsChanged { add { } remove { } }
+		public event EventHandler<SnapshotSpanEventArgs>? TagsChanged { add { } remove { } }
 
 		readonly ITextBuffer buffer;
 		readonly ClassificationTag signatureHelpDocumentationClassificationTag;
@@ -105,7 +105,7 @@ namespace dnSpy.Language.Intellisense {
 
 		public IEnumerable<ITagSpan<IClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans) {
 			var context = buffer.TryGetSignatureHelpClassifierContext();
-			Debug.Assert(!(context is null));
+			Debug2.Assert(!(context is null));
 			if (context is null || context.Session.IsDismissed)
 				yield break;
 			ClassificationTag tag;

@@ -442,7 +442,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		bool TypeScopeEquals(DmdType a, DmdType b) {
-			Debug.Assert(!(a is null) && !(b is null) && !a.HasElementType && !b.HasElementType);
+			Debug2.Assert(!(a is null) && !(b is null) && !a.HasElementType && !b.HasElementType);
 			if (DontCompareTypeScope)
 				return true;
 			if ((object?)a == b)

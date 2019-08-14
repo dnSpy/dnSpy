@@ -31,7 +31,7 @@ namespace dnSpy.Bookmarks.Navigator {
 		/// <summary>
 		/// Raised when <see cref="BookmarksViewOrder"/> is changed
 		/// </summary>
-		public abstract event EventHandler BookmarksViewOrderChanged;
+		public abstract event EventHandler? BookmarksViewOrderChanged;
 
 		/// <summary>
 		/// Gets the default bookmark that gets selected when the active bookmark gets removed

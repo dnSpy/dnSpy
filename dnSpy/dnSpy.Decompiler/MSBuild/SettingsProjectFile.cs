@@ -217,7 +217,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		string? GetConnectionStringDesignTimeValue(PropertyDef prop) {
 			if (toConnectionStringInfo is null)
 				InitializeConnectionStringDesignTimeValues();
-			Debug.Assert(!(toConnectionStringInfo is null));
+			Debug2.Assert(!(toConnectionStringInfo is null));
 			if (!toConnectionStringInfo.TryGetValue(prop.Name, out var info))
 				return null;
 
@@ -238,7 +238,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		}
 
 		void InitializeConnectionStringDesignTimeValues() {
-			Debug.Assert(toConnectionStringInfo is null);
+			Debug2.Assert(toConnectionStringInfo is null);
 			if (!(toConnectionStringInfo is null))
 				return;
 			toConnectionStringInfo = new Dictionary<string, ConnectionStringInfo>(StringComparer.Ordinal);

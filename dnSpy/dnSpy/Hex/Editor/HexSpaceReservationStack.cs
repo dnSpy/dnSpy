@@ -44,12 +44,12 @@ namespace dnSpy.Hex.Editor {
 		/// <summary>
 		/// Raised when it gets aggregate focus
 		/// </summary>
-		public abstract event EventHandler GotAggregateFocus;
+		public abstract event EventHandler? GotAggregateFocus;
 
 		/// <summary>
 		/// Raised when it loses aggregate focus
 		/// </summary>
-		public abstract event EventHandler LostAggregateFocus;
+		public abstract event EventHandler? LostAggregateFocus;
 
 		/// <summary>
 		/// Refreshes the space reservation stack which will force the agents to reposition themselves

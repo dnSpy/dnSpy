@@ -26,7 +26,7 @@ using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace dnSpy.Language.Intellisense {
 	sealed class CompletionCollectionVM : INotifyCollectionChanged, IList {
-		public event NotifyCollectionChangedEventHandler CollectionChanged;
+		public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
 		public object? this[int index] {
 			get => list[index];
@@ -56,11 +56,11 @@ namespace dnSpy.Language.Intellisense {
 			int i;
 			switch (e.Action) {
 			case NotifyCollectionChangedAction.Add:
-				Debug.Assert(!(e.NewItems is null));
+				Debug2.Assert(!(e.NewItems is null));
 				i = e.NewStartingIndex;
 				var newList = new List<CompletionVM>();
 				foreach (Completion? c in e.NewItems) {
-					Debug.Assert(!(c is null));
+					Debug2.Assert(!(c is null));
 					var vm = GetOrCreateVM(c);
 					newList.Add(vm);
 					list.Insert(i++, vm);
@@ -69,10 +69,10 @@ namespace dnSpy.Language.Intellisense {
 				break;
 
 			case NotifyCollectionChangedAction.Remove:
-				Debug.Assert(!(e.OldItems is null));
+				Debug2.Assert(!(e.OldItems is null));
 				var oldList = new List<CompletionVM>();
 				foreach (Completion? c in e.OldItems) {
-					Debug.Assert(!(c is null));
+					Debug2.Assert(!(c is null));
 					var vm = CompletionVM.TryGet(c);
 					if (!(vm is null))
 						oldList.Add(vm);

@@ -138,7 +138,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void CreateMarkerElement(SnapshotSpan fullSpan, Geometry geo) {
-			Debug.Assert(markerElement is null);
+			Debug2.Assert(markerElement is null);
 			RemoveAllAdornments();
 			markerElement = new MarkerElement(geo);
 			markerElement.BackgroundBrush = backgroundBrush;

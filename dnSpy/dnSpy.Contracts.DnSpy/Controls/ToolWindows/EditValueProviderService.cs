@@ -99,7 +99,7 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 	}
 
 	sealed class EditValueImpl : IEditValue {
-		public event EventHandler<EditCompletedEventArgs> EditCompleted;
+		public event EventHandler<EditCompletedEventArgs>? EditCompleted;
 		public object? UIObject => uiControl;
 		public bool IsKeyboardFocused => wpfTextView.HasAggregateFocus;
 

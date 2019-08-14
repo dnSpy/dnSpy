@@ -163,7 +163,7 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 		}
 
 		bool IsRetriggerCharacter(CaretPosition caretPos) {
-			Debug.Assert(!(session is null));
+			Debug2.Assert(!(session is null));
 			if (session is null)
 				return false;
 			if (caretPos.VirtualSpaces > 0)

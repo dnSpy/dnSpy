@@ -47,6 +47,6 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			ExceptionsListViewDoubleClick?.Invoke(this, EventArgs.Empty);
 		}
 
-		public event EventHandler ExceptionsListViewDoubleClick;
+		public event EventHandler? ExceptionsListViewDoubleClick;
 	}
 }

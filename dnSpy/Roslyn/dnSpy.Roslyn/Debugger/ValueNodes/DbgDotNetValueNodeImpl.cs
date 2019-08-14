@@ -82,7 +82,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			if ((options & DbgValueFormatterOptions.NoDebuggerDisplay) != 0)
 				return false;
 			var languageFormatter = formatter as LanguageFormatter;
-			Debug.Assert(!(languageFormatter is null));
+			Debug2.Assert(!(languageFormatter is null));
 			if (languageFormatter is null)
 				return false;
 			var displayAttrFormatter = new DebuggerDisplayAttributeFormatter(evalInfo, languageFormatter, output, options, cultureInfo);
@@ -114,7 +114,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			if ((options & DbgValueFormatterOptions.NoDebuggerDisplay) != 0)
 				return false;
 			var languageFormatter = formatter as LanguageFormatter;
-			Debug.Assert(!(languageFormatter is null));
+			Debug2.Assert(!(languageFormatter is null));
 			if (languageFormatter is null)
 				return false;
 			var displayAttrFormatter = new DebuggerDisplayAttributeFormatter(evalInfo, languageFormatter, output, options, cultureInfo);

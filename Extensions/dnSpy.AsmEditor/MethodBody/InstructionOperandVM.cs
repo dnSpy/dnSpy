@@ -398,7 +398,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			if (o is MethodSig msig)
 				return importer.Import(msig);
 
-			Debug.Assert(o is null);
+			Debug2.Assert(o is null);
 			return null;
 		}
 

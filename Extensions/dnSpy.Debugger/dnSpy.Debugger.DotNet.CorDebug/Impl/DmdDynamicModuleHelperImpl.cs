@@ -25,7 +25,7 @@ using dnSpy.Debugger.DotNet.Metadata;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	sealed class DmdDynamicModuleHelperImpl : DmdDynamicModuleHelper {
-		public override event EventHandler<DmdTypeLoadedEventArgs> TypeLoaded;
+		public override event EventHandler<DmdTypeLoadedEventArgs>? TypeLoaded;
 
 		readonly DbgEngineImpl engine;
 		const ulong FAT_HEADER_SIZE = 3 * 4;
@@ -67,7 +67,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			var ilCode = func?.ILCode;
 			if (ilCode is null)
 				return null;
-			Debug.Assert(!(func is null));
+			Debug2.Assert(!(func is null));
 			ulong addr = ilCode.Address;
 			if (addr == 0)
 				return null;

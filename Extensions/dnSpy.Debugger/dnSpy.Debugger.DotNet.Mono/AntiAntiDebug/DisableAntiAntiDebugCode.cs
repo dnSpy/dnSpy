@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.DotNet.Mono.AntiAntiDebug {
 		static bool TryGetInternalRuntime(DbgProcess process, [NotNullWhen(true)] out DbgMonoDebugInternalRuntime? runtime) {
 			runtime = null;
 			var dbgRuntime = process.Runtimes.FirstOrDefault();
-			Debug.Assert(!(dbgRuntime is null));
+			Debug2.Assert(!(dbgRuntime is null));
 			if (dbgRuntime is null)
 				return false;
 

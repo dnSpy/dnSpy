@@ -26,13 +26,13 @@ using Microsoft.VisualStudio.Utilities;
 namespace dnSpy.Output.Settings {
 	interface IOutputWindowOptionsService {
 		IOutputWindowOptions Default { get; }
-		event EventHandler<OptionChangedEventArgs> OptionChanged;
+		event EventHandler<OptionChangedEventArgs>? OptionChanged;
 	}
 
 	[Export(typeof(IOutputWindowOptionsService))]
 	sealed class OutputWindowOptionsService : IOutputWindowOptionsService {
 		public IOutputWindowOptions Default { get; }
-		public event EventHandler<OptionChangedEventArgs> OptionChanged;
+		public event EventHandler<OptionChangedEventArgs>? OptionChanged;
 
 		[ImportingConstructor]
 		OutputWindowOptionsService(ITextViewOptionsGroupService textViewOptionsGroupService, IContentTypeRegistryService contentTypeRegistryService) {

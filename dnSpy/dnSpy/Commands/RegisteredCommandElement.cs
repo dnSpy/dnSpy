@@ -178,7 +178,7 @@ namespace dnSpy.Commands {
 		}
 
 		void SourceElement_PreviewTextInput(object? sender, TextCompositionEventArgs e) {
-			Debug.Assert(prevKey is null);
+			Debug2.Assert(prevKey is null);
 			prevKey = null;
 			var target = TryGetTargetOrUnregister();
 			if (target is null)

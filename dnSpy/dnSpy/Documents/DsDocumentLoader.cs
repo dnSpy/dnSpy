@@ -76,7 +76,7 @@ namespace dnSpy.Documents {
 		}
 
 		public void Execute(IProgress progress) {
-			Debug.Assert(!(documentsToLoad is null));
+			Debug2.Assert(!(documentsToLoad is null));
 			for (int i = 0; i < documentsToLoad.Length; i++) {
 				progress.ThrowIfCancellationRequested();
 				var f = documentsToLoad[i];

@@ -59,8 +59,8 @@ namespace dnSpy.Decompiler.MSBuild {
 				delegateResXDataNodeConstructor = (Func<string, object?, Func<Type, string>, ResXDataNode>)dynMethod.CreateDelegate(typeof(Func<string, object?, Func<Type, string>, ResXDataNode>));
 			}
 		}
-		static readonly Func<string, Func<Type, string>, ResXResourceWriter> delegateResXResourceWriterConstructor;
-		static readonly Func<string, object?, Func<Type, string>, ResXDataNode> delegateResXDataNodeConstructor;
+		static readonly Func<string, Func<Type, string>, ResXResourceWriter>? delegateResXResourceWriterConstructor;
+		static readonly Func<string, object?, Func<Type, string>, ResXDataNode>? delegateResXDataNodeConstructor;
 
 		public override string Description => dnSpy_Decompiler_Resources.MSBuild_CreateResXFile;
 		public override BuildAction BuildAction => BuildAction.EmbeddedResource;

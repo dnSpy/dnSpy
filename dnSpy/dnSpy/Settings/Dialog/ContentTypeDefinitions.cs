@@ -27,7 +27,7 @@ namespace dnSpy.Settings.Dialog {
 		[Export]
 		[Name(TreeViewContentTypes.TreeViewNodeAppSettings)]
 		[BaseDefinition(TreeViewContentTypes.TreeViewNode)]
-		static readonly ContentTypeDefinition TreeViewNodeAppSettings;
+		static readonly ContentTypeDefinition? TreeViewNodeAppSettings;
 #pragma warning restore CS0169
 	}
 }

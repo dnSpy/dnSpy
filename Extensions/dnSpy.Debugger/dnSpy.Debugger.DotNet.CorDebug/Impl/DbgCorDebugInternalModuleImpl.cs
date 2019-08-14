@@ -46,7 +46,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	}
 
 	sealed class ClosedListenerCollection {
-		public event EventHandler Closed;
+		public event EventHandler? Closed;
 		public void RaiseClosed() => Closed?.Invoke(this, EventArgs.Empty);
 	}
 }

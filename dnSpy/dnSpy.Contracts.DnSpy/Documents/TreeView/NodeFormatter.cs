@@ -41,7 +41,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 			}
 			catch (ArgumentException) {
 			}
-			if (string.IsNullOrEmpty(filename))
+			if (string2.IsNullOrEmpty(filename))
 				filename = document.GetShortName();
 			return filename;
 		}
@@ -264,7 +264,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 			if (md is null)
 				md = m?.ResolveMethodDef();
 			var method = (md ?? m)!;
-			Debug.Assert(!(method is null));
+			Debug2.Assert(!(method is null));
 
 			var name = method.Name;
 			if (name == ".ctor")

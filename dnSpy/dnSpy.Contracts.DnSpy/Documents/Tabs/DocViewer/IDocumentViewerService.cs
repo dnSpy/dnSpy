@@ -30,12 +30,12 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// <summary>
 		/// Raised when a new <see cref="IDocumentViewer"/> instance has been created
 		/// </summary>
-		event EventHandler<DocumentViewerAddedEventArgs> Added;
+		event EventHandler<DocumentViewerAddedEventArgs>? Added;
 
 		/// <summary>
 		/// Raised when a <see cref="IDocumentViewer"/> instance has been closed
 		/// </summary>
-		event EventHandler<DocumentViewerRemovedEventArgs> Removed;
+		event EventHandler<DocumentViewerRemovedEventArgs>? Removed;
 
 		/// <summary>
 		/// Raised when the <see cref="IDocumentViewer"/> instance gets new content
@@ -44,7 +44,7 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// content. I.e., calling it twice in a row with the same content won't raise this event
 		/// the second time.
 		/// </summary>
-		event EventHandler<DocumentViewerGotNewContentEventArgs> GotNewContent;
+		event EventHandler<DocumentViewerGotNewContentEventArgs>? GotNewContent;
 	}
 
 	/// <summary>

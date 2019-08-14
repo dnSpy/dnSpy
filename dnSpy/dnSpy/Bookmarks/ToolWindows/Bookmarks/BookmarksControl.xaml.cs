@@ -47,6 +47,6 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			BookmarksListViewDoubleClick?.Invoke(this, EventArgs.Empty);
 		}
 
-		public event EventHandler BookmarksListViewDoubleClick;
+		public event EventHandler? BookmarksListViewDoubleClick;
 	}
 }

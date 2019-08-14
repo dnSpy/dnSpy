@@ -28,7 +28,7 @@ namespace dnSpy.Roslyn.Text {
 
 		readonly object lockObj = new object();
 		EventHandler<TextChangeEventArgs>? realTextChangedEvent;
-		public override event EventHandler<TextChangeEventArgs> TextChanged {
+		public override event EventHandler<TextChangeEventArgs>? TextChanged {
 			add {
 				lock (lockObj) {
 					if (realTextChangedEvent is null)

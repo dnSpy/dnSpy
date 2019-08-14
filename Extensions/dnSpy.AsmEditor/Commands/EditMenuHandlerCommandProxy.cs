@@ -29,7 +29,7 @@ namespace dnSpy.AsmEditor.Commands {
 
 		AsmEditorContext CreateContext() => command.CreateContext();
 
-		event EventHandler ICommand.CanExecuteChanged {
+		event EventHandler? ICommand.CanExecuteChanged {
 			add => CommandManager.RequerySuggested += value;
 			remove => CommandManager.RequerySuggested -= value;
 		}
@@ -41,7 +41,7 @@ namespace dnSpy.AsmEditor.Commands {
 
 		void ICommand.Execute(object parameter) {
 			var ctx = CreateContext();
-			Debug.Assert(!(ctx is null));
+			Debug2.Assert(!(ctx is null));
 			if (!(ctx is null))
 				command.Execute(ctx);
 		}

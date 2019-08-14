@@ -28,7 +28,7 @@ namespace dnSpy.Hex {
 		public override string Name => simpleStream.Name;
 		public override bool IsReadOnly => simpleStream.IsReadOnly;
 		public override bool IsVolatile => simpleStream.IsVolatile;
-		public override event EventHandler<HexBufferStreamSpanInvalidatedEventArgs> BufferStreamSpanInvalidated;
+		public override event EventHandler<HexBufferStreamSpanInvalidatedEventArgs>? BufferStreamSpanInvalidated;
 
 		const ulong DEFAULT_PAGE_SIZE = 0x1000;
 		const ulong MAX_PAGE_SIZE = 0x1000;
@@ -404,7 +404,7 @@ namespace dnSpy.Hex {
 						partSize = (int)length;
 					if (srcIndex + partSize > cp.DataSize) {
 						if (srcIndex >= cp.DataSize && bytesRead == invalidBytes) {
-							Debug.Assert(bitArray is null);
+							Debug2.Assert(bitArray is null);
 							invalidBytes += partSize;
 						}
 						else {
@@ -420,7 +420,7 @@ namespace dnSpy.Hex {
 						}
 					}
 					else if (bytesRead == validBytes) {
-						Debug.Assert(bitArray is null);
+						Debug2.Assert(bitArray is null);
 						validBytes += partSize;
 					}
 					else {

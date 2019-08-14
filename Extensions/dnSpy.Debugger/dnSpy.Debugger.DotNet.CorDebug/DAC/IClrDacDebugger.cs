@@ -21,8 +21,8 @@ using System;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.DAC {
 	interface IClrDacDebugger {
-		event EventHandler ClrDacRunning;
-		event EventHandler ClrDacPaused;
-		event EventHandler ClrDacTerminated;
+		event EventHandler? ClrDacRunning;
+		event EventHandler? ClrDacPaused;
+		event EventHandler? ClrDacTerminated;
 	}
 }

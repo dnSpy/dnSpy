@@ -229,7 +229,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public string ErrorText {
 			get {
 				string? err;
-				if (!string.IsNullOrEmpty(err = Verify(nameof(ReturnType))))
+				if (!string2.IsNullOrEmpty(err = Verify(nameof(ReturnType))))
 					return err;
 
 				return string.Empty;

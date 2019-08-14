@@ -39,7 +39,7 @@ namespace dnSpy.Decompiler.MSBuild {
 
 		public string SolutionFilename {
 			get {
-				Debug.Assert(!(options.SolutionFilename is null));
+				Debug2.Assert(!(options.SolutionFilename is null));
 				return Path.Combine(options.Directory, options.SolutionFilename);
 			}
 		}

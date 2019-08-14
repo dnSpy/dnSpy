@@ -123,8 +123,8 @@ namespace dnSpy.Debugger.CallStack.TextEditor {
 		}
 
 		void AddMarkers(bool updateActiveStatements) {
-			Debug.Assert(currentStatementMarker is null);
-			Debug.Assert(callReturnMarker is null);
+			Debug2.Assert(currentStatementMarker is null);
+			Debug2.Assert(callReturnMarker is null);
 			var frames = dbgCallStackService.Frames.Frames;
 
 			if (frames.Count != 0) {

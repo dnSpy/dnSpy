@@ -156,7 +156,7 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 		WeakReference? processNameRegexWeakRef;
 
 		bool WildcardsMatch(string? wildcardsString, string value, ref WeakReference? regexWeakRef) {
-			if (string.IsNullOrEmpty(wildcardsString))
+			if (string2.IsNullOrEmpty(wildcardsString))
 				return true;
 			if (!(regexWeakRef?.Target is Regex regex))
 				regexWeakRef = new WeakReference(regex = WildcardsUtils.CreateRegex(wildcardsString));

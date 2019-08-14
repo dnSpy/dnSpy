@@ -41,7 +41,7 @@ namespace dnSpy.Debugger.Impl {
 		public override ReadOnlyCollection<string> Tags { get; }
 		public override DbgInternalRuntime InternalRuntime { get; }
 
-		public override event EventHandler<DbgCollectionChangedEventArgs<DbgAppDomain>> AppDomainsChanged;
+		public override event EventHandler<DbgCollectionChangedEventArgs<DbgAppDomain>>? AppDomainsChanged;
 		public override DbgAppDomain[] AppDomains {
 			get {
 				lock (lockObj)
@@ -50,7 +50,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 		readonly List<DbgAppDomain> appDomains;
 
-		public override event EventHandler<DbgCollectionChangedEventArgs<DbgModule>> ModulesChanged;
+		public override event EventHandler<DbgCollectionChangedEventArgs<DbgModule>>? ModulesChanged;
 		public override DbgModule[] Modules {
 			get {
 				lock (lockObj)
@@ -59,7 +59,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 		readonly List<DbgModule> modules;
 
-		public override event EventHandler<DbgCollectionChangedEventArgs<DbgThread>> ThreadsChanged;
+		public override event EventHandler<DbgCollectionChangedEventArgs<DbgThread>>? ThreadsChanged;
 		public override DbgThread[] Threads {
 			get {
 				lock (lockObj)
@@ -125,7 +125,7 @@ namespace dnSpy.Debugger.Impl {
 				else
 					newCurrent = newBreak;
 			}
-			Debug.Assert((!(newBreak is null)) == (!(newCurrent is null)));
+			Debug2.Assert((!(newBreak is null)) == (!(newCurrent is null)));
 			currentThread = new CurrentObject<DbgThreadImpl>(newCurrent, newBreak);
 			return newCurrent;
 		}

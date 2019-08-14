@@ -308,7 +308,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 				return (fieldRef, containedGenericParams);
 			}
 			else {
-				Debug.Assert(!(info.methodSignature is null));
+				Debug2.Assert(!(info.methodSignature is null));
 				if (name == DmdConstructorInfo.ConstructorName || name == DmdConstructorInfo.TypeConstructorName) {
 					var ctorRef = new DmdConstructorRef(reflectedTypeRef, name, rawInfo.methodSignature!, info.methodSignature);
 					return (ctorRef, containedGenericParams);
@@ -375,7 +375,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 						return (info.fieldType, null, info.containedGenericParams);
 					}
 					else {
-						Debug.Assert(!(info.methodSignature is null));
+						Debug2.Assert(!(info.methodSignature is null));
 						if (info.containedGenericParams)
 							methodSignatureCache.Add(signature, null);
 						else
@@ -397,7 +397,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			var reader = Metadata.PEImage.CreateReader();
 			reader.Position = (uint)Metadata.PEImage.ToFileOffset((RVA)row.RVA);
 			var body = DmdMethodBodyReader.Create(this, new DmdDataStreamImpl(ref reader), genericTypeArguments, genericMethodArguments);
-			Debug.Assert(!(body is null));
+			Debug2.Assert(!(body is null));
 			return body;
 		}
 

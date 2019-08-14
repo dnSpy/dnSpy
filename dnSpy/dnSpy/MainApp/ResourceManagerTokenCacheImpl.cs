@@ -28,7 +28,7 @@ namespace dnSpy.MainApp {
 		readonly object lockObj;
 		readonly Dictionary<Assembly, int> tokensDict;
 
-		public event EventHandler TokensUpdated;
+		public event EventHandler? TokensUpdated;
 
 		public ResourceManagerTokenCacheImpl() {
 			lockObj = new object();
@@ -47,8 +47,8 @@ namespace dnSpy.MainApp {
 		}
 
 		public void SetTokens(Assembly[] assemblies, int[] tokens) {
-			Debug.Assert(!(assemblies is null));
-			Debug.Assert(!(tokens is null));
+			Debug2.Assert(!(assemblies is null));
+			Debug2.Assert(!(tokens is null));
 			Debug.Assert(assemblies.Length == tokens.Length);
 			lock (lockObj) {
 				for (int i = 0; i < assemblies.Length; i++) {

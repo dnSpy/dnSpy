@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Globalization;
 using System.Text;
 
@@ -63,7 +64,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="allowSpaces">true to allow spaces</param>
 		/// <returns></returns>
 		public static string Escape(string? id, int maxLength, bool allowSpaces) {
-			if (string.IsNullOrEmpty(id))
+			if (string2.IsNullOrEmpty(id))
 				return EMPTY_NAME;
 
 			// Common case is a valid string

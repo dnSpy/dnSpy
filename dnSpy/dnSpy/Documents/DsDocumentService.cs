@@ -87,7 +87,7 @@ namespace dnSpy.Documents {
 		int counter_DisableAssemblyLoad;
 
 		public IDisposable DisableAssemblyLoad() => new DisableAssemblyLoadHelper(this);
-		public event EventHandler<NotifyDocumentCollectionChangedEventArgs> CollectionChanged;
+		public event EventHandler<NotifyDocumentCollectionChangedEventArgs>? CollectionChanged;
 		public IDsDocumentServiceSettings Settings { get; }
 
 		[ImportingConstructor]
@@ -218,7 +218,7 @@ namespace dnSpy.Documents {
 		}
 
 		DocumentInfo Find_NoLock(IDsDocumentNameKey key) {
-			Debug.Assert(!(key is null));
+			Debug2.Assert(!(key is null));
 			if (key is null)
 				return default;
 			foreach (var info in documents) {
@@ -454,7 +454,7 @@ namespace dnSpy.Documents {
 		}
 
 		public void Remove(IDsDocumentNameKey key) {
-			Debug.Assert(!(key is null));
+			Debug2.Assert(!(key is null));
 			if (key is null)
 				return;
 
@@ -466,7 +466,7 @@ namespace dnSpy.Documents {
 			finally {
 				rwLock.ExitWriteLock();
 			}
-			Debug.Assert(!(removedDocument is null));
+			Debug2.Assert(!(removedDocument is null));
 
 			if (!(removedDocument is null))
 				CallCollectionChanged(NotifyDocumentCollectionChangedEventArgs.CreateRemove(removedDocument, null));

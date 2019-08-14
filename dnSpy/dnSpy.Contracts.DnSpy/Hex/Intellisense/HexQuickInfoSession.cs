@@ -43,7 +43,7 @@ namespace dnSpy.Contracts.Hex.Intellisense {
 		/// <summary>
 		/// Raised after <see cref="ApplicableToSpan"/> is changed
 		/// </summary>
-		public abstract event EventHandler ApplicableToSpanChanged;
+		public abstract event EventHandler? ApplicableToSpanChanged;
 
 		/// <summary>
 		/// true if the mouse is tracked

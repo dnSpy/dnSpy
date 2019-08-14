@@ -169,7 +169,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Code {
 		public DbgILSpan[] GetILSpansOfStatement(DbgTextSpan statementSpan) {
 			if (statementsDict is null)
 				Interlocked.CompareExchange(ref statementsDict, CreateStatementsDict(Statements), null);
-			Debug.Assert(!(statementsDict is null));
+			Debug2.Assert(!(statementsDict is null));
 			if (statementsDict.TryGetValue(statementSpan, out var list)) {
 				var spans = list.ToArray();
 #if DEBUG

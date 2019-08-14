@@ -64,7 +64,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			monoDebugValueConverter = new MonoDebugValueConverterImpl(this);
 			classHooks = new Dictionary<DmdWellKnownType, ClassHook>();
 			foreach (var info in ClassHookProvider.Create(engine, this)) {
-				Debug.Assert(!(info.Hook is null));
+				Debug2.Assert(!(info.Hook is null));
 				Debug.Assert(!classHooks.ContainsKey(info.WellKnownType));
 				classHooks.Add(info.WellKnownType, info.Hook);
 			}
@@ -332,11 +332,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			try {
 				var reflectionAppDomain = type.AppDomain;
 				var runtimeTypeHandleType = reflectionAppDomain.GetWellKnownType(DmdWellKnownType.System_RuntimeTypeHandle, isOptional: true);
-				Debug.Assert(!(runtimeTypeHandleType is null));
+				Debug2.Assert(!(runtimeTypeHandleType is null));
 				if (runtimeTypeHandleType is null)
 					return false;
 				var getTypeHandleMethod = objValue.Type.GetMethod("get_" + nameof(Type.TypeHandle), DmdSignatureCallingConvention.Default | DmdSignatureCallingConvention.HasThis, 0, runtimeTypeHandleType, Array.Empty<DmdType>(), throwOnError: false);
-				Debug.Assert(!(getTypeHandleMethod is null));
+				Debug2.Assert(!(getTypeHandleMethod is null));
 				if (getTypeHandleMethod is null)
 					return false;
 				typeHandleRes = engine.FuncEvalCall_MonoDebug(evalInfo, getTypeHandleMethod, objValue, Array.Empty<object>(), DbgDotNetInvokeOptions.None, false);
@@ -344,7 +344,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 					return false;
 				var runtimeHelpersType = reflectionAppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_CompilerServices_RuntimeHelpers, isOptional: true);
 				var runClassConstructorMethod = runtimeHelpersType?.GetMethod(nameof(RuntimeHelpers.RunClassConstructor), DmdSignatureCallingConvention.Default, 0, reflectionAppDomain.System_Void, new[] { runtimeTypeHandleType }, throwOnError: false);
-				Debug.Assert(!(runClassConstructorMethod is null));
+				Debug2.Assert(!(runClassConstructorMethod is null));
 				if (runClassConstructorMethod is null)
 					return false;
 				res = engine.FuncEvalCall_MonoDebug(evalInfo, runClassConstructorMethod, null, new[] { typeHandleRes.Value }, DbgDotNetInvokeOptions.None, false);
@@ -1058,13 +1058,13 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 
 				var appDomain = value.Type.AppDomain;
 				var gcHandleType = appDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_GCHandle, isOptional: true);
-				Debug.Assert(!(gcHandleType is null));
+				Debug2.Assert(!(gcHandleType is null));
 				if (gcHandleType is null)
 					return null;
 
 				var allocMethod = gcHandleType.GetMethod(nameof(System.Runtime.InteropServices.GCHandle.Alloc),
 					DmdSignatureCallingConvention.Default, 0, gcHandleType, new[] { appDomain.System_Object }, throwOnError: false);
-				Debug.Assert(!(allocMethod is null));
+				Debug2.Assert(!(allocMethod is null));
 				if (allocMethod is null)
 					return null;
 
@@ -1108,13 +1108,13 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 
 			var appDomain = objectId.ReflectionAppDomain;
 			var gcHandleType = appDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_GCHandle, isOptional: true);
-			Debug.Assert(!(gcHandleType is null));
+			Debug2.Assert(!(gcHandleType is null));
 			if (gcHandleType is null)
 				return;
 
 			var freeMethod = gcHandleType.GetMethod(nameof(System.Runtime.InteropServices.GCHandle.Free),
 				DmdSignatureCallingConvention.HasThis, 0, appDomain.System_Void, Array.Empty<DmdType>(), throwOnError: false);
-			Debug.Assert(!(freeMethod is null));
+			Debug2.Assert(!(freeMethod is null));
 			if (freeMethod is null)
 				return;
 

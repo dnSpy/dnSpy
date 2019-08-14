@@ -46,7 +46,7 @@ namespace dnSpy.Text.Editor {
 			if (textView.TextBuffer != buffer)
 				return null;
 			var wpfTextView = textView as IWpfTextView;
-			Debug.Assert(!(wpfTextView is null));
+			Debug2.Assert(!(wpfTextView is null));
 			if (wpfTextView is null)
 				return null;
 			return wpfTextView.Properties.GetOrCreateSingletonProperty(
@@ -60,7 +60,7 @@ namespace dnSpy.Text.Editor {
 	}
 
 	sealed class IntraTextAdornmentServiceSpaceNegotiatingAdornmentTagger : ITagger<SpaceNegotiatingAdornmentTag>, IIntraTextAdornmentServiceSpaceNegotiatingAdornmentTagger {
-		public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
+		public event EventHandler<SnapshotSpanEventArgs>? TagsChanged;
 
 		readonly IIntraTextAdornmentService intraTextAdornmentService;
 
@@ -104,7 +104,7 @@ namespace dnSpy.Text.Editor {
 		[Name(PredefinedDsAdornmentLayers.IntraTextAdornment)]
 		[Order(After = PredefinedDsAdornmentLayers.BottomLayer, Before = PredefinedDsAdornmentLayers.TopLayer)]
 		[Order(After = PredefinedAdornmentLayers.Text)]
-		static AdornmentLayerDefinition adornmentLayer;
+		static AdornmentLayerDefinition? adornmentLayer;
 #pragma warning restore CS0169
 
 		readonly IWpfTextView wpfTextView;
@@ -174,7 +174,7 @@ namespace dnSpy.Text.Editor {
 
 		void WpfTextView_LayoutChanged(object? sender, TextViewLayoutChangedEventArgs e) {
 			if (adornmentTagInfos.Count > 0) {
-				Debug.Assert(!(layer is null));
+				Debug2.Assert(!(layer is null));
 				currentLineIdentityTags.Clear();
 				foreach (var line in wpfTextView.TextViewLines)
 					currentLineIdentityTags.Add(line.IdentityTag);
@@ -194,11 +194,11 @@ namespace dnSpy.Text.Editor {
 
 					foreach (var identityTag in tags) {
 						var adornmentInfo = identityTag as AdornmentTagInfo;
-						Debug.Assert(!(adornmentInfo is null));
+						Debug2.Assert(!(adornmentInfo is null));
 						if (adornmentInfo is null)
 							continue;
 						var bounds = line.GetAdornmentBounds(identityTag);
-						Debug.Assert(!(bounds is null));
+						Debug2.Assert(!(bounds is null));
 						if (bounds is null)
 							continue;
 
@@ -215,7 +215,7 @@ namespace dnSpy.Text.Editor {
 
 				foreach (var identityTag in tags) {
 					var adornmentInfo = identityTag as AdornmentTagInfo;
-					Debug.Assert(!(adornmentInfo is null));
+					Debug2.Assert(!(adornmentInfo is null));
 					if (adornmentInfo is null)
 						continue;
 					var bounds = line.GetAdornmentBounds(identityTag);
@@ -240,7 +240,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void UpdateAdornmentUIState(ITextViewLine line, AdornmentTagInfo adornmentInfo, TextBounds bounds) {
-			Debug.Assert(!(adornmentInfo.TopUIElement is null));
+			Debug2.Assert(!(adornmentInfo.TopUIElement is null));
 			double verticalScale = line.LineTransform.VerticalScale;
 			adornmentInfo.TopUIElement.SetScale(verticalScale);
 			Canvas.SetTop(adornmentInfo.TopUIElement, bounds.TextTop + line.Baseline - verticalScale * adornmentInfo.Tag!.Baseline);
@@ -248,8 +248,8 @@ namespace dnSpy.Text.Editor {
 		}
 
 		bool AddAdornment(AdornmentTagInfo adornmentInfo, ITextViewLine line) {
-			Debug.Assert(!(adornmentInfo.TopUIElement is null));
-			Debug.Assert(!(layer is null));
+			Debug2.Assert(!(adornmentInfo.TopUIElement is null));
+			Debug2.Assert(!(layer is null));
 			SizeChangedEventHandler sizeChanged = (a, e) => {
 				var bounds = line.GetAdornmentBounds(adornmentInfo);
 				if (bounds is null)

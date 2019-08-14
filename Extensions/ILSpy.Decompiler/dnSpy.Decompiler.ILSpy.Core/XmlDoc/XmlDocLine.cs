@@ -105,7 +105,7 @@ start2:
 		}
 
 		void Trim(out int trimmedIndex, out int trimmedEnd) {
-			Debug.Assert(!(indent is null));
+			Debug2.Assert(!(indent is null));
 
 			int index = iter.Current.Index;
 			int end = index + iter.Current.Length;

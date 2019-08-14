@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+using System;
 using System.Text;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler.XmlDoc;
@@ -37,7 +38,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.XmlDoc {
 					var xmldoc = XmlDocLoader.LoadDocumentation(mr.Module);
 					if (!(xmldoc is null)) {
 						var doc = xmldoc.GetDocumentation(XmlDocKeyProvider.GetKey(mr, stringBuilder));
-						if (!string.IsNullOrEmpty(doc)) {
+						if (!string2.IsNullOrEmpty(doc)) {
 							InsertXmlDocumentation(node, doc);
 						}
 					}

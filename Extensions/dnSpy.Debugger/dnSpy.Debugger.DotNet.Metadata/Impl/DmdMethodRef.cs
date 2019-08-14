@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					newResolvedMethod = (object?)nonGenericInstDeclTypeMethod.DeclaringType == declType ?
 						nonGenericInstDeclTypeMethod :
 						declType.GetMethod(nonGenericInstDeclTypeMethod.Module, nonGenericInstDeclTypeMethod.MetadataToken) as DmdMethodDef;
-					Debug.Assert(!(newResolvedMethod is null));
+					Debug2.Assert(!(newResolvedMethod is null));
 				}
 			}
 			if (!(newResolvedMethod is null)) {

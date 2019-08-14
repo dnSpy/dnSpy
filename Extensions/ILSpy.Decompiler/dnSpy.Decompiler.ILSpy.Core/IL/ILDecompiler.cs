@@ -40,7 +40,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.IL {
 		}
 
 		public DecompilerProvider(DecompilerSettingsService decompilerSettingsService) {
-			Debug.Assert(!(decompilerSettingsService is null));
+			Debug2.Assert(!(decompilerSettingsService is null));
 			this.decompilerSettingsService = decompilerSettingsService ?? throw new ArgumentNullException(nameof(decompilerSettingsService));
 		}
 
@@ -105,7 +105,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.IL {
 			if (xmldoc is null)
 				yield break;
 			var doc = xmldoc.GetDocumentation(XmlDocKeyProvider.GetKey(mr, sb));
-			if (string.IsNullOrEmpty(doc))
+			if (string2.IsNullOrEmpty(doc))
 				yield break;
 
 			foreach (var info in new XmlDocLine(doc)) {

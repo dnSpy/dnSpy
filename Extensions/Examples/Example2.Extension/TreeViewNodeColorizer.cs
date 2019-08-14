@@ -23,12 +23,12 @@ namespace Example2.Extension {
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(UnderlineClassificationType)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition UnderlineClassificationTypeDefinition;
+		static ClassificationTypeDefinition? UnderlineClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(LightgreenBackgroundClassificationType)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition LightgreenBackgroundClassificationTypeDefinition;
+		static ClassificationTypeDefinition? LightgreenBackgroundClassificationTypeDefinition;
 #pragma warning restore CS0169
 
 		// Export the classes that define the colors and order

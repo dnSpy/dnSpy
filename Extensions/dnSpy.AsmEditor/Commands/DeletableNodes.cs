@@ -46,7 +46,7 @@ namespace dnSpy.AsmEditor.Commands {
 		/// The model (dnlib) elements must be deleted after this method is called, not before.
 		/// </summary>
 		public void Delete() {
-			Debug.Assert(parents is null);
+			Debug2.Assert(parents is null);
 			if (!(parents is null))
 				throw new ArgumentException("Nodes have already been deleted");
 
@@ -65,7 +65,7 @@ namespace dnSpy.AsmEditor.Commands {
 		/// The model (dnlib) elements must be restored before this method is called, not after.
 		/// </summary>
 		public void Restore() {
-			Debug.Assert(!(parents is null));
+			Debug2.Assert(!(parents is null));
 			if (parents is null)
 				throw new ArgumentException("Nodes have already been restored");
 

@@ -33,7 +33,7 @@ namespace dnSpy.Language.Intellisense {
 			public CommandTargetFilter(IntellisenseSessionStack owner) {
 				this.owner = owner;
 				wpfTextView = owner.wpfTextView as IDsWpfTextView;
-				Debug.Assert(!(wpfTextView is null));
+				Debug2.Assert(!(wpfTextView is null));
 			}
 
 			public void HookKeyboard() {

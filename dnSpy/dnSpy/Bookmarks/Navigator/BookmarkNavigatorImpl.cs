@@ -42,7 +42,7 @@ namespace dnSpy.Bookmarks.Navigator {
 		}
 		Bookmark? activeBookmark;
 
-		public override event EventHandler ActiveBookmarkChanged;
+		public override event EventHandler? ActiveBookmarkChanged;
 
 		readonly UIDispatcher uiDispatcher;
 		readonly ViewBookmarkProvider viewBookmarkProvider;

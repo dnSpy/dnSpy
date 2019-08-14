@@ -36,9 +36,9 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 	sealed class DocumentViewerService : IDocumentViewerServiceImpl {
 		readonly Lazy<IDocumentViewerListener, IDocumentViewerListenerMetadata>[] documentViewerListeners;
 
-		public event EventHandler<DocumentViewerAddedEventArgs> Added;
-		public event EventHandler<DocumentViewerRemovedEventArgs> Removed;
-		public event EventHandler<DocumentViewerGotNewContentEventArgs> GotNewContent;
+		public event EventHandler<DocumentViewerAddedEventArgs>? Added;
+		public event EventHandler<DocumentViewerRemovedEventArgs>? Removed;
+		public event EventHandler<DocumentViewerGotNewContentEventArgs>? GotNewContent;
 
 		[ImportingConstructor]
 		DocumentViewerService([ImportMany] IEnumerable<Lazy<IDocumentViewerListener, IDocumentViewerListenerMetadata>> documentViewerListeners) => this.documentViewerListeners = documentViewerListeners.OrderBy(a => a.Metadata.Order).ToArray();

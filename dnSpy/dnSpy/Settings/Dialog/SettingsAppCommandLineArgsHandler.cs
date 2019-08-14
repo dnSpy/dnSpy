@@ -47,7 +47,7 @@ namespace dnSpy.Settings.Dialog {
 			}));
 		}
 
-		static Guid? TryParse(string guidString) {
+		static Guid? TryParse(string? guidString) {
 			if (Guid.TryParse(guidString, out var guid))
 				return guid;
 			return null;

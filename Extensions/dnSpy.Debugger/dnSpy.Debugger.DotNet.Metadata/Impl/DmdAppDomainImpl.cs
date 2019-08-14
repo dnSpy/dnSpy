@@ -1021,7 +1021,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				Dictionary<DmdType, DmdTypeDef>? dict1 = null, dict2 = null;
 				toModuleTypeDictIgnoreCase?.TryGetValue(module, out dict1);
 				toModuleTypeDict?.TryGetValue(module, out dict2);
-				Debug.Assert(!(dict1 is null) || !(dict2 is null));
+				Debug2.Assert(!(dict1 is null) || !(dict2 is null));
 				foreach (var type in types) {
 					if (type is null)
 						continue;
@@ -1079,7 +1079,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		internal DmdType[] GetSZArrayInterfaces(DmdType elementType) {
 			var ifaces = defaultExistingWellKnownSZArrayInterfaces;
 			if (ifaces is null) {
-				Debug.Assert(!(CorLib is null), "CorLib hasn't been loaded yet!");
+				Debug2.Assert(!(CorLib is null), "CorLib hasn't been loaded yet!");
 				if (CorLib is null)
 					return Array.Empty<DmdType>();
 				List<DmdType>? list = ObjectPools.AllocListOfType();

@@ -32,7 +32,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 		readonly DecompilerSettings decompilerSettings;
 
 		public override int Version => decompilerSettings.SettingsVersion;
-		public override event EventHandler VersionChanged;
+		public override event EventHandler? VersionChanged;
 
 		public CSharpVBDecompilerSettings(DecompilerSettings? decompilerSettings = null) {
 			this.decompilerSettings = decompilerSettings ?? new DecompilerSettings();

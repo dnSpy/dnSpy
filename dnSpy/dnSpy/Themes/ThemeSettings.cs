@@ -27,7 +27,7 @@ namespace dnSpy.Themes {
 	sealed class ThemeSettings : INotifyPropertyChanged {
 		static readonly Guid SETTINGS_GUID = new Guid("34CF0AF5-D265-4393-BC68-9B8C9B8EA622");
 
-		public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler? PropertyChanged;
 		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 		readonly ISettingsService settingsService;

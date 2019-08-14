@@ -51,13 +51,13 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		public void WriteObjectId(IDbgTextWriter output, ValueNode vm) {
-			Debug.Assert(!(ObjectIdService is null));
+			Debug2.Assert(!(ObjectIdService is null));
 			if (ObjectIdService is null)
 				return;
 			var vmImpl = (ValueNodeImpl)vm;
 			if (vmImpl.RawNode is DebuggerValueRawNode rawNode) {
 				var language = Language;
-				Debug.Assert(!(language is null));
+				Debug2.Assert(!(language is null));
 				if (language is null)
 					return;
 				var value = rawNode.DebuggerValueNode.Value;
@@ -68,7 +68,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 					output.Write(DbgTextColor.Text, " ");
 					output.Write(DbgTextColor.Punctuation, "{");
 					var evalInfo = vmImpl.Context.EvaluationInfo;
-					Debug.Assert(!(evalInfo is null));
+					Debug2.Assert(!(evalInfo is null));
 					if (evalInfo is null)
 						output.Write(DbgTextColor.Error, "???");
 					else

@@ -32,7 +32,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 		readonly IDecompilerService decompilerService;
 		readonly Lazy<DbgDotNetDecompilerGuidProvider, IDbgDotNetDecompilerGuidProviderMetadata>[] dbgDotNetDecompilerGuidProviders;
 
-		public override event EventHandler<EventArgs> DecompilerChanged;
+		public override event EventHandler<EventArgs>? DecompilerChanged;
 
 		public override IDecompiler Decompiler => decompiler!;
 		IDecompiler? decompiler;

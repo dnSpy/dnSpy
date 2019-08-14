@@ -32,7 +32,7 @@ namespace dnSpy.Hex.Editor {
 		public override HexView HexView { get; }
 		public override HexBufferPoint AnchorPoint => anchorPoint;
 		public override HexBufferPoint ActivePoint => activePoint;
-		public override event EventHandler SelectionChanged;
+		public override event EventHandler? SelectionChanged;
 
 		public override bool IsActive {
 			get => hexSelectionLayer.IsActive;

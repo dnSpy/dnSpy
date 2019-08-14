@@ -33,7 +33,7 @@ using dnSpy.Contracts.TreeView.Text;
 
 namespace dnSpy.Settings.Dialog {
 	sealed class AppSettingsPageVM : TreeNodeData, INotifyPropertyChanged {
-		public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler? PropertyChanged;
 		public AppSettingsPageVM? Parent { get; set; }
 		public override Guid Guid => Guid.Empty;
 		public override object? ToolTip => null;

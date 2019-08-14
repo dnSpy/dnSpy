@@ -53,22 +53,22 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// <summary>
 		/// Raised when the collection gets changed
 		/// </summary>
-		event EventHandler<NotifyDocumentTreeViewCollectionChangedEventArgs> CollectionChanged;
+		event EventHandler<NotifyDocumentTreeViewCollectionChangedEventArgs>? CollectionChanged;
 
 		/// <summary>
 		/// Raised when the node's text has changed
 		/// </summary>
-		event EventHandler<EventArgs> NodesTextChanged;
+		event EventHandler<EventArgs>? NodesTextChanged;
 
 		/// <summary>
 		/// Raised when a node gets activated (eg. double clicked)
 		/// </summary>
-		event EventHandler<DocumentTreeNodeActivatedEventArgs> NodeActivated;
+		event EventHandler<DocumentTreeNodeActivatedEventArgs>? NodeActivated;
 
 		/// <summary>
 		/// Raised when selection has changed
 		/// </summary>
-		event EventHandler<TreeViewSelectionChangedEventArgs> SelectionChanged;
+		event EventHandler<TreeViewSelectionChangedEventArgs>? SelectionChanged;
 
 		/// <summary>
 		/// Should only be called by the node that gets activated. Returns true if someone handled it.

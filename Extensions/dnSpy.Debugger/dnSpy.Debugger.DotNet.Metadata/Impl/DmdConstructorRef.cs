@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					newResolvedCtor = (object?)nonGenericInstDeclTypeMethod.DeclaringType == declType ?
 						nonGenericInstDeclTypeMethod :
 						declType.GetMethod(nonGenericInstDeclTypeMethod.Module, nonGenericInstDeclTypeMethod.MetadataToken) as DmdConstructorDef;
-					Debug.Assert(!(newResolvedCtor is null));
+					Debug2.Assert(!(newResolvedCtor is null));
 				}
 			}
 			if (!(newResolvedCtor is null)) {

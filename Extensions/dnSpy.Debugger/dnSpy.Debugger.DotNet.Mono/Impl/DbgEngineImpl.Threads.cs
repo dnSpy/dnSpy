@@ -130,7 +130,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					var state = appDomain.GetOrCreateData<GetManagedIdState>();
 					if (state.ManagedIdGetter is null) {
 						var threadType = thread.Domain.Corlib.GetType("System.Threading.Thread", false, false);
-						Debug.Assert(!(threadType is null));
+						Debug2.Assert(!(threadType is null));
 						state.ManagedIdGetter = threadType?.GetMethod("get_" + nameof(ST.Thread.ManagedThreadId));
 					}
 					if (!(state.ManagedIdGetter is null)) {

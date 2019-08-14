@@ -26,8 +26,8 @@ using VSUTIL = Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Hex.Files {
 	sealed class HexBufferFileServiceImpl : HexBufferFileService {
-		public override event EventHandler<BufferFilesAddedEventArgs> BufferFilesAdded;
-		public override event EventHandler<BufferFilesRemovedEventArgs> BufferFilesRemoved;
+		public override event EventHandler<BufferFilesAddedEventArgs>? BufferFilesAdded;
+		public override event EventHandler<BufferFilesRemovedEventArgs>? BufferFilesRemoved;
 		public override HexBuffer Buffer => buffer;
 
 		public override IEnumerable<HexBufferFile> Files {

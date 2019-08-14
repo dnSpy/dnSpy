@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.IO;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
@@ -56,6 +57,7 @@ namespace dnSpy.Debugger.DbgUI {
 				var filename = debugger.Value.GetCurrentExecutableFilename();
 				if (!File.Exists(filename))
 					return null;
+				Debug2.Assert(!(filename is null));
 				return string.Format(dnSpy_Debugger_Resources.DebugProgramX, UIUtilities.EscapeMenuItemHeader(Path.GetFileName(filename)));
 			}
 

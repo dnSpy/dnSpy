@@ -25,9 +25,9 @@ using Microsoft.VisualStudio.Text.Projection;
 namespace dnSpy.Text.Projection {
 	sealed class BufferGraph : IBufferGraph {
 		public ITextBuffer TopBuffer { get; }
-		public event EventHandler<GraphBufferContentTypeChangedEventArgs> GraphBufferContentTypeChanged;
+		public event EventHandler<GraphBufferContentTypeChangedEventArgs>? GraphBufferContentTypeChanged;
 #pragma warning disable CS0067
-		public event EventHandler<GraphBuffersChangedEventArgs> GraphBuffersChanged;
+		public event EventHandler<GraphBuffersChangedEventArgs>? GraphBuffersChanged;
 #pragma warning restore CS0067
 
 		public BufferGraph(ITextBuffer textBuffer) {

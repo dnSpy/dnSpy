@@ -119,7 +119,7 @@ namespace dnSpy.Contracts.Text {
 			if (PublicKeyBase.IsNullOrEmpty2(publicKey))
 				output.Write(BoxedTextColor.Keyword, "null");
 			else {
-				Debug.Assert(!(publicKey is null));
+				Debug2.Assert(!(publicKey is null));
 				output.Write(BoxedTextColor.Number, publicKey.ToString());
 			}
 

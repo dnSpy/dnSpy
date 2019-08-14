@@ -65,7 +65,7 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// <summary>
 		/// Raised whenever <see cref="IsEnabled"/> has changed
 		/// </summary>
-		event EventHandler IsEnabledChanged;
+		event EventHandler? IsEnabledChanged;
 
 		/// <summary>
 		/// true if the reference is enabled and can be highlighted, false if the reference

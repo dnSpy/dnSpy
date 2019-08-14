@@ -65,7 +65,7 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 			lock (lockObj) {
 				foreach (var info in settings) {
 					var bpImpl = info.Breakpoint as DbgModuleBreakpointImpl;
-					Debug.Assert(!(bpImpl is null));
+					Debug2.Assert(!(bpImpl is null));
 					if (bpImpl is null)
 						continue;
 					Debug.Assert(breakpoints.Contains(bpImpl));
@@ -82,9 +82,9 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 				BreakpointsModified?.Invoke(this, new DbgBreakpointsModifiedEventArgs(new ReadOnlyCollection<DbgModuleBreakpointAndOldSettings>(bps)));
 		}
 
-		public override event EventHandler<DbgBreakpointsModifiedEventArgs> BreakpointsModified;
+		public override event EventHandler<DbgBreakpointsModifiedEventArgs>? BreakpointsModified;
 
-		public override event EventHandler<DbgCollectionChangedEventArgs<DbgModuleBreakpoint>> BreakpointsChanged;
+		public override event EventHandler<DbgCollectionChangedEventArgs<DbgModuleBreakpoint>>? BreakpointsChanged;
 		public override DbgModuleBreakpoint[] Breakpoints {
 			get {
 				lock (lockObj)
@@ -135,7 +135,7 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 			lock (lockObj) {
 				foreach (var bp in breakpoints) {
 					var bpImpl = bp as DbgModuleBreakpointImpl;
-					Debug.Assert(!(bpImpl is null));
+					Debug2.Assert(!(bpImpl is null));
 					if (bpImpl is null)
 						continue;
 					Debug.Assert(this.breakpoints.Contains(bpImpl));

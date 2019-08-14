@@ -25,11 +25,11 @@ using dnSpy.Contracts.Debugger.Engine;
 
 namespace dnSpy.Debugger.Impl {
 	sealed partial class DbgManagerImpl {
-		public override event EventHandler<DbgCurrentObjectChangedEventArgs<DbgProcess>> CurrentProcessChanged;
+		public override event EventHandler<DbgCurrentObjectChangedEventArgs<DbgProcess>>? CurrentProcessChanged;
 		public override DbgCurrentObject<DbgProcess> CurrentProcess => dbgCurrentProcess;
-		public override event EventHandler<DbgCurrentObjectChangedEventArgs<DbgRuntime>> CurrentRuntimeChanged;
+		public override event EventHandler<DbgCurrentObjectChangedEventArgs<DbgRuntime>>? CurrentRuntimeChanged;
 		public override DbgCurrentObject<DbgRuntime> CurrentRuntime => dbgCurrentRuntime;
-		public override event EventHandler<DbgCurrentObjectChangedEventArgs<DbgThread>> CurrentThreadChanged;
+		public override event EventHandler<DbgCurrentObjectChangedEventArgs<DbgThread>>? CurrentThreadChanged;
 		public override DbgCurrentObject<DbgThread> CurrentThread => dbgCurrentThread;
 
 		readonly DbgCurrentProcess dbgCurrentProcess;

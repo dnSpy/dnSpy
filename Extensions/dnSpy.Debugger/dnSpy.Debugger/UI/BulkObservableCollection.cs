@@ -22,7 +22,7 @@ using System.Collections.Specialized;
 
 namespace dnSpy.Debugger.UI {
 	sealed class BulkObservableCollection<T> : List<T>, INotifyCollectionChanged {
-		public event NotifyCollectionChangedEventHandler CollectionChanged;
+		public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
 		public new void Insert(int index, T item) {
 			base.Insert(index, item);

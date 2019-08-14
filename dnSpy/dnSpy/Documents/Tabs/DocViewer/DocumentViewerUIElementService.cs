@@ -124,7 +124,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 	}
 
 	sealed class DocumentViewerUIElementTagger : ITagger<IntraTextAdornmentTag>, IDocumentViewerUIElementTagger {
-		public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
+		public event EventHandler<SnapshotSpanEventArgs>? TagsChanged;
 
 		readonly IDocumentViewerUIElementService documentViewerUIElementService;
 
@@ -207,7 +207,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 					if (!cachedUIElements.TryGetValue(index, out var uiElem)) {
 						uiElem = info.CreateElement();
 						cachedUIElements.Add(index, uiElem);
-						Debug.Assert(!(uiElem is null));
+						Debug2.Assert(!(uiElem is null));
 						uiElem?.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
 					}
 					if (uiElem is null)

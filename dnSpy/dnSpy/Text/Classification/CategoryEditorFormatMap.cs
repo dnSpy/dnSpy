@@ -29,7 +29,7 @@ using Microsoft.VisualStudio.Text.Classification;
 namespace dnSpy.Text.Classification {
 	sealed class CategoryEditorFormatMap : IEditorFormatMap {
 		public bool IsInBatchUpdate { get; private set; }
-		public event EventHandler<FormatItemsEventArgs> FormatMappingChanged;
+		public event EventHandler<FormatItemsEventArgs>? FormatMappingChanged;
 
 		readonly Dispatcher dispatcher;
 		readonly IEditorFormatDefinitionService editorFormatDefinitionService;

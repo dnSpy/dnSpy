@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 
 		static DbgDotNetRawValueFactory() {
 			var ctor = typeof(DateTime).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { typeof(ulong) }, null);
-			Debug.Assert(!(ctor is null));
+			Debug2.Assert(!(ctor is null));
 			if (!(ctor is null)) {
 				var dm = new DynamicMethod("DateTime_ctor_UInt64", typeof(DateTime), new[] { typeof(ulong) }, true);
 				var ilg = dm.GetILGenerator();
@@ -45,7 +45,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				DateTime_ctor_UInt64 = (Func<ulong, DateTime>)dm.CreateDelegate(typeof(Func<ulong, DateTime>));
 			}
 		}
-		static readonly Func<ulong, DateTime> DateTime_ctor_UInt64;
+		static readonly Func<ulong, DateTime>? DateTime_ctor_UInt64;
 
 		public DbgDotNetRawValue Create(Value value, DmdType type) => Create(value, type, 0);
 
@@ -60,7 +60,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 
 			switch (value) {
 			case PrimitiveValue pv:
-				Debug.Assert((pv.Type == ElementType.Object) == (pv.Value is null));
+				Debug2.Assert((pv.Type == ElementType.Object) == (pv.Value is null));
 				switch (pv.Type) {
 				case ElementType.Boolean:	return new DbgDotNetRawValue(DbgSimpleValueType.Boolean, pv.Value);
 				case ElementType.Char:		return new DbgDotNetRawValue(DbgSimpleValueType.CharUtf16, pv.Value);

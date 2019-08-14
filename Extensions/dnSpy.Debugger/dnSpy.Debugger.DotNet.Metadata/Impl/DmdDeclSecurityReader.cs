@@ -80,7 +80,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				if (namedArgs is null)
 					throw new IOException();
 				var (ctor, ctorArguments) = GetConstructor(type, action);
-				Debug.Assert(!(ctor is null));
+				Debug2.Assert(!(ctor is null));
 				if (ctor is null)
 					continue;
 				res[w++] = new DmdCustomAttributeData(ctor, ctorArguments, namedArgs, isPseudoCustomAttribute: false);
@@ -101,8 +101,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			var type = module.AppDomain.GetWellKnownType(DmdWellKnownType.System_Security_Permissions_PermissionSetAttribute);
 			var (ctor, ctorArguments) = GetConstructor(type, action);
 			var xmlProp = type.GetProperty("XML", module.AppDomain.System_String, Array.Empty<DmdType>());
-			Debug.Assert(!(ctor is null));
-			Debug.Assert(!(xmlProp is null));
+			Debug2.Assert(!(ctor is null));
+			Debug2.Assert(!(xmlProp is null));
 			if (ctor is null || xmlProp is null)
 				return Array.Empty<DmdCustomAttributeData>();
 			var namedArguments = new[] { new DmdCustomAttributeNamedArgument(xmlProp, new DmdCustomAttributeTypedArgument(module.AppDomain.System_String, xml)) };

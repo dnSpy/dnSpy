@@ -40,7 +40,7 @@ namespace dnSpy.Hex.Formatting {
 			hexTagAggregator.TagsChanged += HexTagAggregator_TagsChanged;
 		}
 
-		public override event EventHandler<HexAndAdornmentSequenceChangedEventArgs> SequenceChanged;
+		public override event EventHandler<HexAndAdornmentSequenceChangedEventArgs>? SequenceChanged;
 
 		void HexTagAggregator_TagsChanged(object? sender, HexTagsChangedEventArgs e) =>
 			SequenceChanged?.Invoke(this, new HexAndAdornmentSequenceChangedEventArgs(e.Span));

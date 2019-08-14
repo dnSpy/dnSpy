@@ -72,14 +72,14 @@ namespace dnSpy.Text {
 				rawContentTypes = new Dictionary<string, RawContentType>(StringComparer.OrdinalIgnoreCase);
 				foreach (var md in contentTypeDefinitions.Select(a => a.Metadata)) {
 					var typeName = md.Name;
-					Debug.Assert(!(typeName is null));
+					Debug2.Assert(!(typeName is null));
 					if (typeName is null)
 						continue;
 					Debug.Assert(!rawContentTypes.ContainsKey(typeName));
 					if (rawContentTypes.ContainsKey(typeName))
 						continue;
 					var baseTypes = (md.BaseDefinition ?? Array.Empty<string>()).ToArray();
-					Debug.Assert(!(baseTypes is null));
+					Debug2.Assert(!(baseTypes is null));
 					if (baseTypes is null)
 						continue;
 					var rawCt = new RawContentType(typeName, baseTypes, md.MimeType);
@@ -109,7 +109,7 @@ namespace dnSpy.Text {
 				Debug.Assert(b);
 				if (!b)
 					return null;
-				Debug.Assert(!(rawCt is null));
+				Debug2.Assert(!(rawCt is null));
 				b = rawContentTypes.Remove(rawCt.Typename);
 				Debug.Assert(b);
 
@@ -154,7 +154,7 @@ namespace dnSpy.Text {
 
 		ContentType AddContentType_NoLock(string typeName, IContentType[] baseTypes, string? mimeType) {
 			bool addMimeType;
-			if (string.IsNullOrWhiteSpace(mimeType)) {
+			if (string2.IsNullOrWhiteSpace(mimeType)) {
 				addMimeType = false;
 				mimeType = MimeTypePrefix + typeName.ToLowerInvariant();
 			}

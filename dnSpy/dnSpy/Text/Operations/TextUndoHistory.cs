@@ -30,8 +30,8 @@ namespace dnSpy.Text.Operations {
 		public PropertyCollection Properties { get; }
 		public TextUndoHistoryState State { get; private set; }
 		public ITextUndoTransaction? CurrentTransaction => currentTransaction;
-		public event EventHandler<TextUndoRedoEventArgs> UndoRedoHappened;
-		public event EventHandler<TextUndoTransactionCompletedEventArgs> UndoTransactionCompleted;
+		public event EventHandler<TextUndoRedoEventArgs>? UndoRedoHappened;
+		public event EventHandler<TextUndoTransactionCompletedEventArgs>? UndoTransactionCompleted;
 
 		public bool CanRedo => redoList.Count > 0;
 		public bool CanUndo => undoList.Count > 0;

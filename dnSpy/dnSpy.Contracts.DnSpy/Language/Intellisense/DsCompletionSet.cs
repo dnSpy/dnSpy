@@ -119,7 +119,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// Filters the list. <see cref="SelectBestMatch"/> should be called after this method
 		/// </summary>
 		public override void Filter() {
-			Debug.Assert(!(ApplicableTo is null), "You must initialize " + nameof(ApplicableTo) + " before calling this method");
+			Debug2.Assert(!(ApplicableTo is null), "You must initialize " + nameof(ApplicableTo) + " before calling this method");
 			var inputText = SearchText;
 			var filteredList = new List<Completion>(allCompletions.Length);
 			Filter(filteredList, allCompletions);
@@ -159,7 +159,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// </summary>
 		/// <returns></returns>
 		protected virtual CompletionSelectionStatus GetBestMatch() {
-			Debug.Assert(!(ApplicableTo is null), "You must initialize " + nameof(ApplicableTo) + " before calling this method");
+			Debug2.Assert(!(ApplicableTo is null), "You must initialize " + nameof(ApplicableTo) + " before calling this method");
 			var inputText = SearchText;
 			var completionFilter = CreateCompletionFilter(inputText);
 			int matches = 0;
@@ -167,7 +167,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 			var mruSelectionCase = default(MruSelection);
 			var mruSelection = default(MruSelection);
 			if (inputText.Length > 0) {
-				Debug.Assert(!(searchText is null));
+				Debug2.Assert(!(searchText is null));
 				foreach (var completion in Completions) {
 					if (!completionFilter.IsMatch(completion))
 						continue;

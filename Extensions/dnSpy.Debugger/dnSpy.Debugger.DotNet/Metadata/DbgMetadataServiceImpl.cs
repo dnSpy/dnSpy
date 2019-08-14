@@ -106,7 +106,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			var asmFilename = GetAssemblyFilename(moduleFilename, moduleId.AssemblyFullName, moduleId.ModuleNameOnly);
 
 			bool isAutoLoaded = (options & DbgLoadModuleOptions.AutoLoaded) != 0;
-			if (!string.IsNullOrEmpty(asmFilename)) {
+			if (!string2.IsNullOrEmpty(asmFilename)) {
 				var document = documentService.TryGetOrCreate(DsDocumentInfo.CreateDocument(asmFilename), isAutoLoaded);
 				if (document is null)
 					document = documentService.Resolve(new AssemblyNameInfo(moduleId.AssemblyFullName), null);
@@ -126,7 +126,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		static string? GetAssemblyFilename(string moduleFilename, string assemblyFullName, bool moduleNameOnly) {
-			if (string.IsNullOrEmpty(moduleFilename) || (string.IsNullOrEmpty(assemblyFullName) && !moduleNameOnly))
+			if (string2.IsNullOrEmpty(moduleFilename) || (string2.IsNullOrEmpty(assemblyFullName) && !moduleNameOnly))
 				return null;
 			if (moduleNameOnly)
 				return moduleFilename;

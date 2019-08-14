@@ -334,7 +334,7 @@ namespace dnSpy.Themes {
 			if (color.StartsWith("SystemColors.")) {
 				string shortName = color.Substring(13);
 				var property = typeof(SystemColors).GetProperty(shortName + "Brush");
-				Debug.Assert(!(property is null));
+				Debug2.Assert(!(property is null));
 				if (property is null)
 					return null;
 				return (Brush)property.GetValue(null, null)!;

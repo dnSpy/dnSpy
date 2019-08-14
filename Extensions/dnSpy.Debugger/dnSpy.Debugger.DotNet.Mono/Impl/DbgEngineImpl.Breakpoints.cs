@@ -194,7 +194,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					Debug.Assert(ebp.BoundCodeBreakpoint.IsClosed);
 					return;
 				}
-				Debug.Assert(bpData.Breakpoint is null);
+				Debug2.Assert(bpData.Breakpoint is null);
 				bpData.Breakpoint = info.bp;
 				if (!(bpData.Breakpoint is null))
 					bpData.Breakpoint.Tag = bpData;
@@ -253,7 +253,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		void InitializeBreakpoints(TypeMirror monoType) {
 			debuggerThread.VerifyAccess();
-			Debug.Assert(!(monoType is null));
+			Debug2.Assert(!(monoType is null));
 			if (monoType is null)
 				return;
 			var module = TryGetModuleCore_NoCreate(monoType.Module);

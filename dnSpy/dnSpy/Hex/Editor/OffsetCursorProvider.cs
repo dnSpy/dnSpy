@@ -82,7 +82,7 @@ namespace dnSpy.Hex.Editor {
 	}
 
 	sealed class OffsetHexCursorProvider : HexCursorProvider {
-		public override event EventHandler CursorInfoChanged;
+		public override event EventHandler? CursorInfoChanged;
 		public override HexCursorInfo CursorInfo => offsetCursorProvider.CursorInfo;
 		readonly OffsetCursorProvider offsetCursorProvider;
 
@@ -105,7 +105,7 @@ namespace dnSpy.Hex.Editor {
 	}
 
 	sealed class OffsetCursorProvider {
-		public event EventHandler CursorInfoChanged;
+		public event EventHandler? CursorInfoChanged;
 
 		public HexCursorInfo CursorInfo {
 			get => cursorInfo;

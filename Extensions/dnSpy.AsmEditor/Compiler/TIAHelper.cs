@@ -134,7 +134,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		static bool CheckEquivalent(TypeDef td) {
-			Debug.Assert(!(td is null));
+			Debug2.Assert(!(td is null));
 
 			for (int i = 0; !(td is null) && i < 1000; i++) {
 				if (i != 0) {

@@ -159,7 +159,7 @@ namespace dnSpy.Contracts.MVVM {
 		}
 
 		/// <inheritdoc/>
-		public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler? PropertyChanged;
 		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 		string IDataErrorInfo.Error { get { throw new NotImplementedException(); } }

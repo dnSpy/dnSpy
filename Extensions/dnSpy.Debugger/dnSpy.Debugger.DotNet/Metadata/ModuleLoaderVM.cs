@@ -182,7 +182,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			return wasCanceled;
 		}
 
-		public event EventHandler OnCompleted;
+		public event EventHandler? OnCompleted;
 
 		string CalculateCurrentItemName(DynamicModuleDefDocument document) {
 			var module = document.ModuleDef!;

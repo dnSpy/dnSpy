@@ -47,6 +47,6 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			ThreadsListViewDoubleClick?.Invoke(this, EventArgs.Empty);
 		}
 
-		public event EventHandler ThreadsListViewDoubleClick;
+		public event EventHandler? ThreadsListViewDoubleClick;
 	}
 }

@@ -25,7 +25,7 @@ namespace dnSpy.Scripting.Roslyn.VisualBasic {
 	static class ReplOptionsDefinitions {
 #pragma warning disable CS0169
 		[ExportReplOptionsDefinition("Visual Basic", ContentTypes.ReplVisualBasicRoslyn, AppSettingsConstants.GUID_REPL_VISUAL_BASIC_ROSLYN)]
-		static readonly ReplOptionsDefinition visualBasicReplOptionsDefinition;
+		static readonly ReplOptionsDefinition? visualBasicReplOptionsDefinition;
 #pragma warning restore CS0169
 	}
 }

@@ -42,7 +42,7 @@ namespace dnSpy.ToolWindows {
 
 		void IFocusable.Focus() {
 			var focusable = Content as IFocusable;
-			Debug.Assert(!(focusable is null));
+			Debug2.Assert(!(focusable is null));
 			if (!(focusable is null))
 				focusable.Focus();
 		}
@@ -122,12 +122,12 @@ namespace dnSpy.ToolWindows {
 		object? contentUIObject;
 		bool contentUIObject_initd;
 
-		public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler? PropertyChanged;
 		public ToolWindowContent Content { get; }
 
 		public ToolWindowGroup? Owner {
 			get {
-				Debug.Assert(!(owner is null));
+				Debug2.Assert(!(owner is null));
 				return owner;
 			}
 			set => owner = value;
@@ -267,7 +267,7 @@ namespace dnSpy.ToolWindows {
 
 		void ShowWindowPositionMenu(object uiObj) {
 			var fe = uiObj as FrameworkElement;
-			Debug.Assert(!(fe is null));
+			Debug2.Assert(!(fe is null));
 			if (fe is null)
 				return;
 

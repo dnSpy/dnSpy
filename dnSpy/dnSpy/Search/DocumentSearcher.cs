@@ -80,8 +80,8 @@ namespace dnSpy.Search {
 			};
 		}
 
-		public event EventHandler OnSearchCompleted;
-		public event EventHandler<SearchResultEventArgs> OnNewSearchResults;
+		public event EventHandler? OnSearchCompleted;
+		public event EventHandler<SearchResultEventArgs>? OnNewSearchResults;
 
 		public void Cancel() {
 			if (!disposed)
@@ -99,7 +99,7 @@ namespace dnSpy.Search {
 			var task = Task.Factory.StartNew(SearchNewThread, o, cancellationToken)
 			.ContinueWith(t => {
 				var ex = t.Exception;
-				Debug.Assert(ex is null);
+				Debug2.Assert(ex is null);
 			}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
 		}
 		bool hasStarted = false;
@@ -154,7 +154,7 @@ namespace dnSpy.Search {
 			disposed = true;
 			cancellationTokenSource.Cancel();
 			cancellationTokenSource.Dispose();
-			Debug.Assert(!(OnSearchCompleted is null));
+			Debug2.Assert(!(OnSearchCompleted is null));
 			OnSearchCompleted?.Invoke(this, EventArgs.Empty);
 		}
 		bool disposed;
@@ -195,7 +195,7 @@ namespace dnSpy.Search {
 			if (cancellationTokenSource.IsCancellationRequested)
 				return;
 
-			Debug.Assert(!(OnNewSearchResults is null));
+			Debug2.Assert(!(OnNewSearchResults is null));
 			OnNewSearchResults?.Invoke(this, new SearchResultEventArgs(results));
 		}
 	}

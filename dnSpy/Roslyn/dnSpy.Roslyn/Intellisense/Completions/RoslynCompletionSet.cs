@@ -52,7 +52,7 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 		void InitializeCompletions(IEnumerable<Completion> completions) {
 			foreach (var c in completions) {
 				var rc = c as RoslynCompletion;
-				Debug.Assert(!(rc is null));
+				Debug2.Assert(!(rc is null));
 				if (!(rc is null))
 					rc.CompletionSet = this;
 			}
@@ -102,11 +102,11 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 			List<string>? filteredTags = null;
 
 			var filters = Filters;
-			Debug.Assert(!(filters is null));
+			Debug2.Assert(!(filters is null));
 			if (!(filters is null)) {
 				foreach (var tmpFilter in filters) {
 					var filter = tmpFilter as RoslynIntellisenseFilter;
-					Debug.Assert(!(filter is null));
+					Debug2.Assert(!(filter is null));
 					if (!(filter is null) && filter.IsChecked) {
 						if (filteredTags is null)
 							filteredTags = new List<string>();
@@ -139,7 +139,7 @@ matched:
 			mruCompletionService.AddText(completion.DisplayText);
 
 			var info = CompletionInfo.Create(ApplicableTo.TextBuffer.CurrentSnapshot);
-			Debug.Assert(!(info is null));
+			Debug2.Assert(!(info is null));
 			if (info is null)
 				return;
 

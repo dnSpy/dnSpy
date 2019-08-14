@@ -98,7 +98,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <summary>
 		/// Raised when the selection is changed
 		/// </summary>
-		public abstract event EventHandler SelectionChanged;
+		public abstract event EventHandler? SelectionChanged;
 
 		/// <summary>
 		/// Gets the active point

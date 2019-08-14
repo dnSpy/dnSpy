@@ -170,7 +170,7 @@ namespace dnSpy.MainApp {
 		}
 
 		IExportProviderFactory? TryCreateExportProviderFactoryCachedCore(Resolver resolver, out long resourceManagerTokensOffset) {
-			Debug.Assert(!(mefAssemblies is null));
+			Debug2.Assert(!(mefAssemblies is null));
 			resourceManagerTokensOffset = -1;
 			var filename = GetCachedCompositionConfigurationFilename();
 			if (!File.Exists(filename))
@@ -215,7 +215,7 @@ namespace dnSpy.MainApp {
 			writingCachedMefFile = true;
 			Task.Run(() => SaveMefStateAsync(config)).ContinueWith(t => {
 				var ex = t.Exception;
-				Debug.Assert(ex is null);
+				Debug2.Assert(ex is null);
 				writingCachedMefFile = false;
 			}, CancellationToken.None);
 
@@ -224,7 +224,7 @@ namespace dnSpy.MainApp {
 
 		bool writingCachedMefFile;
 		async Task SaveMefStateAsync(CompositionConfiguration config) {
-			Debug.Assert(!(mefAssemblies is null));
+			Debug2.Assert(!(mefAssemblies is null));
 			string filename = GetCachedCompositionConfigurationFilename();
 			bool fileCreated = false;
 			bool deleteFile = true;
@@ -264,7 +264,7 @@ namespace dnSpy.MainApp {
 		}
 
 		void UpdateResourceManagerTokens() {
-			Debug.Assert(!(mefAssemblies is null));
+			Debug2.Assert(!(mefAssemblies is null));
 			var tokensOffset = resourceManagerTokensOffset;
 			if (tokensOffset < 0)
 				return;
@@ -482,11 +482,11 @@ namespace dnSpy.MainApp {
 		}
 
 		void MainWindow_SourceInitialized(object? sender, EventArgs e) {
-			Debug.Assert(!(appWindow is null));
+			Debug2.Assert(!(appWindow is null));
 			appWindow.MainWindow.SourceInitialized -= MainWindow_SourceInitialized;
 
 			var hwndSource = PresentationSource.FromVisual(appWindow.MainWindow) as HwndSource;
-			Debug.Assert(!(hwndSource is null));
+			Debug2.Assert(!(hwndSource is null));
 			if (!(hwndSource is null))
 				hwndSource.AddHook(WndProc);
 		}
@@ -515,12 +515,12 @@ namespace dnSpy.MainApp {
 		void FixEditorContextMenuStyle() {
 			var module = typeof(ContextMenu).Module;
 			var type = module.GetType("System.Windows.Documents.TextEditorContextMenu+EditorContextMenu", false, false);
-			Debug.Assert(!(type is null));
+			Debug2.Assert(!(type is null));
 			if (type is null)
 				return;
 			const string styleKey = "EditorContextMenuStyle";
 			var style = Resources[styleKey];
-			Debug.Assert(!(style is null));
+			Debug2.Assert(!(style is null));
 			if (style is null)
 				return;
 			Resources.Remove(styleKey);
@@ -578,8 +578,8 @@ namespace dnSpy.MainApp {
 		static void ShowElapsedTime(Stopwatch sw) => MsgBox.Instance.Show($"{sw.ElapsedMilliseconds} ms, {sw.ElapsedTicks} ticks");
 
 		void HandleAppArgs(IAppCommandLineArgs appArgs) {
-			Debug.Assert(!(exportProvider is null));
-			Debug.Assert(!(appWindow is null));
+			Debug2.Assert(!(exportProvider is null));
+			Debug2.Assert(!(appWindow is null));
 			if (appArgs.Activate && appWindow.MainWindow.WindowState == WindowState.Minimized)
 				WindowUtils.SetState(appWindow.MainWindow, WindowState.Normal);
 
@@ -608,13 +608,13 @@ namespace dnSpy.MainApp {
 		}
 
 		void HandleAppArgs2(IAppCommandLineArgs appArgs) {
-			Debug.Assert(!(exportProvider is null));
+			Debug2.Assert(!(exportProvider is null));
 			foreach (var handler in exportProvider.GetExports<IAppCommandLineArgsHandler>().OrderBy(a => a.Value.Order))
 				handler.Value.OnNewArgs(appArgs);
 		}
 
 		IDecompiler? GetDecompiler(string language) {
-			Debug.Assert(!(exportProvider is null));
+			Debug2.Assert(!(exportProvider is null));
 			if (string.IsNullOrEmpty(language))
 				return null;
 

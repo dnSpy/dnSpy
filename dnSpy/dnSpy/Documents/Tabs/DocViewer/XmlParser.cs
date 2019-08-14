@@ -572,7 +572,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		void ParseXamlString(Span span) {
-			Debug.Assert(!(xamlAttributeParser is null));
+			Debug2.Assert(!(xamlAttributeParser is null));
 
 			// Absolute minimum is "{x}", but most likely it's longer
 			if (span.Length <= 3)
@@ -601,7 +601,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		void Undo(in Token token) {
-			Debug.Assert(cachedToken is null);
+			Debug2.Assert(cachedToken is null);
 			if (!(cachedToken is null))
 				throw new InvalidOperationException();
 			cachedToken = token;
@@ -626,7 +626,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		Token? cachedToken;
 
 		Token ReadTokenCore() {
-			Debug.Assert(cachedToken is null);
+			Debug2.Assert(cachedToken is null);
 
 			SkipWhitespace();
 			int startPos = textPosition;

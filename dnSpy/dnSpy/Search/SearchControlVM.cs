@@ -240,7 +240,7 @@ namespace dnSpy.Search {
 		IEnumerable<SearchTypeInfo> GetSelectedTypeToSearch() {
 			foreach (var node in documentTreeView.TreeView.TopLevelSelection.Select(a => a.GetAncestorOrSelf<TypeNode>()).Where(a => !(a is null)).Distinct()) {
 				var fileNode = node.GetDocumentNode();
-				Debug.Assert(!(fileNode is null));
+				Debug2.Assert(!(fileNode is null));
 				if (fileNode is null)
 					continue;
 				yield return new SearchTypeInfo(fileNode.Document, node!.TypeDef);
@@ -250,7 +250,7 @@ namespace dnSpy.Search {
 		void FileSearcher_OnSearchCompleted(object? sender, EventArgs e) {
 			if (sender is null || sender != fileSearcher || searchCompleted)
 				return;
-			Debug.Assert(!(fileSearcher is null));
+			Debug2.Assert(!(fileSearcher is null));
 			searchCompleted = true;
 			SearchResults.Remove(fileSearcher.SearchingResult!);
 			TooManyResults = fileSearcher.TooManyResults;

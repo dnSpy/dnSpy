@@ -63,7 +63,7 @@ namespace dnSpy.Bookmarks.Impl {
 			lock (lockObj) {
 				foreach (var info in settings) {
 					var bmImpl = info.Bookmark as BookmarkImpl;
-					Debug.Assert(!(bmImpl is null));
+					Debug2.Assert(!(bmImpl is null));
 					if (bmImpl is null)
 						continue;
 					Debug.Assert(bookmarks.Contains(bmImpl));
@@ -80,9 +80,9 @@ namespace dnSpy.Bookmarks.Impl {
 				BookmarksModified?.Invoke(this, new BookmarksModifiedEventArgs(new ReadOnlyCollection<BookmarkAndOldSettings>(bms)));
 		}
 
-		public override event EventHandler<BookmarksModifiedEventArgs> BookmarksModified;
+		public override event EventHandler<BookmarksModifiedEventArgs>? BookmarksModified;
 
-		public override event EventHandler<CollectionChangedEventArgs<Bookmark>> BookmarksChanged;
+		public override event EventHandler<CollectionChangedEventArgs<Bookmark>>? BookmarksChanged;
 		public override Bookmark[] Bookmarks {
 			get {
 				lock (lockObj)
@@ -153,7 +153,7 @@ namespace dnSpy.Bookmarks.Impl {
 			lock (lockObj) {
 				foreach (var bm in bookmarks) {
 					var bmImpl = bm as BookmarkImpl;
-					Debug.Assert(!(bmImpl is null));
+					Debug2.Assert(!(bmImpl is null));
 					if (bmImpl is null)
 						continue;
 					if (!this.bookmarks.Contains(bmImpl))

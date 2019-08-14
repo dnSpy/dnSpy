@@ -270,10 +270,10 @@ namespace dnSpy.Decompiler.MSBuild {
 				return;
 
 			var file = Files.OfType<TypeProjectFile>().Where(a => DotNetUtils.IsSystemWindowsApplication(a.Type)).FirstOrDefault();
-			Debug.Assert(!(file is null));
+			Debug2.Assert(!(file is null));
 			if (file is null)
 				return;
-			Debug.Assert(file.DependentUpon is null);
+			Debug2.Assert(file.DependentUpon is null);
 			if (!(file.DependentUpon is null))
 				return;
 
@@ -330,7 +330,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		}
 
 		BamlResourceProjectFile? TryGetBamlFile(TypeDef type) {
-			Debug.Assert(!(typeFullNameToBamlFile is null));
+			Debug2.Assert(!(typeFullNameToBamlFile is null));
 			typeFullNameToBamlFile.TryGetValue(type.FullName, out var bamlFile);
 			return bamlFile;
 		}
@@ -345,13 +345,13 @@ namespace dnSpy.Decompiler.MSBuild {
 		Dictionary<string, ResXProjectFile>? typeFullNameToResXFile;
 
 		ResXProjectFile? TryGetResXFile(TypeDef type) {
-			Debug.Assert(!(typeFullNameToResXFile is null));
+			Debug2.Assert(!(typeFullNameToResXFile is null));
 			typeFullNameToResXFile.TryGetValue(type.FullName, out var resxFile);
 			return resxFile;
 		}
 
 		string GetTypeExtension(TypeDef type) {
-			Debug.Assert(!(typeFullNameToBamlFile is null));
+			Debug2.Assert(!(typeFullNameToBamlFile is null));
 			if (typeFullNameToBamlFile.TryGetValue(type.FullName, out var bamlFile))
 				return ".xaml" + Options.Decompiler.FileExtension;
 			return Options.Decompiler.FileExtension;
@@ -473,7 +473,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			if (!Options.CreateResX)
 				return null;
 			var asm = module.Assembly;
-			Debug.Assert(!(asm is null) && !UTF8String.IsNullOrEmpty(asm.Culture));
+			Debug2.Assert(!(asm is null) && !UTF8String.IsNullOrEmpty(asm.Culture));
 			if (asm is null || UTF8String.IsNullOrEmpty(asm.Culture))
 				return null;
 			var name = FileUtils.RemoveExtension(rsrcName);

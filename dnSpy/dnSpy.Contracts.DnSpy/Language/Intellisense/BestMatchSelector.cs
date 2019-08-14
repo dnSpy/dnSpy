@@ -117,7 +117,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		MatchPriority GetMatchPriority(Completion completion) {
 			var filterText = completion.TryGetFilterText();
-			Debug.Assert(!(filterText is null));
+			Debug2.Assert(!(filterText is null));
 			if (filterText is null)
 				return MatchPriority.Other;
 

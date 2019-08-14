@@ -24,8 +24,8 @@ using dnSpy.Contracts.Hex.Editor;
 
 namespace dnSpy.Hex.Editor {
 	sealed class HexSpaceReservationStackImpl : HexSpaceReservationStack {
-		public override event EventHandler GotAggregateFocus;
-		public override event EventHandler LostAggregateFocus;
+		public override event EventHandler? GotAggregateFocus;
+		public override event EventHandler? LostAggregateFocus;
 		public override bool HasAggregateFocus => hasAggregateFocus;
 		bool hasAggregateFocus;
 

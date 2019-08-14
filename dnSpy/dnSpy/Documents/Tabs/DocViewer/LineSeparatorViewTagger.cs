@@ -51,7 +51,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 	}
 
 	sealed class LineSeparatorViewTagger : ITagger<ILineSeparatorTag> {
-		public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
+		public event EventHandler<SnapshotSpanEventArgs>? TagsChanged;
 
 		readonly ITextView textView;
 		LineSeparatorCollection lineSeparatorCollection;

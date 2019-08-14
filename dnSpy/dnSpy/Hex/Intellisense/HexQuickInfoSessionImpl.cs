@@ -28,14 +28,14 @@ using VSUTIL = Microsoft.VisualStudio.Utilities;
 namespace dnSpy.Hex.Intellisense {
 	sealed class HexQuickInfoSessionImpl : HexQuickInfoSession {
 		public override VSLI.BulkObservableCollection<object> QuickInfoContent { get; }
-		public override event EventHandler ApplicableToSpanChanged;
+		public override event EventHandler? ApplicableToSpanChanged;
 		public override bool TrackMouse { get; }
 		public override HexView HexView { get; }
 		public override HexIntellisensePresenter? Presenter => quickInfoPresenter;
 		public override HexCellPosition TriggerPoint { get; }
-		public override event EventHandler PresenterChanged;
-		public override event EventHandler Recalculated;
-		public override event EventHandler Dismissed;
+		public override event EventHandler? PresenterChanged;
+		public override event EventHandler? Recalculated;
+		public override event EventHandler? Dismissed;
 		public override bool IsDismissed => isDismissed;
 		bool isDismissed;
 		public override bool HasInteractiveContent => hasInteractiveContent;

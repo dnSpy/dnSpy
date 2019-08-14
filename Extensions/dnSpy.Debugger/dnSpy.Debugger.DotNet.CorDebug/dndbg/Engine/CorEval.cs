@@ -96,14 +96,14 @@ namespace dndbg.Engine {
 		}
 
 		public int NewArray(CorElementType et, CorClass cls, uint[] dims, int[]? lowBounds = null) {
-			Debug.Assert(!(dims is null) && (lowBounds is null || lowBounds.Length == dims.Length));
+			Debug2.Assert(!(dims is null) && (lowBounds is null || lowBounds.Length == dims.Length));
 			return obj.NewArray(et, cls?.RawObject, dims.Length, dims, lowBounds);
 		}
 
 		public int NewParameterizedArray(CorType type, uint[] dims, int[]? lowBounds = null) {
 			if (eval2 is null)
 				return -1;
-			Debug.Assert(!(dims is null) && (lowBounds is null || lowBounds.Length == dims.Length));
+			Debug2.Assert(!(dims is null) && (lowBounds is null || lowBounds.Length == dims.Length));
 			return eval2.NewParameterizedArray(type.RawObject, dims.Length, dims, lowBounds);
 		}
 

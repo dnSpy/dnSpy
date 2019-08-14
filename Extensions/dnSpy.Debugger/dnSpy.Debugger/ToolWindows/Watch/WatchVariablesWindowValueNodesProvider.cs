@@ -71,7 +71,7 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 	}
 
 	sealed class WatchVariablesWindowValueNodesProviderImpl : WatchVariablesWindowValueNodesProvider {
-		public override event EventHandler NodesChanged;
+		public override event EventHandler? NodesChanged;
 		readonly DbgObjectIdService dbgObjectIdService;
 		readonly List<ExpressionInfo> expressions;
 		readonly Action<string[]> saveExpressions;
@@ -165,8 +165,8 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 			// IDs are also sortable
 			foreach (var id in ids.OrderByDescending(a => a, StringComparer.Ordinal)) {
 				var (index, info) = FindPrevExpression(lastIndex, id);
-				Debug.Assert(!(info is null));
-				Debug.Assert((index < 0) == (info is null));
+				Debug2.Assert(!(info is null));
+				Debug2.Assert((index < 0) == (info is null));
 				if (index < 0)
 					continue;
 				lastIndex = index;

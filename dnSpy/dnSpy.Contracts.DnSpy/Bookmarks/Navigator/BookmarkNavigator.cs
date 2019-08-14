@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.Bookmarks.Navigator {
 		/// <summary>
 		/// Raised when <see cref="ActiveBookmark"/> is changed
 		/// </summary>
-		public abstract event EventHandler ActiveBookmarkChanged;
+		public abstract event EventHandler? ActiveBookmarkChanged;
 
 		/// <summary>
 		/// true if <see cref="SelectPreviousBookmark"/> can be called

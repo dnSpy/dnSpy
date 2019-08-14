@@ -42,7 +42,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		public abstract unsafe bool ReadMemory(uint rva, void* destination, int size);
 		public abstract DmdCustomAttributeData[] ReadCustomAttributes(int metadataToken);
 		public abstract DmdCustomAttributeData[] ReadSecurityAttributes(int metadataToken);
-		public abstract event EventHandler<DmdTypesUpdatedEventArgs> TypesUpdated;
+		public abstract event EventHandler<DmdTypesUpdatedEventArgs>? TypesUpdated;
 	}
 
 	readonly struct DmdTypesUpdatedEventArgs {

@@ -39,12 +39,12 @@ namespace dnSpy.Text.Editor {
 		/// <summary>
 		/// Raised when it gets aggregate focus
 		/// </summary>
-		event EventHandler GotAggregateFocus;
+		event EventHandler? GotAggregateFocus;
 
 		/// <summary>
 		/// Raised when it loses aggregate focus
 		/// </summary>
-		event EventHandler LostAggregateFocus;
+		event EventHandler? LostAggregateFocus;
 
 		/// <summary>
 		/// Refreshes the space reservation stack which will force the agents to reposition themselves

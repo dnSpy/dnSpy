@@ -43,8 +43,8 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 	}
 
 	sealed class AttachProgramOptionsAggregatorImpl : AttachProgramOptionsAggregator {
-		public override event EventHandler<AttachProgramOptionsAddedEventArgs> AttachProgramOptionsAdded;
-		public override event EventHandler Completed;
+		public override event EventHandler<AttachProgramOptionsAddedEventArgs>? AttachProgramOptionsAdded;
+		public override event EventHandler? Completed;
 
 		readonly object lockObj;
 		readonly List<AttachProgramOptions> pendingOptions;

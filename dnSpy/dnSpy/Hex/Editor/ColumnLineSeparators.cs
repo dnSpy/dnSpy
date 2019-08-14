@@ -117,7 +117,7 @@ namespace dnSpy.Hex.Editor {
 		[VSUTIL.Order(After = PredefinedHexAdornmentLayers.BottomLayer, Before = PredefinedHexAdornmentLayers.TopLayer)]
 		[VSUTIL.Order(After = PredefinedHexAdornmentLayers.Selection, Before = PredefinedHexAdornmentLayers.Text)]
 		[VSUTIL.Order(After = PredefinedHexAdornmentLayers.TextMarker)]
-		static HexAdornmentLayerDefinition theAdornmentLayerDefinition;
+		static HexAdornmentLayerDefinition? theAdornmentLayerDefinition;
 #pragma warning restore CS0169
 
 		public ColumnLineSeparatorService(WpfHexView wpfHexView, HexEditorFormatMapService editorFormatMapService) {
@@ -232,7 +232,7 @@ namespace dnSpy.Hex.Editor {
 			RemoveAllLines();
 			if (!enabled)
 				return;
-			Debug.Assert(!(adornmentLayer is null));
+			Debug2.Assert(!(adornmentLayer is null));
 
 			if (wpfHexView.ViewportHeight == 0)
 				return;

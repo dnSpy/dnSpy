@@ -129,7 +129,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.DebugProgram {
 
 		protected override string VerifyCore(string columnName) {
 			if (columnName == nameof(MonoExePath)) {
-				if (!string.IsNullOrWhiteSpace(MonoExePath))
+				if (!string2.IsNullOrWhiteSpace(MonoExePath))
 					return VerifyFilename(MonoExePath);
 			}
 

@@ -33,8 +33,10 @@ namespace dnSpy.AsmEditor.Converters {
 	sealed class CilObjectConverter : IValueConverter {
 		public static readonly CilObjectConverter Instance = new CilObjectConverter();
 
+#nullable disable
 		static IClassificationFormatMap classificationFormatMap;
 		static ITextElementProvider textElementProvider;
+#nullable restore
 
 		[ExportAutoLoaded]
 		sealed class Loader : IAutoLoaded {

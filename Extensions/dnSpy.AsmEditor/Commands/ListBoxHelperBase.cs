@@ -56,7 +56,7 @@ namespace dnSpy.AsmEditor.Commands {
 
 			public bool CanExecute(object parameter) => cmd.CanExecute(owner.GetSelectedItems());
 
-			public event EventHandler CanExecuteChanged {
+			public event EventHandler? CanExecuteChanged {
 				add => CommandManager.RequerySuggested += value;
 				remove => CommandManager.RequerySuggested -= value;
 			}

@@ -55,7 +55,7 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 		}
 
 		void DocumentTabService_FileCollectionChanged(object? sender, NotifyDocumentCollectionChangedEventArgs e) {
-			Debug.Assert(!(dbgCodeBreakpointsService is null));
+			Debug2.Assert(!(dbgCodeBreakpointsService is null));
 			if (dbgCodeBreakpointsService is null)
 				return;
 			switch (e.Type) {

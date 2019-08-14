@@ -193,7 +193,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 
 		(DisplayPart[] nameParts, DisplayPart[] valueParts, DisplayPart[] typeParts) GetDisplayParts(DmdType type) {
 			var ddaType = type.AppDomain.GetWellKnownType(DmdWellKnownType.System_Diagnostics_DebuggerDisplayAttribute, isOptional: true);
-			Debug.Assert(!(ddaType is null));
+			Debug2.Assert(!(ddaType is null));
 
 			bool forceNoAttr = ShouldIgnoreDebuggerDisplayAttribute(type);
 			string? nameDisplayString = null, valueDisplayString = null, typeDisplayString = null;

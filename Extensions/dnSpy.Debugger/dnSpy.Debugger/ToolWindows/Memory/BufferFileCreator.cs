@@ -85,7 +85,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			void OnProcessChanged_UI(DbgProcess? newProcess) {
 				uiDispatcher.VerifyAccess();
 				if (disposed) {
-					Debug.Assert(process is null);
+					Debug2.Assert(process is null);
 					Debug.Assert(runtimes.Count == 0);
 					Debug.Assert(moduleReferences.Count == 0);
 					Debug.Assert(!hexBufferFileService.Files.Any());

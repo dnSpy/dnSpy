@@ -54,7 +54,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			}
 		}
 
-		public override event EventHandler<HexBufferStreamSpanInvalidatedEventArgs> BufferStreamSpanInvalidated;
+		public override event EventHandler<HexBufferStreamSpanInvalidatedEventArgs>? BufferStreamSpanInvalidated;
 
 		public override void ClearCache() {
 			CheckDisposed();

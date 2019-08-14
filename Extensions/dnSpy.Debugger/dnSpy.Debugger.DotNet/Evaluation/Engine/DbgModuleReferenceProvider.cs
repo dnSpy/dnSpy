@@ -326,7 +326,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 						continue;
 					modRefs.Add(modRef);
 					if (modInfo.Module == sourceModule) {
-						Debug.Assert(state.SourceModuleReference is null);
+						Debug2.Assert(state.SourceModuleReference is null);
 						state.SourceModuleReference = modRef;
 					}
 				}

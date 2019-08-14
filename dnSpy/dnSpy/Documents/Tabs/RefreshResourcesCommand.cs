@@ -82,7 +82,7 @@ namespace dnSpy.Documents.Tabs {
 
 			decompilationCache.Clear(new HashSet<IDsDocument?>(ownerNodes.Select(a => {
 				var mod = a.GetModuleNode();
-				Debug.Assert(!(mod is null));
+				Debug2.Assert(!(mod is null));
 				return mod?.Document;
 			}).Where(a => !(a is null))));
 

@@ -177,11 +177,11 @@ namespace dnSpy.Hex.Editor {
 				}
 				else if (mouseCaptured) {
 					e.Handled = true;
-					Debug.Assert(!(mouseLeftDownInfo is null));
+					Debug2.Assert(!(mouseLeftDownInfo is null));
 					if (mouseLeftDownInfo is null)
 						StopScrolling();
 					else if (mouseLeftDownInfo.Value.Clicks == 2 || mouseLeftDownInfo.Value.Clicks == 3) {
-						Debug.Assert(dispatcherTimer is null);
+						Debug2.Assert(dispatcherTimer is null);
 						StopScrolling();
 
 						var mouseLoc = GetLocation(e);

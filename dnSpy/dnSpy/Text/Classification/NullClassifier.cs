@@ -26,7 +26,7 @@ namespace dnSpy.Text.Classification {
 	sealed class NullClassifier : IClassifier {
 		public static readonly IClassifier Instance = new NullClassifier();
 
-		public event EventHandler<ClassificationChangedEventArgs> ClassificationChanged {
+		public event EventHandler<ClassificationChangedEventArgs>? ClassificationChanged {
 			add { }
 			remove { }
 		}

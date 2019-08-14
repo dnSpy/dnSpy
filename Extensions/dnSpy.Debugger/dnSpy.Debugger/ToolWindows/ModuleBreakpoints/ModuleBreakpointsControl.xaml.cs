@@ -47,6 +47,6 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			ModuleBreakpointsListViewDoubleClick?.Invoke(this, EventArgs.Empty);
 		}
 
-		public event EventHandler ModuleBreakpointsListViewDoubleClick;
+		public event EventHandler? ModuleBreakpointsListViewDoubleClick;
 	}
 }

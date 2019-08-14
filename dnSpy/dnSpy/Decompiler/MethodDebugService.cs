@@ -135,7 +135,7 @@ namespace dnSpy.Decompiler {
 
 		TextSpan GetScopeSpan(int textPosition) {
 			int stmtIndex = GetScopeSpanStartIndex(textPosition);
-			Debug.Assert(!(sortedStatements is null));
+			Debug2.Assert(!(sortedStatements is null));
 			if (stmtIndex >= 0) {
 				var scopeSpan = sortedStatements[stmtIndex].Statement.TextSpan;
 				if (scopeSpan.Contains(textPosition))
@@ -172,7 +172,7 @@ namespace dnSpy.Decompiler {
 			if (methodStatements.Count == 0)
 				return false;
 			var methodInfo = TryGetMethodDebugInfo(methodStatements[0].Method);
-			Debug.Assert(!(methodInfo is null));
+			Debug2.Assert(!(methodInfo is null));
 			if (methodInfo is null)
 				return false;
 			var methodSpan = methodInfo.Span;
@@ -269,7 +269,7 @@ namespace dnSpy.Decompiler {
 			int position = span.Start;
 			int end = span.End;
 			int index = GetStartIndex(position);
-			Debug.Assert(!(sortedStatements is null));
+			Debug2.Assert(!(sortedStatements is null));
 			if (index < 0)
 				yield break;
 			var array = sortedStatements;
@@ -306,7 +306,7 @@ namespace dnSpy.Decompiler {
 		int GetScopeSpanStartIndex(int position) {
 			if (sortedStatements is null)
 				InitializeSortedStatements();
-			Debug.Assert(!(sortedStatements is null));
+			Debug2.Assert(!(sortedStatements is null));
 
 			int index = GetStartIndexCore(position);
 			var array = sortedStatements;
@@ -337,7 +337,7 @@ namespace dnSpy.Decompiler {
 		}
 
 		int GetStartIndexCore(int position) {
-			Debug.Assert(!(sortedStatements is null));
+			Debug2.Assert(!(sortedStatements is null));
 			var array = sortedStatements;
 			int lo = 0, hi = array.Length - 1;
 			while (lo <= hi) {
@@ -360,7 +360,7 @@ namespace dnSpy.Decompiler {
 		}
 
 		void InitializeSortedStatements() {
-			Debug.Assert(sortedStatements is null);
+			Debug2.Assert(sortedStatements is null);
 			if (!(sortedStatements is null))
 				return;
 			var list = new List<MethodSourceStatement>();

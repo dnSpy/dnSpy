@@ -59,7 +59,7 @@ namespace dnSpy.Contracts.Command {
 			this.cmdId = cmdId;
 		}
 
-		event EventHandler ICommand.CanExecuteChanged {
+		event EventHandler? ICommand.CanExecuteChanged {
 			add => CommandManager.RequerySuggested += value;
 			remove => CommandManager.RequerySuggested -= value;
 		}

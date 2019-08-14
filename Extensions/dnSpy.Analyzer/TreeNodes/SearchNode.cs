@@ -38,7 +38,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => DsImages.Search;
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
-			Debug.Assert(asyncFetchChildrenHelper is null);
+			Debug2.Assert(asyncFetchChildrenHelper is null);
 			asyncFetchChildrenHelper = new AsyncFetchChildrenHelper(this, () => asyncFetchChildrenHelper = null);
 			yield break;
 		}
@@ -102,7 +102,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		internal static HashSet<string> GetFriendAssemblies(IDsDocumentService documentService, ModuleDef mod, out IDsDocument[] modules) {
 			var asm = mod.Assembly;
-			Debug.Assert(!(asm is null));
+			Debug2.Assert(!(asm is null));
 			var friendAssemblies = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 			foreach (var attribute in asm.CustomAttributes.FindAll("System.Runtime.CompilerServices.InternalsVisibleToAttribute")) {
 				if (attribute.ConstructorArguments.Count == 0)
@@ -115,7 +115,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 			modules = documentService.GetDocuments().Where(a => CanIncludeModule(mod, a.ModuleDef)).ToArray();
 			foreach (var module in modules) {
-				Debug.Assert(!(module.ModuleDef is null));
+				Debug2.Assert(!(module.ModuleDef is null));
 				var asm2 = module.AssemblyDef;
 				if (asm2 is null)
 					continue;

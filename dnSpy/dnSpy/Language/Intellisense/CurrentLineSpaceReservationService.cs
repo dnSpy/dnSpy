@@ -42,7 +42,7 @@ namespace dnSpy.Language.Intellisense {
 			if (!CurrentLineSpaceReservationAgent.IsSupportedSession(session))
 				return;
 			var wpfTextView = session.TextView as IWpfTextView;
-			Debug.Assert(!(wpfTextView is null));
+			Debug2.Assert(!(wpfTextView is null));
 			if (wpfTextView is null)
 				return;
 			var currentLineAgent = session.TextView.Properties.GetOrCreateSingletonProperty(typeof(CurrentLineSpaceReservationAgent), () => new CurrentLineSpaceReservationAgent(wpfTextView));
@@ -53,8 +53,8 @@ namespace dnSpy.Language.Intellisense {
 	sealed class CurrentLineSpaceReservationAgent : ISpaceReservationAgent {
 		bool ISpaceReservationAgent.HasFocus => false;
 		bool ISpaceReservationAgent.IsMouseOver => false;
-		event EventHandler ISpaceReservationAgent.GotFocus { add { } remove { } }
-		event EventHandler ISpaceReservationAgent.LostFocus { add { } remove { } }
+		event EventHandler? ISpaceReservationAgent.GotFocus { add { } remove { } }
+		event EventHandler? ISpaceReservationAgent.LostFocus { add { } remove { } }
 		readonly IWpfTextView wpfTextView;
 		ISpaceReservationManager? spaceReservationManager;
 
@@ -72,7 +72,7 @@ namespace dnSpy.Language.Intellisense {
 				if ((oldValue != 0) == (activeSessions != 0))
 					return;
 				if (activeSessions == 0) {
-					Debug.Assert(!(spaceReservationManager is null));
+					Debug2.Assert(!(spaceReservationManager is null));
 					wpfTextView.Caret.PositionChanged -= Caret_PositionChanged;
 					spaceReservationManager.RemoveAgent(this);
 				}

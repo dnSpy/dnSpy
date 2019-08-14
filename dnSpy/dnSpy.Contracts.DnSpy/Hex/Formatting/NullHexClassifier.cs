@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.Hex.Formatting {
 		public static readonly HexClassifier Instance = new RealNullHexClassifier();
 
 		sealed class RealNullHexClassifier : HexClassifier {
-			public override event EventHandler<HexClassificationChangedEventArgs> ClassificationChanged {
+			public override event EventHandler<HexClassificationChangedEventArgs>? ClassificationChanged {
 				add { }
 				remove { }
 			}

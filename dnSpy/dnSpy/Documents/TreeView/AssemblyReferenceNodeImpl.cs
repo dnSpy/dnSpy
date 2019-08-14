@@ -63,7 +63,7 @@ namespace dnSpy.Documents.TreeView {
 			if (document is null)
 				yield break;
 			var mod = document.ModuleDef;
-			Debug.Assert(!(mod is null));
+			Debug2.Assert(!(mod is null));
 			if (mod is null)
 				yield break;
 			foreach (var asmRef in mod.GetAssemblyRefs())

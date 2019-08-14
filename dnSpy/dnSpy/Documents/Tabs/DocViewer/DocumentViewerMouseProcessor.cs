@@ -117,7 +117,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				var newRef = GetReferenceCore(e);
 				if (!CanClick(e, newRef))
 					return;
-				Debug.Assert(!(newRef is null));
+				Debug2.Assert(!(newRef is null));
 				var documentViewer = TryGetDocumentViewer();
 				if (documentViewer is null)
 					return;

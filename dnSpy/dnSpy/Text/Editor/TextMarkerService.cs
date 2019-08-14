@@ -90,13 +90,13 @@ namespace dnSpy.Text.Editor {
 		[Order(Before = PredefinedDsAdornmentLayers.GlyphTextMarker, After = PredefinedAdornmentLayers.Outlining)]
 		[Order(Before = PredefinedAdornmentLayers.TextMarker)]
 		[Order(Before = PredefinedAdornmentLayers.CurrentLineHighlighter)]
-		static AdornmentLayerDefinition negativeTextMarkerAdornmentLayerDefinition;
+		static AdornmentLayerDefinition? negativeTextMarkerAdornmentLayerDefinition;
 
 		[Export(typeof(AdornmentLayerDefinition))]
 		[Name(PredefinedAdornmentLayers.TextMarker)]
 		[Order(After = PredefinedDsAdornmentLayers.BottomLayer, Before = PredefinedDsAdornmentLayers.TopLayer)]
 		[Order(Before = PredefinedAdornmentLayers.Selection, After = PredefinedAdornmentLayers.Outlining)]
-		static AdornmentLayerDefinition textMarkerAdornmentLayerDefinition;
+		static AdornmentLayerDefinition? textMarkerAdornmentLayerDefinition;
 #pragma warning restore CS0169
 
 		readonly IWpfTextView wpfTextView;
@@ -354,7 +354,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		MarkerElement? TryCreateMarkerElement(SnapshotSpan span, ITextMarkerTag tag) {
-			Debug.Assert(!(tag.Type is null));
+			Debug2.Assert(!(tag.Type is null));
 			var geo = wpfTextView.TextViewLines.GetMarkerGeometry(span);
 			if (geo is null)
 				return null;

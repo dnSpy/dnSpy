@@ -62,13 +62,13 @@ namespace dnSpy.Hex.Editor {
 		[VSUTIL.Order(Before = PredefinedHexAdornmentLayers.GlyphTextMarker, After = PredefinedHexAdornmentLayers.Outlining)]
 		[VSUTIL.Order(Before = PredefinedHexAdornmentLayers.TextMarker)]
 		[VSUTIL.Order(Before = PredefinedHexAdornmentLayers.CurrentLineHighlighter)]
-		static HexAdornmentLayerDefinition negativeTextMarkerAdornmentLayerDefinition;
+		static HexAdornmentLayerDefinition? negativeTextMarkerAdornmentLayerDefinition;
 
 		[Export(typeof(HexAdornmentLayerDefinition))]
 		[VSUTIL.Name(PredefinedHexAdornmentLayers.TextMarker)]
 		[VSUTIL.Order(After = PredefinedHexAdornmentLayers.BottomLayer, Before = PredefinedHexAdornmentLayers.TopLayer)]
 		[VSUTIL.Order(Before = PredefinedHexAdornmentLayers.Selection, After = PredefinedHexAdornmentLayers.Outlining)]
-		static HexAdornmentLayerDefinition textMarkerAdornmentLayerDefinition;
+		static HexAdornmentLayerDefinition? textMarkerAdornmentLayerDefinition;
 #pragma warning restore CS0169
 
 		readonly WpfHexView wpfHexView;
@@ -246,7 +246,7 @@ namespace dnSpy.Hex.Editor {
 				var pos = overlap.Value.Start;
 				for (;;) {
 					var line = wpfHexView.WpfHexViewLines.GetWpfHexViewLineContainingBufferPosition(pos);
-					Debug.Assert(!(line is null));
+					Debug2.Assert(!(line is null));
 					if (!(line is null)) {
 						var taggerContext = new HexTaggerContext(line.BufferLine, line.BufferLine.TextSpan);
 						foreach (var tag in tagAggregator.GetLineTags(taggerContext)) {
@@ -261,7 +261,7 @@ namespace dnSpy.Hex.Editor {
 								markerElements.Add(markerElement);
 						}
 					}
-					Debug.Assert(!(line is null));
+					Debug2.Assert(!(line is null));
 
 					pos = line.BufferEnd;
 					if (pos > overlap.Value.End || pos >= formattedEnd)
@@ -349,7 +349,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		MarkerElement? TryCreateMarkerElement(HexBufferSpan span, HexSpanSelectionFlags flags, HexMarkerTag tag) {
-			Debug.Assert(!(tag.Type is null));
+			Debug2.Assert(!(tag.Type is null));
 			var overlap = wpfHexView.WpfHexViewLines.FormattedSpan.Overlap(span);
 			if (overlap is null)
 				return null;
@@ -357,7 +357,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		MarkerElement? TryCreateMarkerElement(WpfHexViewLine line, VST.Span span, HexMarkerTag tag) {
-			Debug.Assert(!(tag.Type is null));
+			Debug2.Assert(!(tag.Type is null));
 			return TryCreateMarkerElementCore(wpfHexView.WpfHexViewLines.GetLineMarkerGeometry(line, span), line.BufferSpan, tag);
 		}
 

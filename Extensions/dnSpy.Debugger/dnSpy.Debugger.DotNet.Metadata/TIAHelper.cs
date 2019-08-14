@@ -88,7 +88,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		static bool CheckEquivalent(DmdType td) {
-			Debug.Assert(!(td is null));
+			Debug2.Assert(!(td is null));
 
 			for (int i = 0; !(td is null) && i < 1000; i++) {
 				if (i != 0) {
@@ -120,7 +120,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		public static bool IsTypeDefEquivalent(DmdType td) {
-			Debug.Assert(!(td is null));
+			Debug2.Assert(!(td is null));
 			if (GetInfo(td) is null)
 				return false;
 			return CheckEquivalent(td);
@@ -132,11 +132,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			var info1 = GetInfo(td1);
 			if (info1 is null)
 				return false;
-			Debug.Assert(!(td1 is null));
+			Debug2.Assert(!(td1 is null));
 			var info2 = GetInfo(td2);
 			if (info2 is null)
 				return false;
-			Debug.Assert(!(td2 is null));
+			Debug2.Assert(!(td2 is null));
 			if (!CheckEquivalent(td1) || !CheckEquivalent(td2))
 				return false;
 			if (!info1.Value.Equals(info2.Value))

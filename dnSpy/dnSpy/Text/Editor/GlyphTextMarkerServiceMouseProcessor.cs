@@ -108,7 +108,7 @@ namespace dnSpy.Text.Editor {
 				return null;
 			var line = wpfTextViewHost.TextView.TextViewLines.GetTextViewLineContainingYCoordinate(point.Y + wpfTextViewHost.TextView.ViewportTop);
 			var wpfLine = line as IWpfTextViewLine;
-			Debug.Assert((!(line is null)) == (!(wpfLine is null)));
+			Debug2.Assert((!(line is null)) == (!(wpfLine is null)));
 			if (wpfLine is null || !wpfLine.IsVisible())
 				return null;
 			return wpfLine;
@@ -452,7 +452,7 @@ namespace dnSpy.Text.Editor {
 				return;
 			}
 			CloseToolTip(false);
-			Debug.Assert(!(toolTipLine is null));
+			Debug2.Assert(!(toolTipLine is null));
 
 			UpdateToolTipContent(toolTipLine);
 			UpdatePopupContent(toolTipLine);
@@ -465,7 +465,7 @@ namespace dnSpy.Text.Editor {
 					glyphTextMarkerHandlerContext = new GlyphTextMarkerHandlerContext(wpfTextViewHost, margin, line, this);
 				var toolTipInfo = marker.Handler.GetToolTipContent(glyphTextMarkerHandlerContext, marker);
 				if (!(toolTipInfo is null)) {
-					Debug.Assert(toolTip is null);
+					Debug2.Assert(toolTip is null);
 					toolTipMarker = marker;
 					toolTip = new ToolTip();
 					PopupHelper.SetScaleTransform(wpfTextViewHost.TextView, toolTip);

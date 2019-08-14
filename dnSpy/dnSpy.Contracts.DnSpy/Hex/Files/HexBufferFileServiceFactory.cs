@@ -39,7 +39,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <summary>
 		/// Raised after a new <see cref="HexBufferFileService"/> is created
 		/// </summary>
-		public abstract event EventHandler<BufferFileServiceCreatedEventArgs> BufferFileServiceCreated;
+		public abstract event EventHandler<BufferFileServiceCreatedEventArgs>? BufferFileServiceCreated;
 	}
 
 	/// <summary>

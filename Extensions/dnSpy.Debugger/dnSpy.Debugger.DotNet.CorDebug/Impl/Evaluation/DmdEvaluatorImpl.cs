@@ -52,7 +52,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		object GetValueThrow(DbgDotNetValueResult result) {
 			if (!(result.ErrorMessage is null))
 				throw new DmdEvaluatorException(result.ErrorMessage);
-			Debug.Assert(!(result.Value is null));
+			Debug2.Assert(!(result.Value is null));
 			if (result.ValueIsException) {
 				var msg = "An exception was thrown: " + result.Value.Type.FullName;
 				result.Value.Dispose();

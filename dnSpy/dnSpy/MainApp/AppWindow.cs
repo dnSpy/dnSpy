@@ -114,7 +114,7 @@ namespace dnSpy.MainApp {
 		static string CalculateAssemblyInformationalVersion(Assembly asm) {
 			var attrs = asm.GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), false);
 			var attr = attrs.Length == 0 ? null : attrs[0] as AssemblyInformationalVersionAttribute;
-			Debug.Assert(!(attr is null));
+			Debug2.Assert(!(attr is null));
 			if (!(attr is null))
 				return attr.InformationalVersion;
 			return asm.GetName().Version!.ToString();

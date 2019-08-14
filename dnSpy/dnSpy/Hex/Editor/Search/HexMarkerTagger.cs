@@ -56,7 +56,7 @@ namespace dnSpy.Hex.Editor.Search {
 			hexViewSearchService.RegisterHexMarkerListener(this);
 		}
 
-		public override event EventHandler<HexBufferSpanEventArgs> TagsChanged;
+		public override event EventHandler<HexBufferSpanEventArgs>? TagsChanged;
 		void IHexMarkerListener.RaiseTagsChanged(HexBufferSpan span) => TagsChanged?.Invoke(this, new HexBufferSpanEventArgs(span));
 
 		public override IEnumerable<IHexTagSpan<HexMarkerTag>> GetTags(NormalizedHexBufferSpanCollection spans) {

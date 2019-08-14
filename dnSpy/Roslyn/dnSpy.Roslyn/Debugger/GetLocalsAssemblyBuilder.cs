@@ -90,7 +90,7 @@ namespace dnSpy.Roslyn.Debugger {
 				errorMessage = null;
 				return Array.Empty<byte>();
 			}
-			Debug.Assert(!(getLocalsType is null));
+			Debug2.Assert(!(getLocalsType is null));
 
 			foreach (var p in sourceMethod.Parameters) {
 				var name = language.GetVariableName(GetName(p), isThis: p.IsHiddenThisParameter);
@@ -140,8 +140,8 @@ namespace dnSpy.Roslyn.Debugger {
 		}
 
 		(string methodName, DkmClrCompilationResultFlags flags) AddMethod(TypeSig type, int index, bool isLocal) {
-			Debug.Assert(!(generatedModule is null));
-			Debug.Assert(!(getLocalsType is null));
+			Debug2.Assert(!(generatedModule is null));
+			Debug2.Assert(!(getLocalsType is null));
 			var methodName = methodNamePrefix + methodNameIndex++.ToString();
 
 			var callConv = CallingConvention.Default;
@@ -220,7 +220,7 @@ namespace dnSpy.Roslyn.Debugger {
 		}
 
 		Instruction LoadIndirect(TypeSig? type) {
-			Debug.Assert(!(generatedModule is null));
+			Debug2.Assert(!(generatedModule is null));
 			switch (type.GetElementType()) {
 			case ElementType.Boolean:		return Instruction.Create(OpCodes.Ldind_I1);
 			case ElementType.Char:			return Instruction.Create(OpCodes.Ldind_U2);

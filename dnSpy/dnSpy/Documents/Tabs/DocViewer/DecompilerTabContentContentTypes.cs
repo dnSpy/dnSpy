@@ -31,7 +31,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		[Export]
 		[Name(DecompilerTabContentContentTypes.DecompilerTabContentToolTip)]
 		[BaseDefinition(ContentTypes.Text)]
-		static readonly ContentTypeDefinition DecompilerTabContentToolTip;
+		static readonly ContentTypeDefinition? DecompilerTabContentToolTip;
 #pragma warning restore CS0169
 	}
 }

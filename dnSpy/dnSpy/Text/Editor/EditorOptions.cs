@@ -109,7 +109,7 @@ namespace dnSpy.Text.Editor {
 			return value;
 		}
 
-		public event EventHandler<EditorOptionChangedEventArgs> OptionChanged;
+		public event EventHandler<EditorOptionChangedEventArgs>? OptionChanged;
 		void OnChanged(string optionId) {
 			if (scope is null || service.GetOption(optionId).IsApplicableToScope(scope))
 				OptionChanged?.Invoke(this, new EditorOptionChangedEventArgs(optionId));

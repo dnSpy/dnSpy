@@ -80,12 +80,12 @@ namespace dnSpy.MainApp {
 			value == AppToolWindowLocation.Bottom;
 
 		public void Write(ISettingsSection section) {
-			Debug.Assert(!(HorizontalContentState is null) && !(VerticalContentState is null));
+			Debug2.Assert(!(HorizontalContentState is null) && !(VerticalContentState is null));
 			if (!(HorizontalContentState is null))
 				StackedContentStateSerializer.Serialize(section.GetOrCreateSection(HORIZONTALCONTENT_SECT), HorizontalContentState);
 			if (!(VerticalContentState is null))
 				StackedContentStateSerializer.Serialize(section.GetOrCreateSection(VERTICALCONTENT_SECT), VerticalContentState);
-			Debug.Assert(!(LeftState is null) && !(RightState is null) && !(TopState is null) && !(BottomState is null));
+			Debug2.Assert(!(LeftState is null) && !(RightState is null) && !(TopState is null) && !(BottomState is null));
 			if (!(LeftState is null))
 				ToolWindowUIState.Serialize(section.CreateSection(TOOLWINDOWUI_SECT), LeftState);
 			if (!(RightState is null))
@@ -192,7 +192,7 @@ namespace dnSpy.MainApp {
 			section.Attribute(ISHORIZONTAL_ATTR, state.IsHorizontal);
 			foreach (var content in state.Groups)
 				ToolWindowGroupState.Serialize(section.CreateSection(GROUP_SECT), content);
-			Debug.Assert(!(state.StackedContentState is null));
+			Debug2.Assert(!(state.StackedContentState is null));
 			if (!(state.StackedContentState is null))
 				StackedContentStateSerializer.Serialize(section.GetOrCreateSection(STACKEDCONTENTSTATE_SECTION), state.StackedContentState);
 		}
@@ -504,7 +504,7 @@ namespace dnSpy.MainApp {
 
 		ToolWindowContent? Show(Guid guid, AppToolWindowLocation location, bool active, bool focus) {
 			var content = Create(guid);
-			Debug.Assert(!(content is null));
+			Debug2.Assert(!(content is null));
 			if (content is null)
 				return null;
 			Show(content, location, active, focus);
@@ -559,7 +559,7 @@ namespace dnSpy.MainApp {
 			if (content is null)
 				throw new ArgumentNullException(nameof(content));
 			var t = GetToolWindowGroup(content);
-			Debug.Assert(!(t is null));
+			Debug2.Assert(!(t is null));
 			if (t is null)
 				throw new InvalidOperationException();
 			t.Value.group.Close(content);
@@ -596,7 +596,7 @@ namespace dnSpy.MainApp {
 			location = Convert(location);
 			if (t is null || t.Value.ui.Location == location)
 				return;
-			Debug.Assert(!(content is null));
+			Debug2.Assert(!(content is null));
 
 			var g = GetOrCreateGroup(location);
 			t.Value.group.MoveTo(g, content);
@@ -623,12 +623,12 @@ namespace dnSpy.MainApp {
 				return;
 
 			var activeContent = t.Value.group.ActiveTabContent;
-			Debug.Assert(!(activeContent is null));
+			Debug2.Assert(!(activeContent is null));
 			foreach (var c in t.Value.group.TabContents.ToArray())
 				Move(c, location);
 			if (!(activeContent is null)) {
 				var t2 = GetToolWindowGroup(activeContent);
-				Debug.Assert(!(t2 is null));
+				Debug2.Assert(!(t2 is null));
 				if (!(t2 is null)) {
 					t2.Value.group.ActiveTabContent = activeContent;
 				}

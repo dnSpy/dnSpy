@@ -89,7 +89,7 @@ namespace dndbg.Engine {
 		static bool IsModule(CorModule? module, string? filename) => !(module is null) && !module.IsDynamic && !module.IsInMemory && StringComparer.OrdinalIgnoreCase.Equals(module.Name, filename);
 
 		void SetILBreakpoint(DnModuleId moduleId, uint token) {
-			Debug.Assert(token != 0 && breakpoint is null);
+			Debug2.Assert(token != 0 && breakpoint is null);
 			DnBreakpoint? bp = null;
 			bp = debugger.CreateBreakpoint(moduleId, token, 0, ctx2 => {
 				debugger.RemoveBreakpoint(bp!);
@@ -103,7 +103,7 @@ namespace dndbg.Engine {
 			var mod = lmArgs.CorModule;
 			if (!IsOurModule(mod, out var filename))
 				return false;
-			Debug.Assert(!(mod is null));
+			Debug2.Assert(!(mod is null));
 			debugger.RemoveBreakpoint(breakpoint!);
 			breakpoint = null;
 			Debug.Assert(!mod.IsDynamic && !mod.IsInMemory);

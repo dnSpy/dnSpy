@@ -37,7 +37,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 	static class BodyUtils {
 		public static readonly Parameter NullParameter = new Parameter(int.MinValue);
-		static ISimpleILPrinter simpleILPrinter;
+		static ISimpleILPrinter? simpleILPrinter;
 
 		[ExportAutoLoaded]
 		sealed class BodyUtilsInit : IAutoLoaded {
@@ -79,7 +79,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public static object? TryGetModel(Dictionary<object, object> ops, object? objVm) {
 			if (IsNull(objVm))
 				return null;
-			Debug.Assert(!(objVm is null));
+			Debug2.Assert(!(objVm is null));
 			if (!ops.TryGetValue(objVm, out var objModel))
 				return objVm;
 			return objModel;
@@ -529,11 +529,12 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		public static void WriteObject(ITextColorWriter output, object? obj, WriteObjectFlags flags = WriteObjectFlags.None) {
+			Debug2.Assert(!(simpleILPrinter is null));
 			if (IsNull(obj)) {
 				output.Write(BoxedTextColor.Keyword, "null");
 				return;
 			}
-			Debug.Assert(!(obj is null));
+			Debug2.Assert(!(obj is null));
 
 			if (obj is IMemberRef mr) {
 				if (simpleILPrinter.Write(TextColorWriterToDecompilerOutput.Create(output), mr))
@@ -593,13 +594,13 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		static string GetLocalName(string? name, int index) {
-			if (!string.IsNullOrEmpty(name))
+			if (!string2.IsNullOrEmpty(name))
 				return name;
 			return $"V_{index}";
 		}
 
 		static string GetParameterName(string? name, int index) {
-			if (!string.IsNullOrEmpty(name))
+			if (!string2.IsNullOrEmpty(name))
 				return name;
 			return $"A_{index}";
 		}

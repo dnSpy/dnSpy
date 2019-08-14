@@ -95,7 +95,7 @@ namespace dnSpy.Text.Editor {
 			void WpfTextView_MouseRightButtonDown(object? sender, MouseButtonEventArgs e) => StopTimer();
 			void WpfTextView_MouseLeave(object? sender, MouseEventArgs e) => ClearMouseHoverPositionAndStopTimer();
 
-			public event EventHandler<MouseHoverEventArgs> MouseHover {
+			public event EventHandler<MouseHoverEventArgs>? MouseHover {
 				add {
 					if (owner.IsClosed)
 						return;
@@ -134,7 +134,7 @@ namespace dnSpy.Text.Editor {
 					ClearMouseHoverPositionAndStopTimer();
 					return;
 				}
-				Debug.Assert(!(timerStart is null));
+				Debug2.Assert(!(timerStart is null));
 				var list = GetHandlersToNotify();
 				if (!(list is null)) {
 					var mhe = new MouseHoverEventArgs(owner, position.Value, owner.BufferGraph.CreateMappingPoint(new SnapshotPoint(owner.TextSnapshot, position.Value), PointTrackingMode.Positive));

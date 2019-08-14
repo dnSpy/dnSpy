@@ -27,7 +27,7 @@ namespace dnSpy.Debugger.Shared {
 		readonly TimeSpan interval;
 		Timer? timer;
 
-		public event EventHandler Tick;
+		public event EventHandler? Tick;
 
 		public DispatcherTimer(Dispatcher dispatcher, TimeSpan interval) {
 			if (interval < TimeSpan.Zero)

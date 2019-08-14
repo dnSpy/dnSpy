@@ -77,7 +77,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			var index = GetIndex(position);
 			if (index < 0)
 				return null;
-			Debug.Assert(!(knownStringInfos is null));
+			Debug2.Assert(!(knownStringInfos is null));
 
 			var pos = knownStringInfos[index].Span.Start;
 			var end = HexPosition.Min(Span.Span.End, pos + 0x1000);

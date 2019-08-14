@@ -80,7 +80,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			}
 		}
 
-		internal event EventHandler OnVariableChanged;
+		internal event EventHandler? OnVariableChanged;
 
 		public ValueNodesVM(UIDispatcher uiDispatcher, ValueNodesVMOptions options, ITreeViewService treeViewService, LanguageEditValueProviderFactory languageEditValueProviderFactory, DbgValueNodeImageReferenceService dbgValueNodeImageReferenceService, DebuggerSettings debuggerSettings, DbgEvalFormatterSettings dbgEvalFormatterSettings, DbgObjectIdService dbgObjectIdService, IClassificationFormatMapService classificationFormatMapService, ITextBlockContentInfoFactory textBlockContentInfoFactory, IMenuService menuService, IWpfCommandService wpfCommandService) {
 			uiDispatcher.VerifyAccess();
@@ -220,7 +220,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			VerifyChildren_UI(nodes);
 #if DEBUG
 			// PERF: make sure edit node was re-used
-			Debug.Assert(origEditNode is null || origEditNode == TryGetEditNode());
+			Debug2.Assert(origEditNode is null || origEditNode == TryGetEditNode());
 #endif
 
 			if (selectNodeKind != SelectNodeKind.None) {
@@ -266,8 +266,8 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 					else if (!(infos[i].Node is null) && infos[i].CausesSideEffects && infos[i].Node!.HasError) {
 					}
 					else
-						Debug.Assert(infos[i].Node is null);
-					Debug.Assert(!valueNodesProvider.CanAddRemoveExpressions || !(infos[i].Id is null), "Root IDs are required");
+						Debug2.Assert(infos[i].Node is null);
+					Debug2.Assert(!valueNodesProvider.CanAddRemoveExpressions || !(infos[i].Id is null), "Root IDs are required");
 					Debug.Assert(infos[i].Id == node.RootId);
 				}
 			}

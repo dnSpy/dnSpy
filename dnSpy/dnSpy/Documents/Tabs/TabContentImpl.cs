@@ -55,7 +55,7 @@ namespace dnSpy.Documents.Tabs {
 			private set {
 				uiContextVersion++;
 				var newValue = value;
-				Debug.Assert(!(newValue is null));
+				Debug2.Assert(!(newValue is null));
 				if (newValue is null)
 					newValue = new NullDocumentTabUIContext();
 				if (uiContext != newValue) {
@@ -109,7 +109,7 @@ namespace dnSpy.Documents.Tabs {
 
 		void IFocusable.Focus() {
 			var focusable = UIContext as IFocusable;
-			Debug.Assert(!(focusable is null));
+			Debug2.Assert(!(focusable is null));
 			if (!(focusable is null))
 				focusable.Focus();
 		}
@@ -167,7 +167,7 @@ namespace dnSpy.Documents.Tabs {
 				CancelAsyncWorker();
 				elementZoomer.Dispose();
 				var id = documentTabUIContextLocator as IDisposable;
-				Debug.Assert(!(id is null));
+				Debug2.Assert(!(id is null));
 				if (!(id is null))
 					id.Dispose();
 				documentTabService.OnRemoved(this);
@@ -280,7 +280,7 @@ namespace dnSpy.Documents.Tabs {
 			}
 			if (tabContent is null)
 				throw new ArgumentNullException(nameof(tabContent));
-			Debug.Assert(tabContent.DocumentTab is null || tabContent.DocumentTab == this);
+			Debug2.Assert(tabContent.DocumentTab is null || tabContent.DocumentTab == this);
 			HideCurrentContent();
 			Content = tabContent;
 			ShowInternal(tabContent, uiState, onShown, false);
@@ -321,13 +321,13 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		void ShowInternal(DocumentTabContent tabContent, object? uiState, Action<ShowTabContentEventArgs>? onShownHandler, bool isRefresh) {
-			Debug.Assert(asyncWorkerContext is null);
+			Debug2.Assert(asyncWorkerContext is null);
 			UIContext = tabContent.CreateUIContext(documentTabUIContextLocator);
 			var cachedUIContext = UIContext;
-			Debug.Assert(cachedUIContext.DocumentTab is null || cachedUIContext.DocumentTab == this);
+			Debug2.Assert(cachedUIContext.DocumentTab is null || cachedUIContext.DocumentTab == this);
 			cachedUIContext.DocumentTab = this;
 			Debug.Assert(cachedUIContext.DocumentTab == this);
-			Debug.Assert(tabContent.DocumentTab is null || tabContent.DocumentTab == this);
+			Debug2.Assert(tabContent.DocumentTab is null || tabContent.DocumentTab == this);
 			tabContent.DocumentTab = this;
 			Debug.Assert(tabContent.DocumentTab == this);
 

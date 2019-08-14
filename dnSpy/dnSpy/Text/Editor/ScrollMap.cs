@@ -26,7 +26,7 @@ using Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Text.Editor {
 	sealed class ScrollMap : IScrollMap, IDisposable {
-		public event EventHandler MappingChanged;
+		public event EventHandler? MappingChanged;
 		public ITextView TextView { get; }
 		public bool AreElisionsExpanded { get; }
 		public double Start => 0;

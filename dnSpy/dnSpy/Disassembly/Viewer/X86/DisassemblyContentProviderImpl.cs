@@ -85,7 +85,7 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 		const string NASM_COMMENT = ";";
 		const string GAS_COMMENT = "//";
 
-		public override event EventHandler OnContentChanged;
+		public override event EventHandler? OnContentChanged;
 
 		sealed class SymbolResolverImpl : Iced.Intel.ISymbolResolver {
 			readonly DisassemblyContentProviderImpl owner;

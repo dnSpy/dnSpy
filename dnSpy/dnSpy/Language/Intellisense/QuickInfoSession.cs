@@ -30,13 +30,13 @@ namespace dnSpy.Language.Intellisense {
 	sealed class QuickInfoSession : IQuickInfoSession2 {
 		public PropertyCollection Properties { get; }
 		public BulkObservableCollection<object> QuickInfoContent { get; }
-		public event EventHandler ApplicableToSpanChanged;
+		public event EventHandler? ApplicableToSpanChanged;
 		public bool TrackMouse { get; }
 		public ITextView TextView { get; }
 		public IIntellisensePresenter? Presenter => quickInfoPresenter;
-		public event EventHandler PresenterChanged;
-		public event EventHandler Recalculated;
-		public event EventHandler Dismissed;
+		public event EventHandler? PresenterChanged;
+		public event EventHandler? Recalculated;
+		public event EventHandler? Dismissed;
 		public bool IsDismissed { get; private set; }
 		public bool HasInteractiveContent { get; private set; }
 		bool IsStarted { get; set; }

@@ -40,7 +40,7 @@ namespace dnSpy.Text.Editor {
 		public VirtualSnapshotPoint Start => AnchorPoint < ActivePoint ? AnchorPoint : ActivePoint;
 		public VirtualSnapshotPoint End => AnchorPoint < ActivePoint ? ActivePoint : AnchorPoint;
 		public VirtualSnapshotSpan StreamSelectionSpan => new VirtualSnapshotSpan(Start, End);
-		public event EventHandler SelectionChanged;
+		public event EventHandler? SelectionChanged;
 
 		public bool IsActive {
 			get => textSelectionLayer.IsActive;

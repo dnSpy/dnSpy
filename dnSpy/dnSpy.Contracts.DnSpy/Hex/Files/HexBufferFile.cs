@@ -121,7 +121,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <summary>
 		/// Raised after files are added
 		/// </summary>
-		public abstract event EventHandler<BufferFilesAddedEventArgs> BufferFilesAdded;
+		public abstract event EventHandler<BufferFilesAddedEventArgs>? BufferFilesAdded;
 
 		/// <summary>
 		/// Finds a file
@@ -139,7 +139,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <summary>
 		/// Raised after it is removed
 		/// </summary>
-		public abstract event EventHandler Removed;
+		public abstract event EventHandler? Removed;
 
 		/// <summary>
 		/// Gets a structure
@@ -173,7 +173,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <summary>
 		/// Raised after the default structures have been added
 		/// </summary>
-		public abstract event EventHandler StructuresInitialized;
+		public abstract event EventHandler? StructuresInitialized;
 
 		/// <summary>
 		/// Gets headers. Nested files aren't checked.

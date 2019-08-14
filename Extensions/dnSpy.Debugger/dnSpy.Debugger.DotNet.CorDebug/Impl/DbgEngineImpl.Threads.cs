@@ -164,7 +164,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		(DbgEngineThread engineThread, DbgEngineThread.UpdateOptions updateOptions, ThreadProperties props)? UpdateThreadProperties_CorDebug(DnThread thread) {
 			debuggerThread.VerifyAccess();
 			var engineThread = TryGetEngineThread(thread);
-			Debug.Assert(!(engineThread is null));
+			Debug2.Assert(!(engineThread is null));
 			if (engineThread is null)
 				return null;
 			return UpdateThreadProperties_CorDebug(engineThread);
@@ -211,7 +211,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		}
 
 		void DnDebugger_OnThreadAdded(object? sender, ThreadDebuggerEventArgs e) {
-			Debug.Assert(!(objectFactory is null));
+			Debug2.Assert(!(objectFactory is null));
 			if (e.Added) {
 				bool isMainThread = IsMainThread(e.Thread);
 				var props = GetThreadProperties_CorDebug(e.Thread, null, isCreateThread: true, forceReadName: false, isMainThread: isMainThread);
@@ -387,7 +387,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		ICorDebugFrame[]? framesBuffer = new ICorDebugFrame[framesBufferSize];
 		ICorDebugFrame[] GetFramesBuffer() => Interlocked.Exchange(ref framesBuffer, null) ?? new ICorDebugFrame[framesBufferSize];
 		internal void ReturnFramesBuffer(ref ICorDebugFrame[]? framesBuffer) {
-			Debug.Assert(!(framesBuffer is null));
+			Debug2.Assert(!(framesBuffer is null));
 			Interlocked.Exchange(ref this.framesBuffer, framesBuffer);
 			framesBuffer = null;
 		}
@@ -403,7 +403,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				SendMessage(new DbgMessageSetIPComplete(thread, framesInvalidated, messageFlags: GetMessageFlags(), error: error));
 				return;
 			}
-			Debug.Assert(!(corFrame is null));
+			Debug2.Assert(!(corFrame is null));
 
 			framesInvalidated = true;
 			bool failed = !corFrame.SetILFrameIP(offset);

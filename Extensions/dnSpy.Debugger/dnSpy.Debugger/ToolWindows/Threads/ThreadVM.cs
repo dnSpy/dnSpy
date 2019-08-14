@@ -168,7 +168,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		// UI thread
 		ThreadPriority CalculateThreadPriority_UI() {
 			Context.UIDispatcher.VerifyAccess();
-			Debug.Assert(!(hThread is null));
+			Debug2.Assert(!(hThread is null));
 			if (hThread is null || hThread.IsInvalid)
 				return ThreadPriority.Normal;
 			return (ThreadPriority)NativeMethods.GetThreadPriority(hThread.DangerousGetHandle());
@@ -177,7 +177,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		// UI thread
 		ulong CalculateAffinityMask_UI() {
 			Context.UIDispatcher.VerifyAccess();
-			Debug.Assert(!(hThread is null));
+			Debug2.Assert(!(hThread is null));
 			if (hThread is null || hThread.IsInvalid)
 				return 0;
 			var affinityMask = NativeMethods.SetThreadAffinityMask(hThread.DangerousGetHandle(), new IntPtr(-1));

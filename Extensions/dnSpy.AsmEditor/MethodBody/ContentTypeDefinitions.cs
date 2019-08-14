@@ -27,7 +27,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		[Export]
 		[Name(ContentTypes.MethodBodyEditor)]
 		[BaseDefinition(ContentTypes.Text)]
-		static readonly ContentTypeDefinition MethodBodyEditor;
+		static readonly ContentTypeDefinition? MethodBodyEditor;
 #pragma warning restore CS0169
 	}
 }

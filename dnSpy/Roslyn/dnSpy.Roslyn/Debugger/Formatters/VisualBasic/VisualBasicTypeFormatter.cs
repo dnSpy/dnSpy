@@ -347,7 +347,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 			if (!ShowNamespaces)
 				return;
 			var ns = type.MetadataNamespace;
-			if (string.IsNullOrEmpty(ns))
+			if (string2.IsNullOrEmpty(ns))
 				return;
 			foreach (var nsPart in ns.Split(namespaceSeparators)) {
 				WriteIdentifier(nsPart, DbgTextColor.Namespace);

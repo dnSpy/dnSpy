@@ -218,13 +218,13 @@ namespace dnSpy.Language.Intellisense {
 			var sessionState = GetSessionState(session);
 			if (!(sessionState.SpaceReservationAgent is null))
 				sessionState.SpaceReservationManager!.RemoveAgent(sessionState.SpaceReservationAgent);
-			Debug.Assert(sessionState.SpaceReservationAgent is null);
+			Debug2.Assert(sessionState.SpaceReservationAgent is null);
 
 			var presenter = session.Presenter;
 			if (presenter is IPopupIntellisensePresenter popupPresenter) {
 				if (sessionState.SpaceReservationManager is null) {
 					sessionState.SetSpaceReservationManager(wpfTextView.GetSpaceReservationManager(popupPresenter.SpaceReservationManagerName));
-					Debug.Assert(!(sessionState.SpaceReservationManager is null));
+					Debug2.Assert(!(sessionState.SpaceReservationManager is null));
 					sessionState.SpaceReservationManager.AgentChanged += SpaceReservationManager_AgentChanged;
 				}
 				UnregisterPopupIntellisensePresenterEvents(sessionState.PopupIntellisensePresenter);
@@ -242,7 +242,7 @@ namespace dnSpy.Language.Intellisense {
 				if (presenter is ICustomIntellisensePresenter customPresenter)
 					customPresenter.Render();
 				else
-					Debug.Assert(presenter is null, $"Unsupported presenter: {presenter?.GetType()}");
+					Debug2.Assert(presenter is null, $"Unsupported presenter: {presenter?.GetType()}");
 			}
 		}
 
@@ -277,7 +277,7 @@ namespace dnSpy.Language.Intellisense {
 				return;
 			}
 			var sessionState = TryGetSessionState(popupPresenter);
-			Debug.Assert(!(sessionState is null));
+			Debug2.Assert(!(sessionState is null));
 			if (sessionState is null)
 				return;
 			if (propertyName == nameof(popupPresenter.PresentationSpan) || propertyName == nameof(popupPresenter.PopupStyles)) {
@@ -304,7 +304,7 @@ namespace dnSpy.Language.Intellisense {
 
 		void Session_Dismissed(object? sender, EventArgs e) {
 			var session = sender as IIntellisenseSession;
-			Debug.Assert(!(session is null));
+			Debug2.Assert(!(session is null));
 			if (session is null)
 				return;
 			int index = sessions.IndexOf(session);

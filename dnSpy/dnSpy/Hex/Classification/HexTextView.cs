@@ -48,7 +48,7 @@ namespace dnSpy.Hex.Classification {
 		bool VSTE.ITextView.IsClosed => hexView.IsClosed;
 		VSTE.IEditorOptions VSTE.ITextView.Options => hexView.Options;
 		VSUTIL.PropertyCollection VSUTIL.IPropertyOwner.Properties => hexView.Properties;
-		public event EventHandler Closed;
+		public event EventHandler? Closed;
 
 		Brush VSTE.IWpfTextView.Background {
 			get => throw new NotImplementedException();
@@ -92,47 +92,47 @@ namespace dnSpy.Hex.Classification {
 			set => throw new NotImplementedException();
 		}
 
-		event EventHandler<VSTE.BackgroundBrushChangedEventArgs> VSTE.IWpfTextView.BackgroundBrushChanged {
+		event EventHandler<VSTE.BackgroundBrushChangedEventArgs>? VSTE.IWpfTextView.BackgroundBrushChanged {
 			add => throw new NotImplementedException();
 			remove => throw new NotImplementedException();
 		}
 
-		event EventHandler VSTE.ITextView.GotAggregateFocus {
+		event EventHandler? VSTE.ITextView.GotAggregateFocus {
 			add => throw new NotImplementedException();
 			remove => throw new NotImplementedException();
 		}
 
-		event EventHandler<VSTE.TextViewLayoutChangedEventArgs> VSTE.ITextView.LayoutChanged {
+		event EventHandler<VSTE.TextViewLayoutChangedEventArgs>? VSTE.ITextView.LayoutChanged {
 			add => throw new NotImplementedException();
 			remove => throw new NotImplementedException();
 		}
 
-		event EventHandler VSTE.ITextView.LostAggregateFocus {
+		event EventHandler? VSTE.ITextView.LostAggregateFocus {
 			add => throw new NotImplementedException();
 			remove => throw new NotImplementedException();
 		}
 
-		event EventHandler<VSTE.MouseHoverEventArgs> VSTE.ITextView.MouseHover {
+		event EventHandler<VSTE.MouseHoverEventArgs>? VSTE.ITextView.MouseHover {
 			add => throw new NotImplementedException();
 			remove => throw new NotImplementedException();
 		}
 
-		event EventHandler VSTE.ITextView.ViewportHeightChanged {
+		event EventHandler? VSTE.ITextView.ViewportHeightChanged {
 			add => throw new NotImplementedException();
 			remove => throw new NotImplementedException();
 		}
 
-		event EventHandler VSTE.ITextView.ViewportLeftChanged {
+		event EventHandler? VSTE.ITextView.ViewportLeftChanged {
 			add => throw new NotImplementedException();
 			remove => throw new NotImplementedException();
 		}
 
-		event EventHandler VSTE.ITextView.ViewportWidthChanged {
+		event EventHandler? VSTE.ITextView.ViewportWidthChanged {
 			add => throw new NotImplementedException();
 			remove => throw new NotImplementedException();
 		}
 
-		event EventHandler<VSTE.ZoomLevelChangedEventArgs> VSTE.IWpfTextView.ZoomLevelChanged {
+		event EventHandler<VSTE.ZoomLevelChangedEventArgs>? VSTE.IWpfTextView.ZoomLevelChanged {
 			add => throw new NotImplementedException();
 			remove => throw new NotImplementedException();
 		}

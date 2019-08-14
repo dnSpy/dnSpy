@@ -87,7 +87,7 @@ namespace dnSpy.Text.Groups {
 
 		void ITextViewOptionsGroupServiceImpl.TextViewCreated(ITextView textView) {
 			var wpfTextView = textView as IWpfTextView;
-			Debug.Assert(!(wpfTextView is null));
+			Debug2.Assert(!(wpfTextView is null));
 			if (wpfTextView is null)
 				return;
 

@@ -69,7 +69,7 @@ namespace dnSpy.Text {
 
 		CachedColorsListTagger(CachedColorsList cachedColorsList) => this.cachedColorsList = cachedColorsList;
 
-		public event EventHandler<SnapshotSpanEventArgs> TagsChanged {
+		public event EventHandler<SnapshotSpanEventArgs>? TagsChanged {
 			add { }
 			remove { }
 		}
@@ -78,8 +78,8 @@ namespace dnSpy.Text {
 			new CachedColorsListTagger(cachedColorsList);
 
 		public IEnumerable<ITagSpan<IClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans) {
-			Debug.Assert(!(ThemeClassificationTypeService is null));
-			Debug.Assert(!(ClassificationTypeRegistryService is null));
+			Debug2.Assert(!(ThemeClassificationTypeService is null));
+			Debug2.Assert(!(ClassificationTypeRegistryService is null));
 			if (ThemeClassificationTypeService is null || ClassificationTypeRegistryService is null)
 				yield break;
 			if (textClassificationType is null)

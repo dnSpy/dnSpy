@@ -82,7 +82,7 @@ namespace dnSpy.Hex.Formatting {
 				const int tabSize = 4;
 				var builder = new HexHtmlBuilder(classificationFormatMap, delimiter, tabSize);
 				if (spans.Count != 0) {
-					Debug.Assert(!(classifier is null));
+					Debug2.Assert(!(classifier is null));
 					builder.Add(bufferLines, classifier, spans, cancellationToken);
 				}
 				return builder.Create();

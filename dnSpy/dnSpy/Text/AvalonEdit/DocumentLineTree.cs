@@ -324,7 +324,7 @@ namespace dnSpy.Text.AvalonEdit {
 		internal const bool BLACK = false;
 
 		void InsertAsLeft(LineNode parentNode, LineNode newNode) {
-			Debug.Assert(parentNode.left is null);
+			Debug2.Assert(parentNode.left is null);
 			parentNode.left = newNode;
 			newNode.parent = parentNode;
 			newNode.color = RED;
@@ -333,7 +333,7 @@ namespace dnSpy.Text.AvalonEdit {
 		}
 
 		void InsertAsRight(LineNode parentNode, LineNode newNode) {
-			Debug.Assert(parentNode.right is null);
+			Debug2.Assert(parentNode.right is null);
 			parentNode.right = newNode;
 			newNode.parent = parentNode;
 			newNode.color = RED;
@@ -342,10 +342,10 @@ namespace dnSpy.Text.AvalonEdit {
 		}
 
 		void FixTreeOnInsert(LineNode node) {
-			Debug.Assert(!(node is null));
+			Debug2.Assert(!(node is null));
 			Debug.Assert(node.color == RED);
-			Debug.Assert(node.left is null || node.left.color == BLACK);
-			Debug.Assert(node.right is null || node.right.color == BLACK);
+			Debug2.Assert(node.left is null || node.left.color == BLACK);
+			Debug2.Assert(node.right is null || node.right.color == BLACK);
 
 			LineNode parentNode = node.parent;
 			if (parentNode is null) {
@@ -442,7 +442,7 @@ namespace dnSpy.Text.AvalonEdit {
 		}
 
 		void FixTreeOnDelete(LineNode node, LineNode parentNode) {
-			Debug.Assert(node is null || node.parent == parentNode);
+			Debug2.Assert(node is null || node.parent == parentNode);
 			if (parentNode is null)
 				return;
 
@@ -535,7 +535,7 @@ namespace dnSpy.Text.AvalonEdit {
 		void RotateLeft(LineNode p) {
 			// let q be p's right child
 			LineNode q = p.right;
-			Debug.Assert(!(q is null));
+			Debug2.Assert(!(q is null));
 			Debug.Assert(q.parent == p);
 			// set q to be the new root
 			ReplaceNode(p, q);
@@ -553,7 +553,7 @@ namespace dnSpy.Text.AvalonEdit {
 		void RotateRight(LineNode p) {
 			// let q be p's left child
 			LineNode q = p.left;
-			Debug.Assert(!(q is null));
+			Debug2.Assert(!(q is null));
 			Debug.Assert(q.parent == p);
 			// set q to be the new root
 			ReplaceNode(p, q);
@@ -576,7 +576,7 @@ namespace dnSpy.Text.AvalonEdit {
 		}
 
 		static LineNode Sibling(LineNode node, LineNode parentNode) {
-			Debug.Assert(node is null || node.parent == parentNode);
+			Debug2.Assert(node is null || node.parent == parentNode);
 			if (node == parentNode.left)
 				return parentNode.right;
 			else

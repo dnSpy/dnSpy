@@ -126,7 +126,7 @@ namespace dnSpy.AsmEditor.Hex {
 			if (obj is HexBuffer buffer)
 				return buffer;
 			var weakRef = obj as WeakReference;
-			Debug.Assert(!(weakRef is null));
+			Debug2.Assert(!(weakRef is null));
 			return weakRef?.Target as HexBuffer;
 		}
 

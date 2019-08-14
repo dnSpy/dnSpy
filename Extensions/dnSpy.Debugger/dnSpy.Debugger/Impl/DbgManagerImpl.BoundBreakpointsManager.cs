@@ -187,7 +187,7 @@ namespace dnSpy.Debugger.Impl {
 						var runtime = module.Runtime;
 						if (runtime != lastRuntime) {
 							var engine = GetEngine_NoLock(runtime);
-							Debug.Assert(!(engine is null));
+							Debug2.Assert(!(engine is null));
 							if (engine is null)
 								continue;
 							lastRuntime = runtime;

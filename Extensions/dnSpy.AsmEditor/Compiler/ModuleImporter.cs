@@ -315,7 +315,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		void AddNewOrMergedNonNestedType(TypeDef sourceType) {
 			Debug.Assert(!sourceType.IsGlobalModuleType);
-			Debug.Assert(sourceType.DeclaringType is null);
+			Debug2.Assert(sourceType.DeclaringType is null);
 
 			TypeDef? targetType;
 			bool merge = false;
@@ -563,7 +563,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			InitializeNewStateMachineTypes(newType);
 
-			Debug.Assert(!(importSigComparerOptions is null));
+			Debug2.Assert(!(importSigComparerOptions is null));
 			var fieldDiff = new FieldMemberDiff(importSigComparerOptions, targetModule);
 			fieldDiff.Initialize(newType, targetType, mergedImportedType);
 			var methodDiff = new MethodMemberDiff(importSigComparerOptions, targetModule);
@@ -949,7 +949,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		void RenameMergedMembers(MergedImportedType mergedType) {
 			if (mergedType.MergeKind != MergeKind.Rename)
 				throw new InvalidOperationException();
-			Debug.Assert(!(importSigComparerOptions is null));
+			Debug2.Assert(!(importSigComparerOptions is null));
 			var existingProps = new HashSet<PropertyDef>(new ImportPropertyEqualityComparer(new ImportSigComparer(importSigComparerOptions, SIG_COMPARER_OPTIONS | SigComparerOptions.DontCompareReturnType, targetModule)));
 			var existingMethods = new HashSet<MethodDef>(new ImportMethodEqualityComparer(new ImportSigComparer(importSigComparerOptions, SIG_COMPARER_OPTIONS | SigComparerOptions.DontCompareReturnType, targetModule)));
 			var existingEventsFields = new HashSet<string>(StringComparer.Ordinal);
@@ -1227,7 +1227,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		void InitializeTypesStep1(IEnumerable<MergedImportedType> importedTypes) {
-			Debug.Assert(!(importSigComparerOptions is null));
+			Debug2.Assert(!(importSigComparerOptions is null));
 			var memberDict = new MemberLookup(new ImportSigComparer(importSigComparerOptions, SIG_COMPARER_BASE_OPTIONS, targetModule));
 			foreach (var importedType in importedTypes) {
 				var compiledType = toExtraData[importedType].CompiledType;
@@ -1359,7 +1359,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		void InitializeTypesStep2(IEnumerable<MergedImportedType> importedTypes) {
-			Debug.Assert(!(importSigComparerOptions is null));
+			Debug2.Assert(!(importSigComparerOptions is null));
 			var memberDict = new MemberLookup(new ImportSigComparer(importSigComparerOptions, SIG_COMPARER_BASE_OPTIONS, targetModule));
 			foreach (var importedType in importedTypes) {
 				var compiledType = toExtraData[importedType].CompiledType;
@@ -2205,7 +2205,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		MethodDef? FindMethod(TypeDef targetType, MemberRef mr) {
-			Debug.Assert(!(importSigComparerOptions is null));
+			Debug2.Assert(!(importSigComparerOptions is null));
 			var comparer = new ImportSigComparer(importSigComparerOptions, SIG_COMPARER_OPTIONS, targetModule);
 			foreach (var method in targetType.Methods) {
 				if (!UTF8String.Equals(method.Name, mr.Name))
@@ -2243,7 +2243,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		FieldDef? FindField(TypeDef targetType, MemberRef mr) {
-			Debug.Assert(!(importSigComparerOptions is null));
+			Debug2.Assert(!(importSigComparerOptions is null));
 			var comparer = new ImportSigComparer(importSigComparerOptions, SIG_COMPARER_OPTIONS, targetModule);
 			foreach (var field in targetType.Fields) {
 				if (!UTF8String.Equals(field.Name, mr.Name))

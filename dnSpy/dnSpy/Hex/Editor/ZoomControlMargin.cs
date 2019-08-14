@@ -89,7 +89,7 @@ namespace dnSpy.Hex.Editor {
 						return;
 					}
 					if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.Escape) {
-						Debug.Assert(!(originalZoomLevel is null));
+						Debug2.Assert(!(originalZoomLevel is null));
 						if (!(originalZoomLevel is null))
 							HexViewZoomLevel = originalZoomLevel.Value;
 						UpdateTextWithZoomLevel();
@@ -118,7 +118,7 @@ namespace dnSpy.Hex.Editor {
 					// The combobox is too tall, but I want to use the style from the UI.Wpf dll
 					if (horizontalScrollBarMargin is null) {
 						horizontalScrollBarMargin = owner.wpfHexViewHost.GetHexViewMargin(PredefinedHexMarginNames.HorizontalScrollBar);
-						Debug.Assert(!(horizontalScrollBarMargin is null));
+						Debug2.Assert(!(horizontalScrollBarMargin is null));
 						if (!(horizontalScrollBarMargin is null))
 							horizontalScrollBarMargin.VisualElement.SizeChanged += VisualElement_SizeChanged;
 					}

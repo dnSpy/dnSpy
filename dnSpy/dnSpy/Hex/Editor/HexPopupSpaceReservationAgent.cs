@@ -36,8 +36,8 @@ namespace dnSpy.Hex.Editor {
 		bool IsVisible => !(popup.Child is null);
 		public override bool HasFocus => IsVisible && popup.IsKeyboardFocusWithin;
 		public override bool IsMouseOver => IsVisible && popup.IsMouseOver;
-		public override event EventHandler GotFocus;
-		public override event EventHandler LostFocus;
+		public override event EventHandler? GotFocus;
+		public override event EventHandler? LostFocus;
 
 		readonly HexSpaceReservationManager spaceReservationManager;
 		readonly WpfHexView wpfHexView;

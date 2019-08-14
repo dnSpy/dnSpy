@@ -36,7 +36,7 @@ namespace dnSpy.Contracts.Documents {
 		/// <summary>
 		/// Notified when the collection gets changed
 		/// </summary>
-		event EventHandler<NotifyDocumentCollectionChangedEventArgs> CollectionChanged;
+		event EventHandler<NotifyDocumentCollectionChangedEventArgs>? CollectionChanged;
 
 		/// <summary>
 		/// Gets all documents. Doesn't include any children.

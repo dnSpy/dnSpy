@@ -27,7 +27,7 @@ using VSTE = Microsoft.VisualStudio.Text.Editor;
 namespace dnSpy.Hex.HexGroups {
 	sealed class HexViewOptionsGroupImpl : HexViewOptionsGroup {
 		public override IEnumerable<WpfHexView> HexViews => hexViews.ToArray();
-		public override event EventHandler<HexViewOptionChangedEventArgs> HexViewOptionChanged;
+		public override event EventHandler<HexViewOptionChangedEventArgs>? HexViewOptionChanged;
 
 		readonly HexViewOptionsGroupServiceImpl owner;
 		readonly List<WpfHexView> hexViews;
@@ -46,12 +46,12 @@ namespace dnSpy.Hex.HexGroups {
 			this.groupName = groupName ?? throw new ArgumentNullException(nameof(groupName));
 
 			foreach (var option in defaultOptions) {
-				Debug.Assert(!(option.Name is null));
+				Debug2.Assert(!(option.Name is null));
 				if (option.Name is null)
 					continue;
 
 				var subGroup = option.SubGroup;
-				Debug.Assert(!(subGroup is null));
+				Debug2.Assert(!(subGroup is null));
 				if (subGroup is null)
 					continue;
 

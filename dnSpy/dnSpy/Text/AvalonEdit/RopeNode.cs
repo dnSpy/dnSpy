@@ -50,20 +50,20 @@ namespace dnSpy.Text.AvalonEdit {
 		[Conditional("DATACONSISTENCYTEST")]
 		internal void CheckInvariants() {
 			if (height == 0) {
-				Debug.Assert(left is null && right is null);
+				Debug2.Assert(left is null && right is null);
 				if (contents is null) {
 					Debug.Assert(this is FunctionNode<T>);
 					Debug.Assert(length > 0);
 					Debug.Assert(isShared);
 				}
 				else {
-					Debug.Assert(!(contents is null) && contents.Length == NodeSize);
+					Debug2.Assert(!(contents is null) && contents.Length == NodeSize);
 					Debug.Assert(length >= 0 && length <= NodeSize);
 				}
 			}
 			else {
-				Debug.Assert(!(left is null) && !(right is null));
-				Debug.Assert(contents is null);
+				Debug2.Assert(!(left is null) && !(right is null));
+				Debug2.Assert(contents is null);
 				Debug.Assert(length == left.length + right.length);
 				Debug.Assert(height == 1 + Math.Max(left.height, right.height));
 				Debug.Assert(Math.Abs(Balance) <= 1);
@@ -263,7 +263,7 @@ namespace dnSpy.Text.AvalonEdit {
 				}
 				else {
 					// must be a leaf node: function nodes are always marked shared
-					Debug.Assert(!(left.contents is null));
+					Debug2.Assert(!(left.contents is null));
 					// steal buffer from left side
 					contents = left.contents;
 #if DEBUG
@@ -383,7 +383,7 @@ namespace dnSpy.Text.AvalonEdit {
 		/// Splits this leaf node at offset and returns a new node with the part of the text after offset.
 		/// </summary>
 		RopeNode<T> SplitAfter(int offset) {
-			Debug.Assert(!isShared && height == 0 && !(contents is null));
+			Debug2.Assert(!isShared && height == 0 && !(contents is null));
 			RopeNode<T> newPart = new RopeNode<T>();
 			newPart.contents = new T[NodeSize];
 			newPart.length = length - offset;
@@ -552,7 +552,7 @@ namespace dnSpy.Text.AvalonEdit {
 
 		public FunctionNode(int length, Func<Rope<T>> initializer) {
 			Debug.Assert(length > 0);
-			Debug.Assert(!(initializer is null));
+			Debug2.Assert(!(initializer is null));
 
 			this.length = length;
 			this.initializer = initializer;

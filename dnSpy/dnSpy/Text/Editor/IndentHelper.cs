@@ -52,7 +52,7 @@ namespace dnSpy.Text.Editor {
 
 			case IndentStyle.Smart:
 				var indentSize = smartIndentationService.GetDesiredIndentation(textView, line);
-				Debug.Assert(indentSize is null || indentSize.Value >= 0);
+				Debug2.Assert(indentSize is null || indentSize.Value >= 0);
 				return indentSize;
 
 			default:

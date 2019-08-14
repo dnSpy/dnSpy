@@ -35,7 +35,7 @@ namespace dnSpy.Roslyn.Intellisense.QuickInfo {
 		CancellationTokenSource? cancellationTokenSource;
 		CancellationToken cancellationToken;
 
-		public event EventHandler Disposed;
+		public event EventHandler? Disposed;
 		public QuickInfoItem? Item { get; private set; }
 		public QuickInfoState State { get; private set; }
 
@@ -58,7 +58,7 @@ namespace dnSpy.Roslyn.Intellisense.QuickInfo {
 		public void Start() => StartAsync()
 			.ContinueWith(t => {
 				var ex = t.Exception;
-				Debug.Assert(ex is null);
+				Debug2.Assert(ex is null);
 			}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
 
 		async Task StartAsync() {

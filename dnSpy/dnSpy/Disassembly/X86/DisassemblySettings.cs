@@ -24,7 +24,7 @@ using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Disassembly.X86 {
 	abstract class DisassemblySettings : IX86DisassemblySettings {
-		public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler? PropertyChanged;
 		protected void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 		public bool UpperCasePrefixes {

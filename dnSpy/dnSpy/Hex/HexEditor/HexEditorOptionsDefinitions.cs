@@ -25,7 +25,7 @@ namespace dnSpy.Hex.HexEditor {
 	static class HexEditorOptionsDefinitions {
 #pragma warning disable CS0169
 		[ExportHexEditorOptionsDefinition("res:HexEditorGroup_Default", PredefinedHexViewRoles.HexEditorGroupDefault, AppSettingsConstants.GUID_HEX_EDITOR_DEFAULT, typeof(HexEditorOptionsDefinitions))]
-		static readonly HexEditorOptionsDefinition defaultHexEditorOptionsDefinition;
+		static readonly HexEditorOptionsDefinition? defaultHexEditorOptionsDefinition;
 #pragma warning restore CS0169
 	}
 }

@@ -183,7 +183,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <returns></returns>
 		public IEnumerator<HexBufferSpan> GetEnumerator() {
 			foreach (var span in coll) {
-				Debug.Assert(!(buffer is null));// Can't be null if coll is non-empty
+				Debug2.Assert(!(buffer is null));// Can't be null if coll is non-empty
 				yield return new HexBufferSpan(buffer, span);
 			}
 		}

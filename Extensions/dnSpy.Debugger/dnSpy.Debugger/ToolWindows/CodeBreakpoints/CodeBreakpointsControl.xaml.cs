@@ -47,6 +47,6 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			CodeBreakpointsListViewDoubleClick?.Invoke(this, EventArgs.Empty);
 		}
 
-		public event EventHandler CodeBreakpointsListViewDoubleClick;
+		public event EventHandler? CodeBreakpointsListViewDoubleClick;
 	}
 }

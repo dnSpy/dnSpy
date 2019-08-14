@@ -48,7 +48,7 @@ namespace dnSpy.Culture {
 		public bool HasExtraLanguages {
 			get {
 				InitializeSupportedLanguages();
-				Debug.Assert(!(extraLanguages is null));
+				Debug2.Assert(!(extraLanguages is null));
 				return extraLanguages.Length > 0;
 			}
 		}
@@ -56,7 +56,7 @@ namespace dnSpy.Culture {
 		public IEnumerable<LanguageInfo> AllLanguages {
 			get {
 				InitializeSupportedLanguages();
-				Debug.Assert(!(extraLanguages is null));
+				Debug2.Assert(!(extraLanguages is null));
 				var langs = new HashSet<LanguageInfo>();
 				langs.Add(LanguageInfo.CreateSystemLanguage());
 				foreach (var ci in extraLanguages)

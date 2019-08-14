@@ -31,7 +31,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 		public static bool TryGetKickoffMethod(DmdMethodBase method, [NotNullWhen(true)] out DmdMethodBase? kickoffMethod) {
 			var name = method.DeclaringType!.MetadataName;
 			char c;
-			if (!string.IsNullOrEmpty(name) && ((c = name[0]) == '<' || (c == 'V' && name.StartsWith(StateMachineTypeNamePrefix, StringComparison.Ordinal)))) {
+			if (!string2.IsNullOrEmpty(name) && ((c = name[0]) == '<' || (c == 'V' && name.StartsWith(StateMachineTypeNamePrefix, StringComparison.Ordinal)))) {
 				var type = method.DeclaringType.DeclaringType;
 				if (!(type is null)) {
 					string? attrName;
@@ -59,8 +59,8 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 					}
 				}
 				var kickoffMethodName = type is null ? null : GetKickoffMethodName(method.DeclaringType);
-				if (!string.IsNullOrEmpty(kickoffMethodName)) {
-					Debug.Assert(!(type is null));
+				if (!string2.IsNullOrEmpty(kickoffMethodName)) {
+					Debug2.Assert(!(type is null));
 					DmdMethodBase? possibleKickoffMethod = null;
 					int methodGenArgs = method.ReflectedType!.GetGenericArguments().Count - type.GetGenericArguments().Count;
 					foreach (var m in method.DeclaringType!.DeclaringType!.DeclaredMethods) {
@@ -92,7 +92,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 			var smGenArgs = method.ReflectedType!.GetGenericArguments();
 			Debug.Assert(method.GetGenericArguments().Count == 0, "Generic method args should be part of the state machine type");
 			createdMethod = AddTypeArguments(newMethod, smGenArgs)!;
-			Debug.Assert(!(createdMethod is null));
+			Debug2.Assert(!(createdMethod is null));
 			if (createdMethod is null)
 				createdMethod = newMethod;
 		}

@@ -46,8 +46,8 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		readonly IDocumentViewerServiceImpl documentViewerServiceImpl;
 		readonly DocumentViewerControl documentViewerControl;
 
-		public event EventHandler<DocumentViewerGotNewContentEventArgs> GotNewContent;
-		public event EventHandler<DocumentViewerRemovedEventArgs> Removed;
+		public event EventHandler<DocumentViewerGotNewContentEventArgs>? GotNewContent;
+		public event EventHandler<DocumentViewerRemovedEventArgs>? Removed;
 
 		FrameworkElement IDocumentViewer.UIObject => documentViewerControl;
 		double IZoomable.ZoomValue => documentViewerControl.TextView.ZoomLevel / 100.0;
@@ -228,7 +228,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			if (section is null)
 				throw new ArgumentNullException(nameof(section));
 			var state = obj as EditorPositionState;
-			Debug.Assert(!(state is null));
+			Debug2.Assert(!(state is null));
 			if (state is null)
 				return;
 
@@ -278,7 +278,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			Debug.Assert(!isDisposed);
 			if (isDisposed)
 				return;
-			Debug.Assert(!(DocumentTab is null));
+			Debug2.Assert(!(DocumentTab is null));
 			if (DocumentTab is null)
 				return;
 			DocumentTab.FollowReference(textRef, newTab);

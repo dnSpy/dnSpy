@@ -70,10 +70,10 @@ namespace dnSpy.ToolWindows {
 				}
 
 				public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsProviderArgs args) {
-					Debug.Assert(!(owner.ToolWindowGroupService is null));
+					Debug2.Assert(!(owner.ToolWindowGroupService is null));
 					if (!(owner.ToolWindowGroupService is null)) {
 						var twg = owner.ToolWindowGroupService.GetToolWindowGroup(tabGroup);
-						Debug.Assert(!(twg is null));
+						Debug2.Assert(!(twg is null));
 						if (!(twg is null))
 							yield return new GuidObject(MenuConstants.GUIDOBJ_TOOLWINDOWGROUP_GUID, twg);
 					}

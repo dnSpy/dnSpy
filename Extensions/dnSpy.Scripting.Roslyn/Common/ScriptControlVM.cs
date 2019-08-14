@@ -254,7 +254,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		IEnumerable<string> GetDefaultLoadPaths() => GetDefaultScriptFilePaths();
 
 		void InitializeExecutionEngine(bool loadConfig, bool showHelp) {
-			Debug.Assert(execState is null);
+			Debug2.Assert(execState is null);
 			if (!(execState is null))
 				throw new InvalidOperationException();
 
@@ -315,7 +315,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		public Task OnCommandUpdatedAsync(IReplCommandInput command, CancellationToken cancellationToken) {
 			if (isResetting)
 				return Task.CompletedTask;
-			Debug.Assert(!(execState is null));
+			Debug2.Assert(!(execState is null));
 			if (execState is null)
 				throw new InvalidOperationException();
 
@@ -350,11 +350,11 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		protected abstract Compilation CreateScriptCompilation(string assemblyName, SyntaxTree syntaxTree, IEnumerable<MetadataReference>? references, CompilationOptions options, Compilation previousScriptCompilation, Type returnType, Type globalsType);
 
 		bool ExecuteCommandInternal(string input) {
-			Debug.Assert(!(execState is null) && !execState.IsInitializing);
+			Debug2.Assert(!(execState is null) && !execState.IsInitializing);
 			if (execState is null || execState.IsInitializing)
 				return true;
 			lock (lockObj) {
-				Debug.Assert(execState.ExecTask is null && !execState.Executing);
+				Debug2.Assert(execState.ExecTask is null && !execState.Executing);
 				if (!(execState.ExecTask is null) || execState.Executing)
 					return true;
 				execState.Executing = true;
@@ -498,7 +498,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			ReplEditor.OnCommandExecuted();
 			OnCommandExecuted?.Invoke(this, EventArgs.Empty);
 		}
-		public event EventHandler OnCommandExecuted;
+		public event EventHandler? OnCommandExecuted;
 
 		protected abstract ObjectFormatter ObjectFormatter { get; }
 		protected abstract DiagnosticFormatter DiagnosticFormatter { get; }
@@ -591,7 +591,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 					return new OutputWriter(owner, startOnNewLine);
 				return normalOutputWriter = new OutputWriter(owner, false);
 			}
-			static IOutputWriter normalOutputWriter;
+			static IOutputWriter? normalOutputWriter;
 
 			OutputWriter(ScriptControlVM owner, bool startOnNewLine) {
 				this.owner = owner;

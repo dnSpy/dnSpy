@@ -97,7 +97,7 @@ namespace dnSpy.Hex.Intellisense {
 				return Array.IndexOf(infos, a) - Array.IndexOf(infos, b);
 			});
 			BufferSpan = infos[0].BufferSpan;
-			Debug.Assert(!(infos[0].ToolTip is null));
+			Debug2.Assert(!(infos[0].ToolTip is null));
 
 			int index = 0;
 			foreach (var info in infos.OrderBy(a => a.BufferSpan.Start)) {
@@ -201,7 +201,7 @@ namespace dnSpy.Hex.Intellisense {
 			hexToolTipService.RegisterTagger(this);
 		}
 
-		public override event EventHandler<HexBufferSpanEventArgs> TagsChanged;
+		public override event EventHandler<HexBufferSpanEventArgs>? TagsChanged;
 
 		public override IEnumerable<IHexTextTagSpan<HexMarkerTag>> GetTags(HexTaggerContext context) {
 			yield break;

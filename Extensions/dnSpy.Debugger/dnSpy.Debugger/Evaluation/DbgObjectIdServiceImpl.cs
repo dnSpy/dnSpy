@@ -29,7 +29,7 @@ using dnSpy.Contracts.Debugger.Evaluation;
 namespace dnSpy.Debugger.Evaluation {
 	[Export(typeof(DbgObjectIdService))]
 	sealed class DbgObjectIdServiceImpl : DbgObjectIdService {
-		public override event EventHandler ObjectIdsChanged;
+		public override event EventHandler? ObjectIdsChanged;
 
 		readonly Lazy<DbgEngineObjectIdFactory, IDbgEngineObjectIdFactoryMetadata>[] dbgEngineObjectIdFactories;
 

@@ -219,7 +219,7 @@ namespace dnSpy.Text.Operations {
 							if (!info.IsSignificant)
 								continue;
 							var newSpan = span.Overlap(info.Span);
-							Debug.Assert(!(newSpan is null));
+							Debug2.Assert(!(newSpan is null));
 							if (newSpan is null)
 								continue;
 							var s = info.Span.GetText();
@@ -238,7 +238,7 @@ namespace dnSpy.Text.Operations {
 					}
 					ed.Apply();
 				}
-				Debug.Assert(!(lastWord.Span.Snapshot is null));
+				Debug2.Assert(!(lastWord.Span.Snapshot is null));
 				if (lastWord.IsSignificant)
 					Caret.MoveTo(new SnapshotPoint(Snapshot, lastWord.Span.End.Position));
 
@@ -1502,14 +1502,14 @@ namespace dnSpy.Text.Operations {
 
 		public void ScrollColumnLeft() {
 			var wpfTextView = TextView as IWpfTextView;
-			Debug.Assert(!(wpfTextView is null));
+			Debug2.Assert(!(wpfTextView is null));
 			if (!(wpfTextView is null))
 				wpfTextView.ViewScroller.ScrollViewportHorizontallyByPixels(-wpfTextView.FormattedLineSource.ColumnWidth);
 		}
 
 		public void ScrollColumnRight() {
 			var wpfTextView = TextView as IWpfTextView;
-			Debug.Assert(!(wpfTextView is null));
+			Debug2.Assert(!(wpfTextView is null));
 			if (!(wpfTextView is null))
 				wpfTextView.ViewScroller.ScrollViewportHorizontallyByPixels(wpfTextView.FormattedLineSource.ColumnWidth);
 		}
@@ -1700,7 +1700,7 @@ namespace dnSpy.Text.Operations {
 			if (!Roles.Contains(PredefinedTextViewRoles.Zoomable))
 				return null;
 			var wpfTextView = TextView as IWpfTextView;
-			Debug.Assert(!(wpfTextView is null));
+			Debug2.Assert(!(wpfTextView is null));
 			return wpfTextView;
 		}
 

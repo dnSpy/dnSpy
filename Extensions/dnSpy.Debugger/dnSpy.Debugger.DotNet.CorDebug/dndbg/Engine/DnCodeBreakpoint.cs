@@ -47,7 +47,7 @@ namespace dndbg.Engine {
 		readonly List<ModuleCodeBreakpoint> rawBps = new List<ModuleCodeBreakpoint>();
 		readonly CorCode? code;
 
-		internal event EventHandler ErrorChanged;
+		internal event EventHandler? ErrorChanged;
 		internal DnCodeBreakpointError Error => error;
 		DnCodeBreakpointError error;
 

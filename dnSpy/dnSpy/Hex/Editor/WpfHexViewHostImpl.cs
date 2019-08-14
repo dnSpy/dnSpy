@@ -35,7 +35,7 @@ namespace dnSpy.Hex.Editor {
 		public override bool IsClosed => isClosed;
 		bool isClosed;
 		public override WpfHexView HexView { get; }
-		public override event EventHandler Closed;
+		public override event EventHandler? Closed;
 		public override Control HostControl => contentControl;
 
 		readonly ContentControl contentControl;
@@ -68,7 +68,7 @@ namespace dnSpy.Hex.Editor {
 			containerMargins[3] = CreateContainerMargin(wpfHexViewMarginProviderCollectionProvider, PredefinedHexMarginNames.Left, false, 1, 0, 1);
 			containerMargins[4] = CreateContainerMargin(wpfHexViewMarginProviderCollectionProvider, PredefinedHexMarginNames.Right, false, 1, 2, 1);
 			Add(HexView.VisualElement, 1, 1, 1);
-			Debug.Assert(!containerMargins.Any(a => a is null));
+			Debug2.Assert(!containerMargins.Any(a => a is null));
 
 			if (setFocus) {
 				contentControl.Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(() => {

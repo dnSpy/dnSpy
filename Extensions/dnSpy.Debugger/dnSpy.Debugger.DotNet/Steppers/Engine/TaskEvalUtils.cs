@@ -63,7 +63,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 				if (builderField is null)
 					return null;
 				Debug.Assert((object)builderField == TryGetBuilderFieldByType(thisArg.Value.Type));
-				Debug.Assert(TryGetBuilderFieldByname(thisArg.Value.Type) is null ||
+				Debug2.Assert(TryGetBuilderFieldByname(thisArg.Value.Type) is null ||
 					(object?)TryGetBuilderFieldByname(thisArg.Value.Type) == TryGetBuilderFieldByType(thisArg.Value.Type));
 				tmpResult = runtime.LoadField(evalInfo, thisArg.Value, builderField);
 				if (!tmpResult.IsNormalResult || tmpResult.Value!.IsNull)
@@ -130,7 +130,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 				TryGetTaskObjectId_FrameworkBuilder(evalInfo, builderValue) ??
 				TryGetTaskObjectId_ObjectIdForDebugger(evalInfo, builderValue) ??
 				TryGetTaskObjectId_TaskProperty(evalInfo, builderValue);
-			Debug.Assert(result is null || !result.IsNull);
+			Debug2.Assert(result is null || !result.IsNull);
 			return result;
 		}
 
@@ -296,7 +296,7 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 
 		static DbgDotNetValue? TryGetTaskValue(DbgEvaluationInfo evalInfo, DbgDotNetValue value) {
 			var result = TryGetTaskObjectId_TaskProperty(evalInfo, value);
-			Debug.Assert(result is null || !result.IsNull);
+			Debug2.Assert(result is null || !result.IsNull);
 			return result;
 		}
 	}

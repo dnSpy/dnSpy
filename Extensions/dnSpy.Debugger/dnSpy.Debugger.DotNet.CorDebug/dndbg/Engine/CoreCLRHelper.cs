@@ -92,7 +92,7 @@ namespace dndbg.Engine {
 			var list = new List<string>(3);
 			if (File.Exists(dbgshimPath))
 				list.Add(dbgshimPath!);
-			if (!string.IsNullOrEmpty(runtimePath)) {
+			if (!string2.IsNullOrEmpty(runtimePath)) {
 				var dbgshimPathTemp = GetDbgShimPathFromRuntimePath(runtimePath);
 				if (File.Exists(dbgshimPathTemp))
 					list.Add(dbgshimPathTemp!);

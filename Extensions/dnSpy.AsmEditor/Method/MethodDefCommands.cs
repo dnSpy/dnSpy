@@ -160,7 +160,7 @@ namespace dnSpy.AsmEditor.Method {
 			}
 
 			public void Delete(MethodNode[] nodes) {
-				Debug.Assert(infos is null);
+				Debug2.Assert(infos is null);
 				if (!(infos is null))
 					throw new InvalidOperationException();
 
@@ -199,7 +199,7 @@ namespace dnSpy.AsmEditor.Method {
 			}
 
 			public void Restore(MethodNode[] nodes) {
-				Debug.Assert(!(infos is null));
+				Debug2.Assert(!(infos is null));
 				if (infos is null)
 					throw new InvalidOperationException();
 				Debug.Assert(infos.Length == nodes.Length);
@@ -230,7 +230,7 @@ namespace dnSpy.AsmEditor.Method {
 
 						case ModelInfo.PropEventType.EventAdd:
 							evt = (EventDef)pinfo.PropOrEvent;
-							Debug.Assert(evt.AddMethod is null);
+							Debug2.Assert(evt.AddMethod is null);
 							if (!(evt.AddMethod is null))
 								throw new InvalidOperationException();
 							evt.AddMethod = node.MethodDef;
@@ -238,7 +238,7 @@ namespace dnSpy.AsmEditor.Method {
 
 						case ModelInfo.PropEventType.EventInvoke:
 							evt = (EventDef)pinfo.PropOrEvent;
-							Debug.Assert(evt.InvokeMethod is null);
+							Debug2.Assert(evt.InvokeMethod is null);
 							if (!(evt.InvokeMethod is null))
 								throw new InvalidOperationException();
 							evt.InvokeMethod = node.MethodDef;
@@ -246,7 +246,7 @@ namespace dnSpy.AsmEditor.Method {
 
 						case ModelInfo.PropEventType.EventRemove:
 							evt = (EventDef)pinfo.PropOrEvent;
-							Debug.Assert(evt.RemoveMethod is null);
+							Debug2.Assert(evt.RemoveMethod is null);
 							if (!(evt.RemoveMethod is null))
 								throw new InvalidOperationException();
 							evt.RemoveMethod = node.MethodDef;
@@ -351,12 +351,12 @@ namespace dnSpy.AsmEditor.Method {
 			if (!(ownerNode is TypeNode))
 				ownerNode = (DocumentTreeNodeData)ownerNode.TreeNode.Parent!.Data;
 			var typeNode = ownerNode as TypeNode;
-			Debug.Assert(!(typeNode is null));
+			Debug2.Assert(!(typeNode is null));
 			if (typeNode is null)
 				throw new InvalidOperationException();
 
 			var module = typeNode.GetModule();
-			Debug.Assert(!(module is null));
+			Debug2.Assert(!(module is null));
 			if (module is null)
 				throw new InvalidOperationException();
 
@@ -466,7 +466,7 @@ namespace dnSpy.AsmEditor.Method {
 			var methodNode = (MethodNode)nodes[0];
 
 			var module = nodes[0].GetModule();
-			Debug.Assert(!(module is null));
+			Debug2.Assert(!(module is null));
 			if (module is null)
 				throw new InvalidOperationException();
 

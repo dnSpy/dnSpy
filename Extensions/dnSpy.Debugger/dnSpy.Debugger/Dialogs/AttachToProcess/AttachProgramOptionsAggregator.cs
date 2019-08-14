@@ -26,8 +26,8 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 	}
 
 	abstract class AttachProgramOptionsAggregator : IDisposable {
-		public abstract event EventHandler<AttachProgramOptionsAddedEventArgs> AttachProgramOptionsAdded;
-		public abstract event EventHandler Completed;
+		public abstract event EventHandler<AttachProgramOptionsAddedEventArgs>? AttachProgramOptionsAdded;
+		public abstract event EventHandler? Completed;
 		public abstract void Start();
 		public abstract void Dispose();
 	}

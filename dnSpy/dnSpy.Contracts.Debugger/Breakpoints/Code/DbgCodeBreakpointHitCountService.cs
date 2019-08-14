@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// <summary>
 		/// Raised when the hit count is updated
 		/// </summary>
-		public abstract event EventHandler<DbgHitCountChangedEventArgs> HitCountChanged;
+		public abstract event EventHandler<DbgHitCountChangedEventArgs>? HitCountChanged;
 
 		/// <summary>
 		/// Gets the hit count or null if we're not debugging

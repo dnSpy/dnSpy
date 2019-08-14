@@ -77,7 +77,7 @@ namespace dnSpy.Contracts.MVVM {
 		public static EnumVM[] Create(bool sort, Type enumType, params object[] values) {
 			var list = new List<EnumVM>();
 			foreach (var value in enumType.GetEnumValues()) {
-				Debug.Assert(!(value is null));
+				Debug2.Assert(!(value is null));
 				if (values.Any(a => a.Equals(value)))
 					continue;
 				list.Add(new EnumVM(value));

@@ -46,7 +46,7 @@ namespace dnSpy.Text.Editor {
 	}
 
 	sealed class UriClassificationTagger : ITagger<IClassificationTag>, IDisposable {
-		public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
+		public event EventHandler<SnapshotSpanEventArgs>? TagsChanged;
 
 		readonly IClassificationTag classificationTag;
 		readonly ITagAggregator<IUrlTag> tagAggregator;

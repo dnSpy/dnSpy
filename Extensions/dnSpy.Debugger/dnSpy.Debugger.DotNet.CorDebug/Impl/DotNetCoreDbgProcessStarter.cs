@@ -43,7 +43,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		public override bool TryStart(string filename, [NotNullWhen(false)] out string? error) {
 			var dotnetExeFilename = GetPathToDotNetExeHost();
-			Debug.Assert(!(dotnetExeFilename is null));
+			Debug2.Assert(!(dotnetExeFilename is null));
 			var startInfo = new ProcessStartInfo(dotnetExeFilename);
 			startInfo.WorkingDirectory = Path.GetDirectoryName(filename)!;
 			startInfo.Arguments = $"exec \"{filename}\"";

@@ -28,7 +28,7 @@ using dnSpy.UI;
 namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 	[Export(typeof(ViewBookmarkProvider))]
 	sealed class ViewBookmarkProviderImpl : ViewBookmarkProvider {
-		public override event EventHandler BookmarksViewOrderChanged;
+		public override event EventHandler? BookmarksViewOrderChanged;
 		public override IList<Bookmark> BookmarksViewOrder => allBookmarks;
 		public override Bookmark DefaultBookmark => allBookmarks.FirstOrDefault();
 

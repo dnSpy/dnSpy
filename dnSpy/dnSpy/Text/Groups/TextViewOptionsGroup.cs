@@ -29,7 +29,7 @@ using Microsoft.VisualStudio.Utilities;
 namespace dnSpy.Text.Groups {
 	sealed class TextViewOptionsGroup : ITextViewOptionsGroup {
 		IEnumerable<IWpfTextView> ITextViewOptionsGroup.TextViews => textViews.ToArray();
-		public event EventHandler<TextViewOptionChangedEventArgs> TextViewOptionChanged;
+		public event EventHandler<TextViewOptionChangedEventArgs>? TextViewOptionChanged;
 
 		readonly List<IWpfTextView> textViews;
 		readonly Dictionary<IContentType, TextViewGroupOptionCollection> toOptions;
@@ -48,12 +48,12 @@ namespace dnSpy.Text.Groups {
 			this.groupName = groupName ?? throw new ArgumentNullException(nameof(groupName));
 
 			foreach (var option in defaultOptions) {
-				Debug.Assert(!(option.Name is null));
+				Debug2.Assert(!(option.Name is null));
 				if (option.Name is null)
 					continue;
 
 				var ct = option.ContentType is null ? null : contentTypeRegistryService.GetContentType(option.ContentType);
-				Debug.Assert(!(ct is null));
+				Debug2.Assert(!(ct is null));
 				if (ct is null)
 					continue;
 
@@ -71,7 +71,7 @@ namespace dnSpy.Text.Groups {
 		TextViewGroupOptionCollection GetCollection(IContentType? contentType) {
 			if (contentType is null)
 				contentType = contentTypeRegistryService.GetContentType(ContentTypes.Any);
-			Debug.Assert(!(contentType is null));
+			Debug2.Assert(!(contentType is null));
 			if (contentType is null)
 				return ErrorCollection;
 

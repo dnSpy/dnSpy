@@ -183,7 +183,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					asmNode.TreeNode.EnsureChildrenLoaded();
 					Debug.Assert(asmNode.TreeNode.Children.Count >= 1);
 					var moduleNode = asmNode.TreeNode.DataChildren.OfType<ModuleDocumentNode>().FirstOrDefault(a => moduleKey.Equals(a.Document.Key));
-					Debug.Assert(moduleNode is null);
+					Debug2.Assert(moduleNode is null);
 					if (moduleNode is null) {
 						var md = info.DynamicModuleProvider.GetDynamicMetadata(module, out var moduleId);
 						if (!(md is null)) {
@@ -206,7 +206,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					asmNode.TreeNode.EnsureChildrenLoaded();
 					Debug.Assert(asmNode.TreeNode.Children.Count >= 1);
 					var moduleNode = asmNode.TreeNode.DataChildren.OfType<ModuleDocumentNode>().FirstOrDefault(a => moduleKey.Equals(a.Document.Key));
-					Debug.Assert(moduleNode is null);
+					Debug2.Assert(moduleNode is null);
 					if (moduleNode is null) {
 						MemoryModuleDefDocument? newFile = null;
 						try {
@@ -215,9 +215,9 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 						catch {
 						}
 
-						Debug.Assert(!(newFile is null));
+						Debug2.Assert(!(newFile is null));
 						if (!(newFile is null)) {
-							Debug.Assert(!(newFile.ModuleDef is null));
+							Debug2.Assert(!(newFile.ModuleDef is null));
 							UpdateResolver(newFile.ModuleDef);
 							asmNode.Document.Children.Add(newFile);
 							RemoveFromAssembly(newFile.ModuleDef);
@@ -281,12 +281,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				var manifestDnModule = modules[0];
 				var manifestKey = DynamicModuleDefDocument.CreateKey(manifestDnModule);
 				var manMod = FindDocument(manifestKey);
-				Debug.Assert(manMod is null);
+				Debug2.Assert(manMod is null);
 				if (!(manMod is null))
 					return null;
 
 				var manDoc = FindDynamicModule(manifestDnModule);
-				Debug.Assert(manDoc is null);
+				Debug2.Assert(manDoc is null);
 				if (!(manDoc is null))
 					return null;
 
@@ -341,12 +341,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				var manifestModule = modules[0];
 				var manifestKey = MemoryModuleDefDocument.CreateKey(manifestModule.Process, manifestModule.Address);
 				var manMod = FindDocument(manifestKey);
-				Debug.Assert(manMod is null);
+				Debug2.Assert(manMod is null);
 				if (!(manMod is null))
 					return null;
 
 				var manDoc = FindMemoryModule(manifestModule);
-				Debug.Assert(manDoc is null);
+				Debug2.Assert(manDoc is null);
 				if (!(manDoc is null))
 					return null;
 
@@ -365,7 +365,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					}
 					docs.Add(modDoc);
 				}
-				Debug.Assert(!(result is null));
+				Debug2.Assert(!(result is null));
 				if (docs.Count == 0 || result is null)
 					return null;
 				var asmFile = MemoryModuleDefDocument.CreateAssembly(docs);
@@ -424,7 +424,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		void Initialize_UI(RuntimeInfo info, DynamicModuleDefDocument[] docs) {
 			uiDispatcher.VerifyAccess();
-			Debug.Assert(!(info.DynamicModuleProvider is null));
+			Debug2.Assert(!(info.DynamicModuleProvider is null));
 			if (info.DynamicModuleProvider is null)
 				return;
 			info.ClassLoader?.LoadEverything_UI(docs);

@@ -147,7 +147,7 @@ namespace dnSpy.Documents.Tabs.Settings {
 		}
 
 		void SetMemberKind(int index, MemberKindVM newValue) {
-			Debug.Assert(!(newValue is null));
+			Debug2.Assert(!(newValue is null));
 			if (newValue is null)
 				throw new ArgumentNullException(nameof(newValue));
 			if (memberKindVMs[index] == newValue)

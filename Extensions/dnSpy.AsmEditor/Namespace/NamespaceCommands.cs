@@ -100,8 +100,8 @@ namespace dnSpy.AsmEditor.Namespace {
 			}
 
 			public void Delete(NamespaceNode[] nodes, DocumentTreeNodeData[] parents) {
-				Debug.Assert(!(parents is null) && nodes.Length == parents.Length);
-				Debug.Assert(infos is null);
+				Debug2.Assert(!(parents is null) && nodes.Length == parents.Length);
+				Debug2.Assert(infos is null);
 				if (!(infos is null))
 					throw new InvalidOperationException();
 
@@ -110,7 +110,7 @@ namespace dnSpy.AsmEditor.Namespace {
 				for (int i = 0; i < infos.Length; i++) {
 					var node = nodes[i];
 					var module = parents[i].GetModule();
-					Debug.Assert(!(module is null));
+					Debug2.Assert(!(module is null));
 					if (module is null)
 						throw new InvalidOperationException();
 
@@ -131,7 +131,7 @@ namespace dnSpy.AsmEditor.Namespace {
 			}
 
 			public void Restore(NamespaceNode[] nodes, DocumentTreeNodeData[] parents) {
-				Debug.Assert(!(infos is null));
+				Debug2.Assert(!(infos is null));
 				if (infos is null)
 					throw new InvalidOperationException();
 				Debug.Assert(infos.Length == nodes.Length);
@@ -261,7 +261,7 @@ namespace dnSpy.AsmEditor.Namespace {
 		NamespaceNode? GetTarget() => nodes.Nodes.Length == 0 ? null : (NamespaceNode)nodes.Nodes[0].TreeNode.Parent!.DataChildren.First(a => a is NamespaceNode && ((NamespaceNode)a).Name == string.Empty);
 
 		public void Execute() {
-			Debug.Assert(infos is null);
+			Debug2.Assert(infos is null);
 			if (!(infos is null))
 				throw new InvalidOperationException();
 
@@ -290,7 +290,7 @@ namespace dnSpy.AsmEditor.Namespace {
 		}
 
 		public void Undo() {
-			Debug.Assert(!(infos is null));
+			Debug2.Assert(!(infos is null));
 			if (infos is null)
 				throw new InvalidOperationException();
 
@@ -412,7 +412,7 @@ namespace dnSpy.AsmEditor.Namespace {
 			existingNsNode = (NamespaceNode)nsNode.TreeNode.Parent!.DataChildren.FirstOrDefault(a => a is NamespaceNode && newName == ((NamespaceNode)a).Name);
 
 			var module = nsNode.GetModule();
-			Debug.Assert(!(module is null));
+			Debug2.Assert(!(module is null));
 			if (module is null)
 				throw new InvalidOperationException();
 

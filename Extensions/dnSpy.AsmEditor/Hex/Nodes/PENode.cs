@@ -48,7 +48,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public override FilterType GetFilterType(IDocumentTreeNodeFilter filter) => filter.GetResultOther(this).FilterType;
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
-			Debug.Assert(TreeNode.Children.Count == 0 && weakDocListener is null);
+			Debug2.Assert(TreeNode.Children.Count == 0 && weakDocListener is null);
 			if (!(weakDocListener is null))
 				yield break;
 

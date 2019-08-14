@@ -165,7 +165,7 @@ namespace dnSpy.Text.Editor {
 			List<LineInfo> CreateLineInfos(SnapshotPoint bufferPosition, ViewRelativePosition relativeTo, double verticalDistance, double viewportHeightOverride) {
 				var lineInfos = new List<LineInfo>();
 				var startLine = GetLine(bufferPosition);
-				Debug.Assert(!(startLine is null));
+				Debug2.Assert(!(startLine is null));
 
 				double newViewportBottom = NewViewportTop + viewportHeightOverride;
 				double lineStartY;

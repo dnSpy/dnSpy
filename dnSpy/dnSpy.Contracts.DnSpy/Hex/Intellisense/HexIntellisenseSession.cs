@@ -54,7 +54,7 @@ namespace dnSpy.Contracts.Hex.Intellisense {
 		/// <summary>
 		/// Raised after <see cref="Presenter"/> is changed
 		/// </summary>
-		public abstract event EventHandler PresenterChanged;
+		public abstract event EventHandler? PresenterChanged;
 
 		/// <summary>
 		/// Starts the session
@@ -69,7 +69,7 @@ namespace dnSpy.Contracts.Hex.Intellisense {
 		/// <summary>
 		/// Raised after <see cref="Dismiss"/> is called
 		/// </summary>
-		public abstract event EventHandler Dismissed;
+		public abstract event EventHandler? Dismissed;
 
 		/// <summary>
 		/// true if the session has been dismissed
@@ -84,7 +84,7 @@ namespace dnSpy.Contracts.Hex.Intellisense {
 		/// <summary>
 		/// Raised after <see cref="Recalculate"/> is called
 		/// </summary>
-		public abstract event EventHandler Recalculated;
+		public abstract event EventHandler? Recalculated;
 
 		/// <summary>
 		/// Tries to get a match

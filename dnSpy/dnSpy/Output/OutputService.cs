@@ -155,7 +155,7 @@ namespace dnSpy.Output {
 
 			if (!(e.NewItems is null)) {
 				foreach (OutputBufferVM? vm in e.NewItems) {
-					Debug.Assert(!(vm is null));
+					Debug2.Assert(!(vm is null));
 					if (vm.Guid == prevSelectedGuid && prevSelectedGuid != Guid.Empty) {
 						SelectedOutputBufferVM = vm;
 						prevSelectedGuid = Guid.Empty;
@@ -176,7 +176,7 @@ namespace dnSpy.Output {
 				throw new ArgumentNullException(nameof(name));
 
 			var vm = OutputBuffers.FirstOrDefault(a => a.Guid == guid);
-			Debug.Assert(vm is null || vm.Name == name);
+			Debug2.Assert(vm is null || vm.Name == name);
 			if (!(vm is null))
 				return vm;
 
@@ -222,7 +222,7 @@ namespace dnSpy.Output {
 
 		public void Select(Guid guid) {
 			var vm = OutputBuffers.FirstOrDefault(a => a.Guid == guid);
-			Debug.Assert(!(vm is null));
+			Debug2.Assert(!(vm is null));
 			if (!(vm is null))
 				SelectedOutputBufferVM = vm;
 		}
@@ -243,7 +243,7 @@ namespace dnSpy.Output {
 		public void SaveText() {
 			if (!CanSaveText)
 				return;
-			Debug.Assert(!(SelectedOutputBufferVM is null));
+			Debug2.Assert(!(SelectedOutputBufferVM is null));
 			var vm = SelectedOutputBufferVM;
 			var filename = pickSaveFilename.GetFilename(GetFilename(vm), "txt", TEXTFILES_FILTER);
 			if (filename is null)

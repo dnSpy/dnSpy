@@ -27,7 +27,7 @@ using dnSpy.Contracts.Debugger.Evaluation;
 
 namespace dnSpy.Debugger.Evaluation {
 	abstract class DbgRuntimeObjectIdService {
-		public abstract event EventHandler ObjectIdsChanged;
+		public abstract event EventHandler? ObjectIdsChanged;
 		public abstract bool CanCreateObjectId(DbgValue value, CreateObjectIdOptions options);
 		public abstract DbgObjectId?[] CreateObjectIds(DbgValue[] values, CreateObjectIdOptions options);
 		public abstract DbgObjectId? GetObjectId(DbgValue value);
@@ -41,7 +41,7 @@ namespace dnSpy.Debugger.Evaluation {
 	sealed class DbgRuntimeObjectIdServiceImpl : DbgRuntimeObjectIdService, IDisposable {
 		const uint HiddenObjectId = 0;
 
-		public override event EventHandler ObjectIdsChanged;
+		public override event EventHandler? ObjectIdsChanged;
 		internal DbgRuntime Runtime { get; }
 
 		readonly object lockObj;
@@ -114,7 +114,7 @@ namespace dnSpy.Debugger.Evaluation {
 					var value = values[i] as DbgValueImpl;
 					if (value?.Runtime != Runtime)
 						throw new ArgumentException();
-					Debug.Assert(!(value is null));
+					Debug2.Assert(!(value is null));
 					DbgObjectId? objectId;
 					if (Runtime.IsClosed || value.IsClosed || (!isHidden && objectIds.ContainsKey(value)))
 						objectId = null;

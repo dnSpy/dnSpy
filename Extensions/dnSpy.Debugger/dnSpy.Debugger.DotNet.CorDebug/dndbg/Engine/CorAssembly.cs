@@ -54,7 +54,7 @@ namespace dndbg.Engine {
 		public string FullName {
 			get {
 				var module = ManifestModule;
-				Debug.Assert(!(module is null));
+				Debug2.Assert(!(module is null));
 				if (module is null)
 					return Name;
 				return CalculateFullName(module);

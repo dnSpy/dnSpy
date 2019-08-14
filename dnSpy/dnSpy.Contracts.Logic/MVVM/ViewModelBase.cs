@@ -26,7 +26,7 @@ namespace dnSpy.Contracts.MVVM {
 	/// </summary>
 	public abstract class ViewModelBase : INotifyPropertyChanged, IDataErrorInfo {
 		/// <inheritdoc/>
-		public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler? PropertyChanged;
 
 		/// <summary>
 		/// Raises <see cref="PropertyChanged"/>

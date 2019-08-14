@@ -49,8 +49,8 @@ namespace dnSpy.Text.Tagging {
 
 		protected void Initialize() => RecreateTaggers();
 
-		public event EventHandler<BatchedTagsChangedEventArgs> BatchedTagsChanged;
-		public event EventHandler<TagsChangedEventArgs> TagsChanged;
+		public event EventHandler<BatchedTagsChangedEventArgs>? BatchedTagsChanged;
+		public event EventHandler<TagsChangedEventArgs>? TagsChanged;
 
 		public IEnumerable<IMappingTagSpan<T>> GetTags(NormalizedSnapshotSpanCollection snapshotSpans) {
 			if (snapshotSpans is null)

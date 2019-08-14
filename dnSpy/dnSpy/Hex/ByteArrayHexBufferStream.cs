@@ -28,7 +28,7 @@ namespace dnSpy.Hex {
 		public override bool IsReadOnly => false;
 		public override HexSpan Span { get; }
 		public override string Name { get; }
-		public override event EventHandler<HexBufferStreamSpanInvalidatedEventArgs> BufferStreamSpanInvalidated { add { } remove { } }
+		public override event EventHandler<HexBufferStreamSpanInvalidatedEventArgs>? BufferStreamSpanInvalidated { add { } remove { } }
 
 		byte[] data;
 

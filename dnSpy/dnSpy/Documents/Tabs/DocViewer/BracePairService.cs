@@ -58,7 +58,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 	}
 
 	sealed class BracePairViewTagger : ITagger<IBracePairTag> {
-		public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
+		public event EventHandler<SnapshotSpanEventArgs>? TagsChanged;
 
 		readonly IBracePairService bracePairService;
 

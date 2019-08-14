@@ -42,7 +42,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Metadata {
 	}
 
 	sealed class DbgDynamicModuleProviderImpl : DbgDynamicModuleProvider {
-		public override event EventHandler<ClassLoadedEventArgs> ClassLoaded;
+		public override event EventHandler<ClassLoadedEventArgs>? ClassLoaded;
 
 		readonly DbgEngineImpl engine;
 
@@ -193,7 +193,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Metadata {
 		public override void InitializeNonLoadedClasses(DbgModule module, uint[] nonLoadedTokens) {
 			engine.VerifyCorDebugThread();
 			var cmod = TryGetDynamicMetadata(module);
-			Debug.Assert(!(cmod is null));
+			Debug2.Assert(!(cmod is null));
 			if (cmod is null)
 				return;
 			foreach (uint token in nonLoadedTokens)

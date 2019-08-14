@@ -76,7 +76,7 @@ namespace dnSpy.Debugger.Evaluation {
 				Providers = providers ?? throw new ArgumentNullException(nameof(providers));
 		}
 
-		public override event EventHandler<DbgLanguageChangedEventArgs> LanguageChanged;
+		public override event EventHandler<DbgLanguageChangedEventArgs>? LanguageChanged;
 
 		[ImportingConstructor]
 		DbgLanguageServiceImpl(Lazy<DbgManager> dbgManager, [ImportMany] IEnumerable<Lazy<DbgEngineLanguageProvider, IDbgEngineLanguageProviderMetadata>> dbgEngineLanguageProviders, [ImportMany] IEnumerable<Lazy<IDbgLanguageServiceListener>> dbgLanguageServiceListeners) {

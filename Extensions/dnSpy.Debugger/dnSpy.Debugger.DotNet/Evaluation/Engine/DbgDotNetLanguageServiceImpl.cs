@@ -105,7 +105,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				else if (decompilerGuid == visualBasicDecompilerGuid)
 					decompilerGuid = DecompilerConstants.LANGUAGE_VISUALBASIC;
 				var decompiler = decompilerService.Find(decompilerGuid);
-				Debug.Assert(!(decompiler is null));
+				Debug2.Assert(!(decompiler is null));
 				if (decompiler is null)
 					continue;
 

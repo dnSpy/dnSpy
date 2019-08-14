@@ -62,11 +62,11 @@ namespace dnSpy.Themes {
 
 		public override IEnumerable<(object?, object)> GetResourceKeyValues(ThemeColor hlColor) {
 			if (!(ForegroundResourceKey is null)) {
-				Debug.Assert(!(hlColor.Foreground is null));
+				Debug2.Assert(!(hlColor.Foreground is null));
 				yield return (ForegroundResourceKey, ((SolidColorBrush)hlColor.Foreground).Color);
 			}
 			if (!(BackgroundResourceKey is null)) {
-				Debug.Assert(!(hlColor.Background is null));
+				Debug2.Assert(!(hlColor.Background is null));
 				yield return (BackgroundResourceKey, ((SolidColorBrush)hlColor.Background).Color);
 			}
 		}
@@ -82,11 +82,11 @@ namespace dnSpy.Themes {
 
 		public override IEnumerable<(object?, object)> GetResourceKeyValues(ThemeColor hlColor) {
 			if (!(ForegroundResourceKey is null)) {
-				Debug.Assert(!(hlColor.Foreground is null));
+				Debug2.Assert(!(hlColor.Foreground is null));
 				yield return (ForegroundResourceKey, hlColor.Foreground);
 			}
 			if (!(BackgroundResourceKey is null)) {
-				Debug.Assert(!(hlColor.Background is null));
+				Debug2.Assert(!(hlColor.Background is null));
 				yield return (BackgroundResourceKey, hlColor.Background);
 			}
 		}
@@ -102,12 +102,12 @@ namespace dnSpy.Themes {
 
 		public override IEnumerable<(object?, object)> GetResourceKeyValues(ThemeColor hlColor) {
 			if (!(ForegroundResourceKey is null)) {
-				Debug.Assert(!(hlColor.Foreground is null));
+				Debug2.Assert(!(hlColor.Foreground is null));
 				var brush = hlColor.Foreground;
 				yield return (ForegroundResourceKey, CreateDrawingBrush(brush));
 			}
 			if (!(BackgroundResourceKey is null)) {
-				Debug.Assert(!(hlColor.Background is null));
+				Debug2.Assert(!(hlColor.Background is null));
 				var brush = hlColor.Background;
 				yield return (BackgroundResourceKey, CreateDrawingBrush(brush));
 			}

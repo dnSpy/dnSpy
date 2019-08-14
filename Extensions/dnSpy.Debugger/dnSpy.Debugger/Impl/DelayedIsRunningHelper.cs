@@ -23,9 +23,9 @@ using dnSpy.Debugger.Shared;
 namespace dnSpy.Debugger.Impl {
 	interface IIsRunningProvider {
 		bool IsRunning { get; }
-		event EventHandler IsRunningChanged;
+		event EventHandler? IsRunningChanged;
 		bool IsDebugging { get; }
-		event EventHandler IsDebuggingChanged;
+		event EventHandler? IsDebuggingChanged;
 	}
 
 	sealed class DelayedIsRunningHelper {

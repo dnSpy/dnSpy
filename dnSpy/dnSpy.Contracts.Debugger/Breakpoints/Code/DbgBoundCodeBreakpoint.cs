@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// <summary>
 		/// Raised when a property is changed
 		/// </summary>
-		public abstract event PropertyChangedEventHandler PropertyChanged;
+		public abstract event PropertyChangedEventHandler? PropertyChanged;
 
 		/// <summary>
 		/// Gets the breakpoint

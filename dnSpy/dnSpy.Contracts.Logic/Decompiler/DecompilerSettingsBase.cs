@@ -40,7 +40,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <summary>
 		/// Raised when <see cref="Version"/> is changed
 		/// </summary>
-		public abstract event EventHandler VersionChanged;
+		public abstract event EventHandler? VersionChanged;
 
 		/// <summary>
 		/// Gets all options

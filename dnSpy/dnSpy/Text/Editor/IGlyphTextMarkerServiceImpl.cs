@@ -32,10 +32,10 @@ namespace dnSpy.Text.Editor {
 		IEditorFormatMapService EditorFormatMapService { get; }
 		IEnumerable<IGlyphTextMarkerImpl> AllMarkers { get; }
 		Lazy<IGlyphTextMarkerMouseProcessorProvider, IGlyphTextMarkerMouseProcessorProviderMetadata>[] GlyphTextMarkerMouseProcessorProviders { get; }
-		event EventHandler<GlyphTextMarkerAddedEventArgs> MarkerAdded;
-		event EventHandler<GlyphTextMarkerRemovedEventArgs> MarkerRemoved;
-		event EventHandler<GlyphTextMarkersRemovedEventArgs> MarkersRemoved;
-		event EventHandler<GetGlyphTextMarkerAndSpanEventArgs> GetGlyphTextMarkerAndSpan;
+		event EventHandler<GlyphTextMarkerAddedEventArgs>? MarkerAdded;
+		event EventHandler<GlyphTextMarkerRemovedEventArgs>? MarkerRemoved;
+		event EventHandler<GlyphTextMarkersRemovedEventArgs>? MarkersRemoved;
+		event EventHandler<GetGlyphTextMarkerAndSpanEventArgs>? GetGlyphTextMarkerAndSpan;
 	}
 
 	abstract class GlyphTextMarkerEventArgs : EventArgs {

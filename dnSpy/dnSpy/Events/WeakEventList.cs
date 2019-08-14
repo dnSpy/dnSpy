@@ -71,7 +71,7 @@ namespace dnSpy.Events {
 			readonly MethodInfo methodInfo;
 
 			public InstanceInfo(EventHandler<TEventArgs> handler) {
-				Debug.Assert(!(handler.Target is null));
+				Debug2.Assert(!(handler.Target is null));
 				Debug.Assert(handler.GetInvocationList().Length == 1);
 				target = new WeakReference(handler.Target);
 				methodInfo = handler.Method;

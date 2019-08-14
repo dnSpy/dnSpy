@@ -25,7 +25,7 @@ using Mono.Debugger.Soft;
 
 namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 	sealed class DbgDotNetStepperBreakpointImpl : DbgDotNetStepperBreakpoint {
-		public override event EventHandler<DbgDotNetStepperBreakpointEventArgs> Hit;
+		public override event EventHandler<DbgDotNetStepperBreakpointEventArgs>? Hit;
 
 		readonly DbgEngineImpl engine;
 		readonly DbgThread? thread;

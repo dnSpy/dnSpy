@@ -192,7 +192,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 
 		public override DbgCodeBreakpointCheckResult ShouldBreak(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, DbgCodeBreakpointCondition condition) {
 			var expression = condition.Condition;
-			Debug.Assert(!(expression is null));
+			Debug2.Assert(!(expression is null));
 			if (expression is null)
 				return new DbgCodeBreakpointCheckResult("Missing expression");
 

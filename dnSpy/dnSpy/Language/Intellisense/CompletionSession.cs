@@ -33,14 +33,14 @@ namespace dnSpy.Language.Intellisense {
 		public PropertyCollection Properties { get; }
 		public ITextView TextView { get; }
 		public ReadOnlyObservableCollection<CompletionSet> CompletionSets { get; }
-		public event EventHandler<ValueChangedEventArgs<CompletionSet?>> SelectedCompletionSetChanged;
+		public event EventHandler<ValueChangedEventArgs<CompletionSet?>>? SelectedCompletionSetChanged;
 		public bool IsDismissed { get; private set; }
-		public event EventHandler Dismissed;
+		public event EventHandler? Dismissed;
 		public bool IsStarted { get; private set; }
 		public IIntellisensePresenter? Presenter => completionPresenter;
-		public event EventHandler PresenterChanged;
-		public event EventHandler Recalculated;
-		public event EventHandler Committed;
+		public event EventHandler? PresenterChanged;
+		public event EventHandler? Recalculated;
+		public event EventHandler? Committed;
 
 		public CompletionSet? SelectedCompletionSet {
 			get => selectedCompletionSet;

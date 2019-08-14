@@ -60,8 +60,8 @@ namespace dnSpy.TreeView {
 		readonly IClassificationFormatMap classificationFormatMap;
 		readonly object foregroundBrushResourceKey;
 
-		public event EventHandler<TreeViewSelectionChangedEventArgs> SelectionChanged;
-		public event EventHandler<TreeViewNodeRemovedEventArgs> NodeRemoved;
+		public event EventHandler<TreeViewSelectionChangedEventArgs>? SelectionChanged;
+		public event EventHandler<TreeViewNodeRemovedEventArgs>? NodeRemoved;
 
 		public TreeViewImpl(ITreeViewServiceImpl treeViewService, IThemeService themeService, IClassificationFormatMapService classificationFormatMapService, Guid guid, TreeViewOptions options) {
 			Guid = guid;
@@ -126,7 +126,7 @@ namespace dnSpy.TreeView {
 		ITreeNode ITreeView.Create(TreeNodeData data) => Create(data);
 
 		TreeNodeImpl Create(TreeNodeData data) {
-			Debug.Assert(data.TreeNode is null);
+			Debug2.Assert(data.TreeNode is null);
 			var impl = new TreeNodeImpl(this, data);
 			if (!(treeViewListener is null))
 				treeViewListener.OnEvent(this, new TreeViewListenerEventArgs(TreeViewListenerEvent.NodeCreated, impl));
@@ -267,7 +267,7 @@ namespace dnSpy.TreeView {
 			if (node is null)
 				return null;
 			var impl = node.TreeNode as TreeNodeImpl;
-			Debug.Assert(!(impl is null));
+			Debug2.Assert(!(impl is null));
 			return impl?.Node;
 		}
 
@@ -300,7 +300,7 @@ namespace dnSpy.TreeView {
 
 		internal Brush GetNodeForegroundBrush() {
 			var brush = sharpTreeView.TryFindResource(foregroundBrushResourceKey) as Brush;
-			Debug.Assert(!(brush is null));
+			Debug2.Assert(!(brush is null));
 			return brush;
 		}
 	}

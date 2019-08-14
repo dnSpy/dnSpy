@@ -169,7 +169,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Steppers.Engine {
 		/// <summary>
 		/// Raised when the breakpoint is hit
 		/// </summary>
-		public abstract event EventHandler<DbgDotNetStepperBreakpointEventArgs> Hit;
+		public abstract event EventHandler<DbgDotNetStepperBreakpointEventArgs>? Hit;
 	}
 
 	/// <summary>

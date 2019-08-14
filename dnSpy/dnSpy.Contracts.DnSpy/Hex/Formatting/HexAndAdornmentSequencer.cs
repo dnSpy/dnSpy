@@ -37,7 +37,7 @@ namespace dnSpy.Contracts.Hex.Formatting {
 		/// <summary>
 		/// Raised after a sequence has changed
 		/// </summary>
-		public abstract event EventHandler<HexAndAdornmentSequenceChangedEventArgs> SequenceChanged;
+		public abstract event EventHandler<HexAndAdornmentSequenceChangedEventArgs>? SequenceChanged;
 
 		/// <summary>
 		/// Creates a <see cref="HexAndAdornmentCollection"/>

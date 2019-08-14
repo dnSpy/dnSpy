@@ -248,13 +248,13 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 				else if (value is EnumInfo enumInfo) {
 					if (enumInfo.IsArray) {
-						Debug.Assert(enumInfo.Value is null || enumInfo.Value is System.Collections.IList);
+						Debug2.Assert(enumInfo.Value is null || enumInfo.Value is System.Collections.IList);
 						SetSelectedItem(ConstantType.EnumArray);
 						EnumArray.Value = enumInfo;
 						if (ArraysCanBeNull && enumInfo.Value is null) EnumArrayIsNull = true;
 					}
 					else {
-						Debug.Assert(!(enumInfo.Value is null) && !(enumInfo.Value is System.Collections.IList));
+						Debug2.Assert(!(enumInfo.Value is null) && !(enumInfo.Value is System.Collections.IList));
 						SetSelectedItem(ConstantType.Enum);
 						Enum.Value = enumInfo;
 					}

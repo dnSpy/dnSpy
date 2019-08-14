@@ -34,7 +34,7 @@ namespace dnSpy.Text.Classification {
 			set => categoryMap.DefaultTextProperties = value;
 		}
 
-		public event EventHandler<EventArgs> ClassificationFormatMappingChanged;
+		public event EventHandler<EventArgs>? ClassificationFormatMappingChanged;
 		readonly ClassificationFormatMapService classificationFormatMapService;
 		readonly string appearanceCategoryName;
 		IClassificationFormatMap categoryMap;

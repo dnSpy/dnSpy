@@ -42,7 +42,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 			get {
 				if (createdBy is null)
 					CalculateInfo();
-				Debug.Assert(!(createdBy is null));
+				Debug2.Assert(!(createdBy is null));
 				return createdBy;
 			}
 		}
@@ -52,7 +52,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 			get {
 				if (fileVersion is null)
 					CalculateInfo();
-				Debug.Assert(!(fileVersion is null));
+				Debug2.Assert(!(fileVersion is null));
 				return fileVersion;
 			}
 		}

@@ -131,7 +131,7 @@ namespace dnSpy.Search {
 			if (asmNode is null)
 				return;
 			var asm = asmNode.Document.AssemblyDef;
-			Debug.Assert(!(asm is null));
+			Debug2.Assert(!(asm is null));
 			if (asm is null)
 				return;
 			var res = options.Filter.GetResult(asm);

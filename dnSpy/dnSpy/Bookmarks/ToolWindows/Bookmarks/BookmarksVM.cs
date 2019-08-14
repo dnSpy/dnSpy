@@ -44,8 +44,8 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		ObservableCollection<BookmarkVM> SelectedItems { get; }
 		void ResetSearchSettings();
 		string GetSearchHelpText();
-		event EventHandler OnShowChanged;
-		event EventHandler AllItemsFiltered;
+		event EventHandler? OnShowChanged;
+		event EventHandler? AllItemsFiltered;
 		IEnumerable<BookmarkVM> Sort(IEnumerable<BookmarkVM> bookmarks);
 	}
 
@@ -110,8 +110,8 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		}
 		IEditValueProvider? labelsEditValueProvider;
 
-		public event EventHandler OnShowChanged;
-		public event EventHandler AllItemsFiltered;
+		public event EventHandler? OnShowChanged;
+		public event EventHandler? AllItemsFiltered;
 
 		readonly UIDispatcher uiDispatcher;
 		readonly BookmarkContext bookmarkContext;

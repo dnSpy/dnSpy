@@ -58,7 +58,7 @@ namespace dnSpy.Hex.Editor {
 			set => hexCaretLayer.IsHidden = value;
 		}
 
-		public override event EventHandler<HexCaretPositionChangedEventArgs> PositionChanged;
+		public override event EventHandler<HexCaretPositionChangedEventArgs>? PositionChanged;
 		public override HexCaretPosition Position => new HexCaretPosition(currentPosition);
 		HexColumnPosition currentPosition;
 
@@ -237,7 +237,7 @@ namespace dnSpy.Hex.Editor {
 
 		static class TfThreadMgrHelper {
 			static bool initd;
-			static ITfThreadMgr tfThreadMgr;
+			static ITfThreadMgr? tfThreadMgr;
 
 			[DllImport("msctf")]
 			static extern int TF_CreateThreadMgr(out ITfThreadMgr pptim);
@@ -365,7 +365,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		void MoveImeCompositionWindow() {
-			Debug.Assert(!(imeState.HwndSource is null));
+			Debug2.Assert(!(imeState.HwndSource is null));
 			if (!IsValuesCaretPresent && !IsAsciiCaretPresent)
 				return;
 			if (imeState.Context == IntPtr.Zero)

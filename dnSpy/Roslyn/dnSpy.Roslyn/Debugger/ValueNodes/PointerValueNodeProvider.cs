@@ -53,7 +53,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 				initialized = true;
 				// Fails if it's not supported by the runtime
 				derefValue = value.LoadIndirect().Value;
-				Debug.Assert((derefValue is null) == ((evalInfo.Runtime.GetDotNetRuntime().Features & DbgDotNetRuntimeFeatures.NoDereferencePointers) != 0));
+				Debug2.Assert((derefValue is null) == ((evalInfo.Runtime.GetDotNetRuntime().Features & DbgDotNetRuntimeFeatures.NoDereferencePointers) != 0));
 			}
 			return !(derefValue is null) ? 1UL : 0;
 		}

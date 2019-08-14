@@ -29,7 +29,7 @@ namespace dnSpy.Debugger.Dialogs.DebugProgram {
 		internal Guid PageGuid => StartDebuggingOptionsPage.Guid;
 
 		public bool IsValid => StartDebuggingOptionsPage.IsValid;
-		public event EventHandler IsValidChanged;
+		public event EventHandler? IsValidChanged;
 
 		public object? UIObject => StartDebuggingOptionsPage.UIObject;
 		public string Name => StartDebuggingOptionsPage.DisplayName;

@@ -32,8 +32,8 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly List<(RawModuleBytes rawData, CompilerMetadataReference mdRef)> rawModuleBytesList;
 
 		public AssemblyReferenceResolver(RawModuleBytesProvider rawModuleBytesProvider, IAssemblyResolver assemblyResolver, IAssembly tempAssembly, ModuleDef editedModule, TypeDef? nonNestedEditedType) {
-			Debug.Assert(nonNestedEditedType is null || nonNestedEditedType.Module == editedModule);
-			Debug.Assert(nonNestedEditedType?.DeclaringType is null);
+			Debug2.Assert(nonNestedEditedType is null || nonNestedEditedType.Module == editedModule);
+			Debug2.Assert(nonNestedEditedType?.DeclaringType is null);
 			this.rawModuleBytesProvider = rawModuleBytesProvider;
 			this.assemblyResolver = assemblyResolver;
 			this.tempAssembly = tempAssembly;

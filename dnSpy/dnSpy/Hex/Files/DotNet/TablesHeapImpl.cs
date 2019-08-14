@@ -32,7 +32,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			get {
 				if (!initialized)
 					Initialize();
-				Debug.Assert(!(mdTablesReadOnly is null));
+				Debug2.Assert(!(mdTablesReadOnly is null));
 				return mdTablesReadOnly;
 			}
 		}
@@ -57,7 +57,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			get {
 				if (!initialized)
 					Initialize();
-				Debug.Assert(!(tablesHeaderData is null));
+				Debug2.Assert(!(tablesHeaderData is null));
 				return tablesHeaderData;
 			}
 		}
@@ -249,7 +249,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		public override TableRecordData? GetRecord(MDToken token) {
 			if (!initialized)
 				Initialize();
-			Debug.Assert(!(tableRecordDataFactories is null));
+			Debug2.Assert(!(tableRecordDataFactories is null));
 			int tableIndex = (int)token.Table;
 			if ((uint)tableIndex >= (uint)tableRecordDataFactories.Length)
 				return null;
@@ -259,7 +259,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		MDTable? GetTable(HexPosition position) {
 			if (!initialized)
 				Initialize();
-			Debug.Assert(!(mdTables is null));
+			Debug2.Assert(!(mdTables is null));
 			var array = mdTables;
 			int lo = 0, hi = array.Length - 1;
 			while (lo <= hi) {

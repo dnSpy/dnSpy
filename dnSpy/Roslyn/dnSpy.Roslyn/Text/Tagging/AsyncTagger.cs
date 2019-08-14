@@ -46,7 +46,7 @@ namespace dnSpy.Roslyn.Text.Tagging {
 		readonly object lockObj;
 		SnapshotState? lastSnapshotState;
 
-		public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
+		public event EventHandler<SnapshotSpanEventArgs>? TagsChanged;
 
 		sealed class SnapshotState {
 			public bool TaskStarted { get; set; }
@@ -161,7 +161,7 @@ namespace dnSpy.Roslyn.Text.Tagging {
 			public TagsResult[] GetResult() {
 				Debug.Assert(jobs.Count == 0);
 				Debug.Assert(currentResult.Count == 0);
-				Debug.Assert(snapshotHash is null || snapshotHash.Count == 0);
+				Debug2.Assert(snapshotHash is null || snapshotHash.Count == 0);
 				var result = tagsResultList.ToArray();
 				tagsResultList.Clear();
 				currentResult.Clear();
@@ -189,7 +189,7 @@ namespace dnSpy.Roslyn.Text.Tagging {
 		}
 
 		protected void RefreshAllTags(ITextSnapshot snapshot) {
-			Debug.Assert(!(snapshot is null));
+			Debug2.Assert(!(snapshot is null));
 			if (snapshot is null)
 				return;
 			lock (lockObj) {
@@ -221,7 +221,7 @@ namespace dnSpy.Roslyn.Text.Tagging {
 					lastSnapshotState = new SnapshotState(snapshot);
 					lastSnapshotState.AddRef();
 				}
-				Debug.Assert(!(lastSnapshotState is null));
+				Debug2.Assert(!(lastSnapshotState is null));
 
 				foreach (var span in spans) {
 					if (cachedTags.TryGetValue(span.Start.Position, out var tags)) {
@@ -244,8 +244,8 @@ namespace dnSpy.Roslyn.Text.Tagging {
 					}
 				}
 			}
-			Debug.Assert(multipleResults is null || multipleResults.Count >= 2);
-			Debug.Assert(multipleMissingSpans is null || multipleMissingSpans.Count >= 2);
+			Debug2.Assert(multipleResults is null || multipleResults.Count >= 2);
+			Debug2.Assert(multipleMissingSpans is null || multipleMissingSpans.Count >= 2);
 
 			if (!(singleMissingSpan is null)) {
 				if (spans.Count != (multipleMissingSpans?.Count ?? 1)) {

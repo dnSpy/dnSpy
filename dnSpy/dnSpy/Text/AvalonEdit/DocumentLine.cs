@@ -48,7 +48,7 @@ namespace dnSpy.Text.AvalonEdit {
 
 		internal DocumentLine(TextDocument document) {
 #if DEBUG
-			Debug.Assert(!(document is null));
+			Debug2.Assert(!(document is null));
 			this.document = document;
 #endif
 		}

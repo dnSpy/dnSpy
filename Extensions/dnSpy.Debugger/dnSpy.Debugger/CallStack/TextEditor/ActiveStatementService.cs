@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.CallStack.TextEditor {
 
 	sealed class ActiveStatementTagger : ITagger<ITextMarkerTag> {
 		public ITextView TextView { get; }
-		public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
+		public event EventHandler<SnapshotSpanEventArgs>? TagsChanged;
 
 		readonly ActiveStatementService activeStatementService;
 

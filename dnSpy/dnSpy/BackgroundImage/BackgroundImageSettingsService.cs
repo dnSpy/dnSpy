@@ -83,7 +83,7 @@ namespace dnSpy.BackgroundImage {
 				var rawSettings = new RawSettings(section);
 				if (!rawSettings.IsValid)
 					continue;
-				Debug.Assert(!(rawSettings.Id is null));
+				Debug2.Assert(!(rawSettings.Id is null));
 				if (!settingsInfos.TryGetValue(rawSettings.Id, out var info))
 					continue;
 				if (!allSettingsIds.Contains(rawSettings.Id))

@@ -36,7 +36,7 @@ namespace dnSpy.Text.Editor {
 		public bool IsClosed { get; set; }
 		IWpfTextView IWpfTextViewHost.TextView => TextView;
 		public IDsWpfTextView TextView { get; }
-		public event EventHandler Closed;
+		public event EventHandler? Closed;
 		public Control HostControl => this;
 
 		readonly IWpfTextViewMargin[] containerMargins;
@@ -66,7 +66,7 @@ namespace dnSpy.Text.Editor {
 			containerMargins[3] = CreateContainerMargin(wpfTextViewMarginProviderCollectionProvider, PredefinedMarginNames.Left, false, 1, 0, 1);
 			containerMargins[4] = CreateContainerMargin(wpfTextViewMarginProviderCollectionProvider, PredefinedMarginNames.Right, false, 1, 2, 1);
 			Add(TextView.VisualElement, 1, 1, 1);
-			Debug.Assert(!containerMargins.Any(a => a is null));
+			Debug2.Assert(!containerMargins.Any(a => a is null));
 
 			if (setFocus) {
 				Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(() => {

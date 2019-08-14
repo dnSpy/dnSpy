@@ -78,7 +78,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 				var result = PatchAPI(address, info.Address, info.EndAddress);
 				if (!(result.ErrorMessage is null))
 					throw new DbgHookException(result.ErrorMessage);
-				Debug.Assert(!(result.Block is null));
+				Debug2.Assert(!(result.Block is null));
 				simplePatches.Add(result.SimplePatch);
 				return new DbgHookedNativeFunctionImpl(result.Block, result.NewFunctionAddress, address);
 			}
@@ -95,7 +95,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 			var result = PatchAPI(address, address, address + 1);
 			if (!(result.ErrorMessage is null))
 				throw new DbgHookException(result.ErrorMessage);
-			Debug.Assert(!(result.Block is null));
+			Debug2.Assert(!(result.Block is null));
 			simplePatches.Add(result.SimplePatch);
 			return new DbgHookedNativeFunctionImpl(result.Block, result.NewFunctionAddress, address);
 		}

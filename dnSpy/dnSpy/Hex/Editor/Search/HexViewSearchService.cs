@@ -74,14 +74,14 @@ namespace dnSpy.Hex.Editor.Search {
 	}
 
 	sealed class HexViewSearchServiceImpl : HexViewSearchService, INotifyPropertyChanged {
-		public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler? PropertyChanged;
 		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
 #pragma warning disable CS0169
 		[Export(typeof(HexAdornmentLayerDefinition))]
 		[VSUTIL.Name(PredefinedHexAdornmentLayers.Search)]
 		[HexLayerKind(HexLayerKind.Overlay)]
-		static HexAdornmentLayerDefinition searchServiceAdornmentLayerDefinition;
+		static HexAdornmentLayerDefinition? searchServiceAdornmentLayerDefinition;
 #pragma warning restore CS0169
 
 		enum SearchKind {
@@ -279,7 +279,7 @@ namespace dnSpy.Hex.Editor.Search {
 				return CommandTargetStatus.NotHandled;
 			if (!IsSearchControlVisible)
 				return CommandTargetStatus.NotHandled;
-			Debug.Assert(!(searchControl is null));
+			Debug2.Assert(!(searchControl is null));
 
 			if (inIncrementalSearch) {
 				if (group == CommandConstants.HexEditorGroup) {
@@ -315,7 +315,7 @@ namespace dnSpy.Hex.Editor.Search {
 				return CommandTargetStatus.NotHandled;
 			if (!IsSearchControlVisible)
 				return CommandTargetStatus.NotHandled;
-			Debug.Assert(!(searchControl is null));
+			Debug2.Assert(!(searchControl is null));
 
 			if (group == CommandConstants.HexEditorGroup && cmdId == (int)HexEditorIds.CANCEL) {
 				if (inIncrementalSearch)
@@ -525,7 +525,7 @@ namespace dnSpy.Hex.Editor.Search {
 		}
 
 		void FocusSearchStringTextBox() {
-			Debug.Assert(!(searchControl is null));
+			Debug2.Assert(!(searchControl is null));
 			Action? callback = null;
 			// If it hasn't been loaded yet, it has no binding and we must select it in its Loaded event
 			if (searchControl.searchStringTextBox.Text.Length == 0 && SearchString.Length != 0)
@@ -536,7 +536,7 @@ namespace dnSpy.Hex.Editor.Search {
 		}
 
 		void FocusReplaceStringTextBox() {
-			Debug.Assert(!(searchControl is null));
+			Debug2.Assert(!(searchControl is null));
 			Action? callback = null;
 			// If it hasn't been loaded yet, it has no binding and we must select it in its Loaded event
 			if (searchControl.replaceStringTextBox.Text.Length == 0 && ReplaceString.Length != 0)
@@ -547,7 +547,7 @@ namespace dnSpy.Hex.Editor.Search {
 		}
 
 		void RepositionControl(bool recalcSize = false) {
-			Debug.Assert(!(searchControl is null));
+			Debug2.Assert(!(searchControl is null));
 			if (recalcSize)
 				searchControl.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
 			PositionSearchControl(SearchControlPosition.Default);
@@ -705,7 +705,7 @@ namespace dnSpy.Hex.Editor.Search {
 				s = TryGetSearchStringFromSelection();
 			else
 				s = TryGetSearchStringAtPoint(wpfHexView.Caret.Position.Position.ActivePosition.BufferPosition);
-			if (string.IsNullOrEmpty(s) || s.IndexOfAny(CT.LineConstants.newLineChars) >= 0)
+			if (string2.IsNullOrEmpty(s) || s.IndexOfAny(CT.LineConstants.newLineChars) >= 0)
 				return null;
 			return s;
 		}
@@ -804,7 +804,7 @@ namespace dnSpy.Hex.Editor.Search {
 			if (!wpfHexView.Selection.IsEmpty && wpfHexView.Selection.StreamSelectionSpan == vres) {
 				try {
 					var newData = TryGetReplaceStringData(res.Value);
-					Debug.Assert(!(newData is null) && newData.Length == res.Value.Length);
+					Debug2.Assert(!(newData is null) && newData.Length == res.Value.Length);
 					if (newData is null || newData.Length != res.Value.Length)
 						return;
 
@@ -872,7 +872,7 @@ namespace dnSpy.Hex.Editor.Search {
 					foreach (var res in GetAllResultsForReplaceAll()) {
 						if (newData is null)
 							newData = TryGetReplaceStringData(res);
-						Debug.Assert(!(newData is null) && newData.Length == res.Length);
+						Debug2.Assert(!(newData is null) && newData.Length == res.Length);
 						if (newData is null || newData.Length != res.Length)
 							return;
 						// Ignore errors due to read-only regions
@@ -1046,7 +1046,7 @@ namespace dnSpy.Hex.Editor.Search {
 				bool wasInList = asyncSearchers.Remove(searcher);
 				Searching = asyncSearchers.Count != 0;
 				var ex = t.Exception;
-				Debug.Assert(ex is null);
+				Debug2.Assert(ex is null);
 				if (wasInList && !searcherWasCanceled && !t.IsCanceled && !t.IsFaulted)
 					searcher.RaiseCompleted(FindAsyncResult.HasResult, t.Result);
 				else
@@ -1097,7 +1097,7 @@ namespace dnSpy.Hex.Editor.Search {
 			bool disposed;
 
 			public bool Canceled { get; private set; }
-			public event Action<FindAsyncResult, HexBufferSpan?> OnCompleted;
+			public event Action<FindAsyncResult, HexBufferSpan?>? OnCompleted;
 
 			public AsyncSearcher(HexSearchService hexSearchService, SearchOptions searchOptions) {
 				HexSearchService = hexSearchService;

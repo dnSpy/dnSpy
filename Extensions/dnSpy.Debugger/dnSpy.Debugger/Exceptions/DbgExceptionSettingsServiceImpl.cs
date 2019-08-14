@@ -34,7 +34,7 @@ namespace dnSpy.Debugger.Exceptions {
 
 	[Export(typeof(DbgExceptionSettingsService))]
 	sealed class DbgExceptionSettingsServiceImpl : DbgExceptionSettingsService {
-		public override event EventHandler<DbgCollectionChangedEventArgs<DbgExceptionSettingsInfo>> ExceptionsChanged;
+		public override event EventHandler<DbgCollectionChangedEventArgs<DbgExceptionSettingsInfo>>? ExceptionsChanged;
 		public override DbgExceptionSettingsInfo[] Exceptions {
 			get {
 				lock (lockObj)
@@ -88,7 +88,7 @@ namespace dnSpy.Debugger.Exceptions {
 				ExceptionsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgExceptionSettingsInfo>(added, added: true));
 		}
 
-		public override event EventHandler<DbgExceptionSettingsModifiedEventArgs> ExceptionSettingsModified;
+		public override event EventHandler<DbgExceptionSettingsModifiedEventArgs>? ExceptionSettingsModified;
 		public override void Modify(DbgExceptionIdAndSettings[] settings) {
 			if (settings is null)
 				throw new ArgumentNullException(nameof(settings));
@@ -102,7 +102,7 @@ namespace dnSpy.Debugger.Exceptions {
 				foreach (var s in settings) {
 					if (!toExceptionInfo.TryGetValue(s.Id, out var info))
 						continue;
-					Debug.Assert(!(s.Settings.Conditions is null));
+					Debug2.Assert(!(s.Settings.Conditions is null));
 					if (s.Settings.Conditions is null)
 						continue;
 					if (info.Settings == s.Settings)

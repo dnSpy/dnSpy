@@ -176,7 +176,7 @@ namespace dnSpy.Hex.Editor {
 					break;
 
 				case VSTE.AdornmentPositioningBehavior.TextRelative:
-					Debug.Assert(!(elem.VisualSpan is null));
+					Debug2.Assert(!(elem.VisualSpan is null));
 					var translatedLine = GetLine(e.TranslatedLines, GetOverlapsWithSpan(elem.VisualSpan.Value));
 					if (!(translatedLine is null)) {
 						// Only y is updated, x is owner controlled

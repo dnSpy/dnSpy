@@ -27,7 +27,7 @@ namespace dnSpy.Roslyn.Text.Classification {
 		[Export]
 		[Name(RoslynContentTypes.RoslynTaggedText)]
 		[BaseDefinition(ContentTypes.Text)]
-		static readonly ContentTypeDefinition RoslynTaggedText;
+		static readonly ContentTypeDefinition? RoslynTaggedText;
 #pragma warning restore CS0169
 	}
 }

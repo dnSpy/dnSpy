@@ -34,7 +34,7 @@ namespace dnSpy.BackgroundImage {
 		[Export(typeof(HexAdornmentLayerDefinition))]
 		[VSUTIL.Name(PredefinedHexAdornmentLayers.BackgroundImage)]
 		[HexLayerKind(HexLayerKind.Underlay)]
-		static HexAdornmentLayerDefinition backgroundImageAdornmentLayerDefinition;
+		static HexAdornmentLayerDefinition? backgroundImageAdornmentLayerDefinition;
 #pragma warning restore CS0169
 
 		HexViewBackgroundImageService(WpfHexView wpfHexView, IImageSourceService imageSourceService)

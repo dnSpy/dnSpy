@@ -425,7 +425,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void AddMarkerElements(NormalizedSnapshotSpanCollection spans) {
-			Debug.Assert(!(glyphTextMarkerTagAggregator is null));
+			Debug2.Assert(!(glyphTextMarkerTagAggregator is null));
 			if (glyphTextMarkerTagAggregator is null) {
 				glyphTextMarkerTagAggregatorWasNull = true;
 				return;
@@ -521,7 +521,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		MarkerElement? TryCreateMarkerElement(SnapshotSpan span, IGlyphTextMarkerTag tag) {
-			Debug.Assert(!(tag.MarkerTypeName is null));
+			Debug2.Assert(!(tag.MarkerTypeName is null));
 			var geo = TextView.TextViewLines.GetMarkerGeometry(span);
 			if (geo is null)
 				return null;
@@ -579,7 +579,7 @@ namespace dnSpy.Text.Editor {
 			if (dotNetSpanMap == map)
 				return;
 			dotNetSpanMap = map as IDotNetSpanMap;
-			Debug.Assert((map is null) == (dotNetSpanMap is null));
+			Debug2.Assert((map is null) == (dotNetSpanMap is null));
 			if (markerAndSpanCollection.Count != 0) {
 				markerAndSpanCollection.UpdateSpans(dotNetSpanMap);
 				InvalidateEverything();
@@ -829,7 +829,7 @@ namespace dnSpy.Text.Editor {
 				return null;
 			var line = TextView.TextViewLines.GetTextViewLineContainingBufferPosition(span.Value.Start);
 			var wpfLine = line as IWpfTextViewLine;
-			Debug.Assert((!(line is null)) == (!(wpfLine is null)));
+			Debug2.Assert((!(line is null)) == (!(wpfLine is null)));
 			if (wpfLine is null || !wpfLine.IsVisible())
 				return null;
 			return wpfLine;
@@ -845,7 +845,7 @@ namespace dnSpy.Text.Editor {
 			glyphTextMarkerServiceImpl.MarkersRemoved -= GlyphTextMarkerServiceImpl_MarkersRemoved;
 			glyphTextMarkerServiceImpl.GetGlyphTextMarkerAndSpan -= GlyphTextMarkerServiceImpl_GetGlyphTextMarkerAndSpan;
 			editorFormatMap.FormatMappingChanged -= EditorFormatMap_FormatMappingChanged;
-			Debug.Assert(!(glyphTextMarkerTagAggregator is null));
+			Debug2.Assert(!(glyphTextMarkerTagAggregator is null));
 			if (!(glyphTextMarkerTagAggregator is null)) {
 				glyphTextMarkerTagAggregator.BatchedTagsChanged -= GlyphTextMarkerTagAggregator_BatchedTagsChanged;
 				glyphTextMarkerTagAggregator.Dispose();

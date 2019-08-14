@@ -82,7 +82,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 					}
 					else {
 						uint indexLeft = arrayIndex;
-						Debug.Assert(!(indexes is null));
+						Debug2.Assert(!(indexes is null));
 						for (int j = dimensionInfos.Length - 1; j >= 0; j--) {
 							indexes[j] = (int)(indexLeft % dimensionInfos[j].Length) + dimensionInfos[j].BaseIndex;
 							indexLeft = indexLeft / dimensionInfos[j].Length;

@@ -59,7 +59,7 @@ namespace dnSpy.Hex.Tagging {
 	}
 
 	sealed class DefaultTagger : HexTagger<HexClassificationTag> {
-		public override event EventHandler<HexBufferSpanEventArgs> TagsChanged {
+		public override event EventHandler<HexBufferSpanEventArgs>? TagsChanged {
 			add { }
 			remove { }
 		}

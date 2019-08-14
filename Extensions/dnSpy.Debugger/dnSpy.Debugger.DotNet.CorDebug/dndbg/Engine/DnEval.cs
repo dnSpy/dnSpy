@@ -82,7 +82,7 @@ namespace dndbg.Engine {
 
 		public bool EvalTimedOut { get; private set; }
 		public bool SuspendOtherThreads { get; }
-		public event EventHandler<EvalEventArgs> EvalEvent;
+		public event EventHandler<EvalEventArgs>? EvalEvent;
 
 		internal DnEval(DnDebugger debugger, IDebugMessageDispatcher debugMessageDispatcher, bool suspendOtherThreads, List<(DnModule module, CorClass cls)> customNotificationList, CancellationToken cancellationToken) {
 			thread = null!;
@@ -233,7 +233,7 @@ namespace dndbg.Engine {
 		}
 
 		EvalResult SyncWait() {
-			Debug.Assert(!(startTime is null));
+			Debug2.Assert(!(startTime is null));
 
 			var now = DateTime.UtcNow;
 			if (now >= endTime)
@@ -254,7 +254,7 @@ namespace dndbg.Engine {
 					AbortEval(timedOut);
 					throw new TimeoutException();
 				}
-				Debug.Assert(!(res is null));
+				Debug2.Assert(!(res is null));
 				dispResult = (EvalResultKind)res;
 				if (dispResult == EvalResultKind.CustomNotification) {
 					if (!AbortEval(false))

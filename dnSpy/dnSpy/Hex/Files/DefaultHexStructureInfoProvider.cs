@@ -65,7 +65,7 @@ namespace dnSpy.Hex.Files {
 
 			var structure = info.Value.Structure;
 			var field = structure.GetSimpleField(position);
-			Debug.Assert(!(field is null));
+			Debug2.Assert(!(field is null));
 			if (field is null)
 				yield break;
 			yield return new HexStructureField(field.Data.Span, HexStructureFieldKind.CurrentField);

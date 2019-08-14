@@ -51,17 +51,17 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <summary>
 		/// Raised after an agent has been added or removed from <see cref="Agents"/>
 		/// </summary>
-		public abstract event EventHandler<HexSpaceReservationAgentChangedEventArgs> AgentChanged;
+		public abstract event EventHandler<HexSpaceReservationAgentChangedEventArgs>? AgentChanged;
 
 		/// <summary>
 		/// Raised after it got aggregate focus
 		/// </summary>
-		public abstract event EventHandler GotAggregateFocus;
+		public abstract event EventHandler? GotAggregateFocus;
 
 		/// <summary>
 		/// Raised after it lost aggregate focus
 		/// </summary>
-		public abstract event EventHandler LostAggregateFocus;
+		public abstract event EventHandler? LostAggregateFocus;
 
 		/// <summary>
 		/// Adds an agent

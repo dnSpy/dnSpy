@@ -28,7 +28,7 @@ namespace dnSpy.Debugger.Steppers {
 	sealed class DbgStepperImpl : DbgStepper {
 		public override DbgThread Thread => thread;
 		public override bool CanStep => !IsClosed && thread.Process.State == DbgProcessState.Paused && !IsStepping;
-		public override event EventHandler<DbgStepCompleteEventArgs> StepComplete;
+		public override event EventHandler<DbgStepCompleteEventArgs>? StepComplete;
 		DbgDispatcher Dispatcher => Thread.Process.DbgManager.Dispatcher;
 
 		public override bool IsStepping {

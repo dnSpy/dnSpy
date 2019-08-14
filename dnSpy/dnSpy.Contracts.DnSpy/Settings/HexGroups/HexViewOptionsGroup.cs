@@ -36,7 +36,7 @@ namespace dnSpy.Contracts.Settings.HexGroups {
 		/// <summary>
 		/// Raised when an option has changed
 		/// </summary>
-		public abstract event EventHandler<HexViewOptionChangedEventArgs> HexViewOptionChanged;
+		public abstract event EventHandler<HexViewOptionChangedEventArgs>? HexViewOptionChanged;
 
 		/// <summary>
 		/// Returns true if the option is shared by all hex views in this group

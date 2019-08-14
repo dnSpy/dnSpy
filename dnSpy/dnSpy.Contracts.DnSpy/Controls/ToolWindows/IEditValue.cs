@@ -51,7 +51,7 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 		/// <summary>
 		/// Raised when the edit is completed (there's new text or the user canceled the edit operation)
 		/// </summary>
-		event EventHandler<EditCompletedEventArgs> EditCompleted;
+		event EventHandler<EditCompletedEventArgs>? EditCompleted;
 	}
 
 	/// <summary>

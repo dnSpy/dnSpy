@@ -36,16 +36,16 @@ namespace dnSpy.Controls {
 		/// <summary>
 		/// Raised when the DPI has changed
 		/// </summary>
-		event EventHandler<WindowDpiChangedEventArgs> DpiChanged;
+		event EventHandler<WindowDpiChangedEventArgs>? DpiChanged;
 	}
 
 	[Export(typeof(IDpiService))]
 	sealed class DpiService : IDpiService {
 		public Size MainWindowDpi { get; private set; }
-		public event EventHandler<WindowDpiChangedEventArgs> DpiChanged;
+		public event EventHandler<WindowDpiChangedEventArgs>? DpiChanged;
 
 		DpiService() {
-			Debug.Assert(Application.Current is null || Application.Current.Windows.Count == 0);
+			Debug2.Assert(Application.Current is null || Application.Current.Windows.Count == 0);
 			MetroWindow.MetroWindowCreated += MetroWindow_MetroWindowCreated;
 		}
 

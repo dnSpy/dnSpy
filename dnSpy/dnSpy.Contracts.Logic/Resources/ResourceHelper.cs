@@ -38,7 +38,7 @@ namespace dnSpy.Contracts.Resources {
 	public static class ResourceHelper {
 		const string PREFIX = "res:";
 
-		static ResourceManagerTokenCache resourceManagerTokenCache;
+		static ResourceManagerTokenCache? resourceManagerTokenCache;
 
 		internal static void SetResourceManagerTokenCache(ResourceManagerTokenCache tokenCache) {
 			if (tokenCache is null)
@@ -55,7 +55,7 @@ namespace dnSpy.Contracts.Resources {
 		/// <param name="value">String</param>
 		/// <returns></returns>
 		public static string? GetStringOrNull(object obj, string? value) {
-			Debug.Assert(!(resourceManagerTokenCache is null));
+			Debug2.Assert(!(resourceManagerTokenCache is null));
 			if (obj is null)
 				throw new ArgumentNullException(nameof(obj));
 			if (value is null)
@@ -70,7 +70,7 @@ namespace dnSpy.Contracts.Resources {
 		/// <param name="value">String</param>
 		/// <returns></returns>
 		public static string GetString(object obj, string value) {
-			Debug.Assert(!(resourceManagerTokenCache is null));
+			Debug2.Assert(!(resourceManagerTokenCache is null));
 			if (obj is null)
 				throw new ArgumentNullException(nameof(obj));
 			if (value is null)
@@ -82,7 +82,7 @@ namespace dnSpy.Contracts.Resources {
 			if (mgr is null)
 				return "???";
 			var s = mgr.GetString(key);
-			Debug.Assert(!(s is null));
+			Debug2.Assert(!(s is null));
 			return s ?? "???";
 		}
 
@@ -91,7 +91,7 @@ namespace dnSpy.Contracts.Resources {
 				return mgr;
 
 			var tokenCache = resourceManagerTokenCache;
-			Debug.Assert(!(tokenCache is null));
+			Debug2.Assert(!(tokenCache is null));
 			if (!(tokenCache is null)) {
 				if (tokenCache.TryGetResourceManagerGetMethodMetadataToken(assembly, out int getMethodMetadataToken)) {
 					MethodInfo? method;

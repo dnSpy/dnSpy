@@ -141,7 +141,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			var index = GetIndex(position);
 			if (index < 0)
 				return null;
-			Debug.Assert(!(blobDataInfos is null));
+			Debug2.Assert(!(blobDataInfos is null));
 			return blobDataInfos[index];
 		}
 

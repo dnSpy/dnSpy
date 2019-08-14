@@ -82,7 +82,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 		public ICommand SaveCommand => new RelayCommand(a => Save(), a => CanExecuteSave);
 		public ICommand CancelSaveCommand => new RelayCommand(a => CancelSave(), a => IsSaving && !(moduleSaver is null));
-		public event EventHandler OnSavedEvent;
+		public event EventHandler? OnSavedEvent;
 		public bool IsLoaded => State == SaveState.Loaded;
 		public bool IsSaving => State == SaveState.Saving;
 		public bool IsCanceling => State == SaveState.Canceling;
@@ -346,7 +346,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			ms.CancelAsync();
 		}
 
-		public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler? PropertyChanged;
 		void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 	}
 }

@@ -84,7 +84,7 @@ namespace dnSpy.Contracts.Metadata {
 		/// <param name="isInMemory">true if it's an in-memory module</param>
 		/// <param name="nameOnly">true if <paramref name="asmFullName"/> is ignored</param>
 		public ModuleId(string? asmFullName, string moduleName, bool isDynamic, bool isInMemory, bool nameOnly) {
-			Debug.Assert(asmFullName is null || !asmFullName.Contains("\\:"));
+			Debug2.Assert(asmFullName is null || !asmFullName.Contains("\\:"));
 			this.asmFullName = asmFullName ?? string.Empty;
 			this.moduleName = moduleName ?? string.Empty;
 			flags = 0;

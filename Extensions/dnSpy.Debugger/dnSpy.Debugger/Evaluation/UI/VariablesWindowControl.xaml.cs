@@ -30,7 +30,7 @@ using dnSpy.Debugger.Evaluation.ViewModel;
 
 namespace dnSpy.Debugger.Evaluation.UI {
 	sealed partial class VariablesWindowControl : UserControl {
-		static /*readonly*/ Lazy<VariablesWindowOperations> variablesWindowOperations;
+		static /*readonly*/ Lazy<VariablesWindowOperations>? variablesWindowOperations;
 
 		[ExportAutoLoaded]
 		sealed class Loader : IAutoLoaded {
@@ -74,7 +74,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 		}
 
 		void TreeView_PreviewTextInput(object? sender, TextCompositionEventArgs e) {
-			Debug.Assert(!(variablesWindowOperations is null));
+			Debug2.Assert(!(variablesWindowOperations is null));
 			if (variablesWindowOperations is null)
 				return;
 			if (!(treeViewContentPresenter.Content is ListView listView) || listView.SelectedItems.Count != 1)

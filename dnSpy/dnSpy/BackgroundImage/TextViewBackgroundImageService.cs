@@ -33,7 +33,7 @@ namespace dnSpy.BackgroundImage {
 		[Export(typeof(AdornmentLayerDefinition))]
 		[Name(PredefinedDsAdornmentLayers.BackgroundImage)]
 		[LayerKind(LayerKind.Underlay)]
-		static AdornmentLayerDefinition backgroundImageAdornmentLayerDefinition;
+		static AdornmentLayerDefinition? backgroundImageAdornmentLayerDefinition;
 #pragma warning restore CS0169
 
 		TextViewBackgroundImageService(IWpfTextView wpfTextView, IImageSourceService imageSourceService)

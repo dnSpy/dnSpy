@@ -57,17 +57,17 @@ namespace dnSpy.Text {
 		ITextSnapshot ITextBuffer.CurrentSnapshot => CurrentSnapshot;
 		public TextSnapshot CurrentSnapshot { get; private set; }
 
-		public event EventHandler<ContentTypeChangedEventArgs> ContentTypeChanged;
-		public event EventHandler<TextContentChangedEventArgs> ChangedHighPriority;
-		public event EventHandler<TextContentChangedEventArgs> Changed;
-		public event EventHandler<TextContentChangedEventArgs> ChangedLowPriority;
-		public event EventHandler<TextContentChangingEventArgs> Changing;
-		public event EventHandler PostChanged;
+		public event EventHandler<ContentTypeChangedEventArgs>? ContentTypeChanged;
+		public event EventHandler<TextContentChangedEventArgs>? ChangedHighPriority;
+		public event EventHandler<TextContentChangedEventArgs>? Changed;
+		public event EventHandler<TextContentChangedEventArgs>? ChangedLowPriority;
+		public event EventHandler<TextContentChangingEventArgs>? Changing;
+		public event EventHandler? PostChanged;
 #pragma warning disable CS0067
-		public event EventHandler<SnapshotSpanEventArgs> ReadOnlyRegionsChanged;//TODO: Use this event
+		public event EventHandler<SnapshotSpanEventArgs>? ReadOnlyRegionsChanged;//TODO: Use this event
 #pragma warning restore CS0067
 
-		event EventHandler<TextContentChangedEventArgs> ITextBuffer2.ChangedOnBackground {
+		event EventHandler<TextContentChangedEventArgs>? ITextBuffer2.ChangedOnBackground {
 			add => throw new NotImplementedException();
 			remove => throw new NotImplementedException();
 		}

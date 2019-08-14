@@ -64,7 +64,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			classHooks = new Dictionary<DmdTypeName, DotNetClassHook>(DmdTypeNameEqualityComparer.Instance);
 			foreach (var factory in dotNetClassHookFactories) {
 				foreach (var info in factory.Create(this)) {
-					Debug.Assert(!(info.Hook is null));
+					Debug2.Assert(!(info.Hook is null));
 					if (info.WellKnownType is null && info.TypeName is null)
 						anyClassHooksList.Add(info.Hook);
 					else {
@@ -72,7 +72,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 						if (!(info.WellKnownType is null))
 							typeName = DmdWellKnownTypeUtils.GetTypeName(info.WellKnownType.Value);
 						else {
-							Debug.Assert(!(info.TypeName is null));
+							Debug2.Assert(!(info.TypeName is null));
 							typeName = info.TypeName.Value;
 						}
 						Debug.Assert(!classHooks.ContainsKey(typeName));
@@ -93,7 +93,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		bool canFuncEval;
 
 		public override void Initialize(DbgEvaluationInfo evalInfo, DmdMethodBody? realMethodBody, VariablesProvider? argumentsProvider, VariablesProvider? localsProvider, bool canFuncEval) {
-			Debug.Assert(this.evalInfo is null);
+			Debug2.Assert(this.evalInfo is null);
 			if (!(this.evalInfo is null))
 				throw new InvalidOperationException();
 			this.evalInfo = evalInfo;
@@ -111,7 +111,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		public override void Clear(DbgDotNetValue? returnValue) {
 			evalInfo = null!;
 			canFuncEval = false;
-			Debug.Assert(!(argumentsProvider is null));
+			Debug2.Assert(!(argumentsProvider is null));
 			foreach (var v in valuesToDispose) {
 				if (v != returnValue && argumentsProvider.CanDispose(v) && interpreterLocalsProvider.CanDispose(v))
 					v.Dispose();
@@ -318,7 +318,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		internal DbgDotNetValue RecordValue(DbgDotNetValue value) {
 			try {
 				evalInfo.CancellationToken.ThrowIfCancellationRequested();
-				Debug.Assert(!(value is null));
+				Debug2.Assert(!(value is null));
 				valuesToDispose.Add(value);
 				return value;
 			}
@@ -330,7 +330,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 
 		internal ILValue CreateILValue(DbgDotNetValue value) {
 			try {
-				Debug.Assert(!(value is null));
+				Debug2.Assert(!(value is null));
 				valuesToDispose.Add(value);
 				return CreateILValueCore(value);
 			}
@@ -891,7 +891,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 
 		DbgDotNetValue IDebuggerRuntime.GetObjectByAlias(string name) {
 			evalInfo.Context.TryGetData(out DbgDotNetExpressionCompiler? expressionCompiler);
-			Debug.Assert(!(expressionCompiler is null));
+			Debug2.Assert(!(expressionCompiler is null));
 			if (expressionCompiler is null)
 				throw new InvalidOperationException();
 

@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Debugger.Engine.Steppers {
 		/// <summary>
 		/// Raised when the step is complete
 		/// </summary>
-		public abstract event EventHandler<DbgEngineStepCompleteEventArgs> StepComplete;
+		public abstract event EventHandler<DbgEngineStepCompleteEventArgs>? StepComplete;
 
 		/// <summary>
 		/// Steps once. This method can be called again once <see cref="StepComplete"/> is raised.

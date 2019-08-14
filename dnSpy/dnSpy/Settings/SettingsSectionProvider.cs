@@ -41,7 +41,7 @@ namespace dnSpy.Settings {
 		}
 
 		public ISettingsSection CreateSection(string name) {
-			Debug.Assert(!(name is null));
+			Debug2.Assert(!(name is null));
 			if (name is null)
 				throw new ArgumentNullException(nameof(name));
 
@@ -52,7 +52,7 @@ namespace dnSpy.Settings {
 		}
 
 		public ISettingsSection GetOrCreateSection(string name) {
-			Debug.Assert(!(name is null));
+			Debug2.Assert(!(name is null));
 			if (name is null)
 				throw new ArgumentNullException(nameof(name));
 
@@ -67,7 +67,7 @@ namespace dnSpy.Settings {
 		}
 
 		public void RemoveSection(string name) {
-			Debug.Assert(!(name is null));
+			Debug2.Assert(!(name is null));
 			if (name is null)
 				throw new ArgumentNullException(nameof(name));
 
@@ -80,7 +80,7 @@ namespace dnSpy.Settings {
 		}
 
 		public void RemoveSection(ISettingsSection section) {
-			Debug.Assert(!(section is null));
+			Debug2.Assert(!(section is null));
 			if (section is null)
 				throw new ArgumentNullException(nameof(section));
 

@@ -77,7 +77,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 
 		IEnumerable<CreatedMenuItem> IMenuItemProvider.Create(IMenuItemContext context) {
 			var ctx = ProcessesContextMenuEntry.CreateContext(processHexBufferProvider, context);
-			Debug.Assert(!(ctx is null));
+			Debug2.Assert(!(ctx is null));
 			if (ctx is null)
 				yield break;
 

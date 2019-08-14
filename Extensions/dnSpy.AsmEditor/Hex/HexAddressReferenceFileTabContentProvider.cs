@@ -62,7 +62,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 			Debug.Assert(e.Tab.Content == content);
 			var uiContext = e.Tab.UIContext as HexViewDocumentTabUIContext;
-			Debug.Assert(!(uiContext is null));
+			Debug2.Assert(!(uiContext is null));
 			if (uiContext is null || fileOffset is null)
 				return;
 

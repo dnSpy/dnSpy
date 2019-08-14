@@ -29,12 +29,14 @@ using dnSpy.Contracts.Search;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
 	sealed class DnlibTypePicker : IDnlibTypePicker {
+#nullable disable
 		static IAppWindow appWindow;
 		static IDocumentTreeView documentTreeView;
 		static IDocumentSearcherProvider fileSearcherProvider;
 		static IDecompilerService decompilerService;
 		static IDocumentTreeViewProvider documentTreeViewProvider;
 		static IDocumentTreeViewSettings documentTreeViewSettings;
+#nullable restore
 
 		[ExportAutoLoaded]
 		sealed class Loader : IAutoLoaded {

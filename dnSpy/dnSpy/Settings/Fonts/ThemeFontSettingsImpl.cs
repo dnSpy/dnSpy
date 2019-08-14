@@ -60,7 +60,7 @@ namespace dnSpy.Settings.Fonts {
 			OnPropertyChanged(nameof(Active));
 		}
 
-		internal event EventHandler<FontSettingsCreatedEventArgs> FontSettingsCreated;
+		internal event EventHandler<FontSettingsCreatedEventArgs>? FontSettingsCreated;
 	}
 
 	sealed class FontSettingsCreatedEventArgs : EventArgs {

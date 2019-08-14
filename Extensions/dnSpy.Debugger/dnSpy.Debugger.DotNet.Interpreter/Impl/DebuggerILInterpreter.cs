@@ -225,10 +225,10 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 			var body = state.Body;
 			if (body is null)
 				ThrowInvalidMethodBodyInterpreterException();
-			Debug.Assert(!(body is null));
+			Debug2.Assert(!(body is null));
 			debuggerRuntime.Initialize(currentMethod, body);
 			var bodyBytes = state.ILBytes;
-			Debug.Assert(!(bodyBytes is null));
+			Debug2.Assert(!(bodyBytes is null));
 			var exceptionHandlingClauses = body.ExceptionHandlingClauses;
 			int methodBodyPos = 0;
 			DmdType? constrainedType = null;
@@ -4773,11 +4773,11 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Impl {
 		}
 
 		ILValue? FixConstrainedType(DmdType constrainedType, DmdMethodBase method, ILValue v1) {
-			Debug.Assert(!(constrainedType is null));
-			Debug.Assert(!(method is null));
+			Debug2.Assert(!(constrainedType is null));
+			Debug2.Assert(!(method is null));
 			if (v1 is null)
 				ThrowInvalidMethodBodyInterpreterException();
-			Debug.Assert(!(v1 is null));
+			Debug2.Assert(!(v1 is null));
 			if (constrainedType.IsValueType) {
 				if (ImplementsMethod(constrainedType, method.Name, method.GetMethodSignature()))
 					return v1;

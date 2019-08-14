@@ -94,7 +94,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 				}
 				else {
 					var buffer = objsAry[0] as HexBuffer;
-					Debug.Assert(!(buffer is null));
+					Debug2.Assert(!(buffer is null));
 					var optsData = new SaveHexOptionsVM(buffer);
 					var optsWin = new SaveHexOptionsDlg();
 					optsWin.Owner = appWindow.MainWindow;
@@ -132,11 +132,11 @@ namespace dnSpy.AsmEditor.SaveModule {
 					undoCommandService.Value.MarkAsSaved(undoCommandService.Value.GetUndoObject(doc)!);
 					if (doc is IDsDocument document && string.IsNullOrEmpty(document.Filename)) {
 						var filename = vm.GetSavedFileName(doc);
-						if (!string.IsNullOrWhiteSpace(filename) && !(document.ModuleDef is null)) {
+						if (!string2.IsNullOrWhiteSpace(filename) && !(document.ModuleDef is null)) {
 							document.ModuleDef.Location = filename;
 							document.Filename = filename;
 							var modNode = documentTabService.DocumentTreeView.FindNode(document.ModuleDef) as ModuleDocumentNode;
-							Debug.Assert(!(modNode is null));
+							Debug2.Assert(!(modNode is null));
 							if (!(modNode is null)) {
 								modNode.TreeNode.RefreshUI();
 								documentTabService.RefreshModifiedDocument(modNode.Document);

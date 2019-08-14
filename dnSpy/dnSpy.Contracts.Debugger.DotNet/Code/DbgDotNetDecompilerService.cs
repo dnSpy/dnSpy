@@ -35,6 +35,6 @@ namespace dnSpy.Contracts.Debugger.DotNet.Code {
 		/// <summary>
 		/// Raised after <see cref="Decompiler"/> is changed
 		/// </summary>
-		public abstract event EventHandler<EventArgs> DecompilerChanged;
+		public abstract event EventHandler<EventArgs>? DecompilerChanged;
 	}
 }

@@ -539,7 +539,7 @@ namespace dnSpy_Console {
 							throw new ErrorException(dnSpy_Console_Resources.MissingNumberOfThreads);
 						i++;
 						numThreads = SimpleTypeConverter.ParseInt32(next, int.MinValue, int.MaxValue, out error);
-						if (!string.IsNullOrEmpty(error))
+						if (!string2.IsNullOrEmpty(error))
 							throw new ErrorException(error);
 						break;
 
@@ -549,7 +549,7 @@ namespace dnSpy_Console {
 						i++;
 						int vsVer;
 						vsVer = SimpleTypeConverter.ParseInt32(next, int.MinValue, int.MaxValue, out error);
-						if (!string.IsNullOrEmpty(error))
+						if (!string2.IsNullOrEmpty(error))
 							throw new ErrorException(error);
 						switch (vsVer) {
 						case 2005: projectVersion = ProjectVersion.VS2005; break;
@@ -602,7 +602,7 @@ namespace dnSpy_Console {
 							throw new ErrorException(dnSpy_Console_Resources.MissingMDToken);
 						i++;
 						mdToken = SimpleTypeConverter.ParseInt32(next, int.MinValue, int.MaxValue, out error);
-						if (!string.IsNullOrEmpty(error))
+						if (!string2.IsNullOrEmpty(error))
 							throw new ErrorException(error);
 						break;
 
@@ -621,7 +621,7 @@ namespace dnSpy_Console {
 
 					default:
 						(IDecompilerOption option, Action<string> setOptionValue) tuple;
-						Debug.Assert(!(langDict is null));
+						Debug2.Assert(!(langDict is null));
 						if (langDict.TryGetValue(arg, out tuple)) {
 							bool hasArg = tuple.option.Type != typeof(bool);
 							if (hasArg && next is null)
@@ -642,7 +642,7 @@ namespace dnSpy_Console {
 
 		static int ParseInt32(string s) {
 			var v = SimpleTypeConverter.ParseInt32(s, int.MinValue, int.MaxValue, out var error);
-			if (!string.IsNullOrEmpty(error))
+			if (!string2.IsNullOrEmpty(error))
 				throw new ErrorException(error);
 			return v;
 		}
@@ -734,7 +734,7 @@ namespace dnSpy_Console {
 					throw new ErrorException(dnSpy_Console_Resources.InvalidMemberToDecompile);
 			}
 			else {
-				if (string.IsNullOrEmpty(outputDir))
+				if (string2.IsNullOrEmpty(outputDir))
 					throw new ErrorException(dnSpy_Console_Resources.MissingOutputDir);
 				if (GetLanguage().ProjectFileExtension is null)
 					throw new ErrorException(string.Format(dnSpy_Console_Resources.LanguageXDoesNotSupportProjects, GetLanguage().UniqueNameUI));
@@ -825,7 +825,7 @@ namespace dnSpy_Console {
 					var path = Path.GetDirectoryName(file);
 					var name = Path.GetFileName(file);
 					if (Directory.Exists(path)) {
-						Debug.Assert(!(path is null));
+						Debug2.Assert(!(path is null));
 						foreach (var info in DumpDir(path, name))
 							yield return info;
 					}

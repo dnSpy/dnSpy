@@ -25,8 +25,8 @@ using Microsoft.VisualStudio.Text.Editor;
 namespace dnSpy.Text.Editor {
 	sealed class SpaceReservationStack : ISpaceReservationStack {
 		public bool HasAggregateFocus { get; private set; }
-		public event EventHandler GotAggregateFocus;
-		public event EventHandler LostAggregateFocus;
+		public event EventHandler? GotAggregateFocus;
+		public event EventHandler? LostAggregateFocus;
 
 		public bool IsMouseOver {
 			get {

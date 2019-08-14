@@ -338,7 +338,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 				IDmdAssemblyName? asmRef;
 				if (typeDefResolver is null) {
-					Debug.Assert(!(ownerModule is null));
+					Debug2.Assert(!(ownerModule is null));
 					var typeRef = CreateTypeRef(typeNames);
 					var nonNestedTypeRef = (DmdParsedTypeRef)DmdTypeUtilities.GetNonNestedType(typeRef)!;
 					if (readAssemblyReference)

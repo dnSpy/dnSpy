@@ -36,7 +36,7 @@ namespace dnSpy.Text.Adornments {
 #pragma warning disable CS0169
 		[Export(typeof(SpaceReservationManagerDefinition))]
 		[Name(PredefinedSpaceReservationManagerNames.ToolTip)]
-		static readonly SpaceReservationManagerDefinition toolTipSpaceReservationManagerDefinition;
+		static readonly SpaceReservationManagerDefinition? toolTipSpaceReservationManagerDefinition;
 #pragma warning restore CS0169
 
 		public ToolTipProvider(IWpfTextView wpfTextView) {

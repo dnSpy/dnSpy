@@ -55,7 +55,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		public override DbgEngineRuntimeInfo RuntimeInfo => runtimeInfo;
 		public override string[] DebugTags => new[] { PredefinedDebugTags.DotNetDebugger };
 		public override string[] Debugging { get; }
-		public override event EventHandler<DbgEngineMessage> Message;
+		public override event EventHandler<DbgEngineMessage>? Message;
 
 		internal DbgObjectFactory ObjectFactory => objectFactory!;
 		internal VirtualMachine MonoVirtualMachine => vm!;
@@ -280,9 +280,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					connectionPort = startMonoOptions.ConnectionPort;
 					connectionTimeout = startMonoOptions.ConnectionTimeout;
 					filename = startMonoOptions.Filename;
-					if (string.IsNullOrEmpty(filename))
+					if (string2.IsNullOrEmpty(filename))
 						throw new Exception("Missing filename");
-					Debug.Assert(!(startMonoOptions.Filename is null));
+					Debug2.Assert(!(startMonoOptions.Filename is null));
 					if (connectionPort == 0) {
 						int port = NetUtils.GetConnectionPort();
 						Debug.Assert(port >= 0);
@@ -292,7 +292,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					}
 
 					var monoExe = startMonoOptions.MonoExePath;
-					if (string.IsNullOrEmpty(monoExe))
+					if (string2.IsNullOrEmpty(monoExe))
 						monoExe = MonoExeFinder.Find(startMonoOptions.MonoExeOptions);
 					if (!File.Exists(monoExe))
 						throw new StartException(string.Format(dnSpy_Debugger_DotNet_Mono_Resources.Error_CouldNotFindFile, MonoExeFinder.MONO_EXE));
@@ -323,7 +323,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					connectionPort = startUnityOptions.ConnectionPort;
 					connectionTimeout = startUnityOptions.ConnectionTimeout;
 					filename = startUnityOptions.Filename;
-					if (string.IsNullOrEmpty(filename))
+					if (string2.IsNullOrEmpty(filename))
 						throw new Exception("Missing filename");
 					if (connectionPort == 0) {
 						int port = NetUtils.GetConnectionPort();
@@ -376,7 +376,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				else if (options is MonoConnectStartDebuggingOptionsBase connectOptions &&
 					(connectOptions is MonoConnectStartDebuggingOptions || connectOptions is UnityConnectStartDebuggingOptions)) {
 					connectionAddress = connectOptions.Address;
-					if (string.IsNullOrWhiteSpace(connectionAddress))
+					if (string2.IsNullOrWhiteSpace(connectionAddress))
 						connectionAddress = "127.0.0.1";
 					connectionPort = connectOptions.Port;
 					connectionTimeout = connectOptions.ConnectionTimeout;
@@ -387,7 +387,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				}
 				else if (options is MonoAttachToProgramOptionsBase attachOptions) {
 					connectionAddress = attachOptions.Address;
-					if (string.IsNullOrWhiteSpace(connectionAddress))
+					if (string2.IsNullOrWhiteSpace(connectionAddress))
 						connectionAddress = "127.0.0.1";
 					connectionPort = attachOptions.Port;
 					connectionTimeout = attachOptions.ConnectionTimeout;
@@ -540,7 +540,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		void MonoEventThread() {
 			var vm = this.vm;
-			Debug.Assert(!(vm is null));
+			Debug2.Assert(!(vm is null));
 			if (vm is null)
 				throw new InvalidOperationException();
 			for (;;) {
@@ -1197,7 +1197,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				return res;
 			DiscoverNewModules(monoModule);
 			res = TryGetModuleCore_NoCreate(monoModule);
-			Debug.Assert(!(res is null));
+			Debug2.Assert(!(res is null));
 			return res;
 		}
 
@@ -1344,7 +1344,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					return;
 				if (!(consoleStdOut is null))
 					ReadConsoleOutputAsync();
-				Debug.Assert(!(vm is null));
+				Debug2.Assert(!(vm is null));
 				if (!(vm is null)) {
 					InitializeVirtualMachine();
 					// Create the root AppDomain now since we want it to get id=1, which isn't guaranteed

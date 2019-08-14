@@ -239,7 +239,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 						WriteSpace();
 					needSpace = true;
 
-					if (!string.IsNullOrEmpty(param?.Name))
+					if (!string2.IsNullOrEmpty(param?.Name))
 						WriteIdentifier(param.Name, DbgTextColor.Parameter);
 					else
 						WriteIdentifier("A_" + (baseIndex + i).ToString(), DbgTextColor.Parameter);

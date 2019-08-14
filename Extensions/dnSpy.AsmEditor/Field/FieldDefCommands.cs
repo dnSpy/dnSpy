@@ -120,7 +120,7 @@ namespace dnSpy.AsmEditor.Field {
 			}
 
 			public void Delete(FieldNode[] nodes) {
-				Debug.Assert(infos is null);
+				Debug2.Assert(infos is null);
 				if (!(infos is null))
 					throw new InvalidOperationException();
 
@@ -136,7 +136,7 @@ namespace dnSpy.AsmEditor.Field {
 			}
 
 			public void Restore(FieldNode[] nodes) {
-				Debug.Assert(!(infos is null));
+				Debug2.Assert(!(infos is null));
 				if (infos is null)
 					throw new InvalidOperationException();
 				Debug.Assert(infos.Length == nodes.Length);
@@ -238,12 +238,12 @@ namespace dnSpy.AsmEditor.Field {
 			if (!(ownerNode is TypeNode))
 				ownerNode = (DocumentTreeNodeData)ownerNode.TreeNode.Parent!.Data;
 			var typeNode = ownerNode as TypeNode;
-			Debug.Assert(!(typeNode is null));
+			Debug2.Assert(!(typeNode is null));
 			if (typeNode is null)
 				throw new InvalidOperationException();
 
 			var module = typeNode.GetModule();
-			Debug.Assert(!(module is null));
+			Debug2.Assert(!(module is null));
 			if (module is null)
 				throw new InvalidOperationException();
 
@@ -378,7 +378,7 @@ namespace dnSpy.AsmEditor.Field {
 			var fieldNode = (FieldNode)nodes[0];
 
 			var module = nodes[0].GetModule();
-			Debug.Assert(!(module is null));
+			Debug2.Assert(!(module is null));
 			if (module is null)
 				throw new InvalidOperationException();
 

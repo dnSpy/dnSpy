@@ -49,7 +49,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <summary>
 		/// Raised when a new hex view is created
 		/// </summary>
-		public abstract event EventHandler<HexViewCreatedEventArgs> HexViewCreated;
+		public abstract event EventHandler<HexViewCreatedEventArgs>? HexViewCreated;
 
 		/// <summary>
 		/// Creates a new <see cref="WpfHexView"/>

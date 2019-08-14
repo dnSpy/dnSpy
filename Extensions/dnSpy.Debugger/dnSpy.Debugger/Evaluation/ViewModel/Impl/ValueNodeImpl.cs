@@ -49,7 +49,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		// TODO: use your own ICollectionView (collection impls ICollectionView or ICollectionViewFactory)
 		const uint MAX_CHILDREN = 10000;
 
-		public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler? PropertyChanged;
 		public override ImageReference Icon => Context.ValueNodeImageReferenceService.GetImageReference(RawNode.ImageName);
 
 		public override ICommand RefreshExpressionCommand => new RelayCommand(a => RefreshExpression(), a => CanRefreshExpression);
@@ -249,7 +249,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		EditableValueTextInfo GetEditableValue() {
 			if (!CanEditValue())
 				throw new InvalidOperationException();
-			Debug.Assert(!(Context.EvaluationInfo is null));
+			Debug2.Assert(!(Context.EvaluationInfo is null));
 			var text = Context.ExpressionToEdit;
 			Context.ExpressionToEdit = null;
 			if (!(text is null))
@@ -265,7 +265,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				throw new InvalidOperationException();
 			if (expression is null)
 				expression = string.Empty;
-			Debug.Assert(!(Context.EvaluationInfo is null));
+			Debug2.Assert(!(Context.EvaluationInfo is null));
 			if (GetEditableValue().Text == expression)
 				return;
 			var res = RawNode.Assign(Context.EvaluationInfo, expression, Context.EvaluationOptions);
@@ -317,7 +317,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				yield break;
 			}
 
-			Debug.Assert(!(Context.EvaluationInfo is null));
+			Debug2.Assert(!(Context.EvaluationInfo is null));
 			var childCountTmp = RawNode.GetChildCount(Context.EvaluationInfo);
 			cachedChildCount = childCountTmp;
 			if (childCountTmp is null) {
@@ -424,7 +424,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		bool SetDebuggerValueNode(DebuggerValueRawNode newNode, int recursionCounter) {
-			Debug.Assert(!(newNode is null));
+			Debug2.Assert(!(newNode is null));
 			var oldNode = __rawNode_DONT_USE;
 			__rawNode_DONT_USE = newNode;
 			oldCachedValue = cachedValue;

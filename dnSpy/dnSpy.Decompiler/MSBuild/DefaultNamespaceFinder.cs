@@ -86,7 +86,7 @@ namespace dnSpy.Decompiler.MSBuild {
 				else
 					foundNs = GetCommonNamespace(sb, foundNs, ns);
 			}
-			Debug.Assert(!(foundNs is null));
+			Debug2.Assert(!(foundNs is null));
 			return foundNs ?? string.Empty;
 		}
 

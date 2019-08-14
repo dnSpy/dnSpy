@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <summary>
 		/// Raised when one or more non-hidden <see cref="DbgObjectId"/>s are created or removed
 		/// </summary>
-		public abstract event EventHandler ObjectIdsChanged;
+		public abstract event EventHandler? ObjectIdsChanged;
 
 		/// <summary>
 		/// Returns true if it's possible to create an object id

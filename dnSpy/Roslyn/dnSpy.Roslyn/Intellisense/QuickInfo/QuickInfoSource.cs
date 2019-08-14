@@ -81,7 +81,7 @@ namespace dnSpy.Roslyn.Intellisense.QuickInfo {
 			quickInfoTriggerServiceProvider.CloseOtherSessions(session);
 
 			var item = qiSession.Item;
-			Debug.Assert(!(item is null));
+			Debug2.Assert(!(item is null));
 			if (item is null)
 				return;
 			var info = qiSession.State;

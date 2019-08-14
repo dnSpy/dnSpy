@@ -27,92 +27,92 @@ namespace dnSpy.Debugger.UI {
 		[Export]
 		[Name(ContentTypes.CodeBreakpointsWindow)]
 		[BaseDefinition(ContentTypes.Text)]
-		static readonly ContentTypeDefinition CodeBreakpointsWindow;
+		static readonly ContentTypeDefinition? CodeBreakpointsWindow;
 
 		[Export]
 		[Name(ContentTypes.CodeBreakpointsWindowLabels)]
 		[BaseDefinition(ContentTypes.Text)]
-		static readonly ContentTypeDefinition CodeBreakpointsWindowLabels;
+		static readonly ContentTypeDefinition? CodeBreakpointsWindowLabels;
 
 		[Export]
 		[Name(ContentTypes.ModuleBreakpointsWindow)]
 		[BaseDefinition(ContentTypes.Text)]
-		static readonly ContentTypeDefinition ModuleBreakpointsWindow;
+		static readonly ContentTypeDefinition? ModuleBreakpointsWindow;
 
 		[Export]
 		[Name(ContentTypes.ModuleBreakpointsWindowModuleName)]
 		[BaseDefinition(ContentTypes.Text)]
-		static readonly ContentTypeDefinition ModuleBreakpointsWindowModuleName;
+		static readonly ContentTypeDefinition? ModuleBreakpointsWindowModuleName;
 
 		[Export]
 		[Name(ContentTypes.ModuleBreakpointsWindowOrder)]
 		[BaseDefinition(ContentTypes.Text)]
-		static readonly ContentTypeDefinition ModuleBreakpointsWindowOrder;
+		static readonly ContentTypeDefinition? ModuleBreakpointsWindowOrder;
 
 		[Export]
 		[Name(ContentTypes.ModuleBreakpointsWindowAppDomainName)]
 		[BaseDefinition(ContentTypes.Text)]
-		static readonly ContentTypeDefinition ModuleBreakpointsWindowAppDomainName;
+		static readonly ContentTypeDefinition? ModuleBreakpointsWindowAppDomainName;
 
 		[Export]
 		[Name(ContentTypes.ModuleBreakpointsWindowProcessName)]
 		[BaseDefinition(ContentTypes.Text)]
-		static readonly ContentTypeDefinition ModuleBreakpointsWindowProcessName;
+		static readonly ContentTypeDefinition? ModuleBreakpointsWindowProcessName;
 
 		[Export]
 		[Name(ContentTypes.CallStackWindow)]
 		[BaseDefinition(ContentTypes.Text)]
-		static readonly ContentTypeDefinition CallStackWindow;
+		static readonly ContentTypeDefinition? CallStackWindow;
 
 		[Export]
 		[Name(ContentTypes.AttachToProcessWindow)]
 		[BaseDefinition(ContentTypes.Text)]
-		static readonly ContentTypeDefinition AttachToProcessWindow;
+		static readonly ContentTypeDefinition? AttachToProcessWindow;
 
 		[Export]
 		[Name(ContentTypes.ExceptionSettingsWindow)]
 		[BaseDefinition(ContentTypes.Text)]
-		static readonly ContentTypeDefinition ExceptionSettingsWindow;
+		static readonly ContentTypeDefinition? ExceptionSettingsWindow;
 
 		[Export]
 		[Name(ContentTypes.VariablesWindow)]
 		[BaseDefinition(ContentTypes.Text)]
-		static readonly ContentTypeDefinition VariablesWindow;
+		static readonly ContentTypeDefinition? VariablesWindow;
 
 		[Export]
 		[Name(ContentTypes.LocalsWindow)]
 		[BaseDefinition(ContentTypes.VariablesWindow)]
-		static readonly ContentTypeDefinition LocalsWindow;
+		static readonly ContentTypeDefinition? LocalsWindow;
 
 		[Export]
 		[Name(ContentTypes.AutosWindow)]
 		[BaseDefinition(ContentTypes.VariablesWindow)]
-		static readonly ContentTypeDefinition AutosWindow;
+		static readonly ContentTypeDefinition? AutosWindow;
 
 		[Export]
 		[Name(ContentTypes.WatchWindow)]
 		[BaseDefinition(ContentTypes.VariablesWindow)]
-		static readonly ContentTypeDefinition WatchWindow;
+		static readonly ContentTypeDefinition? WatchWindow;
 
 		[Export]
 		[Name(ContentTypes.ModulesWindow)]
 		[BaseDefinition(ContentTypes.Text)]
-		static readonly ContentTypeDefinition ModulesWindow;
+		static readonly ContentTypeDefinition? ModulesWindow;
 
 		[Export]
 		[Name(ContentTypes.ProcessesWindow)]
 		[BaseDefinition(ContentTypes.Text)]
-		static readonly ContentTypeDefinition ProcessesWindow;
+		static readonly ContentTypeDefinition? ProcessesWindow;
 
 		[Export]
 		[Name(ContentTypes.ThreadsWindow)]
 		[BaseDefinition(ContentTypes.Text)]
-		static readonly ContentTypeDefinition ThreadsWindow;
+		static readonly ContentTypeDefinition? ThreadsWindow;
 
 		[Export]
 		[Name(ContentTypes.ThreadsWindowName)]
 		[BaseDefinition(ContentTypes.Text)]
-		static readonly ContentTypeDefinition ThreadsWindowName;
+		static readonly ContentTypeDefinition? ThreadsWindowName;
 #pragma warning restore CS0169
 	}
 }

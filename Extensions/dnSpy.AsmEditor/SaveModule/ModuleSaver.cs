@@ -107,9 +107,9 @@ namespace dnSpy.AsmEditor.SaveModule {
 			public HexFileProgress(ulong totalSize) => TotalSize = totalSize;
 		}
 
-		public event EventHandler OnProgressUpdated;
-		public event EventHandler<ModuleSaverWriteEventArgs> OnWritingFile;
-		public event EventHandler<ModuleSaverLogEventArgs> OnLogMessage;
+		public event EventHandler? OnProgressUpdated;
+		public event EventHandler<ModuleSaverWriteEventArgs>? OnWritingFile;
+		public event EventHandler<ModuleSaverLogEventArgs>? OnLogMessage;
 
 		public ModuleSaver(IEnumerable<SaveOptionsVM> moduleVms) {
 			filesToSave = moduleVms.Select(a => new SaveState(a)).ToArray();

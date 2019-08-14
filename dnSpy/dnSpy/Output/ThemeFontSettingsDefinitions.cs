@@ -24,7 +24,7 @@ namespace dnSpy.Output {
 	static class ThemeFontSettingsDefinitions {
 #pragma warning disable CS0169
 		[ExportThemeFontSettingsDefinition(AppearanceCategoryConstants.OutputWindow, FontType.TextEditor)]
-		static readonly ThemeFontSettingsDefinition outputWindowThemeFontSettingsDefinition;
+		static readonly ThemeFontSettingsDefinition? outputWindowThemeFontSettingsDefinition;
 #pragma warning restore CS0169
 	}
 }

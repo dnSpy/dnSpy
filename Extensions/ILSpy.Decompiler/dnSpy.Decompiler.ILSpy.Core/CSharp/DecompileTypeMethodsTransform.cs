@@ -88,13 +88,13 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 		public void Run(AstNode compilationUnit) {
 			foreach (var en in compilationUnit.Descendants.OfType<EntityDeclaration>()) {
 				var def = en.Annotation<IMemberDef>();
-				Debug.Assert(!(def is null));
+				Debug2.Assert(!(def is null));
 				if (def is null)
 					continue;
 
 				if (partialTypes.Contains(def)) {
 					var tdecl = en as TypeDeclaration;
-					Debug.Assert(!(tdecl is null));
+					Debug2.Assert(!(tdecl is null));
 					if (!(tdecl is null)) {
 						if (tdecl.ClassType != ClassType.Enum)
 							tdecl.Modifiers |= Modifiers.Partial;

@@ -39,8 +39,8 @@ namespace dnSpy.Hex.Tagging {
 
 		sealed class HexTagAggregatorProxy : HexTagAggregator<T> {
 			public override HexBuffer Buffer => owner.Buffer;
-			public override event EventHandler<HexBatchedTagsChangedEventArgs> BatchedTagsChanged;
-			public override event EventHandler<HexTagsChangedEventArgs> TagsChanged;
+			public override event EventHandler<HexBatchedTagsChangedEventArgs>? BatchedTagsChanged;
+			public override event EventHandler<HexTagsChangedEventArgs>? TagsChanged;
 
 			readonly TagAggregator<T> owner;
 

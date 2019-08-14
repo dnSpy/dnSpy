@@ -37,7 +37,7 @@ namespace dnSpy.Images {
 		public ImageSourceInfo[]? GetImageSourceInfos(string name) {
 			if (nameToInfosDict is null)
 				InitializeResources();
-			Debug.Assert(!(nameToInfosDict is null));
+			Debug2.Assert(!(nameToInfosDict is null));
 			if (nameToInfosDict.TryGetValue(name, out var infos))
 				return infos;
 			return null;
@@ -56,7 +56,7 @@ namespace dnSpy.Images {
 				options.TryToLoadPdbFromDisk = false;
 				using (var mod = ModuleDefMD.Load(assembly.ManifestModule, options)) {
 					var rsrc = mod.Resources.Find(rsrcName) as EmbeddedResource;
-					Debug.Assert(!(rsrc is null));
+					Debug2.Assert(!(rsrc is null));
 					if (!(rsrc is null)) {
 						var set = ResourceReader.Read(mod, rsrc.CreateReader());
 						foreach (var elem in set.ResourceElements) {

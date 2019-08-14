@@ -28,10 +28,10 @@ using dnSpy.Debugger.UI;
 
 namespace dnSpy.Debugger.Evaluation.UI {
 	sealed class ValueNodesProviderImpl : ValueNodesProvider {
-		public override event EventHandler NodesChanged;
-		public override event EventHandler IsReadOnlyChanged;
+		public override event EventHandler? NodesChanged;
+		public override event EventHandler? IsReadOnlyChanged;
 		public override bool IsReadOnly => isReadOnly;
-		public override event EventHandler LanguageChanged;
+		public override event EventHandler? LanguageChanged;
 		public override DbgLanguage? Language => language;
 		bool isReadOnly;
 		bool isOpen;
@@ -148,7 +148,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			var info = TryGetLanguage();
 			if (info.frame is null)
 				return new GetNodesResult(variablesWindowValueNodesProvider.GetDefaultNodes(), frameClosed: false, recreateAllNodes: false);
-			Debug.Assert(!(info.language is null));
+			Debug2.Assert(!(info.language is null));
 			var evalInfo = TryGetEvaluationInfo(info);
 			if (evalInfo is null)
 				return new GetNodesResult(variablesWindowValueNodesProvider.GetDefaultNodes(), info.frame.IsClosed, recreateAllNodes: false);
@@ -208,7 +208,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 
 			evalContextInfo.Language = info.language;
 			if (!(info.frame is null)) {
-				Debug.Assert(!(info.language is null));
+				Debug2.Assert(!(info.language is null));
 				//TODO: Show a cancel button if the decompiler takes too long to decompile the method
 				var cancellationToken = CancellationToken.None;
 				var context = info.language.CreateContext(info.frame, cancellationToken: cancellationToken);

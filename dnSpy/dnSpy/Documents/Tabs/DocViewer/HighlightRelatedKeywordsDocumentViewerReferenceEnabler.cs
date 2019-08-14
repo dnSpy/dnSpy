@@ -33,7 +33,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 	sealed class HighlightRelatedKeywordsDocumentViewerReferenceEnabler : IDocumentViewerReferenceEnabler {
 		public bool IsEnabled { get; private set; }
-		public event EventHandler IsEnabledChanged;
+		public event EventHandler? IsEnabledChanged;
 
 		readonly IDocumentViewer documentViewer;
 

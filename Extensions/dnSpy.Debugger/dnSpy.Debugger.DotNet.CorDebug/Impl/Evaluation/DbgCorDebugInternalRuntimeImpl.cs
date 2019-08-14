@@ -67,7 +67,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			corDebugValueConverter = new CorDebugValueConverterImpl(this);
 			classHooks = new Dictionary<DmdWellKnownType, ClassHook>();
 			foreach (var info in ClassHookProvider.Create(this)) {
-				Debug.Assert(!(info.Hook is null));
+				Debug2.Assert(!(info.Hook is null));
 				Debug.Assert(!classHooks.ContainsKey(info.WellKnownType));
 				classHooks.Add(info.WellKnownType, info.Hook);
 			}
@@ -484,7 +484,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			try {
 				var reflectionAppDomain = type.AppDomain;
 				var getTypeMethod = objValue.Type.GetMethod(nameof(object.GetType), DmdSignatureCallingConvention.Default | DmdSignatureCallingConvention.HasThis, 0, reflectionAppDomain.System_Type, Array.Empty<DmdType>(), throwOnError: false);
-				Debug.Assert(!(getTypeMethod is null));
+				Debug2.Assert(!(getTypeMethod is null));
 				if (getTypeMethod is null)
 					return false;
 				var corAppDomain = ilFrame.GetCorAppDomain();
@@ -493,11 +493,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 					return false;
 				var typeObj = getTypeRes.Value;
 				var runtimeTypeHandleType = reflectionAppDomain.GetWellKnownType(DmdWellKnownType.System_RuntimeTypeHandle, isOptional: true);
-				Debug.Assert(!(runtimeTypeHandleType is null));
+				Debug2.Assert(!(runtimeTypeHandleType is null));
 				if (runtimeTypeHandleType is null)
 					return false;
 				var getTypeHandleMethod = typeObj.Type.GetMethod("get_" + nameof(Type.TypeHandle), DmdSignatureCallingConvention.Default | DmdSignatureCallingConvention.HasThis, 0, runtimeTypeHandleType, Array.Empty<DmdType>(), throwOnError: false);
-				Debug.Assert(!(getTypeHandleMethod is null));
+				Debug2.Assert(!(getTypeHandleMethod is null));
 				if (getTypeHandleMethod is null)
 					return false;
 				typeHandleRes = engine.FuncEvalCall_CorDebug(evalInfo, corAppDomain, getTypeHandleMethod, typeObj, Array.Empty<object>(), false);
@@ -505,7 +505,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 					return false;
 				var runtimeHelpersType = reflectionAppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_CompilerServices_RuntimeHelpers, isOptional: true);
 				var runClassConstructorMethod = runtimeHelpersType?.GetMethod(nameof(RuntimeHelpers.RunClassConstructor), DmdSignatureCallingConvention.Default, 0, reflectionAppDomain.System_Void, new[] { runtimeTypeHandleType }, throwOnError: false);
-				Debug.Assert(!(runClassConstructorMethod is null));
+				Debug2.Assert(!(runClassConstructorMethod is null));
 				if (runClassConstructorMethod is null)
 					return false;
 				res = engine.FuncEvalCall_CorDebug(evalInfo, corAppDomain, runClassConstructorMethod, null, new[] { typeHandleRes.Value }, false);
@@ -690,7 +690,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				var res = engine.FuncEvalCall_CorDebug(evalInfo, ilFrame.GetCorAppDomain(), methodGetType, null, new[] { elementType.AssemblyQualifiedName }, false);
 				if (res.HasError || res.ValueIsException)
 					return res;
-				Debug.Assert(!(res.Value is null));
+				Debug2.Assert(!(res.Value is null));
 				typeElementType = res.Value;
 				if (res.Value.IsNull)
 					return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.InternalDebuggerError);
@@ -768,7 +768,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				var res = engine.FuncEvalCall_CorDebug(evalInfo, ilFrame.GetCorAppDomain(), methodGetType, null, new[] { elementType.AssemblyQualifiedName }, false);
 				if (res.HasError || res.ValueIsException)
 					return res;
-				Debug.Assert(!(res.Value is null));
+				Debug2.Assert(!(res.Value is null));
 				typeElementType = res.Value;
 				if (res.Value.IsNull)
 					return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.InternalDebuggerError);

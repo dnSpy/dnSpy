@@ -27,7 +27,7 @@ namespace dnSpy.Search {
 		[Export]
 		[Name(ContentTypes.Search)]
 		[BaseDefinition(ContentTypes.Text)]
-		static readonly ContentTypeDefinition Search;
+		static readonly ContentTypeDefinition? Search;
 #pragma warning restore CS0169
 	}
 }

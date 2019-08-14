@@ -108,7 +108,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// Raised after it is disposed
 		/// </summary>
-		public event EventHandler Disposed;
+		public event EventHandler? Disposed;
 
 		/// <summary>
 		/// true if the instance has been disposed

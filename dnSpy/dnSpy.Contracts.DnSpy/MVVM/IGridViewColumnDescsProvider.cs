@@ -56,7 +56,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <summary>
 		/// Raised when <see cref="SortedColumn"/> is changed
 		/// </summary>
-		public event EventHandler SortedColumnChanged;
+		public event EventHandler? SortedColumnChanged;
 	}
 
 	/// <summary>

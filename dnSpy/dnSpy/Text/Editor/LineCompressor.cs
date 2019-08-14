@@ -99,7 +99,7 @@ namespace dnSpy.Text.Editor {
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		LineKind GetLineType(ITextViewLine line) {
 			var dsLine = line as IDsTextViewLine;
-			Debug.Assert(!(dsLine is null));
+			Debug2.Assert(!(dsLine is null));
 			if (!(dsLine is null) && dsLine.HasAdornments)
 				return LineKind.Normal;
 			if (line.Length == 0)

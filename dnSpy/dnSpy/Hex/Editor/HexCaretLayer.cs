@@ -345,9 +345,9 @@ namespace dnSpy.Hex.Editor {
 
 		protected override void OnRender(DrawingContext drawingContext) {
 			base.OnRender(drawingContext);
-			Debug.Assert((activeCaretBrush is null) == (activeOverwriteCaretBrush is null));
-			Debug.Assert((inactiveCaretBrush is null) == (inactiveOverwriteCaretBrush is null));
-			Debug.Assert((activeCaretBrush is null) == (inactiveCaretBrush is null));
+			Debug2.Assert((activeCaretBrush is null) == (activeOverwriteCaretBrush is null));
+			Debug2.Assert((inactiveCaretBrush is null) == (inactiveOverwriteCaretBrush is null));
+			Debug2.Assert((activeCaretBrush is null) == (inactiveCaretBrush is null));
 			if (activeCaretBrush is null) {
 				InitializeBrushes(out activeCaretBrush, out activeOverwriteCaretBrush, activeCaretClassificationType);
 				InitializeBrushes(out inactiveCaretBrush, out inactiveOverwriteCaretBrush, inactiveCaretClassificationType);
@@ -391,7 +391,7 @@ namespace dnSpy.Hex.Editor {
 			public Geometry? Geometry {
 				get {
 					if (!visible) {
-						Debug.Assert(geometry is null);
+						Debug2.Assert(geometry is null);
 						return null;
 					}
 					if (geometry is null) {

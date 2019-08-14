@@ -64,7 +64,7 @@ namespace dnSpy.Hex.Editor {
 		[VSUTIL.Order(Before = PredefinedHexAdornmentLayers.TextMarker)]
 		[VSUTIL.Order(Before = PredefinedHexAdornmentLayers.GlyphTextMarker)]
 		[VSUTIL.Order(After = PredefinedHexAdornmentLayers.Outlining)]
-		static HexAdornmentLayerDefinition theAdornmentLayerDefinition;
+		static HexAdornmentLayerDefinition? theAdornmentLayerDefinition;
 #pragma warning restore CS0169
 
 		readonly WpfHexView wpfHexView;
@@ -138,7 +138,7 @@ namespace dnSpy.Hex.Editor {
 				adornmentLayer?.RemoveAllAdornments();
 				return;
 			}
-			Debug.Assert(!(adornmentLayer is null));
+			Debug2.Assert(!(adornmentLayer is null));
 
 			var line = wpfHexView.Caret.ContainingHexViewLine;
 			if (line.IsVisible()) {

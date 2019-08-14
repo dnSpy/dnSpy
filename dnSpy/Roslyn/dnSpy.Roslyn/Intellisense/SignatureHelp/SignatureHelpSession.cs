@@ -32,7 +32,7 @@ using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 	sealed class SignatureHelpSession {
-		public event EventHandler Disposed;
+		public event EventHandler? Disposed;
 		readonly Lazy<ISignatureHelpBroker> signatureHelpBroker;
 		readonly ITextView textView;
 		readonly SignatureHelpService signatureHelpService;
@@ -67,7 +67,7 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 			if (info is null)
 				return null;
 			if (triggerInfo.TriggerReason == SignatureHelpTriggerReason.TypeCharCommand) {
-				Debug.Assert(!(triggerInfo.TriggerCharacter is null));
+				Debug2.Assert(!(triggerInfo.TriggerCharacter is null));
 				if (!(triggerInfo.TriggerCharacter is null) && !info.Value.SignatureHelpService.IsTriggerCharacter(triggerInfo.TriggerCharacter.Value))
 					return null;
 			}
@@ -101,7 +101,7 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 
 		void Start(SignatureHelpInfo info, SnapshotPoint triggerPosition, SignatureHelpTriggerInfo triggerInfo) {
 			CancelFetchItems();
-			Debug.Assert(cancellationTokenSource is null);
+			Debug2.Assert(cancellationTokenSource is null);
 			cancellationTokenSource = new CancellationTokenSource();
 			var cancellationTokenSourceTmp = cancellationTokenSource;
 			StartAsync(info, triggerPosition, triggerInfo, cancellationTokenSource.Token)
@@ -172,7 +172,7 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 		void Session_Dismissed(object? sender, EventArgs e) => Dispose();
 
 		void InitializeSignatures(ITrackingSpan applicableToSpan, SignatureHelpResult signatureHelpResult) {
-			Debug.Assert(!(signatureHelpResult.Items is null));
+			Debug2.Assert(!(signatureHelpResult.Items is null));
 			signatures.Clear();
 			foreach (var item in signatureHelpResult.Items.Items) {
 				bool isSelected = signatureHelpResult.SelectedItem == item;

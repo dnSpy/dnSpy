@@ -215,7 +215,7 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		public void Save(ISettingsSection section) {
-			Debug.Assert(!(Content.Attribute<Guid?>(CONTENT_GUID_ATTR) is null));
+			Debug2.Assert(!(Content.Attribute<Guid?>(CONTENT_GUID_ATTR) is null));
 			section.CreateSection(CONTENT_SECTION).CopyFrom(Content);
 			section.CreateSection(UI_SECTION).CopyFrom(UI);
 			section.CreateSection(TAB_UI_SECTION).CopyFrom(TabUI);

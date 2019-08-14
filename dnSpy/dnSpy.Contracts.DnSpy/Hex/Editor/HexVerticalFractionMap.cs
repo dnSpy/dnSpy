@@ -51,6 +51,6 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <summary>
 		/// Raised when the mapping is changed
 		/// </summary>
-		public abstract event EventHandler MappingChanged;
+		public abstract event EventHandler? MappingChanged;
 	}
 }

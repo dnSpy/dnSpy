@@ -102,7 +102,7 @@ namespace dnSpy.Text.Editor {
 			var viewLine = textView.Caret.ContainingTextViewLine;
 			var snapshotLine = viewLine.Start.GetContainingLine();
 			var wpfTextView = textView as IWpfTextView;
-			Debug.Assert(!(wpfTextView is null));
+			Debug2.Assert(!(wpfTextView is null));
 			var ownerWindow = wpfTextView is null ? null : Window.GetWindow(wpfTextView.VisualElement);
 			int maxLines = snapshotLine.Snapshot.LineCount;
 

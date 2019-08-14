@@ -25,7 +25,7 @@ using dnSpy.Debugger.DotNet.CorDebug.Impl;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 	sealed class DbgDotNetStepperBreakpointImpl : DbgDotNetStepperBreakpoint {
-		public override event EventHandler<DbgDotNetStepperBreakpointEventArgs> Hit;
+		public override event EventHandler<DbgDotNetStepperBreakpointEventArgs>? Hit;
 
 		readonly DbgEngineImpl engine;
 		readonly DbgThread? thread;

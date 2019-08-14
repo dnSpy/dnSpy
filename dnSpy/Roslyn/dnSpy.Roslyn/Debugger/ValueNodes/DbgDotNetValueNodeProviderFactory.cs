@@ -321,7 +321,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 				foreach (var field in type.Fields) {
 					var declType = field.DeclaringType;
 					while (declType != currentType) {
-						Debug.Assert(!(currentType.BaseType is null));
+						Debug2.Assert(!(currentType.BaseType is null));
 						currentType = currentType.BaseType;
 						if (inheritanceLevel != byte.MaxValue)
 							inheritanceLevel++;
@@ -347,7 +347,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 						continue;
 					var declType = property.DeclaringType;
 					while (declType != currentType) {
-						Debug.Assert(!(currentType.BaseType is null));
+						Debug2.Assert(!(currentType.BaseType is null));
 						currentType = currentType.BaseType;
 						if (inheritanceLevel != byte.MaxValue)
 							inheritanceLevel++;
@@ -459,7 +459,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 				return false;
 
 			var fields = Formatters.NullableTypeUtils.TryGetNullableFields(state.Type);
-			Debug.Assert(!(fields.hasValueField is null));
+			Debug2.Assert(!(fields.hasValueField is null));
 			if (fields.hasValueField is null)
 				return false;
 

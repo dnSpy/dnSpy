@@ -97,12 +97,12 @@ namespace dnSpy.Contracts.Documents.Tabs {
 		/// <summary>
 		/// Raised when <see cref="RefreshModifiedDocument(IDsDocument)"/> gets called
 		/// </summary>
-		event EventHandler<DocumentModifiedEventArgs> DocumentModified;
+		event EventHandler<DocumentModifiedEventArgs>? DocumentModified;
 
 		/// <summary>
 		/// Notified when the document collection gets changed
 		/// </summary>
-		event EventHandler<NotifyDocumentCollectionChangedEventArgs> DocumentCollectionChanged;
+		event EventHandler<NotifyDocumentCollectionChangedEventArgs>? DocumentCollectionChanged;
 
 		/// <summary>
 		/// Returns true if <paramref name="tabGroup"/> is owned by this instance

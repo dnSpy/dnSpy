@@ -68,7 +68,7 @@ namespace dnSpy.Documents.Tabs {
 				return null;
 			var old = oldList[oldList.Count - 1];
 			oldList.RemoveAt(oldList.Count - 1);
-			Debug.Assert(!(current is null));
+			Debug2.Assert(!(current is null));
 			newList.Add(new TabContentState(current, current.DocumentTab?.UIContext.CreateUIState()));
 			current = old.DocumentTabContent;
 			return old.UIState;
@@ -80,7 +80,7 @@ namespace dnSpy.Documents.Tabs {
 				return null;
 			var old = newList[newList.Count - 1];
 			newList.RemoveAt(newList.Count - 1);
-			Debug.Assert(!(current is null));
+			Debug2.Assert(!(current is null));
 			oldList.Add(new TabContentState(current, current.DocumentTab?.UIContext.CreateUIState()));
 			current = old.DocumentTabContent;
 			return old.UIState;

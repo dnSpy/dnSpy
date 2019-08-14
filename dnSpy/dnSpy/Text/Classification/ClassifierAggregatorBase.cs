@@ -33,7 +33,7 @@ namespace dnSpy.Text.Classification {
 		readonly ISynchronousTagAggregator<IClassificationTag> tagAggregator;
 		readonly ITextBuffer textBuffer;
 
-		public event EventHandler<ClassificationChangedEventArgs> ClassificationChanged;
+		public event EventHandler<ClassificationChangedEventArgs>? ClassificationChanged;
 
 		protected ClassifierAggregatorBase(ISynchronousTagAggregator<IClassificationTag> tagAggregator, IClassificationTypeRegistryService classificationTypeRegistryService, ITextBuffer textBuffer) {
 			this.classificationTypeRegistryService = classificationTypeRegistryService ?? throw new ArgumentNullException(nameof(classificationTypeRegistryService));

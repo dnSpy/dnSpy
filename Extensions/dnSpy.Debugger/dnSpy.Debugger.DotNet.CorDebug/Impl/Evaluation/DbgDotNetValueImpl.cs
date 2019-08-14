@@ -155,7 +155,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 					ownsValue = false;
 				}
 				// Value is sometimes null, DereferencedValue can fail with 0x80131305 = CORDBG_E_BAD_REFERENCE_VALUE
-				Debug.Assert(Value is null || Value.IsArray);
+				Debug2.Assert(Value is null || Value.IsArray);
 			}
 
 			public void Dispose() {

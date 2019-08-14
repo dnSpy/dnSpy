@@ -75,7 +75,7 @@ namespace dnSpy.Hex.Formatting {
 			readonly HexAdornmentElement adornmentElement;
 
 			public AdornmentTextRun(HexLinePart linePart) {
-				Debug.Assert(!(linePart.AdornmentElement is null));
+				Debug2.Assert(!(linePart.AdornmentElement is null));
 				adornmentElement = linePart.AdornmentElement;
 				if (linePart.Span.Length != 0 || adornmentElement.Affinity == VST.PositionAffinity.Successor) {
 					BreakBefore = LineBreakCondition.BreakPossible;

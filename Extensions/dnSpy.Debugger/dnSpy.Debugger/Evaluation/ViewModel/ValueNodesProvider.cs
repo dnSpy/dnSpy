@@ -59,19 +59,19 @@ namespace dnSpy.Debugger.Evaluation.ViewModel {
 		/// <summary>
 		/// Raised when <see cref="GetNodes(DbgEvaluationOptions, DbgValueNodeEvaluationOptions, DbgValueFormatterOptions)"/> must be called again, eg. the debugged program is paused
 		/// </summary>
-		public abstract event EventHandler NodesChanged;
+		public abstract event EventHandler? NodesChanged;
 
 		/// <summary>
 		/// true if the window should be made read-only, eg. the program is running or nothing is being debugged.
 		/// </summary>
 		public abstract bool IsReadOnly { get; }
-		public abstract event EventHandler IsReadOnlyChanged;
+		public abstract event EventHandler? IsReadOnlyChanged;
 
 		/// <summary>
 		/// Gets the language or null if none
 		/// </summary>
 		public abstract DbgLanguage? Language { get; }
-		public abstract event EventHandler LanguageChanged;
+		public abstract event EventHandler? LanguageChanged;
 
 		/// <summary>
 		/// true if root nodes can be added/deleted (supported by watch window)

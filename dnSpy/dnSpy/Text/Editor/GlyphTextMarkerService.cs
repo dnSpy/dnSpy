@@ -49,10 +49,10 @@ namespace dnSpy.Text.Editor {
 	[Export(typeof(IGlyphTextMarkerService))]
 	[Export(typeof(IGlyphTextMarkerServiceImpl))]
 	sealed class GlyphTextMarkerService : IGlyphTextMarkerServiceImpl {
-		public event EventHandler<GlyphTextMarkerAddedEventArgs> MarkerAdded;
-		public event EventHandler<GlyphTextMarkerRemovedEventArgs> MarkerRemoved;
-		public event EventHandler<GlyphTextMarkersRemovedEventArgs> MarkersRemoved;
-		public event EventHandler<GetGlyphTextMarkerAndSpanEventArgs> GetGlyphTextMarkerAndSpan;
+		public event EventHandler<GlyphTextMarkerAddedEventArgs>? MarkerAdded;
+		public event EventHandler<GlyphTextMarkerRemovedEventArgs>? MarkerRemoved;
+		public event EventHandler<GlyphTextMarkersRemovedEventArgs>? MarkersRemoved;
+		public event EventHandler<GetGlyphTextMarkerAndSpanEventArgs>? GetGlyphTextMarkerAndSpan;
 
 #pragma warning disable CS0169
 		[Export(typeof(AdornmentLayerDefinition))]
@@ -60,7 +60,7 @@ namespace dnSpy.Text.Editor {
 		[Order(After = PredefinedDsAdornmentLayers.BottomLayer, Before = PredefinedDsAdornmentLayers.TopLayer)]
 		[Order(Before = PredefinedAdornmentLayers.Selection, After = PredefinedAdornmentLayers.Outlining)]
 		[Order(Before = PredefinedAdornmentLayers.TextMarker)]
-		static AdornmentLayerDefinition glyphTextMarkerAdornmentLayerDefinition;
+		static AdornmentLayerDefinition? glyphTextMarkerAdornmentLayerDefinition;
 #pragma warning restore CS0169
 
 		public IViewTagAggregatorFactoryService ViewTagAggregatorFactoryService { get; }
@@ -205,7 +205,7 @@ namespace dnSpy.Text.Editor {
 			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			var service = GlyphTextViewMarkerService.TryGet(textView);
-			Debug.Assert(!(service is null));
+			Debug2.Assert(!(service is null));
 			service?.SetDotNetSpanMap(map);
 		}
 	}

@@ -39,7 +39,7 @@ namespace dnSpy.Debugger.Evaluation {
 		DbgEvaluationResult CreateResult(DbgRuntime runtime, DbgEngineEvaluationResult result) {
 			if (!(result.Error is null))
 				return new DbgEvaluationResult(PredefinedEvaluationErrorMessagesHelper.GetErrorMessage(result.Error), result.FormatSpecifiers, result.Flags);
-			Debug.Assert(!(result.Value is null));
+			Debug2.Assert(!(result.Value is null));
 			try {
 				var value = new DbgValueImpl(runtime, result.Value);
 				runtime.CloseOnContinue(value);

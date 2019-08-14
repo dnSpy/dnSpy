@@ -110,7 +110,7 @@ namespace dnSpy.Hex.Editor {
 			return value;
 		}
 
-		public event EventHandler<VSTE.EditorOptionChangedEventArgs> OptionChanged;
+		public event EventHandler<VSTE.EditorOptionChangedEventArgs>? OptionChanged;
 		void OnChanged(string optionId) {
 			if (scope is null || service.GetOption(optionId).IsApplicableToScope(scope))
 				OptionChanged?.Invoke(this, new VSTE.EditorOptionChangedEventArgs(optionId));

@@ -99,7 +99,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		}
 
 		string? ConvertEditedString(string? s) {
-			if (string.IsNullOrWhiteSpace(s))
+			if (string2.IsNullOrWhiteSpace(s))
 				return null;
 			return s.Trim();
 		}
@@ -111,7 +111,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		}
 
 		void WriteOrder(string? value) {
-			if (string.IsNullOrWhiteSpace(value))
+			if (string2.IsNullOrWhiteSpace(value))
 				ModuleBreakpoint.Order = null;
 			else {
 				var order = SimpleTypeConverter.ParseInt32(value, int.MinValue, int.MaxValue, out var error);

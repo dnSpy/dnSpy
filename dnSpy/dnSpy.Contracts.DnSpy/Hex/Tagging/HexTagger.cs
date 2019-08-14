@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.Hex.Tagging {
 		/// <summary>
 		/// Raised after tags have changed
 		/// </summary>
-		event EventHandler<HexBufferSpanEventArgs> TagsChanged;
+		event EventHandler<HexBufferSpanEventArgs>? TagsChanged;
 
 		/// <summary>
 		/// Gets all tags intersecting with <paramref name="spans"/>
@@ -75,7 +75,7 @@ namespace dnSpy.Contracts.Hex.Tagging {
 		/// <summary>
 		/// Raised after tags have changed
 		/// </summary>
-		public abstract event EventHandler<HexBufferSpanEventArgs> TagsChanged;
+		public abstract event EventHandler<HexBufferSpanEventArgs>? TagsChanged;
 
 		/// <summary>
 		/// Gets all tags intersecting with <paramref name="spans"/>

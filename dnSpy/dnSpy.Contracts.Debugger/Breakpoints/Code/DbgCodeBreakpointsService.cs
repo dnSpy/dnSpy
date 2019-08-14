@@ -45,7 +45,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// <summary>
 		/// Raised when breakpoints are modified
 		/// </summary>
-		public abstract event EventHandler<DbgBreakpointsModifiedEventArgs> BreakpointsModified;
+		public abstract event EventHandler<DbgBreakpointsModifiedEventArgs>? BreakpointsModified;
 
 		/// <summary>
 		/// Gets all breakpoints
@@ -60,7 +60,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// <summary>
 		/// Raised when <see cref="Breakpoints"/> is changed
 		/// </summary>
-		public abstract event EventHandler<DbgCollectionChangedEventArgs<DbgCodeBreakpoint>> BreakpointsChanged;
+		public abstract event EventHandler<DbgCollectionChangedEventArgs<DbgCodeBreakpoint>>? BreakpointsChanged;
 
 		/// <summary>
 		/// Adds a breakpoint. If the breakpoint already exists, null is returned.
@@ -103,7 +103,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code {
 		/// <summary>
 		/// Raised when <see cref="DbgCodeBreakpoint.BoundBreakpointsMessage"/> is changed
 		/// </summary>
-		public abstract event EventHandler<DbgBoundBreakpointsMessageChangedEventArgs> BoundBreakpointsMessageChanged;
+		public abstract event EventHandler<DbgBoundBreakpointsMessageChangedEventArgs>? BoundBreakpointsMessageChanged;
 	}
 
 	/// <summary>

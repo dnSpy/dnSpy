@@ -43,7 +43,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				if (tryCreateStrongHandle && !value.IsNull && !value.IsHandle && value.IsReference && !type.IsPointer && !type.IsFunctionPointer && !type.IsByRef) {
 					var derefValue = value.GetDereferencedValue(out int hr);
 					var strongHandle = derefValue?.CreateHandle(CorDebugHandleType.HANDLE_STRONG);
-					Debug.Assert(derefValue is null || !(strongHandle is null) || type == type.AppDomain.System_TypedReference);
+					Debug2.Assert(derefValue is null || !(strongHandle is null) || type == type.AppDomain.System_TypedReference);
 					if (!(strongHandle is null))
 						value = strongHandle;
 				}
@@ -134,7 +134,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			var field = obj.Type.GetField(fieldName1, fieldFlags);
 			if (field is null && !(fieldName2 is null))
 				field = obj.Type.GetField(fieldName2, fieldFlags);
-			Debug.Assert(!(field is null));
+			Debug2.Assert(!(field is null));
 			if (field is null)
 				return null;
 
@@ -625,7 +625,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			int hr;
 			if (targetType.IsPointer || targetType.IsFunctionPointer) {
 				var sourceValueBytes = TryGetValueBytes(sourceValue);
-				Debug.Assert(!(sourceValueBytes is null));
+				Debug2.Assert(!(sourceValueBytes is null));
 				if (sourceValueBytes is null || targetValue.Size != (uint)sourceValueBytes.Length)
 					return CordbgErrorHelper.InternalError;
 				ulong address = targetValue.Address;
@@ -656,7 +656,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				if (!targetValue.IsGeneric || sourceValue is null)
 					return CordbgErrorHelper.InternalError;
 				var sourceValueBytes = TryGetValueBytes(sourceValue);
-				Debug.Assert(!(sourceValueBytes is null));
+				Debug2.Assert(!(sourceValueBytes is null));
 				if (sourceValueBytes is null || targetValue.Size != (uint)sourceValueBytes.Length)
 					return CordbgErrorHelper.InternalError;
 				hr = targetValue.WriteGenericValue(sourceValueBytes, dnThread.Process.CorProcess);

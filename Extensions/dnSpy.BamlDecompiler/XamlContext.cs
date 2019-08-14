@@ -183,7 +183,7 @@ namespace dnSpy.BamlDecompiler {
 					continue;
 				var xmlNs = attr.ConstructorArguments[0].Value as UTF8String;
 				var typeNs = attr.ConstructorArguments[1].Value as UTF8String;
-				Debug.Assert(!(xmlNs is null) && !(typeNs is null));
+				Debug2.Assert(!(xmlNs is null) && !(typeNs is null));
 				if (xmlNs is null || typeNs is null)
 					continue;
 

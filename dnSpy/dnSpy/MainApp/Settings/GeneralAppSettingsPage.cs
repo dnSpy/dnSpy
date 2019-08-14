@@ -169,7 +169,7 @@ namespace dnSpy.MainApp.Settings {
 			if (!ThemesVM.Any(a => a.Theme == themeService.Theme))
 				ThemesVM.Add(new ThemeVM(themeService.Theme));
 			SelectedThemeVM = ThemesVM.FirstOrDefault(a => a.Theme == themeService.Theme);
-			Debug.Assert(!(SelectedThemeVM is null));
+			Debug2.Assert(!(SelectedThemeVM is null));
 
 			WindowsExplorerIntegration = windowsExplorerIntegrationService.WindowsExplorerIntegration;
 			AllowMoreThanOneInstance = appSettings.AllowMoreThanOneInstance;

@@ -29,13 +29,13 @@ namespace dnSpy.Hex {
 		public override HexSpan Span => stream.Span;
 		public override string Name => stream.Name;
 		public override HexVersion Version => currentHexVersion;
-		public override event EventHandler<HexContentChangingEventArgs> Changing;
-		public override event EventHandler<HexContentChangedEventArgs> ChangedHighPriority;
-		public override event EventHandler<HexContentChangedEventArgs> Changed;
-		public override event EventHandler<HexContentChangedEventArgs> ChangedLowPriority;
-		public override event EventHandler PostChanged;
+		public override event EventHandler<HexContentChangingEventArgs>? Changing;
+		public override event EventHandler<HexContentChangedEventArgs>? ChangedHighPriority;
+		public override event EventHandler<HexContentChangedEventArgs>? Changed;
+		public override event EventHandler<HexContentChangedEventArgs>? ChangedLowPriority;
+		public override event EventHandler? PostChanged;
 
-		public override event EventHandler<HexBufferSpanInvalidatedEventArgs> BufferSpanInvalidated {
+		public override event EventHandler<HexBufferSpanInvalidatedEventArgs>? BufferSpanInvalidated {
 			add {
 				if (bufferSpanInvalidated is null)
 					stream.BufferStreamSpanInvalidated += HexBufferStream_BufferStreamSpanInvalidated;

@@ -27,7 +27,7 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 		[Export]
 		[Name(ContentTypes.OutputDebug)]
 		[BaseDefinition(ContentTypes.Output)]
-		static readonly ContentTypeDefinition OutputDebugContentTypeDefinition;
+		static readonly ContentTypeDefinition? OutputDebugContentTypeDefinition;
 #pragma warning restore CS0169
 	}
 }

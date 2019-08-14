@@ -32,16 +32,16 @@ namespace dnSpy.Scripting {
 		Dispatcher? dispatcher;
 
 		public T Resolve<T>() where T : class {
-			Debug.Assert(!(exportProvider is null));
-			Debug.Assert(!(dispatcher is null));
+			Debug2.Assert(!(exportProvider is null));
+			Debug2.Assert(!(dispatcher is null));
 			if (exportProvider is null)
 				throw new InvalidOperationException();
 			return dispatcher.UI(() => exportProvider.GetExportedValue<T>());
 		}
 
 		public T? TryResolve<T>() where T : class {
-			Debug.Assert(!(exportProvider is null));
-			Debug.Assert(!(dispatcher is null));
+			Debug2.Assert(!(exportProvider is null));
+			Debug2.Assert(!(dispatcher is null));
 			if (exportProvider is null)
 				throw new InvalidOperationException();
 			return dispatcher.UI(() => {

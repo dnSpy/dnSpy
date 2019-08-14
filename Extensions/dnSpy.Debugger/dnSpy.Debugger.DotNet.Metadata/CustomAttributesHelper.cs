@@ -212,7 +212,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				if ((type.Attributes & DmdTypeAttributes.Serializable) != 0) {
 					var caType = type.AppDomain.GetWellKnownType(DmdWellKnownType.System_SerializableAttribute, isOptional: true);
 					ctor = caType?.GetConstructor(Array.Empty<DmdType>());
-					Debug.Assert(caType is null || !(ctor is null));
+					Debug2.Assert(caType is null || !(ctor is null));
 				}
 				else
 					ctor = null;
@@ -233,7 +233,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				if (type.IsImport) {
 					var caType = type.AppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_ComImportAttribute, isOptional: true);
 					ctor = caType?.GetConstructor(Array.Empty<DmdType>());
-					Debug.Assert(caType is null || !(ctor is null));
+					Debug2.Assert(caType is null || !(ctor is null));
 				}
 				else
 					ctor = null;
@@ -262,7 +262,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				if (caType is null || unmanagedTypeType is null || varEnumType is null)
 					return null;
 				var ctor = caType.GetConstructor(new[] { unmanagedTypeType });
-				Debug.Assert(!(ctor is null));
+				Debug2.Assert(!(ctor is null));
 				return ctor;
 			}
 
@@ -314,7 +314,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					this.offset = (int)offset.Value;
 					var caType = field.AppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_FieldOffsetAttribute, isOptional: true);
 					ctor = caType?.GetConstructor(new[] { field.AppDomain.System_Int32 });
-					Debug.Assert(caType is null || !(ctor is null));
+					Debug2.Assert(caType is null || !(ctor is null));
 				}
 				else {
 					ctor = null;
@@ -338,7 +338,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				if ((field.Attributes & DmdFieldAttributes.NotSerialized) != 0) {
 					var caType = field.AppDomain.GetWellKnownType(DmdWellKnownType.System_NonSerializedAttribute, isOptional: true);
 					ctor = caType?.GetConstructor(Array.Empty<DmdType>());
-					Debug.Assert(caType is null || !(ctor is null));
+					Debug2.Assert(caType is null || !(ctor is null));
 				}
 				else
 					ctor = null;
@@ -365,7 +365,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 						ctor = null;
 					else {
 						ctor = caType.GetConstructor(DmdBindingFlags.Public | DmdBindingFlags.NonPublic | DmdBindingFlags.Instance, new[] { appDomain.System_String });
-						Debug.Assert(!(ctor is null));
+						Debug2.Assert(!(ctor is null));
 					}
 				}
 				else
@@ -425,7 +425,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				if ((method.MethodImplementationFlags & DmdMethodImplAttributes.PreserveSig) != 0) {
 					var caType = method.AppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_PreserveSigAttribute, isOptional: true);
 					ctor = caType?.GetConstructor(Array.Empty<DmdType>());
-					Debug.Assert(caType is null || !(ctor is null));
+					Debug2.Assert(caType is null || !(ctor is null));
 				}
 				else
 					ctor = null;
@@ -446,7 +446,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				if (parameter.IsIn) {
 					var caType = parameter.Member.AppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_InAttribute, isOptional: true);
 					ctor = caType?.GetConstructor(Array.Empty<DmdType>());
-					Debug.Assert(caType is null || !(ctor is null));
+					Debug2.Assert(caType is null || !(ctor is null));
 				}
 				else
 					ctor = null;
@@ -467,7 +467,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				if (parameter.IsOut) {
 					var caType = parameter.Member.AppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_OutAttribute, isOptional: true);
 					ctor = caType?.GetConstructor(Array.Empty<DmdType>());
-					Debug.Assert(caType is null || !(ctor is null));
+					Debug2.Assert(caType is null || !(ctor is null));
 				}
 				else
 					ctor = null;
@@ -488,7 +488,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				if (parameter.IsOptional) {
 					var caType = parameter.Member.AppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_OptionalAttribute, isOptional: true);
 					ctor = caType?.GetConstructor(Array.Empty<DmdType>());
-					Debug.Assert(caType is null || !(ctor is null));
+					Debug2.Assert(caType is null || !(ctor is null));
 				}
 				else
 					ctor = null;

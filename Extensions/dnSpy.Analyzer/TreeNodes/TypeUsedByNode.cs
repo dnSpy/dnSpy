@@ -89,7 +89,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			if (new SigComparer().Equals(type, analyzedType))
 				yield break;
 			if (isComType && ComUtils.ComEquals(type, ref comGuid)) {
-				Debug.Assert(!(allTypes is null));
+				Debug2.Assert(!(allTypes is null));
 				lock (allTypes)
 					allTypes.Add(type);
 				yield break;

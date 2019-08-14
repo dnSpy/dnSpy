@@ -58,8 +58,8 @@ namespace dnSpy.Hex.Formatting {
 		public readonly int Index;
 
 		public HexLinePart(int index, int column, VST.Span span, HexAdornmentElement adornmentElement, TextRunProperties textRunProperties) {
-			Debug.Assert(!(adornmentElement is null));
-			Debug.Assert(!(textRunProperties is null));
+			Debug2.Assert(!(adornmentElement is null));
+			Debug2.Assert(!(textRunProperties is null));
 			Index = index;
 			Column = column;
 			Span = span;
@@ -69,7 +69,7 @@ namespace dnSpy.Hex.Formatting {
 
 		public HexLinePart(int index, int column, VST.Span span, TextRunProperties textRunProperties) {
 			Debug.Assert(!span.IsEmpty);
-			Debug.Assert(!(textRunProperties is null));
+			Debug2.Assert(!(textRunProperties is null));
 			Index = index;
 			Column = column;
 			Span = span;

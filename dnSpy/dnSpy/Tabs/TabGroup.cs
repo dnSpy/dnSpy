@@ -127,7 +127,7 @@ namespace dnSpy.Tabs {
 		}
 
 		void SetFocusNoChecks(IInputElement uiel) {
-			Debug.Assert(!(uiel is null) && uiel.Focusable);
+			Debug2.Assert(!(uiel is null) && uiel.Focusable);
 			if (uiel is null)
 				return;
 			wpfFocusService.Focus(uiel);
@@ -170,7 +170,7 @@ namespace dnSpy.Tabs {
 
 		TabItemImpl? GetTabItemImpl(ITabContent content) {
 			foreach (TabItemImpl? impl in tabControl.Items) {
-				Debug.Assert(!(impl is null));
+				Debug2.Assert(!(impl is null));
 				if (impl.TabContent == content)
 					return impl;
 			}

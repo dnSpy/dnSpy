@@ -125,7 +125,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <summary>
 		/// Raised after <see cref="CursorInfo"/> is changed
 		/// </summary>
-		public abstract event EventHandler CursorInfoChanged;
+		public abstract event EventHandler? CursorInfoChanged;
 
 		/// <summary>
 		/// Gets the cursor and priority

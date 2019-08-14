@@ -248,7 +248,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 					if (av?.IsArray != true)
 						return new EvalArgumentResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 
-					Debug.Assert(elem is null);
+					Debug2.Assert(elem is null);
 					elem = av.GetElementAtPosition(i, out hr);
 					if (elem is null)
 						return new EvalArgumentResult(CordbgErrorHelper.GetErrorMessage(hr));
@@ -387,7 +387,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			var res = CreateNoConstructor(type);
 			if (!(res.ErrorMessage is null))
 				return res;
-			Debug.Assert(!(res.CorValue!.DereferencedValue is null) && !(res.CorValue.DereferencedValue.BoxedValue is null));
+			Debug2.Assert(!(res.CorValue!.DereferencedValue is null) && !(res.CorValue.DereferencedValue.BoxedValue is null));
 			if (value != 0)
 				res.CorValue.DereferencedValue.BoxedValue.WriteGenericValue(new byte[1] { value });
 			return res;
@@ -397,7 +397,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			var res = CreateNoConstructor(type);
 			if (!(res.ErrorMessage is null))
 				return res;
-			Debug.Assert(!(res.CorValue!.DereferencedValue is null) && !(res.CorValue.DereferencedValue.BoxedValue is null));
+			Debug2.Assert(!(res.CorValue!.DereferencedValue is null) && !(res.CorValue.DereferencedValue.BoxedValue is null));
 			if (value != 0)
 				res.CorValue.DereferencedValue.BoxedValue.WriteGenericValue(BitConverter.GetBytes(value));
 			return res;
@@ -407,7 +407,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			var res = CreateNoConstructor(type);
 			if (!(res.ErrorMessage is null))
 				return res;
-			Debug.Assert(!(res.CorValue!.DereferencedValue is null) && !(res.CorValue.DereferencedValue.BoxedValue is null));
+			Debug2.Assert(!(res.CorValue!.DereferencedValue is null) && !(res.CorValue.DereferencedValue.BoxedValue is null));
 			if (value != 0)
 				res.CorValue.DereferencedValue.BoxedValue.WriteGenericValue(BitConverter.GetBytes(value));
 			return res;
@@ -417,7 +417,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			var res = CreateNoConstructor(type);
 			if (!(res.ErrorMessage is null))
 				return res;
-			Debug.Assert(!(res.CorValue!.DereferencedValue is null) && !(res.CorValue.DereferencedValue.BoxedValue is null));
+			Debug2.Assert(!(res.CorValue!.DereferencedValue is null) && !(res.CorValue.DereferencedValue.BoxedValue is null));
 			if (value != 0)
 				res.CorValue.DereferencedValue.BoxedValue.WriteGenericValue(BitConverter.GetBytes(value));
 			return res;
@@ -427,7 +427,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			var res = CreateNoConstructor(reflectionAppDomain.System_Single);
 			if (!(res.ErrorMessage is null))
 				return res;
-			Debug.Assert(!(res.CorValue!.DereferencedValue is null) && !(res.CorValue.DereferencedValue.BoxedValue is null));
+			Debug2.Assert(!(res.CorValue!.DereferencedValue is null) && !(res.CorValue.DereferencedValue.BoxedValue is null));
 			if (value != 0)
 				res.CorValue.DereferencedValue.BoxedValue.WriteGenericValue(BitConverter.GetBytes(value));
 			return res;
@@ -437,7 +437,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			var res = CreateNoConstructor(reflectionAppDomain.System_Double);
 			if (!(res.ErrorMessage is null))
 				return res;
-			Debug.Assert(!(res.CorValue!.DereferencedValue is null) && !(res.CorValue.DereferencedValue.BoxedValue is null));
+			Debug2.Assert(!(res.CorValue!.DereferencedValue is null) && !(res.CorValue.DereferencedValue.BoxedValue is null));
 			if (value != 0)
 				res.CorValue.DereferencedValue.BoxedValue.WriteGenericValue(BitConverter.GetBytes(value));
 			return res;
@@ -447,7 +447,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			var res = CreateNoConstructor(reflectionAppDomain.System_Decimal);
 			if (!(res.ErrorMessage is null))
 				return res;
-			Debug.Assert(!(res.CorValue!.DereferencedValue is null) && !(res.CorValue.DereferencedValue.BoxedValue is null));
+			Debug2.Assert(!(res.CorValue!.DereferencedValue is null) && !(res.CorValue.DereferencedValue.BoxedValue is null));
 			if (value != 0)
 				res.CorValue.DereferencedValue.BoxedValue.WriteGenericValue(GetBytes(value));
 			return res;

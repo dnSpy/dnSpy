@@ -26,7 +26,7 @@ namespace dnSpy.Hex {
 	sealed class HexBufferFactoryServiceImpl : HexBufferFactoryService {
 		readonly HexBufferStreamFactoryService hexBufferStreamFactoryService;
 
-		public override event EventHandler<HexBufferCreatedEventArgs> HexBufferCreated;
+		public override event EventHandler<HexBufferCreatedEventArgs>? HexBufferCreated;
 
 		[ImportingConstructor]
 		HexBufferFactoryServiceImpl(HexBufferStreamFactoryService hexBufferStreamFactoryService) => this.hexBufferStreamFactoryService = hexBufferStreamFactoryService;

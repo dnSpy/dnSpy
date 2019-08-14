@@ -47,7 +47,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 	}
 
 	sealed class BookmarkTagger : ITagger<IClassificationTag> {
-		public event EventHandler<SnapshotSpanEventArgs> TagsChanged { add { } remove { } }
+		public event EventHandler<SnapshotSpanEventArgs>? TagsChanged { add { } remove { } }
 		readonly IClassificationTag nameClassificationTag;
 		readonly BookmarksSettings bookmarksSettings;
 

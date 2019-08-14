@@ -56,7 +56,7 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 		}
 		Parameter? currentParameter;
 
-		public event EventHandler<CurrentParameterChangedEventArgs> CurrentParameterChanged;
+		public event EventHandler<CurrentParameterChangedEventArgs>? CurrentParameterChanged;
 
 		readonly SignatureHelpItem item;
 

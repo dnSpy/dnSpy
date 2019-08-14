@@ -383,7 +383,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		CAArgument CreateArray(TypeSig elemType, object? value) {
 			var aryType = new SZArraySig(elemType);
 			var list = value as System.Collections.IList;
-			Debug.Assert(!(list is null) || value is null);
+			Debug2.Assert(!(list is null) || value is null);
 			if (list is null)
 				return new CAArgument(aryType, null);
 			var ary = new List<CAArgument>(list.Count);

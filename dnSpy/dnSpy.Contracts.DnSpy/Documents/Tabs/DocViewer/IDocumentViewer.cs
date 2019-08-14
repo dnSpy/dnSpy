@@ -178,12 +178,12 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// content. I.e., calling it twice in a row with the same content won't raise this event
 		/// the second time. This event is raised before <see cref="IDocumentViewerService.GotNewContent"/>
 		/// </summary>
-		event EventHandler<DocumentViewerGotNewContentEventArgs> GotNewContent;
+		event EventHandler<DocumentViewerGotNewContentEventArgs>? GotNewContent;
 
 		/// <summary>
 		/// Raised when this instance has been closed. This event is raised before
 		/// <see cref="IDocumentViewerService.Removed"/>
 		/// </summary>
-		event EventHandler<DocumentViewerRemovedEventArgs> Removed;
+		event EventHandler<DocumentViewerRemovedEventArgs>? Removed;
 	}
 }

@@ -87,7 +87,7 @@ namespace dnSpy.Text.Editor {
 
 		internal bool IsMouseOverOverlayLayerElement(MouseEventArgs e) {
 			foreach (UIElement? elem in Children) {
-				Debug.Assert(!(elem is null));
+				Debug2.Assert(!(elem is null));
 				if (elem.IsMouseOver)
 					return true;
 			}
@@ -189,7 +189,7 @@ namespace dnSpy.Text.Editor {
 					break;
 
 				case AdornmentPositioningBehavior.TextRelative:
-					Debug.Assert(!(elem.VisualSpan is null));
+					Debug2.Assert(!(elem.VisualSpan is null));
 					var translatedLine = GetLine(e.TranslatedLines, GetOverlapsWithSpan(elem.VisualSpan.Value));
 					if (!(translatedLine is null)) {
 						// Only y is updated, x is owner controlled

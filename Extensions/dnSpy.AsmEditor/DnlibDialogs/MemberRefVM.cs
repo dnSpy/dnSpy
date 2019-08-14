@@ -152,7 +152,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			var newMethod = dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Method, new SameAssemblyDocumentTreeNodeFilter(typeSigCreatorOptions.OwnerModule, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.MethodDef)), Class as IMethod, typeSigCreatorOptions.OwnerModule);
 			if (!(newMethod is null)) {
 				var md = newMethod as MethodDef;
-				Debug.Assert(!(md is null));
+				Debug2.Assert(!(md is null));
 				if (!(md is null))
 					Class = md;
 			}

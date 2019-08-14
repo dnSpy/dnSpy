@@ -74,7 +74,7 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 
 		bool CheckConditions(DbgExceptionConditionSettings settings, DbgException exception) {
-			Debug.Assert(!(settings.Condition is null));
+			Debug2.Assert(!(settings.Condition is null));
 			if (settings.Condition is null)
 				return false;
 

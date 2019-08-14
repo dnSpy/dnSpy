@@ -32,8 +32,8 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		public override int Id { get; }
 		public override DbgCodeBreakpointOptions Options { get; }
 		public override DbgCodeLocation Location { get; }
-		public override event EventHandler<DbgBreakpointHitCheckEventArgs> HitCheck;
-		public override event EventHandler<DbgBreakpointHitEventArgs> Hit;
+		public override event EventHandler<DbgBreakpointHitCheckEventArgs>? HitCheck;
+		public override event EventHandler<DbgBreakpointHitEventArgs>? Hit;
 
 		public override DbgCodeBreakpointSettings Settings {
 			get {
@@ -100,7 +100,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			}
 		}
 
-		public override event EventHandler<DbgCollectionChangedEventArgs<DbgBoundCodeBreakpoint>> BoundBreakpointsChanged;
+		public override event EventHandler<DbgCollectionChangedEventArgs<DbgBoundCodeBreakpoint>>? BoundBreakpointsChanged;
 		public override DbgBoundCodeBreakpoint[] BoundBreakpoints {
 			get {
 				lock (lockObj)
@@ -109,7 +109,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		}
 		readonly List<DbgBoundCodeBreakpoint> boundCodeBreakpoints;
 
-		public override event EventHandler BoundBreakpointsMessageChanged;
+		public override event EventHandler? BoundBreakpointsMessageChanged;
 		public override DbgBoundCodeBreakpointMessage BoundBreakpointsMessage {
 			get {
 				lock (lockObj)
@@ -225,7 +225,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			DbgBoundCodeBreakpointMessage? warningMsg = null;
 			foreach (var bp in boundCodeBreakpoints) {
 				var msg = bp.Message;
-				Debug.Assert(!(msg.Message is null));
+				Debug2.Assert(!(msg.Message is null));
 				if (msg.Message is null)
 					continue;
 				switch (msg.Severity) {

@@ -82,7 +82,7 @@ namespace dnSpy.Text.Operations {
 		}
 
 		bool IsWholeWord(ITextStructureNavigator? textStructureNavigator, ITextSnapshot snapshot, FindResult result) {
-			Debug.Assert(!(textStructureNavigator is null));
+			Debug2.Assert(!(textStructureNavigator is null));
 			if (textStructureNavigator is null)
 				return false;
 			if (result.Length == 0)
@@ -433,7 +433,7 @@ namespace dnSpy.Text.Operations {
 		IEnumerable<FindResult> GetRegexResults(Regex regex, SnapshotPoint searchTextPosition, string searchText, int index, string searchPattern, FindOptions options, string? replacePattern) {
 			bool onlyWords = (options & FindOptions.WholeWord) != 0;
 			foreach (Match? match in regex.Matches(searchText, index)) {
-				Debug.Assert(!(match is null));
+				Debug2.Assert(!(match is null));
 				int position = searchTextPosition.Position + match.Index;
 				if (!onlyWords || IsWord(searchTextPosition.Snapshot, position, searchPattern.Length))
 					yield return new FindResult(position, match.Length, replacePattern is null ? null : match.Result(replacePattern));

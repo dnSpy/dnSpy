@@ -57,7 +57,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		}
 
 		public Span[] GetMatchSpans(string completionText) {
-			Debug.Assert(acronymMatchIndexes is null || acronymMatchIndexes.Length > 0);
+			Debug2.Assert(acronymMatchIndexes is null || acronymMatchIndexes.Length > 0);
 
 			// Acronyms have higher priority, eg. TA should match |T|ask|A|waiter
 			// and not |Ta|skAwaiter.

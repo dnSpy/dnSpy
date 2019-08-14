@@ -145,7 +145,7 @@ namespace dnSpy.AsmEditor.Resources {
 			}
 
 			public void Delete(DocumentTreeNodeData[] nodes, DocumentTreeNodeData[] parents) {
-				Debug.Assert(infos is null);
+				Debug2.Assert(infos is null);
 				if (!(infos is null))
 					throw new InvalidOperationException();
 
@@ -155,7 +155,7 @@ namespace dnSpy.AsmEditor.Resources {
 					var node = nodes[i];
 
 					var module = parents[i].GetModule();
-					Debug.Assert(!(module is null));
+					Debug2.Assert(!(module is null));
 					if (module is null)
 						throw new InvalidOperationException();
 					var resource = ResourceNode.GetResource(node) ?? throw new InvalidOperationException();
@@ -166,7 +166,7 @@ namespace dnSpy.AsmEditor.Resources {
 			}
 
 			public void Restore(DocumentTreeNodeData[] nodes) {
-				Debug.Assert(!(infos is null));
+				Debug2.Assert(!(infos is null));
 				if (infos is null)
 					throw new InvalidOperationException();
 				Debug.Assert(infos.Length == nodes.Length);
@@ -269,7 +269,7 @@ namespace dnSpy.AsmEditor.Resources {
 			public ModuleInfo(ResourceElementSetNode node) {
 				Node = node ?? throw new InvalidOperationException();
 				var module = node.GetModule();
-				Debug.Assert(!(module is null));
+				Debug2.Assert(!(module is null));
 				Module = module ?? throw new InvalidOperationException();
 				Index = module.Resources.IndexOf(node.Resource);
 				Debug.Assert(Index >= 0);
@@ -576,7 +576,7 @@ namespace dnSpy.AsmEditor.Resources {
 			var rsrcListNode = ResUtils.GetResourceListTreeNode(nodes)!;
 
 			var module = rsrcListNode.GetModule();
-			Debug.Assert(!(module is null));
+			Debug2.Assert(!(module is null));
 			if (module is null)
 				throw new InvalidOperationException();
 
@@ -616,7 +616,7 @@ namespace dnSpy.AsmEditor.Resources {
 
 		CreateFileResourceCommand(ResourcesFolderNode rsrcListNode, NodeAndResource[] nodes) {
 			module = rsrcListNode.GetModule()!;
-			Debug.Assert(!(module is null));
+			Debug2.Assert(!(module is null));
 			this.rsrcListNode = rsrcListNode;
 			this.nodes = nodes;
 		}
@@ -657,7 +657,7 @@ namespace dnSpy.AsmEditor.Resources {
 
 		protected CreateResourceTreeNodeCommand(ResourcesFolderNode rsrcListNode, NodeAndResource resTreeNode) {
 			module = rsrcListNode.GetModule()!;
-			Debug.Assert(!(module is null));
+			Debug2.Assert(!(module is null));
 			this.rsrcListNode = rsrcListNode;
 			this.resTreeNode = resTreeNode;
 		}
@@ -748,7 +748,7 @@ namespace dnSpy.AsmEditor.Resources {
 			var rsrcListNode = ResUtils.GetResourceListTreeNode(nodes)!;
 
 			var module = rsrcListNode.GetModule();
-			Debug.Assert(!(module is null));
+			Debug2.Assert(!(module is null));
 			if (module is null)
 				throw new InvalidOperationException();
 
@@ -846,7 +846,7 @@ namespace dnSpy.AsmEditor.Resources {
 			var rsrcListNode = ResUtils.GetResourceListTreeNode(nodes)!;
 
 			var module = rsrcListNode.GetModule();
-			Debug.Assert(!(module is null));
+			Debug2.Assert(!(module is null));
 			if (module is null)
 				throw new InvalidOperationException();
 
@@ -941,7 +941,7 @@ namespace dnSpy.AsmEditor.Resources {
 			var rsrcListNode = ResUtils.GetResourceListTreeNode(nodes)!;
 
 			var module = rsrcListNode.GetModule();
-			Debug.Assert(!(module is null));
+			Debug2.Assert(!(module is null));
 			if (module is null)
 				throw new InvalidOperationException();
 
@@ -1032,7 +1032,7 @@ namespace dnSpy.AsmEditor.Resources {
 			var rsrcNode = new NodeAndResource(nodes[0]);
 
 			var module = nodes[0].GetParentModule();
-			Debug.Assert(!(module is null));
+			Debug2.Assert(!(module is null));
 			if (module is null)
 				throw new InvalidOperationException();
 
@@ -1118,7 +1118,7 @@ namespace dnSpy.AsmEditor.Resources {
 
 		protected CreateResourceElementCommandBase(ResourceElementSetNode rsrcSetNode, NodeAndResourceElement[] nodes) {
 			module = rsrcSetNode.GetModule()!;
-			Debug.Assert(!(module is null));
+			Debug2.Assert(!(module is null));
 			this.rsrcSetNode = rsrcSetNode;
 			this.nodes = nodes;
 			resource = rsrcSetNode.Resource;
@@ -1226,10 +1226,10 @@ namespace dnSpy.AsmEditor.Resources {
 			var rsrcSetNode = nodes[0] as ResourceElementSetNode;
 			if (rsrcSetNode is null)
 				rsrcSetNode = nodes[0].TreeNode.Parent!.Data as ResourceElementSetNode;
-			Debug.Assert(!(rsrcSetNode is null));
+			Debug2.Assert(!(rsrcSetNode is null));
 
 			var module = rsrcSetNode.GetModule();
-			Debug.Assert(!(module is null));
+			Debug2.Assert(!(module is null));
 			if (module is null)
 				throw new InvalidOperationException();
 
@@ -1340,10 +1340,10 @@ namespace dnSpy.AsmEditor.Resources {
 			var rsrcSetNode = nodes[0] as ResourceElementSetNode;
 			if (rsrcSetNode is null)
 				rsrcSetNode = nodes[0].TreeNode.Parent!.Data as ResourceElementSetNode;
-			Debug.Assert(!(rsrcSetNode is null));
+			Debug2.Assert(!(rsrcSetNode is null));
 
 			var module = rsrcSetNode.GetModule();
-			Debug.Assert(!(module is null));
+			Debug2.Assert(!(module is null));
 			if (module is null)
 				throw new InvalidOperationException();
 
@@ -1374,7 +1374,7 @@ namespace dnSpy.AsmEditor.Resources {
 				MsgBox.Instance.Show(error);
 				return;
 			}
-			Debug.Assert(!(opts is null));
+			Debug2.Assert(!(opts is null));
 
 			var treeView = appService.DocumentTreeView.TreeView;
 			var treeNodeGroup = appService.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.ResourceElementTreeNodeGroup);
@@ -1458,10 +1458,10 @@ namespace dnSpy.AsmEditor.Resources {
 			var rsrcSetNode = nodes[0] as ResourceElementSetNode;
 			if (rsrcSetNode is null)
 				rsrcSetNode = nodes[0].TreeNode.Parent!.Data as ResourceElementSetNode;
-			Debug.Assert(!(rsrcSetNode is null));
+			Debug2.Assert(!(rsrcSetNode is null));
 
 			var module = rsrcSetNode.GetModule();
-			Debug.Assert(!(module is null));
+			Debug2.Assert(!(module is null));
 			if (module is null)
 				throw new InvalidOperationException();
 
@@ -1648,10 +1648,10 @@ namespace dnSpy.AsmEditor.Resources {
 			var rsrcSetNode = nodes[0] as ResourceElementSetNode;
 			if (rsrcSetNode is null)
 				rsrcSetNode = nodes[0].TreeNode.Parent!.Data as ResourceElementSetNode;
-			Debug.Assert(!(rsrcSetNode is null));
+			Debug2.Assert(!(rsrcSetNode is null));
 
 			var module = rsrcSetNode.GetModule();
-			Debug.Assert(!(module is null));
+			Debug2.Assert(!(module is null));
 			if (module is null)
 				throw new InvalidOperationException();
 
@@ -1702,7 +1702,7 @@ namespace dnSpy.AsmEditor.Resources {
 			origOptions = rsrcElNode.ResourceElement;
 
 			module = rsrcSetNode.GetModule()!;
-			Debug.Assert(!(module is null));
+			Debug2.Assert(!(module is null));
 			resource = rsrcSetNode.Resource;
 			resourceIndex = module.Resources.IndexOf(resource);
 			Debug.Assert(resourceIndex >= 0);
@@ -1833,7 +1833,7 @@ namespace dnSpy.AsmEditor.Resources {
 
 			var rsrcElNode = (ResourceElementNode)nodes[0];
 			var module = nodes[0].GetParentModule();
-			Debug.Assert(!(module is null));
+			Debug2.Assert(!(module is null));
 			if (module is null)
 				throw new InvalidOperationException();
 
@@ -1855,7 +1855,7 @@ namespace dnSpy.AsmEditor.Resources {
 			catch (Exception ex) {
 				error = string.Format(dnSpy_AsmEditor_Resources.Error_InvalidResourceData, ex.Message);
 			}
-			if (!string.IsNullOrEmpty(error)) {
+			if (!string2.IsNullOrEmpty(error)) {
 				MsgBox.Instance.Show(error);
 				return;
 			}
@@ -1944,7 +1944,7 @@ namespace dnSpy.AsmEditor.Resources {
 			catch (Exception ex) {
 				error = string.Format(dnSpy_AsmEditor_Resources.Error_NewResourceDataMustBeImage, ex.Message);
 			}
-			if (!string.IsNullOrEmpty(error)) {
+			if (!string2.IsNullOrEmpty(error)) {
 				MsgBox.Instance.Show(error);
 				return;
 			}
@@ -2032,7 +2032,7 @@ namespace dnSpy.AsmEditor.Resources {
 			catch (Exception ex) {
 				error = string.Format(dnSpy_AsmEditor_Resources.Error_NewResourceDataMustBeImage, ex.Message);
 			}
-			if (!string.IsNullOrEmpty(error)) {
+			if (!string2.IsNullOrEmpty(error)) {
 				MsgBox.Instance.Show(error);
 				return;
 			}
@@ -2128,7 +2128,7 @@ namespace dnSpy.AsmEditor.Resources {
 			catch (Exception ex) {
 				error = string.Format(dnSpy_AsmEditor_Resources.Error_CouldNotSerializeImages, ex.Message);
 			}
-			if (!string.IsNullOrEmpty(error)) {
+			if (!string2.IsNullOrEmpty(error)) {
 				MsgBox.Instance.Show(error);
 				return;
 			}

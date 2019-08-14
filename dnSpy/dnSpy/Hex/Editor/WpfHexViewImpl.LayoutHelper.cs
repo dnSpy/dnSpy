@@ -162,7 +162,7 @@ namespace dnSpy.Hex.Editor {
 			List<LineInfo> CreateLineInfos(HexBufferPoint bufferPosition, VSTE.ViewRelativePosition relativeTo, double verticalDistance, double viewportHeightOverride) {
 				var lineInfos = new List<LineInfo>();
 				var startLine = GetLine(bufferPosition);
-				Debug.Assert(!(startLine is null));
+				Debug2.Assert(!(startLine is null));
 
 				double newViewportBottom = NewViewportTop + viewportHeightOverride;
 				double lineStartY;

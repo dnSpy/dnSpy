@@ -101,7 +101,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (importer.NewResources!.Length != 0) {
 				var module = modNode.Document.ModuleDef!;
 				var rsrcListNode = GetResourceListTreeNode(modNode);
-				Debug.Assert(!(rsrcListNode is null));
+				Debug2.Assert(!(rsrcListNode is null));
 				if (!(rsrcListNode is null)) {
 					var newNodes = new NodeAndResource[importer.NewResources.Length];
 					var treeNodeGroup = documentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.ResourceTreeNodeGroup);

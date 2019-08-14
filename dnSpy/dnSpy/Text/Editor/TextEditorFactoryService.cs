@@ -40,7 +40,7 @@ namespace dnSpy.Text.Editor {
 	[Export(typeof(ITextEditorFactoryService))]
 	[Export(typeof(IDsTextEditorFactoryService))]
 	sealed class TextEditorFactoryService : IDsTextEditorFactoryService {
-		public event EventHandler<TextViewCreatedEventArgs> TextViewCreated;
+		public event EventHandler<TextViewCreatedEventArgs>? TextViewCreated;
 		readonly ITextBufferFactoryService textBufferFactoryService;
 		readonly IEditorOptionsFactoryService editorOptionsFactoryService;
 		readonly ICommandService commandService;

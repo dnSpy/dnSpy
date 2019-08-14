@@ -148,7 +148,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				var refsResult = dbgModuleReferenceProvider.GetModuleReferences(evalInfo.Runtime, evalInfo.Frame, info.typeReferences);
 				if (!(refsResult.ErrorMessage is null))
 					return new[] { CreateInternalErrorNode(evalInfo, refsResult.ErrorMessage) };
-				Debug.Assert(!(refsResult.ModuleReferences is null));
+				Debug2.Assert(!(refsResult.ModuleReferences is null));
 
 				// Since we attach this to the module, the module doesn't have to be part of Key
 				var state = StateWithKey<GetNodesState>.GetOrCreate(module, this);

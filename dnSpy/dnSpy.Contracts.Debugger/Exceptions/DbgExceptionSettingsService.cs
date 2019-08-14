@@ -49,7 +49,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// <summary>
 		/// Raised when an exception is modified
 		/// </summary>
-		public abstract event EventHandler<DbgExceptionSettingsModifiedEventArgs> ExceptionSettingsModified;
+		public abstract event EventHandler<DbgExceptionSettingsModifiedEventArgs>? ExceptionSettingsModified;
 
 		/// <summary>
 		/// Removes exception settings
@@ -77,7 +77,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// <summary>
 		/// Raised when <see cref="Exceptions"/> is changed
 		/// </summary>
-		public abstract event EventHandler<DbgCollectionChangedEventArgs<DbgExceptionSettingsInfo>> ExceptionsChanged;
+		public abstract event EventHandler<DbgCollectionChangedEventArgs<DbgExceptionSettingsInfo>>? ExceptionsChanged;
 
 		/// <summary>
 		/// Returns the exception definition if it exists

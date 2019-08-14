@@ -43,7 +43,7 @@ namespace dnSpy.Documents.TreeView {
 		public override void Initialize() => TreeNode.LazyLoading = true;
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
-			Debug.Assert(!(Document.ModuleDef is null));
+			Debug2.Assert(!(Document.ModuleDef is null));
 			foreach (var document in Document.Children)
 				yield return Context.DocumentTreeView.CreateNode(this, document);
 
@@ -63,7 +63,7 @@ namespace dnSpy.Documents.TreeView {
 		}
 
 		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) {
-			Debug.Assert(!(Document.ModuleDef is null));
+			Debug2.Assert(!(Document.ModuleDef is null));
 			if ((options & DocumentNodeWriteOptions.ToolTip) == 0)
 				new NodeFormatter().Write(output, decompiler, Document.ModuleDef, false);
 			else {

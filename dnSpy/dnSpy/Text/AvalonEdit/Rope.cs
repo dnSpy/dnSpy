@@ -276,7 +276,7 @@ namespace dnSpy.Text.AvalonEdit {
 			}
 
 			// this method guarantees that it finds a leaf node
-			Debug.Assert(!(stack.Peek().node.contents is null));
+			Debug2.Assert(!(stack.Peek().node.contents is null));
 			return stack;
 		}
 		#endregion
@@ -507,7 +507,7 @@ namespace dnSpy.Text.AvalonEdit {
 						node = node.GetContentNode();
 						continue;
 					}
-					Debug.Assert(!(node.right is null));
+					Debug2.Assert(!(node.right is null));
 					stack.Push(node.right);
 					node = node.left;
 				}

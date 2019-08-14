@@ -36,7 +36,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// <summary>
 		/// Raised when the collection has changed
 		/// </summary>
-		public event NotifyCollectionChangedEventHandler CollectionChanged;
+		public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
 		/// <summary>
 		/// Gets the item at the specified index

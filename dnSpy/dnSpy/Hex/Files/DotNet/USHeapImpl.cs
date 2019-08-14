@@ -48,7 +48,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			var index = GetIndex(position);
 			if (index < 0)
 				return null;
-			Debug.Assert(!(usStringInfos is null));
+			Debug2.Assert(!(usStringInfos is null));
 			return usStringInfos[index];
 		}
 
@@ -90,7 +90,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			if (array is null) {
 				Initialize();
 				array = usStringInfos;
-				Debug.Assert(!(array is null));
+				Debug2.Assert(!(array is null));
 			}
 			int lo = 0, hi = array.Length - 1;
 			while (lo <= hi) {

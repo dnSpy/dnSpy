@@ -200,6 +200,8 @@ namespace AppHostInfoGenerator {
 								continue;
 							}
 							Debug.Assert(!(ridData is null));
+							if (ridData is null)
+								throw new InvalidOperationException();
 							using (var ridZip = new ZipArchive(new MemoryStream(ridData), ZipArchiveMode.Read, leaveOpen: false)) {
 								var appHostEntries = GetAppHostEntries(ridZip).ToArray();
 								if (appHostEntries.Length == 0)

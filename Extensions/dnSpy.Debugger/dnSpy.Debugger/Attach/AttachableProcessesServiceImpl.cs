@@ -161,7 +161,7 @@ namespace dnSpy.Debugger.Attach {
 			bool IsValidProcessId(int pid) => processIds.Length == 0 || Array.IndexOf(processIds, pid) >= 0;
 
 			void EnumeratorCompleted(ProviderInfo info, bool canceled, Exception? ex) {
-				Debug.Assert(!(taskCompletionSource is null));
+				Debug2.Assert(!(taskCompletionSource is null));
 				AttachableProcess[]? attachableProcesses;
 				lock (lockObj) {
 					wasCanceled |= canceled;

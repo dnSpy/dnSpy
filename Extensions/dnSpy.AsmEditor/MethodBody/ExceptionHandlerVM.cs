@@ -143,7 +143,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		static InstructionVM? RemoveNullInstance(InstructionVM? vm) {
-			Debug.Assert(!(vm is null));
+			Debug2.Assert(!(vm is null));
 			if (vm is null || vm == InstructionVM.Null)
 				return null;
 			return vm;

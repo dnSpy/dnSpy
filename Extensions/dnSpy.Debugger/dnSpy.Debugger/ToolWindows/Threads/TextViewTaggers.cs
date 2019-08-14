@@ -46,7 +46,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 	}
 
 	sealed class ThreadTagger : ITagger<IClassificationTag> {
-		public event EventHandler<SnapshotSpanEventArgs> TagsChanged { add { } remove { } }
+		public event EventHandler<SnapshotSpanEventArgs>? TagsChanged { add { } remove { } }
 		readonly IClassificationTag nameClassificationTag;
 		readonly DebuggerSettings debuggerSettings;
 

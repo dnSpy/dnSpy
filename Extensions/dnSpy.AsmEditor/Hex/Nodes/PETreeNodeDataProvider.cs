@@ -42,20 +42,20 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		public IEnumerable<TreeNodeData> Create(TreeNodeDataProviderContext context) {
 			var fileNode = context.Owner.Data as DsDocumentNode;
-			Debug.Assert(!(fileNode is null));
+			Debug2.Assert(!(fileNode is null));
 			if (fileNode is null)
 				yield break;
 
 			bool hasPENode = HasPENode(fileNode);
 			var peImage = fileNode.Document.PEImage;
-			Debug.Assert(!hasPENode || !(peImage is null));
+			Debug2.Assert(!hasPENode || !(peImage is null));
 			if (hasPENode && !(peImage is null)) {
 				Func<HexBufferFile> createBufferFile = () => {
 					var buffer = hexBufferService.Value.GetOrCreate(peImage);
 					var service = hexBufferFileServiceFactory.Value.Create(buffer);
 					var pePosition = HexPosition.Zero;
 					var bufferFile = service.GetFile(pePosition, checkNestedFiles: false);
-					Debug.Assert(!(bufferFile is null), "File hasn't been created");
+					Debug2.Assert(!(bufferFile is null), "File hasn't been created");
 					return bufferFile;
 				};
 				yield return new PENode(createBufferFile, peStructureProviderFactory.Value);

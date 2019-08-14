@@ -59,7 +59,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		protected string MainGeneratedCodeName => "main.g" + languageCompiler.FileExtension;
 
 		public ModuleImporter? Result { get; set; }
-		public event EventHandler CodeCompiled;
+		public event EventHandler? CodeCompiled;
 		public bool HasDecompiled { get; private set; }
 		public ICommand CompileCommand => new RelayCommand(a => CompileCode(), a => CanCompile);
 		public ICommand AddAssemblyReferenceCommand => new RelayCommand(a => AddAssemblyReference(), a => CanAddAssemblyReference);
@@ -102,7 +102,7 @@ namespace dnSpy.AsmEditor.Compiler {
 					return;
 				codeDocument.TextView.VisualElement.SizeChanged -= VisualElement_SizeChanged;
 
-				Debug.Assert(!(initialPosition.Snapshot is null));
+				Debug2.Assert(!(initialPosition.Snapshot is null));
 				if (initialPosition.Snapshot is null)
 					return;
 				codeDocument.TextView.Caret.MoveTo(initialPosition.TranslateTo(codeDocument.TextView.TextSnapshot, PointTrackingMode.Negative));
@@ -274,7 +274,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		protected void StartDecompile() => StartDecompileAsync().ContinueWith(t => {
 			var ex = t.Exception;
-			Debug.Assert(ex is null);
+			Debug2.Assert(ex is null);
 		}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
 
 		protected readonly struct SimpleDocument {
@@ -324,7 +324,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				var publicKeyData = (tempAssembly.PublicKeyOrToken as PublicKey)?.Data;
 				languageCompiler.InitializeProject(new CompilerProjectInfo(tempAssembly.Name, publicKeyData, assemblyReferences, assemblyReferenceResolver, PlatformHelper.GetPlatform(sourceModule)));
 				foreach (var ar in assemblyReferences) {
-					if (!string.IsNullOrEmpty(ar.Filename))
+					if (!string2.IsNullOrEmpty(ar.Filename))
 						currentReferences.Add(ar.Filename);
 				}
 				codeDocs = languageCompiler.AddDocuments(docs.ToArray());
@@ -393,7 +393,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			StartCompileAsync().ContinueWith(t => {
 				DnSpyEventSource.Log.CompileStop();
 				var ex = t.Exception;
-				Debug.Assert(ex is null);
+				Debug2.Assert(ex is null);
 			}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
 		}
 
@@ -494,7 +494,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			new CompilerDiagnostic(CompilerDiagnosticSeverity.Error, $"Exception: {ex.GetType()}: {ex.Message}", "DSBUG1", null, null, null);
 
 		Task<CompilationResult> CompileAsync() {
-			Debug.Assert(compileCodeState is null);
+			Debug2.Assert(compileCodeState is null);
 			if (!(compileCodeState is null))
 				throw new InvalidOperationException();
 			var state = new CompileCodeState();
@@ -589,7 +589,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				return;
 
 			var doc = Documents.FirstOrDefault(a => a.Name == diag.FullPath);
-			Debug.Assert(!(doc is null));
+			Debug2.Assert(!(doc is null));
 			if (doc is null)
 				return;
 			SelectedDocument = doc;

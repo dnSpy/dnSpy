@@ -25,8 +25,8 @@ using dnSpy.Contracts.Debugger.Breakpoints.Code;
 
 namespace dnSpy.Debugger.Breakpoints.Code {
 	abstract class BoundCodeBreakpointsService {
-		public abstract event EventHandler<DbgCollectionChangedEventArgs<DbgCodeBreakpoint>> BreakpointsChanged;
-		public abstract event EventHandler<DbgBreakpointsModifiedEventArgs> BreakpointsModified;
+		public abstract event EventHandler<DbgCollectionChangedEventArgs<DbgCodeBreakpoint>>? BreakpointsChanged;
+		public abstract event EventHandler<DbgBreakpointsModifiedEventArgs>? BreakpointsModified;
 		public abstract DbgCodeBreakpoint[] Breakpoints { get; }
 		public abstract DbgBoundCodeBreakpoint[] AddBoundBreakpoints_DbgThread(IList<DbgBoundCodeBreakpoint> boundBreakpoints);
 		public abstract void RemoveBoundBreakpoints_DbgThread(IList<DbgBoundCodeBreakpoint> boundBreakpoints);
@@ -35,8 +35,8 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 
 	[Export(typeof(BoundCodeBreakpointsService))]
 	sealed class BoundCodeBreakpointsServiceImpl : BoundCodeBreakpointsService {
-		public override event EventHandler<DbgCollectionChangedEventArgs<DbgCodeBreakpoint>> BreakpointsChanged;
-		public override event EventHandler<DbgBreakpointsModifiedEventArgs> BreakpointsModified;
+		public override event EventHandler<DbgCollectionChangedEventArgs<DbgCodeBreakpoint>>? BreakpointsChanged;
+		public override event EventHandler<DbgBreakpointsModifiedEventArgs>? BreakpointsModified;
 		public override DbgCodeBreakpoint[] Breakpoints => dbgCodeBreakpointsService.Breakpoints;
 
 		readonly DbgManager dbgManager;

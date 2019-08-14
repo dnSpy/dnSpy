@@ -106,7 +106,7 @@ namespace dnSpy.Text.Tagging.Xml {
 		}
 
 		public IEnumerable<XamlSpan> GetTags() {
-			Debug.Assert(!(snapshot is null));
+			Debug2.Assert(!(snapshot is null));
 			// This is the first { delimiter
 			yield return new XamlSpan(new SnapshotSpan(snapshot, spanStart, 1), XamlKind.Delimiter);
 
@@ -201,7 +201,7 @@ namespace dnSpy.Text.Tagging.Xml {
 		}
 
 		void Undo(in CharSpan charSpan) {
-			Debug.Assert(nextCharSpan is null);
+			Debug2.Assert(nextCharSpan is null);
 			if (!(nextCharSpan is null))
 				throw new InvalidOperationException();
 			nextCharSpan = charSpan;
@@ -273,7 +273,7 @@ namespace dnSpy.Text.Tagging.Xml {
 		}
 
 		int NextChar() {
-			Debug.Assert(!(snapshot is null));
+			Debug2.Assert(!(snapshot is null));
 			if (bufferPos >= bufferLen) {
 				int len = spanEnd - snapshotPos;
 				if (len == 0)
@@ -289,7 +289,7 @@ namespace dnSpy.Text.Tagging.Xml {
 		}
 
 		int PeekChar() {
-			Debug.Assert(!(snapshot is null));
+			Debug2.Assert(!(snapshot is null));
 			if (bufferPos >= bufferLen) {
 				int len = spanEnd - snapshotPos;
 				if (len == 0)

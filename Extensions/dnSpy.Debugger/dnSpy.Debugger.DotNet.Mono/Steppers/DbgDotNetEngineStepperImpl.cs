@@ -118,9 +118,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 
 		async Task<DbgThread> StepCoreAsync(ThreadMirror thread, DbgCodeRange[] ranges, bool isStepInto) {
 			engine.VerifyMonoDebugThread();
-			Debug.Assert(!(session is null));
+			Debug2.Assert(!(session is null));
 			var method = GetFrame(thread)?.Method;
-			Debug.Assert(!(method is null));
+			Debug2.Assert(!(method is null));
 			if (method is null)
 				throw new StepErrorException("Internal error");
 
@@ -136,7 +136,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 
 		Task<ThreadMirror> StepCore2Async(ThreadMirror thread, DbgCodeRange[] ranges, bool isStepInto) {
 			engine.VerifyMonoDebugThread();
-			Debug.Assert(!(session is null));
+			Debug2.Assert(!(session is null));
 			var tcs = new TaskCompletionSource<ThreadMirror>();
 			var stepReq = engine.CreateStepRequest(thread, e => {
 				if (engine.IsClosed || e.Canceled)
@@ -158,7 +158,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 
 		public override Task<DbgThread> StepOutAsync(DbgDotNetEngineStepperFrameInfo frame) {
 			engine.VerifyMonoDebugThread();
-			Debug.Assert(!(session is null));
+			Debug2.Assert(!(session is null));
 			var frameImpl = (DbgDotNetEngineStepperFrameInfoImpl)frame;
 			var tcs = new TaskCompletionSource<DbgThread>();
 			var stepReq = engine.CreateStepRequest(frameImpl.MonoThread, e => {

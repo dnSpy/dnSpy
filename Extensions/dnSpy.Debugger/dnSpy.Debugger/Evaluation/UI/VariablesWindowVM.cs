@@ -61,7 +61,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 	interface IVariablesWindowVM {
 		bool IsOpen { get; set; }
 		bool IsVisible { get; set; }
-		event EventHandler TreeViewChanged;
+		event EventHandler? TreeViewChanged;
 		ITreeView TreeView { get; }
 		IValueNodesVM VM { get; }
 	}
@@ -77,7 +77,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			set => lazyToolWindowVMHelper.IsVisible = value;
 		}
 
-		public event EventHandler TreeViewChanged;
+		public event EventHandler? TreeViewChanged;
 		public ITreeView TreeView => valueNodesVM!.TreeView;
 
 		IValueNodesVM IVariablesWindowVM.VM => valueNodesVM!;

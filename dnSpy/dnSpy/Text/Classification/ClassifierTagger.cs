@@ -27,7 +27,7 @@ namespace dnSpy.Text.Classification {
 	sealed class ClassifierTagger : ITagger<ClassificationTag>, IDisposable {
 		IClassifier[] classifiers;
 
-		public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
+		public event EventHandler<SnapshotSpanEventArgs>? TagsChanged;
 
 		public ClassifierTagger(IClassifier[] classifiers) {
 			this.classifiers = classifiers ?? throw new ArgumentNullException(nameof(classifiers));

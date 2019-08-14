@@ -38,7 +38,7 @@ namespace dndbg.Engine {
 				return CorModuleDef;
 
 			Assembly.InitializeAssemblyAndModules();
-			Debug.Assert(!(CorModuleDef is null));
+			Debug2.Assert(!(CorModuleDef is null));
 			return CorModuleDef;
 		}
 

@@ -157,7 +157,7 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 			}
 
 			DisposeEditValue();
-			Debug.Assert(editValue is null);
+			Debug2.Assert(editValue is null);
 			var info = editableValue.GetText();
 			editValue = EditValueProvider?.Create(info.Text, info.Flags);
 			if (editValue is null) {

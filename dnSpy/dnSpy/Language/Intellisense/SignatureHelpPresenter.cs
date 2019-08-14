@@ -43,10 +43,10 @@ namespace dnSpy.Language.Intellisense {
 		PopupStyles IPopupIntellisensePresenter.PopupStyles => PopupStyles.None;
 		string IPopupIntellisensePresenter.SpaceReservationManagerName => IntellisenseSpaceReservationManagerNames.SignatureHelpSpaceReservationManagerName;
 		IIntellisenseSession IIntellisensePresenter.Session => session;
-		event EventHandler IPopupIntellisensePresenter.SurfaceElementChanged { add { } remove { } }
-		event EventHandler<ValueChangedEventArgs<PopupStyles>> IPopupIntellisensePresenter.PopupStylesChanged { add { } remove { } }
-		public event EventHandler PresentationSpanChanged;
-		public event PropertyChangedEventHandler PropertyChanged;
+		event EventHandler? IPopupIntellisensePresenter.SurfaceElementChanged { add { } remove { } }
+		event EventHandler<ValueChangedEventArgs<PopupStyles>>? IPopupIntellisensePresenter.PopupStylesChanged { add { } remove { } }
+		public event EventHandler? PresentationSpanChanged;
+		public event PropertyChangedEventHandler? PropertyChanged;
 
 		public ICommand SelectPreviousSignatureCommand => new RelayCommand(a => IncrementSelectedSignature(-1));
 		public ICommand SelectNextSignatureCommand => new RelayCommand(a => IncrementSelectedSignature(1));
@@ -102,7 +102,7 @@ namespace dnSpy.Language.Intellisense {
 		[Export]
 		[Name(DefaultExtendedContentTypeName)]
 		[BaseDefinition(ContentTypes.SignatureHelp)]
-		static readonly ContentTypeDefinition defaultContentTypeDefinition;
+		static readonly ContentTypeDefinition? defaultContentTypeDefinition;
 #pragma warning restore CS0169
 
 		public SignatureHelpPresenter(ISignatureHelpSession session, ITextBufferFactoryService textBufferFactoryService, IContentTypeRegistryService contentTypeRegistryService, IClassifierAggregatorService classifierAggregatorService, IClassificationFormatMap classificationFormatMap) {
@@ -118,7 +118,7 @@ namespace dnSpy.Language.Intellisense {
 			this.classifierAggregatorService = classifierAggregatorService ?? throw new ArgumentNullException(nameof(classifierAggregatorService));
 			this.classificationFormatMap = classificationFormatMap ?? throw new ArgumentNullException(nameof(classificationFormatMap));
 			defaultExtendedContentType = contentTypeRegistryService.GetContentType(DefaultExtendedContentTypeName);
-			Debug.Assert(!(defaultExtendedContentType is null));
+			Debug2.Assert(!(defaultExtendedContentType is null));
 			classificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
 			session.Dismissed += Session_Dismissed;
 			session.SelectedSignatureChanged += Session_SelectedSignatureChanged;
@@ -236,9 +236,9 @@ namespace dnSpy.Language.Intellisense {
 
 			var signature = currentSignature;
 			var doc = signature?.Documentation;
-			if (string.IsNullOrEmpty(doc))
+			if (string2.IsNullOrEmpty(doc))
 				return null;
-			Debug.Assert(!(signature is null));
+			Debug2.Assert(!(signature is null));
 
 			return CreateUIObject(doc, GetExtendedClassifierContentType(), new SignatureDocumentationSignatureHelpClassifierContext(session, signature));
 		}
@@ -263,7 +263,7 @@ namespace dnSpy.Language.Intellisense {
 			signatureTextBuffer.Replace(new Span(0, signatureTextBuffer.CurrentSnapshot.Length), text);
 			var oldContentType = signatureTextBuffer.ContentType;
 			var atSpan = signature.ApplicableToSpan;
-			Debug.Assert(!(atSpan is null));
+			Debug2.Assert(!(atSpan is null));
 			if (!(atSpan is null)) {
 				var span = atSpan.GetStartPoint(atSpan.TextBuffer.CurrentSnapshot);
 				signatureTextBuffer.ChangeContentType(GetSigHelpContentType(span.Snapshot.ContentType), null);
@@ -356,7 +356,7 @@ namespace dnSpy.Language.Intellisense {
 			if (parameter is null)
 				return null;
 			var name = parameter.Name;
-			if (string.IsNullOrEmpty(name))
+			if (string2.IsNullOrEmpty(name))
 				return null;
 
 			int nameOffset = 0;
@@ -372,7 +372,7 @@ namespace dnSpy.Language.Intellisense {
 			if (parameter is null)
 				return null;
 			var text = parameter.Documentation;
-			if (string.IsNullOrEmpty(text))
+			if (string2.IsNullOrEmpty(text))
 				return null;
 
 			return CreateUIObject(text, GetExtendedClassifierContentType(), new ParameterDocumentationSignatureHelpClassifierContext(session, parameter));

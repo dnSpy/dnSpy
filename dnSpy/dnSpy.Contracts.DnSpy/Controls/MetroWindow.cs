@@ -43,7 +43,7 @@ namespace dnSpy.Contracts.Controls {
 		/// <summary>
 		/// Raised when a new <see cref="MetroWindow"/> instance has been created
 		/// </summary>
-		internal static EventHandler<MetroWindowCreatedEventArgs> MetroWindowCreated;
+		internal static event EventHandler<MetroWindowCreatedEventArgs>? MetroWindowCreated;
 
 		/// <summary>
 		/// Constructor
@@ -61,7 +61,7 @@ namespace dnSpy.Contracts.Controls {
 			base.OnSourceInitialized(e);
 
 			var hwndSource = PresentationSource.FromVisual(this) as HwndSource;
-			Debug.Assert(!(hwndSource is null));
+			Debug2.Assert(!(hwndSource is null));
 			if (!(hwndSource is null)) {
 				hwndSource.AddHook(WndProc);
 				wpfDpi = new Size(96.0 * hwndSource.CompositionTarget.TransformToDevice.M11, 96.0 * hwndSource.CompositionTarget.TransformToDevice.M22);
@@ -157,7 +157,7 @@ namespace dnSpy.Contracts.Controls {
 		/// <summary>
 		/// Raised when the DPI (<see cref="WindowDpi"/>) has changed
 		/// </summary>
-		public event EventHandler WindowDpiChanged;
+		public event EventHandler? WindowDpiChanged;
 
 		/// <summary>
 		/// Show system menu command
@@ -167,7 +167,7 @@ namespace dnSpy.Contracts.Controls {
 		/// <summary>
 		/// Raised when full screen state has changed
 		/// </summary>
-		public event EventHandler IsFullScreenChanged;
+		public event EventHandler? IsFullScreenChanged;
 
 		/// <summary>
 		/// Is full screen property
@@ -218,7 +218,7 @@ namespace dnSpy.Contracts.Controls {
 
 		static void OnMaximizedElementChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
 			var border = d as Border;
-			Debug.Assert(!(border is null));
+			Debug2.Assert(!(border is null));
 			if (border is null)
 				return;
 			var win = Window.GetWindow(border) as MetroWindow;
@@ -252,7 +252,7 @@ namespace dnSpy.Contracts.Controls {
 			void MetroWindow_StateChanged(object? sender, EventArgs e) => UpdatePadding((MetroWindow)sender!);
 
 			void UpdatePadding(MetroWindow window) {
-				Debug.Assert(!(window is null));
+				Debug2.Assert(!(window is null));
 
 				var state = window.IsFullScreen ? WindowState.Maximized : window.WindowState;
 				switch (state) {

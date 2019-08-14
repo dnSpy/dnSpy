@@ -58,7 +58,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 
 			var bpType = location.Type;
 			var serializer = TryGetSerializer(bpType);
-			Debug.Assert(!(serializer is null));
+			Debug2.Assert(!(serializer is null));
 			if (serializer is null)
 				return;
 
@@ -71,11 +71,11 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 				return null;
 
 			var typeFullName = section.Attribute<string>("__BPT");
-			Debug.Assert(!(typeFullName is null));
+			Debug2.Assert(!(typeFullName is null));
 			if (typeFullName is null)
 				return null;
 			var serializer = TryGetSerializer(typeFullName);
-			Debug.Assert(!(serializer is null));
+			Debug2.Assert(!(serializer is null));
 			if (serializer is null)
 				return null;
 

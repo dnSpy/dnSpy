@@ -382,7 +382,7 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 		protected DbgDotNetCompilationResult CreateCompilationResult(string expression, CompileResult compileResult, ResultProperties resultProperties, string? errorMessage, DbgDotNetText name) {
 			if (!(errorMessage is null))
 				return new DbgDotNetCompilationResult(errorMessage);
-			Debug.Assert(!(compileResult is null));
+			Debug2.Assert(!(compileResult is null));
 			if (compileResult is null)
 				return new DbgDotNetCompilationResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 
@@ -413,7 +413,7 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 		}
 
 		protected DbgDotNetCompilationResult CreateCompilationResult(EvalContextState state, byte[] assembly, string typeName, DSEELocalAndMethod[] infos, string? errorMessage) {
-			Debug.Assert(errorMessage is null || (assembly is null || assembly.Length == 0));
+			Debug2.Assert(errorMessage is null || (assembly is null || assembly.Length == 0));
 
 			if (!(errorMessage is null))
 				return new DbgDotNetCompilationResult(errorMessage);
@@ -494,7 +494,7 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 					customTypeInfo = null;
 
 				var resultFlags = DbgDotNetCompiledExpressionResultFlags.None;
-				Debug.Assert(!(state.NotCompilerGenerated is null));
+				Debug2.Assert(!(state.NotCompilerGenerated is null));
 				if (info.Kind == LocalAndMethodKind.Local && (uint)info.Index < (uint)state.NotCompilerGenerated.Length && !state.NotCompilerGenerated[info.Index])
 					resultFlags |= DbgDotNetCompiledExpressionResultFlags.CompilerGenerated;
 				compiledExpressions[w++] = DbgDotNetCompiledExpressionResult.Create(typeName, info.MethodName, info.LocalName, displayName, flags, imageName, customTypeInfo, null, resultFlags, info.Index);

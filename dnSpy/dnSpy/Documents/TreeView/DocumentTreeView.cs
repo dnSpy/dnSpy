@@ -56,11 +56,11 @@ namespace dnSpy.Documents.TreeView {
 		IEnumerable<DsDocumentNode> TopNodes => TreeView.Root.Children.Select(a => (DsDocumentNode)a.Data);
 		public IDotNetImageService DotNetImageService { get; }
 		public IWpfCommands WpfCommands { get; }
-		public event EventHandler<NotifyDocumentTreeViewCollectionChangedEventArgs> CollectionChanged;
+		public event EventHandler<NotifyDocumentTreeViewCollectionChangedEventArgs>? CollectionChanged;
 
 		void CallCollectionChanged(NotifyDocumentTreeViewCollectionChangedEventArgs eventArgs) =>
 			CollectionChanged?.Invoke(this, eventArgs);
-		public event EventHandler<DocumentTreeNodeActivatedEventArgs> NodeActivated;
+		public event EventHandler<DocumentTreeNodeActivatedEventArgs>? NodeActivated;
 
 		public bool RaiseNodeActivated(DocumentTreeNodeData node) {
 			if (node is null)
@@ -72,7 +72,7 @@ namespace dnSpy.Documents.TreeView {
 			return e.Handled;
 		}
 
-		public event EventHandler<TreeViewSelectionChangedEventArgs> SelectionChanged;
+		public event EventHandler<TreeViewSelectionChangedEventArgs>? SelectionChanged;
 		bool disable_SelectionChanged = false;
 
 		void TreeView_SelectionChanged(object? sender, TreeViewSelectionChangedEventArgs e) {
@@ -245,7 +245,7 @@ namespace dnSpy.Documents.TreeView {
 			}
 		}
 
-		public event EventHandler<EventArgs> NodesTextChanged;
+		public event EventHandler<EventArgs>? NodesTextChanged;
 		void NotifyNodesTextRefreshed() => NodesTextChanged?.Invoke(this, EventArgs.Empty);
 		void DecompilerService_DecompilerChanged(object? sender, EventArgs e) => UpdateDecompiler(((IDecompilerService)sender!).Decompiler);
 
@@ -290,7 +290,7 @@ namespace dnSpy.Documents.TreeView {
 					index = addDocumentInfo.Index;
 					if (newNode.TreeNode is null)
 						TreeView.Create(newNode);
-					Debug.Assert(!(newNode.TreeNode is null));
+					Debug2.Assert(!(newNode.TreeNode is null));
 				}
 				else {
 					newNode = CreateNode(null, e.Documents[0]);
@@ -315,7 +315,7 @@ namespace dnSpy.Documents.TreeView {
 				var list = new List<(DsDocumentNode docNode, int index)>(e.Documents.Select(a => {
 					bool b = dict2.TryGetValue(a, out var node);
 					Debug.Assert(b);
-					Debug.Assert(!(node is null));
+					Debug2.Assert(!(node is null));
 					int j = -1;
 					b = b && dict.TryGetValue(node, out j);
 					Debug.Assert(b);
@@ -371,7 +371,7 @@ namespace dnSpy.Documents.TreeView {
 
 		void ITreeViewListener.OnEvent(ITreeView treeView, TreeViewListenerEventArgs e) {
 			if (e.Event == TreeViewListenerEvent.NodeCreated) {
-				Debug.Assert(!(context is null));
+				Debug2.Assert(!(context is null));
 				var node = (ITreeNode)e.Argument;
 				if (node.Data is DocumentTreeNodeData d)
 					d.Context = context;
@@ -682,7 +682,7 @@ namespace dnSpy.Documents.TreeView {
 			if (documentNode is null)
 				throw new ArgumentNullException(nameof(documentNode));
 			Debug.Assert(!TreeView.Root.DataChildren.Contains(documentNode));
-			Debug.Assert(documentNode.TreeNode.Parent is null);
+			Debug2.Assert(documentNode.TreeNode.Parent is null);
 			DocumentService.ForceAdd(documentNode.Document, false, new AddDocumentInfo(documentNode, index));
 			Debug.Assert(TreeView.Root.DataChildren.Contains(documentNode));
 		}
@@ -734,7 +734,7 @@ namespace dnSpy.Documents.TreeView {
 		}
 
 		void OnDropFiles(int index, string[] filenames) {
-			Debug.Assert(!(mruList is null));
+			Debug2.Assert(!(mruList is null));
 			if (mruList is null)
 				return;
 			if (!context.CanDragAndDrop)

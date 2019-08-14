@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// Raised when the module's memory has been updated (eg. decrypted). The debugger will
 		/// try to reset all breakpoints.
 		/// </summary>
-		public abstract event EventHandler<ModulesRefreshedEventArgs> ModulesRefreshed;
+		public abstract event EventHandler<ModulesRefreshedEventArgs>? ModulesRefreshed;
 	}
 
 	/// <summary>

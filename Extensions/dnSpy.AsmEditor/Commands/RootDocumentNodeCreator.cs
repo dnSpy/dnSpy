@@ -47,7 +47,7 @@ namespace dnSpy.AsmEditor.Commands {
 		}
 
 		public void Add() {
-			Debug.Assert(documentNode.TreeNode.Parent is null);
+			Debug2.Assert(documentNode.TreeNode.Parent is null);
 			if (!(documentNode.TreeNode.Parent is null))
 				throw new InvalidOperationException();
 			Debug.Assert(!restoreIndex || origIndex >= 0);
@@ -65,7 +65,7 @@ namespace dnSpy.AsmEditor.Commands {
 		}
 
 		public void Remove() {
-			Debug.Assert(!(documentNode.TreeNode.Parent is null));
+			Debug2.Assert(!(documentNode.TreeNode.Parent is null));
 			if (documentNode.TreeNode.Parent is null)
 				throw new InvalidOperationException();
 

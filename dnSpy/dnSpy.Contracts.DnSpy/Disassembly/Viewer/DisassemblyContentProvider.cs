@@ -38,7 +38,7 @@ namespace dnSpy.Contracts.Disassembly.Viewer {
 		/// <summary>
 		/// Raised when the content is changed
 		/// </summary>
-		public abstract event EventHandler OnContentChanged;
+		public abstract event EventHandler? OnContentChanged;
 
 		/// <summary>
 		/// Gets the content

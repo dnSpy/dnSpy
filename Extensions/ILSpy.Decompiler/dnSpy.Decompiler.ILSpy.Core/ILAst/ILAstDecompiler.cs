@@ -39,7 +39,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 		}
 
 		public DecompilerProvider(DecompilerSettingsService decompilerSettingsService) {
-			Debug.Assert(!(decompilerSettingsService is null));
+			Debug2.Assert(!(decompilerSettingsService is null));
 			this.decompilerSettingsService = decompilerSettingsService ?? throw new ArgumentNullException(nameof(decompilerSettingsService));
 		}
 
@@ -124,7 +124,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.ILAst {
 			var allVariables = ilMethod.GetSelfAndChildrenRecursive<ILExpression>().Select(e => e.Operand as ILVariable)
 				.Where(v => !(v is null) && !v.IsParameter).Distinct();
 			foreach (var v in allVariables) {
-				Debug.Assert(!(v is null));
+				Debug2.Assert(!(v is null));
 				output.Write(IdentifierEscaper.Escape(v.Name), v.GetTextReferenceObject(), DecompilerReferenceFlags.Local | DecompilerReferenceFlags.Definition, v.IsParameter ? BoxedTextColor.Parameter : BoxedTextColor.Local);
 				if (!(v.Type is null)) {
 					output.Write(" ", BoxedTextColor.Text);

@@ -124,8 +124,8 @@ namespace dnSpy.Contracts.Controls {
 #pragma warning restore CS8618 // Non-nullable field is uninitialized.
 
 			public override TextRun GetTextRun(int textSourceCharacterIndex) {
-				Debug.Assert(!(text is null));
-				Debug.Assert(!(props is null));
+				Debug2.Assert(!(text is null));
+				Debug2.Assert(!(props is null));
 				if (textSourceCharacterIndex >= text.Length) {
 					return new TextEndOfParagraph(1);
 				}
@@ -200,13 +200,13 @@ namespace dnSpy.Contracts.Controls {
 
 		protected override Size MeasureOverride(Size availableSize) {
 			EnsureText();
-			Debug.Assert(!(line is null));
+			Debug2.Assert(!(line is null));
 			return new Size(line.Width, line.Height);
 		}
 
 		protected override void OnRender(DrawingContext drawingContext) {
 			EnsureText();
-			Debug.Assert(!(line is null));
+			Debug2.Assert(!(line is null));
 			line.Draw(drawingContext, new Point(0, 0), InvertAxes.None);
 		}
 	}

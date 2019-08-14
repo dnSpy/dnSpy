@@ -81,7 +81,7 @@ namespace dnSpy.Documents.Tabs {
 			var resolver = GetResolver(documentTabService, out var tab);
 			if (resolver is null)
 				return;
-			Debug.Assert(!(tab is null));
+			Debug2.Assert(!(tab is null));
 
 			var member = AskForDef(dnSpy_Resources.GoToToken_Title, resolver);
 			if (member is null)

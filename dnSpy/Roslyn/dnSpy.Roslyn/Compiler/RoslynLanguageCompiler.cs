@@ -123,7 +123,7 @@ namespace dnSpy.Roslyn.Compiler {
 		public abstract IEnumerable<string> GetRequiredAssemblyReferences(ModuleDef editedModule);
 
 		public void InitializeProject(CompilerProjectInfo projectInfo) {
-			Debug.Assert(workspace is null);
+			Debug2.Assert(workspace is null);
 
 			workspace = new AdhocWorkspace(RoslynMefHostServices.DefaultServices);
 			workspace.WorkspaceChanged += Workspace_WorkspaceChanged;
@@ -205,7 +205,7 @@ namespace dnSpy.Roslyn.Compiler {
 		}
 
 		public ICodeDocument[] AddDocuments(CompilerDocumentInfo[] documents) {
-			Debug.Assert(!(workspace is null));
+			Debug2.Assert(!(workspace is null));
 			var newDocuments = new List<RoslynCodeDocument>();
 
 			foreach (var doc in documents)
@@ -227,7 +227,7 @@ namespace dnSpy.Roslyn.Compiler {
 		}
 
 		public async Task<CompilationResult> CompileAsync(CancellationToken cancellationToken) {
-			Debug.Assert(!(workspace is null));
+			Debug2.Assert(!(workspace is null));
 			var project = workspace.CurrentSolution.Projects.First();
 			Debug.Assert(project.SupportsCompilation);
 			var compilation = await project.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
@@ -268,7 +268,7 @@ namespace dnSpy.Roslyn.Compiler {
 		protected abstract string GetHelpUri(Diagnostic diagnostic);
 
 		public bool AddMetadataReferences(CompilerMetadataReference[] metadataReferences) {
-			Debug.Assert(!(workspace is null));
+			Debug2.Assert(!(workspace is null));
 			if (workspace is null)
 				throw new InvalidOperationException();
 			var newProj = workspace.CurrentSolution.Projects.First().AddMetadataReferences(metadataReferences.Select(a => a.CreateMetadataReference(docFactory)));

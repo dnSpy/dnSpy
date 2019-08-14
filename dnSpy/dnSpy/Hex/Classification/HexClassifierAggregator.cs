@@ -33,7 +33,7 @@ namespace dnSpy.Hex.Classification {
 		readonly HexTagAggregator<HexClassificationTag> hexTagAggregator;
 		readonly HexBuffer buffer;
 
-		public override event EventHandler<HexClassificationChangedEventArgs> ClassificationChanged;
+		public override event EventHandler<HexClassificationChangedEventArgs>? ClassificationChanged;
 
 		protected HexClassifierAggregator(HexTagAggregator<HexClassificationTag> hexTagAggregator, VSTC.IClassificationTypeRegistryService classificationTypeRegistryService, HexBuffer buffer) {
 			this.classificationTypeRegistryService = classificationTypeRegistryService ?? throw new ArgumentNullException(nameof(classificationTypeRegistryService));

@@ -24,13 +24,13 @@ namespace dnSpy.Settings.Fonts {
 	static class ThemeFontSettingsDefinitions {
 #pragma warning disable CS0169
 		[ExportThemeFontSettingsDefinition(AppearanceCategoryConstants.TextEditor, FontType.TextEditor)]
-		static readonly ThemeFontSettingsDefinition textEditorThemeFontSettingsDefinition;
+		static readonly ThemeFontSettingsDefinition? textEditorThemeFontSettingsDefinition;
 
 		[ExportThemeFontSettingsDefinition(AppearanceCategoryConstants.HexEditor, FontType.HexEditor)]
-		static readonly ThemeFontSettingsDefinition hexEditorThemeFontSettingsDefinition;
+		static readonly ThemeFontSettingsDefinition? hexEditorThemeFontSettingsDefinition;
 
 		[ExportThemeFontSettingsDefinition(AppearanceCategoryConstants.UIMisc, FontType.UI)]
-		static readonly ThemeFontSettingsDefinition uiThemeFontSettingsDefinition;
+		static readonly ThemeFontSettingsDefinition? uiThemeFontSettingsDefinition;
 #pragma warning restore CS0169
 	}
 }

@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel.Composition;
 using Microsoft.CodeAnalysis;
 
@@ -24,7 +25,7 @@ namespace dnSpy.Roslyn.Documentation {
 	[Export(typeof(IRoslynDocumentationProviderFactory))]
 	sealed class RoslynDocumentationProviderFactory : IRoslynDocumentationProviderFactory {
 		public DocumentationProvider? TryCreate(string? filename) {
-			if (string.IsNullOrEmpty(filename))
+			if (string2.IsNullOrEmpty(filename))
 				return null;
 			return new RoslynDocumentationProvider(filename);
 		}

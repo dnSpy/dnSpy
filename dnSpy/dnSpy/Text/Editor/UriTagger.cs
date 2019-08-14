@@ -37,7 +37,7 @@ namespace dnSpy.Text.Editor {
 	}
 
 	sealed class UriTagger : ITagger<IUrlTag> {
-		public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
+		public event EventHandler<SnapshotSpanEventArgs>? TagsChanged;
 
 		readonly ITextView textView;
 		readonly int maxLineLength;
@@ -80,7 +80,7 @@ namespace dnSpy.Text.Editor {
 						line = line.Snapshot.GetLineFromLineNumber(line.LineNumber + 1);
 					}
 					else {
-						Debug.Assert(line is null || pos > line.ExtentIncludingLineBreak.End.Position);
+						Debug2.Assert(line is null || pos > line.ExtentIncludingLineBreak.End.Position);
 						line = span.Snapshot.GetLineFromPosition(pos);
 					}
 

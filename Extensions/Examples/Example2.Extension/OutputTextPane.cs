@@ -27,7 +27,7 @@ namespace Example2.Extension {
 				_instance = value ?? throw new ArgumentNullException(nameof(value));
 			}
 		}
-		static IOutputTextPane _instance;
+		static IOutputTextPane? _instance;
 
 		// This class initializes the Logger property. It gets auto loaded by dnSpy
 		[ExportAutoLoaded(Order = double.MinValue)]

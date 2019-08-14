@@ -192,7 +192,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void InitializeGlyphFactories(IContentType? beforeContentType, IContentType afterContentType) {
-			Debug.Assert(!(iconCanvas is null));
+			Debug2.Assert(!(iconCanvas is null));
 			var oldFactories = new Dictionary<IGlyphFactoryProvider, IGlyphFactory>();
 			foreach (var info in glyphFactories.Values)
 				oldFactories[info.FactoryProvider] = info.Factory;
@@ -205,7 +205,7 @@ namespace dnSpy.Text.Editor {
 					continue;
 				IGlyphFactory? glyphFactory = null;
 				foreach (var type in lazy.Metadata.TagTypes) {
-					Debug.Assert(!(type is null));
+					Debug2.Assert(!(type is null));
 					if (type is null)
 						break;
 					Debug.Assert(!glyphFactories.ContainsKey(type));
@@ -289,7 +289,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void OnNewLayout(IList<ITextViewLine> newOrReformattedLines, IList<ITextViewLine> translatedLines) {
-			Debug.Assert(!(lineInfos is null));
+			Debug2.Assert(!(lineInfos is null));
 			var newInfos = new Dictionary<object, LineInfo>();
 
 			foreach (var line in newOrReformattedLines)
@@ -324,7 +324,7 @@ namespace dnSpy.Text.Editor {
 
 		void AddLine(Dictionary<object, LineInfo> newInfos, ITextViewLine line) {
 			var wpfLine = line as IWpfTextViewLine;
-			Debug.Assert(!(wpfLine is null));
+			Debug2.Assert(!(wpfLine is null));
 			if (wpfLine is null)
 				return;
 			var info = new LineInfo(line, CreateIconInfos(wpfLine));
@@ -334,11 +334,11 @@ namespace dnSpy.Text.Editor {
 		}
 
 		List<IconInfo> CreateIconInfos(IWpfTextViewLine line) {
-			Debug.Assert(!(tagAggregator is null));
+			Debug2.Assert(!(tagAggregator is null));
 			var icons = new List<IconInfo>();
 			foreach (var mappingSpan in tagAggregator.GetTags(line.ExtentAsMappingSpan)) {
 				var tag = mappingSpan.Tag;
-				Debug.Assert(!(tag is null));
+				Debug2.Assert(!(tag is null));
 				if (tag is null)
 					continue;
 				// Fails if someone forgot to Export(typeof(IGlyphFactoryProvider)) with the correct tag types
@@ -395,7 +395,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void Update(IWpfTextViewLine line) {
-			Debug.Assert(!(lineInfos is null));
+			Debug2.Assert(!(lineInfos is null));
 			Debug.Assert(line.VisibilityState != VisibilityState.Unattached);
 			if (!lineInfos.TryGetValue(line.IdentityTag, out var info))
 				return;

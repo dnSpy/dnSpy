@@ -35,12 +35,12 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 		[Export]
 		[Name(ContentTypes.CSharpRoslyn + SignatureHelpConstants.ExtendedSignatureHelpContentTypeSuffix)]
 		[BaseDefinition(ContentTypes.SignatureHelp)]
-		static readonly ContentTypeDefinition CSharpRoslynContentTypeDefinition;
+		static readonly ContentTypeDefinition? CSharpRoslynContentTypeDefinition;
 
 		[Export]
 		[Name(ContentTypes.VisualBasicRoslyn + SignatureHelpConstants.ExtendedSignatureHelpContentTypeSuffix)]
 		[BaseDefinition(ContentTypes.SignatureHelp)]
-		static readonly ContentTypeDefinition VisualBasicRoslynContentTypeDefinition;
+		static readonly ContentTypeDefinition? VisualBasicRoslynContentTypeDefinition;
 #pragma warning restore CS0169
 	}
 
@@ -78,7 +78,7 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 	}
 
 	sealed class SignatureHelpTaggerEx : ITagger<IClassificationTag> {
-		public event EventHandler<SnapshotSpanEventArgs> TagsChanged { add { } remove { } }
+		public event EventHandler<SnapshotSpanEventArgs>? TagsChanged { add { } remove { } }
 
 		readonly ITextBuffer buffer;
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
@@ -90,7 +90,7 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 
 		public IEnumerable<ITagSpan<IClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans) {
 			var context = buffer.TryGetSignatureHelpClassifierContext();
-			Debug.Assert(!(context is null));
+			Debug2.Assert(!(context is null));
 			if (context is null || context.Session.IsDismissed)
 				yield break;
 

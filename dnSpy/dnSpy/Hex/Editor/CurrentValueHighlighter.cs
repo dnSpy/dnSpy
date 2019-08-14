@@ -54,7 +54,7 @@ namespace dnSpy.Hex.Editor {
 
 		public override IHexTagger<T>? CreateTagger<T>(HexView hexView, HexBuffer buffer) {
 			var wpfHexView = hexView as WpfHexView;
-			Debug.Assert(!(wpfHexView is null));
+			Debug2.Assert(!(wpfHexView is null));
 			if (!(wpfHexView is null)) {
 				return wpfHexView.Properties.GetOrCreateSingletonProperty(typeof(CurrentValueHighlighterTagger), () =>
 					new CurrentValueHighlighterTagger(currentValueHighlighterProvider.Get(wpfHexView))) as IHexTagger<T>;
@@ -64,7 +64,7 @@ namespace dnSpy.Hex.Editor {
 	}
 
 	sealed class CurrentValueHighlighterTagger : HexTagger<HexMarkerTag> {
-		public override event EventHandler<HexBufferSpanEventArgs> TagsChanged;
+		public override event EventHandler<HexBufferSpanEventArgs>? TagsChanged;
 		readonly CurrentValueHighlighter currentValueHighlighter;
 
 		public CurrentValueHighlighterTagger(CurrentValueHighlighter currentValueHighlighter) {

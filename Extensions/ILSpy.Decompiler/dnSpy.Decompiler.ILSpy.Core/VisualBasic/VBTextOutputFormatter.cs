@@ -55,7 +55,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 			// For ctor/cctor field initializers
 			var mms = node.Annotation<List<Tuple<MethodDebugInfoBuilder, List<ILSpan>>>>();
 			if (!(mms is null)) {
-				Debug.Assert(multiMappings is null);
+				Debug2.Assert(multiMappings is null);
 				multiMappings = mms;
 			}
 		}
@@ -65,7 +65,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 				throw new InvalidOperationException();
 
 			if (!(node.Annotation<MethodDebugInfoBuilder>() is null)) {
-				Debug.Assert(!(currentMethodDebugInfoBuilder is null));
+				Debug2.Assert(!(currentMethodDebugInfoBuilder is null));
 				if (context.CalculateILSpans) {
 					foreach (var ns in context.UsingNamespaces)
 						currentMethodDebugInfoBuilder.Scope.Imports.Add(ImportInfo.CreateNamespace(ns));
@@ -263,7 +263,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 
 		public void WriteComment(bool isDocumentation, string content, CSharp2.CommentReference[] refs) {
 			if (isDocumentation) {
-				Debug.Assert(refs is null);
+				Debug2.Assert(refs is null);
 				output.Write("'''", BoxedTextColor.XmlDocCommentDelimiter);
 				output.WriteXmlDoc(content);
 				output.WriteLine();
@@ -356,7 +356,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 		}
 
 		public void AddHighlightedKeywordReference(object reference, int start, int end) {
-			Debug.Assert(!(reference is null));
+			Debug2.Assert(!(reference is null));
 			if (!(reference is null))
 				output.AddSpanReference(reference, start, end, PredefinedSpanReferenceIds.HighlightRelatedKeywords);
 		}

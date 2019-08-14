@@ -50,7 +50,7 @@ namespace dnSpy.Settings.Dialog {
 		[Export]
 		[Name(ContentTypes.OptionsDialogText)]
 		[BaseDefinition(ContentTypes.Text)]
-		static readonly ContentTypeDefinition OptionsDialogTextContentTypeDefinition;
+		static readonly ContentTypeDefinition? OptionsDialogTextContentTypeDefinition;
 #pragma warning restore CS0169
 
 		[ImportingConstructor]

@@ -45,14 +45,14 @@ namespace dnSpy.Roslyn.Debugger.FilterExpressionEvaluator {
 				switch (value >> 8) {
 				case 0:
 					opCode = OpCodes.OneByteOpCodes[value & 0xFF];
-					Debug.Assert(!(opCode is null));
+					Debug2.Assert(!(opCode is null));
 					if (!(opCode is null))
 						toReflectionOpCode[opCode] = sreOpCode;
 					break;
 
 				case 0xFE:
 					opCode = OpCodes.TwoByteOpCodes[value & 0xFF];
-					Debug.Assert(!(opCode is null));
+					Debug2.Assert(!(opCode is null));
 					if (!(opCode is null))
 						toReflectionOpCode[opCode] = sreOpCode;
 					break;
@@ -74,9 +74,9 @@ namespace dnSpy.Roslyn.Debugger.FilterExpressionEvaluator {
 		static readonly Type[] evalDelegateParamTypes = new Type[] { typeof(string), typeof(int), typeof(string), typeof(ulong), typeof(string) };
 		public EvalDelegate? CreateDelegate() {
 			var type = module.Find(evalClassName, isReflectionName: true);
-			Debug.Assert(!(type is null));
+			Debug2.Assert(!(type is null));
 			var method = type?.FindMethod(evalMethodName);
-			Debug.Assert(!(method?.Body is null));
+			Debug2.Assert(!(method?.Body is null));
 			if (!(method?.Body is CilBody body))
 				return null;
 			if (method.ReturnType.ElementType != ElementType.Boolean)

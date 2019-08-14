@@ -63,7 +63,7 @@ namespace dnSpy.Text.Editor {
 		[Order(Before = PredefinedAdornmentLayers.TextMarker)]
 		[Order(Before = PredefinedDsAdornmentLayers.GlyphTextMarker)]
 		[Order(After = PredefinedAdornmentLayers.Outlining)]
-		static AdornmentLayerDefinition theAdornmentLayerDefinition;
+		static AdornmentLayerDefinition? theAdornmentLayerDefinition;
 #pragma warning restore CS0169
 
 		readonly IWpfTextView wpfTextView;
@@ -137,7 +137,7 @@ namespace dnSpy.Text.Editor {
 				adornmentLayer?.RemoveAllAdornments();
 				return;
 			}
-			Debug.Assert(!(adornmentLayer is null));
+			Debug2.Assert(!(adornmentLayer is null));
 
 			var line = wpfTextView.Caret.ContainingTextViewLine;
 			if (line.IsVisible()) {

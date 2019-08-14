@@ -608,7 +608,7 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		static string GetShortMenuItemHeader(string s) {
-			Debug.Assert(!(s is null));
+			Debug2.Assert(!(s is null));
 			if (s is null)
 				s = string.Empty;
 			const int MAX_LEN = 40;

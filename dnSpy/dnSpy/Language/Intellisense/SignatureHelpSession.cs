@@ -33,13 +33,13 @@ namespace dnSpy.Language.Intellisense {
 		public PropertyCollection Properties { get; }
 		public ITextView TextView { get; }
 		public ReadOnlyObservableCollection<ISignature> Signatures { get; }
-		public event EventHandler<SelectedSignatureChangedEventArgs> SelectedSignatureChanged;
+		public event EventHandler<SelectedSignatureChangedEventArgs>? SelectedSignatureChanged;
 		public bool IsDismissed { get; private set; }
-		public event EventHandler Dismissed;
+		public event EventHandler? Dismissed;
 		public bool IsStarted { get; private set; }
 		public IIntellisensePresenter? Presenter => signatureHelpPresenter;
-		public event EventHandler PresenterChanged;
-		public event EventHandler Recalculated;
+		public event EventHandler? PresenterChanged;
+		public event EventHandler? Recalculated;
 
 		public ISignature? SelectedSignature {
 			get => selectedSignature;

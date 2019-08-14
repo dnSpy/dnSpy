@@ -42,7 +42,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			public AssemblyState(DmdAssembly assembly) {
 				dict = new Dictionary<TypeKey, DmdType>();
 				var proxyAttr = assembly.AppDomain.GetWellKnownType(DmdWellKnownType.System_Diagnostics_DebuggerTypeProxyAttribute, isOptional: true);
-				Debug.Assert(!(proxyAttr is null));
+				Debug2.Assert(!(proxyAttr is null));
 				if (!(proxyAttr is null)) {
 					foreach (var ca in assembly.CustomAttributes) {
 						if (ca.AttributeType != proxyAttr)
@@ -102,7 +102,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 
 		static DmdConstructorInfo? GetProxyTypeConstructor(DmdType targetType) {
 			var proxyAttr = targetType.AppDomain.GetWellKnownType(DmdWellKnownType.System_Diagnostics_DebuggerTypeProxyAttribute, isOptional: true);
-			Debug.Assert(!(proxyAttr is null));
+			Debug2.Assert(!(proxyAttr is null));
 			if (proxyAttr is null)
 				return null;
 			DmdType? currentType = targetType;

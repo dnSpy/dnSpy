@@ -52,7 +52,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		public string Title {
 			get {
-				if (!string.IsNullOrEmpty(options.Title))
+				if (!string2.IsNullOrEmpty(options.Title))
 					return options.Title;
 				return dnSpy_AsmEditor_Resources.CreateTypeSig;
 			}

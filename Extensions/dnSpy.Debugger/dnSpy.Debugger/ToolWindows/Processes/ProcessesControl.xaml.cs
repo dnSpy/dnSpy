@@ -47,6 +47,6 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			ProcessesListViewDoubleClick?.Invoke(this, EventArgs.Empty);
 		}
 
-		public event EventHandler ProcessesListViewDoubleClick;
+		public event EventHandler? ProcessesListViewDoubleClick;
 	}
 }

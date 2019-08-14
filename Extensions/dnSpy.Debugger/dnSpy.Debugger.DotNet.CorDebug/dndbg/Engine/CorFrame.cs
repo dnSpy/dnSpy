@@ -221,7 +221,7 @@ namespace dndbg.Engine {
 				methGenArgs = Array.Empty<CorType>();
 				return false;
 			}
-			Debug.Assert(!(func is null));
+			Debug2.Assert(!(func is null));
 
 			var mdi = module.GetMetaDataInterface<IMetaDataImport>();
 			var gas = new List<CorType>(TypeParameters);

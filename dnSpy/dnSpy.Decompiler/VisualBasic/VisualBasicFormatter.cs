@@ -218,7 +218,7 @@ namespace dnSpy.Decompiler.VisualBasic {
 		void WriteToken(IMDTokenProvider tok) {
 			if (!ShowTokens)
 				return;
-			Debug.Assert(!(tok is null));
+			Debug2.Assert(!(tok is null));
 			if (tok is null)
 				return;
 			OutputWrite(CommentBegin + ToFormattedUInt32(tok.MDToken.Raw) + CommentEnd, BoxedTextColor.Comment);
@@ -986,7 +986,7 @@ namespace dnSpy.Decompiler.VisualBasic {
 
 				case ElementType.GenericInst:
 					var gis = (GenericInstSig?)type;
-					Debug.Assert(!(gis is null));
+					Debug2.Assert(!(gis is null));
 					if (TypeFormatterUtils.IsSystemNullable(gis)) {
 						Write(GenericArgumentResolver.Resolve(gis.GenericArguments[0], typeGenArgs, methGenArgs), null, null);
 						OutputWrite("?", BoxedTextColor.Operator);

@@ -47,6 +47,6 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			ModulesListViewDoubleClick?.Invoke(this, EventArgs.Empty);
 		}
 
-		public event EventHandler ModulesListViewDoubleClick;
+		public event EventHandler? ModulesListViewDoubleClick;
 	}
 }

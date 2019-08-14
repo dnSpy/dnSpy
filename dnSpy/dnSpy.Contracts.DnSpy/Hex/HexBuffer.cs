@@ -73,7 +73,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// Raised when a span of data got modified by other code
 		/// </summary>
-		public abstract event EventHandler<HexBufferSpanInvalidatedEventArgs> BufferSpanInvalidated;
+		public abstract event EventHandler<HexBufferSpanInvalidatedEventArgs>? BufferSpanInvalidated;
 
 		/// <summary>
 		/// Clears any read caches and raises <see cref="BufferSpanInvalidated"/> if needed
@@ -653,32 +653,32 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// Raised before the text buffer gets changed
 		/// </summary>
-		public abstract event EventHandler<HexContentChangingEventArgs> Changing;
+		public abstract event EventHandler<HexContentChangingEventArgs>? Changing;
 
 		/// <summary>
 		/// Raised when the buffer has changed
 		/// </summary>
-		public abstract event EventHandler<HexContentChangedEventArgs> ChangedHighPriority;
+		public abstract event EventHandler<HexContentChangedEventArgs>? ChangedHighPriority;
 
 		/// <summary>
 		/// Raised when the buffer has changed
 		/// </summary>
-		public abstract event EventHandler<HexContentChangedEventArgs> Changed;
+		public abstract event EventHandler<HexContentChangedEventArgs>? Changed;
 
 		/// <summary>
 		/// Raised when the buffer has changed
 		/// </summary>
-		public abstract event EventHandler<HexContentChangedEventArgs> ChangedLowPriority;
+		public abstract event EventHandler<HexContentChangedEventArgs>? ChangedLowPriority;
 
 		/// <summary>
 		/// Raised after an edit operation has completed or after it has been canceled
 		/// </summary>
-		public abstract event EventHandler PostChanged;
+		public abstract event EventHandler? PostChanged;
 
 		/// <summary>
 		/// Raised after it is disposed
 		/// </summary>
-		public event EventHandler Disposed;
+		public event EventHandler? Disposed;
 
 		/// <summary>
 		/// true if the instance has been disposed

@@ -49,7 +49,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <summary>
 		/// Raised when a runtime's current language is changed
 		/// </summary>
-		public abstract event EventHandler<DbgLanguageChangedEventArgs> LanguageChanged;
+		public abstract event EventHandler<DbgLanguageChangedEventArgs>? LanguageChanged;
 	}
 
 	/// <summary>

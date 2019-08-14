@@ -111,7 +111,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			var mdReader = DotNetMetadataHeaderReader.TryCreate(file, span);
 			if (mdReader is null)
 				return;
-			Debug.Assert(!(mdReader.StorageStreamHeaders is null));
+			Debug2.Assert(!(mdReader.StorageStreamHeaders is null));
 			mdHeader = DotNetMetadataHeaderDataImpl.TryCreate(file, mdReader.MetadataHeaderSpan, (int)mdReader.VersionStringSpan.Length.ToUInt64(), mdReader.StorageStreamHeaders);
 			if (mdHeader is null)
 				return;

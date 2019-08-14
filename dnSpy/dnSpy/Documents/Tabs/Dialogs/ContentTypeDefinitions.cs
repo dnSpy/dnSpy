@@ -27,17 +27,17 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		[Export]
 		[Name(ContentTypes.TabsDialog)]
 		[BaseDefinition(ContentTypes.Text)]
-		static readonly ContentTypeDefinition TabsDialog;
+		static readonly ContentTypeDefinition? TabsDialog;
 
 		[Export]
 		[Name(ContentTypes.GacDialog)]
 		[BaseDefinition(ContentTypes.Text)]
-		static readonly ContentTypeDefinition GacDialog;
+		static readonly ContentTypeDefinition? GacDialog;
 
 		[Export]
 		[Name(ContentTypes.DocListDialog)]
 		[BaseDefinition(ContentTypes.Text)]
-		static readonly ContentTypeDefinition DocListDialog;
+		static readonly ContentTypeDefinition? DocListDialog;
 #pragma warning restore CS0169
 	}
 }

@@ -86,7 +86,7 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 				}
 			}
 			foreach (var block in blocks) {
-				if (!string.IsNullOrEmpty(block.Label))
+				if (!string2.IsNullOrEmpty(block.Label))
 					cachedSymResolver.AddSymbol(block.Address, new SymbolResolverResult(SymbolKindUtils.ToSymbolKind(block.LabelKind), block.Label, block.Address), fakeSymbol: true);
 			}
 			return new DisassemblyContentProviderImpl(bitness, cachedSymResolver, deps.DisasmSettings, deps.MasmSettings, deps.NasmSettings, deps.GasSettings, formatterOptions, header, optimization, blocks, codeInfo, variableInfo, methodName, shortMethodName, moduleName);

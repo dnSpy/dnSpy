@@ -51,7 +51,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		}
 
 		public string Create(string fileExt, string fullName) {
-			Debug.Assert(!(fileExt is null) && fileExt.Length > 1 && fileExt[0] == '.');
+			Debug2.Assert(!(fileExt is null) && fileExt.Length > 1 && fileExt[0] == '.');
 			string name = StripDefaultNamespace(fullName);
 			if (string.IsNullOrEmpty(name))
 				name = fullName;
@@ -59,7 +59,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		}
 
 		public string CreateFromNamespaceName(string fileExt, string ns, string name) {
-			Debug.Assert(!(fileExt is null) && fileExt.Length > 1 && fileExt[0] == '.');
+			Debug2.Assert(!(fileExt is null) && fileExt.Length > 1 && fileExt[0] == '.');
 			var list = GetNamespaceParts(ns);
 			list.Add(name);
 			return Create(list.ToArray(), fileExt);

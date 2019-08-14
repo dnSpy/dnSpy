@@ -63,7 +63,7 @@ namespace dnSpy.Text.Editor.Search {
 		[Export(typeof(AdornmentLayerDefinition))]
 		[Name(PredefinedDsAdornmentLayers.Search)]
 		[LayerKind(LayerKind.Overlay)]
-		static AdornmentLayerDefinition searchServiceAdornmentLayerDefinition;
+		static AdornmentLayerDefinition? searchServiceAdornmentLayerDefinition;
 #pragma warning restore CS0169
 
 		const int MAX_SEARCH_RESULTS = 5000;
@@ -215,7 +215,7 @@ namespace dnSpy.Text.Editor.Search {
 				return CommandTargetStatus.NotHandled;
 			if (!IsSearchControlVisible)
 				return CommandTargetStatus.NotHandled;
-			Debug.Assert(!(searchControl is null));
+			Debug2.Assert(!(searchControl is null));
 
 			if (inIncrementalSearch) {
 				if (group == CommandConstants.TextEditorGroup) {
@@ -251,7 +251,7 @@ namespace dnSpy.Text.Editor.Search {
 				return CommandTargetStatus.NotHandled;
 			if (!IsSearchControlVisible)
 				return CommandTargetStatus.NotHandled;
-			Debug.Assert(!(searchControl is null));
+			Debug2.Assert(!(searchControl is null));
 
 			if (group == CommandConstants.TextEditorGroup && cmdId == (int)TextEditorIds.CANCEL) {
 				if (inIncrementalSearch)
@@ -463,7 +463,7 @@ namespace dnSpy.Text.Editor.Search {
 		}
 
 		void FocusSearchStringTextBox() {
-			Debug.Assert(!(searchControl is null));
+			Debug2.Assert(!(searchControl is null));
 			Action? callback = null;
 			// If it hasn't been loaded yet, it has no binding and we must select it in its Loaded event
 			if (searchControl.searchStringTextBox.Text.Length == 0 && SearchString.Length != 0)
@@ -474,7 +474,7 @@ namespace dnSpy.Text.Editor.Search {
 		}
 
 		void FocusReplaceStringTextBox() {
-			Debug.Assert(!(searchControl is null));
+			Debug2.Assert(!(searchControl is null));
 			Action? callback = null;
 			// If it hasn't been loaded yet, it has no binding and we must select it in its Loaded event
 			if (searchControl.replaceStringTextBox.Text.Length == 0 && ReplaceString.Length != 0)
@@ -485,7 +485,7 @@ namespace dnSpy.Text.Editor.Search {
 		}
 
 		void RepositionControl(bool recalcSize = false) {
-			Debug.Assert(!(searchControl is null));
+			Debug2.Assert(!(searchControl is null));
 			if (recalcSize)
 				searchControl.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
 			PositionSearchControl(SearchControlPosition.Default);
@@ -635,7 +635,7 @@ namespace dnSpy.Text.Editor.Search {
 				s = TryGetSearchStringFromSelection();
 			else
 				s = TryGetSearchStringAtPoint(wpfTextView.Caret.Position.VirtualBufferPosition);
-			if (string.IsNullOrEmpty(s) || s.IndexOfAny(LineConstants.newLineChars) >= 0)
+			if (string2.IsNullOrEmpty(s) || s.IndexOfAny(LineConstants.newLineChars) >= 0)
 				return null;
 			return s;
 		}
@@ -717,7 +717,7 @@ namespace dnSpy.Text.Editor.Search {
 			var res = ReplaceFindNextCore(out var expandedReplacePattern);
 			if (res is null)
 				return;
-			Debug.Assert(!(expandedReplacePattern is null));
+			Debug2.Assert(!(expandedReplacePattern is null));
 
 			var vres = new VirtualSnapshotSpan(res.Value);
 			if (!wpfTextView.Selection.IsEmpty && wpfTextView.Selection.StreamSelectionSpan == vres) {
@@ -734,7 +734,7 @@ namespace dnSpy.Text.Editor.Search {
 				res = ReplaceFindNextCore(out expandedReplacePattern);
 				if (res is null)
 					return;
-				Debug.Assert(!(expandedReplacePattern is null));
+				Debug2.Assert(!(expandedReplacePattern is null));
 				ShowSearchResult(res.Value);
 			}
 			else
@@ -859,7 +859,7 @@ namespace dnSpy.Text.Editor.Search {
 				}
 				if (res is null)
 					break;
-				Debug.Assert(!(expandedReplacePattern is null));
+				Debug2.Assert(!(expandedReplacePattern is null));
 				yield return (res.Value, expandedReplacePattern);
 				if (startingPosition.Position == snapshot.Length)
 					break;

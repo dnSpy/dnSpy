@@ -113,7 +113,7 @@ namespace dndbg.DotNet {
 		}
 
 		internal uint? GetFieldOffset(CorFieldDef cfd) {
-			Debug.Assert(!(fieldRidToFieldOffset is null));
+			Debug2.Assert(!(fieldRidToFieldOffset is null));
 			if (fieldRidToFieldOffset is null)
 				return null;
 			if (fieldRidToFieldOffset.TryGetValue(cfd.OriginalToken.Rid, out uint fieldOffset))
@@ -299,7 +299,7 @@ namespace dndbg.DotNet {
 					var ovr = overrides[i];
 					var newMethodBody = readerModule.ResolveToken(ovr.MethodBodyToken, gpContext) as IMethodDefOrRef;
 					var newMethodDeclaration = readerModule.ResolveToken(ovr.MethodDeclarationToken, gpContext) as IMethodDefOrRef;
-					Debug.Assert(!(newMethodBody is null) && !(newMethodDeclaration is null));
+					Debug2.Assert(!(newMethodBody is null) && !(newMethodDeclaration is null));
 					if (newMethodBody is null || newMethodDeclaration is null)
 						continue;
 					newList.Add(new MethodOverride(newMethodBody, newMethodDeclaration));

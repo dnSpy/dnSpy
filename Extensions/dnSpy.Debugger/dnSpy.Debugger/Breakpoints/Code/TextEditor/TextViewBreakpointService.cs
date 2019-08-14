@@ -98,7 +98,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			var textView = GetTextView(tab);
 			if (textView is null)
 				return new LocationsResult(dbgManager, null, allLocations);
-			Debug.Assert(!(tab is null));
+			Debug2.Assert(!(tab is null));
 			var pos = position ?? textView.Caret.Position.VirtualBufferPosition;
 			if (pos.Position.Snapshot != textView.TextSnapshot)
 				throw new ArgumentException();

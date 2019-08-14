@@ -30,1616 +30,1616 @@ namespace dnSpy.Text.Classification {
 #pragma warning disable CS0169
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(PredefinedClassificationTypeNames.NaturalLanguage)]
-		static ClassificationTypeDefinition NaturalLanguageClassificationTypeDefinition;
+		static ClassificationTypeDefinition? NaturalLanguageClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition FormalLanguageClassificationTypeDefinition;
+		static ClassificationTypeDefinition? FormalLanguageClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.Literal)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition LiteralClassificationTypeDefinition;
+		static ClassificationTypeDefinition? LiteralClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.Identifier)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition IdentifierClassificationTypeDefinition;
+		static ClassificationTypeDefinition? IdentifierClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(PredefinedClassificationTypeNames.Other)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition OtherClassificationTypeDefinition;
+		static ClassificationTypeDefinition? OtherClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(PredefinedClassificationTypeNames.WhiteSpace)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition WhiteSpaceClassificationTypeDefinition;
+		static ClassificationTypeDefinition? WhiteSpaceClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.Text)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition TextClassificationTypeDefinition;
+		static ClassificationTypeDefinition? TextClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.Operator)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition OperatorClassificationTypeDefinition;
+		static ClassificationTypeDefinition? OperatorClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.Punctuation)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition PunctuationClassificationTypeDefinition;
+		static ClassificationTypeDefinition? PunctuationClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.Number)]
 		[BaseDefinition(PredefinedClassificationTypeNames.Literal)]
-		static ClassificationTypeDefinition NumberClassificationTypeDefinition;
+		static ClassificationTypeDefinition? NumberClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.Comment)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition CommentClassificationTypeDefinition;
+		static ClassificationTypeDefinition? CommentClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.Keyword)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition KeywordClassificationTypeDefinition;
+		static ClassificationTypeDefinition? KeywordClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.String)]
 		[BaseDefinition(PredefinedClassificationTypeNames.Literal)]
-		static ClassificationTypeDefinition StringClassificationTypeDefinition;
+		static ClassificationTypeDefinition? StringClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.VerbatimString)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition VerbatimStringClassificationTypeDefinition;
+		static ClassificationTypeDefinition? VerbatimStringClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.Char)]
 		[BaseDefinition(PredefinedClassificationTypeNames.Literal)]
-		static ClassificationTypeDefinition CharClassificationTypeDefinition;
+		static ClassificationTypeDefinition? CharClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.Namespace)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition NamespaceClassificationTypeDefinition;
+		static ClassificationTypeDefinition? NamespaceClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.Type)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition TypeClassificationTypeDefinition;
+		static ClassificationTypeDefinition? TypeClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.SealedType)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition SealedTypeClassificationTypeDefinition;
+		static ClassificationTypeDefinition? SealedTypeClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.StaticType)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StaticTypeClassificationTypeDefinition;
+		static ClassificationTypeDefinition? StaticTypeClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.Delegate)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition DelegateClassificationTypeDefinition;
+		static ClassificationTypeDefinition? DelegateClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.Enum)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition EnumClassificationTypeDefinition;
+		static ClassificationTypeDefinition? EnumClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.Interface)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition InterfaceClassificationTypeDefinition;
+		static ClassificationTypeDefinition? InterfaceClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.ValueType)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition ValueTypeClassificationTypeDefinition;
+		static ClassificationTypeDefinition? ValueTypeClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.Module)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition ModuleClassificationTypeDefinition;
+		static ClassificationTypeDefinition? ModuleClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.TypeGenericParameter)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition TypeGenericParameterClassificationTypeDefinition;
+		static ClassificationTypeDefinition? TypeGenericParameterClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.MethodGenericParameter)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition MethodGenericParameterClassificationTypeDefinition;
+		static ClassificationTypeDefinition? MethodGenericParameterClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.InstanceMethod)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition InstanceMethodClassificationTypeDefinition;
+		static ClassificationTypeDefinition? InstanceMethodClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.StaticMethod)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StaticMethodClassificationTypeDefinition;
+		static ClassificationTypeDefinition? StaticMethodClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.ExtensionMethod)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition ExtensionMethodClassificationTypeDefinition;
+		static ClassificationTypeDefinition? ExtensionMethodClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.InstanceField)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition InstanceFieldClassificationTypeDefinition;
+		static ClassificationTypeDefinition? InstanceFieldClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.EnumField)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition EnumFieldClassificationTypeDefinition;
+		static ClassificationTypeDefinition? EnumFieldClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.LiteralField)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition LiteralFieldClassificationTypeDefinition;
+		static ClassificationTypeDefinition? LiteralFieldClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.StaticField)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StaticFieldClassificationTypeDefinition;
+		static ClassificationTypeDefinition? StaticFieldClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.InstanceEvent)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition InstanceEventClassificationTypeDefinition;
+		static ClassificationTypeDefinition? InstanceEventClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.StaticEvent)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StaticEventClassificationTypeDefinition;
+		static ClassificationTypeDefinition? StaticEventClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.InstanceProperty)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition InstancePropertyClassificationTypeDefinition;
+		static ClassificationTypeDefinition? InstancePropertyClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.StaticProperty)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StaticPropertyClassificationTypeDefinition;
+		static ClassificationTypeDefinition? StaticPropertyClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.Local)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition LocalClassificationTypeDefinition;
+		static ClassificationTypeDefinition? LocalClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.Parameter)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition ParameterClassificationTypeDefinition;
+		static ClassificationTypeDefinition? ParameterClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.PreprocessorKeyword)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition PreprocessorKeywordClassificationTypeDefinition;
+		static ClassificationTypeDefinition? PreprocessorKeywordClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.PreprocessorText)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition PreprocessorTextClassificationTypeDefinition;
+		static ClassificationTypeDefinition? PreprocessorTextClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.Label)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition LabelClassificationTypeDefinition;
+		static ClassificationTypeDefinition? LabelClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.OpCode)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition OpCodeClassificationTypeDefinition;
+		static ClassificationTypeDefinition? OpCodeClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.ILDirective)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition ILDirectiveClassificationTypeDefinition;
+		static ClassificationTypeDefinition? ILDirectiveClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.ILModule)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition ILModuleClassificationTypeDefinition;
+		static ClassificationTypeDefinition? ILModuleClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.ExcludedCode)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition ExcludedCodeClassificationTypeDefinition;
+		static ClassificationTypeDefinition? ExcludedCodeClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XmlDocCommentAttributeName)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlDocCommentAttributeNameClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XmlDocCommentAttributeNameClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XmlDocCommentAttributeQuotes)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlDocCommentAttributeQuotesClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XmlDocCommentAttributeQuotesClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XmlDocCommentAttributeValue)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlDocCommentAttributeValueClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XmlDocCommentAttributeValueClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XmlDocCommentCDataSection)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlDocCommentCDataSectionClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XmlDocCommentCDataSectionClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XmlDocCommentComment)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlDocCommentCommentClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XmlDocCommentCommentClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XmlDocCommentDelimiter)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlDocCommentDelimiterClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XmlDocCommentDelimiterClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XmlDocCommentEntityReference)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlDocCommentEntityReferenceClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XmlDocCommentEntityReferenceClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XmlDocCommentName)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlDocCommentNameClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XmlDocCommentNameClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XmlDocCommentProcessingInstruction)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlDocCommentProcessingInstructionClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XmlDocCommentProcessingInstructionClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XmlDocCommentText)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlDocCommentTextClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XmlDocCommentTextClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XmlLiteralAttributeName)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlLiteralAttributeNameClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XmlLiteralAttributeNameClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XmlLiteralAttributeQuotes)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlLiteralAttributeQuotesClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XmlLiteralAttributeQuotesClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XmlLiteralAttributeValue)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlLiteralAttributeValueClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XmlLiteralAttributeValueClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XmlLiteralCDataSection)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlLiteralCDataSectionClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XmlLiteralCDataSectionClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XmlLiteralComment)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlLiteralCommentClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XmlLiteralCommentClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XmlLiteralDelimiter)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlLiteralDelimiterClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XmlLiteralDelimiterClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XmlLiteralEmbeddedExpression)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlLiteralEmbeddedExpressionClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XmlLiteralEmbeddedExpressionClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XmlLiteralEntityReference)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlLiteralEntityReferenceClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XmlLiteralEntityReferenceClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XmlLiteralName)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlLiteralNameClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XmlLiteralNameClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XmlLiteralProcessingInstruction)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlLiteralProcessingInstructionClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XmlLiteralProcessingInstructionClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XmlLiteralText)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlLiteralTextClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XmlLiteralTextClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XmlAttribute)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlAttributeClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XmlAttributeClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XmlAttributeQuotes)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlAttributeQuotesClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XmlAttributeQuotesClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XmlAttributeValue)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlAttributeValueClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XmlAttributeValueClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XmlCDataSection)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlCDataSectionClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XmlCDataSectionClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XmlComment)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlCommentClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XmlCommentClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XmlDelimiter)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlDelimiterClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XmlDelimiterClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XmlKeyword)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlKeywordClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XmlKeywordClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XmlName)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlNameClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XmlNameClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XmlProcessingInstruction)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlProcessingInstructionClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XmlProcessingInstructionClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XmlText)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlTextClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XmlTextClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XamlAttribute)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XamlAttributeClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XamlAttributeClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XamlAttributeQuotes)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XamlAttributeQuotesClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XamlAttributeQuotesClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XamlAttributeValue)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XamlAttributeValueClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XamlAttributeValueClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XamlCDataSection)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XamlCDataSectionClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XamlCDataSectionClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XamlComment)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XamlCommentClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XamlCommentClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XamlDelimiter)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XamlDelimiterClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XamlDelimiterClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XamlKeyword)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XamlKeywordClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XamlKeywordClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XamlMarkupExtensionClass)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XamlMarkupExtensionClassClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XamlMarkupExtensionClassClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XamlMarkupExtensionParameterName)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XamlMarkupExtensionParameterNameClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XamlMarkupExtensionParameterNameClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XamlMarkupExtensionParameterValue)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XamlMarkupExtensionParameterValueClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XamlMarkupExtensionParameterValueClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XamlName)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XamlNameClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XamlNameClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XamlProcessingInstruction)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XamlProcessingInstructionClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XamlProcessingInstructionClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XamlText)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XamlTextClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XamlTextClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.XmlDocToolTipHeader)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition XmlDocToolTipHeaderClassificationTypeDefinition;
+		static ClassificationTypeDefinition? XmlDocToolTipHeaderClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.Assembly)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition AssemblyClassificationTypeDefinition;
+		static ClassificationTypeDefinition? AssemblyClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.AssemblyExe)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition AssemblyExeClassificationTypeDefinition;
+		static ClassificationTypeDefinition? AssemblyExeClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.AssemblyModule)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition AssemblyModuleClassificationTypeDefinition;
+		static ClassificationTypeDefinition? AssemblyModuleClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.DirectoryPart)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition DirectoryPartClassificationTypeDefinition;
+		static ClassificationTypeDefinition? DirectoryPartClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.FileNameNoExtension)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition FileNameNoExtensionClassificationTypeDefinition;
+		static ClassificationTypeDefinition? FileNameNoExtensionClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.FileExtension)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition FileExtensionClassificationTypeDefinition;
+		static ClassificationTypeDefinition? FileExtensionClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.Error)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition ErrorClassificationTypeDefinition;
+		static ClassificationTypeDefinition? ErrorClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.ToStringEval)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition ToStringEvalClassificationTypeDefinition;
+		static ClassificationTypeDefinition? ToStringEvalClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.ReplPrompt1)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition ReplPrompt1ClassificationTypeDefinition;
+		static ClassificationTypeDefinition? ReplPrompt1ClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.ReplPrompt2)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition ReplPrompt2ClassificationTypeDefinition;
+		static ClassificationTypeDefinition? ReplPrompt2ClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.ReplOutputText)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition ReplOutputTextClassificationTypeDefinition;
+		static ClassificationTypeDefinition? ReplOutputTextClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.ReplScriptOutputText)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition ReplScriptOutputTextClassificationTypeDefinition;
+		static ClassificationTypeDefinition? ReplScriptOutputTextClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.Black)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition BlackClassificationTypeDefinition;
+		static ClassificationTypeDefinition? BlackClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.Blue)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition BlueClassificationTypeDefinition;
+		static ClassificationTypeDefinition? BlueClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.Cyan)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition CyanClassificationTypeDefinition;
+		static ClassificationTypeDefinition? CyanClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.DarkBlue)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition DarkBlueClassificationTypeDefinition;
+		static ClassificationTypeDefinition? DarkBlueClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.DarkCyan)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition DarkCyanClassificationTypeDefinition;
+		static ClassificationTypeDefinition? DarkCyanClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.DarkGray)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition DarkGrayClassificationTypeDefinition;
+		static ClassificationTypeDefinition? DarkGrayClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.DarkGreen)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition DarkGreenClassificationTypeDefinition;
+		static ClassificationTypeDefinition? DarkGreenClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.DarkMagenta)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition DarkMagentaClassificationTypeDefinition;
+		static ClassificationTypeDefinition? DarkMagentaClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.DarkRed)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition DarkRedClassificationTypeDefinition;
+		static ClassificationTypeDefinition? DarkRedClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.DarkYellow)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition DarkYellowClassificationTypeDefinition;
+		static ClassificationTypeDefinition? DarkYellowClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.Gray)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition GrayClassificationTypeDefinition;
+		static ClassificationTypeDefinition? GrayClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.Green)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition GreenClassificationTypeDefinition;
+		static ClassificationTypeDefinition? GreenClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.Magenta)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition MagentaClassificationTypeDefinition;
+		static ClassificationTypeDefinition? MagentaClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.Red)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition RedClassificationTypeDefinition;
+		static ClassificationTypeDefinition? RedClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.White)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition WhiteClassificationTypeDefinition;
+		static ClassificationTypeDefinition? WhiteClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.Yellow)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition YellowClassificationTypeDefinition;
+		static ClassificationTypeDefinition? YellowClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.InvBlack)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition InvBlackClassificationTypeDefinition;
+		static ClassificationTypeDefinition? InvBlackClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.InvBlue)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition InvBlueClassificationTypeDefinition;
+		static ClassificationTypeDefinition? InvBlueClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.InvCyan)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition InvCyanClassificationTypeDefinition;
+		static ClassificationTypeDefinition? InvCyanClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.InvDarkBlue)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition InvDarkBlueClassificationTypeDefinition;
+		static ClassificationTypeDefinition? InvDarkBlueClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.InvDarkCyan)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition InvDarkCyanClassificationTypeDefinition;
+		static ClassificationTypeDefinition? InvDarkCyanClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.InvDarkGray)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition InvDarkGrayClassificationTypeDefinition;
+		static ClassificationTypeDefinition? InvDarkGrayClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.InvDarkGreen)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition InvDarkGreenClassificationTypeDefinition;
+		static ClassificationTypeDefinition? InvDarkGreenClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.InvDarkMagenta)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition InvDarkMagentaClassificationTypeDefinition;
+		static ClassificationTypeDefinition? InvDarkMagentaClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.InvDarkRed)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition InvDarkRedClassificationTypeDefinition;
+		static ClassificationTypeDefinition? InvDarkRedClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.InvDarkYellow)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition InvDarkYellowClassificationTypeDefinition;
+		static ClassificationTypeDefinition? InvDarkYellowClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.InvGray)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition InvGrayClassificationTypeDefinition;
+		static ClassificationTypeDefinition? InvGrayClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.InvGreen)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition InvGreenClassificationTypeDefinition;
+		static ClassificationTypeDefinition? InvGreenClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.InvMagenta)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition InvMagentaClassificationTypeDefinition;
+		static ClassificationTypeDefinition? InvMagentaClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.InvRed)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition InvRedClassificationTypeDefinition;
+		static ClassificationTypeDefinition? InvRedClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.InvWhite)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition InvWhiteClassificationTypeDefinition;
+		static ClassificationTypeDefinition? InvWhiteClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.InvYellow)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition InvYellowClassificationTypeDefinition;
+		static ClassificationTypeDefinition? InvYellowClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.DebugLogExceptionHandled)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition DebugLogExceptionHandledClassificationTypeDefinition;
+		static ClassificationTypeDefinition? DebugLogExceptionHandledClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.DebugLogExceptionUnhandled)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition DebugLogExceptionUnhandledClassificationTypeDefinition;
+		static ClassificationTypeDefinition? DebugLogExceptionUnhandledClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.DebugLogStepFiltering)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition DebugLogStepFilteringClassificationTypeDefinition;
+		static ClassificationTypeDefinition? DebugLogStepFilteringClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.DebugLogLoadModule)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition DebugLogLoadModuleClassificationTypeDefinition;
+		static ClassificationTypeDefinition? DebugLogLoadModuleClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.DebugLogUnloadModule)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition DebugLogUnloadModuleClassificationTypeDefinition;
+		static ClassificationTypeDefinition? DebugLogUnloadModuleClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.DebugLogExitProcess)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition DebugLogExitProcessClassificationTypeDefinition;
+		static ClassificationTypeDefinition? DebugLogExitProcessClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.DebugLogExitThread)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition DebugLogExitThreadClassificationTypeDefinition;
+		static ClassificationTypeDefinition? DebugLogExitThreadClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.DebugLogProgramOutput)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition DebugLogProgramOutputClassificationTypeDefinition;
+		static ClassificationTypeDefinition? DebugLogProgramOutputClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.DebugLogMDA)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition DebugLogMDAClassificationTypeDefinition;
+		static ClassificationTypeDefinition? DebugLogMDAClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.DebugLogTimestamp)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition DebugLogTimestampClassificationTypeDefinition;
+		static ClassificationTypeDefinition? DebugLogTimestampClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.DebugLogTrace)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition DebugLogTraceClassificationTypeDefinition;
+		static ClassificationTypeDefinition? DebugLogTraceClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.DebugLogExtensionMessage)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition DebugLogExtensionMessageClassificationTypeDefinition;
+		static ClassificationTypeDefinition? DebugLogExtensionMessageClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.LineNumber)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition LineNumberClassificationTypeDefinition;
+		static ClassificationTypeDefinition? LineNumberClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.ReplLineNumberInput1)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition ReplLineNumberInput1ClassificationTypeDefinition;
+		static ClassificationTypeDefinition? ReplLineNumberInput1ClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.ReplLineNumberInput2)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition ReplLineNumberInput2ClassificationTypeDefinition;
+		static ClassificationTypeDefinition? ReplLineNumberInput2ClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.ReplLineNumberOutput)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition ReplLineNumberOutputClassificationTypeDefinition;
+		static ClassificationTypeDefinition? ReplLineNumberOutputClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.VisibleWhitespace)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition VisibleWhitespaceClassificationTypeDefinition;
+		static ClassificationTypeDefinition? VisibleWhitespaceClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.SelectedText)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition SelectedTextClassificationTypeDefinition;
+		static ClassificationTypeDefinition? SelectedTextClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.InactiveSelectedText)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition InactiveSelectedTextClassificationTypeDefinition;
+		static ClassificationTypeDefinition? InactiveSelectedTextClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HighlightedReference)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HighlightedReferenceClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HighlightedReferenceClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HighlightedWrittenReference)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HighlightedWrittenReferenceClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HighlightedWrittenReferenceClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HighlightedDefinition)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HighlightedDefinitionClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HighlightedDefinitionClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.CurrentStatement)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition CurrentStatementClassificationTypeDefinition;
+		static ClassificationTypeDefinition? CurrentStatementClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.CurrentStatementMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition CurrentStatementMarkerClassificationTypeDefinition;
+		static ClassificationTypeDefinition? CurrentStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.CallReturn)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition CallReturnClassificationTypeDefinition;
+		static ClassificationTypeDefinition? CallReturnClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.CallReturnMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition CallReturnMarkerClassificationTypeDefinition;
+		static ClassificationTypeDefinition? CallReturnMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.ActiveStatementMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition ActiveStatementMarkerClassificationTypeDefinition;
+		static ClassificationTypeDefinition? ActiveStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.BreakpointStatement)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition BreakpointStatementClassificationTypeDefinition;
+		static ClassificationTypeDefinition? BreakpointStatementClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.BreakpointStatementMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition BreakpointStatementMarkerClassificationTypeDefinition;
+		static ClassificationTypeDefinition? BreakpointStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.SelectedBreakpointStatementMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition SelectedBreakpointStatementMarkerClassificationTypeDefinition;
+		static ClassificationTypeDefinition? SelectedBreakpointStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.DisabledBreakpointStatementMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition DisabledBreakpointStatementMarkerClassificationTypeDefinition;
+		static ClassificationTypeDefinition? DisabledBreakpointStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.AdvancedBreakpointStatement)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition AdvancedBreakpointStatementClassificationTypeDefinition;
+		static ClassificationTypeDefinition? AdvancedBreakpointStatementClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.AdvancedBreakpointStatementMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition AdvancedBreakpointStatementMarkerClassificationTypeDefinition;
+		static ClassificationTypeDefinition? AdvancedBreakpointStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.SelectedAdvancedBreakpointStatementMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition SelectedAdvancedBreakpointStatementMarkerClassificationTypeDefinition;
+		static ClassificationTypeDefinition? SelectedAdvancedBreakpointStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.DisabledAdvancedBreakpointStatement)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition DisabledAdvancedBreakpointStatementClassificationTypeDefinition;
+		static ClassificationTypeDefinition? DisabledAdvancedBreakpointStatementClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.DisabledAdvancedBreakpointStatementMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition DisabledAdvancedBreakpointStatementMarkerClassificationTypeDefinition;
+		static ClassificationTypeDefinition? DisabledAdvancedBreakpointStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.SelectedDisabledAdvancedBreakpointStatementMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition SelectedDisabledAdvancedBreakpointStatementMarkerClassificationTypeDefinition;
+		static ClassificationTypeDefinition? SelectedDisabledAdvancedBreakpointStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.BreakpointWarningStatement)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition BreakpointWarningStatementClassificationTypeDefinition;
+		static ClassificationTypeDefinition? BreakpointWarningStatementClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.BreakpointWarningStatementMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition BreakpointWarningStatementMarkerClassificationTypeDefinition;
+		static ClassificationTypeDefinition? BreakpointWarningStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.SelectedBreakpointWarningStatementMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition SelectedBreakpointWarningStatementMarkerClassificationTypeDefinition;
+		static ClassificationTypeDefinition? SelectedBreakpointWarningStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.BreakpointErrorStatement)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition BreakpointErrorStatementClassificationTypeDefinition;
+		static ClassificationTypeDefinition? BreakpointErrorStatementClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.BreakpointErrorStatementMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition BreakpointErrorStatementMarkerClassificationTypeDefinition;
+		static ClassificationTypeDefinition? BreakpointErrorStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.SelectedBreakpointErrorStatementMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition SelectedBreakpointErrorStatementMarkerClassificationTypeDefinition;
+		static ClassificationTypeDefinition? SelectedBreakpointErrorStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.AdvancedBreakpointWarningStatement)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition AdvancedBreakpointWarningStatementClassificationTypeDefinition;
+		static ClassificationTypeDefinition? AdvancedBreakpointWarningStatementClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.AdvancedBreakpointWarningStatementMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition AdvancedBreakpointWarningStatementMarkerClassificationTypeDefinition;
+		static ClassificationTypeDefinition? AdvancedBreakpointWarningStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.SelectedAdvancedBreakpointWarningStatementMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition SelectedAdvancedBreakpointWarningStatementMarkerClassificationTypeDefinition;
+		static ClassificationTypeDefinition? SelectedAdvancedBreakpointWarningStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.AdvancedBreakpointErrorStatement)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition AdvancedBreakpointErrorStatementClassificationTypeDefinition;
+		static ClassificationTypeDefinition? AdvancedBreakpointErrorStatementClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.AdvancedBreakpointErrorStatementMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition AdvancedBreakpointErrorStatementMarkerClassificationTypeDefinition;
+		static ClassificationTypeDefinition? AdvancedBreakpointErrorStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.SelectedAdvancedBreakpointErrorStatementMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition SelectedAdvancedBreakpointErrorStatementMarkerClassificationTypeDefinition;
+		static ClassificationTypeDefinition? SelectedAdvancedBreakpointErrorStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.TracepointStatement)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition TracepointStatementClassificationTypeDefinition;
+		static ClassificationTypeDefinition? TracepointStatementClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.TracepointStatementMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition TracepointStatementMarkerClassificationTypeDefinition;
+		static ClassificationTypeDefinition? TracepointStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.SelectedTracepointStatementMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition SelectedTracepointStatementMarkerClassificationTypeDefinition;
+		static ClassificationTypeDefinition? SelectedTracepointStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.DisabledTracepointStatement)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition DisabledTracepointStatementClassificationTypeDefinition;
+		static ClassificationTypeDefinition? DisabledTracepointStatementClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.DisabledTracepointStatementMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition DisabledTracepointStatementMarkerClassificationTypeDefinition;
+		static ClassificationTypeDefinition? DisabledTracepointStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.SelectedDisabledTracepointStatementMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition SelectedDisabledTracepointStatementMarkerClassificationTypeDefinition;
+		static ClassificationTypeDefinition? SelectedDisabledTracepointStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.AdvancedTracepointStatement)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition AdvancedTracepointStatementClassificationTypeDefinition;
+		static ClassificationTypeDefinition? AdvancedTracepointStatementClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.AdvancedTracepointStatementMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition AdvancedTracepointStatementMarkerClassificationTypeDefinition;
+		static ClassificationTypeDefinition? AdvancedTracepointStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.SelectedAdvancedTracepointStatementMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition SelectedAdvancedTracepointStatementMarkerClassificationTypeDefinition;
+		static ClassificationTypeDefinition? SelectedAdvancedTracepointStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.DisabledAdvancedTracepointStatement)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition DisabledAdvancedTracepointStatementClassificationTypeDefinition;
+		static ClassificationTypeDefinition? DisabledAdvancedTracepointStatementClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.DisabledAdvancedTracepointStatementMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition DisabledAdvancedTracepointStatementMarkerClassificationTypeDefinition;
+		static ClassificationTypeDefinition? DisabledAdvancedTracepointStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.SelectedDisabledAdvancedTracepointStatementMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition SelectedDisabledAdvancedTracepointStatementMarkerClassificationTypeDefinition;
+		static ClassificationTypeDefinition? SelectedDisabledAdvancedTracepointStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.TracepointWarningStatement)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition TracepointWarningStatementClassificationTypeDefinition;
+		static ClassificationTypeDefinition? TracepointWarningStatementClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.TracepointWarningStatementMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition TracepointWarningStatementMarkerClassificationTypeDefinition;
+		static ClassificationTypeDefinition? TracepointWarningStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.SelectedTracepointWarningStatementMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition SelectedTracepointWarningStatementMarkerClassificationTypeDefinition;
+		static ClassificationTypeDefinition? SelectedTracepointWarningStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.TracepointErrorStatement)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition TracepointErrorStatementClassificationTypeDefinition;
+		static ClassificationTypeDefinition? TracepointErrorStatementClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.TracepointErrorStatementMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition TracepointErrorStatementMarkerClassificationTypeDefinition;
+		static ClassificationTypeDefinition? TracepointErrorStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.SelectedTracepointErrorStatementMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition SelectedTracepointErrorStatementMarkerClassificationTypeDefinition;
+		static ClassificationTypeDefinition? SelectedTracepointErrorStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.AdvancedTracepointWarningStatement)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition AdvancedTracepointWarningStatementClassificationTypeDefinition;
+		static ClassificationTypeDefinition? AdvancedTracepointWarningStatementClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.AdvancedTracepointWarningStatementMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition AdvancedTracepointWarningStatementMarkerClassificationTypeDefinition;
+		static ClassificationTypeDefinition? AdvancedTracepointWarningStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.SelectedAdvancedTracepointWarningStatementMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition SelectedAdvancedTracepointWarningStatementMarkerClassificationTypeDefinition;
+		static ClassificationTypeDefinition? SelectedAdvancedTracepointWarningStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.AdvancedTracepointErrorStatement)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition AdvancedTracepointErrorStatementClassificationTypeDefinition;
+		static ClassificationTypeDefinition? AdvancedTracepointErrorStatementClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.AdvancedTracepointErrorStatementMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition AdvancedTracepointErrorStatementMarkerClassificationTypeDefinition;
+		static ClassificationTypeDefinition? AdvancedTracepointErrorStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.SelectedAdvancedTracepointErrorStatementMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition SelectedAdvancedTracepointErrorStatementMarkerClassificationTypeDefinition;
+		static ClassificationTypeDefinition? SelectedAdvancedTracepointErrorStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.BookmarkName)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition BookmarkNameClassificationTypeDefinition;
+		static ClassificationTypeDefinition? BookmarkNameClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.ActiveBookmarkName)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition ActiveBookmarkNameClassificationTypeDefinition;
+		static ClassificationTypeDefinition? ActiveBookmarkNameClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.CurrentLine)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition CurrentLineClassificationTypeDefinition;
+		static ClassificationTypeDefinition? CurrentLineClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.CurrentLineNoFocus)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition CurrentLineNoFocusClassificationTypeDefinition;
+		static ClassificationTypeDefinition? CurrentLineNoFocusClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HexText)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexTextClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexTextClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HexOffset)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexOffsetClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexOffsetClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HexByte0)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexByte0ClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexByte0ClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HexByte1)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexByte1ClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexByte1ClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HexByteError)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexByteErrorClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexByteErrorClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HexAscii)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexAsciiClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexAsciiClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HexCaret)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexCaretClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexCaretClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HexInactiveCaret)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexInactiveCaretClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexInactiveCaretClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HexSelection)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexSelectionClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexSelectionClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.GlyphMargin)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition GlyphMarginClassificationTypeDefinition;
+		static ClassificationTypeDefinition? GlyphMarginClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.BraceMatching)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition BraceMatchingClassificationTypeDefinition;
+		static ClassificationTypeDefinition? BraceMatchingClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.LineSeparator)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition LineSeparatorClassificationTypeDefinition;
+		static ClassificationTypeDefinition? LineSeparatorClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.FindMatchHighlightMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition FindMatchHighlightMarkerClassificationTypeDefinition;
+		static ClassificationTypeDefinition? FindMatchHighlightMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.BlockStructureNamespace)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition BlockStructureNamespaceClassificationTypeDefinition;
+		static ClassificationTypeDefinition? BlockStructureNamespaceClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.BlockStructureType)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition BlockStructureTypeClassificationTypeDefinition;
+		static ClassificationTypeDefinition? BlockStructureTypeClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.BlockStructureModule)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition BlockStructureModuleClassificationTypeDefinition;
+		static ClassificationTypeDefinition? BlockStructureModuleClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.BlockStructureValueType)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition BlockStructureValueTypeClassificationTypeDefinition;
+		static ClassificationTypeDefinition? BlockStructureValueTypeClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.BlockStructureInterface)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition BlockStructureInterfaceClassificationTypeDefinition;
+		static ClassificationTypeDefinition? BlockStructureInterfaceClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.BlockStructureMethod)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition BlockStructureMethodClassificationTypeDefinition;
+		static ClassificationTypeDefinition? BlockStructureMethodClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.BlockStructureAccessor)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition BlockStructureAccessorClassificationTypeDefinition;
+		static ClassificationTypeDefinition? BlockStructureAccessorClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.BlockStructureAnonymousMethod)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition BlockStructureAnonymousMethodClassificationTypeDefinition;
+		static ClassificationTypeDefinition? BlockStructureAnonymousMethodClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.BlockStructureConstructor)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition BlockStructureConstructorClassificationTypeDefinition;
+		static ClassificationTypeDefinition? BlockStructureConstructorClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.BlockStructureDestructor)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition BlockStructureDestructorClassificationTypeDefinition;
+		static ClassificationTypeDefinition? BlockStructureDestructorClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.BlockStructureOperator)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition BlockStructureOperatorClassificationTypeDefinition;
+		static ClassificationTypeDefinition? BlockStructureOperatorClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.BlockStructureConditional)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition BlockStructureConditionalClassificationTypeDefinition;
+		static ClassificationTypeDefinition? BlockStructureConditionalClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.BlockStructureLoop)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition BlockStructureLoopClassificationTypeDefinition;
+		static ClassificationTypeDefinition? BlockStructureLoopClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.BlockStructureProperty)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition BlockStructurePropertyClassificationTypeDefinition;
+		static ClassificationTypeDefinition? BlockStructurePropertyClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.BlockStructureEvent)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition BlockStructureEventClassificationTypeDefinition;
+		static ClassificationTypeDefinition? BlockStructureEventClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.BlockStructureTry)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition BlockStructureTryClassificationTypeDefinition;
+		static ClassificationTypeDefinition? BlockStructureTryClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.BlockStructureCatch)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition BlockStructureCatchClassificationTypeDefinition;
+		static ClassificationTypeDefinition? BlockStructureCatchClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.BlockStructureFilter)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition BlockStructureFilterClassificationTypeDefinition;
+		static ClassificationTypeDefinition? BlockStructureFilterClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.BlockStructureFinally)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition BlockStructureFinallyClassificationTypeDefinition;
+		static ClassificationTypeDefinition? BlockStructureFinallyClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.BlockStructureFault)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition BlockStructureFaultClassificationTypeDefinition;
+		static ClassificationTypeDefinition? BlockStructureFaultClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.BlockStructureLock)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition BlockStructureLockClassificationTypeDefinition;
+		static ClassificationTypeDefinition? BlockStructureLockClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.BlockStructureUsing)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition BlockStructureUsingClassificationTypeDefinition;
+		static ClassificationTypeDefinition? BlockStructureUsingClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.BlockStructureFixed)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition BlockStructureFixedClassificationTypeDefinition;
+		static ClassificationTypeDefinition? BlockStructureFixedClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.BlockStructureSwitch)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition BlockStructureSwitchClassificationTypeDefinition;
+		static ClassificationTypeDefinition? BlockStructureSwitchClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.BlockStructureCase)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition BlockStructureCaseClassificationTypeDefinition;
+		static ClassificationTypeDefinition? BlockStructureCaseClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.BlockStructureLocalFunction)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition BlockStructureLocalFunctionClassificationTypeDefinition;
+		static ClassificationTypeDefinition? BlockStructureLocalFunctionClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.BlockStructureOther)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition BlockStructureOtherClassificationTypeDefinition;
+		static ClassificationTypeDefinition? BlockStructureOtherClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.BlockStructureXml)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition BlockStructureXmlClassificationTypeDefinition;
+		static ClassificationTypeDefinition? BlockStructureXmlClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.BlockStructureXaml)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition BlockStructureXamlClassificationTypeDefinition;
+		static ClassificationTypeDefinition? BlockStructureXamlClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.CompletionMatchHighlight)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition CompletionMatchHighlightClassificationTypeDefinition;
+		static ClassificationTypeDefinition? CompletionMatchHighlightClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.CompletionSuffix)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition CompletionSuffixClassificationTypeDefinition;
+		static ClassificationTypeDefinition? CompletionSuffixClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.SignatureHelpDocumentation)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition SignatureHelpDocumentationClassificationTypeDefinition;
+		static ClassificationTypeDefinition? SignatureHelpDocumentationClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.SignatureHelpCurrentParameter)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition SignatureHelpCurrentParameterClassificationTypeDefinition;
+		static ClassificationTypeDefinition? SignatureHelpCurrentParameterClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.SignatureHelpParameter)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition SignatureHelpParameterClassificationTypeDefinition;
+		static ClassificationTypeDefinition? SignatureHelpParameterClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.SignatureHelpParameterDocumentation)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition SignatureHelpParameterDocumentationClassificationTypeDefinition;
+		static ClassificationTypeDefinition? SignatureHelpParameterDocumentationClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.Url)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition UrlClassificationTypeDefinition;
+		static ClassificationTypeDefinition? UrlClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HexPeDosHeader)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexPeDosHeaderClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexPeDosHeaderClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HexPeFileHeader)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexPeFileHeaderClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexPeFileHeaderClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HexPeOptionalHeader32)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexPeOptionalHeader32ClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexPeOptionalHeader32ClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HexPeOptionalHeader64)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexPeOptionalHeader64ClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexPeOptionalHeader64ClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HexPeSection)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexPeSectionClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexPeSectionClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HexPeSectionName)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexPeSectionNameClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexPeSectionNameClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HexCor20Header)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexCor20HeaderClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexCor20HeaderClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HexStorageSignature)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexStorageSignatureClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexStorageSignatureClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HexStorageHeader)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexStorageHeaderClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexStorageHeaderClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HexStorageStream)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexStorageStreamClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexStorageStreamClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HexStorageStreamName)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexStorageStreamNameClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexStorageStreamNameClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HexStorageStreamNameInvalid)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexStorageStreamNameInvalidClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexStorageStreamNameInvalidClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HexTablesStream)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexTablesStreamClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexTablesStreamClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HexTableName)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexTableNameClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexTableNameClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.DocumentListMatchHighlight)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition DocumentListMatchHighlightClassificationTypeDefinition;
+		static ClassificationTypeDefinition? DocumentListMatchHighlightClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.GacMatchHighlight)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition GacMatchHighlightClassificationTypeDefinition;
+		static ClassificationTypeDefinition? GacMatchHighlightClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.AppSettingsTreeViewNodeMatchHighlight)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition AppSettingsTreeViewNodeMatchHighlightClassificationTypeDefinition;
+		static ClassificationTypeDefinition? AppSettingsTreeViewNodeMatchHighlightClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.AppSettingsTextMatchHighlight)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition AppSettingsTextMatchHighlightClassificationTypeDefinition;
+		static ClassificationTypeDefinition? AppSettingsTextMatchHighlightClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HexCurrentLine)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexCurrentLineClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexCurrentLineClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HexCurrentLineNoFocus)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexCurrentLineNoFocusClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexCurrentLineNoFocusClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HexInactiveSelectedText)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexInactiveSelectedTextClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexInactiveSelectedTextClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HexColumnLine0)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexColumnLine0ClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexColumnLine0ClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HexColumnLine1)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexColumnLine1ClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexColumnLine1ClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HexColumnLineGroup0)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexColumnLineGroup0ClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexColumnLineGroup0ClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HexColumnLineGroup1)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexColumnLineGroup1ClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexColumnLineGroup1ClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HexHighlightedValuesColumn)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexHighlightedValuesColumnClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexHighlightedValuesColumnClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HexHighlightedAsciiColumn)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexHighlightedAsciiColumnClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexHighlightedAsciiColumnClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HexGlyphMargin)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexGlyphMarginClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexGlyphMarginClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HexCurrentValueCell)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexCurrentValueCellClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexCurrentValueCellClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HexCurrentAsciiCell)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexCurrentAsciiCellClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexCurrentAsciiCellClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.OutputWindowText)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition OutputWindowTextClassificationTypeDefinition;
+		static ClassificationTypeDefinition? OutputWindowTextClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HexFindMatchHighlightMarker)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexFindMatchHighlightMarkerClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexFindMatchHighlightMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HexToolTipServiceField0)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexToolTipServiceField0ClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexToolTipServiceField0ClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HexToolTipServiceField1)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexToolTipServiceField1ClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexToolTipServiceField1ClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.HexToolTipServiceCurrentField)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexToolTipServiceCurrentFieldClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexToolTipServiceCurrentFieldClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.ListFindMatchHighlight)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition ListFindMatchHighlightClassificationTypeDefinition;
+		static ClassificationTypeDefinition? ListFindMatchHighlightClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.DebuggerValueChangedHighlight)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition DebuggerValueChangedHighlightClassificationTypeDefinition;
+		static ClassificationTypeDefinition? DebuggerValueChangedHighlightClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.DebugExceptionName)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition DebugExceptionNameClassificationTypeDefinition;
+		static ClassificationTypeDefinition? DebugExceptionNameClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.DebugStowedExceptionName)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition DebugStowedExceptionNameClassificationTypeDefinition;
+		static ClassificationTypeDefinition? DebugStowedExceptionNameClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.DebugReturnValueName)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition DebugReturnValueNameClassificationTypeDefinition;
+		static ClassificationTypeDefinition? DebugReturnValueNameClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.DebugVariableName)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition DebugVariableNameClassificationTypeDefinition;
+		static ClassificationTypeDefinition? DebugVariableNameClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.DebugObjectIdName)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition DebugObjectIdNameClassificationTypeDefinition;
+		static ClassificationTypeDefinition? DebugObjectIdNameClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.DebuggerDisplayAttributeEval)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition DebuggerDisplayAttributeEvalClassificationTypeDefinition;
+		static ClassificationTypeDefinition? DebuggerDisplayAttributeEvalClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.DebuggerNoStringQuotesEval)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition DebuggerNoStringQuotesEvalClassificationTypeDefinition;
+		static ClassificationTypeDefinition? DebuggerNoStringQuotesEvalClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.DebugViewPropertyName)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition DebugViewPropertyNameClassificationTypeDefinition;
+		static ClassificationTypeDefinition? DebugViewPropertyNameClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.AsmComment)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition AsmCommentClassificationTypeDefinition;
+		static ClassificationTypeDefinition? AsmCommentClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.AsmDirective)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition AsmDirectiveClassificationTypeDefinition;
+		static ClassificationTypeDefinition? AsmDirectiveClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.AsmPrefix)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition AsmPrefixClassificationTypeDefinition;
+		static ClassificationTypeDefinition? AsmPrefixClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.AsmMnemonic)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition AsmMnemonicClassificationTypeDefinition;
+		static ClassificationTypeDefinition? AsmMnemonicClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.AsmKeyword)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition AsmKeywordClassificationTypeDefinition;
+		static ClassificationTypeDefinition? AsmKeywordClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.AsmOperator)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition AsmOperatorClassificationTypeDefinition;
+		static ClassificationTypeDefinition? AsmOperatorClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.AsmPunctuation)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition AsmPunctuationClassificationTypeDefinition;
+		static ClassificationTypeDefinition? AsmPunctuationClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.AsmNumber)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition AsmNumberClassificationTypeDefinition;
+		static ClassificationTypeDefinition? AsmNumberClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.AsmRegister)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition AsmRegisterClassificationTypeDefinition;
+		static ClassificationTypeDefinition? AsmRegisterClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.AsmSelectorValue)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition AsmSelectorValueClassificationTypeDefinition;
+		static ClassificationTypeDefinition? AsmSelectorValueClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.AsmLabelAddress)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition AsmLabelAddressClassificationTypeDefinition;
+		static ClassificationTypeDefinition? AsmLabelAddressClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.AsmFunctionAddress)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition AsmFunctionAddressClassificationTypeDefinition;
+		static ClassificationTypeDefinition? AsmFunctionAddressClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.AsmLabel)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition AsmLabelClassificationTypeDefinition;
+		static ClassificationTypeDefinition? AsmLabelClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.AsmFunction)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition AsmFunctionClassificationTypeDefinition;
+		static ClassificationTypeDefinition? AsmFunctionClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.AsmData)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition AsmDataClassificationTypeDefinition;
+		static ClassificationTypeDefinition? AsmDataClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.AsmAddress)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition AsmAddressClassificationTypeDefinition;
+		static ClassificationTypeDefinition? AsmAddressClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.AsmHexBytes)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition AsmHexBytesClassificationTypeDefinition;
+		static ClassificationTypeDefinition? AsmHexBytesClassificationTypeDefinition;
 #pragma warning restore CS0169
 
 		[Export(typeof(EditorFormatDefinition))]

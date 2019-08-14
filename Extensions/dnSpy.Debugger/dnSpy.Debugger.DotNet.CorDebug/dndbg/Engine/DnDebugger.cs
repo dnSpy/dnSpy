@@ -87,48 +87,48 @@ namespace dndbg.Engine {
 		public void SetProcessTerminated() => forceProcessTerminated = true;
 		bool forceProcessTerminated;
 
-		public event EventHandler OnAttachComplete;
+		public event EventHandler? OnAttachComplete;
 
-		public event EventHandler<ThreadDebuggerEventArgs> OnThreadAdded;
+		public event EventHandler<ThreadDebuggerEventArgs>? OnThreadAdded;
 		void CallOnThreadAdded(DnThread thread, bool added, out bool shouldPause) {
 			var e = new ThreadDebuggerEventArgs(thread, added);
 			OnThreadAdded?.Invoke(this, e);
 			shouldPause = e.ShouldPause;
 		}
 
-		public event EventHandler<AppDomainDebuggerEventArgs> OnAppDomainAdded;
+		public event EventHandler<AppDomainDebuggerEventArgs>? OnAppDomainAdded;
 		void CallOnAppDomainAdded(DnAppDomain appDomain, bool added, out bool shouldPause) {
 			var e = new AppDomainDebuggerEventArgs(appDomain, added);
 			OnAppDomainAdded?.Invoke(this, e);
 			shouldPause = e.ShouldPause;
 		}
 
-		public event EventHandler<AssemblyDebuggerEventArgs> OnAssemblyAdded;
+		public event EventHandler<AssemblyDebuggerEventArgs>? OnAssemblyAdded;
 		void CallOnAssemblyAdded(DnAssembly assembly, bool added, out bool shouldPause) {
 			var e = new AssemblyDebuggerEventArgs(assembly, added);
 			OnAssemblyAdded?.Invoke(this, e);
 			shouldPause = e.ShouldPause;
 		}
 
-		public event EventHandler<ModuleDebuggerEventArgs> OnModuleAdded;
+		public event EventHandler<ModuleDebuggerEventArgs>? OnModuleAdded;
 		void CallOnModuleAdded(DnModule module, bool added, out bool shouldPause) {
 			var e = new ModuleDebuggerEventArgs(module, added);
 			OnModuleAdded?.Invoke(this, e);
 			shouldPause = e.ShouldPause;
 		}
 
-		public event EventHandler<NameChangedDebuggerEventArgs> OnNameChanged;
+		public event EventHandler<NameChangedDebuggerEventArgs>? OnNameChanged;
 		void CallOnNameChanged(DnAppDomain? appDomain, DnThread? thread) =>
 			OnNameChanged?.Invoke(this, new NameChangedDebuggerEventArgs(appDomain, thread));
 
-		public event EventHandler<DebuggerEventArgs> OnProcessStateChanged;
+		public event EventHandler<DebuggerEventArgs>? OnProcessStateChanged;
 		void CallOnProcessStateChanged() =>
 			OnProcessStateChanged?.Invoke(this, DebuggerEventArgs.Empty);
 
-		public event EventHandler<CorModuleDefCreatedEventArgs> OnCorModuleDefCreated;
+		public event EventHandler<CorModuleDefCreatedEventArgs>? OnCorModuleDefCreated;
 		internal void CorModuleDefCreated(DnModule module) {
 			DebugVerifyThread();
-			Debug.Assert(!(module.CorModuleDef is null));
+			Debug2.Assert(!(module.CorModuleDef is null));
 			OnCorModuleDefCreated?.Invoke(this, new CorModuleDefCreatedEventArgs(module, module.CorModuleDef));
 		}
 
@@ -254,7 +254,7 @@ namespace dndbg.Engine {
 		static readonly string[] clrFiles_v2 = new string[] { "mscorwks.dll", "mscorsvr.dll" };
 		static readonly string[] clrFiles_v4 = new string[] { "clr.dll" };
 
-		public event DebugCallbackEventHandler DebugCallbackEvent;
+		public event DebugCallbackEventHandler? DebugCallbackEvent;
 
 		// Could be called from any thread
 		internal void OnManagedCallbackFromAnyThread(Func<DebugCallbackEventArgs> func) => debugMessageDispatcher.ExecuteAsync(() => {
@@ -375,7 +375,7 @@ namespace dndbg.Engine {
 		// and no methods can be called because the CLR debugger could call us before this method
 		// returns.
 		bool Continue(ICorDebugController? controller, bool callOnProcessStateChanged) {
-			Debug.Assert(!(controller is null));
+			Debug2.Assert(!(controller is null));
 			if (controller is null)
 				return false;
 
@@ -417,7 +417,7 @@ namespace dndbg.Engine {
 				return;
 
 			var controller = Current.Controller;
-			Debug.Assert(!(controller is null));
+			Debug2.Assert(!(controller is null));
 			if (controller is null)
 				return;
 
@@ -487,7 +487,7 @@ namespace dndbg.Engine {
 		CorStepper? Step(CorFrame? frame, StepKind step, Action<DnDebugger, StepCompleteDebugCallbackEventArgs?, bool>? action = null) {
 			if (!CanStep(frame))
 				return null;
-			Debug.Assert(!(frame is null));
+			Debug2.Assert(!(frame is null));
 
 			var stepper = CreateStepper(frame);
 			if (stepper is null)
@@ -537,7 +537,7 @@ namespace dndbg.Engine {
 				return Step(frame, stepInto ? StepKind.StepInto : StepKind.StepOver, action);
 			if (!CanStep(frame))
 				return null;
-			Debug.Assert(!(frame is null));
+			Debug2.Assert(!(frame is null));
 
 			var stepper = CreateStepper(frame);
 			if (stepper is null)
@@ -1165,7 +1165,7 @@ namespace dndbg.Engine {
 			}
 		}
 
-		public event EventHandler<RedirectedOutputEventArgs> OnRedirectedOutput;
+		public event EventHandler<RedirectedOutputEventArgs>? OnRedirectedOutput;
 		async void ReadPipesAsync() {
 			var waitTasks = new Task[2];
 			var outputPipe = this.outputPipe!;
@@ -1662,7 +1662,7 @@ namespace dndbg.Engine {
 
 		public void AddCustomNotificationClassToken(DnModule module, uint token) {
 			var cls = module.CorModule.GetClassFromToken(token);
-			Debug.Assert(!(cls is null));
+			Debug2.Assert(!(cls is null));
 			if (!(cls is null))
 				customNotificationList.Add((module, cls));
 		}

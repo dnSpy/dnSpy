@@ -219,13 +219,13 @@ namespace dnSpy.Hex.Intellisense {
 			var sessionState = GetSessionState(session);
 			if (!(sessionState.SpaceReservationAgent is null))
 				sessionState.SpaceReservationManager!.RemoveAgent(sessionState.SpaceReservationAgent);
-			Debug.Assert(sessionState.SpaceReservationAgent is null);
+			Debug2.Assert(sessionState.SpaceReservationAgent is null);
 
 			var presenter = session.Presenter;
 			if (presenter is IHexPopupIntellisensePresenter popupPresenter) {
 				if (sessionState.SpaceReservationManager is null) {
 					sessionState.SetSpaceReservationManager(wpfHexView.GetSpaceReservationManager(popupPresenter.SpaceReservationManagerName));
-					Debug.Assert(!(sessionState.SpaceReservationManager is null));
+					Debug2.Assert(!(sessionState.SpaceReservationManager is null));
 					sessionState.SpaceReservationManager.AgentChanged += SpaceReservationManager_AgentChanged;
 				}
 				UnregisterPopupIntellisensePresenterEvents(sessionState.PopupIntellisensePresenter);
@@ -243,7 +243,7 @@ namespace dnSpy.Hex.Intellisense {
 				if (presenter is IHexCustomIntellisensePresenter customPresenter)
 					customPresenter.Render();
 				else
-					Debug.Assert(presenter is null, $"Unsupported presenter: {presenter?.GetType()}");
+					Debug2.Assert(presenter is null, $"Unsupported presenter: {presenter?.GetType()}");
 			}
 		}
 
@@ -278,7 +278,7 @@ namespace dnSpy.Hex.Intellisense {
 				return;
 			}
 			var sessionState = TryGetSessionState(popupPresenter);
-			Debug.Assert(!(sessionState is null));
+			Debug2.Assert(!(sessionState is null));
 			if (sessionState is null)
 				return;
 			if (propertyName == nameof(popupPresenter.PresentationSpan) || propertyName == nameof(popupPresenter.PopupStyles)) {
@@ -305,7 +305,7 @@ namespace dnSpy.Hex.Intellisense {
 
 		void Session_Dismissed(object? sender, EventArgs e) {
 			var session = sender as HexIntellisenseSession;
-			Debug.Assert(!(session is null));
+			Debug2.Assert(!(session is null));
 			if (session is null)
 				return;
 			int index = sessions.IndexOf(session);

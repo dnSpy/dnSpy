@@ -120,7 +120,7 @@ namespace dnSpy.Bookmarks.TextEditor {
 			uiDispatcher.VerifyAccess();
 			var bms = new List<Bookmark>(bookmarks.Count);
 			var removedMarkers = new List<IGlyphTextMarker>(bookmarks.Count);
-			Debug.Assert(!(bookmarkInfos is null));
+			Debug2.Assert(!(bookmarkInfos is null));
 			for (int i = 0; i < bookmarks.Count; i++) {
 				var bm = bookmarks[i];
 				if (!bm.TryGetData(out BookmarkData? data))
@@ -142,7 +142,7 @@ namespace dnSpy.Bookmarks.TextEditor {
 			if (!bm.TryGetData(out BookmarkData? data))
 				return;
 
-			Debug.Assert(!(bookmarkInfos is null));
+			Debug2.Assert(!(bookmarkInfos is null));
 			var info = bookmarkInfos[(int)BookmarkImageUtilities.GetBookmarkKind(bm)];
 			if (data.Info == info && !(data.Marker is null))
 				return;

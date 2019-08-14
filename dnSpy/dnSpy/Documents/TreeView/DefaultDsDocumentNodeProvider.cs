@@ -26,12 +26,12 @@ namespace dnSpy.Documents.TreeView {
 	sealed class DefaultDsDocumentNodeProvider : IDsDocumentNodeProvider {
 		public DsDocumentNode? Create(IDocumentTreeView documentTreeView, DsDocumentNode? owner, IDsDocument document) {
 			if (document is IDsDotNetDocument dnDocument) {
-				Debug.Assert(!(document.ModuleDef is null));
+				Debug2.Assert(!(document.ModuleDef is null));
 				if (document.AssemblyDef is null || !(owner is null))
 					return new ModuleDocumentNodeImpl(dnDocument);
 				return new AssemblyDocumentNodeImpl(dnDocument);
 			}
-			Debug.Assert(document.AssemblyDef is null && document.ModuleDef is null);
+			Debug2.Assert(document.AssemblyDef is null && document.ModuleDef is null);
 			if (!(document.PEImage is null))
 				return new PEDocumentNodeImpl(document);
 

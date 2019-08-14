@@ -118,7 +118,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 					DbgDotNetValue? objValue = value;
 					DbgDotNetValueResult valueResult = default;
 					try {
-						Debug.Assert(!(info.fields is null));
+						Debug2.Assert(!(info.fields is null));
 						foreach (var field in info.fields) {
 							valueResult = runtime.LoadField(evalInfo, objValue, field);
 							if (!(valueResult.Value is null))

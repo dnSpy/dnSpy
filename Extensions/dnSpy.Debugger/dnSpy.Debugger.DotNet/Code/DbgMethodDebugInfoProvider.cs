@@ -111,7 +111,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 		}
 
 		MethodDebugInfoResult GetMethodDebugInfo(DbgRuntime runtime, in MethodDebugInfoResultKey key, IDecompiler decompiler, ModuleDef? mdModule, uint token, CancellationToken cancellationToken) {
-			Debug.Assert(!(mdModule is null));
+			Debug2.Assert(!(mdModule is null));
 			if (mdModule is null)
 				return default;
 

@@ -77,7 +77,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		void DeleteTypeDef(MetadataEditor mdEditor, TypeDef nonNestedTypeDef) {
-			Debug.Assert(nonNestedTypeDef.DeclaringType is null);
+			Debug2.Assert(nonNestedTypeDef.DeclaringType is null);
 
 			var dict = new Dictionary<TypeDef, (TypeDef Type, uint TypeRefRid, RawTypeRefRow TypeRefRow)>();
 			foreach (var type in MDPatcherUtils.GetMetadataTypes(nonNestedTypeDef)) {
@@ -117,7 +117,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		/// reference it in the temporary edit-assembly.
 		/// </summary>
 		void PatchTypeRefsToEditedType(TypeDef nonNestedEditedType) {
-			Debug.Assert(nonNestedEditedType.DeclaringType is null);
+			Debug2.Assert(nonNestedEditedType.DeclaringType is null);
 			if (remappedTypeTokens.Count == 0)
 				return;
 

@@ -79,7 +79,7 @@ namespace dnSpy.Text.Editor {
 		[Name(PredefinedDsAdornmentLayers.LineSeparator)]
 		[Order(After = PredefinedDsAdornmentLayers.BottomLayer, Before = PredefinedDsAdornmentLayers.TopLayer)]
 		[Order(After = PredefinedAdornmentLayers.Selection, Before = PredefinedAdornmentLayers.Squiggle)]
-		static AdornmentLayerDefinition theAdornmentLayerDefinition;
+		static AdornmentLayerDefinition? theAdornmentLayerDefinition;
 #pragma warning restore CS0169
 
 		readonly IWpfTextView wpfTextView;
@@ -111,7 +111,7 @@ namespace dnSpy.Text.Editor {
 
 		void UpdateLineSeparator() {
 			if (wpfTextView.Options.IsLineSeparatorEnabled()) {
-				Debug.Assert(tagAggregator is null);
+				Debug2.Assert(tagAggregator is null);
 				if (!(tagAggregator is null))
 					throw new InvalidOperationException();
 				if (adornmentLayer is null)
@@ -155,7 +155,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void UpdateLineSeparatorElementsForeground() {
-			Debug.Assert(!(lineSeparatorBrush is null));
+			Debug2.Assert(!(lineSeparatorBrush is null));
 			foreach (var elem in lineSeparatorElements)
 				elem.Brush = lineSeparatorBrush;
 		}
@@ -236,8 +236,8 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void AddLineSeparatorElements(NormalizedSnapshotSpanCollection spans) {
-			Debug.Assert(!(tagAggregator is null));
-			Debug.Assert(!(adornmentLayer is null));
+			Debug2.Assert(!(tagAggregator is null));
+			Debug2.Assert(!(adornmentLayer is null));
 			var textViewLines = wpfTextView.TextViewLines;
 			// There's always at least one line in the collection
 			Debug.Assert(textViewLines.Count > 0);

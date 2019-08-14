@@ -66,7 +66,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 	}
 
 	sealed class TheTagger : ITagger<IClassificationTag> {
-		public event EventHandler<SnapshotSpanEventArgs> TagsChanged { add { } remove { } }
+		public event EventHandler<SnapshotSpanEventArgs>? TagsChanged { add { } remove { } }
 		readonly IClassificationTag classificationTag;
 		readonly DebuggerSettings debuggerSettings;
 

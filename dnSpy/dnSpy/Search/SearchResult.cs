@@ -117,7 +117,7 @@ namespace dnSpy.Search {
 			}
 
 			if (o is TypeDef td) {
-				Debug.Assert(!(Context.Decompiler is null));
+				Debug2.Assert(!(Context.Decompiler is null));
 				Context.Decompiler.WriteType(output, td, includeNamespace);
 				return;
 			}
@@ -195,7 +195,7 @@ namespace dnSpy.Search {
 				return;
 			}
 
-			Debug.Assert(o is null);
+			Debug2.Assert(o is null);
 		}
 
 		public static SearchResult CreateMessage(SearchResultContext context, string msg, object color, bool first) =>

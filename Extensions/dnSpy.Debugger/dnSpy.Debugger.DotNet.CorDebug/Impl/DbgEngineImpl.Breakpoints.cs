@@ -55,7 +55,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		void SendCodeBreakpointHitMessage_CorDebug(DnCodeBreakpoint breakpoint, DbgThread? thread) {
 			debuggerThread.VerifyAccess();
 			var bpData = (BoundBreakpointData?)breakpoint.Tag;
-			Debug.Assert(!(bpData is null));
+			Debug2.Assert(!(bpData is null));
 			if (!(bpData is null))
 				SendMessage(new DbgMessageBreakpoint(bpData.EngineBoundCodeBreakpoint.BoundCodeBreakpoint, thread, GetMessageFlags()));
 			else

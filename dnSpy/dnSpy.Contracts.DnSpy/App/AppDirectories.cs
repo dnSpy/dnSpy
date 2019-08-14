@@ -50,7 +50,7 @@ namespace dnSpy.Contracts.App {
 			if (hasCalledSetSettingsFilename)
 				throw new InvalidOperationException();
 			hasCalledSetSettingsFilename = true;
-			if (!string.IsNullOrEmpty(filename))
+			if (!string2.IsNullOrEmpty(filename))
 				settingsFilename = filename;
 		}
 		static bool hasCalledSetSettingsFilename = false;

@@ -40,7 +40,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Raised when a new type in this module is loaded. It must be raised on the COM thread.
 		/// </summary>
-		public abstract event EventHandler<DmdTypeLoadedEventArgs> TypeLoaded;
+		public abstract event EventHandler<DmdTypeLoadedEventArgs>? TypeLoaded;
 	}
 
 	/// <summary>

@@ -129,7 +129,7 @@ namespace dnSpy.MainApp {
 					try {
 						var info = FileVersionInfo.GetVersionInfo(Assembly.Location);
 						var fileVer = info.FileVersion;
-						if (!string.IsNullOrEmpty(fileVer))
+						if (!string2.IsNullOrEmpty(fileVer))
 							return fileVer;
 					}
 					catch {
@@ -152,8 +152,8 @@ namespace dnSpy.MainApp {
 				get {
 					var name = Name;
 					var verStr = VersionString;
-					Debug.Assert(!string.IsNullOrEmpty(verStr));
-					if (string.IsNullOrEmpty(verStr))
+					Debug.Assert(!string2.IsNullOrEmpty(verStr));
+					if (string2.IsNullOrEmpty(verStr))
 						return name;
 					return $"{name} ({verStr})";
 				}
@@ -162,7 +162,7 @@ namespace dnSpy.MainApp {
 			public string Copyright {
 				get {
 					var c = ExtensionInfo.Copyright;
-					if (!string.IsNullOrEmpty(c))
+					if (!string2.IsNullOrEmpty(c))
 						return c;
 					var attr = Assembly.GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
 					if (attr.Length == 0)
@@ -174,7 +174,7 @@ namespace dnSpy.MainApp {
 			public string ShortDescription {
 				get {
 					var s = ExtensionInfo.ShortDescription;
-					if (!string.IsNullOrEmpty(s))
+					if (!string2.IsNullOrEmpty(s))
 						return s;
 					var attr = Assembly.GetCustomAttributes(typeof(AssemblyDescriptionAttribute), false);
 					if (attr.Length == 0)
@@ -227,7 +227,7 @@ namespace dnSpy.MainApp {
 		}
 
 		void WriteShortInfo(IDecompilerOutput output, string s) {
-			if (string.IsNullOrEmpty(s))
+			if (string2.IsNullOrEmpty(s))
 				return;
 			const int MAX_SHORT_LEN = 128;
 			if (s.Length > MAX_SHORT_LEN)

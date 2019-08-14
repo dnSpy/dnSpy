@@ -25,7 +25,7 @@ namespace dnSpy.Scripting.Roslyn.CSharp {
 	static class ReplOptionsDefinitions {
 #pragma warning disable CS0169
 		[ExportReplOptionsDefinition("C#", ContentTypes.ReplCSharpRoslyn, AppSettingsConstants.GUID_REPL_CSHARP_ROSLYN)]
-		static readonly ReplOptionsDefinition csharpReplOptionsDefinition;
+		static readonly ReplOptionsDefinition? csharpReplOptionsDefinition;
 #pragma warning restore CS0169
 	}
 }

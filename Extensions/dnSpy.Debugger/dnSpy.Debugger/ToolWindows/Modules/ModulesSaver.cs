@@ -52,7 +52,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			if (modules.Length == 1) {
 				var vm = modules[0];
 				var filename = new PickSaveFilename().GetFilename(GetModuleFilename(vm.Module), GetDefaultExtension(GetModuleFilename(vm.Module), vm.Module.IsExe), PickFilenameConstants.DotNetAssemblyOrModuleFilter);
-				if (string.IsNullOrEmpty(filename))
+				if (string2.IsNullOrEmpty(filename))
 					return;
 				list[0] = (vm.Module, filename);
 			}
@@ -60,7 +60,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 				var dir = new PickDirectory().GetDirectory(null);
 				if (!Directory.Exists(dir))
 					return;
-				Debug.Assert(!(dir is null));
+				Debug2.Assert(!(dir is null));
 				for (int i = 0; i < modules.Length; i++) {
 					var file = modules[i];
 					var filename = file.Module.Name;
@@ -102,7 +102,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		static string GetDefaultExtension(string? name, bool isExe) {
 			try {
 				var ext = Path.GetExtension(name);
-				if (ext.Length > 0 && ext[0] == '.')
+				if (!(ext is null) && ext.Length > 0 && ext[0] == '.')
 					return ext.Substring(1);
 			}
 			catch {

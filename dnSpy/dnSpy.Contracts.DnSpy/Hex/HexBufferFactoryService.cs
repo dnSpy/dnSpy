@@ -67,7 +67,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// Raised when a new <see cref="HexBuffer"/> has been created
 		/// </summary>
-		public abstract event EventHandler<HexBufferCreatedEventArgs> HexBufferCreated;
+		public abstract event EventHandler<HexBufferCreatedEventArgs>? HexBufferCreated;
 
 		/// <summary>
 		/// Creates a new <see cref="HexBuffer"/>

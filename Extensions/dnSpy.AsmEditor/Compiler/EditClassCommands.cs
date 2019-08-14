@@ -136,7 +136,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 			else
 				modNode = nodes[0].GetModuleNode();
-			Debug.Assert(!(modNode is null));
+			Debug2.Assert(!(modNode is null));
 			if (modNode is null)
 				return;
 
@@ -150,7 +150,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				vm.Dispose();
 				return;
 			}
-			Debug.Assert(!(vm.Result is null));
+			Debug2.Assert(!(vm.Result is null));
 
 			undoCommandService.Value.Add(new EditClassCommand(addUpdatedNodesHelperProvider, modNode, vm.Result));
 			vm.Dispose();

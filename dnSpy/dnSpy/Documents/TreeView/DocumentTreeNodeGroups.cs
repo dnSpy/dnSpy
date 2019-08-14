@@ -354,7 +354,7 @@ namespace dnSpy.Documents.TreeView {
 				parent = tdr;
 				for (int i = 0; i < parents; i++) {
 					parent = tdr.DeclaringType;
-					Debug.Assert(!(parent is null));
+					Debug2.Assert(!(parent is null));
 				}
 				if (needSep)
 					sb.Append('.');

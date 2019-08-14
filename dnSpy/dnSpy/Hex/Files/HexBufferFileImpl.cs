@@ -28,11 +28,11 @@ using VSUTIL = Microsoft.VisualStudio.Utilities;
 namespace dnSpy.Hex.Files {
 	sealed class HexBufferFileImpl : HexBufferFile {
 		public override HexBufferFile? ParentFile { get; }
-		public override event EventHandler<BufferFilesAddedEventArgs> BufferFilesAdded;
+		public override event EventHandler<BufferFilesAddedEventArgs>? BufferFilesAdded;
 		public override bool IsRemoved => isRemoved;
-		public override event EventHandler Removed;
+		public override event EventHandler? Removed;
 		public override bool IsStructuresInitialized => isStructuresInitialized;
-		public override event EventHandler StructuresInitialized;
+		public override event EventHandler? StructuresInitialized;
 
 		public override IEnumerable<HexBufferFile> Files {
 			get {
@@ -118,7 +118,7 @@ namespace dnSpy.Hex.Files {
 
 			// Always initialize this first to make sure nested files get created
 			CreateStructureProviders(true);
-			Debug.Assert(!(structureProviders is null));
+			Debug2.Assert(!(structureProviders is null));
 
 			if (checkNestedFiles && files.Count != 0) {
 				var file = files.FindData(position);
@@ -137,7 +137,7 @@ namespace dnSpy.Hex.Files {
 
 		public override ComplexData? GetStructure(string id) {
 			CreateStructureProviders(true);
-			Debug.Assert(!(structureProviders is null));
+			Debug2.Assert(!(structureProviders is null));
 			foreach (var provider in structureProviders) {
 				var structure = provider.GetStructure(id);
 				if (!(structure is null))
@@ -157,7 +157,7 @@ namespace dnSpy.Hex.Files {
 				}
 				bufferFileHeadersProviders = list.ToArray();
 			}
-			Debug.Assert(!(structureProviders is null));
+			Debug2.Assert(!(structureProviders is null));
 
 			foreach (var provider in structureProviders) {
 				var headers = provider.GetHeaders<THeaders>();

@@ -63,7 +63,7 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 		EnterKeyRule? TryGetEnterKeyRule() {
 			if (!HasSession)
 				return null;
-			Debug.Assert(!(completionSession is null));
+			Debug2.Assert(!(completionSession is null));
 
 			if (completionSession.SelectedCompletionSet?.SelectionStatus.Completion is RoslynCompletion completion)
 				return completion.CompletionItem.Rules.EnterKeyRule;
@@ -108,7 +108,7 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 			case EnterKeyRule.AfterFullyTypedWord:
 				if (!HasSession)
 					return false;
-				Debug.Assert(!(completionSession is null));
+				Debug2.Assert(!(completionSession is null));
 				var completion = completionSession.SelectedCompletionSet?.SelectionStatus.Completion;
 				if (completion is null)
 					return false;
@@ -128,7 +128,7 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 		bool TryCommitCharacter(char c) {
 			if (!HasSession)
 				return false;
-			Debug.Assert(!(completionSession is null));
+			Debug2.Assert(!(completionSession is null));
 			var completionService = TryGetRoslynCompletionService();
 			if (completionService is null)
 				return false;
@@ -145,7 +145,7 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 				return CommandTargetStatus.NotHandled;
 
 			if (HasSession) {
-				Debug.Assert(!(completionSession is null));
+				Debug2.Assert(!(completionSession is null));
 				if (group == CommandConstants.TextEditorGroup) {
 					switch ((TextEditorIds)cmdId) {
 					case TextEditorIds.RETURN:
@@ -196,7 +196,7 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 				case TextEditorIds.COMPLETEWORD:
 					StartSession();
 					if (HasSession) {
-						Debug.Assert(!(completionSession is null));
+						Debug2.Assert(!(completionSession is null));
 						if (completionSession.SelectedCompletionSet?.SelectionStatus.IsUnique == true)
 							completionSession.Commit();
 					}

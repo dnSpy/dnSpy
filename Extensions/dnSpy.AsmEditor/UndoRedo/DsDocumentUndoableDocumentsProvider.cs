@@ -45,7 +45,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		IUndoObject? IUndoableDocumentsProvider.GetUndoObject(object obj) {
 			if (obj is DocumentTreeNodeData node) {
 				var documentNode = node.GetDocumentNode();
-				Debug.Assert(!(documentNode is null));
+				Debug2.Assert(!(documentNode is null));
 				if (!(documentNode is null)) {
 					// Need this check here since some commands (eg. create netmodule) create nodes
 					// and they haven't yet been inserted into the treeview.
@@ -54,7 +54,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 					if (documentNode is AssemblyDocumentNode asmNode) {
 						asmNode.TreeNode.EnsureChildrenLoaded();
 						var modNode = asmNode.TreeNode.DataChildren.FirstOrDefault() as ModuleDocumentNode;
-						Debug.Assert(!(modNode is null));
+						Debug2.Assert(!(modNode is null));
 						if (!(modNode is null))
 							return GetUndoObjectNoChecks(modNode.Document);
 					}
@@ -87,7 +87,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 				// Assemblies and manifest modules don't share a IDsDocument instance, but we must
 				// use the same IUndoObject instance since they're part of the same file.
 				var module = document.ModuleDef;
-				Debug.Assert(!(module is null));
+				Debug2.Assert(!(module is null));
 				if (module is null)
 					throw new InvalidOperationException();
 				var modFile = FindModule(module);

@@ -32,7 +32,7 @@ namespace dnSpy.Documents {
 		public IDsDocument? Create(IDsDocumentService documentService, DsDocumentInfo documentInfo) {
 			if (documentInfo.Type == DocumentConstants.DOCUMENTTYPE_INMEMORY) {
 				var getFileData = documentInfo.Data as Func<(byte[]? filedata, bool isFileLayout)>;
-				Debug.Assert(!(getFileData is null));
+				Debug2.Assert(!(getFileData is null));
 				if (!(getFileData is null)) {
 					var info = getFileData();
 					if (!(info.filedata is null))

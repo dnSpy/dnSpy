@@ -29,12 +29,12 @@ namespace Example2.Extension {
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(Color1_ClassificationTypeName)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition Color1ClassificationTypeDefinition;
+		static ClassificationTypeDefinition? Color1ClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(Color2_ClassificationTypeName)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition Color2ClassificationTypeDefinition;
+		static ClassificationTypeDefinition? Color2ClassificationTypeDefinition;
 #pragma warning restore CS0169
 
 		// Export the classes that define the colors and order
@@ -84,7 +84,7 @@ namespace Example2.Extension {
 		// This event must be raised when you detect changes to spans in the document. If
 		// your GetTags() method does async work, you should raise it when the async work
 		// is completed.
-		public event EventHandler<SnapshotSpanEventArgs> TagsChanged {
+		public event EventHandler<SnapshotSpanEventArgs>? TagsChanged {
 			add { }
 			remove { }
 		}

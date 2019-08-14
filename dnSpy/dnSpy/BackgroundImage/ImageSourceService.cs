@@ -311,7 +311,7 @@ namespace dnSpy.BackgroundImage {
 			}
 
 			List<string> GetAllFilenames() {
-				Debug.Assert(!(theme is null));
+				Debug2.Assert(!(theme is null));
 				if (cachedAllFilenamesListWeakRef?.Target is List<string> list && (DateTimeOffset.UtcNow - cachedTime).TotalMilliseconds <= cachedFilenamesMaxMilliseconds)
 					return list;
 
@@ -367,7 +367,7 @@ namespace dnSpy.BackgroundImage {
 			}
 
 			ImageInfo? TryCreateNextImageSource(EnumeratorInfo info) {
-				Debug.Assert(!(theme is null));
+				Debug2.Assert(!(theme is null));
 				if (info is null)
 					return null;
 				if (!info.Iterator.SourceOptions.IsSupportedTheme(theme))
@@ -428,7 +428,7 @@ namespace dnSpy.BackgroundImage {
 			if (listeners.Contains(listener))
 				throw new InvalidOperationException();
 			if (listeners.Count == 0) {
-				Debug.Assert(imageIterator is null);
+				Debug2.Assert(imageIterator is null);
 				imageIterator = new ImageIterator(backgroundImageSettings.IsRandom);
 				backgroundImageSettings.SettingsChanged += BackgroundImageSettings_SettingsChanged;
 				themeService.ThemeChangedLowPriority += ThemeService_ThemeChangedLowPriority;
@@ -452,7 +452,7 @@ namespace dnSpy.BackgroundImage {
 				DisposeTimer();
 				backgroundImageSettings.SettingsChanged -= BackgroundImageSettings_SettingsChanged;
 				themeService.ThemeChangedLowPriority -= ThemeService_ThemeChangedLowPriority;
-				Debug.Assert(!(imageIterator is null));
+				Debug2.Assert(!(imageIterator is null));
 				imageIterator.Dispose();
 				imageIterator = null;
 			}

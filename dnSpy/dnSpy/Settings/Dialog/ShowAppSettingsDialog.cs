@@ -88,7 +88,7 @@ namespace dnSpy.Settings.Dialog {
 		}
 
 		object? IPageUIObjectLoader.GetUIObject(AppSettingsPage page) {
-			Debug.Assert(!(appSettingsDlg is null));
+			Debug2.Assert(!(appSettingsDlg is null));
 			var oldCursor = appSettingsDlg.Cursor;
 			try {
 				appSettingsDlg.Cursor = Cursors.Wait;
@@ -162,7 +162,7 @@ namespace dnSpy.Settings.Dialog {
 		}
 
 		void InitializeKeyboardBindings() {
-			Debug.Assert(!(appSettingsDlg is null));
+			Debug2.Assert(!(appSettingsDlg is null));
 			var cmd = new RelayCommand(a => {
 				appSettingsDlg.searchTextBox.Focus();
 				appSettingsDlg.searchTextBox.SelectAll();
@@ -172,9 +172,9 @@ namespace dnSpy.Settings.Dialog {
 		}
 
 		void FilterTreeView(string searchText) {
-			Debug.Assert(!(allPages is null));
-			Debug.Assert(!(rootVM is null));
-			Debug.Assert(!(appSettingsDlg is null));
+			Debug2.Assert(!(allPages is null));
+			Debug2.Assert(!(rootVM is null));
+			Debug2.Assert(!(appSettingsDlg is null));
 			if (string.IsNullOrWhiteSpace(searchText))
 				searchText = string.Empty;
 			if (searchText == string.Empty) {
@@ -212,8 +212,8 @@ namespace dnSpy.Settings.Dialog {
 		bool isFiltering;
 
 		void RefreshAllNodes() {
-			Debug.Assert(!(allPages is null));
-			Debug.Assert(!(appSettingsDlg is null));
+			Debug2.Assert(!(allPages is null));
+			Debug2.Assert(!(appSettingsDlg is null));
 			foreach (var page in allPages)
 				page.ClearUICache();
 			foreach (var page in allPages)
@@ -234,7 +234,7 @@ namespace dnSpy.Settings.Dialog {
 		}
 
 		bool IsVisible(AppSettingsPageVM page, SearchMatcher matcher) {
-			Debug.Assert(!(appSettingsDlg is null));
+			Debug2.Assert(!(appSettingsDlg is null));
 			pageStringsList.Clear();
 			pageTitlesList.Clear();
 			var p = page;
@@ -396,7 +396,7 @@ namespace dnSpy.Settings.Dialog {
 
 			foreach (var lz in appSettingsPageProviders) {
 				foreach (var page in lz.Value.Create()) {
-					Debug.Assert(!(page is null));
+					Debug2.Assert(!(page is null));
 					if (page is null)
 						continue;
 					var vm = new AppSettingsPageVM(page, pageContext);
@@ -435,12 +435,12 @@ namespace dnSpy.Settings.Dialog {
 
 		static AppSettingsPageVM? TryCreate(object obj, IAppSettingsPageContainerMetadata md, PageContext context) {
 			Guid? guid = md.Guid is null ? null : TryParseGuid(md.Guid);
-			Debug.Assert(!(guid is null), "Invalid GUID");
+			Debug2.Assert(!(guid is null), "Invalid GUID");
 			if (guid is null)
 				return null;
 
 			Guid? parentGuid = md.ParentGuid is null ? rootGuid : TryParseGuid(md.ParentGuid);
-			Debug.Assert(!(parentGuid is null), "Invalid Parent GUID");
+			Debug2.Assert(!(parentGuid is null), "Invalid Parent GUID");
 			if (parentGuid is null)
 				return null;
 

@@ -85,12 +85,12 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <summary>
 		/// Raised after files are added
 		/// </summary>
-		public abstract event EventHandler<BufferFilesAddedEventArgs> BufferFilesAdded;
+		public abstract event EventHandler<BufferFilesAddedEventArgs>? BufferFilesAdded;
 
 		/// <summary>
 		/// Raised after files are removed
 		/// </summary>
-		public abstract event EventHandler<BufferFilesRemovedEventArgs> BufferFilesRemoved;
+		public abstract event EventHandler<BufferFilesRemovedEventArgs>? BufferFilesRemoved;
 
 		/// <summary>
 		/// Finds a file

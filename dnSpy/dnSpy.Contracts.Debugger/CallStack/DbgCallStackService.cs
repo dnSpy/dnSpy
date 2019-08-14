@@ -48,7 +48,7 @@ namespace dnSpy.Contracts.Debugger.CallStack {
 		/// <summary>
 		/// Raised when <see cref="Frames"/> is changed
 		/// </summary>
-		public abstract event EventHandler<FramesChangedEventArgs> FramesChanged;
+		public abstract event EventHandler<FramesChangedEventArgs>? FramesChanged;
 	}
 
 	/// <summary>

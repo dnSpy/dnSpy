@@ -33,7 +33,7 @@ namespace dnSpy.Text.Classification {
 	sealed class CategoryClassificationFormatMap : IClassificationFormatMap {
 		public TextFormattingRunProperties DefaultTextProperties {
 			get {
-				Debug.Assert(!(defaultTextFormattingRunProperties is null));
+				Debug2.Assert(!(defaultTextFormattingRunProperties is null));
 				return defaultTextFormattingRunProperties;
 			}
 			set {
@@ -48,7 +48,7 @@ namespace dnSpy.Text.Classification {
 			}
 		}
 
-		public event EventHandler<EventArgs> ClassificationFormatMappingChanged;
+		public event EventHandler<EventArgs>? ClassificationFormatMappingChanged;
 
 		public ReadOnlyCollection<IClassificationType> CurrentPriorityOrder {
 			get {
@@ -102,7 +102,7 @@ namespace dnSpy.Text.Classification {
 				var e = editorFormatDefinitionService.ClassificationFormatDefinitions[i];
 				foreach (var ctString in e.Metadata.ClassificationTypeNames) {
 					var classificationType = classificationTypeRegistryService.GetClassificationType(ctString);
-					Debug.Assert(!(classificationType is null));
+					Debug2.Assert(!(classificationType is null));
 					if (classificationType is null)
 						continue;
 					Debug.Assert(!toEditorFormatDefinition.ContainsKey(classificationType));
@@ -168,7 +168,7 @@ namespace dnSpy.Text.Classification {
 				return TextFormattingRunProperties.CreateTextFormattingRunProperties();
 			if (info.ExplicitTextProperties is null)
 				CreateExplicitTextProperties(info);
-			Debug.Assert(!(info.ExplicitTextProperties is null));
+			Debug2.Assert(!(info.ExplicitTextProperties is null));
 			return info.ExplicitTextProperties;
 		}
 
@@ -176,10 +176,10 @@ namespace dnSpy.Text.Classification {
 			if (classificationType is null)
 				throw new ArgumentNullException(nameof(classificationType));
 			var info = TryGetClassificationInfo(classificationType, canCreate: true);
-			Debug.Assert(!(info is null));
+			Debug2.Assert(!(info is null));
 			if (info.InheritedTextProperties is null)
 				CreateInheritedTextProperties(info);
-			Debug.Assert(!(info.InheritedTextProperties is null));
+			Debug2.Assert(!(info.InheritedTextProperties is null));
 			return info.InheritedTextProperties;
 		}
 

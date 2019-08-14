@@ -54,7 +54,7 @@ namespace dnSpy.Decompiler.MSBuild {
 
 		IEnumerable<string> GetFiles(AssemblyDef asm, ModuleDef mod) {
 			var baseDir = GetBaseDirectory(asm, mod);
-			if (string.IsNullOrEmpty(baseDir))
+			if (string2.IsNullOrEmpty(baseDir))
 				yield break;
 			var baseDirs = new List<string>();
 			baseDirs.Add(baseDir);

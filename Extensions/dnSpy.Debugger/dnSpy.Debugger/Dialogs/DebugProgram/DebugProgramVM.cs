@@ -43,7 +43,7 @@ namespace dnSpy.Debugger.Dialogs.DebugProgram {
 
 		public StartDebuggingOptionsInfo StartDebuggingOptions {
 			get {
-				Debug.Assert(optionsPages_selectedItem?.IsValid == true);
+				Debug2.Assert(optionsPages_selectedItem?.IsValid == true);
 				var info = optionsPages_selectedItem.StartDebuggingOptionsPage.GetOptions();
 				if (info.Options is null)
 					throw new InvalidOperationException();

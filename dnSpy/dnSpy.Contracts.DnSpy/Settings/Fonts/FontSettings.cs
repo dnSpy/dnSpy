@@ -34,7 +34,7 @@ namespace dnSpy.Contracts.Settings.Fonts {
 		/// <summary>
 		/// Raised after a property is changed
 		/// </summary>
-		public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler? PropertyChanged;
 
 		/// <summary>
 		/// Raises <see cref="PropertyChanged"/>

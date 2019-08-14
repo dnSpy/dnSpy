@@ -55,7 +55,7 @@ namespace dnSpy.MainApp {
 		readonly List<LanguageInfo> infos;
 		readonly IDecompilerService decompilerService;
 
-		public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler? PropertyChanged;
 
 		public object? SelectedItem {
 			get => selectedItem;
@@ -103,7 +103,7 @@ namespace dnSpy.MainApp {
 		AppWindow? appWindow = null;
 
 		public Binding GetBinding(IToolBarItemContext context) {
-			Debug.Assert(!(appWindow is null) && !(appWindow.MainWindow is null));
+			Debug2.Assert(!(appWindow is null) && !(appWindow.MainWindow is null));
 			return new Binding(nameof(appWindow.MainWindow.IsFullScreen)) {
 				Source = appWindow.MainWindow,
 			};
@@ -114,7 +114,7 @@ namespace dnSpy.MainApp {
 
 		bool initd = false;
 		public override bool IsVisible(IToolBarItemContext context) {
-			Debug.Assert(!(appWindow is null) && !(appWindow.MainWindow is null));
+			Debug2.Assert(!(appWindow is null) && !(appWindow.MainWindow is null));
 			if (!initd) {
 				appWindow.MainWindow.IsFullScreenChanged += (s, e) => appWindow.RefreshToolBar();
 				initd = true;

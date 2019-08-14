@@ -93,7 +93,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		public sealed override ulong GetChildCount(DbgEvaluationInfo evalInfo) {
 			if (!hasInitialized)
 				Initialize(evalInfo);
-			Debug.Assert(!(childNodeProviderInfos is null));
+			Debug2.Assert(!(childNodeProviderInfos is null));
 			if (!(realProvider is null))
 				return realProvider.GetChildCount(evalInfo);
 			return childNodeProviderInfos[childNodeProviderInfos.Length - 1].EndIndex;
@@ -107,7 +107,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			errorMessage = InitializeCore(evalInfo);
 			if (!(realProvider is null))
 				return;
-			Debug.Assert(!(errorMessage is null) || !(membersCollection.Members is null));
+			Debug2.Assert(!(errorMessage is null) || !(membersCollection.Members is null));
 			if (errorMessage is null && membersCollection.Members is null)
 				errorMessage = PredefinedEvaluationErrorMessages.InternalDebuggerError;
 			dbgManager = evalInfo.Runtime.Process.DbgManager;
@@ -249,7 +249,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 
 		int lastProviderIndex;
 		int GetProviderIndex(ulong childIndex) {
-			Debug.Assert(!(childNodeProviderInfos is null));
+			Debug2.Assert(!(childNodeProviderInfos is null));
 			var infos = childNodeProviderInfos;
 			ref readonly var last = ref infos[lastProviderIndex];
 			if (last.StartIndex <= childIndex && childIndex < last.EndIndex)
@@ -274,7 +274,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			Debug.Assert(this.valueNodeFactory == valueNodeFactory);
 			if (!hasInitialized)
 				Initialize(evalInfo);
-			Debug.Assert(!(childNodeProviderInfos is null));
+			Debug2.Assert(!(childNodeProviderInfos is null));
 			if (!(realProvider is null))
 				return realProvider.GetChildren(valueNodeFactory, evalInfo, index, count, options, formatSpecifiers);
 			DbgDotNetValueNode[]? children = null;
@@ -328,7 +328,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		protected virtual void DisposeCore() { }
 
 		public sealed override void Dispose() {
-			Debug.Assert(childNodeProviderInfos is null || !(dbgManager is null));
+			Debug2.Assert(childNodeProviderInfos is null || !(dbgManager is null));
 			DisposeCore();
 			realProvider?.Dispose();
 			if (!(childNodeProviderInfos is null)) {

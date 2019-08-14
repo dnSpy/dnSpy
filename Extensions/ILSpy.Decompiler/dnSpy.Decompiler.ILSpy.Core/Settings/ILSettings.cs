@@ -24,7 +24,7 @@ using dnSpy.Contracts.MVVM;
 namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 	class ILSettings : ViewModelBase {
 		protected virtual void OnModified() { }
-		public event EventHandler SettingsVersionChanged;
+		public event EventHandler? SettingsVersionChanged;
 
 		void OptionsChanged() {
 			Interlocked.Increment(ref settingsVersion);

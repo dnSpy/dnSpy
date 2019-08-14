@@ -53,10 +53,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 	abstract partial class DbgEngineImpl : DbgEngine, IClrDacDebugger {
 		public override DbgStartKind StartKind { get; }
 		public override string[] DebugTags => new[] { PredefinedDebugTags.DotNetDebugger };
-		public override event EventHandler<DbgEngineMessage> Message;
-		public event EventHandler ClrDacRunning;
-		public event EventHandler ClrDacPaused;
-		public event EventHandler ClrDacTerminated;
+		public override event EventHandler<DbgEngineMessage>? Message;
+		public event EventHandler? ClrDacRunning;
+		public event EventHandler? ClrDacPaused;
+		public event EventHandler? ClrDacTerminated;
 
 		internal DebuggerThread DebuggerThread => debuggerThread;
 		internal DbgObjectFactory ObjectFactory => objectFactory;
@@ -124,7 +124,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			RawMetadataService = deps.RawMetadataService;
 		}
 
-		internal event EventHandler<ClassLoadedEventArgs> ClassLoaded;
+		internal event EventHandler<ClassLoadedEventArgs>? ClassLoaded;
 
 		internal bool CheckCorDebugThread() => debuggerThread.CheckAccess();
 		internal void VerifyCorDebugThread() => debuggerThread.VerifyAccess();
@@ -219,13 +219,13 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			case DebugCallbackKind.LoadClass:
 				var lcArgs = (LoadClassDebugCallbackEventArgs)e;
 				var cls = lcArgs.CorClass;
-				Debug.Assert(!(cls is null));
+				Debug2.Assert(!(cls is null));
 				if (!(cls is null)) {
 					var dnModule = dbg.TryGetModule(lcArgs.CorAppDomain, cls);
 					if (dnModule!.IsDynamic == true) {
 						UpdateDynamicModuleIds(dnModule);
 						module = TryGetModule(dnModule.CorModule);
-						Debug.Assert(!(module is null));
+						Debug2.Assert(!(module is null));
 						if (!(module is null))
 							dbgModuleMemoryRefreshedNotifier.RaiseModulesRefreshed(new[] { module });
 						if (!(dnModule.CorModuleDef is null) && !(module is null)) {
@@ -345,7 +345,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		void DnDebugger_OnAttachComplete(object? sender, EventArgs e) => DetectMainThread();
 
 		void DnDebugger_OnProcessStateChanged(object? sender, DebuggerEventArgs e) {
-			Debug.Assert(!(sender is null) && sender == dnDebugger);
+			Debug2.Assert(!(sender is null) && sender == dnDebugger);
 
 			if (dnDebugger.ProcessState == DebuggerProcessState.Terminated) {
 				if (hProcess_debuggee is null || hProcess_debuggee.IsClosed || hProcess_debuggee.IsInvalid || !Native.NativeMethods.GetExitCodeProcess(hProcess_debuggee.DangerousGetHandle(), out int exitCode))
@@ -441,7 +441,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		}
 
 		void DnDebugger_OnAppDomainAdded(object? sender, AppDomainDebuggerEventArgs e) {
-			Debug.Assert(!(objectFactory is null));
+			Debug2.Assert(!(objectFactory is null));
 			if (e.Added) {
 				e.ShouldPause = true;
 				var appDomain = dmdRuntime.CreateAppDomain(e.AppDomain.Id);
@@ -581,7 +581,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		}
 
 		void DnDebugger_OnModuleAdded(object? sender, ModuleDebuggerEventArgs e) {
-			Debug.Assert(!(objectFactory is null));
+			Debug2.Assert(!(objectFactory is null));
 			if (e.Added) {
 				e.ShouldPause = true;
 				var appDomain = TryGetEngineAppDomain(e.Module.AppDomain)?.AppDomain;
@@ -598,7 +598,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				var reflectionModule = ((DbgCorDebugInternalModuleImpl)engineModule.Module.InternalModule).ReflectionModule!;
 				if (reflectionModule.IsCorLib) {
 					var type = reflectionModule.AppDomain.GetWellKnownType(DmdWellKnownType.System_Diagnostics_Debugger_CrossThreadDependencyNotification, isOptional: true);
-					Debug.Assert(!(type is null) || dnDebugger.DebuggeeVersion.StartsWith("v2."));
+					Debug2.Assert(!(type is null) || dnDebugger.DebuggeeVersion.StartsWith("v2."));
 					if (!(type is null))
 						dnDebugger.AddCustomNotificationClassToken(e.Module, (uint)type.MetadataToken);
 				}
@@ -688,7 +688,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					BreakProcessKind = GetBreakProcessKind(options.BreakKind),
 					Environment = env.Environment,
 				};
-				Debug.Assert(!(dbgOptions.Filename is null));
+				Debug2.Assert(!(dbgOptions.Filename is null));
 				if (AppHostUtils.TryGetAppHostEmbeddedDotNetDllPath(dbgOptions.Filename, out _, out var dotNetDllPath))
 					dbgOptions.ManagedDllFilename = dotNetDllPath;
 				else if (AppHostUtils.IsDotNetCoreAppHost(dbgOptions.Filename, out var dllFilename))

@@ -114,7 +114,7 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 	}
 
 	abstract class EditableValue : IEditableValue {
-		public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler? PropertyChanged;
 		public virtual EditableValueOptions Options => EditableValueOptions.None;
 		public virtual bool CanEdit => true;
 

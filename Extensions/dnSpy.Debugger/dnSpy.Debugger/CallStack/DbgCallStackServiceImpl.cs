@@ -48,7 +48,7 @@ namespace dnSpy.Debugger.CallStack {
 			}
 		}
 
-		public override event EventHandler<FramesChangedEventArgs> FramesChanged;
+		public override event EventHandler<FramesChangedEventArgs>? FramesChanged;
 		public override DbgCallStackFramesInfo Frames {
 			get {
 				lock (lockObj)
@@ -124,7 +124,7 @@ namespace dnSpy.Debugger.CallStack {
 		void DbgProcess_IsRunningChanged(object? sender, EventArgs e) {
 			if (currentThreadProcess != sender)
 				return;
-			Debug.Assert(!(currentThreadProcess is null));
+			Debug2.Assert(!(currentThreadProcess is null));
 			if (!currentThreadProcess.IsRunning)
 				UpdateFrames_DbgThread();
 		}

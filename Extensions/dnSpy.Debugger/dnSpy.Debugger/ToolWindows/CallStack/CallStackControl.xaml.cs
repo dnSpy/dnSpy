@@ -34,6 +34,6 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			CallStackListViewDoubleClick?.Invoke(this, EventArgs.Empty);
 		}
 
-		public event EventHandler CallStackListViewDoubleClick;
+		public event EventHandler? CallStackListViewDoubleClick;
 	}
 }

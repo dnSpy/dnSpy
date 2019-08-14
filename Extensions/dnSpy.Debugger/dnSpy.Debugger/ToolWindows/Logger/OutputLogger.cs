@@ -101,7 +101,7 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 			if (dbgManager.IsDebugging) {
 				UI(() => {
 					Initialize_UI();
-					Debug.Assert(!(textPane is null));
+					Debug2.Assert(!(textPane is null));
 					if (outputLoggerSettings.ShowDebugOutputLog)
 						outputService.Value.Select(GUID_OUTPUT_LOGGER_DEBUG);
 					textPane.Clear();
@@ -113,7 +113,7 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 			uiDispatcher.VerifyAccess();
 			if (textPane is null)
 				Initialize_UI();
-			Debug.Assert(!(textPane is null));
+			Debug2.Assert(!(textPane is null));
 			textPane.WriteLine(color, text);
 		}
 
@@ -121,7 +121,7 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 			uiDispatcher.VerifyAccess();
 			if (textPane is null)
 				Initialize_UI();
-			Debug.Assert(!(textPane is null));
+			Debug2.Assert(!(textPane is null));
 			textPane.Write(color, text);
 		}
 

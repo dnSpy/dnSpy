@@ -43,7 +43,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <summary>
 		/// Raised when it is closed
 		/// </summary>
-		public abstract event EventHandler Closed;
+		public abstract event EventHandler? Closed;
 
 		/// <summary>
 		/// Gets a margin or null if it doesn't exist

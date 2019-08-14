@@ -22,12 +22,12 @@ namespace Example2.Extension {
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(HexColor1_ClassificationTypeName)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexColor1ClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexColor1ClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(HexColor2_ClassificationTypeName)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition HexColor2ClassificationTypeDefinition;
+		static ClassificationTypeDefinition? HexColor2ClassificationTypeDefinition;
 #pragma warning restore CS0169
 
 		// Export the classes that define the colors and order
@@ -72,7 +72,7 @@ namespace Example2.Extension {
 		// This event must be raised when you detect changes to spans in the document. If
 		// your GetTags() method does async work, you should raise it when the async work
 		// is completed.
-		public override event EventHandler<HexBufferSpanEventArgs> TagsChanged {
+		public override event EventHandler<HexBufferSpanEventArgs>? TagsChanged {
 			add { }
 			remove { }
 		}

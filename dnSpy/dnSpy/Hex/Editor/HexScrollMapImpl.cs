@@ -24,7 +24,7 @@ using dnSpy.Contracts.Hex.Editor;
 
 namespace dnSpy.Hex.Editor {
 	sealed class HexScrollMapImpl : HexScrollMap, IDisposable {
-		public override event EventHandler MappingChanged;
+		public override event EventHandler? MappingChanged;
 		public override HexView HexView { get; }
 		public override double Start => 0;
 		public override double End => end;

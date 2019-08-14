@@ -118,7 +118,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			var res = EvaluateImpl(evalInfo, expression, options | DbgEvaluationOptions.NoName, state);
 			if (!(res.Error is null))
 				return new DbgEngineEvaluationResult(res.Error, res.Flags);
-			Debug.Assert(!(res.Value is null));
+			Debug2.Assert(!(res.Value is null));
 			try {
 				return new DbgEngineEvaluationResult(new DbgEngineValueImpl(res.Value), res.FormatSpecifiers, res.Flags);
 			}
@@ -236,7 +236,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			EvaluateImplExpressionState? evalState;
 			if (!(stateObj is null)) {
 				evalState = stateObj as EvaluateImplExpressionState;
-				Debug.Assert(!(evalState is null));
+				Debug2.Assert(!(evalState is null));
 				if (evalState is null)
 					throw new ArgumentException("Invalid expression evaluator state. It must be null or created by " + nameof(DbgExpressionEvaluator) + "." + nameof(DbgExpressionEvaluator.CreateExpressionEvaluatorState) + "()");
 			}
@@ -250,7 +250,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				return new EvaluateImplResult(refsResult.ErrorMessage, CreateName(expression), null, null, 0, PredefinedDbgValueNodeImageNames.Error, null);
 
 			var keyOptions = options & ~(DbgEvaluationOptions.NoSideEffects | DbgEvaluationOptions.NoFuncEval);
-			Debug.Assert(!(refsResult.ModuleReferences is null));
+			Debug2.Assert(!(refsResult.ModuleReferences is null));
 			var key = new EvaluateImplExpressionState.Key(this, debugInfoVersion, memberModule, memberToken, memberVersion, refsResult.ModuleReferences, scope, aliases, keyOptions, expression);
 			if (!evalState.CachedKey.Equals(key)) {
 				evalState.CompilationResult = !(type is null) ?

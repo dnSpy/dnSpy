@@ -55,7 +55,7 @@ namespace dnSpy.Bookmarks.Impl {
 
 			var bmType = location.Type;
 			var serializer = TryGetSerializer(bmType);
-			Debug.Assert(!(serializer is null));
+			Debug2.Assert(!(serializer is null));
 			if (serializer is null)
 				return;
 
@@ -68,11 +68,11 @@ namespace dnSpy.Bookmarks.Impl {
 				return null;
 
 			var typeFullName = section.Attribute<string>("__BMT");
-			Debug.Assert(!(typeFullName is null));
+			Debug2.Assert(!(typeFullName is null));
 			if (typeFullName is null)
 				return null;
 			var serializer = TryGetSerializer(typeFullName);
-			Debug.Assert(!(serializer is null));
+			Debug2.Assert(!(serializer is null));
 			if (serializer is null)
 				return null;
 

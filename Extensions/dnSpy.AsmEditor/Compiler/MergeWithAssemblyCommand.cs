@@ -111,11 +111,11 @@ namespace dnSpy.AsmEditor.Compiler {
 				return;
 
 			var modNode = GetModuleNode(nodes[0]);
-			Debug.Assert(!(modNode is null));
+			Debug2.Assert(!(modNode is null));
 			if (modNode is null)
 				return;
 			var module = modNode.Document.ModuleDef;
-			Debug.Assert(!(module is null));
+			Debug2.Assert(!(module is null));
 			if (module is null)
 				throw new InvalidOperationException();
 

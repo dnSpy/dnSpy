@@ -78,15 +78,15 @@ namespace dnSpy.Hex.Editor {
 		public override HexBuffer Buffer { get; }
 		public override bool IsClosed => isClosed;
 		public override HexBufferSpan? ProvisionalTextHighlight { get; set; }//TODO:
-		public override event EventHandler GotAggregateFocus;
-		public override event EventHandler LostAggregateFocus;
-		public override event EventHandler Closed;
-		public override event EventHandler<VSTE.BackgroundBrushChangedEventArgs> BackgroundBrushChanged;
-		public override event EventHandler ViewportLeftChanged;
-		public override event EventHandler ViewportHeightChanged;
-		public override event EventHandler ViewportWidthChanged;
-		public override event EventHandler<HexViewLayoutChangedEventArgs> LayoutChanged;
-		public override event EventHandler<VSTE.ZoomLevelChangedEventArgs> ZoomLevelChanged;
+		public override event EventHandler? GotAggregateFocus;
+		public override event EventHandler? LostAggregateFocus;
+		public override event EventHandler? Closed;
+		public override event EventHandler<VSTE.BackgroundBrushChangedEventArgs>? BackgroundBrushChanged;
+		public override event EventHandler? ViewportLeftChanged;
+		public override event EventHandler? ViewportHeightChanged;
+		public override event EventHandler? ViewportWidthChanged;
+		public override event EventHandler<HexViewLayoutChangedEventArgs>? LayoutChanged;
+		public override event EventHandler<VSTE.ZoomLevelChangedEventArgs>? ZoomLevelChanged;
 		public override HexFormattedLineSource FormattedLineSource => formattedLineSource!;
 		HexFormattedLineSource? formattedLineSource;
 		public override bool InLayout => inLayout;
@@ -130,19 +130,19 @@ namespace dnSpy.Hex.Editor {
 		[VSUTIL.Name(PredefinedHexAdornmentLayers.Text)]
 		[VSUTIL.Order(After = PredefinedHexAdornmentLayers.BottomLayer, Before = PredefinedHexAdornmentLayers.TopLayer)]
 		[VSUTIL.Order(After = PredefinedHexAdornmentLayers.Selection, Before = PredefinedHexAdornmentLayers.Caret)]
-		static readonly HexAdornmentLayerDefinition textAdornmentLayerDefinition;
+		static readonly HexAdornmentLayerDefinition? textAdornmentLayerDefinition;
 
 		[Export(typeof(HexAdornmentLayerDefinition))]
 		[VSUTIL.Name(PredefinedHexAdornmentLayers.Caret)]
 		[VSUTIL.Order(After = PredefinedHexAdornmentLayers.BottomLayer, Before = PredefinedHexAdornmentLayers.TopLayer)]
 		[VSUTIL.Order(After = PredefinedHexAdornmentLayers.Text)]
-		static readonly HexAdornmentLayerDefinition caretAdornmentLayerDefinition;
+		static readonly HexAdornmentLayerDefinition? caretAdornmentLayerDefinition;
 
 		[Export(typeof(HexAdornmentLayerDefinition))]
 		[VSUTIL.Name(PredefinedHexAdornmentLayers.Selection)]
 		[VSUTIL.Order(After = PredefinedHexAdornmentLayers.BottomLayer, Before = PredefinedHexAdornmentLayers.TopLayer)]
 		[VSUTIL.Order(Before = PredefinedHexAdornmentLayers.Text)]
-		static readonly HexAdornmentLayerDefinition selectionAdornmentLayerDefinition;
+		static readonly HexAdornmentLayerDefinition? selectionAdornmentLayerDefinition;
 #pragma warning restore CS0169
 
 		public WpfHexViewImpl(HexBuffer buffer, VSTE.ITextViewRoleSet roles, VSTE.IEditorOptions parentOptions, HexEditorOptionsFactoryService hexEditorOptionsFactoryService, ICommandService commandService, FormattedHexSourceFactoryService formattedHexSourceFactoryService, HexViewClassifierAggregatorService hexViewClassifierAggregatorService, HexAndAdornmentSequencerFactoryService hexAndAdornmentSequencerFactoryService, HexBufferLineFormatterFactoryService bufferLineProviderFactoryService, HexClassificationFormatMapService classificationFormatMapService, HexEditorFormatMapService editorFormatMapService, HexAdornmentLayerDefinitionService adornmentLayerDefinitionService, HexLineTransformProviderService lineTransformProviderService, HexSpaceReservationStackProvider spaceReservationStackProvider, Lazy<WpfHexViewCreationListener, IDeferrableTextViewRoleMetadata>[] wpfHexViewCreationListeners, Lazy<HexViewCreationListener, IDeferrableTextViewRoleMetadata>[] hexViewCreationListeners, VSTC.IClassificationTypeRegistryService classificationTypeRegistryService, Lazy<HexCursorProviderFactory, ITextViewRoleMetadata>[] hexCursorProviderFactories) {
@@ -275,12 +275,12 @@ namespace dnSpy.Hex.Editor {
 							priority = info.Priority;
 						}
 					}
-					Debug.Assert(!(cursor is null));
+					Debug2.Assert(!(cursor is null));
 					return cursor ?? defaultCursor;
 				}
 			}
 
-			public event Action<Cursor> CursorChanged;
+			public event Action<Cursor>? CursorChanged;
 
 			public HexCursorProviderInfoCollection(HexCursorProvider[] hexCursorProviders, Cursor defaultCursor) {
 				providerInfos = hexCursorProviders.Select(a => new ProviderInfo(a)).ToArray();
@@ -292,7 +292,7 @@ namespace dnSpy.Hex.Editor {
 
 			void Provider_CursorInfoChanged(object? sender, EventArgs e) {
 				var providerInfo = providerInfos.FirstOrDefault(a => a.Provider == sender);
-				Debug.Assert(!(providerInfo is null));
+				Debug2.Assert(!(providerInfo is null));
 				if (providerInfo is null)
 					return;
 				providerInfo.CursorInfo = providerInfo.Provider.CursorInfo;
@@ -768,7 +768,7 @@ namespace dnSpy.Hex.Editor {
 				throw new InvalidOperationException();
 			var oldBufferLines = hexBufferLineFormatter;
 			var oldHexBufferLineFormatterOptions = hexBufferLineFormatterOptions;
-			Debug.Assert(!(oldBufferLines is null));
+			Debug2.Assert(!(oldBufferLines is null));
 			bool raiseBufferLinesChangedEvent = false;
 			bool revalidateBufferPosition = false;
 
@@ -848,10 +848,10 @@ namespace dnSpy.Hex.Editor {
 				}
 			}
 			layoutHelper.LayoutLines(bufferPosition, relativeTo, verticalDistance, ViewportLeft, viewportWidthOverride, viewportHeightOverride);
-			Debug.Assert(!(layoutHelper.AllVisibleLines is null));
-			Debug.Assert(!(layoutHelper.NewOrReformattedLines is null));
-			Debug.Assert(!(layoutHelper.TranslatedLines is null));
-			Debug.Assert(!(layoutHelper.AllVisiblePhysicalLines is null));
+			Debug2.Assert(!(layoutHelper.AllVisibleLines is null));
+			Debug2.Assert(!(layoutHelper.NewOrReformattedLines is null));
+			Debug2.Assert(!(layoutHelper.TranslatedLines is null));
+			Debug2.Assert(!(layoutHelper.AllVisiblePhysicalLines is null));
 
 			visiblePhysicalLines.AddRange(layoutHelper.AllVisiblePhysicalLines);
 			wpfHexViewLineCollection = new WpfHexViewLineCollectionImpl(this, layoutHelper.AllVisibleLines);
@@ -1014,7 +1014,7 @@ namespace dnSpy.Hex.Editor {
 			canvas.Loaded -= WpfHexView_Loaded;
 			var window = Window.GetWindow(canvas);
 			metroWindow = window as MetroWindow;
-			Debug.Assert(!(window is null));
+			Debug2.Assert(!(window is null));
 			if (!(metroWindow is null)) {
 				metroWindow.WindowDpiChanged += MetroWindow_WindowDpiChanged;
 				MetroWindow_WindowDpiChanged(metroWindow, EventArgs.Empty);
@@ -1024,7 +1024,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		void MetroWindow_WindowDpiChanged(object? sender, EventArgs e) {
-			Debug.Assert(!(sender is null) && sender == metroWindow);
+			Debug2.Assert(!(sender is null) && sender == metroWindow);
 			((MetroWindow)sender).SetScaleTransform(canvas, ZoomLevel / 100);
 		}
 
@@ -1034,7 +1034,7 @@ namespace dnSpy.Hex.Editor {
 					__lineTransformProvider = lineTransformProviderService.Create(this, removeExtraTextLineVerticalPixels);
 					recreateLineTransformProvider = false;
 				}
-				Debug.Assert(!(__lineTransformProvider is null));
+				Debug2.Assert(!(__lineTransformProvider is null));
 				return __lineTransformProvider;
 			}
 		}
@@ -1052,7 +1052,7 @@ namespace dnSpy.Hex.Editor {
 				owner.LineTransformProvider.GetLineTransform(line, yPosition, placement);
 		}
 
-		public override event EventHandler<HexMouseHoverEventArgs> MouseHover {
+		public override event EventHandler<HexMouseHoverEventArgs>? MouseHover {
 			add => mouseHoverHelper.MouseHover += value;
 			remove => mouseHoverHelper.MouseHover -= value;
 		}
@@ -1084,7 +1084,7 @@ namespace dnSpy.Hex.Editor {
 
 		internal bool IsMouseOverOverlayLayerElement(MouseEventArgs e) => overlayAdornmentLayerCollection.IsMouseOverOverlayLayerElement(e);
 
-		public override event EventHandler<BufferLinesChangedEventArgs> BufferLinesChanged;
+		public override event EventHandler<BufferLinesChangedEventArgs>? BufferLinesChanged;
 		public override HexBufferLineFormatter BufferLines {
 			get {
 				// Don't raise BufferLinesChanged event here. It's the responsibility of the code

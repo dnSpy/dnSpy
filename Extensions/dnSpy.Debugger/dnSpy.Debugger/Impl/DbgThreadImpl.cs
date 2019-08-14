@@ -100,7 +100,7 @@ namespace dnSpy.Debugger.Impl {
 			hThread = NativeMethods.OpenThread(dwDesiredAccess, false, (uint)id);
 		}
 
-		public override event PropertyChangedEventHandler PropertyChanged;
+		public override event PropertyChangedEventHandler? PropertyChanged;
 		void OnPropertyChanged(string propName) {
 			Dispatcher.VerifyAccess();
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));

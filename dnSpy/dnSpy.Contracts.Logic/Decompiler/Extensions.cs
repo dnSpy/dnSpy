@@ -56,7 +56,7 @@ namespace dnSpy.Contracts.Decompiler {
 				return tdr;
 			if (t is TypeSig sig)
 				return sig.ToTypeDefOrRef();
-			Debug.Assert(t is null);
+			Debug2.Assert(t is null);
 			return null;
 		}
 

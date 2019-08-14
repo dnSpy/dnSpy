@@ -57,7 +57,7 @@ namespace dnSpy.Text.Editor {
 		[Order(After = PredefinedDsAdornmentLayers.BottomLayer, Before = PredefinedDsAdornmentLayers.TopLayer)]
 		[Order(After = PredefinedAdornmentLayers.Selection, Before = PredefinedAdornmentLayers.Text)]
 		[Order(After = PredefinedAdornmentLayers.TextMarker)]
-		static AdornmentLayerDefinition adornmentLayerDefinition;
+		static AdornmentLayerDefinition? adornmentLayerDefinition;
 #pragma warning restore CS0169
 
 		readonly IWpfTextView wpfTextView;
@@ -153,7 +153,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void UpdateColorInfos() {
-			Debug.Assert(!(editorFormatMap is null));
+			Debug2.Assert(!(editorFormatMap is null));
 			var lineKind = wpfTextView.Options.GetBlockStructureLineKind();
 			foreach (var info in lineColorInfos) {
 				var props = editorFormatMap.GetProperties(info.Type);
@@ -279,7 +279,7 @@ namespace dnSpy.Text.Editor {
 		void AddLineElements(NormalizedSnapshotSpanCollection spans) {
 			if (spans.Count == 0)
 				return;
-			Debug.Assert(!(layer is null));
+			Debug2.Assert(!(layer is null));
 			var list = new List<BlockStructureData>();
 			var updated = new HashSet<BlockStructureData>(BlockStructureDataComparer.Instance);
 			foreach (var span in spans) {

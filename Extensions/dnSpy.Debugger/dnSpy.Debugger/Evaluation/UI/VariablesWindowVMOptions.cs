@@ -33,7 +33,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 	}
 
 	abstract class VariablesWindowValueNodesProvider {
-		public virtual event EventHandler NodesChanged { add { } remove { } }
+		public virtual event EventHandler? NodesChanged { add { } remove { } }
 		public abstract ValueNodesProviderResult GetNodes(DbgEvaluationInfo evalInfo, DbgLanguage language, DbgEvaluationOptions options, DbgValueNodeEvaluationOptions nodeEvalOptions, DbgValueFormatterOptions nameFormatterOptions);
 		public virtual DbgValueNodeInfo[] GetDefaultNodes() => Array.Empty<DbgValueNodeInfo>();
 

@@ -83,7 +83,7 @@ namespace dnSpy.Documents.Tabs {
 			var decompiler = decompilerService.Decompiler;
 			if (decompiler.ProjectFileExtension is null) {
 				decompiler = decompilerService.AllDecompilers.FirstOrDefault(a => !(a.ProjectFileExtension is null));
-				Debug.Assert(!(decompiler is null));
+				Debug2.Assert(!(decompiler is null));
 				if (decompiler is null)
 					return;
 			}
@@ -161,7 +161,7 @@ namespace dnSpy.Documents.Tabs {
 						GetDisableAssemblyLoad = () => owner.documentTreeView.DocumentService.DisableAssemblyLoad(),
 						AsyncMethodBodyDecompilation = false,
 					};
-					Debug.Assert(!(vm.Directory is null));
+					Debug2.Assert(!(vm.Directory is null));
 					var options = new ProjectCreatorOptions(vm.Directory, cancellationToken);
 					options.ProjectVersion = vm.ProjectVersion;
 					if (vm.CreateSolution)
@@ -268,7 +268,7 @@ namespace dnSpy.Documents.Tabs {
 							newValue = newProgress;
 							newProgress = null;
 						}
-						Debug.Assert(!(newValue is null));
+						Debug2.Assert(!(newValue is null));
 						if (!(newValue is null))
 							vm.TotalProgress = newValue.Value;
 					}));

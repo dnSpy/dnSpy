@@ -56,7 +56,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			}
 
 			var ctor = debugViewType.GetConstructor(DmdBindingFlags.Public | DmdBindingFlags.NonPublic | DmdBindingFlags.Instance, DmdCallingConventions.Standard | DmdCallingConventions.HasThis, new[] { enumerableType });
-			Debug.Assert(!(ctor is null));
+			Debug2.Assert(!(ctor is null));
 			return ctor;
 		}
 
@@ -83,7 +83,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 				var toArrayMethd = type.GetMethod(nameof(List<int>.ToArray), DmdSignatureCallingConvention.HasThis,
 					0, genArgs[0].MakeArrayType(), Array.Empty<DmdType>(), throwOnError: false) as DmdMethodInfo;
 
-				Debug.Assert((!(ctor is null)) == (!(toArrayMethd is null)));
+				Debug2.Assert((!(ctor is null)) == (!(toArrayMethd is null)));
 				if (ctor is null || toArrayMethd is null)
 					return default;
 				return (ctor, toArrayMethd);
@@ -92,7 +92,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 				var icollectionType = appDomain.GetWellKnownType(DmdWellKnownType.System_Collections_ICollection, isOptional: true);
 				if (!objType.CanCastTo(icollectionType))
 					return default;
-				Debug.Assert(!(icollectionType is null));
+				Debug2.Assert(!(icollectionType is null));
 
 				var type = appDomain.CorLib?.GetType("System.Collections." + nameof(ArrayList));
 				var ctor = type?.GetMethod(DmdConstructorInfo.ConstructorName, DmdSignatureCallingConvention.HasThis,
@@ -100,7 +100,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 				var toArrayMethd = type?.GetMethod(nameof(ArrayList.ToArray), DmdSignatureCallingConvention.HasThis,
 					0, appDomain.System_Object.MakeArrayType(), Array.Empty<DmdType>(), throwOnError: false) as DmdMethodInfo;
 
-				Debug.Assert((!(ctor is null)) == (!(toArrayMethd is null)));
+				Debug2.Assert((!(ctor is null)) == (!(toArrayMethd is null)));
 				if (ctor is null || toArrayMethd is null)
 					return default;
 				return (ctor, toArrayMethd);

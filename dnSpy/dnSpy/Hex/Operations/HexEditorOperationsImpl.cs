@@ -510,7 +510,7 @@ namespace dnSpy.Hex.Operations {
 				return true;
 
 			var encoding = Options.TryGetEncoding();
-			Debug.Assert(!(encoding is null));
+			Debug2.Assert(!(encoding is null));
 			if (encoding is null)
 				return false;
 
@@ -783,7 +783,7 @@ namespace dnSpy.Hex.Operations {
 			var pos = ActiveCaretBufferPosition;
 			var line = BufferLines.GetLineFromPosition(pos);
 			var cell = line.ValueCells.GetCell(pos);
-			Debug.Assert(!(cell is null));
+			Debug2.Assert(!(cell is null));
 			if (cell is null)
 				return false;
 			var cellText = line.Text.Substring(cell.TextSpan.Start, cell.TextSpan.Length);
@@ -1009,14 +1009,14 @@ namespace dnSpy.Hex.Operations {
 
 		public override void ScrollColumnLeft() {
 			var wpfHexView = HexView as WpfHexView;
-			Debug.Assert(!(wpfHexView is null));
+			Debug2.Assert(!(wpfHexView is null));
 			if (!(wpfHexView is null))
 				wpfHexView.ViewScroller.ScrollViewportHorizontallyByPixels(-wpfHexView.FormattedLineSource.ColumnWidth);
 		}
 
 		public override void ScrollColumnRight() {
 			var wpfHexView = HexView as WpfHexView;
-			Debug.Assert(!(wpfHexView is null));
+			Debug2.Assert(!(wpfHexView is null));
 			if (!(wpfHexView is null))
 				wpfHexView.ViewScroller.ScrollViewportHorizontallyByPixels(wpfHexView.FormattedLineSource.ColumnWidth);
 		}
@@ -1038,7 +1038,7 @@ namespace dnSpy.Hex.Operations {
 			if (!Roles.Contains(PredefinedHexViewRoles.Zoomable))
 				return null;
 			var wpfHexView = HexView as WpfHexView;
-			Debug.Assert(!(wpfHexView is null));
+			Debug2.Assert(!(wpfHexView is null));
 			return wpfHexView;
 		}
 
@@ -1157,7 +1157,7 @@ namespace dnSpy.Hex.Operations {
 			if (span is null)
 				return;
 			var overlap = BufferLines.BufferSpan.Span.Overlap(span.Value);
-			Debug.Assert(!(overlap is null));
+			Debug2.Assert(!(overlap is null));
 			if (overlap is null)
 				return;
 			if (!overlap.Value.Contains(currPos))

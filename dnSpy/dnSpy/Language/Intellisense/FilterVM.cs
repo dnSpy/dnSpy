@@ -24,7 +24,7 @@ using dnSpy.Contracts.Language.Intellisense;
 
 namespace dnSpy.Language.Intellisense {
 	sealed class FilterVM : INotifyPropertyChanged {
-		public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler? PropertyChanged;
 
 		public ImageReference ImageReference { get; }
 

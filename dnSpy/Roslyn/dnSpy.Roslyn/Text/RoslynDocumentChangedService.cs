@@ -23,13 +23,13 @@ using Microsoft.VisualStudio.Text;
 
 namespace dnSpy.Roslyn.Text {
 	interface IRoslynDocumentChangedService {
-		event EventHandler<RoslynDocumentChangedEventArgs> DocumentChanged;
+		event EventHandler<RoslynDocumentChangedEventArgs>? DocumentChanged;
 		void RaiseDocumentChanged(ITextSnapshot snapshot);
 	}
 
 	[Export(typeof(IRoslynDocumentChangedService))]
 	sealed class RoslynDocumentChangedService : IRoslynDocumentChangedService {
-		public event EventHandler<RoslynDocumentChangedEventArgs> DocumentChanged;
+		public event EventHandler<RoslynDocumentChangedEventArgs>? DocumentChanged;
 
 		public void RaiseDocumentChanged(ITextSnapshot snapshot) {
 			if (snapshot is null)

@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.Debugger.StartDebugging.Dialog {
 		/// <summary>
 		/// Raised after a property is changed
 		/// </summary>
-		public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler? PropertyChanged;
 
 		/// <summary>
 		/// Raises <see cref="PropertyChanged"/>

@@ -98,7 +98,7 @@ namespace dnSpy.Text.Formatting {
 			readonly IAdornmentElement adornmentElement;
 
 			public AdornmentTextRun(in LinePart linePart) {
-				Debug.Assert(!(linePart.AdornmentElement is null));
+				Debug2.Assert(!(linePart.AdornmentElement is null));
 				adornmentElement = linePart.AdornmentElement;
 				if (linePart.Span.Length != 0 || adornmentElement.Affinity == PositionAffinity.Successor) {
 					BreakBefore = LineBreakCondition.BreakPossible;

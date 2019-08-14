@@ -92,7 +92,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			if (useProvider) {
 				if (!(info.ErrorMessage is null))
 					return new DbgDotNetValueNodeImpl(this, info.Provider, name, nodeInfo, expression, PredefinedDbgValueNodeImageNames.Error, true, false, null, null, info.ErrorMessage, new DbgDotNetText(new DbgDotNetTextPart(DbgTextColor.Error, info.ErrorMessage)), formatSpecifiers, columnFormatter);
-				Debug.Assert(!(info.Provider is null));
+				Debug2.Assert(!(info.Provider is null));
 				return new DbgDotNetValueNodeImpl(this, info.Provider, name, nodeInfo, expression, info.Provider?.ImageName ?? imageName, true, false, null, null, info.ErrorMessage, info.Provider?.ValueText ?? default, formatSpecifiers, columnFormatter);
 			}
 			return new DbgDotNetValueNodeImpl(this, info.Provider, name, nodeInfo, expression, imageName, isReadOnly, causesSideEffects, expectedType, value.Type, info.ErrorMessage, default, formatSpecifiers, columnFormatter);

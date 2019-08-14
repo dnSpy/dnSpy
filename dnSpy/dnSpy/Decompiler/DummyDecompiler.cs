@@ -37,7 +37,7 @@ namespace dnSpy.Decompiler {
 		sealed class DummySettings : DecompilerSettingsBase {
 			public override DecompilerSettingsBase Clone() => new DummySettings();
 			public override int Version => 0;
-			public override event EventHandler VersionChanged { add { } remove { } }
+			public override event EventHandler? VersionChanged { add { } remove { } }
 
 			public override IEnumerable<IDecompilerOption> Options {
 				get { yield break; }

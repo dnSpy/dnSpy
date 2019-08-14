@@ -65,7 +65,7 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 	}
 
 	sealed class SignatureHelpTagger : ITagger<IClassificationTag> {
-		public event EventHandler<SnapshotSpanEventArgs> TagsChanged { add { } remove { } }
+		public event EventHandler<SnapshotSpanEventArgs>? TagsChanged { add { } remove { } }
 
 		readonly ITextBuffer buffer;
 		readonly ISignatureHelpSession session;

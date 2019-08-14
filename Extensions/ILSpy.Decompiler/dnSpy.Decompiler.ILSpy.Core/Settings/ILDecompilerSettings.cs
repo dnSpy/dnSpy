@@ -30,7 +30,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 		readonly ILSettings ilSettings;
 
 		public override int Version => ilSettings.SettingsVersion;
-		public override event EventHandler VersionChanged;
+		public override event EventHandler? VersionChanged;
 
 		public ILDecompilerSettings(ILSettings? ilSettings = null) {
 			this.ilSettings = ilSettings ?? new ILSettings();

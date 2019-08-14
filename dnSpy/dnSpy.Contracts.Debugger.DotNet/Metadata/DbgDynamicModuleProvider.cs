@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Raised when a new class has been loaded in a dynamic assembly
 		/// </summary>
-		public abstract event EventHandler<ClassLoadedEventArgs> ClassLoaded;
+		public abstract event EventHandler<ClassLoadedEventArgs>? ClassLoaded;
 
 		/// <summary>
 		/// Executes <paramref name="action"/> asynchronously on the thread required to load dynamic modules.

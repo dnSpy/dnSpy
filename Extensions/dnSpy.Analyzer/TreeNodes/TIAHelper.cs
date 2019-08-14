@@ -113,7 +113,7 @@ namespace dnlib.DotNet {
 		internal static bool IsTypeDefEquivalent(TypeDef td) => GetInfo(td) != null && CheckEquivalent(td);
 
 		static bool CheckEquivalent(TypeDef td) {
-			Debug.Assert(td != null);
+			Debug2.Assert(td != null);
 
 			for (int i = 0; td != null && i < 1000; i++) {
 				if (i != 0) {

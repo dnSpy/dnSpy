@@ -59,7 +59,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			this.documentViewerReferenceEnablerProviders = new Dictionary<string, Lazy<IDocumentViewerReferenceEnablerProvider, IDocumentViewerReferenceEnablerProviderMetadata>>(documentViewerReferenceEnablerProviders.Length, StringComparer.Ordinal);
 			foreach (var lazy in documentViewerReferenceEnablerProviders) {
 				string id = lazy.Metadata.Id;
-				Debug.Assert(!(id is null));
+				Debug2.Assert(!(id is null));
 				if (id is null)
 					continue;
 				bool b = this.documentViewerReferenceEnablerProviders.ContainsKey(id);
@@ -77,7 +77,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 	}
 
 	sealed class DocumentViewerHighlightReferencesTagger : ITagger<ITextMarkerTag> {
-		public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
+		public event EventHandler<SnapshotSpanEventArgs>? TagsChanged;
 
 		readonly ITextView textView;
 		SpanData<ReferenceInfo>? currentReference;
@@ -173,9 +173,9 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		bool IsEnabled(string? id) {
-			Debug.Assert(!(documentViewerReferenceEnablers is null));
-			Debug.Assert(!(documentViewerReferenceEnablerProviders is null));
-			Debug.Assert(!(documentViewer is null));
+			Debug2.Assert(!(documentViewerReferenceEnablers is null));
+			Debug2.Assert(!(documentViewerReferenceEnablerProviders is null));
+			Debug2.Assert(!(documentViewer is null));
 
 			// A null id is always enabled
 			if (id is null)
@@ -185,7 +185,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				bool b = documentViewerReferenceEnablerProviders.TryGetValue(id, out var lazy);
 				Debug.Assert(b, $"Missing {nameof(IDocumentViewerReferenceEnablerProvider)} for reference id = {id}");
 				if (b) {
-					Debug.Assert(!(lazy is null));
+					Debug2.Assert(!(lazy is null));
 					refChecker = lazy.Value.Create(documentViewer);
 					if (!(refChecker is null))
 						refChecker.IsEnabledChanged += DocumentViewerReferenceEnabler_IsEnabledChanged;
@@ -209,8 +209,8 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				yield break;
 			if (documentViewer.TextView.IsClosed)
 				yield break;
-			Debug.Assert(!(documentViewerReferenceEnablerProviders is null));
-			Debug.Assert(!(documentViewerReferenceEnablers is null));
+			Debug2.Assert(!(documentViewerReferenceEnablerProviders is null));
+			Debug2.Assert(!(documentViewerReferenceEnablers is null));
 
 			// It's not common for both references to be non-null but it does happen if it's VB and the reference
 			// is at eg. a Get keyword. For that reason, check for span refs first or we won't see the definition

@@ -123,7 +123,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		/// <summary>
 		/// Raised after the position is changed by calling one of the MoveTo methods
 		/// </summary>
-		public abstract event EventHandler<HexCaretPositionChangedEventArgs> PositionChanged;
+		public abstract event EventHandler<HexCaretPositionChangedEventArgs>? PositionChanged;
 
 		/// <summary>
 		/// Brings the caret into view

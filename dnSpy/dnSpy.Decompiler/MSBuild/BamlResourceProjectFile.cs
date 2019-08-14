@@ -110,7 +110,7 @@ namespace dnSpy.Decompiler.MSBuild {
 				}
 
 				var body = GetInitializeComponentBody();
-				Debug.Assert(!(body is null));
+				Debug2.Assert(!(body is null));
 				if (!(body is null)) {
 					var startupUri = GetStartupUri(body);
 					if (!(startupUri is null))

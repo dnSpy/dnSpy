@@ -77,15 +77,15 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 		}
 
 		void RegisterEvents() {
-			Debug.Assert(!(listBox is null));
-			Debug.Assert(!(vmCollNcc is null));
+			Debug2.Assert(!(listBox is null));
+			Debug2.Assert(!(vmCollNcc is null));
 			listBox.SelectionChanged += ListBox_SelectionChanged;
 			vmCollNcc.CollectionChanged += VmCollNcc_CollectionChanged;
 		}
 
 		void ListBox_SelectionChanged(object? sender, SelectionChangedEventArgs e) {
-			Debug.Assert(!(listBox is null));
-			Debug.Assert(!(vmColl is null));
+			Debug2.Assert(!(listBox is null));
+			Debug2.Assert(!(vmColl is null));
 			if (ListBox_SelectionChanged_ignoreCalls)
 				return;
 			try {
@@ -107,14 +107,14 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 		bool VmCollNcc_CollectionChanged_ignoreCalls;
 
 		void VmCollNcc_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
-			Debug.Assert(!(listBox is null));
+			Debug2.Assert(!(listBox is null));
 			if (VmCollNcc_CollectionChanged_ignoreCalls)
 				return;
 			try {
 				ListBox_SelectionChanged_ignoreCalls = true;
 				switch (e.Action) {
 				case NotifyCollectionChangedAction.Add:
-					Debug.Assert(!(e.NewItems is null));
+					Debug2.Assert(!(e.NewItems is null));
 					if (!(e.NewItems is null)) {
 						foreach (var item in e.NewItems)
 							listBox.SelectedItems.Add(item);
@@ -122,7 +122,7 @@ namespace dnSpy.Contracts.Controls.ToolWindows {
 					break;
 
 				case NotifyCollectionChangedAction.Remove:
-					Debug.Assert(!(e.OldItems is null));
+					Debug2.Assert(!(e.OldItems is null));
 					if (!(e.OldItems is null)) {
 						foreach (var item in e.OldItems)
 							listBox.SelectedItems.Remove(item);

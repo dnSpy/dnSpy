@@ -194,7 +194,7 @@ namespace dnSpy.Analyzer {
 
 		void ITreeViewListener.OnEvent(ITreeView treeView, TreeViewListenerEventArgs e) {
 			if (e.Event == TreeViewListenerEvent.NodeCreated) {
-				Debug.Assert(!(context is null));
+				Debug2.Assert(!(context is null));
 				var node = (ITreeNode)e.Argument;
 				if (node.Data is AnalyzerTreeNodeData d)
 					d.Context = context;

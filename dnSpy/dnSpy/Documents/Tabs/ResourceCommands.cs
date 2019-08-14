@@ -210,22 +210,22 @@ namespace dnSpy.Documents.Tabs {
 			if (resRef is null)
 				return;
 			var modNode = documentTabService.DocumentTreeView.FindNode(resRef.Module);
-			Debug.Assert(!(modNode is null));
+			Debug2.Assert(!(modNode is null));
 			if (modNode is null)
 				return;
 			modNode.TreeNode.EnsureChildrenLoaded();
 			var resDirNode = modNode.TreeNode.DataChildren.FirstOrDefault(a => a is ResourcesFolderNode);
-			Debug.Assert(!(resDirNode is null));
+			Debug2.Assert(!(resDirNode is null));
 			if (resDirNode is null)
 				return;
 			resDirNode.TreeNode.EnsureChildrenLoaded();
 			var resSetNode = resDirNode.TreeNode.DataChildren.FirstOrDefault(a => a is ResourceElementSetNode && ((ResourceElementSetNode)a).Name == resRef.Filename);
-			Debug.Assert(!(resSetNode is null));
+			Debug2.Assert(!(resSetNode is null));
 			if (resSetNode is null)
 				return;
 			resSetNode.TreeNode.EnsureChildrenLoaded();
 			var resNode = resSetNode.TreeNode.DataChildren.FirstOrDefault(a => ResourceElementNode.GetResourceElement((DocumentTreeNodeData)a) is ResourceElement resourceElement && resourceElement.Name == resRef.ResourceName);
-			Debug.Assert(!(resNode is null));
+			Debug2.Assert(!(resNode is null));
 			if (resNode is null)
 				return;
 			documentTabService.FollowReference(resNode);

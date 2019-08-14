@@ -105,7 +105,7 @@ namespace dnSpy.Roslyn.Intellisense.Completions.Classification {
 			var description = completionSet.GetDescriptionAsync(completion).GetAwaiter().GetResult();
 			var indexes = GetMatchIndexes(completion, description);
 			if (!(indexes is null)) {
-				Debug.Assert(!(description is null));
+				Debug2.Assert(!(description is null));
 				int pos = 0;
 				var parts = description.TaggedParts;
 				int endIndex = indexes.Value.endIndex;

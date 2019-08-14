@@ -247,9 +247,9 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 				ref readonly var block = ref blocks[i];
 				if (i > 0 && (formatterOptions & InternalFormatterOptions.EmptyLineBetweenBasicBlocks) != 0)
 					output.Write(Environment.NewLine, BoxedTextColor.Text);
-				if (!string.IsNullOrEmpty(block.Comment))
+				if (!string2.IsNullOrEmpty(block.Comment))
 					WriteComment(output, commentPrefix, block.Comment);
-				if ((formatterOptions & InternalFormatterOptions.AddLabels) != 0 && !string.IsNullOrEmpty(block.Label)) {
+				if ((formatterOptions & InternalFormatterOptions.AddLabels) != 0 && !string2.IsNullOrEmpty(block.Label)) {
 					output.Write(block.Label, refFactory.Create(block.LabelKind, block.Label), DisassemblyReferenceFlags.Definition | DisassemblyReferenceFlags.Local, GetColor(block.LabelKind));
 					output.Write(":", BoxedTextColor.AsmPunctuation);
 					output.Write(Environment.NewLine, BoxedTextColor.Text);

@@ -29,7 +29,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// <summary>
 		/// Raised when a property is changed
 		/// </summary>
-		public abstract event PropertyChangedEventHandler PropertyChanged;
+		public abstract event PropertyChangedEventHandler? PropertyChanged;
 
 		/// <summary>
 		/// Gets the runtime
@@ -119,7 +119,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// <summary>
 		/// Raised when the module's memory has been updated (eg. decrypted)
 		/// </summary>
-		public abstract event EventHandler Refreshed;
+		public abstract event EventHandler? Refreshed;
 
 		/// <summary>
 		/// Gets incremented when the module gets refreshed (<see cref="Refreshed"/>)

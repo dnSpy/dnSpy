@@ -116,7 +116,7 @@ namespace dndbg.Engine {
 			for (int i = 0; i < modules.Length; i++) {
 				var module = modules[i];
 				if (!(module.CorModuleDef is null)) {
-					Debug.Assert(!(corAssemblyDef is null));
+					Debug2.Assert(!(corAssemblyDef is null));
 					continue;
 				}
 				module.CorModuleDef = new CorModuleDef(module.CorModule.GetMetaDataInterface<IMetaDataImport>(), new CorModuleDefHelper(module));

@@ -30,9 +30,9 @@ namespace dnSpy.Text.Editor {
 	sealed class SpaceReservationManager : ISpaceReservationManager {
 		public ReadOnlyCollection<ISpaceReservationAgent> Agents { get; }
 		public bool HasAggregateFocus { get; private set; }
-		public event EventHandler<SpaceReservationAgentChangedEventArgs> AgentChanged;
-		public event EventHandler GotAggregateFocus;
-		public event EventHandler LostAggregateFocus;
+		public event EventHandler<SpaceReservationAgentChangedEventArgs>? AgentChanged;
+		public event EventHandler? GotAggregateFocus;
+		public event EventHandler? LostAggregateFocus;
 
 		public bool IsMouseOver {
 			get {

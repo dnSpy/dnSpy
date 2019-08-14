@@ -42,7 +42,7 @@ namespace dnSpy.Text.Formatting {
 			tagAggregator.TagsChanged += TagAggregator_TagsChanged;
 		}
 
-		public event EventHandler<TextAndAdornmentSequenceChangedEventArgs> SequenceChanged;
+		public event EventHandler<TextAndAdornmentSequenceChangedEventArgs>? SequenceChanged;
 
 		void TagAggregator_TagsChanged(object? sender, TagsChangedEventArgs e) =>
 			SequenceChanged?.Invoke(this, new TextAndAdornmentSequenceChangedEventArgs(e.Span));

@@ -27,9 +27,10 @@ using dnSpy.Contracts.Images;
 
 namespace dnSpy.Images {
 	sealed class DsImageConverter : IMultiValueConverter {
-		internal static IImageService imageService;
+		internal static IImageService? imageService;
 
 		public object? Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
+			Debug2.Assert(!(imageService is null));
 			if (values is null)
 				throw new ArgumentNullException(nameof(values));
 			bool b = values.Length == 7;

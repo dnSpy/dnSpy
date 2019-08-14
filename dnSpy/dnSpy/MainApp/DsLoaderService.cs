@@ -31,7 +31,7 @@ namespace dnSpy.MainApp {
 	interface IDsLoaderService {
 		void Initialize(IDsLoaderContentProvider content, Window window, IAppCommandLineArgs args);
 		void Save();
-		event EventHandler OnAppLoaded;
+		event EventHandler? OnAppLoaded;
 	}
 
 	interface IDsLoaderContentProvider {
@@ -46,7 +46,7 @@ namespace dnSpy.MainApp {
 
 		WindowLoader? windowLoader;
 
-		public event EventHandler OnAppLoaded;
+		public event EventHandler? OnAppLoaded;
 
 		[ImportingConstructor]
 		DsLoaderService(ISettingsService settingsService, [ImportMany] IEnumerable<Lazy<IDsLoader, IDsLoaderMetadata>> mefLoaders) {
@@ -56,12 +56,12 @@ namespace dnSpy.MainApp {
 		}
 
 		public void Initialize(IDsLoaderContentProvider content, Window window, IAppCommandLineArgs args) {
-			Debug.Assert(!(windowLoader is null));
+			Debug2.Assert(!(windowLoader is null));
 			windowLoader.Initialize(content, window, args);
 		}
 
 		internal void LoadAllCodeFinished() {
-			Debug.Assert(!(windowLoader is null));
+			Debug2.Assert(!(windowLoader is null));
 			windowLoader = null;
 			OnAppLoaded?.Invoke(this, EventArgs.Empty);
 		}

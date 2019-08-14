@@ -234,7 +234,7 @@ namespace dnSpy.Text.Editor {
 
 		protected override void OnRender(DrawingContext drawingContext) {
 			base.OnRender(drawingContext);
-			Debug.Assert((overwriteCaretBrush is null) == (caretBrush is null));
+			Debug2.Assert((overwriteCaretBrush is null) == (caretBrush is null));
 			if (caretBrush is null) {
 				caretBrush = classificationFormatMap.DefaultTextProperties.ForegroundBrush;
 				Debug.Assert(!classificationFormatMap.DefaultTextProperties.ForegroundBrushEmpty);

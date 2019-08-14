@@ -28,9 +28,9 @@ namespace dnSpy.Language.Intellisense {
 		UIElement IPopupIntellisensePresenter.SurfaceElement => control;
 		PopupStyles IPopupIntellisensePresenter.PopupStyles => PopupStyles.PositionClosest;
 		string IPopupIntellisensePresenter.SpaceReservationManagerName => IntellisenseSpaceReservationManagerNames.QuickInfoSpaceReservationManagerName;
-		event EventHandler IPopupIntellisensePresenter.SurfaceElementChanged { add { } remove { } }
-		event EventHandler<ValueChangedEventArgs<PopupStyles>> IPopupIntellisensePresenter.PopupStylesChanged { add { } remove { } }
-		public event EventHandler PresentationSpanChanged;
+		event EventHandler? IPopupIntellisensePresenter.SurfaceElementChanged { add { } remove { } }
+		event EventHandler<ValueChangedEventArgs<PopupStyles>>? IPopupIntellisensePresenter.PopupStylesChanged { add { } remove { } }
+		public event EventHandler? PresentationSpanChanged;
 
 		public double Opacity {
 			get => control.Opacity;

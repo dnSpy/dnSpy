@@ -121,7 +121,7 @@ namespace dndbg.DotNet {
 		/// Gets notified when a new type is added/updated. If this isn't a dynamic module, this
 		/// event is never raised.
 		/// </summary>
-		public event EventHandler<TypeUpdatedEventArgs> TypeUpdated;
+		public event EventHandler<TypeUpdatedEventArgs>? TypeUpdated;
 
 		public MDToken OriginalToken => new MDToken(MDToken.Table, origRid);
 
@@ -148,7 +148,7 @@ namespace dndbg.DotNet {
 			mdi2 = mdi as IMetaDataImport2;
 			this.corModuleDefHelper = corModuleDefHelper;
 			var fname = corModuleDefHelper.Filename;
-			Debug.Assert(fname is null || File.Exists(fname));
+			Debug2.Assert(fname is null || File.Exists(fname));
 			location = fname ?? string.Empty;
 			isManifestModule = corModuleDefHelper.IsManifestModule;
 			isExeFile = IsExeFile(isManifestModule, location);
@@ -319,7 +319,7 @@ namespace dndbg.DotNet {
 			var caBlob = MDAPI.GetCustomAttributeBlob(mdi, caToken, out uint typeToken) ?? Array.Empty<byte>();
 			var cat = ResolveToken(typeToken, gpContext) as ICustomAttributeType;
 			var ca = CustomAttributeReader.Read(this, caBlob, cat, gpContext);
-			Debug.Assert(!(ca is null));
+			Debug2.Assert(!(ca is null));
 			return ca;
 		}
 
@@ -1096,7 +1096,7 @@ namespace dndbg.DotNet {
 				if (!IsValidToken(new MDToken(Table.ExportedType, rid).Raw))
 					break;
 				var et = ResolveExportedType(rid);
-				Debug.Assert(!(et is null));
+				Debug2.Assert(!(et is null));
 				if (et is null)
 					break;
 				ExportedTypes.Add(et);

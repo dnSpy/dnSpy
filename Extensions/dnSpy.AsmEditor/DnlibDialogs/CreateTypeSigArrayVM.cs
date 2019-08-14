@@ -114,7 +114,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			if (!AddCurrentCanExecute())
 				return;
 			var typeSig = TypeSigCreator.TypeSig;
-			Debug.Assert(!(typeSig is null));
+			Debug2.Assert(!(typeSig is null));
 			TypeSigCollection.Add(typeSig);
 			TypeSigCollection.SelectedIndex = TypeSigCollection.Count - 1;
 			TypeSigCreator.TypeSig = null;

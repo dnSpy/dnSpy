@@ -38,7 +38,7 @@ using VSTE = Microsoft.VisualStudio.Text.Editor;
 namespace dnSpy.Hex.Editor {
 	[Export(typeof(HexEditorFactoryService))]
 	sealed class HexEditorFactoryServiceImpl : HexEditorFactoryService {
-		public override event EventHandler<HexViewCreatedEventArgs> HexViewCreated;
+		public override event EventHandler<HexViewCreatedEventArgs>? HexViewCreated;
 		readonly HexEditorOptionsFactoryService hexEditorOptionsFactoryService;
 		readonly ICommandService commandService;
 		readonly Lazy<WpfHexViewCreationListener, IDeferrableTextViewRoleMetadata>[] wpfHexViewCreationListeners;

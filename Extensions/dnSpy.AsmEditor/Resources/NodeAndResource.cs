@@ -31,7 +31,7 @@ namespace dnSpy.AsmEditor.Resources {
 		readonly DocumentTreeNodeData node;
 
 		public NodeAndResource(DocumentTreeNodeData node) {
-			Debug.Assert(!(ResourceNode.GetResource(node) is null));
+			Debug2.Assert(!(ResourceNode.GetResource(node) is null));
 			this.node = node;
 		}
 	}

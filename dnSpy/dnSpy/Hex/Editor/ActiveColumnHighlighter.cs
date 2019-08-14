@@ -100,7 +100,7 @@ namespace dnSpy.Hex.Editor {
 		[VSUTIL.Name(PredefinedHexAdornmentLayers.ActiveColumnHighlighter)]
 		[VSUTIL.Order(Before = PredefinedHexAdornmentLayers.BottomLayer)]
 		[VSUTIL.Order(Before = PredefinedHexAdornmentLayers.TopLayer)]
-		static HexAdornmentLayerDefinition theAdornmentLayerDefinition;
+		static HexAdornmentLayerDefinition? theAdornmentLayerDefinition;
 #pragma warning restore CS0169
 
 		public ActiveColumnHighlighterService(WpfHexView wpfHexView, HexEditorFormatMapService editorFormatMapService) {
@@ -201,7 +201,7 @@ namespace dnSpy.Hex.Editor {
 			RemoveAllRectangles();
 			if (!enabled)
 				return;
-			Debug.Assert(!(adornmentLayer is null));
+			Debug2.Assert(!(adornmentLayer is null));
 
 			if (wpfHexView.ViewportHeight == 0)
 				return;

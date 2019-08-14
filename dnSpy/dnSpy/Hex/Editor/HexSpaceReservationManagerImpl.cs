@@ -31,9 +31,9 @@ namespace dnSpy.Hex.Editor {
 		public override ReadOnlyCollection<HexSpaceReservationAgent> Agents { get; }
 		public override bool HasAggregateFocus => hasAggregateFocus;
 		bool hasAggregateFocus;
-		public override event EventHandler<HexSpaceReservationAgentChangedEventArgs> AgentChanged;
-		public override event EventHandler GotAggregateFocus;
-		public override event EventHandler LostAggregateFocus;
+		public override event EventHandler<HexSpaceReservationAgentChangedEventArgs>? AgentChanged;
+		public override event EventHandler? GotAggregateFocus;
+		public override event EventHandler? LostAggregateFocus;
 
 		public override bool IsMouseOver {
 			get {

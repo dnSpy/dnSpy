@@ -35,7 +35,7 @@ namespace dnSpy.Contracts.Settings.Groups {
 		/// <summary>
 		/// Raised when an option has changed
 		/// </summary>
-		event EventHandler<TextViewOptionChangedEventArgs> TextViewOptionChanged;
+		event EventHandler<TextViewOptionChangedEventArgs>? TextViewOptionChanged;
 
 		/// <summary>
 		/// Returns true if the option is shared by all text views in this group

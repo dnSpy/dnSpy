@@ -42,7 +42,7 @@ namespace dnSpy.Hex.Editor {
 
 		public HexToolTipStructureSpanTagger(HexStructureInfoAggregator hexStructureInfoAggregator) => this.hexStructureInfoAggregator = hexStructureInfoAggregator ?? throw new ArgumentNullException(nameof(hexStructureInfoAggregator));
 
-		public override event EventHandler<HexBufferSpanEventArgs> TagsChanged { add { } remove { } }
+		public override event EventHandler<HexBufferSpanEventArgs>? TagsChanged { add { } remove { } }
 
 		public override IEnumerable<IHexTextTagSpan<HexToolTipStructureSpanTag>> GetTags(HexTaggerContext context) {
 			yield break;

@@ -192,7 +192,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		void InitializeGlyphFactories() {
-			Debug.Assert(!(iconCanvas is null));
+			Debug2.Assert(!(iconCanvas is null));
 			var oldFactories = new Dictionary<HexGlyphFactoryProvider, HexGlyphFactory>();
 			foreach (var info in glyphFactories.Values)
 				oldFactories[info.FactoryProvider] = info.Factory;
@@ -203,7 +203,7 @@ namespace dnSpy.Hex.Editor {
 			foreach (var lazy in lazyGlyphFactoryProviders) {
 				HexGlyphFactory? glyphFactory = null;
 				foreach (var type in lazy.Metadata.TagTypes) {
-					Debug.Assert(!(type is null));
+					Debug2.Assert(!(type is null));
 					if (type is null)
 						break;
 					Debug.Assert(!glyphFactories.ContainsKey(type));
@@ -269,7 +269,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		void RefreshEverything() {
-			Debug.Assert(!(lineInfos is null));
+			Debug2.Assert(!(lineInfos is null));
 			lineInfos.Clear();
 			foreach (var c in childCanvases)
 				c.Children.Clear();
@@ -283,7 +283,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		void OnNewLayout(IReadOnlyList<HexViewLine> newOrReformattedLines, IReadOnlyList<HexViewLine> translatedLines) {
-			Debug.Assert(!(lineInfos is null));
+			Debug2.Assert(!(lineInfos is null));
 			var newInfos = new Dictionary<object, LineInfo>();
 
 			foreach (var line in newOrReformattedLines)
@@ -318,7 +318,7 @@ namespace dnSpy.Hex.Editor {
 
 		void AddLine(Dictionary<object, LineInfo> newInfos, HexViewLine line) {
 			var wpfLine = line as WpfHexViewLine;
-			Debug.Assert(!(wpfLine is null));
+			Debug2.Assert(!(wpfLine is null));
 			if (wpfLine is null)
 				return;
 			var info = new LineInfo(line, CreateIconInfos(wpfLine));
@@ -330,7 +330,7 @@ namespace dnSpy.Hex.Editor {
 		List<IconInfo> CreateIconInfos(WpfHexViewLine line) {
 			var icons = new List<IconInfo>();
 			foreach (var glyphTag in GetGlyphTags(line)) {
-				Debug.Assert(!(glyphTag is null));
+				Debug2.Assert(!(glyphTag is null));
 				if (glyphTag is null)
 					continue;
 				// Fails if someone forgot to Export(typeof(HexGlyphFactoryProvider)) with the correct tag types
@@ -352,7 +352,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		IEnumerable<HexGlyphTag> GetGlyphTags(WpfHexViewLine line) {
-			Debug.Assert(!(tagAggregator is null));
+			Debug2.Assert(!(tagAggregator is null));
 			foreach (var tagSpan in tagAggregator.GetTags(line.BufferSpan)) {
 				if (line.IntersectsBufferSpan(tagSpan.Span))
 					yield return tagSpan.Tag;
@@ -392,7 +392,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		void Update(WpfHexViewLine line) {
-			Debug.Assert(!(lineInfos is null));
+			Debug2.Assert(!(lineInfos is null));
 			Debug.Assert(line.VisibilityState != VSTF.VisibilityState.Unattached);
 			if (!lineInfos.TryGetValue(line.IdentityTag, out var info))
 				return;
@@ -426,8 +426,8 @@ namespace dnSpy.Hex.Editor {
 				return;
 			if (wpfHexViewHost.IsClosed)
 				return;
-			Debug.Assert(!(editorFormatMap is null));
-			Debug.Assert(!(tagAggregator is null));
+			Debug2.Assert(!(editorFormatMap is null));
+			Debug2.Assert(!(tagAggregator is null));
 			hasRegisteredEvents = true;
 			editorFormatMap.FormatMappingChanged += EditorFormatMap_FormatMappingChanged;
 			tagAggregator.BatchedTagsChanged += TagAggregator_BatchedTagsChanged;

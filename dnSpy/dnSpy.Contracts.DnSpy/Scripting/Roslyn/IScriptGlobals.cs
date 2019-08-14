@@ -38,7 +38,7 @@ namespace dnSpy.Contracts.Scripting.Roslyn {
 		/// Raised before the script gets reset. Can be used to unregister from events to prevent
 		/// memory leaks. Raised on the UI thread.
 		/// </summary>
-		event EventHandler ScriptResetting;
+		event EventHandler? ScriptResetting;
 
 		/// <summary>
 		/// Cancellation token that gets signalled when the script gets reset

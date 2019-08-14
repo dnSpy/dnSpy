@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using dnSpy.Contracts.Debugger.Exceptions;
 using dnSpy.Contracts.Debugger.Text;
 
@@ -25,7 +26,7 @@ namespace dnSpy.Debugger.DotNet.Exceptions {
 	sealed class CLRDbgExceptionFormatter : DbgExceptionFormatter {
 		public override bool WriteName(IDbgTextWriter writer, DbgExceptionDefinition definition) {
 			var fullName = definition.Id.Name;
-			if (!string.IsNullOrEmpty(fullName)) {
+			if (!string2.IsNullOrEmpty(fullName)) {
 				var nsParts = fullName.Split(nsSeps);
 				int pos = 0;
 				var partColor = DbgTextColor.Namespace;

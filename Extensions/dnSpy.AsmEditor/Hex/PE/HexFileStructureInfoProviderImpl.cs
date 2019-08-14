@@ -88,7 +88,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 				if (!(tblsStream is null)) {
 					var first = tblsStream.MetadataTables.FirstOrDefault(a => !(a is null));
 					var last = tblsStream.MetadataTables.LastOrDefault(a => !(a is null));
-					Debug.Assert(!(first is null));
+					Debug2.Assert(!(first is null));
 					if (!(first is null))
 						metadataTablesSpan = HexSpan.FromBounds(first.Span.Start, last.Span.End);
 				}

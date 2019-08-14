@@ -454,7 +454,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			var addr = valueNode?.Value?.GetRawAddressValue(onlyDataAddress: true);
 			if (addr is null)
 				return;
-			Debug.Assert(!(valueNode is null));
+			Debug2.Assert(!(valueNode is null));
 			var process = valueNode.Process;
 			var start = new HexPosition(addr.Value.Address);
 			var end = start + addr.Value.Length;

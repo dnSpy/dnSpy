@@ -51,7 +51,7 @@ namespace dnSpy.Text.Editor {
 			set => textCaretLayer.IsHidden = value;
 		}
 
-		public event EventHandler<CaretPositionChangedEventArgs> PositionChanged;
+		public event EventHandler<CaretPositionChangedEventArgs>? PositionChanged;
 		public CaretPosition Position => new CaretPosition(currentPosition, textView.BufferGraph.CreateMappingPoint(currentPosition.Position, PointTrackingMode.Positive), Affinity);
 		VirtualSnapshotPoint currentPosition;
 
@@ -138,7 +138,7 @@ namespace dnSpy.Text.Editor {
 
 		static class TfThreadMgrHelper {
 			static bool initd;
-			static ITfThreadMgr tfThreadMgr;
+			static ITfThreadMgr? tfThreadMgr;
 
 			[DllImport("msctf")]
 			static extern int TF_CreateThreadMgr(out ITfThreadMgr pptim);

@@ -118,7 +118,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 		}
 
 		public override void InitializeContext(DbgEvaluationContext context, DbgCodeLocation? location, CancellationToken cancellationToken) {
-			Debug.Assert(!(context.Runtime.GetDotNetRuntime() is null));
+			Debug2.Assert(!(context.Runtime.GetDotNetRuntime() is null));
 
 			IDebuggerDisplayAttributeEvaluatorUtils.Initialize(context, debuggerDisplayAttributeEvaluator);
 			// Needed by DebuggerRuntimeImpl (calls expressionCompiler.TryGetAliasInfo())

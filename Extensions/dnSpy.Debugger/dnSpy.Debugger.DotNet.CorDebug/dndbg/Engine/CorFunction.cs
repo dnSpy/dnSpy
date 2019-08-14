@@ -44,7 +44,7 @@ namespace dndbg.Engine {
 				// Here if it's an extern method, eg. it's not IL code, but native code
 
 				var mod = Module;
-				Debug.Assert(!(mod is null));
+				Debug2.Assert(!(mod is null));
 				var mdi = mod?.GetMetaDataInterface<IMetaDataImport>();
 				uint tdOwner = 0x02000000 + MDAPI.GetMethodOwnerRid(mdi, Token);
 				return mod?.GetClassFromToken(tdOwner);

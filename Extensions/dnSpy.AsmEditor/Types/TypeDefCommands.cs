@@ -130,7 +130,7 @@ namespace dnSpy.AsmEditor.Types {
 			}
 
 			public void Delete(TypeNode[] nodes) {
-				Debug.Assert(infos is null);
+				Debug2.Assert(infos is null);
 				if (!(infos is null))
 					throw new InvalidOperationException();
 
@@ -146,7 +146,7 @@ namespace dnSpy.AsmEditor.Types {
 			}
 
 			public void Restore(TypeNode[] nodes) {
-				Debug.Assert(!(infos is null));
+				Debug2.Assert(!(infos is null));
 				if (infos is null)
 					throw new InvalidOperationException();
 				Debug.Assert(infos.Length == nodes.Length);
@@ -230,7 +230,7 @@ namespace dnSpy.AsmEditor.Types {
 			string ns = nsNode?.Name ?? string.Empty;
 
 			var module = nodes[0].GetModule();
-			Debug.Assert(!(module is null));
+			Debug2.Assert(!(module is null));
 			if (module is null)
 				throw new InvalidOperationException();
 			var options = TypeDefOptions.Create(ns, TypeConstants.DEFAULT_TYPE_NAME, module.CorLibTypes.Object.TypeDefOrRef, false);
@@ -255,7 +255,7 @@ namespace dnSpy.AsmEditor.Types {
 		CreateTypeDefCommand(IList<TypeDef> ownerList, DocumentTreeNodeData ownerNode, TypeDefOptions options) {
 			this.ownerList = ownerList;
 			var modNode = ownerNode.GetModuleNode();
-			Debug.Assert(!(modNode is null));
+			Debug2.Assert(!(modNode is null));
 			if (modNode is null)
 				throw new InvalidOperationException();
 			nsNodeCreator = new NamespaceNodeCreator(options.Namespace, modNode);
@@ -348,12 +348,12 @@ namespace dnSpy.AsmEditor.Types {
 			if (!(ownerNode is TypeNode))
 				ownerNode = (DocumentTreeNodeData)ownerNode.TreeNode.Parent!.Data;
 			var typeNode = ownerNode as TypeNode;
-			Debug.Assert(!(typeNode is null));
+			Debug2.Assert(!(typeNode is null));
 			if (typeNode is null)
 				throw new InvalidOperationException();
 
 			var module = typeNode.GetModule();
-			Debug.Assert(!(module is null));
+			Debug2.Assert(!(module is null));
 			if (module is null)
 				throw new InvalidOperationException();
 			var options = TypeDefOptions.Create(UTF8String.Empty, TypeConstants.DEFAULT_TYPE_NAME, module.CorLibTypes.Object.TypeDefOrRef, true);
@@ -378,7 +378,7 @@ namespace dnSpy.AsmEditor.Types {
 			this.ownerType = ownerType;
 
 			var modNode = ownerType.GetModuleNode();
-			Debug.Assert(!(modNode is null));
+			Debug2.Assert(!(modNode is null));
 			if (modNode is null)
 				throw new InvalidOperationException();
 			nestedType = ownerType.Create(options.CreateTypeDef(modNode.Document.ModuleDef!));
@@ -463,7 +463,7 @@ namespace dnSpy.AsmEditor.Types {
 			var typeNode = (TypeNode)nodes[0];
 
 			var module = nodes[0].GetModule();
-			Debug.Assert(!(module is null));
+			Debug2.Assert(!(module is null));
 			if (module is null)
 				throw new InvalidOperationException();
 
@@ -594,7 +594,7 @@ namespace dnSpy.AsmEditor.Types {
 
 		internal static void InvalidateBaseTypeFolderNode(TypeNode typeNode) {
 			var btNode = (BaseTypeFolderNode)typeNode.TreeNode.DataChildren.FirstOrDefault(a => a is BaseTypeFolderNode);
-			Debug.Assert(!(btNode is null) || typeNode.TreeNode.Children.Count == 0);
+			Debug2.Assert(!(btNode is null) || typeNode.TreeNode.Children.Count == 0);
 			if (!(btNode is null))
 				btNode.InvalidateChildren();
 		}

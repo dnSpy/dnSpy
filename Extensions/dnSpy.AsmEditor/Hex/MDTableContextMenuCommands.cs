@@ -124,7 +124,7 @@ namespace dnSpy.AsmEditor.Hex {
 			return null;
 		}
 
-		event EventHandler ICommand.CanExecuteChanged {
+		event EventHandler? ICommand.CanExecuteChanged {
 			add => CommandManager.RequerySuggested += value;
 			remove => CommandManager.RequerySuggested -= value;
 		}

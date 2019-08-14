@@ -130,11 +130,11 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			var methodNode = (MethodNode)nodes[0];
 			var modNode = methodNode.GetModuleNode();
-			Debug.Assert(!(modNode is null));
+			Debug2.Assert(!(modNode is null));
 			if (modNode is null)
 				throw new InvalidOperationException();
 			var module = modNode.Document.ModuleDef;
-			Debug.Assert(!(module is null));
+			Debug2.Assert(!(module is null));
 			if (module is null)
 				throw new InvalidOperationException();
 
@@ -146,7 +146,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 				if (win.ShowDialog() != true)
 					return;
-				Debug.Assert(!(vm.Result is null));
+				Debug2.Assert(!(vm.Result is null));
 
 				undoCommandService.Value.Add(new EditMethodBodyCodeCommand(addUpdatedNodesHelperProvider, modNode, vm.Result));
 			}
@@ -204,7 +204,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			EditMethodBodyCodeCommand.Execute(editCodeVMCreator, addUpdatedNodesHelperProvider, undoCommandService, appService, new DocumentTreeNodeData[] { methodNode }, list);
 		}
 
-		event EventHandler ICommand.CanExecuteChanged {
+		event EventHandler? ICommand.CanExecuteChanged {
 			add => CommandManager.RequerySuggested += value;
 			remove => CommandManager.RequerySuggested -= value;
 		}

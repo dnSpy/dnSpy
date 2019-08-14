@@ -98,7 +98,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			var methodNode = (MethodNode)nodes[0];
 
 			var module = nodes[0].GetModule();
-			Debug.Assert(!(module is null));
+			Debug2.Assert(!(module is null));
 			if (module is null)
 				throw new InvalidOperationException();
 
@@ -186,7 +186,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			EditMethodBodyILCommand.Execute(methodAnnotations, undoCommandService, appService, new DocumentTreeNodeData[] { methodNode }, BodyCommandUtils.GetInstructionOffsets(method, list));
 		}
 
-		event EventHandler ICommand.CanExecuteChanged {
+		event EventHandler? ICommand.CanExecuteChanged {
 			add => CommandManager.RequerySuggested += value;
 			remove => CommandManager.RequerySuggested -= value;
 		}

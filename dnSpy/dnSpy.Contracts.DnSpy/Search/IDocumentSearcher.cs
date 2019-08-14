@@ -71,11 +71,11 @@ namespace dnSpy.Contracts.Search {
 		/// <summary>
 		/// Raised when the search has completed or was canceled
 		/// </summary>
-		event EventHandler OnSearchCompleted;
+		event EventHandler? OnSearchCompleted;
 
 		/// <summary>
 		/// Raised when there are more results available
 		/// </summary>
-		event EventHandler<SearchResultEventArgs> OnNewSearchResults;
+		event EventHandler<SearchResultEventArgs>? OnNewSearchResults;
 	}
 }

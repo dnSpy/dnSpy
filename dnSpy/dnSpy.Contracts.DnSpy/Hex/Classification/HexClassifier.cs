@@ -34,7 +34,7 @@ namespace dnSpy.Contracts.Hex.Classification {
 		/// <summary>
 		/// Raised when classification spans have changed
 		/// </summary>
-		public abstract event EventHandler<HexClassificationChangedEventArgs> ClassificationChanged;
+		public abstract event EventHandler<HexClassificationChangedEventArgs>? ClassificationChanged;
 
 		/// <summary>
 		/// Classifies text

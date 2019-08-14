@@ -122,7 +122,7 @@ namespace dnSpy.Documents {
 			foreach (var lz in runtimeAsmResolvers) {
 				var result = lz.Value.Resolve(assembly, sourceModule);
 				if (!result.IsDefault) {
-					if (!string.IsNullOrEmpty(result.Filename)) {
+					if (!string2.IsNullOrEmpty(result.Filename)) {
 						var file = documentService.Find(FilenameKey.CreateFullPath(result.Filename), checkTempCache: true);
 						if (!(file is null))
 							return file;
@@ -130,7 +130,7 @@ namespace dnSpy.Documents {
 
 					if (!(result.GetFileData is null))
 						return documentService.TryGetOrCreateInternal(DsDocumentInfo.CreateInMemory(result.GetFileData, result.Filename), true, true);
-					if (!string.IsNullOrEmpty(result.Filename))
+					if (!string2.IsNullOrEmpty(result.Filename))
 						return documentService.TryGetOrCreateInternal(DsDocumentInfo.CreateDocument(result.Filename), true, true);
 
 					Debug.Fail("Shouldn't be reached");
@@ -191,7 +191,7 @@ namespace dnSpy.Documents {
 			}
 
 			var sourceFilename = module.Location;
-			if (!string.IsNullOrEmpty(sourceFilename)) {
+			if (!string2.IsNullOrEmpty(sourceFilename)) {
 				bool isExe = (module.Characteristics & Characteristics.Dll) == 0;
 				Version? fwkVersion;
 				foreach (var info in frameworkInfos) {
@@ -572,7 +572,7 @@ namespace dnSpy.Documents {
 
 				// If it's a self-contained .NET Core app, we don't need the version since we must only search
 				// the current directory.
-				Debug.Assert(fwkKind == FrameworkKind.DotNetCore || netCoreVersion is null);
+				Debug2.Assert(fwkKind == FrameworkKind.DotNetCore || netCoreVersion is null);
 				document = LookupFromSearchPaths(assembly, sourceModule, sourceModuleDirectoryHint, netCoreVersion);
 				if (!(document is null))
 					return documentService.GetOrAddCanDispose(document, assembly);
@@ -614,7 +614,7 @@ namespace dnSpy.Documents {
 
 		IDsDocument? LookupFromSearchPaths(IAssembly asmName, ModuleDef? sourceModule, string? sourceModuleDir, Version? dotNetCoreAppVersion) {
 			IDsDocument? document;
-			if (sourceModuleDir is null && !(sourceModule is null) && !string.IsNullOrEmpty(sourceModule.Location)) {
+			if (sourceModuleDir is null && !(sourceModule is null) && !string2.IsNullOrEmpty(sourceModule.Location)) {
 				try {
 					sourceModuleDir = Path.GetDirectoryName(sourceModule.Location);
 				}

@@ -40,7 +40,7 @@ namespace dnSpy.Debugger.Impl {
 
 		public override int RefreshedVersion => refreshedVersion;
 		volatile int refreshedVersion;
-		public override event EventHandler Refreshed;
+		public override event EventHandler? Refreshed;
 		internal void RaiseRefreshed() {
 			Interlocked.Increment(ref refreshedVersion);
 			Refreshed?.Invoke(this, EventArgs.Empty);
@@ -104,7 +104,7 @@ namespace dnSpy.Debugger.Impl {
 			this.version = version;
 		}
 
-		public override event PropertyChangedEventHandler PropertyChanged;
+		public override event PropertyChangedEventHandler? PropertyChanged;
 		void OnPropertyChanged(string propName) {
 			Dispatcher.VerifyAccess();
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));

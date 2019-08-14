@@ -36,6 +36,6 @@ namespace dnSpy.Search {
 			SearchListBoxDoubleClick?.Invoke(this, EventArgs.Empty);
 		}
 
-		public event EventHandler SearchListBoxDoubleClick;
+		public event EventHandler? SearchListBoxDoubleClick;
 	}
 }

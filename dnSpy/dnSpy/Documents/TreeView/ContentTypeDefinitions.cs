@@ -27,7 +27,7 @@ namespace dnSpy.Documents.TreeView {
 		[Export]
 		[Name(TreeViewContentTypes.TreeViewNodeAssemblyExplorer)]
 		[BaseDefinition(TreeViewContentTypes.TreeViewNode)]
-		static readonly ContentTypeDefinition TreeViewNodeAssemblyExplorer;
+		static readonly ContentTypeDefinition? TreeViewNodeAssemblyExplorer;
 #pragma warning restore CS0169
 	}
 }

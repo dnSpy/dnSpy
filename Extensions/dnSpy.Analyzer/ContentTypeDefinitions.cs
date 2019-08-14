@@ -27,7 +27,7 @@ namespace dnSpy.Analyzer {
 		[Export]
 		[Name(TreeViewContentTypes.TreeViewNodeAnalyzer)]
 		[BaseDefinition(TreeViewContentTypes.TreeViewNode)]
-		static readonly ContentTypeDefinition TreeViewNodeAnalyzer;
+		static readonly ContentTypeDefinition? TreeViewNodeAnalyzer;
 #pragma warning restore CS0169
 	}
 }

@@ -1169,7 +1169,7 @@ namespace dnSpy.AsmEditor.Hex {
 
 		static string GetHeaderInternal(IDocumentTabService documentTabService, HexContext context) {
 			var tokRef = GetTokenReference(documentTabService, context);
-			Debug.Assert(!(tokRef is null));
+			Debug2.Assert(!(tokRef is null));
 			return string.Format(dnSpy_AsmEditor_Resources.GoToMetaDataTableRowCommand, tokRef.Token);
 		}
 

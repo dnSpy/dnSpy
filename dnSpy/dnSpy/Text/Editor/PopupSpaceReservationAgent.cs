@@ -35,8 +35,8 @@ namespace dnSpy.Text.Editor {
 		bool IsVisible => !(popup.Child is null);
 		public bool HasFocus => IsVisible && popup.IsKeyboardFocusWithin;
 		public bool IsMouseOver => IsVisible && popup.IsMouseOver;
-		public event EventHandler GotFocus;
-		public event EventHandler LostFocus;
+		public event EventHandler? GotFocus;
+		public event EventHandler? LostFocus;
 
 		readonly ISpaceReservationManager spaceReservationManager;
 		readonly IWpfTextView wpfTextView;

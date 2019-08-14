@@ -147,7 +147,7 @@ namespace dnSpy.Tabs {
 		}
 
 		void AddScaleTransform() {
-			Debug.Assert(!(zoomElement is null));
+			Debug2.Assert(!(zoomElement is null));
 			var mwin = GetWindow();
 			if (!(mwin is null)) {
 				mwin.SetScaleTransform(zoomElement, currentZoomValue);
@@ -156,7 +156,7 @@ namespace dnSpy.Tabs {
 		}
 
 		MetroWindow? GetWindow() {
-			Debug.Assert(!(zoomElement is null));
+			Debug2.Assert(!(zoomElement is null));
 			if (!(metroWindow is null))
 				return metroWindow;
 			if (zoomElement is null)
@@ -178,7 +178,7 @@ namespace dnSpy.Tabs {
 		}
 
 		void MetroWindow_WindowDpiChanged(object? sender, EventArgs e) {
-			Debug.Assert(!(sender is null) && sender == metroWindow);
+			Debug2.Assert(!(sender is null) && sender == metroWindow);
 			((MetroWindow)sender).SetScaleTransform(zoomElement, currentZoomValue);
 		}
 

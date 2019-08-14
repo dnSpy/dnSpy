@@ -113,7 +113,7 @@ namespace dnSpy.Hex.Editor {
 			void WpfHexView_MouseRightButtonDown(object? sender, MouseButtonEventArgs e) => StopTimer();
 			void WpfHexView_MouseLeave(object? sender, MouseEventArgs e) => ClearMouseHoverPositionAndStopTimer();
 
-			public event EventHandler<HexMouseHoverEventArgs> MouseHover {
+			public event EventHandler<HexMouseHoverEventArgs>? MouseHover {
 				add {
 					if (owner.IsClosed)
 						return;
@@ -152,7 +152,7 @@ namespace dnSpy.Hex.Editor {
 					ClearMouseHoverPositionAndStopTimer();
 					return;
 				}
-				Debug.Assert(!(timerStart is null));
+				Debug2.Assert(!(timerStart is null));
 				var list = GetHandlersToNotify();
 				if (!(list is null)) {
 					var mhe = new HexMouseHoverEventArgs(owner, position.Value.Line, position.Value.Column);

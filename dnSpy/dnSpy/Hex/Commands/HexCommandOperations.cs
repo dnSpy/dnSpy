@@ -91,7 +91,7 @@ namespace dnSpy.Hex.Commands {
 		Dispatcher CurrentDispatcher {
 			get {
 				var wpfHexView = HexView as WpfHexView;
-				Debug.Assert(!(wpfHexView is null));
+				Debug2.Assert(!(wpfHexView is null));
 				return wpfHexView?.VisualElement.Dispatcher ?? Dispatcher.CurrentDispatcher;
 			}
 		}
@@ -99,7 +99,7 @@ namespace dnSpy.Hex.Commands {
 		Window OwnerWindow {
 			get {
 				var wpfHexView = HexView as WpfHexView;
-				Debug.Assert(!(wpfHexView is null));
+				Debug2.Assert(!(wpfHexView is null));
 				if (!(wpfHexView is null)) {
 					var window = Window.GetWindow(wpfHexView.VisualElement);
 					if (!(window is null))
@@ -180,7 +180,7 @@ namespace dnSpy.Hex.Commands {
 				return;
 
 			var span = GetGoToMetadataSpan(mdHeaders, peHeaders, data.OffsetTokenValue, data.GoToMetadataKind);
-			Debug.Assert(!(span is null));
+			Debug2.Assert(!(span is null));
 			if (span is null)
 				return;
 			var info = UserValueToSelection(span.Value.End, span.Value.Start);
