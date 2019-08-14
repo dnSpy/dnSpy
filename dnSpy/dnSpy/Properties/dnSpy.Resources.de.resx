@@ -834,7 +834,7 @@
     <value>Geladene Dateien:</value>
   </data>
   <data name="SearchWindow_SearchFrameworkAssemblies" xml:space="preserve">
-    <value>Search in framework assemblies</value>
+    <value>In Framework Assemblys suchen</value>
   </data>
   <data name="SearchWindow_Where_AllFiles" xml:space="preserve">
     <value>Alle Dateien</value>
@@ -2059,12 +2059,12 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Typen</value>
   </data>
   <data name="NumberBaseFormatString" xml:space="preserve">
-    <value>Base {0}:</value>
+    <value>Basis {0}:</value>
   </data>
   <data name="RawValue" xml:space="preserve">
-    <value>Raw:</value>
+    <value>Roh:</value>
   </data>
   <data name="RecentFilesCommand" xml:space="preserve">
-    <value>Recent _Files</value>
+    <value>Zu_letzt geöffnete Dateien</value>
   </data>
 </root>

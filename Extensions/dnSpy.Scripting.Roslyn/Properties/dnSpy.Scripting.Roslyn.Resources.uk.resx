@@ -166,7 +166,7 @@
     <value>Завантажити та виконати скрипт, #load "myscript.csx"</value>
   </data>
   <data name="HelpScriptDirective_r" xml:space="preserve">
-    <value>Додати посилання, або збірку або шлях до файлу на диску або шлях до dnSpy або каталогу користувача, #r "myfile.dll"</value>
+    <value>Додати посилання, або збірку, або шлях до файлу на диску, або шлях до dnSpy або каталогу користувача, #r "myfile.dll"</value>
   </data>
   <data name="HelpShiftEnter" xml:space="preserve">
     <value>Вставити новий рядок</value>

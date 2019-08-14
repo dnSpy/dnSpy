@@ -127,7 +127,7 @@
     <value>已应用到</value>
   </data>
   <data name="AssignedByTreeNode" xml:space="preserve">
-    <value>被赋值于</value>
+    <value>分配者：</value>
   </data>
   <data name="CopyCommand" xml:space="preserve">
     <value>复制(_Y)</value>

@@ -145,7 +145,7 @@
     <value>Опція точна</value>
   </data>
   <data name="CompilerSettings_PreprocessorSymbols" xml:space="preserve">
-    <value>Уомвні символи компіляції</value>
+    <value>Умовні символи компіляції</value>
   </data>
   <data name="CompletionSet_All" xml:space="preserve">
     <value>Всі</value>
@@ -190,7 +190,7 @@
     <value>Представленню Dynamic необхідне посилання на {0}</value>
   </data>
   <data name="DynamicView_MustBeDynamicOrComType" xml:space="preserve">
-    <value>Представлення Dynamic може бути лише в об'єктів COM чи Dynamic</value>
+    <value>Представлення Dynamic може бути лише для об'єктів COM чи Dynamic</value>
   </data>
   <data name="EnumsToolTip" xml:space="preserve">
     <value>Перечислення</value>
@@ -205,7 +205,7 @@
     <value>Поля</value>
   </data>
   <data name="FilterExpressionEvaluator_CompiledExpressionThrewAnException" xml:space="preserve">
-    <value>Скомпільований вираз кинув виключення: {0}</value>
+    <value>Скомпільований вираз згенерував виключення: {0}</value>
   </data>
   <data name="FilterExpressionEvaluator_InvalidExpression" xml:space="preserve">
     <value>Неприпустимий вираз</value>

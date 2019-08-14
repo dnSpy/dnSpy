@@ -208,7 +208,7 @@
     <value>Декомпіляція...</value>
   </data>
   <data name="DerivedTypes" xml:space="preserve">
-    <value>Дочірні типи</value>
+    <value>Похідні Типи</value>
   </data>
   <data name="DotNetExes" xml:space="preserve">
     <value>Виконавчі файли .NET</value>
@@ -262,16 +262,16 @@
     <value>_Стрічка [, стовпчик]</value>
   </data>
   <data name="GoToLine_Title" xml:space="preserve">
-    <value>Перейти до рядка</value>
+    <value>Перейти до Рядка</value>
   </data>
   <data name="GoToReferenceCommand" xml:space="preserve">
-    <value>Перейти до посилання</value>
+    <value>Перейти до Посилання</value>
   </data>
   <data name="GoToReferenceKey" xml:space="preserve">
-    <value>Подвійний клік</value>
+    <value>Подвійний Клік</value>
   </data>
   <data name="GoToTokenCommand" xml:space="preserve">
-    <value>Перейти до MD токена...</value>
+    <value>Перейти до M_D Токена...</value>
   </data>
   <data name="GoToTokenKey" xml:space="preserve">
     <value>Ctrl+D</value>
@@ -283,19 +283,19 @@
     <value>Невірний токен метаданих: 0x{0:X8}</value>
   </data>
   <data name="GoToToken_Label" xml:space="preserve">
-    <value>Токен _метаданих</value>
+    <value>Токен _Метаданих</value>
   </data>
   <data name="GoToToken_Title" xml:space="preserve">
     <value>Перейти до токену метаданих</value>
   </data>
   <data name="HideAllToolWindowsCommand" xml:space="preserve">
-    <value>З_аховати усі вкладки</value>
+    <value>З_аховати Усі Вкладки</value>
   </data>
   <data name="HideToolWindowCommand" xml:space="preserve">
     <value>_Сховати</value>
   </data>
   <data name="HighlightLine" xml:space="preserve">
-    <value>_Підсвітити поточний рядок</value>
+    <value>_Підсвітити ПоточнийРрядок</value>
   </data>
   <data name="InvalidInputTextMessageBox" xml:space="preserve">
     <value>Невірний текст</value>
@@ -322,7 +322,7 @@
     <value>_Вікно</value>
   </data>
   <data name="MergeAllTabGroupsCommand" xml:space="preserve">
-    <value>Об'єднати усі груи вкладок</value>
+    <value>Об'єднати Усі Групи Вкладок</value>
   </data>
   <data name="MessageBoxDontShowAgain" xml:space="preserve">
     <value>Більше не показувати</value>
@@ -337,16 +337,16 @@
     <value>_Вниз</value>
   </data>
   <data name="MoveLeftCommand" xml:space="preserve">
-    <value>Вліво</value>
+    <value>_Вліво</value>
   </data>
   <data name="MoveRightCommand" xml:space="preserve">
     <value>_Вправо</value>
   </data>
   <data name="MoveTabGroupAfterNextTabGroupCommand" xml:space="preserve">
-    <value>Перемістити групу вкладок після наступної групи вкладок</value>
+    <value>Перемістити Групу Вкладок Після Наступної Групи Вкладок</value>
   </data>
   <data name="MoveTabGroupBeforePreviousTabGroupCommand" xml:space="preserve">
-    <value>Перемістити групу вкладок перед попередньою групою вкладок</value>
+    <value>Перемістити Групу Вкладок Перед Попередньою Групою Вкладок</value>
   </data>
   <data name="MoveToNextTabGroupCommand" xml:space="preserve">
     <value>Перенести усе в наступну групу вкладок</value>
@@ -388,7 +388,7 @@
     <value>_Відкрити...</value>
   </data>
   <data name="OpenContainingFolderCommand" xml:space="preserve">
-    <value>_Відкрити каталог</value>
+    <value>_Відкрити Вмістимий Каталог</value>
   </data>
   <data name="OpenGACCommand" xml:space="preserve">
     <value>Відкрити із _GAC...</value>
