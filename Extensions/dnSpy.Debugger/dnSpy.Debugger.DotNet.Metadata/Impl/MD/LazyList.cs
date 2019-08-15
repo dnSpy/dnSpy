@@ -27,7 +27,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 	}
 
 	sealed class LazyList<T> where T : class {
-		readonly T[][] allElements;
+		readonly T?[][] allElements;
 		readonly Func<uint, T> readElementByRID;
 		readonly uint length;
 
@@ -57,7 +57,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 	}
 
 	sealed class LazyList<TValue, TArg> where TValue : class {
-		readonly TValue[][] allElements;
+		readonly TValue?[][] allElements;
 		readonly Func<uint, TArg, TValue> readElementByRID;
 		readonly uint length;
 
@@ -87,7 +87,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 	}
 
 	sealed class LazyList2<TValue, TArg1, TArg2> where TValue : class {
-		readonly TValue[][] allElements;
+		readonly TValue?[][] allElements;
 		readonly Func<uint, TArg1, TArg2, (TValue elem, bool containedGenericParams)> readElementByRID;
 		readonly uint length;
 
