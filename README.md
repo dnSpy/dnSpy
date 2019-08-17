@@ -83,11 +83,12 @@ Or build it from source, see the [Wiki](https://github.com/0xd4d/dnSpy/wiki/Buil
 
 # List of other open source libraries used by dnSpy
 
-- ILSpy decompiler engine (C# and Visual Basic decompilers)
-- Roslyn (C# and Visual Basic compilers)
-- dnlib (.NET metadata reader/writer which can also read obfuscated assemblies)
-- VS MEF (Faster MEF equals faster startup)
-- ClrMD (Access to lower level debugging info not provided by the CorDebug API)
+- [ILSpy decompiler engine](https://github.com/icsharpcode/ILSpy) (C# and Visual Basic decompilers)
+- [Roslyn](https://github.com/dotnet/roslyn) (C# and Visual Basic compilers)
+- [dnlib](https://github.com/0xd4d/dnlib) (.NET metadata reader/writer which can also read obfuscated assemblies)
+- [VS MEF](https://www.nuget.org/packages/Microsoft.VisualStudio.Composition) (Faster MEF equals faster startup)
+- [ClrMD](https://github.com/microsoft/clrmd) (Access to lower level debugging info not provided by the CorDebug API)
+- [Iced](https://github.com/0xd4d/iced) (x86/x64 disassembler)
 
 # Translating dnSpy
 
