@@ -37,6 +37,7 @@ namespace AppHostInfoGenerator {
 		// The code ignores known versions so all versions can be added.
 		//	^(\S+)\s.*		=>		\t\t\t"\1",
 		static readonly string[] DotNetAppHost_Versions_ToCheck = new string[] {
+			"3.0.0-preview9-19423-09",
 			"3.0.0-preview8-28405-07",
 			"3.0.0-preview7-27912-14",
 			"3.0.0-preview6-27804-01",
@@ -45,6 +46,7 @@ namespace AppHostInfoGenerator {
 			"3.0.0-preview3-27503-5",
 			"3.0.0-preview-27324-5",
 			"3.0.0-preview-27122-01",
+			"2.2.7",
 			"2.2.6",
 			"2.2.5",
 			"2.2.4",
@@ -55,6 +57,7 @@ namespace AppHostInfoGenerator {
 			"2.2.0-preview3-27014-02",
 			"2.2.0-preview2-26905-02",
 			"2.2.0-preview-26820-02",
+			"2.1.13",
 			"2.1.12",
 			"2.1.11",
 			"2.1.10",
