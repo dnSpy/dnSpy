@@ -7,7 +7,7 @@ install:
 
     appveyor DownloadFile https://dot.net/v1/dotnet-install.ps1
 
-    powershell -NoLogo -NoProfile -File dotnet-install.ps1 -Version 3.0.100-preview7-012821 -InstallDir "%ProgramFiles%\dotnet" -Architecture x64
+    powershell -NoLogo -NoProfile -File dotnet-install.ps1 -Version 3.0.100-rc1-014190 -InstallDir "%ProgramFiles%\dotnet" -Architecture x64
 build_script:
 - cmd: build.cmd
 test: off
