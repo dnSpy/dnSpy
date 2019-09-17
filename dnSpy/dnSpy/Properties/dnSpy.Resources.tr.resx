@@ -832,7 +832,7 @@
     <value>Yüklenen dosyalar:</value>
   </data>
   <data name="SearchWindow_SearchFrameworkAssemblies" xml:space="preserve">
-    <value>Search in framework assemblies</value>
+    <value>Çerçeve montajlarında ara</value>
   </data>
   <data name="SearchWindow_Where_AllFiles" xml:space="preserve">
     <value>Tüm Dosyalar</value>
@@ -2055,12 +2055,12 @@ Filtre Assembly Explorer seçeneklerinden değiştirilebilir.</value>
     <value>Türler</value>
   </data>
   <data name="NumberBaseFormatString" xml:space="preserve">
-    <value>Base {0}:</value>
+    <value>Baz</value>
   </data>
   <data name="RawValue" xml:space="preserve">
-    <value>Raw:</value>
+    <value>Ham:</value>
   </data>
   <data name="RecentFilesCommand" xml:space="preserve">
-    <value>Recent _Files</value>
+    <value>Son_Dosyalar</value>
   </data>
 </root>

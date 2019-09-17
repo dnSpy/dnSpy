@@ -121,19 +121,19 @@
     <value>_Kesme Noktası Ekle</value>
   </data>
   <data name="AddExceptionCommand" xml:space="preserve">
-    <value>E_xception Ekle</value>
+    <value>İstisna Ekle</value>
   </data>
   <data name="AppDomainNotAvailable" xml:space="preserve">
     <value>&lt;kullanılamaz&gt;</value>
   </data>
   <data name="AppMenu_Debug" xml:space="preserve">
-    <value>_Debug</value>
+    <value>_Hata ayıklama</value>
   </data>
   <data name="AppTitle_Debugging" xml:space="preserve">
     <value>Hata ayıklanıyor</value>
   </data>
   <data name="AskDeleteAllBreakpoints" xml:space="preserve">
-    <value>Tüm breakpoint'leri silmek istiyor musunuz?</value>
+    <value>Tüm kesme noktalarını silmek istiyor musunuz?</value>
   </data>
   <data name="AttachToProcessCommand" xml:space="preserve">
     <value>_İşleme ekle...</value>
@@ -1528,6 +1528,6 @@ Genişletmek istediğinizden emin misiniz?</value>
     <value>Hata ayıklayıcısını keserken dnSpy'ı ön plana getirin</value>
   </data>
   <data name="Column_LoadModule" xml:space="preserve">
-    <value>Load</value>
+    <value>Yükle</value>
   </data>
 </root>

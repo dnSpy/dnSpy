@@ -166,7 +166,7 @@
     <value>Помилка</value>
   </data>
   <data name="DebuggerVarsWindow_ExpandDynamicViewMessage" xml:space="preserve">
-    <value>Розкриття представлення Dynamic запитає динамічні члени об'єкта</value>
+    <value>Розкриття Dynamic представлення запитає динамічні члени об'єкта</value>
   </data>
   <data name="DebuggerVarsWindow_ExpandResultsViewMessage" xml:space="preserve">
     <value>Розкриття представлення результатів призведе до перечислення IEnumerable</value>

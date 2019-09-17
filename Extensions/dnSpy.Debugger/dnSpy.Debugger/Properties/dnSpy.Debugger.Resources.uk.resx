@@ -1353,7 +1353,7 @@
     <value>Ctrl+V</value>
   </data>
   <data name="ClearAllCommand" xml:space="preserve">
-    <value>Очистити все</value>
+    <value>Очистити Все</value>
   </data>
   <data name="DeleteWatchCommand" xml:space="preserve">
     <value>В_идалити watch</value>

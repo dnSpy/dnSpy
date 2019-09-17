@@ -349,7 +349,7 @@
     <value>Перемістити Групу Вкладок Перед Попередньою Групою Вкладок</value>
   </data>
   <data name="MoveToNextTabGroupCommand" xml:space="preserve">
-    <value>Перенести усе в наступну групу вкладок</value>
+    <value>Перенести в Наступну Групу Вкладок</value>
   </data>
   <data name="MoveToolWindowCommand" xml:space="preserve">
     <value>_Перемістити</value>
@@ -424,7 +424,7 @@
     <value>Версія:</value>
   </data>
   <data name="OpenInNewTabCommand" xml:space="preserve">
-    <value>Відкрити у новій вкладці</value>
+    <value>Відкрити у Новій _Вкладці</value>
   </data>
   <data name="OpenInNewTabKey" xml:space="preserve">
     <value>Ctrl+T</value>
@@ -469,7 +469,7 @@
     <value>_Пошук</value>
   </data>
   <data name="OpenList_Title" xml:space="preserve">
-    <value>Відкрити список</value>
+    <value>Відкрити Список</value>
   </data>
   <data name="OpenToolBarToolTip" xml:space="preserve">
     <value>Відкрити</value>
@@ -502,7 +502,7 @@
     <value>Пошук зупинений, знайдено більше {0:n0} результатів.</value>
   </data>
   <data name="SearchAssembliesCommand" xml:space="preserve">
-    <value>_Шукати в збірках</value>
+    <value>_Шукати в Збірках</value>
   </data>
   <data name="SearchAssembliesToolBarToolTip" xml:space="preserve">
     <value>Шукати в збірках</value>
@@ -511,7 +511,7 @@
     <value>Пошук...</value>
   </data>
   <data name="SearchMsdnCommand" xml:space="preserve">
-    <value>Знайти в MSDN</value>
+    <value>Знайти в _MSDN</value>
   </data>
   <data name="SearchWindow_Options" xml:space="preserve">
     <value>Налаштування</value>
@@ -553,13 +553,13 @@
     <value>Виникла невідома помилка</value>
   </data>
   <data name="UseHorizontalTabGroupsCommand" xml:space="preserve">
-    <value>Використовувати горизонтальні групи вкладок</value>
+    <value>Використовувати Горизонтальні Групи Вкладок</value>
   </data>
   <data name="UseVerticalTabGroupsCommand" xml:space="preserve">
-    <value>Використовувати вертикальні групи вкладок</value>
+    <value>Використовувати Вертикальні Групи Вкладок</value>
   </data>
   <data name="WindowsCommand" xml:space="preserve">
-    <value>Вікна...</value>
+    <value>_Вікна...</value>
   </data>
   <data name="WordWrapHeader" xml:space="preserve">
     <value>_Перенесення Слів</value>
@@ -580,10 +580,10 @@
     <value>Показати публічний ключ збірки</value>
   </data>
   <data name="DisplaySettings_ShowAssemblyVersion" xml:space="preserve">
-    <value>Показати інформацію про збірку</value>
+    <value>Показати версію збірки</value>
   </data>
   <data name="DisplaySettings_ShowLineNumbers" xml:space="preserve">
-    <value>Показати номера рядків</value>
+    <value>Показати номери рядків</value>
   </data>
   <data name="DisplaySettings_ShowTokens" xml:space="preserve">
     <value>Показати токени метаданих</value>
@@ -592,7 +592,7 @@
     <value>_Налаштування...</value>
   </data>
   <data name="SearchWindow_AllAbove" xml:space="preserve">
-    <value>Все можливе</value>
+    <value>Все Можливе</value>
   </data>
   <data name="SearchWindow_AllAbove_Key" xml:space="preserve">
     <value>Ctrl+B</value>
@@ -604,13 +604,13 @@
     <value>AssemblyRef</value>
   </data>
   <data name="SearchWindow_CaseSensitiveSearch" xml:space="preserve">
-    <value>Регістрозалежний пошук</value>
+    <value>Регістрозалежний Пошук</value>
   </data>
   <data name="SearchWindow_Class" xml:space="preserve">
     <value>Клас</value>
   </data>
   <data name="SearchWindow_DecompileResources" xml:space="preserve">
-    <value>Декомпілювати ресурси (напр. XAML)</value>
+    <value>Декомпілювати Ресурси (напр. XAML)</value>
   </data>
   <data name="SearchWindow_Delegate" xml:space="preserve">
     <value>Делегат</value>
@@ -631,7 +631,7 @@
     <value>Ctrl+F</value>
   </data>
   <data name="SearchWindow_Generic" xml:space="preserve">
-    <value>Загальний тип</value>
+    <value>Загальний Тип</value>
   </data>
   <data name="SearchWindow_Interface" xml:space="preserve">
     <value>Інтерфейс</value>
@@ -649,10 +649,10 @@
     <value>Ctrl+I</value>
   </data>
   <data name="SearchWindow_MatchAny" xml:space="preserve">
-    <value>Співпадіння із любим термом</value>
+    <value>Співпадіння Із Любим Термом</value>
   </data>
   <data name="SearchWindow_MatchWholeWords" xml:space="preserve">
-    <value>Лишень повне співпадіння слів</value>
+    <value>Лишень Повне Співпадіння Слів</value>
   </data>
   <data name="SearchWindow_Member" xml:space="preserve">
     <value>Член</value>
@@ -676,13 +676,13 @@
     <value>Простір імен</value>
   </data>
   <data name="SearchWindow_NonGeneric" xml:space="preserve">
-    <value>Незагальний тип</value>
+    <value>Незагальний Тип</value>
   </data>
   <data name="SearchWindow_Parameter" xml:space="preserve">
     <value>Параметр</value>
   </data>
   <data name="SearchWindow_ParameterLocal" xml:space="preserve">
-    <value>Параметр/Локальна змінна</value>
+    <value>Параметр/Локальна Змінна</value>
   </data>
   <data name="SearchWindow_ParameterLocal_Key" xml:space="preserve">
     <value>Ctrl+N</value>
@@ -715,7 +715,7 @@
     <value>Ctrl+T</value>
   </data>
   <data name="ToolWindowWinPosButtonToolTip" xml:space="preserve">
-    <value>Позиція вікна</value>
+    <value>Позиція Вікна</value>
   </data>
   <data name="Theme_Blue" xml:space="preserve">
     <value>_Голубий</value>
@@ -724,7 +724,7 @@
     <value>_Темний</value>
   </data>
   <data name="Theme_HighContrast" xml:space="preserve">
-    <value>_Висока контрастність</value>
+    <value>_Висока Контрастність</value>
   </data>
   <data name="Theme_Light" xml:space="preserve">
     <value>_Світла</value>
@@ -751,10 +751,10 @@
     <value>Чи ви хочете завантажити збережені налаштування?</value>
   </data>
   <data name="ExportToProjectCommand" xml:space="preserve">
-    <value>Експорт в Проект...</value>
+    <value>Експорт в Пр_оект...</value>
   </data>
   <data name="ExportToProject_Title" xml:space="preserve">
-    <value>Експорт в проект</value>
+    <value>Експорт в Проект</value>
   </data>
   <data name="Error_FileAlreadyExists" xml:space="preserve">
     <value>Файл із таким же ж іменем як і каталог вже існує.</value>
@@ -769,7 +769,7 @@
     <value>Створити файли .res_x</value>
   </data>
   <data name="ExportToProject_DecompileXaml" xml:space="preserve">
-    <value>Декомпілювати _baml в xaml</value>
+    <value>Декомпілювати _baml у xaml</value>
   </data>
   <data name="ExportToProject_DestinationFolder" xml:space="preserve">
     <value>_Каталог</value>
@@ -826,7 +826,7 @@
     <value>Властивості</value>
   </data>
   <data name="AboutScreen_LicenseInfo" xml:space="preserve">
-    <value>dnSpy заліцензовний під GPLv3.</value>
+    <value>dnSpy ліцензований під GPLv3.</value>
   </data>
   <data name="AboutScreen_LoadedFiles" xml:space="preserve">
     <value>Завантажені файли:</value>
@@ -838,19 +838,19 @@
     <value>Всі Файли</value>
   </data>
   <data name="SearchWindow_Where_FilesInSameFolder" xml:space="preserve">
-    <value>Файли в тому ж каталозі</value>
+    <value>Файли в тому ж Каталозі</value>
   </data>
   <data name="SearchWindow_Where_SelectedFiles" xml:space="preserve">
-    <value>Вибрані файли</value>
+    <value>Вибрані Файли</value>
   </data>
   <data name="SearchWindow_Where_SelectedType" xml:space="preserve">
-    <value>Вибраний тип</value>
+    <value>Вибраний Тип</value>
   </data>
   <data name="GoToResourceCommand" xml:space="preserve">
-    <value>Перейти до ре_сурсу</value>
+    <value>Перейти до Ре_сурсу</value>
   </data>
   <data name="CollapseTreeViewNodesCommand" xml:space="preserve">
-    <value>Згорнути вузли _дерева</value>
+    <value>Згорнути Вузли _Дерева</value>
   </data>
   <data name="CloseAllCommand" xml:space="preserve">
     <value>Закрити всі</value>
@@ -859,7 +859,7 @@
     <value>_Новий</value>
   </data>
   <data name="ExportToProject_ProjectGuid" xml:space="preserve">
-    <value>_GUID проекту</value>
+    <value>_GUID Проекту</value>
   </data>
   <data name="ShortCutKeyCtrlShiftP" xml:space="preserve">
     <value>Ctrl+Shift+P</value>
@@ -871,7 +871,7 @@
     <value>Вивід</value>
   </data>
   <data name="Output_ClearAll_ToolTip" xml:space="preserve">
-    <value>Очистити все</value>
+    <value>Очистити Все</value>
   </data>
   <data name="Output_ShowOutputFrom" xml:space="preserve">
     <value>_Показати вивід із:</value>
@@ -985,7 +985,7 @@
     <value>Розтягнути</value>
   </data>
   <data name="BgImgSettings_VerticalOffset" xml:space="preserve">
-    <value>Вертикальний зсув</value>
+    <value>Вертикальний Зсув</value>
   </data>
   <data name="ImagePlacement_Bottom" xml:space="preserve">
     <value>Низ</value>
