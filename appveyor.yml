@@ -2,14 +2,17 @@ version: x.x.{build}
 image: Visual Studio 2019
 configuration: Release
 install:
-- cmd: >-
+- cmd: |
     git submodule update --init --recursive
-
     appveyor DownloadFile https://dot.net/v1/dotnet-install.ps1
-
     powershell -NoLogo -NoProfile -File dotnet-install.ps1 -Version 3.0.100 -InstallDir "%ProgramFiles%\dotnet" -Architecture x64
+    REM To get an updated EXE URL, go to https://visualstudio.microsoft.com/downloads/ -> Tools for VS -> Build Tools for VS
+    appveyor DownloadFile https://download.visualstudio.microsoft.com/download/pr/1d102ee6-9263-4353-8676-6430f0cc5998/c0457643c8a80b008250148151a51cb6cc0aa2ccb57316db496628faa9b9a84f/vs_BuildTools.exe
+    start /wait vs_BuildTools.exe --quiet --wait --norestart --installPath "C:\vsbuildtools" --add Microsoft.VisualStudio.Workload.ManagedDesktopBuildTools --add Microsoft.VisualStudio.Workload.NetCoreBuildTools
 build_script:
-- cmd: build.cmd
+- cmd: |
+    set path=C:\vsbuildtools\MSBuild\Current\Bin\amd64;%path%
+    build.cmd
 test: off
 artifacts:
 - path: dnSpy/dnSpy/bin/Release/net472

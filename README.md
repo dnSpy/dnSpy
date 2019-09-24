@@ -25,7 +25,7 @@ dnSpy uses the ILSpy decompiler engine and the Roslyn (C# / Visual Basic) compil
 
 [Latest release](https://github.com/0xd4d/dnSpy/releases)
 
-Latest build: [![Build status](https://ci.appveyor.com/api/projects/status/3utl4e1qkx7pamko/branch/master?svg=true)](https://ci.appveyor.com/project/0xd4d/dnspy/branch/master/artifacts)
+Latest build: [![Build status](https://ci.appveyor.com/api/projects/status/3utl4e1qkx7pamko/branch/master?svg=true)](https://ci.appveyor.com/project/0xd4d/dnspy/branch/master/artifacts)    [![](https://github.com/0xd4d/dnSpy/workflows/GitHub%20CI/badge.svg)](https://github.com/0xd4d/dnSpy/actions)
 
 Or build it from source, see the [Wiki](https://github.com/0xd4d/dnSpy/wiki/Building-dnSpy).
 

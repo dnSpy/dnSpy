@@ -1,0 +1,47 @@
+name: GitHub CI
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: Build
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          submodules: true
+          fetch-depth: 1
+
+      - name: Install .NET Core
+        shell: pwsh
+        run: |
+          Invoke-WebRequest -Uri 'https://dot.net/v1/dotnet-install.ps1' -UseBasicParsing -OutFile "$env:temp\dotnet-install.ps1"
+          & $env:temp\dotnet-install.ps1 -Version 3.0.100 -InstallDir "$env:ProgramFiles\dotnet" -Architecture x64
+
+      - name: Install VS build tools
+        shell: pwsh
+        run: |
+          # To get an updated EXE URL, go to https://visualstudio.microsoft.com/downloads/ -> Tools for VS -> Build Tools for VS
+          Invoke-WebRequest -Uri 'https://download.visualstudio.microsoft.com/download/pr/1d102ee6-9263-4353-8676-6430f0cc5998/c0457643c8a80b008250148151a51cb6cc0aa2ccb57316db496628faa9b9a84f/vs_BuildTools.exe' -UseBasicParsing -OutFile "$env:temp\vs_BuildTools.exe"
+          # List of ids: https://docs.microsoft.com/visualstudio/install/workload-component-id-vs-build-tools?vs-2019&view=vs-2019
+          & "$env:TEMP\vs_BuildTools.exe" --quiet --wait --norestart --installPath "C:\vsbuildtools" --add Microsoft.VisualStudio.Workload.ManagedDesktopBuildTools --add Microsoft.VisualStudio.Workload.NetCoreBuildTools
+          Wait-Process vs_BuildTools
+
+      - name: Build
+        run: |
+          set path=C:\vsbuildtools\MSBuild\Current\Bin\amd64;%path%
+          build.cmd
+
+      - uses: actions/upload-artifact@v1
+        with:
+          name: dnSpy-net472
+          path: dnSpy/dnSpy/bin/Release/net472
+
+      - uses: actions/upload-artifact@v1
+        with:
+          name: dnSpy-netcore-win32
+          path: dnSpy/dnSpy/bin/Release/netcoreapp3.0/win-x86/publish
+
+      - uses: actions/upload-artifact@v1
+        with:
+          name: dnSpy-netcore-win64
+          path: dnSpy/dnSpy/bin/Release/netcoreapp3.0/win-x64/publish
