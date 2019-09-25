@@ -1,5 +1,5 @@
 name: GitHub CI
-on: [push, pull_request]
+on: push
 
 jobs:
   build:
@@ -9,7 +9,6 @@ jobs:
       - uses: actions/checkout@v1
         with:
           submodules: true
-          fetch-depth: 1
 
       - name: Install .NET Core
         shell: pwsh
@@ -17,6 +16,7 @@ jobs:
           Invoke-WebRequest -Uri 'https://dot.net/v1/dotnet-install.ps1' -UseBasicParsing -OutFile "$env:temp\dotnet-install.ps1"
           & $env:temp\dotnet-install.ps1 -Version 3.0.100 -InstallDir "$env:ProgramFiles\dotnet" -Architecture x64
 
+      # build.cmd needs to use msbuild since dotnet build doesn't support COMReference: https://github.com/0xd4d/dnSpy/issues/1053
       - name: Install VS build tools
         shell: pwsh
         run: |
@@ -26,22 +26,64 @@ jobs:
           & "$env:TEMP\vs_BuildTools.exe" --quiet --wait --norestart --installPath "C:\vsbuildtools" --add Microsoft.VisualStudio.Workload.ManagedDesktopBuildTools --add Microsoft.VisualStudio.Workload.NetCoreBuildTools
           Wait-Process vs_BuildTools
 
-      - name: Build
+      # Build each tfm separately since building all requires too much diskspace
+      - name: Build .NET Framework x86 + x64 files
+        shell: pwsh
         run: |
-          set path=C:\vsbuildtools\MSBuild\Current\Bin\amd64;%path%
-          build.cmd
+          $env:Path = "C:\vsbuildtools\MSBuild\Current\Bin\amd64;%PATH%;" + $env:Path
+          .\build.cmd net
+          New-Item -ItemType directory -Path "C:\builtfiles" -Force
+          Compress-Archive -Path "dnSpy\dnSpy\bin\Release\net472" -DestinationPath C:\builtfiles\dnSpy-net472.zip
+          .\clean-all.cmd
+
+      - name: Build .NET Core x86 files
+        shell: pwsh
+        run: |
+          $env:Path = "C:\vsbuildtools\MSBuild\Current\Bin\amd64;%PATH%;" + $env:Path
+          .\build.cmd corex86
+          New-Item -ItemType directory -Path "C:\builtfiles" -Force
+          Compress-Archive -Path "dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x86\publish" -DestinationPath C:\builtfiles\dnSpy-netcore-win32.zip
+          .\clean-all.cmd
+
+      - name: Build .NET Core x64 files
+        shell: pwsh
+        run: |
+          $env:Path = "C:\vsbuildtools\MSBuild\Current\Bin\amd64;%PATH%;" + $env:Path
+          .\build.cmd corex64
+          New-Item -ItemType directory -Path "C:\builtfiles" -Force
+          Compress-Archive -Path "dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x64\publish" -DestinationPath C:\builtfiles\dnSpy-netcore-win64.zip
+          .\clean-all.cmd
 
       - uses: actions/upload-artifact@v1
         with:
           name: dnSpy-net472
-          path: dnSpy/dnSpy/bin/Release/net472
+          path: C:\builtfiles\dnSpy-net472.zip
 
       - uses: actions/upload-artifact@v1
         with:
           name: dnSpy-netcore-win32
-          path: dnSpy/dnSpy/bin/Release/netcoreapp3.0/win-x86/publish
+          path: C:\builtfiles\dnSpy-netcore-win32.zip
 
       - uses: actions/upload-artifact@v1
         with:
           name: dnSpy-netcore-win64
-          path: dnSpy/dnSpy/bin/Release/netcoreapp3.0/win-x64/publish
+          path: C:\builtfiles\dnSpy-netcore-win64.zip
+
+      # Create a new release: create a tag, then git push origin <tagname>, wait for it to build
+      - name: Release
+        uses: softprops/action-gh-release@b28d815 #@v1
+        with:
+          files: |
+            C:\builtfiles\dnSpy-net472.zip
+            C:\builtfiles\dnSpy-netcore-win32.zip
+            C:\builtfiles\dnSpy-netcore-win64.zip
+          body: |
+            `dnSpy-net472.zip` requires .NET Framework 4.7.2 or later.
+            
+            `dnSpy-netcore-win32.zip` and `dnSpy-netcore-win64.zip` don't depend on .NET Framework, but use .NET Core instead which is included in the zip files. If `dnSpy.exe` fails to start, try:
+            
+            - Install VC dependencies: https://support.microsoft.com/help/2977003/the-latest-supported-visual-c-downloads
+            - Windows 7: Must have KB2999226 and KB2533623 installed
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}

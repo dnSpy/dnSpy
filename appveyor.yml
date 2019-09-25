@@ -11,7 +11,7 @@ install:
     start /wait vs_BuildTools.exe --quiet --wait --norestart --installPath "C:\vsbuildtools" --add Microsoft.VisualStudio.Workload.ManagedDesktopBuildTools --add Microsoft.VisualStudio.Workload.NetCoreBuildTools
 build_script:
 - cmd: |
-    set path=C:\vsbuildtools\MSBuild\Current\Bin\amd64;%path%
+    set PATH=C:\vsbuildtools\MSBuild\Current\Bin\amd64;%PATH%
     build.cmd
 test: off
 artifacts:
@@ -21,17 +21,3 @@ artifacts:
   name: dnSpy-netcore-win32
 - path: dnSpy/dnSpy/bin/Release/netcoreapp3.0/win-x64/publish
   name: dnSpy-netcore-win64
-deploy:
-- provider: GitHub
-  description: New release
-  on:
-    APPVEYOR_REPO_TAG: true
-  auth_token:
-    secure: A8Xfg1Sr7/XmTlvOyNEBQVwMARF+uyigNNJXQYq4pQFaR3Z3x0iaXGZMLlvA0oTO
-notifications:
-- provider: Email
-  to:
-  - de4dot@gmail.com
-  on_build_success: false
-  on_build_failure: true
-  on_build_status_changed: false
