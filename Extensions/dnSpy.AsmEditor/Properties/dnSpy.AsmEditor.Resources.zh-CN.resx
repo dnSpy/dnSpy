@@ -124,28 +124,28 @@
     <value>追加类型</value>
   </data>
   <data name="AssemblyDlg_Main_CB_DisableJITCompileOpt" xml:space="preserve">
-    <value>_Disable JIT编译优化器</value>
+    <value>禁用 JIT编译优化(_D)</value>
   </data>
   <data name="AssemblyDlg_Main_CB_EnableJITCompTrck" xml:space="preserve">
-    <value>启用_JIT编译跟踪</value>
+    <value>启用 JIT 编译跟踪(_J)</value>
   </data>
   <data name="AssemblyDlg_Main_CB_ProcessArchSpec" xml:space="preserve">
     <value>指定处理器架构(_E)</value>
   </data>
   <data name="AssemblyDlg_Main_CB_PublicKey" xml:space="preserve">
-    <value>Public _Key</value>
+    <value>公钥(_K)</value>
   </data>
   <data name="AssemblyDlg_Main_CB_Retargetable" xml:space="preserve">
-    <value>_Retargetable</value>
+    <value>可重定向(_R)</value>
   </data>
   <data name="AssemblyDlg_Main_ContentType" xml:space="preserve">
-    <value>内容类型</value>
+    <value>内容类型(_T)</value>
   </data>
   <data name="AssemblyDlg_Main_Culture" xml:space="preserve">
     <value>区域(_U)</value>
   </data>
   <data name="AssemblyDlg_Main_DotNetVersion" xml:space="preserve">
-    <value>.NET_版本</value>
+    <value>.NET 版本(_V)</value>
   </data>
   <data name="AssemblyDlg_Main_HashAlgorithm" xml:space="preserve">
     <value>Hash 算法(_H)</value>
@@ -1565,7 +1565,7 @@
     <value>名称(_N)</value>
   </data>
   <data name="Module_DotNetVersion" xml:space="preserve">
-    <value>.NET_版本</value>
+    <value>.NET 版本(_V)</value>
   </data>
   <data name="Module_EntryPoint" xml:space="preserve">
     <value>入口点</value>
@@ -1598,7 +1598,7 @@
     <value>名称(_N)</value>
   </data>
   <data name="NetModule_DotNetVersion" xml:space="preserve">
-    <value>.NET_版本</value>
+    <value>.NET 版本(_V)</value>
   </data>
   <data name="NetModule_Name" xml:space="preserve">
     <value>名称(_N)</value>

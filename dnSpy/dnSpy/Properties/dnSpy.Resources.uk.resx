@@ -853,7 +853,7 @@
     <value>Згорнути Вузли _Дерева</value>
   </data>
   <data name="CloseAllCommand" xml:space="preserve">
-    <value>Закрити всі</value>
+    <value>Закрити Всі</value>
   </data>
   <data name="ExportToProject_NewGuid" xml:space="preserve">
     <value>_Новий</value>
@@ -877,7 +877,7 @@
     <value>_Показати вивід із:</value>
   </data>
   <data name="Output_WordWrap_ToolTip" xml:space="preserve">
-    <value>Увімкнути або вимкнути перенос слів</value>
+    <value>Увімкнути або Вимкнути Перенос Слів</value>
   </data>
   <data name="ShortCutKeyAlt2" xml:space="preserve">
     <value>Alt+2</value>
@@ -889,7 +889,7 @@
     <value>Зберегти</value>
   </data>
   <data name="ClearAllCommand" xml:space="preserve">
-    <value>Очистити все</value>
+    <value>Очистити Все</value>
   </data>
   <data name="ShortCutKeyCtrlL" xml:space="preserve">
     <value>Ctrl+L</value>
@@ -898,13 +898,13 @@
     <value>Текстові файли</value>
   </data>
   <data name="ShowLineNumbersCommand" xml:space="preserve">
-    <value>Показати номери стрічок</value>
+    <value>Показати Номери Стрічок</value>
   </data>
   <data name="ShortCutKeyCtrlDIGIT" xml:space="preserve">
     <value>Ctrl+{0}</value>
   </data>
   <data name="ShowTimestampsCommand" xml:space="preserve">
-    <value>Показати часові мітки</value>
+    <value>Показати Часові Мітки</value>
   </data>
   <data name="ShortCutKeyCtrlECtrlW" xml:space="preserve">
     <value>Ctrl+E, Ctrl+W</value>
@@ -925,10 +925,10 @@
     <value>Згорнути</value>
   </data>
   <data name="Window_Restore" xml:space="preserve">
-    <value>Відновити</value>
+    <value>Відновити Вниз</value>
   </data>
   <data name="BackgroundImageOptDlgTab" xml:space="preserve">
-    <value>Фоновий малюнок</value>
+    <value>Фоновий Малюнок</value>
   </data>
   <data name="BgImgDisplayName_CodeEditor" xml:space="preserve">
     <value>Редактор коду</value>
@@ -949,7 +949,7 @@
     <value>Напрямок</value>
   </data>
   <data name="BgImgSettings_HorizontalOffset" xml:space="preserve">
-    <value>Горизонтальне зміщення</value>
+    <value>Горизонтальне Зміщення</value>
   </data>
   <data name="BgImgSettings_Images" xml:space="preserve">
     <value>Додати шляхи до малюнків і каталогів, один шлях в рядку:</value>
@@ -958,7 +958,7 @@
     <value>Інтервал</value>
   </data>
   <data name="BgImgSettings_MaxHeight" xml:space="preserve">
-    <value>Максимальна висота</value>
+    <value>Максимальна Висота</value>
   </data>
   <data name="BgImgSettings_MaxWidth" xml:space="preserve">
     <value>Максимальна ширина</value>
