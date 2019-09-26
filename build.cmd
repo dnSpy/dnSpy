@@ -56,7 +56,7 @@ set build_this=
 
 if "%1"=="" set build_this=y
 if "%1"=="corex64" set build_this=y
-if not "%build_this%"=="y" goto :corex64
+if not "%build_this%"=="y" goto :skip_corex64
 echo Building .NET Core x64 binaries
 msbuild -v:m -restore -t:Publish -p:Configuration=Release -p:TargetFramework=netcoreapp3.0 -p:RuntimeIdentifier=win-x64 -p:SelfContained=True || goto :error
 REM move all files to a bin sub dir but keep the exe apphosts
@@ -68,7 +68,7 @@ move dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x64\publish\bin\dnSpy.exe dnSpy\d
 move dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x64\publish\bin\dnSpy.Console.exe dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x64\publish || goto :error
 Build\AppHostPatcher\bin\Release\net472\AppHostPatcher.exe dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x64\publish\dnSpy.exe -d bin || goto :error
 Build\AppHostPatcher\bin\Release\net472\AppHostPatcher.exe dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x64\publish\dnSpy.Console.exe -d bin || goto :error
-:corex64
+:skip_corex64
 set build_this=
 
 goto :EOF

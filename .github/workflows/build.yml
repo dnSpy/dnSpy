@@ -27,31 +27,31 @@ jobs:
           Wait-Process vs_BuildTools
 
       # Build each tfm separately since building all requires too much diskspace
-      - name: Build .NET Framework x86 + x64 files
+      - name: Build dnSpy (.NET Framework)
         shell: pwsh
         run: |
           $env:Path = "C:\vsbuildtools\MSBuild\Current\Bin\amd64;%PATH%;" + $env:Path
           .\build.cmd net
-          New-Item -ItemType directory -Path "C:\builtfiles" -Force
-          Compress-Archive -Path "dnSpy\dnSpy\bin\Release\net472" -DestinationPath C:\builtfiles\dnSpy-net472.zip
+          New-Item -ItemType Directory -Path "C:\builtfiles" -Force | Out-Null
+          Compress-Archive -Path "dnSpy\dnSpy\bin\Release\net472\*" -DestinationPath C:\builtfiles\dnSpy-net472.zip
           .\clean-all.cmd
 
-      - name: Build .NET Core x86 files
+      - name: Build dnSpy (.NET Core x86)
         shell: pwsh
         run: |
           $env:Path = "C:\vsbuildtools\MSBuild\Current\Bin\amd64;%PATH%;" + $env:Path
           .\build.cmd corex86
-          New-Item -ItemType directory -Path "C:\builtfiles" -Force
-          Compress-Archive -Path "dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x86\publish" -DestinationPath C:\builtfiles\dnSpy-netcore-win32.zip
+          New-Item -ItemType Directory -Path "C:\builtfiles" -Force | Out-Null
+          Compress-Archive -Path "dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x86\publish\*" -DestinationPath C:\builtfiles\dnSpy-netcore-win32.zip
           .\clean-all.cmd
 
-      - name: Build .NET Core x64 files
+      - name: Build dnSpy (.NET Core x64)
         shell: pwsh
         run: |
           $env:Path = "C:\vsbuildtools\MSBuild\Current\Bin\amd64;%PATH%;" + $env:Path
           .\build.cmd corex64
-          New-Item -ItemType directory -Path "C:\builtfiles" -Force
-          Compress-Archive -Path "dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x64\publish" -DestinationPath C:\builtfiles\dnSpy-netcore-win64.zip
+          New-Item -ItemType Directory -Path "C:\builtfiles" -Force | Out-Null
+          Compress-Archive -Path "dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x64\publish\*" -DestinationPath C:\builtfiles\dnSpy-netcore-win64.zip
           .\clean-all.cmd
 
       - uses: actions/upload-artifact@v1
@@ -70,7 +70,7 @@ jobs:
           path: C:\builtfiles\dnSpy-netcore-win64.zip
 
       # Create a new release: create a tag, then git push origin <tagname>, wait for it to build
-      - name: Release
+      - name: Create a new GitHub release if a new tag is pushed
         uses: softprops/action-gh-release@b28d815 #@v1
         with:
           files: |
