@@ -13,45 +13,45 @@ jobs:
       - name: Install .NET Core
         shell: pwsh
         run: |
-          Invoke-WebRequest -Uri 'https://dot.net/v1/dotnet-install.ps1' -UseBasicParsing -OutFile "$env:temp\dotnet-install.ps1"
-          & $env:temp\dotnet-install.ps1 -Version 3.0.100 -InstallDir "$env:ProgramFiles\dotnet" -Architecture x64
+          Invoke-WebRequest -Uri 'https://dot.net/v1/dotnet-install.ps1' -UseBasicParsing -OutFile $env:temp\dotnet-install.ps1
+          & $env:temp\dotnet-install.ps1 -Version 3.0.100 -InstallDir $env:ProgramFiles\dotnet -Architecture x64
 
-      # build.cmd needs to use msbuild since dotnet build doesn't support COMReference: https://github.com/0xd4d/dnSpy/issues/1053
+      # build.cmd needs to use msbuild since 'dotnet build' doesn't support COMReference: https://github.com/0xd4d/dnSpy/issues/1053
       - name: Install VS build tools
         shell: pwsh
         run: |
           # To get an updated EXE URL, go to https://visualstudio.microsoft.com/downloads/ -> Tools for VS -> Build Tools for VS
-          Invoke-WebRequest -Uri 'https://download.visualstudio.microsoft.com/download/pr/1d102ee6-9263-4353-8676-6430f0cc5998/c0457643c8a80b008250148151a51cb6cc0aa2ccb57316db496628faa9b9a84f/vs_BuildTools.exe' -UseBasicParsing -OutFile "$env:temp\vs_BuildTools.exe"
+          Invoke-WebRequest -Uri 'https://download.visualstudio.microsoft.com/download/pr/1d102ee6-9263-4353-8676-6430f0cc5998/c0457643c8a80b008250148151a51cb6cc0aa2ccb57316db496628faa9b9a84f/vs_BuildTools.exe' -UseBasicParsing -OutFile $env:temp\vs_BuildTools.exe
           # List of ids: https://docs.microsoft.com/visualstudio/install/workload-component-id-vs-build-tools?vs-2019&view=vs-2019
-          & "$env:TEMP\vs_BuildTools.exe" --quiet --wait --norestart --installPath "C:\vsbuildtools" --add Microsoft.VisualStudio.Workload.ManagedDesktopBuildTools --add Microsoft.VisualStudio.Workload.NetCoreBuildTools
+          & $env:TEMP\vs_BuildTools.exe --quiet --wait --norestart --installPath C:\vsbuildtools --add Microsoft.VisualStudio.Workload.ManagedDesktopBuildTools --add Microsoft.VisualStudio.Workload.NetCoreBuildTools
           Wait-Process vs_BuildTools
 
-      # Build each tfm separately since building all requires too much diskspace
+      # Build each tfm separately since building all requires too much disk space
       - name: Build dnSpy (.NET Framework)
         shell: pwsh
         run: |
-          $env:Path = "C:\vsbuildtools\MSBuild\Current\Bin\amd64;%PATH%;" + $env:Path
+          $env:Path = "C:\vsbuildtools\MSBuild\Current\Bin\amd64;" + $env:Path
           .\build.cmd net
-          New-Item -ItemType Directory -Path "C:\builtfiles" -Force | Out-Null
-          Compress-Archive -Path "dnSpy\dnSpy\bin\Release\net472\*" -DestinationPath C:\builtfiles\dnSpy-net472.zip
+          New-Item -ItemType Directory -Path C:\builtfiles -Force | Out-Null
+          Compress-Archive -Path dnSpy\dnSpy\bin\Release\net472\* -DestinationPath C:\builtfiles\dnSpy-net472.zip
           .\clean-all.cmd
 
       - name: Build dnSpy (.NET Core x86)
         shell: pwsh
         run: |
-          $env:Path = "C:\vsbuildtools\MSBuild\Current\Bin\amd64;%PATH%;" + $env:Path
+          $env:Path = "C:\vsbuildtools\MSBuild\Current\Bin\amd64;" + $env:Path
           .\build.cmd corex86
-          New-Item -ItemType Directory -Path "C:\builtfiles" -Force | Out-Null
-          Compress-Archive -Path "dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x86\publish\*" -DestinationPath C:\builtfiles\dnSpy-netcore-win32.zip
+          New-Item -ItemType Directory -Path C:\builtfiles -Force | Out-Null
+          Compress-Archive -Path dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x86\publish\* -DestinationPath C:\builtfiles\dnSpy-netcore-win32.zip
           .\clean-all.cmd
 
       - name: Build dnSpy (.NET Core x64)
         shell: pwsh
         run: |
-          $env:Path = "C:\vsbuildtools\MSBuild\Current\Bin\amd64;%PATH%;" + $env:Path
+          $env:Path = "C:\vsbuildtools\MSBuild\Current\Bin\amd64;" + $env:Path
           .\build.cmd corex64
-          New-Item -ItemType Directory -Path "C:\builtfiles" -Force | Out-Null
-          Compress-Archive -Path "dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x64\publish\*" -DestinationPath C:\builtfiles\dnSpy-netcore-win64.zip
+          New-Item -ItemType Directory -Path C:\builtfiles -Force | Out-Null
+          Compress-Archive -Path dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x64\publish\* -DestinationPath C:\builtfiles\dnSpy-netcore-win64.zip
           .\clean-all.cmd
 
       - uses: actions/upload-artifact@v1
@@ -69,7 +69,7 @@ jobs:
           name: dnSpy-netcore-win64
           path: C:\builtfiles\dnSpy-netcore-win64.zip
 
-      # Create a new release: create a tag, then git push origin <tagname>, wait for it to build
+      # Create a new release: create a tag, then 'git push origin <tagname>', wait for it to build
       - name: Create a new GitHub release if a new tag is pushed
         uses: softprops/action-gh-release@b28d815 #@v1
         with:
