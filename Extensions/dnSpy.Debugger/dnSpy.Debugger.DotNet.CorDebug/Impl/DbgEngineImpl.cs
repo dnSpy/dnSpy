@@ -674,8 +674,12 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					env.Add("COMPLUS_MDA", "0");
 				}
 				if (debuggerSettings.SuppressJITOptimization_SystemModules) {
-					env.Add("COMPlus_ZapDisable", "1");
-					env.Add("COMPlus_ReadyToRun", "0");
+					if (options is DotNetFrameworkStartDebuggingOptions)
+						env.Add("COMPlus_ZapDisable", "1");
+					else if (options is DotNetCoreStartDebuggingOptions)
+						env.Add("COMPlus_ReadyToRun", "0");
+					else
+						Debug.Fail("Unreachable code");
 				}
 				// Disable OS heap debugging https://github.com/0xd4d/dnSpy/issues/1106
 				env.Add("_NO_DEBUG_HEAP", "1");
