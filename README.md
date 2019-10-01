@@ -15,8 +15,8 @@ The following pictures show dnSpy in action. It shows dnSpy editing and debuggin
 - Debug .NET Framework, .NET Core and Unity game assemblies, no source code required
 - Edit assemblies in C# or Visual Basic or IL, and edit all metadata
 - Light and dark themes
-- Extensible, write your own extension
-- High DPI support (per-monitor DPI aware)
+- Extensible, write your own extensions
+- High DPI support (per-monitor DPI-aware)
 - And much more, see below
 
 dnSpy uses the ILSpy decompiler engine and the Roslyn (C# / Visual Basic) compiler and many other open source libraries, see below for more info.
@@ -34,7 +34,7 @@ Or build it from source, see the [Wiki](https://github.com/0xd4d/dnSpy/wiki/Buil
 - Debug .NET Framework, .NET Core and Unity game assemblies, no source code required
 - Set breakpoints and step into any assembly
 - Locals, watch, autos windows
-- Variables windows supports saving variables (eg. decrypted byte arrays) to disk or view them in the hex editor (memory window)
+- Variables windows support saving variables (eg. decrypted byte arrays) to disk or view them in the hex editor (memory window)
 - Object IDs
 - Multiple processes can be debugged at the same time
 - Break on module load
@@ -53,15 +53,15 @@ Or build it from source, see the [Wiki](https://github.com/0xd4d/dnSpy/wiki/Buil
 - All metadata can be edited
 - Edit methods and classes in C# or Visual Basic with IntelliSense, no source code required
 - Add new methods, classes or members in C# or Visual Basic
-- IL editor for low level IL method body editing
-- Low level metadata tables can be edited. This uses the hex editor internally.
+- IL editor for low-level IL method body editing
+- Low-level metadata tables can be edited. This uses the hex editor internally.
 
 # Hex Editor
 
 - Click on an address in the decompiled code to go to its IL code in the hex editor
-- Reverse of above, press F12 in an IL body in the hex editor to go to the decompiled code or other high level representation of the bits. It's great to find out which statement a patch modified.
+- The reverse of the above, press F12 in an IL body in the hex editor to go to the decompiled code or other high-level representation of the bits. It's great to find out which statement a patch modified.
 - Highlights .NET metadata structures and PE structures
-- Tooltips shows more info about the selected .NET metadata / PE field
+- Tooltips show more info about the selected .NET metadata / PE field
 - Go to position, file, RVA
 - Go to .NET metadata token, method body, #Blob / #Strings / #US heap offset or #GUID heap index
 - Follow references (Ctrl+F12)
@@ -72,11 +72,11 @@ Or build it from source, see the [Wiki](https://github.com/0xd4d/dnSpy/wiki/Buil
 - Blue, light and dark themes (and a dark high contrast theme)
 - Bookmarks
 - C# Interactive window can be used to script dnSpy
-- Search assemblies for classes, methods, strings etc
-- Analyze class and method usage, find callers etc
+- Search assemblies for classes, methods, strings, etc
+- Analyze class and method usage, find callers, etc
 - Multiple tabs and tab groups
-- References are highlighted, use Tab / Shift+Tab to move to next reference
-- Go to entry point and module initializer commands
+- References are highlighted, use Tab / Shift+Tab to move to the next reference
+- Go to the entry point and module initializer commands
 - Go to metadata token or metadata row commands
 - Code tooltips (C# and Visual Basic)
 - Export to project
