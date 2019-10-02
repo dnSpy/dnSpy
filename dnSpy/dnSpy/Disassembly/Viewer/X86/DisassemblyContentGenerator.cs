@@ -83,6 +83,28 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 					break;
 				}
 			}
+
+			public override void WriteNumber(in Instruction instruction, int operand, int instructionOperand, string text, ulong value, NumberKind numberKind, FormatterOutputTextKind kind) {
+				var color = GetColor(kind);
+				const DisassemblyReferenceFlags flags = DisassemblyReferenceFlags.Local | DisassemblyReferenceFlags.NoFollow;
+				output.Write(text, GetValue(value, numberKind), flags, color);
+			}
+
+			static object GetValue(ulong value, NumberKind numberKind) {
+				switch (numberKind) {
+				case NumberKind.Int8:	return (sbyte)value;
+				case NumberKind.UInt8:	return (byte)value;
+				case NumberKind.Int16:	return (short)value;
+				case NumberKind.UInt16:	return (ushort)value;
+				case NumberKind.Int32:	return (int)value;
+				case NumberKind.UInt32:	return (uint)value;
+				case NumberKind.Int64:	return (long)value;
+				case NumberKind.UInt64:	return (ulong)value;
+				default:
+					Debug.Fail($"Unknown number kind: {numberKind}");
+					throw new ArgumentOutOfRangeException(nameof(numberKind), $"Unknown number kind: {numberKind}");
+				}
+			}
 		}
 
 		static object GetColor(FormatterOutputTextKind kind) {
