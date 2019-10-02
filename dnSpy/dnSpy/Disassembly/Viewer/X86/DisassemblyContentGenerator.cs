@@ -279,7 +279,7 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 						output.Write(" ", BoxedTextColor.Text);
 					}
 
-					formatter.Format(ref instr, formatterOutput);
+					formatter.Format(instr, formatterOutput);
 					output.Write(Environment.NewLine, BoxedTextColor.Text);
 				}
 			}

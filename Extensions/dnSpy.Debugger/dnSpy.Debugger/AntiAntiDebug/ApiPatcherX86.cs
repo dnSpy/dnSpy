@@ -19,6 +19,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using dnSpy.Contracts.Debugger;
 using Iced.Intel;
 using II = Iced.Intel;
@@ -179,7 +180,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 				while (true) {
 					decoder.Decode(out var instr);
 					blockInstructions.Add(instr);
-					var info = instrInfoFactory.GetInfo(ref instr);
+					var info = instrInfoFactory.GetInfo(instr);
 
 					ulong jmpTarget;
 					bool jmpTargetIsIndirect;
@@ -304,7 +305,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 			public override void WriteByte(byte value) => memBlock.WriteByte(value);
 		}
 
-		bool TryCopyOriginalBlock(ProcessMemoryBlock memBlock, InstructionList blockInstructions, out string errorMessage) {
+		bool TryCopyOriginalBlock(ProcessMemoryBlock memBlock, InstructionList blockInstructions, [NotNullWhen(false)] out string? errorMessage) {
 			Debug.Assert(blockInstructions.Count != 0);
 			var targetAddr = blockInstructions[blockInstructions.Count - 1].NextIP;
 			blockInstructions.Add(Instruction.CreateBranch(is64 ? II.Code.Jmp_rel32_64 : II.Code.Jmp_rel32_32, targetAddr));
