@@ -37,15 +37,15 @@
     <DiaSymReaderVersion>1.7.0</DiaSymReaderVersion>
     <DnlibVersion>3.2.0</DnlibVersion>
     <IcedVersion>1.3.0</IcedVersion>
-    <MSBuildNuGetVersion>16.0.461</MSBuildNuGetVersion>
-    <MSDiagRuntimeVersion>1.1.35902</MSDiagRuntimeVersion>
-    <MSVSCompositionVersion>16.1.8</MSVSCompositionVersion>
+    <MSBuildNuGetVersion>16.3.0</MSBuildNuGetVersion>
+    <MSDiagRuntimeVersion>1.1.46104</MSDiagRuntimeVersion>
+    <MSVSCompositionVersion>16.4.11</MSVSCompositionVersion>
     <MSVSIntellisenseVersion>15.5.27130</MSVSIntellisenseVersion>
     <MSVSTextVersion>15.5.27130</MSVSTextVersion>
     <NewtonsoftJsonVersion>12.0.2</NewtonsoftJsonVersion>
     <OokiiDialogsVersion>1.0.0</OokiiDialogsVersion>
     <RoslynVersion>2.10.0</RoslynVersion>
-    <SCCompositionVersion>4.6.0-preview5.19224.8</SCCompositionVersion>
+    <SCCompositionVersion>4.6.0</SCCompositionVersion>
   </PropertyGroup>
 
   <Import Project="$(MSBuildThisFileDirectory)Build\ConvertToNetstandardReferences\ConvertToNetstandardReferences.tasks" Condition=" '$(IsDotNetCore)' == 'true' " />
