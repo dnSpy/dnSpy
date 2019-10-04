@@ -16,8 +16,8 @@ jobs:
         shell: pwsh
         run: |
           $env:Path = 'C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\amd64;' + $env:Path
-          .\build.cmd net
-          New-Item -ItemType Directory -Path C:\builtfiles -Force | Out-Null
+          .\build.ps1 net
+          New-Item -ItemType Directory -Path C:\builtfiles -Force > $null
           Compress-Archive -Path dnSpy\dnSpy\bin\Release\net472\* -DestinationPath C:\builtfiles\dnSpy-net472.zip
           .\clean-all.cmd
 
@@ -25,8 +25,8 @@ jobs:
         shell: pwsh
         run: |
           $env:Path = 'C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\amd64;' + $env:Path
-          .\build.cmd corex86
-          New-Item -ItemType Directory -Path C:\builtfiles -Force | Out-Null
+          .\build.ps1 core-x86
+          New-Item -ItemType Directory -Path C:\builtfiles -Force > $null
           Compress-Archive -Path dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x86\publish\* -DestinationPath C:\builtfiles\dnSpy-netcore-win32.zip
           .\clean-all.cmd
 
@@ -34,8 +34,8 @@ jobs:
         shell: pwsh
         run: |
           $env:Path = 'C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\amd64;' + $env:Path
-          .\build.cmd corex64
-          New-Item -ItemType Directory -Path C:\builtfiles -Force | Out-Null
+          .\build.ps1 core-x64
+          New-Item -ItemType Directory -Path C:\builtfiles -Force > $null
           Compress-Archive -Path dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x64\publish\* -DestinationPath C:\builtfiles\dnSpy-netcore-win64.zip
           .\clean-all.cmd
 
