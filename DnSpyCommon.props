@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <!--
-        - appveyor.yml (artifacts)
-        - build.cmd
+        - build.ps1
+        - .github/workflows/build.yml
         - dnSpy/dnSpy/app.config (supportedRuntime, .NET Framework only)
     NOTE: Update the ABOVE files when TargetFrameworks is updated -->
     <TargetFrameworks>net472;netcoreapp3.0</TargetFrameworks>
@@ -20,7 +20,7 @@
     <AppDesignerFolderContentsVisibleOnlyInShowAllFiles>false</AppDesignerFolderContentsVisibleOnlyInShowAllFiles>
     <!-- Make sure we don't have to publish each extension to get all their refs -->
     <CopyLocalLockFileAssemblies Condition=" '$(IsDotNetCore)' == 'true' ">true</CopyLocalLockFileAssemblies>
-    <!-- If this gets updated, also update appveyor.yml and build.cmd -->
+    <!-- If this gets updated, also update .github/workflows/build.yml and build.ps1 -->
     <DnSpyRuntimeIdentifiers>win-x86;win-x64</DnSpyRuntimeIdentifiers>
     <SatelliteResourceLanguages>de;es;es-ES;fa;fr;hu;it;pt-PT;ru;tr;uk;zh-CN</SatelliteResourceLanguages>
 
