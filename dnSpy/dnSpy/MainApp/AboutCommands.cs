@@ -26,7 +26,7 @@ using dnSpy.Properties;
 namespace dnSpy.MainApp {
 	static class AboutHelpers {
 		public const string BASE_URL = @"https://github.com/0xd4d/dnSpy/";
-		public const string BUILD_URL = @"https://ci.appveyor.com/project/0xd4d/dnspy/branch/master/artifacts";
+		public const string BUILD_URL = @"https://github.com/0xd4d/dnSpy/actions";
 
 		public static void OpenWebPage(string url, IMessageBoxService messageBoxService) {
 			try {

@@ -1,4 +1,4 @@
-Before clicking `Submit new issue`, try the [latest build](https://ci.appveyor.com/project/0xd4d/dnspy/branch/master/artifacts)
+Before clicking `Submit new issue`, try the latest build [![](https://github.com/0xd4d/dnSpy/workflows/GitHub%20CI/badge.svg)](https://github.com/0xd4d/dnSpy/actions)
 
 - What version did you use?
 
