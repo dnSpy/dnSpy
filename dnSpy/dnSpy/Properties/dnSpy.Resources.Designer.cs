@@ -5682,6 +5682,24 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Instruction.
+        /// </summary>
+        public static string ToolTip_Instruction {
+            get {
+                return ResourceManager.GetString("ToolTip_Instruction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OpCode.
+        /// </summary>
+        public static string ToolTip_OpCode {
+            get {
+                return ResourceManager.GetString("ToolTip_OpCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Window Position.
         /// </summary>
         public static string ToolWindowWinPosButtonToolTip {

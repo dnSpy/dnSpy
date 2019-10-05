@@ -107,7 +107,7 @@ namespace dnSpy.Disassembly.X86 {
 			public static readonly Iced.Intel.ISymbolResolver Instance = new SymbolResolver();
 			SymbolResolver() { }
 
-			public bool TryGetSymbol(int operand, int instructionOperand, ref Instruction instruction, ulong address, int addressSize, out SymbolResult symbol) {
+			public bool TryGetSymbol(in Instruction instruction, int operand, int instructionOperand, ulong address, int addressSize, out SymbolResult symbol) {
 				if (address == SYMBOLADDR) {
 					symbol = new SymbolResult(SYMBOLADDR, new TextInfo(SYMBOLNAME, FormatterOutputTextKind.Data), SymbolFlags.None);
 					return true;

@@ -142,6 +142,12 @@ namespace dnSpy.Disassembly.Viewer {
 				flags |= DecompilerReferenceFlags.Definition;
 			if ((referenceFlags & DisassemblyReferenceFlags.Local) != 0)
 				flags |= DecompilerReferenceFlags.Local;
+			if ((referenceFlags & DisassemblyReferenceFlags.IsWrite) != 0)
+				flags |= DecompilerReferenceFlags.IsWrite;
+			if ((referenceFlags & DisassemblyReferenceFlags.Hidden) != 0)
+				flags |= DecompilerReferenceFlags.Hidden;
+			if ((referenceFlags & DisassemblyReferenceFlags.NoFollow) != 0)
+				flags |= DecompilerReferenceFlags.NoFollow;
 			return flags;
 		}
 
