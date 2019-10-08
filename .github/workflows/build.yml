@@ -15,7 +15,8 @@ jobs:
       - name: Build dnSpy (.NET Framework)
         shell: pwsh
         run: |
-          $env:Path = 'C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\amd64;' + $env:Path
+          $msbuildPath = Join-Path (Get-ChildItem "${env:ProgramFiles(x86)}\Microsoft Visual Studio" | Where-Object { $_.Name -match '^\d{4}$' -and $_.PSIsContainer } | Sort-Object Name -Descending)[0] 'Enterprise\MSBuild\Current\Bin\amd64'
+          $env:PATH = $msbuildPath + ';' + $env:PATH
           .\build.ps1 net
           New-Item -ItemType Directory -Path C:\builtfiles -Force > $null
           Compress-Archive -Path dnSpy\dnSpy\bin\Release\net472\* -DestinationPath C:\builtfiles\dnSpy-net472.zip
@@ -24,7 +25,8 @@ jobs:
       - name: Build dnSpy (.NET Core x86)
         shell: pwsh
         run: |
-          $env:Path = 'C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\amd64;' + $env:Path
+          $msbuildPath = Join-Path (Get-ChildItem "${env:ProgramFiles(x86)}\Microsoft Visual Studio" | Where-Object { $_.Name -match '^\d{4}$' -and $_.PSIsContainer } | Sort-Object Name -Descending)[0] 'Enterprise\MSBuild\Current\Bin\amd64'
+          $env:PATH = $msbuildPath + ';' + $env:PATH
           .\build.ps1 core-x86
           New-Item -ItemType Directory -Path C:\builtfiles -Force > $null
           Compress-Archive -Path dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x86\publish\* -DestinationPath C:\builtfiles\dnSpy-netcore-win32.zip
@@ -33,7 +35,8 @@ jobs:
       - name: Build dnSpy (.NET Core x64)
         shell: pwsh
         run: |
-          $env:Path = 'C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\amd64;' + $env:Path
+          $msbuildPath = Join-Path (Get-ChildItem "${env:ProgramFiles(x86)}\Microsoft Visual Studio" | Where-Object { $_.Name -match '^\d{4}$' -and $_.PSIsContainer } | Sort-Object Name -Descending)[0] 'Enterprise\MSBuild\Current\Bin\amd64'
+          $env:PATH = $msbuildPath + ';' + $env:PATH
           .\build.ps1 core-x64
           New-Item -ItemType Directory -Path C:\builtfiles -Force > $null
           Compress-Archive -Path dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x64\publish\* -DestinationPath C:\builtfiles\dnSpy-netcore-win64.zip

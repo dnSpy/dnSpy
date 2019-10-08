@@ -1,4 +1,4 @@
-param([string]$buildtfm = 'all')
+param([string]$buildtfm = 'all', [switch]$NoMsbuild)
 $ErrorActionPreference = 'Stop'
 
 $net_tfm = 'net472'
@@ -10,20 +10,20 @@ $apphostpatcher_dir = "Build\AppHostPatcher"
 #
 # The reason we don't use dotnet build is that dotnet build doesn't support COM references yet https://github.com/0xd4d/dnSpy/issues/1053
 #
-# dotnet build -c $configuration -f $net_tfm
-# ...
-# dotnet publish -c $configuration -f $netcore_tfm -r win-x86 --self-contained
-# ...
-# dotnet publish -c $configuration -f $netcore_tfm -r win-x64 --self-contained
-# ...
 
 function Build-NetFramework {
 	Write-Host 'Building .NET Framework x86 and x64 binaries'
 
 	$outdir = "$net_baseoutput\$net_tfm"
 
-	msbuild -v:m -restore -t:Build -p:Configuration=$configuration -p:TargetFramework=$net_tfm
-	if ($LASTEXITCODE) { exit $LASTEXITCODE }
+	if ($NoMsbuild) {
+		dotnet build -v:m -c $configuration -f $net_tfm
+		if ($LASTEXITCODE) { exit $LASTEXITCODE }
+	}
+	else {
+		msbuild -v:m -m -restore -t:Build -p:Configuration=$configuration -p:TargetFramework=$net_tfm
+		if ($LASTEXITCODE) { exit $LASTEXITCODE }
+	}
 
 	# move all files to a bin sub dir but keep the exe files
 	Rename-Item $outdir bin
@@ -45,8 +45,14 @@ function Build-NetCore {
 	$outdir = "$net_baseoutput\$netcore_tfm\$rid"
 	$publishDir = "$outdir\publish"
 
-	msbuild -v:m -restore -t:Publish -p:Configuration=$configuration -p:TargetFramework=$netcore_tfm -p:RuntimeIdentifier=$rid -p:SelfContained=True
-	if ($LASTEXITCODE) { exit $LASTEXITCODE }
+	if ($NoMsbuild) {
+		dotnet publish -v:m -c $configuration -f $netcore_tfm -r $rid --self-contained
+		if ($LASTEXITCODE) { exit $LASTEXITCODE }
+	}
+	else {
+		msbuild -v:m -m -restore -t:Publish -p:Configuration=$configuration -p:TargetFramework=$netcore_tfm -p:RuntimeIdentifier=$rid -p:SelfContained=True
+		if ($LASTEXITCODE) { exit $LASTEXITCODE }
+	}
 
 	# move all files to a bin sub dir but keep the exe apphosts
 	$tmpbin = 'tmpbin'
@@ -66,8 +72,14 @@ $buildCoreX86 = $buildtfm -eq 'all' -or $buildtfm -eq 'core-x86'
 $buildCoreX64 = $buildtfm -eq 'all' -or $buildtfm -eq 'core-x64'
 
 if ($buildCoreX86 -or $buildCoreX64) {
-	msbuild -v:m -restore -t:Build -p:Configuration=$configuration -p:TargetFramework=$net_tfm $apphostpatcher_dir\AppHostPatcher.csproj
-	if ($LASTEXITCODE) { exit $LASTEXITCODE }
+	if ($NoMsbuild) {
+		dotnet build -v:m -c $configuration -f $net_tfm $apphostpatcher_dir\AppHostPatcher.csproj
+		if ($LASTEXITCODE) { exit $LASTEXITCODE }
+	}
+	else {
+		msbuild -v:m -m -restore -t:Build -p:Configuration=$configuration -p:TargetFramework=$net_tfm $apphostpatcher_dir\AppHostPatcher.csproj
+		if ($LASTEXITCODE) { exit $LASTEXITCODE }
+	}
 }
 
 if ($buildNet) {
