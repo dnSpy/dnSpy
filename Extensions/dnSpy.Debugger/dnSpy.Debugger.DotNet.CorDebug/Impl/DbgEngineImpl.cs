@@ -693,10 +693,6 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					Environment = env.Environment,
 				};
 				Debug2.Assert(!(dbgOptions.Filename is null));
-				if (AppHostUtils.TryGetAppHostEmbeddedDotNetDllPath(dbgOptions.Filename, out _, out var dotNetDllPath))
-					dbgOptions.ManagedDllFilename = dotNetDllPath;
-				else if (AppHostUtils.IsDotNetCoreAppHost(dbgOptions.Filename, out var dllFilename))
-					dbgOptions.ManagedDllFilename = dllFilename;
 				dbgOptions.DebugOptions.IgnoreBreakInstructions = false;
 				dbgOptions.DebugOptions.DebugOptionsProvider = new DebugOptionsProviderImpl(debuggerSettings);
 				if (debuggerSettings.RedirectGuiConsoleOutput && PortableExecutableFileHelpers.IsGuiApp(options.Filename))
