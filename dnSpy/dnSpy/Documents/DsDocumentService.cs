@@ -279,8 +279,8 @@ namespace dnSpy.Documents {
 			return document;
 		}
 
-		internal IDsDocument GetOrAddCanDispose(IDsDocument document, IAssembly origAssemblyRef) {
-			document.IsAutoLoaded = true;
+		internal IDsDocument GetOrAddCanDispose(IDsDocument document, IAssembly origAssemblyRef, bool isAutoLoaded) {
+			document.IsAutoLoaded = isAutoLoaded;
 			IDsDocument result;
 			DocumentInfo info;
 			rwLock.EnterReadLock();

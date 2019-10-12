@@ -489,6 +489,7 @@ namespace dnSpy.Documents {
 			var fwkKind = GetFrameworkKind(sourceModule, out var netCoreVersion, out var sourceModuleDirectoryHint);
 			if (fwkKind == FrameworkKind.DotNetCore && !dotNetCorePathProvider.HasDotNetCore)
 				fwkKind = FrameworkKind.DotNetFramework4;
+			bool loaded;
 			IDsDocument? document;
 			IDsDocument? existingDocument;
 			FindAssemblyOptions options;
@@ -538,9 +539,9 @@ namespace dnSpy.Documents {
 				if (!(existingDocument is null))
 					return existingDocument;
 
-				document = LookupFromSearchPaths(assembly, sourceModule, sourceModuleDirectoryHint, netCoreVersion);
+				(document, loaded) = LookupFromSearchPaths(assembly, sourceModule, sourceModuleDirectoryHint, netCoreVersion);
 				if (!(document is null))
-					return documentService.GetOrAddCanDispose(document, assembly);
+					return documentService.GetOrAddCanDispose(document, assembly, loaded);
 
 				var gacFile = GacInfo.FindInGac(assembly, gacVersion);
 				if (!(gacFile is null))
@@ -558,7 +559,7 @@ namespace dnSpy.Documents {
 						Debug.Assert(gacVersion == -1);
 					document = TryLoadFromDir(assembly, checkVersion: true, checkPublicKeyToken: true, gacPath.Path);
 					if (!(document is null))
-						return documentService.GetOrAddCanDispose(document, assembly);
+						return documentService.GetOrAddCanDispose(document, assembly, isAutoLoaded: true);
 				}
 				break;
 
@@ -573,9 +574,9 @@ namespace dnSpy.Documents {
 				// If it's a self-contained .NET Core app, we don't need the version since we must only search
 				// the current directory.
 				Debug2.Assert(fwkKind == FrameworkKind.DotNetCore || netCoreVersion is null);
-				document = LookupFromSearchPaths(assembly, sourceModule, sourceModuleDirectoryHint, netCoreVersion);
+				(document, loaded) = LookupFromSearchPaths(assembly, sourceModule, sourceModuleDirectoryHint, netCoreVersion);
 				if (!(document is null))
-					return documentService.GetOrAddCanDispose(document, assembly);
+					return documentService.GetOrAddCanDispose(document, assembly, loaded);
 
 				// If it already exists in assembly explorer, use it
 				options = DsDocumentService.DefaultOptions;
@@ -612,7 +613,7 @@ namespace dnSpy.Documents {
 			}
 		}
 
-		IDsDocument? LookupFromSearchPaths(IAssembly asmName, ModuleDef? sourceModule, string? sourceModuleDir, Version? dotNetCoreAppVersion) {
+		(IDsDocument? document, bool loaded) LookupFromSearchPaths(IAssembly asmName, ModuleDef? sourceModule, string? sourceModuleDir, Version? dotNetCoreAppVersion) {
 			IDsDocument? document;
 			if (sourceModuleDir is null && !(sourceModule is null) && !string2.IsNullOrEmpty(sourceModule.Location)) {
 				try {
@@ -627,7 +628,7 @@ namespace dnSpy.Documents {
 			if (!(sourceModuleDir is null)) {
 				document = TryFindFromDir(asmName, dirPath: sourceModuleDir);
 				if (!(document is null))
-					return document;
+					return (document, false);
 			}
 
 			string[]? dotNetCorePaths;
@@ -641,24 +642,24 @@ namespace dnSpy.Documents {
 				foreach (var path in dotNetCorePaths) {
 					document = TryFindFromDir(asmName, dirPath: path);
 					if (!(document is null))
-						return document;
+						return (document, false);
 				}
 			}
 
 			if (!(sourceModuleDir is null)) {
 				document = TryLoadFromDir(asmName, checkVersion: false, checkPublicKeyToken: false, dirPath: sourceModuleDir);
 				if (!(document is null))
-					return document;
+					return (document, true);
 			}
 			if (!(dotNetCorePaths is null)) {
 				foreach (var path in dotNetCorePaths) {
 					document = TryLoadFromDir(asmName, checkVersion: false, checkPublicKeyToken: false, dirPath: path);
 					if (!(document is null))
-						return document;
+						return (document, true);
 				}
 			}
 
-			return null;
+			return default;
 		}
 
 		IDsDocument? TryFindFromDir(IAssembly asmName, string dirPath) {
