@@ -41,7 +41,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		static readonly byte[] AppHostExeUnpatchedSignature = Encoding.UTF8.GetBytes(AppHostExeUnpatched + "\0");
 		static readonly byte[] AppHostExeSignature = Encoding.UTF8.GetBytes("c3ab8ff13720e8ad9047dd39466b3c89" + "\0");
 
-		internal static bool IsDotNetCoreAppHost(string filename, [NotNullWhen(true)] out string? dllFilename) {
+		// .NET Core 2.x, older .NET Core 3.0 previews
+		internal static bool IsDotNetCoreAppHostV1(string filename, [NotNullWhen(true)] out string? dllFilename) {
 			// We detect the apphost.exe like so:
 			//	- must have an exe extension
 			//	- must be a PE file and an EXE (DLL bit cleared)
@@ -76,7 +77,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			return true;
 		}
 
-		internal static bool IsDotNetCoreBundle(string filename) {
+		// Older .NET Core 3.0 previews
+		internal static bool IsDotNetCoreBundleV1(string filename) {
 			try {
 				using (var stream = File.OpenRead(filename)) {
 					if (stream.Length < bundleSig.Length)
@@ -97,6 +99,22 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		}
 		// "\x0E.NetCoreBundle"
 		static readonly byte[] bundleSig = new byte[] { 0x0E, 0x2E, 0x4E, 0x65, 0x74, 0x43, 0x6F, 0x72, 0x65, 0x42, 0x75, 0x6E, 0x64, 0x6C, 0x65 };
+
+		// .NET Core 3.0
+		internal static bool IsDotNetCoreBundleV2_or_AppHost(string filename) {
+			try {
+				var data = ReadBytes(filename, 512 * 1024);
+				return GetOffset(data, apphostSigV2) >= 0;
+			}
+			catch {
+			}
+			return false;
+		}
+		// SHA256(".net core bundle"). The previous 8 bytes is 0 or offset of the bundle header-offset
+		static readonly byte[] apphostSigV2 = new byte[] {
+			0x8B, 0x12, 0x02, 0xB9, 0x6A, 0x61, 0x20, 0x38, 0x72, 0x7B, 0x93, 0x02, 0x14, 0xD7, 0xA0, 0x32,
+			0x13, 0xF5, 0xB9, 0xE6, 0xEF, 0xAE, 0x33, 0x18, 0xEE, 0x3B, 0x2D, 0xCE, 0x24, 0xB3, 0x6A, 0xAE,
+		};
 
 		static byte[] ReadBytes(string filename, int maxBytes) {
 			using (var file = File.OpenRead(filename)) {

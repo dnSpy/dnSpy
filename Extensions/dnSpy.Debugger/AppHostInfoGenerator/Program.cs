@@ -33,6 +33,7 @@ using Newtonsoft.Json.Linq;
 
 namespace AppHostInfoGenerator {
 	sealed class Program : IDisposable {
+		// *** .NET Core 3.0 apphosts now have a signature (SHA256(".net core bundle")) so this table doesn't need to be updated anymore.
 		// Add new versions from: https://www.nuget.org/packages/Microsoft.NETCore.DotNetAppHost/
 		// The code ignores known versions so all versions can be added.
 		//	^(\S+)\s.*		=>		\t\t\t"\1",

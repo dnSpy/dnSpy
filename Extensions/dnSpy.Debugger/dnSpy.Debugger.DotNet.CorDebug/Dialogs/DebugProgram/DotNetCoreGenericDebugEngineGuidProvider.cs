@@ -36,9 +36,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
 			if (!File.Exists(filename))
 				return false;
 			return
+				AppHostUtils.IsDotNetCoreBundleV1(filename) ||
+				AppHostUtils.IsDotNetCoreBundleV2_or_AppHost(filename) ||
 				IsKnownDotNetCoreAppHost(filename) ||
-				AppHostUtils.IsDotNetCoreAppHost(filename, out _) ||
-				AppHostUtils.IsDotNetCoreBundle(filename);
+				AppHostUtils.IsDotNetCoreAppHostV1(filename, out _);
 		}
 
 		static bool IsKnownDotNetCoreAppHost(string filename) {
