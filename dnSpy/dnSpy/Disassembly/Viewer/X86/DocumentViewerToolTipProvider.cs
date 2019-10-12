@@ -43,6 +43,8 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 			provider.Output.Write(BoxedTextColor.Text, $"{dnSpy_Resources.ToolTip_OpCode}: {opCode.ToOpCodeString()}");
 			provider.Output.WriteLine();
 			provider.Output.Write(BoxedTextColor.Text, $"{dnSpy_Resources.ToolTip_Instruction}: {opCode.ToInstructionString()}");
+			provider.Output.WriteLine();
+			provider.Output.Write(BoxedTextColor.Text, $"CPUID: {string.Join(", ", opCode.Code.CpuidFeatures())}");
 
 			return provider.Create();
 		}
