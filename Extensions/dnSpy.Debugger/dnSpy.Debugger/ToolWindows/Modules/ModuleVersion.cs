@@ -30,6 +30,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 				versionString = string.Empty;
 			int index = GetEndIndex(versionString);
 			var verSubStr = index == versionString.Length ? versionString : versionString.Substring(0, index);
+			verSubStr = verSubStr.Replace(',', '.');
 			if (Version.TryParse(verSubStr, out version!))
 				remaining = index == versionString.Length ? string.Empty : versionString.Substring(index);
 			else {
@@ -39,10 +40,15 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		}
 
 		static int GetEndIndex(string v) {
+			var sepChar = '\0';
 			for (int i = 0; i < v.Length; i++) {
 				var c = v[i];
-				if (!char.IsDigit(c) && c != '.')
-					return i;
+				if (!char.IsDigit(c)) {
+					if (sepChar == 0)
+						sepChar = c == ',' ? c : '.';
+					if (c != sepChar)
+						return i;
+				}
 			}
 			return v.Length;
 		}
