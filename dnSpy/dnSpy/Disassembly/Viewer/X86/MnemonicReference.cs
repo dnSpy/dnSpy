@@ -24,10 +24,12 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 	sealed class MnemonicReference {
 		public Code Code { get; }
 		public string Mnemonic { get; }
+		public CpuidFeature[] CpuidFeatures { get; }
 
-		public MnemonicReference(Code code, string mnemonic) {
+		public MnemonicReference(Code code, string mnemonic, CpuidFeature[] cpuidFeatures) {
 			Code = code;
 			Mnemonic = mnemonic;
+			CpuidFeatures = cpuidFeatures;
 		}
 
 		public override bool Equals(object? obj) =>
