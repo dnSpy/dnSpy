@@ -1403,7 +1403,7 @@
     <value>PE</value>
   </data>
   <data name="HexNode_PE_Section" xml:space="preserve">
-    <value>章节</value>
+    <value>节</value>
   </data>
   <data name="HexNode_StorageHeader" xml:space="preserve">
     <value>存储标题</value>

@@ -961,7 +961,7 @@
     <value>Максимальна Висота</value>
   </data>
   <data name="BgImgSettings_MaxWidth" xml:space="preserve">
-    <value>Максимальна ширина</value>
+    <value>Максимальна Ширина</value>
   </data>
   <data name="BgImgSettings_Opacity" xml:space="preserve">
     <value>Прозорість</value>
@@ -970,7 +970,7 @@
     <value>Розміщення</value>
   </data>
   <data name="BgImgSettings_RandomImage" xml:space="preserve">
-    <value>Випадкове зображення</value>
+    <value>Випадкове Зображення</value>
   </data>
   <data name="BgImgSettings_Reset" xml:space="preserve">
     <value>Очистити</value>
@@ -979,7 +979,7 @@
     <value>Зум %</value>
   </data>
   <data name="BgImgSettings_ShowImages" xml:space="preserve">
-    <value>Показати зображення</value>
+    <value>Показати Зображення</value>
   </data>
   <data name="BgImgSettings_Stretch" xml:space="preserve">
     <value>Розтягнути</value>
@@ -991,10 +991,10 @@
     <value>Низ</value>
   </data>
   <data name="ImagePlacement_BottomLeft" xml:space="preserve">
-    <value>Внизу зліва</value>
+    <value>Внизу Зліва</value>
   </data>
   <data name="ImagePlacement_BottomRight" xml:space="preserve">
-    <value>Знизу справа</value>
+    <value>Знизу Справа</value>
   </data>
   <data name="ImagePlacement_Center" xml:space="preserve">
     <value>Центр</value>
@@ -1009,7 +1009,7 @@
     <value>Зверху</value>
   </data>
   <data name="ImagePlacement_TopLeft" xml:space="preserve">
-    <value>Зверху ліворуч</value>
+    <value>Зверху Ліворуч</value>
   </data>
   <data name="ImagePlacement_TopRight" xml:space="preserve">
     <value>Зверху праворуч</value>
@@ -1018,25 +1018,25 @@
     <value>Обидва</value>
   </data>
   <data name="StretchDirection_DownOnly" xml:space="preserve">
-    <value>Тільки вниз</value>
+    <value>Тільки Вниз</value>
   </data>
   <data name="StretchDirection_UpOnly" xml:space="preserve">
-    <value>Тільки вгору</value>
+    <value>Тільки Вгору</value>
   </data>
   <data name="Files_Images" xml:space="preserve">
     <value>Зображення</value>
   </data>
   <data name="BgImgSettings_BottomMarginPercent" xml:space="preserve">
-    <value>Нижній відступ, %</value>
+    <value>Нижній Відступ, %</value>
   </data>
   <data name="BgImgSettings_LeftMarginPercent" xml:space="preserve">
-    <value>Лівий відступ, %</value>
+    <value>Лівий Відступ, %</value>
   </data>
   <data name="BgImgSettings_RightMarginPercent" xml:space="preserve">
-    <value>Правий відступ, %</value>
+    <value>Правий Відступ, %</value>
   </data>
   <data name="BgImgSettings_TopMarginPercent" xml:space="preserve">
-    <value>Верхній відступ, %</value>
+    <value>Верхній Відступ, %</value>
   </data>
   <data name="Search_FindNextToolTip" xml:space="preserve">
     <value>Знайти наступне</value>
@@ -1057,7 +1057,7 @@
     <value>Замінити далі</value>
   </data>
   <data name="Search_UseRegularExpressionsToolTip" xml:space="preserve">
-    <value>Використовувати регулярні вирази</value>
+    <value>Використовувати Регулярні Вирази</value>
   </data>
   <data name="Search_ToggleReplaceModeToolTip" xml:space="preserve">
     <value>Переключіть для переключення між режимами пошуку та заміни</value>
@@ -1066,7 +1066,7 @@
     <value>Закрити</value>
   </data>
   <data name="IncrementalSearchCommand" xml:space="preserve">
-    <value>Послідовний пошук</value>
+    <value>Послідовний Пошук</value>
   </data>
   <data name="ShortCutKeyCtrlI" xml:space="preserve">
     <value>Ctrl+I</value>
@@ -1090,7 +1090,7 @@
     <value>Тема</value>
   </data>
   <data name="IntegrateWithWindowsExplorer" xml:space="preserve">
-    <value>Інтегрувати в провідник Windows</value>
+    <value>Інтегрувати в Провідник Windows</value>
   </data>
   <data name="AssemblyExplorerSettings_Order" xml:space="preserve">
     <value>Сортування (потрібне перевантаження)</value>
@@ -1105,7 +1105,7 @@
     <value>Шрифт</value>
   </data>
   <data name="CodeEditorSettings" xml:space="preserve">
-    <value>Редактор коду</value>
+    <value>Редактор Коду</value>
   </data>
   <data name="TabsSettings" xml:space="preserve">
     <value>Вкладки</value>
@@ -1129,13 +1129,13 @@
     <value>Розмір _табулятора</value>
   </data>
   <data name="TextViewerSettings" xml:space="preserve">
-    <value>Перегляд тексту</value>
+    <value>Перегляд Тексту</value>
   </data>
   <data name="AdvancedSettings" xml:space="preserve">
     <value>Додаткові налаштування</value>
   </data>
   <data name="ScrollBarsSettings" xml:space="preserve">
-    <value>Смуги прокрутки</value>
+    <value>Смуги Прокрутки</value>
   </data>
   <data name="TextEditorCompressEmptyOrWhitespaceLines" xml:space="preserve">
     <value>Стискати пусті стрічки</value>
@@ -1192,7 +1192,7 @@
     <value>Управління масштабуванням</value>
   </data>
   <data name="OutputWindowSettings" xml:space="preserve">
-    <value>Вікно виводу</value>
+    <value>Вікно Виводу</value>
   </data>
   <data name="TextEditorShowTimestamps" xml:space="preserve">
     <value>Показувати час</value>
@@ -1231,7 +1231,7 @@
     <value>За замовчанням</value>
   </data>
   <data name="HexEditorSettings" xml:space="preserve">
-    <value>Hex-редактор</value>
+    <value>Hex-Редактор</value>
   </data>
   <data name="HexEditorEncoding" xml:space="preserve">
     <value>Кодування</value>
@@ -1284,10 +1284,10 @@
 {0}</value>
   </data>
   <data name="HexEditorSaveSelection_Title" xml:space="preserve">
-    <value>Зберегти вибране 0x{0:X}-0x{1:X}</value>
+    <value>Зберегти Вибране 0x{0:X}-0x{1:X}</value>
   </data>
   <data name="Button_DefaultSettings" xml:space="preserve">
-    <value>Налаштування _за замовчуванням</value>
+    <value>Налаштування _За Замовчуванням</value>
   </data>
   <data name="Button_RestoreSettings" xml:space="preserve">
     <value>Очистити</value>
@@ -2063,5 +2063,11 @@
   </data>
   <data name="RecentFilesCommand" xml:space="preserve">
     <value>Недавні Файли</value>
+  </data>
+  <data name="ToolTip_Instruction" xml:space="preserve">
+    <value>Інструкції</value>
+  </data>
+  <data name="ToolTip_OpCode" xml:space="preserve">
+    <value>OpCode</value>
   </data>
 </root>

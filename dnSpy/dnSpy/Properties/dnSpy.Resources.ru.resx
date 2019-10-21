@@ -2066,4 +2066,10 @@
   <data name="RecentFilesCommand" xml:space="preserve">
     <value>Последние Файлы</value>
   </data>
+  <data name="ToolTip_Instruction" xml:space="preserve">
+    <value>Инструкции</value>
+  </data>
+  <data name="ToolTip_OpCode" xml:space="preserve">
+    <value>Опкод</value>
+  </data>
 </root>
