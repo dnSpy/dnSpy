@@ -671,7 +671,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					disableMDA = false;
 				if (disableMDA) {
 					// https://docs.microsoft.com/en-us/dotnet/framework/debug-trace-profile/diagnosing-errors-with-managed-debugging-assistants
-					env.Add("COMPLUS_MDA", "0");
+					env.Add("COMPlus_MDA", "0");
 				}
 				if (debuggerSettings.SuppressJITOptimization_SystemModules) {
 					if (options is DotNetFrameworkStartDebuggingOptions)
