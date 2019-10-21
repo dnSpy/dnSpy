@@ -1,0 +1,1531 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddBreakpointCommand" xml:space="preserve">
+    <value>_Add Breakpoint</value>
+  </data>
+  <data name="AddExceptionCommand" xml:space="preserve">
+    <value>Add E_xception</value>
+  </data>
+  <data name="AppDomainNotAvailable" xml:space="preserve">
+    <value>&lt;não disponível&gt;</value>
+  </data>
+  <data name="AppMenu_Debug" xml:space="preserve">
+    <value>_Depurar</value>
+  </data>
+  <data name="AppTitle_Debugging" xml:space="preserve">
+    <value>Depurando</value>
+  </data>
+  <data name="AskDeleteAllBreakpoints" xml:space="preserve">
+    <value>Deseja eliminar todos os pontos de interrupção?</value>
+  </data>
+  <data name="AttachToProcessCommand" xml:space="preserve">
+    <value>Anexar ao _Processo...</value>
+  </data>
+  <data name="Attach_AttachToProcess" xml:space="preserve">
+    <value>Anexar ao Processo</value>
+  </data>
+  <data name="Attach_UseDnSpy32" xml:space="preserve">
+    <value>Use o dnSpy 64-bit para depurar processos em 64-bit</value>
+  </data>
+  <data name="Attach_UseDnSpy64" xml:space="preserve">
+    <value>Use o dnSpy 32-bit para depurar processos em 32-bit</value>
+  </data>
+  <data name="BreakCommand" xml:space="preserve">
+    <value>Para_r Tudo</value>
+  </data>
+  <data name="BreakpointsCommand" xml:space="preserve">
+    <value>Pontos_de_Interrupção</value>
+  </data>
+  <data name="Button_Attach" xml:space="preserve">
+    <value>_Anexar</value>
+  </data>
+  <data name="Button_Cancel" xml:space="preserve">
+    <value>_Cancelar</value>
+  </data>
+  <data name="Button_OK" xml:space="preserve">
+    <value>_OK</value>
+  </data>
+  <data name="Button_Refresh" xml:space="preserve">
+    <value>_Atualizar</value>
+  </data>
+  <data name="CallStackCommand" xml:space="preserve">
+    <value>_Call Stack</value>
+  </data>
+  <data name="CallStack_MaxFramesExceeded" xml:space="preserve">
+    <value>O número máximo de Stack Frames suportados pelo dnSpy foi excedido.</value>
+  </data>
+  <data name="Column_Address" xml:space="preserve">
+    <value>Endereço</value>
+  </data>
+  <data name="Column_AppDomain" xml:space="preserve">
+    <value>AppDomain</value>
+  </data>
+  <data name="Column_DynamicModule" xml:space="preserve">
+    <value>Dinâmico</value>
+  </data>
+  <data name="Column_InMemoryModule" xml:space="preserve">
+    <value>InMemory</value>
+  </data>
+  <data name="Column_Module" xml:space="preserve">
+    <value>Módulo</value>
+  </data>
+  <data name="Column_Name" xml:space="preserve">
+    <value>Nome</value>
+  </data>
+  <data name="Column_OptimizedModule" xml:space="preserve">
+    <value>Otimizado</value>
+  </data>
+  <data name="Column_Order" xml:space="preserve">
+    <value>Classificar</value>
+  </data>
+  <data name="Column_Path" xml:space="preserve">
+    <value>Caminho</value>
+  </data>
+  <data name="Column_Process" xml:space="preserve">
+    <value>Processo</value>
+  </data>
+  <data name="Column_ProcessArchitecture" xml:space="preserve">
+    <value>Arquitetura</value>
+  </data>
+  <data name="Column_ProcessFilename" xml:space="preserve">
+    <value>Nome do Arquivo</value>
+  </data>
+  <data name="Column_ProcessID" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="Column_ProcessTitle" xml:space="preserve">
+    <value>Título</value>
+  </data>
+  <data name="Column_ProcessType" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
+  <data name="Column_ThreadAffinityMask" xml:space="preserve">
+    <value>Máscara de Afinidade</value>
+  </data>
+  <data name="Column_ThreadCategory" xml:space="preserve">
+    <value>Categoria</value>
+  </data>
+  <data name="Column_ThreadID" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="Column_ThreadLocation" xml:space="preserve">
+    <value>Localização</value>
+  </data>
+  <data name="Column_ThreadManagedId" xml:space="preserve">
+    <value>ID Gerenciado</value>
+  </data>
+  <data name="Column_ThreadPriority" xml:space="preserve">
+    <value>Prioridade</value>
+  </data>
+  <data name="Column_ThreadState" xml:space="preserve">
+    <value>Estado</value>
+  </data>
+  <data name="Column_ThreadSuspendedCount" xml:space="preserve">
+    <value>Contagem Suspensa</value>
+  </data>
+  <data name="Column_Timestamp" xml:space="preserve">
+    <value>Marca Temporal</value>
+  </data>
+  <data name="Column_Type" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
+  <data name="Column_Value" xml:space="preserve">
+    <value>Valor</value>
+  </data>
+  <data name="Column_Version" xml:space="preserve">
+    <value>Versão</value>
+  </data>
+  <data name="ContinueDebuggingCommand" xml:space="preserve">
+    <value>_Continuar</value>
+  </data>
+  <data name="CopyCommand" xml:space="preserve">
+    <value>Cop_iar</value>
+  </data>
+  <data name="DbgAsm_Title" xml:space="preserve">
+    <value>Depurar Programa</value>
+  </data>
+  <data name="DbgSettings_AutoOpenLocalsWindow" xml:space="preserve">
+    <value>Exibir as janelas Locais ao iniciar o depurador</value>
+  </data>
+  <data name="DbgSettings_DisableDebuggerDetection" xml:space="preserve">
+    <value>Impedir que o código detecte o depurador</value>
+  </data>
+  <data name="DbgSettings_IgnoreBreakInstructions" xml:space="preserve">
+    <value>Ignorar Debugger.Break() e quebrar as instruções</value>
+  </data>
+  <data name="DbgSettings_PropertyEvalAndFunctionCalls" xml:space="preserve">
+    <value>Permitir a avaliação da propriedade e outras chamadas de função implícitas</value>
+  </data>
+  <data name="DbgSettings_UseMemoryModules" xml:space="preserve">
+    <value>Depurar arquivos carregados na memória do processo (desmarque a opção para usar arquivos do disco)</value>
+  </data>
+  <data name="DbgSettings_UseStringConversionFunction" xml:space="preserve">
+    <value>Chamar a função de conversão para string de objetos nas janelas de variáveis</value>
+  </data>
+  <data name="StartDebugging2" xml:space="preserve">
+    <value>_Começar a Depuração...</value>
+  </data>
+  <data name="DebuggerOptDlgTab" xml:space="preserve">
+    <value>Depurador</value>
+  </data>
+  <data name="DebugProgramX" xml:space="preserve">
+    <value>_Debug {0}</value>
+  </data>
+  <data name="Debug_EventDescription_Exception" xml:space="preserve">
+    <value>Exceção</value>
+  </data>
+  <data name="Debug_EventDescription_LoadModule1" xml:space="preserve">
+    <value>LoadModule DYN={0} MEM={1} {2:X8} {3:X8} {4}</value>
+  </data>
+  <data name="Debug_EventDescription_LoadModule2" xml:space="preserve">
+    <value>LoadModule A={0:X8} S={1:X8} {2}</value>
+  </data>
+  <data name="Debug_EventDescription_UnhandledException" xml:space="preserve">
+    <value>Exceção não tratada</value>
+  </data>
+  <data name="DeleteAllBreakpointsCommand" xml:space="preserve">
+    <value>Eliminar Todos Pontos de interrupção</value>
+  </data>
+  <data name="DeleteBreakpointCommand" xml:space="preserve">
+    <value>E_liminar Ponto de interrupção</value>
+  </data>
+  <data name="DetachAllCommand" xml:space="preserve">
+    <value>Desanexar T_odos</value>
+  </data>
+  <data name="DisableAllBreakpointsCommand" xml:space="preserve">
+    <value>Desativar todos Breakpoints</value>
+  </data>
+  <data name="EnableAllBreakpointsCommand" xml:space="preserve">
+    <value>Ativar todos Breakpoints</value>
+  </data>
+  <data name="EnableBreakpointCommand" xml:space="preserve">
+    <value>_Ativar Breakpoint</value>
+  </data>
+  <data name="EnableBreakpointCommand2" xml:space="preserve">
+    <value>Ativar Breakpoint</value>
+  </data>
+  <data name="ErrorOccurredX" xml:space="preserve">
+    <value>Ocorreu um erro:
+
+{0}</value>
+  </data>
+  <data name="Error_CantEvalUnlessDebuggerStopped" xml:space="preserve">
+    <value>Não é possível avaliar a menos que o depurador esteja parado</value>
+  </data>
+  <data name="Error_CantEvalWhenUnhandledExceptionHasOccurred" xml:space="preserve">
+    <value>Não é possível avaliar quando uma exceção não tratada ocorreu</value>
+  </data>
+  <data name="Error_StartWithoutDebuggingCouldNotStart" xml:space="preserve">
+    <value>Não foi possível iniciar o '{0}' ERRO: {1}</value>
+  </data>
+  <data name="ExceptionSettingsCommand" xml:space="preserve">
+    <value>Configurações de Exceção</value>
+  </data>
+  <data name="Exceptions_Remove_ToolTip" xml:space="preserve">
+    <value>Remover uma exceção da lista</value>
+  </data>
+  <data name="Exceptions_RestoreSettings_ToolTip" xml:space="preserve">
+    <value>Restaurar a lista para as configurações padrão</value>
+  </data>
+  <data name="Exceptions_Search" xml:space="preserve">
+    <value>Pesquisar</value>
+  </data>
+  <data name="Exceptions_Search_ToolTip" xml:space="preserve">
+    <value>Procurar por uma exceção</value>
+  </data>
+  <data name="Exceptions_ShowOnlyEnabledExceptions_ToolTip" xml:space="preserve">
+    <value>Mostrar apenas exceções habilitadas</value>
+  </data>
+  <data name="FreezeThreadCommand" xml:space="preserve">
+    <value>_Congelar</value>
+  </data>
+  <data name="GoToDisassemblyCommand2" xml:space="preserve">
+    <value>Ir para _Disassembly</value>
+  </data>
+  <data name="GoToModuleCommand" xml:space="preserve">
+    <value>_Ir Para o Módulo</value>
+  </data>
+  <data name="HexDisplayCommand" xml:space="preserve">
+    <value>_Hexadecimal Display</value>
+  </data>
+  <data name="LocalsAddWatchCommand" xml:space="preserve">
+    <value>Add _Watch</value>
+  </data>
+  <data name="LocalsCollapseChildrenNodesCommand" xml:space="preserve">
+    <value>_Collapse Children</value>
+  </data>
+  <data name="LocalsCollapseParentNodeCommand" xml:space="preserve">
+    <value>C_ollapse Parent</value>
+  </data>
+  <data name="LocalsCommand" xml:space="preserve">
+    <value>_Locais</value>
+  </data>
+  <data name="LocalsCopyValueCommand" xml:space="preserve">
+    <value>Copiar Valor</value>
+  </data>
+  <data name="LocalsEditValueCommand" xml:space="preserve">
+    <value>Editar Valor</value>
+  </data>
+  <data name="LocalsExpandChildrenNodesCommand" xml:space="preserve">
+    <value>E_xpand Children</value>
+  </data>
+  <data name="LocalsSaveCommand" xml:space="preserve">
+    <value>_Salvar...</value>
+  </data>
+  <data name="LocalsSave_Error_CouldNotSaveDataToFilename" xml:space="preserve">
+    <value>Erro ao salvar dados para '{0}' erro: {1}</value>
+  </data>
+  <data name="Locals_Ask_TooManyItems" xml:space="preserve">
+    <value>Este item contém mais do que {0} itens filho e será limitado para exibir esse número de itens quando expandido.
+
+Tem certeza que deseja expandi-la?</value>
+  </data>
+  <data name="Locals_Error_CantEvaluateWhenThreadIsAtUnsafePoint" xml:space="preserve">
+    <value>Não é possível avaliar quando o thread está em um ponto inseguro. Avance uma vez ou execute até atingir um ponto de interrupção.</value>
+  </data>
+  <data name="Locals_Error_EvalDisabledCantCallPropsAndMethods" xml:space="preserve">
+    <value>Atualmente não é possível invocar métodos e propriedades</value>
+  </data>
+  <data name="Locals_Error_EvalTimedOutIsDisabled" xml:space="preserve">
+    <value>Avaliação expirou e foi desativada até você continuar o programa depurado.</value>
+  </data>
+  <data name="Locals_Error_EvaluationTimedOut" xml:space="preserve">
+    <value>A avaliação esgotou o tempo limite</value>
+  </data>
+  <data name="MemoryWindowCommand" xml:space="preserve">
+    <value>_Memória</value>
+  </data>
+  <data name="ModuleCopyFilenameCommand" xml:space="preserve">
+    <value>Copiar o nome do arquivo</value>
+  </data>
+  <data name="ModuleSaveModulesTitle" xml:space="preserve">
+    <value>Salvar módulos</value>
+  </data>
+  <data name="ModuleSaveModuleTitle" xml:space="preserve">
+    <value>Salvar Módulo</value>
+  </data>
+  <data name="ModulesCommand" xml:space="preserve">
+    <value>Módul_os</value>
+  </data>
+  <data name="Module_NoAddress" xml:space="preserve">
+    <value>&lt;nenhum endereço&gt;</value>
+  </data>
+  <data name="OpenContainingFolderCommand" xml:space="preserve">
+    <value>_Abrir Pasta</value>
+  </data>
+  <data name="OpenModuleFromMemoryCommand" xml:space="preserve">
+    <value>Abrir o módulo da memória</value>
+  </data>
+  <data name="RemoveExceptionCommand" xml:space="preserve">
+    <value>_Remover</value>
+  </data>
+  <data name="RenameThreadCommand" xml:space="preserve">
+    <value>Renomear</value>
+  </data>
+  <data name="RestartCommand" xml:space="preserve">
+    <value>_Reiniciar</value>
+  </data>
+  <data name="RestoreDefaultExceptionSettingsCommand" xml:space="preserve">
+    <value>Restaurar padrões</value>
+  </data>
+  <data name="RunToCursorCommand" xml:space="preserve">
+    <value>Ru_n To Cursor</value>
+  </data>
+  <data name="SaveModuleCommand" xml:space="preserve">
+    <value>Salvar módulo...</value>
+  </data>
+  <data name="SaveModulesCommand" xml:space="preserve">
+    <value>Guardar {0} módulos...</value>
+  </data>
+  <data name="SelectAllCommand" xml:space="preserve">
+    <value>Selecionar_Tudo</value>
+  </data>
+  <data name="SetNextStatementCommand" xml:space="preserve">
+    <value>Set Ne_xt Statement</value>
+  </data>
+  <data name="ShortCutAltAsterisk" xml:space="preserve">
+    <value>Alt+Num *</value>
+  </data>
+  <data name="ShortCutKeyAlt4" xml:space="preserve">
+    <value>Alt+4</value>
+  </data>
+  <data name="ShortCutKeyAlt6" xml:space="preserve">
+    <value>Alt+6</value>
+  </data>
+  <data name="ShortCutKeyCtrlA" xml:space="preserve">
+    <value>Ctrl+A</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltB" xml:space="preserve">
+    <value>Ctrl+Alt+B</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltC" xml:space="preserve">
+    <value>Ctrl+Alt+C</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltE" xml:space="preserve">
+    <value>Ctrl+Alt+E</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltH" xml:space="preserve">
+    <value>Ctrl+Alt+H</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltP" xml:space="preserve">
+    <value>Ctrl+Alt+P</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltU" xml:space="preserve">
+    <value>Ctrl+Alt+U</value>
+  </data>
+  <data name="ShortCutKeyCtrlShift_DIGIT" xml:space="preserve">
+    <value>Ctrl+Shift+{0}</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltBreak" xml:space="preserve">
+    <value>Ctrl+Alt+Break</value>
+  </data>
+  <data name="ShortCutKeyCtrlC" xml:space="preserve">
+    <value>Ctrl+C</value>
+  </data>
+  <data name="ShortCutKeyCtrlF10" xml:space="preserve">
+    <value>Ctrl+F10</value>
+  </data>
+  <data name="ShortCutKeyCtrlF5" xml:space="preserve">
+    <value>Ctrl+F5</value>
+  </data>
+  <data name="ShortCutKeyCtrlF9" xml:space="preserve">
+    <value>Ctrl+F9</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftC" xml:space="preserve">
+    <value>Ctrl+Shift+C</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftF10" xml:space="preserve">
+    <value>Ctrl + Shift + F10</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftF5" xml:space="preserve">
+    <value>Ctrl + Shift + F5</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftF9" xml:space="preserve">
+    <value>Ctrl + Shift + F9</value>
+  </data>
+  <data name="ShortCutKeyCtrl_DIGIT" xml:space="preserve">
+    <value>Ctrl+{0}</value>
+  </data>
+  <data name="ShortCutKeyDelete" xml:space="preserve">
+    <value>Del</value>
+  </data>
+  <data name="ShortCutKeyEnter" xml:space="preserve">
+    <value>Enter</value>
+  </data>
+  <data name="ShortCutKeyF10" xml:space="preserve">
+    <value>F10</value>
+  </data>
+  <data name="ShortCutKeyF11" xml:space="preserve">
+    <value>F11</value>
+  </data>
+  <data name="ShortCutKeyF2" xml:space="preserve">
+    <value>F2</value>
+  </data>
+  <data name="ShortCutKeyF5" xml:space="preserve">
+    <value>F5</value>
+  </data>
+  <data name="ShortCutKeyF9" xml:space="preserve">
+    <value>F9</value>
+  </data>
+  <data name="ShortCutKeyInsert" xml:space="preserve">
+    <value>Ins</value>
+  </data>
+  <data name="ShortCutKeyShiftF11" xml:space="preserve">
+    <value>Shift + F11</value>
+  </data>
+  <data name="ShortCutKeyShiftF5" xml:space="preserve">
+    <value>Shift + F5</value>
+  </data>
+  <data name="ShowInMemoryWindowCommand" xml:space="preserve">
+    <value>Mostrar na Janela de Memória</value>
+  </data>
+  <data name="ShowInstructionPointerCommand" xml:space="preserve">
+    <value>Mostrar IP</value>
+  </data>
+  <data name="ShowModuleNamesCommand" xml:space="preserve">
+    <value>Show _Module Names</value>
+  </data>
+  <data name="ShowNamespacesCommand" xml:space="preserve">
+    <value>Mostrar Namespaces</value>
+  </data>
+  <data name="ShowNextStatementCommand" xml:space="preserve">
+    <value>S_how Next Statement</value>
+  </data>
+  <data name="ShowDeclaringTypesCommand" xml:space="preserve">
+    <value>Show Declaring Types</value>
+  </data>
+  <data name="ShowParameterNamesCommand" xml:space="preserve">
+    <value>Show _Parameter Names</value>
+  </data>
+  <data name="ShowParameterTypesCommand" xml:space="preserve">
+    <value>Show Parameter _Types</value>
+  </data>
+  <data name="ShowParameterValuesCommand" xml:space="preserve">
+    <value>Show Parameter _Values</value>
+  </data>
+  <data name="ShowReturnTypesCommand" xml:space="preserve">
+    <value>Show Return Types</value>
+  </data>
+  <data name="ShowTokensCommand" xml:space="preserve">
+    <value>Mostrar Tokens</value>
+  </data>
+  <data name="ShowIntrinsicTypeKeywordsCommand" xml:space="preserve">
+    <value>Show Intrinsic Type Keywords</value>
+  </data>
+  <data name="StartWithoutDebuggingCommand" xml:space="preserve">
+    <value>Start Wit_hout Debugging</value>
+  </data>
+  <data name="StatusBar_Ready" xml:space="preserve">
+    <value>Pronto</value>
+  </data>
+  <data name="StatusBar_Running" xml:space="preserve">
+    <value>Executando...</value>
+  </data>
+  <data name="StepIntoCommand" xml:space="preserve">
+    <value>Step _Into</value>
+  </data>
+  <data name="StepOutCommand" xml:space="preserve">
+    <value>Step Ou_t</value>
+  </data>
+  <data name="StepOverCommand" xml:space="preserve">
+    <value>Step _Over</value>
+  </data>
+  <data name="StopDebuggingCommand" xml:space="preserve">
+    <value>Parar Depuração</value>
+  </data>
+  <data name="SwitchToFrameCommand" xml:space="preserve">
+    <value>Mudar para Frame</value>
+  </data>
+  <data name="SwitchToThreadCommand" xml:space="preserve">
+    <value>Mudar para Thread</value>
+  </data>
+  <data name="ThawThreadCommand" xml:space="preserve">
+    <value>_Thaw</value>
+  </data>
+  <data name="ThreadsCommand" xml:space="preserve">
+    <value>T_hreads</value>
+  </data>
+  <data name="ThreadType_Main" xml:space="preserve">
+    <value>Thread Principal</value>
+  </data>
+  <data name="ThreadType_Terminated" xml:space="preserve">
+    <value>Terminated Thread</value>
+  </data>
+  <data name="ThreadType_ThreadPool" xml:space="preserve">
+    <value>Thread Pool</value>
+  </data>
+  <data name="ThreadType_Unknown" xml:space="preserve">
+    <value>Thread Desconhecido</value>
+  </data>
+  <data name="ThreadType_Worker" xml:space="preserve">
+    <value>Worker Thread</value>
+  </data>
+  <data name="Thread_LocationNotAvailable" xml:space="preserve">
+    <value>&lt;não disponível&gt;</value>
+  </data>
+  <data name="Thread_NoName" xml:space="preserve">
+    <value>&lt;Sem Nome&gt;</value>
+  </data>
+  <data name="Thread_Priority_AboveNormal" xml:space="preserve">
+    <value>Acima do Nomal</value>
+  </data>
+  <data name="Thread_Priority_BelowNormal" xml:space="preserve">
+    <value>Abaixo do Normal</value>
+  </data>
+  <data name="Thread_Priority_Highest" xml:space="preserve">
+    <value>Mais alto</value>
+  </data>
+  <data name="Thread_Priority_Lowest" xml:space="preserve">
+    <value>Mais baixo</value>
+  </data>
+  <data name="Thread_Priority_Normal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="ToggleBreakpointCommand" xml:space="preserve">
+    <value>Al_ternar Breakpoint</value>
+  </data>
+  <data name="ToolBarBreakAllToolTip" xml:space="preserve">
+    <value>Pausar Todos</value>
+  </data>
+  <data name="ToolBarContinueDebuggingButton" xml:space="preserve">
+    <value>Continuar</value>
+  </data>
+  <data name="ToolBarContinueDebuggingToolTip" xml:space="preserve">
+    <value>Continuar</value>
+  </data>
+  <data name="ToolBarDebugAssemblyToolTip" xml:space="preserve">
+    <value>Depurar um Programa</value>
+  </data>
+  <data name="ToolBarRestartToolTip" xml:space="preserve">
+    <value>Reinicar</value>
+  </data>
+  <data name="ToolBarShowNextStatementToolTip" xml:space="preserve">
+    <value>Mostrar próxima Declaração</value>
+  </data>
+  <data name="ToolBarStartDebuggingButton" xml:space="preserve">
+    <value>Iniciar</value>
+  </data>
+  <data name="ToolBarStepIntoToolTip" xml:space="preserve">
+    <value>Entrar em</value>
+  </data>
+  <data name="ToolBarStepOutToolTip" xml:space="preserve">
+    <value>Sair</value>
+  </data>
+  <data name="ToolBarStepOverToolTip" xml:space="preserve">
+    <value>Pular instrução</value>
+  </data>
+  <data name="ToolBarStopDebuggingToolTip" xml:space="preserve">
+    <value>Parar Depuração</value>
+  </data>
+  <data name="Window_Breakpoints" xml:space="preserve">
+    <value>Pontos de interrupção</value>
+  </data>
+  <data name="Window_CallStack" xml:space="preserve">
+    <value>Pilha de chamadas</value>
+  </data>
+  <data name="Window_ExceptionSettings" xml:space="preserve">
+    <value>Configurações de exceção</value>
+  </data>
+  <data name="Window_Locals" xml:space="preserve">
+    <value>Locais</value>
+  </data>
+  <data name="Window_Memory_10_MenuItem" xml:space="preserve">
+    <value>Memória 1_0</value>
+  </data>
+  <data name="Window_Memory_N" xml:space="preserve">
+    <value>Memória {0}</value>
+  </data>
+  <data name="Window_Memory_N_MenuItem" xml:space="preserve">
+    <value>Memória _{0}</value>
+  </data>
+  <data name="Window_Memory_N_MenuItem2" xml:space="preserve">
+    <value>Memória {0}</value>
+  </data>
+  <data name="Window_Modules" xml:space="preserve">
+    <value>Módulos</value>
+  </data>
+  <data name="Window_Threads" xml:space="preserve">
+    <value>Threads</value>
+  </data>
+  <data name="YesNo_No" xml:space="preserve">
+    <value>Não</value>
+  </data>
+  <data name="YesNo_Yes" xml:space="preserve">
+    <value>Sim</value>
+  </data>
+  <data name="DbgSettings_SyntaxHighlight" xml:space="preserve">
+    <value>Realce de sintaxe</value>
+  </data>
+  <data name="LoadModulesCommand" xml:space="preserve">
+    <value>Abrir Módulos</value>
+  </data>
+  <data name="LoadXModulesCommand" xml:space="preserve">
+    <value>Abrir {0} Módulos</value>
+  </data>
+  <data name="ShowParameterTypesCommand2" xml:space="preserve">
+    <value>Mostrar Tipos de Parâmetro</value>
+  </data>
+  <data name="Plugin_ShortDescription" xml:space="preserve">
+    <value>Depurador</value>
+  </data>
+  <data name="DebugLoggerName" xml:space="preserve">
+    <value>Depurar</value>
+  </data>
+  <data name="ShowExceptionMessages" xml:space="preserve">
+    <value>_Exception Messages</value>
+  </data>
+  <data name="ShowModuleLoadMessages" xml:space="preserve">
+    <value>Module _Load Messages</value>
+  </data>
+  <data name="ShowModuleUnloadMessages" xml:space="preserve">
+    <value>Module _Unload Messages</value>
+  </data>
+  <data name="ShowProcessExitMessages" xml:space="preserve">
+    <value>_Process Exit Messages</value>
+  </data>
+  <data name="ShowProgramOutputMessages" xml:space="preserve">
+    <value>Program _Output</value>
+  </data>
+  <data name="ShowStepFilteringMessages" xml:space="preserve">
+    <value>_Step Filtering Messages</value>
+  </data>
+  <data name="ShowThreadExitMessages" xml:space="preserve">
+    <value>_Thread Exit Messages</value>
+  </data>
+  <data name="ShowMDAMessages" xml:space="preserve">
+    <value>Mensagens MDA</value>
+  </data>
+  <data name="DebugLogAdditionalInformation" xml:space="preserve">
+    <value>Informação adicional: {0}</value>
+  </data>
+  <data name="DebugLogExceptionHandled" xml:space="preserve">
+    <value>Exceção lançada: '{0}' em {1}</value>
+  </data>
+  <data name="DebugLogExceptionUnhandled" xml:space="preserve">
+    <value>Ocorreu uma exceção sem tratamento do tipo '{0}' em {1}</value>
+  </data>
+  <data name="DebugLogExitProcess" xml:space="preserve">
+    <value>O programa '{0}' foi encerrado com código {1} (0x{1:x}).</value>
+  </data>
+  <data name="DebugLogExitThread" xml:space="preserve">
+    <value>A thread 0x{0:x} foi encerrada com código {1} (0x{1:x}).</value>
+  </data>
+  <data name="DebugLogLoadModule" xml:space="preserve">
+    <value>'{0}' carregado.</value>
+  </data>
+  <data name="DebugLogMDA" xml:space="preserve">
+    <value>Assistente de Depuração Gerenciado '{0}' detectou um problema em '{1}'.</value>
+  </data>
+  <data name="DebugLogUnloadModule" xml:space="preserve">
+    <value>'{0}' descarregado.</value>
+  </data>
+  <data name="ExceptionMessageIsNull" xml:space="preserve">
+    <value>"&lt;Nenhuma mensagem de exceção&gt;"</value>
+  </data>
+  <data name="GlyphToolTip_Location" xml:space="preserve">
+    <value>Localização</value>
+  </data>
+  <data name="HexEditorGroup_DebuggerMemory" xml:space="preserve">
+    <value>Janela de Memória</value>
+  </data>
+  <data name="BgImgDisplayName_DebuggerMemory" xml:space="preserve">
+    <value>Editor Hex (Janela de Memória)</value>
+  </data>
+  <data name="DbgAsm_DebugEngine" xml:space="preserve">
+    <value>_Debug engine</value>
+  </data>
+  <data name="DebugWindows" xml:space="preserve">
+    <value>_Windows</value>
+  </data>
+  <data name="OutputCommand" xml:space="preserve">
+    <value>_Output</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltW_DIGIT" xml:space="preserve">
+    <value>Ctrl + Alt + W, {0}</value>
+  </data>
+  <data name="TerminateAllCommand" xml:space="preserve">
+    <value>Ter_minate All</value>
+  </data>
+  <data name="WatchCommand" xml:space="preserve">
+    <value>_Watch</value>
+  </data>
+  <data name="Window_Watch_10_MenuItem" xml:space="preserve">
+    <value>Watch 1_0</value>
+  </data>
+  <data name="Window_Watch_N" xml:space="preserve">
+    <value>Observador {0}</value>
+  </data>
+  <data name="Window_Watch_N_MenuItem" xml:space="preserve">
+    <value>Observador _{0}</value>
+  </data>
+  <data name="Window_Watch_N_MenuItem2" xml:space="preserve">
+    <value>Observador {0}</value>
+  </data>
+  <data name="Options" xml:space="preserve">
+    <value>_Opções...</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltZ" xml:space="preserve">
+    <value>Ctrl + Alt + Z</value>
+  </data>
+  <data name="ProcessesCommand" xml:space="preserve">
+    <value>_Processes</value>
+  </data>
+  <data name="Window_Processes" xml:space="preserve">
+    <value>Processos</value>
+  </data>
+  <data name="Column_Debugging" xml:space="preserve">
+    <value>Depurando</value>
+  </data>
+  <data name="Column_ID" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="Column_State" xml:space="preserve">
+    <value>Estado</value>
+  </data>
+  <data name="Column_Title" xml:space="preserve">
+    <value>Título</value>
+  </data>
+  <data name="Process_Paused" xml:space="preserve">
+    <value>Pausar</value>
+  </data>
+  <data name="Process_Running" xml:space="preserve">
+    <value>Em execução</value>
+  </data>
+  <data name="Processes_AttachToProcessToolTip" xml:space="preserve">
+    <value>Anexar ao Processo</value>
+  </data>
+  <data name="Processes_DetachToolTip" xml:space="preserve">
+    <value>Desanexar Processo</value>
+  </data>
+  <data name="Processes_TerminateToolTip" xml:space="preserve">
+    <value>Terminate Process</value>
+  </data>
+  <data name="ShortCutKeyCtrlF" xml:space="preserve">
+    <value>Ctrl+F</value>
+  </data>
+  <data name="DetachProcessCommand" xml:space="preserve">
+    <value>_Desanexar Processo</value>
+  </data>
+  <data name="DetachWhenDebuggingStoppedCommand" xml:space="preserve">
+    <value>Detach _When Debugging Stopped</value>
+  </data>
+  <data name="TerminateProcessCommand" xml:space="preserve">
+    <value>Ter_minate Process</value>
+  </data>
+  <data name="ProcessCommand" xml:space="preserve">
+    <value>Processo</value>
+  </data>
+  <data name="Column_ProcessName" xml:space="preserve">
+    <value>Nome do Processo</value>
+  </data>
+  <data name="AllRemainingExceptionsNotInList" xml:space="preserve">
+    <value>&lt;All {0} not in this list&gt;</value>
+  </data>
+  <data name="Exceptions_EditConditions_ToolTip" xml:space="preserve">
+    <value>Editar condições</value>
+  </data>
+  <data name="Column_Conditions" xml:space="preserve">
+    <value>Condições</value>
+  </data>
+  <data name="Column_BreakWhenThrown" xml:space="preserve">
+    <value>Parar quando acionado</value>
+  </data>
+  <data name="Column_Category" xml:space="preserve">
+    <value>Categoria</value>
+  </data>
+  <data name="Exception_Conditions_And" xml:space="preserve">
+    <value>E</value>
+  </data>
+  <data name="Exception_Conditions_ModuleNameEquals" xml:space="preserve">
+    <value>O nome do módulo é igual</value>
+  </data>
+  <data name="Exception_Conditions_ModuleNameNotEquals" xml:space="preserve">
+    <value>O nome do módulo não é igual</value>
+  </data>
+  <data name="Exceptions_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Reset all search criteria so that all exceptions are shown</value>
+  </data>
+  <data name="Exceptions_AllCategories" xml:space="preserve">
+    <value>Todos</value>
+  </data>
+  <data name="EditConditionsCommand" xml:space="preserve">
+    <value>Editar Condições...</value>
+  </data>
+  <data name="ExceptionsCommand" xml:space="preserve">
+    <value>Exceptions</value>
+  </data>
+  <data name="FindCommand" xml:space="preserve">
+    <value>_Encontrar</value>
+  </data>
+  <data name="Exceptions_NoMatch" xml:space="preserve">
+    <value>No exception types match your search filter.</value>
+  </data>
+  <data name="AddExceptionButton" xml:space="preserve">
+    <value>Adicionar</value>
+  </data>
+  <data name="ExceptionDescription" xml:space="preserve">
+    <value>Exception description</value>
+  </data>
+  <data name="Exception_Error_NameCanNotBeEmpty" xml:space="preserve">
+    <value>Name can't be empty</value>
+  </data>
+  <data name="EditConditions_Title" xml:space="preserve">
+    <value>Edit Conditions</value>
+  </data>
+  <data name="Button_AddCondition" xml:space="preserve">
+    <value>_Add Condition</value>
+  </data>
+  <data name="ModuleBreakpointsCommand" xml:space="preserve">
+    <value>Mod_ule Breakpoints</value>
+  </data>
+  <data name="Window_ModuleBreakpoints" xml:space="preserve">
+    <value>Module Breakpoints</value>
+  </data>
+  <data name="Breakpoints_AddBreakpoint_ToolTip" xml:space="preserve">
+    <value>Adicionar breakpoint</value>
+  </data>
+  <data name="Breakpoints_RemoveBreakpoint_ToolTip" xml:space="preserve">
+    <value>Remove breakpoint</value>
+  </data>
+  <data name="EditAppDomainNameCommand" xml:space="preserve">
+    <value>Editar o nome do AppDomain</value>
+  </data>
+  <data name="EditModuleNameCommand" xml:space="preserve">
+    <value>Editar Nome do Módulo</value>
+  </data>
+  <data name="EditOrderCommand" xml:space="preserve">
+    <value>Editar a Ordem de Carregamento dos Módulos</value>
+  </data>
+  <data name="EditProcessNameCommand" xml:space="preserve">
+    <value>Editar Nome do Processo</value>
+  </data>
+  <data name="RemoveAllBreakpointsCommand" xml:space="preserve">
+    <value>Remover Todos os Breakpoints</value>
+  </data>
+  <data name="RemoveBreakpointCommand" xml:space="preserve">
+    <value>Remover Breakpoint</value>
+  </data>
+  <data name="DisableBreakpointCommand3" xml:space="preserve">
+    <value>Desativar Breakpoint</value>
+  </data>
+  <data name="EnableBreakpointCommand3" xml:space="preserve">
+    <value>Ativar Breakpoint</value>
+  </data>
+  <data name="DbgSettings_BreakAllProcesses" xml:space="preserve">
+    <value>Pausar todos os processos quando um processo é pausado</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltF10" xml:space="preserve">
+    <value>Ctrl + Alt + F10</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltF11" xml:space="preserve">
+    <value>Ctrl + Alt + F11</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftAltF11" xml:space="preserve">
+    <value>Ctrl+Shift+Alt+F11</value>
+  </data>
+  <data name="StepIntoCurrentProcessCommand" xml:space="preserve">
+    <value>Step Into (Current Process)</value>
+  </data>
+  <data name="StepOutCurrentProcessCommand" xml:space="preserve">
+    <value>Step Out (Current Process)</value>
+  </data>
+  <data name="StepOverCurrentProcessCommand" xml:space="preserve">
+    <value>Step Over (Current Process)</value>
+  </data>
+  <data name="Processes_BreakProcessToolTip" xml:space="preserve">
+    <value>Pausar Processo</value>
+  </data>
+  <data name="Processes_ContinueProcessToolTip" xml:space="preserve">
+    <value>Continuar processo</value>
+  </data>
+  <data name="Processes_StepIntoProcessToolTip" xml:space="preserve">
+    <value>Entrar em</value>
+  </data>
+  <data name="Processes_StepOutProcessToolTip" xml:space="preserve">
+    <value>Sair</value>
+  </data>
+  <data name="Processes_StepOverProcessToolTip" xml:space="preserve">
+    <value>Pular instrução</value>
+  </data>
+  <data name="StepsOnlyTheCurrentProcess" xml:space="preserve">
+    <value>Steps only the current process</value>
+  </data>
+  <data name="BreakProcessCommand" xml:space="preserve">
+    <value>_Pausar Processo</value>
+  </data>
+  <data name="ContinueProcessCommand" xml:space="preserve">
+    <value>_Continuar Processo</value>
+  </data>
+  <data name="AttachToProcess_Search_ToolTip" xml:space="preserve">
+    <value>Procurar por um processo</value>
+  </data>
+  <data name="AutosCommand" xml:space="preserve">
+    <value>_Autos</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltV_A" xml:space="preserve">
+    <value>Ctrl+Alt+V, A</value>
+  </data>
+  <data name="Breakpoints_ExportMatchingBreakpoints_ToolTip" xml:space="preserve">
+    <value>Export all breakpoints matching the current search criteria</value>
+  </data>
+  <data name="Breakpoints_ImportBreakpoints_ToolTip" xml:space="preserve">
+    <value>Importar breakpoints a partir de um arquivo</value>
+  </data>
+  <data name="ExportSelectedCommand" xml:space="preserve">
+    <value>_Exportar Selecionados...</value>
+  </data>
+  <data name="Breakpoints_NoMatch" xml:space="preserve">
+    <value>Nenhum breakpoint corresponde ao filtro de pesquisa.</value>
+  </data>
+  <data name="Breakpoints_Search" xml:space="preserve">
+    <value>Pesquisar</value>
+  </data>
+  <data name="Breakpoints_Search_ToolTip" xml:space="preserve">
+    <value>Procurar breakpoint</value>
+  </data>
+  <data name="Breakpoints_RemoveMatchingBreakpoints_ToolTip" xml:space="preserve">
+    <value>Remove all breakpoints matching the current search criteria</value>
+  </data>
+  <data name="Breakpoints_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Reset all search criteria so that all breakpoints are shown</value>
+  </data>
+  <data name="Breakpoints_ToggleMatchingBreakpoints_ToolTip" xml:space="preserve">
+    <value>Enable or disable all breakpoints matching the current search criteria</value>
+  </data>
+  <data name="Modules_AllProcesses" xml:space="preserve">
+    <value>Todos</value>
+  </data>
+  <data name="Modules_NoMatch" xml:space="preserve">
+    <value>No modules match your search filter.</value>
+  </data>
+  <data name="Modules_Search" xml:space="preserve">
+    <value>Pesquisar</value>
+  </data>
+  <data name="Modules_Search_ToolTip" xml:space="preserve">
+    <value>Procurar um módulo</value>
+  </data>
+  <data name="Modules_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Redefinir todos os critérios de pesquisa para que todos os módulos sejam exibidos</value>
+  </data>
+  <data name="Modules_Process" xml:space="preserve">
+    <value>Processo</value>
+  </data>
+  <data name="SearchHelp_ToolTip" xml:space="preserve">
+    <value>Ajuda</value>
+  </data>
+  <data name="Column_Condition" xml:space="preserve">
+    <value>Condição</value>
+  </data>
+  <data name="Column_Filter" xml:space="preserve">
+    <value>Filtro</value>
+  </data>
+  <data name="Column_HitCount" xml:space="preserve">
+    <value>Hit Count</value>
+  </data>
+  <data name="Column_WhenHit" xml:space="preserve">
+    <value>When Hit</value>
+  </data>
+  <data name="Breakpoints_GoToDisassembly_ToolTip" xml:space="preserve">
+    <value>Ir Para Disassembly</value>
+  </data>
+  <data name="Breakpoints_GoToSourceCode_ToolTip" xml:space="preserve">
+    <value>Ir Para o Código Fonte</value>
+  </data>
+  <data name="GoToSourceCodeCommand" xml:space="preserve">
+    <value>Ir Para o Código Fonte</value>
+  </data>
+  <data name="Breakpoint_Condition_NoCondition" xml:space="preserve">
+    <value>(nenhuma condição)</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenConditionHasChanged" xml:space="preserve">
+    <value>when '{0}' has changed</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenConditionIsTrue" xml:space="preserve">
+    <value>quando '{0}' for verdadeiro</value>
+  </data>
+  <data name="Breakpoint_Filter_NoFilter" xml:space="preserve">
+    <value>(nenhum)</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsAMultipleOf" xml:space="preserve">
+    <value>when hit count is a multiple of {0}</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsEqualTo" xml:space="preserve">
+    <value>when hit count is equal to {0}</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsGreaterThanOrEqualTo" xml:space="preserve">
+    <value>when hit count is greater than or equal to {0}</value>
+  </data>
+  <data name="Breakpoint_HitCount_NoHitCount" xml:space="preserve">
+    <value>pausar sempre</value>
+  </data>
+  <data name="Breakpoint_Tracepoint_NoTraceMessage" xml:space="preserve">
+    <value>Pausar</value>
+  </data>
+  <data name="Breakpoint_Tracepoint_PrintMessage" xml:space="preserve">
+    <value>Imprimir mensagem '{0}'</value>
+  </data>
+  <data name="ShortCutKeyAltEnter" xml:space="preserve">
+    <value>Alt+Enter</value>
+  </data>
+  <data name="SettingsCommand" xml:space="preserve">
+    <value>_Settings</value>
+  </data>
+  <data name="EditBreakpointSettings_Title" xml:space="preserve">
+    <value>Breakpoint Settings</value>
+  </data>
+  <data name="Breakpoint_Condition_IsTrue" xml:space="preserve">
+    <value>Verdadeiro</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenChanged" xml:space="preserve">
+    <value>When changed</value>
+  </data>
+  <data name="Breakpoint_HitCount_IsAMultipleOf" xml:space="preserve">
+    <value>É um múltiplo de</value>
+  </data>
+  <data name="EditBreakpointSettings_ConditionalExpression" xml:space="preserve">
+    <value>Conditional _Expression</value>
+  </data>
+  <data name="EditBreakpointSettings_Filter" xml:space="preserve">
+    <value>_Filtro</value>
+  </data>
+  <data name="EditBreakpointSettings_HitCount" xml:space="preserve">
+    <value>_Hit Count</value>
+  </data>
+  <data name="EditBreakpointSettings_Trace" xml:space="preserve">
+    <value>_Log Message</value>
+  </data>
+  <data name="GlyphToolTip_Actions" xml:space="preserve">
+    <value>Actions:</value>
+  </data>
+  <data name="GlyphToolTip_Conditions" xml:space="preserve">
+    <value>Condições:</value>
+  </data>
+  <data name="Breakpoint_Condition_ConditionalExpression" xml:space="preserve">
+    <value>Conditional expression:</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenConditionHasChanged2" xml:space="preserve">
+    <value>'{0}' mudou</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenConditionIsTrue2" xml:space="preserve">
+    <value>'{0}' é verdadeiro</value>
+  </data>
+  <data name="Breakpoint_Filter_Filter" xml:space="preserve">
+    <value>Filtro: '{0}'</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsAMultipleOf2" xml:space="preserve">
+    <value>A contagem de atingidos é um múltiplo de {0}</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsEqualTo2" xml:space="preserve">
+    <value>A contagem de atingidos é igual a {0}</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsGreaterThanOrEqualTo2" xml:space="preserve">
+    <value>A contagem de atringidos é maior ou igual a {0}</value>
+  </data>
+  <data name="Breakpoint_Tracepoint_PrintMessage2" xml:space="preserve">
+    <value>A mensagem de log '{0}', na janela de Saída</value>
+  </data>
+  <data name="Breakpoints_GlyphMargin_DisableBreakpoint" xml:space="preserve">
+    <value>Desativar ponto de interrupção</value>
+  </data>
+  <data name="Breakpoints_GlyphMargin_EnableBreakpoint" xml:space="preserve">
+    <value>Ativar breakpoint</value>
+  </data>
+  <data name="Breakpoints_GlyphMargin_ShowSettingsToolTip" xml:space="preserve">
+    <value>Configurações...</value>
+  </data>
+  <data name="Breakpoints_GlyphMargin_BreakWhenBreakpointHit" xml:space="preserve">
+    <value>Pausar</value>
+  </data>
+  <data name="EditBreakpointSettings_TraceContinue" xml:space="preserve">
+    <value>Continuar execução</value>
+  </data>
+  <data name="ExportCommand" xml:space="preserve">
+    <value>E_xportar...</value>
+  </data>
+  <data name="SettingsCommand2" xml:space="preserve">
+    <value>_Configurações...</value>
+  </data>
+  <data name="StartDebuggingCommand" xml:space="preserve">
+    <value>Iniciar Depuração</value>
+  </data>
+  <data name="Breakpoint_Tracepoint_BreakPrintMessage" xml:space="preserve">
+    <value>Pausar e imprimir a mensagem '{0}'</value>
+  </data>
+  <data name="BreakpointMessage_TheFunctionCanNotBeFound" xml:space="preserve">
+    <value>A função {0} não pode ser encontrada</value>
+  </data>
+  <data name="Breakpoints_BreakpointWillNotBeHit" xml:space="preserve">
+    <value>O breakpoint não vai ser alcançado atualmente. {0}</value>
+  </data>
+  <data name="Breakpoints_ModuleNotLoaded" xml:space="preserve">
+    <value>The module hasn't been loaded or no symbols have been loaded for this module.</value>
+  </data>
+  <data name="BreakpointMessage_CouldNotCreateBreakpoint" xml:space="preserve">
+    <value>Could not create the breakpoint.</value>
+  </data>
+  <data name="Column_Labels" xml:space="preserve">
+    <value>Rótulos</value>
+  </data>
+  <data name="EditLabelsCommand" xml:space="preserve">
+    <value>Editar rótulos</value>
+  </data>
+  <data name="Threads_FreezeThreads_ToolTip" xml:space="preserve">
+    <value>Freeze Threads</value>
+  </data>
+  <data name="Threads_NoMatch" xml:space="preserve">
+    <value>No threads match your search filter.</value>
+  </data>
+  <data name="Threads_Process" xml:space="preserve">
+    <value>Processo</value>
+  </data>
+  <data name="Threads_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Reset all search criteria so that all threads are shown</value>
+  </data>
+  <data name="Threads_Search" xml:space="preserve">
+    <value>Pesquisar</value>
+  </data>
+  <data name="Threads_Search_ToolTip" xml:space="preserve">
+    <value>Search for a thread</value>
+  </data>
+  <data name="Threads_ThawThreads_ToolTip" xml:space="preserve">
+    <value>Thaw Threads</value>
+  </data>
+  <data name="Threads_AllProcesses" xml:space="preserve">
+    <value>Todos</value>
+  </data>
+  <data name="EditLabelsMsgBoxLabel" xml:space="preserve">
+    <value>Rótulos</value>
+  </data>
+  <data name="EditLabelsTitle" xml:space="preserve">
+    <value>Editar rótulos</value>
+  </data>
+  <data name="Breakpoint_HitCount_CurrentHitCountValue" xml:space="preserve">
+    <value>currently {0}</value>
+  </data>
+  <data name="ResetBreakpointHitCountCommand" xml:space="preserve">
+    <value>Reset Hit Count</value>
+  </data>
+  <data name="HelpToolTip" xml:space="preserve">
+    <value>Ajuda</value>
+  </data>
+  <data name="FilterExpression_AllVariables" xml:space="preserve">
+    <value>Variables that can be used:</value>
+  </data>
+  <data name="FilterExpression_Example" xml:space="preserve">
+    <value>Example: {0}</value>
+  </data>
+  <data name="TracepointMessage_EscapeSequences" xml:space="preserve">
+    <value>Escape sequences: {0}</value>
+  </data>
+  <data name="TracepointMessage_EvaluateMessage" xml:space="preserve">
+    <value>Use {xxx} to evaluate expression xxx</value>
+  </data>
+  <data name="TracepointMessage_Example" xml:space="preserve">
+    <value>Exemplo: {0}</value>
+  </data>
+  <data name="TracepointMessage_ValidKeywords" xml:space="preserve">
+    <value>The following keywords can be used:</value>
+  </data>
+  <data name="CallStackBreakpointCommand" xml:space="preserve">
+    <value>_Breakpoint</value>
+  </data>
+  <data name="InsertBreakpointCommand" xml:space="preserve">
+    <value>Insert B_reakpoint</value>
+  </data>
+  <data name="InsertTracepointCommand" xml:space="preserve">
+    <value>Insert _Tracepoint</value>
+  </data>
+  <data name="UnwindToThisFrameCommand" xml:space="preserve">
+    <value>_Unwind To This Frame</value>
+  </data>
+  <data name="GlyphMargin_CurrentStatementToolTip" xml:space="preserve">
+    <value>This is the next statement that will be executed.</value>
+  </data>
+  <data name="GlyphMargin_ReturnStatementToolTip" xml:space="preserve">
+    <value>This is the next statement to execute when this thread returns from the current function.</value>
+  </data>
+  <data name="DbgSettings_EnableManagedDebuggingAssistants" xml:space="preserve">
+    <value>Enable Managed Debugging Assistants (MDA)</value>
+  </data>
+  <data name="DebugStepProcessError" xml:space="preserve">
+    <value>Could not step: {0}</value>
+  </data>
+  <data name="ProcessIsNotPaused" xml:space="preserve">
+    <value>O processo não está pausado</value>
+  </data>
+  <data name="Window_Autos" xml:space="preserve">
+    <value>Autos</value>
+  </data>
+  <data name="DbgSettings_HighlightChangedVariables" xml:space="preserve">
+    <value>Highlight changed variables in variables windows</value>
+  </data>
+  <data name="MakeObjectIdCommand" xml:space="preserve">
+    <value>_Make Object ID</value>
+  </data>
+  <data name="LanguageCommand" xml:space="preserve">
+    <value>Línguagem</value>
+  </data>
+  <data name="DbgSettings_DebugEngine" xml:space="preserve">
+    <value>Debug Engine</value>
+  </data>
+  <data name="DbgSettings_Language" xml:space="preserve">
+    <value>Línguagem</value>
+  </data>
+  <data name="ShortCutKeyCtrlV" xml:space="preserve">
+    <value>Ctrl+V</value>
+  </data>
+  <data name="ClearAllCommand" xml:space="preserve">
+    <value>Apagar tudo</value>
+  </data>
+  <data name="DeleteWatchCommand" xml:space="preserve">
+    <value>_Delete Watch</value>
+  </data>
+  <data name="PasteCommand" xml:space="preserve">
+    <value>_Colar</value>
+  </data>
+  <data name="ExpressionCausesSideEffectsNoEval" xml:space="preserve">
+    <value>Esta expressão causa efeitos colaterais e não será avaliada</value>
+  </data>
+  <data name="RefreshExpressionButtonToolTip" xml:space="preserve">
+    <value>Clique neste botão para avaliar agora.</value>
+  </data>
+  <data name="ErrorEvaluatingExpression" xml:space="preserve">
+    <value>Não foi possível avaliar a expressão</value>
+  </data>
+  <data name="DeleteObjectIdCommand" xml:space="preserve">
+    <value>Apagar ID de Objeto</value>
+  </data>
+  <data name="DbgSettings_ShowRawStructureOfObjects" xml:space="preserve">
+    <value>Show raw structure of objects in variables windows</value>
+  </data>
+  <data name="UnknownValue" xml:space="preserve">
+    <value>&lt;Desconhecido&gt;</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>Atualizar</value>
+  </data>
+  <data name="DbgSettings_GroupParametersAndLocalsTogether" xml:space="preserve">
+    <value>Group parameters and locals together</value>
+  </data>
+  <data name="DbgSettings_ShowCompilerGeneratedVariables" xml:space="preserve">
+    <value>Show compiler generated variables</value>
+  </data>
+  <data name="DbgSettings_ShowDecompilerGeneratedVariables" xml:space="preserve">
+    <value>Show decompiler generated variables</value>
+  </data>
+  <data name="DbgSettings_SortLocals" xml:space="preserve">
+    <value>Ordenar locais</value>
+  </data>
+  <data name="DbgSettings_SortParameters" xml:space="preserve">
+    <value>Ordenar parâmetros</value>
+  </data>
+  <data name="DbgSettings_HideCompilerGeneratedMembers" xml:space="preserve">
+    <value>Hide compiler generated members</value>
+  </data>
+  <data name="FunctionEvaluationDisabled" xml:space="preserve">
+    <value>Implicit function evaluation is turned off by the user</value>
+  </data>
+  <data name="DbgSettings_RespectHideMemberAttributes" xml:space="preserve">
+    <value>Respect attributes that hide members</value>
+  </data>
+  <data name="InternalDebuggerError" xml:space="preserve">
+    <value>Erro interno do depurador</value>
+  </data>
+  <data name="FuncEvalRequiresAllThreadsToRun" xml:space="preserve">
+    <value>The function evaluation requires all threads to run.</value>
+  </data>
+  <data name="DigitSeparatorsCommand" xml:space="preserve">
+    <value>Separadores de Dígitos</value>
+  </data>
+  <data name="Column_ProcessCommandLine" xml:space="preserve">
+    <value>Command Line</value>
+  </data>
+  <data name="CannotReadLocalOrArgumentMaybeOptimizedAway" xml:space="preserve">
+    <value>Cannot obtain value of the local variable or argument because it is not available at this instruction pointer, possibly because it has been optimized away.</value>
+  </data>
+  <data name="ExceptionMessage" xml:space="preserve">
+    <value>Message: {0}</value>
+  </data>
+  <data name="ExceptionName" xml:space="preserve">
+    <value>Exception: {0}</value>
+  </data>
+  <data name="UnhandledExceptionMessage_ProcessName_ProcessId" xml:space="preserve">
+    <value>An unhandled exception occurred in {0} ({1})</value>
+  </data>
+  <data name="StatusBar_BreakpointHit" xml:space="preserve">
+    <value>Breakpoint</value>
+  </data>
+  <data name="BreakpointExpressionMustBeABooleanExpression" xml:space="preserve">
+    <value>The breakpoint expression must be a boolean expression</value>
+  </data>
+  <data name="DbgSettings_SuppressJITOptimization" xml:space="preserve">
+    <value>Suppress JIT optimization on module load</value>
+  </data>
+  <data name="DbgSettings_SuppressJITOptimization_ProgramModules" xml:space="preserve">
+    <value>Program modules</value>
+  </data>
+  <data name="DbgSettings_SuppressJITOptimization_SystemModules" xml:space="preserve">
+    <value>System modules</value>
+  </data>
+  <data name="RuntimeIsUnableToEvaluateExpression" xml:space="preserve">
+    <value>The runtime is unable to evaluate this expression.</value>
+  </data>
+  <data name="Exceptions_ToggleMatchingExceptions_ToolTip" xml:space="preserve">
+    <value>Enable or disable all exceptions matching the current search criteria</value>
+  </data>
+  <data name="DisableBreakpointCommand2" xml:space="preserve">
+    <value>Desativar Breakpoint</value>
+  </data>
+  <data name="Exceptions_Add_ToolTip" xml:space="preserve">
+    <value>Add an exception to the list</value>
+  </data>
+  <data name="AskAppWindowClosingStopDebugging" xml:space="preserve">
+    <value>Deseja parar a depuração?</value>
+  </data>
+  <data name="DbgSettings_FocusActiveProcess" xml:space="preserve">
+    <value>Give focus to debugged process</value>
+  </data>
+  <data name="LoadAllModulesCommand" xml:space="preserve">
+    <value>Abrir todos os módulos</value>
+  </data>
+  <data name="DbgSettings_HideDeprecatedError" xml:space="preserve">
+    <value>Ocultar membros descontinuados nas janelas de variáveis</value>
+  </data>
+  <data name="DbgSettings_ShowReturnValues" xml:space="preserve">
+    <value>Mostrar valores de retorno</value>
+  </data>
+  <data name="DbgSettings_RedirectGuiConsoleOutput" xml:space="preserve">
+    <value>Redirect GUI applications' console output to the Output window</value>
+  </data>
+  <data name="AttachToProcess_MakingAnImageEasierToDebug" xml:space="preserve">
+    <value>Tornar uma imagem mais simples de depurar</value>
+  </data>
+  <data name="ShowOnlyPublicMembersCommand" xml:space="preserve">
+    <value>Membros públicos</value>
+  </data>
+  <data name="DbgSettings_ShowRawLocals" xml:space="preserve">
+    <value>Mostrar variáveis locais originais</value>
+  </data>
+  <data name="DbgSettings_AsyncDebugging" xml:space="preserve">
+    <value>Ativar depuração assíncrona</value>
+  </data>
+  <data name="DbgSettings_StepOverPropertiesAndOperators" xml:space="preserve">
+    <value>Step over properties and operators</value>
+  </data>
+  <data name="CopyExpressionCommand" xml:space="preserve">
+    <value>Copy E_xpression</value>
+  </data>
+  <data name="Error_CouldNotShowDisassembly" xml:space="preserve">
+    <value>Could not find the method's code. Make sure that the process is paused and that the method has been jitted.</value>
+  </data>
+  <data name="DisassemblyCommand" xml:space="preserve">
+    <value>_Disassembly</value>
+  </data>
+  <data name="ShortCutKeyAlt8" xml:space="preserve">
+    <value>Alt+8</value>
+  </data>
+  <data name="DbgSettings_IgnoreUnhandledExceptions" xml:space="preserve">
+    <value>Ignore unhandled exceptions</value>
+  </data>
+  <data name="RunWithInvalidExtension" xml:space="preserve">
+    <value>Are you sure you want to run this file which doesn't have a valid extension?</value>
+  </data>
+  <data name="DebugWithInvalidExtension" xml:space="preserve">
+    <value>Are you sure you want to debug this file which doesn't have a valid extension?</value>
+  </data>
+  <data name="Processes_NoMatch" xml:space="preserve">
+    <value>No processes match your search filter.</value>
+  </data>
+  <data name="Processes_Search" xml:space="preserve">
+    <value>Pesquisar</value>
+  </data>
+  <data name="Processes_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Reset all search criteria so that all processes are shown</value>
+  </data>
+  <data name="Processes_Search_ToolTip" xml:space="preserve">
+    <value>Procurar por um processo</value>
+  </data>
+  <data name="DbgSettings_FocusDebuggerWhenProcessBreaks" xml:space="preserve">
+    <value>Bring dnSpy to the foreground when breaking in the debugger</value>
+  </data>
+  <data name="Column_LoadModule" xml:space="preserve">
+    <value>Load</value>
+  </data>
+</root>

@@ -2,7 +2,7 @@ dnSpy credits:
 
 	0xd4d
 	Ki
-
+	And all other contributors: https://github.com/0xd4d/dnSpy/graphs/contributors
 
 ILSpy decompiler and analyzer credits:
 
@@ -91,3 +91,17 @@ Turkish:
 	rifatx
 	python dede
 	meertcevik
+
+Czech:
+
+	Matyho videa (matousporizek)
+	MirekVales
+
+Portuguese, Brazilian:
+
+	Marcelo Fabiano Kachimarck (marcelofabiano)
+	Marco Giovanni (mgpx)
+	Night (reffinS)
+	Marcos De Noni Buturri (marcosdenoni)
+	Bruno Silva (irbein.tepes)
+	EduardooViip

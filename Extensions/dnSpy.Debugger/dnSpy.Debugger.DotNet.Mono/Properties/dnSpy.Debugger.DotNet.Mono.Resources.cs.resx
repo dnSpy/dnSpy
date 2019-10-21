@@ -1,0 +1,253 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="DbgAsm_Args" xml:space="preserve">
+    <value>Argumenty
+</value>
+  </data>
+  <data name="DbgAsm_Assembly" xml:space="preserve">
+    <value>Sestavení</value>
+  </data>
+  <data name="DbgAsm_BreakAt" xml:space="preserve">
+    <value>Zastavit na</value>
+  </data>
+  <data name="DbgAsm_ConnectionPort" xml:space="preserve">
+    <value>Port</value>
+  </data>
+  <data name="DbgAsm_Connect_To_Process" xml:space="preserve">
+    <value>Připojit</value>
+  </data>
+  <data name="DbgAsm_IP_Address" xml:space="preserve">
+    <value>IP adresa</value>
+  </data>
+  <data name="DbgAsm_WorkingDir" xml:space="preserve">
+    <value>Pracovní adresář</value>
+  </data>
+  <data name="DbgBreak_CreateProcessEvent" xml:space="preserve">
+    <value>Vytvořit proces</value>
+  </data>
+  <data name="DbgBreak_Dont" xml:space="preserve">
+    <value>Nezastavit</value>
+  </data>
+  <data name="DbgBreak_EntryPoint" xml:space="preserve">
+    <value>Vstupní bod</value>
+  </data>
+  <data name="Error_FileDoesNotExist" xml:space="preserve">
+    <value>Soubor neexistuje</value>
+  </data>
+  <data name="Error_MissingFilename" xml:space="preserve">
+    <value>Chybějící název souboru</value>
+  </data>
+  <data name="Plugin_ShortDescription" xml:space="preserve">
+    <value>Ladicí program ({0})</value>
+  </data>
+  <data name="Error_CouldNotFindFile" xml:space="preserve">
+    <value>Nelze najít {0}</value>
+  </data>
+  <data name="Error_CouldNotConnectToProcess" xml:space="preserve">
+    <value>Nelze se připojit k laděnému procesu</value>
+  </data>
+  <data name="Error_CouldNotFindDebuggedProcess" xml:space="preserve">
+    <value>Nelze nalézt laděný proces</value>
+  </data>
+  <data name="Error_ConnectionWasUnexpectedlyClosed" xml:space="preserve">
+    <value>Spojení s laděným procesem bylo nečekaně uzavřeno</value>
+  </data>
+  <data name="Thread_UserState_Aborted" xml:space="preserve">
+    <value>Přerušeno</value>
+  </data>
+  <data name="Thread_UserState_AbortRequested" xml:space="preserve">
+    <value>Vyžádáno přerušení</value>
+  </data>
+  <data name="Thread_UserState_Background" xml:space="preserve">
+    <value>Pozadí</value>
+  </data>
+  <data name="Thread_UserState_Stopped" xml:space="preserve">
+    <value>Zastaveno</value>
+  </data>
+  <data name="Thread_UserState_StopRequested" xml:space="preserve">
+    <value>Zastavit vyžádané</value>
+  </data>
+  <data name="Thread_UserState_Suspended" xml:space="preserve">
+    <value>Pozastaveno</value>
+  </data>
+  <data name="Thread_UserState_SuspendRequested" xml:space="preserve">
+    <value>Pozastaveno vyžádané</value>
+  </data>
+  <data name="Thread_UserState_Unstarted" xml:space="preserve">
+    <value>Nezahájeno</value>
+  </data>
+  <data name="Thread_UserState_WaitSleepJoin" xml:space="preserve">
+    <value>Čekat, spát, připojit</value>
+  </data>
+  <data name="ExceptionMessageIsNull" xml:space="preserve">
+    <value>"&lt;žádná zpráva vyjímky&gt;"</value>
+  </data>
+  <data name="StackFrame_FunctionEvaluation" xml:space="preserve">
+    <value>Hodnocení funkce</value>
+  </data>
+  <data name="StackFrame_NativeTransition" xml:space="preserve">
+    <value>Nativní přechod</value>
+  </data>
+  <data name="Error_RuntimeDoesNotSupportCallingGenericMethods" xml:space="preserve">
+    <value>Tento runtime nepodporuje volání generických metod</value>
+  </data>
+  <data name="Error_CanNotWriteToThisArgument" xml:space="preserve">
+    <value>Není možné psát na "to"</value>
+  </data>
+  <data name="Error_CannotAccessMemberRuntimeLimitations" xml:space="preserve">
+    <value>Člen nemůže být zpřístupněn díky omezení runtimu</value>
+  </data>
+  <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
+    <value>Nelze nastavit další výkaz.</value>
+  </data>
+  <data name="DbgAsm_ProcessIsSuspended" xml:space="preserve">
+    <value>Proces je zastaven a čeká na ladicí program</value>
+  </data>
+  <data name="Error_RuntimeDoesNotSupportSettingNewStatement" xml:space="preserve">
+    <value>Runtime nepodporuje stanovení nového prohlášení</value>
+  </data>
+  <data name="AttachToProcessXCommand" xml:space="preserve">
+    <value>Připojit k procesu ({0})...</value>
+  </data>
+  <data name="UnityEditor" xml:space="preserve">
+    <value>Editor</value>
+  </data>
+  <data name="ConnectToUnity_UseAttachToUnityProcessDlgBoxMessage" xml:space="preserve">
+    <value>Použijte dialogové okno Připojit k procesu (Unity) pro připojení ladicích sestavení</value>
+  </data>
+  <data name="CanNotSetABreakpointWhenProcessIsPaused" xml:space="preserve">
+    <value>Nelze nastavit zarážku když je proces zastavený.</value>
+  </data>
+  <data name="DbgAsm_Executable" xml:space="preserve">
+    <value>Spustitelný soubor</value>
+  </data>
+  <data name="CouldNotConnectToUnityGame_MakeSureMonoDllFileIsPatched" xml:space="preserve">
+    <value>Ujistěte se, že jste upravili soubor mono.dll hry</value>
+  </data>
+  <data name="DbgAsm_ConnectionTimeoutInSeconds" xml:space="preserve">
+    <value>Časový limit(y)</value>
+  </data>
+  <data name="AttachToUnityProcess_DebugBuildsOnlyMessage" xml:space="preserve">
+    <value>Toto je pouze pro ladicí sestavení Unity</value>
+  </data>
+  <data name="DebuggingUnityGamesText" xml:space="preserve">
+    <value>Ladění Unity her</value>
+  </data>
+</root>

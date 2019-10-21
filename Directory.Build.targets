@@ -25,11 +25,9 @@
     <GarbageFile Include="x86\e_sqlite3.dll" />
     <GarbageDir Include="x86" />
     <GarbageDir Include="x64" />
-    <GarbageDir Include="cs" />
     <GarbageDir Include="ja" />
     <GarbageDir Include="ko" />
     <GarbageDir Include="pl" />
-    <GarbageDir Include="pt-BR" />
     <GarbageDir Include="zh-Hans" />
     <GarbageDir Include="zh-Hant" />
     <GarbageDir Include="runtimes" Condition=" '$(IsDotNetFramework)' == 'true' " />

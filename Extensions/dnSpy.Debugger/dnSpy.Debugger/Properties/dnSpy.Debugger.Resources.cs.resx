@@ -1,0 +1,1533 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddBreakpointCommand" xml:space="preserve">
+    <value>Přidat zarážku</value>
+  </data>
+  <data name="AddExceptionCommand" xml:space="preserve">
+    <value>Přidat vyjímku</value>
+  </data>
+  <data name="AppDomainNotAvailable" xml:space="preserve">
+    <value>&lt;nedostupný(é)&gt;</value>
+  </data>
+  <data name="AppMenu_Debug" xml:space="preserve">
+    <value>Ladit</value>
+  </data>
+  <data name="AppTitle_Debugging" xml:space="preserve">
+    <value>Ladění</value>
+  </data>
+  <data name="AskDeleteAllBreakpoints" xml:space="preserve">
+    <value>Chcete odstranit všechny zarážky?</value>
+  </data>
+  <data name="AttachToProcessCommand" xml:space="preserve">
+    <value>Připojit k procesu...</value>
+  </data>
+  <data name="Attach_AttachToProcess" xml:space="preserve">
+    <value>Připojit k procesu</value>
+  </data>
+  <data name="Attach_UseDnSpy32" xml:space="preserve">
+    <value>Použijte 64bitovou verzi DnSpy k připojení k 64bitovým procesům</value>
+  </data>
+  <data name="Attach_UseDnSpy64" xml:space="preserve">
+    <value>Použijte 32bitovou verzi DnSpy k připojení k 32bitovým procesům</value>
+  </data>
+  <data name="BreakCommand" xml:space="preserve">
+    <value>Zastavit vše</value>
+  </data>
+  <data name="BreakpointsCommand" xml:space="preserve">
+    <value>Zarážky</value>
+  </data>
+  <data name="Button_Attach" xml:space="preserve">
+    <value>Připojit</value>
+  </data>
+  <data name="Button_Cancel" xml:space="preserve">
+    <value>Zrušit</value>
+  </data>
+  <data name="Button_OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="Button_Refresh" xml:space="preserve">
+    <value>Obnovit</value>
+  </data>
+  <data name="CallStackCommand" xml:space="preserve">
+    <value>Zásobník volání</value>
+  </data>
+  <data name="CallStack_MaxFramesExceeded" xml:space="preserve">
+    <value>Byl překročen maximální počet rámů zásobníku podporovaný DnSpy.</value>
+  </data>
+  <data name="Column_Address" xml:space="preserve">
+    <value>Adresa</value>
+  </data>
+  <data name="Column_AppDomain" xml:space="preserve">
+    <value>Doména aplikace</value>
+  </data>
+  <data name="Column_DynamicModule" xml:space="preserve">
+    <value>Dynamický</value>
+  </data>
+  <data name="Column_InMemoryModule" xml:space="preserve">
+    <value>V paměti</value>
+  </data>
+  <data name="Column_Module" xml:space="preserve">
+    <value>Modul</value>
+  </data>
+  <data name="Column_Name" xml:space="preserve">
+    <value>Název</value>
+  </data>
+  <data name="Column_OptimizedModule" xml:space="preserve">
+    <value>Optimalizováno</value>
+  </data>
+  <data name="Column_Order" xml:space="preserve">
+    <value>Pořadí</value>
+  </data>
+  <data name="Column_Path" xml:space="preserve">
+    <value>Cesta</value>
+  </data>
+  <data name="Column_Process" xml:space="preserve">
+    <value>Proces</value>
+  </data>
+  <data name="Column_ProcessArchitecture" xml:space="preserve">
+    <value>Architektura</value>
+  </data>
+  <data name="Column_ProcessFilename" xml:space="preserve">
+    <value>Název souboru</value>
+  </data>
+  <data name="Column_ProcessID" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="Column_ProcessTitle" xml:space="preserve">
+    <value>Nadpis</value>
+  </data>
+  <data name="Column_ProcessType" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="Column_ThreadAffinityMask" xml:space="preserve">
+    <value>Maska spříznění</value>
+  </data>
+  <data name="Column_ThreadCategory" xml:space="preserve">
+    <value>Kategorie</value>
+  </data>
+  <data name="Column_ThreadID" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="Column_ThreadLocation" xml:space="preserve">
+    <value>Umístění</value>
+  </data>
+  <data name="Column_ThreadManagedId" xml:space="preserve">
+    <value>Spravované ID</value>
+  </data>
+  <data name="Column_ThreadPriority" xml:space="preserve">
+    <value>Priorita</value>
+  </data>
+  <data name="Column_ThreadState" xml:space="preserve">
+    <value>Stav</value>
+  </data>
+  <data name="Column_ThreadSuspendedCount" xml:space="preserve">
+    <value>Počet pozastavených</value>
+  </data>
+  <data name="Column_Timestamp" xml:space="preserve">
+    <value>Časové razítko</value>
+  </data>
+  <data name="Column_Type" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="Column_Value" xml:space="preserve">
+    <value>Hodnota</value>
+  </data>
+  <data name="Column_Version" xml:space="preserve">
+    <value>Verze</value>
+  </data>
+  <data name="ContinueDebuggingCommand" xml:space="preserve">
+    <value>_Pokračovat</value>
+  </data>
+  <data name="CopyCommand" xml:space="preserve">
+    <value>Kopírovat</value>
+  </data>
+  <data name="DbgAsm_Title" xml:space="preserve">
+    <value>Ladit program</value>
+  </data>
+  <data name="DbgSettings_AutoOpenLocalsWindow" xml:space="preserve">
+    <value>Zobrazit okno s lokálními proměnnými, když se ladicí program spustí</value>
+  </data>
+  <data name="DbgSettings_DisableDebuggerDetection" xml:space="preserve">
+    <value>Zabránit kódu před detekcí ladicího programu</value>
+  </data>
+  <data name="DbgSettings_IgnoreBreakInstructions" xml:space="preserve">
+    <value>Ignorovat Debugger.Break() a přerušit instrukce</value>
+  </data>
+  <data name="DbgSettings_PropertyEvalAndFunctionCalls" xml:space="preserve">
+    <value>Povolit vyhodnocení vlastnosti a další volání implicitních funkcí</value>
+  </data>
+  <data name="DbgSettings_UseMemoryModules" xml:space="preserve">
+    <value>Ladění souborů z paměti v procesu (zrušte zaškrtnutí políčka používat soubory na disku)</value>
+  </data>
+  <data name="DbgSettings_UseStringConversionFunction" xml:space="preserve">
+    <value>Volat funkci pro převod řetězce na objekty v oknech s proměnnými</value>
+  </data>
+  <data name="StartDebugging2" xml:space="preserve">
+    <value>Spustit ladění...</value>
+  </data>
+  <data name="DebuggerOptDlgTab" xml:space="preserve">
+    <value>Ladicí program</value>
+  </data>
+  <data name="DebugProgramX" xml:space="preserve">
+    <value>Ladit {0}</value>
+  </data>
+  <data name="Debug_EventDescription_Exception" xml:space="preserve">
+    <value>Výjimka</value>
+  </data>
+  <data name="Debug_EventDescription_LoadModule1" xml:space="preserve">
+    <value>LoadModule DYN ={0} MEM ={1} {2:X8} {3:X8} {4}</value>
+  </data>
+  <data name="Debug_EventDescription_LoadModule2" xml:space="preserve">
+    <value>LoadModule A ={0:X8} S ={1:X8} {2}</value>
+  </data>
+  <data name="Debug_EventDescription_UnhandledException" xml:space="preserve">
+    <value>Neošetřená výjimka</value>
+  </data>
+  <data name="DeleteAllBreakpointsCommand" xml:space="preserve">
+    <value>Odstranit všechny zarážky</value>
+  </data>
+  <data name="DeleteBreakpointCommand" xml:space="preserve">
+    <value>Smazat zarážku</value>
+  </data>
+  <data name="DetachAllCommand" xml:space="preserve">
+    <value>Odpojit vše</value>
+  </data>
+  <data name="DisableAllBreakpointsCommand" xml:space="preserve">
+    <value>Zakázat všechny zarážky</value>
+  </data>
+  <data name="EnableAllBreakpointsCommand" xml:space="preserve">
+    <value>Povolit všechny zarážky</value>
+  </data>
+  <data name="EnableBreakpointCommand" xml:space="preserve">
+    <value>Povolit zarážku</value>
+  </data>
+  <data name="EnableBreakpointCommand2" xml:space="preserve">
+    <value>Povolit zarážku</value>
+  </data>
+  <data name="ErrorOccurredX" xml:space="preserve">
+    <value>Došlo k chybě:
+
+{0}</value>
+  </data>
+  <data name="Error_CantEvalUnlessDebuggerStopped" xml:space="preserve">
+    <value>Nelze vyhodnotit, pokud je ladicí program zastaven</value>
+  </data>
+  <data name="Error_CantEvalWhenUnhandledExceptionHasOccurred" xml:space="preserve">
+    <value>Nelze vyhodnotit, když dojde k neošetřené vyjímce</value>
+  </data>
+  <data name="Error_StartWithoutDebuggingCouldNotStart" xml:space="preserve">
+    <value>Nelze spustit "{0}"
+Chyba: {1}</value>
+  </data>
+  <data name="ExceptionSettingsCommand" xml:space="preserve">
+    <value>Nastavení vyjímek</value>
+  </data>
+  <data name="Exceptions_Remove_ToolTip" xml:space="preserve">
+    <value>Odebrat výjimku ze seznamu</value>
+  </data>
+  <data name="Exceptions_RestoreSettings_ToolTip" xml:space="preserve">
+    <value>Obnovit seznam do výchozího nastavení</value>
+  </data>
+  <data name="Exceptions_Search" xml:space="preserve">
+    <value>Hledat</value>
+  </data>
+  <data name="Exceptions_Search_ToolTip" xml:space="preserve">
+    <value>Hledat vyjímku</value>
+  </data>
+  <data name="Exceptions_ShowOnlyEnabledExceptions_ToolTip" xml:space="preserve">
+    <value>Zobrazit pouze povolené výjimky</value>
+  </data>
+  <data name="FreezeThreadCommand" xml:space="preserve">
+    <value>Zmrazit</value>
+  </data>
+  <data name="GoToDisassemblyCommand2" xml:space="preserve">
+    <value>Přejít na rozebraný modul</value>
+  </data>
+  <data name="GoToModuleCommand" xml:space="preserve">
+    <value>Přejít na modul</value>
+  </data>
+  <data name="HexDisplayCommand" xml:space="preserve">
+    <value>Hexadecimalní zobrazení</value>
+  </data>
+  <data name="LocalsAddWatchCommand" xml:space="preserve">
+    <value>Přidat dozor</value>
+  </data>
+  <data name="LocalsCollapseChildrenNodesCommand" xml:space="preserve">
+    <value>Otevřít seznam poduzlů</value>
+  </data>
+  <data name="LocalsCollapseParentNodeCommand" xml:space="preserve">
+    <value>Otevřít nadřazený uzel</value>
+  </data>
+  <data name="LocalsCommand" xml:space="preserve">
+    <value>Lokální proměnné</value>
+  </data>
+  <data name="LocalsCopyValueCommand" xml:space="preserve">
+    <value>Zkopírovat hodnotu</value>
+  </data>
+  <data name="LocalsEditValueCommand" xml:space="preserve">
+    <value>Upravit hodnotu</value>
+  </data>
+  <data name="LocalsExpandChildrenNodesCommand" xml:space="preserve">
+    <value>Rozbalit poduzly</value>
+  </data>
+  <data name="LocalsSaveCommand" xml:space="preserve">
+    <value>Uložit...</value>
+  </data>
+  <data name="LocalsSave_Error_CouldNotSaveDataToFilename" xml:space="preserve">
+    <value>Chyba při ukládání dat do "{0}"
+Chyba: {1}</value>
+  </data>
+  <data name="Locals_Ask_TooManyItems" xml:space="preserve">
+    <value>Tato položka obsahuje více než {0} podřízených položek a bude omezena na zobrazení tohoto počtu položek při rozbalení.
+
+opravdu ho chcete rozbalit?</value>
+  </data>
+  <data name="Locals_Error_CantEvaluateWhenThreadIsAtUnsafePoint" xml:space="preserve">
+    <value>Nelze vyhodnotit, pokud je vlákno v nebezpečném bodě. Krokujte jednou, nebo spusťte do té doby než se narazí na zarážku.</value>
+  </data>
+  <data name="Locals_Error_EvalDisabledCantCallPropsAndMethods" xml:space="preserve">
+    <value>V současné době není možné volat vlastnosti a metody</value>
+  </data>
+  <data name="Locals_Error_EvalTimedOutIsDisabled" xml:space="preserve">
+    <value>Vyodnocení vypršel časový limit a bylo zakázáno, dokud budete pokračovat v ladění programu.</value>
+  </data>
+  <data name="Locals_Error_EvaluationTimedOut" xml:space="preserve">
+    <value>Vypršel časový limit vyhodnocení</value>
+  </data>
+  <data name="MemoryWindowCommand" xml:space="preserve">
+    <value>Paměť</value>
+  </data>
+  <data name="ModuleCopyFilenameCommand" xml:space="preserve">
+    <value>Zkopírovat název souboru</value>
+  </data>
+  <data name="ModuleSaveModulesTitle" xml:space="preserve">
+    <value>Uložit moduly</value>
+  </data>
+  <data name="ModuleSaveModuleTitle" xml:space="preserve">
+    <value>Uložit modul</value>
+  </data>
+  <data name="ModulesCommand" xml:space="preserve">
+    <value>Moduly</value>
+  </data>
+  <data name="Module_NoAddress" xml:space="preserve">
+    <value>&lt;žádná adresa&gt;</value>
+  </data>
+  <data name="OpenContainingFolderCommand" xml:space="preserve">
+    <value>Otevřít obsahující složku</value>
+  </data>
+  <data name="OpenModuleFromMemoryCommand" xml:space="preserve">
+    <value>Otevřít modul z paměti</value>
+  </data>
+  <data name="RemoveExceptionCommand" xml:space="preserve">
+    <value>Odstranit</value>
+  </data>
+  <data name="RenameThreadCommand" xml:space="preserve">
+    <value>Přejmenovat</value>
+  </data>
+  <data name="RestartCommand" xml:space="preserve">
+    <value>Restartovat</value>
+  </data>
+  <data name="RestoreDefaultExceptionSettingsCommand" xml:space="preserve">
+    <value>Obnovit výchozí</value>
+  </data>
+  <data name="RunToCursorCommand" xml:space="preserve">
+    <value>Spustit ke kurzoru</value>
+  </data>
+  <data name="SaveModuleCommand" xml:space="preserve">
+    <value>Uložit modul...</value>
+  </data>
+  <data name="SaveModulesCommand" xml:space="preserve">
+    <value>Uložit {0} modulů...</value>
+  </data>
+  <data name="SelectAllCommand" xml:space="preserve">
+    <value>Vybrat vše</value>
+  </data>
+  <data name="SetNextStatementCommand" xml:space="preserve">
+    <value>Nastavit další prohlášení</value>
+  </data>
+  <data name="ShortCutAltAsterisk" xml:space="preserve">
+    <value>Alt+Num *</value>
+  </data>
+  <data name="ShortCutKeyAlt4" xml:space="preserve">
+    <value>Alt+4</value>
+  </data>
+  <data name="ShortCutKeyAlt6" xml:space="preserve">
+    <value>Alt+6</value>
+  </data>
+  <data name="ShortCutKeyCtrlA" xml:space="preserve">
+    <value>Ctrl+A</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltB" xml:space="preserve">
+    <value>Ctrl+Alt+B</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltC" xml:space="preserve">
+    <value>Ctrl+Alt+C</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltE" xml:space="preserve">
+    <value>Ctrl+Alt+E</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltH" xml:space="preserve">
+    <value>Ctrl+Alt+H</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltP" xml:space="preserve">
+    <value>Ctrl+Alt+P</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltU" xml:space="preserve">
+    <value>Ctrl+Alt+U</value>
+  </data>
+  <data name="ShortCutKeyCtrlShift_DIGIT" xml:space="preserve">
+    <value>Ctrl+Shift+{0}</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltBreak" xml:space="preserve">
+    <value>Ctrl+Alt+Break</value>
+  </data>
+  <data name="ShortCutKeyCtrlC" xml:space="preserve">
+    <value>Ctrl+C</value>
+  </data>
+  <data name="ShortCutKeyCtrlF10" xml:space="preserve">
+    <value>Ctrl+F10</value>
+  </data>
+  <data name="ShortCutKeyCtrlF5" xml:space="preserve">
+    <value>Ctrl+F5</value>
+  </data>
+  <data name="ShortCutKeyCtrlF9" xml:space="preserve">
+    <value>Ctrl+F9</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftC" xml:space="preserve">
+    <value>Ctrl+Shift+C</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftF10" xml:space="preserve">
+    <value>Ctrl+Shift+F10</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftF5" xml:space="preserve">
+    <value>Ctrl+Shift+F5</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftF9" xml:space="preserve">
+    <value>Ctrl+Shift+F9</value>
+  </data>
+  <data name="ShortCutKeyCtrl_DIGIT" xml:space="preserve">
+    <value>Ctrl+{0}</value>
+  </data>
+  <data name="ShortCutKeyDelete" xml:space="preserve">
+    <value>Del</value>
+  </data>
+  <data name="ShortCutKeyEnter" xml:space="preserve">
+    <value>Vložit</value>
+  </data>
+  <data name="ShortCutKeyF10" xml:space="preserve">
+    <value>F10</value>
+  </data>
+  <data name="ShortCutKeyF11" xml:space="preserve">
+    <value>F11</value>
+  </data>
+  <data name="ShortCutKeyF2" xml:space="preserve">
+    <value>F2</value>
+  </data>
+  <data name="ShortCutKeyF5" xml:space="preserve">
+    <value>F5</value>
+  </data>
+  <data name="ShortCutKeyF9" xml:space="preserve">
+    <value>F9</value>
+  </data>
+  <data name="ShortCutKeyInsert" xml:space="preserve">
+    <value>Ins</value>
+  </data>
+  <data name="ShortCutKeyShiftF11" xml:space="preserve">
+    <value>Shift+F11</value>
+  </data>
+  <data name="ShortCutKeyShiftF5" xml:space="preserve">
+    <value>Shift+F5</value>
+  </data>
+  <data name="ShowInMemoryWindowCommand" xml:space="preserve">
+    <value>Zobrazit v okně paměti</value>
+  </data>
+  <data name="ShowInstructionPointerCommand" xml:space="preserve">
+    <value>Zobrazit instrukční ukazatel</value>
+  </data>
+  <data name="ShowModuleNamesCommand" xml:space="preserve">
+    <value>Zobrazit jména modulů</value>
+  </data>
+  <data name="ShowNamespacesCommand" xml:space="preserve">
+    <value>Zobrazit obory názvů</value>
+  </data>
+  <data name="ShowNextStatementCommand" xml:space="preserve">
+    <value>Zobrazit další prohlášení</value>
+  </data>
+  <data name="ShowDeclaringTypesCommand" xml:space="preserve">
+    <value>Zobrazit deklarační typy</value>
+  </data>
+  <data name="ShowParameterNamesCommand" xml:space="preserve">
+    <value>Zobrazit názvy parametrů</value>
+  </data>
+  <data name="ShowParameterTypesCommand" xml:space="preserve">
+    <value>Zobrazit typy parametrů</value>
+  </data>
+  <data name="ShowParameterValuesCommand" xml:space="preserve">
+    <value>Zobrazit hodnoty parametrů</value>
+  </data>
+  <data name="ShowReturnTypesCommand" xml:space="preserve">
+    <value>Zobrazit návratové typy</value>
+  </data>
+  <data name="ShowTokensCommand" xml:space="preserve">
+    <value>Zobrazit tokeny</value>
+  </data>
+  <data name="ShowIntrinsicTypeKeywordsCommand" xml:space="preserve">
+    <value>Zobrazit slova klíčového typu</value>
+  </data>
+  <data name="StartWithoutDebuggingCommand" xml:space="preserve">
+    <value>Spustit bez ladění</value>
+  </data>
+  <data name="StatusBar_Ready" xml:space="preserve">
+    <value>Připraven</value>
+  </data>
+  <data name="StatusBar_Running" xml:space="preserve">
+    <value>Spuštěn...</value>
+  </data>
+  <data name="StepIntoCommand" xml:space="preserve">
+    <value>Vkročit</value>
+  </data>
+  <data name="StepOutCommand" xml:space="preserve">
+    <value>Vykročit</value>
+  </data>
+  <data name="StepOverCommand" xml:space="preserve">
+    <value>Překročit</value>
+  </data>
+  <data name="StopDebuggingCommand" xml:space="preserve">
+    <value>Zastavit ladění</value>
+  </data>
+  <data name="SwitchToFrameCommand" xml:space="preserve">
+    <value>Přepnout na rám</value>
+  </data>
+  <data name="SwitchToThreadCommand" xml:space="preserve">
+    <value>Přepnout na vlákno</value>
+  </data>
+  <data name="ThawThreadCommand" xml:space="preserve">
+    <value>Rozmrazit</value>
+  </data>
+  <data name="ThreadsCommand" xml:space="preserve">
+    <value>Vlákna</value>
+  </data>
+  <data name="ThreadType_Main" xml:space="preserve">
+    <value>Hlavní vlákno</value>
+  </data>
+  <data name="ThreadType_Terminated" xml:space="preserve">
+    <value>Ukončené vlákno</value>
+  </data>
+  <data name="ThreadType_ThreadPool" xml:space="preserve">
+    <value>Fond podprocesů</value>
+  </data>
+  <data name="ThreadType_Unknown" xml:space="preserve">
+    <value>Neznámé vlákno</value>
+  </data>
+  <data name="ThreadType_Worker" xml:space="preserve">
+    <value>Pracovní vlákno</value>
+  </data>
+  <data name="Thread_LocationNotAvailable" xml:space="preserve">
+    <value>&lt;nedostupný(é)&gt;</value>
+  </data>
+  <data name="Thread_NoName" xml:space="preserve">
+    <value>&lt;Bez jména&gt;</value>
+  </data>
+  <data name="Thread_Priority_AboveNormal" xml:space="preserve">
+    <value>Vyšší než normální</value>
+  </data>
+  <data name="Thread_Priority_BelowNormal" xml:space="preserve">
+    <value>Nižší než normální</value>
+  </data>
+  <data name="Thread_Priority_Highest" xml:space="preserve">
+    <value>Nejvyšší</value>
+  </data>
+  <data name="Thread_Priority_Lowest" xml:space="preserve">
+    <value>Nejnižší</value>
+  </data>
+  <data name="Thread_Priority_Normal" xml:space="preserve">
+    <value>Normální</value>
+  </data>
+  <data name="ToggleBreakpointCommand" xml:space="preserve">
+    <value>Přepnout zarážku</value>
+  </data>
+  <data name="ToolBarBreakAllToolTip" xml:space="preserve">
+    <value>Zastavit vše</value>
+  </data>
+  <data name="ToolBarContinueDebuggingButton" xml:space="preserve">
+    <value>Pokračovat</value>
+  </data>
+  <data name="ToolBarContinueDebuggingToolTip" xml:space="preserve">
+    <value>Pokračovat</value>
+  </data>
+  <data name="ToolBarDebugAssemblyToolTip" xml:space="preserve">
+    <value>Ladit program</value>
+  </data>
+  <data name="ToolBarRestartToolTip" xml:space="preserve">
+    <value>Restartovat</value>
+  </data>
+  <data name="ToolBarShowNextStatementToolTip" xml:space="preserve">
+    <value>Zobrazit další prohlášení</value>
+  </data>
+  <data name="ToolBarStartDebuggingButton" xml:space="preserve">
+    <value>Spustit</value>
+  </data>
+  <data name="ToolBarStepIntoToolTip" xml:space="preserve">
+    <value>Vkročit</value>
+  </data>
+  <data name="ToolBarStepOutToolTip" xml:space="preserve">
+    <value>Vykročit</value>
+  </data>
+  <data name="ToolBarStepOverToolTip" xml:space="preserve">
+    <value>Překročit</value>
+  </data>
+  <data name="ToolBarStopDebuggingToolTip" xml:space="preserve">
+    <value>Zastavit ladění</value>
+  </data>
+  <data name="Window_Breakpoints" xml:space="preserve">
+    <value>Zarážky</value>
+  </data>
+  <data name="Window_CallStack" xml:space="preserve">
+    <value>Zásobník volání</value>
+  </data>
+  <data name="Window_ExceptionSettings" xml:space="preserve">
+    <value>Nastavení výjimek</value>
+  </data>
+  <data name="Window_Locals" xml:space="preserve">
+    <value>Lokální typy</value>
+  </data>
+  <data name="Window_Memory_10_MenuItem" xml:space="preserve">
+    <value>Paměť 1_0</value>
+  </data>
+  <data name="Window_Memory_N" xml:space="preserve">
+    <value>Paměť {0}</value>
+  </data>
+  <data name="Window_Memory_N_MenuItem" xml:space="preserve">
+    <value>Paměť {0}</value>
+  </data>
+  <data name="Window_Memory_N_MenuItem2" xml:space="preserve">
+    <value>Paměť {0}</value>
+  </data>
+  <data name="Window_Modules" xml:space="preserve">
+    <value>Moduly</value>
+  </data>
+  <data name="Window_Threads" xml:space="preserve">
+    <value>Vlákna</value>
+  </data>
+  <data name="YesNo_No" xml:space="preserve">
+    <value>Ne</value>
+  </data>
+  <data name="YesNo_Yes" xml:space="preserve">
+    <value>Ano</value>
+  </data>
+  <data name="DbgSettings_SyntaxHighlight" xml:space="preserve">
+    <value>Zvýraznění syntaxe</value>
+  </data>
+  <data name="LoadModulesCommand" xml:space="preserve">
+    <value>Otevřít moduly</value>
+  </data>
+  <data name="LoadXModulesCommand" xml:space="preserve">
+    <value>Otevřít {0} modulů</value>
+  </data>
+  <data name="ShowParameterTypesCommand2" xml:space="preserve">
+    <value>Zobrazit typy parametrů</value>
+  </data>
+  <data name="Plugin_ShortDescription" xml:space="preserve">
+    <value>Ladicí program</value>
+  </data>
+  <data name="DebugLoggerName" xml:space="preserve">
+    <value>Ladění</value>
+  </data>
+  <data name="ShowExceptionMessages" xml:space="preserve">
+    <value>Zprávy vyjímek</value>
+  </data>
+  <data name="ShowModuleLoadMessages" xml:space="preserve">
+    <value>Zprávy načtení modulu</value>
+  </data>
+  <data name="ShowModuleUnloadMessages" xml:space="preserve">
+    <value>Zprávy odpojení modulu</value>
+  </data>
+  <data name="ShowProcessExitMessages" xml:space="preserve">
+    <value>Zprávy ukončení procesu</value>
+  </data>
+  <data name="ShowProgramOutputMessages" xml:space="preserve">
+    <value>Výstup programu</value>
+  </data>
+  <data name="ShowStepFilteringMessages" xml:space="preserve">
+    <value>Filtrovací zprávy krokování</value>
+  </data>
+  <data name="ShowThreadExitMessages" xml:space="preserve">
+    <value>Zprávy ukončení vlákna</value>
+  </data>
+  <data name="ShowMDAMessages" xml:space="preserve">
+    <value>Zprávy MDA</value>
+  </data>
+  <data name="DebugLogAdditionalInformation" xml:space="preserve">
+    <value>Další informace: {0}</value>
+  </data>
+  <data name="DebugLogExceptionHandled" xml:space="preserve">
+    <value>Vyvolána výjimka: '{0}' v {1}</value>
+  </data>
+  <data name="DebugLogExceptionUnhandled" xml:space="preserve">
+    <value>Došlo k neošetřené výjimce typu '{0}' v {1}</value>
+  </data>
+  <data name="DebugLogExitProcess" xml:space="preserve">
+    <value>Program '{0}' byl ukončen s kódem {1} (0 x{1:x}).</value>
+  </data>
+  <data name="DebugLogExitThread" xml:space="preserve">
+    <value>Vlákno 0x{0:x} bylo ukončeno s kódem {1} (0x{1:x}).</value>
+  </data>
+  <data name="DebugLogLoadModule" xml:space="preserve">
+    <value>Načtené '{0}'.</value>
+  </data>
+  <data name="DebugLogMDA" xml:space="preserve">
+    <value>Pomocník spravovaného ladění '{0}' detekoval problém v '{1}'.</value>
+  </data>
+  <data name="DebugLogUnloadModule" xml:space="preserve">
+    <value>Odpojen '{0}'.</value>
+  </data>
+  <data name="ExceptionMessageIsNull" xml:space="preserve">
+    <value>"&lt;žádná zpráva vyjímky&gt;"</value>
+  </data>
+  <data name="GlyphToolTip_Location" xml:space="preserve">
+    <value>Umístění</value>
+  </data>
+  <data name="HexEditorGroup_DebuggerMemory" xml:space="preserve">
+    <value>Paměť</value>
+  </data>
+  <data name="BgImgDisplayName_DebuggerMemory" xml:space="preserve">
+    <value>Hexadecimální editor (Paměť)</value>
+  </data>
+  <data name="DbgAsm_DebugEngine" xml:space="preserve">
+    <value>Ladicí engine</value>
+  </data>
+  <data name="DebugWindows" xml:space="preserve">
+    <value>Okna</value>
+  </data>
+  <data name="OutputCommand" xml:space="preserve">
+    <value>Výstup</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltW_DIGIT" xml:space="preserve">
+    <value>Ctrl+Alt+W, {0}</value>
+  </data>
+  <data name="TerminateAllCommand" xml:space="preserve">
+    <value>Zastavit vše</value>
+  </data>
+  <data name="WatchCommand" xml:space="preserve">
+    <value>Sledovat</value>
+  </data>
+  <data name="Window_Watch_10_MenuItem" xml:space="preserve">
+    <value>Sledovat 1_0</value>
+  </data>
+  <data name="Window_Watch_N" xml:space="preserve">
+    <value>Sledovat {0}</value>
+  </data>
+  <data name="Window_Watch_N_MenuItem" xml:space="preserve">
+    <value>Sledovat {0}</value>
+  </data>
+  <data name="Window_Watch_N_MenuItem2" xml:space="preserve">
+    <value>Sledovat {0}</value>
+  </data>
+  <data name="Options" xml:space="preserve">
+    <value>Možnosti...</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltZ" xml:space="preserve">
+    <value>Ctrl+Alt+Z</value>
+  </data>
+  <data name="ProcessesCommand" xml:space="preserve">
+    <value>Procesy</value>
+  </data>
+  <data name="Window_Processes" xml:space="preserve">
+    <value>Procesy</value>
+  </data>
+  <data name="Column_Debugging" xml:space="preserve">
+    <value>Ladění</value>
+  </data>
+  <data name="Column_ID" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="Column_State" xml:space="preserve">
+    <value>Stav</value>
+  </data>
+  <data name="Column_Title" xml:space="preserve">
+    <value>Nadpis</value>
+  </data>
+  <data name="Process_Paused" xml:space="preserve">
+    <value>Zastavit</value>
+  </data>
+  <data name="Process_Running" xml:space="preserve">
+    <value>Spuštěno</value>
+  </data>
+  <data name="Processes_AttachToProcessToolTip" xml:space="preserve">
+    <value>Připojit k procesu</value>
+  </data>
+  <data name="Processes_DetachToolTip" xml:space="preserve">
+    <value>Odpojit proces</value>
+  </data>
+  <data name="Processes_TerminateToolTip" xml:space="preserve">
+    <value>Ukončit proces</value>
+  </data>
+  <data name="ShortCutKeyCtrlF" xml:space="preserve">
+    <value>Ctrl+F</value>
+  </data>
+  <data name="DetachProcessCommand" xml:space="preserve">
+    <value>Odpojit proces</value>
+  </data>
+  <data name="DetachWhenDebuggingStoppedCommand" xml:space="preserve">
+    <value>Odpojit, když je ladění zastaveno</value>
+  </data>
+  <data name="TerminateProcessCommand" xml:space="preserve">
+    <value>Zastavit proces</value>
+  </data>
+  <data name="ProcessCommand" xml:space="preserve">
+    <value>Proces</value>
+  </data>
+  <data name="Column_ProcessName" xml:space="preserve">
+    <value>Název procesu</value>
+  </data>
+  <data name="AllRemainingExceptionsNotInList" xml:space="preserve">
+    <value>&lt;Všechny {0} nejsou v seznamu&gt;</value>
+  </data>
+  <data name="Exceptions_EditConditions_ToolTip" xml:space="preserve">
+    <value>Upravit podmínky</value>
+  </data>
+  <data name="Column_Conditions" xml:space="preserve">
+    <value>Podmínky</value>
+  </data>
+  <data name="Column_BreakWhenThrown" xml:space="preserve">
+    <value>Přerušit při vyvolání</value>
+  </data>
+  <data name="Column_Category" xml:space="preserve">
+    <value>Kategorie</value>
+  </data>
+  <data name="Exception_Conditions_And" xml:space="preserve">
+    <value>A</value>
+  </data>
+  <data name="Exception_Conditions_ModuleNameEquals" xml:space="preserve">
+    <value>Název modulu je stejný</value>
+  </data>
+  <data name="Exception_Conditions_ModuleNameNotEquals" xml:space="preserve">
+    <value>Název modulu není stejný</value>
+  </data>
+  <data name="Exceptions_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Obnovit všechna vyhledávací kritéria tak, aby byly zobrazeny všechny vyjímky</value>
+  </data>
+  <data name="Exceptions_AllCategories" xml:space="preserve">
+    <value>Všechny</value>
+  </data>
+  <data name="EditConditionsCommand" xml:space="preserve">
+    <value>Upravit podmínky...</value>
+  </data>
+  <data name="ExceptionsCommand" xml:space="preserve">
+    <value>Výjimky</value>
+  </data>
+  <data name="FindCommand" xml:space="preserve">
+    <value>Najít</value>
+  </data>
+  <data name="Exceptions_NoMatch" xml:space="preserve">
+    <value>Žádné typy výjimek neodpovídají hledacímu filtru.</value>
+  </data>
+  <data name="AddExceptionButton" xml:space="preserve">
+    <value>Přidat</value>
+  </data>
+  <data name="ExceptionDescription" xml:space="preserve">
+    <value>Popis výjimky</value>
+  </data>
+  <data name="Exception_Error_NameCanNotBeEmpty" xml:space="preserve">
+    <value>Název nemůže být prázdný</value>
+  </data>
+  <data name="EditConditions_Title" xml:space="preserve">
+    <value>Upravit podmínky</value>
+  </data>
+  <data name="Button_AddCondition" xml:space="preserve">
+    <value>Přidat podmínku</value>
+  </data>
+  <data name="ModuleBreakpointsCommand" xml:space="preserve">
+    <value>Zarážky modulu</value>
+  </data>
+  <data name="Window_ModuleBreakpoints" xml:space="preserve">
+    <value>Zarážky modulu</value>
+  </data>
+  <data name="Breakpoints_AddBreakpoint_ToolTip" xml:space="preserve">
+    <value>Přidat zarážku</value>
+  </data>
+  <data name="Breakpoints_RemoveBreakpoint_ToolTip" xml:space="preserve">
+    <value>Odstranit zarážku</value>
+  </data>
+  <data name="EditAppDomainNameCommand" xml:space="preserve">
+    <value>Upravit název AppDomain</value>
+  </data>
+  <data name="EditModuleNameCommand" xml:space="preserve">
+    <value>Upravit název modulu</value>
+  </data>
+  <data name="EditOrderCommand" xml:space="preserve">
+    <value>Upravit pořadí načítání modulu</value>
+  </data>
+  <data name="EditProcessNameCommand" xml:space="preserve">
+    <value>Upravit název procesu</value>
+  </data>
+  <data name="RemoveAllBreakpointsCommand" xml:space="preserve">
+    <value>Odstranit všechny zarážky</value>
+  </data>
+  <data name="RemoveBreakpointCommand" xml:space="preserve">
+    <value>Odstranit zarážku</value>
+  </data>
+  <data name="DisableBreakpointCommand3" xml:space="preserve">
+    <value>Zakázat zarážku</value>
+  </data>
+  <data name="EnableBreakpointCommand3" xml:space="preserve">
+    <value>Povolit zarážku</value>
+  </data>
+  <data name="DbgSettings_BreakAllProcesses" xml:space="preserve">
+    <value>Přerušit všechny procesy, když se jeden přeruší</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltF10" xml:space="preserve">
+    <value>Ctrl+Alt+F10</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltF11" xml:space="preserve">
+    <value>Ctrl+Alt+F11</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftAltF11" xml:space="preserve">
+    <value>Ctrl+Shift+Alt+F11</value>
+  </data>
+  <data name="StepIntoCurrentProcessCommand" xml:space="preserve">
+    <value>Vkročit do (aktuální proces)</value>
+  </data>
+  <data name="StepOutCurrentProcessCommand" xml:space="preserve">
+    <value>Vykročit z (aktuální proces)</value>
+  </data>
+  <data name="StepOverCurrentProcessCommand" xml:space="preserve">
+    <value>Překročit (aktuální proces)</value>
+  </data>
+  <data name="Processes_BreakProcessToolTip" xml:space="preserve">
+    <value>Přerušit proces</value>
+  </data>
+  <data name="Processes_ContinueProcessToolTip" xml:space="preserve">
+    <value>Pokračovat v procesu</value>
+  </data>
+  <data name="Processes_StepIntoProcessToolTip" xml:space="preserve">
+    <value>Vkročit</value>
+  </data>
+  <data name="Processes_StepOutProcessToolTip" xml:space="preserve">
+    <value>Vykročit</value>
+  </data>
+  <data name="Processes_StepOverProcessToolTip" xml:space="preserve">
+    <value>Překročit</value>
+  </data>
+  <data name="StepsOnlyTheCurrentProcess" xml:space="preserve">
+    <value>Krokovat pouze aktuální proces</value>
+  </data>
+  <data name="BreakProcessCommand" xml:space="preserve">
+    <value>Přerušit proces</value>
+  </data>
+  <data name="ContinueProcessCommand" xml:space="preserve">
+    <value>Pokračovat v procesu</value>
+  </data>
+  <data name="AttachToProcess_Search_ToolTip" xml:space="preserve">
+    <value>Hledat proces</value>
+  </data>
+  <data name="AutosCommand" xml:space="preserve">
+    <value>Auta</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltV_A" xml:space="preserve">
+    <value>Ctrl+Alt+V, A</value>
+  </data>
+  <data name="Breakpoints_ExportMatchingBreakpoints_ToolTip" xml:space="preserve">
+    <value>Exportovat všechny zarážky odpovídající aktuálním vyhledávacím kritériím</value>
+  </data>
+  <data name="Breakpoints_ImportBreakpoints_ToolTip" xml:space="preserve">
+    <value>Importovat zarážky ze souboru</value>
+  </data>
+  <data name="ExportSelectedCommand" xml:space="preserve">
+    <value>Exportovat vybrané...</value>
+  </data>
+  <data name="Breakpoints_NoMatch" xml:space="preserve">
+    <value>Žádné zarážky neodpovídají vašemu hledacímu filtru.</value>
+  </data>
+  <data name="Breakpoints_Search" xml:space="preserve">
+    <value>Hledat</value>
+  </data>
+  <data name="Breakpoints_Search_ToolTip" xml:space="preserve">
+    <value>Vyhledat zarážku</value>
+  </data>
+  <data name="Breakpoints_RemoveMatchingBreakpoints_ToolTip" xml:space="preserve">
+    <value>Odstranit všechny zarážky odpovídající aktuálním vyhledávacím kritériím</value>
+  </data>
+  <data name="Breakpoints_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Obnovit všechna vyhledávací kritéria tak, aby byly zobrazeny všechny zarážky</value>
+  </data>
+  <data name="Breakpoints_ToggleMatchingBreakpoints_ToolTip" xml:space="preserve">
+    <value>Povolit či zakázat všechny zarážky odpovídající aktuálním vyhledávacím kritériím</value>
+  </data>
+  <data name="Modules_AllProcesses" xml:space="preserve">
+    <value>Všechny</value>
+  </data>
+  <data name="Modules_NoMatch" xml:space="preserve">
+    <value>Žádné moduly neodpovídají vašemu hledacímu filtru.</value>
+  </data>
+  <data name="Modules_Search" xml:space="preserve">
+    <value>Hledat</value>
+  </data>
+  <data name="Modules_Search_ToolTip" xml:space="preserve">
+    <value>Vyhledat modul</value>
+  </data>
+  <data name="Modules_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Obnovit všechna vyhledávací kritéria tak, aby byly zobrazeny všechny moduly</value>
+  </data>
+  <data name="Modules_Process" xml:space="preserve">
+    <value>Proces</value>
+  </data>
+  <data name="SearchHelp_ToolTip" xml:space="preserve">
+    <value>Nápověda</value>
+  </data>
+  <data name="Column_Condition" xml:space="preserve">
+    <value>Podmínka</value>
+  </data>
+  <data name="Column_Filter" xml:space="preserve">
+    <value>Filtr</value>
+  </data>
+  <data name="Column_HitCount" xml:space="preserve">
+    <value>Počet úderů</value>
+  </data>
+  <data name="Column_WhenHit" xml:space="preserve">
+    <value>Když se udeří</value>
+  </data>
+  <data name="Breakpoints_GoToDisassembly_ToolTip" xml:space="preserve">
+    <value>Přejít na rozebraný modul</value>
+  </data>
+  <data name="Breakpoints_GoToSourceCode_ToolTip" xml:space="preserve">
+    <value>Přejít na zdrojový kód</value>
+  </data>
+  <data name="GoToSourceCodeCommand" xml:space="preserve">
+    <value>Přejít na zdrojový kód</value>
+  </data>
+  <data name="Breakpoint_Condition_NoCondition" xml:space="preserve">
+    <value>(žádná podmínka)</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenConditionHasChanged" xml:space="preserve">
+    <value>když se '{0}' změnil</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenConditionIsTrue" xml:space="preserve">
+    <value>když '{0}' je pravda</value>
+  </data>
+  <data name="Breakpoint_Filter_NoFilter" xml:space="preserve">
+    <value>(žádný)</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsAMultipleOf" xml:space="preserve">
+    <value>když je počet úderů násobek {0}</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsEqualTo" xml:space="preserve">
+    <value>když je počet úderů roven {0}</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsGreaterThanOrEqualTo" xml:space="preserve">
+    <value>když je počet úderů větší než nebo roven {0}</value>
+  </data>
+  <data name="Breakpoint_HitCount_NoHitCount" xml:space="preserve">
+    <value>přerušit vždy</value>
+  </data>
+  <data name="Breakpoint_Tracepoint_NoTraceMessage" xml:space="preserve">
+    <value>Zastavit</value>
+  </data>
+  <data name="Breakpoint_Tracepoint_PrintMessage" xml:space="preserve">
+    <value>Vytisknout zprávu '{0}'</value>
+  </data>
+  <data name="ShortCutKeyAltEnter" xml:space="preserve">
+    <value>Alt+Enter</value>
+  </data>
+  <data name="SettingsCommand" xml:space="preserve">
+    <value>Nastavení</value>
+  </data>
+  <data name="EditBreakpointSettings_Title" xml:space="preserve">
+    <value>Nastavení zarážky</value>
+  </data>
+  <data name="Breakpoint_Condition_IsTrue" xml:space="preserve">
+    <value>Je pravda</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenChanged" xml:space="preserve">
+    <value>Při změně</value>
+  </data>
+  <data name="Breakpoint_HitCount_IsAMultipleOf" xml:space="preserve">
+    <value>Je násobek</value>
+  </data>
+  <data name="EditBreakpointSettings_ConditionalExpression" xml:space="preserve">
+    <value>Podmíněný výraz</value>
+  </data>
+  <data name="EditBreakpointSettings_Filter" xml:space="preserve">
+    <value>Filtr</value>
+  </data>
+  <data name="EditBreakpointSettings_HitCount" xml:space="preserve">
+    <value>Počet úderů</value>
+  </data>
+  <data name="EditBreakpointSettings_Trace" xml:space="preserve">
+    <value>Logovat zprávu</value>
+  </data>
+  <data name="GlyphToolTip_Actions" xml:space="preserve">
+    <value>Akce:</value>
+  </data>
+  <data name="GlyphToolTip_Conditions" xml:space="preserve">
+    <value>Podmínky:</value>
+  </data>
+  <data name="Breakpoint_Condition_ConditionalExpression" xml:space="preserve">
+    <value>Podmíněný výraz:</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenConditionHasChanged2" xml:space="preserve">
+    <value>'{0}' se změnil</value>
+  </data>
+  <data name="Breakpoint_Condition_WhenConditionIsTrue2" xml:space="preserve">
+    <value>'{0}' je pravda</value>
+  </data>
+  <data name="Breakpoint_Filter_Filter" xml:space="preserve">
+    <value>Filtr: '{0}'</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsAMultipleOf2" xml:space="preserve">
+    <value>Počet úderů je násobek {0}</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsEqualTo2" xml:space="preserve">
+    <value>Počet úderů je roven {0}</value>
+  </data>
+  <data name="Breakpoint_HitCount_HitCountIsGreaterThanOrEqualTo2" xml:space="preserve">
+    <value>Počet úderů je větší než nebo roven {0}</value>
+  </data>
+  <data name="Breakpoint_Tracepoint_PrintMessage2" xml:space="preserve">
+    <value>Logovat zprávu '{0}' do Okna výstupu</value>
+  </data>
+  <data name="Breakpoints_GlyphMargin_DisableBreakpoint" xml:space="preserve">
+    <value>Zakázat zarážku</value>
+  </data>
+  <data name="Breakpoints_GlyphMargin_EnableBreakpoint" xml:space="preserve">
+    <value>Povolit zarážku</value>
+  </data>
+  <data name="Breakpoints_GlyphMargin_ShowSettingsToolTip" xml:space="preserve">
+    <value>Nastavení...</value>
+  </data>
+  <data name="Breakpoints_GlyphMargin_BreakWhenBreakpointHit" xml:space="preserve">
+    <value>Zastavit</value>
+  </data>
+  <data name="EditBreakpointSettings_TraceContinue" xml:space="preserve">
+    <value>Pokračovat v provádění</value>
+  </data>
+  <data name="ExportCommand" xml:space="preserve">
+    <value>Exportovat...</value>
+  </data>
+  <data name="SettingsCommand2" xml:space="preserve">
+    <value>Nastavení...</value>
+  </data>
+  <data name="StartDebuggingCommand" xml:space="preserve">
+    <value>Spustit ladění</value>
+  </data>
+  <data name="Breakpoint_Tracepoint_BreakPrintMessage" xml:space="preserve">
+    <value>Přerušit a vytisknout zprávu '{0}'</value>
+  </data>
+  <data name="BreakpointMessage_TheFunctionCanNotBeFound" xml:space="preserve">
+    <value>Funkce nebyla nalezena: {0}</value>
+  </data>
+  <data name="Breakpoints_BreakpointWillNotBeHit" xml:space="preserve">
+    <value>V současnosti nebude zarážka udeřena. {0}</value>
+  </data>
+  <data name="Breakpoints_ModuleNotLoaded" xml:space="preserve">
+    <value>Modul není načten nebo nejsou načteny žádné symboly pro tento modul.</value>
+  </data>
+  <data name="BreakpointMessage_CouldNotCreateBreakpoint" xml:space="preserve">
+    <value>Nelze vytvořit zarážku.</value>
+  </data>
+  <data name="Column_Labels" xml:space="preserve">
+    <value>Popisky</value>
+  </data>
+  <data name="EditLabelsCommand" xml:space="preserve">
+    <value>Upravit popisky</value>
+  </data>
+  <data name="Threads_FreezeThreads_ToolTip" xml:space="preserve">
+    <value>Zmrazit vlákna</value>
+  </data>
+  <data name="Threads_NoMatch" xml:space="preserve">
+    <value>Žádná vlákna neodpovídají vašemu hledacímu filtru.</value>
+  </data>
+  <data name="Threads_Process" xml:space="preserve">
+    <value>Proces</value>
+  </data>
+  <data name="Threads_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Obnovit všechna vyhledávací kritéria tak, aby byly zobrazeny všechna vlákna</value>
+  </data>
+  <data name="Threads_Search" xml:space="preserve">
+    <value>Hledat</value>
+  </data>
+  <data name="Threads_Search_ToolTip" xml:space="preserve">
+    <value>Hledat vlákno</value>
+  </data>
+  <data name="Threads_ThawThreads_ToolTip" xml:space="preserve">
+    <value>Rozmrazit vlákna</value>
+  </data>
+  <data name="Threads_AllProcesses" xml:space="preserve">
+    <value>Vše</value>
+  </data>
+  <data name="EditLabelsMsgBoxLabel" xml:space="preserve">
+    <value>Popisky</value>
+  </data>
+  <data name="EditLabelsTitle" xml:space="preserve">
+    <value>Upravit popisky</value>
+  </data>
+  <data name="Breakpoint_HitCount_CurrentHitCountValue" xml:space="preserve">
+    <value>v současnosti {0}</value>
+  </data>
+  <data name="ResetBreakpointHitCountCommand" xml:space="preserve">
+    <value>Resetovat počet úderů</value>
+  </data>
+  <data name="HelpToolTip" xml:space="preserve">
+    <value>Nápověda</value>
+  </data>
+  <data name="FilterExpression_AllVariables" xml:space="preserve">
+    <value>Proměnné, které lze použít:</value>
+  </data>
+  <data name="FilterExpression_Example" xml:space="preserve">
+    <value>Příklad: {0}</value>
+  </data>
+  <data name="TracepointMessage_EscapeSequences" xml:space="preserve">
+    <value>Únikové sekvence: {0}</value>
+  </data>
+  <data name="TracepointMessage_EvaluateMessage" xml:space="preserve">
+    <value>Použijte {xxx} k hodnocení výrazu xxx</value>
+  </data>
+  <data name="TracepointMessage_Example" xml:space="preserve">
+    <value>Příklad: {0}</value>
+  </data>
+  <data name="TracepointMessage_ValidKeywords" xml:space="preserve">
+    <value>Následující klíčová slova lze použít:</value>
+  </data>
+  <data name="CallStackBreakpointCommand" xml:space="preserve">
+    <value>Zarážka</value>
+  </data>
+  <data name="InsertBreakpointCommand" xml:space="preserve">
+    <value>Vložit zarážku</value>
+  </data>
+  <data name="InsertTracepointCommand" xml:space="preserve">
+    <value>Vložit trasovací bod</value>
+  </data>
+  <data name="UnwindToThisFrameCommand" xml:space="preserve">
+    <value>Odpočinout do tohoto rámce</value>
+  </data>
+  <data name="GlyphMargin_CurrentStatementToolTip" xml:space="preserve">
+    <value>Toto je další prohlášení, které bude spuštěno.</value>
+  </data>
+  <data name="GlyphMargin_ReturnStatementToolTip" xml:space="preserve">
+    <value>Toto je další prohlášení které se spustí, až se toto vlákno vrátí ze současné funkce.</value>
+  </data>
+  <data name="DbgSettings_EnableManagedDebuggingAssistants" xml:space="preserve">
+    <value>Povolit Asistenty spravovaného ladění (MDA)</value>
+  </data>
+  <data name="DebugStepProcessError" xml:space="preserve">
+    <value>Nelze krokovat: {0}</value>
+  </data>
+  <data name="ProcessIsNotPaused" xml:space="preserve">
+    <value>Proces není pozastaven</value>
+  </data>
+  <data name="Window_Autos" xml:space="preserve">
+    <value>Auta</value>
+  </data>
+  <data name="DbgSettings_HighlightChangedVariables" xml:space="preserve">
+    <value>Zvýraznit změněné proměnné v Okně proměnných</value>
+  </data>
+  <data name="MakeObjectIdCommand" xml:space="preserve">
+    <value>Vytvořit ID objektu</value>
+  </data>
+  <data name="LanguageCommand" xml:space="preserve">
+    <value>Jazyk</value>
+  </data>
+  <data name="DbgSettings_DebugEngine" xml:space="preserve">
+    <value>Ladicí engine</value>
+  </data>
+  <data name="DbgSettings_Language" xml:space="preserve">
+    <value>Jazyk</value>
+  </data>
+  <data name="ShortCutKeyCtrlV" xml:space="preserve">
+    <value>Ctrl+V</value>
+  </data>
+  <data name="ClearAllCommand" xml:space="preserve">
+    <value>Vymazat vše</value>
+  </data>
+  <data name="DeleteWatchCommand" xml:space="preserve">
+    <value>Odstranit sledování</value>
+  </data>
+  <data name="PasteCommand" xml:space="preserve">
+    <value>_Vložit</value>
+  </data>
+  <data name="ExpressionCausesSideEffectsNoEval" xml:space="preserve">
+    <value>Toto vyjádření způsobuje vedlejší účinky a nebude hodnoceno</value>
+  </data>
+  <data name="RefreshExpressionButtonToolTip" xml:space="preserve">
+    <value>Klepněte na toto tlačítko pro vyhodnocení.</value>
+  </data>
+  <data name="ErrorEvaluatingExpression" xml:space="preserve">
+    <value>Nelze vyhodnotit výraz</value>
+  </data>
+  <data name="DeleteObjectIdCommand" xml:space="preserve">
+    <value>Odstranit ID objektu</value>
+  </data>
+  <data name="DbgSettings_ShowRawStructureOfObjects" xml:space="preserve">
+    <value>Zobrazit syrovou strukturu objektů v Okně proměnných</value>
+  </data>
+  <data name="UnknownValue" xml:space="preserve">
+    <value>&lt;Neznámá&gt;</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>Obnovit</value>
+  </data>
+  <data name="DbgSettings_GroupParametersAndLocalsTogether" xml:space="preserve">
+    <value>Seskupit parametry a lokální proměnné dohromady</value>
+  </data>
+  <data name="DbgSettings_ShowCompilerGeneratedVariables" xml:space="preserve">
+    <value>Zobrazit kompilátorem generované proměnné</value>
+  </data>
+  <data name="DbgSettings_ShowDecompilerGeneratedVariables" xml:space="preserve">
+    <value>Zobrazit dekompilátorem generované proměnné</value>
+  </data>
+  <data name="DbgSettings_SortLocals" xml:space="preserve">
+    <value>Třídit lokální proměnné</value>
+  </data>
+  <data name="DbgSettings_SortParameters" xml:space="preserve">
+    <value>Třídit parametry</value>
+  </data>
+  <data name="DbgSettings_HideCompilerGeneratedMembers" xml:space="preserve">
+    <value>Skrýt kompilátorem generované členy</value>
+  </data>
+  <data name="FunctionEvaluationDisabled" xml:space="preserve">
+    <value>Vyhodnocení implicitní funkce je vypnuto uživatelem</value>
+  </data>
+  <data name="DbgSettings_RespectHideMemberAttributes" xml:space="preserve">
+    <value>Respektovat atributy skrývající členy</value>
+  </data>
+  <data name="InternalDebuggerError" xml:space="preserve">
+    <value>Vnitřní chyba ladicího programu</value>
+  </data>
+  <data name="FuncEvalRequiresAllThreadsToRun" xml:space="preserve">
+    <value>Vyhodnocení funkce vyžaduje všechny vlákna spuštěna.</value>
+  </data>
+  <data name="DigitSeparatorsCommand" xml:space="preserve">
+    <value>Oddělovače číslic</value>
+  </data>
+  <data name="Column_ProcessCommandLine" xml:space="preserve">
+    <value>Příkazový řádek</value>
+  </data>
+  <data name="CannotReadLocalOrArgumentMaybeOptimizedAway" xml:space="preserve">
+    <value>Nelze získat hodnotu lokální proměnné nebo argumentu, protože není k dispozici na tomto ukazateli na instrukci, pravděpodobně byla optimalizována pryč z.</value>
+  </data>
+  <data name="ExceptionMessage" xml:space="preserve">
+    <value>Zpráva: {0}</value>
+  </data>
+  <data name="ExceptionName" xml:space="preserve">
+    <value>Výjimka: {0}</value>
+  </data>
+  <data name="UnhandledExceptionMessage_ProcessName_ProcessId" xml:space="preserve">
+    <value>Došlo k neošetřené výjimce v {0} ({1})</value>
+  </data>
+  <data name="StatusBar_BreakpointHit" xml:space="preserve">
+    <value>Zarážka</value>
+  </data>
+  <data name="BreakpointExpressionMustBeABooleanExpression" xml:space="preserve">
+    <value>Výraz zarážky musí být booleovský výraz</value>
+  </data>
+  <data name="DbgSettings_SuppressJITOptimization" xml:space="preserve">
+    <value>Potlačit optimalizaci JIT při načtení modulu</value>
+  </data>
+  <data name="DbgSettings_SuppressJITOptimization_ProgramModules" xml:space="preserve">
+    <value>Moduly programu</value>
+  </data>
+  <data name="DbgSettings_SuppressJITOptimization_SystemModules" xml:space="preserve">
+    <value>Systémové moduly</value>
+  </data>
+  <data name="RuntimeIsUnableToEvaluateExpression" xml:space="preserve">
+    <value>Runtime není schopen vyhodnotit tento výraz.</value>
+  </data>
+  <data name="Exceptions_ToggleMatchingExceptions_ToolTip" xml:space="preserve">
+    <value>Povolit nebo zakázat všechny výjimky odpovídající aktuálním vyhledávacím kritériím</value>
+  </data>
+  <data name="DisableBreakpointCommand2" xml:space="preserve">
+    <value>Zakázat zarážku</value>
+  </data>
+  <data name="Exceptions_Add_ToolTip" xml:space="preserve">
+    <value>Přidat výjimku do seznamu</value>
+  </data>
+  <data name="AskAppWindowClosingStopDebugging" xml:space="preserve">
+    <value>Chcete zastavit ladění?</value>
+  </data>
+  <data name="DbgSettings_FocusActiveProcess" xml:space="preserve">
+    <value>Zaměřit se na laděný proces</value>
+  </data>
+  <data name="LoadAllModulesCommand" xml:space="preserve">
+    <value>Otevřít všechny moduly</value>
+  </data>
+  <data name="DbgSettings_HideDeprecatedError" xml:space="preserve">
+    <value>Skrýt zastarale členy v oknech s proměnnými</value>
+  </data>
+  <data name="DbgSettings_ShowReturnValues" xml:space="preserve">
+    <value>Zobrazit návratové hodnoty</value>
+  </data>
+  <data name="DbgSettings_RedirectGuiConsoleOutput" xml:space="preserve">
+    <value>Přesměrování výstupu konzoly aplikací grafického uživatelského rozhraní do Okna výstupu</value>
+  </data>
+  <data name="AttachToProcess_MakingAnImageEasierToDebug" xml:space="preserve">
+    <value>Usnadnění ladění obrazu</value>
+  </data>
+  <data name="ShowOnlyPublicMembersCommand" xml:space="preserve">
+    <value>Veřejné členy</value>
+  </data>
+  <data name="DbgSettings_ShowRawLocals" xml:space="preserve">
+    <value>Zobrazit syrové lokální proměnné</value>
+  </data>
+  <data name="DbgSettings_AsyncDebugging" xml:space="preserve">
+    <value>Povolit asynchronní ladění</value>
+  </data>
+  <data name="DbgSettings_StepOverPropertiesAndOperators" xml:space="preserve">
+    <value>Překročit vlastnosti a operátory</value>
+  </data>
+  <data name="CopyExpressionCommand" xml:space="preserve">
+    <value>Kopírovat výraz</value>
+  </data>
+  <data name="Error_CouldNotShowDisassembly" xml:space="preserve">
+    <value>Nebyl nalezen kód metody. Ujistěte se, že je proces pozastaven a že tato metoda byla jitnuta.</value>
+  </data>
+  <data name="DisassemblyCommand" xml:space="preserve">
+    <value>Rozebrání</value>
+  </data>
+  <data name="ShortCutKeyAlt8" xml:space="preserve">
+    <value>Alt+8</value>
+  </data>
+  <data name="DbgSettings_IgnoreUnhandledExceptions" xml:space="preserve">
+    <value>Ignorovat neošetřené výjimky</value>
+  </data>
+  <data name="RunWithInvalidExtension" xml:space="preserve">
+    <value>Opravdu chcete spustit tento soubor, který nemá platné rozšíření?</value>
+  </data>
+  <data name="DebugWithInvalidExtension" xml:space="preserve">
+    <value>Opravdu chcete ladit tento soubor, který nemá platné rozšíření?</value>
+  </data>
+  <data name="Processes_NoMatch" xml:space="preserve">
+    <value>Žádné procesy neodpovídají vašemu hledacímu filtru.</value>
+  </data>
+  <data name="Processes_Search" xml:space="preserve">
+    <value>Hledat</value>
+  </data>
+  <data name="Processes_ResetSearchSettings_ToolTip" xml:space="preserve">
+    <value>Obnovit všechna vyhledávací kritéria tak, aby byly zobrazeny všechny procesy</value>
+  </data>
+  <data name="Processes_Search_ToolTip" xml:space="preserve">
+    <value>Hledat proces</value>
+  </data>
+  <data name="DbgSettings_FocusDebuggerWhenProcessBreaks" xml:space="preserve">
+    <value>Bring dnSpy to the foreground when breaking in the debugger</value>
+  </data>
+  <data name="Column_LoadModule" xml:space="preserve">
+    <value>Load</value>
+  </data>
+</root>
