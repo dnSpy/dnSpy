@@ -168,6 +168,9 @@
   <data name="DecompilerSettings_FullyQualifyAmbiguousTypeNames" xml:space="preserve">
     <value>Přidat jmenné prostory pro typy se stejným názvem</value>
   </data>
+  <data name="DecompilerSettings_HexadecimalNumbers" xml:space="preserve">
+    <value>Hexadecimal numbers</value>
+  </data>
   <data name="DecompilerSettings_IntroduceIncrementAndDecrement" xml:space="preserve">
     <value>Použít operátory zvyšování a snižování</value>
   </data>

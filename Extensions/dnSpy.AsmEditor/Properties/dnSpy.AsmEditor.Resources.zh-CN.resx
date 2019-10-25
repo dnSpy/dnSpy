@@ -548,7 +548,7 @@
     <value>_GUID</value>
   </data>
   <data name="MarshalType_NativeType" xml:space="preserve">
-    <value>本地类型(_N)</value>
+    <value>本机类型(_N)</value>
   </data>
   <data name="MarshalType_Nothing" xml:space="preserve">
     <value>无</value>

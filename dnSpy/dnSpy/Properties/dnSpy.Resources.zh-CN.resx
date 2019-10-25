@@ -2067,7 +2067,7 @@
     <value>最近的文件(_F)</value>
   </data>
   <data name="ToolTip_Instruction" xml:space="preserve">
-    <value>Instruction</value>
+    <value>指令</value>
   </data>
   <data name="ToolTip_OpCode" xml:space="preserve">
     <value>操作码</value>

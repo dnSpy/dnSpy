@@ -1308,16 +1308,16 @@
     <value>Копіювати зміщення</value>
   </data>
   <data name="CopySpecialCommand" xml:space="preserve">
-    <value>Спеціальне копіювання</value>
+    <value>Спеціальне Копіювання</value>
   </data>
   <data name="CopyTextCommand" xml:space="preserve">
-    <value>Копіювати текст</value>
+    <value>Копіювати Текст</value>
   </data>
   <data name="CopyUnicodeStringCommand" xml:space="preserve">
-    <value>Копіювати стрічку Unicode</value>
+    <value>Копіювати Стрічку Unicode</value>
   </data>
   <data name="CopyUTF8StringCommand" xml:space="preserve">
-    <value>Копіювати стрічку UTF-8</value>
+    <value>Копіювати Стрічку UTF-8</value>
   </data>
   <data name="CopyVisualBasicArrayCommand" xml:space="preserve">
     <value>Копіювати масив VB</value>

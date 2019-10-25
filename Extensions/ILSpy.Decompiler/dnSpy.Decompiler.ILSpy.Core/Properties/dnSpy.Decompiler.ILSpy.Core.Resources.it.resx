@@ -168,6 +168,9 @@
   <data name="DecompilerSettings_FullyQualifyAmbiguousTypeNames" xml:space="preserve">
     <value>Aggiungi uno spazio dei nomi per i tipi con lo stesso nome</value>
   </data>
+  <data name="DecompilerSettings_HexadecimalNumbers" xml:space="preserve">
+    <value>Hexadecimal numbers</value>
+  </data>
   <data name="DecompilerSettings_IntroduceIncrementAndDecrement" xml:space="preserve">
     <value>Utilizza operatori di incremento e decremento</value>
   </data>

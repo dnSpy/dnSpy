@@ -193,7 +193,7 @@
     <value>全局类型:</value>
   </data>
   <data name="Decompile_NativeEntryPoint" xml:space="preserve">
-    <value>本地入口点: 0x{0:X8}</value>
+    <value>本机入口点: 0x{0:X8}</value>
   </data>
   <data name="Decompile_Runtime" xml:space="preserve">
     <value>运行库:</value>

@@ -168,6 +168,9 @@
   <data name="DecompilerSettings_FullyQualifyAmbiguousTypeNames" xml:space="preserve">
     <value>将命名空间名添加到具有相同名称的类型</value>
   </data>
+  <data name="DecompilerSettings_HexadecimalNumbers" xml:space="preserve">
+    <value>Hexadecimal numbers</value>
+  </data>
   <data name="DecompilerSettings_IntroduceIncrementAndDecrement" xml:space="preserve">
     <value>使用增量和减量运算符</value>
   </data>

@@ -280,7 +280,7 @@
     <value>在变量窗口中对对象调用字符串转换方法</value>
   </data>
   <data name="StartDebugging2" xml:space="preserve">
-    <value>启动调试(_S)...</value>
+    <value>开始调试(_S)...</value>
   </data>
   <data name="DebuggerOptDlgTab" xml:space="preserve">
     <value>调试器</value>
@@ -592,7 +592,7 @@
     <value>显示内部类型关键字</value>
   </data>
   <data name="StartWithoutDebuggingCommand" xml:space="preserve">
-    <value>启动但不调试(_H)</value>
+    <value>开始执行(不调试) (_H)</value>
   </data>
   <data name="StatusBar_Ready" xml:space="preserve">
     <value>就绪</value>
@@ -661,7 +661,7 @@
     <value>正常</value>
   </data>
   <data name="ToggleBreakpointCommand" xml:space="preserve">
-    <value>设置/取消断点(_G)</value>
+    <value>切换断点(_G)</value>
   </data>
   <data name="ToolBarBreakAllToolTip" xml:space="preserve">
     <value>全部中断</value>
@@ -1225,7 +1225,7 @@
     <value>设置(_S)...</value>
   </data>
   <data name="StartDebuggingCommand" xml:space="preserve">
-    <value>启动调试</value>
+    <value>开始调试</value>
   </data>
   <data name="Breakpoint_Tracepoint_BreakPrintMessage" xml:space="preserve">
     <value>中断并打印消息 '{0}'</value>
