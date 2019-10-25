@@ -42,6 +42,7 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 			SortMembers = sect.Attribute<bool?>(nameof(SortMembers)) ?? SortMembers;
 			ShowPdbInfo = sect.Attribute<bool?>(nameof(ShowPdbInfo)) ?? ShowPdbInfo;
 			MaxStringLength = sect.Attribute<int?>(nameof(MaxStringLength)) ?? MaxStringLength;
+			HexadecimalNumbers = sect.Attribute<bool?>(nameof(HexadecimalNumbers)) ?? HexadecimalNumbers;
 			disableSave = false;
 		}
 		readonly bool disableSave;
@@ -58,6 +59,7 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 			sect.Attribute(nameof(SortMembers), SortMembers);
 			sect.Attribute(nameof(ShowPdbInfo), ShowPdbInfo);
 			sect.Attribute(nameof(MaxStringLength), MaxStringLength);
+			sect.Attribute(nameof(HexadecimalNumbers), HexadecimalNumbers);
 		}
 	}
 }

@@ -223,6 +223,11 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 				Description = dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_RemoveNewDelegateClass,
 				Name = DecompilerOptionConstants.RemoveNewDelegateClass_NAME,
 			};
+			yield return new DecompilerOption<bool>(DecompilerOptionConstants.HexadecimalNumbers_GUID,
+						() => decompilerSettings.HexadecimalNumbers, a => decompilerSettings.HexadecimalNumbers = a) {
+				Description = dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_HexadecimalNumbers,
+				Name = DecompilerOptionConstants.HexadecimalNumbers_NAME,
+			};
 		}
 
 		string GetMemberOrder() =>

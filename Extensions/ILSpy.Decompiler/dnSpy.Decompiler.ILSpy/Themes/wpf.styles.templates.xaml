@@ -25,6 +25,7 @@
             <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.AllowFieldInitializers}" Content="{x:Static p:dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_AllowFieldInitializers}"/>
             <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.TypeAddInternalModifier}" Content="{x:Static p:dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_TypeAddInternalModifier}"/>
             <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.MemberAddPrivateModifier}" Content="{x:Static p:dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_MemberAddPrivateModifier}"/>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.HexadecimalNumbers}" Content="{x:Static p:dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_HexadecimalNumbers}"/>
             <GroupBox Margin="0 5 0 0" Header="{x:Static p:dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_DecompilationOrder}">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -52,6 +53,7 @@
             <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ShowILComments}" Content="{x:Static p:dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_ShowILComments}"/>
             <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.SortMembers}" Content="{x:Static p:dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_SortMethods}"/>
             <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ShowPdbInfo}" Content="{x:Static p:dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_ShowPdbInfo}"/>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.HexadecimalNumbers}" Content="{x:Static p:dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_HexadecimalNumbers}"/>
         </StackPanel>
     </DataTemplate>
 

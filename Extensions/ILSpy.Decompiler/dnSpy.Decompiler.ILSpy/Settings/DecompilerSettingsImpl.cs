@@ -74,6 +74,7 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 			TypeAddInternalModifier = sect.Attribute<bool?>(nameof(TypeAddInternalModifier)) ?? TypeAddInternalModifier;
 			MemberAddPrivateModifier = sect.Attribute<bool?>(nameof(MemberAddPrivateModifier)) ?? MemberAddPrivateModifier;
 			//RemoveNewDelegateClass = sect.Attribute<bool?>(nameof(RemoveNewDelegateClass)) ?? RemoveNewDelegateClass;
+			HexadecimalNumbers = sect.Attribute<bool?>(nameof(HexadecimalNumbers)) ?? HexadecimalNumbers;
 			//TODO: CSharpFormattingOptions
 			disableSave = false;
 		}
@@ -123,6 +124,7 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 			sect.Attribute(nameof(TypeAddInternalModifier), TypeAddInternalModifier);
 			sect.Attribute(nameof(MemberAddPrivateModifier), MemberAddPrivateModifier);
 			//sect.Attribute(nameof(RemoveNewDelegateClass), RemoveNewDelegateClass);
+			sect.Attribute(nameof(HexadecimalNumbers), HexadecimalNumbers);
 			//TODO: CSharpFormattingOptions
 		}
 	}
