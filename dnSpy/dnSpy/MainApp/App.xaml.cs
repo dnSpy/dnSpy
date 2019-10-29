@@ -127,6 +127,9 @@ namespace dnSpy.MainApp {
 			//		https://github.com/0xd4d/dnSpy/issues/734
 			//		https://github.com/0xd4d/dnSpy/issues/735
 			// This has been fixed in .NET Core 3.0 and .NET Framework 4.8
+#if NET48
+#error Remove this now
+#endif
 			AppContext.SetSwitch("Switch.System.Windows.Controls.Grid.StarDefinitionsCanExceedAvailableSpace", true);
 #endif
 		}
