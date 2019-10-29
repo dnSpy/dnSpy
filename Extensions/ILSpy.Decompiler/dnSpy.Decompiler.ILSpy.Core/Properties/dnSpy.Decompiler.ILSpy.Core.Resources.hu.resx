@@ -169,7 +169,7 @@
     <value>Névtér hozzáadása az azonos nevű típusokhoz</value>
   </data>
   <data name="DecompilerSettings_HexadecimalNumbers" xml:space="preserve">
-    <value>Hexadecimal numbers</value>
+    <value>Hexadecimális számok</value>
   </data>
   <data name="DecompilerSettings_IntroduceIncrementAndDecrement" xml:space="preserve">
     <value>Növelő és csökkentő operátorok használata</value>

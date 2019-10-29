@@ -127,7 +127,7 @@
     <value>已应用到</value>
   </data>
   <data name="AssignedByTreeNode" xml:space="preserve">
-    <value>被赋值于</value>
+    <value>赋值于</value>
   </data>
   <data name="CopyCommand" xml:space="preserve">
     <value>复制(_Y)</value>
@@ -205,7 +205,7 @@
     <value>语法高亮</value>
   </data>
   <data name="UsedByTreeNode" xml:space="preserve">
-    <value>被使用于</value>
+    <value>被使用</value>
   </data>
   <data name="UsesTreeNode" xml:space="preserve">
     <value>使用</value>

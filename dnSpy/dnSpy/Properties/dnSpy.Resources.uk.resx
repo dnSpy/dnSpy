@@ -1302,10 +1302,10 @@
     <value>Очистити вибрані байти</value>
   </data>
   <data name="CopyCSharpArrayCommand" xml:space="preserve">
-    <value>Копіювати масив C#</value>
+    <value>Копіювати Масив C#</value>
   </data>
   <data name="CopyOffsetCommand" xml:space="preserve">
-    <value>Копіювати зміщення</value>
+    <value>Копіювати Зміщення</value>
   </data>
   <data name="CopySpecialCommand" xml:space="preserve">
     <value>Спеціальне Копіювання</value>

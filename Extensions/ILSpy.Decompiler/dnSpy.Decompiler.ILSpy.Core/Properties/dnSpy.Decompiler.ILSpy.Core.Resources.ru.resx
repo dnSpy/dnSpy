@@ -169,7 +169,7 @@
     <value>Добавить пространство имен в типы с таким же именем</value>
   </data>
   <data name="DecompilerSettings_HexadecimalNumbers" xml:space="preserve">
-    <value>Hexadecimal numbers</value>
+    <value>Шестнадцатеричные цифры</value>
   </data>
   <data name="DecompilerSettings_IntroduceIncrementAndDecrement" xml:space="preserve">
     <value>Использовать операторы инкремента и декремента</value>

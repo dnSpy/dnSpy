@@ -169,7 +169,7 @@
     <value>Añadir un espacio de nombre a los tipos con el mismo nombre</value>
   </data>
   <data name="DecompilerSettings_HexadecimalNumbers" xml:space="preserve">
-    <value>Hexadecimal numbers</value>
+    <value>Números hexadecimales</value>
   </data>
   <data name="DecompilerSettings_IntroduceIncrementAndDecrement" xml:space="preserve">
     <value>Uso de incremento y decremento de operadores</value>
