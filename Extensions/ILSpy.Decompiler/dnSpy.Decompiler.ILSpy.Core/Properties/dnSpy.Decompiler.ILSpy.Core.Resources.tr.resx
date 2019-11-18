@@ -169,7 +169,7 @@
     <value>Aynı isimdeki tipler için bir isim boşluğu ekle</value>
   </data>
   <data name="DecompilerSettings_HexadecimalNumbers" xml:space="preserve">
-    <value>Hexadecimal numbers</value>
+    <value>Onaltılık sayılar</value>
   </data>
   <data name="DecompilerSettings_IntroduceIncrementAndDecrement" xml:space="preserve">
     <value>Artış ve azalış uygulayıcıları kullan</value>

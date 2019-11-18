@@ -1231,7 +1231,7 @@
     <value>За замовчанням</value>
   </data>
   <data name="HexEditorSettings" xml:space="preserve">
-    <value>Hex-Редактор</value>
+    <value>Hex Редактор</value>
   </data>
   <data name="HexEditorEncoding" xml:space="preserve">
     <value>Кодування</value>
@@ -1261,7 +1261,7 @@
     <value>О_фсет</value>
   </data>
   <data name="GoToOffset_Title" xml:space="preserve">
-    <value>Перехід по зміщенню</value>
+    <value>Перехід по Зміщенню</value>
   </data>
   <data name="HexEditorSelect_End" xml:space="preserve">
     <value>Кін_ец</value>
@@ -1279,9 +1279,7 @@
     <value>Значення має бути між {0} та {1}</value>
   </data>
   <data name="AnErrorOccurred" xml:space="preserve">
-    <value>Трапилась помилка:
-
-{0}</value>
+    <value>Трапилась помилка: {0}</value>
   </data>
   <data name="HexEditorSaveSelection_Title" xml:space="preserve">
     <value>Зберегти Вибране 0x{0:X}-0x{1:X}</value>
@@ -1293,13 +1291,13 @@
     <value>Очистити</value>
   </data>
   <data name="BytesPerLineCommand" xml:space="preserve">
-    <value>Байтів у стрічці</value>
+    <value>Байтів у Стрічці</value>
   </data>
   <data name="ClearByteCommand" xml:space="preserve">
-    <value>Очистити байт</value>
+    <value>Очистити Байт</value>
   </data>
   <data name="ClearSelectedBytesCommand" xml:space="preserve">
-    <value>Очистити вибрані байти</value>
+    <value>Очистити Вибрані Байти</value>
   </data>
   <data name="CopyCSharpArrayCommand" xml:space="preserve">
     <value>Копіювати Масив C#</value>
@@ -1320,19 +1318,19 @@
     <value>Копіювати Стрічку UTF-8</value>
   </data>
   <data name="CopyVisualBasicArrayCommand" xml:space="preserve">
-    <value>Копіювати масив VB</value>
+    <value>Копіювати Масив VB</value>
   </data>
   <data name="FillSelectionCommand" xml:space="preserve">
-    <value>Заповнити виділене байтом...</value>
+    <value>Заповнити Виділене Байтом...</value>
   </data>
   <data name="FillSelection_Label" xml:space="preserve">
     <value>_Байт</value>
   </data>
   <data name="FillSelection_Title" xml:space="preserve">
-    <value>Введіть значення</value>
+    <value>Введіть Значення</value>
   </data>
   <data name="GoToOffsetCommand" xml:space="preserve">
-    <value>Перейти по зміщенню...</value>
+    <value>Перейти по Зміщенню...</value>
   </data>
   <data name="HexEditorSaveSelectionCommand" xml:space="preserve">
     <value>Зберегти об_ране...</value>
@@ -1344,19 +1342,19 @@
     <value>Налаштування...</value>
   </data>
   <data name="HexEditor_BytesPerLine_16" xml:space="preserve">
-    <value>_16 байт</value>
+    <value>_16 Байт</value>
   </data>
   <data name="HexEditor_BytesPerLine_32" xml:space="preserve">
-    <value>_32 байт</value>
+    <value>_32 Байт</value>
   </data>
   <data name="HexEditor_BytesPerLine_48" xml:space="preserve">
-    <value>_48 байт</value>
+    <value>_48 Байт</value>
   </data>
   <data name="HexEditor_BytesPerLine_64" xml:space="preserve">
-    <value>_64 байти</value>
+    <value>_64 Байти</value>
   </data>
   <data name="HexEditor_BytesPerLine_8" xml:space="preserve">
-    <value>_8 байтів</value>
+    <value>_8 Байтів</value>
   </data>
   <data name="HexEditor_BytesPerLine_FitToWidth" xml:space="preserve">
     <value>_Розтягнути по Ширині</value>
@@ -1371,7 +1369,7 @@
     <value>Б_айтів в стрічці</value>
   </data>
   <data name="LocalHexSettings_EndOffset" xml:space="preserve">
-    <value>Зміщення _кінця</value>
+    <value>Зміщення _Кінця</value>
   </data>
   <data name="LocalHexSettings_OffsetBitSize" xml:space="preserve">
     <value>Кількість бі_тів зміщення</value>
@@ -1380,13 +1378,13 @@
     <value>Пока_зати ASCII</value>
   </data>
   <data name="LocalHexSettings_ShowOffset" xml:space="preserve">
-    <value>Пок_азати зміщення</value>
+    <value>Пок_азати Зміщення</value>
   </data>
   <data name="LocalHexSettings_ShowValues" xml:space="preserve">
-    <value>Показати з_начення</value>
+    <value>Показати З_начення</value>
   </data>
   <data name="LocalHexSettings_StartOffset" xml:space="preserve">
-    <value>_Зміщення початку</value>
+    <value>_Зміщення Початку</value>
   </data>
   <data name="LocalHexSettings_Title" xml:space="preserve">
     <value>Налаштування локального Hex-редактора</value>

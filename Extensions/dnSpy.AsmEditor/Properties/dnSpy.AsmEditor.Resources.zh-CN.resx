@@ -368,7 +368,7 @@
     <value>编辑成员引用</value>
   </data>
   <data name="EditMethodOverride" xml:space="preserve">
-    <value>编辑方法重载</value>
+    <value>编辑方法重写</value>
   </data>
   <data name="EditMethodSpec" xml:space="preserve">
     <value>编辑方法声明</value>
@@ -1553,7 +1553,7 @@
     <value>主体类型(_B)</value>
   </data>
   <data name="MethodOverridesTab" xml:space="preserve">
-    <value>重载</value>
+    <value>重写</value>
   </data>
   <data name="MethodParametersTab" xml:space="preserve">
     <value>参数</value>
