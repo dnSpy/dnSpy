@@ -22,7 +22,7 @@
     <CopyLocalLockFileAssemblies Condition=" '$(IsDotNetCore)' == 'true' ">true</CopyLocalLockFileAssemblies>
     <!-- If this gets updated, also update .github/workflows/build.yml and build.ps1 -->
     <DnSpyRuntimeIdentifiers>win-x86;win-x64</DnSpyRuntimeIdentifiers>
-    <SatelliteResourceLanguages>de;es;es-ES;fa;fr;hu;it;pt-PT;ru;tr;uk;zh-CN</SatelliteResourceLanguages>
+    <SatelliteResourceLanguages>cs;de;es;es-ES;fa;fr;hu;it;pt-BR;pt-PT;ru;tr;uk;zh-CN</SatelliteResourceLanguages>
 
     <!-- Update app.config whenever this value changes -->
     <DnSpyAssemblyVersion>6.1.0.0</DnSpyAssemblyVersion>
