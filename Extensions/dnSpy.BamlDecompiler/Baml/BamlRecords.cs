@@ -526,8 +526,8 @@ namespace dnSpy.BamlDecompiler.Baml {
 		}
 
 		protected override void WriteData(BamlBinaryWriter writer) {
-			writer.Write(Value);
 			writer.Write(AttributeId);
+			writer.Write(Value);
 		}
 	}
 
