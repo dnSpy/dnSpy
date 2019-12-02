@@ -213,6 +213,13 @@ namespace dnSpy.Analyzer.TreeNodes {
 			if (method is null || !method.IsMethod)
 				return false;
 
+			if (method is MethodSpec ms && ms.Instantiation is GenericInstMethodSig gims) {
+				foreach (var ga in gims.GenericArguments) {
+					if (TypeMatches(ga))
+						return true;
+				}
+			}
+
 			return TypeMatches(method.DeclaringType)
 				   || TypeMatches(method.MethodSig.GetRetType())
 				   || IsUsedInMethodParameters(method.GetParameters());
@@ -270,10 +277,75 @@ namespace dnSpy.Analyzer.TreeNodes {
 		bool IsUsedInMethodParameters(IEnumerable<Parameter> parameters) => parameters.Any(IsUsedInMethodParameter);
 		bool IsUsedInMethodParameter(Parameter parameter) => !parameter.IsHiddenThisParameter && TypeMatches(parameter.Type);
 
-		bool TypeMatches(IType? tref) {
+		bool TypeMatches(IType? tref) => TypeMatches(tref, 0);
+		bool TypeMatches(IType? tref, int level) {
+			if (level >= 100)
+				return false;
 			if (isComType && tref.Resolve() is TypeDef td && ComUtils.ComEquals(td, ref comGuid))
 				return true;
-			return !(tref is null) && new SigComparer().Equals(analyzedType, tref?.GetScopeType());
+			if (!(tref is null)) {
+				if (new SigComparer().Equals(analyzedType, tref.GetScopeType()))
+					return true;
+				if (tref is TypeSig ts) {
+					switch (ts) {
+					case TypeDefOrRefSig tdr:
+						if (TypeMatches(tdr.TypeDefOrRef, level + 1))
+							return true;
+						break;
+					case FnPtrSig fnptr:
+						if (fnptr.MethodSig is MethodSig msig) {
+							if (TypeMatches(msig.RetType, level + 1))
+								return true;
+							foreach (var p in msig.Params) {
+								if (TypeMatches(p, level + 1))
+									return true;
+							}
+							if (!(msig.ParamsAfterSentinel is null)) {
+								foreach (var p in msig.ParamsAfterSentinel) {
+									if (TypeMatches(p, level + 1))
+										return true;
+								}
+							}
+						}
+						break;
+					case GenericInstSig gis:
+						if (TypeMatches(gis.GenericType, level + 1))
+							return true;
+						foreach (var ga in gis.GenericArguments) {
+							if (TypeMatches(ga, level + 1))
+								return true;
+						}
+						break;
+					case PtrSig ps:
+						if (TypeMatches(ps.Next, level + 1))
+							return true;
+						break;
+					case ByRefSig brs:
+						if (TypeMatches(brs.Next, level + 1))
+							return true;
+						break;
+					case ArraySigBase asb:
+						if (TypeMatches(asb.Next, level + 1))
+							return true;
+						break;
+					case ModifierSig ms:
+						if (TypeMatches(ms.Modifier, level + 1))
+							return true;
+						if (TypeMatches(ms.Next, level + 1))
+							return true;
+						break;
+					case PinnedSig ps:
+						if (TypeMatches(ps.Next, level + 1))
+							return true;
+						break;
+					}
+				}
+				else if (tref is TypeSpec typeSpec) {
+					if (TypeMatches(typeSpec.TypeSig, level + 1))
+						return true;
+				}
+			}
+			return false;
 		}
 
 		public static bool CanShow(TypeDef? type) => !(type is null);
