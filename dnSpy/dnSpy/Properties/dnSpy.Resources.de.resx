@@ -2017,7 +2017,7 @@ Der Filter kann in den Assembly-Explorer-Optionen geändert werden.</value>
     <value>Leerzeichen nach Speicheroperand Komma</value>
   </data>
   <data name="DisassemblySettings_UseHexNumbers" xml:space="preserve">
-    <value>Hexadezimalzahlen verwenden</value>
+    <value>Hexadezimale Zahlen verwenden</value>
   </data>
   <data name="Disassembly_TabTitle" xml:space="preserve">
     <value>Disassembly</value>

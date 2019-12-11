@@ -1829,7 +1829,7 @@ O Filtro pode ser alterado nas opções do Assembly Explorer.</value>
     <value>Mostrar Tipos de Parâmetro</value>
   </data>
   <data name="ShowReturnTypesCommand" xml:space="preserve">
-    <value>Show Return Types</value>
+    <value>Mostrar Tipos de Retorno</value>
   </data>
   <data name="ShowTokensCommand" xml:space="preserve">
     <value>Mostrar Tokens</value>
@@ -1838,37 +1838,37 @@ O Filtro pode ser alterado nas opções do Assembly Explorer.</value>
     <value>Ctrl+K, Ctrl+W</value>
   </data>
   <data name="ClearAllBookmarksInDocumentCommand" xml:space="preserve">
-    <value>Clear All Bookmarks In Document</value>
+    <value>Limpar Todos os Marcadores no Documento</value>
   </data>
   <data name="ClearBookmarksCommand" xml:space="preserve">
-    <value>_Clear Bookmarks</value>
+    <value>_Limpar Marcadores</value>
   </data>
   <data name="DisableAllBookmarksCommand" xml:space="preserve">
-    <value>Disable _All Bookmarks</value>
+    <value>Desabilitar _Todos os Marcadores</value>
   </data>
   <data name="EnableAllBookmarksCommand" xml:space="preserve">
-    <value>Enable _All Bookmarks</value>
+    <value>Habilitar _Todos os Marcadores</value>
   </data>
   <data name="EnableBookmarkCommand" xml:space="preserve">
     <value>Ativar Bookmark</value>
   </data>
   <data name="GoToNextBookmarkCommand" xml:space="preserve">
-    <value>Next _Bookmark</value>
+    <value>Próximo _Marcador</value>
   </data>
   <data name="GoToNextBookmarkInDocumentCommand" xml:space="preserve">
     <value>N_ext Bookmark In Document</value>
   </data>
   <data name="GoToNextBookmarkWithSameLabelCommand" xml:space="preserve">
-    <value>Next Bookmark With Same Label</value>
+    <value>Próximo Marcador Com a Mesma Tag</value>
   </data>
   <data name="GoToPreviousBookmarkCommand" xml:space="preserve">
-    <value>_Previous Bookmark</value>
+    <value>Marcador _Anterior</value>
   </data>
   <data name="GoToPreviousBookmarkInDocumentCommand" xml:space="preserve">
     <value>P_revious Bookmark In Document</value>
   </data>
   <data name="GoToPreviousBookmarkWithSameLabelCommand" xml:space="preserve">
-    <value>Previous Bookmark With Same Label</value>
+    <value>Marcador Anterior com a Mesma Tag</value>
   </data>
   <data name="ShortCutKeyCtrlK_CtrlK" xml:space="preserve">
     <value>Ctrl+K, Ctrl+K</value>
@@ -1883,7 +1883,7 @@ O Filtro pode ser alterado nas opções do Assembly Explorer.</value>
     <value>Ctrl+K, Ctrl+P</value>
   </data>
   <data name="ToggleBookmarkCommand" xml:space="preserve">
-    <value>_Toggle Bookmark</value>
+    <value>_Alternar Marcador</value>
   </data>
   <data name="EditLabelsMsgBoxLabel" xml:space="preserve">
     <value>Rótulos</value>
@@ -1892,55 +1892,55 @@ O Filtro pode ser alterado nas opções do Assembly Explorer.</value>
     <value>Editar rótulos</value>
   </data>
   <data name="User_Administrator" xml:space="preserve">
-    <value>Administrator</value>
+    <value>Administrador</value>
   </data>
   <data name="AllowMoreThanOneInstance" xml:space="preserve">
-    <value>Allow more than one instance (restart required)</value>
+    <value>Permitir mais do que uma instância (necessário reiniciar)</value>
   </data>
   <data name="DisassemblerDlgTabTitle" xml:space="preserve">
     <value>Disassembler</value>
   </data>
   <data name="CodeStyleDlgTabTitle" xml:space="preserve">
-    <value>Code Style</value>
+    <value>Estilo de Código</value>
   </data>
   <data name="DisassemblySettings_AddLabels" xml:space="preserve">
-    <value>Add labels</value>
+    <value>Adicionar tag</value>
   </data>
   <data name="DisassemblySettings_AddLeadingZeroToHexNumbers" xml:space="preserve">
-    <value>Add leading '0' to hex numbers if needed</value>
+    <value>Adicionar '0' para números hexadecimais, se necessário</value>
   </data>
   <data name="DisassemblySettings_AlwaysShowMemorySize" xml:space="preserve">
-    <value>Always show size of memory operands</value>
+    <value>Sempre mostrar tamanho de operadores de memória</value>
   </data>
   <data name="DisassemblySettings_AlwaysShowScale" xml:space="preserve">
-    <value>Always show the scale value</value>
+    <value>Sempre mostrar o valor da escala</value>
   </data>
   <data name="DisassemblySettings_AlwaysShowSegmentRegister" xml:space="preserve">
-    <value>Always show segment registers</value>
+    <value>Sempre mostrar registradores do segmento</value>
   </data>
   <data name="DisassemblySettings_DigitSeparator" xml:space="preserve">
-    <value>Digit separator</value>
+    <value>Separadores de Dígitos</value>
   </data>
   <data name="DisassemblySettings_EmptyLineBetweenBasicBlocks" xml:space="preserve">
-    <value>Add an empty line between blocks</value>
+    <value>Adicionar linha vazia entre blocos</value>
   </data>
   <data name="DisassemblySettings_HexPrefix" xml:space="preserve">
-    <value>Hex prefix</value>
+    <value>Prefixo Hexa</value>
   </data>
   <data name="DisassemblySettings_HexSuffix" xml:space="preserve">
-    <value>Hex suffix</value>
+    <value>Sufixo Hexa</value>
   </data>
   <data name="DisassemblySettings_NewTab" xml:space="preserve">
-    <value>Show disassembly in a new tab</value>
+    <value>Mostrar Disassembly em uma nova aba</value>
   </data>
   <data name="DisassemblySettings_OperandColumn" xml:space="preserve">
-    <value>Operand column</value>
+    <value>Coluna de operadores</value>
   </data>
   <data name="DisassemblySettings_RipRelativeAddresses" xml:space="preserve">
-    <value>RIP-relative addresses</value>
+    <value>Endereços relativos a RIP</value>
   </data>
   <data name="DisassemblySettings_ScaleBeforeIndex" xml:space="preserve">
-    <value>Show scale before index register</value>
+    <value>Mostrar escala antes do registrador de índice</value>
   </data>
   <data name="DisassemblySettings_BranchLeadingZeroes" xml:space="preserve">
     <value>Add leading zeroes (branches)</value>
@@ -1949,13 +1949,13 @@ O Filtro pode ser alterado nas opções do Assembly Explorer.</value>
     <value>Add leading zeroes</value>
   </data>
   <data name="DisassemblySettings_ShowBranchSize" xml:space="preserve">
-    <value>Show branch size</value>
+    <value>Mostrar tamanho do branch</value>
   </data>
   <data name="DisassemblySettings_ShowInstructionAddress" xml:space="preserve">
-    <value>Show instruction address</value>
+    <value>Mostrar endereço da instrução</value>
   </data>
   <data name="DisassemblySettings_ShowInstructionBytes" xml:space="preserve">
-    <value>Show instruction bytes</value>
+    <value>Mostrar bytes da instrução</value>
   </data>
   <data name="DisassemblySettings_ShowZeroDisplacements" xml:space="preserve">
     <value>Show zero displacements</value>
@@ -1967,70 +1967,70 @@ O Filtro pode ser alterado nas opções do Assembly Explorer.</value>
     <value>Signed displacements</value>
   </data>
   <data name="DisassemblySettings_SmallHexNumbersInDecimal" xml:space="preserve">
-    <value>Show small numbers in decimal</value>
+    <value>Mostrar números pequenos em decimal</value>
   </data>
   <data name="DisassemblySettings_SpaceAfterMemoryBracket" xml:space="preserve">
-    <value>Space after memory operand brackets</value>
+    <value>Espaço após colchetes do operador de memória</value>
   </data>
   <data name="DisassemblySettings_SpaceAfterOperandSeparator" xml:space="preserve">
-    <value>Space after operand separator</value>
+    <value>Espaço após separador do operador</value>
   </data>
   <data name="DisassemblySettings_SpacesBetweenMemoryAddOperators" xml:space="preserve">
-    <value>Space between '+'</value>
+    <value>Espaço entre '+'</value>
   </data>
   <data name="DisassemblySettings_SpacesBetweenMemoryMulOperators" xml:space="preserve">
-    <value>Space between '*'</value>
+    <value>Espaço entre '*'</value>
   </data>
   <data name="DisassemblySettings_UpperCaseAll" xml:space="preserve">
-    <value>Upper case everything</value>
+    <value>Tudo em letras maiúsculas</value>
   </data>
   <data name="DisassemblySettings_UpperCaseHex" xml:space="preserve">
-    <value>Upper case hex numbers</value>
+    <value>Números hexadecimais em maiúsculo</value>
   </data>
   <data name="DisassemblySettings_UpperCaseKeywords" xml:space="preserve">
     <value>Palavras Chaves Maiúsculas</value>
   </data>
   <data name="DisassemblySettings_UpperCaseMnemonics" xml:space="preserve">
-    <value>Upper case mnemonics</value>
+    <value>Mnemônicos em maiúsculo</value>
   </data>
   <data name="DisassemblySettings_UpperCasePrefixes" xml:space="preserve">
-    <value>Upper case prefixes</value>
+    <value>Prefixos em maiúsculo</value>
   </data>
   <data name="DisassemblySettings_UpperCaseRegisters" xml:space="preserve">
-    <value>Upper case registers</value>
+    <value>Registradores em maiúsculo</value>
   </data>
   <data name="DisassemblySettings_UsePseudoOps" xml:space="preserve">
-    <value>Pseudo instructions</value>
+    <value>Pseudo instruções</value>
   </data>
   <data name="DisassemblySettings_X86AssemblerSyntax" xml:space="preserve">
-    <value>Syntax</value>
+    <value>Sintaxe</value>
   </data>
   <data name="DisassemblySettings_NakedRegisters" xml:space="preserve">
     <value>Naked registers</value>
   </data>
   <data name="DisassemblySettings_ShowMnemonicSizeSuffix" xml:space="preserve">
-    <value>Always show mnemonic size suffix</value>
+    <value>Sempre mostrar tamanho do sufixo mnemônico</value>
   </data>
   <data name="DisassemblySettings_SpaceAfterMemoryOperandComma" xml:space="preserve">
-    <value>Space after memory operand comma</value>
+    <value>Espaço após vírgula do operador de memória</value>
   </data>
   <data name="DisassemblySettings_UseHexNumbers" xml:space="preserve">
-    <value>Hex numbers</value>
+    <value>Números hexadecimais</value>
   </data>
   <data name="Disassembly_TabTitle" xml:space="preserve">
     <value>Disassembly</value>
   </data>
   <data name="DisassemblySettings_ShowCode" xml:space="preserve">
-    <value>Show decompiled code</value>
+    <value>Mostrar código descompilado</value>
   </data>
   <data name="DisassemblySettings_ShowILCode" xml:space="preserve">
-    <value>Show IL code</value>
+    <value>Mostrar código IL</value>
   </data>
   <data name="Disassembly_MethodIsNotOptimized" xml:space="preserve">
-    <value>The method is not optimized</value>
+    <value>O método não está otimizado</value>
   </data>
   <data name="DisassemblySettings_ShowSymbolAddress" xml:space="preserve">
-    <value>Show symbol address</value>
+    <value>Mostrar endereço do símbolo</value>
   </data>
   <data name="Decompile_Timestamp" xml:space="preserve">
     <value>Horário:</value>
@@ -2039,7 +2039,7 @@ O Filtro pode ser alterado nas opções do Assembly Explorer.</value>
     <value>&lt;Desconhecido&gt;</value>
   </data>
   <data name="TypeReferencesFolder" xml:space="preserve">
-    <value>Type References</value>
+    <value>Referências do tipo</value>
   </data>
   <data name="TreeViewEventsFolder" xml:space="preserve">
     <value>Eventos</value>
@@ -2054,7 +2054,7 @@ O Filtro pode ser alterado nas opções do Assembly Explorer.</value>
     <value>Propriedades</value>
   </data>
   <data name="TreeViewTypesFolder" xml:space="preserve">
-    <value>Types</value>
+    <value>Tipos</value>
   </data>
   <data name="NumberBaseFormatString" xml:space="preserve">
     <value>Base {0}:</value>
@@ -2063,10 +2063,10 @@ O Filtro pode ser alterado nas opções do Assembly Explorer.</value>
     <value>Raw:</value>
   </data>
   <data name="RecentFilesCommand" xml:space="preserve">
-    <value>Recent _Files</value>
+    <value>Arquivos recentes</value>
   </data>
   <data name="ToolTip_Instruction" xml:space="preserve">
-    <value>Instruction</value>
+    <value>Instrução</value>
   </data>
   <data name="ToolTip_OpCode" xml:space="preserve">
     <value>OpCode</value>

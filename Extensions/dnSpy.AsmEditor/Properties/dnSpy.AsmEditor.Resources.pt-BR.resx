@@ -1278,7 +1278,7 @@ Tem certeza que deseja fechar a janela?</value>
     <value>Não é possível criar uma lista de imagem vazia</value>
   </data>
   <data name="Error_Filename_ContainsInvalidPathCharacter" xml:space="preserve">
-    <value>Filename contains at least one invalid path character.</value>
+    <value>Nome do arquivo contém pelo menos um caracter de caminho inválido.</value>
   </data>
   <data name="Error_Filename_Empty" xml:space="preserve">
     <value>Nome do arquivo não pode estar vazio.</value>
@@ -1293,7 +1293,7 @@ Tem certeza que deseja fechar a janela?</value>
     <value>Nome do arquivo não pode conter apenas espaço branco</value>
   </data>
   <data name="Error_Filename_ReservedOSFilename" xml:space="preserve">
-    <value>The filename is a reserved operating system filename and can't be used.</value>
+    <value>O nome do arquivo é reservado pelo sistema operacional e não pode ser usado.</value>
   </data>
   <data name="Error_Filename_TooLong" xml:space="preserve">
     <value>Nome do arquivo é muito longo.</value>
@@ -1302,7 +1302,7 @@ Tem certeza que deseja fechar a janela?</value>
     <value>Instrução foi removida</value>
   </data>
   <data name="Error_InstrTargetHasBeenRemoved" xml:space="preserve">
-    <value>Instruction target has been removed</value>
+    <value>Alvo da instrução foi removido</value>
   </data>
   <data name="Error_InvalidResourceData" xml:space="preserve">
     <value>Não é possível usar esses dados: {0}</value>
@@ -1410,10 +1410,10 @@ Tem certeza que deseja fechar a janela?</value>
     <value>Cabeçalho de Armazenamento</value>
   </data>
   <data name="HexNode_StorageSignature" xml:space="preserve">
-    <value>Storage Signature</value>
+    <value>Assinatura de armazenamento</value>
   </data>
   <data name="HexNode_StorageStream" xml:space="preserve">
-    <value>Storage Stream</value>
+    <value>Stream de Armazenamento</value>
   </data>
   <data name="HexNode_TablesStream" xml:space="preserve">
     <value>Stream de Tabelas</value>
@@ -1467,10 +1467,10 @@ Tem certeza que deseja fechar a janela?</value>
     <value>Interfaces</value>
   </data>
   <data name="InvertBranchCommand" xml:space="preserve">
-    <value>_Invert Branch</value>
+    <value>_Inverter Branch</value>
   </data>
   <data name="InvertBranchesCommand" xml:space="preserve">
-    <value>_Invert Branches</value>
+    <value>_Inverter Branches</value>
   </data>
   <data name="LocalName" xml:space="preserve">
     <value>Nome</value>
@@ -1512,7 +1512,7 @@ Tem certeza que deseja fechar a janela?</value>
     <value>Fixado</value>
   </data>
   <data name="MDWriterOptionsTab" xml:space="preserve">
-    <value>MD Writer Options</value>
+    <value>Opções MD Writer</value>
   </data>
   <data name="MetadataTab" xml:space="preserve">
     <value>Metadata</value>
@@ -1605,13 +1605,13 @@ Tem certeza que deseja fechar a janela?</value>
     <value>_Nome</value>
   </data>
   <data name="NodesUseHexEditorMsg" xml:space="preserve">
-    <value>All tree nodes below use the hex editor to modify the PE file</value>
+    <value>Todos os nós da árvore abaixo usam o editor hexadecimal para modificar o arquivo PE</value>
   </data>
   <data name="NopInstrCommand" xml:space="preserve">
-    <value>_NOP Instruction</value>
+    <value>Instrução _NOP</value>
   </data>
   <data name="NopInstrsCommand" xml:space="preserve">
-    <value>_NOP Instructions</value>
+    <value>Instruções _NOP</value>
   </data>
   <data name="Offset" xml:space="preserve">
     <value>Offset</value>
@@ -1816,8 +1816,8 @@ Alguns os ofuscadores colocam dados lá</value>
     <value>Shared Method _Bodies</value>
   </data>
   <data name="SaveModule_ShareMethodBodies_ToolTip" xml:space="preserve">
-    <value>.NET methods that have the exact same code will share method bodies.
-The output file will be a little bit smaller</value>
+    <value>Os métodos .NET que têm exatamente o mesmo código vão compartilhar os corpos do método.
+O arquivo de saída será um pouco menor</value>
   </data>
   <data name="SaveModule_Title" xml:space="preserve">
     <value>Salvar Módulo</value>
@@ -1826,8 +1826,8 @@ The output file will be a little bit smaller</value>
     <value>_Mixed-Mode Module</value>
   </data>
   <data name="SaveModule_UseMixedMode_ToolTip" xml:space="preserve">
-    <value>Should be checked if it's a mixed-mode module (eg. C++/.NET).
-Most options will be re-initialized when this checkbox is clicked</value>
+    <value>Deve ser verificado se é um módulo de modo misto (por exemplo. C + + / .NET).
+A maioria das opções são reinicializadas quando essa caixa de seleção é clicada</value>
   </data>
   <data name="SaveModule_WritePdb" xml:space="preserve">
     <value>Guardar Arquivo _PDB</value>
@@ -2079,7 +2079,7 @@ Most options will be re-initialized when this checkbox is clicked</value>
     <value>Reserved_2</value>
   </data>
   <data name="SaveModule_Metadata_Signature" xml:space="preserve">
-    <value>_Signature</value>
+    <value>_Assinatura</value>
   </data>
   <data name="SaveModule_Metadata_StorageFlags" xml:space="preserve">
     <value>S_torageFlags</value>
@@ -2109,28 +2109,28 @@ Most options will be re-initialized when this checkbox is clicked</value>
     <value>Reserv_ed1</value>
   </data>
   <data name="SaveModule_TablesHeap_UseENC" xml:space="preserve">
-    <value>_Use #- Table</value>
+    <value>_Use a Tabela #-</value>
   </data>
   <data name="CustomAttribute_NamedArg_Field" xml:space="preserve">
-    <value>Field</value>
+    <value>Campo</value>
   </data>
   <data name="CustomAttribute_NamedArg_Property" xml:space="preserve">
-    <value>Property</value>
+    <value>Propriedade</value>
   </data>
   <data name="SaveModules_FixErrorsByEditingSettings" xml:space="preserve">
-    <value>-- Fix the errors by editing the options.</value>
+    <value>-- Corrija os erros editando as opções.</value>
   </data>
   <data name="GoToMetaDataTableRow_RID" xml:space="preserve">
     <value>_RID</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>Assembly editor</value>
+    <value>Editor de Assembly</value>
   </data>
   <data name="ShortCutKeyCtrlShiftE" xml:space="preserve">
-    <value>Ctrl+Shift+E</value>
+    <value>CTRL+Shift+E</value>
   </data>
   <data name="EditMethodBodyCode" xml:space="preserve">
-    <value>Edit Method ({0})...</value>
+    <value>Editar Método ({0})...</value>
   </data>
   <data name="EditCodeTitle" xml:space="preserve">
     <value>Editar código</value>
@@ -2166,22 +2166,22 @@ Most options will be re-initialized when this checkbox is clicked</value>
     <value>Aviso</value>
   </data>
   <data name="AddAssemblyReferenceToolTip" xml:space="preserve">
-    <value>Add Assembly Reference</value>
+    <value>Adicionar Referência de Assembly</value>
   </data>
   <data name="AddGacReferenceToolTip" xml:space="preserve">
     <value>Adicionar Referência do Assembly (GAC)</value>
   </data>
   <data name="Error_CouldNotAddAssemblyReferences" xml:space="preserve">
-    <value>Couldn't add the assembly references.</value>
+    <value>Não foi possível adicionar referências de assembly.</value>
   </data>
   <data name="EditMethodCode" xml:space="preserve">
     <value>Editar Código do Método</value>
   </data>
   <data name="ERR_IM_AddingRemovingStaticFromEditedMethodNotSupported" xml:space="preserve">
-    <value>Adding or removing 'static' or 'Shared' from edited methods isn't supported: {0}</value>
+    <value>Adicionar ou remover 'static' ou 'Shared' dos métodos editados não é suportado: {0}</value>
   </data>
   <data name="ERR_IM_CouldNotFindEditedMethod" xml:space="preserve">
-    <value>Couldn't find the edited method. Make sure you didn't add or remove 'static' or 'Shared' or changed the parameter types, return type or method name: {0}</value>
+    <value>Não foi possível encontrar o método editado. Certifique-se de que você não adicionou ou removeu 'static' ou 'Shared' ou mudou os tipos de parâmetros, o tipo de retorno ou o nome do método: {0}</value>
   </data>
   <data name="ERR_IM_CouldNotFindField" xml:space="preserve">
     <value>Não foi possível encontrar o campo: {0}</value>
@@ -2274,16 +2274,16 @@ Most options will be re-initialized when this checkbox is clicked</value>
     <value>Ctrl+Shift+O</value>
   </data>
   <data name="EditCodeAddClassMembers" xml:space="preserve">
-    <value>Add Class Members</value>
+    <value>Adicionar Classe Members</value>
   </data>
   <data name="EditCodeAddClassMembers2" xml:space="preserve">
-    <value>Add Class Members ({0})...</value>
+    <value>Adicionar Classe Members ({0})...</value>
   </data>
   <data name="SaveModule_PreserveOtherMetadataStreams" xml:space="preserve">
     <value>Copiar Streams de Metadados Desconhecidos</value>
   </data>
   <data name="RerunNgenIfGacAssembly" xml:space="preserve">
-    <value>Run NGEN.exe if this assembly is installed in the GAC</value>
+    <value>Executar NGEN.exe se este assembly estiver instalado no GAC</value>
   </data>
   <data name="CompilerDlgTabTitle" xml:space="preserve">
     <value>Compilador</value>

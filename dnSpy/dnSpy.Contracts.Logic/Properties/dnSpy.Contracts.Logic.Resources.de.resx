@@ -139,7 +139,7 @@
     <value>Unbekannte Zeichenfolge Escape-Sequenz: \{0}</value>
   </data>
   <data name="InvalidHexCharacter" xml:space="preserve">
-    <value>Eine HEX-Zeichenfolge darf nur hexadezimale Zeichen enthalten: 0-9 und A-F</value>
+    <value>Eine hexadezimale Zeichenfolge darf nur hexadezimale Zeichen enthalten: 0-9 und A-F</value>
   </data>
   <data name="InvalidHexStringSize" xml:space="preserve">
     <value>Eine hexadezimale Zeichenfolge muss eine gerade Anzahl an hexadezimalen Zeichen enthalten</value>

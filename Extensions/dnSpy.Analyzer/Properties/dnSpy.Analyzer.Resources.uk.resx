@@ -127,7 +127,7 @@
     <value>Застосовано до</value>
   </data>
   <data name="AssignedByTreeNode" xml:space="preserve">
-    <value>Ким Присвоєний</value>
+    <value>Ким Призначено</value>
   </data>
   <data name="CopyCommand" xml:space="preserve">
     <value>Копіюв_ати</value>
@@ -145,13 +145,13 @@
     <value>Перейти до посилання</value>
   </data>
   <data name="GoToReferenceInCodeCommand" xml:space="preserve">
-    <value>Показати посилання на метод</value>
+    <value>Показати посилання на методі</value>
   </data>
   <data name="GoToReferenceInCodeNewTabCommand" xml:space="preserve">
     <value>Показати посилання в методі (Нова _Вкладка)</value>
   </data>
   <data name="GoToReferenceNewTabCommand" xml:space="preserve">
-    <value>Перейти до посилання (Нова Вкладка)</value>
+    <value>Перейти до посилання (Нова Вкла_дка)</value>
   </data>
   <data name="HidesParent" xml:space="preserve">
     <value>ховає</value>
@@ -160,13 +160,13 @@
     <value>Реалізований</value>
   </data>
   <data name="InstantiatedByTreeNode" xml:space="preserve">
-    <value>Викликано в</value>
+    <value>Ким створено примірник</value>
   </data>
   <data name="OverriddenByTreeNode" xml:space="preserve">
-    <value>Перевантажено в</value>
+    <value>Ким перевантажено</value>
   </data>
   <data name="OverridesTreeNode" xml:space="preserve">
-    <value>Перевантаження</value>
+    <value>Перекриває</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
     <value>Аналізує збірки</value>
@@ -184,7 +184,7 @@
     <value>Пошук...</value>
   </data>
   <data name="ShiftDoubleClick" xml:space="preserve">
-    <value>Shift+подвійний клік</value>
+    <value>Shift+Подвійний клік</value>
   </data>
   <data name="ShortCutKeyCtrlC" xml:space="preserve">
     <value>Ctrl+C</value>
@@ -193,13 +193,13 @@
     <value>Ctrl+Shift+R</value>
   </data>
   <data name="ShortCutKeyDelete" xml:space="preserve">
-    <value>Видалити</value>
+    <value>Del</value>
   </data>
   <data name="ShowMetadataTokensCommand" xml:space="preserve">
-    <value>Показувати токени</value>
+    <value>Показати токени</value>
   </data>
   <data name="SingleClickExpandNodes" xml:space="preserve">
-    <value>Розгортати вузли одним клациком</value>
+    <value>Одноразове натискання розгортає вузли</value>
   </data>
   <data name="SyntaxHighlightCommand" xml:space="preserve">
     <value>Підсвітка синтаксису</value>

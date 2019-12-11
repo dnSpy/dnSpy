@@ -169,7 +169,7 @@
     <value>Typen mit dem gleichen Namen einen Namespace hinzufügen</value>
   </data>
   <data name="DecompilerSettings_HexadecimalNumbers" xml:space="preserve">
-    <value>Hexadecimal numbers</value>
+    <value>Hexadezimale Zahlen</value>
   </data>
   <data name="DecompilerSettings_IntroduceIncrementAndDecrement" xml:space="preserve">
     <value>Inkrement- und Dekrementoperatoren verwenden</value>

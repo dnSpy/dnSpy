@@ -525,7 +525,7 @@
     <value>Ctrl+{0}</value>
   </data>
   <data name="ShortCutKeyDelete" xml:space="preserve">
-    <value>Видалити</value>
+    <value>Del</value>
   </data>
   <data name="ShortCutKeyEnter" xml:space="preserve">
     <value>Enter</value>
@@ -585,7 +585,7 @@
     <value>Показати тип повернення</value>
   </data>
   <data name="ShowTokensCommand" xml:space="preserve">
-    <value>Показувати токени</value>
+    <value>Показати токени</value>
   </data>
   <data name="ShowIntrinsicTypeKeywordsCommand" xml:space="preserve">
     <value>Показати ключові слова вбудованих типів</value>
