@@ -3,6 +3,10 @@ dnSpy
 - Debug .NET and Unity assemblies
 - Edit .NET and Unity assemblies
 
+![debug-animated](images/debug-animated.gif)
+
+![edit-code-animated](images/edit-code-animated.gif)
+
 # Building
 
 ```PS
