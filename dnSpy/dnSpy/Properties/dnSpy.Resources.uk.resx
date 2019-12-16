@@ -169,7 +169,7 @@
     <value>Не вдається перетворити вхідні дані в потрібний тип: {0}</value>
   </data>
   <data name="CloseAllTabGroupsButThisCommand" xml:space="preserve">
-    <value>Закрити всі вкладки групи, крім цьої</value>
+    <value>Закрити Всі Вкладки Групи Окрім Цієї</value>
   </data>
   <data name="CloseAllTabsButThisCommand" xml:space="preserve">
     <value>Закрити _ Усі Окрім Цієї</value>
@@ -1631,19 +1631,19 @@
     <value>Ctrl+E, Ctrl+N</value>
   </data>
   <data name="HexEditorSelectStructureCommand" xml:space="preserve">
-    <value>Обрати структуру</value>
+    <value>Обрати Структуру</value>
   </data>
   <data name="ShortCutKeyCtrlECtrlS" xml:space="preserve">
     <value>Ctrl+E, Ctrl+S</value>
   </data>
   <data name="HexEditFieldCommand" xml:space="preserve">
-    <value>Редагувати поле</value>
+    <value>Редагувати Поле</value>
   </data>
   <data name="OptionColorizeText" xml:space="preserve">
     <value>Розфарбувати текст</value>
   </data>
   <data name="ShortCutKeyAltRightArrow" xml:space="preserve">
-    <value>Alt + стрілка вправо</value>
+    <value>Alt + Стрілка Вправо</value>
   </data>
   <data name="ShortCutKeyBackspace" xml:space="preserve">
     <value>Backspace</value>
@@ -1982,7 +1982,7 @@
     <value>Все у верхньому регістрі</value>
   </data>
   <data name="DisassemblySettings_UpperCaseHex" xml:space="preserve">
-    <value>Hex-числа в верхньому регістрі</value>
+    <value>Hex-числа у верхньому регістрі</value>
   </data>
   <data name="DisassemblySettings_UpperCaseKeywords" xml:space="preserve">
     <value>Верхній регістр ключових слів</value>
