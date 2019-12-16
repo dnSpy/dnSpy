@@ -1,4 +1,4 @@
-dnSpy
+# dnSpy - [Latest release](https://github.com/0xd4d/dnSpy/releases) - [❤️ Donate](https://github.com/sponsors/0xd4d)
 
 - Debug .NET and Unity assemblies
 - Edit .NET and Unity assemblies
@@ -7,7 +7,7 @@ dnSpy
 
 ![edit-code-animated](images/edit-code-animated.gif)
 
-# Building
+## Building
 
 ```PS
 git clone --recursive https://github.com/0xd4d/dnSpy.git
