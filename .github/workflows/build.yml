@@ -43,19 +43,19 @@ jobs:
           .\clean-all.cmd
 
       - uses: actions/upload-artifact@v1
-        if: false
+        if: true
         with:
           name: dnSpy-net472
           path: C:\builtfiles\dnSpy-net472.zip
 
       - uses: actions/upload-artifact@v1
-        if: false
+        if: true
         with:
           name: dnSpy-netcore-win32
           path: C:\builtfiles\dnSpy-netcore-win32.zip
 
       - uses: actions/upload-artifact@v1
-        if: false
+        if: true
         with:
           name: dnSpy-netcore-win64
           path: C:\builtfiles\dnSpy-netcore-win64.zip
