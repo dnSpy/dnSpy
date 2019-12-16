@@ -19,7 +19,7 @@ jobs:
           $env:PATH = $msbuildPath + ';' + $env:PATH
           .\build.ps1 net
           New-Item -ItemType Directory -Path C:\builtfiles -Force > $null
-          Compress-Archive -Path dnSpy\dnSpy\bin\Release\net48\* -DestinationPath C:\builtfiles\dnSpy-net48.zip
+          Compress-Archive -Path dnSpy\dnSpy\bin\Release\net472\* -DestinationPath C:\builtfiles\dnSpy-net472.zip
           .\clean-all.cmd
 
       - name: Build dnSpy (.NET Core x86)
@@ -29,7 +29,7 @@ jobs:
           $env:PATH = $msbuildPath + ';' + $env:PATH
           .\build.ps1 core-x86
           New-Item -ItemType Directory -Path C:\builtfiles -Force > $null
-          Compress-Archive -Path dnSpy\dnSpy\bin\Release\netcoreapp3.1\win-x86\publish\* -DestinationPath C:\builtfiles\dnSpy-netcore-win32.zip
+          Compress-Archive -Path dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x86\publish\* -DestinationPath C:\builtfiles\dnSpy-netcore-win32.zip
           .\clean-all.cmd
 
       - name: Build dnSpy (.NET Core x64)
@@ -39,14 +39,14 @@ jobs:
           $env:PATH = $msbuildPath + ';' + $env:PATH
           .\build.ps1 core-x64
           New-Item -ItemType Directory -Path C:\builtfiles -Force > $null
-          Compress-Archive -Path dnSpy\dnSpy\bin\Release\netcoreapp3.1\win-x64\publish\* -DestinationPath C:\builtfiles\dnSpy-netcore-win64.zip
+          Compress-Archive -Path dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x64\publish\* -DestinationPath C:\builtfiles\dnSpy-netcore-win64.zip
           .\clean-all.cmd
 
       - uses: actions/upload-artifact@v1
         if: false
         with:
-          name: dnSpy-net48
-          path: C:\builtfiles\dnSpy-net48.zip
+          name: dnSpy-net472
+          path: C:\builtfiles\dnSpy-net472.zip
 
       - uses: actions/upload-artifact@v1
         if: false
@@ -65,11 +65,11 @@ jobs:
         uses: softprops/action-gh-release@b28d815 #@v1
         with:
           files: |
-            C:\builtfiles\dnSpy-net48.zip
+            C:\builtfiles\dnSpy-net472.zip
             C:\builtfiles\dnSpy-netcore-win32.zip
             C:\builtfiles\dnSpy-netcore-win64.zip
           body: |
-            `dnSpy-net48.zip` requires .NET Framework 4.8 or later.
+            `dnSpy-net472.zip` requires .NET Framework 4.7.2 or later.
             
             `dnSpy-netcore-win32.zip` and `dnSpy-netcore-win64.zip` don't depend on .NET Framework, but use .NET Core instead which is included in the zip files. If `dnSpy.exe` fails to start, try:
             

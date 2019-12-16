@@ -118,6 +118,20 @@ namespace dnSpy.MainApp {
 			// This prevents a thin line between the tab item and its content when dpi is eg. 144.
 			// It's hard to miss if you check the Options dialog box.
 			AppContext.SetSwitch("Switch.MS.Internal.DoNotApplyLayoutRoundingToMarginsAndBorderThickness", true);
+
+#if NETFRAMEWORK
+			// Workaround for a bug
+			//		Switch.System.Windows.Controls.Grid.StarDefinitionsCanExceedAvailableSpace=true
+			//		https://docs.microsoft.com/en-us/dotnet/framework/migration-guide/runtime/4.7-4.7.1#resizing-a-grid-can-hang
+			// Repro: DPI=120%, .NET Framework 4.7.1, open the File, View, or Window menus
+			//		https://github.com/0xd4d/dnSpy/issues/734
+			//		https://github.com/0xd4d/dnSpy/issues/735
+			// This has been fixed in .NET Core 3.0 and .NET Framework 4.8
+#if NET48
+#error Remove this now
+#endif
+			AppContext.SetSwitch("Switch.System.Windows.Controls.Grid.StarDefinitionsCanExceedAvailableSpace", true);
+#endif
 		}
 
 		ExportProvider InitializeMEF(bool readSettings, bool useCache) {
