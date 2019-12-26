@@ -71,12 +71,10 @@ jobs:
             C:\builtfiles\dnSpy-netcore-win32.zip
             C:\builtfiles\dnSpy-netcore-win64.zip
           body: |
-            `dnSpy-net472.zip` requires .NET Framework 4.7.2 or later.
+            ### Consider [❤️ donating](https://github.com/sponsors/0xd4d) to support this project if dnSpy helped you!
             
-            `dnSpy-netcore-win32.zip` and `dnSpy-netcore-win64.zip` don't depend on .NET Framework, but use .NET Core instead which is included in the zip files. If `dnSpy.exe` fails to start, try:
             
-            - Install VC dependencies: https://support.microsoft.com/help/2977003/the-latest-supported-visual-c-downloads
-            - Windows 7: Must have KB2999226 and KB2533623 installed
-        if: false && startsWith(github.ref, 'refs/tags/')
+            Downloads below or [build](https://github.com/0xd4d/dnSpy/blob/master/README.md#building) it yourself
+        if: startsWith(github.ref, 'refs/tags/')
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
