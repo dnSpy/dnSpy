@@ -31,7 +31,7 @@ namespace dnSpy.Documents.TreeView {
 	[Export(typeof(AssemblyExplorerMostRecentlyUsedList))]
 	sealed class AssemblyExplorerMostRecentlyUsedListImpl : AssemblyExplorerMostRecentlyUsedList {
 		static readonly Guid SETTINGS_GUID = new Guid("642B9276-3C9A-4EFE-9B3B-D62046824B18");
-		const int MaxFileCount = 10;
+		const int MaxFileCount = 30;
 		const string filenameSectionName = "file";
 		const string filenameAttributeName = "name";
 
