@@ -31,8 +31,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.AntiAntiDebug {
 		public IsDebuggerPresentPatcherX86(DbgNativeFunctionHookContext context, DbgCorDebugInternalRuntime runtime)
 			: base(context) => clrFilename = runtime.ClrFilename;
 
-		public bool TryPatchX86([NotNullWhen(false)] out string? errorMessage) {
-			var function = functionProvider.GetFunction(IsDebuggerPresentConstants.DllName, IsDebuggerPresentConstants.FuncName);
+		public bool TryPatchX86(string dllName, [NotNullWhen(false)] out string? errorMessage) {
+			var function = functionProvider.GetFunction(dllName, IsDebuggerPresentConstants.FuncName);
 			var clrDllName = Path.GetFileName(clrFilename);
 			if (!functionProvider.TryGetModuleAddress(clrDllName, out var clrAddress, out var clrEndAddress)) {
 				errorMessage = $"Couldn't get the address of {clrDllName}";
@@ -75,8 +75,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.AntiAntiDebug {
 			return true;
 		}
 
-		public bool TryPatchX64([NotNullWhen(false)] out string? errorMessage) {
-			var function = functionProvider.GetFunction(IsDebuggerPresentConstants.DllName, IsDebuggerPresentConstants.FuncName);
+		public bool TryPatchX64(string dllName, [NotNullWhen(false)] out string? errorMessage) {
+			var function = functionProvider.GetFunction(dllName, IsDebuggerPresentConstants.FuncName);
 			var clrDllName = Path.GetFileName(clrFilename);
 			if (!functionProvider.TryGetModuleAddress(clrDllName, out var clrAddress, out var clrEndAddress)) {
 				errorMessage = $"Couldn't get the address of {clrDllName}";
