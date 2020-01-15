@@ -187,7 +187,7 @@
     <value>Скидання ядра виконання.</value>
   </data>
   <data name="Script_ToolTip_ClearScreen" xml:space="preserve">
-    <value>Очистити екран</value>
+    <value>Очистити Екран</value>
   </data>
   <data name="Script_ToolTip_HistoryNext" xml:space="preserve">
     <value>Історія Далі</value>
@@ -199,7 +199,7 @@
     <value>Очистити</value>
   </data>
   <data name="ShortCutKeyAltDown" xml:space="preserve">
-    <value>Alt + стрілка вниз</value>
+    <value>Alt + Стрілка Вниз</value>
   </data>
   <data name="ShortCutKeyAltUp" xml:space="preserve">
     <value>Alt + стрілка вгору</value>
@@ -271,10 +271,10 @@
     <value>Ctrl + E, Ctrl + W</value>
   </data>
   <data name="ShowLineNumbersCommand" xml:space="preserve">
-    <value>Показати номери рядків</value>
+    <value>Показати Номери Рядків</value>
   </data>
   <data name="WordWrapHeader" xml:space="preserve">
-    <value>Перенесення слів</value>
+    <value>Перенесення Слів</value>
   </data>
   <data name="Repl_WordWrap_ToolTip" xml:space="preserve">
     <value>Увімкнути або вимкнути перенос слів</value>
@@ -301,9 +301,9 @@
     <value>Ctrl+Shift+S</value>
   </data>
   <data name="CSharpScriptFiles" xml:space="preserve">
-    <value>Файли скриптів C#</value>
+    <value>Файли Скриптів C#</value>
   </data>
   <data name="VisualBasicScriptFiles" xml:space="preserve">
-    <value>Файли скриптів Visual Basic</value>
+    <value>Файли Cкриптів Visual Basic</value>
   </data>
 </root>

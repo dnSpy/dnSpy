@@ -121,31 +121,31 @@
     <value>Classes</value>
   </data>
   <data name="CompilerSettings_AllowUnsafe" xml:space="preserve">
-    <value>Allow unsafe code</value>
+    <value>Permitir código não seguro</value>
   </data>
   <data name="CompilerSettings_CheckOverflow" xml:space="preserve">
-    <value>Check for arithmetic overflow/underflow</value>
+    <value>Verificar se há overflow/fluxo aritmético</value>
   </data>
   <data name="CompilerSettings_EmbedVBRuntime" xml:space="preserve">
-    <value>Embed Visual Basic runtime</value>
+    <value>Incorporar tempo de execução Visual Basic</value>
   </data>
   <data name="CompilerSettings_Optimize" xml:space="preserve">
-    <value>Optimize code</value>
+    <value>Otimizar código</value>
   </data>
   <data name="CompilerSettings_OptionCompareBinary" xml:space="preserve">
-    <value>Option compare: binary</value>
+    <value>Opção de comparação: binário</value>
   </data>
   <data name="CompilerSettings_OptionExplicit" xml:space="preserve">
-    <value>Option explicit</value>
+    <value>Opção explícita</value>
   </data>
   <data name="CompilerSettings_OptionInfer" xml:space="preserve">
-    <value>Option infer</value>
+    <value>Inferir Opção</value>
   </data>
   <data name="CompilerSettings_OptionStrict" xml:space="preserve">
-    <value>Option strict</value>
+    <value>Opção estrita</value>
   </data>
   <data name="CompilerSettings_PreprocessorSymbols" xml:space="preserve">
-    <value>Conditional compilation symbols</value>
+    <value>Símbolos de compilação condicional</value>
   </data>
   <data name="CompletionSet_All" xml:space="preserve">
     <value>Todas</value>
@@ -160,13 +160,13 @@
     <value>Membros estáticos</value>
   </data>
   <data name="DebuggerVarsWindow_DynamicView" xml:space="preserve">
-    <value>Dynamic View</value>
+    <value>Vista Dinâmica</value>
   </data>
   <data name="DebuggerVarsWindow_Error_PropertyName" xml:space="preserve">
     <value>Erro</value>
   </data>
   <data name="DebuggerVarsWindow_ExpandDynamicViewMessage" xml:space="preserve">
-    <value>Expanding the Dynamic View will get the dynamic members for the object</value>
+    <value>Expandir a visão dinâmica obterá os membros dinâmicos para o objeto</value>
   </data>
   <data name="DebuggerVarsWindow_ExpandResultsViewMessage" xml:space="preserve">
     <value>Expandir a Vista de Resultados vai enumerar o IEnumerable</value>
@@ -187,10 +187,10 @@
     <value>Delegados</value>
   </data>
   <data name="DynamicViewAssemblyNotLoaded" xml:space="preserve">
-    <value>Dynamic View requires {0} to be referenced</value>
+    <value>Exibição dinâmica requer que {0} seja referenciado</value>
   </data>
   <data name="DynamicView_MustBeDynamicOrComType" xml:space="preserve">
-    <value>Only COM or Dynamic objects can have Dynamic View</value>
+    <value>Apenas COM ou objetos dinâmicos podem ter Visualização Dinâmica</value>
   </data>
   <data name="EnumsToolTip" xml:space="preserve">
     <value>Enums</value>

@@ -1769,7 +1769,7 @@
     <value>Перейменувати</value>
   </data>
   <data name="GoToBookmarkCommand" xml:space="preserve">
-    <value>Перейти на Закладку</value>
+    <value>Перейти На Закладку</value>
   </data>
   <data name="ShortCutKeyCtrl_DIGIT" xml:space="preserve">
     <value>Ctrl+{0}</value>

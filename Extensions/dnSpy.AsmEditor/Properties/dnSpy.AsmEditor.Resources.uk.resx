@@ -121,16 +121,16 @@
     <value>Додати Об'єкт</value>
   </data>
   <data name="AppendType" xml:space="preserve">
-    <value>Додати тип</value>
+    <value>Додати Тип</value>
   </data>
   <data name="AssemblyDlg_Main_CB_DisableJITCompileOpt" xml:space="preserve">
     <value>_Вимкнути Оптимізатор JIT-компіляції</value>
   </data>
   <data name="AssemblyDlg_Main_CB_EnableJITCompTrck" xml:space="preserve">
-    <value>Ввімкнути відслідковування _JIT-компіляції</value>
+    <value>Ввімкнути Відслідковування _JIT-компіляції</value>
   </data>
   <data name="AssemblyDlg_Main_CB_ProcessArchSpec" xml:space="preserve">
-    <value>Архітектура проц_есора вказана</value>
+    <value>Архітектура Проц_есора Вказана</value>
   </data>
   <data name="AssemblyDlg_Main_CB_PublicKey" xml:space="preserve">
     <value>Відкритий _Ключ</value>

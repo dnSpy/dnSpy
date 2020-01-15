@@ -211,7 +211,7 @@
     <value>Створити  ресурс сплеш-екрану {0}</value>
   </data>
   <data name="MSBuild_CreateWinFormsDesignerFile" xml:space="preserve">
-    <value>Створити файл WinForms дизайнер</value>
+    <value>Створити файл WinForms Дизайнер</value>
   </data>
   <data name="MSBuild_CreateWinFormsFile" xml:space="preserve">
     <value>Створити файл WinForms</value>

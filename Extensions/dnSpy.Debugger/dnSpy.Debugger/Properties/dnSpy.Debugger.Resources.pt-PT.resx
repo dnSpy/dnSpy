@@ -1482,7 +1482,7 @@ Tem certeza que deseja expandi-la?</value>
     <value>Show raw locals</value>
   </data>
   <data name="DbgSettings_AsyncDebugging" xml:space="preserve">
-    <value>Enable async debugging</value>
+    <value>Ativar depuração assíncrona</value>
   </data>
   <data name="DbgSettings_StepOverPropertiesAndOperators" xml:space="preserve">
     <value>Step over properties and operators</value>
@@ -1500,7 +1500,7 @@ Tem certeza que deseja expandi-la?</value>
     <value>Alt + 8</value>
   </data>
   <data name="DbgSettings_IgnoreUnhandledExceptions" xml:space="preserve">
-    <value>Ignore unhandled exceptions</value>
+    <value>Ignorar exceções não tratadas</value>
   </data>
   <data name="RunWithInvalidExtension" xml:space="preserve">
     <value>Are you sure you want to run this file which doesn't have a valid extension?</value>
@@ -1509,7 +1509,7 @@ Tem certeza que deseja expandi-la?</value>
     <value>Are you sure you want to debug this file which doesn't have a valid extension?</value>
   </data>
   <data name="Processes_NoMatch" xml:space="preserve">
-    <value>No processes match your search filter.</value>
+    <value>Nenhum processo corresponde ao filtro de pesquisa.</value>
   </data>
   <data name="Processes_Search" xml:space="preserve">
     <value>Pesquisa</value>
@@ -1524,6 +1524,6 @@ Tem certeza que deseja expandi-la?</value>
     <value>Bring dnSpy to the foreground when breaking in the debugger</value>
   </data>
   <data name="Column_LoadModule" xml:space="preserve">
-    <value>Load</value>
+    <value>Carregar</value>
   </data>
 </root>

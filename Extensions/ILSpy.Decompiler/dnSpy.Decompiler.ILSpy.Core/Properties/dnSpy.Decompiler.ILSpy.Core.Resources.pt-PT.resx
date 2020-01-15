@@ -169,7 +169,7 @@
     <value>Adicionar um namespace para tipos com o mesmo nome</value>
   </data>
   <data name="DecompilerSettings_HexadecimalNumbers" xml:space="preserve">
-    <value>Hexadecimal numbers</value>
+    <value>Números hexadecimais</value>
   </data>
   <data name="DecompilerSettings_IntroduceIncrementAndDecrement" xml:space="preserve">
     <value>Usar operadores de incremento e decremento</value>
@@ -181,7 +181,7 @@
     <value>Número máximo de elementos em array para mostrar</value>
   </data>
   <data name="DecompilerSettings_MaxStringLength" xml:space="preserve">
-    <value>Max string length</value>
+    <value>Comprimento máximo do texto</value>
   </data>
   <data name="DecompilerSettings_MemberAddPrivateModifier" xml:space="preserve">
     <value>Adicionar o modificador 'private' aos membros de tipo</value>

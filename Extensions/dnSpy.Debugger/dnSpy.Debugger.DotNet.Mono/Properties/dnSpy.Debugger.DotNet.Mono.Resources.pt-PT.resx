@@ -217,10 +217,10 @@
     <value>Não foi possível definir a próxima instrução.</value>
   </data>
   <data name="DbgAsm_ProcessIsSuspended" xml:space="preserve">
-    <value>Process is paused and _waiting for the debugger</value>
+    <value>Processo está pausado e aguardando pelo depurador</value>
   </data>
   <data name="Error_RuntimeDoesNotSupportSettingNewStatement" xml:space="preserve">
-    <value>The runtime doesn't support setting a new statement</value>
+    <value>O tempo de execução não suporta a configuração de uma nova declaração</value>
   </data>
   <data name="AttachToProcessXCommand" xml:space="preserve">
     <value>Anexar ao Processo ({0})...</value>
@@ -238,7 +238,7 @@
     <value>E_xecutable</value>
   </data>
   <data name="CouldNotConnectToUnityGame_MakeSureMonoDllFileIsPatched" xml:space="preserve">
-    <value>Make sure you have patched the game's mono.dll file</value>
+    <value>Certifique-se de que alterou o arquivo mono.dll do jogo</value>
   </data>
   <data name="DbgAsm_ConnectionTimeoutInSeconds" xml:space="preserve">
     <value>_Timeout (s)</value>
