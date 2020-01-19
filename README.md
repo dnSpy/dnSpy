@@ -18,7 +18,7 @@ See below for more features
 git clone --recursive https://github.com/0xd4d/dnSpy.git
 cd dnSpy
 # or dotnet build
-./build.ps1
+./build.ps1 -NoMsbuild
 ```
 
 # Debugger
