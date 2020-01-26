@@ -23,23 +23,23 @@ using Iced.Intel;
 
 namespace dnSpy.Disassembly.Viewer.X86 {
 	static class SymbolKindUtils {
-		public static SymbolKind ToSymbolKind(FormatterOutputTextKind kind) {
+		public static SymbolKind ToSymbolKind(FormatterTextKind kind) {
 			switch (kind) {
-			case FormatterOutputTextKindExtensions.UnknownSymbol:return SymbolKind.Unknown;
-			case FormatterOutputTextKind.Data:		return SymbolKind.Data;
-			case FormatterOutputTextKind.Label:		return SymbolKind.Label;
-			case FormatterOutputTextKind.Function:	return SymbolKind.Function;
-			default:								return SymbolKind.Unknown;
+			case FormatterTextKindExtensions.UnknownSymbol:return SymbolKind.Unknown;
+			case FormatterTextKind.Data:		return SymbolKind.Data;
+			case FormatterTextKind.Label:		return SymbolKind.Label;
+			case FormatterTextKind.Function:	return SymbolKind.Function;
+			default:							return SymbolKind.Unknown;
 			}
 		}
 
-		public static FormatterOutputTextKind ToFormatterOutputTextKind(SymbolKind kind) {
+		public static FormatterTextKind ToFormatterOutputTextKind(SymbolKind kind) {
 			switch (kind) {
-			case SymbolKind.Unknown:	return FormatterOutputTextKindExtensions.UnknownSymbol;
-			case SymbolKind.Data:		return FormatterOutputTextKind.Data;
-			case SymbolKind.Label:		return FormatterOutputTextKind.Label;
-			case SymbolKind.Function:	return FormatterOutputTextKind.Function;
-			default:					return FormatterOutputTextKind.Text;
+			case SymbolKind.Unknown:	return FormatterTextKindExtensions.UnknownSymbol;
+			case SymbolKind.Data:		return FormatterTextKind.Data;
+			case SymbolKind.Label:		return FormatterTextKind.Label;
+			case SymbolKind.Function:	return FormatterTextKind.Function;
+			default:					return FormatterTextKind.Text;
 			}
 		}
 	}

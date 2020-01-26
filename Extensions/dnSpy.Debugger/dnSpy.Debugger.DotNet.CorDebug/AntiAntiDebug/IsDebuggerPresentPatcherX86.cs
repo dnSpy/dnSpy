@@ -66,7 +66,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.AntiAntiDebug {
 			instructions.Add(Instruction.Create(II.Code.Retnd));
 
 			var block = new InstructionBlock(new CodeWriterImpl(function), instructions, function.NewCodeAddress);
-			if (!BlockEncoder.TryEncode(process.Bitness, block, out var encErrMsg)) {
+			if (!BlockEncoder.TryEncode(process.Bitness, block, out var encErrMsg, out _)) {
 				errorMessage = $"Failed to encode: {encErrMsg}";
 				return false;
 			}
@@ -124,7 +124,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.AntiAntiDebug {
 			instructions.Add(Instruction.Create(II.Code.Retnq));
 
 			var block = new InstructionBlock(new CodeWriterImpl(function), instructions, function.NewCodeAddress);
-			if (!BlockEncoder.TryEncode(process.Bitness, block, out var encErrMsg)) {
+			if (!BlockEncoder.TryEncode(process.Bitness, block, out var encErrMsg, out _)) {
 				errorMessage = $"Failed to encode: {encErrMsg}";
 				return false;
 			}

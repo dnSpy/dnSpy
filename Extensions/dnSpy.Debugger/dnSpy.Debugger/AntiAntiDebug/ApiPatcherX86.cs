@@ -288,7 +288,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 			}
 			var arrayCodeWriter = new ArrayCodeWriterImpl((int)patchSize);
 			var block = new InstructionBlock(arrayCodeWriter, instructions, blockAddress);
-			if (!BlockEncoder.TryEncode(is64 ? 64 : 32, block, out errorMessage, options: BlockEncoderOptions.DontFixBranches))
+			if (!BlockEncoder.TryEncode(is64 ? 64 : 32, block, out errorMessage, out _, options: BlockEncoderOptions.DontFixBranches))
 				return new PatchAPIResult(errorMessage);
 
 			Debug.Assert((uint)arrayCodeWriter.Index == patchSize);
@@ -311,7 +311,7 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 			blockInstructions.Add(Instruction.CreateBranch(is64 ? II.Code.Jmp_rel32_64 : II.Code.Jmp_rel32_32, targetAddr));
 			var codeWriter = new ProcessMemoryBlockCodeWriter(memBlock);
 			var block = new InstructionBlock(codeWriter, blockInstructions, memBlock.CurrentAddress);
-			return BlockEncoder.TryEncode(is64 ? 64 : 32, block, out errorMessage);
+			return BlockEncoder.TryEncode(is64 ? 64 : 32, block, out errorMessage, out _);
 		}
 	}
 }

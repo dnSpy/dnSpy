@@ -215,7 +215,7 @@ namespace dnSpy.Contracts.Disassembly {
 		/// <summary>
 		/// Sign extend memory displacements to the address size (16-bit, 32-bit, 64-bit), eg. 'mov al,[eax+12h]' vs 'mov al,[eax+00000012h]'
 		/// </summary>
-		bool SignExtendMemoryDisplacements { get; set; }
+		bool DisplacementLeadingZeroes { get; set; }
 
 		/// <summary>
 		/// Options that control if the memory size (eg. dword ptr) is shown or not.

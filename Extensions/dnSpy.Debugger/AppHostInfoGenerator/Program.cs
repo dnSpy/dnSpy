@@ -171,20 +171,20 @@ namespace AppHostInfoGenerator {
 					var fileData = DownloadNuGetPackage("Microsoft.NETCore.DotNetAppHost", version, NuGetSource.NuGet);
 					using (var zip = new ZipArchive(new MemoryStream(fileData), ZipArchiveMode.Read, leaveOpen: false)) {
 						var runtimeJsonString = GetFileAsString(zip, "runtime.json");
-						var runtimeJson = (JObject)JsonConvert.DeserializeObject(runtimeJsonString);
-						foreach (JProperty runtime in runtimeJson["runtimes"]) {
+						var runtimeJson = (JObject)JsonConvert.DeserializeObject(runtimeJsonString)!;
+						foreach (JProperty runtime in runtimeJson["runtimes"]!) {
 							var runtimeName = runtime.Name;
 							if (runtime.Count != 1)
 								throw new InvalidOperationException("Expected 1 child");
-							var dotNetAppHostObject = (JObject)runtime.First;
-							var dotNetAppHostObject2 = (JObject)dotNetAppHostObject["Microsoft.NETCore.DotNetAppHost"];
+							var dotNetAppHostObject = (JObject)runtime.First!;
+							var dotNetAppHostObject2 = (JObject)dotNetAppHostObject["Microsoft.NETCore.DotNetAppHost"]!;
 							if (dotNetAppHostObject2.Count != 1)
 								throw new InvalidOperationException("Expected 1 child");
-							var dotNetAppHostProperty = (JProperty)dotNetAppHostObject2.First;
+							var dotNetAppHostProperty = (JProperty)dotNetAppHostObject2.First!;
 							if (dotNetAppHostProperty.Count != 1)
 								throw new InvalidOperationException("Expected 1 child");
 							var runtimePackageName = dotNetAppHostProperty.Name;
-							var runtimePackageVersion = GetNuGetVersion((string)((JValue)dotNetAppHostProperty.Value).Value);
+							var runtimePackageVersion = GetNuGetVersion((string)((JValue)dotNetAppHostProperty.Value).Value!);
 							Console.WriteLine();
 							Console.WriteLine($"{runtimePackageName} {runtimePackageVersion}");
 							NuGetSource[] nugetSources;
