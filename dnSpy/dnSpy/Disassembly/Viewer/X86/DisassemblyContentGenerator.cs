@@ -32,7 +32,7 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 		const int HEXBYTES_COLUMN_BYTE_LENGTH = 10;
 
 		sealed class AsmReferenceFactory {
-			readonly Dictionary<(FormatterOutputTextKind kind, string value), AsmReference> refDict = new Dictionary<(FormatterOutputTextKind kind, string value), AsmReference>();
+			readonly Dictionary<(FormatterTextKind kind, string value), AsmReference> refDict = new Dictionary<(FormatterTextKind kind, string value), AsmReference>();
 			readonly Dictionary<(Code code, string mnemonic, CpuidFeature[] cpuidFeatures), MnemonicReference> mnemonicDict = new Dictionary<(Code code, string mnemonic, CpuidFeature[] cpuidFeatures), MnemonicReference>(new MnemonicComparer());
 
 			sealed class MnemonicComparer : IEqualityComparer<(Code code, string mnemonic, CpuidFeature[] cpuidFeatures)> {
@@ -56,7 +56,7 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 					(int)obj.code ^ StringComparer.Ordinal.GetHashCode(obj.mnemonic);
 			}
 
-			public AsmReference Create(FormatterOutputTextKind kind, string value) {
+			public AsmReference Create(FormatterTextKind kind, string value) {
 				var key = (kind, value);
 				if (!refDict.TryGetValue(key, out var asmRef))
 					refDict[key] = asmRef = new AsmReference(kind, value);
@@ -72,9 +72,9 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 		}
 
 		sealed class AsmReference {
-			readonly FormatterOutputTextKind kind;
+			readonly FormatterTextKind kind;
 			readonly string value;
-			public AsmReference(FormatterOutputTextKind kind, string value) {
+			public AsmReference(FormatterTextKind kind, string value) {
 				this.kind = kind;
 				this.value = value;
 			}
@@ -91,19 +91,19 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 				this.output = output;
 			}
 
-			public override void Write(string text, FormatterOutputTextKind kind) {
+			public override void Write(string text, FormatterTextKind kind) {
 				var color = GetColor(kind);
 				switch (kind) {
-				case FormatterOutputTextKind.Directive:
-				case FormatterOutputTextKind.Prefix:
-				case FormatterOutputTextKind.Mnemonic:
-				case FormatterOutputTextKind.Keyword:
-				case FormatterOutputTextKind.Register:
-				case FormatterOutputTextKindExtensions.UnknownSymbol:
-				case FormatterOutputTextKind.Data:
-				case FormatterOutputTextKind.Label:
-				case FormatterOutputTextKind.Function:
-				case FormatterOutputTextKind.Decorator:
+				case FormatterTextKind.Directive:
+				case FormatterTextKind.Prefix:
+				case FormatterTextKind.Mnemonic:
+				case FormatterTextKind.Keyword:
+				case FormatterTextKind.Register:
+				case FormatterTextKindExtensions.UnknownSymbol:
+				case FormatterTextKind.Data:
+				case FormatterTextKind.Label:
+				case FormatterTextKind.Function:
+				case FormatterTextKind.Decorator:
 					output.Write(text, refFactory.Create(kind, text), DisassemblyReferenceFlags.Local, color);
 					break;
 
@@ -113,7 +113,7 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 				}
 			}
 
-			public override void WriteNumber(in Instruction instruction, int operand, int instructionOperand, string text, ulong value, NumberKind numberKind, FormatterOutputTextKind kind) {
+			public override void WriteNumber(in Instruction instruction, int operand, int instructionOperand, string text, ulong value, NumberKind numberKind, FormatterTextKind kind) {
 				var color = GetColor(kind);
 				const DisassemblyReferenceFlags flags = DisassemblyReferenceFlags.Local | DisassemblyReferenceFlags.NoFollow;
 				output.Write(text, GetValue(value, numberKind), flags, color);
@@ -136,46 +136,46 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 			}
 
 			public override void WriteMnemonic(in Instruction instruction, string text) {
-				var color = GetColor(FormatterOutputTextKind.Mnemonic);
+				var color = GetColor(FormatterTextKind.Mnemonic);
 				output.Write(text, refFactory.Create(instruction, text), DisassemblyReferenceFlags.Local, color);
 			}
 		}
 
-		static object GetColor(FormatterOutputTextKind kind) {
+		static object GetColor(FormatterTextKind kind) {
 			switch (kind) {
-			case FormatterOutputTextKind.Text:
+			case FormatterTextKind.Text:
 				return BoxedTextColor.Text;
-			case FormatterOutputTextKind.Directive:
+			case FormatterTextKind.Directive:
 				return BoxedTextColor.AsmDirective;
-			case FormatterOutputTextKind.Prefix:
+			case FormatterTextKind.Prefix:
 				return BoxedTextColor.AsmPrefix;
-			case FormatterOutputTextKind.Mnemonic:
+			case FormatterTextKind.Mnemonic:
 				return BoxedTextColor.AsmMnemonic;
-			case FormatterOutputTextKind.Keyword:
+			case FormatterTextKind.Keyword:
 				return BoxedTextColor.AsmKeyword;
-			case FormatterOutputTextKind.Operator:
+			case FormatterTextKind.Operator:
 				return BoxedTextColor.AsmOperator;
-			case FormatterOutputTextKind.Punctuation:
+			case FormatterTextKind.Punctuation:
 				return BoxedTextColor.AsmPunctuation;
-			case FormatterOutputTextKind.Number:
+			case FormatterTextKind.Number:
 				return BoxedTextColor.AsmNumber;
-			case FormatterOutputTextKind.Register:
+			case FormatterTextKind.Register:
 				return BoxedTextColor.AsmRegister;
-			case FormatterOutputTextKind.SelectorValue:
+			case FormatterTextKind.SelectorValue:
 				return BoxedTextColor.AsmSelectorValue;
-			case FormatterOutputTextKind.LabelAddress:
+			case FormatterTextKind.LabelAddress:
 				return BoxedTextColor.AsmLabelAddress;
-			case FormatterOutputTextKind.FunctionAddress:
+			case FormatterTextKind.FunctionAddress:
 				return BoxedTextColor.AsmFunctionAddress;
-			case FormatterOutputTextKindExtensions.UnknownSymbol:
+			case FormatterTextKindExtensions.UnknownSymbol:
 				return BoxedTextColor.AsmLabel;
-			case FormatterOutputTextKind.Data:
+			case FormatterTextKind.Data:
 				return BoxedTextColor.AsmData;
-			case FormatterOutputTextKind.Label:
+			case FormatterTextKind.Label:
 				return BoxedTextColor.AsmLabel;
-			case FormatterOutputTextKind.Function:
+			case FormatterTextKind.Function:
 				return BoxedTextColor.AsmFunction;
-			case FormatterOutputTextKind.Decorator:
+			case FormatterTextKind.Decorator:
 				return BoxedTextColor.Text;
 			default:
 				Debug.Fail($"Unknown output kind: {kind}");

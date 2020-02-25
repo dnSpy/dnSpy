@@ -23,7 +23,7 @@ using Iced.Intel;
 
 namespace dnSpy.Disassembly.X86 {
 	sealed class DisasmBooleanSetting : ViewModelBase {
-		readonly StringBuilderFormatterOutput output;
+		readonly StringOutput output;
 		readonly Func<bool> getValue;
 		readonly Action<bool> setValue;
 		readonly Formatter formatter;
@@ -47,7 +47,7 @@ namespace dnSpy.Disassembly.X86 {
 			}
 		}
 
-		public DisasmBooleanSetting(StringBuilderFormatterOutput output, Func<bool> getValue, Action<bool> setValue, Formatter formatter, in Instruction instruction) {
+		public DisasmBooleanSetting(StringOutput output, Func<bool> getValue, Action<bool> setValue, Formatter formatter, in Instruction instruction) {
 			this.output = output ?? throw new ArgumentNullException(nameof(output));
 			this.getValue = getValue ?? throw new ArgumentNullException(nameof(getValue));
 			this.setValue = setValue ?? throw new ArgumentNullException(nameof(setValue));

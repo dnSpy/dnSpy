@@ -99,7 +99,7 @@ namespace dnSpy.Contracts.Decompiler {
 				var fd = ((IField)memberRef).ResolveFieldDef();
 				if (fd is null)
 					return BoxedTextColor.InstanceField;
-				if (fd.DeclaringType.IsEnum)
+				if (fd.DeclaringType?.IsEnum == true)
 					return BoxedTextColor.EnumField;
 				if (fd.IsLiteral)
 					return BoxedTextColor.LiteralField;

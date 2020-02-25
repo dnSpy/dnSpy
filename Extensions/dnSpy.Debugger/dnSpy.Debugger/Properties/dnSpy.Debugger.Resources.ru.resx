@@ -1468,7 +1468,7 @@
     <value>Открыть все модули</value>
   </data>
   <data name="DbgSettings_HideDeprecatedError" xml:space="preserve">
-    <value>Скрыть deprecated члены в окнах переменных</value>
+    <value>Скрыть deprecated-члены в окнах переменных</value>
   </data>
   <data name="DbgSettings_ShowReturnValues" xml:space="preserve">
     <value>Показывать возвращаемые значения</value>
@@ -1525,7 +1525,7 @@
     <value>Поиск процесса</value>
   </data>
   <data name="DbgSettings_FocusDebuggerWhenProcessBreaks" xml:space="preserve">
-    <value>Bring dnSpy to the foreground when breaking in the debugger</value>
+    <value>Открывать dnSpy на переднем плане при останове в отладчике</value>
   </data>
   <data name="Column_LoadModule" xml:space="preserve">
     <value>Загрузить</value>

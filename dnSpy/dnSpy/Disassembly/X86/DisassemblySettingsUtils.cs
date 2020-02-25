@@ -63,7 +63,7 @@ namespace dnSpy.Disassembly.X86 {
 			options.BranchLeadingZeroes = settings.BranchLeadingZeroes;
 			options.SignedImmediateOperands = settings.SignedImmediateOperands;
 			options.SignedMemoryDisplacements = settings.SignedMemoryDisplacements;
-			options.SignExtendMemoryDisplacements = settings.SignExtendMemoryDisplacements;
+			options.DisplacementLeadingZeroes = settings.DisplacementLeadingZeroes;
 			options.MemorySizeOptions = ToMemorySizeOptions(settings.MemorySizeOptions);
 			options.RipRelativeAddresses = settings.RipRelativeAddresses;
 			options.DecimalDigitGroupSize = settings.DecimalDigitGroupSize;

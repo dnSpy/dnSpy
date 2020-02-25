@@ -437,16 +437,16 @@ namespace dnSpy.Disassembly.X86 {
 		}
 		bool signedMemoryDisplacements = true;
 
-		public bool SignExtendMemoryDisplacements {
-			get => signExtendMemoryDisplacements;
+		public bool DisplacementLeadingZeroes {
+			get => displacementLeadingZeroes;
 			set {
-				if (value != signExtendMemoryDisplacements) {
-					signExtendMemoryDisplacements = value;
-					OnPropertyChanged(nameof(SignExtendMemoryDisplacements));
+				if (value != displacementLeadingZeroes) {
+					displacementLeadingZeroes = value;
+					OnPropertyChanged(nameof(DisplacementLeadingZeroes));
 				}
 			}
 		}
-		bool signExtendMemoryDisplacements;
+		bool displacementLeadingZeroes;
 
 		public MemorySizeOptions MemorySizeOptions {
 			get => memorySizeOptions;
@@ -541,7 +541,7 @@ namespace dnSpy.Disassembly.X86 {
 			BranchLeadingZeroes = sect.Attribute<bool?>(nameof(BranchLeadingZeroes)) ?? BranchLeadingZeroes;
 			SignedImmediateOperands = sect.Attribute<bool?>(nameof(SignedImmediateOperands)) ?? SignedImmediateOperands;
 			SignedMemoryDisplacements = sect.Attribute<bool?>(nameof(SignedMemoryDisplacements)) ?? SignedMemoryDisplacements;
-			SignExtendMemoryDisplacements = sect.Attribute<bool?>(nameof(SignExtendMemoryDisplacements)) ?? SignExtendMemoryDisplacements;
+			DisplacementLeadingZeroes = sect.Attribute<bool?>(nameof(DisplacementLeadingZeroes)) ?? DisplacementLeadingZeroes;
 			MemorySizeOptions = sect.Attribute<MemorySizeOptions?>(nameof(MemorySizeOptions)) ?? MemorySizeOptions;
 			RipRelativeAddresses = sect.Attribute<bool?>(nameof(RipRelativeAddresses)) ?? RipRelativeAddresses;
 			ShowBranchSize = sect.Attribute<bool?>(nameof(ShowBranchSize)) ?? ShowBranchSize;
@@ -587,7 +587,7 @@ namespace dnSpy.Disassembly.X86 {
 			sect.Attribute(nameof(BranchLeadingZeroes), BranchLeadingZeroes);
 			sect.Attribute(nameof(SignedImmediateOperands), SignedImmediateOperands);
 			sect.Attribute(nameof(SignedMemoryDisplacements), SignedMemoryDisplacements);
-			sect.Attribute(nameof(SignExtendMemoryDisplacements), SignExtendMemoryDisplacements);
+			sect.Attribute(nameof(DisplacementLeadingZeroes), DisplacementLeadingZeroes);
 			sect.Attribute(nameof(MemorySizeOptions), MemorySizeOptions);
 			sect.Attribute(nameof(RipRelativeAddresses), RipRelativeAddresses);
 			sect.Attribute(nameof(ShowBranchSize), ShowBranchSize);
@@ -635,7 +635,7 @@ namespace dnSpy.Disassembly.X86 {
 			other.BranchLeadingZeroes = BranchLeadingZeroes;
 			other.SignedImmediateOperands = SignedImmediateOperands;
 			other.SignedMemoryDisplacements = SignedMemoryDisplacements;
-			other.SignExtendMemoryDisplacements = SignExtendMemoryDisplacements;
+			other.DisplacementLeadingZeroes = DisplacementLeadingZeroes;
 			other.MemorySizeOptions = MemorySizeOptions;
 			other.RipRelativeAddresses = RipRelativeAddresses;
 			other.ShowBranchSize = ShowBranchSize;
