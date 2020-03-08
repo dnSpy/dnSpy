@@ -42,13 +42,18 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 
 		static ResourceElement CreateSerializedImage(Stream stream, string filename) {
 			object obj;
-			if (filename.EndsWith(".ico", StringComparison.OrdinalIgnoreCase))
+			string typeName;
+			if (filename.EndsWith(".ico", StringComparison.OrdinalIgnoreCase)) {
 				obj = new System.Drawing.Icon(stream);
-			else
+				typeName = SerializedImageUtilities.SystemDrawingIcon.AssemblyQualifiedName;
+			}
+			else {
 				obj = new System.Drawing.Bitmap(stream);
+				typeName = SerializedImageUtilities.SystemDrawingBitmap.AssemblyQualifiedName;
+			}
 			var serializedData = Serialize(obj);
 
-			var userType = new UserResourceType(obj.GetType().AssemblyQualifiedName, ResourceTypeCode.UserTypes);
+			var userType = new UserResourceType(typeName, ResourceTypeCode.UserTypes);
 			var rsrcElem = new ResourceElement {
 				Name = Path.GetFileName(filename),
 				ResourceData = new BinaryResourceData(userType, serializedData),
