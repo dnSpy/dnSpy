@@ -13,7 +13,7 @@ jobs:
 
       - uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '3.0.102'
+          dotnet-version: '3.1.200'
 
       # Build each tfm separately since building all requires too much disk space
       - name: Build dnSpy (.NET Framework)
@@ -31,10 +31,9 @@ jobs:
         run: |
           $msbuildPath = Split-Path (& "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -requires Microsoft.Component.MSBuild -find MSBuild\Current\Bin\amd64\MSBuild.exe | Select-Object -First 1) -Parent
           $env:PATH = $msbuildPath + ';' + $env:PATH
-          # .NET Core SDK 3.1 is buggy, use dotnet build to disable COM stuff
-          .\build.ps1 core-x86 -NoMsbuild
+          .\build.ps1 core-x86
           New-Item -ItemType Directory -Path C:\builtfiles -Force > $null
-          Compress-Archive -Path dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x86\publish\* -DestinationPath C:\builtfiles\dnSpy-netcore-win32.zip
+          Compress-Archive -Path dnSpy\dnSpy\bin\Release\netcoreapp3.1\win-x86\publish\* -DestinationPath C:\builtfiles\dnSpy-netcore-win32.zip
           .\clean-all.cmd
 
       - name: Build dnSpy (.NET Core x64)
@@ -42,10 +41,9 @@ jobs:
         run: |
           $msbuildPath = Split-Path (& "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -requires Microsoft.Component.MSBuild -find MSBuild\Current\Bin\amd64\MSBuild.exe | Select-Object -First 1) -Parent
           $env:PATH = $msbuildPath + ';' + $env:PATH
-          # .NET Core SDK 3.1 is buggy, use dotnet build to disable COM stuff
-          .\build.ps1 core-x64 -NoMsbuild
+          .\build.ps1 core-x64
           New-Item -ItemType Directory -Path C:\builtfiles -Force > $null
-          Compress-Archive -Path dnSpy\dnSpy\bin\Release\netcoreapp3.0\win-x64\publish\* -DestinationPath C:\builtfiles\dnSpy-netcore-win64.zip
+          Compress-Archive -Path dnSpy\dnSpy\bin\Release\netcoreapp3.1\win-x64\publish\* -DestinationPath C:\builtfiles\dnSpy-netcore-win64.zip
           .\clean-all.cmd
 
       - uses: actions/upload-artifact@v1
