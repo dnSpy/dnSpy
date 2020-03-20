@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Files;
 using dnSpy.Contracts.Hex.Files.DotNet;
@@ -45,7 +46,7 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		sealed class ResourceInfoComparer : IComparer<ResourceInfo> {
 			public static readonly ResourceInfoComparer Instance = new ResourceInfoComparer();
-			public int Compare(ResourceInfo x, ResourceInfo y) {
+			public int Compare([AllowNull] ResourceInfo x, [AllowNull] ResourceInfo y) {
 				int c = x.Span.Start.CompareTo(y.Span.Start);
 				if (c != 0)
 					return c;

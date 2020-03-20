@@ -119,6 +119,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			}
 
 			ctor = type.GetConstructor(Array.Empty<DmdType>()) ?? type.GetConstructors().FirstOrDefault();
+			Debug2.Assert(!(ctor is null));
 			return (ctor, null);
 		}
 

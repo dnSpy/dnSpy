@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Data;
@@ -185,7 +186,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 												AssemblyNameComparerFlags.PublicKeyToken |
 												AssemblyNameComparerFlags.ContentType;
 
-		public bool Equals(GACFileVM x, GACFileVM y) {
+		public bool Equals([AllowNull] GACFileVM x, [AllowNull] GACFileVM y) {
 			if (x == y)
 				return true;
 			if (x is null || y is null)
@@ -193,7 +194,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 			return new AssemblyNameComparer(flags).Equals(x.Assembly, y.Assembly);
 		}
 
-		public int GetHashCode(GACFileVM obj) {
+		public int GetHashCode([DisallowNull] GACFileVM obj) {
 			if (obj is null)
 				return 0;
 			return new AssemblyNameComparer(flags).GetHashCode(obj.Assembly);

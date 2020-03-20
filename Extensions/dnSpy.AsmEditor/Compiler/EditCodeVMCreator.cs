@@ -113,7 +113,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			return languageCompilerProviders.Any(a => a.Language == decompiler.GenericGuid);
 		}
 
-		IDecompiler TryGetUsedLanguage(CompilationKind kind) {
+		IDecompiler? TryGetUsedLanguage(CompilationKind kind) {
 			var defaultDecompiler = decompilerService.Decompiler;
 			if (IsSupportedLanguage(defaultDecompiler, kind))
 				return defaultDecompiler;

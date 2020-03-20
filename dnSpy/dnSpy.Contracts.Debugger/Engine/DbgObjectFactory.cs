@@ -210,7 +210,7 @@ namespace dnSpy.Contracts.Debugger.Engine {
 		/// <param name="message">Warning/error message or default if none</param>
 		/// <param name="data">Data to add to the <see cref="DbgEngineBoundCodeBreakpoint"/> or null if nothing gets added</param>
 		/// <returns></returns>
-		public DbgEngineBoundCodeBreakpoint Create<T>(DbgCodeLocation location, DbgModule? module, ulong address, DbgEngineBoundCodeBreakpointMessage message, T? data) where T : class =>
+		public DbgEngineBoundCodeBreakpoint? Create<T>(DbgCodeLocation location, DbgModule? module, ulong address, DbgEngineBoundCodeBreakpointMessage message, T? data) where T : class =>
 			Create(new[] { new DbgBoundCodeBreakpointInfo<T>(location, module, address, message, data) }).FirstOrDefault();
 
 		/// <summary>

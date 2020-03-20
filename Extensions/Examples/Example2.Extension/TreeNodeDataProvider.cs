@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
@@ -50,7 +51,7 @@ namespace Example2.Extension {
 
 			public double Order { get; }
 
-			public int Compare(TreeNodeData x, TreeNodeData y) {
+			public int Compare([AllowNull] TreeNodeData x, [AllowNull] TreeNodeData y) {
 				if (x == y)
 					return 0;
 				var a = x as AssemblyChildNode;
@@ -132,7 +133,7 @@ namespace Example2.Extension {
 
 			public double Order { get; }
 
-			public int Compare(TreeNodeData x, TreeNodeData y) {
+			public int Compare([AllowNull] TreeNodeData x, [AllowNull] TreeNodeData y) {
 				if (x == y)
 					return 0;
 				var a = x as ModuleChildNode;
@@ -169,7 +170,7 @@ namespace Example2.Extension {
 
 			public double Order { get; }
 
-			public int Compare(TreeNodeData x, TreeNodeData y) {
+			public int Compare([AllowNull] TreeNodeData x, [AllowNull] TreeNodeData y) {
 				if (x == y)
 					return 0;
 				var a = x as SomeMessageNode;

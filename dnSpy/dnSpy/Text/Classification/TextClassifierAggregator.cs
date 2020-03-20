@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using dnSpy.Contracts.Text.Classification;
 using Microsoft.VisualStudio.Text;
@@ -42,7 +43,15 @@ namespace dnSpy.Text.Classification {
 
 		sealed class TextClassificationTagComparer : IComparer<TextClassificationTag> {
 			public static readonly TextClassificationTagComparer Instance = new TextClassificationTagComparer();
-			public int Compare(TextClassificationTag x, TextClassificationTag y) => x.Span.Start - y.Span.Start;
+			public int Compare([AllowNull] TextClassificationTag x, [AllowNull] TextClassificationTag y) {
+				if ((object?)x == y)
+					return 0;
+				if (x is null)
+					return -1;
+				if (y is null)
+					return 1;
+				return x.Span.Start - y.Span.Start;
+			}
 		}
 
 		public IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context) {

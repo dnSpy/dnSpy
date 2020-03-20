@@ -82,7 +82,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		public byte[] ComputeHash() {
 			hasher.TransformFinalBlock(new byte[0], 0, 0);
-			return hasher.Hash;
+			return hasher.Hash!;
 		}
 
 		public static byte[]? CreatePublicKeyToken(byte[]? publicKeyData) {

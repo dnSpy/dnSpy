@@ -36,11 +36,11 @@ namespace dnSpy.Bookmarks.Navigator {
 		/// <summary>
 		/// Gets the default bookmark that gets selected when the active bookmark gets removed
 		/// </summary>
-		public abstract Bookmark DefaultBookmark { get; }
+		public abstract Bookmark? DefaultBookmark { get; }
 
 		/// <summary>
 		/// Called when there's a new active bookmark
 		/// </summary>
-		public abstract void SetActiveBookmark(Bookmark bookmark);
+		public abstract void SetActiveBookmark(Bookmark? bookmark);
 	}
 }

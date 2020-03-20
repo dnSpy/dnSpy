@@ -131,7 +131,7 @@ namespace dnSpy.Themes {
 				return theme;
 			if (themes.TryGetValue(DefaultThemeGuid, out theme))
 				return theme;
-			return AllThemes.FirstOrDefault();
+			return AllThemes.First();
 		}
 
 		void SwitchThemeIfNecessary() {

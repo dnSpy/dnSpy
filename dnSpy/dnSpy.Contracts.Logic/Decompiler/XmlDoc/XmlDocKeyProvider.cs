@@ -33,7 +33,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 		/// <param name="member">Member</param>
 		/// <param name="b">String builder</param>
 		/// <returns></returns>
-		public static StringBuilder? GetKey(IMemberRef member, StringBuilder b) {
+		public static StringBuilder? GetKey(IMemberRef? member, StringBuilder b) {
 			if (member is null)
 				return null;
 			b.Clear();

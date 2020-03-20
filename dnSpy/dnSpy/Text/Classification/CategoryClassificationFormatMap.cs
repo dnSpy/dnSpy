@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows;
 using dnSpy.Contracts.Text.Classification;
@@ -243,9 +244,9 @@ namespace dnSpy.Text.Classification {
 
 			public ClassificationTypeComparer(CategoryClassificationFormatMap owner) => this.owner = owner;
 
-			public int Compare(IClassificationType x, IClassificationType y) => GetOrder(y) - GetOrder(x);
+			public int Compare([AllowNull] IClassificationType x, [AllowNull] IClassificationType y) => GetOrder(y) - GetOrder(x);
 
-			int GetOrder(IClassificationType a) {
+			int GetOrder(IClassificationType? a) {
 				if (a is null)
 					return -1;
 				if (owner.toClassificationTypeOrder.TryGetValue(a, out int order))

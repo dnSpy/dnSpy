@@ -23,6 +23,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using dnSpy.Contracts.Controls.ToolWindows;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Modules;
@@ -245,7 +246,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			UI(() => DebuggerSettings_PropertyChanged_UI(e.PropertyName));
 
 		// UI thread
-		void DebuggerSettings_PropertyChanged_UI(string propertyName) {
+		void DebuggerSettings_PropertyChanged_UI(string? propertyName) {
 			moduleBreakpointContext.UIDispatcher.VerifyAccess();
 			if (propertyName == nameof(DebuggerSettings.SyntaxHighlight)) {
 				moduleBreakpointContext.SyntaxHighlight = debuggerSettings.SyntaxHighlight;
@@ -371,8 +372,14 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 		void InitializeNothingMatched(string filterText) =>
 			NothingMatched = AllItems.Count == 0 && !string.IsNullOrWhiteSpace(filterText);
 
-		public int Compare(ModuleBreakpointVM x, ModuleBreakpointVM y) {
+		public int Compare([AllowNull] ModuleBreakpointVM x, [AllowNull] ModuleBreakpointVM y) {
 			Debug.Assert(moduleBreakpointContext.UIDispatcher.CheckAccess());
+			if ((object?)x == y)
+				return 0;
+			if (x is null)
+				return -1;
+			if (y is null)
+				return 1;
 			var (desc, dir) = Descs.SortedColumn;
 
 			int id;

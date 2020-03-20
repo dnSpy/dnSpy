@@ -56,7 +56,7 @@ namespace dnSpy.Settings {
 			if (name is null)
 				throw new ArgumentNullException(nameof(name));
 
-			ISettingsSection section;
+			ISettingsSection? section;
 			lock (lockObj) {
 				section = sections.FirstOrDefault(a => StringComparer.Ordinal.Equals(name, a.Name));
 				if (!(section is null))

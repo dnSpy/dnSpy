@@ -207,7 +207,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			throw new InvalidOperationException();
 		}
 
-		SaveOptionsVM GetSaveOptionsVM(object obj) => Modules.FirstOrDefault(a => a.UndoDocument == obj);
+		SaveOptionsVM? GetSaveOptionsVM(object obj) => Modules.FirstOrDefault(a => a.UndoDocument == obj);
 
 		public bool WasSaved(object obj) {
 			var data = GetSaveOptionsVM(obj);

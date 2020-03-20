@@ -53,7 +53,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 					return FindVariableOfTypeUsageInType(type.DeclaringType, type);
 				}
 				else {
-					MethodDef constructor = GetTypeConstructor(type);
+					var constructor = GetTypeConstructor(type);
 					if (constructor is null)
 						return null;
 					return FindMethodUsageInType(type.DeclaringType, constructor);
@@ -62,7 +62,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			return null;
 		}
 
-		static MethodDef GetTypeConstructor(TypeDef type) => type.FindConstructors().FirstOrDefault();
+		static MethodDef? GetTypeConstructor(TypeDef type) => type.FindConstructors().FirstOrDefault();
 
 		static MethodDef? FindMethodUsageInType(TypeDef type, MethodDef analyzedMethod) {
 			string name = analyzedMethod.Name;

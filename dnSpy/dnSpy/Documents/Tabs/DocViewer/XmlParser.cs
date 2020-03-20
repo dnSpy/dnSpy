@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Text;
 using Microsoft.VisualStudio.Text;
@@ -470,7 +471,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			public string Alias { get; }
 			public XmlNamespaceDefinition? Definition { get; set; }
 			public XmlNamespaceReference(string alias) => Alias = alias ?? throw new ArgumentNullException(nameof(alias));
-			public bool Equals(XmlNamespaceReference other) => Equals(Definition, other.Definition);
+			public bool Equals([AllowNull] XmlNamespaceReference other) => Equals(Definition, other?.Definition);
 			public override bool Equals(object? obj) => obj is XmlNamespaceReference && Equals((XmlNamespaceReference)obj);
 			public override int GetHashCode() => Definition?.GetHashCode() ?? 0;
 		}

@@ -105,7 +105,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			UI(() => BookmarkLocationFormatter_PropertyChanged_UI(e.PropertyName));
 
 		// UI thread
-		void BookmarkLocationFormatter_PropertyChanged_UI(string propertyName) {
+		void BookmarkLocationFormatter_PropertyChanged_UI(string? propertyName) {
 			Context.UIDispatcher.VerifyAccess();
 			switch (propertyName) {
 			case BookmarkLocationFormatter.LocationProperty:

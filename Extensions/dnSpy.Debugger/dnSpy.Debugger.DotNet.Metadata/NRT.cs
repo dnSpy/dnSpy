@@ -10,5 +10,13 @@ namespace System.Diagnostics.CodeAnalysis {
 		public DoesNotReturnIfAttribute(bool parameterValue) => ParameterValue = parameterValue;
 		public bool ParameterValue { get; }
 	}
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, Inherited = false)]
+	sealed class AllowNullAttribute : Attribute {
+		public AllowNullAttribute() { }
+	}
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, Inherited = false)]
+	sealed class DisallowNullAttribute : Attribute {
+		public DisallowNullAttribute() { }
+	}
 }
 #endif

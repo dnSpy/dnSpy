@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.Evaluation;
@@ -247,7 +248,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			public static readonly MemberValueNodeInfoEqualityComparer Instance = new MemberValueNodeInfoEqualityComparer();
 			MemberValueNodeInfoEqualityComparer() { }
 
-			public int Compare(MemberValueNodeInfo x, MemberValueNodeInfo y) {
+			public int Compare([AllowNull] MemberValueNodeInfo x, [AllowNull] MemberValueNodeInfo y) {
 				int c = GetOrder(x.Member.MemberType) - GetOrder(y.Member.MemberType);
 				if (c != 0)
 					return c;

@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Text;
 using Microsoft.VisualStudio.Text;
@@ -72,12 +73,12 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 		sealed class LeftSorter : IComparer<CodeBracesRange> {
 			public static readonly LeftSorter Instance = new LeftSorter();
-			public int Compare(CodeBracesRange x, CodeBracesRange y) => x.Left.Start - y.Left.Start;
+			public int Compare([AllowNull] CodeBracesRange x, [AllowNull] CodeBracesRange y) => x.Left.Start - y.Left.Start;
 		}
 
 		sealed class RightSorter : IComparer<CodeBracesRange> {
 			public static readonly RightSorter Instance = new RightSorter();
-			public int Compare(CodeBracesRange x, CodeBracesRange y) => x.Right.Start - y.Right.Start;
+			public int Compare([AllowNull] CodeBracesRange x, [AllowNull] CodeBracesRange y) => x.Right.Start - y.Right.Start;
 		}
 
 		public BracePairResultCollection? GetBracePairs(int position) {

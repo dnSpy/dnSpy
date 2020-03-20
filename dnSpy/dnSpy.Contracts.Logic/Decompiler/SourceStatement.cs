@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
@@ -40,7 +41,7 @@ namespace dnSpy.Contracts.Decompiler {
 		public TextSpan TextSpan => textSpan;
 
 		internal sealed class SpanStartComparerImpl : IComparer<SourceStatement> {
-			public int Compare(SourceStatement x, SourceStatement y) => (int)(x.ilSpan.Start - y.ilSpan.Start);
+			public int Compare([AllowNull] SourceStatement x, [AllowNull] SourceStatement y) => (int)(x.ilSpan.Start - y.ilSpan.Start);
 		}
 
 		/// <summary>

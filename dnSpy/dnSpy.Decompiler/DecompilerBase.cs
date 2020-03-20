@@ -161,7 +161,7 @@ namespace dnSpy.Decompiler {
 			}
 		}
 
-		object? GetEntryPoint(ModuleDef module) {
+		object? GetEntryPoint(ModuleDef? module) {
 			int maxIters = 1;
 			for (int i = 0; !(module is null) && i < maxIters; i++) {
 				var rva = module.NativeEntryPoint;

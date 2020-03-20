@@ -66,22 +66,22 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 				var md = Resolve(method) as MethodDef;
 				if (md is null)
 					return null;
-				mr = md.DeclaringType.Properties.FirstOrDefault(p => p.GetMethod == md || p.SetMethod == md);
-				return docProvider.GetDocumentation(XmlDocKeyProvider.GetKey(mr, sb));
+				var mr2 = md.DeclaringType.Properties.FirstOrDefault(p => p.GetMethod == md || p.SetMethod == md);
+				return docProvider.GetDocumentation(XmlDocKeyProvider.GetKey(mr2, sb));
 			}
 			else if (name.StartsWith("add_")) {
 				var md = Resolve(method) as MethodDef;
 				if (md is null)
 					return null;
-				mr = md.DeclaringType.Events.FirstOrDefault(p => p.AddMethod == md);
-				return docProvider.GetDocumentation(XmlDocKeyProvider.GetKey(mr, sb));
+				var mr2 = md.DeclaringType.Events.FirstOrDefault(p => p.AddMethod == md);
+				return docProvider.GetDocumentation(XmlDocKeyProvider.GetKey(mr2, sb));
 			}
 			else if (name.StartsWith("remove_")) {
 				var md = Resolve(method) as MethodDef;
 				if (md is null)
 					return null;
-				mr = md.DeclaringType.Events.FirstOrDefault(p => p.RemoveMethod == md);
-				return docProvider.GetDocumentation(XmlDocKeyProvider.GetKey(mr, sb));
+				var mr2 = md.DeclaringType.Events.FirstOrDefault(p => p.RemoveMethod == md);
+				return docProvider.GetDocumentation(XmlDocKeyProvider.GetKey(mr2, sb));
 			}
 			return null;
 		}

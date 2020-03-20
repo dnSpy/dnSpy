@@ -180,7 +180,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			UI(() => DebuggerSettings_PropertyChanged_UI(e.PropertyName));
 
 		// UI thread
-		void DebuggerSettings_PropertyChanged_UI(string propertyName) {
+		void DebuggerSettings_PropertyChanged_UI(string? propertyName) {
 			callStackContext.UIDispatcher.VerifyAccess();
 			switch (propertyName) {
 			case nameof(DebuggerSettings.UseHexadecimal):
@@ -215,7 +215,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			UI(() => CallStackDisplaySettings_PropertyChanged_UI(e.PropertyName));
 
 		// UI thread
-		void CallStackDisplaySettings_PropertyChanged_UI(string propertyName) {
+		void CallStackDisplaySettings_PropertyChanged_UI(string? propertyName) {
 			callStackContext.UIDispatcher.VerifyAccess();
 			switch (propertyName) {
 			case nameof(CallStackDisplaySettings.ShowReturnTypes):

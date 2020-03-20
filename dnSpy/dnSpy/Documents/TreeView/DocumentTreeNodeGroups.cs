@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
@@ -150,7 +151,7 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(TreeNodeData x, TreeNodeData y) {
+		public int Compare([AllowNull] TreeNodeData x, [AllowNull] TreeNodeData y) {
 			if (x == y) return 0;
 			var a = x as AssemblyReferenceNode;
 			var b = y as AssemblyReferenceNode;
@@ -165,7 +166,7 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(TreeNodeData x, TreeNodeData y) {
+		public int Compare([AllowNull] TreeNodeData x, [AllowNull] TreeNodeData y) {
 			if (x == y) return 0;
 			var a = x as ModuleReferenceNode;
 			var b = y as ModuleReferenceNode;
@@ -180,7 +181,7 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(TreeNodeData x, TreeNodeData y) {
+		public int Compare([AllowNull] TreeNodeData x, [AllowNull] TreeNodeData y) {
 			if (x == y) return 0;
 			var a = x as ReferencesFolderNode;
 			var b = y as ReferencesFolderNode;
@@ -195,7 +196,7 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(TreeNodeData x, TreeNodeData y) {
+		public int Compare([AllowNull] TreeNodeData x, [AllowNull] TreeNodeData y) {
 			if (x == y) return 0;
 			var a = x as ResourcesFolderNode;
 			var b = y as ResourcesFolderNode;
@@ -210,7 +211,7 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(TreeNodeData x, TreeNodeData y) {
+		public int Compare([AllowNull] TreeNodeData x, [AllowNull] TreeNodeData y) {
 			if (x == y) return 0;
 			var a = x as BaseTypeFolderNode;
 			var b = y as BaseTypeFolderNode;
@@ -225,7 +226,7 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(TreeNodeData x, TreeNodeData y) {
+		public int Compare([AllowNull] TreeNodeData x, [AllowNull] TreeNodeData y) {
 			if (x == y) return 0;
 			var a = x as DerivedTypesFolderNode;
 			var b = y as DerivedTypesFolderNode;
@@ -240,7 +241,7 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(TreeNodeData x, TreeNodeData y) {
+		public int Compare([AllowNull] TreeNodeData x, [AllowNull] TreeNodeData y) {
 			if (x == y) return 0;
 			var a = x as MessageNode;
 			var b = y as MessageNode;
@@ -255,7 +256,7 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(TreeNodeData x, TreeNodeData y) {
+		public int Compare([AllowNull] TreeNodeData x, [AllowNull] TreeNodeData y) {
 			if (x == y) return 0;
 			var a = x as DerivedTypeNode;
 			var b = y as DerivedTypeNode;
@@ -272,7 +273,7 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(TreeNodeData x, TreeNodeData y) {
+		public int Compare([AllowNull] TreeNodeData x, [AllowNull] TreeNodeData y) {
 			if (x == y) return 0;
 			var a = x as NamespaceNode;
 			var b = y as NamespaceNode;
@@ -287,7 +288,7 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(TreeNodeData x, TreeNodeData y) {
+		public int Compare([AllowNull] TreeNodeData x, [AllowNull] TreeNodeData y) {
 			if (x == y) return 0;
 			var a = x as BaseTypeNode;
 			var b = y as BaseTypeNode;
@@ -304,7 +305,7 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(TreeNodeData x, TreeNodeData y) {
+		public int Compare([AllowNull] TreeNodeData x, [AllowNull] TreeNodeData y) {
 			if (x == y) return 0;
 			var a = x as TypeNode;
 			var b = y as TypeNode;
@@ -323,7 +324,7 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(TreeNodeData x, TreeNodeData y) {
+		public int Compare([AllowNull] TreeNodeData x, [AllowNull] TreeNodeData y) {
 			if (x == y) return 0;
 			var a = x as TypeReferenceNode;
 			var b = y as TypeReferenceNode;
@@ -392,7 +393,7 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(TreeNodeData x, TreeNodeData y) {
+		public int Compare([AllowNull] TreeNodeData x, [AllowNull] TreeNodeData y) {
 			if (x == y) return 0;
 			var a = x as MethodNode;
 			var b = y as MethodNode;
@@ -407,7 +408,7 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(TreeNodeData x, TreeNodeData y) {
+		public int Compare([AllowNull] TreeNodeData x, [AllowNull] TreeNodeData y) {
 			if (x == y) return 0;
 			var a = x as FieldNode;
 			var b = y as FieldNode;
@@ -422,7 +423,7 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(TreeNodeData x, TreeNodeData y) {
+		public int Compare([AllowNull] TreeNodeData x, [AllowNull] TreeNodeData y) {
 			if (x == y) return 0;
 			var a = x as EventNode;
 			var b = y as EventNode;
@@ -437,7 +438,7 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(TreeNodeData x, TreeNodeData y) {
+		public int Compare([AllowNull] TreeNodeData x, [AllowNull] TreeNodeData y) {
 			if (x == y) return 0;
 			var a = x as PropertyNode;
 			var b = y as PropertyNode;
@@ -452,8 +453,10 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(TreeNodeData x, TreeNodeData y) {
-			if (x == y) return 0;
+		public int Compare([AllowNull] TreeNodeData x, [AllowNull] TreeNodeData y) {
+			if ((object?)x == y) return 0;
+			if (x is null) return -1;
+			if (y is null) return 1;
 			var ra = ResourceNode.GetResource((DocumentTreeNodeData)x);
 			var rb = ResourceNode.GetResource((DocumentTreeNodeData)y);
 			if (ra is null) return -1;
@@ -469,8 +472,10 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(TreeNodeData x, TreeNodeData y) {
-			if (x == y) return 0;
+		public int Compare([AllowNull] TreeNodeData x, [AllowNull] TreeNodeData y) {
+			if ((object?)x == y) return 0;
+			if (x is null) return -1;
+			if (y is null) return 1;
 			var ra = ResourceElementNode.GetResourceElement((DocumentTreeNodeData)x);
 			var rb = ResourceElementNode.GetResourceElement((DocumentTreeNodeData)y);
 			if (ra is null) return -1;
@@ -488,7 +493,7 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(TreeNodeData x, TreeNodeData y) {
+		public int Compare([AllowNull] TreeNodeData x, [AllowNull] TreeNodeData y) {
 			if (x == y) return 0;
 			var a = x as TypeSpecsFolderNode;
 			var b = y as TypeSpecsFolderNode;
@@ -503,7 +508,7 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(TreeNodeData x, TreeNodeData y) {
+		public int Compare([AllowNull] TreeNodeData x, [AllowNull] TreeNodeData y) {
 			if (x == y) return 0;
 			var a = x as MethodReferencesFolderNode;
 			var b = y as MethodReferencesFolderNode;
@@ -518,7 +523,7 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(TreeNodeData x, TreeNodeData y) {
+		public int Compare([AllowNull] TreeNodeData x, [AllowNull] TreeNodeData y) {
 			if (x == y) return 0;
 			var a = x as PropertyReferencesFolderNode;
 			var b = y as PropertyReferencesFolderNode;
@@ -533,7 +538,7 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(TreeNodeData x, TreeNodeData y) {
+		public int Compare([AllowNull] TreeNodeData x, [AllowNull] TreeNodeData y) {
 			if (x == y) return 0;
 			var a = x as EventReferencesFolderNode;
 			var b = y as EventReferencesFolderNode;
@@ -548,7 +553,7 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(TreeNodeData x, TreeNodeData y) {
+		public int Compare([AllowNull] TreeNodeData x, [AllowNull] TreeNodeData y) {
 			if (x == y) return 0;
 			var a = x as FieldReferencesFolderNode;
 			var b = y as FieldReferencesFolderNode;
@@ -563,7 +568,7 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(TreeNodeData x, TreeNodeData y) {
+		public int Compare([AllowNull] TreeNodeData x, [AllowNull] TreeNodeData y) {
 			if (x == y) return 0;
 			var a = x as MethodReferenceNode;
 			var b = y as MethodReferenceNode;
@@ -578,7 +583,7 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(TreeNodeData x, TreeNodeData y) {
+		public int Compare([AllowNull] TreeNodeData x, [AllowNull] TreeNodeData y) {
 			if (x == y) return 0;
 			var a = x as PropertyReferenceNode;
 			var b = y as PropertyReferenceNode;
@@ -593,7 +598,7 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(TreeNodeData x, TreeNodeData y) {
+		public int Compare([AllowNull] TreeNodeData x, [AllowNull] TreeNodeData y) {
 			if (x == y) return 0;
 			var a = x as EventReferenceNode;
 			var b = y as EventReferenceNode;
@@ -608,7 +613,7 @@ namespace dnSpy.Documents.TreeView {
 
 		public double Order { get; set; }
 
-		public int Compare(TreeNodeData x, TreeNodeData y) {
+		public int Compare([AllowNull] TreeNodeData x, [AllowNull] TreeNodeData y) {
 			if (x == y) return 0;
 			var a = x as FieldReferenceNode;
 			var b = y as FieldReferenceNode;

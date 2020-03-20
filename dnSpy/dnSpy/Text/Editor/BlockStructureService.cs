@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -267,12 +268,12 @@ namespace dnSpy.Text.Editor {
 		sealed class BlockStructureDataComparer : IEqualityComparer<BlockStructureData> {
 			public static readonly BlockStructureDataComparer Instance = new BlockStructureDataComparer();
 
-			public bool Equals(BlockStructureData x, BlockStructureData y) =>
+			public bool Equals([AllowNull] BlockStructureData x, [AllowNull] BlockStructureData y) =>
 				x.BlockKind == y.BlockKind &&
 				x.Top == y.Top &&
 				x.Bottom == y.Bottom;
 
-			public int GetHashCode(BlockStructureData obj) =>
+			public int GetHashCode([DisallowNull] BlockStructureData obj) =>
 				obj.Top.GetHashCode() ^ obj.Bottom.GetHashCode() ^ (int)obj.BlockKind;
 		}
 

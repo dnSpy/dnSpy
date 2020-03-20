@@ -5,5 +5,13 @@ namespace System.Diagnostics.CodeAnalysis {
 		public NotNullWhenAttribute(bool returnValue) => ReturnValue = returnValue;
 		public bool ReturnValue { get; }
 	}
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, Inherited = false)]
+	sealed class AllowNullAttribute : Attribute {
+		public AllowNullAttribute() { }
+	}
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, Inherited = false)]
+	sealed class DisallowNullAttribute : Attribute {
+		public DisallowNullAttribute() { }
+	}
 }
 #endif

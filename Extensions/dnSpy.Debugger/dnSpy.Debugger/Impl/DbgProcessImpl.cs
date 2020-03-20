@@ -248,7 +248,7 @@ namespace dnSpy.Debugger.Impl {
 				using (var p = Process.GetProcessById(pid)) {
 					name = p.ProcessName;
 					// Could throw
-					filename = p.MainModule.FileName;
+					filename = p.MainModule?.FileName;
 					name = Path.GetFileName(filename);
 				}
 			}

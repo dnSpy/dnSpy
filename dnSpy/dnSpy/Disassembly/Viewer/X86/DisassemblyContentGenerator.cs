@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using dnSpy.Contracts.Disassembly;
 using dnSpy.Contracts.Disassembly.Viewer;
 using dnSpy.Contracts.Text;
@@ -36,7 +37,7 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 			readonly Dictionary<(Code code, string mnemonic, CpuidFeature[] cpuidFeatures), MnemonicReference> mnemonicDict = new Dictionary<(Code code, string mnemonic, CpuidFeature[] cpuidFeatures), MnemonicReference>(new MnemonicComparer());
 
 			sealed class MnemonicComparer : IEqualityComparer<(Code code, string mnemonic, CpuidFeature[] cpuidFeatures)> {
-				public bool Equals((Code code, string mnemonic, CpuidFeature[] cpuidFeatures) x, (Code code, string mnemonic, CpuidFeature[] cpuidFeatures) y) {
+				public bool Equals([AllowNull] (Code code, string mnemonic, CpuidFeature[] cpuidFeatures) x, [AllowNull] (Code code, string mnemonic, CpuidFeature[] cpuidFeatures) y) {
 					if (x.code != y.code)
 						return false;
 					if (x.mnemonic != y.mnemonic)
@@ -52,7 +53,7 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 					return true;
 				}
 
-				public int GetHashCode((Code code, string mnemonic, CpuidFeature[] cpuidFeatures) obj) =>
+				public int GetHashCode([DisallowNull] (Code code, string mnemonic, CpuidFeature[] cpuidFeatures) obj) =>
 					(int)obj.code ^ StringComparer.Ordinal.GetHashCode(obj.mnemonic);
 			}
 

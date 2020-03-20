@@ -118,7 +118,7 @@ namespace dnSpy.MainApp.Settings {
 			}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
 		}
 
-		FontAndColorOptionsVM GetBestFontAndColorOptions() =>
+		FontAndColorOptionsVM? GetBestFontAndColorOptions() =>
 			FontAndColorOptions.FirstOrDefault(a => a.Name == AppearanceCategoryConstants.TextEditor) ??
 			FontAndColorOptions.FirstOrDefault();
 

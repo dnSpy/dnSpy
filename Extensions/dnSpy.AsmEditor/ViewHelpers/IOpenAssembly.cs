@@ -25,7 +25,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 		/// Asks the user to pick a file and returns it or null if the user canceled.
 		/// </summary>
 		/// <returns></returns>
-		IDsDocument Open();
+		IDsDocument? Open();
 
 		/// <summary>
 		/// Asks the user to pick files and returns them or an empty array if the user canceled.

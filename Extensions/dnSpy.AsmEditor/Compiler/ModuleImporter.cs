@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
@@ -522,40 +523,40 @@ namespace dnSpy.AsmEditor.Compiler {
 				Deleted.AddRange(targetMembersDict.Keys.Where(a => !newMembersDict.ContainsKey(a)));
 			}
 			protected abstract IList<T> GetMembers(TypeDef type);
-			public abstract bool Equals(T x, T y);
-			public abstract int GetHashCode(T obj);
+			public abstract bool Equals([AllowNull] T x, [AllowNull] T y);
+			public abstract int GetHashCode([DisallowNull] T obj);
 		}
 
 		sealed class FieldMemberDiff : MemberDiff<FieldDef> {
 			readonly ImportFieldEqualityComparer comparer;
 			public FieldMemberDiff(ImportSigComparerOptions importSigComparerOptions, ModuleDef targetModule) => comparer = new ImportFieldEqualityComparer(new ImportSigComparer(importSigComparerOptions, SIG_COMPARER_OPTIONS, targetModule));
 			protected override IList<FieldDef> GetMembers(TypeDef type) => type.Fields;
-			public override bool Equals(FieldDef x, FieldDef y) => comparer.Equals(x, y);
-			public override int GetHashCode(FieldDef obj) => comparer.GetHashCode(obj);
+			public override bool Equals([AllowNull] FieldDef x, [AllowNull] FieldDef y) => comparer.Equals(x, y);
+			public override int GetHashCode([DisallowNull] FieldDef obj) => comparer.GetHashCode(obj);
 		}
 
 		sealed class MethodMemberDiff : MemberDiff<MethodDef> {
 			readonly ImportMethodEqualityComparer comparer;
 			public MethodMemberDiff(ImportSigComparerOptions importSigComparerOptions, ModuleDef targetModule) => comparer = new ImportMethodEqualityComparer(new ImportSigComparer(importSigComparerOptions, SIG_COMPARER_OPTIONS, targetModule));
 			protected override IList<MethodDef> GetMembers(TypeDef type) => type.Methods;
-			public override bool Equals(MethodDef x, MethodDef y) => comparer.Equals(x, y);
-			public override int GetHashCode(MethodDef obj) => comparer.GetHashCode(obj);
+			public override bool Equals([AllowNull] MethodDef x, [AllowNull] MethodDef y) => comparer.Equals(x, y);
+			public override int GetHashCode([DisallowNull] MethodDef obj) => comparer.GetHashCode(obj);
 		}
 
 		sealed class PropertyMemberDiff : MemberDiff<PropertyDef> {
 			readonly ImportPropertyEqualityComparer comparer;
 			public PropertyMemberDiff(ImportSigComparerOptions importSigComparerOptions, ModuleDef targetModule) => comparer = new ImportPropertyEqualityComparer(new ImportSigComparer(importSigComparerOptions, SIG_COMPARER_OPTIONS, targetModule));
 			protected override IList<PropertyDef> GetMembers(TypeDef type) => type.Properties;
-			public override bool Equals(PropertyDef x, PropertyDef y) => comparer.Equals(x, y);
-			public override int GetHashCode(PropertyDef obj) => comparer.GetHashCode(obj);
+			public override bool Equals([AllowNull] PropertyDef x, [AllowNull] PropertyDef y) => comparer.Equals(x, y);
+			public override int GetHashCode([DisallowNull] PropertyDef obj) => comparer.GetHashCode(obj);
 		}
 
 		sealed class EventMemberDiff : MemberDiff<EventDef> {
 			readonly ImportEventEqualityComparer comparer;
 			public EventMemberDiff(ImportSigComparerOptions importSigComparerOptions, ModuleDef targetModule) => comparer = new ImportEventEqualityComparer(new ImportSigComparer(importSigComparerOptions, SIG_COMPARER_OPTIONS, targetModule));
 			protected override IList<EventDef> GetMembers(TypeDef type) => type.Events;
-			public override bool Equals(EventDef x, EventDef y) => comparer.Equals(x, y);
-			public override int GetHashCode(EventDef obj) => comparer.GetHashCode(obj);
+			public override bool Equals([AllowNull] EventDef x, [AllowNull] EventDef y) => comparer.Equals(x, y);
+			public override int GetHashCode([DisallowNull] EventDef obj) => comparer.GetHashCode(obj);
 		}
 
 		MergedImportedType MergeEditedTypes(TypeDef newType, TypeDef targetType) {

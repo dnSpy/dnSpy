@@ -28,7 +28,7 @@ namespace dnSpy.Text.Operations {
 		public bool CanUndo => State == UndoTransactionState.Completed;
 		public ITextUndoHistory History => history;
 		public IMergeTextUndoTransactionPolicy? MergePolicy { get; set; }
-		public ITextUndoTransaction Parent { get; }
+		public ITextUndoTransaction? Parent { get; }
 		public UndoTransactionState State { get; private set; }
 		public IList<ITextUndoPrimitive> UndoPrimitives => readOnlyUndoPrimitives;
 
@@ -42,7 +42,7 @@ namespace dnSpy.Text.Operations {
 		readonly List<ITextUndoPrimitive> undoPrimitives;
 		readonly ReadOnlyCollection<ITextUndoPrimitive> readOnlyUndoPrimitives;
 
-		public TextUndoTransaction(TextUndoHistory history, ITextUndoTransaction parent, string description) {
+		public TextUndoTransaction(TextUndoHistory history, ITextUndoTransaction? parent, string description) {
 			this.history = history ?? throw new ArgumentNullException(nameof(history));
 			Parent = parent;
 			undoPrimitives = new List<ITextUndoPrimitive>();

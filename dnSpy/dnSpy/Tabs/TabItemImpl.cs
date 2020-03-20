@@ -67,7 +67,7 @@ namespace dnSpy.Tabs {
 				isSelected = impl.IsSelected;
 			}
 
-			internal void TabContentPropertyChanged(string propName) {
+			internal void TabContentPropertyChanged(string? propName) {
 				if (propName == nameof(ITabContent.ToolTip))
 					OnPropertyChanged(nameof(ToolTip));
 				else if (propName == nameof(ITabContent.Title))

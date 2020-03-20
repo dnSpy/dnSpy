@@ -98,7 +98,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			UI(() => DbgBreakpointLocationFormatter_PropertyChanged_UI(e.PropertyName));
 
 		// UI thread
-		void DbgBreakpointLocationFormatter_PropertyChanged_UI(string propertyName) {
+		void DbgBreakpointLocationFormatter_PropertyChanged_UI(string? propertyName) {
 			Context.UIDispatcher.VerifyAccess();
 			switch (propertyName) {
 			case DbgBreakpointLocationFormatter.NameProperty:

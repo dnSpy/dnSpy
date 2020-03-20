@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using dnSpy.Contracts.Hex;
 
@@ -166,7 +167,15 @@ namespace dnSpy.Hex {
 
 		sealed class ReverseOldPositionSorter : IComparer<HexChange> {
 			public static readonly ReverseOldPositionSorter Instance = new ReverseOldPositionSorter();
-			public int Compare(HexChange x, HexChange y) => y.OldPosition.CompareTo(x.OldPosition);
+			public int Compare([AllowNull] HexChange x, [AllowNull] HexChange y) {
+				if ((object?)x == y)
+					return 0;
+				if (x is null)
+					return -1;
+				if (y is null)
+					return 1;
+				return y.OldPosition.CompareTo(x.OldPosition);
+			}
 		}
 
 		public override int TryReadByte(HexPosition position) => stream.TryReadByte(position);

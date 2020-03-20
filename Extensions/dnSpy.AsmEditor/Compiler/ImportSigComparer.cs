@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using dnlib.DotNet;
 
 namespace dnSpy.AsmEditor.Compiler {
@@ -34,50 +35,50 @@ namespace dnSpy.AsmEditor.Compiler {
 	sealed class ImportTypeEqualityComparer : IEqualityComparer<TypeDef>, IEqualityComparer<ITypeDefOrRef>, IEqualityComparer<IType>, IEqualityComparer<TypeSig> {
 		/*readonly*/ ImportSigComparer comparer;
 		public ImportTypeEqualityComparer(ImportSigComparer comparer) => this.comparer = comparer;
-		public bool Equals(TypeDef x, TypeDef y) => comparer.Equals(x, y);
-		public int GetHashCode(TypeDef obj) => comparer.GetHashCode(obj);
-		public bool Equals(ITypeDefOrRef x, ITypeDefOrRef y) => comparer.Equals(x, y);
-		public int GetHashCode(ITypeDefOrRef obj) => comparer.GetHashCode(obj);
-		public bool Equals(IType x, IType y) => comparer.Equals(x, y);
-		public int GetHashCode(IType obj) => comparer.GetHashCode(obj);
-		public bool Equals(TypeSig x, TypeSig y) => comparer.Equals(x, y);
-		public int GetHashCode(TypeSig obj) => comparer.GetHashCode(obj);
+		public bool Equals([AllowNull] TypeDef x, [AllowNull] TypeDef y) => comparer.Equals(x, y);
+		public int GetHashCode([DisallowNull] TypeDef obj) => comparer.GetHashCode(obj);
+		public bool Equals([AllowNull] ITypeDefOrRef x, [AllowNull] ITypeDefOrRef y) => comparer.Equals(x, y);
+		public int GetHashCode([DisallowNull] ITypeDefOrRef obj) => comparer.GetHashCode(obj);
+		public bool Equals([AllowNull] IType x, [AllowNull] IType y) => comparer.Equals(x, y);
+		public int GetHashCode([DisallowNull] IType obj) => comparer.GetHashCode(obj);
+		public bool Equals([AllowNull] TypeSig x, [AllowNull] TypeSig y) => comparer.Equals(x, y);
+		public int GetHashCode([DisallowNull] TypeSig obj) => comparer.GetHashCode(obj);
 	}
 
 	sealed class ImportPropertyEqualityComparer : IEqualityComparer<PropertyDef> {
 		/*readonly*/ ImportSigComparer comparer;
 		public ImportPropertyEqualityComparer(ImportSigComparer comparer) => this.comparer = comparer;
-		public bool Equals(PropertyDef x, PropertyDef y) => comparer.Equals(x, y);
-		public int GetHashCode(PropertyDef obj) => comparer.GetHashCode(obj);
+		public bool Equals([AllowNull] PropertyDef x, [AllowNull] PropertyDef y) => comparer.Equals(x, y);
+		public int GetHashCode([DisallowNull] PropertyDef obj) => comparer.GetHashCode(obj);
 	}
 
 	sealed class ImportEventEqualityComparer : IEqualityComparer<EventDef> {
 		/*readonly*/ ImportSigComparer comparer;
 		public ImportEventEqualityComparer(ImportSigComparer comparer) => this.comparer = comparer;
-		public bool Equals(EventDef x, EventDef y) => comparer.Equals(x, y);
-		public int GetHashCode(EventDef obj) => comparer.GetHashCode(obj);
+		public bool Equals([AllowNull] EventDef x, [AllowNull] EventDef y) => comparer.Equals(x, y);
+		public int GetHashCode([DisallowNull] EventDef obj) => comparer.GetHashCode(obj);
 	}
 
 	sealed class ImportMethodEqualityComparer : IEqualityComparer<MethodDef>, IEqualityComparer<MemberRef>, IEqualityComparer<IMethod> {
 		/*readonly*/ ImportSigComparer comparer;
 		public ImportMethodEqualityComparer(ImportSigComparer comparer) => this.comparer = comparer;
-		public bool Equals(MethodDef x, MethodDef y) => comparer.Equals(x, y);
-		public int GetHashCode(MethodDef obj) => comparer.GetHashCode(obj);
-		public bool Equals(MemberRef x, MemberRef y) => comparer.Equals(x, y);
-		public int GetHashCode(MemberRef obj) => comparer.GetHashCode(obj);
-		public bool Equals(IMethod x, IMethod y) => comparer.Equals(x, y);
-		public int GetHashCode(IMethod obj) => comparer.GetHashCode(obj);
+		public bool Equals([AllowNull] MethodDef x, [AllowNull] MethodDef y) => comparer.Equals(x, y);
+		public int GetHashCode([DisallowNull] MethodDef obj) => comparer.GetHashCode(obj);
+		public bool Equals([AllowNull] MemberRef x, [AllowNull] MemberRef y) => comparer.Equals(x, y);
+		public int GetHashCode([DisallowNull] MemberRef obj) => comparer.GetHashCode(obj);
+		public bool Equals([AllowNull] IMethod x, [AllowNull] IMethod y) => comparer.Equals(x, y);
+		public int GetHashCode([DisallowNull] IMethod obj) => comparer.GetHashCode(obj);
 	}
 
 	sealed class ImportFieldEqualityComparer : IEqualityComparer<FieldDef>, IEqualityComparer<MemberRef>, IEqualityComparer<IField> {
 		/*readonly*/ ImportSigComparer comparer;
 		public ImportFieldEqualityComparer(ImportSigComparer comparer) => this.comparer = comparer;
-		public bool Equals(FieldDef x, FieldDef y) => comparer.Equals(x, y);
-		public int GetHashCode(FieldDef obj) => comparer.GetHashCode(obj);
-		public bool Equals(MemberRef x, MemberRef y) => comparer.Equals(x, y);
-		public int GetHashCode(MemberRef obj) => comparer.GetHashCode(obj);
-		public bool Equals(IField x, IField y) => comparer.Equals(x, y);
-		public int GetHashCode(IField obj) => comparer.GetHashCode(obj);
+		public bool Equals([AllowNull] FieldDef x, [AllowNull] FieldDef y) => comparer.Equals(x, y);
+		public int GetHashCode([DisallowNull] FieldDef obj) => comparer.GetHashCode(obj);
+		public bool Equals([AllowNull] MemberRef x, [AllowNull] MemberRef y) => comparer.Equals(x, y);
+		public int GetHashCode([DisallowNull] MemberRef obj) => comparer.GetHashCode(obj);
+		public bool Equals([AllowNull] IField x, [AllowNull] IField y) => comparer.Equals(x, y);
+		public int GetHashCode([DisallowNull] IField obj) => comparer.GetHashCode(obj);
 	}
 
 	// Most code is from dnlib.DotNet.SigComparer
@@ -358,9 +359,9 @@ namespace dnSpy.AsmEditor.Compiler {
 			return result;
 		}
 
-		public bool Equals(ITypeDefOrRef a, ITypeDefOrRef b) => Equals((IType)a, (IType)b);
+		public bool Equals(ITypeDefOrRef? a, ITypeDefOrRef? b) => Equals((IType?)a, (IType?)b);
 
-		public int GetHashCode(ITypeDefOrRef a) => GetHashCode((IType)a);
+		public int GetHashCode(ITypeDefOrRef? a) => GetHashCode((IType?)a);
 
 		public bool Equals(IType? a, IType? b) {
 			if (a == b)
