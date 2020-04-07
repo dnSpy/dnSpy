@@ -635,7 +635,7 @@
     <value>Tipos de Parâmetro do Método</value>
   </data>
   <data name="MethodSig_MethodVarArgParameterTypes" xml:space="preserve">
-    <value>Method VarArg Parameter Types</value>
+    <value>Tipos de Parâmetro VarArg Método</value>
   </data>
   <data name="MethodSig_NumGenerics" xml:space="preserve">
     <value># Generico_s</value>
@@ -1422,13 +1422,13 @@ Tem certeza que deseja fechar a janela?</value>
     <value>Colar Hex do Corpo do Método</value>
   </data>
   <data name="HexWriteEmptyMethodBodyCommand" xml:space="preserve">
-    <value>Hex Write Empty Body</value>
+    <value>Gravar em hexadecimal em espaço vazio</value>
   </data>
   <data name="HexWriteReturnFalseBodyCommand" xml:space="preserve">
-    <value>Hex Write 'return false' Body</value>
+    <value>Gravar em hexadecimal 'return false' </value>
   </data>
   <data name="HexWriteReturnTrueBodyCommand" xml:space="preserve">
-    <value>Hex Write 'return true' Body</value>
+    <value>Gravar em hexadecimal 'return true'</value>
   </data>
   <data name="Hex_Undo_Message_InsertBytes" xml:space="preserve">
     <value>Inserir Bytes</value>
@@ -1587,7 +1587,7 @@ Tem certeza que deseja fechar a janela?</value>
     <value>Metadata</value>
   </data>
   <data name="Module_ModuleType" xml:space="preserve">
-    <value>Module _Type</value>
+    <value>Tipo de Módulo</value>
   </data>
   <data name="Module_Name" xml:space="preserve">
     <value>Nome</value>
@@ -1626,7 +1626,7 @@ Tem certeza que deseja fechar a janela?</value>
     <value>pad</value>
   </data>
   <data name="PasteRecordsCommand" xml:space="preserve">
-    <value>_Paste {0} records @ {1:X8}, RID {2}</value>
+    <value>_Colar {0} Registos @ {1:X8}, RID {2}</value>
   </data>
   <data name="PropertyX" xml:space="preserve">
     <value>Propriedade: {0}</value>
@@ -1656,7 +1656,7 @@ Tem certeza que deseja fechar a janela?</value>
     <value>Raw Save {0} resources</value>
   </data>
   <data name="RawSaveResourcesSubDirectoriesCommand" xml:space="preserve">
-    <value>Raw Save {0} resources, use sub dirs</value>
+    <value>Salvar {0} recursos, usando sub diretórios</value>
   </data>
   <data name="RedoCommand" xml:space="preserve">
     <value>Refazer</value>
@@ -1807,13 +1807,13 @@ Alguns os ofuscadores colocam dados lá</value>
     <value>Preservar offsets de Heap</value>
   </data>
   <data name="SaveModule_PreserveTokens" xml:space="preserve">
-    <value>P_reserve All MD Tokens</value>
+    <value>Preservar Todos os Tokens de MD</value>
   </data>
   <data name="SaveModule_PreserveTokens_ToolTip" xml:space="preserve">
     <value>Se o arquivo ainda está ofuscado, os RIDs talvez necessitem serem preservados</value>
   </data>
   <data name="SaveModule_ShareMethodBodies" xml:space="preserve">
-    <value>Shared Method _Bodies</value>
+    <value>_Corpos de Método Compartilhado</value>
   </data>
   <data name="SaveModule_ShareMethodBodies_ToolTip" xml:space="preserve">
     <value>Os métodos .NET que têm exatamente o mesmo código vão compartilhar os corpos do método.
@@ -1923,7 +1923,7 @@ A maioria das opções são reinicializadas quando essa caixa de seleção é cl
     <value>Organizar Seleção</value>
   </data>
   <data name="TablesHeapOptionsTab" xml:space="preserve">
-    <value>Tables Heap Options</value>
+    <value>Opções de Titulo de Tabelas</value>
   </data>
   <data name="Token" xml:space="preserve">
     <value>Token</value>
@@ -1932,7 +1932,7 @@ A maioria das opções são reinicializadas quando essa caixa de seleção é cl
     <value>Você selecionou demasiados bytes de dados</value>
   </data>
   <data name="Type_ClassSize" xml:space="preserve">
-    <value>C_lass Size</value>
+    <value>Tamanho da Classe</value>
   </data>
   <data name="Type_Name" xml:space="preserve">
     <value>_Nome</value>
@@ -1941,7 +1941,7 @@ A maioria das opções são reinicializadas quando essa caixa de seleção é cl
     <value>N_amespace</value>
   </data>
   <data name="Type_PackingSize" xml:space="preserve">
-    <value>Packing Si_ze</value>
+    <value>Tamanho de Empacotamento</value>
   </data>
   <data name="UndoCommand" xml:space="preserve">
     <value>Desfazer</value>
@@ -2061,22 +2061,22 @@ A maioria das opções são reinicializadas quando essa caixa de seleção é cl
     <value>_Ponto de entrada</value>
   </data>
   <data name="SaveModule_Cor20_MajorRuntimeVersion" xml:space="preserve">
-    <value>_Major RT Ver</value>
+    <value>_Maior RT Ver</value>
   </data>
   <data name="SaveModule_Cor20_MinorRuntimeVersion" xml:space="preserve">
-    <value>Mino_r RT Ver</value>
+    <value>Menor_r RT Ver</value>
   </data>
   <data name="SaveModule_Metadata_MajorVersion" xml:space="preserve">
-    <value>_MajorVersion</value>
+    <value>_MaiorVersão</value>
   </data>
   <data name="SaveModule_Metadata_MinorVersion" xml:space="preserve">
-    <value>MinorVe_rsion</value>
+    <value>MenorVe_rsão</value>
   </data>
   <data name="SaveModule_Metadata_Reserved1" xml:space="preserve">
-    <value>Reserved_1</value>
+    <value>Reservado_1</value>
   </data>
   <data name="SaveModule_Metadata_Reserved2" xml:space="preserve">
-    <value>Reserved_2</value>
+    <value>Reservado_2</value>
   </data>
   <data name="SaveModule_Metadata_Signature" xml:space="preserve">
     <value>_Assinatura</value>
@@ -2097,16 +2097,16 @@ A maioria das opções são reinicializadas quando essa caixa de seleção é cl
     <value>Extra_Data</value>
   </data>
   <data name="SaveModule_TablesHeap_HasDeletedRows" xml:space="preserve">
-    <value>_HasDeletedRows</value>
+    <value>_Linhas_dispersas</value>
   </data>
   <data name="SaveModule_TablesHeap_MajorVersion" xml:space="preserve">
     <value>M_ajorVersion</value>
   </data>
   <data name="SaveModule_TablesHeap_MinorVersion" xml:space="preserve">
-    <value>Reserv_ed1</value>
+    <value>Reservado_ed1</value>
   </data>
   <data name="SaveModule_TablesHeap_Reserved1" xml:space="preserve">
-    <value>Reserv_ed1</value>
+    <value>Reservado_ed1</value>
   </data>
   <data name="SaveModule_TablesHeap_UseENC" xml:space="preserve">
     <value>_Use a Tabela #-</value>

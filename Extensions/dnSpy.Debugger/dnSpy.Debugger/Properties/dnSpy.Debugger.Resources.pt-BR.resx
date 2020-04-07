@@ -369,10 +369,10 @@
     <value>Add _Watch</value>
   </data>
   <data name="LocalsCollapseChildrenNodesCommand" xml:space="preserve">
-    <value>_Collapse Children</value>
+    <value>Limite Extra</value>
   </data>
   <data name="LocalsCollapseParentNodeCommand" xml:space="preserve">
-    <value>C_ollapse Parent</value>
+    <value>Limite principal</value>
   </data>
   <data name="LocalsCommand" xml:space="preserve">
     <value>_Locais</value>
@@ -384,7 +384,7 @@
     <value>Editar Valor</value>
   </data>
   <data name="LocalsExpandChildrenNodesCommand" xml:space="preserve">
-    <value>E_xpand Children</value>
+    <value>Expanção Extra</value>
   </data>
   <data name="LocalsSaveCommand" xml:space="preserve">
     <value>_Salvar...</value>
@@ -446,7 +446,7 @@ Tem certeza que deseja expandi-la?</value>
     <value>Restaurar padrões</value>
   </data>
   <data name="RunToCursorCommand" xml:space="preserve">
-    <value>Ru_n To Cursor</value>
+    <value>I_niciar com Cursor</value>
   </data>
   <data name="SaveModuleCommand" xml:space="preserve">
     <value>Salvar módulo...</value>
@@ -458,7 +458,7 @@ Tem certeza que deseja expandi-la?</value>
     <value>Selecionar_Tudo</value>
   </data>
   <data name="SetNextStatementCommand" xml:space="preserve">
-    <value>Set Ne_xt Statement</value>
+    <value>Conjunto Próximo de Declaração</value>
   </data>
   <data name="ShortCutAltAsterisk" xml:space="preserve">
     <value>Alt+Num *</value>
@@ -560,25 +560,25 @@ Tem certeza que deseja expandi-la?</value>
     <value>Mostrar IP</value>
   </data>
   <data name="ShowModuleNamesCommand" xml:space="preserve">
-    <value>Show _Module Names</value>
+    <value>Exibir _Nomes dos Módulos</value>
   </data>
   <data name="ShowNamespacesCommand" xml:space="preserve">
     <value>Mostrar Namespaces</value>
   </data>
   <data name="ShowNextStatementCommand" xml:space="preserve">
-    <value>S_how Next Statement</value>
+    <value>E_xibir Próxima Declaração</value>
   </data>
   <data name="ShowDeclaringTypesCommand" xml:space="preserve">
     <value>Mostrar Tipos de Declaração</value>
   </data>
   <data name="ShowParameterNamesCommand" xml:space="preserve">
-    <value>Show _Parameter Names</value>
+    <value>Exibir Parâmetros de _Nomes</value>
   </data>
   <data name="ShowParameterTypesCommand" xml:space="preserve">
-    <value>Show Parameter _Types</value>
+    <value>Exibir Parâmetros de _Valores</value>
   </data>
   <data name="ShowParameterValuesCommand" xml:space="preserve">
-    <value>Show Parameter _Values</value>
+    <value>Exibir Parameter _Valores</value>
   </data>
   <data name="ShowReturnTypesCommand" xml:space="preserve">
     <value>Mostrar Tipos de Retorno</value>
@@ -590,7 +590,7 @@ Tem certeza que deseja expandi-la?</value>
     <value>Mostrar Palavras-Chave de Tipo Intrínsecas</value>
   </data>
   <data name="StartWithoutDebuggingCommand" xml:space="preserve">
-    <value>Start Wit_hout Debugging</value>
+    <value>Iniciar _Sem Depuração</value>
   </data>
   <data name="StatusBar_Ready" xml:space="preserve">
     <value>Pronto</value>
@@ -599,13 +599,13 @@ Tem certeza que deseja expandi-la?</value>
     <value>Executando...</value>
   </data>
   <data name="StepIntoCommand" xml:space="preserve">
-    <value>Step _Into</value>
+    <value>Pular _Instrução</value>
   </data>
   <data name="StepOutCommand" xml:space="preserve">
-    <value>Step Ou_t</value>
+    <value>Pular pro _Fim</value>
   </data>
   <data name="StepOverCommand" xml:space="preserve">
-    <value>Step _Over</value>
+    <value>Pular _Processo</value>
   </data>
   <data name="StopDebuggingCommand" xml:space="preserve">
     <value>Parar Depuração</value>
@@ -629,13 +629,13 @@ Tem certeza que deseja expandi-la?</value>
     <value>Thread Encerrada</value>
   </data>
   <data name="ThreadType_ThreadPool" xml:space="preserve">
-    <value>Thread Pool</value>
+    <value>Tópico de Pool</value>
   </data>
   <data name="ThreadType_Unknown" xml:space="preserve">
     <value>Thread Desconhecido</value>
   </data>
   <data name="ThreadType_Worker" xml:space="preserve">
-    <value>Worker Thread</value>
+    <value>Trabalho de Thread</value>
   </data>
   <data name="Thread_LocationNotAvailable" xml:space="preserve">
     <value>&lt;não disponível&gt;</value>
@@ -749,25 +749,25 @@ Tem certeza que deseja expandi-la?</value>
     <value>Depurar</value>
   </data>
   <data name="ShowExceptionMessages" xml:space="preserve">
-    <value>_Exception Messages</value>
+    <value>_Mensagens de Exceção</value>
   </data>
   <data name="ShowModuleLoadMessages" xml:space="preserve">
-    <value>Module _Load Messages</value>
+    <value>Módulo _Carregar Mensagens</value>
   </data>
   <data name="ShowModuleUnloadMessages" xml:space="preserve">
-    <value>Module _Unload Messages</value>
+    <value>Módulo _Descarregar Mensagens</value>
   </data>
   <data name="ShowProcessExitMessages" xml:space="preserve">
-    <value>_Process Exit Messages</value>
+    <value>_Mensagens de Saída do Processo</value>
   </data>
   <data name="ShowProgramOutputMessages" xml:space="preserve">
-    <value>Program _Output</value>
+    <value>_Saída do Programa</value>
   </data>
   <data name="ShowStepFilteringMessages" xml:space="preserve">
-    <value>_Step Filtering Messages</value>
+    <value>_Filtragem de Mensagens</value>
   </data>
   <data name="ShowThreadExitMessages" xml:space="preserve">
-    <value>_Thread Exit Messages</value>
+    <value>_Mensagens de saída thread</value>
   </data>
   <data name="ShowMDAMessages" xml:space="preserve">
     <value>Mensagens MDA</value>
@@ -809,10 +809,10 @@ Tem certeza que deseja expandi-la?</value>
     <value>Editor Hex (Janela de Memória)</value>
   </data>
   <data name="DbgAsm_DebugEngine" xml:space="preserve">
-    <value>_Debug engine</value>
+    <value>_Motor de depuração</value>
   </data>
   <data name="DebugWindows" xml:space="preserve">
-    <value>_Windows</value>
+    <value>_Janelas</value>
   </data>
   <data name="OutputCommand" xml:space="preserve">
     <value>_Output</value>
@@ -821,13 +821,13 @@ Tem certeza que deseja expandi-la?</value>
     <value>Ctrl + Alt + W, {0}</value>
   </data>
   <data name="TerminateAllCommand" xml:space="preserve">
-    <value>Ter_minate All</value>
+    <value>Ter_minar Todos</value>
   </data>
   <data name="WatchCommand" xml:space="preserve">
-    <value>_Watch</value>
+    <value>_Observar</value>
   </data>
   <data name="Window_Watch_10_MenuItem" xml:space="preserve">
-    <value>Watch 1_0</value>
+    <value>Observar 1_0</value>
   </data>
   <data name="Window_Watch_N" xml:space="preserve">
     <value>Observador {0}</value>
@@ -884,10 +884,10 @@ Tem certeza que deseja expandi-la?</value>
     <value>_Desanexar Processo</value>
   </data>
   <data name="DetachWhenDebuggingStoppedCommand" xml:space="preserve">
-    <value>Detach _When Debugging Stopped</value>
+    <value>Desanexar _Quando a Depuração Parar</value>
   </data>
   <data name="TerminateProcessCommand" xml:space="preserve">
-    <value>Ter_minate Process</value>
+    <value>Ter_minar processo</value>
   </data>
   <data name="ProcessCommand" xml:space="preserve">
     <value>Processo</value>
@@ -953,10 +953,10 @@ Tem certeza que deseja expandi-la?</value>
     <value>_Adicionar Condição</value>
   </data>
   <data name="ModuleBreakpointsCommand" xml:space="preserve">
-    <value>Mod_ule Breakpoints</value>
+    <value>Pontos de i_nterrupção do Módulo</value>
   </data>
   <data name="Window_ModuleBreakpoints" xml:space="preserve">
-    <value>Module Breakpoints</value>
+    <value>Pontos de interrupção do Módulo</value>
   </data>
   <data name="Breakpoints_AddBreakpoint_ToolTip" xml:space="preserve">
     <value>Adicionar breakpoint</value>
@@ -1001,13 +1001,13 @@ Tem certeza que deseja expandi-la?</value>
     <value>Ctrl+Shift+Alt+F11</value>
   </data>
   <data name="StepIntoCurrentProcessCommand" xml:space="preserve">
-    <value>Step Into (Current Process)</value>
+    <value>Pular para o Começo (Processo Atual)</value>
   </data>
   <data name="StepOutCurrentProcessCommand" xml:space="preserve">
-    <value>Step Out (Current Process)</value>
+    <value>Pular para o Fim (Processo Atual)</value>
   </data>
   <data name="StepOverCurrentProcessCommand" xml:space="preserve">
-    <value>Step Over (Current Process)</value>
+    <value>Pular Agora (Processo Atual)</value>
   </data>
   <data name="Processes_BreakProcessToolTip" xml:space="preserve">
     <value>Pausar Processo</value>
@@ -1100,7 +1100,7 @@ Tem certeza que deseja expandi-la?</value>
     <value>Contador de ocorrências</value>
   </data>
   <data name="Column_WhenHit" xml:space="preserve">
-    <value>When Hit</value>
+    <value>Quando atingir</value>
   </data>
   <data name="Breakpoints_GoToDisassembly_ToolTip" xml:space="preserve">
     <value>Ir Para Disassembly</value>
@@ -1265,7 +1265,7 @@ Tem certeza que deseja expandi-la?</value>
     <value>Procurar thread</value>
   </data>
   <data name="Threads_ThawThreads_ToolTip" xml:space="preserve">
-    <value>Thaw Threads</value>
+    <value>Total de tópicos</value>
   </data>
   <data name="Threads_AllProcesses" xml:space="preserve">
     <value>Todos</value>
@@ -1313,7 +1313,7 @@ Tem certeza que deseja expandi-la?</value>
     <value>Inserir _Tracepoint</value>
   </data>
   <data name="UnwindToThisFrameCommand" xml:space="preserve">
-    <value>_Unwind To This Frame</value>
+    <value>_Desenrolar Até Esta Estrutura</value>
   </data>
   <data name="GlyphMargin_CurrentStatementToolTip" xml:space="preserve">
     <value>Esta é a próxima declaração a ser executada.</value>
@@ -1337,7 +1337,7 @@ Tem certeza que deseja expandi-la?</value>
     <value>Destacar variáveis alteradas na janela de variáveis</value>
   </data>
   <data name="MakeObjectIdCommand" xml:space="preserve">
-    <value>_Make Object ID</value>
+    <value>_Criar ID de Objeto</value>
   </data>
   <data name="LanguageCommand" xml:space="preserve">
     <value>Línguagem</value>
@@ -1355,7 +1355,7 @@ Tem certeza que deseja expandi-la?</value>
     <value>Apagar tudo</value>
   </data>
   <data name="DeleteWatchCommand" xml:space="preserve">
-    <value>_Delete Watch</value>
+    <value>_Apagar Observador</value>
   </data>
   <data name="PasteCommand" xml:space="preserve">
     <value>_Colar</value>
@@ -1490,13 +1490,13 @@ Tem certeza que deseja expandi-la?</value>
     <value>Saltar sobre propriedades e operadores</value>
   </data>
   <data name="CopyExpressionCommand" xml:space="preserve">
-    <value>Copy E_xpression</value>
+    <value>Copiar E_xpression</value>
   </data>
   <data name="Error_CouldNotShowDisassembly" xml:space="preserve">
     <value>Não foi possível encontrar o código do método. Certifique-se de que o processo está pausado e que o método foi bloqueado.</value>
   </data>
   <data name="DisassemblyCommand" xml:space="preserve">
-    <value>_Disassembly</value>
+    <value>_Desmontagem</value>
   </data>
   <data name="ShortCutKeyAlt8" xml:space="preserve">
     <value>Alt+8</value>
