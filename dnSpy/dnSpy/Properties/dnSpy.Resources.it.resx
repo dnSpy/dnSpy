@@ -832,7 +832,7 @@
     <value>File caricati:</value>
   </data>
   <data name="SearchWindow_SearchFrameworkAssemblies" xml:space="preserve">
-    <value>Search in framework assemblies</value>
+    <value>Cerca in framework assemblies</value>
   </data>
   <data name="SearchWindow_Where_AllFiles" xml:space="preserve">
     <value>Tutti i file</value>
@@ -1940,10 +1940,10 @@
     <value>Mostra scala prima del registro indice</value>
   </data>
   <data name="DisassemblySettings_BranchLeadingZeroes" xml:space="preserve">
-    <value>Add leading zeroes (branches)</value>
+    <value>Aggiungi zeri iniziali (diramazioni)</value>
   </data>
   <data name="DisassemblySettings_LeadingZeroes" xml:space="preserve">
-    <value>Add leading zeroes</value>
+    <value>Aggiungi zeri iniziali</value>
   </data>
   <data name="DisassemblySettings_ShowBranchSize" xml:space="preserve">
     <value>Mostra la dimensione del ramo</value>
@@ -2036,7 +2036,7 @@
     <value>&lt;Sconosciuto&gt;</value>
   </data>
   <data name="TypeReferencesFolder" xml:space="preserve">
-    <value>Type References</value>
+    <value>Riferimenti Tipo</value>
   </data>
   <data name="TreeViewEventsFolder" xml:space="preserve">
     <value>Eventi</value>
@@ -2051,7 +2051,7 @@
     <value>Proprietá</value>
   </data>
   <data name="TreeViewTypesFolder" xml:space="preserve">
-    <value>Types</value>
+    <value>Tipi</value>
   </data>
   <data name="NumberBaseFormatString" xml:space="preserve">
     <value>Base {0}:</value>
@@ -2060,10 +2060,10 @@
     <value>Raw:</value>
   </data>
   <data name="RecentFilesCommand" xml:space="preserve">
-    <value>Recent _Files</value>
+    <value>_File recenti</value>
   </data>
   <data name="ToolTip_Instruction" xml:space="preserve">
-    <value>Instruction</value>
+    <value>Istruzione</value>
   </data>
   <data name="ToolTip_OpCode" xml:space="preserve">
     <value>OpCode</value>

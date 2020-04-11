@@ -160,7 +160,7 @@
     <value>'{0}' ha lanciato un eccezione di tipo '{1}'</value>
   </data>
   <data name="ModuleMetadataNotFoundOrInvalid" xml:space="preserve">
-    <value>I metadata del moduli non possono essere trovati o sono invalidi</value>
+    <value>I metadata dei moduli non possono essere trovati o sono invalidi</value>
   </data>
   <data name="Module_BreakProcessBeforeLoadingDynamicModules" xml:space="preserve">
     <value>Devi interrompere il processo prima che i moduli dinamici possano essere caricati.</value>
@@ -172,7 +172,7 @@
     <value>Non c'è nessuna eccezione nel thread corrente</value>
   </data>
   <data name="ReloadAllMethodBodiesCommand" xml:space="preserve">
-    <value>Reload ti tutti i corpi dei metodi</value>
+    <value>Ricarica tutti i corpi dei metodi</value>
   </data>
   <data name="ReturnValueNotAvailable" xml:space="preserve">
     <value>Ritornare un valore non è attualmente supportato</value>
