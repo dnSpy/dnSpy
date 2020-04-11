@@ -32,6 +32,7 @@
 
     <!-- AD0001: buggy Roslyn analyzer(s) crash, disable that warning -->
     <NoWarn>NU1701;AD0001</NoWarn>
+    <NoWarn Condition=" '$(IsDotNetFramework)' == 'true' ">$(NoWarn);CS8767</NoWarn>
 
     <!-- Update app.config whenever some of these versions change (eg. dnlib version) -->
     <DiaSymReaderVersion>1.7.0</DiaSymReaderVersion>

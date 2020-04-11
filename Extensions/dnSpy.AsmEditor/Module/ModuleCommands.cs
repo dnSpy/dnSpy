@@ -295,7 +295,7 @@ namespace dnSpy.AsmEditor.Module {
 			nodes.Length > 0 &&
 			nodes.All(n => n is AssemblyDocumentNode &&
 					!(((AssemblyDocumentNode)n).Document.AssemblyDef is null) &&
-					((AssemblyDocumentNode)n).Document.AssemblyDef.Modules.Count == 1);
+					((AssemblyDocumentNode)n).Document.AssemblyDef!.Modules.Count == 1);
 
 		static void Execute(Lazy<IUndoCommandService> undoCommandService, DocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
