@@ -37,17 +37,21 @@ namespace dnSpy.AsmEditor.Compiler {
 		sealed class InvalidSignatureException : Exception { }
 
 		MDSigPatcher(List<byte> sigBuilder, RemappedTypeTokens remappedTypeTokens, RawModuleBytes moduleData, uint blobOffset, uint sigOffset) {
+			if ((ulong)blobOffset + sigOffset > (ulong)moduleData.Size)
+				ThrowInvalidSignatureException();
 			this.sigBuilder = sigBuilder;
 			this.remappedTypeTokens = remappedTypeTokens;
 			currPos = (byte*)moduleData.Pointer + blobOffset + sigOffset;
 			uint size = MDPatcherUtils.ReadCompressedUInt32(ref currPos, (byte*)moduleData.Pointer + moduleData.Size);
 			startPos = currPos;
 			endPos = currPos + size;
+			if ((ulong)(endPos - (byte*)moduleData.Pointer) > (ulong)moduleData.Size)
+				ThrowInvalidSignatureException();
 			usingBuilder = false;
 			recursionCounter = 0;
 		}
 
-		void ThrowInvalidSignatureException() => throw new InvalidSignatureException();
+		static void ThrowInvalidSignatureException() => throw new InvalidSignatureException();
 
 		void SwitchToBuilder(uint bytesToRemove) {
 			if (usingBuilder) {
@@ -150,6 +154,8 @@ namespace dnSpy.AsmEditor.Compiler {
 				patcher.PatchTypeSignature();
 				return patcher.GetResult();
 			}
+			catch (MDPatcherUtils.InvalidMetadataException) {
+			}
 			catch (InvalidSignatureException) {
 			}
 			Debug.Fail("Failed to patch type sig");
@@ -161,6 +167,8 @@ namespace dnSpy.AsmEditor.Compiler {
 				var patcher = new MDSigPatcher(sigBuilder, remappedTypeTokens, moduleData, blobOffset, sigOffset);
 				patcher.PatchCallingConventionSignature();
 				return patcher.GetResult();
+			}
+			catch (MDPatcherUtils.InvalidMetadataException) {
 			}
 			catch (InvalidSignatureException) {
 			}
