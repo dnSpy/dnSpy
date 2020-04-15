@@ -344,6 +344,8 @@ namespace dnSpy.Contracts.Text {
 		AsmData,
 		AsmAddress,
 		AsmHexBytes,
+		Region,
+		RegionText,
 
 		/// <summary>
 		/// Must be last
@@ -674,6 +676,8 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object AsmData = TextColor.AsmData;
 		public static readonly object AsmAddress = TextColor.AsmAddress;
 		public static readonly object AsmHexBytes = TextColor.AsmHexBytes;
+		public static readonly object Region = TextColor.Region;
+		public static readonly object RegionText = TextColor.RegionText;
 
 		/// <summary>
 		/// Boxes <paramref name="color"/>
@@ -1006,6 +1010,8 @@ namespace dnSpy.Contracts.Text {
 			AsmData,
 			AsmAddress,
 			AsmHexBytes,
+			Region,
+			RegionText,
 		};
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}

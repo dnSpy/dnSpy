@@ -1616,5 +1616,15 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <see cref="TextColor.AsmHexBytes"/>
 		/// </summary>
 		public const string AsmHexBytes = "Theme-" + nameof(AsmHexBytes);
+
+		/// <summary>
+		/// <see cref="TextColor.Region"/>
+		/// </summary>
+		public const string Region = "Theme-" + nameof(Region);
+
+		/// <summary>
+		/// <see cref="TextColor.RegionText"/>
+		/// </summary>
+		public const string RegionText = "Theme-" + nameof(RegionText);
 	}
 }

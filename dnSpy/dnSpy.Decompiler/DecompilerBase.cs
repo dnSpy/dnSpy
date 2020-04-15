@@ -43,6 +43,7 @@ namespace dnSpy.Decompiler {
 		public abstract string FileExtension { get; }
 		public virtual string? ProjectFileExtension => null;
 		public virtual MetadataTextColorProvider MetadataTextColorProvider => CSharpMetadataTextColorProvider.Instance;
+		public virtual bool SupportsRegion => false;
 
 		public void WriteName(ITextColorWriter output, TypeDef type) =>
 			FormatTypeName(TextColorWriterToDecompilerOutput.Create(output), type);
@@ -246,5 +247,8 @@ namespace dnSpy.Decompiler {
 		public virtual bool CanDecompile(DecompilationType decompilationType) => false;
 
 		public virtual void Decompile(DecompilationType decompilationType, object data) => throw new NotImplementedException();
+
+		public virtual void WriteRegionBegin(IDecompilerOutput output, string text) => throw new NotImplementedException();
+		public virtual void WriteRegionEnd(IDecompilerOutput output) => throw new NotImplementedException();
 	}
 }

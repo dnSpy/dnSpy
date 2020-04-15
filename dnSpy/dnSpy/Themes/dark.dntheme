@@ -317,6 +317,8 @@
 		<color name="asmdata" fg="#AA70FF" />
 		<color name="asmaddress" fg="#B5CEA8" />
 		<color name="asmhexbytes" fg="#808080" />
+		<color name="region" fg="#0000FF" />
+		<color name="regiontext" fg="#DCDCDC" />
 
 		<color name="systemcolorscontrol" bg="#303030" />
 		<color name="systemcolorscontroldark" bg="#606060" />

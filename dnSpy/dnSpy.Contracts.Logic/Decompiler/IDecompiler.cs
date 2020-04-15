@@ -234,6 +234,24 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="decompilationType">Decompilation type</param>
 		/// <param name="data">Data, see <see cref="DecompilationType"/></param>
 		void Decompile(DecompilationType decompilationType, object data);
+
+		/// <summary>
+		/// True if <see cref="WriteRegionBegin(IDecompilerOutput, string)" /> and <see cref="WriteRegionEnd(IDecompilerOutput)" /> is supported
+		/// </summary>
+		bool SupportsRegion { get; }
+
+		/// <summary>
+		/// Writes a region start
+		/// </summary>
+		/// <param name="output">Output</param>
+		/// <param name="text">The text for the region</param>
+		void WriteRegionBegin(IDecompilerOutput output, string text);
+
+		/// <summary>
+		/// Writes a region end
+		/// </summary>
+		/// <param name="output">Output</param>
+		void WriteRegionEnd(IDecompilerOutput output);
 	}
 
 	/// <summary>

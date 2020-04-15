@@ -2217,6 +2217,8 @@ namespace dnSpy.Themes {
 							new BrushColorInfo(ColorType.AsmData, ""),
 							new BrushColorInfo(ColorType.AsmAddress, ""),
 							new BrushColorInfo(ColorType.AsmHexBytes, ""),
+							new BrushColorInfo(ColorType.Region, ""),
+							new BrushColorInfo(ColorType.RegionText, ""),
 						},
 					},
 				},

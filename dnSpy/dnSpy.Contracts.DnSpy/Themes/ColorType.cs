@@ -342,6 +342,8 @@ namespace dnSpy.Contracts.Themes {
 		AsmData,
 		AsmAddress,
 		AsmHexBytes,
+		Region,
+		RegionText,
 
 		// Must be last in this group
 		LastNR,

@@ -329,5 +329,17 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 			new VisualBasicFormatter(output, DefaultFormatterOptions, null).WriteNamespaceToolTip(@namespace);
 		public override void Write(ITextColorWriter output, IMemberRef member, FormatterOptions flags) =>
 			new VisualBasicFormatter(output, flags, null).Write(member);
+
+		public override bool SupportsRegion => true;
+		public override void WriteRegionBegin(IDecompilerOutput output, string text) {
+			text ??= "";
+			output.Write("#Region ", BoxedTextColor.Region);
+			output.Write($"\"{text.Replace('"', '\'')}\"", BoxedTextColor.RegionText);
+			output.WriteLine();
+		}
+		public override void WriteRegionEnd(IDecompilerOutput output) {
+			output.Write("#End Region", BoxedTextColor.Region);
+			output.WriteLine();
+		}
 	}
 }

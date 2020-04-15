@@ -521,5 +521,16 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 				return DecompiledBodyKind.Full;
 			return DecompiledBodyKind.Empty;
 		}
+
+		public override bool SupportsRegion => true;
+		public override void WriteRegionBegin(IDecompilerOutput output, string text) {
+			output.Write("#region ", BoxedTextColor.Region);
+			output.Write(text, BoxedTextColor.RegionText);
+			output.WriteLine();
+		}
+		public override void WriteRegionEnd(IDecompilerOutput output) {
+			output.Write("#endregion", BoxedTextColor.Region);
+			output.WriteLine();
+		}
 	}
 }

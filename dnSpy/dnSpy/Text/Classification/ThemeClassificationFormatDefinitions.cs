@@ -4572,5 +4572,23 @@ namespace dnSpy.Text.Classification {
 		[Order(After = Priority.Default)]
 		sealed class WhiteSpace : ClassificationFormatDefinition {
 		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.Region)]
+		[Name(ThemeClassificationTypeNameKeys.Region)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Comment), Order(After = ThemeClassificationTypeNameKeys.Comment)]
+		sealed class Region : ThemeClassificationFormatDefinition {
+			Region() : base(TextColor.Region) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.RegionText)]
+		[Name(ThemeClassificationTypeNameKeys.RegionText)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Region), Order(After = ThemeClassificationTypeNameKeys.Region)]
+		sealed class RegionText : ThemeClassificationFormatDefinition {
+			RegionText() : base(TextColor.RegionText) { }
+		}
 	}
 }
