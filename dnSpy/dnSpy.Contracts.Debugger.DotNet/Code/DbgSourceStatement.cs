@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace dnSpy.Contracts.Debugger.DotNet.Code {
 	/// <summary>
@@ -40,7 +41,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Code {
 		public DbgTextSpan TextSpan => textSpan;
 
 		internal sealed class SpanStartComparerImpl : IComparer<DbgSourceStatement> {
-			public int Compare(DbgSourceStatement x, DbgSourceStatement y) => (int)(x.ilSpan.Start - y.ilSpan.Start);
+			public int Compare([AllowNull] DbgSourceStatement x, [AllowNull] DbgSourceStatement y) => (int)(x.ilSpan.Start - y.ilSpan.Start);
 		}
 
 		/// <summary>

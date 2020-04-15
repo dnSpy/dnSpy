@@ -23,6 +23,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Exceptions;
@@ -287,7 +288,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			UI(() => DebuggerSettings_PropertyChanged_UI(e.PropertyName));
 
 		// UI thread
-		void DebuggerSettings_PropertyChanged_UI(string propertyName) {
+		void DebuggerSettings_PropertyChanged_UI(string? propertyName) {
 			exceptionContext.UIDispatcher.VerifyAccess();
 			if (propertyName == nameof(DebuggerSettings.SyntaxHighlight)) {
 				exceptionContext.SyntaxHighlight = debuggerSettings.SyntaxHighlight;
@@ -406,9 +407,15 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		void InitializeNothingMatched(string filterText, bool showOnlyEnabledExceptions, ExceptionCategoryVM selectedCategory) =>
 			NothingMatched = AllItems.Count == 0 && !(string.IsNullOrWhiteSpace(filterText) && !showOnlyEnabledExceptions && selectedCategory == exceptionCategories.FirstOrDefault());
 
-		int IComparer<ExceptionVMCached>.Compare(ExceptionVMCached x, ExceptionVMCached y) => Compare(x, y);
-		int Compare(ExceptionVMCached x, ExceptionVMCached y) {
+		int IComparer<ExceptionVMCached>.Compare([AllowNull] ExceptionVMCached x, [AllowNull] ExceptionVMCached y) => Compare(x, y);
+		int Compare(ExceptionVMCached? x, ExceptionVMCached? y) {
 			Debug.Assert(exceptionContext.UIDispatcher.CheckAccess());
+			if ((object?)x == y)
+				return 0;
+			if (x is null)
+				return -1;
+			if (y is null)
+				return 1;
 			var (desc, dir) = Descs.SortedColumn;
 
 			int id;

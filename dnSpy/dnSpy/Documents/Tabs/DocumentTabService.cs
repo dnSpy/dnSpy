@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -659,9 +660,11 @@ namespace dnSpy.Documents.Tabs {
 			}
 
 			sealed class DsDocumentComparer : IEqualityComparer<IDsDocument> {
-				public bool Equals(IDsDocument x, IDsDocument y) {
-					if (x == y)
+				public bool Equals([AllowNull] IDsDocument x, [AllowNull] IDsDocument y) {
+					if ((object?)x == y)
 						return true;
+					if (x is null || y is null)
+						return false;
 
 					var fx = x.SerializedDocument;
 					var fy = y.SerializedDocument;
@@ -671,7 +674,7 @@ namespace dnSpy.Documents.Tabs {
 					return Equals(fx.Value, fy.Value);
 				}
 
-				public int GetHashCode(IDsDocument obj) {
+				public int GetHashCode([DisallowNull] IDsDocument obj) {
 					var f = obj.SerializedDocument;
 					return f is null ? 0 : GetHashCode(f.Value);
 				}

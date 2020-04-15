@@ -129,12 +129,12 @@ namespace dnSpy.AsmEditor.Hex {
 			remove => CommandManager.RequerySuggested -= value;
 		}
 
-		bool ICommand.CanExecute(object parameter) {
+		bool ICommand.CanExecute(object? parameter) {
 			var ctx = CreateMDTableContext();
 			return !(ctx is null) && cmd.IsVisible(ctx) && cmd.IsEnabled(ctx);
 		}
 
-		void ICommand.Execute(object parameter) {
+		void ICommand.Execute(object? parameter) {
 			var ctx = CreateMDTableContext();
 			if (!(ctx is null))
 				cmd.Execute(ctx);

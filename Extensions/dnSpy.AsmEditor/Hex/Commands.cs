@@ -1305,7 +1305,7 @@ namespace dnSpy.AsmEditor.Hex {
 				return modNode;
 			if (node is AssemblyDocumentNode asmNode) {
 				asmNode.TreeNode.EnsureChildrenLoaded();
-				return (ModuleDocumentNode)asmNode.TreeNode.DataChildren.FirstOrDefault(a => a is ModuleDocumentNode);
+				return (ModuleDocumentNode?)asmNode.TreeNode.DataChildren.FirstOrDefault(a => a is ModuleDocumentNode);
 			}
 			return null;
 		}

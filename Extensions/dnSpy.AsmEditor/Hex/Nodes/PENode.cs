@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using dnSpy.AsmEditor.Hex.PE;
 using dnSpy.AsmEditor.Properties;
@@ -130,7 +131,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			if ((token & 0x00FFFFFF) == 0)
 				return null;
 			TreeNode.EnsureChildrenLoaded();
-			var stgStreamNode = (StorageStreamNode)TreeNode.DataChildren.FirstOrDefault(a => a is StorageStreamNode && ((StorageStreamNode)a).HeapKind == DotNetHeapKind.Tables);
+			var stgStreamNode = (StorageStreamNode?)TreeNode.DataChildren.FirstOrDefault(a => a is StorageStreamNode && ((StorageStreamNode)a).HeapKind == DotNetHeapKind.Tables);
 			return stgStreamNode?.FindTokenNode(token);
 		}
 
@@ -167,7 +168,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		public double Order { get; }
 
-		public int Compare(TreeNodeData x, TreeNodeData y) {
+		public int Compare([AllowNull] TreeNodeData x, [AllowNull] TreeNodeData y) {
 			if (x == y) return 0;
 			var a = x as PENode;
 			var b = y as PENode;

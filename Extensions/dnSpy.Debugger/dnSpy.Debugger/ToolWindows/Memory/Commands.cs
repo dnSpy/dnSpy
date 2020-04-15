@@ -107,9 +107,9 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 			return pid.ToString();
 		}
 
-		static string GetProcessName(Process process) {
+		static string? GetProcessName(Process process) {
 			try {
-				return process.MainModule.ModuleName;
+				return process.MainModule?.ModuleName;
 			}
 			catch {
 			}

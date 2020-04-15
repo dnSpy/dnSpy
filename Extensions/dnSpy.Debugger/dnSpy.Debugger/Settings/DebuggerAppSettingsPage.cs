@@ -85,16 +85,16 @@ namespace dnSpy.Debugger.Settings {
 	sealed class RuntimesVM : ViewModelBase {
 		public object Items => runtimes;
 		readonly ObservableCollection<RuntimeVM> runtimes;
-		public object SelectedItem {
+		public object? SelectedItem {
 			get => selectedItem;
 			set {
 				if (selectedItem == value)
 					return;
-				selectedItem = (RuntimeVM)value;
+				selectedItem = (RuntimeVM?)value;
 				OnPropertyChanged(nameof(SelectedItem));
 			}
 		}
-		RuntimeVM selectedItem;
+		RuntimeVM? selectedItem;
 
 		public RuntimesVM(RuntimeLanguageInfo[] infos) {
 			runtimes = new ObservableCollection<RuntimeVM>(infos.OrderBy(a => a.RuntimeDisplayName, StringComparer.CurrentCultureIgnoreCase).Select(a => new RuntimeVM(a)));
@@ -128,7 +128,7 @@ namespace dnSpy.Debugger.Settings {
 			Name = info.RuntimeDisplayName;
 			runtimeKindGuid = info.RuntimeKindGuid;
 			languages = new ObservableCollection<LanguageVM>(info.Languages.OrderBy(a => a.LanguageDisplayName, StringComparer.CurrentCultureIgnoreCase).Select(a => new LanguageVM(a)));
-			selectedItem = languages.FirstOrDefault(a => a.ID == info.CurrentLanguage) ?? languages.FirstOrDefault();
+			selectedItem = languages.FirstOrDefault(a => a.ID == info.CurrentLanguage) ?? languages.First();
 		}
 
 		public (Guid runtimeKindGuid, string languageName) GetSettings() => (runtimeKindGuid, selectedItem.ID);

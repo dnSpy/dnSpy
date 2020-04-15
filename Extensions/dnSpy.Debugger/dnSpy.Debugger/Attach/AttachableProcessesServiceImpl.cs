@@ -143,7 +143,7 @@ namespace dnSpy.Debugger.Attach {
 					return false;
 				if (processNameRegexes.Length != 0) {
 					try {
-						if (!IsValidProcessName(Path.GetFileName(process.MainModule.FileName)))
+						if (!IsValidProcessName(Path.GetFileName(process.MainModule?.FileName) ?? string.Empty))
 							return false;
 					}
 					catch (InvalidOperationException) {

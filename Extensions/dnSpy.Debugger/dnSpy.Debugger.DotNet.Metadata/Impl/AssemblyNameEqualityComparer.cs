@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	sealed class AssemblyNameEqualityComparer : IEqualityComparer<IDmdAssemblyName> {
@@ -42,7 +43,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			};
 		}
 
-		public bool Equals(IDmdAssemblyName x, IDmdAssemblyName y) {
+		public bool Equals([AllowNull] IDmdAssemblyName x, [AllowNull] IDmdAssemblyName y) {
+			if ((object?)x == y)
+				return true;
+			if (x is null || y is null)
+				return false;
 			if (!StringComparer.OrdinalIgnoreCase.Equals(x.Name, y.Name))
 				return false;
 
@@ -91,7 +96,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			return true;
 		}
 
-		public int GetHashCode(IDmdAssemblyName obj) {
+		public int GetHashCode([DisallowNull] IDmdAssemblyName obj) {
 			int hc = StringComparer.OrdinalIgnoreCase.GetHashCode(obj.Name ?? string.Empty);
 			// Version number is ignored, see Equals()
 			hc ^= (obj.CultureName ?? string.Empty).GetHashCode();

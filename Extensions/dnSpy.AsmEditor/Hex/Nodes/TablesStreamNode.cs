@@ -72,7 +72,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			output.Write(BoxedTextColor.HexTablesStream, dnSpy_AsmEditor_Resources.HexNode_TablesStream);
 
 		public MetadataTableRecordNode? FindTokenNode(uint token) {
-			var mdTblNode = (MetadataTableNode)TreeNode.DataChildren.FirstOrDefault(a => ((MetadataTableNode)a).TableInfo.Table == (Table)(token >> 24));
+			var mdTblNode = (MetadataTableNode?)TreeNode.DataChildren.FirstOrDefault(a => ((MetadataTableNode)a).TableInfo.Table == (Table)(token >> 24));
 			return mdTblNode?.FindTokenNode(token);
 		}
 	}

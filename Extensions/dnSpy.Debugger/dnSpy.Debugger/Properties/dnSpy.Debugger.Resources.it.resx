@@ -142,10 +142,10 @@
     <value>Connettersi al processo</value>
   </data>
   <data name="Attach_UseDnSpy32" xml:space="preserve">
-    <value>Use 64-bit dnSpy to attach to 64-bit processes</value>
+    <value>Usa dnSpy.exe a 64-bit per connetterti ai processi a 64-bit</value>
   </data>
   <data name="Attach_UseDnSpy64" xml:space="preserve">
-    <value>Use 32-bit dnSpy to attach to 32-bit processes</value>
+    <value>Usa dnSpy.exe a 32-bit per connetterti ai processi a 32-bit</value>
   </data>
   <data name="BreakCommand" xml:space="preserve">
     <value>Interromp_i tutto</value>
@@ -217,7 +217,7 @@
     <value>Tipo</value>
   </data>
   <data name="Column_ThreadAffinityMask" xml:space="preserve">
-    <value>Maschera dell'affinità</value>
+    <value>Maschera d'affinità</value>
   </data>
   <data name="Column_ThreadCategory" xml:space="preserve">
     <value>Categoria</value>
@@ -241,7 +241,7 @@
     <value>Conteggio sospeso</value>
   </data>
   <data name="Column_Timestamp" xml:space="preserve">
-    <value>Marca temporale</value>
+    <value>Marcatura temporale</value>
   </data>
   <data name="Column_Type" xml:space="preserve">
     <value>Tipo</value>
@@ -274,13 +274,13 @@
     <value>Consenti la valutazione delle proprietà e altre chiamate di funzioni implicite</value>
   </data>
   <data name="DbgSettings_UseMemoryModules" xml:space="preserve">
-    <value>Debug files caricati dalla memoria del processo (deselezionare questa opzione per utilizzare i file su disco)</value>
+    <value>Debug dei file caricati dalla memoria del processo (deselezionare questa opzione per utilizzare i file su disco)</value>
   </data>
   <data name="DbgSettings_UseStringConversionFunction" xml:space="preserve">
     <value>Chiama la funzione di conversione stringa sugli oggetti nelle finestre delle variabili</value>
   </data>
   <data name="StartDebugging2" xml:space="preserve">
-    <value>_Inizia il debug...</value>
+    <value>_Avvia il debug...</value>
   </data>
   <data name="DebuggerOptDlgTab" xml:space="preserve">
     <value>Debugger</value>
@@ -307,7 +307,7 @@
     <value>C_ancella il breakpoint</value>
   </data>
   <data name="DetachAllCommand" xml:space="preserve">
-    <value>Staccare tu_tti</value>
+    <value>Rilascia tu_tti</value>
   </data>
   <data name="DisableAllBreakpointsCommand" xml:space="preserve">
     <value>Disattiva tutti i Breakpoi_nts</value>
@@ -397,7 +397,7 @@
     <value>Non è possibile valutare quando il thread è in un punto non sicuro. Entra ancora una volta, o eseguire fino al breakpoint.</value>
   </data>
   <data name="Locals_Error_EvalDisabledCantCallPropsAndMethods" xml:space="preserve">
-    <value>Attualmente non è possibile chiamare metodi e proprietà</value>
+    <value>Attualmente non è possibile chiamare proprietà e metodi</value>
   </data>
   <data name="Locals_Error_EvalTimedOutIsDisabled" xml:space="preserve">
     <value>Valutazione scaduta ed è stata disattivata fino a che si continua il programma sotto debug.</value>
@@ -415,7 +415,7 @@
     <value>Salvare i moduli</value>
   </data>
   <data name="ModuleSaveModuleTitle" xml:space="preserve">
-    <value>Salva Modulo</value>
+    <value>Salva il modulo</value>
   </data>
   <data name="ModulesCommand" xml:space="preserve">
     <value>M_oduli</value>
@@ -1498,30 +1498,30 @@
     <value>Alt+8</value>
   </data>
   <data name="DbgSettings_IgnoreUnhandledExceptions" xml:space="preserve">
-    <value>Ignore unhandled exceptions</value>
+    <value>Ignora eccezioni non gestite</value>
   </data>
   <data name="RunWithInvalidExtension" xml:space="preserve">
-    <value>Are you sure you want to run this file which doesn't have a valid extension?</value>
+    <value>Sei sicuro di voler eseguire questo file che non ha un'estensione valida?</value>
   </data>
   <data name="DebugWithInvalidExtension" xml:space="preserve">
-    <value>Are you sure you want to debug this file which doesn't have a valid extension?</value>
+    <value>Sei sicuro di voler eseguire il debug di questo file che non ha un'estensione valida?</value>
   </data>
   <data name="Processes_NoMatch" xml:space="preserve">
-    <value>No processes match your search filter.</value>
+    <value>Nessun processo corrisponde al filtro di ricerca.</value>
   </data>
   <data name="Processes_Search" xml:space="preserve">
     <value>Ricerca</value>
   </data>
   <data name="Processes_ResetSearchSettings_ToolTip" xml:space="preserve">
-    <value>Reset all search criteria so that all processes are shown</value>
+    <value>Resetta tutti i criteri di ricerca in modo che tutti i processi siano visualizzati</value>
   </data>
   <data name="Processes_Search_ToolTip" xml:space="preserve">
     <value>Cerca un processo</value>
   </data>
   <data name="DbgSettings_FocusDebuggerWhenProcessBreaks" xml:space="preserve">
-    <value>Bring dnSpy to the foreground when breaking in the debugger</value>
+    <value>Porta dnSpy in primo piano quando il debug si interrompe</value>
   </data>
   <data name="Column_LoadModule" xml:space="preserve">
-    <value>Load</value>
+    <value>Carica</value>
   </data>
 </root>

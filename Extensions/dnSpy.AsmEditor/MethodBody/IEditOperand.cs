@@ -24,6 +24,6 @@ namespace dnSpy.AsmEditor.MethodBody {
 		/// </summary>
 		/// <param name="parameter">Parameter passed from the button command</param>
 		/// <param name="operand">Operand to edit</param>
-		void Edit(object parameter, InstructionOperandVM operand);
+		void Edit(object? parameter, InstructionOperandVM operand);
 	}
 }

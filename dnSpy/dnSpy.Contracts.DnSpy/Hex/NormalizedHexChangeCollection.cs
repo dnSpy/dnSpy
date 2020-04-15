@@ -21,6 +21,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace dnSpy.Contracts.Hex {
@@ -120,7 +121,15 @@ namespace dnSpy.Contracts.Hex {
 
 		sealed class Comparer : IComparer<HexChange> {
 			public static readonly Comparer Instance = new Comparer();
-			public int Compare(HexChange x, HexChange y) => x.OldPosition.CompareTo(y.OldPosition);
+			public int Compare([AllowNull] HexChange x, [AllowNull] HexChange y) {
+				if ((object?)x == y)
+					return 0;
+				if (x is null)
+					return -1;
+				if (y is null)
+					return 1;
+				return x.OldPosition.CompareTo(y.OldPosition);
+			}
 		}
 
 		/// <summary>

@@ -146,7 +146,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		readonly ObservableCollection<DecompilerVM> allDecompilers;
 
 		public DecompilerVM Language {
-			get => allDecompilers.FirstOrDefault(a => a.Decompiler == options.Decompiler);
+			get => allDecompilers.First(a => a.Decompiler == options.Decompiler)!;
 			set {
 				if (options.Decompiler != value.Decompiler) {
 					options.Decompiler = value.Decompiler;

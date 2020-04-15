@@ -34,7 +34,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 
 	[Export(typeof(DbgFilterExpressionEvaluatorService))]
 	sealed class DbgFilterExpressionEvaluatorServiceImpl : DbgFilterExpressionEvaluatorService {
-		readonly Lazy<DbgFilterExpressionEvaluator, IDbgFilterExpressionEvaluatorMetadata> dbgFilterExpressionEvaluator;
+		readonly Lazy<DbgFilterExpressionEvaluator, IDbgFilterExpressionEvaluatorMetadata>? dbgFilterExpressionEvaluator;
 
 		public override bool HasExpressionEvaluator => !(dbgFilterExpressionEvaluator is null);
 

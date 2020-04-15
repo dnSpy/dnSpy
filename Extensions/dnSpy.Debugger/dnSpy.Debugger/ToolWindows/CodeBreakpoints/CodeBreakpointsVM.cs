@@ -23,6 +23,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using dnSpy.Contracts.Controls.ToolWindows;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Breakpoints.Code;
@@ -244,7 +245,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			UI(() => DebuggerSettings_PropertyChanged_UI(e.PropertyName));
 
 		// UI thread
-		void DebuggerSettings_PropertyChanged_UI(string propertyName) {
+		void DebuggerSettings_PropertyChanged_UI(string? propertyName) {
 			codeBreakpointContext.UIDispatcher.VerifyAccess();
 			switch (propertyName) {
 			case nameof(DebuggerSettings.SyntaxHighlight):
@@ -264,7 +265,7 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 			UI(() => DbgCodeBreakpointDisplaySettings_PropertyChanged_UI(e.PropertyName));
 
 		// UI thread
-		void DbgCodeBreakpointDisplaySettings_PropertyChanged_UI(string propertyName) {
+		void DbgCodeBreakpointDisplaySettings_PropertyChanged_UI(string? propertyName) {
 			codeBreakpointContext.UIDispatcher.VerifyAccess();
 			switch (propertyName) {
 			case nameof(DbgCodeBreakpointDisplaySettings.ShowTokens):
@@ -458,8 +459,14 @@ namespace dnSpy.Debugger.ToolWindows.CodeBreakpoints {
 		void InitializeNothingMatched(string filterText) =>
 			NothingMatched = AllItems.Count == 0 && !string.IsNullOrWhiteSpace(filterText);
 
-		public int Compare(CodeBreakpointVM x, CodeBreakpointVM y) {
+		public int Compare([AllowNull] CodeBreakpointVM x, [AllowNull] CodeBreakpointVM y) {
 			Debug.Assert(codeBreakpointContext.UIDispatcher.CheckAccess());
+			if ((object?)x == y)
+				return 0;
+			if (x is null)
+				return -1;
+			if (y is null)
+				return 1;
 			var (desc, dir) = Descs.SortedColumn;
 
 			int id;

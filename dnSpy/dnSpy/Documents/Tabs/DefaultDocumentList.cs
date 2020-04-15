@@ -123,7 +123,7 @@ namespace dnSpy.Documents.Tabs {
 			var wpa81 = allFiles.FirstOrDefault(a => a.Filename.EndsWith(@"\Reference Assemblies\Microsoft\Framework\WindowsPhoneApp\v8.1\RedistList\FrameworkList.xml", StringComparison.OrdinalIgnoreCase));
 			if (!(wpa81 is null))
 				wpa81.Name = "Windows Phone App 8.1";	// Another one has the identical name so add "App" to it
-			if (!(net30 is null))
+			if (!(net30 is null) && !(net20 is null))
 				net30.AddFilesFrom(net20);
 			if (!(net35 is null) && !(net30 is null))
 				net35.AddFilesFrom(net30);

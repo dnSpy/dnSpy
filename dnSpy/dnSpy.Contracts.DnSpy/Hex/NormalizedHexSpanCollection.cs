@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace dnSpy.Contracts.Hex {
@@ -83,7 +84,7 @@ namespace dnSpy.Contracts.Hex {
 
 		sealed class HexSpanComparer : IComparer<HexSpan> {
 			public static readonly HexSpanComparer Instance = new HexSpanComparer();
-			public int Compare(HexSpan x, HexSpan y) => x.Start.CompareTo(y.Start);
+			public int Compare([AllowNull] HexSpan x, [AllowNull] HexSpan y) => x.Start.CompareTo(y.Start);
 		}
 
 		/// <summary>

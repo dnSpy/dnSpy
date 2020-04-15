@@ -121,7 +121,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		static TypeNode GetOrCreateNonNestedTypeTreeNode(ModuleDocumentNode modNode, TypeDef type) {
 			Debug2.Assert(!(type is null) && type.DeclaringType is null);
 			modNode.TreeNode.EnsureChildrenLoaded();
-			TypeNode typeNode;
+			TypeNode? typeNode;
 			var nsNode = GetOrCreateNamespaceNode(modNode, type.Namespace);
 			typeNode = nsNode.TreeNode.DataChildren.OfType<TypeNode>().FirstOrDefault(a => a.TypeDef == type);
 			if (!(typeNode is null))

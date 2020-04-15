@@ -252,7 +252,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 			createSolution = true;
 			ProjectVersionVM.SelectedItem = ProjectVersion.VS2010;
 			allDecompilers = new ObservableCollection<DecompilerVM>(decompilerService.AllDecompilers.Where(a => !(a.ProjectFileExtension is null)).Select(a => new DecompilerVM(a)));
-			decompiler = allDecompilers.FirstOrDefault();
+			decompiler = allDecompilers.First();
 			isIndeterminate = false;
 			ProjectGuid = new NullableGuidVM(Guid.NewGuid(), a => HasErrorUpdated());
 		}

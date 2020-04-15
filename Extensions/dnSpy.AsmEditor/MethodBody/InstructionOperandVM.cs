@@ -272,7 +272,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			OperandListVM.DataErrorInfoDelegate = VerifyOperand;
 		}
 
-		void EditOther(object parameter) {
+		void EditOther(object? parameter) {
 			switch (InstructionOperandType) {
 			case InstructionOperandType.Field:
 			case InstructionOperandType.Method:
@@ -290,7 +290,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 		}
 
-		bool EditOtherCanExecute(object parameter) {
+		bool EditOtherCanExecute(object? parameter) {
 			switch (InstructionOperandType) {
 			case InstructionOperandType.Field:
 			case InstructionOperandType.Method:

@@ -19,6 +19,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents;
@@ -201,7 +202,7 @@ namespace dnSpy.Search {
 		public static SearchResult CreateMessage(SearchResultContext context, string msg, object color, bool first) =>
 			new MessageSearchResult(msg, color, first) { Context = context };
 
-		public int CompareTo(ISearchResult other) {
+		public int CompareTo([AllowNull] ISearchResult other) {
 			if (other is null)
 				return -1;
 			int o1 = GetOrder(this);

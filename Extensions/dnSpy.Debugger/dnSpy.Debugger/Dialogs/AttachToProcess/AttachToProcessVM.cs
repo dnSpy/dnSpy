@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
@@ -281,8 +282,14 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 			return list;
 		}
 
-		public int Compare(ProgramVM x, ProgramVM y) {
+		public int Compare([AllowNull] ProgramVM x, [AllowNull] ProgramVM y) {
 			Debug.Assert(uiDispatcher.CheckAccess());
+			if ((object?)x == y)
+				return 0;
+			if (x is null)
+				return -1;
+			if (y is null)
+				return 1;
 			var (desc, dir) = Descs.SortedColumn;
 
 			int id;

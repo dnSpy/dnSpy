@@ -41,8 +41,8 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 			public ExportedFunctions? ExportedFunctions { get; set; }
 
 			public ModuleInfo(ProcessModule module) {
-				Name = Path.GetFileName(module.FileName);
-				Filename = module.FileName;
+				Name = Path.GetFileName(module.FileName) ?? "???";
+				Filename = module.FileName ?? "???";
 				Address = (ulong)module.BaseAddress.ToInt64();
 				EndAddress = Address + (uint)module.ModuleMemorySize;
 			}

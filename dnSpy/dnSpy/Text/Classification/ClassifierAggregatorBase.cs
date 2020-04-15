@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Tagging;
@@ -51,7 +52,15 @@ namespace dnSpy.Text.Classification {
 
 		sealed class ClassificationSpanComparer : IComparer<ClassificationSpan> {
 			public static readonly ClassificationSpanComparer Instance = new ClassificationSpanComparer();
-			public int Compare(ClassificationSpan x, ClassificationSpan y) => x.Span.Start.Position - y.Span.Start.Position;
+			public int Compare([AllowNull] ClassificationSpan x, [AllowNull] ClassificationSpan y) {
+				if ((object?)x == y)
+					return 0;
+				if (x is null)
+					return -1;
+				if (y is null)
+					return 1;
+				return x.Span.Start.Position - y.Span.Start.Position;
+			}
 		}
 
 		public IList<ClassificationSpan> GetClassificationSpans(SnapshotSpan span) =>

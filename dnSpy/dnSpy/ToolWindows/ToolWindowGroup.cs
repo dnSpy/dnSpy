@@ -60,7 +60,7 @@ namespace dnSpy.ToolWindows {
 		}
 
 		public static ToolWindowGroup? GetToolWindowGroup(ITabGroup? tabGroup) => (ToolWindowGroup?)tabGroup?.Tag;
-		TabContentImpl GetTabContentImpl(ToolWindowContent content) => TabContentImpls.FirstOrDefault(a => a.Content == content);
+		TabContentImpl? GetTabContentImpl(ToolWindowContent content) => TabContentImpls.FirstOrDefault(a => a.Content == content);
 		public void Add(ToolWindowContent content) => TabGroup.Add(new TabContentImpl(this, content));
 
 		public void Close(ToolWindowContent content) {

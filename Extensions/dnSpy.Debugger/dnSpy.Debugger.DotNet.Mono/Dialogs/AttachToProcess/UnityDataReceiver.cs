@@ -59,7 +59,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.AttachToProcess {
 
 			public byte[]? GetData() {
 				EndPoint anyEndpoint = new IPEndPoint(IPAddress.Any, 0);
-				var asyncRes = AsyncResult;
+				var asyncRes = AsyncResult!;
 				AsyncResult = null;
 				int count = socket.EndReceiveFrom(asyncRes, ref anyEndpoint);
 				if (count == 0)

@@ -192,18 +192,16 @@ Errore: {1}</value>
     <value>WaitSleepJoin</value>
   </data>
   <data name="UseDnSpy64ExeToDebug32" xml:space="preserve">
-    <value>Use 32-bit dnSpy to debug 32-bit applications.</value>
+    <value>Usa applicazione dnSpy a 32-bit per debug a 32-bit.</value>
   </data>
   <data name="UseDnSpyExeToDebug64" xml:space="preserve">
-    <value>Use 64-bit dnSpy to debug 64-bit applications.</value>
+    <value>Usa applicazione dnSpy a 64-bit per debug a 64-bit.</value>
   </data>
   <data name="ExceptionMessageIsNull" xml:space="preserve">
     <value>"&lt;nessun messaggio di errore&gt;"</value>
   </data>
   <data name="Error_CouldNotStartDebugger2" xml:space="preserve">
-    <value>Impossibile avviare il debugger.
-
-Errore: {0}</value>
+    <value>Impossibile avviare il debugger. Errore: {0}</value>
   </data>
   <data name="Error_CouldNotAttachToProcess" xml:space="preserve">
     <value>Impossibile collegarsi al processo {0}</value>
@@ -272,7 +270,7 @@ HR: 0x{0:X8}
 Errore: 0x{1:X8}</value>
   </data>
   <data name="DbgAsm_UseHostExecutable" xml:space="preserve">
-    <value>Use host executable</value>
+    <value>Usa eseguibile host</value>
   </data>
   <data name="DbgAsm_Executable" xml:space="preserve">
     <value>E_seguibile</value>

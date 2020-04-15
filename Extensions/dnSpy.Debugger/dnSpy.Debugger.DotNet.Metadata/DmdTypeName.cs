@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
@@ -134,7 +135,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <returns></returns>
-		public bool Equals(DmdTypeName x, DmdTypeName y) =>
+		public bool Equals([AllowNull] DmdTypeName x, [AllowNull] DmdTypeName y) =>
 			x.Name == y.Name &&
 			x.Namespace == y.Namespace &&
 			x.Extra == y.Extra;
@@ -144,7 +145,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public int GetHashCode(DmdTypeName obj) =>
+		public int GetHashCode([DisallowNull] DmdTypeName obj) =>
 			StringComparer.Ordinal.GetHashCode(obj.Namespace ?? string.Empty) ^
 			StringComparer.Ordinal.GetHashCode(obj.Name ?? string.Empty) ^
 			StringComparer.Ordinal.GetHashCode(obj.Extra ?? string.Empty);

@@ -26,13 +26,13 @@ using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.AsmEditor.Commands {
 	class IndexObservableCollection<T> : ObservableCollection<T> where T : class, IIndexedItem {
-		public ICommand AddItemBeforeCommand => new RelayCommand(a => AddItemBefore((T[])a), a => AddItemBeforeCanExecute((T[])a));
-		public ICommand AddItemAfterCommand => new RelayCommand(a => AddItemAfter((T[])a), a => AddItemAfterCanExecute((T[])a));
-		public ICommand AppendItemCommand => new RelayCommand(a => AppendItem((T[])a), a => AppendItemCanExecute((T[])a));
-		public ICommand ItemMoveUpCommand => new RelayCommand(a => ItemMoveUp((T[])a), a => ItemMoveUpCanExecute((T[])a));
-		public ICommand ItemMoveDownCommand => new RelayCommand(a => ItemMoveDown((T[])a), a => ItemMoveDownCanExecute((T[])a));
-		public ICommand RemoveItemCommand => new RelayCommand(a => RemoveItem((T[])a), a => RemoveItemCanExecute((T[])a));
-		public ICommand RemoveAllItemsCommand => new RelayCommand(a => RemoveAllItems((T[])a), a => RemoveAllItemsCanExecute((T[])a));
+		public ICommand AddItemBeforeCommand => new RelayCommand(a => AddItemBefore((T[])a!), a => AddItemBeforeCanExecute((T[])a!));
+		public ICommand AddItemAfterCommand => new RelayCommand(a => AddItemAfter((T[])a!), a => AddItemAfterCanExecute((T[])a!));
+		public ICommand AppendItemCommand => new RelayCommand(a => AppendItem((T[])a!), a => AppendItemCanExecute((T[])a!));
+		public ICommand ItemMoveUpCommand => new RelayCommand(a => ItemMoveUp((T[])a!), a => ItemMoveUpCanExecute((T[])a!));
+		public ICommand ItemMoveDownCommand => new RelayCommand(a => ItemMoveDown((T[])a!), a => ItemMoveDownCanExecute((T[])a!));
+		public ICommand RemoveItemCommand => new RelayCommand(a => RemoveItem((T[])a!), a => RemoveItemCanExecute((T[])a!));
+		public ICommand RemoveAllItemsCommand => new RelayCommand(a => RemoveAllItems((T[])a!), a => RemoveAllItemsCanExecute((T[])a!));
 		public bool DisableAutoUpdateProps { get; set; }
 		public Action<int>? UpdateIndexesDelegate { get; set; }
 		public bool CanCreateNewItems => !(createNewItem is null);

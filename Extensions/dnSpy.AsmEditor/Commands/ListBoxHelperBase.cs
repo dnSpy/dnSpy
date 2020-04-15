@@ -54,14 +54,14 @@ namespace dnSpy.AsmEditor.Commands {
 				this.cmd = cmd;
 			}
 
-			public bool CanExecute(object parameter) => cmd.CanExecute(owner.GetSelectedItems());
+			public bool CanExecute(object? parameter) => cmd.CanExecute(owner.GetSelectedItems());
 
 			public event EventHandler? CanExecuteChanged {
 				add => CommandManager.RequerySuggested += value;
 				remove => CommandManager.RequerySuggested -= value;
 			}
 
-			public void Execute(object parameter) => cmd.Execute(owner.GetSelectedItems());
+			public void Execute(object? parameter) => cmd.Execute(owner.GetSelectedItems());
 		}
 
 		protected abstract T[] GetSelectedItems();
@@ -171,7 +171,7 @@ namespace dnSpy.AsmEditor.Commands {
 		protected void AddCopyHandlers() {
 			Add(new ContextMenuHandler {
 				Header = "res:CopyAsTextCommand",
-				Command = new RelayCommand(a => CopyItemsAsText((T[])a), a => CopyItemsAsTextCanExecute((T[])a)),
+				Command = new RelayCommand(a => CopyItemsAsText((T[])a!), a => CopyItemsAsTextCanExecute((T[])a!)),
 				Icon = DsImages.Copy,
 				InputGestureText = "res:ShortCutKeyCtrlT",
 				Modifiers = ModifierKeys.Control,
@@ -179,7 +179,7 @@ namespace dnSpy.AsmEditor.Commands {
 			});
 			Add(new ContextMenuHandler {
 				Header = "res:CutCommand",
-				Command = new RelayCommand(a => CutItems((T[])a), a => CutItemsCanExecute((T[])a)),
+				Command = new RelayCommand(a => CutItems((T[])a!), a => CutItemsCanExecute((T[])a!)),
 				Icon = DsImages.Cut,
 				InputGestureText = "res:ShortCutKeyCtrlX",
 				Modifiers = ModifierKeys.Control,
@@ -187,7 +187,7 @@ namespace dnSpy.AsmEditor.Commands {
 			});
 			Add(new ContextMenuHandler {
 				Header = "res:CopyCommand",
-				Command = new RelayCommand(a => CopyItems((T[])a), a => CopyItemsCanExecute((T[])a)),
+				Command = new RelayCommand(a => CopyItems((T[])a!), a => CopyItemsCanExecute((T[])a!)),
 				Icon = DsImages.Copy,
 				InputGestureText = "res:ShortCutKeyCtrlC",
 				Modifiers = ModifierKeys.Control,

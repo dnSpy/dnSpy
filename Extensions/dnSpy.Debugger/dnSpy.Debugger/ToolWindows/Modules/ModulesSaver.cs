@@ -89,6 +89,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 				return true;
 			if (!data.WasError)
 				return true;
+			Debug2.Assert(!(data.ErrorMessage is null));
 			error = data.ErrorMessage;
 			return false;
 		}

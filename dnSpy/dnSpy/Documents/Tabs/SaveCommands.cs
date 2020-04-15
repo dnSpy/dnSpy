@@ -58,8 +58,8 @@ namespace dnSpy.Documents.Tabs {
 		readonly IDecompilerService decompilerService;
 		readonly IDocumentTreeViewSettings documentTreeViewSettings;
 		readonly IExportToProjectSettings exportToProjectSettings;
-		readonly Lazy<IBamlDecompiler> bamlDecompiler;
-		readonly Lazy<IXamlOutputOptionsProvider> xamlOutputOptionsProvider;
+		readonly Lazy<IBamlDecompiler>? bamlDecompiler;
+		readonly Lazy<IXamlOutputOptionsProvider>? xamlOutputOptionsProvider;
 
 		[ImportingConstructor]
 		ExportProjectCommand(IAppWindow appWindow, IDocumentTreeView documentTreeView, IDecompilerService decompilerService, IDocumentTreeViewSettings documentTreeViewSettings, IExportToProjectSettings exportToProjectSettings, [ImportMany] IEnumerable<Lazy<IBamlDecompiler>> bamlDecompilers, [ImportMany] IEnumerable<Lazy<IXamlOutputOptionsProvider>> xamlOutputOptionsProviders) {
@@ -219,7 +219,7 @@ namespace dnSpy.Documents.Tabs {
 				if (!File.Exists(fileToOpen))
 					return;
 				try {
-					Process.Start(new ProcessStartInfo(fileToOpen) { UseShellExecute = true });
+					Process.Start(new ProcessStartInfo(fileToOpen!) { UseShellExecute = true });
 				}
 				catch {
 				}

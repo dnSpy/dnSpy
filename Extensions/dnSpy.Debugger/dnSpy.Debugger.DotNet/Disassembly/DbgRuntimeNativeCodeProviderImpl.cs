@@ -45,7 +45,7 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 		readonly Lazy<DbgMetadataService> dbgMetadataService;
 		readonly Lazy<DbgModuleIdProviderService> dbgModuleIdProviderService;
 		readonly IDecompilerService decompilerService;
-		readonly IDecompiler ilDecompiler;
+		readonly IDecompiler? ilDecompiler;
 
 		[ImportingConstructor]
 		DbgRuntimeNativeCodeProviderImpl(Lazy<DbgMetadataService> dbgMetadataService, Lazy<DbgModuleIdProviderService> dbgModuleIdProviderService, IDecompilerService decompilerService) {
@@ -112,6 +112,7 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 					List<int>? ilOffsets = null;
 
 					if (canShowILCode) {
+						Debug2.Assert(!(ilDecompiler is null));
 						var provider = new DecompiledCodeProvider(ilDecompiler, method, cancellationToken);
 						if (provider.TryDecompile())
 							ilCodeProvider = provider.CreateILCodeProvider();

@@ -375,7 +375,7 @@ namespace dnSpy.Decompiler.CSharp {
 			WriteGenerics(genParams, BoxedTextColor.TypeGenericParameter);
 		}
 
-		bool WriteRefIfByRef(TypeSig typeSig, ParamDef? pd, bool forceReadOnly) {
+		bool WriteRefIfByRef(TypeSig? typeSig, ParamDef? pd, bool forceReadOnly) {
 			if (typeSig.RemovePinnedAndModifiers() is ByRefSig) {
 				if (!(pd is null) && (!pd.IsIn && pd.IsOut)) {
 					OutputWrite(Keyword_out, BoxedTextColor.Keyword);
@@ -854,7 +854,7 @@ namespace dnSpy.Decompiler.CSharp {
 			}
 		}
 
-		void Write(TypeSig type, ParamDef? ownerParam, IList<TypeSig>? typeGenArgs, IList<TypeSig>? methGenArgs, bool forceReadOnly = false) {
+		void Write(TypeSig? type, ParamDef? ownerParam, IList<TypeSig>? typeGenArgs, IList<TypeSig>? methGenArgs, bool forceReadOnly = false) {
 			WriteRefIfByRef(type, ownerParam, forceReadOnly);
 			if (type.RemovePinnedAndModifiers() is ByRefSig byRef)
 				type = byRef.Next;
@@ -1159,7 +1159,7 @@ namespace dnSpy.Decompiler.CSharp {
 
 		void ForceWriteReturnType(in FormatterMethodInfo info, bool writeSpace, bool isReadOnly) {
 			if (!(!(info.MethodDef is null) && info.MethodDef.IsConstructor)) {
-				TypeSig retType;
+				TypeSig? retType;
 				ParamDef? retParamDef;
 				if (info.RetTypeIsLastArgType) {
 					retType = info.MethodSig.Params.LastOrDefault();

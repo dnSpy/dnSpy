@@ -201,7 +201,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			return BodyCommandUtils.GetStatements(documentViewer, documentViewer.Caret.Position.BufferPosition, FindByTextPositionOptions.None);
 		}
 
-		void ICommand.Execute(object parameter) => Execute(GetStatements());
-		bool ICommand.CanExecute(object parameter) => IsVisible(GetStatements());
+		void ICommand.Execute(object? parameter) => Execute(GetStatements());
+		bool ICommand.CanExecute(object? parameter) => IsVisible(GetStatements());
 	}
 }

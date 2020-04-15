@@ -136,34 +136,34 @@
     <value>Çift tıklayın</value>
   </data>
   <data name="ExposedByTreeNode" xml:space="preserve">
-    <value>Tarafından gösterilen</value>
+    <value>Etkilendiren</value>
   </data>
   <data name="ExtensionMethodsTreeNode" xml:space="preserve">
     <value>Genişletme yöntemleri</value>
   </data>
   <data name="GoToReferenceCommand" xml:space="preserve">
-    <value>Refesansa Git</value>
+    <value>Referansı izle</value>
   </data>
   <data name="GoToReferenceInCodeCommand" xml:space="preserve">
-    <value>Metodda Referans Göster</value>
+    <value>Metod içerisinde Referansı Göster</value>
   </data>
   <data name="GoToReferenceInCodeNewTabCommand" xml:space="preserve">
-    <value>Methodda Referansı Göster(Yeni Sekme)</value>
+    <value>Method içerisinde Referansı Göster(Yeni _Sekme)</value>
   </data>
   <data name="GoToReferenceNewTabCommand" xml:space="preserve">
-    <value>Referansa Git(Yeni Sekme)</value>
+    <value>Referansa Git(Yeni _Sekme)</value>
   </data>
   <data name="HidesParent" xml:space="preserve">
     <value>gizle</value>
   </data>
   <data name="ImplementedByTreeNode" xml:space="preserve">
-    <value>Tarafından uygulanan</value>
+    <value>Uyarlayan</value>
   </data>
   <data name="InstantiatedByTreeNode" xml:space="preserve">
     <value>Tarafından örneği</value>
   </data>
   <data name="OverriddenByTreeNode" xml:space="preserve">
-    <value>Geçersiz kılınmış</value>
+    <value>Üzerine Yazan</value>
   </data>
   <data name="OverridesTreeNode" xml:space="preserve">
     <value>Geçersiz Kıl</value>

@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using dnSpy.Analyzer.Properties;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
@@ -40,7 +41,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		sealed class MessageNodeTreeNodeGroup : ITreeNodeGroup {
 			public double Order { get; }
 
-			public int Compare(TreeNodeData x, TreeNodeData y) {
+			public int Compare([AllowNull] TreeNodeData x, [AllowNull] TreeNodeData y) {
 				if (x == y)
 					return 0;
 				var a = x as MessageNode;

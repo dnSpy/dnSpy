@@ -1237,9 +1237,9 @@ namespace dndbg.Engine {
 		}
 
 		public static DnDebugger Attach(AttachProcessOptions options) {
-			string filename;
+			string? filename;
 			using (var process = Process.GetProcessById(options.ProcessId))
-				filename = process.MainModule.FileName;
+				filename = process.MainModule?.FileName;
 			var corDebug = CreateCorDebug(options, out var debuggeeVersion, out var clrPath, out var otherVersion);
 			if (corDebug is null)
 				throw new Exception("An ICorDebug instance couldn't be created");
