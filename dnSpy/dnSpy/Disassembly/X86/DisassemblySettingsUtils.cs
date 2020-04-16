@@ -56,7 +56,7 @@ namespace dnSpy.Disassembly.X86 {
 			options.BinaryDigitGroupSize = settings.BinaryDigitGroupSize;
 			options.DigitSeparator = settings.DigitSeparator;
 			options.LeadingZeroes = settings.LeadingZeroes;
-			options.UpperCaseHex = settings.UpperCaseHex;
+			options.UppercaseHex = settings.UppercaseHex;
 			options.SmallHexNumbersInDecimal = settings.SmallHexNumbersInDecimal;
 			options.AddLeadingZeroToHexNumbers = settings.AddLeadingZeroToHexNumbers;
 			options.NumberBase = ToIcedNumberBase(settings.NumberBase);
@@ -70,12 +70,12 @@ namespace dnSpy.Disassembly.X86 {
 			options.ShowBranchSize = settings.ShowBranchSize;
 			options.DecimalSuffix = settings.DecimalSuffix;
 			options.HexDigitGroupSize = settings.HexDigitGroupSize;
-			options.UpperCasePrefixes = settings.UpperCasePrefixes;
-			options.UpperCaseMnemonics = settings.UpperCaseMnemonics;
-			options.UpperCaseRegisters = settings.UpperCaseRegisters;
-			options.UpperCaseKeywords = settings.UpperCaseKeywords;
-			options.UpperCaseDecorators = settings.UpperCaseDecorators;
-			options.UpperCaseAll = settings.UpperCaseAll;
+			options.UppercasePrefixes = settings.UppercasePrefixes;
+			options.UppercaseMnemonics = settings.UppercaseMnemonics;
+			options.UppercaseRegisters = settings.UppercaseRegisters;
+			options.UppercaseKeywords = settings.UppercaseKeywords;
+			options.UppercaseDecorators = settings.UppercaseDecorators;
+			options.UppercaseAll = settings.UppercaseAll;
 			options.FirstOperandCharIndex = settings.FirstOperandCharIndex;
 			options.TabSize = settings.TabSize;
 			options.SpaceAfterOperandSeparator = settings.SpaceAfterOperandSeparator;
@@ -91,27 +91,18 @@ namespace dnSpy.Disassembly.X86 {
 			options.DecimalPrefix = settings.DecimalPrefix;
 			options.UsePseudoOps = settings.UsePseudoOps;
 			options.ShowSymbolAddress = settings.ShowSymbolAddress;
+			options.GasNakedRegisters = settings.GasNakedRegisters;
+			options.GasShowMnemonicSizeSuffix = settings.GasShowMnemonicSizeSuffix;
+			options.GasSpaceAfterMemoryOperandComma = settings.GasSpaceAfterMemoryOperandComma;
+			options.MasmAddDsPrefix32 = settings.MasmAddDsPrefix32;
+			options.MasmDisplInBrackets = settings.MasmDisplInBrackets;
+			options.MasmSymbolDisplInBrackets = settings.MasmSymbolDisplInBrackets;
+			options.NasmShowSignExtendedImmediateSize = settings.NasmShowSignExtendedImmediateSize;
 		}
 
-		public static MasmFormatterOptions ToMasm(this IMasmDisassemblySettings settings) {
-			var options = new MasmFormatterOptions();
+		public static FormatterOptions ToIcedOptions(this IX86DisassemblySettings settings) {
+			var options = new FormatterOptions();
 			CopyBase(options, settings);
-			return options;
-		}
-
-		public static NasmFormatterOptions ToNasm(this INasmDisassemblySettings settings) {
-			var options = new NasmFormatterOptions();
-			CopyBase(options, settings);
-			options.ShowSignExtendedImmediateSize = settings.ShowSignExtendedImmediateSize;
-			return options;
-		}
-
-		public static GasFormatterOptions ToGas(this IGasDisassemblySettings settings) {
-			var options = new GasFormatterOptions();
-			CopyBase(options, settings);
-			options.NakedRegisters = settings.NakedRegisters;
-			options.ShowMnemonicSizeSuffix = settings.ShowMnemonicSizeSuffix;
-			options.SpaceAfterMemoryOperandComma = settings.SpaceAfterMemoryOperandComma;
 			return options;
 		}
 	}

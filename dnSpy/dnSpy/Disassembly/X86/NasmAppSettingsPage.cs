@@ -26,15 +26,8 @@ namespace dnSpy.Disassembly.X86 {
 		public override Guid Guid => new Guid("929A1758-C8CC-450E-A214-90B390A846DF");
 		public override string Title => CodeStyleConstants.NASM_NAME;
 
-		NasmDisassemblySettings NasmSettings => (NasmDisassemblySettings)Settings;
-
 		public NasmAppSettingsPage(NasmDisassemblySettings x86DisassemblySettings)
-			: base(x86DisassemblySettings, x86DisassemblySettings.Clone(), new NasmFormatter(new NasmFormatterOptions(), SymbolResolver.Instance)) { }
-
-		protected override void InitializeFormatterOptionsCore(FormatterOptions options) {
-			var nasm = (NasmFormatterOptions)options;
-			nasm.ShowSignExtendedImmediateSize = NasmSettings.ShowSignExtendedImmediateSize;
-		}
+			: base(x86DisassemblySettings, x86DisassemblySettings.Clone(), new NasmFormatter(SymbolResolver.Instance)) { }
 
 		public override void OnApply() =>
 			((NasmDisassemblySettings)x86DisassemblySettings).CopyTo((NasmDisassemblySettings)_global_x86DisassemblySettings);
