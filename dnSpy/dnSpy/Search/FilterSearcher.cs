@@ -461,10 +461,11 @@ namespace dnSpy.Search {
 		}
 
 		void Search(IDsDocument ownerModule, TypeDef type) {
+			CheckCustomAttributes(ownerModule, type, type.DeclaringType);
+
 			var res = options.Filter.GetResult(type);
 			if (res.FilterType == FilterType.Hide)
 				return;
-			CheckCustomAttributes(ownerModule, type, type.DeclaringType);
 
 			if (res.IsMatch && (IsMatch(FixTypeName(type.FullName), type) || IsMatch(FixTypeName(type.Name), type))) {
 				options.OnMatch(new SearchResult {
