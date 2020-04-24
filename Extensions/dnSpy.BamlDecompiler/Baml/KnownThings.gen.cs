@@ -93,7 +93,7 @@ namespace Test {
 
 			code.AppendLine("\t\tvoid InitAssemblies() {");
 			for (int i = 0; i < assemblies.Count; i++) {
-				var line = "\t\t\tassemblies[{0}] = resolver.ResolveThrow(\"{1}\", module);";
+				var line = "\t\t\tassemblies[{0}] = ResolveThrow(\"{1}\");";
 				code.AppendLine(string.Format(line, i, assemblies[i]));
 			}
 			code.AppendLine("\t\t}").AppendLine();
