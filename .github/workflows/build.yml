@@ -11,9 +11,11 @@ jobs:
         with:
           submodules: true
 
-      - uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '3.1.201'
+      - name: Install .NET
+        shell: pwsh
+        run: |
+          Invoke-WebRequest https://dot.net/v1/dotnet-install.ps1 -OutFile dotnet-install.ps1
+          ./dotnet-install.ps1 -Channel 3.1
 
       # Build each tfm separately since building all requires too much disk space
       - name: Build dnSpy (.NET Framework)
