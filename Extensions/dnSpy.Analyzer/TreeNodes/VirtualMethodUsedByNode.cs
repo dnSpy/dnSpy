@@ -108,28 +108,25 @@ namespace dnSpy.Analyzer.TreeNodes {
 					MethodDef? md = null;
 
 					if (isComType) {
-						if (instr.OpCode.Code == Code.Call || instr.OpCode.Code == Code.Callvirt) {
-							md ??= mr.ResolveMethodDef();
-							if (!(md is null)) {
-								ComUtils.GetMemberInfo(md, out bool otherIsComType, out var otherComGuid, out int otherVtblIndex);
-								if (otherIsComType && comGuid == otherComGuid && vtblIndex == otherVtblIndex) {
-									foundInstr = instr;
-									break;
-								}
+						md ??= mr.ResolveMethodDef();
+						if (!(md is null)) {
+							ComUtils.GetMemberInfo(md, out bool otherIsComType, out var otherComGuid, out int otherVtblIndex);
+							if (otherIsComType && comGuid == otherComGuid && vtblIndex == otherVtblIndex) {
+								foundInstr = instr;
+								break;
 							}
 						}
 					}
 
 					if (mr.Name == name) {
 						// explicit call to the requested method 
-						if ((instr.OpCode.Code == Code.Call || instr.OpCode.Code == Code.Callvirt)
-							&& Helpers.IsReferencedBy(analyzedMethod.DeclaringType, mr.DeclaringType)
+						if (Helpers.IsReferencedBy(analyzedMethod.DeclaringType, mr.DeclaringType)
 							&& CheckEquals(md ??= mr.ResolveMethodDef(), analyzedMethod)) {
 							foundInstr = instr;
 							break;
 						}
 						// virtual call to base method
-						if (instr.OpCode.Code == Code.Callvirt) {
+						if (instr.OpCode.Code == Code.Callvirt || instr.OpCode.Code == Code.Ldvirtftn) {
 							md ??= mr.ResolveMethodDef();
 							if (md is null) {
 								// cannot resolve the operand, so ignore this method

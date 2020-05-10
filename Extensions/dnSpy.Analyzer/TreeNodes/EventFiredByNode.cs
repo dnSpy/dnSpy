@@ -73,8 +73,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				Instruction? foundInstr = null;
 				foreach (Instruction instr in method.Body.Instructions) {
 					Code code = instr.OpCode.Code;
-					if (code == Code.Ldfld || code == Code.Ldflda) {
-						IField? fr = instr.Operand as IField;
+					if ((code == Code.Ldfld || code == Code.Ldflda || code == Code.Ldtoken) && instr.Operand is IField fr && fr.IsField) {
 						if (CheckEquals(fr.ResolveFieldDef(), eventBackingField)) {
 							readBackingField = true;
 						}
