@@ -27,9 +27,7 @@ namespace dnSpy.Disassembly.X86 {
 		public override string Title => CodeStyleConstants.MASM_NAME;
 
 		public MasmAppSettingsPage(MasmDisassemblySettings x86DisassemblySettings)
-			: base(x86DisassemblySettings, x86DisassemblySettings.Clone(), new MasmFormatter(new MasmFormatterOptions(), SymbolResolver.Instance)) { }
-
-		protected override void InitializeFormatterOptionsCore(FormatterOptions options) { }
+			: base(x86DisassemblySettings, x86DisassemblySettings.Clone(), new MasmFormatter(SymbolResolver.Instance)) { }
 
 		public override void OnApply() =>
 			((MasmDisassemblySettings)x86DisassemblySettings).CopyTo((MasmDisassemblySettings)_global_x86DisassemblySettings);

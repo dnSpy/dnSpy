@@ -24,23 +24,12 @@ using dnSpy.Contracts.Disassembly;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Disassembly.X86 {
-	class NasmDisassemblySettings : DisassemblySettings, INasmDisassemblySettings {
+	class NasmDisassemblySettings : DisassemblySettings, IX86DisassemblySettings {
 		public NasmDisassemblySettings() {
 			HexSuffix = "h";
 			OctalSuffix = "o";
 			BinarySuffix = "b";
 		}
-
-		public bool ShowSignExtendedImmediateSize {
-			get => showSignExtendedImmediateSize;
-			set {
-				if (value != showSignExtendedImmediateSize) {
-					showSignExtendedImmediateSize = value;
-					OnPropertyChanged(nameof(ShowSignExtendedImmediateSize));
-				}
-			}
-		}
-		bool showSignExtendedImmediateSize;
 
 		public NasmDisassemblySettings Clone() => CopyTo(new NasmDisassemblySettings());
 
@@ -48,12 +37,10 @@ namespace dnSpy.Disassembly.X86 {
 			if (other is null)
 				throw new ArgumentNullException(nameof(other));
 			base.CopyTo(other);
-			other.ShowSignExtendedImmediateSize = ShowSignExtendedImmediateSize;
 			return other;
 		}
 	}
 
-	[Export(typeof(INasmDisassemblySettings))]
 	[Export(typeof(NasmDisassemblySettingsImpl))]
 	sealed class NasmDisassemblySettingsImpl : NasmDisassemblySettings {
 		static readonly Guid SETTINGS_GUID = new Guid("2F066064-741B-454E-9D21-B04BCF802018");
@@ -66,7 +53,6 @@ namespace dnSpy.Disassembly.X86 {
 
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			ReadSettings(sect);
-			ShowSignExtendedImmediateSize = sect.Attribute<bool?>(nameof(ShowSignExtendedImmediateSize)) ?? ShowSignExtendedImmediateSize;
 
 			PropertyChanged += OnPropertyChanged;
 		}
@@ -76,7 +62,6 @@ namespace dnSpy.Disassembly.X86 {
 		void Save() {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			WriteSettings(sect);
-			sect.Attribute(nameof(ShowSignExtendedImmediateSize), ShowSignExtendedImmediateSize);
 		}
 	}
 }

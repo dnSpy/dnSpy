@@ -26,25 +26,8 @@ namespace dnSpy.Disassembly.X86 {
 		public override Guid Guid => new Guid("B2A9B538-925A-4029-9158-8C2FE632764D");
 		public override string Title => CodeStyleConstants.GAS_NAME;
 
-		public DisasmBooleanSetting NakedRegisters { get; }
-		public DisasmBooleanSetting ShowMnemonicSizeSuffix { get; }
-		public DisasmBooleanSetting SpaceAfterMemoryOperandComma { get; }
-
-		GasDisassemblySettings GasSettings => (GasDisassemblySettings)Settings;
-
 		public GasAppSettingsPage(GasDisassemblySettings x86DisassemblySettings)
-			: base(x86DisassemblySettings, x86DisassemblySettings.Clone(), new GasFormatter(new GasFormatterOptions(), SymbolResolver.Instance)) {
-			NakedRegisters = AddDisasmBoolSetting(() => GasSettings.NakedRegisters, value => GasSettings.NakedRegisters = value, Instruction.Create(Code.Xchg_r64_RAX, Register.RSI, Register.RAX));
-			ShowMnemonicSizeSuffix = AddDisasmBoolSetting(() => GasSettings.ShowMnemonicSizeSuffix, value => GasSettings.ShowMnemonicSizeSuffix = value, Instruction.Create(Code.Xchg_r64_RAX, Register.RSI, Register.RAX));
-			SpaceAfterMemoryOperandComma = AddDisasmBoolSetting(() => GasSettings.SpaceAfterMemoryOperandComma, value => GasSettings.SpaceAfterMemoryOperandComma = value, Instruction.Create(Code.Mov_rm64_r64, new MemoryOperand(Register.RAX, Register.RDI, 4, 0x12345678, 8), Register.RCX));
-		}
-
-		protected override void InitializeFormatterOptionsCore(FormatterOptions options) {
-			var gas = (GasFormatterOptions)options;
-			gas.NakedRegisters = GasSettings.NakedRegisters;
-			gas.ShowMnemonicSizeSuffix = GasSettings.ShowMnemonicSizeSuffix;
-			gas.SpaceAfterMemoryOperandComma = GasSettings.SpaceAfterMemoryOperandComma;
-		}
+			: base(x86DisassemblySettings, x86DisassemblySettings.Clone(), new GasFormatter(SymbolResolver.Instance)) { }
 
 		public override void OnApply() =>
 			((GasDisassemblySettings)x86DisassemblySettings).CopyTo((GasDisassemblySettings)_global_x86DisassemblySettings);

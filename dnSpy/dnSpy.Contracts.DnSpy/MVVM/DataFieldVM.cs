@@ -373,11 +373,11 @@ namespace dnSpy.Contracts.MVVM {
 		/// <summary>
 		/// Gets/sets whether to use upper case hex digits
 		/// </summary>
-		public bool UpperCaseHex {
-			get => upperCaseHex;
-			set => upperCaseHex = value;
+		public bool UppercaseHex {
+			get => uppercaseHex;
+			set => uppercaseHex = value;
 		}
-		bool upperCaseHex = true;
+		bool uppercaseHex = true;
 
 		/// <summary>
 		/// Constructor
@@ -396,7 +396,7 @@ namespace dnSpy.Contracts.MVVM {
 			: base(onUpdated) => SetValueFromConstructor(value!);// can be null, but we can't use 'T?'
 
 		/// <inheritdoc/>
-		protected override string OnNewValue(IList<byte> value) => SimpleTypeConverter.ByteArrayToString(value, UpperCaseHex);
+		protected override string OnNewValue(IList<byte> value) => SimpleTypeConverter.ByteArrayToString(value, UppercaseHex);
 
 		/// <inheritdoc/>
 		protected override string? ConvertToValue(out IList<byte> value) {

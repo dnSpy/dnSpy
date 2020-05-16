@@ -138,8 +138,8 @@ namespace dnSpy.AsmEditor.Method {
 		}
 
 		public bool SecurityMitigations {
-			get => GetFlagValue((MethodImplAttributes)0x0400);
-			set => SetFlagValue((MethodImplAttributes)0x0400, value);
+			get => GetFlagValue(MethodImplAttributes.SecurityMitigations);
+			set => SetFlagValue(MethodImplAttributes.SecurityMitigations, value);
 		}
 
 		bool GetFlagValue(MethodImplAttributes flag) => (ImplAttributes & flag) != 0;

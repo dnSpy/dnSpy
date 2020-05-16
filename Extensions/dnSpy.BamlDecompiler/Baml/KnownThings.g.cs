@@ -28,12 +28,12 @@ namespace dnSpy.BamlDecompiler.Baml {
 		// Auto generated. Do not modify.
 
 		void InitAssemblies() {
-			assemblies[0] = resolver.ResolveThrow("mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089", module);
-			assemblies[1] = resolver.ResolveThrow("System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089", module);
-			assemblies[2] = resolver.ResolveThrow("WindowsBase, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35", module);
-			assemblies[3] = resolver.ResolveThrow("PresentationCore, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35", module);
-			assemblies[4] = resolver.ResolveThrow("PresentationFramework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35", module);
-			assemblies[5] = resolver.ResolveThrow("System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089", module);
+			assemblies[0] = ResolveThrow("mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
+			assemblies[1] = ResolveThrow("System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
+			assemblies[2] = ResolveThrow("WindowsBase, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
+			assemblies[3] = ResolveThrow("PresentationCore, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
+			assemblies[4] = ResolveThrow("PresentationFramework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
+			assemblies[5] = ResolveThrow("System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
 		}
 
 		void InitTypes() {

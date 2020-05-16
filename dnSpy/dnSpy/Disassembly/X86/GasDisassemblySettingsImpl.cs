@@ -24,45 +24,12 @@ using dnSpy.Contracts.Disassembly;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Disassembly.X86 {
-	class GasDisassemblySettings : DisassemblySettings, IGasDisassemblySettings {
+	class GasDisassemblySettings : DisassemblySettings, IX86DisassemblySettings {
 		public GasDisassemblySettings() {
 			HexPrefix = "0x";
 			OctalPrefix = "0";
 			BinaryPrefix = "0b";
 		}
-
-		public bool NakedRegisters {
-			get => nakedRegisters;
-			set {
-				if (value != nakedRegisters) {
-					nakedRegisters = value;
-					OnPropertyChanged(nameof(NakedRegisters));
-				}
-			}
-		}
-		bool nakedRegisters;
-
-		public bool ShowMnemonicSizeSuffix {
-			get => showMnemonicSizeSuffix;
-			set {
-				if (value != showMnemonicSizeSuffix) {
-					showMnemonicSizeSuffix = value;
-					OnPropertyChanged(nameof(ShowMnemonicSizeSuffix));
-				}
-			}
-		}
-		bool showMnemonicSizeSuffix;
-
-		public bool SpaceAfterMemoryOperandComma {
-			get => spaceAfterMemoryOperandComma;
-			set {
-				if (value != spaceAfterMemoryOperandComma) {
-					spaceAfterMemoryOperandComma = value;
-					OnPropertyChanged(nameof(SpaceAfterMemoryOperandComma));
-				}
-			}
-		}
-		bool spaceAfterMemoryOperandComma;
 
 		public GasDisassemblySettings Clone() => CopyTo(new GasDisassemblySettings());
 
@@ -70,14 +37,10 @@ namespace dnSpy.Disassembly.X86 {
 			if (other is null)
 				throw new ArgumentNullException(nameof(other));
 			base.CopyTo(other);
-			other.NakedRegisters = NakedRegisters;
-			other.ShowMnemonicSizeSuffix = ShowMnemonicSizeSuffix;
-			other.SpaceAfterMemoryOperandComma = SpaceAfterMemoryOperandComma;
 			return other;
 		}
 	}
 
-	[Export(typeof(IGasDisassemblySettings))]
 	[Export(typeof(GasDisassemblySettingsImpl))]
 	sealed class GasDisassemblySettingsImpl : GasDisassemblySettings {
 		static readonly Guid SETTINGS_GUID = new Guid("40476B68-2E8A-4507-8F59-727FE87A04EE");
@@ -90,9 +53,6 @@ namespace dnSpy.Disassembly.X86 {
 
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
 			ReadSettings(sect);
-			NakedRegisters = sect.Attribute<bool?>(nameof(NakedRegisters)) ?? NakedRegisters;
-			ShowMnemonicSizeSuffix = sect.Attribute<bool?>(nameof(ShowMnemonicSizeSuffix)) ?? ShowMnemonicSizeSuffix;
-			SpaceAfterMemoryOperandComma = sect.Attribute<bool?>(nameof(SpaceAfterMemoryOperandComma)) ?? SpaceAfterMemoryOperandComma;
 
 			PropertyChanged += OnPropertyChanged;
 		}
@@ -102,9 +62,6 @@ namespace dnSpy.Disassembly.X86 {
 		void Save() {
 			var sect = settingsService.RecreateSection(SETTINGS_GUID);
 			WriteSettings(sect);
-			sect.Attribute(nameof(NakedRegisters), NakedRegisters);
-			sect.Attribute(nameof(ShowMnemonicSizeSuffix), ShowMnemonicSizeSuffix);
-			sect.Attribute(nameof(SpaceAfterMemoryOperandComma), SpaceAfterMemoryOperandComma);
 		}
 	}
 }

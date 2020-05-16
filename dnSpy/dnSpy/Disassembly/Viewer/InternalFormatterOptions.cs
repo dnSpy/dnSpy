@@ -27,6 +27,6 @@ namespace dnSpy.Disassembly.Viewer {
 		InstructionAddresses			= 0x00000002,
 		InstructionBytes				= 0x00000004,
 		AddLabels						= 0x00000008,
-		UpperCaseHex					= 0x00000010,
+		UppercaseHex					= 0x00000010,
 	}
 }

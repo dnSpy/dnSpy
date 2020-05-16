@@ -404,10 +404,11 @@ namespace dnSpy.Search {
 		}
 
 		void Search(IDsDocument ownerModule, string nsOwner, TypeDef type) {
+			CheckCustomAttributes(ownerModule, type, nsOwner);
+
 			var res = options.Filter.GetResult(type);
 			if (res.FilterType == FilterType.Hide)
 				return;
-			CheckCustomAttributes(ownerModule, type, nsOwner);
 
 			if (res.IsMatch && (IsMatch(FixTypeName(type.FullName), type) || IsMatch(FixTypeName(type.Name), type))) {
 				options.OnMatch(new SearchResult {
@@ -460,10 +461,11 @@ namespace dnSpy.Search {
 		}
 
 		void Search(IDsDocument ownerModule, TypeDef type) {
+			CheckCustomAttributes(ownerModule, type, type.DeclaringType);
+
 			var res = options.Filter.GetResult(type);
 			if (res.FilterType == FilterType.Hide)
 				return;
-			CheckCustomAttributes(ownerModule, type, type.DeclaringType);
 
 			if (res.IsMatch && (IsMatch(FixTypeName(type.FullName), type) || IsMatch(FixTypeName(type.Name), type))) {
 				options.OnMatch(new SearchResult {

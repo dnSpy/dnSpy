@@ -30,9 +30,9 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 	[Export(typeof(DisassemblyContentProviderFactoryDependencies))]
 	sealed class DisassemblyContentProviderFactoryDependencies {
 		public DisassemblyContentSettings DisasmSettings { get; }
-		public IMasmDisassemblySettings MasmSettings { get; }
-		public INasmDisassemblySettings NasmSettings { get; }
-		public IGasDisassemblySettings GasSettings { get; }
+		public IX86DisassemblySettings MasmSettings { get; }
+		public IX86DisassemblySettings NasmSettings { get; }
+		public IX86DisassemblySettings GasSettings { get; }
 
 		[ImportingConstructor]
 		DisassemblyContentProviderFactoryDependencies(DisassemblyContentSettingsImpl disasm, MasmDisassemblySettingsImpl masm, NasmDisassemblySettingsImpl nasm, GasDisassemblySettingsImpl gas) {
@@ -140,7 +140,7 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 									break;
 
 								case 8:
-									addresses.Add((ulong)(int)instr.MemoryDisplacement);
+									addresses.Add(instr.MemoryDisplacement64);
 									break;
 								}
 							}
