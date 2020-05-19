@@ -199,7 +199,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 					DbgDotNetArrayDimensionInfo[]? tmpDimensionInfos = null;
 					bool res = engine.InvokeCorDebugThread(() => GetArrayInfo_CorDebug(out tmpElementCount, out tmpDimensionInfos));
 					elementCount = tmpElementCount;
-					dimensionInfos = tmpDimensionInfos;
+					dimensionInfos = tmpDimensionInfos!;
 					return res;
 				}
 			}

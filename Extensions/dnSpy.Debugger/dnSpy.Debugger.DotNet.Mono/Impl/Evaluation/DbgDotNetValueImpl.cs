@@ -137,7 +137,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 					DbgDotNetArrayDimensionInfo[]? tmpDimensionInfos = null;
 					bool res = engine.InvokeMonoDebugThread(() => GetArrayInfo_MonoDebug(out tmpElementCount, out tmpDimensionInfos));
 					elementCount = tmpElementCount;
-					dimensionInfos = tmpDimensionInfos;
+					dimensionInfos = tmpDimensionInfos!;
 					return res;
 				}
 			}
