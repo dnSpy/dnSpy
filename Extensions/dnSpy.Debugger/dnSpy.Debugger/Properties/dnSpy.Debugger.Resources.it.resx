@@ -1342,7 +1342,7 @@
     <value>Motore di debug</value>
   </data>
   <data name="DbgSettings_Language" xml:space="preserve">
-    <value>Lingua</value>
+    <value>Linguaggio</value>
   </data>
   <data name="ShortCutKeyCtrlV" xml:space="preserve">
     <value>Ctrl+V</value>
@@ -1456,7 +1456,7 @@
     <value>Si desidera interrompere il debug?</value>
   </data>
   <data name="DbgSettings_FocusActiveProcess" xml:space="preserve">
-    <value>Dai il focus a processo sottoposto a debug</value>
+    <value>Dai il focus al processo sottoposto a debug</value>
   </data>
   <data name="LoadAllModulesCommand" xml:space="preserve">
     <value>Apri tutti i Moduli</value>

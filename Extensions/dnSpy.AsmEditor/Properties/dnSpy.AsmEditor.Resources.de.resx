@@ -127,7 +127,7 @@
     <value>_Deaktiviere JIT Kompilationsoptimierer</value>
   </data>
   <data name="AssemblyDlg_Main_CB_EnableJITCompTrck" xml:space="preserve">
-    <value>Aktiviere _JIT Kompiler Nachverfolgung</value>
+    <value>_JIT Kompilierverfolgung aktivieren</value>
   </data>
   <data name="AssemblyDlg_Main_CB_ProcessArchSpec" xml:space="preserve">
     <value>Proc_essor Arch angegeben</value>
@@ -139,7 +139,7 @@
     <value>_Retargetable</value>
   </data>
   <data name="AssemblyDlg_Main_ContentType" xml:space="preserve">
-    <value>Inhalt _Type</value>
+    <value>Inhalt _Typ</value>
   </data>
   <data name="AssemblyDlg_Main_Culture" xml:space="preserve">
     <value>K_ultur</value>
@@ -196,7 +196,7 @@
     <value>C</value>
   </data>
   <data name="ClearCharacter_ToolTip" xml:space="preserve">
-    <value>Leere Objekte</value>
+    <value>Objekte löschen</value>
   </data>
   <data name="ClearTypesCharacter" xml:space="preserve">
     <value>C</value>

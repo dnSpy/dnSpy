@@ -1899,19 +1899,19 @@ Filtro pode ser alterado nas opções do Explorador Assembly.</value>
     <value>Disassembler</value>
   </data>
   <data name="CodeStyleDlgTabTitle" xml:space="preserve">
-    <value>Code Style</value>
+    <value>Estilo de Código</value>
   </data>
   <data name="DisassemblySettings_AddLabels" xml:space="preserve">
-    <value>Add labels</value>
+    <value>Adicionar rótulos</value>
   </data>
   <data name="DisassemblySettings_AddLeadingZeroToHexNumbers" xml:space="preserve">
-    <value>Add leading '0' to hex numbers if needed</value>
+    <value>Adicionar a liderança '0' a números hexadecimais se necessário</value>
   </data>
   <data name="DisassemblySettings_AlwaysShowMemorySize" xml:space="preserve">
-    <value>Always show size of memory operands</value>
+    <value>Sempre mostrar o tamanho dos operadores de memória</value>
   </data>
   <data name="DisassemblySettings_AlwaysShowScale" xml:space="preserve">
-    <value>Always show the scale value</value>
+    <value>Exibir sempre o valor da escala</value>
   </data>
   <data name="DisassemblySettings_AlwaysShowSegmentRegister" xml:space="preserve">
     <value>Always show segment registers</value>
