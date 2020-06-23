@@ -154,7 +154,7 @@
     <value>_Name</value>
   </data>
   <data name="AssemblyDlg_Main_ProcessorArch" xml:space="preserve">
-    <value>Proce_ssor Arch</value>
+    <value>Proze_ssorarchitektur</value>
   </data>
   <data name="AssemblyDlg_Main_PublicKey" xml:space="preserve">
     <value>Öffentlicher _Schlüssel</value>
@@ -253,7 +253,7 @@
     <value>Erstelle TypeSig Feld</value>
   </data>
   <data name="CreateFnPtrMethodSignature" xml:space="preserve">
-    <value>Erstelle FnPtr Methoden Signature</value>
+    <value>FnPtr Methodensignatur erstellen</value>
   </data>
   <data name="CreateGenericInstanceTypeArguments" xml:space="preserve">
     <value>Erstelle generische Instanz Typ Argumente</value>

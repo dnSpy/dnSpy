@@ -142,10 +142,10 @@
     <value>پیوستن به _پردازش</value>
   </data>
   <data name="Attach_UseDnSpy32" xml:space="preserve">
-    <value>Use 64-bit dnSpy to attach to 64-bit processes</value>
+    <value>از dnspy.exe برای افزودن پردازنده های 64-بیتی استفاده کنید</value>
   </data>
   <data name="Attach_UseDnSpy64" xml:space="preserve">
-    <value>Use 32-bit dnSpy to attach to 32-bit processes</value>
+    <value>از dnspy.exe برای افزودن پردازنده های 64-بیتی استفاده کنید</value>
   </data>
   <data name="BreakCommand" xml:space="preserve">
     <value>توقف همه</value>
