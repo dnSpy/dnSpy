@@ -12,6 +12,10 @@ See below for more features
 
 ![edit-code-animated](images/edit-code-animated.gif)
 
+## Binaries
+
+https://github.com/0xd4d/dnSpy/actions
+
 ## Building
 
 ```PS
@@ -20,6 +24,8 @@ cd dnSpy
 # or dotnet build
 ./build.ps1 -NoMsbuild
 ```
+
+To debug Unity games, you need this repo too: https://github.com/dnSpy/dnSpy-Unity-mono
 
 # Debugger
 
