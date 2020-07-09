@@ -27,7 +27,7 @@
     <!-- Update app.config whenever this value changes -->
     <DnSpyAssemblyVersion>6.1.5.0</DnSpyAssemblyVersion>
     <!-- This is shown in the title bar -->
-    <DnSpyAssemblyInformationalVersion>v6.1.5</DnSpyAssemblyInformationalVersion>
+    <DnSpyAssemblyInformationalVersion>v</DnSpyAssemblyInformationalVersion>
     <DnSpyAssemblyCopyright>Copyright (C) 2014-2020 de4dot@gmail.com</DnSpyAssemblyCopyright>
 
     <!-- AD0001: buggy Roslyn analyzer(s) crash, disable that warning -->
