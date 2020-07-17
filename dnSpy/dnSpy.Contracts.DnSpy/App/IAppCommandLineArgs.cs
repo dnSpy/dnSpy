@@ -90,6 +90,9 @@ namespace dnSpy.Contracts.App {
 		/// <summary>Attach to this process name, unless it's empty. Can contain wildcards.</summary>
 		string DebugAttachProcess { get; }
 
+		/// <summary>Additional directory to check for extensions.</summary>
+		string ExtraExtensionDirectory { get; }
+
 		/// <summary>
 		/// Returns true if the argument is present
 		/// </summary>
