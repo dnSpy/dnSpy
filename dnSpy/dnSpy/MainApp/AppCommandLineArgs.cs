@@ -77,6 +77,7 @@ namespace dnSpy.MainApp {
 			ShowStartupTime = false;
 			DebugAttachPid = 0;
 			DebugAttachProcess = string.Empty;
+			ExtraExtensionDirectory = string.Empty;
 
 			bool canParseCommands = true;
 			for (int i = 0; i < args.Length; i++) {

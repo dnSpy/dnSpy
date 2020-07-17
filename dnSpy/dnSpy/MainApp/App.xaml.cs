@@ -325,7 +325,7 @@ namespace dnSpy.MainApp {
 		Assembly[] LoadExtensionAssemblies() {
 			var dir = AppDirectories.BinDirectory;
 			var unsortedFiles = GetExtensionFiles(dir);
-			if (!(args.ExtraExtensionDirectory is null))
+			if (!string.IsNullOrEmpty(args.ExtraExtensionDirectory))
 				unsortedFiles = unsortedFiles.Concat(GetExtensionFiles(args.ExtraExtensionDirectory));
 
 			// Load the modules in a predictable order or multicore-JIT could stop recording. See
