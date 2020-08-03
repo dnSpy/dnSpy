@@ -14,7 +14,7 @@ See below for more features
 
 ## Binaries
 
-https://github.com/0xd4d/dnSpy/actions
+https://github.com/0xd4d/dnSpy/releases
 
 ## Building
 
