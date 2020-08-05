@@ -49,6 +49,7 @@ namespace dnSpy.MainApp {
 		public uint DebugEvent { get; }
 		public ulong JitDebugInfo { get; }
 		public string DebugAttachProcess { get; }
+		public string ExtraExtensionDirectory { get; }
 
 		readonly Dictionary<string, string> userArgs = new Dictionary<string, string>();
 		readonly List<string> filenames = new List<string>();
@@ -76,6 +77,7 @@ namespace dnSpy.MainApp {
 			ShowStartupTime = false;
 			DebugAttachPid = 0;
 			DebugAttachProcess = string.Empty;
+			ExtraExtensionDirectory = string.Empty;
 
 			bool canParseCommands = true;
 			for (int i = 0; i < args.Length; i++) {
@@ -191,6 +193,11 @@ namespace dnSpy.MainApp {
 					case "-pn":
 					case "--process-name":
 						DebugAttachProcess = next;
+						i++;
+						break;
+
+					case "--extension-directory":
+						ExtraExtensionDirectory = GetFullPath(next);
 						i++;
 						break;
 
