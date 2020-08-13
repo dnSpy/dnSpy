@@ -404,10 +404,11 @@ namespace dnSpy.Search {
 		}
 
 		void Search(IDsDocument ownerModule, string nsOwner, TypeDef type) {
+			CheckCustomAttributes(ownerModule, type, nsOwner);
+
 			var res = options.Filter.GetResult(type);
 			if (res.FilterType == FilterType.Hide)
 				return;
-			CheckCustomAttributes(ownerModule, type, nsOwner);
 
 			if (res.IsMatch && (IsMatch(FixTypeName(type.FullName), type) || IsMatch(FixTypeName(type.Name), type))) {
 				options.OnMatch(new SearchResult {
@@ -460,10 +461,11 @@ namespace dnSpy.Search {
 		}
 
 		void Search(IDsDocument ownerModule, TypeDef type) {
+			CheckCustomAttributes(ownerModule, type, type.DeclaringType);
+
 			var res = options.Filter.GetResult(type);
 			if (res.FilterType == FilterType.Hide)
 				return;
-			CheckCustomAttributes(ownerModule, type, type.DeclaringType);
 
 			if (res.IsMatch && (IsMatch(FixTypeName(type.FullName), type) || IsMatch(FixTypeName(type.Name), type))) {
 				options.OnMatch(new SearchResult {
@@ -502,7 +504,8 @@ namespace dnSpy.Search {
 		bool CheckMatch(MethodDef method) {
 			if (IsMatch(method.Name, method))
 				return true;
-			if (IsMatch(FixTypeName(method.DeclaringType.FullName) + "." + method.Name.String, method))
+			if (IsMatch(FixTypeName(method.DeclaringType.FullName) + "." + method.Name.String, method) ||
+				IsMatch(FixTypeName(method.DeclaringType.FullName) + "::" + method.Name.String, method))
 				return true;
 
 			if (method.ImplMap is ImplMap im) {
@@ -641,7 +644,8 @@ namespace dnSpy.Search {
 		bool CheckMatch(FieldDef field) {
 			if (IsMatch(field.Name, field))
 				return true;
-			if (IsMatch(FixTypeName(field.DeclaringType.FullName) + "." + field.Name.String, field))
+			if (IsMatch(FixTypeName(field.DeclaringType.FullName) + "." + field.Name.String, field) ||
+				IsMatch(FixTypeName(field.DeclaringType.FullName) + "::" + field.Name.String, field))
 				return true;
 
 			if (field.ImplMap is ImplMap im) {
@@ -674,7 +678,8 @@ namespace dnSpy.Search {
 		bool CheckMatch(PropertyDef prop) {
 			if (IsMatch(prop.Name, prop))
 				return true;
-			if (IsMatch(FixTypeName(prop.DeclaringType.FullName) + "." + prop.Name.String, prop))
+			if (IsMatch(FixTypeName(prop.DeclaringType.FullName) + "." + prop.Name.String, prop) ||
+				IsMatch(FixTypeName(prop.DeclaringType.FullName) + "::" + prop.Name.String, prop))
 				return true;
 
 			return false;
@@ -702,7 +707,8 @@ namespace dnSpy.Search {
 		bool CheckMatch(EventDef evt) {
 			if (IsMatch(evt.Name, evt))
 				return true;
-			if (IsMatch(FixTypeName(evt.DeclaringType.FullName) + "." + evt.Name.String, evt))
+			if (IsMatch(FixTypeName(evt.DeclaringType.FullName) + "." + evt.Name.String, evt) ||
+				IsMatch(FixTypeName(evt.DeclaringType.FullName) + "::" + evt.Name.String, evt))
 				return true;
 
 			return false;

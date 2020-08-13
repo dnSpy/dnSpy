@@ -25,7 +25,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			if (!File.Exists(file))
 				return false;
 			try {
-				using (var f = File.OpenRead(file)) {
+				using (var f = File.OpenRead(file!)) {
 					var r = new BinaryReader(f);
 					if (r.ReadUInt16() != 0x5A4D)
 						return false;

@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using dnlib.DotNet;
@@ -354,7 +355,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 	sealed class AnalyzerEntityTreeNodeComparer : IEqualityComparer<EntityNode> {
 		public static readonly AnalyzerEntityTreeNodeComparer Instance = new AnalyzerEntityTreeNodeComparer();
 		AnalyzerEntityTreeNodeComparer() { }
-		public bool Equals(EntityNode x, EntityNode y) => (object?)x.Member == y.Member;
-		public int GetHashCode(EntityNode node) => node.Member?.GetHashCode() ?? 0;
+		public bool Equals([AllowNull] EntityNode x, [AllowNull] EntityNode y) => (object?)x?.Member == y?.Member;
+		public int GetHashCode([DisallowNull] EntityNode node) => node.Member?.GetHashCode() ?? 0;
 	}
 }

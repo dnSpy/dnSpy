@@ -133,7 +133,7 @@
     <value>Copi_a</value>
   </data>
   <data name="DoubleClick" xml:space="preserve">
-    <value>Doble Clic</value>
+    <value>Doble Click</value>
   </data>
   <data name="ExposedByTreeNode" xml:space="preserve">
     <value>Expuesto por</value>
@@ -142,7 +142,7 @@
     <value>Métodos de extensión</value>
   </data>
   <data name="GoToReferenceCommand" xml:space="preserve">
-    <value>Ir a referencia</value>
+    <value>Ir a la referencia</value>
   </data>
   <data name="GoToReferenceInCodeCommand" xml:space="preserve">
     <value>Ver Referencia en Método</value>
@@ -160,13 +160,13 @@
     <value>Implementado por</value>
   </data>
   <data name="InstantiatedByTreeNode" xml:space="preserve">
-    <value>Instanciado por nodo de árbol</value>
+    <value>Instanciado por</value>
   </data>
   <data name="OverriddenByTreeNode" xml:space="preserve">
     <value>Sobrescrito por</value>
   </data>
   <data name="OverridesTreeNode" xml:space="preserve">
-    <value>Reemplaza</value>
+    <value>Sobrescrituras</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
     <value>Analiza ensamblados</value>
@@ -184,7 +184,7 @@
     <value>Buscando...</value>
   </data>
   <data name="ShiftDoubleClick" xml:space="preserve">
-    <value>Shift+Doble Click</value>
+    <value>Mayu+Doble Click</value>
   </data>
   <data name="ShortCutKeyCtrlC" xml:space="preserve">
     <value>Ctrl+C</value>
@@ -199,7 +199,7 @@
     <value>Mostrar Tokens</value>
   </data>
   <data name="SingleClickExpandNodes" xml:space="preserve">
-    <value>Con un solo clic expande los nodos</value>
+    <value>Expandir nodos con un solo click</value>
   </data>
   <data name="SyntaxHighlightCommand" xml:space="preserve">
     <value>Resaltar sintaxis</value>

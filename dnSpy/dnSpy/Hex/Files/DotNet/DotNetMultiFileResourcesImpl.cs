@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Text.RegularExpressions;
 using dnSpy.Contracts.Hex;
@@ -64,7 +65,13 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		sealed class DataSorter : IComparer<Data> {
 			public static readonly DataSorter Instance = new DataSorter();
-			public int Compare(Data x, Data y) {
+			public int Compare([AllowNull] Data x, [AllowNull] Data y) {
+				if ((object?)x == y)
+					return 0;
+				if (x is null)
+					return -1;
+				if (y is null)
+					return 1;
 				int c = x.Span.Start.CompareTo(y.Span.Start);
 				if (c != 0)
 					return c;

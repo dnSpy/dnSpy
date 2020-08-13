@@ -146,9 +146,9 @@ namespace dnSpy.Debugger.Attach {
 			return (name, title, filename, commandLine, arch, operatingSystem);
 		}
 
-		static string GetProcessName(Process process) {
+		static string? GetProcessName(Process process) {
 			try {
-				return process.MainModule.FileName;
+				return process.MainModule?.FileName;
 			}
 			catch {
 			}

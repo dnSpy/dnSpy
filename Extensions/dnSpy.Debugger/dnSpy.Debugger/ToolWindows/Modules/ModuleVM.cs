@@ -85,7 +85,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			Context.UIDispatcher.UI(() => DbgModule_PropertyChanged_UI(e.PropertyName));
 
 		// UI thread
-		void DbgModule_PropertyChanged_UI(string propertyName) {
+		void DbgModule_PropertyChanged_UI(string? propertyName) {
 			Context.UIDispatcher.VerifyAccess();
 			switch (propertyName) {
 			case nameof(Module.IsExe):

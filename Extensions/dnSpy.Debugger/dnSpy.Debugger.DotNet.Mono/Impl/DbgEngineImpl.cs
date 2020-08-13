@@ -296,11 +296,12 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 						monoExe = MonoExeFinder.Find(startMonoOptions.MonoExeOptions);
 					if (!File.Exists(monoExe))
 						throw new StartException(string.Format(dnSpy_Debugger_DotNet_Mono_Resources.Error_CouldNotFindFile, MonoExeFinder.MONO_EXE));
+					Debug2.Assert(!(monoExe is null));
 					Debug.Assert(!connectionAddress.Contains(" "));
 					var psi = new ProcessStartInfo {
 						FileName = monoExe,
 						Arguments = $"--debug --debugger-agent=transport=dt_socket,server=y,address={connectionAddress}:{connectionPort} \"{startMonoOptions.Filename}\" {startMonoOptions.CommandLine}",
-						WorkingDirectory = startMonoOptions.WorkingDirectory,
+						WorkingDirectory = startMonoOptions.WorkingDirectory ?? string.Empty,
 						UseShellExecute = false,
 					};
 					if (debuggerSettings.RedirectGuiConsoleOutput && PortableExecutableFileHelpers.IsGuiApp(startMonoOptions.Filename)) {
@@ -310,7 +311,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					var env = new Dictionary<string, string>();
 					foreach (var kv in startMonoOptions.Environment.Environment)
 						psi.Environment[kv.Key] = kv.Value;
-					using (var process = Process.Start(psi)) {
+					using (var process = Process.Start(psi)!) {
 						expectedPid = process.Id;
 						ReadConsoleOutput(psi, process);
 					}
@@ -334,9 +335,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					}
 
 					var psi = new ProcessStartInfo {
-						FileName = startUnityOptions.Filename,
-						Arguments = startUnityOptions.CommandLine,
-						WorkingDirectory = startUnityOptions.WorkingDirectory,
+						FileName = startUnityOptions.Filename!,
+						Arguments = startUnityOptions.CommandLine ?? string.Empty,
+						WorkingDirectory = startUnityOptions.WorkingDirectory ?? string.Empty,
 						UseShellExecute = false,
 					};
 					if (debuggerSettings.RedirectGuiConsoleOutput && PortableExecutableFileHelpers.IsGuiApp(startUnityOptions.Filename)) {
@@ -365,7 +366,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 						envVarValue += ",no-hide-debugger";
 					psi.Environment[ENV_VAR_NAME_V1] = envVarValue;
 
-					using (var process = Process.Start(psi)) {
+					using (var process = Process.Start(psi)!) {
 						expectedPid = process.Id;
 						ReadConsoleOutput(psi, process);
 					}

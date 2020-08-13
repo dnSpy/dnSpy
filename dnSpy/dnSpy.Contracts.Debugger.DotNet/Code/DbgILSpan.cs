@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace dnSpy.Contracts.Debugger.DotNet.Code {
 	/// <summary>
@@ -94,7 +95,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Code {
 
 		sealed class DbgILSpanComparer : IComparer<DbgILSpan> {
 			public static readonly DbgILSpanComparer Instance = new DbgILSpanComparer();
-			public int Compare(DbgILSpan x, DbgILSpan y) {
+			public int Compare([AllowNull] DbgILSpan x, [AllowNull] DbgILSpan y) {
 				int c = unchecked((int)x.Start - (int)y.Start);
 				if (c != 0)
 					return c;

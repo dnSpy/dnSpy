@@ -217,7 +217,7 @@ namespace dnSpy.Output {
 			return OutputBuffers.Count;
 		}
 
-		public IOutputTextPane Find(Guid guid) => OutputBuffers.FirstOrDefault(a => a.Guid == guid);
+		public IOutputTextPane? Find(Guid guid) => OutputBuffers.FirstOrDefault(a => a.Guid == guid);
 		public IOutputTextPane GetTextPane(Guid guid) => Find(guid) ?? new NotPresentOutputWriter(this, guid);
 
 		public void Select(Guid guid) {

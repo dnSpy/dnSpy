@@ -118,7 +118,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 				createdBy = CalculateCreatedByFromAttribute() ?? string.Empty;
 		}
 
-		static string Filter(string s) {
+		static string Filter(string? s) {
 			if (s is null)
 				return string.Empty;
 			const int MAX = 512;

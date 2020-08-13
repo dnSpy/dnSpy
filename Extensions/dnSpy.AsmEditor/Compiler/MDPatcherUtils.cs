@@ -28,6 +28,8 @@ using dnlib.PE;
 
 namespace dnSpy.AsmEditor.Compiler {
 	static unsafe class MDPatcherUtils {
+		public sealed class InvalidMetadataException : Exception { }
+
 		public static IEnumerable<TypeDef> GetMetadataTypes(TypeDef type) {
 			if (!ExistsInMetadata(type))
 				yield break;
@@ -49,19 +51,19 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		public unsafe static uint ReadCompressedUInt32(ref byte* data, byte* end) {
 			if (data >= end)
-				throw new IndexOutOfRangeException();
+				throw new InvalidMetadataException();
 			byte b = *data++;
 			if ((b & 0x80) == 0)
 				return b;
 
 			if ((b & 0xC0) == 0x80) {
 				if (data >= end)
-					throw new IndexOutOfRangeException();
+					throw new InvalidMetadataException();
 				return (uint)(((b & 0x3F) << 8) | *data++);
 			}
 
 			if (data + 2 >= end)
-				throw new IndexOutOfRangeException();
+				throw new InvalidMetadataException();
 			return (uint)(((b & 0x1F) << 24) | (*data++ << 16) |
 					(*data++ << 8) | *data++);
 		}

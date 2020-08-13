@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Files;
 using dnSpy.Contracts.Hex.Files.DotNet;
@@ -45,7 +46,7 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		sealed class MethodBodyPositionAndRidComparer : IComparer<MethodBodyRvaAndRid> {
 			public static readonly MethodBodyPositionAndRidComparer Instance = new MethodBodyPositionAndRidComparer();
-			public int Compare(MethodBodyRvaAndRid x, MethodBodyRvaAndRid y) {
+			public int Compare([AllowNull] MethodBodyRvaAndRid x, [AllowNull] MethodBodyRvaAndRid y) {
 				int c = x.Rva.CompareTo(y.Rva);
 				if (c != 0)
 					return c;

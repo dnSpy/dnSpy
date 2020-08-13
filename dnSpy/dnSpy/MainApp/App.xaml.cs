@@ -96,6 +96,7 @@ namespace dnSpy.MainApp {
 		Stopwatch? startupStopwatch;
 		public App(bool readSettings, Stopwatch startupStopwatch) {
 			resourceManagerTokenCacheImpl = new ResourceManagerTokenCacheImpl();
+			args = new AppCommandLineArgs();
 
 			// PERF: Init MEF on a BG thread. Results in slightly faster startup, eg. InitializeComponent() becomes a 'free' call on this UI thread
 			initializeMEFTask = Task.Run(() => InitializeMEF(readSettings, useCache: readSettings));
@@ -103,7 +104,6 @@ namespace dnSpy.MainApp {
 
 			resourceManagerTokenCacheImpl.TokensUpdated += ResourceManagerTokenCacheImpl_TokensUpdated;
 			ResourceHelper.SetResourceManagerTokenCache(resourceManagerTokenCacheImpl);
-			args = new AppCommandLineArgs();
 			AppDirectories.SetSettingsFilename(args.SettingsFilename);
 
 			AddAppContextFixes();
@@ -324,10 +324,14 @@ namespace dnSpy.MainApp {
 
 		Assembly[] LoadExtensionAssemblies() {
 			var dir = AppDirectories.BinDirectory;
+			var unsortedFiles = GetExtensionFiles(dir);
+			if (!string.IsNullOrEmpty(args.ExtraExtensionDirectory))
+				unsortedFiles = unsortedFiles.Concat(GetExtensionFiles(args.ExtraExtensionDirectory));
+
 			// Load the modules in a predictable order or multicore-JIT could stop recording. See
 			// "Understanding Background JIT compilation -> What can go wrong with background JIT compilation"
 			// in the PerfView docs for more info.
-			var files = GetExtensionFiles(dir).OrderBy(a => a, StringComparer.OrdinalIgnoreCase).ToArray();
+			var files = unsortedFiles.OrderBy(a => a, StringComparer.OrdinalIgnoreCase).ToArray();
 #if NETCOREAPP
 			foreach (var file in files)
 				netCoreAssemblyLoader.AddSearchPath(Path.GetDirectoryName(file)!);

@@ -133,7 +133,7 @@
     <value>_Codice sorgente</value>
   </data>
   <data name="About_TabTitle" xml:space="preserve">
-    <value>Info su</value>
+    <value>Informazioni</value>
   </data>
   <data name="AllFiles" xml:space="preserve">
     <value>Tutti i file</value>
@@ -316,7 +316,7 @@
     <value>_Tema</value>
   </data>
   <data name="Menu_View" xml:space="preserve">
-    <value>_Vedi</value>
+    <value>_Mostra</value>
   </data>
   <data name="Menu_Windows" xml:space="preserve">
     <value>_Window</value>
@@ -577,7 +577,7 @@
     <value>Ripristinare le schede all'avvio</value>
   </data>
   <data name="DisplaySettings_ShowAssemblyPublicKeyToken" xml:space="preserve">
-    <value>Mostra l'assembly del token della chiave pubblica</value>
+    <value>Mostra la chiave pubblica dell'assembly</value>
   </data>
   <data name="DisplaySettings_ShowAssemblyVersion" xml:space="preserve">
     <value>Visualizza la versione dell'assembly</value>
@@ -691,7 +691,7 @@
     <value>Ctrl+J</value>
   </data>
   <data name="SearchWindow_Property" xml:space="preserve">
-    <value>Proprietà</value>
+    <value>Proprieta'</value>
   </data>
   <data name="SearchWindow_Property_Key" xml:space="preserve">
     <value>Ctrl+P</value>
@@ -718,7 +718,7 @@
     <value>Posizione della finestra</value>
   </data>
   <data name="Theme_Blue" xml:space="preserve">
-    <value>_Blue</value>
+    <value>_Blu</value>
   </data>
   <data name="Theme_Dark" xml:space="preserve">
     <value>_Scuro</value>
@@ -823,7 +823,7 @@
     <value>Tipi nidificati</value>
   </data>
   <data name="MemberKind_Properties" xml:space="preserve">
-    <value>Proprietá</value>
+    <value>Proprieta'</value>
   </data>
   <data name="AboutScreen_LicenseInfo" xml:space="preserve">
     <value>dnSpy è pubblicato con licenza GPLv3.</value>
@@ -832,7 +832,7 @@
     <value>File caricati:</value>
   </data>
   <data name="SearchWindow_SearchFrameworkAssemblies" xml:space="preserve">
-    <value>Search in framework assemblies</value>
+    <value>Cerca in framework assemblies</value>
   </data>
   <data name="SearchWindow_Where_AllFiles" xml:space="preserve">
     <value>Tutti i file</value>
@@ -991,7 +991,7 @@
     <value>In basso</value>
   </data>
   <data name="ImagePlacement_BottomLeft" xml:space="preserve">
-    <value>In Basso a Sinistra</value>
+    <value>In basso a sinistra</value>
   </data>
   <data name="ImagePlacement_BottomRight" xml:space="preserve">
     <value>In basso a destra</value>
@@ -1009,7 +1009,7 @@
     <value>Alto</value>
   </data>
   <data name="ImagePlacement_TopLeft" xml:space="preserve">
-    <value>In Alto a Sinistra</value>
+    <value>In alto a sinistra</value>
   </data>
   <data name="ImagePlacement_TopRight" xml:space="preserve">
     <value>In alto a destra</value>
@@ -1460,10 +1460,10 @@
     <comment>the delete key</comment>
   </data>
   <data name="ShowAllBytesCommand" xml:space="preserve">
-    <value>Mostra tutti i bytes</value>
+    <value>Mostra tutti i byte</value>
   </data>
   <data name="ShowOnlySelectedBytesCommand" xml:space="preserve">
-    <value>Mostra solo i bytres selezionati</value>
+    <value>Mostra solo i byte selezionati</value>
   </data>
   <data name="ValueFormatCommand" xml:space="preserve">
     <value>Formato del valore</value>
@@ -1853,7 +1853,7 @@
     <value>_Segnalibro successivo</value>
   </data>
   <data name="GoToNextBookmarkInDocumentCommand" xml:space="preserve">
-    <value>S_uccessivo segnalibro nel documento</value>
+    <value>Segnalibro s_uccessivo nel documento</value>
   </data>
   <data name="GoToNextBookmarkWithSameLabelCommand" xml:space="preserve">
     <value>Segnalibro successivo con la stessa etichetta</value>
@@ -1880,7 +1880,7 @@
     <value>Ctrl+K, Ctrl+P</value>
   </data>
   <data name="ToggleBookmarkCommand" xml:space="preserve">
-    <value>_Aziona i segnalibri</value>
+    <value>_Aggiungi/Togli segnalibro</value>
   </data>
   <data name="EditLabelsMsgBoxLabel" xml:space="preserve">
     <value>Etichette</value>
@@ -1904,7 +1904,7 @@
     <value>Aggiungi etichette</value>
   </data>
   <data name="DisassemblySettings_AddLeadingZeroToHexNumbers" xml:space="preserve">
-    <value>Aggiungi il numero "0" iniziale ai numeri esadecimali se necessario</value>
+    <value>Aggiungi il numero iniziale "0" ai numeri esadecimali se necessario</value>
   </data>
   <data name="DisassemblySettings_AlwaysShowMemorySize" xml:space="preserve">
     <value>Mostra sempre le dimensioni degli operandi di memoria</value>
@@ -1928,7 +1928,7 @@
     <value>Suffisso esadecimale</value>
   </data>
   <data name="DisassemblySettings_NewTab" xml:space="preserve">
-    <value>Mostra lo smontaggio in una nuova scheda</value>
+    <value>Mostra il disassemblato in una nuova scheda</value>
   </data>
   <data name="DisassemblySettings_OperandColumn" xml:space="preserve">
     <value>Colonna Operando</value>
@@ -1940,16 +1940,16 @@
     <value>Mostra scala prima del registro indice</value>
   </data>
   <data name="DisassemblySettings_BranchLeadingZeroes" xml:space="preserve">
-    <value>Add leading zeroes (branches)</value>
+    <value>Aggiungi zeri iniziali (salti)</value>
   </data>
   <data name="DisassemblySettings_LeadingZeroes" xml:space="preserve">
-    <value>Add leading zeroes</value>
+    <value>Aggiungi zeri iniziali</value>
   </data>
   <data name="DisassemblySettings_ShowBranchSize" xml:space="preserve">
-    <value>Mostra la dimensione del ramo</value>
+    <value>Mostra la dimensione del salto</value>
   </data>
   <data name="DisassemblySettings_ShowInstructionAddress" xml:space="preserve">
-    <value>Mostra l'indirizzo di istruzioni</value>
+    <value>Mostra l'indirizzo delle istruzioni</value>
   </data>
   <data name="DisassemblySettings_ShowInstructionBytes" xml:space="preserve">
     <value>Mostra i byte di istruzioni</value>
@@ -1964,7 +1964,7 @@
     <value>Spostamenti segnati</value>
   </data>
   <data name="DisassemblySettings_SmallHexNumbersInDecimal" xml:space="preserve">
-    <value>Mostra piccoli numeri in decimale</value>
+    <value>Mostra numeri piccoli in decimale</value>
   </data>
   <data name="DisassemblySettings_SpaceAfterMemoryBracket" xml:space="preserve">
     <value>Parentesi degli spazi vuoti dopo la memoria</value>
@@ -2036,7 +2036,7 @@
     <value>&lt;Sconosciuto&gt;</value>
   </data>
   <data name="TypeReferencesFolder" xml:space="preserve">
-    <value>Type References</value>
+    <value>Riferimenti Tipo</value>
   </data>
   <data name="TreeViewEventsFolder" xml:space="preserve">
     <value>Eventi</value>
@@ -2048,10 +2048,10 @@
     <value>Metodi</value>
   </data>
   <data name="TreeViewPropertiesFolder" xml:space="preserve">
-    <value>Proprietá</value>
+    <value>Proprieta'</value>
   </data>
   <data name="TreeViewTypesFolder" xml:space="preserve">
-    <value>Types</value>
+    <value>Tipi</value>
   </data>
   <data name="NumberBaseFormatString" xml:space="preserve">
     <value>Base {0}:</value>
@@ -2060,10 +2060,10 @@
     <value>Raw:</value>
   </data>
   <data name="RecentFilesCommand" xml:space="preserve">
-    <value>Recent _Files</value>
+    <value>_File recenti</value>
   </data>
   <data name="ToolTip_Instruction" xml:space="preserve">
-    <value>Instruction</value>
+    <value>Istruzione</value>
   </data>
   <data name="ToolTip_OpCode" xml:space="preserve">
     <value>OpCode</value>

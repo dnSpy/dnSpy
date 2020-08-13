@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 
@@ -742,8 +743,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			sealed class EqualityComparer : IEqualityComparer<Key> {
 				public static readonly EqualityComparer Instance = new EqualityComparer();
 				EqualityComparer() { }
-				public bool Equals(Key x, Key y) => x.Equals(y);
-				public int GetHashCode(Key obj) => obj.GetHashCode();
+				public bool Equals([AllowNull] Key x, [AllowNull] Key y) => x.Equals(y);
+				public int GetHashCode([DisallowNull] Key obj) => obj.GetHashCode();
 			}
 			readonly struct Key : IEquatable<Key> {
 				public string Name { get; }
@@ -816,8 +817,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			sealed class EqualityComparer : IEqualityComparer<Key> {
 				public static readonly EqualityComparer Instance = new EqualityComparer();
 				EqualityComparer() { }
-				public bool Equals(Key x, Key y) => x.Equals(y);
-				public int GetHashCode(Key obj) => obj.GetHashCode();
+				public bool Equals([AllowNull] Key x, [AllowNull] Key y) => x.Equals(y);
+				public int GetHashCode([DisallowNull] Key obj) => obj.GetHashCode();
 			}
 			readonly struct Key : IEquatable<Key> {
 				public string Name { get; }

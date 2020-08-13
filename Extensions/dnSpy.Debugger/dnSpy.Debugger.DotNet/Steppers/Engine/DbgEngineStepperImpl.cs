@@ -307,8 +307,14 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 			try {
 				evalInfo = CreateEvaluationInfo(thread);
 				var info = TaskEvalUtils.CallSetNotificationForWaitCompletion(evalInfo, builderFieldModule, builderFieldToken, value);
-				taskValue = info.taskValue;
-				return info.success;
+				if (info.success && info.taskValue is object) {
+					taskValue = info.taskValue;
+					return true;
+				}
+				else {
+					taskValue = null;
+					return false;
+				}
 			}
 			finally {
 				evalInfo?.Close();

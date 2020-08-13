@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Documents {
 			return annotation;
 		}
 
-		public T? Annotation<T>() where T : class => (T)list.FirstOrDefault(a => a is T);
+		public T? Annotation<T>() where T : class => (T?)list.FirstOrDefault(a => a is T);
 		public IEnumerable<T> Annotations<T>() where T : class => list.OfType<T>();
 
 		public void RemoveAnnotations<T>() where T : class {

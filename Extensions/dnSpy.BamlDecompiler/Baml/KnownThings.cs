@@ -61,6 +61,19 @@ namespace dnSpy.BamlDecompiler.Baml {
 		public AssemblyDef FrameworkAssembly => assemblies[0];
 		TypeDef InitType(IAssembly assembly, string ns, string name) => typeResolver.ResolveThrow(new TypeRefUser(module, ns, name, assembly.ToAssemblyRef()));
 		KnownMember InitMember(KnownTypes parent, string name, TypeDef type) => new KnownMember(parent, types[parent], name, type);
+		AssemblyDef ResolveThrow(string asmFullName) {
+			var asm = resolver.Resolve(asmFullName, module);
+			if (!(asm is null))
+				return asm;
+			var newName = asmFullName switch {
+				"WindowsBase, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" => "WindowsBase, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35",
+				"PresentationCore, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" => "PresentationCore, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35",
+				"PresentationFramework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" => "PresentationFramework, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35",
+				_ => null,
+			};
+			asm = newName is null ? null : resolver.Resolve(newName, module);
+			return asm ?? resolver.ResolveThrow(asmFullName, module)/*Will throw*/;
+		}
 	}
 
 	internal class KnownMember {

@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
@@ -128,7 +129,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 			public double Order => 100;
 
-			public int Compare(TreeNodeData x, TreeNodeData y) {
+			public int Compare([AllowNull] TreeNodeData x, [AllowNull] TreeNodeData y) {
 				if (x == y)
 					return 0;
 				var a = x as AnalyzerTreeNodeData;

@@ -23,6 +23,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Text;
@@ -64,17 +65,17 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		public object ProcessCollection => processes;
 		readonly ObservableCollection<SimpleProcessVM> processes;
 
-		public object SelectedProcess {
+		public object? SelectedProcess {
 			get => selectedProcess;
 			set {
 				if (selectedProcess != value) {
-					selectedProcess = (SimpleProcessVM)value;
+					selectedProcess = (SimpleProcessVM?)value;
 					OnPropertyChanged(nameof(SelectedProcess));
 					FilterList_UI(filterText, selectedProcess);
 				}
 			}
 		}
-		SimpleProcessVM selectedProcess;
+		SimpleProcessVM? selectedProcess;
 
 		public string FilterText {
 			get => filterText;
@@ -296,7 +297,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			UI(() => DebuggerSettings_PropertyChanged_UI(e.PropertyName));
 
 		// UI thread
-		void DebuggerSettings_PropertyChanged_UI(string propertyName) {
+		void DebuggerSettings_PropertyChanged_UI(string? propertyName) {
 			moduleContext.UIDispatcher.VerifyAccess();
 			if (propertyName == nameof(DebuggerSettings.UseHexadecimal))
 				RefreshHexFields_UI();
@@ -471,7 +472,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		}
 
 		// UI thread
-		void FilterList_UI(string filterText, SimpleProcessVM selectedProcess) {
+		void FilterList_UI(string filterText, SimpleProcessVM? selectedProcess) {
 			moduleContext.UIDispatcher.VerifyAccess();
 			if (string.IsNullOrWhiteSpace(filterText))
 				filterText = string.Empty;
@@ -486,7 +487,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		}
 
 		// UI thread
-		void SortList(string filterText, SimpleProcessVM selectedProcess) {
+		void SortList(string filterText, SimpleProcessVM? selectedProcess) {
 			moduleContext.UIDispatcher.VerifyAccess();
 			var newList = new List<ModuleVM>(GetFilteredItems_UI(filterText, selectedProcess));
 			newList.Sort(this);
@@ -503,11 +504,17 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		}
 
 		void InitializeNothingMatched() => InitializeNothingMatched(filterText, selectedProcess);
-		void InitializeNothingMatched(string filterText, SimpleProcessVM selectedProcess) =>
+		void InitializeNothingMatched(string filterText, SimpleProcessVM? selectedProcess) =>
 			NothingMatched = AllItems.Count == 0 && !(string.IsNullOrWhiteSpace(filterText) && selectedProcess?.Process is null);
 
-		public int Compare(ModuleVM x, ModuleVM y) {
+		public int Compare([AllowNull] ModuleVM x, [AllowNull] ModuleVM y) {
 			Debug.Assert(moduleContext.UIDispatcher.CheckAccess());
+			if ((object?)x == y)
+				return 0;
+			if (x is null)
+				return -1;
+			if (y is null)
+				return 1;
 			var (desc, dir) = Descs.SortedColumn;
 
 			int id;
@@ -588,7 +595,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		}
 
 		// UI thread
-		IEnumerable<ModuleVM> GetFilteredItems_UI(string filterText, SimpleProcessVM selectedProcess) {
+		IEnumerable<ModuleVM> GetFilteredItems_UI(string filterText, SimpleProcessVM? selectedProcess) {
 			moduleContext.UIDispatcher.VerifyAccess();
 			foreach (var vm in realAllItems) {
 				if (IsMatch_UI(vm, filterText, selectedProcess))
@@ -597,7 +604,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		}
 
 		// UI thread
-		bool IsMatch_UI(ModuleVM vm, string filterText, SimpleProcessVM selectedProcess) {
+		bool IsMatch_UI(ModuleVM vm, string filterText, SimpleProcessVM? selectedProcess) {
 			Debug.Assert(moduleContext.UIDispatcher.CheckAccess());
 			if (!(selectedProcess?.Process is null) && selectedProcess.Process != vm.Module.Process)
 				return false;
@@ -788,7 +795,13 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		sealed class SimpleProcessVMComparer : IComparer<SimpleProcessVM> {
 			public static readonly SimpleProcessVMComparer Instance = new SimpleProcessVMComparer();
 			SimpleProcessVMComparer() { }
-			public int Compare(SimpleProcessVM x, SimpleProcessVM y) {
+			public int Compare([AllowNull] SimpleProcessVM x, [AllowNull] SimpleProcessVM y) {
+				if ((object?)x == y)
+					return 0;
+				if (x is null)
+					return -1;
+				if (y is null)
+					return 1;
 				bool x1 = x.Process is null;
 				bool y1 = y.Process is null;
 				if (x1 != y1) {

@@ -226,7 +226,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			this.decompilerService = decompilerService;
 			this.documentTreeView = documentTreeView;
 			allDecompilers = new ObservableCollection<DecompilerVM>(decompilerService.AllDecompilers.Select(a => new DecompilerVM(a)));
-			decompiler = allDecompilers.FirstOrDefault(a => a.Decompiler == decompilerService.Decompiler);
+			decompiler = allDecompilers.FirstOrDefault(a => a.Decompiler == decompilerService.Decompiler) ?? throw new InvalidOperationException();
 			this.filter = filter;
 			delayedSearch = new DelayedAction(DEFAULT_DELAY_SEARCH_MS, DelayStartSearch);
 			SearchResults = new ObservableCollection<ISearchResult>();

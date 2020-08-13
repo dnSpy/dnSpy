@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Classification;
@@ -47,7 +48,7 @@ namespace dnSpy.Hex.Classification {
 
 		sealed class HexClassificationSpanComparer : IComparer<HexClassificationSpan> {
 			public static readonly HexClassificationSpanComparer Instance = new HexClassificationSpanComparer();
-			public int Compare(HexClassificationSpan x, HexClassificationSpan y) => x.Span.Start - y.Span.Start;
+			public int Compare([AllowNull] HexClassificationSpan x, [AllowNull] HexClassificationSpan y) => x.Span.Start - y.Span.Start;
 		}
 
 		public override void GetClassificationSpans(List<HexClassificationSpan> result, HexClassificationContext context) =>

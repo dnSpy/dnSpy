@@ -1174,7 +1174,7 @@ namespace dnSpy.Decompiler.VisualBasic {
 		static bool IsSub(in FormatterMethodInfo info) => GetReturnTypeInfo(info).returnType.RemovePinnedAndModifiers().GetElementType() == ElementType.Void;
 
 		static (TypeSig? returnType, ParamDef? paramDef) GetReturnTypeInfo(in FormatterMethodInfo info) {
-			TypeSig retType;
+			TypeSig? retType;
 			ParamDef? retParamDef;
 			if (info.RetTypeIsLastArgType) {
 				retType = info.MethodSig.Params.LastOrDefault();

@@ -400,7 +400,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		bool ExistsInProject(string filename) => !(FindOtherProject(filename) is null);
 		bool AssemblyExistsInProject(string asmSimpleName) =>
 			allProjects.Any(a => StringComparer.OrdinalIgnoreCase.Equals(a.AssemblyName, asmSimpleName));
-		Project FindOtherProject(string filename) =>
+		Project? FindOtherProject(string filename) =>
 			allProjects.FirstOrDefault(f => StringComparer.OrdinalIgnoreCase.Equals(Path.GetFullPath(f.Module.Location), Path.GetFullPath(filename)));
 	}
 }

@@ -127,7 +127,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			Add(new ContextMenuHandler {
 				Header = "res:CopyMetaDataToken",
 				HeaderPlural = "res:CopyMetaDataTokens",
-				Command = new RelayCommand(a => CopyOperandMDTokens((InstructionVM[])a), a => CopyOperandMDTokensCanExecute((InstructionVM[])a)),
+				Command = new RelayCommand(a => CopyOperandMDTokens((InstructionVM[])a!), a => CopyOperandMDTokensCanExecute((InstructionVM[])a!)),
 				InputGestureText = "res:ShortCutKeyCtrlM",
 				Modifiers = ModifierKeys.Control,
 				Key = Key.M,
@@ -135,7 +135,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			Add(new ContextMenuHandler {
 				Header = "res:CopyRVACommand",
 				HeaderPlural = "res:CopyRVAsCommand",
-				Command = new RelayCommand(a => CopyInstructionRVA((InstructionVM[])a), a => CopyInstructionRVACanExecute((InstructionVM[])a)),
+				Command = new RelayCommand(a => CopyInstructionRVA((InstructionVM[])a!), a => CopyInstructionRVACanExecute((InstructionVM[])a!)),
 				InputGestureText = "res:ShortCutKeyCtrlR",
 				Modifiers = ModifierKeys.Control,
 				Key = Key.R,
@@ -143,7 +143,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			Add(new ContextMenuHandler {
 				Header = "res:CopyFileOffsetCommand",
 				HeaderPlural = "res:CopyFileOffsetsCommand",
-				Command = new RelayCommand(a => CopyInstructionFileOffset((InstructionVM[])a), a => CopyInstructionFileOffsetCanExecute((InstructionVM[])a)),
+				Command = new RelayCommand(a => CopyInstructionFileOffset((InstructionVM[])a!), a => CopyInstructionFileOffsetCanExecute((InstructionVM[])a!)),
 				InputGestureText = "res:ShortCutKeyCtrlF",
 				Modifiers = ModifierKeys.Control,
 				Key = Key.F,
@@ -341,7 +341,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			TypeSpec		= 0x00000080,
 		}
 
-		void ShowMenu(object parameter, InstructionOperandVM opvm, MenuCommandFlags flags) {
+		void ShowMenu(object? parameter, InstructionOperandVM opvm, MenuCommandFlags flags) {
 			var ctxMenu = new ContextMenu();
 			ctxMenu.SetResourceReference(DsImage.BackgroundBrushProperty, "ContextMenuRectangleFill");
 
@@ -496,7 +496,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			opvm.Other = data.GetSwitchList();
 		}
 
-		void IEditOperand.Edit(object parameter, InstructionOperandVM opvm) {
+		void IEditOperand.Edit(object? parameter, InstructionOperandVM opvm) {
 			MenuCommandFlags flags;
 			switch (opvm.InstructionOperandType) {
 			case InstructionOperandType.Field:

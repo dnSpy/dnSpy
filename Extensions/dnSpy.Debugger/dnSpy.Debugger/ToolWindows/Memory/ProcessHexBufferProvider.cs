@@ -230,7 +230,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 		}
 
 		// UI thread
-		void InitializeNonInitializedBuffers_UI(ProcessInfo info) {
+		void InitializeNonInitializedBuffers_UI(ProcessInfo? info) {
 			uiDispatcher.VerifyAccess();
 			if (info is null)
 				return;

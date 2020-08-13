@@ -23,6 +23,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using dnSpy.Contracts.Controls.ToolWindows;
 using dnSpy.Contracts.Debugger;
@@ -354,7 +355,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			UI(() => DebuggerSettings_PropertyChanged_UI(e.PropertyName));
 
 		// UI thread
-		void DebuggerSettings_PropertyChanged_UI(string propertyName) {
+		void DebuggerSettings_PropertyChanged_UI(string? propertyName) {
 			threadContext.UIDispatcher.VerifyAccess();
 			switch (propertyName) {
 			case nameof(DebuggerSettings.UseHexadecimal):
@@ -605,8 +606,14 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		void InitializeNothingMatched(string filterText, SimpleProcessVM? selectedProcess) =>
 			NothingMatched = AllItems.Count == 0 && !(string.IsNullOrWhiteSpace(filterText) && selectedProcess?.Process is null);
 
-		public int Compare(ThreadVM x, ThreadVM y) {
+		public int Compare([AllowNull] ThreadVM x, [AllowNull] ThreadVM y) {
 			Debug.Assert(threadContext.UIDispatcher.CheckAccess());
+			if ((object?)x == y)
+				return 0;
+			if (x is null)
+				return -1;
+			if (y is null)
+				return 1;
 			var (desc, dir) = Descs.SortedColumn;
 
 			int id;
@@ -883,7 +890,13 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		sealed class SimpleProcessVMComparer : IComparer<SimpleProcessVM> {
 			public static readonly SimpleProcessVMComparer Instance = new SimpleProcessVMComparer();
 			SimpleProcessVMComparer() { }
-			public int Compare(SimpleProcessVM x, SimpleProcessVM y) {
+			public int Compare([AllowNull] SimpleProcessVM x, [AllowNull] SimpleProcessVM y) {
+				if ((object?)x == y)
+					return 0;
+				if (x is null)
+					return -1;
+				if (y is null)
+					return 1;
 				bool x1 = x.Process is null;
 				bool y1 = y.Process is null;
 				if (x1 != y1) {

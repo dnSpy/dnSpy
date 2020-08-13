@@ -65,7 +65,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			var type = thread.Domain.Corlib.GetType("System.Runtime.CompilerServices.RuntimeHelpers");
 			if (type is null)
 				return null;
+#pragma warning disable CS0618
 			var method = type.GetMethod("get_" + nameof(System.Runtime.CompilerServices.RuntimeHelpers.OffsetToStringData));
+#pragma warning restore CS0618
 			if (method is null)
 				return null;
 			var res = Call(method, Array.Empty<Value>());

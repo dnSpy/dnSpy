@@ -34,7 +34,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			if (modNode is null)
 				return null;
 			modNode.TreeNode.EnsureChildrenLoaded();
-			var peNode = (PENode)modNode.TreeNode.DataChildren.FirstOrDefault(a => a is PENode);
+			var peNode = (PENode?)modNode.TreeNode.DataChildren.FirstOrDefault(a => a is PENode);
 			return peNode?.FindTokenNode(tokRef.Token);
 		}
 	}

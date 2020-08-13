@@ -1,21 +1,21 @@
 [submodule "Plugins/ILSpy.Decompiler/NRefactory"]
 	path = Extensions/ILSpy.Decompiler/NRefactory
-	url = https://github.com/0xd4d/nrefactory.git
+	url = https://github.com/dnSpy/nrefactory.git
 [submodule "Libraries/ICSharpCode.TreeView"]
 	path = Libraries/ICSharpCode.TreeView
-	url = https://github.com/0xd4d/ICSharpCode.TreeView.git
+	url = https://github.com/dnSpy/ICSharpCode.TreeView.git
 [submodule "Plugins/ILSpy.Decompiler/ICSharpCode.Decompiler"]
 	path = Extensions/ILSpy.Decompiler/ICSharpCode.Decompiler
-	url = https://github.com/0xd4d/ILSpy.git
+	url = https://github.com/dnSpy/ILSpy.git
 [submodule "dnSpy/dnSpy.Images"]
 	path = dnSpy/dnSpy.Images
-	url = https://github.com/0xd4d/dnSpy.Images.git
+	url = https://github.com/dnSpy/dnSpy.Images.git
 [submodule "Extensions/dnSpy.Debugger/netcorefiles"]
 	path = Extensions/dnSpy.Debugger/netcorefiles
-	url = https://github.com/0xd4d/netcorefiles.git
+	url = https://github.com/dnSpy/netcorefiles.git
 [submodule "dnSpy/Roslyn/Roslyn.ExpressionCompiler"]
 	path = dnSpy/Roslyn/Roslyn.ExpressionCompiler
-	url = https://github.com/0xd4d/Roslyn.ExpressionCompiler.git
+	url = https://github.com/dnSpy/Roslyn.ExpressionCompiler.git
 [submodule "Extensions/dnSpy.Debugger/Mono.Debugger.Soft"]
 	path = Extensions/dnSpy.Debugger/Mono.Debugger.Soft
-	url = https://github.com/0xd4d/Mono.Debugger.Soft.git
+	url = https://github.com/dnSpy/Mono.Debugger.Soft.git

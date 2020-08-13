@@ -19,6 +19,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 
@@ -80,7 +81,9 @@ namespace dnSpy.Documents {
 			return 0;
 		}
 
-		public int CompareTo(FrameworkPaths other) {
+		public int CompareTo([AllowNull] FrameworkPaths other) {
+			if (other is null)
+				return 1;
 			int c = Version.CompareTo(other.Version);
 			if (c != 0)
 				return c;

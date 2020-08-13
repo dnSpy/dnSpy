@@ -169,7 +169,7 @@
     <value>اضافه کردن فضای نام به انواع با نام مشابه</value>
   </data>
   <data name="DecompilerSettings_HexadecimalNumbers" xml:space="preserve">
-    <value>Hexadecimal numbers</value>
+    <value>اعداد هگز</value>
   </data>
   <data name="DecompilerSettings_IntroduceIncrementAndDecrement" xml:space="preserve">
     <value>استفاده از اپراتورهای افزایشی و کاهشی</value>
@@ -181,7 +181,7 @@
     <value>حداکثر تعداد عناصر آرایه برای نشان دادن</value>
   </data>
   <data name="DecompilerSettings_MaxStringLength" xml:space="preserve">
-    <value>Max string length</value>
+    <value>حداکثر طول رشته</value>
   </data>
   <data name="DecompilerSettings_MemberAddPrivateModifier" xml:space="preserve">
     <value>اضافه کردن اصلاح کننده 'خصوصی'به اعضای تایپ</value>

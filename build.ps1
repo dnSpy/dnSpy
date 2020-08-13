@@ -2,7 +2,7 @@ param([string]$buildtfm = 'all', [switch]$NoMsbuild)
 $ErrorActionPreference = 'Stop'
 
 $net_tfm = 'net472'
-$netcore_tfm = 'netcoreapp3.0'
+$netcore_tfm = 'netcoreapp3.1'
 $configuration = 'Release'
 $net_baseoutput = "dnSpy\dnSpy\bin\$configuration"
 $apphostpatcher_dir = "Build\AppHostPatcher"

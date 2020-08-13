@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.Engine.Evaluation;
@@ -58,7 +59,7 @@ namespace dnSpy.Debugger.Evaluation {
 
 			public ObjectIdComparer(DbgEngineObjectIdFactory dbgEngineObjectIdFactory) => this.dbgEngineObjectIdFactory = dbgEngineObjectIdFactory;
 
-			public new bool Equals(object x, object y) {
+			public new bool Equals([AllowNull] object x, [AllowNull] object y) {
 				if (x == y)
 					return true;
 				if (x is DbgObjectIdImpl objectId1 && y is DbgValueImpl value1)
@@ -68,7 +69,7 @@ namespace dnSpy.Debugger.Evaluation {
 				return false;
 			}
 
-			public int GetHashCode(object obj) {
+			public int GetHashCode([DisallowNull] object obj) {
 				switch (obj) {
 				case DbgObjectIdImpl objectId:	return dbgEngineObjectIdFactory.GetHashCode(objectId.EngineObjectId);
 				case DbgValueImpl value:		return dbgEngineObjectIdFactory.GetHashCode(value.EngineValue);

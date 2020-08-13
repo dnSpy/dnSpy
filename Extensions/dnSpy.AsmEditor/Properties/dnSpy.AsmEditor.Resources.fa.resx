@@ -133,7 +133,7 @@
     <value>معماری پردازنده را مشخص می کند</value>
   </data>
   <data name="AssemblyDlg_Main_CB_PublicKey" xml:space="preserve">
-    <value>_کلیدعمومی</value>
+    <value>کلید_عمومی</value>
   </data>
   <data name="AssemblyDlg_Main_CB_Retargetable" xml:space="preserve">
     <value>قابل تغییر هدف</value>
@@ -202,7 +202,7 @@
     <value>C</value>
   </data>
   <data name="ClearTypesCharacter_ToolTip" xml:space="preserve">
-    <value>پاک کردن Types</value>
+    <value>انواع پاک کردن</value>
   </data>
   <data name="ConstantDlg_Constant" xml:space="preserve">
     <value>ثابت</value>
@@ -223,7 +223,7 @@
     <value>Ctrl+B</value>
   </data>
   <data name="CouldNotResolveType" xml:space="preserve">
-    <value>قادر به Resolve Type نیست. مطمئن شوید که آن اسمبلی(assembly) در حال حاضر لود شده است.</value>
+    <value>قادر به Resolve Type نیست. مطمئن شوید که آن اٌسمبلی(assembly) در حال حاضر بارگذاری شده است.</value>
   </data>
   <data name="CreateAssemblyCommand" xml:space="preserve">
     <value>ایجاد اسمبلی(assembly)...</value>
@@ -256,10 +256,10 @@
     <value>ایجاد FnPtr Method Signature</value>
   </data>
   <data name="CreateGenericInstanceTypeArguments" xml:space="preserve">
-    <value>ایجاد Generic Instance Type Arguments</value>
+    <value>ایجاد استدلال های نوع عمومی</value>
   </data>
   <data name="CreateGenericParameter" xml:space="preserve">
-    <value>ایجاد Generic Parameter</value>
+    <value>ایجاد پارامتر عمومی</value>
   </data>
   <data name="CreateGenericParameterConstraint" xml:space="preserve">
     <value>ایجاد Generic Parameter Constraint</value>
@@ -268,22 +268,22 @@
     <value>ایجاد Method Override</value>
   </data>
   <data name="CreateMethodSignature" xml:space="preserve">
-    <value>ایجاد Method Signature</value>
+    <value>ایجاد متود امضاء</value>
   </data>
   <data name="CreateParameter" xml:space="preserve">
     <value>ایجاد پارامتر(Parameter)</value>
   </data>
   <data name="CreatePropertySignature" xml:space="preserve">
-    <value>ایجاد Property Signature</value>
+    <value>ایجاد امضای املاک</value>
   </data>
   <data name="CreateReturnType" xml:space="preserve">
-    <value>ایجاد Return Type</value>
+    <value>ایجاد بازگشت نوعِ</value>
   </data>
   <data name="CreateSecurityAttribute" xml:space="preserve">
-    <value>ایجاد Security Attribute</value>
+    <value>ایجاد ویژگی امنیتی</value>
   </data>
   <data name="CreateSecurityDeclaration" xml:space="preserve">
-    <value>ایجاد Security Declaration</value>
+    <value>ایجاد اعلامیه امنیتی</value>
   </data>
   <data name="CreateType" xml:space="preserve">
     <value>ایجاد یک نوع(Type)</value>
@@ -326,7 +326,7 @@
     <value>حذف {0} رویداد(Event)</value>
   </data>
   <data name="DeleteFieldCommand" xml:space="preserve">
-    <value>حذف فیلد(Field)</value>
+    <value>فیلد را حذف کنید.</value>
   </data>
   <data name="DeleteFieldsCommand" xml:space="preserve">
     <value>حذف {0} فیلدها(Fields)</value>
@@ -413,37 +413,37 @@
     <value>Field Type: {0}</value>
   </data>
   <data name="Field_Access" xml:space="preserve">
-    <value>_Access</value>
+    <value>_دسترسی</value>
   </data>
   <data name="Field_DefaultValueInfo" xml:space="preserve">
     <value>مقدار پیش فرض برای این field</value>
   </data>
   <data name="Field_Flags" xml:space="preserve">
-    <value>Flags</value>
+    <value>پرچم ها</value>
   </data>
   <data name="Field_InitialValue" xml:space="preserve">
-    <value>Initial_Value</value>
+    <value>مقدار_اولیه</value>
   </data>
   <data name="Field_Name" xml:space="preserve">
     <value>_نام</value>
   </data>
   <data name="Field_Offset" xml:space="preserve">
-    <value>O_ffset</value>
+    <value>انحراف</value>
   </data>
   <data name="Field_RVA" xml:space="preserve">
     <value>_RVA</value>
   </data>
   <data name="GenericParameterNumber" xml:space="preserve">
-    <value>gparam({0})</value>
+    <value>شایعات({0})</value>
   </data>
   <data name="GP_Class" xml:space="preserve">
-    <value>C_lass</value>
+    <value>کلاس</value>
   </data>
   <data name="GP_Constraints" xml:space="preserve">
     <value>محدودیت ها</value>
   </data>
   <data name="GP_DefaultConstructor" xml:space="preserve">
-    <value>پیشفرض</value>
+    <value>پیش فرض</value>
   </data>
   <data name="GP_Kind" xml:space="preserve">
     <value>نوع</value>
@@ -488,16 +488,16 @@
     <value>Cor20 Header</value>
   </data>
   <data name="HexNode_DOSHeader" xml:space="preserve">
-    <value>DOS Header</value>
+    <value>هدر DOS</value>
   </data>
   <data name="HexNode_FileHeader" xml:space="preserve">
-    <value>File Header</value>
+    <value>هدر پرونده</value>
   </data>
   <data name="HexNode_OptHeader32" xml:space="preserve">
-    <value>Optional Header (32-bit)</value>
+    <value>سربرگ اختیاری (32 بیتی)</value>
   </data>
   <data name="HexNode_OptHeader64" xml:space="preserve">
-    <value>Optional Header (64-bit)</value>
+    <value>سربرگ اختیاری (64 بیتی)</value>
   </data>
   <data name="ImplMapTab" xml:space="preserve">
     <value>ImplMap</value>
@@ -533,22 +533,22 @@
     <value>_دیتا</value>
   </data>
   <data name="MarshalType_ElemType" xml:space="preserve">
-    <value>Elem_Type</value>
+    <value>نوع_آیتم</value>
   </data>
   <data name="MarshalType_Enable" xml:space="preserve">
     <value>فعال کردن(_E)</value>
   </data>
   <data name="MarshalType_EnumNotInitialized" xml:space="preserve">
-    <value>&lt;Not Initialized&gt;</value>
+    <value>&amp; lt؛ اولیه نیست &amp; gt؛</value>
   </data>
   <data name="MarshalType_Flags" xml:space="preserve">
     <value>_پرچم ها</value>
   </data>
   <data name="MarshalType_GUID" xml:space="preserve">
-    <value>_GUID</value>
+    <value>_راهنما</value>
   </data>
   <data name="MarshalType_NativeType" xml:space="preserve">
-    <value>_NativeType</value>
+    <value>_نوع بومی</value>
   </data>
   <data name="MarshalType_Nothing" xml:space="preserve">
     <value>هیچی</value>
@@ -593,7 +593,7 @@
     <value>راه اندازی از متود...</value>
   </data>
   <data name="MemberRef_MethodDef" xml:space="preserve">
-    <value>_MethodDef</value>
+    <value>_متود Def</value>
   </data>
   <data name="MemberRef_MethodDef_ToolTip" xml:space="preserve">
     <value>راه اندازی کلاس به MethodDef</value>
@@ -611,7 +611,7 @@
     <value>_نام</value>
   </data>
   <data name="MemberRef_Type" xml:space="preserve">
-    <value>_Type</value>
+    <value>_نوع</value>
   </data>
   <data name="MemberRef_TypeSpec" xml:space="preserve">
     <value>Type_Spec</value>
@@ -674,7 +674,7 @@
     <value>متودهای دیگر</value>
   </data>
   <data name="ParamDef_Flags" xml:space="preserve">
-    <value>Flags</value>
+    <value>پرچم ها</value>
   </data>
   <data name="ParamDef_Flags_In" xml:space="preserve">
     <value>_In</value>
@@ -899,7 +899,7 @@
     <value>تبدیل به آرایه تک بعدی، حد پایین صفر</value>
   </data>
   <data name="TypeSigCreator_Type" xml:space="preserve">
-    <value>_Type</value>
+    <value>_نوع</value>
   </data>
   <data name="TypeSigCreator_Type_ToolTip" xml:space="preserve">
     <value>افزودن یک type</value>
@@ -1704,7 +1704,7 @@
     <value>_رنگ شفاف</value>
   </data>
   <data name="Resource_Type" xml:space="preserve">
-    <value>_Type</value>
+    <value>_نوع</value>
   </data>
   <data name="Resource_Value" xml:space="preserve">
     <value>_مقدار</value>
@@ -2019,7 +2019,7 @@
     <value>تایپ</value>
   </data>
   <data name="Flags" xml:space="preserve">
-    <value>Flags</value>
+    <value>پرچم ها</value>
   </data>
   <data name="MethodBody_Column_OpCode" xml:space="preserve">
     <value>OpCode</value>
@@ -2292,10 +2292,10 @@
     <value>کامپایلر</value>
   </data>
   <data name="ReplaceNopsInstrCommand" xml:space="preserve">
-    <value>_Replace with NOPs</value>
+    <value>_جایگزین NOP شود</value>
   </data>
   <data name="ReplaceNopsInstrsCommand" xml:space="preserve">
-    <value>_Replace with NOPs</value>
+    <value>_جایگزین NOP شود</value>
   </data>
   <data name="Type_Flags_Accessibility" xml:space="preserve">
     <value>دسترسی</value>

@@ -148,13 +148,13 @@
     <value>Versión de.NET</value>
   </data>
   <data name="AssemblyDlg_Main_HashAlgorithm" xml:space="preserve">
-    <value>Algoritmo Hash</value>
+    <value>Algoritmo _Hash</value>
   </data>
   <data name="AssemblyDlg_Main_Name" xml:space="preserve">
-    <value>Nombre</value>
+    <value>_Nombre</value>
   </data>
   <data name="AssemblyDlg_Main_ProcessorArch" xml:space="preserve">
-    <value>Arquitectura de procesador</value>
+    <value>Arquitectura de proce_sador</value>
   </data>
   <data name="AssemblyDlg_Main_PublicKey" xml:space="preserve">
     <value>Clave _Pública</value>
@@ -163,13 +163,13 @@
     <value>_Versión</value>
   </data>
   <data name="Button_Add" xml:space="preserve">
-    <value>Añadir</value>
+    <value>_Añadir</value>
   </data>
   <data name="Button_Add2" xml:space="preserve">
-    <value>Añadir...</value>
+    <value>_Añadir...</value>
   </data>
   <data name="Button_Cancel" xml:space="preserve">
-    <value>Cancelar</value>
+    <value>_Cancelar</value>
   </data>
   <data name="Button_Delete" xml:space="preserve">
     <value>Eliminar</value>
@@ -184,7 +184,7 @@
     <value>_Eliminar</value>
   </data>
   <data name="Button_RestoreSettings" xml:space="preserve">
-    <value>Restablecer</value>
+    <value>_Restablecer</value>
   </data>
   <data name="CA_NA_Name" xml:space="preserve">
     <value>_Nombre</value>
@@ -404,7 +404,7 @@
     <value>_Invocar...</value>
   </data>
   <data name="Event_Name" xml:space="preserve">
-    <value>Nombre</value>
+    <value>_Nombre</value>
   </data>
   <data name="Event_RemoveMethod" xml:space="preserve">
     <value>_Eliminar...</value>
@@ -425,7 +425,7 @@
     <value>Valor inicial</value>
   </data>
   <data name="Field_Name" xml:space="preserve">
-    <value>Nombre</value>
+    <value>_Nombre</value>
   </data>
   <data name="Field_Offset" xml:space="preserve">
     <value>Desplazamiento</value>
@@ -452,7 +452,7 @@
     <value>Solo se usa si la versión del encabezado MD es 1.1 (0x0101). Nunca es 1.1, así que ignora el tipo</value>
   </data>
   <data name="GP_Name" xml:space="preserve">
-    <value>Nombre</value>
+    <value>_Nombre</value>
   </data>
   <data name="GP_Number" xml:space="preserve">
     <value>N_úmero</value>
@@ -509,7 +509,7 @@
     <value>Mó_dulo</value>
   </data>
   <data name="ImplMap_Name" xml:space="preserve">
-    <value>Nombre</value>
+    <value>_Nombre</value>
   </data>
   <data name="MainTab" xml:space="preserve">
     <value>Principal</value>
@@ -608,7 +608,7 @@
     <value>Inicializar la clase a un Módulo referencia</value>
   </data>
   <data name="MemberRef_Name" xml:space="preserve">
-    <value>Nombre</value>
+    <value>_Nombre</value>
   </data>
   <data name="MemberRef_Type" xml:space="preserve">
     <value>_Tipo</value>
@@ -686,7 +686,7 @@
     <value>S_alida</value>
   </data>
   <data name="ParamDef_Name" xml:space="preserve">
-    <value>Nombre</value>
+    <value>_Nombre</value>
   </data>
   <data name="ParamDef_Sequence" xml:space="preserve">
     <value>_Secuencia</value>
@@ -1562,7 +1562,7 @@
     <value>Firma</value>
   </data>
   <data name="Method_Name" xml:space="preserve">
-    <value>Nombre</value>
+    <value>_Nombre</value>
   </data>
   <data name="Module_DotNetVersion" xml:space="preserve">
     <value>Versión de.NET</value>
@@ -1595,13 +1595,13 @@
     <value>Mover tipos al espacio de nombres vacío</value>
   </data>
   <data name="Namespace_Name" xml:space="preserve">
-    <value>Nombre</value>
+    <value>_Nombre</value>
   </data>
   <data name="NetModule_DotNetVersion" xml:space="preserve">
     <value>Versión de.NET</value>
   </data>
   <data name="NetModule_Name" xml:space="preserve">
-    <value>Nombre</value>
+    <value>_Nombre</value>
   </data>
   <data name="NodesUseHexEditorMsg" xml:space="preserve">
     <value>Todos los nodos de árbol abajo usan el editor hexadecimal para modificar el archivo PE</value>
@@ -1637,7 +1637,7 @@
     <value>Getters</value>
   </data>
   <data name="Property_Name" xml:space="preserve">
-    <value>Nombre</value>
+    <value>_Nombre</value>
   </data>
   <data name="Property_OtherMethods" xml:space="preserve">
     <value>Otros métodos</value>
@@ -1694,7 +1694,7 @@
     <value>_Data</value>
   </data>
   <data name="Resource_Name" xml:space="preserve">
-    <value>Nombre</value>
+    <value>_Nombre</value>
   </data>
   <data name="Resource_Size" xml:space="preserve">
     <value>_Tamaño</value>
@@ -1931,7 +1931,7 @@
     <value>Tamaño de la C_lase</value>
   </data>
   <data name="Type_Name" xml:space="preserve">
-    <value>Nombre</value>
+    <value>_Nombre</value>
   </data>
   <data name="Type_Namespace" xml:space="preserve">
     <value>Espacio de N_ombre</value>

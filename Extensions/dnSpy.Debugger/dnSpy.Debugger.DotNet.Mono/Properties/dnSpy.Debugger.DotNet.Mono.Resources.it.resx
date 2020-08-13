@@ -205,7 +205,7 @@
     <value>Transizione nativa</value>
   </data>
   <data name="Error_RuntimeDoesNotSupportCallingGenericMethods" xml:space="preserve">
-    <value>Questo runtime non supporta la chiamata a metodi generic</value>
+    <value>Questo runtime non supporta la chiamata a metodi generici</value>
   </data>
   <data name="Error_CanNotWriteToThisArgument" xml:space="preserve">
     <value>E' impossibile scrive su 'this'</value>

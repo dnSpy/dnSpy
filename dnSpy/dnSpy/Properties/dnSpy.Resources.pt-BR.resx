@@ -832,7 +832,7 @@
     <value>Arquivos carregados:</value>
   </data>
   <data name="SearchWindow_SearchFrameworkAssemblies" xml:space="preserve">
-    <value>Search in framework assemblies</value>
+    <value>Pesquisar nos assemblies</value>
   </data>
   <data name="SearchWindow_Where_AllFiles" xml:space="preserve">
     <value>Todos os arquivos</value>
@@ -1817,13 +1817,13 @@ O Filtro pode ser alterado nas opções do Assembly Explorer.</value>
     <value>Mostrar Palavras-Chave de Tipo Intrínsecas</value>
   </data>
   <data name="ShowModuleNamesCommand" xml:space="preserve">
-    <value>Show _Module Names</value>
+    <value>Exibir _Nomes dos Módulos</value>
   </data>
   <data name="ShowNamespacesCommand" xml:space="preserve">
     <value>Mostrar Namespaces</value>
   </data>
   <data name="ShowParameterNamesCommand" xml:space="preserve">
-    <value>Show _Parameter Names</value>
+    <value>Mostrar Tipos de _Parâmetro</value>
   </data>
   <data name="ShowParameterTypesCommand2" xml:space="preserve">
     <value>Mostrar Tipos de Parâmetro</value>
@@ -1856,7 +1856,7 @@ O Filtro pode ser alterado nas opções do Assembly Explorer.</value>
     <value>Próximo _Marcador</value>
   </data>
   <data name="GoToNextBookmarkInDocumentCommand" xml:space="preserve">
-    <value>N_ext Bookmark In Document</value>
+    <value>Marcador S_eguinte No Documento</value>
   </data>
   <data name="GoToNextBookmarkWithSameLabelCommand" xml:space="preserve">
     <value>Próximo Marcador Com a Mesma Tag</value>
@@ -1865,7 +1865,7 @@ O Filtro pode ser alterado nas opções do Assembly Explorer.</value>
     <value>Marcador _Anterior</value>
   </data>
   <data name="GoToPreviousBookmarkInDocumentCommand" xml:space="preserve">
-    <value>P_revious Bookmark In Document</value>
+    <value>Marcador A_nterior No Documento</value>
   </data>
   <data name="GoToPreviousBookmarkWithSameLabelCommand" xml:space="preserve">
     <value>Marcador Anterior com a Mesma Tag</value>
@@ -1943,10 +1943,10 @@ O Filtro pode ser alterado nas opções do Assembly Explorer.</value>
     <value>Mostrar escala antes do registrador de índice</value>
   </data>
   <data name="DisassemblySettings_BranchLeadingZeroes" xml:space="preserve">
-    <value>Add leading zeroes (branches)</value>
+    <value>Adicionar zeros à esquerda (branches)</value>
   </data>
   <data name="DisassemblySettings_LeadingZeroes" xml:space="preserve">
-    <value>Add leading zeroes</value>
+    <value>Adicionar zeros à esquerda</value>
   </data>
   <data name="DisassemblySettings_ShowBranchSize" xml:space="preserve">
     <value>Mostrar tamanho do branch</value>
@@ -1958,13 +1958,13 @@ O Filtro pode ser alterado nas opções do Assembly Explorer.</value>
     <value>Mostrar bytes da instrução</value>
   </data>
   <data name="DisassemblySettings_ShowZeroDisplacements" xml:space="preserve">
-    <value>Show zero displacements</value>
+    <value>Mostrar zero deslocamentos</value>
   </data>
   <data name="DisassemblySettings_SignedImmediateOperands" xml:space="preserve">
-    <value>Signed numbers</value>
+    <value>Números de Linhas</value>
   </data>
   <data name="DisassemblySettings_SignedMemoryDisplacements" xml:space="preserve">
-    <value>Signed displacements</value>
+    <value>Deslocamentos assinados</value>
   </data>
   <data name="DisassemblySettings_SmallHexNumbersInDecimal" xml:space="preserve">
     <value>Mostrar números pequenos em decimal</value>
@@ -2006,7 +2006,7 @@ O Filtro pode ser alterado nas opções do Assembly Explorer.</value>
     <value>Sintaxe</value>
   </data>
   <data name="DisassemblySettings_NakedRegisters" xml:space="preserve">
-    <value>Naked registers</value>
+    <value>Cadastros embutidos</value>
   </data>
   <data name="DisassemblySettings_ShowMnemonicSizeSuffix" xml:space="preserve">
     <value>Sempre mostrar tamanho do sufixo mnemônico</value>

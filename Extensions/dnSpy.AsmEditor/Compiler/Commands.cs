@@ -219,7 +219,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			return BodyCommandUtils.GetStatements(documentViewer, documentViewer.Caret.Position.BufferPosition.Position, FindByTextPositionOptions.OuterMostStatement);
 		}
 
-		void ICommand.Execute(object parameter) => Execute(GetStatements());
-		bool ICommand.CanExecute(object parameter) => IsVisible(editCodeVMCreator, GetStatements());
+		void ICommand.Execute(object? parameter) => Execute(GetStatements());
+		bool ICommand.CanExecute(object? parameter) => IsVisible(editCodeVMCreator, GetStatements());
 	}
 }

@@ -1,4 +1,4 @@
-# dnSpy - [Latest release](https://github.com/0xd4d/dnSpy/releases) - [❤️ Donate](https://github.com/sponsors/0xd4d)
+# dnSpy - [Latest release](https://github.com/0xd4d/dnSpy/releases)
 
 dnSpy is a debugger and .NET assembly editor. You can use it to edit and debug assemblies even if you don't have any source code available. Main features:
 
@@ -12,6 +12,10 @@ See below for more features
 
 ![edit-code-animated](images/edit-code-animated.gif)
 
+## Binaries
+
+https://github.com/0xd4d/dnSpy/releases
+
 ## Building
 
 ```PS
@@ -20,6 +24,8 @@ cd dnSpy
 # or dotnet build
 ./build.ps1 -NoMsbuild
 ```
+
+To debug Unity games, you need this repo too: https://github.com/dnSpy/dnSpy-Unity-mono (or get the binaries from https://github.com/0xd4d/dnSpy/releases/unity)
 
 # Debugger
 

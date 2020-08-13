@@ -43,7 +43,7 @@ namespace dnSpy.Text.Editor.Operations {
 		public bool TryGetTextViewUndoManager(IDsWpfTextView textView, [NotNullWhen(true)] out ITextViewUndoManager? manager) {
 			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
-			return textView.Properties.TryGetProperty(textViewUndoManagerKey, out manager);
+			return textView.Properties.TryGetProperty(textViewUndoManagerKey, out manager!);
 		}
 
 		public void RemoveTextViewUndoManager(IDsWpfTextView textView) {

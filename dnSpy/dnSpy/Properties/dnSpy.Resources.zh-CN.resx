@@ -148,7 +148,7 @@
     <value>程序集资源管理器</value>
   </data>
   <data name="BaseTypeFolder" xml:space="preserve">
-    <value>基类型和接口</value>
+    <value>基类和接口</value>
   </data>
   <data name="Button_Cancel" xml:space="preserve">
     <value>取消(_C)</value>
@@ -2058,7 +2058,7 @@
     <value>类型</value>
   </data>
   <data name="NumberBaseFormatString" xml:space="preserve">
-    <value>基础 {0}:</value>
+    <value>基数 {0}:</value>
   </data>
   <data name="RawValue" xml:space="preserve">
     <value>原始:</value>

@@ -265,7 +265,7 @@ namespace dnSpy.ToolWindows {
 
 		bool CanShowWindowPositionMenu => true;
 
-		void ShowWindowPositionMenu(object uiObj) {
+		void ShowWindowPositionMenu(object? uiObj) {
 			var fe = uiObj as FrameworkElement;
 			Debug2.Assert(!(fe is null));
 			if (fe is null)

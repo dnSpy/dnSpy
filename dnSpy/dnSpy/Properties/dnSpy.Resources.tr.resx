@@ -265,7 +265,7 @@
     <value>Satıra git</value>
   </data>
   <data name="GoToReferenceCommand" xml:space="preserve">
-    <value>Refesansa Git</value>
+    <value>Referansı izle</value>
   </data>
   <data name="GoToReferenceKey" xml:space="preserve">
     <value>Çift tıklayın</value>
@@ -2064,7 +2064,7 @@ Filtre Assembly Explorer seçeneklerinden değiştirilebilir.</value>
     <value>Son_Dosyalar</value>
   </data>
   <data name="ToolTip_Instruction" xml:space="preserve">
-    <value>Instruction</value>
+    <value>Talimat</value>
   </data>
   <data name="ToolTip_OpCode" xml:space="preserve">
     <value>Op Kodu</value>

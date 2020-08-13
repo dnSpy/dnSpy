@@ -144,7 +144,7 @@ namespace dnSpy.Disassembly.X86 {
 						switch (instr.MemoryDisplSize) {
 						case 2:
 						case 4: displ = instr.MemoryDisplacement; break;
-						case 8: displ = (ulong)(int)instr.MemoryDisplacement; break;
+						case 8: displ = instr.MemoryDisplacement64; break;
 						default:
 							Debug.Fail($"Unknown mem displ size: {instr.MemoryDisplSize}");
 							goto case 8;

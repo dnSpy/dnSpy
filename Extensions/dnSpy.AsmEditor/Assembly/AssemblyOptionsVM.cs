@@ -197,7 +197,7 @@ namespace dnSpy.AsmEditor.Assembly {
 			VersionMinor = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged(nameof(AssemblyFullName)); }, true);
 			VersionBuild = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged(nameof(AssemblyFullName)); }, true);
 			VersionRevision = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged(nameof(AssemblyFullName)); }, true);
-			PublicKey = new HexStringVM(a => { HasErrorUpdated(); OnPropertyChanged(nameof(AssemblyFullName)); UpdatePublicKeyFlag(); }) { UpperCaseHex = false };
+			PublicKey = new HexStringVM(a => { HasErrorUpdated(); OnPropertyChanged(nameof(AssemblyFullName)); UpdatePublicKeyFlag(); }) { UppercaseHex = false };
 			CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerService);
 			DeclSecuritiesVM = new DeclSecuritiesVM(ownerModule, decompilerService, null, null);
 			Reinitialize();

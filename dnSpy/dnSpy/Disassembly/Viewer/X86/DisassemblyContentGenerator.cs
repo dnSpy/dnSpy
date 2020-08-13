@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using dnSpy.Contracts.Disassembly;
 using dnSpy.Contracts.Disassembly.Viewer;
 using dnSpy.Contracts.Text;
@@ -36,7 +37,7 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 			readonly Dictionary<(Code code, string mnemonic, CpuidFeature[] cpuidFeatures), MnemonicReference> mnemonicDict = new Dictionary<(Code code, string mnemonic, CpuidFeature[] cpuidFeatures), MnemonicReference>(new MnemonicComparer());
 
 			sealed class MnemonicComparer : IEqualityComparer<(Code code, string mnemonic, CpuidFeature[] cpuidFeatures)> {
-				public bool Equals((Code code, string mnemonic, CpuidFeature[] cpuidFeatures) x, (Code code, string mnemonic, CpuidFeature[] cpuidFeatures) y) {
+				public bool Equals([AllowNull] (Code code, string mnemonic, CpuidFeature[] cpuidFeatures) x, [AllowNull] (Code code, string mnemonic, CpuidFeature[] cpuidFeatures) y) {
 					if (x.code != y.code)
 						return false;
 					if (x.mnemonic != y.mnemonic)
@@ -52,7 +53,7 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 					return true;
 				}
 
-				public int GetHashCode((Code code, string mnemonic, CpuidFeature[] cpuidFeatures) obj) =>
+				public int GetHashCode([DisallowNull] (Code code, string mnemonic, CpuidFeature[] cpuidFeatures) obj) =>
 					(int)obj.code ^ StringComparer.Ordinal.GetHashCode(obj.mnemonic);
 			}
 
@@ -229,7 +230,7 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 			WriteComment(output, commentPrefix, GetCodeSizeString(blocks));
 			output.Write(Environment.NewLine, BoxedTextColor.Text);
 
-			bool upperCaseHex = (formatterOptions & InternalFormatterOptions.UpperCaseHex) != 0;
+			bool uppercaseHex = (formatterOptions & InternalFormatterOptions.UppercaseHex) != 0;
 			var variables = codeInfo?.Variables ?? Array.Empty<X86Variable>();
 			if (variables.Length != 0) {
 				var sb = new System.Text.StringBuilder();
@@ -256,9 +257,9 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 						sb.Append("???");
 						sb.Append(' ');
 					}
-					sb.Append(FormatAddress(bitness, varInfo.LiveAddress, upperCaseHex));
+					sb.Append(FormatAddress(bitness, varInfo.LiveAddress, uppercaseHex));
 					sb.Append('-');
-					sb.Append(FormatAddress(bitness, varInfo.LiveAddress + varInfo.LiveLength, upperCaseHex));
+					sb.Append(FormatAddress(bitness, varInfo.LiveAddress + varInfo.LiveLength, uppercaseHex));
 					sb.Append(' ');
 					switch (varInfo.LocationKind) {
 					case X86VariableLocationKind.Other:
@@ -281,7 +282,7 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 							sb.Append('+');
 						if (memOffs != 0) {
 							sb.Append(formatter.Options.HexPrefix ?? string.Empty);
-							sb.Append(memOffs.ToString(upperCaseHex ? "X2" : "x2"));
+							sb.Append(memOffs.ToString(uppercaseHex ? "X2" : "x2"));
 							sb.Append(formatter.Options.HexSuffix ?? string.Empty);
 						}
 						sb.Append(']');
@@ -315,7 +316,7 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 				for (int j = 0; j < instrs.Length; j++) {
 					ref var instr = ref instrs[j].Instruction;
 					if ((formatterOptions & InternalFormatterOptions.InstructionAddresses) != 0) {
-						var address = FormatAddress(bitness, instr.IP, upperCaseHex);
+						var address = FormatAddress(bitness, instr.IP, uppercaseHex);
 						output.Write(address, BoxedTextColor.AsmAddress);
 						output.Write(" ", BoxedTextColor.Text);
 					}
@@ -327,7 +328,7 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 						var codeBytes = code.Array!;
 						for (int k = 0; k < code.Count; k++) {
 							byte b = codeBytes[k + code.Offset];
-							output.Write(b.ToString(upperCaseHex ? "X2" : "x2"), BoxedTextColor.AsmHexBytes);
+							output.Write(b.ToString(uppercaseHex ? "X2" : "x2"), BoxedTextColor.AsmHexBytes);
 						}
 						int missingBytes = HEXBYTES_COLUMN_BYTE_LENGTH - code.Count;
 						for (int k = 0; k < missingBytes; k++)
@@ -356,16 +357,16 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 			return codeSize;
 		}
 
-		static string FormatAddress(int bitness, ulong address, bool upperCaseHex) {
+		static string FormatAddress(int bitness, ulong address, bool uppercaseHex) {
 			switch (bitness) {
 			case 16:
-				return address.ToString(upperCaseHex ? "X4" : "x4");
+				return address.ToString(uppercaseHex ? "X4" : "x4");
 
 			case 32:
-				return address.ToString(upperCaseHex ? "X8" : "x8");
+				return address.ToString(uppercaseHex ? "X8" : "x8");
 
 			case 64:
-				return address.ToString(upperCaseHex ? "X16" : "x16");
+				return address.ToString(uppercaseHex ? "X16" : "x16");
 
 			default:
 				Debug.Fail($"Unknown bitness: {bitness}");

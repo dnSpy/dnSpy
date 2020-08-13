@@ -975,7 +975,7 @@
     <value>Imagen al azar</value>
   </data>
   <data name="BgImgSettings_Reset" xml:space="preserve">
-    <value>Restablecer</value>
+    <value>_Restablecer</value>
   </data>
   <data name="BgImgSettings_Zoom" xml:space="preserve">
     <value>Zoom %</value>
@@ -1292,7 +1292,7 @@
     <value>Configuración _Predeterminada</value>
   </data>
   <data name="Button_RestoreSettings" xml:space="preserve">
-    <value>Restablecer</value>
+    <value>_Restablecer</value>
   </data>
   <data name="BytesPerLineCommand" xml:space="preserve">
     <value>Bytes por línea</value>

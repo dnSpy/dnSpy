@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
@@ -376,7 +377,7 @@ namespace dnSpy.Decompiler {
 		sealed class MethodSourceStatementComparer : IComparer<MethodSourceStatement> {
 			public static readonly MethodSourceStatementComparer Instance = new MethodSourceStatementComparer();
 
-			public int Compare(MethodSourceStatement x, MethodSourceStatement y) {
+			public int Compare([AllowNull] MethodSourceStatement x, [AllowNull] MethodSourceStatement y) {
 				var tsx = x.Statement.TextSpan;
 				var tsy = y.Statement.TextSpan;
 				int c = tsx.Start - tsy.Start;

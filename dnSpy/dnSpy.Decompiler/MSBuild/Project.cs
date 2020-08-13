@@ -483,6 +483,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			var set = TryCreateResourceElementSet(module, er);
 			if (set is null)
 				return null;
+			Debug2.Assert(!(er is null));
 
 			var dirName = Path.GetDirectoryName(nonSatFile.Filename)!;
 			var dir = Directory.Length + 1 > dirName.Length ? string.Empty : dirName.Substring(Directory.Length + 1);
@@ -492,7 +493,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			return CreateResXFile(module, er, set, filename, string.Empty, true);
 		}
 
-		static ResourceElementSet? TryCreateResourceElementSet(ModuleDef module, EmbeddedResource er) {
+		static ResourceElementSet? TryCreateResourceElementSet(ModuleDef module, EmbeddedResource? er) {
 			if (er is null)
 				return null;
 			if (!ResourceReader.CouldBeResourcesFile(er.CreateReader()))

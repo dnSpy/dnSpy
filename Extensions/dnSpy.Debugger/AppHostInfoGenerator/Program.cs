@@ -370,13 +370,13 @@ namespace AppHostInfoGenerator {
 			public static readonly AppHostInfoDupeEqualityComparer Instance = new AppHostInfoDupeEqualityComparer();
 			AppHostInfoDupeEqualityComparer() { }
 
-			public bool Equals(AppHostInfo x, AppHostInfo y) =>
+			public bool Equals([AllowNull] AppHostInfo x, [AllowNull] AppHostInfo y) =>
 				x.RelPathOffset == y.RelPathOffset &&
 				x.HashDataOffset == y.HashDataOffset &&
 				x.HashDataSize == y.HashDataSize &&
 				AppHostInfoEqualityComparer.ByteArrayEquals(x.Hash, y.Hash);
 
-			public int GetHashCode(AppHostInfo obj) =>
+			public int GetHashCode([DisallowNull] AppHostInfo obj) =>
 				(int)(obj.RelPathOffset ^ obj.HashDataOffset ^ obj.HashDataSize) ^ AppHostInfoEqualityComparer.ByteArrayGetHashCode(obj.Hash);
 		}
 
@@ -384,12 +384,12 @@ namespace AppHostInfoGenerator {
 			public static readonly AppHostInfoEqualityComparer Instance = new AppHostInfoEqualityComparer();
 			AppHostInfoEqualityComparer() { }
 
-			public bool Equals(AppHostInfo x, AppHostInfo y) =>
+			public bool Equals([AllowNull] AppHostInfo x, [AllowNull] AppHostInfo y) =>
 				x.HashDataOffset == y.HashDataOffset &&
 				x.HashDataSize == y.HashDataSize &&
 				ByteArrayEquals(x.Hash, y.Hash);
 
-			public int GetHashCode(AppHostInfo obj) =>
+			public int GetHashCode([DisallowNull] AppHostInfo obj) =>
 				(int)(obj.HashDataOffset ^ obj.HashDataSize) ^ ByteArrayGetHashCode(obj.Hash);
 
 			internal static bool ByteArrayEquals(byte[] a, byte[] b) {

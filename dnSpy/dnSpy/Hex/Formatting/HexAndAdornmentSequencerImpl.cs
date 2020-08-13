@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Hex.Formatting;
@@ -108,7 +109,7 @@ namespace dnSpy.Hex.Formatting {
 
 		sealed class AdornmentElementAndSpanComparer : IComparer<AdornmentElementAndSpan> {
 			public static readonly AdornmentElementAndSpanComparer Instance = new AdornmentElementAndSpanComparer();
-			public int Compare(AdornmentElementAndSpan x, AdornmentElementAndSpan y) {
+			public int Compare([AllowNull] AdornmentElementAndSpan x, [AllowNull] AdornmentElementAndSpan y) {
 				int c = x.Span.Start - y.Span.Start;
 				if (c != 0)
 					return c;

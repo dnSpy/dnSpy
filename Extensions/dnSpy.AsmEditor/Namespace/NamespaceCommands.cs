@@ -388,7 +388,7 @@ namespace dnSpy.AsmEditor.Namespace {
 		readonly string newName;
 		readonly string origName;
 		readonly NamespaceNode nsNode;
-		readonly NamespaceNode existingNsNode;
+		readonly NamespaceNode? existingNsNode;
 		readonly DocumentTreeNodeData origParentNode;
 		readonly int origParentChildIndex;
 		readonly UTF8String[] typeNamespaces;
@@ -409,7 +409,7 @@ namespace dnSpy.AsmEditor.Namespace {
 			this.newName = newName;
 			origName = nsNode.Name;
 			this.nsNode = nsNode;
-			existingNsNode = (NamespaceNode)nsNode.TreeNode.Parent!.DataChildren.FirstOrDefault(a => a is NamespaceNode && newName == ((NamespaceNode)a).Name);
+			existingNsNode = (NamespaceNode?)nsNode.TreeNode.Parent!.DataChildren.FirstOrDefault(a => a is NamespaceNode && newName == ((NamespaceNode)a).Name);
 
 			var module = nsNode.GetModule();
 			Debug2.Assert(!(module is null));

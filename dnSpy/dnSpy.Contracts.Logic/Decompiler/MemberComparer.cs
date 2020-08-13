@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using dnlib.DotNet;
 
 namespace dnSpy.Contracts.Decompiler {
@@ -26,14 +27,20 @@ namespace dnSpy.Contracts.Decompiler {
 	/// Member comparer base class
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	public abstract class MemberRefComparer<T> : IComparer<T> where T : IMemberRef {
+	public abstract class MemberRefComparer<T> : IComparer<T> where T : class, IMemberRef {
 		/// <summary>
 		/// Compares two instances
 		/// </summary>
 		/// <param name="x">First instance to compare</param>
 		/// <param name="y">Second instance to compare</param>
 		/// <returns></returns>
-		public int Compare(T x, T y) {
+		public int Compare([AllowNull] T x, [AllowNull] T y) {
+			if ((object?)x == y)
+				return 0;
+			if (x is null)
+				return -1;
+			if (y is null)
+				return 1;
 			int c = StringComparer.OrdinalIgnoreCase.Compare(x.Name, y.Name);
 			if (c != 0) return c;
 			c = x.MDToken.Raw.CompareTo(y.MDToken.Raw);
@@ -107,7 +114,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="x">First instance to compare</param>
 		/// <param name="y">Second instance to compare</param>
 		/// <returns></returns>
-		public int Compare(MethodDef x, MethodDef y) => MethodRefComparer.Instance.Compare(x, y);
+		public int Compare([AllowNull] MethodDef x, [AllowNull] MethodDef y) => MethodRefComparer.Instance.Compare(x, y);
 	}
 
 	/// <summary>
@@ -125,7 +132,13 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="x">First instance to compare</param>
 		/// <param name="y">Second instance to compare</param>
 		/// <returns></returns>
-		public int Compare(IMethod x, IMethod y) {
+		public int Compare([AllowNull] IMethod x, [AllowNull] IMethod y) {
+			if ((object?)x == y)
+				return 0;
+			if (x is null)
+				return -1;
+			if (y is null)
+				return 1;
 			int c = StringComparer.OrdinalIgnoreCase.Compare(x.Name, y.Name);
 			if (c != 0)
 				return c;
@@ -171,7 +184,13 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="x">First instance to compare</param>
 		/// <param name="y">Second instance to compare</param>
 		/// <returns></returns>
-		public int Compare(IMethod x, IMethod y) {
+		public int Compare([AllowNull] IMethod x, [AllowNull] IMethod y) {
+			if ((object?)x == y)
+				return 0;
+			if (x is null)
+				return -1;
+			if (y is null)
+				return 1;
 			string xn = x.Name;
 			string yn = y.Name;
 			int xacc = GetAccessor(xn, out var xPropName);
@@ -216,7 +235,13 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="x">First instance to compare</param>
 		/// <param name="y">Second instance to compare</param>
 		/// <returns></returns>
-		public int Compare(IMethod x, IMethod y) {
+		public int Compare([AllowNull] IMethod x, [AllowNull] IMethod y) {
+			if ((object?)x == y)
+				return 0;
+			if (x is null)
+				return -1;
+			if (y is null)
+				return 1;
 			string xn = x.Name;
 			string yn = y.Name;
 			int xacc = GetAccessor(xn, out var xPropName);

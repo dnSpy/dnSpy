@@ -30,7 +30,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 
 		public OpenAssembly(IDsDocumentService documentService) => this.documentService = documentService;
 
-		public IDsDocument Open() => Open(false).FirstOrDefault();
+		public IDsDocument? Open() => Open(false).FirstOrDefault();
 		public IDsDocument[] OpenMany() => Open(true);
 
 		IDsDocument[] Open(bool many) {

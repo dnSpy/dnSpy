@@ -91,8 +91,8 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 			return true;
 		}
 		static readonly AssemblyRef SystemDrawingAsm = new AssemblyRefUser(new AssemblyNameInfo("System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"));
-		static readonly TypeRef SystemDrawingBitmap = new TypeRefUser(null, "System.Drawing", "Bitmap", SystemDrawingAsm);
-		static readonly TypeRef SystemDrawingIcon = new TypeRefUser(null, "System.Drawing", "Icon", SystemDrawingAsm);
+		internal static readonly TypeRef SystemDrawingBitmap = new TypeRefUser(null, "System.Drawing", "Bitmap", SystemDrawingAsm);
+		internal static readonly TypeRef SystemDrawingIcon = new TypeRefUser(null, "System.Drawing", "Icon", SystemDrawingAsm);
 
 		/// <summary>
 		/// Serializes the image
@@ -104,14 +104,19 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 			bool isIcon = BitConverter.ToUInt32(data, 0) == 0x00010000;
 
 			object obj;
-			if (isIcon)
+			string typeName;
+			if (isIcon) {
 				obj = new System.Drawing.Icon(new MemoryStream(data));
-			else
+				typeName = SystemDrawingIcon.AssemblyQualifiedName;
+			}
+			else {
 				obj = new System.Drawing.Bitmap(new MemoryStream(data));
+				typeName = SystemDrawingBitmap.AssemblyQualifiedName;
+			}
 
 			return new ResourceElement {
 				Name = resElem.Name,
-				ResourceData = new BinaryResourceData(new UserResourceType(obj.GetType().AssemblyQualifiedName, ResourceTypeCode.UserTypes), SerializationUtilities.Serialize(obj)),
+				ResourceData = new BinaryResourceData(new UserResourceType(typeName, ResourceTypeCode.UserTypes), SerializationUtilities.Serialize(obj)),
 			};
 		}
 	}

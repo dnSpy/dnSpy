@@ -115,7 +115,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 		}
 
-		static ResourcesFolderNode GetResourceListTreeNode(ModuleDocumentNode modNode) {
+		static ResourcesFolderNode? GetResourceListTreeNode(ModuleDocumentNode modNode) {
 			modNode.TreeNode.EnsureChildrenLoaded();
 			return modNode.TreeNode.DataChildren.OfType<ResourcesFolderNode>().FirstOrDefault();
 		}

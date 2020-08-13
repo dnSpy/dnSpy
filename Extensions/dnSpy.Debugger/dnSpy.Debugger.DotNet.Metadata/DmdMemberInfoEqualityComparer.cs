@@ -18,6 +18,7 @@
 */
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace dnSpy.Debugger.DotNet.Metadata {
 	/// <summary>
@@ -74,30 +75,30 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		public DmdMemberInfoEqualityComparer(DmdSigComparerOptions options) => this.options = options;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-		public bool Equals(DmdMemberInfo? x, DmdMemberInfo? y) => new DmdSigComparer(options).Equals(x, y);
-		public int GetHashCode(DmdMemberInfo? obj) => new DmdSigComparer(options).GetHashCode(obj);
-		public bool Equals(DmdType? x, DmdType? y) => new DmdSigComparer(options).Equals(x, y);
-		public int GetHashCode(DmdType? obj) => new DmdSigComparer(options).GetHashCode(obj);
-		public bool Equals(DmdFieldInfo? x, DmdFieldInfo? y) => new DmdSigComparer(options).Equals(x, y);
-		public int GetHashCode(DmdFieldInfo? obj) => new DmdSigComparer(options).GetHashCode(obj);
-		public bool Equals(DmdMethodBase? x, DmdMethodBase? y) => new DmdSigComparer(options).Equals(x, y);
-		public int GetHashCode(DmdMethodBase? obj) => new DmdSigComparer(options).GetHashCode(obj);
-		public bool Equals(DmdConstructorInfo? x, DmdConstructorInfo? y) => new DmdSigComparer(options).Equals(x, y);
-		public int GetHashCode(DmdConstructorInfo? obj) => new DmdSigComparer(options).GetHashCode(obj);
-		public bool Equals(DmdMethodInfo? x, DmdMethodInfo? y) => new DmdSigComparer(options).Equals(x, y);
-		public int GetHashCode(DmdMethodInfo? obj) => new DmdSigComparer(options).GetHashCode(obj);
-		public bool Equals(DmdPropertyInfo? x, DmdPropertyInfo? y) => new DmdSigComparer(options).Equals(x, y);
-		public int GetHashCode(DmdPropertyInfo? obj) => new DmdSigComparer(options).GetHashCode(obj);
-		public bool Equals(DmdEventInfo? x, DmdEventInfo? y) => new DmdSigComparer(options).Equals(x, y);
-		public int GetHashCode(DmdEventInfo? obj) => new DmdSigComparer(options).GetHashCode(obj);
-		public bool Equals(DmdParameterInfo? x, DmdParameterInfo? y) => new DmdSigComparer(options).Equals(x, y);
-		public int GetHashCode(DmdParameterInfo? obj) => new DmdSigComparer(options).GetHashCode(obj);
-		public bool Equals(DmdMethodSignature? x, DmdMethodSignature? y) => new DmdSigComparer(options).Equals(x, y);
-		public int GetHashCode(DmdMethodSignature? obj) => new DmdSigComparer(options).GetHashCode(obj);
-		public bool Equals(IDmdAssemblyName? x, IDmdAssemblyName? y) => new DmdSigComparer(options).Equals(x, y);
-		public int GetHashCode(IDmdAssemblyName? obj) => new DmdSigComparer(options).GetHashCode(obj);
-		public bool Equals(DmdCustomModifier x, DmdCustomModifier y) => new DmdSigComparer(options).Equals(x, y);
-		public int GetHashCode(DmdCustomModifier obj) => new DmdSigComparer(options).GetHashCode(obj);
+		public bool Equals([AllowNull] DmdMemberInfo? x, [AllowNull] DmdMemberInfo? y) => new DmdSigComparer(options).Equals(x, y);
+		public int GetHashCode([DisallowNull] DmdMemberInfo? obj) => new DmdSigComparer(options).GetHashCode(obj);
+		public bool Equals([AllowNull] DmdType? x, [AllowNull] DmdType? y) => new DmdSigComparer(options).Equals(x, y);
+		public int GetHashCode([DisallowNull] DmdType? obj) => new DmdSigComparer(options).GetHashCode(obj);
+		public bool Equals([AllowNull] DmdFieldInfo? x, [AllowNull] DmdFieldInfo? y) => new DmdSigComparer(options).Equals(x, y);
+		public int GetHashCode([DisallowNull] DmdFieldInfo? obj) => new DmdSigComparer(options).GetHashCode(obj);
+		public bool Equals([AllowNull] DmdMethodBase? x, [AllowNull] DmdMethodBase? y) => new DmdSigComparer(options).Equals(x, y);
+		public int GetHashCode([DisallowNull] DmdMethodBase? obj) => new DmdSigComparer(options).GetHashCode(obj);
+		public bool Equals([AllowNull] DmdConstructorInfo? x, [AllowNull] DmdConstructorInfo? y) => new DmdSigComparer(options).Equals(x, y);
+		public int GetHashCode([DisallowNull] DmdConstructorInfo? obj) => new DmdSigComparer(options).GetHashCode(obj);
+		public bool Equals([AllowNull] DmdMethodInfo? x, [AllowNull] DmdMethodInfo? y) => new DmdSigComparer(options).Equals(x, y);
+		public int GetHashCode([DisallowNull] DmdMethodInfo? obj) => new DmdSigComparer(options).GetHashCode(obj);
+		public bool Equals([AllowNull] DmdPropertyInfo? x, [AllowNull] DmdPropertyInfo? y) => new DmdSigComparer(options).Equals(x, y);
+		public int GetHashCode([DisallowNull] DmdPropertyInfo? obj) => new DmdSigComparer(options).GetHashCode(obj);
+		public bool Equals([AllowNull] DmdEventInfo? x, [AllowNull] DmdEventInfo? y) => new DmdSigComparer(options).Equals(x, y);
+		public int GetHashCode([DisallowNull] DmdEventInfo? obj) => new DmdSigComparer(options).GetHashCode(obj);
+		public bool Equals([AllowNull] DmdParameterInfo? x, [AllowNull] DmdParameterInfo? y) => new DmdSigComparer(options).Equals(x, y);
+		public int GetHashCode([DisallowNull] DmdParameterInfo? obj) => new DmdSigComparer(options).GetHashCode(obj);
+		public bool Equals([AllowNull] DmdMethodSignature? x, [AllowNull] DmdMethodSignature? y) => new DmdSigComparer(options).Equals(x, y);
+		public int GetHashCode([DisallowNull] DmdMethodSignature? obj) => new DmdSigComparer(options).GetHashCode(obj);
+		public bool Equals([AllowNull] IDmdAssemblyName? x, [AllowNull] IDmdAssemblyName? y) => new DmdSigComparer(options).Equals(x, y);
+		public int GetHashCode([DisallowNull] IDmdAssemblyName? obj) => new DmdSigComparer(options).GetHashCode(obj);
+		public bool Equals([AllowNull] DmdCustomModifier x, [AllowNull] DmdCustomModifier y) => new DmdSigComparer(options).Equals(x, y);
+		public int GetHashCode([DisallowNull] DmdCustomModifier obj) => new DmdSigComparer(options).GetHashCode(obj);
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	}
 }

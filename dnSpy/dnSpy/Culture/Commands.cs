@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Menus;
@@ -84,7 +85,7 @@ namespace dnSpy.Culture {
 	sealed class LanguageInfoComparer : IComparer<LanguageInfo> {
 		public static readonly LanguageInfoComparer Instance = new LanguageInfoComparer();
 
-		public int Compare(LanguageInfo x, LanguageInfo y) {
+		public int Compare([AllowNull] LanguageInfo x, [AllowNull] LanguageInfo y) {
 			if (x == y)
 				return 0;
 			if (x is null)

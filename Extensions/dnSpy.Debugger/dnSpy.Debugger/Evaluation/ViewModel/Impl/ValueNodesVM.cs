@@ -224,7 +224,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 #endif
 
 			if (selectNodeKind != SelectNodeKind.None) {
-				ITreeNode node;
+				ITreeNode? node;
 				switch (selectNodeKind) {
 				case SelectNodeKind.Open:
 					node = rootNode.TreeNode.Children.FirstOrDefault();
@@ -486,7 +486,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			UI(() => DebuggerSettings_PropertyChanged_UI(e.PropertyName));
 
 		// UI thread
-		void DebuggerSettings_PropertyChanged_UI(string propertyName) {
+		void DebuggerSettings_PropertyChanged_UI(string? propertyName) {
 			valueNodesContext.UIDispatcher.VerifyAccess();
 			switch (propertyName) {
 			case nameof(DebuggerSettings.UseHexadecimal):
@@ -523,7 +523,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			UI(() => DbgEvalFormatterSettings_PropertyChanged_UI(e.PropertyName));
 
 		// UI thread
-		void DbgEvalFormatterSettings_PropertyChanged_UI(string propertyName) {
+		void DbgEvalFormatterSettings_PropertyChanged_UI(string? propertyName) {
 			valueNodesContext.UIDispatcher.VerifyAccess();
 			switch (propertyName) {
 			case nameof(DbgEvalFormatterSettings.ShowNamespaces):

@@ -72,7 +72,7 @@ namespace dnSpy.ToolWindows {
 			set => ((TabGroupService)tabGroupService).StackedContentState = value;
 		}
 
-		ITabGroup GetTabGroup(IToolWindowGroup g) => tabGroupService.TabGroups.FirstOrDefault(a => a.Tag == g);
+		ITabGroup? GetTabGroup(IToolWindowGroup g) => tabGroupService.TabGroups.FirstOrDefault(a => a.Tag == g);
 
 		public ToolWindowGroupService(ITabGroupService tabGroupService) {
 			this.tabGroupService = tabGroupService;

@@ -242,7 +242,7 @@ namespace dnSpy.Debugger.Impl {
 			RaiseCurrentObjectEvents_DbgThread(processEventArgs, runtimeEventArgs, threadEventArgs);
 		}
 
-		DbgProcessImpl GetProcess_NoLock(DbgProcessImpl? current, DbgProcessImpl @default) {
+		DbgProcessImpl? GetProcess_NoLock(DbgProcessImpl? current, DbgProcessImpl? @default) {
 			if (current is null)
 				return @default;
 			switch (current.State) {

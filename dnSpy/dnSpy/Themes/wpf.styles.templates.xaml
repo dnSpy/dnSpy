@@ -6804,18 +6804,18 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <CheckBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UpperCasePrefixes.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UpperCasePrefixes}"/>
-            <TextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UpperCasePrefixes.Disassembly, Mode=OneWay}" />
-            <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UpperCaseMnemonics.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UpperCaseMnemonics}"/>
-            <TextBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UpperCaseMnemonics.Disassembly, Mode=OneWay}" />
-            <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UpperCaseRegisters.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UpperCaseRegisters}"/>
-            <TextBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UpperCaseRegisters.Disassembly, Mode=OneWay}" />
-            <CheckBox Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UpperCaseKeywords.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UpperCaseKeywords}"/>
-            <TextBox Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UpperCaseKeywords.Disassembly, Mode=OneWay}" />
-            <CheckBox Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UpperCaseHex.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UpperCaseHex}"/>
-            <TextBox Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UpperCaseHex.Disassembly, Mode=OneWay}" />
-            <CheckBox Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UpperCaseAll.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UpperCaseAll}"/>
-            <TextBox Grid.Row="11" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UpperCaseAll.Disassembly, Mode=OneWay}" />
+            <CheckBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UppercasePrefixes.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UpperCasePrefixes}"/>
+            <TextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UppercasePrefixes.Disassembly, Mode=OneWay}" />
+            <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UppercaseMnemonics.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UpperCaseMnemonics}"/>
+            <TextBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UppercaseMnemonics.Disassembly, Mode=OneWay}" />
+            <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UppercaseRegisters.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UpperCaseRegisters}"/>
+            <TextBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UppercaseRegisters.Disassembly, Mode=OneWay}" />
+            <CheckBox Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UppercaseKeywords.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UpperCaseKeywords}"/>
+            <TextBox Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UppercaseKeywords.Disassembly, Mode=OneWay}" />
+            <CheckBox Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UppercaseHex.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UpperCaseHex}"/>
+            <TextBox Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UppercaseHex.Disassembly, Mode=OneWay}" />
+            <CheckBox Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UppercaseAll.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UpperCaseAll}"/>
+            <TextBox Grid.Row="11" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UppercaseAll.Disassembly, Mode=OneWay}" />
             <CheckBox Grid.Row="12" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding SpaceAfterOperandSeparator.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_SpaceAfterOperandSeparator}"/>
             <TextBox Grid.Row="13" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding SpaceAfterOperandSeparator.Disassembly, Mode=OneWay}" />
             <CheckBox Grid.Row="14" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding SpaceAfterMemoryBracket.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_SpaceAfterMemoryBracket}"/>
@@ -6931,18 +6931,18 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <CheckBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UpperCasePrefixes.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UpperCasePrefixes}"/>
-            <TextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UpperCasePrefixes.Disassembly, Mode=OneWay}" />
-            <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UpperCaseMnemonics.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UpperCaseMnemonics}"/>
-            <TextBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UpperCaseMnemonics.Disassembly, Mode=OneWay}" />
-            <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UpperCaseRegisters.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UpperCaseRegisters}"/>
-            <TextBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UpperCaseRegisters.Disassembly, Mode=OneWay}" />
-            <CheckBox Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UpperCaseKeywords.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UpperCaseKeywords}"/>
-            <TextBox Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UpperCaseKeywords.Disassembly, Mode=OneWay}" />
-            <CheckBox Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UpperCaseHex.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UpperCaseHex}"/>
-            <TextBox Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UpperCaseHex.Disassembly, Mode=OneWay}" />
-            <CheckBox Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UpperCaseAll.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UpperCaseAll}"/>
-            <TextBox Grid.Row="11" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UpperCaseAll.Disassembly, Mode=OneWay}" />
+            <CheckBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UppercasePrefixes.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UpperCasePrefixes}"/>
+            <TextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UppercasePrefixes.Disassembly, Mode=OneWay}" />
+            <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UppercaseMnemonics.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UpperCaseMnemonics}"/>
+            <TextBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UppercaseMnemonics.Disassembly, Mode=OneWay}" />
+            <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UppercaseRegisters.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UpperCaseRegisters}"/>
+            <TextBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UppercaseRegisters.Disassembly, Mode=OneWay}" />
+            <CheckBox Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UppercaseKeywords.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UpperCaseKeywords}"/>
+            <TextBox Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UppercaseKeywords.Disassembly, Mode=OneWay}" />
+            <CheckBox Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UppercaseHex.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UpperCaseHex}"/>
+            <TextBox Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UppercaseHex.Disassembly, Mode=OneWay}" />
+            <CheckBox Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UppercaseAll.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UpperCaseAll}"/>
+            <TextBox Grid.Row="11" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UppercaseAll.Disassembly, Mode=OneWay}" />
             <CheckBox Grid.Row="12" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding SpaceAfterOperandSeparator.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_SpaceAfterOperandSeparator}"/>
             <TextBox Grid.Row="13" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding SpaceAfterOperandSeparator.Disassembly, Mode=OneWay}" />
             <CheckBox Grid.Row="14" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding SpaceAfterMemoryBracket.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_SpaceAfterMemoryBracket}"/>
@@ -7052,22 +7052,22 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <CheckBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UpperCasePrefixes.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UpperCasePrefixes}"/>
-            <TextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UpperCasePrefixes.Disassembly, Mode=OneWay}" />
-            <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UpperCaseMnemonics.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UpperCaseMnemonics}"/>
-            <TextBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UpperCaseMnemonics.Disassembly, Mode=OneWay}" />
-            <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UpperCaseRegisters.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UpperCaseRegisters}"/>
-            <TextBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UpperCaseRegisters.Disassembly, Mode=OneWay}" />
-            <CheckBox Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UpperCaseHex.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UpperCaseHex}"/>
-            <TextBox Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UpperCaseHex.Disassembly, Mode=OneWay}" />
-            <CheckBox Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UpperCaseAll.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UpperCaseAll}"/>
-            <TextBox Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UpperCaseAll.Disassembly, Mode=OneWay}" />
+            <CheckBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UppercasePrefixes.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UpperCasePrefixes}"/>
+            <TextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UppercasePrefixes.Disassembly, Mode=OneWay}" />
+            <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UppercaseMnemonics.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UpperCaseMnemonics}"/>
+            <TextBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UppercaseMnemonics.Disassembly, Mode=OneWay}" />
+            <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UppercaseRegisters.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UpperCaseRegisters}"/>
+            <TextBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UppercaseRegisters.Disassembly, Mode=OneWay}" />
+            <CheckBox Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UppercaseHex.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UpperCaseHex}"/>
+            <TextBox Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UppercaseHex.Disassembly, Mode=OneWay}" />
+            <CheckBox Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UppercaseAll.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UpperCaseAll}"/>
+            <TextBox Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UppercaseAll.Disassembly, Mode=OneWay}" />
             <CheckBox Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding SpaceAfterOperandSeparator.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_SpaceAfterOperandSeparator}"/>
             <TextBox Grid.Row="11" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding SpaceAfterOperandSeparator.Disassembly, Mode=OneWay}" />
             <CheckBox Grid.Row="12" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding SpaceAfterMemoryBracket.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_SpaceAfterMemoryBracket}"/>
             <TextBox Grid.Row="13" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding SpaceAfterMemoryBracket.Disassembly, Mode=OneWay}" />
-            <CheckBox Grid.Row="14" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding SpaceAfterMemoryOperandComma.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_SpaceAfterMemoryOperandComma}"/>
-            <TextBox Grid.Row="15" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding SpaceAfterMemoryOperandComma.Disassembly, Mode=OneWay}" />
+            <CheckBox Grid.Row="14" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding GasSpaceAfterMemoryOperandComma.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_SpaceAfterMemoryOperandComma}"/>
+            <TextBox Grid.Row="15" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding GasSpaceAfterMemoryOperandComma.Disassembly, Mode=OneWay}" />
             <CheckBox Grid.Row="16" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding AlwaysShowScale.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_AlwaysShowScale}"/>
             <TextBox Grid.Row="17" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding AlwaysShowScale.Disassembly, Mode=OneWay}" />
             <CheckBox Grid.Row="18" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding AlwaysShowSegmentRegister.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_AlwaysShowSegmentRegister}"/>
@@ -7092,10 +7092,10 @@
             <TextBox Grid.Row="37" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UsePseudoOps.Disassembly, Mode=OneWay}" />
             <CheckBox Grid.Row="38" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding ShowSymbolAddress.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_ShowSymbolAddress}"/>
             <TextBox Grid.Row="39" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding ShowSymbolAddress.Disassembly, Mode=OneWay}" />
-            <CheckBox Grid.Row="40" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding NakedRegisters.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_NakedRegisters}"/>
-            <TextBox Grid.Row="41" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding NakedRegisters.Disassembly, Mode=OneWay}" />
-            <CheckBox Grid.Row="42" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding ShowMnemonicSizeSuffix.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_ShowMnemonicSizeSuffix}"/>
-            <TextBox Grid.Row="43" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding ShowMnemonicSizeSuffix.Disassembly, Mode=OneWay}" />
+            <CheckBox Grid.Row="40" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding GasNakedRegisters.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_NakedRegisters}"/>
+            <TextBox Grid.Row="41" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding GasNakedRegisters.Disassembly, Mode=OneWay}" />
+            <CheckBox Grid.Row="42" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding GasShowMnemonicSizeSuffix.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_ShowMnemonicSizeSuffix}"/>
+            <TextBox Grid.Row="43" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding GasShowMnemonicSizeSuffix.Disassembly, Mode=OneWay}" />
             <CheckBox Grid.Row="44" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UseHexNumbers.Value}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_UseHexNumbers}"/>
             <TextBox Grid.Row="45" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Background="Transparent" IsReadOnly="True" TextWrapping="NoWrap" Text="{Binding UseHexNumbers.Disassembly, Mode=OneWay}" />
             <Label Grid.Row="46" Grid.Column="0" Margin="-5 5 0 0" Target="{Binding ElementName=opColumnTextBox}" Content="{x:Static p:dnSpy_Resources.DisassemblySettings_OperandColumn}" />

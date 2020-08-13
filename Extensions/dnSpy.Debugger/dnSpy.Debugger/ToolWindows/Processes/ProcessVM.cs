@@ -190,7 +190,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 			UI(() => DbgProcess_PropertyChanged_UI(e.PropertyName));
 
 		// UI thread
-		void DbgProcess_PropertyChanged_UI(string propertyName) {
+		void DbgProcess_PropertyChanged_UI(string? propertyName) {
 			Context.UIDispatcher.VerifyAccess();
 			switch (propertyName) {
 			case nameof(Process.Name):

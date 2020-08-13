@@ -130,7 +130,7 @@
     <value>Ordine di decompilazione</value>
   </data>
   <data name="DecompilerSettings_DecompileAnonMethods" xml:space="preserve">
-    <value>Decompila metodi/lambda anonime</value>
+    <value>Decompila metodi/lambda anonimi</value>
   </data>
   <data name="DecompilerSettings_DecompileAsyncMethods" xml:space="preserve">
     <value>Decompila metodi async (async/await)</value>
@@ -169,7 +169,7 @@
     <value>Aggiungi uno spazio dei nomi per i tipi con lo stesso nome</value>
   </data>
   <data name="DecompilerSettings_HexadecimalNumbers" xml:space="preserve">
-    <value>Hexadecimal numbers</value>
+    <value>Numeri esadecimali</value>
   </data>
   <data name="DecompilerSettings_IntroduceIncrementAndDecrement" xml:space="preserve">
     <value>Utilizza operatori di incremento e decremento</value>
@@ -223,7 +223,7 @@
     <value>Ordina metodi, campi, proprietà, eventi e tipi</value>
   </data>
   <data name="DecompilerSettings_SortSystemFirst" xml:space="preserve">
-    <value>Le direttive 'System' al primo posto quando si usa l'ordinamento</value>
+    <value>Porta le direttive 'System' al primo posto quando si usa l'ordinamento</value>
   </data>
   <data name="DecompilerSettings_TypeAddInternalModifier" xml:space="preserve">
     <value>Aggiungi il modificatore 'internal' ai tipi</value>

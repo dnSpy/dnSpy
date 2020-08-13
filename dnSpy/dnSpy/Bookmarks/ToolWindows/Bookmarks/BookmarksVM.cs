@@ -23,6 +23,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using dnSpy.Bookmarks.Impl;
 using dnSpy.Bookmarks.UI;
 using dnSpy.Contracts.Bookmarks;
@@ -236,7 +237,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			UI(() => BookmarksSettings_PropertyChanged_UI(e.PropertyName));
 
 		// UI thread
-		void BookmarksSettings_PropertyChanged_UI(string propertyName) {
+		void BookmarksSettings_PropertyChanged_UI(string? propertyName) {
 			bookmarkContext.UIDispatcher.VerifyAccess();
 			if (propertyName == nameof(BookmarksSettings.SyntaxHighlight)) {
 				bookmarkContext.SyntaxHighlight = bookmarksSettings.SyntaxHighlight;
@@ -249,7 +250,7 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 			UI(() => BookmarkDisplaySettings_PropertyChanged_UI(e.PropertyName));
 
 		// UI thread
-		void BookmarkDisplaySettings_PropertyChanged_UI(string propertyName) {
+		void BookmarkDisplaySettings_PropertyChanged_UI(string? propertyName) {
 			bookmarkContext.UIDispatcher.VerifyAccess();
 			switch (propertyName) {
 			case nameof(BookmarkDisplaySettings.ShowTokens):
@@ -423,8 +424,14 @@ namespace dnSpy.Bookmarks.ToolWindows.Bookmarks {
 		void InitializeNothingMatched(string filterText) =>
 			NothingMatched = AllItems.Count == 0 && !string.IsNullOrWhiteSpace(filterText);
 
-		public int Compare(BookmarkVM x, BookmarkVM y) {
+		public int Compare([AllowNull] BookmarkVM x, [AllowNull] BookmarkVM y) {
 			Debug.Assert(bookmarkContext.UIDispatcher.CheckAccess());
+			if ((object?)x == y)
+				return 0;
+			if (x is null)
+				return -1;
+			if (y is null)
+				return 1;
 			var (desc, dir) = Descs.SortedColumn;
 
 			int id;

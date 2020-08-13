@@ -267,7 +267,7 @@ namespace dnSpy_Console {
 				ParseCommandLine(args);
 				if (allLanguages.Length == 0)
 					throw new ErrorException(dnSpy_Console_Resources.NoLanguagesFound);
-				if (GetLanguage() is null)
+				if (GetLanguageOrNull() is null)
 					throw new ErrorException(string.Format(dnSpy_Console_Resources.LanguageXDoesNotExist, language));
 				Decompile();
 			}
@@ -493,7 +493,7 @@ namespace dnSpy_Console {
 							throw new ErrorException(dnSpy_Console_Resources.MissingLanguageName);
 						language = next;
 						i++;
-						if (GetLanguage() is null)
+						if (GetLanguageOrNull() is null)
 							throw new ErrorException(string.Format(dnSpy_Console_Resources.LanguageDoesNotExist, language));
 						lang = null;
 						langDict = null;
@@ -760,13 +760,13 @@ namespace dnSpy_Console {
 			return new Indenter(spaces, spaces, false);
 		}
 
-		static TypeDef FindType(ModuleDef module, string name) =>
+		static TypeDef? FindType(ModuleDef module, string name) =>
 			FindTypeFullName(module, name, StringComparer.Ordinal) ??
 			FindTypeFullName(module, name, StringComparer.OrdinalIgnoreCase) ??
 			FindTypeName(module, name, StringComparer.Ordinal) ??
 			FindTypeName(module, name, StringComparer.OrdinalIgnoreCase);
 
-		static TypeDef FindTypeFullName(ModuleDef module, string name, StringComparer comparer) {
+		static TypeDef? FindTypeFullName(ModuleDef module, string name, StringComparer comparer) {
 			var sb = new StringBuilder();
 			return module.GetTypes().FirstOrDefault(a => {
 				sb.Clear();
@@ -784,7 +784,7 @@ namespace dnSpy_Console {
 			});
 		}
 
-		static TypeDef FindTypeName(ModuleDef module, string name, StringComparer comparer) {
+		static TypeDef? FindTypeName(ModuleDef module, string name, StringComparer comparer) {
 			var sb = new StringBuilder();
 			return module.GetTypes().FirstOrDefault(a => {
 				sb.Clear();
@@ -967,7 +967,8 @@ namespace dnSpy_Console {
 			return proj;
 		}
 
-		IDecompiler GetLanguage() {
+		IDecompiler GetLanguage() => GetLanguageOrNull() ?? throw new InvalidOperationException();
+		IDecompiler? GetLanguageOrNull() {
 			bool hasGuid = Guid.TryParse(language, out var guid);
 			return AllLanguages.FirstOrDefault(a => {
 				if (StringComparer.OrdinalIgnoreCase.Equals(language, a.UniqueNameUI))

@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -100,6 +101,7 @@ namespace dnSpy.Settings.Dialog {
 		}
 
 		public void Select(Guid value) {
+			Debug2.Assert(!(allPages is null));
 			var page = allPages.FirstOrDefault(a => a.Page.Guid == value);
 			if (page?.Parent is null)
 				return;
@@ -354,7 +356,15 @@ namespace dnSpy.Settings.Dialog {
 
 		sealed class AppSettingsPageVMSorter : IComparer<AppSettingsPageVM> {
 			public static readonly AppSettingsPageVMSorter Instance = new AppSettingsPageVMSorter();
-			public int Compare(AppSettingsPageVM x, AppSettingsPageVM y) => x.Order.CompareTo(y.Order);
+			public int Compare([AllowNull] AppSettingsPageVM x, [AllowNull] AppSettingsPageVM y) {
+				if ((object?)x == y)
+					return 0;
+				if (x is null)
+					return -1;
+				if (y is null)
+					return 1;
+				return x.Order.CompareTo(y.Order);
+			}
 		}
 
 		AppSettingsPageVM InitializeChildren(AppSettingsPageVM[] pages) {

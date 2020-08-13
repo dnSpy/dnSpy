@@ -75,10 +75,9 @@ jobs:
             C:\builtfiles\dnSpy-netcore-win32.zip
             C:\builtfiles\dnSpy-netcore-win64.zip
           body: |
-            ### Consider [❤️ donating](https://github.com/sponsors/0xd4d) to support this project if dnSpy helped you!
-            
-            
             Downloads below or [build](https://github.com/0xd4d/dnSpy/blob/master/README.md#building) it yourself
+            
+            If your antivirus software complains, it's a false positive and you should contact them. I can't fix their buggy software.
             
             `dnSpy-net472.zip` requires .NET Framework 4.7.2 or later.
             

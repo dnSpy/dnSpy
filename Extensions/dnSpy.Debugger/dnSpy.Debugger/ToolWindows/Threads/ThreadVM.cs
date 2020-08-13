@@ -264,7 +264,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 			Context.UIDispatcher.UI(() => DbgThread_PropertyChanged_UI(e.PropertyName));
 
 		// UI thread
-		void DbgThread_PropertyChanged_UI(string propertyName) {
+		void DbgThread_PropertyChanged_UI(string? propertyName) {
 			Context.UIDispatcher.VerifyAccess();
 			if (disposed)
 				return;
