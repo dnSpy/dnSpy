@@ -25,9 +25,9 @@
     <SatelliteResourceLanguages>cs;de;es;es-ES;fa;fr;hu;it;pt-BR;pt-PT;ru;tr;uk;zh-CN</SatelliteResourceLanguages>
 
     <!-- Update app.config whenever this value changes -->
-    <DnSpyAssemblyVersion>6.1.6.0</DnSpyAssemblyVersion>
+    <DnSpyAssemblyVersion>6.1.7.0</DnSpyAssemblyVersion>
     <!-- This is shown in the title bar -->
-    <DnSpyAssemblyInformationalVersion>v6.1.6</DnSpyAssemblyInformationalVersion>
+    <DnSpyAssemblyInformationalVersion>v6.1.7</DnSpyAssemblyInformationalVersion>
     <DnSpyAssemblyCopyright>Copyright (C) 2014-2020 de4dot@gmail.com</DnSpyAssemblyCopyright>
 
     <!-- AD0001: buggy Roslyn analyzer(s) crash, disable that warning -->
