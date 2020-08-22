@@ -265,7 +265,7 @@
     <value>Mostrar a janela Locais ao iniciar o depurador</value>
   </data>
   <data name="DbgSettings_DisableDebuggerDetection" xml:space="preserve">
-    <value>Prevent code from detecting the debugger</value>
+    <value>Impedir que o código detecte o depurador</value>
   </data>
   <data name="DbgSettings_IgnoreBreakInstructions" xml:space="preserve">
     <value>Ignorar Debugger.Break() e quebrar as instruções</value>
@@ -1470,7 +1470,7 @@ Tem certeza que deseja expandi-la?</value>
     <value>Mostrar valores de retorno</value>
   </data>
   <data name="DbgSettings_RedirectGuiConsoleOutput" xml:space="preserve">
-    <value>Redirect GUI applications' console output to the Output window</value>
+    <value>Redirecionar a saída do console de aplicativos GUI para a janela de saída</value>
   </data>
   <data name="AttachToProcess_MakingAnImageEasierToDebug" xml:space="preserve">
     <value>Making an Image Easier to Debug</value>

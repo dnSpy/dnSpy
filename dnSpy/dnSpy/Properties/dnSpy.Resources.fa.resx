@@ -834,7 +834,7 @@
     <value>فایل های بارگذاری شده:</value>
   </data>
   <data name="SearchWindow_SearchFrameworkAssemblies" xml:space="preserve">
-    <value>Search in framework assemblies</value>
+    <value>جستجو در اسمبلی های فریمورک</value>
   </data>
   <data name="SearchWindow_Where_AllFiles" xml:space="preserve">
     <value>تمام فایل‌ها</value>
@@ -1942,7 +1942,7 @@
     <value>RIP-relative addresses</value>
   </data>
   <data name="DisassemblySettings_ScaleBeforeIndex" xml:space="preserve">
-    <value>Show scale before index register</value>
+    <value>نمایش مقیاس قبل از ثبت فهرست</value>
   </data>
   <data name="DisassemblySettings_BranchLeadingZeroes" xml:space="preserve">
     <value>Add leading zeroes (branches)</value>
@@ -2014,13 +2014,13 @@
     <value>Always show mnemonic size suffix</value>
   </data>
   <data name="DisassemblySettings_SpaceAfterMemoryOperandComma" xml:space="preserve">
-    <value>Space after memory operand comma</value>
+    <value>فضای بعد از کاما عملوند حافظه</value>
   </data>
   <data name="DisassemblySettings_UseHexNumbers" xml:space="preserve">
     <value>شماره های هگز</value>
   </data>
   <data name="Disassembly_TabTitle" xml:space="preserve">
-    <value>Disassembly</value>
+    <value>مجزا کردن (دیس اسمبلی)</value>
   </data>
   <data name="DisassemblySettings_ShowCode" xml:space="preserve">
     <value>نمایش کد دیکامپایل شده</value>
@@ -2032,7 +2032,7 @@
     <value>متود بهینه نشده است</value>
   </data>
   <data name="DisassemblySettings_ShowSymbolAddress" xml:space="preserve">
-    <value>Show symbol address</value>
+    <value>نمایش آدرس نماد</value>
   </data>
   <data name="Decompile_Timestamp" xml:space="preserve">
     <value>برچسب زمان:</value>
@@ -2041,7 +2041,7 @@
     <value>&lt;نامشخص&gt;</value>
   </data>
   <data name="TypeReferencesFolder" xml:space="preserve">
-    <value>Type References</value>
+    <value>مرجع نوع ها</value>
   </data>
   <data name="TreeViewEventsFolder" xml:space="preserve">
     <value>رویدادها</value>
@@ -2056,19 +2056,19 @@
     <value>Propertieها</value>
   </data>
   <data name="TreeViewTypesFolder" xml:space="preserve">
-    <value>Types</value>
+    <value>نوع</value>
   </data>
   <data name="NumberBaseFormatString" xml:space="preserve">
-    <value>Base {0}:</value>
+    <value>پایه</value>
   </data>
   <data name="RawValue" xml:space="preserve">
-    <value>Raw:</value>
+    <value>خام</value>
   </data>
   <data name="RecentFilesCommand" xml:space="preserve">
-    <value>Recent _Files</value>
+    <value>فایل های اخیر</value>
   </data>
   <data name="ToolTip_Instruction" xml:space="preserve">
-    <value>Instruction</value>
+    <value>دستورالعمل</value>
   </data>
   <data name="ToolTip_OpCode" xml:space="preserve">
     <value>OpCode</value>

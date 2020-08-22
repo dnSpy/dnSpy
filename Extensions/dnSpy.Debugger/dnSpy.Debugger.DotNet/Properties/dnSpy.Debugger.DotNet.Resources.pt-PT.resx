@@ -178,10 +178,10 @@
     <value>O valor de retorno não está disponível atualmente</value>
   </data>
   <data name="StepFilter_SteppingOverOperator" xml:space="preserve">
-    <value>Step into: Stepping over operator '{0}'.</value>
+    <value>Pulando o operador '{0}'</value>
   </data>
   <data name="StepFilter_SteppingOverProperty" xml:space="preserve">
-    <value>Step into: Stepping over property '{0}'.</value>
+    <value>Pulando a propiedade '{0}'.</value>
   </data>
   <data name="UnknownVariableOrObjectId" xml:space="preserve">
     <value>Variável ou ID de objeto desconhecido</value>

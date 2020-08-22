@@ -1149,7 +1149,7 @@
     <value>Indicator margin</value>
   </data>
   <data name="TextEditorHighlightCurrentLine" xml:space="preserve">
-    <value>Highlight current line</value>
+    <value>Zvýraznit aktuální řádek</value>
   </data>
   <data name="TextEditorHighlightMatchingBrace" xml:space="preserve">
     <value>Highlight braces</value>
