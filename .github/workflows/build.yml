@@ -33,7 +33,7 @@ jobs:
           $env:PATH = $msbuildPath + ';' + $env:PATH
           .\build.ps1 net
           New-Item -ItemType Directory -Path C:\builtfiles -Force > $null
-          Compress-Archive -Path dnSpy\dnSpy\bin\Release\net472\* -DestinationPath C:\builtfiles\dnSpy-net472.zip
+          Compress-Archive -Path dnSpy\dnSpy\bin\Release\net48\* -DestinationPath C:\builtfiles\dnSpy-net48.zip
           .\clean-all.cmd
 
       - name: Build dnSpy (.NET Core x86)
@@ -59,8 +59,8 @@ jobs:
       - uses: actions/upload-artifact@v1
         if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/')
         with:
-          name: dnSpy-net472
-          path: C:\builtfiles\dnSpy-net472.zip
+          name: dnSpy-net48
+          path: C:\builtfiles\dnSpy-net48.zip
 
       - uses: actions/upload-artifact@v1
         if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/')
@@ -79,7 +79,7 @@ jobs:
         uses: softprops/action-gh-release@b28d815 #@v1
         with:
           files: |
-            C:\builtfiles\dnSpy-net472.zip
+            C:\builtfiles\dnSpy-net48.zip
             C:\builtfiles\dnSpy-netcore-win32.zip
             C:\builtfiles\dnSpy-netcore-win64.zip
           body: |
