@@ -4,7 +4,6 @@
     <!--
         - build.ps1
         - .github/workflows/build.yml
-        - dnSpy/dnSpy/app.config (supportedRuntime, .NET Framework only)
     NOTE: Update the ABOVE files when TargetFrameworks is updated -->
     <TargetFrameworks>net48;netcoreapp3.1</TargetFrameworks>
     <IsDotNetFramework>false</IsDotNetFramework>
