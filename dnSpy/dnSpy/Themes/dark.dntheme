@@ -725,7 +725,6 @@
 		<color name="environmenttoolwindowtabselectedtab" bg="#FF252526" />
 		<color name="environmenttoolwindowtabselectedtext" fg="#FF0097FB" />
 		<color name="environmenttoolwindowtabtext" fg="#FFD0D0D0" />
-		<color name="searchboxwatermark" fg="#FFA0A0A0" />
 		<color name="memorywindowdisabled" bg="#40FFFFFF" />
 		<color name="treeviewnode" fg="#F1F1F1" />
 		<color name="environmentdropdownglyph" bg="#FF999999" />
