@@ -765,7 +765,6 @@ namespace dnSpy.Contracts.Themes {
 		EnvironmentToolWindowTabSelectedTab,
 		EnvironmentToolWindowTabSelectedText,
 		EnvironmentToolWindowTabText,
-		SearchBoxWatermark,
 		MemoryWindowDisabled,
 		TreeViewNode,
 		EnvironmentDropDownGlyph,
