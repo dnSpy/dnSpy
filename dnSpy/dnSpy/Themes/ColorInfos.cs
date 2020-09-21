@@ -1775,6 +1775,10 @@ namespace dnSpy.Themes {
 				DefaultForeground = "#FF444444",
 				ForegroundResourceKey = "EnvironmentToolWindowTabText",
 			},
+			new BrushColorInfo(ColorType.SearchBoxWatermark, "SearchBox Watermark") {
+				DefaultForeground = "#FF6D6D6D",
+				ForegroundResourceKey = "SearchBoxWatermarkForeground",
+			},
 			new BrushColorInfo(ColorType.MemoryWindowDisabled, "Memory Window Disabled") {
 				DefaultBackground = "#40000000",
 				BackgroundResourceKey = "MemoryWindowDisabled",
