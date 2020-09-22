@@ -161,7 +161,7 @@ namespace dnSpy.Disassembly.X86 {
 			GasSpaceAfterMemoryOperandComma = AddDisasmBoolSetting(() => Settings.GasSpaceAfterMemoryOperandComma, value => Settings.GasSpaceAfterMemoryOperandComma = value, Instruction.Create(Code.Mov_rm64_r64, new MemoryOperand(Register.RAX, Register.RDI, 4, 0x12345678, 8), Register.RCX));
 
 			OperandColumnVM = new Int32VM(x86DisassemblySettings.FirstOperandCharIndex + 1, a => {
-				if (!OperandColumnVM.HasError)
+				if (!OperandColumnVM!.HasError)
 					this.x86DisassemblySettings.FirstOperandCharIndex = OperandColumnVM.Value - 1;
 			}, useDecimal: true) { Min = 1, Max = 100 };
 

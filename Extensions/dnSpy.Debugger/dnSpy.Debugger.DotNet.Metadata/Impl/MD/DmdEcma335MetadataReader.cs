@@ -622,6 +622,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		protected override DmdCustomAttributeData[] ReadTypeDefSecurityAttributes(uint rid) => ReadSecurityAttributesCore(Table.TypeDef, rid);
 		protected override DmdCustomAttributeData[] ReadMethodSecurityAttributes(uint rid) => ReadSecurityAttributesCore(Table.Method, rid);
 
+#pragma warning disable SYSLIB0003 // SecurityAction
 		DmdCustomAttributeData[] ReadSecurityAttributesCore(Table table, uint rid) {
 			var ridList = Metadata.GetDeclSecurityRidList(table, rid);
 			if (ridList.Count == 0)
@@ -670,6 +671,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 				throw new InvalidOperationException();
 			return sas;
 		}
+#pragma warning restore SYSLIB0003 // SecurityAction
 
 		internal DmdMarshalType? ReadMarshalType(int metadataToken, DmdModule module, IList<DmdType>? genericTypeArguments) {
 			if (!TablesStream.TryReadFieldMarshalRow(Metadata.GetFieldMarshalRid((Table)((uint)metadataToken >> 24), (uint)metadataToken & 0x00FFFFFF), out var row))

@@ -188,7 +188,7 @@ namespace dnSpy_Console {
 		readonly DecompilationContext decompilationContext;
 		readonly ModuleContext moduleContext;
 		readonly AssemblyResolver assemblyResolver;
-		readonly IBamlDecompiler bamlDecompiler;
+		readonly IBamlDecompiler? bamlDecompiler;
 		readonly HashSet<string> reservedOptions;
 #if NETCOREAPP
 		readonly dnSpy.MainApp.NetCoreAssemblyLoader netCoreAssemblyLoader = new dnSpy.MainApp.NetCoreAssemblyLoader(System.Runtime.Loader.AssemblyLoadContext.Default);
@@ -245,7 +245,7 @@ namespace dnSpy_Console {
 			}
 		}
 
-		static IBamlDecompiler TryLoadBamlDecompiler() => TryCreateType<IBamlDecompiler>("dnSpy.BamlDecompiler.x", "dnSpy.BamlDecompiler.BamlDecompiler");
+		static IBamlDecompiler? TryLoadBamlDecompiler() => TryCreateType<IBamlDecompiler>("dnSpy.BamlDecompiler.x", "dnSpy.BamlDecompiler.BamlDecompiler");
 
 		static Assembly? TryLoad(string asmName) {
 			try {
@@ -256,7 +256,7 @@ namespace dnSpy_Console {
 			return null;
 		}
 
-		static T TryCreateType<T>(string asmName, string typeFullName) {
+		static T? TryCreateType<T>(string asmName, string typeFullName) where T : class {
 			var asm = TryLoad(asmName);
 			var type = asm?.GetType(typeFullName);
 			return type is null ? default! : (T)Activator.CreateInstance(type)!;

@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#pragma warning disable SYSLIB0003 // SecurityAction
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

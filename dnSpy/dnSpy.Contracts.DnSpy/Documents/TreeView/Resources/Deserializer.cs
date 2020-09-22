@@ -89,7 +89,9 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		public static Dictionary<string, DeserializedDataInfo> Deserialize(string asmName, string typeName, byte[] data) {
 			var fmt = new BinaryFormatter();
 			fmt.Binder = new MyBinder(asmName, typeName);
+#pragma warning disable SYSLIB0011
 			var obj = fmt.Deserialize(new MemoryStream(data)) as DeserializedType;
+#pragma warning restore SYSLIB0011
 			Debug2.Assert(!(obj is null));
 			if (obj is null)
 				return new Dictionary<string, DeserializedDataInfo>();

@@ -40,7 +40,7 @@ namespace dnSpy.Extension {
 				return config;
 			var doc = XDocument.Load(filename, LoadOptions.None);
 			var root = doc.Root;
-			if (root.Name == XML_ROOT_NAME)
+			if (root?.Name == XML_ROOT_NAME)
 				Read(root, config);
 			return config;
 		}

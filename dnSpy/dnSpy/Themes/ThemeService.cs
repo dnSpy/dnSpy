@@ -167,7 +167,7 @@ namespace dnSpy.Themes {
 		Theme? Load(string filename) {
 			try {
 				var root = XDocument.Load(filename).Root;
-				if (root.Name != "theme")
+				if (root?.Name != "theme")
 					return null;
 
 				var theme = new Theme(root);

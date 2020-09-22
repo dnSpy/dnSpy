@@ -166,7 +166,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				if (!IsMethodSig)
 					throw new InvalidOperationException();
 				CallingConvention = (CallingConvention & ~dnlib.DotNet.CallingConvention.Mask) |
-					(dnlib.DotNet.CallingConvention)(MethodCallingConv)MethodCallingConv.SelectedItem!;
+					(dnlib.DotNet.CallingConvention)(MethodCallingConv)MethodCallingConv!.SelectedItem!;
 			});
 			if (!CanHaveSentinel) {
 				MethodCallingConv.Items.RemoveAt(MethodCallingConv.GetIndex(DnlibDialogs.MethodCallingConv.VarArg));

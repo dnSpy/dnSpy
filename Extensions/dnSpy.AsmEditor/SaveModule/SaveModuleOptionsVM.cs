@@ -156,7 +156,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 			ModuleKind = new EnumListVM(moduleKindList, (a, b) => {
 				OnPropertyChanged(nameof(Extension));
-				PEHeadersOptions.Subsystem.SelectedItem = GetSubsystem((ModuleKind)ModuleKind.SelectedItem!);
+				PEHeadersOptions.Subsystem.SelectedItem = GetSubsystem((ModuleKind)ModuleKind!.SelectedItem!);
 				PEHeadersOptions.Characteristics = CharacteristicsHelper.GetCharacteristics(PEHeadersOptions.Characteristics ?? 0, (ModuleKind)ModuleKind.SelectedItem!);
 			});
 
@@ -288,7 +288,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			this.defaultMachine = defaultMachine;
 			this.defaultSubsystem = defaultSubsystem;
 			Machine = new EnumListVM(machineList, (a, b) => {
-				Characteristics = CharacteristicsHelper.GetCharacteristics(Characteristics ?? 0, (dnlib.PE.Machine)Machine.SelectedItem!);
+				Characteristics = CharacteristicsHelper.GetCharacteristics(Characteristics ?? 0, (dnlib.PE.Machine)Machine!.SelectedItem!);
 			});
 			TimeDateStamp = new NullableUInt32VM(a => HasErrorUpdated());
 			PointerToSymbolTable = new NullableUInt32VM(a => HasErrorUpdated());

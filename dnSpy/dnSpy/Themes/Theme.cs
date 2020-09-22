@@ -95,8 +95,7 @@ namespace dnSpy.Themes {
 				throw new Exception("Missing or empty guid attribute");
 			Guid = new Guid(guid.Value);
 
-			var name = root.Attribute("name");
-			Name = name is null ? string.Empty : (string)name;
+			Name = (string?)root.Attribute("name") ?? string.Empty;
 
 			var menuName = root.Attribute("menu-name");
 			if (menuName is null || string.IsNullOrEmpty(menuName.Value))

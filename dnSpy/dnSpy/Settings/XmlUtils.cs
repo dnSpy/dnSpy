@@ -25,7 +25,7 @@ namespace dnSpy.Settings {
 	static class XmlUtils {
 		const char ESCAPE_CHAR = '©';
 
-		public static string? EscapeAttributeValue(string s) {
+		public static string? EscapeAttributeValue(string? s) {
 			if (s is null)
 				return null;
 			var sb = new StringBuilder(s.Length);
@@ -38,7 +38,7 @@ namespace dnSpy.Settings {
 			return sb.ToString();
 		}
 
-		public static string? UnescapeAttributeValue(string s) {
+		public static string? UnescapeAttributeValue(string? s) {
 			if (s is null)
 				return null;
 			if (s.IndexOf(ESCAPE_CHAR) < 0)

@@ -175,7 +175,7 @@ namespace dnSpy.Documents.Tabs {
 				var refFilePath = Path.GetDirectoryName(Path.GetDirectoryName(filename));
 				var doc = XDocument.Load(filename, LoadOptions.None);
 				var root = doc.Root;
-				if (root.Name != "FileList")
+				if (root?.Name != "FileList")
 					throw new InvalidOperationException();
 				foreach (var attr in root.Attributes()) {
 					switch (attr.Name.ToString()) {
@@ -395,19 +395,19 @@ namespace dnSpy.Documents.Tabs {
 			try {
 				var doc = XDocument.Load(filename, LoadOptions.None);
 				var root = doc.Root;
-				if (root.Name != "FileList")
+				if (root?.Name != "FileList")
 					return null;
-				var name = (string)root.Attribute("name");
-				if (string.IsNullOrWhiteSpace(name))
+				var name = (string?)root.Attribute("name");
+				if (string2.IsNullOrWhiteSpace(name))
 					return null;
 				bool? isDefault = (bool?)root.Attribute("default");
 				var l = new DefaultDocumentList(name);
 				foreach (var sect in root.Elements("File")) {
-					var name2 = (string)sect.Attribute("name");
-					if (string.IsNullOrWhiteSpace(name2))
+					var name2 = (string?)sect.Attribute("name");
+					if (string2.IsNullOrWhiteSpace(name2))
 						return null;
-					var type = (string)sect.Attribute("type") ?? "gac";
-					var guidStr = (string)sect.Attribute("guid");
+					var type = (string?)sect.Attribute("type") ?? "gac";
+					var guidStr = (string?)sect.Attribute("guid");
 					Guid guid = Guid.Empty;
 					bool hasGuid = !(guidStr is null) && Guid.TryParse(guidStr, out guid);
 					if (type.Equals("file"))

@@ -198,20 +198,20 @@ namespace dnSpy.BackgroundImage.Dialog {
 			this.pickFilename = pickFilename ?? throw new ArgumentNullException(nameof(pickFilename));
 			this.pickDirectory = pickDirectory ?? throw new ArgumentNullException(nameof(pickDirectory));
 			Settings = new ObservableCollection<Settings>(settings.OrderBy(a => a.Lazy.Value.UIOrder).Select(a => new Settings(a)));
-			stretchVM = new EnumListVM(EnumVM.Create(false, typeof(Stretch)), (a, b) => currentItem.RawSettings.Stretch = (Stretch)stretchVM.SelectedItem!);
-			stretchDirectionVM = new EnumListVM(stretchDirectionList, (a, b) => currentItem.RawSettings.StretchDirection = (StretchDirection)stretchDirectionVM.SelectedItem!);
-			imagePlacementVM = new EnumListVM(imagePlacementList, (a, b) => currentItem.RawSettings.ImagePlacement = (ImagePlacement)imagePlacementVM.SelectedItem!);
-			opacityVM = new DoubleVM(a => { if (!opacityVM.HasError) currentItem.RawSettings.Opacity = FilterOpacity(opacityVM.Value); });
-			horizontalOffsetVM = new DoubleVM(a => { if (!horizontalOffsetVM.HasError) currentItem.RawSettings.HorizontalOffset = FilterOffset(horizontalOffsetVM.Value); });
-			verticalOffsetVM = new DoubleVM(a => { if (!verticalOffsetVM.HasError) currentItem.RawSettings.VerticalOffset = FilterOffset(verticalOffsetVM.Value); });
-			leftMarginWidthPercentVM = new DoubleVM(a => { if (!leftMarginWidthPercentVM.HasError) currentItem.RawSettings.LeftMarginWidthPercent = FilterMarginPercent(leftMarginWidthPercentVM.Value); });
-			rightMarginWidthPercentVM = new DoubleVM(a => { if (!rightMarginWidthPercentVM.HasError) currentItem.RawSettings.RightMarginWidthPercent = FilterMarginPercent(rightMarginWidthPercentVM.Value); });
-			topMarginHeightPercentVM = new DoubleVM(a => { if (!topMarginHeightPercentVM.HasError) currentItem.RawSettings.TopMarginHeightPercent = FilterMarginPercent(topMarginHeightPercentVM.Value); });
-			bottomMarginHeightPercentVM = new DoubleVM(a => { if (!bottomMarginHeightPercentVM.HasError) currentItem.RawSettings.BottomMarginHeightPercent = FilterMarginPercent(bottomMarginHeightPercentVM.Value); });
-			maxHeightVM = new DoubleVM(a => { if (!maxHeightVM.HasError) currentItem.RawSettings.MaxHeight = FilterLength(maxHeightVM.Value); });
-			maxWidthVM = new DoubleVM(a => { if (!maxWidthVM.HasError) currentItem.RawSettings.MaxWidth = FilterLength(maxWidthVM.Value); });
-			zoomVM = new DoubleVM(a => { if (!zoomVM.HasError) currentItem.RawSettings.Zoom = FilterZoom(zoomVM.Value); });
-			intervalVM = new DefaultConverterVM<TimeSpan>(a => { if (!intervalVM.HasError) currentItem.RawSettings.Interval = intervalVM.Value; });
+			stretchVM = new EnumListVM(EnumVM.Create(false, typeof(Stretch)), (a, b) => currentItem!.RawSettings.Stretch = (Stretch)stretchVM!.SelectedItem!);
+			stretchDirectionVM = new EnumListVM(stretchDirectionList, (a, b) => currentItem!.RawSettings.StretchDirection = (StretchDirection)stretchDirectionVM!.SelectedItem!);
+			imagePlacementVM = new EnumListVM(imagePlacementList, (a, b) => currentItem!.RawSettings.ImagePlacement = (ImagePlacement)imagePlacementVM!.SelectedItem!);
+			opacityVM = new DoubleVM(a => { if (!opacityVM!.HasError) currentItem!.RawSettings.Opacity = FilterOpacity(opacityVM.Value); });
+			horizontalOffsetVM = new DoubleVM(a => { if (!horizontalOffsetVM!.HasError) currentItem!.RawSettings.HorizontalOffset = FilterOffset(horizontalOffsetVM.Value); });
+			verticalOffsetVM = new DoubleVM(a => { if (!verticalOffsetVM!.HasError) currentItem!.RawSettings.VerticalOffset = FilterOffset(verticalOffsetVM.Value); });
+			leftMarginWidthPercentVM = new DoubleVM(a => { if (!leftMarginWidthPercentVM!.HasError) currentItem!.RawSettings.LeftMarginWidthPercent = FilterMarginPercent(leftMarginWidthPercentVM.Value); });
+			rightMarginWidthPercentVM = new DoubleVM(a => { if (!rightMarginWidthPercentVM!.HasError) currentItem!.RawSettings.RightMarginWidthPercent = FilterMarginPercent(rightMarginWidthPercentVM.Value); });
+			topMarginHeightPercentVM = new DoubleVM(a => { if (!topMarginHeightPercentVM!.HasError) currentItem!.RawSettings.TopMarginHeightPercent = FilterMarginPercent(topMarginHeightPercentVM.Value); });
+			bottomMarginHeightPercentVM = new DoubleVM(a => { if (!bottomMarginHeightPercentVM!.HasError) currentItem!.RawSettings.BottomMarginHeightPercent = FilterMarginPercent(bottomMarginHeightPercentVM.Value); });
+			maxHeightVM = new DoubleVM(a => { if (!maxHeightVM!.HasError) currentItem!.RawSettings.MaxHeight = FilterLength(maxHeightVM.Value); });
+			maxWidthVM = new DoubleVM(a => { if (!maxWidthVM!.HasError) currentItem!.RawSettings.MaxWidth = FilterLength(maxWidthVM.Value); });
+			zoomVM = new DoubleVM(a => { if (!zoomVM!.HasError) currentItem!.RawSettings.Zoom = FilterZoom(zoomVM.Value); });
+			intervalVM = new DefaultConverterVM<TimeSpan>(a => { if (!intervalVM!.HasError) currentItem!.RawSettings.Interval = intervalVM.Value; });
 			CurrentItem = Settings.FirstOrDefault(a => a.Id == backgroundImageSettingsService.LastSelectedId) ?? Settings[0];
 		}
 

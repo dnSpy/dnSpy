@@ -133,8 +133,8 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 				return false;
 			try {
 				var xml = XDocument.Load(new StringReader("<docroot>" + xmlDoc + "</docroot>"), LoadOptions.None);
-				foreach (var pxml in xml.Root.Elements(xmlElemName)) {
-					if ((string)pxml.Attribute("name") == name) {
+				foreach (var pxml in xml.Root?.Elements(xmlElemName) ?? Array.Empty<XElement>()) {
+					if ((string?)pxml.Attribute("name") == name) {
 						WriteXmlDocParameter(output, pxml);
 						return true;
 					}
@@ -152,17 +152,17 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 				else if (elem is XElement xelem) {
 					switch (xelem.Name.ToString().ToUpperInvariant()) {
 					case "SEE":
-						var cref = xelem.Attribute("cref");
+						var cref = (string?)xelem.Attribute("cref");
 						if (!(cref is null))
-							output.Write(XmlDocRenderer.GetCref((string)cref), BoxedTextColor.Text);
-						var langword = xelem.Attribute("langword");
+							output.Write(XmlDocRenderer.GetCref(cref), BoxedTextColor.Text);
+						var langword = (string?)xelem.Attribute("langword");
 						if (!(langword is null))
-							output.Write(((string)langword).Trim(), BoxedTextColor.Keyword);
+							output.Write(langword.Trim(), BoxedTextColor.Keyword);
 						break;
 					case "PARAMREF":
-						var nameAttr = xml.Attribute("name");
+						var nameAttr = (string?)xml.Attribute("name");
 						if (!(nameAttr is null))
-							output.Write(((string)nameAttr).Trim(), BoxedTextColor.Parameter);
+							output.Write(nameAttr.Trim(), BoxedTextColor.Parameter);
 						break;
 					case "BR":
 					case "PARA":

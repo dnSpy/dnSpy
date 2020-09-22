@@ -143,12 +143,13 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 				using (XmlTextReader xmlReader = new XmlTextReader(fs)) {
 					xmlReader.XmlResolver = null; // no DTD resolving
 					xmlReader.MoveToContent();
-					if (string.IsNullOrEmpty(xmlReader.GetAttribute("redirect"))) {
+					var redirectAttr = (string?)xmlReader.GetAttribute("redirect");
+					if (string2.IsNullOrEmpty(redirectAttr)) {
 						this.fileName = fileName;
-						encoding = GetEncoding(xmlReader.Encoding);
+						encoding = GetEncoding(xmlReader.Encoding ?? throw new InvalidOperationException());
 						ReadXmlDoc(xmlReader);
 					} else {
-						string? redirectionTarget = GetRedirectionTarget(fileName, xmlReader.GetAttribute("redirect"));
+						var redirectionTarget = GetRedirectionTarget(fileName, redirectAttr);
 						if (!(redirectionTarget is null)) {
 							//Debug.WriteLine("XmlDoc " + fileName + " is redirecting to " + redirectionTarget);
 							using (FileStream redirectedFs = new FileStream(redirectionTarget, FileMode.Open, FileAccess.Read, FileShare.Read | FileShare.Delete)) {
@@ -156,12 +157,12 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 									redirectedXmlReader.XmlResolver = null; // no DTD resolving
 									redirectedXmlReader.MoveToContent();
 									this.fileName = redirectionTarget;
-									encoding = GetEncoding(redirectedXmlReader.Encoding);
+									encoding = GetEncoding(redirectedXmlReader.Encoding ?? throw new InvalidOperationException());
 									ReadXmlDoc(redirectedXmlReader);
 								}
 							}
 						} else {
-							throw new XmlException("XmlDoc " + fileName + " is redirecting to " + xmlReader.GetAttribute("redirect") + ", but that file was not found.");
+							throw new XmlException("XmlDoc " + fileName + " is redirecting to " + redirectAttr + ", but that file was not found.");
 						}
 					}
 				}
@@ -301,7 +302,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 					case XmlNodeType.Element:
 						if (reader.LocalName == "member") {
 							int pos = linePosMapper.GetPositionForLine(reader.LineNumber) + Math.Max(reader.LinePosition - 2, 0);
-							string memberAttr = reader.GetAttribute("name");
+							var memberAttr = (string?)reader.GetAttribute("name");
 							if (!(memberAttr is null))
 								indexList.Add(new IndexEntry(GetHashCode(memberAttr), pos));
 							reader.Skip();
@@ -421,7 +422,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 					r.XmlResolver = null; // no DTD resolving
 					while (r.Read()) {
 						if (r.NodeType == XmlNodeType.Element) {
-							string memberAttr = r.GetAttribute("name");
+							var memberAttr = (string?)r.GetAttribute("name");
 							if (memberAttr == key) {
 								return r.ReadInnerXml();
 							} else {

@@ -72,7 +72,9 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 			//		module is eg. a .NET 2.0 asm, you should replace the versions from 4.0.0.0 to 2.0.0.0.
 			var formatter = new BinaryFormatter();
 			var outStream = new MemoryStream();
+#pragma warning disable SYSLIB0011
 			formatter.Serialize(outStream, obj);
+#pragma warning restore SYSLIB0011
 			return outStream.ToArray();
 		}
 
@@ -84,7 +86,9 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <returns></returns>
 		public static string Deserialize(byte[] data, out object? obj) {
 			try {
+#pragma warning disable SYSLIB0011
 				obj = new BinaryFormatter().Deserialize(new MemoryStream(data));
+#pragma warning restore SYSLIB0011
 				return string.Empty;
 			}
 			catch (Exception ex) {

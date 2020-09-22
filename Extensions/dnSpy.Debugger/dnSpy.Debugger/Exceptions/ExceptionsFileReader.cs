@@ -35,31 +35,31 @@ namespace dnSpy.Debugger.Exceptions {
 					return;
 				var doc = XDocument.Load(filename, LoadOptions.None);
 				var root = doc.Root;
-				if (root.Name == "Exceptions") {
+				if (root?.Name == "Exceptions") {
 					foreach (var categoryDefElem in root.Elements("CategoryDef")) {
-						var name = (string)categoryDefElem.Attribute("Name");
-						var displayName = (string)categoryDefElem.Attribute("DisplayName");
-						var shortDisplayName = (string)categoryDefElem.Attribute("ShortDisplayName");
-						var flagsAttr = (string)categoryDefElem.Attribute("Flags");
-						if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(displayName) || string.IsNullOrWhiteSpace(shortDisplayName))
+						var name = (string?)categoryDefElem.Attribute("Name");
+						var displayName = (string?)categoryDefElem.Attribute("DisplayName");
+						var shortDisplayName = (string?)categoryDefElem.Attribute("ShortDisplayName");
+						var flagsAttr = (string?)categoryDefElem.Attribute("Flags");
+						if (string2.IsNullOrWhiteSpace(name) || string2.IsNullOrWhiteSpace(displayName) || string2.IsNullOrWhiteSpace(shortDisplayName))
 							continue;
 						var flags = ParseCategoryFlags(flagsAttr);
 						CategoryDefinitions.Add(new DbgExceptionCategoryDefinition(flags, name, displayName, shortDisplayName));
 					}
 					foreach (var exDefCollElem in root.Elements("ExceptionDefs")) {
-						var category = (string)exDefCollElem.Attribute("Category");
-						if (string.IsNullOrWhiteSpace(category))
+						var category = (string?)exDefCollElem.Attribute("Category");
+						if (string2.IsNullOrWhiteSpace(category))
 							continue;
 						foreach (var exDefElem in exDefCollElem.Elements("Exception")) {
-							var name = (string)exDefElem.Attribute("Name");
-							var code = (string)exDefElem.Attribute("Code");
-							string? description = (string)exDefElem.Attribute("Description");
-							if (string.IsNullOrWhiteSpace(description))
+							var name = (string?)exDefElem.Attribute("Name");
+							var code = (string?)exDefElem.Attribute("Code");
+							string? description = (string?)exDefElem.Attribute("Description");
+							if (string2.IsNullOrWhiteSpace(description))
 								description = null;
-							var flagsAttr = (string)exDefElem.Attribute("Flags");
+							var flagsAttr = (string?)exDefElem.Attribute("Flags");
 							DbgExceptionId id;
 							if (code is null) {
-								if (string.IsNullOrWhiteSpace(name))
+								if (string2.IsNullOrWhiteSpace(name))
 									continue;
 								id = new DbgExceptionId(category, name);
 							}
@@ -95,7 +95,7 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 
 		static readonly char[] flagsSeparators = new char[] { ',' };
-		static DbgExceptionCategoryDefinitionFlags ParseCategoryFlags(string flagsAttr) {
+		static DbgExceptionCategoryDefinitionFlags ParseCategoryFlags(string? flagsAttr) {
 			var flags = DbgExceptionCategoryDefinitionFlags.None;
 			if (!(flagsAttr is null)) {
 				foreach (var name in flagsAttr.Split(flagsSeparators, StringSplitOptions.RemoveEmptyEntries)) {
@@ -109,7 +109,7 @@ namespace dnSpy.Debugger.Exceptions {
 			return flags;
 		}
 
-		static DbgExceptionDefinitionFlags ParseExceptionFlags(string flagsAttr) {
+		static DbgExceptionDefinitionFlags ParseExceptionFlags(string? flagsAttr) {
 			var flags = DbgExceptionDefinitionFlags.None;
 			if (!(flagsAttr is null)) {
 				foreach (var name in flagsAttr.Split(flagsSeparators, StringSplitOptions.RemoveEmptyEntries)) {

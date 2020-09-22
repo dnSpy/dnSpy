@@ -251,12 +251,12 @@ namespace dnSpy.Decompiler.MSBuild {
 				var doc = XDocument.Load(configFile, LoadOptions.None);
 				var prefix = type.ReflectionFullName + ".";
 				foreach (var e in doc.XPathSelectElements("/configuration/connectionStrings/add")) {
-					var name = (string)e.Attribute("name");
+					var name = (string?)e.Attribute("name");
 					if (name is null || !name.StartsWith(prefix, StringComparison.Ordinal))
 						continue;
 
-					var connectionString = (string)e.Attribute("connectionString");
-					var providerName = (string)e.Attribute("providerName");
+					var connectionString = (string?)e.Attribute("connectionString");
+					var providerName = (string?)e.Attribute("providerName");
 					if (connectionString is null || providerName is null)
 						continue;
 

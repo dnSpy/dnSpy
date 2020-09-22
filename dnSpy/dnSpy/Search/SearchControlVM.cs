@@ -138,7 +138,7 @@ namespace dnSpy.Search {
 			SearchResults = new ObservableCollection<ISearchResult>();
 			searchResultsCollectionView = (ListCollectionView)CollectionViewSource.GetDefaultView(SearchResults);
 			searchResultsCollectionView.CustomSort = new SearchResult_Comparer();
-			SearchLocationVM = new EnumListVM(searchLocationList, (a, b) => SearchSettings.SearchLocation = (SearchLocation)SearchLocationVM.SelectedItem!);
+			SearchLocationVM = new EnumListVM(searchLocationList, (a, b) => SearchSettings.SearchLocation = (SearchLocation)SearchLocationVM!.SelectedItem!);
 			SearchLocationVM.SelectedItem = SearchSettings.SearchLocation;
 
 			Add(SearchType.AssemblyDef, dnSpy_Resources.SearchWindow_Assembly, DsImages.Assembly, null, VisibleMembersFlags.AssemblyDef);

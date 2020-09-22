@@ -1115,6 +1115,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 				return COMThread(() => ReadSecurityAttributesCore_COMThread(token));
 		}
 
+#pragma warning disable SYSLIB0003 // SecurityAction
 		internal DmdCustomAttributeData[] ReadSecurityAttributesCore_COMThread(uint token) {
 			dispatcher.VerifyAccess();
 			var tokens = MDAPI.GetPermissionSetTokens(MetaDataImport, token);
@@ -1166,6 +1167,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 				throw new InvalidOperationException();
 			return sas;
 		}
+#pragma warning restore SYSLIB0003 // SecurityAction
 
 		internal DmdMarshalType? ReadFieldMarshalType_COMThread(int metadataToken, DmdModule module, IList<DmdType>? genericTypeArguments) {
 			dispatcher.VerifyAccess();
