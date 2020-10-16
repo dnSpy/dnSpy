@@ -67,7 +67,7 @@
                 <CheckBox Margin="0 5 5 0" Content="{x:Static p:dnSpy_Resources.SearchWindow_SearchFrameworkAssemblies}" IsChecked="{Binding SearchSettings.SearchFrameworkAssemblies}" />
             </WrapPanel>
         </Grid>
-        <!-- VirtualizingStackPanel.VirtualizationMode="Recycling" isn't used, see https://github.com/0xd4d/dnSpy/issues/1163 -->
+        <!-- VirtualizingStackPanel.VirtualizationMode="Recycling" isn't used, see https://github.com/dnSpy/dnSpy/issues/1163 -->
         <ListBox Grid.Row="1"
                  Name="searchListBox"
                  SelectionMode="Single"

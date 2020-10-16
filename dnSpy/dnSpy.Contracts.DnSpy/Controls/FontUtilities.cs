@@ -118,7 +118,7 @@ namespace dnSpy.Contracts.Controls {
 			get {
 				try {
 					// This can throw if an update was installed that removed support for the current
-					// OS, see https://github.com/0xd4d/dnSpy/issues/692
+					// OS, see https://github.com/dnSpy/dnSpy/issues/692
 					return Fonts.SystemFontFamilies;
 				}
 				catch {

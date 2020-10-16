@@ -681,7 +681,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					else
 						Debug.Fail("Unreachable code");
 				}
-				// Disable OS heap debugging https://github.com/0xd4d/dnSpy/issues/1106
+				// Disable OS heap debugging https://github.com/dnSpy/dnSpy/issues/1106
 				env.Add("_NO_DEBUG_HEAP", "1");
 
 				var dbgOptions = new DebugProcessOptions(CreateDebugInfo(options)) {

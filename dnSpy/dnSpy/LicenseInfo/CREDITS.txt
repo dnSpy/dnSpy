@@ -2,7 +2,7 @@ dnSpy credits:
 
 	0xd4d
 	Ki
-	And all other contributors: https://github.com/0xd4d/dnSpy/graphs/contributors
+	And all other contributors: https://github.com/dnSpy/dnSpy/graphs/contributors
 
 ILSpy decompiler and analyzer credits:
 

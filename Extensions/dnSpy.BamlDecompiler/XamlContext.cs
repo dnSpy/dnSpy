@@ -204,6 +204,6 @@ namespace dnSpy.BamlDecompiler {
 			return xName;
 		}
 
-		public XName GetPseudoName(string name) => XNamespace.Get("https://github.com/0xd4d/dnSpy").GetName(name);
+		public XName GetPseudoName(string name) => XNamespace.Get("https://github.com/dnSpy/dnSpy").GetName(name);
 	}
 }

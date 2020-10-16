@@ -29,7 +29,7 @@ namespace dnSpy.MainApp {
 		[ImportingConstructor]
 		DevBuildWarning(IMessageBoxService messageBoxService) {
 			if (IsCIBuild())
-				messageBoxService.Show("This is a dev build of dnSpy and is missing features!\r\n\r\nDownload the latest master branch build from\r\n\r\nhttps://github.com/0xd4d/dnSpy/actions\r\n\r\nPress Ctrl+C to copy this text.");
+				messageBoxService.Show("This is a dev build of dnSpy and is missing features!\r\n\r\nDownload the latest master branch build from\r\n\r\nhttps://github.com/dnSpy/dnSpy/actions\r\n\r\nPress Ctrl+C to copy this text.");
 		}
 
 		bool IsCIBuild() {
