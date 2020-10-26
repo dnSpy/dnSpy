@@ -15,7 +15,7 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
         with:
           submodules: true
 
@@ -56,23 +56,26 @@ jobs:
           Compress-Archive -Path dnSpy\dnSpy\bin\Release\netcoreapp3.1\win-x64\publish\* -DestinationPath C:\builtfiles\dnSpy-netcore-win64.zip
           .\clean-all.cmd
 
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v2
         if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/')
         with:
           name: dnSpy-net48
           path: C:\builtfiles\dnSpy-net48.zip
+          if-no-files-found: error
 
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v2
         if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/')
         with:
           name: dnSpy-netcore-win32
           path: C:\builtfiles\dnSpy-netcore-win32.zip
+          if-no-files-found: error
 
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v2
         if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/')
         with:
           name: dnSpy-netcore-win64
           path: C:\builtfiles\dnSpy-netcore-win64.zip
+          if-no-files-found: error
 
       # Create a new release: create a tag, then 'git push origin <tagname>', wait for it to build
       - name: Create a new GitHub release if a new tag is pushed
