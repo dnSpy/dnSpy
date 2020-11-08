@@ -424,11 +424,15 @@ namespace dnSpy.AsmEditor.Field {
 				Debug.Assert(b);
 				if (!b)
 					throw new InvalidOperationException();
+
+				var isNodeSelected = fieldNode.TreeNode.TreeView.SelectedItem == fieldNode;
+
 				origParentNode.TreeNode.Children.RemoveAt(origParentChildIndex);
 				newOptions.CopyTo(fieldNode.FieldDef);
-
 				origParentNode.TreeNode.AddChild(fieldNode.TreeNode);
-				origParentNode.TreeNode.TreeView.SelectItems(new[] { fieldNode });
+
+				if (isNodeSelected)
+					origParentNode.TreeNode.TreeView.SelectItems(new[] { fieldNode });
 			}
 			else
 				newOptions.CopyTo(fieldNode.FieldDef);

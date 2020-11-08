@@ -530,22 +530,32 @@ namespace dnSpy.AsmEditor.Types {
 				Debug.Assert(b);
 				if (!b)
 					throw new InvalidOperationException();
+
+				var isNodeSelected = typeNode.TreeNode.TreeView.SelectedItem == typeNode;
+
 				origParentNode.TreeNode.Children.RemoveAt(origParentChildIndex);
 				newOptions.CopyTo(typeNode.TypeDef, module);
 
 				nsNodeCreator.Add();
 				nsNodeCreator.NamespaceNode.TreeNode.AddChild(typeNode.TreeNode);
+
+				if (isNodeSelected)
+					origParentNode.TreeNode.TreeView.SelectItems(new[] { typeNode });
 			}
 			else if (nameChanged) {
 				bool b = origParentChildIndex < origParentNode.TreeNode.Children.Count && origParentNode.TreeNode.Children[origParentChildIndex] == typeNode.TreeNode;
 				Debug.Assert(b);
 				if (!b)
 					throw new InvalidOperationException();
+
+				var isNodeSelected = typeNode.TreeNode.TreeView.SelectedItem == typeNode;
+
 				origParentNode.TreeNode.Children.RemoveAt(origParentChildIndex);
 				newOptions.CopyTo(typeNode.TypeDef, module);
-
 				origParentNode.TreeNode.AddChild(typeNode.TreeNode);
-				origParentNode.TreeNode.TreeView.SelectItems(new[] { typeNode });
+
+				if (isNodeSelected)
+					origParentNode.TreeNode.TreeView.SelectItems(new[] { typeNode });
 			}
 			else
 				newOptions.CopyTo(typeNode.TypeDef, module);
