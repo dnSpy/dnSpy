@@ -35,13 +35,13 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		public override DbgEngine? Create(DbgManager dbgManager, DebugProgramOptions options) {
 			switch (options) {
-			case MonoStartDebuggingOptions _:
-			case MonoConnectStartDebuggingOptions _:
+			case MonoStartDebuggingOptions:
+			case MonoConnectStartDebuggingOptions:
 				return new DbgEngineImpl(dbgEngineImplDependencies.Value, dbgManager, MonoDebugRuntimeKind.Mono);
 
-			case UnityConnectStartDebuggingOptions _:
-			case UnityAttachToProgramOptions _:
-			case UnityStartDebuggingOptions _:
+			case UnityConnectStartDebuggingOptions:
+			case UnityAttachToProgramOptions:
+			case UnityStartDebuggingOptions:
 				return new DbgEngineImpl(dbgEngineImplDependencies.Value, dbgManager, MonoDebugRuntimeKind.Unity);
 			}
 
