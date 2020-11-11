@@ -67,11 +67,11 @@ function Build-Net {
 	}
 }
 
-$buildNet	  = $buildtfm -eq 'all' -or $buildtfm -eq 'net'
-$buildCoreX86 = $buildtfm -eq 'all' -or $buildtfm -eq 'core-x86'
-$buildCoreX64 = $buildtfm -eq 'all' -or $buildtfm -eq 'core-x64'
+$buildNet	 = $buildtfm -eq 'all' -or $buildtfm -eq 'netframework'
+$buildNetX86 = $buildtfm -eq 'all' -or $buildtfm -eq 'net-x86'
+$buildNetX64 = $buildtfm -eq 'all' -or $buildtfm -eq 'net-x64'
 
-if ($buildCoreX86 -or $buildCoreX64) {
+if ($buildNetX86 -or $buildNetX64) {
 	if ($NoMsbuild) {
 		dotnet build -v:m -c $configuration -f $netframework_tfm $apphostpatcher_dir\AppHostPatcher.csproj
 		if ($LASTEXITCODE) { exit $LASTEXITCODE }
@@ -86,10 +86,10 @@ if ($buildNet) {
 	Build-NetFramework
 }
 
-if ($buildCoreX86) {
+if ($buildNetX86) {
 	Build-Net x86
 }
 
-if ($buildCoreX64) {
+if ($buildNetX64) {
 	Build-Net x64
 }
