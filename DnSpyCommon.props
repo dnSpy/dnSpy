@@ -5,20 +5,20 @@
         - build.ps1
         - .github/workflows/build.yml
     NOTE: Update the ABOVE files when TargetFrameworks is updated -->
-    <TargetFrameworks>net48;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>net48;net5.0-windows</TargetFrameworks>
     <IsDotNetFramework>false</IsDotNetFramework>
-    <IsDotNetCore>false</IsDotNetCore>
-    <IsSelfContainedDotNetCore>false</IsSelfContainedDotNetCore>
-    <IsDotNetFramework Condition=" !$(TargetFramework.StartsWith(netcoreapp)) ">true</IsDotNetFramework>
-    <IsDotNetCore Condition=" $(TargetFramework.StartsWith(netcoreapp)) ">true</IsDotNetCore>
-    <IsSelfContainedDotNetCore Condition=" '$(IsDotNetCore)' == 'true' ">true</IsSelfContainedDotNetCore>
+    <IsDotNet>false</IsDotNet>
+    <IsSelfContainedDotNet>false</IsSelfContainedDotNet>
+    <IsDotNetFramework Condition=" $(TargetFramework.StartsWith(net4)) ">true</IsDotNetFramework>
+    <IsDotNet Condition=" !$(TargetFramework.StartsWith(net4)) ">false</IsDotNet>
+    <IsSelfContainedDotNet Condition=" '$(IsDotNet)' == 'true' ">true</IsSelfContainedDotNet>
     <Features>strict;nullablePublicOnly</Features>
     <LangVersion>8.0</LangVersion>
     <LangVersion Condition=" $(MSBuildProjectFile.EndsWith('.vbproj')) " >latest</LangVersion>
     <NeutralLanguage>en</NeutralLanguage>
     <AppDesignerFolderContentsVisibleOnlyInShowAllFiles>false</AppDesignerFolderContentsVisibleOnlyInShowAllFiles>
     <!-- Make sure we don't have to publish each extension to get all their refs -->
-    <CopyLocalLockFileAssemblies Condition=" '$(IsDotNetCore)' == 'true' ">true</CopyLocalLockFileAssemblies>
+    <CopyLocalLockFileAssemblies Condition=" '$(IsDotNet)' == 'true' ">true</CopyLocalLockFileAssemblies>
     <!-- If this gets updated, also update .github/workflows/build.yml and build.ps1 -->
     <DnSpyRuntimeIdentifiers>win-x86;win-x64</DnSpyRuntimeIdentifiers>
     <SatelliteResourceLanguages>cs;de;es;es-ES;fa;fr;hu;it;pt-BR;pt-PT;ru;tr;uk;zh-CN</SatelliteResourceLanguages>
@@ -48,7 +48,7 @@
     <SCCompositionVersion>4.6.0</SCCompositionVersion>
   </PropertyGroup>
 
-  <Import Project="$(MSBuildThisFileDirectory)Build\ConvertToNetstandardReferences\ConvertToNetstandardReferences.tasks" Condition=" '$(IsDotNetCore)' == 'true' " />
+  <Import Project="$(MSBuildThisFileDirectory)Build\ConvertToNetstandardReferences\ConvertToNetstandardReferences.tasks" Condition=" '$(IsDotNet)' == 'true' " />
 
   <!-- .NET Core 3.0 SDK doesn't currently support COMReference: https://github.com/dnSpy/dnSpy/issues/1053 -->
   <PropertyGroup>

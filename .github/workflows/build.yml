@@ -43,7 +43,7 @@ jobs:
           $env:PATH = $msbuildPath + ';' + $env:PATH
           .\build.ps1 core-x86
           New-Item -ItemType Directory -Path C:\builtfiles -Force > $null
-          Compress-Archive -Path dnSpy\dnSpy\bin\Release\netcoreapp3.1\win-x86\publish\* -DestinationPath C:\builtfiles\dnSpy-netcore-win32.zip
+          Compress-Archive -Path dnSpy\dnSpy\bin\Release\net5.0-windows\win-x86\publish\* -DestinationPath C:\builtfiles\dnSpy-netcore-win32.zip
           .\clean-all.cmd
 
       - name: Build dnSpy (.NET Core x64)
@@ -53,7 +53,7 @@ jobs:
           $env:PATH = $msbuildPath + ';' + $env:PATH
           .\build.ps1 core-x64
           New-Item -ItemType Directory -Path C:\builtfiles -Force > $null
-          Compress-Archive -Path dnSpy\dnSpy\bin\Release\netcoreapp3.1\win-x64\publish\* -DestinationPath C:\builtfiles\dnSpy-netcore-win64.zip
+          Compress-Archive -Path dnSpy\dnSpy\bin\Release\net5.0-windows\win-x64\publish\* -DestinationPath C:\builtfiles\dnSpy-netcore-win64.zip
           .\clean-all.cmd
 
       - uses: actions/upload-artifact@v2

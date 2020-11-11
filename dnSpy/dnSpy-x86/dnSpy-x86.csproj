@@ -10,8 +10,7 @@
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
     <Nullable>enable</Nullable>
-    <!-- If it's .NET Core, we can only use 32-bit only or 64-bit only exes. dnSpy-x86 isn't needed. -->
-    <OutputPath Condition=" '$(IsDotNetCore)' != 'true' ">..\dnSpy\bin\$(Configuration)\</OutputPath>
+    <OutputPath Condition=" '$(IsDotNetFramework)' == 'true' ">..\dnSpy\bin\$(Configuration)\</OutputPath>
 
     <RuntimeIdentifiers>$(DnSpyRuntimeIdentifiers)</RuntimeIdentifiers>
     <OutputType>WinExe</OutputType>
