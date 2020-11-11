@@ -450,6 +450,9 @@ namespace dnSpy.AsmEditor.Namespace {
 				Debug.Assert(b);
 				if (!b)
 					throw new InvalidOperationException();
+
+				var isNodeSelected = nsNode.TreeNode.TreeView.SelectedItem == nsNode;
+
 				origParentNode.TreeNode.Children.RemoveAt(origParentChildIndex);
 				nsNode.Name = newName;
 
@@ -457,7 +460,10 @@ namespace dnSpy.AsmEditor.Namespace {
 					typeNode.TypeDef.Namespace = newNamespace;
 
 				origParentNode.TreeNode.AddChild(nsNode.TreeNode);
-				origParentNode.TreeNode.TreeView.SelectItems(new[] { nsNode });
+
+				if (isNodeSelected)
+					origParentNode.TreeNode.TreeView.SelectItems(new[] { nsNode });
+
 				nsNode.TreeNode.RefreshUI();
 			}
 
@@ -481,6 +487,8 @@ namespace dnSpy.AsmEditor.Namespace {
 				}
 			}
 			else {
+				var isNodeSelected = nsNode.TreeNode.TreeView.SelectedItem == nsNode;
+
 				bool b = origParentNode.TreeNode.Children.Remove(nsNode.TreeNode);
 				Debug.Assert(b);
 				if (!b)
@@ -491,7 +499,10 @@ namespace dnSpy.AsmEditor.Namespace {
 
 				nsNode.Name = origName;
 				origParentNode.TreeNode.Children.Insert(origParentChildIndex, nsNode.TreeNode);
-				origParentNode.TreeNode.TreeView.SelectItems(new[] { nsNode });
+
+				if (isNodeSelected)
+					origParentNode.TreeNode.TreeView.SelectItems(new[] { nsNode });
+
 				nsNode.TreeNode.RefreshUI();
 			}
 

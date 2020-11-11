@@ -337,7 +337,6 @@ namespace dnSpy.AsmEditor.Assembly {
 						info.AssemblyRef.PublicKeyOrToken = newOptions.PublicKey;
 				}
 			}
-			asmNode.TreeNode.TreeView.SelectItems(new[] { asmNode });
 			asmNode.TreeNode.RefreshUI();
 		}
 

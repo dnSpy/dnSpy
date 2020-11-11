@@ -1075,11 +1075,15 @@ namespace dnSpy.AsmEditor.Resources {
 				Debug.Assert(b);
 				if (!b)
 					throw new InvalidOperationException();
+
+				var isNodeSelected = rsrcNode.Node.TreeNode.TreeView.SelectedItem == rsrcNode.Node;
+
 				origParentNode.TreeNode.Children.RemoveAt(origParentChildIndex);
 				newOptions.CopyTo(rsrcNode.Resource);
-
 				origParentNode.TreeNode.AddChild(rsrcNode.Node.TreeNode);
-				origParentNode.TreeNode.TreeView.SelectItems(new[] { rsrcNode.Node });
+
+				if (isNodeSelected)
+					origParentNode.TreeNode.TreeView.SelectItems(new[] { rsrcNode.Node });
 			}
 			else
 				newOptions.CopyTo(rsrcNode.Resource);
@@ -1088,6 +1092,8 @@ namespace dnSpy.AsmEditor.Resources {
 
 		public void Undo() {
 			if (nameChanged) {
+				var isNodeSelected = rsrcNode.Node.TreeNode.TreeView.SelectedItem == rsrcNode.Node;
+
 				bool b = origParentNode.TreeNode.Children.Remove(rsrcNode.Node.TreeNode);
 				Debug.Assert(b);
 				if (!b)
@@ -1095,7 +1101,9 @@ namespace dnSpy.AsmEditor.Resources {
 
 				origOptions.CopyTo(rsrcNode.Resource);
 				origParentNode.TreeNode.Children.Insert(origParentChildIndex, rsrcNode.Node.TreeNode);
-				origParentNode.TreeNode.TreeView.SelectItems(new[] { rsrcNode.Node });
+
+				if (isNodeSelected)
+					origParentNode.TreeNode.TreeView.SelectItems(new[] { rsrcNode.Node });
 			}
 			else
 				origOptions.CopyTo(rsrcNode.Resource);

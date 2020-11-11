@@ -512,11 +512,15 @@ namespace dnSpy.AsmEditor.Method {
 				Debug.Assert(b);
 				if (!b)
 					throw new InvalidOperationException();
+
+				var isNodeSelected = methodNode.TreeNode.TreeView.SelectedItem == methodNode;
+
 				origParentNode.TreeNode.Children.RemoveAt(origParentChildIndex);
 				newOptions.CopyTo(methodNode.MethodDef);
-
 				origParentNode.TreeNode.AddChild(methodNode.TreeNode);
-				origParentNode.TreeNode.TreeView.SelectItems(new[] { methodNode });
+
+				if (isNodeSelected)
+					origParentNode.TreeNode.TreeView.SelectItems(new[] { methodNode });
 			}
 			else
 				newOptions.CopyTo(methodNode.MethodDef);

@@ -411,11 +411,15 @@ namespace dnSpy.AsmEditor.Property {
 				Debug.Assert(b);
 				if (!b)
 					throw new InvalidOperationException();
+
+				var isNodeSelected = propNode.TreeNode.TreeView.SelectedItem == propNode;
+
 				origParentNode.TreeNode.Children.RemoveAt(origParentChildIndex);
 				newOptions.CopyTo(propNode.PropertyDef);
-
 				origParentNode.TreeNode.AddChild(propNode.TreeNode);
-				origParentNode.TreeNode.TreeView.SelectItems(new[] { propNode });
+
+				if (isNodeSelected)
+					origParentNode.TreeNode.TreeView.SelectItems(new[] { propNode });
 			}
 			else
 				newOptions.CopyTo(propNode.PropertyDef);
@@ -424,6 +428,8 @@ namespace dnSpy.AsmEditor.Property {
 
 		public void Undo() {
 			if (nameChanged) {
+				var isNodeSelected = propNode.TreeNode.TreeView.SelectedItem == propNode;
+
 				bool b = origParentNode.TreeNode.Children.Remove(propNode.TreeNode);
 				Debug.Assert(b);
 				if (!b)
@@ -431,7 +437,9 @@ namespace dnSpy.AsmEditor.Property {
 
 				origOptions.CopyTo(propNode.PropertyDef);
 				origParentNode.TreeNode.Children.Insert(origParentChildIndex, propNode.TreeNode);
-				origParentNode.TreeNode.TreeView.SelectItems(new[] { propNode });
+
+				if (isNodeSelected)
+					origParentNode.TreeNode.TreeView.SelectItems(new[] { propNode });
 			}
 			else
 				origOptions.CopyTo(propNode.PropertyDef);
