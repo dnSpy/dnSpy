@@ -943,7 +943,7 @@ namespace dndbg.DotNet {
 		protected override void InitializeTypes() {
 			var list = GetNonNestedClassRids();
 			var tmp = new LazyList<TypeDef?, uint[]>(list.Length, this, list, (list2, index) => ResolveTypeDef(list2[index]));
-			Interlocked.CompareExchange(ref types, tmp, null);
+			Interlocked.CompareExchange(ref types, tmp, null!);
 		}
 
 		uint[] GetNonNestedClassRids() {
@@ -1075,7 +1075,7 @@ namespace dndbg.DotNet {
 		protected override void InitializeExportedTypes() {
 			var list = MDAPI.GetExportedTypeRids(MetaDataAssemblyImport);
 			var tmp = new LazyList<ExportedType?, uint[]>(list.Length, list, (list2, i) => ResolveExportedType(list2[i]));
-			Interlocked.CompareExchange(ref exportedTypes, tmp, null);
+			Interlocked.CompareExchange(ref exportedTypes, tmp, null!);
 			lastExportedTypeRidInList = list.Length == 0 ? 0 : list.Max();
 		}
 
@@ -1109,7 +1109,7 @@ namespace dndbg.DotNet {
 		protected override void InitializeResources() {
 			var list = MDAPI.GetManifestResourceRids(MetaDataAssemblyImport);
 			var tmp = new ResourceCollection(list.Length, null, (ctx, i) => CreateResource((uint)i + 1));
-			Interlocked.CompareExchange(ref resources, tmp, null);
+			Interlocked.CompareExchange(ref resources, tmp, null!);
 			lastManifestResourceRidInList = list.Length == 0 ? 0 : list.Max();
 		}
 

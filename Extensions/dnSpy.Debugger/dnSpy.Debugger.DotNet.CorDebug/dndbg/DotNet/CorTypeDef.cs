@@ -409,7 +409,7 @@ namespace dndbg.DotNet {
 		protected override void InitializeNestedTypes() {
 			var list = readerModule.GetTypeDefNestedClassRids(this);
 			var tmp = new LazyList<TypeDef?, uint[]>(list.Length, this, list, (list2, index) => readerModule.ResolveTypeDef(list2[index]));
-			Interlocked.CompareExchange(ref nestedTypes, tmp, null);
+			Interlocked.CompareExchange(ref nestedTypes, tmp, null!);
 		}
 	}
 }

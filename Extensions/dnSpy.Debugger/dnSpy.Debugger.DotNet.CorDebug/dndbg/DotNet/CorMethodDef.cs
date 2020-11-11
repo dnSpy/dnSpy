@@ -181,7 +181,7 @@ namespace dndbg.DotNet {
 
 		protected override void InitializeOverrides() {
 			var tmp = ownerType.GetMethodOverrides(this);
-			Interlocked.CompareExchange(ref overrides, tmp, null);
+			Interlocked.CompareExchange(ref overrides, tmp, null!);
 		}
 
 		protected override ImplMap? GetImplMap_NoLock() {
