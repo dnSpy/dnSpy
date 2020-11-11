@@ -101,9 +101,9 @@ namespace dnSpy.AsmEditor.Hex {
 
 		MDTableContext? CreateMDTableContext() {
 			var tab = documentTabService.ActiveTab;
-			if (!(tab is null)) {
+			if (tab is not null) {
 				var listView = FindListView(tab);
-				if (!(listView is null) && UIUtils.HasSelectedChildrenFocus(listView))
+				if (listView is not null && UIUtils.HasSelectedChildrenFocus(listView))
 					return MenuMDTableCommand.ToMDTableContext(listView, false);
 			}
 
@@ -112,7 +112,7 @@ namespace dnSpy.AsmEditor.Hex {
 
 		static ListView? FindListView(IDocumentTab tab) {
 			var o = tab.UIContext.UIObject as DependencyObject;
-			while (!(o is null)) {
+			while (o is not null) {
 				if (o is ListView lv && InitDataTemplateAP.GetInitialize(lv))
 					return lv;
 				var children = UIUtils.GetChildren(o).ToArray();
@@ -131,12 +131,12 @@ namespace dnSpy.AsmEditor.Hex {
 
 		bool ICommand.CanExecute(object? parameter) {
 			var ctx = CreateMDTableContext();
-			return !(ctx is null) && cmd.IsVisible(ctx) && cmd.IsEnabled(ctx);
+			return ctx is not null && cmd.IsVisible(ctx) && cmd.IsEnabled(ctx);
 		}
 
 		void ICommand.Execute(object? parameter) {
 			var ctx = CreateMDTableContext();
-			if (!(ctx is null))
+			if (ctx is not null)
 				cmd.Execute(ctx);
 		}
 	}
@@ -233,7 +233,7 @@ namespace dnSpy.AsmEditor.Hex {
 
 		static void ExecuteInternal(MDTableContext context) {
 			var recVM = Ask(dnSpy_AsmEditor_Resources.GoToRowIdentifier_Title, context);
-			if (!(recVM is null))
+			if (recVM is not null)
 				UIUtils.ScrollSelectAndSetFocus(context.ListView, recVM);
 		}
 
@@ -277,11 +277,11 @@ namespace dnSpy.AsmEditor.Hex {
 
 		static void ExecuteInternal(IDocumentTabService documentTabService, MDTableContext context) {
 			var @ref = GetAddressReference(context);
-			if (!(@ref is null))
+			if (@ref is not null)
 				documentTabService.FollowReference(@ref);
 		}
 
-		static bool IsEnabledInternal(MDTableContext context) => !(GetAddressReference(context) is null);
+		static bool IsEnabledInternal(MDTableContext context) => GetAddressReference(context) is not null;
 
 		static AddressReference? GetAddressReference(MDTableContext context) {
 			if (context.Records.Length == 0)
@@ -390,7 +390,7 @@ namespace dnSpy.AsmEditor.Hex {
 			HexBufferWriterHelper.Write(buffer, context.Records[0].Span.Start, data);
 		}
 
-		static bool IsEnabledInternal(MDTableContext context) => !(GetPasteData(context) is null);
+		static bool IsEnabledInternal(MDTableContext context) => GetPasteData(context) is not null;
 
 		static byte[]? GetPasteData(MDTableContext context) {
 			if (context.Records.Length == 0)

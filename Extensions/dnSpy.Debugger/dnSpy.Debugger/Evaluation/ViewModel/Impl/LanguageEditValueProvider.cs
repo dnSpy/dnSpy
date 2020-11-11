@@ -75,7 +75,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		string GetContentType() {
-			if (!(language is null)) {
+			if (language is not null) {
 				//TODO:
 			}
 			return defaultContentType;

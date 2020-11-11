@@ -81,7 +81,7 @@ namespace dnSpy.Language.Intellisense {
 				if (!TextView.TextDataModel.ContentType.IsOfAnyType(provider.Metadata.ContentTypes))
 					continue;
 				var source = provider.Value.TryCreateQuickInfoSource(textBuffer);
-				if (!(source is null)) {
+				if (source is not null) {
 					if (list is null)
 						list = new List<IQuickInfoSource>();
 					list.Add(source);
@@ -91,7 +91,7 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		void DisposeQuickInfoSources() {
-			if (!(quickInfoSources is null)) {
+			if (quickInfoSources is not null) {
 				foreach (var source in quickInfoSources)
 					source.Dispose();
 				quickInfoSources = null;

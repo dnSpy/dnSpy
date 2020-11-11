@@ -147,7 +147,7 @@ namespace dnSpy.Contracts.Decompiler {
 					}
 				}
 			}
-			if (!(intersection is null))
+			if (intersection is not null)
 				return intersection;
 
 			var list = new List<SourceStatement>();

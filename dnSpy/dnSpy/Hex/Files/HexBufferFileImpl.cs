@@ -94,7 +94,7 @@ namespace dnSpy.Hex.Files {
 				var list = new List<StructureProvider>(structureProviderFactories.Length);
 				foreach (var lz in structureProviderFactories) {
 					var provider = lz.Value.Create(this);
-					if (!(provider is null))
+					if (provider is not null)
 						list.Add(provider);
 				}
 				structureProviders = list.ToArray();
@@ -118,18 +118,18 @@ namespace dnSpy.Hex.Files {
 
 			// Always initialize this first to make sure nested files get created
 			CreateStructureProviders(true);
-			Debug2.Assert(!(structureProviders is null));
+			Debug2.Assert(structureProviders is not null);
 
 			if (checkNestedFiles && files.Count != 0) {
 				var file = files.FindData(position);
 				var info = file?.GetFileAndStructure(position, checkNestedFiles);
-				if (!(info is null))
+				if (info is not null)
 					return info;
 			}
 
 			foreach (var provider in structureProviders) {
 				var structure = provider.GetStructure(position);
-				if (!(structure is null))
+				if (structure is not null)
 					return new FileAndStructure(this, structure);
 			}
 			return null;
@@ -137,10 +137,10 @@ namespace dnSpy.Hex.Files {
 
 		public override ComplexData? GetStructure(string id) {
 			CreateStructureProviders(true);
-			Debug2.Assert(!(structureProviders is null));
+			Debug2.Assert(structureProviders is not null);
 			foreach (var provider in structureProviders) {
 				var structure = provider.GetStructure(id);
-				if (!(structure is null))
+				if (structure is not null)
 					return structure;
 			}
 			return null;
@@ -152,22 +152,22 @@ namespace dnSpy.Hex.Files {
 				var list = new List<BufferFileHeadersProvider>(bufferFileHeadersProviderFactories.Length);
 				foreach (var lz in bufferFileHeadersProviderFactories) {
 					var provider = lz.Value.Create(this);
-					if (!(provider is null))
+					if (provider is not null)
 						list.Add(provider);
 				}
 				bufferFileHeadersProviders = list.ToArray();
 			}
-			Debug2.Assert(!(structureProviders is null));
+			Debug2.Assert(structureProviders is not null);
 
 			foreach (var provider in structureProviders) {
 				var headers = provider.GetHeaders<THeaders>();
-				if (!(headers is null))
+				if (headers is not null)
 					return headers;
 			}
 
 			foreach (var provider in bufferFileHeadersProviders) {
 				var headers = provider.GetHeaders<THeaders>();
-				if (!(headers is null))
+				if (headers is not null)
 					return headers;
 			}
 

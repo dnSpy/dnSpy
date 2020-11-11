@@ -139,14 +139,14 @@ namespace dnSpy.Text.Operations {
 			var firstSpan = default(SnapshotSpan);
 			using (var ed = wpfTextView.TextBuffer.CreateEdit()) {
 				foreach (var span in GetNormalizedSpansToReplaceWithText()) {
-					Debug2.Assert(!(span.Snapshot is null));
+					Debug2.Assert(span.Snapshot is not null);
 					if (firstSpan.Snapshot is null)
 						firstSpan = span;
 					ed.Replace(span, s);
 				}
 				ed.Apply();
 			}
-			Debug2.Assert(!(firstSpan.Snapshot is null));
+			Debug2.Assert(firstSpan.Snapshot is not null);
 			wpfTextView.Selection.Clear();
 			wpfTextView.Caret.MoveTo(new SnapshotPoint(wpfTextView.TextSnapshot, firstSpan.Start.Position + s.Length));
 			wpfTextView.Caret.EnsureVisible();

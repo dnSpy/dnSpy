@@ -57,7 +57,7 @@ namespace dnSpy.Decompiler.MSBuild {
 				writer.WriteStartDocument();
 				writer.WriteStartElement("Project", "http://schemas.microsoft.com/developer/msbuild/2003");
 				var toolsVersion = GetToolsVersion();
-				if (!(toolsVersion is null))
+				if (toolsVersion is not null)
 					writer.WriteAttributeString("ToolsVersion", toolsVersion);
 				if (projectVersion <= ProjectVersion.VS2015)
 					writer.WriteAttributeString("DefaultTargets", "Build");
@@ -84,7 +84,7 @@ namespace dnSpy.Decompiler.MSBuild {
 				writer.WriteElementString("ProjectGuid", project.Guid.ToString("B").ToUpperInvariant());
 				writer.WriteElementString("OutputType", GetOutputType());
 				var appDesignFolder = GetAppDesignerFolder();
-				if (!(appDesignFolder is null))
+				if (appDesignFolder is not null)
 					writer.WriteElementString("AppDesignerFolder", appDesignFolder);
 				writer.WriteElementString("RootNamespace", GetRootNamespace());
 				var asmName = GetAssemblyName();
@@ -103,11 +103,11 @@ namespace dnSpy.Decompiler.MSBuild {
 					writer.WriteElementString("ProjectTypeGuids", text);
 				}
 				//TODO: VB includes a "MyType"
-				if (!(project.ApplicationManifest is null))
+				if (project.ApplicationManifest is not null)
 					writer.WriteElementString("ApplicationManifest", GetRelativePath(project.ApplicationManifest.Filename));
-				if (!(project.ApplicationIcon is null))
+				if (project.ApplicationIcon is not null)
 					writer.WriteElementString("ApplicationIcon", GetRelativePath(project.ApplicationIcon.Filename));
-				if (!(project.StartupObject is null))
+				if (project.StartupObject is not null)
 					writer.WriteElementString("StartupObject", project.StartupObject);
 				writer.WriteEndElement();
 
@@ -127,7 +127,7 @@ namespace dnSpy.Decompiler.MSBuild {
 					writer.WriteElementString("NoStdLib", "true");
 				if (project.AllowUnsafeBlocks)
 					writer.WriteElementString("AllowUnsafeBlocks", "true");
-				if (!(noWarnList is null))
+				if (noWarnList is not null)
 					writer.WriteElementString("NoWarn", noWarnList);
 				writer.WriteEndElement();
 
@@ -145,7 +145,7 @@ namespace dnSpy.Decompiler.MSBuild {
 					writer.WriteElementString("NoStdLib", "true");
 				if (project.AllowUnsafeBlocks)
 					writer.WriteElementString("AllowUnsafeBlocks", "true");
-				if (!(noWarnList is null))
+				if (noWarnList is not null)
 					writer.WriteElementString("NoWarn", noWarnList);
 				writer.WriteEndElement();
 
@@ -156,13 +156,13 @@ namespace dnSpy.Decompiler.MSBuild {
 					var hash = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 					foreach (var r in gacRefs) {
 						var asm = project.Module.Context.AssemblyResolver.Resolve(r, project.Module);
-						if (!(asm is null) && ExistsInProject(asm.ManifestModule.Location))
+						if (asm is not null && ExistsInProject(asm.ManifestModule.Location))
 							continue;
 						hash.Add(r.Name);
 						writer.WriteStartElement("Reference");
 						writer.WriteAttributeString("Include", IdentifierEscaper.Escape(r.Name));
 						var hintPath = GetHintPath(asm);
-						if (!(hintPath is null))
+						if (hintPath is not null)
 							writer.WriteElementString("HintPath", hintPath);
 						writer.WriteEndElement();
 					}
@@ -246,13 +246,13 @@ namespace dnSpy.Decompiler.MSBuild {
 					continue;
 				writer.WriteStartElement(ToString(buildAction));
 				writer.WriteAttributeString("Include", GetRelativePath(file.Filename));
-				if (!(file.DependentUpon is null))
+				if (file.DependentUpon is not null)
 					writer.WriteElementString("DependentUpon", GetRelativePath(Path.GetDirectoryName(file.Filename)!, file.DependentUpon.Filename));
-				if (!(file.SubType is null))
+				if (file.SubType is not null)
 					writer.WriteElementString("SubType", file.SubType);
-				if (!(file.Generator is null))
+				if (file.Generator is not null)
 					writer.WriteElementString("Generator", file.Generator);
-				if (!(file.LastGenOutput is null))
+				if (file.LastGenOutput is not null)
 					writer.WriteElementString("LastGenOutput", GetRelativePath(Path.GetDirectoryName(file.Filename)!, file.LastGenOutput.Filename));
 				if (file.AutoGen)
 					writer.WriteElementString("AutoGen", "True");
@@ -397,7 +397,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			return false;
 		}
 
-		bool ExistsInProject(string filename) => !(FindOtherProject(filename) is null);
+		bool ExistsInProject(string filename) => FindOtherProject(filename) is not null;
 		bool AssemblyExistsInProject(string asmSimpleName) =>
 			allProjects.Any(a => StringComparer.OrdinalIgnoreCase.Equals(a.AssemblyName, asmSimpleName));
 		Project? FindOtherProject(string filename) =>

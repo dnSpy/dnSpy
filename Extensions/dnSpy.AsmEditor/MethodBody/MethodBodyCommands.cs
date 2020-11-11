@@ -98,7 +98,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			var methodNode = (MethodNode)nodes[0];
 
 			var module = nodes[0].GetModule();
-			Debug2.Assert(!(module is null));
+			Debug2.Assert(module is not null);
 			if (module is null)
 				throw new InvalidOperationException();
 
@@ -108,7 +108,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			win.Owner = appService.MainWindow;
 			win.Title = $"{win.Title} - {methodNode.ToString()}";
 
-			if (data.IsCilBody && !(offsets is null))
+			if (data.IsCilBody && offsets is not null)
 				data.CilBodyVM.Select(offsets);
 
 			if (win.ShowDialog() != true)
@@ -165,9 +165,9 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		internal static bool IsVisibleInternal(IMenuItemContext? context) => IsVisible(BodyCommandUtils.GetStatements(context, FindByTextPositionOptions.None));
 		static bool IsVisible(IList<MethodSourceStatement>? list) =>
-			!(list is null) &&
+			list is not null &&
 			list.Count != 0 &&
-			!(list[0].Method.Body is null) &&
+			list[0].Method.Body is not null &&
 			list[0].Method.Body.Instructions.Count > 0;
 
 		public override void Execute(IMenuItemContext context) => Execute(BodyCommandUtils.GetStatements(context, FindByTextPositionOptions.None));

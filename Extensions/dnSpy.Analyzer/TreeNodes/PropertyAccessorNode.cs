@@ -28,7 +28,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			: base(analyzedMethod, isSetter: isSetter) => this.name = name;
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) {
-			if (!(name is null))
+			if (name is not null)
 				output.Write(BoxedTextColor.Keyword, name);
 			else
 				base.Write(output, decompiler);

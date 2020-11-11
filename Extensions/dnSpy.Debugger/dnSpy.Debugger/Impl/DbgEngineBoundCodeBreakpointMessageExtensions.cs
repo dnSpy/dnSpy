@@ -25,23 +25,23 @@ using dnSpy.Debugger.Properties;
 namespace dnSpy.Debugger.Impl {
 	static class DbgEngineBoundCodeBreakpointMessageExtensions {
 		public static DbgBoundCodeBreakpointMessage ToDbgBoundCodeBreakpointMessage(this DbgEngineBoundCodeBreakpointMessage message) {
-			if (!(message.Arguments is null)) {
+			if (message.Arguments is not null) {
 				switch (message.Kind) {
 				case DbgEngineBoundCodeBreakpointMessageKind.None:
 					return DbgBoundCodeBreakpointMessage.None;
 
 				case DbgEngineBoundCodeBreakpointMessageKind.CustomWarning:
-					if (message.Arguments.Length == 1 && !(message.Arguments[0] is null))
+					if (message.Arguments.Length == 1 && message.Arguments[0] is not null)
 						return new DbgBoundCodeBreakpointMessage(DbgBoundCodeBreakpointSeverity.Warning, message.Arguments[0]);
 					break;
 
 				case DbgEngineBoundCodeBreakpointMessageKind.CustomError:
-					if (message.Arguments.Length == 1 && !(message.Arguments[0] is null))
+					if (message.Arguments.Length == 1 && message.Arguments[0] is not null)
 						return new DbgBoundCodeBreakpointMessage(DbgBoundCodeBreakpointSeverity.Error, message.Arguments[0]);
 					break;
 
 				case DbgEngineBoundCodeBreakpointMessageKind.FunctionNotFound:
-					if (message.Arguments.Length == 1 && !(message.Arguments[0] is null))
+					if (message.Arguments.Length == 1 && message.Arguments[0] is not null)
 						return new DbgBoundCodeBreakpointMessage(DbgBoundCodeBreakpointSeverity.Error, string.Format(dnSpy_Debugger_Resources.BreakpointMessage_TheFunctionCanNotBeFound, message.Arguments[0]));
 					break;
 

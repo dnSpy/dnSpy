@@ -81,10 +81,10 @@ namespace dnSpy.Debugger.CallStack.TextEditor {
 		void SetCurrentProcess(DbgProcess? process) {
 			if (currentProcess == process)
 				return;
-			if (!(currentProcess is null))
+			if (currentProcess is not null)
 				currentProcess.IsRunningChanged -= DbgProcess_IsRunningChanged;
 			currentProcess = process;
-			if (!(process is null))
+			if (process is not null)
 				process.IsRunningChanged += DbgProcess_IsRunningChanged;
 		}
 
@@ -101,11 +101,11 @@ namespace dnSpy.Debugger.CallStack.TextEditor {
 		static readonly ReadOnlyCollection<DbgStackFrame> emptyStackFrames = new ReadOnlyCollection<DbgStackFrame>(Array.Empty<DbgStackFrame>());
 
 		void ClearMarkers() {
-			if (!(currentStatementMarker is null) || !(callReturnMarker is null)) {
+			if (currentStatementMarker is not null || callReturnMarker is not null) {
 				var list = new List<IGlyphTextMarker>(2);
-				if (!(currentStatementMarker is null))
+				if (currentStatementMarker is not null)
 					list.Add(currentStatementMarker);
-				if (!(callReturnMarker is null))
+				if (callReturnMarker is not null)
 					list.Add(callReturnMarker);
 				currentStatementMarker = null;
 				callReturnMarker = null;
@@ -116,7 +116,7 @@ namespace dnSpy.Debugger.CallStack.TextEditor {
 		GlyphTextMarkerLocationInfo? GetTextMarkerLocationInfo(DbgStackFrame frame) {
 			foreach (var provider in dbgStackFrameGlyphTextMarkerLocationInfoProviders) {
 				var info = provider.Value.Create(frame);
-				if (!(info is null))
+				if (info is not null)
 					return info;
 			}
 			return null;
@@ -129,7 +129,7 @@ namespace dnSpy.Debugger.CallStack.TextEditor {
 
 			if (frames.Count != 0) {
 				var markerLocationInfo = GetTextMarkerLocationInfo(frames[0]);
-				if (!(markerLocationInfo is null)) {
+				if (markerLocationInfo is not null) {
 					currentStatementMarker = glyphTextMarkerService.Value.AddMarker(
 						markerLocationInfo,
 						DsImages.CurrentInstructionPointer,
@@ -144,7 +144,7 @@ namespace dnSpy.Debugger.CallStack.TextEditor {
 
 				int activeFrameIndex = dbgCallStackService.ActiveFrameIndex;
 				markerLocationInfo = activeFrameIndex != 0 && (uint)activeFrameIndex < (uint)frames.Count ? GetTextMarkerLocationInfo(frames[activeFrameIndex]) : null;
-				if (!(markerLocationInfo is null)) {
+				if (markerLocationInfo is not null) {
 					callReturnMarker = glyphTextMarkerService.Value.AddMarker(
 						markerLocationInfo,
 						DsImages.CallReturnInstructionPointer,

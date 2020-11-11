@@ -156,7 +156,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			GenericParameterCount = new UInt32VM(0, a => {
 				HasErrorUpdated();
 				OnPropertyChanged(nameof(SignatureFullName));
-				if (!(GenericParameterCount is null) && !GenericParameterCount.HasError)
+				if (GenericParameterCount is not null && !GenericParameterCount.HasError)
 					IsGeneric = GenericParameterCount.Value != 0;
 			}) {
 				Min = ModelUtils.COMPRESSED_UINT32_MIN,
@@ -204,7 +204,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				ParametersCreateTypeSigArray.TypeSigCollection.AddRange(sig.Params);
 				GenericParameterCount.Value = sig.GenParamCount;
 				SentinelCreateTypeSigArray.TypeSigCollection.Clear();
-				if (!(sig.ParamsAfterSentinel is null))
+				if (sig.ParamsAfterSentinel is not null)
 					SentinelCreateTypeSigArray.TypeSigCollection.AddRange(sig.ParamsAfterSentinel);
 			}
 		}
@@ -214,13 +214,13 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				throw new InvalidOperationException();
 
 			var newTypeSig = typeSigCreator.Create(options.TypeSigCreatorOptions.Clone(dnSpy_AsmEditor_Resources.CreateReturnType), ReturnType, out bool canceled);
-			if (!(newTypeSig is null))
+			if (newTypeSig is not null)
 				ReturnType = newTypeSig;
 		}
 
 		protected override string? Verify(string columnName) {
 			if (columnName == nameof(ReturnType))
-				return !(ReturnType is null) ? string.Empty : dnSpy_AsmEditor_Resources.ReturnTypeRequired;
+				return ReturnType is not null ? string.Empty : dnSpy_AsmEditor_Resources.ReturnTypeRequired;
 			return string.Empty;
 		}
 

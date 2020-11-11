@@ -227,7 +227,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				elementCount = obj.Value.ArrayCount;
 				var baseIndexes = (obj.Value.HasBaseIndicies ? obj.Value.BaseIndicies : null) ?? Array.Empty<uint>();
 				var dimensions = obj.Value.Dimensions;
-				if (!(dimensions is null)) {
+				if (dimensions is not null) {
 					var infos = new DbgDotNetArrayDimensionInfo[dimensions.Length];
 					for (int i = 0; i < infos.Length; i++)
 						infos[i] = new DbgDotNetArrayDimensionInfo((int)(i < baseIndexes.Length ? baseIndexes[i] : 0), dimensions[i]);

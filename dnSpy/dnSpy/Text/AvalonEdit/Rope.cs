@@ -58,7 +58,7 @@ namespace dnSpy.Text.AvalonEdit {
 			}
 			else {
 				string text = input as string;
-				if (!(text is null)) {
+				if (text is not null) {
 					// if a string is IEnumerable<T>, then T must be char
 					((Rope<char>)(object)this).root = CharRope.InitFromString(text);
 				}
@@ -256,7 +256,7 @@ namespace dnSpy.Text.AvalonEdit {
 						entry = new RopeCacheEntry(entry.node.GetContentNode(), entry.nodeStartIndex);
 						// entry is now guaranteed NOT to be another function node
 					}
-					if (!(entry.node.contents is null)) {
+					if (entry.node.contents is not null) {
 						// this is a node containing actual content, so we're done
 						break;
 					}
@@ -276,7 +276,7 @@ namespace dnSpy.Text.AvalonEdit {
 			}
 
 			// this method guarantees that it finds a leaf node
-			Debug2.Assert(!(stack.Peek().node.contents is null));
+			Debug2.Assert(stack.Peek().node.contents is not null);
 			return stack;
 		}
 		#endregion
@@ -313,7 +313,7 @@ namespace dnSpy.Text.AvalonEdit {
 		/// </remarks>
 		public override string ToString() {
 			Rope<char> charRope = this as Rope<char>;
-			if (!(charRope is null)) {
+			if (charRope is not null) {
 				return charRope.ToString(0, Length);
 			}
 			else {
@@ -499,7 +499,7 @@ namespace dnSpy.Text.AvalonEdit {
 
 		static IEnumerator<T> Enumerate(RopeNode<T> node) {
 			Stack<RopeNode<T>> stack = new Stack<RopeNode<T>>();
-			while (!(node is null)) {
+			while (node is not null) {
 				// go to leftmost node, pushing the right parts that we'll have to visit later
 				while (node.contents is null) {
 					if (node.height == 0) {
@@ -507,7 +507,7 @@ namespace dnSpy.Text.AvalonEdit {
 						node = node.GetContentNode();
 						continue;
 					}
-					Debug2.Assert(!(node.right is null));
+					Debug2.Assert(node.right is not null);
 					stack.Push(node.right);
 					node = node.left;
 				}

@@ -153,15 +153,15 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 					switch (xelem.Name.ToString().ToUpperInvariant()) {
 					case "SEE":
 						var cref = (string?)xelem.Attribute("cref");
-						if (!(cref is null))
+						if (cref is not null)
 							output.Write(XmlDocRenderer.GetCref(cref), BoxedTextColor.Text);
 						var langword = (string?)xelem.Attribute("langword");
-						if (!(langword is null))
+						if (langword is not null)
 							output.Write(langword.Trim(), BoxedTextColor.Keyword);
 						break;
 					case "PARAMREF":
 						var nameAttr = (string?)xml.Attribute("name");
-						if (!(nameAttr is null))
+						if (nameAttr is not null)
 							output.Write(nameAttr.Trim(), BoxedTextColor.Parameter);
 						break;
 					case "BR":

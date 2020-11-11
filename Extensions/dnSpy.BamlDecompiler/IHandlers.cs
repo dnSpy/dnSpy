@@ -47,7 +47,7 @@ namespace dnSpy.BamlDecompiler {
 
 		public static void ProcessChildren(XamlContext ctx, BamlBlockNode node, BamlElement nodeElem) {
 			ctx.XmlNs.PushScope(nodeElem);
-			if (!(nodeElem.Xaml.Element is null))
+			if (nodeElem.Xaml.Element is not null)
 				nodeElem.Xaml.Element.AddAnnotation(ctx.XmlNs.CurrentScope);
 			foreach (var child in node.Children) {
 				var handler = LookupHandler(child.Type);
@@ -56,7 +56,7 @@ namespace dnSpy.BamlDecompiler {
 					continue;
 				}
 				var elem = handler.Translate(ctx, (BamlNode)child, nodeElem);
-				if (!(elem is null)) {
+				if (elem is not null) {
 					nodeElem.Children.Add(elem);
 					elem.Parent = nodeElem;
 				}

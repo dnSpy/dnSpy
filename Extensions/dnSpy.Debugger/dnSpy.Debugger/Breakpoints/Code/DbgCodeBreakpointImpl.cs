@@ -225,7 +225,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			DbgBoundCodeBreakpointMessage? warningMsg = null;
 			foreach (var bp in boundCodeBreakpoints) {
 				var msg = bp.Message;
-				Debug2.Assert(!(msg.Message is null));
+				Debug2.Assert(msg.Message is not null);
 				if (msg.Message is null)
 					continue;
 				switch (msg.Severity) {

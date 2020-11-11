@@ -96,15 +96,15 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 			}
 
 			IDecompiler? decompiler = decompilerService.Decompiler;
-			if (!(decompiler is null) && decompiler.GenericGuid == DecompilerConstants.LANGUAGE_IL)
+			if (decompiler is not null && decompiler.GenericGuid == DecompilerConstants.LANGUAGE_IL)
 				decompiler = null;
-			bool canShowILCode = (options & DbgNativeCodeOptions.ShowILCode) != 0 && !(ilDecompiler is null);
-			bool canShowCode = (options & DbgNativeCodeOptions.ShowCode) != 0 && !(decompiler is null);
+			bool canShowILCode = (options & DbgNativeCodeOptions.ShowILCode) != 0 && ilDecompiler is not null;
+			bool canShowCode = (options & DbgNativeCodeOptions.ShowCode) != 0 && decompiler is not null;
 			NativeVariableInfo[]? nativeVariableInfo = null;
-			if (!(methodModule is null) && methodToken != 0 && (canShowILCode || canShowCode) && HasSequencePoints(nativeCode)) {
+			if (methodModule is not null && methodToken != 0 && (canShowILCode || canShowCode) && HasSequencePoints(nativeCode)) {
 				var module = dbgMetadataService.Value.TryGetMetadata(methodModule, DbgLoadModuleOptions.AutoLoaded);
 				var method = module?.ResolveToken(methodToken) as MethodDef;
-				if (!(method is null)) {
+				if (method is not null) {
 					var cancellationToken = CancellationToken.None;
 
 					ILSourceStatementProvider ilCodeProvider = default;
@@ -112,7 +112,7 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 					List<int>? ilOffsets = null;
 
 					if (canShowILCode) {
-						Debug2.Assert(!(ilDecompiler is null));
+						Debug2.Assert(ilDecompiler is not null);
 						var provider = new DecompiledCodeProvider(ilDecompiler, method, cancellationToken);
 						if (provider.TryDecompile())
 							ilCodeProvider = provider.CreateILCodeProvider();

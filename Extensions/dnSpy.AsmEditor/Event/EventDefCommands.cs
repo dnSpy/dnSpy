@@ -119,11 +119,11 @@ namespace dnSpy.AsmEditor.Event {
 				}
 
 				static IEnumerable<MethodDef> GetMethods(EventDef evt) {
-					if (!(evt.AddMethod is null))
+					if (evt.AddMethod is not null)
 						yield return evt.AddMethod;
-					if (!(evt.InvokeMethod is null))
+					if (evt.InvokeMethod is not null)
 						yield return evt.InvokeMethod;
-					if (!(evt.RemoveMethod is null))
+					if (evt.RemoveMethod is not null)
 						yield return evt.RemoveMethod;
 					foreach (var m in evt.OtherMethods)
 						yield return m;
@@ -132,7 +132,7 @@ namespace dnSpy.AsmEditor.Event {
 
 			public void Delete(EventNode[] nodes) {
 				Debug2.Assert(infos is null);
-				if (!(infos is null))
+				if (infos is not null)
 					throw new InvalidOperationException();
 
 				infos = new ModelInfo[nodes.Length];
@@ -156,7 +156,7 @@ namespace dnSpy.AsmEditor.Event {
 			}
 
 			public void Restore(EventNode[] nodes) {
-				Debug2.Assert(!(infos is null));
+				Debug2.Assert(infos is not null);
 				if (infos is null)
 					throw new InvalidOperationException();
 				Debug.Assert(infos.Length == nodes.Length);
@@ -251,7 +251,7 @@ namespace dnSpy.AsmEditor.Event {
 
 		static bool CanExecute(DocumentTreeNodeData[] nodes) =>
 			nodes.Length == 1 &&
-			(nodes[0] is TypeNode || (!(nodes[0].TreeNode.Parent is null) && nodes[0].TreeNode.Parent!.Data is TypeNode));
+			(nodes[0] is TypeNode || (nodes[0].TreeNode.Parent is not null && nodes[0].TreeNode.Parent!.Data is TypeNode));
 
 		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppService appService, DocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
@@ -261,12 +261,12 @@ namespace dnSpy.AsmEditor.Event {
 			if (!(ownerNode is TypeNode))
 				ownerNode = (DocumentTreeNodeData)ownerNode.TreeNode.Parent!.Data;
 			var typeNode = ownerNode as TypeNode;
-			Debug2.Assert(!(typeNode is null));
+			Debug2.Assert(typeNode is not null);
 			if (typeNode is null)
 				throw new InvalidOperationException();
 
 			var module = typeNode.GetModule();
-			Debug2.Assert(!(module is null));
+			Debug2.Assert(module is not null);
 			if (module is null)
 				throw new InvalidOperationException();
 			var options = EventDefOptions.Create("MyEvent", module.CorLibTypes.GetTypeRef("System", "EventHandler"));
@@ -371,7 +371,7 @@ namespace dnSpy.AsmEditor.Event {
 			var eventNode = (EventNode)nodes[0];
 
 			var module = nodes[0].GetModule();
-			Debug2.Assert(!(module is null));
+			Debug2.Assert(module is not null);
 			if (module is null)
 				throw new InvalidOperationException();
 

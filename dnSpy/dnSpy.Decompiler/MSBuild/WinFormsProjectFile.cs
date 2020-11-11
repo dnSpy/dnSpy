@@ -47,7 +47,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		}
 
 		public IMemberDef[] GetDefsToRemove() {
-			if (!(defsToRemove is null))
+			if (defsToRemove is not null)
 				return defsToRemove;
 			lock (defsToRemoveLock) {
 				if (defsToRemove is null)
@@ -60,14 +60,14 @@ namespace dnSpy.Decompiler.MSBuild {
 
 		IEnumerable<IMemberDef> CalculateDefsToRemove() {
 			var m = GetInitializeComponent();
-			if (!(m is null)) {
+			if (m is not null) {
 				yield return m;
 				foreach (var f in DotNetUtils.GetFields(m))
 					yield return f;
 			}
 
 			m = GetDispose();
-			if (!(m is null)) {
+			if (m is not null) {
 				yield return m;
 				foreach (var f in DotNetUtils.GetFields(m))
 					yield return f;

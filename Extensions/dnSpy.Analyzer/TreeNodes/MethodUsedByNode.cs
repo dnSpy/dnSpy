@@ -81,18 +81,18 @@ namespace dnSpy.Analyzer.TreeNodes {
 			if (isSetter)
 				property = analyzedMethod.DeclaringType.Properties.FirstOrDefault(a => a.SetMethod == analyzedMethod);
 
-			var includeAllModules = (!(property is null) && CustomAttributesUtils.IsPseudoCustomAttributeType(analyzedMethod.DeclaringType)) || !(implMapName is null);
+			var includeAllModules = (property is not null && CustomAttributesUtils.IsPseudoCustomAttributeType(analyzedMethod.DeclaringType)) || implMapName is not null;
 			var options = ScopedWhereUsedAnalyzerOptions.None;
 			if (includeAllModules)
 				options |= ScopedWhereUsedAnalyzerOptions.IncludeAllModules;
-			if (!(implMapName is null))
+			if (implMapName is not null)
 				options |= ScopedWhereUsedAnalyzerOptions.ForcePublic;
 			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNodeData>(Context.DocumentService, analyzedMethod, FindReferencesInType, options);
 			foreach (var child in analyzer.PerformAnalysis(ct)) {
 				yield return child;
 			}
 
-			if (!(property is null)) {
+			if (property is not null) {
 				var hash = new HashSet<AssemblyDef>();
 				foreach (var module in analyzer.AllModules) {
 					if (module.Assembly is AssemblyDef asm && hash.Add(asm)) {
@@ -113,7 +113,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				if (!method.HasBody)
 					continue;
 				Instruction? foundInstr = null;
-				if (!(implMapName is null)) {
+				if (implMapName is not null) {
 					foreach (var instr in method.Body.Instructions) {
 						if (instr.Operand is IMethod mr && !mr.IsField &&
 							mr.ResolveMethodDef() is MethodDef md &&
@@ -137,7 +137,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 					}
 				}
 
-				if (!(foundInstr is null)) {
+				if (foundInstr is not null) {
 					if (GetOriginalCodeLocation(method) is MethodDef codeLocation && !HasAlreadyBeenFound(codeLocation)) {
 						var node = new MethodNode(codeLocation) { Context = Context };
 						if (codeLocation == method)
@@ -147,7 +147,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				}
 			}
 
-			if (!(property is null)) {
+			if (property is not null) {
 				foreach (var node in FieldAccessNode.CheckCustomAttributeNamedArgumentWrite(Context, type, property)) {
 					if (node is MethodNode methodNode && methodNode.Member is MethodDef method && HasAlreadyBeenFound(method))
 						continue;

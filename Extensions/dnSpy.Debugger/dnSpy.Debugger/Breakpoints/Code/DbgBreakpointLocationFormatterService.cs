@@ -45,7 +45,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			foreach (var lz in dbgBreakpointLocationFormatterProviders) {
 				if (Array.IndexOf(lz.Metadata.Types, type) >= 0) {
 					var formatter = lz.Value.Create(location);
-					if (!(formatter is null))
+					if (formatter is not null)
 						return formatter;
 				}
 			}

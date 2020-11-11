@@ -57,7 +57,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		public DotNetResourceProviderImpl(HexBufferFile file, PeHeaders peHeaders, DotNetMetadataHeaders? metadataHeaders, HexSpan? resourcesSpan)
 			: base(file) {
 			this.peHeaders = peHeaders ?? throw new ArgumentNullException(nameof(peHeaders));
-			if (!(metadataHeaders?.TablesStream is null) && !(resourcesSpan is null)) {
+			if (metadataHeaders?.TablesStream is not null && resourcesSpan is not null) {
 				Debug.Assert(file.Span.Contains(resourcesSpan.Value));// Verified by caller
 				ResourcesSpan = resourcesSpan.Value;
 				resourceInfos = CreateResourceInfos(file, metadataHeaders.TablesStream.MDTables[(int)Table.ManifestResource], metadataHeaders.StringsStream);

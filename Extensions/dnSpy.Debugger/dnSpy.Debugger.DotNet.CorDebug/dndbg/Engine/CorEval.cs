@@ -96,19 +96,19 @@ namespace dndbg.Engine {
 		}
 
 		public int NewArray(CorElementType et, CorClass cls, uint[] dims, int[]? lowBounds = null) {
-			Debug2.Assert(!(dims is null) && (lowBounds is null || lowBounds.Length == dims.Length));
+			Debug2.Assert(dims is not null && (lowBounds is null || lowBounds.Length == dims.Length));
 			return obj.NewArray(et, cls?.RawObject, dims.Length, dims, lowBounds);
 		}
 
 		public int NewParameterizedArray(CorType type, uint[] dims, int[]? lowBounds = null) {
 			if (eval2 is null)
 				return -1;
-			Debug2.Assert(!(dims is null) && (lowBounds is null || lowBounds.Length == dims.Length));
+			Debug2.Assert(dims is not null && (lowBounds is null || lowBounds.Length == dims.Length));
 			return eval2.NewParameterizedArray(type.RawObject, dims.Length, dims, lowBounds);
 		}
 
 		public int NewString(string s) {
-			if (!(eval2 is null))
+			if (eval2 is not null)
 				return eval2.NewStringWithLength(s, s.Length);
 			return obj.NewString(s);
 		}
@@ -126,7 +126,7 @@ namespace dndbg.Engine {
 			return eval2.CallParameterizedFunction(func.RawObject, typeArgs is null ? 0 : typeArgs.Length, typeArgs.ToCorDebugArray(), args.Length, args.ToCorDebugArray());
 		}
 
-		public bool Equals(CorEval? other) => !(other is null) &&
+		public bool Equals(CorEval? other) => other is not null &&
 				RawObject == other.RawObject;
 
 		public override bool Equals(object? obj) => Equals(obj as CorEval);

@@ -98,7 +98,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		static bool CanExecute(EditCodeVMCreator editCodeVMCreator, DocumentTreeNodeData[] nodes) =>
-			editCodeVMCreator.CanCreate(CompilationKind.AddClass) && nodes.Length == 1 && !(GetModuleNode(nodes[0]) is null);
+			editCodeVMCreator.CanCreate(CompilationKind.AddClass) && nodes.Length == 1 && GetModuleNode(nodes[0]) is not null;
 
 		static ModuleDocumentNode? GetModuleNode(DocumentTreeNodeData node) {
 			if (node is AssemblyDocumentNode asmNode) {
@@ -114,11 +114,11 @@ namespace dnSpy.AsmEditor.Compiler {
 				return;
 
 			var modNode = GetModuleNode(nodes[0]);
-			Debug2.Assert(!(modNode is null));
+			Debug2.Assert(modNode is not null);
 			if (modNode is null)
 				return;
 			var module = modNode.Document.ModuleDef;
-			Debug2.Assert(!(module is null));
+			Debug2.Assert(module is not null);
 			if (module is null)
 				throw new InvalidOperationException();
 
@@ -138,7 +138,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				vm.Dispose();
 				return;
 			}
-			Debug2.Assert(!(vm.Result is null));
+			Debug2.Assert(vm.Result is not null);
 
 			undoCommandService.Value.Add(new AddClassCommand(addUpdatedNodesHelperProvider, modNode, vm.Result));
 			vm.Dispose();

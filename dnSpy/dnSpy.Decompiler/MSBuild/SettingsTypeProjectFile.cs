@@ -71,7 +71,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		}
 
 		public IMemberDef[] GetDefsToRemove() {
-			if (!(defsToRemove is null))
+			if (defsToRemove is not null)
 				return defsToRemove;
 			lock (defsToRemoveLock) {
 				if (defsToRemove is null)
@@ -84,7 +84,7 @@ namespace dnSpy.Decompiler.MSBuild {
 
 		IEnumerable<IMemberDef> CalculateDefsToRemove() {
 			var defaultProp = FindDefaultProperty();
-			if (!(defaultProp is null)) {
+			if (defaultProp is not null) {
 				foreach (var d in DotNetUtils.GetMethodsAndSelf(defaultProp))
 					yield return d;
 				foreach (var d in DotNetUtils.GetDefs(defaultProp))
@@ -103,7 +103,7 @@ namespace dnSpy.Decompiler.MSBuild {
 				if (p.Name != "Default")
 					continue;
 				var g = p.GetMethod;
-				if (g is null || !g.IsStatic || !(p.SetMethod is null) || p.OtherMethods.Count != 0)
+				if (g is null || !g.IsStatic || p.SetMethod is not null || p.OtherMethods.Count != 0)
 					continue;
 				if (g.MethodSig.GetParamCount() != 0)
 					continue;

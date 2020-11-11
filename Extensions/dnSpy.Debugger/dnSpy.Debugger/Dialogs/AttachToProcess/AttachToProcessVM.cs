@@ -52,7 +52,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 		public string SearchHelpToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Debugger_Resources.SearchHelp_ToolTip, null);
 
 		public ICommand InfoLinkCommand => new RelayCommand(a => ShowInfoLinkPage());
-		public bool HasInfoLink => !(InfoLinkToolTip is null) && !(infoLink is null);
+		public bool HasInfoLink => InfoLinkToolTip is not null && infoLink is not null;
 		public string? InfoLinkToolTip { get; }
 		readonly string? infoLink;
 
@@ -103,7 +103,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 			}
 			Title = GetTitle(options);
 			MessageText = GetMessage(options);
-			if (!(options.InfoLink is null)) {
+			if (options.InfoLink is not null) {
 				var l = options.InfoLink.Value;
 				if (!string.IsNullOrEmpty(l.Url)) {
 					InfoLinkToolTip = l.ToolTipMessage;
@@ -162,7 +162,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 		}
 
 		static string? GetMessage(ShowAttachToProcessDialogOptions options) {
-			if (!(options.Message is null))
+			if (options.Message is not null)
 				return options.Message;
 			if (!Environment.Is64BitOperatingSystem)
 				return null;
@@ -196,7 +196,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 			uiDispatcher.VerifyAccess();
 			processProvider?.Dispose();
 			processProvider = null;
-			if (!(attachProgramOptionsAggregator is null)) {
+			if (attachProgramOptionsAggregator is not null) {
 				attachProgramOptionsAggregator.AttachProgramOptionsAdded -= AttachProgramOptionsAggregator_AttachProgramOptionsAdded;
 				attachProgramOptionsAggregator.Completed -= AttachProgramOptionsAggregator_Completed;
 				attachProgramOptionsAggregator.Dispose();
@@ -209,7 +209,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 			uiDispatcher.VerifyAccess();
 			if (attachProgramOptionsAggregator != sender)
 				return;
-			Debug2.Assert(!(processProvider is null));
+			Debug2.Assert(processProvider is not null);
 			foreach (var options in e.AttachProgramOptions) {
 				if (!dbgManager.CanDebugRuntime(options.ProcessId, options.RuntimeId))
 					continue;
@@ -494,7 +494,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 		}
 
 		void ShowInfoLinkPage() {
-			if (!(infoLink is null))
+			if (infoLink is not null)
 				OpenWebPage(infoLink);
 		}
 

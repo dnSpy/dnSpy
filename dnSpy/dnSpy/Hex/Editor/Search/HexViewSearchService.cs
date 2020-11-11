@@ -279,7 +279,7 @@ namespace dnSpy.Hex.Editor.Search {
 				return CommandTargetStatus.NotHandled;
 			if (!IsSearchControlVisible)
 				return CommandTargetStatus.NotHandled;
-			Debug2.Assert(!(searchControl is null));
+			Debug2.Assert(searchControl is not null);
 
 			if (inIncrementalSearch) {
 				if (group == CommandConstants.HexEditorGroup) {
@@ -315,7 +315,7 @@ namespace dnSpy.Hex.Editor.Search {
 				return CommandTargetStatus.NotHandled;
 			if (!IsSearchControlVisible)
 				return CommandTargetStatus.NotHandled;
-			Debug2.Assert(!(searchControl is null));
+			Debug2.Assert(searchControl is not null);
 
 			if (group == CommandConstants.HexEditorGroup && cmdId == (int)HexEditorIds.CANCEL) {
 				if (inIncrementalSearch)
@@ -334,7 +334,7 @@ namespace dnSpy.Hex.Editor.Search {
 
 					case HexEditorIds.TYPECHAR:
 						var s = args as string;
-						if (!(s is null) && s.IndexOfAny(CT.LineConstants.newLineChars) < 0)
+						if (s is not null && s.IndexOfAny(CT.LineConstants.newLineChars) < 0)
 							SetIncrementalSearchString(SearchString + s);
 						else
 							CancelIncrementalSearch();
@@ -389,7 +389,7 @@ namespace dnSpy.Hex.Editor.Search {
 		}
 		bool isIncrementalSearchCaretMove;
 
-		bool IsSearchControlVisible => !(layer is null) && !layer.IsEmpty;
+		bool IsSearchControlVisible => layer is not null && !layer.IsEmpty;
 
 		void UseGlobalSettingsIfUiIsHidden(bool canOverwriteSearchString) {
 			if (!IsSearchControlVisible)
@@ -466,7 +466,7 @@ namespace dnSpy.Hex.Editor.Search {
 		static void SelectAllWhenFocused(TextBox textBox) =>
 			textBox.GotKeyboardFocus += (s, e) => textBox.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => textBox.SelectAll()));
 
-		public bool HasSearchControlFocus => !(searchControl is null) && searchControl.IsKeyboardFocusWithin;
+		public bool HasSearchControlFocus => searchControl is not null && searchControl.IsKeyboardFocusWithin;
 		void SearchControl_LostKeyboardFocus(object? sender, KeyboardFocusChangedEventArgs e) => OnPropertyChanged(nameof(HasSearchControlFocus));
 		void SearchControl_GotKeyboardFocus(object? sender, KeyboardFocusChangedEventArgs e) {
 			CloseSearchControlIfIncrementalSearch();
@@ -525,7 +525,7 @@ namespace dnSpy.Hex.Editor.Search {
 		}
 
 		void FocusSearchStringTextBox() {
-			Debug2.Assert(!(searchControl is null));
+			Debug2.Assert(searchControl is not null);
 			Action? callback = null;
 			// If it hasn't been loaded yet, it has no binding and we must select it in its Loaded event
 			if (searchControl.searchStringTextBox.Text.Length == 0 && SearchString.Length != 0)
@@ -536,7 +536,7 @@ namespace dnSpy.Hex.Editor.Search {
 		}
 
 		void FocusReplaceStringTextBox() {
-			Debug2.Assert(!(searchControl is null));
+			Debug2.Assert(searchControl is not null);
 			Action? callback = null;
 			// If it hasn't been loaded yet, it has no binding and we must select it in its Loaded event
 			if (searchControl.replaceStringTextBox.Text.Length == 0 && ReplaceString.Length != 0)
@@ -547,7 +547,7 @@ namespace dnSpy.Hex.Editor.Search {
 		}
 
 		void RepositionControl(bool recalcSize = false) {
-			Debug2.Assert(!(searchControl is null));
+			Debug2.Assert(searchControl is not null);
 			if (recalcSize)
 				searchControl.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
 			PositionSearchControl(SearchControlPosition.Default);
@@ -712,7 +712,7 @@ namespace dnSpy.Hex.Editor.Search {
 
 		void UpdateSearchStringFromCaretPosition(bool canSearch) {
 			var newSearchString = TryGetSearchStringAtCaret();
-			if (!(newSearchString is null))
+			if (newSearchString is not null)
 				SetSearchString(newSearchString, canSearch);
 		}
 
@@ -775,7 +775,7 @@ namespace dnSpy.Hex.Editor.Search {
 			}
 		}
 
-		bool IsReplaceStringValid() => !(DataParser.TryParseData(ReplaceString, DataKind, IsBigEndian) is null);
+		bool IsReplaceStringValid() => DataParser.TryParseData(ReplaceString, DataKind, IsBigEndian) is not null;
 
 		byte[]? TryGetReplaceStringData(HexBufferSpan replaceSpan) {
 			var data = DataParser.TryParseData(ReplaceString, DataKind, IsBigEndian);
@@ -804,7 +804,7 @@ namespace dnSpy.Hex.Editor.Search {
 			if (!wpfHexView.Selection.IsEmpty && wpfHexView.Selection.StreamSelectionSpan == vres) {
 				try {
 					var newData = TryGetReplaceStringData(res.Value);
-					Debug2.Assert(!(newData is null) && newData.Length == res.Value.Length);
+					Debug2.Assert(newData is not null && newData.Length == res.Value.Length);
 					if (newData is null || newData.Length != res.Value.Length)
 						return;
 
@@ -872,7 +872,7 @@ namespace dnSpy.Hex.Editor.Search {
 					foreach (var res in GetAllResultsForReplaceAll()) {
 						if (newData is null)
 							newData = TryGetReplaceStringData(res);
-						Debug2.Assert(!(newData is null) && newData.Length == res.Length);
+						Debug2.Assert(newData is not null && newData.Length == res.Length);
 						if (newData is null || newData.Length != res.Length)
 							return;
 						// Ignore errors due to read-only regions
@@ -1005,7 +1005,7 @@ namespace dnSpy.Hex.Editor.Search {
 				if (findAsyncSearcher != findAsyncSearcherTmp)
 					return;
 				CancelFindAsyncSearcher();
-				if (!(foundSpan is null)) {
+				if (foundSpan is not null) {
 					try {
 						isIncrementalSearchCaretMove = isIncrementalSearch;
 						ShowSearchResult(foundSpan.Value);
@@ -1210,15 +1210,15 @@ namespace dnSpy.Hex.Editor.Search {
 			IAsyncSearcher? searcher = null;
 			searcher = FindAsync(searchOptions, (result, foundSpan) => {
 				if (result == FindAsyncResult.InvalidSearchOptions) {
-					bool refresh = !(hexMarkerSearchService is null);
+					bool refresh = hexMarkerSearchService is not null;
 					hexMarkerSearchService = null;
 					if (refresh)
 						RefreshAllTags();
 					// We could be here if the input string is invalid, in which case we tell the user there was nothing found
 					FoundMatch = SearchString.Length == 0;
 				}
-				else if (result == FindAsyncResult.HasResult && !(searcher is null) && searcher.HexSearchService == hexMarkerSearchService) {
-					FoundMatch = !(foundSpan is null);
+				else if (result == FindAsyncResult.HasResult && searcher is not null && searcher.HexSearchService == hexMarkerSearchService) {
+					FoundMatch = foundSpan is not null;
 					lastMatch = foundSpan is null ? HexPosition.Zero : foundSpan.Value.Span.Start;
 				}
 			});

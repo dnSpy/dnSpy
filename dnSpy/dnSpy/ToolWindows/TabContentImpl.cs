@@ -36,14 +36,14 @@ namespace dnSpy.ToolWindows {
 		bool IFocusable.CanFocus {
 			get {
 				var focusable = Content as IFocusable;
-				return !(focusable is null) && focusable.CanFocus;
+				return focusable is not null && focusable.CanFocus;
 			}
 		}
 
 		void IFocusable.Focus() {
 			var focusable = Content as IFocusable;
-			Debug2.Assert(!(focusable is null));
-			if (!(focusable is null))
+			Debug2.Assert(focusable is not null);
+			if (focusable is not null)
 				focusable.Focus();
 		}
 
@@ -69,7 +69,7 @@ namespace dnSpy.ToolWindows {
 				if (contentPresenter is null) {
 					contentPresenter = new ContentPresenter { Content = this };
 					contentPresenter.MouseDown += (s, e) => {
-						if (!e.Handled && !(Owner is null)) {
+						if (!e.Handled && Owner is not null) {
 							Owner.SetFocus(this);
 							e.Handled = true;
 						}
@@ -99,7 +99,7 @@ namespace dnSpy.ToolWindows {
 				if (contentPresenter?.IsKeyboardFocusWithin == true)
 					return true;
 				var f = ContentUIObject as IInputElement;
-				return !(f is null) && f.IsKeyboardFocusWithin;
+				return f is not null && f.IsKeyboardFocusWithin;
 			}
 		}
 
@@ -127,7 +127,7 @@ namespace dnSpy.ToolWindows {
 
 		public ToolWindowGroup? Owner {
 			get {
-				Debug2.Assert(!(owner is null));
+				Debug2.Assert(owner is not null);
 				return owner;
 			}
 			set => owner = value;
@@ -148,7 +148,7 @@ namespace dnSpy.ToolWindows {
 
 		public void OnVisibilityChanged(TabContentVisibilityEvent visEvent) {
 			var ev = Convert(visEvent);
-			if (!(ev is null)) {
+			if (ev is not null) {
 #if DEBUG
 				switch (ev) {
 				case ToolWindowContentVisibilityEvent.Added:
@@ -196,7 +196,7 @@ namespace dnSpy.ToolWindows {
 			case TabContentVisibilityEvent.Removed:
 				elementZoomer.Dispose();
 				RemoveEvents();
-				if (!(contentPresenter is null))
+				if (contentPresenter is not null)
 					contentPresenter.Content = null;
 				contentPresenter = null;
 				OnPropertyChanged(nameof(UIObject));
@@ -259,7 +259,7 @@ namespace dnSpy.ToolWindows {
 		void Close() {
 			if (!CanClose)
 				return;
-			if (!(Owner is null))
+			if (Owner is not null)
 				Owner.Close(this);
 		}
 
@@ -267,7 +267,7 @@ namespace dnSpy.ToolWindows {
 
 		void ShowWindowPositionMenu(object? uiObj) {
 			var fe = uiObj as FrameworkElement;
-			Debug2.Assert(!(fe is null));
+			Debug2.Assert(fe is not null);
 			if (fe is null)
 				return;
 

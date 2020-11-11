@@ -113,13 +113,13 @@ namespace dnSpy.Debugger.DotNet.CorDebug.DAC {
 			string name;
 
 			name = clrRuntime.GetJitHelperFunctionName(address);
-			if (!(name is null)) {
+			if (name is not null) {
 				result = new SymbolResolverResult(SymbolKind.Function, name, address);
 				return true;
 			}
 
 			name = clrRuntime.GetMethodTableName(address);
-			if (!(name is null)) {
+			if (name is not null) {
 				result = new SymbolResolverResult(SymbolKind.Data, "methodtable(" + name + ")", address);
 				return true;
 			}
@@ -129,7 +129,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.DAC {
 				if (clrRuntime.ReadPointer(address, out ulong newAddress) && newAddress >= MIN_ADDR)
 					method = clrRuntime.GetMethodByAddress(newAddress);
 			}
-			if (!(method is null)) {
+			if (method is not null) {
 				result = new SymbolResolverResult(SymbolKind.Function, method.ToString()!, address);
 				return true;
 			}

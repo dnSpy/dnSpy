@@ -137,7 +137,7 @@ namespace dnSpy.Contracts.Utilities {
 			var newWinmdPaths = new List<string>();
 
 			bool hasGAC2;
-			if (!(Type.GetType("Mono.Runtime") is null)) {
+			if (Type.GetType("Mono.Runtime") is not null) {
 				hasGAC2 = false;
 				var dirs = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
 				var extraMonoPathsList = new List<GacPathInfo>();
@@ -164,7 +164,7 @@ namespace dnSpy.Contracts.Utilities {
 				}
 
 				var paths = Environment.GetEnvironmentVariable("MONO_PATH");
-				if (!(paths is null)) {
+				if (paths is not null) {
 					foreach (var tmp in paths.Split(Path.PathSeparator)) {
 						var path = tmp.Trim();
 						if (path != string.Empty && Directory.Exists(path))

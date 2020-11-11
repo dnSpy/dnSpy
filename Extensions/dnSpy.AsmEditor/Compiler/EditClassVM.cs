@@ -42,7 +42,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			: base(options, defToEdit as TypeDef ?? defToEdit.DeclaringType) {
 			this.defToEdit = defToEdit;
 			nonNestedTypeToEdit = defToEdit as TypeDef ?? defToEdit.DeclaringType;
-			while (!(nonNestedTypeToEdit.DeclaringType is null))
+			while (nonNestedTypeToEdit.DeclaringType is not null)
 				nonNestedTypeToEdit = nonNestedTypeToEdit.DeclaringType;
 			methodSourceStatement = statementsInMethodToEdit.Count == 0 ? (MethodSourceStatement?)null : statementsInMethodToEdit[0];
 			StartDecompile();

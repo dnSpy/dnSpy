@@ -218,7 +218,7 @@ namespace dnSpy.Decompiler.VisualBasic {
 		void WriteToken(IMDTokenProvider tok) {
 			if (!ShowTokens)
 				return;
-			Debug2.Assert(!(tok is null));
+			Debug2.Assert(tok is not null);
 			if (tok is null)
 				return;
 			OutputWrite(CommentBegin + ToFormattedUInt32(tok.MDToken.Raw) + CommentEnd, BoxedTextColor.Comment);
@@ -230,22 +230,22 @@ namespace dnSpy.Decompiler.VisualBasic {
 				return;
 			}
 
-			if (member is IMethod method && !(method.MethodSig is null)) {
+			if (member is IMethod method && method.MethodSig is not null) {
 				WriteToolTip(method);
 				return;
 			}
 
-			if (member is IField field && !(field.FieldSig is null)) {
+			if (member is IField field && field.FieldSig is not null) {
 				WriteToolTip(field);
 				return;
 			}
 
-			if (member is PropertyDef prop && !(prop.PropertySig is null)) {
+			if (member is PropertyDef prop && prop.PropertySig is not null) {
 				WriteToolTip(prop);
 				return;
 			}
 
-			if (member is EventDef evt && !(evt.EventType is null)) {
+			if (member is EventDef evt && evt.EventType is not null) {
 				WriteToolTip(evt);
 				return;
 			}
@@ -269,22 +269,22 @@ namespace dnSpy.Decompiler.VisualBasic {
 				return;
 			}
 
-			if (member is IMethod method && !(method.MethodSig is null)) {
+			if (member is IMethod method && method.MethodSig is not null) {
 				Write(method);
 				return;
 			}
 
-			if (member is IField field && !(field.FieldSig is null)) {
+			if (member is IField field && field.FieldSig is not null) {
 				Write(field);
 				return;
 			}
 
-			if (member is PropertyDef prop && !(prop.PropertySig is null)) {
+			if (member is PropertyDef prop && prop.PropertySig is not null) {
 				Write(prop);
 				return;
 			}
 
-			if (member is EventDef evt && !(evt.EventType is null)) {
+			if (member is EventDef evt && evt.EventType is not null) {
 				Write(evt);
 				return;
 			}
@@ -340,9 +340,9 @@ namespace dnSpy.Decompiler.VisualBasic {
 			Write(method);
 
 			var td = method.DeclaringType.ResolveTypeDef();
-			if (!(td is null)) {
+			if (td is not null) {
 				var s = TypeFormatterUtils.GetNumberOfOverloadsString(td, method);
-				if (!(s is null))
+				if (s is not null)
 					OutputWrite(s, BoxedTextColor.Text);
 			}
 		}
@@ -353,7 +353,7 @@ namespace dnSpy.Decompiler.VisualBasic {
 				td = ((TypeRef)type).Resolve();
 			if (td is null ||
 				td.GenericParameters.Count == 0 ||
-				(!(td.DeclaringType is null) && td.DeclaringType.GenericParameters.Count >= td.GenericParameters.Count)) {
+				(td.DeclaringType is not null && td.DeclaringType.GenericParameters.Count >= td.GenericParameters.Count)) {
 				var oldFlags = options;
 				options &= ~(FormatterOptions.ShowNamespaces | FormatterOptions.ShowIntrinsicTypeKeywords);
 				if (useNamespaces)
@@ -366,7 +366,7 @@ namespace dnSpy.Decompiler.VisualBasic {
 			}
 
 			int numGenParams = td.GenericParameters.Count;
-			if (!(type.DeclaringType is null)) {
+			if (type.DeclaringType is not null) {
 				var oldFlags = options;
 				options &= ~(FormatterOptions.ShowNamespaces | FormatterOptions.ShowIntrinsicTypeKeywords);
 				if (useNamespaces)
@@ -436,16 +436,16 @@ namespace dnSpy.Decompiler.VisualBasic {
 			WriteModuleName(info);
 
 			string[]? operatorInfo;
-			if (!(info.MethodDef is null) && info.MethodDef.IsConstructor && !(method.DeclaringType is null))
+			if (info.MethodDef is not null && info.MethodDef.IsConstructor && method.DeclaringType is not null)
 				operatorInfo = null;
-			else if (!(info.MethodDef is null) && info.MethodDef.Overrides.Count > 0) {
+			else if (info.MethodDef is not null && info.MethodDef.Overrides.Count > 0) {
 				var ovrMeth = (IMemberRef)info.MethodDef.Overrides[0].MethodDeclaration;
 				operatorInfo = TryGetOperatorInfo(ovrMeth.Name);
 			}
 			else
 				operatorInfo = TryGetOperatorInfo(method.Name);
 
-			if (!(operatorInfo is null)) {
+			if (operatorInfo is not null) {
 				for (int i = 0; i < operatorInfo.Length - 1; i++) {
 					WriteOperatorInfoString(operatorInfo[i]);
 					WriteSpace();
@@ -461,9 +461,9 @@ namespace dnSpy.Decompiler.VisualBasic {
 				Write(method.DeclaringType);
 				WritePeriod();
 			}
-			if (!(info.MethodDef is null) && info.MethodDef.IsConstructor && !(method.DeclaringType is null))
+			if (info.MethodDef is not null && info.MethodDef.IsConstructor && method.DeclaringType is not null)
 				OutputWrite(Keyword_New, BoxedTextColor.Keyword);
-			else if (!(info.MethodDef is null) && info.MethodDef.Overrides.Count > 0) {
+			else if (info.MethodDef is not null && info.MethodDef.Overrides.Count > 0) {
 				var ovrMeth = (IMemberRef)info.MethodDef.Overrides[0].MethodDeclaration;
 				WriteMethodName(method, ovrMeth.Name, operatorInfo);
 			}
@@ -484,7 +484,7 @@ namespace dnSpy.Decompiler.VisualBasic {
 		void WriteOperatorInfoString(string s) => OutputWrite(s, 'A' <= s[0] && s[0] <= 'Z' ? BoxedTextColor.Keyword : BoxedTextColor.Operator);
 
 		void WriteMethodName(IMethod method, string name, string[]? operatorInfo) {
-			if (!(operatorInfo is null))
+			if (operatorInfo is not null)
 				WriteOperatorInfoString(operatorInfo[operatorInfo.Length - 1]);
 			else
 				WriteIdentifier(name, VisualBasicMetadataTextColorProvider.Instance.GetColor(method));
@@ -505,12 +505,12 @@ namespace dnSpy.Decompiler.VisualBasic {
 
 			var sig = field.FieldSig;
 			var td = field.DeclaringType.ResolveTypeDef();
-			bool isEnumOwner = !(td is null) && td.IsEnum;
+			bool isEnumOwner = td is not null && td.IsEnum;
 
 			var fd = field.ResolveFieldDef();
 			object? constant = null;
-			bool isConstant = !(fd is null) && (fd.IsLiteral || (fd.IsStatic && fd.IsInitOnly)) && TypeFormatterUtils.HasConstant(fd, out var constantAttribute) && TypeFormatterUtils.TryGetConstant(fd, constantAttribute, out constant);
-			if (!isEnumOwner || (!(fd is null) && !fd.IsLiteral)) {
+			bool isConstant = fd is not null && (fd.IsLiteral || (fd.IsStatic && fd.IsInitOnly)) && TypeFormatterUtils.HasConstant(fd, out var constantAttribute) && TypeFormatterUtils.TryGetConstant(fd, constantAttribute, out constant);
+			if (!isEnumOwner || (fd is not null && !fd.IsLiteral)) {
 				if (isToolTip) {
 					OutputWrite(DescriptionParenOpen, BoxedTextColor.Punctuation);
 					OutputWrite(isConstant ? dnSpy_Decompiler_Resources.ToolTip_Constant : dnSpy_Decompiler_Resources.ToolTip_Field, BoxedTextColor.Text);
@@ -656,7 +656,7 @@ namespace dnSpy.Decompiler.VisualBasic {
 				WritePeriod();
 			}
 			var ovrMeth = md is null || md.Overrides.Count == 0 ? null : md.Overrides[0].MethodDeclaration;
-			if (!(ovrMeth is null) && TypeFormatterUtils.GetPropertyName(ovrMeth) is string ovrMethPropName)
+			if (ovrMeth is not null && TypeFormatterUtils.GetPropertyName(ovrMeth) is string ovrMethPropName)
 				WriteIdentifier(ovrMethPropName, VisualBasicMetadataTextColorProvider.Instance.GetColor(prop));
 			else
 				WriteIdentifier(prop.Name, VisualBasicMetadataTextColorProvider.Instance.GetColor(prop));
@@ -733,7 +733,7 @@ namespace dnSpy.Decompiler.VisualBasic {
 			Write(TypeFormatterUtils.GetMemberSpecialFlags(type));
 
 			MethodDef invoke;
-			if (TypeFormatterUtils.IsDelegate(td) && !((invoke = td.FindMethod("Invoke")) is null) && !(invoke.MethodSig is null)) {
+			if (TypeFormatterUtils.IsDelegate(td) && (invoke = td.FindMethod("Invoke")) is not null && invoke.MethodSig is not null) {
 				OutputWrite(Keyword_delegate, BoxedTextColor.Keyword);
 				WriteSpace();
 
@@ -779,7 +779,7 @@ namespace dnSpy.Decompiler.VisualBasic {
 		}
 
 		static bool IsModule(TypeDef type) =>
-			!(type is null) && type.DeclaringType is null && type.IsSealed && type.IsDefined(stringMicrosoftVisualBasicCompilerServices, stringStandardModuleAttribute);
+			type is not null && type.DeclaringType is null && type.IsSealed && type.IsDefined(stringMicrosoftVisualBasicCompilerServices, stringStandardModuleAttribute);
 		static readonly UTF8String stringMicrosoftVisualBasicCompilerServices = new UTF8String("Microsoft.VisualBasic.CompilerServices");
 		static readonly UTF8String stringStandardModuleAttribute = new UTF8String("StandardModuleAttribute");
 
@@ -798,13 +798,13 @@ namespace dnSpy.Decompiler.VisualBasic {
 					return;
 				}
 
-				if (!(type.DeclaringType is null)) {
+				if (type.DeclaringType is not null) {
 					Write(type.DeclaringType);
 					WritePeriod();
 				}
 
 				string? keyword = GetTypeKeyword(type);
-				if (!(keyword is null))
+				if (keyword is not null)
 					OutputWrite(keyword, BoxedTextColor.Keyword);
 				else {
 					if (showModuleNames)
@@ -833,7 +833,7 @@ namespace dnSpy.Decompiler.VisualBasic {
 		string? GetTypeKeyword(ITypeDefOrRef type) {
 			if (!ShowIntrinsicTypeKeywords)
 				return null;
-			if (type is null || !(type.DeclaringType is null) || type.Namespace != "System" || !type.DefinitionAssembly.IsCorLib())
+			if (type is null || type.DeclaringType is not null || type.Namespace != "System" || !type.DefinitionAssembly.IsCorLib())
 				return null;
 			switch (type.TypeName) {
 			case "Boolean":	return "Boolean";
@@ -874,13 +874,13 @@ namespace dnSpy.Decompiler.VisualBasic {
 					methGenArgs = Array.Empty<TypeSig>();
 
 				List<ArraySigBase>? list = null;
-				while (!(type is null) && (type.ElementType == ElementType.SZArray || type.ElementType == ElementType.Array)) {
+				while (type is not null && (type.ElementType == ElementType.SZArray || type.ElementType == ElementType.Array)) {
 					if (list is null)
 						list = new List<ArraySigBase>();
 					list.Add((ArraySigBase)type);
 					type = type.Next;
 				}
-				if (!(list is null)) {
+				if (list is not null) {
 					Write(list[list.Count - 1].Next, typeGenArgs, Array.Empty<TypeSig>());
 					foreach (var aryType in list) {
 						if (aryType.ElementType == ElementType.Array) {
@@ -965,11 +965,11 @@ namespace dnSpy.Decompiler.VisualBasic {
 				case ElementType.Var:
 				case ElementType.MVar:
 					var gsType = Read(type.ElementType == ElementType.Var ? typeGenArgs : methGenArgs, (int)((GenericSig)type).Number);
-					if (!(gsType is null))
+					if (gsType is not null)
 						Write(gsType, typeGenArgs, methGenArgs);
 					else {
 						var gp = ((GenericSig)type).GenericParam;
-						if (!(gp is null))
+						if (gp is not null)
 							Write(gp);
 						else {
 							if (type.ElementType == ElementType.MVar) {
@@ -986,7 +986,7 @@ namespace dnSpy.Decompiler.VisualBasic {
 
 				case ElementType.GenericInst:
 					var gis = (GenericInstSig?)type;
-					Debug2.Assert(!(gis is null));
+					Debug2.Assert(gis is not null);
 					if (TypeFormatterUtils.IsSystemNullable(gis)) {
 						Write(GenericArgumentResolver.Resolve(gis.GenericArguments[0], typeGenArgs, methGenArgs), null, null);
 						OutputWrite("?", BoxedTextColor.Operator);
@@ -1035,7 +1035,7 @@ namespace dnSpy.Decompiler.VisualBasic {
 							WriteCommaSpace();
 						Write(sig.Params[i], typeGenArgs, methGenArgs);
 					}
-					if (!(sig.ParamsAfterSentinel is null)) {
+					if (sig.ParamsAfterSentinel is not null) {
 						if (sig.Params.Count > 0)
 							WriteCommaSpace();
 						OutputWrite("...", BoxedTextColor.Punctuation);
@@ -1095,7 +1095,7 @@ namespace dnSpy.Decompiler.VisualBasic {
 				WriteSpace();
 			}
 			WriteIdentifier(TypeFormatterUtils.GetName(variable), isLocal ? BoxedTextColor.Local : BoxedTextColor.Parameter);
-			if (!(pd is null))
+			if (pd is not null)
 				WriteToken(pd);
 			WriteSpace();
 			OutputWrite(Keyword_As, BoxedTextColor.Keyword);
@@ -1162,7 +1162,7 @@ namespace dnSpy.Decompiler.VisualBasic {
 				return;
 			if (IsSub(info))
 				return;
-			if (!(!(info.MethodDef is null) && info.MethodDef.IsConstructor)) {
+			if (!(info.MethodDef is not null && info.MethodDef.IsConstructor)) {
 				var retInfo = GetReturnTypeInfo(info);
 				WriteSpace();
 				OutputWrite(Keyword_As, BoxedTextColor.Keyword);
@@ -1194,9 +1194,9 @@ namespace dnSpy.Decompiler.VisualBasic {
 
 		void WriteGenericArguments(in FormatterMethodInfo info) {
 			if (info.MethodSig.GenParamCount > 0) {
-				if (!(info.MethodGenericParams is null))
+				if (info.MethodGenericParams is not null)
 					WriteGenerics(info.MethodGenericParams, BoxedTextColor.MethodGenericParameter, GenericParamContext.Create(info.MethodDef));
-				else if (!(info.MethodDef is null))
+				else if (info.MethodDef is not null)
 					WriteGenerics(info.MethodDef.GenericParameters, BoxedTextColor.MethodGenericParameter);
 			}
 		}
@@ -1214,7 +1214,7 @@ namespace dnSpy.Decompiler.VisualBasic {
 				if (i > 0)
 					WriteCommaSpace();
 				ParamDef? pd;
-				if (!(info.MethodDef is null) && baseIndex + i < info.MethodDef.Parameters.Count)
+				if (info.MethodDef is not null && baseIndex + i < info.MethodDef.Parameters.Count)
 					pd = info.MethodDef.Parameters[baseIndex + i].ParamDef;
 				else
 					pd = null;
@@ -1232,7 +1232,7 @@ namespace dnSpy.Decompiler.VisualBasic {
 						WriteSpace();
 					}
 
-					if (!(pd is null) && pd.CustomAttributes.IsDefined("System.ParamArrayAttribute")) {
+					if (pd is not null && pd.CustomAttributes.IsDefined("System.ParamArrayAttribute")) {
 						OutputWrite(Keyword_params, BoxedTextColor.Keyword);
 						needSpace = true;
 					}
@@ -1243,7 +1243,7 @@ namespace dnSpy.Decompiler.VisualBasic {
 						WriteSpace();
 					needSpace = true;
 
-					if (!(pd is null)) {
+					if (pd is not null) {
 						WriteIdentifier(pd.Name, BoxedTextColor.Parameter);
 						WriteToken(pd);
 					}

@@ -55,7 +55,7 @@ namespace dnSpy.Hex.Files.PE {
 				peHeadersImpl = new PeHeadersImpl(reader, file.Span);
 				peHeadersSpan = GetSpan(peHeadersImpl.DosHeader.Span.Span, peHeadersImpl.FileHeader.Span.Span, peHeadersImpl.OptionalHeader.Span.Span, peHeadersImpl.Sections.Span.Span);
 			}
-			return !(peHeadersImpl is null);
+			return peHeadersImpl is not null;
 		}
 
 		HexSpan GetSpan(params HexSpan[] spans) {

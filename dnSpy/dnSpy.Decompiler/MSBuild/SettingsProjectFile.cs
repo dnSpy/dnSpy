@@ -89,7 +89,7 @@ namespace dnSpy.Decompiler.MSBuild {
 						writer.WriteAttributeString("GenerateDefaultValueInCode", "false");
 					writer.WriteAttributeString("Type", setting.Type);
 					writer.WriteAttributeString("Scope", setting.Scope);
-					if (!(setting.DesignTimeValue is null)) {
+					if (setting.DesignTimeValue is not null) {
 						writer.WriteStartElement("DesignTimeValue");
 						writer.WriteAttributeString("Profile", setting.DesignTimeValue.Profile);
 						writer.WriteString(setting.DesignTimeValue.Text);
@@ -133,12 +133,12 @@ namespace dnSpy.Decompiler.MSBuild {
 
 				bool roaming = false;
 				ca = prop.CustomAttributes.Find("System.Configuration.SettingsManageabilityAttribute");
-				if (!(ca is null) && ca.ConstructorArguments.Count == 1) {
+				if (ca is not null && ca.ConstructorArguments.Count == 1) {
 					arg = ca.ConstructorArguments[0];
 					var argType = arg.Type.RemovePinnedAndModifiers();
-					if (!(argType is null) && argType.ReflectionFullName == "System.Configuration.SettingsManageability") {
+					if (argType is not null && argType.ReflectionFullName == "System.Configuration.SettingsManageability") {
 						var v = arg.Value as int?;
-						if (!(v is null)) {
+						if (v is not null) {
 							switch ((SettingsManageability)v.Value) {
 							case SettingsManageability.Roaming:
 								roaming = true;
@@ -151,17 +151,17 @@ namespace dnSpy.Decompiler.MSBuild {
 				var setting = new Setting();
 
 				ca = prop.CustomAttributes.Find("System.Configuration.SpecialSettingAttribute");
-				if (!(ca is null) && ca.ConstructorArguments.Count == 1) {
+				if (ca is not null && ca.ConstructorArguments.Count == 1) {
 					arg = ca.ConstructorArguments[0];
 					var argType = arg.Type.RemovePinnedAndModifiers();
-					if (!(argType is null) && argType.ReflectionFullName == "System.Configuration.SpecialSetting") {
+					if (argType is not null && argType.ReflectionFullName == "System.Configuration.SpecialSetting") {
 						var v = arg.Value as int?;
-						if (!(v is null)) {
+						if (v is not null) {
 							switch ((SpecialSetting)v.Value) {
 							case SpecialSetting.ConnectionString:
 								settingsType = "(Connection string)";
 								var designTimeValue = GetConnectionStringDesignTimeValue(prop);
-								if (!(designTimeValue is null)) {
+								if (designTimeValue is not null) {
 									setting.DesignTimeValue = new Value {
 										Profile = DEFAULT_PROFILE,
 										Text = designTimeValue,
@@ -178,20 +178,20 @@ namespace dnSpy.Decompiler.MSBuild {
 
 				string? provider = null;
 				ca = prop.CustomAttributes.Find("System.Configuration.SettingsProviderAttribute");
-				if (!(ca is null) && ca.ConstructorArguments.Count == 1) {
+				if (ca is not null && ca.ConstructorArguments.Count == 1) {
 					arg = ca.ConstructorArguments[0];
 					var argType = arg.Type.RemovePinnedAndModifiers();
 					if (argType.GetElementType() == ElementType.String)
 						provider = arg.Value as UTF8String;
-					else if (!(argType is null) && argType.FullName == "System.Type") {
-						if (arg.Value is TypeDefOrRefSig t && !(t.TypeDefOrRef is null))
+					else if (argType is not null && argType.FullName == "System.Type") {
+						if (arg.Value is TypeDefOrRefSig t && t.TypeDefOrRef is not null)
 							provider = t.TypeDefOrRef.ReflectionFullName;
 					}
 				}
 
 				string? description = null;
 				ca = prop.CustomAttributes.Find("System.Configuration.SettingsDescriptionAttribute");
-				if (!(ca is null) && ca.ConstructorArguments.Count == 1) {
+				if (ca is not null && ca.ConstructorArguments.Count == 1) {
 					arg = ca.ConstructorArguments[0];
 					var argType = arg.Type.RemovePinnedAndModifiers();
 					if (argType.GetElementType() == ElementType.String)
@@ -217,7 +217,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		string? GetConnectionStringDesignTimeValue(PropertyDef prop) {
 			if (toConnectionStringInfo is null)
 				InitializeConnectionStringDesignTimeValues();
-			Debug2.Assert(!(toConnectionStringInfo is null));
+			Debug2.Assert(toConnectionStringInfo is not null);
 			if (!toConnectionStringInfo.TryGetValue(prop.Name, out var info))
 				return null;
 
@@ -239,7 +239,7 @@ namespace dnSpy.Decompiler.MSBuild {
 
 		void InitializeConnectionStringDesignTimeValues() {
 			Debug2.Assert(toConnectionStringInfo is null);
-			if (!(toConnectionStringInfo is null))
+			if (toConnectionStringInfo is not null)
 				return;
 			toConnectionStringInfo = new Dictionary<string, ConnectionStringInfo>(StringComparer.Ordinal);
 

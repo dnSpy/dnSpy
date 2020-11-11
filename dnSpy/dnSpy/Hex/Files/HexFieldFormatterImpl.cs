@@ -100,11 +100,11 @@ namespace dnSpy.Hex.Files {
 			if (!structure.Span.Span.Contains(position))
 				throw new ArgumentOutOfRangeException(nameof(position));
 			var field = structure.GetSimpleField(position);
-			Debug2.Assert(!(field is null));
+			Debug2.Assert(field is not null);
 			if (field is null)
 				return;
 			var data = field.Data as SimpleData;
-			Debug2.Assert(!(data is null));
+			Debug2.Assert(data is not null);
 			if (data is null)
 				return;
 			try {

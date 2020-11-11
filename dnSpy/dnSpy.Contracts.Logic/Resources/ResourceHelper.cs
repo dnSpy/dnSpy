@@ -43,7 +43,7 @@ namespace dnSpy.Contracts.Resources {
 		internal static void SetResourceManagerTokenCache(ResourceManagerTokenCache tokenCache) {
 			if (tokenCache is null)
 				throw new ArgumentNullException(nameof(tokenCache));
-			if (!(resourceManagerTokenCache is null))
+			if (resourceManagerTokenCache is not null)
 				throw new InvalidOperationException();
 			resourceManagerTokenCache = tokenCache;
 		}
@@ -55,7 +55,7 @@ namespace dnSpy.Contracts.Resources {
 		/// <param name="value">String</param>
 		/// <returns></returns>
 		public static string? GetStringOrNull(object obj, string? value) {
-			Debug2.Assert(!(resourceManagerTokenCache is null));
+			Debug2.Assert(resourceManagerTokenCache is not null);
 			if (obj is null)
 				throw new ArgumentNullException(nameof(obj));
 			if (value is null)
@@ -70,7 +70,7 @@ namespace dnSpy.Contracts.Resources {
 		/// <param name="value">String</param>
 		/// <returns></returns>
 		public static string GetString(object obj, string value) {
-			Debug2.Assert(!(resourceManagerTokenCache is null));
+			Debug2.Assert(resourceManagerTokenCache is not null);
 			if (obj is null)
 				throw new ArgumentNullException(nameof(obj));
 			if (value is null)
@@ -82,7 +82,7 @@ namespace dnSpy.Contracts.Resources {
 			if (mgr is null)
 				return "???";
 			var s = mgr.GetString(key);
-			Debug2.Assert(!(s is null));
+			Debug2.Assert(s is not null);
 			return s ?? "???";
 		}
 
@@ -91,8 +91,8 @@ namespace dnSpy.Contracts.Resources {
 				return mgr;
 
 			var tokenCache = resourceManagerTokenCache;
-			Debug2.Assert(!(tokenCache is null));
-			if (!(tokenCache is null)) {
+			Debug2.Assert(tokenCache is not null);
+			if (tokenCache is not null) {
 				if (tokenCache.TryGetResourceManagerGetMethodMetadataToken(assembly, out int getMethodMetadataToken)) {
 					MethodInfo? method;
 					try {
@@ -103,7 +103,7 @@ namespace dnSpy.Contracts.Resources {
 						method = null;
 					}
 					mgr = TrySetResourceManager(assembly, method, save: false);
-					if (!(mgr is null))
+					if (mgr is not null)
 						return mgr;
 				}
 			}
@@ -116,7 +116,7 @@ namespace dnSpy.Contracts.Resources {
 					continue;
 				var m = prop.GetGetMethod();
 				mgr = TrySetResourceManager(assembly, m, save: true);
-				if (!(mgr is null))
+				if (mgr is not null)
 					return mgr;
 			}
 

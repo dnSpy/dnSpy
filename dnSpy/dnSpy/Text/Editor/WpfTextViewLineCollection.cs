@@ -173,7 +173,7 @@ namespace dnSpy.Text.Editor {
 			MarkerHelper.AddGeometries(textView, textBounds, isLineGeometry, clipToViewport, padding, 0, ref geo, ref createOutlinedPath);
 			if (createOutlinedPath)
 				geo = geo!.GetOutlinedPathGeometry();
-			if (!(geo is null) && geo.CanFreeze)
+			if (geo is not null && geo.CanFreeze)
 				geo.Freeze();
 			return geo;
 		}

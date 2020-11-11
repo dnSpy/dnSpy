@@ -115,7 +115,7 @@ namespace dnSpy.Debugger.Evaluation {
 					var value = values[i] as DbgValueImpl;
 					if (value?.Runtime != Runtime)
 						throw new ArgumentException();
-					Debug2.Assert(!(value is null));
+					Debug2.Assert(value is not null);
 					DbgObjectId? objectId;
 					if (Runtime.IsClosed || value.IsClosed || (!isHidden && objectIds.ContainsKey(value)))
 						objectId = null;

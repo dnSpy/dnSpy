@@ -104,8 +104,8 @@ namespace dnSpy.Roslyn.Intellisense.Completions.Classification {
 			// The text is usually identical to the description and it's classified
 			var description = completionSet.GetDescriptionAsync(completion).GetAwaiter().GetResult();
 			var indexes = GetMatchIndexes(completion, description);
-			if (!(indexes is null)) {
-				Debug2.Assert(!(description is null));
+			if (indexes is not null) {
+				Debug2.Assert(description is not null);
 				int pos = 0;
 				var parts = description.TaggedParts;
 				int endIndex = indexes.Value.endIndex;

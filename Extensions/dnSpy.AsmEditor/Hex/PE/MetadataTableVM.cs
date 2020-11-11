@@ -236,7 +236,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 				Debug.Assert(0 <= i && i <= endi && endi < Collection.Count);
 				while (i <= endi) {
 					var obj = Collection.TryGet(i);
-					if (!(obj is null))
+					if (obj is not null)
 						obj.OnBufferChanged(changes);
 					i++;
 				}

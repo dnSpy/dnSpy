@@ -58,7 +58,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 				if (!dict.TryGetValue("IconData", out var info))
 					return false;
 				imageData = info.Value as byte[];
-				return !(imageData is null);
+				return imageData is not null;
 			}
 
 			return false;

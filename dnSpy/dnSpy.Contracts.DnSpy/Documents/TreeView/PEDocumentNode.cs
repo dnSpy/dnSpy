@@ -35,6 +35,6 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// </summary>
 		/// <param name="document">Document</param>
 		protected PEDocumentNode(IDsDocument document)
-			: base(document) => Debug2.Assert(!(document.PEImage is null) && document.ModuleDef is null);
+			: base(document) => Debug2.Assert(document.PEImage is not null && document.ModuleDef is null);
 	}
 }

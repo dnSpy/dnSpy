@@ -32,24 +32,24 @@ namespace dnSpy.Documents {
 		public IDsDocument? Create(IDsDocumentService documentService, DsDocumentInfo documentInfo) {
 			if (documentInfo.Type == DocumentConstants.DOCUMENTTYPE_INMEMORY) {
 				var getFileData = documentInfo.Data as Func<(byte[]? filedata, bool isFileLayout)>;
-				Debug2.Assert(!(getFileData is null));
-				if (!(getFileData is null)) {
+				Debug2.Assert(getFileData is not null);
+				if (getFileData is not null) {
 					var info = getFileData();
-					if (!(info.filedata is null))
+					if (info.filedata is not null)
 						return documentService.CreateDocument(documentInfo, info.filedata, documentInfo.Name, info.isFileLayout);
 				}
 				return null;
 			}
 
 			var filename = GetFilename(documentInfo);
-			if (!(filename is null))
+			if (filename is not null)
 				return documentService.CreateDocument(documentInfo, filename);
 			return null;
 		}
 
 		public IDsDocumentNameKey? CreateKey(IDsDocumentService documentService, DsDocumentInfo documentInfo) {
 			var filename = GetFilename(documentInfo);
-			if (!(filename is null))
+			if (filename is not null)
 				return new FilenameKey(filename);
 			return null;
 		}
@@ -77,7 +77,7 @@ namespace dnSpy.Documents {
 				return null;
 
 			var f = GetGacFilename(s.Substring(0, index));
-			if (!(f is null))
+			if (f is not null)
 				return f;
 			return s.Substring(index + DocumentConstants.REFERENCE_ASSEMBLY_SEPARATOR.Length).Trim();
 		}

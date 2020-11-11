@@ -247,7 +247,7 @@ namespace dnSpy.Hex.Formatting {
 				if (!IsValid)
 					throw new ObjectDisposedException(nameof(HexFormattedLineImpl));
 				foreach (var part in linePartsCollection.LineParts) {
-					if (!(part.AdornmentElement is null))
+					if (part.AdornmentElement is not null)
 						return true;
 				}
 				return false;
@@ -427,7 +427,7 @@ namespace dnSpy.Hex.Formatting {
 				throw new ObjectDisposedException(nameof(HexFormattedLineImpl));
 
 			var pos = GetLinePositionFromXCoordinate(xCoordinate);
-			if (!(pos is null))
+			if (pos is not null)
 				return pos.Value;
 			if (xCoordinate <= TextLeft)
 				return TextSpan.Start;
@@ -441,7 +441,7 @@ namespace dnSpy.Hex.Formatting {
 				throw new ObjectDisposedException(nameof(HexFormattedLineImpl));
 
 			var pos = GetLinePositionFromXCoordinate(xCoordinate);
-			if (!(pos is null)) {
+			if (pos is not null) {
 				if (pos.Value < TextSpan.End) {
 					var bounds = GetExtendedCharacterBounds(pos.Value);
 					// Get closest buffer position
@@ -496,7 +496,7 @@ namespace dnSpy.Hex.Formatting {
 		int GetLastColumn(int position) {
 			int column = FilterColumn(linePartsCollection.ConvertLinePositionToColumn(position));
 			var part = linePartsCollection.GetLinePartFromColumn(column);
-			if (!(part is null)) {
+			if (part is not null) {
 				var lineParts = linePartsCollection.LineParts;
 				int lineIndex = position - linePartsCollection.Span.Start;
 				for (int i = part.Value.Index + 1; i < lineParts.Count; i++, column++) {
@@ -543,13 +543,13 @@ namespace dnSpy.Hex.Formatting {
 				column -= textSpan.Length;
 			}
 
-			return (column == 0 || IsLastVisualLine) && !(lastTextSpan is null) ? lastTextSpan.Value.Properties : null;
+			return (column == 0 || IsLastVisualLine) && lastTextSpan is not null ? lastTextSpan.Value.Properties : null;
 		}
 
 		public override Collection<VSTF.TextBounds> GetNormalizedTextBounds(VST.Span lineSpan) {
 			var list = new List<VSTF.TextBounds>();
 			var bounds = TryGetNormalizedTextBounds(lineSpan);
-			if (!(bounds is null))
+			if (bounds is not null)
 				list.Add(bounds.Value);
 			return new Collection<VSTF.TextBounds>(list);
 		}
@@ -586,7 +586,7 @@ namespace dnSpy.Hex.Formatting {
 
 			foreach (var info in bufferLine.GetSpans(pos.Value, flags)) {
 				var valuesSpan = TryGetNormalizedTextBounds(info.TextSpan);
-				if (!(valuesSpan is null))
+				if (valuesSpan is not null)
 					list.Add(valuesSpan.Value);
 			}
 

@@ -69,7 +69,7 @@ namespace dnSpy.Bookmarks.Impl {
 				bmSect.Attribute("IsEnabled", bmSettings.IsEnabled);
 				bookmarkLocationSerializerService.Serialize(bmSect.CreateSection("BML"), bm.Location);
 				bmSect.Attribute("Name", bm.Name ?? string.Empty);
-				if (!(bmSettings.Labels is null) && bmSettings.Labels.Count != 0)
+				if (bmSettings.Labels is not null && bmSettings.Labels.Count != 0)
 					SaveLabels(bmSect, bmSettings.Labels.ToArray());
 			}
 		}

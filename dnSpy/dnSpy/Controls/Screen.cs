@@ -90,7 +90,7 @@ namespace dnSpy.Controls {
 			var helper = GetHelper(o);
 			IsValid = false;
 			info = default;
-			if (!(helper is null)) {
+			if (helper is not null) {
 				var hMonitor = MonitorFromWindow(helper.Handle, MONITOR_DEFAULTTONEAREST);
 				info.cbSize = MONITORINFOEX.SIZE;
 				if (!GetMonitorInfo(hMonitor, ref info))

@@ -56,7 +56,7 @@ namespace dnSpy.Hex.Intellisense {
 
 			public CommandTargetStatus CanExecute(Guid group, int cmdId) {
 				if (group == CommandConstants.HexEditorGroup) {
-					if (!(TryGetIntellisenseKeyboardCommand((HexEditorIds)cmdId) is null))
+					if (TryGetIntellisenseKeyboardCommand((HexEditorIds)cmdId) is not null)
 						return CommandTargetStatus.Handled;
 				}
 				return CommandTargetStatus.NotHandled;
@@ -70,7 +70,7 @@ namespace dnSpy.Hex.Intellisense {
 			public CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) {
 				if (group == CommandConstants.HexEditorGroup) {
 					var command = TryGetIntellisenseKeyboardCommand((HexEditorIds)cmdId);
-					if (!(command is null) && owner.ExecuteKeyboardCommand(command.Value))
+					if (command is not null && owner.ExecuteKeyboardCommand(command.Value))
 						return CommandTargetStatus.Handled;
 				}
 				return CommandTargetStatus.NotHandled;

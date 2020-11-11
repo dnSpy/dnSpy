@@ -130,11 +130,11 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			var methodNode = (MethodNode)nodes[0];
 			var modNode = methodNode.GetModuleNode();
-			Debug2.Assert(!(modNode is null));
+			Debug2.Assert(modNode is not null);
 			if (modNode is null)
 				throw new InvalidOperationException();
 			var module = modNode.Document.ModuleDef;
-			Debug2.Assert(!(module is null));
+			Debug2.Assert(module is not null);
 			if (module is null)
 				throw new InvalidOperationException();
 
@@ -146,7 +146,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 				if (win.ShowDialog() != true)
 					return;
-				Debug2.Assert(!(vm.Result is null));
+				Debug2.Assert(vm.Result is not null);
 
 				undoCommandService.Value.Add(new EditMethodBodyCodeCommand(addUpdatedNodesHelperProvider, modNode, vm.Result));
 			}
@@ -181,9 +181,9 @@ namespace dnSpy.AsmEditor.Compiler {
 		internal static bool IsVisibleInternal(EditCodeVMCreator editCodeVMCreator, IMenuItemContext? context) => IsVisible(editCodeVMCreator, BodyCommandUtils.GetStatements(context, FindByTextPositionOptions.OuterMostStatement));
 		static bool IsVisible(EditCodeVMCreator editCodeVMCreator, IList<MethodSourceStatement>? list) =>
 			editCodeVMCreator.CanCreate(CompilationKind.EditMethod) &&
-			!(list is null) &&
+			list is not null &&
 			list.Count != 0 &&
-			!(list[0].Method.Body is null) &&
+			list[0].Method.Body is not null &&
 			list[0].Method.Body.Instructions.Count > 0;
 
 		public override void Execute(IMenuItemContext context) => Execute(BodyCommandUtils.GetStatements(context, FindByTextPositionOptions.OuterMostStatement));

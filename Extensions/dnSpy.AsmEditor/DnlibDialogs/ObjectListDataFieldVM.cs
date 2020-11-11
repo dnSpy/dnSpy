@@ -49,7 +49,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public ObjectListDataFieldVM(ModuleDef ownerModule, IList<object?> value, Action<DataFieldVM> onUpdated, TypeSigCreatorOptions? options)
 			: base(onUpdated) {
 			this.ownerModule = ownerModule;
-			if (!(options is null)) {
+			if (options is not null) {
 				this.options = options.Clone(dnSpy_AsmEditor_Resources.CreateType);
 				this.options.NullTypeSigAllowed = true;
 			}
@@ -58,7 +58,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		protected override string OnNewValue(IList<object?> value) {
 			objects.Clear();
-			if (!(value is null))
+			if (value is not null)
 				objects.AddRange(value);
 			return CalculateStringValue();
 		}

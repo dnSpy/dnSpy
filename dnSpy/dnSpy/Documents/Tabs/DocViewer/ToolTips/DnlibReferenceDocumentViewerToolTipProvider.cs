@@ -56,7 +56,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		string? GetDocumentation(XmlDocumentationProvider docProvider, IMemberRef mr) {
 			var sb = new StringBuilder();
 			var doc = docProvider.GetDocumentation(XmlDocKeyProvider.GetKey(mr, sb));
-			if (!(doc is null))
+			if (doc is not null)
 				return doc;
 			var method = mr as IMethod;
 			if (method is null)
@@ -106,12 +106,12 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 			provider.CreateNewOutput();
 			try {
 				var docProvider = XmlDocLoader.LoadDocumentation(gp.Module);
-				if (!(docProvider is null)) {
+				if (docProvider is not null) {
 					if (!provider.Output.WriteXmlDocGeneric(GetDocumentation(docProvider, gp.Owner), gp.Name) && gp.Owner is TypeDef) {
 						// If there's no doc available, use the parent class' documentation if this
 						// is a generic type parameter (and not a generic method parameter).
 						var owner = ((TypeDef)gp.Owner).DeclaringType;
-						while (!(owner is null)) {
+						while (owner is not null) {
 							if (provider.Output.WriteXmlDocGeneric(GetDocumentation(docProvider, owner), gp.Name))
 								break;
 							owner = owner.DeclaringType;
@@ -142,7 +142,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 			try {
 				if (resolvedRef is IMemberDef) {
 					var docProvider = XmlDocLoader.LoadDocumentation(resolvedRef.Module);
-					if (!(docProvider is null))
+					if (docProvider is not null)
 						provider.Output.WriteXmlDoc(GetDocumentation(docProvider, resolvedRef));
 				}
 			}
@@ -169,10 +169,10 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 			var method = parameter.Parameter.Method;
 			try {
 				var docProvider = XmlDocLoader.LoadDocumentation(method.Module);
-				if (!(docProvider is null)) {
+				if (docProvider is not null) {
 					if (!provider.Output.WriteXmlDocParameter(GetDocumentation(docProvider, method), parameter.Name)) {
 						var owner = method.DeclaringType;
-						while (!(owner is null)) {
+						while (owner is not null) {
 							if (provider.Output.WriteXmlDocParameter(GetDocumentation(docProvider, owner), parameter.Name))
 								break;
 							owner = owner.DeclaringType;
@@ -196,7 +196,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 			provider.Output.Write(BoxedTextColor.Punctuation, "(");
 			provider.Output.Write(BoxedTextColor.Number, opCodeHex);
 			provider.Output.Write(BoxedTextColor.Punctuation, ")");
-			if (!(s is null)) {
+			if (s is not null) {
 				provider.Output.Write(BoxedTextColor.Text, " - ");
 				provider.Output.Write(BoxedTextColor.Text, s);
 			}

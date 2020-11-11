@@ -71,7 +71,7 @@ namespace Example1.Extension {
 	sealed class TextEditorCommand3 : MenuItemBase {
 		public override void Execute(IMenuItemContext context) {
 			var md = GetTokenObj(context);
-			if (!(md is null)) {
+			if (md is not null) {
 				try {
 					Clipboard.SetText($"{md.MDToken.Raw:X8}");
 				}
@@ -101,14 +101,14 @@ namespace Example1.Extension {
 
 		// Only show this in the document viewer
 		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID);
-		public override bool IsEnabled(IMenuItemContext context) => !(GetTokenObj(context) is null);
+		public override bool IsEnabled(IMenuItemContext context) => GetTokenObj(context) is not null;
 	}
 
 	[ExportMenuItem(Group = Constants.GROUP_TEXTEDITOR, Order = 30)]
 	sealed class TextEditorCommand4 : MenuItemBase {
 		public override void Execute(IMenuItemContext context) {
 			var documentViewer = GetDocumentViewer(context);
-			if (!(documentViewer is null)) {
+			if (documentViewer is not null) {
 				try {
 					var lineColumn = GetLineColumn(documentViewer.Caret.Position.VirtualBufferPosition);
 					Clipboard.SetText($"Line,col: {lineColumn.Line + 1},{lineColumn.Column + 1}");
@@ -150,6 +150,6 @@ namespace Example1.Extension {
 
 		// Only show this in the document viewer
 		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID);
-		public override bool IsEnabled(IMenuItemContext context) => !(GetDocumentViewer(context) is null);
+		public override bool IsEnabled(IMenuItemContext context) => GetDocumentViewer(context) is not null;
 	}
 }

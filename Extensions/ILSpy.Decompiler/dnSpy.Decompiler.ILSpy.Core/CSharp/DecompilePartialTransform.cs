@@ -43,13 +43,13 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 		public void Run(AstNode compilationUnit) {
 			foreach (var en in compilationUnit.Descendants.OfType<EntityDeclaration>()) {
 				var def = en.Annotation<IMemberDef>();
-				Debug2.Assert(!(def is null));
+				Debug2.Assert(def is not null);
 				if (def is null)
 					continue;
 				if (def == type) {
 					var tdecl = en as TypeDeclaration;
-					Debug2.Assert(!(tdecl is null));
-					if (!(tdecl is null)) {
+					Debug2.Assert(tdecl is not null);
+					if (tdecl is not null) {
 						if (addPartialKeyword) {
 							if (tdecl.ClassType != ClassType.Enum)
 								tdecl.Modifiers |= Modifiers.Partial;
@@ -63,7 +63,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 						}
 						foreach (var iface in tdecl.BaseTypes) {
 							var tdr = iface.Annotation<ITypeDefOrRef>();
-							if (!(tdr is null) && ifacesToRemove.Contains(tdr))
+							if (tdr is not null && ifacesToRemove.Contains(tdr))
 								iface.Remove();
 						}
 					}

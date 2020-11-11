@@ -110,10 +110,10 @@ namespace dnSpy.Decompiler.MSBuild {
 				}
 
 				var body = GetInitializeComponentBody();
-				Debug2.Assert(!(body is null));
-				if (!(body is null)) {
+				Debug2.Assert(body is not null);
+				if (body is not null) {
 					var startupUri = GetStartupUri(body);
-					if (!(startupUri is null))
+					if (startupUri is not null)
 						writer.WriteAttributeString("StartupUri", startupUri);
 
 					foreach (var info in GetEvents(body))

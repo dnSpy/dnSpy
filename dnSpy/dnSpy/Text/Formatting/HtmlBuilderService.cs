@@ -76,7 +76,7 @@ namespace dnSpy.Text.Formatting {
 			try {
 				int tabSize;
 				IClassificationFormatMap classificationFormatMap;
-				if (!(textView is null)) {
+				if (textView is not null) {
 					classifier = synchronousViewClassifierAggregatorService.GetSynchronousClassifier(textView);
 					classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(textView);
 					tabSize = textView.Options.GetTabSize();

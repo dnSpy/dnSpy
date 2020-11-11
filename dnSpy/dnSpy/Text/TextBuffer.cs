@@ -47,7 +47,7 @@ namespace dnSpy.Text {
 
 		void CreateNewCurrentSnapshot(IList<ITextChange>? changes, int? reiteratedVersionNumber = null, ITextSource? afterTextSource = null) {
 			// It's null the first time it's called from the ctor
-			if (!(changes is null))
+			if (changes is not null)
 				currentTextVersion = currentTextVersion.SetChanges(changes, reiteratedVersionNumber);
 			var textSource = afterTextSource ?? Document.CreateSnapshot();
 			var textImage = new TextImage(this, textSource, currentTextVersion.ImageVersion);
@@ -75,7 +75,7 @@ namespace dnSpy.Text {
 		internal TextDocument Document {
 			get => document;
 			private set {
-				if (!(document is null))
+				if (document is not null)
 					throw new InvalidOperationException();
 				document = value;
 				CreateNewCurrentSnapshot(null);
@@ -95,7 +95,7 @@ namespace dnSpy.Text {
 			Document.SetOwnerThread(null);
 		}
 
-		public bool EditInProgress => !(textEditInProgress is null);
+		public bool EditInProgress => textEditInProgress is not null;
 		public bool CheckEditAccess() => CheckAccess();
 		TextEdit? textEditInProgress;
 
@@ -199,7 +199,7 @@ namespace dnSpy.Text {
 		}
 
 		public void TakeThreadOwnership() {
-			if (!(ownerThread is null) && ownerThread != Thread.CurrentThread)
+			if (ownerThread is not null && ownerThread != Thread.CurrentThread)
 				throw new InvalidOperationException();
 			ownerThread = Thread.CurrentThread;
 			Document.SetOwnerThread(ownerThread);

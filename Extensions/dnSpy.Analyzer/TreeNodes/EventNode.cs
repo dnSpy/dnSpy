@@ -54,13 +54,13 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
-			if (!(analyzedEvent.AddMethod is null))
+			if (analyzedEvent.AddMethod is not null)
 				yield return new EventAccessorNode(analyzedEvent.AddMethod, "add");
 
-			if (!(analyzedEvent.RemoveMethod is null))
+			if (analyzedEvent.RemoveMethod is not null)
 				yield return new EventAccessorNode(analyzedEvent.RemoveMethod, "remove");
 
-			if (!(analyzedEvent.InvokeMethod is null))
+			if (analyzedEvent.InvokeMethod is not null)
 				yield return new EventAccessorNode(analyzedEvent.InvokeMethod, "raise");
 
 			foreach (var accessor in analyzedEvent.OtherMethods)

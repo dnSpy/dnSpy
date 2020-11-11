@@ -71,7 +71,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			get {
 				foreach (var doc in Documents) {
 					var info = GetDocumentInfo(doc);
-					if (!(info is null))
+					if (info is not null)
 						yield return info.Value;
 				}
 			}
@@ -82,7 +82,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			if (dnDoc is IModuleIdHolder idHolder)
 				return new DocumentInfo(doc, idHolder.ModuleId, dnDoc.IsActive);
 			var mod = doc.ModuleDef;
-			if (!(mod is null) && File.Exists(mod.Location))
+			if (mod is not null && File.Exists(mod.Location))
 				return new DocumentInfo(doc, ModuleId.CreateFromFile(mod), isActive: dnDoc?.IsActive ?? true);
 			return null;
 		}

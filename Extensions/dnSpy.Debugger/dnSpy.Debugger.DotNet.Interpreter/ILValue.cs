@@ -636,7 +636,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter {
 		/// <summary>
 		/// true if it was created by a ldvirtftn instruction, false it was created by a ldftn instruction
 		/// </summary>
-		public bool IsVirtual => !(VirtualThisObject is null);
+		public bool IsVirtual => VirtualThisObject is not null;
 
 		/// <summary>
 		/// Gets the this value if and only if this was created by a ldvirtftn instruction, otherwise it's null

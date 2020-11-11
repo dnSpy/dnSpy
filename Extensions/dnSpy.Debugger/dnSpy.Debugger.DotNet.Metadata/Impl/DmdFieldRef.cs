@@ -36,22 +36,22 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		DmdFieldDef ResolvedField => GetResolvedField(throwOnError: true)!;
 		DmdFieldDef? GetResolvedField(bool throwOnError) {
-			if (!(__resolvedField_DONT_USE is null))
+			if (__resolvedField_DONT_USE is not null)
 				return __resolvedField_DONT_USE;
 
 			DmdFieldDef? newResolvedField = null;
 			var declType = declaringTypeRef.Resolve(throwOnError);
-			if (!(declType is null)) {
+			if (declType is not null) {
 				var nonGenericInstDeclType = declType.IsGenericType ? declType.GetGenericTypeDefinition() : declType;
 				var nonGenericInstDeclTypeField = (DmdFieldDef?)nonGenericInstDeclType?.GetField(Name, rawFieldType, throwOnError: false);
-				if (!(nonGenericInstDeclTypeField is null)) {
+				if (nonGenericInstDeclTypeField is not null) {
 					newResolvedField = (object?)nonGenericInstDeclTypeField.DeclaringType == declType ?
 						nonGenericInstDeclTypeField :
 						(DmdFieldDef?)declType.GetField(nonGenericInstDeclTypeField.Module, nonGenericInstDeclTypeField.MetadataToken);
-					Debug2.Assert(!(newResolvedField is null));
+					Debug2.Assert(newResolvedField is not null);
 				}
 			}
-			if (!(newResolvedField is null)) {
+			if (newResolvedField is not null) {
 				Interlocked.CompareExchange(ref __resolvedField_DONT_USE, newResolvedField, null);
 				Debug.Assert(DmdMemberInfoEqualityComparer.DefaultMember.Equals(__resolvedField_DONT_USE!.ReflectedType, declaringTypeRef));
 				return __resolvedField_DONT_USE;

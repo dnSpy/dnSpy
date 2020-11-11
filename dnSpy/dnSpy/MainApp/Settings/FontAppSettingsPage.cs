@@ -211,7 +211,7 @@ namespace dnSpy.MainApp.Settings {
 
 		public override bool Equals(object? obj) {
 			var other = obj as FontFamilyVM;
-			return !(other is null) &&
+			return other is not null &&
 				FontFamily.Equals(other.FontFamily);
 		}
 

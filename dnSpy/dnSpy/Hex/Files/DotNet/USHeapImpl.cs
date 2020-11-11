@@ -36,7 +36,7 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		public override ComplexData? GetStructure(HexPosition position) {
 			var info = GetStringInfo(position);
-			if (!(info is null))
+			if (info is not null)
 				return new USHeapRecordData(Span.Buffer, info.Value.LengthSpan, info.Value.StringSpan, info.Value.TerminalByteSpan, this);
 
 			return null;
@@ -48,12 +48,12 @@ namespace dnSpy.Hex.Files.DotNet {
 			var index = GetIndex(position);
 			if (index < 0)
 				return null;
-			Debug2.Assert(!(usStringInfos is null));
+			Debug2.Assert(usStringInfos is not null);
 			return usStringInfos[index];
 		}
 
 		void Initialize() {
-			if (!(usStringInfos is null))
+			if (usStringInfos is not null)
 				return;
 			usStringInfos = CreateUSStringInfos();
 		}
@@ -90,7 +90,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			if (array is null) {
 				Initialize();
 				array = usStringInfos;
-				Debug2.Assert(!(array is null));
+				Debug2.Assert(array is not null);
 			}
 			int lo = 0, hi = array.Length - 1;
 			while (lo <= hi) {

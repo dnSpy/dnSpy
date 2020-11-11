@@ -81,7 +81,7 @@ namespace dnSpy.Decompiler {
 			output.WriteLine();
 			PrintEntryPoint(asm.ManifestModule, output);
 			var peImage = TryGetPEImage(asm.ManifestModule);
-			if (!(peImage is null))
+			if (peImage is not null)
 				WriteTimestampComment(output, peImage);
 			output.WriteLine();
 		}
@@ -119,11 +119,11 @@ namespace dnSpy.Decompiler {
 				this.WriteCommentLine(output, dnSpy_Decompiler_Resources.Decompile_ThisAssemblyContainsUnmanagedCode);
 			}
 			string? runtimeName = GetRuntimeDisplayName(mod);
-			if (!(runtimeName is null)) {
+			if (runtimeName is not null) {
 				this.WriteCommentLine(output, dnSpy_Decompiler_Resources.Decompile_Runtime + " " + runtimeName);
 			}
 			var peImage = TryGetPEImage(mod);
-			if (!(peImage is null))
+			if (peImage is not null)
 				WriteTimestampComment(output, peImage);
 			output.WriteLine();
 		}
@@ -151,7 +151,7 @@ namespace dnSpy.Decompiler {
 			else if (ep is MethodDef epMethod) {
 				WriteCommentBegin(output, true);
 				output.Write(dnSpy_Decompiler_Resources.Decompile_EntryPoint + " ", BoxedTextColor.Comment);
-				if (!(epMethod.DeclaringType is null)) {
+				if (epMethod.DeclaringType is not null) {
 					output.Write(IdentifierEscaper.Escape(epMethod.DeclaringType.FullName), epMethod.DeclaringType, DecompilerReferenceFlags.None, BoxedTextColor.Comment);
 					output.Write(".", BoxedTextColor.Comment);
 				}
@@ -163,7 +163,7 @@ namespace dnSpy.Decompiler {
 
 		object? GetEntryPoint(ModuleDef? module) {
 			int maxIters = 1;
-			for (int i = 0; !(module is null) && i < maxIters; i++) {
+			for (int i = 0; module is not null && i < maxIters; i++) {
 				var rva = module.NativeEntryPoint;
 				if (rva != 0)
 					return (uint)rva;

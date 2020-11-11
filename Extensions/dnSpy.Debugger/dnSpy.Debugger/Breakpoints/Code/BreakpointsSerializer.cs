@@ -113,15 +113,15 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 				var bpSettings = bp.Settings;
 				bpSect.Attribute("IsEnabled", bpSettings.IsEnabled);
 				dbgCodeLocationSerializerService.Serialize(bpSect.CreateSection("BPL"), location);
-				if (!(bpSettings.Condition is null))
+				if (bpSettings.Condition is not null)
 					Save(bpSect.CreateSection("Condition"), bpSettings.Condition.Value);
-				if (!(bpSettings.HitCount is null))
+				if (bpSettings.HitCount is not null)
 					Save(bpSect.CreateSection("HitCount"), bpSettings.HitCount.Value);
-				if (!(bpSettings.Filter is null))
+				if (bpSettings.Filter is not null)
 					Save(bpSect.CreateSection("Filter"), bpSettings.Filter.Value);
-				if (!(bpSettings.Trace is null))
+				if (bpSettings.Trace is not null)
 					Save(bpSect.CreateSection("Trace"), bpSettings.Trace.Value);
-				if (!(bpSettings.Labels is null) && bpSettings.Labels.Count != 0)
+				if (bpSettings.Labels is not null && bpSettings.Labels.Count != 0)
 					SaveLabels(bpSect, bpSettings.Labels.ToArray());
 			}
 		}

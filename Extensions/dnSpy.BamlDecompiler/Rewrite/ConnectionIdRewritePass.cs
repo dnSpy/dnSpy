@@ -68,7 +68,7 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 					break;
 				}
 			}
-			if (!(iface is null))
+			if (iface is not null)
 				return;
 
 			Dictionary<int, Action<XamlContext, XElement>> connIds = null;
@@ -126,7 +126,7 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 
 			public void Callback(XamlContext ctx, XElement elem) {
 				XName name;
-				if (!(AttachedType is null)) {
+				if (AttachedType is not null) {
 					var clrNs = AttachedType.ReflectionNamespace;
 					var xmlNs = ctx.XmlNs.LookupXmlns(AttachedType.DefinitionAssembly, clrNs);
 					name = ctx.GetXmlNamespace(xmlNs)?.GetName(EventName) ?? AttachedType.Name + "." + EventName;
@@ -216,7 +216,7 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 					}
 				}
 
-				if (!(cb is null)) {
+				if (cb is not null) {
 					foreach (var id in info.connIds)
 						connIds[id] = cb;
 				}
@@ -232,7 +232,7 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 				return list;
 
 			var sw = method.GetSelfAndChildrenRecursive<ILSwitch>().FirstOrDefault();
-			if (!(sw is null)) {
+			if (sw is not null) {
 				foreach (var lbl in sw.CaseBlocks) {
 					if (lbl.Values is null)
 						continue;

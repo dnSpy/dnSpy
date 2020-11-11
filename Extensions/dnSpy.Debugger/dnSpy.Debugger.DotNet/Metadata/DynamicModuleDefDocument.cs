@@ -55,7 +55,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		protected override TList<IDsDocument> CreateChildren() {
 			var list = new TList<IDsDocument>();
-			if (!(files is null)) {
+			if (files is not null) {
 				list.AddRange(files);
 				files = null;
 			}

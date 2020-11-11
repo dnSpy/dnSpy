@@ -106,7 +106,7 @@ namespace dnSpy.Text.Tagging.Xml {
 		}
 
 		public IEnumerable<XamlSpan> GetTags() {
-			Debug2.Assert(!(snapshot is null));
+			Debug2.Assert(snapshot is not null);
 			// This is the first { delimiter
 			yield return new XamlSpan(new SnapshotSpan(snapshot, spanStart, 1), XamlKind.Delimiter);
 
@@ -130,17 +130,17 @@ namespace dnSpy.Text.Tagging.Xml {
 					var name = GetNextName(cspan.Value);
 					if (readingExtensionClass) {
 						yield return new XamlSpan(new SnapshotSpan(snapshot, name.Item1.Span), XamlKind.Class);
-						if (!(name.Item2 is null))
+						if (name.Item2 is not null)
 							yield return new XamlSpan(new SnapshotSpan(snapshot, name.Item2.Value.Span), XamlKind.Delimiter);
-						if (!(name.Item3 is null))
+						if (name.Item3 is not null)
 							yield return new XamlSpan(new SnapshotSpan(snapshot, name.Item3.Value.Span), XamlKind.Class);
 						readingExtensionClass = false;
 					}
 					else {
 						yield return new XamlSpan(new SnapshotSpan(snapshot, name.Item1.Span), XamlKind.ParameterName);
-						if (!(name.Item2 is null))
+						if (name.Item2 is not null)
 							yield return new XamlSpan(new SnapshotSpan(snapshot, name.Item2.Value.Span), XamlKind.Delimiter);
-						if (!(name.Item3 is null))
+						if (name.Item3 is not null)
 							yield return new XamlSpan(new SnapshotSpan(snapshot, name.Item3.Value.Span), XamlKind.ParameterName);
 
 						var next = GetNextSpan();
@@ -162,9 +162,9 @@ namespace dnSpy.Text.Tagging.Xml {
 								name = GetNextName(next.Value);
 
 								yield return new XamlSpan(new SnapshotSpan(snapshot, name.Item1.Span), XamlKind.ParameterValue);
-								if (!(name.Item2 is null))
+								if (name.Item2 is not null)
 									yield return new XamlSpan(new SnapshotSpan(snapshot, name.Item2.Value.Span), XamlKind.Delimiter);
-								if (!(name.Item3 is null))
+								if (name.Item3 is not null)
 									yield return new XamlSpan(new SnapshotSpan(snapshot, name.Item3.Value.Span), XamlKind.ParameterValue);
 							}
 							else {
@@ -187,13 +187,13 @@ namespace dnSpy.Text.Tagging.Xml {
 			Debug.Assert(item1.Kind == TokenKind.Name);
 			var item2 = GetNextSpan();
 			if (item2 is null || item2.Value.Span.Length != 1 || item2.Value.Kind != TokenKind.Colon) {
-				if (!(item2 is null))
+				if (item2 is not null)
 					Undo(item2.Value);
 				return new CharSpan3(item1);
 			}
 			var item3 = GetNextSpan();
 			if (item3 is null || item3.Value.Kind != TokenKind.Name) {
-				if (!(item3 is null))
+				if (item3 is not null)
 					Undo(item3.Value);
 				return new CharSpan3(item1, item2);
 			}
@@ -202,14 +202,14 @@ namespace dnSpy.Text.Tagging.Xml {
 
 		void Undo(in CharSpan charSpan) {
 			Debug2.Assert(nextCharSpan is null);
-			if (!(nextCharSpan is null))
+			if (nextCharSpan is not null)
 				throw new InvalidOperationException();
 			nextCharSpan = charSpan;
 		}
 		CharSpan? nextCharSpan;
 
 		CharSpan? GetNextSpan() {
-			if (!(nextCharSpan is null)) {
+			if (nextCharSpan is not null) {
 				var res = nextCharSpan;
 				nextCharSpan = null;
 				return res;
@@ -273,7 +273,7 @@ namespace dnSpy.Text.Tagging.Xml {
 		}
 
 		int NextChar() {
-			Debug2.Assert(!(snapshot is null));
+			Debug2.Assert(snapshot is not null);
 			if (bufferPos >= bufferLen) {
 				int len = spanEnd - snapshotPos;
 				if (len == 0)
@@ -289,7 +289,7 @@ namespace dnSpy.Text.Tagging.Xml {
 		}
 
 		int PeekChar() {
-			Debug2.Assert(!(snapshot is null));
+			Debug2.Assert(snapshot is not null);
 			if (bufferPos >= bufferLen) {
 				int len = spanEnd - snapshotPos;
 				if (len == 0)

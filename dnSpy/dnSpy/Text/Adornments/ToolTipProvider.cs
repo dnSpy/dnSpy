@@ -45,7 +45,7 @@ namespace dnSpy.Text.Adornments {
 		}
 
 		public void ClearToolTip() {
-			if (!(toolTipAgent is null))
+			if (toolTipAgent is not null)
 				spaceReservationManager.RemoveAgent(toolTipAgent);
 		}
 

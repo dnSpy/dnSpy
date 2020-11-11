@@ -33,7 +33,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 			char c;
 			if (!string2.IsNullOrEmpty(name) && ((c = name[0]) == '<' || (c == 'V' && name.StartsWith(StateMachineTypeNamePrefix, StringComparison.Ordinal)))) {
 				var type = method.DeclaringType.DeclaringType;
-				if (!(type is null)) {
+				if (type is not null) {
 					string? attrName;
 					// These attributes could be missing from the type (eg. it's a Unity assembly)
 					if (method.DeclaringType.CanCastTo(type.AppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_CompilerServices_IAsyncStateMachine, isOptional: true)))
@@ -42,7 +42,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 						attrName = "System.Runtime.CompilerServices.IteratorStateMachineAttribute";
 					else
 						attrName = null;
-					if (!(attrName is null)) {
+					if (attrName is not null) {
 						var declTypeDef = method.DeclaringType;
 						if (declTypeDef.IsConstructedGenericType)
 							declTypeDef = declTypeDef.GetGenericTypeDefinition();
@@ -60,7 +60,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 				}
 				var kickoffMethodName = type is null ? null : GetKickoffMethodName(method.DeclaringType);
 				if (!string2.IsNullOrEmpty(kickoffMethodName)) {
-					Debug2.Assert(!(type is null));
+					Debug2.Assert(type is not null);
 					DmdMethodBase? possibleKickoffMethod = null;
 					int methodGenArgs = method.ReflectedType!.GetGenericArguments().Count - type.GetGenericArguments().Count;
 					foreach (var m in method.DeclaringType!.DeclaringType!.DeclaredMethods) {
@@ -70,14 +70,14 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 						if (sig.GenericParameterCount != methodGenArgs)
 							continue;
 
-						if (!(possibleKickoffMethod is null)) {
+						if (possibleKickoffMethod is not null) {
 							// More than one method with the same name and partial signature
 							possibleKickoffMethod = null;
 							break;
 						}
 						possibleKickoffMethod = m;
 					}
-					if (!(possibleKickoffMethod is null)) {
+					if (possibleKickoffMethod is not null) {
 						CreateMethod(method, possibleKickoffMethod, out kickoffMethod);
 						return true;
 					}
@@ -92,7 +92,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 			var smGenArgs = method.ReflectedType!.GetGenericArguments();
 			Debug.Assert(method.GetGenericArguments().Count == 0, "Generic method args should be part of the state machine type");
 			createdMethod = AddTypeArguments(newMethod, smGenArgs)!;
-			Debug2.Assert(!(createdMethod is null));
+			Debug2.Assert(createdMethod is not null);
 			if (createdMethod is null)
 				createdMethod = newMethod;
 		}

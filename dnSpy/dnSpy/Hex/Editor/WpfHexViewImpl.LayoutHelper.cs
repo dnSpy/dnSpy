@@ -94,11 +94,11 @@ namespace dnSpy.Hex.Editor {
 				// just like in VS' WpfHexViewLine collection.
 				var firstInfo = infos[0];
 				var prevLine = AddLineTransform(GetLineBefore(firstInfo.Line), firstInfo.Y, VSTE.ViewRelativePosition.Bottom);
-				if (!(prevLine is null))
+				if (prevLine is not null)
 					infos.Insert(0, new LineInfo(prevLine, firstInfo.Y - prevLine.Height));
 				var lastInfo = infos[infos.Count - 1];
 				var nextLine = AddLineTransform(GetLineAfter(lastInfo.Line), lastInfo.Y + lastInfo.Line.Height, VSTE.ViewRelativePosition.Top);
-				if (!(nextLine is null))
+				if (nextLine is not null)
 					infos.Add(new LineInfo(nextLine, lastInfo.Y + lastInfo.Line.Height));
 
 				var keptLines = new HashSet<PhysicalLine>();
@@ -162,7 +162,7 @@ namespace dnSpy.Hex.Editor {
 			List<LineInfo> CreateLineInfos(HexBufferPoint bufferPosition, VSTE.ViewRelativePosition relativeTo, double verticalDistance, double viewportHeightOverride) {
 				var lineInfos = new List<LineInfo>();
 				var startLine = GetLine(bufferPosition);
-				Debug2.Assert(!(startLine is null));
+				Debug2.Assert(startLine is not null);
 
 				double newViewportBottom = NewViewportTop + viewportHeightOverride;
 				double lineStartY;
@@ -218,7 +218,7 @@ namespace dnSpy.Hex.Editor {
 			}
 
 			HexFormattedLine? AddLineTransform(HexFormattedLine? line, double yPosition, VSTE.ViewRelativePosition placement) {
-				if (!(line is null)) {
+				if (line is not null) {
 					var lineTransform = lineTransformProvider.GetLineTransform(line, yPosition, placement);
 					if (lineTransform != line.LineTransform) {
 						line.SetLineTransform(lineTransform);

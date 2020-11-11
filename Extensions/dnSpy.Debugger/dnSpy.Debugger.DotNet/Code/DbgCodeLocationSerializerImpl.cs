@@ -63,7 +63,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 					state.MethodAsString = GetMethodAsString(loc.Module, loc.Token);
 					state.Initialized = true;
 				}
-				if (!(state.MethodAsString is null))
+				if (state.MethodAsString is not null)
 					section.Attribute("Method", state.MethodAsString);
 			}
 		}

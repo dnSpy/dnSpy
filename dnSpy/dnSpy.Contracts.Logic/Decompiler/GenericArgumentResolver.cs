@@ -56,7 +56,7 @@ namespace dnSpy.Contracts.Decompiler {
 		bool ReplaceGenericArg(ref TypeSig typeSig) {
 			if (typeSig is GenericMVar genericMVar) {
 				var newSig = Read(methodGenArgs, genericMVar.Number);
-				if (!(newSig is null)) {
+				if (newSig is not null) {
 					typeSig = newSig;
 					return true;
 				}
@@ -65,7 +65,7 @@ namespace dnSpy.Contracts.Decompiler {
 
 			if (typeSig is GenericVar genericVar) {
 				var newSig = Read(typeGenArgs, genericVar.Number);
-				if (!(newSig is null)) {
+				if (newSig is not null) {
 					typeSig = newSig;
 					return true;
 				}
@@ -98,7 +98,7 @@ namespace dnSpy.Contracts.Decompiler {
 			foreach (var p in old.Params)
 				sig.Params.Add(ResolveGenericArgs(p));
 			sig.GenParamCount = old.GenParamCount;
-			if (!(sig.ParamsAfterSentinel is null)) {
+			if (sig.ParamsAfterSentinel is not null) {
 				foreach (var p in old.ParamsAfterSentinel)
 					sig.ParamsAfterSentinel.Add(ResolveGenericArgs(p));
 			}
@@ -187,15 +187,15 @@ namespace dnSpy.Contracts.Decompiler {
 			LocalSig? lsig;
 			PropertySig? psig;
 			GenericInstMethodSig? gsig;
-			if (!((msig = sig as MethodSig) is null))
+			if ((msig = sig as MethodSig) is not null)
 				result = ResolveGenericArgs(msig);
-			else if (!((fsig = sig as FieldSig) is null))
+			else if ((fsig = sig as FieldSig) is not null)
 				result = ResolveGenericArgs(fsig);
-			else if (!((lsig = sig as LocalSig) is null))
+			else if ((lsig = sig as LocalSig) is not null)
 				result = ResolveGenericArgs(lsig);
-			else if (!((psig = sig as PropertySig) is null))
+			else if ((psig = sig as PropertySig) is not null)
 				result = ResolveGenericArgs(psig);
-			else if (!((gsig = sig as GenericInstMethodSig) is null))
+			else if ((gsig = sig as GenericInstMethodSig) is not null)
 				result = ResolveGenericArgs(gsig);
 			else
 				result = null;
@@ -217,7 +217,7 @@ namespace dnSpy.Contracts.Decompiler {
 			outSig.RetType = ResolveGenericArgs(inSig.RetType);
 			outSig.GenParamCount = inSig.GenParamCount;
 			UpdateSigList(outSig.Params, inSig.Params);
-			if (!(inSig.ParamsAfterSentinel is null)) {
+			if (inSig.ParamsAfterSentinel is not null) {
 				outSig.ParamsAfterSentinel = new List<TypeSig>(inSig.ParamsAfterSentinel.Count);
 				UpdateSigList(outSig.ParamsAfterSentinel, inSig.ParamsAfterSentinel);
 			}

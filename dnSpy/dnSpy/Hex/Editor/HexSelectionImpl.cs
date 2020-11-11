@@ -143,7 +143,7 @@ namespace dnSpy.Hex.Editor {
 					if (anchorPoint < activePoint) {
 						var anchorCell = GetCell(bufferLines, anchorPoint);
 						var activeCell = GetCell(bufferLines, activePoint - 1);
-						if (!(anchorCell is null) && !(activeCell is null)) {
+						if (anchorCell is not null && activeCell is not null) {
 							anchorPoint = anchorCell.BufferStart;
 							activePoint = activeCell.BufferEnd;
 						}
@@ -151,7 +151,7 @@ namespace dnSpy.Hex.Editor {
 					else {
 						var activeCell = GetCell(bufferLines, activePoint);
 						var anchorCell = GetCell(bufferLines, anchorPoint - 1);
-						if (!(anchorCell is null) && !(activeCell is null)) {
+						if (anchorCell is not null && activeCell is not null) {
 							activePoint = activeCell.BufferStart;
 							anchorPoint = anchorCell.BufferEnd;
 						}

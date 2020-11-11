@@ -55,7 +55,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 
 		public void Focus() {
 			var listView = variablesWindowControl.ListView;
-			if (!(listView is null))
+			if (listView is not null)
 				UIUtilities.FocusSelector(listView);
 		}
 

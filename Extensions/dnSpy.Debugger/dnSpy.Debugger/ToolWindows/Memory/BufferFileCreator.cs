@@ -91,7 +91,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 					Debug.Assert(!hexBufferFileService.Files.Any());
 					return;
 				}
-				if (!(process is null))
+				if (process is not null)
 					process.RuntimesChanged -= Process_RuntimesChanged;
 				foreach (var r in runtimes)
 					r.ModulesChanged -= DbgRuntime_ModulesChanged;
@@ -101,7 +101,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 				addedModules.Clear();
 
 				process = newProcess;
-				if (!(newProcess is null))
+				if (newProcess is not null)
 					newProcess.DbgManager.Dispatcher.BeginInvoke(() => OnNewProcess_DbgThread(newProcess));
 			}
 

@@ -57,12 +57,12 @@ namespace dnSpy.Text.AvalonEdit {
 					Debug.Assert(isShared);
 				}
 				else {
-					Debug2.Assert(!(contents is null) && contents.Length == NodeSize);
+					Debug2.Assert(contents is not null && contents.Length == NodeSize);
 					Debug.Assert(length >= 0 && length <= NodeSize);
 				}
 			}
 			else {
-				Debug2.Assert(!(left is null) && !(right is null));
+				Debug2.Assert(left is not null && right is not null);
 				Debug2.Assert(contents is null);
 				Debug.Assert(length == left.length + right.length);
 				Debug.Assert(height == 1 + Math.Max(left.height, right.height));
@@ -110,9 +110,9 @@ namespace dnSpy.Text.AvalonEdit {
 
 		internal void Publish() {
 			if (!isShared) {
-				if (!(left is null))
+				if (left is not null)
 					left.Publish();
-				if (!(right is null))
+				if (right is not null)
 					right.Publish();
 				// it's important that isShared=true is set at the end:
 				// Publish() must not return until the whole subtree is marked as shared, even when
@@ -263,7 +263,7 @@ namespace dnSpy.Text.AvalonEdit {
 				}
 				else {
 					// must be a leaf node: function nodes are always marked shared
-					Debug2.Assert(!(left.contents is null));
+					Debug2.Assert(left.contents is not null);
 					// steal buffer from left side
 					contents = left.contents;
 #if DEBUG
@@ -383,7 +383,7 @@ namespace dnSpy.Text.AvalonEdit {
 		/// Splits this leaf node at offset and returns a new node with the part of the text after offset.
 		/// </summary>
 		RopeNode<T> SplitAfter(int offset) {
-			Debug2.Assert(!isShared && height == 0 && !(contents is null));
+			Debug2.Assert(!isShared && height == 0 && contents is not null);
 			RopeNode<T> newPart = new RopeNode<T>();
 			newPart.contents = new T[NodeSize];
 			newPart.length = length - offset;
@@ -505,12 +505,12 @@ namespace dnSpy.Text.AvalonEdit {
 		internal virtual void AppendTreeToString(StringBuilder b, int indent) {
 			b.AppendLine(ToString());
 			indent += 2;
-			if (!(left is null)) {
+			if (left is not null) {
 				b.Append(' ', indent);
 				b.Append("L: ");
 				left.AppendTreeToString(b, indent);
 			}
-			if (!(right is null)) {
+			if (right is not null) {
 				b.Append(' ', indent);
 				b.Append("R: ");
 				right.AppendTreeToString(b, indent);
@@ -518,9 +518,9 @@ namespace dnSpy.Text.AvalonEdit {
 		}
 
 		public override string ToString() {
-			if (!(contents is null)) {
+			if (contents is not null) {
 				char[] charContents = contents as char[];
-				if (!(charContents is null))
+				if (charContents is not null)
 					return "[Leaf length=" + length + ", isShared=" + isShared + ", text=\"" + new string(charContents, 0, length) + "\"]";
 				else
 					return "[Leaf length=" + length + ", isShared=" + isShared + "\"]";
@@ -552,7 +552,7 @@ namespace dnSpy.Text.AvalonEdit {
 
 		public FunctionNode(int length, Func<Rope<T>> initializer) {
 			Debug.Assert(length > 0);
-			Debug2.Assert(!(initializer is null));
+			Debug2.Assert(initializer is not null);
 
 			this.length = length;
 			this.initializer = initializer;
@@ -597,7 +597,7 @@ namespace dnSpy.Text.AvalonEdit {
 				resultNode = cachedResults;
 			}
 			indent += 2;
-			if (!(resultNode is null)) {
+			if (resultNode is not null) {
 				b.Append(' ', indent);
 				b.Append("C: ");
 				resultNode.AppendTreeToString(b, indent);

@@ -54,7 +54,7 @@ namespace dnSpy.Hex.Files.DnSpy {
 				res.Children.Add(CreateTextElement(text));
 			}
 			var imgRef = content.Image as ImageReference?;
-			if (!(imgRef is null)) {
+			if (imgRef is not null) {
 				var img = new DsImage {
 					ImageReference = imgRef.Value,
 					Margin = new Thickness(0, 0, 4, 0),

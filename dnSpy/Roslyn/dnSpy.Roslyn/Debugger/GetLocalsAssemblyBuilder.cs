@@ -90,7 +90,7 @@ namespace dnSpy.Roslyn.Debugger {
 				errorMessage = null;
 				return Array.Empty<byte>();
 			}
-			Debug2.Assert(!(getLocalsType is null));
+			Debug2.Assert(getLocalsType is not null);
 
 			foreach (var p in sourceMethod.Parameters) {
 				var name = language.GetVariableName(GetName(p), isThis: p.IsHiddenThisParameter);
@@ -100,7 +100,7 @@ namespace dnSpy.Roslyn.Debugger {
 			}
 
 			var body = sourceMethod.Body;
-			if (!(body is null)) {
+			if (body is not null) {
 				foreach (var l in body.Variables) {
 					var name = language.GetVariableName(GetName(l), isThis: false);
 					const LocalAndMethodKind kind = LocalAndMethodKind.Local;
@@ -140,8 +140,8 @@ namespace dnSpy.Roslyn.Debugger {
 		}
 
 		(string methodName, DkmClrCompilationResultFlags flags) AddMethod(TypeSig type, int index, bool isLocal) {
-			Debug2.Assert(!(generatedModule is null));
-			Debug2.Assert(!(getLocalsType is null));
+			Debug2.Assert(generatedModule is not null);
+			Debug2.Assert(getLocalsType is not null);
 			var methodName = methodNamePrefix + methodNameIndex++.ToString();
 
 			var callConv = CallingConvention.Default;
@@ -152,7 +152,7 @@ namespace dnSpy.Roslyn.Debugger {
 			if (methodSig.RetType.IsByRef)
 				methodSig.RetType = methodSig.RetType.Next.RemovePinnedAndModifiers();
 
-			if (!(lastMethodSig is null)) {
+			if (lastMethodSig is not null) {
 				foreach (var p in lastMethodSig.Params)
 					methodSig.Params.Add(p);
 			}
@@ -220,7 +220,7 @@ namespace dnSpy.Roslyn.Debugger {
 		}
 
 		Instruction LoadIndirect(TypeSig? type) {
-			Debug2.Assert(!(generatedModule is null));
+			Debug2.Assert(generatedModule is not null);
 			switch (type.GetElementType()) {
 			case ElementType.Boolean:		return Instruction.Create(OpCodes.Ldind_I1);
 			case ElementType.Char:			return Instruction.Create(OpCodes.Ldind_U2);

@@ -81,10 +81,10 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 			}
 
 			var documentViewer = textView.TextBuffer.TryGetDocumentViewer();
-			Debug2.Assert(!(documentViewer is null));
+			Debug2.Assert(documentViewer is not null);
 			var statement = documentViewer?.GetMethodDebugService().FindByCodeOffset(new ModuleTokenId(location.Module, location.Token), location.Offset);
-			Debug2.Assert((!(documentViewer is null)) == (!(statement is null)));
-			if (!(statement is null)) {
+			Debug2.Assert((documentViewer is not null) == (statement is not null));
+			if (statement is not null) {
 				output.Write(DbgTextColor.Text, " ('");
 				var decompiler = (documentViewer?.DocumentTab?.Content as IDecompilerTabContent)?.Decompiler ?? decompilerService.Decompiler;
 				decompiler.Write(new DbgTextColorWriter(output), statement.Value.Method, FormatterOptions.Default);

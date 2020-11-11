@@ -82,7 +82,7 @@ namespace dnSpy.Text.Formatting {
 				linePart = LineParts[LineParts.Count - 1];
 			if (linePart is null)
 				return 0;
-			if (!(linePart.Value.AdornmentElement is null))
+			if (linePart.Value.AdornmentElement is not null)
 				return linePart.Value.Column;
 			return linePart.Value.Column + ((bufferPosition.Position - Span.Span.Start) - linePart.Value.Span.Start);
 		}
@@ -103,7 +103,7 @@ namespace dnSpy.Text.Formatting {
 				linePart = LineParts[LineParts.Count - 1];
 			if (linePart is null)
 				return null;
-			if (!(linePart.Value.AdornmentElement is null))
+			if (linePart.Value.AdornmentElement is not null)
 				return null;
 			return Span.Start + linePart.Value.Span.Start + (column - linePart.Value.Column);
 		}

@@ -48,7 +48,7 @@ namespace dnSpy.Debugger.Code.TextEditor {
 				throw new ArgumentException();
 			foreach (var lz in dbgTextViewCodeLocationProviders) {
 				var res = lz.Value.CreateLocation(tab, textView, position);
-				if (!(res is null))
+				if (res is not null)
 					yield return res.Value;
 			}
 		}

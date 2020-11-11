@@ -52,8 +52,8 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 		void InitializeCompletions(IEnumerable<Completion> completions) {
 			foreach (var c in completions) {
 				var rc = c as RoslynCompletion;
-				Debug2.Assert(!(rc is null));
-				if (!(rc is null))
+				Debug2.Assert(rc is not null);
+				if (rc is not null)
 					rc.CompletionSet = this;
 			}
 		}
@@ -102,12 +102,12 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 			List<string>? filteredTags = null;
 
 			var filters = Filters;
-			Debug2.Assert(!(filters is null));
-			if (!(filters is null)) {
+			Debug2.Assert(filters is not null);
+			if (filters is not null) {
 				foreach (var tmpFilter in filters) {
 					var filter = tmpFilter as RoslynIntellisenseFilter;
-					Debug2.Assert(!(filter is null));
-					if (!(filter is null) && filter.IsChecked) {
+					Debug2.Assert(filter is not null);
+					if (filter is not null && filter.IsChecked) {
 						if (filteredTags is null)
 							filteredTags = new List<string>();
 						filteredTags.AddRange(filter.Tags);
@@ -139,7 +139,7 @@ matched:
 			mruCompletionService.AddText(completion.DisplayText);
 
 			var info = CompletionInfo.Create(ApplicableTo.TextBuffer.CurrentSnapshot);
-			Debug2.Assert(!(info is null));
+			Debug2.Assert(info is not null);
 			if (info is null)
 				return;
 
@@ -156,7 +156,7 @@ matched:
 					return;
 				ed.Apply();
 			}
-			if (!(change.NewPosition is null)) {
+			if (change.NewPosition is not null) {
 				var snapshot = buffer.CurrentSnapshot;
 				Debug.Assert(change.NewPosition.Value <= snapshot.Length);
 				if (change.NewPosition.Value <= snapshot.Length) {

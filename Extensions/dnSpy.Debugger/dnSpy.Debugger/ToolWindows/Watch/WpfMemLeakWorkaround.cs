@@ -48,7 +48,7 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 			for (int i = 0; i < WatchWindowsHelper.NUMBER_OF_WATCH_WINDOWS; i++) {
 				if (watchContentFactory.TryGetContent(i, out var watchContent)) {
 					var listView = watchContent.VariablesWindowControl.ListView;
-					if (!(listView is null))
+					if (listView is not null)
 						AutomationPeerMemoryLeakWorkaround.ClearAll(listView);
 				}
 			}

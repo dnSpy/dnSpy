@@ -285,13 +285,13 @@ namespace dnSpy.Contracts.Search {
 			return new DocumentTreeNodeFilterResult(FilterType.Hide, false);
 		}
 
-		static bool IsDelegate(TypeDef type) => !(type.BaseType is null) && type.BaseType.FullName == "System.MulticastDelegate" && type.BaseType.DefinitionAssembly.IsCorLib();
+		static bool IsDelegate(TypeDef type) => type.BaseType is not null && type.BaseType.FullName == "System.MulticastDelegate" && type.BaseType.DefinitionAssembly.IsCorLib();
 
 		static bool HasInstanceConstructors(TypeDef type) => type.Methods.Any(m => m.IsInstanceConstructor);
 
 		static bool HasMethodBodies(TypeDef type) {
 			foreach (var method in type.Methods) {
-				if (!(method.Body is null))
+				if (method.Body is not null)
 					return true;
 			}
 			return false;
@@ -301,7 +301,7 @@ namespace dnSpy.Contracts.Search {
 
 		static bool HasLocals(TypeDef type) {
 			foreach (var method in type.Methods) {
-				if (!(method.Body is null) && method.Body.HasVariables)
+				if (method.Body is not null && method.Body.HasVariables)
 					return true;
 			}
 			return false;

@@ -42,7 +42,7 @@ namespace dnSpy.Language.Intellisense {
 			if (!CurrentLineSpaceReservationAgent.IsSupportedSession(session))
 				return;
 			var wpfTextView = session.TextView as IWpfTextView;
-			Debug2.Assert(!(wpfTextView is null));
+			Debug2.Assert(wpfTextView is not null);
 			if (wpfTextView is null)
 				return;
 			var currentLineAgent = session.TextView.Properties.GetOrCreateSingletonProperty(typeof(CurrentLineSpaceReservationAgent), () => new CurrentLineSpaceReservationAgent(wpfTextView));
@@ -72,7 +72,7 @@ namespace dnSpy.Language.Intellisense {
 				if ((oldValue != 0) == (activeSessions != 0))
 					return;
 				if (activeSessions == 0) {
-					Debug2.Assert(!(spaceReservationManager is null));
+					Debug2.Assert(spaceReservationManager is not null);
 					wpfTextView.Caret.PositionChanged -= Caret_PositionChanged;
 					spaceReservationManager.RemoveAgent(this);
 				}

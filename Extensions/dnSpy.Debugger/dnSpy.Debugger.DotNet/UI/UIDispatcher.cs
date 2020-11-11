@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.DotNet.UI {
 		static readonly FieldInfo? _disableProcessingCountFieldInfo;
 		static UIDispatcher() {
 			_disableProcessingCountFieldInfo = typeof(Dispatcher).GetField("_disableProcessingCount", BindingFlags.NonPublic | BindingFlags.Instance);
-			Debug2.Assert(!(_disableProcessingCountFieldInfo is null) && _disableProcessingCountFieldInfo.FieldType == typeof(int));
+			Debug2.Assert(_disableProcessingCountFieldInfo is not null && _disableProcessingCountFieldInfo.FieldType == typeof(int));
 		}
 
 		Dispatcher Dispatcher { get; }

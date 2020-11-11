@@ -115,7 +115,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 						Header = document[i]
 					};
 
-					if (!(prev is null)) {
+					if (prev is not null) {
 						prev.Children.Add(current);
 						current.Parent = prev;
 						stack.Push(prev);

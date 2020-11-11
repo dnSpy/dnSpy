@@ -120,7 +120,7 @@ namespace dnSpy.Debugger.Impl {
 			bool raiseEvent, raiseUINameEvent;
 			lock (lockObj) {
 				var oldUIName = GetUINameNoDefaultName_NoLock();
-				raiseEvent = this.kind != kind && !(kind is null);
+				raiseEvent = this.kind != kind && kind is not null;
 				if (raiseEvent)
 					this.kind = kind!;
 				raiseUINameEvent = oldUIName != GetUINameNoDefaultName_NoLock();
@@ -158,7 +158,7 @@ namespace dnSpy.Debugger.Impl {
 			bool raiseEvent, raiseUINameEvent;
 			lock (lockObj) {
 				var oldUIName = GetUINameNoDefaultName_NoLock();
-				raiseEvent = this.name != name && !(name is null);
+				raiseEvent = this.name != name && name is not null;
 				if (raiseEvent)
 					this.name = name!;
 				raiseUINameEvent = oldUIName != GetUINameNoDefaultName_NoLock();
@@ -217,7 +217,7 @@ namespace dnSpy.Debugger.Impl {
 
 		public override bool HasName() {
 			lock (lockObj)
-				return !(GetUINameNoDefaultName_NoLock() is null);
+				return GetUINameNoDefaultName_NoLock() is not null;
 		}
 
 		void WriteUIName_DbgThread(string newUserName) {
@@ -231,11 +231,11 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		string? GetUINameNoDefaultName_NoLock() {
-			if (!(userName is null))
+			if (userName is not null)
 				return userName;
 
 			var threadName = name;
-			if (!(threadName is null))
+			if (threadName is not null)
 				return threadName;
 
 			if (kind == PredefinedThreadKinds.Main)

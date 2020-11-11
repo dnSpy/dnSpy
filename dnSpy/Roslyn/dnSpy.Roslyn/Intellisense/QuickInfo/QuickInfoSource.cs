@@ -70,7 +70,7 @@ namespace dnSpy.Roslyn.Intellisense.QuickInfo {
 				session.Properties.AddProperty(hasTriggeredQuickInfoKey, null);
 
 				var point = session.GetTriggerPoint(session.TextView.TextSnapshot);
-				if (!(point is null))
+				if (point is not null)
 					quickInfoTriggerServiceProvider.Create(session.TextView).TryTrigger(point.Value, session.TrackMouse);
 				return;
 			}
@@ -81,7 +81,7 @@ namespace dnSpy.Roslyn.Intellisense.QuickInfo {
 			quickInfoTriggerServiceProvider.CloseOtherSessions(session);
 
 			var item = qiSession.Item;
-			Debug2.Assert(!(item is null));
+			Debug2.Assert(item is not null);
 			if (item is null)
 				return;
 			var info = qiSession.State;

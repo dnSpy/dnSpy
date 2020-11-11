@@ -297,7 +297,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			var modules = documentService.GetDocuments().Where(a => SearchNode.CanIncludeModule(mod, a.ModuleDef));
 
 			foreach (var module in modules) {
-				Debug2.Assert(!(module.ModuleDef is null));
+				Debug2.Assert(module.ModuleDef is not null);
 				ct.ThrowIfCancellationRequested();
 				if (ModuleReferencesScopeType(module.ModuleDef))
 					yield return module.ModuleDef;
@@ -316,7 +316,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			var friendAssemblies = SearchNode.GetFriendAssemblies(documentService, mod, out var modules);
 			if (friendAssemblies.Count > 0) {
 				foreach (var module in modules) {
-					Debug2.Assert(!(module.ModuleDef is null));
+					Debug2.Assert(module.ModuleDef is not null);
 					ct.ThrowIfCancellationRequested();
 					if ((module.AssemblyDef is null || friendAssemblies.Contains(module.AssemblyDef.Name)) && ModuleReferencesScopeType(module.ModuleDef))
 						yield return module.ModuleDef;

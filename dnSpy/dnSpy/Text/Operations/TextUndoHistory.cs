@@ -89,7 +89,7 @@ namespace dnSpy.Text.Operations {
 				throw new InvalidOperationException();
 			if (description is null)
 				throw new ArgumentNullException(nameof(description));
-			if (!(currentTransaction is null))
+			if (currentTransaction is not null)
 				throw new InvalidOperationException();
 			ClearRedo();
 			return currentTransaction = new TextUndoTransaction(this, undoList.LastOrDefault(), description);
@@ -98,7 +98,7 @@ namespace dnSpy.Text.Operations {
 		public void Redo(int count) {
 			if (count < 0)
 				throw new ArgumentOutOfRangeException(nameof(count));
-			if (!(currentTransaction is null))
+			if (currentTransaction is not null)
 				throw new InvalidOperationException();
 			if (State != TextUndoHistoryState.Idle)
 				throw new InvalidOperationException();
@@ -118,7 +118,7 @@ namespace dnSpy.Text.Operations {
 		public void Undo(int count) {
 			if (count < 0)
 				throw new ArgumentOutOfRangeException(nameof(count));
-			if (!(currentTransaction is null))
+			if (currentTransaction is not null)
 				throw new InvalidOperationException();
 			if (State != TextUndoHistoryState.Idle)
 				throw new InvalidOperationException();

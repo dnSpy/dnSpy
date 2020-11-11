@@ -56,13 +56,13 @@ namespace dnSpy.AsmEditor.Commands {
 
 		bool ICommand.CanExecute(object? parameter) {
 			var ctx = CreateContext();
-			return !(ctx is null) && command.IsVisible(ctx) && command.IsEnabled(ctx);
+			return ctx is not null && command.IsVisible(ctx) && command.IsEnabled(ctx);
 		}
 
 		void ICommand.Execute(object? parameter) {
 			var ctx = CreateContext();
-			Debug2.Assert(!(ctx is null));
-			if (!(ctx is null))
+			Debug2.Assert(ctx is not null);
+			if (ctx is not null)
 				command.Execute(ctx);
 		}
 	}

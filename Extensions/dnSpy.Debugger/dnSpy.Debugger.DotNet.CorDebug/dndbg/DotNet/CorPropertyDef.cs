@@ -97,7 +97,7 @@ namespace dndbg.DotNet {
 		}
 
 		protected override void InitializePropertyMethods_NoLock() {
-			if (!(otherMethods is null))
+			if (otherMethods is not null)
 				return;
 			ownerType.InitializeProperty(this, out var newGetMethods, out var newSetMethods, out var newOtherMethods);
 			getMethods = newGetMethods;

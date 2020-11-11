@@ -103,7 +103,7 @@ namespace dnSpy.MainApp {
 		AppWindow? appWindow = null;
 
 		public Binding GetBinding(IToolBarItemContext context) {
-			Debug2.Assert(!(appWindow is null) && !(appWindow.MainWindow is null));
+			Debug2.Assert(appWindow is not null && appWindow.MainWindow is not null);
 			return new Binding(nameof(appWindow.MainWindow.IsFullScreen)) {
 				Source = appWindow.MainWindow,
 			};
@@ -114,7 +114,7 @@ namespace dnSpy.MainApp {
 
 		bool initd = false;
 		public override bool IsVisible(IToolBarItemContext context) {
-			Debug2.Assert(!(appWindow is null) && !(appWindow.MainWindow is null));
+			Debug2.Assert(appWindow is not null && appWindow.MainWindow is not null);
 			if (!initd) {
 				appWindow.MainWindow.IsFullScreenChanged += (s, e) => appWindow.RefreshToolBar();
 				initd = true;

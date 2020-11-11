@@ -57,7 +57,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 					return peStructure;
 
 				var provider = peStructureProviderFactory.TryGetProvider(file);
-				if (!(provider is null))
+				if (provider is not null)
 					peStructure = new PEStructure(provider);
 
 				file.Properties.AddProperty(typeof(PEStructure), peStructure);
@@ -72,25 +72,25 @@ namespace dnSpy.AsmEditor.Hex.PE {
 					peStructureProvider.ImageFileHeader,
 					peStructureProvider.ImageOptionalHeader,
 				};
-				if (!(peStructureProvider.ImageCor20Header is null))
+				if (peStructureProvider.ImageCor20Header is not null)
 					list.Add(peStructureProvider.ImageCor20Header);
-				if (!(peStructureProvider.StorageSignature is null))
+				if (peStructureProvider.StorageSignature is not null)
 					list.Add(peStructureProvider.StorageSignature);
-				if (!(peStructureProvider.StorageHeader is null))
+				if (peStructureProvider.StorageHeader is not null)
 					list.Add(peStructureProvider.StorageHeader);
-				if (!(peStructureProvider.TablesStream is null))
+				if (peStructureProvider.TablesStream is not null)
 					list.Add(peStructureProvider.TablesStream);
 				list.AddRange(peStructureProvider.Sections);
 				list.AddRange(peStructureProvider.StorageStreams);
 				hexStructures = list.ToArray();
 
 				var tblsStream = peStructureProvider.TablesStream;
-				if (!(tblsStream is null)) {
-					var first = tblsStream.MetadataTables.FirstOrDefault(a => !(a is null));
-					var last = tblsStream.MetadataTables.LastOrDefault(a => !(a is null));
-					Debug2.Assert(!(first is null));
-					if (!(first is null)) {
-						Debug2.Assert(!(last is null));
+				if (tblsStream is not null) {
+					var first = tblsStream.MetadataTables.FirstOrDefault(a => a is not null);
+					var last = tblsStream.MetadataTables.LastOrDefault(a => a is not null);
+					Debug2.Assert(first is not null);
+					if (first is not null) {
+						Debug2.Assert(last is not null);
 						metadataTablesSpan = HexSpan.FromBounds(first.Span.Start, last.Span.End);
 					}
 				}
@@ -143,7 +143,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 				return null;
 
 			var info = peStructure.GetField(position);
-			if (!(info is null))
+			if (info is not null)
 				return new HexFieldReference(file, info.Value.Structure, info.Value.Field);
 
 			return null;

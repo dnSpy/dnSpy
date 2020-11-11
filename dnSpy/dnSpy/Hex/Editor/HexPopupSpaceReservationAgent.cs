@@ -33,7 +33,7 @@ using VSTF = Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Hex.Editor {
 	sealed class HexPopupSpaceReservationAgent : HexSpaceReservationAgent {
-		bool IsVisible => !(popup.Child is null);
+		bool IsVisible => popup.Child is not null;
 		public override bool HasFocus => IsVisible && popup.IsKeyboardFocusWithin;
 		public override bool IsMouseOver => IsVisible && popup.IsMouseOver;
 		public override event EventHandler? GotFocus;
@@ -344,7 +344,7 @@ namespace dnSpy.Hex.Editor {
 			if (content is FrameworkElement fwElem)
 				fwElem.SizeChanged += Content_SizeChanged;
 			var window = Window.GetWindow(wpfHexView.VisualElement);
-			if (!(window is null))
+			if (window is not null)
 				window.LocationChanged += Window_LocationChanged;
 			content.GotFocus += Content_GotFocus;
 			content.LostFocus += Content_LostFocus;
@@ -360,7 +360,7 @@ namespace dnSpy.Hex.Editor {
 			if (content is FrameworkElement fwElem)
 				fwElem.SizeChanged -= Content_SizeChanged;
 			var window = Window.GetWindow(wpfHexView.VisualElement);
-			if (!(window is null))
+			if (window is not null)
 				window.LocationChanged -= Window_LocationChanged;
 			content.GotFocus -= Content_GotFocus;
 			content.LostFocus -= Content_LostFocus;

@@ -42,7 +42,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		public static bool IsDefined(DmdType type, string attributeTypeFullName, bool inherit) {
-			for (DmdType? currentType = type; !(currentType is null); currentType = currentType.BaseType) {
+			for (DmdType? currentType = type; currentType is not null; currentType = currentType.BaseType) {
 				var customAttributes = currentType.GetCustomAttributesData();
 				for (int i = 0; i < customAttributes.Count; i++) {
 					var ca = customAttributes[i];
@@ -58,7 +58,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		public static bool IsDefined(DmdType type, DmdType? attributeType, bool inherit) {
-			for (DmdType? currentType = type; !(currentType is null); currentType = currentType.BaseType) {
+			for (DmdType? currentType = type; currentType is not null; currentType = currentType.BaseType) {
 				var customAttributes = currentType.GetCustomAttributesData();
 				for (int i = 0; i < customAttributes.Count; i++) {
 					var ca = customAttributes[i];
@@ -74,7 +74,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		public static bool IsDefined(DmdMethodInfo method, string attributeTypeFullName, bool inherit) {
-			for (DmdMethodInfo? currentMethod = method; !(currentMethod is null); currentMethod = currentMethod.GetParentDefinition()) {
+			for (DmdMethodInfo? currentMethod = method; currentMethod is not null; currentMethod = currentMethod.GetParentDefinition()) {
 				var customAttributes = currentMethod.GetCustomAttributesData();
 				for (int i = 0; i < customAttributes.Count; i++) {
 					var ca = customAttributes[i];
@@ -90,7 +90,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		public static bool IsDefined(DmdMethodInfo method, DmdType? attributeType, bool inherit) {
-			for (DmdMethodInfo? currentMethod = method; !(currentMethod is null); currentMethod = currentMethod.GetParentDefinition()) {
+			for (DmdMethodInfo? currentMethod = method; currentMethod is not null; currentMethod = currentMethod.GetParentDefinition()) {
 				var customAttributes = currentMethod.GetCustomAttributesData();
 				for (int i = 0; i < customAttributes.Count; i++) {
 					var ca = customAttributes[i];
@@ -124,7 +124,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		public static DmdCustomAttributeData? Find(DmdType type, string attributeTypeFullName, bool inherit) {
-			for (DmdType? currentType = type; !(currentType is null); currentType = currentType.BaseType) {
+			for (DmdType? currentType = type; currentType is not null; currentType = currentType.BaseType) {
 				var customAttributes = currentType.GetCustomAttributesData();
 				for (int i = 0; i < customAttributes.Count; i++) {
 					var ca = customAttributes[i];
@@ -140,7 +140,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		public static DmdCustomAttributeData? Find(DmdType type, DmdType? attributeType, bool inherit) {
-			for (DmdType? currentType = type; !(currentType is null); currentType = currentType.BaseType) {
+			for (DmdType? currentType = type; currentType is not null; currentType = currentType.BaseType) {
 				var customAttributes = currentType.GetCustomAttributesData();
 				for (int i = 0; i < customAttributes.Count; i++) {
 					var ca = customAttributes[i];
@@ -156,7 +156,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		public static DmdCustomAttributeData? Find(DmdMethodInfo method, string attributeTypeFullName, bool inherit) {
-			for (DmdMethodInfo? currentMethod = method; !(currentMethod is null); currentMethod = currentMethod.GetParentDefinition()) {
+			for (DmdMethodInfo? currentMethod = method; currentMethod is not null; currentMethod = currentMethod.GetParentDefinition()) {
 				var customAttributes = currentMethod.GetCustomAttributesData();
 				for (int i = 0; i < customAttributes.Count; i++) {
 					var ca = customAttributes[i];
@@ -172,7 +172,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		public static DmdCustomAttributeData? Find(DmdMethodInfo method, DmdType? attributeType, bool inherit) {
-			for (DmdMethodInfo? currentMethod = method; !(currentMethod is null); currentMethod = currentMethod.GetParentDefinition()) {
+			for (DmdMethodInfo? currentMethod = method; currentMethod is not null; currentMethod = currentMethod.GetParentDefinition()) {
 				var customAttributes = currentMethod.GetCustomAttributesData();
 				for (int i = 0; i < customAttributes.Count; i++) {
 					var ca = customAttributes[i];
@@ -205,14 +205,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		readonly struct SerializableAttributeInfo {
-			public int Count => !(ctor is null) ? 1 : 0;
+			public int Count => ctor is not null ? 1 : 0;
 			readonly DmdConstructorInfo? ctor;
 
 			public SerializableAttributeInfo(DmdType type) {
 				if ((type.Attributes & DmdTypeAttributes.Serializable) != 0) {
 					var caType = type.AppDomain.GetWellKnownType(DmdWellKnownType.System_SerializableAttribute, isOptional: true);
 					ctor = caType?.GetConstructor(Array.Empty<DmdType>());
-					Debug2.Assert(caType is null || !(ctor is null));
+					Debug2.Assert(caType is null || ctor is not null);
 				}
 				else
 					ctor = null;
@@ -226,14 +226,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		readonly struct ComImportAttributeInfo {
-			public int Count => !(ctor is null) ? 1 : 0;
+			public int Count => ctor is not null ? 1 : 0;
 			readonly DmdConstructorInfo? ctor;
 
 			public ComImportAttributeInfo(DmdType type) {
 				if (type.IsImport) {
 					var caType = type.AppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_ComImportAttribute, isOptional: true);
 					ctor = caType?.GetConstructor(Array.Empty<DmdType>());
-					Debug2.Assert(caType is null || !(ctor is null));
+					Debug2.Assert(caType is null || ctor is not null);
 				}
 				else
 					ctor = null;
@@ -247,7 +247,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		readonly struct MarshalAsAttributeInfo {
-			public int Count => !(ctor is null) ? 1 : 0;
+			public int Count => ctor is not null ? 1 : 0;
 			readonly DmdConstructorInfo? ctor;
 
 			public MarshalAsAttributeInfo(DmdFieldInfo field, DmdMarshalType? marshalType) => ctor = Initialize(field.AppDomain, marshalType);
@@ -262,7 +262,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				if (caType is null || unmanagedTypeType is null || varEnumType is null)
 					return null;
 				var ctor = caType.GetConstructor(new[] { unmanagedTypeType });
-				Debug2.Assert(!(ctor is null));
+				Debug2.Assert(ctor is not null);
 				return ctor;
 			}
 
@@ -270,13 +270,13 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				if (Count == 0)
 					return;
 				int argsCount = 5;
-				if (!(marshalType!.MarshalType is null))
+				if (marshalType!.MarshalType is not null)
 					argsCount++;
-				if (!(marshalType.MarshalTypeRef is null))
+				if (marshalType.MarshalTypeRef is not null)
 					argsCount++;
-				if (!(marshalType.MarshalCookie is null))
+				if (marshalType.MarshalCookie is not null)
 					argsCount++;
-				if (!(marshalType.SafeArrayUserDefinedSubType is null))
+				if (marshalType.SafeArrayUserDefinedSubType is not null)
 					argsCount++;
 				var type = ctor!.ReflectedType!;
 				var appDomain = type.AppDomain;
@@ -289,13 +289,13 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				namedArgs[w++] = new DmdCustomAttributeNamedArgument(type.GetField("SizeConst"), new DmdCustomAttributeTypedArgument(appDomain.System_Int32, marshalType.SizeConst));
 				namedArgs[w++] = new DmdCustomAttributeNamedArgument(type.GetField("IidParameterIndex"), new DmdCustomAttributeTypedArgument(appDomain.System_Int32, marshalType.IidParameterIndex));
 				namedArgs[w++] = new DmdCustomAttributeNamedArgument(type.GetField("SafeArraySubType"), new DmdCustomAttributeTypedArgument(varEnumType, (int)marshalType.SafeArraySubType));
-				if (!(marshalType.MarshalType is null))
+				if (marshalType.MarshalType is not null)
 					namedArgs[w++] = new DmdCustomAttributeNamedArgument(type.GetField("MarshalType"), new DmdCustomAttributeTypedArgument(appDomain.System_String, marshalType.MarshalType));
-				if (!(marshalType.MarshalTypeRef is null))
+				if (marshalType.MarshalTypeRef is not null)
 					namedArgs[w++] = new DmdCustomAttributeNamedArgument(type.GetField("MarshalTypeRef"), new DmdCustomAttributeTypedArgument(appDomain.System_Type, marshalType.MarshalTypeRef));
-				if (!(marshalType.MarshalCookie is null))
+				if (marshalType.MarshalCookie is not null)
 					namedArgs[w++] = new DmdCustomAttributeNamedArgument(type.GetField("MarshalCookie"), new DmdCustomAttributeTypedArgument(appDomain.System_String, marshalType.MarshalCookie));
-				if (!(marshalType.SafeArrayUserDefinedSubType is null))
+				if (marshalType.SafeArrayUserDefinedSubType is not null)
 					namedArgs[w++] = new DmdCustomAttributeNamedArgument(type.GetField("SafeArrayUserDefinedSubType"), new DmdCustomAttributeTypedArgument(appDomain.System_Type, marshalType.SafeArrayUserDefinedSubType));
 				if (namedArgs.Length != w)
 					throw new InvalidOperationException();
@@ -305,16 +305,16 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		readonly struct FieldOffsetAttributeInfo {
-			public int Count => !(ctor is null) ? 1 : 0;
+			public int Count => ctor is not null ? 1 : 0;
 			readonly DmdConstructorInfo? ctor;
 			readonly int offset;
 
 			public FieldOffsetAttributeInfo(DmdFieldInfo field, uint? offset) {
-				if (!(offset is null)) {
+				if (offset is not null) {
 					this.offset = (int)offset.Value;
 					var caType = field.AppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_FieldOffsetAttribute, isOptional: true);
 					ctor = caType?.GetConstructor(new[] { field.AppDomain.System_Int32 });
-					Debug2.Assert(caType is null || !(ctor is null));
+					Debug2.Assert(caType is null || ctor is not null);
 				}
 				else {
 					ctor = null;
@@ -331,14 +331,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		readonly struct NonSerializedAttributeInfo {
-			public int Count => !(ctor is null) ? 1 : 0;
+			public int Count => ctor is not null ? 1 : 0;
 			readonly DmdConstructorInfo? ctor;
 
 			public NonSerializedAttributeInfo(DmdFieldInfo field) {
 				if ((field.Attributes & DmdFieldAttributes.NotSerialized) != 0) {
 					var caType = field.AppDomain.GetWellKnownType(DmdWellKnownType.System_NonSerializedAttribute, isOptional: true);
 					ctor = caType?.GetConstructor(Array.Empty<DmdType>());
-					Debug2.Assert(caType is null || !(ctor is null));
+					Debug2.Assert(caType is null || ctor is not null);
 				}
 				else
 					ctor = null;
@@ -352,11 +352,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		readonly struct DllImportAttributeInfo {
-			public int Count => !(ctor is null) ? 1 : 0;
+			public int Count => ctor is not null ? 1 : 0;
 			readonly DmdConstructorInfo? ctor;
 
 			public DllImportAttributeInfo(DmdMethodInfo method, in DmdImplMap? implMap) {
-				if (!(implMap is null)) {
+				if (implMap is not null) {
 					var appDomain = method.AppDomain;
 					var caType = appDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_DllImportAttribute, isOptional: true);
 					var charSetType = appDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_CharSet, isOptional: true);
@@ -365,7 +365,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 						ctor = null;
 					else {
 						ctor = caType.GetConstructor(DmdBindingFlags.Public | DmdBindingFlags.NonPublic | DmdBindingFlags.Instance, new[] { appDomain.System_String });
-						Debug2.Assert(!(ctor is null));
+						Debug2.Assert(ctor is not null);
 					}
 				}
 				else
@@ -418,14 +418,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		readonly struct PreserveSigAttributeInfo {
-			public int Count => !(ctor is null) ? 1 : 0;
+			public int Count => ctor is not null ? 1 : 0;
 			readonly DmdConstructorInfo? ctor;
 
 			public PreserveSigAttributeInfo(DmdMethodInfo method) {
 				if ((method.MethodImplementationFlags & DmdMethodImplAttributes.PreserveSig) != 0) {
 					var caType = method.AppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_PreserveSigAttribute, isOptional: true);
 					ctor = caType?.GetConstructor(Array.Empty<DmdType>());
-					Debug2.Assert(caType is null || !(ctor is null));
+					Debug2.Assert(caType is null || ctor is not null);
 				}
 				else
 					ctor = null;
@@ -439,14 +439,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		readonly struct InAttributeInfo {
-			public int Count => !(ctor is null) ? 1 : 0;
+			public int Count => ctor is not null ? 1 : 0;
 			readonly DmdConstructorInfo? ctor;
 
 			public InAttributeInfo(DmdParameterInfo parameter) {
 				if (parameter.IsIn) {
 					var caType = parameter.Member.AppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_InAttribute, isOptional: true);
 					ctor = caType?.GetConstructor(Array.Empty<DmdType>());
-					Debug2.Assert(caType is null || !(ctor is null));
+					Debug2.Assert(caType is null || ctor is not null);
 				}
 				else
 					ctor = null;
@@ -460,14 +460,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		readonly struct OutAttributeInfo {
-			public int Count => !(ctor is null) ? 1 : 0;
+			public int Count => ctor is not null ? 1 : 0;
 			readonly DmdConstructorInfo? ctor;
 
 			public OutAttributeInfo(DmdParameterInfo parameter) {
 				if (parameter.IsOut) {
 					var caType = parameter.Member.AppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_OutAttribute, isOptional: true);
 					ctor = caType?.GetConstructor(Array.Empty<DmdType>());
-					Debug2.Assert(caType is null || !(ctor is null));
+					Debug2.Assert(caType is null || ctor is not null);
 				}
 				else
 					ctor = null;
@@ -481,14 +481,14 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		readonly struct OptionalAttributeInfo {
-			public int Count => !(ctor is null) ? 1 : 0;
+			public int Count => ctor is not null ? 1 : 0;
 			readonly DmdConstructorInfo? ctor;
 
 			public OptionalAttributeInfo(DmdParameterInfo parameter) {
 				if (parameter.IsOptional) {
 					var caType = parameter.Member.AppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_OptionalAttribute, isOptional: true);
 					ctor = caType?.GetConstructor(Array.Empty<DmdType>());
-					Debug2.Assert(caType is null || !(ctor is null));
+					Debug2.Assert(caType is null || ctor is not null);
 				}
 				else
 					ctor = null;

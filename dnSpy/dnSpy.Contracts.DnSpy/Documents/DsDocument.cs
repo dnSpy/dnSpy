@@ -69,7 +69,7 @@ namespace dnSpy.Contracts.Documents {
 					lock (lockObj) {
 						if (children is null) {
 							children = CreateChildren();
-							Debug2.Assert(!(children is null));
+							Debug2.Assert(children is not null);
 							if (children is null)
 								children = new TList<IDsDocument>();
 						}
@@ -82,7 +82,7 @@ namespace dnSpy.Contracts.Documents {
 		TList<IDsDocument>? children;
 
 		/// <inheritdoc/>
-		public bool ChildrenLoaded => !(children is null);
+		public bool ChildrenLoaded => children is not null;
 
 		/// <summary>
 		/// Creates the children
@@ -197,10 +197,10 @@ namespace dnSpy.Contracts.Documents {
 		}
 
 		void LoadSymbols() {
-			Debug2.Assert(!(ModuleDef is null));
+			Debug2.Assert(ModuleDef is not null);
 			// Happens if a module has been removed but then the exact same instance
 			// was re-added.
-			if (!(ModuleDef.PdbState is null))
+			if (ModuleDef.PdbState is not null)
 				return;
 
 			var m = ModuleDef as ModuleDefMD;
@@ -275,7 +275,7 @@ namespace dnSpy.Contracts.Documents {
 		protected override TList<IDsDocument> CreateChildren() {
 			var asm = AssemblyDef;
 			var list = new TList<IDsDocument>(asm is null ? 1 : asm.Modules.Count);
-			if (isAsmNode && !(asm is null)) {
+			if (isAsmNode && asm is not null) {
 				bool foundThis = false;
 				foreach (var module in asm.Modules) {
 					if (ModuleDef == module) {
@@ -300,9 +300,9 @@ namespace dnSpy.Contracts.Documents {
 			: base(modmodule.SerializedDocument ?? new DsDocumentInfo(), modmodule.ModuleDef!, false, true) => module = modmodule;
 
 		protected override TList<IDsDocument> CreateChildren() {
-			Debug2.Assert(!(module is null));
+			Debug2.Assert(module is not null);
 			var list = new TList<IDsDocument>();
-			if (!(module is null))
+			if (module is not null)
 				list.Add(module);
 			module = null;
 			return list;

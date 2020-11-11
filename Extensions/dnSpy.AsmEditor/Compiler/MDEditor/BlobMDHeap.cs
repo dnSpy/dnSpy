@@ -79,6 +79,6 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 		}
 
 		public override bool MustRewriteHeap() => newData.Count > 0;
-		public override bool ExistsInMetadata => !(blobStream.StreamHeader is null);
+		public override bool ExistsInMetadata => blobStream.StreamHeader is not null;
 	}
 }

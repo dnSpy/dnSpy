@@ -47,7 +47,7 @@ namespace dnSpy.Documents.Tabs {
 				return (T)obj;
 			if (weakCachedInstances.TryGetValue(key, out var weakRef)) {
 				obj = weakRef.Target;
-				if (!(obj is null))
+				if (obj is not null)
 					return (T)obj;
 			}
 
@@ -64,7 +64,7 @@ namespace dnSpy.Documents.Tabs {
 		ReferenceResult<T> Create<T>() where T : class {
 			foreach (var c in documentTabUIContextProviders) {
 				var t = c.Value.Create<T>() as T;
-				if (!(t is null))
+				if (t is not null)
 					return new ReferenceResult<T>(t, c.Metadata.UseStrongReference);
 			}
 			throw new InvalidOperationException();
@@ -86,7 +86,7 @@ namespace dnSpy.Documents.Tabs {
 
 			public Key(object obj) => this.obj = obj ?? throw new ArgumentNullException(nameof(obj));
 
-			public bool Equals(Key? other) => !(other is null) && obj.Equals(other.obj);
+			public bool Equals(Key? other) => other is not null && obj.Equals(other.obj);
 			public override bool Equals(object? obj) => Equals(obj as Key);
 			public override int GetHashCode() => obj.GetHashCode();
 		}

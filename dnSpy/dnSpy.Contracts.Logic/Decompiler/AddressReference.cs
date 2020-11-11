@@ -64,7 +64,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="other"></param>
 		/// <returns></returns>
 		public bool Equals(AddressReference? other) =>
-			!(other is null) &&
+			other is not null &&
 			IsRVA == other.IsRVA &&
 			Address == other.Address &&
 			Length == other.Length &&

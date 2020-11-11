@@ -62,7 +62,7 @@ namespace dnSpy.Roslyn.Text.Tagging {
 			Initialize(asyncState, snapshot, cancellationToken).Wait(cancellationToken);
 			if (!asyncState.IsValid)
 				yield break;
-			Debug2.Assert(!(asyncState.SyntaxRoot is null) && !(asyncState.SemanticModel is null) && !(asyncState.Workspace is null));
+			Debug2.Assert(asyncState.SyntaxRoot is not null && asyncState.SemanticModel is not null && asyncState.Workspace is not null);
 
 			var classifier = new RoslynClassifier(asyncState.SyntaxRoot, asyncState.SemanticModel, asyncState.Workspace, roslynClassificationTypes, defaultClassificationType, cancellationToken);
 			foreach (var span in spans) {
@@ -80,7 +80,7 @@ namespace dnSpy.Roslyn.Text.Tagging {
 				await Initialize(state.UserAsyncState, snapshot, state.CancellationToken).ConfigureAwait(false);
 			if (!state.UserAsyncState.IsValid)
 				return;
-			Debug2.Assert(!(state.UserAsyncState.SyntaxRoot is null) && !(state.UserAsyncState.SemanticModel is null) && !(state.UserAsyncState.Workspace is null));
+			Debug2.Assert(state.UserAsyncState.SyntaxRoot is not null && state.UserAsyncState.SemanticModel is not null && state.UserAsyncState.Workspace is not null);
 
 			var classifier = new RoslynClassifier(state.UserAsyncState.SyntaxRoot, state.UserAsyncState.SemanticModel, state.UserAsyncState.Workspace, roslynClassificationTypes, defaultClassificationType, state.CancellationToken);
 			state.UserAsyncState.TagsList.Clear();

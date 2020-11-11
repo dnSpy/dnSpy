@@ -254,7 +254,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 						if (ArraysCanBeNull && enumInfo.Value is null) EnumArrayIsNull = true;
 					}
 					else {
-						Debug2.Assert(!(enumInfo.Value is null) && !(enumInfo.Value is System.Collections.IList));
+						Debug2.Assert(enumInfo.Value is not null && !(enumInfo.Value is System.Collections.IList));
 						SetSelectedItem(ConstantType.Enum);
 						Enum.Value = enumInfo;
 					}

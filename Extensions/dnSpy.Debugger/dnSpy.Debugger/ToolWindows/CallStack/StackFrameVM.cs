@@ -157,8 +157,8 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 		}
 
 		protected override ClassifiedTextCollection CreateName() {
-			Debug2.Assert(!(language is null));
-			if (!(language is null) && !frame.IsClosed) {
+			Debug2.Assert(language is not null);
+			if (language is not null && !frame.IsClosed) {
 				const CultureInfo? cultureInfo = null;
 				CancellationToken cancellationToken = default;
 

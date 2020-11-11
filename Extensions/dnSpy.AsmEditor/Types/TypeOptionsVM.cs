@@ -258,7 +258,7 @@ namespace dnSpy.AsmEditor.Types {
 				CanAddGenericMethodVar = false,
 				OwnerType = ownerType,
 			};
-			if (!(ownerType is null) && ownerType.GenericParameters.Count == 0)
+			if (ownerType is not null && ownerType.GenericParameters.Count == 0)
 				typeSigCreatorOptions.CanAddGenericTypeVar = false;
 			TypeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
 			TypeSigCreator.PropertyChanged += typeSigCreator_PropertyChanged;
@@ -438,7 +438,7 @@ namespace dnSpy.AsmEditor.Types {
 		}
 
 		bool IsClassBaseType(IType? type) =>
-			!(type is null) &&
+			type is not null &&
 			!IsSystemEnum(type) &&
 			!IsSystemValueType(type);
 

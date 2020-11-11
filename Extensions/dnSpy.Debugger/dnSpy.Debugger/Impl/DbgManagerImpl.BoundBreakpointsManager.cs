@@ -118,9 +118,9 @@ namespace dnSpy.Debugger.Impl {
 						newDisabledBreakpoints.Add(info.Breakpoint);
 					}
 				}
-				if (!(newDisabledBreakpoints is null))
+				if (newDisabledBreakpoints is not null)
 					RemoveBoundBreakpoints_DbgThread(newDisabledBreakpoints);
-				if (!(newEnabledBreakpoints is null))
+				if (newEnabledBreakpoints is not null)
 					AddBoundBreakpoints_DbgThread(newEnabledBreakpoints);
 			}
 
@@ -187,7 +187,7 @@ namespace dnSpy.Debugger.Impl {
 						var runtime = module.Runtime;
 						if (runtime != lastRuntime) {
 							var engine = GetEngine_NoLock(runtime);
-							Debug2.Assert(!(engine is null));
+							Debug2.Assert(engine is not null);
 							if (engine is null)
 								continue;
 							lastRuntime = runtime;

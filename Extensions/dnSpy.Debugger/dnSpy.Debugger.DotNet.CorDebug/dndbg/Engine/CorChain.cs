@@ -106,7 +106,7 @@ namespace dndbg.Engine {
 				rangeStart = rangeEnd = 0;
 		}
 
-		public bool Equals(CorChain? other) => !(other is null) && RawObject == other.RawObject;
+		public bool Equals(CorChain? other) => other is not null && RawObject == other.RawObject;
 		public override bool Equals(object? obj) => Equals(obj as CorChain);
 		public override int GetHashCode() => RawObject.GetHashCode();
 		public override string ToString() => $"[Chain] Managed={(IsManaged ? 1 : 0)} {StackStart:X8}-{StackEnd:X8} {Reason}";

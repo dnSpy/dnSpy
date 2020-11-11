@@ -178,7 +178,7 @@ namespace dnSpy.Debugger.Impl {
 		}
 
 		DbgRuntimeImpl? GetRuntime_NoLock(DbgRuntimeImpl? runtime, DbgRuntimeImpl? defaultRuntime) {
-			if (!(runtime is null)) {
+			if (runtime is not null) {
 				var info = engineInfos.First(a => a.Runtime == runtime);
 				if (info.IsPaused || owner.GetDelayedIsRunning_DbgThread(info.Engine) == false)
 					return runtime;
@@ -499,7 +499,7 @@ namespace dnSpy.Debugger.Impl {
 				ThreadsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgThread>(removedThreads, added: false));
 			if (raiseDebuggingChanged)
 				OnPropertyChanged(nameof(Debugging));
-			if (!(runtime is null))
+			if (runtime is not null)
 				RuntimesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgRuntime>(runtime, added: false));
 		}
 

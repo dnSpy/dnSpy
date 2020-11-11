@@ -66,7 +66,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		internal void CancelStepper(StepEventRequest stepReq) {
 			debuggerThread.VerifyAccess();
-			if (!(stepReq is null)) {
+			if (stepReq is not null) {
 				try {
 					using (TempBreak())
 						stepReq.Disable();

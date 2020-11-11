@@ -64,7 +64,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			monoDebugValueConverter = new MonoDebugValueConverterImpl(this);
 			classHooks = new Dictionary<DmdWellKnownType, ClassHook>();
 			foreach (var info in ClassHookProvider.Create(engine, this)) {
-				Debug2.Assert(!(info.Hook is null));
+				Debug2.Assert(info.Hook is not null);
 				Debug.Assert(!classHooks.ContainsKey(info.WellKnownType));
 				classHooks.Add(info.WellKnownType, info.Hook);
 			}
@@ -176,7 +176,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 
 		static DmdMethodBase? TryGetMethod(DmdModule module, int methodMetadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) {
 			var method = module?.ResolveMethod(methodMetadataToken, (IList<DmdType>?)null, null, DmdResolveOptions.None);
-			if (!(method is null)) {
+			if (method is not null) {
 				if (genericTypeArguments.Count != 0) {
 					var type = method.ReflectedType!.MakeGenericType(genericTypeArguments);
 					method = type.GetMethod(method.Module, method.MetadataToken, throwOnError: true)!;
@@ -208,7 +208,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			Dispatcher.VerifyAccess();
 			try {
 				var info = GetFieldValueLocationCore(evalInfo, obj, field);
-				if (!(info.errorMessage is null))
+				if (info.errorMessage is not null)
 					return DbgDotNetValueResult.CreateError(info.errorMessage);
 				return DbgDotNetValueResult.Create(engine.CreateDotNetValue_MonoDebug(info.valueLocation!));
 			}
@@ -272,7 +272,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		}
 
 		void InitializeStaticConstructor(DbgEvaluationInfo evalInfo, ILDbgEngineStackFrame ilFrame, DmdType type, TypeMirror monoType) {
-			if (!(engine.CheckFuncEval(evalInfo.Context) is null))
+			if (engine.CheckFuncEval(evalInfo.Context) is not null)
 				return;
 			var state = type.GetOrCreateData<StaticConstructorInitializedState>();
 			if (state.Initialized > 0 || Interlocked.Exchange(ref state.Initialized, 1) != 0)
@@ -280,7 +280,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			if (engine.MonoVirtualMachine.Version.AtLeast(2, 23) && monoType.IsInitialized)
 				return;
 			var cctor = type.TypeInitializer;
-			if (!(cctor is null)) {
+			if (cctor is not null) {
 				var fields = type.DeclaredFields;
 				for (int i = 0; i < fields.Count; i++) {
 					var field = fields[i];
@@ -295,7 +295,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 					catch {
 						break;
 					}
-					if (!(fieldValue is null)) {
+					if (fieldValue is not null) {
 						if (fieldValue is PrimitiveValue pv && pv.Value is null)
 							continue;
 						if (field.FieldType.IsValueType) {
@@ -332,11 +332,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			try {
 				var reflectionAppDomain = type.AppDomain;
 				var runtimeTypeHandleType = reflectionAppDomain.GetWellKnownType(DmdWellKnownType.System_RuntimeTypeHandle, isOptional: true);
-				Debug2.Assert(!(runtimeTypeHandleType is null));
+				Debug2.Assert(runtimeTypeHandleType is not null);
 				if (runtimeTypeHandleType is null)
 					return false;
 				var getTypeHandleMethod = objValue.Type.GetMethod("get_" + nameof(Type.TypeHandle), DmdSignatureCallingConvention.Default | DmdSignatureCallingConvention.HasThis, 0, runtimeTypeHandleType, Array.Empty<DmdType>(), throwOnError: false);
-				Debug2.Assert(!(getTypeHandleMethod is null));
+				Debug2.Assert(getTypeHandleMethod is not null);
 				if (getTypeHandleMethod is null)
 					return false;
 				typeHandleRes = engine.FuncEvalCall_MonoDebug(evalInfo, getTypeHandleMethod, objValue, Array.Empty<object>(), DbgDotNetInvokeOptions.None, false);
@@ -344,7 +344,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 					return false;
 				var runtimeHelpersType = reflectionAppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_CompilerServices_RuntimeHelpers, isOptional: true);
 				var runClassConstructorMethod = runtimeHelpersType?.GetMethod(nameof(RuntimeHelpers.RunClassConstructor), DmdSignatureCallingConvention.Default, 0, reflectionAppDomain.System_Void, new[] { runtimeTypeHandleType }, throwOnError: false);
-				Debug2.Assert(!(runClassConstructorMethod is null));
+				Debug2.Assert(runClassConstructorMethod is not null);
 				if (runClassConstructorMethod is null)
 					return false;
 				res = engine.FuncEvalCall_MonoDebug(evalInfo, runClassConstructorMethod, null, new[] { typeHandleRes.Value }, DbgDotNetInvokeOptions.None, false);
@@ -411,10 +411,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			evalInfo.CancellationToken.ThrowIfCancellationRequested();
 			try {
 				var info = GetFieldValueLocationCore(evalInfo, obj, field);
-				if (!(info.errorMessage is null))
+				if (info.errorMessage is not null)
 					return info.errorMessage;
 				var res = engine.CreateMonoValue_MonoDebug(evalInfo, value, field.FieldType);
-				if (!(res.ErrorMessage is null))
+				if (res.ErrorMessage is not null)
 					return res.ErrorMessage;
 				return info.valueLocation!.Store(res.Value!);
 			}
@@ -445,7 +445,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				if (DmdWellKnownTypeUtils.TryGetWellKnownType(typeName, out var wellKnownType)) {
 					if (classHooks.TryGetValue(wellKnownType, out var hook) && type == type.AppDomain.GetWellKnownType(wellKnownType, isOptional: true)) {
 						var res = hook.Call(obj, method, arguments);
-						if (!(res is null))
+						if (res is not null)
 							return DbgDotNetValueResult.Create(res);
 					}
 				}
@@ -479,7 +479,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				if (DmdWellKnownTypeUtils.TryGetWellKnownType(typeName, out var wellKnownType)) {
 					if (classHooks.TryGetValue(wellKnownType, out var hook) && type == type.AppDomain.GetWellKnownType(wellKnownType, isOptional: true)) {
 						var res = hook.CreateInstance(ctor, arguments);
-						if (!(res is null))
+						if (res is not null)
 							return DbgDotNetValueResult.Create(res);
 					}
 				}
@@ -622,15 +622,15 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				stowedException = GetStowedExceptionCore(evalInfo, DbgDotNetRuntimeConstants.StowedExceptionId);
 				returnValues = GetReturnValuesCore(evalInfo);
 
-				int count = (!(exception is null) ? 1 : 0) + (!(stowedException is null) ? 1 : 0) + returnValues.Length + (returnValues.Length != 0 ? 1 : 0);
+				int count = (exception is not null ? 1 : 0) + (stowedException is not null ? 1 : 0) + returnValues.Length + (returnValues.Length != 0 ? 1 : 0);
 				if (count == 0)
 					return Array.Empty<DbgDotNetAliasInfo>();
 
 				var res = new DbgDotNetAliasInfo[count];
 				int w = 0;
-				if (!(exception is null))
+				if (exception is not null)
 					res[w++] = new DbgDotNetAliasInfo(DbgDotNetAliasInfoKind.Exception, exception.Type, DbgDotNetRuntimeConstants.ExceptionId, Guid.Empty, null);
-				if (!(stowedException is null))
+				if (stowedException is not null)
 					res[w++] = new DbgDotNetAliasInfo(DbgDotNetAliasInfoKind.StowedException, stowedException.Type, DbgDotNetRuntimeConstants.StowedExceptionId, Guid.Empty, null);
 				if (returnValues.Length != 0) {
 					res[w++] = new DbgDotNetAliasInfo(DbgDotNetAliasInfoKind.ReturnValue, returnValues[returnValues.Length - 1].Value.Type, DbgDotNetRuntimeConstants.LastReturnValueId, Guid.Empty, null);
@@ -671,14 +671,14 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			try {
 				exception = GetExceptionCore(evalInfo, DbgDotNetRuntimeConstants.ExceptionId);
 				stowedException = GetStowedExceptionCore(evalInfo, DbgDotNetRuntimeConstants.StowedExceptionId);
-				int count = (!(exception is null) ? 1 : 0) + (!(stowedException is null) ? 1 : 0);
+				int count = (exception is not null ? 1 : 0) + (stowedException is not null ? 1 : 0);
 				if (count == 0)
 					return Array.Empty<DbgDotNetExceptionInfo>();
 				var res = new DbgDotNetExceptionInfo[count];
 				int w = 0;
-				if (!(exception is null))
+				if (exception is not null)
 					res[w++] = new DbgDotNetExceptionInfo(exception, DbgDotNetRuntimeConstants.ExceptionId, DbgDotNetExceptionInfoFlags.None);
-				if (!(stowedException is null))
+				if (stowedException is not null)
 					res[w++] = new DbgDotNetExceptionInfo(stowedException, DbgDotNetRuntimeConstants.StowedExceptionId, DbgDotNetExceptionInfoFlags.StowedException);
 				if (w != res.Length)
 					throw new InvalidOperationException();
@@ -779,7 +779,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			Dispatcher.VerifyAccess();
 			try {
 				var info = GetLocalValueLocationCore(evalInfo, index);
-				if (!(info.errorMessage is null))
+				if (info.errorMessage is not null)
 					return DbgDotNetValueResult.CreateError(info.errorMessage);
 				return DbgDotNetValueResult.Create(engine.CreateDotNetValue_MonoDebug(info.valueLocation!));
 			}
@@ -806,8 +806,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 
 			var method = GetFrameMethodCore(evalInfo);
 			var localVars = GetCachedMethodBody(method)?.LocalVariables;
-			var localType = !(localVars is null) && (uint)index < (uint)localVars.Count ? localVars[(int)index].LocalType : null;
-			if (!(localType is null) && localType.IsByRef)
+			var localType = localVars is not null && (uint)index < (uint)localVars.Count ? localVars[(int)index].LocalType : null;
+			if (localType is not null && localType.IsByRef)
 				localType = localType.GetElementType();
 			var type = engine.GetReflectionType(reflectionAppDomain, local.Type, localType);
 			type = AddByRefIfNeeded(type, localVars, index);
@@ -866,7 +866,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			Dispatcher.VerifyAccess();
 			try {
 				var info = GetParameterValueLocationCore(evalInfo, index);
-				if (!(info.errorMessage is null))
+				if (info.errorMessage is not null)
 					return DbgDotNetValueResult.CreateError(info.errorMessage);
 				return DbgDotNetValueResult.Create(engine.CreateDotNetValue_MonoDebug(info.valueLocation!));
 			}
@@ -904,8 +904,8 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 
 			var method = GetFrameMethodCore(evalInfo);
 			var paramTypes = method?.GetMethodSignature().GetParameterTypes();
-			var paramType = !(paramTypes is null) && (uint)index < (uint)paramTypes.Count ? paramTypes[(int)index] : null;
-			if (!(paramType is null) && paramType.IsByRef)
+			var paramType = paramTypes is not null && (uint)index < (uint)paramTypes.Count ? paramTypes[(int)index] : null;
+			if (paramType is not null && paramType.IsByRef)
 				paramType = paramType.GetElementType();
 			type = engine.GetReflectionType(reflectionAppDomain, parameter.ParameterType, paramType);
 			type = AddByRefIfNeeded(type, paramTypes, index);
@@ -930,10 +930,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			evalInfo.CancellationToken.ThrowIfCancellationRequested();
 			try {
 				var info = GetLocalValueLocationCore(evalInfo, index);
-				if (!(info.errorMessage is null))
+				if (info.errorMessage is not null)
 					return info.errorMessage;
 				var res = engine.CreateMonoValue_MonoDebug(evalInfo, value, targetType);
-				if (!(res.ErrorMessage is null))
+				if (res.ErrorMessage is not null)
 					return res.ErrorMessage;
 				return info.valueLocation!.Store(res.Value!);
 			}
@@ -959,10 +959,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			evalInfo.CancellationToken.ThrowIfCancellationRequested();
 			try {
 				var info = GetParameterValueLocationCore(evalInfo, index);
-				if (!(info.errorMessage is null))
+				if (info.errorMessage is not null)
 					return info.errorMessage;
 				var res = engine.CreateMonoValue_MonoDebug(evalInfo, value, targetType);
-				if (!(res.ErrorMessage is null))
+				if (res.ErrorMessage is not null)
 					return res.ErrorMessage;
 				return info.valueLocation!.Store(res.Value!);
 			}
@@ -1014,10 +1014,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			DbgDotNetValueResult res = default;
 			try {
 				res = CreateValueCore(evalInfo, value);
-				if (!(res.ErrorMessage is null))
+				if (res.ErrorMessage is not null)
 					return res;
 				var boxedValue = res.Value!.Box(evalInfo);
-				if (!(boxedValue is null))
+				if (boxedValue is not null)
 					return boxedValue.Value;
 				return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 			}
@@ -1058,13 +1058,13 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 
 				var appDomain = value.Type.AppDomain;
 				var gcHandleType = appDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_GCHandle, isOptional: true);
-				Debug2.Assert(!(gcHandleType is null));
+				Debug2.Assert(gcHandleType is not null);
 				if (gcHandleType is null)
 					return null;
 
 				var allocMethod = gcHandleType.GetMethod(nameof(System.Runtime.InteropServices.GCHandle.Alloc),
 					DmdSignatureCallingConvention.Default, 0, gcHandleType, new[] { appDomain.System_Object }, throwOnError: false);
-				Debug2.Assert(!(allocMethod is null));
+				Debug2.Assert(allocMethod is not null);
 				if (allocMethod is null)
 					return null;
 
@@ -1108,13 +1108,13 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 
 			var appDomain = objectId.ReflectionAppDomain;
 			var gcHandleType = appDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_InteropServices_GCHandle, isOptional: true);
-			Debug2.Assert(!(gcHandleType is null));
+			Debug2.Assert(gcHandleType is not null);
 			if (gcHandleType is null)
 				return;
 
 			var freeMethod = gcHandleType.GetMethod(nameof(System.Runtime.InteropServices.GCHandle.Free),
 				DmdSignatureCallingConvention.HasThis, 0, appDomain.System_Void, Array.Empty<DmdType>(), throwOnError: false);
-			Debug2.Assert(!(freeMethod is null));
+			Debug2.Assert(freeMethod is not null);
 			if (freeMethod is null)
 				return;
 

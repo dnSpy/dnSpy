@@ -61,7 +61,7 @@ namespace dnSpy.Documents.TreeView {
 		public override FilterType GetFilterType(IDocumentTreeNodeFilter filter) {
 			var p = TreeNode.Parent;
 			var parent = p is null ? null : p.Data as ModuleDocumentNode;
-			Debug2.Assert(!(parent is null));
+			Debug2.Assert(parent is not null);
 			if (parent is null)
 				return FilterType.Default;
 			var res = filter.GetResult(Name, parent.Document);

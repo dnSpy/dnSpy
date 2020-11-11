@@ -441,7 +441,7 @@ namespace dnSpy.Hex {
 				}
 			}
 
-			if (!(bitArray is null))
+			if (bitArray is not null)
 				return new HexBytes(destination, bitArray);
 			if (invalidBytes == bytesRead)
 				return new HexBytes(destination, false);

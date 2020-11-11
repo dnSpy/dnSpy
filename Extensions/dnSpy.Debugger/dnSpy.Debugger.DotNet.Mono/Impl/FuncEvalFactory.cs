@@ -117,7 +117,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					funcEvalState.methodInvokeCounter++;
 
 					Debug2.Assert(!isNewobj || obj is null);
-					bool isInvokeInstanceMethod = !(obj is null) && !isNewobj;
+					bool isInvokeInstanceMethod = obj is not null && !isNewobj;
 
 					AsyncCallback asyncCallback = asyncRes2 => {
 						if (done)

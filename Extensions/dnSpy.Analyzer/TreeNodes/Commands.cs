@@ -133,7 +133,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				if (nodes is null)
 					yield break;
 
-				if (checkRoot && nodes.All(a => !(a.TreeNode.Parent is null) && a.TreeNode.Parent.Parent is null))
+				if (checkRoot && nodes.All(a => a.TreeNode.Parent is not null && a.TreeNode.Parent.Parent is null))
 					yield break;
 
 				foreach (var node in nodes) {
@@ -188,7 +188,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 					yield break;
 
 				var @ref = context.Find<TextReference>();
-				if (!(@ref is null)) {
+				if (@ref is not null) {
 					if (@ref.Reference is IMemberRef mr)
 						yield return mr;
 				}
@@ -251,13 +251,13 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 
 			var propertyAnalyzer = PropertyNode.TryCreateAnalyzer(member, decompiler);
-			if (!(propertyAnalyzer is null)) {
+			if (propertyAnalyzer is not null) {
 				toolWindowService.Show(AnalyzerToolWindowContent.THE_GUID);
 				analyzerService.Value.Add(propertyAnalyzer);
 			}
 
 			var eventAnalyzer = EventNode.TryCreateAnalyzer(member, decompiler);
-			if (!(eventAnalyzer is null)) {
+			if (eventAnalyzer is not null) {
 				toolWindowService.Show(AnalyzerToolWindowContent.THE_GUID);
 				analyzerService.Value.Add(eventAnalyzer);
 			}
@@ -266,7 +266,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		static IMemberDef? ResolveReference(object? reference) {
 			if (reference is ITypeDefOrRef)
 				return ((ITypeDefOrRef)reference).ResolveTypeDef();
-			else if (reference is IMethod && !(((IMethod)reference).MethodSig is null))
+			else if (reference is IMethod && ((IMethod)reference).MethodSig is not null)
 				return ((IMethod)reference).ResolveMethodDef();
 			else if (reference is IField)
 				return ((IField)reference).ResolveFieldDef();
@@ -289,20 +289,20 @@ namespace dnSpy.Analyzer.TreeNodes {
 			cmds.Add(ApplicationCommands.Delete, (s, e) => DeleteNodes(), (s, e) => e.CanExecute = CanDeleteNodes, ModifierKeys.None, Key.Delete);
 		}
 
-		bool CanDeleteNodes => !(GetNodes() is null);
+		bool CanDeleteNodes => GetNodes() is not null;
 		void DeleteNodes() => DeleteNodes(GetNodes());
 		TreeNodeData[]? GetNodes() => GetNodes(analyzerService.Value.TreeView.TopLevelSelection);
 
 		internal static TreeNodeData[]? GetNodes(TreeNodeData[] nodes) {
 			if (nodes is null)
 				return null;
-			if (nodes.Length == 0 || !nodes.All(a => !(a.TreeNode.Parent is null) && a.TreeNode.Parent.Parent is null))
+			if (nodes.Length == 0 || !nodes.All(a => a.TreeNode.Parent is not null && a.TreeNode.Parent.Parent is null))
 				return null;
 			return nodes;
 		}
 
 		internal static void DeleteNodes(TreeNodeData[]? nodes) {
-			if (!(nodes is null)) {
+			if (nodes is not null) {
 				foreach (var node in nodes) {
 					AnalyzerTreeNodeData.CancelSelfAndChildren(node);
 					node.TreeNode.Parent!.Children.Remove(node.TreeNode);
@@ -313,7 +313,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 	[ExportMenuItem(Header = "res:RemoveCommand", Icon = DsImagesAttribute.Cancel, InputGestureText = "res:ShortCutKeyDelete", Group = MenuConstants.GROUP_CTX_ANALYZER_OTHER, Order = 10)]
 	sealed class RemoveAnalyzeCtxMenuCommand : MenuItemBase {
-		public override bool IsVisible(IMenuItemContext context) => !(GetNodes(context) is null);
+		public override bool IsVisible(IMenuItemContext context) => GetNodes(context) is not null;
 
 		static TreeNodeData[]? GetNodes(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID))

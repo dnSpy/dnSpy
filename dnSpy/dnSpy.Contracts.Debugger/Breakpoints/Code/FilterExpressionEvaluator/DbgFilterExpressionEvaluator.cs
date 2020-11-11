@@ -68,7 +68,7 @@ namespace dnSpy.Contracts.Debugger.Breakpoints.Code.FilterExpressionEvaluator {
 		/// <summary>
 		/// true if there was an error
 		/// </summary>
-		public bool HasError => !(Error is null);
+		public bool HasError => Error is not null;
 
 		/// <summary>
 		/// Constructor

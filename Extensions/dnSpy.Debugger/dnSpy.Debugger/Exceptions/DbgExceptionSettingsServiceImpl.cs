@@ -102,7 +102,7 @@ namespace dnSpy.Debugger.Exceptions {
 				foreach (var s in settings) {
 					if (!toExceptionInfo.TryGetValue(s.Id, out var info))
 						continue;
-					Debug2.Assert(!(s.Settings.Conditions is null));
+					Debug2.Assert(s.Settings.Conditions is not null);
 					if (s.Settings.Conditions is null)
 						continue;
 					if (info.Settings == s.Settings)
@@ -149,7 +149,7 @@ namespace dnSpy.Debugger.Exceptions {
 				foreach (var s in settings) {
 					if (toExceptionInfo.ContainsKey(s.Definition.Id))
 						continue;
-					bool b = !(s.Definition.Id.Category is null) && !(s.Settings.Conditions is null);
+					bool b = s.Definition.Id.Category is not null && s.Settings.Conditions is not null;
 					Debug.Assert(b);
 					if (!b)
 						continue;

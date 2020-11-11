@@ -33,7 +33,7 @@ namespace dnSpy.Language.Intellisense {
 		public CompletionSessionCommandTargetFilter(ICompletionSession completionSession) {
 			this.completionSession = completionSession ?? throw new ArgumentNullException(nameof(completionSession));
 			dsWpfTextView = completionSession.TextView as IDsWpfTextView;
-			Debug2.Assert(!(dsWpfTextView is null));
+			Debug2.Assert(dsWpfTextView is not null);
 
 			dsWpfTextView?.CommandTarget.AddFilter(this, CommandTargetFilterOrder.IntellisenseDefaultStatmentCompletion);
 			completionSession.TextView.Caret.PositionChanged += Caret_PositionChanged;

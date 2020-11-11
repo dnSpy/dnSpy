@@ -52,7 +52,7 @@ namespace dnSpy.Hex.Editor {
 		public override bool AddAdornment(VSTE.AdornmentPositioningBehavior behavior, HexBufferSpan? visualSpan, object? tag, UIElement adornment, VSTE.AdornmentRemovedCallback? removedCallback) {
 			if (adornment is null)
 				throw new ArgumentNullException(nameof(adornment));
-			if (!(visualSpan is null) && visualSpan.Value.IsDefault)
+			if (visualSpan is not null && visualSpan.Value.IsDefault)
 				throw new ArgumentException();
 			if (visualSpan is null && behavior == VSTE.AdornmentPositioningBehavior.TextRelative)
 				throw new ArgumentNullException(nameof(visualSpan));
@@ -61,7 +61,7 @@ namespace dnSpy.Hex.Editor {
 			if (layerKind != HexLayerKind.Normal) {
 				if (behavior != VSTE.AdornmentPositioningBehavior.OwnerControlled)
 					throw new ArgumentOutOfRangeException(nameof(behavior), "Special layers must use AdornmentPositioningBehavior.OwnerControlled");
-				if (!(visualSpan is null))
+				if (visualSpan is not null)
 					throw new ArgumentOutOfRangeException(nameof(visualSpan), "Special layers must use a null visual span");
 			}
 			bool canAdd = visualSpan is null || HexView.HexViewLines.IntersectsBufferSpan(visualSpan.Value);
@@ -128,7 +128,7 @@ namespace dnSpy.Hex.Editor {
 				throw new ArgumentNullException(nameof(match));
 			for (int i = adornmentLayerElements.Count - 1; i >= 0; i--) {
 				var elem = adornmentLayerElements[i];
-				if (!(elem.VisualSpan is null) && visualSpan.OverlapsWith(GetOverlapsWithSpan(elem.VisualSpan.Value)) && match(elem)) {
+				if (elem.VisualSpan is not null && visualSpan.OverlapsWith(GetOverlapsWithSpan(elem.VisualSpan.Value)) && match(elem)) {
 					adornmentLayerElements.RemoveAt(i);
 					canvas.Children.RemoveAt(i);
 					elem.RemovedCallback?.Invoke(elem.Tag, elem.Adornment);
@@ -158,8 +158,8 @@ namespace dnSpy.Hex.Editor {
 				var elem = adornmentLayerElements[i];
 
 				// All adornments that exist in spans that have been removed or in reformatted lines are always removed.
-				if (!(elem.VisualSpan is null) &&
-					(!HexView.HexViewLines.IntersectsBufferSpan(elem.VisualSpan.Value) || !(GetLine(e.NewOrReformattedLines, GetOverlapsWithSpan(elem.VisualSpan.Value)) is null))) {
+				if (elem.VisualSpan is not null &&
+					(!HexView.HexViewLines.IntersectsBufferSpan(elem.VisualSpan.Value) || GetLine(e.NewOrReformattedLines, GetOverlapsWithSpan(elem.VisualSpan.Value)) is not null)) {
 					adornmentLayerElements.RemoveAt(i);
 					canvas.Children.RemoveAt(i);
 					elem.RemovedCallback?.Invoke(elem.Tag, elem.Adornment);
@@ -176,9 +176,9 @@ namespace dnSpy.Hex.Editor {
 					break;
 
 				case VSTE.AdornmentPositioningBehavior.TextRelative:
-					Debug2.Assert(!(elem.VisualSpan is null));
+					Debug2.Assert(elem.VisualSpan is not null);
 					var translatedLine = GetLine(e.TranslatedLines, GetOverlapsWithSpan(elem.VisualSpan.Value));
-					if (!(translatedLine is null)) {
+					if (translatedLine is not null) {
 						// Only y is updated, x is owner controlled
 						Canvas.SetTop(elem.Adornment, ToDefault(Canvas.GetTop(elem.Adornment), 0) + translatedLine.DeltaY);
 					}

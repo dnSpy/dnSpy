@@ -223,7 +223,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			var vm = (NormalStackFrameVM)SelectedItems[0];
 			var process = vm.Frame.Process;
 			var bp = dbgCodeBreakpointsService.Value.Add(new DbgCodeBreakpointInfo(vm.Frame.Location!.Clone(), new DbgCodeBreakpointSettings { IsEnabled = true }, DbgCodeBreakpointOptions.Hidden | DbgCodeBreakpointOptions.Temporary | DbgCodeBreakpointOptions.OneShot));
-			if (!(bp is null))
+			if (bp is not null)
 				dbgManager.Value.Run(process);
 		}
 
@@ -287,7 +287,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			var info = GetBreakpoint();
 			if (info is null)
 				return;
-			if (!(info.Value.breakpoint is null)) {
+			if (info.Value.breakpoint is not null) {
 				if (info.Value.breakpoint.IsEnabled)
 					info.Value.breakpoint.Remove();
 				else
@@ -301,13 +301,13 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 					var settings = bp.Settings;
 					settings.Trace = new DbgCodeBreakpointTrace(string.Empty, @continue: true);
 					var newSettings = showCodeBreakpointSettingsService.Value.Show(settings);
-					if (!(newSettings is null))
+					if (newSettings is not null)
 						bp.Settings = newSettings.Value;
 				}
 			}
 		}
 
-		public override bool CanEnableBreakpoint => !(GetBreakpoint()?.breakpoint is null);
+		public override bool CanEnableBreakpoint => GetBreakpoint()?.breakpoint is not null;
 		public override void EnableBreakpoint() {
 			if (!CanEnableBreakpoint)
 				return;
@@ -316,7 +316,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 				bp.IsEnabled = !bp.IsEnabled;
 		}
 
-		public override bool CanRemoveBreakpoint => !(GetBreakpoint()?.breakpoint is null);
+		public override bool CanRemoveBreakpoint => GetBreakpoint()?.breakpoint is not null;
 		public override void RemoveBreakpoint() {
 			if (!CanRemoveBreakpoint)
 				return;
@@ -325,7 +325,7 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 				bp.Remove();
 		}
 
-		public override bool CanEditBreakpointSettings => !(GetBreakpoint()?.breakpoint is null);
+		public override bool CanEditBreakpointSettings => GetBreakpoint()?.breakpoint is not null;
 		public override void EditBreakpointSettings() {
 			if (!CanEditBreakpointSettings)
 				return;
@@ -333,12 +333,12 @@ namespace dnSpy.Debugger.ToolWindows.CallStack {
 			if (info?.breakpoint is DbgCodeBreakpoint bp) {
 				var settings = bp.Settings;
 				var newSettings = showCodeBreakpointSettingsService.Value.Show(settings);
-				if (!(newSettings is null))
+				if (newSettings is not null)
 					bp.Settings = newSettings.Value;
 			}
 		}
 
-		public override bool CanExportBreakpoint => !(GetBreakpoint()?.breakpoint is null);
+		public override bool CanExportBreakpoint => GetBreakpoint()?.breakpoint is not null;
 		public override void ExportBreakpoint() {
 			if (!CanExportBreakpoint)
 				return;

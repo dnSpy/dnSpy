@@ -63,7 +63,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 		KnownMember InitMember(KnownTypes parent, string name, TypeDef type) => new KnownMember(parent, types[parent], name, type);
 		AssemblyDef ResolveThrow(string asmFullName) {
 			var asm = resolver.Resolve(asmFullName, module);
-			if (!(asm is null))
+			if (asm is not null)
 				return asm;
 			var newName = asmFullName switch {
 				"WindowsBase, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" => "WindowsBase, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35",

@@ -113,7 +113,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 
 		public override int Hit_DbgThread(DbgCodeBreakpoint breakpoint) {
 			dbgDispatcherProvider.VerifyAccess();
-			Debug2.Assert(!(dbgManager is null));
+			Debug2.Assert(dbgManager is not null);
 			if (breakpoint is null)
 				throw new ArgumentNullException(nameof(breakpoint));
 			int hitCount;
@@ -198,7 +198,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 			}
 			if (raisePendingEvent)
 				FlushPendingHitCountChanged_DbgThread();
-			if (!(updated is null))
+			if (updated is not null)
 				HitCountChanged?.Invoke(this, new DbgHitCountChangedEventArgs(new ReadOnlyCollection<DbgCodeBreakpointAndHitCount>(updated)));
 		}
 	}

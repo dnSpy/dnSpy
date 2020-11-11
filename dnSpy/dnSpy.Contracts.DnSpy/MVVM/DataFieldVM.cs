@@ -238,7 +238,7 @@ namespace dnSpy.Contracts.MVVM {
 		/// <returns></returns>
 		public override string? ConvertToObjectValue(out object value) {
 			var error = ConvertToValue(out var v);
-			Debug2.Assert(!(v is null));
+			Debug2.Assert(v is not null);
 			value = v;
 			return error;
 		}

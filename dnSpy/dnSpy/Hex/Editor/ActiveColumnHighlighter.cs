@@ -201,7 +201,7 @@ namespace dnSpy.Hex.Editor {
 			RemoveAllRectangles();
 			if (!enabled)
 				return;
-			Debug2.Assert(!(adornmentLayer is null));
+			Debug2.Assert(adornmentLayer is not null);
 
 			if (wpfHexView.ViewportHeight == 0)
 				return;

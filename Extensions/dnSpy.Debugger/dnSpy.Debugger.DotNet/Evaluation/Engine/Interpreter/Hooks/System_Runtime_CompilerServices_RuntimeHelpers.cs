@@ -72,7 +72,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter.Hooks {
 		static bool TryGetSize(DmdType type, out int size) {
 			if (type.IsValueType) {
 				var attr = type.StructLayoutAttribute;
-				if (!(attr is null) && attr.Size >= 0) {
+				if (attr is not null && attr.Size >= 0) {
 					size = attr.Size;
 					return true;
 				}

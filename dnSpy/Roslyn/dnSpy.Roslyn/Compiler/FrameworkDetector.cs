@@ -42,7 +42,7 @@ namespace dnSpy.Roslyn.Compiler {
 			}
 
 			var info = TryGetTargetFrameworkAttribute(module.Assembly);
-			if (!(info.framework is null)) {
+			if (info.framework is not null) {
 				if (info.framework == ".NETFramework") {
 					if (info.version.StartsWith("2.") || info.version.StartsWith("3."))
 						return FrameworkKind.DotNetFramework2;

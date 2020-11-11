@@ -92,9 +92,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				}
 			}
 			catch (Exception ex) {
-				if (!(res is null))
-					evalInfo.Runtime.Process.DbgManager.Close(res.Where(a => !(a is null)));
-				if (!(dnNodes is null))
+				if (res is not null)
+					evalInfo.Runtime.Process.DbgManager.Close(res.Where(a => a is not null));
+				if (dnNodes is not null)
 					evalInfo.Runtime.Process.DbgManager.Close(dnNodes);
 				if (!ExceptionUtils.IsInternalDebuggerError(ex))
 					throw;
@@ -123,7 +123,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 			DbgValueFormatterTypeOptions typeFormatterOptions;
 			var formatter = owner.Formatter;
 			var dnValue = value?.DotNetValue;
-			if (!(options.NameOutput is null)) {
+			if (options.NameOutput is not null) {
 				formatterOptions = PredefinedFormatSpecifiers.GetValueFormatterOptions(dnValueNode.FormatSpecifiers, options.NameFormatterOptions);
 				if (dnValueNode.FormatName(evalInfo, options.NameOutput, formatter, formatterOptions, cultureInfo)) {
 					// Nothing
@@ -132,7 +132,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					dnValueNode.Name.WriteTo(options.NameOutput);
 				evalInfo.CancellationToken.ThrowIfCancellationRequested();
 			}
-			if (!(options.ExpectedTypeOutput is null)) {
+			if (options.ExpectedTypeOutput is not null) {
 				formatterOptions = PredefinedFormatSpecifiers.GetValueFormatterOptions(dnValueNode.FormatSpecifiers, options.TypeFormatterOptions);
 				typeFormatterOptions = PredefinedFormatSpecifiers.GetValueFormatterTypeOptions(dnValueNode.FormatSpecifiers, options.ExpectedTypeFormatterOptions);
 				if (dnValueNode.FormatExpectedType(evalInfo, options.ExpectedTypeOutput, formatter, typeFormatterOptions, formatterOptions, cultureInfo)) {
@@ -142,7 +142,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					formatter.FormatType(evalInfo, options.ExpectedTypeOutput, expectedType, null, typeFormatterOptions, cultureInfo);
 				evalInfo.CancellationToken.ThrowIfCancellationRequested();
 			}
-			if (!(options.ActualTypeOutput is null)) {
+			if (options.ActualTypeOutput is not null) {
 				formatterOptions = PredefinedFormatSpecifiers.GetValueFormatterOptions(dnValueNode.FormatSpecifiers, options.TypeFormatterOptions);
 				typeFormatterOptions = PredefinedFormatSpecifiers.GetValueFormatterTypeOptions(dnValueNode.FormatSpecifiers, options.ActualTypeFormatterOptions);
 				if (dnValueNode.FormatActualType(evalInfo, options.ActualTypeOutput, formatter, typeFormatterOptions, formatterOptions, cultureInfo)) {
@@ -152,12 +152,12 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 					formatter.FormatType(evalInfo, options.ActualTypeOutput, actualType, dnValue, typeFormatterOptions, cultureInfo);
 				evalInfo.CancellationToken.ThrowIfCancellationRequested();
 			}
-			if (!(options.ValueOutput is null)) {
+			if (options.ValueOutput is not null) {
 				formatterOptions = PredefinedFormatSpecifiers.GetValueFormatterOptions(dnValueNode.FormatSpecifiers, options.ValueFormatterOptions);
 				if (dnValueNode.FormatValue(evalInfo, options.ValueOutput, formatter, formatterOptions, cultureInfo)) {
 					// Nothing
 				}
-				else if (!(dnValue is null))
+				else if (dnValue is not null)
 					formatter.FormatValue(evalInfo, options.ValueOutput, dnValue, formatterOptions, cultureInfo);
 				else if (ErrorMessage is string errorMessage)
 					options.ValueOutput.Write(DbgTextColor.Error, owner.ErrorMessagesHelper.GetErrorMessage(errorMessage));

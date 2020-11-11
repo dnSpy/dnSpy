@@ -187,7 +187,7 @@ namespace dndbg.DotNet {
 				return corModuleDefHelper.CorLib;
 
 			var asmRef = TryGetCorLibAssemblyRef();
-			if (!(asmRef is null))
+			if (asmRef is not null)
 				return asmRef;
 
 			return corModuleDefHelper.CorLib;
@@ -216,7 +216,7 @@ namespace dndbg.DotNet {
 					bestNonMscorlib = asmRef;
 			}
 
-			if (!(bestMscorlib is null))
+			if (bestMscorlib is not null)
 				return bestMscorlib;
 			return bestNonMscorlib;
 		}
@@ -319,7 +319,7 @@ namespace dndbg.DotNet {
 			var caBlob = MDAPI.GetCustomAttributeBlob(mdi, caToken, out uint typeToken) ?? Array.Empty<byte>();
 			var cat = ResolveToken(typeToken, gpContext) as ICustomAttributeType;
 			var ca = CustomAttributeReader.Read(this, caBlob, cat, gpContext);
-			Debug2.Assert(!(ca is null));
+			Debug2.Assert(ca is not null);
 			return ca;
 		}
 
@@ -399,7 +399,7 @@ namespace dndbg.DotNet {
 			if (mdi2 is null)
 				return MDHeaderRuntimeVersion.MS_CLR_10;    // Could be .NET 1.0 or 1.1 but choose 1.0
 			var s = MDAPI.GetModuleVersionString(mdi2);
-			if (!(s is null))
+			if (s is not null)
 				return s;
 			return MDHeaderRuntimeVersion.MS_CLR_20;
 		}
@@ -638,7 +638,7 @@ namespace dndbg.DotNet {
 			}
 
 			if (ridToInterfaceImpl.TryGetValue(rid, out cii)) {
-				if (!(cii is null))
+				if (cii is not null)
 					return cii;
 				if (DisableMDAPICalls)
 					return null;
@@ -673,7 +673,7 @@ namespace dndbg.DotNet {
 			}
 
 			if (ridToMemberRef.TryGetValue(rid, out cmr)) {
-				if (!(cmr is null))
+				if (cmr is not null)
 					return cmr;
 				if (DisableMDAPICalls)
 					return null;
@@ -720,7 +720,7 @@ namespace dndbg.DotNet {
 			}
 
 			if (ridToStandAloneSig.TryGetValue(rid, out cts)) {
-				if (!(cts is null))
+				if (cts is not null)
 					return cts;
 				if (DisableMDAPICalls)
 					return null;
@@ -793,7 +793,7 @@ namespace dndbg.DotNet {
 			}
 
 			if (ridToTypeSpec.TryGetValue(rid, out cts)) {
-				if (!(cts is null))
+				if (cts is not null)
 					return cts;
 				if (DisableMDAPICalls)
 					return null;
@@ -965,7 +965,7 @@ namespace dndbg.DotNet {
 		}
 
 		void InitializeTypeTables() {
-			if (!(ridToNested is null))
+			if (ridToNested is not null)
 				return;
 
 			var allTypes = MDAPI.GetTypeDefTokens(mdi);
@@ -1096,7 +1096,7 @@ namespace dndbg.DotNet {
 				if (!IsValidToken(new MDToken(Table.ExportedType, rid).Raw))
 					break;
 				var et = ResolveExportedType(rid);
-				Debug2.Assert(!(et is null));
+				Debug2.Assert(et is not null);
 				if (et is null)
 					break;
 				ExportedTypes.Add(et);
@@ -1257,7 +1257,7 @@ namespace dndbg.DotNet {
 			const bool calledFromLoadClass = false;
 			var ctd = InitializeTypeDef(rid, calledFromLoadClass, out bool created);
 			// If it was created, Initialize() has already been called
-			if (!created && !(ctd is null) && !ctd.CompletelyLoaded)
+			if (!created && ctd is not null && !ctd.CompletelyLoaded)
 				Initialize(ctd, created, calledFromLoadClass);
 		}
 

@@ -28,7 +28,7 @@ namespace Example2.Extension {
 		// Used by MyDsDocumentNode.Decompile() to show the file in the text editor
 		public string Text {
 			get {
-				if (!(text is null))
+				if (text is not null)
 					return text;
 				try {
 					return text = File.ReadAllText(Filename);

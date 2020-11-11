@@ -288,7 +288,7 @@ namespace dnSpy.Debugger.ToolWindows.ModuleBreakpoints {
 			var filename = pickFilename.GetFilename(null, "xml", PickFilenameConstants.XmlFilenameFilter);
 			if (!File.Exists(filename))
 				return;
-			Debug2.Assert(!(filename is null));
+			Debug2.Assert(filename is not null);
 			var settingsService = settingsServiceFactory.Value.Create();
 			try {
 				settingsService.Open(filename);

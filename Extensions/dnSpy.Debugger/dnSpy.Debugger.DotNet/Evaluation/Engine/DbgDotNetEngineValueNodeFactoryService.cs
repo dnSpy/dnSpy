@@ -71,7 +71,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 			Debug.Fail($"Default value node factory ({LanguageConstants.DefaultLanguageGuid.ToString()}) wasn't exported");
 			var lz = toLazyFactory.Values.FirstOrDefault();
-			if (!(lz is null))
+			if (lz is not null)
 				return GetFactory(formatter, lz);
 			return null;
 		}

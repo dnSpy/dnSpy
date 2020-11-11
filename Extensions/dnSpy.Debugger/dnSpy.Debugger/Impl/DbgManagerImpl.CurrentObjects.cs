@@ -201,7 +201,7 @@ namespace dnSpy.Debugger.Impl {
 			DbgCurrentObjectChangedEventArgs<DbgRuntime> runtimeEventArgs;
 			DbgCurrentObjectChangedEventArgs<DbgThread> threadEventArgs;
 			lock (lockObj) {
-				if (!forceSet && !(dbgCurrentProcess.currentProcess.Current is null))
+				if (!forceSet && dbgCurrentProcess.currentProcess.Current is not null)
 					return false;
 				var info = GetEngineInfo_NoLock(engine);
 				var process = info.Process;

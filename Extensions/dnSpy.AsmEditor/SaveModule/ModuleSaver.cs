@@ -241,7 +241,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 		void ILogger.Log(object? sender, LoggerEvent loggerEvent, string format, params object[] args) {
 			ThrowIfCanceled();
-			if (!(OnLogMessage is null)) {
+			if (OnLogMessage is not null) {
 				var evtType =
 					loggerEvent == LoggerEvent.Error ? ModuleSaverLogEvent.Error :
 					loggerEvent == LoggerEvent.Warning ? ModuleSaverLogEvent.Warning :

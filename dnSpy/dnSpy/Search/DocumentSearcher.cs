@@ -154,7 +154,7 @@ namespace dnSpy.Search {
 			disposed = true;
 			cancellationTokenSource.Cancel();
 			cancellationTokenSource.Dispose();
-			Debug2.Assert(!(OnSearchCompleted is null));
+			Debug2.Assert(OnSearchCompleted is not null);
 			OnSearchCompleted?.Invoke(this, EventArgs.Empty);
 		}
 		bool disposed;
@@ -195,7 +195,7 @@ namespace dnSpy.Search {
 			if (cancellationTokenSource.IsCancellationRequested)
 				return;
 
-			Debug2.Assert(!(OnNewSearchResults is null));
+			Debug2.Assert(OnNewSearchResults is not null);
 			OnNewSearchResults?.Invoke(this, new SearchResultEventArgs(results));
 		}
 	}

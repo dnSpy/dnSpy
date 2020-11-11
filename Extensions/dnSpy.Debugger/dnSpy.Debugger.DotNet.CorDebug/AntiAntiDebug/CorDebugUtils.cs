@@ -28,12 +28,12 @@ namespace dnSpy.Debugger.DotNet.CorDebug.AntiAntiDebug {
 		public static bool TryGetInternalRuntime(DbgProcess process, [NotNullWhen(true)] out DbgCorDebugInternalRuntime? runtime) {
 			runtime = null;
 			var dbgRuntime = process.Runtimes.FirstOrDefault();
-			Debug2.Assert(!(dbgRuntime is null));
+			Debug2.Assert(dbgRuntime is not null);
 			if (dbgRuntime is null)
 				return false;
 
 			runtime = dbgRuntime.InternalRuntime as DbgCorDebugInternalRuntime;
-			return !(runtime is null);
+			return runtime is not null;
 		}
 	}
 }

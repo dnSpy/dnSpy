@@ -36,7 +36,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 	sealed class DbgFilterExpressionEvaluatorServiceImpl : DbgFilterExpressionEvaluatorService {
 		readonly Lazy<DbgFilterExpressionEvaluator, IDbgFilterExpressionEvaluatorMetadata>? dbgFilterExpressionEvaluator;
 
-		public override bool HasExpressionEvaluator => !(dbgFilterExpressionEvaluator is null);
+		public override bool HasExpressionEvaluator => dbgFilterExpressionEvaluator is not null;
 
 		[ImportingConstructor]
 		DbgFilterExpressionEvaluatorServiceImpl([ImportMany] IEnumerable<Lazy<DbgFilterExpressionEvaluator, IDbgFilterExpressionEvaluatorMetadata>> dbgFilterExpressionEvaluators) =>
@@ -47,7 +47,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 		public override string? IsValidExpression(string expr) {
 			if (expr is null)
 				throw new ArgumentNullException(nameof(expr));
-			if (!(dbgFilterExpressionEvaluator is null))
+			if (dbgFilterExpressionEvaluator is not null)
 				return dbgFilterExpressionEvaluator.Value.IsValidExpression(expr);
 			return NoFEEError;
 		}
@@ -65,7 +65,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 				throw new ArgumentNullException(nameof(output));
 			if (expr is null)
 				throw new ArgumentNullException(nameof(expr));
-			if (!(dbgFilterExpressionEvaluator is null))
+			if (dbgFilterExpressionEvaluator is not null)
 				dbgFilterExpressionEvaluator.Value.Write(output, expr);
 			else
 				output.Write(DbgTextColor.Error, expr);

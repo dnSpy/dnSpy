@@ -34,7 +34,7 @@ namespace dnSpy.AsmEditor.Commands {
 		public IEnumerable<DocumentTreeNodeData> OriginalNodes {
 			get {
 				yield return ownerTypeNode;
-				if (!(nestedTypeNode is null))
+				if (nestedTypeNode is not null)
 					yield return nestedTypeNode;
 			}
 		}
@@ -44,7 +44,7 @@ namespace dnSpy.AsmEditor.Commands {
 				throw new ArgumentNullException(nameof(modNode));
 			if (nestedType is null)
 				throw new ArgumentNullException(nameof(nestedType));
-			if (!(nestedType.Module is null))
+			if (nestedType.Module is not null)
 				throw new ArgumentException();
 			this.ownerTypeNode = ownerTypeNode;
 			nestedTypeNode = modNode.Context.DocumentTreeView.CreateNested(nestedType);

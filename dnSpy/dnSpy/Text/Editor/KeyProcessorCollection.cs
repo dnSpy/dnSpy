@@ -145,7 +145,7 @@ namespace dnSpy.Text.Editor {
 				if (!wpfTextView.TextDataModel.ContentType.IsOfAnyType(provider.Metadata.ContentTypes))
 					continue;
 				var keyProcessor = provider.Value.GetAssociatedProcessor(wpfTextView);
-				if (!(keyProcessor is null))
+				if (keyProcessor is not null)
 					list.Add(keyProcessor);
 			}
 			keyProcessors = list.ToArray();

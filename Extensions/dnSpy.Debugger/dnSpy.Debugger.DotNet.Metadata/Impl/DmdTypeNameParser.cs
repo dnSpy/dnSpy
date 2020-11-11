@@ -216,7 +216,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		IDmdAssemblyName FindAssemblyRef(DmdParsedTypeRef? nonNestedTypeRef) {
 			IDmdAssemblyName? asmRef = null;
-			if (!(nonNestedTypeRef is null))
+			if (nonNestedTypeRef is not null)
 				asmRef = FindAssemblyRefCore(nonNestedTypeRef);
 			return asmRef ?? ownerModule!.Assembly.GetName();
 		}
@@ -224,13 +224,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		IDmdAssemblyName FindAssemblyRefCore(DmdParsedTypeRef nonNestedTypeRef) {
 			var modAsm = (DmdAssemblyImpl)ownerModule!.Assembly;
 			var type = modAsm.GetType(nonNestedTypeRef, ignoreCase: false);
-			if (!(type is null))
+			if (type is not null)
 				return modAsm.GetName();
 
 			var corLibAsm = (DmdAssemblyImpl?)ownerModule.AppDomain.CorLib;
-			if (!(corLibAsm is null)) {
+			if (corLibAsm is not null) {
 				type = corLibAsm.GetType(nonNestedTypeRef, ignoreCase: false);
-				if (!(type is null))
+				if (type is not null)
 					return corLibAsm.GetName();
 			}
 
@@ -338,7 +338,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 				IDmdAssemblyName? asmRef;
 				if (typeDefResolver is null) {
-					Debug2.Assert(!(ownerModule is null));
+					Debug2.Assert(ownerModule is not null);
 					var typeRef = CreateTypeRef(typeNames);
 					var nonNestedTypeRef = (DmdParsedTypeRef)DmdTypeUtilities.GetNonNestedType(typeRef)!;
 					if (readAssemblyReference)

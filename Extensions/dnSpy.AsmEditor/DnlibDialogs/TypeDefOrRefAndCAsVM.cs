@@ -34,7 +34,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		protected override TypeDefOrRefAndCAVM Create(TModel model) {
 			var gpc = model as GenericParamConstraint;
-			if (!(gpc is null))
+			if (gpc is not null)
 				return new TypeDefOrRefAndCAVM(new TypeDefOrRefAndCAOptions(gpc), OwnerModule, decompilerService, ownerType, ownerMethod);
 			return new TypeDefOrRefAndCAVM(new TypeDefOrRefAndCAOptions((InterfaceImpl)(object)model), OwnerModule, decompilerService, ownerType, ownerMethod);
 		}

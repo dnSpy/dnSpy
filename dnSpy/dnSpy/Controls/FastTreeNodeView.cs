@@ -43,7 +43,7 @@ namespace dnSpy.Controls {
 		static readonly object toolTipDummy = new object();
 
 		void InitializeChildrens() {
-			if (!(expander is null))
+			if (expander is not null)
 				return;
 
 			ToolTip = toolTipDummy;
@@ -64,8 +64,8 @@ namespace dnSpy.Controls {
 				Focusable = false
 			};
 
-			expander.Checked += (sender, e) => { if (!(Node is null)) Node.IsExpanded = true; };
-			expander.Unchecked += (sender, e) => { if (!(Node is null)) Node.IsExpanded = false; };
+			expander.Checked += (sender, e) => { if (Node is not null) Node.IsExpanded = true; };
+			expander.Unchecked += (sender, e) => { if (Node is not null) Node.IsExpanded = false; };
 
 			AddVisualChild(expander);
 			AddVisualChild(icon);

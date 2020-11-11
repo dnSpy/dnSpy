@@ -38,11 +38,11 @@ namespace dnSpy.AsmEditor.Commands {
 		}
 
 		IEnumerable<MethodDef> GetMethods() {
-			if (!(eventNode.EventDef.AddMethod is null))
+			if (eventNode.EventDef.AddMethod is not null)
 				yield return eventNode.EventDef.AddMethod;
-			if (!(eventNode.EventDef.RemoveMethod is null))
+			if (eventNode.EventDef.RemoveMethod is not null)
 				yield return eventNode.EventDef.RemoveMethod;
-			if (!(eventNode.EventDef.InvokeMethod is null))
+			if (eventNode.EventDef.InvokeMethod is not null)
 				yield return eventNode.EventDef.InvokeMethod;
 			foreach (var m in eventNode.EventDef.OtherMethods)
 				yield return m;

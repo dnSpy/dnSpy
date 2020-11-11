@@ -197,7 +197,7 @@ namespace dndbg.Engine {
 			IntPtr pHandleArray = IntPtr.Zero, pStringArray = IntPtr.Zero;
 			uint dwArrayLength = 0;
 
-			bool useHost = !(info.HostFilename is null);
+			bool useHost = info.HostFilename is not null;
 			var pi = new PROCESS_INFORMATION();
 			bool error = true, calledSetEvent = false;
 			try {

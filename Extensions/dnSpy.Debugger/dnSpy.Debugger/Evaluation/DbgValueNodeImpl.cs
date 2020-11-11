@@ -45,7 +45,7 @@ namespace dnSpy.Debugger.Evaluation {
 			Language = language ?? throw new ArgumentNullException(nameof(language));
 			this.engineValueNode = engineValueNode ?? throw new ArgumentNullException(nameof(engineValueNode));
 			var engineValue = engineValueNode.Value;
-			if (!(engineValue is null))
+			if (engineValue is not null)
 				value = new DbgValueImpl(runtime, engineValue);
 			else if (!engineValueNode.IsReadOnly)
 				throw new InvalidOperationException();
@@ -95,7 +95,7 @@ namespace dnSpy.Debugger.Evaluation {
 		}
 
 		DbgValueNodeAssignmentResult CreateResult(DbgEngineValueNodeAssignmentResult result) {
-			if (!(result.Error is null)) {
+			if (result.Error is not null) {
 				if (engineValueNode.Value != value?.EngineValue)
 					throw new InvalidOperationException();
 				return new DbgValueNodeAssignmentResult(result.Flags, PredefinedEvaluationErrorMessagesHelper.GetErrorMessage(result.Error));
@@ -118,7 +118,7 @@ namespace dnSpy.Debugger.Evaluation {
 				throw new ArgumentNullException(nameof(expression));
 			if (IsReadOnly)
 				throw new InvalidOperationException();
-			if (!(engineValueNode.ErrorMessage is null))
+			if (engineValueNode.ErrorMessage is not null)
 				throw new NotSupportedException();
 			return CreateResult(engineValueNode.Assign(evalInfo, expression, options));
 		}

@@ -85,7 +85,7 @@ namespace dnSpy.Contracts.Hex.Files {
 		/// <summary>
 		/// true if it's a nested file (<see cref="ParentFile"/> is not null)
 		/// </summary>
-		public bool IsNestedFile => !(ParentFile is null);
+		public bool IsNestedFile => ParentFile is not null;
 
 		/// <summary>
 		/// Gets all nested files

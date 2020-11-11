@@ -68,7 +68,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			}
 
 			var expr = filter.Filter;
-			Debug2.Assert(!(expr is null));
+			Debug2.Assert(expr is not null);
 			if (expr is null)
 				return new DbgCodeBreakpointCheckResult("Missing expression");
 

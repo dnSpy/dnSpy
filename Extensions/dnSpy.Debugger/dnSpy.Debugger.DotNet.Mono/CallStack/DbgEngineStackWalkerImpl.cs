@@ -99,7 +99,7 @@ namespace dnSpy.Debugger.DotNet.Mono.CallStack {
 			}
 			else {
 				var module = engine.TryGetModule(method.DeclaringType.Module);
-				if (!(module is null))
+				if (module is not null)
 					return new ILDbgEngineStackFrame(engine, module, monoThread, monoFrame, frameIndex, dbgDotNetCodeLocationFactory);
 
 				Debug.Fail("Creating an error stack frame");

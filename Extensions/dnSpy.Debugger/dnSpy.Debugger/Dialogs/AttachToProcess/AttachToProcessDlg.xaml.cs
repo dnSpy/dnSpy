@@ -79,7 +79,7 @@ namespace dnSpy.Debugger.Dialogs.AttachToProcess {
 		void OnLoaded(object? sender, RoutedEventArgs e) {
 			listView.Focus();
 			var vm = DataContext as AttachToProcessVM;
-			if (listView.SelectedItem is null && !(vm is null) && vm.AllItems.Count > 0)
+			if (listView.SelectedItem is null && vm is not null && vm.AllItems.Count > 0)
 				FocusListViewElement();
 		}
 

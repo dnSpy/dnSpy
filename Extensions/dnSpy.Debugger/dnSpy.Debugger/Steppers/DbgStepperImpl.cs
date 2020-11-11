@@ -34,7 +34,7 @@ namespace dnSpy.Debugger.Steppers {
 		public override bool IsStepping {
 			get {
 				lock (lockObj)
-					return !(stepperTag is null);
+					return stepperTag is not null;
 			}
 		}
 
@@ -62,7 +62,7 @@ namespace dnSpy.Debugger.Steppers {
 			Dispatcher.VerifyAccess();
 			bool wasStepping;
 			lock (lockObj) {
-				wasStepping = !(stepperTag is null) && stepperTag == e.Tag;
+				wasStepping = stepperTag is not null && stepperTag == e.Tag;
 				stepperTag = null;
 				thread = (DbgThreadImpl?)e.Thread ?? thread;
 			}
@@ -89,7 +89,7 @@ namespace dnSpy.Debugger.Steppers {
 				throw new ArgumentNullException(nameof(error));
 			bool wasStepping;
 			lock (lockObj) {
-				wasStepping = !(stepperTag is null);
+				wasStepping = stepperTag is not null;
 				stepperTag = null;
 			}
 			if (wasStepping)

@@ -45,7 +45,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 						break;
 					foreach (var frame in frames) {
 						var location = frame.Location;
-						if (!(location is null))
+						if (location is not null)
 							return (location.Clone(), frameIndex);
 						frameIndex++;
 					}

@@ -61,9 +61,9 @@ namespace dnSpy.Decompiler {
 
 		public static TargetFrameworkInfo Create(ModuleDef module) {
 			var asm = module.Assembly;
-			if (!(asm is null) && module.IsManifestModule) {
+			if (asm is not null && module.IsManifestModule) {
 				var info = TryGetTargetFrameworkInfoInternal(asm);
-				if (!(info is null))
+				if (info is not null)
 					return info.Value;
 			}
 
@@ -235,7 +235,7 @@ namespace dnSpy.Decompiler {
 			yield return module;
 			foreach (var asmRef in module.GetAssemblyRefs()) {
 				var asm = module.Context.AssemblyResolver.Resolve(asmRef, module);
-				if (!(asm is null))
+				if (asm is not null)
 					yield return asm.ManifestModule;
 			}
 		}
@@ -266,7 +266,7 @@ namespace dnSpy.Decompiler {
 					ver = Dnr2035Version.V30;
 			}
 			var asm = module.Assembly;
-			if (!(asm is null) && module.IsManifestModule) {
+			if (asm is not null && module.IsManifestModule) {
 				if (dotNet35Asms.Contains(asm.FullName))
 					return Dnr2035Version.V35;
 				if (dotNet30Asms.Contains(asm.FullName))

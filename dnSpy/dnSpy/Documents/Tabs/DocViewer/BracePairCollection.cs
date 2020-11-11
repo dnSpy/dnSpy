@@ -84,11 +84,11 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public BracePairResultCollection? GetBracePairs(int position) {
 			var left = leftSorted.Find(position);
 			var right = rightSorted.Find(position);
-			if (!(left is null) && !(right is null))
+			if (left is not null && right is not null)
 				return new BracePairResultCollection(new BracePairResult(left.Value.Span, left.Value.Data), new BracePairResult(right.Value.Data, right.Value.Span));
-			if (!(left is null))
+			if (left is not null)
 				return new BracePairResultCollection(new BracePairResult(left.Value.Span, left.Value.Data), null);
-			if (!(right is null))
+			if (right is not null)
 				return new BracePairResultCollection(new BracePairResult(right.Value.Data, right.Value.Span), null);
 			return null;
 		}

@@ -53,7 +53,7 @@ namespace dnSpy.BamlDecompiler.Xaml {
 				sb.Append(typeName);
 
 			bool comma = false;
-			if (!(Initializer is null) && Initializer.Length > 0) {
+			if (Initializer is not null && Initializer.Length > 0) {
 				sb.Append(' ');
 				for (int i = 0; i < Initializer.Length; i++) {
 					if (comma)

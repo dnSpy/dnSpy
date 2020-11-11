@@ -91,7 +91,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				attr |= DmdBindingFlags.Instance;
 			if ((object)@event.ReflectedType! != @event.DeclaringType) {
 				var method = @event.AddMethod;
-				if (!(method is null)) {
+				if (method is not null) {
 					if (method.IsStatic) {
 						if (method.IsPrivate)
 							return false;
@@ -118,7 +118,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				attr |= DmdBindingFlags.Instance;
 			if ((object)property.ReflectedType! != property.DeclaringType) {
 				var method = property.GetMethod;
-				if (!(method is null)) {
+				if (method is not null) {
 					if (method.IsStatic) {
 						if (method.IsPrivate)
 							return false;
@@ -160,7 +160,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		public static bool IsMatch(DmdPropertyInfo property, DmdType returnType) {
-			if (!(returnType is null)) {
+			if (returnType is not null) {
 				var comparer = new DmdSigComparer(DmdSigComparerOptions.CheckTypeEquivalence | DmdMemberInfoEqualityComparer.DefaultTypeOptions);
 				if (!comparer.Equals(property.PropertyType, returnType))
 					return false;
@@ -179,7 +179,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public static bool IsMatch(DmdType type, string? @namespace, string name, DmdBindingFlags bindingAttr) {
 			// Namespace comparison is exact
-			if (!(@namespace is null) && type.Namespace != @namespace)
+			if (@namespace is not null && type.Namespace != @namespace)
 				return false;
 			if ((bindingAttr & DmdBindingFlags.IgnoreCase) != 0)
 				return StringComparer.OrdinalIgnoreCase.Equals(type.Name, name);

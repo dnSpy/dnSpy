@@ -63,7 +63,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 
 			public bool TryGetCode(out int code, [NotNullWhen(false)] out string? error) {
 				code = SimpleTypeConverter.ParseInt32(StringValue, int.MinValue, int.MaxValue, out error);
-				if (!(error is null))
+				if (error is not null)
 					code = (int)SimpleTypeConverter.ParseUInt32(StringValue, uint.MinValue, uint.MaxValue, out error);
 				return error is null;
 			}
@@ -128,7 +128,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 		}
 		string descriptionText = string.Empty;
 
-		bool IsExceptionCode => !(selectedCategory is null) && (selectedCategory.Definition.Flags & DbgExceptionCategoryDefinitionFlags.Code) != 0;
+		bool IsExceptionCode => selectedCategory is not null && (selectedCategory.Definition.Flags & DbgExceptionCategoryDefinitionFlags.Code) != 0;
 		public bool HasDescriptionText => IsExceptionCode;
 
 		sealed class ExceptionCategoryVM : ViewModelBase {

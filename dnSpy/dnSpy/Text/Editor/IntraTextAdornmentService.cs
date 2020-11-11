@@ -46,7 +46,7 @@ namespace dnSpy.Text.Editor {
 			if (textView.TextBuffer != buffer)
 				return null;
 			var wpfTextView = textView as IWpfTextView;
-			Debug2.Assert(!(wpfTextView is null));
+			Debug2.Assert(wpfTextView is not null);
 			if (wpfTextView is null)
 				return null;
 			return wpfTextView.Properties.GetOrCreateSingletonProperty(
@@ -146,7 +146,7 @@ namespace dnSpy.Text.Editor {
 			if (line is null)
 				line = wpfTextView.TextViewLines.GetTextViewLineContainingBufferPosition(adornmentInfo.Span.Start);
 			var selSpan = line is null ? null : wpfTextView.Selection.GetSelectionOnTextViewLine(line);
-			bool selected = !(selSpan is null) && selSpan.Value.Contains(new VirtualSnapshotSpan(adornmentInfo.Span));
+			bool selected = selSpan is not null && selSpan.Value.Contains(new VirtualSnapshotSpan(adornmentInfo.Span));
 			IntraTextAdornment.SetIsSelected(adornmentInfo.UserUIElement, selected);
 		}
 
@@ -174,7 +174,7 @@ namespace dnSpy.Text.Editor {
 
 		void WpfTextView_LayoutChanged(object? sender, TextViewLayoutChangedEventArgs e) {
 			if (adornmentTagInfos.Count > 0) {
-				Debug2.Assert(!(layer is null));
+				Debug2.Assert(layer is not null);
 				currentLineIdentityTags.Clear();
 				foreach (var line in wpfTextView.TextViewLines)
 					currentLineIdentityTags.Add(line.IdentityTag);
@@ -194,11 +194,11 @@ namespace dnSpy.Text.Editor {
 
 					foreach (var identityTag in tags) {
 						var adornmentInfo = identityTag as AdornmentTagInfo;
-						Debug2.Assert(!(adornmentInfo is null));
+						Debug2.Assert(adornmentInfo is not null);
 						if (adornmentInfo is null)
 							continue;
 						var bounds = line.GetAdornmentBounds(identityTag);
-						Debug2.Assert(!(bounds is null));
+						Debug2.Assert(bounds is not null);
 						if (bounds is null)
 							continue;
 
@@ -215,7 +215,7 @@ namespace dnSpy.Text.Editor {
 
 				foreach (var identityTag in tags) {
 					var adornmentInfo = identityTag as AdornmentTagInfo;
-					Debug2.Assert(!(adornmentInfo is null));
+					Debug2.Assert(adornmentInfo is not null);
 					if (adornmentInfo is null)
 						continue;
 					var bounds = line.GetAdornmentBounds(identityTag);
@@ -240,7 +240,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void UpdateAdornmentUIState(ITextViewLine line, AdornmentTagInfo adornmentInfo, TextBounds bounds) {
-			Debug2.Assert(!(adornmentInfo.TopUIElement is null));
+			Debug2.Assert(adornmentInfo.TopUIElement is not null);
 			double verticalScale = line.LineTransform.VerticalScale;
 			adornmentInfo.TopUIElement.SetScale(verticalScale);
 			Canvas.SetTop(adornmentInfo.TopUIElement, bounds.TextTop + line.Baseline - verticalScale * adornmentInfo.Tag!.Baseline);
@@ -248,8 +248,8 @@ namespace dnSpy.Text.Editor {
 		}
 
 		bool AddAdornment(AdornmentTagInfo adornmentInfo, ITextViewLine line) {
-			Debug2.Assert(!(adornmentInfo.TopUIElement is null));
-			Debug2.Assert(!(layer is null));
+			Debug2.Assert(adornmentInfo.TopUIElement is not null);
+			Debug2.Assert(layer is not null);
 			SizeChangedEventHandler sizeChanged = (a, e) => {
 				var bounds = line.GetAdornmentBounds(adornmentInfo);
 				if (bounds is null)
@@ -290,7 +290,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public void RegisterTagger(IIntraTextAdornmentServiceSpaceNegotiatingAdornmentTagger tagger) {
-			if (!(this.tagger is null))
+			if (this.tagger is not null)
 				throw new InvalidOperationException();
 			this.tagger = tagger ?? throw new ArgumentNullException(nameof(tagger));
 		}

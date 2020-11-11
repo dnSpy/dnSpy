@@ -250,7 +250,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			}
 
 			string? methodName = null, shortMethodName = null;
-			if (!(reflectionMethod is null)) {
+			if (reflectionMethod is not null) {
 				shortMethodName = reflectionMethod.ToString();
 				methodName = shortMethodName + " (0x" + reflectionMethod.MetadataToken.ToString("X8") + ")";
 			}

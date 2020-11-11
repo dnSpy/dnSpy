@@ -51,7 +51,7 @@ namespace dnSpy.Text.Editor {
 
 			var point = GetTextPoint(wpfTextView, e);
 			var line = wpfTextView.TextViewLines.GetTextViewLineContainingYCoordinate(point.Y);
-			if (!(line is null))
+			if (line is not null)
 				textViewLine = line;
 			else if (point.Y <= wpfTextView.ViewportTop)
 				textViewLine = wpfTextView.TextViewLines.FirstVisibleLine;

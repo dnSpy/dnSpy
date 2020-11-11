@@ -61,7 +61,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			debuggerThread.VerifyAccess();
 			if (!canInitializeObjectConstants)
 				return;
-			if (!(objectConstants is null))
+			if (objectConstants is not null)
 				return;
 			if (objectFactory is null)
 				return;
@@ -165,7 +165,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			funcEvalFactory.CreateFuncEval(a => OnFuncEvalComplete(a, context), monoThread, context.FuncEvalTimeout, suspendOtherThreads: (context.Options & DbgEvaluationContextOptions.RunAllThreads) == 0, cancellationToken: cancellationToken);
 
 		FuncEval CreateFuncEval2(DbgEvaluationContext? contextOpt, ThreadMirror monoThread, CancellationToken cancellationToken) {
-			if (!(contextOpt is null))
+			if (contextOpt is not null)
 				return CreateFuncEval(contextOpt, monoThread, cancellationToken);
 			return funcEvalFactory.CreateFuncEval(a => OnFuncEvalComplete(a), monoThread, DbgLanguage.DefaultFuncEvalTimeout, suspendOtherThreads: true, cancellationToken: cancellationToken);
 		}
@@ -230,7 +230,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			debuggerThread.VerifyAccess();
 			evalInfo.CancellationToken.ThrowIfCancellationRequested();
 			var tmp = CheckFuncEval(evalInfo.Context);
-			if (!(tmp is null))
+			if (tmp is not null)
 				return tmp.Value;
 			return FuncEvalCallCore_MonoDebug(evalInfo.Context, evalInfo.Frame, evalInfo.Frame.Thread, method, obj, arguments, invokeOptions, newObj, evalInfo.CancellationToken);
 		}
@@ -252,7 +252,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				if (res.IsNormalResult) {
 					try {
 						var error = objImpl.ValueLocation.Store(((DbgDotNetValueImpl)res.Value!).Value);
-						if (!(error is null)) {
+						if (error is not null) {
 							res.Value?.Dispose();
 							return DbgDotNetValueResult.CreateError(error);
 						}
@@ -312,7 +312,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 						if (method is DmdMethodInfo m)
 							declType = m.GetBaseDefinition().DeclaringType!;
 						var val = converter.Convert(obj, declType, out origType);
-						if (!(val.ErrorMessage is null))
+						if (val.ErrorMessage is not null)
 							return DbgDotNetValueResult.CreateError(val.ErrorMessage);
 						// Don't box it if it's a value type and it implements the method, eg. 1.ToString() fails without this check
 						if (origType.IsValueType && method.DeclaringType == origType) {
@@ -327,7 +327,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 							funcEvalOptions |= FuncEvalOptions.ReturnOutThis;
 					}
 					else if (newObj && method.ReflectedType!.IsValueType) {
-						if (!(contextOpt is null) && !(frameOpt is null)) {
+						if (contextOpt is not null && frameOpt is not null) {
 							//TODO: The Mono fork Unity uses doesn't support this, it returns nothing
 							var evalInfo = new DbgEvaluationInfo(contextOpt, frameOpt, cancellationToken);
 							hiddenThisValue = CreateValueType(evalInfo, method.ReflectedType, 0);
@@ -344,7 +344,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					for (int i = 0; i < arguments.Length; i++) {
 						var paramType = paramTypes[i];
 						var val = converter.Convert(arguments[i], paramType, out origType);
-						if (!(val.ErrorMessage is null))
+						if (val.ErrorMessage is not null)
 							return DbgDotNetValueResult.CreateError(val.ErrorMessage);
 						var valType = origType ?? MonoValueTypeCreator.CreateType(this, val.Value!, paramType);
 						args[i] = BoxIfNeeded(monoThread.Domain, val.Value!, paramType, valType);
@@ -357,13 +357,13 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 						return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 					if ((funcEvalOptions & FuncEvalOptions.ReturnOutThis) != 0 && res.OutThis is StructMirror outStructMirror) {
 						var error = (obj as DbgDotNetValueImpl)?.ValueLocation.Store(outStructMirror);
-						if (!(error is null))
+						if (error is not null)
 							return DbgDotNetValueResult.CreateError(error);
 					}
 					var returnType = (method as DmdMethodInfo)?.ReturnType ?? method.ReflectedType!;
 					var returnValue = res.Exception ?? res.Result ?? createdResultValue ?? new PrimitiveValue(vm, ElementType.Object, null);
 					var valueLocation = new NoValueLocation(returnType, returnValue);
-					if (!(res.Exception is null))
+					if (res.Exception is not null)
 						return DbgDotNetValueResult.CreateException(CreateDotNetValue_MonoDebug(valueLocation));
 					return DbgDotNetValueResult.Create(CreateDotNetValue_MonoDebug(valueLocation));
 				}
@@ -398,7 +398,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			debuggerThread.VerifyAccess();
 			evalInfo.CancellationToken.ThrowIfCancellationRequested();
 			var tmp = CheckFuncEval(evalInfo.Context);
-			if (!(tmp is null))
+			if (tmp is not null)
 				return tmp.Value;
 
 			var monoThread = GetThread(evalInfo.Frame.Thread);
@@ -428,7 +428,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			if (value is DbgDotNetValueImpl)
 				return DbgDotNetValueResult.Create((DbgDotNetValueImpl)value);
 			var tmp = CheckFuncEval(evalInfo.Context);
-			if (!(tmp is null))
+			if (tmp is not null)
 				return tmp.Value;
 
 			var monoThread = GetThread(evalInfo.Frame.Thread);
@@ -437,7 +437,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				using (var funcEval = CreateFuncEval(evalInfo.Context, monoThread, evalInfo.CancellationToken)) {
 					var converter = new EvalArgumentConverter(this, funcEval, monoThread.Domain, reflectionAppDomain);
 					var evalRes = converter.Convert(value, reflectionAppDomain.System_Object, out var newValueType);
-					if (!(evalRes.ErrorMessage is null))
+					if (evalRes.ErrorMessage is not null)
 						return DbgDotNetValueResult.CreateError(evalRes.ErrorMessage);
 
 					var resultValue = CreateDotNetValue_MonoDebug(reflectionAppDomain, evalRes.Value!, newValueType);
@@ -461,7 +461,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			if (value is DbgDotNetValueImpl)
 				return new DbgCreateMonoValueResult(((DbgDotNetValueImpl)value).Value);
 			var tmp = CheckFuncEval(evalInfo.Context);
-			if (!(tmp is null))
+			if (tmp is not null)
 				return new DbgCreateMonoValueResult(tmp.Value.ErrorMessage ?? throw new InvalidOperationException());
 
 			var monoThread = GetThread(evalInfo.Frame.Thread);
@@ -470,7 +470,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				using (var funcEval = CreateFuncEval(evalInfo.Context, monoThread, evalInfo.CancellationToken)) {
 					var converter = new EvalArgumentConverter(this, funcEval, monoThread.Domain, reflectionAppDomain);
 					var evalRes = converter.Convert(value, targetType, out var newValueType);
-					if (!(evalRes.ErrorMessage is null))
+					if (evalRes.ErrorMessage is not null)
 						return new DbgCreateMonoValueResult(evalRes.ErrorMessage);
 					var newValue = evalRes.Value!;
 					if (targetType.IsEnum && !(newValue is EnumMirror))

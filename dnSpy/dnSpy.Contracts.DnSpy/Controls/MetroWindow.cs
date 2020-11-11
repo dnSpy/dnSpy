@@ -61,8 +61,8 @@ namespace dnSpy.Contracts.Controls {
 			base.OnSourceInitialized(e);
 
 			var hwndSource = PresentationSource.FromVisual(this) as HwndSource;
-			Debug2.Assert(!(hwndSource is null));
-			if (!(hwndSource is null)) {
+			Debug2.Assert(hwndSource is not null);
+			if (hwndSource is not null) {
 				hwndSource.AddHook(WndProc);
 				wpfDpi = new Size(96.0 * hwndSource.CompositionTarget.TransformToDevice.M11, 96.0 * hwndSource.CompositionTarget.TransformToDevice.M22);
 
@@ -218,7 +218,7 @@ namespace dnSpy.Contracts.Controls {
 
 		static void OnMaximizedElementChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
 			var border = d as Border;
-			Debug2.Assert(!(border is null));
+			Debug2.Assert(border is not null);
 			if (border is null)
 				return;
 			var win = Window.GetWindow(border) as MetroWindow;
@@ -252,7 +252,7 @@ namespace dnSpy.Contracts.Controls {
 			void MetroWindow_StateChanged(object? sender, EventArgs e) => UpdatePadding((MetroWindow)sender!);
 
 			void UpdatePadding(MetroWindow window) {
-				Debug2.Assert(!(window is null));
+				Debug2.Assert(window is not null);
 
 				var state = window.IsFullScreen ? WindowState.Maximized : window.WindowState;
 				switch (state) {

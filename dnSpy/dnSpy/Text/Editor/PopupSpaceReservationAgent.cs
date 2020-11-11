@@ -32,7 +32,7 @@ using Microsoft.VisualStudio.Text.Formatting;
 
 namespace dnSpy.Text.Editor {
 	sealed class PopupSpaceReservationAgent : ISpaceReservationAgent {
-		bool IsVisible => !(popup.Child is null);
+		bool IsVisible => popup.Child is not null;
 		public bool HasFocus => IsVisible && popup.IsKeyboardFocusWithin;
 		public bool IsMouseOver => IsVisible && popup.IsMouseOver;
 		public event EventHandler? GotFocus;
@@ -328,7 +328,7 @@ namespace dnSpy.Text.Editor {
 			if (content is FrameworkElement fwElem)
 				fwElem.SizeChanged += Content_SizeChanged;
 			var window = Window.GetWindow(wpfTextView.VisualElement);
-			if (!(window is null))
+			if (window is not null)
 				window.LocationChanged += Window_LocationChanged;
 			content.GotFocus += Content_GotFocus;
 			content.LostFocus += Content_LostFocus;
@@ -344,7 +344,7 @@ namespace dnSpy.Text.Editor {
 			if (content is FrameworkElement fwElem)
 				fwElem.SizeChanged -= Content_SizeChanged;
 			var window = Window.GetWindow(wpfTextView.VisualElement);
-			if (!(window is null))
+			if (window is not null)
 				window.LocationChanged -= Window_LocationChanged;
 			content.GotFocus -= Content_GotFocus;
 			content.LostFocus -= Content_LostFocus;

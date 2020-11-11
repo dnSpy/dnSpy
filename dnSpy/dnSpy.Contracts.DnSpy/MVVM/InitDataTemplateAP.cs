@@ -62,7 +62,7 @@ namespace dnSpy.Contracts.MVVM {
 		}
 
 		static void InitializePropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
-			Debug2.Assert(!(MefState.Instance is null));
+			Debug2.Assert(MefState.Instance is not null);
 			if ((bool)e.NewValue) {
 				foreach (var elem in MefState.Instance.entries)
 					elem.Value.Initialize(d);

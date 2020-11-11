@@ -137,7 +137,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 			var corFrame = CorFrame;
 			methodMetadataToken = (int)corFrame.Token;
 			var corModule = corFrame.Function?.Module;
-			if (!(corModule is null)) {
+			if (corModule is not null) {
 				module = engine.TryGetModule(corModule)?.GetReflectionModule() ?? throw new InvalidOperationException();
 				if (!corFrame.GetTypeAndMethodGenericParameters(out var typeGenArgs, out var methGenArgs))
 					throw new InvalidOperationException();

@@ -54,7 +54,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			HeaderSize = new StructField<UInt32Data>("HeaderSize", new UInt32Data(buffer, pos + 8));
 
 			if (resourceTypeSpan is null) {
-				if (!(resourceSetTypeSpan is null))
+				if (resourceSetTypeSpan is not null)
 					throw new ArgumentException();
 				UnknownHeader = new StructField<VirtualArrayData<ByteData>>("Header", ArrayData.CreateVirtualByteArray(new HexBufferSpan(buffer, HexSpan.FromBounds(pos + 0x0C, versionPosition))));
 			}
@@ -97,11 +97,11 @@ namespace dnSpy.Hex.Files.DotNet {
 			list.Add(MagicNum);
 			list.Add(ResMgrHeaderVersion);
 			list.Add(HeaderSize);
-			if (!(UnknownHeader is null))
+			if (UnknownHeader is not null)
 				list.Add(UnknownHeader);
-			if (!(ReaderType is null))
+			if (ReaderType is not null)
 				list.Add(ReaderType);
-			if (!(ResourceSetType is null))
+			if (ResourceSetType is not null)
 				list.Add(ResourceSetType);
 			list.Add(Version);
 			list.Add(NumResources);

@@ -76,9 +76,9 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 			}
 			if (info.ExportedFunctions.TryGet(funcName, out var address)) {
 				var result = PatchAPI(address, info.Address, info.EndAddress);
-				if (!(result.ErrorMessage is null))
+				if (result.ErrorMessage is not null)
 					throw new DbgHookException(result.ErrorMessage);
-				Debug2.Assert(!(result.Block is null));
+				Debug2.Assert(result.Block is not null);
 				simplePatches.Add(result.SimplePatch);
 				return new DbgHookedNativeFunctionImpl(result.Block, result.NewFunctionAddress, address);
 			}
@@ -93,9 +93,9 @@ namespace dnSpy.Debugger.AntiAntiDebug {
 			if (!hookedFuncs.Add((dllName, funcName)))
 				throw new DbgHookException($"Some code tried to hook the same func twice: {dllName}: {funcName}");
 			var result = PatchAPI(address, address, address + 1);
-			if (!(result.ErrorMessage is null))
+			if (result.ErrorMessage is not null)
 				throw new DbgHookException(result.ErrorMessage);
-			Debug2.Assert(!(result.Block is null));
+			Debug2.Assert(result.Block is not null);
 			simplePatches.Add(result.SimplePatch);
 			return new DbgHookedNativeFunctionImpl(result.Block, result.NewFunctionAddress, address);
 		}

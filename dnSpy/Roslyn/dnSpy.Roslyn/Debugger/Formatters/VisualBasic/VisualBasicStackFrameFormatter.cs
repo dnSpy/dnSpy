@@ -135,7 +135,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 			if (runtime.Dispatcher.CheckAccess())
 				return false;
 			var sig = runtime.GetFrameMethod(evalInfo)?.GetMethodSignature();
-			return !(sig is null) && (sig.GetParameterTypes().Count > 0 || sig.GetVarArgsParameterTypes().Count > 0);
+			return sig is not null && (sig.GetParameterTypes().Count > 0 || sig.GetVarArgsParameterTypes().Count > 0);
 		}
 
 		public void Format() {
@@ -334,7 +334,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 				break;
 			}
 
-			if (!(loc is null)) {
+			if (loc is not null) {
 				var addr = loc.NativeAddress;
 				if (addr.Address != 0) {
 					WriteCommaSpace();
@@ -441,7 +441,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 			else
 				operatorInfo = Operators.TryGetOperatorInfo(method.Name);
 
-			if (!(operatorInfo is null)) {
+			if (operatorInfo is not null) {
 				for (int i = 0; i < operatorInfo.Length - 1; i++) {
 					WriteOperatorInfoString(operatorInfo[i]);
 					WriteSpace();
@@ -494,7 +494,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 		void WriteOperatorInfoString(string s) => OutputWrite(s, 'A' <= s[0] && s[0] <= 'Z' ? DbgTextColor.Keyword : DbgTextColor.Operator);
 
 		void WriteMethodName(DmdMethodBase method, string name, string[]? operatorInfo) {
-			if (!(operatorInfo is null))
+			if (operatorInfo is not null)
 				WriteOperatorInfoString(operatorInfo[operatorInfo.Length - 1]);
 			else
 				WriteIdentifier(name, TypeFormatterUtils.GetColor(method, canBeModule: true));

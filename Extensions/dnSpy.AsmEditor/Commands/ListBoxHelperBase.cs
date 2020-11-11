@@ -212,7 +212,7 @@ namespace dnSpy.AsmEditor.Commands {
 		}
 
 		public void OnDataContextChanged(object dataContext) {
-			if (!(coll is null))
+			if (coll is not null)
 				throw new InvalidOperationException("DataContext changed more than once");
 
 			// Can't add M, N etc as shortcuts so must use a key down handler
@@ -281,9 +281,9 @@ namespace dnSpy.AsmEditor.Commands {
 				menuItem.Header = ResourceHelper.GetString(handler, listBox.SelectedItems.Count > 1 ? handler.HeaderPlural ?? handler.Header : handler.Header);
 				var tmpHandler = handler;
 				menuItem.Click += (s, e2) => tmpHandler.Command.Execute(parameter);
-				if (!(handler.Icon is null))
+				if (handler.Icon is not null)
 					Add16x16Image(menuItem, handler.Icon.Value, menuItem.IsEnabled);
-				if (!(handler.InputGestureText is null))
+				if (handler.InputGestureText is not null)
 					menuItem.InputGestureText = ResourceHelper.GetString(handler, handler.InputGestureText);
 
 				if (addSep) {
@@ -362,8 +362,8 @@ namespace dnSpy.AsmEditor.Commands {
 		}
 
 		void PasteItems() => PasteItems(0);
-		bool PasteItemsCanExecute() => !(GetClipboardData() is null);
+		bool PasteItemsCanExecute() => GetClipboardData() is not null;
 		void PasteAfterItems() => PasteItems(1);
-		bool PasteAfterItemsCanExecute() => listBox.SelectedIndex >= 0 && !(GetClipboardData() is null);
+		bool PasteAfterItemsCanExecute() => listBox.SelectedIndex >= 0 && GetClipboardData() is not null;
 	}
 }

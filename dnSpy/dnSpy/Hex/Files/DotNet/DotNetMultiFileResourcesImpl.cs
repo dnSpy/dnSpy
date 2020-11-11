@@ -184,7 +184,7 @@ namespace dnSpy.Hex.Files.DotNet {
 
 			foreach (var elem in elems) {
 				list.Add(new UnicodeNameAndOffsetData(elem, elem.UnicodeName));
-				if (!(elem.ResData is null))
+				if (elem.ResData is not null)
 					list.Add(new ResourceInfoData(elem, elem.ResData.FullSpan));
 			}
 
@@ -390,7 +390,7 @@ namespace dnSpy.Hex.Files.DotNet {
 				return Header;
 
 			var data = GetData(position);
-			if (!(data is null))
+			if (data is not null)
 				return GetStructure(data);
 
 			return null;
@@ -412,7 +412,7 @@ namespace dnSpy.Hex.Files.DotNet {
 				string resName = Encoding.Unicode.GetString(File.Buffer.ReadBytes(info.UnicodeName.StringSpan));
 				string? typeName = null;
 				var typeData = resData as TypeResData;
-				if (!(typeData is null))
+				if (typeData is not null)
 					typeName = Encoding.UTF8.GetString(File.Buffer.ReadBytes(typeData.Utf8TypeName.StringSpan));
 				var resInfo = new MultiResourceInfo(resName, resData.TypeCode, typeName);
 				switch (resData.TypeCode) {

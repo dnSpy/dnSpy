@@ -57,7 +57,7 @@ namespace dnSpy.Debugger.DbgUI {
 				var filename = debugger.Value.GetCurrentExecutableFilename();
 				if (!File.Exists(filename))
 					return null;
-				Debug2.Assert(!(filename is null));
+				Debug2.Assert(filename is not null);
 				return string.Format(dnSpy_Debugger_Resources.DebugProgramX, UIUtilities.EscapeMenuItemHeader(Path.GetFileName(filename)));
 			}
 

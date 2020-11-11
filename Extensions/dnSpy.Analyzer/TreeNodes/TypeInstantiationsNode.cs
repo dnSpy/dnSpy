@@ -64,7 +64,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 					}
 				}
 
-				if (!(foundInstr is null))
+				if (foundInstr is not null)
 					yield return new MethodNode(method) { Context = Context, SourceRef = new SourceRef(method, foundInstr.Offset, foundInstr.Operand as IMDTokenProvider) };
 			}
 		}

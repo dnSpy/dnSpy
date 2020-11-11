@@ -75,7 +75,7 @@ namespace dnSpy.AsmEditor.Module {
 			module.Cor20HeaderFlags = Cor20HeaderFlags;
 			module.Cor20HeaderRuntimeVersion = Cor20HeaderRuntimeVersion;
 			module.TablesHeaderVersion = TablesHeaderVersion;
-			if (!(ManagedEntryPoint is null))
+			if (ManagedEntryPoint is not null)
 				module.ManagedEntryPoint = ManagedEntryPoint;
 			else
 				module.NativeEntryPoint = NativeEntryPoint;

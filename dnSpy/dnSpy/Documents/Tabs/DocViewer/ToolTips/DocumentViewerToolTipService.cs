@@ -68,7 +68,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		DocumentViewerToolTipService? TryGetInstance() {
 			if (__documentViewerToolTipService is null) {
 				var docViewer = textView.TextBuffer.TryGetDocumentViewer();
-				if (!(docViewer is null))
+				if (docViewer is not null)
 					__documentViewerToolTipService = documentViewerToolTipServiceProvider.GetService(docViewer);
 			}
 			return __documentViewerToolTipService;
@@ -249,7 +249,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 			var ctx = new ToolTipProviderContext(dotNetImageService, decompiler, codeToolTipSettings, documentViewer, classificationFormatMap, themeClassificationTypeService, classificationTypeRegistryService);
 			foreach (var provider in documentViewerToolTipProviders) {
 				var toolTipContent = provider.Value.Create(ctx, @ref);
-				if (!(toolTipContent is null))
+				if (toolTipContent is not null)
 					return toolTipContent;
 			}
 

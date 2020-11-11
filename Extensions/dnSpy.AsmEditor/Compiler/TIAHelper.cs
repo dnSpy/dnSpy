@@ -71,7 +71,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			UTF8String? scope = null, identifier = null;
 			var tia = td.CustomAttributes.Find("System.Runtime.InteropServices.TypeIdentifierAttribute");
-			if (!(tia is null)) {
+			if (tia is not null) {
 				if (tia.ConstructorArguments.Count >= 2) {
 					if (tia.ConstructorArguments[0].Type.GetElementType() != ElementType.String)
 						return null;
@@ -134,9 +134,9 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		static bool CheckEquivalent(TypeDef td) {
-			Debug2.Assert(!(td is null));
+			Debug2.Assert(td is not null);
 
-			for (int i = 0; !(td is null) && i < 1000; i++) {
+			for (int i = 0; td is not null && i < 1000; i++) {
 				if (i != 0) {
 					var info = GetInfo(td);
 					if (info is null)

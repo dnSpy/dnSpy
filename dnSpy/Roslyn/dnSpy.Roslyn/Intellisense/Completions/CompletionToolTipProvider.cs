@@ -61,7 +61,7 @@ namespace dnSpy.Roslyn.Intellisense.Completions {
 			if (roslynCompletion is null)
 				return null;
 			var roslynCollection = context.SelectedCompletionSet as RoslynCompletionSet;
-			Debug2.Assert(!(roslynCollection is null));
+			Debug2.Assert(roslynCollection is not null);
 			if (roslynCollection is null)
 				return null;
 

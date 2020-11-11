@@ -348,7 +348,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		object? ReadEnumValue(DmdType? underlyingType) {
-			if (!(underlyingType is null)) {
+			if (underlyingType is not null) {
 				var typeCode = DmdType.GetTypeCode(underlyingType);
 				if (typeCode < TypeCode.Boolean || typeCode > TypeCode.UInt64)
 					throw new CABlobParserException("Invalid enum underlying type");
@@ -363,7 +363,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				return type.GetGenericArguments();
 
 			var resolvedType = type.ResolveNoThrow();
-			if (!(resolvedType is null))
+			if (resolvedType is not null)
 				return resolvedType.GetGenericArguments();
 
 			return ReadOnlyCollectionHelpers.Empty<DmdType>();

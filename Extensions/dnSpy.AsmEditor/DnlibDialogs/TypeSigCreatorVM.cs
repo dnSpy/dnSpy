@@ -110,11 +110,11 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		bool showTypeFullName = true;
 
 		public bool CanAddGeneric => IsEnabled && (options.CanAddGenericTypeVar || options.CanAddGenericMethodVar);
-		public bool IsValidTypeSig => options.NullTypeSigAllowed || !(TypeSig is null);
+		public bool IsValidTypeSig => options.NullTypeSigAllowed || TypeSig is not null;
 		public bool CanAddLeafTypeSig => IsEnabled && TypeSig is null;
 		public bool AddingLeafTypeSig => TypeSig is null;
-		public bool CanAddNonLeafTypeSig => IsEnabled && !(TypeSig is PinnedSig) && !(TypeSig is null);
-		public bool AddingNonLeafTypeSig => !(TypeSig is null);
+		public bool CanAddNonLeafTypeSig => IsEnabled && !(TypeSig is PinnedSig) && TypeSig is not null;
+		public bool AddingNonLeafTypeSig => TypeSig is not null;
 		public string TypeSigDnlibFullName => TypeSig is null ? "null" : TypeSig.FullName;
 
 		public string TypeSigLanguageFullName {
@@ -128,8 +128,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		public ICommand ReinitializeCommand => new RelayCommand(a => Reinitialize());
-		public ICommand ClearTypeSigCommand => new RelayCommand(a => TypeSig = null, a => IsEnabled && !(TypeSig is null));
-		public ICommand RemoveLastTypeSigCommand => new RelayCommand(a => RemoveLastTypeSig(), a => IsEnabled && !(TypeSig is null));
+		public ICommand ClearTypeSigCommand => new RelayCommand(a => TypeSig = null, a => IsEnabled && TypeSig is not null);
+		public ICommand RemoveLastTypeSigCommand => new RelayCommand(a => RemoveLastTypeSig(), a => IsEnabled && TypeSig is not null);
 		public ICommand AddTypeDefOrRefCommand => new RelayCommand(a => AddTypeDefOrRef(), a => AddTypeDefOrRefCanExecute());
 		public ICommand AddGenericVarCommand => new RelayCommand(a => AddGenericVar(), a => AddGenericVarCanExecute());
 		public ICommand AddGenericMVarCommand => new RelayCommand(a => AddGenericMVar(), a => AddGenericMVarCanExecute());
@@ -189,7 +189,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		void RemoveLastTypeSig() {
-			if (!(TypeSig is null))
+			if (TypeSig is not null)
 				TypeSig = TypeSig.Next;
 		}
 
@@ -204,7 +204,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				return null;
 
 			var corLibSig = options.OwnerModule.CorLibTypes.GetCorLibTypeSig(type);
-			if (!(corLibSig is null))
+			if (corLibSig is not null)
 				return corLibSig;
 			else {
 				var td = type.ResolveTypeDef();
@@ -308,7 +308,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		void AddCModReqdSig() {
 			var type = GetTypeSig();
-			if (!(type is null))
+			if (type is not null)
 				TypeSig = new CModReqdSig(type.ToTypeDefOrRef(), TypeSig);
 		}
 
@@ -316,7 +316,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		void AddCModOptSig() {
 			var type = GetTypeSig();
-			if (!(type is null))
+			if (type is not null)
 				TypeSig = new CModOptSig(type.ToTypeDefOrRef(), TypeSig);
 		}
 

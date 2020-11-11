@@ -205,7 +205,7 @@ namespace dndbg.Engine {
 			return res;
 		}
 
-		public bool Equals(CorCode? other) => !(other is null) && RawObject == other.RawObject;
+		public bool Equals(CorCode? other) => other is not null && RawObject == other.RawObject;
 		public override bool Equals(object? obj) => Equals(obj as CorCode);
 		public override int GetHashCode() => RawObject.GetHashCode();
 	}

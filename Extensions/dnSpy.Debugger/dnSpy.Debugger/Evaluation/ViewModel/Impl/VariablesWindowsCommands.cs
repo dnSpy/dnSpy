@@ -190,7 +190,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 		IEnumerable<CreatedMenuItem> IMenuItemProvider.Create(IMenuItemContext context) {
 			var ctx = CreateContext(context);
-			Debug2.Assert(!(ctx is null));
+			Debug2.Assert(ctx is not null);
 			if (ctx is null)
 				yield break;
 
@@ -228,7 +228,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 		IEnumerable<CreatedMenuItem> IMenuItemProvider.Create(IMenuItemContext context) {
 			var ctx = CreateContext(context);
-			Debug2.Assert(!(ctx is null));
+			Debug2.Assert(ctx is not null);
 			if (ctx is null)
 				yield break;
 

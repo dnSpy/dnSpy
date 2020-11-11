@@ -47,13 +47,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		public override DmdMethodInfo? Resolve(bool throwOnError) {
-			if (!(__resolvedMethod_DONT_USE is null))
+			if (__resolvedMethod_DONT_USE is not null)
 				return __resolvedMethod_DONT_USE;
 
 			var genericMethodDef = (DmdMethodDef?)genericMethodRef.Resolve(throwOnError);
-			if (!(genericMethodDef is null)) {
+			if (genericMethodDef is not null) {
 				var newResolvedMethod = (DmdMethodSpec)AppDomain.MakeGenericMethod(genericMethodDef, genericArguments, DmdMakeTypeOptions.None);
-				if (!(newResolvedMethod is null)) {
+				if (newResolvedMethod is not null) {
 					Interlocked.CompareExchange(ref __resolvedMethod_DONT_USE, newResolvedMethod, null);
 					return __resolvedMethod_DONT_USE!;
 				}

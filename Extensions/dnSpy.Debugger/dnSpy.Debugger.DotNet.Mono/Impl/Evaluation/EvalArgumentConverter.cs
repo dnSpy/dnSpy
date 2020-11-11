@@ -87,7 +87,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 				return new EvalArgumentResult(appDomain.CreateString(s));
 			}
 			var res = ConvertCore(value, origType, out type);
-			if (!(res.ErrorMessage is null))
+			if (res.ErrorMessage is not null)
 				return res;
 			if (origType.IsEnum) {
 				type = origType;
@@ -323,7 +323,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 
 		static bool IsInitialized<T>(T[] array) where T : class {
 			for (int i = 0; i < array.Length; i++) {
-				if (!(array[i] is null))
+				if (array[i] is not null)
 					return true;
 			}
 			return false;
@@ -383,7 +383,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			var elementType = reflectionAppDomain.System_String;
 			type = elementType.MakeArrayType();
 			var res = CreateSZArray(elementType, array.Length);
-			if (!(res.ErrorMessage is null))
+			if (res.ErrorMessage is not null)
 				return res;
 			if (!IsInitialized(array))
 				return res;
@@ -396,7 +396,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 					continue;
 
 				var stringValueRes = Convert(s, elementType, out var type2);
-				if (!(stringValueRes.ErrorMessage is null))
+				if (stringValueRes.ErrorMessage is not null)
 					return stringValueRes;
 
 				arrayValue[i] = stringValueRes.Value;
@@ -408,7 +408,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		unsafe EvalArgumentResult ConvertSZArray(void* array, int length, int elementSize, DmdType elementType, out DmdType type) {
 			type = elementType.MakeArrayType();
 			var res = CreateSZArray(elementType, length);
-			if (!(res.ErrorMessage is null))
+			if (res.ErrorMessage is not null)
 				return res;
 			if (!IsInitialized(array, length * elementSize))
 				return res;

@@ -73,7 +73,7 @@ namespace dnSpy.AsmEditor.Resources {
 			if (dnlibTypePicker is null)
 				throw new InvalidOperationException();
 			var newType = dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Type, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.TypeDef), GetTypeRef(), ownerModule);
-			if (!(newType is null))
+			if (newType is not null)
 				TypeFullName = newType.AssemblyQualifiedName;
 		}
 

@@ -62,13 +62,13 @@ namespace dnSpy.AsmEditor.Resources {
 
 			case dnlib.DotNet.ResourceType.AssemblyLinked:
 				var al = (AssemblyLinkedResource)resource;
-				Debug2.Assert(!(Assembly is null));
+				Debug2.Assert(Assembly is not null);
 				al.Assembly = Assembly;
 				break;
 
 			case dnlib.DotNet.ResourceType.Linked:
 				var lr = (LinkedResource)resource;
-				Debug2.Assert(!(File is null));
+				Debug2.Assert(File is not null);
 				lr.File = File;
 				break;
 

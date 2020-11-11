@@ -34,7 +34,7 @@ namespace dnSpy.Documents.TreeView {
 
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) {
 			var td = TryGetTypeDef();
-			if (!(td is null))
+			if (td is not null)
 				return dnImgMgr.GetImageReference(td);
 			return isBaseType ? DsImages.ClassPublic : DsImages.InterfacePublic;
 		}
@@ -44,10 +44,10 @@ namespace dnSpy.Documents.TreeView {
 
 		TypeDef? TryGetTypeDef() {
 			var td = (TypeDef?)weakRefResolvedTypeDef.Target;
-			if (!(td is null))
+			if (td is not null)
 				return td;
 			td = TryGetTypeDefOrRef().ResolveTypeDef();
-			if (!(td is null))
+			if (td is not null)
 				weakRefResolvedTypeDef = new WeakReference(td);
 			return td;
 		}
@@ -89,7 +89,7 @@ namespace dnSpy.Documents.TreeView {
 			if (td is null)
 				yield break;
 
-			if (!(td.BaseType is null))
+			if (td.BaseType is not null)
 				yield return new BaseTypeNodeImpl(Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.BaseTypeTreeNodeGroupBaseType), td.BaseType, true);
 			foreach (var iface in td.Interfaces)
 				yield return new BaseTypeNodeImpl(Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.InterfaceBaseTypeTreeNodeGroupBaseType), iface.Interface, false);

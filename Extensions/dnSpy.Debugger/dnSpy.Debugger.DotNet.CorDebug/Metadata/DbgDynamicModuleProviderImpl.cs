@@ -34,7 +34,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Metadata {
 	sealed class DbgDynamicModuleProviderFactoryImpl : DbgDynamicModuleProviderFactory {
 		public override DbgDynamicModuleProvider? Create(DbgRuntime runtime) {
 			var engine = DbgEngineImpl.TryGetEngine(runtime);
-			if (!(engine is null))
+			if (engine is not null)
 				return runtime.GetOrCreateData(() => new DbgDynamicModuleProviderImpl(engine));
 
 			return null;
@@ -63,15 +63,15 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Metadata {
 
 		public override ModuleDef? GetDynamicMetadata(DbgModule module, out ModuleId moduleId) {
 			var data = module.GetOrCreateData<DynamicModuleData>();
-			if (!(data.Metadata is null)) {
+			if (data.Metadata is not null) {
 				moduleId = data.ModuleId;
 				return data.Metadata;
 			}
 			var info = Invoke(() => {
-				if (!(data.Metadata is null))
+				if (data.Metadata is not null)
 					return (metadata: data.Metadata, moduleId: data.ModuleId);
 				var info2 = engine.GetDynamicMetadata_EngineThread(module);
-				if (!(info2.metadata is null)) {
+				if (info2.metadata is not null) {
 					// DsDotNetDocumentBase sets EnableTypeDefFindCache to true and that property accesses the
 					// Types property. It must be initialized in the correct thread.
 					_ = info2.metadata.Types;
@@ -91,7 +91,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Metadata {
 			engine.VerifyCorDebugThread();
 			foreach (var module in modules) {
 				var md = TryGetDynamicMetadata(module);
-				if (!(md is null))
+				if (md is not null)
 					md.DisableMDAPICalls = !started;
 			}
 		}
@@ -193,7 +193,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Metadata {
 		public override void InitializeNonLoadedClasses(DbgModule module, uint[] nonLoadedTokens) {
 			engine.VerifyCorDebugThread();
 			var cmod = TryGetDynamicMetadata(module);
-			Debug2.Assert(!(cmod is null));
+			Debug2.Assert(cmod is not null);
 			if (cmod is null)
 				return;
 			foreach (uint token in nonLoadedTokens)

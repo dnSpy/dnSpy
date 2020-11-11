@@ -127,7 +127,7 @@ namespace dnSpy.Debugger.DbgUI {
 			var engineGuids = new List<Guid>();
 			foreach (var lz in genericDebugEngineGuidProviders) {
 				var engineGuid = lz.Value.GetEngineGuid(filename);
-				if (!(engineGuid is null))
+				if (engineGuid is not null)
 					engineGuids.Add(engineGuid.Value);
 			}
 
@@ -147,7 +147,7 @@ namespace dnSpy.Debugger.DbgUI {
 					}
 				}
 				// The order of the engine guids is important so exit as soon as we find a match
-				if (!(firstResult is null))
+				if (firstResult is not null)
 					break;
 			}
 			return firstResult;

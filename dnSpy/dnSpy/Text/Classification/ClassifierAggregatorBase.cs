@@ -77,11 +77,11 @@ namespace dnSpy.Text.Classification {
 
 			var list = new List<ClassificationSpan>();
 			var targetSnapshot = span.Snapshot;
-			var tags = !(cancellationToken is null) ? tagAggregator.GetTags(span, cancellationToken.Value) : tagAggregator.GetTags(span);
+			var tags = cancellationToken is not null ? tagAggregator.GetTags(span, cancellationToken.Value) : tagAggregator.GetTags(span);
 			foreach (var mspan in tags) {
 				foreach (var s in mspan.Span.GetSpans(textBuffer)) {
 					var overlap = span.Overlap(s.TranslateTo(targetSnapshot, SpanTrackingMode.EdgeExclusive));
-					if (!(overlap is null))
+					if (overlap is not null)
 						list.Add(new ClassificationSpan(overlap.Value, mspan.Tag.ClassificationType));
 				}
 			}

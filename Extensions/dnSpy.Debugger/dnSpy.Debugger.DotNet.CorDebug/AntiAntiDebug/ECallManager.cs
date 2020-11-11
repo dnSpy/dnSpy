@@ -316,7 +316,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.AntiAntiDebug {
 				ulong nullPtr1 = ReadPtr(pos + ptrSize * 2);
 				ulong nullPtr2 = ReadPtr(pos + ptrSize * 3);
 				var name = ReadAsciizIdPtr(pos + ptrSize * 4);
-				if (nullPtr1 == 0 && nullPtr2 == 0 && !(name is null) && !(methRva is null) && (methRva.Value == 0 || IsCodeRva(methRva.Value))) {
+				if (nullPtr1 == 0 && nullPtr2 == 0 && name is not null && methRva is not null && (methRva.Value == 0 || IsCodeRva(methRva.Value))) {
 					tableFormat = TableFormat.V1;
 					return;
 				}
@@ -326,7 +326,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.AntiAntiDebug {
 			if (pos + ptrSize * (3 + (hasSig ? 1 : 0)) < reader.Length) {
 				uint? methRva = ReadRva(pos + ptrSize * 1);
 				var name = ReadAsciizIdPtr(pos + ptrSize * 2);
-				if (!(name is null) && !(methRva is null) && (methRva.Value == 0 || IsCodeRva(methRva.Value))) {
+				if (name is not null && methRva is not null && (methRva.Value == 0 || IsCodeRva(methRva.Value))) {
 					tableFormat = TableFormat.V2;
 					return;
 				}

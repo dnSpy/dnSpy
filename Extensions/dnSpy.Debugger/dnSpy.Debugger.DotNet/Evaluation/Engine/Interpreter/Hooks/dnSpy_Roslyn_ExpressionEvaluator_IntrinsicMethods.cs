@@ -119,7 +119,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter.Hooks {
 					break;
 				type = sig.ReturnType.GetElementType()!;
 				var origMethod = method.ReflectedType!.GetMethod(method.Module, method.MetadataToken);
-				Debug2.Assert(!(origMethod is null));
+				Debug2.Assert(origMethod is not null);
 				sig = origMethod.GetMethodSignature();
 				ps = sig.GetParameterTypes();
 				if (sig.GenericParameterCount == 1 && sig.ReturnType.IsPointer &&

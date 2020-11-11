@@ -122,7 +122,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		public bool CanUndo => undoCommands.Count != 0;
 		public bool CanRedo => redoCommands.Count != 0;
 		public int NumberOfModifiedDocuments => GetModifiedDocuments().Count();
-		bool IsAdding => !(currentCommands is null);
+		bool IsAdding => currentCommands is not null;
 
 		public void Add(IUndoCommand command) {
 			if (currentCommands is null) {
@@ -144,7 +144,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		/// </summary>
 		BeginEndAdder BeginAdd() {
 			Debug2.Assert(currentCommands is null);
-			if (!(currentCommands is null))
+			if (currentCommands is not null)
 				throw new InvalidOperationException();
 
 			return new BeginEndAdder(this);
@@ -152,7 +152,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 
 		void BeginAddInternal() {
 			Debug2.Assert(currentCommands is null);
-			if (!(currentCommands is null))
+			if (currentCommands is not null)
 				throw new InvalidOperationException();
 
 			int prev = currentCommandCounter;
@@ -161,7 +161,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		}
 
 		void EndAddInternal() {
-			Debug2.Assert(!(currentCommands is null));
+			Debug2.Assert(currentCommands is not null);
 			if (currentCommands is null)
 				throw new InvalidOperationException();
 
@@ -180,7 +180,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 
 		void Clear(bool clearUndo, bool clearRedo) {
 			Debug2.Assert(currentCommands is null);
-			if (!(currentCommands is null))
+			if (currentCommands is not null)
 				throw new InvalidOperationException();
 
 			if (clearUndo) {
@@ -195,8 +195,8 @@ namespace dnSpy.AsmEditor.UndoRedo {
 			if (clearUndo && clearRedo) {
 				foreach (var p in undoableDocumentsProviders) {
 					foreach (var uo in p.Value.GetObjects()) {
-						Debug2.Assert(!(uo is null));
-						if (!(uo is null) && !IsModified(uo))
+						Debug2.Assert(uo is not null);
+						if (uo is not null && !IsModified(uo))
 							uo.SavedCommand = 0;
 					}
 				}
@@ -216,7 +216,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 
 		public void Undo() {
 			Debug2.Assert(currentCommands is null);
-			if (!(currentCommands is null))
+			if (currentCommands is not null)
 				throw new InvalidOperationException();
 
 			if (undoCommands.Count == 0)
@@ -234,7 +234,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 
 		public void Redo() {
 			Debug2.Assert(currentCommands is null);
-			if (!(currentCommands is null))
+			if (currentCommands is not null)
 				throw new InvalidOperationException();
 
 			if (redoCommands.Count == 0)
@@ -281,10 +281,10 @@ namespace dnSpy.AsmEditor.UndoRedo {
 			var hash = new HashSet<object>();
 			foreach (var p in undoableDocumentsProviders) {
 				foreach (var uo in p.Value.GetObjects()) {
-					Debug2.Assert(!(uo is null));
-					if (!(uo is null) && IsModified(uo)) {
+					Debug2.Assert(uo is not null);
+					if (uo is not null && IsModified(uo)) {
 						var doc = p.Value.GetDocument(uo);
-						Debug2.Assert(!(doc is null));
+						Debug2.Assert(doc is not null);
 						if (doc is null)
 							throw new InvalidOperationException();
 						hash.Add(doc);
@@ -297,7 +297,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		object? GetDocument(IUndoObject uo) {
 			foreach (var p in undoableDocumentsProviders) {
 				var doc = p.Value.GetDocument(uo);
-				if (!(doc is null))
+				if (doc is not null)
 					return doc;
 			}
 
@@ -371,7 +371,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		IEnumerable<IUndoObject> GetModifiedObjects(IUndoCommand command) {
 			foreach (var obj in command.ModifiedObjects) {
 				var uo = GetUndoObject(obj);
-				if (!(uo is null))
+				if (uo is not null)
 					yield return uo;
 			}
 		}
@@ -379,7 +379,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		public IUndoObject? GetUndoObject(object obj) {
 			foreach (var up in undoableDocumentsProviders) {
 				var uo = up.Value.GetUndoObject(obj);
-				if (!(uo is null))
+				if (uo is not null)
 					return uo;
 			}
 
@@ -416,7 +416,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 						continue;
 					foreach (var obj in cmd2.NonModifiedObjects) {
 						var uo = GetUndoObject(obj);
-						if (!(uo is null))
+						if (uo is not null)
 							yield return uo;
 					}
 				}

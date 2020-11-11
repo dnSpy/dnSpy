@@ -41,7 +41,7 @@ namespace dnSpy.Text.Editor {
 		IEnumerable<SpaceReservationManager> SpaceReservationManagers {
 			get {
 				foreach (var mgr in spaceReservationManagers) {
-					if (!(mgr is null))
+					if (mgr is not null)
 						yield return mgr;
 				}
 			}
@@ -123,7 +123,7 @@ namespace dnSpy.Text.Editor {
 			wpfTextView.Closed -= WpfTextView_Closed;
 			for (int i = 0; i < spaceReservationManagers.Length; i++) {
 				var mgr = spaceReservationManagers[i];
-				if (!(mgr is null)) {
+				if (mgr is not null) {
 					spaceReservationManagers[i] = null;
 					mgr.GotAggregateFocus -= SpaceReservationManager_GotAggregateFocus;
 					mgr.LostAggregateFocus -= SpaceReservationManager_LostAggregateFocus;

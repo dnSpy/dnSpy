@@ -76,7 +76,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 				NameParts = nameParts ?? throw new ArgumentNullException(nameof(nameParts));
 				ValueParts = valueParts ?? throw new ArgumentNullException(nameof(valueParts));
 				TypeParts = typeParts ?? throw new ArgumentNullException(nameof(typeParts));
-				if (!(typeContext is null)) {
+				if (typeContext is not null) {
 					lockObj = new object();
 					eeStates = new Dictionary<string, object?>(StringComparer.Ordinal);
 				}
@@ -130,7 +130,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 					try {
 						var evalInfo2 = new DbgEvaluationInfo(typeState.TypeContext!, evalInfo.Frame, evalInfo.CancellationToken);
 						evalRes = evaluator.Evaluate(evalInfo2, value, part.Text, DbgEvaluationOptions.Expression, eeState);
-						if (!(evalRes.Error is null)) {
+						if (evalRes.Error is not null) {
 							output.Write(DbgTextColor.Error, "<<<");
 							output.Write(DbgTextColor.Error, evalRes.Error);
 							output.Write(DbgTextColor.Error, ">>>");
@@ -155,7 +155,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 
 		TypeState GetOrCreateTypeState(DmdType type, DbgLanguage language) {
 			var state = StateWithKey<TypeState>.TryGet(type, language);
-			if (!(state is null))
+			if (state is not null)
 				return state;
 			return GetOrCreateTypeStateCore(type, language);
 		}
@@ -193,11 +193,11 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 
 		(DisplayPart[] nameParts, DisplayPart[] valueParts, DisplayPart[] typeParts) GetDisplayParts(DmdType type) {
 			var ddaType = type.AppDomain.GetWellKnownType(DmdWellKnownType.System_Diagnostics_DebuggerDisplayAttribute, isOptional: true);
-			Debug2.Assert(!(ddaType is null));
+			Debug2.Assert(ddaType is not null);
 
 			bool forceNoAttr = ShouldIgnoreDebuggerDisplayAttribute(type);
 			string? nameDisplayString = null, valueDisplayString = null, typeDisplayString = null;
-			if (!forceNoAttr && !(ddaType is null)) {
+			if (!forceNoAttr && ddaType is not null) {
 				var attr = type.FindCustomAttribute(ddaType, inherit: true);
 				if (attr is null) {
 					if (type.CanCastTo(type.AppDomain.System_Type)) {

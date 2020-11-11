@@ -73,7 +73,7 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		public override bool IsEnabled(IMenuItemContext context) =>
-			GetModules().Length > 0 && decompilerService.AllDecompilers.Any(a => !(a.ProjectFileExtension is null));
+			GetModules().Length > 0 && decompilerService.AllDecompilers.Any(a => a.ProjectFileExtension is not null);
 
 		public override void Execute(IMenuItemContext context) {
 			var modules = GetModules();
@@ -82,14 +82,14 @@ namespace dnSpy.Documents.Tabs {
 
 			var decompiler = decompilerService.Decompiler;
 			if (decompiler.ProjectFileExtension is null) {
-				decompiler = decompilerService.AllDecompilers.FirstOrDefault(a => !(a.ProjectFileExtension is null));
-				Debug2.Assert(!(decompiler is null));
+				decompiler = decompilerService.AllDecompilers.FirstOrDefault(a => a.ProjectFileExtension is not null);
+				Debug2.Assert(decompiler is not null);
 				if (decompiler is null)
 					return;
 			}
 
 			var task = new ExportTask(this, modules);
-			var vm = new ExportToProjectVM(new PickDirectory(), decompilerService, task, !(bamlDecompiler is null));
+			var vm = new ExportToProjectVM(new PickDirectory(), decompilerService, task, bamlDecompiler is not null);
 			task.vm = vm;
 			vm.ProjectVersion = exportToProjectSettings.ProjectVersion;
 			vm.CreateResX = documentTreeViewSettings.DeserializeResources;
@@ -129,7 +129,7 @@ namespace dnSpy.Documents.Tabs {
 				cancellationTokenSource = new CancellationTokenSource();
 				cancellationToken = cancellationTokenSource.Token;
 				dispatcher = Dispatcher.CurrentDispatcher;
-				if (!(owner.bamlDecompiler is null)) {
+				if (owner.bamlDecompiler is not null) {
 					bamlDecompiler = owner.bamlDecompiler.Value;
 					xamlOutputOptionsProvider = owner.xamlOutputOptionsProvider?.Value;
 				}
@@ -161,7 +161,7 @@ namespace dnSpy.Documents.Tabs {
 						GetDisableAssemblyLoad = () => owner.documentTreeView.DocumentService.DisableAssemblyLoad(),
 						AsyncMethodBodyDecompilation = false,
 					};
-					Debug2.Assert(!(vm.Directory is null));
+					Debug2.Assert(vm.Directory is not null);
 					var options = new ProjectCreatorOptions(vm.Directory, cancellationToken);
 					options.ProjectVersion = vm.ProjectVersion;
 					if (vm.CreateSolution)
@@ -169,7 +169,7 @@ namespace dnSpy.Documents.Tabs {
 					options.Logger = this;
 					options.ProgressListener = this;
 
-					bool hasProjectGuid = !(vm.ProjectGuid.Value is null);
+					bool hasProjectGuid = vm.ProjectGuid.Value is not null;
 					string? guidFormat = null;
 					int guidNum = 0;
 					if (hasProjectGuid) {
@@ -185,7 +185,7 @@ namespace dnSpy.Documents.Tabs {
 							DecompileXaml = vm.DecompileXaml,
 							ProjectGuid = hasProjectGuid ? new Guid(string.Format(guidFormat!, guidNum++)) : Guid.NewGuid(),
 						};
-						if (!(bamlDecompiler is null)) {
+						if (bamlDecompiler is not null) {
 							var o = BamlDecompilerOptions.Create(vm.Decompiler.Decompiler);
 							var outputOptions = xamlOutputOptionsProvider?.Default ?? new XamlOutputOptions();
 							projOpts.DecompileBaml = (a, b, c, d) => bamlDecompiler.Decompile(a, b, c, o, d, outputOptions);
@@ -203,7 +203,7 @@ namespace dnSpy.Documents.Tabs {
 				.ContinueWith(t => {
 					DnSpyEventSource.Log.ExportToProjectStop();
 					var ex = t.Exception;
-					if (!(ex is null))
+					if (ex is not null)
 						Error(string.Format(dnSpy_Resources.ErrorExceptionOccurred, ex));
 					EmtpyErrorList();
 					vm.OnExportComplete();
@@ -268,8 +268,8 @@ namespace dnSpy.Documents.Tabs {
 							newValue = newProgress;
 							newProgress = null;
 						}
-						Debug2.Assert(!(newValue is null));
-						if (!(newValue is null))
+						Debug2.Assert(newValue is not null);
+						if (newValue is not null)
 							vm.TotalProgress = newValue.Value;
 					}));
 				}
@@ -286,7 +286,7 @@ namespace dnSpy.Documents.Tabs {
 
 		static string? GetSolutionFilename(IEnumerable<ModuleDef> modules) {
 			foreach (var e in modules.OrderBy(a => (a.Characteristics & Characteristics.Dll) == 0 ? 0 : 1)) {
-				var name = e.IsManifestModule && !(e.Assembly is null) ? GetSolutionName(e.Assembly.Name) : GetSolutionName(e.Name);
+				var name = e.IsManifestModule && e.Assembly is not null ? GetSolutionName(e.Assembly.Name) : GetSolutionName(e.Name);
 				if (!string.IsNullOrWhiteSpace(name))
 					return name;
 			}
@@ -308,7 +308,7 @@ namespace dnSpy.Documents.Tabs {
 			var hashSet = new HashSet<ModuleDef?>();
 			foreach (var n in documentTreeView.TreeView.TopLevelSelection) {
 				var asmNode = n.GetAssemblyNode();
-				if (!(asmNode is null)) {
+				if (asmNode is not null) {
 					asmNode.TreeNode.EnsureChildrenLoaded();
 					foreach (var c in asmNode.TreeNode.DataChildren.OfType<ModuleDocumentNode>())
 						hashSet.Add(c.Document.ModuleDef);
@@ -316,7 +316,7 @@ namespace dnSpy.Documents.Tabs {
 				}
 
 				var modNode = n.GetModuleNode();
-				if (!(modNode is null))
+				if (modNode is not null)
 					hashSet.Add(modNode.Document.ModuleDef);
 			}
 			hashSet.Remove(null);
@@ -351,14 +351,14 @@ namespace dnSpy.Documents.Tabs {
 			this.documentTabService = documentTabService;
 		}
 
-		public override bool IsVisible(IMenuItemContext context) => !(GetTabGroup(context) is null);
+		public override bool IsVisible(IMenuItemContext context) => GetTabGroup(context) is not null;
 		public override string? GetHeader(IMenuItemContext context) => saveService.GetMenuHeader(GetDocumentTab(context));
 
 		ITabGroup? GetTabGroup(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TABCONTROL_GUID))
 				return null;
 			var g = context.Find<ITabGroup>();
-			return !(g is null) && documentTabService.Owns(g) ? g : null;
+			return g is not null && documentTabService.Owns(g) ? g : null;
 		}
 
 		IDocumentTab? GetDocumentTab(IMenuItemContext context) {

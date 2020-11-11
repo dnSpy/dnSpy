@@ -89,10 +89,10 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 					if (value.HasRawValue && value.RawValue is null)
 						return new SimpleSavedValue(value.ValueType, value.RawValue, valueType);
 					var objectId = dbgObjectIdService.CreateObjectId(value, CreateObjectIdOptions.Hidden);
-					if (!(objectId is null))
+					if (objectId is not null)
 						return new ObjectIdSavedValue(dbgObjectIdService, objectId);
 					var addr = value.GetRawAddressValue(onlyDataAddress: false);
-					if (!(addr is null))
+					if (addr is not null)
 						return new AddressSavedValue(addr.Value, valueType);
 					return null;
 
@@ -137,7 +137,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 
 				public override bool Equals(DbgEvaluationInfo evalInfo, SavedValue other) {
 					var obj = other as SimpleSavedValue;
-					return !(obj is null) &&
+					return obj is not null &&
 						obj.type == type &&
 						Equals(obj.value, value) &&
 						(value is null || obj.valueType == valueType);
@@ -192,7 +192,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 
 		public override DbgCodeBreakpointCheckResult ShouldBreak(DbgBoundCodeBreakpoint boundBreakpoint, DbgThread thread, DbgCodeBreakpointCondition condition) {
 			var expression = condition.Condition;
-			Debug2.Assert(!(expression is null));
+			Debug2.Assert(expression is not null);
 			if (expression is null)
 				return new DbgCodeBreakpointCheckResult("Missing expression");
 
@@ -208,7 +208,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 				var state = GetState(boundBreakpoint, language, frame, condition, cancellationToken);
 				var evalInfo = new DbgEvaluationInfo(state.Context!, frame, cancellationToken);
 				var evalRes = language.ExpressionEvaluator.Evaluate(evalInfo, expression, DbgEvaluationOptions.Expression, state.ExpressionEvaluatorState!);
-				if (!(evalRes.Error is null))
+				if (evalRes.Error is not null)
 					return new DbgCodeBreakpointCheckResult(evalRes.Error);
 				value = evalRes.Value!;
 
@@ -254,9 +254,9 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 				}
 			}
 			finally {
-				if (!(frame is null))
+				if (frame is not null)
 					thread.Process.DbgManager.Close(frame);
-				if (!(value is null))
+				if (value is not null)
 					thread.Process.DbgManager.Close(value);
 			}
 		}

@@ -53,7 +53,7 @@ namespace dnSpy.Bookmarks.DotNet {
 
 			if (!iloc.Module.IsInMemory && !iloc.Module.IsDynamic) {
 				var s = GetTokenAsString(iloc.Module, iloc.Token);
-				if (!(s is null))
+				if (s is not null)
 					section.Attribute("TokenString", s);
 			}
 		}

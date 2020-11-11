@@ -42,7 +42,7 @@ namespace dnSpy.Text.AvalonEdit {
 			// keep the first document line
 			DocumentLine ls = documentLineTree.GetByNumber(1);
 			// but mark all other lines as deleted, and detach them from the other nodes
-			for (DocumentLine line = ls.NextLine; !(line is null); line = line.NextLine) {
+			for (DocumentLine line = ls.NextLine; line is not null; line = line.NextLine) {
 				line.isDeleted = true;
 				line.parent = line.left = line.right = null;
 			}

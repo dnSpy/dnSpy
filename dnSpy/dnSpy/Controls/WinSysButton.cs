@@ -63,7 +63,7 @@ namespace dnSpy.Controls {
 		void WinSysButton_Loaded(object? sender, RoutedEventArgs e) {
 			Loaded -= WinSysButton_Loaded;
 			window = Window.GetWindow(this);
-			if (!(window is null)) // null if in design mode
+			if (window is not null) // null if in design mode
 				window.StateChanged += window_StateChanged;
 		}
 

@@ -54,11 +54,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				return dbgInMemoryModuleService.LoadModule(module);
 
 			var mod = dbgInMemoryModuleService.FindModule(module);
-			if (!(mod is null))
+			if (mod is not null)
 				return mod;
 
 			var id = dbgModuleIdProviderService.GetModuleId(module);
-			if (!(id is null))
+			if (id is not null)
 				return TryGetMetadata(id.Value, options);
 
 			return null;
@@ -67,7 +67,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		ModuleDef? LoadNonDiskFile(ModuleId moduleId, DbgLoadModuleOptions options) {
 			if (UseMemoryModules || moduleId.IsDynamic || moduleId.IsInMemory || (options & DbgLoadModuleOptions.ForceMemory) != 0) {
 				var module = dbgModuleIdProviderService.GetModule(moduleId);
-				if (!(module is null))
+				if (module is not null)
 					return dbgInMemoryModuleService.LoadModule(module);
 			}
 
@@ -94,7 +94,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		public override ModuleDef? TryGetMetadata(ModuleId moduleId, DbgLoadModuleOptions options) {
 			var mod = LoadNonDiskFile(moduleId, options) ?? LoadExisting(moduleId);
-			if (!(mod is null))
+			if (mod is not null)
 				return mod;
 
 			if (moduleId.IsDynamic || moduleId.IsInMemory)
@@ -110,7 +110,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				var document = documentService.TryGetOrCreate(DsDocumentInfo.CreateDocument(asmFilename), isAutoLoaded);
 				if (document is null)
 					document = documentService.Resolve(new AssemblyNameInfo(moduleId.AssemblyFullName), null);
-				if (!(document is null)) {
+				if (document is not null) {
 					// Common case is a single-file assembly or first module of a multifile assembly
 					if (asmFilename.Equals(moduleFilename, StringComparison.OrdinalIgnoreCase))
 						return document.ModuleDef;

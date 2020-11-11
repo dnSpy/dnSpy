@@ -76,15 +76,15 @@ namespace dnSpy.Text.Classification {
 			var cultureInfo = dict[ClassificationFormatDefinition.CultureInfoId] as CultureInfo;
 			var textRunProps = TextFormattingRunProperties.CreateTextFormattingRunProperties(foreground, background, typeface, size, hintingSize, textDecorations, textEffects, cultureInfo);
 			var isItalic = dict[ClassificationFormatDefinition.IsItalicId] as bool?;
-			if (!(isItalic is null))
+			if (isItalic is not null)
 				textRunProps = textRunProps.SetItalic(isItalic.Value);
 			var isBold = dict[ClassificationFormatDefinition.IsBoldId] as bool?;
-			if (!(isBold is null))
+			if (isBold is not null)
 				textRunProps = textRunProps.SetBold(isBold.Value);
 			double? opacity;
-			if (foreground is null && !((opacity = dict[ClassificationFormatDefinition.ForegroundOpacityId] as double?) is null))
+			if (foreground is null && (opacity = dict[ClassificationFormatDefinition.ForegroundOpacityId] as double?) is not null)
 				textRunProps = textRunProps.SetForegroundOpacity(opacity.Value);
-			if (background is null && !((opacity = dict[ClassificationFormatDefinition.BackgroundOpacityId] as double?) is null))
+			if (background is null && (opacity = dict[ClassificationFormatDefinition.BackgroundOpacityId] as double?) is not null)
 				textRunProps = textRunProps.SetBackgroundOpacity(opacity.Value);
 			return textRunProps;
 		}
@@ -93,7 +93,7 @@ namespace dnSpy.Text.Classification {
 			var brush = dict[brushId] as Brush;
 			if (brush is null) {
 				var color = dict[colorId] as Color?;
-				if (!(color is null))
+				if (color is not null)
 					brush = new SolidColorBrush(color.Value);
 			}
 			if (brush is null)
@@ -102,7 +102,7 @@ namespace dnSpy.Text.Classification {
 				return brush;
 
 			var opacity = dict[opacityId] as double? ?? defaultOpacity;
-			if (!(opacity is null)) {
+			if (opacity is not null) {
 				brush = brush.Clone();
 				brush.Opacity = opacity.Value;
 			}

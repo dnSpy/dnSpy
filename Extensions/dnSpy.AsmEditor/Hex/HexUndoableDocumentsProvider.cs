@@ -34,7 +34,7 @@ namespace dnSpy.AsmEditor.Hex {
 		[ImportingConstructor]
 		HexUndoableDocumentsProvider(Lazy<IHexBufferService> hexBufferService) => this.hexBufferService = hexBufferService;
 
-		IEnumerable<IUndoObject> IUndoableDocumentsProvider.GetObjects() => hexBufferService.Value.GetBuffers().Select(a => TryGetUndoObject(a)).Where(a => !(a is null));
+		IEnumerable<IUndoObject> IUndoableDocumentsProvider.GetObjects() => hexBufferService.Value.GetBuffers().Select(a => TryGetUndoObject(a)).Where(a => a is not null);
 
 		IUndoObject? IUndoableDocumentsProvider.GetUndoObject(object obj) {
 			if (obj is HexBuffer buffer)
@@ -42,7 +42,7 @@ namespace dnSpy.AsmEditor.Hex {
 			return null;
 		}
 
-		bool IUndoableDocumentsProvider.OnExecutedOneCommand(IUndoObject obj) => !(TryGetHexBuffer(obj) is null);
+		bool IUndoableDocumentsProvider.OnExecutedOneCommand(IUndoObject obj) => TryGetHexBuffer(obj) is not null;
 		object? IUndoableDocumentsProvider.GetDocument(IUndoObject obj) => TryGetHexBuffer(obj);
 		internal static HexBuffer? TryGetHexBuffer(IUndoObject? iuo) => (iuo as UndoObject)?.Value as HexBuffer;
 

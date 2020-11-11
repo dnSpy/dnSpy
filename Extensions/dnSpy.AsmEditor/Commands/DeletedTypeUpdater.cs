@@ -50,7 +50,7 @@ namespace dnSpy.AsmEditor.Commands {
 		public void Add() {
 			if (!parentNode.TreeNode.Children.Remove(ownerNode.TreeNode))
 				throw new InvalidOperationException();
-			if (!(ownerType is null)) {
+			if (ownerType is not null) {
 				typeIndex = ownerType.NestedTypes.IndexOf(type);
 				ownerType.NestedTypes.RemoveAt(typeIndex);
 			}
@@ -61,7 +61,7 @@ namespace dnSpy.AsmEditor.Commands {
 		}
 
 		public void Remove() {
-			if (!(ownerType is null))
+			if (ownerType is not null)
 				ownerType.NestedTypes.Insert(typeIndex, type);
 			else
 				ownerModule.Types.Insert(typeIndex, type);

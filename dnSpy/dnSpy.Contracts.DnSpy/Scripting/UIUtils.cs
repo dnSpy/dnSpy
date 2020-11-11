@@ -50,7 +50,7 @@ namespace dnSpy.Contracts.Scripting {
 					return;
 				}
 			}), DispatcherPriority.Send);
-			if (!(exInfo is null))
+			if (exInfo is not null)
 				exInfo.Throw();
 		}
 
@@ -77,7 +77,7 @@ namespace dnSpy.Contracts.Scripting {
 					return default!;
 				}
 			}), DispatcherPriority.Send);
-			if (!(exInfo is null))
+			if (exInfo is not null)
 				exInfo.Throw();
 			return res;
 		}
@@ -117,7 +117,7 @@ namespace dnSpy.Contracts.Scripting {
 						return default!;
 					}
 				}), DispatcherPriority.Send);
-				if (!(exInfo is null))
+				if (exInfo is not null)
 					exInfo.Throw();
 				if (!canContinue)
 					break;

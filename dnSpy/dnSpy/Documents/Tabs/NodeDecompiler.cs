@@ -69,7 +69,7 @@ namespace dnSpy.Documents.Tabs {
 			this.decompiler = decompiler;
 			this.decompilationContext = decompilationContext;
 			this.decompileNodeContext = decompileNodeContext;
-			if (!(this.decompileNodeContext is null))
+			if (this.decompileNodeContext is not null)
 				this.decompileNodeContext.ContentTypeString = decompiler.ContentTypeString;
 		}
 
@@ -186,7 +186,7 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		void DecompileUnknown(DocumentTreeNodeData node) {
-			if (node is IDecompileSelf decompileSelf && !(decompileNodeContext is null)) {
+			if (node is IDecompileSelf decompileSelf && decompileNodeContext is not null) {
 				if (decompileSelf.Decompile(decompileNodeContext))
 					return;
 			}
@@ -218,7 +218,7 @@ namespace dnSpy.Documents.Tabs {
 		void Decompile(PEDocumentNode node) {
 			decompiler.WriteCommentLine(output, node.Document.Filename);
 			var peImage = node.Document.PEImage;
-			if (!(peImage is null)) {
+			if (peImage is not null) {
 				var timestampLine = dnSpy_Resources.Decompile_Timestamp + " ";
 				uint ts = peImage.ImageNTHeaders.FileHeader.TimeDateStamp;
 				if ((int)ts > 0) {

@@ -41,7 +41,7 @@ namespace dnSpy.Settings {
 		}
 
 		public ISettingsSection CreateSection(string name) {
-			Debug2.Assert(!(name is null));
+			Debug2.Assert(name is not null);
 			if (name is null)
 				throw new ArgumentNullException(nameof(name));
 
@@ -52,14 +52,14 @@ namespace dnSpy.Settings {
 		}
 
 		public ISettingsSection GetOrCreateSection(string name) {
-			Debug2.Assert(!(name is null));
+			Debug2.Assert(name is not null);
 			if (name is null)
 				throw new ArgumentNullException(nameof(name));
 
 			ISettingsSection? section;
 			lock (lockObj) {
 				section = sections.FirstOrDefault(a => StringComparer.Ordinal.Equals(name, a.Name));
-				if (!(section is null))
+				if (section is not null)
 					return section;
 				sections.Add(section = new SettingsSection(name));
 			}
@@ -67,7 +67,7 @@ namespace dnSpy.Settings {
 		}
 
 		public void RemoveSection(string name) {
-			Debug2.Assert(!(name is null));
+			Debug2.Assert(name is not null);
 			if (name is null)
 				throw new ArgumentNullException(nameof(name));
 
@@ -80,7 +80,7 @@ namespace dnSpy.Settings {
 		}
 
 		public void RemoveSection(ISettingsSection section) {
-			Debug2.Assert(!(section is null));
+			Debug2.Assert(section is not null);
 			if (section is null)
 				throw new ArgumentNullException(nameof(section));
 

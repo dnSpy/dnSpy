@@ -37,7 +37,7 @@ namespace dnSpy.Language.Intellisense {
 			if (!center)
 				return;
 			var scrollViewer = TryGetScrollViewer(lb);
-			if (!(scrollViewer is null)) {
+			if (scrollViewer is not null) {
 				int index = lb.Items.IndexOf(item);
 				int itemsPerPage = (int)Math.Max(1, Math.Floor(scrollViewer.ViewportHeight));
 				scrollViewer.ScrollToVerticalOffset(Math.Max(0, index - itemsPerPage / 2));
@@ -52,7 +52,7 @@ namespace dnSpy.Language.Intellisense {
 					return res;
 
 				var res2 = FindVisualChild<T>(child);
-				if (!(res2 is null))
+				if (res2 is not null)
 					return res2;
 			}
 

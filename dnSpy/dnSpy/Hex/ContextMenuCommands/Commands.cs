@@ -191,7 +191,7 @@ namespace dnSpy.Hex.ContextMenuCommands {
 
 		public IEnumerable<CreatedMenuItem> Create(IMenuItemContext context) {
 			var ctx = CreateContext(context);
-			Debug2.Assert(!(ctx is null));
+			Debug2.Assert(ctx is not null);
 			if (ctx is null)
 				yield break;
 			var hexView = ctx.HexView;
@@ -217,7 +217,7 @@ namespace dnSpy.Hex.ContextMenuCommands {
 
 		public IEnumerable<CreatedMenuItem> Create(IMenuItemContext context) {
 			var ctx = CreateContext(context);
-			Debug2.Assert(!(ctx is null));
+			Debug2.Assert(ctx is not null);
 			if (ctx is null)
 				yield break;
 			var hexView = ctx.HexView;

@@ -91,7 +91,7 @@ namespace dnSpy.Contracts.Debugger.Exceptions {
 		/// <returns></returns>
 		public override int GetHashCode() {
 			int hc = (int)Flags;
-			if (!(Conditions is null)) {
+			if (Conditions is not null) {
 				foreach (var c in Conditions)
 					hc ^= (int)c.ConditionType ^ StringComparer.Ordinal.GetHashCode(c.Condition ?? string.Empty);
 			}

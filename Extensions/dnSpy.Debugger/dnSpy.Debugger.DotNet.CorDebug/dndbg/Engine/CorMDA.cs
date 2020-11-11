@@ -78,7 +78,7 @@ namespace dndbg.Engine {
 			: base(code) {
 		}
 
-		public bool Equals(CorMDA? other) => !(other is null) && RawObject == other.RawObject;
+		public bool Equals(CorMDA? other) => other is not null && RawObject == other.RawObject;
 		public override bool Equals(object? obj) => Equals(obj as CorMDA);
 		public override int GetHashCode() => RawObject.GetHashCode();
 		public override string ToString() => $"MDA: TID={OSThreadId} {Name}";

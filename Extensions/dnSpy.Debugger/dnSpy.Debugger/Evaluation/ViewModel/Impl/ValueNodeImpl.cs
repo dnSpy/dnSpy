@@ -216,14 +216,14 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 
 		internal bool IsEditNode => IsRoot && Context.EditValueNodeExpression.SupportsEditExpression && RootId is null;
 
-		internal bool CanEditNameExpression() => IsRoot && Context.EditValueNodeExpression.SupportsEditExpression && !Context.IsWindowReadOnly && !(Context.EvaluationInfo is null);
+		internal bool CanEditNameExpression() => IsRoot && Context.EditValueNodeExpression.SupportsEditExpression && !Context.IsWindowReadOnly && Context.EvaluationInfo is not null;
 
 		EditableValueTextInfo GetNameExpression() {
 			if (!CanEditNameExpression())
 				throw new InvalidOperationException();
 			var text = Context.ExpressionToEdit;
 			Context.ExpressionToEdit = null;
-			if (!(text is null))
+			if (text is not null)
 				return new EditableValueTextInfo(text, EditValueFlags.None);
 			// Always use the expression since the Name column could've been replaced with any random
 			// text if DebuggerDisplayAttribute.Name property isn't null.
@@ -244,15 +244,15 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				Context.EditValueNodeExpression.EditExpression(RootId, expression);
 		}
 
-		internal bool CanEditValue() => !RawNode.IsReadOnly && !Context.IsWindowReadOnly && !(Context.EvaluationInfo is null);
+		internal bool CanEditValue() => !RawNode.IsReadOnly && !Context.IsWindowReadOnly && Context.EvaluationInfo is not null;
 
 		EditableValueTextInfo GetEditableValue() {
 			if (!CanEditValue())
 				throw new InvalidOperationException();
-			Debug2.Assert(!(Context.EvaluationInfo is null));
+			Debug2.Assert(Context.EvaluationInfo is not null);
 			var text = Context.ExpressionToEdit;
 			Context.ExpressionToEdit = null;
-			if (!(text is null))
+			if (text is not null)
 				return new EditableValueTextInfo(text, EditValueFlags.None);
 			var output = new DbgStringBuilderTextWriter();
 			var options = Context.ValueNodeFormatParameters.ValueFormatterOptions | DbgValueFormatterOptions.Edit;
@@ -265,13 +265,13 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				throw new InvalidOperationException();
 			if (expression is null)
 				expression = string.Empty;
-			Debug2.Assert(!(Context.EvaluationInfo is null));
+			Debug2.Assert(Context.EvaluationInfo is not null);
 			if (GetEditableValue().Text == expression)
 				return;
 			var res = RawNode.Assign(Context.EvaluationInfo, expression, Context.EvaluationOptions);
 			if (res.Error is null)
 				oldCachedValue = cachedValue;
-			bool retry = !(res.Error is null) &&
+			bool retry = res.Error is not null &&
 				(res.Flags & DbgEEAssignmentResultFlags.CompilerError) != 0 &&
 				(res.Flags & DbgEEAssignmentResultFlags.ExecutedCode) == 0 &&
 				CanEditValue();
@@ -317,7 +317,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				yield break;
 			}
 
-			Debug2.Assert(!(Context.EvaluationInfo is null));
+			Debug2.Assert(Context.EvaluationInfo is not null);
 			var childCountTmp = RawNode.GetChildCount(Context.EvaluationInfo);
 			cachedChildCount = childCountTmp;
 			if (childCountTmp is null) {
@@ -384,7 +384,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		const int MAX_TREEVIEW_RECURSION = 30;
 
 		RawNode CreateNewNode(RawNode? newNode) {
-			if (!(newNode is null))
+			if (newNode is not null)
 				return newNode;
 			if (RawNode is ErrorRawNode errorNode)
 				return errorNode;
@@ -424,7 +424,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		bool SetDebuggerValueNode(DebuggerValueRawNode newNode, int recursionCounter) {
-			Debug2.Assert(!(newNode is null));
+			Debug2.Assert(newNode is not null);
 			var oldNode = __rawNode_DONT_USE;
 			__rawNode_DONT_USE = newNode;
 			oldCachedValue = cachedValue;
@@ -447,13 +447,13 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				for (int i = 0; i < count; i++) {
 					var childNode = (ValueNodeImpl)children[i].Data;
 					var childRawNode = childNode.RawNode as ChildDbgValueRawNode;
-					if (!(childRawNode is null) && !childRawNode.HasInitializedUnderlyingData) {
+					if (childRawNode is not null && !childRawNode.HasInitializedUnderlyingData) {
 						childRawNode.SetParent(newNode, null);
 						continue;
 					}
 
 					// Check if we must read the value. If its treenode is expanded, it must be read now, else it can be delayed
-					if (!(childRawNode is null) && childNode.TreeNode.IsExpanded) {
+					if (childRawNode is not null && childNode.TreeNode.IsExpanded) {
 						var newChildValue = Context.ValueNodeReader.GetDebuggerNodeForReuse(newNode, (uint)i);
 						// We have to create a new one here and can't reuse the existing ChildDbgValueRawNode by
 						// calling its SetParent() method. Otherwise IsSame() above will compare the same
@@ -466,7 +466,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 					}
 					else {
 						// It's safe to read the underlying data lazily
-						if (!(childRawNode is null))
+						if (childRawNode is not null)
 							childRawNode.SetParent(newNode, null);
 						else
 							childNode.__rawNode_DONT_USE = new ChildDbgValueRawNode(debuggerValueNodeChanged, childNode, newNode, (uint)i, Context.ValueNodeReader);
@@ -560,9 +560,9 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		bool IsEditingValue() => nameEditableValue?.IsEditingValue == true || valueEditableValue?.IsEditingValue == true;
 
 		internal void ClearEditingValueProperties() {
-			if (!(nameEditableValue is null))
+			if (nameEditableValue is not null)
 				nameEditableValue.IsEditingValue = false;
-			if (!(valueEditableValue is null))
+			if (valueEditableValue is not null)
 				valueEditableValue.IsEditingValue = false;
 		}
 	}

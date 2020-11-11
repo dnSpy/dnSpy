@@ -84,7 +84,7 @@ namespace Example1.Extension {
 	sealed class TVCommand5 : TVCtxMenuCommand {
 		public override void Execute(TVContext context) {
 			var node = GetTokenNode(context);
-			if (!(node is null)) {
+			if (node is not null) {
 				try {
 					Clipboard.SetText($"{node.Reference!.MDToken.Raw:X8}");
 				}
@@ -105,14 +105,14 @@ namespace Example1.Extension {
 			return $"Copy token {node.Reference!.MDToken.Raw:X8}";
 		}
 
-		public override bool IsVisible(TVContext context) => !(GetTokenNode(context) is null);
+		public override bool IsVisible(TVContext context) => GetTokenNode(context) is not null;
 	}
 
 	[ExportMenuItem(Header = "Copy Second Instruction", Group = Constants.GROUP_TREEVIEW, Order = 50)]
 	sealed class TVCommand6 : TVCtxMenuCommand {
 		public override void Execute(TVContext context) {
 			var instr = GetSecondInstruction(context);
-			if (!(instr is null)) {
+			if (instr is not null) {
 				try {
 					Clipboard.SetText($"Second instruction: {instr}");
 				}
@@ -132,6 +132,6 @@ namespace Example1.Extension {
 			return body.Instructions[1];
 		}
 
-		public override bool IsEnabled(TVContext context) => !(GetSecondInstruction(context) is null);
+		public override bool IsEnabled(TVContext context) => GetSecondInstruction(context) is not null;
 	}
 }

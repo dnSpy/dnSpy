@@ -23,7 +23,7 @@ using System.Linq;
 namespace dnSpy.Contracts.Documents {
 	sealed class AnnotationsImpl : IAnnotations {
 		public T? AddAnnotation<T>(T? annotation) where T : class {
-			if (!(annotation is null))
+			if (annotation is not null)
 				list.Add(annotation);
 			return annotation;
 		}

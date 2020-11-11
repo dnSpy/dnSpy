@@ -32,7 +32,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 
 		public CustomAttributeVM? Edit(string? title, CustomAttributeVM ca) {
 			var win = new CustomAttributeDlg();
-			if (!(title is null))
+			if (title is not null)
 				win.Title = title;
 			win.DataContext = ca;
 			win.Owner = ownerWindow ?? Application.Current.MainWindow;

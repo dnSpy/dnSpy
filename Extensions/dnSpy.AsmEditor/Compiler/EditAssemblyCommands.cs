@@ -106,17 +106,17 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			var asmNode = nodes[0] as AssemblyDocumentNode;
 			ModuleDocumentNode? modNode;
-			if (!(asmNode is null)) {
+			if (asmNode is not null) {
 				asmNode.TreeNode.EnsureChildrenLoaded();
 				modNode = asmNode.TreeNode.DataChildren.FirstOrDefault() as ModuleDocumentNode;
 			}
 			else
 				modNode = nodes[0] as ModuleDocumentNode;
-			Debug2.Assert(!(modNode is null));
+			Debug2.Assert(modNode is not null);
 			if (modNode is null)
 				return;
 			var module = modNode.Document.ModuleDef;
-			Debug2.Assert(!(module is null));
+			Debug2.Assert(module is not null);
 			if (module is null)
 				throw new InvalidOperationException();
 
@@ -135,7 +135,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				vm.Dispose();
 				return;
 			}
-			Debug2.Assert(!(vm.Result is null));
+			Debug2.Assert(vm.Result is not null);
 
 			undoCommandService.Value.Add(new EditAssemblyCommand(addUpdatedNodesHelperProvider, modNode, vm.Result));
 			vm.Dispose();

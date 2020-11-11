@@ -86,7 +86,7 @@ namespace dnSpy.Hex.Editor {
 				}
 				else {
 					var margin = lazy.Value.CreateMargin(wpfHexViewHost, marginContainer);
-					if (!(margin is null))
+					if (margin is not null)
 						newInfos.Add(new WpfHexViewMarginInfo(lazy.Value, lazy.Metadata, margin));
 				}
 			}

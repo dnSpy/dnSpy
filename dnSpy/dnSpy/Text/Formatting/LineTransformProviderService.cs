@@ -55,7 +55,7 @@ namespace dnSpy.Text.Formatting {
 				if (!textView.Roles.ContainsAny(p.Metadata.TextViewRoles))
 					continue;
 				var source = p.Value.Create(textView);
-				if (!(source is null))
+				if (source is not null)
 					list.Add(source);
 			}
 			return new LineTransformProvider(list.ToArray(), removeExtraTextLineVerticalPixels);

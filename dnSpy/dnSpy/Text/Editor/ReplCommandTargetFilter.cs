@@ -232,7 +232,7 @@ namespace dnSpy.Text.Editor {
 			else if (group == CommandConstants.TextEditorGroup) {
 				switch ((TextEditorIds)cmdId) {
 				case TextEditorIds.BACKSPACE:
-					if (!(replEditor.ReplEditorOperations.ProvisionalCompositionSpan is null))
+					if (replEditor.ReplEditorOperations.ProvisionalCompositionSpan is not null)
 						replEditor.ReplEditorOperations.InsertText(string.Empty);
 					else
 						replEditor.ReplEditorOperations.Backspace();

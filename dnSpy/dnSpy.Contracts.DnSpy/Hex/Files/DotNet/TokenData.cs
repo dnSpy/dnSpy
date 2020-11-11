@@ -107,7 +107,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <param name="formatter">Formatter</param>
 		public override void WriteValue(HexFieldFormatter formatter) {
 			var token = ReadToken();
-			if (!(token is null))
+			if (token is not null)
 				formatter.WriteToken(token.Value.Raw);
 			else
 				WriteValueError(formatter);

@@ -127,7 +127,7 @@ namespace dnSpy.Debugger.DbgUI {
 			}
 
 			var errMsg = dbgManager.Value.Start(options);
-			if (!(errMsg is null))
+			if (errMsg is not null)
 				messageBoxService.Value.Show(errMsg);
 		}
 		bool showingDebugProgramDlgBox;
@@ -164,7 +164,7 @@ namespace dnSpy.Debugger.DbgUI {
 		public override bool CanShowNextStatement => CanExecutePauseCommand;
 		public override void ShowNextStatement() {
 			var info = GetCurrentStatementLocation();
-			if (!(info.location is null)) {
+			if (info.location is not null) {
 				referenceNavigatorService.Value.GoTo(info.location);
 				dbgCallStackService.Value.ActiveFrameIndex = info.frameIndex;
 			}
@@ -174,7 +174,7 @@ namespace dnSpy.Debugger.DbgUI {
 			var frames = dbgCallStackService.Value.Frames.Frames;
 			for (int i = 0; i < frames.Count; i++) {
 				var location = frames[i].Location;
-				if (!(location is null))
+				if (location is not null)
 					return (location, i);
 			}
 			return (null, -1);
@@ -185,7 +185,7 @@ namespace dnSpy.Debugger.DbgUI {
 				if (!CanExecutePauseCommand || dbgManager.Value.CurrentThread.Current is null)
 					return false;
 				using (var res = GetCurrentTextViewStatementLocation())
-					return !(res.Location is null);
+					return res.Location is not null;
 			}
 		}
 
@@ -193,7 +193,7 @@ namespace dnSpy.Debugger.DbgUI {
 			if (!CanSetNextStatement)
 				return;
 			using (var res = GetCurrentTextViewStatementLocation()) {
-				if (!(res.Location is null))
+				if (res.Location is not null)
 					dbgManager.Value.CurrentThread.Current?.SetIP(res.Location);
 			}
 		}
@@ -211,7 +211,7 @@ namespace dnSpy.Debugger.DbgUI {
 			}
 
 			public void Dispose() {
-				if (!(allLocations is null) && allLocations.Count > 0)
+				if (allLocations is not null && allLocations.Count > 0)
 					dbgManager.Value.Close(allLocations);
 			}
 		}
@@ -308,7 +308,7 @@ namespace dnSpy.Debugger.DbgUI {
 				if (!CanExecutePauseCommand || dbgManager.Value.CurrentThread.Current is null)
 					return false;
 				using (var res = GetCurrentTextViewStatementLocation()) {
-					if (!(res.Location is null)) {
+					if (res.Location is not null) {
 						foreach (var runtime in GetRuntimes()) {
 							if (dbgShowNativeCodeService.Value.CanShowNativeCode(runtime, res.Location))
 								return true;
@@ -323,7 +323,7 @@ namespace dnSpy.Debugger.DbgUI {
 			if (!CanGoToDisassembly)
 				return;
 			using (var res = GetCurrentTextViewStatementLocation()) {
-				if (!(res.Location is null)) {
+				if (res.Location is not null) {
 					foreach (var runtime in GetRuntimes()) {
 						if (dbgShowNativeCodeService.Value.CanShowNativeCode(runtime, res.Location)) {
 							if (!dbgShowNativeCodeService.Value.ShowNativeCode(runtime, res.Location))
@@ -336,7 +336,7 @@ namespace dnSpy.Debugger.DbgUI {
 		}
 		IEnumerable<DbgRuntime> GetRuntimes() {
 			var currentRuntime = dbgManager.Value.CurrentRuntime.Current;
-			if (!(currentRuntime is null))
+			if (currentRuntime is not null)
 				yield return currentRuntime;
 			foreach (var process in dbgManager.Value.Processes) {
 				foreach (var runtime in process.Runtimes) {
@@ -357,7 +357,7 @@ namespace dnSpy.Debugger.DbgUI {
 		public override bool CanDeleteAllBreakpoints => dbgCodeBreakpointsService.Value.VisibleBreakpoints.Any();
 		public override void DeleteAllBreakpointsAskUser() {
 			var res = messageBoxService.Value.ShowIgnorableMessage(new Guid("37250D26-E844-49F4-904B-29600B90476C"), dnSpy_Debugger_Resources.AskDeleteAllBreakpoints, MsgBoxButton.Yes | MsgBoxButton.No);
-			if (!(res is null) && res != MsgBoxButton.Yes)
+			if (res is not null && res != MsgBoxButton.Yes)
 				return;
 			dbgCodeBreakpointsService.Value.Clear();
 		}
@@ -417,7 +417,7 @@ namespace dnSpy.Debugger.DbgUI {
 		}
 
 		void DbgManager_MessageSetIPComplete(object? sender, DbgMessageSetIPCompleteEventArgs e) {
-			if (!(e.Error is null))
+			if (e.Error is not null)
 				UI(() => ShowError_UI(e.Error));
 		}
 
@@ -537,7 +537,7 @@ namespace dnSpy.Debugger.DbgUI {
 					var bbe = (DbgMessageBoundBreakpointEventArgs)e;
 					var bpMsg = $"{dnSpy_Debugger_Resources.StatusBar_BreakpointHit} #{bbe.BoundBreakpoint.Breakpoint.Id} : pid={bbe.BoundBreakpoint.Process.Id}({GetProcessName(bbe.BoundBreakpoint.Process)})";
 					module = bbe.BoundBreakpoint.Module;
-					if (!(module is null))
+					if (module is not null)
 						bpMsg += $", {module.Name}";
 					if (bbe.BoundBreakpoint.HasAddress)
 						bpMsg += $", 0x{bbe.BoundBreakpoint.Address.ToString("X")}";

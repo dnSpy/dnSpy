@@ -53,7 +53,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			var list = new List<DmdMethodInfo>(otherMethods.Count);
 			foreach (var method in otherMethods) {
 				var accessor = AccessorUtils.FilterAccessor(options, method);
-				if (!(accessor is null))
+				if (accessor is not null)
 					list.Add(accessor);
 			}
 			return list.Count == 0 ? Array.Empty<DmdMethodInfo>() : list.ToArray();
@@ -82,7 +82,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		void InitializeEventMethods() {
 			var f = ExtraFields;
-			if (!(f.__otherMethods_DONT_USE is null))
+			if (f.__otherMethods_DONT_USE is not null)
 				return;
 			GetMethods(out var addMethod, out var removeMethod, out var raiseMethod, out var otherMethods);
 			lock (LockObject) {
@@ -98,7 +98,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public sealed override ReadOnlyCollection<DmdCustomAttributeData> GetCustomAttributesData() {
 			var f = ExtraFields;
-			if (!(f.__customAttributes_DONT_USE is null))
+			if (f.__customAttributes_DONT_USE is not null)
 				return f.__customAttributes_DONT_USE;
 			var info = CreateCustomAttributes();
 			var newCAs = CustomAttributesHelper.AddPseudoCustomAttributes(this, info);

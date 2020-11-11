@@ -47,14 +47,14 @@ namespace dnSpy.Contracts.Decompiler {
 
 			if (type.IsSealed && type.IsAbstract) {
 				var bt = type.BaseType;
-				if (!(bt is null) && bt.DefinitionAssembly.IsCorLib()) {
+				if (bt is not null && bt.DefinitionAssembly.IsCorLib()) {
 					if (bt is TypeRef baseTr) {
 						if (baseTr.Namespace == systemString && baseTr.Name == objectString)
 							return BoxedTextColor.StaticType;
 					}
 					else {
 						var baseTd = bt as TypeDef;
-						if (!(baseTd is null) && baseTd.Namespace == systemString && baseTd.Name == objectString)
+						if (baseTd is not null && baseTd.Namespace == systemString && baseTd.Name == objectString)
 							return BoxedTextColor.StaticType;
 					}
 				}
@@ -77,7 +77,7 @@ namespace dnSpy.Contracts.Decompiler {
 				return BoxedTextColor.Text;
 
 			var td = type.Resolve();
-			if (!(td is null))
+			if (td is not null)
 				return GetColor(td);
 
 			return BoxedTextColor.Type;
@@ -112,10 +112,10 @@ namespace dnSpy.Contracts.Decompiler {
 				if (mr.MethodSig is null)
 					return BoxedTextColor.InstanceMethod;
 				var md = mr.ResolveMethodDef();
-				if (!(md is null) && md.IsConstructor)
+				if (md is not null && md.IsConstructor)
 					return GetColor(md.DeclaringType);
 				if (!mr.MethodSig.HasThis) {
-					if (!(md is null) && md.IsDefined(systemRuntimeCompilerServicesString, extensionAttributeString))
+					if (md is not null && md.IsDefined(systemRuntimeCompilerServicesString, extensionAttributeString))
 						return BoxedTextColor.ExtensionMethod;
 					return BoxedTextColor.StaticMethod;
 				}
@@ -173,10 +173,10 @@ namespace dnSpy.Contracts.Decompiler {
 			if (genericParam is null)
 				return BoxedTextColor.Text;
 
-			if (!(genericParam.DeclaringType is null))
+			if (genericParam.DeclaringType is not null)
 				return BoxedTextColor.TypeGenericParameter;
 
-			if (!(genericParam.DeclaringMethod is null))
+			if (genericParam.DeclaringMethod is not null)
 				return BoxedTextColor.MethodGenericParameter;
 
 			return BoxedTextColor.TypeGenericParameter;
@@ -303,7 +303,7 @@ namespace dnSpy.Contracts.Decompiler {
 		}
 
 		static bool IsModule(TypeDef? type) =>
-			!(type is null) && type.DeclaringType is null && type.IsSealed && type.IsDefined(stringMicrosoftVisualBasicCompilerServices, stringStandardModuleAttribute);
+			type is not null && type.DeclaringType is null && type.IsSealed && type.IsDefined(stringMicrosoftVisualBasicCompilerServices, stringStandardModuleAttribute);
 		static readonly UTF8String stringMicrosoftVisualBasicCompilerServices = new UTF8String("Microsoft.VisualBasic.CompilerServices");
 		static readonly UTF8String stringStandardModuleAttribute = new UTF8String("StandardModuleAttribute");
 	}

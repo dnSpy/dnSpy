@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.Impl {
 			if (!e.CurrentChanged)
 				return;
 			var newProcess = ((DbgManager)sender!).CurrentProcess.Current;
-			if (!(newProcess is null))
+			if (newProcess is not null)
 				currentProcess = newProcess;
 		}
 

@@ -90,7 +90,7 @@ namespace dnSpy.Language.Intellisense {
 					sigsToRemove.Add(i);
 				}
 			}
-			if (!(sigsToRemove is null)) {
+			if (sigsToRemove is not null) {
 				for (int i = sigsToRemove.Count - 1; i >= 0; i--)
 					signatures.RemoveAt(sigsToRemove[i]);
 			}
@@ -125,7 +125,7 @@ namespace dnSpy.Language.Intellisense {
 				if (!TextView.TextDataModel.ContentType.IsOfAnyType(provider.Metadata.ContentTypes))
 					continue;
 				var source = provider.Value.TryCreateSignatureHelpSource(textBuffer);
-				if (!(source is null))
+				if (source is not null)
 					list.Add(source);
 			}
 			return list.ToArray();
@@ -171,7 +171,7 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		void DisposeSignatureHelpSources() {
-			if (!(signatureHelpSources is null)) {
+			if (signatureHelpSources is not null) {
 				foreach (var source in signatureHelpSources)
 					source.Dispose();
 				signatureHelpSources = null;
@@ -201,7 +201,7 @@ namespace dnSpy.Language.Intellisense {
 
 			foreach (var source in signatureHelpSources) {
 				var signature = source.GetBestMatch(this);
-				if (!(signature is null)) {
+				if (signature is not null) {
 					SelectedSignature = signature;
 					return true;
 				}

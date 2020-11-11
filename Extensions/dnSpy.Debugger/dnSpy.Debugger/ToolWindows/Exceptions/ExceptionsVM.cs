@@ -499,7 +499,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 			exceptionContext.UIDispatcher.VerifyAccess();
 			var category = selectedCategory?.Definition?.Name;
 			foreach (var item in realAllItems) {
-				if (!(category is null) && item.Definition.Id.Category != category)
+				if (category is not null && item.Definition.Id.Category != category)
 					continue;
 				var vmc = CreateCached_UI(item);
 				if (IsMatch_UI(vmc, filterText, showOnlyEnabledExceptions))

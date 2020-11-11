@@ -152,7 +152,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <param name="other">Other instance</param>
 		/// <returns></returns>
 		public bool Equals(HexBufferLineFormatterOptions? other) =>
-			!(other is null) &&
+			other is not null &&
 			CharsPerLine == other.CharsPerLine &&
 			BytesPerLine == other.BytesPerLine &&
 			GroupSizeInBytes == other.GroupSizeInBytes &&

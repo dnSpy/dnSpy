@@ -34,7 +34,7 @@ namespace dnSpy.Language.Intellisense {
 		public QuickInfoPresenter(IQuickInfoSession session)
 			: base(session) {
 			wpfTextView = session.TextView as IWpfTextView;
-			Debug2.Assert(!(wpfTextView is null));
+			Debug2.Assert(wpfTextView is not null);
 			popup = new Popup {
 				PlacementTarget = wpfTextView?.VisualElement,
 				Placement = PlacementMode.Relative,
@@ -63,12 +63,12 @@ namespace dnSpy.Language.Intellisense {
 				return false;
 
 			var point = session.GetTriggerPoint(session.TextView.TextSnapshot);
-			Debug2.Assert(!(point is null));
+			Debug2.Assert(point is not null);
 			if (point is null)
 				return false;
 
 			var line = session.TextView.TextViewLines.GetTextViewLineContainingBufferPosition(point.Value);
-			Debug2.Assert(!(line is null) && line.VisibilityState != VisibilityState.Unattached);
+			Debug2.Assert(line is not null && line.VisibilityState != VisibilityState.Unattached);
 			if (line is null || line.VisibilityState == VisibilityState.Unattached)
 				return false;
 
@@ -103,7 +103,7 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		bool ShouldDismiss(MouseEventArgs e) {
-			Debug2.Assert(!(wpfTextView is null));
+			Debug2.Assert(wpfTextView is not null);
 			var mousePos = GetMousePoint(e.MouseDevice);
 			if (mousePos is null)
 				return true;
@@ -147,7 +147,7 @@ namespace dnSpy.Language.Intellisense {
 
 		protected override void OnSessionDismissed() {
 			ClosePopup();
-			if (!(wpfTextView is null)) {
+			if (wpfTextView is not null) {
 				wpfTextView.VisualElement.MouseLeave -= VisualElement_MouseLeave;
 				wpfTextView.VisualElement.MouseMove -= VisualElement_MouseMove;
 				popup.RemoveHandler(UIElement.MouseLeaveEvent, new MouseEventHandler(Popup_MouseLeave));

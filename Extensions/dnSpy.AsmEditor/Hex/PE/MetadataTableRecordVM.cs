@@ -190,7 +190,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 
 		string GetGuidDescription(HexField field) {
 			var g = ReadGuidHeap(field);
-			if (!(g is null))
+			if (g is not null)
 				return $"{g.Value.ToString()} (#GUID Heap Index)";
 			return "#GUID Heap Index";
 		}
@@ -348,7 +348,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 					InvalidateDescription(i);
 			}
 			var infoCols = InfoColumnIndexes;
-			if (!(infoCols is null)) {
+			if (infoCols is not null) {
 				foreach (var index in infoCols) {
 					var field = hexFields[index];
 					if (changes.OverlapsWith(field.Span)) {

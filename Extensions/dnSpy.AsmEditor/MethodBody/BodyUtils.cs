@@ -79,7 +79,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public static object? TryGetModel(Dictionary<object, object> ops, object? objVm) {
 			if (IsNull(objVm))
 				return null;
-			Debug2.Assert(!(objVm is null));
+			Debug2.Assert(objVm is not null);
 			if (!ops.TryGetValue(objVm, out var objModel))
 				return objVm;
 			return objModel;
@@ -529,12 +529,12 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		public static void WriteObject(ITextColorWriter output, object? obj, WriteObjectFlags flags = WriteObjectFlags.None) {
-			Debug2.Assert(!(simpleILPrinter is null));
+			Debug2.Assert(simpleILPrinter is not null);
 			if (IsNull(obj)) {
 				output.Write(BoxedTextColor.Keyword, "null");
 				return;
 			}
-			Debug2.Assert(!(obj is null));
+			Debug2.Assert(obj is not null);
 
 			if (obj is IMemberRef mr) {
 				if (simpleILPrinter.Write(TextColorWriterToDecompilerOutput.Create(output), mr))

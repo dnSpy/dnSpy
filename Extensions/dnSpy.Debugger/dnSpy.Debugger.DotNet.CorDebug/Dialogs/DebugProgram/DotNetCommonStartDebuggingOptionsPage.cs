@@ -39,7 +39,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
 					OnPropertyChanged(nameof(Filename));
 					UpdateIsValid();
 					var path = GetPath(filename);
-					if (!(path is null))
+					if (path is not null)
 						WorkingDirectory = path;
 				}
 			}

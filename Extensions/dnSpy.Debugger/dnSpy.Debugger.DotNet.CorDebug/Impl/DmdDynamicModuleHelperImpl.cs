@@ -67,7 +67,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			var ilCode = func?.ILCode;
 			if (ilCode is null)
 				return null;
-			Debug2.Assert(!(func is null));
+			Debug2.Assert(func is not null);
 			ulong addr = ilCode.Address;
 			if (addr == 0)
 				return null;

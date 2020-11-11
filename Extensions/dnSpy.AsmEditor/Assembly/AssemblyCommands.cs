@@ -52,7 +52,7 @@ namespace dnSpy.AsmEditor.Assembly {
 	sealed class DisableMemoryMappedIOCommand : MenuItemBase {
 		public override bool IsVisible(IMenuItemContext context) =>
 			context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID) &&
-			(context.Find<TreeNodeData[]>() ?? Array.Empty<TreeNodeData>()).Any(a => !(GetDocument(a) is null));
+			(context.Find<TreeNodeData[]>() ?? Array.Empty<TreeNodeData>()).Any(a => GetDocument(a) is not null);
 
 		static IDsDocument? GetDocument(TreeNodeData node) {
 			var fileNode = node as DsDocumentNode;
@@ -72,7 +72,7 @@ namespace dnSpy.AsmEditor.Assembly {
 			var asms = new List<IDsDocument>();
 			foreach (var node in (context.Find<TreeNodeData[]>() ?? Array.Empty<TreeNodeData>())) {
 				var file = GetDocument(node);
-				if (!(file is null))
+				if (file is not null)
 					asms.Add(file);
 			}
 			foreach (var asm in asms)
@@ -276,7 +276,7 @@ namespace dnSpy.AsmEditor.Assembly {
 		}
 
 		static bool CanExecute(DocumentTreeNodeData[] nodes) =>
-			!(nodes is null) &&
+			nodes is not null &&
 			nodes.Length == 1 &&
 			nodes[0] is AssemblyDocumentNode;
 
@@ -327,7 +327,7 @@ namespace dnSpy.AsmEditor.Assembly {
 
 		public void Execute() {
 			newOptions.CopyTo(asmNode.Document.AssemblyDef!);
-			if (!(assemblyRefInfos is null)) {
+			if (assemblyRefInfos is not null) {
 				var pkt = newOptions.PublicKey.Token;
 				foreach (var info in assemblyRefInfos) {
 					info.AssemblyRef.Name = newOptions.Name;
@@ -343,7 +343,7 @@ namespace dnSpy.AsmEditor.Assembly {
 
 		public void Undo() {
 			origOptions.CopyTo(asmNode.Document.AssemblyDef!);
-			if (!(assemblyRefInfos is null)) {
+			if (assemblyRefInfos is not null) {
 				foreach (var info in assemblyRefInfos) {
 					info.AssemblyRef.Name = info.OrigName;
 					info.AssemblyRef.PublicKeyOrToken = info.OrigPublicKeyOrToken;
@@ -392,7 +392,7 @@ namespace dnSpy.AsmEditor.Assembly {
 		}
 
 		static bool CanExecute(DocumentTreeNodeData[] nodes) =>
-			!(nodes is null) &&
+			nodes is not null &&
 			(nodes.Length == 0 || nodes[0] is DsDocumentNode);
 
 		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppService appService, DocumentTreeNodeData[] nodes) {

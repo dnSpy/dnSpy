@@ -68,11 +68,11 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 				var dvCtrl = documentViewer.documentViewerControl;
 				var loc = dvCtrl.TextView.GetTextEditorPosition(args.OpenedFromKeyboard);
-				if (!(loc is null)) {
+				if (loc is not null) {
 					yield return new GuidObject(MenuConstants.GUIDOBJ_TEXTEDITORPOSITION_GUID, loc);
 
 					var @ref = dvCtrl.GetReferenceInfo(loc.Position);
-					if (!(@ref is null))
+					if (@ref is not null)
 						yield return new GuidObject(MenuConstants.GUIDOBJ_CODE_REFERENCE_GUID, @ref.Value.ToTextReference());
 				}
 			}
@@ -139,7 +139,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public override object? CreateUIState() {
 			if (isDisposed)
 				throw new ObjectDisposedException(nameof(IDocumentViewer));
-			if (!(cachedEditorPositionState is null))
+			if (cachedEditorPositionState is not null)
 				return cachedEditorPositionState;
 			return new EditorPositionState(documentViewerControl.TextView);
 		}
@@ -228,7 +228,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			if (section is null)
 				throw new ArgumentNullException(nameof(section));
 			var state = obj as EditorPositionState;
-			Debug2.Assert(!(state is null));
+			Debug2.Assert(state is not null);
 			if (state is null)
 				return;
 
@@ -278,7 +278,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			Debug.Assert(!isDisposed);
 			if (isDisposed)
 				return;
-			Debug2.Assert(!(DocumentTab is null));
+			Debug2.Assert(DocumentTab is not null);
 			if (DocumentTab is null)
 				return;
 			DocumentTab.FollowReference(textRef, newTab);

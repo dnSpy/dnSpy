@@ -65,7 +65,7 @@ namespace dnSpy.Hex.Editor {
 			if (TWPF.BrushComparer.Equals(newBackgroundBrush, backgroundBrush))
 				return;
 			backgroundBrush = newBackgroundBrush;
-			if (!(markerElement is null))
+			if (markerElement is not null)
 				markerElement.BackgroundBrush = backgroundBrush;
 		}
 		Brush? backgroundBrush;

@@ -55,7 +55,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 				derefValue = value.LoadIndirect().Value;
 				Debug2.Assert((derefValue is null) == ((evalInfo.Runtime.GetDotNetRuntime().Features & DbgDotNetRuntimeFeatures.NoDereferencePointers) != 0));
 			}
-			return !(derefValue is null) ? 1UL : 0;
+			return derefValue is not null ? 1UL : 0;
 		}
 
 		public override DbgDotNetValueNode[] GetChildren(LanguageValueNodeFactory valueNodeFactory, DbgEvaluationInfo evalInfo, ulong index, int count, DbgValueNodeEvaluationOptions options, ReadOnlyCollection<string>? formatSpecifiers) {
@@ -66,7 +66,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			var nodeInfo = new DbgDotNetValueNodeInfo(derefValue, derefExpr);
 			var res = valueNodeProviderFactory.Create(evalInfo, true, derefValue.Type, nodeInfo, options);
 			DbgDotNetValueNode valueNode;
-			if (!(res.ErrorMessage is null))
+			if (res.ErrorMessage is not null)
 				valueNode = valueNodeFactory.CreateError(evalInfo, DbgDotNetText.Empty, res.ErrorMessage, derefExpr, false);
 			else
 				valueNode = valueNodeFactory.Create(res.Provider!, derefName, nodeInfo, derefExpr, PredefinedDbgValueNodeImageNames.DereferencedPointer, false, false, value.Type.GetElementType()!, derefValue.Type, null, default, formatSpecifiers);

@@ -40,9 +40,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		public override string ToString() {
 			var td = EnumType.ResolveTypeDef();
-			if (!(td is null)) {
+			if (td is not null) {
 				var s = ModelUtils.GetEnumFieldName(td, Value);
-				if (!(s is null))
+				if (s is not null)
 					return $"{EnumType}.{s}";
 			}
 			if (!IsArray)
@@ -86,7 +86,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 					enumUnderlyingTypeField = null;
 				else {
 					enumUnderlyingTypeField = CreateEnumUnderlyingTypeField(td.GetEnumUnderlyingType().RemovePinnedAndModifiers().GetElementType());
-					if (!(enumUnderlyingTypeField is null)) {
+					if (enumUnderlyingTypeField is not null) {
 						enumUnderlyingTypeField.StringValue = StringValue;
 						ForceWriteStringValue(enumUnderlyingTypeField.StringValue);
 					}
@@ -114,7 +114,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		protected override void OnStringValueChanged() {
-			if (!(enumUnderlyingTypeField is null))
+			if (enumUnderlyingTypeField is not null)
 				enumUnderlyingTypeField.StringValue = StringValue;
 		}
 
@@ -132,7 +132,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		protected override string? ConvertToValue(out EnumInfo value) {
 			string? error = null;
 			value = enumInfo;
-			if (!(enumUnderlyingTypeField is null))
+			if (enumUnderlyingTypeField is not null)
 				error = enumUnderlyingTypeField.ConvertToObjectValue(out value.Value);
 
 			return error;
@@ -142,11 +142,11 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			this.enumInfo = enumInfo;
 			enumUnderlyingTypeField = null;
 
-			if (!(enumInfo.Value is null))
+			if (enumInfo.Value is not null)
 				enumUnderlyingTypeField = CreateEnumUnderlyingTypeFieldFromValue(enumInfo.Value);
 			else {
 				var td = enumInfo.EnumType.ResolveTypeDef();
-				if (!(td is null) && td.IsEnum)
+				if (td is not null && td.IsEnum)
 					enumUnderlyingTypeField = CreateEnumUnderlyingTypeField(td.GetEnumUnderlyingType().RemovePinnedAndModifiers().GetElementType());
 			}
 		}
@@ -155,7 +155,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			if (dnlibTypePicker is null)
 				throw new InvalidOperationException();
 			var type = dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_EnumType, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.EnumTypeDef), EnumType, ownerModule);
-			if (!(type is null))
+			if (type is not null)
 				EnumType = type;
 		}
 

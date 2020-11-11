@@ -231,7 +231,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					return null;
 
 				DmdAssemblyImpl? targetAssembly = assembly;
-				if (!(assemblyName is null) && !assembly.AppDomainImpl.AssemblyNameEqualityComparer.Equals(targetAssembly.GetName(), assemblyName)) {
+				if (assemblyName is not null && !assembly.AppDomainImpl.AssemblyNameEqualityComparer.Equals(targetAssembly.GetName(), assemblyName)) {
 					targetAssembly = (DmdAssemblyImpl?)targetAssembly.AppDomain.GetAssembly(assemblyName);
 					if (targetAssembly is null)
 						return null;
@@ -266,7 +266,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 			var resolver = new TypeDefResolver(this, (options & DmdGetTypeOptions.IgnoreCase) != 0);
 			var type = DmdTypeNameParser.Parse(resolver, typeName);
-			if (!(type is null))
+			if (type is not null)
 				return appDomain.Intern(type, DmdMakeTypeOptions.NoResolve);
 
 			if ((options & DmdGetTypeOptions.ThrowOnError) != 0)
@@ -275,7 +275,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		public override ReadOnlyCollection<DmdCustomAttributeData> GetSecurityAttributesData() {
-			if (!(securityAttributes is null))
+			if (securityAttributes is not null)
 				return securityAttributes;
 			var cas = metadataReader.ReadSecurityAttributes(0x20000001);
 			Interlocked.CompareExchange(ref securityAttributes, ReadOnlyCollectionHelpers.Create(cas), null);
@@ -284,7 +284,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		volatile ReadOnlyCollection<DmdCustomAttributeData>? securityAttributes;
 
 		public override ReadOnlyCollection<DmdCustomAttributeData> GetCustomAttributesData() {
-			if (!(customAttributes is null))
+			if (customAttributes is not null)
 				return customAttributes;
 			var cas = metadataReader.ReadCustomAttributes(0x20000001);
 			var newCAs = CustomAttributesHelper.AddPseudoCustomAttributes(this, cas, GetSecurityAttributesData());

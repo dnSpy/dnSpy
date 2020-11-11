@@ -206,7 +206,7 @@ namespace dnSpy.AsmEditor.Resources {
 			if (openFile is null)
 				throw new InvalidOperationException();
 			var newBytes = openFile.Open();
-			if (!(newBytes is null))
+			if (newBytes is not null)
 				Data = newBytes;
 		}
 

@@ -68,7 +68,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		protected override IEnumerable<ResourceData> GetDeserializedData() {
 			var dd = deserializedData;
 			var re = ResourceElement;
-			if (!(dd is null))
+			if (dd is not null)
 				yield return new ResourceData(re.Name, token => ResourceUtilities.StringToStream(ConvertObjectToString(dd)));
 			else
 				yield return new ResourceData(re.Name, token => new MemoryStream(((BinaryResourceData)re.ResourceData).Data));

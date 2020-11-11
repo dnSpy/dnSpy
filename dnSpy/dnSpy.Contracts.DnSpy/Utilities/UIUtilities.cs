@@ -46,7 +46,7 @@ namespace dnSpy.Contracts.Utilities {
 
 		static T? GetItem<T>(DependencyObject view, object o) where T : class {
 			var depo = o as DependencyObject;
-			while (!(depo is null) && !(depo is T) && depo != view)
+			while (depo is not null && !(depo is T) && depo != view)
 				depo = GetParent(depo);
 			return depo as T;
 		}
@@ -61,7 +61,7 @@ namespace dnSpy.Contracts.Utilities {
 		public static bool IsLeftDoubleClick<T>(DependencyObject view, MouseButtonEventArgs e) where T : class {
 			if (MouseButton.Left != e.ChangedButton)
 				return false;
-			return !(GetItem<T>(view, e.OriginalSource) is null);
+			return GetItem<T>(view, e.OriginalSource) is not null;
 		}
 
 		/// <summary>
@@ -99,9 +99,9 @@ namespace dnSpy.Contracts.Utilities {
 		static void FocusSelectorInternal(Selector selector) {
 			bool focused = false;
 			var item = selector.SelectedItem as IInputElement;
-			if (item is null && !(selector.SelectedItem is null))
+			if (item is null && selector.SelectedItem is not null)
 				item = selector.ItemContainerGenerator.ContainerFromItem(selector.SelectedItem) as IInputElement;
-			if (!(item is null))
+			if (item is not null)
 				focused = item.Focus();
 			if (!focused) {
 				selector.Focus();
@@ -125,7 +125,7 @@ namespace dnSpy.Contracts.Utilities {
 		public static void Focus(IInputElement? element, Action? calledAfterFocus = null) {
 			var uiElem = element as UIElement;
 			var fwkElem = element as FrameworkElement;
-			if (uiElem is null || (!(fwkElem is null) && fwkElem.IsLoaded && fwkElem.IsVisible) || (fwkElem is null && uiElem.IsVisible)) {
+			if (uiElem is null || (fwkElem is not null && fwkElem.IsLoaded && fwkElem.IsVisible) || (fwkElem is null && uiElem.IsVisible)) {
 				element?.Focus();
 				calledAfterFocus?.Invoke();
 				return;

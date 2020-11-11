@@ -32,7 +32,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 
 		public MemberRefVM? Edit(string? title, MemberRefVM pd) {
 			var win = new MemberRefDlg();
-			if (!(title is null))
+			if (title is not null)
 				win.Title = title;
 			win.DataContext = pd;
 			win.Owner = ownerWindow ?? Application.Current.MainWindow;

@@ -42,7 +42,7 @@ namespace dnSpy.Hex.Editor {
 		IEnumerable<HexSpaceReservationManagerImpl> SpaceReservationManagers {
 			get {
 				foreach (var mgr in spaceReservationManagers) {
-					if (!(mgr is null))
+					if (mgr is not null)
 						yield return mgr;
 				}
 			}
@@ -124,7 +124,7 @@ namespace dnSpy.Hex.Editor {
 			wpfHexView.Closed -= WpfHexView_Closed;
 			for (int i = 0; i < spaceReservationManagers.Length; i++) {
 				var mgr = spaceReservationManagers[i];
-				if (!(mgr is null)) {
+				if (mgr is not null) {
 					spaceReservationManagers[i] = null;
 					mgr.GotAggregateFocus -= HexSpaceReservationManager_GotAggregateFocus;
 					mgr.LostAggregateFocus -= HexSpaceReservationManager_LostAggregateFocus;

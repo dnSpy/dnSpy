@@ -70,11 +70,11 @@ namespace dnSpy.Text.Editor {
 				int pos = span.Start;
 
 				// We check full lines so make sure we don't re-check the same line again
-				if (!(line is null) && line.ExtentIncludingLineBreak.End.Position > pos)
+				if (line is not null && line.ExtentIncludingLineBreak.End.Position > pos)
 					continue;
 
 				for (;;) {
-					if (!(line is null) && line.ExtentIncludingLineBreak.End.Position == pos) {
+					if (line is not null && line.ExtentIncludingLineBreak.End.Position == pos) {
 						if (line.Snapshot.LineCount == line.LineNumber + 1)
 							break;
 						line = line.Snapshot.GetLineFromLineNumber(line.LineNumber + 1);

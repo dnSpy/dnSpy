@@ -108,7 +108,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			if (endPos < methodBodyPosition)
 				endPos = methodBodyPosition;
 			var info = new MethodBodyReader(File, tokens, methodBodyPosition, endPos).Read();
-			if (!(info is null))
+			if (info is not null)
 				return info.Value;
 
 			// The file could be obfuscated (encrypted methods), assume the method ends at the next method body RVA

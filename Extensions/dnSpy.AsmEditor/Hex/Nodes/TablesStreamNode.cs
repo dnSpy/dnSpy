@@ -49,7 +49,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 			newChildren = new List<TreeNodeData>();
 			foreach (var mdTable in tablesStream.MetadataTables) {
-				if (!(mdTable is null))
+				if (mdTable is not null)
 					newChildren.Add(new MetadataTableNode(mdTable));
 			}
 		}

@@ -317,7 +317,7 @@ namespace dnSpy.Contracts.Utilities {
 
 		static ulong ParseUnsigned(string s, ulong min, ulong max, out string? error) {
 			error = TryParseUnsigned(s, min, max, out ulong value);
-			if (!(error is null))
+			if (error is not null)
 				return 0;
 			return value;
 		}
@@ -421,7 +421,7 @@ namespace dnSpy.Contracts.Utilities {
 		public static char ParseChar(string s, out string? error) {
 			int index = 0;
 			char c = ParseChar(s, ref index, out error);
-			if (!(error is null))
+			if (error is not null)
 				return (char)0;
 			SkipSpaces(s, ref index);
 			if (index != s.Length)
@@ -495,7 +495,7 @@ namespace dnSpy.Contracts.Utilities {
 		public static string? ParseString(string s, bool canHaveNull, out string? error) {
 			int index = 0;
 			var res = ParseString(s, canHaveNull, ref index, out error);
-			if (!(error is null))
+			if (error is not null)
 				return null;
 			SkipSpaces(s, ref index);
 			if (index != s.Length)
@@ -692,7 +692,7 @@ namespace dnSpy.Contracts.Utilities {
 
 		static long ParseSigned(string s, long min, long max, object minObject, out string? error) {
 			error = TryParseSigned(s, min, max, minObject, out long value);
-			if (!(error is null))
+			if (error is not null)
 				return 0;
 			return value;
 		}
@@ -882,7 +882,7 @@ namespace dnSpy.Contracts.Utilities {
 					return null;
 				}
 				var res = parseValue(value);
-				if (!(res.error is null)) {
+				if (res.error is not null) {
 					error = res.error;
 					return null;
 				}
@@ -907,7 +907,7 @@ namespace dnSpy.Contracts.Utilities {
 			while (true) {
 				int oldIndex = index;
 				list.Add(parseValue(data, s, ref index, out error));
-				if (!(error is null))
+				if (error is not null)
 					return null;
 				Debug.Assert(oldIndex < index);
 				if (oldIndex >= index)

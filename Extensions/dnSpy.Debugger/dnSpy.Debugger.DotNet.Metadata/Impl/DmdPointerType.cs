@@ -54,7 +54,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			if (!IsMetadataReference)
 				return this;
 			var newElementType = elementType.ResolveNoThrow();
-			if (!(newElementType is null))
+			if (newElementType is not null)
 				return AppDomain.MakePointerType(newElementType, GetCustomModifiers());
 			return null;
 		}
@@ -64,7 +64,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			if (IsFullyResolved)
 				return this;
 			var et = elementType.FullResolve();
-			if (!(et is null))
+			if (et is not null)
 				return (DmdTypeBase)AppDomain.MakePointerType(et, GetCustomModifiers());
 			return null;
 		}

@@ -117,8 +117,8 @@ namespace dnSpy.Text.Editor {
 					return;
 				}
 				if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.Escape) {
-					Debug2.Assert(!(originalZoomLevel is null));
-					if (!(originalZoomLevel is null))
+					Debug2.Assert(originalZoomLevel is not null);
+					if (originalZoomLevel is not null)
 						TextViewZoomLevel = originalZoomLevel.Value;
 					UpdateTextWithZoomLevel();
 					wpfTextViewHost.TextView.VisualElement.Focus();
@@ -145,11 +145,11 @@ namespace dnSpy.Text.Editor {
 				// The combobox is too tall, but I want to use the style from the UI.Wpf dll
 				if (horizontalScrollBarMargin is null) {
 					horizontalScrollBarMargin = wpfTextViewHost.GetTextViewMargin(PredefinedMarginNames.HorizontalScrollBar);
-					Debug2.Assert(!(horizontalScrollBarMargin is null));
-					if (!(horizontalScrollBarMargin is null))
+					Debug2.Assert(horizontalScrollBarMargin is not null);
+					if (horizontalScrollBarMargin is not null)
 						horizontalScrollBarMargin.VisualElement.SizeChanged += VisualElement_SizeChanged;
 				}
-				if (!(horizontalScrollBarMargin is null))
+				if (horizontalScrollBarMargin is not null)
 					Height = horizontalScrollBarMargin.VisualElement.Height;
 			}
 			else
@@ -192,7 +192,7 @@ namespace dnSpy.Text.Editor {
 		public void Dispose() {
 			IsVisibleChanged -= ZoomControlMargin_IsVisibleChanged;
 			wpfTextViewHost.TextView.Options.OptionChanged -= Options_OptionChanged;
-			if (!(horizontalScrollBarMargin is null))
+			if (horizontalScrollBarMargin is not null)
 				horizontalScrollBarMargin.VisualElement.SizeChanged -= VisualElement_SizeChanged;
 			UnregisterEvents();
 		}

@@ -37,7 +37,7 @@ namespace dnSpy.Contracts.Search {
 		/// <returns></returns>
 		public static ISearchComparer Create(string searchText, bool caseSensitive, bool matchWholeWords, bool matchAnyWords) {
 			var regex = TryCreateRegEx(searchText, caseSensitive);
-			if (!(regex is null))
+			if (regex is not null)
 				return new RegExSearchComparer(regex);
 
 			var searchTerms = searchText.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -58,10 +58,10 @@ namespace dnSpy.Contracts.Search {
 			var s = searchText.Trim();
 
 			var val64 = TryParseInt64(s);
-			if (!(val64 is null))
+			if (val64 is not null)
 				return new IntegerLiteralSearchComparer(val64.Value);
 			var uval64 = TryParseUInt64(s);
-			if (!(uval64 is null))
+			if (uval64 is not null)
 				return new IntegerLiteralSearchComparer(unchecked((long)uval64.Value));
 			if (double.TryParse(s, out double dbl))
 				return new DoubleLiteralSearchComparer(dbl);
@@ -70,7 +70,7 @@ namespace dnSpy.Contracts.Search {
 				s = s.Substring(1, s.Length - 2);
 			else {
 				var regex = TryCreateRegEx(s, caseSensitive);
-				if (!(regex is null))
+				if (regex is not null)
 					return new RegExStringLiteralSearchComparer(regex);
 			}
 			return new StringLiteralSearchComparer(s, caseSensitive, matchWholeWords);
@@ -144,7 +144,7 @@ namespace dnSpy.Contracts.Search {
 		public RegExStringLiteralSearchComparer(Regex regex) => this.regex = regex ?? throw new ArgumentNullException(nameof(regex));
 
 		public bool IsMatch(string? text, object? obj) {
-			if (obj is IHasConstant hc && !(hc.Constant is null))
+			if (obj is IHasConstant hc && hc.Constant is not null)
 				obj = hc.Constant.Value;
 
 			return obj is string s && regex.IsMatch(s);
@@ -163,7 +163,7 @@ namespace dnSpy.Contracts.Search {
 		}
 
 		public bool IsMatch(string? text, object? obj) {
-			if (obj is IHasConstant hc && !(hc.Constant is null))
+			if (obj is IHasConstant hc && hc.Constant is not null)
 				obj = hc.Constant.Value;
 
 			if (!(obj is string s))
@@ -180,7 +180,7 @@ namespace dnSpy.Contracts.Search {
 		public IntegerLiteralSearchComparer(long value) => searchValue = value;
 
 		public bool IsMatch(string? text, object? obj) {
-			if (obj is IHasConstant hc && !(hc.Constant is null))
+			if (obj is IHasConstant hc && hc.Constant is not null)
 				obj = hc.Constant.Value;
 			if (obj is null)
 				return false;
@@ -211,7 +211,7 @@ namespace dnSpy.Contracts.Search {
 		public DoubleLiteralSearchComparer(double value) => searchValue = value;
 
 		public bool IsMatch(string? text, object? obj) {
-			if (obj is IHasConstant hc && !(hc.Constant is null))
+			if (obj is IHasConstant hc && hc.Constant is not null)
 				obj = hc.Constant.Value;
 			if (obj is null)
 				return false;

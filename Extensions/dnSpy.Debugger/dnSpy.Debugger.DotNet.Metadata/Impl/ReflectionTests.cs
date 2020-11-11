@@ -370,7 +370,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				catch (ArgumentException) {
 					continue;
 				}
-				Verify((!(t1 is null)) == (!(t2 is null)));
+				Verify((t1 is not null) == (t2 is not null));
 				if (t1 is null)
 					break;
 				TestTypes(t1, t2);
@@ -481,7 +481,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				return;
 			for (int i = 0; i < t2.Length; i++) {
 				var t2t = t2[i];
-				if (!(t2t is null))
+				if (t2t is not null)
 					SimpleTest(t1[i], t2t);
 			}
 		}
@@ -506,15 +506,15 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			Verify(m1.Name == m2.Name);
 			bool isGlobal = (m2.MemberType == MemberTypes.Field || m2.MemberType == MemberTypes.Method) && m2.DeclaringType is null;
 			if (isGlobal) {
-				Verify((!(m1.DeclaringType is null)) == (m2.DeclaringType is null));
-				Verify((!(m1.ReflectedType is null)) == (m2.ReflectedType is null));
+				Verify((m1.DeclaringType is not null) == (m2.DeclaringType is null));
+				Verify((m1.ReflectedType is not null) == (m2.ReflectedType is null));
 			}
 			else {
-				Verify((!(m1.DeclaringType is null)) == (!(m2.DeclaringType is null)));
-				if (!(m1.DeclaringType is null))
+				Verify((m1.DeclaringType is not null) == (m2.DeclaringType is not null));
+				if (m1.DeclaringType is not null)
 					SimpleTest(m1.DeclaringType, m2.DeclaringType);
-				Verify((!(m1.ReflectedType is null)) == (!(m2.ReflectedType is null)));
-				if (!(m1.ReflectedType is null))
+				Verify((m1.ReflectedType is not null) == (m2.ReflectedType is not null));
+				if (m1.ReflectedType is not null)
 					SimpleTest(m1.ReflectedType, m2.ReflectedType);
 			}
 			Verify(m1.MetadataToken == m2.MetadataToken);
@@ -545,8 +545,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				ex2 = ex;
 				t2 = default(T2);
 			}
-			if (Verify((!(ex1 is null)) == (!(ex2 is null)))) {
-				if (!(ex1 is null))
+			if (Verify((ex1 is not null) == (ex2 is not null))) {
+				if (ex1 is not null)
 					Verify(ex1.GetType() == ex2.GetType());
 				else
 					Verify(compare(t1, t2));
@@ -736,7 +736,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				var bt2 = t2.BaseType;
 				SimpleTest(bt1, bt2);
 				Verify((bt1 is null) == (bt2 is null));
-				if (!(bt1 is null)) {
+				if (bt1 is not null) {
 					if (!Verify(bt1.AssemblyQualifiedName == bt2.AssemblyQualifiedName ||
 								(bt1.IsMetadataReference && bt1.ResolveNoThrow() is null && bt1.FullName == bt2.FullName)))
 						break;
@@ -1095,9 +1095,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			bool b = m1s == m2.ToString();
 			Verify(b || m1s.Contains("*"));
 			Verify(m1.MetadataToken == m2.MetadataToken);
-			if (!(m2.ReflectedType is null))
+			if (m2.ReflectedType is not null)
 				Test(m1.ReflectedType, m2.ReflectedType, m2.DeclaringType);
-			if (!(m2.DeclaringType is null))
+			if (m2.DeclaringType is not null)
 				Test(m1.DeclaringType, m2.DeclaringType, m2.DeclaringType);
 		}
 		static void Test(DmdEventInfo e1, EventInfo e2) {

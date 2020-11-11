@@ -129,7 +129,7 @@ namespace dnSpy.Hex.Files.PE {
 			}
 
 			var b = DotNetCheckIsFileLayout();
-			if (!(b is null))
+			if (b is not null)
 				return b.Value;
 
 			if (!file.IsNestedFile && file.Buffer.IsMemory) {
@@ -147,7 +147,7 @@ namespace dnSpy.Hex.Files.PE {
 		}
 
 		bool? DotNetCheckIsFileLayout() {
-			Debug2.Assert(!(OptionalHeader is null));
+			Debug2.Assert(OptionalHeader is not null);
 			if (OptionalHeader.DataDirectory.Data.FieldCount <= 14)
 				return null;
 			var dataDir = OptionalHeader.DataDirectory.Data[14];
@@ -195,7 +195,7 @@ namespace dnSpy.Hex.Files.PE {
 		HexPosition MemoryLayout_ToBufferPosition(uint rva) => file.Span.Start + rva;
 
 		HexPosition FileLayout_ToBufferPosition(uint rva) {
-			Debug2.Assert(!(SectionHeaders is null));
+			Debug2.Assert(SectionHeaders is not null);
 			var fileSpan = file.Span;
 			foreach (var sect in SectionHeaders) {
 				if (rva >= sect.VirtualAddress && rva < sect.VirtualAddress + Math.Max(sect.VirtualSize, sect.SizeOfRawData))

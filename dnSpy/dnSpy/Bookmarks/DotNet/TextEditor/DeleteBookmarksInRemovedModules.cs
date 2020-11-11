@@ -54,7 +54,7 @@ namespace dnSpy.Bookmarks.DotNet.TextEditor {
 		}
 
 		void DocumentTabService_FileCollectionChanged(object? sender, NotifyDocumentCollectionChangedEventArgs e) {
-			Debug2.Assert(!(bookmarksService is null));
+			Debug2.Assert(bookmarksService is not null);
 			if (bookmarksService is null)
 				return;
 			switch (e.Type) {
@@ -85,7 +85,7 @@ namespace dnSpy.Bookmarks.DotNet.TextEditor {
 						bookmarksToRemove.Add(bm);
 					}
 				}
-				if (!(bookmarksToRemove is null))
+				if (bookmarksToRemove is not null)
 					bookmarksService.Remove(bookmarksToRemove.ToArray());
 				break;
 

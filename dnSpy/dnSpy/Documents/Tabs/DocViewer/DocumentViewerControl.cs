@@ -88,12 +88,12 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		WaitAdorner? CurrentWaitAdorner {
 			get => __currentWaitAdorner;
 			set {
-				if (!(__currentWaitAdorner is null)) {
+				if (__currentWaitAdorner is not null) {
 					__currentWaitAdorner.progressBar.IsIndeterminate = false;
 					Children.Remove(__currentWaitAdorner);
 				}
 				__currentWaitAdorner = value;
-				if (!(__currentWaitAdorner is null))
+				if (__currentWaitAdorner is not null)
 					Children.Add(__currentWaitAdorner);
 			}
 		}
@@ -290,7 +290,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				}
 
 				var localTarget = FindDefinition(spanData);
-				if (!(localTarget is null))
+				if (localTarget is not null)
 					spanData = localTarget.Value;
 
 				if (spanData.Data.IsDefinition) {
@@ -313,7 +313,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			}
 			else {
 				var localTarget = FindDefinition(spanData);
-				if (!(localTarget is null))
+				if (localTarget is not null)
 					spanData = localTarget.Value;
 
 				int pos = -1;
@@ -351,7 +351,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 		bool IsOwnerOf(SpanData<ReferenceInfo> refInfo) {
 			var other = currentContent.Content.ReferenceCollection.Find(refInfo.Span.Start);
-			return !(other is null) &&
+			return other is not null &&
 				other.Value.Span == refInfo.Span &&
 				other.Value.Data == refInfo.Data;
 		}
@@ -419,7 +419,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 			var spanData = currentContent.Content.ReferenceCollection.FindFrom(line.Start.Position).FirstOrDefault(r => r.Data.Reference is IMemberDef && r.Data.IsDefinition && !r.Data.IsLocal);
 			if (statements.Count == 0) {
-				if (!(spanData.Data.Reference is null))
+				if (spanData.Data.Reference is not null)
 					return new ReferencePosition(spanData);
 			}
 			else if (spanData.Data.Reference is null)
@@ -440,18 +440,18 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			if (referencePosition is null)
 				return false;
 
-			if (!(referencePosition.MethodSourceStatement is null)) {
+			if (referencePosition.MethodSourceStatement is not null) {
 				var methodSourceStatement = referencePosition.MethodSourceStatement.Value;
 				var methodStatement = methodDebugService.FindByCodeOffset(methodSourceStatement.Method, methodSourceStatement.Statement.ILSpan.Start);
-				if (!(methodStatement is null)) {
+				if (methodStatement is not null) {
 					MoveCaretToPosition(methodStatement.Value.Statement.TextSpan.Start, options);
 					return true;
 				}
 			}
 
-			if (!(referencePosition.SpanData is null)) {
+			if (referencePosition.SpanData is not null) {
 				var spanData = FindReferenceInfo(referencePosition.SpanData.Value);
-				if (!(spanData is null))
+				if (spanData is not null)
 					return GoToTarget(spanData, false, false, options);
 			}
 
@@ -470,7 +470,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			// Check these references first because if the caret is at a Get declaration (VB), then there's
 			// no code references to it, but there's a 'Get' and 'End Get' in these refs that should be used.
 			var spanRefData = SpanDataCollectionUtilities.GetCurrentSpanReference(spanReferenceCollection, TextView);
-			if (!(spanRefData?.Data.Reference is null)) {
+			if (spanRefData?.Data.Reference is not null) {
 				foreach (var newSpanData in GetReferenceInfosFrom(spanReferenceCollection, spanRefData.Value.Span.Start, forward)) {
 					if (object.Equals(newSpanData.Data.Reference, spanRefData.Value.Data.Reference)) {
 						MoveCaretToSpan(newSpanData.Span, MoveCaretOptions.Focus | MoveCaretOptions.Select);
@@ -481,7 +481,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			}
 
 			var spanData = GetCurrentReferenceInfo();
-			if (!(spanData is null) && !spanData.Value.Data.IsHidden && !spanData.Value.Data.NoFollow) {
+			if (spanData is not null && !spanData.Value.Data.IsHidden && !spanData.Value.Data.NoFollow) {
 				foreach (var newSpanData in GetReferenceInfosFrom(spanData.Value.Span.Start, forward)) {
 					if (!newSpanData.Data.IsHidden && !newSpanData.Data.NoFollow && SpanDataReferenceInfoExtensions.CompareReferences(newSpanData.Data, spanData.Value.Data)) {
 						MoveCaretToSpan(newSpanData.Span, MoveCaretOptions.Focus | MoveCaretOptions.Select);
@@ -512,7 +512,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			bool isReversed = false;
 			// If there's another reference at the caret, move caret to Start instead of End
 			var nextRef = GetReferenceInfo(span.End);
-			if (!(nextRef is null) && nextRef.Value.Span != span) {
+			if (nextRef is not null && nextRef.Value.Span != span) {
 				wpfTextViewHost.TextView.Caret.MoveTo(new SnapshotPoint(snapshot, span.Start));
 				isReversed = true;
 			}

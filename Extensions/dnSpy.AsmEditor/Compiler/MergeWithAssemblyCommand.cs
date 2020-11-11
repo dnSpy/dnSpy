@@ -95,7 +95,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			public override void Execute(CodeContext context) => MergeWithAssemblyCommand.Execute(pickFilename, addUpdatedNodesHelperProvider, undoCommandService, appService, context.Nodes);
 		}
 
-		static bool CanExecute(DocumentTreeNodeData[] nodes) => nodes.Length == 1 && !(GetModuleNode(nodes[0]) is null);
+		static bool CanExecute(DocumentTreeNodeData[] nodes) => nodes.Length == 1 && GetModuleNode(nodes[0]) is not null;
 
 		static ModuleDocumentNode? GetModuleNode(DocumentTreeNodeData node) {
 			if (node is AssemblyDocumentNode asmNode) {
@@ -111,11 +111,11 @@ namespace dnSpy.AsmEditor.Compiler {
 				return;
 
 			var modNode = GetModuleNode(nodes[0]);
-			Debug2.Assert(!(modNode is null));
+			Debug2.Assert(modNode is not null);
 			if (modNode is null)
 				return;
 			var module = modNode.Document.ModuleDef;
-			Debug2.Assert(!(module is null));
+			Debug2.Assert(module is not null);
 			if (module is null)
 				throw new InvalidOperationException();
 
@@ -127,7 +127,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			// This is a basic assembly merger, we don't support merging dependencies. It would require
 			// fixing all refs to the dep and redirect them to the new defs that now exist in 'module'.
 			var asm = module.Assembly;
-			if (!(asm is null) && !(result.Value.Assembly is null)) {
+			if (asm is not null && result.Value.Assembly is not null) {
 				if (IsNonSupportedAssembly(module, asm, result.Value.Assembly)) {
 					Contracts.App.MsgBox.Instance.Show($"Can't merge with {result.Value.Assembly} because it's a dependency");
 					return;

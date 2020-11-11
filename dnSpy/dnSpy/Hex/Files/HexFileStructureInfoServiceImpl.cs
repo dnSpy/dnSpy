@@ -52,7 +52,7 @@ namespace dnSpy.Hex.Files {
 			var providers = new List<HexFileStructureInfoProvider>(hexFileStructureInfoProviderFactories.Length);
 			foreach (var lz in hexFileStructureInfoProviderFactories) {
 				var provider = lz.Value.Create(hexView);
-				if (!(provider is null))
+				if (provider is not null)
 					providers.Add(provider);
 			}
 			return providers.ToArray();
@@ -106,7 +106,7 @@ namespace dnSpy.Hex.Files {
 			var structure = info.Value.Structure;
 			foreach (var provider in HexFileStructureInfoProviders) {
 				var toolTip = provider.GetToolTip(file, structure, position);
-				if (!(toolTip is null))
+				if (toolTip is not null)
 					return toolTip;
 			}
 
@@ -122,7 +122,7 @@ namespace dnSpy.Hex.Files {
 			var structure = info.Value.Structure;
 			foreach (var provider in HexFileStructureInfoProviders) {
 				var toolTip = provider.GetReference(file, structure, position);
-				if (!(toolTip is null))
+				if (toolTip is not null)
 					return toolTip;
 			}
 
@@ -140,13 +140,13 @@ namespace dnSpy.Hex.Files {
 			HexSpan? span;
 			foreach (var provider in HexFileStructureInfoProviders) {
 				span = provider.GetFieldReferenceSpan(file, structure, position);
-				if (!(span is null))
+				if (span is not null)
 					return span;
 			}
 
 			var field = structure.GetSimpleField(position);
 			span = (field?.Data as SimpleData)?.GetFieldReferenceSpan(file);
-			if (!(span is null))
+			if (span is not null)
 				return span;
 
 			return null;

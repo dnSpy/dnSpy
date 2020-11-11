@@ -137,7 +137,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				dbgDynamicModuleProvider.InitializeNonLoadedClasses(state.Document.DbgModule, nonLoadedTokens);
 			}
 
-			var remaining = states.Where(a => a.ModifiedTypes.Count != 0 || (!(a.LoadClassHash is null) && a.LoadClassHash.Count != 0)).Select(a => a.Document).ToArray();
+			var remaining = states.Where(a => a.ModifiedTypes.Count != 0 || (a.LoadClassHash is not null && a.LoadClassHash.Count != 0)).Select(a => a.Document).ToArray();
 			if (remaining.Length == 0)
 				return;
 
@@ -157,7 +157,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		uint[] GetNonLoadedTokens(ModuleState state) {
 			var hash = new HashSet<uint>(state.ModifiedTypes);
-			if (!(state.LoadClassHash is null)) {
+			if (state.LoadClassHash is not null) {
 				foreach (var a in state.LoadClassHash)
 					hash.Add(a);
 			}
@@ -165,7 +165,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			tokens.Sort();
 			var res = new List<uint>(tokens.Count);
 			foreach (uint token in tokens) {
-				bool loaded = !(state.LoadClassHash is null) && state.LoadClassHash.Contains(token);
+				bool loaded = state.LoadClassHash is not null && state.LoadClassHash.Contains(token);
 				if (loaded)
 					continue;   // It has already been initialized
 

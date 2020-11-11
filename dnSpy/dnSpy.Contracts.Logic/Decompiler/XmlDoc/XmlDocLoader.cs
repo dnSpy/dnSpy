@@ -37,7 +37,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 		static XmlDocumentationProvider? LoadMscorlibDocumentation() {
 			string? xmlDocFile = FindXmlDocumentation("mscorlib.dll", MDHeaderRuntimeVersion.MS_CLR_40)
 				?? FindXmlDocumentation("mscorlib.dll", MDHeaderRuntimeVersion.MS_CLR_20);
-			if (!(xmlDocFile is null))
+			if (xmlDocFile is not null)
 				return XmlDocumentationProvider.Create(xmlDocFile);
 			else
 				return null;
@@ -152,7 +152,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 				fileName = null;
 				foreach (var path in refAsmPathsV4) {
 					fileName = LookupLocalizedXmlDoc(Path.Combine(path, assemblyFileName));
-					if (!(fileName is null))
+					if (fileName is not null)
 						break;
 				}
 				fileName = fileName

@@ -37,7 +37,7 @@ namespace dnSpy.Documents.TreeView {
 
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) {
 			var td = TryGetTypeDef();
-			if (!(td is null))
+			if (td is not null)
 				return dnImgMgr.GetImageReference(td);
 			return DsImages.ClassPublic;
 		}
@@ -54,12 +54,12 @@ namespace dnSpy.Documents.TreeView {
 		public override IEnumerable<TreeNodeData> CreateChildren() {
 			if (!createChildren)
 				yield break;
-			if (!(derivedTypesFinder is null)) {
+			if (derivedTypesFinder is not null) {
 				derivedTypesFinder.Cancel();
 				derivedTypesFinder = null;
 			}
 			var td = TryGetTypeDef();
-			if (!(td is null))
+			if (td is not null)
 				derivedTypesFinder = new DerivedTypesFinder(this, td);
 		}
 		DerivedTypesFinder? derivedTypesFinder;

@@ -42,7 +42,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		/// <param name="bigBlob"><c>true</c> if #Blob size >= 0x10000</param>
 		/// <param name="rowCounts">Count of rows in each table</param>
 		public void InitializeSizes(bool bigStrings, bool bigGuid, bool bigBlob, uint[] rowCounts) {
-			Debug2.Assert(!(tableInfos is null));
+			Debug2.Assert(tableInfos is not null);
 			this.bigStrings = bigStrings;
 			this.bigGuid = bigGuid;
 			this.bigBlob = bigBlob;
@@ -63,7 +63,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		}
 
 		int GetSize(ColumnSize columnSize) {
-			Debug2.Assert(!(rowCounts is null));
+			Debug2.Assert(rowCounts is not null);
 			if (ColumnSize.Module <= columnSize && columnSize <= ColumnSize.CustomDebugInformation) {
 				int table = (int)(columnSize - ColumnSize.Module);
 				uint count = table >= rowCounts.Length ? 0 : rowCounts[table];

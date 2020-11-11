@@ -35,8 +35,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 		static DbgDotNetRawValueFactory() {
 			var ctor = typeof(DateTime).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { typeof(ulong) }, null);
-			Debug2.Assert(!(ctor is null));
-			if (!(ctor is null)) {
+			Debug2.Assert(ctor is not null);
+			if (ctor is not null) {
 				var dm = new DynamicMethod("DateTime_ctor_UInt64", typeof(DateTime), new[] { typeof(ulong) }, true);
 				var ilg = dm.GetILGenerator();
 				ilg.Emit(OpCodes.Ldarg_0);
@@ -219,7 +219,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				data = v.ReadGenericValue();
 				if (data is null)
 					break;
-				if (!(DateTime_ctor_UInt64 is null))
+				if (DateTime_ctor_UInt64 is not null)
 					return new DbgDotNetRawValue(DbgSimpleValueType.DateTime, DateTime_ctor_UInt64(BitConverter.ToUInt64(data, 0)));
 				return new DbgDotNetRawValue(DbgSimpleValueType.DateTime, default(DateTime));
 
@@ -265,7 +265,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			var info = NullableTypeUtils.TryGetNullableFields(nullableType);
 			if (info.hasValueField is null)
 				return false;
-			Debug2.Assert(!(info.valueField is null));
+			Debug2.Assert(info.valueField is not null);
 
 			var cls = nullableValue.ExactType?.Class;
 			var hasValueValue = nullableValue.GetFieldValue(cls, (uint)info.hasValueField.MetadataToken);

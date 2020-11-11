@@ -45,8 +45,8 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		IUndoObject? IUndoableDocumentsProvider.GetUndoObject(object obj) {
 			if (obj is DocumentTreeNodeData node) {
 				var documentNode = node.GetDocumentNode();
-				Debug2.Assert(!(documentNode is null));
-				if (!(documentNode is null)) {
+				Debug2.Assert(documentNode is not null);
+				if (documentNode is not null) {
 					// Need this check here since some commands (eg. create netmodule) create nodes
 					// and they haven't yet been inserted into the treeview.
 					if (documentNode is ModuleDocumentNode)
@@ -54,8 +54,8 @@ namespace dnSpy.AsmEditor.UndoRedo {
 					if (documentNode is AssemblyDocumentNode asmNode) {
 						asmNode.TreeNode.EnsureChildrenLoaded();
 						var modNode = asmNode.TreeNode.DataChildren.FirstOrDefault() as ModuleDocumentNode;
-						Debug2.Assert(!(modNode is null));
-						if (!(modNode is null))
+						Debug2.Assert(modNode is not null);
+						if (modNode is not null)
 							return GetUndoObjectNoChecks(modNode.Document);
 					}
 					return GetUndoObject(documentNode.Document);
@@ -69,9 +69,9 @@ namespace dnSpy.AsmEditor.UndoRedo {
 
 		bool IUndoableDocumentsProvider.OnExecutedOneCommand(IUndoObject obj) {
 			var file = TryGetDocument(obj);
-			if (!(file is null)) {
+			if (file is not null) {
 				var module = file.ModuleDef;
-				if (!(module is null))
+				if (module is not null)
 					module.ResetTypeDefFindCache();
 				documentTabService.RefreshModifiedDocument(file);
 				return true;
@@ -87,7 +87,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 				// Assemblies and manifest modules don't share a IDsDocument instance, but we must
 				// use the same IUndoObject instance since they're part of the same file.
 				var module = document.ModuleDef;
-				Debug2.Assert(!(module is null));
+				Debug2.Assert(module is not null);
 				if (module is null)
 					throw new InvalidOperationException();
 				var modFile = FindModule(module);

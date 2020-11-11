@@ -50,7 +50,7 @@ namespace dnSpy.Documents.Tabs {
 			if (@ref is ITypeDefOrRef)
 				return ((ITypeDefOrRef)@ref).ResolveTypeDef();
 
-			if (@ref is IMethod && !(((IMethod)@ref).MethodSig is null)) {
+			if (@ref is IMethod && ((IMethod)@ref).MethodSig is not null) {
 				var m = (IMethod)@ref;
 				if (m is MethodSpec)
 					m = ((MethodSpec)m).Method;
@@ -82,7 +82,7 @@ namespace dnSpy.Documents.Tabs {
 				return @ref2 ?? @ref;
 
 			const int MAX = 100;
-			for (int i = 0; i < MAX && !(def.DeclaringType is null); i++)
+			for (int i = 0; i < MAX && def.DeclaringType is not null; i++)
 				def = def.DeclaringType;
 			return def;
 		}
@@ -92,7 +92,7 @@ namespace dnSpy.Documents.Tabs {
 				if (textRef.Reference is IAssembly || textRef.Reference is ModuleDef || textRef.Reference is ModuleRef || textRef.Reference is NamespaceReference)
 					return null;
 				var result = CreateMemberRefResult(documentTabService, textRef.Reference);
-				if (!(result is null))
+				if (result is not null)
 					return result;
 
 				return CreateLocalRefResult(sourceContent, textRef);
@@ -132,14 +132,14 @@ namespace dnSpy.Documents.Tabs {
 				// Add the assembly to the list again. Next time the user clicks on the link,
 				// FindNode() above will succeed.
 				var def = @ref as IMemberDef ?? (@ref as ParamDef)?.DeclaringMethod;
-				if (!(def is null)) {
+				if (def is not null) {
 					DsDocument? document = null;
 					var mod = def.Module;
-					if (!(mod is null) && !(mod.Assembly is null))
+					if (mod is not null && mod.Assembly is not null)
 						document = DsDotNetDocument.CreateAssembly(DsDocumentInfo.CreateDocument(mod.Location), mod, false);
-					else if (!(mod is null))
+					else if (mod is not null)
 						document = DsDotNetDocument.CreateModule(DsDocumentInfo.CreateDocument(mod.Location), mod, false);
-					if (!(document is null)) {
+					if (document is not null) {
 						var existingDocument = documentTabService.DocumentTreeView.DocumentService.GetOrAdd(document);
 						if (existingDocument != document)
 							documentTabService.DocumentTreeView.DocumentService.ForceAdd(document, true, null);
@@ -150,7 +150,7 @@ namespace dnSpy.Documents.Tabs {
 			}
 
 			var content = decompileDocumentTabContentFactory.Create(new DocumentTreeNodeData[] { node });
-			if (@ref is MethodStatementReference statementRef && !(statementRef.Offset is null)) {
+			if (@ref is MethodStatementReference statementRef && statementRef.Offset is not null) {
 				return new DocumentTabReferenceResult(content, null, a => {
 					if (a.Success && !a.HasMovedCaret) {
 						GoToReference(content, resolvedRef, statementRef.Method, statementRef.Offset.Value, content.WasNewContent);

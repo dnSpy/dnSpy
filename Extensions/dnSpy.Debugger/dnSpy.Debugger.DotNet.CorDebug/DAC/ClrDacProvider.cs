@@ -34,7 +34,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.DAC {
 			if (clrPath is null)
 				throw new ArgumentNullException(nameof(clrPath));
 			var clrDac = CreateCore(pid, clrPath, clrDacDebugger);
-			Debug2.Assert(!(clrDac is null));
+			Debug2.Assert(clrDac is not null);
 			return clrDac ?? NullClrDac.Instance;
 		}
 

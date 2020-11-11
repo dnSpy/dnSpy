@@ -77,7 +77,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 
 		IEnumerable<CreatedMenuItem> IMenuItemProvider.Create(IMenuItemContext context) {
 			var ctx = ProcessesContextMenuEntry.CreateContext(processHexBufferProvider, context);
-			Debug2.Assert(!(ctx is null));
+			Debug2.Assert(ctx is not null);
 			if (ctx is null)
 				yield break;
 
@@ -94,7 +94,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 
 		string GetProcessHeader(Process? process, int pid) {
 			try {
-				if (!(process is null)) {
+				if (process is not null) {
 					var title = Filter(process.MainWindowTitle, 200);
 					var name = GetProcessName(process);
 					if (string.IsNullOrWhiteSpace(title))

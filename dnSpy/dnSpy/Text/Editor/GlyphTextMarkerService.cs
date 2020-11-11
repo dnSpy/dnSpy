@@ -205,7 +205,7 @@ namespace dnSpy.Text.Editor {
 			if (textView is null)
 				throw new ArgumentNullException(nameof(textView));
 			var service = GlyphTextViewMarkerService.TryGet(textView);
-			Debug2.Assert(!(service is null));
+			Debug2.Assert(service is not null);
 			service?.SetDotNetSpanMap(map);
 		}
 	}

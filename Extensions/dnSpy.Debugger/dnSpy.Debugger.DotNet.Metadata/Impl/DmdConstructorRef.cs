@@ -39,22 +39,22 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		DmdConstructorDef ResolvedConstructor => GetResolvedConstructor(throwOnError: true)!;
 		DmdConstructorDef? GetResolvedConstructor(bool throwOnError) {
-			if (!(__resolvedConstructor_DONT_USE is null))
+			if (__resolvedConstructor_DONT_USE is not null)
 				return __resolvedConstructor_DONT_USE;
 
 			DmdConstructorDef? newResolvedCtor = null;
 			var declType = declaringTypeRef.Resolve(throwOnError);
-			if (!(declType is null)) {
+			if (declType is not null) {
 				var nonGenericInstDeclType = declType.IsGenericType ? declType.GetGenericTypeDefinition() : declType;
 				var nonGenericInstDeclTypeMethod = nonGenericInstDeclType?.GetMethod(Name, rawMethodSignature, throwOnError: false) as DmdConstructorDef;
-				if (!(nonGenericInstDeclTypeMethod is null)) {
+				if (nonGenericInstDeclTypeMethod is not null) {
 					newResolvedCtor = (object?)nonGenericInstDeclTypeMethod.DeclaringType == declType ?
 						nonGenericInstDeclTypeMethod :
 						declType.GetMethod(nonGenericInstDeclTypeMethod.Module, nonGenericInstDeclTypeMethod.MetadataToken) as DmdConstructorDef;
-					Debug2.Assert(!(newResolvedCtor is null));
+					Debug2.Assert(newResolvedCtor is not null);
 				}
 			}
-			if (!(newResolvedCtor is null)) {
+			if (newResolvedCtor is not null) {
 				Interlocked.CompareExchange(ref __resolvedConstructor_DONT_USE, newResolvedCtor, null);
 				Debug.Assert(DmdMemberInfoEqualityComparer.DefaultMember.Equals(__resolvedConstructor_DONT_USE!.ReflectedType, declaringTypeRef));
 				return __resolvedConstructor_DONT_USE;

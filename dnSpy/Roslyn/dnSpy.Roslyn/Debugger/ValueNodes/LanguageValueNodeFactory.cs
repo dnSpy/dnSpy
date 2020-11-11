@@ -45,7 +45,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		protected abstract bool SupportsModuleTypes { get; }
 
 		public DbgDotNetText GetTypeParameterName(DmdType typeParameter) {
-			bool isMethodParam = !(typeParameter.DeclaringMethod is null);
+			bool isMethodParam = typeParameter.DeclaringMethod is not null;
 			var name = typeParameter.MetadataName ?? string.Empty;
 			// Added by vbc
 			const string StateMachineTypeParameterPrefix = "SM$";
@@ -81,7 +81,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			var specialViewOptions = (options & ~(DbgValueNodeEvaluationOptions.ResultsView | DbgValueNodeEvaluationOptions.DynamicView));
 			if ((options & DbgValueNodeEvaluationOptions.ResultsView) != 0) {
 				info = valueNodeProviderFactory.CreateResultsView(evalInfo, addParens, expectedType, nodeInfo, specialViewOptions);
-				useProvider = !(info.ErrorMessage is null);
+				useProvider = info.ErrorMessage is not null;
 			}
 			else if ((options & DbgValueNodeEvaluationOptions.DynamicView) != 0) {
 				info = valueNodeProviderFactory.CreateDynamicView(evalInfo, addParens, expectedType, nodeInfo, specialViewOptions);
@@ -90,9 +90,9 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			else
 				info = valueNodeProviderFactory.Create(evalInfo, addParens, expectedType, nodeInfo, options);
 			if (useProvider) {
-				if (!(info.ErrorMessage is null))
+				if (info.ErrorMessage is not null)
 					return new DbgDotNetValueNodeImpl(this, info.Provider, name, nodeInfo, expression, PredefinedDbgValueNodeImageNames.Error, true, false, null, null, info.ErrorMessage, new DbgDotNetText(new DbgDotNetTextPart(DbgTextColor.Error, info.ErrorMessage)), formatSpecifiers, columnFormatter);
-				Debug2.Assert(!(info.Provider is null));
+				Debug2.Assert(info.Provider is not null);
 				return new DbgDotNetValueNodeImpl(this, info.Provider, name, nodeInfo, expression, info.Provider?.ImageName ?? imageName, true, false, null, null, info.ErrorMessage, info.Provider?.ValueText ?? default, formatSpecifiers, columnFormatter);
 			}
 			return new DbgDotNetValueNodeImpl(this, info.Provider, name, nodeInfo, expression, imageName, isReadOnly, causesSideEffects, expectedType, value.Type, info.ErrorMessage, default, formatSpecifiers, columnFormatter);
@@ -134,7 +134,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			const bool isReadOnly = true;
 			const bool causesSideEffects = false;
 			var property = PropertyState.TryGetProperty(method);
-			var imageName = !(property is null) ? ImageNameUtils.GetImageName(property) : ImageNameUtils.GetImageName(method, SupportsModuleTypes);
+			var imageName = property is not null ? ImageNameUtils.GetImageName(property) : ImageNameUtils.GetImageName(method, SupportsModuleTypes);
 			return CreateValue(evalInfo, default, value, formatSpecifiers, options, expression, imageName, isReadOnly, causesSideEffects, value.Type, false, columnFormatter);
 		}
 

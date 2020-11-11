@@ -72,7 +72,7 @@ namespace dnSpy.Documents.Tabs {
 			section.Attribute(INDEX_ATTR, Index);
 			section.Attribute(ISHORIZONTAL_ATTR, IsHorizontal);
 
-			if (!(StackedContentState is null))
+			if (StackedContentState is not null)
 				StackedContentStateSerializer.Serialize(section.GetOrCreateSection(STACKEDCONTENTSTATE_SECTION), StackedContentState);
 
 			foreach (var stg in TabGroups)
@@ -100,7 +100,7 @@ namespace dnSpy.Documents.Tabs {
 					yield return o;
 			}
 
-			if (!(StackedContentState is null))
+			if (StackedContentState is not null)
 				((TabGroupService)mgr).StackedContentState = StackedContentState;
 
 			var ary = mgr.TabGroups.ToArray();
@@ -128,7 +128,7 @@ namespace dnSpy.Documents.Tabs {
 
 			foreach (var tabSection in section.SectionsWithName(TAB_SECTION)) {
 				var tab = SerializedTab.TryLoad(tabSection);
-				if (!(tab is null))
+				if (tab is not null)
 					tg.Tabs.Add(tab);
 			}
 
@@ -148,7 +148,7 @@ namespace dnSpy.Documents.Tabs {
 
 			foreach (IDocumentTab tab in g.TabContents) {
 				var t = SerializedTab.TryCreate(documentTabContentFactoryService, tab);
-				if (!(t is null))
+				if (t is not null)
 					tg.Tabs.Add(t);
 			}
 
@@ -207,7 +207,7 @@ namespace dnSpy.Documents.Tabs {
 			var autoLoadedDocuments = new List<DsDocumentInfo>();
 			foreach (var sect in section.SectionsWithName(AUTOLOADED_SECTION)) {
 				var info = DsDocumentInfoSerializer.TryLoad(sect);
-				if (!(info is null))
+				if (info is not null)
 					autoLoadedDocuments.Add(info.Value);
 			}
 
@@ -215,7 +215,7 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		public void Save(ISettingsSection section) {
-			Debug2.Assert(!(Content.Attribute<Guid?>(CONTENT_GUID_ATTR) is null));
+			Debug2.Assert(Content.Attribute<Guid?>(CONTENT_GUID_ATTR) is not null);
 			section.CreateSection(CONTENT_SECTION).CopyFrom(Content);
 			section.CreateSection(UI_SECTION).CopyFrom(UI);
 			section.CreateSection(TAB_UI_SECTION).CopyFrom(TabUI);
@@ -258,7 +258,7 @@ namespace dnSpy.Documents.Tabs {
 				hash.Add(document);
 				if (document.Document.IsAutoLoaded) {
 					var info = document.Document.SerializedDocument;
-					if (!(info is null))
+					if (info is not null)
 						yield return info.Value;
 				}
 			}
@@ -335,7 +335,7 @@ namespace dnSpy.Documents.Tabs {
 		public static SerializedPath Create(DocumentTreeNodeData? node) {
 			var path = new SerializedPath();
 
-			while (!(node is null) && !(node.TreeNode.Parent is null)) {
+			while (node is not null && node.TreeNode.Parent is not null) {
 				path.Names.Add(node.NodePathName);
 				var parent = node.TreeNode.Parent;
 				node = parent.Data as DocumentTreeNodeData;

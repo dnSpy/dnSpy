@@ -49,8 +49,8 @@ namespace dnSpy.Text.Editor {
 				bool useVspaces = line.IsLastDocumentLine();
 				var lineExtent = new VirtualSnapshotSpan(new VirtualSnapshotPoint(line.Start), new VirtualSnapshotPoint(line.EndIncludingLineBreak, useVspaces ? span.End.VirtualSpaces : 0));
 				var extentTmp = lineExtent.Intersection(new VirtualSnapshotSpan(pos, span.End));
-				Debug2.Assert(!(extentTmp is null));
-				if (line.VisibilityState != VisibilityState.Unattached && !(extentTmp is null) && extentTmp.Value.Length != 0) {
+				Debug2.Assert(extentTmp is not null);
+				if (line.VisibilityState != VisibilityState.Unattached && extentTmp is not null && extentTmp.Value.Length != 0) {
 					var extent = extentTmp.Value;
 					Collection<TextBounds> textBounds;
 					if (extent.Start.IsInVirtualSpace) {
@@ -78,7 +78,7 @@ namespace dnSpy.Text.Editor {
 			}
 			if (createOutlinedPath)
 				geo = geo!.GetOutlinedPathGeometry();
-			if (!(geo is null) && geo.CanFreeze)
+			if (geo is not null && geo.CanFreeze)
 				geo.Freeze();
 			return geo;
 		}
@@ -93,8 +93,8 @@ namespace dnSpy.Text.Editor {
 				Debug.Assert(span.SnapshotSpan.End <= line.EndIncludingLineBreak);
 				var lineExtent = new VirtualSnapshotSpan(new VirtualSnapshotPoint(line.Start), new VirtualSnapshotPoint(line.EndIncludingLineBreak, span.End.VirtualSpaces));
 				var extentTmp = lineExtent.Intersection(span);
-				Debug2.Assert(!(extentTmp is null));
-				if (line.VisibilityState != VisibilityState.Unattached && !(extentTmp is null)) {
+				Debug2.Assert(extentTmp is not null);
+				if (line.VisibilityState != VisibilityState.Unattached && extentTmp is not null) {
 					var extent = extentTmp.Value;
 					Collection<TextBounds> textBounds;
 					if (extent.Start.IsInVirtualSpace) {
@@ -118,7 +118,7 @@ namespace dnSpy.Text.Editor {
 			}
 			if (createOutlinedPath)
 				geo = geo!.GetOutlinedPathGeometry();
-			if (!(geo is null) && geo.CanFreeze)
+			if (geo is not null && geo.CanFreeze)
 				geo.Freeze();
 			return geo;
 		}

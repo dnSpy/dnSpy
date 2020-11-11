@@ -169,7 +169,7 @@ namespace dnSpy.MainApp.Settings {
 			if (!ThemesVM.Any(a => a.Theme == themeService.Theme))
 				ThemesVM.Add(new ThemeVM(themeService.Theme));
 			SelectedThemeVM = ThemesVM.FirstOrDefault(a => a.Theme == themeService.Theme);
-			Debug2.Assert(!(SelectedThemeVM is null));
+			Debug2.Assert(SelectedThemeVM is not null);
 
 			WindowsExplorerIntegration = windowsExplorerIntegrationService.WindowsExplorerIntegration;
 			AllowMoreThanOneInstance = appSettings.AllowMoreThanOneInstance;
@@ -183,7 +183,7 @@ namespace dnSpy.MainApp.Settings {
 
 		public override void OnApply() => throw new InvalidOperationException();
 		public void OnApply(IAppRefreshSettings appRefreshSettings) {
-			if (!(SelectedThemeVM is null))
+			if (SelectedThemeVM is not null)
 				themeService.Theme = SelectedThemeVM.Theme;
 			windowsExplorerIntegrationService.WindowsExplorerIntegration = WindowsExplorerIntegration;
 			appSettings.AllowMoreThanOneInstance = AllowMoreThanOneInstance;

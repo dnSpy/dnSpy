@@ -32,12 +32,12 @@ namespace dnSpy.Text.Operations {
 
 		public SnapshotPoint? StartPoint {
 			get {
-				if (!(startPoint is null))
+				if (startPoint is not null)
 					startPoint = startPoint.Value.TranslateTo(buffer.CurrentSnapshot, (SearchOptions & FindOptions.SearchReverse) != 0 ? PointTrackingMode.Negative : PointTrackingMode.Positive);
 				return startPoint;
 			}
 			set {
-				if (!(value is null) && value.Value.Snapshot.TextBuffer != buffer)
+				if (value is not null && value.Value.Snapshot.TextBuffer != buffer)
 					throw new ArgumentException();
 				startPoint = value;
 			}
@@ -79,7 +79,7 @@ namespace dnSpy.Text.Operations {
 				throw new InvalidOperationException();
 
 			SnapshotPoint startingPosition;
-			if (!(CurrentResult is null)) {
+			if (CurrentResult is not null) {
 				if ((SearchOptions & FindOptions.SearchReverse) != 0) {
 					if (CurrentResult.Value.End.Position > 0)
 						startingPosition = CurrentResult.Value.End - 1;
@@ -97,7 +97,7 @@ namespace dnSpy.Text.Operations {
 						return FindFailed();
 				}
 			}
-			else if (!(StartPoint is null))
+			else if (StartPoint is not null)
 				startingPosition = StartPoint.Value;
 			else
 				startingPosition = new SnapshotPoint(buffer.CurrentSnapshot, 0);

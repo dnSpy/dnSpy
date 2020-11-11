@@ -78,7 +78,7 @@ namespace dnSpy.Search {
 					return module.Location;
 				if (!string.IsNullOrWhiteSpace(module.Name))
 					return module.Name;
-				if (!(module.Assembly is null) && !string.IsNullOrWhiteSpace(module.Assembly.Name))
+				if (module.Assembly is not null && !string.IsNullOrWhiteSpace(module.Assembly.Name))
 					return module.Assembly.Name;
 				return null;
 			}
@@ -118,7 +118,7 @@ namespace dnSpy.Search {
 			}
 
 			if (o is TypeDef td) {
-				Debug2.Assert(!(Context.Decompiler is null));
+				Debug2.Assert(Context.Decompiler is not null);
 				Context.Decompiler.WriteType(output, td, includeNamespace);
 				return;
 			}

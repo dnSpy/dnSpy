@@ -62,7 +62,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 					res[i] = new TypeVariableValueNode(valueNodeFactory, typeVariableInfos[j]);
 			}
 			catch {
-				evalInfo.Context.Process.DbgManager.Close(res.Where(a => !(a is null)));
+				evalInfo.Context.Process.DbgManager.Close(res.Where(a => a is not null));
 				throw;
 			}
 			return res;
@@ -88,7 +88,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			ExpectedType = info.GenericArgumentType;
 			Value = new TypeVariableValue(info.GenericArgumentType);
 			var paramType = info.GenericParameterType;
-			bool isMethodParam = !(paramType.DeclaringMethod is null);
+			bool isMethodParam = paramType.DeclaringMethod is not null;
 			ImageName = isMethodParam ? PredefinedDbgValueNodeImageNames.GenericMethodParameter : PredefinedDbgValueNodeImageNames.GenericTypeParameter;
 			Name = valueNodeFactory.GetTypeParameterName(paramType);
 		}

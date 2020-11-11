@@ -75,9 +75,9 @@ namespace dnSpy.Hex.Files.DotNet {
 				LocalVarSigTok,
 				Instructions,
 			};
-			if (!(Padding is null))
+			if (Padding is not null)
 				fields.Add(Padding);
-			if (!(EHTable is null))
+			if (EHTable is not null)
 				fields.Add(EHTable);
 			Fields = fields.ToArray();
 		}

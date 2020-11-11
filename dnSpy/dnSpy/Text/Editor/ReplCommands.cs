@@ -89,7 +89,7 @@ namespace dnSpy.Text.Editor {
 			return false;
 		}
 
-		public bool CanSelectNext => HasCommands && !(selectedIndex is null);
+		public bool CanSelectNext => HasCommands && selectedIndex is not null;
 
 		public bool SelectNext(string? text = null) {
 			foreach (var t in NextCommands) {

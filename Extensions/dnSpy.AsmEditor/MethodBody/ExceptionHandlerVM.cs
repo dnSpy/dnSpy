@@ -99,10 +99,10 @@ namespace dnSpy.AsmEditor.MethodBody {
 		string VerifyInstruction(ListVM<InstructionVM> list) {
 			var item = list.SelectedItem;
 			var instr = item as InstructionVM;
-			if (!(item is null) && instr is null)
+			if (item is not null && instr is null)
 				return dnSpy_AsmEditor_Resources.Error_OnlyInstrsCanBeSelected;
 
-			if (!(instr is null) && instr.Index == -1)
+			if (instr is not null && instr.Index == -1)
 				return dnSpy_AsmEditor_Resources.Error_InstrHasBeenRemoved;
 
 			return string.Empty;
@@ -143,7 +143,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		static InstructionVM? RemoveNullInstance(InstructionVM? vm) {
-			Debug2.Assert(!(vm is null));
+			Debug2.Assert(vm is not null);
 			if (vm is null || vm == InstructionVM.Null)
 				return null;
 			return vm;

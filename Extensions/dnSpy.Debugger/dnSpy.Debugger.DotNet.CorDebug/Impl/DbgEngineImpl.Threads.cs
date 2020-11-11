@@ -53,7 +53,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		}
 
 		DbgThreadData? TryGetThreadData(DbgThread thread) {
-			if (!(thread is null) && thread.TryGetData(out DbgThreadData? data))
+			if (thread is not null && thread.TryGetData(out DbgThreadData? data))
 				return data;
 			return null;
 		}
@@ -131,7 +131,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				return PredefinedThreadKinds.Main;
 
 			var s = GetThreadKind_ClrDac(thread);
-			if (!(s is null))
+			if (s is not null)
 				return s;
 
 			if ((thread.CorThread.UserState & CorDebugUserState.USER_STOPPED) != 0)
@@ -164,7 +164,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		(DbgEngineThread engineThread, DbgEngineThread.UpdateOptions updateOptions, ThreadProperties props)? UpdateThreadProperties_CorDebug(DnThread thread) {
 			debuggerThread.VerifyAccess();
 			var engineThread = TryGetEngineThread(thread);
-			Debug2.Assert(!(engineThread is null));
+			Debug2.Assert(engineThread is not null);
 			if (engineThread is null)
 				return null;
 			return UpdateThreadProperties_CorDebug(engineThread);
@@ -204,14 +204,14 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					threadsToUpdate = new List<(DbgEngineThread, DbgEngineThread.UpdateOptions, ThreadProperties)>();
 				threadsToUpdate.Add(info.Value);
 			}
-			if (!(threadsToUpdate is null)) {
+			if (threadsToUpdate is not null) {
 				foreach (var info in threadsToUpdate)
 					NotifyThreadPropertiesChanged_CorDebug(info.engineThread, info.updateOptions, info.props);
 			}
 		}
 
 		void DnDebugger_OnThreadAdded(object? sender, ThreadDebuggerEventArgs e) {
-			Debug2.Assert(!(objectFactory is null));
+			Debug2.Assert(objectFactory is not null);
 			if (e.Added) {
 				bool isMainThread = IsMainThread(e.Thread);
 				var props = GetThreadProperties_CorDebug(e.Thread, null, isCreateThread: true, forceReadName: false, isMainThread: isMainThread);
@@ -228,7 +228,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					if (toEngineThread.TryGetValue(e.Thread, out engineThread))
 						toEngineThread.Remove(e.Thread);
 				}
-				if (!(engineThread is null)) {
+				if (engineThread is not null) {
 					e.ShouldPause = true;
 					engineThread.Remove(GetMessageFlags());
 				}
@@ -253,7 +253,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		bool IsNotMainThread(DnThread thread) {
 			var info = clrDac.GetThreadInfo(thread.VolatileThreadId);
-			if (!(info is null)) {
+			if (info is not null) {
 				var flags = info.Value.Flags;
 				const ClrDacThreadFlags NotMainThreadFlags =
 					ClrDacThreadFlags.IsFinalizer |
@@ -300,10 +300,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 					}
 				}
 			}
-			if (!(mainThreadInfo.thread is null)) {
+			if (mainThreadInfo.thread is not null) {
 				mainThreadInfo.data!.IsMainThread = true;
 				var info = UpdateThreadProperties_CorDebug(mainThreadInfo.thread);
-				if (!(info is null))
+				if (info is not null)
 					NotifyThreadPropertiesChanged_CorDebug(info.Value.engineThread, info.Value.updateOptions, info.Value.props);
 			}
 		}
@@ -372,7 +372,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				corThread.State = CorDebugThreadState.THREAD_RUN;
 			}
 			var info = UpdateThreadProperties_CorDebug(threadData.DnThread);
-			if (!(info is null))
+			if (info is not null)
 				NotifyThreadPropertiesChanged_CorDebug(info.Value.engineThread, info.Value.updateOptions, info.Value.props);
 		}
 
@@ -387,7 +387,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		ICorDebugFrame[]? framesBuffer = new ICorDebugFrame[framesBufferSize];
 		ICorDebugFrame[] GetFramesBuffer() => Interlocked.Exchange(ref framesBuffer, null) ?? new ICorDebugFrame[framesBufferSize];
 		internal void ReturnFramesBuffer(ref ICorDebugFrame[]? framesBuffer) {
-			Debug2.Assert(!(framesBuffer is null));
+			Debug2.Assert(framesBuffer is not null);
 			Interlocked.Exchange(ref this.framesBuffer, framesBuffer);
 			framesBuffer = null;
 		}
@@ -403,7 +403,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				SendMessage(new DbgMessageSetIPComplete(thread, framesInvalidated, messageFlags: GetMessageFlags(), error: error));
 				return;
 			}
-			Debug2.Assert(!(corFrame is null));
+			Debug2.Assert(corFrame is not null);
 
 			framesInvalidated = true;
 			bool failed = !corFrame.SetILFrameIP(offset);

@@ -148,7 +148,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 			var info = TryGetLanguage();
 			if (info.frame is null)
 				return new GetNodesResult(variablesWindowValueNodesProvider.GetDefaultNodes(), frameClosed: false, recreateAllNodes: false);
-			Debug2.Assert(!(info.language is null));
+			Debug2.Assert(info.language is not null);
 			var evalInfo = TryGetEvaluationInfo(info);
 			if (evalInfo is null)
 				return new GetNodesResult(variablesWindowValueNodesProvider.GetDefaultNodes(), info.frame.IsClosed, recreateAllNodes: false);
@@ -203,12 +203,12 @@ namespace dnSpy.Debugger.Evaluation.UI {
 		public override DbgEvaluationInfo? TryGetEvaluationInfo() => TryGetEvaluationInfo(TryGetLanguage());
 
 		DbgEvaluationInfo? TryGetEvaluationInfo((DbgLanguage? language, DbgStackFrame? frame) info) {
-			if (!(evalContextInfo.EvalInfo is null) && evalContextInfo.Language == info.language && evalContextInfo.EvalInfo.Frame == info.frame)
+			if (evalContextInfo.EvalInfo is not null && evalContextInfo.Language == info.language && evalContextInfo.EvalInfo.Frame == info.frame)
 				return evalContextInfo.EvalInfo;
 
 			evalContextInfo.Language = info.language;
-			if (!(info.frame is null)) {
-				Debug2.Assert(!(info.language is null));
+			if (info.frame is not null) {
+				Debug2.Assert(info.language is not null);
 				//TODO: Show a cancel button if the decompiler takes too long to decompile the method
 				var cancellationToken = CancellationToken.None;
 				var context = info.language.CreateContext(info.frame, cancellationToken: cancellationToken);

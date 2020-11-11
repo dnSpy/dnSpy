@@ -91,7 +91,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			var vm = DataContext as EditCodeVM;
 			var diag = diagnosticsListView.SelectedItem as CompilerDiagnosticVM;
-			Debug2.Assert(!(vm is null) && !(diag is null));
+			Debug2.Assert(vm is not null && diag is not null);
 			if (vm is null || diag is null)
 				return;
 

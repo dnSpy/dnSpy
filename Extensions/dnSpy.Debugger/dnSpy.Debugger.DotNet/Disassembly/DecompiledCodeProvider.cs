@@ -62,7 +62,7 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 				info = TryDecompileCode(method, method.MDToken.Raw, ctx, output);
 			}
 			debugInfo = info.debugInfo;
-			return !(debugInfo is null);
+			return debugInfo is not null;
 		}
 
 		public NativeVariableInfo[] CreateNativeVariableInfo() {

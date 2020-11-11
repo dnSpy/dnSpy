@@ -212,7 +212,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 
 				default:
 					var binData = resourceElement.ResourceData as BinaryResourceData;
-					if (!(binData is null))
+					if (binData is not null)
 						return string.Format(dnSpy_Contracts_DnSpy_Resources.NumberOfBytesAndType, binData.Data.Length, binData.TypeName);
 					return resourceElement.ResourceData.ToString() ?? string.Empty;
 				}

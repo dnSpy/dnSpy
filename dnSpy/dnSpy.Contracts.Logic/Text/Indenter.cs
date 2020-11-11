@@ -74,7 +74,7 @@ namespace dnSpy.Contracts.Text {
 				cachedStrings.Add(null);
 
 			var s = cachedStrings[level];
-			if (!(s is null))
+			if (s is not null)
 				return s;
 			s = CreateIndentString(level);
 			cachedStrings[level] = s;

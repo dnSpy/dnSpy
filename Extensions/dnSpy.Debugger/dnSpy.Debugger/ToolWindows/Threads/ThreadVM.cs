@@ -168,7 +168,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		// UI thread
 		ThreadPriority CalculateThreadPriority_UI() {
 			Context.UIDispatcher.VerifyAccess();
-			Debug2.Assert(!(hThread is null));
+			Debug2.Assert(hThread is not null);
 			if (hThread is null || hThread.IsInvalid)
 				return ThreadPriority.Normal;
 			return (ThreadPriority)NativeMethods.GetThreadPriority(hThread.DangerousGetHandle());
@@ -177,7 +177,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		// UI thread
 		ulong CalculateAffinityMask_UI() {
 			Context.UIDispatcher.VerifyAccess();
-			Debug2.Assert(!(hThread is null));
+			Debug2.Assert(hThread is not null);
 			if (hThread is null || hThread.IsInvalid)
 				return 0;
 			var affinityMask = NativeMethods.SetThreadAffinityMask(hThread.DangerousGetHandle(), new IntPtr(-1));
@@ -323,7 +323,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		// UI thread
 		void OpenThread_UI() {
 			Context.UIDispatcher.VerifyAccess();
-			if (!(hThread is null))
+			if (hThread is not null)
 				return;
 			const int dwDesiredAccess = NativeMethods.THREAD_QUERY_INFORMATION | NativeMethods.THREAD_SET_INFORMATION;
 			hThread = NativeMethods.OpenThread(dwDesiredAccess, false, (uint)Thread.Id);
@@ -360,7 +360,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 				}
 			}
 			finally {
-				if (!(frames is null) && frames.Length != 0) {
+				if (frames is not null && frames.Length != 0) {
 					Debug.Assert(frames.Length == 1);
 					Thread.Process.DbgManager.Close(new DbgObject[] { stackWalker!, frames[0] });
 				}

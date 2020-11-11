@@ -50,9 +50,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		}
 
 		object GetValueThrow(DbgDotNetValueResult result) {
-			if (!(result.ErrorMessage is null))
+			if (result.ErrorMessage is not null)
 				throw new DmdEvaluatorException(result.ErrorMessage);
-			Debug2.Assert(!(result.Value is null));
+			Debug2.Assert(result.Value is not null);
 			if (result.ValueIsException) {
 				var msg = "An exception was thrown: " + result.Value.Type.FullName;
 				result.Value.Dispose();
@@ -82,7 +82,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 		public override void StoreField(object? context, DmdFieldInfo field, object? obj, object? value) {
 			var evalInfo = GetEvaluationInfo(context);
 			var errorMessage = engine.DotNetRuntime.StoreField(evalInfo, GetDotNetValue(obj), field, value);
-			if (!(errorMessage is null))
+			if (errorMessage is not null)
 				throw new DmdEvaluatorException(errorMessage);
 		}
 	}

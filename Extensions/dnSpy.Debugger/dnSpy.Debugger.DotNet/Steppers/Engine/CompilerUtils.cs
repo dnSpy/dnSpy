@@ -62,11 +62,11 @@ namespace dnSpy.Debugger.DotNet.Steppers.Engine {
 		// from inside an iterator or async method. That method just calls the real base method.
 		public static bool IsBaseWrapperMethod(DbgModule module, uint token) {
 			var reflectionModule = module.GetReflectionModule();
-			Debug2.Assert(!(reflectionModule is null));
+			Debug2.Assert(reflectionModule is not null);
 			if (reflectionModule is null)
 				return false;
 			var method = reflectionModule.ResolveMethod((int)token, DmdResolveOptions.None);
-			Debug2.Assert(!(method is null));
+			Debug2.Assert(method is not null);
 			if (method is null)
 				return false;
 

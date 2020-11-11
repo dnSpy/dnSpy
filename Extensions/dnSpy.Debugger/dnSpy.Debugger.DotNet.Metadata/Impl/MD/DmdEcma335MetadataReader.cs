@@ -134,7 +134,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		internal DmdType ReadFieldType(uint signature, IList<DmdType> genericTypeArguments) {
 			lock (signatureLock) {
 				if (fieldTypeCache.TryGetValue(signature, out var fieldType)) {
-					if (!(fieldType is null))
+					if (fieldType is not null)
 						return fieldType;
 					var info = ReadFieldTypeCore(signature, genericTypeArguments);
 					Debug.Assert(info.containedGenericParams);
@@ -183,7 +183,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		internal DmdMethodSignature ReadMethodSignature(uint signature, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments, bool isProperty) {
 			lock (signatureLock) {
 				if (methodSignatureCache.TryGetValue(signature, out var methodSignature)) {
-					if (!(methodSignature is null))
+					if (methodSignature is not null)
 						return methodSignature;
 					var info = ReadMethodSignatureCore(signature, genericTypeArguments, genericMethodArguments, isProperty);
 					Debug.Assert(info.containedGenericParams);
@@ -303,12 +303,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			if ((classToken >> 24) == 0x1B)
 				containedGenericParams = true;
 
-			if (!(info.fieldType is null)) {
+			if (info.fieldType is not null) {
 				var fieldRef = new DmdFieldRef(reflectedTypeRef, name, rawInfo.fieldType!, info.fieldType);
 				return (fieldRef, containedGenericParams);
 			}
 			else {
-				Debug2.Assert(!(info.methodSignature is null));
+				Debug2.Assert(info.methodSignature is not null);
 				if (name == DmdConstructorInfo.ConstructorName || name == DmdConstructorInfo.TypeConstructorName) {
 					var ctorRef = new DmdConstructorRef(reflectedTypeRef, name, rawInfo.methodSignature!, info.methodSignature);
 					return (ctorRef, containedGenericParams);
@@ -347,7 +347,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 		(DmdType? fieldType, DmdMethodSignature? methodSignature, bool containedGenericParams) ReadMethodSignatureOrFieldType(uint signature, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments) {
 			lock (signatureLock) {
 				if (methodSignatureCache.TryGetValue(signature, out var methodSignature)) {
-					if (!(methodSignature is null))
+					if (methodSignature is not null)
 						return (null, methodSignature, false);
 					var info = ReadMethodSignatureCore(signature, genericTypeArguments, genericMethodArguments, isProperty: false);
 					if (info.methodSignature is null)
@@ -356,7 +356,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 					return (null, info.methodSignature, info.containedGenericParams);
 				}
 				else if (fieldTypeCache.TryGetValue(signature, out var fieldType)) {
-					if (!(fieldType is null))
+					if (fieldType is not null)
 						return (fieldType, null, false);
 					var info = ReadFieldTypeCore(signature, genericTypeArguments);
 					if (info.fieldType is null)
@@ -367,7 +367,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 				else {
 					var reader = BlobStream.CreateReader(signature);
 					var info = DmdSignatureReader.ReadMethodSignatureOrFieldType(module, new DmdDataStreamImpl(ref reader), genericTypeArguments, genericMethodArguments, resolveTypes);
-					if (!(info.fieldType is null)) {
+					if (info.fieldType is not null) {
 						if (info.containedGenericParams)
 							fieldTypeCache.Add(signature, null);
 						else
@@ -375,7 +375,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 						return (info.fieldType, null, info.containedGenericParams);
 					}
 					else {
-						Debug2.Assert(!(info.methodSignature is null));
+						Debug2.Assert(info.methodSignature is not null);
 						if (info.containedGenericParams)
 							methodSignatureCache.Add(signature, null);
 						else
@@ -397,7 +397,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 			var reader = Metadata.PEImage.CreateReader();
 			reader.Position = (uint)Metadata.PEImage.ToFileOffset((RVA)row.RVA);
 			var body = DmdMethodBodyReader.Create(this, new DmdDataStreamImpl(ref reader), genericTypeArguments, genericMethodArguments);
-			Debug2.Assert(!(body is null));
+			Debug2.Assert(body is not null);
 			return body;
 		}
 
@@ -652,7 +652,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.MD {
 					res.Add((cas, action));
 				}
 			}
-			if (!(firstCas is null))
+			if (firstCas is not null)
 				return firstCas;
 			if (res is null)
 				return Array.Empty<DmdCustomAttributeData>();

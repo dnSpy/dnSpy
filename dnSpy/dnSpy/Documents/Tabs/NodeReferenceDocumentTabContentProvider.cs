@@ -56,7 +56,7 @@ namespace dnSpy.Documents.Tabs {
 				return Create(mod);
 			if (@ref is IAssembly asmRef) {
 				var doc = documentTreeView.DocumentService.Resolve(asmRef, null);
-				if (!(doc is null))
+				if (doc is not null)
 					return Create(doc);
 			}
 			return null;

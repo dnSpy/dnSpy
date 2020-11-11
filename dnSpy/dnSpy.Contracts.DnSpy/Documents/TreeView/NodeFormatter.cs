@@ -31,8 +31,8 @@ namespace dnSpy.Contracts.Documents.TreeView {
 	/// Node formatter
 	/// </summary>
 	public readonly struct NodeFormatter {
-		static bool IsExe(ModuleDef? mod) => !(mod is null) && (mod.Characteristics & Characteristics.Dll) == 0;
-		static bool IsExe(IPEImage? peImage) => !(peImage is null) && (peImage.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) == 0;
+		static bool IsExe(ModuleDef? mod) => mod is not null && (mod.Characteristics & Characteristics.Dll) == 0;
+		static bool IsExe(IPEImage? peImage) => peImage is not null && (peImage.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) == 0;
 
 		static string GetFilename(IDsDocument document) {
 			string? filename = null;
@@ -63,7 +63,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		public void Write(ITextColorWriter output, IDecompiler decompiler, IDsDocument document) {
 			var filename = GetFilename(document);
 			var peImage = document.PEImage;
-			if (!(peImage is null))
+			if (peImage is not null)
 				output.Write(IsExe(peImage) ? BoxedTextColor.AssemblyExe : BoxedTextColor.Assembly, NameUtilities.CleanName(filename));
 			else
 				output.Write(BoxedTextColor.Text, NameUtilities.CleanName(filename));
@@ -264,7 +264,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 			if (md is null)
 				md = m?.ResolveMethodDef();
 			var method = (md ?? m)!;
-			Debug2.Assert(!(method is null));
+			Debug2.Assert(method is not null);
 
 			var name = method.Name;
 			if (name == ".ctor")
@@ -283,7 +283,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 					}
 					output.Write(BoxedTextColor.Punctuation, ">");
 				}
-				else if (!(md is null) && md.GenericParameters.Count > 0) {
+				else if (md is not null && md.GenericParameters.Count > 0) {
 					output.Write(BoxedTextColor.Punctuation, "<");
 					var genericArgs = md.GenericParameters;
 					for (int i = 0; i < genericArgs.Count; i++) {
@@ -296,7 +296,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 			}
 
 			output.Write(BoxedTextColor.Punctuation, "(");
-			if (!(msig is null)) {
+			if (msig is not null) {
 				var ps = msig.Params;
 				var parameters = md?.Parameters;
 				int paramBaseIndex = md is null || md.IsStatic ? 0 : 1;

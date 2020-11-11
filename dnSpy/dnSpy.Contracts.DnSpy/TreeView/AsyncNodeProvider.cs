@@ -118,7 +118,7 @@ namespace dnSpy.Contracts.TreeView {
 		});
 
 		void RemoveMessageNode_UI() {
-			if (!(msgNode is null))
+			if (msgNode is not null)
 				targetNode.TreeNode.Children.Remove(msgNode);
 			OnCompleted();
 		}

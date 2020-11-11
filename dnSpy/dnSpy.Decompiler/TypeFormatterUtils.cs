@@ -113,7 +113,7 @@ namespace dnSpy.Decompiler {
 
 		static int GetNumberOfOverloads(TypeDef? type, string name, bool checkBaseTypes) {
 			var hash = new HashSet<MethodDef>(MethodEqualityComparer.DontCompareDeclaringTypes);
-			while (!(type is null)) {
+			while (type is not null) {
 				foreach (var m in type.Methods) {
 					if (m.Name == name)
 						hash.Add(m);
@@ -139,7 +139,7 @@ namespace dnSpy.Decompiler {
 			var n = variable.Name;
 			if (!string.IsNullOrWhiteSpace(n))
 				return n;
-			if (!(variable.Variable is null)) {
+			if (variable.Variable is not null) {
 				if (variable.IsLocal)
 					return "V_" + variable.Variable.Index.ToString();
 				return "A_" + variable.Variable.Index.ToString();
@@ -150,8 +150,8 @@ namespace dnSpy.Decompiler {
 
 		public static bool IsSystemNullable(GenericInstSig gis) {
 			var gt = gis.GenericType as ValueTypeSig;
-			return !(gt is null) &&
-				!(gt.TypeDefOrRef is null) &&
+			return gt is not null &&
+				gt.TypeDefOrRef is not null &&
 				gt.TypeDefOrRef.DefinitionAssembly.IsCorLib() &&
 				gt.TypeDefOrRef.FullName == "System.Nullable`1";
 		}
@@ -200,7 +200,7 @@ namespace dnSpy.Decompiler {
 			return rank;
 		}
 
-		public static bool IsDelegate(TypeDef? td) => !(td is null) &&
+		public static bool IsDelegate(TypeDef? td) => td is not null &&
 			new SigComparer().Equals(td.BaseType, td.Module.CorLibTypes.GetTypeRef("System", "MulticastDelegate")) &&
 			td.BaseType.DefinitionAssembly.IsCorLib();
 
@@ -343,7 +343,7 @@ namespace dnSpy.Decompiler {
 			var flags = MemberSpecialFlags.None;
 
 			var md = method.ResolveMethodDef();
-			if (!(md is null) && IsExtension(md.CustomAttributes))
+			if (md is not null && IsExtension(md.CustomAttributes))
 				flags |= MemberSpecialFlags.Extension;
 
 			if (IsAwaitableType(method.MethodSig.GetRetType()))
@@ -365,11 +365,11 @@ namespace dnSpy.Decompiler {
 			constantAttribute = null;
 			if (hc is null)
 				return false;
-			if (!(hc.Constant is null))
+			if (hc.Constant is not null)
 				return true;
 			foreach (var ca in hc.CustomAttributes) {
 				var type = ca.AttributeType;
-				while (!(type is null)) {
+				while (type is not null) {
 					var fullName = type.FullName;
 					if (fullName == "System.Runtime.CompilerServices.CustomConstantAttribute" ||
 						fullName == "System.Runtime.CompilerServices.DecimalConstantAttribute") {
@@ -383,12 +383,12 @@ namespace dnSpy.Decompiler {
 		}
 
 		public static bool TryGetConstant(IHasConstant? hc, CustomAttribute? constantAttribute, out object? constant) {
-			if (!(hc?.Constant is null)) {
+			if (hc?.Constant is not null) {
 				constant = hc.Constant.Value;
 				return true;
 			}
 
-			if (!(constantAttribute is null)) {
+			if (constantAttribute is not null) {
 				if (constantAttribute.TypeFullName == "System.Runtime.CompilerServices.DecimalConstantAttribute") {
 					if (TryGetDecimalConstantAttributeValue(constantAttribute, out var decimalValue)) {
 						constant = decimalValue;

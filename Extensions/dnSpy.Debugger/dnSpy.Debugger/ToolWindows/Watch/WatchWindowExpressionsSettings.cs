@@ -87,7 +87,7 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 		}
 
 		void Save(WatchInfo info) {
-			if (!(info.Section is null))
+			if (info.Section is not null)
 				watchSection.RemoveSection(info.Section);
 			var sect = info.Section = watchSection.CreateSection("Watch");
 			sect.Attribute("Index", info.WindowIndex);

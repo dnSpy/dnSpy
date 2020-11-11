@@ -66,7 +66,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 				return PredefinedEvaluationErrorMessages.FuncEvalDisabled;
 
 			var errorMessage = InitializeEnumerableDebugView(evalInfo);
-			if (!(errorMessage is null)) {
+			if (errorMessage is not null) {
 				if (InitializeListDebugView(evalInfo))
 					errorMessage = null;
 			}
@@ -175,7 +175,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 
 		protected override (DbgDotNetValueNode? node, bool canHide) TryCreateInstanceValueNode(DbgEvaluationInfo evalInfo, DbgDotNetValueResult valueResult) {
 			var noResultsNode = DebugViewNoResultsValueNode.TryCreate(evalInfo, Expression, valueResult);
-			if (!(noResultsNode is null)) {
+			if (noResultsNode is not null) {
 				valueResult.Value?.Dispose();
 				return (noResultsNode, false);
 			}

@@ -182,11 +182,11 @@ namespace dnSpy.Text.Editor {
 
 		public override void OnMouseMove(object? sender, MouseEventArgs e) {
 			if (e.LeftButton == MouseButtonState.Pressed) {
-				if (!(mouseLeftDownInfo is null) && !mouseLeftDownInfo.Value.TryAdvanceVersion(wpfTextView.TextSnapshot.Version)) {
+				if (mouseLeftDownInfo is not null && !mouseLeftDownInfo.Value.TryAdvanceVersion(wpfTextView.TextSnapshot.Version)) {
 					CancelMouseLeftButtonSelection();
 					return;
 				}
-				if (!mouseCaptured && !(mouseLeftDownInfo is null)) {
+				if (!mouseCaptured && mouseLeftDownInfo is not null) {
 					var mouseLoc = GetLocation(e);
 					var dist = mouseLeftDownInfo.Value.Point - mouseLoc.Point;
 					bool movedEnough = Math.Abs(dist.X) >= SystemParameters.MinimumHorizontalDragDistance ||
@@ -199,7 +199,7 @@ namespace dnSpy.Text.Editor {
 				}
 				else if (mouseCaptured) {
 					e.Handled = true;
-					Debug2.Assert(!(mouseLeftDownInfo is null));
+					Debug2.Assert(mouseLeftDownInfo is not null);
 					if (mouseLeftDownInfo is null)
 						StopScrolling();
 					else if (mouseLeftDownInfo.Value.Clicks == 2 || mouseLeftDownInfo.Value.Clicks == 3) {
@@ -260,7 +260,7 @@ namespace dnSpy.Text.Editor {
 				return;
 			}
 
-			if (!(dispatcherTimer is null)) {
+			if (dispatcherTimer is not null) {
 				// It resets the timer if we write a new value, even if it's identical to the original value
 				if (dispatcherTimer.Interval != interval)
 					dispatcherTimer.Interval = interval;

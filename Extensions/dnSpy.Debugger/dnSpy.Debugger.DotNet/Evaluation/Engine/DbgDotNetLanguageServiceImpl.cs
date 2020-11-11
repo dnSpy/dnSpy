@@ -105,7 +105,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				else if (decompilerGuid == visualBasicDecompilerGuid)
 					decompilerGuid = DecompilerConstants.LANGUAGE_VISUALBASIC;
 				var decompiler = decompilerService.Find(decompilerGuid);
-				Debug2.Assert(!(decompiler is null));
+				Debug2.Assert(decompiler is not null);
 				if (decompiler is null)
 					continue;
 
@@ -132,7 +132,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 
 			Debug.Fail($"Default formatter ({LanguageConstants.DefaultLanguageGuid.ToString()}) wasn't exported");
 			formatter = formattersDict.Values.FirstOrDefault();
-			return !(formatter is null);
+			return formatter is not null;
 		}
 
 		public override DbgEngineObjectIdFactory GetEngineObjectIdFactory(Guid runtimeGuid) =>

@@ -37,7 +37,7 @@ namespace dnSpy.Roslyn.Text {
 			get {
 				if (defaultServices is null)
 					Interlocked.CompareExchange(ref defaultServices, CreateDefaultServices(), null);
-				Debug2.Assert(!(defaultServices is null));
+				Debug2.Assert(defaultServices is not null);
 				return defaultServices;
 			}
 		}

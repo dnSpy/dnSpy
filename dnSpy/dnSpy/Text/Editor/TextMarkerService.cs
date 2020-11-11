@@ -234,14 +234,14 @@ namespace dnSpy.Text.Editor {
 			foreach (var mappingSpan in e.Spans) {
 				foreach (var span in mappingSpan.GetSpans(wpfTextView.TextSnapshot)) {
 					var intersection = wpfTextView.TextViewLines.FormattedSpan.Intersection(span);
-					if (!(intersection is null)) {
+					if (intersection is not null) {
 						if (intersectionSpans is null)
 							intersectionSpans = new List<SnapshotSpan>();
 						intersectionSpans.Add(intersection.Value);
 					}
 				}
 			}
-			if (!(intersectionSpans is null))
+			if (intersectionSpans is not null)
 				UpdateRange(new NormalizedSnapshotSpanCollection(intersectionSpans));
 		}
 
@@ -345,7 +345,7 @@ namespace dnSpy.Text.Editor {
 				newPen = new Pen(scBrush, PEN_THICKNESS);
 				newPen.Freeze();
 			}
-			else if (!((newPen = props[MarkerFormatDefinition.BorderId] as Pen) is null)) {
+			else if ((newPen = props[MarkerFormatDefinition.BorderId] as Pen) is not null) {
 				if (newPen.CanFreeze)
 					newPen.Freeze();
 			}
@@ -354,7 +354,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		MarkerElement? TryCreateMarkerElement(SnapshotSpan span, ITextMarkerTag tag) {
-			Debug2.Assert(!(tag.Type is null));
+			Debug2.Assert(tag.Type is not null);
 			var geo = wpfTextView.TextViewLines.GetMarkerGeometry(span);
 			if (geo is null)
 				return null;

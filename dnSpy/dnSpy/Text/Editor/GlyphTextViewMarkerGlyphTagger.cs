@@ -44,7 +44,7 @@ namespace dnSpy.Text.Editor {
 
 		public ITagger<T>? CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag {
 			var wpfTextView = textView as IWpfTextView;
-			Debug2.Assert(!(wpfTextView is null));
+			Debug2.Assert(wpfTextView is not null);
 			if (wpfTextView is null)
 				return null;
 			if (textView.TextBuffer != buffer)

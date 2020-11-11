@@ -38,10 +38,10 @@ namespace dnSpy.AsmEditor.Resources {
 
 		void ResourceElementControl_Loaded(object? sender, RoutedEventArgs e) {
 			var vm = DataContext as ResourceElementVM;
-			Debug2.Assert(!(vm is null));
-			if (!(vm is null) && !string.IsNullOrEmpty(vm.Name) && vm.IsSingleLineValue)
+			Debug2.Assert(vm is not null);
+			if (vm is not null && !string.IsNullOrEmpty(vm.Name) && vm.IsSingleLineValue)
 				valueTextBox.Focus();
-			else if (!(vm is null) && !string.IsNullOrEmpty(vm.Name) && vm.IsMultiLineValue)
+			else if (vm is not null && !string.IsNullOrEmpty(vm.Name) && vm.IsMultiLineValue)
 				multiLineTextBox.Focus();
 			else
 				nameTextBox.Focus();

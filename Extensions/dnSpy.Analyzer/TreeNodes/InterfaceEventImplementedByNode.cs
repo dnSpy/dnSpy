@@ -39,11 +39,11 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		public InterfaceEventImplementedByNode(EventDef analyzedEvent) {
 			this.analyzedEvent = analyzedEvent ?? throw new ArgumentNullException(nameof(analyzedEvent));
-			if (!(this.analyzedEvent.AddMethod is null)) {
+			if (this.analyzedEvent.AddMethod is not null) {
 				analyzedMethod = this.analyzedEvent.AddMethod;
 				accessorKind = AccessorKind.Adder;
 			}
-			else if (!(this.analyzedEvent.RemoveMethod is null)) {
+			else if (this.analyzedEvent.RemoveMethod is not null) {
 				analyzedMethod = this.analyzedEvent.RemoveMethod;
 				accessorKind = AccessorKind.Remover;
 			}

@@ -35,7 +35,7 @@ namespace dnSpy.AsmEditor.Commands {
 		public ICommand RemoveAllItemsCommand => new RelayCommand(a => RemoveAllItems((T[])a!), a => RemoveAllItemsCanExecute((T[])a!));
 		public bool DisableAutoUpdateProps { get; set; }
 		public Action<int>? UpdateIndexesDelegate { get; set; }
-		public bool CanCreateNewItems => !(createNewItem is null);
+		public bool CanCreateNewItems => createNewItem is not null;
 		public bool CanRemoveItems => true;
 		public bool CanMoveItems => true;
 
@@ -91,7 +91,7 @@ namespace dnSpy.AsmEditor.Commands {
 		}
 
 		public void UpdateIndexes(int index) {
-			if (!(UpdateIndexesDelegate is null))
+			if (UpdateIndexesDelegate is not null)
 				UpdateIndexesDelegate(index);
 			else
 				DefaultUpdateIndexes(index);

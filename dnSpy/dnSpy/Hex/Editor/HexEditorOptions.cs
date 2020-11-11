@@ -68,7 +68,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		void UpdateOptions(HexEditorOptions? oldParent) {
-			if (!(oldParent is null)) {
+			if (oldParent is not null) {
 				for (int i = 0; i < oldParent.weakChildren.Count; i++) {
 					if (oldParent.weakChildren[i].Target == this) {
 						oldParent.weakChildren.RemoveAt(i);
@@ -76,10 +76,10 @@ namespace dnSpy.Hex.Editor {
 					}
 				}
 			}
-			if (!(parent is null))
+			if (parent is not null)
 				parent.weakChildren.Add(new WeakReference(this));
 
-			if (!(parent is null) || !(oldParent is null)) {
+			if (parent is not null || oldParent is not null) {
 				foreach (var o in SupportedOptions) {
 					if (dict.ContainsKey(o.Name))
 						continue;
@@ -92,10 +92,10 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		bool TryGetValue(string optionId, [NotNullWhen(true)] out object? value) {
-			if (!(scope is null) && !service.GetOption(optionId).IsApplicableToScope(scope))
+			if (scope is not null && !service.GetOption(optionId).IsApplicableToScope(scope))
 				throw new InvalidOperationException();
 			HexEditorOptions? p = this;
-			while (!(p is null)) {
+			while (p is not null) {
 				if (p.dict.TryGetValue(optionId, out value))
 					return true;
 				p = p.parent;
@@ -128,7 +128,7 @@ namespace dnSpy.Hex.Editor {
 		public bool IsOptionDefined(string optionId, bool localScopeOnly) {
 			if (optionId is null)
 				throw new ArgumentNullException(nameof(optionId));
-			if (!(parent is null) && localScopeOnly)
+			if (parent is not null && localScopeOnly)
 				return dict.ContainsKey(optionId);
 			var def = service.GetOption(optionId);
 			return scope is null || def.IsApplicableToScope(scope);
@@ -160,7 +160,7 @@ namespace dnSpy.Hex.Editor {
 			if (optionId is null)
 				throw new ArgumentNullException(nameof(optionId));
 			var def = service.GetOption(optionId);
-			if (!(scope is null) && !def.IsApplicableToScope(scope))
+			if (scope is not null && !def.IsApplicableToScope(scope))
 				throw new InvalidOperationException();
 			if (!def.IsValid(ref value))
 				throw new ArgumentException();

@@ -31,7 +31,7 @@ using dnSpy.Decompiler;
 namespace dnSpy.Documents.TreeView {
 	sealed class AssemblyDocumentNodeImpl : AssemblyDocumentNode {
 		public AssemblyDocumentNodeImpl(IDsDotNetDocument document)
-			: base(document) => Debug2.Assert(!(document.AssemblyDef is null));
+			: base(document) => Debug2.Assert(document.AssemblyDef is not null);
 
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.ASSEMBLY_NODE_GUID);
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => dnImgMgr.GetImageReference(Document.AssemblyDef!);
@@ -43,7 +43,7 @@ namespace dnSpy.Documents.TreeView {
 		}
 
 		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) {
-			Debug2.Assert(!(Document.AssemblyDef is null));
+			Debug2.Assert(Document.AssemblyDef is not null);
 			if ((options & DocumentNodeWriteOptions.ToolTip) == 0)
 				new NodeFormatter().Write(output, decompiler, Document.AssemblyDef, false, Context.ShowAssemblyVersion, Context.ShowAssemblyPublicKeyToken);
 			else {

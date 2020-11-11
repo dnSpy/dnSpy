@@ -41,7 +41,7 @@ namespace dnSpy.Hex.Intellisense {
 				throw new ArgumentNullException(nameof(session));
 			foreach (var lz in intellisensePresenterProviders) {
 				var presenter = lz.Value.TryCreateIntellisensePresenter(session);
-				if (!(presenter is null))
+				if (presenter is not null)
 					return presenter;
 			}
 			return null;

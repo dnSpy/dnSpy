@@ -153,9 +153,9 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		static IEnumerable<DbgRuntime> GetRuntimesCore(DbgManager dbgManager) {
 			var currentRuntime = dbgManager.CurrentRuntime;
 			DbgRuntime? runtime;
-			if (!((runtime = currentRuntime.Current) is null))
+			if ((runtime = currentRuntime.Current) is not null)
 				yield return runtime;
-			if (!((runtime = currentRuntime.Break) is null))
+			if ((runtime = currentRuntime.Break) is not null)
 				yield return runtime;
 
 			if (currentRuntime.Current?.Process is DbgProcess currentProcess) {

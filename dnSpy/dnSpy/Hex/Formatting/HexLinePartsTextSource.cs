@@ -48,7 +48,7 @@ namespace dnSpy.Hex.Formatting {
 			if (linePart is null)
 				return endOfLine;
 			var part = linePart.Value;
-			if (!(part.AdornmentElement is null))
+			if (part.AdornmentElement is not null)
 				return new AdornmentTextRun(part);
 			else {
 				int offs = textSourceCharacterIndex - part.Column;
@@ -75,7 +75,7 @@ namespace dnSpy.Hex.Formatting {
 			readonly HexAdornmentElement adornmentElement;
 
 			public AdornmentTextRun(HexLinePart linePart) {
-				Debug2.Assert(!(linePart.AdornmentElement is null));
+				Debug2.Assert(linePart.AdornmentElement is not null);
 				adornmentElement = linePart.AdornmentElement;
 				if (linePart.Span.Length != 0 || adornmentElement.Affinity == VST.PositionAffinity.Successor) {
 					BreakBefore = LineBreakCondition.BreakPossible;
@@ -105,7 +105,7 @@ namespace dnSpy.Hex.Formatting {
 		public int GetColumnOfFirstNonWhitespace() {
 			int column = 0;
 			foreach (var part in linePartsCollection.LineParts) {
-				if (!(part.AdornmentElement is null))
+				if (part.AdornmentElement is not null)
 					break;
 				int len = part.Span.Length;
 				int start = part.Span.Start;

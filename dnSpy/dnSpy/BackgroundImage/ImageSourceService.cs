@@ -113,7 +113,7 @@ namespace dnSpy.BackgroundImage {
 				}
 			}
 
-			public bool HasImageSource => !(currentImageInfo is null);
+			public bool HasImageSource => currentImageInfo is not null;
 			public bool HasThemeImages => filenameIterators.Any(a => a.SourceOptions.HasThemeImages);
 
 			sealed class SourceOptions {
@@ -311,7 +311,7 @@ namespace dnSpy.BackgroundImage {
 			}
 
 			List<string> GetAllFilenames() {
-				Debug2.Assert(!(theme is null));
+				Debug2.Assert(theme is not null);
 				if (cachedAllFilenamesListWeakRef?.Target is List<string> list && (DateTimeOffset.UtcNow - cachedTime).TotalMilliseconds <= cachedFilenamesMaxMilliseconds)
 					return list;
 
@@ -333,7 +333,7 @@ namespace dnSpy.BackgroundImage {
 			ImageInfo? TryCreateNextImageSource(List<string> filenames) {
 				foreach (var filename in filenames) {
 					var imgInfo = TryCreateImageSource(filename);
-					if (!(imgInfo is null))
+					if (imgInfo is not null)
 						return imgInfo;
 				}
 
@@ -346,7 +346,7 @@ namespace dnSpy.BackgroundImage {
 				if (currentEnumeratorInfo is null)
 					currentEnumeratorInfo = new EnumeratorInfo(filenameIterators[currentFilenameIteratorIndex]);
 				var imgInfo = TryCreateNextImageSource(currentEnumeratorInfo);
-				if (!(imgInfo is null))
+				if (imgInfo is not null)
 					return imgInfo;
 
 				int baseIndex = currentFilenameIteratorIndex;
@@ -359,7 +359,7 @@ namespace dnSpy.BackgroundImage {
 					currentEnumeratorInfo = new EnumeratorInfo(filenameIterators[currentFilenameIteratorIndex]);
 
 					imgInfo = TryCreateNextImageSource(currentEnumeratorInfo);
-					if (!(imgInfo is null))
+					if (imgInfo is not null)
 						return imgInfo;
 				}
 
@@ -367,14 +367,14 @@ namespace dnSpy.BackgroundImage {
 			}
 
 			ImageInfo? TryCreateNextImageSource(EnumeratorInfo info) {
-				Debug2.Assert(!(theme is null));
+				Debug2.Assert(theme is not null);
 				if (info is null)
 					return null;
 				if (!info.Iterator.SourceOptions.IsSupportedTheme(theme))
 					return null;
 				while (info.Enumerator.MoveNext()) {
 					var imgInfo = TryCreateImageSource(info.Enumerator.Current);
-					if (!(imgInfo is null))
+					if (imgInfo is not null)
 						return imgInfo;
 				}
 				return null;
@@ -395,7 +395,7 @@ namespace dnSpy.BackgroundImage {
 			ImageInfo? TryCreateImageSource(string filename) {
 				if (!HasAllowedUriScheme(filename) && !File.Exists(filename))
 					return null;
-				if (!(currentImageInfo is null) && StringComparer.InvariantCultureIgnoreCase.Equals(filename, currentImageInfo.Filename))
+				if (currentImageInfo is not null && StringComparer.InvariantCultureIgnoreCase.Equals(filename, currentImageInfo.Filename))
 					return currentImageInfo;
 				try {
 					// Make sure \\?\C:\some\path\image.png won't throw an exception
@@ -452,7 +452,7 @@ namespace dnSpy.BackgroundImage {
 				DisposeTimer();
 				backgroundImageSettings.SettingsChanged -= BackgroundImageSettings_SettingsChanged;
 				themeService.ThemeChangedLowPriority -= ThemeService_ThemeChangedLowPriority;
-				Debug2.Assert(!(imageIterator is null));
+				Debug2.Assert(imageIterator is not null);
 				imageIterator.Dispose();
 				imageIterator = null;
 			}
@@ -508,7 +508,7 @@ namespace dnSpy.BackgroundImage {
 			const double minimumMilliseconds = 50;
 			if (!enabled || backgroundImageSettings.Interval < TimeSpan.FromMilliseconds(minimumMilliseconds))
 				DisposeTimer();
-			else if (!(dispatcherTimer is null)) {
+			else if (dispatcherTimer is not null) {
 				// Settings got changed, always write the value even if it's identical. If we
 				// don't, the next image could be shown in eg. 1 second.
 				dispatcherTimer.Interval = backgroundImageSettings.Interval;

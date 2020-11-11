@@ -47,8 +47,8 @@ namespace dnSpy.MainApp {
 		}
 
 		public void SetTokens(Assembly[] assemblies, int[] tokens) {
-			Debug2.Assert(!(assemblies is null));
-			Debug2.Assert(!(tokens is null));
+			Debug2.Assert(assemblies is not null);
+			Debug2.Assert(tokens is not null);
 			Debug.Assert(assemblies.Length == tokens.Length);
 			lock (lockObj) {
 				for (int i = 0; i < assemblies.Length; i++) {

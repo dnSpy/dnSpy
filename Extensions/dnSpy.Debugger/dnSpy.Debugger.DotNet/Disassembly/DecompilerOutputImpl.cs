@@ -52,8 +52,8 @@ namespace dnSpy.Debugger.DotNet.Disassembly {
 
 		public void Initialize(uint methodToken) => this.methodToken = methodToken;
 		public (MethodDebugInfo debugInfo, MethodDebugInfo? stateMachineDebugInfo) TryGetMethodDebugInfo() {
-			if (!(methodDebugInfo is null)) {
-				if (!(kickoffMethodDebugInfo is null))
+			if (methodDebugInfo is not null) {
+				if (kickoffMethodDebugInfo is not null)
 					return (kickoffMethodDebugInfo, methodDebugInfo);
 				return (methodDebugInfo, null);
 			}

@@ -234,7 +234,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 				process.DbgManager.Dispatcher.BeginInvoke(() => {
 					if (process.DbgManager.CurrentProcess.Current == process) {
 						var thread = process.DbgManager.CurrentThread.Current;
-						if (!(thread is null))
+						if (thread is not null)
 							uiDispatcher.UI(() => GoToThread(thread, newTab: newTab));
 					}
 				});
@@ -243,7 +243,7 @@ namespace dnSpy.Debugger.ToolWindows.Processes {
 
 		void GoToThread(DbgThread thread, bool newTab) {
 			var info = Threads.ThreadUtilities.GetFirstFrameLocation(thread);
-			if (!(info.location is null)) {
+			if (info.location is not null) {
 				try {
 					var options = newTab ? new object[] { PredefinedReferenceNavigatorOptions.NewTab } : Array.Empty<object>();
 					referenceNavigatorService.Value.GoTo(info.location, options);

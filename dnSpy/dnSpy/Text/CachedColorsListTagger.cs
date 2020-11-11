@@ -78,8 +78,8 @@ namespace dnSpy.Text {
 			new CachedColorsListTagger(cachedColorsList);
 
 		public IEnumerable<ITagSpan<IClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans) {
-			Debug2.Assert(!(ThemeClassificationTypeService is null));
-			Debug2.Assert(!(ClassificationTypeRegistryService is null));
+			Debug2.Assert(ThemeClassificationTypeService is not null);
+			Debug2.Assert(ClassificationTypeRegistryService is not null);
 			if (ThemeClassificationTypeService is null || ClassificationTypeRegistryService is null)
 				yield break;
 			if (textClassificationType is null)

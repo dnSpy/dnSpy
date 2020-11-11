@@ -83,7 +83,7 @@ namespace dnSpy.BackgroundImage {
 				var rawSettings = new RawSettings(section);
 				if (!rawSettings.IsValid)
 					continue;
-				Debug2.Assert(!(rawSettings.Id is null));
+				Debug2.Assert(rawSettings.Id is not null);
 				if (!settingsInfos.TryGetValue(rawSettings.Id, out var info))
 					continue;
 				if (!allSettingsIds.Contains(rawSettings.Id))
@@ -122,7 +122,7 @@ namespace dnSpy.BackgroundImage {
 				info.BackgroundImageSettings.RaiseSettingsChanged();
 				if (info.Lazy.Value.UserVisible) {
 					var rootSection = settingsService.GetOrCreateSection(SETTINGS_GUID);
-					if (!(info.SettingsSection is null))
+					if (info.SettingsSection is not null)
 						rootSection.RemoveSection(info.SettingsSection);
 					info.SettingsSection = rootSection.CreateSection(SettingsName);
 					info.RawSettings.SaveSettings(info.SettingsSection);

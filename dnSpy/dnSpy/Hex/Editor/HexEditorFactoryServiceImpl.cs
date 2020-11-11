@@ -103,7 +103,7 @@ namespace dnSpy.Hex.Editor {
 				yield return new GuidObject(MenuConstants.GUIDOBJ_WPF_HEXVIEW_GUID, wpfHexView);
 				yield return new GuidObject(MenuConstants.GUIDOBJ_HEXEDITORPOSITION_GUID, wpfHexView.Caret.Position);
 
-				if (!(createGuidObjects is null)) {
+				if (createGuidObjects is not null) {
 					foreach (var guidObject in createGuidObjects(args))
 						yield return guidObject;
 				}
@@ -150,7 +150,7 @@ namespace dnSpy.Hex.Editor {
 
 			var wpfHexView = new WpfHexViewImpl(buffer, roles, parentOptions, hexEditorOptionsFactoryService, commandService, formattedHexSourceFactoryService, hexViewClassifierAggregatorService, hexAndAdornmentSequencerFactoryService, hexBufferLineFormatterFactoryService, classificationFormatMapService, editorFormatMapService, adornmentLayerDefinitionService, lineTransformProviderService, spaceReservationStackProvider, wpfHexViewCreationListeners, hexViewCreationListeners, classificationTypeRegistryService, hexCursorProviderFactories);
 
-			if (!(options?.MenuGuid is null)) {
+			if (options?.MenuGuid is not null) {
 				var guidObjectsProvider = new GuidObjectsProvider(wpfHexView, options.CreateGuidObjects);
 				menuService.InitializeContextMenu(wpfHexView.VisualElement, options.MenuGuid.Value, guidObjectsProvider, new HexContextMenuInitializer(wpfHexView));
 			}

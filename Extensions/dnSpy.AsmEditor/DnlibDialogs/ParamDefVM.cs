@@ -172,7 +172,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			Name = options.Name;
 			Sequence.Value = options.Sequence;
 			Attributes = options.Attributes;
-			if (!(options.Constant is null)) {
+			if (options.Constant is not null) {
 				HasDefault = true;
 				ConstantVM.Value = options.Constant.Value;
 			}

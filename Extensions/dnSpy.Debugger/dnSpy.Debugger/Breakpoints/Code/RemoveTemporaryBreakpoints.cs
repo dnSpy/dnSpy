@@ -45,7 +45,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 						bpsToRemove.Add(bp);
 					}
 				}
-				if (!(bpsToRemove is null))
+				if (bpsToRemove is not null)
 					dbgCodeBreakpointsService.Value.Remove(bpsToRemove.ToArray());
 			}
 		}

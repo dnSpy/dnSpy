@@ -35,7 +35,7 @@ namespace dnSpy.Hex.Commands {
 		public ICommand GoToMetadataUSCommand => new RelayCommand(a => GoToMetadataKind = GoToMetadataKind.US);
 		public ICommand GoToMetadataGUIDCommand => new RelayCommand(a => GoToMetadataKind = GoToMetadataKind.GUID);
 		public ICommand GoToMetadataTableCommand => new RelayCommand(a => GoToMetadataKind = GoToMetadataKind.Table);
-		public ICommand GoToMetadataMemberRvaCommand => new RelayCommand(a => GoToMetadataKind = GoToMetadataKind.MemberRva, a => !(peHeaders is null));
+		public ICommand GoToMetadataMemberRvaCommand => new RelayCommand(a => GoToMetadataKind = GoToMetadataKind.MemberRva, a => peHeaders is not null);
 
 		public bool IsOffset {
 			get {
@@ -127,7 +127,7 @@ namespace dnSpy.Hex.Commands {
 			offsetTokenVM = new OffsetTokenVM(buffer, mdHeaders, peHeaders, value, a => HasErrorUpdated());
 			GoToMetadataCollection = new ObservableCollection<GoToMetadataKindVM>();
 			GoToMetadataCollection.Add(new GoToMetadataKindVM(GoToMetadataKind.Table, dnSpy_Resources.GoToMetadataToken, dnSpy_Resources.ShortCutKeyCtrl1));
-			if (!(peHeaders is null))
+			if (peHeaders is not null)
 				GoToMetadataCollection.Add(new GoToMetadataKindVM(GoToMetadataKind.MemberRva, dnSpy_Resources.GoToMetadataMethodBody, dnSpy_Resources.ShortCutKeyCtrl2));
 			GoToMetadataCollection.Add(new GoToMetadataKindVM(GoToMetadataKind.Blob, "#Blob", dnSpy_Resources.ShortCutKeyCtrl3));
 			GoToMetadataCollection.Add(new GoToMetadataKindVM(GoToMetadataKind.Strings, "#Strings", dnSpy_Resources.ShortCutKeyCtrl4));
@@ -165,7 +165,7 @@ namespace dnSpy.Hex.Commands {
 
 			protected override string? ConvertToValue(out uint value) {
 				value = SimpleTypeConverter.ParseUInt32(StringValue, Min, Max, out var error);
-				if (!(error is null))
+				if (error is not null)
 					return error;
 				return CheckOffsetToken(value) ? null : dnSpy_Resources.GoToMetadataInvalidOffsetOrToken;
 			}
@@ -193,7 +193,7 @@ namespace dnSpy.Hex.Commands {
 					return value != 0 && mdHeaders.GUIDStream?.IsValidIndex(value) == true;
 
 				case GoToMetadataKind.Table:
-					return !(GetMDTable(value) is null);
+					return GetMDTable(value) is not null;
 
 				case GoToMetadataKind.MemberRva:
 					if (peHeaders is null)

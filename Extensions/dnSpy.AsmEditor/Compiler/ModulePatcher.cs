@@ -44,7 +44,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			// NOTE: We can't remove the type from the corlib (eg. mscorlib) because the compiler
 			// (Roslyn) won't recognize it as the corlib if it has any AssemblyRefs.
 			// A possible fix is to add a new netmodule to the corlib assembly.
-			bool fixTypeDefRefs = !(nonNestedEditedType is null) &&
+			bool fixTypeDefRefs = nonNestedEditedType is not null &&
 				MDPatcherUtils.ExistsInMetadata(nonNestedEditedType) &&
 				MDPatcherUtils.ReferencesModule(module, nonNestedEditedType?.Module) &&
 				!module.Assembly.IsCorLib();

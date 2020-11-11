@@ -111,7 +111,7 @@ namespace dnSpy.Debugger.Evaluation {
 					Debug.Assert(langs.Count != 0);
 					if (langs.Count == 0 || langs[0].Name == PredefinedDbgLanguageNames.None)
 						continue;
-					var runtimeName = kv.Value.Providers.FirstOrDefault(a => !(a.Value.RuntimeDisplayName is null))?.Value.RuntimeDisplayName;
+					var runtimeName = kv.Value.Providers.FirstOrDefault(a => a.Value.RuntimeDisplayName is not null)?.Value.RuntimeDisplayName;
 					if (runtimeName is null)
 						continue;
 					var languageName = GetCurrentLanguage(kv.Key).Name;

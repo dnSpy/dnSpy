@@ -159,7 +159,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				Debug.Assert(imageLayout == DbgImageLayout.File, nameof(GetFileVersion) + " assumes file layout");
 
 				var bytes = dnModule.Process.CorProcess.ReadMemory(dnModule.Address, (int)dnModule.Size);
-				if (!(bytes is null)) {
+				if (bytes is not null) {
 					try {
 						version = GetFileVersion(bytes);
 						using (var peImage = new PEImage(bytes, imageLayout == DbgImageLayout.File ? ImageLayout.File : ImageLayout.Memory, true))
@@ -237,7 +237,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			}
 			finally {
 				try {
-					if (!(tempFilename is null))
+					if (tempFilename is not null)
 						File.Delete(tempFilename);
 				}
 				catch { }

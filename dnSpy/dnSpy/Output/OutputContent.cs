@@ -110,7 +110,7 @@ namespace dnSpy.Output {
 
 		void SelectLog(int tmpIndex) {
 			var vm = OutputService.SelectLog(tmpIndex);
-			Debug2.Assert(!(vm is null));
+			Debug2.Assert(vm is not null);
 			if (vm is null)
 				return;
 			vm.FocusedElement?.Focus();

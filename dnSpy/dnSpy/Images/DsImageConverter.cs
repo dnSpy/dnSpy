@@ -30,7 +30,7 @@ namespace dnSpy.Images {
 		internal static IImageService? imageService;
 
 		public object? Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
-			Debug2.Assert(!(imageService is null));
+			Debug2.Assert(imageService is not null);
 			if (values is null)
 				throw new ArgumentNullException(nameof(values));
 			bool b = values.Length == 7;

@@ -220,7 +220,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void StartTimer() {
-			if (!(dispatcherTimer is null))
+			if (dispatcherTimer is not null)
 				throw new InvalidOperationException();
 			// Make sure the caret doesn't blink when it's moved
 			layer.Opacity = 1;

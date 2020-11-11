@@ -80,7 +80,7 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		public override string ToString() {
 			var sb = new StringBuilder();
 			sb.Append(Filename ?? "???");
-			if (!(LineLocationSpan is null))
+			if (LineLocationSpan is not null)
 				sb.Append(LineLocationSpan.Value.StartLinePosition.ToString());
 			sb.Append(": ");
 			switch (Severity) {

@@ -82,7 +82,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 					}
 					else {
 						uint indexLeft = arrayIndex;
-						Debug2.Assert(!(indexes is null));
+						Debug2.Assert(indexes is not null);
 						for (int j = dimensionInfos.Length - 1; j >= 0; j--) {
 							indexes[j] = (int)(indexLeft % dimensionInfos[j].Length) + dimensionInfos[j].BaseIndex;
 							indexLeft = indexLeft / dimensionInfos[j].Length;
@@ -99,7 +99,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 						newNode = null;
 						if (CSharpDynamicPropertyHelper.IsCSharpDynamicProperty(newValue.Value!.Type)) {
 							var info = CSharpDynamicPropertyHelper.GetRealValue(evalInfo, newValue.Value);
-							if (!(info.name is null)) {
+							if (info.name is not null) {
 								newValue.Value.Dispose();
 								name = new DbgDotNetText(new DbgDotNetTextPart(DbgTextColor.DebugViewPropertyName, info.name));
 								expression = valueNodeFactory.GetFieldExpression(expression, info.valueField.Name, null, false);
@@ -115,7 +115,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 				ObjectCache.Free(ref output);
 			}
 			catch {
-				evalInfo.Context.Process.DbgManager.Close(res.Where(a => !(a is null)));
+				evalInfo.Context.Process.DbgManager.Close(res.Where(a => a is not null));
 				newValue.Value?.Dispose();
 				throw;
 			}

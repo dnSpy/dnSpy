@@ -64,7 +64,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				if (selectedItem != value) {
 					selectedItem = value;
 					OnPropertyChanged(nameof(SelectedItem));
-					if (!(value is null)) {
+					if (value is not null) {
 						searchResult = null;
 						OnPropertyChanged(nameof(SearchResult));
 					}
@@ -77,7 +77,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public object? SelectedDnlibObject {
 			get {
 				var res = SearchResult;
-				if (!(res is null)) {
+				if (res is not null) {
 					var obj = res.Object;
 
 					if (obj is AssemblyDef && filter.GetResult((AssemblyDef)obj).IsMatch)
@@ -105,7 +105,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 
 				var item = documentTreeView.TreeView.FromImplNode(SelectedItem);
-				if (!(item is null)) {
+				if (item is not null) {
 					if (item is AssemblyDocumentNode && filter.GetResult(((AssemblyDocumentNode)item).Document.AssemblyDef!).IsMatch)
 						return ((AssemblyDocumentNode)item).Document;
 					else if (item is ModuleDocumentNode && filter.GetResult(((ModuleDocumentNode)item).Document.ModuleDef!).IsMatch)
@@ -185,7 +185,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				if (searchResult != value) {
 					searchResult = value;
 					OnPropertyChanged(nameof(SearchResult));
-					if (!(value is null)) {
+					if (value is not null) {
 						selectedItem = null;
 						OnPropertyChanged(nameof(SelectedItem));
 					}
@@ -332,7 +332,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		void CancelSearch() {
 			TooManyResults = false;
 			delayedSearch.Cancel();
-			if (!(fileSearcher is null)) {
+			if (fileSearcher is not null) {
 				fileSearcher.Cancel();
 				fileSearcher = null;
 			}

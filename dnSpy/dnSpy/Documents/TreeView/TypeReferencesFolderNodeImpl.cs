@@ -40,7 +40,7 @@ namespace dnSpy.Documents.TreeView {
 		readonly ModuleDocumentNode moduleNode;
 
 		public TypeReferencesFolderNodeImpl(ITreeNodeGroup treeNodeGroup, ModuleDocumentNode moduleNode) {
-			Debug2.Assert(!(moduleNode.Document.ModuleDef is null));
+			Debug2.Assert(moduleNode.Document.ModuleDef is not null);
 			TreeNodeGroup = treeNodeGroup;
 			this.moduleNode = moduleNode;
 		}
@@ -81,13 +81,13 @@ namespace dnSpy.Documents.TreeView {
 			this.typeDict = typeDict;
 			foreach (var kv in typeDict) {
 				scope = kv.Key.Scope;
-				if (!(scope is null))
+				if (scope is not null)
 					break;
 			}
 		}
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
-			Debug2.Assert(!(typeDict is null));
+			Debug2.Assert(typeDict is not null);
 
 			foreach (var kv in typeDict) {
 				var type = kv.Key;
@@ -124,13 +124,13 @@ namespace dnSpy.Documents.TreeView {
 			this.methodDict = methodDict;
 			foreach (var kv in methodDict) {
 				scope = kv.Key.DeclaringType?.Scope;
-				if (!(scope is null))
+				if (scope is not null)
 					break;
 			}
 		}
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
-			Debug2.Assert(!(methodDict is null));
+			Debug2.Assert(methodDict is not null);
 
 			foreach (var kv in methodDict) {
 				var method = kv.Key;
@@ -165,13 +165,13 @@ namespace dnSpy.Documents.TreeView {
 			this.propertyDict = propertyDict;
 			foreach (var kv in propertyDict) {
 				scope = kv.Key.DeclaringType?.Scope;
-				if (!(scope is null))
+				if (scope is not null)
 					break;
 			}
 		}
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
-			Debug2.Assert(!(propertyDict is null));
+			Debug2.Assert(propertyDict is not null);
 
 			foreach (var kv in propertyDict) {
 				var property = kv.Key;
@@ -206,13 +206,13 @@ namespace dnSpy.Documents.TreeView {
 			this.eventDict = eventDict;
 			foreach (var kv in eventDict) {
 				scope = kv.Key.DeclaringType?.Scope;
-				if (!(scope is null))
+				if (scope is not null)
 					break;
 			}
 		}
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
-			Debug2.Assert(!(eventDict is null));
+			Debug2.Assert(eventDict is not null);
 
 			foreach (var kv in eventDict) {
 				var @event = kv.Key;
@@ -247,13 +247,13 @@ namespace dnSpy.Documents.TreeView {
 			this.fieldDict = fieldDict;
 			foreach (var kv in fieldDict) {
 				scope = kv.Key.DeclaringType?.Scope;
-				if (!(scope is null))
+				if (scope is not null)
 					break;
 			}
 		}
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
-			Debug2.Assert(!(fieldDict is null));
+			Debug2.Assert(fieldDict is not null);
 
 			foreach (var kv in fieldDict) {
 				var field = kv.Key;
@@ -297,7 +297,7 @@ namespace dnSpy.Documents.TreeView {
 		}
 
 		public override void Initialize() {
-			Debug2.Assert(!(typeInfo is null));
+			Debug2.Assert(typeInfo is not null);
 			TreeNode.LazyLoading =
 				typeInfo.TypeDict.Count != 0 ||
 				typeInfo.MethodDict.Count != 0 ||
@@ -307,7 +307,7 @@ namespace dnSpy.Documents.TreeView {
 		}
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
-			Debug2.Assert(!(typeInfo is null));
+			Debug2.Assert(typeInfo is not null);
 
 			if (typeInfo.TypeDict.Count != 0)
 				yield return new TypeSpecsFolderNodeImpl(Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.TypeSpecsFolderTreeNodeGroupTypeReference), typeInfo.TypeDict);

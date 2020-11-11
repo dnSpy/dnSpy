@@ -45,11 +45,11 @@ namespace dnSpy.Text.Tagging {
 
 			var type = typeof(T);
 			foreach (var info in textViewTaggerProviders) {
-				if (!(info.Metadata.TextViewRoles is null) && !textView.Roles.ContainsAny(info.Metadata.TextViewRoles))
+				if (info.Metadata.TextViewRoles is not null && !textView.Roles.ContainsAny(info.Metadata.TextViewRoles))
 					continue;
 				if (CanCreateTagger(contentType, type, info.Metadata.ContentTypes, info.Metadata.TagTypes)) {
 					var tagger = info.Value.CreateTagger<T>(textView, textBuffer);
-					if (!(tagger is null))
+					if (tagger is not null)
 						yield return tagger;
 				}
 			}
@@ -60,7 +60,7 @@ namespace dnSpy.Text.Tagging {
 			foreach (var info in textBufferTaggerProviders) {
 				if (CanCreateTagger(contentType, type, info.Metadata.ContentTypes, info.Metadata.TagTypes)) {
 					var tagger = info.Value.CreateTagger<T>(textBuffer);
-					if (!(tagger is null))
+					if (tagger is not null)
 						yield return tagger;
 				}
 			}

@@ -132,7 +132,7 @@ namespace dnSpy.Images {
 		}
 
 		Size GetDpi(DependencyObject? dpiObject, Size dpi) {
-			if (!(dpiObject is null)) {
+			if (dpiObject is not null) {
 				if (Window.GetWindow(dpiObject) is MetroWindow window)
 					return window.WindowDpi;
 			}
@@ -167,7 +167,7 @@ namespace dnSpy.Images {
 			if (internalOptions.PhysicalSize.Width == 0 || internalOptions.PhysicalSize.Height == 0)
 				return null;
 
-			if (!(imageReference.Assembly is null)) {
+			if (imageReference.Assembly is not null) {
 				var name = imageReference.Name;
 				foreach (var provider in GetProviders(imageReference.Assembly)) {
 					var infos = provider.Value.GetImageSourceInfos(name);
@@ -202,7 +202,7 @@ namespace dnSpy.Images {
 
 					foreach (var info in infoList) {
 						var bitmapSource = TryGetImage(info.Uri, internalOptions);
-						if (!(bitmapSource is null))
+						if (bitmapSource is not null)
 							return bitmapSource;
 					}
 
@@ -222,7 +222,7 @@ namespace dnSpy.Images {
 			BitmapSource? image;
 			if (imageCache.TryGetValue(key, out var weakImage)) {
 				image = weakImage.Target as BitmapSource;
-				if (!(image is null))
+				if (image is not null)
 					return image;
 			}
 
@@ -230,7 +230,7 @@ namespace dnSpy.Images {
 			if (image is null)
 				return null;
 
-			if (!(options.BackgroundColor is null))
+			if (options.BackgroundColor is not null)
 				image = ThemedImageCreator.CreateThemedBitmapSource(image, options.BackgroundColor.Value, isHighContrast);
 			imageCache[key] = new WeakReference(image);
 			return image;

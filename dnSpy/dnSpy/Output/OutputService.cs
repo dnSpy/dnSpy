@@ -94,7 +94,7 @@ namespace dnSpy.Output {
 
 		public object? TextEditorUIObject => SelectedOutputBufferVM?.TextEditorUIObject;
 		public IInputElement? FocusedElement => SelectedOutputBufferVM?.FocusedElement;
-		public bool HasOutputWindows => !(SelectedOutputBufferVM is null);
+		public bool HasOutputWindows => SelectedOutputBufferVM is not null;
 		public double ZoomLevel => SelectedOutputBufferVM?.ZoomLevel ?? 100;
 
 		public OutputBufferVM? SelectedOutputBufferVM {
@@ -153,9 +153,9 @@ namespace dnSpy.Output {
 			if (SelectedOutputBufferVM is null)
 				SelectedOutputBufferVM = OutputBuffers.FirstOrDefault();
 
-			if (!(e.NewItems is null)) {
+			if (e.NewItems is not null) {
 				foreach (OutputBufferVM? vm in e.NewItems) {
-					Debug2.Assert(!(vm is null));
+					Debug2.Assert(vm is not null);
 					if (vm.Guid == prevSelectedGuid && prevSelectedGuid != Guid.Empty) {
 						SelectedOutputBufferVM = vm;
 						prevSelectedGuid = Guid.Empty;
@@ -177,7 +177,7 @@ namespace dnSpy.Output {
 
 			var vm = OutputBuffers.FirstOrDefault(a => a.Guid == guid);
 			Debug2.Assert(vm is null || vm.Name == name);
-			if (!(vm is null))
+			if (vm is not null)
 				return vm;
 
 			var logEditorOptions = new LogEditorOptions {
@@ -222,15 +222,15 @@ namespace dnSpy.Output {
 
 		public void Select(Guid guid) {
 			var vm = OutputBuffers.FirstOrDefault(a => a.Guid == guid);
-			Debug2.Assert(!(vm is null));
-			if (!(vm is null))
+			Debug2.Assert(vm is not null);
+			if (vm is not null)
 				SelectedOutputBufferVM = vm;
 		}
 
 		public bool CanCopy => SelectedOutputBufferVM?.CanCopy == true;
 		public void Copy() => SelectedOutputBufferVM?.Copy();
 
-		public bool CanClearAll => !(SelectedOutputBufferVM is null);
+		public bool CanClearAll => SelectedOutputBufferVM is not null;
 
 		public void ClearAll() {
 			if (!CanClearAll)
@@ -238,12 +238,12 @@ namespace dnSpy.Output {
 			SelectedOutputBufferVM?.Clear();
 		}
 
-		public bool CanSaveText => !(SelectedOutputBufferVM is null);
+		public bool CanSaveText => SelectedOutputBufferVM is not null;
 
 		public void SaveText() {
 			if (!CanSaveText)
 				return;
-			Debug2.Assert(!(SelectedOutputBufferVM is null));
+			Debug2.Assert(SelectedOutputBufferVM is not null);
 			var vm = SelectedOutputBufferVM;
 			var filename = pickSaveFilename.GetFilename(GetFilename(vm), "txt", TEXTFILES_FILTER);
 			if (filename is null)

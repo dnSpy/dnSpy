@@ -100,7 +100,7 @@ namespace dnSpy.Bookmarks.TextEditor {
 				throw new InvalidOperationException();
 			foreach (var bm in e.Objects) {
 				var location = bookmarkGlyphTextMarkerLocationProviderService.GetLocation(bm);
-				if (!(location is null)) {
+				if (location is not null) {
 					bm.GetOrCreateData(() => new BookmarkData(location));
 					UpdateMarker(bm);
 					continue;
@@ -120,7 +120,7 @@ namespace dnSpy.Bookmarks.TextEditor {
 			uiDispatcher.VerifyAccess();
 			var bms = new List<Bookmark>(bookmarks.Count);
 			var removedMarkers = new List<IGlyphTextMarker>(bookmarks.Count);
-			Debug2.Assert(!(bookmarkInfos is null));
+			Debug2.Assert(bookmarkInfos is not null);
 			for (int i = 0; i < bookmarks.Count; i++) {
 				var bm = bookmarks[i];
 				if (!bm.TryGetData(out BookmarkData? data))
@@ -142,12 +142,12 @@ namespace dnSpy.Bookmarks.TextEditor {
 			if (!bm.TryGetData(out BookmarkData? data))
 				return;
 
-			Debug2.Assert(!(bookmarkInfos is null));
+			Debug2.Assert(bookmarkInfos is not null);
 			var info = bookmarkInfos[(int)BookmarkImageUtilities.GetBookmarkKind(bm)];
-			if (data.Info == info && !(data.Marker is null))
+			if (data.Info == info && data.Marker is not null)
 				return;
 			data.Info = info;
-			if (!(data.Marker is null))
+			if (data.Marker is not null)
 				glyphTextMarkerService.Value.Remove(data.Marker);
 
 			data.Marker = glyphTextMarkerService.Value.AddMarker(data.Location, info.ImageReference, info.MarkerTypeName, info.SelectedMarkerTypeName, info.ClassificationType, info.ZIndex, bm, bookmarkGlyphTextMarkerHandler, null);

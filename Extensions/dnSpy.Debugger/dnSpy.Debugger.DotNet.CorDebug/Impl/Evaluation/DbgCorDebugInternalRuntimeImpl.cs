@@ -67,7 +67,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			corDebugValueConverter = new CorDebugValueConverterImpl(this);
 			classHooks = new Dictionary<DmdWellKnownType, ClassHook>();
 			foreach (var info in ClassHookProvider.Create(this)) {
-				Debug2.Assert(!(info.Hook is null));
+				Debug2.Assert(info.Hook is not null);
 				Debug.Assert(!classHooks.ContainsKey(info.WellKnownType));
 				classHooks.Add(info.WellKnownType, info.Hook);
 			}
@@ -94,7 +94,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			public ModuleDefMD? Module;
 			public int LoadClassVersion;
 			public DbgDotNetRawModuleBytes ToDbgDotNetRawModuleBytes() {
-				if (!(RawBytes is null))
+				if (RawBytes is not null)
 					return new DbgDotNetRawModuleBytes(RawBytes, isFileLayout: true);
 				return DbgDotNetRawModuleBytes.None;
 			}
@@ -109,7 +109,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				return DbgDotNetRawModuleBytes.None;
 
 			var state = module.GetOrCreateData<DynamicModuleMetadataState>();
-			if (!(state.RawBytes is null) && state.LoadClassVersion == loadClassVersion)
+			if (state.RawBytes is not null && state.LoadClassVersion == loadClassVersion)
 				return state.ToDbgDotNetRawModuleBytes();
 
 			var md = dnModule.GetOrCreateCorModuleDef();
@@ -172,11 +172,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				bool b = module.TryGetData<DynamicModuleMetadataState>(out state);
 				Debug.Assert(b);
 			}
-			if (!(state is null)) {
+			if (state is not null) {
 				if (state.Module is null)
 					state.Module = ModuleDefMD.Load(state.RawBytes);
 				var method = state.Module.ResolveToken(methodToken) as MethodDef;
-				if (!(method is null)) {
+				if (method is not null) {
 					metadataMethodToken = method.MDToken.ToInt32();
 					metadataLocalVarSigTok = (int)(method.Body?.LocalVarSigTok ?? 0);
 					return true;
@@ -221,7 +221,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 		static DmdMethodBase? TryGetMethod(DmdModule? module, int methodMetadataToken, IList<DmdType> genericTypeArguments, IList<DmdType> genericMethodArguments) {
 			var method = module?.ResolveMethod(methodMetadataToken, (IList<DmdType>?)null, null, DmdResolveOptions.None);
-			if (!(method is null)) {
+			if (method is not null) {
 				if (genericTypeArguments.Count != 0) {
 					var type = method.ReflectedType!.MakeGenericType(genericTypeArguments);
 					method = type.GetMethod(method.Module, method.MetadataToken, throwOnError: true)!;
@@ -405,7 +405,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 
 		static DbgDotNetValueResult CreateSyntheticValue(DmdType type, object? constant) {
 			var dnValue = SyntheticValueFactory.TryCreateSyntheticValue(type, constant);
-			if (!(dnValue is null))
+			if (dnValue is not null)
 				return DbgDotNetValueResult.Create(dnValue);
 			return DbgDotNetValueResult.CreateError(CordbgErrorHelper.InternalError);
 		}
@@ -415,13 +415,13 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		}
 
 		void InitializeStaticConstructor(DbgEvaluationInfo evalInfo, ILDbgEngineStackFrame ilFrame, DmdType type, CorType corType) {
-			if (!(engine.CheckFuncEval(evalInfo) is null))
+			if (engine.CheckFuncEval(evalInfo) is not null)
 				return;
 			var state = type.GetOrCreateData<StaticConstructorInitializedState>();
 			if (state.Initialized > 0 || Interlocked.Exchange(ref state.Initialized, 1) != 0)
 				return;
 			var cctor = type.TypeInitializer;
-			if (!(cctor is null)) {
+			if (cctor is not null) {
 				foreach (var field in type.DeclaredFields) {
 					if (!field.IsStatic || field.IsLiteral)
 						continue;
@@ -429,14 +429,14 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 					var fieldValue = corType.GetStaticFieldValue((uint)field.MetadataToken, ilFrame.CorFrame, out int hr);
 					if (hr == CordbgErrors.CORDBG_E_CLASS_NOT_LOADED || hr == CordbgErrors.CORDBG_E_STATIC_VAR_NOT_AVAILABLE)
 						break;
-					if (!(fieldValue is null)) {
+					if (fieldValue is not null) {
 						try {
 							if (fieldValue.IsNull)
 								continue;
 							if (field.FieldType.IsValueType) {
 								var objValue = fieldValue.GetDereferencedValue(out hr)?.GetBoxedValue(out hr);
 								var data = objValue?.ReadGenericValue();
-								if (!(data is null) && !IsZero(data))
+								if (data is not null && !IsZero(data))
 									return;
 							}
 							else {
@@ -484,7 +484,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			try {
 				var reflectionAppDomain = type.AppDomain;
 				var getTypeMethod = objValue.Type.GetMethod(nameof(object.GetType), DmdSignatureCallingConvention.Default | DmdSignatureCallingConvention.HasThis, 0, reflectionAppDomain.System_Type, Array.Empty<DmdType>(), throwOnError: false);
-				Debug2.Assert(!(getTypeMethod is null));
+				Debug2.Assert(getTypeMethod is not null);
 				if (getTypeMethod is null)
 					return false;
 				var corAppDomain = ilFrame.GetCorAppDomain();
@@ -493,11 +493,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 					return false;
 				var typeObj = getTypeRes.Value;
 				var runtimeTypeHandleType = reflectionAppDomain.GetWellKnownType(DmdWellKnownType.System_RuntimeTypeHandle, isOptional: true);
-				Debug2.Assert(!(runtimeTypeHandleType is null));
+				Debug2.Assert(runtimeTypeHandleType is not null);
 				if (runtimeTypeHandleType is null)
 					return false;
 				var getTypeHandleMethod = typeObj.Type.GetMethod("get_" + nameof(Type.TypeHandle), DmdSignatureCallingConvention.Default | DmdSignatureCallingConvention.HasThis, 0, runtimeTypeHandleType, Array.Empty<DmdType>(), throwOnError: false);
-				Debug2.Assert(!(getTypeHandleMethod is null));
+				Debug2.Assert(getTypeHandleMethod is not null);
 				if (getTypeHandleMethod is null)
 					return false;
 				typeHandleRes = engine.FuncEvalCall_CorDebug(evalInfo, corAppDomain, getTypeHandleMethod, typeObj, Array.Empty<object>(), false);
@@ -505,7 +505,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 					return false;
 				var runtimeHelpersType = reflectionAppDomain.GetWellKnownType(DmdWellKnownType.System_Runtime_CompilerServices_RuntimeHelpers, isOptional: true);
 				var runClassConstructorMethod = runtimeHelpersType?.GetMethod(nameof(RuntimeHelpers.RunClassConstructor), DmdSignatureCallingConvention.Default, 0, reflectionAppDomain.System_Void, new[] { runtimeTypeHandleType }, throwOnError: false);
-				Debug2.Assert(!(runClassConstructorMethod is null));
+				Debug2.Assert(runClassConstructorMethod is not null);
 				if (runClassConstructorMethod is null)
 					return false;
 				res = engine.FuncEvalCall_CorDebug(evalInfo, corAppDomain, runClassConstructorMethod, null, new[] { typeHandleRes.Value }, false);
@@ -574,7 +574,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				if (DmdWellKnownTypeUtils.TryGetWellKnownType(typeName, out var wellKnownType)) {
 					if (classHooks.TryGetValue(wellKnownType, out var hook) && type == type.AppDomain.GetWellKnownType(wellKnownType, isOptional: true)) {
 						var res = hook.Call(obj, method, arguments);
-						if (!(res is null))
+						if (res is not null)
 							return DbgDotNetValueResult.Create(res);
 					}
 				}
@@ -611,7 +611,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				if (DmdWellKnownTypeUtils.TryGetWellKnownType(typeName, out var wellKnownType)) {
 					if (classHooks.TryGetValue(wellKnownType, out var hook) && type == type.AppDomain.GetWellKnownType(wellKnownType, isOptional: true)) {
 						var res = hook.CreateInstance(ctor, arguments);
-						if (!(res is null))
+						if (res is not null)
 							return DbgDotNetValueResult.Create(res);
 					}
 				}
@@ -690,7 +690,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				var res = engine.FuncEvalCall_CorDebug(evalInfo, ilFrame.GetCorAppDomain(), methodGetType, null, new[] { elementType.AssemblyQualifiedName }, false);
 				if (res.HasError || res.ValueIsException)
 					return res;
-				Debug2.Assert(!(res.Value is null));
+				Debug2.Assert(res.Value is not null);
 				typeElementType = res.Value;
 				if (res.Value.IsNull)
 					return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.InternalDebuggerError);
@@ -768,7 +768,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				var res = engine.FuncEvalCall_CorDebug(evalInfo, ilFrame.GetCorAppDomain(), methodGetType, null, new[] { elementType.AssemblyQualifiedName }, false);
 				if (res.HasError || res.ValueIsException)
 					return res;
-				Debug2.Assert(!(res.Value is null));
+				Debug2.Assert(res.Value is not null);
 				typeElementType = res.Value;
 				if (res.Value.IsNull)
 					return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.InternalDebuggerError);
@@ -818,15 +818,15 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 				stowedException = GetStowedExceptionCore(evalInfo, DbgDotNetRuntimeConstants.StowedExceptionId);
 				returnValues = GetReturnValuesCore(evalInfo);
 
-				int count = (!(exception is null) ? 1 : 0) + (!(stowedException is null) ? 1 : 0) + returnValues.Length + (returnValues.Length != 0 ? 1 : 0);
+				int count = (exception is not null ? 1 : 0) + (stowedException is not null ? 1 : 0) + returnValues.Length + (returnValues.Length != 0 ? 1 : 0);
 				if (count == 0)
 					return Array.Empty<DbgDotNetAliasInfo>();
 
 				var res = new DbgDotNetAliasInfo[count];
 				int w = 0;
-				if (!(exception is null))
+				if (exception is not null)
 					res[w++] = new DbgDotNetAliasInfo(DbgDotNetAliasInfoKind.Exception, exception.Type, DbgDotNetRuntimeConstants.ExceptionId, Guid.Empty, null);
-				if (!(stowedException is null))
+				if (stowedException is not null)
 					res[w++] = new DbgDotNetAliasInfo(DbgDotNetAliasInfoKind.StowedException, stowedException.Type, DbgDotNetRuntimeConstants.StowedExceptionId, Guid.Empty, null);
 				if (returnValues.Length != 0) {
 					res[w++] = new DbgDotNetAliasInfo(DbgDotNetAliasInfoKind.ReturnValue, returnValues[returnValues.Length - 1].Value.Type, DbgDotNetRuntimeConstants.LastReturnValueId, Guid.Empty, null);
@@ -867,14 +867,14 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			try {
 				exception = GetExceptionCore(evalInfo, DbgDotNetRuntimeConstants.ExceptionId);
 				stowedException = GetStowedExceptionCore(evalInfo, DbgDotNetRuntimeConstants.StowedExceptionId);
-				int count = (!(exception is null) ? 1 : 0) + (!(stowedException is null) ? 1 : 0);
+				int count = (exception is not null ? 1 : 0) + (stowedException is not null ? 1 : 0);
 				if (count == 0)
 					return Array.Empty<DbgDotNetExceptionInfo>();
 				var res = new DbgDotNetExceptionInfo[count];
 				int w = 0;
-				if (!(exception is null))
+				if (exception is not null)
 					res[w++] = new DbgDotNetExceptionInfo(exception, DbgDotNetRuntimeConstants.ExceptionId, DbgDotNetExceptionInfoFlags.None);
-				if (!(stowedException is null))
+				if (stowedException is not null)
 					res[w++] = new DbgDotNetExceptionInfo(stowedException, DbgDotNetRuntimeConstants.StowedExceptionId, DbgDotNetExceptionInfoFlags.StowedException);
 				if (w != res.Length)
 					throw new InvalidOperationException();
@@ -1133,10 +1133,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 			DbgDotNetValueResult res = default;
 			try {
 				res = CreateValueCore(evalInfo, value);
-				if (!(res.ErrorMessage is null))
+				if (res.ErrorMessage is not null)
 					return res;
 				var boxedValue = res.Value!.Box(evalInfo);
-				if (!(boxedValue is null))
+				if (boxedValue is not null)
 					return boxedValue.Value;
 				return DbgDotNetValueResult.CreateError(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 			}

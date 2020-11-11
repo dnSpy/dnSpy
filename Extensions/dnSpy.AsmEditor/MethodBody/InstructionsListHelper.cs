@@ -201,7 +201,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 		}
 
-		bool CopyOperandMDTokensCanExecute(InstructionVM[] instrs) => instrs.Any(a => !(GetOperandMDToken(a.InstructionOperandVM) is null));
+		bool CopyOperandMDTokensCanExecute(InstructionVM[] instrs) => instrs.Any(a => GetOperandMDToken(a.InstructionOperandVM) is not null);
 
 		static uint? GetOperandMDToken(InstructionOperandVM op) {
 			switch (op.InstructionOperandType) {
@@ -236,7 +236,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		void coll_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
-			if (!(e.NewItems is null))
+			if (e.NewItems is not null)
 				InitializeInstructions(e.NewItems);
 		}
 
@@ -409,7 +409,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			MemberRef? mr = opvm.Other as MemberRef;
 			if (opvm.Other is FieldDef fd)
 				mr = cilBodyVM.OwnerModule.Import(fd);
-			if (!(mr is null) && mr.FieldSig is null)
+			if (mr is not null && mr.FieldSig is null)
 				mr = null;
 			AddMemberRef(opvm, mr, true);
 		}
@@ -428,9 +428,9 @@ namespace dnSpy.AsmEditor.MethodBody {
 				mr = ms.Method as MemberRef;
 				md = ms.Method as MethodDef;
 			}
-			if (!(md is null))
+			if (md is not null)
 				mr = cilBodyVM.OwnerModule.Import(md);
-			if (!(mr is null) && mr.MethodSig is null)
+			if (mr is not null && mr.MethodSig is null)
 				mr = null;
 			AddMemberRef(opvm, mr, false);
 		}
@@ -481,7 +481,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			var opts = new MethodSigCreatorOptions(cilBodyVM.TypeSigCreatorOptions.Clone(dnSpy_AsmEditor_Resources.CreateMethodSig));
 			opts.CanHaveSentinel = true;
 			var sig = (MethodSig?)creator.Create(opts, opvm.Other as MethodSig);
-			if (!(sig is null))
+			if (sig is not null)
 				opvm.Other = sig;
 		}
 

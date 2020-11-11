@@ -29,7 +29,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			var tokRef = @ref as TokenReference;
 			if (tokRef is null)
 				tokRef = (@ref as TextReference)?.Reference as TokenReference;
-			if (!(tokRef is null))
+			if (tokRef is not null)
 				return Create(tokRef, documentTabService);
 			return null;
 		}

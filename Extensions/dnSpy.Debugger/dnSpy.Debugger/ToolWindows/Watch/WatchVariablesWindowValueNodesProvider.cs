@@ -165,7 +165,7 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 			// IDs are also sortable
 			foreach (var id in ids.OrderByDescending(a => a, StringComparer.Ordinal)) {
 				var (index, info) = FindPrevExpression(lastIndex, id);
-				Debug2.Assert(!(info is null));
+				Debug2.Assert(info is not null);
 				Debug2.Assert((index < 0) == (info is null));
 				if (index < 0)
 					continue;

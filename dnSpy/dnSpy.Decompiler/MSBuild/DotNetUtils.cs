@@ -24,7 +24,7 @@ using dnlib.DotNet;
 namespace dnSpy.Decompiler.MSBuild {
 	static class DotNetUtils {
 		static bool IsType(TypeDef type, string typeFullName) {
-			while (!(type is null)) {
+			while (type is not null) {
 				var bt = type.BaseType;
 				if (bt is null)
 					break;
@@ -37,13 +37,13 @@ namespace dnSpy.Decompiler.MSBuild {
 
 		public static bool IsWinForm(TypeDef type) => IsType(type, "System.Windows.Forms.Form");
 		public static bool IsSystemWindowsApplication(TypeDef type) => IsType(type, "System.Windows.Application");
-		public static bool IsStartUpClass(TypeDef type) => !(type.Module.EntryPoint is null) && type.Module.EntryPoint.DeclaringType == type;
+		public static bool IsStartUpClass(TypeDef type) => type.Module.EntryPoint is not null && type.Module.EntryPoint.DeclaringType == type;
 		public static bool IsUnsafe(ModuleDef module) => module.CustomAttributes.IsDefined("System.Security.UnverifiableCodeAttribute");
 		public static IEnumerable<FieldDef> GetFields(MethodDef method) => GetDefs(method).OfType<FieldDef>();
 
 		public static IEnumerable<IMemberDef> GetDefs(MethodDef method) {
 			var body = method.Body;
-			if (!(body is null)) {
+			if (body is not null) {
 				foreach (var instr in body.Instructions) {
 					if (instr.Operand is IMemberDef def && def.DeclaringType == method.DeclaringType)
 						yield return def;

@@ -41,15 +41,15 @@ namespace dnSpy.Roslyn.Intellisense.QuickInfo {
 		public bool HasWarningImageReference => !WarningImageReference.IsDefault;
 		public object? MainDescriptionObject { get; }
 		public object? DocumentationObject { get; }
-		public bool HasDocumentationObject => !(DocumentationObject is null);
+		public bool HasDocumentationObject => DocumentationObject is not null;
 		public object? UsageObject { get; }
-		public bool HasUsageObject => !(UsageObject is null);
+		public bool HasUsageObject => UsageObject is not null;
 		public object? TypeParameterMapObject { get; }
-		public bool HasTypeParameterMapObject => !(TypeParameterMapObject is null);
+		public bool HasTypeParameterMapObject => TypeParameterMapObject is not null;
 		public object? AnonymousTypesObject { get; }
-		public bool HasAnonymousTypesObject => !(AnonymousTypesObject is null);
+		public bool HasAnonymousTypesObject => AnonymousTypesObject is not null;
 		public object? ExceptionObject { get; }
-		public bool HasExceptionObject => !(ExceptionObject is null);
+		public bool HasExceptionObject => ExceptionObject is not null;
 
 		public InformationQuickInfoContentVM(ITextView textView, InformationQuickInfoContent content, IClassificationFormatMap classificationFormatMap, IThemeClassificationTypeService themeClassificationTypeService) {
 			if (textView is null)
@@ -61,9 +61,9 @@ namespace dnSpy.Roslyn.Intellisense.QuickInfo {
 			if (themeClassificationTypeService is null)
 				throw new ArgumentNullException(nameof(themeClassificationTypeService));
 			var sb = new StringBuilder();
-			if (!(content.SymbolGlyph is null))
+			if (content.SymbolGlyph is not null)
 				SymbolImageReference = content.SymbolGlyph.Value.GetImageReference() ?? default;
-			if (!(content.WarningGlyph is null))
+			if (content.WarningGlyph is not null)
 				WarningImageReference = content.WarningGlyph.Value.GetImageReference() ?? default;
 			MainDescriptionObject = TryCreateObject(sb, content.MainDescription, classificationFormatMap, themeClassificationTypeService);
 			DocumentationObject = TryCreateObject(sb, content.Documentation, classificationFormatMap, themeClassificationTypeService);

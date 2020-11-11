@@ -380,15 +380,15 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 		}
 
 		protected DbgDotNetCompilationResult CreateCompilationResult(string expression, CompileResult compileResult, ResultProperties resultProperties, string? errorMessage, DbgDotNetText name) {
-			if (!(errorMessage is null))
+			if (errorMessage is not null)
 				return new DbgDotNetCompilationResult(errorMessage);
-			Debug2.Assert(!(compileResult is null));
+			Debug2.Assert(compileResult is not null);
 			if (compileResult is null)
 				return new DbgDotNetCompilationResult(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 
 			var customTypeInfoGuid = compileResult.GetCustomTypeInfo(out var payload);
 			DbgDotNetCustomTypeInfo? customTypeInfo;
-			if (!(payload is null))
+			if (payload is not null)
 				customTypeInfo = new DbgDotNetCustomTypeInfo(customTypeInfoGuid, payload);
 			else
 				customTypeInfo = null;
@@ -415,7 +415,7 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 		protected DbgDotNetCompilationResult CreateCompilationResult(EvalContextState state, byte[] assembly, string typeName, DSEELocalAndMethod[] infos, string? errorMessage) {
 			Debug2.Assert(errorMessage is null || (assembly is null || assembly.Length == 0));
 
-			if (!(errorMessage is null))
+			if (errorMessage is not null)
 				return new DbgDotNetCompilationResult(errorMessage);
 			if (assembly is null || assembly.Length == 0)
 				return new DbgDotNetCompilationResult(Array.Empty<byte>(), Array.Empty<DbgDotNetCompiledExpressionResult>());
@@ -488,13 +488,13 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler {
 					flags |= DbgEvaluationResultFlags.BooleanExpression;
 
 				DbgDotNetCustomTypeInfo? customTypeInfo;
-				if (!(info.CustomTypeInfo is null))
+				if (info.CustomTypeInfo is not null)
 					customTypeInfo = new DbgDotNetCustomTypeInfo(info.CustomTypeInfoId, info.CustomTypeInfo);
 				else
 					customTypeInfo = null;
 
 				var resultFlags = DbgDotNetCompiledExpressionResultFlags.None;
-				Debug2.Assert(!(state.NotCompilerGenerated is null));
+				Debug2.Assert(state.NotCompilerGenerated is not null);
 				if (info.Kind == LocalAndMethodKind.Local && (uint)info.Index < (uint)state.NotCompilerGenerated.Length && !state.NotCompilerGenerated[info.Index])
 					resultFlags |= DbgDotNetCompiledExpressionResultFlags.CompilerGenerated;
 				compiledExpressions[w++] = DbgDotNetCompiledExpressionResult.Create(typeName, info.MethodName, info.LocalName, displayName, flags, imageName, customTypeInfo, null, resultFlags, info.Index);

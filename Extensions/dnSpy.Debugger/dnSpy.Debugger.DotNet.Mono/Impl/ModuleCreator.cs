@@ -218,7 +218,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				Debug.Assert(imageLayout == DbgImageLayout.File, nameof(GetFileVersion) + " assumes file layout");
 
 				var bytes = moduleSize == 0 ? null : engine.DbgRuntime.Process.ReadMemory(moduleAddress, (int)moduleSize);
-				if (!(bytes is null)) {
+				if (bytes is not null) {
 					try {
 						version = GetFileVersion(bytes);
 						using (var peImage = new PEImage(bytes, imageLayout == DbgImageLayout.File ? ImageLayout.File : ImageLayout.Memory, true))
@@ -296,7 +296,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			}
 			finally {
 				try {
-					if (!(tempFilename is null))
+					if (tempFilename is not null)
 						File.Delete(tempFilename);
 				}
 				catch { }

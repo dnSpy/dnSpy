@@ -137,7 +137,7 @@ namespace dnSpy.Text.Editor {
 				adornmentLayer?.RemoveAllAdornments();
 				return;
 			}
-			Debug2.Assert(!(adornmentLayer is null));
+			Debug2.Assert(adornmentLayer is not null);
 
 			var line = wpfTextView.Caret.ContainingTextViewLine;
 			if (line.IsVisible()) {
@@ -235,7 +235,7 @@ namespace dnSpy.Text.Editor {
 			if (line is null)
 				throw new ArgumentNullException(nameof(line));
 			var newRect = new Rect(PEN_THICKNESS / 2, PEN_THICKNESS / 2, Math.Max(0, width - PEN_THICKNESS), Math.Max(0, line.TextHeight + WpfTextViewLine.DEFAULT_BOTTOM_SPACE - PEN_THICKNESS));
-			if (!(geometry is null) && newRect == geometryRect)
+			if (geometry is not null && newRect == geometryRect)
 				return;
 			geometryRect = newRect;
 			if (geometryRect.Height == 0 || geometryRect.Width == 0)
@@ -250,7 +250,7 @@ namespace dnSpy.Text.Editor {
 
 		protected override void OnRender(DrawingContext drawingContext) {
 			base.OnRender(drawingContext);
-			if (!(geometry is null))
+			if (geometry is not null)
 				drawingContext.DrawGeometry(BackgroundBrush, pen, geometry);
 		}
 	}

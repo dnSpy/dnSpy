@@ -133,7 +133,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 				if (bp.IsHidden)
 					continue;
 				var location = dbgBreakpointGlyphTextMarkerLocationProviderService.GetLocation(bp);
-				if (!(location is null)) {
+				if (location is not null) {
 					bp.GetOrCreateData(() => new BreakpointData(location));
 					UpdateMarker(bp);
 					continue;
@@ -177,10 +177,10 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 				return;
 
 			var info = breakpointInfos![(int)BreakpointImageUtilities.GetBreakpointKind(bp)];
-			if (data.Info == info && !(data.Marker is null))
+			if (data.Info == info && data.Marker is not null)
 				return;
 			data.Info = info;
-			if (!(data.Marker is null))
+			if (data.Marker is not null)
 				glyphTextMarkerService.Value.Remove(data.Marker);
 
 			data.Marker = glyphTextMarkerService.Value.AddMarker(data.Location, info.ImageReference, info.MarkerTypeName, info.SelectedMarkerTypeName, info.ClassificationType, info.ZIndex, bp, breakpointGlyphTextMarkerHandler, textViewFilter);
@@ -203,7 +203,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 					}
 				}
 			}
-			if (!(locations is null))
+			if (locations is not null)
 				return new DbgTextViewBreakpointLocationResult(locations.Select(a => a.Clone()).ToArray(), new VirtualSnapshotSpan(locationSpan));
 			return null;
 		}

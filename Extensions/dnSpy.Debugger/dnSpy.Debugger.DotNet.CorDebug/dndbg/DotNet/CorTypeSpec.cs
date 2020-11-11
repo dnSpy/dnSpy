@@ -44,7 +44,7 @@ namespace dndbg.DotNet {
 
 			var sigData = MDAPI.GetTypeSpecSignatureBlob(mdi, token);
 			var sig = readerModule.ReadTypeSignature(sigData, gpContext, out extraData);
-			if (!(sig is null))
+			if (sig is not null)
 				sig.Rid = origRid;
 			return sig;
 		}

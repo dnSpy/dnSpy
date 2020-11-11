@@ -76,7 +76,7 @@ namespace dndbg.Engine {
 			return hr >= 0;
 		}
 
-		public bool Equals(CorStepper? other) => !(other is null) && RawObject == other.RawObject;
+		public bool Equals(CorStepper? other) => other is not null && RawObject == other.RawObject;
 		public override bool Equals(object? obj) => Equals(obj as CorStepper);
 		public override int GetHashCode() => RawObject.GetHashCode();
 		public override string ToString() => $"[Stepper] HC={GetHashCode():X8} Active={IsActive}";

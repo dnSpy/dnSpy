@@ -58,7 +58,7 @@ namespace dnSpy.Tabs {
 
 		public void InstallZoom(IUIObjectProvider provider, FrameworkElement? elem) {
 			var zoomable = (provider as IZoomableProvider)?.Zoomable ?? provider as IZoomable;
-			if (!(zoomable is null))
+			if (zoomable is not null)
 				InstallScaleCore(provider, zoomable);
 			else
 				InstallScaleCore(provider, elem);
@@ -89,7 +89,7 @@ namespace dnSpy.Tabs {
 			uiObjectProvider = null;
 			if (zoomElement is null)
 				return;
-			if (!(metroWindow is null))
+			if (metroWindow is not null)
 				metroWindow.WindowDpiChanged -= MetroWindow_WindowDpiChanged;
 			zoomElement.Loaded -= ZoomElement_Loaded;
 			zoomElement.PreviewMouseWheel -= ZoomElement_PreviewMouseWheel;
@@ -142,29 +142,29 @@ namespace dnSpy.Tabs {
 
 			currentZoomValue = newZoomValue;
 
-			if (!(zoomElement is null))
+			if (zoomElement is not null)
 				AddScaleTransform();
 		}
 
 		void AddScaleTransform() {
-			Debug2.Assert(!(zoomElement is null));
+			Debug2.Assert(zoomElement is not null);
 			var mwin = GetWindow();
-			if (!(mwin is null)) {
+			if (mwin is not null) {
 				mwin.SetScaleTransform(zoomElement, currentZoomValue);
 				DsImage.SetZoom(zoomElement, currentZoomValue);
 			}
 		}
 
 		MetroWindow? GetWindow() {
-			Debug2.Assert(!(zoomElement is null));
-			if (!(metroWindow is null))
+			Debug2.Assert(zoomElement is not null);
+			if (metroWindow is not null)
 				return metroWindow;
 			if (zoomElement is null)
 				return null;
 
 			var win = Window.GetWindow(zoomElement);
 			metroWindow = win as MetroWindow;
-			if (!(metroWindow is null)) {
+			if (metroWindow is not null) {
 				metroWindow.WindowDpiChanged += MetroWindow_WindowDpiChanged;
 				return metroWindow;
 			}
@@ -178,14 +178,14 @@ namespace dnSpy.Tabs {
 		}
 
 		void MetroWindow_WindowDpiChanged(object? sender, EventArgs e) {
-			Debug2.Assert(!(sender is null) && sender == metroWindow);
+			Debug2.Assert(sender is not null && sender == metroWindow);
 			((MetroWindow)sender).SetScaleTransform(zoomElement, currentZoomValue);
 		}
 
 		void ZoomElement_Loaded(object? sender, RoutedEventArgs e) {
 			var fe = (FrameworkElement)sender!;
 			fe.Loaded -= ZoomElement_Loaded;
-			if (!(zoomElement is null))
+			if (zoomElement is not null)
 				AddScaleTransform();
 		}
 

@@ -37,7 +37,7 @@ namespace dnSpy.BamlDecompiler.Xaml {
 		}
 
 		public void TryResolve() {
-			if (!(ResolvedMember is null))
+			if (ResolvedMember is not null)
 				return;
 
 			var typeDef = DeclaringType.ResolvedType.ResolveTypeDef();
@@ -45,15 +45,15 @@ namespace dnSpy.BamlDecompiler.Xaml {
 				return;
 
 			ResolvedMember = typeDef.FindPropertyCheckBaseType(PropertyName);
-			if (!(ResolvedMember is null))
+			if (ResolvedMember is not null)
 				return;
 
 			ResolvedMember = typeDef.FindFieldCheckBaseType(PropertyName + "Property");
-			if (!(ResolvedMember is null))
+			if (ResolvedMember is not null)
 				return;
 
 			ResolvedMember = typeDef.FindEventCheckBaseType(PropertyName);
-			if (!(ResolvedMember is null))
+			if (ResolvedMember is not null)
 				return;
 
 			ResolvedMember = typeDef.FindFieldCheckBaseType(PropertyName + "Event");
@@ -70,7 +70,7 @@ namespace dnSpy.BamlDecompiler.Xaml {
 				if (comparer.Equals(t, declType))
 					return false;
 				t = t.GetBaseType();
-			} while (!(t is null));
+			} while (t is not null);
 			return true;
 		}
 

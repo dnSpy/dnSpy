@@ -46,7 +46,7 @@ namespace dnSpy.Language.Intellisense {
 		public CompletionCollectionVM(IList<Completion> completionList) {
 			this.completionList = completionList ?? throw new ArgumentNullException(nameof(completionList));
 			completionListNotifyCollectionChanged = completionList as INotifyCollectionChanged;
-			if (!(completionListNotifyCollectionChanged is null))
+			if (completionListNotifyCollectionChanged is not null)
 				completionListNotifyCollectionChanged.CollectionChanged += CompletionList_CollectionChanged;
 			list = new List<CompletionVM>(completionList.Count);
 			ReinitializeList();
@@ -56,11 +56,11 @@ namespace dnSpy.Language.Intellisense {
 			int i;
 			switch (e.Action) {
 			case NotifyCollectionChangedAction.Add:
-				Debug2.Assert(!(e.NewItems is null));
+				Debug2.Assert(e.NewItems is not null);
 				i = e.NewStartingIndex;
 				var newList = new List<CompletionVM>();
 				foreach (Completion? c in e.NewItems) {
-					Debug2.Assert(!(c is null));
+					Debug2.Assert(c is not null);
 					var vm = GetOrCreateVM(c);
 					newList.Add(vm);
 					list.Insert(i++, vm);
@@ -69,12 +69,12 @@ namespace dnSpy.Language.Intellisense {
 				break;
 
 			case NotifyCollectionChangedAction.Remove:
-				Debug2.Assert(!(e.OldItems is null));
+				Debug2.Assert(e.OldItems is not null);
 				var oldList = new List<CompletionVM>();
 				foreach (Completion? c in e.OldItems) {
-					Debug2.Assert(!(c is null));
+					Debug2.Assert(c is not null);
 					var vm = CompletionVM.TryGet(c);
-					if (!(vm is null))
+					if (vm is not null)
 						oldList.Add(vm);
 					Debug.Assert(list[e.OldStartingIndex].Completion == vm?.Completion);
 					list.RemoveAt(e.OldStartingIndex);
@@ -118,7 +118,7 @@ namespace dnSpy.Language.Intellisense {
 		public void Remove(object? value) => throw new NotSupportedException();
 		public void RemoveAt(int index) => throw new NotSupportedException();
 		public void Dispose() {
-			if (!(completionListNotifyCollectionChanged is null))
+			if (completionListNotifyCollectionChanged is not null)
 				completionListNotifyCollectionChanged.CollectionChanged -= CompletionList_CollectionChanged;
 			list.Clear();
 		}

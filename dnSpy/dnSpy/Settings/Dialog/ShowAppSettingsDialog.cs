@@ -89,7 +89,7 @@ namespace dnSpy.Settings.Dialog {
 		}
 
 		object? IPageUIObjectLoader.GetUIObject(AppSettingsPage page) {
-			Debug2.Assert(!(appSettingsDlg is null));
+			Debug2.Assert(appSettingsDlg is not null);
 			var oldCursor = appSettingsDlg.Cursor;
 			try {
 				appSettingsDlg.Cursor = Cursors.Wait;
@@ -101,7 +101,7 @@ namespace dnSpy.Settings.Dialog {
 		}
 
 		public void Select(Guid value) {
-			Debug2.Assert(!(allPages is null));
+			Debug2.Assert(allPages is not null);
 			var page = allPages.FirstOrDefault(a => a.Page.Guid == value);
 			if (page?.Parent is null)
 				return;
@@ -128,13 +128,13 @@ namespace dnSpy.Settings.Dialog {
 			appSettingsDlg.Owner = ownerWindow ?? throw new ArgumentNullException(nameof(ownerWindow));
 
 			AppSettingsPageVM? selectedItem = null;
-			if (!(guid is null))
+			if (guid is not null)
 				selectedItem = allPages.FirstOrDefault(a => a.Page.Guid == guid.Value);
 			if (selectedItem is null)
 				selectedItem = rootVM.Children.FirstOrDefault();
-			if (guid is null && !(selectedItem is null))
+			if (guid is null && selectedItem is not null)
 				selectedItem = selectedItem.VisiblePage;
-			if (!(selectedItem is null))
+			if (selectedItem is not null)
 				pageContext.TreeView.SelectItems(new[] { selectedItem });
 
 			bool saveSettings = appSettingsDlg.ShowDialog() == true;
@@ -164,7 +164,7 @@ namespace dnSpy.Settings.Dialog {
 		}
 
 		void InitializeKeyboardBindings() {
-			Debug2.Assert(!(appSettingsDlg is null));
+			Debug2.Assert(appSettingsDlg is not null);
 			var cmd = new RelayCommand(a => {
 				appSettingsDlg.searchTextBox.Focus();
 				appSettingsDlg.searchTextBox.SelectAll();
@@ -174,9 +174,9 @@ namespace dnSpy.Settings.Dialog {
 		}
 
 		void FilterTreeView(string searchText) {
-			Debug2.Assert(!(allPages is null));
-			Debug2.Assert(!(rootVM is null));
-			Debug2.Assert(!(appSettingsDlg is null));
+			Debug2.Assert(allPages is not null);
+			Debug2.Assert(rootVM is not null);
+			Debug2.Assert(appSettingsDlg is not null);
 			if (string.IsNullOrWhiteSpace(searchText))
 				searchText = string.Empty;
 			if (searchText == string.Empty) {
@@ -201,7 +201,7 @@ namespace dnSpy.Settings.Dialog {
 			RefreshAllNodes();
 			if (pageContext.TreeView.SelectedItem is null) {
 				var first = rootVM.Children.FirstOrDefault(a => !a.TreeNode.IsHidden);
-				if (!(first is null)) {
+				if (first is not null) {
 					pageContext.TreeView.SelectItems(new[] { first });
 					// The treeview steals the focus. It uses prio Loaded.
 					appSettingsDlg.searchTextBox.Focus();
@@ -214,8 +214,8 @@ namespace dnSpy.Settings.Dialog {
 		bool isFiltering;
 
 		void RefreshAllNodes() {
-			Debug2.Assert(!(allPages is null));
-			Debug2.Assert(!(appSettingsDlg is null));
+			Debug2.Assert(allPages is not null);
+			Debug2.Assert(appSettingsDlg is not null);
 			foreach (var page in allPages)
 				page.ClearUICache();
 			foreach (var page in allPages)
@@ -236,12 +236,12 @@ namespace dnSpy.Settings.Dialog {
 		}
 
 		bool IsVisible(AppSettingsPageVM page, SearchMatcher matcher) {
-			Debug2.Assert(!(appSettingsDlg is null));
+			Debug2.Assert(appSettingsDlg is not null);
 			pageStringsList.Clear();
 			pageTitlesList.Clear();
 			var p = page;
 			// Don't include the root
-			while (!(p.Parent is null)) {
+			while (p.Parent is not null) {
 				pageTitlesList.Add(p.Page.Title);
 				p = p.Parent;
 			}
@@ -257,7 +257,7 @@ namespace dnSpy.Settings.Dialog {
 
 		object IContentConverter.Convert(object content, object ownerControl) {
 			var result = TryConvert(content, ownerControl);
-			if (!(result is null))
+			if (result is not null)
 				return result;
 
 			if (ownerControl is TextControl textControl) {
@@ -406,7 +406,7 @@ namespace dnSpy.Settings.Dialog {
 
 			foreach (var lz in appSettingsPageProviders) {
 				foreach (var page in lz.Value.Create()) {
-					Debug2.Assert(!(page is null));
+					Debug2.Assert(page is not null);
 					if (page is null)
 						continue;
 					var vm = new AppSettingsPageVM(page, pageContext);
@@ -445,12 +445,12 @@ namespace dnSpy.Settings.Dialog {
 
 		static AppSettingsPageVM? TryCreate(object obj, IAppSettingsPageContainerMetadata md, PageContext context) {
 			Guid? guid = md.Guid is null ? null : TryParseGuid(md.Guid);
-			Debug2.Assert(!(guid is null), "Invalid GUID");
+			Debug2.Assert(guid is not null, "Invalid GUID");
 			if (guid is null)
 				return null;
 
 			Guid? parentGuid = md.ParentGuid is null ? rootGuid : TryParseGuid(md.ParentGuid);
-			Debug2.Assert(!(parentGuid is null), "Invalid Parent GUID");
+			Debug2.Assert(parentGuid is not null, "Invalid Parent GUID");
 			if (parentGuid is null)
 				return null;
 

@@ -86,10 +86,10 @@ namespace dnSpy.Text.Editor {
 
 			var list = new List<IGlyphTextMarkerMouseProcessor>();
 			foreach (var lazy in glyphTextMarkerServiceImpl.GlyphTextMarkerMouseProcessorProviders) {
-				if (!(lazy.Metadata.TextViewRoles is null) && !wpfTextViewHost.TextView.Roles.ContainsAny(lazy.Metadata.TextViewRoles))
+				if (lazy.Metadata.TextViewRoles is not null && !wpfTextViewHost.TextView.Roles.ContainsAny(lazy.Metadata.TextViewRoles))
 					continue;
 				var mouseProcessor = lazy.Value.GetAssociatedMouseProcessor(wpfTextViewHost, margin);
-				if (!(mouseProcessor is null))
+				if (mouseProcessor is not null)
 					list.Add(mouseProcessor);
 			}
 			glyphTextMarkerMouseProcessors = list.ToArray();
@@ -108,7 +108,7 @@ namespace dnSpy.Text.Editor {
 				return null;
 			var line = wpfTextViewHost.TextView.TextViewLines.GetTextViewLineContainingYCoordinate(point.Y + wpfTextViewHost.TextView.ViewportTop);
 			var wpfLine = line as IWpfTextViewLine;
-			Debug2.Assert((!(line is null)) == (!(wpfLine is null)));
+			Debug2.Assert((line is not null) == (wpfLine is not null));
 			if (wpfLine is null || !wpfLine.IsVisible())
 				return null;
 			return wpfLine;
@@ -429,7 +429,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void CloseToolTip(bool clearLine = true) {
-			if (!(toolTip is null))
+			if (toolTip is not null)
 				toolTip.IsOpen = false;
 			toolTip = null;
 			toolTipMarker = null;
@@ -452,7 +452,7 @@ namespace dnSpy.Text.Editor {
 				return;
 			}
 			CloseToolTip(false);
-			Debug2.Assert(!(toolTipLine is null));
+			Debug2.Assert(toolTipLine is not null);
 
 			UpdateToolTipContent(toolTipLine);
 			UpdatePopupContent(toolTipLine);
@@ -464,7 +464,7 @@ namespace dnSpy.Text.Editor {
 				if (glyphTextMarkerHandlerContext is null)
 					glyphTextMarkerHandlerContext = new GlyphTextMarkerHandlerContext(wpfTextViewHost, margin, line, this);
 				var toolTipInfo = marker.Handler.GetToolTipContent(glyphTextMarkerHandlerContext, marker);
-				if (!(toolTipInfo is null)) {
+				if (toolTipInfo is not null) {
 					Debug2.Assert(toolTip is null);
 					toolTipMarker = marker;
 					toolTip = new ToolTip();
@@ -500,7 +500,7 @@ namespace dnSpy.Text.Editor {
 				if (glyphTextMarkerHandlerContext is null)
 					glyphTextMarkerHandlerContext = new GlyphTextMarkerHandlerContext(wpfTextViewHost, margin, line, this);
 				var popupContent = marker.Handler.GetPopupContent(glyphTextMarkerHandlerContext, marker);
-				if (!(popupContent is null)) {
+				if (popupContent is not null) {
 					AddPopupContent(line, marker, popupContent);
 					return;
 				}
@@ -527,7 +527,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void TextView_LayoutChanged(object? sender, TextViewLayoutChangedEventArgs e) {
-			bool refresh = !(toolTipLine is null) || popup.IsOpen;
+			bool refresh = toolTipLine is not null || popup.IsOpen;
 			if (popup.IsOpen) {
 				if (e.OldSnapshot != e.NewSnapshot)
 					ClosePopup();

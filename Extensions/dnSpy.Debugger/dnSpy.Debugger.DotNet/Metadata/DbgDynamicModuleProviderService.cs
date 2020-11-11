@@ -42,7 +42,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				throw new ArgumentNullException(nameof(runtime));
 			foreach (var lz in dbgDynamicModuleProviderFactories) {
 				var provider = lz.Value.Create(runtime);
-				if (!(provider is null))
+				if (provider is not null)
 					return provider;
 			}
 			return null;

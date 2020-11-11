@@ -144,7 +144,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				return ownerModule.UpdateRowId(new ImplMapUser(modRef, Name, Attributes));
 			}
 			set {
-				IsEnabled = !(value is null);
+				IsEnabled = value is not null;
 				if (value is null)
 					return;
 

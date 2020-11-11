@@ -61,11 +61,11 @@ namespace dnSpy.Hex.Files.DotNet {
 			}
 
 			var stringsRec = structure as StringsHeapRecordData;
-			if (!(stringsRec?.Terminator is null))
+			if (stringsRec?.Terminator is not null)
 				return stringsRecordIndexes;
 
 			if (structure is USHeapRecordData usRec) {
-				if (!(usRec.TerminalByte is null))
+				if (usRec.TerminalByte is not null)
 					return usRecordIndexes3;
 				return usRecordIndexes2;
 			}
@@ -147,19 +147,19 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		HexSpan? GetFieldReferenceSpan(HexBufferFile file, DotNetCor20Data cor20, HexPosition position) {
 			HexSpan? span;
-			if (!((span = DataDirectoryDataUtils.TryGetSpan(file, cor20.Metadata.Data, position)) is null))
+			if ((span = DataDirectoryDataUtils.TryGetSpan(file, cor20.Metadata.Data, position)) is not null)
 				return span;
-			if (!((span = DataDirectoryDataUtils.TryGetSpan(file, cor20.Resources.Data, position)) is null))
+			if ((span = DataDirectoryDataUtils.TryGetSpan(file, cor20.Resources.Data, position)) is not null)
 				return span;
-			if (!((span = DataDirectoryDataUtils.TryGetSpan(file, cor20.StrongNameSignature.Data, position)) is null))
+			if ((span = DataDirectoryDataUtils.TryGetSpan(file, cor20.StrongNameSignature.Data, position)) is not null)
 				return span;
-			if (!((span = DataDirectoryDataUtils.TryGetSpan(file, cor20.CodeManagerTable.Data, position)) is null))
+			if ((span = DataDirectoryDataUtils.TryGetSpan(file, cor20.CodeManagerTable.Data, position)) is not null)
 				return span;
-			if (!((span = DataDirectoryDataUtils.TryGetSpan(file, cor20.VTableFixups.Data, position)) is null))
+			if ((span = DataDirectoryDataUtils.TryGetSpan(file, cor20.VTableFixups.Data, position)) is not null)
 				return span;
-			if (!((span = DataDirectoryDataUtils.TryGetSpan(file, cor20.ExportAddressTableJumps.Data, position)) is null))
+			if ((span = DataDirectoryDataUtils.TryGetSpan(file, cor20.ExportAddressTableJumps.Data, position)) is not null)
 				return span;
-			if (!((span = DataDirectoryDataUtils.TryGetSpan(file, cor20.ManagedNativeHeader.Data, position)) is null))
+			if ((span = DataDirectoryDataUtils.TryGetSpan(file, cor20.ManagedNativeHeader.Data, position)) is not null)
 				return span;
 
 			if (cor20.EntryPointTokenOrRVA.Data.Span.Span.Contains(position)) {
@@ -233,7 +233,7 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		HexSpan? GetFieldReferenceSpan(HexBufferFile file, FatMethodBody fatBody, HexPosition position) {
 			var ehTable = fatBody.EHTable;
-			if (!(ehTable is null)) {
+			if (ehTable is not null) {
 				if (!ehTable.Data.Span.Span.Contains(position))
 					return null;
 
@@ -245,9 +245,9 @@ namespace dnSpy.Hex.Files.DotNet {
 					if (clause is null)
 						return null;
 					HexSpan? span;
-					if (!((span = TryGetSpan(fatBody, position, clause.TryOffset.Data, clause.TryLength.Data)) is null))
+					if ((span = TryGetSpan(fatBody, position, clause.TryOffset.Data, clause.TryLength.Data)) is not null)
 						return span;
-					if (!((span = TryGetSpan(fatBody, position, clause.HandlerOffset.Data, clause.HandlerLength.Data)) is null))
+					if ((span = TryGetSpan(fatBody, position, clause.HandlerOffset.Data, clause.HandlerLength.Data)) is not null)
 						return span;
 					if (clause.ClassTokenOrFilterOffset.Data.Span.Span.Contains(position)) {
 						if (clause.Flags.Data.ReadValue() == 0)
@@ -264,9 +264,9 @@ namespace dnSpy.Hex.Files.DotNet {
 					if (clause is null)
 						return null;
 					HexSpan? span;
-					if (!((span = TryGetSpan(fatBody, position, clause.TryOffset.Data, clause.TryLength.Data)) is null))
+					if ((span = TryGetSpan(fatBody, position, clause.TryOffset.Data, clause.TryLength.Data)) is not null)
 						return span;
-					if (!((span = TryGetSpan(fatBody, position, clause.HandlerOffset.Data, clause.HandlerLength.Data)) is null))
+					if ((span = TryGetSpan(fatBody, position, clause.HandlerOffset.Data, clause.HandlerLength.Data)) is not null)
 						return span;
 					if (clause.ClassTokenOrFilterOffset.Data.Span.Span.Contains(position)) {
 						if (clause.Flags.Data.ReadValue() == 0)

@@ -105,7 +105,7 @@ namespace dnSpy.Language.Intellisense {
 
 		public IEnumerable<ITagSpan<IClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans) {
 			var context = buffer.TryGetSignatureHelpClassifierContext();
-			Debug2.Assert(!(context is null));
+			Debug2.Assert(context is not null);
 			if (context is null || context.Session.IsDismissed)
 				yield break;
 			ClassificationTag tag;

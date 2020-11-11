@@ -55,7 +55,7 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 		}
 
 		void DocumentTabService_FileCollectionChanged(object? sender, NotifyDocumentCollectionChangedEventArgs e) {
-			Debug2.Assert(!(dbgCodeBreakpointsService is null));
+			Debug2.Assert(dbgCodeBreakpointsService is not null);
 			if (dbgCodeBreakpointsService is null)
 				return;
 			switch (e.Type) {
@@ -87,7 +87,7 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 						breakpointsToRemove.Add(bp);
 					}
 				}
-				if (!(breakpointsToRemove is null))
+				if (breakpointsToRemove is not null)
 					dbgCodeBreakpointsService.Remove(breakpointsToRemove.ToArray());
 				break;
 

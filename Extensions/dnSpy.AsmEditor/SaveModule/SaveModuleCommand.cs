@@ -102,7 +102,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 				bool added = false;
 
-				if (!(fileNode.Document.ModuleDef is null)) {
+				if (fileNode.Document.ModuleDef is not null) {
 					var file = fileNode.Document;
 					var uo = undoCommandService.Value.GetUndoObject(file)!;
 					if (undoCommandService.Value.IsModified(uo)) {
@@ -112,7 +112,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 				}
 
 				var doc = hexBufferService.Value.TryGet(fileNode.Document.Filename);
-				if (!(doc is null)) {
+				if (doc is not null) {
 					var uo = undoCommandService.Value.GetUndoObject(doc)!;
 					if (undoCommandService.Value.IsModified(uo)) {
 						hash.Add(doc);
@@ -121,7 +121,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 				}
 
 				// If nothing was modified, just include the selected module
-				if (!added && !(fileNode.Document.ModuleDef is null))
+				if (!added && fileNode.Document.ModuleDef is not null)
 					hash.Add(fileNode.Document);
 			}
 			return new HashSet<object>(undoCommandService.Value.GetUniqueDocuments(hash));

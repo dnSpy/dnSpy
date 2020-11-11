@@ -135,7 +135,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 
 		public override void WriteShort(IDecompilerOutput output, IDecompiler decompiler, bool showOffset) {
 			var documentViewerOutput = output as IDocumentViewerOutput;
-			if (!(documentViewerOutput is null)) {
+			if (documentViewerOutput is not null) {
 				documentViewerOutput.AddUIElement(() => {
 					return new System.Windows.Controls.Image {
 						Source = imageSource,
@@ -144,7 +144,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 			}
 
 			base.WriteShort(output, decompiler, showOffset);
-			if (!(documentViewerOutput is null)) {
+			if (documentViewerOutput is not null) {
 				documentViewerOutput.AddButton(dnSpy_Resources.SaveResourceButton, () => Save());
 				documentViewerOutput.WriteLine();
 				documentViewerOutput.WriteLine();
@@ -194,7 +194,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 
 		protected override IEnumerable<ResourceData> GetDeserializedData() {
 			var id = imageData;
-			Debug2.Assert(!(id is null));
+			Debug2.Assert(id is not null);
 			yield return new ResourceData(ResourceElement.Name, token => new MemoryStream(id));
 		}
 

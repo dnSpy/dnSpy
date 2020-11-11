@@ -90,7 +90,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			if (new SigComparer().Equals(type, analyzedType))
 				yield break;
 			if (isComType && ComUtils.ComEquals(type, ref comGuid)) {
-				Debug2.Assert(!(allTypes is null));
+				Debug2.Assert(allTypes is not null);
 				lock (allTypes)
 					allTypes.Add(type);
 				yield break;
@@ -121,11 +121,11 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		EntityNode HandleSpecialMethodNode(MethodDef method, SourceRef? sourceRef) {
 			var property = method.DeclaringType.Properties.FirstOrDefault(p => (object?)p.GetMethod == method || (object?)p.SetMethod == method);
-			if (!(property is null))
+			if (property is not null)
 				return new PropertyNode(property) { Context = Context, SourceRef = sourceRef };
 
 			var @event = method.DeclaringType.Events.FirstOrDefault(p => (object?)p.AddMethod == method || (object?)p.RemoveMethod == method || (object?)p.InvokeMethod == method);
-			if (!(@event is null))
+			if (@event is not null)
 				return new EventNode(@event) { Context = Context, SourceRef = sourceRef };
 
 			return new MethodNode(method) { Context = Context, SourceRef = sourceRef };
@@ -284,7 +284,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				return false;
 			if (isComType && tref.Resolve() is TypeDef td && ComUtils.ComEquals(td, ref comGuid))
 				return true;
-			if (!(tref is null)) {
+			if (tref is not null) {
 				if (new SigComparer().Equals(analyzedType, tref.GetScopeType()))
 					return true;
 				if (tref is TypeSig ts) {
@@ -301,7 +301,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 								if (TypeMatches(p, level + 1))
 									return true;
 							}
-							if (!(msig.ParamsAfterSentinel is null)) {
+							if (msig.ParamsAfterSentinel is not null) {
 								foreach (var p in msig.ParamsAfterSentinel) {
 									if (TypeMatches(p, level + 1))
 										return true;
@@ -349,7 +349,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			return false;
 		}
 
-		public static bool CanShow(TypeDef? type) => !(type is null);
+		public static bool CanShow(TypeDef? type) => type is not null;
 	}
 
 	sealed class AnalyzerEntityTreeNodeComparer : IEqualityComparer<EntityNode> {

@@ -99,7 +99,7 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 					Parameters.Add(new Parameter(signature, parameter, locus, prettyPrintedLocus));
 				}
 				Add(item.SuffixDisplayParts);
-				if (!(selectedParameter is null) && (uint)selectedParameter.Value < (uint)item.Parameters.Length) {
+				if (selectedParameter is not null && (uint)selectedParameter.Value < (uint)item.Parameters.Length) {
 					var parameter = item.Parameters[selectedParameter.Value];
 					Add(parameter.SelectedDisplayParts);
 				}
@@ -152,7 +152,7 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 			PrettyPrintedContentTaggedText = builder.PrettyPrintedContentTaggedText;
 			Parameters = new ReadOnlyCollection<IParameter>(builder.Parameters);
 
-			if (!(selectedParameter is null)) {
+			if (selectedParameter is not null) {
 				if ((uint)selectedParameter.Value < (uint)Parameters.Count)
 					CurrentParameter = Parameters[selectedParameter.Value];
 				else if (item.IsVariadic && Parameters.Count > 0)

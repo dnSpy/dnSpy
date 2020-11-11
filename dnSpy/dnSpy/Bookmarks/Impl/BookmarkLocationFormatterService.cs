@@ -44,7 +44,7 @@ namespace dnSpy.Bookmarks.Impl {
 			foreach (var lz in bookmarkLocationFormatterProviders) {
 				if (Array.IndexOf(lz.Metadata.Types, type) >= 0) {
 					var formatter = lz.Value.Create(location);
-					if (!(formatter is null))
+					if (formatter is not null)
 						return formatter;
 				}
 			}

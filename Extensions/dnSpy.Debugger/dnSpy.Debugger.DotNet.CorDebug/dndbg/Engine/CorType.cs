@@ -85,7 +85,7 @@ namespace dndbg.Engine {
 			return hr < 0 || value is null ? null : new CorValue(value);
 		}
 
-		public bool Equals(CorType? other) => !(other is null) && RawObject == other.RawObject;
+		public bool Equals(CorType? other) => other is not null && RawObject == other.RawObject;
 		public override bool Equals(object? obj) => Equals(obj as CorType);
 		public override int GetHashCode() => RawObject.GetHashCode();
 	}

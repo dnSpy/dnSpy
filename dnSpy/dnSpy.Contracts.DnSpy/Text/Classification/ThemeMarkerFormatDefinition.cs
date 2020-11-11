@@ -48,11 +48,11 @@ namespace dnSpy.Contracts.Text.Classification {
 			var res = CreateResourceDictionary();
 
 			var fg = GetForeground(theme);
-			if (!(fg is null))
+			if (fg is not null)
 				res[ForegroundBrushId] = fg;
 
 			var bg = GetBackground(theme);
-			if (!(bg is null))
+			if (bg is not null)
 				res[BackgroundBrushId] = bg;
 
 			return res;

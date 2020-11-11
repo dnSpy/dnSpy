@@ -37,14 +37,14 @@ namespace dnSpy.Images {
 		public ImageSourceInfo[]? GetImageSourceInfos(string name) {
 			if (nameToInfosDict is null)
 				InitializeResources();
-			Debug2.Assert(!(nameToInfosDict is null));
+			Debug2.Assert(nameToInfosDict is not null);
 			if (nameToInfosDict.TryGetValue(name, out var infos))
 				return infos;
 			return null;
 		}
 
 		void InitializeResources() {
-			if (!(nameToInfosDict is null))
+			if (nameToInfosDict is not null)
 				return;
 			var dict = new Dictionary<string, List<ImageSourceInfo>>(StringComparer.InvariantCultureIgnoreCase);
 
@@ -56,12 +56,12 @@ namespace dnSpy.Images {
 				options.TryToLoadPdbFromDisk = false;
 				using (var mod = ModuleDefMD.Load(assembly.ManifestModule, options)) {
 					var rsrc = mod.Resources.Find(rsrcName) as EmbeddedResource;
-					Debug2.Assert(!(rsrc is null));
-					if (!(rsrc is null)) {
+					Debug2.Assert(rsrc is not null);
+					if (rsrc is not null) {
 						var set = ResourceReader.Read(mod, rsrc.CreateReader());
 						foreach (var elem in set.ResourceElements) {
 							const string imagesPrefix = "images/";
-							if (!(elem.Name is null) && elem.Name.StartsWith(imagesPrefix, StringComparison.OrdinalIgnoreCase)) {
+							if (elem.Name is not null && elem.Name.StartsWith(imagesPrefix, StringComparison.OrdinalIgnoreCase)) {
 								var imageName = elem.Name.Substring(imagesPrefix.Length);
 								var nameNoExt = RemoveExtension(imageName);
 								string? nameKey = null;
@@ -79,7 +79,7 @@ namespace dnSpy.Images {
 										Size = GetImageSize(nameNoExt, out nameKey) ?? new Size(16, 16),
 									};
 								}
-								if (!(info is null) && !(nameKey is null)) {
+								if (info is not null && nameKey is not null) {
 									if (!dict.TryGetValue(nameKey, out var list))
 										dict.Add(nameKey, list = new List<ImageSourceInfo>());
 									list.Add(info.Value);

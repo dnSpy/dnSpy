@@ -160,7 +160,7 @@ namespace dnSpy.Roslyn.Text.Classification {
 		public static RoslynClassificationTypes GetClassificationTypeInstance(IThemeClassificationTypeService themeClassificationTypeService) {
 			if (classificationTypeInstance is null)
 				Interlocked.CompareExchange(ref classificationTypeInstance, new RoslynClassificationTypes(themeClassificationTypeService), null);
-			Debug2.Assert(!(classificationTypeInstance is null));
+			Debug2.Assert(classificationTypeInstance is not null);
 			return classificationTypeInstance;
 		}
 		static RoslynClassificationTypes? classificationTypeInstance;

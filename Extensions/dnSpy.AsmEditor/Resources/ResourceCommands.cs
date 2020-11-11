@@ -119,7 +119,7 @@ namespace dnSpy.AsmEditor.Resources {
 			return string.Format(dnSpy_AsmEditor_Resources.DeleteResourcesCommand, nodes.Length);
 		}
 
-		static bool CanExecute(DocumentTreeNodeData[] nodes) => nodes.Length > 0 && nodes.All(n => !(ResourceNode.GetResource(n) is null));
+		static bool CanExecute(DocumentTreeNodeData[] nodes) => nodes.Length > 0 && nodes.All(n => ResourceNode.GetResource(n) is not null);
 
 		static void Execute(Lazy<IUndoCommandService> undoCommandService, DocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
@@ -146,7 +146,7 @@ namespace dnSpy.AsmEditor.Resources {
 
 			public void Delete(DocumentTreeNodeData[] nodes, DocumentTreeNodeData[] parents) {
 				Debug2.Assert(infos is null);
-				if (!(infos is null))
+				if (infos is not null)
 					throw new InvalidOperationException();
 
 				infos = new ModelInfo[nodes.Length];
@@ -155,7 +155,7 @@ namespace dnSpy.AsmEditor.Resources {
 					var node = nodes[i];
 
 					var module = parents[i].GetModule();
-					Debug2.Assert(!(module is null));
+					Debug2.Assert(module is not null);
 					if (module is null)
 						throw new InvalidOperationException();
 					var resource = ResourceNode.GetResource(node) ?? throw new InvalidOperationException();
@@ -166,7 +166,7 @@ namespace dnSpy.AsmEditor.Resources {
 			}
 
 			public void Restore(DocumentTreeNodeData[] nodes) {
-				Debug2.Assert(!(infos is null));
+				Debug2.Assert(infos is not null);
 				if (infos is null)
 					throw new InvalidOperationException();
 				Debug.Assert(infos.Length == nodes.Length);
@@ -250,7 +250,7 @@ namespace dnSpy.AsmEditor.Resources {
 			return string.Format(dnSpy_AsmEditor_Resources.DeleteResourcesCommand, nodes.Length);
 		}
 
-		static bool CanExecute(DocumentTreeNodeData[] nodes) => nodes.Length > 0 && nodes.All(n => !(ResourceElementNode.GetResourceElement(n) is null));
+		static bool CanExecute(DocumentTreeNodeData[] nodes) => nodes.Length > 0 && nodes.All(n => ResourceElementNode.GetResourceElement(n) is not null);
 
 		static void Execute(Lazy<IUndoCommandService> undoCommandService, DocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
@@ -269,7 +269,7 @@ namespace dnSpy.AsmEditor.Resources {
 			public ModuleInfo(ResourceElementSetNode node) {
 				Node = node ?? throw new InvalidOperationException();
 				var module = node.GetModule();
-				Debug2.Assert(!(module is null));
+				Debug2.Assert(module is not null);
 				Module = module ?? throw new InvalidOperationException();
 				Index = module.Resources.IndexOf(node.Resource);
 				Debug.Assert(Index >= 0);
@@ -371,7 +371,7 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 
 		protected ResourceData[] GetResourceData(IResourceDataProvider[]? nodes) => SaveResources.GetResourceData(nodes, resourceDataType);
-		public override bool IsVisible(IMenuItemContext context) => !(GetResourceNodes(context) is null);
+		public override bool IsVisible(IMenuItemContext context) => GetResourceNodes(context) is not null;
 		public override void Execute(IMenuItemContext context) => SaveResources.Save(GetResourceNodes(context), useSubDirs, resourceDataType);
 	}
 
@@ -486,16 +486,16 @@ namespace dnSpy.AsmEditor.Resources {
 	}
 
 	static class ResUtils {
-		public static bool CanExecuteResourceListCommand(DocumentTreeNodeData[] nodes) => !(GetResourceListTreeNode(nodes) is null);
+		public static bool CanExecuteResourceListCommand(DocumentTreeNodeData[] nodes) => GetResourceListTreeNode(nodes) is not null;
 
 		public static ResourcesFolderNode? GetResourceListTreeNode(DocumentTreeNodeData[] nodes) {
 			if (nodes.Length != 1)
 				return null;
 			ResourcesFolderNode? rsrcListNode;
-			if (!((rsrcListNode = nodes[0] as ResourcesFolderNode) is null))
+			if ((rsrcListNode = nodes[0] as ResourcesFolderNode) is not null)
 				return rsrcListNode;
 			rsrcListNode = nodes[0].TreeNode.Parent?.Data as ResourcesFolderNode;
-			if (!(rsrcListNode is null))
+			if (rsrcListNode is not null)
 				return rsrcListNode;
 
 			var modNode = nodes[0] as ModuleDocumentNode;
@@ -576,7 +576,7 @@ namespace dnSpy.AsmEditor.Resources {
 			var rsrcListNode = ResUtils.GetResourceListTreeNode(nodes)!;
 
 			var module = rsrcListNode.GetModule();
-			Debug2.Assert(!(module is null));
+			Debug2.Assert(module is not null);
 			if (module is null)
 				throw new InvalidOperationException();
 
@@ -616,7 +616,7 @@ namespace dnSpy.AsmEditor.Resources {
 
 		CreateFileResourceCommand(ResourcesFolderNode rsrcListNode, NodeAndResource[] nodes) {
 			module = rsrcListNode.GetModule()!;
-			Debug2.Assert(!(module is null));
+			Debug2.Assert(module is not null);
 			this.rsrcListNode = rsrcListNode;
 			this.nodes = nodes;
 		}
@@ -657,7 +657,7 @@ namespace dnSpy.AsmEditor.Resources {
 
 		protected CreateResourceTreeNodeCommand(ResourcesFolderNode rsrcListNode, NodeAndResource resTreeNode) {
 			module = rsrcListNode.GetModule()!;
-			Debug2.Assert(!(module is null));
+			Debug2.Assert(module is not null);
 			this.rsrcListNode = rsrcListNode;
 			this.resTreeNode = resTreeNode;
 		}
@@ -748,7 +748,7 @@ namespace dnSpy.AsmEditor.Resources {
 			var rsrcListNode = ResUtils.GetResourceListTreeNode(nodes)!;
 
 			var module = rsrcListNode.GetModule();
-			Debug2.Assert(!(module is null));
+			Debug2.Assert(module is not null);
 			if (module is null)
 				throw new InvalidOperationException();
 
@@ -846,7 +846,7 @@ namespace dnSpy.AsmEditor.Resources {
 			var rsrcListNode = ResUtils.GetResourceListTreeNode(nodes)!;
 
 			var module = rsrcListNode.GetModule();
-			Debug2.Assert(!(module is null));
+			Debug2.Assert(module is not null);
 			if (module is null)
 				throw new InvalidOperationException();
 
@@ -941,7 +941,7 @@ namespace dnSpy.AsmEditor.Resources {
 			var rsrcListNode = ResUtils.GetResourceListTreeNode(nodes)!;
 
 			var module = rsrcListNode.GetModule();
-			Debug2.Assert(!(module is null));
+			Debug2.Assert(module is not null);
 			if (module is null)
 				throw new InvalidOperationException();
 
@@ -1023,7 +1023,7 @@ namespace dnSpy.AsmEditor.Resources {
 			public override void Execute(CodeContext context) => ResourceSettingsCommand.Execute(undoCommandService, appService, context.Nodes);
 		}
 
-		static bool CanExecute(DocumentTreeNodeData[] nodes) => nodes.Length == 1 && !(ResourceNode.GetResource(nodes[0]) is null);
+		static bool CanExecute(DocumentTreeNodeData[] nodes) => nodes.Length == 1 && ResourceNode.GetResource(nodes[0]) is not null;
 
 		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppService appService, DocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
@@ -1032,7 +1032,7 @@ namespace dnSpy.AsmEditor.Resources {
 			var rsrcNode = new NodeAndResource(nodes[0]);
 
 			var module = nodes[0].GetParentModule();
-			Debug2.Assert(!(module is null));
+			Debug2.Assert(module is not null);
 			if (module is null)
 				throw new InvalidOperationException();
 
@@ -1118,7 +1118,7 @@ namespace dnSpy.AsmEditor.Resources {
 
 		protected CreateResourceElementCommandBase(ResourceElementSetNode rsrcSetNode, NodeAndResourceElement[] nodes) {
 			module = rsrcSetNode.GetModule()!;
-			Debug2.Assert(!(module is null));
+			Debug2.Assert(module is not null);
 			this.rsrcSetNode = rsrcSetNode;
 			this.nodes = nodes;
 			resource = rsrcSetNode.Resource;
@@ -1226,10 +1226,10 @@ namespace dnSpy.AsmEditor.Resources {
 			var rsrcSetNode = nodes[0] as ResourceElementSetNode;
 			if (rsrcSetNode is null)
 				rsrcSetNode = nodes[0].TreeNode.Parent!.Data as ResourceElementSetNode;
-			Debug2.Assert(!(rsrcSetNode is null));
+			Debug2.Assert(rsrcSetNode is not null);
 
 			var module = rsrcSetNode.GetModule();
-			Debug2.Assert(!(module is null));
+			Debug2.Assert(module is not null);
 			if (module is null)
 				throw new InvalidOperationException();
 
@@ -1259,7 +1259,7 @@ namespace dnSpy.AsmEditor.Resources {
 						error = string.Format(dnSpy_AsmEditor_Resources.Error_ReadingFiles, ex.Message);
 				}
 			}
-			if (!(error is null))
+			if (error is not null)
 				MsgBox.Instance.Show(error);
 			if (newNodes.Count == 0)
 				return;
@@ -1340,10 +1340,10 @@ namespace dnSpy.AsmEditor.Resources {
 			var rsrcSetNode = nodes[0] as ResourceElementSetNode;
 			if (rsrcSetNode is null)
 				rsrcSetNode = nodes[0].TreeNode.Parent!.Data as ResourceElementSetNode;
-			Debug2.Assert(!(rsrcSetNode is null));
+			Debug2.Assert(rsrcSetNode is not null);
 
 			var module = rsrcSetNode.GetModule();
-			Debug2.Assert(!(module is null));
+			Debug2.Assert(module is not null);
 			if (module is null)
 				throw new InvalidOperationException();
 
@@ -1374,7 +1374,7 @@ namespace dnSpy.AsmEditor.Resources {
 				MsgBox.Instance.Show(error);
 				return;
 			}
-			Debug2.Assert(!(opts is null));
+			Debug2.Assert(opts is not null);
 
 			var treeView = appService.DocumentTreeView.TreeView;
 			var treeNodeGroup = appService.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.ResourceElementTreeNodeGroup);
@@ -1458,10 +1458,10 @@ namespace dnSpy.AsmEditor.Resources {
 			var rsrcSetNode = nodes[0] as ResourceElementSetNode;
 			if (rsrcSetNode is null)
 				rsrcSetNode = nodes[0].TreeNode.Parent!.Data as ResourceElementSetNode;
-			Debug2.Assert(!(rsrcSetNode is null));
+			Debug2.Assert(rsrcSetNode is not null);
 
 			var module = rsrcSetNode.GetModule();
-			Debug2.Assert(!(module is null));
+			Debug2.Assert(module is not null);
 			if (module is null)
 				throw new InvalidOperationException();
 
@@ -1648,10 +1648,10 @@ namespace dnSpy.AsmEditor.Resources {
 			var rsrcSetNode = nodes[0] as ResourceElementSetNode;
 			if (rsrcSetNode is null)
 				rsrcSetNode = nodes[0].TreeNode.Parent!.Data as ResourceElementSetNode;
-			Debug2.Assert(!(rsrcSetNode is null));
+			Debug2.Assert(rsrcSetNode is not null);
 
 			var module = rsrcSetNode.GetModule();
-			Debug2.Assert(!(module is null));
+			Debug2.Assert(module is not null);
 			if (module is null)
 				throw new InvalidOperationException();
 
@@ -1702,7 +1702,7 @@ namespace dnSpy.AsmEditor.Resources {
 			origOptions = rsrcElNode.ResourceElement;
 
 			module = rsrcSetNode.GetModule()!;
-			Debug2.Assert(!(module is null));
+			Debug2.Assert(module is not null);
 			resource = rsrcSetNode.Resource;
 			resourceIndex = module.Resources.IndexOf(resource);
 			Debug.Assert(resourceIndex >= 0);
@@ -1833,7 +1833,7 @@ namespace dnSpy.AsmEditor.Resources {
 
 			var rsrcElNode = (ResourceElementNode)nodes[0];
 			var module = nodes[0].GetParentModule();
-			Debug2.Assert(!(module is null));
+			Debug2.Assert(module is not null);
 			if (module is null)
 				throw new InvalidOperationException();
 

@@ -48,7 +48,7 @@ namespace dnSpy.Culture {
 		public bool HasExtraLanguages {
 			get {
 				InitializeSupportedLanguages();
-				Debug2.Assert(!(extraLanguages is null));
+				Debug2.Assert(extraLanguages is not null);
 				return extraLanguages.Length > 0;
 			}
 		}
@@ -56,7 +56,7 @@ namespace dnSpy.Culture {
 		public IEnumerable<LanguageInfo> AllLanguages {
 			get {
 				InitializeSupportedLanguages();
-				Debug2.Assert(!(extraLanguages is null));
+				Debug2.Assert(extraLanguages is not null);
 				var langs = new HashSet<LanguageInfo>();
 				langs.Add(LanguageInfo.CreateSystemLanguage());
 				foreach (var ci in extraLanguages)
@@ -71,7 +71,7 @@ namespace dnSpy.Culture {
 		public LanguageInfo Language {
 			get {
 				var cultureInfo = UICulture;
-				if (!(cultureInfo is null))
+				if (cultureInfo is not null)
 					return LanguageInfo.Create(cultureInfo);
 				return LanguageInfo.CreateSystemLanguage();
 			}
@@ -122,7 +122,7 @@ namespace dnSpy.Culture {
 		}
 
 		void InitializeSupportedLanguages() {
-			if (!(extraLanguages is null))
+			if (extraLanguages is not null)
 				return;
 			var langs = new HashSet<CultureInfo>();
 			foreach (var di in GetDirectories(AppDirectories.BinDirectory)) {
@@ -133,7 +133,7 @@ namespace dnSpy.Culture {
 				if (files.Length == 0)
 					continue;
 				var ci = TryCreateCultureInfo(Path.GetFileName(di));
-				if (!(ci is null))
+				if (ci is not null)
 					langs.Add(ci);
 			}
 

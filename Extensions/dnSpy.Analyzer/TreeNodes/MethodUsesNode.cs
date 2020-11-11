@@ -60,7 +60,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			foreach (Instruction instr in analyzedMethod.Body.Instructions) {
 				if (instr.Operand is IMethod mr && !mr.IsField) {
 					MethodDef def = mr.ResolveMethodDef();
-					if (!(def is null))
+					if (def is not null)
 						yield return new DefRef<MethodDef>(def, new SourceRef(analyzedMethod, instr.Offset, instr.Operand as IMDTokenProvider));
 				}
 			}
@@ -70,7 +70,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			foreach (Instruction instr in analyzedMethod.Body.Instructions) {
 				if (instr.Operand is IField fr && !fr.IsMethod) {
 					FieldDef def = fr.ResolveFieldDef();
-					if (!(def is null))
+					if (def is not null)
 						yield return new DefRef<FieldDef>(def, new SourceRef(analyzedMethod, instr.Offset, instr.Operand as IMDTokenProvider));
 				}
 			}

@@ -29,7 +29,7 @@ using dnSpy.Contracts.TreeView;
 namespace dnSpy.Documents.Tabs {
 	static class CopyTokenCommand {
 		static void ExecuteInternal(uint? token) {
-			if (!(token is null)) {
+			if (token is not null) {
 				try {
 					Clipboard.SetText($"0x{token.Value:X8}");
 				}
@@ -39,7 +39,7 @@ namespace dnSpy.Documents.Tabs {
 
 		[ExportMenuItem(Header = "res:CopyMDTokenCommand", Group = MenuConstants.GROUP_CTX_DOCVIEWER_TOKENS, Order = 50)]
 		sealed class CodeCommand : MenuItemBase {
-			public override bool IsVisible(IMenuItemContext context) => !(GetReference(context) is null);
+			public override bool IsVisible(IMenuItemContext context) => GetReference(context) is not null;
 			public override void Execute(IMenuItemContext context) => ExecuteInternal(GetReference(context));
 			static uint? GetReference(IMenuItemContext context) => GetReference(context, MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID);
 
@@ -62,14 +62,14 @@ namespace dnSpy.Documents.Tabs {
 
 		[ExportMenuItem(Header = "res:CopyMDTokenCommand", Group = MenuConstants.GROUP_CTX_SEARCH_TOKENS, Order = 0)]
 		sealed class SearchCommand : MenuItemBase {
-			public override bool IsVisible(IMenuItemContext context) => !(GetReference(context) is null);
+			public override bool IsVisible(IMenuItemContext context) => GetReference(context) is not null;
 			public override void Execute(IMenuItemContext context) => ExecuteInternal(GetReference(context));
 			static uint? GetReference(IMenuItemContext context) => CodeCommand.GetReference(context, MenuConstants.GUIDOBJ_SEARCH_GUID);
 		}
 
 		[ExportMenuItem(Header = "res:CopyMDTokenCommand", Group = MenuConstants.GROUP_CTX_DOCUMENTS_TOKENS, Order = 40)]
 		sealed class DocumentsCommand : MenuItemBase {
-			public override bool IsVisible(IMenuItemContext context) => !(GetReference(context) is null);
+			public override bool IsVisible(IMenuItemContext context) => GetReference(context) is not null;
 			public override void Execute(IMenuItemContext context) => ExecuteInternal(GetReference(context));
 			static uint? GetReference(IMenuItemContext context) => GetReference(context, MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID);
 
@@ -86,7 +86,7 @@ namespace dnSpy.Documents.Tabs {
 
 		[ExportMenuItem(Header = "res:CopyMDTokenCommand", Group = MenuConstants.GROUP_CTX_ANALYZER_TOKENS, Order = 0)]
 		sealed class AnalyzerCommand : MenuItemBase {
-			public override bool IsVisible(IMenuItemContext context) => !(GetReference(context) is null);
+			public override bool IsVisible(IMenuItemContext context) => GetReference(context) is not null;
 			public override void Execute(IMenuItemContext context) => ExecuteInternal(GetReference(context));
 			static uint? GetReference(IMenuItemContext context) => DocumentsCommand.GetReference(context, MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID);
 		}

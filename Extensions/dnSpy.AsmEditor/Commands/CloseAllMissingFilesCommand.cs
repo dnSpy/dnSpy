@@ -47,10 +47,10 @@ namespace dnSpy.AsmEditor.Commands {
 			return nodes.Length == 0 ? null : nodes;
 		}
 
-		public override bool IsEnabled(IMenuItemContext context) => !(GetNodes() is null);
+		public override bool IsEnabled(IMenuItemContext context) => GetNodes() is not null;
 		public override void Execute(IMenuItemContext context) {
 			var nodes = GetNodes();
-			if (!(nodes is null))
+			if (nodes is not null)
 				RemoveAssemblyCommand.Execute(undoCommandService, documentSaver, appService, nodes);
 		}
 	}

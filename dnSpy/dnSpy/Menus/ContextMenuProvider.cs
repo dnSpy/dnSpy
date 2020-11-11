@@ -49,7 +49,7 @@ namespace dnSpy.Menus {
 				return false;
 
 			var o = e.OriginalSource as DependencyObject;
-			while (!(o is null)) {
+			while (o is not null) {
 				if (o == element)
 					return false;
 

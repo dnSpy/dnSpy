@@ -37,7 +37,7 @@ namespace dnSpy.Documents.Tabs {
 				return null;
 			foreach (var provider in tabSaverProviders) {
 				var ts = provider.Create(tab);
-				if (!(ts is null))
+				if (ts is not null)
 					return ts;
 			}
 			return null;
@@ -45,7 +45,7 @@ namespace dnSpy.Documents.Tabs {
 
 		public bool CanSave(IDocumentTab? tab) {
 			var ts = GetTabSaver(tab);
-			return !(ts is null) && ts.CanSave;
+			return ts is not null && ts.CanSave;
 		}
 
 		public string GetMenuHeader(IDocumentTab? tab) {

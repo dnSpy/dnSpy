@@ -51,7 +51,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		public override bool Initialize() {
 			HexSpan? resourcesSpan = null;
 			var peHeaders = file.GetHeaders<PeHeaders>();
-			if (!(peHeaders is null)) {
+			if (peHeaders is not null) {
 				if (peHeaders.OptionalHeader.DataDirectory.Data.FieldCount < 15)
 					return false;
 				// Mono ignores the size field
@@ -75,14 +75,14 @@ namespace dnSpy.Hex.Files.DotNet {
 				ReadDotNetMetadataHeader(file.Span);
 			}
 
-			if (!(mdHeader is null) && !(dotNetHeaps is null))
+			if (mdHeader is not null && dotNetHeaps is not null)
 				dotNetMetadataHeaders = new DotNetMetadataHeadersImpl(metadataSpan, mdHeader, dotNetHeaps);
-			if (!(peHeaders is null) && !(cor20 is null)) {
+			if (peHeaders is not null && cor20 is not null) {
 				dotNetMethodProvider = new DotNetMethodProviderImpl(file, peHeaders, dotNetMetadataHeaders?.TablesStream);
 				dotNetResourceProvider = new DotNetResourceProviderImpl(file, peHeaders, dotNetMetadataHeaders, resourcesSpan);
 				dotNetHeaders = new DotNetHeadersImpl(peHeaders, cor20, dotNetMetadataHeaders, strongNameSignature, dotNetMethodProvider, dotNetResourceProvider);
 			}
-			return !(cor20 is null) || !metadataSpan.IsEmpty;
+			return cor20 is not null || !metadataSpan.IsEmpty;
 		}
 
 		HexSpan? Read(PeHeaders peHeaders, DataDirectoryData dir, bool allowZeroSize) {
@@ -111,7 +111,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			var mdReader = DotNetMetadataHeaderReader.TryCreate(file, span);
 			if (mdReader is null)
 				return;
-			Debug2.Assert(!(mdReader.StorageStreamHeaders is null));
+			Debug2.Assert(mdReader.StorageStreamHeaders is not null);
 			mdHeader = DotNetMetadataHeaderDataImpl.TryCreate(file, mdReader.MetadataHeaderSpan, (int)mdReader.VersionStringSpan.Length.ToUInt64(), mdReader.StorageStreamHeaders);
 			if (mdHeader is null)
 				return;
@@ -129,16 +129,16 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		public override ComplexData? GetStructure(HexPosition position) {
 			var cor20 = this.cor20;
-			if (!(cor20 is null)) {
+			if (cor20 is not null) {
 				if (cor20.Span.Span.Contains(position))
 					return cor20;
 				if (strongNameSignature?.Span.Span.Contains(position) == true)
 					return strongNameSignature;
 				var body = dotNetMethodProvider?.GetMethodBody(position);
-				if (!(body is null))
+				if (body is not null)
 					return body;
 				var resource = dotNetResourceProvider?.GetResource(position);
-				if (!(resource is null))
+				if (resource is not null)
 					return resource;
 			}
 

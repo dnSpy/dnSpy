@@ -72,14 +72,14 @@ namespace dnSpy.Text {
 				rawContentTypes = new Dictionary<string, RawContentType>(StringComparer.OrdinalIgnoreCase);
 				foreach (var md in contentTypeDefinitions.Select(a => a.Metadata)) {
 					var typeName = md.Name;
-					Debug2.Assert(!(typeName is null));
+					Debug2.Assert(typeName is not null);
 					if (typeName is null)
 						continue;
 					Debug.Assert(!rawContentTypes.ContainsKey(typeName));
 					if (rawContentTypes.ContainsKey(typeName))
 						continue;
 					var baseTypes = (md.BaseDefinition ?? Array.Empty<string>()).ToArray();
-					Debug2.Assert(!(baseTypes is null));
+					Debug2.Assert(baseTypes is not null);
 					if (baseTypes is null)
 						continue;
 					var rawCt = new RawContentType(typeName, baseTypes, md.MimeType);
@@ -97,7 +97,7 @@ namespace dnSpy.Text {
 
 			ContentType? TryCreate(string typeName, int recurse) {
 				var ct = TryGet(typeName);
-				if (!(ct is null))
+				if (ct is not null)
 					return ct;
 
 				const int MAX_RECURSE = 1000;
@@ -109,7 +109,7 @@ namespace dnSpy.Text {
 				Debug.Assert(b);
 				if (!b)
 					return null;
-				Debug2.Assert(!(rawCt is null));
+				Debug2.Assert(rawCt is not null);
 				b = rawContentTypes.Remove(rawCt.Typename);
 				Debug.Assert(b);
 
@@ -183,7 +183,7 @@ namespace dnSpy.Text {
 				throw new ArgumentException("Guid is reserved", nameof(typeName));
 			lock (lockObj) {
 				if (contentTypes.TryGetValue(typeName, out var ct)) {
-					if (!(ct.MimeType is null))
+					if (ct.MimeType is not null)
 						mimeTypeToContentType.Remove(ct.MimeType);
 					contentTypes.Remove(typeName);
 				}

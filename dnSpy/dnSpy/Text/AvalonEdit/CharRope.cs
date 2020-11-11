@@ -85,7 +85,7 @@ namespace dnSpy.Text.AvalonEdit {
 		}
 
 		static void FillNode(RopeNode<char> node, string text, int start) {
-			if (!(node.contents is null)) {
+			if (node.contents is not null) {
 				text.CopyTo(start, node.contents, 0, node.length);
 			}
 			else {

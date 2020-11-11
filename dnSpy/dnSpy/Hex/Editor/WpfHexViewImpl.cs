@@ -270,12 +270,12 @@ namespace dnSpy.Hex.Editor {
 					double priority = double.NegativeInfinity;
 					foreach (var providerInfo in providerInfos) {
 						var info = providerInfo.CursorInfo;
-						if (!(info.Cursor is null) && info.Priority > priority) {
+						if (info.Cursor is not null && info.Priority > priority) {
 							cursor = info.Cursor;
 							priority = info.Priority;
 						}
 					}
-					Debug2.Assert(!(cursor is null));
+					Debug2.Assert(cursor is not null);
 					return cursor ?? defaultCursor;
 				}
 			}
@@ -292,7 +292,7 @@ namespace dnSpy.Hex.Editor {
 
 			void Provider_CursorInfoChanged(object? sender, EventArgs e) {
 				var providerInfo = providerInfos.FirstOrDefault(a => a.Provider == sender);
-				Debug2.Assert(!(providerInfo is null));
+				Debug2.Assert(providerInfo is not null);
 				if (providerInfo is null)
 					return;
 				providerInfo.CursorInfo = providerInfo.Provider.CursorInfo;
@@ -315,7 +315,7 @@ namespace dnSpy.Hex.Editor {
 				if (!Roles.ContainsAny(lz.Metadata.TextViewRoles))
 					continue;
 				var provider = lz.Value.Create(this);
-				if (!(provider is null))
+				if (provider is not null)
 					list.Add(provider);
 			}
 			return list.ToArray();
@@ -331,7 +331,7 @@ namespace dnSpy.Hex.Editor {
 		void DelayScreenRefresh() {
 			if (IsClosed)
 				return;
-			if (!(screenRefreshTimer is null))
+			if (screenRefreshTimer is not null)
 				return;
 			int ms = Options.GetRefreshScreenOnChangeWaitMilliSeconds();
 			if (ms > 0)
@@ -677,7 +677,7 @@ namespace dnSpy.Hex.Editor {
 			spaceReservationStack.LostAggregateFocus -= SpaceReservationStack_LostAggregateFocus;
 			hexCursorProviderInfoCollection.CursorChanged -= HexCursorProviderInfoCollection_CursorChanged;
 			hexCursorProviderInfoCollection.Dispose();
-			if (!(metroWindow is null))
+			if (metroWindow is not null)
 				metroWindow.WindowDpiChanged -= MetroWindow_WindowDpiChanged;
 		}
 
@@ -729,12 +729,12 @@ namespace dnSpy.Hex.Editor {
 
 			foreach (var pline in visiblePhysicalLines) {
 				var lline = pline.FindFormattedLineByBufferPosition(bufferPosition);
-				if (!(lline is null))
+				if (lline is not null)
 					return lline;
 			}
 
 			var cachedLine = physicalLineCache.FindFormattedLineByBufferPosition(bufferPosition);
-			if (!(cachedLine is null))
+			if (cachedLine is not null)
 				return cachedLine;
 
 			var physLine = CreatePhysicalLineNoCache(bufferPosition, ViewportWidth);
@@ -768,7 +768,7 @@ namespace dnSpy.Hex.Editor {
 				throw new InvalidOperationException();
 			var oldBufferLines = hexBufferLineFormatter;
 			var oldHexBufferLineFormatterOptions = hexBufferLineFormatterOptions;
-			Debug2.Assert(!(oldBufferLines is null));
+			Debug2.Assert(oldBufferLines is not null);
 			bool raiseBufferLinesChangedEvent = false;
 			bool revalidateBufferPosition = false;
 
@@ -848,10 +848,10 @@ namespace dnSpy.Hex.Editor {
 				}
 			}
 			layoutHelper.LayoutLines(bufferPosition, relativeTo, verticalDistance, ViewportLeft, viewportWidthOverride, viewportHeightOverride);
-			Debug2.Assert(!(layoutHelper.AllVisibleLines is null));
-			Debug2.Assert(!(layoutHelper.NewOrReformattedLines is null));
-			Debug2.Assert(!(layoutHelper.TranslatedLines is null));
-			Debug2.Assert(!(layoutHelper.AllVisiblePhysicalLines is null));
+			Debug2.Assert(layoutHelper.AllVisibleLines is not null);
+			Debug2.Assert(layoutHelper.NewOrReformattedLines is not null);
+			Debug2.Assert(layoutHelper.TranslatedLines is not null);
+			Debug2.Assert(layoutHelper.AllVisiblePhysicalLines is not null);
 
 			visiblePhysicalLines.AddRange(layoutHelper.AllVisiblePhysicalLines);
 			wpfHexViewLineCollection = new WpfHexViewLineCollectionImpl(this, layoutHelper.AllVisibleLines);
@@ -997,9 +997,9 @@ namespace dnSpy.Hex.Editor {
 		void InitializeZoom() {
 			var window = Window.GetWindow(canvas);
 			metroWindow = window as MetroWindow;
-			if (!(window is null) && metroWindow is null)
+			if (window is not null && metroWindow is null)
 				return;
-			if (!(metroWindow is null)) {
+			if (metroWindow is not null) {
 				metroWindow.WindowDpiChanged += MetroWindow_WindowDpiChanged;
 				MetroWindow_WindowDpiChanged(metroWindow, EventArgs.Empty);
 				ZoomLevelChanged?.Invoke(this, new VSTE.ZoomLevelChangedEventArgs(ZoomLevel, canvas.LayoutTransform));
@@ -1014,8 +1014,8 @@ namespace dnSpy.Hex.Editor {
 			canvas.Loaded -= WpfHexView_Loaded;
 			var window = Window.GetWindow(canvas);
 			metroWindow = window as MetroWindow;
-			Debug2.Assert(!(window is null));
-			if (!(metroWindow is null)) {
+			Debug2.Assert(window is not null);
+			if (metroWindow is not null) {
 				metroWindow.WindowDpiChanged += MetroWindow_WindowDpiChanged;
 				MetroWindow_WindowDpiChanged(metroWindow, EventArgs.Empty);
 				ZoomLevelChanged?.Invoke(this, new VSTE.ZoomLevelChangedEventArgs(ZoomLevel, canvas.LayoutTransform));
@@ -1024,7 +1024,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		void MetroWindow_WindowDpiChanged(object? sender, EventArgs e) {
-			Debug2.Assert(!(sender is null) && sender == metroWindow);
+			Debug2.Assert(sender is not null && sender == metroWindow);
 			((MetroWindow)sender).SetScaleTransform(canvas, ZoomLevel / 100);
 		}
 
@@ -1034,7 +1034,7 @@ namespace dnSpy.Hex.Editor {
 					__lineTransformProvider = lineTransformProviderService.Create(this, removeExtraTextLineVerticalPixels);
 					recreateLineTransformProvider = false;
 				}
-				Debug2.Assert(!(__lineTransformProvider is null));
+				Debug2.Assert(__lineTransformProvider is not null);
 				return __lineTransformProvider;
 			}
 		}

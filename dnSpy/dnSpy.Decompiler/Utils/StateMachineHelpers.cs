@@ -159,7 +159,7 @@ namespace dnSpy.Decompiler.Utils {
 			var ifaces = type.Interfaces;
 			for (int i = 0; i < ifaces.Count; i++) {
 				var iface = ifaces[i].Interface;
-				if (!(iface is null) && EqualsName(iface, @namespace, name))
+				if (iface is not null && EqualsName(iface, @namespace, name))
 					return true;
 			}
 			return false;
@@ -189,7 +189,7 @@ namespace dnSpy.Decompiler.Utils {
 		static bool IsDisposeSig(MethodSig sig) {
 			if (sig.GenParamCount != 0)
 				return false;
-			if (!(sig.ParamsAfterSentinel is null))
+			if (sig.ParamsAfterSentinel is not null)
 				return false;
 			if (sig.Params.Count != 0)
 				return false;

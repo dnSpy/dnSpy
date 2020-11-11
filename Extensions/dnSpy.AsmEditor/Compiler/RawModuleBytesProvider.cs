@@ -41,7 +41,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			// Try the file, if it still exists
 			var rawData = TryReadFile(module.Location);
-			if (!(rawData is null))
+			if (rawData is not null)
 				return rawData;
 
 			// If there's no file, use the in-memory data

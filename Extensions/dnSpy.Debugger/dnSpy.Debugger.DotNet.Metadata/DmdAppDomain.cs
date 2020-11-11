@@ -339,7 +339,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <param name="wellKnownType">Well known type</param>
 		/// <returns></returns>
-		public bool HasWellKnownType(DmdWellKnownType wellKnownType) => !(GetWellKnownType(wellKnownType, isOptional: true) is null);
+		public bool HasWellKnownType(DmdWellKnownType wellKnownType) => GetWellKnownType(wellKnownType, isOptional: true) is not null;
 
 		/// <summary>
 		/// Gets a well known type

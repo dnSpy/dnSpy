@@ -38,17 +38,17 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				sb.Append(c);
 			}
 
-			if (!(version is null)) {
+			if (version is not null) {
 				sb.Append(", Version=");
 				sb.Append(version.ToString());
 			}
 
-			if (!(culture is null)) {
+			if (culture is not null) {
 				sb.Append(", Culture=");
 				sb.Append(string.IsNullOrEmpty(culture) ? "neutral" : culture);
 			}
 
-			if (!(publicKeyOrToken is null)) {
+			if (publicKeyOrToken is not null) {
 				sb.Append(isPublicKeyToken ? ", PublicKeyToken=" : ", PublicKey=");
 				if (publicKeyOrToken.Length == 0)
 					sb.Append("null");

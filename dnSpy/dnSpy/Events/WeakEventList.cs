@@ -57,7 +57,7 @@ namespace dnSpy.Events {
 		}
 
 		sealed class InstanceInfo : Info {
-			public override bool IsAlive => !(target.Target is null);
+			public override bool IsAlive => target.Target is not null;
 
 			public override void Execute(object? source, TEventArgs e) {
 				if (target.Target is object self)
@@ -71,7 +71,7 @@ namespace dnSpy.Events {
 			readonly MethodInfo methodInfo;
 
 			public InstanceInfo(EventHandler<TEventArgs> handler) {
-				Debug2.Assert(!(handler.Target is null));
+				Debug2.Assert(handler.Target is not null);
 				Debug.Assert(handler.GetInvocationList().Length == 1);
 				target = new WeakReference(handler.Target);
 				methodInfo = handler.Method;

@@ -65,11 +65,11 @@ namespace dndbg.Engine {
 		internal ICorDebugController? Controller {
 			get {
 				ICorDebugController? controller = null;
-				if (controller is null && !(EventArgs is null))
+				if (controller is null && EventArgs is not null)
 					controller = EventArgs.CorDebugController;
-				if (controller is null && !(AppDomain is null))
+				if (controller is null && AppDomain is not null)
 					controller = AppDomain.CorAppDomain.RawObject;
-				if (controller is null && !(Process is null))
+				if (controller is null && Process is not null)
 					controller = Process.CorProcess.RawObject;
 				return controller;
 			}

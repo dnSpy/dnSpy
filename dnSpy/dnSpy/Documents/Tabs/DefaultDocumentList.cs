@@ -58,7 +58,7 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		public IEnumerable<DefaultDocumentList> AllFiles =>
-			allFiles.Where(a => a.Files.Count > 0 && !(a.Name is null)).
+			allFiles.Where(a => a.Files.Count > 0 && a.Name is not null).
 					Select(a => new DefaultDocumentList(a.Name!, a.Files.Select(b => b.ToDsDocumentInfo()))).
 					Where(a => a.Documents.Length > 0);
 
@@ -93,23 +93,23 @@ namespace dnSpy.Documents.Tabs {
 				cancellationToken.ThrowIfCancellationRequested();
 				var dirs = GetDirs(d1);
 				var redistDir = dirs.FirstOrDefault(a => StringComparer.OrdinalIgnoreCase.Equals(a, Path.Combine(d1, "RedistList")));
-				if (!(redistDir is null))
+				if (redistDir is not null)
 					AddRedistList(redistDir);
 
 				foreach (var d2 in GetDirs(d1)) { // d2 = eg. v4.5.1, etc
 					cancellationToken.ThrowIfCancellationRequested();
 					dirs = GetDirs(d2);
 					redistDir = dirs.FirstOrDefault(a => StringComparer.OrdinalIgnoreCase.Equals(a, Path.Combine(d2, "RedistList")));
-					if (!(redistDir is null))
+					if (redistDir is not null)
 						AddRedistList(redistDir);
 
 					var profileDir = dirs.FirstOrDefault(a => StringComparer.OrdinalIgnoreCase.Equals(a, Path.Combine(d2, "Profile")));
-					if (!(profileDir is null)) {
+					if (profileDir is not null) {
 						foreach (var d3 in GetDirs(profileDir)) { // d3 = eg. Client
 							cancellationToken.ThrowIfCancellationRequested();
 							dirs = GetDirs(d3);
 							redistDir = dirs.FirstOrDefault(a => StringComparer.OrdinalIgnoreCase.Equals(a, Path.Combine(d3, "RedistList")));
-							if (!(redistDir is null))
+							if (redistDir is not null)
 								AddRedistList(redistDir);
 						}
 					}
@@ -121,19 +121,19 @@ namespace dnSpy.Documents.Tabs {
 			var net35 = allFiles.FirstOrDefault(a => a.Filename.EndsWith(@"\Reference Assemblies\Microsoft\Framework\v3.5\RedistList\FrameworkList.xml", StringComparison.OrdinalIgnoreCase));
 			var net35C = allFiles.FirstOrDefault(a => a.Filename.EndsWith(@"\Reference Assemblies\Microsoft\Framework\.NETFramework\v3.5\Profile\Client\RedistList\FrameworkList.xml", StringComparison.OrdinalIgnoreCase));
 			var wpa81 = allFiles.FirstOrDefault(a => a.Filename.EndsWith(@"\Reference Assemblies\Microsoft\Framework\WindowsPhoneApp\v8.1\RedistList\FrameworkList.xml", StringComparison.OrdinalIgnoreCase));
-			if (!(wpa81 is null))
+			if (wpa81 is not null)
 				wpa81.Name = "Windows Phone App 8.1";	// Another one has the identical name so add "App" to it
-			if (!(net30 is null) && !(net20 is null))
+			if (net30 is not null && net20 is not null)
 				net30.AddFilesFrom(net20);
-			if (!(net35 is null) && !(net30 is null))
+			if (net35 is not null && net30 is not null)
 				net35.AddFilesFrom(net30);
-			if (!(net35C is null) && !(net30 is null))
+			if (net35C is not null && net30 is not null)
 				net35C.AddFilesFrom(net30);
-			if (!(net20 is null))
+			if (net20 is not null)
 				net20.Name = ".NET Framework 2.0";
-			if (!(net30 is null))
+			if (net30 is not null)
 				net30.Name = ".NET Framework 3.0";
-			if (!(net35 is null))
+			if (net35 is not null)
 				net35.Name = ".NET Framework 3.5";
 		}
 
@@ -366,7 +366,7 @@ namespace dnSpy.Documents.Tabs {
 				foreach (var f in files) {
 					cancellationToken.ThrowIfCancellationRequested();
 					var d = ReadDefaultFileList(f);
-					if (!(d is null))
+					if (d is not null)
 						xmlFiles.Add(d.Value);
 				}
 			}
@@ -409,7 +409,7 @@ namespace dnSpy.Documents.Tabs {
 					var type = (string?)sect.Attribute("type") ?? "gac";
 					var guidStr = (string?)sect.Attribute("guid");
 					Guid guid = Guid.Empty;
-					bool hasGuid = !(guidStr is null) && Guid.TryParse(guidStr, out guid);
+					bool hasGuid = guidStr is not null && Guid.TryParse(guidStr, out guid);
 					if (type.Equals("file"))
 						l.Add(DsDocumentInfo.CreateDocument(name2));
 					else if (type.Equals("refasm"))

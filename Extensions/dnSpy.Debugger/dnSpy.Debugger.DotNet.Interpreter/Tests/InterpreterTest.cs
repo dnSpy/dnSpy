@@ -3812,7 +3812,7 @@ namespace dnSpy.Debugger.DotNet.Interpreter.Tests {
 				ex2 = ex;
 				res2 = null;
 			}
-			if (!(ex1 is null) || !(ex2 is null))
+			if (ex1 is not null || ex2 is not null)
 				Verify(ex1?.GetType().FullName == ex2?.GetType().FullName);
 			else
 				Verify(m1.ReturnType, res1, res2);

@@ -127,7 +127,7 @@ namespace dnSpy.Tabs {
 		}
 
 		void SetFocusNoChecks(IInputElement uiel) {
-			Debug2.Assert(!(uiel is null) && uiel.Focusable);
+			Debug2.Assert(uiel is not null && uiel.Focusable);
 			if (uiel is null)
 				return;
 			wpfFocusService.Focus(uiel);
@@ -170,7 +170,7 @@ namespace dnSpy.Tabs {
 
 		TabItemImpl? GetTabItemImpl(ITabContent content) {
 			foreach (TabItemImpl? impl in tabControl.Items) {
-				Debug2.Assert(!(impl is null));
+				Debug2.Assert(impl is not null);
 				if (impl.TabContent == content)
 					return impl;
 			}
@@ -219,7 +219,7 @@ namespace dnSpy.Tabs {
 			tabControl.SetStyle(options.TabControlStyle ?? "FileTabGroupTabControlStyle");
 			tabControl.SelectionChanged += TabControl_SelectionChanged;
 			tabControl.PreviewKeyDown += TabControl_PreviewKeyDown;
-			if (!(options.InitializeContextMenu is null))
+			if (options.InitializeContextMenu is not null)
 				contextMenuProvider = options.InitializeContextMenu(menuService, this, tabControl);
 			else if (options.TabGroupGuid != Guid.Empty)
 				contextMenuProvider = menuService.InitializeContextMenu(tabControl, options.TabGroupGuid, new GuidObjectsProvider(this));
@@ -288,14 +288,14 @@ namespace dnSpy.Tabs {
 		void tabItem_GotKeyboardFocus(object? sender, KeyboardFocusChangedEventArgs e) {
 			tabGroupService.SetActive(this);
 			var tabItem = GetTabItemImpl(sender);
-			if (!(tabItem is null))
+			if (tabItem is not null)
 				tabItem.IsActive = true;
 			IsActive = true;
 		}
 
 		void tabItem_LostKeyboardFocus(object? sender, KeyboardFocusChangedEventArgs e) {
 			var tabItem = GetTabItemImpl(sender);
-			if (!(tabItem is null))
+			if (tabItem is not null)
 				tabItem.IsActive = false;
 			IsActive = false;
 		}
@@ -480,7 +480,7 @@ namespace dnSpy.Tabs {
 		}
 
 		public bool MoveTo(TabGroup dstTabGroup, TabItemImpl srcTabItem, TabItemImpl insertBeforeThis) {
-			if (!(insertBeforeThis is null)) {
+			if (insertBeforeThis is not null) {
 				Debug.Assert(dstTabGroup.tabControl.Items.Contains(insertBeforeThis));
 				return MoveTo(dstTabGroup, srcTabItem, dstTabGroup.tabControl.Items.IndexOf(insertBeforeThis));
 			}
@@ -595,7 +595,7 @@ namespace dnSpy.Tabs {
 		public void SelectPreviousTab() => SelectTab(tabControl.SelectedIndex - 1);
 		public bool SelectPreviousTabCanExecute => tabControl.Items.Count > 1;
 		public void CloseActiveTab() => RemoveTabItem(ActiveTabItemImpl);
-		public bool CloseActiveTabCanExecute => !(ActiveTabItemImpl is null);
+		public bool CloseActiveTabCanExecute => ActiveTabItemImpl is not null;
 
 		public void CloseAllButActiveTab() {
 			var activeTab = ActiveTabItemImpl;

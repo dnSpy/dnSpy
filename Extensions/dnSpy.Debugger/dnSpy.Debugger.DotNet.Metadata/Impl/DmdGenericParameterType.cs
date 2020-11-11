@@ -25,7 +25,7 @@ using System.Threading;
 
 namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 	abstract class DmdGenericParameterType : DmdTypeBase {
-		public override DmdTypeSignatureKind TypeSignatureKind => !(declaringType is null) ? DmdTypeSignatureKind.TypeGenericParameter : DmdTypeSignatureKind.MethodGenericParameter;
+		public override DmdTypeSignatureKind TypeSignatureKind => declaringType is not null ? DmdTypeSignatureKind.TypeGenericParameter : DmdTypeSignatureKind.MethodGenericParameter;
 		public sealed override DmdTypeScope TypeScope => new DmdTypeScope(Module);
 		public sealed override DmdMethodBase? DeclaringMethod => declaringMethod;
 		public sealed override DmdType? DeclaringType => declaringType;
@@ -92,7 +92,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		public sealed override ReadOnlyCollection<DmdType> GetGenericParameterConstraints() {
-			if (!(__genericParameterConstraints_DONT_USE is null))
+			if (__genericParameterConstraints_DONT_USE is not null)
 				return __genericParameterConstraints_DONT_USE;
 			var res = CreateGenericParameterConstraints();
 			Interlocked.CompareExchange(ref __genericParameterConstraints_DONT_USE, ReadOnlyCollectionHelpers.Create(res), null);

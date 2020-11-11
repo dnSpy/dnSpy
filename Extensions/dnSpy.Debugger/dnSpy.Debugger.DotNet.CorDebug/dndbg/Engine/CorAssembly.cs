@@ -54,7 +54,7 @@ namespace dndbg.Engine {
 		public string FullName {
 			get {
 				var module = ManifestModule;
-				Debug2.Assert(!(module is null));
+				Debug2.Assert(module is not null);
 				if (module is null)
 					return Name;
 				return CalculateFullName(module);
@@ -104,7 +104,7 @@ namespace dndbg.Engine {
 			return sb.ToString();
 		}
 
-		public bool Equals(CorAssembly? other) => !(other is null) && RawObject == other.RawObject;
+		public bool Equals(CorAssembly? other) => other is not null && RawObject == other.RawObject;
 		public override bool Equals(object? obj) => Equals(obj as CorAssembly);
 		public override int GetHashCode() => RawObject.GetHashCode();
 		public override string ToString() => $"[Assembly] {Name}";

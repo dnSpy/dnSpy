@@ -102,7 +102,7 @@ namespace dnSpy.Text.Editor {
 			var viewLine = textView.Caret.ContainingTextViewLine;
 			var snapshotLine = viewLine.Start.GetContainingLine();
 			var wpfTextView = textView as IWpfTextView;
-			Debug2.Assert(!(wpfTextView is null));
+			Debug2.Assert(wpfTextView is not null);
 			var ownerWindow = wpfTextView is null ? null : Window.GetWindow(wpfTextView.VisualElement);
 			int maxLines = snapshotLine.Snapshot.LineCount;
 
@@ -128,14 +128,14 @@ namespace dnSpy.Text.Editor {
 			column = null;
 			bool columnError = false;
 			Match match;
-			if (!((match = goToLineRegex1.Match(s)) is null) && match.Groups.Count == 4) {
+			if ((match = goToLineRegex1.Match(s)) is not null && match.Groups.Count == 4) {
 				TryParseOneBasedToZeroBased(match.Groups[1].Value, out line);
-				if (!(line is null) && line.Value >= maxLines)
+				if (line is not null && line.Value >= maxLines)
 					line = null;
 				if (match.Groups[3].Value != string.Empty)
 					columnError = !TryParseOneBasedToZeroBased(match.Groups[3].Value, out column);
 			}
-			else if (!((match = goToLineRegex2.Match(s)) is null) && match.Groups.Count == 2) {
+			else if ((match = goToLineRegex2.Match(s)) is not null && match.Groups.Count == 2) {
 				line = currentLine;
 				columnError = !TryParseOneBasedToZeroBased(match.Groups[1].Value, out column);
 			}

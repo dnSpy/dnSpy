@@ -306,7 +306,7 @@ namespace dnSpy.Hex.Operations {
 
 			if ((options & HexFindOptions.Wrap) != 0) {
 				var upperBounds = HexPosition.Min(searchRange.Span.End, startingPosition.Position + lowerBytes.LongLength - 1);
-				if ((options & HexFindOptions.NoOverlaps) != 0 && !(firstBlockResult is null) && upperBounds > firstBlockResult.Value.Start)
+				if ((options & HexFindOptions.NoOverlaps) != 0 && firstBlockResult is not null && upperBounds > firstBlockResult.Value.Start)
 					upperBounds = firstBlockResult.Value.Start;
 				foreach (var span in GetValidSpans(startingPosition.Buffer, searchRange.Start, upperBounds)) {
 					cancellationToken.ThrowIfCancellationRequested();
@@ -406,7 +406,7 @@ loop:
 					HexPosition.Zero;
 				if (lowerBounds < searchRange.Span.Start)
 					lowerBounds = searchRange.Span.Start;
-				if ((options & HexFindOptions.NoOverlaps) != 0 && !(firstBlockResult is null) && lowerBounds < firstBlockResult.Value.End)
+				if ((options & HexFindOptions.NoOverlaps) != 0 && firstBlockResult is not null && lowerBounds < firstBlockResult.Value.End)
 					lowerBounds = firstBlockResult.Value.End;
 				foreach (var span in GetValidSpansReverse(startingPosition.Buffer, searchRange.End - 1, lowerBounds)) {
 					cancellationToken.ThrowIfCancellationRequested();

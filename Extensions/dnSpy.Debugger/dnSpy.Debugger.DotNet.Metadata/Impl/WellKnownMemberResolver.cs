@@ -39,7 +39,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				return null;
 
 			ref var cachedType = ref wellKnownTypes[(int)wellKnownType];
-			if (!(cachedType is null))
+			if (cachedType is not null)
 				return cachedType;
 
 			lock (lockObj) {
@@ -71,7 +71,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 							}
 						}
 
-						if (!(cachedType is null))
+						if (cachedType is not null)
 							return cachedType;
 					}
 				}

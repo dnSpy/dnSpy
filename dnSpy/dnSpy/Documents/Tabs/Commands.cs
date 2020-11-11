@@ -152,7 +152,7 @@ namespace dnSpy.Documents.Tabs {
 
 			var flvm = win.SelectedItems.FirstOrDefault();
 			var oldSelected = documentListService.SelectedDocumentList;
-			if (!(flvm is null)) {
+			if (flvm is not null) {
 				documentListLoader.SaveCurrentDocumentsToList();
 				documentListService.Add(flvm.DocumentList);
 				documentListService.SelectedDocumentList = flvm.DocumentList;
@@ -234,7 +234,7 @@ namespace dnSpy.Documents.Tabs {
 			mruList.Add(document.Filename);
 			Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
 				var node = documentTreeView.FindNode(document);
-				if (!(node is null))
+				if (node is not null)
 					documentTreeView.TreeView.SelectItems(new[] { node });
 			}));
 		}
@@ -294,7 +294,7 @@ namespace dnSpy.Documents.Tabs {
 			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_MAINWINDOW);
 			cmds.Add(ShowCodeEditorRoutedCommand,
 				(s, e) => documentTabService.ActiveTab?.TrySetFocus(),
-				(s, e) => e.CanExecute = !(documentTabService.ActiveTab is null),
+				(s, e) => e.CanExecute = documentTabService.ActiveTab is not null,
 				ModifierKeys.Control | ModifierKeys.Alt, Key.D0,
 				ModifierKeys.Control | ModifierKeys.Alt, Key.NumPad0,
 				ModifierKeys.None, Key.F7);
@@ -311,7 +311,7 @@ namespace dnSpy.Documents.Tabs {
 
 	[ExportMenuItem(Header = "res:OpenContainingFolderCommand", Group = MenuConstants.GROUP_CTX_DOCUMENTS_OTHER, Order = 30)]
 	sealed class OpenContainingFolderCtxMenuCommand : MenuItemBase {
-		public override bool IsVisible(IMenuItemContext context) => !(GetFilename(context) is null);
+		public override bool IsVisible(IMenuItemContext context) => GetFilename(context) is not null;
 
 		static string? GetFilename(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID))

@@ -54,12 +54,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// true if the property can be read
 		/// </summary>
-		public bool CanRead => !(GetMethod is null);
+		public bool CanRead => GetMethod is not null;
 
 		/// <summary>
 		/// true if the property can be written to
 		/// </summary>
-		public bool CanWrite => !(SetMethod is null);
+		public bool CanWrite => SetMethod is not null;
 
 		/// <summary>
 		/// Resolves a property reference

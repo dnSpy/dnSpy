@@ -89,7 +89,7 @@ namespace dnSpy.Hex.Formatting {
 					sequenceList.Add(new HexSequenceElementImpl(textSpan));
 				if (info.Span.Start != end || (info.Span.Length == 0 && info.AdornmentElement.Affinity == VST.PositionAffinity.Predecessor)) {
 					bool canAppend = true;
-					if (!(lastAddedAdornment is null) && lastAddedAdornment.Value.Span.End > info.Span.Start)
+					if (lastAddedAdornment is not null && lastAddedAdornment.Value.Span.End > info.Span.Start)
 						canAppend = false;
 					if (canAppend) {
 						sequenceList.Add(info.AdornmentElement);

@@ -372,7 +372,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			Debug.Assert(toWellKnownType.Count == WellKnownTypesCount);
 #if DEBUG
 			foreach (var name in toWellKnownTypeName)
-				Debug2.Assert(!(name.Name is null));
+				Debug2.Assert(name.Name is not null);
 #endif
 		}
 	}

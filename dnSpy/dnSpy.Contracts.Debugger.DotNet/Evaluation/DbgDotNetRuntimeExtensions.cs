@@ -33,7 +33,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// <returns></returns>
 		public static IDbgDotNetRuntime GetDotNetRuntime(this DbgRuntime runtime) {
 			var dnRuntime = runtime.InternalRuntime as IDbgDotNetRuntime;
-			Debug2.Assert(!(dnRuntime is null));
+			Debug2.Assert(dnRuntime is not null);
 			if (dnRuntime is null)
 				throw new InvalidOperationException(nameof(DbgRuntime.InternalRuntime) + " must implement " + nameof(IDbgDotNetRuntime));
 			return dnRuntime;

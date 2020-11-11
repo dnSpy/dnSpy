@@ -49,7 +49,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 		/// <summary>Extra data or null if there was no extra data</summary>
 		public abstract StructField<UInt32Data>? ExtraData { get; }
 		/// <summary>true if <see cref="ExtraData"/> field exists in header and isn't null</summary>
-		public bool HasExtraData => !(ExtraData is null);
+		public bool HasExtraData => ExtraData is not null;
 		/// <summary>Rows</summary>
 		public abstract StructField<ArrayData<UInt32Data>> Rows { get; }
 	}

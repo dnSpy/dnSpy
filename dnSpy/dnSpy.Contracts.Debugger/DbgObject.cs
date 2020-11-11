@@ -119,7 +119,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// <returns></returns>
 		public bool TryGetData<T>([NotNullWhen(true)] out T? value) where T : class {
 			lock (lockObj) {
-				if (!(dataList is null)) {
+				if (dataList is not null) {
 					var type = typeof(T).TypeHandle;
 					foreach (var kv in dataList) {
 						if (kv.key.Equals(type)) {

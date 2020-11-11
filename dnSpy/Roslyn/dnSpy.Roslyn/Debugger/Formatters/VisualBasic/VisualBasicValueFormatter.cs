@@ -118,10 +118,10 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 					DbgDotNetValue? objValue = value;
 					DbgDotNetValueResult valueResult = default;
 					try {
-						Debug2.Assert(!(info.fields is null));
+						Debug2.Assert(info.fields is not null);
 						foreach (var field in info.fields) {
 							valueResult = runtime.LoadField(evalInfo, objValue, field);
-							if (!(valueResult.Value is null))
+							if (valueResult.Value is not null)
 								values.Add(valueResult.Value);
 							if (valueResult.HasError || valueResult.ValueIsException) {
 								objValue = null;
@@ -157,10 +157,10 @@ namespace dnSpy.Roslyn.Debugger.Formatters.VisualBasic {
 			DbgDotNetValueResult keyResult = default, valueResult = default;
 			try {
 				keyResult = runtime.LoadField(evalInfo, value, info.keyField);
-				if (!(keyResult.ErrorMessage is null) || keyResult.ValueIsException)
+				if (keyResult.ErrorMessage is not null || keyResult.ValueIsException)
 					return false;
 				valueResult = runtime.LoadField(evalInfo, value, info.valueField!);
-				if (!(valueResult.ErrorMessage is null) || valueResult.ValueIsException)
+				if (valueResult.ErrorMessage is not null || valueResult.ValueIsException)
 					return false;
 
 				OutputWrite(KeyValuePairTypeOpenParen, DbgTextColor.Punctuation);

@@ -99,7 +99,7 @@ namespace dnSpy.MainApp {
 
 		public void Show(Exception exception, string? msg, Window? ownerWindow) {
 			string msgToShow;
-			if (!(exception is null)) {
+			if (exception is not null) {
 				msgToShow = $"{msg ?? dnSpy_Resources.ExceptionMessage}\n\n{exception.ToString()}";
 				const int MAX_LEN = 2048;
 				if (msgToShow.Length > MAX_LEN)

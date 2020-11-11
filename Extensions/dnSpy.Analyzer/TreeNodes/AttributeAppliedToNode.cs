@@ -39,7 +39,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		public static bool CanShow(TypeDef type) => type.IsClass && IsCustomAttribute(type);
 
 		static bool IsCustomAttribute(TypeDef type) {
-			while (!(type is null)) {
+			while (type is not null) {
 				var bt = type.BaseType.ResolveTypeDef();
 				if (bt is null)
 					return false;
@@ -55,7 +55,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			analyzedTypes = new List<TypeDef> { analyzedType };
 			includeAllModules = CustomAttributesUtils.IsPseudoCustomAttributeType(analyzedType);
 			var ca = analyzedType.CustomAttributes.Find("System.AttributeUsageAttribute");
-			if (!(ca is null) && ca.ConstructorArguments.Count == 1 && ca.ConstructorArguments[0].Value is int)
+			if (ca is not null && ca.ConstructorArguments.Count == 1 && ca.ConstructorArguments[0].Value is int)
 				usage = (AttributeTargets)ca.ConstructorArguments[0].Value;
 			else
 				usage = AttributeTargets.All;
@@ -104,7 +104,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			foreach (var module in modules) {
 				if ((usage & AttributeTargets.Assembly) != 0) {
 					AssemblyDef asm = module.Assembly;
-					if (!(asm is null) && checkedAsms.Add(asm)) {
+					if (asm is not null && checkedAsms.Add(asm)) {
 						foreach (var attribute in asm.GetCustomAttributes()) {
 							if (new SigComparer().Equals(attribute.AttributeType?.GetScopeType(), trScopeType)) {
 								yield return new AssemblyNode(asm) { Context = Context };
@@ -267,10 +267,10 @@ namespace dnSpy.Analyzer.TreeNodes {
 			var modules = Context.DocumentService.GetDocuments().Where(a => SearchNode.CanIncludeModule(mod, a.ModuleDef));
 
 			foreach (var module in modules) {
-				Debug2.Assert(!(module.ModuleDef is null));
+				Debug2.Assert(module.ModuleDef is not null);
 				ct.ThrowIfCancellationRequested();
 				var typeref = GetScopeTypeRefInModule(module.ModuleDef);
-				if (!(typeref is null))
+				if (typeref is not null)
 					yield return (module.ModuleDef, typeref);
 			}
 		}
@@ -288,11 +288,11 @@ namespace dnSpy.Analyzer.TreeNodes {
 			var friendAssemblies = GetFriendAssemblies(Context.DocumentService, mod, out var modules);
 			if (friendAssemblies.Count > 0) {
 				foreach (var module in modules) {
-					Debug2.Assert(!(module.ModuleDef is null));
+					Debug2.Assert(module.ModuleDef is not null);
 					ct.ThrowIfCancellationRequested();
 					if (module.AssemblyDef is null || friendAssemblies.Contains(module.AssemblyDef.Name)) {
 						var typeref = GetScopeTypeRefInModule(module.ModuleDef);
-						if (!(typeref is null))
+						if (typeref is not null)
 							yield return (module.ModuleDef, typeref);
 					}
 				}

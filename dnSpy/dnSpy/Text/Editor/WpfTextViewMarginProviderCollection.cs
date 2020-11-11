@@ -90,7 +90,7 @@ namespace dnSpy.Text.Editor {
 				}
 				else {
 					var margin = lazy.Value.CreateMargin(wpfTextViewHost, marginContainer);
-					if (!(margin is null))
+					if (margin is not null)
 						newInfos.Add(new WpfTextViewMarginInfo(lazy.Value, lazy.Metadata, margin));
 				}
 			}

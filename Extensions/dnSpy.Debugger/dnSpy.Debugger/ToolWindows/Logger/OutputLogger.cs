@@ -71,7 +71,7 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 		void Initialize() => UI(() => Initialize_UI());
 		void Initialize_UI() {
 			uiDispatcher.VerifyAccess();
-			if (!(textPane is null))
+			if (textPane is not null)
 				return;
 			textPane = outputService.Value.Create(GUID_OUTPUT_LOGGER_DEBUG, dnSpy_Debugger_Resources.DebugLoggerName, contentTypeRegistryService.Value.GetContentType(ContentTypes.OutputDebug));
 		}
@@ -101,7 +101,7 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 			if (dbgManager.IsDebugging) {
 				UI(() => {
 					Initialize_UI();
-					Debug2.Assert(!(textPane is null));
+					Debug2.Assert(textPane is not null);
 					if (outputLoggerSettings.ShowDebugOutputLog)
 						outputService.Value.Select(GUID_OUTPUT_LOGGER_DEBUG);
 					textPane.Clear();
@@ -113,7 +113,7 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 			uiDispatcher.VerifyAccess();
 			if (textPane is null)
 				Initialize_UI();
-			Debug2.Assert(!(textPane is null));
+			Debug2.Assert(textPane is not null);
 			textPane.WriteLine(color, text);
 		}
 
@@ -121,7 +121,7 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 			uiDispatcher.VerifyAccess();
 			if (textPane is null)
 				Initialize_UI();
-			Debug2.Assert(!(textPane is null));
+			Debug2.Assert(textPane is not null);
 			textPane.Write(color, text);
 		}
 
@@ -169,7 +169,7 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 					var msg2 = ex.Message is null ? null : string.Format(dnSpy_Debugger_Resources.DebugLogAdditionalInformation, ex.Message);
 					UI(() => {
 						WriteLine_UI(BoxedTextColor.DebugLogMDA, msg1);
-						if (!(msg2 is null))
+						if (msg2 is not null)
 							WriteLine_UI(BoxedTextColor.DebugLogMDA, msg2);
 					});
 				}
@@ -181,7 +181,7 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 						var msg2 = ex.Message is null ? null : string.Format(dnSpy_Debugger_Resources.DebugLogAdditionalInformation, FilterUserMessage(ex.Message));
 						UI(() => {
 							WriteLine_UI(BoxedTextColor.DebugLogExceptionHandled, msg1);
-							if (!(msg2 is null))
+							if (msg2 is not null)
 								WriteLine_UI(BoxedTextColor.DebugLogExceptionHandled, msg2);
 						});
 					}
@@ -190,7 +190,7 @@ namespace dnSpy.Debugger.ToolWindows.Logger {
 						var msg2 = ex.Message is null ? null : string.Format(dnSpy_Debugger_Resources.DebugLogAdditionalInformation, FilterUserMessage(ex.Message));
 						UI(() => {
 							WriteLine_UI(BoxedTextColor.DebugLogExceptionUnhandled, msg1);
-							if (!(msg2 is null))
+							if (msg2 is not null)
 								WriteLine_UI(BoxedTextColor.DebugLogExceptionUnhandled, msg2);
 						});
 					}

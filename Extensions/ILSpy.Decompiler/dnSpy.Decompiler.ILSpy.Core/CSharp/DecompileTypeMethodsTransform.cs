@@ -40,7 +40,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 			foreach (var method in methods) {
 				// If it's part of a property or event, include the property or event since there are no partial props/events
 				var prop = method.DeclaringType.Properties.FirstOrDefault(a => a.GetMethods.Contains(method) || a.SetMethods.Contains(method));
-				if (!(prop is null)) {
+				if (prop is not null) {
 					defsToShow.Add(prop);
 					foreach (var m in prop.GetMethods)
 						defsToShow.Add(m);
@@ -51,13 +51,13 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 				}
 				else {
 					var evt = method.DeclaringType.Events.FirstOrDefault(a => a.AddMethod == method || a.RemoveMethod == method);
-					if (!(evt is null)) {
+					if (evt is not null) {
 						defsToShow.Add(evt);
-						if (!(evt.AddMethod is null))
+						if (evt.AddMethod is not null)
 							defsToShow.Add(evt.AddMethod);
-						if (!(evt.RemoveMethod is null))
+						if (evt.RemoveMethod is not null)
 							defsToShow.Add(evt.RemoveMethod);
-						if (!(evt.InvokeMethod is null))
+						if (evt.InvokeMethod is not null)
 							defsToShow.Add(evt.InvokeMethod);
 						foreach (var m in evt.OtherMethods)
 							defsToShow.Add(m);
@@ -73,7 +73,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 				}
 			}
 			foreach (var def in defsToShow) {
-				for (var declType = def.DeclaringType; !(declType is null); declType = declType.DeclaringType)
+				for (var declType = def.DeclaringType; declType is not null; declType = declType.DeclaringType)
 					partialTypes.Add(declType);
 			}
 			foreach (var type in types) {
@@ -88,14 +88,14 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 		public void Run(AstNode compilationUnit) {
 			foreach (var en in compilationUnit.Descendants.OfType<EntityDeclaration>()) {
 				var def = en.Annotation<IMemberDef>();
-				Debug2.Assert(!(def is null));
+				Debug2.Assert(def is not null);
 				if (def is null)
 					continue;
 
 				if (partialTypes.Contains(def)) {
 					var tdecl = en as TypeDeclaration;
-					Debug2.Assert(!(tdecl is null));
-					if (!(tdecl is null)) {
+					Debug2.Assert(tdecl is not null);
+					if (tdecl is not null) {
 						if (tdecl.ClassType != ClassType.Enum)
 							tdecl.Modifiers |= Modifiers.Partial;
 						if (!showDefinitions) {

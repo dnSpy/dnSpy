@@ -170,7 +170,7 @@ namespace dndbg.Engine {
 		}
 
 		void InitializeStartTime() {
-			if (!(startTime is null))
+			if (startTime is not null)
 				return;
 
 			startTime = DateTime.UtcNow;
@@ -233,7 +233,7 @@ namespace dndbg.Engine {
 		}
 
 		EvalResult SyncWait() {
-			Debug2.Assert(!(startTime is null));
+			Debug2.Assert(startTime is not null);
 
 			var now = DateTime.UtcNow;
 			if (now >= endTime)
@@ -254,7 +254,7 @@ namespace dndbg.Engine {
 					AbortEval(timedOut);
 					throw new TimeoutException();
 				}
-				Debug2.Assert(!(res is null));
+				Debug2.Assert(res is not null);
 				dispResult = (EvalResultKind)res;
 				if (dispResult == EvalResultKind.CustomNotification) {
 					if (!AbortEval(false))
@@ -319,7 +319,7 @@ namespace dndbg.Engine {
 					break;
 				var cne = (CustomNotificationDebugCallbackEventArgs)e;
 				var value = cne.CorThread?.GetCurrentCustomDebuggerNotification();
-				if (!(value is null)) {
+				if (value is not null) {
 					debugMessageDispatcher.CancelDispatchQueue(EvalResultKind.CustomNotification);
 					debugger.DisposeHandle(value);
 					return;

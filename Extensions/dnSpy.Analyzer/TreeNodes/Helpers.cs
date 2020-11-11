@@ -46,7 +46,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		/// Used to detect the 'parent method' for a lambda/iterator/async state machine.
 		/// </summary>
 		static MethodDef? GetOriginalCodeLocation(TypeDef type) {
-			if (!(type is null) && !(type.DeclaringType is null) && IsCompilerGenerated(type)) {
+			if (type is not null && type.DeclaringType is not null && IsCompilerGenerated(type)) {
 				if (type.IsValueType) {
 					// Value types might not have any constructor; but they must be stored in a local var
 					// because 'initobj' (or 'call .ctor') expects a managed ref.
@@ -107,12 +107,12 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		static TypeDef? ResolveWithinSameModule(ITypeDefOrRef type) {
-			if (!(type is null) && type.Scope == type.Module)
+			if (type is not null && type.Scope == type.Module)
 				return type.ResolveTypeDef();
 			return null;
 		}
 
 		static bool IsCompilerGenerated(this IHasCustomAttribute hca) =>
-			!(hca is null) && hca.CustomAttributes.IsDefined("System.Runtime.CompilerServices.CompilerGeneratedAttribute");
+			hca is not null && hca.CustomAttributes.IsDefined("System.Runtime.CompilerServices.CompilerGeneratedAttribute");
 	}
 }

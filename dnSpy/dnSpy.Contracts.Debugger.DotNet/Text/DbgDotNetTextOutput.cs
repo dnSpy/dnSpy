@@ -38,7 +38,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Text {
 		/// <param name="color">Color</param>
 		/// <param name="text">Text</param>
 		public void Write(DbgTextColor color, string? text) {
-			if (!(text is null))
+			if (text is not null)
 				list.Add(new DbgDotNetTextPart(color, text));
 		}
 

@@ -97,11 +97,11 @@ namespace dnSpy.Text.Editor {
 				// just like in VS' IWpfTextViewLine collection.
 				var firstInfo = infos[0];
 				var prevLine = AddLineTransform(GetLineBefore(firstInfo.Line), firstInfo.Y, ViewRelativePosition.Bottom);
-				if (!(prevLine is null))
+				if (prevLine is not null)
 					infos.Insert(0, new LineInfo(prevLine, firstInfo.Y - prevLine.Height));
 				var lastInfo = infos[infos.Count - 1];
 				var nextLine = AddLineTransform(GetLineAfter(lastInfo.Line), lastInfo.Y + lastInfo.Line.Height, ViewRelativePosition.Top);
-				if (!(nextLine is null))
+				if (nextLine is not null)
 					infos.Add(new LineInfo(nextLine, lastInfo.Y + lastInfo.Line.Height));
 
 				var keptLines = new HashSet<PhysicalLine>();
@@ -165,7 +165,7 @@ namespace dnSpy.Text.Editor {
 			List<LineInfo> CreateLineInfos(SnapshotPoint bufferPosition, ViewRelativePosition relativeTo, double verticalDistance, double viewportHeightOverride) {
 				var lineInfos = new List<LineInfo>();
 				var startLine = GetLine(bufferPosition);
-				Debug2.Assert(!(startLine is null));
+				Debug2.Assert(startLine is not null);
 
 				double newViewportBottom = NewViewportTop + viewportHeightOverride;
 				double lineStartY;
@@ -221,7 +221,7 @@ namespace dnSpy.Text.Editor {
 			}
 
 			IFormattedLine? AddLineTransform(IFormattedLine? line, double yPosition, ViewRelativePosition placement) {
-				if (!(line is null)) {
+				if (line is not null) {
 					var lineTransform = lineTransformProvider.GetLineTransform(line, yPosition, placement);
 					if (lineTransform != line.LineTransform) {
 						line.SetLineTransform(lineTransform);

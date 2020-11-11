@@ -89,7 +89,7 @@ namespace dnSpy.ToolWindows {
 		static ToolWindowContent? GetToolWindowContent(ITabContent? selected) => ((TabContentImpl?)selected)?.Content;
 
 		void TabGroupService_TabSelectionChanged(object? sender, TabSelectedEventArgs e) {
-			if (!(e.Selected is null)) {
+			if (e.Selected is not null) {
 				Debug.Assert(e.TabGroup.ActiveTabContent == e.Selected);
 				e.TabGroup.SetFocus(e.Selected);
 			}
@@ -111,7 +111,7 @@ namespace dnSpy.ToolWindows {
 			tabGroupService.Close(impl.TabGroup);
 		}
 
-		public bool CloseAllTabsCanExecute => !(tabGroupService.ActiveTabGroup is null) && tabGroupService.ActiveTabGroup.TabContents.Count() > 1 && tabGroupService.CloseAllTabsCanExecute;
+		public bool CloseAllTabsCanExecute => tabGroupService.ActiveTabGroup is not null && tabGroupService.ActiveTabGroup.TabContents.Count() > 1 && tabGroupService.CloseAllTabsCanExecute;
 		public void CloseAllTabs() => tabGroupService.CloseAllTabs();
 		public bool NewHorizontalTabGroupCanExecute => tabGroupService.NewHorizontalTabGroupCanExecute;
 		public void NewHorizontalTabGroup() => tabGroupService.NewHorizontalTabGroup(a => new ToolWindowGroup(this, a));

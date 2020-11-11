@@ -55,7 +55,7 @@ namespace dnSpy.Contracts.Documents {
 		/// </summary>
 		/// <param name="other">Other instance</param>
 		/// <returns></returns>
-		public bool Equals(FilenameKey? other) => !(other is null) && StringComparer.OrdinalIgnoreCase.Equals(filename, other.filename);
+		public bool Equals(FilenameKey? other) => other is not null && StringComparer.OrdinalIgnoreCase.Equals(filename, other.filename);
 
 		/// <summary>
 		/// Equals()

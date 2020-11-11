@@ -46,12 +46,12 @@ namespace dnSpy.Hex.HexGroups {
 			this.groupName = groupName ?? throw new ArgumentNullException(nameof(groupName));
 
 			foreach (var option in defaultOptions) {
-				Debug2.Assert(!(option.Name is null));
+				Debug2.Assert(option.Name is not null);
 				if (option.Name is null)
 					continue;
 
 				var subGroup = option.SubGroup;
-				Debug2.Assert(!(subGroup is null));
+				Debug2.Assert(subGroup is not null);
 				if (subGroup is null)
 					continue;
 

@@ -197,7 +197,7 @@ namespace dndbg.Engine {
 			return hr >= 0;
 		}
 
-		public bool Equals(CorProcess? other) => !(other is null) && RawObject == other.RawObject;
+		public bool Equals(CorProcess? other) => other is not null && RawObject == other.RawObject;
 		public override bool Equals(object? obj) => Equals(obj as CorProcess);
 		public override int GetHashCode() => RawObject.GetHashCode();
 		public override string ToString() => $"[Process] {ProcessId} CLR v{CLRVersion} Flags={DesiredNGENCompilerFlags}";

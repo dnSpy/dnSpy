@@ -34,7 +34,7 @@ namespace dnSpy.Contracts.MVVM.Dialogs {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
 				var data = DataContext as ProgressVM;
-				if (!(data is null)) {
+				if (data is not null) {
 					data.OnCompleted += ProgressVM_OnCompleted;
 					if (data.HasCompleted)
 						OnCompleted();
@@ -64,7 +64,7 @@ namespace dnSpy.Contracts.MVVM.Dialogs {
 
 		void OnCompleted() {
 			var data = DataContext as ProgressVM;
-			DialogResult = !(data is null) && !data.WasCanceled;
+			DialogResult = data is not null && !data.WasCanceled;
 			Close();
 		}
 

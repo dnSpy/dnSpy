@@ -123,7 +123,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.AttachToProcess {
 				catch (ObjectDisposedException) {
 				}
 
-				if (!(data is null))
+				if (data is not null)
 					return data;
 
 				conn.Dispose();

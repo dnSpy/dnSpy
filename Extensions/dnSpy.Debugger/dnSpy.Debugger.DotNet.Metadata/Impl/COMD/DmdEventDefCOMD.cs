@@ -71,7 +71,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			if ((token >> 24) != 0x06 || (token & 0x00FFFFFF) == 0)
 				return null;
 			var method = ReflectedType!.GetMethod(Module, (int)token) as DmdMethodInfo;
-			Debug2.Assert(!(method is null));
+			Debug2.Assert(method is not null);
 			return method;
 		}
 

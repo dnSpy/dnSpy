@@ -117,14 +117,14 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		MatchPriority GetMatchPriority(Completion completion) {
 			var filterText = completion.TryGetFilterText();
-			Debug2.Assert(!(filterText is null));
+			Debug2.Assert(filterText is not null);
 			if (filterText is null)
 				return MatchPriority.Other;
 
 			if (filterText.Equals(searchText, StringComparison.CurrentCulture))
 				return MatchPriority.Full;
 
-			bool matchedAcronym = !(acronymMatchIndexes is null) && AcronymSearchHelpers.TryUpdateAcronymIndexes(acronymMatchIndexes, searchText, filterText);
+			bool matchedAcronym = acronymMatchIndexes is not null && AcronymSearchHelpers.TryUpdateAcronymIndexes(acronymMatchIndexes, searchText, filterText);
 			if (matchedAcronym && CountUpperCaseLetters(filterText) == acronymMatchIndexes!.Length)
 				return MatchPriority.FullAcronym;
 

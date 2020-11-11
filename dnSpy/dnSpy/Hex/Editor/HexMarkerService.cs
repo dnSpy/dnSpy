@@ -202,13 +202,13 @@ namespace dnSpy.Hex.Editor {
 			List<HexBufferSpan>? intersectionSpans = null;
 			foreach (var span in e.Spans) {
 				var intersection = wpfHexView.HexViewLines.FormattedSpan.Intersection(span);
-				if (!(intersection is null)) {
+				if (intersection is not null) {
 					if (intersectionSpans is null)
 						intersectionSpans = new List<HexBufferSpan>();
 					intersectionSpans.Add(intersection.Value);
 				}
 			}
-			if (!(intersectionSpans is null))
+			if (intersectionSpans is not null)
 				UpdateRange(new NormalizedHexBufferSpanCollection(intersectionSpans));
 		}
 
@@ -246,8 +246,8 @@ namespace dnSpy.Hex.Editor {
 				var pos = overlap.Value.Start;
 				for (;;) {
 					var line = wpfHexView.WpfHexViewLines.GetWpfHexViewLineContainingBufferPosition(pos);
-					Debug2.Assert(!(line is null));
-					if (!(line is null)) {
+					Debug2.Assert(line is not null);
+					if (line is not null) {
 						var taggerContext = new HexTaggerContext(line.BufferLine, line.BufferLine.TextSpan);
 						foreach (var tag in tagAggregator.GetLineTags(taggerContext)) {
 							if (tag.Tag?.Type is null)
@@ -261,7 +261,7 @@ namespace dnSpy.Hex.Editor {
 								markerElements.Add(markerElement);
 						}
 					}
-					Debug2.Assert(!(line is null));
+					Debug2.Assert(line is not null);
 
 					pos = line.BufferEnd;
 					if (pos > overlap.Value.End || pos >= formattedEnd)
@@ -340,7 +340,7 @@ namespace dnSpy.Hex.Editor {
 				newPen = new Pen(scBrush, PEN_THICKNESS);
 				newPen.Freeze();
 			}
-			else if (!((newPen = props[VSTC.MarkerFormatDefinition.BorderId] as Pen) is null)) {
+			else if ((newPen = props[VSTC.MarkerFormatDefinition.BorderId] as Pen) is not null) {
 				if (newPen.CanFreeze)
 					newPen.Freeze();
 			}
@@ -349,7 +349,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		MarkerElement? TryCreateMarkerElement(HexBufferSpan span, HexSpanSelectionFlags flags, HexMarkerTag tag) {
-			Debug2.Assert(!(tag.Type is null));
+			Debug2.Assert(tag.Type is not null);
 			var overlap = wpfHexView.WpfHexViewLines.FormattedSpan.Overlap(span);
 			if (overlap is null)
 				return null;
@@ -357,7 +357,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		MarkerElement? TryCreateMarkerElement(WpfHexViewLine line, VST.Span span, HexMarkerTag tag) {
-			Debug2.Assert(!(tag.Type is null));
+			Debug2.Assert(tag.Type is not null);
 			return TryCreateMarkerElementCore(wpfHexView.WpfHexViewLines.GetLineMarkerGeometry(line, span), line.BufferSpan, tag);
 		}
 

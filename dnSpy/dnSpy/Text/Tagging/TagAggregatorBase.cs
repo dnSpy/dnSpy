@@ -87,7 +87,7 @@ namespace dnSpy.Text.Tagging {
 			var snapshotSpansSnapshot = snapshotSpans[0].Snapshot;
 			foreach (var tagger in taggers) {
 				var syncTagger = tagger as ISynchronousTagger<T>;
-				var tags = !(syncTagger is null) ? syncTagger.GetTags(snapshotSpans, cancellationToken) : tagger.GetTags(snapshotSpans);
+				var tags = syncTagger is not null ? syncTagger.GetTags(snapshotSpans, cancellationToken) : tagger.GetTags(snapshotSpans);
 				cancellationToken.ThrowIfCancellationRequested();
 				foreach (var tagSpan in tags) {
 					var newSpan = tagSpan.Span.TranslateTo(snapshotSpansSnapshot, SpanTrackingMode.EdgeExclusive);
@@ -141,7 +141,7 @@ namespace dnSpy.Text.Tagging {
 				return;
 			IMappingSpan? mappingSpan = null;
 			TagsChanged?.Invoke(sender ?? this, new TagsChangedEventArgs(mappingSpan = BufferGraph.CreateMappingSpan(span, SpanTrackingMode.EdgeExclusive)));
-			if (!(BatchedTagsChanged is null)) {
+			if (BatchedTagsChanged is not null) {
 				lock (lockObj) {
 					batchedTagsChangedList.Add(mappingSpan ?? BufferGraph.CreateMappingSpan(span, SpanTrackingMode.EdgeExclusive));
 					if (batchedTagsChangedList.Count == 1)

@@ -45,7 +45,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		}
 
 		void RemoveFadeOut() {
-			if (!(fadeOutStoryboard is null)) {
+			if (fadeOutStoryboard is not null) {
 				fadeOutStoryboard.Completed -= FadeOutStoryboard_Completed;
 				fadeOutStoryboard.Stop();
 				fadeOutStoryboard = null;
@@ -69,7 +69,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			if (loaded)
 				return;
 			loaded = true;
-			if (!(focusedElement is null))
+			if (focusedElement is not null)
 				focusedElement.LostKeyboardFocus += FocusedElement_LostKeyboardFocus;
 			glyphMargin.MouseEnter += GlyphMargin_MouseEnter;
 			glyphMargin.MouseLeave += GlyphMargin_MouseLeave;
@@ -108,7 +108,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 		void StartTimerIfNeeded() {
 			if (IsMouseWithinControls)
 				return;
-			if (!(timer is null))
+			if (timer is not null)
 				return;
 			timer = new DispatcherTimer(DispatcherPriority.Normal, Dispatcher);
 			timer.Tick += Timer_Tick;
@@ -121,7 +121,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			if (Parent is Popup popup)
 				popup.IsOpen = false;
 
-			if (!(focusedElement is null))
+			if (focusedElement is not null)
 				focusedElement.LostKeyboardFocus -= FocusedElement_LostKeyboardFocus;
 			glyphMargin.MouseEnter -= GlyphMargin_MouseEnter;
 			glyphMargin.MouseLeave -= GlyphMargin_MouseLeave;

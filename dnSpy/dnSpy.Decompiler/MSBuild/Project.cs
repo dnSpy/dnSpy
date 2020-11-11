@@ -96,11 +96,11 @@ namespace dnSpy.Decompiler.MSBuild {
 			}
 
 			var ep = Options.Module.EntryPoint;
-			if (!(ep is null) && !(ep.DeclaringType is null))
+			if (ep is not null && ep.DeclaringType is not null)
 				StartupObject = ep.DeclaringType.ReflectionFullName;
 
 			applicationManifest = ApplicationManifest.TryCreate(Options.Module.Win32Resources, filenameCreator);
-			if (!(ApplicationManifest is null))
+			if (ApplicationManifest is not null)
 				Files.Add(new ApplicationManifestProjectFile(ApplicationManifest.Filename));
 
 			foreach (var rsrc in Options.Module.Resources) {
@@ -192,7 +192,7 @@ namespace dnSpy.Decompiler.MSBuild {
 
 		ProjectFile CreateTypeProjectFile(TypeDef type, FilenameCreator filenameCreator) {
 			var bamlFile = TryGetBamlFile(type);
-			if (!(bamlFile is null)) {
+			if (bamlFile is not null) {
 				var filename = filenameCreator.Create(GetTypeExtension(type), type.FullName);
 				TypeProjectFile newFile;
 				var isAppType = DotNetUtils.IsSystemWindowsApplication(type);
@@ -213,19 +213,19 @@ namespace dnSpy.Decompiler.MSBuild {
 			const string DESIGNER = ".Designer";
 			var resxFile = TryGetResXFile(type);
 			if (DotNetUtils.IsWinForm(type)) {
-				var fname = !(resxFile is null) ? Path.GetFileNameWithoutExtension(resxFile.Filename) : type.Name.String;
+				var fname = resxFile is not null ? Path.GetFileNameWithoutExtension(resxFile.Filename) : type.Name.String;
 				var filename = filenameCreator.CreateFromNamespaceName(GetTypeExtension(type), type.ReflectionNamespace, fname);
 				var dname = filenameCreator.CreateFromNamespaceName(GetTypeExtension(type), type.ReflectionNamespace, fname + DESIGNER);
 
 				var newFile = new WinFormsProjectFile(type, filename, Options.DecompilationContext, Options.Decompiler, createDecompilerOutput);
-				if (!(resxFile is null))
+				if (resxFile is not null)
 					resxFile.DependentUpon = newFile;
 				var winFormsDesignerFile = new WinFormsDesignerProjectFile(newFile, dname, createDecompilerOutput);
 				winFormsDesignerFile.DependentUpon = newFile;
 				Files.Add(winFormsDesignerFile);
 				return newFile;
 			}
-			else if (!(resxFile is null)) {
+			else if (resxFile is not null) {
 				var filename = filenameCreator.CreateFromNamespaceName(GetTypeExtension(type), type.ReflectionNamespace, Path.GetFileNameWithoutExtension(resxFile.Filename) + DESIGNER);
 				var newFile = new TypeProjectFile(type, filename, Options.DecompilationContext, Options.Decompiler, createDecompilerOutput);
 				newFile.DependentUpon = resxFile;
@@ -237,7 +237,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			}
 
 			var bt = type.BaseType;
-			if (!(bt is null) && bt.FullName == "System.Configuration.ApplicationSettingsBase") {
+			if (bt is not null && bt.FullName == "System.Configuration.ApplicationSettingsBase") {
 				var designerFilename = filenameCreator.Create(DESIGNER + GetTypeExtension(type), type.FullName);
 				var settingsFilename = filenameCreator.Create(".settings", type.FullName);
 				ProjectFile designerTypeFile;
@@ -264,17 +264,17 @@ namespace dnSpy.Decompiler.MSBuild {
 		}
 
 		void CreateEmptyAppXamlFile() {
-			if (!hasXamlClasses || !(appTypeProjFile is null))
+			if (!hasXamlClasses || appTypeProjFile is not null)
 				return;
 			if ((Options.Module.Characteristics & Characteristics.Dll) != 0)
 				return;
 
 			var file = Files.OfType<TypeProjectFile>().Where(a => DotNetUtils.IsSystemWindowsApplication(a.Type)).FirstOrDefault();
-			Debug2.Assert(!(file is null));
+			Debug2.Assert(file is not null);
 			if (file is null)
 				return;
 			Debug2.Assert(file.DependentUpon is null);
-			if (!(file.DependentUpon is null))
+			if (file.DependentUpon is not null)
 				return;
 
 			Files.Remove(file);
@@ -330,7 +330,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		}
 
 		BamlResourceProjectFile? TryGetBamlFile(TypeDef type) {
-			Debug2.Assert(!(typeFullNameToBamlFile is null));
+			Debug2.Assert(typeFullNameToBamlFile is not null);
 			typeFullNameToBamlFile.TryGetValue(type.FullName, out var bamlFile);
 			return bamlFile;
 		}
@@ -345,13 +345,13 @@ namespace dnSpy.Decompiler.MSBuild {
 		Dictionary<string, ResXProjectFile>? typeFullNameToResXFile;
 
 		ResXProjectFile? TryGetResXFile(TypeDef type) {
-			Debug2.Assert(!(typeFullNameToResXFile is null));
+			Debug2.Assert(typeFullNameToResXFile is not null);
 			typeFullNameToResXFile.TryGetValue(type.FullName, out var resxFile);
 			return resxFile;
 		}
 
 		string GetTypeExtension(TypeDef type) {
-			Debug2.Assert(!(typeFullNameToBamlFile is null));
+			Debug2.Assert(typeFullNameToBamlFile is not null);
 			if (typeFullNameToBamlFile.TryGetValue(type.FullName, out var bamlFile))
 				return ".xaml" + Options.Decompiler.FileExtension;
 			return Options.Decompiler.FileExtension;
@@ -365,7 +365,7 @@ namespace dnSpy.Decompiler.MSBuild {
 
 			if (ResourceReader.CouldBeResourcesFile(er.CreateReader())) {
 				var files = TryCreateResourceFiles(module, resourceNameCreator, er);
-				if (!(files is null)) {
+				if (files is not null) {
 					foreach (var file in files)
 						yield return file;
 					yield break;
@@ -413,7 +413,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		}
 
 		IEnumerable<ProjectFile> CreateXamlResourceFiles(ModuleDef module, ResourceNameCreator resourceNameCreator, ResourceElementSet set) {
-			bool decompileBaml = Options.DecompileXaml && !(Options.DecompileBaml is null);
+			bool decompileBaml = Options.DecompileXaml && Options.DecompileBaml is not null;
 			foreach (var e in set.ResourceElements) {
 				Debug.Assert(e.ResourceData.Code == ResourceTypeCode.ByteArray || e.ResourceData.Code == ResourceTypeCode.Stream);
 				var data = (byte[])((BuiltInResourceData)e.ResourceData).Data;
@@ -464,7 +464,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		IEnumerable<ProjectFile> CreateSatelliteFiles(string rsrcName, FilenameCreator filenameCreator, ProjectFile nonSatFile) {
 			foreach (var satMod in satelliteAssemblyFinder.GetSatelliteAssemblies(Options.Module)) {
 				var satFile = TryCreateSatelliteFile(satMod, rsrcName, filenameCreator, nonSatFile);
-				if (!(satFile is null))
+				if (satFile is not null)
 					yield return satFile;
 			}
 		}
@@ -473,7 +473,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			if (!Options.CreateResX)
 				return null;
 			var asm = module.Assembly;
-			Debug2.Assert(!(asm is null) && !UTF8String.IsNullOrEmpty(asm.Culture));
+			Debug2.Assert(asm is not null && !UTF8String.IsNullOrEmpty(asm.Culture));
 			if (asm is null || UTF8String.IsNullOrEmpty(asm.Culture))
 				return null;
 			var name = FileUtils.RemoveExtension(rsrcName);
@@ -483,7 +483,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			var set = TryCreateResourceElementSet(module, er);
 			if (set is null)
 				return null;
-			Debug2.Assert(!(er is null));
+			Debug2.Assert(er is not null);
 
 			var dirName = Path.GetDirectoryName(nonSatFile.Filename)!;
 			var dir = Directory.Length + 1 > dirName.Length ? string.Empty : dirName.Substring(Directory.Length + 1);
@@ -507,19 +507,19 @@ namespace dnSpy.Decompiler.MSBuild {
 		}
 
 		public IEnumerable<IJob> GetJobs() {
-			if (!(ApplicationIcon is null))
+			if (ApplicationIcon is not null)
 				yield return ApplicationIcon;
-			if (!(ApplicationManifest is null))
+			if (ApplicationManifest is not null)
 				yield return ApplicationManifest;
 			foreach (var f in Files)
 				yield return f;
 		}
 
 		public void OnWrite() {
-			string asmName = !(Options.Module.Assembly is null) && Options.Module.IsManifestModule ? Options.Module.Assembly.Name : null;
+			string asmName = Options.Module.Assembly is not null && Options.Module.IsManifestModule ? Options.Module.Assembly.Name : null;
 			foreach (var bamlFile in Files.OfType<BamlResourceProjectFile>()) {
 				foreach (var asmRef in bamlFile.AssemblyReferences) {
-					if (!(asmName is null) && !StringComparer.Ordinal.Equals(asmName, asmRef.Name))
+					if (asmName is not null && !StringComparer.Ordinal.Equals(asmName, asmRef.Name))
 						ExtraAssemblyReferences.Add(asmRef.Name);
 				}
 			}

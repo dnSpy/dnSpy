@@ -69,7 +69,7 @@ namespace dnSpy.BackgroundImage {
 
 		protected override void OnDisabledCore() {
 			wpfTextView.LayoutChanged -= WpfTextView_LayoutChanged;
-			if (!(adornmentLayer is null))
+			if (adornmentLayer is not null)
 				adornmentLayer.RemoveAllAdornments();
 		}
 

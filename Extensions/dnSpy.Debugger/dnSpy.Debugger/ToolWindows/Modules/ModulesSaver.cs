@@ -60,7 +60,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 				var dir = new PickDirectory().GetDirectory(null);
 				if (!Directory.Exists(dir))
 					return;
-				Debug2.Assert(!(dir is null));
+				Debug2.Assert(dir is not null);
 				for (int i = 0; i < modules.Length; i++) {
 					var file = modules[i];
 					var filename = file.Module.Name;
@@ -89,7 +89,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 				return true;
 			if (!data.WasError)
 				return true;
-			Debug2.Assert(!(data.ErrorMessage is null));
+			Debug2.Assert(data.ErrorMessage is not null);
 			error = data.ErrorMessage;
 			return false;
 		}
@@ -103,7 +103,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		static string GetDefaultExtension(string? name, bool isExe) {
 			try {
 				var ext = Path.GetExtension(name);
-				if (!(ext is null) && ext.Length > 0 && ext[0] == '.')
+				if (ext is not null && ext.Length > 0 && ext[0] == '.')
 					return ext.Substring(1);
 			}
 			catch {

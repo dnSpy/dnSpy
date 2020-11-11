@@ -46,14 +46,14 @@ namespace dnSpy.BamlDecompiler.Xaml {
 		}
 
 		public void ResolveNamespace(XElement elem, XamlContext ctx) {
-			if (!(Namespace is null))
+			if (Namespace is not null)
 				return;
 
 			// Since XmlnsProperty records are inside the element,
 			// the namespace is resolved after processing the element body.
 
 			string xmlNs = null;
-			if (!(elem.Annotation<XmlnsScope>() is null))
+			if (elem.Annotation<XmlnsScope>() is not null)
 				xmlNs = elem.Annotation<XmlnsScope>().LookupXmlns(Assembly, TypeNamespace);
 			if (xmlNs is null)
 				xmlNs = ctx.XmlNs.LookupXmlns(Assembly, TypeNamespace);
@@ -78,7 +78,7 @@ namespace dnSpy.BamlDecompiler.Xaml {
 				int count = 0;
 				var truePrefix = prefix;
 				XNamespace prefixNs, ns = ctx.GetXmlNamespace(xmlNs);
-				while (!((prefixNs = elem.GetNamespaceOfPrefix(truePrefix)) is null) && prefixNs != ns) {
+				while ((prefixNs = elem.GetNamespaceOfPrefix(truePrefix)) is not null && prefixNs != ns) {
 					count++;
 					truePrefix = prefix + count;
 				}

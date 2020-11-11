@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.App {
 		public static IMessageBoxService Instance {
 			get => messageBoxService ?? throw new InvalidOperationException();
 			internal set {
-				if (!(messageBoxService is null))
+				if (messageBoxService is not null)
 					throw new InvalidOperationException();
 				messageBoxService = value ?? throw new ArgumentNullException(nameof(value));
 			}

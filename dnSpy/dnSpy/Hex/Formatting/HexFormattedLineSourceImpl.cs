@@ -171,7 +171,7 @@ namespace dnSpy.Hex.Formatting {
 			if (list.Count > 0) {
 				var last = list[list.Count - 1];
 				if (last.AdornmentElement is null && last.TextRunProperties == props && last.Span.End == cspan.Span.Start) {
-					Debug2.Assert(!(last.TextRunProperties is null));
+					Debug2.Assert(last.TextRunProperties is not null);
 					list[list.Count - 1] = new HexLinePart(list.Count - 1, last.Column, VST.Span.FromBounds(last.Span.Start - startOffs, cspan.Span.End - startOffs), last.TextRunProperties);
 					return;
 				}

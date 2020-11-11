@@ -117,8 +117,8 @@ namespace dnSpy.Themes {
 
 		void InitializeResources() {
 			var app = Application.Current;
-			Debug2.Assert(!(app is null));
-			if (!(app is null))
+			Debug2.Assert(app is not null);
+			if (app is not null)
 				((Theme)Theme).UpdateResources(app.Resources);
 		}
 

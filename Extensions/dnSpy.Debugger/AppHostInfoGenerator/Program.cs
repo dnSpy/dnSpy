@@ -206,7 +206,7 @@ namespace AppHostInfoGenerator {
 								Console.WriteLine(error);
 								continue;
 							}
-							Debug.Assert(!(ridData is null));
+							Debug.Assert(ridData is not null);
 							if (ridData is null)
 								throw new InvalidOperationException();
 							using (var ridZip = new ZipArchive(new MemoryStream(ridData), ZipArchiveMode.Read, leaveOpen: false)) {
@@ -430,7 +430,7 @@ namespace AppHostInfoGenerator {
 
 		void WriteComment(string? name, string? origValue) {
 			if (name is null) {
-				if (!(origValue is null))
+				if (origValue is not null)
 					output.Write($"// {origValue}");
 			}
 			else if (origValue is null)

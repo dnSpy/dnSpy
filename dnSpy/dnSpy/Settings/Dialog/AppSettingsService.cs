@@ -69,8 +69,8 @@ namespace dnSpy.Settings.Dialog {
 		public void Show(Guid guid, Window? owner) => Show2(guid, owner);
 
 		void Show2(Guid? guid, Window? owner) {
-			if (!(showAppSettings is null)) {
-				if (!(guid is null))
+			if (showAppSettings is not null) {
+				if (guid is not null)
 					showAppSettings.Select(guid.Value);
 				return;
 			}

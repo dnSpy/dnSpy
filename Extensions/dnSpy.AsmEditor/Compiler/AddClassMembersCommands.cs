@@ -115,7 +115,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				return;
 
 			TypeNode? typeNode = null;
-			for (TreeNodeData? n = node; !(n is null);) {
+			for (TreeNodeData? n = node; n is not null;) {
 				if (n is TypeNode t)
 					typeNode = t;
 				n = n.TreeNode.Parent?.Data;
@@ -125,13 +125,13 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			var asmNode = nodes[0] as AssemblyDocumentNode;
 			ModuleDocumentNode? modNode;
-			if (!(asmNode is null)) {
+			if (asmNode is not null) {
 				asmNode.TreeNode.EnsureChildrenLoaded();
 				modNode = asmNode.TreeNode.DataChildren.FirstOrDefault() as ModuleDocumentNode;
 			}
 			else
 				modNode = nodes[0].GetModuleNode();
-			Debug2.Assert(!(modNode is null));
+			Debug2.Assert(modNode is not null);
 			if (modNode is null)
 				return;
 
@@ -145,7 +145,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				vm.Dispose();
 				return;
 			}
-			Debug2.Assert(!(vm.Result is null));
+			Debug2.Assert(vm.Result is not null);
 
 			undoCommandService.Value.Add(new AddClassMembersCommand(addUpdatedNodesHelperProvider, modNode, vm.Result));
 			vm.Dispose();

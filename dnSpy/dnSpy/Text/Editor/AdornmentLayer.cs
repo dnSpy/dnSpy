@@ -58,7 +58,7 @@ namespace dnSpy.Text.Editor {
 			if (layerKind != LayerKind.Normal) {
 				if (behavior != AdornmentPositioningBehavior.OwnerControlled)
 					throw new ArgumentOutOfRangeException(nameof(behavior), "Special layers must use AdornmentPositioningBehavior.OwnerControlled");
-				if (!(visualSpan is null))
+				if (visualSpan is not null)
 					throw new ArgumentOutOfRangeException(nameof(visualSpan), "Special layers must use a null visual span");
 			}
 			bool canAdd = visualSpan is null || TextView.TextViewLines.IntersectsBufferSpan(visualSpan.Value);
@@ -87,7 +87,7 @@ namespace dnSpy.Text.Editor {
 
 		internal bool IsMouseOverOverlayLayerElement(MouseEventArgs e) {
 			foreach (UIElement? elem in Children) {
-				Debug2.Assert(!(elem is null));
+				Debug2.Assert(elem is not null);
 				if (elem.IsMouseOver)
 					return true;
 			}
@@ -112,7 +112,7 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentException();
 			for (int i = adornmentLayerElements.Count - 1; i >= 0; i--) {
 				var elem = adornmentLayerElements[i];
-				if (!(elem.VisualSpan is null) && visualSpan.OverlapsWith(GetOverlapsWithSpan(elem.VisualSpan.Value))) {
+				if (elem.VisualSpan is not null && visualSpan.OverlapsWith(GetOverlapsWithSpan(elem.VisualSpan.Value))) {
 					adornmentLayerElements.RemoveAt(i);
 					Children.RemoveAt(i);
 					elem.RemovedCallback?.Invoke(elem.Tag, elem.Adornment);
@@ -149,7 +149,7 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(match));
 			for (int i = adornmentLayerElements.Count - 1; i >= 0; i--) {
 				var elem = adornmentLayerElements[i];
-				if (!(elem.VisualSpan is null) && visualSpan.OverlapsWith(GetOverlapsWithSpan(elem.VisualSpan.Value)) && match(elem)) {
+				if (elem.VisualSpan is not null && visualSpan.OverlapsWith(GetOverlapsWithSpan(elem.VisualSpan.Value)) && match(elem)) {
 					adornmentLayerElements.RemoveAt(i);
 					Children.RemoveAt(i);
 					elem.RemovedCallback?.Invoke(elem.Tag, elem.Adornment);
@@ -171,8 +171,8 @@ namespace dnSpy.Text.Editor {
 				elem.OnLayoutChanged(e.NewSnapshot);
 
 				// All adornments that exist in spans that have been removed or in reformatted lines are always removed.
-				if (!(elem.VisualSpan is null) &&
-					(!TextView.TextViewLines.IntersectsBufferSpan(elem.VisualSpan.Value) || !(GetLine(e.NewOrReformattedLines, GetOverlapsWithSpan(elem.VisualSpan.Value)) is null))) {
+				if (elem.VisualSpan is not null &&
+					(!TextView.TextViewLines.IntersectsBufferSpan(elem.VisualSpan.Value) || GetLine(e.NewOrReformattedLines, GetOverlapsWithSpan(elem.VisualSpan.Value)) is not null)) {
 					adornmentLayerElements.RemoveAt(i);
 					Children.RemoveAt(i);
 					elem.RemovedCallback?.Invoke(elem.Tag, elem.Adornment);
@@ -189,9 +189,9 @@ namespace dnSpy.Text.Editor {
 					break;
 
 				case AdornmentPositioningBehavior.TextRelative:
-					Debug2.Assert(!(elem.VisualSpan is null));
+					Debug2.Assert(elem.VisualSpan is not null);
 					var translatedLine = GetLine(e.TranslatedLines, GetOverlapsWithSpan(elem.VisualSpan.Value));
-					if (!(translatedLine is null)) {
+					if (translatedLine is not null) {
 						// Only y is updated, x is owner controlled
 						SetTop(elem.Adornment, ToDefault(GetTop(elem.Adornment), 0) + translatedLine.DeltaY);
 					}

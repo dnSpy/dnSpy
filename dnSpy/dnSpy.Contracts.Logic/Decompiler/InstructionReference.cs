@@ -51,7 +51,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		public bool Equals(InstructionReference? other) => !(other is null) && Method == other.Method && Instruction == other.Instruction;
+		public bool Equals(InstructionReference? other) => other is not null && Method == other.Method && Instruction == other.Instruction;
 
 		/// <summary>
 		/// Equals()

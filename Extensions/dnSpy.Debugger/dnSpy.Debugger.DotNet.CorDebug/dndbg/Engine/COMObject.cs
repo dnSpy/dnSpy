@@ -26,11 +26,11 @@ namespace dndbg.Engine {
 		protected readonly T obj;
 
 		protected COMObject(T obj) {
-			Debug2.Assert(!(obj is null));
+			Debug2.Assert(obj is not null);
 			this.obj = obj ?? throw new ArgumentNullException(nameof(obj));
 		}
 
-		public bool Equals(COMObject<T>? other) => !(other is null) && RawObject == other.RawObject;
+		public bool Equals(COMObject<T>? other) => other is not null && RawObject == other.RawObject;
 		public override bool Equals(object? obj) => Equals(obj as COMObject<T>);
 		public override int GetHashCode() => RawObject.GetHashCode();
 	}

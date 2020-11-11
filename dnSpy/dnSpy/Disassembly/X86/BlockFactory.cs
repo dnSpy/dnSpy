@@ -175,7 +175,7 @@ namespace dnSpy.Disassembly.X86 {
 					newBlocks.Add(currentBlock);
 				}
 				// The addr of each block is always in the dictionary so currentBlock is initialized
-				Debug2.Assert(!(currentBlock.Instructions is null));
+				Debug2.Assert(currentBlock.Instructions is not null);
 				currentBlock.Instructions.Add(new X86InstructionInfo(info.code, instr));
 			}
 

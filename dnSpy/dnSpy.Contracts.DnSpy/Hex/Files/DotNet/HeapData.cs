@@ -101,7 +101,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 			String = new StructField<StringData>("String", new StringData(new HexBufferSpan(buffer, stringSpan), Encoding.UTF8));
 			if (hasTerminatingZero)
 				Terminator = new StructField<ByteData>("Terminator", new ByteData(buffer, stringSpan.End));
-			if (!(Terminator is null)) {
+			if (Terminator is not null) {
 				Fields = new BufferField[] {
 					String,
 					Terminator,
@@ -167,7 +167,7 @@ namespace dnSpy.Contracts.Hex.Files.DotNet {
 			String = new StructField<StringData>("String", new StringData(new HexBufferSpan(buffer, stringSpan), Encoding.Unicode));
 			if (!terminalByteSpan.IsEmpty)
 				TerminalByte = new StructField<ByteData>("TerminalByte", new ByteData(new HexBufferSpan(buffer, terminalByteSpan)));
-			if (!(TerminalByte is null)) {
+			if (TerminalByte is not null) {
 				Fields = new BufferField[] {
 					Length,
 					String,

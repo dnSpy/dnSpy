@@ -103,9 +103,9 @@ namespace dnSpy.Roslyn.Debugger.FilterExpressionEvaluator {
 			if (variableProvider is null)
 				throw new ArgumentNullException(nameof(variableProvider));
 			var compiledExpr = GetOrCompile(expr);
-			if (!(compiledExpr.CompilationError is null))
+			if (compiledExpr.CompilationError is not null)
 				return new DbgFilterExpressionEvaluatorResult(compiledExpr.CompilationError);
-			if (!(compiledExpr.RuntimeError is null))
+			if (compiledExpr.RuntimeError is not null)
 				return new DbgFilterExpressionEvaluatorResult(compiledExpr.RuntimeError);
 
 			bool evalResult;
@@ -163,13 +163,13 @@ namespace dnSpy.Roslyn.Debugger.FilterExpressionEvaluator {
 
 		CompiledExpr CreateCompiledExpr(string expr) {
 			var compRes = Compile(expr);
-			if (!(compRes.error is null))
+			if (compRes.error is not null)
 				return new CompiledExpr(compRes.error);
 
 			try {
 				using (var delCreator = new EvalDelegateCreator(compRes.assembly!, FilterExpressionClassName, EvalMethodName)) {
 					var del = delCreator.CreateDelegate();
-					if (!(del is null))
+					if (del is not null)
 						return new CompiledExpr(del);
 				}
 			}

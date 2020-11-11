@@ -68,7 +68,7 @@ namespace dnSpy.AsmEditor.Compiler {
 					(*data++ << 8) | *data++);
 		}
 
-		public static bool ExistsInMetadata(TypeDef? type) => !(type is null) && !(type is TypeDefUser);
+		public static bool ExistsInMetadata(TypeDef? type) => type is not null && !(type is TypeDefUser);
 
 		public static bool ReferencesModule(ModuleDef sourceModule, ModuleDef? targetModule) {
 			if (targetModule is null)
@@ -78,7 +78,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				return true;
 
 			var targetAssembly = targetModule.Assembly;
-			if (!(targetAssembly is null)) {
+			if (targetAssembly is not null) {
 				// Don't compare version, there could be binding redirects
 				var asmComparer = new AssemblyNameComparer(AssemblyNameComparerFlags.Name | AssemblyNameComparerFlags.PublicKeyToken | AssemblyNameComparerFlags.Culture | AssemblyNameComparerFlags.ContentType);
 				foreach (var asmRef in sourceModule.GetAssemblyRefs()) {

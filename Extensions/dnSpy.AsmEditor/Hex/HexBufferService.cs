@@ -101,7 +101,7 @@ namespace dnSpy.AsmEditor.Hex {
 			var buffersToDispose = new List<HexBuffer>(objs.Length);
 			foreach (var obj in objs) {
 				var buffer = TryGetBuffer(obj);
-				if (!(buffer is null))
+				if (buffer is not null)
 					buffersToDispose.Add(buffer);
 			}
 			foreach (var lz in hexBufferServiceListeners)
@@ -126,7 +126,7 @@ namespace dnSpy.AsmEditor.Hex {
 			if (obj is HexBuffer buffer)
 				return buffer;
 			var weakRef = obj as WeakReference;
-			Debug2.Assert(!(weakRef is null));
+			Debug2.Assert(weakRef is not null);
 			return weakRef?.Target as HexBuffer;
 		}
 
@@ -138,7 +138,7 @@ namespace dnSpy.AsmEditor.Hex {
 			HexBuffer? buffer;
 			lock (lockObj) {
 				buffer = TryGet_NoLock(filename);
-				if (!(buffer is null))
+				if (buffer is not null)
 					return buffer;
 
 				byte[] data;
@@ -167,7 +167,7 @@ namespace dnSpy.AsmEditor.Hex {
 			HexBuffer? buffer;
 			lock (lockObj) {
 				buffer = TryGet_NoLock(filename);
-				if (!(buffer is null))
+				if (buffer is not null)
 					return buffer;
 
 				buffer = hexBufferFactoryService.Create(peImage.CreateReader().ToArray(), filename, hexBufferFactoryService.DefaultFileTags);

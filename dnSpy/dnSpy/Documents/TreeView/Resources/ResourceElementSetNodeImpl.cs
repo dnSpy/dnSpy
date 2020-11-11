@@ -71,7 +71,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 			TreeNode.EnsureChildrenLoaded();
 			foreach (DocumentTreeNodeData node in TreeNode.DataChildren) {
 				var provider = ResourceDataProviderUtils.GetResourceDataProvider(node);
-				Debug2.Assert(!(provider is null));
+				Debug2.Assert(provider is not null);
 				if (provider is null)
 					continue;
 				foreach (var data in provider.GetResourceData(ResourceDataType.Deserialized))
@@ -90,7 +90,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 
 		public override void RegenerateEmbeddedResource() {
 			var module = this.GetModule();
-			Debug2.Assert(!(module is null));
+			Debug2.Assert(module is not null);
 			if (module is null)
 				throw new InvalidOperationException();
 			RegenerateEmbeddedResource(module);

@@ -50,7 +50,7 @@ namespace dnSpy.Debugger.Impl {
 
 		internal void UpdateName_DbgThread(string? name) {
 			Dispatcher.VerifyAccess();
-			if (this.name != name && !(name is null)) {
+			if (this.name != name && name is not null) {
 				this.name = name;
 				OnPropertyChanged(nameof(Name));
 			}

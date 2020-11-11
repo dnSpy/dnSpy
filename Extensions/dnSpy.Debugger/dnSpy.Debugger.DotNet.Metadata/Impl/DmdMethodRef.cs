@@ -39,22 +39,22 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		DmdMethodDef ResolvedMethod => GetResolvedMethod(throwOnError: true)!;
 		DmdMethodDef? GetResolvedMethod(bool throwOnError) {
-			if (!(__resolvedMethod_DONT_USE is null))
+			if (__resolvedMethod_DONT_USE is not null)
 				return __resolvedMethod_DONT_USE;
 
 			DmdMethodDef? newResolvedMethod = null;
 			var declType = declaringTypeRef.Resolve(throwOnError);
-			if (!(declType is null)) {
+			if (declType is not null) {
 				var nonGenericInstDeclType = declType.IsGenericType ? declType.GetGenericTypeDefinition() : declType;
 				var nonGenericInstDeclTypeMethod = nonGenericInstDeclType?.GetMethod(Name, rawMethodSignature, throwOnError: false) as DmdMethodDef;
-				if (!(nonGenericInstDeclTypeMethod is null)) {
+				if (nonGenericInstDeclTypeMethod is not null) {
 					newResolvedMethod = (object?)nonGenericInstDeclTypeMethod.DeclaringType == declType ?
 						nonGenericInstDeclTypeMethod :
 						declType.GetMethod(nonGenericInstDeclTypeMethod.Module, nonGenericInstDeclTypeMethod.MetadataToken) as DmdMethodDef;
-					Debug2.Assert(!(newResolvedMethod is null));
+					Debug2.Assert(newResolvedMethod is not null);
 				}
 			}
-			if (!(newResolvedMethod is null)) {
+			if (newResolvedMethod is not null) {
 				Interlocked.CompareExchange(ref __resolvedMethod_DONT_USE, newResolvedMethod, null);
 				Debug.Assert(DmdMemberInfoEqualityComparer.DefaultMember.Equals(__resolvedMethod_DONT_USE!.ReflectedType, declaringTypeRef));
 				return __resolvedMethod_DONT_USE;

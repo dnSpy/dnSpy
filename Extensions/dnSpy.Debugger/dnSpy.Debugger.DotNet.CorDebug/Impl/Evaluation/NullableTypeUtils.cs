@@ -34,12 +34,12 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 					continue;
 				switch (field.Name) {
 				case KnownMemberNames.Nullable_HasValue_FieldName:
-					if (!(hasValueField is null))
+					if (hasValueField is not null)
 						return (null, null);
 					hasValueField = field;
 					break;
 				case KnownMemberNames.Nullable_Value_FieldName:
-					if (!(valueField is null))
+					if (valueField is not null)
 						return (null, null);
 					valueField = field;
 					break;

@@ -77,7 +77,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		int? requiredCount;
 
-		public bool IsFiniteCount => !(RequiredCount is null);
+		public bool IsFiniteCount => RequiredCount is not null;
 		public bool IsUnlimitedCount => RequiredCount is null;
 		public int NumberOfTypesLeft => RequiredCount is null ? -1 : RequiredCount.Value - TypeSigCollection.Count;
 		public bool CanNotAddMore => !CanAddMore;
@@ -114,7 +114,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			if (!AddCurrentCanExecute())
 				return;
 			var typeSig = TypeSigCreator.TypeSig;
-			Debug2.Assert(!(typeSig is null));
+			Debug2.Assert(typeSig is not null);
 			TypeSigCollection.Add(typeSig);
 			TypeSigCollection.SelectedIndex = TypeSigCollection.Count - 1;
 			TypeSigCreator.TypeSig = null;
@@ -123,7 +123,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		bool AddCurrentCanExecute() =>
 			IsEnabled &&
 			(IsUnlimitedCount || NumberOfTypesLeft > 0) &&
-			!(TypeSigCreator.TypeSig is null);
+			TypeSigCreator.TypeSig is not null;
 
 		public override bool HasError => !IsUnlimitedCount && NumberOfTypesLeft > 0;
 	}

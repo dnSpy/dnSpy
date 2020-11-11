@@ -120,7 +120,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				return;
 
 			TypeNode? typeNode = null;
-			for (TreeNodeData? n = node; !(n is null);) {
+			for (TreeNodeData? n = node; n is not null;) {
 				if (n is TypeNode t)
 					typeNode = t;
 				n = n.TreeNode.Parent?.Data;
@@ -130,13 +130,13 @@ namespace dnSpy.AsmEditor.Compiler {
 
 			var asmNode = nodes[0] as AssemblyDocumentNode;
 			ModuleDocumentNode? modNode;
-			if (!(asmNode is null)) {
+			if (asmNode is not null) {
 				asmNode.TreeNode.EnsureChildrenLoaded();
 				modNode = asmNode.TreeNode.DataChildren.FirstOrDefault() as ModuleDocumentNode;
 			}
 			else
 				modNode = nodes[0].GetModuleNode();
-			Debug2.Assert(!(modNode is null));
+			Debug2.Assert(modNode is not null);
 			if (modNode is null)
 				return;
 
@@ -150,7 +150,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				vm.Dispose();
 				return;
 			}
-			Debug2.Assert(!(vm.Result is null));
+			Debug2.Assert(vm.Result is not null);
 
 			undoCommandService.Value.Add(new EditClassCommand(addUpdatedNodesHelperProvider, modNode, vm.Result));
 			vm.Dispose();
@@ -185,9 +185,9 @@ namespace dnSpy.AsmEditor.Compiler {
 		internal static bool IsVisibleInternal(EditCodeVMCreator editCodeVMCreator, IMenuItemContext? context) => IsVisible(editCodeVMCreator, BodyCommandUtils.GetStatements(context, FindByTextPositionOptions.OuterMostStatement));
 		static bool IsVisible(EditCodeVMCreator editCodeVMCreator, IList<MethodSourceStatement>? list) =>
 			editCodeVMCreator.CanCreate(CompilationKind.EditClass) &&
-			!(list is null) &&
+			list is not null &&
 			list.Count != 0 &&
-			!(list[0].Method.Body is null) &&
+			list[0].Method.Body is not null &&
 			list[0].Method.Body.Instructions.Count > 0;
 
 		public override void Execute(IMenuItemContext context) => Execute(BodyCommandUtils.GetStatements(context, FindByTextPositionOptions.OuterMostStatement));

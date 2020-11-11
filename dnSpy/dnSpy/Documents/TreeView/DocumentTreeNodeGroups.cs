@@ -347,7 +347,7 @@ namespace dnSpy.Documents.TreeView {
 				return tdr.Name;
 			int parents = 0;
 			ITypeDefOrRef parent;
-			for (parent = tdr.DeclaringType; !(parent is null); parent = parent.DeclaringType)
+			for (parent = tdr.DeclaringType; parent is not null; parent = parent.DeclaringType)
 				parents++;
 			bool needSep = false;
 			// parents should be small so we don't need to use a List<T>/Stack<T>
@@ -355,7 +355,7 @@ namespace dnSpy.Documents.TreeView {
 				parent = tdr;
 				for (int i = 0; i < parents; i++) {
 					parent = tdr.DeclaringType;
-					Debug2.Assert(!(parent is null));
+					Debug2.Assert(parent is not null);
 				}
 				if (needSep)
 					sb.Append('.');

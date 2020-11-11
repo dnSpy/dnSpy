@@ -86,7 +86,7 @@ namespace dnSpy.Search {
 		bool CheckCA(IDsDocument file, IHasCustomAttribute hca, object? parent, CAArgument o) {
 			var value = o.Value;
 			var u = value as UTF8String;
-			if (!(u is null))
+			if (u is not null)
 				value = u.String;
 			if (!IsMatch(null, value))
 				return false;
@@ -131,7 +131,7 @@ namespace dnSpy.Search {
 			if (asmNode is null)
 				return;
 			var asm = asmNode.Document.AssemblyDef;
-			Debug2.Assert(!(asm is null));
+			Debug2.Assert(asm is not null);
 			if (asm is null)
 				return;
 			var res = options.Filter.GetResult(asm);
@@ -186,7 +186,7 @@ namespace dnSpy.Search {
 					NameObject = mod,
 					ObjectImageReference = options.DotNetImageService.GetImageReference(mod),
 					LocationObject = mod.Assembly,
-					LocationImageReference = !(mod.Assembly is null) ? options.DotNetImageService.GetImageReference(mod.Assembly.ManifestModule) : new ImageReference(),
+					LocationImageReference = mod.Assembly is not null ? options.DotNetImageService.GetImageReference(mod.Assembly.ManifestModule) : new ImageReference(),
 					Document = module,
 				});
 			}
@@ -260,7 +260,7 @@ namespace dnSpy.Search {
 					return;
 				modNode.TreeNode.EnsureChildrenLoaded();
 				var resFolder = modNode.TreeNode.Children.FirstOrDefault(a => a.Data is ResourcesFolderNode);
-				if (!(resFolder is null)) {
+				if (resFolder is not null) {
 					resFolder.EnsureChildrenLoaded();
 					resNodes.AddRange(resFolder.DataChildren.OfType<ResourceNode>());
 				}
@@ -625,7 +625,7 @@ namespace dnSpy.Search {
 				case Code.Ldstr: operand = instr.Operand; break;
 				default: operand = null; break;
 				}
-				if (!(operand is null) && IsMatch(null, operand)) {
+				if (operand is not null && IsMatch(null, operand)) {
 					options.OnMatch(new SearchResult {
 						Context = options.Context,
 						Object = method,

@@ -47,14 +47,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				InitializePropertyMethods();
 			var list = new List<DmdMethodInfo>();
 			var accessor = AccessorUtils.FilterAccessor(options, f.__getMethod_DONT_USE!);
-			if (!(accessor is null))
+			if (accessor is not null)
 				list.Add(accessor);
 			accessor = AccessorUtils.FilterAccessor(options, f.__setMethod_DONT_USE!);
-			if (!(accessor is null))
+			if (accessor is not null)
 				list.Add(accessor);
 			foreach (var method in f.__otherMethods_DONT_USE!) {
 				accessor = AccessorUtils.FilterAccessor(options, method);
-				if (!(accessor is null))
+				if (accessor is not null)
 					list.Add(accessor);
 			}
 			return list.ToArray();
@@ -76,7 +76,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		void InitializePropertyMethods() {
 			var f = ExtraFields;
-			if (!(f.__otherMethods_DONT_USE is null))
+			if (f.__otherMethods_DONT_USE is not null)
 				return;
 			GetMethods(out var getMethod, out var setMethod, out var otherMethods);
 			lock (LockObject) {
@@ -98,7 +98,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		void InitializeIndexParameters() {
 			var f = ExtraFields;
-			if (!(f.__indexParameters_DONT_USE is null))
+			if (f.__indexParameters_DONT_USE is not null)
 				return;
 			var info = CreateIndexParameters();
 			Interlocked.CompareExchange(ref f.__indexParameters_DONT_USE, ReadOnlyCollectionHelpers.Create(info), null);
@@ -132,7 +132,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public sealed override ReadOnlyCollection<DmdCustomAttributeData> GetCustomAttributesData() {
 			var f = ExtraFields;
-			if (!(f.__customAttributes_DONT_USE is null))
+			if (f.__customAttributes_DONT_USE is not null)
 				return f.__customAttributes_DONT_USE;
 			var info = CreateCustomAttributes();
 			var newCAs = CustomAttributesHelper.AddPseudoCustomAttributes(this, info);

@@ -48,22 +48,22 @@ namespace dnSpy.Contracts.Text.Classification {
 			var res = CreateResourceDictionary();
 
 			var isBold = GetIsBold(theme);
-			if (!(isBold is null))
+			if (isBold is not null)
 				res.Add(IsBoldId, isBold.Value);
 
 			var isItalic = GetIsItalic(theme);
-			if (!(isItalic is null))
+			if (isItalic is not null)
 				res.Add(IsItalicId, isItalic.Value);
 
 			var fg = GetForeground(theme);
-			if (!(fg is null)) {
+			if (fg is not null) {
 				res[ForegroundBrushId] = fg;
 				if (fg.Opacity != 1)
 					res[ForegroundOpacityId] = fg.Opacity;
 			}
 
 			var bg = GetBackground(theme);
-			if (!(bg is null)) {
+			if (bg is not null) {
 				res[BackgroundBrushId] = bg;
 				if (bg.Opacity != 1)
 					res[BackgroundOpacityId] = bg.Opacity;

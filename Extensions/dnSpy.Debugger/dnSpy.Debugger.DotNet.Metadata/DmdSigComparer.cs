@@ -208,7 +208,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 							// resolve them and then compare again.
 							var ra = a.ResolveNoThrow();
 							var rb = ra is null ? null : b.ResolveNoThrow();
-							result = !(ra is null) && !(rb is null) && TypeScopeEquals(ra, rb);
+							result = ra is not null && rb is not null && TypeScopeEquals(ra, rb);
 							if (!result && CheckTypeEquivalence)
 								result = TIAHelper.Equivalent(ra, rb);
 						}
@@ -442,7 +442,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		bool TypeScopeEquals(DmdType a, DmdType b) {
-			Debug2.Assert(!(a is null) && !(b is null) && !a.HasElementType && !b.HasElementType);
+			Debug2.Assert(a is not null && b is not null && !a.HasElementType && !b.HasElementType);
 			if (DontCompareTypeScope)
 				return true;
 			if ((object?)a == b)

@@ -99,7 +99,7 @@ namespace dnSpy.Language.Intellisense {
 			var list = new List<CompletionIconVM>();
 			foreach (var icon in icons) {
 				var imageUIObject = CreateImageUIObject(icon);
-				if (!(imageUIObject is null))
+				if (imageUIObject is not null)
 					list.Add(new CompletionIconVM(imageUIObject));
 			}
 			return list;

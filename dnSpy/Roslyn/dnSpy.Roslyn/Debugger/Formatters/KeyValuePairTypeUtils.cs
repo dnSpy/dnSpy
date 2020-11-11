@@ -45,12 +45,12 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 				if (field.IsStatic || field.IsLiteral)
 					continue;
 				if (field.Name == keyFieldName) {
-					if (!(keyField is null))
+					if (keyField is not null)
 						return (null, null);
 					keyField = field;
 				}
 				else if (field.Name == valueFieldName) {
-					if (!(valueField is null))
+					if (valueField is not null)
 						return (null, null);
 					valueField = field;
 				}

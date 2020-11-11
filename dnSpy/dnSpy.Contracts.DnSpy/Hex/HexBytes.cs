@@ -44,7 +44,7 @@ namespace dnSpy.Contracts.Hex {
 		/// Returns true if all bytes are valid, false if all bytes are invalid, or null
 		/// if it's not known (use <see cref="IsValid(int)"/>)
 		/// </summary>
-		public bool? AllValid => !(validBytes is null) ? (bool?)null : allValid;
+		public bool? AllValid => validBytes is not null ? (bool?)null : allValid;
 
 		readonly byte[] bytes;
 		readonly bool allValid;// Only used if the bit array is null

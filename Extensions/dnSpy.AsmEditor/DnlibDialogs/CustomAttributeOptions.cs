@@ -39,7 +39,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		public CustomAttribute Create() {
-			if (!(RawData is null))
+			if (RawData is not null)
 				return new CustomAttribute(Constructor, RawData);
 			return new CustomAttribute(Constructor, ConstructorArguments, NamedArguments);
 		}

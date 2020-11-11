@@ -327,7 +327,7 @@ namespace dnSpy.Text.Formatting {
 				if (!IsValid)
 					throw new ObjectDisposedException(nameof(WpfTextViewLine));
 				foreach (var part in linePartsCollection.LineParts) {
-					if (!(part.AdornmentElement is null))
+					if (part.AdornmentElement is not null)
 						return true;
 				}
 				return false;
@@ -517,7 +517,7 @@ namespace dnSpy.Text.Formatting {
 				throw new ObjectDisposedException(nameof(WpfTextViewLine));
 
 			var pos = GetBufferPositionFromXCoordinate(xCoordinate);
-			if (!(pos is null))
+			if (pos is not null)
 				return new VirtualSnapshotPoint(pos.Value);
 			if (xCoordinate <= TextLeft)
 				return new VirtualSnapshotPoint(ExtentIncludingLineBreak.Start);
@@ -531,7 +531,7 @@ namespace dnSpy.Text.Formatting {
 				throw new ObjectDisposedException(nameof(WpfTextViewLine));
 
 			var pos = GetBufferPositionFromXCoordinate(xCoordinate);
-			if (!(pos is null)) {
+			if (pos is not null) {
 				if (pos.Value < End) {
 					var bounds = GetExtendedCharacterBounds(pos.Value);
 					// Get closest buffer position
@@ -599,7 +599,7 @@ namespace dnSpy.Text.Formatting {
 				throw new ArgumentException();
 			int column = FilterColumn(linePartsCollection.ConvertBufferPositionToColumn(point));
 			var part = linePartsCollection.GetLinePartFromColumn(column);
-			if (!(part is null)) {
+			if (part is not null) {
 				var lineParts = linePartsCollection.LineParts;
 				int lineIndex = point - linePartsCollection.Span.Start;
 				for (int i = part.Value.Index + 1; i < lineParts.Count; i++, column++) {
@@ -648,7 +648,7 @@ namespace dnSpy.Text.Formatting {
 				column -= textSpan.Length;
 			}
 
-			return ((column == 0 && IsLastTextViewLineForSnapshotLine) || IsLastVisualLine) && !(lastTextSpan is null) ? lastTextSpan.Value.Properties : null;
+			return ((column == 0 && IsLastTextViewLineForSnapshotLine) || IsLastVisualLine) && lastTextSpan is not null ? lastTextSpan.Value.Properties : null;
 		}
 
 		public Collection<TF.TextBounds> GetNormalizedTextBounds(SnapshotSpan bufferSpan) {

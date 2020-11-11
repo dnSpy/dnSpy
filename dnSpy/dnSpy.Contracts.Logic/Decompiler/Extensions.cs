@@ -188,11 +188,11 @@ namespace dnSpy.Contracts.Decompiler {
 		}
 
 		static IEnumerable<MethodDef> GetAllMethods(this EventDef e) {
-			if (!(e.AddMethod is null))
+			if (e.AddMethod is not null)
 				yield return e.AddMethod;
-			if (!(e.InvokeMethod is null))
+			if (e.InvokeMethod is not null)
 				yield return e.InvokeMethod;
-			if (!(e.RemoveMethod is null))
+			if (e.RemoveMethod is not null)
 				yield return e.RemoveMethod;
 			foreach (var m in e.OtherMethods)
 				yield return m;
@@ -228,9 +228,9 @@ namespace dnSpy.Contracts.Decompiler {
 
 			var accessor = property.GetMethod ?? property.SetMethod;
 			var basePropDef = property;
-			if (!(accessor is null) && accessor.HasOverrides) {
+			if (accessor is not null && accessor.HasOverrides) {
 				var baseAccessor = accessor.Overrides.First().MethodDeclaration.ResolveMethodDef();
-				if (!(baseAccessor is null)) {
+				if (baseAccessor is not null) {
 					foreach (var baseProp in baseAccessor.DeclaringType.Properties) {
 						if (baseProp.GetMethod == baseAccessor || baseProp.SetMethod == baseAccessor) {
 							basePropDef = baseProp;
@@ -252,7 +252,7 @@ namespace dnSpy.Contracts.Decompiler {
 			if (type is null)
 				return null;
 			foreach (var ca in type.CustomAttributes.FindAll("System.Reflection.DefaultMemberAttribute")) {
-				if (!(ca.Constructor is null) && ca.Constructor.FullName == @"System.Void System.Reflection.DefaultMemberAttribute::.ctor(System.String)" &&
+				if (ca.Constructor is not null && ca.Constructor.FullName == @"System.Void System.Reflection.DefaultMemberAttribute::.ctor(System.String)" &&
 					ca.ConstructorArguments.Count == 1 &&
 					ca.ConstructorArguments[0].Value is UTF8String) {
 					return (UTF8String)ca.ConstructorArguments[0].Value;

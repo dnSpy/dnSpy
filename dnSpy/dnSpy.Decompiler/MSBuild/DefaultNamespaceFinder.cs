@@ -54,7 +54,7 @@ namespace dnSpy.Decompiler.MSBuild {
 
 			var modNs = GetModuleNamespace(module);
 			var foundNs = info2.CommonPrefix;
-			if (!string.IsNullOrEmpty(modNs) && !(foundNs is null) && foundNs.StartsWith(modNs + "."))
+			if (!string.IsNullOrEmpty(modNs) && foundNs is not null && foundNs.StartsWith(modNs + "."))
 				foundNs = modNs;
 
 			return foundNs ?? string.Empty;
@@ -68,7 +68,7 @@ namespace dnSpy.Decompiler.MSBuild {
 
 			var modNs = GetModuleNamespace(module);
 			var info = infos.FirstOrDefault(a => modNs.Equals(a.CommonPrefix) || a.CommonPrefix.StartsWith(modNs));
-			if (!(info.CommonPrefix is null))
+			if (info.CommonPrefix is not null)
 				return info;
 
 			// Here if it's eg. mscorlib, System.Xml or other system assemblies with several
@@ -86,7 +86,7 @@ namespace dnSpy.Decompiler.MSBuild {
 				else
 					foundNs = GetCommonNamespace(sb, foundNs, ns);
 			}
-			Debug2.Assert(!(foundNs is null));
+			Debug2.Assert(foundNs is not null);
 			return foundNs ?? string.Empty;
 		}
 
@@ -114,7 +114,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		static string GetModuleNamespace(ModuleDef module) {
 			var asm = module.Assembly;
 			string s;
-			if (!(asm is null) && module.IsManifestModule)
+			if (asm is not null && module.IsManifestModule)
 				s = asm.Name;
 			else {
 				s = module.Name;

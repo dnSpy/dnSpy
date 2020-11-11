@@ -76,7 +76,7 @@ namespace dnSpy.BamlDecompiler {
 
 		public NamespaceMap LookupNamespaceFromPrefix(string prefix) {
 			var scope = CurrentScope;
-			while (!(scope is null)) {
+			while (scope is not null) {
 				foreach (var ns in scope) {
 					if (ns.XmlnsPrefix == prefix)
 						return PIFixup(ns);
@@ -90,7 +90,7 @@ namespace dnSpy.BamlDecompiler {
 
 		public NamespaceMap LookupNamespaceFromXmlns(string xmlNs) {
 			var scope = CurrentScope;
-			while (!(scope is null)) {
+			while (scope is not null) {
 				foreach (var ns in scope) {
 					if (ns.XMLNamespace == xmlNs)
 						return ns;
@@ -110,7 +110,7 @@ namespace dnSpy.BamlDecompiler {
 			}
 
 			var scope = CurrentScope;
-			while (!(scope is null)) {
+			while (scope is not null) {
 				foreach (var ns in scope) {
 					if (comparer.Equals(ns.Assembly, asm) && ns.CLRNamespace == clrNs)
 						return ns.XMLNamespace;

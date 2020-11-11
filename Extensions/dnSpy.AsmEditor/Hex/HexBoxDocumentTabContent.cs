@@ -127,7 +127,7 @@ namespace dnSpy.AsmEditor.Hex {
 		public HexViewDocumentTabUIContext(HexEditorGroupFactoryService hexEditorGroupFactoryService, HexBuffer buffer) => hexViewHost = hexEditorGroupFactoryService.Create(buffer, PredefinedHexViewRoles.HexEditorGroup, PredefinedHexViewRoles.HexEditorGroupDefault, new Guid(MenuConstants.GUIDOBJ_ASMEDITOR_HEXVIEW_GUID));
 
 		public override object? CreateUIState() {
-			if (!(cachedHexViewUIState is null))
+			if (cachedHexViewUIState is not null)
 				return cachedHexViewUIState;
 			var state = new HexViewUIState(HexView);
 			state.ShowOffsetColumn = HexView.Options.ShowOffsetColumn();

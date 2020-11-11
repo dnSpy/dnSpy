@@ -45,7 +45,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 
 			IList<DmdType> genericTypeArguments;
 			IList<DmdType>? genericMethodArguments;
-			if (!(DeclaringMethod is null)) {
+			if (DeclaringMethod is not null) {
 				genericTypeArguments = DeclaringMethod.DeclaringType!.GetGenericArguments();
 				genericMethodArguments = DeclaringMethod.GetGenericArguments();
 			}
@@ -66,7 +66,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		}
 
 		DmdGenericParameterTypeCOMD Clone(IList<DmdCustomModifier>? customModifiers) =>
-			!(DeclaringMethod is null) ?
+			DeclaringMethod is not null ?
 			new DmdGenericParameterTypeCOMD(reader, Rid, DeclaringMethod, MetadataName, GenericParameterPosition, GenericParameterAttributes, customModifiers) :
 			new DmdGenericParameterTypeCOMD(reader, Rid, (DmdTypeBase)DeclaringType!, MetadataName, GenericParameterPosition, GenericParameterAttributes, customModifiers);
 

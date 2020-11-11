@@ -53,7 +53,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				throw new ArgumentException($"Invalid content type: {contentType}");
 
 			var writer = GetDocumentWriter(ct);
-			if (!(writer is null))
+			if (writer is not null)
 				writer.Write(output, text);
 			else
 				output.Write(text, BoxedTextColor.Text);
@@ -64,7 +64,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				if (!contentType.IsOfAnyType(lz.Metadata.ContentTypes))
 					continue;
 				var writer = lz.Value.Create(contentType);
-				if (!(writer is null))
+				if (writer is not null)
 					return writer;
 			}
 			return null;

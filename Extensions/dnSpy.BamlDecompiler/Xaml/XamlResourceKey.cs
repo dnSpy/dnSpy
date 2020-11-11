@@ -90,7 +90,7 @@ namespace dnSpy.BamlDecompiler.Xaml {
 					return (XamlResourceKey)n.Annotation;
 				}
 				n = n.Parent;
-			} while (!(n is null));
+			} while (n is not null);
 			found = null;
 			return null;
 		}

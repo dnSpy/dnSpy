@@ -146,7 +146,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 
 		public override bool Equals(object? obj) {
 			var other = obj as ILSettings;
-			return !(other is null) &&
+			return other is not null &&
 				ShowILComments == other.ShowILComments &&
 				ShowXmlDocumentation == other.ShowXmlDocumentation &&
 				ShowTokenAndRvaComments == other.ShowTokenAndRvaComments &&

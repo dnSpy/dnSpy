@@ -36,7 +36,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		}
 
 		static FieldInfoMirror? GetField(TypeMirror type, string name1, string name2) {
-			while (!(type is null)) {
+			while (type is not null) {
 				foreach (var field in type.GetFields()) {
 					if (field.Name == name1 || field.Name == name2)
 						return field;

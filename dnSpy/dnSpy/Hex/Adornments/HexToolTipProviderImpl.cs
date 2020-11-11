@@ -45,7 +45,7 @@ namespace dnSpy.Hex.Adornments {
 		}
 
 		public override void ClearToolTip() {
-			if (!(toolTipAgent is null))
+			if (toolTipAgent is not null)
 				spaceReservationManager.RemoveAgent(toolTipAgent);
 		}
 

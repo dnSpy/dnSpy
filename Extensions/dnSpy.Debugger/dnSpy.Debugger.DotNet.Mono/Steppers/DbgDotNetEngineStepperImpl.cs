@@ -89,7 +89,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 				token = (uint)(frameMethod?.MetadataToken ?? 0);
 				var offs = frame?.ILOffset;
 				offset = (uint)(offs ?? 0);
-				return !(module is null) && token != 0 && !(offs is null);
+				return module is not null && token != 0 && offs is not null;
 			}
 
 			public override bool Equals(DbgDotNetEngineStepperFrameInfo other) {
@@ -118,9 +118,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 
 		async Task<DbgThread> StepCoreAsync(ThreadMirror thread, DbgCodeRange[] ranges, bool isStepInto) {
 			engine.VerifyMonoDebugThread();
-			Debug2.Assert(!(session is null));
+			Debug2.Assert(session is not null);
 			var method = GetFrame(thread)?.Method;
-			Debug2.Assert(!(method is null));
+			Debug2.Assert(method is not null);
 			if (method is null)
 				throw new StepErrorException("Internal error");
 
@@ -136,7 +136,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 
 		Task<ThreadMirror> StepCore2Async(ThreadMirror thread, DbgCodeRange[] ranges, bool isStepInto) {
 			engine.VerifyMonoDebugThread();
-			Debug2.Assert(!(session is null));
+			Debug2.Assert(session is not null);
 			var tcs = new TaskCompletionSource<ThreadMirror>();
 			var stepReq = engine.CreateStepRequest(thread, e => {
 				if (engine.IsClosed || e.Canceled)
@@ -158,7 +158,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 
 		public override Task<DbgThread> StepOutAsync(DbgDotNetEngineStepperFrameInfo frame) {
 			engine.VerifyMonoDebugThread();
-			Debug2.Assert(!(session is null));
+			Debug2.Assert(session is not null);
 			var frameImpl = (DbgDotNetEngineStepperFrameInfoImpl)frame;
 			var tcs = new TaskCompletionSource<DbgThread>();
 			var stepReq = engine.CreateStepRequest(frameImpl.MonoThread, e => {
@@ -168,7 +168,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 					tcs.SetException(new ForciblyCanceledException(forciblyCanceledErrorMessage));
 				else {
 					var thread = engine.TryGetThread(frameImpl.MonoThread);
-					if (!(thread is null))
+					if (thread is not null)
 						tcs.SetResult(thread);
 					else
 						tcs.SetException(new InvalidOperationException());
@@ -224,7 +224,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Steppers {
 			var sessionImpl = (SessionImpl)session;
 			var stepper = sessionImpl.MonoStepper;
 			sessionImpl.MonoStepper = null;
-			if (!(stepper is null))
+			if (stepper is not null)
 				engine.CancelStepper(stepper);
 		}
 

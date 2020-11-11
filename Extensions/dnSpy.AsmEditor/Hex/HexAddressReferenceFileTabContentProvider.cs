@@ -43,7 +43,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			var addrRef = @ref as AddressReference;
 			if (addrRef is null)
 				addrRef = (@ref as TextReference)?.Reference as AddressReference;
-			if (!(addrRef is null))
+			if (addrRef is not null)
 				return Create(addrRef, documentTabService.DocumentTreeView);
 			return null;
 		}
@@ -62,7 +62,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 			Debug.Assert(e.Tab.Content == content);
 			var uiContext = e.Tab.UIContext as HexViewDocumentTabUIContext;
-			Debug2.Assert(!(uiContext is null));
+			Debug2.Assert(uiContext is not null);
 			if (uiContext is null || fileOffset is null)
 				return;
 

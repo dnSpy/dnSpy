@@ -183,7 +183,7 @@ namespace dnSpy.BamlDecompiler {
 					continue;
 				var xmlNs = attr.ConstructorArguments[0].Value as UTF8String;
 				var typeNs = attr.ConstructorArguments[1].Value as UTF8String;
-				Debug2.Assert(!(xmlNs is null) && !(typeNs is null));
+				Debug2.Assert(xmlNs is not null && typeNs is not null);
 				if (xmlNs is null || typeNs is null)
 					continue;
 
@@ -197,7 +197,7 @@ namespace dnSpy.BamlDecompiler {
 		public XName GetXamlNsName(string name, XElement elem = null) {
 			var xNs = GetXmlNamespace("http://schemas.microsoft.com/winfx/2006/xaml");
 			XName xName;
-			if (!(elem is null) && xNs == elem.GetDefaultNamespace())
+			if (elem is not null && xNs == elem.GetDefaultNamespace())
 				xName = name;
 			else
 				xName = xNs + name;

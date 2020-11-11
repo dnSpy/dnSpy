@@ -101,7 +101,7 @@ namespace dnSpy.Roslyn.Debugger.ExpressionCompiler.VisualBasic {
 			DbgDotNetText name;
 			if ((options & DbgEvaluationOptions.NoName) != 0)
 				name = DbgDotNetText.Empty;
-			else if (!(errorMessage is null))
+			else if (errorMessage is not null)
 				name = CreateErrorName(expression);
 			else
 				name = GetExpressionText(state.MetadataContext.EvaluationContext, state.MetadataContext.Compilation, expression, cancellationToken);

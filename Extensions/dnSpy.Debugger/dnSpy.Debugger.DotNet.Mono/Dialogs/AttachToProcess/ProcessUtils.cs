@@ -27,7 +27,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Dialogs.AttachToProcess {
 			if (context.ProcessIds.Length != 0 && Array.IndexOf(context.ProcessIds, pid) < 0)
 				return false;
 
-			if (!(context.IsValidProcess is null)) {
+			if (context.IsValidProcess is not null) {
 				Process? processToDispose = null;
 				try {
 					if (process is null)

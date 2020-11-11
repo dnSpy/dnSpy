@@ -62,7 +62,7 @@ namespace dnSpy.Debugger.Exceptions {
 			if (definition.Id.Category is null)
 				throw new ArgumentException();
 			WriteNameCore(writer, definition);
-			if (includeDescription && !(definition.Description is null)) {
+			if (includeDescription && definition.Description is not null) {
 				writer.Write(DbgTextColor.Text, " ");
 				WriteDescription(writer, definition);
 			}

@@ -41,7 +41,7 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 					sb.AppendLine(dnSpy_Resources.Disassembly_MethodIsNotOptimized);
 					sb.AppendLine(DisassemblyContentGenerator.LINE);
 				}
-				if (!(moduleName is null))
+				if (moduleName is not null)
 					sb.AppendLine(moduleName);
 				sb.AppendLine(methodName);
 				sb.Append(DisassemblyContentGenerator.GetCodeSizeString(blocks));

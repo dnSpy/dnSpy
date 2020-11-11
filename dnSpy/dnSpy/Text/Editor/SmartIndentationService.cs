@@ -55,7 +55,7 @@ namespace dnSpy.Text.Editor {
 			var contentType = textView.TextDataModel.ContentType;
 			foreach (var p in providerSelector.GetProviders(contentType)) {
 				var smartIndent = p.Value.CreateSmartIndent(textView);
-				if (!(smartIndent is null))
+				if (smartIndent is not null)
 					return smartIndent;
 			}
 

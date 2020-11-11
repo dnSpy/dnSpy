@@ -82,12 +82,12 @@ namespace dnSpy.Text.Groups {
 					continue;
 				options.AddRange(lz.Value.GetOptions());
 			}
-			return options.Where(a => !(a.ContentType is null) && !(a.Name is null) && !(a.Type is null)).ToArray();
+			return options.Where(a => a.ContentType is not null && a.Name is not null && a.Type is not null).ToArray();
 		}
 
 		void ITextViewOptionsGroupServiceImpl.TextViewCreated(ITextView textView) {
 			var wpfTextView = textView as IWpfTextView;
-			Debug2.Assert(!(wpfTextView is null));
+			Debug2.Assert(wpfTextView is not null);
 			if (wpfTextView is null)
 				return;
 
@@ -97,7 +97,7 @@ namespace dnSpy.Text.Groups {
 
 			foreach (var lz in textViewOptionsGroupNameProviders) {
 				var name = lz.Value.TryGetGroupName(wpfTextView);
-				if (!(name is null)) {
+				if (name is not null) {
 					var group = GetGroup(name);
 					group.TextViewCreated(wpfTextView);
 					break;

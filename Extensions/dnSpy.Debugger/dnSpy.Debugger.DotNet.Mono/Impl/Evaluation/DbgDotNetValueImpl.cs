@@ -98,7 +98,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			if (!Type.IsByRef)
 				return PredefinedEvaluationErrorMessages.InternalDebuggerError;
 			var res = engine.CreateMonoValue_MonoDebug(evalInfo, value, Type.GetElementType()!);
-			if (!(res.ErrorMessage is null))
+			if (res.ErrorMessage is not null)
 				return res.ErrorMessage;
 			return valueLocation.Store(res.Value!);
 		}
@@ -176,7 +176,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			Debug.Assert(Type.IsArray);
 			engine.VerifyMonoDebugThread();
 			var info = GetArrayElementValueLocation_MonoDebug(index);
-			if (!(info.errorMessage is null))
+			if (info.errorMessage is not null)
 				return DbgDotNetValueResult.CreateError(info.errorMessage);
 			return DbgDotNetValueResult.Create(engine.CreateDotNetValue_MonoDebug(info.valueLocation!));
 		}
@@ -202,10 +202,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			engine.VerifyMonoDebugThread();
 			evalInfo.CancellationToken.ThrowIfCancellationRequested();
 			var info = GetArrayElementValueLocation_MonoDebug(index);
-			if (!(info.errorMessage is null))
+			if (info.errorMessage is not null)
 				return info.errorMessage;
 			var res = engine.CreateMonoValue_MonoDebug(evalInfo, value, info.valueLocation!.Type);
-			if (!(res.ErrorMessage is null))
+			if (res.ErrorMessage is not null)
 				return res.ErrorMessage;
 			return info.valueLocation.Store(res.Value!);
 		}

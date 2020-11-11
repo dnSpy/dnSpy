@@ -39,7 +39,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		// Try System.Reflection.Assembly.Load(string)
 		bool Try_Assembly_Load_String(string assemblyFullName) {
 			var systemAssemblyType = appDomain.GetWellKnownType(DmdWellKnownType.System_Reflection_Assembly, isOptional: true);
-			Debug2.Assert(!(systemAssemblyType is null));
+			Debug2.Assert(systemAssemblyType is not null);
 			if (systemAssemblyType is null)
 				return false;
 

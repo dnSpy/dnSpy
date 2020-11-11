@@ -40,7 +40,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		void DbgCodeBreakpointsService_BreakpointsModified(object? sender, DbgBreakpointsModifiedEventArgs e) {
 			List<DbgCodeBreakpoint>? resetThese = null;
 			foreach (var info in e.Breakpoints) {
-				if (!(info.OldSettings.HitCount is null))
+				if (info.OldSettings.HitCount is not null)
 					continue;
 				var breakpoint = info.Breakpoint;
 				if (breakpoint.Settings.HitCount is null)
@@ -49,7 +49,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 					resetThese = new List<DbgCodeBreakpoint>();
 				resetThese.Add(breakpoint);
 			}
-			if (!(resetThese is null))
+			if (resetThese is not null)
 				dbgCodeBreakpointHitCountService.Value.Reset(resetThese.ToArray());
 		}
 	}

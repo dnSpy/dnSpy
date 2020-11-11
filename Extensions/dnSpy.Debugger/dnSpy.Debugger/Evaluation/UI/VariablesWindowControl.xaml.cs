@@ -46,10 +46,10 @@ namespace dnSpy.Debugger.Evaluation.UI {
 				return;
 			if (treeViewContentPresenter.Content is UIElement oldElem)
 				oldElem.PreviewTextInput -= TreeView_PreviewTextInput;
-			if (!(listView is null))
+			if (listView is not null)
 				listView.PreviewTextInput += TreeView_PreviewTextInput;
 			treeViewContentPresenter.Content = listView;
-			if (!(listView is null)) {
+			if (listView is not null) {
 				AutomationPeerMemoryLeakWorkaround.SetEmptyCount(listView, GetEmptyCount(windowKind));
 				var gridView = (GridView)FindResource("GridView");
 				listView.View = gridView;
@@ -74,7 +74,7 @@ namespace dnSpy.Debugger.Evaluation.UI {
 		}
 
 		void TreeView_PreviewTextInput(object? sender, TextCompositionEventArgs e) {
-			Debug2.Assert(!(variablesWindowOperations is null));
+			Debug2.Assert(variablesWindowOperations is not null);
 			if (variablesWindowOperations is null)
 				return;
 			if (!(treeViewContentPresenter.Content is ListView listView) || listView.SelectedItems.Count != 1)

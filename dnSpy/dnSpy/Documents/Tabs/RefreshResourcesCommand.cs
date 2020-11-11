@@ -74,7 +74,7 @@ namespace dnSpy.Documents.Tabs {
 			var ownerNodes = new HashSet<ResourcesFolderNode?>();
 			foreach (var node in modifiedResourceNodes) {
 				var owner = node.GetAncestorOrSelf<ResourcesFolderNode>();
-				if (!(owner is null))
+				if (owner is not null)
 					ownerNodes.Add(owner);
 			}
 			if (ownerNodes.Count == 0)
@@ -82,9 +82,9 @@ namespace dnSpy.Documents.Tabs {
 
 			decompilationCache.Clear(new HashSet<IDsDocument?>(ownerNodes.Select(a => {
 				var mod = a.GetModuleNode();
-				Debug2.Assert(!(mod is null));
+				Debug2.Assert(mod is not null);
 				return mod?.Document;
-			}).Where(a => !(a is null))));
+			}).Where(a => a is not null)));
 
 			var tabs = new List<IDocumentTab>();
 			foreach (var tab in documentTabService.VisibleFirstTabs) {

@@ -56,7 +56,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 
 		protected override void Dispose(bool disposing) {
-			if (!(pointer is null)) {
+			if (pointer is not null) {
 				NativeMemoryAllocator.Free(pointer, size);
 				pointer = null;
 				size = 0;

@@ -41,7 +41,7 @@ namespace dnSpy.Settings {
 		}
 
 		public T Attribute<T>(string name) {
-			Debug2.Assert(!(name is null));
+			Debug2.Assert(name is not null);
 			if (name is null)
 				throw new ArgumentNullException(nameof(name));
 
@@ -63,7 +63,7 @@ namespace dnSpy.Settings {
 		}
 
 		public void Attribute<T>(string name, T value) {
-			Debug2.Assert(!(name is null));
+			Debug2.Assert(name is not null);
 			if (name is null)
 				throw new ArgumentNullException(nameof(name));
 
@@ -74,7 +74,7 @@ namespace dnSpy.Settings {
 		}
 
 		public void RemoveAttribute(string name) {
-			Debug2.Assert(!(name is null));
+			Debug2.Assert(name is not null);
 			if (name is null)
 				throw new ArgumentNullException(nameof(name));
 

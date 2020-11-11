@@ -72,7 +72,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 				else {
 					parameters = null;
 				}
-				if (!(parameters is null) && parameters.Any(a => a.IsNormalMethodParameter)) {
+				if (parameters is not null && parameters.Any(a => a.IsNormalMethodParameter)) {
 					b.Append('(');
 					for (int i = 0; i < parameters.Count; i++) {
 						var param = parameters[i];
@@ -84,7 +84,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 					}
 					b.Append(')');
 				}
-				if (!(explicitReturnType is null)) {
+				if (explicitReturnType is not null) {
 					b.Append('~');
 					AppendTypeName(b, explicitReturnType);
 				}
@@ -95,12 +95,12 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 		static IEnumerable<Parameter> GetParameters(PropertyDef property) {
 			if (property is null)
 				yield break;
-			if (!(property.GetMethod is null)) {
+			if (property.GetMethod is not null) {
 				foreach (var param in property.GetMethod.Parameters)
 					yield return param;
 				yield break;
 			}
-			if (!(property.SetMethod is null)) {
+			if (property.SetMethod is not null) {
 				int last = property.SetMethod.Parameters.Count - 1;
 				foreach (var param in property.SetMethod.Parameters) {
 					if (param.Index != last)
@@ -160,7 +160,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 			}
 			else {
 				var typeRef = type.ToTypeDefOrRef();
-				if (!(typeRef.DeclaringType is null)) {
+				if (typeRef.DeclaringType is not null) {
 					AppendTypeName(b, typeRef.DeclaringType.ToTypeSig());
 					b.Append('.');
 					b.Append(typeRef.Name);
@@ -175,7 +175,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 			if (type is null)
 				return 0;
 			int outerTypeParameterCount = 0;
-			if (!(type.DeclaringType is null)) {
+			if (type.DeclaringType is not null) {
 				ITypeDefOrRef declType = type.DeclaringType;
 				outerTypeParameterCount = AppendTypeNameWithArguments(b, declType, genericArguments);
 				b.Append('.');
@@ -289,7 +289,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 			if (type is null && pos > 0) { // Original code only entered if ns.Length > 0
 										   // try if this is a nested type
 				type = FindType(module, name.Substring(0, pos));
-				if (!(type is null)) {
+				if (type is not null) {
 					foreach (var nt in type.NestedTypes) {
 						if (nt.Name == name)
 							return nt;

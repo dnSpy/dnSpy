@@ -111,7 +111,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 		}
 
 		MethodDebugInfoResult GetMethodDebugInfo(DbgRuntime runtime, in MethodDebugInfoResultKey key, IDecompiler decompiler, ModuleDef? mdModule, uint token, CancellationToken cancellationToken) {
-			Debug2.Assert(!(mdModule is null));
+			Debug2.Assert(mdModule is not null);
 			if (mdModule is null)
 				return default;
 
@@ -122,8 +122,8 @@ namespace dnSpy.Debugger.DotNet.Code {
 				for (int i = debugInfos.Count - 1; i >= 0; i--) {
 					var info = debugInfos[i];
 					if (info.key.Equals(key)) {
-						if ((!(info.result.DebugInfo is null) && info.result.DebugInfo.DebugInfoVersion != decompiler.Settings.Version) ||
-							(!(info.result.StateMachineDebugInfo is null) && info.result.StateMachineDebugInfo.DebugInfoVersion != decompiler.Settings.Version)) {
+						if ((info.result.DebugInfo is not null && info.result.DebugInfo.DebugInfoVersion != decompiler.Settings.Version) ||
+							(info.result.StateMachineDebugInfo is not null && info.result.StateMachineDebugInfo.DebugInfoVersion != decompiler.Settings.Version)) {
 							debugInfos.RemoveAt(i);
 							continue;
 						}

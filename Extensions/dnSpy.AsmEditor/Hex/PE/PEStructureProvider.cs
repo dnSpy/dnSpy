@@ -110,10 +110,10 @@ namespace dnSpy.AsmEditor.Hex.PE {
 				sections[i] = new ImageSectionHeaderVM(buffer, peHeaders.Sections[i].Data);
 			var dnHeaders = file.GetHeaders<DotNetHeaders>();
 			storageStreams = Array.Empty<StorageStreamVM>();
-			if (!(dnHeaders is null)) {
+			if (dnHeaders is not null) {
 				imageCor20Header = new ImageCor20HeaderVM(buffer, dnHeaders.Cor20);
 				var mdHeaders = dnHeaders.MetadataHeaders;
-				if (!(mdHeaders is null)) {
+				if (mdHeaders is not null) {
 					storageSignature = new StorageSignatureVM(buffer, mdHeaders.MetadataHeader);
 					storageHeader = new StorageHeaderVM(buffer, mdHeaders.MetadataHeader);
 					storageStreams = new StorageStreamVM[mdHeaders.Streams.Count];
@@ -124,7 +124,7 @@ namespace dnSpy.AsmEditor.Hex.PE {
 					}
 
 					var metadataTables = new MetadataTableVM[0x40];
-					if (!(mdHeaders.TablesStream is null)) {
+					if (mdHeaders.TablesStream is not null) {
 						tablesStream = new TablesStreamVM(buffer, mdHeaders.TablesStream, metadataTables);
 						var stringsHeapSpan = GetSpan(mdHeaders.StringsStream);
 						var guidHeapSpan = GetSpan(mdHeaders.GUIDStream);

@@ -67,7 +67,7 @@ namespace dnSpy.Hex.Files.DnSpy {
 		ImageReference GetImage(ComplexData structure, HexPosition position) {
 			foreach (var lz in hexFileImageReferenceProviders) {
 				var imgRef = lz.Value.GetImage(structure, position);
-				if (!(imgRef is null))
+				if (imgRef is not null)
 					return imgRef.Value;
 			}
 			return DsImages.FieldPublic;

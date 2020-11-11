@@ -63,7 +63,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		ModuleId? GetModuleIdCore(DbgModule module) {
 			foreach (var lz in dbgModuleIdProviders) {
 				var id = lz.Value.GetModuleId(module);
-				if (!(id is null))
+				if (id is not null)
 					return id;
 			}
 			return null;

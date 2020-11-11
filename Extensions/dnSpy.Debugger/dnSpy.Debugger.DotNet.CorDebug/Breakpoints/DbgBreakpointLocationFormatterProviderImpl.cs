@@ -36,7 +36,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Breakpoints {
 			switch (location) {
 			case DbgDotNetNativeCodeLocationImpl nativeLoc:
 				var formatter = nativeLoc.Formatter;
-				if (!(formatter is null))
+				if (formatter is not null)
 					return formatter;
 				formatter = breakpointFormatterService.Value.Create(nativeLoc);
 				nativeLoc.Formatter = formatter;

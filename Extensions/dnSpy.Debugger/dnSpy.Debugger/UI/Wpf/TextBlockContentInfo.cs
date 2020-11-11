@@ -72,7 +72,7 @@ namespace dnSpy.Debugger.UI.Wpf {
 		}
 
 		public bool Equals(TextBlockContentInfo? other) =>
-			!(other is null) &&
+			other is not null &&
 			TextElementFactory == other.TextElementFactory &&
 			Version == other.Version &&
 			ClassificationFormatMap == other.ClassificationFormatMap &&

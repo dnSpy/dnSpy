@@ -70,7 +70,7 @@ namespace dnSpy.BackgroundImage {
 
 		protected override void OnDisabledCore() {
 			wpfHexView.LayoutChanged -= WpfHexView_LayoutChanged;
-			if (!(adornmentLayer is null))
+			if (adornmentLayer is not null)
 				adornmentLayer.RemoveAllAdornments();
 		}
 

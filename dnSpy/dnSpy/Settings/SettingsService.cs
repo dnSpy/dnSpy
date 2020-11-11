@@ -67,7 +67,7 @@ namespace dnSpy.Settings {
 		}
 
 		public void RemoveSection(ISettingsSection section) {
-			Debug2.Assert(!(section is null));
+			Debug2.Assert(section is not null);
 			if (section is null)
 				throw new ArgumentNullException(nameof(section));
 

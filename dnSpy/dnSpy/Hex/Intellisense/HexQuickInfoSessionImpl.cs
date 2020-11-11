@@ -78,7 +78,7 @@ namespace dnSpy.Hex.Intellisense {
 			List<HexQuickInfoSource>? list = null;
 			foreach (var provider in quickInfoSourceProviders) {
 				var source = provider.Value.TryCreateQuickInfoSource(HexView);
-				if (!(source is null)) {
+				if (source is not null) {
 					if (list is null)
 						list = new List<HexQuickInfoSource>();
 					list.Add(source);
@@ -88,7 +88,7 @@ namespace dnSpy.Hex.Intellisense {
 		}
 
 		void DisposeQuickInfoSources() {
-			if (!(quickInfoSources is null)) {
+			if (quickInfoSources is not null) {
 				foreach (var source in quickInfoSources)
 					source.Dispose();
 				quickInfoSources = null;

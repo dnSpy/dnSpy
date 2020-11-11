@@ -59,9 +59,9 @@ namespace dnSpy.Hex.Files.PE {
 				return null;
 
 			HexSpan? span;
-			if (!((span = TryGetRvaSpan(file, position, data.VirtualAddress.Data, data.VirtualSize.Data)) is null))
+			if ((span = TryGetRvaSpan(file, position, data.VirtualAddress.Data, data.VirtualSize.Data)) is not null)
 				return span;
-			if (!((span = TryGetFileSpan(file, position, data.PointerToRawData.Data, data.SizeOfRawData.Data)) is null))
+			if ((span = TryGetFileSpan(file, position, data.PointerToRawData.Data, data.SizeOfRawData.Data)) is not null)
 				return span;
 
 			return null;

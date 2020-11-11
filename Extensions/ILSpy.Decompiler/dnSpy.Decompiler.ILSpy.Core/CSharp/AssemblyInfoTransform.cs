@@ -28,7 +28,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 		public void Run(AstNode compilationUnit) {
 			foreach (var attrSect in compilationUnit.Descendants.OfType<AttributeSection>()) {
 				var attr = attrSect.Descendants.OfType<Attribute>().FirstOrDefault();
-				Debug2.Assert(!(attr is null));
+				Debug2.Assert(attr is not null);
 				if (attr is null)
 					continue;
 				bool remove = false;

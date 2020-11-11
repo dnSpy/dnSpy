@@ -203,7 +203,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		void LoadModules(IList<ModuleVM> modules) =>
 			moduleLoader.Value.LoadModules(modules.Select(a => a.Module).ToArray(), DbgLoadModuleReferenceHandlerOptions.None);
 
-		public override bool CanShowInMemoryWindow => !(GetShowInMemoryWindowModule() is null);
+		public override bool CanShowInMemoryWindow => GetShowInMemoryWindowModule() is not null;
 		public override void ShowInMemoryWindow(int windowIndex) {
 			if ((uint)windowIndex >= (uint)MemoryWindowsHelper.NUMBER_OF_MEMORY_WINDOWS)
 				throw new ArgumentOutOfRangeException(nameof(windowIndex));
@@ -220,12 +220,12 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 		public override void ShowInMemoryWindow() => ShowInMemoryWindowCore(null);
 		void ShowInMemoryWindowCore(int? windowIndex) {
 			var vm = GetShowInMemoryWindowModule();
-			if (!(vm is null)) {
+			if (vm is not null) {
 				var start = new HexPosition(vm.Module.Address);
 				var end = start + vm.Module.Size;
 				Debug.Assert(end <= HexPosition.MaxEndPosition);
 				if (end <= HexPosition.MaxEndPosition) {
-					if (!(windowIndex is null))
+					if (windowIndex is not null)
 						memoryWindowService.Value.Show(vm.Module.Process.Id, HexSpan.FromBounds(start, end), windowIndex.Value);
 					else
 						memoryWindowService.Value.Show(vm.Module.Process.Id, HexSpan.FromBounds(start, end));
@@ -240,7 +240,7 @@ namespace dnSpy.Debugger.ToolWindows.Modules {
 			set => debuggerSettings.UseHexadecimal = value;
 		}
 
-		public override bool CanOpenContainingFolder => !(GetFilename() is null);
+		public override bool CanOpenContainingFolder => GetFilename() is not null;
 		public override void OpenContainingFolder() {
 			var filename = GetFilename();
 			if (filename is null)

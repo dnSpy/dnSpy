@@ -49,7 +49,7 @@ namespace dnSpy.Analyzer {
 			analyzerService.Value.FollowNode(@ref, newTab, useCodeRef);
 		}
 
-		public override bool IsVisible(IMenuItemContext context) => !(GetReference(context) is null);
+		public override bool IsVisible(IMenuItemContext context) => GetReference(context) is not null;
 
 		TreeNodeData? GetReference(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID))
@@ -59,7 +59,7 @@ namespace dnSpy.Analyzer {
 			if (nodes is null || nodes.Length != 1)
 				return null;
 
-			if (nodes[0] is IMDTokenNode tokenNode && !(tokenNode.Reference is null)) {
+			if (nodes[0] is IMDTokenNode tokenNode && tokenNode.Reference is not null) {
 				if (!analyzerService.Value.CanFollowNode(nodes[0], useCodeRef))
 					return null;
 				return nodes[0];

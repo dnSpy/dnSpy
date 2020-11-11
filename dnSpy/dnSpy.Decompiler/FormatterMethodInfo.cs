@@ -41,20 +41,20 @@ namespace dnSpy.Decompiler {
 			MethodDef = method as MethodDef;
 			var ms = method as MethodSpec;
 			var mr = method as MemberRef;
-			if (!(ms is null)) {
+			if (ms is not null) {
 				var ts = ms.Method is null ? null : ms.Method.DeclaringType as TypeSpec;
-				if (!(ts is null)) {
+				if (ts is not null) {
 					if (ts.TypeSig.RemovePinnedAndModifiers() is GenericInstSig gp)
 						TypeGenericParams = gp.GenericArguments;
 				}
 
 				var gsSig = ms.GenericInstMethodSig;
-				if (!(gsSig is null))
+				if (gsSig is not null)
 					MethodGenericParams = gsSig.GenericArguments;
 
 				MethodDef = ms.Method.ResolveMethodDef();
 			}
-			else if (!(mr is null)) {
+			else if (mr is not null) {
 				if (mr.DeclaringType is TypeSpec ts) {
 					if (ts.TypeSig.RemovePinnedAndModifiers() is GenericInstSig gp)
 						TypeGenericParams = gp.GenericArguments;

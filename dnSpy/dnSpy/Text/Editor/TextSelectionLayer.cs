@@ -64,7 +64,7 @@ namespace dnSpy.Text.Editor {
 			if (BrushComparer.Equals(newBackgroundBrush, backgroundBrush))
 				return;
 			backgroundBrush = newBackgroundBrush;
-			if (!(markerElement is null))
+			if (markerElement is not null)
 				markerElement.BackgroundBrush = backgroundBrush;
 		}
 		Brush? backgroundBrush;

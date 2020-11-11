@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Decompiler {
 	/// </summary>
 	public static class CustomAttributesUtils {
 		static bool IsType(TypeDef type, (UTF8String @namespace, UTF8String name)[] typeNames) {
-			if (!(type.DeclaringType is null))
+			if (type.DeclaringType is not null)
 				return false;
 			var name = type.Name;
 			var @namespace = type.Namespace;
@@ -151,7 +151,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <returns></returns>
 		public static IEnumerable<CustomAttribute> GetCustomAttributes(this AssemblyDef assembly) {
 			var module = (ModuleDef?)assembly.ManifestModule;
-			if (!(module is null)) {
+			if (module is not null) {
 				if (assembly.HashAlgorithm != AssemblyHashAlgorithm.SHA1) {
 					var declType = new TypeRefUser(module, systemReflectionName, assemblyAlgorithmIdAttributeName, module.CorLibTypes.AssemblyRef);
 					var enumDeclType = new ValueTypeSig(new TypeRefUser(module, systemConfigurationAssembliesName, assemblyHashAlgorithmName, module.CorLibTypes.AssemblyRef));
@@ -182,7 +182,7 @@ namespace dnSpy.Contracts.Decompiler {
 			}
 			foreach (var ca in assembly.CustomAttributes)
 				yield return ca;
-			if (!(module is null)) {
+			if (module is not null) {
 				foreach (var ca in GetSecurityDeclarations(module, assembly))
 					yield return ca;
 			}
@@ -419,7 +419,7 @@ namespace dnSpy.Contracts.Decompiler {
 		}
 
 		static bool HasIsReadOnlyAttribute(IHasCustomAttribute hca) =>
-			!(Find(hca, systemRuntimeCompilerServicesName, isReadOnlyAttributeName) is null);
+			Find(hca, systemRuntimeCompilerServicesName, isReadOnlyAttributeName) is not null;
 
 		/// <summary>
 		/// Gets custom attributes and pseudo custom attributes
@@ -509,7 +509,7 @@ namespace dnSpy.Contracts.Decompiler {
 				var type = ca.AttributeType;
 				if (type.Name != name || type.Namespace != @namespace)
 					continue;
-				if (!(type.DeclaringType is null))
+				if (type.DeclaringType is not null)
 					continue;
 				return ca;
 			}
@@ -525,7 +525,7 @@ namespace dnSpy.Contracts.Decompiler {
 			foreach (var ca in property.CustomAttributes)
 				yield return ca;
 			var defMemCa = Find(property.DeclaringType, systemReflectionName, defaultMemberAttributeName);
-			if (!(defMemCa is null) && defMemCa.ConstructorArguments.Count > 0 &&
+			if (defMemCa is not null && defMemCa.ConstructorArguments.Count > 0 &&
 				defMemCa.ConstructorArguments[0].Value is UTF8String defMember &&
 				defMember != itemName && defMember == property.Name) {
 				var module = property.Module;

@@ -53,7 +53,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			if (ModuleNode.TreeNode.LazyLoading)
 				return;
 
-			if (!(loadedClassTokens is null)) {
+			if (loadedClassTokens is not null) {
 				foreach (var a in loadedClassTokens)
 					modifiedTypes.Add(a);
 			}
@@ -63,7 +63,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			bool needRedecompile = false;
 			foreach (uint token in tokensList) {
 				var td = Document.ModuleDef!.ResolveToken(token) as TypeDef;
-				Debug2.Assert(!(td is null));
+				Debug2.Assert(td is not null);
 				if (td is null)
 					continue;
 				Update(td);
@@ -79,7 +79,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		List<TypeDef> GetNonCheckedTypeAndDeclaringTypes(TypeDef td) {
 			var list = new List<TypeDef>();
-			while (!(td is null) && !checkedTypes.Contains(td)) {
+			while (td is not null && !checkedTypes.Contains(td)) {
 				list.Add(td);
 				checkedTypes.Add(td);
 				td = td.DeclaringType;
@@ -109,7 +109,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 						break;
 					typeNode = GetOrCreateNestedTypeTreeNode(parentNode, type);
 				}
-				Debug2.Assert(!(typeNode is null));
+				Debug2.Assert(typeNode is not null);
 
 				if (wasLoaded || modifiedTypes.Contains(type.MDToken.Raw))
 					UpdateMemberNodes(typeNode);
@@ -119,12 +119,12 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		static TypeNode GetOrCreateNonNestedTypeTreeNode(ModuleDocumentNode modNode, TypeDef type) {
-			Debug2.Assert(!(type is null) && type.DeclaringType is null);
+			Debug2.Assert(type is not null && type.DeclaringType is null);
 			modNode.TreeNode.EnsureChildrenLoaded();
 			TypeNode? typeNode;
 			var nsNode = GetOrCreateNamespaceNode(modNode, type.Namespace);
 			typeNode = nsNode.TreeNode.DataChildren.OfType<TypeNode>().FirstOrDefault(a => a.TypeDef == type);
-			if (!(typeNode is null))
+			if (typeNode is not null)
 				return typeNode;
 			typeNode = nsNode.Create(type);
 			nsNode.TreeNode.AddChild(typeNode.TreeNode);
@@ -134,7 +134,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		static NamespaceNode GetOrCreateNamespaceNode(ModuleDocumentNode modNode, string ns) {
 			modNode.TreeNode.EnsureChildrenLoaded();
 			var nsNode = modNode.TreeNode.DataChildren.OfType<NamespaceNode>().FirstOrDefault(a => a.Name == ns);
-			if (!(nsNode is null))
+			if (nsNode is not null)
 				return nsNode;
 			nsNode = modNode.Create(ns);
 			modNode.TreeNode.AddChild(nsNode.TreeNode);
@@ -142,10 +142,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		}
 
 		static TypeNode GetOrCreateNestedTypeTreeNode(TypeNode typeNode, TypeDef nestedType) {
-			Debug2.Assert(!(nestedType is null) && nestedType.DeclaringType == typeNode.TypeDef);
+			Debug2.Assert(nestedType is not null && nestedType.DeclaringType == typeNode.TypeDef);
 			typeNode.TreeNode.EnsureChildrenLoaded();
 			var childTypeNode = typeNode.TreeNode.DataChildren.OfType<TypeNode>().FirstOrDefault(a => a.TypeDef == nestedType);
-			if (!(childTypeNode is null))
+			if (childTypeNode is not null)
 				return childTypeNode;
 			childTypeNode = typeNode.Create(nestedType);
 			typeNode.TreeNode.AddChild(childTypeNode.TreeNode);

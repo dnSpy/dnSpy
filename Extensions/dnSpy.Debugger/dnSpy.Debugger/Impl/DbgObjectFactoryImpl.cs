@@ -53,7 +53,7 @@ namespace dnSpy.Debugger.Impl {
 			if (disposed)
 				throw new ObjectDisposedException(nameof(DbgObjectFactoryImpl));
 			var appDomain = new DbgAppDomainImpl(runtime, internalAppDomain, name, id);
-			if (!(data is null))
+			if (data is not null)
 				appDomain.GetOrCreateData(() => data);
 			var engineAppDomain = new DbgEngineAppDomainImpl(appDomain);
 			onCreated?.Invoke(engineAppDomain);
@@ -76,7 +76,7 @@ namespace dnSpy.Debugger.Impl {
 			if (disposed)
 				throw new ObjectDisposedException(nameof(DbgObjectFactoryImpl));
 			var module = new DbgModuleImpl(runtime, VerifyOptionalAppDomain(appDomain), internalModule, isExe, address, size, imageLayout, name, filename, isDynamic, isInMemory, isOptimized, order, timestamp, version);
-			if (!(data is null))
+			if (data is not null)
 				module.GetOrCreateData(() => data);
 			var engineModule = new DbgEngineModuleImpl(module);
 			onCreated?.Invoke(engineModule);
@@ -88,7 +88,7 @@ namespace dnSpy.Debugger.Impl {
 			if (disposed)
 				throw new ObjectDisposedException(nameof(DbgObjectFactoryImpl));
 			var thread = new DbgThreadImpl(runtime, VerifyOptionalAppDomain(appDomain), kind, id, managedId, name, suspendedCount, state);
-			if (!(data is null))
+			if (data is not null)
 				thread.GetOrCreateData(() => data);
 			var engineThread = new DbgEngineThreadImpl(thread);
 			onCreated?.Invoke(engineThread);
@@ -100,7 +100,7 @@ namespace dnSpy.Debugger.Impl {
 			if (id.IsDefaultId)
 				throw new ArgumentException();
 			var exception = new DbgExceptionImpl(runtime, id, flags, message, thread, module);
-			if (!(data is null))
+			if (data is not null)
 				exception.GetOrCreateData(() => data);
 			onCreated?.Invoke(exception);
 			owner.Dispatcher.BeginInvoke(() => owner.AddException_DbgThread(runtime, exception, messageFlags));
@@ -135,16 +135,16 @@ namespace dnSpy.Debugger.Impl {
 				else {
 					var bp = new DbgBoundCodeBreakpointImpl(runtime, breakpoint, info.Module, info.Address, info.Message.ToDbgBoundCodeBreakpointMessage());
 					var data = info.Data;
-					if (!(data is null))
+					if (data is not null)
 						bp.GetOrCreateData(() => data);
 					var ebp = new DbgEngineBoundCodeBreakpointImpl(bp);
 					bps.Add(ebp);
 					bpImpls.Add(ebp);
 				}
 			}
-			if (bpImpls.Count > 0 || !(dataToDispose is null)) {
+			if (bpImpls.Count > 0 || dataToDispose is not null) {
 				owner.Dispatcher.BeginInvoke(() => {
-					if (!(dataToDispose is null)) {
+					if (dataToDispose is not null) {
 						foreach (var id in dataToDispose)
 							id.Dispose();
 					}

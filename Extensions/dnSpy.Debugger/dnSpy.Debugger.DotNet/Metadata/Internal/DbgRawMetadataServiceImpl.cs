@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Internal {
 			var state = runtime.GetOrCreateData<RuntimeState>();
 			lock (state.LockObj) {
 				if (state.Dict.TryGetValue(moduleAddress, out var rawMd)) {
-					if (!(rawMd.TryAddRef() is null)) {
+					if (rawMd.TryAddRef() is not null) {
 						if (rawMd.IsFileLayout != isFileLayout || rawMd.Size != moduleSize) {
 							rawMd.Release();
 							throw new InvalidOperationException();

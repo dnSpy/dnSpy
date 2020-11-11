@@ -73,7 +73,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			return 0;
 		}
 
-		bool HasExtensionAttribute(IHasCustomAttribute p) => !(p.CustomAttributes.Find("System.Runtime.CompilerServices.ExtensionAttribute") is null);
+		bool HasExtensionAttribute(IHasCustomAttribute p) => p.CustomAttributes.Find("System.Runtime.CompilerServices.ExtensionAttribute") is not null;
 
 		// show on all types except static classes
 		public static bool CanShow(TypeDef type) => !(type.IsAbstract && type.IsSealed);

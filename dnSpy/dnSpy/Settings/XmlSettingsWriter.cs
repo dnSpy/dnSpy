@@ -58,7 +58,7 @@ namespace dnSpy.Settings {
 			xmlSect.SetAttributeValue(XmlSettingsConstants.SECTION_ATTRIBUTE_NAME, XmlUtils.EscapeAttributeValue(section.Name));
 			foreach (var attr in section.Attributes.OrderBy(a => a.key.ToUpperInvariant())) {
 				var n = XmlUtils.FilterAttributeName(attr.key);
-				Debug2.Assert(!(n is null), "Invalid character(s) in section attribute name. Only valid XML attribute names can be used.");
+				Debug2.Assert(n is not null, "Invalid character(s) in section attribute name. Only valid XML attribute names can be used.");
 				if (n is null)
 					continue;
 				bool b = n == XmlSettingsConstants.SECTION_ATTRIBUTE_NAME;

@@ -32,16 +32,16 @@ namespace dnSpy.Scripting {
 		Dispatcher? dispatcher;
 
 		public T Resolve<T>() where T : class {
-			Debug2.Assert(!(exportProvider is null));
-			Debug2.Assert(!(dispatcher is null));
+			Debug2.Assert(exportProvider is not null);
+			Debug2.Assert(dispatcher is not null);
 			if (exportProvider is null)
 				throw new InvalidOperationException();
 			return dispatcher.UI(() => exportProvider.GetExportedValue<T>());
 		}
 
 		public T? TryResolve<T>() where T : class {
-			Debug2.Assert(!(exportProvider is null));
-			Debug2.Assert(!(dispatcher is null));
+			Debug2.Assert(exportProvider is not null);
+			Debug2.Assert(dispatcher is not null);
 			if (exportProvider is null)
 				throw new InvalidOperationException();
 			return dispatcher.UI(() => {
@@ -55,7 +55,7 @@ namespace dnSpy.Scripting {
 
 		public void SetExportProvider(Dispatcher dispatcher, ExportProvider exportProvider) {
 			this.dispatcher = dispatcher;
-			if (!(this.exportProvider is null))
+			if (this.exportProvider is not null)
 				throw new InvalidOperationException();
 			this.exportProvider = exportProvider ?? throw new ArgumentNullException(nameof(exportProvider));
 		}

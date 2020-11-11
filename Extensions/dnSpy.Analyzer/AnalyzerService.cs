@@ -143,7 +143,7 @@ namespace dnSpy.Analyzer {
 		void ActivateNode() {
 			var nodes = TreeView.TopLevelSelection;
 			var node = nodes.Length == 0 ? null : nodes[0] as TreeNodeData;
-			if (!(node is null))
+			if (node is not null)
 				node.Activate();
 		}
 
@@ -194,7 +194,7 @@ namespace dnSpy.Analyzer {
 
 		void ITreeViewListener.OnEvent(ITreeView treeView, TreeViewListenerEventArgs e) {
 			if (e.Event == TreeViewListenerEvent.NodeCreated) {
-				Debug2.Assert(!(context is null));
+				Debug2.Assert(context is not null);
 				var node = (ITreeNode)e.Argument;
 				if (node.Data is AnalyzerTreeNodeData d)
 					d.Context = context;
@@ -213,7 +213,7 @@ namespace dnSpy.Analyzer {
 		public void Add(AnalyzerTreeNodeData node) {
 			if (node is EntityNode an) {
 				var found = TreeView.Root.DataChildren.OfType<EntityNode>().FirstOrDefault(n => n.Member == an.Member);
-				if (!(found is null)) {
+				if (found is not null) {
 					found.TreeNode.IsExpanded = true;
 					TreeView.SelectItems(new TreeNodeData[] { found });
 					TreeView.Focus();
@@ -240,13 +240,13 @@ namespace dnSpy.Analyzer {
 			var entityNode = node as EntityNode;
 			var srcRef = entityNode?.SourceRef;
 
-			bool code = useCodeRef ?? !(srcRef is null);
+			bool code = useCodeRef ?? srcRef is not null;
 			if (code) {
 				if (srcRef is null)
 					return;
-				if (!(srcRef.Value.ILOffset is null)) {
+				if (srcRef.Value.ILOffset is not null) {
 					documentTabService.FollowReference(srcRef.Value.Method, newTab, true, a => {
-						if (!a.HasMovedCaret && a.Success && !(srcRef is null))
+						if (!a.HasMovedCaret && a.Success && srcRef is not null)
 							a.HasMovedCaret = GoTo(a.Tab, srcRef.Value.Method, srcRef.Value.ILOffset, srcRef.Value.Reference);
 					});
 				}
@@ -268,8 +268,8 @@ namespace dnSpy.Analyzer {
 			var srcRef = entityNode?.SourceRef;
 
 			if (useCodeRef)
-				return !(srcRef is null);
-			return !(@ref is null);
+				return srcRef is not null;
+			return @ref is not null;
 		}
 
 		bool GoTo(IDocumentTab tab, MethodDef method, uint? ilOffset, object? @ref) {
@@ -354,7 +354,7 @@ namespace dnSpy.Analyzer {
 				if (new SigComparer(flags).Equals(prop, b as PropertyDef))
 					return true;
 				var bm = b as IMethod;
-				return !(bm is null) &&
+				return bm is not null &&
 					(new SigComparer(flags).Equals(prop.GetMethod, bm) ||
 					new SigComparer(flags).Equals(prop.SetMethod, bm));
 			}
@@ -363,7 +363,7 @@ namespace dnSpy.Analyzer {
 				if (new SigComparer(flags).Equals(evt, b as EventDef))
 					return true;
 				var bm = b as IMethod;
-				return !(bm is null) &&
+				return bm is not null &&
 					(new SigComparer(flags).Equals(evt.AddMethod, bm) ||
 					new SigComparer(flags).Equals(evt.InvokeMethod, bm) ||
 					new SigComparer(flags).Equals(evt.RemoveMethod, bm));

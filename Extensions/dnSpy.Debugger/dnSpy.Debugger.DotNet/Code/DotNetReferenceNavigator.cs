@@ -104,7 +104,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 			if (def is null)
 				return false;
 
-			bool found = !(documentTabService.DocumentTreeView.FindNode(def.Module) is null);
+			bool found = documentTabService.DocumentTreeView.FindNode(def.Module) is not null;
 			if (found) {
 				documentTabService.FollowReference(def, newTab, true, e => {
 					Debug.Assert(e.Tab.UIContext is IDocumentViewer);
@@ -145,7 +145,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 			if (offset == EPILOG) {
 				specialIpOffset = true;
 				var mod = dbgMetadataService.Value.TryGetMetadata(module.Module, DbgLoadModuleOptions.AutoLoaded);
-				if (mod?.ResolveToken(module.Token) is MethodDef md && !(md.Body is null) && md.Body.Instructions.Count > 0)
+				if (mod?.ResolveToken(module.Token) is MethodDef md && md.Body is not null && md.Body.Instructions.Count > 0)
 					offset = md.Body.Instructions[md.Body.Instructions.Count - 1].Offset;
 				else
 					return;
@@ -207,7 +207,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 
 		static bool VerifyAndGetCurrentDebuggedMethod(IDocumentViewer documentViewer, ModuleTokenId token, out IMethodDebugService methodDebugService) {
 			methodDebugService = documentViewer.GetMethodDebugService();
-			return !(methodDebugService.TryGetMethodDebugInfo(token) is null);
+			return methodDebugService.TryGetMethodDebugInfo(token) is not null;
 		}
 
 		void RefreshMethodBodies(IDocumentViewer documentViewer, MethodDef method, ModuleTokenId module, uint offset, bool specialIpOffset, bool newTab) {

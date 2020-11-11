@@ -51,7 +51,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 			foreach (var provider in resourceNodeProviders) {
 				try {
 					var node = provider.Value.Create(module, resource, treeNodeGroup);
-					if (!(node is null))
+					if (node is not null)
 						return node;
 				}
 				catch {
@@ -76,7 +76,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 			foreach (var provider in resourceNodeProviders) {
 				try {
 					var node = provider.Value.Create(module, resourceElement, treeNodeGroup);
-					if (!(node is null))
+					if (node is not null)
 						return node;
 				}
 				catch {

@@ -35,17 +35,17 @@ namespace dnSpy.Text.Tagging.Xml {
 		protected XmlTaggerBase(TaggerClassificationTypes taggerClassificationTypes) {
 			if (taggerClassificationTypes is null)
 				throw new ArgumentNullException(nameof(taggerClassificationTypes));
-			Debug2.Assert(!(taggerClassificationTypes.Attribute?.ClassificationType is null));
-			Debug2.Assert(!(taggerClassificationTypes.AttributeQuotes?.ClassificationType is null));
-			Debug2.Assert(!(taggerClassificationTypes.AttributeValue?.ClassificationType is null));
-			Debug2.Assert(!(taggerClassificationTypes.AttributeValueXaml?.ClassificationType is null));
-			Debug2.Assert(!(taggerClassificationTypes.CDataSection?.ClassificationType is null));
-			Debug2.Assert(!(taggerClassificationTypes.Comment?.ClassificationType is null));
-			Debug2.Assert(!(taggerClassificationTypes.Delimiter?.ClassificationType is null));
-			Debug2.Assert(!(taggerClassificationTypes.Keyword?.ClassificationType is null));
-			Debug2.Assert(!(taggerClassificationTypes.Name?.ClassificationType is null));
-			Debug2.Assert(!(taggerClassificationTypes.ProcessingInstruction?.ClassificationType is null));
-			Debug2.Assert(!(taggerClassificationTypes.Text?.ClassificationType is null));
+			Debug2.Assert(taggerClassificationTypes.Attribute?.ClassificationType is not null);
+			Debug2.Assert(taggerClassificationTypes.AttributeQuotes?.ClassificationType is not null);
+			Debug2.Assert(taggerClassificationTypes.AttributeValue?.ClassificationType is not null);
+			Debug2.Assert(taggerClassificationTypes.AttributeValueXaml?.ClassificationType is not null);
+			Debug2.Assert(taggerClassificationTypes.CDataSection?.ClassificationType is not null);
+			Debug2.Assert(taggerClassificationTypes.Comment?.ClassificationType is not null);
+			Debug2.Assert(taggerClassificationTypes.Delimiter?.ClassificationType is not null);
+			Debug2.Assert(taggerClassificationTypes.Keyword?.ClassificationType is not null);
+			Debug2.Assert(taggerClassificationTypes.Name?.ClassificationType is not null);
+			Debug2.Assert(taggerClassificationTypes.ProcessingInstruction?.ClassificationType is not null);
+			Debug2.Assert(taggerClassificationTypes.Text?.ClassificationType is not null);
 			this.taggerClassificationTypes = taggerClassificationTypes;
 		}
 

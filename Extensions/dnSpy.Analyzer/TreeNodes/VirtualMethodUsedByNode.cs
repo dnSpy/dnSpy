@@ -52,7 +52,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			if (isSetter)
 				property = analyzedMethod.DeclaringType.Properties.FirstOrDefault(a => a.SetMethod == analyzedMethod);
 
-			var includeAllModules = !(property is null) && CustomAttributesUtils.IsPseudoCustomAttributeType(analyzedMethod.DeclaringType);
+			var includeAllModules = property is not null && CustomAttributesUtils.IsPseudoCustomAttributeType(analyzedMethod.DeclaringType);
 			ComUtils.GetMemberInfo(analyzedMethod, out isComType, out comGuid, out vtblIndex);
 			includeAllModules |= isComType;
 			var options = ScopedWhereUsedAnalyzerOptions.None;
@@ -65,7 +65,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				yield return child;
 			}
 
-			if (!(property is null)) {
+			if (property is not null) {
 				var hash = new HashSet<AssemblyDef>();
 				foreach (var module in analyzer.AllModules) {
 					if (module.Assembly is AssemblyDef asm && hash.Add(module.Assembly)) {
@@ -109,7 +109,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 					if (isComType) {
 						md ??= mr.ResolveMethodDef();
-						if (!(md is null)) {
+						if (md is not null) {
 							ComUtils.GetMemberInfo(md, out bool otherIsComType, out var otherComGuid, out int otherVtblIndex);
 							if (otherIsComType && comGuid == otherComGuid && vtblIndex == otherVtblIndex) {
 								foundInstr = instr;
@@ -140,7 +140,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 					}
 				}
 
-				if (!(foundInstr is null)) {
+				if (foundInstr is not null) {
 					if (GetOriginalCodeLocation(method) is MethodDef codeLocation && !HasAlreadyBeenFound(codeLocation)) {
 						var node = new MethodNode(codeLocation) { Context = Context };
 						if (codeLocation == method)
@@ -150,7 +150,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				}
 			}
 
-			if (!(property is null)) {
+			if (property is not null) {
 				foreach (var node in FieldAccessNode.CheckCustomAttributeNamedArgumentWrite(Context, type, property)) {
 					if (node is MethodNode methodNode && methodNode.Member is MethodDef method && HasAlreadyBeenFound(method))
 						continue;

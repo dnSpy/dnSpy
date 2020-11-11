@@ -31,7 +31,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 				if (dict.TryGetValue(index, out elem))
 					return elem;
 				elem = readElementByRID(index + 1);
-				if (!(elem is null))
+				if (elem is not null)
 					dict[index] = elem;
 				return elem;
 			}
@@ -58,7 +58,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 				if (dict.TryGetValue(index, out elem))
 					return elem;
 				elem = readElementByRID(index + 1, arg);
-				if (!(elem is null))
+				if (elem is not null)
 					dict[index] = elem;
 				return elem;
 			}
@@ -80,7 +80,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 				if (dict.TryGetValue(index, out elem))
 					return elem;
 				var info = readElementByRID(index + 1, arg1, arg2);
-				if (!((elem = info.elem) is null) && !info.containedGenericParams)
+				if ((elem = info.elem) is not null && !info.containedGenericParams)
 					dict[index] = elem;
 				return elem;
 			}

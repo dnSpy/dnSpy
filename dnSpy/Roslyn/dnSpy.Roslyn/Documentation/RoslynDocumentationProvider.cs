@@ -52,7 +52,7 @@ namespace dnSpy.Roslyn.Documentation {
 
 		public override bool Equals(object? obj) {
 			var other = obj as RoslynDocumentationProvider;
-			return !(other is null) && stringComparer.Equals(filename, other.filename);
+			return other is not null && stringComparer.Equals(filename, other.filename);
 		}
 	}
 }

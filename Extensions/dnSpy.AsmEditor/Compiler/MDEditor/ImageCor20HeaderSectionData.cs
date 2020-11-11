@@ -70,7 +70,7 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 			stream.Write(mdData.RVA);
 			stream.Write(mdData.Size);
 
-			if (!(snData is null)) {
+			if (snData is not null) {
 				stream.Position = cor20HeaderStrongnameDataDirPosition;
 				Debug.Assert(snData.RVA != 0);
 				Debug.Assert(snData.Size != 0);

@@ -40,7 +40,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			if (dict.TryGetValue(assembly, out res))
 				return res;
 			res = Lookup_CorDebug(assembly);
-			if (!(res is null)) {
+			if (res is not null) {
 				dict[assembly] = res;
 				dict[res] = res;
 			}

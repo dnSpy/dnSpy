@@ -69,7 +69,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 				return res;
 			}
 			catch {
-				evalInfo.Context.Runtime.Process.DbgManager.Close(res.Where(a => !(a is null)));
+				evalInfo.Context.Runtime.Process.DbgManager.Close(res.Where(a => a is not null));
 				throw;
 			}
 		}

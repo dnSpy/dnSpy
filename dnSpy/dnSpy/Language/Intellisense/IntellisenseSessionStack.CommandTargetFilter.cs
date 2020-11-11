@@ -33,7 +33,7 @@ namespace dnSpy.Language.Intellisense {
 			public CommandTargetFilter(IntellisenseSessionStack owner) {
 				this.owner = owner;
 				wpfTextView = owner.wpfTextView as IDsWpfTextView;
-				Debug2.Assert(!(wpfTextView is null));
+				Debug2.Assert(wpfTextView is not null);
 			}
 
 			public void HookKeyboard() {
@@ -57,7 +57,7 @@ namespace dnSpy.Language.Intellisense {
 
 			public CommandTargetStatus CanExecute(Guid group, int cmdId) {
 				if (group == CommandConstants.TextEditorGroup) {
-					if (!(TryGetIntellisenseKeyboardCommand((TextEditorIds)cmdId) is null))
+					if (TryGetIntellisenseKeyboardCommand((TextEditorIds)cmdId) is not null)
 						return CommandTargetStatus.Handled;
 				}
 				return CommandTargetStatus.NotHandled;
@@ -71,7 +71,7 @@ namespace dnSpy.Language.Intellisense {
 			public CommandTargetStatus Execute(Guid group, int cmdId, object? args, ref object? result) {
 				if (group == CommandConstants.TextEditorGroup) {
 					var command = TryGetIntellisenseKeyboardCommand((TextEditorIds)cmdId);
-					if (!(command is null) && owner.ExecuteKeyboardCommand(command.Value))
+					if (command is not null && owner.ExecuteKeyboardCommand(command.Value))
 						return CommandTargetStatus.Handled;
 				}
 				return CommandTargetStatus.NotHandled;

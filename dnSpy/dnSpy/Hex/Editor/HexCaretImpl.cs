@@ -201,7 +201,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		void InitializeIME() {
-			if (!(imeState.HwndSource is null))
+			if (imeState.HwndSource is not null)
 				return;
 			imeState.HwndSource = PresentationSource.FromVisual(hexView.VisualElement) as HwndSource;
 			if (imeState.HwndSource is null)
@@ -365,7 +365,7 @@ namespace dnSpy.Hex.Editor {
 		}
 
 		void MoveImeCompositionWindow() {
-			Debug2.Assert(!(imeState.HwndSource is null));
+			Debug2.Assert(imeState.HwndSource is not null);
 			if (!IsValuesCaretPresent && !IsAsciiCaretPresent)
 				return;
 			if (imeState.Context == IntPtr.Zero)
@@ -386,11 +386,11 @@ namespace dnSpy.Hex.Editor {
 
 			var rootVisual = imeState.HwndSource.RootVisual;
 			GeneralTransform? generalTransform = null;
-			if (!(rootVisual is null) && rootVisual.IsAncestorOf(hexView.VisualElement))
+			if (rootVisual is not null && rootVisual.IsAncestorOf(hexView.VisualElement))
 				generalTransform = hexView.VisualElement.TransformToAncestor(rootVisual);
 
 			var compTarget = imeState.HwndSource.CompositionTarget;
-			if (!(generalTransform is null) && !(compTarget is null)) {
+			if (generalTransform is not null && compTarget is not null) {
 				var transform = compTarget.TransformToDevice;
 				compForm.dwStyle = CFS_FORCE_POSITION;
 
@@ -721,7 +721,7 @@ namespace dnSpy.Hex.Editor {
 
 		void SavePreferredYCoordinate() {
 			var line = GetVisibleCaretLine();
-			if (!(line is null))
+			if (line is not null)
 				__preferredYCoordinate = (line.Top + line.Bottom) / 2 - hexView.ViewportTop;
 			else
 				__preferredYCoordinate = 0;

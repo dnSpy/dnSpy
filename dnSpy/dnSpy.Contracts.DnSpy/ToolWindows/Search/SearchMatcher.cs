@@ -105,7 +105,7 @@ namespace dnSpy.Contracts.ToolWindows.Search {
 				return spans;
 
 			foreach (var cmd in searchCommands) {
-				if (!(cmd.ColumnId is null) && cmd.ColumnId != columnId)
+				if (cmd.ColumnId is not null && cmd.ColumnId != columnId)
 					continue;
 				if (cmd.Negate)
 					continue;

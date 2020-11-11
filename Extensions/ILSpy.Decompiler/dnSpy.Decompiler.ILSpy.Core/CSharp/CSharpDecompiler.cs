@@ -44,7 +44,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 		}
 
 		public DecompilerProvider(DecompilerSettingsService decompilerSettingsService) {
-			Debug2.Assert(!(decompilerSettingsService is null));
+			Debug2.Assert(decompilerSettingsService is not null);
 			this.decompilerSettingsService = decompilerSettingsService ?? throw new ArgumentNullException(nameof(decompilerSettingsService));
 		}
 
@@ -243,7 +243,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 		void RunTransformsAndGenerateCode(ref BuilderState state, IDecompilerOutput output, DecompilationContext ctx, IAstTransform? additionalTransform = null) {
 			var astBuilder = state.AstBuilder;
 			astBuilder.RunTransformations(transformAbortCondition);
-			if (!(additionalTransform is null)) {
+			if (additionalTransform is not null) {
 				additionalTransform.Run(astBuilder.SyntaxTree);
 			}
 			AddXmlDocumentation(ref state, langSettings.Settings, astBuilder);
@@ -256,7 +256,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 				var hasXmlDocFileTmp = state.State.HasXmlDocFile(module);
 				bool hasXmlDocFile;
 				if (hasXmlDocFileTmp is null) {
-					hasXmlDocFile = !(XmlDocLoader.LoadDocumentation(module) is null);
+					hasXmlDocFile = XmlDocLoader.LoadDocumentation(module) is not null;
 					state.State.SetHasXmlDocFile(module, hasXmlDocFile);
 				}
 				else
@@ -335,11 +335,11 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 		static readonly UTF8String isReadOnlyAttributeString = new UTF8String("IsReadOnlyAttribute");
 		bool WriteRefIfByRef(IDecompilerOutput output, TypeSig typeSig, ParamDef? pd) {
 			if (typeSig.RemovePinnedAndModifiers() is ByRefSig) {
-				if (!(pd is null) && (!pd.IsIn && pd.IsOut)) {
+				if (pd is not null && (!pd.IsIn && pd.IsOut)) {
 					output.Write("out", BoxedTextColor.Keyword);
 					output.Write(" ", BoxedTextColor.Text);
 				}
-				else if (!(pd is null) && pd.IsDefined(systemRuntimeCompilerServicesString, isReadOnlyAttributeString)) {
+				else if (pd is not null && pd.IsDefined(systemRuntimeCompilerServicesString, isReadOnlyAttributeString)) {
 					output.Write("in", BoxedTextColor.Keyword);
 					output.Write(" ", BoxedTextColor.Text);
 				}
@@ -375,7 +375,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 			}
 			if (isIndexer.Value) {
 				var accessor = property.GetMethod ?? property.SetMethod;
-				if (!(accessor is null) && accessor.HasOverrides) {
+				if (accessor is not null && accessor.HasOverrides) {
 					var methDecl = accessor.Overrides.First().MethodDeclaration;
 					var declaringType = methDecl is null ? null : methDecl.DeclaringType;
 					TypeToString(output, declaringType, includeNamespace: true);

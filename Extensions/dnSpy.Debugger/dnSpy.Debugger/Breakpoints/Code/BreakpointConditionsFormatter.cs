@@ -99,7 +99,7 @@ namespace dnSpy.Debugger.Breakpoints.Code {
 		}
 
 		void WriteCurrentHitCountValue(IDbgTextWriter output, int? currentHitCount) {
-			if (!(currentHitCount is null)) {
+			if (currentHitCount is not null) {
 				output.Write(DbgTextColor.Comment, " ");
 				output.Write(DbgTextColor.Punctuation, "(");
 				WriteArgumentAndText(output, DbgTextColor.Number, dnSpy_Debugger_Resources.Breakpoint_HitCount_CurrentHitCountValue, currentHitCount.Value.ToString());

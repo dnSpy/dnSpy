@@ -233,7 +233,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 				node.FilterVersion = node.Context.FilterVersion;
 				node.TreeNode.IsHidden = false;
 				var fnode = node as DocumentTreeNodeData;
-				if (!(fnode is null) && fnode.refilter && node.TreeNode.Children.Count > 0)
+				if (fnode is not null && fnode.refilter && node.TreeNode.Children.Count > 0)
 					node.OnEnsureChildrenLoaded();
 				break;
 
@@ -388,7 +388,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// <param name="data">Updated with the data if successful</param>
 		/// <returns></returns>
 		public bool TryGetData<T>([NotNullWhen(true)] out T? data) where T : class {
-			if (!(dataList is null)) {
+			if (dataList is not null) {
 				foreach (var obj in dataList) {
 					if (obj is T t) {
 						data = t;
@@ -448,7 +448,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// <returns></returns>
 		public static DsDocumentNode? GetTopNode(this TreeNodeData? self) {
 			var root = self is null ? null : self.TreeNode.TreeView.Root;
-			while (!(self is null)) {
+			while (self is not null) {
 				if (self is DsDocumentNode found) {
 					var p = found.TreeNode.Parent;
 					if (p is null || p == root)

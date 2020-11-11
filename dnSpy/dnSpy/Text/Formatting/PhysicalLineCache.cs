@@ -41,7 +41,7 @@ namespace dnSpy.Text.Formatting {
 			for (int i = 0; i < cache.Count; i++) {
 				var physLine = cache[i];
 				var line = physLine.FindFormattedLineByBufferPosition(point);
-				if (!(line is null))
+				if (line is not null)
 					return line;
 			}
 			return null;

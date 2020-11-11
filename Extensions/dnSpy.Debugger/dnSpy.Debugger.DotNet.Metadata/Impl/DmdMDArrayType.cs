@@ -70,7 +70,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			if (!IsMetadataReference)
 				return this;
 			var newElementType = elementType.ResolveNoThrow();
-			if (!(newElementType is null))
+			if (newElementType is not null)
 				return AppDomain.MakeArrayType(newElementType, rank, sizes, lowerBounds, GetCustomModifiers());
 			return null;
 		}
@@ -80,7 +80,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			if (IsFullyResolved)
 				return this;
 			var et = elementType.FullResolve();
-			if (!(et is null))
+			if (et is not null)
 				return (DmdTypeBase)AppDomain.MakeArrayType(et, rank, sizes, lowerBounds, GetCustomModifiers());
 			return null;
 		}
@@ -106,7 +106,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			var int32Type = AppDomain.System_Int32;
 			for (int i = 0; i < types.Length; i++)
 				types[i] = int32Type;
-			if (!(lastType is null))
+			if (lastType is not null)
 				types[types.Length - 1] = lastType;
 			return types;
 		}

@@ -102,7 +102,7 @@ namespace dnSpy.AsmEditor.Compiler {
 					return;
 				codeDocument.TextView.VisualElement.SizeChanged -= VisualElement_SizeChanged;
 
-				Debug2.Assert(!(initialPosition.Snapshot is null));
+				Debug2.Assert(initialPosition.Snapshot is not null);
 				if (initialPosition.Snapshot is null)
 					return;
 				codeDocument.TextView.Caret.MoveTo(initialPosition.TranslateTo(codeDocument.TextView.TextSnapshot, PointTrackingMode.Negative));
@@ -156,9 +156,9 @@ namespace dnSpy.AsmEditor.Compiler {
 			sourceModule = options.SourceModule;
 			AddDocumentsImage = options.AddDocumentsImage;
 			currentReferences = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-			if (!(typeToEdit is null)) {
+			if (typeToEdit is not null) {
 				Debug.Assert(typeToEdit.Module == sourceModule);
-				while (!(typeToEdit.DeclaringType is null))
+				while (typeToEdit.DeclaringType is not null)
 					typeToEdit = typeToEdit.DeclaringType;
 			}
 			tempAssembly = new AssemblyNameInfo {
@@ -339,7 +339,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			for (int i = 0; i < Documents.Count; i++) {
 				var doc = Documents[i];
 				var caretSpan = simpleDocuments[i].CaretSpan;
-				if (!(caretSpan is null) && caretSpan.Value.End <= doc.TextView.TextSnapshot.Length)
+				if (caretSpan is not null && caretSpan.Value.End <= doc.TextView.TextSnapshot.Length)
 					doc.Initialize(new SnapshotPoint(doc.TextView.TextSnapshot, caretSpan.Value.Start));
 				else
 					doc.Initialize(new SnapshotPoint(doc.TextView.TextSnapshot, 0));
@@ -446,7 +446,7 @@ namespace dnSpy.AsmEditor.Compiler {
 					new CompilerDiagnostic(CompilerDiagnosticSeverity.Error, "The task was canceled", "DSWTF!", null, null, null),
 				};
 			}
-			else if (!(caughtException is null)) {
+			else if (caughtException is not null) {
 				compilerDiagnostics = new CompilerDiagnostic[] { ToCompilerDiagnostic(caughtException) };
 			}
 			else if (result?.Success == true) {
@@ -479,7 +479,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			compileCodeState = null;
 			CanCompile = true;
 
-			if (!(importer is null)) {
+			if (importer is not null) {
 				Result = importer;
 				CodeCompiled?.Invoke(this, EventArgs.Empty);
 			}
@@ -495,7 +495,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		Task<CompilationResult> CompileAsync() {
 			Debug2.Assert(compileCodeState is null);
-			if (!(compileCodeState is null))
+			if (compileCodeState is not null)
 				throw new InvalidOperationException();
 			var state = new CompileCodeState();
 			compileCodeState = state;
@@ -589,12 +589,12 @@ namespace dnSpy.AsmEditor.Compiler {
 				return;
 
 			var doc = Documents.FirstOrDefault(a => a.Name == diag.FullPath);
-			Debug2.Assert(!(doc is null));
+			Debug2.Assert(doc is not null);
 			if (doc is null)
 				return;
 			SelectedDocument = doc;
 
-			if (!(diag.LineLocationSpan is null)) {
+			if (diag.LineLocationSpan is not null) {
 				UIUtilities.Focus(doc.TextView.VisualElement, () => {
 					// The caret isn't always moved unless we wait a little
 					doc.TextView.VisualElement.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {

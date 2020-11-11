@@ -103,8 +103,8 @@ namespace dnSpy.Language.Intellisense {
 			session.TextView.LostAggregateFocus += TextView_LostAggregateFocus;
 			session.TextView.TextBuffer.ChangedLowPriority += TextBuffer_ChangedLowPriority;
 			wpfTextView = session.TextView as IWpfTextView;
-			Debug2.Assert(!(wpfTextView is null));
-			if (!(wpfTextView is null))
+			Debug2.Assert(wpfTextView is not null);
+			if (wpfTextView is not null)
 				wpfTextView.VisualElement.PreviewKeyDown += VisualElement_PreviewKeyDown;
 			session.TextView.LayoutChanged += TextView_LayoutChanged;
 			control.completionsListBox.SelectionChanged += CompletionsListBox_SelectionChanged;
@@ -139,7 +139,7 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		void TextView_LayoutChanged(object? sender, TextViewLayoutChangedEventArgs e) {
-			if (!(wpfTextView is null) && oldZoomLevel != wpfTextView.ZoomLevel) {
+			if (wpfTextView is not null && oldZoomLevel != wpfTextView.ZoomLevel) {
 				oldZoomLevel = wpfTextView.ZoomLevel;
 				HideToolTip();
 			}
@@ -211,7 +211,7 @@ namespace dnSpy.Language.Intellisense {
 				if (!contentType.IsOfAnyType(provider.Metadata.ContentTypes))
 					continue;
 				var elem = provider.Value.GetUIElement(completionVM.Completion, session, UIElementType.Tooltip);
-				if (!(elem is null))
+				if (elem is not null)
 					return elem;
 			}
 
@@ -274,9 +274,9 @@ namespace dnSpy.Language.Intellisense {
 			if (item is null && control.completionsListBox.Items.Count > 0)
 				item = control.completionsListBox.Items[0];
 			var scrollViewer = WpfUtils.TryGetScrollViewer(control.completionsListBox);
-			if (!(item is null) && !(scrollViewer is null)) {
+			if (item is not null && scrollViewer is not null) {
 				var lbItem = control.completionsListBox.ItemContainerGenerator.ContainerFromItem(item) as ListBoxItem;
-				Debug2.Assert(!(lbItem is null));
+				Debug2.Assert(lbItem is not null);
 				lbItem.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
 				var itemHeight = lbItem.DesiredSize.Height;
 				double maxHeight = itemHeight * 9;
@@ -286,7 +286,7 @@ namespace dnSpy.Language.Intellisense {
 					control.completionsListBox.MaxHeight = maxHeight;
 			}
 
-			if (!(scrollViewer is null)) {
+			if (scrollViewer is not null) {
 				if (scrollViewer.ViewportHeight != 0)
 					UpdateSelectedItem();
 				else {
@@ -384,7 +384,7 @@ namespace dnSpy.Language.Intellisense {
 			if (completionSet is null)
 				return;
 			var newCompletion = e.AddedItems[0] as CompletionVM;
-			Debug2.Assert(!(newCompletion is null));
+			Debug2.Assert(newCompletion is not null);
 			if (newCompletion is null)
 				return;
 			if (completionSet.SelectionStatus.Completion == newCompletion.Completion)
@@ -491,9 +491,9 @@ namespace dnSpy.Language.Intellisense {
 		void UpdateFilterCollection() {
 			var filterCompletionSet = session.SelectedCompletionSet as DsCompletionSet;
 			DisposeFilters();
-			if (!(filterCompletionSet is null)) {
+			if (filterCompletionSet is not null) {
 				var completionSetFilters = filterCompletionSet.Filters;
-				if (!(completionSetFilters is null)) {
+				if (completionSetFilters is not null) {
 					foreach (var filter in completionSetFilters)
 						filters.Add(new FilterVM(filter, this, filter.ImageReference));
 				}
@@ -539,7 +539,7 @@ namespace dnSpy.Language.Intellisense {
 			if (completion is null)
 				return null;
 			var vm = CompletionVM.TryGet(completion);
-			Debug2.Assert(!(vm is null));
+			Debug2.Assert(vm is not null);
 			return vm;
 		}
 
@@ -566,12 +566,12 @@ namespace dnSpy.Language.Intellisense {
 			UnregisterCompletionSetEvents();
 			Debug2.Assert(currentCompletionSet is null);
 			currentCompletionSet = completionSet;
-			if (!(completionSet is null))
+			if (completionSet is not null)
 				completionSet.SelectionStatusChanged += CompletionSet_SelectionStatusChanged;
 		}
 
 		void UnregisterCompletionSetEvents() {
-			if (!(currentCompletionSet is null)) {
+			if (currentCompletionSet is not null) {
 				currentCompletionSet.SelectionStatusChanged -= CompletionSet_SelectionStatusChanged;
 				currentCompletionSet = null;
 			}
@@ -596,7 +596,7 @@ namespace dnSpy.Language.Intellisense {
 			control.completionsListBox.ItemContainerGenerator.StatusChanged -= ItemContainerGenerator_StatusChanged;
 			control.SizeChanged -= Control_SizeChanged;
 			control.GotKeyboardFocus -= Control_GotKeyboardFocus;
-			if (!(wpfTextView is null))
+			if (wpfTextView is not null)
 				wpfTextView.VisualElement.PreviewKeyDown -= VisualElement_PreviewKeyDown;
 			session.TextView.LayoutChanged -= TextView_LayoutChanged;
 			completionTextElementProvider.Dispose();
@@ -612,7 +612,7 @@ namespace dnSpy.Language.Intellisense {
 			if (string2.IsNullOrEmpty((completion as DsCompletion)?.Suffix))
 				return null;
 			var elem = CreateFrameworkElement(completion, CompletionClassifierKind.Suffix);
-			if (!(elem is null))
+			if (elem is not null)
 				elem.Margin = new Thickness(5, 0, 2, 0);
 			return elem;
 		}

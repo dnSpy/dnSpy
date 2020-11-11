@@ -91,7 +91,7 @@ namespace dnSpy.AsmEditor.Hex {
 				var textRef = context.Find<TextReference>();
 				bool isDefinition = false;
 				object? @ref = null;
-				if (!(textRef is null)) {
+				if (textRef is not null) {
 					@ref = textRef.Reference;
 					isDefinition = textRef.IsDefinition;
 				}
@@ -128,14 +128,14 @@ namespace dnSpy.AsmEditor.Hex {
 
 		internal static HexContext CreateContext(IDocumentTabService documentTabService) {
 			var documentViewer = documentTabService.ActiveTab.TryGetDocumentViewer();
-			if (!(documentViewer is null) && documentViewer.UIObject.IsKeyboardFocusWithin)
+			if (documentViewer is not null && documentViewer.UIObject.IsKeyboardFocusWithin)
 				return CreateContext(documentViewer);
 
 			if (documentTabService.DocumentTreeView.TreeView.UIObject.IsKeyboardFocusWithin)
 				return CreateContext(documentTabService.DocumentTreeView);
 
 			if (documentTabService.DocumentTreeView.TreeView.SelectedItems.Length != 0) {
-				if (!(documentViewer is null))
+				if (documentViewer is not null)
 					return CreateContext(documentViewer);
 				if (UIUtils.HasSelectedChildrenFocus(documentTabService.DocumentTreeView.TreeView.UIObject as ListBox))
 					return CreateContext(documentTabService.DocumentTreeView);
@@ -148,7 +148,7 @@ namespace dnSpy.AsmEditor.Hex {
 			var refInfo = documentViewer.SelectedReference;
 			bool isDefinition = false;
 			object? @ref = null;
-			if (!(refInfo is null)) {
+			if (refInfo is not null) {
 				@ref = refInfo.Value.Data.Reference;
 				isDefinition = refInfo.Value.Data.IsDefinition;
 			}
@@ -275,7 +275,7 @@ namespace dnSpy.AsmEditor.Hex {
 
 		internal static void ExecuteInternal(IDocumentTabService documentTabService, Lazy<IMethodAnnotations> methodAnnotations, HexContext context) {
 			var node = GetNode(documentTabService, methodAnnotations, context);
-			if (!(node is null)) {
+			if (node is not null) {
 				var tab = documentTabService.ActiveTab;
 				var uiContext = tab?.UIContext as HexViewDocumentTabUIContext;
 				if (uiContext is null)
@@ -285,7 +285,7 @@ namespace dnSpy.AsmEditor.Hex {
 
 		static bool IsVisibleInternal(IDocumentTabService documentTabService, Lazy<IMethodAnnotations> methodAnnotations, HexContext context) {
 			var node = GetNode(documentTabService, methodAnnotations, context);
-			return !(node is null) && !string.IsNullOrEmpty(node.Document.Filename);
+			return node is not null && !string.IsNullOrEmpty(node.Document.Filename);
 		}
 
 		static DsDocumentNode? GetDocumentNode(IDocumentTabService documentTabService, Lazy<IMethodAnnotations> methodAnnotations, HexContext context) {
@@ -298,7 +298,7 @@ namespace dnSpy.AsmEditor.Hex {
 			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
 				return GetActiveAssemblyTreeNode(documentTabService);
 			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID)) {
-				return !(context.Nodes is null) &&
+				return context.Nodes is not null &&
 					context.Nodes.Length == 1 ?
 					context.Nodes[0] as DsDocumentNode : null;
 			}
@@ -341,11 +341,11 @@ namespace dnSpy.AsmEditor.Hex {
 
 		internal static void ExecuteInternal(IDocumentTabService documentTabService, HexContext context) {
 			var @ref = GetAddressReference(context);
-			if (!(@ref is null))
+			if (@ref is not null)
 				documentTabService.FollowReference(@ref);
 		}
 
-		internal static bool IsVisibleInternal(HexContext context) => !(GetAddressReference(context) is null);
+		internal static bool IsVisibleInternal(HexContext context) => GetAddressReference(context) is not null;
 
 		static AddressReference? GetAddressReference(HexContext context) {
 			if (context.Reference is null)
@@ -368,10 +368,10 @@ namespace dnSpy.AsmEditor.Hex {
 			if (fileNode is null)
 				return null;
 			var mod = fileNode.Document.ModuleDef;
-			if (!(mod is null) && File.Exists(mod.Location))
+			if (mod is not null && File.Exists(mod.Location))
 				return mod.Location;
 			var peImage = fileNode.Document.PEImage;
-			if (!(peImage is null) && File.Exists(peImage.Filename))
+			if (peImage is not null && File.Exists(peImage.Filename))
 				return peImage.Filename;
 			return null;
 		}
@@ -407,11 +407,11 @@ namespace dnSpy.AsmEditor.Hex {
 
 		internal static void ExecuteInternal(IDocumentTabService documentTabService, Lazy<IMethodAnnotations> methodAnnotations, HexContext context) {
 			var @ref = GetAddressReference(methodAnnotations, context);
-			if (!(@ref is null))
+			if (@ref is not null)
 				documentTabService.FollowReference(@ref);
 		}
 
-		internal static bool IsVisibleInternal(Lazy<IMethodAnnotations> methodAnnotations, HexContext context) => !(GetAddressReference(methodAnnotations, context) is null);
+		internal static bool IsVisibleInternal(Lazy<IMethodAnnotations> methodAnnotations, HexContext context) => GetAddressReference(methodAnnotations, context) is not null;
 
 		static AddressReference? GetAddressReference(Lazy<IMethodAnnotations> methodAnnotations, HexContext context) {
 			if (ShowAddressReferenceInHexEditorCommand.IsVisibleInternal(context))
@@ -481,11 +481,11 @@ namespace dnSpy.AsmEditor.Hex {
 
 		internal static void ExecuteInternal(IDocumentTabService documentTabService, Lazy<IMethodAnnotations> methodAnnotations, HexContext context) {
 			var @ref = GetAddressReference(methodAnnotations, context);
-			if (!(@ref is null))
+			if (@ref is not null)
 				documentTabService.FollowReference(@ref);
 		}
 
-		internal static bool IsVisibleInternal(Lazy<IMethodAnnotations> methodAnnotations, HexContext context) => !(GetAddressReference(methodAnnotations, context) is null);
+		internal static bool IsVisibleInternal(Lazy<IMethodAnnotations> methodAnnotations, HexContext context) => GetAddressReference(methodAnnotations, context) is not null;
 
 		static AddressReference? GetAddressReference(Lazy<IMethodAnnotations> methodAnnotations, HexContext context) {
 			if (ShowAddressReferenceInHexEditorCommand.IsVisibleInternal(context))
@@ -537,11 +537,11 @@ namespace dnSpy.AsmEditor.Hex {
 
 		internal static void ExecuteInternal(IDocumentTabService documentTabService, Lazy<IMethodAnnotations> methodAnnotations, HexContext context) {
 			var @ref = GetAddressReference(methodAnnotations, context);
-			if (!(@ref is null))
+			if (@ref is not null)
 				documentTabService.FollowReference(@ref);
 		}
 
-		internal static bool IsVisibleInternal(Lazy<IMethodAnnotations> methodAnnotations, HexContext context) => !(GetAddressReference(methodAnnotations, context) is null);
+		internal static bool IsVisibleInternal(Lazy<IMethodAnnotations> methodAnnotations, HexContext context) => GetAddressReference(methodAnnotations, context) is not null;
 
 		static AddressReference? GetAddressReference(Lazy<IMethodAnnotations> methodAnnotations, HexContext context) {
 			if (ShowAddressReferenceInHexEditorCommand.IsVisibleInternal(context))
@@ -608,11 +608,11 @@ namespace dnSpy.AsmEditor.Hex {
 
 		static void ExecuteInternal(IDocumentTabService documentTabService, Lazy<IMethodAnnotations> methodAnnotations, HexContext context) {
 			var @ref = GetAddressReference(methodAnnotations, context);
-			if (!(@ref is null))
+			if (@ref is not null)
 				documentTabService.FollowReference(@ref);
 		}
 
-		internal static bool IsVisibleInternal(Lazy<IMethodAnnotations> methodAnnotations, HexContext context) => !(GetAddressReference(methodAnnotations, context) is null);
+		internal static bool IsVisibleInternal(Lazy<IMethodAnnotations> methodAnnotations, HexContext context) => GetAddressReference(methodAnnotations, context) is not null;
 
 		static IMemberDef? ResolveDef(object? mr) {
 			if (mr is ITypeDefOrRef)
@@ -626,12 +626,12 @@ namespace dnSpy.AsmEditor.Hex {
 
 		internal static IMemberDef? GetMemberDef(HexContext context) {
 			IMemberDef? def = null;
-			if (!(context.Nodes is null) && context.Nodes.Length == 1 && context.Nodes[0] is IMDTokenNode)
+			if (context.Nodes is not null && context.Nodes.Length == 1 && context.Nodes[0] is IMDTokenNode)
 				def = ResolveDef(((IMDTokenNode)context.Nodes[0]).Reference);
 			else {
 				// Only allow declarations of the defs, i.e., right-clicking a method call with a method
 				// def as reference should return null, not the method def.
-				if (!(context.Reference is null) && context.IsDefinition && context.Reference is IMemberRef) {
+				if (context.Reference is not null && context.IsDefinition && context.Reference is IMemberRef) {
 					// Don't resolve it. It's confusing if we show the method body of a called method
 					// instead of the current method.
 					def = context.Reference as IMemberDef;
@@ -680,15 +680,15 @@ namespace dnSpy.AsmEditor.Hex {
 
 		static void ExecuteInternal(IDocumentTabService documentTabService, HexContext context) {
 			var @ref = GetAddressReference(context);
-			if (!(@ref is null))
+			if (@ref is not null)
 				documentTabService.FollowReference(@ref);
 		}
 
-		static bool IsVisibleInternal(HexContext context) => !(GetAddressReference(context) is null);
+		static bool IsVisibleInternal(HexContext context) => GetAddressReference(context) is not null;
 
 		static AddressReference? GetAddressReference(HexContext context) {
 			var info = TVChangeBodyHexEditorCommand.GetMethodLengthAndOffset(context);
-			if (!(info is null))
+			if (info is not null)
 				return new AddressReference(info.Value.Filename, false, info.Value.Offset, info.Value.Size);
 
 			return null;
@@ -720,11 +720,11 @@ namespace dnSpy.AsmEditor.Hex {
 
 		static void ExecuteInternal(IDocumentTabService documentTabService, HexContext context) {
 			var @ref = GetAddressReference(context);
-			if (!(@ref is null))
+			if (@ref is not null)
 				documentTabService.FollowReference(@ref);
 		}
 
-		static bool IsVisibleInternal(HexContext context) => !(GetAddressReference(context) is null);
+		static bool IsVisibleInternal(HexContext context) => GetAddressReference(context) is not null;
 
 		static AddressReference? GetAddressReference(HexContext context) {
 			var fd = TVShowMethodInstructionsInHexEditorCommand.GetMemberDef(context) as FieldDef;
@@ -764,11 +764,11 @@ namespace dnSpy.AsmEditor.Hex {
 
 		static void ExecuteInternal(IDocumentTabService documentTabService, HexContext context) {
 			var @ref = GetAddressReference(context);
-			if (!(@ref is null))
+			if (@ref is not null)
 				documentTabService.FollowReference(@ref);
 		}
 
-		static bool IsVisibleInternal(HexContext context) => !(GetAddressReference(context) is null);
+		static bool IsVisibleInternal(HexContext context) => GetAddressReference(context) is not null;
 
 		static AddressReference? GetAddressReference(HexContext context) {
 			if (context.Nodes is null || context.Nodes.Length != 1)
@@ -776,7 +776,7 @@ namespace dnSpy.AsmEditor.Hex {
 
 			if (context.Nodes[0] is DocumentTreeNodeData node && ResourceDataProviderUtils.GetResourceDataProvider(node) is IResourceDataProvider rsrc && rsrc.FileOffset != 0) {
 				var mod = node.GetParentModule();
-				if (!(mod is null) && File.Exists(mod.Location))
+				if (mod is not null && File.Exists(mod.Location))
 					return new AddressReference(mod.Location, false, rsrc.FileOffset, rsrc.Length);
 			}
 
@@ -828,7 +828,7 @@ namespace dnSpy.AsmEditor.Hex {
 			if (data is null)
 				return false;
 			var info = GetMethodLengthAndOffset(context);
-			return !(info is null) && info.Value.Size >= (ulong)data.Length;
+			return info is not null && info.Value.Size >= (ulong)data.Length;
 		}
 
 		static byte[]? GetData(ITVChangeBodyHexEditorCommand cmd, HexContext context) {
@@ -1003,7 +1003,7 @@ namespace dnSpy.AsmEditor.Hex {
 
 			case ElementType.ValueType:
 				var td = ((ValueTypeSig)retType).TypeDefOrRef.ResolveTypeDef();
-				if (!(td is null) && td.IsEnum) {
+				if (td is not null && td.IsEnum) {
 					var undType = td.GetEnumUnderlyingType().RemovePinnedAndModifiers();
 					var et = undType.GetElementType();
 					if ((ElementType.Boolean <= et && et <= ElementType.R8) || et == ElementType.I || et == ElementType.U)
@@ -1083,7 +1083,7 @@ namespace dnSpy.AsmEditor.Hex {
 			ClipboardUtils.SetText(ClipboardUtils.ToHexString(data));
 		}
 
-		static bool IsVisibleInternal(HexContext context) => !(TVChangeBodyHexEditorCommand.GetMethodLengthAndOffset(context) is null);
+		static bool IsVisibleInternal(HexContext context) => TVChangeBodyHexEditorCommand.GetMethodLengthAndOffset(context) is not null;
 
 		static byte[]? GetMethodBodyBytes(Lazy<IHexBufferService> hexBufferService, HexContext context) {
 			var info = TVChangeBodyHexEditorCommand.GetMethodLengthAndOffset(context);
@@ -1169,7 +1169,7 @@ namespace dnSpy.AsmEditor.Hex {
 
 		static string GetHeaderInternal(IDocumentTabService documentTabService, HexContext context) {
 			var tokRef = GetTokenReference(documentTabService, context);
-			Debug2.Assert(!(tokRef is null));
+			Debug2.Assert(tokRef is not null);
 			return string.Format(dnSpy_AsmEditor_Resources.GoToMetaDataTableRowCommand, tokRef.Token);
 		}
 
@@ -1181,11 +1181,11 @@ namespace dnSpy.AsmEditor.Hex {
 
 		internal static void ExecuteInternal(IDocumentTabService documentTabService, HexContext context) {
 			var @ref = GetTokenReference(documentTabService, context);
-			if (!(@ref is null))
+			if (@ref is not null)
 				documentTabService.FollowReference(@ref);
 		}
 
-		internal static bool IsVisibleInternal(IDocumentTabService documentTabService, HexContext context) => !(GetTokenReference(documentTabService, context) is null);
+		internal static bool IsVisibleInternal(IDocumentTabService documentTabService, HexContext context) => GetTokenReference(documentTabService, context) is not null;
 
 		static TokenReference? GetTokenReference(IDocumentTabService documentTabService, HexContext context) {
 			var @ref = GetTokenReference2(context);
@@ -1204,7 +1204,7 @@ namespace dnSpy.AsmEditor.Hex {
 		static TokenReference? GetTokenReference2(HexContext context) {
 			if (context is null)
 				return null;
-			if (!(context.Reference is null)) {
+			if (context.Reference is not null) {
 				if (context.Reference is TokenReference tokRef)
 					return tokRef;
 
@@ -1213,14 +1213,14 @@ namespace dnSpy.AsmEditor.Hex {
 
 				if (context.Reference is Parameter p) {
 					var pd = p.ParamDef;
-					if (!(pd is null) && !(pd.DeclaringMethod is null))
+					if (pd is not null && pd.DeclaringMethod is not null)
 						return CreateTokenReference(pd.DeclaringMethod.Module, pd);
 				}
 			}
-			if (!(context.Nodes is null) && context.Nodes.Length == 1) {
-				if (context.Nodes[0] is IMDTokenNode node && !(node.Reference is null)) {
+			if (context.Nodes is not null && context.Nodes.Length == 1) {
+				if (context.Nodes[0] is IMDTokenNode node && node.Reference is not null) {
 					var mod = (node as TreeNodeData).GetModule();
-					if (!(mod is null))
+					if (mod is not null)
 						return new TokenReference(mod, node.Reference.MDToken.Raw);
 				}
 			}
@@ -1278,7 +1278,7 @@ namespace dnSpy.AsmEditor.Hex {
 			Execute2(documentTabService, context);
 		static bool IsVisibleInternal(HexContext context) => CanExecute(context);
 
-		static bool CanExecute(HexContext context) => !(GetModule(context, out var tab) is null);
+		static bool CanExecute(HexContext context) => GetModule(context, out var tab) is not null;
 
 		static ModuleDef? GetModule(HexContext context, out IDocumentTab? tab) {
 			tab = null;
@@ -1289,11 +1289,11 @@ namespace dnSpy.AsmEditor.Hex {
 				tab = uiContext.DocumentTab!;
 				var content = tab.Content;
 				var node = content.Nodes.FirstOrDefault();
-				if (!(node is null))
+				if (node is not null)
 					return GetModule(GetModuleNode(node));
 			}
 
-			if (!(context.Nodes is null) && context.Nodes.Length == 1)
+			if (context.Nodes is not null && context.Nodes.Length == 1)
 				return GetModule(GetModuleNode(context.Nodes[0]));
 
 			return null;
@@ -1301,7 +1301,7 @@ namespace dnSpy.AsmEditor.Hex {
 
 		static ModuleDocumentNode? GetModuleNode(TreeNodeData node) {
 			var modNode = node.GetModuleNode();
-			if (!(modNode is null))
+			if (modNode is not null)
 				return modNode;
 			if (node is AssemblyDocumentNode asmNode) {
 				asmNode.TreeNode.EnsureChildrenLoaded();
@@ -1327,7 +1327,7 @@ namespace dnSpy.AsmEditor.Hex {
 				return;
 			}
 
-			if (!(tab is null))
+			if (tab is not null)
 				tab.FollowReference(tokRef, false);
 			else
 				documentTabService.FollowReference(tokRef);
@@ -1341,7 +1341,7 @@ namespace dnSpy.AsmEditor.Hex {
 			if (!string.IsNullOrEmpty(error))
 				return error;
 			var memberRef = module.ResolveToken(token);
-			if (!(memberRef is null))
+			if (memberRef is not null)
 				return string.Empty;
 			if (module is ModuleDefMD md) {
 				var mdToken = new MDToken(token);

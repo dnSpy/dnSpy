@@ -152,9 +152,9 @@ namespace dnSpy.Hex.Editor {
 					ClearMouseHoverPositionAndStopTimer();
 					return;
 				}
-				Debug2.Assert(!(timerStart is null));
+				Debug2.Assert(timerStart is not null);
 				var list = GetHandlersToNotify();
-				if (!(list is null)) {
+				if (list is not null) {
 					var mhe = new HexMouseHoverEventArgs(owner, position.Value.Line, position.Value.Column);
 					foreach (var h in list) {
 						h.Raised = true;

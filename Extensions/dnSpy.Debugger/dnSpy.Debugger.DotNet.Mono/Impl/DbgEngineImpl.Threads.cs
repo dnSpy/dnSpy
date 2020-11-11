@@ -59,7 +59,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		}
 
 		DbgThreadData? TryGetThreadData(DbgThread thread) {
-			if (!(thread is null) && thread.TryGetData(out DbgThreadData? data))
+			if (thread is not null && thread.TryGetData(out DbgThreadData? data))
 				return data;
 			return null;
 		}
@@ -125,18 +125,18 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				return null;
 
 			var appDomain = TryGetEngineAppDomain(thread.Domain)?.AppDomain;
-			if (!(appDomain is null)) {
+			if (appDomain is not null) {
 				try {
 					var state = appDomain.GetOrCreateData<GetManagedIdState>();
 					if (state.ManagedIdGetter is null) {
 						var threadType = thread.Domain.Corlib.GetType("System.Threading.Thread", false, false);
-						Debug2.Assert(!(threadType is null));
+						Debug2.Assert(threadType is not null);
 						state.ManagedIdGetter = threadType?.GetMethod("get_" + nameof(ST.Thread.ManagedThreadId));
 					}
-					if (!(state.ManagedIdGetter is null)) {
+					if (state.ManagedIdGetter is not null) {
 						if (!TryGetManagedId(thread, thread, state.ManagedIdGetter, out ulong? managedId))
 							return null;
-						if (!(managedId is null))
+						if (managedId is not null)
 							return managedId;
 
 						foreach (var t in thread.VirtualMachine.GetThreads()) {
@@ -144,7 +144,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 								continue;
 							if (!TryGetManagedId(t, thread, state.ManagedIdGetter, out managedId))
 								return null;
-							if (!(managedId is null))
+							if (managedId is not null)
 								return managedId;
 						}
 					}
@@ -247,7 +247,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					threadsToUpdate = new List<(DbgEngineThread, DbgEngineThread.UpdateOptions, ThreadProperties)>();
 				threadsToUpdate.Add(info.Value);
 			}
-			if (!(threadsToUpdate is null)) {
+			if (threadsToUpdate is not null) {
 				foreach (var info in threadsToUpdate)
 					NotifyThreadPropertiesChanged_MonoDebug(info.engineThread, info.updateOptions, info.props);
 			}
@@ -283,7 +283,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				if (toEngineThread.TryGetValue(monoThread, out engineThread))
 					toEngineThread.Remove(monoThread);
 			}
-			if (!(engineThread is null))
+			if (engineThread is not null)
 				engineThread.Remove(GetMessageFlags() | DbgEngineMessageFlags.Running);
 		}
 
@@ -402,7 +402,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			if (module is null)
 				return false;
 
-			if (!(location.DbgModule is null)) {
+			if (location.DbgModule is not null) {
 				if (location.DbgModule != module)
 					return false;
 			}

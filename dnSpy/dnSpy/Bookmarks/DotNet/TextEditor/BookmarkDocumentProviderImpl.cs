@@ -64,7 +64,7 @@ namespace dnSpy.Bookmarks.DotNet.TextEditor {
 			var documentViewer = tab?.TryGetDocumentViewer();
 			if (documentViewer is null)
 				return null;
-			Debug2.Assert(!(tab is null));
+			Debug2.Assert(tab is not null);
 			var methodDebugService = documentViewer.GetMethodDebugService();
 			var info = methodDebugService.TryGetMethodDebugInfo(new ModuleTokenId(bodyLoc.Module, bodyLoc.Token));
 			if (info is null)
@@ -79,7 +79,7 @@ namespace dnSpy.Bookmarks.DotNet.TextEditor {
 			var documentViewer = tab?.TryGetDocumentViewer();
 			if (documentViewer is null)
 				return null;
-			Debug2.Assert(!(tab is null));
+			Debug2.Assert(tab is not null);
 
 			foreach (var info in documentViewer.ReferenceCollection) {
 				if (!info.Data.IsDefinition)

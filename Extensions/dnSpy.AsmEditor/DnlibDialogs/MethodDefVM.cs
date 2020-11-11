@@ -62,6 +62,6 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			return string.Empty;
 		}
 
-		public override bool HasError => !(Method is null);
+		public override bool HasError => Method is not null;
 	}
 }

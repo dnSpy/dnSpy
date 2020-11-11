@@ -48,7 +48,7 @@ namespace dnSpy.Decompiler {
 					textChars[i] = '-';
 				}
 			}
-			if (!(textChars is null))
+			if (textChars is not null)
 				text = new string(textChars);
 
 			if (ReservedFileNames.Contains(text))

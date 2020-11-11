@@ -43,7 +43,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 				throw new ArgumentNullException(nameof(breakpoint));
 			foreach (var lz in dbgBreakpointGlyphTextMarkerLocationProviders) {
 				var loc = lz.Value.GetLocation(breakpoint);
-				if (!(loc is null))
+				if (loc is not null)
 					return loc;
 			}
 			return null;

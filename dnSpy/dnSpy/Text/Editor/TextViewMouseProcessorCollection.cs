@@ -47,7 +47,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		bool AllowMouseEvent(MouseEventArgs e) {
-			if (!(dsWpfTextView is null) && dsWpfTextView.IsMouseOverOverlayLayerElement(e)) {
+			if (dsWpfTextView is not null && dsWpfTextView.IsMouseOverOverlayLayerElement(e)) {
 				e.Handled = true;
 				return false;
 			}
@@ -63,7 +63,7 @@ namespace dnSpy.Text.Editor {
 				if (!wpfTextView.TextDataModel.ContentType.IsOfAnyType(provider.Metadata.ContentTypes))
 					continue;
 				var mouseProcessor = provider.Value.GetAssociatedProcessor(wpfTextView);
-				if (!(mouseProcessor is null))
+				if (mouseProcessor is not null)
 					list.Add(mouseProcessor);
 			}
 			UIElement? manipulationElem = null;//TODO:

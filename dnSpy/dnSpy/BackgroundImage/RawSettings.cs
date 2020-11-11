@@ -27,7 +27,7 @@ using dnSpy.Contracts.Settings;
 
 namespace dnSpy.BackgroundImage {
 	sealed class RawSettings : IEquatable<RawSettings?> {
-		public bool IsValid => !(Id is null);
+		public bool IsValid => Id is not null;
 		public string? Id { get; private set; }
 		public Stretch Stretch { get; set; }
 		public StretchDirection StretchDirection { get; set; }

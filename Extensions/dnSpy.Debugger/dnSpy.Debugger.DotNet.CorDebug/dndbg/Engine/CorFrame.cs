@@ -221,7 +221,7 @@ namespace dndbg.Engine {
 				methGenArgs = Array.Empty<CorType>();
 				return false;
 			}
-			Debug2.Assert(!(func is null));
+			Debug2.Assert(func is not null);
 
 			var mdi = module.GetMetaDataInterface<IMetaDataImport>();
 			var gas = new List<CorType>(TypeParameters);
@@ -250,7 +250,7 @@ namespace dndbg.Engine {
 			return hr < 0 || value is null ? null : new CorValue(value);
 		}
 
-		public bool Equals(CorFrame? other) => !(other is null) && RawObject == other.RawObject;
+		public bool Equals(CorFrame? other) => other is not null && RawObject == other.RawObject;
 		public override bool Equals(object? obj) => Equals(obj as CorFrame);
 		public override int GetHashCode() => RawObject.GetHashCode();
 	}

@@ -83,7 +83,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			if (dnlibTypePicker is null)
 				throw new InvalidOperationException();
 			var newMethod = dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Method, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.MethodDef), Method, typeSigCreatorOptions.OwnerModule);
-			if (!(newMethod is null))
+			if (newMethod is not null)
 				Method = newMethod;
 		}
 
@@ -94,7 +94,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			Method = options.Method;
 			var gim = options.Instantiation as GenericInstMethodSig;
 			CreateTypeSigArrayVM.TypeSigCollection.Clear();
-			if (!(gim is null))
+			if (gim is not null)
 				CreateTypeSigArrayVM.TypeSigCollection.AddRange(gim.GenericArguments);
 			CustomAttributesVM.InitializeFrom(options.CustomAttributes);
 		}

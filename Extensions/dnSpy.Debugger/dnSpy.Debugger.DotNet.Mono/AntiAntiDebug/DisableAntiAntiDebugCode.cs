@@ -30,12 +30,12 @@ namespace dnSpy.Debugger.DotNet.Mono.AntiAntiDebug {
 		static bool TryGetInternalRuntime(DbgProcess process, [NotNullWhen(true)] out DbgMonoDebugInternalRuntime? runtime) {
 			runtime = null;
 			var dbgRuntime = process.Runtimes.FirstOrDefault();
-			Debug2.Assert(!(dbgRuntime is null));
+			Debug2.Assert(dbgRuntime is not null);
 			if (dbgRuntime is null)
 				return false;
 
 			runtime = dbgRuntime.InternalRuntime as DbgMonoDebugInternalRuntime;
-			return !(runtime is null);
+			return runtime is not null;
 		}
 
 		public bool IsEnabled(DbgNativeFunctionHookContext context) => TryGetInternalRuntime(context.Process, out _);

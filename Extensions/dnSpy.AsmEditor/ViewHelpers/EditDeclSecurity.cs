@@ -32,7 +32,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 
 		public DeclSecurityVM? Edit(string? title, DeclSecurityVM ds) {
 			var win = new DeclSecurityDlg();
-			if (!(title is null))
+			if (title is not null)
 				win.Title = title;
 			win.DataContext = ds;
 			win.Owner = ownerWindow ?? Application.Current.MainWindow;

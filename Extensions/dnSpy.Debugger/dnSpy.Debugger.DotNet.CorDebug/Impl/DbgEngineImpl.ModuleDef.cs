@@ -32,12 +32,12 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		void DnDebugger_OnCorModuleDefCreated(object? sender, CorModuleDefCreatedEventArgs e) {
 			debuggerThread.VerifyAccess();
 			var appDomain = TryGetEngineAppDomain(e.Module.AppDomain)?.AppDomain;
-			Debug2.Assert(!(appDomain is null));
-			if (!(appDomain is null)) {
+			Debug2.Assert(appDomain is not null);
+			if (appDomain is not null) {
 				var state = appDomain.GetOrCreateData<AppDomainModuleState>();
 				if (state.ModuleContext is null) {
 					var reflectionAppDomain = appDomain.GetReflectionAppDomain();
-					Debug2.Assert(!(reflectionAppDomain is null));
+					Debug2.Assert(reflectionAppDomain is not null);
 					state.ModuleContext = CreateModuleContext(reflectionAppDomain);
 				}
 				e.CorModuleDef.Context = state.ModuleContext;

@@ -45,7 +45,7 @@ namespace dnSpy.Text.Classification {
 				if (!contentType.IsOfAnyType(lz.Metadata.ContentTypes))
 					continue;
 				var classifier = lz.Value.Create(contentType);
-				if (!(classifier is null))
+				if (classifier is not null)
 					list.Add(classifier);
 			}
 			return new TextClassifierAggregator(classificationTypeRegistryService, list);

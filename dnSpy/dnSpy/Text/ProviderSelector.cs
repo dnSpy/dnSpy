@@ -55,7 +55,7 @@ namespace dnSpy.Text {
 			foreach (var provider in providers) {
 				foreach (var ctString in provider.Metadata.ContentTypes) {
 					var ct = contentTypeRegistryService.GetContentType(ctString);
-					Debug2.Assert(!(ct is null));
+					Debug2.Assert(ct is not null);
 					if (ct is null)
 						continue;
 					int dist = GetDistance(ct, contentType);

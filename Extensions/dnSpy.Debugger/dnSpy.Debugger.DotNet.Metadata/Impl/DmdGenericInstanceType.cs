@@ -109,7 +109,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			if (IsFullyResolved)
 				return this;
 			var newTypeArguments = DmdTypeUtilities.FullResolve(typeArguments);
-			if (!(newTypeArguments is null))
+			if (newTypeArguments is not null)
 				return (DmdTypeBase)AppDomain.MakeGenericType(genericTypeDefinition, newTypeArguments, GetCustomModifiers());
 			return null;
 		}

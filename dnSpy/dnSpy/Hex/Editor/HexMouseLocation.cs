@@ -46,7 +46,7 @@ namespace dnSpy.Hex.Editor {
 
 			var point = GetTextPoint(wpfHexView, e);
 			var line = wpfHexView.HexViewLines.GetHexViewLineContainingYCoordinate(point.Y);
-			if (!(line is null))
+			if (line is not null)
 				hexViewLine = line;
 			else if (point.Y <= wpfHexView.ViewportTop)
 				hexViewLine = wpfHexView.HexViewLines.FirstVisibleLine;

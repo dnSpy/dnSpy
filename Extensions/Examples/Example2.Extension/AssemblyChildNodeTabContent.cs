@@ -28,7 +28,7 @@ namespace Example2.Extension {
 				// Serialize() doesn't add anything extra to 'section', but if it did, you'd have to
 				// get that info here and return null if the serialized data wasn't found.
 				var node = context.Nodes.Length == 1 ? context.Nodes[0] as AssemblyChildNode : null;
-				if (!(node is null))
+				if (node is not null)
 					return new AssemblyChildNodeTabContent(node);
 			}
 			return null;

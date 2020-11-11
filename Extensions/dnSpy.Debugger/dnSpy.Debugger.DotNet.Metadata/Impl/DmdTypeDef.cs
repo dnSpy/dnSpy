@@ -173,7 +173,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			// We loop here because the field could be cleared if it's a dynamic type
 			for (;;) {
 				var gps = f.__genericParameters_DONT_USE;
-				if (!(gps is null))
+				if (gps is not null)
 					return gps;
 				var res = CreateGenericParameters();
 				Interlocked.CompareExchange(ref f.__genericParameters_DONT_USE, ReadOnlyCollectionHelpers.Create(res), null);

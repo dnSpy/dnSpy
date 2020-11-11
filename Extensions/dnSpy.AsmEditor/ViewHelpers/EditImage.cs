@@ -56,7 +56,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 				return mo;
 			}
 			catch (Exception ex) {
-				if (!(imgStream is null))
+				if (imgStream is not null)
 					imgStream.Dispose();
 				MsgBox.Instance.Show(string.Format(dnSpy_AsmEditor_Resources.Error_OpenImage, ex.Message), MsgBoxButton.OK, ownerWindow);
 				return null;

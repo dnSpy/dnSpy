@@ -81,7 +81,7 @@ namespace dnSpy.Hex.Files.DotNet {
 		}
 
 		void Initialize() {
-			if (!(blobDataInfos is null))
+			if (blobDataInfos is not null)
 				return;
 			if (metadata is null)
 				return;
@@ -90,7 +90,7 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		public override ComplexData? GetStructure(HexPosition position) {
 			var info = GetBlobDataInfo(position);
-			if (!(info is null))
+			if (info is not null)
 				return GetStructure(info.Value, position);
 
 			return null;
@@ -141,7 +141,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			var index = GetIndex(position);
 			if (index < 0)
 				return null;
-			Debug2.Assert(!(blobDataInfos is null));
+			Debug2.Assert(blobDataInfos is not null);
 			return blobDataInfos[index];
 		}
 

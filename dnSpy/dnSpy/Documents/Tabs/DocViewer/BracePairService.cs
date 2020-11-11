@@ -190,7 +190,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				return (pair.Left.Start, pair);
 			if (pair.Right.Start == pos) {
 				var pair2 = coll.GetBracePairs(pos - 1);
-				if (!(pair2 is null) && pair2.Value.First.Right.End == pos)
+				if (pair2 is not null && pair2.Value.First.Right.End == pos)
 					return (pair2.Value.First.Left.Start, pair2.Value.First);
 			}
 			if (pair.Left.Start <= pos && pos <= pair.Left.End)
@@ -288,7 +288,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				return res;
 			if (res.Value.First.Right.Start == pos) {
 				res = bracePairCollection.GetBracePairs(pos - 1);
-				if (!(res is null) && res.Value.First.Right.End == pos)
+				if (res is not null && res.Value.First.Right.End == pos)
 					return new BracePairResultCollection(res.Value.First, null);
 			}
 			return null;
@@ -315,25 +315,25 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		void RefreshTags(BracePairResultCollection? a, BracePairResultCollection? b) {
-			if (!(a is null)) {
+			if (a is not null) {
 				RefreshTags(a.Value.First);
 				RefreshTags(a.Value.Second);
 			}
-			if (!(b is null)) {
+			if (b is not null) {
 				RefreshTags(b.Value.First);
 				RefreshTags(b.Value.Second);
 			}
 		}
 
 		void RefreshTags(BracePairResult? a) {
-			if (!(a is null)) {
+			if (a is not null) {
 				RefreshTags(a.Value.Left);
 				RefreshTags(a.Value.Right);
 			}
 		}
 
 		void RefreshTags(Span span) {
-			if (!(tagger is null)) {
+			if (tagger is not null) {
 				var snapshot = textView.TextSnapshot;
 				if (span.End <= snapshot.Length)
 					tagger?.RaiseTagsChanged(new SnapshotSpan(snapshot, span));
@@ -341,7 +341,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		void RefreshAllTags() {
-			if (!(tagger is null)) {
+			if (tagger is not null) {
 				UpdateBracePairs(false);
 				var snapshot = textView.TextSnapshot;
 				tagger?.RaiseTagsChanged(new SnapshotSpan(snapshot, 0, snapshot.Length));
@@ -354,7 +354,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		public void SetBracePairViewTagger(BracePairViewTagger tagger) {
-			if (!(this.tagger is null))
+			if (this.tagger is not null)
 				throw new InvalidOperationException();
 			this.tagger = tagger ?? throw new ArgumentNullException(nameof(tagger));
 		}
@@ -367,7 +367,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				yield return new TagSpan<IBracePairTag>(new SnapshotSpan(snapshot, currentBracePair.Value.First.Left), BracePairTag.Instance);
 			if (currentBracePair.Value.First.Right.End <= snapshot.Length)
 				yield return new TagSpan<IBracePairTag>(new SnapshotSpan(snapshot, currentBracePair.Value.First.Right), BracePairTag.Instance);
-			if (!(currentBracePair.Value.Second is null)) {
+			if (currentBracePair.Value.Second is not null) {
 				if (currentBracePair.Value.Second.Value.Left.End <= snapshot.Length)
 					yield return new TagSpan<IBracePairTag>(new SnapshotSpan(snapshot, currentBracePair.Value.Second.Value.Left), BracePairTag.Instance);
 				if (currentBracePair.Value.Second.Value.Right.End <= snapshot.Length)

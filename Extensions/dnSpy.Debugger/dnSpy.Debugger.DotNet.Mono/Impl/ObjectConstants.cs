@@ -38,9 +38,9 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		public bool TryCreate([NotNullWhen(true)] out ObjectConstants? objectConstants) {
 			try {
 				var offsetToStringData = GetOffsetToStringData();
-				if (!(offsetToStringData is null)) {
+				if (offsetToStringData is not null) {
 					var offsetToArrayData = GetOffsetToArrayData();
-					if (!(offsetToArrayData is null)) {
+					if (offsetToArrayData is not null) {
 						objectConstants = new ObjectConstants(offsetToStringData, offsetToArrayData);
 						return true;
 					}

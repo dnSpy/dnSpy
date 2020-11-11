@@ -31,13 +31,13 @@ namespace dnSpy.Decompiler.IL {
 			else if (hi != 0)
 				return null;
 			var s = cachedOpCodeDocs[index];
-			if (!(s is null))
+			if (s is not null)
 				return s;
 
 			var docProvider = XmlDocLoader.MscorlibDocumentation;
-			if (!(docProvider is null)) {
+			if (docProvider is not null) {
 				string? docXml = docProvider.GetDocumentation("F:System.Reflection.Emit.OpCodes." + code.Code.ToString());
-				if (!(docXml is null)) {
+				if (docXml is not null) {
 					XmlDocRenderer renderer = new XmlDocRenderer();
 					renderer.AddXmlDocumentation(docXml);
 					return cachedOpCodeDocs[index] = renderer.ToString();

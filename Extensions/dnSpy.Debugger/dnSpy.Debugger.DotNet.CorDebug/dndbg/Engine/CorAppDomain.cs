@@ -93,7 +93,7 @@ namespace dndbg.Engine {
 			return res is null ? null : new CorType(res);
 		}
 
-		public bool Equals(CorAppDomain? other) => !(other is null) && RawObject == other.RawObject;
+		public bool Equals(CorAppDomain? other) => other is not null && RawObject == other.RawObject;
 		public override bool Equals(object? obj) => Equals(obj as CorAppDomain);
 		public override int GetHashCode() => RawObject.GetHashCode();
 		public override string ToString() => $"[AppDomain] {Id} {Name}";

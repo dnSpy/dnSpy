@@ -94,11 +94,11 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		void Hook(NotifyCollectionChangedEventArgs e) {
-			if (!(e.OldItems is null)) {
+			if (e.OldItems is not null) {
 				foreach (INotifyPropertyChanged? i in e.OldItems)
 					i!.PropertyChanged -= arg_PropertyChanged;
 			}
-			if (!(e.NewItems is null)) {
+			if (e.NewItems is not null) {
 				foreach (INotifyPropertyChanged? i in e.NewItems)
 					i!.PropertyChanged += arg_PropertyChanged;
 			}
@@ -113,7 +113,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			if (dnlibTypePicker is null)
 				throw new InvalidOperationException();
 			var newAttrType = dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Type, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.TypeDef), AttributeType, ownerModule);
-			if (!(newAttrType is null))
+			if (newAttrType is not null)
 				AttributeType = newAttrType;
 		}
 

@@ -139,7 +139,7 @@ namespace dndbg.Engine {
 		internal DnThread? ThreadExited(ICorDebugThread? comThread) {
 			var thread = threads.TryGet(comThread);
 			// Sometimes we don't get a CreateThread message
-			if (!(thread is null)) {
+			if (thread is not null) {
 				thread.SetHasExited();
 				threads.Remove(comThread);
 			}

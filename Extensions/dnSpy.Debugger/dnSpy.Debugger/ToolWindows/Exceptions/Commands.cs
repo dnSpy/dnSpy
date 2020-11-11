@@ -196,7 +196,7 @@ namespace dnSpy.Debugger.ToolWindows.Exceptions {
 
 		IEnumerable<CreatedMenuItem> IMenuItemProvider.Create(IMenuItemContext context) {
 			var ctx = ExceptionsContextMenuEntry.CreateContext(exceptionsCommandContext, context);
-			Debug2.Assert(!(ctx is null));
+			Debug2.Assert(ctx is not null);
 			if (ctx is null)
 				yield break;
 

@@ -59,7 +59,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			this.documentViewerReferenceEnablerProviders = new Dictionary<string, Lazy<IDocumentViewerReferenceEnablerProvider, IDocumentViewerReferenceEnablerProviderMetadata>>(documentViewerReferenceEnablerProviders.Length, StringComparer.Ordinal);
 			foreach (var lazy in documentViewerReferenceEnablerProviders) {
 				string id = lazy.Metadata.Id;
-				Debug2.Assert(!(id is null));
+				Debug2.Assert(id is not null);
 				if (id is null)
 					continue;
 				bool b = this.documentViewerReferenceEnablerProviders.ContainsKey(id);
@@ -137,7 +137,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		void SetDocumentViewer(IDocumentViewer documentViewer, Dictionary<string, Lazy<IDocumentViewerReferenceEnablerProvider, IDocumentViewerReferenceEnablerProviderMetadata>> documentViewerReferenceEnablerProviders) {
-			if (!(this.documentViewer is null))
+			if (this.documentViewer is not null)
 				throw new InvalidOperationException();
 			this.documentViewer = documentViewer ?? throw new ArgumentNullException(nameof(documentViewer));
 			this.documentViewerReferenceEnablerProviders = documentViewerReferenceEnablerProviders ?? throw new ArgumentNullException(nameof(documentViewerReferenceEnablerProviders));
@@ -173,9 +173,9 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		bool IsEnabled(string? id) {
-			Debug2.Assert(!(documentViewerReferenceEnablers is null));
-			Debug2.Assert(!(documentViewerReferenceEnablerProviders is null));
-			Debug2.Assert(!(documentViewer is null));
+			Debug2.Assert(documentViewerReferenceEnablers is not null);
+			Debug2.Assert(documentViewerReferenceEnablerProviders is not null);
+			Debug2.Assert(documentViewer is not null);
 
 			// A null id is always enabled
 			if (id is null)
@@ -185,9 +185,9 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				bool b = documentViewerReferenceEnablerProviders.TryGetValue(id, out var lazy);
 				Debug.Assert(b, $"Missing {nameof(IDocumentViewerReferenceEnablerProvider)} for reference id = {id}");
 				if (b) {
-					Debug2.Assert(!(lazy is null));
+					Debug2.Assert(lazy is not null);
 					refChecker = lazy.Value.Create(documentViewer);
-					if (!(refChecker is null))
+					if (refChecker is not null)
 						refChecker.IsEnabledChanged += DocumentViewerReferenceEnabler_IsEnabledChanged;
 				}
 				else
@@ -209,13 +209,13 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				yield break;
 			if (documentViewer.TextView.IsClosed)
 				yield break;
-			Debug2.Assert(!(documentViewerReferenceEnablerProviders is null));
-			Debug2.Assert(!(documentViewerReferenceEnablers is null));
+			Debug2.Assert(documentViewerReferenceEnablerProviders is not null);
+			Debug2.Assert(documentViewerReferenceEnablers is not null);
 
 			// It's not common for both references to be non-null but it does happen if it's VB and the reference
 			// is at eg. a Get keyword. For that reason, check for span refs first or we won't see the definition
 			// highlight because it's hidden behind another span reference.
-			if (!(currentSpanReference is null)) {
+			if (currentSpanReference is not null) {
 				if (spans.Count == 0)
 					yield break;
 				var snapshot = spans[0].Snapshot;
@@ -235,7 +235,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				}
 			}
 
-			if (!(currentReference is null)) {
+			if (currentReference is not null) {
 				if (spans.Count == 0)
 					yield break;
 				var snapshot = spans[0].Snapshot;
@@ -281,13 +281,13 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			bool refresh = false;
 
 			var newRef = GetCurrentReference();
-			if (!(newRef is null)) {
+			if (newRef is not null) {
 				if (!IsSameReference(newRef, currentReference))
 					refresh = true;
 			}
 
 			var newSpanRef = GetCurrentSpanReference();
-			if (!(newSpanRef is null)) {
+			if (newSpanRef is not null) {
 				if (!IsSameReference(newSpanRef, currentSpanReference))
 					refresh = true;
 			}
@@ -308,7 +308,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		void TextView_Closed(object? sender, EventArgs e) {
-			if (!(documentViewerReferenceEnablers is null)) {
+			if (documentViewerReferenceEnablers is not null) {
 				foreach (var v in documentViewerReferenceEnablers.Values) {
 					if (v is null)
 						continue;
@@ -324,7 +324,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			textView.Closed -= TextView_Closed;
 			textView.Options.OptionChanged -= Options_OptionChanged;
 			textView.Caret.PositionChanged -= Caret_PositionChanged;
-			if (!(documentViewer is null))
+			if (documentViewer is not null)
 				documentViewer.GotNewContent -= DocumentViewer_GotNewContent;
 		}
 	}

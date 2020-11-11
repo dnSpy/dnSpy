@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		/// <summary>
 		/// true if the compilation succeeded
 		/// </summary>
-		public bool Success => !(RawFile is null);
+		public bool Success => RawFile is not null;
 
 		/// <summary>
 		/// Result of compilation or null if compilation failed

@@ -56,7 +56,7 @@ namespace dnSpy.AsmEditor.Commands {
 				if (tns != ns)
 					throw new ArgumentException();
 				// Can't be a nested type, and can't be part of a module yet
-				if (!(t.DeclaringType is null) || !(t.Module is null))
+				if (t.DeclaringType is not null || t.Module is not null)
 					throw new ArgumentException();
 			}
 			ownerList = modNode.Document.ModuleDef!.Types;

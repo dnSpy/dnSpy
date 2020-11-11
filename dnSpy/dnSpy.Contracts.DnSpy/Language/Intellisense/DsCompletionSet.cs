@@ -119,7 +119,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// Filters the list. <see cref="SelectBestMatch"/> should be called after this method
 		/// </summary>
 		public override void Filter() {
-			Debug2.Assert(!(ApplicableTo is null), "You must initialize " + nameof(ApplicableTo) + " before calling this method");
+			Debug2.Assert(ApplicableTo is not null, "You must initialize " + nameof(ApplicableTo) + " before calling this method");
 			var inputText = SearchText;
 			var filteredList = new List<Completion>(allCompletions.Length);
 			Filter(filteredList, allCompletions);
@@ -159,7 +159,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// </summary>
 		/// <returns></returns>
 		protected virtual CompletionSelectionStatus GetBestMatch() {
-			Debug2.Assert(!(ApplicableTo is null), "You must initialize " + nameof(ApplicableTo) + " before calling this method");
+			Debug2.Assert(ApplicableTo is not null, "You must initialize " + nameof(ApplicableTo) + " before calling this method");
 			var inputText = SearchText;
 			var completionFilter = CreateCompletionFilter(inputText);
 			int matches = 0;
@@ -167,7 +167,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 			var mruSelectionCase = default(MruSelection);
 			var mruSelection = default(MruSelection);
 			if (inputText.Length > 0) {
-				Debug2.Assert(!(searchText is null));
+				Debug2.Assert(searchText is not null);
 				foreach (var completion in Completions) {
 					if (!completionFilter.IsMatch(completion))
 						continue;
@@ -191,10 +191,10 @@ namespace dnSpy.Contracts.Language.Intellisense {
 			// local 'i' exists, and we previously typed 'int', and we've just typed 'i',
 			// then select 'i' and not 'int'
 			var selectedCompletion = mruSelectionCase.Completion ?? mruSelection.Completion ?? selector.Result;
-			if (!(selector.Result is null) && inputText.Equals(selector.Result!.TryGetFilterText(), StringComparison.OrdinalIgnoreCase))
+			if (selector.Result is not null && inputText.Equals(selector.Result!.TryGetFilterText(), StringComparison.OrdinalIgnoreCase))
 				selectedCompletion = selector.Result;
 
-			bool isSelected = !(selectedCompletion is null);
+			bool isSelected = selectedCompletion is not null;
 			bool isUnique = matches == 1;
 			return new CompletionSelectionStatus(selectedCompletion, isSelected, isUnique);
 		}

@@ -33,7 +33,7 @@ namespace dnSpy.Contracts.Decompiler {
 				var comparableBaseType = baseType.ResolveTypeDef();
 				if (comparableBaseType is null)
 					return false;
-				while (!(derivedType.BaseType is null)) {
+				while (derivedType.BaseType is not null) {
 					var resolvedBaseType = derivedType.BaseType.Resolve();
 					if (resolvedBaseType is null)
 						return false;
@@ -148,7 +148,7 @@ namespace dnSpy.Contracts.Decompiler {
 
 		public static bool MatchInterfaceMethod(MethodDef? candidate, MethodDef? method, ITypeDefOrRef interfaceContextType) {
 			var genericInstSig = interfaceContextType.TryGetGenericInstSig();
-			if (!(genericInstSig is null)) {
+			if (genericInstSig is not null) {
 				return MatchMethod(candidate, candidate?.MethodSig, method, GenericArgumentResolver.Resolve(method?.MethodSig, genericInstSig.GenericArguments, null));
 			}
 			else {
@@ -181,7 +181,7 @@ namespace dnSpy.Contracts.Decompiler {
 							continue;
 						yield return baseProperty;
 						var anyPropertyAccessor = baseProperty.GetMethod ?? baseProperty.SetMethod;
-						if (!(anyPropertyAccessor is null) && anyPropertyAccessor.IsNewSlot == anyPropertyAccessor.IsVirtual)
+						if (anyPropertyAccessor is not null && anyPropertyAccessor.IsNewSlot == anyPropertyAccessor.IsVirtual)
 							yield break;
 					}
 				}
@@ -215,7 +215,7 @@ namespace dnSpy.Contracts.Decompiler {
 						IsVisibleFromDerived(baseEvent, declType)) {
 						yield return baseEvent;
 						var anyEventAccessor = baseEvent.AddMethod ?? baseEvent.RemoveMethod ?? baseEvent.InvokeMethod;
-						if (!(anyEventAccessor is null) && anyEventAccessor.IsNewSlot == anyEventAccessor.IsVirtual)
+						if (anyEventAccessor is not null && anyEventAccessor.IsNewSlot == anyEventAccessor.IsVirtual)
 							yield break;
 					}
 				}
@@ -254,7 +254,7 @@ namespace dnSpy.Contracts.Decompiler {
 				var derivedTypeAsm = derivedType.Module.Assembly;
 				var asm = baseMember.DeclaringType.Module.Assembly;
 
-				if (!(derivedTypeAsm is null) && !(asm is null)) {
+				if (derivedTypeAsm is not null && asm is not null) {
 					foreach (var attribute in asm.CustomAttributes) {
 						if (!Compare(attribute.AttributeType, systemRuntimeCompilerServicesString, internalsVisibleToAttributeString))
 							continue;
@@ -347,7 +347,7 @@ namespace dnSpy.Contracts.Decompiler {
 				typeDef = typeDef.BaseType.ResolveTypeDef();
 				if (typeDef is null)
 					break;
-			} while (!(typeDef.BaseType is null));
+			} while (typeDef.BaseType is not null);
 		}
 
 		public static IEnumerable<TypeSig> GetTypeAndBaseTypes(TypeDef? type) {

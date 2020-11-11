@@ -154,7 +154,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		}
 
 		bool CalculateIsVisible(GACFileVM vm, string filterText) {
-			Debug2.Assert(!(filterText is null) && filterText.Trim().ToUpperInvariant() == filterText);
+			Debug2.Assert(filterText is not null && filterText.Trim().ToUpperInvariant() == filterText);
 			if (!ShowDuplicates && vm.IsDuplicate)
 				return false;
 			if (string.IsNullOrEmpty(filterText))

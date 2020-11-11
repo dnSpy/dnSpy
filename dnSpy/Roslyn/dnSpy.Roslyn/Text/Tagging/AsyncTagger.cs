@@ -189,7 +189,7 @@ namespace dnSpy.Roslyn.Text.Tagging {
 		}
 
 		protected void RefreshAllTags(ITextSnapshot snapshot) {
-			Debug2.Assert(!(snapshot is null));
+			Debug2.Assert(snapshot is not null);
 			if (snapshot is null)
 				return;
 			lock (lockObj) {
@@ -221,7 +221,7 @@ namespace dnSpy.Roslyn.Text.Tagging {
 					lastSnapshotState = new SnapshotState(snapshot);
 					lastSnapshotState.AddRef();
 				}
-				Debug2.Assert(!(lastSnapshotState is null));
+				Debug2.Assert(lastSnapshotState is not null);
 
 				foreach (var span in spans) {
 					if (cachedTags.TryGetValue(span.Start.Position, out var tags)) {
@@ -247,9 +247,9 @@ namespace dnSpy.Roslyn.Text.Tagging {
 			Debug2.Assert(multipleResults is null || multipleResults.Count >= 2);
 			Debug2.Assert(multipleMissingSpans is null || multipleMissingSpans.Count >= 2);
 
-			if (!(singleMissingSpan is null)) {
+			if (singleMissingSpan is not null) {
 				if (spans.Count != (multipleMissingSpans?.Count ?? 1)) {
-					spans = !(multipleMissingSpans is null) ?
+					spans = multipleMissingSpans is not null ?
 						new NormalizedSnapshotSpanCollection(multipleMissingSpans) :
 						new NormalizedSnapshotSpanCollection(singleMissingSpan.Value);
 				}

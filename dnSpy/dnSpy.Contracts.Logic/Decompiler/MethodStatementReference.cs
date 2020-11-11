@@ -52,7 +52,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <returns></returns>
 		public override bool Equals(object? obj) {
 			var other = obj as MethodStatementReference;
-			return !(other is null) &&
+			return other is not null &&
 				Method == other.Method &&
 				Offset == other.Offset;
 		}

@@ -91,7 +91,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
 				return false;
 			var uiContext = context.Find<IDocumentViewer>();
-			return !(uiContext is null) && !uiContext.Selection.IsEmpty;
+			return uiContext is not null && !uiContext.Selection.IsEmpty;
 		}
 	}
 
@@ -99,15 +99,15 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 	sealed class FindInCodeCommand : MenuItemBase {
 		public override void Execute(IMenuItemContext context) {
 			var elem = GetInputElement();
-			if (!(elem is null))
+			if (elem is not null)
 				ApplicationCommands.Find.Execute(null, elem);
 		}
 
-		public override bool IsEnabled(IMenuItemContext context) => !(GetInputElement() is null);
+		public override bool IsEnabled(IMenuItemContext context) => GetInputElement() is not null;
 
 		IInputElement? GetInputElement() {
 			var elem = Keyboard.FocusedElement;
-			return !(elem is null) && ApplicationCommands.Find.CanExecute(null, elem) ? elem : null;
+			return elem is not null && ApplicationCommands.Find.CanExecute(null, elem) ? elem : null;
 		}
 	}
 

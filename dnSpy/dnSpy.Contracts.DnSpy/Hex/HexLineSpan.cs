@@ -48,7 +48,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <summary>
 		/// true if it's a text span
 		/// </summary>
-		public bool IsTextSpan => !(TextSpan is null);
+		public bool IsTextSpan => TextSpan is not null;
 
 		/// <summary>
 		/// Constructor

@@ -73,7 +73,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 					OnPropertyChanged(nameof(IsSavingOrCanceling));
 					OnModuleSettingsSaved();
 
-					if (saveState == SaveState.Saved && !(OnSavedEvent is null))
+					if (saveState == SaveState.Saved && OnSavedEvent is not null)
 						OnSavedEvent(this, EventArgs.Empty);
 				}
 			}
@@ -81,7 +81,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		SaveState saveState = SaveState.Loaded;
 
 		public ICommand SaveCommand => new RelayCommand(a => Save(), a => CanExecuteSave);
-		public ICommand CancelSaveCommand => new RelayCommand(a => CancelSave(), a => IsSaving && !(moduleSaver is null));
+		public ICommand CancelSaveCommand => new RelayCommand(a => CancelSave(), a => IsSaving && moduleSaver is not null);
 		public event EventHandler? OnSavedEvent;
 		public bool IsLoaded => State == SaveState.Loaded;
 		public bool IsSaving => State == SaveState.Saving;

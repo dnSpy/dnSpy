@@ -65,7 +65,7 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 			lock (lockObj) {
 				foreach (var info in settings) {
 					var bpImpl = info.Breakpoint as DbgModuleBreakpointImpl;
-					Debug2.Assert(!(bpImpl is null));
+					Debug2.Assert(bpImpl is not null);
 					if (bpImpl is null)
 						continue;
 					Debug.Assert(breakpoints.Contains(bpImpl));
@@ -135,7 +135,7 @@ namespace dnSpy.Debugger.Breakpoints.Modules {
 			lock (lockObj) {
 				foreach (var bp in breakpoints) {
 					var bpImpl = bp as DbgModuleBreakpointImpl;
-					Debug2.Assert(!(bpImpl is null));
+					Debug2.Assert(bpImpl is not null);
 					if (bpImpl is null)
 						continue;
 					Debug.Assert(this.breakpoints.Contains(bpImpl));

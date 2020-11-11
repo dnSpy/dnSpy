@@ -163,7 +163,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.CallStack {
 		}
 
 		protected override void CloseCore(DbgDispatcher dispatcher) {
-			if (!(framesBuffer is null))
+			if (framesBuffer is not null)
 				engine.ReturnFramesBuffer(ref framesBuffer);
 			framesBuffer = null;
 			enumerator?.Dispose();

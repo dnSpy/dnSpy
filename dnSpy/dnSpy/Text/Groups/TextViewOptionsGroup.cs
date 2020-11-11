@@ -48,12 +48,12 @@ namespace dnSpy.Text.Groups {
 			this.groupName = groupName ?? throw new ArgumentNullException(nameof(groupName));
 
 			foreach (var option in defaultOptions) {
-				Debug2.Assert(!(option.Name is null));
+				Debug2.Assert(option.Name is not null);
 				if (option.Name is null)
 					continue;
 
 				var ct = option.ContentType is null ? null : contentTypeRegistryService.GetContentType(option.ContentType);
-				Debug2.Assert(!(ct is null));
+				Debug2.Assert(ct is not null);
 				if (ct is null)
 					continue;
 
@@ -71,7 +71,7 @@ namespace dnSpy.Text.Groups {
 		TextViewGroupOptionCollection GetCollection(IContentType? contentType) {
 			if (contentType is null)
 				contentType = contentTypeRegistryService.GetContentType(ContentTypes.Any);
-			Debug2.Assert(!(contentType is null));
+			Debug2.Assert(contentType is not null);
 			if (contentType is null)
 				return ErrorCollection;
 

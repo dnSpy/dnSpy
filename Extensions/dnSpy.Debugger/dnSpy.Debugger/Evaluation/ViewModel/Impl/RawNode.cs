@@ -81,9 +81,9 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		internal void SetErrorMessage(string errorMessage) => this.errorMessage = errorMessage;
 
 		public override void Format(DbgEvaluationInfo? evalInfo, IDbgValueNodeFormatParameters options, CultureInfo? cultureInfo) {
-			if (!(options.NameOutput is null))
+			if (options.NameOutput is not null)
 				FormatName(evalInfo, options.NameOutput, options.NameFormatterOptions, cultureInfo);
-			if (!(options.ValueOutput is null))
+			if (options.ValueOutput is not null)
 				FormatValue(evalInfo, options.ValueOutput, options.ValueFormatterOptions, cultureInfo);
 		}
 
@@ -102,13 +102,13 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		protected abstract ref readonly ClassifiedTextCollection CachedActualType { get; }
 
 		public sealed override void Format(DbgEvaluationInfo? evalInfo, IDbgValueNodeFormatParameters options, CultureInfo? cultureInfo) {
-			if (!(options.NameOutput is null))
+			if (options.NameOutput is not null)
 				FormatName(evalInfo, options.NameOutput, options.NameFormatterOptions, cultureInfo);
-			if (!(options.ValueOutput is null))
+			if (options.ValueOutput is not null)
 				FormatValue(evalInfo, options.ValueOutput, options.ValueFormatterOptions, cultureInfo);
-			if (!(options.ExpectedTypeOutput is null))
+			if (options.ExpectedTypeOutput is not null)
 				WriteTo(options.ExpectedTypeOutput, CachedExpectedType);
-			if (!(options.ActualTypeOutput is null))
+			if (options.ActualTypeOutput is not null)
 				WriteTo(options.ActualTypeOutput, CachedActualType);
 		}
 
@@ -194,25 +194,25 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			new ChildDbgValueRawNode(debuggerValueNodeChanged, debuggerValueNodeChangedData, this, index, reader);
 
 		public override void Format(DbgEvaluationInfo? evalInfo, IDbgValueNodeFormatParameters options, CultureInfo? cultureInfo) {
-			if (!(evalInfo is null))
+			if (evalInfo is not null)
 				DebuggerValueNode.Format(evalInfo, options, cultureInfo);
 			else {
-				if (!(options.NameOutput is null))
+				if (options.NameOutput is not null)
 					FormatName(evalInfo, options.NameOutput, options.NameFormatterOptions, cultureInfo);
-				if (!(options.ValueOutput is null))
+				if (options.ValueOutput is not null)
 					FormatValue(evalInfo, options.ValueOutput, options.ValueFormatterOptions, cultureInfo);
 			}
 		}
 
 		public override void FormatName(DbgEvaluationInfo? evalInfo, IDbgTextWriter output, DbgValueFormatterOptions options, CultureInfo? cultureInfo) {
-			if (!(evalInfo is null))
+			if (evalInfo is not null)
 				DebuggerValueNode.FormatName(evalInfo, output, options, cultureInfo);
 			else
 				output.Write(DbgTextColor.Error, "???");
 		}
 
 		public override void FormatValue(DbgEvaluationInfo? evalInfo, IDbgTextWriter output, DbgValueFormatterOptions options, CultureInfo? cultureInfo) {
-			if (!(evalInfo is null))
+			if (evalInfo is not null)
 				DebuggerValueNode.FormatValue(evalInfo, output, options, cultureInfo);
 			else
 				output.Write(DbgTextColor.Error, "???");
@@ -233,7 +233,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 	}
 
 	sealed class ChildDbgValueRawNode : DebuggerValueRawNode {
-		public override bool HasInitializedUnderlyingData => !(__dbgValueNode_DONT_USE is null);
+		public override bool HasInitializedUnderlyingData => __dbgValueNode_DONT_USE is not null;
 		internal DebuggerValueRawNode Parent => parent;
 		internal uint DbgValueNodeChildIndex { get; }
 

@@ -80,19 +80,19 @@ namespace dnSpy.MainApp {
 			value == AppToolWindowLocation.Bottom;
 
 		public void Write(ISettingsSection section) {
-			Debug2.Assert(!(HorizontalContentState is null) && !(VerticalContentState is null));
-			if (!(HorizontalContentState is null))
+			Debug2.Assert(HorizontalContentState is not null && VerticalContentState is not null);
+			if (HorizontalContentState is not null)
 				StackedContentStateSerializer.Serialize(section.GetOrCreateSection(HORIZONTALCONTENT_SECT), HorizontalContentState);
-			if (!(VerticalContentState is null))
+			if (VerticalContentState is not null)
 				StackedContentStateSerializer.Serialize(section.GetOrCreateSection(VERTICALCONTENT_SECT), VerticalContentState);
-			Debug2.Assert(!(LeftState is null) && !(RightState is null) && !(TopState is null) && !(BottomState is null));
-			if (!(LeftState is null))
+			Debug2.Assert(LeftState is not null && RightState is not null && TopState is not null && BottomState is not null);
+			if (LeftState is not null)
 				ToolWindowUIState.Serialize(section.CreateSection(TOOLWINDOWUI_SECT), LeftState);
-			if (!(RightState is null))
+			if (RightState is not null)
 				ToolWindowUIState.Serialize(section.CreateSection(TOOLWINDOWUI_SECT), RightState);
-			if (!(TopState is null))
+			if (TopState is not null)
 				ToolWindowUIState.Serialize(section.CreateSection(TOOLWINDOWUI_SECT), TopState);
-			if (!(BottomState is null))
+			if (BottomState is not null)
 				ToolWindowUIState.Serialize(section.CreateSection(TOOLWINDOWUI_SECT), BottomState);
 			foreach (var kv in SavedLocations) {
 				var sect = section.CreateSection(LOCATION_SECT);
@@ -192,8 +192,8 @@ namespace dnSpy.MainApp {
 			section.Attribute(ISHORIZONTAL_ATTR, state.IsHorizontal);
 			foreach (var content in state.Groups)
 				ToolWindowGroupState.Serialize(section.CreateSection(GROUP_SECT), content);
-			Debug2.Assert(!(state.StackedContentState is null));
-			if (!(state.StackedContentState is null))
+			Debug2.Assert(state.StackedContentState is not null);
+			if (state.StackedContentState is not null)
 				StackedContentStateSerializer.Serialize(section.GetOrCreateSection(STACKEDCONTENTSTATE_SECTION), state.StackedContentState);
 		}
 	}
@@ -330,7 +330,7 @@ namespace dnSpy.MainApp {
 			foreach (var kv in state.SavedLocations)
 				savedLocations[kv.Key] = kv.Value;
 
-			if (!(state.LeftState is null) && !(state.RightState is null) && !(state.TopState is null) && !(state.BottomState is null)) {
+			if (state.LeftState is not null && state.RightState is not null && state.TopState is not null && state.BottomState is not null) {
 				state.LeftState.Restore(this, toolWindowUIs[AppToolWindowLocation.Left]);
 				state.RightState.Restore(this, toolWindowUIs[AppToolWindowLocation.Right]);
 				state.TopState.Restore(this, toolWindowUIs[AppToolWindowLocation.Top]);
@@ -339,7 +339,7 @@ namespace dnSpy.MainApp {
 			else
 				RestoreDefault();
 
-			if (!(state.HorizontalContentState is null) && !(state.VerticalContentState is null)) {
+			if (state.HorizontalContentState is not null && state.VerticalContentState is not null) {
 				horizontalContent.State = state.HorizontalContentState;
 				verticalContent.State = state.VerticalContentState;
 			}
@@ -422,7 +422,7 @@ namespace dnSpy.MainApp {
 			if (content is null)
 				throw new ArgumentNullException(nameof(content));
 			var t = GetToolWindowGroup(content);
-			if (!(t is null)) {
+			if (t is not null) {
 				if (active)
 					t.Value.group.ActiveTabContent = content;
 				if (focus)
@@ -457,7 +457,7 @@ namespace dnSpy.MainApp {
 			var content = Create(guid);
 			if (content is null)
 				return false;
-			if (!(GetToolWindowGroup(content) is null))
+			if (GetToolWindowGroup(content) is not null)
 				return false;
 
 			g.Add(content);
@@ -475,8 +475,8 @@ namespace dnSpy.MainApp {
 			ui.IsAdded = true;
 		}
 
-		public bool IsShown(ToolWindowContent content) => !(GetToolWindowGroup(content) is null);
-		public bool IsShown(Guid guid) => !(GetToolWindowGroup(guid) is null);
+		public bool IsShown(ToolWindowContent content) => GetToolWindowGroup(content) is not null;
+		public bool IsShown(Guid guid) => GetToolWindowGroup(guid) is not null;
 
 		void Hide(ToolWindowUI ui) {
 			Debug.Assert(!ui.ToolWindowGroupService.TabGroups.Any());
@@ -504,7 +504,7 @@ namespace dnSpy.MainApp {
 
 		ToolWindowContent? Show(Guid guid, AppToolWindowLocation location, bool active, bool focus) {
 			var content = Create(guid);
-			Debug2.Assert(!(content is null));
+			Debug2.Assert(content is not null);
 			if (content is null)
 				return null;
 			Show(content, location, active, focus);
@@ -514,7 +514,7 @@ namespace dnSpy.MainApp {
 		ToolWindowContent? Create(Guid guid) {
 			foreach (var provider in mainToolWindowContentProviders) {
 				var content = provider.Value.GetOrCreate(guid);
-				if (!(content is null))
+				if (content is not null)
 					return content;
 			}
 			return null;
@@ -559,7 +559,7 @@ namespace dnSpy.MainApp {
 			if (content is null)
 				throw new ArgumentNullException(nameof(content));
 			var t = GetToolWindowGroup(content);
-			Debug2.Assert(!(t is null));
+			Debug2.Assert(t is not null);
 			if (t is null)
 				throw new InvalidOperationException();
 			t.Value.group.Close(content);
@@ -596,7 +596,7 @@ namespace dnSpy.MainApp {
 			location = Convert(location);
 			if (t is null || t.Value.ui.Location == location)
 				return;
-			Debug2.Assert(!(content is null));
+			Debug2.Assert(content is not null);
 
 			var g = GetOrCreateGroup(location);
 			t.Value.group.MoveTo(g, content);
@@ -623,13 +623,13 @@ namespace dnSpy.MainApp {
 				return;
 
 			var activeContent = t.Value.group.ActiveTabContent;
-			Debug2.Assert(!(activeContent is null));
+			Debug2.Assert(activeContent is not null);
 			foreach (var c in t.Value.group.TabContents.ToArray())
 				Move(c, location);
-			if (!(activeContent is null)) {
+			if (activeContent is not null) {
 				var t2 = GetToolWindowGroup(activeContent);
-				Debug2.Assert(!(t2 is null));
-				if (!(t2 is null)) {
+				Debug2.Assert(t2 is not null);
+				if (t2 is not null) {
 					t2.Value.group.ActiveTabContent = activeContent;
 				}
 			}

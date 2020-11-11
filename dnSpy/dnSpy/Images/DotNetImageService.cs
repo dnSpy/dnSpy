@@ -177,18 +177,18 @@ namespace dnSpy.Images {
 		}
 
 		static bool IsModule(TypeDef type) =>
-			!(type is null) && type.DeclaringType is null && type.IsSealed && type.IsDefined(stringMicrosoftVisualBasicCompilerServices, stringStandardModuleAttribute);
+			type is not null && type.DeclaringType is null && type.IsSealed && type.IsDefined(stringMicrosoftVisualBasicCompilerServices, stringStandardModuleAttribute);
 		static readonly UTF8String stringMicrosoftVisualBasicCompilerServices = new UTF8String("Microsoft.VisualBasic.CompilerServices");
 		static readonly UTF8String stringStandardModuleAttribute = new UTF8String("StandardModuleAttribute");
 
 		static bool IsDelegate(TypeDef type) =>
-			!(type.BaseType is null) && type.BaseType.FullName == "System.MulticastDelegate" && type.BaseType.DefinitionAssembly.IsCorLib();
+			type.BaseType is not null && type.BaseType.FullName == "System.MulticastDelegate" && type.BaseType.DefinitionAssembly.IsCorLib();
 
 		static bool IsException(TypeDef type) {
 			TypeDef? td = type;
 			if (IsSystemException(td))
 				return true;
-			for (int i = 0; i < 1000 && !(td is null); i++) {
+			for (int i = 0; i < 1000 && td is not null; i++) {
 				if (IsSystemException(td.BaseType))
 					return true;
 				var bt = td.BaseType;
@@ -198,7 +198,7 @@ namespace dnSpy.Images {
 		}
 
 		static bool IsSystemException(ITypeDefOrRef? type) =>
-			!(type is null) &&
+			type is not null &&
 			type.DeclaringType is null &&
 			type.Namespace == "System" &&
 			type.Name == "Exception" &&
@@ -261,7 +261,7 @@ namespace dnSpy.Images {
 			}
 		}
 
-		static bool IsSystemDecimal(TypeSig ts) => !(ts is null) && ts.DefinitionAssembly.IsCorLib() && ts.FullName == "System.Decimal";
+		static bool IsSystemDecimal(TypeSig ts) => ts is not null && ts.DefinitionAssembly.IsCorLib() && ts.FullName == "System.Decimal";
 		static bool IsDecimalConstant(FieldDef field) => IsSystemDecimal(field.FieldType) && field.CustomAttributes.IsDefined("System.Runtime.CompilerServices.DecimalConstantAttribute");
 
 		public ImageReference GetImageReference(MethodDef method) {

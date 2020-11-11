@@ -77,7 +77,7 @@ namespace dnSpy.ToolBars {
 		}
 
 		void InitializeToolBarItems() {
-			if (!(guidToGroups is null))
+			if (guidToGroups is not null)
 				return;
 
 			var dict = new Dictionary<Guid, Dictionary<string, ToolBarItemGroupMD>>();
@@ -128,7 +128,7 @@ namespace dnSpy.ToolBars {
 
 		public ToolBar InitializeToolBar(ToolBar? toolBar, Guid toolBarGuid, IInputElement? commandTarget) {
 			InitializeToolBarItems();
-			Debug2.Assert(!(guidToGroups is null));
+			Debug2.Assert(guidToGroups is not null);
 			if (toolBar is null) {
 				toolBar = new ToolBar();
 				toolBar.FocusVisualStyle = null;
@@ -157,7 +157,7 @@ namespace dnSpy.ToolBars {
 
 					foreach (var item in items) {
 						var obj = Create(item, ctx, commandTarget);
-						if (!(obj is null))
+						if (obj is not null)
 							toolBar.Items.Add(obj);
 					}
 				}
@@ -183,7 +183,7 @@ namespace dnSpy.ToolBars {
 			var md2 = (IToolBarButtonMetadata)md.Metadata;
 
 			var cmdHolder = item as ICommandHolder;
-			var cmd = !(cmdHolder is null) ? cmdHolder.Command : new RelayCommand(a => item.Execute(ctx), a => item.IsEnabled(ctx));
+			var cmd = cmdHolder is not null ? cmdHolder.Command : new RelayCommand(a => item.Execute(ctx), a => item.IsEnabled(ctx));
 
 			var header = ResourceHelper.GetStringOrNull(item, md2.Header);
 			var icon = md2.Icon;
@@ -193,8 +193,8 @@ namespace dnSpy.ToolBars {
 
 			var imgRef = item.GetIcon(ctx) ?? ImageReferenceHelper.GetImageReference(item, icon) ?? default;
 			var toggleButtonCmd = item as IToolBarToggleButton;
-			Debug2.Assert(md2.IsToggleButton == (!(toggleButtonCmd is null)), "Implement IToolBarToggleButton if IsToggleButton is true");
-			if (!(toggleButtonCmd is null))
+			Debug2.Assert(md2.IsToggleButton == (toggleButtonCmd is not null), "Implement IToolBarToggleButton if IsToggleButton is true");
+			if (toggleButtonCmd is not null)
 				return CreateToggleButton(toggleButtonCmd.GetBinding(ctx), cmd, commandTarget, header, toolTip, imgRef);
 			return new ToolBarButtonVM(cmd, commandTarget, header, toolTip, imgRef);
 		}
@@ -211,8 +211,8 @@ namespace dnSpy.ToolBars {
 				});
 			}
 			var checkBox = new CheckBox { Content = sp };
-			Debug2.Assert(!(binding is null));
-			if (!(binding is null))
+			Debug2.Assert(binding is not null);
+			if (binding is not null)
 				checkBox.SetBinding(ToggleButton.IsCheckedProperty, binding);
 			if (!string.IsNullOrEmpty(toolTip))
 				checkBox.ToolTip = toolTip;

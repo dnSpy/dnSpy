@@ -43,7 +43,7 @@ namespace dnSpy.Bookmarks.TextEditor {
 				throw new ArgumentNullException(nameof(bookmark));
 			foreach (var lz in bookmarkGlyphTextMarkerLocationProviders) {
 				var loc = lz.Value.GetLocation(bookmark);
-				if (!(loc is null))
+				if (loc is not null)
 					return loc;
 			}
 			return null;

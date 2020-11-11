@@ -72,7 +72,7 @@ namespace dnSpy.AsmEditor.Method {
 			method.GenericParameters.Clear();
 			method.GenericParameters.AddRange(GenericParameters);
 			method.Overrides.Clear();
-			method.Overrides.AddRange(Overrides.Select(e => !(e.MethodBody is null) ? e : new MethodOverride(method, e.MethodDeclaration)));
+			method.Overrides.AddRange(Overrides.Select(e => e.MethodBody is not null ? e : new MethodOverride(method, e.MethodDeclaration)));
 			method.Parameters.UpdateParameterTypes();
 			return method;
 		}

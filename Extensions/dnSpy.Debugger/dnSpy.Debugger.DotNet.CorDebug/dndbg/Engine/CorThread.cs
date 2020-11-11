@@ -157,7 +157,7 @@ namespace dndbg.Engine {
 			return hr < 0 || eval is null ? null : new CorEval(eval);
 		}
 
-		public bool Equals(CorThread? other) => !(other is null) && RawObject == other.RawObject;
+		public bool Equals(CorThread? other) => other is not null && RawObject == other.RawObject;
 		public override bool Equals(object? obj) => Equals(obj as CorThread);
 		public override int GetHashCode() => RawObject.GetHashCode();
 		public override string ToString() => $"[Thread] TID={ThreadId}, VTID={VolatileThreadId} State={State} UserState={UserState}";

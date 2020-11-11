@@ -27,7 +27,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
 				var data = DataContext as ModuleLoaderVM;
-				if (!(data is null)) {
+				if (data is not null) {
 					data.OnCompleted += ModuleLoaderVM_OnCompleted;
 					if (data.HasCompleted)
 						OnCompleted();
@@ -56,7 +56,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		void OnCompleted() {
 			var data = DataContext as ModuleLoaderVM;
-			DialogResult = !(data is null) && !data.WasCanceled;
+			DialogResult = data is not null && !data.WasCanceled;
 			Close();
 		}
 	}

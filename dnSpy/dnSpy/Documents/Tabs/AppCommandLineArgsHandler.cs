@@ -40,13 +40,13 @@ namespace dnSpy.Documents.Tabs {
 		public void OnNewArgs(IAppCommandLineArgs args) {
 			if (!SelectMember(args)) {
 				var mod = GetLoadedFiles(args).FirstOrDefault();
-				if (!(mod is null))
+				if (mod is not null)
 					documentTabService.FollowReference((object)mod.Assembly ?? mod);
 				else {
 					foreach (var filename in args.Filenames) {
 						var key = new FilenameKey(filename);
 						var document = documentTabService.DocumentTreeView.DocumentService.GetDocuments().FirstOrDefault(a => a.Key.Equals(key));
-						if (!(document is null)) {
+						if (document is not null) {
 							documentTabService.FollowReference(document);
 							break;
 						}
@@ -76,14 +76,14 @@ namespace dnSpy.Documents.Tabs {
 					var ns = args.SelectMember.Substring(XMLDOC_NS_PREFIX.Length);
 					var modNode = documentTabService.DocumentTreeView.FindNode(mod);
 					var nsNode = modNode is null ? null : documentTabService.DocumentTreeView.FindNamespaceNode(modNode.Document, ns);
-					if (!(nsNode is null)) {
+					if (nsNode is not null) {
 						documentTabService.FollowReference(nsNode);
 						return true;
 					}
 				}
 				else {
 					var member = XmlDocKeyProvider.FindMemberByKey(mod, args.SelectMember);
-					if (!(member is null)) {
+					if (member is not null) {
 						documentTabService.FollowReference(member);
 						return true;
 					}
@@ -99,7 +99,7 @@ namespace dnSpy.Documents.Tabs {
 				var document = documentTabService.DocumentTreeView.DocumentService.GetDocuments().FirstOrDefault(a => key.Equals(a.Key));
 				if (document?.ModuleDef is null)
 					continue;
-				if (!(document.AssemblyDef is null)) {
+				if (document.AssemblyDef is not null) {
 					foreach (var mod in document.AssemblyDef.Modules)
 						yield return mod;
 				}

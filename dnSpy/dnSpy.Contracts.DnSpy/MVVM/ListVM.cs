@@ -167,7 +167,7 @@ namespace dnSpy.Contracts.MVVM {
 		string IDataErrorInfo.this[string columnName] {
 			get {
 				if (columnName == nameof(SelectedIndex)) {
-					if (!(DataErrorInfoDelegate is null))
+					if (DataErrorInfoDelegate is not null)
 						return DataErrorInfoDelegate(this);
 				}
 				return string.Empty;

@@ -198,7 +198,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		internal uint GetEnclosingTypeDefRid_COMThread(uint typeDefRid) {
 			dispatcher.VerifyAccess();
 			InitializeTypeTables_COMThread();
-			Debug2.Assert(!(ridToEnclosing is null));
+			Debug2.Assert(ridToEnclosing is not null);
 			bool b = ridToEnclosing.TryGetValue(typeDefRid, out uint enclTypeRid);
 			Debug.Assert(b);
 			return enclTypeRid;
@@ -207,7 +207,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		internal uint[] GetTypeDefNestedClassRids_COMThread(uint typeDefRid) {
 			dispatcher.VerifyAccess();
 			InitializeTypeTables_COMThread();
-			Debug2.Assert(!(ridToNested is null));
+			Debug2.Assert(ridToNested is not null);
 			bool b = ridToNested.TryGetValue(typeDefRid, out var list);
 			Debug.Assert(b);
 			return list is null || list.Count == 0 ? Array.Empty<uint>() : list.ToArray();
@@ -215,7 +215,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 
 		void InitializeTypeTables_COMThread() {
 			dispatcher.VerifyAccess();
-			if (!(ridToNested is null))
+			if (ridToNested is not null)
 				return;
 
 			var allTypes = MDAPI.GetTypeDefTokens(MetaDataImport);
@@ -227,8 +227,8 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 
 		void UpdateTypeTables_COMThread(uint[] tokens) {
 			dispatcher.VerifyAccess();
-			Debug2.Assert(!(ridToNested is null));
-			Debug2.Assert(!(ridToEnclosing is null));
+			Debug2.Assert(ridToNested is not null);
+			Debug2.Assert(ridToEnclosing is not null);
 			Array.Sort(tokens);
 			foreach (uint token in tokens) {
 				uint rid = token & 0x00FFFFFF;
@@ -269,7 +269,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 
 			uint typeToken = (uint)e.MetadataToken;
 			uint[] newTokens;
-			if (!(ridToNested is null))
+			if (ridToNested is not null)
 				newTokens = UpdateTypeTables_COMThread(typeToken);
 			else
 				newTokens = GetNewTokens_COMThread(typeToken);
@@ -283,11 +283,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		uint[] UpdateTypeTables_COMThread(uint typeToken) {
 			dispatcher.VerifyAccess();
 			uint typeRid = typeToken & 0x00FFFFFF;
-			bool b = !(ridToEnclosing is null) && !ridToEnclosing.ContainsKey(typeRid);
+			bool b = ridToEnclosing is not null && !ridToEnclosing.ContainsKey(typeRid);
 			Debug.Assert(b);
 			if (!b)
 				return new[] { typeToken };
-			Debug2.Assert(!(ridToEnclosing is null));
+			Debug2.Assert(ridToEnclosing is not null);
 
 			var tokens = GetNewTokens_COMThread(typeRid);
 			UpdateTypeTables_COMThread(tokens);
@@ -295,7 +295,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			foreach (var token in tokens) {
 				uint rid = token & 0x00FFFFFF;
 				if (token != typeToken) {
-					b = !(typeDefList.TryGet(rid) is null);
+					b = typeDefList.TryGet(rid) is not null;
 					Debug.Assert(!b);
 					if (b)
 						continue;
@@ -370,7 +370,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		internal DmdType ReadFieldType_COMThread((IntPtr addr, uint size) signature, IList<DmdType> genericTypeArguments) {
 			dispatcher.VerifyAccess();
 			if (fieldTypeCache.TryGetValue(signature.addr, out var fieldType)) {
-				if (!(fieldType is null))
+				if (fieldType is not null)
 					return fieldType;
 				var info = ReadFieldTypeCore_COMThread(signature, genericTypeArguments);
 				Debug.Assert(info.containedGenericParams);
@@ -427,7 +427,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		internal DmdMethodSignature ReadMethodSignature_COMThread((IntPtr addr, uint size) signature, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments, bool isProperty) {
 			dispatcher.VerifyAccess();
 			if (methodSignatureCache.TryGetValue(signature.addr, out var methodSignature)) {
-				if (!(methodSignature is null))
+				if (methodSignature is not null)
 					return methodSignature;
 				var info = ReadMethodSignatureCore_COMThread(signature, genericTypeArguments, genericMethodArguments, isProperty);
 				Debug.Assert(info.containedGenericParams);
@@ -567,12 +567,12 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			if ((classToken >> 24) == 0x1B)
 				containedGenericParams = true;
 
-			if (!(info.fieldType is null)) {
+			if (info.fieldType is not null) {
 				var fieldRef = new DmdFieldRef(reflectedTypeRef, name, rawInfo.fieldType!, info.fieldType);
 				return (fieldRef, containedGenericParams);
 			}
 			else {
-				Debug2.Assert(!(info.methodSignature is null));
+				Debug2.Assert(info.methodSignature is not null);
 				if (name == DmdConstructorInfo.ConstructorName || name == DmdConstructorInfo.TypeConstructorName) {
 					var ctorRef = new DmdConstructorRef(reflectedTypeRef, name, rawInfo.methodSignature!, info.methodSignature);
 					return (ctorRef, containedGenericParams);
@@ -611,7 +611,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		(DmdType? fieldType, DmdMethodSignature? methodSignature, bool containedGenericParams) ReadMethodSignatureOrFieldType_COMThread((IntPtr addr, uint size) signature, IList<DmdType>? genericTypeArguments, IList<DmdType>? genericMethodArguments) {
 			dispatcher.VerifyAccess();
 			if (methodSignatureCache.TryGetValue(signature.addr, out var methodSignature)) {
-				if (!(methodSignature is null))
+				if (methodSignature is not null)
 					return (null, methodSignature, false);
 				var info = ReadMethodSignatureCore_COMThread(signature, genericTypeArguments, genericMethodArguments, isProperty: false);
 				if (info.methodSignature is null)
@@ -620,7 +620,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 				return (null, info.methodSignature, info.containedGenericParams);
 			}
 			else if (fieldTypeCache.TryGetValue(signature.addr, out var fieldType)) {
-				if (!(fieldType is null))
+				if (fieldType is not null)
 					return (fieldType, null, false);
 				var info = ReadFieldTypeCore_COMThread(signature, genericTypeArguments);
 				if (info.fieldType is null)
@@ -630,7 +630,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 			}
 			else {
 				var info = DmdSignatureReader.ReadMethodSignatureOrFieldType(module, new DmdPointerDataStream(signature), genericTypeArguments, genericMethodArguments, resolveTypes);
-				if (!(info.fieldType is null)) {
+				if (info.fieldType is not null) {
 					if (info.containedGenericParams)
 						fieldTypeCache.Add(signature.addr, null);
 					else
@@ -638,7 +638,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 					return (info.fieldType, null, info.containedGenericParams);
 				}
 				else {
-					Debug2.Assert(!(info.methodSignature is null));
+					Debug2.Assert(info.methodSignature is not null);
 					if (info.containedGenericParams)
 						methodSignatureCache.Add(signature.addr, null);
 					else
@@ -674,7 +674,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 				return null;
 			using (bodyStream) {
 				var body = DmdMethodBodyReader.Create(this, bodyStream, genericTypeArguments, genericMethodArguments);
-				Debug2.Assert(!(body is null));
+				Debug2.Assert(body is not null);
 				return body;
 			}
 		}
@@ -1000,13 +1000,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 		public override DmdReadOnlyAssemblyName GetName() {
 			if (assemblyName is null)
 				InitializeAssemblyName();
-			Debug2.Assert(!(assemblyName is null));
+			Debug2.Assert(assemblyName is not null);
 			return assemblyName;
 		}
 		DmdReadOnlyAssemblyName? assemblyName;
 
 		void InitializeAssemblyName() {
-			if (!(assemblyName is null))
+			if (assemblyName is not null)
 				return;
 			if (IsCOMThread)
 				InitializeAssemblyName_COMThread();
@@ -1016,7 +1016,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 
 		void InitializeAssemblyName_COMThread() {
 			dispatcher.VerifyAccess();
-			if (!(assemblyName is null))
+			if (assemblyName is not null)
 				return;
 
 			const uint token = 0x20000001;
@@ -1148,7 +1148,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl.COMD {
 					res.Add((cas, action));
 				}
 			}
-			if (!(firstCas is null))
+			if (firstCas is not null)
 				return firstCas;
 			if (res is null)
 				return Array.Empty<DmdCustomAttributeData>();

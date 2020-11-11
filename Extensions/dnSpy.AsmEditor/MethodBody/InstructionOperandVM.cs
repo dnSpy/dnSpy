@@ -419,33 +419,33 @@ namespace dnSpy.AsmEditor.MethodBody {
 					break;
 
 				case MethodBody.InstructionOperandType.Field:
-					if (!(Other is null)) {
+					if (Other is not null) {
 						if (!(Other is IField))
 							return dnSpy_AsmEditor_Resources.Error_OpMustBeField;
-						if (Other is IMethod method && !(method.MethodSig is null))
+						if (Other is IMethod method && method.MethodSig is not null)
 							return dnSpy_AsmEditor_Resources.Error_OpMustBeField;
 					}
 					break;
 
 				case MethodBody.InstructionOperandType.Method:
-					if (!(Other is null)) {
+					if (Other is not null) {
 						if (!(Other is IMethod))
 							return dnSpy_AsmEditor_Resources.Error_OpMustBeMethod;
-						if (Other is IField field && !(field.FieldSig is null))
+						if (Other is IField field && field.FieldSig is not null)
 							return dnSpy_AsmEditor_Resources.Error_OpMustBeMethod;
 					}
 					break;
 
 				case MethodBody.InstructionOperandType.Token:
-					if (!(Other is null) && !(Other is ITokenOperand)) return dnSpy_AsmEditor_Resources.Error_OpMustBeTypeMethodField;
+					if (Other is not null && !(Other is ITokenOperand)) return dnSpy_AsmEditor_Resources.Error_OpMustBeTypeMethodField;
 					break;
 
 				case MethodBody.InstructionOperandType.Type:
-					if (!(Other is null) && !(Other is ITypeDefOrRef)) return dnSpy_AsmEditor_Resources.Error_OpMustBeType;
+					if (Other is not null && !(Other is ITypeDefOrRef)) return dnSpy_AsmEditor_Resources.Error_OpMustBeType;
 					break;
 
 				case MethodBody.InstructionOperandType.MethodSig:
-					if (!(Other is null) && !(Other is MethodSig)) return dnSpy_AsmEditor_Resources.Error_OpMustBeMethodSig;
+					if (Other is not null && !(Other is MethodSig)) return dnSpy_AsmEditor_Resources.Error_OpMustBeMethodSig;
 					break;
 
 				case MethodBody.InstructionOperandType.SwitchTargets:
@@ -453,7 +453,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 					if (list is null)
 						return dnSpy_AsmEditor_Resources.Error_OpMustBeListInstrs;
 					foreach (var i in list) {
-						if (!(i is null) && i.Index == -1)
+						if (i is not null && i.Index == -1)
 							return dnSpy_AsmEditor_Resources.Error_SwitchInstrTargetHasBeenRemoved;
 					}
 					break;

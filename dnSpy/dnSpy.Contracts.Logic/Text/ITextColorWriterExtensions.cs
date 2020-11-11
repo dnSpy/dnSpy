@@ -94,8 +94,8 @@ namespace dnSpy.Contracts.Text {
 			if (asm is null)
 				return output;
 			var asmDef = asm as AssemblyDef;
-			bool isExe = !(asmDef is null) &&
-				!(asmDef.ManifestModule is null) &&
+			bool isExe = asmDef is not null &&
+				asmDef.ManifestModule is not null &&
 				(asmDef.ManifestModule.Characteristics & dnlib.PE.Characteristics.Dll) == 0;
 			output.Write(isExe ? BoxedTextColor.AssemblyExe : BoxedTextColor.Assembly, asm.Name);
 
@@ -119,7 +119,7 @@ namespace dnSpy.Contracts.Text {
 			if (PublicKeyBase.IsNullOrEmpty2(publicKey))
 				output.Write(BoxedTextColor.Keyword, "null");
 			else {
-				Debug2.Assert(!(publicKey is null));
+				Debug2.Assert(publicKey is not null);
 				output.Write(BoxedTextColor.Number, publicKey.ToString());
 			}
 

@@ -58,7 +58,7 @@ namespace dnSpy.MainApp.Settings {
 							continue;
 
 						using (var key = Registry.CurrentUser.OpenSubKey(@"Software\Classes\" + name + @"\shell\" + EXPLORER_MENU_TEXT)) {
-							if (!(key is null))
+							if (key is not null)
 								count++;
 						}
 					}

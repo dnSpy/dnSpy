@@ -133,7 +133,7 @@ namespace dnSpy.Debugger.Attach {
 					throw new ArgumentNullException(nameof(options));
 				lock (lockObj) {
 					var info = AttachableProcessInfo.Create(processProvider, options);
-					if (!(info is null) && IsMatch(info))
+					if (info is not null && IsMatch(info))
 						result.Add(new AttachableProcessImpl(dbgManager.Value, options, info));
 				}
 			}
@@ -161,11 +161,11 @@ namespace dnSpy.Debugger.Attach {
 			bool IsValidProcessId(int pid) => processIds.Length == 0 || Array.IndexOf(processIds, pid) >= 0;
 
 			void EnumeratorCompleted(ProviderInfo info, bool canceled, Exception? ex) {
-				Debug2.Assert(!(taskCompletionSource is null));
+				Debug2.Assert(taskCompletionSource is not null);
 				AttachableProcess[]? attachableProcesses;
 				lock (lockObj) {
 					wasCanceled |= canceled;
-					if (!(ex is null)) {
+					if (ex is not null) {
 						if (thrownExceptions is null)
 							thrownExceptions = new List<Exception>();
 						thrownExceptions.Add(ex);
@@ -179,8 +179,8 @@ namespace dnSpy.Debugger.Attach {
 					else
 						attachableProcesses = null;
 				}
-				if (!(attachableProcesses is null)) {
-					if (!(thrownExceptions is null))
+				if (attachableProcesses is not null) {
+					if (thrownExceptions is not null)
 						taskCompletionSource.SetException(thrownExceptions);
 					else if (wasCanceled)
 						taskCompletionSource.SetCanceled();

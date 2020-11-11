@@ -55,7 +55,7 @@ namespace dnSpy.Documents.Tabs {
 			private set {
 				uiContextVersion++;
 				var newValue = value;
-				Debug2.Assert(!(newValue is null));
+				Debug2.Assert(newValue is not null);
 				if (newValue is null)
 					newValue = new NullDocumentTabUIContext();
 				if (uiContext != newValue) {
@@ -109,8 +109,8 @@ namespace dnSpy.Documents.Tabs {
 
 		void IFocusable.Focus() {
 			var focusable = UIContext as IFocusable;
-			Debug2.Assert(!(focusable is null));
-			if (!(focusable is null))
+			Debug2.Assert(focusable is not null);
+			if (focusable is not null)
 				focusable.Focus();
 		}
 
@@ -167,8 +167,8 @@ namespace dnSpy.Documents.Tabs {
 				CancelAsyncWorker();
 				elementZoomer.Dispose();
 				var id = documentTabUIContextLocator as IDisposable;
-				Debug2.Assert(!(id is null));
-				if (!(id is null))
+				Debug2.Assert(id is not null);
+				if (id is not null)
 					id.Dispose();
 				documentTabService.OnRemoved(this);
 				tabHistory.Dispose();
@@ -211,7 +211,7 @@ namespace dnSpy.Documents.Tabs {
 
 		void FollowReferenceCore(object @ref, DocumentTabContent? sourceContent, Action<ShowTabContentEventArgs>? onShown) {
 			var result = TryCreateContentFromReference(@ref, sourceContent);
-			if (!(result is null)) {
+			if (result is not null) {
 				Show(result.DocumentTabContent, result.UIState, e => {
 					// Call the original caller (onShown()) first and result last since both could
 					// move the caret. The result should only move the caret if the original caller
@@ -222,7 +222,7 @@ namespace dnSpy.Documents.Tabs {
 			}
 			else {
 				var defaultContent = TryCreateDefaultContent();
-				if (!(defaultContent is null)) {
+				if (defaultContent is not null) {
 					Show(defaultContent, null, e => {
 						onShown?.Invoke(new ShowTabContentEventArgs(ShowTabContentResult.Failed, this));
 					});
@@ -258,7 +258,7 @@ namespace dnSpy.Documents.Tabs {
 		DocumentTabReferenceResult? TryCreateContentFromReference(object @ref, DocumentTabContent? sourceContent) {
 			foreach (var f in referenceDocumentTabContentProviders) {
 				var c = f.Value.Create(DocumentTabService, sourceContent, @ref);
-				if (!(c is null))
+				if (c is not null)
 					return c;
 			}
 			return null;
@@ -267,7 +267,7 @@ namespace dnSpy.Documents.Tabs {
 		DocumentTabContent? TryCreateDefaultContent() {
 			foreach (var f in defaultDocumentTabContentProviders) {
 				var c = f.Value.Create(DocumentTabService);
-				if (!(c is null))
+				if (c is not null)
 					return c;
 			}
 			return null;
@@ -385,7 +385,7 @@ namespace dnSpy.Documents.Tabs {
 		}
 		AsyncWorkerContext? asyncWorkerContext;
 
-		public bool IsAsyncExecInProgress => !(asyncWorkerContext is null);
+		public bool IsAsyncExecInProgress => asyncWorkerContext is not null;
 
 		public void AsyncExec(Action<CancellationTokenSource> preExec, Action asyncAction, Action<IAsyncShowResult> postExec) {
 			CancelAsyncWorker();
@@ -410,9 +410,9 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		void OnShown(object? uiState, Action<ShowTabContentEventArgs>? onShownHandler, IShowContext showCtx, ShowTabContentResult result) {
-			if (!(uiState is null))
+			if (uiState is not null)
 				RestoreUIState(uiState);
-			if (!(onShownHandler is null) || !(showCtx.OnShown is null)) {
+			if (onShownHandler is not null || showCtx.OnShown is not null) {
 				var e = new ShowTabContentEventArgs(result, this);
 				onShownHandler?.Invoke(e);
 				showCtx.OnShown?.Invoke(e);

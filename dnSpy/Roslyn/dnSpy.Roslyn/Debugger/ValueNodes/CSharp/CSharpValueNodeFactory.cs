@@ -116,7 +116,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes.CSharp {
 			typeFormatter.Format(method.DeclaringType!, null);
 			var valueFormatter = new Formatters.CSharp.CSharpPrimitiveValueFormatter(output, valueOptions.ToValueFormatterOptions(), cultureInfo);
 			output.Write(DbgTextColor.Operator, ".");
-			if (!(property is null)) {
+			if (property is not null) {
 				if (property.GetIndexParameters().Count != 0) {
 					output.Write(DbgTextColor.Keyword, Keyword_this);
 					WriteMethodParameterList(output, method, typeFormatter, GetAllMethodParameterTypes(property.GetMethodSignature()), IndexerParenOpen, IndexerParenClose);
@@ -139,7 +139,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes.CSharp {
 				}
 				else {
 					var operatorInfo = Formatters.CSharp.Operators.TryGetOperatorInfo(method.Name);
-					if (!(operatorInfo is null) && method is DmdMethodInfo methodInfo) {
+					if (operatorInfo is not null && method is DmdMethodInfo methodInfo) {
 						bool isExplicitOrImplicit = operatorInfo[0] == "explicit" || operatorInfo[0] == "implicit";
 
 						for (int i = 0; i < operatorInfo.Length; i++) {

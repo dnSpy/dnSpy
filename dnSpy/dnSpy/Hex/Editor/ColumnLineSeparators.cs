@@ -232,7 +232,7 @@ namespace dnSpy.Hex.Editor {
 			RemoveAllLines();
 			if (!enabled)
 				return;
-			Debug2.Assert(!(adornmentLayer is null));
+			Debug2.Assert(adornmentLayer is not null);
 
 			if (wpfHexView.ViewportHeight == 0)
 				return;
@@ -282,7 +282,7 @@ namespace dnSpy.Hex.Editor {
 				newPen = InitializePen(new Pen(scBrush, PEN_THICKNESS), lineKind);
 				newPen.Freeze();
 			}
-			else if (!((newPen = props[VSTC.MarkerFormatDefinition.BorderId] as Pen) is null)) {
+			else if ((newPen = props[VSTC.MarkerFormatDefinition.BorderId] as Pen) is not null) {
 				if (newPen.CanFreeze)
 					newPen.Freeze();
 			}

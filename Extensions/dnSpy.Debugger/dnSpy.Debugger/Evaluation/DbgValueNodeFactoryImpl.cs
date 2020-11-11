@@ -49,7 +49,7 @@ namespace dnSpy.Debugger.Evaluation {
 				}
 			}
 			catch {
-				runtime.Process.DbgManager.Close(res.Select(a => a.ValueNode).Where(a => !(a is null)));
+				runtime.Process.DbgManager.Close(res.Select(a => a.ValueNode).Where(a => a is not null));
 				throw;
 			}
 			return res;

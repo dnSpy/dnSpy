@@ -91,7 +91,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 
 					var name = new DbgDotNetText(new DbgDotNetTextPart(DbgTextColor.InstanceField, info.DefaultName));
 					DbgDotNetValueNode newNode;
-					if (!(errorMessage is null))
+					if (errorMessage is not null)
 						newNode = valueNodeFactory.CreateError(evalInfo, name, errorMessage, expression, false);
 					else if (valueIsException)
 						newNode = valueNodeFactory.Create(evalInfo, name, objValue, formatSpecifiers, options, expression, PredefinedDbgValueNodeImageNames.Error, true, false, expectedType, false);
@@ -105,7 +105,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 				}
 			}
 			catch {
-				evalInfo.Runtime.Process.DbgManager.Close(res.Where(a => !(a is null)));
+				evalInfo.Runtime.Process.DbgManager.Close(res.Where(a => a is not null));
 				foreach (var vr in valueResults)
 					vr.Value?.Dispose();
 				valueResult.Value?.Dispose();

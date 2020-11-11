@@ -89,7 +89,7 @@ namespace dnSpy.Hex.Editor {
 
 			foreach (var info in margins) {
 				var margin = info.Margin.GetHexViewMargin(marginName);
-				if (!(margin is null))
+				if (margin is not null)
 					return margin;
 			}
 

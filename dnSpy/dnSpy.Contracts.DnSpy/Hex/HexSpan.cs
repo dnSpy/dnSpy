@@ -143,7 +143,7 @@ namespace dnSpy.Contracts.Hex {
 		/// </summary>
 		/// <param name="span"></param>
 		/// <returns></returns>
-		public bool OverlapsWith(HexSpan span) => !(Overlap(span) is null);
+		public bool OverlapsWith(HexSpan span) => Overlap(span) is not null;
 
 		/// <summary>
 		/// operator ==()

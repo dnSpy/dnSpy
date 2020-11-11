@@ -34,9 +34,9 @@ namespace dnSpy.Decompiler.ILSpy.Core.XmlDoc {
 		public void Run(AstNode node) {
 			if (node is EntityDeclaration) {
 				IMemberRef mr = node.Annotation<IMemberRef>();
-				if (!(mr is null) && !(mr.Module is null)) {
+				if (mr is not null && mr.Module is not null) {
 					var xmldoc = XmlDocLoader.LoadDocumentation(mr.Module);
-					if (!(xmldoc is null)) {
+					if (xmldoc is not null) {
 						var doc = xmldoc.GetDocumentation(XmlDocKeyProvider.GetKey(mr, stringBuilder));
 						if (!string2.IsNullOrEmpty(doc)) {
 							InsertXmlDocumentation(node, doc);
@@ -53,7 +53,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.XmlDoc {
 		void InsertXmlDocumentation(AstNode node, string doc) {
 			foreach (var info in new XmlDocLine(doc)) {
 				stringBuilder.Clear();
-				if (!(info is null)) {
+				if (info is not null) {
 					stringBuilder.Append(' ');
 					info.Value.WriteTo(stringBuilder);
 				}

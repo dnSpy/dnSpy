@@ -65,7 +65,7 @@ namespace dnSpy.Debugger.DotNet.Exceptions {
 				TypeDef? td = type;
 				if (IsSystemException(td))
 					return true;
-				for (int i = 0; i < 1000 && !(td is null); i++) {
+				for (int i = 0; i < 1000 && td is not null; i++) {
 					if (IsSystemException(td.BaseType))
 						return true;
 					var bt = td.BaseType;
@@ -75,7 +75,7 @@ namespace dnSpy.Debugger.DotNet.Exceptions {
 			}
 
 			static bool IsSystemException(ITypeDefOrRef type) =>
-				!(type is null) &&
+				type is not null &&
 				type.DeclaringType is null &&
 				type.Namespace == "System" &&
 				type.Name == "Exception" &&

@@ -65,7 +65,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				}
 			}
 
-			if (!(comIface is null) && ComUtils.GetMethod(comIface, vtblIndex) is MethodDef comIfaceMethod) {
+			if (comIface is not null && ComUtils.GetMethod(comIface, vtblIndex) is MethodDef comIfaceMethod) {
 				foreach (var method in type.Methods) {
 					// Don't include abstract methods, they don't implement anything
 					if (!method.IsVirtual || method.IsAbstract)
@@ -77,7 +77,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				}
 			}
 
-			if (!(implementedInterfaceRef is null)) {
+			if (implementedInterfaceRef is not null) {
 				foreach (var method in type.Methods) {
 					// Don't include abstract methods, they don't implement anything
 					if (!method.IsVirtual || method.IsAbstract)

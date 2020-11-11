@@ -297,7 +297,7 @@ namespace dnSpy.AsmEditor.Method {
 				OwnerType = ownerType,
 				OwnerMethod = ownerMethod,
 			};
-			if (!(ownerType is null) && ownerType.GenericParameters.Count == 0)
+			if (ownerType is not null && ownerType.GenericParameters.Count == 0)
 				typeSigCreatorOptions.CanAddGenericTypeVar = false;
 
 			var methodSigCreatorOptions = new MethodSigCreatorOptions(typeSigCreatorOptions);

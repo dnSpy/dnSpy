@@ -219,7 +219,7 @@ namespace dnSpy.Text.Operations {
 							if (!info.IsSignificant)
 								continue;
 							var newSpan = span.Overlap(info.Span);
-							Debug2.Assert(!(newSpan is null));
+							Debug2.Assert(newSpan is not null);
 							if (newSpan is null)
 								continue;
 							var s = info.Span.GetText();
@@ -238,7 +238,7 @@ namespace dnSpy.Text.Operations {
 					}
 					ed.Apply();
 				}
-				Debug2.Assert(!(lastWord.Span.Snapshot is null));
+				Debug2.Assert(lastWord.Span.Snapshot is not null);
 				if (lastWord.IsSignificant)
 					Caret.MoveTo(new SnapshotPoint(Snapshot, lastWord.Span.End.Position));
 
@@ -271,7 +271,7 @@ namespace dnSpy.Text.Operations {
 					dataObj.SetData(VS_COPY_FULL_LINE_DATA_FORMAT, true);
 				if (isBoxData)
 					dataObj.SetData(VS_COPY_BOX_DATA_FORMAT, true);
-				if (!(htmlText is null))
+				if (htmlText is not null)
 					dataObj.SetData(DataFormats.Html, htmlText);
 				Clipboard.SetDataObject(dataObj);
 				return true;
@@ -1502,15 +1502,15 @@ namespace dnSpy.Text.Operations {
 
 		public void ScrollColumnLeft() {
 			var wpfTextView = TextView as IWpfTextView;
-			Debug2.Assert(!(wpfTextView is null));
-			if (!(wpfTextView is null))
+			Debug2.Assert(wpfTextView is not null);
+			if (wpfTextView is not null)
 				wpfTextView.ViewScroller.ScrollViewportHorizontallyByPixels(-wpfTextView.FormattedLineSource.ColumnWidth);
 		}
 
 		public void ScrollColumnRight() {
 			var wpfTextView = TextView as IWpfTextView;
-			Debug2.Assert(!(wpfTextView is null));
-			if (!(wpfTextView is null))
+			Debug2.Assert(wpfTextView is not null);
+			if (wpfTextView is not null)
 				wpfTextView.ViewScroller.ScrollViewportHorizontallyByPixels(wpfTextView.FormattedLineSource.ColumnWidth);
 		}
 
@@ -1700,7 +1700,7 @@ namespace dnSpy.Text.Operations {
 			if (!Roles.Contains(PredefinedTextViewRoles.Zoomable))
 				return null;
 			var wpfTextView = TextView as IWpfTextView;
-			Debug2.Assert(!(wpfTextView is null));
+			Debug2.Assert(wpfTextView is not null);
 			return wpfTextView;
 		}
 

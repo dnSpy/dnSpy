@@ -54,7 +54,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		public IEnumerable<HexStructureInfoProviderAndData<object>> GetToolTips(HexPosition position) {
 			foreach (var provider in Providers) {
 				var toolTip = provider.GetToolTip(position);
-				if (!(toolTip is null))
+				if (toolTip is not null)
 					yield return new HexStructureInfoProviderAndData<object>(provider, toolTip);
 			}
 		}
@@ -67,7 +67,7 @@ namespace dnSpy.Contracts.Hex.Editor {
 		public IEnumerable<HexStructureInfoProviderAndData<object>> GetReferences(HexPosition position) {
 			foreach (var provider in Providers) {
 				var reference = provider.GetReference(position);
-				if (!(reference is null))
+				if (reference is not null)
 					yield return new HexStructureInfoProviderAndData<object>(provider, reference);
 			}
 		}

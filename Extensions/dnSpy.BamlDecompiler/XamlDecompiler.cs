@@ -53,7 +53,7 @@ namespace dnSpy.BamlDecompiler {
 				pass.Run(ctx, xaml);
 			}
 
-			if (!(assemblyReferences is null))
+			if (assemblyReferences is not null)
 				assemblyReferences.AddRange(ctx.Baml.AssemblyIdMap.Select(a => a.Value.AssemblyFullName));
 
 			return xaml;

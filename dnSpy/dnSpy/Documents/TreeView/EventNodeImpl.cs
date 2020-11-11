@@ -47,11 +47,11 @@ namespace dnSpy.Documents.TreeView {
 		}
 
 		public override IEnumerable<TreeNodeData> CreateChildren() {
-			if (!(EventDef.AddMethod is null))
+			if (EventDef.AddMethod is not null)
 				yield return new MethodNodeImpl(Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.MethodTreeNodeGroupEvent), EventDef.AddMethod);
-			if (!(EventDef.RemoveMethod is null))
+			if (EventDef.RemoveMethod is not null)
 				yield return new MethodNodeImpl(Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.MethodTreeNodeGroupEvent), EventDef.RemoveMethod);
-			if (!(EventDef.InvokeMethod is null))
+			if (EventDef.InvokeMethod is not null)
 				yield return new MethodNodeImpl(Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.MethodTreeNodeGroupEvent), EventDef.InvokeMethod);
 			foreach (var m in EventDef.OtherMethods)
 				yield return new MethodNodeImpl(Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.MethodTreeNodeGroupEvent), m);

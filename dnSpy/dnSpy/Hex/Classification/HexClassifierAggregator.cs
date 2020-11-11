@@ -64,10 +64,10 @@ namespace dnSpy.Hex.Classification {
 			var list = new List<HexClassificationSpan>();
 
 			var taggerContext = new HexTaggerContext(context.Line, context.LineSpan);
-			var tags = !(cancellationToken is null) ? hexTagAggregator.GetAllTags(taggerContext, cancellationToken.Value) : hexTagAggregator.GetAllTags(taggerContext);
+			var tags = cancellationToken is not null ? hexTagAggregator.GetAllTags(taggerContext, cancellationToken.Value) : hexTagAggregator.GetAllTags(taggerContext);
 			foreach (var tagSpan in tags) {
 				var overlap = textSpan.Overlap(tagSpan.Span);
-				if (!(overlap is null))
+				if (overlap is not null)
 					list.Add(new HexClassificationSpan(overlap.Value, tagSpan.Tag.ClassificationType));
 			}
 

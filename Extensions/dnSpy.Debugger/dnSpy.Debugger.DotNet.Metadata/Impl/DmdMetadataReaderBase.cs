@@ -34,13 +34,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			switch ((uint)metadataToken >> 24) {
 			case 0x06:
 				var method = ResolveMethodDef(rid);
-				if (!(method is null))
+				if (method is not null)
 					return method;
 				break;
 
 			case 0x0A:
 				var mr = ResolveMemberRef(rid, genericTypeArguments, genericMethodArguments);
-				if (!(mr is null)) {
+				if (mr is not null) {
 					if (mr is DmdMethodBase methodRef)
 						return TryResolve(methodRef, options);
 					if ((options & DmdResolveOptions.ThrowOnError) != 0)
@@ -50,7 +50,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 			case 0x2B:
 				var methodSpec = ResolveMethodSpec(rid, genericTypeArguments, genericMethodArguments);
-				if (!(methodSpec is null))
+				if (methodSpec is not null)
 					return TryResolve(methodSpec, options);
 				break;
 			}
@@ -65,13 +65,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			switch ((uint)metadataToken >> 24) {
 			case 0x04:
 				var field = ResolveFieldDef(rid);
-				if (!(field is null))
+				if (field is not null)
 					return field;
 				break;
 
 			case 0x0A:
 				var memberRef = ResolveMemberRef(rid, genericTypeArguments, genericMethodArguments);
-				if (!(memberRef is null)) {
+				if (memberRef is not null) {
 					if (memberRef is DmdFieldInfo fieldRef)
 						return TryResolve(fieldRef, options);
 					if ((options & DmdResolveOptions.ThrowOnError) != 0)
@@ -90,25 +90,25 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			switch ((uint)metadataToken >> 24) {
 			case 0x01:
 				var typeRef = ResolveTypeRef(rid);
-				if (!(typeRef is null))
+				if (typeRef is not null)
 					return TryResolve(typeRef, options);
 				break;
 
 			case 0x02:
 				var typeDef = ResolveTypeDef(rid);
-				if (!(typeDef is null))
+				if (typeDef is not null)
 					return typeDef;
 				break;
 
 			case 0x1B:
 				var typeSpec = ResolveTypeSpec(rid, genericTypeArguments, genericMethodArguments);
-				if (!(typeSpec is null))
+				if (typeSpec is not null)
 					return TryResolve(typeSpec, options);
 				break;
 
 			case 0x27:
 				var exportedType = ResolveExportedType(rid);
-				if (!(exportedType is null))
+				if (exportedType is not null)
 					return exportedType;// Don't try to resolve it, callers want the actual reference
 				break;
 			}
@@ -123,49 +123,49 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			switch ((uint)metadataToken >> 24) {
 			case 0x01:
 				var typeRef = ResolveTypeRef(rid);
-				if (!(typeRef is null))
+				if (typeRef is not null)
 					return TryResolve(typeRef, options);
 				break;
 
 			case 0x02:
 				var typeDef = ResolveTypeDef(rid);
-				if (!(typeDef is null))
+				if (typeDef is not null)
 					return typeDef;
 				break;
 
 			case 0x04:
 				var field = ResolveFieldDef(rid);
-				if (!(field is null))
+				if (field is not null)
 					return field;
 				break;
 
 			case 0x06:
 				var method = ResolveMethodDef(rid);
-				if (!(method is null))
+				if (method is not null)
 					return method;
 				break;
 
 			case 0x0A:
 				var memberRef = ResolveMemberRef(rid, genericTypeArguments, genericMethodArguments);
-				if (!(memberRef is null))
+				if (memberRef is not null)
 					return TryResolve(memberRef, options);
 				break;
 
 			case 0x1B:
 				var typeSpec = ResolveTypeSpec(rid, genericTypeArguments, genericMethodArguments);
-				if (!(typeSpec is null))
+				if (typeSpec is not null)
 					return TryResolve(typeSpec, options);
 				break;
 
 			case 0x27:
 				var exportedType = ResolveExportedType(rid);
-				if (!(exportedType is null))
+				if (exportedType is not null)
 					return exportedType;// Don't try to resolve it, callers want the actual reference
 				break;
 
 			case 0x2B:
 				var methodSpec = ResolveMethodSpec(rid, genericTypeArguments, genericMethodArguments);
-				if (!(methodSpec is null))
+				if (methodSpec is not null)
 					return TryResolve(methodSpec, options);
 				break;
 			}
@@ -180,7 +180,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			switch ((uint)metadataToken >> 24) {
 			case 0x11:
 				var methodSig = ResolveMethodSignature(rid, genericTypeArguments, genericMethodArguments);
-				if (!(methodSig is null))
+				if (methodSig is not null)
 					return methodSig;
 				break;
 			}

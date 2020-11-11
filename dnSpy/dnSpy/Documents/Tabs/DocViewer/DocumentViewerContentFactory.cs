@@ -103,7 +103,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			public void AddCustomData(string id, object data) {
 				if (customDataDict is null)
 					throw new ObjectDisposedException(nameof(IDocumentViewerCustomDataContext));
-				Debug2.Assert(!(resultDict is null));
+				Debug2.Assert(resultDict is not null);
 				if (id is null)
 					throw new ArgumentNullException(nameof(id));
 				if (resultDict.ContainsKey(id))

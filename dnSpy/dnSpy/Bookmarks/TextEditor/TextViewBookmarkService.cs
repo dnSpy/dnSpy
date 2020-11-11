@@ -118,7 +118,7 @@ namespace dnSpy.Bookmarks.TextEditor {
 			var textView = GetTextView(tab);
 			if (textView is null)
 				return new LocationsResult(bookmarksService, null, allLocations);
-			Debug2.Assert(!(tab is null));
+			Debug2.Assert(tab is not null);
 			var pos = position ?? textView.Caret.Position.VirtualBufferPosition;
 			if (pos.Position.Snapshot != textView.TextSnapshot)
 				throw new ArgumentException();
@@ -191,7 +191,7 @@ namespace dnSpy.Bookmarks.TextEditor {
 			}
 
 			public void Dispose() {
-				if (!(location is null))
+				if (location is not null)
 					bookmarksService.Value.Close(location);
 			}
 
@@ -221,7 +221,7 @@ namespace dnSpy.Bookmarks.TextEditor {
 				switch (info.kind) {
 				case ToggleCreateBookmarkKind.Add:
 					var bookmark = bookmarksService.Value.Add(new Contracts.Bookmarks.BookmarkInfo(info.TakeOwnershipOfLocation()!, new BookmarkSettings() { IsEnabled = true }));
-					if (!(bookmark is null))
+					if (bookmark is not null)
 						bookmarkNavigator.Value.SetActiveBookmarkNoCheck(bookmark);
 					break;
 
@@ -324,7 +324,7 @@ namespace dnSpy.Bookmarks.TextEditor {
 				return null;
 			foreach (var lz in bookmarkDocumentProviders) {
 				var doc = lz.Value.GetDocument(bookmark);
-				if (!(doc is null))
+				if (doc is not null)
 					return doc;
 			}
 			return null;

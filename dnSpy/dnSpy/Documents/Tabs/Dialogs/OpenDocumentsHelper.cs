@@ -32,10 +32,10 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 			var documentLoader = new DsDocumentLoader(documentTreeView.DocumentService, ownerWindow, mruList);
 			var loadedDocuments = documentLoader.Load(filenames.Select(a => new DocumentToLoad(DsDocumentInfo.CreateDocument(a))));
 			var document = loadedDocuments.Length == 0 ? null : loadedDocuments[loadedDocuments.Length - 1];
-			if (selectDocument && !(document is null)) {
+			if (selectDocument && document is not null) {
 				Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
 					var node = documentTreeView.FindNode(document);
-					if (!(node is null))
+					if (node is not null)
 						documentTreeView.TreeView.SelectItems(new[] { node });
 				}));
 			}

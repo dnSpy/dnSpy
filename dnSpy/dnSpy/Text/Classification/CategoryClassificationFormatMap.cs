@@ -34,7 +34,7 @@ namespace dnSpy.Text.Classification {
 	sealed class CategoryClassificationFormatMap : IClassificationFormatMap {
 		public TextFormattingRunProperties DefaultTextProperties {
 			get {
-				Debug2.Assert(!(defaultTextFormattingRunProperties is null));
+				Debug2.Assert(defaultTextFormattingRunProperties is not null);
 				return defaultTextFormattingRunProperties;
 			}
 			set {
@@ -103,7 +103,7 @@ namespace dnSpy.Text.Classification {
 				var e = editorFormatDefinitionService.ClassificationFormatDefinitions[i];
 				foreach (var ctString in e.Metadata.ClassificationTypeNames) {
 					var classificationType = classificationTypeRegistryService.GetClassificationType(ctString);
-					Debug2.Assert(!(classificationType is null));
+					Debug2.Assert(classificationType is not null);
 					if (classificationType is null)
 						continue;
 					Debug.Assert(!toEditorFormatDefinition.ContainsKey(classificationType));
@@ -169,7 +169,7 @@ namespace dnSpy.Text.Classification {
 				return TextFormattingRunProperties.CreateTextFormattingRunProperties();
 			if (info.ExplicitTextProperties is null)
 				CreateExplicitTextProperties(info);
-			Debug2.Assert(!(info.ExplicitTextProperties is null));
+			Debug2.Assert(info.ExplicitTextProperties is not null);
 			return info.ExplicitTextProperties;
 		}
 
@@ -177,10 +177,10 @@ namespace dnSpy.Text.Classification {
 			if (classificationType is null)
 				throw new ArgumentNullException(nameof(classificationType));
 			var info = TryGetClassificationInfo(classificationType, canCreate: true);
-			Debug2.Assert(!(info is null));
+			Debug2.Assert(info is not null);
 			if (info.InheritedTextProperties is null)
 				CreateInheritedTextProperties(info);
-			Debug2.Assert(!(info.InheritedTextProperties is null));
+			Debug2.Assert(info.InheritedTextProperties is not null);
 			return info.InheritedTextProperties;
 		}
 

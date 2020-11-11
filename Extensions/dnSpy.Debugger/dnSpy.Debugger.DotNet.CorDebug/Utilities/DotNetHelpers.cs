@@ -101,7 +101,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 		static bool TryGetInstallLocationFromRegistry(string regPath, [NotNullWhen(true)] out string? installLocation) {
 			using (var key = Registry.LocalMachine.OpenSubKey(regPath)) {
 				installLocation = key?.GetValue("InstallLocation") as string;
-				return !(installLocation is null);
+				return installLocation is not null;
 			}
 		}
 

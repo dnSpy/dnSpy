@@ -33,7 +33,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			get {
 				if (!initialized)
 					Initialize();
-				Debug2.Assert(!(pdbStreamHeaderData is null));
+				Debug2.Assert(pdbStreamHeaderData is not null);
 				return pdbStreamHeaderData;
 			}
 		}
@@ -42,7 +42,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			get {
 				if (!initialized)
 					Initialize();
-				Debug2.Assert(!(pdbId is null));
+				Debug2.Assert(pdbId is not null);
 				return pdbId;
 			}
 		}
@@ -67,7 +67,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			get {
 				if (!initialized)
 					Initialize();
-				Debug2.Assert(!(typeSystemTableRowsReadOnly is null));
+				Debug2.Assert(typeSystemTableRowsReadOnly is not null);
 				return typeSystemTableRowsReadOnly;
 			}
 		}

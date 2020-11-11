@@ -125,7 +125,7 @@ namespace dnSpy.BackgroundImage {
 		}
 
 		protected void UpdateImagePosition() {
-			Debug2.Assert(!(currentImage is null));
+			Debug2.Assert(currentImage is not null);
 			if (currentImage is null)
 				return;
 			UpdateImagePosition(currentImage);
@@ -234,7 +234,7 @@ namespace dnSpy.BackgroundImage {
 		}
 
 		void AddImageToAdornmentLayer() {
-			Debug2.Assert(!(currentImage is null));
+			Debug2.Assert(currentImage is not null);
 			AddImageToAdornmentLayerCore(currentImage);
 		}
 

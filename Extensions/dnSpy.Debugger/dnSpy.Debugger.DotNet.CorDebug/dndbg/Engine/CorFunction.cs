@@ -27,7 +27,7 @@ namespace dndbg.Engine {
 	sealed class CorFunction : COMObject<ICorDebugFunction>, IEquatable<CorFunction?> {
 		public CorModule? Module {
 			get {
-				if (!(module is null))
+				if (module is not null)
 					return module;
 				int hr = obj.GetModule(out var mod);
 				return module = hr < 0 || mod is null ? null : new CorModule(mod);
@@ -38,13 +38,13 @@ namespace dndbg.Engine {
 		public CorClass? Class {
 			get {
 				int hr = obj.GetClass(out var cls);
-				if (hr >= 0 && !(cls is null))
+				if (hr >= 0 && cls is not null)
 					return new CorClass(cls);
 
 				// Here if it's an extern method, eg. it's not IL code, but native code
 
 				var mod = Module;
-				Debug2.Assert(!(mod is null));
+				Debug2.Assert(mod is not null);
 				var mdi = mod?.GetMetaDataInterface<IMetaDataImport>();
 				uint tdOwner = 0x02000000 + MDAPI.GetMethodOwnerRid(mdi, Token);
 				return mod?.GetClassFromToken(tdOwner);
@@ -123,7 +123,7 @@ namespace dndbg.Engine {
 
 		public string? GetName() => MDAPI.GetMethodName(Module?.GetMetaDataInterface<IMetaDataImport>(), Token);
 
-		public bool Equals(CorFunction? other) => !(other is null) && RawObject == other.RawObject;
+		public bool Equals(CorFunction? other) => other is not null && RawObject == other.RawObject;
 		public override bool Equals(object? obj) => Equals(obj as CorFunction);
 		public override int GetHashCode() => RawObject.GetHashCode();
 	}

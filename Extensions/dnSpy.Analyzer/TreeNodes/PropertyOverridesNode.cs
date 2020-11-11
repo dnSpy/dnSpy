@@ -56,7 +56,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		public static bool CanShow(PropertyDef property) {
 			var accessor = property.GetMethod ?? property.SetMethod;
-			return !(accessor is null) && accessor.IsVirtual && !accessor.IsFinal && !accessor.DeclaringType.IsInterface;
+			return accessor is not null && accessor.IsVirtual && !accessor.IsFinal && !accessor.DeclaringType.IsInterface;
 		}
 	}
 }

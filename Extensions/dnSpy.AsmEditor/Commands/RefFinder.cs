@@ -95,7 +95,7 @@ namespace dnSpy.AsmEditor.Commands {
 				var tdrSig = typeSig as TypeDefOrRefSig;
 				if (tdrSig is null && typeSig is GenericInstSig gis)
 					tdrSig = gis.GenericType;
-				if (!(tdrSig is null)) {
+				if (tdrSig is not null) {
 					if (tdrSig.TypeDefOrRef is TypeDef td2)
 						return TypeEqualityComparerInstance.Equals(td2, type);
 					if (tdrSig.TypeDefOrRef is TypeRef tr2)

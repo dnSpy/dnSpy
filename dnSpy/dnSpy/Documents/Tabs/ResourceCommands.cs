@@ -45,7 +45,7 @@ namespace dnSpy.Documents.Tabs {
 
 		public static ResourceRef? TryCreate(object? o) {
 			if (o is PropertyDef pd) {
-				if (!(pd.SetMethod is null))
+				if (pd.SetMethod is not null)
 					return null;
 				o = pd.GetMethod;
 			}
@@ -204,28 +204,28 @@ namespace dnSpy.Documents.Tabs {
 			public override bool IsVisible(IMenuItemContext context) => GoToResourceCommand.IsVisible(TryCreate(context));
 		}
 
-		static bool IsVisible(ResourceRef? resRef) => !(resRef is null);
+		static bool IsVisible(ResourceRef? resRef) => resRef is not null;
 
 		static void Execute(IDocumentTabService documentTabService, ResourceRef? resRef) {
 			if (resRef is null)
 				return;
 			var modNode = documentTabService.DocumentTreeView.FindNode(resRef.Module);
-			Debug2.Assert(!(modNode is null));
+			Debug2.Assert(modNode is not null);
 			if (modNode is null)
 				return;
 			modNode.TreeNode.EnsureChildrenLoaded();
 			var resDirNode = modNode.TreeNode.DataChildren.FirstOrDefault(a => a is ResourcesFolderNode);
-			Debug2.Assert(!(resDirNode is null));
+			Debug2.Assert(resDirNode is not null);
 			if (resDirNode is null)
 				return;
 			resDirNode.TreeNode.EnsureChildrenLoaded();
 			var resSetNode = resDirNode.TreeNode.DataChildren.FirstOrDefault(a => a is ResourceElementSetNode && ((ResourceElementSetNode)a).Name == resRef.Filename);
-			Debug2.Assert(!(resSetNode is null));
+			Debug2.Assert(resSetNode is not null);
 			if (resSetNode is null)
 				return;
 			resSetNode.TreeNode.EnsureChildrenLoaded();
 			var resNode = resSetNode.TreeNode.DataChildren.FirstOrDefault(a => ResourceElementNode.GetResourceElement((DocumentTreeNodeData)a) is ResourceElement resourceElement && resourceElement.Name == resRef.ResourceName);
-			Debug2.Assert(!(resNode is null));
+			Debug2.Assert(resNode is not null);
 			if (resNode is null)
 				return;
 			documentTabService.FollowReference(resNode);

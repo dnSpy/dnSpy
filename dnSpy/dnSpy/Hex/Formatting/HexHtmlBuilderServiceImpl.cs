@@ -70,7 +70,7 @@ namespace dnSpy.Hex.Formatting {
 			HexClassifier? classifier = null;
 			try {
 				VSTC.IClassificationFormatMap classificationFormatMap;
-				if (!(hexView is null)) {
+				if (hexView is not null) {
 					classifier = viewClassifierAggregatorService.GetClassifier(hexView);
 					classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(hexView);
 				}
@@ -82,7 +82,7 @@ namespace dnSpy.Hex.Formatting {
 				const int tabSize = 4;
 				var builder = new HexHtmlBuilder(classificationFormatMap, delimiter, tabSize);
 				if (spans.Count != 0) {
-					Debug2.Assert(!(classifier is null));
+					Debug2.Assert(classifier is not null);
 					builder.Add(bufferLines, classifier, spans, cancellationToken);
 				}
 				return builder.Create();

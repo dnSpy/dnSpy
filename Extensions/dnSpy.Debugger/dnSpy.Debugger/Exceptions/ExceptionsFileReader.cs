@@ -97,7 +97,7 @@ namespace dnSpy.Debugger.Exceptions {
 		static readonly char[] flagsSeparators = new char[] { ',' };
 		static DbgExceptionCategoryDefinitionFlags ParseCategoryFlags(string? flagsAttr) {
 			var flags = DbgExceptionCategoryDefinitionFlags.None;
-			if (!(flagsAttr is null)) {
+			if (flagsAttr is not null) {
 				foreach (var name in flagsAttr.Split(flagsSeparators, StringSplitOptions.RemoveEmptyEntries)) {
 					switch (name.Trim().ToLowerInvariant()) {
 					case "code":		flags |= DbgExceptionCategoryDefinitionFlags.Code; break;
@@ -111,7 +111,7 @@ namespace dnSpy.Debugger.Exceptions {
 
 		static DbgExceptionDefinitionFlags ParseExceptionFlags(string? flagsAttr) {
 			var flags = DbgExceptionDefinitionFlags.None;
-			if (!(flagsAttr is null)) {
+			if (flagsAttr is not null) {
 				foreach (var name in flagsAttr.Split(flagsSeparators, StringSplitOptions.RemoveEmptyEntries)) {
 					switch (name.Trim().ToLowerInvariant()) {
 					case "stop1":		flags |= DbgExceptionDefinitionFlags.StopFirstChance; break;

@@ -56,7 +56,7 @@ namespace dnSpy.Metadata {
 				var list = new List<IModuleIdFactory>(moduleIdFactoryProviders.Length);
 				foreach (var provider in moduleIdFactoryProviders) {
 					var factory = provider.Value.Create();
-					if (!(factory is null))
+					if (factory is not null)
 						list.Add(factory);
 				}
 				factories = list.ToArray();
@@ -64,7 +64,7 @@ namespace dnSpy.Metadata {
 
 			foreach (var factory in factories) {
 				var id = factory.Create(module);
-				if (!(id is null))
+				if (id is not null)
 					return new StrongBox<ModuleId>(id.Value);
 			}
 

@@ -82,17 +82,17 @@ namespace dnSpy.Documents {
 
 			info = TryGetDotNetPathsCore(version.Major, version.Minor, bitness) ??
 				TryGetDotNetPathsCore(version.Major, version.Minor, bitness2);
-			if (!(info is null))
+			if (info is not null)
 				return info.Paths;
 
 			info = TryGetDotNetPathsCore(version.Major, bitness) ??
 				TryGetDotNetPathsCore(version.Major, bitness2);
-			if (!(info is null))
+			if (info is not null)
 				return info.Paths;
 
 			info = TryGetDotNetPathsCore(bitness) ??
 				TryGetDotNetPathsCore(bitness2);
-			if (!(info is null))
+			if (info is not null)
 				return info.Paths;
 
 			return null;
@@ -247,7 +247,7 @@ namespace dnSpy.Documents {
 		static bool TryGetInstallLocationFromRegistry(string regPath, [NotNullWhen(true)] out string? installLocation) {
 			using (var key = Registry.LocalMachine.OpenSubKey(regPath)) {
 				installLocation = key?.GetValue("InstallLocation") as string;
-				return !(installLocation is null);
+				return installLocation is not null;
 			}
 		}
 

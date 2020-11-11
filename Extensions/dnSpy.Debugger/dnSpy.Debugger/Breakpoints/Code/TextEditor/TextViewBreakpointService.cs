@@ -98,7 +98,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			var textView = GetTextView(tab);
 			if (textView is null)
 				return new LocationsResult(dbgManager, null, allLocations);
-			Debug2.Assert(!(tab is null));
+			Debug2.Assert(tab is not null);
 			var pos = position ?? textView.Caret.Position.VirtualBufferPosition;
 			if (pos.Position.Snapshot != textView.TextSnapshot)
 				throw new ArgumentException();
@@ -106,7 +106,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			foreach (var loc in dbgTextViewCodeLocationService.Value.CreateLocation(tab, textView, pos))
 				UpdateResult(allLocations, textView, ref res, loc, useIfSameSpan: false);
 			SnapshotSpan span;
-			if (!(res is null)) {
+			if (res is not null) {
 				var resSpan = res.Value.Span.SnapshotSpan;
 				var newStart = Min(pos.Position, resSpan.Start);
 				var newEnd = Max(pos.Position, resSpan.End);
@@ -191,7 +191,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			}
 
 			public void Dispose() {
-				if (!(locations is null) && locations.Length > 0)
+				if (locations is not null && locations.Length > 0)
 					dbgManager.Value.Close(locations);
 			}
 		}

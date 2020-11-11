@@ -223,7 +223,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 		public override byte[] ReadBytes(HexPosition position, long length) {
 			CheckDisposed();
 			var streamLocal = stream;
-			if (!(streamLocal is null))
+			if (streamLocal is not null)
 				return streamLocal.ReadBytes(position, length);
 			return new byte[length];
 		}

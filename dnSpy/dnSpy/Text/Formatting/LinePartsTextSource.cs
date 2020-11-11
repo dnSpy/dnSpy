@@ -50,7 +50,7 @@ namespace dnSpy.Text.Formatting {
 			if (linePart is null)
 				return endOfLine;
 			var part = linePart.Value;
-			if (!(part.AdornmentElement is null))
+			if (part.AdornmentElement is not null)
 				return new AdornmentTextRun(part);
 			else {
 				int offs = textSourceCharacterIndex - part.Column;
@@ -98,7 +98,7 @@ namespace dnSpy.Text.Formatting {
 			readonly IAdornmentElement adornmentElement;
 
 			public AdornmentTextRun(in LinePart linePart) {
-				Debug2.Assert(!(linePart.AdornmentElement is null));
+				Debug2.Assert(linePart.AdornmentElement is not null);
 				adornmentElement = linePart.AdornmentElement;
 				if (linePart.Span.Length != 0 || adornmentElement.Affinity == PositionAffinity.Successor) {
 					BreakBefore = LineBreakCondition.BreakPossible;
@@ -128,7 +128,7 @@ namespace dnSpy.Text.Formatting {
 		public int GetColumnOfFirstNonWhitespace() {
 			int column = 0;
 			foreach (var part in linePartsCollection.LineParts) {
-				if (!(part.AdornmentElement is null))
+				if (part.AdornmentElement is not null)
 					break;
 				int len = part.Span.Length;
 				int start = part.Span.Start;

@@ -39,7 +39,7 @@ namespace dnSpy.Decompiler.MSBuild {
 
 		public string SolutionFilename {
 			get {
-				Debug2.Assert(!(options.SolutionFilename is null));
+				Debug2.Assert(options.SolutionFilename is not null);
 				return Path.Combine(options.Directory, options.SolutionFilename);
 			}
 		}
@@ -142,7 +142,7 @@ namespace dnSpy.Decompiler.MSBuild {
 				progressListener.SetProgress(maxProgress);
 			}
 			finally {
-				if (!(satelliteAssemblyFinder is null))
+				if (satelliteAssemblyFinder is not null)
 					satelliteAssemblyFinder.Dispose();
 			}
 		}

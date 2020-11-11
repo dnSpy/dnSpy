@@ -317,12 +317,12 @@ $TNAME");
 			HasErrorUpdated();
 		}
 
-		public bool HasFilterExpressionError => EnableFilter && !(lastFilterError is null);
+		public bool HasFilterExpressionError => EnableFilter && lastFilterError is not null;
 		public string? FilterExpressionError => EnableFilter ? lastFilterError : null;
 		string? lastFilterError;
 
 		void StartVerifyFilterTimer() {
-			if (!(verifyFilterTimer is null))
+			if (verifyFilterTimer is not null)
 				return;
 			verifyFilterTimer = new Timer(1000);
 			verifyFilterTimer.Elapsed += VerifyFilterTimer_Elapsed;

@@ -83,11 +83,11 @@ namespace dnSpy.Hex {
 		}
 
 		HexEditImpl? hexEditInProgress;
-		public override bool EditInProgress => !(hexEditInProgress is null);
+		public override bool EditInProgress => hexEditInProgress is not null;
 		public override bool CheckEditAccess() => CheckAccess();
 
 		public override void TakeThreadOwnership() {
-			if (!(ownerThread is null) && ownerThread != Thread.CurrentThread)
+			if (ownerThread is not null && ownerThread != Thread.CurrentThread)
 				throw new InvalidOperationException();
 			ownerThread = Thread.CurrentThread;
 		}

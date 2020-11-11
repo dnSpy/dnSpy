@@ -38,7 +38,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		public override DbgEngineRuntimeInfo RuntimeInfo {
 			get {
-				Debug2.Assert(!(runtimeInfo is null));
+				Debug2.Assert(runtimeInfo is not null);
 				return runtimeInfo;
 			}
 		}

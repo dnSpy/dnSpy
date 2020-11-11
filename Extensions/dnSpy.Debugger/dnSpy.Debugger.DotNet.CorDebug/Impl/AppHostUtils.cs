@@ -195,7 +195,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 						hashDataSize = info.HashDataSize;
 					}
 				}
-				if (!(hash is null) && ByteArrayEquals(hash, info.Hash))
+				if (hash is not null && ByteArrayEquals(hash, info.Hash))
 					yield return info;
 			}
 		}

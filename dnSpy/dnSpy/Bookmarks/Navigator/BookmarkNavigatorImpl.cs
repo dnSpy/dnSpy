@@ -114,7 +114,7 @@ namespace dnSpy.Bookmarks.Navigator {
 				return null;
 			foreach (var lz in bookmarkDocumentProviders) {
 				var doc = lz.Value.GetDocument(bookmark);
-				if (!(doc is null))
+				if (doc is not null)
 					return doc;
 			}
 			return null;

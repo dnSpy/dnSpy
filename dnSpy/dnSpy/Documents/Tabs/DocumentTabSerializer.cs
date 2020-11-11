@@ -37,7 +37,7 @@ namespace dnSpy.Documents.Tabs {
 
 		public IEnumerable<object?> Restore(List<SerializedTabGroupWindow> tgws) {
 			var mainTgw = tgws.FirstOrDefault(a => a.Name == SerializedTabGroupWindow.MAIN_NAME);
-			if (!(mainTgw is null)) {
+			if (mainTgw is not null) {
 				foreach (var o in Load(mainTgw))
 					yield return o;
 				yield return null;

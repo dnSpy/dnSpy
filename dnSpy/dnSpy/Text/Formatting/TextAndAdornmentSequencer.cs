@@ -111,7 +111,7 @@ namespace dnSpy.Text.Formatting {
 					sequenceList.Add(new TextSequenceElement(BufferGraph.CreateMappingSpan(textSpan, SpanTrackingMode.EdgeExclusive)));
 				if (info.Span.Start != end || (info.Span.Length == 0 && info.AdornmentElement.Affinity == PositionAffinity.Predecessor)) {
 					bool canAppend = true;
-					if (!(lastAddedAdornment is null) && lastAddedAdornment.Value.Span.End > info.Span.Start)
+					if (lastAddedAdornment is not null && lastAddedAdornment.Value.Span.End > info.Span.Start)
 						canAppend = false;
 					if (canAppend) {
 						sequenceList.Add(info.AdornmentElement);

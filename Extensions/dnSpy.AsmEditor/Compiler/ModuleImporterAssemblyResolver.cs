@@ -64,7 +64,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			foreach (var reference in references) {
 				if (comparer.Equals(reference.Assembly, assemblyReference)) {
 					assembly = GetModule(reference)?.Assembly;
-					if (!(assembly is null))
+					if (assembly is not null)
 						return true;
 				}
 			}

@@ -45,7 +45,7 @@ namespace dnSpy.AsmEditor {
 		void Initialize(FontSettings fontSettings) {
 			if (prevFontSettings == fontSettings)
 				return;
-			if (!(prevFontSettings is null))
+			if (prevFontSettings is not null)
 				prevFontSettings.PropertyChanged -= FontSettings_PropertyChanged;
 			prevFontSettings = fontSettings;
 			fontSettings.PropertyChanged += FontSettings_PropertyChanged;

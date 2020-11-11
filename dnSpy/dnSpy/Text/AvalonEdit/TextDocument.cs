@@ -47,7 +47,7 @@ namespace dnSpy.Text.AvalonEdit {
 		/// It is possible to change the owner thread using the <see cref="SetOwnerThread"/> method.</para>
 		/// </remarks>
 		public void VerifyAccess() {
-			if (!(owner is null) && Thread.CurrentThread != owner)
+			if (owner is not null && Thread.CurrentThread != owner)
 				throw new InvalidOperationException("TextDocument can be accessed only from the thread that owns it.");
 		}
 
@@ -67,7 +67,7 @@ namespace dnSpy.Text.AvalonEdit {
 			// We need to lock here to ensure that in the null owner case,
 			// only one thread succeeds in taking ownership.
 			lock (lockObject) {
-				if (!(owner is null)) {
+				if (owner is not null) {
 					VerifyAccess();
 				}
 				owner = newOwner;
@@ -153,7 +153,7 @@ namespace dnSpy.Text.AvalonEdit {
 		public string Text {
 			get {
 				VerifyAccess();
-				string completeText = !(cachedText is null) ? (cachedText.Target as string) : null;
+				string completeText = cachedText is not null ? (cachedText.Target as string) : null;
 				if (completeText is null) {
 					completeText = rope.ToString();
 					cachedText = new WeakReference(completeText);

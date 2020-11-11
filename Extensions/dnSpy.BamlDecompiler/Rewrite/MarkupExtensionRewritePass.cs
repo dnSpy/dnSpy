@@ -87,10 +87,10 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 
 		bool CanInlineExt(XamlContext ctx, XElement ctxElement) {
 			var type = ctxElement.Annotation<XamlType>();
-			if (!(type is null) && !(type.ResolvedType is null)) {
+			if (type is not null && type.ResolvedType is not null) {
 				var typeDef = type.ResolvedType.GetBaseType();
 				bool isExt = false;
-				while (!(typeDef is null)) {
+				while (typeDef is not null) {
 					if (typeDef.FullName == "System.Windows.Markup.MarkupExtension") {
 						isExt = true;
 						break;
@@ -149,7 +149,7 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 					return null;
 
 				if (elem.Name == ctor) {
-					if (!(ext.Initializer is null))
+					if (ext.Initializer is not null)
 						return null;
 
 					var args = InlineCtor(ctx, elem);

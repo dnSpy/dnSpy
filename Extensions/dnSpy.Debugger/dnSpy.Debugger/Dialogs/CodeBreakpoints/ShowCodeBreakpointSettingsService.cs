@@ -62,7 +62,7 @@ namespace dnSpy.Debugger.Dialogs.CodeBreakpoints {
 			if (breakpoints.Length == 0)
 				return;
 			var newSettings = Show(breakpoints[0].Settings);
-			if (!(newSettings is null))
+			if (newSettings is not null)
 				dbgCodeBreakpointsService.Value.Modify(breakpoints.Select(a => new DbgCodeBreakpointAndSettings(a, newSettings.Value)).ToArray());
 		}
 	}

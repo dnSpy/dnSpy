@@ -49,7 +49,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		bool SendCodeBreakpointHitMessage_MonoDebug(BreakpointEventRequest breakpoint, DbgThread? thread) {
 			debuggerThread.VerifyAccess();
 			if (breakpoint.Tag is BoundBreakpointData bpData) {
-				if (!(bpData is null))
+				if (bpData is not null)
 					SendMessage(new DbgMessageBreakpoint(bpData.EngineBoundCodeBreakpoint!.BoundCodeBreakpoint, thread, GetMessageFlags()));
 				else
 					SendMessage(new DbgMessageBreak(thread, GetMessageFlags()));
@@ -169,7 +169,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					continue;
 				}
 				bpData.EngineBoundCodeBreakpoint = ebp;
-				if (!(bpData.Breakpoint is null))
+				if (bpData.Breakpoint is not null)
 					bpData.Breakpoint.Tag = bpData;
 			}
 
@@ -196,7 +196,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				}
 				Debug2.Assert(bpData.Breakpoint is null);
 				bpData.Breakpoint = info.bp;
-				if (!(bpData.Breakpoint is null))
+				if (bpData.Breakpoint is not null)
 					bpData.Breakpoint.Tag = bpData;
 				ebp.UpdateMessage(info.error);
 			}
@@ -253,7 +253,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		void InitializeBreakpoints(TypeMirror monoType) {
 			debuggerThread.VerifyAccess();
-			Debug2.Assert(!(monoType is null));
+			Debug2.Assert(monoType is not null);
 			if (monoType is null)
 				return;
 			var module = TryGetModuleCore_NoCreate(monoType.Module);

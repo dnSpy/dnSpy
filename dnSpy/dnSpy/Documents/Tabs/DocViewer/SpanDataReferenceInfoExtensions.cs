@@ -31,14 +31,14 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 			var mra = refInfoA.Reference as IMemberRef;
 			var mrb = refInfoB.Reference as IMemberRef;
-			if (!(mra is null) && !(mrb is null)) {
+			if (mra is not null && mrb is not null) {
 				// PERF: Prevent expensive resolves by doing a quick name check
 				if (mra.Name != mrb.Name)
 					return false;
 
 				var dta = mra.DeclaringType;
 				var dtb = mrb.DeclaringType;
-				if (!(dta is null)) {
+				if (dta is not null) {
 					if (dtb is null)
 						return false;
 					if (dta.Name != dtb.Name)
@@ -47,7 +47,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 						return false;
 				}
 				else {
-					if (!(dtb is null))
+					if (dtb is not null)
 						return false;
 				}
 

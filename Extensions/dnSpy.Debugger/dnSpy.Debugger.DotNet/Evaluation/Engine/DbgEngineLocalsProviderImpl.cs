@@ -146,9 +146,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				// in the same arguments so it won't get recreated every time the method gets called.
 				var info = dbgAliasProvider.GetAliases(evalInfo);
 				var refsResult = dbgModuleReferenceProvider.GetModuleReferences(evalInfo.Runtime, evalInfo.Frame, info.typeReferences);
-				if (!(refsResult.ErrorMessage is null))
+				if (refsResult.ErrorMessage is not null)
 					return new[] { CreateInternalErrorNode(evalInfo, refsResult.ErrorMessage) };
-				Debug2.Assert(!(refsResult.ModuleReferences is null));
+				Debug2.Assert(refsResult.ModuleReferences is not null);
 
 				// Since we attach this to the module, the module doesn't have to be part of Key
 				var state = StateWithKey<GetNodesState>.GetOrCreate(module, this);
@@ -272,8 +272,8 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine {
 				return valueNodes;
 			}
 			catch (Exception ex) {
-				if (!(valueNodes is null))
-					evalInfo.Runtime.Process.DbgManager.Close(valueNodes.Select(a => a.ValueNode).Where(a => !(a is null)));
+				if (valueNodes is not null)
+					evalInfo.Runtime.Process.DbgManager.Close(valueNodes.Select(a => a.ValueNode).Where(a => a is not null));
 				if (!ExceptionUtils.IsInternalDebuggerError(ex))
 					throw;
 				return new[] { CreateInternalErrorNode(evalInfo, PredefinedEvaluationErrorMessages.InternalDebuggerError) };

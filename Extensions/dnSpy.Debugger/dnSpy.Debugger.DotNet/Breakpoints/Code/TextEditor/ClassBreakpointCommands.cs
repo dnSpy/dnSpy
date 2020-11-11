@@ -78,7 +78,7 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 				existing.Add(location);
 				list.Add(new DbgCodeBreakpointInfo(location, settings));
 			}
-			if (!(objsToClose is null))
+			if (objsToClose is not null)
 				dbgManager.Value.Close(objsToClose);
 			dbgCodeBreakpointsService.Value.Add(list.ToArray());
 		}
@@ -102,8 +102,8 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 				this.guid = Guid.Parse(guid);
 			}
 
-			public override bool IsVisible(IMenuItemContext context) => !(GetTypeRef(context, guid) is null);
-			public override bool IsEnabled(IMenuItemContext context) => !(GetTypeRef(context, guid) is null);
+			public override bool IsVisible(IMenuItemContext context) => GetTypeRef(context, guid) is not null;
+			public override bool IsEnabled(IMenuItemContext context) => GetTypeRef(context, guid) is not null;
 
 			public override void Execute(IMenuItemContext context) {
 				var type = GetTypeRef(context, guid)?.ResolveTypeDef();
@@ -171,7 +171,7 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 				yield break;
 
 			var @ref = context.Find<TextReference>();
-			if (!(@ref is null)) {
+			if (@ref is not null) {
 				var realRef = @ref.Reference;
 				if (realRef is Parameter)
 					realRef = ((Parameter)realRef).ParamDef;
@@ -182,7 +182,7 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 			}
 
 			var nodes = context.Find<TreeNodeData[]>();
-			if (!(nodes is null) && nodes.Length != 0) {
+			if (nodes is not null && nodes.Length != 0) {
 				foreach (var node in nodes) {
 					if (node is IMDTokenNode tokenNode && tokenNode.Reference is IMDTokenProvider tokenProvider)
 						yield return tokenProvider;
@@ -208,11 +208,11 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 				}
 
 				case EventDef evt:
-					if (!(evt.AddMethod is null))
+					if (evt.AddMethod is not null)
 						methods.Add(evt.AddMethod);
-					if (!(evt.RemoveMethod is null))
+					if (evt.RemoveMethod is not null)
 						methods.Add(evt.RemoveMethod);
-					if (!(evt.InvokeMethod is null))
+					if (evt.InvokeMethod is not null)
 						methods.Add(evt.InvokeMethod);
 					methods.AddRange(evt.OtherMethods);
 					break;
@@ -233,14 +233,14 @@ namespace dnSpy.Debugger.DotNet.Breakpoints.Code.TextEditor {
 				this.guid = Guid.Parse(guid);
 			}
 
-			public override bool IsVisible(IMenuItemContext context) => !(GetMethodReferences(context, guid) is null);
-			public override bool IsEnabled(IMenuItemContext context) => !(GetMethodReferences(context, guid) is null);
+			public override bool IsVisible(IMenuItemContext context) => GetMethodReferences(context, guid) is not null;
+			public override bool IsEnabled(IMenuItemContext context) => GetMethodReferences(context, guid) is not null;
 
 			public override void Execute(IMenuItemContext context) {
 				var methodRefs = GetMethodReferences(context, guid);
 				if (methodRefs is null)
 					return;
-				methodBreakpointsService.Value.Add(methodRefs.Select(a => a.ResolveMethodDef()).Where(a => !(a is null)).ToArray(), tracepoint);
+				methodBreakpointsService.Value.Add(methodRefs.Select(a => a.ResolveMethodDef()).Where(a => a is not null).ToArray(), tracepoint);
 			}
 		}
 

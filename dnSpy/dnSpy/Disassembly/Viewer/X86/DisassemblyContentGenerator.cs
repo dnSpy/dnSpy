@@ -218,14 +218,14 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 				WriteComment(output, commentPrefix, LINE);
 				output.Write(Environment.NewLine, BoxedTextColor.Text);
 			}
-			if (!(header is null)) {
+			if (header is not null) {
 				WriteComment(output, commentPrefix, header);
 				output.Write(Environment.NewLine, BoxedTextColor.Text);
 			}
 
-			if (!(moduleName is null))
+			if (moduleName is not null)
 				WriteComment(output, commentPrefix, moduleName);
-			if (!(methodName is null))
+			if (methodName is not null)
 				WriteComment(output, commentPrefix, methodName);
 			WriteComment(output, commentPrefix, GetCodeSizeString(blocks));
 			output.Write(Environment.NewLine, BoxedTextColor.Text);
@@ -244,7 +244,7 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 						sb.Append(' ');
 					}
 					var name = varInfo.Name ?? GetName(variableInfo, varInfo);
-					if (!(name is null)) {
+					if (name is not null) {
 						printedName = true;
 						if (varInfo.Index >= 0)
 							sb.Append('(');

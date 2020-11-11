@@ -132,7 +132,7 @@ namespace dnSpy.Contracts.Hex.Editor.HexGroups {
 		/// <param name="other"></param>
 		/// <returns></returns>
 		public bool Equals(LocalGroupOptions? other) =>
-			!(other is null) &&
+			other is not null &&
 			ShowOffsetColumn == other.ShowOffsetColumn &&
 			ShowValuesColumn == other.ShowValuesColumn &&
 			ShowAsciiColumn == other.ShowAsciiColumn &&

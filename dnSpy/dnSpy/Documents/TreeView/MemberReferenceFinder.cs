@@ -113,7 +113,7 @@ namespace dnSpy.Documents.TreeView {
 				type = gis.GenericType?.TypeDefOrRef;
 			else if (sig is TypeDefOrRefSig tdrs)
 				type = tdrs.TypeDefOrRef;
-			return !(type is null);
+			return type is not null;
 		}
 
 		static ITypeDefOrRef GetTypeDefOrRef(ITypeDefOrRef typeRef) {

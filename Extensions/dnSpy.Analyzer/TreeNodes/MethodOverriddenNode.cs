@@ -66,7 +66,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		public static bool CanShow(MethodDef method) =>
-			!(method.DeclaringType.BaseType is null) &&
+			method.DeclaringType.BaseType is not null &&
 			(method.IsVirtual || method.IsAbstract) && method.IsReuseSlot;
 	}
 }

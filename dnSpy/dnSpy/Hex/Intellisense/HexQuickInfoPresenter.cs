@@ -34,7 +34,7 @@ namespace dnSpy.Hex.Intellisense {
 		public HexQuickInfoPresenter(HexQuickInfoSession session)
 			: base(session) {
 			wpfHexView = session.HexView as WpfHexView;
-			Debug2.Assert(!(wpfHexView is null));
+			Debug2.Assert(wpfHexView is not null);
 			popup = new Popup {
 				PlacementTarget = wpfHexView?.VisualElement,
 				Placement = PlacementMode.Relative,
@@ -74,7 +74,7 @@ namespace dnSpy.Hex.Intellisense {
 				return false;
 
 			var line = session.HexView.HexViewLines.GetHexViewLineContainingBufferPosition(point.BufferPosition);
-			Debug2.Assert(!(line is null) && line.VisibilityState != VSTF.VisibilityState.Unattached);
+			Debug2.Assert(line is not null && line.VisibilityState != VSTF.VisibilityState.Unattached);
 			if (line is null || line.VisibilityState == VSTF.VisibilityState.Unattached)
 				return false;
 
@@ -110,7 +110,7 @@ namespace dnSpy.Hex.Intellisense {
 		}
 
 		bool ShouldDismiss(MouseEventArgs e) {
-			Debug2.Assert(!(wpfHexView is null));
+			Debug2.Assert(wpfHexView is not null);
 			var mousePos = GetMousePoint(e.MouseDevice);
 			if (mousePos is null)
 				return true;
@@ -153,7 +153,7 @@ namespace dnSpy.Hex.Intellisense {
 
 		protected override void OnSessionDismissed() {
 			ClosePopup();
-			if (!(wpfHexView is null)) {
+			if (wpfHexView is not null) {
 				wpfHexView.VisualElement.MouseLeave -= VisualElement_MouseLeave;
 				wpfHexView.VisualElement.MouseMove -= VisualElement_MouseMove;
 				popup.RemoveHandler(UIElement.MouseLeaveEvent, new MouseEventHandler(Popup_MouseLeave));

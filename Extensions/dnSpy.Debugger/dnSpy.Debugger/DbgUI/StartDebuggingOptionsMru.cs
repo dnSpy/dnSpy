@@ -56,7 +56,7 @@ namespace dnSpy.Debugger.DbgUI {
 			if (filename is null)
 				return;
 			var info = Find(filename);
-			if (!(info is null)) {
+			if (info is not null) {
 				bool b = list.Remove(info);
 				Debug.Assert(b);
 				list.Add(info);

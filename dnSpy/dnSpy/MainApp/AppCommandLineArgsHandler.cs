@@ -46,7 +46,7 @@ namespace dnSpy.MainApp {
 				toolWindowService.Close(info.Guid);
 			foreach (var info in GetToolWindowInfos(args.ShowToolWindow)) {
 				var content = toolWindowService.Show(info.Guid, info.Location);
-				Debug2.Assert(!(content is null));
+				Debug2.Assert(content is not null);
 				if (content is null)
 					continue;
 				if (info.Location is null)

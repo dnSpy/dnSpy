@@ -57,7 +57,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				return type.IsGenericTypeDefinition;
 			// It's a TypeRef, make sure it won't throw if it can't resolve the type
 			var resolvedType = type.ResolveNoThrow();
-			if (!(resolvedType is null))
+			if (resolvedType is not null)
 				return resolvedType.IsGenericTypeDefinition;
 			// Guess based on name
 			return type is Impl.DmdTypeRef && type.MetadataName!.LastIndexOf('`') >= 0;
@@ -68,7 +68,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				return type.ContainsGenericParameters;
 			// It's a TypeRef, make sure it won't throw if it can't resolve the type
 			var resolvedType = type.ResolveNoThrow();
-			if (!(resolvedType is null))
+			if (resolvedType is not null)
 				return resolvedType.ContainsGenericParameters;
 			if (type is Impl.DmdTypeRef)
 				return type.MetadataName!.LastIndexOf('`') >= 0;
@@ -87,7 +87,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			}
 
 			var nonNested = Impl.DmdTypeUtilities.GetNonNestedType(type);
-			if (!(nonNested is null)) {
+			if (nonNested is not null) {
 				var typeScope = nonNested.TypeScope;
 				switch (typeScope.Kind) {
 				default:
@@ -115,7 +115,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				return type.GetGenericTypeDefinition();
 
 			var resolvedType = type.ResolveNoThrow();
-			if (!(resolvedType is null))
+			if (resolvedType is not null)
 				return resolvedType.GetGenericTypeDefinition();
 
 			if (type is Impl.DmdGenericInstanceTypeRef)
@@ -130,7 +130,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				return type.GetGenericArguments();
 
 			var resolvedType = type.ResolveNoThrow();
-			if (!(resolvedType is null))
+			if (resolvedType is not null)
 				return resolvedType.GetGenericArguments();
 
 			if (type is Impl.DmdGenericInstanceTypeRef)
@@ -145,7 +145,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				return method.GetGenericArguments();
 
 			var resolvedMethod = method.ResolveMethodBaseNoThrow();
-			if (!(resolvedMethod is null))
+			if (resolvedMethod is not null)
 				return resolvedMethod.GetGenericArguments();
 
 			return Array.Empty<DmdType>();
@@ -490,7 +490,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			FormatTypeName(sig.ReturnType, flags);
 			writer.Append(' ');
 			writer.Append(name);
-			if (!(genericArguments is null))
+			if (genericArguments is not null)
 				WriteMethodGenericArguments(genericArguments, flags);
 			if (isMethod || sig.GetParameterTypes().Count != 0 || sig.GetVarArgsParameterTypes().Count != 0) {
 				if (!isMethod)

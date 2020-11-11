@@ -58,7 +58,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		public bool Equals(TokenReference? other) => !(other is null) && Token == other.Token && ModuleDef == other.ModuleDef;
+		public bool Equals(TokenReference? other) => other is not null && Token == other.Token && ModuleDef == other.ModuleDef;
 
 		/// <summary>
 		/// Equals()

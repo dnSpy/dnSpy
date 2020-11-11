@@ -58,7 +58,7 @@ namespace dnSpy.Text.Classification {
 				foreach (var ct in info.Metadata.ContentTypes) {
 					if (bufferContentType.IsOfType(ct)) {
 						var classifier = info.Value.GetClassifier(buffer);
-						if (!(classifier is null))
+						if (classifier is not null)
 							yield return classifier;
 						break;
 					}

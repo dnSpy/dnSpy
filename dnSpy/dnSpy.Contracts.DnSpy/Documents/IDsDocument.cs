@@ -158,7 +158,7 @@ namespace dnSpy.Contracts.Documents {
 		static IEnumerable<T> GetModules<T>(HashSet<T> hash, IEnumerable<IDsDocument> documents) where T : ModuleDef {
 			foreach (var f in documents.SelectMany(f => f.NonLoadedDescendantsAndSelf())) {
 				var mod = f.ModuleDef as T;
-				if (!(mod is null) && !hash.Contains(mod)) {
+				if (mod is not null && !hash.Contains(mod)) {
 					hash.Add(mod);
 					yield return mod;
 				}
@@ -167,7 +167,7 @@ namespace dnSpy.Contracts.Documents {
 					continue;
 				foreach (var m in asm.Modules) {
 					mod = m as T;
-					if (!(mod is null) && !hash.Contains(mod)) {
+					if (mod is not null && !hash.Contains(mod)) {
 						hash.Add(mod);
 						yield return mod;
 					}

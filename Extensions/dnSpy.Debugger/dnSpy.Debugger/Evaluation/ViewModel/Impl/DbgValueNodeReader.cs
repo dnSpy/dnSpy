@@ -42,7 +42,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		public override void SetValueNodeEvaluationOptions(DbgValueNodeEvaluationOptions options) => dbgValueNodeEvaluationOptions = options;
 
 		public override DbgValueNode GetDebuggerNode(ChildDbgValueRawNode valueNode) {
-			Debug2.Assert(!(evalInfo is null));
+			Debug2.Assert(evalInfo is not null);
 			var parent = valueNode.Parent;
 			uint startIndex = valueNode.DbgValueNodeChildIndex;
 			const int count = 1;
@@ -52,7 +52,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		public override DbgValueNode GetDebuggerNodeForReuse(DebuggerValueRawNode parent, uint startIndex) {
-			Debug2.Assert(!(evalInfo is null));
+			Debug2.Assert(evalInfo is not null);
 			const int count = 1;
 			var newNodes = parent.DebuggerValueNode.GetChildren(evalInfo, startIndex, count, dbgValueNodeEvaluationOptions);
 			Debug.Assert(count == 1);
@@ -60,7 +60,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		}
 
 		public override DbgValueNodeInfo Evaluate(string expression) {
-			Debug2.Assert(!(evalInfo is null));
+			Debug2.Assert(evalInfo is not null);
 			return evaluate(evalInfo, expression);
 		}
 	}

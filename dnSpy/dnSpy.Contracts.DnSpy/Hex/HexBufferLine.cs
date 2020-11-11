@@ -316,7 +316,7 @@ namespace dnSpy.Contracts.Hex {
 						firstCell = lastCell = cell;
 					}
 				}
-				if (!(firstCell is null))
+				if (firstCell is not null)
 					yield return Create(collection, firstCell, lastCell!, overlapSpan.Value);
 				yield break;
 			}
@@ -453,7 +453,7 @@ namespace dnSpy.Contracts.Hex {
 				break;
 
 			case HexLinePositionInfoType.ValueCellSeparator:
-				Debug2.Assert(!(position.Cell is null));
+				Debug2.Assert(position.Cell is not null);
 				Debug.Assert(position.Cell.CellSpan.End == position.Position);
 				position = HexLinePositionInfo.CreateValue(position.Cell.CellSpan.End - 1, position.Cell);
 				break;
@@ -478,7 +478,7 @@ namespace dnSpy.Contracts.Hex {
 			case HexLinePositionInfoType.AsciiCell:
 				if (!IsAsciiColumnPresent)
 					return null;
-				Debug2.Assert(!(cell is null));
+				Debug2.Assert(cell is not null);
 				if (onlyVisibleCells && !cell.HasData) {
 					var visible = GetVisible(AsciiCells, cell);
 					if (visible is null)
@@ -489,7 +489,7 @@ namespace dnSpy.Contracts.Hex {
 				return new HexCellPosition(HexColumnType.Ascii, cell.BufferStart, cellPosition);
 
 			case HexLinePositionInfoType.ValueCell:
-				Debug2.Assert(!(cell is null));
+				Debug2.Assert(cell is not null);
 				if (!IsValuesColumnPresent)
 					return null;
 				if (onlyVisibleCells && !cell.HasData) {

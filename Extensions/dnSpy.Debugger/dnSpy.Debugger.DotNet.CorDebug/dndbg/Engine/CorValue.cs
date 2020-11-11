@@ -322,7 +322,7 @@ namespace dndbg.Engine {
 				// This sometimes fails with CORDBG_E_CLASS_NOT_LOADED (ImmutableArray<T>, debugging VS2017).
 				// If it fails, use process.WriteMemory().
 				hr = g.SetValue(new IntPtr(p));
-				if (hr < 0 && !(process is null)) {
+				if (hr < 0 && process is not null) {
 					hr = process.WriteMemory(address, data, 0, data.Length, out var sizeWritten);
 					if (sizeWritten != data.Length && hr >= 0)
 						hr = -1;
@@ -343,7 +343,7 @@ namespace dndbg.Engine {
 			return hr < 0 ? null : data;
 		}
 
-		public bool Equals(CorValue? other) => !(other is null) && RawObject == other.RawObject;
+		public bool Equals(CorValue? other) => other is not null && RawObject == other.RawObject;
 		public override bool Equals(object? obj) => Equals(obj as CorValue);
 		public override int GetHashCode() => RawObject.GetHashCode();
 	}

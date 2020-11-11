@@ -154,7 +154,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 					return value;
 				}
 				td = tdr.ResolveTypeDef();
-				if (!(td is null) && !td.IsEnum)
+				if (td is not null && !td.IsEnum)
 					break;
 				return new EnumInfo() {
 					EnumType = tdr,
@@ -186,7 +186,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 						if (tdr.IsSystemType())
 							return Null<Type[]>.Instance;
 						td = tdr.ResolveTypeDef();
-						if (!(td is null) && !td.IsEnum)
+						if (td is not null && !td.IsEnum)
 							break;
 						return EnumInfo.CreateNullArray(tdr);
 					}
@@ -217,7 +217,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 					if (tdr.IsSystemType())
 						return ConvertArray<TypeSig>(elemType, oldList);
 					td = tdr.ResolveTypeDef();
-					if (!(td is null) && !td.IsEnum)
+					if (td is not null && !td.IsEnum)
 						break;
 					return ConvertEnum(elemType, oldList);
 				}
@@ -232,10 +232,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		object ConvertEnum(TypeSig elemType, IList<CAArgument> oldList) {
 			var td = elemType.GetScopeTypeDefOrRef().ResolveTypeDef();
 			ElementType underlyingElemType = ElementType.End;
-			if (!(td is null) && td.IsEnum)
+			if (td is not null && td.IsEnum)
 				underlyingElemType = td.GetEnumUnderlyingType().RemovePinnedAndModifiers().GetElementType();
 			if (!(ElementType.Boolean <= underlyingElemType && underlyingElemType <= ElementType.R8)) {
-				if (oldList.Count > 0 && !(oldList[0].Value is null))
+				if (oldList.Count > 0 && oldList[0].Value is not null)
 					underlyingElemType = ModelUtils.GetElementType(oldList[0].Value.GetType());
 			}
 
@@ -337,7 +337,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 					return new CAArgument(enumSig, enumInfo.Value);
 				var res = CreateArray(enumSig, enumInfo.Value);
 				var list = (IList<CAArgument>?)res.Value;
-				if (!(list is null)) {
+				if (list is not null) {
 					for (int i = 0; i < list.Count; i++)
 						list[i] = new CAArgument(enumSig, list[i].Value);
 				}
@@ -383,7 +383,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		CAArgument CreateArray(TypeSig elemType, object? value) {
 			var aryType = new SZArraySig(elemType);
 			var list = value as System.Collections.IList;
-			Debug2.Assert(!(list is null) || value is null);
+			Debug2.Assert(list is not null || value is null);
 			if (list is null)
 				return new CAArgument(aryType, null);
 			var ary = new List<CAArgument>(list.Count);

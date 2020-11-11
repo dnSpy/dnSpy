@@ -43,7 +43,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// <param name="clearedDocuments">All cleared documents</param>
 		/// <returns></returns>
 		public static NotifyDocumentTreeViewCollectionChangedEventArgs CreateClear(DsDocumentNode[] clearedDocuments) {
-			Debug2.Assert(!(clearedDocuments is null));
+			Debug2.Assert(clearedDocuments is not null);
 			var e = new NotifyDocumentTreeViewCollectionChangedEventArgs(clearedDocuments);
 			e.Type = NotifyDocumentTreeViewCollection.Clear;
 			return e;
@@ -55,7 +55,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// <param name="document">Added document</param>
 		/// <returns></returns>
 		public static NotifyDocumentTreeViewCollectionChangedEventArgs CreateAdd(DsDocumentNode document) {
-			Debug2.Assert(!(document is null));
+			Debug2.Assert(document is not null);
 			var e = new NotifyDocumentTreeViewCollectionChangedEventArgs(new DsDocumentNode[] { document });
 			e.Type = NotifyDocumentTreeViewCollection.Add;
 			return e;
@@ -67,7 +67,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// <param name="documents">Removed documents</param>
 		/// <returns></returns>
 		public static NotifyDocumentTreeViewCollectionChangedEventArgs CreateRemove(DsDocumentNode[] documents) {
-			Debug2.Assert(!(documents is null));
+			Debug2.Assert(documents is not null);
 			var e = new NotifyDocumentTreeViewCollectionChangedEventArgs(documents);
 			e.Type = NotifyDocumentTreeViewCollection.Remove;
 			return e;

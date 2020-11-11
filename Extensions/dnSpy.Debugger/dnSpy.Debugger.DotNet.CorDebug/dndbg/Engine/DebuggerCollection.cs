@@ -54,7 +54,7 @@ namespace dndbg.Engine {
 				return null;
 
 			var value = TryGet(key);
-			if (!(value is null))
+			if (value is not null)
 				return value;
 
 			var createdValue = createValue(key);

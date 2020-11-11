@@ -64,7 +64,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			readonly int position;
 			readonly int versionNumber;
 
-			public bool IsClickable => !(SpanData is null) || (!(RealSpanData is null) && Keyboard.Modifiers == ModifierKeys.Control);
+			public bool IsClickable => SpanData is not null || (RealSpanData is not null && Keyboard.Modifiers == ModifierKeys.Control);
 
 			public MouseReferenceInfo(SpanData<ReferenceInfo>? spanData, SpanData<ReferenceInfo>? realSpanData, VirtualSnapshotPoint point) {
 				SpanData = spanData;
@@ -83,7 +83,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public override void PostprocessMouseLeftButtonDown(MouseButtonEventArgs e) {
 			RestoreState();
 			clickedRef = GetReferenceCore(e);
-			if (!(clickedRef is null))
+			if (clickedRef is not null)
 				UpdateCursor(clickedRef.Value.IsClickable);
 		}
 
@@ -95,7 +95,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		void RestoreState() {
-			if (!(oldCursor is null))
+			if (oldCursor is not null)
 				wpfTextView.VisualElement.Cursor = oldCursor;
 			clickedRef = null;
 			oldCursor = null;
@@ -117,7 +117,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				var newRef = GetReferenceCore(e);
 				if (!CanClick(e, newRef))
 					return;
-				Debug2.Assert(!(newRef is null));
+				Debug2.Assert(newRef is not null);
 				var documentViewer = TryGetDocumentViewer();
 				if (documentViewer is null)
 					return;

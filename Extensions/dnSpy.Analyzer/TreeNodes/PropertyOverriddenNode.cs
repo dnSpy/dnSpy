@@ -68,18 +68,18 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		public static bool CanShow(PropertyDef property) =>
-			!((GetAccessor(property.GetMethod) ?? GetAccessor(property.SetMethod)) is null);
+			(GetAccessor(property.GetMethod) ?? GetAccessor(property.SetMethod)) is not null;
 
 		static MethodDef? GetAccessor(MethodDef? accessor) {
-			if (!(accessor is null) &&
-				!(accessor.DeclaringType.BaseType is null) &&
+			if (accessor is not null &&
+				accessor.DeclaringType.BaseType is not null &&
 				(accessor.IsVirtual || accessor.IsAbstract) && accessor.IsReuseSlot)
 				return accessor;
 			return null;
 		}
 
 		static MethodDef? GetVirtualAccessor(MethodDef? accessor) {
-			if (!(accessor is null) && (accessor.IsVirtual || accessor.IsAbstract))
+			if (accessor is not null && (accessor.IsVirtual || accessor.IsAbstract))
 				return accessor;
 			return null;
 		}

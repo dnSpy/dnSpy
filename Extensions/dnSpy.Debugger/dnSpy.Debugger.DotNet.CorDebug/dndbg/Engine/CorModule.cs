@@ -47,7 +47,7 @@ namespace dndbg.Engine {
 		public bool HasAssemblyRow {
 			get {
 				var mdi = GetMetaDataInterface<IMetaDataImport>();
-				return !(mdi is null) && mdi.IsValidToken(new MDToken(Table.Assembly, 1).Raw);
+				return mdi is not null && mdi.IsValidToken(new MDToken(Table.Assembly, 1).Raw);
 			}
 		}
 
@@ -192,7 +192,7 @@ namespace dndbg.Engine {
 			return o as T;
 		}
 
-		public bool Equals(CorModule? other) => !(other is null) && RawObject == other.RawObject;
+		public bool Equals(CorModule? other) => other is not null && RawObject == other.RawObject;
 		public override bool Equals(object? obj) => Equals(obj as CorModule);
 		public override int GetHashCode() => RawObject.GetHashCode();
 		public override string ToString() => $"[Module] DYN={(IsDynamic ? 1 : 0)} MEM={(IsInMemory ? 1 : 0)} A={Address:X8} S={Size:X8} {Name}";

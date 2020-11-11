@@ -62,7 +62,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID))
 					return null;
 				var nodes = context.Find<TreeNodeData[]>();
-				if (!(nodes is null) && nodes.Length != 0)
+				if (nodes is not null && nodes.Length != 0)
 					return nodes[0] as DocumentTreeNodeData;
 				return null;
 			}

@@ -63,7 +63,7 @@ namespace dnSpy.Bookmarks.Impl {
 			lock (lockObj) {
 				foreach (var info in settings) {
 					var bmImpl = info.Bookmark as BookmarkImpl;
-					Debug2.Assert(!(bmImpl is null));
+					Debug2.Assert(bmImpl is not null);
 					if (bmImpl is null)
 						continue;
 					Debug.Assert(bookmarks.Contains(bmImpl));
@@ -133,7 +133,7 @@ namespace dnSpy.Bookmarks.Impl {
 					}
 				}
 			}
-			if (!(objsToClose is null)) {
+			if (objsToClose is not null) {
 				foreach (var obj in objsToClose)
 					obj.Close();
 			}
@@ -153,7 +153,7 @@ namespace dnSpy.Bookmarks.Impl {
 			lock (lockObj) {
 				foreach (var bm in bookmarks) {
 					var bmImpl = bm as BookmarkImpl;
-					Debug2.Assert(!(bmImpl is null));
+					Debug2.Assert(bmImpl is not null);
 					if (bmImpl is null)
 						continue;
 					if (!this.bookmarks.Contains(bmImpl))

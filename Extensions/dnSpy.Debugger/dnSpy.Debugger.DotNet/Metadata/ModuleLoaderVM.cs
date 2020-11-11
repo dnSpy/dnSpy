@@ -190,7 +190,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 			sb.Append($"({Array.IndexOf(documents, document) + 1}/{documents.Length}): ");
 
 			var asm = module.Assembly;
-			if (!(asm is null)) {
+			if (asm is not null) {
 				if (module.IsManifestModule)
 					sb.Append(asm.FullName);
 				else

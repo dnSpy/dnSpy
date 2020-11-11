@@ -109,7 +109,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes.VisualBasic {
 			typeFormatter.Format(method.DeclaringType!, null);
 			var valueFormatter = new Formatters.VisualBasic.VisualBasicPrimitiveValueFormatter(output, valueOptions.ToValueFormatterOptions(), cultureInfo);
 			output.Write(DbgTextColor.Operator, ".");
-			if (!(property is null)) {
+			if (property is not null) {
 				output.Write(MemberUtils.GetColor(property), Formatters.VisualBasic.VisualBasicTypeFormatter.GetFormattedIdentifier(property.Name));
 				valueFormatter.WriteTokenComment(property.MetadataToken);
 				output.Write(DbgTextColor.Operator, ".");
@@ -118,7 +118,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes.VisualBasic {
 			}
 			else {
 				var operatorInfo = Formatters.VisualBasic.Operators.TryGetOperatorInfo(method.Name);
-				if (!(operatorInfo is null) && method is DmdMethodInfo methodInfo) {
+				if (operatorInfo is not null && method is DmdMethodInfo methodInfo) {
 					for (int i = 0; i < operatorInfo.Length; i++) {
 						if (i > 0)
 							output.Write(DbgTextColor.Text, " ");

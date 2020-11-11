@@ -29,7 +29,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public const int COMPRESSED_INT32_MAX	= 0x0FFFFFFF;
 
 		public static bool IsSystemType(this ITypeDefOrRef? tdr) =>
-			!(tdr is null) &&
+			tdr is not null &&
 			tdr.DeclaringType is null &&
 			tdr.Namespace == "System" &&
 			tdr.Name == "Type" &&
@@ -59,7 +59,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			if (td is null || value is null)
 				return null;
 			foreach (var fd in td.Fields) {
-				if (fd.IsLiteral && !(fd.Constant is null) && value.Equals(fd.Constant.Value))
+				if (fd.IsLiteral && fd.Constant is not null && value.Equals(fd.Constant.Value))
 					return fd.Name;
 			}
 			return null;

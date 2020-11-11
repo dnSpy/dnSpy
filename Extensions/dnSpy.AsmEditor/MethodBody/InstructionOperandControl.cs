@@ -90,9 +90,9 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		void OnInstructionOperandVMChanged(InstructionOperandVM oldValue, InstructionOperandVM newValue) {
-			if (!(oldValue is null))
+			if (oldValue is not null)
 				oldValue.PropertyChanged -= instructionOperandVM_PropertyChanged;
-			if (!(newValue is null)) {
+			if (newValue is not null) {
 				newValue.PropertyChanged += instructionOperandVM_PropertyChanged;
 				InitializeOperandType(newValue);
 			}

@@ -48,14 +48,14 @@ namespace dnSpy.Analyzer.TreeNodes {
 		internal IEnumerable<AnalyzerTreeNodeData> FetchChildrenInternal(CancellationToken token) => FetchChildren(token);
 
 		public override void OnIsVisibleChanged() {
-			if (!TreeNode.IsVisible && !(asyncFetchChildrenHelper is null) && !asyncFetchChildrenHelper.CompletedSuccessfully) {
+			if (!TreeNode.IsVisible && asyncFetchChildrenHelper is not null && !asyncFetchChildrenHelper.CompletedSuccessfully) {
 				CancelAndClearChildren();
 				TreeNode.LazyLoading = true;
 			}
  		}
 
 		public override void OnIsExpandedChanged(bool isExpanded) {
-			if (!isExpanded && !(asyncFetchChildrenHelper is null) && !asyncFetchChildrenHelper.CompletedSuccessfully) {
+			if (!isExpanded && asyncFetchChildrenHelper is not null && !asyncFetchChildrenHelper.CompletedSuccessfully) {
 				CancelAndClearChildren();
 				TreeNode.LazyLoading = true;
 			}
@@ -95,14 +95,14 @@ namespace dnSpy.Analyzer.TreeNodes {
 				return false;
 			if (targetModule == module)
 				return false;
-			if (!(targetModule.Assembly is null) && targetModule.Assembly == module.Assembly)
+			if (targetModule.Assembly is not null && targetModule.Assembly == module.Assembly)
 				return false;
 			return true;
 		}
 
 		internal static HashSet<string> GetFriendAssemblies(IDsDocumentService documentService, ModuleDef mod, out IDsDocument[] modules) {
 			var asm = mod.Assembly;
-			Debug2.Assert(!(asm is null));
+			Debug2.Assert(asm is not null);
 			var friendAssemblies = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 			foreach (var attribute in asm.CustomAttributes.FindAll("System.Runtime.CompilerServices.InternalsVisibleToAttribute")) {
 				if (attribute.ConstructorArguments.Count == 0)
@@ -115,7 +115,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 			modules = documentService.GetDocuments().Where(a => CanIncludeModule(mod, a.ModuleDef)).ToArray();
 			foreach (var module in modules) {
-				Debug2.Assert(!(module.ModuleDef is null));
+				Debug2.Assert(module.ModuleDef is not null);
 				var asm2 = module.AssemblyDef;
 				if (asm2 is null)
 					continue;
@@ -135,7 +135,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			Debug.Assert(analyzedTypes.Count == 1 && analyzedTypes[0] == analyzedType);
 			if (!TIAHelper.IsTypeDefEquivalent(analyzedType))
 				return;
-			foreach (var document in documentService.GetDocuments().Where(a => !(a.ModuleDef is null))) {
+			foreach (var document in documentService.GetDocuments().Where(a => a.ModuleDef is not null)) {
 				foreach (var type in GetTypeEquivalentTypes(document.AssemblyDef, document.ModuleDef, analyzedType)) {
 					if (type != analyzedType)
 						analyzedTypes.Add(type);
@@ -157,12 +157,12 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		static IEnumerable<ModuleDef> GetModules(AssemblyDef? assembly, ModuleDef? module) {
-			if (!(assembly is null)) {
+			if (assembly is not null) {
 				foreach (var mod in assembly.Modules)
 					yield return mod;
 			}
 			else {
-				if (!(module is null))
+				if (module is not null)
 					yield return module;
 			}
 		}

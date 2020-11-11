@@ -162,7 +162,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			// This fails if fullName is a generic instantiated type and at least one generic argument
 			// is a type in another assembly, eg. List<MyType>.
 			var result = monoType.Module.Assembly.GetType(fullName);
-			if (!(result is null))
+			if (result is not null)
 				return result;
 			return monoTypeLoader?.Load(monoType.Assembly, fullName);
 		}

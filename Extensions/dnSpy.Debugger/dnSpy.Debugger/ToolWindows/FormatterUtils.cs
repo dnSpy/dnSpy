@@ -84,7 +84,7 @@ namespace dnSpy.Debugger.ToolWindows {
 		}
 
 		public static T WriteYesNoOrNA<T>(this T output, bool? value) where T : IDbgTextWriter {
-			if (!(value is null))
+			if (value is not null)
 				output.WriteYesNo(value.Value);
 			else
 				output.Write(DbgTextColor.Text, "N/A");

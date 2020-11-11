@@ -182,7 +182,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="options">Default options</param>
 		/// <returns></returns>
 		public static DbgValueFormatterOptions GetValueFormatterOptions(ReadOnlyCollection<string>? formatSpecifiers, DbgValueFormatterOptions options) {
-			if (!(formatSpecifiers is null)) {
+			if (formatSpecifiers is not null) {
 				for (int i = 0; i < formatSpecifiers.Count; i++) {
 					switch (formatSpecifiers[i]) {
 					case Decimal:
@@ -252,7 +252,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="options">Default options</param>
 		/// <returns></returns>
 		public static DbgValueFormatterTypeOptions GetValueFormatterTypeOptions(ReadOnlyCollection<string>? formatSpecifiers, DbgValueFormatterTypeOptions options) {
-			if (!(formatSpecifiers is null)) {
+			if (formatSpecifiers is not null) {
 				for (int i = 0; i < formatSpecifiers.Count; i++) {
 					switch (formatSpecifiers[i]) {
 					case Decimal:
@@ -298,7 +298,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <param name="options">Default options</param>
 		/// <returns></returns>
 		public static DbgValueNodeEvaluationOptions GetValueNodeEvaluationOptions(ReadOnlyCollection<string>? formatSpecifiers, DbgValueNodeEvaluationOptions options) {
-			if (!(formatSpecifiers is null)) {
+			if (formatSpecifiers is not null) {
 				for (int i = 0; i < formatSpecifiers.Count; i++) {
 					switch (formatSpecifiers[i]) {
 					case DynamicView:

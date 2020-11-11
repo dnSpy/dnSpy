@@ -348,12 +348,12 @@ namespace dnSpy.AsmEditor.MethodBody {
 		void InvertBranch(InstructionVM[] instrs) {
 			foreach (var instr in instrs) {
 				var code = InvertBcc(instr.Code);
-				if (!(code is null))
+				if (code is not null)
 					instr.Code = code.Value;
 			}
 		}
 
-		bool InvertBranchCanExecute(InstructionVM[] instrs) => instrs.Any(a => !(InvertBcc(a.Code) is null));
+		bool InvertBranchCanExecute(InstructionVM[] instrs) => instrs.Any(a => InvertBcc(a.Code) is not null);
 
 		static Code? InvertBcc(Code code) {
 			switch (code) {
@@ -462,7 +462,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 		}
 
-		bool RemoveInstructionAndAddPopsCanExecute(InstructionVM[] instrs) => instrs.Any(a => !(GetInstructionPops(a) is null));
+		bool RemoveInstructionAndAddPopsCanExecute(InstructionVM[] instrs) => instrs.Any(a => GetInstructionPops(a) is not null);
 
 		readonly struct InstructionPushPopInfo {
 			public readonly int PopCount;
@@ -545,7 +545,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 			case ElementType.ValueType:
 				var td = ((ValueTypeSig)pushType!).TypeDefOrRef.ResolveTypeDef();
-				if (!(td is null) && td.IsEnum) {
+				if (td is not null && td.IsEnum) {
 					var undType = td.GetEnumUnderlyingType().RemovePinnedAndModifiers();
 					var et = undType.GetElementType();
 					if ((ElementType.Boolean <= et && et <= ElementType.R8) || et == ElementType.I || et == ElementType.U) {
@@ -626,7 +626,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			IList<TypeSig>? typeGenArgs = null;
 			if (type is TypeSpec ts) {
 				var genSig = ts.TypeSig.ToGenericInstSig();
-				if (!(genSig is null))
+				if (genSig is not null)
 					typeGenArgs = genSig.GenericArguments;
 			}
 			if (typeGenArgs is null && methodGenArgs is null)
@@ -635,7 +635,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		void InstructionsListVM_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
-			if (!(e.NewItems is null))
+			if (e.NewItems is not null)
 				InstallInstructionHandlers(e.NewItems);
 
 			if (!InstructionsListVM.DisableAutoUpdateProps)
@@ -680,7 +680,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		bool disableInstrOpUpdate = false;
 
 		void LocalsListVM_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
-			if (!(e.NewItems is null)) {
+			if (e.NewItems is not null) {
 				foreach (LocalVM? local in e.NewItems) {
 					local!.PropertyChanged -= local_PropertyChanged;
 					local.PropertyChanged += local_PropertyChanged;
@@ -701,7 +701,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		void ExceptionHandlersListVM_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
-			if (!(e.NewItems is null)) {
+			if (e.NewItems is not null) {
 				foreach (ExceptionHandlerVM? eh in e.NewItems) {
 					eh!.PropertyChanged -= eh_PropertyChanged;
 					eh.PropertyChanged += eh_PropertyChanged;
@@ -710,7 +710,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 			if (!ExceptionHandlersListVM.DisableAutoUpdateProps) {
 				if (e.Action == NotifyCollectionChangedAction.Add) {
-					if (!(e.NewItems is null)) {
+					if (e.NewItems is not null) {
 						foreach (ExceptionHandlerVM? eh in e.NewItems)
 							eh!.InstructionChanged(InstructionsListVM);
 					}

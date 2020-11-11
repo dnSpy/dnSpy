@@ -39,7 +39,7 @@ namespace dnSpy.Hex.Editor {
 				var list = new List<HexStructureInfoProvider>(hexStructureInfoProviderFactories.Length);
 				foreach (var lz in hexStructureInfoProviderFactories) {
 					var provider = lz.Value.Create(hexView);
-					if (!(provider is null))
+					if (provider is not null)
 						list.Add(provider);
 				}
 				return new HexStructureInfoAggregatorImpl(list.ToArray());

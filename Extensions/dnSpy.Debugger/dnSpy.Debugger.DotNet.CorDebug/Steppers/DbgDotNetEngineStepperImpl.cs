@@ -66,7 +66,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 				token = func?.Token ?? 0;
 				var offs = GetILOffset(CorFrame);
 				offset = offs ?? 0;
-				return !(module is null) && token != 0 && !(offs is null);
+				return module is not null && token != 0 && offs is not null;
 			}
 
 			public override bool Equals(DbgDotNetEngineStepperFrameInfo other) {
@@ -122,9 +122,9 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 					return;
 				if (!rvState.CorThread.Equals(corThread))
 					return;
-				Debug2.Assert(!(corThread is null));
+				Debug2.Assert(corThread is not null);
 				var corFrame = corThread.ActiveFrame;
-				Debug2.Assert(!(corFrame is null));
+				Debug2.Assert(corFrame is not null);
 				if (corFrame is null)
 					return;
 				if (rvState.StackStart != corFrame.StackStart || rvState.StackEnd != corFrame.StackEnd || rvState.Token != corFrame.Token)
@@ -137,10 +137,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 				bool error = true;
 				try {
 					corValue = corFrame.GetReturnValueForILOffset(offset);
-					if (!(corValue is null)) {
+					if (corValue is not null) {
 						var reflectionModule = engine.TryGetModule(corFrame.Function?.Module)?.GetReflectionModule();
-						Debug2.Assert(!(reflectionModule is null));
-						if (!(reflectionModule is null)) {
+						Debug2.Assert(reflectionModule is not null);
+						if (reflectionModule is not null) {
 							if (ReturnValues.Count >= maxReturnValues) {
 								TooManyReturnValues = true;
 								RemoveAllBreakpointsCore();
@@ -252,7 +252,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 
 		public override Task<DbgThread> StepOutAsync(DbgDotNetEngineStepperFrameInfo frame) {
 			engine.VerifyCorDebugThread();
-			Debug2.Assert(!(session is null));
+			Debug2.Assert(session is not null);
 			var frameImpl = (DbgDotNetEngineStepperFrameInfoImpl)frame;
 			Debug.Assert(dnDebugger.ProcessState == DebuggerProcessState.Paused);
 			CorStepper? newCorStepper = null;
@@ -261,10 +261,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 				if (canceled)
 					tcs.SetCanceled();
 				else {
-					Debug2.Assert(!(e is null));
+					Debug2.Assert(e is not null);
 					e.AddPauseReason(DebuggerPauseReason.Other);
 					var thread = engine.TryGetThread(e.CorThread);
-					if (!(thread is null))
+					if (thread is not null)
 						tcs.SetResult(thread);
 					else
 						tcs.SetException(new InvalidOperationException());
@@ -277,7 +277,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 
 		public override Task<DbgThread> StepIntoAsync(DbgDotNetEngineStepperFrameInfo frame, DbgCodeRange[] ranges) {
 			engine.VerifyCorDebugThread();
-			Debug2.Assert(!(session is null));
+			Debug2.Assert(session is not null);
 			var frameImpl = (DbgDotNetEngineStepperFrameInfoImpl)frame;
 			Debug.Assert(dnDebugger.ProcessState == DebuggerProcessState.Paused);
 			CorStepper? newCorStepper = null;
@@ -287,10 +287,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 				if (canceled)
 					tcs.SetCanceled();
 				else {
-					Debug2.Assert(!(e is null));
+					Debug2.Assert(e is not null);
 					e.AddPauseReason(DebuggerPauseReason.Other);
 					var thread = engine.TryGetThread(e.CorThread);
-					if (!(thread is null))
+					if (thread is not null)
 						tcs.SetResult(thread);
 					else
 						tcs.SetException(new InvalidOperationException());
@@ -303,7 +303,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 
 		public override Task<DbgThread> StepOverAsync(DbgDotNetEngineStepperFrameInfo frame, DbgCodeRange[] ranges) {
 			engine.VerifyCorDebugThread();
-			Debug2.Assert(!(session is null));
+			Debug2.Assert(session is not null);
 			var frameImpl = (DbgDotNetEngineStepperFrameInfoImpl)frame;
 			Debug.Assert(dnDebugger.ProcessState == DebuggerProcessState.Paused);
 			CorStepper? newCorStepper = null;
@@ -313,10 +313,10 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 				if (canceled)
 					tcs.SetCanceled();
 				else {
-					Debug2.Assert(!(e is null));
+					Debug2.Assert(e is not null);
 					e.AddPauseReason(DebuggerPauseReason.Other);
 					var thread = engine.TryGetThread(e.CorThread);
-					if (!(thread is null))
+					if (thread is not null)
 						tcs.SetResult(thread);
 					else
 						tcs.SetException(new InvalidOperationException());
@@ -329,14 +329,14 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 
 		public override void OnStepComplete() {
 			engine.VerifyCorDebugThread();
-			Debug2.Assert(!(session is null));
+			Debug2.Assert(session is not null);
 			var returnValues = session.TakeOwnershipOfReturnValues() ?? Array.Empty<DbgDotNetReturnValueInfo>();
 			engine.SetReturnValues(returnValues);
 		}
 
 		public override void CollectReturnValues(DbgDotNetEngineStepperFrameInfo frame, DbgILInstruction[][] statementInstructions) {
 			engine.VerifyCorDebugThread();
-			Debug2.Assert(!(session is null));
+			Debug2.Assert(session is not null);
 			var frameImpl = (DbgDotNetEngineStepperFrameInfoImpl)frame;
 			if (statementInstructions.Length == 0)
 				return;
@@ -366,7 +366,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 					if (liveOffsets.Length == 0)
 						continue;
 					var method = GetMethod(frameImpl.CorFrame, (int)instr.Operand, ref reflectionModule, ref genericTypeArguments, ref genericMethodArguments);
-					Debug2.Assert(!(method is null));
+					Debug2.Assert(method is not null);
 					if (method is null)
 						continue;
 					bps.Clear();
@@ -461,7 +461,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Steppers {
 			var sessionImpl = (SessionImpl)session;
 			var stepper = sessionImpl.CorStepper;
 			sessionImpl.CorStepper = null;
-			if (!(stepper is null))
+			if (stepper is not null)
 				dnDebugger.CancelStep(stepper);
 		}
 

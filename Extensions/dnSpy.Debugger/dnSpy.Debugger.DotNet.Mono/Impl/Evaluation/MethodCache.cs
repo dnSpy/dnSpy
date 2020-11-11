@@ -47,13 +47,13 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			MethodMirror? monoMethod;
 
 			var mi = method as DmdMethodInfo;
-			if (!(mi is null) && mi.IsConstructedGenericMethod) {
+			if (mi is not null && mi.IsConstructedGenericMethod) {
 				if (toMonoMethod.TryGetValue(method, out monoMethod))
 					return monoMethod;
 				if (!engine.MonoVirtualMachine.Version.AtLeast(2, 24))
 					throw new InvalidOperationException();
 				monoMethod = TryGetMethodCore2(mi.GetGenericMethodDefinition(), monoTypeLoader);
-				if (!(monoMethod is null)) {
+				if (monoMethod is not null) {
 					var genArgs = mi.GetGenericArguments();
 					var monoGenArgs = new TypeMirror[genArgs.Count];
 					for (int i = 0; i < monoGenArgs.Length; i++)
@@ -65,7 +65,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			}
 			else {
 				monoMethod = TryGetMethodCore2(method, monoTypeLoader);
-				if (!(monoMethod is null))
+				if (monoMethod is not null)
 					return monoMethod;
 			}
 

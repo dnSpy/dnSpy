@@ -66,7 +66,7 @@ namespace dnSpy.Debugger.DbgUI {
 			if (ok)
 				return true;
 
-			Debug2.Assert(!(error is null));
+			Debug2.Assert(error is not null);
 			if (error is null)
 				error = "<Unknown error>";
 			return false;

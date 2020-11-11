@@ -67,12 +67,12 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 			if (info is null)
 				return null;
 			if (triggerInfo.TriggerReason == SignatureHelpTriggerReason.TypeCharCommand) {
-				Debug2.Assert(!(triggerInfo.TriggerCharacter is null));
-				if (!(triggerInfo.TriggerCharacter is null) && !info.Value.SignatureHelpService.IsTriggerCharacter(triggerInfo.TriggerCharacter.Value))
+				Debug2.Assert(triggerInfo.TriggerCharacter is not null);
+				if (triggerInfo.TriggerCharacter is not null && !info.Value.SignatureHelpService.IsTriggerCharacter(triggerInfo.TriggerCharacter.Value))
 					return null;
 			}
 			else if (triggerInfo.TriggerReason == SignatureHelpTriggerReason.RetriggerCommand) {
-				if (!(triggerInfo.TriggerCharacter is null) && !info.Value.SignatureHelpService.IsRetriggerCharacter(triggerInfo.TriggerCharacter.Value))
+				if (triggerInfo.TriggerCharacter is not null && !info.Value.SignatureHelpService.IsRetriggerCharacter(triggerInfo.TriggerCharacter.Value))
 					return null;
 			}
 
@@ -165,14 +165,14 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 			}
 
 			var selectedSig = signatures.FirstOrDefault(a => a.IsSelected);
-			if (!(selectedSig is null))
+			if (selectedSig is not null)
 				session.SelectedSignature = selectedSig;
 		}
 
 		void Session_Dismissed(object? sender, EventArgs e) => Dispose();
 
 		void InitializeSignatures(ITrackingSpan applicableToSpan, SignatureHelpResult signatureHelpResult) {
-			Debug2.Assert(!(signatureHelpResult.Items is null));
+			Debug2.Assert(signatureHelpResult.Items is not null);
 			signatures.Clear();
 			foreach (var item in signatureHelpResult.Items.Items) {
 				bool isSelected = signatureHelpResult.SelectedItem == item;
@@ -194,7 +194,7 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 				return;
 			isDisposed = true;
 			CancelFetchItems();
-			if (!(session is null)) {
+			if (session is not null) {
 				session.Dismissed -= Session_Dismissed;
 				session.Dismiss();
 			}

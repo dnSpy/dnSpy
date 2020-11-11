@@ -150,7 +150,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 						ReadXmlDoc(xmlReader);
 					} else {
 						var redirectionTarget = GetRedirectionTarget(fileName, redirectAttr);
-						if (!(redirectionTarget is null)) {
+						if (redirectionTarget is not null) {
 							//Debug.WriteLine("XmlDoc " + fileName + " is redirecting to " + redirectionTarget);
 							using (FileStream redirectedFs = new FileStream(redirectionTarget, FileMode.Open, FileAccess.Read, FileShare.Read | FileShare.Delete)) {
 								using (XmlTextReader redirectedXmlReader = new XmlTextReader(redirectedFs)) {
@@ -303,7 +303,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 						if (reader.LocalName == "member") {
 							int pos = linePosMapper.GetPositionForLine(reader.LineNumber) + Math.Max(reader.LinePosition - 2, 0);
 							var memberAttr = (string?)reader.GetAttribute("name");
-							if (!(memberAttr is null))
+							if (memberAttr is not null)
 								indexList.Add(new IndexEntry(GetHashCode(memberAttr), pos));
 							reader.Skip();
 						}
@@ -372,7 +372,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 						// go through all items that have the correct hash
 						while (++m < index.Length && index[m].HashCode == hashcode) {
 							val = LoadDocumentation(key, index[m].PositionInFile);
-							if (!(val is null))
+							if (val is not null)
 								break;
 						}
 						// cache the result (even if it is null)

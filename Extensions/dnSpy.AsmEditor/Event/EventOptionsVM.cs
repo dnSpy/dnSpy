@@ -42,9 +42,9 @@ namespace dnSpy.AsmEditor.Event {
 		public ICommand PickAddMethodCommand => new RelayCommand(a => PickAddMethod());
 		public ICommand PickInvokeMethodCommand => new RelayCommand(a => PickInvokeMethod());
 		public ICommand PickRemoveMethodCommand => new RelayCommand(a => PickRemoveMethod());
-		public ICommand ClearAddMethodCommand => new RelayCommand(a => AddMethod = null, a => !(AddMethod is null));
-		public ICommand ClearInvokeMethodCommand => new RelayCommand(a => InvokeMethod = null, a => !(InvokeMethod is null));
-		public ICommand ClearRemoveMethodCommand => new RelayCommand(a => RemoveMethod = null, a => !(RemoveMethod is null));
+		public ICommand ClearAddMethodCommand => new RelayCommand(a => AddMethod = null, a => AddMethod is not null);
+		public ICommand ClearInvokeMethodCommand => new RelayCommand(a => InvokeMethod = null, a => InvokeMethod is not null);
+		public ICommand ClearRemoveMethodCommand => new RelayCommand(a => RemoveMethod = null, a => RemoveMethod is not null);
 
 		public EventAttributes Attributes {
 			get => attributes;
@@ -150,7 +150,7 @@ namespace dnSpy.AsmEditor.Event {
 				CanAddGenericMethodVar = true,
 				OwnerType = ownerType,
 			};
-			if (!(ownerType is null) && ownerType.GenericParameters.Count == 0)
+			if (ownerType is not null && ownerType.GenericParameters.Count == 0)
 				typeSigCreatorOptions.CanAddGenericTypeVar = false;
 			TypeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
 			TypeSigCreator.PropertyChanged += typeSigCreator_PropertyChanged;
@@ -180,19 +180,19 @@ namespace dnSpy.AsmEditor.Event {
 
 		void PickAddMethod() {
 			var method = PickMethod(AddMethod);
-			if (!(method is null))
+			if (method is not null)
 				AddMethod = method;
 		}
 
 		void PickInvokeMethod() {
 			var method = PickMethod(InvokeMethod);
-			if (!(method is null))
+			if (method is not null)
 				InvokeMethod = method;
 		}
 
 		void PickRemoveMethod() {
 			var method = PickMethod(RemoveMethod);
-			if (!(method is null))
+			if (method is not null)
 				RemoveMethod = method;
 		}
 

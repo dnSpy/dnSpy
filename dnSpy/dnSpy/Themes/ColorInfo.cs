@@ -61,12 +61,12 @@ namespace dnSpy.Themes {
 			: base(colorType, description) => ForegroundResourceKey = null;
 
 		public override IEnumerable<(object?, object)> GetResourceKeyValues(ThemeColor hlColor) {
-			if (!(ForegroundResourceKey is null)) {
-				Debug2.Assert(!(hlColor.Foreground is null));
+			if (ForegroundResourceKey is not null) {
+				Debug2.Assert(hlColor.Foreground is not null);
 				yield return (ForegroundResourceKey, ((SolidColorBrush)hlColor.Foreground).Color);
 			}
-			if (!(BackgroundResourceKey is null)) {
-				Debug2.Assert(!(hlColor.Background is null));
+			if (BackgroundResourceKey is not null) {
+				Debug2.Assert(hlColor.Background is not null);
 				yield return (BackgroundResourceKey, ((SolidColorBrush)hlColor.Background).Color);
 			}
 		}
@@ -81,12 +81,12 @@ namespace dnSpy.Themes {
 		}
 
 		public override IEnumerable<(object?, object)> GetResourceKeyValues(ThemeColor hlColor) {
-			if (!(ForegroundResourceKey is null)) {
-				Debug2.Assert(!(hlColor.Foreground is null));
+			if (ForegroundResourceKey is not null) {
+				Debug2.Assert(hlColor.Foreground is not null);
 				yield return (ForegroundResourceKey, hlColor.Foreground);
 			}
-			if (!(BackgroundResourceKey is null)) {
-				Debug2.Assert(!(hlColor.Background is null));
+			if (BackgroundResourceKey is not null) {
+				Debug2.Assert(hlColor.Background is not null);
 				yield return (BackgroundResourceKey, hlColor.Background);
 			}
 		}
@@ -101,13 +101,13 @@ namespace dnSpy.Themes {
 			: base(colorType, description) => ForegroundResourceKey = null;
 
 		public override IEnumerable<(object?, object)> GetResourceKeyValues(ThemeColor hlColor) {
-			if (!(ForegroundResourceKey is null)) {
-				Debug2.Assert(!(hlColor.Foreground is null));
+			if (ForegroundResourceKey is not null) {
+				Debug2.Assert(hlColor.Foreground is not null);
 				var brush = hlColor.Foreground;
 				yield return (ForegroundResourceKey, CreateDrawingBrush(brush));
 			}
-			if (!(BackgroundResourceKey is null)) {
-				Debug2.Assert(!(hlColor.Background is null));
+			if (BackgroundResourceKey is not null) {
+				Debug2.Assert(hlColor.Background is not null);
 				var brush = hlColor.Background;
 				yield return (BackgroundResourceKey, CreateDrawingBrush(brush));
 			}

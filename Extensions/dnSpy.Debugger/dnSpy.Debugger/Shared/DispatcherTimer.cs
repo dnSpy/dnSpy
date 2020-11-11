@@ -59,7 +59,7 @@ namespace dnSpy.Debugger.Shared {
 
 		public void Start() {
 			lock (lockObj) {
-				if (!(timer is null))
+				if (timer is not null)
 					return;
 				timer = new Timer(OnTimerCallback, null, interval, interval);
 			}

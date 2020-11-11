@@ -61,7 +61,7 @@ namespace dnSpy.Settings.AppearanceCategory {
 			var newActive = ThemeFontSettings.Active;
 			if (activeFontSettings == newActive)
 				return;
-			if (!(activeFontSettings is null))
+			if (activeFontSettings is not null)
 				activeFontSettings.PropertyChanged -= ActiveFontSettings_PropertyChanged;
 			activeFontSettings = newActive;
 			activeFontSettings.PropertyChanged += ActiveFontSettings_PropertyChanged;
@@ -89,7 +89,7 @@ namespace dnSpy.Settings.AppearanceCategory {
 		}
 
 		ResourceDictionary CreateResourceDictionaryCore(ITheme theme) {
-			Debug2.Assert(!(activeFontSettings is null));
+			Debug2.Assert(activeFontSettings is not null);
 			var res = new ResourceDictionary();
 
 			var tc = theme.GetColor(def.ColorType);

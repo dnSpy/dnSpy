@@ -138,7 +138,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 			case InstructionOperandType.SwitchTargets:
 				var list = InstructionOperandVM.Other as IList<InstructionVM>;
-				if (!(list is null))
+				if (list is not null)
 					return new Instruction(opCode, new Instruction[list.Count]);
 				return new Instruction(opCode, Array.Empty<Instruction>());
 

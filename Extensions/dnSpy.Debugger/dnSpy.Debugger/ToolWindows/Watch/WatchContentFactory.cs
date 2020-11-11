@@ -45,7 +45,7 @@ namespace dnSpy.Debugger.ToolWindows.Watch {
 
 		public override bool TryGetContent(int index, out WatchContent watchContent) {
 			watchContent = contents[index];
-			return !(watchContent is null);
+			return watchContent is not null;
 		}
 
 		public override WatchContent GetContent(int index) {

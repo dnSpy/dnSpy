@@ -70,7 +70,7 @@ namespace dnSpy.Settings.Fonts {
 				var name = tfsSection.Attribute<string>(ThemeFontSettingsAttrName);
 				if (name is null)
 					continue;
-				if (!(TryGetThemeFontSettingsSection(name) is null)) {
+				if (TryGetThemeFontSettingsSection(name) is not null) {
 					rootSection.RemoveSection(tfsSection);
 					continue;
 				}
@@ -83,7 +83,7 @@ namespace dnSpy.Settings.Fonts {
 			if (name is null)
 				throw new ArgumentNullException(nameof(name));
 			var section = TryGetThemeFontSettingsSection(name);
-			if (!(section is null))
+			if (section is not null)
 				rootSection.RemoveSection(section);
 		}
 
@@ -93,7 +93,7 @@ namespace dnSpy.Settings.Fonts {
 				var themeGuid = fontSection.Attribute<Guid?>(FontSettingsAttrThemeGuid);
 				var fontFamily = fontSection.Attribute<string>(FontSettingsAttrFontFamily);
 				var fontSize = fontSection.Attribute<double?>(FontSettingsAttrFontSize);
-				if (themeGuid is null || string.IsNullOrWhiteSpace(fontFamily) || fontSize is null || !(TryGetThemeFontSettingsSection(name, themeGuid.Value) is null)) {
+				if (themeGuid is null || string.IsNullOrWhiteSpace(fontFamily) || fontSize is null || TryGetThemeFontSettingsSection(name, themeGuid.Value) is not null) {
 					tfsSection.RemoveSection(fontSection);
 					continue;
 				}
@@ -124,7 +124,7 @@ namespace dnSpy.Settings.Fonts {
 
 		ISettingsSection GetThemeFontSettingsSection(string name) {
 			var section = TryGetThemeFontSettingsSection(name);
-			if (!(section is null))
+			if (section is not null)
 				return section;
 			section = rootSection.CreateSection(ThemeFontSettingsSection);
 			section.Attribute(ThemeFontSettingsAttrName, name);
@@ -135,7 +135,7 @@ namespace dnSpy.Settings.Fonts {
 		ISettingsSection GetThemeFontSettingsSection(string name, Guid themeGuid) {
 			var tfsSection = GetThemeFontSettingsSection(name);
 			var section = TryGetThemeFontSettingsSection(name, themeGuid);
-			if (!(section is null))
+			if (section is not null)
 				return section;
 			section = tfsSection.CreateSection(FontSettingsSection);
 			section.Attribute(FontSettingsAttrThemeGuid, themeGuid);

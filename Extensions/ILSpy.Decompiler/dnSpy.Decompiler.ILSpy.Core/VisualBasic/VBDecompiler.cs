@@ -43,7 +43,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 		}
 
 		public DecompilerProvider(DecompilerSettingsService decompilerSettingsService) {
-			Debug2.Assert(!(decompilerSettingsService is null));
+			Debug2.Assert(decompilerSettingsService is not null);
 			this.decompilerSettingsService = decompilerSettingsService ?? throw new ArgumentNullException(nameof(decompilerSettingsService));
 		}
 
@@ -195,7 +195,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 		void RunTransformsAndGenerateCode(ref BuilderState state, IDecompilerOutput output, DecompilationContext ctx, IAstTransform? additionalTransform = null) {
 			var astBuilder = state.AstBuilder;
 			astBuilder.RunTransformations(transformAbortCondition);
-			if (!(additionalTransform is null)) {
+			if (additionalTransform is not null) {
 				additionalTransform.Run(astBuilder.SyntaxTree);
 			}
 			var settings = GetDecompilerSettings();
@@ -249,7 +249,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 			var converter = new CSharpToVBConverterVisitor(type.Module, envProvider);
 			var astType = AstBuilder.ConvertType(type, new StringBuilder(), typeAttributes, options);
 
-			if (!(type.TryGetByRefSig() is null)) {
+			if (type.TryGetByRefSig() is not null) {
 				output.Write("ByRef", BoxedTextColor.Keyword);
 				output.Write(" ", BoxedTextColor.Text);
 				if (astType is ICSharpCode.NRefactory.CSharp.ComposedType && ((ICSharpCode.NRefactory.CSharp.ComposedType)astType).PointerRank > 0)

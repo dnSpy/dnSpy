@@ -601,7 +601,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// <summary>
 		/// true if there was an error. Error message is in <see cref="Error"/>
 		/// </summary>
-		public bool HasError => !(Error is null);
+		public bool HasError => Error is not null;
 
 		/// <summary>
 		/// Constructor
@@ -646,7 +646,7 @@ namespace dnSpy.Contracts.Debugger {
 		/// <summary>
 		/// true if there was an error. Error message is in <see cref="Error"/>
 		/// </summary>
-		public bool HasError => !(Error is null);
+		public bool HasError => Error is not null;
 
 		/// <summary>
 		/// Constructor

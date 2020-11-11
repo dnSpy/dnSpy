@@ -109,7 +109,7 @@ namespace dnSpy.AsmEditor.Property {
 				CanAddGenericMethodVar = true,
 				OwnerType = ownerType,
 			};
-			if (!(ownerType is null) && ownerType.GenericParameters.Count == 0)
+			if (ownerType is not null && ownerType.GenericParameters.Count == 0)
 				typeSigCreatorOptions.CanAddGenericTypeVar = false;
 			var methodSigCreatorOptions = new MethodSigCreatorOptions(typeSigCreatorOptions);
 			methodSigCreatorOptions.IsPropertySig = true;
@@ -146,7 +146,7 @@ namespace dnSpy.AsmEditor.Property {
 			Attributes = options.Attributes;
 			Name = options.Name;
 			PropertySig = options.PropertySig;
-			if (!(options.Constant is null)) {
+			if (options.Constant is not null) {
 				HasDefault = true;
 				ConstantVM.Value = options.Constant.Value;
 			}

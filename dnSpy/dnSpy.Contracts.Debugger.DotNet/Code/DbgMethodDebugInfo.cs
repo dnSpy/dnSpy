@@ -108,7 +108,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Code {
 		public DbgILSpan[] GetUnusedRanges() => GetUnusedILSpans();
 
 		DbgILSpan[] GetUnusedILSpans() {
-			if (!(cachedUnusedILSpans is null))
+			if (cachedUnusedILSpans is not null)
 				return cachedUnusedILSpans;
 			var list = new List<DbgILSpan>(Statements.Length);
 			foreach (var s in Statements)
@@ -169,7 +169,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Code {
 		public DbgILSpan[] GetILSpansOfStatement(DbgTextSpan statementSpan) {
 			if (statementsDict is null)
 				Interlocked.CompareExchange(ref statementsDict, CreateStatementsDict(Statements), null);
-			Debug2.Assert(!(statementsDict is null));
+			Debug2.Assert(statementsDict is not null);
 			if (statementsDict.TryGetValue(statementSpan, out var list)) {
 				var spans = list.ToArray();
 #if DEBUG
@@ -211,7 +211,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Code {
 		}
 
 		public T[] ToArray() {
-			if (!(list is null))
+			if (list is not null)
 				return list.ToArray();
 			if (hasFirstValue)
 				return new[] { firstValue };

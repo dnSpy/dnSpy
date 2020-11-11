@@ -86,7 +86,7 @@ namespace dnSpy.Text.Editor {
 
 			foreach (var info in margins) {
 				var margin = info.Margin.GetTextViewMargin(marginName);
-				if (!(margin is null))
+				if (margin is not null)
 					return margin;
 			}
 

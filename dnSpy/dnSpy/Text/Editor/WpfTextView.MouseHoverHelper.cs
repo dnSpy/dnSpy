@@ -134,9 +134,9 @@ namespace dnSpy.Text.Editor {
 					ClearMouseHoverPositionAndStopTimer();
 					return;
 				}
-				Debug2.Assert(!(timerStart is null));
+				Debug2.Assert(timerStart is not null);
 				var list = GetHandlersToNotify();
-				if (!(list is null)) {
+				if (list is not null) {
 					var mhe = new MouseHoverEventArgs(owner, position.Value, owner.BufferGraph.CreateMappingPoint(new SnapshotPoint(owner.TextSnapshot, position.Value), PointTrackingMode.Positive));
 					foreach (var h in list) {
 						h.Raised = true;

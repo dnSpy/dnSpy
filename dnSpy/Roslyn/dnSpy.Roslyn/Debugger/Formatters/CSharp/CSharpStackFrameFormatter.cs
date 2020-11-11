@@ -144,7 +144,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 			if (runtime.Dispatcher.CheckAccess())
 				return false;
 			var sig = runtime.GetFrameMethod(evalInfo)?.GetMethodSignature();
-			return !(sig is null) && (sig.GetParameterTypes().Count > 0 || sig.GetVarArgsParameterTypes().Count > 0);
+			return sig is not null && (sig.GetParameterTypes().Count > 0 || sig.GetVarArgsParameterTypes().Count > 0);
 		}
 
 		public void Format() {
@@ -350,7 +350,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 				break;
 			}
 
-			if (!(loc is null)) {
+			if (loc is not null) {
 				var addr = loc.NativeAddress;
 				if (addr.Address != 0) {
 					WriteCommaSpace();
@@ -450,7 +450,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 				operatorInfo = null;
 			else
 				operatorInfo = Operators.TryGetOperatorInfo(method.Name);
-			bool isExplicitOrImplicit = !(operatorInfo is null) && (operatorInfo[0] == "explicit" || operatorInfo[0] == "implicit");
+			bool isExplicitOrImplicit = operatorInfo is not null && (operatorInfo[0] == "explicit" || operatorInfo[0] == "implicit");
 
 			if (!isExplicitOrImplicit) {
 				if (ReturnTypes && !(method is DmdConstructorInfo)) {
@@ -491,7 +491,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters.CSharp {
 		void WriteOperatorInfoString(string s) => OutputWrite(s, 'a' <= s[0] && s[0] <= 'z' ? DbgTextColor.Keyword : DbgTextColor.Operator);
 
 		void WriteMethodName(DmdMethodBase method, string name, string[]? operatorInfo) {
-			if (!(operatorInfo is null)) {
+			if (operatorInfo is not null) {
 				for (int i = 0; i < operatorInfo.Length; i++) {
 					if (i > 0)
 						WriteSpace();

@@ -78,7 +78,7 @@ namespace dnSpy.Hex.Operations {
 				public static byte[] GetBuffer() => Interlocked.Exchange(ref weakBuffer, null)?.Target as byte[] ?? new byte[BUFFER_LENGTH];
 				public static void ReturnBuffer(ref byte[]? buffer) {
 					var tmp = buffer;
-					if (!(tmp is null)) {
+					if (tmp is not null) {
 						buffer = null;
 						weakBuffer = new WeakReference(tmp);
 					}

@@ -47,7 +47,7 @@ if (annotation is null )
 	return null;
 
 IEntity current = null;
-if (!(entity is null)) {
+if (entity is not null) {
 	var typeInfo = entity.Annotation<TypeReference>();
 	current = loader.ReadTypeReference(typeInfo).Resolve(context).GetDefinition();
 }
@@ -128,7 +128,7 @@ return loader.ReadTypeReference(annotation, entity: current).Resolve(context);*/
 			}
 		}
 
-		public bool HasEvent(ICSharpCode.NRefactory.VB.Ast.Expression expression) => !(expression.Annotation<EventDef>() is null);
+		public bool HasEvent(ICSharpCode.NRefactory.VB.Ast.Expression expression) => expression.Annotation<EventDef>() is not null;
 
 		public bool IsMethodGroup(ICSharpCode.NRefactory.CSharp.Expression expression) {
 			var annotation = expression.Annotation<MethodDef>();
@@ -145,10 +145,10 @@ return loader.ReadTypeReference(annotation, entity: current).Resolve(context);*/
 
 			sb.Clear();
 			var getMethod = propInfo.GetMethod;
-			if (!(getMethod is null))
+			if (getMethod is not null)
 				return getMethod.Parameters.Where(p => p.IsNormalMethodParameter).Select(p => new ICSharpCode.NRefactory.CSharp.ParameterDeclaration(AstBuilder.ConvertType(p.Type, sb), p.Name, GetModifiers(p))).ToArray();
 			var setMethod = propInfo.SetMethod;
-			if (!(setMethod is null)) {
+			if (setMethod is not null) {
 				var ps = setMethod.Parameters.Where(p => p.IsNormalMethodParameter).ToArray();
 				if (ps.Length > 1)
 					return ps.Take(ps.Length - 1).Select(p => new ICSharpCode.NRefactory.CSharp.ParameterDeclaration(AstBuilder.ConvertType(p.Type, sb), p.Name, GetModifiers(p))).ToArray();
@@ -159,7 +159,7 @@ return loader.ReadTypeReference(annotation, entity: current).Resolve(context);*/
 
 		ICSharpCode.NRefactory.CSharp.ParameterModifier GetModifiers(Parameter p) {
 			var pd = p.ParamDef;
-			if (!(pd is null)) {
+			if (pd is not null) {
 				if (pd.IsOut && pd.IsIn)
 					return ICSharpCode.NRefactory.CSharp.ParameterModifier.Ref;
 				if (pd.IsOut)

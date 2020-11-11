@@ -42,7 +42,7 @@ namespace dnSpy.Roslyn.Debugger.Formatters {
 			ToStringState CreateToStringState(DmdType type2) {
 				var appDomain = type2.AppDomain;
 				var method = type2.GetMethod(nameof(object.ToString), DmdSignatureCallingConvention.Default | DmdSignatureCallingConvention.HasThis, 0, appDomain.System_String, Array.Empty<DmdType>(), throwOnError: false) as DmdMethodInfo;
-				if (!(method is null)) {
+				if (method is not null) {
 					if (method.DeclaringType == appDomain.System_Object || method.DeclaringType == appDomain.System_ValueType || method.DeclaringType == appDomain.System_Enum)
 						method = null;
 				}

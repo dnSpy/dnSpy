@@ -83,31 +83,31 @@ namespace dnSpy.Debugger.Breakpoints.Code.TextEditor {
 			WriteLocation(output, breakpoint, textView, span);
 
 			const string INDENTATION = "    ";
-			if (!(breakpoint.Condition is null) || !(breakpoint.HitCount is null) || !(breakpoint.Filter is null)) {
+			if (breakpoint.Condition is not null || breakpoint.HitCount is not null || breakpoint.Filter is not null) {
 				output.WriteLine();
 				output.WriteLine();
 				output.Write(DbgTextColor.Text, dnSpy_Debugger_Resources.GlyphToolTip_Conditions);
 
-				if (!(breakpoint.Condition is null)) {
+				if (breakpoint.Condition is not null) {
 					output.WriteLine();
 					output.Write(DbgTextColor.Text, INDENTATION);
 					breakpointConditionsFormatter.WriteToolTip(output, breakpoint.Condition.Value);
 				}
 
-				if (!(breakpoint.HitCount is null)) {
+				if (breakpoint.HitCount is not null) {
 					output.WriteLine();
 					output.Write(DbgTextColor.Text, INDENTATION);
 					breakpointConditionsFormatter.WriteToolTip(output, breakpoint.HitCount.Value, dbgCodeBreakpointHitCountService.GetHitCount(breakpoint));
 				}
 
-				if (!(breakpoint.Filter is null)) {
+				if (breakpoint.Filter is not null) {
 					output.WriteLine();
 					output.Write(DbgTextColor.Text, INDENTATION);
 					breakpointConditionsFormatter.WriteToolTip(output, breakpoint.Filter.Value);
 				}
 			}
 
-			if (!(breakpoint.Trace is null)) {
+			if (breakpoint.Trace is not null) {
 				output.WriteLine();
 				output.WriteLine();
 				output.Write(DbgTextColor.Text, dnSpy_Debugger_Resources.GlyphToolTip_Actions);

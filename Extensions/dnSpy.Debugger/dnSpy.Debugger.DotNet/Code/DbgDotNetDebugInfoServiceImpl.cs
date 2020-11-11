@@ -90,7 +90,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 			DbgMethodDebugInfo? debugInfo;
 			DbgMethodDebugInfo? stateMachineDebugInfo = null;
 			int methodVersion;
-			if (!(decompilerDebugInfo is null)) {
+			if (decompilerDebugInfo is not null) {
 				methodVersion = 1;
 				debugInfo = DbgMethodDebugInfoUtils.ToDbgMethodDebugInfo(decompilerDebugInfo);
 			}

@@ -460,7 +460,7 @@ namespace dnSpy.Search {
 			if (Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(filename))) is string baseDir && Directory.Exists(Path.Combine(baseDir, "Microsoft.NETCore.App")))
 				return true;
 
-			if (!(assemblySimpleName is null)) {
+			if (assemblySimpleName is not null) {
 				if (frameworkAssemblyNames.Contains(assemblySimpleName))
 					return true;
 				foreach (var prefix in frameworkAssemblyNamePrefixes) {

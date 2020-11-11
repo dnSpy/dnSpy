@@ -57,7 +57,7 @@ namespace dnSpy.Text.Editor {
 			: base(PredefinedDsMarginNames.CustomLineNumber, wpfTextViewHost, classificationFormatMapService, textFormatterProvider) => CustomLineNumberMargin.SetMargin(wpfTextViewHost.TextView, this);
 
 		void ICustomLineNumberMargin.SetOwner(ICustomLineNumberMarginOwner owner) {
-			if (!(this.owner is null))
+			if (this.owner is not null)
 				throw new InvalidOperationException();
 			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
 			if (Visibility == Visibility.Visible)
@@ -85,13 +85,13 @@ namespace dnSpy.Text.Editor {
 		}
 
 		protected override int? GetMaxLineDigitsCore() {
-			Debug2.Assert(!(owner is null));
+			Debug2.Assert(owner is not null);
 			return owner?.GetMaxLineNumberDigits();
 		}
 
 		protected override TextFormattingRunProperties GetLineNumberTextFormattingRunProperties(ITextViewLine viewLine, LineNumberState state, int lineNumber) {
-			Debug2.Assert(!(owner is null));
-			Debug2.Assert(!(state is null));
+			Debug2.Assert(owner is not null);
+			Debug2.Assert(state is not null);
 			if (owner is null)
 				throw new InvalidOperationException();
 			var customState = (CustomLineNumberState)state;

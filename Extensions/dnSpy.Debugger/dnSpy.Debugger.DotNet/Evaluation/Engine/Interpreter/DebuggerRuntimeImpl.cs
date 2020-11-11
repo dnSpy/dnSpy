@@ -64,15 +64,15 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			classHooks = new Dictionary<DmdTypeName, DotNetClassHook>(DmdTypeNameEqualityComparer.Instance);
 			foreach (var factory in dotNetClassHookFactories) {
 				foreach (var info in factory.Create(this)) {
-					Debug2.Assert(!(info.Hook is null));
+					Debug2.Assert(info.Hook is not null);
 					if (info.WellKnownType is null && info.TypeName is null)
 						anyClassHooksList.Add(info.Hook);
 					else {
 						DmdTypeName typeName;
-						if (!(info.WellKnownType is null))
+						if (info.WellKnownType is not null)
 							typeName = DmdWellKnownTypeUtils.GetTypeName(info.WellKnownType.Value);
 						else {
-							Debug2.Assert(!(info.TypeName is null));
+							Debug2.Assert(info.TypeName is not null);
 							typeName = info.TypeName.Value;
 						}
 						Debug.Assert(!classHooks.ContainsKey(typeName));
@@ -94,7 +94,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 
 		public override void Initialize(DbgEvaluationInfo evalInfo, DmdMethodBody? realMethodBody, VariablesProvider? argumentsProvider, VariablesProvider? localsProvider, bool canFuncEval) {
 			Debug2.Assert(this.evalInfo is null);
-			if (!(this.evalInfo is null))
+			if (this.evalInfo is not null)
 				throw new InvalidOperationException();
 			this.evalInfo = evalInfo;
 			this.canFuncEval = canFuncEval;
@@ -111,7 +111,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		public override void Clear(DbgDotNetValue? returnValue) {
 			evalInfo = null!;
 			canFuncEval = false;
-			Debug2.Assert(!(argumentsProvider is null));
+			Debug2.Assert(argumentsProvider is not null);
 			foreach (var v in valuesToDispose) {
 				if (v != returnValue && argumentsProvider.CanDispose(v) && interpreterLocalsProvider.CanDispose(v))
 					v.Dispose();
@@ -125,14 +125,14 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		public override DbgDotNetValue GetDotNetValue(ILValue value, DmdType? targetType = null) {
 			targetType ??= value.Type;
 			var dnValue = TryGetDotNetValue(value, value.IsNull ? targetType : value.Type, canCreateValue: true);
-			if (!(dnValue is null))
+			if (dnValue is not null)
 				return dnValue;
 			throw new InvalidOperationException();//TODO:
 		}
 
 		DbgDotNetValue? TryCreateSyntheticValue(DmdType type, object? value) {
 			var dnValue = SyntheticValueFactory.TryCreateSyntheticValue(type, value);
-			if (!(dnValue is null))
+			if (dnValue is not null)
 				RecordValue(dnValue);
 			return dnValue;
 		}
@@ -214,9 +214,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 					newValue = null;
 					break;
 				}
-				if (!(newValue is null)) {
+				if (newValue is not null) {
 					var dnValue = TryCreateSyntheticValue(type!, newValue);
-					if (!(dnValue is null))
+					if (dnValue is not null)
 						return dnValue;
 					return RecordValue(runtime.CreateValue(evalInfo, newValue));
 				}
@@ -226,7 +226,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 
 		internal object? GetDebuggerValue(ILValue value, DmdType targetType) {
 			var dnValue = TryGetDotNetValue(value, targetType, canCreateValue: false);
-			if (!(dnValue is null))
+			if (dnValue is not null)
 				return dnValue;
 
 			if (value.IsNull)
@@ -318,7 +318,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		internal DbgDotNetValue RecordValue(DbgDotNetValue value) {
 			try {
 				evalInfo.CancellationToken.ThrowIfCancellationRequested();
-				Debug2.Assert(!(value is null));
+				Debug2.Assert(value is not null);
 				valuesToDispose.Add(value);
 				return value;
 			}
@@ -330,7 +330,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 
 		internal ILValue CreateILValue(DbgDotNetValue value) {
 			try {
-				Debug2.Assert(!(value is null));
+				Debug2.Assert(value is not null);
 				valuesToDispose.Add(value);
 				return CreateILValueCore(value);
 			}
@@ -419,7 +419,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 
 		public override ILValue? LoadArgumentAddress(int index, DmdType type) {
 			var addrValue = argumentsProvider.GetValueAddress(index, type);
-			if (!(addrValue is null)) {
+			if (addrValue is not null) {
 				Debug.Assert(addrValue.Type.IsByRef);
 				return new ByRefILValueImpl(this, RecordValue(addrValue));
 			}
@@ -428,7 +428,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 
 		public override ILValue? LoadLocalAddress(int index, DmdType type) {
 			var addrValue = interpreterLocalsProvider.GetValueAddress(index, type);
-			if (!(addrValue is null)) {
+			if (addrValue is not null) {
 				Debug.Assert(addrValue.Type.IsByRef);
 				return new ByRefILValueImpl(this, RecordValue(addrValue));
 			}
@@ -439,7 +439,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 
 		internal bool StoreArgument2(int index, DmdType targetType, object? value) {
 			var error = SetArgument(index, targetType, value);
-			if (!(error is null))
+			if (error is not null)
 				throw new InterpreterMessageException(error);
 			return true;
 		}
@@ -448,7 +448,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 
 		internal bool StoreLocal2(int index, DmdType targetType, object? value) {
 			var error = SetLocal(index, targetType, value);
-			if (!(error is null))
+			if (error is not null)
 				throw new InterpreterMessageException(error);
 			return true;
 		}
@@ -509,7 +509,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			if (!type.IsValueType)
 				return new SyntheticNullValue(type);
 			var dnValue = TryCreateDefaultValue(type);
-			if (!(dnValue is null))
+			if (dnValue is not null)
 				return dnValue;
 			if (!canFuncEval)
 				throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.FuncEvalDisabled);
@@ -518,7 +518,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 
 		public override ILValue? CreateTypeNoConstructor(DmdType type) {
 			var dnValue = TryCreateDefaultValue(type);
-			if (!(dnValue is null))
+			if (dnValue is not null)
 				return CreateILValue(dnValue);
 			if (!canFuncEval)
 				throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.FuncEvalDisabled);
@@ -569,7 +569,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			const DotNetClassHookCallOptions options = DotNetClassHookCallOptions.None;
 			foreach (var anyHook in anyClassHooks) {
 				var res = anyHook.CreateInstance(options, ctor, arguments);
-				if (!(res is null))
+				if (res is not null)
 					return DbgDotNetValueResult.Create(res);
 			}
 
@@ -583,9 +583,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 					if (type != type.AppDomain.GetWellKnownType(wellKnownType, isOptional: true))
 						hook = null;
 				}
-				if (!(hook is null)) {
+				if (hook is not null) {
 					var res = hook.CreateInstance(options, ctor, arguments);
-					if (!(res is null))
+					if (res is not null)
 						return DbgDotNetValueResult.Create(res);
 				}
 			}
@@ -618,7 +618,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 
 		public override ILValue? LoadStaticFieldAddress(DmdFieldInfo field) {
 			var addrValue = runtime.LoadFieldAddress(evalInfo, null, field);
-			if (!(addrValue is null)) {
+			if (addrValue is not null) {
 				Debug.Assert(addrValue.Type.IsByRef);
 				return new ByRefILValueImpl(this, RecordValue(addrValue));
 			}
@@ -628,7 +628,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		public override bool StoreStaticField(DmdFieldInfo field, ILValue value) => StoreStaticField(field, GetDebuggerValue(value, field.FieldType));
 		internal bool StoreStaticField(DmdFieldInfo field, object? value) {
 			var error = runtime.StoreField(evalInfo, null, field, value);
-			if (!(error is null))
+			if (error is not null)
 				throw new InterpreterMessageException(error);
 			return true;
 		}
@@ -647,7 +647,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 
 		internal void SetArrayElementAt(DbgDotNetValue arrayValue, uint index, object? value) {
 			var error = arrayValue.SetArrayElementAt(evalInfo, index, value);
-			if (!(error is null))
+			if (error is not null)
 				throw new InterpreterMessageException(error);
 		}
 
@@ -659,7 +659,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 				return laddr.Equals(raddr);
 			if (TryGetDotNetValue(left, canCreateValue: false) is DbgDotNetValue lv && TryGetDotNetValue(right, canCreateValue: false) is DbgDotNetValue rv) {
 				var res = runtime.Equals(lv, rv);
-				if (!(res is null))
+				if (res is not null)
 					return res;
 			}
 			return null;
@@ -672,7 +672,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 				return false;
 
 			var res = runtime.Equals(a, b);
-			if (!(res is null))
+			if (res is not null)
 				return res.Value;
 
 			return false;
@@ -683,7 +683,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 
 		internal bool StoreInstanceField(DbgDotNetValue objValue, DmdFieldInfo field, object? value) {
 			var error = runtime.StoreField(evalInfo, objValue, field, value);
-			if (!(error is null))
+			if (error is not null)
 				throw new InterpreterMessageException(error);
 			return true;
 		}
@@ -697,9 +697,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		internal ILValue LoadValueTypeFieldAddress(AddressILValue objValue, DmdFieldInfo field) {
 			Debug.Assert(field.ReflectedType!.IsValueType);
 			var dnObjValue = TryGetDotNetValue(objValue, canCreateValue: false);
-			if (!(dnObjValue is null)) {
+			if (dnObjValue is not null) {
 				var addrValue = runtime.LoadFieldAddress(evalInfo, dnObjValue, field);
-				if (!(addrValue is null)) {
+				if (addrValue is not null) {
 					Debug.Assert(addrValue.Type.IsByRef);
 					return new ByRefILValueImpl(this, RecordValue(addrValue));
 				}
@@ -710,7 +710,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		internal ILValue LoadReferenceTypeFieldAddress(DbgDotNetValue objValue, DmdFieldInfo field) {
 			Debug.Assert(!field.ReflectedType!.IsValueType);
 			var addrValue = runtime.LoadFieldAddress(evalInfo, objValue, field);
-			if (!(addrValue is null)) {
+			if (addrValue is not null) {
 				Debug.Assert(addrValue.Type.IsByRef);
 				return new ByRefILValueImpl(this, RecordValue(addrValue));
 			}
@@ -720,7 +720,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 		internal bool StoreIndirect(DbgDotNetValue refValue, object? value) {
 			Debug.Assert(refValue.Type.IsByRef || refValue.Type.IsPointer);
 			var error = refValue.StoreIndirect(evalInfo, value);
-			if (!(error is null))
+			if (error is not null)
 				throw new InterpreterMessageException(error);
 			return true;
 		}
@@ -758,7 +758,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			var options = isCallvirt ? DotNetClassHookCallOptions.IsCallvirt : DotNetClassHookCallOptions.None;
 			foreach (var anyHook in anyClassHooks) {
 				var res = anyHook.Call(options, obj, method, arguments);
-				if (!(res is null))
+				if (res is not null)
 					return DbgDotNetValueResult.Create(res);
 			}
 
@@ -772,9 +772,9 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 					if (type != type.AppDomain.GetWellKnownType(wellKnownType, isOptional: true))
 						hook = null;
 				}
-				if (!(hook is null)) {
+				if (hook is not null) {
 					var res = hook.Call(options, obj, method, arguments);
-					if (!(res is null))
+					if (res is not null)
 						return DbgDotNetValueResult.Create(res);
 				}
 			}
@@ -804,7 +804,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 			if (value is ConstantInt32ILValue i32Value)
 				return i32Value.Value;
 			var dnValue = TryGetDotNetValue(value, canCreateValue: false);
-			if (!(dnValue is null)) {
+			if (dnValue is not null) {
 				if (dnValue.Type != dnValue.Type.AppDomain.System_Int32)
 					throw new InvalidOperationException();
 				var rawValue = dnValue.GetRawValue();
@@ -817,7 +817,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 
 		DbgDotNetValue IDebuggerRuntime.CreateValue(object? value, DmdType targetType) {
 			var res = TryCreateSyntheticValue(targetType, value);
-			if (!(res is null))
+			if (res is not null)
 				return res;
 			return RecordValue(runtime.CreateValue(evalInfo, value));
 		}
@@ -863,7 +863,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 
 		DbgDotNetValue IDebuggerRuntime.ToDotNetValue(ILValue value) {
 			var dnValue = TryGetDotNetValue(value, canCreateValue: false);
-			if (!(dnValue is null))
+			if (dnValue is not null)
 				return dnValue;
 			throw new InterpreterMessageException(PredefinedEvaluationErrorMessages.InternalDebuggerError);
 		}
@@ -891,7 +891,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 
 		DbgDotNetValue IDebuggerRuntime.GetObjectByAlias(string name) {
 			evalInfo.Context.TryGetData(out DbgDotNetExpressionCompiler? expressionCompiler);
-			Debug2.Assert(!(expressionCompiler is null));
+			Debug2.Assert(expressionCompiler is not null);
 			if (expressionCompiler is null)
 				throw new InvalidOperationException();
 
@@ -912,7 +912,7 @@ namespace dnSpy.Debugger.DotNet.Evaluation.Engine.Interpreter {
 
 			case DbgDotNetAliasKind.ObjectId:
 				var objectId = dbgObjectIdService.GetObjectId(evalInfo.Runtime, aliasInfo.Id);
-				if (!(objectId is null)) {
+				if (objectId is not null) {
 					var dbgValue = objectId.GetValue(evalInfo);
 					value = (DbgDotNetValue)dbgValue.InternalValue;
 					return RecordValue(value);

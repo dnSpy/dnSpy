@@ -112,7 +112,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				return;
 			int index = Collection.SelectedIndex;
 			var vm = EditClone(Clone(Collection[index]));
-			if (!(vm is null)) {
+			if (vm is not null) {
 				Collection[index] = vm;
 				Collection.SelectedIndex = index;
 			}
@@ -125,7 +125,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				return;
 
 			var vm = AddNew(Create());
-			if (!(vm is null)) {
+			if (vm is not null) {
 				var index = GetAddIndex(vm);
 				Collection.Insert(index, vm);
 				Collection.SelectedIndex = index;

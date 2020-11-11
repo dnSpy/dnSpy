@@ -50,7 +50,7 @@ namespace ConvertToNetstandardReferences {
 		}
 
 		static bool IsPublic(TypeDef type) {
-			while (!(type is null)) {
+			while (type is not null) {
 				if (!type.IsPublic && !type.IsNestedPublic)
 					return false;
 				type = type.DeclaringType;
@@ -59,7 +59,7 @@ namespace ConvertToNetstandardReferences {
 		}
 
 		static bool IsPublic(ExportedType type) {
-			while (!(type is null)) {
+			while (type is not null) {
 				if (!type.IsPublic && !type.IsNestedPublic)
 					return false;
 				type = type.DeclaringType;

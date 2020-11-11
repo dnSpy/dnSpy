@@ -38,7 +38,7 @@ namespace dnSpy.Documents.TreeView {
 			: base(targetNode) {
 			msgNodeGroup = targetNode.Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.MessageTreeNodeGroupDerivedTypes);
 			derivedTypesGroup = targetNode.Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.DerivedTypeTreeNodeGroupDerivedTypes);
-			weakModules = targetNode.Context.DocumentTreeView.DocumentService.GetDocuments().Where(a => !(a.ModuleDef is null)).SelectMany(a => !(a.AssemblyDef is null) ? (IEnumerable<ModuleDef>)a.AssemblyDef.Modules : new[] { a.ModuleDef! }).Select(a => new WeakReference(a)).ToArray();
+			weakModules = targetNode.Context.DocumentTreeView.DocumentService.GetDocuments().Where(a => a.ModuleDef is not null).SelectMany(a => a.AssemblyDef is not null ? (IEnumerable<ModuleDef>)a.AssemblyDef.Modules : new[] { a.ModuleDef! }).Select(a => new WeakReference(a)).ToArray();
 			this.type = type;
 			Start();
 		}
@@ -81,7 +81,7 @@ namespace dnSpy.Documents.TreeView {
 			else {
 				foreach (var td in module.GetTypes()) {
 					var bt = td.BaseType;
-					if (!(bt is null) && new SigComparer().Equals(type, bt.GetScopeType()))
+					if (bt is not null && new SigComparer().Equals(type, bt.GetScopeType()))
 						yield return td;
 				}
 			}

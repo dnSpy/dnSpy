@@ -161,7 +161,7 @@ namespace dnSpy.AsmEditor.Method {
 
 			public void Delete(MethodNode[] nodes) {
 				Debug2.Assert(infos is null);
-				if (!(infos is null))
+				if (infos is not null)
 					throw new InvalidOperationException();
 
 				infos = new ModelInfo[nodes.Length];
@@ -199,7 +199,7 @@ namespace dnSpy.AsmEditor.Method {
 			}
 
 			public void Restore(MethodNode[] nodes) {
-				Debug2.Assert(!(infos is null));
+				Debug2.Assert(infos is not null);
 				if (infos is null)
 					throw new InvalidOperationException();
 				Debug.Assert(infos.Length == nodes.Length);
@@ -231,7 +231,7 @@ namespace dnSpy.AsmEditor.Method {
 						case ModelInfo.PropEventType.EventAdd:
 							evt = (EventDef)pinfo.PropOrEvent;
 							Debug2.Assert(evt.AddMethod is null);
-							if (!(evt.AddMethod is null))
+							if (evt.AddMethod is not null)
 								throw new InvalidOperationException();
 							evt.AddMethod = node.MethodDef;
 							break;
@@ -239,7 +239,7 @@ namespace dnSpy.AsmEditor.Method {
 						case ModelInfo.PropEventType.EventInvoke:
 							evt = (EventDef)pinfo.PropOrEvent;
 							Debug2.Assert(evt.InvokeMethod is null);
-							if (!(evt.InvokeMethod is null))
+							if (evt.InvokeMethod is not null)
 								throw new InvalidOperationException();
 							evt.InvokeMethod = node.MethodDef;
 							break;
@@ -247,7 +247,7 @@ namespace dnSpy.AsmEditor.Method {
 						case ModelInfo.PropEventType.EventRemove:
 							evt = (EventDef)pinfo.PropOrEvent;
 							Debug2.Assert(evt.RemoveMethod is null);
-							if (!(evt.RemoveMethod is null))
+							if (evt.RemoveMethod is not null)
 								throw new InvalidOperationException();
 							evt.RemoveMethod = node.MethodDef;
 							break;
@@ -341,7 +341,7 @@ namespace dnSpy.AsmEditor.Method {
 
 		static bool CanExecute(DocumentTreeNodeData[] nodes) =>
 			nodes.Length == 1 &&
-			(nodes[0] is TypeNode || (!(nodes[0].TreeNode.Parent is null) && nodes[0].TreeNode.Parent!.Data is TypeNode));
+			(nodes[0] is TypeNode || (nodes[0].TreeNode.Parent is not null && nodes[0].TreeNode.Parent!.Data is TypeNode));
 
 		static void Execute(Lazy<IUndoCommandService> undoCommandService, IAppService appService, DocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
@@ -351,12 +351,12 @@ namespace dnSpy.AsmEditor.Method {
 			if (!(ownerNode is TypeNode))
 				ownerNode = (DocumentTreeNodeData)ownerNode.TreeNode.Parent!.Data;
 			var typeNode = ownerNode as TypeNode;
-			Debug2.Assert(!(typeNode is null));
+			Debug2.Assert(typeNode is not null);
 			if (typeNode is null)
 				throw new InvalidOperationException();
 
 			var module = typeNode.GetModule();
-			Debug2.Assert(!(module is null));
+			Debug2.Assert(module is not null);
 			if (module is null)
 				throw new InvalidOperationException();
 
@@ -466,7 +466,7 @@ namespace dnSpy.AsmEditor.Method {
 			var methodNode = (MethodNode)nodes[0];
 
 			var module = nodes[0].GetModule();
-			Debug2.Assert(!(module is null));
+			Debug2.Assert(module is not null);
 			if (module is null)
 				throw new InvalidOperationException();
 
@@ -520,7 +520,7 @@ namespace dnSpy.AsmEditor.Method {
 			}
 			else
 				newOptions.CopyTo(methodNode.MethodDef);
-			if (!(memberRefInfos is null)) {
+			if (memberRefInfos is not null) {
 				foreach (var info in memberRefInfos)
 					info.MemberRef.Name = methodNode.MethodDef.Name;
 			}
@@ -540,7 +540,7 @@ namespace dnSpy.AsmEditor.Method {
 			}
 			else
 				origOptions.CopyTo(methodNode.MethodDef);
-			if (!(memberRefInfos is null)) {
+			if (memberRefInfos is not null) {
 				foreach (var info in memberRefInfos)
 					info.MemberRef.Name = info.OrigName;
 			}

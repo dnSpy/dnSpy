@@ -77,7 +77,7 @@ namespace dnSpy.Disassembly.Viewer.X86 {
 		public DisassemblyContentProvider Create() {
 			var blocks = BlockFactory.Create(bitness, this.blocks);
 			var cachedSymResolver = new CachedSymbolResolver();
-			if (!(symbolResolver is null)) {
+			if (symbolResolver is not null) {
 				var addresses = GetPossibleSymbolAddresses(blocks);
 				if (addresses.Length != 0) {
 					var symbolResolverResults = new SymbolResolverResult[addresses.Length];

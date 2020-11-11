@@ -120,7 +120,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		internal DocumentViewerContent CreateContent(Dictionary<string, object> dataDict) {
 			VerifyState(State.CustomDataProviders);
 			state = State.ContentCreated;
-			Debug2.Assert(!(cachedText is null));
+			Debug2.Assert(cachedText is not null);
 			Debug.Assert(cachedText == stringBuilder.ToString());
 			return new DocumentViewerContent(cachedText, cachedTextColorsCollection, referenceBuilder.Create(), dataDict);
 		}

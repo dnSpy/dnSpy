@@ -125,7 +125,7 @@ namespace dnSpy.Debugger.Impl {
 				else
 					newCurrent = newBreak;
 			}
-			Debug2.Assert((!(newBreak is null)) == (!(newCurrent is null)));
+			Debug2.Assert((newBreak is not null) == (newCurrent is not null));
 			currentThread = new CurrentObject<DbgThreadImpl>(newCurrent, newBreak);
 			return newCurrent;
 		}
@@ -175,17 +175,17 @@ namespace dnSpy.Debugger.Impl {
 					}
 				}
 			}
-			if (!(threadsToRemove is null) && threadsToRemove.Count != 0)
+			if (threadsToRemove is not null && threadsToRemove.Count != 0)
 				ThreadsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgThread>(threadsToRemove, added: false));
-			if (!(modulesToRemove is null) && modulesToRemove.Count != 0)
+			if (modulesToRemove is not null && modulesToRemove.Count != 0)
 				ModulesChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgModule>(modulesToRemove, added: false));
 			owner.RemoveAppDomain_DbgThread(this, appDomain, messageFlags);
 			AppDomainsChanged?.Invoke(this, new DbgCollectionChangedEventArgs<DbgAppDomain>(appDomain, added: false));
-			if (!(threadsToRemove is null)) {
+			if (threadsToRemove is not null) {
 				foreach (var thread in threadsToRemove)
 					thread.Close(Dispatcher);
 			}
-			if (!(modulesToRemove is null)) {
+			if (modulesToRemove is not null) {
 				foreach (var module in modulesToRemove)
 					module.Close(Dispatcher);
 			}

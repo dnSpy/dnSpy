@@ -40,11 +40,11 @@ namespace dnSpy.Decompiler.MSBuild {
 
 		IEnumerable<IMemberDef> GetDefsToRemove() {
 			var ep = Type.Module.EntryPoint;
-			if (!(ep is null) && ep.DeclaringType == Type)
+			if (ep is not null && ep.DeclaringType == Type)
 				yield return ep;
 
 			var d = FindInitializeComponent();
-			if (!(d is null)) {
+			if (d is not null) {
 				yield return d;
 				foreach (var f in DotNetUtils.GetFields(d)) {
 					if (f.FieldType.RemovePinnedAndModifiers().GetElementType() == ElementType.Boolean)
@@ -53,14 +53,14 @@ namespace dnSpy.Decompiler.MSBuild {
 			}
 
 			var connMeth = FindConnectMethod();
-			if (!(connMeth is null)) {
+			if (connMeth is not null) {
 				yield return connMeth;
 				foreach (var f in DotNetUtils.GetFields(connMeth))
 					yield return f;
 			}
 
 			var delMeth = FindCreateDelegateMethod();
-			if (!(delMeth is null))
+			if (delMeth is not null)
 				yield return delMeth;
 		}
 

@@ -28,7 +28,7 @@ namespace dnSpy.Text.Editor {
 
 		public static Brush? GetBrush(ResourceDictionary dict, string prop, Brush? defaultBrush = null) {
 			var brush = dict[prop] as Brush ?? defaultBrush;
-			if (!(brush is null) && brush.CanFreeze)
+			if (brush is not null && brush.CanFreeze)
 				brush.Freeze();
 			return brush;
 		}

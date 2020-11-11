@@ -89,7 +89,7 @@ namespace dnSpy.Roslyn.Text.Classification {
 		public IEnumerable<ClassifierResult> GetColors(TextSpan textSpan) {
 			foreach (var cspan in Classifier.GetClassifiedSpans(semanticModel, textSpan, workspace)) {
 				var color = GetClassificationType(cspan) ?? defaultColor;
-				if (!(color is null))
+				if (color is not null)
 					yield return new ClassifierResult(Span.FromBounds(cspan.TextSpan.Start, cspan.TextSpan.End), color);
 			}
 		}
@@ -125,7 +125,7 @@ namespace dnSpy.Roslyn.Text.Classification {
 
 		object? GetClassificationType2(ClassifiedSpan cspan) {
 			var symRes = GetSymbolResult(cspan.TextSpan);
-			if (!(symRes.Color is null))
+			if (symRes.Color is not null)
 				return symRes.Color;
 			var symbol = symRes.Symbol;
 			if (symbol is null)
@@ -223,7 +223,7 @@ the_switch:
 					return roslynClassificationTypes.ValueType;
 
 				case TypeKind.TypeParameter:
-					if (!((symbol as ITypeParameterSymbol)?.DeclaringMethod is null))
+					if ((symbol as ITypeParameterSymbol)?.DeclaringMethod is not null)
 						return roslynClassificationTypes.MethodGenericParameter;
 					return roslynClassificationTypes.TypeGenericParameter;
 
@@ -256,7 +256,7 @@ the_switch:
 				return roslynClassificationTypes.Local;
 
 			case SymbolKind.TypeParameter:
-				return !((symbol as ITypeParameterSymbol)?.DeclaringMethod is null) ?
+				return (symbol as ITypeParameterSymbol)?.DeclaringMethod is not null ?
 					roslynClassificationTypes.MethodGenericParameter : roslynClassificationTypes.TypeGenericParameter;
 
 			case SymbolKind.Preprocessing:
@@ -300,7 +300,7 @@ the_switch:
 
 			case ClassificationTypeNames.ClassName:
 				symRes = GetSymbolResult(cspan.TextSpan);
-				if (!(symRes.Color is null))
+				if (symRes.Color is not null)
 					return symRes.Color;
 				if (symRes.Symbol?.IsStatic == true)
 					return roslynClassificationTypes.StaticType;

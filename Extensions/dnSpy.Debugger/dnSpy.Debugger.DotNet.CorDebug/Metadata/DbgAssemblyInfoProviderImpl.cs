@@ -27,7 +27,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Metadata {
 	sealed class DbgAssemblyInfoProviderFactoryImpl : DbgAssemblyInfoProviderFactory {
 		public override DbgAssemblyInfoProvider? Create(DbgRuntime runtime) {
 			var engine = DbgEngineImpl.TryGetEngine(runtime);
-			if (!(engine is null))
+			if (engine is not null)
 				return new DbgAssemblyInfoProviderImpl(engine);
 			return null;
 		}

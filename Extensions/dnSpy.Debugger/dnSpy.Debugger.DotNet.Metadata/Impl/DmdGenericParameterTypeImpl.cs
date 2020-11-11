@@ -33,7 +33,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		protected override DmdType[]? CreateGenericParameterConstraints() => Array.Empty<DmdType>();
 
 		DmdGenericParameterTypeImpl Clone(IList<DmdCustomModifier>? customModifiers) =>
-			!(DeclaringMethod is null) ?
+			DeclaringMethod is not null ?
 			new DmdGenericParameterTypeImpl(AppDomain, DeclaringMethod, MetadataName, GenericParameterPosition, GenericParameterAttributes, customModifiers) :
 			new DmdGenericParameterTypeImpl(AppDomain, (DmdTypeBase)DeclaringType!, MetadataName, GenericParameterPosition, GenericParameterAttributes, customModifiers);
 

@@ -32,7 +32,7 @@ namespace dnSpy.Text.WPF {
 
 			var sa = a as SolidColorBrush;
 			var sb = b as SolidColorBrush;
-			if (!(sa is null) && !(sb is null)) {
+			if (sa is not null && sb is not null) {
 				if (sa.Color.A == 0 && sb.Color.A == 0)
 					return true;
 				return sa.Color.A == sb.Color.A && sa.Color.R == sb.Color.R && sa.Color.G == sb.Color.G && sa.Color.B == sb.Color.B;

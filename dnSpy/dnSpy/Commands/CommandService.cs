@@ -62,7 +62,7 @@ namespace dnSpy.Commands {
 				if (c2 is null)
 					continue;
 				var cmd = c2.CreateFromTextInput(target, text);
-				if (!(cmd is null))
+				if (cmd is not null)
 					return cmd;
 			}
 			return null;

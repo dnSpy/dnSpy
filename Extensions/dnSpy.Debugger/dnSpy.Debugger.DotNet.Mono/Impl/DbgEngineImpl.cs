@@ -174,7 +174,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		bool HasConnected_MonoDebugThread {
 			get {
 				debuggerThread.VerifyAccess();
-				return !(vm is null);
+				return vm is not null;
 			}
 		}
 
@@ -214,7 +214,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				funcRaiseMessage = raiseMessage;
 			}
 			public override bool RaiseMessage() {
-				if (!(funcRaiseMessage is null))
+				if (funcRaiseMessage is not null)
 					return funcRaiseMessage();
 				actionRaiseMessage!();
 				return true;
@@ -282,7 +282,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					filename = startMonoOptions.Filename;
 					if (string2.IsNullOrEmpty(filename))
 						throw new Exception("Missing filename");
-					Debug2.Assert(!(startMonoOptions.Filename is null));
+					Debug2.Assert(startMonoOptions.Filename is not null);
 					if (connectionPort == 0) {
 						int port = NetUtils.GetConnectionPort();
 						Debug.Assert(port >= 0);
@@ -296,7 +296,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 						monoExe = MonoExeFinder.Find(startMonoOptions.MonoExeOptions);
 					if (!File.Exists(monoExe))
 						throw new StartException(string.Format(dnSpy_Debugger_DotNet_Mono_Resources.Error_CouldNotFindFile, MonoExeFinder.MONO_EXE));
-					Debug2.Assert(!(monoExe is null));
+					Debug2.Assert(monoExe is not null);
 					Debug.Assert(!connectionAddress.Contains(" "));
 					var psi = new ProcessStartInfo {
 						FileName = monoExe,
@@ -541,7 +541,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		void MonoEventThread() {
 			var vm = this.vm;
-			Debug2.Assert(!(vm is null));
+			Debug2.Assert(vm is not null);
 			if (vm is null)
 				throw new InvalidOperationException();
 			for (;;) {
@@ -672,7 +672,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 						eventSets = pendingEventSets.ToArray();
 					pendingEventSets.Clear();
 				}
-				if (!(eventSet is null))
+				if (eventSet is not null)
 					OnDebuggerEvents(eventSet);
 				else {
 					foreach (var e in eventSets!)
@@ -769,7 +769,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				case EventType.VMDeath:
 					expectedSuspendPolicy = SuspendPolicy.None;
 					var vmde = (VMDeathEvent)evt;
-					if (!(vmDeathExitCode is null))
+					if (vmDeathExitCode is not null)
 						break;
 					if (vm!.Version.AtLeast(2, 27))
 						vmDeathExitCode = vmde.ExitCode;
@@ -807,7 +807,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				case EventType.MethodEntry:
 					expectedSuspendPolicy = SuspendPolicy.None;
 					Debug.Assert(evt.TryGetRequest() == methodEntryEventRequest);
-					if (!(methodEntryEventRequest is null) && evt.TryGetRequest() == methodEntryEventRequest) {
+					if (methodEntryEventRequest is not null && evt.TryGetRequest() == methodEntryEventRequest) {
 						methodEntryEventRequest.Disable();
 						methodEntryEventRequest = null;
 						// Func-eval doesn't work at first assembly load event for some reason. Should work now though.
@@ -844,7 +844,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					expectedSuspendPolicy = SuspendPolicy.All;
 					var be = (BreakpointEvent)evt;
 					var bpReq = be.TryGetRequest() as BreakpointEventRequest;
-					if (!(bpReq is null)) {
+					if (bpReq is not null) {
 						if (breakOnEntryPointData?.Breakpoint == bpReq) {
 							bpReq.Disable();
 							breakOnEntryPointData = null;
@@ -875,7 +875,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 					// Add it to the cache
 					var reflectionAppDomain = TryGetEngineAppDomain(tle.Type.Assembly.Domain)?.AppDomain.GetReflectionAppDomain();
-					if (!(reflectionAppDomain is null)) {
+					if (reflectionAppDomain is not null) {
 						try {
 							GetReflectionType(reflectionAppDomain, tle.Type, null);
 						}
@@ -1098,7 +1098,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					}
 				}
 			}
-			if (!(engineAppDomain is null))
+			if (engineAppDomain is not null)
 				engineAppDomain.Remove(GetMessageFlags());
 		}
 
@@ -1135,7 +1135,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		bool CreateModule(ModuleMirror monoModule) {
 			debuggerThread.VerifyAccess();
 
-			if (!(TryGetModuleCore_NoCreate(monoModule) is null))
+			if (TryGetModuleCore_NoCreate(monoModule) is not null)
 				return false;
 
 			var appDomain = TryGetEngineAppDomain(monoModule.Assembly.Domain)?.AppDomain;
@@ -1152,7 +1152,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 				toEngineModule.Add(monoModule, engineModule);
 			}
 
-			if (!(breakOnEntryPointData is null) && breakOnEntryPointData.Breakpoint is null &&
+			if (breakOnEntryPointData is not null && breakOnEntryPointData.Breakpoint is null &&
 				StringComparer.OrdinalIgnoreCase.Equals(breakOnEntryPointData.Filename, engineModule.Module.Filename)) {
 				try {
 					CreateEntryPointBreakpoint(monoModule.Assembly.EntryPoint);
@@ -1186,7 +1186,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					((DbgMonoDebugInternalModuleImpl)engineModule.Module.InternalModule).Remove();
 				}
 			}
-			if (!(engineModule is null))
+			if (engineModule is not null)
 				engineModule.Remove(GetMessageFlags());
 		}
 
@@ -1194,11 +1194,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			if (monoModule is null)
 				return null;
 			var res = TryGetModuleCore_NoCreate(monoModule);
-			if (!(res is null))
+			if (res is not null)
 				return res;
 			DiscoverNewModules(monoModule);
 			res = TryGetModuleCore_NoCreate(monoModule);
-			Debug2.Assert(!(res is null));
+			Debug2.Assert(res is not null);
 			return res;
 		}
 
@@ -1217,7 +1217,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		// when we've found a new module.
 		void DiscoverNewModules(ModuleMirror monoModule) {
 			debuggerThread.VerifyAccess();
-			if (!(monoModule is null)) {
+			if (monoModule is not null) {
 				Debug.Assert(monoModule.Assembly.ManifestModule == monoModule);
 				AddNewModule(monoModule);
 			}
@@ -1232,7 +1232,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		void AddNewModule(ModuleMirror monoModule) {
 			debuggerThread.VerifyAccess();
-			if (!(TryGetModuleCore_NoCreate(monoModule) is null))
+			if (TryGetModuleCore_NoCreate(monoModule) is not null)
 				return;
 
 			if (suspendCount == 0) {
@@ -1296,7 +1296,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 		internal IDbgDotNetRuntime DotNetRuntime => internalRuntime!;
 		DbgMonoDebugInternalRuntimeImpl? internalRuntime;
 		public override DbgInternalRuntime CreateInternalRuntime(DbgRuntime runtime) {
-			if (!(internalRuntime is null))
+			if (internalRuntime is not null)
 				throw new InvalidOperationException();
 			dmdRuntime = DmdRuntimeFactory.CreateRuntime(new DmdEvaluatorImpl(this), runtime.Process.PointerSize == 4 ? DmdImageFileMachine.I386 : DmdImageFileMachine.AMD64);
 			return internalRuntime = new DbgMonoDebugInternalRuntimeImpl(this, runtime, dmdRuntime, monoDebugRuntimeKind);
@@ -1343,10 +1343,10 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			try {
 				if (gotVMDisconnect)
 					return;
-				if (!(consoleStdOut is null))
+				if (consoleStdOut is not null)
 					ReadConsoleOutputAsync();
-				Debug2.Assert(!(vm is null));
-				if (!(vm is null)) {
+				Debug2.Assert(vm is not null);
+				if (vm is not null) {
 					InitializeVirtualMachine();
 					// Create the root AppDomain now since we want it to get id=1, which isn't guaranteed
 					// if it's an attach and we wait for AppDomainCreate events.
@@ -1516,7 +1516,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			// can't create the correct instantiated generic type. We can't create a generic DmdType from a
 			// TypeMirror. If we cache the generic DmdType, we'll be able to look it up later when we get
 			// a generic TypeMirror.
-			if (!(couldBeRealTypeOpt is null) && !vm!.Version.AtLeast(2, 15)) {
+			if (couldBeRealTypeOpt is not null && !vm!.Version.AtLeast(2, 15)) {
 				try {
 					MonoDebugTypeCreator.GetType(this, couldBeRealTypeOpt, null);
 				}

@@ -98,7 +98,7 @@ namespace dnSpy.Contracts.Hex {
 			foreach (var span in spans) {
 				if (span.IsDefault)
 					throw new ArgumentException();
-				if (!(buffer is null) && buffer != span.Buffer)
+				if (buffer is not null && buffer != span.Buffer)
 					throw new ArgumentException();
 				buffer = span.Buffer;
 				list.Add(span.Span);
@@ -183,7 +183,7 @@ namespace dnSpy.Contracts.Hex {
 		/// <returns></returns>
 		public IEnumerator<HexBufferSpan> GetEnumerator() {
 			foreach (var span in coll) {
-				Debug2.Assert(!(buffer is null));// Can't be null if coll is non-empty
+				Debug2.Assert(buffer is not null);// Can't be null if coll is non-empty
 				yield return new HexBufferSpan(buffer, span);
 			}
 		}

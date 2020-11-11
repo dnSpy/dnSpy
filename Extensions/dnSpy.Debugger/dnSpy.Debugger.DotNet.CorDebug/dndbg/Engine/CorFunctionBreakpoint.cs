@@ -49,7 +49,7 @@ namespace dndbg.Engine {
 				offset = 0;
 		}
 
-		public bool Equals(CorFunctionBreakpoint? other) => !(other is null) && RawObject == other.RawObject;
+		public bool Equals(CorFunctionBreakpoint? other) => other is not null && RawObject == other.RawObject;
 		public override bool Equals(object? obj) => Equals(obj as CorFunctionBreakpoint);
 		public override int GetHashCode() => RawObject.GetHashCode();
 		public override string ToString() => $"[FunctionBreakpoint] Enabled={(IsActive ? 1 : 0)}, Offset={Offset:X4} Method={Function}";

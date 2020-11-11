@@ -50,16 +50,16 @@ namespace dnSpy.Hex.Editor {
 			}
 
 			void InitializeHandlers() {
-				if (!(handlers is null))
+				if (handlers is not null)
 					return;
 				var list = new List<IHexMarginContextMenuHandler>(marginContextMenuHandlerProviders.Length);
 				foreach (var lazy in marginContextMenuHandlerProviders) {
 					if (!StringComparer.OrdinalIgnoreCase.Equals(lazy.Metadata.MarginName, marginName))
 						continue;
-					if (!(lazy.Metadata.TextViewRoles is null) && !wpfHexViewHost.HexView.Roles.ContainsAny(lazy.Metadata.TextViewRoles))
+					if (lazy.Metadata.TextViewRoles is not null && !wpfHexViewHost.HexView.Roles.ContainsAny(lazy.Metadata.TextViewRoles))
 						continue;
 					var handler = lazy.Value.Create(wpfHexViewHost, margin);
-					if (!(handler is null))
+					if (handler is not null)
 						list.Add(handler);
 				}
 				handlers = list.ToArray();
@@ -68,7 +68,7 @@ namespace dnSpy.Hex.Editor {
 			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsProviderArgs args) {
 				if (handlers is null)
 					InitializeHandlers();
-				Debug2.Assert(!(handlers is null));
+				Debug2.Assert(handlers is not null);
 
 				var point = Mouse.PrimaryDevice.GetPosition(margin.VisualElement);
 

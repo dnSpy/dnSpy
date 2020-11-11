@@ -150,7 +150,7 @@ namespace dnSpy.Controls {
 			children = new List<ChildInfo>();
 			grid = new Grid();
 			grid.SetResourceReference(FrameworkElement.StyleProperty, "StackedContentGridStyle");
-			if (!(margin is null))
+			if (margin is not null)
 				grid.Margin = margin.Value;
 			this.isHorizontal = isHorizontal;
 			this.splitterLength = splitterLength;
@@ -212,9 +212,9 @@ namespace dnSpy.Controls {
 					}
 
 					var rowDef = new RowDefinition() { Height = GetGridLength(info.LengthInfo.Vertical.GridLength!.Value, -d) };
-					if (!(info.LengthInfo.Vertical.MaxLength is null))
+					if (info.LengthInfo.Vertical.MaxLength is not null)
 						rowDef.MaxHeight = info.LengthInfo.Vertical.MaxLength.Value;
-					if (!(info.LengthInfo.Vertical.MinLength is null))
+					if (info.LengthInfo.Vertical.MinLength is not null)
 						rowDef.MinHeight = info.LengthInfo.Vertical.MinLength.Value;
 					grid.RowDefinitions.Add(rowDef);
 					var uiel = GetUIElement(info.Child);
@@ -246,9 +246,9 @@ namespace dnSpy.Controls {
 					}
 
 					var colDef = new ColumnDefinition() { Width = GetGridLength(info.LengthInfo.Horizontal.GridLength!.Value, -d) };
-					if (!(info.LengthInfo.Horizontal.MaxLength is null))
+					if (info.LengthInfo.Horizontal.MaxLength is not null)
 						colDef.MaxWidth = info.LengthInfo.Horizontal.MaxLength.Value;
-					if (!(info.LengthInfo.Horizontal.MinLength is null))
+					if (info.LengthInfo.Horizontal.MinLength is not null)
 						colDef.MinWidth = info.LengthInfo.Horizontal.MinLength.Value;
 					grid.ColumnDefinitions.Add(colDef);
 					var uiel = GetUIElement(info.Child);

@@ -52,7 +52,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 		bool useMixedMode;
 
-		public bool CanWritePdb => !(Module.PdbState is null);
+		public bool CanWritePdb => Module.PdbState is not null;
 
 		public bool WritePdb {
 			get => writePdb;
@@ -197,7 +197,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			else {
 				var options = new ModuleWriterOptions(Module);
 				CopyTo(options);
-				if (!(Module.ManagedEntryPoint is null) || Module.NativeEntryPoint == 0)
+				if (Module.ManagedEntryPoint is not null || Module.NativeEntryPoint == 0)
 					options.Cor20HeaderOptions.Flags &= ~ComImageFlags.NativeEntryPoint;
 				return AddOtherOptions(options);
 			}
@@ -845,7 +845,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 				return null;
 			}
 			set {
-				if (!(value is null) && value != PreserveRids) {
+				if (value is not null && value != PreserveRids) {
 					if (value.Value)
 						Flags |= MetadataFlags.PreserveRids;
 					else
@@ -945,7 +945,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 				Flags &= ~flag;
 
 			OnPropertyChanged(prop1);
-			if (!(prop2 is null))
+			if (prop2 is not null)
 				OnPropertyChanged(prop2);
 		}
 

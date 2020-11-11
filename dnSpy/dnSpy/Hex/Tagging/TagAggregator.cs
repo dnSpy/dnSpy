@@ -59,7 +59,7 @@ namespace dnSpy.Hex.Tagging {
 			public override IEnumerable<IHexTextTagSpan<T>> GetAllTags(HexTaggerContext context, CancellationToken cancellationToken) =>
 				owner.GetAllTags(context, cancellationToken);
 
-			public bool IsBatchedTagsChangedHooked => !(BatchedTagsChanged is null);
+			public bool IsBatchedTagsChangedHooked => BatchedTagsChanged is not null;
 			public void RaiseTagsChanged(object? sender, HexTagsChangedEventArgs e) => TagsChanged?.Invoke(sender, e);
 			public void RaiseBatchedTagsChanged(object? sender, HexBatchedTagsChangedEventArgs e) => BatchedTagsChanged?.Invoke(sender, e);
 			protected override void DisposeCore() => owner.Dispose();
@@ -124,7 +124,7 @@ namespace dnSpy.Hex.Tagging {
 			var spans = new NormalizedHexBufferSpanCollection(span);
 			var textSpan = context.LineSpan;
 			foreach (var tagger in taggers) {
-				var tags = !(cancellationToken is null) ? tagger.GetTags(spans, cancellationToken.Value) : tagger.GetTags(spans);
+				var tags = cancellationToken is not null ? tagger.GetTags(spans, cancellationToken.Value) : tagger.GetTags(spans);
 				foreach (var tagSpan in tags) {
 					var intersection = span.Intersection(tagSpan.Span);
 					if (intersection is null)
@@ -132,15 +132,15 @@ namespace dnSpy.Hex.Tagging {
 
 					foreach (var info in context.Line.GetSpans(intersection.Value, tagSpan.Flags)) {
 						var vs = textSpan.Intersection(info.TextSpan);
-						if (!(vs is null))
+						if (vs is not null)
 							yield return new HexTextTagSpan<T>(vs.Value, tagSpan.Tag);
 					}
 				}
 
-				var textTags = !(cancellationToken is null) ? tagger.GetTags(context, cancellationToken.Value) : tagger.GetTags(context);
+				var textTags = cancellationToken is not null ? tagger.GetTags(context, cancellationToken.Value) : tagger.GetTags(context);
 				foreach (var tagSpan in textTags) {
 					var intersection = textSpan.Intersection(tagSpan.Span);
-					if (!(intersection is null))
+					if (intersection is not null)
 						yield return new HexTextTagSpan<T>(intersection.Value, tagSpan.Tag);
 				}
 			}

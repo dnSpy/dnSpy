@@ -37,7 +37,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// Gets the member type
 		/// </summary>
-		public sealed override DmdMemberTypes MemberType => (TypeSignatureKind == DmdTypeSignatureKind.Type || TypeSignatureKind == DmdTypeSignatureKind.GenericInstance) && !(DeclaringType is null) ? DmdMemberTypes.NestedType : DmdMemberTypes.TypeInfo;
+		public sealed override DmdMemberTypes MemberType => (TypeSignatureKind == DmdTypeSignatureKind.Type || TypeSignatureKind == DmdTypeSignatureKind.GenericInstance) && DeclaringType is not null ? DmdMemberTypes.NestedType : DmdMemberTypes.TypeInfo;
 
 		/// <summary>
 		/// Gets the type signature kind
@@ -113,7 +113,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <summary>
 		/// true if it's a nested type
 		/// </summary>
-		public bool IsNested => !(DeclaringType is null);
+		public bool IsNested => DeclaringType is not null;
 
 		/// <summary>
 		/// Gets the generic parameter attributes
@@ -225,7 +225,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					return true;
 				var systemDelegate = AppDomain.System_Delegate;
 				var systemEnum = AppDomain.System_Enum;
-				for (DmdType? type = this; !(type is null); type = type.BaseType) {
+				for (DmdType? type = this; type is not null; type = type.BaseType) {
 					if (type == systemDelegate || type == systemEnum)
 						return true;
 				}
@@ -1276,7 +1276,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 				throw new ArgumentNullException(nameof(type));
 			if (this == type)
 				return false;
-			for (var t = BaseType; !(t is null); t = t.BaseType) {
+			for (var t = BaseType; t is not null; t = t.BaseType) {
 				if (t == type)
 					return true;
 			}

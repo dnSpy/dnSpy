@@ -41,7 +41,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		DmdGenericInstanceType ResolvedType => GetResolvedType(throwOnError: true)!;
 		DmdGenericInstanceType? GetResolvedType(bool throwOnError) {
-			if (!(__resolvedType_DONT_USE is null))
+			if (__resolvedType_DONT_USE is not null)
 				return __resolvedType_DONT_USE;
 			var typeDef = genericTypeRef.GetResolvedType(throwOnError);
 			var newRT = (DmdGenericInstanceType?)typeDef?.AppDomain.MakeGenericType(typeDef, typeArguments, GetCustomModifiers());
@@ -68,7 +68,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		public override DmdType GetGenericTypeDefinition() {
 			var resolvedType = GetResolvedType(throwOnError: false);
-			if (!(resolvedType is null))
+			if (resolvedType is not null)
 				return resolvedType.GetGenericTypeDefinition();
 			return genericTypeRef;
 		}

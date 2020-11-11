@@ -194,7 +194,7 @@ namespace dnSpy.Tabs {
 				SetActive(dstTabGroup);
 		}
 
-		public bool MoveToNextTabGroupCanExecute => ActiveIndex >= 0 && ActiveIndex + 1 < stackedContent.Count && !(stackedContent[ActiveIndex].ActiveTabItemImpl is null);
+		public bool MoveToNextTabGroupCanExecute => ActiveIndex >= 0 && ActiveIndex + 1 < stackedContent.Count && stackedContent[ActiveIndex].ActiveTabItemImpl is not null;
 
 		public void MoveToNextTabGroup() {
 			if (!MoveToNextTabGroupCanExecute)
@@ -202,7 +202,7 @@ namespace dnSpy.Tabs {
 			Move(stackedContent[ActiveIndex + 1], stackedContent[ActiveIndex], stackedContent[ActiveIndex].ActiveTabItemImpl);
 		}
 
-		public bool MoveToPreviousTabGroupCanExecute => ActiveIndex > 0 && !(stackedContent[ActiveIndex].ActiveTabItemImpl is null);
+		public bool MoveToPreviousTabGroupCanExecute => ActiveIndex > 0 && stackedContent[ActiveIndex].ActiveTabItemImpl is not null;
 
 		public void MoveToPreviousTabGroup() {
 			if (!MoveToPreviousTabGroupCanExecute)

@@ -54,7 +54,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		protected override void WriteCore(ITextColorWriter output, DocumentNodeWriteOptions options) {
 			output.Write(BoxedTextColor.Number, (index + 1).ToString());
-			if (!(infoTuple is null)) {
+			if (infoTuple is not null) {
 				output.WriteSpace();
 				output.Write(BoxedTextColor.Operator, "-");
 				output.WriteSpace();
@@ -63,7 +63,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		public override void OnBufferChanged(NormalizedHexChangeCollection changes) {
-			if (!(infoTuple is null)) {
+			if (infoTuple is not null) {
 				var tableInfo = ((MetadataTableNode)TreeNode.Parent!.Data).TableInfo;
 				foreach (var index in infoTuple.Value.Item1) {
 					var col = tableInfo.Columns[index];

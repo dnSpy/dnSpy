@@ -90,14 +90,14 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 
 		public IEnumerable<ITagSpan<IClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans) {
 			var context = buffer.TryGetSignatureHelpClassifierContext();
-			Debug2.Assert(!(context is null));
+			Debug2.Assert(context is not null);
 			if (context is null || context.Session.IsDismissed)
 				yield break;
 
 			if (context.Type == SignatureHelpClassifierContextTypes.ParameterName) {
 				var paramContext = (ParameterNameSignatureHelpClassifierContext)context;
 				var parameter = paramContext.Parameter as Parameter;
-				if (!(parameter?.Name is null)) {
+				if (parameter?.Name is not null) {
 					var snapshot = buffer.CurrentSnapshot;
 					var span = new Span(paramContext.NameOffset, parameter.Name.Length);
 					Debug.Assert(span.End <= snapshot.Length);

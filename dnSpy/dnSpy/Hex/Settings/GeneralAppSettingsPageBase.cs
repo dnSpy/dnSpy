@@ -170,7 +170,7 @@ namespace dnSpy.Hex.Settings {
 				options.GroupSizeInBytes = GroupSizeInBytesVM.Value;
 
 			var encodingInfo = EncodingInfo;
-			if (!(encodingInfo is null))
+			if (encodingInfo is not null)
 				options.EncodingCodePage = encodingInfo.CodePage;
 		}
 	}

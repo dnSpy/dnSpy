@@ -32,7 +32,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 
 		public TypeDefOrRefAndCAVM? Edit(string? title, TypeDefOrRefAndCAVM obj) {
 			var win = new TypeDefOrRefAndCADlg();
-			if (!(title is null))
+			if (title is not null)
 				win.Title = title;
 			win.DataContext = obj;
 			win.Owner = ownerWindow ?? Application.Current.MainWindow;

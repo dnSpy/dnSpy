@@ -84,7 +84,7 @@ namespace dnSpy.Disassembly.Viewer {
 			var bracesStack = new Stack<(int pos, char brace)>();
 			foreach (var info in disasmContent.Text) {
 				var text = info.Text;
-				if (!(info.Reference is null))
+				if (info.Reference is not null)
 					output.Write(text, info.Reference, ToDecompilerReferenceFlags(info.ReferenceFlags), info.Color);
 				else
 					output.Write(text, info.Color);

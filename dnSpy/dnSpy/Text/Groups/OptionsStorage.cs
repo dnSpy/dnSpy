@@ -142,7 +142,7 @@ namespace dnSpy.Text.Groups {
 				value = c.ConvertFromInvariantString(textValue);
 				if (type.IsValueType && value is null)
 					return false;
-				if (!(value is null) && !type.IsAssignableFrom(value.GetType()))
+				if (value is not null && !type.IsAssignableFrom(value.GetType()))
 					return false;
 				return true;
 			}

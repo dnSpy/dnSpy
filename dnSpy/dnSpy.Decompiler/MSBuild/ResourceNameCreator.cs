@@ -43,13 +43,13 @@ namespace dnSpy.Decompiler.MSBuild {
 				n = n.Substring(0, n.Length - RESOURCES_EXT.Length);
 
 			var type = module.Find(n, true);
-			if (!(type is null) && DotNetUtils.IsWinForm(type)) {
+			if (type is not null && DotNetUtils.IsWinForm(type)) {
 				typeFullName = type.ReflectionFullName;
 				return filenameCreator.CreateFromNamespaceName(RESX_EXT, type.Namespace, type.Name);
 			}
 
 			var resXType = GetResXType(type, n);
-			if (!(resXType is null)) {
+			if (resXType is not null) {
 				typeFullName = resXType.ReflectionFullName;
 				return filenameCreator.CreateFromNamespaceName(RESX_EXT, resXType.ReflectionNamespace, GetResxDesignerFilename(resXType.ReflectionNamespace, n));
 			}
@@ -66,7 +66,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		}
 
 		TypeDef? GetResXType(TypeDef? type, string name) {
-			if (!(type is null) && IsResXType(type, name))
+			if (type is not null && IsResXType(type, name))
 				return type;
 			return FindResXType(name);
 		}
@@ -77,7 +77,7 @@ namespace dnSpy.Decompiler.MSBuild {
 
 				foreach (var t in module.Types) {
 					var s = GetResXString(t);
-					if (!(s is null))
+					if (s is not null)
 						dict[s] = t;
 				}
 
@@ -90,9 +90,9 @@ namespace dnSpy.Decompiler.MSBuild {
 		Dictionary<string, TypeDef>? resXNameToType;
 
 		static string? GetResXString(TypeDef type) {
-			if (!type.Fields.Any(a => a.IsStatic && !(a.FieldType is null) && a.FieldType.ToString() == "System.Globalization.CultureInfo"))
+			if (!type.Fields.Any(a => a.IsStatic && a.FieldType is not null && a.FieldType.ToString() == "System.Globalization.CultureInfo"))
 				return null;
-			if (!type.Fields.Any(a => a.IsStatic && !(a.FieldType is null) && a.FieldType.ToString() == "System.Resources.ResourceManager"))
+			if (!type.Fields.Any(a => a.IsStatic && a.FieldType is not null && a.FieldType.ToString() == "System.Resources.ResourceManager"))
 				return null;
 			foreach (var m in type.Methods) {
 				var body = m.Body;
@@ -135,11 +135,11 @@ namespace dnSpy.Decompiler.MSBuild {
 		string GetBamlResourceName(string resourceName) {
 			if (namespaces is null)
 				Initialize();
-			Debug2.Assert(!(partialNamespaceMap is null));
-			Debug2.Assert(!(partialTypeToFullNameMap is null));
-			Debug2.Assert(!(typeToFullNameMap is null));
-			Debug2.Assert(!(lowerCaseNsToReal is null));
-			Debug2.Assert(!(namespaces is null));
+			Debug2.Assert(partialNamespaceMap is not null);
+			Debug2.Assert(partialTypeToFullNameMap is not null);
+			Debug2.Assert(typeToFullNameMap is not null);
+			Debug2.Assert(lowerCaseNsToReal is not null);
+			Debug2.Assert(namespaces is not null);
 
 			var ext = FileUtils.GetExtension(resourceName);
 			var nameNoExt = resourceName.Substring(0, resourceName.Length - ext.Length);
@@ -162,11 +162,11 @@ namespace dnSpy.Decompiler.MSBuild {
 		public string GetBamlResourceName(string resourceName, out string typeFullName) {
 			if (namespaces is null)
 				Initialize();
-			Debug2.Assert(!(partialNamespaceMap is null));
-			Debug2.Assert(!(partialTypeToFullNameMap is null));
-			Debug2.Assert(!(typeToFullNameMap is null));
-			Debug2.Assert(!(lowerCaseNsToReal is null));
-			Debug2.Assert(!(namespaces is null));
+			Debug2.Assert(partialNamespaceMap is not null);
+			Debug2.Assert(partialTypeToFullNameMap is not null);
+			Debug2.Assert(typeToFullNameMap is not null);
+			Debug2.Assert(lowerCaseNsToReal is not null);
+			Debug2.Assert(namespaces is not null);
 
 			Debug.Assert(resourceName.EndsWith(".baml", StringComparison.OrdinalIgnoreCase));
 			var name = resourceName.Substring(0, resourceName.Length - ".baml".Length);
@@ -180,8 +180,8 @@ namespace dnSpy.Decompiler.MSBuild {
 		}
 
 		string? GetFullName(string partialName) {
-			Debug2.Assert(!(partialTypeToFullNameMap is null));
-			Debug2.Assert(!(typeToFullNameMap is null));
+			Debug2.Assert(partialTypeToFullNameMap is not null);
+			Debug2.Assert(typeToFullNameMap is not null);
 			var name = partialName;
 			if (!string.IsNullOrEmpty(filenameCreator.DefaultNamespace))
 				name = filenameCreator.DefaultNamespace + "." + name;
@@ -194,11 +194,11 @@ namespace dnSpy.Decompiler.MSBuild {
 		public string GetResourceFilename(string resourceName) {
 			if (namespaces is null)
 				Initialize();
-			Debug2.Assert(!(partialNamespaceMap is null));
-			Debug2.Assert(!(partialTypeToFullNameMap is null));
-			Debug2.Assert(!(typeToFullNameMap is null));
-			Debug2.Assert(!(lowerCaseNsToReal is null));
-			Debug2.Assert(!(namespaces is null));
+			Debug2.Assert(partialNamespaceMap is not null);
+			Debug2.Assert(partialTypeToFullNameMap is not null);
+			Debug2.Assert(typeToFullNameMap is not null);
+			Debug2.Assert(lowerCaseNsToReal is not null);
+			Debug2.Assert(namespaces is not null);
 
 			string[] parts = resourceName.Split(new char[] { '.' });
 			var possibleNamespaces = new List<string>(parts.Length);
@@ -223,7 +223,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		}
 
 		void Initialize() {
-			if (!(namespaces is null))
+			if (namespaces is not null)
 				return;
 
 			// Only include actual used namespaces, eg. if "ns1.ns2.Type1" is used, but there's no

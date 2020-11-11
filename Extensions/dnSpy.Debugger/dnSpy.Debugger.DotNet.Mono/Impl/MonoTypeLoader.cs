@@ -49,7 +49,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 
 		public override TypeMirror? Load(AssemblyMirror assembly, string typeFullName) {
 			var res = engine.CheckFuncEval(evalInfo.Context);
-			if (!(res is null))
+			if (res is not null)
 				return null;
 			var appDomain = evalInfo.Frame.AppDomain;
 			if (appDomain is null)
@@ -70,14 +70,14 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 					state.Method_System_Reflection_Assembly_GetType_String =
 						assemblyType.GetMethod(nameof(System.Reflection.Assembly.GetType), DmdSignatureCallingConvention.HasThis,
 						0, reflectionAppDomain.System_Type, new[] { reflectionAppDomain.System_String }, throwOnError: false);
-					Debug2.Assert(!(state.Method_System_Reflection_Assembly_GetType_String is null));
+					Debug2.Assert(state.Method_System_Reflection_Assembly_GetType_String is not null);
 					if (state.Method_System_Reflection_Assembly_GetType_String is null)
 						return null;
 
 					state.Method_System_Array_CreateInstance_Type_Int32 =
 						reflectionAppDomain.System_Array.GetMethod(nameof(Array.CreateInstance), DmdSignatureCallingConvention.Default,
 						0, reflectionAppDomain.System_Array, new[] { reflectionAppDomain.System_Type, reflectionAppDomain.System_Int32 }, throwOnError: false);
-					Debug2.Assert(!(state.Method_System_Array_CreateInstance_Type_Int32 is null));
+					Debug2.Assert(state.Method_System_Array_CreateInstance_Type_Int32 is not null);
 					if (state.Method_System_Array_CreateInstance_Type_Int32 is null)
 						return null;
 				}

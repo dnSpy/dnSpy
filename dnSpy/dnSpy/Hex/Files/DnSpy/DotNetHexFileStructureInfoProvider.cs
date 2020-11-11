@@ -114,11 +114,11 @@ namespace dnSpy.Hex.Files.DnSpy {
 
 		object? GetToolTip(DotNetEmbeddedResource resource, HexPosition position) {
 			var mdHeaders = resource.ResourceProvider.File.GetHeaders<DotNetMetadataHeaders>();
-			Debug2.Assert(!(mdHeaders is null));
+			Debug2.Assert(mdHeaders is not null);
 			if (mdHeaders is null)
 				return null;
 			var rec = mdHeaders.TablesStream?.GetRecord(resource.Token);
-			Debug2.Assert(!(rec is null));
+			Debug2.Assert(rec is not null);
 			if (rec is null)
 				return null;
 			const int NameColumn = 2;
@@ -266,7 +266,7 @@ namespace dnSpy.Hex.Files.DnSpy {
 			var mdTable = tablesHeap.MDTables[(int)tableRecord.Token.Table];
 			int offset = (int)(position - tableRecord.Span.Span.Start).ToUInt64();
 			var column = mdTable.Columns.FirstOrDefault(a => a.Offset <= offset && offset < a.Offset + a.Size);
-			Debug2.Assert(!(column is null));
+			Debug2.Assert(column is not null);
 			if (column is null)
 				return null;
 			var mdHeaders = tablesHeap.Metadata;

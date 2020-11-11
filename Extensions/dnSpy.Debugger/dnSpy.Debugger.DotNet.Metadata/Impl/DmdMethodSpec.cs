@@ -75,7 +75,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		}
 
 		void InitializeParameters() {
-			if (!(__parameters_DONT_USE is null))
+			if (__parameters_DONT_USE is not null)
 				return;
 
 			var newRP = new DmdCreatedParameterInfo(this, genericMethodDefinition.ReturnParameter, methodSignature.ReturnType);

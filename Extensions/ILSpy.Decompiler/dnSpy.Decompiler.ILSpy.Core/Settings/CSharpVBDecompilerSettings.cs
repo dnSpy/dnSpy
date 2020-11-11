@@ -273,7 +273,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 
 		public override bool Equals(object? obj) {
 			var other = obj as CSharpVBDecompilerSettings;
-			return !(other is null) && decompilerSettings.Equals(other.decompilerSettings);
+			return other is not null && decompilerSettings.Equals(other.decompilerSettings);
 		}
 
 		public override int GetHashCode() => decompilerSettings.GetHashCode();

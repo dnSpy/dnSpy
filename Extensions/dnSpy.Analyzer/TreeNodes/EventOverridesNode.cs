@@ -55,7 +55,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		public static bool CanShow(EventDef @event) {
 			var accessor = @event.AddMethod ?? @event.RemoveMethod ?? @event.InvokeMethod;
-			return !(accessor is null) && accessor.IsVirtual && !accessor.IsFinal && !accessor.DeclaringType.IsInterface;
+			return accessor is not null && accessor.IsVirtual && !accessor.IsFinal && !accessor.DeclaringType.IsInterface;
 		}
 	}
 }

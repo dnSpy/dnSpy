@@ -137,7 +137,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 				int maxFrames = parsed.MaxFrames;
 				if (parsed.Evaluates && maxFrames < 1)
 					maxFrames = 1;
-				if (maxFrames > 0 && !(thread is null)) {
+				if (maxFrames > 0 && thread is not null) {
 					stackWalker = thread.CreateStackWalker();
 					stackFrames = stackWalker.GetNextStackFrames(maxFrames);
 				}
@@ -147,7 +147,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			finally {
 				this.boundBreakpoint = null;
 				this.thread = null;
-				if (!(stackWalker is null)) {
+				if (stackWalker is not null) {
 					stackWalker.Close();
 					boundBreakpoint.Process.DbgManager.Close(stackFrames!);
 					stackWalker = null;
@@ -178,7 +178,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 		}
 
 		void Write(ParsedTracepointMessage parsed, string tracepointMessage) {
-			Debug2.Assert(!(boundBreakpoint is null));
+			Debug2.Assert(boundBreakpoint is not null);
 			DbgStackFrame? frame;
 			foreach (var part in parsed.Parts) {
 				switch (part.Kind) {
@@ -194,7 +194,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 						var language = dbgLanguageService.GetCurrentLanguage(thread!.Runtime.RuntimeKindGuid);
 						var cancellationToken = CancellationToken.None;
 						var state = GetTracepointEvalState(boundBreakpoint, language, frame, tracepointMessage, cancellationToken);
-						Debug2.Assert(!(part.String is null));
+						Debug2.Assert(part.String is not null);
 						var eeState = state.GetExpressionEvaluatorState(part.String);
 						var evalInfo = new DbgEvaluationInfo(state.Context!, frame, cancellationToken);
 						var evalRes = language.ExpressionEvaluator.Evaluate(evalInfo, part.String, DbgEvaluationOptions.Expression, eeState);
@@ -224,7 +224,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 
 				case TracepointMessageKind.WriteCallerModule:
 					var module = TryGetFrame(part.Number)?.Module;
-					if (!(module is null))
+					if (module is not null)
 						Write(module.Filename);
 					else
 						WriteError();
@@ -232,7 +232,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 
 				case TracepointMessageKind.WriteCallerOffset:
 					frame = TryGetFrame(part.Number);
-					if (!(frame is null)) {
+					if (frame is not null) {
 						Write("0x");
 						Write(frame.FunctionOffset.ToString("X8"));
 					}
@@ -242,7 +242,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 
 				case TracepointMessageKind.WriteCallerToken:
 					frame = TryGetFrame(part.Number);
-					if (!(frame is null) && frame.HasFunctionToken) {
+					if (frame is not null && frame.HasFunctionToken) {
 						Write("0x");
 						Write(frame.FunctionToken.ToString("X8"));
 					}
@@ -312,7 +312,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 		void WriteFrame(int index, DbgStackFrameFormatterOptions frameOptions) => WriteFrame(TryGetFrame(index), frameOptions);
 
 		void WriteFrame(DbgStackFrame? frame, DbgStackFrameFormatterOptions frameOptions) {
-			if (!(frame is null)) {
+			if (frame is not null) {
 				if (!debuggerSettings.UseHexadecimal)
 					frameOptions |= DbgStackFrameFormatterOptions.Decimal;
 				if (debuggerSettings.UseDigitSeparators)
@@ -427,7 +427,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 		}
 
 		void Write(DbgEvaluationInfo evalInfo, DbgLanguage language, in DbgEvaluationResult evalRes) {
-			if (!(evalRes.Error is null)) {
+			if (evalRes.Error is not null) {
 				Write("<<<");
 				Write(PredefinedEvaluationErrorMessagesHelper.GetErrorMessage(evalRes.Error));
 				Write(">>>");
@@ -435,7 +435,7 @@ namespace dnSpy.Debugger.Breakpoints.Code.CondChecker {
 			else {
 				var options = GetValueFormatterOptions(evalRes.FormatSpecifiers, isEdit: false);
 				const CultureInfo? cultureInfo = null;
-				Debug2.Assert(!(evalRes.Value is null));
+				Debug2.Assert(evalRes.Value is not null);
 				language.Formatter.FormatValue(evalInfo, stringBuilderTextColorWriter, evalRes.Value, options, cultureInfo);
 				evalRes.Value.Close();
 			}

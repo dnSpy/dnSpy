@@ -89,8 +89,8 @@ namespace dnSpy.Hex.Editor {
 						return;
 					}
 					if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.Escape) {
-						Debug2.Assert(!(originalZoomLevel is null));
-						if (!(originalZoomLevel is null))
+						Debug2.Assert(originalZoomLevel is not null);
+						if (originalZoomLevel is not null)
 							HexViewZoomLevel = originalZoomLevel.Value;
 						UpdateTextWithZoomLevel();
 						owner.wpfHexViewHost.HexView.VisualElement.Focus();
@@ -118,11 +118,11 @@ namespace dnSpy.Hex.Editor {
 					// The combobox is too tall, but I want to use the style from the UI.Wpf dll
 					if (horizontalScrollBarMargin is null) {
 						horizontalScrollBarMargin = owner.wpfHexViewHost.GetHexViewMargin(PredefinedHexMarginNames.HorizontalScrollBar);
-						Debug2.Assert(!(horizontalScrollBarMargin is null));
-						if (!(horizontalScrollBarMargin is null))
+						Debug2.Assert(horizontalScrollBarMargin is not null);
+						if (horizontalScrollBarMargin is not null)
 							horizontalScrollBarMargin.VisualElement.SizeChanged += VisualElement_SizeChanged;
 					}
-					if (!(horizontalScrollBarMargin is null))
+					if (horizontalScrollBarMargin is not null)
 						Height = horizontalScrollBarMargin.VisualElement.Height;
 				}
 				else
@@ -148,7 +148,7 @@ namespace dnSpy.Hex.Editor {
 
 			public void Dispose() {
 				IsVisibleChanged -= ZoomControlMargin_IsVisibleChanged;
-				if (!(horizontalScrollBarMargin is null))
+				if (horizontalScrollBarMargin is not null)
 					horizontalScrollBarMargin.VisualElement.SizeChanged -= VisualElement_SizeChanged;
 			}
 		}

@@ -93,7 +93,7 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 					var s = args as string;
 					if (s is null || s.Length != 1)
 						break;
-					if (!(session is null)) {
+					if (session is not null) {
 						if (session.IsRetriggerCharacter(s[0]))
 							TriggerSession(new SignatureHelpTriggerInfo(SignatureHelpTriggerReason.RetriggerCommand, s[0]));
 						else if (session.IsTriggerCharacter(s[0]))
@@ -111,7 +111,7 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 
 			// Need to retrigger it if user backspaced and deleted a comma. We need to check for it
 			// here because Caret-pos-changed handler doesn't retrigger it for perf reasons.
-			if (!(session is null) && oldSnapshot != textView.TextSnapshot)
+			if (session is not null && oldSnapshot != textView.TextSnapshot)
 				TriggerSession(new SignatureHelpTriggerInfo(SignatureHelpTriggerReason.RetriggerCommand));
 
 			return CommandTargetStatus.Handled;
@@ -163,7 +163,7 @@ namespace dnSpy.Roslyn.Intellisense.SignatureHelp {
 		}
 
 		bool IsRetriggerCharacter(CaretPosition caretPos) {
-			Debug2.Assert(!(session is null));
+			Debug2.Assert(session is not null);
 			if (session is null)
 				return false;
 			if (caretPos.VirtualSpaces > 0)

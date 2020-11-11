@@ -455,7 +455,7 @@ namespace dndbg.Engine {
 		}
 
 		static ICorDebugAppDomain? GetAppDomain(ICorDebugAppDomain? pAppDomain, ICorDebugThread? pThread) {
-			if (pAppDomain is null && !(pThread is null))
+			if (pAppDomain is null && pThread is not null)
 				pThread.GetAppDomain(out pAppDomain);
 			Debug.WriteLineIf(pAppDomain is null, "GetAppDomain: Could not get AppDomain");
 			return pAppDomain;

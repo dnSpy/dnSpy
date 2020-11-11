@@ -258,7 +258,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 			DmdAssemblyImpl[] assembliesCopy;
 			lock (assembliesLockObj) {
-				if (!(name is null)) {
+				if (name is not null) {
 					if (assemblyNameToAssembly.TryGetValue(name, out var cached))
 						return cached;
 				}
@@ -272,9 +272,9 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 			var assembly = GetAssemblySlowCore(assembliesCopy, simpleName, name);
 
-			if (!(assembly is null)) {
+			if (assembly is not null) {
 				lock (assembliesLockObj) {
-					if (!(name is null)) {
+					if (name is not null) {
 						if (assemblyNameToAssembly.TryGetValue(name, out var cached))
 							return cached;
 						assemblyNameToAssembly[name.AsReadOnly()] = assembly;
@@ -400,7 +400,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			if (name is null)
 				throw new ArgumentNullException(nameof(name));
 			var asm = GetAssembly(name);
-			if (!(asm is null))
+			if (asm is not null)
 				return asm;
 
 			var assemblyType = GetWellKnownType(DmdWellKnownType.System_Reflection_Assembly);
@@ -433,7 +433,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			if (path is null)
 				throw new ArgumentNullException(nameof(path));
 			var asm = GetAssemblyByPath(path);
-			if (!(asm is null))
+			if (asm is not null)
 				return asm;
 
 			var assemblyType = GetWellKnownType(DmdWellKnownType.System_Reflection_Assembly);
@@ -447,7 +447,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				throw new ArgumentNullException(nameof(assemblyFile));
 			var name = new DmdReadOnlyAssemblyName(assemblyFile);
 			var asm = GetAssembly(name) ?? GetAssemblyByPath(assemblyFile);
-			if (!(asm is null))
+			if (asm is not null)
 				return asm;
 
 			var assemblyType = GetWellKnownType(DmdWellKnownType.System_Reflection_Assembly);
@@ -490,7 +490,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			var et = elementType as DmdTypeBase;
 			if (et is null)
 				throw new ArgumentException();
-			if (!(customModifiers is null)) {
+			if (customModifiers is not null) {
 				for (int i = 0; i < customModifiers.Count; i++) {
 					if (customModifiers[i].Type.AppDomain != this)
 						throw new ArgumentException();
@@ -518,7 +518,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			var et = elementType as DmdTypeBase;
 			if (et is null)
 				throw new ArgumentException();
-			if (!(customModifiers is null)) {
+			if (customModifiers is not null) {
 				for (int i = 0; i < customModifiers.Count; i++) {
 					if (customModifiers[i].Type.AppDomain != this)
 						throw new ArgumentException();
@@ -546,7 +546,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			var et = elementType as DmdTypeBase;
 			if (et is null)
 				throw new ArgumentException();
-			if (!(customModifiers is null)) {
+			if (customModifiers is not null) {
 				for (int i = 0; i < customModifiers.Count; i++) {
 					if (customModifiers[i].Type.AppDomain != this)
 						throw new ArgumentException();
@@ -581,7 +581,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			var et = elementType as DmdTypeBase;
 			if (et is null)
 				throw new ArgumentException();
-			if (!(customModifiers is null)) {
+			if (customModifiers is not null) {
 				for (int i = 0; i < customModifiers.Count; i++) {
 					if (customModifiers[i].Type.AppDomain != this)
 						throw new ArgumentException();
@@ -612,7 +612,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				if (typeArguments[i].AppDomain != this)
 					throw new InvalidOperationException();
 			}
-			if (!(customModifiers is null)) {
+			if (customModifiers is not null) {
 				for (int i = 0; i < customModifiers.Count; i++) {
 					if (customModifiers[i].Type.AppDomain != this)
 						throw new ArgumentException();
@@ -717,7 +717,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				if (varArgsParameterTypes[i].AppDomain != this)
 					throw new ArgumentException();
 			}
-			if (!(customModifiers is null)) {
+			if (customModifiers is not null) {
 				for (int i = 0; i < customModifiers.Count; i++) {
 					if (customModifiers[i].Type.AppDomain != this)
 						throw new ArgumentException();
@@ -754,7 +754,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				if (varArgsParameterTypes[i].AppDomain != this)
 					throw new ArgumentException();
 			}
-			if (!(customModifiers is null)) {
+			if (customModifiers is not null) {
 				for (int i = 0; i < customModifiers.Count; i++) {
 					if (customModifiers[i].Type.AppDomain != this)
 						throw new ArgumentException();
@@ -786,7 +786,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				throw new ArgumentNullException(nameof(declaringType));
 			if (name is null)
 				throw new ArgumentNullException(nameof(name));
-			if (!(customModifiers is null)) {
+			if (customModifiers is not null) {
 				for (int i = 0; i < customModifiers.Count; i++) {
 					if (customModifiers[i].Type.AppDomain != this)
 						throw new ArgumentException();
@@ -805,7 +805,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				throw new ArgumentNullException(nameof(declaringMethod));
 			if (name is null)
 				throw new ArgumentNullException(nameof(name));
-			if (!(customModifiers is null)) {
+			if (customModifiers is not null) {
 				for (int i = 0; i < customModifiers.Count; i++) {
 					if (customModifiers[i].Type.AppDomain != this)
 						throw new ArgumentException();
@@ -828,7 +828,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					return null;
 				DmdTypeDef? type;
 				DmdTypeUtilities.SplitFullName(typeNames[0], out var @namespace, out var name);
-				if (!(assemblyName is null)) {
+				if (assemblyName is not null) {
 					var assembly = (DmdAssemblyImpl?)appDomain.GetAssembly(assemblyName);
 					if (!(assembly?.ManifestModule is DmdModule module))
 						return null;
@@ -843,7 +843,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 							continue;
 						var typeRef = new DmdParsedTypeRef(module, null, DmdTypeScope.Invalid, @namespace, name, null);
 						type = assembly.GetType(typeRef, ignoreCase);
-						if (!(type is null))
+						if (type is not null)
 							break;
 					}
 				}
@@ -867,7 +867,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 			var resolver = new TypeDefResolver(this, (options & DmdGetTypeOptions.IgnoreCase) != 0);
 			var type = DmdTypeNameParser.Parse(resolver, typeName);
-			if (!(type is null))
+			if (type is not null)
 				return Intern(type, DmdMakeTypeOptions.NoResolve);
 
 			if ((options & DmdGetTypeOptions.ThrowOnError) != 0)
@@ -880,7 +880,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				throw new ArgumentNullException(nameof(typeRef));
 
 			var type = ResolveCore(typeRef, ignoreCase);
-			if (!(type is null))
+			if (type is not null)
 				return type;
 
 			if (throwOnError)
@@ -942,7 +942,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					return null;
 
 				var td = Lookup(etAsm, typeRef, ignoreCase);
-				if (!(td is null))
+				if (td is not null)
 					return td;
 
 				modules = etAsm.GetModules();
@@ -998,14 +998,14 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 			if (manifestModule is null)
 				return null;
 			var type = Lookup(manifestModule, typeRef, ignoreCase);
-			if (!(type is null))
+			if (type is not null)
 				return type;
 
 			foreach (var module in assembly.GetModules()) {
 				if (manifestModule == module)
 					continue;
 				type = Lookup(module, typeRef, ignoreCase);
-				if (!(type is null))
+				if (type is not null)
 					return type;
 			}
 			return null;
@@ -1021,13 +1021,13 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				Dictionary<DmdType, DmdTypeDef>? dict1 = null, dict2 = null;
 				toModuleTypeDictIgnoreCase?.TryGetValue(module, out dict1);
 				toModuleTypeDict?.TryGetValue(module, out dict2);
-				Debug2.Assert(!(dict1 is null) || !(dict2 is null));
+				Debug2.Assert(dict1 is not null || dict2 is not null);
 				foreach (var type in types) {
 					if (type is null)
 						continue;
-					if (!(dict1 is null))
+					if (dict1 is not null)
 						dict1[type] = type;
-					if (!(dict2 is null))
+					if (dict2 is not null)
 						dict2[type] = type;
 				}
 			}
@@ -1079,7 +1079,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 		internal DmdType[] GetSZArrayInterfaces(DmdType elementType) {
 			var ifaces = defaultExistingWellKnownSZArrayInterfaces;
 			if (ifaces is null) {
-				Debug2.Assert(!(CorLib is null), "CorLib hasn't been loaded yet!");
+				Debug2.Assert(CorLib is not null, "CorLib hasn't been loaded yet!");
 				if (CorLib is null)
 					return Array.Empty<DmdType>();
 				List<DmdType>? list = ObjectPools.AllocListOfType();
@@ -1088,7 +1088,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 					// They're not always present so if we fail to find a type in the corlib, we don't
 					// want to search the remaining assemblies (could be hundreds of assemblies).
 					var iface = GetWellKnownType(wellKnownType, isOptional: true, onlyCorLib: true);
-					if (!(iface is null))
+					if (iface is not null)
 						list.Add(iface);
 				}
 				Interlocked.CompareExchange(ref defaultExistingWellKnownSZArrayInterfaces, ObjectPools.FreeAndToArray(ref list), null);

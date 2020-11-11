@@ -95,7 +95,7 @@ namespace dnSpy.AsmEditor.Compiler.MDEditor {
 			if ((cor20.Flags & ComImageFlags.StrongNameSigned) != 0 && cor20.StrongNameSignature.Size != 0 && cor20.StrongNameSignature.VirtualAddress != 0)
 				snData = new StrongNameSignatureSectionData(cor20.StrongNameSignature.Size);
 
-			if (!(snData is null))
+			if (snData is not null)
 				textSection.SectionData.Add(snData);
 			var mdData = new DotNetMetadataSectionData(mdEditor);
 			textSection.SectionData.Add(new ImageCor20HeaderSectionData(mdData, snData));

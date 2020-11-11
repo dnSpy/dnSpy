@@ -604,7 +604,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 
 		void InitializeNothingMatched() => InitializeNothingMatched(filterText, selectedProcess);
 		void InitializeNothingMatched(string filterText, SimpleProcessVM? selectedProcess) =>
-			NothingMatched = AllItems.Count == 0 && !(string.IsNullOrWhiteSpace(filterText) && selectedProcess?.Process is null);
+			NothingMatched = AllItems.Count == 0 && string.IsNullOrWhiteSpace(filterText) && selectedProcess?.Process is not null;
 
 		public int Compare([AllowNull] ThreadVM x, [AllowNull] ThreadVM y) {
 			Debug.Assert(threadContext.UIDispatcher.CheckAccess());
@@ -703,7 +703,7 @@ namespace dnSpy.Debugger.ToolWindows.Threads {
 		// UI thread
 		bool IsMatch_UI(ThreadVM vm, string filterText, SimpleProcessVM? selectedProcess) {
 			Debug.Assert(threadContext.UIDispatcher.CheckAccess());
-			if (!(selectedProcess?.Process is null) && selectedProcess.Process != vm.Thread.Process)
+			if (selectedProcess?.Process is not null && selectedProcess.Process != vm.Thread.Process)
 				return false;
 			// Common case check, we don't need to allocate any strings
 			if (filterText == string.Empty)

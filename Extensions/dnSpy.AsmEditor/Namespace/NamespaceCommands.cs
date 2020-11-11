@@ -72,7 +72,7 @@ namespace dnSpy.AsmEditor.Namespace {
 			string.Format(dnSpy_AsmEditor_Resources.DeleteNamespacesCommand, count);
 
 		static bool CanExecute(DocumentTreeNodeData[] nodes) =>
-			!(nodes is null) &&
+			nodes is not null &&
 			nodes.Length > 0 &&
 			nodes.All(a => a is NamespaceNode);
 
@@ -100,9 +100,9 @@ namespace dnSpy.AsmEditor.Namespace {
 			}
 
 			public void Delete(NamespaceNode[] nodes, DocumentTreeNodeData[] parents) {
-				Debug2.Assert(!(parents is null) && nodes.Length == parents.Length);
+				Debug2.Assert(parents is not null && nodes.Length == parents.Length);
 				Debug2.Assert(infos is null);
-				if (!(infos is null))
+				if (infos is not null)
 					throw new InvalidOperationException();
 
 				infos = new ModuleInfo[nodes.Length];
@@ -110,7 +110,7 @@ namespace dnSpy.AsmEditor.Namespace {
 				for (int i = 0; i < infos.Length; i++) {
 					var node = nodes[i];
 					var module = parents[i].GetModule();
-					Debug2.Assert(!(module is null));
+					Debug2.Assert(module is not null);
 					if (module is null)
 						throw new InvalidOperationException();
 
@@ -131,7 +131,7 @@ namespace dnSpy.AsmEditor.Namespace {
 			}
 
 			public void Restore(NamespaceNode[] nodes, DocumentTreeNodeData[] parents) {
-				Debug2.Assert(!(infos is null));
+				Debug2.Assert(infos is not null);
 				if (infos is null)
 					throw new InvalidOperationException();
 				Debug.Assert(infos.Length == nodes.Length);
@@ -210,12 +210,12 @@ namespace dnSpy.AsmEditor.Namespace {
 		}
 
 		static bool CanExecute(DocumentTreeNodeData[] nodes) =>
-			!(nodes is null) &&
+			nodes is not null &&
 			nodes.Length > 0 &&
 			nodes.All(a => a is NamespaceNode) &&
 			nodes.Any(a => ((NamespaceNode)a).Name != string.Empty) &&
 			IsInSameModule(nodes) &&
-			!(nodes[0].TreeNode.Parent is null) &&
+			nodes[0].TreeNode.Parent is not null &&
 			nodes[0].TreeNode.Parent!.DataChildren.Any(a => a is NamespaceNode && ((NamespaceNode)a).Name == string.Empty);
 
 		static bool IsInSameModule(DocumentTreeNodeData[] nodes) {
@@ -262,7 +262,7 @@ namespace dnSpy.AsmEditor.Namespace {
 
 		public void Execute() {
 			Debug2.Assert(infos is null);
-			if (!(infos is null))
+			if (infos is not null)
 				throw new InvalidOperationException();
 
 			nodes.Delete();
@@ -290,7 +290,7 @@ namespace dnSpy.AsmEditor.Namespace {
 		}
 
 		public void Undo() {
-			Debug2.Assert(!(infos is null));
+			Debug2.Assert(infos is not null);
 			if (infos is null)
 				throw new InvalidOperationException();
 
@@ -320,7 +320,7 @@ namespace dnSpy.AsmEditor.Namespace {
 
 		public IEnumerable<object> ModifiedObjects {
 			get {
-				if (!(nsTarget is null))
+				if (nsTarget is not null)
 					yield return nsTarget;
 				foreach (var n in nodes.Nodes)
 					yield return n;
@@ -362,7 +362,7 @@ namespace dnSpy.AsmEditor.Namespace {
 		}
 
 		static bool CanExecute(DocumentTreeNodeData[] nodes) =>
-			!(nodes is null) &&
+			nodes is not null &&
 			nodes.Length == 1 &&
 			nodes[0] is NamespaceNode;
 
@@ -412,7 +412,7 @@ namespace dnSpy.AsmEditor.Namespace {
 			existingNsNode = (NamespaceNode?)nsNode.TreeNode.Parent!.DataChildren.FirstOrDefault(a => a is NamespaceNode && newName == ((NamespaceNode)a).Name);
 
 			var module = nsNode.GetModule();
-			Debug2.Assert(!(module is null));
+			Debug2.Assert(module is not null);
 			if (module is null)
 				throw new InvalidOperationException();
 
@@ -437,7 +437,7 @@ namespace dnSpy.AsmEditor.Namespace {
 
 		public void Execute() {
 			UTF8String newNamespace = newName;
-			if (!(existingNsNode is null)) {
+			if (existingNsNode is not null) {
 				Debug.Assert(origChildren.Length == nsNode.TreeNode.Children.Count);
 				nsNode.TreeNode.Children.Clear();
 				foreach (var typeNode in origChildren) {
@@ -466,7 +466,7 @@ namespace dnSpy.AsmEditor.Namespace {
 		}
 
 		public void Undo() {
-			if (!(existingNsNode is null)) {
+			if (existingNsNode is not null) {
 				Debug.Assert(nsNode.TreeNode.Children.Count == 0);
 				foreach (var typeNode in origChildren) {
 					bool b = existingNsNode.TreeNode.Children.Remove(typeNode.TreeNode);

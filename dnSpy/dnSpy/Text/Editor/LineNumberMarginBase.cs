@@ -178,7 +178,7 @@ namespace dnSpy.Text.Editor {
 				var lineNumber = GetLineNumber(viewLine, ref lineNumberState);
 				if (lineNumber is null)
 					continue;
-				Debug2.Assert(!(lineNumberState is null));
+				Debug2.Assert(lineNumberState is not null);
 
 				if (!identityTagToLine.TryGetValue(viewLine.IdentityTag, out var line) || line.Number != lineNumber)
 					line = CreateLine(viewLine, lineNumberState, lineNumber.Value);

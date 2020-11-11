@@ -192,7 +192,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void InitializeGlyphFactories(IContentType? beforeContentType, IContentType afterContentType) {
-			Debug2.Assert(!(iconCanvas is null));
+			Debug2.Assert(iconCanvas is not null);
 			var oldFactories = new Dictionary<IGlyphFactoryProvider, IGlyphFactory>();
 			foreach (var info in glyphFactories.Values)
 				oldFactories[info.FactoryProvider] = info.Factory;
@@ -205,7 +205,7 @@ namespace dnSpy.Text.Editor {
 					continue;
 				IGlyphFactory? glyphFactory = null;
 				foreach (var type in lazy.Metadata.TagTypes) {
-					Debug2.Assert(!(type is null));
+					Debug2.Assert(type is not null);
 					if (type is null)
 						break;
 					Debug.Assert(!glyphFactories.ContainsKey(type));
@@ -238,13 +238,13 @@ namespace dnSpy.Text.Editor {
 				foreach (var c in childCanvases)
 					iconCanvas.Children.Add(c);
 
-				if (!(beforeContentType is null))
+				if (beforeContentType is not null)
 					RefreshEverything();
 			}
 		}
 
 		void Initialize() {
-			if (!(mouseProcessorCollection is null))
+			if (mouseProcessorCollection is not null)
 				return;
 			iconCanvas = new Canvas { Background = Brushes.Transparent };
 			Children.Add(iconCanvas);
@@ -289,7 +289,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void OnNewLayout(IList<ITextViewLine> newOrReformattedLines, IList<ITextViewLine> translatedLines) {
-			Debug2.Assert(!(lineInfos is null));
+			Debug2.Assert(lineInfos is not null);
 			var newInfos = new Dictionary<object, LineInfo>();
 
 			foreach (var line in newOrReformattedLines)
@@ -324,7 +324,7 @@ namespace dnSpy.Text.Editor {
 
 		void AddLine(Dictionary<object, LineInfo> newInfos, ITextViewLine line) {
 			var wpfLine = line as IWpfTextViewLine;
-			Debug2.Assert(!(wpfLine is null));
+			Debug2.Assert(wpfLine is not null);
 			if (wpfLine is null)
 				return;
 			var info = new LineInfo(line, CreateIconInfos(wpfLine));
@@ -334,11 +334,11 @@ namespace dnSpy.Text.Editor {
 		}
 
 		List<IconInfo> CreateIconInfos(IWpfTextViewLine line) {
-			Debug2.Assert(!(tagAggregator is null));
+			Debug2.Assert(tagAggregator is not null);
 			var icons = new List<IconInfo>();
 			foreach (var mappingSpan in tagAggregator.GetTags(line.ExtentAsMappingSpan)) {
 				var tag = mappingSpan.Tag;
-				Debug2.Assert(!(tag is null));
+				Debug2.Assert(tag is not null);
 				if (tag is null)
 					continue;
 				// Fails if someone forgot to Export(typeof(IGlyphFactoryProvider)) with the correct tag types
@@ -395,7 +395,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void Update(IWpfTextViewLine line) {
-			Debug2.Assert(!(lineInfos is null));
+			Debug2.Assert(lineInfos is not null);
 			Debug.Assert(line.VisibilityState != VisibilityState.Unattached);
 			if (!lineInfos.TryGetValue(line.IdentityTag, out var info))
 				return;
@@ -437,9 +437,9 @@ namespace dnSpy.Text.Editor {
 
 		void UnregisterEvents() {
 			hasRegisteredEvents = false;
-			if (!(editorFormatMap is null))
+			if (editorFormatMap is not null)
 				editorFormatMap.FormatMappingChanged -= EditorFormatMap_FormatMappingChanged;
-			if (!(tagAggregator is null))
+			if (tagAggregator is not null)
 				tagAggregator.BatchedTagsChanged -= TagAggregator_BatchedTagsChanged;
 			wpfTextViewHost.TextView.LayoutChanged -= TextView_LayoutChanged;
 		}

@@ -44,7 +44,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <summary>
 		/// true if this is an error value node
 		/// </summary>
-		public bool HasError => !(ErrorMessage is null);
+		public bool HasError => ErrorMessage is not null;
 
 		/// <summary>
 		/// Gets the error message or null
@@ -54,7 +54,7 @@ namespace dnSpy.Contracts.Debugger.Evaluation {
 		/// <summary>
 		/// true if <see cref="Value"/> is not null
 		/// </summary>
-		public bool HasValue => !(Value is null);
+		public bool HasValue => Value is not null;
 
 		/// <summary>
 		/// Gets the value or null if there's none

@@ -77,7 +77,7 @@ namespace dnSpy.Settings.Dialog {
 
 		PageAndUIObject? GetOrCreatePageAndUIObject() {
 			var uiObj = context.PageUIObjectLoader.GetUIObject(Page);
-			if (!(uiObj is null))
+			if (uiObj is not null)
 				return createdPageAndUIObject ??= new PageAndUIObject(this, CreateUIObject(uiObj));
 
 			// Try to pick a visible child
@@ -144,7 +144,7 @@ namespace dnSpy.Settings.Dialog {
 			if (obj is null)
 				yield break;
 			var objString = TryGetString(obj);
-			if (!(objString is null))
+			if (objString is not null)
 				yield return objString;
 			foreach (var childObj in LogicalTreeHelper.GetChildren(obj)) {
 				var child = childObj as DependencyObject;
@@ -159,17 +159,17 @@ namespace dnSpy.Settings.Dialog {
 			string? s;
 
 			s = (obj as GroupBox)?.Header as string;
-			if (!(s is null))
+			if (s is not null)
 				return s;
 
 			// Label, CheckBox, Button, TextControl and others
 			s = (obj as ContentControl)?.Content as string;
-			if (!(s is null))
+			if (s is not null)
 				return s;
 
 			Debug.Assert(!(obj is TextBlock), $"Use {nameof(TextControl)} instead so the text can be highlighted");
 			s = (obj as TextBlock)?.Text;
-			if (!(s is null))
+			if (s is not null)
 				return s;
 
 			return null;

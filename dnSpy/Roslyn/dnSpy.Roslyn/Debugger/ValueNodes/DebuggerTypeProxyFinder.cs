@@ -42,8 +42,8 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 			public AssemblyState(DmdAssembly assembly) {
 				dict = new Dictionary<TypeKey, DmdType>();
 				var proxyAttr = assembly.AppDomain.GetWellKnownType(DmdWellKnownType.System_Diagnostics_DebuggerTypeProxyAttribute, isOptional: true);
-				Debug2.Assert(!(proxyAttr is null));
-				if (!(proxyAttr is null)) {
+				Debug2.Assert(proxyAttr is not null);
+				if (proxyAttr is not null) {
 					foreach (var ca in assembly.CustomAttributes) {
 						if (ca.AttributeType != proxyAttr)
 							continue;
@@ -102,7 +102,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 
 		static DmdConstructorInfo? GetProxyTypeConstructor(DmdType targetType) {
 			var proxyAttr = targetType.AppDomain.GetWellKnownType(DmdWellKnownType.System_Diagnostics_DebuggerTypeProxyAttribute, isOptional: true);
-			Debug2.Assert(!(proxyAttr is null));
+			Debug2.Assert(proxyAttr is not null);
 			if (proxyAttr is null)
 				return null;
 			DmdType? currentType = targetType;
@@ -110,15 +110,15 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 				DmdConstructorInfo? proxyCtor;
 
 				var ca = currentType.FindCustomAttribute(proxyAttr, inherit: false);
-				if (!(ca is null) && ca.ConstructorArguments.Count == 1) {
+				if (ca is not null && ca.ConstructorArguments.Count == 1) {
 					proxyCtor = GetConstructor(GetType(currentType.Assembly, ca.ConstructorArguments[0].Value), currentType);
-					if (!(proxyCtor is null))
+					if (proxyCtor is not null)
 						return proxyCtor;
 				}
 
 				var asmState = GetAssemblyState(currentType.Assembly);
 				proxyCtor = GetConstructor(asmState.GetProxyType(currentType), currentType);
-				if (!(proxyCtor is null))
+				if (proxyCtor is not null)
 					return proxyCtor;
 
 				currentType = currentType.BaseType;

@@ -67,11 +67,11 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 
 		internal DmdTypeDef ResolvedType => GetResolvedType(throwOnError: true)!;
 		internal DmdTypeDef? GetResolvedType(bool throwOnError) {
-			if (!(__resolvedType_DONT_USE is null))
+			if (__resolvedType_DONT_USE is not null)
 				return __resolvedType_DONT_USE;
 			var appDomain = (DmdAppDomainImpl)ownerModule.AppDomain;
 			var type = appDomain.Resolve(this, throwOnError, ignoreCase: false);
-			if (!(type is null) && GetCustomModifiers().Count != 0)
+			if (type is not null && GetCustomModifiers().Count != 0)
 				type = (DmdTypeDef)appDomain.Intern(type.WithCustomModifiers(GetCustomModifiers()), DmdMakeTypeOptions.None);
 			Interlocked.CompareExchange(ref __resolvedType_DONT_USE, type, null);
 			return __resolvedType_DONT_USE;

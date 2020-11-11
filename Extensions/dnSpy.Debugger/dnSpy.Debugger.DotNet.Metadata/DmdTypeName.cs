@@ -73,11 +73,11 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// <returns></returns>
 		public static DmdTypeName Create(DmdType type) {
 			if (type.TypeSignatureKind == DmdTypeSignatureKind.Type) {
-				Debug2.Assert(!(type.MetadataName is null));
+				Debug2.Assert(type.MetadataName is not null);
 				var declType = type.DeclaringType;
 				if (declType is null)
 					return new DmdTypeName(type.MetadataNamespace, type.MetadataName);
-				Debug2.Assert(!(declType.MetadataName is null));
+				Debug2.Assert(declType.MetadataName is not null);
 
 				if (declType.DeclaringType is null)
 					return new DmdTypeName(declType.MetadataNamespace, declType.MetadataName, type.MetadataName);
@@ -89,7 +89,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 					list.Add(type);
 					type = type.DeclaringType;
 				}
-				Debug2.Assert(!(type.MetadataName is null));
+				Debug2.Assert(type.MetadataName is not null);
 				StringBuilder? sb = ObjectCache.AllocStringBuilder();
 				for (int i = list.Count - 1; i >= 0; i--) {
 					if (i != list.Count - 1)

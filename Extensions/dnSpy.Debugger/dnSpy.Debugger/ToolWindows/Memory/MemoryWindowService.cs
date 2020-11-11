@@ -54,7 +54,7 @@ namespace dnSpy.Debugger.ToolWindows.Memory {
 
 		public override void Show(int pid, HexSpan span, int windowIndex) {
 			var mc = GetMemoryToolWindowContent(windowIndex);
-			Debug2.Assert(!(mc is null));
+			Debug2.Assert(mc is not null);
 			if (mc is null)
 				return;
 			ShowInMemoryWindow(pid, mc, span);

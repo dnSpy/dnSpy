@@ -72,7 +72,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// </summary>
 		/// <returns></returns>
 		public byte[]? GetPublicKeyToken() {
-			if (publicKeyToken is null && !(publicKey is null)) {
+			if (publicKeyToken is null && publicKey is not null) {
 				try {
 					publicKeyToken = AssemblyHasher.CreatePublicKeyToken(publicKey);
 				}

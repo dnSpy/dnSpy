@@ -46,7 +46,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			foreach (var filename in dialog.FileNames) {
 				var info = DsDocumentInfo.CreateDocument(filename);
 				var file = documentService.TryGetOrCreate(info);
-				if (!(file is null))
+				if (file is not null)
 					list.Add(file);
 			}
 			return list.ToArray();

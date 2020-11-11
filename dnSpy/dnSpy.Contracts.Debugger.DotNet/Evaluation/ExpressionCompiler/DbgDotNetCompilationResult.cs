@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.Debugger.DotNet.Evaluation.ExpressionCompiler {
 		/// <summary>
 		/// true if it has an error message (<see cref="ErrorMessage"/>)
 		/// </summary>
-		public bool IsError => !(ErrorMessage is null);
+		public bool IsError => ErrorMessage is not null;
 
 		/// <summary>
 		/// Gets the error message or null if there was no error

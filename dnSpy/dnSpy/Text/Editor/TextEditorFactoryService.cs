@@ -100,10 +100,10 @@ namespace dnSpy.Text.Editor {
 			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsProviderArgs args) {
 				yield return new GuidObject(MenuConstants.GUIDOBJ_WPF_TEXTVIEW_GUID, wpfTextView);
 				var loc = wpfTextView.GetTextEditorPosition(args.OpenedFromKeyboard);
-				if (!(loc is null))
+				if (loc is not null)
 					yield return new GuidObject(MenuConstants.GUIDOBJ_TEXTEDITORPOSITION_GUID, loc);
 
-				if (!(createGuidObjects is null)) {
+				if (createGuidObjects is not null) {
 					foreach (var guidObject in createGuidObjects(args))
 						yield return guidObject;
 				}
@@ -188,7 +188,7 @@ namespace dnSpy.Text.Editor {
 			var contentType = dataModel.ContentType;
 			foreach (var p in providerSelector.GetProviders(contentType)) {
 				var model = p.Value.CreateTextViewModel(dataModel, roles);
-				if (!(model is null))
+				if (model is not null)
 					return model;
 			}
 			return new TextViewModel(dataModel);
@@ -209,7 +209,7 @@ namespace dnSpy.Text.Editor {
 		IDsWpfTextView CreateTextViewImpl(ITextViewModel textViewModel, ITextViewRoleSet roles, IEditorOptions parentOptions, TextViewCreatorOptions? options) {
 			var wpfTextView = new WpfTextView(textViewModel, roles, parentOptions, editorOptionsFactoryService, commandService, smartIndentationService, formattedTextSourceFactoryService, viewClassifierAggregatorService, textAndAdornmentSequencerFactoryService, classificationFormatMapService, editorFormatMapService, adornmentLayerDefinitionService, lineTransformProviderService, spaceReservationStackProvider, wpfTextViewConnectionListenerServiceProvider, bufferGraphFactoryService, wpfTextViewCreationListeners, textViewCreationListeners);
 
-			if (!(options?.MenuGuid is null)) {
+			if (options?.MenuGuid is not null) {
 				var guidObjectsProvider = new GuidObjectsProvider(wpfTextView, options.CreateGuidObjects);
 				menuService.InitializeContextMenu(wpfTextView.VisualElement, options.MenuGuid.Value, guidObjectsProvider, new ContextMenuInitializer(wpfTextView));
 			}

@@ -114,17 +114,17 @@ namespace dnSpy.Debugger.CallStack {
 			dbgManager!.Dispatcher.VerifyAccess();
 			if (currentThreadProcess == process)
 				return;
-			if (!(currentThreadProcess is null))
+			if (currentThreadProcess is not null)
 				currentThreadProcess.IsRunningChanged -= DbgProcess_IsRunningChanged;
 			currentThreadProcess = process;
-			if (!(process is null))
+			if (process is not null)
 				process.IsRunningChanged += DbgProcess_IsRunningChanged;
 		}
 
 		void DbgProcess_IsRunningChanged(object? sender, EventArgs e) {
 			if (currentThreadProcess != sender)
 				return;
-			Debug2.Assert(!(currentThreadProcess is null));
+			Debug2.Assert(currentThreadProcess is not null);
 			if (!currentThreadProcess.IsRunning)
 				UpdateFrames_DbgThread();
 		}
@@ -163,7 +163,7 @@ namespace dnSpy.Debugger.CallStack {
 			}
 			finally {
 				stackWalker?.Close();
-				if (!(newFrames is null) && frames != newFrames && newFrames.Length > 0)
+				if (newFrames is not null && frames != newFrames && newFrames.Length > 0)
 					dbgManager.Close(newFrames);
 			}
 			if (raiseFramesChanged || raiseActiveFrameIndexChanged)
@@ -172,7 +172,7 @@ namespace dnSpy.Debugger.CallStack {
 
 		int GetFrameIndex(DbgStackFrame[] newFrames) {
 			for (int i = 0; i < newFrames.Length; i++) {
-				if (!(newFrames[i].Location is null))
+				if (newFrames[i].Location is not null)
 					return i;
 			}
 			return 0;

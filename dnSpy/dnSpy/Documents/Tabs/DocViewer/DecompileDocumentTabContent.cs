@@ -184,7 +184,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			decompileContext.DecompileNodeContext = new DecompileNodeContext(decompilationContext, Decompiler, decompileContext.DocumentViewerContentFactory.Output, decompileDocumentTabContentFactory.DocumentWriterService, dispatcher);
 			if (ctx.IsRefresh) {
 				decompileContext.SavedRefPos = ((IDocumentViewer)ctx.UIContext).SaveReferencePosition();
-				if (!(decompileContext.SavedRefPos is null)) {
+				if (decompileContext.SavedRefPos is not null) {
 					ctx.OnShown = e => {
 						if (e.Success && !e.HasMovedCaret) {
 							e.HasMovedCaret = ((IDocumentViewer)ctx.UIContext).RestoreReferencePosition(decompileContext.SavedRefPos);
@@ -209,7 +209,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public override void OnShow(IShowContext ctx) {
 			UpdateLanguage();
 			var decompileContext = CreateDecompileContext(ctx);
-			Debug2.Assert(!(decompileContext.DecompileNodeContext is null));
+			Debug2.Assert(decompileContext.DecompileNodeContext is not null);
 			decompileContext.CachedContent = decompileDocumentTabContentFactory.DecompilationCache.Lookup(decompileContext.DecompileNodeContext.Decompiler, nodes, out var contentType);
 			decompileContext.DecompileNodeContext.ContentType = contentType;
 			ctx.Tag = decompileContext;
@@ -218,7 +218,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public override Task CreateContentAsync(IAsyncShowContext ctx) {
 			var decompileContext = (DecompileContext)ctx.Tag!;
 			decompileContext.AsyncShowContext = ctx;
-			Debug2.Assert(!(decompileContext.DecompileNodeContext is null));
+			Debug2.Assert(decompileContext.DecompileNodeContext is not null);
 			decompileContext.DecompileNodeContext.DecompilationContext.CancellationToken = ctx.CancellationToken;
 			decompileDocumentTabContentFactory.DocumentTreeNodeDecompiler.Decompile(decompileContext.DecompileNodeContext, nodes);
 			return Task.CompletedTask;
@@ -228,8 +228,8 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			var decompileContext = (DecompileContext)ctx.Tag!;
 			var documentViewer = (IDocumentViewer)ctx.UIContext;
 
-			Debug2.Assert(!(decompileContext.DecompileNodeContext is null));
-			Debug2.Assert(!(decompileContext.DocumentViewerContentFactory is null));
+			Debug2.Assert(decompileContext.DecompileNodeContext is not null);
+			Debug2.Assert(decompileContext.DocumentViewerContentFactory is not null);
 			var contentType = decompileContext.DecompileNodeContext.ContentType;
 			if (contentType is null) {
 				var contentTypeString = decompileContext.DecompileNodeContext.ContentTypeString;
@@ -246,7 +246,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				docViewContentFactory.Output.Write(dnSpy_Resources.DecompilationCanceled, BoxedTextColor.Error);
 				content = docViewContentFactory.CreateContent(documentViewer, contentType);
 			}
-			else if (!(result.Exception is null)) {
+			else if (result.Exception is not null) {
 				var docViewContentFactory = decompileDocumentTabContentFactory.DocumentViewerContentFactoryProvider.Create();
 				docViewContentFactory.Output.Write(dnSpy_Resources.DecompilationException, BoxedTextColor.Error);
 				docViewContentFactory.Output.WriteLine();
@@ -271,7 +271,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 		public override bool NeedAsyncWork(IShowContext ctx) {
 			var decompileContext = (DecompileContext)ctx.Tag!;
-			if (!(decompileContext.CachedContent is null))
+			if (decompileContext.CachedContent is not null)
 				return false;
 
 			var uiCtx = (IDocumentViewer)ctx.UIContext;

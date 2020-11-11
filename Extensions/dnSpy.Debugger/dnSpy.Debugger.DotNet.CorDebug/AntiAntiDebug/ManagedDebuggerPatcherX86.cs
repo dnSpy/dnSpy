@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.AntiAntiDebug {
 
 			var debuggeeVersion = runtime.Version.Version;
 			bool isClrV2OrOlder =
-				!(debuggeeVersion is null) &&
+				debuggeeVersion is not null &&
 				(debuggeeVersion.StartsWith("v1.", StringComparison.OrdinalIgnoreCase) ||
 				debuggeeVersion.StartsWith("v2.", StringComparison.OrdinalIgnoreCase));
 

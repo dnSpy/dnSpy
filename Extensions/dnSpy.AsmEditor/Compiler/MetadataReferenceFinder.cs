@@ -59,7 +59,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		IEnumerable<AssemblyDef> GetAssemblies(ModuleDef module, IEnumerable<string> extraAssemblyReferences) {
 			var asm = module.Assembly;
-			if (!(asm is null)) {
+			if (asm is not null) {
 				foreach (var a in GetAssemblies(asm))
 					yield return a;
 			}
@@ -79,7 +79,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				yield return a;
 			foreach (var s in extraAssemblyReferences) {
 				var info = new AssemblyNameInfo(s);
-				if (!(info.Version is null))
+				if (info.Version is not null)
 					yield return info;
 			}
 		}
@@ -134,7 +134,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				checkedContractsAssemblies.Add(asmRef);
 
 				var contractsAsm = module.Context.AssemblyResolver.Resolve(asmRef, module);
-				if (!(contractsAsm is null)) {
+				if (contractsAsm is not null) {
 					yield return contractsAsm;
 					foreach (var m in contractsAsm.Modules) {
 						foreach (var ar in m.GetAssemblyRefs()) {
@@ -150,7 +150,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			foreach (var asmRef in nonContractAsms) {
 				cancellationToken.ThrowIfCancellationRequested();
 				var asm = module.Context.AssemblyResolver.Resolve(asmRef, module);
-				if (!(asm is null))
+				if (asm is not null)
 					yield return asm;
 			}
 		}

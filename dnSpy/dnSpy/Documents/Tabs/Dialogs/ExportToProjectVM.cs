@@ -251,7 +251,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 			decompileXaml = canDecompileBaml;
 			createSolution = true;
 			ProjectVersionVM.SelectedItem = ProjectVersion.VS2010;
-			allDecompilers = new ObservableCollection<DecompilerVM>(decompilerService.AllDecompilers.Where(a => !(a.ProjectFileExtension is null)).Select(a => new DecompilerVM(a)));
+			allDecompilers = new ObservableCollection<DecompilerVM>(decompilerService.AllDecompilers.Where(a => a.ProjectFileExtension is not null).Select(a => new DecompilerVM(a)));
 			decompiler = allDecompilers.First();
 			isIndeterminate = false;
 			ProjectGuid = new NullableGuidVM(Guid.NewGuid(), a => HasErrorUpdated());
@@ -261,7 +261,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 
 		void PickDestDir() {
 			var newDir = pickDirectory.GetDirectory(Directory);
-			if (!(newDir is null))
+			if (newDir is not null)
 				Directory = newDir;
 		}
 

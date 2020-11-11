@@ -65,13 +65,13 @@ namespace dnSpy.Hex.Files {
 
 			var structure = info.Value.Structure;
 			var field = structure.GetSimpleField(position);
-			Debug2.Assert(!(field is null));
+			Debug2.Assert(field is not null);
 			if (field is null)
 				yield break;
 			yield return new HexStructureField(field.Data.Span, HexStructureFieldKind.CurrentField);
 
 			var indexes = hexFileStructureInfoService.GetSubStructureIndexes(position);
-			if (!(indexes is null)) {
+			if (indexes is not null) {
 				if (indexes.Length == 0) {
 					for (int i = 0; i < structure.FieldCount; i++) {
 						var span = structure.GetFieldByIndex(i).Data.Span;

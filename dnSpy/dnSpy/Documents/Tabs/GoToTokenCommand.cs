@@ -63,7 +63,7 @@ namespace dnSpy.Documents.Tabs {
 			return tab.Content.Nodes.FirstOrDefault().GetModule();
 		}
 
-		internal static bool CanExecuteInternal(IDocumentTabService documentTabService) => !(GetResolver(documentTabService, out var tab) is null);
+		internal static bool CanExecuteInternal(IDocumentTabService documentTabService) => GetResolver(documentTabService, out var tab) is not null;
 
 		static object? ResolveDef(object mr) {
 			if (mr is ParamDef)
@@ -81,7 +81,7 @@ namespace dnSpy.Documents.Tabs {
 			var resolver = GetResolver(documentTabService, out var tab);
 			if (resolver is null)
 				return;
-			Debug2.Assert(!(tab is null));
+			Debug2.Assert(tab is not null);
 
 			var member = AskForDef(dnSpy_Resources.GoToToken_Title, resolver);
 			if (member is null)

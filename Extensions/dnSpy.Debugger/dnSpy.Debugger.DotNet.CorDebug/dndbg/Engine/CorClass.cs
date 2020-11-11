@@ -49,7 +49,7 @@ namespace dndbg.Engine {
 			return hr < 0 || value is null ? null : new CorType(value);
 		}
 
-		public bool Equals(CorClass? other) => !(other is null) && RawObject == other.RawObject;
+		public bool Equals(CorClass? other) => other is not null && RawObject == other.RawObject;
 		public override bool Equals(object? obj) => Equals(obj as CorClass);
 		public override int GetHashCode() => RawObject.GetHashCode();
 	}

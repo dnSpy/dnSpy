@@ -61,7 +61,7 @@ namespace dnSpy.Language.Intellisense {
 		public bool HasParameter {
 			get {
 				var parameter = session.SelectedSignature?.CurrentParameter;
-				return !(parameter is null) &&
+				return parameter is not null &&
 					!string.IsNullOrEmpty(parameter.Documentation) &&
 					!string.IsNullOrEmpty(parameter.Name);
 			}
@@ -118,7 +118,7 @@ namespace dnSpy.Language.Intellisense {
 			this.classifierAggregatorService = classifierAggregatorService ?? throw new ArgumentNullException(nameof(classifierAggregatorService));
 			this.classificationFormatMap = classificationFormatMap ?? throw new ArgumentNullException(nameof(classificationFormatMap));
 			defaultExtendedContentType = contentTypeRegistryService.GetContentType(DefaultExtendedContentTypeName);
-			Debug2.Assert(!(defaultExtendedContentType is null));
+			Debug2.Assert(defaultExtendedContentType is not null);
 			classificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
 			session.Dismissed += Session_Dismissed;
 			session.SelectedSignatureChanged += Session_SelectedSignatureChanged;
@@ -238,7 +238,7 @@ namespace dnSpy.Language.Intellisense {
 			var doc = signature?.Documentation;
 			if (string2.IsNullOrEmpty(doc))
 				return null;
-			Debug2.Assert(!(signature is null));
+			Debug2.Assert(signature is not null);
 
 			return CreateUIObject(doc, GetExtendedClassifierContentType(), new SignatureDocumentationSignatureHelpClassifierContext(session, signature));
 		}
@@ -263,8 +263,8 @@ namespace dnSpy.Language.Intellisense {
 			signatureTextBuffer.Replace(new Span(0, signatureTextBuffer.CurrentSnapshot.Length), text);
 			var oldContentType = signatureTextBuffer.ContentType;
 			var atSpan = signature.ApplicableToSpan;
-			Debug2.Assert(!(atSpan is null));
-			if (!(atSpan is null)) {
+			Debug2.Assert(atSpan is not null);
+			if (atSpan is not null) {
 				var span = atSpan.GetStartPoint(atSpan.TextBuffer.CurrentSnapshot);
 				signatureTextBuffer.ChangeContentType(GetSigHelpContentType(span.Snapshot.ContentType), null);
 			}

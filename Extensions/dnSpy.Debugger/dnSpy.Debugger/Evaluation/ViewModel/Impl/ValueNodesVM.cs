@@ -109,7 +109,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 		// UI thread
 		void OnValueNodeAssigned(string? errorMessage, bool retry) {
 			valueNodesContext.UIDispatcher.VerifyAccess();
-			if (!(errorMessage is null))
+			if (errorMessage is not null)
 				valueNodesContext.ShowMessageBox(errorMessage, ShowMessageBoxButtons.OK);
 			if (!retry) {
 				OnVariableChanged?.Invoke(this, EventArgs.Empty);
@@ -237,7 +237,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 				default: throw new InvalidOperationException();
 				}
 				selectNodeKind = SelectNodeKind.None;
-				if (!(node is null)) {
+				if (node is not null) {
 					treeView.SelectItems(new[] { node.Data });
 					treeView.ScrollIntoView();
 				}
@@ -263,11 +263,11 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 					var node = (ValueNodeImpl)children[i].Data;
 					if (node.RawNode is DbgValueRawNode rootNode)
 						Debug.Assert(rootNode.DebuggerValueNode == infos[i].Node);
-					else if (!(infos[i].Node is null) && infos[i].CausesSideEffects && infos[i].Node!.HasError) {
+					else if (infos[i].Node is not null && infos[i].CausesSideEffects && infos[i].Node!.HasError) {
 					}
 					else
 						Debug2.Assert(infos[i].Node is null);
-					Debug2.Assert(!valueNodesProvider.CanAddRemoveExpressions || !(infos[i].Id is null), "Root IDs are required");
+					Debug2.Assert(!valueNodesProvider.CanAddRemoveExpressions || infos[i].Id is not null, "Root IDs are required");
 					Debug.Assert(infos[i].Id == node.RootId);
 				}
 			}
@@ -387,7 +387,7 @@ namespace dnSpy.Debugger.Evaluation.ViewModel.Impl {
 			if (valueNodesContext.EditValueNodeExpression.SupportsEditExpression) {
 				var children = rootNode.TreeNode.Children;
 				var editNode = TryGetEditNode();
-				if (infos.Length == 0 && children.Count == 1 && !(editNode is null))
+				if (infos.Length == 0 && children.Count == 1 && editNode is not null)
 					return;
 				if (children.Count < 30) {
 					while (children.Count > 0 && editNode != children[0].Data)

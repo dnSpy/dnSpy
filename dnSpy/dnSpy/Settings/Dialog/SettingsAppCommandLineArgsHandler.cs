@@ -40,7 +40,7 @@ namespace dnSpy.Settings.Dialog {
 			Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
 				var guidString = args.GetArgumentValue(ARG_NAME);
 				var guid = TryParse(guidString);
-				if (!(guid is null))
+				if (guid is not null)
 					appSettingsService.Value.Show(guid.Value);
 				else
 					appSettingsService.Value.Show();

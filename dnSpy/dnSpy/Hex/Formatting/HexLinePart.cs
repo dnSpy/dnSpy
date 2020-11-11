@@ -35,7 +35,7 @@ namespace dnSpy.Hex.Formatting {
 		/// <summary>
 		/// Length in column characters. This is never zero.
 		/// </summary>
-		public int ColumnLength => !(AdornmentElement is null) ? 1 : Span.Length;
+		public int ColumnLength => AdornmentElement is not null ? 1 : Span.Length;
 
 		/// <summary>
 		/// Span relative to the start of the physical line (<see cref="HexLinePartsCollection.Span"/>)
@@ -58,8 +58,8 @@ namespace dnSpy.Hex.Formatting {
 		public readonly int Index;
 
 		public HexLinePart(int index, int column, VST.Span span, HexAdornmentElement adornmentElement, TextRunProperties textRunProperties) {
-			Debug2.Assert(!(adornmentElement is null));
-			Debug2.Assert(!(textRunProperties is null));
+			Debug2.Assert(adornmentElement is not null);
+			Debug2.Assert(textRunProperties is not null);
 			Index = index;
 			Column = column;
 			Span = span;
@@ -69,7 +69,7 @@ namespace dnSpy.Hex.Formatting {
 
 		public HexLinePart(int index, int column, VST.Span span, TextRunProperties textRunProperties) {
 			Debug.Assert(!span.IsEmpty);
-			Debug2.Assert(!(textRunProperties is null));
+			Debug2.Assert(textRunProperties is not null);
 			Index = index;
 			Column = column;
 			Span = span;
@@ -95,7 +95,7 @@ namespace dnSpy.Hex.Formatting {
 		}
 
 		public override string ToString() {
-			if (!(AdornmentElement is null))
+			if (AdornmentElement is not null)
 				return $"{Span.ToString()} {AdornmentElement.ToString()}";
 			return Span.ToString();
 		}

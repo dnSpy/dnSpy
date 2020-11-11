@@ -47,7 +47,7 @@ namespace dnSpy.Documents.Tabs {
 			var context = new DocumentTabContentFactoryContext(nodes);
 			foreach (var factory in tabContentFactories) {
 				var tabContent = factory.Value.Create(context);
-				if (!(tabContent is null))
+				if (tabContent is not null)
 					return tabContent;
 			}
 			return null;
@@ -58,7 +58,7 @@ namespace dnSpy.Documents.Tabs {
 			var context = new DocumentTabContentFactoryContext(nodes);
 			foreach (var factory in tabContentFactories) {
 				var guid = factory.Value.Serialize(content, section);
-				if (!(guid is null))
+				if (guid is not null)
 					return guid;
 			}
 			return null;
@@ -68,7 +68,7 @@ namespace dnSpy.Documents.Tabs {
 			var context = new DocumentTabContentFactoryContext(nodes);
 			foreach (var factory in tabContentFactories) {
 				var content = factory.Value.Deserialize(guid, section, context);
-				if (!(content is null))
+				if (content is not null)
 					return content;
 			}
 			return null;

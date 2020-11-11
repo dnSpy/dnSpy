@@ -33,7 +33,7 @@ namespace dnSpy.Debugger.ToolWindows {
 		static string GetProcessName(DbgProcess process, bool useHex) =>
 			"[" + (useHex ? "0x" + process.Id.ToString("X") : process.Id.ToString()) + "]" + (string.IsNullOrEmpty(process.Name) ? string.Empty : " " + process.Name);
 		public void UpdateName(bool useHex) {
-			if (!(Process is null)) {
+			if (Process is not null) {
 				var newName = GetProcessName(Process, useHex);
 				if (Name != newName) {
 					Name = newName;

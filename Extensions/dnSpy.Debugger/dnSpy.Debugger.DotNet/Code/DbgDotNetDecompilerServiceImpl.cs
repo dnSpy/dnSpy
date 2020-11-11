@@ -53,7 +53,7 @@ namespace dnSpy.Debugger.DotNet.Code {
 		Guid GetDecompilerGuid(DbgLanguage language) {
 			foreach (var lz in dbgDotNetDecompilerGuidProviders) {
 				var guid = lz.Value.GetDecompilerGuid(language);
-				if (!(guid is null))
+				if (guid is not null)
 					return guid.Value;
 			}
 			return DecompilerConstants.LANGUAGE_CSHARP;
