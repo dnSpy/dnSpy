@@ -27,15 +27,15 @@ using System.Text.RegularExpressions;
 using Microsoft.Win32;
 
 namespace dnSpy.Documents {
-	sealed class DotNetCorePathProvider {
-		readonly FrameworkPaths[] netcorePaths;
+	sealed class DotNetPathProvider {
+		readonly FrameworkPaths[] netPaths;
 
-		public bool HasDotNetCore => netcorePaths.Length != 0;
+		public bool HasDotNet => netPaths.Length != 0;
 
-		readonly struct NetCorePathInfo {
+		readonly struct DotNetPathInfo {
 			public readonly string Directory;
 			public readonly int Bitness;
-			public NetCorePathInfo(string directory, int bitness) {
+			public DotNetPathInfo(string directory, int bitness) {
 				Directory = directory ?? throw new ArgumentNullException(nameof(directory));
 				Bitness = bitness;
 			}
@@ -61,10 +61,10 @@ namespace dnSpy.Documents {
 			public override int GetHashCode() => version.Major ^ version.Minor ^ version.Patch ^ (version.Extra.Length == 0 ? 0 : -1);
 		}
 
-		public DotNetCorePathProvider() {
+		public DotNetPathProvider() {
 			var list = new List<FrameworkPath>();
-			foreach (var info in GetDotNetCoreBaseDirs())
-				list.AddRange(GetDotNetCorePaths(info.Directory, info.Bitness));
+			foreach (var info in GetDotNetBaseDirs())
+				list.AddRange(GetDotNetPaths(info.Directory, info.Bitness));
 
 			var paths = from p in list
 						group p by new { Path = (Path.GetDirectoryName(Path.GetDirectoryName(p.Path)) ?? string.Empty).ToUpperInvariant(), p.Bitness, Version = new FrameworkVersionIgnoreExtra(p.Version) } into g
@@ -72,44 +72,44 @@ namespace dnSpy.Documents {
 						select new FrameworkPaths(g.ToArray());
 			var array = paths.ToArray();
 			Array.Sort(array);
-			netcorePaths = array;
+			netPaths = array;
 		}
 
-		public string[]? TryGetDotNetCorePaths(Version version, int bitness) {
+		public string[]? TryGetDotNetPaths(Version version, int bitness) {
 			Debug.Assert(bitness == 32 || bitness == 64);
 			int bitness2 = bitness ^ 0x60;
 			FrameworkPaths? info;
 
-			info = TryGetDotNetCorePathsCore(version.Major, version.Minor, bitness) ??
-				TryGetDotNetCorePathsCore(version.Major, version.Minor, bitness2);
+			info = TryGetDotNetPathsCore(version.Major, version.Minor, bitness) ??
+				TryGetDotNetPathsCore(version.Major, version.Minor, bitness2);
 			if (!(info is null))
 				return info.Paths;
 
-			info = TryGetDotNetCorePathsCore(version.Major, bitness) ??
-				TryGetDotNetCorePathsCore(version.Major, bitness2);
+			info = TryGetDotNetPathsCore(version.Major, bitness) ??
+				TryGetDotNetPathsCore(version.Major, bitness2);
 			if (!(info is null))
 				return info.Paths;
 
-			info = TryGetDotNetCorePathsCore(bitness) ??
-				TryGetDotNetCorePathsCore(bitness2);
+			info = TryGetDotNetPathsCore(bitness) ??
+				TryGetDotNetPathsCore(bitness2);
 			if (!(info is null))
 				return info.Paths;
 
 			return null;
 		}
 
-		FrameworkPaths? TryGetDotNetCorePathsCore(int major, int minor, int bitness) {
+		FrameworkPaths? TryGetDotNetPathsCore(int major, int minor, int bitness) {
 			FrameworkPaths? fpMajor = null;
 			FrameworkPaths? fpMajorMinor = null;
-			for (int i = netcorePaths.Length - 1; i >= 0; i--) {
-				var info = netcorePaths[i];
+			for (int i = netPaths.Length - 1; i >= 0; i--) {
+				var info = netPaths[i];
 				if (info.Bitness == bitness && info.Version.Major == major) {
 					if (fpMajor is null)
 						fpMajor = info;
 					else
 						fpMajor = BestMinorVersion(minor, fpMajor, info);
 					if (info.Version.Minor == minor) {
-						if (info.HasDotNetCoreAppPath)
+						if (info.HasDotNetAppPath)
 							return info;
 						if (fpMajorMinor is null)
 							fpMajorMinor = info;
@@ -140,12 +140,12 @@ namespace dnSpy.Documents {
 			return 0x80000000 + (uint)minVer - (uint)ver - 1;
 		}
 
-		FrameworkPaths? TryGetDotNetCorePathsCore(int major, int bitness) {
+		FrameworkPaths? TryGetDotNetPathsCore(int major, int bitness) {
 			FrameworkPaths? fpMajor = null;
-			for (int i = netcorePaths.Length - 1; i >= 0; i--) {
-				var info = netcorePaths[i];
+			for (int i = netPaths.Length - 1; i >= 0; i--) {
+				var info = netPaths[i];
 				if (info.Bitness == bitness && info.Version.Major == major) {
-					if (info.HasDotNetCoreAppPath)
+					if (info.HasDotNetAppPath)
 						return info;
 					if (fpMajor is null)
 						fpMajor = info;
@@ -154,12 +154,12 @@ namespace dnSpy.Documents {
 			return fpMajor;
 		}
 
-		FrameworkPaths? TryGetDotNetCorePathsCore(int bitness) {
+		FrameworkPaths? TryGetDotNetPathsCore(int bitness) {
 			FrameworkPaths? best = null;
-			for (int i = netcorePaths.Length - 1; i >= 0; i--) {
-				var info = netcorePaths[i];
+			for (int i = netPaths.Length - 1; i >= 0; i--) {
+				var info = netPaths[i];
 				if (info.Bitness == bitness) {
-					if (info.HasDotNetCoreAppPath)
+					if (info.HasDotNetAppPath)
 						return info;
 					if (best is null)
 						best = info;
@@ -169,9 +169,9 @@ namespace dnSpy.Documents {
 		}
 
 		const string DotNetExeName = "dotnet.exe";
-		static IEnumerable<NetCorePathInfo> GetDotNetCoreBaseDirs() {
+		static IEnumerable<DotNetPathInfo> GetDotNetBaseDirs() {
 			var hash = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-			foreach (var tmp in GetDotNetCoreBaseDirCandidates()) {
+			foreach (var tmp in GetDotNetBaseDirCandidates()) {
 				var path = tmp.Trim();
 				if (!Directory.Exists(path))
 					continue;
@@ -204,12 +204,12 @@ namespace dnSpy.Documents {
 				}
 				if (bitness == -1)
 					continue;
-				yield return new NetCorePathInfo(path, bitness);
+				yield return new DotNetPathInfo(path, bitness);
 			}
 		}
 
-		// NOTE: This same method exists in DotNetCoreHelpers (CorDebug project). Update both methods if this one gets updated.
-		static IEnumerable<string> GetDotNetCoreBaseDirCandidates() {
+		// NOTE: This same method exists in DotNetHelpers (CorDebug project). Update both methods if this one gets updated.
+		static IEnumerable<string> GetDotNetBaseDirCandidates() {
 			// Microsoft tools don't check the PATH env var, only the default locations (eg. ProgramFiles)
 			var envVars = new string[] {
 				"PATH",
@@ -251,7 +251,7 @@ namespace dnSpy.Documents {
 			}
 		}
 
-		static IEnumerable<FrameworkPath> GetDotNetCorePaths(string basePath, int bitness) {
+		static IEnumerable<FrameworkPath> GetDotNetPaths(string basePath, int bitness) {
 			if (!Directory.Exists(basePath))
 				yield break;
 			var sharedDir = Path.Combine(basePath, "shared");
@@ -309,8 +309,8 @@ namespace dnSpy.Documents {
 			}
 		}
 
-		public Version? TryGetDotNetCoreVersion(string filename) {
-			foreach (var info in netcorePaths) {
+		public Version? TryGetDotNetVersion(string filename) {
+			foreach (var info in netPaths) {
 				foreach (var path in info.Paths) {
 					if (FileUtils.IsFileInDir(path, filename))
 						return info.SystemVersion;

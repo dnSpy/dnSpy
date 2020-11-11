@@ -50,7 +50,7 @@
 
   <Import Project="$(MSBuildThisFileDirectory)Build\ConvertToNetstandardReferences\ConvertToNetstandardReferences.tasks" Condition=" '$(IsDotNet)' == 'true' " />
 
-  <!-- .NET Core 3.0 SDK doesn't currently support COMReference: https://github.com/dnSpy/dnSpy/issues/1053 -->
+  <!-- .NET 5.0 SDK doesn't currently support COMReference: https://github.com/dnSpy/dnSpy/issues/1053 -->
   <PropertyGroup>
     <HasCOMReference>false</HasCOMReference>
     <HasCOMReference Condition=" '$(MSBuildRuntimeType)' != 'Core' ">true</HasCOMReference>

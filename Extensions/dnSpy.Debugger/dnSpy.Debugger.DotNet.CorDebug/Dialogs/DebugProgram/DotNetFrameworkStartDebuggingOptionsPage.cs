@@ -27,7 +27,7 @@ using dnSpy.Contracts.MVVM;
 using dnSpy.Debugger.DotNet.CorDebug.Utilities;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
-	sealed class DotNetFrameworkStartDebuggingOptionsPage : DotNetStartDebuggingOptionsPage {
+	sealed class DotNetFrameworkStartDebuggingOptionsPage : DotNetCommonStartDebuggingOptionsPage {
 		// This guid is also used by DebugProgramVM
 		public override Guid Guid => new Guid("3FB8FCB5-AECE-443A-ABDE-601F2C23F1C1");
 		public override double DisplayOrder => PredefinedStartDebuggingOptionsPageDisplayOrders.DotNetFramework;

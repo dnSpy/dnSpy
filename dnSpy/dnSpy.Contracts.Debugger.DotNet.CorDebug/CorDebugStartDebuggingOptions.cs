@@ -21,7 +21,7 @@ using System;
 
 namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
 	/// <summary>
-	/// Debugging options base class shared by .NET Framework code and .NET Core code
+	/// Debugging options base class shared by .NET Framework code and .NET code
 	/// </summary>
 	public abstract class CorDebugStartDebuggingOptions : StartDebuggingOptions {
 		/// <summary>

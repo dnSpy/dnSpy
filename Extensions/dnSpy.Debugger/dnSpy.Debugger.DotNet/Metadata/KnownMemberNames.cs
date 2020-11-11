@@ -57,9 +57,9 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		// System.Threading.Thread
 		public const string Thread_ManagedThreadId_FieldName1 = "m_ManagedThreadId";
-		public const string Thread_ManagedThreadId_FieldName2 = "_managedThreadId";// .NET Core since early 2019
+		public const string Thread_ManagedThreadId_FieldName2 = "_managedThreadId";// .NET since early 2019
 		public const string Thread_Name_FieldName1 = "m_Name";
-		public const string Thread_Name_FieldName2 = "_name";// .NET Core since early 2019
+		public const string Thread_Name_FieldName2 = "_name";// .NET since early 2019
 
 		// System.Nullable<T>
 		public const string Nullable_HasValue_FieldName = "hasValue";
@@ -74,7 +74,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 		// System.DateTime
 		public const string DateTime_DateData_FieldName1 = "dateData";// .NET Framework, Mono
-		public const string DateTime_DateData_FieldName2 = "_dateData";// .NET Core
+		public const string DateTime_DateData_FieldName2 = "_dateData";// .NET
 		public const string DateTime_Ticks_FieldName_Mono = "ticks";
 		public const string DateTime_Kind_FieldName_Mono = "kind";
 

@@ -27,7 +27,7 @@ using dnSpy.Debugger.Shared;
 using Microsoft.Win32;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
-	static class DotNetCoreHelpers {
+	static class DotNetHelpers {
 		public static readonly string DotNetExeName = FileUtilities.GetNativeExeFilename("dotnet");
 
 		public static string? GetPathToDotNetExeHost(int bitness) {
@@ -36,7 +36,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 			var pathEnvVar = Environment.GetEnvironmentVariable("PATH");
 			if (pathEnvVar is null)
 				return null;
-			foreach (var tmp in GetDotNetCoreBaseDirCandidates()) {
+			foreach (var tmp in GetDotNetBaseDirCandidates()) {
 				var path = tmp.Trim();
 				if (!Directory.Exists(path))
 					continue;
@@ -62,8 +62,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 			return null;
 		}
 
-		// NOTE: This same method exists in DotNetCorePathProvider (dnSpy project). Update both methods if this one gets updated.
-		static IEnumerable<string> GetDotNetCoreBaseDirCandidates() {
+		// NOTE: This same method exists in DotNetPathProvider (dnSpy project). Update both methods if this one gets updated.
+		static IEnumerable<string> GetDotNetBaseDirCandidates() {
 			// Microsoft tools don't check the PATH env var, only the default locations (eg. ProgramFiles)
 			var envVars = new string[] {
 				"PATH",
@@ -115,7 +115,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 			case 64:	return Path.Combine(basePath, "x64", filename);
 			default:	throw new ArgumentOutOfRangeException(nameof(bitness));
 			}
-#elif NETCOREAPP
+#elif NET
 			var filename = FileUtilities.GetNativeDllFilename("dbgshim");
 			return Path.Combine(Path.GetDirectoryName(typeof(void).Assembly.Location)!, filename);
 #else
@@ -123,7 +123,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Utilities {
 #endif
 		}
 
-		public static bool IsDotNetCoreExecutable(string filename) {
+		public static bool IsDotNetExecutable(string filename) {
 			if (!File.Exists(filename))
 				return false;
 			if (!PortableExecutableFileHelpers.IsExecutable(filename))

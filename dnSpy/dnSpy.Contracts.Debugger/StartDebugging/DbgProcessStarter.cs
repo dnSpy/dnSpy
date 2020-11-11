@@ -89,9 +89,9 @@ namespace dnSpy.Contracts.Debugger.StartDebugging {
 	/// </summary>
 	public static class PredefinedDbgProcessStarterOrders {
 		/// <summary>
-		/// .NET Core
+		/// .NET
 		/// </summary>
-		public const double DotNetCore = 1000000;
+		public const double DotNet = 1000000;
 
 		/// <summary>
 		/// Default process starter that calls <see cref="Process.Start(string)"/>

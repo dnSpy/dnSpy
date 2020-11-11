@@ -31,8 +31,8 @@ using dnSpy.Debugger.DotNet.CorDebug.Properties;
 using dnSpy.Debugger.DotNet.CorDebug.Utilities;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
-	sealed class DotNetCoreDbgEngineImpl : DbgEngineImpl {
-		protected override CorDebugRuntimeKind CorDebugRuntimeKind => CorDebugRuntimeKind.DotNetCore;
+	sealed class DotNetDbgEngineImpl : DbgEngineImpl {
+		protected override CorDebugRuntimeKind CorDebugRuntimeKind => CorDebugRuntimeKind.DotNet;
 		public override string[] Debugging => debugging;
 		static readonly string[] debugging = new[] { "CoreCLR" };
 
@@ -46,26 +46,26 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 
 		int Bitness => IntPtr.Size * 8;
 
-		public DotNetCoreDbgEngineImpl(DbgEngineImplDependencies deps, DbgManager dbgManager, DbgStartKind startKind)
+		public DotNetDbgEngineImpl(DbgEngineImplDependencies deps, DbgManager dbgManager, DbgStartKind startKind)
 			: base(deps, dbgManager, startKind) {
 		}
 
 		string GetDbgShimAndVerify() {
-			var dbgShimFilename = DotNetCoreHelpers.GetDebugShimFilename(Bitness);
+			var dbgShimFilename = DotNetHelpers.GetDebugShimFilename(Bitness);
 			if (!File.Exists(dbgShimFilename))
 				throw new Exception("Couldn't find dbgshim.dll: " + dbgShimFilename);
 			return dbgShimFilename;
 		}
 
 		protected override CLRTypeDebugInfo CreateDebugInfo(CorDebugStartDebuggingOptions options) {
-			var dncOptions = (DotNetCoreStartDebuggingOptions)options;
+			var dncOptions = (DotNetStartDebuggingOptions)options;
 			string? hostFilename;
 			if (!dncOptions.UseHost)
 				hostFilename = null;
 			else if (string.IsNullOrWhiteSpace(dncOptions.Host)) {
-				hostFilename = DotNetCoreHelpers.GetPathToDotNetExeHost(Bitness);
+				hostFilename = DotNetHelpers.GetPathToDotNetExeHost(Bitness);
 				if (!File.Exists(hostFilename))
-					throw new Exception(string.Format(dnSpy_Debugger_DotNet_CorDebug_Resources.Error_CouldNotFindDotNetCoreHost, DotNetCoreHelpers.DotNetExeName));
+					throw new Exception(string.Format(dnSpy_Debugger_DotNet_CorDebug_Resources.Error_CouldNotFindDotNetCoreHost, DotNetHelpers.DotNetExeName));
 			}
 			else
 				hostFilename = dncOptions.Host;
@@ -74,22 +74,22 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 		}
 
 		protected override CLRTypeAttachInfo CreateAttachInfo(CorDebugAttachToProgramOptions options) {
-			var dncOptions = (DotNetCoreAttachToProgramOptions)options;
+			var dncOptions = (DotNetAttachToProgramOptions)options;
 			return new CoreCLRTypeAttachInfo(dncOptions.ClrModuleVersion, GetDbgShimAndVerify(), dncOptions.CoreCLRFilename);
 		}
 
 		protected override void OnDebugProcess(DnDebugger dnDebugger) =>
-			runtimeInfo = new DbgEngineRuntimeInfo(PredefinedDbgRuntimeGuids.DotNetCore_Guid, PredefinedDbgRuntimeKindGuids.DotNet_Guid, "CoreCLR", new DotNetCoreRuntimeId(dnDebugger.OtherVersion), runtimeTags);
+			runtimeInfo = new DbgEngineRuntimeInfo(PredefinedDbgRuntimeGuids.DotNet_Guid, PredefinedDbgRuntimeKindGuids.DotNet_Guid, "CoreCLR", new DotNetRuntimeId(dnDebugger.OtherVersion), runtimeTags);
 		static readonly ReadOnlyCollection<string> runtimeTags = new ReadOnlyCollection<string>(new[] {
+			PredefinedDotNetDbgRuntimeTags.DotNetBase,
 			PredefinedDotNetDbgRuntimeTags.DotNet,
-			PredefinedDotNetDbgRuntimeTags.DotNetCore,
 		});
 	}
 
-	sealed class DotNetCoreRuntimeId : RuntimeId {
+	sealed class DotNetRuntimeId : RuntimeId {
 		readonly string? version;
-		public DotNetCoreRuntimeId(string? version) => this.version = version;
-		public override bool Equals(object? obj) => obj is DotNetCoreRuntimeId other && StringComparer.Ordinal.Equals(version ?? string.Empty, other.version ?? string.Empty);
+		public DotNetRuntimeId(string? version) => this.version = version;
+		public override bool Equals(object? obj) => obj is DotNetRuntimeId other && StringComparer.Ordinal.Equals(version ?? string.Empty, other.version ?? string.Empty);
 		public override int GetHashCode() => StringComparer.Ordinal.GetHashCode(version ?? string.Empty);
 	}
 }

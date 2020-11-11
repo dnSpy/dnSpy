@@ -1,8 +1,8 @@
 param([string]$buildtfm = 'all', [switch]$NoMsbuild)
 $ErrorActionPreference = 'Stop'
 
-$net_tfm = 'net48'
-$netcore_tfm = 'net5.0-windows'
+$netframework_tfm = 'net48'
+$net_tfm = 'net5.0-windows'
 $configuration = 'Release'
 $net_baseoutput = "dnSpy\dnSpy\bin\$configuration"
 $apphostpatcher_dir = "Build\AppHostPatcher"
@@ -14,14 +14,14 @@ $apphostpatcher_dir = "Build\AppHostPatcher"
 function Build-NetFramework {
 	Write-Host 'Building .NET Framework x86 and x64 binaries'
 
-	$outdir = "$net_baseoutput\$net_tfm"
+	$outdir = "$net_baseoutput\$netframework_tfm"
 
 	if ($NoMsbuild) {
-		dotnet build -v:m -c $configuration -f $net_tfm
+		dotnet build -v:m -c $configuration -f $netframework_tfm
 		if ($LASTEXITCODE) { exit $LASTEXITCODE }
 	}
 	else {
-		msbuild -v:m -m -restore -t:Build -p:Configuration=$configuration -p:TargetFramework=$net_tfm
+		msbuild -v:m -m -restore -t:Build -p:Configuration=$configuration -p:TargetFramework=$netframework_tfm
 		if ($LASTEXITCODE) { exit $LASTEXITCODE }
 	}
 
@@ -36,21 +36,21 @@ function Build-NetFramework {
 	}
 }
 
-function Build-NetCore {
+function Build-Net {
 	param([string]$arch)
 
-	Write-Host "Building .NET Core $arch binaries"
+	Write-Host "Building .NET $arch binaries"
 
 	$rid = "win-$arch"
-	$outdir = "$net_baseoutput\$netcore_tfm\$rid"
+	$outdir = "$net_baseoutput\$net_tfm\$rid"
 	$publishDir = "$outdir\publish"
 
 	if ($NoMsbuild) {
-		dotnet publish -v:m -c $configuration -f $netcore_tfm -r $rid --self-contained
+		dotnet publish -v:m -c $configuration -f $net_tfm -r $rid --self-contained
 		if ($LASTEXITCODE) { exit $LASTEXITCODE }
 	}
 	else {
-		msbuild -v:m -m -restore -t:Publish -p:Configuration=$configuration -p:TargetFramework=$netcore_tfm -p:RuntimeIdentifier=$rid -p:SelfContained=True
+		msbuild -v:m -m -restore -t:Publish -p:Configuration=$configuration -p:TargetFramework=$net_tfm -p:RuntimeIdentifier=$rid -p:SelfContained=True
 		if ($LASTEXITCODE) { exit $LASTEXITCODE }
 	}
 
@@ -62,7 +62,7 @@ function Build-NetCore {
 	Rename-Item $publishDir\$tmpbin bin
 	foreach ($exe in 'dnSpy.exe', 'dnSpy.Console.exe') {
 		Move-Item $publishDir\bin\$exe $publishDir
-		& $apphostpatcher_dir\bin\$configuration\$net_tfm\AppHostPatcher.exe $publishDir\$exe -d bin
+		& $apphostpatcher_dir\bin\$configuration\$netframework_tfm\AppHostPatcher.exe $publishDir\$exe -d bin
 		if ($LASTEXITCODE) { exit $LASTEXITCODE }
 	}
 }
@@ -73,11 +73,11 @@ $buildCoreX64 = $buildtfm -eq 'all' -or $buildtfm -eq 'core-x64'
 
 if ($buildCoreX86 -or $buildCoreX64) {
 	if ($NoMsbuild) {
-		dotnet build -v:m -c $configuration -f $net_tfm $apphostpatcher_dir\AppHostPatcher.csproj
+		dotnet build -v:m -c $configuration -f $netframework_tfm $apphostpatcher_dir\AppHostPatcher.csproj
 		if ($LASTEXITCODE) { exit $LASTEXITCODE }
 	}
 	else {
-		msbuild -v:m -m -restore -t:Build -p:Configuration=$configuration -p:TargetFramework=$net_tfm $apphostpatcher_dir\AppHostPatcher.csproj
+		msbuild -v:m -m -restore -t:Build -p:Configuration=$configuration -p:TargetFramework=$netframework_tfm $apphostpatcher_dir\AppHostPatcher.csproj
 		if ($LASTEXITCODE) { exit $LASTEXITCODE }
 	}
 }
@@ -87,9 +87,9 @@ if ($buildNet) {
 }
 
 if ($buildCoreX86) {
-	Build-NetCore x86
+	Build-Net x86
 }
 
 if ($buildCoreX64) {
-	Build-NetCore x64
+	Build-Net x64
 }

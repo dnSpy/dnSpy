@@ -31,7 +31,7 @@ namespace dnSpy.Search {
 		};
 
 		static readonly HashSet<string> frameworkAssemblyNames = new HashSet<string>(StringComparer.Ordinal) {
-			// .NET Core
+			// .NET
 			"Accessibility",
 			"DirectWriteForwarder",
 			"Microsoft.AI.DependencyCollector",
@@ -456,7 +456,7 @@ namespace dnSpy.Search {
 		};
 
 		public static bool IsFrameworkAssembly(string filename, string? assemblySimpleName) {
-			// Check if it's in one of the .NET Core runtime dirs
+			// Check if it's in one of the .NET runtime dirs
 			if (Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(filename))) is string baseDir && Directory.Exists(Path.Combine(baseDir, "Microsoft.NETCore.App")))
 				return true;
 

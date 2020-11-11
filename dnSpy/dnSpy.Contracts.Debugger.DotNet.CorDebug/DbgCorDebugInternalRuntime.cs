@@ -21,7 +21,7 @@ using dnSpy.Contracts.Debugger.DotNet.Evaluation;
 
 namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
 	/// <summary>
-	/// .NET Framework / .NET Core runtime. It must implement <see cref="IDbgDotNetRuntime"/>
+	/// .NET Framework / .NET runtime. It must implement <see cref="IDbgDotNetRuntime"/>
 	/// </summary>
 	public abstract class DbgCorDebugInternalRuntime : DbgDotNetInternalRuntime {
 		/// <summary>

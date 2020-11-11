@@ -49,7 +49,7 @@ namespace dnSpy.Contracts.Debugger.StartDebugging.Dialog {
 		public abstract double DisplayOrder { get; }
 
 		/// <summary>
-		/// Name of debug engine shown in the UI, eg. ".NET Framework" or ".NET Core" or "Mono"
+		/// Name of debug engine shown in the UI, eg. ".NET Framework" or ".NET" or "Mono"
 		/// </summary>
 		public abstract string DisplayName { get; }
 
@@ -160,9 +160,9 @@ namespace dnSpy.Contracts.Debugger.StartDebugging.Dialog {
 		public const double DotNetFramework = 1000000;
 
 		/// <summary>
-		/// .NET Core
+		/// .NET
 		/// </summary>
-		public const double DotNetCore = 1000000;
+		public const double DotNet = 1000000;
 
 		/// <summary>
 		/// .NET Mono

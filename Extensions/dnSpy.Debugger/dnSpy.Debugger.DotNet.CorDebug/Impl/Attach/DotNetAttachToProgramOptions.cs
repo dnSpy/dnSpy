@@ -18,48 +18,41 @@
 */
 
 using System;
+using dnSpy.Contracts.Debugger;
 
-namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
+namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Attach {
 	/// <summary>
-	/// Debugging options that will start and debug an application when passed to <see cref="DbgManager.Start(DebugProgramOptions)"/>.
-	/// This is used to debug .NET Core assemblies.
+	/// .NET attach to process options
 	/// </summary>
-	public sealed class DotNetCoreStartDebuggingOptions : CorDebugStartDebuggingOptions {
+	sealed class DotNetAttachToProgramOptions : CorDebugAttachToProgramOptions {
 		/// <summary>
-		/// If true, use <see cref="Host"/> (eg. dotnet.exe). If false, <see cref="Host"/>
-		/// isn't used and <see cref="CorDebugStartDebuggingOptions.Filename"/> should be
-		/// a native executable (eg. a renamed apphost.exe) that knows how to start the runtime.
+		/// A string returned by <c>dbgshim.dll</c>'s <c>CreateVersionStringFromModule</c> function
+		/// or null to use the first found CoreCLR in the process.
 		/// </summary>
-		public bool UseHost { get; set; } = true;
+		public string? ClrModuleVersion { get; set; }
 
 		/// <summary>
-		/// Path to host (eg. dotnet.exe) or null if dnSpy should try to find dotnet.exe
+		/// Path to <c>coreclr.dll</c> or null to use the first found one in the process
 		/// </summary>
-		public string? Host { get; set; }
-
-		/// <summary>
-		/// Host arguments (eg. "exec" if .NET Core's dotnet.exe is used)
-		/// </summary>
-		public string? HostArguments { get; set; }
+		public string? CoreCLRFilename { get; set; }
 
 		/// <summary>
 		/// Clones this instance
 		/// </summary>
 		/// <returns></returns>
-		public override DebugProgramOptions Clone() => CopyTo(new DotNetCoreStartDebuggingOptions());
+		public override DebugProgramOptions Clone() => CopyTo(new DotNetAttachToProgramOptions());
 
 		/// <summary>
 		/// Copies this instance to <paramref name="other"/> and returns it
 		/// </summary>
 		/// <param name="other">Destination</param>
 		/// <returns></returns>
-		public DotNetCoreStartDebuggingOptions CopyTo(DotNetCoreStartDebuggingOptions other) {
+		public DotNetAttachToProgramOptions CopyTo(DotNetAttachToProgramOptions other) {
 			if (other is null)
 				throw new ArgumentNullException(nameof(other));
 			base.CopyTo(other);
-			other.UseHost = UseHost;
-			other.Host = Host;
-			other.HostArguments = HostArguments;
+			other.ClrModuleVersion = ClrModuleVersion;
+			other.CoreCLRFilename = CoreCLRFilename;
 			return other;
 		}
 	}

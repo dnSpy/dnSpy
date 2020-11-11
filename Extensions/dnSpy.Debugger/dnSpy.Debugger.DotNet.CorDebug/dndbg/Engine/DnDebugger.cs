@@ -168,7 +168,7 @@ namespace dndbg.Engine {
 		public string DebuggeeVersion { get; }
 
 		/// <summary>
-		/// Other version, used by .NET Core
+		/// Other version, used by .NET
 		/// </summary>
 		public string OtherVersion { get; }
 
@@ -1536,7 +1536,7 @@ namespace dndbg.Engine {
 		public int TryBreakProcesses() => TryBreakProcesses(true);
 
 		int TryBreakProcesses(bool callProcessStopped) {
-			// At least with .NET Core, we'll get a DebuggerError (hr=0x80004005 (unspecified error))
+			// At least with .NET, we'll get a DebuggerError (hr=0x80004005 (unspecified error))
 			// if we try to break the process before the CreateProcess event.
 			if (ProcessStateInternal == DebuggerProcessState.Starting)
 				return -1;

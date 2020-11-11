@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if NETCOREAPP
+#if NET
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -25,12 +25,12 @@ using System.Reflection;
 using System.Runtime.Loader;
 
 namespace dnSpy.MainApp {
-	sealed class NetCoreAssemblyLoader {
+	sealed class DotNetAssemblyLoader {
 		string[] searchPaths;
 		readonly HashSet<string> searchPathsHash;
 		static readonly string[] assemblyExtensions = new string[] { ".dll" };
 
-		public NetCoreAssemblyLoader(AssemblyLoadContext loadContext) {
+		public DotNetAssemblyLoader(AssemblyLoadContext loadContext) {
 			loadContext.Resolving += AssemblyLoadContext_Resolving;
 			searchPaths = Array.Empty<string>();
 			searchPathsHash = new HashSet<string>(StringComparer.Ordinal);

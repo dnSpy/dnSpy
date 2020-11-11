@@ -25,14 +25,14 @@ using dnSpy.Contracts.Debugger.StartDebugging;
 using dnSpy.Debugger.DotNet.CorDebug.Utilities;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
-	[ExportDbgProcessStarter(PredefinedDbgProcessStarterOrders.DotNetCore)]
-	sealed class DotNetCoreDbgProcessStarter : DbgProcessStarter {
-		string? GetPathToDotNetExeHost() => DotNetCoreHelpers.GetPathToDotNetExeHost(IntPtr.Size * 8);
+	[ExportDbgProcessStarter(PredefinedDbgProcessStarterOrders.DotNet)]
+	sealed class DotNetDbgProcessStarter : DbgProcessStarter {
+		string? GetPathToDotNetExeHost() => DotNetHelpers.GetPathToDotNetExeHost(IntPtr.Size * 8);
 
 		public override bool IsSupported(string filename, out ProcessStarterResult result) {
 			result = ProcessStarterResult.None;
 
-			if (!DotNetCoreHelpers.IsDotNetCoreExecutable(filename) || GetPathToDotNetExeHost() is null)
+			if (!DotNetHelpers.IsDotNetExecutable(filename) || GetPathToDotNetExeHost() is null)
 				return false;
 
 			var extension = Path.GetExtension(filename);

@@ -360,10 +360,10 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 
 			// We do not compare the version number. The runtime can redirect an assembly
 			// reference from a requested version to any other version.
-			// The public key token is also ignored. Only .NET Framwork checks it (.NET Core
+			// The public key token is also ignored. Only .NET Framwork checks it (.NET
 			// and Unity ignore it). We could add a new option to ignore the PKT but it would
 			// require too many changes to the code (they access singleton comparers) and isn't
-			// worth it. It's also being replaced by .NET Core. It's not common for two
+			// worth it. It's also being replaced by .NET. It's not common for two
 			// assemblies loaded in the same process to have the same assembly name but a
 			// different public key token.
 			const DmdAssemblyNameFlags flagsMask = DmdAssemblyNameFlags.ContentType_Mask;

@@ -29,7 +29,7 @@ To debug Unity games, you need this repo too: https://github.com/dnSpy/dnSpy-Uni
 
 # Debugger
 
-- Debug .NET Framework, .NET Core and Unity game assemblies, no source code required
+- Debug .NET Framework, .NET and Unity game assemblies, no source code required
 - Set breakpoints and step into any assembly
 - Locals, watch, autos windows
 - Variables windows support saving variables (eg. decrypted byte arrays) to disk or view them in the hex editor (memory window)

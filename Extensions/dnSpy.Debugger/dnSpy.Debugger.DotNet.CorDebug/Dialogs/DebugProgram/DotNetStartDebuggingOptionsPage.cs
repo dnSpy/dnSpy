@@ -18,155 +18,157 @@
 */
 
 using System;
-using System.ComponentModel;
 using System.IO;
 using System.Windows.Input;
 using dnSpy.Contracts.Debugger;
 using dnSpy.Contracts.Debugger.DotNet.CorDebug;
+using dnSpy.Contracts.Debugger.StartDebugging;
 using dnSpy.Contracts.Debugger.StartDebugging.Dialog;
 using dnSpy.Contracts.MVVM;
-using dnSpy.Debugger.DotNet.CorDebug.Properties;
+using dnSpy.Debugger.DotNet.CorDebug.Utilities;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
-	abstract class DotNetStartDebuggingOptionsPage : StartDebuggingOptionsPage, IDataErrorInfo {
-		public override object? UIObject => this;
+	sealed class DotNetStartDebuggingOptionsPage : DotNetCommonStartDebuggingOptionsPage {
+		public override Guid Guid => new Guid("6DA15E33-27DA-498B-8AF1-552399485002");
+		public override double DisplayOrder => PredefinedStartDebuggingOptionsPageDisplayOrders.DotNet;
+		// Shouldn't be localized
+		public override string DisplayName => ".NET";
 
-		public string Filename {
-			get => filename;
+		public bool UseHost {
+			get => useHost;
 			set {
-				if (filename != value) {
-					filename = value;
-					OnPropertyChanged(nameof(Filename));
-					UpdateIsValid();
-					var path = GetPath(filename);
-					if (!(path is null))
-						WorkingDirectory = path;
-				}
-			}
-		}
-		string filename = string.Empty;
-
-		public string CommandLine {
-			get => commandLine;
-			set {
-				if (commandLine != value) {
-					commandLine = value;
-					OnPropertyChanged(nameof(CommandLine));
+				if (useHost != value) {
+					useHost = value;
+					OnPropertyChanged(nameof(UseHost));
+					OnPropertyChanged(nameof(HostFilename));
 					UpdateIsValid();
 				}
 			}
 		}
-		string commandLine = string.Empty;
+		bool useHost;
 
-		public string WorkingDirectory {
-			get => workingDirectory;
+		public string HostFilename {
+			get => hostFilename;
 			set {
-				if (workingDirectory != value) {
-					workingDirectory = value;
-					OnPropertyChanged(nameof(WorkingDirectory));
+				if (hostFilename != value) {
+					hostFilename = value;
+					OnPropertyChanged(nameof(HostFilename));
 					UpdateIsValid();
 				}
 			}
 		}
-		string workingDirectory = string.Empty;
+		string hostFilename = string.Empty;
 
-		public ICommand PickFilenameCommand => new RelayCommand(a => PickNewFilename());
-		public ICommand PickWorkingDirectoryCommand => new RelayCommand(a => PickNewWorkingDirectory());
-
-		public EnumListVM BreakProcessKindVM => breakProcessKindVM;
-		readonly EnumListVM breakProcessKindVM = new EnumListVM(BreakProcessKindsUtils.BreakProcessKindList);
-
-		public string BreakKind {
-			get => (string)BreakProcessKindVM.SelectedItem!;
-			set => BreakProcessKindVM.SelectedItem = value;
-		}
-
-		public override bool IsValid => isValid;
-		bool isValid;
-
-		protected void UpdateIsValid() {
-			var newIsValid = CalculateIsValid();
-			if (newIsValid == isValid)
-				return;
-			isValid = newIsValid;
-			OnPropertyChanged(nameof(IsValid));
-		}
-
-		protected abstract bool CalculateIsValid();
-
-		protected readonly IPickFilename pickFilename;
-		readonly IPickDirectory pickDirectory;
-
-		protected DotNetStartDebuggingOptionsPage(IPickFilename pickFilename, IPickDirectory pickDirectory) {
-			this.pickFilename = pickFilename ?? throw new ArgumentNullException(nameof(pickFilename));
-			this.pickDirectory = pickDirectory ?? throw new ArgumentNullException(nameof(pickDirectory));
-		}
-
-		static string? GetPath(string file) {
-			try {
-				return Path.GetDirectoryName(file);
+		public string HostArguments {
+			get => hostArguments;
+			set {
+				if (hostArguments != value) {
+					hostArguments = value;
+					OnPropertyChanged(nameof(HostArguments));
+					UpdateIsValid();
+				}
 			}
-			catch {
-			}
-			return null;
+		}
+		string hostArguments = string.Empty;
+
+		public ICommand PickHostFilenameCommand => new RelayCommand(a => PickNewHostFilename(), a => CanPickNewHostFilename);
+
+		public DotNetStartDebuggingOptionsPage(IPickFilename pickFilename, IPickDirectory pickDirectory)
+			: base(pickFilename, pickDirectory) {
 		}
 
-		protected static void Initialize(string filename, CorDebugStartDebuggingOptions options) {
-			options.Filename = filename;
-			options.WorkingDirectory = GetPath(options.Filename);
-		}
+		bool CanPickNewHostFilename => UseHost;
 
-		protected abstract void PickNewFilename();
-
-		void PickNewWorkingDirectory() {
-			var newDir = pickDirectory.GetDirectory(WorkingDirectory);
-			if (newDir is null)
+		void PickNewHostFilename() {
+			var newFilename = pickFilename.GetFilename(HostFilename, "exe", PickFilenameConstants.ExecutableFilter);
+			if (newFilename is null)
 				return;
 
-			WorkingDirectory = newDir;
+			HostFilename = newFilename;
 		}
 
-		static string FilterBreakKind(string? breakKind) {
-			foreach (var info in BreakProcessKindsUtils.BreakProcessKindList) {
-				if (StringComparer.Ordinal.Equals(breakKind, (string)info.Value))
-					return breakKind!;
+		protected override void PickNewFilename() {
+			var newFilename = pickFilename.GetFilename(Filename, "dll", PickFilenameConstants.DotNetAssemblyOrModuleFilter);
+			if (newFilename is null)
+				return;
+
+			Filename = newFilename;
+		}
+
+		public override void InitializePreviousOptions(StartDebuggingOptions options) {
+			var dncOptions = options as DotNetStartDebuggingOptions;
+			if (dncOptions is null)
+				return;
+			Initialize(dncOptions);
+		}
+
+		public override void InitializeDefaultOptions(string filename, string breakKind, StartDebuggingOptions? options) =>
+			Initialize(GetDefaultOptions(filename, breakKind, options));
+
+		DotNetStartDebuggingOptions GetDefaultOptions(string filename, string breakKind, StartDebuggingOptions? options) {
+			bool isExe = PortableExecutableFileHelpers.IsExecutable(filename);
+			if (isExe) {
+				var dncOptions = CreateOptions(breakKind);
+				Initialize(filename, dncOptions);
+				dncOptions.UseHost = !DotNetGenericDebugEngineGuidProvider.IsDotNetAppHostFilename(filename);
+				return dncOptions;
 			}
-			return PredefinedBreakKinds.DontBreak;
-		}
-
-		protected void Initialize(CorDebugStartDebuggingOptions options) {
-			Filename = options.Filename ?? string.Empty;
-			CommandLine = options.CommandLine ?? string.Empty;
-			// Must be init'd after Filename since it also overwrites this property
-			WorkingDirectory = options.WorkingDirectory ?? string.Empty;
-			BreakKind = FilterBreakKind(options.BreakKind);
-		}
-
-		protected T InitializeDefault<T>(T options, string breakKind) where T : CorDebugStartDebuggingOptions {
-			options.BreakKind = FilterBreakKind(breakKind);
-			return options;
-		}
-
-		protected T GetOptions<T>(T options) where T : CorDebugStartDebuggingOptions {
-			options.Filename = Filename;
-			options.CommandLine = CommandLine;
-			options.WorkingDirectory = WorkingDirectory;
-			options.BreakKind = FilterBreakKind(BreakKind);
-			return options;
-		}
-
-		string IDataErrorInfo.Error => throw new NotImplementedException();
-		string IDataErrorInfo.this[string columnName] => Verify(columnName);
-
-		protected static string VerifyFilename(string filename) {
-			if (!File.Exists(filename)) {
-				if (string.IsNullOrWhiteSpace(filename))
-					return dnSpy_Debugger_DotNet_CorDebug_Resources.Error_MissingFilename;
-				return dnSpy_Debugger_DotNet_CorDebug_Resources.Error_FileDoesNotExist;
+			else {
+				// If it's a DLL, use the old EXE options if available
+				if (options is DotNetStartDebuggingOptions dncOptions)
+					return dncOptions;
+				return CreateOptions(breakKind);
 			}
+		}
+
+		DotNetStartDebuggingOptions CreateOptions(string breakKind) =>
+			InitializeDefault(new DotNetStartDebuggingOptions { HostArguments = "exec" }, breakKind);
+
+		void Initialize(DotNetStartDebuggingOptions options) {
+			base.Initialize(options);
+			UseHost = options.UseHost;
+			HostFilename = options.Host ?? string.Empty;
+			HostArguments = options.HostArguments ?? string.Empty;
+		}
+
+		public override StartDebuggingOptionsInfo GetOptions() {
+			var options = GetOptions(new DotNetStartDebuggingOptions {
+				UseHost = UseHost,
+				Host = HostFilename,
+				HostArguments = HostArguments,
+			});
+			var flags = StartDebuggingOptionsInfoFlags.None;
+			if (File.Exists(options.Filename)) {
+				var extension = Path.GetExtension(options.Filename);
+				if (!StringComparer.OrdinalIgnoreCase.Equals(extension, ".exe") && !StringComparer.OrdinalIgnoreCase.Equals(extension, ".dll"))
+					flags |= StartDebuggingOptionsInfoFlags.WrongExtension;
+			}
+			return new StartDebuggingOptionsInfo(options, options.Filename, flags);
+		}
+
+		public override bool SupportsDebugEngine(Guid engineGuid, out double order) {
+			if (engineGuid == PredefinedGenericDebugEngineGuids.DotNet) {
+				order = PredefinedGenericDebugEngineOrders.DotNet;
+				return true;
+			}
+
+			order = 0;
+			return false;
+		}
+
+		protected override bool CalculateIsValid() =>
+			string.IsNullOrEmpty(Verify(nameof(HostFilename))) &&
+			string.IsNullOrEmpty(Verify(nameof(Filename)));
+
+		protected override string Verify(string columnName) {
+			if (columnName == nameof(HostFilename)) {
+				if (UseHost && !string.IsNullOrWhiteSpace(HostFilename))
+					return VerifyFilename(HostFilename);
+			}
+			else if (columnName == nameof(Filename))
+				return VerifyFilename(Filename);
+
 			return string.Empty;
 		}
-
-		protected abstract string Verify(string columnName);
 	}
 }

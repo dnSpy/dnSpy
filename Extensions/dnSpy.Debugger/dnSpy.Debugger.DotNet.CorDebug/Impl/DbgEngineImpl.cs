@@ -299,7 +299,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				frame = thread.ActiveFrame;
 				if (frame?.Function is null) {
 					// Ignore the first frame(s) that have a null function. This rarely happens (eg. it
-					// happens when debugging dnSpy built for .NET Core x86)
+					// happens when debugging dnSpy built for .NET x86)
 					frame = thread.AllFrames.FirstOrDefault(a => !(a.Function is null));
 				}
 			}
@@ -666,8 +666,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				// We can only debug processes with the same bitness, so check IntPtr.Size.
 				if (IntPtr.Size == 4 && debuggerSettings.AntiIsDebuggerPresent && options is DotNetFrameworkStartDebuggingOptions)
 					disableMDA = true;
-				// .NET Core doesn't support MDAs
-				if (options is DotNetCoreStartDebuggingOptions)
+				// .NET doesn't support MDAs
+				if (options is DotNetStartDebuggingOptions)
 					disableMDA = false;
 				if (disableMDA) {
 					// https://docs.microsoft.com/en-us/dotnet/framework/debug-trace-profile/diagnosing-errors-with-managed-debugging-assistants
@@ -676,7 +676,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				if (debuggerSettings.SuppressJITOptimization_SystemModules) {
 					if (options is DotNetFrameworkStartDebuggingOptions)
 						env.Add("COMPlus_ZapDisable", "1");
-					else if (options is DotNetCoreStartDebuggingOptions)
+					else if (options is DotNetStartDebuggingOptions)
 						env.Add("COMPlus_ReadyToRun", "0");
 					else
 						Debug.Fail("Unreachable code");
@@ -771,8 +771,8 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 				string errMsg;
 				if (ex is ErrorException errEx)
 					errMsg = errEx.Message;
-				else if (CorDebugRuntimeKind == CorDebugRuntimeKind.DotNetCore && ex is ArgumentException) {
-					// .NET Core throws ArgumentException if it can't attach to it (.NET Framework throws a COM exception with the correct error message)
+				else if (CorDebugRuntimeKind == CorDebugRuntimeKind.DotNet && ex is ArgumentException) {
+					// .NET throws ArgumentException if it can't attach to it (.NET Framework throws a COM exception with the correct error message)
 					errMsg = string.Format(dnSpy_Debugger_DotNet_CorDebug_Resources.Error_CouldNotStartDebugger2,
 						string.Format(dnSpy_Debugger_DotNet_CorDebug_Resources.Error_ProcessIsAlreadyBeingDebugged, options.ProcessId.ToString()));
 				}
@@ -857,7 +857,7 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			get {
 				debuggerThread.VerifyAccess();
 				// If it's null, we haven't connected yet (most likely due to timeout, eg. trying to debug
-				// a .NET Framework program with the .NET Core engine)
+				// a .NET Framework program with the .NET engine)
 				return !(dnDebugger is null);
 			}
 		}

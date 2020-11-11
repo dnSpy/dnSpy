@@ -43,7 +43,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 				DmdWellKnownType.System_Linq_SystemCore_EnumerableDebugView_T :
 				DmdWellKnownType.System_Linq_SystemCore_EnumerableDebugView;
 			var debugViewType = appDomain.GetWellKnownType(wellKnownType, isOptional: true);
-			// If this fails, System.Core (.NET Framework) / System.Linq (.NET Core) hasn't been loaded yet
+			// If this fails, System.Core (.NET Framework) / System.Linq (.NET) hasn't been loaded yet
 			// or the type doesn't exist in the assembly (Unity)
 			if (debugViewType is null)
 				return null;

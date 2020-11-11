@@ -55,19 +55,19 @@ namespace dnSpy.Documents {
 			SystemVersion = new Version(firstPath.Version.Major, firstPath.Version.Minor, firstPath.Version.Patch, 0);
 
 			foreach (var p in Paths) {
-				if (StringComparer.OrdinalIgnoreCase.Equals(Path.GetFileName(Path.GetDirectoryName(p)), DotNetCoreAppDir)) {
-					HasDotNetCoreAppPath = true;
+				if (StringComparer.OrdinalIgnoreCase.Equals(Path.GetFileName(Path.GetDirectoryName(p)), DotNetAppDir)) {
+					HasDotNetAppPath = true;
 					break;
 				}
 			}
 		}
 
-		// Sort the .NET Core dir last since it also contains some assemblies that exist in some other
+		// Sort the .NET dir last since it also contains some assemblies that exist in some other
 		// dirs, eg. WindowsBase.dll is in both Microsoft.NETCore.App and Microsoft.WindowsDesktop.App
 		// and the one in Microsoft.NETCore.App isn't the same one WPF apps expect (it has no types).
 		// There are other dupe assemblies, eg. Microsoft.Win32.Registry.dll exists both in
 		// Microsoft.NETCore.App and Microsoft.WindowsDesktop.App.
-		const string DotNetCoreAppDir = "Microsoft.NETCore.App";
+		const string DotNetAppDir = "Microsoft.NETCore.App";
 		static int SortPaths(string x, string y) {
 			int c = GetPathGroupOrder(x) - GetPathGroupOrder(y);
 			if (c != 0)
@@ -76,7 +76,7 @@ namespace dnSpy.Documents {
 		}
 
 		static int GetPathGroupOrder(string path) {
-			if (StringComparer.OrdinalIgnoreCase.Equals(Path.GetFileName(Path.GetDirectoryName(path)), DotNetCoreAppDir))
+			if (StringComparer.OrdinalIgnoreCase.Equals(Path.GetFileName(Path.GetDirectoryName(path)), DotNetAppDir))
 				return int.MaxValue;
 			return 0;
 		}
@@ -105,7 +105,7 @@ namespace dnSpy.Documents {
 			return 0;
 		}
 
-		internal bool HasDotNetCoreAppPath { get; }
+		internal bool HasDotNetAppPath { get; }
 	}
 
 	// It's a class since very few of these are created

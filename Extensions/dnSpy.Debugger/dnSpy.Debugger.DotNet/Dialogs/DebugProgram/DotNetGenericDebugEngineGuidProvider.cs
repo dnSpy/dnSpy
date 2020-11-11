@@ -24,7 +24,7 @@ using dnlib.PE;
 using dnSpy.Contracts.Debugger.StartDebugging;
 
 namespace dnSpy.Debugger.DotNet.Dialogs.DebugProgram {
-	[ExportGenericDebugEngineGuidProvider(PredefinedGenericDebugEngineGuidProviderOrders.DotNet)]
+	[ExportGenericDebugEngineGuidProvider(PredefinedGenericDebugEngineGuidProviderOrders.DotNetAny)]
 	sealed class DotNetGenericDebugEngineGuidProvider : GenericDebugEngineGuidProvider {
 		public override Guid? GetEngineGuid(string filename) {
 			if (!File.Exists(filename))
@@ -59,7 +59,7 @@ namespace dnSpy.Debugger.DotNet.Dialogs.DebugProgram {
 						if (values.Length >= 2 && values.Length <= 3) {
 							var framework = values[0].Trim();
 							if (framework == ".NETCoreApp")
-								return PredefinedGenericDebugEngineGuids.DotNetCore;
+								return PredefinedGenericDebugEngineGuids.DotNet;
 						}
 
 						return defaultGuid;

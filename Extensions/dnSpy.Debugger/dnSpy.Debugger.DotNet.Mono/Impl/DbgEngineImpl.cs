@@ -146,11 +146,11 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl {
 			funcEvalFactory = new FuncEvalFactory(debuggerThread.GetDebugMessageDispatcher());
 		}
 		static readonly ReadOnlyCollection<string> monoRuntimeTags = new ReadOnlyCollection<string>(new[] {
-			PredefinedDotNetDbgRuntimeTags.DotNet,
+			PredefinedDotNetDbgRuntimeTags.DotNetBase,
 			PredefinedDotNetDbgRuntimeTags.DotNetMono,
 		});
 		static readonly ReadOnlyCollection<string> unityRuntimeTags = new ReadOnlyCollection<string>(new[] {
-			PredefinedDotNetDbgRuntimeTags.DotNet,
+			PredefinedDotNetDbgRuntimeTags.DotNetBase,
 			PredefinedDotNetDbgRuntimeTags.DotNetUnity,
 		});
 

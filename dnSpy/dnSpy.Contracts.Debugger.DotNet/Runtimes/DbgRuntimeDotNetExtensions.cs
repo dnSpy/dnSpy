@@ -31,6 +31,6 @@ namespace dnSpy.Contracts.Debugger {
 		/// </summary>
 		/// <param name="runtime">Runtime</param>
 		/// <returns></returns>
-		public static bool IsDotNetRuntime(this DbgRuntime runtime) => runtime.Tags.Any(a => StringComparer.Ordinal.Equals(PredefinedDotNetDbgRuntimeTags.DotNet, a));
+		public static bool IsDotNetRuntime(this DbgRuntime runtime) => runtime.Tags.Any(a => StringComparer.Ordinal.Equals(PredefinedDotNetDbgRuntimeTags.DotNetBase, a));
 	}
 }

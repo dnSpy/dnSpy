@@ -24,25 +24,25 @@ using dnSpy.Contracts.Debugger.StartDebugging;
 using dnSpy.Debugger.DotNet.CorDebug.Impl;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Dialogs.DebugProgram {
-	[ExportGenericDebugEngineGuidProvider(PredefinedGenericDebugEngineGuidProviderOrders.DotNetCore)]
-	sealed class DotNetCoreGenericDebugEngineGuidProvider : GenericDebugEngineGuidProvider {
+	[ExportGenericDebugEngineGuidProvider(PredefinedGenericDebugEngineGuidProviderOrders.DotNet)]
+	sealed class DotNetGenericDebugEngineGuidProvider : GenericDebugEngineGuidProvider {
 		public override Guid? GetEngineGuid(string filename) {
-			if (!IsDotNetCoreAppHostFilename(filename))
+			if (!IsDotNetAppHostFilename(filename))
 				return null;
-			return PredefinedGenericDebugEngineGuids.DotNetCore;
+			return PredefinedGenericDebugEngineGuids.DotNet;
 		}
 
-		internal static bool IsDotNetCoreAppHostFilename(string filename) {
+		internal static bool IsDotNetAppHostFilename(string filename) {
 			if (!File.Exists(filename))
 				return false;
 			return
-				AppHostUtils.IsDotNetCoreBundleV1(filename) ||
-				AppHostUtils.IsDotNetCoreBundleV2_or_AppHost(filename) ||
-				IsKnownDotNetCoreAppHost(filename) ||
-				AppHostUtils.IsDotNetCoreAppHostV1(filename, out _);
+				AppHostUtils.IsDotNetBundleV1(filename) ||
+				AppHostUtils.IsDotNetBundleV2_or_AppHost(filename) ||
+				IsKnownDotNetAppHost(filename) ||
+				AppHostUtils.IsDotNetAppHostV1(filename, out _);
 		}
 
-		static bool IsKnownDotNetCoreAppHost(string filename) {
+		static bool IsKnownDotNetAppHost(string filename) {
 			if (AppHostUtils.TryGetAppHostEmbeddedDotNetDllPath(filename, out var couldBeAppHost, out _))
 				return true;
 			Debug.Assert(!couldBeAppHost, $"Looks like an unsupported apphost, update {nameof(AppHostInfoData)} table");

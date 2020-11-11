@@ -88,8 +88,8 @@ namespace dnSpy.MainApp {
 		readonly List<LoadedExtension> loadedExtensions = new List<LoadedExtension>();
 		readonly IAppCommandLineArgs args;
 		ExportProvider? exportProvider;
-#if NETCOREAPP
-		readonly NetCoreAssemblyLoader netCoreAssemblyLoader = new NetCoreAssemblyLoader(System.Runtime.Loader.AssemblyLoadContext.Default);
+#if NET
+		readonly DotNetAssemblyLoader dotNetAssemblyLoader = new DotNetAssemblyLoader(System.Runtime.Loader.AssemblyLoadContext.Default);
 #endif
 
 		Task<ExportProvider> initializeMEFTask;
@@ -282,8 +282,8 @@ namespace dnSpy.MainApp {
 		}
 
 		Assembly[] GetAssemblies() {
-#if NETCOREAPP
-			netCoreAssemblyLoader.AddSearchPath(AppDirectories.BinDirectory);
+#if NET
+			dotNetAssemblyLoader.AddSearchPath(AppDirectories.BinDirectory);
 #endif
 			var list = new List<Assembly>();
 			list.Add(GetType().Assembly);
@@ -318,9 +318,9 @@ namespace dnSpy.MainApp {
 			// "Understanding Background JIT compilation -> What can go wrong with background JIT compilation"
 			// in the PerfView docs for more info.
 			var files = unsortedFiles.OrderBy(a => a, StringComparer.OrdinalIgnoreCase).ToArray();
-#if NETCOREAPP
+#if NET
 			foreach (var file in files)
-				netCoreAssemblyLoader.AddSearchPath(Path.GetDirectoryName(file)!);
+				dotNetAssemblyLoader.AddSearchPath(Path.GetDirectoryName(file)!);
 #endif
 			var asms = new List<Assembly>();
 			foreach (var file in files) {

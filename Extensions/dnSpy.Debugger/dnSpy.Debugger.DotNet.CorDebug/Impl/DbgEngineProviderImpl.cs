@@ -38,14 +38,14 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl {
 			case DotNetFrameworkStartDebuggingOptions _:
 				return new DotNetFrameworkDbgEngineImpl(dbgEngineImplDependencies.Value, dbgManager, DbgStartKind.Start);
 
-			case DotNetCoreStartDebuggingOptions _:
-				return new DotNetCoreDbgEngineImpl(dbgEngineImplDependencies.Value, dbgManager, DbgStartKind.Start);
+			case DotNetStartDebuggingOptions _:
+				return new DotNetDbgEngineImpl(dbgEngineImplDependencies.Value, dbgManager, DbgStartKind.Start);
 
 			case DotNetFrameworkAttachToProgramOptions _:
 				return new DotNetFrameworkDbgEngineImpl(dbgEngineImplDependencies.Value, dbgManager, DbgStartKind.Attach);
 
-			case DotNetCoreAttachToProgramOptions _:
-				return new DotNetCoreDbgEngineImpl(dbgEngineImplDependencies.Value, dbgManager, DbgStartKind.Attach);
+			case DotNetAttachToProgramOptions _:
+				return new DotNetDbgEngineImpl(dbgEngineImplDependencies.Value, dbgManager, DbgStartKind.Attach);
 			}
 
 			return null;

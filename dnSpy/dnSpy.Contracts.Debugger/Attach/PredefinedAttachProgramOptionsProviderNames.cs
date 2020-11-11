@@ -28,9 +28,9 @@ namespace dnSpy.Contracts.Debugger.Attach {
 		public const string DotNetFramework = nameof(DotNetFramework);
 
 		/// <summary>
-		/// .NET Core
+		/// .NET
 		/// </summary>
-		public const string DotNetCore = nameof(DotNetCore);
+		public const string DotNet = nameof(DotNet);
 
 		/// <summary>
 		/// Unity Editor

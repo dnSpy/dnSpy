@@ -23,9 +23,9 @@ namespace dnSpy.Contracts.Debugger.DotNet {
 	/// </summary>
 	public static class PredefinedDotNetDbgRuntimeTags {
 		/// <summary>
-		/// .NET runtime
+		/// .NET runtime (any)
 		/// </summary>
-		public const string DotNet = nameof(DotNet);
+		public const string DotNetBase = nameof(DotNetBase);
 
 		/// <summary>
 		/// .NET Framework runtime
@@ -33,9 +33,9 @@ namespace dnSpy.Contracts.Debugger.DotNet {
 		public const string DotNetFramework = nameof(DotNetFramework);
 
 		/// <summary>
-		/// .NET Core runtime
+		/// .NET runtime
 		/// </summary>
-		public const string DotNetCore = nameof(DotNetCore);
+		public const string DotNet = nameof(DotNet);
 
 		/// <summary>
 		/// .NET Mono runtime

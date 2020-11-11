@@ -206,7 +206,7 @@ namespace dndbg.DotNet {
 					continue;
 
 				if ("mscorlib".Equals(asmRef.Name, StringComparison.OrdinalIgnoreCase)) {
-					if ((pktMscorlibDesktop.Equals(asmRef.PublicKeyOrToken) || pktMscorlibDotNetCore.Equals(asmRef.PublicKeyOrToken)) &&
+					if ((pktMscorlibDotNetFramework.Equals(asmRef.PublicKeyOrToken) || pktMscorlibDotNet.Equals(asmRef.PublicKeyOrToken)) &&
 						asmRef.Version != mscorlibWinMDVersion) {
 						if (bestMscorlib is null || asmRef.Version > bestMscorlib.Version)
 							bestMscorlib = asmRef;
@@ -221,8 +221,8 @@ namespace dndbg.DotNet {
 			return bestNonMscorlib;
 		}
 		static readonly Version mscorlibWinMDVersion = new Version(0xFF, 0xFF, 0xFF, 0xFF);
-		static readonly PublicKeyToken pktMscorlibDesktop = new PublicKeyToken("b77a5c561934e089");
-		static readonly PublicKeyToken pktMscorlibDotNetCore = new PublicKeyToken("7cec85d7bea7798e");
+		static readonly PublicKeyToken pktMscorlibDotNetFramework = new PublicKeyToken("b77a5c561934e089");
+		static readonly PublicKeyToken pktMscorlibDotNet = new PublicKeyToken("7cec85d7bea7798e");
 
 		/// <summary>
 		/// Should be called after caller has added it to its assembly

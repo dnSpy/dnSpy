@@ -235,7 +235,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			if (!(fieldValues[0] is PrimitiveValue pvFlags && fieldValues[1] is PrimitiveValue pvHi &&
 				fieldValues[2] is PrimitiveValue pvLo && fieldValues[3] is PrimitiveValue pvMid))
 				return default;
-			// Mono using .NET Core source code
+			// Mono using .NET source code
 			if (pvFlags.Value is int && pvHi.Value is int && pvLo.Value is int && pvMid.Value is int)
 				return ((int)pvFlags.Value, (int)pvHi.Value, (int)pvLo.Value, (int)pvMid.Value);
 			// Unity and older Mono
@@ -250,7 +250,7 @@ namespace dnSpy.Debugger.DotNet.Mono.Impl.Evaluation {
 			if (fields.Length != values.Length)
 				return default;
 			if (fields.Length == 1) {
-				// Newer Mono using .NET Core source code
+				// Newer Mono using .NET source code
 
 				if (fields[0].Name != KnownMemberNames.DateTime_DateData_FieldName1 && fields[0].Name != KnownMemberNames.DateTime_DateData_FieldName2)
 					return default;

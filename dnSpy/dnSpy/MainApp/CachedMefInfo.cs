@@ -37,7 +37,7 @@ namespace dnSpy.MainApp {
 		static string GetPathToClrDll() {
 #if NETFRAMEWORK
 			const string clrDllFilename = "clr.dll";
-#elif NETCOREAPP
+#elif NET
 			const string clrDllFilename = "coreclr.dll";
 #else
 #error Unknown target framework

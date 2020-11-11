@@ -287,7 +287,7 @@ namespace dnSpy.Debugger.DotNet.Metadata.Impl {
 				}
 			}
 			else if (CanResolveToCorLib(name)) {
-				// .NET Core hack. We don't resolve assemblies, but some attributes used by the
+				// .NET hack. We don't resolve assemblies, but some attributes used by the
 				// debugger reference types in an assembly that just forwards the type to the corlib.
 				// This assembly isn't normally loaded at runtime.
 				// We could resolve assemblies but then it's possible that we'll resolve the wrong

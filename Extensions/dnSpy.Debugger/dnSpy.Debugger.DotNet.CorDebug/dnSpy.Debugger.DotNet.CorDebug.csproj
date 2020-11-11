@@ -47,18 +47,18 @@
   </ItemGroup>
 
   <ItemGroup>
-    <NetCoreDebugFilesX86 Include="..\netcorefiles\x86\**" />
-    <NetCoreDebugFilesX64 Include="..\netcorefiles\x64\**" />
+    <DotNetDebugFilesX86 Include="..\netcorefiles\x86\**" />
+    <DotNetDebugFilesX64 Include="..\netcorefiles\x64\**" />
   </ItemGroup>
 
-  <Target Name="CopyNetCoreDebugFiles_AfterBuild" AfterTargets="AfterBuild" Condition=" '$(IsDotNetFramework)' == 'true' ">
-    <Copy SourceFiles="@(NetCoreDebugFilesX86)" DestinationFolder="$(TargetDir)debug\core\x86" />
-    <Copy SourceFiles="@(NetCoreDebugFilesX64)" DestinationFolder="$(TargetDir)debug\core\x64" />
+  <Target Name="CopyDotNetDebugFiles_AfterBuild" AfterTargets="AfterBuild" Condition=" '$(IsDotNetFramework)' == 'true' ">
+    <Copy SourceFiles="@(DotNetDebugFilesX86)" DestinationFolder="$(TargetDir)debug\core\x86" />
+    <Copy SourceFiles="@(DotNetDebugFilesX64)" DestinationFolder="$(TargetDir)debug\core\x64" />
   </Target>
 
-  <Target Name="CopyNetCoreDebugFiles_Publish" AfterTargets="Publish" Condition=" '$(IsDotNetFramework)' == 'true' ">
-    <Copy SourceFiles="@(NetCoreDebugFilesX86)" DestinationFolder="$(PublishDir)debug\core\x86" />
-    <Copy SourceFiles="@(NetCoreDebugFilesX64)" DestinationFolder="$(PublishDir)debug\core\x64" />
+  <Target Name="CopyDotNetDebugFiles_Publish" AfterTargets="Publish" Condition=" '$(IsDotNetFramework)' == 'true' ">
+    <Copy SourceFiles="@(DotNetDebugFilesX86)" DestinationFolder="$(PublishDir)debug\core\x86" />
+    <Copy SourceFiles="@(DotNetDebugFilesX64)" DestinationFolder="$(PublishDir)debug\core\x64" />
   </Target>
 
   <ItemGroup>

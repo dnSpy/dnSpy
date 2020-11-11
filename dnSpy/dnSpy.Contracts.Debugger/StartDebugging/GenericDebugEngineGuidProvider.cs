@@ -63,18 +63,18 @@ namespace dnSpy.Contracts.Debugger.StartDebugging {
 	/// </summary>
 	public static class PredefinedGenericDebugEngineGuidProviderOrders {
 		/// <summary>
-		/// .NET Framework / .NET Core
+		/// .NET Framework / .NET
 		/// </summary>
-		public const double DotNet = 1000000;
+		public const double DotNetAny = 1000000;
 
 		/// <summary>
 		/// Unity
 		/// </summary>
-		public const double DotNetUnity = DotNet + 1;
+		public const double DotNetUnity = DotNetAny + 1;
 
 		/// <summary>
-		/// .NET Core
+		/// .NET
 		/// </summary>
-		public const double DotNetCore = DotNet + 2;
+		public const double DotNet = DotNetAny + 2;
 	}
 }

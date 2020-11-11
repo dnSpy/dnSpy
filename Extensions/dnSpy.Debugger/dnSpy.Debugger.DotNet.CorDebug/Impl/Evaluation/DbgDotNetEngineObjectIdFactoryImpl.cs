@@ -31,11 +31,11 @@ namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Evaluation {
 		}
 	}
 
-	[ExportDbgEngineObjectIdFactory(PredefinedDbgRuntimeGuids.DotNetCore)]
-	sealed class DbgDotNetCoreEngineObjectIdFactoryImpl : DbgDotNetEngineObjectIdFactory {
+	[ExportDbgEngineObjectIdFactory(PredefinedDbgRuntimeGuids.DotNet)]
+	sealed class DbgDotNetEngineObjectIdFactoryImpl : DbgDotNetEngineObjectIdFactory {
 		[ImportingConstructor]
-		DbgDotNetCoreEngineObjectIdFactoryImpl(DbgDotNetLanguageService dbgDotNetLanguageService)
-			: base(PredefinedDbgRuntimeGuids.DotNetCore_Guid, dbgDotNetLanguageService) {
+		DbgDotNetEngineObjectIdFactoryImpl(DbgDotNetLanguageService dbgDotNetLanguageService)
+			: base(PredefinedDbgRuntimeGuids.DotNet_Guid, dbgDotNetLanguageService) {
 		}
 	}
 }

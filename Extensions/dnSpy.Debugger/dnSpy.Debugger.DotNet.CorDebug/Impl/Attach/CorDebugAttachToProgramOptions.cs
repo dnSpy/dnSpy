@@ -22,7 +22,7 @@ using dnSpy.Contracts.Debugger;
 
 namespace dnSpy.Debugger.DotNet.CorDebug.Impl.Attach {
 	/// <summary>
-	/// Debugging options base class shared by .NET Framework code and .NET Core code
+	/// Debugging options base class shared by .NET Framework code and .NET code
 	/// </summary>
 	abstract class CorDebugAttachToProgramOptions : AttachToProgramOptions {
 		/// <summary>

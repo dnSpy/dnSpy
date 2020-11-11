@@ -22,7 +22,7 @@ using dnlib.DotNet;
 
 namespace dnSpy.Documents {
 	readonly struct TargetFrameworkAttributeInfo {
-		public bool IsDotNetCore => Framework == ".NETCoreApp";
+		public bool IsDotNet => Framework == ".NETCoreApp";
 		public readonly string Framework;
 		public readonly Version Version;
 		public readonly string Profile;

@@ -23,8 +23,8 @@ using System.IO;
 namespace dnSpy.MainApp {
 	static class BGJitUtils {
 		public static string GetFolder() {
-#if NETCOREAPP
-			const string frameworkDir = "netcore";
+#if NET
+			const string frameworkDir = "net";
 #elif NETFRAMEWORK
 			const string frameworkDir = "netframework";
 #else

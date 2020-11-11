@@ -190,16 +190,16 @@ namespace dnSpy_Console {
 		readonly AssemblyResolver assemblyResolver;
 		readonly IBamlDecompiler? bamlDecompiler;
 		readonly HashSet<string> reservedOptions;
-#if NETCOREAPP
-		readonly dnSpy.MainApp.NetCoreAssemblyLoader netCoreAssemblyLoader = new dnSpy.MainApp.NetCoreAssemblyLoader(System.Runtime.Loader.AssemblyLoadContext.Default);
+#if NET
+		readonly dnSpy.MainApp.DotNetAssemblyLoader dotNetAssemblyLoader = new dnSpy.MainApp.DotNetAssemblyLoader(System.Runtime.Loader.AssemblyLoadContext.Default);
 #endif
 
 		static readonly char PATHS_SEP = Path.PathSeparator;
 
 		public DnSpyDecompiler() {
-#if NETCOREAPP
+#if NET
 			// This assembly is always in the bin sub dir if one exists
-			netCoreAssemblyLoader.AddSearchPath(Path.GetDirectoryName(typeof(ILSpan).Assembly.Location)!);
+			dotNetAssemblyLoader.AddSearchPath(Path.GetDirectoryName(typeof(ILSpan).Assembly.Location)!);
 #endif
 			files = new List<string>();
 			asmPaths = new List<string>();

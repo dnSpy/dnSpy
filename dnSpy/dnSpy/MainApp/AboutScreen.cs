@@ -192,8 +192,8 @@ namespace dnSpy.MainApp {
 		void Write(IDecompilerOutput output) {
 #if NETFRAMEWORK
 			const string frameworkName = ".NET Framework";
-#elif NETCOREAPP
-			const string frameworkName = ".NET Core";
+#elif NET
+			const string frameworkName = ".NET";
 #else
 #error Unknown target framework
 #endif

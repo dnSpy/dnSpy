@@ -27,7 +27,7 @@ namespace dnSpy.Roslyn.Compiler {
 		Unknown,
 		DotNetFramework2,
 		DotNetFramework4,
-		DotNetCore,
+		DotNet,
 		Unity2,
 		Unity4,
 	}
@@ -52,7 +52,7 @@ namespace dnSpy.Roslyn.Compiler {
 					return FrameworkKind.Unknown;
 				}
 				if (info.framework == ".NETCoreApp")
-					return FrameworkKind.DotNetCore;
+					return FrameworkKind.DotNet;
 
 				return FrameworkKind.Unknown;
 			}
@@ -67,7 +67,7 @@ namespace dnSpy.Roslyn.Compiler {
 			switch (corlib.Name) {
 			case "System.Runtime":
 				if (corlib.Version >= new Version(4, 1, 0, 0))
-					return FrameworkKind.DotNetCore;
+					return FrameworkKind.DotNet;
 				break;
 			}
 

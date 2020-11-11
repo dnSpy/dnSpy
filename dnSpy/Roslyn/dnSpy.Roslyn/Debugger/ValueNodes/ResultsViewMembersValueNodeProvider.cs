@@ -145,7 +145,7 @@ namespace dnSpy.Roslyn.Debugger.ValueNodes {
 		}
 
 		ClrVersion GetClrVersion(DbgRuntime runtime) {
-			if (runtime.Guid == PredefinedDbgRuntimeGuids.DotNetCore_Guid)
+			if (runtime.Guid == PredefinedDbgRuntimeGuids.DotNet_Guid)
 				return ClrVersion.CoreCLR;
 			if (enumerableType.AppDomain.CorLib?.GetName().Version == new Version(2, 0, 0, 0))
 				return ClrVersion.CLR2;

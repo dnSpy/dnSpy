@@ -30,9 +30,9 @@ namespace dnSpy.Contracts.Debugger.StartDebugging {
 		public static readonly Guid DotNetFramework = new Guid("0F99555D-5523-4AAE-BD4C-0451B9D50126");
 
 		/// <summary>
-		/// .NET Core
+		/// .NET
 		/// </summary>
-		public static readonly Guid DotNetCore = new Guid("7D294510-4730-433B-85C1-61EC0B4F6C3C");
+		public static readonly Guid DotNet = new Guid("7D294510-4730-433B-85C1-61EC0B4F6C3C");
 
 		/// <summary>
 		/// Unity

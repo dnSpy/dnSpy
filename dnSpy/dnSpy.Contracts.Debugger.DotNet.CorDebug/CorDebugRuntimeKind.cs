@@ -28,8 +28,8 @@ namespace dnSpy.Contracts.Debugger.DotNet.CorDebug {
 		DotNetFramework,
 
 		/// <summary>
-		/// .NET Core
+		/// .NET
 		/// </summary>
-		DotNetCore,
+		DotNet,
 	}
 }

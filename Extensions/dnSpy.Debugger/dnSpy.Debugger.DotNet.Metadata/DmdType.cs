@@ -1368,7 +1368,7 @@ namespace dnSpy.Debugger.DotNet.Metadata {
 		/// true if this is a by-ref like value type
 		/// </summary>
 		public bool IsByRefLike =>
-			//TODO: .NET Core adds this attribute to by ref like types, but .NET Framework does not, eg.
+			//TODO: .NET adds this attribute to by ref like types, but .NET Framework does not, eg.
 			//		ArgIterator, RuntimeArgumentHandle, TypedReference
 			CustomAttributesHelper.IsDefined(this, "System.Runtime.CompilerServices.IsByRefLikeAttribute", inherit: false);
 

@@ -51,7 +51,7 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type dbgprog:DotNetCoreStartDebuggingOptionsPage}">
+    <DataTemplate DataType="{x:Type dbgprog:DotNetStartDebuggingOptionsPage}">
         <Grid Grid.Row="0" Margin="0 0 0 0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
