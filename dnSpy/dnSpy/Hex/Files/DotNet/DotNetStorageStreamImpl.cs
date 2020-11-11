@@ -32,12 +32,17 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		public DotNetStorageStreamImpl(HexBufferSpan span)
 			: base(span) {
+
 			var buffer = span.Buffer;
-			var pos = span.Start.Position;
-			Offset = new StructField<UInt32Data>("iOffset", new UInt32Data(buffer, pos));
-			Size = new StructField<UInt32Data>("iSize", new UInt32Data(buffer, pos + 4));
-			StreamName = new StructField<StringData>("rcName", new StringData(buffer, pos + 8, (int)(span.Length.ToUInt64() - 8), Encoding.ASCII));
-			Fields = new BufferField[] {
+			var pos    = span.Start.Position;
+
+         // GUI-Labels for "Storage Stream #0 #~" ,      "Storage Stream #1 #Strings" ,
+         //                 .. #2 #US, ... #3 #Blob and ... #4 #GUID"
+			Offset     = new StructField<UInt32Data>("Offset", new UInt32Data(buffer, pos));
+			Size       = new StructField<UInt32Data>("Size"  , new UInt32Data(buffer, pos + 4));
+			StreamName = new StructField<StringData>("Name"  , new StringData(buffer, pos + 8, (int)(span.Length.ToUInt64() - 8), Encoding.ASCII));
+
+            Fields     = new BufferField[] {
 				Offset,
 				Size,
 				StreamName,
