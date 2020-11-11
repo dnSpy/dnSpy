@@ -45,19 +45,24 @@ namespace dnSpy.Hex.Files.DotNet {
 
 		DotNetMetadataHeaderDataImpl(HexBufferSpan span, int stringLength, StorageStreamHeader[] storageStreamHeaders)
 			: base(span) {
+
 			var buffer = span.Buffer;
-			var pos = span.Start.Position;
-			Signature = new StructField<UInt32Data>("lSignature", new UInt32Data(buffer, pos));
-			MajorVersion = new StructField<UInt16Data>("iMajorVer", new UInt16Data(buffer, pos + 4));
-			MinorVersion = new StructField<UInt16Data>("iMinorVer", new UInt16Data(buffer, pos + 6));
-			ExtraData = new StructField<UInt32Data>("iExtraData", new UInt32Data(buffer, pos + 8));
-			VersionStringCount = new StructField<UInt32Data>("iVersionString", new UInt32Data(buffer, pos + 0x0C));
-			VersionString = new StructField<StringData>("VersionString", new StringData(buffer, pos + 0x10, stringLength, Encoding.UTF8));
-			pos = pos + 0x10 + stringLength;
-			Flags = new StructField<ByteFlagsData>("fFlags", new ByteFlagsData(buffer, pos, flagsFlagInfos));
-			Pad = new StructField<ByteData>("pad", new ByteData(buffer, pos + 1));
-			StreamCount = new StructField<UInt16Data>("iStreams", new UInt16Data(buffer, pos + 2));
+			var pos    = span.Start.Position;
+
+			Signature          = new StructField<UInt32Data>(   "Signature"   , new UInt32Data(   buffer, pos        )); // Always    0x424A5342 "BSJB"
+			MajorVersion       = new StructField<UInt16Data>(   "MajorVer"    , new UInt16Data(   buffer, pos +    4 )); // currently 1
+			MinorVersion       = new StructField<UInt16Data>(   "MinorVer"    , new UInt16Data(   buffer, pos +    6 )); // currently 1
+			ExtraData          = new StructField<UInt32Data>(   "Reserved"    , new UInt32Data(   buffer, pos +    8 ));
+			VersionStringCount = new StructField<UInt32Data>(   "CLRVerStrLen", new UInt32Data(   buffer, pos + 0x0C )); // The CLRVerStrLen is rounded up to a multiple of 4.
+			VersionString      = new StructField<StringData>(   "CLRVerStr"   , new StringData(   buffer, pos + 0x10, stringLength, Encoding.UTF8));
+			pos                = pos + 0x10 + stringLength;
+
+			Flags              = new StructField<ByteFlagsData>("Flags"       , new ByteFlagsData(buffer, pos, flagsFlagInfos));
+			Pad                = new StructField<ByteData>  (   "Flags_pad"   , new ByteData  (   buffer, pos + 1));
+			StreamCount        = new StructField<UInt16Data>(   "Streams"     , new UInt16Data(   buffer, pos + 2)); // currently 5
 			pos += 4;
+
+         // Read the 5 DotNetStorageStream; #~,  #Strings,  #US,  #Blob and  #GUID   into StreamHeaders[]
 			var fields = new ArrayField<DotNetStorageStream>[storageStreamHeaders.Length];
 			for (int i = 0; i < storageStreamHeaders.Length; i++) {
 				var field = new ArrayField<DotNetStorageStream>(new DotNetStorageStreamImpl(new HexBufferSpan(buffer, storageStreamHeaders[i].Span)), (uint)i);
@@ -65,6 +70,7 @@ namespace dnSpy.Hex.Files.DotNet {
 			}
 			var arraySpan = storageStreamHeaders.Length == 0 ? new HexSpan(pos, 0) : HexSpan.FromBounds(storageStreamHeaders[0].Span.Start, storageStreamHeaders[storageStreamHeaders.Length - 1].Span.End);
 			StreamHeaders = new StructField<VariableLengthArrayData<DotNetStorageStream>>("Pools", new VariableLengthArrayData<DotNetStorageStream>(string.Empty, new HexBufferSpan(buffer, arraySpan), fields));
+
 			Fields = new BufferField[] {
 				Signature,
 				MajorVersion,
