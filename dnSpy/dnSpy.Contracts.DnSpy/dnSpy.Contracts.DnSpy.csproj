@@ -36,7 +36,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ookii.Dialogs" Version="$(OokiiDialogsVersion)" />
+    <PackageReference Include="Ookii.Dialogs.Wpf" Version="$(OokiiDialogsWpfVersion)" />
     <!--TODO: This is a workaround for a bug where we get the wrong version of System.Security.Permissions.
     Microsoft.VisualStudio.Composition.NetFxAttributes and Microsoft.VisualStudio.Composition reference
     System.ComponentModel.Composition 4.5.0 which references System.Security.Permissions 4.5.0 which has

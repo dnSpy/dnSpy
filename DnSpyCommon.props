@@ -43,7 +43,7 @@
     <MSVSIntellisenseVersion>15.5.27130</MSVSIntellisenseVersion>
     <MSVSTextVersion>15.5.27130</MSVSTextVersion>
     <NewtonsoftJsonVersion>12.0.3</NewtonsoftJsonVersion>
-    <OokiiDialogsVersion>1.0.0</OokiiDialogsVersion>
+    <OokiiDialogsWpfVersion>3.0.1</OokiiDialogsWpfVersion>
     <RoslynVersion>2.10.0</RoslynVersion>
     <SCCompositionVersion>4.6.0</SCCompositionVersion>
   </PropertyGroup>
