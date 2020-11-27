@@ -53,11 +53,11 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 			return null;
 		}
 
-		static readonly (int @base, int groupSize)[] numberBases = new (int, int)[] {
-			(2, 4),
-			(8, 4),
-			(10, 3),
-			(16, 4),
+		static readonly (int @base, int groupSize,string baseName)[] numberBases = new (int, int,string)[] {
+			(2, 4,"BIN"),
+			(8, 4, "OCT"),
+			(10, 3,"DEC"),
+			(16, 4, "HEX"),
 		};
 		object Create(IDocumentViewerToolTipProviderContext context, Func<StringBuilder, int, string> toBase) {
 			var provider = context.Create();
@@ -70,7 +70,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 					provider.Output.WriteLine();
 				needNewline = true;
 
-				provider.Output.Write(BoxedTextColor.Text, string.Format(dnSpy_Resources.NumberBaseFormatString, info.@base));
+				provider.Output.Write(BoxedTextColor.Text, string.Format("{0}: {1}",info.baseName, info.@base));
 				provider.Output.Write(BoxedTextColor.Text, " ");
 				var numStr = toBase(sb, info.@base);
 				if (info.groupSize != 0)
