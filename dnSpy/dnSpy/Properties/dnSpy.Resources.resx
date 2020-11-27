@@ -2058,9 +2058,6 @@ Filter can be changed in Assembly Explorer options.</value>
   <data name="TreeViewTypesFolder" xml:space="preserve">
     <value>Types</value>
   </data>
-  <data name="NumberBaseFormatString" xml:space="preserve">
-    <value>Base {0}:</value>
-  </data>
   <data name="RawValue" xml:space="preserve">
     <value>Raw:</value>
   </data>

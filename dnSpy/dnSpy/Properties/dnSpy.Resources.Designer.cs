@@ -3306,15 +3306,6 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Base {0}:.
-        /// </summary>
-        public static string NumberBaseFormatString {
-            get {
-                return ResourceManager.GetString("NumberBaseFormatString", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to _Open....
         /// </summary>
         public static string OpenCommand {
