@@ -70,7 +70,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 					provider.Output.WriteLine();
 				needNewline = true;
 
-				provider.Output.Write(BoxedTextColor.Text, string.Format("{0}: {1}",info.baseName, info.@base));
+				provider.Output.Write(BoxedTextColor.Text, info.baseName);
 				provider.Output.Write(BoxedTextColor.Text, " ");
 				var numStr = toBase(sb, info.@base);
 				if (info.groupSize != 0)
