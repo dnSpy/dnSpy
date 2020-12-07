@@ -584,7 +584,7 @@ Voulez-vous vraiment étendre cet élément ?</value>
     <value>Afficher les types de retour</value>
   </data>
   <data name="ShowTokensCommand" xml:space="preserve">
-    <value>Motrer les tokens</value>
+    <value>Montrer les tokens</value>
   </data>
   <data name="ShowIntrinsicTypeKeywordsCommand" xml:space="preserve">
     <value>Afficher les mots clés du type intrinsèque</value>

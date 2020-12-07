@@ -1547,7 +1547,7 @@ Le filtre peut être changé dans les options de l'explorateur d'Assembly.</valu
     <value>Ctrl+Maj+A</value>
   </data>
   <data name="ShortCutKeyCtrlShiftR" xml:space="preserve">
-    <value>Ctrl+Maj+R</value>
+    <value>Ctrl + Maj + R</value>
   </data>
   <data name="ShortCutKeyCtrlShiftV" xml:space="preserve">
     <value>Ctrl+Maj+V</value>
@@ -1832,7 +1832,7 @@ Le filtre peut être changé dans les options de l'explorateur d'Assembly.</valu
     <value>Afficher les types de retour</value>
   </data>
   <data name="ShowTokensCommand" xml:space="preserve">
-    <value>Motrer les tokens</value>
+    <value>Montrer les tokens</value>
   </data>
   <data name="ShortCutKeyCtrlK_CtrlW" xml:space="preserve">
     <value>Ctrl+K, Ctrl+W</value>

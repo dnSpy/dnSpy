@@ -130,7 +130,7 @@
     <value>_درباره ما</value>
   </data>
   <data name="About_SourceCode" xml:space="preserve">
-    <value>_منبع کد</value>
+    <value>_کد منبع</value>
   </data>
   <data name="About_TabTitle" xml:space="preserve">
     <value>درباره ما</value>
@@ -139,13 +139,13 @@
     <value>تمام فایل‌ها</value>
   </data>
   <data name="AssemblyExplorerCommand" xml:space="preserve">
-    <value>مدیریت Assembly</value>
+    <value>_مرور اسمبلی</value>
   </data>
   <data name="AssemblyExplorerKey" xml:space="preserve">
     <value>Ctrl+Alt+L</value>
   </data>
   <data name="AssemblyExplorerTitle" xml:space="preserve">
-    <value>مدیریت Assembly</value>
+    <value>مرور اسمبلی</value>
   </data>
   <data name="BaseTypeFolder" xml:space="preserve">
     <value>Base Type و Interfaces</value>
@@ -208,7 +208,7 @@
     <value>در حال دیکامپایل...</value>
   </data>
   <data name="DerivedTypes" xml:space="preserve">
-    <value>Derived Types</value>
+    <value>انواع مشتق شده</value>
   </data>
   <data name="DotNetExes" xml:space="preserve">
     <value>اجرایی.NET</value>
@@ -277,13 +277,13 @@
     <value>Ctrl+D</value>
   </data>
   <data name="GoToToken_CouldNotResolve" xml:space="preserve">
-    <value>نمی توان عضو reference با توکن 0x{0:X8} را resolve نمود</value>
+    <value>عضو ارجاعی با توکن 0x{0:X8} را نمیتوان حل و فصل کرد</value>
   </data>
   <data name="GoToToken_InvalidToken" xml:space="preserve">
-    <value>Metadata token نامعتبر: 0x{0:X8}</value>
+    <value>توکن فراداده نامعتبر: 0x{0:X8}</value>
   </data>
   <data name="GoToToken_Label" xml:space="preserve">
-    <value>_Metadata token</value>
+    <value>_توکن فراداده</value>
   </data>
   <data name="GoToToken_Title" xml:space="preserve">
     <value>برو به MD Token</value>
@@ -481,16 +481,16 @@
     <value>فعالسازی تمام پیغام‌های خطا</value>
   </data>
   <data name="Options_Misc_UseMmapdIO" xml:space="preserve">
-    <value>استفاده از memory mapped I/O</value>
+    <value>استفاده از حافظه ورودی/خرورجی نگاشته شده</value>
   </data>
   <data name="ReferencesFolder" xml:space="preserve">
-    <value>References</value>
+    <value>ارجاع ها</value>
   </data>
   <data name="ReloadAsmsCommand" xml:space="preserve">
     <value>بارگذاری‌مجدد تمام Assemblys</value>
   </data>
   <data name="ResourcesFolder" xml:space="preserve">
-    <value>Resources</value>
+    <value>منابع</value>
   </data>
   <data name="SaveKey" xml:space="preserve">
     <value>Ctrl+S</value>
@@ -502,10 +502,10 @@
     <value>جستجو متوقف شد، بیش از {0:n0} نتیجه یافت شد.</value>
   </data>
   <data name="SearchAssembliesCommand" xml:space="preserve">
-    <value>_جستجو Assemblies</value>
+    <value>_جستجو اسمبلی ها</value>
   </data>
   <data name="SearchAssembliesToolBarToolTip" xml:space="preserve">
-    <value>جستجو Assemblies</value>
+    <value>جستجوی اسمبلی ها</value>
   </data>
   <data name="Searching" xml:space="preserve">
     <value>در حال جستجو...</value>
@@ -538,7 +538,7 @@
     <value>_بستن پنجره</value>
   </data>
   <data name="TabsDlg_Module_Column" xml:space="preserve">
-    <value>Module</value>
+    <value>ماژول</value>
   </data>
   <data name="TabsDlg_Name_Column" xml:space="preserve">
     <value>نام</value>
@@ -571,13 +571,13 @@
     <value>دیکامپایل اعضای یک کلاس محصور به جای عضو کلاس</value>
   </data>
   <data name="DisplaySettings_HighlightReferences" xml:space="preserve">
-    <value>برجسته کردن رفرنس ها</value>
+    <value>برجسته کردن ارجاع ها</value>
   </data>
   <data name="DisplaySettings_RestoreTabs" xml:space="preserve">
     <value>بازگرداندن زبانه ها در راه اندازی</value>
   </data>
   <data name="DisplaySettings_ShowAssemblyPublicKeyToken" xml:space="preserve">
-    <value>نمایش public key token اسمبلی</value>
+    <value>نمایش کلید عمومی توکن اسمبلی</value>
   </data>
   <data name="DisplaySettings_ShowAssemblyVersion" xml:space="preserve">
     <value>نمایش نسخه اسمبلی</value>
@@ -586,7 +586,7 @@
     <value>نمایش شماره های خط</value>
   </data>
   <data name="DisplaySettings_ShowTokens" xml:space="preserve">
-    <value>نشان دادن توکن های metadata</value>
+    <value>نشان دادن توکن های فراداده</value>
   </data>
   <data name="OptionsCommand" xml:space="preserve">
     <value>_تنظیمات...</value>
@@ -598,28 +598,28 @@
     <value>Ctrl+B</value>
   </data>
   <data name="SearchWindow_Assembly" xml:space="preserve">
-    <value>Assembly</value>
+    <value>اسمبلی</value>
   </data>
   <data name="SearchWindow_AssemblyRef" xml:space="preserve">
-    <value>AssemblyRef</value>
+    <value>مرجع اسمبلی</value>
   </data>
   <data name="SearchWindow_CaseSensitiveSearch" xml:space="preserve">
     <value>جستجوی حساس به حروف کوچک و بزرگ</value>
   </data>
   <data name="SearchWindow_Class" xml:space="preserve">
-    <value>Class</value>
+    <value>کلاس</value>
   </data>
   <data name="SearchWindow_DecompileResources" xml:space="preserve">
-    <value>دیکامپایل ریسورس ها (مثلا XAML)</value>
+    <value>دیکامپایل منبع ها (مثلا XAML)</value>
   </data>
   <data name="SearchWindow_Delegate" xml:space="preserve">
-    <value>Delegate</value>
+    <value>دلگیت ها</value>
   </data>
   <data name="SearchWindow_Enum" xml:space="preserve">
-    <value>Enum</value>
+    <value>داده شمارشی</value>
   </data>
   <data name="SearchWindow_Event" xml:space="preserve">
-    <value>Event</value>
+    <value>رویداد</value>
   </data>
   <data name="SearchWindow_Event_Key" xml:space="preserve">
     <value>Ctrl+E</value>
@@ -631,7 +631,7 @@
     <value>Ctrl+F</value>
   </data>
   <data name="SearchWindow_Generic" xml:space="preserve">
-    <value>تایپ های عمومی</value>
+    <value>انواع عمومی</value>
   </data>
   <data name="SearchWindow_Interface" xml:space="preserve">
     <value>واسط</value>
@@ -661,28 +661,28 @@
     <value>Ctrl+U</value>
   </data>
   <data name="SearchWindow_Method" xml:space="preserve">
-    <value>متود</value>
+    <value>رویه</value>
   </data>
   <data name="SearchWindow_Method_Key" xml:space="preserve">
     <value>Ctrl+M</value>
   </data>
   <data name="SearchWindow_Module" xml:space="preserve">
-    <value>Module</value>
+    <value>ماژول</value>
   </data>
   <data name="SearchWindow_ModuleRef" xml:space="preserve">
-    <value>ModuleRef</value>
+    <value>مرجع ماژول</value>
   </data>
   <data name="SearchWindow_Namespace" xml:space="preserve">
     <value>فضاهای نام</value>
   </data>
   <data name="SearchWindow_NonGeneric" xml:space="preserve">
-    <value>Non-Generic Type</value>
+    <value>نوع غیر-عمومی</value>
   </data>
   <data name="SearchWindow_Parameter" xml:space="preserve">
-    <value>Parameter</value>
+    <value>ورودی</value>
   </data>
   <data name="SearchWindow_ParameterLocal" xml:space="preserve">
-    <value>پارامتر/محلی</value>
+    <value>ورودی/محلی</value>
   </data>
   <data name="SearchWindow_ParameterLocal_Key" xml:space="preserve">
     <value>Ctrl+N</value>
@@ -691,19 +691,19 @@
     <value>Ctrl+J</value>
   </data>
   <data name="SearchWindow_Property" xml:space="preserve">
-    <value>Property</value>
+    <value>ویژگی</value>
   </data>
   <data name="SearchWindow_Property_Key" xml:space="preserve">
     <value>Ctrl+P</value>
   </data>
   <data name="SearchWindow_Resource" xml:space="preserve">
-    <value>Resource</value>
+    <value>منبع</value>
   </data>
   <data name="SearchWindow_Resource_Key" xml:space="preserve">
     <value>Ctrl+R</value>
   </data>
   <data name="SearchWindow_Struct" xml:space="preserve">
-    <value>Struct</value>
+    <value>ساختار</value>
   </data>
   <data name="SearchWindow_Title" xml:space="preserve">
     <value>جستجو</value>
@@ -745,7 +745,7 @@
     <value>Ctrl+Shift+O</value>
   </data>
   <data name="SortAsmsCommand" xml:space="preserve">
-    <value>مرتب کردن Assemblies</value>
+    <value>مرتب کردن اسمبلی ها</value>
   </data>
   <data name="AskReadSettings" xml:space="preserve">
     <value>آیا مایل به بارگذاری تنظیمات نام ذخیره شده هستید؟</value>
@@ -784,16 +784,16 @@
     <value>_زبان</value>
   </data>
   <data name="ExportToProject_OpenProjectInVisualStudio" xml:space="preserve">
-    <value>_بار کردن پروژه در Visual Studio</value>
+    <value>_بار کردن پروژه در ویژوال استودیو</value>
   </data>
   <data name="ExportToProject_ProjectVersion" xml:space="preserve">
     <value>_نسخه</value>
   </data>
   <data name="ExportToProject_SolutionFilename" xml:space="preserve">
-    <value>_سولیشن</value>
+    <value>_سولوشن</value>
   </data>
   <data name="ExportToProject_UnpackResources" xml:space="preserve">
-    <value>_آنپک ریسورس ها</value>
+    <value>_بازکردن منبع ها</value>
   </data>
   <data name="Error_MissingFilename" xml:space="preserve">
     <value>نام پرونده گم شده</value>
@@ -813,19 +813,19 @@
     <value>دیکامپایلر</value>
   </data>
   <data name="MemberKind_Events" xml:space="preserve">
-    <value>Events</value>
+    <value>رویدادها</value>
   </data>
   <data name="MemberKind_Fields" xml:space="preserve">
-    <value>Fields</value>
+    <value>فیلدها</value>
   </data>
   <data name="MemberKind_Methods" xml:space="preserve">
-    <value>متود ها</value>
+    <value>رویه ها</value>
   </data>
   <data name="MemberKind_NestedTypes" xml:space="preserve">
-    <value>Nested Types</value>
+    <value>انواع تودرتو</value>
   </data>
   <data name="MemberKind_Properties" xml:space="preserve">
-    <value>Propertieها</value>
+    <value>ویژگی‌ها</value>
   </data>
   <data name="AboutScreen_LicenseInfo" xml:space="preserve">
     <value>dnSpy تحت لیسانس GPLv3 می باشد.</value>
@@ -849,7 +849,7 @@
     <value>تایپ انتخاب شده</value>
   </data>
   <data name="GoToResourceCommand" xml:space="preserve">
-    <value>رفتن به _ریسورس</value>
+    <value>رفتن به _منبع</value>
   </data>
   <data name="CollapseTreeViewNodesCommand" xml:space="preserve">
     <value>بستن گره های _نمای درختی</value>
@@ -879,7 +879,7 @@
     <value>_نمایش خروجی از:</value>
   </data>
   <data name="Output_WordWrap_ToolTip" xml:space="preserve">
-    <value>تغییر وضعیت Word Wrap</value>
+    <value>تغییر وضعیت پیوستگی کلمات</value>
   </data>
   <data name="ShortCutKeyAlt2" xml:space="preserve">
     <value>Alt+2</value>
@@ -906,7 +906,7 @@
     <value>Ctrl+{0}</value>
   </data>
   <data name="ShowTimestampsCommand" xml:space="preserve">
-    <value>نمایش Timestamps</value>
+    <value>نمایش برچسب‌های زمانی</value>
   </data>
   <data name="ShortCutKeyCtrlECtrlW" xml:space="preserve">
     <value>Ctrl+E, Ctrl+W</value>
@@ -951,7 +951,7 @@
     <value>جهت</value>
   </data>
   <data name="BgImgSettings_HorizontalOffset" xml:space="preserve">
-    <value>افست افقی</value>
+    <value>تنظیم افقی</value>
   </data>
   <data name="BgImgSettings_Images" xml:space="preserve">
     <value>اضافه کردن مسیر به عکس ها و پویشه عکسها، یک مسیر در هر خط:</value>
@@ -987,7 +987,7 @@
     <value>کش آمدن تصویر</value>
   </data>
   <data name="BgImgSettings_VerticalOffset" xml:space="preserve">
-    <value>افست عمودی</value>
+    <value>تنظیم عمودی</value>
   </data>
   <data name="ImagePlacement_Bottom" xml:space="preserve">
     <value>پایین</value>
@@ -1059,7 +1059,7 @@
     <value>جایگزینی بعدی</value>
   </data>
   <data name="Search_UseRegularExpressionsToolTip" xml:space="preserve">
-    <value>استفاده از Regex</value>
+    <value>استفاده از عبارت‌های با قاعده</value>
   </data>
   <data name="Search_ToggleReplaceModeToolTip" xml:space="preserve">
     <value>سوییچ بین حالت جستجو و جایگزینی</value>
@@ -1176,7 +1176,7 @@
     <value>زوم با چرخ ماوس</value>
   </data>
   <data name="TextEditorReferenceHighlighting" xml:space="preserve">
-    <value>برجسته کردن رفرنس ها</value>
+    <value>برجسته کردن ارجاع ها</value>
   </data>
   <data name="TextEditorSelectionMargin" xml:space="preserve">
     <value>حاشیه انتخاب</value>
@@ -1197,7 +1197,7 @@
     <value>پنجره خروجی</value>
   </data>
   <data name="TextEditorShowTimestamps" xml:space="preserve">
-    <value>نمایش Timestamps</value>
+    <value>نمایش برچسب‌های زمانی</value>
   </data>
   <data name="ReplSettings" xml:space="preserve">
     <value>REPL</value>
@@ -1234,7 +1234,7 @@
     <value>پیش‌فرض</value>
   </data>
   <data name="HexEditorSettings" xml:space="preserve">
-    <value>ویرایشگر Hex</value>
+    <value>ویرایشگر مبنا16</value>
   </data>
   <data name="HexEditorEncoding" xml:space="preserve">
     <value>رمزگذاری</value>
@@ -1246,13 +1246,13 @@
     <value>_برجسته سازی این خط</value>
   </data>
   <data name="HexEditorOffsetFormat" xml:space="preserve">
-    <value>افست</value>
+    <value>تنظیم</value>
   </data>
   <data name="HexEditorOffsetLowerCaseHex" xml:space="preserve">
-    <value>حروف کوچک هگز (آفست)</value>
+    <value>حروف کوچک مبنا16 (محل تنظیم)</value>
   </data>
   <data name="HexEditorValuesLowerCaseHex" xml:space="preserve">
-    <value>حروف بزرگ هگز (آفست)</value>
+    <value>حروف بزرگ مبنا16 (مقادیر)</value>
   </data>
   <data name="BlockStructureLineKind_None" xml:space="preserve">
     <value>هیچ</value>
@@ -1261,10 +1261,10 @@
     <value>نشان دادن ستون جدا کننده خط</value>
   </data>
   <data name="GoToOffset_Offset_Label" xml:space="preserve">
-    <value>انحراف</value>
+    <value>تنظیم</value>
   </data>
   <data name="GoToOffset_Title" xml:space="preserve">
-    <value>رفتن به افست</value>
+    <value>رفتن به محل تنظیم</value>
   </data>
   <data name="HexEditorSelect_End" xml:space="preserve">
     <value>_پایان</value>
@@ -1308,7 +1308,7 @@
     <value>کپی بعنوان آرایه C#</value>
   </data>
   <data name="CopyOffsetCommand" xml:space="preserve">
-    <value>کپی افست</value>
+    <value>کپی محل تنظیم</value>
   </data>
   <data name="CopySpecialCommand" xml:space="preserve">
     <value>کپی ویژه</value>
@@ -1323,7 +1323,7 @@
     <value>کپی بعنوان رشته UTF-8</value>
   </data>
   <data name="CopyVisualBasicArrayCommand" xml:space="preserve">
-    <value>کپی بعنوان آرایه VB</value>
+    <value>کپی بعنوان آرایه ویژوال بیسیک</value>
   </data>
   <data name="FillSelectionCommand" xml:space="preserve">
     <value>پرکردن قسمت انتخاب شده با بایت...</value>
@@ -1335,7 +1335,7 @@
     <value>مقدار را وارد کنید</value>
   </data>
   <data name="GoToOffsetCommand" xml:space="preserve">
-    <value>رفتن به افست...</value>
+    <value>رفتن به محل تنظیم...</value>
   </data>
   <data name="HexEditorSaveSelectionCommand" xml:space="preserve">
     <value>ذخیره _قسمت انتخاب شده...</value>
@@ -1365,19 +1365,19 @@
     <value>_متناسب با عرض</value>
   </data>
   <data name="LocalHexSettings_BaseOffset" xml:space="preserve">
-    <value>افست _پایه</value>
+    <value>محل تنظیم _پایه</value>
   </data>
   <data name="LocalHexSettings_BaseOffset_ToolTip" xml:space="preserve">
-    <value>این مقدار قبل از اینکه نمایش داده شود به آفست شروع اضافه شده است</value>
+    <value>این مقدار قبل از اینکه نمایش داده شود به محل تنظیم شروع اضافه شده است</value>
   </data>
   <data name="LocalHexSettings_BytesPerLine" xml:space="preserve">
     <value>_بایت‌ در هر خط</value>
   </data>
   <data name="LocalHexSettings_EndOffset" xml:space="preserve">
-    <value>_افست پایانی</value>
+    <value>_محل تنظیم پایانی</value>
   </data>
   <data name="LocalHexSettings_OffsetBitSize" xml:space="preserve">
-    <value>اندازه آفست _بیت</value>
+    <value>اندازه محل تنظیم _بیت</value>
   </data>
   <data name="LocalHexSettings_ShowASCII" xml:space="preserve">
     <value>_نمایش اسکی</value>
@@ -1389,16 +1389,16 @@
     <value>نمایش _مقادیر</value>
   </data>
   <data name="LocalHexSettings_StartOffset" xml:space="preserve">
-    <value>آفست _شروع</value>
+    <value>محل تنظیم _شروع</value>
   </data>
   <data name="LocalHexSettings_Title" xml:space="preserve">
     <value>تنظیمات محلی ویرایشگر هگز</value>
   </data>
   <data name="LocalHexSettings_UseRelOffsets" xml:space="preserve">
-    <value>استفاده از آفست های _نسبی</value>
+    <value>استفاده از محل‌های تنظیم _نسبی</value>
   </data>
   <data name="LocalHexSettings_UseRelOffsets_ToolTip" xml:space="preserve">
-    <value>همه آفست ها با شروع آفست نسبی هستند</value>
+    <value>همه محل‌های تنظیم نسبت به موقعیت شروع تنظیم هستند</value>
   </data>
   <data name="LocalHexSettings_ValueFormat" xml:space="preserve">
     <value>ارزش _فرمت</value>
@@ -1522,7 +1522,7 @@
     <value>فهرست</value>
   </data>
   <data name="HexToolTipOffset" xml:space="preserve">
-    <value>آفست</value>
+    <value>تنظیم</value>
   </data>
   <data name="BigEndian" xml:space="preserve">
     <value>Big Endian</value>
@@ -1531,10 +1531,10 @@
     <value>کپی {0}</value>
   </data>
   <data name="CopyAbsoluteFileOffsetCommand" xml:space="preserve">
-    <value>کپی آفست مطلق</value>
+    <value>کپی محل تنظیم مطلق</value>
   </data>
   <data name="CopyFileOffsetCommand" xml:space="preserve">
-    <value>کپی آفست فایل</value>
+    <value>کپی محل تنظیم فایل</value>
   </data>
   <data name="CopyRVACommand" xml:space="preserve">
     <value>کپی RVA</value>
@@ -1585,10 +1585,10 @@
     <value>طول</value>
   </data>
   <data name="GoToMetadata_Title" xml:space="preserve">
-    <value>برو به Metadata</value>
+    <value>برو به فراداده</value>
   </data>
   <data name="GoToMetadata_Token_Label" xml:space="preserve">
-    <value>_Token</value>
+    <value>_توکن</value>
   </data>
   <data name="ShortCutKeyCtrl5" xml:space="preserve">
     <value>Ctrl+5</value>
@@ -1597,19 +1597,19 @@
     <value>Ctrl+6</value>
   </data>
   <data name="GoToMetadataCommand" xml:space="preserve">
-    <value>برو به Metadata...</value>
+    <value>برو به فراداده...</value>
   </data>
   <data name="ShortCutKeyCtrlM" xml:space="preserve">
     <value>Ctrl+M</value>
   </data>
   <data name="GoToMetadataInvalidOffsetOrToken" xml:space="preserve">
-    <value>آفست یا metadata نامعتبر است</value>
+    <value>محل تنظیم یا فراداده نامعتبر است</value>
   </data>
   <data name="GoToMetadataMethodBody" xml:space="preserve">
-    <value>بدنه متود</value>
+    <value>بدنه رویه</value>
   </data>
   <data name="GoToMetadataToken" xml:space="preserve">
-    <value>توکن Metadata</value>
+    <value>توکن فراداده</value>
   </data>
   <data name="GoToMetadata_Index_Label" xml:space="preserve">
     <value>_فهرست</value>
@@ -1684,7 +1684,7 @@
     <value>Alt+R</value>
   </data>
   <data name="TimestampDateTimeFormat" xml:space="preserve">
-    <value>فرمت برچسب زمان</value>
+    <value>قالب برچسب زمان</value>
   </data>
   <data name="Window_Bookmarks" xml:space="preserve">
     <value>نشانه‌ها</value>
@@ -1927,10 +1927,10 @@
     <value>اضافه کردن یک خط خالی بین بلاک ها</value>
   </data>
   <data name="DisassemblySettings_HexPrefix" xml:space="preserve">
-    <value>پیشوند هگز</value>
+    <value>پیشوند مبنا16</value>
   </data>
   <data name="DisassemblySettings_HexSuffix" xml:space="preserve">
-    <value>پسوند هگز</value>
+    <value>پسوند مبنا16</value>
   </data>
   <data name="DisassemblySettings_NewTab" xml:space="preserve">
     <value>نمایش دیس‌اسمبلی در تب دیگر</value>
@@ -1939,16 +1939,16 @@
     <value>ستون عملوند</value>
   </data>
   <data name="DisassemblySettings_RipRelativeAddresses" xml:space="preserve">
-    <value>RIP-relative addresses</value>
+    <value>آدرسهای RIP-نسبی</value>
   </data>
   <data name="DisassemblySettings_ScaleBeforeIndex" xml:space="preserve">
     <value>نمایش مقیاس قبل از ثبت فهرست</value>
   </data>
   <data name="DisassemblySettings_BranchLeadingZeroes" xml:space="preserve">
-    <value>Add leading zeroes (branches)</value>
+    <value>اضافه کردن صفر در ابتدا (شاخه ها)</value>
   </data>
   <data name="DisassemblySettings_LeadingZeroes" xml:space="preserve">
-    <value>Add leading zeroes</value>
+    <value>اضافه کردن صفر در ابتدا</value>
   </data>
   <data name="DisassemblySettings_ShowBranchSize" xml:space="preserve">
     <value>نمایش اندازه شاخه</value>
@@ -2011,7 +2011,7 @@
     <value>ثبات های خام</value>
   </data>
   <data name="DisassemblySettings_ShowMnemonicSizeSuffix" xml:space="preserve">
-    <value>Always show mnemonic size suffix</value>
+    <value>همیشه پسوند اندازه حافظه را نشان بده</value>
   </data>
   <data name="DisassemblySettings_SpaceAfterMemoryOperandComma" xml:space="preserve">
     <value>فضای بعد از کاما عملوند حافظه</value>
@@ -2047,16 +2047,16 @@
     <value>رویدادها</value>
   </data>
   <data name="TreeViewFieldsFolder" xml:space="preserve">
-    <value>Fieldها</value>
+    <value>فیلدها</value>
   </data>
   <data name="TreeViewMethodsFolder" xml:space="preserve">
-    <value>متود ها</value>
+    <value>رویه ها</value>
   </data>
   <data name="TreeViewPropertiesFolder" xml:space="preserve">
-    <value>Propertieها</value>
+    <value>ویژگی‌ها</value>
   </data>
   <data name="TreeViewTypesFolder" xml:space="preserve">
-    <value>نوع</value>
+    <value>انواع</value>
   </data>
   <data name="NumberBaseFormatString" xml:space="preserve">
     <value>پایه</value>
@@ -2071,6 +2071,6 @@
     <value>دستورالعمل</value>
   </data>
   <data name="ToolTip_OpCode" xml:space="preserve">
-    <value>OpCode</value>
+    <value>آپ-کد</value>
   </data>
 </root>

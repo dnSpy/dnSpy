@@ -265,7 +265,7 @@
     <value>نمایش پنجره Locals زمانی که فرایند اشکال زدایی آغاز شد</value>
   </data>
   <data name="DbgSettings_DisableDebuggerDetection" xml:space="preserve">
-    <value>Prevent code from detecting the debugger</value>
+    <value>جلوگیری کد از تشخیص دیباگر</value>
   </data>
   <data name="DbgSettings_IgnoreBreakInstructions" xml:space="preserve">
     <value>نادیده گرفتن Debugger.Break و دستورات توقف</value>
@@ -1504,30 +1504,30 @@
     <value>Alt+8</value>
   </data>
   <data name="DbgSettings_IgnoreUnhandledExceptions" xml:space="preserve">
-    <value>Ignore unhandled exceptions</value>
+    <value>نادیده گرفتن استثناهای نامشخص</value>
   </data>
   <data name="RunWithInvalidExtension" xml:space="preserve">
-    <value>Are you sure you want to run this file which doesn't have a valid extension?</value>
+    <value>آیا مطمئن هستید که میخواهید این فایل که پسوند معتبری ندارد را اجرا کنید؟</value>
   </data>
   <data name="DebugWithInvalidExtension" xml:space="preserve">
-    <value>Are you sure you want to debug this file which doesn't have a valid extension?</value>
+    <value>آیا مطمئن هستید که میخواهید این فایل که پسوند معتبری ندارد را دیباگ کنید؟</value>
   </data>
   <data name="Processes_NoMatch" xml:space="preserve">
-    <value>No processes match your search filter.</value>
+    <value>پروسه ای مطابق با فیلتر پیدا نشد.</value>
   </data>
   <data name="Processes_Search" xml:space="preserve">
     <value>جستجو</value>
   </data>
   <data name="Processes_ResetSearchSettings_ToolTip" xml:space="preserve">
-    <value>Reset all search criteria so that all processes are shown</value>
+    <value>تنظیم مجدد تمام معیار به طوری که همه پروسه ها نمایش داده شده</value>
   </data>
   <data name="Processes_Search_ToolTip" xml:space="preserve">
     <value>جستجو برای یک پروسس</value>
   </data>
   <data name="DbgSettings_FocusDebuggerWhenProcessBreaks" xml:space="preserve">
-    <value>Bring dnSpy to the foreground when breaking in the debugger</value>
+    <value>dnSpy را هنگام توقف اجرا در دیباگر به پیش زمینه بیاور</value>
   </data>
   <data name="Column_LoadModule" xml:space="preserve">
-    <value>Load</value>
+    <value>بارگذاری</value>
   </data>
 </root>

@@ -1152,7 +1152,7 @@
     <value>Zvýraznit aktuální řádek</value>
   </data>
   <data name="TextEditorHighlightMatchingBrace" xml:space="preserve">
-    <value>Highlight braces</value>
+    <value>Zvýraznit závorky</value>
   </data>
   <data name="TextEditorHighlightRelatedKeywords" xml:space="preserve">
     <value>Highlight related keywords</value>
@@ -1161,7 +1161,7 @@
     <value>Show _horizontal scroll bar</value>
   </data>
   <data name="TextEditorLineHeight" xml:space="preserve">
-    <value>Line height</value>
+    <value>Výška řádku</value>
   </data>
   <data name="TextEditorLineSeparators" xml:space="preserve">
     <value>Show procedure line separators</value>

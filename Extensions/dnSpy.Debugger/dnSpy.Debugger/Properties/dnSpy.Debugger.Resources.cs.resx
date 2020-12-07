@@ -406,7 +406,7 @@ opravdu ho chcete rozbalit?</value>
     <value>V současné době není možné volat vlastnosti a metody</value>
   </data>
   <data name="Locals_Error_EvalTimedOutIsDisabled" xml:space="preserve">
-    <value>Vyodnocení vypršel časový limit a bylo zakázáno, dokud budete pokračovat v ladění programu.</value>
+    <value>Vyhodnocení vypršel časový limit a bylo zakázáno, dokud nebudete pokračovat v ladění programu.</value>
   </data>
   <data name="Locals_Error_EvaluationTimedOut" xml:space="preserve">
     <value>Vypršel časový limit vyhodnocení</value>
@@ -568,7 +568,7 @@ opravdu ho chcete rozbalit?</value>
     <value>Zobrazit obory názvů</value>
   </data>
   <data name="ShowNextStatementCommand" xml:space="preserve">
-    <value>Zobrazit další prohlášení</value>
+    <value>Zobrazit další příkaz</value>
   </data>
   <data name="ShowDeclaringTypesCommand" xml:space="preserve">
     <value>Zobrazit deklarační typy</value>
@@ -679,7 +679,7 @@ opravdu ho chcete rozbalit?</value>
     <value>Restartovat</value>
   </data>
   <data name="ToolBarShowNextStatementToolTip" xml:space="preserve">
-    <value>Zobrazit další prohlášení</value>
+    <value>Zobrazit další příkaz</value>
   </data>
   <data name="ToolBarStartDebuggingButton" xml:space="preserve">
     <value>Spustit</value>
@@ -1318,10 +1318,10 @@ opravdu ho chcete rozbalit?</value>
     <value>Odpočinout do tohoto rámce</value>
   </data>
   <data name="GlyphMargin_CurrentStatementToolTip" xml:space="preserve">
-    <value>Toto je další prohlášení, které bude spuštěno.</value>
+    <value>Toto je další příkaz, který bude vykonán.</value>
   </data>
   <data name="GlyphMargin_ReturnStatementToolTip" xml:space="preserve">
-    <value>Toto je další prohlášení které se spustí, až se toto vlákno vrátí ze současné funkce.</value>
+    <value>Toto je další příkaz, který bude vykonán, až se toto vlákno vrátí ze současné funkce.</value>
   </data>
   <data name="DbgSettings_EnableManagedDebuggingAssistants" xml:space="preserve">
     <value>Povolit Asistenty spravovaného ladění (MDA)</value>
@@ -1525,7 +1525,7 @@ opravdu ho chcete rozbalit?</value>
     <value>Hledat proces</value>
   </data>
   <data name="DbgSettings_FocusDebuggerWhenProcessBreaks" xml:space="preserve">
-    <value>Bring dnSpy to the foreground when breaking in the debugger</value>
+    <value>Přenést dnSpy do popředí při zastavení v debuggeru</value>
   </data>
   <data name="Column_LoadModule" xml:space="preserve">
     <value>Load</value>

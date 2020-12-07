@@ -136,7 +136,7 @@
     <value>Double clique</value>
   </data>
   <data name="ExposedByTreeNode" xml:space="preserve">
-    <value>Exposés par</value>
+    <value>Exposé par</value>
   </data>
   <data name="ExtensionMethodsTreeNode" xml:space="preserve">
     <value>Méthodes d'extension</value>
@@ -190,13 +190,13 @@
     <value>Ctrl + C</value>
   </data>
   <data name="ShortCutKeyCtrlShiftR" xml:space="preserve">
-    <value>Ctrl+Maj+R</value>
+    <value>Ctrl + Maj + R</value>
   </data>
   <data name="ShortCutKeyDelete" xml:space="preserve">
     <value>Effacer</value>
   </data>
   <data name="ShowMetadataTokensCommand" xml:space="preserve">
-    <value>Motrer les tokens</value>
+    <value>Montrer les tokens</value>
   </data>
   <data name="SingleClickExpandNodes" xml:space="preserve">
     <value>Un clic simple ouvre les noeuds</value>
